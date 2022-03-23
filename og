@@ -1,0 +1,1332 @@
+Debug: 6 2 log.c:252 handle_log_output_command(): set log_output to "og"
+Debug: 7 2 options.c:245 add_default_dirs(): bindir=bin
+Debug: 8 2 options.c:246 add_default_dirs(): pkgdatadir=
+Debug: 9 2 options.c:247 add_default_dirs(): exepath=D:/kffang/backup_sofware/openocd-20210823/Nuclei/OpenOCD/2021.08-eng1/bin
+Debug: 10 2 options.c:248 add_default_dirs(): bin2data=../
+Debug: 11 2 configuration.c:44 add_script_search_dir(): adding C:/Users/Administrator/AppData/Roaming/OpenOCD
+Debug: 12 2 configuration.c:44 add_script_search_dir(): adding D:/kffang/backup_sofware/openocd-20210823/Nuclei/OpenOCD/2021.08-eng1/bin/..//site
+Debug: 13 2 configuration.c:44 add_script_search_dir(): adding D:/kffang/backup_sofware/openocd-20210823/Nuclei/OpenOCD/2021.08-eng1/bin/..//scripts
+Debug: 14 2 command.c:201 script_debug(): command - gdb_port 3333
+Debug: 15 2 command.c:201 script_debug(): command - telnet_port 4444
+Debug: 16 2 command.c:201 script_debug(): command - tcl_port 6666
+Debug: 17 2 command.c:201 script_debug(): command - ocd_find SoC/demosoc/Board/nuclei_fpga_eval/openocd_demosoc.cfg
+Debug: 18 2 configuration.c:99 find_file(): found SoC/demosoc/Board/nuclei_fpga_eval/openocd_demosoc.cfg
+Debug: 19 3 command.c:201 script_debug(): command - adapter speed 1000
+Debug: 20 3 command.c:201 script_debug(): command - adapter speed 1000
+Debug: 21 3 core.c:1818 jtag_config_khz(): handle jtag khz
+Debug: 22 3 core.c:1781 adapter_khz_to_speed(): convert khz to interface specific speed value
+Debug: 23 3 core.c:1781 adapter_khz_to_speed(): convert khz to interface specific speed value
+Debug: 24 3 command.c:201 script_debug(): command - adapter driver ftdi
+Debug: 25 3 command.c:201 script_debug(): command - adapter driver ftdi
+Debug: 26 3 command.c:201 script_debug(): command - ftdi_vid_pid 0x0403 0x6010
+Debug: 27 3 command.c:201 script_debug(): command - ftdi_oscan1_mode off
+Debug: 28 3 command.c:201 script_debug(): command - transport select jtag
+Debug: 29 3 command.c:201 script_debug(): command - transport select jtag
+Debug: 30 3 command.c:201 script_debug(): command - ftdi_layout_init 0x0008 0x001b
+Debug: 31 3 command.c:201 script_debug(): command - ftdi_layout_signal nSRST -oe 0x0020 -data 0x0020
+Debug: 32 3 command.c:201 script_debug(): command - ftdi_layout_signal TCK -data 0x0001
+Debug: 33 3 command.c:201 script_debug(): command - ftdi_layout_signal TDI -data 0x0002
+Debug: 34 3 command.c:201 script_debug(): command - ftdi_layout_signal TDO -input 0x0004
+Debug: 35 3 command.c:201 script_debug(): command - ftdi_layout_signal TMS -data 0x0008
+Debug: 36 3 command.c:201 script_debug(): command - ftdi_layout_signal JTAG_SEL -data 0x0100 -oe 0x0100
+Debug: 37 3 command.c:201 script_debug(): command - jtag newtap riscv cpu -irlen 5
+Debug: 38 3 command.c:201 script_debug(): command - jtag newtap riscv cpu -irlen 5
+Debug: 39 3 tcl.c:566 jim_newtap_cmd(): Creating New Tap, Chip: riscv, Tap: cpu, Dotted: riscv.cpu, 2 params
+Debug: 40 3 tcl.c:590 jim_newtap_cmd(): Processing option: -irlen
+Debug: 41 3 core.c:1484 jtag_tap_init(): Created Tap: riscv.cpu @ abs position 0, irlen 5, capture: 0x1 mask: 0x3
+Debug: 42 3 command.c:201 script_debug(): command - target create riscv.cpu riscv -chain-position riscv.cpu
+Debug: 43 3 command.c:201 script_debug(): command - target create riscv.cpu riscv -chain-position riscv.cpu
+Debug: 44 3 target.c:2185 target_free_all_working_areas_restore(): freeing all working areas
+Debug: 45 3 riscv.c:427 riscv_create_target(): riscv_create_target()
+Debug: 46 3 command.c:201 script_debug(): command - riscv.cpu configure -work-area-phys 0xc0000000 -work-area-size 10000 -work-area-backup 1
+Debug: 47 3 command.c:201 script_debug(): command - riscv.cpu configure -work-area-phys 0xc0000000 -work-area-size 10000 -work-area-backup 1
+Debug: 48 3 target.c:2185 target_free_all_working_areas_restore(): freeing all working areas
+Debug: 49 3 target.c:2185 target_free_all_working_areas_restore(): freeing all working areas
+Debug: 50 3 target.c:2185 target_free_all_working_areas_restore(): freeing all working areas
+Debug: 51 3 command.c:201 script_debug(): command - riscv expose_csrs 416-496,770-800,835-850,1227-1231,1483-1486,1984-2032,2064-2070,2370-2380,2490-2500,4032-4040
+Debug: 52 3 command.c:201 script_debug(): command - riscv expose_csrs 416-496,770-800,835-850,1227-1231,1483-1486,1984-2032,2064-2070,2370-2380,2490-2500,4032-4040
+Debug: 53 3 command.c:201 script_debug(): command - init
+Debug: 54 3 command.c:201 script_debug(): command - target init
+Debug: 55 3 command.c:201 script_debug(): command - target init
+Debug: 56 3 command.c:201 script_debug(): command - target names
+Debug: 57 3 command.c:201 script_debug(): command - target names
+Debug: 58 4 command.c:201 script_debug(): command - riscv.cpu cget -event gdb-flash-erase-start
+Debug: 59 4 command.c:201 script_debug(): command - riscv.cpu cget -event gdb-flash-erase-start
+Debug: 60 4 command.c:201 script_debug(): command - riscv.cpu configure -event gdb-flash-erase-start reset init
+Debug: 61 4 command.c:201 script_debug(): command - riscv.cpu configure -event gdb-flash-erase-start reset init
+Debug: 62 4 command.c:201 script_debug(): command - riscv.cpu cget -event gdb-flash-write-end
+Debug: 63 4 command.c:201 script_debug(): command - riscv.cpu cget -event gdb-flash-write-end
+Debug: 64 4 command.c:201 script_debug(): command - riscv.cpu configure -event gdb-flash-write-end reset halt
+Debug: 65 4 command.c:201 script_debug(): command - riscv.cpu configure -event gdb-flash-write-end reset halt
+Debug: 66 4 command.c:201 script_debug(): command - riscv.cpu cget -event gdb-attach
+Debug: 67 4 command.c:201 script_debug(): command - riscv.cpu cget -event gdb-attach
+Debug: 68 4 command.c:201 script_debug(): command - riscv.cpu configure -event gdb-attach halt 1000
+Debug: 69 4 command.c:201 script_debug(): command - riscv.cpu configure -event gdb-attach halt 1000
+Debug: 70 4 target.c:1646 handle_target_init_command(): Initializing targets...
+Debug: 71 4 riscv.c:438 riscv_init_target(): riscv_init_target()
+Debug: 72 4 semihosting_common.c:99 semihosting_common_init():  
+Debug: 73 4 ftdi.c:734 ftdi_initialize(): ftdi interface using shortest path jtag state transitions
+Info : 74 146 mpsse.c:254 open_matching_device(): Using libusb driver
+Debug: 75 147 mpsse.c:641 mpsse_purge(): -
+Debug: 76 147 mpsse.c:935 mpsse_loopback_config(): off
+Debug: 77 147 mpsse.c:980 mpsse_set_frequency(): target 1000000 Hz
+Debug: 78 148 mpsse.c:972 mpsse_rtck_config(): off
+Debug: 79 148 mpsse.c:961 mpsse_divide_by_5_config(): off
+Debug: 80 148 mpsse.c:941 mpsse_set_divisor(): 29
+Debug: 81 148 mpsse.c:1004 mpsse_set_frequency(): actually 1000000 Hz
+Debug: 82 148 core.c:1781 adapter_khz_to_speed(): convert khz to interface specific speed value
+Debug: 83 148 core.c:1785 adapter_khz_to_speed(): have interface set up
+Debug: 84 148 mpsse.c:980 mpsse_set_frequency(): target 1000000 Hz
+Debug: 85 148 mpsse.c:972 mpsse_rtck_config(): off
+Debug: 86 148 mpsse.c:961 mpsse_divide_by_5_config(): off
+Debug: 87 148 mpsse.c:941 mpsse_set_divisor(): 29
+Debug: 88 148 mpsse.c:1004 mpsse_set_frequency(): actually 1000000 Hz
+Debug: 89 148 core.c:1781 adapter_khz_to_speed(): convert khz to interface specific speed value
+Debug: 90 148 core.c:1785 adapter_khz_to_speed(): have interface set up
+Info : 91 148 core.c:1561 adapter_init(): clock speed 1000 kHz
+Debug: 92 148 openocd.c:143 handle_init_command(): Debug Adapter init complete
+Debug: 93 148 command.c:201 script_debug(): command - transport init
+Debug: 94 148 command.c:201 script_debug(): command - transport init
+Debug: 95 148 transport.c:230 handle_transport_init(): handle_transport_init
+Debug: 96 148 core.c:833 jtag_add_reset(): SRST line released
+Debug: 97 148 core.c:858 jtag_add_reset(): TRST line released
+Debug: 98 148 core.c:331 jtag_call_event_callbacks(): jtag event: TAP reset
+Debug: 99 148 command.c:201 script_debug(): command - jtag arp_init
+Debug: 100 148 command.c:201 script_debug(): command - jtag arp_init
+Debug: 101 148 core.c:1574 jtag_init_inner(): Init JTAG chain
+Debug: 102 148 core.c:331 jtag_call_event_callbacks(): jtag event: TAP reset
+Debug: 103 149 core.c:1239 jtag_examine_chain(): DR scan interrogation for IDCODE/BYPASS
+Debug: 104 149 core.c:331 jtag_call_event_callbacks(): jtag event: TAP reset
+Info : 105 150 core.c:1138 jtag_examine_chain_display(): JTAG tap: riscv.cpu tap/device found: 0x1c900a6d (mfg: 0x536 (Nuclei System Technology Co Ltd), part: 0xc900, ver: 0x1)
+Debug: 106 150 core.c:1370 jtag_validate_ircapture(): IR capture validation scan
+Debug: 107 150 core.c:1428 jtag_validate_ircapture(): riscv.cpu: IR capture 0x01
+Debug: 108 150 command.c:201 script_debug(): command - dap init
+Debug: 109 150 command.c:201 script_debug(): command - dap init
+Debug: 110 150 arm_dap.c:106 dap_init_all(): Initializing all DAPs ...
+Debug: 111 150 openocd.c:160 handle_init_command(): Examining targets...
+Debug: 112 150 target.c:1833 target_call_event_callbacks(): target event 19 (examine-start) for core riscv.cpu
+Debug: 113 150 riscv.c:1113 riscv_examine(): riscv_examine()
+Debug: 114 151 riscv.c:400 dtmcontrol_scan(): DTMCONTROL: 0x0 -> 0x7071
+Debug: 115 151 riscv.c:1123 riscv_examine(): dtmcontrol=0x7071
+Debug: 116 151 riscv.c:1125 riscv_examine():   version=0x1
+Debug: 117 151 riscv-013.c:2279 init_target(): init
+Debug: 118 151 riscv-013.c:451 dtmcontrol_scan(): DTMCS: 0x0 -> 0x7071
+Debug: 119 151 riscv-013.c:1571 examine(): dtmcontrol=0x7071
+Debug: 120 151 riscv-013.c:1572 examine():   dmireset=0
+Debug: 121 151 riscv-013.c:1573 examine():   idle=7
+Debug: 122 151 riscv-013.c:1574 examine():   dmistat=0
+Debug: 123 151 riscv-013.c:1575 examine():   abits=7
+Debug: 124 151 riscv-013.c:1576 examine():   version=1
+Debug: 125 151 riscv-013.c:257 get_dm(): [0] Allocating new DM
+Debug: 126 152 riscv-013.c:397 scan(): 41b w 00000000 @10 -> + 00000000 @00; 0i
+Debug: 127 152 riscv-013.c:397 scan(): 41b - 00000000 @10 -> b 00000000 @10; 0i
+Debug: 128 152 riscv-013.c:462 increase_dmi_busy_delay(): dtmcs_idle=7, dmi_busy_delay=1, ac_busy_delay=0
+Debug: 129 152 riscv-013.c:451 dtmcontrol_scan(): DTMCS: 0x10000 -> 0x7c71
+Debug: 130 153 riscv-013.c:397 scan(): 41b - 00000000 @10 -> + 00000000 @10; 1i
+Debug: 131 153 riscv-013.c:397 scan(): 41b w 00000001 @10 -> + 00000000 @00; 1i
+Debug: 132 153 riscv-013.c:407 scan():  dmactive -> 
+Debug: 133 153 riscv-013.c:397 scan(): 41b - 00000000 @10 -> b 00000000 @10; 1i
+Debug: 134 153 riscv-013.c:462 increase_dmi_busy_delay(): dtmcs_idle=7, dmi_busy_delay=2, ac_busy_delay=0
+Debug: 135 154 riscv-013.c:451 dtmcontrol_scan(): DTMCS: 0x10000 -> 0x7c71
+Debug: 136 155 riscv-013.c:397 scan(): 41b - 00000000 @10 -> + 00000001 @10; 2i
+Debug: 137 155 riscv-013.c:407 scan():  ->  dmactive
+Debug: 138 155 riscv-013.c:397 scan(): 41b w 07ffffc1 @10 -> + 00000000 @00; 2i
+Debug: 139 155 riscv-013.c:407 scan():  hasel hartselhi=1023 hartsello=1023 dmactive -> 
+Debug: 140 155 riscv-013.c:397 scan(): 41b - 00000000 @10 -> b 00000000 @10; 2i
+Debug: 141 155 riscv-013.c:462 increase_dmi_busy_delay(): dtmcs_idle=7, dmi_busy_delay=3, ac_busy_delay=0
+Debug: 142 156 riscv-013.c:451 dtmcontrol_scan(): DTMCS: 0x10000 -> 0x7c71
+Debug: 143 156 riscv-013.c:397 scan(): 41b - 00000000 @10 -> + 07ffffc1 @10; 3i
+Debug: 144 156 riscv-013.c:407 scan():  ->  hasel hartselhi=1023 hartsello=1023 dmactive
+Debug: 145 156 riscv-013.c:397 scan(): 41b r 00000000 @10 -> + 00000000 @00; 3i
+Debug: 146 157 riscv-013.c:397 scan(): 41b - 00000000 @10 -> b 00000000 @10; 3i
+Debug: 147 157 riscv-013.c:462 increase_dmi_busy_delay(): dtmcs_idle=7, dmi_busy_delay=4, ac_busy_delay=0
+Debug: 148 157 riscv-013.c:451 dtmcontrol_scan(): DTMCS: 0x10000 -> 0x7c71
+Debug: 149 158 riscv-013.c:397 scan(): 41b - 00000000 @10 -> + 03ff0001 @10; 4i
+Debug: 150 158 riscv-013.c:407 scan():  ->  hartsello=1023 dmactive
+Debug: 151 158 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 152 158 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004aeaa2 @11; 4i
+Debug: 153 158 riscv-013.c:407 scan():  ->  impebreak allhavereset allresumeack allnonexistent anynonexistent allunavail allrunning allhalted authenticated hasresethaltreq version=2
+Debug: 154 158 riscv-013.c:1621 examine(): dmstatus:  0x004aeaa2
+Debug: 155 158 riscv-013.c:1637 examine(): hartsellen=10
+Debug: 156 159 riscv-013.c:397 scan(): 41b r 00000000 @12 -> + 00000000 @00; 4i
+Debug: 157 159 riscv-013.c:397 scan(): 41b - 00000000 @12 -> + 00214110 @12; 4i
+Debug: 158 159 riscv-013.c:397 scan(): 41b r 00000000 @38 -> + 00000000 @00; 4i
+Debug: 159 160 riscv-013.c:397 scan(): 41b - 00000000 @38 -> + 2004042f @38; 4i
+Debug: 160 160 riscv-013.c:407 scan():  ->  sbversion=1 sbaccess=2 sbasize=33 sbaccess64 sbaccess32 sbaccess16 sbaccess8
+Debug: 161 160 riscv-013.c:397 scan(): 41b r 00000000 @16 -> + 00000000 @00; 4i
+Debug: 162 160 riscv-013.c:397 scan(): 41b - 00000000 @16 -> + 08000004 @16; 4i
+Debug: 163 160 riscv-013.c:407 scan():  ->  progbufsize=8 datacount=4
+Info : 164 160 riscv-013.c:1668 examine(): datacount=4 progbufsize=8
+Debug: 165 161 riscv-013.c:397 scan(): 41b r 00000000 @10 -> + 00000000 @00; 4i
+Debug: 166 161 riscv-013.c:397 scan(): 41b - 00000000 @10 -> + 03ff0001 @10; 4i
+Debug: 167 161 riscv-013.c:407 scan():  ->  hartsello=1023 dmactive
+Debug: 168 162 riscv-013.c:397 scan(): 41b w 00000001 @10 -> + 00000000 @00; 4i
+Debug: 169 162 riscv-013.c:407 scan():  dmactive -> 
+Debug: 170 162 riscv-013.c:397 scan(): 41b - 00000000 @10 -> + 00000001 @10; 4i
+Debug: 171 162 riscv-013.c:407 scan():  ->  dmactive
+Debug: 172 162 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 173 163 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 174 163 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 175 163 riscv-013.c:397 scan(): 41b r 00000000 @10 -> + 00000000 @00; 4i
+Debug: 176 164 riscv-013.c:397 scan(): 41b - 00000000 @10 -> + 00000001 @10; 4i
+Debug: 177 164 riscv-013.c:407 scan():  ->  dmactive
+Debug: 178 164 riscv-013.c:397 scan(): 41b w 00010001 @10 -> + 00000000 @00; 4i
+Debug: 179 164 riscv-013.c:407 scan():  hartsello=1 dmactive -> 
+Debug: 180 165 riscv-013.c:397 scan(): 41b - 00000000 @10 -> + 00010001 @10; 4i
+Debug: 181 165 riscv-013.c:407 scan():  ->  hartsello=1 dmactive
+Debug: 182 165 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 183 165 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004aeaa2 @11; 4i
+Debug: 184 165 riscv-013.c:407 scan():  ->  impebreak allhavereset allresumeack allnonexistent anynonexistent allunavail allrunning allhalted authenticated hasresethaltreq version=2
+Debug: 185 165 riscv-013.c:1706 examine(): Detected 1 harts.
+Debug: 186 166 riscv-013.c:397 scan(): 41b r 00000000 @10 -> + 00000000 @00; 4i
+Debug: 187 166 riscv-013.c:397 scan(): 41b - 00000000 @10 -> + 00010001 @10; 4i
+Debug: 188 166 riscv-013.c:407 scan():  ->  hartsello=1 dmactive
+Debug: 189 166 riscv-013.c:397 scan(): 41b w 00000001 @10 -> + 00000000 @00; 4i
+Debug: 190 166 riscv-013.c:407 scan():  dmactive -> 
+Debug: 191 167 riscv-013.c:397 scan(): 41b - 00000000 @10 -> + 00000001 @10; 4i
+Debug: 192 167 riscv-013.c:407 scan():  ->  dmactive
+Debug: 193 167 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 194 167 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 195 167 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 196 168 riscv-013.c:789 execute_abstract_command(): command=0x321008; access register, size=64, postexec=0, transfer=1, write=0, regno=0x1008
+Debug: 197 168 riscv-013.c:397 scan(): 41b w 00321008 @17 -> + 00000000 @00; 4i
+Debug: 198 168 riscv-013.c:397 scan(): 41b r 00000000 @16 -> + 00321008 @17; 4i
+Debug: 199 169 riscv-013.c:397 scan(): 41b - 00000000 @16 -> + 08000004 @16; 4i
+Debug: 200 169 riscv-013.c:407 scan():  ->  progbufsize=8 datacount=4
+Debug: 201 169 riscv-013.c:789 execute_abstract_command(): command=0x320301; access register, size=64, postexec=0, transfer=1, write=0, regno=0x301
+Debug: 202 169 riscv-013.c:397 scan(): 41b w 00320301 @17 -> + 00000000 @00; 4i
+Debug: 203 169 riscv-013.c:397 scan(): 41b r 00000000 @16 -> + 00320301 @17; 4i
+Debug: 204 170 riscv-013.c:397 scan(): 41b - 00000000 @16 -> + 08000004 @16; 4i
+Debug: 205 170 riscv-013.c:407 scan():  ->  progbufsize=8 datacount=4
+Debug: 206 170 riscv-013.c:397 scan(): 41b r 00000000 @05 -> + 00000000 @00; 4i
+Debug: 207 171 riscv-013.c:397 scan(): 41b - 00000000 @05 -> + 80000000 @05; 4i
+Debug: 208 171 riscv-013.c:397 scan(): 41b r 00000000 @04 -> + 00000000 @00; 4i
+Debug: 209 171 riscv-013.c:397 scan(): 41b - 00000000 @04 -> + 0014912d @04; 4i
+Debug: 210 171 riscv-013.c:1496 register_read_direct(): {0} misa = 0x800000000014912d
+Debug: 211 171 riscv.c:4069 riscv_init_registers(): create register cache for 4194 registers
+Debug: 212 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 416 (name=csr416)
+Debug: 213 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 417 (name=csr417)
+Debug: 214 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 418 (name=csr418)
+Debug: 215 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 419 (name=csr419)
+Debug: 216 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 420 (name=csr420)
+Debug: 217 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 421 (name=csr421)
+Debug: 218 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 422 (name=csr422)
+Debug: 219 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 423 (name=csr423)
+Debug: 220 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 424 (name=csr424)
+Debug: 221 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 425 (name=csr425)
+Debug: 222 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 426 (name=csr426)
+Debug: 223 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 427 (name=csr427)
+Debug: 224 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 428 (name=csr428)
+Debug: 225 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 429 (name=csr429)
+Debug: 226 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 430 (name=csr430)
+Debug: 227 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 431 (name=csr431)
+Debug: 228 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 432 (name=csr432)
+Debug: 229 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 433 (name=csr433)
+Debug: 230 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 434 (name=csr434)
+Debug: 231 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 435 (name=csr435)
+Debug: 232 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 436 (name=csr436)
+Debug: 233 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 437 (name=csr437)
+Debug: 234 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 438 (name=csr438)
+Debug: 235 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 439 (name=csr439)
+Debug: 236 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 440 (name=csr440)
+Debug: 237 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 441 (name=csr441)
+Debug: 238 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 442 (name=csr442)
+Debug: 239 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 443 (name=csr443)
+Debug: 240 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 444 (name=csr444)
+Debug: 241 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 445 (name=csr445)
+Debug: 242 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 446 (name=csr446)
+Debug: 243 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 447 (name=csr447)
+Debug: 244 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 448 (name=csr448)
+Debug: 245 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 449 (name=csr449)
+Debug: 246 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 450 (name=csr450)
+Debug: 247 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 451 (name=csr451)
+Debug: 248 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 452 (name=csr452)
+Debug: 249 172 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 453 (name=csr453)
+Debug: 250 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 454 (name=csr454)
+Debug: 251 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 455 (name=csr455)
+Debug: 252 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 456 (name=csr456)
+Debug: 253 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 457 (name=csr457)
+Debug: 254 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 458 (name=csr458)
+Debug: 255 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 459 (name=csr459)
+Debug: 256 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 460 (name=csr460)
+Debug: 257 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 461 (name=csr461)
+Debug: 258 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 462 (name=csr462)
+Debug: 259 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 463 (name=csr463)
+Debug: 260 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 464 (name=csr464)
+Debug: 261 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 465 (name=csr465)
+Debug: 262 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 466 (name=csr466)
+Debug: 263 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 467 (name=csr467)
+Debug: 264 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 468 (name=csr468)
+Debug: 265 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 469 (name=csr469)
+Debug: 266 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 470 (name=csr470)
+Debug: 267 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 471 (name=csr471)
+Debug: 268 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 472 (name=csr472)
+Debug: 269 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 473 (name=csr473)
+Debug: 270 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 474 (name=csr474)
+Debug: 271 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 475 (name=csr475)
+Debug: 272 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 476 (name=csr476)
+Debug: 273 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 477 (name=csr477)
+Debug: 274 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 478 (name=csr478)
+Debug: 275 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 479 (name=csr479)
+Debug: 276 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 480 (name=csr480)
+Debug: 277 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 481 (name=csr481)
+Debug: 278 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 482 (name=csr482)
+Debug: 279 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 483 (name=csr483)
+Debug: 280 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 484 (name=csr484)
+Debug: 281 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 485 (name=csr485)
+Debug: 282 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 486 (name=csr486)
+Debug: 283 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 487 (name=csr487)
+Debug: 284 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 488 (name=csr488)
+Debug: 285 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 489 (name=csr489)
+Debug: 286 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 490 (name=csr490)
+Debug: 287 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 491 (name=csr491)
+Debug: 288 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 492 (name=csr492)
+Debug: 289 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 493 (name=csr493)
+Debug: 290 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 494 (name=csr494)
+Debug: 291 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 495 (name=csr495)
+Debug: 292 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 496 (name=csr496)
+Debug: 293 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 776 (name=csr776)
+Debug: 294 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 777 (name=csr777)
+Debug: 295 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 778 (name=csr778)
+Debug: 296 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 779 (name=csr779)
+Debug: 297 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 780 (name=csr780)
+Debug: 298 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 781 (name=csr781)
+Debug: 299 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 782 (name=csr782)
+Debug: 300 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 783 (name=csr783)
+Debug: 301 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 785 (name=csr785)
+Debug: 302 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 786 (name=csr786)
+Debug: 303 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 787 (name=csr787)
+Debug: 304 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 788 (name=csr788)
+Debug: 305 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 789 (name=csr789)
+Debug: 306 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 790 (name=csr790)
+Debug: 307 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 791 (name=csr791)
+Debug: 308 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 792 (name=csr792)
+Debug: 309 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 793 (name=csr793)
+Debug: 310 173 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 794 (name=csr794)
+Debug: 311 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 795 (name=csr795)
+Debug: 312 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 796 (name=csr796)
+Debug: 313 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 797 (name=csr797)
+Debug: 314 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 798 (name=csr798)
+Debug: 315 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 799 (name=csr799)
+Debug: 316 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 839 (name=csr839)
+Debug: 317 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 844 (name=csr844)
+Debug: 318 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 845 (name=csr845)
+Debug: 319 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 846 (name=csr846)
+Debug: 320 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 847 (name=csr847)
+Debug: 321 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 848 (name=csr848)
+Debug: 322 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 849 (name=csr849)
+Debug: 323 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 850 (name=csr850)
+Debug: 324 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1227 (name=csr1227)
+Debug: 325 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1228 (name=csr1228)
+Debug: 326 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1229 (name=csr1229)
+Debug: 327 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1230 (name=csr1230)
+Debug: 328 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1231 (name=csr1231)
+Debug: 329 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1483 (name=csr1483)
+Debug: 330 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1484 (name=csr1484)
+Debug: 331 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1485 (name=csr1485)
+Debug: 332 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1486 (name=csr1486)
+Debug: 333 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1984 (name=csr1984)
+Debug: 334 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1985 (name=csr1985)
+Debug: 335 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1986 (name=csr1986)
+Debug: 336 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1987 (name=csr1987)
+Debug: 337 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1988 (name=csr1988)
+Debug: 338 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1989 (name=csr1989)
+Debug: 339 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1990 (name=csr1990)
+Debug: 340 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1991 (name=csr1991)
+Debug: 341 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1992 (name=csr1992)
+Debug: 342 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1993 (name=csr1993)
+Debug: 343 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1994 (name=csr1994)
+Debug: 344 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1995 (name=csr1995)
+Debug: 345 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1996 (name=csr1996)
+Debug: 346 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1997 (name=csr1997)
+Debug: 347 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1998 (name=csr1998)
+Debug: 348 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 1999 (name=csr1999)
+Debug: 349 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2000 (name=csr2000)
+Debug: 350 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2001 (name=csr2001)
+Debug: 351 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2002 (name=csr2002)
+Debug: 352 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2003 (name=csr2003)
+Debug: 353 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2004 (name=csr2004)
+Debug: 354 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2005 (name=csr2005)
+Debug: 355 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2006 (name=csr2006)
+Debug: 356 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2007 (name=csr2007)
+Debug: 357 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2008 (name=csr2008)
+Debug: 358 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2009 (name=csr2009)
+Debug: 359 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2010 (name=csr2010)
+Debug: 360 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2011 (name=csr2011)
+Debug: 361 174 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2012 (name=csr2012)
+Debug: 362 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2013 (name=csr2013)
+Debug: 363 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2014 (name=csr2014)
+Debug: 364 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2015 (name=csr2015)
+Debug: 365 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2016 (name=csr2016)
+Debug: 366 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2017 (name=csr2017)
+Debug: 367 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2018 (name=csr2018)
+Debug: 368 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2019 (name=csr2019)
+Debug: 369 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2020 (name=csr2020)
+Debug: 370 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2021 (name=csr2021)
+Debug: 371 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2022 (name=csr2022)
+Debug: 372 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2023 (name=csr2023)
+Debug: 373 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2024 (name=csr2024)
+Debug: 374 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2025 (name=csr2025)
+Debug: 375 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2026 (name=csr2026)
+Debug: 376 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2027 (name=csr2027)
+Debug: 377 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2028 (name=csr2028)
+Debug: 378 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2029 (name=csr2029)
+Debug: 379 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2030 (name=csr2030)
+Debug: 380 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2031 (name=csr2031)
+Debug: 381 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2032 (name=csr2032)
+Debug: 382 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2064 (name=csr2064)
+Debug: 383 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2065 (name=csr2065)
+Debug: 384 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2066 (name=csr2066)
+Debug: 385 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2067 (name=csr2067)
+Debug: 386 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2068 (name=csr2068)
+Debug: 387 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2069 (name=csr2069)
+Debug: 388 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2070 (name=csr2070)
+Debug: 389 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2370 (name=csr2370)
+Debug: 390 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2371 (name=csr2371)
+Debug: 391 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2372 (name=csr2372)
+Debug: 392 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2373 (name=csr2373)
+Debug: 393 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2374 (name=csr2374)
+Debug: 394 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2375 (name=csr2375)
+Debug: 395 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2376 (name=csr2376)
+Debug: 396 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2377 (name=csr2377)
+Debug: 397 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2378 (name=csr2378)
+Debug: 398 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2379 (name=csr2379)
+Debug: 399 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2380 (name=csr2380)
+Debug: 400 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2490 (name=csr2490)
+Debug: 401 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2491 (name=csr2491)
+Debug: 402 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2492 (name=csr2492)
+Debug: 403 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2493 (name=csr2493)
+Debug: 404 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2494 (name=csr2494)
+Debug: 405 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2495 (name=csr2495)
+Debug: 406 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2496 (name=csr2496)
+Debug: 407 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2497 (name=csr2497)
+Debug: 408 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2498 (name=csr2498)
+Debug: 409 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2499 (name=csr2499)
+Debug: 410 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 2500 (name=csr2500)
+Debug: 411 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 4032 (name=csr4032)
+Debug: 412 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 4033 (name=csr4033)
+Debug: 413 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 4034 (name=csr4034)
+Debug: 414 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 4035 (name=csr4035)
+Debug: 415 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 4036 (name=csr4036)
+Debug: 416 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 4037 (name=csr4037)
+Debug: 417 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 4038 (name=csr4038)
+Debug: 418 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 4039 (name=csr4039)
+Debug: 419 175 riscv.c:4611 riscv_init_registers(): Exposing additional CSR 4040 (name=csr4040)
+Debug: 420 175 riscv-013.c:1757 examine():  hart 0: XLEN=64, misa=0x800000000014912d
+Info : 421 175 riscv-013.c:1780 examine(): Examined RISC-V core; found 1 harts
+Info : 422 175 riscv-013.c:1782 examine():  hart 0: XLEN=64, misa=0x800000000014912d
+Debug: 423 175 target.c:1833 target_call_event_callbacks(): target event 21 (examine-end) for core riscv.cpu
+Debug: 424 175 command.c:201 script_debug(): command - flash init
+Debug: 425 175 command.c:201 script_debug(): command - flash init
+Debug: 426 175 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 427 175 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 428 175 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=0
+Debug: 429 176 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 430 176 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 431 176 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 432 176 riscv.c:2083 riscv_poll_hart():   triggered a halt
+Debug: 433 176 riscv.c:2264 riscv_openocd_poll():   hart 0 halted
+Debug: 434 176 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 435 176 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 436 177 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 437 177 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 438 177 riscv-013.c:789 execute_abstract_command(): command=0x3207b0; access register, size=64, postexec=0, transfer=1, write=0, regno=0x7b0
+Debug: 439 177 riscv-013.c:397 scan(): 41b w 003207b0 @17 -> + 00000000 @00; 4i
+Debug: 440 177 riscv-013.c:397 scan(): 41b r 00000000 @16 -> + 003207b0 @17; 4i
+Debug: 441 177 riscv-013.c:397 scan(): 41b - 00000000 @16 -> + 08000004 @16; 4i
+Debug: 442 177 riscv-013.c:407 scan():  ->  progbufsize=8 datacount=4
+Debug: 443 177 riscv-013.c:397 scan(): 41b r 00000000 @05 -> + 00000000 @00; 4i
+Debug: 444 178 riscv-013.c:397 scan(): 41b - 00000000 @05 -> + 00000000 @05; 4i
+Debug: 445 178 riscv-013.c:397 scan(): 41b r 00000000 @04 -> + 00000000 @00; 4i
+Debug: 446 178 riscv-013.c:397 scan(): 41b - 00000000 @04 -> + 4000b643 @04; 4i
+Debug: 447 178 riscv-013.c:1496 register_read_direct(): {0} dcsr = 0x4000b643
+Debug: 448 178 riscv-013.c:4326 riscv013_halt_reason(): dcsr.cause: 0x1
+Debug: 449 178 riscv.c:2118 set_debug_reason(): [riscv.cpu] debug_reason=1
+Debug: 450 178 riscv_semihosting.c:79 riscv_semihosting():    -> NONE (!semihosting->is_active)
+Debug: 451 178 target.c:1833 target_call_event_callbacks(): target event 0 (gdb-halt) for core riscv.cpu
+Debug: 452 178 target.c:1833 target_call_event_callbacks(): target event 1 (halted) for core riscv.cpu
+Debug: 453 178 tcl.c:1384 handle_flash_init_command(): Initializing flash devices...
+Debug: 454 178 command.c:201 script_debug(): command - nand init
+Debug: 455 178 command.c:201 script_debug(): command - nand init
+Debug: 456 178 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 457 178 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 458 178 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 459 178 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 460 178 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 461 179 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 462 179 tcl.c:498 handle_nand_init_command(): Initializing NAND devices...
+Debug: 463 179 command.c:201 script_debug(): command - pld init
+Debug: 464 179 command.c:201 script_debug(): command - pld init
+Debug: 465 179 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 466 179 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 467 179 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 468 179 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 469 179 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 470 179 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 471 179 pld.c:206 handle_pld_init_command(): Initializing PLDs...
+Debug: 472 179 command.c:201 script_debug(): command - tpiu init
+Debug: 473 179 command.c:201 script_debug(): command - tpiu init
+Debug: 474 179 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 475 179 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 476 179 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 477 179 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 478 179 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 479 179 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Info : 480 179 gdb_server.c:3629 gdb_target_start(): starting gdb server for riscv.cpu on 3333
+Info : 481 180 server.c:312 add_service(): Listening on port 3333 for gdb connections
+Debug: 482 180 command.c:201 script_debug(): command - halt
+Debug: 483 180 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 484 180 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 485 180 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 486 180 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 487 181 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 488 181 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 489 181 target.c:3292 handle_halt_command(): -
+Debug: 490 181 riscv.c:1227 riscv_halt(): [0] halting all harts
+Debug: 491 181 riscv.c:1163 halt_prep(): [riscv.cpu] prep hart, debug_reason=1
+Debug: 492 181 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 493 181 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 494 181 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 495 181 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 496 181 riscv.c:1168 halt_prep(): [riscv.cpu] Hart is already halted (reason=1).
+Debug: 497 181 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 498 181 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 499 182 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 500 182 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 501 182 riscv.c:1185 riscv_halt_go_all_harts(): [riscv.cpu] Hart is already halted.
+Debug: 502 182 riscv.c:3493 riscv_invalidate_register_cache(): [0]
+Debug: 503 182 target.c:1833 target_call_event_callbacks(): target event 0 (gdb-halt) for core riscv.cpu
+Debug: 504 182 target.c:1833 target_call_event_callbacks(): target event 1 (halted) for core riscv.cpu
+Debug: 505 182 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 506 182 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 507 182 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 508 182 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 509 182 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 510 182 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 511 182 command.c:201 script_debug(): command - echo Started by GNU MCU Eclipse
+Debug: 512 182 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 513 182 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 514 182 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 515 182 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 516 183 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 517 183 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+User : 518 183 command.c:729 jim_echo(): Started by GNU MCU Eclipse
+Info : 519 183 server.c:312 add_service(): Listening on port 6666 for tcl connections
+Info : 520 183 server.c:312 add_service(): Listening on port 4444 for telnet connections
+Debug: 521 183 command.c:201 script_debug(): command - init
+Debug: 522 183 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 523 183 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 524 183 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 525 183 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 526 183 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 527 183 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 528 284 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 529 284 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 530 284 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 531 285 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 532 285 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 533 285 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 534 392 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 535 392 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 536 392 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 537 393 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 538 393 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 539 393 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 540 500 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 541 500 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 542 500 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 543 501 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 544 502 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 545 502 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 546 607 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 547 607 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 548 607 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 549 608 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 550 608 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 551 609 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 552 717 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 553 717 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 554 717 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 555 717 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 556 718 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 557 718 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 558 828 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 559 828 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 560 828 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 561 828 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 562 829 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 563 829 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 564 938 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 565 938 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 566 938 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 567 940 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 568 941 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 569 941 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 570 1046 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 571 1046 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 572 1046 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 573 1047 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 574 1048 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 575 1048 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 576 1153 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 577 1153 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 578 1153 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 579 1154 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 580 1154 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 581 1154 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 582 1261 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 583 1261 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 584 1261 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 585 1261 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 586 1262 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 587 1262 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 588 1369 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 589 1369 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 590 1369 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 591 1369 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 592 1369 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 593 1369 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 594 1478 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 595 1478 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 596 1478 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 597 1479 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 598 1479 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 599 1479 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 600 1586 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 601 1586 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 602 1586 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 603 1587 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 604 1587 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 605 1587 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 606 1696 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 607 1696 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 608 1696 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 609 1696 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 610 1697 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 611 1697 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 612 1805 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 613 1805 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 614 1805 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 615 1805 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 616 1805 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 617 1805 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 618 1913 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 619 1913 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 620 1913 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 621 1914 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 622 1915 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 623 1915 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 624 2022 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 625 2022 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 626 2022 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 627 2023 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 628 2024 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 629 2024 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 630 2131 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 631 2131 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 632 2131 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 633 2132 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 634 2132 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 635 2133 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 636 2241 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 637 2241 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 638 2241 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 639 2242 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 640 2242 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 641 2242 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 642 2348 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 643 2348 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 644 2348 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 645 2349 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 646 2349 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 647 2349 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 648 2457 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 649 2457 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 650 2457 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 651 2458 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 652 2458 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 653 2458 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 654 2564 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 655 2564 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 656 2564 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 657 2565 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 658 2565 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 659 2565 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 660 2672 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 661 2672 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 662 2672 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 663 2673 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 664 2673 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 665 2673 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 666 2781 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 667 2781 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 668 2781 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 669 2781 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 670 2782 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 671 2782 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 672 2890 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 673 2890 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 674 2890 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 675 2891 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 676 2891 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 677 2891 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 678 2997 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 679 2997 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 680 2997 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 681 2998 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 682 2999 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 683 2999 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 684 3107 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 685 3107 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 686 3107 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 687 3107 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 688 3108 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 689 3108 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 690 3215 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 691 3215 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 692 3215 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 693 3216 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 694 3216 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 695 3217 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 696 3324 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 697 3324 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 698 3324 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 699 3324 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 700 3325 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 701 3325 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 702 3432 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 703 3432 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 704 3432 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 705 3433 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 706 3434 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 707 3434 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 708 3541 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 709 3541 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 710 3541 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 711 3542 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 712 3543 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 713 3543 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 714 3650 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 715 3650 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 716 3650 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 717 3651 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 718 3652 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 719 3652 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 720 3758 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 721 3758 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 722 3758 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 723 3759 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 724 3759 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 725 3760 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 726 3868 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 727 3868 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 728 3868 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 729 3869 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 730 3869 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 731 3870 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 732 3977 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 733 3977 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 734 3977 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 735 3978 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 736 3979 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 737 3979 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 738 4086 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 739 4086 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 740 4086 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 741 4087 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 742 4088 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 743 4088 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 744 4195 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 745 4195 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 746 4195 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 747 4196 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 748 4196 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 749 4197 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 750 4302 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 751 4302 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 752 4302 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 753 4303 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 754 4304 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 755 4304 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 756 4411 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 757 4411 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 758 4411 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 759 4412 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 760 4412 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 761 4412 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 762 4519 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 763 4519 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 764 4519 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 765 4520 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 766 4520 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 767 4520 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 768 4628 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 769 4628 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 770 4628 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 771 4629 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 772 4630 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 773 4630 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 774 4737 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 775 4737 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 776 4737 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 777 4738 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 778 4739 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 779 4739 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 780 4846 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 781 4846 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 782 4846 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 783 4846 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 784 4847 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 785 4847 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 786 4955 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 787 4955 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 788 4955 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 789 4956 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 790 4957 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 791 4957 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 792 5063 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 793 5063 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 794 5063 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 795 5064 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 796 5065 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 797 5065 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 798 5172 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 799 5172 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 800 5172 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 801 5173 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 802 5174 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 803 5174 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 804 5279 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 805 5279 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 806 5279 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 807 5280 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 808 5281 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 809 5281 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 810 5388 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 811 5388 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 812 5388 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 813 5388 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 814 5389 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 815 5389 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 816 5495 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 817 5495 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 818 5495 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 819 5496 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 820 5496 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 821 5496 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 822 5603 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 823 5603 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 824 5603 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 825 5603 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 826 5604 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 827 5604 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 828 5711 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 829 5711 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 830 5711 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 831 5712 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 832 5712 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 833 5712 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 834 5821 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 835 5821 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 836 5821 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 837 5821 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 838 5822 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 839 5822 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 840 5930 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 841 5930 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 842 5930 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 843 5930 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 844 5931 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 845 5931 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 846 6039 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 847 6039 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 848 6039 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 849 6040 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 850 6040 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 851 6040 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 852 6148 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 853 6148 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 854 6148 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 855 6149 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 856 6149 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 857 6150 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 858 6257 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 859 6257 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 860 6257 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 861 6258 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 862 6258 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 863 6258 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 864 6364 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 865 6364 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 866 6364 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 867 6364 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 868 6365 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 869 6365 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 870 6471 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 871 6471 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 872 6471 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 873 6472 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 874 6472 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 875 6472 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 876 6581 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 877 6581 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 878 6581 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 879 6582 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 880 6582 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 881 6582 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 882 6692 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 883 6692 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 884 6692 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 885 6692 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 886 6693 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 887 6693 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 888 6799 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 889 6799 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 890 6799 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 891 6799 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 892 6800 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 893 6800 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 894 6908 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 895 6908 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 896 6908 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 897 6908 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 898 6909 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 899 6909 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 900 7016 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 901 7016 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 902 7016 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 903 7017 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 904 7017 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 905 7017 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 906 7125 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 907 7125 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 908 7125 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 909 7125 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 910 7126 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 911 7126 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 912 7233 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 913 7233 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 914 7233 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 915 7233 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 916 7234 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 917 7234 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 918 7342 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 919 7342 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 920 7342 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 921 7342 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 922 7343 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 923 7343 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 924 7451 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 925 7451 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 926 7451 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 927 7452 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 928 7453 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 929 7453 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 930 7560 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 931 7560 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 932 7560 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 933 7561 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 934 7561 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 935 7561 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 936 7668 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 937 7668 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 938 7668 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 939 7668 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 940 7669 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 941 7669 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 942 7776 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 943 7776 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 944 7776 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 945 7776 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 946 7777 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 947 7777 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 948 7883 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 949 7883 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 950 7883 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 951 7883 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 952 7884 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 953 7884 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 954 7992 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 955 7992 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 956 7992 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 957 7993 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 958 7993 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 959 7993 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 960 8100 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 961 8100 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 962 8100 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 963 8100 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 964 8101 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 965 8101 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 966 8208 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 967 8208 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 968 8208 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 969 8209 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 970 8209 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 971 8209 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 972 8317 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 973 8317 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 974 8317 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 975 8318 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 976 8318 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 977 8318 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 978 8427 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 979 8427 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 980 8427 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 981 8427 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 982 8428 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 983 8428 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 984 8537 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 985 8537 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 986 8537 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 987 8537 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 988 8538 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 989 8538 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 990 8645 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 991 8645 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 992 8645 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 993 8646 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 994 8647 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 995 8647 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 996 8756 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 997 8756 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 998 8756 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 999 8757 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1000 8757 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1001 8757 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1002 8865 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1003 8865 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1004 8865 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1005 8866 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1006 8866 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1007 8866 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1008 8975 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1009 8975 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1010 8975 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1011 8976 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1012 8976 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1013 8976 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1014 9083 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1015 9083 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1016 9083 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1017 9084 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1018 9084 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1019 9084 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1020 9192 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1021 9192 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1022 9192 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1023 9193 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1024 9193 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1025 9193 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1026 9300 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1027 9300 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1028 9300 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1029 9301 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1030 9301 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1031 9301 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1032 9409 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1033 9409 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1034 9409 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1035 9409 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1036 9410 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1037 9410 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1038 9518 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1039 9518 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1040 9518 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1041 9519 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1042 9519 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1043 9519 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1044 9627 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1045 9627 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1046 9627 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1047 9628 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1048 9628 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1049 9628 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1050 9734 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1051 9734 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1052 9734 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1053 9734 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1054 9735 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1055 9735 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1056 9843 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1057 9843 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1058 9843 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1059 9843 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1060 9844 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1061 9844 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1062 9950 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1063 9950 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1064 9950 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1065 9950 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1066 9951 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1067 9951 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1068 10059 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1069 10059 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1070 10059 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1071 10059 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1072 10059 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1073 10059 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1074 10166 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1075 10166 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1076 10166 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1077 10167 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1078 10167 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1079 10167 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1080 10276 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1081 10276 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1082 10276 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1083 10277 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1084 10277 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1085 10277 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1086 10385 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1087 10385 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1088 10385 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1089 10385 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1090 10386 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1091 10386 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1092 10493 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1093 10493 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1094 10493 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1095 10493 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1096 10494 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1097 10494 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1098 10602 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1099 10602 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1100 10602 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1101 10603 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1102 10603 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1103 10603 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1104 10710 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1105 10710 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1106 10710 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1107 10711 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1108 10712 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1109 10712 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1110 10819 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1111 10819 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1112 10819 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1113 10820 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1114 10820 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1115 10820 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1116 10927 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1117 10927 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1118 10927 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1119 10928 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1120 10928 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1121 10928 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1122 11036 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1123 11036 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1124 11036 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1125 11036 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1126 11037 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1127 11037 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1128 11142 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1129 11142 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1130 11142 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1131 11143 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1132 11143 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1133 11143 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1134 11250 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1135 11250 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1136 11250 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1137 11250 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1138 11252 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1139 11252 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1140 11359 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1141 11359 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1142 11359 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1143 11359 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1144 11361 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1145 11361 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1146 11466 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1147 11466 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1148 11466 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1149 11467 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1150 11467 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1151 11467 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1152 11576 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1153 11576 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1154 11576 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1155 11576 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1156 11576 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1157 11576 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1158 11684 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1159 11684 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1160 11684 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1161 11685 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1162 11685 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1163 11685 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1164 11790 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1165 11790 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1166 11790 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1167 11790 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1168 11791 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1169 11791 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1170 11899 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1171 11899 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1172 11899 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1173 11900 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1174 11900 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1175 11900 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1176 12009 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1177 12009 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1178 12009 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1179 12009 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1180 12009 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1181 12009 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1182 12118 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1183 12118 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1184 12118 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1185 12118 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1186 12119 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1187 12119 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1188 12227 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1189 12227 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1190 12227 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1191 12227 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1192 12228 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1193 12228 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1194 12335 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1195 12335 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1196 12335 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1197 12335 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1198 12336 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1199 12336 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1200 12443 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1201 12443 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1202 12443 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1203 12444 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1204 12444 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1205 12444 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1206 12553 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1207 12553 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1208 12553 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1209 12554 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1210 12554 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1211 12554 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1212 12661 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1213 12661 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1214 12661 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1215 12662 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1216 12662 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1217 12662 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1218 12769 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1219 12769 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1220 12769 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1221 12769 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1222 12770 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1223 12770 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1224 12877 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1225 12877 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1226 12877 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1227 12878 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1228 12878 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1229 12878 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1230 12985 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1231 12985 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1232 12985 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1233 12985 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1234 12985 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1235 12985 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1236 13092 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1237 13092 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1238 13092 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1239 13093 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1240 13094 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1241 13094 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1242 13201 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1243 13201 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1244 13201 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1245 13201 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1246 13202 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1247 13202 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1248 13310 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1249 13310 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1250 13310 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1251 13311 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1252 13311 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1253 13311 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1254 13419 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1255 13419 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1256 13419 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1257 13420 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1258 13421 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1259 13421 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1260 13528 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1261 13528 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1262 13528 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1263 13529 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1264 13529 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1265 13529 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1266 13638 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1267 13638 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1268 13638 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1269 13638 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1270 13639 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1271 13639 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1272 13747 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1273 13747 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1274 13747 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1275 13748 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1276 13749 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1277 13749 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1278 13857 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1279 13857 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1280 13857 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1281 13857 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1282 13858 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1283 13858 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1284 13967 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1285 13967 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1286 13967 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1287 13968 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1288 13969 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1289 13969 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1290 14076 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1291 14076 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1292 14076 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1293 14076 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1294 14077 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1295 14077 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1296 14184 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1297 14184 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1298 14184 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1299 14184 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1300 14185 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1301 14185 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1302 14292 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1303 14292 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1304 14292 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1305 14292 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1306 14293 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1307 14293 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1308 14400 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1309 14400 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1310 14400 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1311 14401 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1312 14402 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1313 14402 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1314 14509 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1315 14509 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1316 14509 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1317 14510 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1318 14510 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1319 14510 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1320 14617 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1321 14617 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1322 14617 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1323 14617 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1324 14618 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1325 14618 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1326 14727 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1327 14727 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1328 14727 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1329 14728 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1330 14729 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1331 14729 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2
+Debug: 1332 14835 riscv.c:2172 riscv_openocd_poll(): polling all harts
+Debug: 1333 14835 riscv.c:3482 riscv_set_current_hartid(): setting hartid to 0, was 0
+Debug: 1334 14835 riscv.c:2077 riscv_poll_hart(): polling hart 0, target->state=2
+Debug: 1335 14836 riscv-013.c:397 scan(): 41b r 00000000 @11 -> + 00000000 @00; 4i
+Debug: 1336 14836 riscv-013.c:397 scan(): 41b - 00000000 @11 -> + 004003a2 @11; 4i
+Debug: 1337 14836 riscv-013.c:407 scan():  ->  impebreak allhalted anyhalted authenticated hasresethaltreq version=2

@@ -1,0 +1,13 @@
+Build:
+PROGRAM=application/baremetal/demo_qspi/qspi_transfer DOWNLOAD=ilm CORE=ux600fd dasm
+PROGRAM=application/baremetal/demo_qspi/qspi_flash DOWNLOAD=ilm CORE=ux600fd dasm
+PROGRAM=application/baremetal/demo_spi/spi_master DOWNLOAD=ilm CORE=ux600fd dasm
+PROGRAM=application/baremetal/demo_gpio/gpio_led DOWNLOAD=ilm CORE=ux600fd dasm
+PROGRAM=application/baremetal/demo_gpio/gpio_input DOWNLOAD=ilm CORE=ux600fd dasm
+
+Clean:
+PROGRAM=application/baremetal/demo_qspi/qspi_transfer DOWNLOAD=ilm CORE=ux600fd clean
+PROGRAM=application/baremetal/demo_qspi/qspi_flash DOWNLOAD=ilm CORE=ux600fd clean
+PROGRAM=application/baremetal/demo_spi/spi_master DOWNLOAD=ilm CORE=ux600fd clean
+PROGRAM=application/baremetal/demo_gpio/gpio_led DOWNLOAD=ilm CORE=ux600fd clean
+PROGRAM=application/baremetal/demo_gpio/gpio_input DOWNLOAD=ilm CORE=ux600fd clean
