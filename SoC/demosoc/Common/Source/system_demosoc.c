@@ -33,8 +33,8 @@
 /* ToDo: add here your necessary defines for device initialization
          following is an example for different system frequencies */
 #ifndef SYSTEM_CLOCK
-#define SYSTEM_CLOCK    (40000000UL)  // uart test
-//#define SYSTEM_CLOCK    (200000000UL)
+//#define SYSTEM_CLOCK    (25000000UL)  // uart test
+#define SYSTEM_CLOCK    (40000000UL)
 #endif
 
 /**
@@ -125,7 +125,6 @@ void SystemInit(void)
      * reaching pre-main. RW section maybe overwritten afterwards.
      */
     SystemCoreClock = SYSTEM_CLOCK;
-    SysTimer_clk_sel();
 }
 
 /**
@@ -262,9 +261,9 @@ void SystemBannerPrint(void)
 #error DOWNLOAD_MODE is not defined via build system, please check!
 #endif
     const char* download_modes[] = {"FLASHXIP", "FLASH", "ILM", "DDR"};
-  //  printf("Nuclei SDK Build Time: %s, %s\r\n", __DATE__, __TIME__);   //
- //   printf("Download Mode: %s\r\n", download_modes[DOWNLOAD_MODE]);    
- //   printf("CPU Frequency %lu Hz\r\n", SystemCoreClock);             //  
+    printf("Nuclei SDK Build Time: %s, %s\r\n", __DATE__, __TIME__);
+    printf("Download Mode: %s\r\n", download_modes[DOWNLOAD_MODE]);
+    printf("CPU Frequency %lu Hz\r\n", SystemCoreClock);
 #endif
 }
 
@@ -349,18 +348,9 @@ void _premain_init(void)
     uart_init(SOC_DEBUG_UART, 115200);
 #endif
     //uart init
-#if defined(__ICACHE_PRESENT) && __ICACHE_PRESENT == 1
-    EnableICache();
-#endif
-#if defined(__DCACHE_PRESENT) && __DCACHE_PRESENT == 1
-    EnableDCache();
-#endif
-
-  //  SystemCoreClock = get_cpu_freq();
 	AL9000_uart_init(AL9000_UART0,115200,UART_BIT_LENGTH_8);
 	AL9000_uart_config_stopbit(AL9000_UART0,AL9000_UART_STOP_BIT_1);
 	AL9000_uart_fifo_enable(AL9000_UART0);
-	/* __RV_CSR_CLEAR(CSR_MMISC_CTL ,MMISC_CTL_BPU); */
     __RV_CSR_CLEAR(CSR_MMISC_CTL, MMISC_CTL_BPU);
     /* Display banner after UART initialized */
     SystemBannerPrint();
