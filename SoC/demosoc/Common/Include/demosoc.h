@@ -1287,6 +1287,8 @@ typedef struct
 
 
 #define WDT_BASE                  	(0xF8410000)
+#define SMC_BASE                  	(0x6841A000UL)
+#define NAND_BASE                  	(0x69000000UL)
 
 
 /* Peripheral memory map */
