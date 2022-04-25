@@ -25,7 +25,7 @@ void SOC_INT89_IRQn_handler(void)
 
 
 int main(void){
-#if 1
+#if 0
    ECLIC_Register_IRQ(SOC_INT89_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,SOC_INT89_IRQn_handler);
    __enable_irq();
    uart_readirq_enable(AL9000_UART0);
