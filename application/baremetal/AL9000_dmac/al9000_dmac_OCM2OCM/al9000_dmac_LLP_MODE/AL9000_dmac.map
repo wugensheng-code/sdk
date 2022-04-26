@@ -1,0 +1,1715 @@
+Archive member included to satisfy reference by file (symbol)
+
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-atexit.o)
+                              ../../../../../SoC/demosoc/Common/Source/GCC/startup_demosoc.S.o (atexit)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fini.o)
+                              ../../../../../SoC/demosoc/Common/Source/GCC/startup_demosoc.S.o (__libc_fini_array)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-impure.o)
+                              ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o (_impure_ptr)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-init.o)
+                              ../../../../../SoC/demosoc/Common/Source/GCC/startup_demosoc.S.o (__libc_init_array)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-printf.o)
+                              ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o (printf)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-puts.o)
+                              ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o (puts)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-reent.o)
+                              ../../../../../SoC/demosoc/Common/Source/Stubs/close.c.o (errno)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-setvbuf.o)
+                              ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o (setvbuf)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-sysisatty.o)
+                              ../../../../../SoC/demosoc/Common/Source/Stubs/write.c.o (isatty)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-wbuf.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-puts.o) (__swbuf_r)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-wsetup.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-puts.o) (__swsetup_r)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__atexit.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-atexit.o) (__register_exitproc)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__call_atexit.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__atexit.o) (__call_exitprocs)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fflush.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-setvbuf.o) (_fflush_r)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-printf.o) (__sinit)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fwalk.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o) (_fwalk)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-makebuf.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-setvbuf.o) (__swhatbuf_r)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-malloc.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-setvbuf.o) (malloc)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memset.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o) (memset)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-freer.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-reent.o) (_free_r)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-mallocr.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o) (_malloc_r)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-printf.o) (_vfprintf_r)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-sbrkr.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-mallocr.o) (_sbrk_r)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-stdio.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o) (__sread)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-writer.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-stdio.o) (_write_r)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-closer.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-stdio.o) (_close_r)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fstatr.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-makebuf.o) (_fstat_r)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fvwrite.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf.o) (__sfvwrite_r)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-isattyr.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-makebuf.o) (_isatty_r)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-lseekr.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-stdio.o) (_lseek_r)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memchr.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf.o) (memchr)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memcpy.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fvwrite.o) (memcpy)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memmove.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fvwrite.o) (memmove)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-mlock.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-freer.o) (__malloc_lock)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-reallocr.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fvwrite.o) (_realloc_r)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf_i.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf.o) (_printf_i)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-readr.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-stdio.o) (_read_r)
+c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-msizer.o)
+                              c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-reallocr.o) (_malloc_usable_size_r)
+
+Allocating common symbols
+Common symbol       size              file
+
+errno               0x4               c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-reent.o)
+
+Discarded input sections
+
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/startup_demosoc.S.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/startup_demosoc.S.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/startup_demosoc.S.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.can_mode_select
+                0x0000000000000000       0x48 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .rodata        0x0000000000000000      0x21c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.can_tx_mode
+                0x0000000000000000       0xa0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.canfd_device_driver_bittime_configuration
+                0x0000000000000000      0x4c6 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .rodata.canfd_device_driver_bittime_configuration
+                0x0000000000000000       0x34 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.canfd_get_freebuffer
+                0x0000000000000000       0x3a ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.canfd_tx_interrupt
+                0x0000000000000000       0xa4 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.can_rx   0x0000000000000000      0x61e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.canfd_rx_poll
+                0x0000000000000000       0xce ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.canfd_rxfull_interrupt
+                0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.set_canfd_xmit_mode
+                0x0000000000000000      0x1ac ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.canfd_driver_start_xmit
+                0x0000000000000000      0x974 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.set_rx_fillter
+                0x0000000000000000      0x31a ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.set_reset_mode
+                0x0000000000000000       0x56 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.get_of_chip_status
+                0x0000000000000000       0xd4 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.canfd_error_interrupt
+                0x0000000000000000      0x1aa ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.canfd_interrupt
+                0x0000000000000000      0x194 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.CAN_RX_INTERRUPT_ENABLE
+                0x0000000000000000       0x7c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.CAN_TransmitStatus
+                0x0000000000000000       0xf6 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.CAN_MessagePending
+                0x0000000000000000       0xde ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.can_TX_length
+                0x0000000000000000       0xd2 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .rodata.can_TX_length
+                0x0000000000000000      0x104 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.Can_Send_Msg
+                0x0000000000000000      0x22e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.Can_Receive_Msg
+                0x0000000000000000       0xee ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text.CAN_TX_COMPLETE
+                0x0000000000000000       0x86 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .debug_info    0x0000000000000000     0x1893 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .debug_abbrev  0x0000000000000000      0x3c9 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .debug_aranges
+                0x0000000000000000      0x180 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .debug_ranges  0x0000000000000000      0x170 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .debug_line    0x0000000000000000     0x23dc ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .debug_str     0x0000000000000000      0xd65 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .debug_frame   0x0000000000000000      0x440 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .sbss.DMA_BLOCK_LIST_reload_count
+                0x0000000000000000        0x2 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .bss.buffer_list_parm
+                0x0000000000000000      0x7d0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .text.dw_dmac_disable
+                0x0000000000000000       0x58 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .text.dw_dmac_disableChannel
+                0x0000000000000000       0xba ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .text.dw_dmac_disableChannelIrq
+                0x0000000000000000       0x6a ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .text.dw_dmac_clearIrq
+                0x0000000000000000       0xb6 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .text.dw_dmac_maskIrq
+                0x0000000000000000       0xf2 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .text.can_dma_mode
+                0x0000000000000000       0x90 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .text.dma_blocklist_function
+                0x0000000000000000      0x4fc ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .rodata.dma_blocklist_function
+                0x0000000000000000       0x28 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .text.cpu_dma_read_block_num
+                0x0000000000000000       0x70 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .text.updata_ctl_parm_h
+                0x0000000000000000       0xfe ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .text.dma_interrupt_readfunction
+                0x0000000000000000       0x34 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .text.can_handshank_function
+                0x0000000000000000       0x34 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .text.can_dma_enable
+                0x0000000000000000       0x5a ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .text.uart_dma_Init
+                0x0000000000000000       0xdc ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .text.can_dma_Init
+                0x0000000000000000      0x138 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .text.gpio_enable_output
+                0x0000000000000000       0x46 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .text.gpio_enable_input
+                0x0000000000000000       0x46 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .text.gpio_write
+                0x0000000000000000       0x72 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .text.gpio_toggle
+                0x0000000000000000       0x7e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .text.gpio_output_read
+                0x0000000000000000       0x3e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .text.gpio_input_read
+                0x0000000000000000       0x3e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .text.gpio_int_enable
+                0x0000000000000000       0x46 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .text.gpio_int_disable
+                0x0000000000000000       0x46 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .text.gpio_intmask_cfg
+                0x0000000000000000       0x72 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .text.gpio_inttype_cfg
+                0x0000000000000000      0x15e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .text.gpio_int_status
+                0x0000000000000000       0x3e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .text.gpio_debounce_cfg
+                0x0000000000000000       0x72 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .debug_info    0x0000000000000000      0xebe ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .debug_abbrev  0x0000000000000000      0x274 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .debug_aranges
+                0x0000000000000000       0xe0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .debug_ranges  0x0000000000000000       0xd0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .debug_line    0x0000000000000000      0x709 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .debug_str     0x0000000000000000      0x877 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .debug_frame   0x0000000000000000      0x250 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.dwc_ssi_disable
+                0x0000000000000000       0x2e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.dwc_ssi_enable
+                0x0000000000000000       0x2e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_mas_en
+                0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_x1_mode
+                0x0000000000000000       0x42 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_x2_mode
+                0x0000000000000000       0x5c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_x4_mode
+                0x0000000000000000       0x5c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_tmod_tx_rx
+                0x0000000000000000       0x42 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_tmod_tx
+                0x0000000000000000       0x58 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_tmod_rx
+                0x0000000000000000       0x5e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_tmod_e2prom
+                0x0000000000000000       0x42 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_frf_spi
+                0x0000000000000000       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_sste_dis
+                0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_dfs
+                0x0000000000000000       0x46 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_ser
+                0x0000000000000000       0x36 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_sckdiv_cfg
+                0x0000000000000000       0x3e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_txftl_tft
+                0x0000000000000000       0x46 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_txftl_txfthr
+                0x0000000000000000       0x72 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_rxftl_cfg
+                0x0000000000000000       0x46 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_data_transmit
+                0x0000000000000000       0x36 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_data_read
+                0x0000000000000000       0x1a ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_sr_tfe
+                0x0000000000000000       0x26 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_sr_busy
+                0x0000000000000000       0x26 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_sr_rfne
+                0x0000000000000000       0x26 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_ctrl1_ndf
+                0x0000000000000000       0x22 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_spictrlr0_trans_type
+                0x0000000000000000       0x36 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_spictrlr0_addr_l
+                0x0000000000000000       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_spictrlr0_xip_mod
+                0x0000000000000000       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_spictrlr0_inst_l
+                0x0000000000000000       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_spictrlr0_wait_cycles
+                0x0000000000000000       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_spictrlr0_xip_dfs_hc
+                0x0000000000000000       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_spictrlr0_xip_inst_en
+                0x0000000000000000       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_spictrlr0_xip_cont_xfer_en
+                0x0000000000000000       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_spictrlr0_xip_mbl
+                0x0000000000000000       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_spictrlr0_xip_prefetch_en
+                0x0000000000000000       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text.qspi_spictrlr0_clk_stretch_en
+                0x0000000000000000       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .debug_info    0x0000000000000000     0x132b ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .debug_abbrev  0x0000000000000000      0x294 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .debug_aranges
+                0x0000000000000000      0x250 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .debug_ranges  0x0000000000000000      0x240 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .debug_line    0x0000000000000000      0xbd0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .debug_str     0x0000000000000000      0x949 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .debug_frame   0x0000000000000000      0x6a0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_dwc_ssi_disable
+                0x0000000000000000       0x2e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_dwc_ssi_enable
+                0x0000000000000000       0x2e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_x1_mode
+                0x0000000000000000       0x42 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_x2_mode
+                0x0000000000000000       0x5a ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_x4_mode
+                0x0000000000000000       0x5c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_tmod_tx_rx
+                0x0000000000000000       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_tmod_tx
+                0x0000000000000000       0x52 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_tmod_rx
+                0x0000000000000000       0x52 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_tmod_e2prom
+                0x0000000000000000       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_frf_spi
+                0x0000000000000000       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_scpol_cfg
+                0x0000000000000000       0x7e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_scph_cfg
+                0x0000000000000000       0x7e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_sste_dis
+                0x0000000000000000       0x42 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_dfs  0x0000000000000000       0x46 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_ser  0x0000000000000000       0x36 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_sckdiv_cfg
+                0x0000000000000000       0x36 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_txftl_tft
+                0x0000000000000000       0x46 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_rxftl_cfg
+                0x0000000000000000       0x46 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_data_transmit
+                0x0000000000000000       0x36 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_data_read
+                0x0000000000000000       0x1a ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_sr_tfe
+                0x0000000000000000       0x26 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_sr_busy
+                0x0000000000000000       0x26 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_sr_rfne
+                0x0000000000000000       0x26 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text.spi_ctrl1_ndf
+                0x0000000000000000       0x22 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .debug_info    0x0000000000000000     0x107d ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .debug_abbrev  0x0000000000000000      0x283 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .debug_aranges
+                0x0000000000000000      0x1a0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .debug_ranges  0x0000000000000000      0x190 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .debug_line    0x0000000000000000      0x990 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .debug_str     0x0000000000000000      0x7f3 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .debug_frame   0x0000000000000000      0x490 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.uart_dmac_write
+                0x0000000000000000       0x50 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.uart_readirq_enable
+                0x0000000000000000       0x3e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_resetFifo
+                0x0000000000000000       0x3a ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_setParity
+                0x0000000000000000       0x36 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_dma_sw_handshake
+                0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_disablePtime
+                0x0000000000000000       0x5a ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_enableLoopback
+                0x0000000000000000       0x38 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_disableLoopback
+                0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_enableAfc
+                0x0000000000000000       0x3a ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_disableAfc
+                0x0000000000000000       0x44 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_setDmaMode
+                0x0000000000000000       0x36 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_enableIrq
+                0x0000000000000000       0x56 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_disableIrq
+                0x0000000000000000       0x7a ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_setTxTrigger
+                0x0000000000000000       0xda ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_setRxTrigger
+                0x0000000000000000       0xda ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_setDmaTxMode
+                0x0000000000000000       0x68 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_setDmaRxMode
+                0x0000000000000000       0x68 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_userIrqHandler
+                0x0000000000000000      0x10e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .rodata.AL9000_uart_userIrqHandler
+                0x0000000000000000       0x34 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_enableFifoAccess
+                0x0000000000000000       0x5e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_haltTx
+                0x0000000000000000       0x62 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text.AL9000_uart_resumeTx
+                0x0000000000000000       0x60 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .text.uart_init
+                0x0000000000000000       0x78 ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .text.uart_config_stopbit
+                0x0000000000000000       0x70 ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .text.uart_set_tx_watermark
+                0x0000000000000000       0x68 ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .text.uart_enable_txint
+                0x0000000000000000       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .text.uart_disable_txint
+                0x0000000000000000       0x3a ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .text.uart_set_rx_watermark
+                0x0000000000000000       0x68 ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .text.uart_enable_rxint
+                0x0000000000000000       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .text.uart_disable_rxint
+                0x0000000000000000       0x3a ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .debug_info    0x0000000000000000      0xbeb ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .debug_abbrev  0x0000000000000000      0x256 ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .debug_aranges
+                0x0000000000000000       0xa0 ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .debug_ranges  0x0000000000000000       0x90 ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .debug_line    0x0000000000000000      0x5b9 ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .debug_str     0x0000000000000000      0x713 ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .debug_frame   0x0000000000000000      0x190 ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_getres.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_getres.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_getres.c.o
+ .text.clock_getres
+                0x0000000000000000       0x44 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_getres.c.o
+ .debug_info    0x0000000000000000      0xa42 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_getres.c.o
+ .debug_abbrev  0x0000000000000000      0x209 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_getres.c.o
+ .debug_aranges
+                0x0000000000000000       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_getres.c.o
+ .debug_ranges  0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_getres.c.o
+ .debug_line    0x0000000000000000      0x359 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_getres.c.o
+ .debug_str     0x0000000000000000      0x65c ../../../../../SoC/demosoc/Common/Source/Stubs/clock_getres.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_getres.c.o
+ .debug_frame   0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_getres.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_getres.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_gettime.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_gettime.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_gettime.c.o
+ .text.clock_gettime
+                0x0000000000000000       0x5e ../../../../../SoC/demosoc/Common/Source/Stubs/clock_gettime.c.o
+ .debug_info    0x0000000000000000      0xa9e ../../../../../SoC/demosoc/Common/Source/Stubs/clock_gettime.c.o
+ .debug_abbrev  0x0000000000000000      0x22b ../../../../../SoC/demosoc/Common/Source/Stubs/clock_gettime.c.o
+ .debug_aranges
+                0x0000000000000000       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_gettime.c.o
+ .debug_ranges  0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_gettime.c.o
+ .debug_line    0x0000000000000000      0x364 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_gettime.c.o
+ .debug_str     0x0000000000000000      0x68f ../../../../../SoC/demosoc/Common/Source/Stubs/clock_gettime.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_gettime.c.o
+ .debug_frame   0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_gettime.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_gettime.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_settime.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_settime.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_settime.c.o
+ .text.clock_settime
+                0x0000000000000000       0x18 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_settime.c.o
+ .debug_info    0x0000000000000000      0xa46 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_settime.c.o
+ .debug_abbrev  0x0000000000000000      0x209 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_settime.c.o
+ .debug_aranges
+                0x0000000000000000       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_settime.c.o
+ .debug_ranges  0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_settime.c.o
+ .debug_line    0x0000000000000000      0x342 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_settime.c.o
+ .debug_str     0x0000000000000000      0x65e ../../../../../SoC/demosoc/Common/Source/Stubs/clock_settime.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_settime.c.o
+ .debug_frame   0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_settime.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/clock_settime.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/close.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/close.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/close.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/execve.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/execve.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/execve.c.o
+ .text._execve  0x0000000000000000       0x28 ../../../../../SoC/demosoc/Common/Source/Stubs/execve.c.o
+ .debug_info    0x0000000000000000      0x9dd ../../../../../SoC/demosoc/Common/Source/Stubs/execve.c.o
+ .debug_abbrev  0x0000000000000000      0x209 ../../../../../SoC/demosoc/Common/Source/Stubs/execve.c.o
+ .debug_aranges
+                0x0000000000000000       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/execve.c.o
+ .debug_ranges  0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/execve.c.o
+ .debug_line    0x0000000000000000      0x311 ../../../../../SoC/demosoc/Common/Source/Stubs/execve.c.o
+ .debug_str     0x0000000000000000      0x607 ../../../../../SoC/demosoc/Common/Source/Stubs/execve.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/execve.c.o
+ .debug_frame   0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/execve.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/execve.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/exit.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/exit.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/exit.c.o
+ .text._exit    0x0000000000000000       0x1c ../../../../../SoC/demosoc/Common/Source/Stubs/exit.c.o
+ .debug_info    0x0000000000000000      0x9ef ../../../../../SoC/demosoc/Common/Source/Stubs/exit.c.o
+ .debug_abbrev  0x0000000000000000      0x23e ../../../../../SoC/demosoc/Common/Source/Stubs/exit.c.o
+ .debug_aranges
+                0x0000000000000000       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/exit.c.o
+ .debug_ranges  0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/exit.c.o
+ .debug_line    0x0000000000000000      0x359 ../../../../../SoC/demosoc/Common/Source/Stubs/exit.c.o
+ .debug_str     0x0000000000000000      0x5ff ../../../../../SoC/demosoc/Common/Source/Stubs/exit.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/exit.c.o
+ .debug_frame   0x0000000000000000       0x38 ../../../../../SoC/demosoc/Common/Source/Stubs/exit.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/exit.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/fork.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/fork.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/fork.c.o
+ .text._fork    0x0000000000000000       0x1c ../../../../../SoC/demosoc/Common/Source/Stubs/fork.c.o
+ .debug_info    0x0000000000000000      0x9a5 ../../../../../SoC/demosoc/Common/Source/Stubs/fork.c.o
+ .debug_abbrev  0x0000000000000000      0x1e5 ../../../../../SoC/demosoc/Common/Source/Stubs/fork.c.o
+ .debug_aranges
+                0x0000000000000000       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/fork.c.o
+ .debug_ranges  0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/fork.c.o
+ .debug_line    0x0000000000000000      0x30f ../../../../../SoC/demosoc/Common/Source/Stubs/fork.c.o
+ .debug_str     0x0000000000000000      0x5f9 ../../../../../SoC/demosoc/Common/Source/Stubs/fork.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/fork.c.o
+ .debug_frame   0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/fork.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/fork.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/fstat.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/fstat.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/fstat.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/getpid.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/getpid.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/getpid.c.o
+ .text._getpid  0x0000000000000000       0x10 ../../../../../SoC/demosoc/Common/Source/Stubs/getpid.c.o
+ .debug_info    0x0000000000000000      0x999 ../../../../../SoC/demosoc/Common/Source/Stubs/getpid.c.o
+ .debug_abbrev  0x0000000000000000      0x1e5 ../../../../../SoC/demosoc/Common/Source/Stubs/getpid.c.o
+ .debug_aranges
+                0x0000000000000000       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/getpid.c.o
+ .debug_ranges  0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/getpid.c.o
+ .debug_line    0x0000000000000000      0x309 ../../../../../SoC/demosoc/Common/Source/Stubs/getpid.c.o
+ .debug_str     0x0000000000000000      0x5f7 ../../../../../SoC/demosoc/Common/Source/Stubs/getpid.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/getpid.c.o
+ .debug_frame   0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/getpid.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/getpid.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/gettimeofday.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/gettimeofday.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/gettimeofday.c.o
+ .text._gettimeofday
+                0x0000000000000000       0x84 ../../../../../SoC/demosoc/Common/Source/Stubs/gettimeofday.c.o
+ .debug_info    0x0000000000000000      0xac8 ../../../../../SoC/demosoc/Common/Source/Stubs/gettimeofday.c.o
+ .debug_abbrev  0x0000000000000000      0x255 ../../../../../SoC/demosoc/Common/Source/Stubs/gettimeofday.c.o
+ .debug_aranges
+                0x0000000000000000       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/gettimeofday.c.o
+ .debug_ranges  0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/gettimeofday.c.o
+ .debug_line    0x0000000000000000      0x3ae ../../../../../SoC/demosoc/Common/Source/Stubs/gettimeofday.c.o
+ .debug_str     0x0000000000000000      0x68a ../../../../../SoC/demosoc/Common/Source/Stubs/gettimeofday.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/gettimeofday.c.o
+ .debug_frame   0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/gettimeofday.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/gettimeofday.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/isatty.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/isatty.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/isatty.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/kill.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/kill.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/kill.c.o
+ .text._kill    0x0000000000000000       0x2a ../../../../../SoC/demosoc/Common/Source/Stubs/kill.c.o
+ .debug_info    0x0000000000000000      0x9c4 ../../../../../SoC/demosoc/Common/Source/Stubs/kill.c.o
+ .debug_abbrev  0x0000000000000000      0x1f6 ../../../../../SoC/demosoc/Common/Source/Stubs/kill.c.o
+ .debug_aranges
+                0x0000000000000000       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/kill.c.o
+ .debug_ranges  0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/kill.c.o
+ .debug_line    0x0000000000000000      0x30f ../../../../../SoC/demosoc/Common/Source/Stubs/kill.c.o
+ .debug_str     0x0000000000000000      0x5f9 ../../../../../SoC/demosoc/Common/Source/Stubs/kill.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/kill.c.o
+ .debug_frame   0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/kill.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/kill.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/link.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/link.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/link.c.o
+ .text._link    0x0000000000000000       0x24 ../../../../../SoC/demosoc/Common/Source/Stubs/link.c.o
+ .debug_info    0x0000000000000000      0x9c4 ../../../../../SoC/demosoc/Common/Source/Stubs/link.c.o
+ .debug_abbrev  0x0000000000000000      0x1f6 ../../../../../SoC/demosoc/Common/Source/Stubs/link.c.o
+ .debug_aranges
+                0x0000000000000000       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/link.c.o
+ .debug_ranges  0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/link.c.o
+ .debug_line    0x0000000000000000      0x30f ../../../../../SoC/demosoc/Common/Source/Stubs/link.c.o
+ .debug_str     0x0000000000000000      0x5f9 ../../../../../SoC/demosoc/Common/Source/Stubs/link.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/link.c.o
+ .debug_frame   0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/link.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/link.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/lseek.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/lseek.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/lseek.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/open.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/open.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/open.c.o
+ .text._open    0x0000000000000000       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/open.c.o
+ .debug_info    0x0000000000000000      0x9d3 ../../../../../SoC/demosoc/Common/Source/Stubs/open.c.o
+ .debug_abbrev  0x0000000000000000      0x1f6 ../../../../../SoC/demosoc/Common/Source/Stubs/open.c.o
+ .debug_aranges
+                0x0000000000000000       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/open.c.o
+ .debug_ranges  0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/open.c.o
+ .debug_line    0x0000000000000000      0x30f ../../../../../SoC/demosoc/Common/Source/Stubs/open.c.o
+ .debug_str     0x0000000000000000      0x609 ../../../../../SoC/demosoc/Common/Source/Stubs/open.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/open.c.o
+ .debug_frame   0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/open.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/open.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/read.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/read.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/read.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/sbrk.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/sbrk.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/sbrk.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/stat.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/stat.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/stat.c.o
+ .text._stat    0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/stat.c.o
+ .debug_info    0x0000000000000000      0xba7 ../../../../../SoC/demosoc/Common/Source/Stubs/stat.c.o
+ .debug_abbrev  0x0000000000000000      0x204 ../../../../../SoC/demosoc/Common/Source/Stubs/stat.c.o
+ .debug_aranges
+                0x0000000000000000       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/stat.c.o
+ .debug_ranges  0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/stat.c.o
+ .debug_line    0x0000000000000000      0x331 ../../../../../SoC/demosoc/Common/Source/Stubs/stat.c.o
+ .debug_str     0x0000000000000000      0x730 ../../../../../SoC/demosoc/Common/Source/Stubs/stat.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/stat.c.o
+ .debug_frame   0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/stat.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/stat.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/times.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/times.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/times.c.o
+ .text._times   0x0000000000000000       0xb4 ../../../../../SoC/demosoc/Common/Source/Stubs/times.c.o
+ .bss.t0.6881   0x0000000000000000       0x10 ../../../../../SoC/demosoc/Common/Source/Stubs/times.c.o
+ .debug_info    0x0000000000000000      0xa85 ../../../../../SoC/demosoc/Common/Source/Stubs/times.c.o
+ .debug_abbrev  0x0000000000000000      0x226 ../../../../../SoC/demosoc/Common/Source/Stubs/times.c.o
+ .debug_aranges
+                0x0000000000000000       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/times.c.o
+ .debug_ranges  0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/times.c.o
+ .debug_line    0x0000000000000000      0x3ca ../../../../../SoC/demosoc/Common/Source/Stubs/times.c.o
+ .debug_str     0x0000000000000000      0x66a ../../../../../SoC/demosoc/Common/Source/Stubs/times.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/times.c.o
+ .debug_frame   0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/times.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/times.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/unlink.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/unlink.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/unlink.c.o
+ .text._unlink  0x0000000000000000       0x14 ../../../../../SoC/demosoc/Common/Source/Stubs/unlink.c.o
+ .debug_info    0x0000000000000000      0x9b5 ../../../../../SoC/demosoc/Common/Source/Stubs/unlink.c.o
+ .debug_abbrev  0x0000000000000000      0x1f6 ../../../../../SoC/demosoc/Common/Source/Stubs/unlink.c.o
+ .debug_aranges
+                0x0000000000000000       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/unlink.c.o
+ .debug_ranges  0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/unlink.c.o
+ .debug_line    0x0000000000000000      0x30b ../../../../../SoC/demosoc/Common/Source/Stubs/unlink.c.o
+ .debug_str     0x0000000000000000      0x602 ../../../../../SoC/demosoc/Common/Source/Stubs/unlink.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/unlink.c.o
+ .debug_frame   0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/unlink.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/unlink.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/wait.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/wait.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/wait.c.o
+ .text._wait    0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/wait.c.o
+ .debug_info    0x0000000000000000      0x9f3 ../../../../../SoC/demosoc/Common/Source/Stubs/wait.c.o
+ .debug_abbrev  0x0000000000000000      0x1f8 ../../../../../SoC/demosoc/Common/Source/Stubs/wait.c.o
+ .debug_aranges
+                0x0000000000000000       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/wait.c.o
+ .debug_ranges  0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/wait.c.o
+ .debug_line    0x0000000000000000      0x31b ../../../../../SoC/demosoc/Common/Source/Stubs/wait.c.o
+ .debug_str     0x0000000000000000      0x61c ../../../../../SoC/demosoc/Common/Source/Stubs/wait.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/wait.c.o
+ .debug_frame   0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/wait.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/wait.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/write.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/write.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/Stubs/write.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/demosoc_common.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/demosoc_common.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/demosoc_common.c.o
+ .text.get_timer_freq
+                0x0000000000000000       0x16 ../../../../../SoC/demosoc/Common/Source/demosoc_common.c.o
+ .text.measure_cpu_freq
+                0x0000000000000000       0xda ../../../../../SoC/demosoc/Common/Source/demosoc_common.c.o
+ .text.get_cpu_freq
+                0x0000000000000000       0x32 ../../../../../SoC/demosoc/Common/Source/demosoc_common.c.o
+ .text.delay_1ms
+                0x0000000000000000       0x5a ../../../../../SoC/demosoc/Common/Source/demosoc_common.c.o
+ .debug_info    0x0000000000000000      0xc0b ../../../../../SoC/demosoc/Common/Source/demosoc_common.c.o
+ .debug_abbrev  0x0000000000000000      0x2c4 ../../../../../SoC/demosoc/Common/Source/demosoc_common.c.o
+ .debug_aranges
+                0x0000000000000000       0x60 ../../../../../SoC/demosoc/Common/Source/demosoc_common.c.o
+ .debug_ranges  0x0000000000000000       0x50 ../../../../../SoC/demosoc/Common/Source/demosoc_common.c.o
+ .debug_line    0x0000000000000000      0x502 ../../../../../SoC/demosoc/Common/Source/demosoc_common.c.o
+ .debug_str     0x0000000000000000      0x6e5 ../../../../../SoC/demosoc/Common/Source/demosoc_common.c.o
+ .comment       0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/demosoc_common.c.o
+ .debug_frame   0x0000000000000000       0xd8 ../../../../../SoC/demosoc/Common/Source/demosoc_common.c.o
+ .riscv.attributes
+                0x0000000000000000       0x35 ../../../../../SoC/demosoc/Common/Source/demosoc_common.c.o
+ .text          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .data          0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .bss           0x0000000000000000        0x0 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .text.SystemCoreClockUpdate
+                0x0000000000000000       0x20 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .text.Exception_Register_EXC
+                0x0000000000000000       0x5c ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .text.Exception_Get_EXC
+                0x0000000000000000       0x54 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .text          0x0000000000000000        0x0 ./main.c.o
+ .data          0x0000000000000000        0x0 ./main.c.o
+ .bss           0x0000000000000000        0x0 ./main.c.o
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-atexit.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-atexit.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-atexit.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fini.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fini.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fini.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-impure.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-impure.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-impure.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-init.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-init.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-init.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-printf.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-printf.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-printf.o)
+ .text._printf_r
+                0x0000000000000000       0x42 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-printf.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-puts.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-puts.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-puts.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-reent.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-reent.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-reent.o)
+ .text.cleanup_glue
+                0x0000000000000000       0x2c c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-reent.o)
+ .text._reclaim_reent
+                0x0000000000000000      0x10c c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-reent.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-setvbuf.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-setvbuf.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-setvbuf.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-sysisatty.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-sysisatty.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-sysisatty.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-wbuf.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-wbuf.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-wbuf.o)
+ .text.__swbuf  0x0000000000000000       0x14 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-wbuf.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-wsetup.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-wsetup.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-wsetup.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__atexit.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__atexit.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__atexit.o)
+ .sdata.__atexit_dummy
+                0x0000000000000000        0x8 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__atexit.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__call_atexit.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__call_atexit.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__call_atexit.o)
+ .text.__call_exitprocs
+                0x0000000000000000       0xca c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__call_atexit.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fflush.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fflush.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fflush.o)
+ .text.fflush   0x0000000000000000       0x2c c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fflush.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+ .text.__fp_lock
+                0x0000000000000000        0x4 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+ .text.__fp_unlock
+                0x0000000000000000        0x4 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+ .text._cleanup
+                0x0000000000000000       0x10 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+ .text.__sfp_lock_acquire
+                0x0000000000000000        0x2 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+ .text.__sfp_lock_release
+                0x0000000000000000        0x2 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+ .text.__sinit_lock_acquire
+                0x0000000000000000        0x2 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+ .text.__sinit_lock_release
+                0x0000000000000000        0x2 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+ .text.__fp_lock_all
+                0x0000000000000000       0x18 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+ .text.__fp_unlock_all
+                0x0000000000000000       0x18 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fwalk.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fwalk.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fwalk.o)
+ .text._fwalk   0x0000000000000000       0x64 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fwalk.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-makebuf.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-makebuf.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-makebuf.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-malloc.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-malloc.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-malloc.o)
+ .text.free     0x0000000000000000       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-malloc.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memset.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memset.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-freer.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-freer.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-freer.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-mallocr.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-mallocr.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-mallocr.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf.o)
+ .text.__sprint_r
+                0x0000000000000000       0x2c c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf.o)
+ .text.vfprintf
+                0x0000000000000000       0x16 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-sbrkr.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-sbrkr.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-sbrkr.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-stdio.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-stdio.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-stdio.o)
+ .text.__seofread
+                0x0000000000000000        0x4 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-stdio.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-writer.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-writer.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-writer.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-closer.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-closer.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-closer.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fstatr.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fstatr.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fstatr.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fvwrite.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fvwrite.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fvwrite.o)
+ .text.__sfvwrite_r
+                0x0000000000000000      0x320 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fvwrite.o)
+ .comment       0x0000000000000000       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fvwrite.o)
+ .riscv.attributes
+                0x0000000000000000       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fvwrite.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-isattyr.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-isattyr.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-isattyr.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-lseekr.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-lseekr.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-lseekr.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memchr.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memchr.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memchr.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memcpy.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memcpy.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memcpy.o)
+ .text.memcpy   0x0000000000000000       0xd4 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memcpy.o)
+ .comment       0x0000000000000000       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memcpy.o)
+ .riscv.attributes
+                0x0000000000000000       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memcpy.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memmove.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memmove.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memmove.o)
+ .text.memmove  0x0000000000000000       0x4a c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memmove.o)
+ .comment       0x0000000000000000       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memmove.o)
+ .riscv.attributes
+                0x0000000000000000       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memmove.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-mlock.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-mlock.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-mlock.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-reallocr.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-reallocr.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-reallocr.o)
+ .text._realloc_r
+                0x0000000000000000       0x7e c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-reallocr.o)
+ .comment       0x0000000000000000       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-reallocr.o)
+ .riscv.attributes
+                0x0000000000000000       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-reallocr.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf_i.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf_i.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf_i.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-readr.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-readr.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-readr.o)
+ .text          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-msizer.o)
+ .data          0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-msizer.o)
+ .bss           0x0000000000000000        0x0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-msizer.o)
+ .text._malloc_usable_size_r
+                0x0000000000000000       0x20 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-msizer.o)
+ .comment       0x0000000000000000       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-msizer.o)
+ .riscv.attributes
+                0x0000000000000000       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-msizer.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+ilm              0x0000000061000000 0x0000000000010000 axrl !w
+ram              0x0000000061010000 0x0000000000010000 axw !rl
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+LOAD ../../../../../SoC/demosoc/Common/Source/GCC/startup_demosoc.S.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_can.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_gpio.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_qspi.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_spi.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Drivers/demosoc_uart.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/clock_getres.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/clock_gettime.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/clock_settime.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/close.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/execve.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/exit.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/fork.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/fstat.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/getpid.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/gettimeofday.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/isatty.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/kill.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/link.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/lseek.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/open.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/read.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/sbrk.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/stat.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/times.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/unlink.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/wait.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/Stubs/write.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/demosoc_common.c.o
+LOAD ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+LOAD ./main.c.o
+LOAD c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libstdc++.a
+LOAD c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/rv64imafdc/lp64d\libgcc.a
+LOAD c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a
+LOAD c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libc_nano.a
+LOAD c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/rv64imafdc/lp64d\libgcc.a
+START GROUP
+LOAD c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/rv64imafdc/lp64d\libgcc.a
+LOAD c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libc_nano.a
+LOAD c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libnosys.a
+END GROUP
+START GROUP
+LOAD c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/rv64imafdc/lp64d\libgcc.a
+LOAD c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libc_nano.a
+LOAD c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libnosys.a
+END GROUP
+                0x0000000000000800                __stack_size = DEFINED (__stack_size)?__stack_size:0x800
+
+.init           0x0000000061000000      0x2aa
+ *(.vtable)
+ .vtable        0x0000000061000000      0x1b0 ../../../../../SoC/demosoc/Common/Source/GCC/startup_demosoc.S.o
+                0x0000000061000000                vector_base
+ *(SORT_NONE(.init))
+ .init          0x00000000610001b0       0xfa ../../../../../SoC/demosoc/Common/Source/GCC/startup_demosoc.S.o
+                0x00000000610001b0                _start
+
+.ilalign        0x00000000610002aa        0x2
+                0x00000000610002ac                . = ALIGN (0x4)
+ *fill*         0x00000000610002aa        0x2 
+                0x00000000610002ac                PROVIDE (_ilm_lma = .)
+
+.ialign         0x00000000610002ac        0x0
+                0x00000000610002ac                PROVIDE (_ilm = .)
+
+.text           0x00000000610002c0     0x4076
+ *(.text.unlikely .text.unlikely.*)
+ *(.text.startup .text.startup.*)
+ *(.text .text.*)
+ .text.trap     0x00000000610002c0       0x7e ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+                0x00000000610002c0                exc_entry
+ *fill*         0x000000006100033e        0x2 
+ .text.irq      0x0000000061000340       0x76 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+                0x0000000061000340                irq_entry
+                0x00000000610003b2                default_intexc_handler
+ .text.dw_dmac_enable
+                0x00000000610003b6       0x2c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x00000000610003b6                dw_dmac_enable
+ .text.dw_dmac_enableChannel
+                0x00000000610003e2       0x52 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x00000000610003e2                dw_dmac_enableChannel
+ .text.dw_dmac_enableChannelIrq
+                0x0000000061000434       0x6c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x0000000061000434                dw_dmac_enableChannelIrq
+ .text.dw_dmac_unmaskIrq
+                0x00000000610004a0      0x112 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x00000000610004a0                dw_dmac_unmaskIrq
+ .text.dw_dmac_setAddress
+                0x00000000610005b2       0x90 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x00000000610005b2                dw_dmac_setAddress
+ .text.dw_dmac_setChannelConfig
+                0x0000000061000642      0x1e2 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x0000000061000642                dw_dmac_setChannelConfig
+ .text.dw_dmac_setTransferType
+                0x0000000061000824      0x24e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x0000000061000824                dw_dmac_setTransferType
+ .text.dw_dmac_setMemPeriphFlowCtl
+                0x0000000061000a72      0x106 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x0000000061000a72                dw_dmac_setMemPeriphFlowCtl
+ .text.dw_dmac_setTransWidth
+                0x0000000061000b78      0x23e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x0000000061000b78                dw_dmac_setTransWidth
+ .text.dw_dmac_setBlockTransSize
+                0x0000000061000db6       0x9e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x0000000061000db6                dw_dmac_setBlockTransSize
+ .text.dw_dmac_setBurstTransLength
+                0x0000000061000e54      0x29c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x0000000061000e54                dw_dmac_setBurstTransLength
+ .text.dw_dmac_setMstSelect
+                0x00000000610010f0      0x19c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x00000000610010f0                dw_dmac_setMstSelect
+ .text.dw_dmac_setAddressInc
+                0x000000006100128c      0x186 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x000000006100128c                dw_dmac_setAddressInc
+ .text.dw_dmac_setHsPolarity
+                0x0000000061001412       0xf6 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x0000000061001412                dw_dmac_setHsPolarity
+ .text.dw_dmac_setFifoMode
+                0x0000000061001508       0x96 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x0000000061001508                dw_dmac_setFifoMode
+ .text.dw_dmac_setFlowCtlMode
+                0x000000006100159e       0x6c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x000000006100159e                dw_dmac_setFlowCtlMode
+ .text.dw_dmac_setHandshakingMode
+                0x000000006100160a       0xf2 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x000000006100160a                dw_dmac_setHandshakingMode
+ .text.dw_dmac_setReload
+                0x00000000610016fc       0xd0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x00000000610016fc                dw_dmac_setReload
+ .text.dw_dmac_setSingle
+                0x00000000610017cc       0xb6 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x00000000610017cc                dw_dmac_setSingle
+ .text.dw_dmac_setLlpEnable
+                0x0000000061001882       0xd0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x0000000061001882                dw_dmac_setLlpEnable
+ .text.dw_dmac_setListPointerAddress
+                0x0000000061001952      0x134 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x0000000061001952                dw_dmac_setListPointerAddress
+ .text.dw_dmac_checkChannelBusy
+                0x0000000061001a86       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x0000000061001a86                dw_dmac_checkChannelBusy
+ .text.write_To_OCM
+                0x0000000061001ac2       0x68 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                0x0000000061001ac2                write_To_OCM
+ .text.AL9000_uart_init
+                0x0000000061001b2a       0x8c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+                0x0000000061001b2a                AL9000_uart_init
+ .text.AL9000_uart_set_baudrate
+                0x0000000061001bb6       0xca ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+                0x0000000061001bb6                AL9000_uart_set_baudrate
+ .text.AL9000_uart_dataleng_config
+                0x0000000061001c80       0xa8 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+                0x0000000061001c80                AL9000_uart_dataleng_config
+ .text.AL9000_uart_config_stopbit
+                0x0000000061001d28       0x96 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+                0x0000000061001d28                AL9000_uart_config_stopbit
+ .text.AL9000_uart_fifo_enable
+                0x0000000061001dbe       0x30 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+                0x0000000061001dbe                AL9000_uart_fifo_enable
+ .text.uart_write
+                0x0000000061001dee       0x50 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+                0x0000000061001dee                uart_write
+ .text.uart_read
+                0x0000000061001e3e       0x5e ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+                0x0000000061001e3e                uart_read
+ .text.AL9000_uart_enablePtime
+                0x0000000061001e9c       0x3c ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+                0x0000000061001e9c                AL9000_uart_enablePtime
+ .text._close   0x0000000061001ed8       0x1e ../../../../../SoC/demosoc/Common/Source/Stubs/close.c.o
+                0x0000000061001ed8                _close
+ .text._fstat   0x0000000061001ef6       0x4a ../../../../../SoC/demosoc/Common/Source/Stubs/fstat.c.o
+                0x0000000061001ef6                _fstat
+ .text._isatty  0x0000000061001f40       0x16 ../../../../../SoC/demosoc/Common/Source/Stubs/isatty.c.o
+                0x0000000061001f40                _isatty
+ .text._lseek   0x0000000061001f56       0x26 ../../../../../SoC/demosoc/Common/Source/Stubs/lseek.c.o
+                0x0000000061001f56                _lseek
+ .text._read    0x0000000061001f7c       0x4e ../../../../../SoC/demosoc/Common/Source/Stubs/read.c.o
+                0x0000000061001f7c                _read
+ .text._sbrk    0x0000000061001fca       0x78 ../../../../../SoC/demosoc/Common/Source/Stubs/sbrk.c.o
+                0x0000000061001fca                _sbrk
+ .text._write   0x0000000061002042       0x9a ../../../../../SoC/demosoc/Common/Source/Stubs/write.c.o
+                0x0000000061002042                _write
+ .text.SystemInit
+                0x00000000610020dc       0x20 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+                0x00000000610020dc                SystemInit
+ .text.system_default_exception_handler
+                0x00000000610020fc       0x64 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .text.Exception_Init
+                0x0000000061002160       0x48 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .text.core_exception_handler
+                0x00000000610021a8       0x94 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+                0x00000000610021a8                core_exception_handler
+ .text.SystemBannerPrint
+                0x000000006100223c       0x78 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+                0x000000006100223c                SystemBannerPrint
+ .text.ECLIC_Init
+                0x00000000610022b4       0xa4 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+                0x00000000610022b4                ECLIC_Init
+ .text.ECLIC_Register_IRQ
+                0x0000000061002358      0x4ae ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+                0x0000000061002358                ECLIC_Register_IRQ
+ .text._premain_init
+                0x0000000061002806       0x34 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+                0x0000000061002806                _premain_init
+ .text._postmain_fini
+                0x000000006100283a       0x14 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+                0x000000006100283a                _postmain_fini
+ .text._init    0x000000006100284e        0xe ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+                0x000000006100284e                _init
+ .text._fini    0x000000006100285c        0xe ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+                0x000000006100285c                _fini
+ .text.SOC_DMA_AHB_HANDLER
+                0x000000006100286a      0x178 ./main.c.o
+                0x000000006100286a                SOC_DMA_AHB_HANDLER
+ .text.main     0x00000000610029e2      0x382 ./main.c.o
+                0x00000000610029e2                main
+ .text.atexit   0x0000000061002d64        0xc c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-atexit.o)
+                0x0000000061002d64                atexit
+ .text.__libc_fini_array
+                0x0000000061002d70       0x3a c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fini.o)
+                0x0000000061002d70                __libc_fini_array
+ .text.__libc_init_array
+                0x0000000061002daa       0x6e c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-init.o)
+                0x0000000061002daa                __libc_init_array
+ .text.printf   0x0000000061002e18       0x3c c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-printf.o)
+                0x0000000061002e18                iprintf
+                0x0000000061002e18                printf
+ .text._puts_r  0x0000000061002e54       0xe8 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-puts.o)
+                0x0000000061002e54                _puts_r
+ .text.puts     0x0000000061002f3c        0xa c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-puts.o)
+                0x0000000061002f3c                puts
+ .text.setvbuf  0x0000000061002f46      0x190 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-setvbuf.o)
+                0x0000000061002f46                setvbuf
+ .text.isatty   0x00000000610030d6        0x4 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-sysisatty.o)
+                0x00000000610030d6                isatty
+ .text.__swbuf_r
+                0x00000000610030da       0xc6 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-wbuf.o)
+                0x00000000610030da                __swbuf_r
+ .text.__swsetup_r
+                0x00000000610031a0      0x10c c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-wsetup.o)
+                0x00000000610031a0                __swsetup_r
+ .text.__register_exitproc
+                0x00000000610032ac       0x7e c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__atexit.o)
+                0x00000000610032ac                __register_exitproc
+ .text.__sflush_r
+                0x000000006100332a      0x13e c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fflush.o)
+                0x000000006100332a                __sflush_r
+ .text._fflush_r
+                0x0000000061003468       0x68 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fflush.o)
+                0x0000000061003468                _fflush_r
+ .text.std      0x00000000610034d0       0x66 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+ .text._cleanup_r
+                0x0000000061003536        0xc c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+                0x0000000061003536                _cleanup_r
+ .text.__sfmoreglue
+                0x0000000061003542       0x48 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+                0x0000000061003542                __sfmoreglue
+ .text.__sinit  0x000000006100358a       0x72 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+                0x000000006100358a                __sinit
+ .text.__sfp    0x00000000610035fc       0x9a c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+                0x00000000610035fc                __sfp
+ .text._fwalk_reent
+                0x0000000061003696       0x6c c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fwalk.o)
+                0x0000000061003696                _fwalk_reent
+ .text.__swhatbuf_r
+                0x0000000061003702       0x5c c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-makebuf.o)
+                0x0000000061003702                __swhatbuf_r
+ .text.__smakebuf_r
+                0x000000006100375e       0xa2 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-makebuf.o)
+                0x000000006100375e                __smakebuf_r
+ .text.malloc   0x0000000061003800        0xa c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-malloc.o)
+                0x0000000061003800                malloc
+ .text          0x000000006100380a       0xaa c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memset.o)
+                0x000000006100380a                memset
+ .text._free_r  0x00000000610038b4       0xaa c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-freer.o)
+                0x00000000610038b4                _free_r
+ .text._malloc_r
+                0x000000006100395e       0xf0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-mallocr.o)
+                0x000000006100395e                _malloc_r
+ .text.__sfputc_r
+                0x0000000061003a4e       0x32 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf.o)
+ .text.__sfputs_r
+                0x0000000061003a80       0x44 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf.o)
+                0x0000000061003a80                __sfputs_r
+ .text._vfprintf_r
+                0x0000000061003ac4      0x2b2 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf.o)
+                0x0000000061003ac4                _vfprintf_r
+                0x0000000061003ac4                _vfiprintf_r
+ .text._sbrk_r  0x0000000061003d76       0x28 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-sbrkr.o)
+                0x0000000061003d76                _sbrk_r
+ .text.__sread  0x0000000061003d9e       0x32 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-stdio.o)
+                0x0000000061003d9e                __sread
+ .text.__swrite
+                0x0000000061003dd0       0x52 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-stdio.o)
+                0x0000000061003dd0                __swrite
+ .text.__sseek  0x0000000061003e22       0x38 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-stdio.o)
+                0x0000000061003e22                __sseek
+ .text.__sclose
+                0x0000000061003e5a        0x8 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-stdio.o)
+                0x0000000061003e5a                __sclose
+ .text._write_r
+                0x0000000061003e62       0x2c c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-writer.o)
+                0x0000000061003e62                _write_r
+ .text._close_r
+                0x0000000061003e8e       0x28 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-closer.o)
+                0x0000000061003e8e                _close_r
+ .text._fstat_r
+                0x0000000061003eb6       0x2a c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fstatr.o)
+                0x0000000061003eb6                _fstat_r
+ .text._isatty_r
+                0x0000000061003ee0       0x28 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-isattyr.o)
+                0x0000000061003ee0                _isatty_r
+ .text._lseek_r
+                0x0000000061003f08       0x2c c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-lseekr.o)
+                0x0000000061003f08                _lseek_r
+ .text.memchr   0x0000000061003f34       0x1a c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memchr.o)
+                0x0000000061003f34                memchr
+ .text.__malloc_lock
+                0x0000000061003f4e        0x2 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-mlock.o)
+                0x0000000061003f4e                __malloc_lock
+ .text.__malloc_unlock
+                0x0000000061003f50        0x2 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-mlock.o)
+                0x0000000061003f50                __malloc_unlock
+ .text._printf_common
+                0x0000000061003f52      0x126 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf_i.o)
+                0x0000000061003f52                _printf_common
+ .text._printf_i
+                0x0000000061004078      0x292 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf_i.o)
+                0x0000000061004078                _printf_i
+ .text._read_r  0x000000006100430a       0x2c c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-readr.o)
+                0x000000006100430a                _read_r
+ *(.gnu.linkonce.t.*)
+
+.rodata         0x0000000061004338      0x6d8
+                0x0000000061004338                . = ALIGN (0x4)
+ *(.rdata)
+ *(.rodata .rodata.*)
+ .rodata.dw_dmac_setTransferType
+                0x0000000061004338       0x28 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .rodata.dw_dmac_setTransWidth
+                0x0000000061004360       0x28 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .rodata.dw_dmac_setBurstTransLength
+                0x0000000061004388       0x38 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .rodata        0x00000000610043c0      0x241 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ *fill*         0x0000000061004601        0x7 
+ .rodata        0x0000000061004608      0x118 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .rodata        0x0000000061004720      0x1a8 ./main.c.o
+ .rodata.__sf_fake_stderr
+                0x00000000610048c8       0x38 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+                0x00000000610048c8                __sf_fake_stderr
+ .rodata.__sf_fake_stdin
+                0x0000000061004900       0x38 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+                0x0000000061004900                __sf_fake_stdin
+ .rodata.__sf_fake_stdout
+                0x0000000061004938       0x38 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+                0x0000000061004938                __sf_fake_stdout
+ .rodata._vfprintf_r.str1.8
+                0x0000000061004970       0x17 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf.o)
+ *fill*         0x0000000061004987        0x1 
+ .rodata._printf_i.str1.8
+                0x0000000061004988       0x30 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf_i.o)
+                                         0x29 (size before relaxing)
+ .rodata._printf_i
+                0x00000000610049b8       0x58 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf_i.o)
+                0x0000000061004a10                . = ALIGN (0x4)
+                0x0000000061004a10                __rt_init_start = .
+ *(SORT_BY_NAME(.rti_fn*))
+                0x0000000061004a10                __rt_init_end = .
+                0x0000000061004a10                . = ALIGN (0x4)
+                0x0000000061004a10                __fsymtab_start = .
+ *(FSymTab)
+                0x0000000061004a10                __fsymtab_end = .
+                0x0000000061004a10                . = ALIGN (0x4)
+                0x0000000061004a10                __vsymtab_start = .
+ *(VSymTab)
+                0x0000000061004a10                __vsymtab_end = .
+ *(.gnu.linkonce.r.*)
+
+.rela.dyn       0x0000000061004a10        0x0
+ .rela.init     0x0000000061004a10        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .rela.text._close
+                0x0000000061004a10        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .rela.text._fstat
+                0x0000000061004a10        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .rela.sdata.curbrk.7012
+                0x0000000061004a10        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .rela.text._sbrk
+                0x0000000061004a10        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .rela.text.__libc_fini_array
+                0x0000000061004a10        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .rela.text.__libc_init_array
+                0x0000000061004a10        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .rela.text.isatty
+                0x0000000061004a10        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .rela.text.__register_exitproc
+                0x0000000061004a10        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .rela.text._vfprintf_r
+                0x0000000061004a10        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .rela.text._sbrk_r
+                0x0000000061004a10        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .rela.text._write_r
+                0x0000000061004a10        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .rela.text._close_r
+                0x0000000061004a10        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .rela.text._fstat_r
+                0x0000000061004a10        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .rela.text._isatty_r
+                0x0000000061004a10        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .rela.text._lseek_r
+                0x0000000061004a10        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .rela.text._read_r
+                0x0000000061004a10        0x0 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+
+.fini
+ *(SORT_NONE(.fini))
+                0x0000000061004a10                . = ALIGN (0x4)
+                [!provide]                        PROVIDE (__etext = .)
+                [!provide]                        PROVIDE (_etext = .)
+                [!provide]                        PROVIDE (etext = .)
+                0x0000000061004a10                PROVIDE (_eilm = .)
+
+.preinit_array  0x0000000061004a10        0x0
+                0x0000000061004a10                PROVIDE (__preinit_array_start = .)
+ *(.preinit_array)
+                0x0000000061004a10                PROVIDE (__preinit_array_end = .)
+
+.init_array     0x0000000061004a10        0x0
+                0x0000000061004a10                PROVIDE (__init_array_start = .)
+ *(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*))
+ *(.init_array EXCLUDE_FILE(*crtend?.o *crtend.o *crtbegin?.o *crtbegin.o) .ctors)
+                0x0000000061004a10                PROVIDE (__init_array_end = .)
+
+.fini_array     0x0000000061004a10        0x0
+                0x0000000061004a10                PROVIDE (__fini_array_start = .)
+ *(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*))
+ *(.fini_array EXCLUDE_FILE(*crtend?.o *crtend.o *crtbegin?.o *crtbegin.o) .dtors)
+                0x0000000061004a10                PROVIDE (__fini_array_end = .)
+
+.ctors
+ *crtbegin.o(.ctors)
+ *crtbegin?.o(.ctors)
+ *(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors)
+ *(SORT_BY_NAME(.ctors.*))
+ *(.ctors)
+
+.dtors
+ *crtbegin.o(.dtors)
+ *crtbegin?.o(.dtors)
+ *(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
+ *(SORT_BY_NAME(.dtors.*))
+ *(.dtors)
+
+.lalign         0x0000000061004a10        0x0
+                0x0000000061004a10                . = ALIGN (0x4)
+                0x0000000061004a10                PROVIDE (_data_lma = .)
+
+.dalign         0x0000000061010000        0x0 load address 0x0000000061004a10
+                0x0000000061010000                . = ALIGN (0x4)
+                0x0000000061010000                PROVIDE (_data = .)
+
+.data           0x0000000061010000       0xd0 load address 0x0000000061004a10
+ *(.data .data.*)
+ .data.impure_data
+                0x0000000061010000       0xb0 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-impure.o)
+ *(.gnu.linkonce.d.*)
+                0x00000000610100b0                . = ALIGN (0x8)
+                0x00000000610108b0                PROVIDE (__global_pointer$ = (. + 0x800))
+ *(.sdata .sdata.* .sdata*)
+ .sdata.curbrk.7012
+                0x00000000610100b0        0x8 ../../../../../SoC/demosoc/Common/Source/Stubs/sbrk.c.o
+ .sdata.SystemCoreClock
+                0x00000000610100b8        0x4 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+                0x00000000610100b8                SystemCoreClock
+ *fill*         0x00000000610100bc        0x4 
+ .sdata._impure_ptr
+                0x00000000610100c0        0x8 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-impure.o)
+                0x00000000610100c0                _impure_ptr
+ .sdata2._global_impure_ptr
+                0x00000000610100c8        0x8 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-impure.o)
+                0x00000000610100c8                _global_impure_ptr
+ *(.gnu.linkonce.s.*)
+                0x00000000610100d0                . = ALIGN (0x8)
+ *(.srodata.cst16)
+ *(.srodata.cst8)
+ *(.srodata.cst4)
+ *(.srodata.cst2)
+ *(.srodata .srodata.*)
+                0x00000000610100d0                . = ALIGN (0x4)
+                0x00000000610100d0                PROVIDE (_edata = .)
+                [!provide]                        PROVIDE (edata = .)
+                [!provide]                        PROVIDE (_fbss = .)
+                0x00000000610100d0                PROVIDE (__bss_start = .)
+
+.bss            0x00000000610100d0      0x19c
+ *(.sbss*)
+ .sbss._global_atexit
+                0x00000000610100d0        0x8 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__call_atexit.o)
+                0x00000000610100d0                _global_atexit
+ .sbss.__malloc_free_list
+                0x00000000610100d8        0x8 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-mallocr.o)
+                0x00000000610100d8                __malloc_free_list
+ .sbss.__malloc_sbrk_start
+                0x00000000610100e0        0x8 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-mallocr.o)
+                0x00000000610100e0                __malloc_sbrk_start
+ *(.gnu.linkonce.sb.*)
+ *(.bss .bss.*)
+ .bss.SystemExceptionHandlers
+                0x00000000610100e8       0x68 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .bss._global_atexit0
+                0x0000000061010150      0x118 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__atexit.o)
+ *(.gnu.linkonce.b.*)
+ *(COMMON)
+ COMMON         0x0000000061010268        0x4 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-reent.o)
+                0x0000000061010268                errno
+                0x000000006101026c                . = ALIGN (0x4)
+                0x0000000061010270                . = ALIGN (0x8)
+                0x0000000061010270                PROVIDE (_end = .)
+                [!provide]                        PROVIDE (end = .)
+
+.stack          0x000000006101f800      0x800 load address 0x000000006101026c
+                0x000000006101f800                PROVIDE (_heap_end = .)
+                0x0000000000000800                . = __stack_size
+ *fill*         0x000000006101f800      0x800 
+                0x0000000061020000                PROVIDE (_sp = .)
+OUTPUT(AL9000_dmac.elf elf64-littleriscv)
+
+.riscv.attributes
+                0x0000000000000000       0x35
+ .riscv.attributes
+                0x0000000000000000       0x33 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .riscv.attributes
+                0x0000000000000033       0x33 ../../../../../SoC/demosoc/Common/Source/GCC/startup_demosoc.S.o
+ .riscv.attributes
+                0x0000000000000066       0x35 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .riscv.attributes
+                0x000000000000009b       0x35 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .riscv.attributes
+                0x00000000000000d0       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/close.c.o
+ .riscv.attributes
+                0x0000000000000105       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/fstat.c.o
+ .riscv.attributes
+                0x000000000000013a       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/isatty.c.o
+ .riscv.attributes
+                0x000000000000016f       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/lseek.c.o
+ .riscv.attributes
+                0x00000000000001a4       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/read.c.o
+ .riscv.attributes
+                0x00000000000001d9       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/sbrk.c.o
+ .riscv.attributes
+                0x000000000000020e       0x35 ../../../../../SoC/demosoc/Common/Source/Stubs/write.c.o
+ .riscv.attributes
+                0x0000000000000243       0x35 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .riscv.attributes
+                0x0000000000000278       0x35 ./main.c.o
+ .riscv.attributes
+                0x00000000000002ad       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-atexit.o)
+ .riscv.attributes
+                0x00000000000002e2       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fini.o)
+ .riscv.attributes
+                0x0000000000000317       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-impure.o)
+ .riscv.attributes
+                0x000000000000034c       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-init.o)
+ .riscv.attributes
+                0x0000000000000381       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-printf.o)
+ .riscv.attributes
+                0x00000000000003b6       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-puts.o)
+ .riscv.attributes
+                0x00000000000003eb       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-reent.o)
+ .riscv.attributes
+                0x0000000000000420       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-setvbuf.o)
+ .riscv.attributes
+                0x0000000000000455       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-sysisatty.o)
+ .riscv.attributes
+                0x000000000000048a       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-wbuf.o)
+ .riscv.attributes
+                0x00000000000004bf       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-wsetup.o)
+ .riscv.attributes
+                0x00000000000004f4       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__atexit.o)
+ .riscv.attributes
+                0x0000000000000529       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__call_atexit.o)
+ .riscv.attributes
+                0x000000000000055e       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fflush.o)
+ .riscv.attributes
+                0x0000000000000593       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+ .riscv.attributes
+                0x00000000000005c8       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fwalk.o)
+ .riscv.attributes
+                0x00000000000005fd       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-makebuf.o)
+ .riscv.attributes
+                0x0000000000000632       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-malloc.o)
+ .riscv.attributes
+                0x0000000000000667       0x33 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memset.o)
+ .riscv.attributes
+                0x000000000000069a       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-freer.o)
+ .riscv.attributes
+                0x00000000000006cf       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-mallocr.o)
+ .riscv.attributes
+                0x0000000000000704       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf.o)
+ .riscv.attributes
+                0x0000000000000739       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-sbrkr.o)
+ .riscv.attributes
+                0x000000000000076e       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-stdio.o)
+ .riscv.attributes
+                0x00000000000007a3       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-writer.o)
+ .riscv.attributes
+                0x00000000000007d8       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-closer.o)
+ .riscv.attributes
+                0x000000000000080d       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fstatr.o)
+ .riscv.attributes
+                0x0000000000000842       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-isattyr.o)
+ .riscv.attributes
+                0x0000000000000877       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-lseekr.o)
+ .riscv.attributes
+                0x00000000000008ac       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memchr.o)
+ .riscv.attributes
+                0x00000000000008e1       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-mlock.o)
+ .riscv.attributes
+                0x0000000000000916       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf_i.o)
+ .riscv.attributes
+                0x000000000000094b       0x35 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-readr.o)
+
+.comment        0x0000000000000000       0x11
+ .comment       0x0000000000000000       0x11 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                                         0x12 (size before relaxing)
+ .comment       0x0000000000000011       0x12 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .comment       0x0000000000000011       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/close.c.o
+ .comment       0x0000000000000011       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/fstat.c.o
+ .comment       0x0000000000000011       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/isatty.c.o
+ .comment       0x0000000000000011       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/lseek.c.o
+ .comment       0x0000000000000011       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/read.c.o
+ .comment       0x0000000000000011       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/sbrk.c.o
+ .comment       0x0000000000000011       0x12 ../../../../../SoC/demosoc/Common/Source/Stubs/write.c.o
+ .comment       0x0000000000000011       0x12 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .comment       0x0000000000000011       0x12 ./main.c.o
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-atexit.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fini.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-impure.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-init.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-printf.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-puts.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-reent.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-setvbuf.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-sysisatty.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-wbuf.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-wsetup.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__atexit.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-__call_atexit.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fflush.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-findfp.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fwalk.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-makebuf.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-malloc.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-freer.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-mallocr.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-sbrkr.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-stdio.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-writer.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-closer.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-fstatr.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-isattyr.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-lseekr.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-memchr.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-mlock.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-nano-vfprintf_i.o)
+ .comment       0x0000000000000011       0x12 c:/software_backup/backup_sofware/nucleistudio_ide_202102-win64/nucleistudio/toolchain/gcc/bin/../lib/gcc/riscv-nuclei-elf/9.2.0/../../../../riscv-nuclei-elf/lib/rv64imafdc/lp64d\libg_nano.a(lib_a-readr.o)
+
+.debug_line     0x0000000000000000     0x557d
+ .debug_line    0x0000000000000000       0xdc ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .debug_line    0x00000000000000dc      0x1c7 ../../../../../SoC/demosoc/Common/Source/GCC/startup_demosoc.S.o
+ .debug_line    0x00000000000002a3     0x1e27 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .debug_line    0x00000000000020ca      0xda0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .debug_line    0x0000000000002e6a      0x310 ../../../../../SoC/demosoc/Common/Source/Stubs/close.c.o
+ .debug_line    0x000000000000317a      0x36f ../../../../../SoC/demosoc/Common/Source/Stubs/fstat.c.o
+ .debug_line    0x00000000000034e9      0x30a ../../../../../SoC/demosoc/Common/Source/Stubs/isatty.c.o
+ .debug_line    0x00000000000037f3      0x308 ../../../../../SoC/demosoc/Common/Source/Stubs/lseek.c.o
+ .debug_line    0x0000000000003afb      0x355 ../../../../../SoC/demosoc/Common/Source/Stubs/read.c.o
+ .debug_line    0x0000000000003e50      0x348 ../../../../../SoC/demosoc/Common/Source/Stubs/sbrk.c.o
+ .debug_line    0x0000000000004198      0x3a4 ../../../../../SoC/demosoc/Common/Source/Stubs/write.c.o
+ .debug_line    0x000000000000453c      0xa1c ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .debug_line    0x0000000000004f58      0x625 ./main.c.o
+
+.debug_info     0x0000000000000000     0xc0ed
+ .debug_info    0x0000000000000000       0x22 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .debug_info    0x0000000000000022       0x22 ../../../../../SoC/demosoc/Common/Source/GCC/startup_demosoc.S.o
+ .debug_info    0x0000000000000044     0x2b33 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .debug_info    0x0000000000002b77     0x18ae ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .debug_info    0x0000000000004425      0x9b4 ../../../../../SoC/demosoc/Common/Source/Stubs/close.c.o
+ .debug_info    0x0000000000004dd9      0xc2e ../../../../../SoC/demosoc/Common/Source/Stubs/fstat.c.o
+ .debug_info    0x0000000000005a07      0x9c9 ../../../../../SoC/demosoc/Common/Source/Stubs/isatty.c.o
+ .debug_info    0x00000000000063d0      0x9d3 ../../../../../SoC/demosoc/Common/Source/Stubs/lseek.c.o
+ .debug_info    0x0000000000006da3      0xbae ../../../../../SoC/demosoc/Common/Source/Stubs/read.c.o
+ .debug_info    0x0000000000007951      0xa0f ../../../../../SoC/demosoc/Common/Source/Stubs/sbrk.c.o
+ .debug_info    0x0000000000008360      0xbd9 ../../../../../SoC/demosoc/Common/Source/Stubs/write.c.o
+ .debug_info    0x0000000000008f39     0x17f5 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .debug_info    0x000000000000a72e     0x19bf ./main.c.o
+
+.debug_abbrev   0x0000000000000000     0x1dc6
+ .debug_abbrev  0x0000000000000000       0x12 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .debug_abbrev  0x0000000000000012       0x12 ../../../../../SoC/demosoc/Common/Source/GCC/startup_demosoc.S.o
+ .debug_abbrev  0x0000000000000024      0x3e9 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .debug_abbrev  0x000000000000040d      0x39a ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .debug_abbrev  0x00000000000007a7      0x1f6 ../../../../../SoC/demosoc/Common/Source/Stubs/close.c.o
+ .debug_abbrev  0x000000000000099d      0x209 ../../../../../SoC/demosoc/Common/Source/Stubs/fstat.c.o
+ .debug_abbrev  0x0000000000000ba6      0x1f1 ../../../../../SoC/demosoc/Common/Source/Stubs/isatty.c.o
+ .debug_abbrev  0x0000000000000d97      0x1f6 ../../../../../SoC/demosoc/Common/Source/Stubs/lseek.c.o
+ .debug_abbrev  0x0000000000000f8d      0x221 ../../../../../SoC/demosoc/Common/Source/Stubs/read.c.o
+ .debug_abbrev  0x00000000000011ae      0x210 ../../../../../SoC/demosoc/Common/Source/Stubs/sbrk.c.o
+ .debug_abbrev  0x00000000000013be      0x240 ../../../../../SoC/demosoc/Common/Source/Stubs/write.c.o
+ .debug_abbrev  0x00000000000015fe      0x4d9 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .debug_abbrev  0x0000000000001ad7      0x2ef ./main.c.o
+
+.debug_aranges  0x0000000000000000      0x770
+ .debug_aranges
+                0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .debug_aranges
+                0x0000000000000040       0x40 ../../../../../SoC/demosoc/Common/Source/GCC/startup_demosoc.S.o
+ .debug_aranges
+                0x0000000000000080      0x270 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .debug_aranges
+                0x00000000000002f0      0x1f0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .debug_aranges
+                0x00000000000004e0       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/close.c.o
+ .debug_aranges
+                0x0000000000000510       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/fstat.c.o
+ .debug_aranges
+                0x0000000000000540       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/isatty.c.o
+ .debug_aranges
+                0x0000000000000570       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/lseek.c.o
+ .debug_aranges
+                0x00000000000005a0       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/read.c.o
+ .debug_aranges
+                0x00000000000005d0       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/sbrk.c.o
+ .debug_aranges
+                0x0000000000000600       0x30 ../../../../../SoC/demosoc/Common/Source/Stubs/write.c.o
+ .debug_aranges
+                0x0000000000000630      0x100 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .debug_aranges
+                0x0000000000000730       0x40 ./main.c.o
+
+.debug_str      0x0000000000000000     0x2d29
+ .debug_str     0x0000000000000000       0xc2 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .debug_str     0x00000000000000c2       0x3f ../../../../../SoC/demosoc/Common/Source/GCC/startup_demosoc.S.o
+                                         0xc3 (size before relaxing)
+ .debug_str     0x0000000000000101     0x1918 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+                                       0x1a54 (size before relaxing)
+ .debug_str     0x0000000000001a19      0x5ff ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+                                        0xec8 (size before relaxing)
+ .debug_str     0x0000000000002018       0x4e ../../../../../SoC/demosoc/Common/Source/Stubs/close.c.o
+                                        0x5f4 (size before relaxing)
+ .debug_str     0x0000000000002066      0x16e ../../../../../SoC/demosoc/Common/Source/Stubs/fstat.c.o
+                                        0x77c (size before relaxing)
+ .debug_str     0x00000000000021d4       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/isatty.c.o
+                                        0x60d (size before relaxing)
+ .debug_str     0x0000000000002214       0x45 ../../../../../SoC/demosoc/Common/Source/Stubs/lseek.c.o
+                                        0x60e (size before relaxing)
+ .debug_str     0x0000000000002259       0x3e ../../../../../SoC/demosoc/Common/Source/Stubs/read.c.o
+                                        0x691 (size before relaxing)
+ .debug_str     0x0000000000002297       0x5c ../../../../../SoC/demosoc/Common/Source/Stubs/sbrk.c.o
+                                        0x62e (size before relaxing)
+ .debug_str     0x00000000000022f3       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/write.c.o
+                                        0x693 (size before relaxing)
+ .debug_str     0x0000000000002333      0x9c9 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+                                       0x10c9 (size before relaxing)
+ .debug_str     0x0000000000002cfc       0x2d ./main.c.o
+                                       0x179e (size before relaxing)
+
+.debug_ranges   0x0000000000000000      0x6c0
+ .debug_ranges  0x0000000000000000       0x40 ../../../../../SoC/demosoc/Common/Source/GCC/intexc_demosoc.S.o
+ .debug_ranges  0x0000000000000040       0x40 ../../../../../SoC/demosoc/Common/Source/GCC/startup_demosoc.S.o
+ .debug_ranges  0x0000000000000080      0x260 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .debug_ranges  0x00000000000002e0      0x1e0 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .debug_ranges  0x00000000000004c0       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/close.c.o
+ .debug_ranges  0x00000000000004e0       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/fstat.c.o
+ .debug_ranges  0x0000000000000500       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/isatty.c.o
+ .debug_ranges  0x0000000000000520       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/lseek.c.o
+ .debug_ranges  0x0000000000000540       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/read.c.o
+ .debug_ranges  0x0000000000000560       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/sbrk.c.o
+ .debug_ranges  0x0000000000000580       0x20 ../../../../../SoC/demosoc/Common/Source/Stubs/write.c.o
+ .debug_ranges  0x00000000000005a0       0xf0 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .debug_ranges  0x0000000000000690       0x30 ./main.c.o
+
+.debug_frame    0x0000000000000000     0x1168
+ .debug_frame   0x0000000000000000      0x708 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_dma.c.o
+ .debug_frame   0x0000000000000708      0x580 ../../../../../SoC/demosoc/Common/Source/Drivers/al9000_uart.c.o
+ .debug_frame   0x0000000000000c88       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/close.c.o
+ .debug_frame   0x0000000000000cc8       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/fstat.c.o
+ .debug_frame   0x0000000000000d08       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/isatty.c.o
+ .debug_frame   0x0000000000000d48       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/lseek.c.o
+ .debug_frame   0x0000000000000d88       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/read.c.o
+ .debug_frame   0x0000000000000dc8       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/sbrk.c.o
+ .debug_frame   0x0000000000000e08       0x40 ../../../../../SoC/demosoc/Common/Source/Stubs/write.c.o
+ .debug_frame   0x0000000000000e48      0x2b0 ../../../../../SoC/demosoc/Common/Source/system_demosoc.c.o
+ .debug_frame   0x00000000000010f8       0x70 ./main.c.o

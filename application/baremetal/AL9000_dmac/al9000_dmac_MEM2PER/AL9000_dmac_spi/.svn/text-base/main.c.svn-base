@@ -1,0 +1,122 @@
+
+/*
+ * main.c
+ *
+ *  Created on: 2021¿?11¿?10¿?
+ *      Author: wei.pang
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "nuclei_sdk_soc.h"
+#include "al9000_uart.h"
+#include "al9000_dmac.h"
+#include "al9000_spi.h"
+#include <time.h>
+/*
+ *instruction
+ *test_mode		:reload mode
+ *importannt parameter	:
+ *
+ *
+ *
+*/
+void SOC_DMA_AHB_HANDLER(void)
+{  
+	dw_dmac_clearIrq(AL9000_DMAC,dw_dmac_channel_num_1,block_1);
+}
+    int main(void){
+
+    uint16_t i = 0;
+    uint8_t wrdata_a[256] = {0};
+    uint8_t rddata_a[256] = {0};
+	          volatile uint32_t buffer[256];
+	 for (volatile uint32_t i = 0 ; i < 256 ; i++)
+	 {
+		 buffer[i] = i;
+	 }
+	write_To_OCM((uint32_t*)buffer,256,(uint32_t*)MEM_BASE1_ADDR);
+    for(i=0; i<256; i++)
+    {
+    	wrdata_a[i] = i;
+    }
+
+
+	uint32_t flash_id = 0;
+
+	spi_dwc_ssi_disable(SPI0);
+
+	spi_dfs(SPI0,SPI_DFS_BYTE);   // byte
+	spi_sste_dis(SPI0);
+	spi_x1_mode(SPI0);
+	spi_tmod_e2prom(SPI0); // EEPROM read
+	spi_txftl_tft(SPI0, 0); // default
+	spi_ctrl1_ndf(SPI0, 2); // receive 2+1 data items
+	spi_ser(SPI0,SER_SS1_EN); // choose ss1 -- for same to simulation code.
+	spi_sckdiv_cfg(SPI0, 0x1E);  // divided by 30.
+	spi_dwc_ssi_enable(SPI0);
+	spi_dwc_ssi_disable(SPI0);
+	spi_dfs(SPI0,SPI_DFS_BYTE);   // byte
+	spi_sste_dis(SPI0);
+	spi_x1_mode(SPI0);
+	spi_tmod_tx(SPI0); // TX only
+	spi_txftl_tft(SPI0, 0); // default
+	spi_dwc_ssi_enable(SPI0);
+	spi_data_transmit(SPI0,CMD_WREN); // tx read id cmd
+	while(!spi_sr_tfe(SPI0)); // wait TFE returns to 1
+	while(spi_sr_busy(SPI0));  // check busyl or idle,wait BUSY returns to 0
+	spi_data_transmit(SPI0,CMD_CHIP_ERASE); // tx chip erase cmd
+	spi_data_transmit(SPI0,CMD_SECTOR_ERASE); // tx sector erase cmd
+	spi_data_transmit(SPI0,0x00); // tx addr[23:16]
+	spi_data_transmit(SPI0,0x00); // tx addr[15:8]
+	spi_data_transmit(SPI0,0x00); // tx addr[7:0]
+	while(!spi_sr_tfe(SPI0)); // wait TFE returns to 1
+	while(spi_sr_busy(SPI0));  // check busy or idle,wait BUSY returns to 0
+	spi_dwc_ssi_disable(SPI0);
+	spi_dfs(SPI0,SPI_DFS_BYTE);   // byte
+	spi_sste_dis(SPI0);
+	spi_x1_mode(SPI0);
+	spi_tmod_tx(SPI0); // TX only
+	spi_txftl_tft(SPI0, 0); // default
+	spi_dwc_ssi_enable(SPI0);
+	spi_data_transmit(SPI0,CMD_WREN); // tx read id cmd
+	while(!spi_sr_tfe(SPI0)); // wait TFE returns to 1
+	while(spi_sr_busy(SPI0));  // check busy or idle,wait BUSY returns to 0
+	spi_dwc_ssi_disable(SPI0);
+	spi_txftl_tft(SPI0, 0); // default
+	spi_tx_dma_Init(); 
+	spi_dwc_ssi_enable(SPI0);
+	spi_data_transmit(SPI0,CMD_PP); // tx Page Program cmd
+	spi_data_transmit(SPI0,0x00); // tx addr[23:16]
+	spi_data_transmit(SPI0,0x00); // tx addr[15:8]
+	spi_data_transmit(SPI0,0x00); // tx addr[7:0]
+	//while(!spi_sr_tfe(SPI0)); // wait TFE returns to 1
+	//while(spi_sr_busy(SPI0));  // check busy or idle,wait BUSY returns to 0
+	dw_dmac_enable(AL9000_DMAC);
+	dw_dmac_enableChannel(AL9000_DMAC,dw_dmac_channel_num_0);
+	/*check status--wait busy returns to idle*/
+	while(!spi_sr_tfe(SPI0)); // wait TFE returns to 1
+	while(spi_sr_busy(SPI0));  // check busy or idle,wait BUSY returns to 0
+	dw_dmac_disable(AL9000_DMAC);
+	dw_dmac_disableChannel(AL9000_DMAC,dw_dmac_channel_num_0);
+	spi_dwc_ssi_disable(SPI0);
+	spi_dfs(SPI0,SPI_DFS_BYTE);   // byte
+	spi_sste_dis(SPI0);
+	spi_x1_mode(SPI0);
+	spi_tmod_e2prom(SPI0); // e2prom read
+	spi_ctrl1_ndf(SPI0, 0x1D); // receive 30 data items
+	spi_rx_dma_Init();
+	spi_dwc_ssi_enable(SPI0);
+	spi_data_transmit(SPI0,CMD_SREAD); // tx x1 read cmd
+	spi_data_transmit(SPI0,0x00); // tx addr[23:16]
+	spi_data_transmit(SPI0,0x00); // tx addr[15:8]
+	spi_data_transmit(SPI0,0x00); // tx addr[7:0]
+	while(!spi_sr_tfe(SPI0)); // wait TFE returns to 1
+	dw_dmac_enable(AL9000_DMAC);
+	dw_dmac_enableChannel(AL9000_DMAC,dw_dmac_channel_num_0);
+    	while(1);
+	return 0;
+}
+
+
+
