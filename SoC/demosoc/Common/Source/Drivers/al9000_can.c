@@ -107,7 +107,6 @@ uint8_t can_tx_mode(CAN_AL9000_TypeDef *CANX,enum tx_mode_type mode){
 
 	break;
 	}
-	printf( "can_tx_mode %08x\n",CANX ->CFG_STAT_TCMD_TCTRL_RCTRL);
 	return val;
 }
 int canfd_device_driver_bittime_configuration(CAN_AL9000_TypeDef *CANX,enum baud_rate rate,TOPCFG_TypeDef *TOP,enum can_type type){
@@ -121,101 +120,59 @@ int canfd_device_driver_bittime_configuration(CAN_AL9000_TypeDef *CANX,enum baud
 	printf("can_mode %d\r\n",val);
 	switch(rate){
 	case Sarbrate_0_25Mbit:
-		s_seg1 = 64;s_seg2 = 16;s_sjw = 16;
+		s_seg1 = 62;s_seg2 = 15;s_sjw = 15;S_presc = 3;
 	break;
 	case Sarbrate_0_5Mbit:
-		s_seg1 = 64;s_seg2 = 16;s_sjw = 16;
+		s_seg1 = 62;s_seg2 =15;s_sjw = 15;S_presc = 1;
 	break;
-#if 0
 	case rate_0_5Mbit:
-		s_seg1 = 38;s_seg2 = 9;s_sjw = 9;S_presc = 0;
+		s_seg1 = 30;s_seg2 = 7;s_sjw = 7;S_presc = 3;
 	break;
 	case rate_0_833Mbit:
-		s_seg1 = 19;s_seg2 = 5;s_sjw = 5;
+		s_seg1 = 17;s_seg2 = 4;s_sjw = 4;S_presc = 3;
 	break;
 	case rate_1Mbit:
-		s_seg1 = 18;s_seg2 = 4;s_sjw = 4;S_presc = 0;
-		//f_seg1 = 32;f_seg2 = 8;f_sjw = 8;F_presc = 0;
+		s_seg1 = 62;s_seg2 =15;s_sjw = 15;S_presc = 1;
+		f_seg1 = 30;f_seg2 = 7;f_sjw = 7;F_presc = 0;
 	break;
 	case rate_1_538Mbit:
-		s_seg1 = 64;s_seg2 = 16;s_sjw = 16;S_presc = 0;
-		f_seg1 = 20;f_seg2 = 6;f_sjw = 6;F_presc = 0;
+		s_seg1 = 62;s_seg2 =15;s_sjw = 15;S_presc = 1;
+		f_seg1 = 18;f_seg2 = 5;f_sjw = 5;F_presc = 0;
 	break;
 	case rate_2Mbit:
-		s_seg1 = 38;s_seg2 = 9;s_sjw = 9;S_presc = 0;
-		f_seg1 = 8;f_seg2 = 2;f_sjw = 1;F_presc = 0;
+		s_seg1 = 62;s_seg2 =15;s_sjw = 15;S_presc = 1;
+		f_seg1 = 14;f_seg2 = 3;f_sjw = 3;F_presc = 1;
 	break;
 	case rate_3_077Mbit:
-		s_seg1 = 64;s_seg2 = 16;s_sjw = 16;S_presc = 0;
-		f_seg1 = 10;f_seg2 = 3;f_sjw = 3;F_presc = 0;
+		s_seg1 = 62;s_seg2 =15;s_sjw = 15;S_presc = 1;
+		f_seg1 = 10;f_seg2 = 2;f_sjw = 2;F_presc = 1;
 	break;
 	case rate_4Mbit:
-		s_seg1 = 64;s_seg2 = 16;s_sjw = 16;S_presc = 0;
-		f_seg1 = 8;f_seg2 = 2;f_sjw = 2;F_presc = 0;
+		s_seg1 = 62;s_seg2 =15;s_sjw = 15;S_presc = 1;
+		f_seg1 = 14;f_seg2 = 3;f_sjw = 3;F_presc = 0;
 	break;
 	case rate_5Mbit:
-		s_seg1 = 38;s_seg2 = 9;s_sjw = 9;S_presc = 0;
-		f_seg1 = 2;f_seg2 = 0;f_sjw = 0;F_presc = 0;
+		s_seg1 = 62;s_seg2 = 15;s_sjw = 15;S_presc = 1;
+		f_seg1 = 10;f_seg2 = 3;f_sjw = 3;F_presc = 0;
+		printf( "baud rate is 5Mbit/s \r\n");
 	break;
 	case rate_6_667Mbit:
-		s_seg1 = 64;s_seg2 = 16;s_sjw = 16;S_presc = 0;
-		f_seg1 = 5;f_seg2 = 1;f_sjw = 1;F_presc = 0;
+		s_seg1 = 62;s_seg2 =15;s_sjw = 15;S_presc = 1;
+		f_seg1 = 8;f_seg2 = 1;f_sjw = 1;F_presc = 0;
 	break;
 	case rate_8Mbit:
-		s_seg1 = 64;s_seg2 = 16;s_sjw = 16;S_presc = 0;
-		f_seg1 = 4;f_seg2 = 1;f_sjw = 1;F_presc = 0;
+		s_seg1 = 62;s_seg2 =15;s_sjw = 15;S_presc = 1;
+		f_seg1 = 6;f_seg2 = 1;f_sjw = 1;F_presc = 0;
 	break;
 	case rate_10Mbit:
-			s_seg1 = 64;s_seg2 = 16;s_sjw = 16;S_presc = 0;
-			f_seg1 = 3;f_seg2 = 1;f_sjw = 1;F_presc = 0;
+		s_seg1 = 62;s_seg2 =15;s_sjw = 15;S_presc = 1;
+		f_seg1 = 4;f_seg2 = 1;f_sjw = 1;F_presc = 0;
 	break;
-#endif
-#if 1
-	case rate_0_5Mbit:
-			s_seg1 = 30;s_seg2 = 7;s_sjw = 7;S_presc = 0;
-		break;
-		case rate_0_833Mbit:
-			s_seg1 = 19;s_seg2 = 5;s_sjw = 5;
-		break;
-		case rate_1Mbit:
-			s_seg1 = 30;s_seg2 = 7;s_sjw = 7;S_presc = 0;
-			//f_seg1 = 32;f_seg2 = 8;f_sjw = 8;F_presc = 0;
-		break;
-		case rate_1_538Mbit:
-			s_seg1 = 64;s_seg2 = 16;s_sjw = 16;S_presc = 0;
-			f_seg1 = 20;f_seg2 = 6;f_sjw = 6;F_presc = 0;
-		break;
-		case rate_2Mbit:
-			s_seg1 = 30;s_seg2 = 7;s_sjw = 7;S_presc = 0;
-			f_seg1 = 14;f_seg2 = 3;f_sjw = 3;F_presc = 0;
-		break;
-		case rate_3_077Mbit:
-			s_seg1 = 30;s_seg2 = 7;s_sjw = 7;S_presc = 0;
-			f_seg1 = 10;f_seg2 = 3;f_sjw = 3;F_presc = 0;
-		break;
-		case rate_4Mbit:
-			s_seg1 = 30;s_seg2 = 7;s_sjw = 7;S_presc = 0;
-			f_seg1 = 8;f_seg2 = 2;f_sjw = 2;F_presc = 0;
-		break;
-		case rate_5Mbit:
-			s_seg1 = 58;s_seg2 = 19;s_sjw = 19;S_presc = 0;
-			f_seg1 = 4;f_seg2 = 1;f_sjw = 1;F_presc = 0;
-		break;
-		case rate_6_667Mbit:
-			s_seg1 = 64;s_seg2 = 16;s_sjw = 16;S_presc = 0;
-			f_seg1 = 5;f_seg2 = 1;f_sjw = 1;F_presc = 0;
-		break;
-		case rate_8Mbit:
-			s_seg1 = 64;s_seg2 = 16;s_sjw = 16;S_presc = 0;
-			f_seg1 = 4;f_seg2 = 1;f_sjw = 1;F_presc = 0;
-		break;
-		case rate_10Mbit:
-				s_seg1 = 64;s_seg2 = 16;s_sjw = 16;S_presc = 0;
-				f_seg1 = 3;f_seg2 = 1;f_sjw = 1;F_presc = 0;
-		break;
-#endif
+	case can_rate_1Mbit:
+		s_seg1 = 30;s_seg2 = 7;s_sjw = 7;S_presc = 1;
+	break;
 	default:
-		s_seg1 = 30;s_seg2 = 7;s_sjw = 7;
+		s_seg1 = 30;s_seg2 = 7;s_sjw = 7;S_presc = 1;
 	break;
 	}
 	reset_test=GET_BIT(CANX ->CFG_STAT_TCMD_TCTRL_RCTRL,7);
@@ -229,29 +186,19 @@ int canfd_device_driver_bittime_configuration(CAN_AL9000_TypeDef *CANX,enum baud
 		CANX ->S_Seg_1_S_Seg_2_S_SJW_S_PRESC =	(uint32_t)(s_seg1 | s_seg2 << 8 | s_sjw  << 16 | S_presc << 24);
 		tseg1 = s_seg1 + 2;
 		tseg2 = s_seg2 + 1;
-
-		//BR =(SystemCoreClock)
-		printf( "baud rate is %08x\n",CANX ->S_Seg_1_S_Seg_2_S_SJW_S_PRESC);
 	}
-	//printf( "baud rate is %08x\n",BR);
 	else{
 		CANX ->S_Seg_1_S_Seg_2_S_SJW_S_PRESC =	(uint32_t)(s_seg1 | s_seg2 << 8 | s_sjw  << 16 | S_presc << 24);
 
 		CANX ->F_Seg_1_F_Seg_2_F_SJW_F_PRESC =  (uint32_t)(f_seg1 | f_seg2 << 8 | f_sjw  << 16 | F_presc << 24);
 		CANX ->EALCAP_TDC_RECNT_TECNT |= CAN_FD_SET_TDCEN_MASK ;
 		CANX ->EALCAP_TDC_RECNT_TECNT |= (uint32_t)(f_seg1 << 8);
-		printf( "baud rate is %08x\n",CANX ->S_Seg_1_S_Seg_2_S_SJW_S_PRESC);
-		printf( "baud rate is %08x\n",CANX ->F_Seg_1_F_Seg_2_F_SJW_F_PRESC);
-		printf( "TDC = %d\r\n",GET_BITS(CANX ->EALCAP_TDC_RECNT_TECNT,8,14));
 	}
 	/*reset off*/
 	CANX ->CFG_STAT_TCMD_TCTRL_RCTRL &= ~CAN_FD_SET_RST_MASK;
 	for(delaytime = 0 ; delaytime < 150; delaytime ++){
 		delaytime++;
 	}
-	/*print configured slow and fast bit rate*/
-	//printf( "Slow bit rate configuration: %08x\n",GET_BITS(CANX ->S_Seg_1,0,7));
-	//printf( "Fast bit rate configuration: %08x\n",GET_BITS(CANX ->F_Seg_1,0,4));
 	return 0;
 }
 
@@ -292,7 +239,6 @@ uint32_t can_rx(CAN_AL9000_TypeDef *CANX,CanRxMsg* RxMessage,enum data_length le
 
 	//printf("start can_rx interrrupt\n");
 	control   = can_tx_mode(CANX,NORMAL);
-	printf("control = %d\r\n",control);
 	if(control == 0 || control == 1)
 	{
 		RxMessage ->IDE   = GET_BIT(CANX ->RBUF_CTL,7);
@@ -340,7 +286,7 @@ uint32_t can_rx(CAN_AL9000_TypeDef *CANX,CanRxMsg* RxMessage,enum data_length le
 					break;
 					}
 
-			 printf("RBUF_DATA = %d",RxMessage->Data[i]);
+			 //printf("RBUF_DATA = %d",RxMessage->Data[i]);
 			 //printf("RBUF_DATA = %d",RxMessage->Data[i]);
 			}
 		//}
@@ -398,7 +344,7 @@ uint32_t can_rx(CAN_AL9000_TypeDef *CANX,CanRxMsg* RxMessage,enum data_length le
 					break;
 					}
 
-			 printf("RBUF_DATA = %d",RxMessage->Data[i]);
+			 //printf("RBUF_DATA = %d",RxMessage->Data[i]);
 			}
 		//}
 
@@ -410,6 +356,69 @@ uint32_t can_rx(CAN_AL9000_TypeDef *CANX,CanRxMsg* RxMessage,enum data_length le
     }
 	return 0;
 }
+#if 0
+/*
+ * Return: 1 on success and 0 on failure.
+ */
+int canfd_rx(CAN_AL9000_TypeDef *CANX,uint8_t DLC){
+	struct canfd_frame *cf;
+	struct sk_buff *skb;
+
+	uint32_t	ctl,can_id,data=0,data_can[2]={0,0};
+	uint8_t	dlc,control,rx_status;
+	int i;
+
+	/*since here we start canfd_rx interrrupt*/
+	//printf("start canfd_rx interrrupt\n");
+
+	/*rx control register has 32 bits--->uint32_t ctl will be used later*/
+	rx_status=GET_BITS(CANX ->RCTRL,0,7);
+	if(rx_status & CAN_FD_RSTAT_NOT_EMPTY_MASK){
+		can_id = GET_BITS(CANX ->RBUF_ID_PARM.RBUF_ID,0,10);
+		//dlc=GET_BITS(CANX ->RBUF_CTL,0,7)&CAN_FD_SET_DLC_MASK;
+
+
+	/*change the CANFD id into socketcan id format*/
+		if(control&CAN_FD_SET_EDL_MASK){
+			/*extended format*/
+			CANX ->TBUF_ID_PARM.TBUF_ID=can_id;
+			if(CANX ->RBUF_CTL.IDE & CAN_FD_SET_IDE_MASK)
+				CANX ->TBUF_ID_PARM.TBUF_ID |= CAN_EFF_FLAG;
+			else
+				CANX ->TBUF_ID_PARM.TBUF_ID &= (~CAN_EFF_FLAG);
+		/*bit 29,error message not defined here*/
+
+		}
+		else{
+			CANX ->RBUF_ID_PARM.RBUF_ID=can_id;
+			if(CANX ->RBUF_CTL.IDE & CAN_FD_SET_IDE_MASK)
+				CANX ->RBUF_ID_PARM.RBUF_ID |= CAN_EFF_FLAG;
+			else
+				CANX ->RBUF_ID_PARM.RBUF_ID &= (~CAN_EFF_FLAG);
+	/*deal with RTR in can2.0*/
+			if(CANX ->RBUF_CTL.RTR&CAN_FD_SET_RTR_MASK)
+				CANX ->RBUF_ID_PARM.RBUF_ID |=CAN_RTR_FLAG ;
+
+		}
+
+		/* Data*/
+		/*CANFD frames handed over to SKB*/
+		if(control&CAN_FD_SET_EDL_MASK){
+			for (i = 0; i < DLC; i += 4) {
+				printf( "CAN FD original DATA 0x%08x\n",CANX ->RBUF_DATA[i]);
+			}
+		}
+		/*point to next packet and will save to buffer*/
+		/*reset RREL to release RB slot, next RBUF will be updated. Then reset receive interrupt flag(we can not reset interrupt flag here)*/
+
+		CANX ->CFG_STAT_TCMD_TCTRL_RCTRL |=CAN_FD_SET_RREL_MASK;
+		//canfd_reigister_set_bit(priv,RTIF,CAN_FD_SET_RIF_MASK);
+
+		return 1;
+	}
+	return 0;
+}
+#endif
 int canfd_rx_poll(CAN_AL9000_TypeDef *CANX, int quota){
 	int work_done = 0;
 	uint8_t rx_status = 0,control = 0;
@@ -445,149 +454,41 @@ void canfd_rxfull_interrupt(CAN_AL9000_TypeDef *CANX,uint32_t isr){
 /*This part could also be removed, when only one mode is used*/
  int set_canfd_xmit_mode(CAN_AL9000_TypeDef *CANX,enum can_tx_mode tx_mode){
 	switch(tx_mode){
+		case XMIT_FULL:
+			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL |=CAN_FD_SET_FULLCAN_MASK;
+			printf( "Full can mode\n");
+			break;
+
 		case XMIT_SEP_FIFO:
 			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL &=~CAN_FD_SET_FULLCAN_MASK;
-			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL &=~CAN_FD_SET_PRIORITY_MASK;
-			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL |= CAN_FD_SET_TBSEL_MASK;
+			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL |= CAN_FD_SET_FIFO_MASK;
+			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL &= ~CAN_FD_SET_TBSEL_MASK;
 			printf( "FIFO mode\n");
 
 			break;
 
 		case XMIT_SEP_PRIO://有问题
 			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL &=~CAN_FD_SET_FULLCAN_MASK;
-			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL |=CAN_FD_SET_PRIORITY_MASK ;
-			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL &=~CAN_FD_SET_TBSEL_MASK ;
+			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL &=~CAN_FD_SET_FIFO_MASK ;
+			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL |=CAN_FD_SET_TBSEL_MASK ;
 			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL |= CAN_FD_SET_TENEXT_MASK;
 			printf( "Priority mode\n");
 
 			break;
-		default:
+		case XMIT_PTB_MODE:
+			//CANX ->CFG_STAT_TCMD_TCTRL_RCTRL &= ~CAN_FD_SET_FULLCAN_MASK;
+			//CANX ->CFG_STAT_TCMD_TCTRL_RCTRL |= CAN_FD_SET_FIFO_MASK;
+			//CANX ->CFG_STAT_TCMD_TCTRL_RCTRL |= CAN_CFG_STAT_TPSS;
+			//CANX ->CFG_STAT_TCMD_TCTRL_RCTRL   |= CAN_FD_SET_TENEXT_MASK;
 			printf( "PTB mode\n");
+
+			break;
+		default:
 			break;
 	}
 	return 0;
 }
 
- uint8_t can_tx_function(CAN_AL9000_TypeDef *CANX,CanTxMsg* TxMessage,enum data_length len){
-	 volatile uint8_t i = 0;
-	 CANX ->CFG_STAT_TCMD_TCTRL_RCTRL &=CAN_FD_OFF_STBY_MASK;/* standy mode off*/
-	 CANX ->TBUF_CTL = ((uint32_t)TxMessage ->DLC)	   |\
-	 	 			   ((uint32_t)TxMessage ->IDE) << 7|\
-	 	 			   ((uint32_t)TxMessage ->FDF) << 5|\
-	 	 			   ((uint32_t)TxMessage ->RTR) << 6|\
-	 	 			   ((uint32_t)TxMessage ->BRS) << 4;
-	 			/*transmit can fd frame*/
-	 			if(GET_BIT(CANX ->TBUF_CTL,5)==CANFD_MASK){
-	 				if (GET_BIT(CANX ->TBUF_CTL,5)==CANFD_MASK) {
-	 					if(CAN_Id_Standard == GET_BIT(CANX ->TBUF_CTL,7)){
-	 						CANX ->TBUF_ID_PARM = TxMessage ->StdId;// | TxMessage ->TTSEN;
-	 						printf("StdID = %08x\n",TxMessage ->StdId);
-	 					}
-	 					else{
-	 						CANX ->TBUF_ID_PARM = TxMessage->ExtId ;//| TxMessage ->TTSEN;/*IDE=0*/
-	 						printf("ExtID = %08x\n",TxMessage ->ExtId);
-	 					}
-	 					if (GET_BIT(CANX ->TBUF_CTL,4)== 1){		/*CANFD_BRS=0x01*/
-	 						for(i=0;i< len;i++){
-	 					switch(i%4)
-	 					{
-	 					case 0:
-	 					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i];
-	 					break;
-	 					case 1:
-	 					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i-1] |TxMessage ->Data[i] << 8 ;
-	 					break;
-	 					case 2:
-	 					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i-2] |TxMessage ->Data[i-1] << 8 | TxMessage ->Data[i] << 16;
-	 					break;
-	 					default:
-	 					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i-3] |TxMessage ->Data[i-2] << 8 | TxMessage ->Data[i-1] << 16|TxMessage ->Data[i] << 24;
-	 					break;
-	 					}
-	 					//printf("TBUF_data %d",i,CANX ->TBUF_DATA[i]);
-	 				    }
-	 				}
-	 				}
-
-	 				/* Transmit can 2.0 frame under canfd mode*/
-	 				else{
-	 					TxMessage ->BRS =0;
-	 					TxMessage ->FDF =0;
-	 					if(TxMessage ->DLC > 8)
-	 					{
-	 						printf("You set mode is can ,your dlc can't set over 8,please set dlc 0 - 8");
-	 						while(1);
-	 					}
-	 					CANX ->TBUF_CTL = ((uint32_t)TxMessage ->DLC)|\
-	 						 			  ((uint32_t)TxMessage ->IDE) << 7|\
-	 						 			  ((uint32_t)TxMessage ->FDF) << 5|\
-	 						 			  ((uint32_t)TxMessage ->RTR) << 6|\
-	 						 			  ((uint32_t)TxMessage ->BRS) << 4;
-	 					if(CAN_Id_Standard == GET_BIT(CANX ->TBUF_CTL,7)){
-	 						CANX ->TBUF_ID_PARM = TxMessage ->StdId;// | TxMessage ->TTSEN;
-	 						printf("StdID = %08x\n",TxMessage ->StdId);
-	 					}
-	 					else{
-	 						CANX ->TBUF_ID_PARM = TxMessage->ExtId;// | TxMessage ->TTSEN;/*IDE=0*/
-	 					}
-	 					for(i=0;i< len;i++){
-	 						 					switch(i%4)
-	 						 					{
-	 						 					case 0:
-	 						 					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i];
-	 						 					break;
-	 						 					case 1:
-	 						 					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i-1] |TxMessage ->Data[i] << 8 ;
-	 						 					break;
-	 						 					case 2:
-	 						 					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i-2] |TxMessage ->Data[i-1] << 8 | TxMessage ->Data[i] << 16;
-	 						 					break;
-	 						 					default:
-	 						 					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i-3] |TxMessage ->Data[i-2] << 8 | TxMessage ->Data[i-1] << 16|TxMessage ->Data[i] << 24;
-	 						 					break;
-	 						 					}
-	 						 					//printf("TBUF_data %d",i,CANX ->TBUF_DATA[i]);
-	 						 				    }
-
-	 				}
-
-	 			}
-	 			/*deal with can 2.0 frame, when the driver can only be compatible with can 2.0 tranceiver	*/
-	 			else{
-	 				/*transmit can2.0 frame*/
-	 				//printf("Sending can2.0 frame\n");
-	 				if(CAN_Id_Standard == GET_BIT(CANX ->TBUF_CTL,7)){
-	 					CANX ->TBUF_ID_PARM = TxMessage ->StdId;// | TxMessage ->TTSEN;
-	 					printf("StdID = %08x\n",TxMessage ->StdId);
-	 				}
-	 				else{
-	 					CANX ->TBUF_ID_PARM = TxMessage->ExtId;// | TxMessage ->TTSEN;/*IDE=0*/
-	 				}
-
-	 					for(i=0;i<len;i++){
-	 					switch(i%4)
-	 					{
-	 					case 0:
-	 					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i];
-	 					break;
-	 					case 1:
-	 					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i-1] |TxMessage ->Data[i] << 8 ;
-	 					break;
-	 					case 2:
-	 					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i-2] |TxMessage ->Data[i-1] << 8 | TxMessage ->Data[i] << 16;
-	 					break;
-	 					default:
-	 					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i-3] |TxMessage ->Data[i-2] << 8 | TxMessage ->Data[i-1] << 16|TxMessage ->Data[i] << 24;
-	 					break;
-	 					}
-	 				    }
-
-	 				}
-
-	 			/*set TPE to transmit data. update statistic*/
-	 			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL |=CAN_FD_SET_TPE_MASK;
-	 			return 0;
- }
 /*
  * netdev_tx_t (*ndo_start_xmit)(struct sk_buff *skb,
  *                               struct net_device *dev);
@@ -602,7 +503,7 @@ int canfd_driver_start_xmit(CAN_AL9000_TypeDef *CANX,CanTxMsg* TxMessage,enum ca
 	volatile uint8_t i;
 
 	//printf( "CANFD Driver starts to send canfd/can 2.0 frame since here\n");
-	set_canfd_xmit_mode(CANX,tx_mode);
+	tx_mode=XMIT_PTB_MODE;//test
 						CANX ->TBUF_CTL = ((uint32_t)TxMessage ->DLC)|\
 								   ((uint32_t)TxMessage ->IDE) << 7|\
 								   ((uint32_t)TxMessage ->FDF) << 5|\
@@ -613,19 +514,142 @@ int canfd_driver_start_xmit(CAN_AL9000_TypeDef *CANX,CanTxMsg* TxMessage,enum ca
 		case XMIT_FULL:
 			return -1;
 			break;
-		case XMIT_SEP_FIFO:
-			can_tx_function(CANX,TxMessage,len);
-			break;
 		case XMIT_PTB_MODE:
-			can_tx_function(CANX,TxMessage,len);
-			break;
+			set_canfd_xmit_mode(CANX,tx_mode);
+			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL &=CAN_FD_OFF_STBY_MASK;/* standy mode off*/
+			//printf("CANX ->TBUF_ID_PARM.TBUF_ID=%x10",CANX ->RBUF_ID_PARM.RBUF_ID);
+			/*transmit can fd frame*/
+			if(GET_BIT(CANX ->TBUF_CTL,5)==CANFD_MASK){
+				if (GET_BIT(CANX ->TBUF_CTL,5)==CANFD_MASK) {
+					if(CAN_Id_Standard == GET_BIT(CANX ->TBUF_CTL,7)){
+						CANX ->TBUF_CTL = ((uint32_t)TxMessage ->DLC)|\
+								   ((uint32_t)TxMessage ->IDE) << 7|\
+								   ((uint32_t)TxMessage ->FDF) << 5|\
+								   ((uint32_t)TxMessage ->RTR) << 6|\
+								   ((uint32_t)TxMessage ->BRS) << 4;
+						CANX ->TBUF_ID_PARM = TxMessage ->StdId;// | TxMessage ->TTSEN;
+						//printf("tx_StdID = %08x\n",TxMessage ->StdId);
+					}
+					else{
+						//CANX ->TBUF_ID_PARM = (uint32_t)0x00000000;
+						CANX ->TBUF_CTL = ((uint32_t)TxMessage ->DLC)|\
+								   ((uint32_t)TxMessage ->IDE) << 7|\
+								   ((uint32_t)TxMessage ->FDF) << 5|\
+								   ((uint32_t)TxMessage ->RTR) << 6|\
+								   ((uint32_t)TxMessage ->BRS) << 4;
+
+						CANX ->TBUF_ID_PARM = TxMessage->ExtId ;//| TxMessage ->TTSEN;/*IDE=0*/
+					}
+					if (GET_BIT(CANX ->TBUF_CTL,4)== 1){		/*CANFD_BRS=0x01*/
+						CANX ->TBUF_CTL = ((uint32_t)TxMessage ->DLC)|\
+								   ((uint32_t)TxMessage ->IDE) << 7|\
+								   ((uint32_t)TxMessage ->FDF) << 5|\
+								   ((uint32_t)TxMessage ->RTR) << 6|\
+								   ((uint32_t)TxMessage ->BRS) << 4;
+						}
+						for(i=0;i< len;i++){
+					switch(i%4)
+					{
+					case 0:
+					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i];
+					break;
+					case 1:
+					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i-1] |TxMessage ->Data[i] << 8 ;
+					break;
+					case 2:
+					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i-2] |TxMessage ->Data[i-1] << 8 | TxMessage ->Data[i] << 16;
+					break;
+					default:
+					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i-3] |TxMessage ->Data[i-2] << 8 | TxMessage ->Data[i-1] << 16|TxMessage ->Data[i] << 24;
+					break;
+					}
+					//printf("TBUF_data %d",i,CANX ->TBUF_DATA[i]);
+				    }
+				}
+
+				/* Transmit can 2.0 frame under canfd mode*/
+				else{
+					TxMessage ->BRS =0;
+					if(CAN_Id_Standard == GET_BIT(CANX ->TBUF_CTL,7)){
+						//CANX ->TBUF_ID_PARM = (uint32_t)0x00000000;
+						//CANX ->TBUF_CTL.IDE = TxMessage ->IDE;
+						CANX ->TBUF_CTL = ((uint32_t)TxMessage ->DLC)|\
+								   ((uint32_t)TxMessage ->IDE) << 7|\
+								   ((uint32_t)TxMessage ->FDF) << 5|\
+								   ((uint32_t)TxMessage ->RTR) << 6|\
+								   ((uint32_t)TxMessage ->BRS) << 4;
+						CANX ->TBUF_ID_PARM = TxMessage ->StdId;// | TxMessage ->TTSEN;
+						//printf("StdID = %08x\n",TxMessage ->StdId);
+					}
+					else{
+						//CANX ->TBUF_ID_PARM = (uint32_t)0x00000000;
+						CANX ->TBUF_CTL = ((uint32_t)TxMessage ->DLC)|\
+								   ((uint32_t)TxMessage ->IDE) << 7|\
+								   ((uint32_t)TxMessage ->FDF) << 5|\
+								   ((uint32_t)TxMessage ->RTR) << 6|\
+								   ((uint32_t)TxMessage ->BRS) << 4;
+						CANX ->TBUF_ID_PARM = TxMessage->ExtId;// | TxMessage ->TTSEN;/*IDE=0*/
+					}
+
+				}
+
+			}
+			/*deal with can 2.0 frame, when the driver can only be compatible with can 2.0 tranceiver	*/
+			else{
+				/*transmit can2.0 frame*/
+				//printf("Sending can2.0 frame\n");
+				CANX ->TBUF_CTL |= TxMessage -> BRS << 4 ;
+				if(CAN_Id_Standard == GET_BIT(CANX ->TBUF_CTL,7)){
+					//CANX ->TBUF_ID_PARM = (uint32_t)0x00000000;
+					//CANX ->TBUF_CTL.IDE = TxMessage ->IDE;
+						CANX ->TBUF_CTL = ((uint32_t)TxMessage ->DLC)|\
+								   ((uint32_t)TxMessage ->IDE) << 7|\
+								   ((uint32_t)TxMessage ->FDF) << 5|\
+								   ((uint32_t)TxMessage ->RTR) << 6|\
+								   ((uint32_t)TxMessage ->BRS) << 4;
+					CANX ->TBUF_ID_PARM = TxMessage ->StdId;// | TxMessage ->TTSEN;
+					//printf("StdID = %08x\n",TxMessage ->StdId);
+				}
+				else{
+					//CANX ->TBUF_ID_PARM = (uint32_t)0x00000000;
+						CANX ->TBUF_CTL = ((uint32_t)TxMessage ->DLC)|\
+								   ((uint32_t)TxMessage ->IDE) << 7|\
+								   ((uint32_t)TxMessage ->FDF) << 5|\
+								   ((uint32_t)TxMessage ->RTR) << 6|\
+								   ((uint32_t)TxMessage ->BRS) << 4;
+
+					CANX ->TBUF_ID_PARM = TxMessage->ExtId;// | TxMessage ->TTSEN;/*IDE=0*/
+				}
+
+					for(i=0;i<len;i++){
+					switch(i%4)
+					{
+					case 0:
+					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i];
+					break;
+					case 1:
+					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i-1] |TxMessage ->Data[i] << 8 ;
+					break;
+					case 2:
+					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i-2] |TxMessage ->Data[i-1] << 8 | TxMessage ->Data[i] << 16;
+					break;
+					default:
+					CANX ->TBUF_DATA[i/4] =TxMessage ->Data[i-3] |TxMessage ->Data[i-2] << 8 | TxMessage ->Data[i-1] << 16|TxMessage ->Data[i] << 24;
+					break;
+					}
+				    }
+
+				}
+
+			/*set TPE to transmit data. update statistic*/
+			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL |=CAN_FD_SET_TPE_MASK;
+					break;
 		default:
 			break;
 
 	return 0;
 	}
 }
-
 
 uint8_t set_rx_fillter(CAN_AL9000_TypeDef *CANX,enum ACFADR ACFADDR,uint32_t ID){
 	set_reset_mode(CANX);
@@ -711,37 +735,9 @@ void canfd_error_interrupt(CAN_AL9000_TypeDef *CANX){
 	eir = GET_BITS(CANX ->RTIE_RTIF_ERRINT_LIMIT,0,7);
 	//printf("in Error interrupt");
 
-	koer = GET_BITS(CANX ->EALCAP_TDC_RECNT_TECNT,5,7);
-	recnt= GET_BITS(CANX ->EALCAP_TDC_RECNT_TECNT,8,15);
-	tecnt= GET_BITS(CANX ->EALCAP_TDC_RECNT_TECNT,16,23);
-	switch(koer)
-	{
-	case 0:
-			printf("no error \r\n");
-		break;
-	case 1:
-				printf("bit error \r\n");
-		break;
-	case 2:
-				printf("form error \r\n");
-		break;
-	case 3:
-				printf("stuff error \r\n");
-		break;
-	case 4:
-				printf("Acknowledgment error \r\n");
-		break;
-	case 5:
-				printf("crc error \r\n");
-		break;
-	case 6:
-				printf("other error \r\n");
-		break;
-	defaut:
-				printf("no used \r\n");
-		break;
-
-	}
+	koer = GET_BITS(CANX ->EALCAP_TDC_RECNT_TECNT,0,7)&CAN_FD_SET_KOER_MASK;
+	recnt= GET_BITS(CANX ->EALCAP_TDC_RECNT_TECNT,0,7);
+	tecnt= GET_BITS(CANX ->EALCAP_TDC_RECNT_TECNT,0,7);
 
 	//test
 	//if(recnt>40 || tecnt>40) canfd_reigister_set_bit(priv,CANX ->CANX ->CFG_STAT_TCMD_TCTRL_RCTRL,CAN_FD_SET_BUSOFF_MASK);
@@ -915,6 +911,10 @@ int canfd_chip_start(CAN_AL9000_TypeDef *CANX,enum baud_rate rate){
 	/*check the mode,later on*/
 
 	/*set mode*/
+	ret=GET_BITS(CANX ->CFG_STAT_TCMD_TCTRL_RCTRL,0,7);
+	//ret|=CAN_FD_LBMEMOD_MASK;	/*set loopback externel mode*/
+	ret&=~CAN_FD_LBMEMOD_MASK;	/*unset loopback externel mode*/
+	CANX ->CFG_STAT_TCMD_TCTRL_RCTRL = ret;
 	return 0;
 
 }
@@ -936,7 +936,6 @@ uint8_t CAN_TransmitStatus(CAN_AL9000_TypeDef *CANX){
 	can_cfg_state = GET_BITS(CANX ->CFG_STAT_TCMD_TCTRL_RCTRL,11,12);
 	switch(can_cfg_state){
 	case 0:
-		printf("please set PTB OR STB");
 	break;
 	case 1:
 		printf("please set  STB");
@@ -1043,7 +1042,7 @@ uint8_t can_TX_length(enum data_length len){
 	}
 	return TxMessage.DLC;
 }
-uint8_t Can_Send_Msg(CAN_AL9000_TypeDef *CANX,uint8_t* msg,enum can_tx_mode tx_mode,enum data_length len,uint32_t ID)
+uint8_t Can_Send_Msg(CAN_AL9000_TypeDef *CANX,uint8_t* msg,enum can_tx_mode tx_mode,enum data_length len ,uint32_t ID)
 {
 	volatile uint8_t mbox;
 	volatile uint8_t isr;
@@ -1066,7 +1065,6 @@ uint8_t Can_Send_Msg(CAN_AL9000_TypeDef *CANX,uint8_t* msg,enum can_tx_mode tx_m
 	//while(GET_BIT(CANX ->CFG_STAT_TCMD_TCTRL_RCTRL,1) == ACTIVE);
 	if(GET_BIT(CANX ->RTIE_RTIF_ERRINT_LIMIT,11) == ACTIVE){
 		i=0;
-		printf("TPIF1 = %08x\r\n",CANX ->RTIE_RTIF_ERRINT_LIMIT);
 		CANX ->RTIE_RTIF_ERRINT_LIMIT |= CAN_FD_SET_TPIF_MASK;
 		//while(GET_BIT(CANX ->CFG_STAT_TCMD_TCTRL_RCTRL,1) == ACTIVE);//等待发送完成
 		i++;	//等待发送结束
@@ -1077,11 +1075,6 @@ uint8_t Can_Send_Msg(CAN_AL9000_TypeDef *CANX,uint8_t* msg,enum can_tx_mode tx_m
 		//CANX -> CFG_STAT_TCMD_TCTRL_RCTRL |= CAN_FD_SET_TPA_MASK;
 		//count++;
 	}
-	canfd_error_interrupt(CANX);
-	printf("TPIF2 = %08x\r\n",CANX ->RTIE_RTIF_ERRINT_LIMIT);
-	printf("EALCAP = %02x\r\n",GET_BITS(CANX ->EALCAP_TDC_RECNT_TECNT,5,7));
-	printf("Rcent = %d\r\n",GET_BITS(CANX ->EALCAP_TDC_RECNT_TECNT,16,23));
-	printf("Tcent = %d\r\n",GET_BITS(CANX ->EALCAP_TDC_RECNT_TECNT,24,31));
 	i=0;
 	return 0;
 }
@@ -1103,10 +1096,10 @@ uint8_t Can_Receive_Msg(CAN_AL9000_TypeDef *CANX,uint8_t *buf,enum data_length l
 	else {
 		  if(CAN_MessagePending(CANX) == 0) return 0;//没有接收到数据,直接退出
 		  can_rx(CANX,&RxMessage,len);
-		  for(i=0;i< len;i++)
+		  for(i=0;i < len;i++)
 		  buf[i]=RxMessage.Data[i];
-		  printf( "can_tx_mode %08x\n",CANX ->CFG_STAT_TCMD_TCTRL_RCTRL);
-		  printf("intr %08x\r\n",CANX ->EALCAP_TDC_RECNT_TECNT);
+		  //printf( "can_tx_mode %08x\n",CANX ->CFG_STAT_TCMD_TCTRL_RCTRL);
+		  //printf("intr %08x\r\n",CANX ->EALCAP_TDC_RECNT_TECNT);
 		  return RxMessage.DLC;
 	      CANX ->RTIE_RTIF_ERRINT_LIMIT |= CAN_INTF_RIF;
 	    }
@@ -1118,4 +1111,14 @@ void  CAN_TX_COMPLETE(CAN_AL9000_TypeDef *CANX)
 	CANX -> CFG_STAT_TCMD_TCTRL_RCTRL |= CAN_FD_SET_RST_MASK;
 	CANX -> CFG_STAT_TCMD_TCTRL_RCTRL &=~CAN_FD_SET_TPA_MASK;
 	CANX -> CFG_STAT_TCMD_TCTRL_RCTRL &=~CAN_FD_SET_RST_MASK;
+}
+void CAN_TEST_error(CAN_AL9000_TypeDef *CANX){
+	if(GET_BITS(CANX ->EALCAP_TDC_RECNT_TECNT,24,31) == 0){
+		printf("can trasmiate success\r\n");
+	}
+	else{printf("can trasmiate error\r\n");}
+	if(GET_BITS(CANX ->EALCAP_TDC_RECNT_TECNT,16,23) == 0){
+		printf("can receive success\r\n");
+	}
+	else{printf("can receive error\r\n");}
 }
