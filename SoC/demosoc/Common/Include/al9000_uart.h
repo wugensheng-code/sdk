@@ -138,11 +138,20 @@ Data Length Select.
 #define UART_REG_LCR_DLS_6BITS  				((uint8_t)0x01)
 #define UART_REG_LCR_DLS_7BITS  				((uint8_t)0x02)
 #define UART_REG_LCR_DLS_8BITS  				((uint8_t)0x03)
+#define UART_REF_FCR_TX_EMPTY_00				((uint8_t)0x00)
+#define UART_REF_FCR_TX_EMPTY_01				((uint8_t)0x10)
+#define UART_REF_FCR_TX_EMPTY_10				((uint8_t)0x20)
+#define UART_REF_FCR_TX_EMPTY_11				((uint8_t)0x30)
+#define UART_REF_FCR_RX_EMPTY_00				((uint8_t)0x00)
+#define UART_REF_FCR_RX_EMPTY_01				((uint8_t)0x40)
+#define UART_REF_FCR_RX_EMPTY_10				((uint8_t)0x80)
+#define UART_REF_FCR_RX_EMPTY_11				((uint8_t)0xC0)
  /*
 Number of stop bits.
  */ 
-#define UART_REG_LCR_STOP_1BITS  ((uint8_t)0x00);
+#define UART_REG_LCR_STOP_1BITS  ((uint8_t)0x00)
 #define UART_REG_LCR_STOP_2BITS  ((uint8_t)0x04)
+#define UART_REG_LCR_STOP_1P5BITS  ((uint8_t)0x04)
  /*
 Parity Enable.
  */ 
@@ -262,6 +271,7 @@ Receiver FIFO Error bit.
 /*******************  Bit definition for UART_REG_TFR register  ********************/
 /*******************  Bit definition for UART_REG_RFW register  ********************/
 /*******************  Bit definition for UART_REG_USR register  ********************/
+#define UART_REG_HTX_Halt_tx   BIT(0)
 /*
  Framing Error bit.
   */ 
@@ -309,7 +319,55 @@ typedef enum AL9000_uart_bit_length {
     UART_BIT_LENGTH_7 = 2 ,
     UART_BIT_LENGTH_8 = 3 ,
 } AL9000_UART_BIT_LENGTH;
-
+enum AL9000_uart_tx_trigger{
+	FIFO_empty,
+	characters_in_the_FIFO_is_2,
+	FIFO_1_4_full,
+	FIFO_1_2full
+};
+enum AL9000_uart_event{
+	Uart_event_modem = 0,
+	Uart_event_none	 = 1,
+	Uart_event_thre  = 2,
+	Received_data_available = 4,
+	Receiver_line_status = 6,
+	Uart_event_busy		=7,
+	Uart_event_timeout	=12,
+};
+enum AL9000_uart_rx_trigger{
+	one_character_in_the_FIFO,
+	RX_FIFO_1_4_full,
+	RX_FIFO_1_2full,
+	FIFO_2_less_than_full
+};
+/****d* uart.data/dw_uart_irq
+ * DESCRIPTION
+ *  These are the bit definitions used for managing UART interrupts.
+ *  The functionality of ETBEI and ERBFI alters when programmable THRE
+ *  interrupt mode is active (dw_uart_enablePtime()).  See the
+ *  DW_apb_uart databook for a detailed description.
+ * NOTES
+ *  This data type relates to the following register bit field(s):
+ *   - ier/erbfi
+ *   - ier/etbei
+ *   - ier/elsi
+ *   - ier/edssi
+ * SEE ALSO
+ *  dw_uart_enableIrq(), dw_uart_disableIrq(), dw_uart_isIrqEnabled()
+ * SOURCE
+ */
+enum AL9000_uart_irq {
+    Uart_irq_erbfi 	= 0x01,      // receive data available
+    Uart_irq_etbei 	= 0x02,      // transmitter holding register empty
+    Uart_irq_elsi 	= 0x04,       // receiver line status
+    Uart_irq_edssi 	= 0x08,      // modem status
+    Uart_irq_all 	= 0x0f         // all interrupts
+};
+enum AL9000_dma_mode{
+	TX_DMA_MODE = 1,
+	RX_DMA_MODE = 2,
+	TX_RX_DMA_MODE = 3
+};
 /*!
     \brief  uart initialize
     \param  uart: uart parameter stuct
@@ -317,7 +375,7 @@ typedef enum AL9000_uart_bit_length {
     \param  bit_length: bit length (5/6/7/8/9)
     \retval 0,if uart!=null; otherwise -1;
 */
-int32_t AL9000_uart_init(UART_AL9000_TypeDef *uart, uint32_t baudrate,AL9000_UART_BIT_LENGTH bitlength);
+//int32_t AL9000_uart_init(UART_AL9000_TypeDef *uart, uint32_t baudrate,AL9000_UART_BIT_LENGTH bitlength);
 /*!
     \brief  uart stop bit config
     \param  uart: uart parameter stuct
@@ -448,9 +506,31 @@ int32_t AL9000_uart_get_flag_rxip(UART_AL9000_TypeDef *uart);
     \param  uart: uart parameter stuct
     \retval flag,if uart!=null; otherwise -1;
 */
+int32_t AL9000_uart_init(UART_AL9000_TypeDef *uart, uint32_t baudrate,AL9000_UART_BIT_LENGTH bit_length, AL9000_UART_STOP_BIT stopbit);
+uint8_t AL9000_uart_set_baudrate(UART_AL9000_TypeDef *uart, uint32_t baudrate);
+uint8_t AL9000_uart_dataleng_config(UART_AL9000_TypeDef *uart,AL9000_UART_BIT_LENGTH bit_length);
 int32_t AL9000_uart_get_flag_txip(UART_AL9000_TypeDef *uart);
-
-
+uint8_t uart_readirq_enable(UART_AL9000_TypeDef *uart);
+void AL9000_uart_resetFifo(UART_AL9000_TypeDef *uart);
+void AL9000_uart_setParity(UART_AL9000_TypeDef *uart);
+uint8_t AL9000_dma_sw_handshake(UART_AL9000_TypeDef *uart,DMA_Channel_TypeDef *Channelx);
+int AL9000_uart_enablePtime(UART_AL9000_TypeDef *uart);
+int AL9000_uart_disablePtime(UART_AL9000_TypeDef *uart);
+//void AL9000_uart_setBreak(UART_AL9000_TypeDef *uart, enum AL9000_state state);
+void AL9000_uart_enableLoopback(UART_AL9000_TypeDef *uart);
+void AL9000_uart_disableLoopback(UART_AL9000_TypeDef *uart);
+int AL9000_uart_enableAfc(UART_AL9000_TypeDef *uart);
+int AL9000_uart_disableAfc(UART_AL9000_TypeDef *uart);
+void AL9000_uart_setDmaMode(UART_AL9000_TypeDef *uart);
+void AL9000_uart_enableIrq(UART_AL9000_TypeDef *uart, enum AL9000_uart_irq interrupts);
+void AL9000_uart_disableIrq(UART_AL9000_TypeDef *uart,enum AL9000_uart_irq interrupts);
+void AL9000_uart_setTxTrigger(UART_AL9000_TypeDef *uart, enum AL9000_uart_tx_trigger trigger);
+void AL9000_uart_setRxTrigger(UART_AL9000_TypeDef *uart, enum AL9000_uart_rx_trigger trigger);
+void AL9000_uart_setDmaTxMode(UART_AL9000_TypeDef *uart,DMA_Channel_TypeDef *Channelx);
+void AL9000_uart_setDmaRxMode(UART_AL9000_TypeDef *uart,DMA_Channel_TypeDef *Channelx);
+int AL9000_uart_userIrqHandler(UART_AL9000_TypeDef *uart);
+int AL9000_uart_enableFifoAccess(UART_AL9000_TypeDef *uart);
+int AL9000_uart_resumeTx(UART_AL9000_TypeDef *uart);
 #ifdef __cplusplus
 }
 #endif
