@@ -121,6 +121,7 @@ __STATIC_FORCEINLINE uint64_t SysTimer_GetLoadValue(void)
     return SysTimer->MTIMER;
 }
 
+
 /**
  * \brief  Set system timer compare value
  * \details
@@ -161,6 +162,21 @@ __STATIC_FORCEINLINE void SysTimer_Start(void)
 {
     SysTimer->MTIMECTL &= ~(SysTimer_MTIMECTL_TIMESTOP_Msk);
 }
+
+
+/**
+ * \brief  Enable system timer counter running
+ * \details
+ * Enable system timer counter running by clear
+ * TIMESTOP bit in MTIMECTL register.
+ */
+__STATIC_FORCEINLINE void SysTimer_clk_sel(void)
+{
+    SysTimer->MTIMECTL = SysTimer->MTIMECTL | 0x1<<2;
+}
+
+
+
 
 /**
  * \brief  Stop system timer counter running
