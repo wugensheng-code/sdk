@@ -34,6 +34,10 @@
 extern "C" {
 #endif
 
+
+#define SIMU_TEST
+
+
 /** @addtogroup Nuclei
   * @{
   */
@@ -107,32 +111,35 @@ typedef enum IRQn {
     SOC_INT42_IRQn           = 42,                /*!< Device Interrupt */
     SOC_INT43_IRQn           = 43,                /*!< Device Interrupt */
     SOC_INT44_IRQn           = 44,                /*!< Device Interrupt */
-          WDT_IRQn	     = 45,                /*!< Device Interrupt */
+	WDT_IRQn	     		 = 45,                /*!< Device Interrupt */
     SOC_INT46_IRQn           = 46,                /*!< Device Interrupt */
     SOC_INT47_IRQn           = 47,                /*!< Device Interrupt */
     SOC_INT48_IRQn           = 48,                /*!< Device Interrupt */
     SOC_INT49_IRQn           = 49,                /*!< Device Interrupt */
     SOC_INT50_IRQn           = 50,                /*!< Device Interrupt */
-    SOC_INT51_IRQn           = 51,                /*!< Device Interrupt */
-    SOC_INT52_IRQn           = 52,                /*!< Device Interrupt */
-    SOC_INT53_IRQn           = 53,                /*!< Device Interrupt */
-    SOC_INT54_IRQn           = 54,                /*!< Device Interrupt */
-    SOC_INT55_IRQn           = 55,                /*!< Device Interrupt */
-    SOC_INT56_IRQn           = 56,                /*!< Device Interrupt */
-    SOC_INT57_IRQn           = 57,                /*!< Device Interrupt */
-    SOC_INT58_IRQn           = 58,                /*!< Device Interrupt */
-    SOC_INT59_IRQn           = 59,                /*!< Device Interrupt */
-    SOC_INT60_IRQn           = 60,                /*!< Device Interrupt */
-    SOC_INT61_IRQn           = 61,                /*!< Device Interrupt */
-    SOC_INT62_IRQn           = 62,                /*!< Device Interrupt */
-    SOC_INT63_IRQn           = 63,                /*!< Device Interrupt */
-    SOC_INT64_IRQn           = 64,                /*!< Device Interrupt */
-    SOC_INT65_IRQn           = 65,                /*!< Device Interrupt */
-    SOC_INT66_IRQn           = 66,                /*!< Device Interrupt */
-    SOC_INT67_IRQn           = 67,                /*!< Device Interrupt */
-    SOC_INT68_IRQn           = 68,                /*!< Device Interrupt */
-    SOC_INT69_IRQn           = 69,                /*!< Device Interrupt */
-    SOC_INT70_IRQn           = 70,                /*!< Device Interrupt */
+	SOC_INT51_IRQn           = 51,                /*!< Device Interrupt */
+	SOC_INT52_IRQn           = 52,                /*!< Device Interrupt */
+	SOC_INT53_IRQn           = 53,                /*!< Device Interrupt */
+	SOC_INT54_IRQn           = 54,                /*!< Device Interrupt */
+	SOC_INT55_IRQn           = 55,                /*!< Device Interrupt */
+	SOC_INT56_IRQn           = 56,                /*!< Device Interrupt */
+	SOC_INT57_IRQn           = 57,                /*!< Device Interrupt */
+	/*XEC0_IRQn                = 58,     */           /*!gbe0*/
+	/*XEC1_IRQn                = 59,      */          /*!gbe1*/
+	/*SOC_INT36_IRQn           = 36,    */            /*!< Device Interrupt */
+	SOC_INT58_IRQn           = 58,                /*!< Device Interrupt */
+	SOC_INT59_IRQn           = 59,                /*!< Device Interrupt */
+	SOC_INT60_IRQn           = 60,                /*!< Device Interrupt */
+	SOC_INT61_IRQn           = 61,                /*!< Device Interrupt */
+	SOC_INT62_IRQn           = 62,                /*!< Device Interrupt */
+	SOC_INT63_IRQn           = 63,                /*!< Device Interrupt */
+	SOC_INT64_IRQn           = 64,                /*!< Device Interrupt */
+	SOC_INT65_IRQn           = 65,                /*!< Device Interrupt */
+	SOC_INT66_IRQn           = 66,                /*!< Device Interrupt */
+	SOC_INT67_IRQn           = 67,                /*!< Device Interrupt */
+	SOC_INT68_IRQn           = 68,                /*!< Device Interrupt */
+	SOC_INT69_IRQn           = 69,                /*!< Device Interrupt */
+	SOC_INT70_IRQn           = 70,                /*!< Device Interrupt */
 	GPIO0_IRQn		         = 71,                /*!< Device Interrupt */
 	GPIO1_IRQn           	 = 72,                /*!< Device Interrupt */
 	GPIO2_IRQn           	 = 73,                /*!< Device Interrupt */
@@ -145,8 +152,8 @@ typedef enum IRQn {
 	SOC_INT80_IRQn           = 80,                /*!< Device Interrupt */
 	SOC_INT81_IRQn           = 81,                /*!< Device Interrupt */
 	SOC_INT82_IRQn           = 82,                /*!< Device Interrupt */
-	SOC_INT83_IRQn           = 83,                /*!< Device Interrupt-i2c0 */
-	SOC_INT84_IRQn           = 84,                /*!< Device Interrupt-i2c1 */
+	SOC_INT83_IRQn           = 83,                /*!< Device Interrupt */
+	SOC_INT84_IRQn           = 84,                /*!< Device Interrupt */
 	SOC_INT85_IRQn           = 85,                /*!< Device Interrupt */
 	SOC_INT86_IRQn           = 86,                /*!< Device Interrupt */
 	SOC_INT87_IRQn           = 87,                /*!< Device Interrupt */
@@ -244,7 +251,7 @@ typedef enum EXCn {
 #warning Not supported compiler type
 #endif
 
-#define RTC_FREQ                    25000000//32768
+#define RTC_FREQ                    8000000//32768
 // The TIMER frequency is just the RTC frequency
 #define SOC_TIMER_FREQ              RTC_FREQ
 /* =========================================================================================================================== */
@@ -341,11 +348,14 @@ typedef enum {
 #define GPIO_BIT_ALL_ZERO           (0x0)
 #define GPIO_BIT_ALL_ONE            (0xFFFFFFFF)
 
+
+
 typedef struct{
    __IOM uint32_t reverse[89];
    __IOM uint32_t  can_fd_ctrl;
    __IOM uint32_t reverse1[18];
    __IOM uint32_t can_dma;
+
 }TOPCFG_TypeDef;
 /**
   * @brief GPIO-AL9000
@@ -413,7 +423,8 @@ typedef struct {
 } PWM_TypeDef;
 
 
-/******************************* QSPI registers definition **************************************/
+
+
 /**
   * @brief QSPI-AL9000
 */
@@ -496,8 +507,6 @@ typedef struct {
     __IOM uint32_t XIP_MODE_BITS;       /*offset 0xfc*/
 } QSPI_TypeDef;
 
-
-/******************************* SPI registers definition **************************************/
 /**
   * @brief SPI-AL9000
   */
@@ -549,8 +558,6 @@ typedef struct {
     __IOM uint32_t RSVD_1;      		/*offset 0xf8*/
     __IOM uint32_t RSVD_2;		        /*offset 0xfc*/
 } SPI_TypeDef;
-
-
 /******************************* I2C registers definition **************************************/
 typedef struct
 {
@@ -752,21 +759,25 @@ typedef struct {
  *
  */
 typedef struct{
-    __IOM uint32_t RBR_THR_DLL;  // 0x00
-    __IOM uint32_t DLH_IER;     // 0x04
-    __IOM uint32_t IIR_FCR;      // 0x08
-    __IOM uint32_t LCR;         // 0x0c
-    __IOM uint32_t MCR;          // 0x10
-    __IOM uint32_t LSR;         // 0X14
-    __IOM uint32_t MSR;          // 0X18	
-	__IOM uint32_t SCR;          // 0x1c
-    __IOM uint32_t reserved_reg1[20]; // 0x20-0x70
-	__IOM uint32_t FAR;		//0x70
-    __IOM uint32_t TFR;               // 0x74
-    __IOM uint32_t RFW;             // 0x78
-    __IOM uint32_t USR;               // 0x7c
-    __IOM uint32_t TFL;             // 0x80
-    __IOM uint32_t RFL;               // 0x84
+	volatile uint32_t RBR_THR_DLL; 	//0x00
+	volatile uint32_t DLH_IER;	//0x04
+	volatile uint32_t IIR_FCR;	//0x08
+	volatile uint32_t LCR;		//0x0c
+	volatile uint32_t MCR;		//0x10
+	volatile uint32_t LSR;		//0X14
+	volatile uint32_t MSR;		//0X18
+	volatile uint32_t SCR;		//0x1c
+	volatile uint32_t reserved_reg1[20];  //0x20-0x70
+	volatile uint32_t FAR;		//0x70
+	volatile uint32_t TFR;		//0x74
+	volatile uint32_t RFW;		//0x78
+	volatile uint32_t USR;		//0x7c
+	volatile uint32_t TFL;		//0x80
+	volatile uint32_t RFL;		//0x84
+	volatile uint32_t resv_reg2[7];
+	volatile uint32_t HTX;
+	volatile uint32_t DMASA;
+	volatile uint32_t CPR;
 }UART_AL9000_TypeDef;
 
 /*@}*/ /* end of group demosoc_Peripherals */
@@ -776,29 +787,29 @@ typedef struct{
   * @brief Ethernet MAC
   */
 typedef struct {
-    __IOM uint32_t MAC_Configuration;
-    __IOM uint32_t MAC_Ext_Configuration;
-    __IOM uint32_t MAC_Packet_Filter;
-    __IOM uint32_t MAC_Watchdog_Timeout;  //0xc
-   // __IOM uint32_t reserved_re[19];     //offset 0x10+i*0x4, i=[0..35]*/
-    __IOM uint32_t reserved_re1;          //0x10
-    __IOM uint32_t reserved_re2;          //0x14
-    __IOM uint32_t reserved_re3;          //0x18
-    __IOM uint32_t reserved_re4;          //0x1c
-    __IOM uint32_t reserved_re5;          //0x20
-    __IOM uint32_t reserved_re6;          //0x24
-    __IOM uint32_t reserved_re7;          //0x28
-    __IOM uint32_t reserved_re8;          //0x2c
-    __IOM uint32_t reserved_re9;          //0x30
-    __IOM uint32_t reserved_re10;         //0x34
-    __IOM uint32_t reserved_re11;         //0x38
-     __IOM uint32_t reserved_re12;        //0x3c
-     __IOM uint32_t reserved_re13;          //0x40
-     __IOM uint32_t reserved_re14;         //0x44
-     __IOM uint32_t reserved_re15;         //0x48
-      __IOM uint32_t reserved_re16;        //0x4c
-    __IOM uint32_t MAC_VLAN_Tag;       //0x50
-    __IOM uint32_t MAC_VLAN_Tag_Data;  //0x54
+	__IOM uint32_t MAC_Configuration;
+	__IOM uint32_t MAC_Ext_Configuration;
+	__IOM uint32_t MAC_Packet_Filter;
+	__IOM uint32_t MAC_Watchdog_Timeout;  //0xc
+	   // __IOM uint32_t reserved_re[19];     //offset 0x10+i*0x4, i=[0..35]*/
+	__IOM uint32_t reserved_re1;          //0x10
+	__IOM uint32_t reserved_re2;          //0x14
+	__IOM uint32_t reserved_re3;          //0x18
+	__IOM uint32_t reserved_re4;          //0x1c
+	__IOM uint32_t reserved_re5;          //0x20
+	__IOM uint32_t reserved_re6;          //0x24
+	__IOM uint32_t reserved_re7;          //0x28
+	__IOM uint32_t reserved_re8;          //0x2c
+	__IOM uint32_t reserved_re9;          //0x30
+	__IOM uint32_t reserved_re10;         //0x34
+	__IOM uint32_t reserved_re11;         //0x38
+	__IOM uint32_t reserved_re12;        //0x3c
+	__IOM uint32_t reserved_re13;          //0x40
+	__IOM uint32_t reserved_re14;         //0x44
+	__IOM uint32_t reserved_re15;         //0x48
+	__IOM uint32_t reserved_re16;        //0x4c
+	__IOM uint32_t MAC_VLAN_Tag;       //0x50
+	__IOM uint32_t MAC_VLAN_Tag_Data;  //0x54
 
 } ETH_MACTypeDef;
 
@@ -833,11 +844,10 @@ typedef struct {
 
 
 typedef struct {
-	__IOM uint32_t  MAC_Address0_High;   //0x300
-	__IOM uint32_t  MAC_Address0_Low;    //0x304
+	__IOM uint32_t  MAC_Address0_High;
+	__IOM uint32_t  MAC_Address0_Low;
 	__IOM uint32_t  MAC_Address1_High;   //0x308
 	__IOM uint32_t  MAC_Address1_Low;    //0x30c
-
 }ETH_MACAddrTypeDef;
 
 typedef struct {
@@ -1159,7 +1169,7 @@ typedef struct
    __IOM uint32_t TBUF_ID_PARM;							/*offset 0x50*/
    __IOM uint32_t TBUF_CTL;								/*offset 0x54*/
    //__IOM uint8_t revers[3];
-   __IOM uint32_t TBUF_DATA[16];				/*offset 0x55 - 0x97*/
+   __IOM uint32_t TBUF_DATA[16];						/*offset 0x58 - 0x97*/
    __IOM uint8_t TTS[8];
    __IOM uint32_t CFG_STAT_TCMD_TCTRL_RCTRL;			/*offset 0xA0 */
    __IOM uint32_t RTIE_RTIF_ERRINT_LIMIT;				/*offset 0xA4 */
@@ -1282,16 +1292,11 @@ typedef struct
 //#define DEMOSOC_PERIPH_BASE     (0x10000000UL)//(0x10000000UL)      /*!< (Peripheral) Base Address */
 #define PERIPH_BASE     		(0xF8000000UL)					    /*!< (Peripheral) Base Address */
 #define MEM_BASE1_ADDR           (0x61030000)
-#define MEM_BASE2_ADDR           (0x61030100)
-
-
+#define MEM_BASE2_ADDR           (0x61030500)
 
 #define WDT_BASE                  	(0xF8410000)
 #define SMC_BASE                  	(0x6841A000UL)
-#define NAND_BASE                  	(0x69000000UL)
-
-
-/* Peripheral memory map */
+#define NAND_BASE                  	(0x69000000UL)/* Peripheral memory map */
 #define GPIO_BLOCK0_BASE        (0xF8411000UL)          			/*!< (GPIO BLOCK0) Base Address */
 #define GPIO_BLOCK1_BASE        (0xF8411100UL)          			/*!< (GPIO BLOCK1) Base Address */
 #define GPIO_BLOCK2_BASE        (0xF8411200UL)          			/*!< (GPIO BLOCK2) Base Address */
@@ -1302,8 +1307,12 @@ typedef struct
 //#define UART1_BASE              (DEMOSOC_PERIPH_BASE + 0x23000)          /*!< (UART1) Base Address */
 //#define PWM1_BASE               (DEMOSOC_PERIPH_BASE + 0x25000)          /*!< (PWM1) Base Address */
 //#define PWM2_BASE               (DEMOSOC_PERIPH_BASE + 0x35000)          /*!< (PWM2) Base Address */
-
-#define AL9000_TOP_CFG_BASE     (0XF8800000)
+//#define I2C_BASE                (DEMOSOC_PERIPH_BASE + 0x42000)          /*!< (I2C Master) Base Address */
+#define AL9000_TOP_CFG_BASE     		 (0xF8800000)
+#define AL9000_PLPS_RESET                (0xf8801078)
+#define AL9000_GP0                       (0x80000000)
+#define AL9000_GP1                       (0xA0000000)
+#define AL9000_FAHB_BASE				 (0xFC000000)
 #define AL9000_CAN0_BASE                 (0xF8408000)
 #define AL9000_CAN1_BASE                 (0xF8409000)
 #define AL9000_DMAC_channel_1BASE        (0xF804D000)				 			 /*!< (AL9000_DMAC_channel_1BASE) Base Address */
@@ -1316,6 +1325,7 @@ typedef struct
 #define AL9000_DMAC_channel_8BASE        (0xF804D268)				 			 /*!< (AL9000_DMAC_channel_8BASE) Base Address */
 #define AL9000_DMAC_BASE                 (0xF804D2C0)				 			 /*!< (AL9000_UART0_BASE) Base Address */
 #define AL9000_UART0_BASE       (0xF8400000)				 			         /*!< (AL9000_UART0) Base Address */
+#define AL9000_UART1_BASE       (0xF8401000)				 			         /*!< (AL9000_UART1) Base Address */
 #define QSPI0_BASE              (PERIPH_BASE + 0x0004E000)	 			 /*!< (QSPI0) Base Address */
 #define SPI0_BASE               (PERIPH_BASE + 0x00404000)	 			 /*!< (SPI0) Base Address */
 #define SPI1_BASE               (PERIPH_BASE + 0x00405000)	 			 /*!< (SPI1) Base Address */
@@ -1350,13 +1360,13 @@ typedef struct
 
 #define UART0                   ((UART_TypeDef *) UART0_BASE)
 #define WDT                   	((WDT_TypeDef *)  WDT_BASE)
-
 #define PWM0                    ((PWM_TypeDef *) PWM0_BASE)
 #define UART1                   ((UART_TypeDef *) UART1_BASE)
 #define PWM1                    ((PWM_TypeDef *) PWM1_BASE)
 #define PWM2                    ((PWM_TypeDef *) PWM2_BASE)
-
+#define I2C                     ((I2C_TypeDef *) I2C_BASE)
 #define AL9000_UART0		        ((UART_AL9000_TypeDef *) AL9000_UART0_BASE)
+#define AL9000_UART1		        ((UART_AL9000_TypeDef *) AL9000_UART1_BASE)
 #define AL9000_CAN0				((CAN_AL9000_TypeDef *) AL9000_CAN0_BASE)
 #define AL9000_CAN1				((CAN_AL9000_TypeDef *) AL9000_CAN1_BASE)
 #define AL9000_TOP0             ((TOPCFG_TypeDef *) AL9000_TOP_CFG_BASE  )
@@ -1374,7 +1384,6 @@ typedef struct
 #define SPI1			              ((SPI_TypeDef *) SPI1_BASE)
 #define I2C0                     	  ((I2C_TypeDef *) I2C0_BASE)
 #define I2C1                     	  ((I2C_TypeDef *) I2C1_BASE)
-
 // Helper functions
 #define _REG8(p, i)             (*(volatile uint8_t *) ((p) + (i)))
 #define _REG32(p, i)            (*(volatile uint32_t *) ((p) + (i)))
@@ -1411,8 +1420,6 @@ void fsbl_pass_fail_simulation(uint32_t state);
 void print_value(uint64_t val);
 void print_char(uint8_t c);
 void print_string(uint8_t *str);
-
-
 /** @} */ /* End of group demosoc */
 
 
