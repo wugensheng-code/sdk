@@ -2,9 +2,9 @@ TARGET = AL9000_sd
 
 NUCLEI_SDK_ROOT = ../../..
 
-SRCDIRS = . 
+SRCDIRS = . FATFS
 
-INCDIRS = . 
+INCDIRS = . FATFS
 
 
 include $(NUCLEI_SDK_ROOT)/Build/Makefile.base
