@@ -48,7 +48,7 @@
 #define CMD_RDID			(0x9F)
 #define CMD_WREN			(0x06)
 #define CMD_WRR  			(0x01)  // Write Register(status-1,configuration-1)
-#define CMD_SECTOR_ERASE    (0xD8)  // 256KB(=64*4KB)
+#define CMD_SECTOR_ERASE    (0x20)  // 256KB(=64*4KB)
 #define CMD_CHIP_ERASE      (0x60)
 #define CMD_PP     			(0x02)
 #define CMD_SREAD  			(0x03)
@@ -112,8 +112,9 @@
                                                             at which the Receive FIFO controller triggers an interrupt.*/
 /* SPI_IMR */
 
-
-
+/* SPI DMA Control Register*/
+#define SPI_DMACR_TDMAE	BIT(1)
+#define SPI_DMACR_RDMAE	BIT(0)
 /*SER*/
 #define SER_SS0_EN               			(1<<0)
 #define SER_SS1_EN               			(1<<1)
