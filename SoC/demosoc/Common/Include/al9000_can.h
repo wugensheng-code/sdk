@@ -31,7 +31,7 @@ enum can_tx_mode{
 
 #define	CAN_FD_SET_PRIORITY_MASK			BIT(21)	/*set TSMODE as 1->FIFO mode*/
 #define	CAN_FD_OFF_FIFO_MASK			0xdf	/*set TSMODE as 0->Priority mode*/
-	
+#define CAN_FD_SET_FIFO_MASK			(uint32_t)0x00200000
 #define	CAN_FD_SET_TSONE_MASK			0x04	
 #define	CAN_FD_OFF_TSONE_MASK			0xfb
 	
@@ -354,7 +354,8 @@ enum baud_rate{
 	rate_5Mbit,
 	rate_6_667Mbit,
 	rate_8Mbit,
-	rate_10Mbit
+	rate_10Mbit,
+	can_rate_1Mbit
 };
 enum arb_baud_rate {
 	arbrate_0_25Mbit,
@@ -448,6 +449,7 @@ void  CAN_TX_COMPLETE(CAN_AL9000_TypeDef *CANX);
 uint8_t set_rx_fillter(CAN_AL9000_TypeDef *CANX,enum ACFADR ACFADDR,uint32_t ID);
 uint8_t can_TX_length(enum data_length len);
 uint8_t can_tx_function(CAN_AL9000_TypeDef *CANX,CanTxMsg* TxMessage,enum data_length len);
+void CAN_TEST_error(CAN_AL9000_TypeDef *CANX);
 #ifdef __cplusplus
 }
 #endif
