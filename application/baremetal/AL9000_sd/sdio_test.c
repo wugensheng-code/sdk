@@ -489,16 +489,22 @@ void SD_Init_n()
      {
     	 Buffer_MultiBlock_Rx[i] = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+ 0x20);
      }
-
      wait_transfer_complete();
 
-     if (Buffer_MultiBlock_Rx[0] == write_b)
-     {
+     int result = 0;
 
+     for (i = 0; i< 128;i++)
+     {
+    	 result = strcmp(Buffer_MultiBlock_Rx[i], write_b);
+     }
+
+     if (result == 0)
+     {
+    	 printf("test pass\n");
      }
      else
      {
-
+    	 printf("test fail\n");
      }
 
 
