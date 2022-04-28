@@ -408,6 +408,7 @@ SD_Error SD_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t Block
 	 volatile unsigned int value = 0;
 	 volatile unsigned int value1 = 0;
 	 volatile unsigned int reg_value = 0;
+	 uint8_t* ptr = readbuff;
 #if 0
 
 	    //sdma start
@@ -468,6 +469,7 @@ SD_Error SD_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t Block
 
 	        // send command 17 read single block
 	        REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000000);
+	        SDIO->ARGUMENT_R = ReadAddr;
 	        REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x11220090);
 	        value = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0xC);
 	        wait_command_complete();
@@ -481,8 +483,9 @@ SD_Error SD_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t Block
 	         for (i = 0; i< 128;i++)
 	         {
 	        	 reg_value = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+ 0x20);
-			     memcpy(readbuff, &reg_value, 4);
-			     readbuff += 4;
+			     //*ptr = reg_value;
+			     memcpy(ptr, &reg_value, 4);
+			     ptr = ptr +4;
 	         }
 
 
@@ -509,6 +512,7 @@ SD_Error SD_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t Bl
 	 volatile unsigned int value = 0;
 	 volatile unsigned int value1 = 0;
 	 volatile unsigned int reg_value = 0;
+	 uint8_t* ptr =  writebuff;
 
 	 // send command 16
 	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x4, 0x00080200);
@@ -523,6 +527,7 @@ SD_Error SD_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t Bl
 	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000000);
 	     SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = BlockSize;
 	     SDIO->BLOCKCOUNT_R = NumberOfBlocks;
+	     SDIO->ARGUMENT_R = WriteAddr;
 	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x18220082);
 	     value = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0xC);
 	     wait_command_complete();
@@ -530,9 +535,9 @@ SD_Error SD_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t Bl
 	     int i = 0;
 	     for (i = 0; i< 128;i++)
 	     {
-	    	 memcpy(&reg_value, writebuff, 4);
+	    	 memcpy(&reg_value, ptr, 4);
 	         REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x20, reg_value);
-	         writebuff += 4;
+	         ptr=ptr+4;
 	     }
 
 	     wait_transfer_complete();
@@ -796,11 +801,12 @@ void SD_Test(void)
 	    __IO SD_Error errorstatus = SD_OK;
 	    UINT fnum;            					  /* 文件成功读写数量 */
 	    BYTE ReadBuffer[1024]={0};        /* 读缓冲区 */
-	    BYTE WriteBuffer[] = "welcome\r\n";
+	    BYTE WriteBuffer[] = "welcome88888888888888888888\r\n";
 	    FIL fnew;
 
 
 	    res_sd = f_mount(&fs,"0:",1);
+#if 1
 	    if(res_sd == FR_NO_FILESYSTEM)
 	    {
 	    	res_sd=f_mkfs("0:",0,0);
@@ -810,7 +816,7 @@ void SD_Test(void)
 	    		res_sd = f_mount(&fs,"0:",1);
 	    	}
 	    }
-
+#endif
 	    	res_sd = f_open(&fnew, "0:FatFs.txt",FA_CREATE_ALWAYS | FA_WRITE );
 	    	if ( res_sd == FR_OK )
 	    	{
