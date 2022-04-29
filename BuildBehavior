@@ -13,3 +13,5 @@ PROGRAM=application/baremetal/demo_spi/spi_master DOWNLOAD=ilm CORE=ux600fd clea
 PROGRAM=application/baremetal/demo_gpio/gpio_led DOWNLOAD=ilm CORE=ux600fd clean
 PROGRAM=application/baremetal/demo_gpio/gpio_input DOWNLOAD=ilm CORE=ux600fd clean
 PROGRAM=application/baremetal/demo_i2c/i2c_e2prom DOWNLOAD=ilm CORE=ux600fd clean
+PROGRAM=application/demo_SDK DOWNLOAD=ilm CORE=ux600fd clean
+PROGRAM=application/baremetal/demo_per DOWNLOAD=ilm CORE=ux600fd clean

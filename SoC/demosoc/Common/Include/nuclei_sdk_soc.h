@@ -15,6 +15,7 @@ extern "C" {
 #include "demosoc_pwm.h"
 #include "al9000_uart.h"
 #include "al9000_can.h"
+#include "al9000_dmac.h"
 
 #ifdef __cplusplus
 }

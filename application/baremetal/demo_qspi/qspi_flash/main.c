@@ -10,7 +10,7 @@
 #include "nuclei_sdk_soc.h"
 
 #define FLASH_RDID
-#define FLASH_ERASE
+//#define FLASH_ERASE
 #define FLASH_X1
 #define FLASH_X2
 #define FLASH_X4
@@ -154,6 +154,19 @@ int main()
     {
     	wrdata_a[i] = i;
     }
+
+    dwc_ssi_disable(QSPI0);
+    qspi_ser(QSPI0,SER_SS0_EN);
+    qspi_dfs(QSPI0,DFS_BYTE);
+    qspi_x1_mode(QSPI0);
+    qspi_tmod_tx(QSPI0);
+    qspi_txftl_tft(QSPI0, 0);
+    dwc_ssi_enable(QSPI0);
+    qspi_data_transmit(QSPI0,0xF0);
+
+	while(!qspi_sr_tfe(QSPI0));
+	while(qspi_sr_busy(QSPI0));
+    flash_wait_wip();
 
 	/******************** flash x1 mode id-check**********************/
 #ifdef FLASH_RDID
