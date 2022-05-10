@@ -85,84 +85,49 @@ void SOC_DMA_AHB_HANDLER(void)
  	 */
         ECLIC_Register_IRQ(SOC_INT65_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,SOC_DMA_AHB_HANDLER);
 	__enable_irq();
-	/*
- 	 *dw_dmac_enableChannelIrq()
- 	 */
-         dw_dmac_enableChannelIrq(AL9000_DMAC_channel_0,dw_dmac_channel_num_1);
-	/*
-	 *dw_dmac_unmaskIrq()
-	 */
+
+         dw_dmac_enableChannelIrq(AL9000_DMAC_channel_0);
+
          dw_dmac_unmaskIrq(AL9000_DMAC,dw_dmac_channel_num_1,tfr_l);
 
+	 dw_dmac_setAddress(AL9000_DMAC_channel_0,Dmac_src,MEM_BASE1_ADDR);
 
-	/*
-	 * dw_dmac_setAddress
-	 *
-	 */
-	 dw_dmac_setAddress(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_src,MEM_BASE1_ADDR);
-		/*
-		 * dw_dmac_setAddress
-		 */
-         dw_dmac_setAddress(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_dst,MEM_BASE2_ADDR);
+         dw_dmac_setAddress(AL9000_DMAC_channel_0,Dmac_dst,MEM_BASE2_ADDR);
 
-	/*
-	 * dw_dmac_setChannelConfig
-	 */
 	 dw_dmac_setChannelConfig(AL9000_DMAC_channel_0);
-	 /*
-	  * dw_dmac_setTransferType
-	  */
-	 dw_dmac_setTransferType(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_transfer_row10,Dmac_src_dst);
-	 /*
-	  * dw_dmac_setMemPeriphFlowCtl
-	  */
-	 dw_dmac_setMemPeriphFlowCtl(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,MEM2MEM);
-	 /*
-	  * dw_dmac_setTransWidth
-	  * you can set the Transwidth :8/16/32/64/256 MAX_WIDTH=256
-	  */
-	 dw_dmac_setTransWidth(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_src_dst,WIDTH_32);
-	 /*
-	  * dw_dmac_setBlockTransSize
-	  * you can set the number of burst in one of the block
-	  * range MIN:MAX = 1:4096
-	  */
-	 dw_dmac_setBlockTransSize(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,10);
-	 /*
-	  * dw_dmac_setBurstTransLength
-	  */
-	 dw_dmac_setBurstTransLength(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_src_dst,DW_DMA_MSIZE_8);
-	 /*
-	  *  dw_dmac_setMstSelect
-	  */
-	 dw_dmac_setMstSelect(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_src_dst,SMS_master1,DMS_master1);
-	 /*
-	  * dw_dmac_setAddressInc
-	  */
-	 dw_dmac_setAddressInc(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_src_dst,Increments);
-	 /*
-	  * dw_dmac_setHandshakingMode
-	  */
-	 dw_dmac_setHandshakingMode(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_src_dst,Hardware_handshaking);
-	 /*
-	  * dw_dmac_setHsPolarity
-	  */
-	 dw_dmac_setHsPolarity(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_src_dst,ACTIVE_HIGH);
+
+	 dw_dmac_setTransferType(AL9000_DMAC_channel_0,Dmac_transfer_row10);
+
+	 dw_dmac_setMemPeriphFlowCtl(AL9000_DMAC_channel_0,MEM2MEM);
+
+	 dw_dmac_setTransWidth(AL9000_DMAC_channel_0,Dmac_src_dst,WIDTH_32);
+
+	 dw_dmac_setBlockTransSize(AL9000_DMAC_channel_0,10);
+
+	 dw_dmac_setBurstTransLength(AL9000_DMAC_channel_0,Dmac_src_dst,DW_DMA_MSIZE_8);
+
+	 dw_dmac_setMstSelect(AL9000_DMAC_channel_0,Dmac_src_dst,SMS_master1,DMS_master1);
+
+	 dw_dmac_setAddressInc(AL9000_DMAC_channel_0,Dmac_src_dst,Increments);
+
+	 dw_dmac_setHandshakingMode(AL9000_DMAC_channel_0,Dmac_src_dst,Hardware_handshaking);
+
+	 dw_dmac_setHsPolarity(AL9000_DMAC_channel_0,Dmac_src_dst,ACTIVE_HIGH);
 	 /*
 	  * dw_dmac_setFifoMode
 	  */
-	 dw_dmac_setFifoMode(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,FIFO_MODE_0);
+	 dw_dmac_setFifoMode(AL9000_DMAC_channel_0,FIFO_MODE_0);
 
 	 /*
 	  * dw_dmac_setFlowCtlMode
 	  */
-	 dw_dmac_setFlowCtlMode(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,fc_mode_0);
+	 dw_dmac_setFlowCtlMode(AL9000_DMAC_channel_0,fc_mode_0);
 	 /*
 	  * dw_dmac_checkChannelBusy
 	  */
-	 dw_dmac_checkChannelBusy(AL9000_DMAC,dw_dmac_channel_num_1);
+	 dw_dmac_checkChannelBusy(AL9000_DMAC);
 
-	 dw_dmac_setListPointerAddress(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,LMS_master1,LLP_BASE_ADDR);
+	 dw_dmac_setListPointerAddress(AL9000_DMAC_channel_0,LMS_master1,LLP_BASE_ADDR);
 
           volatile uint32_t buffer[10];
 	  volatile uint32_t buffer_list_parm[4][5]={{0x61030000,0x61030100,0x61030300,0x18004825,0x00000008},

@@ -371,67 +371,68 @@ void SD_Init_n()
     wait_command_complete();
     sleep(2000);
 
+    //sdma start
+
+    memset(Buffer_MultiBlock_Tx, 0x5a, sizeof(Buffer_MultiBlock_Tx));
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x28, 0x0000BF02);
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x00, Buffer_MultiBlock_Tx);
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x58, Buffer_MultiBlock_Tx);
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x04, 0x00080200);
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x08, 0x00200000);
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C, 0x00000000);
+
+
     // send command 16
     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x4, 0x00080200);
     SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = 0x200;
     SDIO->BLOCKCOUNT_R = 0x1;
     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000200);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x10020082);
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x10020083);
     wait_command_complete();
 
     // send command 24
     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000000);
     SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = 0x200;
     SDIO->BLOCKCOUNT_R = 0x1;
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x18220082);
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x18220083);
     value = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0xC);
     wait_command_complete();
 
-        int i = 0;
-        int j = 0;
-
-
-        for (i = 0; i< 128;i++)
-        {
-        	REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x20, 0xa5a5a5a5);
-        }
-        REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x30, 0x10);
-
     wait_transfer_complete();
 
+
+    memset(Buffer_MultiBlock_Rx, 0, sizeof(Buffer_MultiBlock_Rx));
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x28, 0x0000BF02);
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x00, Buffer_MultiBlock_Rx);
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x58, Buffer_MultiBlock_Rx);
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x04, 0x00080200);
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x08, 0x00200000);
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C, 0x00000000);
 
         // send command 16
         REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x4, 0x00080200);
         SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = 0x200;
         SDIO->BLOCKCOUNT_R = 0x8;
         REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000200);
-        REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x10020082);
+        REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x10020083);
         wait_command_complete();
 
         // send command 17 read single block
         REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000000);
-        REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x11220090);
+        REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x11220091);
         value = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0xC);
         wait_command_complete();
 
-        wait_buffer_read_ready_complete();
 
-        value = 0;
-        memset(Buffer_MultiBlock_Rx, 0, sizeof(Buffer_MultiBlock_Rx));
-        i = 0;
-        j = 0;
-        int m1 =0;
-        int m2 =0;
+     wait_transfer_complete();    //sdma start
 
-         for (i = 0; i< 128;i++)
-         {
-        	 Buffer_MultiBlock_Rx[i] = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+ 0x20);
-         }
-
-
-     wait_transfer_complete();
-
-
+     memset(Buffer_MultiBlock_Tx, 0x6b, sizeof(Buffer_MultiBlock_Tx));
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x28, 0x0000BF02);
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x00, Buffer_MultiBlock_Tx);
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x58, Buffer_MultiBlock_Tx);
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x04, 0x00080200);
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x08, 0x00200000);
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C, 0x00000000);
 
 
      // send command 16
@@ -439,73 +440,50 @@ void SD_Init_n()
      SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = 0x200;
      SDIO->BLOCKCOUNT_R = 0x1;
      REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000200);
-     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x10020082);
-     SDIO->XFER_MODE_R.DATA_XFER_DIR = 0x0;
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x10020083);
      wait_command_complete();
 
      // send command 24
      REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000000);
      SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = 0x200;
      SDIO->BLOCKCOUNT_R = 0x1;
-     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x18220082);
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x18220083);
      value = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0xC);
      wait_command_complete();
-
-     i = 0;
-     j = 0;
-     uint32_t write_b = 0xb6b6b6b6;
-
-
-     for (i = 0; i< 128;i++)
-     {
-         REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x20, write_b);
-     }
-     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x30, 0x10);
 
      wait_transfer_complete();
 
-      // send command 16
-     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x4, 0x00080200);
-     SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = 0x200;
-     SDIO->BLOCKCOUNT_R = 0x8;
-     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000200);
-     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x10020082);
-     wait_command_complete();
 
-       // send command 17 read single block
-     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000000);
-     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x11220090);
-     value = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0xC);
-     wait_command_complete();
-
-     wait_buffer_read_ready_complete();
-
-     value = 0;
      memset(Buffer_MultiBlock_Rx, 0, sizeof(Buffer_MultiBlock_Rx));
-     i = 0;
-     j = 0;
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x28, 0x0000BF02);
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x00, Buffer_MultiBlock_Rx);
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x58, Buffer_MultiBlock_Rx);
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x04, 0x00080200);
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x08, 0x00200000);
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C, 0x00000000);
 
-     for (i = 0; i< 128;i++)
-     {
-    	 Buffer_MultiBlock_Rx[i] = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+ 0x20);
-     }
-     wait_transfer_complete();
+         // send command 16
+         REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x4, 0x00080200);
+         SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = 0x200;
+         SDIO->BLOCKCOUNT_R = 0x8;
+         REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000200);
+         REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x10020083);
+         wait_command_complete();
 
-     int result = 0;
+         // send command 17 read single block
+         REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000000);
+         REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x11220091);
+         value = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0xC);
+         wait_command_complete();
 
-     for (i = 0; i< 128;i++)
-     {
-    	 result = strcmp(Buffer_MultiBlock_Rx[i], write_b);
-     }
 
-     if (result == 0)
-     {
-    	 printf("test pass\n");
-     }
-     else
-     {
-    	 printf("test fail\n");
-     }
+      wait_transfer_complete();
+
+
+
+
+
+
 
 
 

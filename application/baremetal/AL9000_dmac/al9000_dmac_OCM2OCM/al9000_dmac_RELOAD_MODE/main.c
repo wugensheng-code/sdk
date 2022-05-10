@@ -11,7 +11,6 @@
 #include "al9000_uart.h"
 #include "al9000_dmac.h"
 #include <time.h>
-#include "anl_printf.h"
 /*
  *instruction
  *test_mode		:reload mode
@@ -26,8 +25,8 @@ void SOC_DMA_AHB_HANDLER(void)
 {
     printf("enter_irq_number = %d\n\r",count);
      if(count == 10){
-       dw_dmac_setSingle(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_src_dst);
-       dw_dmac_clearIrq(AL9000_DMAC,dw_dmac_channel_num_1,tfr_l);
+       dw_dmac_setSingle(AL9000_DMAC_channel_0,Dmac_src_dst);
+       dw_dmac_clearIrq(AL9000_DMAC);
        dw_dmac_enable(AL9000_DMAC);
        //count = 0;
   	 for(int i = 0 ; i< 10; i++)
@@ -47,7 +46,7 @@ void SOC_DMA_AHB_HANDLER(void)
        printf("DMAC_MEM2MEM_RELOAD_MODE has been completed\n\r");
     }
     else{
-           dw_dmac_clearIrq(AL9000_DMAC,dw_dmac_channel_num_1,block_1);
+           dw_dmac_clearIrq(AL9000_DMAC);
          }
      count ++;
 }
@@ -65,80 +64,23 @@ void SOC_DMA_AHB_HANDLER(void)
 
         ECLIC_Register_IRQ(SOC_INT65_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,SOC_DMA_AHB_HANDLER);
 	__enable_irq();
-	/*
- 	 *dw_dmac_enableChannelIrq()
- 	 */
-         dw_dmac_enableChannelIrq(AL9000_DMAC_channel_0,dw_dmac_channel_num_1);
-	/*
-	 *dw_dmac_unmaskIrq()
-	 */
-         dw_dmac_unmaskIrq(AL9000_DMAC,dw_dmac_channel_num_1,block_1);
 
-	/*
-	 * dw_dmac_setAddress
-	 *
-	 */
-	 dw_dmac_setAddress(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_src,MEM_BASE1_ADDR);
-		/*
-		 * dw_dmac_setAddress
-		 */
-         dw_dmac_setAddress(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_dst,MEM_BASE2_ADDR);
-
-	/*
-	 * dw_dmac_setChannelConfig
-	 */
-	 dw_dmac_setChannelConfig(AL9000_DMAC_channel_0,dw_dmac_channel_num_1);
-	 /*
-	  * dw_dmac_setTransferType
-	  */
-	 dw_dmac_setTransferType(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_transfer_row2,Dmac_src);
-	 /*
-	  * dw_dmac_setMemPeriphFlowCtl
-	  */
-	 dw_dmac_setMemPeriphFlowCtl(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,MEM2MEM);
-	 /*
-	  * dw_dmac_setTransWidth
-	  * you can set the Transwidth :8/16/32/64/256 MAX_WIDTH=256
-	  */
-	 dw_dmac_setTransWidth(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_src_dst,WIDTH_32);
-	 /*
-	  * dw_dmac_setBlockTransSize
-	  * you can set the number of burst in one of the block
-	  * range MIN:MAX = 1:4096
-	  */
-	 dw_dmac_setBlockTransSize(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,10);
-	 /*
-	  * dw_dmac_setBurstTransLength
-	  */
-	 dw_dmac_setBurstTransLength(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_src_dst,DW_DMA_MSIZE_8);
-	 /*
-	  *  dw_dmac_setMstSelect
-	  */
-	 dw_dmac_setMstSelect(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_src_dst,SMS_master1,DMS_master1);
-	 /*
-	  * dw_dmac_setAddressInc
-	  */
-	 dw_dmac_setAddressInc(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_src_dst,Increments);
-	 /*
-	  * dw_dmac_setHandshakingMode
-	  */
-	 dw_dmac_setHandshakingMode(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_src_dst,Hardware_handshaking);
-	 /*
-	  * dw_dmac_setHsPolarity
-	  */
-	 dw_dmac_setHsPolarity(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_src_dst,ACTIVE_HIGH);
-	 /*
-	  * dw_dmac_setFifoMode
-	  */
-	 dw_dmac_setFifoMode(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,FIFO_MODE_0);
-
-	 /*
-	  * dw_dmac_setFlowCtlMode
-	  */
-	 dw_dmac_setFlowCtlMode(AL9000_DMAC_channel_0,dw_dmac_channel_num_1,fc_mode_0);
-	 /*
-	  * dw_dmac_checkChannelBusy
-	  */
+     dw_dmac_enableChannelIrq(AL9000_DMAC_channel_0);
+     dw_dmac_unmaskIrq(AL9000_DMAC,dw_dmac_channel_num_1,block_1);
+	 dw_dmac_setAddress(AL9000_DMAC_channel_0,Dmac_src,MEM_BASE1_ADDR);
+     dw_dmac_setAddress(AL9000_DMAC_channel_0,Dmac_dst,MEM_BASE2_ADDR);
+	 dw_dmac_setChannelConfig(AL9000_DMAC_channel_0);
+	 dw_dmac_setTransferType(AL9000_DMAC_channel_0,Dmac_transfer_row2);
+	 dw_dmac_setMemPeriphFlowCtl(AL9000_DMAC_channel_0,MEM2MEM);
+	 dw_dmac_setTransWidth(AL9000_DMAC_channel_0,Dmac_src_dst,WIDTH_32);
+	 dw_dmac_setBlockTransSize(AL9000_DMAC_channel_0,10);
+	 dw_dmac_setBurstTransLength(AL9000_DMAC_channel_0,Dmac_src_dst,DW_DMA_MSIZE_8);
+	 dw_dmac_setMstSelect(AL9000_DMAC_channel_0,Dmac_src_dst,SMS_master1,DMS_master1);
+	 dw_dmac_setAddressInc(AL9000_DMAC_channel_0,Dmac_src_dst,Increments);
+	 dw_dmac_setHandshakingMode(AL9000_DMAC_channel_0,Dmac_src_dst,Hardware_handshaking);
+	 dw_dmac_setHsPolarity(AL9000_DMAC_channel_0,Dmac_src_dst,ACTIVE_HIGH);
+	 dw_dmac_setFifoMode(AL9000_DMAC_channel_0,FIFO_MODE_0);
+	 dw_dmac_setFlowCtlMode(AL9000_DMAC_channel_0,fc_mode_0);
 
           volatile uint32_t buffer[128];
 	/* for (volatile uint32_t i = 0 ; i < 128 ; i++)
