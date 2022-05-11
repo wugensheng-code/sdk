@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
 
-// test  1 2 3
+// test  1 2 3 4
 
 void print_misa(void)
 {
