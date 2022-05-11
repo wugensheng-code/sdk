@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
 
+// test 
+
 void print_misa(void)
 {
     CSR_MISA_Type misa_bits = (CSR_MISA_Type) __RV_CSR_READ(CSR_MISA);
