@@ -27,39 +27,39 @@ int i2c_master_tx(I2C_TypeDef *master,I2C_TypeDef *slave)
 	printf("* Example 1: Master Tx/Slave Rx\n");
 #ifdef BIT_ADDR_7
 	// MASTER DEVICE SETUP
-	i2c_disable(master);
-	i2c_clock_setup(master, I2C_CLOCK); // scl setup
-	i2c_setSpeedMode(master, I2c_speed_standard); // 100Kb/s
-	i2c_setMasterAddressMode(master, I2c_7bit_address); // 7-bit
-	i2c_enableMaster(master); //master
-	i2c_setTargetAddress(master,SLAVE_ADDRESS);
-	i2c_enable(master);
+	AlI2c_Disable(master);
+	AlI2c_ClockSetup(master, I2C_CLOCK); // scl setup
+	AlI2c_SetSpeedMode(master, I2c_speed_standard); // 100Kb/s
+	AlI2c_SetMasterAddressMode(master, I2c_7bit_address); // 7-bit
+	AlI2c_EnableMaster(master); //master
+	AlI2c_SetTargetAddress(master,SLAVE_ADDRESS);
+	AlI2c_Enable(master);
 	// SLAVE DEVICE SETUP
-	i2c_disable(slave);
-//	i2c_clock_setup(slave, I2C_CLOCK);
-	i2c_setSpeedMode(slave, I2c_speed_standard); // 100Kb/s
-	i2c_setSlaveAddressMode(slave, I2c_7bit_address); // 7-bit
-	i2c_enableSlave(slave); //slave
-	i2c_setSlaveAddress(slave,SLAVE_ADDRESS);
-	i2c_enable(slave);
+	AlI2c_Disable(slave);
+//	AlI2c_Clock_Setup(slave, I2C_CLOCK);
+	AlI2c_SetSpeedMode(slave, I2c_speed_standard); // 100Kb/s
+	AlI2c_SetSlaveAddressMode(slave, I2c_7bit_address); // 7-bit
+	AlI2c_EnableSlave(slave); //slave
+	AlI2c_SetSlaveAddress(slave,SLAVE_ADDRESS);
+	AlI2c_Enable(slave);
 #endif
 #ifdef BIT_ADDR_10
 	// MASTER DEVICE SETUP
-	i2c_disable(master);
-	i2c_clock_setup(master, I2C_CLOCK); // scl setup
-	i2c_setSpeedMode(master, I2c_speed_standard); // 100Kb/s
-	i2c_setMasterAddressMode(master, I2c_10bit_address); // 10-bit
-	i2c_enableMaster(master); //master
-	i2c_setTargetAddress(master,SLAVE_ADDRESS);
-	i2c_enable(master);
+	AlI2c_Disable(master);
+	AlI2c_Clock_Setup(master, I2C_CLOCK); // scl setup
+	AlI2c_SetSpeedMode(master, I2c_speed_standard); // 100Kb/s
+	AlI2c_SetMasterAddressMode(master, I2c_10bit_address); // 10-bit
+	AlI2c_EnableMaster(master); //master
+	AlI2c_SetTargetAddress(master,SLAVE_ADDRESS);
+	AlI2c_Enable(master);
 	// SLAVE DEVICE SETUP
-	i2c_disable(slave);
-//	i2c_clock_setup(slave, I2C_CLOCK);
-	i2c_setSpeedMode(slave, I2c_speed_standard); // 100Kb/s
-	i2c_setSlaveAddressMode(slave, I2c_10bit_address); // 10-bit
-	i2c_enableSlave(slave); //slave
-	i2c_setSlaveAddress(slave,SLAVE_ADDRESS);
-	i2c_enable(slave);
+	AlI2c_Disable(slave);
+//	AlI2c_Clock_Setup(slave, I2C_CLOCK);
+	AlI2c_SetSpeedMode(slave, I2c_speed_standard); // 100Kb/s
+	AlI2c_SetSlaveAddressMode(slave, I2c_10bit_address); // 10-bit
+	AlI2c_EnableSlave(slave); //slave
+	AlI2c_SetSlaveAddress(slave,SLAVE_ADDRESS);
+	AlI2c_Enable(slave);
 #endif
 	// Transfer Characteristics
 	//
@@ -72,11 +72,11 @@ int i2c_master_tx(I2C_TypeDef *master,I2C_TypeDef *slave)
 	{
 		if(i == 7)
 		{
-			i2c_write(master, stop, (uint8_t) i);
+			AlI2c_Write(master, stop, (uint8_t) i);
 		}
 		else
 		{
-			i2c_write(master, normal, (uint8_t) i);
+			AlI2c_Write(master, normal, (uint8_t) i);
 		}
 	}
 	// On the slave side, the Rx FIFO is continuously polled for data.
@@ -87,8 +87,8 @@ int i2c_master_tx(I2C_TypeDef *master,I2C_TypeDef *slave)
     i = 0;
     printf("Slave received bytes: ");
     while(i++ < 7) {
-        while(i2c_isRxFifoEmpty(slave) == true);
-        datum = i2c_read(slave);
+        while(AlI2c_IsRxFifoEmpty(slave) == true);
+        datum = AlI2c_Read(slave);
         if(datum != i)
         {
         	printf("\n*** ERROR: expected %d, received %d ***\n", i, datum);
@@ -114,23 +114,23 @@ int i2c_master_rx(I2C_TypeDef *master,I2C_TypeDef *slave)
 	uint8_t datum;
 	printf("* Example 2: Master Rx/Slave Tx\n");
 	// MASTER DEVICE SETUP
-	i2c_disable(master);
-	i2c_clock_setup(master, I2C_CLOCK); // scl setup
-	i2c_setSpeedMode(master, I2c_speed_standard); // 100Kb/s
-	i2c_setMasterAddressMode(master, I2c_10bit_address); // 10-bit
-	i2c_enableMaster(master); //master
+	AlI2c_Disable(master);
+	AlI2c_Clock_Setup(master, I2C_CLOCK); // scl setup
+	AlI2c_SetSpeedMode(master, I2c_speed_standard); // 100Kb/s
+	AlI2c_SetMasterAddressMode(master, I2c_10bit_address); // 10-bit
+	AlI2c_EnableMaster(master); //master
 	// Use the start byte protocol with the target address when
 	// initiating transfer.
-//	i2c_setTxMode(master, I2c_tx_start_byte);
-	i2c_setTargetAddress(master,SLAVE_ADDRESS);
-	i2c_enable(master);
+//	AlI2c_SetTxMode(master, I2c_tx_start_byte);
+	AlI2c_SetTargetAddress(master,SLAVE_ADDRESS);
+	AlI2c_Enable(master);
 	// SLAVE DEVICE SETUP
-	i2c_disable(slave);
-	i2c_setSpeedMode(slave, I2c_speed_standard); // 100Kb/s
-	i2c_setMasterAddressMode(slave, I2c_10bit_address); // 10-bit
-	i2c_enableSlave(slave); //slave
-	i2c_setSlaveAddress(slave,SLAVE_ADDRESS);
-	i2c_enable(slave);
+	AlI2c_Disable(slave);
+	AlI2c_SetSpeedMode(slave, I2c_speed_standard); // 100Kb/s
+	AlI2c_SetMasterAddressMode(slave, I2c_10bit_address); // 10-bit
+	AlI2c_EnableSlave(slave); //slave
+	AlI2c_SetSlaveAddress(slave,SLAVE_ADDRESS);
+	AlI2c_Enable(slave);
 
 	// Transfer Characteristics
 	//
@@ -156,7 +156,7 @@ int i2c_master_rx(I2C_TypeDef *master,I2C_TypeDef *slave)
     for(i = 1; i <= 7; i++) {
 //        while(dw_i2c_isRawIrqActive(slave, I2c_irq_rd_req) == false);
         printf("%d ", i);
-        i2c_write(slave, normal, i);
+        AlI2c_Write(slave, normal, i);
 //        // clear the read request interrupt
 //        dw_i2c_clearIrq(slave, I2c_irq_rd_req);
     }

@@ -391,6 +391,8 @@ int main()
 		if(wrdata_a[i] != rddata_a[i])
 		{
 			printf("FAIL: datas are not same!\r\n");
+			printf("fail data is %d\r\n",i);
+			printf("fail data is %d\r\n",rddata_a[i]);
 			return -1;
 		}
 	}

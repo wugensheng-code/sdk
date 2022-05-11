@@ -35,7 +35,7 @@ void gpio0_handler(void)
     	i++;
     	printf("i=%d\r\n", i);
     }while(i<10);
-    gpio_int_disable(GPIO0,(0x1<<GPIO_PIN_ARRAY[0]));
+    AlGpio_IntDisable(GPIO0,(0x1<<GPIO_PIN_ARRAY[0]));
     printf("Exit gpio0_handler\r\n");
 }
 
@@ -43,7 +43,7 @@ void gpio0_handler(void)
 //{
 //    printf("Enter gpio1_handler\r\n");
 //    gpio1_irq_count++;
-//    gpio_int_disable(GPIO0,(0x1<<GPIO_PIN_ARRAY[1]));
+//    AlGpio_int_disable(GPIO0,(0x1<<GPIO_PIN_ARRAY[1]));
 //}
 
 
@@ -54,7 +54,7 @@ void gpio0_handler(void)
 //    if(gpio2_irq_count==3)
 //    {
 //		gpio2_irq_count=0;
-//		gpio_int_disable(GPIO2,(0x1<<0));
+//		AlGpio_int_disable(GPIO2,(0x1<<0));
 //    }
 //}
 //
@@ -66,32 +66,32 @@ void gpio0_handler(void)
 //    if(gpio3_irq_count==3)
 //    {
 //        gpio3_irq_count=0;
-//        gpio_int_disable(GPIO3,(0x1<<0));
+//        AlGpio_int_disable(GPIO3,(0x1<<0));
 //    }
 //}
 
 
 void gpio_config(void)
 {	//caution:int cfg must before int enable
-	gpio_enable_input(GPIO0,(0x1<<GPIO_PIN_ARRAY[0]));
-	gpio_inttype_cfg(GPIO0,(0x1<<GPIO_PIN_ARRAY[0]),GPIO_INT_HIGH);
-//	gpio_intmask_cfg(GPIO0,(0x1<<GPIO_PIN_ARRAY[0]),INT_MASK); // mask int
-	gpio_int_enable(GPIO0,(0x1<<GPIO_PIN_ARRAY[0]));
+	AlGpio_EnableInput(GPIO0,(0x1<<GPIO_PIN_ARRAY[0]));
+	AlGpio_IntTypeCfg(GPIO0,(0x1<<GPIO_PIN_ARRAY[0]),GPIO_INT_HIGH);
+//	AlGpio_intmask_cfg(GPIO0,(0x1<<GPIO_PIN_ARRAY[0]),INT_MASK); // mask int
+	AlGpio_IntEnable(GPIO0,(0x1<<GPIO_PIN_ARRAY[0]));
 
 //	//caution:int cfg must before int enable
-//	gpio_enable_input(GPIO0,(0x1<<GPIO_PIN_ARRAY[1]));
-//	gpio_inttype_cfg(GPIO0,(0x1<<GPIO_PIN_ARRAY[1]),GPIO_INT_LOW);
-//	gpio_int_enable(GPIO0,(0x1<<GPIO_PIN_ARRAY[1]));
+//	AlGpio_enable_input(GPIO0,(0x1<<GPIO_PIN_ARRAY[1]));
+//	AlGpio_inttype_cfg(GPIO0,(0x1<<GPIO_PIN_ARRAY[1]),GPIO_INT_LOW);
+//	AlGpio_int_enable(GPIO0,(0x1<<GPIO_PIN_ARRAY[1]));
 
 //	//caution:int cfg must before int enable
-//	gpio_enable_input(GPIO2,(0x1<<GPIO_PIN_ARRAY[0]));
-//	gpio_inttype_cfg(GPIO2,(0x1<<GPIO_PIN_ARRAY[0]),GPIO_INT_RISE);
-//	gpio_int_enable(GPIO2,(0x1<<GPIO_PIN_ARRAY[0]));
+//	AlGpio_enable_input(GPIO2,(0x1<<GPIO_PIN_ARRAY[0]));
+//	AlGpio_inttype_cfg(GPIO2,(0x1<<GPIO_PIN_ARRAY[0]),GPIO_INT_RISE);
+//	AlGpio_int_enable(GPIO2,(0x1<<GPIO_PIN_ARRAY[0]));
 //
 //	//caution:int cfg must before int enable
-//	gpio_enable_input(GPIO3,(0x1<<GPIO_PIN_ARRAY[0]));
-//	gpio_inttype_cfg(GPIO3,(0x1<<GPIO_PIN_ARRAY[0]),GPIO_INT_FALL);
-//	gpio_int_enable(GPIO3,(0x1<<GPIO_PIN_ARRAY[0]));
+//	AlGpio_enable_input(GPIO3,(0x1<<GPIO_PIN_ARRAY[0]));
+//	AlGpio_inttype_cfg(GPIO3,(0x1<<GPIO_PIN_ARRAY[0]),GPIO_INT_FALL);
+//	AlGpio_int_enable(GPIO3,(0x1<<GPIO_PIN_ARRAY[0]));
 }
 
 

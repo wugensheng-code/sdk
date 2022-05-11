@@ -18,7 +18,7 @@ void gpio_config(void)
 {
     for(int i=0; i<LEDn; i++)
     {
-        gpio_enable_input(GPIO0,1<<GPIO_CLORK[i]);
+        AlGpio_EnableInput(GPIO0,1<<GPIO_CLORK[i]);
     }
 }
 
@@ -30,9 +30,9 @@ int main(void)
     {
         for(int i=0; i<LEDn; i++)
         {
-            if(0!=gpio_input_read(GPIO0,1<<GPIO_CLORK[i]))
+            if(0!=AlGpio_InputRead(GPIO0,1<<GPIO_CLORK[i]))
             {
-                printf("GPIO[%d] input data value is %d\r\n",GPIO_CLORK[i],gpio_input_read(GPIO0,1<<GPIO_CLORK[i]));
+                printf("GPIO[%d] input data value is %d\r\n",GPIO_CLORK[i],AlGpio_InputRead(GPIO0,1<<GPIO_CLORK[i]));
             }
         }
     }

@@ -350,7 +350,7 @@ void _premain_init(void)
 #endif
     //uart init
     //dma_init();
-	AL9000_uart_init(AL9000_UART0, 115200,UART_BIT_LENGTH_8, AL9000_UART_STOP_BIT_1);
+	AlUart_Init(AL_UART0, 115200,UART_BIT_LENGTH_8, AL_UART_STOP_BIT_1);
 	__RV_CSR_CLEAR(CSR_MMISC_CTL,MMISC_CTL_BPU);
 	//dma_init();
     /* Display banner after UART initialized */

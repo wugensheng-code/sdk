@@ -82,7 +82,7 @@
 #define CMD_QREAD  			(0x6B)
 
 #define CMD_RDSR  			(0x05)
-
+#define CMD_RESET			(0xf0)
 #define SR1_WIP		        (1)
 //#define GD25Q40B
 /* bits definitions */

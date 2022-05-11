@@ -18,17 +18,17 @@ void led_config(void)
     for(int i=0; i<LEDn; i++)
     {
         //bank0
-        gpio_enable_output(GPIO0,LED_CLORK[i]);
-        gpio_write(GPIO0,LED_CLORK[i],1);
+        AlGpio_EnableOutput(GPIO0,LED_CLORK[i]);
+        AlGpio_Write(GPIO0,LED_CLORK[i],1);
         //bank1
-        gpio_enable_output(GPIO1,LED_CLORK[i]);
-        gpio_write(GPIO1,LED_CLORK[i],1);
+        AlGpio_EnableOutput(GPIO1,LED_CLORK[i]);
+        AlGpio_Write(GPIO1,LED_CLORK[i],1);
         //bank2
-        gpio_enable_output(GPIO2,LED_CLORK[i]);
-        gpio_write(GPIO2,LED_CLORK[i],1);
+        AlGpio_EnableOutput(GPIO2,LED_CLORK[i]);
+        AlGpio_Write(GPIO2,LED_CLORK[i],1);
         //bank3
-        gpio_enable_output(GPIO3,LED_CLORK[i]);
-        gpio_write(GPIO3,LED_CLORK[i],1);
+        AlGpio_EnableOutput(GPIO3,LED_CLORK[i]);
+        AlGpio_Write(GPIO3,LED_CLORK[i],1);
     }
 }
 
@@ -40,20 +40,20 @@ int main(void)
         for(int i=0; i<LEDn; i++)
         {
         	//bank0
-            gpio_toggle(GPIO0,LED_CLORK[i]);
-            gpio_output_read(GPIO0,LED_CLORK[i]);
+            AlGpio_Toggle(GPIO0,LED_CLORK[i]);
+            AlGpio_OutputRead(GPIO0,LED_CLORK[i]);
         	//bank1
-            gpio_toggle(GPIO1,LED_CLORK[i]);
-            gpio_output_read(GPIO1,LED_CLORK[i]);
+            AlGpio_Toggle(GPIO1,LED_CLORK[i]);
+            AlGpio_OutputRead(GPIO1,LED_CLORK[i]);
         	//bank2
-            gpio_toggle(GPIO2,LED_CLORK[i]);
-            gpio_output_read(GPIO2,LED_CLORK[i]);
+            AlGpio_Toggle(GPIO2,LED_CLORK[i]);
+            AlGpio_OutputRead(GPIO2,LED_CLORK[i]);
         	//bank3
-            gpio_toggle(GPIO3,LED_CLORK[i]);
-            gpio_output_read(GPIO3,LED_CLORK[i]);
+            AlGpio_Toggle(GPIO3,LED_CLORK[i]);
+            AlGpio_OutputRead(GPIO3,LED_CLORK[i]);
 //            delay_1ms(1000);
-            printf("gpio_toggle\r\n");
-//            anl_printf("gpio_toggle\r\n");
+            printf("AlGpio_Toggle\r\n");
+//            anl_printf("AlGpio_Toggle\r\n");
         }
     }
 }

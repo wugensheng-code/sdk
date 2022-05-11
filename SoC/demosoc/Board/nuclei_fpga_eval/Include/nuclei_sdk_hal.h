@@ -9,7 +9,7 @@ extern "C" {
 #include "board_nuclei_fpga_eval.h"
 
 //#define SOC_DEBUG_UART      UART0
-#define SOC_DEBUG_UART      AL9000_UART0
+#define SOC_DEBUG_UART      AL_UART0
 #ifndef NUCLEI_BANNER
 #define NUCLEI_BANNER       1
 #endif

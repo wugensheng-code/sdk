@@ -352,13 +352,13 @@ typedef enum {
 
 typedef struct{
    __IOM uint32_t reverse[89];
-   __IOM uint32_t  can_fd_ctrl;
+   __IOM uint32_t can_fd_ctrl;
    __IOM uint32_t reverse1[18];
    __IOM uint32_t can_dma;
 
 }TOPCFG_TypeDef;
 /**
-  * @brief GPIO-AL9000
+  * @brief GPIO-AL
   */
 typedef struct {  /*!< GPIO Structure */
     __IOM uint32_t SWPORTA_DR;					/*offset 0x00,Port data register*/
@@ -426,7 +426,7 @@ typedef struct {
 
 
 /**
-  * @brief QSPI-AL9000
+  * @brief QSPI-AL
 */
 typedef struct
 {
@@ -508,7 +508,7 @@ typedef struct {
 } QSPI_TypeDef;
 
 /**
-  * @brief SPI-AL9000
+  * @brief SPI-AL
   */
 // this ctrlr0 struct has problem(causeof big/little endian), to be modify.
 //typedef struct
@@ -712,7 +712,7 @@ typedef struct
 }ic_dma_cr;
 
 /**
-  * @brief I2C-AL9000
+  * @brief I2C-AL
   */
 typedef struct {
 	__IOM ic_con IC_CON;              					/*offset 0x00,I2C Control Register*/
@@ -755,7 +755,7 @@ typedef struct {
 
 /*
  *
- * al9000_uart
+ * AL_uart
  *
  */
 typedef struct{
@@ -778,7 +778,7 @@ typedef struct{
 	volatile uint32_t HTX;
 	volatile uint32_t DMASA;
 	volatile uint32_t CPR;
-}UART_AL9000_TypeDef;
+}AL_UART_TypeDef;
 
 /*@}*/ /* end of group demosoc_Peripherals */
 
@@ -1040,7 +1040,7 @@ typedef struct{
 }LLP_PARM;
 /*
  *
- * al9000_dma_register_struct
+ * AL_dma_register_struct
  *
  */
 typedef struct{
@@ -1159,7 +1159,7 @@ typedef struct{
 	__IOM uint32_t Dma_COMP_PARAMS_1_H;		/*offset 0x3f4*/
 	__IOM uint32_t DmaCompsID_L;			/*offset 0x3f8*/
 	__IOM uint32_t DmaCompsID_H;				/*offset 0x3fc*/
-}DMAC_AL9000_TypeDef;
+}AL_DMAC_TypeDef;
 typedef struct
 {
    __IOM uint32_t RBUF_ID_PARM;							/*offset 0x00*/
@@ -1199,7 +1199,7 @@ typedef struct
    __IOM uint8_t MEM_ES_2;
    __IOM uint8_t MEM_ES_3;
    __IOM uint8_t SCFG;
-} CAN_AL9000_TypeDef;
+} AL_CAN_TypeDef;
 
 
 #define XEC0_MAC_BASE                 (XEC0_BASE)
@@ -1292,7 +1292,7 @@ typedef struct
 //#define DEMOSOC_PERIPH_BASE     (0x10000000UL)//(0x10000000UL)      /*!< (Peripheral) Base Address */
 #define PERIPH_BASE     		(0xF8000000UL)					    /*!< (Peripheral) Base Address */
 #define MEM_BASE1_ADDR           (0x61030000)
-#define MEM_BASE2_ADDR           (0x61030500)
+#define MEM_BASE2_ADDR           (0x61030100)
 
 #define WDT_BASE                  	(0xF8410000)
 #define SMC_BASE                  	(0x6841A000UL)
@@ -1308,24 +1308,24 @@ typedef struct
 //#define PWM1_BASE               (DEMOSOC_PERIPH_BASE + 0x25000)          /*!< (PWM1) Base Address */
 //#define PWM2_BASE               (DEMOSOC_PERIPH_BASE + 0x35000)          /*!< (PWM2) Base Address */
 //#define I2C_BASE                (DEMOSOC_PERIPH_BASE + 0x42000)          /*!< (I2C Master) Base Address */
-#define AL9000_TOP_CFG_BASE     		 (0xF8800000)
-#define AL9000_PLPS_RESET                (0xf8801078)
-#define AL9000_GP0                       (0x80000000)
-#define AL9000_GP1                       (0xA0000000)
-#define AL9000_FAHB_BASE				 (0xFC000000)
-#define AL9000_CAN0_BASE                 (0xF8408000)
-#define AL9000_CAN1_BASE                 (0xF8409000)
-#define AL9000_DMAC_channel_1BASE        (0xF804D000)				 			 /*!< (AL9000_DMAC_channel_1BASE) Base Address */
-#define AL9000_DMAC_channel_2BASE        (0xF804D058)				 			 /*!< (AL9000_DMAC_channel_2BASE) Base Address */
-#define AL9000_DMAC_channel_3BASE        (0xF804D0B0)				 			 /*!< (AL9000_DMAC_channel_3BASE) Base Address */
-#define AL9000_DMAC_channel_4BASE        (0xF804D108)				 			 /*!< (AL9000_DMAC_channel_4BASE) Base Address */
-#define AL9000_DMAC_channel_5BASE        (0xF804D160)				 			 /*!< (AL9000_DMAC_channel_5BASE) Base Address */
-#define AL9000_DMAC_channel_6BASE        (0xF804D1B8)				 			 /*!< (AL9000_DMAC_channel_6BASE) Base Address */
-#define AL9000_DMAC_channel_7BASE        (0xF804D210)				 			 /*!< (AL9000_DMAC_channel_7BASE) Base Address */
-#define AL9000_DMAC_channel_8BASE        (0xF804D268)				 			 /*!< (AL9000_DMAC_channel_8BASE) Base Address */
-#define AL9000_DMAC_BASE                 (0xF804D2C0)				 			 /*!< (AL9000_UART0_BASE) Base Address */
-#define AL9000_UART0_BASE       (0xF8400000)				 			         /*!< (AL9000_UART0) Base Address */
-#define AL9000_UART1_BASE       (0xF8401000)				 			         /*!< (AL9000_UART1) Base Address */
+#define AL_TOP_CFG_BASE     		 (0xF8800000)
+#define AL_PLPS_RESET                (0xf8801078)
+#define AL_GP0                       (0x80000000)
+#define AL_GP1                       (0xA0000000)
+#define AL_FAHB_BASE				 (0xFC000000)
+#define AL_CAN0_BASE                 (0xF8408000)
+#define AL_CAN1_BASE                 (0xF8409000)
+#define AL_DMAC_channel_1BASE        (0xF804D000)				 			 /*!< (AL_DMAC_channel_1BASE) Base Address */
+#define AL_DMAC_channel_2BASE        (0xF804D058)				 			 /*!< (AL_DMAC_channel_2BASE) Base Address */
+#define AL_DMAC_channel_3BASE        (0xF804D0B0)				 			 /*!< (AL_DMAC_channel_3BASE) Base Address */
+#define AL_DMAC_channel_4BASE        (0xF804D108)				 			 /*!< (AL_DMAC_channel_4BASE) Base Address */
+#define AL_DMAC_channel_5BASE        (0xF804D160)				 			 /*!< (AL_DMAC_channel_5BASE) Base Address */
+#define AL_DMAC_channel_6BASE        (0xF804D1B8)				 			 /*!< (AL_DMAC_channel_6BASE) Base Address */
+#define AL_DMAC_channel_7BASE        (0xF804D210)				 			 /*!< (AL_DMAC_channel_7BASE) Base Address */
+#define AL_DMAC_channel_8BASE        (0xF804D268)				 			 /*!< (AL_DMAC_channel_8BASE) Base Address */
+#define AL_DMAC_BASE                 (0xF804D2C0)				 			 /*!< (AL_UART0_BASE) Base Address */
+#define AL_UART0_BASE       (0xF8400000)				 			         /*!< (AL_UART0) Base Address */
+#define AL_UART1_BASE       (0xF8401000)				 			         /*!< (AL_UART1) Base Address */
 #define QSPI0_BASE              (PERIPH_BASE + 0x0004E000)	 			 /*!< (QSPI0) Base Address */
 #define SPI0_BASE               (PERIPH_BASE + 0x00404000)	 			 /*!< (SPI0) Base Address */
 #define SPI1_BASE               (PERIPH_BASE + 0x00405000)	 			 /*!< (SPI1) Base Address */
@@ -1339,7 +1339,7 @@ typedef struct
 #define QSPI_XIP1_END_ADDR		(0x7FFFFFFFUL)							/*qspi-xip1 end address*/
 #define XEC0_BASE               (0xf8100000UL)
 #define XEC1_BASE               (0xf8110000UL)
-
+#define DDR_BASE				(0x00000000UL)
 /** @} */ /* End of group Device_Peripheral_peripheralAddr */
 
 
@@ -1365,20 +1365,20 @@ typedef struct
 #define PWM1                    ((PWM_TypeDef *) PWM1_BASE)
 #define PWM2                    ((PWM_TypeDef *) PWM2_BASE)
 #define I2C                     ((I2C_TypeDef *) I2C_BASE)
-#define AL9000_UART0		        ((UART_AL9000_TypeDef *) AL9000_UART0_BASE)
-#define AL9000_UART1		        ((UART_AL9000_TypeDef *) AL9000_UART1_BASE)
-#define AL9000_CAN0				((CAN_AL9000_TypeDef *) AL9000_CAN0_BASE)
-#define AL9000_CAN1				((CAN_AL9000_TypeDef *) AL9000_CAN1_BASE)
-#define AL9000_TOP0             ((TOPCFG_TypeDef *) AL9000_TOP_CFG_BASE  )
-#define AL9000_DMAC             			((DMAC_AL9000_TypeDef *) AL9000_DMAC_BASE)
-#define AL9000_DMAC_channel_0             ((DMA_Channel_TypeDef *) AL9000_DMAC_channel_1BASE)
-#define AL9000_DMAC_channel_1             ((DMA_Channel_TypeDef *) AL9000_DMAC_channel_2BASE)
-#define AL9000_DMAC_channel_2             ((DMA_Channel_TypeDef *) AL9000_DMAC_channel_3BASE)
-#define AL9000_DMAC_channel_3             ((DMA_Channel_TypeDef *) AL9000_DMAC_channel_4BASE)
-#define AL9000_DMAC_channel_4             ((DMA_Channel_TypeDef *) AL9000_DMAC_channel_5BASE)
-#define AL9000_DMAC_channel_5             ((DMA_Channel_TypeDef *) AL9000_DMAC_channel_6BASE)
-#define AL9000_DMAC_channel_6             ((DMA_Channel_TypeDef *) AL9000_DMAC_channel_7BASE)
-#define AL9000_DMAC_channel_7             ((DMA_Channel_TypeDef *) AL9000_DMAC_channel_8BASE)
+#define AL_UART0		        ((AL_UART_TypeDef *) AL_UART0_BASE)
+#define AL_UART1		        ((AL_UART_TypeDef *) AL_UART1_BASE)
+#define AL_CAN0					((AL_CAN_TypeDef *) AL_CAN0_BASE)
+#define AL_CAN1					((AL_CAN_TypeDef *) AL_CAN1_BASE)
+#define AL_TOP0             	((TOPCFG_TypeDef *) AL_TOP_CFG_BASE  )
+#define AL_DMAC             		  ((AL_DMAC_TypeDef *) AL_DMAC_BASE)
+#define AL_DMAC_channel_0             ((DMA_Channel_TypeDef *) AL_DMAC_channel_1BASE)
+#define AL_DMAC_channel_1             ((DMA_Channel_TypeDef *) AL_DMAC_channel_2BASE)
+#define AL_DMAC_channel_2             ((DMA_Channel_TypeDef *) AL_DMAC_channel_3BASE)
+#define AL_DMAC_channel_3             ((DMA_Channel_TypeDef *) AL_DMAC_channel_4BASE)
+#define AL_DMAC_channel_4             ((DMA_Channel_TypeDef *) AL_DMAC_channel_5BASE)
+#define AL_DMAC_channel_5             ((DMA_Channel_TypeDef *) AL_DMAC_channel_6BASE)
+#define AL_DMAC_channel_6             ((DMA_Channel_TypeDef *) AL_DMAC_channel_7BASE)
+#define AL_DMAC_channel_7             ((DMA_Channel_TypeDef *) AL_DMAC_channel_8BASE)
 #define QSPI0			              ((QSPI_TypeDef *) QSPI0_BASE)
 #define SPI0			              ((SPI_TypeDef *) SPI0_BASE)
 #define SPI1			              ((SPI_TypeDef *) SPI1_BASE)
@@ -1399,7 +1399,7 @@ typedef struct
 #define UART0_REG(offset)       _REG32(UART0_BASE, offset)
 #define UART1_REG(offset)       _REG32(UART1_BASE, offset)
 #define I2C_REG(offset)         _REG8(I2C_BASE, offset)
-#define AL9000_UART0_REG(offset)_REG32(AL9000_UART0_BASE,offset)
+#define AL_UART0_REG(offset)_REG32(AL_UART0_BASE,offset)
 
 #define XEC0                     ((XEC_TypeDef *) XEC0_BASE)
 #define XEC0_NCFG                ((XEC_TypeDef *) XEC0_NCFG_BASE)

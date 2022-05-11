@@ -8,14 +8,14 @@ extern "C" {
 
 #include "demosoc.h"
 //#include "demosoc_uart.h"
-#include "al9000_gpio.h"
-#include "al9000_i2c.h"
+#include "al_gpio.h"
+#include "al_i2c.h"
 #include "al9000_qspi.h"
 #include "al9000_spi.h"
 #include "demosoc_pwm.h"
-#include "al9000_uart.h"
-#include "al9000_can.h"
-#include "al9000_dmac.h"
+#include "al_uart.h"
+#include "al_can.h"
+#include "al_dmac.h"
 
 #ifdef __cplusplus
 }
