@@ -50,5 +50,11 @@ NUCLEI_SDK_RTOS = $(NUCLEI_SDK_ROOT)/OS/$(RTOS)
 include $(NUCLEI_SDK_BUILD)/gmsl/gmsl
 
 include $(NUCLEI_SDK_BUILD)/Makefile.misc
+
+ifeq ($(SOC), demoapu)
+include $(NUCLEI_SDK_BUILD)/Makefile.conf.apu
+else
 include $(NUCLEI_SDK_BUILD)/Makefile.conf
+endif
+
 include $(NUCLEI_SDK_BUILD)/Makefile.rules

@@ -15,7 +15,7 @@ VALID_PROGRAM_MAKEFILE=$(wildcard $(PROGRAM)/Makefile)
 # Valid SDK Rules accepted by build system
 VALID_SDK_RULES := all info help bin size dasm upload run_openocd run_gdb clean debug
 
-PROGS_TO_SEARCH := test/* application/* application/*/* application/*/*/* application/*/*/*/*
+PROGS_TO_SEARCH := test/* application/* application/*/* application/*/*/* application/*/*/*/* SoC/*/*/*/
 PROGS_makefile := $(foreach progdir, $(PROGS_TO_SEARCH), $(sort $(dir $(wildcard $(progdir)/makefile))))
 PROGS_Makefile := $(foreach progdir, $(PROGS_TO_SEARCH), $(sort $(dir $(wildcard $(progdir)/Makefile))))
 PROGS_DIRS := $(sort $(PROGS_makefile) $(PROGS_Makefile))
