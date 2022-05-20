@@ -50,7 +50,7 @@ el3_entry:
 	msr	scr_el3, x0
 	msr	cptr_el3, xzr			/* Enable FP/SIMD */
 	/* set up stack point */
-    ldr x28, =stack_top
+	ldr x28, =_sp
 	mov sp, x28
 #ifdef COUNTER_FREQUENCY
 	ldr	x0, =COUNTER_FREQUENCY
@@ -70,7 +70,7 @@ el2_entry:
 	mov	x0, #0x33ff
 	msr	cptr_el2, x0			/* Enable FP/SIMD */
 	/* set up stack point */
-    ldr x28, =stack_top
+	ldr x28, =_sp
 	mov sp, x28
 	b   main_entry
 
@@ -78,7 +78,7 @@ el2_entry:
 .align 3
 el1_entry:
 	/* set up stack point */
-    ldr x28, =stack_top
+	ldr x28, =_sp
 	mov sp, x28
 	adr	x0, vectors
 	msr	vbar_el1, x0
