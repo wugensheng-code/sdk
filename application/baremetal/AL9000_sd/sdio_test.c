@@ -827,7 +827,7 @@ void SD_Test(void)
 #endif
 	    /*------------------- 文件系统测试：读测试 ------------------------------------*/
 	    	//printf("****** 即将进行文件读取测试... ******\r\n");
-	    	res_sd = f_open(&fnew, "0:Boot.bin", FA_OPEN_EXISTING | FA_READ);
+	    	res_sd = f_open(&fnew, "0:FatFs.txt", FA_OPEN_EXISTING | FA_READ);
 	    	if(res_sd == FR_OK)
 	    	{
 	    		//printf("》打开文件成功。\r\n");
