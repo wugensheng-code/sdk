@@ -408,7 +408,7 @@ SD_Error SD_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t Block
 	 volatile unsigned int value = 0;
 	 volatile unsigned int value1 = 0;
 	 volatile unsigned int reg_value = 0;
-	 uint8_t* ptr = readbuff;
+	 uint32_t* Buffer_SingleBlock = (uint32_t* )readbuff;
 #if 0
 
 	    //sdma start
@@ -455,9 +455,12 @@ SD_Error SD_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t Block
 		 }
 
 #endif
-
-
-
+	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x28, 0x0000BF02);
+	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x00, Buffer_SingleBlock);
+	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x58, Buffer_SingleBlock);
+	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x04, 0x00080200);
+	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x08, 0x00200000);
+	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C, 0x00000000);
 
 	        // send command 16
 	        REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x4, 0x00080200);
@@ -470,24 +473,9 @@ SD_Error SD_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t Block
 	        // send command 17 read single block
 	        REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000000);
 	        SDIO->ARGUMENT_R = ReadAddr;
-	        REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x11220090);
+	        REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x11220091);
 	        value = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0xC);
 	        wait_command_complete();
-
-	        wait_buffer_read_ready_complete();
-
-	        value = 0;
-	        int i = 0;
-
-
-	         for (i = 0; i< 128;i++)
-	         {
-	        	 reg_value = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+ 0x20);
-			     //*ptr = reg_value;
-			     memcpy(ptr, &reg_value, 4);
-			     ptr = ptr +4;
-	         }
-
 
 	     wait_transfer_complete();
 
@@ -512,14 +500,21 @@ SD_Error SD_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t Bl
 	 volatile unsigned int value = 0;
 	 volatile unsigned int value1 = 0;
 	 volatile unsigned int reg_value = 0;
-	 uint8_t* ptr =  writebuff;
+	 uint32_t* Buffer_SingleBlock = (uint32_t* )writebuff;
+
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x28, 0x0000BF02);
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x00, Buffer_SingleBlock);
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x58, Buffer_SingleBlock);
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x04, 0x00080200);
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x08, 0x00200000);
+     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C, 0x00000000);
 
 	 // send command 16
 	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x4, 0x00080200);
 	     SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = 0x200;
 	     SDIO->BLOCKCOUNT_R = 0x1;
 	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000200);
-	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x10020082);
+	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x10020083);
 	     SDIO->XFER_MODE_R.DATA_XFER_DIR = 0x0;
 	     wait_command_complete();
 
@@ -528,17 +523,9 @@ SD_Error SD_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t Bl
 	     SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = BlockSize;
 	     SDIO->BLOCKCOUNT_R = NumberOfBlocks;
 	     SDIO->ARGUMENT_R = WriteAddr;
-	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x18220082);
+	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x18220083);
 	     value = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0xC);
 	     wait_command_complete();
-
-	     int i = 0;
-	     for (i = 0; i< 128;i++)
-	     {
-	    	 memcpy(&reg_value, ptr, 4);
-	         REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x20, reg_value);
-	         ptr=ptr+4;
-	     }
 
 	     wait_transfer_complete();
 
@@ -801,7 +788,7 @@ void SD_Test(void)
 	    __IO SD_Error errorstatus = SD_OK;
 	    UINT fnum;            					  /* 文件成功读写数量 */
 	    BYTE ReadBuffer[1024]={0};        /* 读缓冲区 */
-	    BYTE WriteBuffer[] = "welcome88888888888888888888\r\n";
+	    BYTE WriteBuffer[] = "welcome777777777777777\r\n";
 	    FIL fnew;
 
 
