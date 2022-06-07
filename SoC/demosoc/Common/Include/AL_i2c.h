@@ -1,13 +1,13 @@
 /*
- * al9000_i2c.h
+ * al_i2c.h
  *
  *  Created on: Feb.10.2022
  *      Author: haitao.liu
  */
 
 
-#ifndef _AL9000_I2C_H_
-#define _AL9000_I2C_H_
+#ifndef _AL_I2C_H_
+#define _AL_I2C_H_
 
 #include "demosoc.h"
 

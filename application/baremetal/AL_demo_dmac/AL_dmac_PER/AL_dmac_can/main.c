@@ -9,10 +9,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
-#include "al_uart.h"
-#include "al_dmac.h"
-#include "al_can.h"
-#include <time.h>
 uint8_t tx_buf1[64];
 uint8_t tx_buf2[64];
 uint8_t tx_buf3[64];

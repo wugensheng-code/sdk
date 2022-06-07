@@ -8,9 +8,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
-#include "al_uart.h"
-#include "al_can.h"
-#include <time.h>
 #include "board_nuclei_fpga_eval.h"
 
 uint8_t tx_buf1[64];

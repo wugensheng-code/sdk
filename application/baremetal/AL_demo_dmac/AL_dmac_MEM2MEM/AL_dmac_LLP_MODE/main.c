@@ -7,9 +7,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
-#include "al_uart.h"
-#include "al_dmac.h"
-//#include "anl_printf.h"
 #include <time.h>
 /*
  *

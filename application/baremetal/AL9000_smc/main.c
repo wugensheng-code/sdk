@@ -78,7 +78,7 @@ int main(void)
 				(3 << 	SMC_SetCycles_Trc_FIELD		));	//RE width
 
 
-		*((volatile uint32_t *)(SMC_BASE+SMC_REG_DIRCT_CMD)) = SMC_DirectCmd_SelChip_Interface1Chip1 | SMC_DirectCmd_CmdType_UpdateRegsAndAXI;
+		//*((volatile uint32_t *)(SMC_BASE+SMC_REG_DIRCT_CMD)) = SMC_DirectCmd_SelChip_Interface1Chip1 | SMC_DirectCmd_CmdType_UpdateRegsAndAXI;
 
 
 		Onfi_CmdReset();
@@ -458,6 +458,20 @@ int main(void)
 	TEST->ecc_value_valid = 1;
 
 	printf("%d\r\n",*((uint32_t *)SMC_BASE+SMC_REG_ECC1_STATUS));
+
+#endif
+
+#if 1
+
+#define GIT_BIT
+#define SET_BIT
+
+/* reg[end,start] = value */
+#define GIT_BITS(start, end, value, reg) ((reg >> start)&(0xffffffff >> (32-(end-start)))
+
+#define SET_BITS
+
+#define CLEAR_BITS
 
 #endif
 

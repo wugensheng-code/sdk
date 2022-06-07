@@ -82,6 +82,23 @@ enum OnfiCmdArrayOffset{
 #define ONFI_CMD_COPY_BACKREAD_CYCLES				5		/* ONFI Read command total address cycles*/
 #define ONFI_CMD_COPY_BACKREAD_END_TIMING			ONFI_ENDIN_CMD_PHASE /* COPY_BACKREAD End Cmd in command phase */
 
+
+
+#if 0
+
+#define ONFI_CMD_CHANGE_READ_COLUMN1				0x05	/* ONFI Change Read Column command Start */
+#define ONFI_CMD_CHANGE_READ_COLUMN2				0xE0	/* ONFI Change Read Column command End */
+#define ONFI_CMD_CHANGE_READ_CYCLES					2		/* ONFI Change Raed command total address cycles*/
+#define ONFI_CMD_COPY_BACKREAD_END_TIMING			ONFI_ENDIN_CMD_PHASE /* COPY_BACKREAD End Cmd in command phase */
+
+#define ONFI_CMD_READ_CACHE_ENHANCED1				0x00	/* ONFI Read Cache Enhanced command Start */
+#define ONFI_CMD_READ_CACHE_ENHANCED2				0x31	/* ONFI Read Cache Enhanced command End */
+#define ONFI_CMD_READ_CACHE_ENHANCED_CYCLES			5		/* ONFI Read Cache Enhanced command total address cycles*/
+#define ONFI_CMD_READ_CACHE_ENHANCED_END_TIMING		ONFI_ENDIN_CMD_PHASE /* READ_CACHE_ENHANCED End Cmd in command phase */
+
+#endif
+
+
 #define ONFI_CMD_CHANGE_READ_COLUMN1				0x05	/* ONFI Change Read Column command Start */
 #define ONFI_CMD_CHANGE_READ_COLUMN2				0xE0	/* ONFI Change Read Column command End */
 #define ONFI_CMD_CHANGE_READ_CYCLES					2		/* ONFI Change Raed command total address cycles*/
@@ -97,9 +114,9 @@ enum OnfiCmdArrayOffset{
 #define ONFI_CMD_PROGRAM_CACHE_CYCLES				5		/* ONFI Read Cache command total address cycles*/
 #define ONFI_CMD_PROGRAM_CACHE_END_TIMING			ONFI_ENDIN_DATA_PHASE /* READ_CACHE End Cmd Invalid */
 
-#define ONFI_CMD_READ_CACHE1						0x31	/* ONFI Read Cache command Start */
-#define ONFI_CMD_READ_CACHE2						ONFI_END_CMD_NONE	/* ONFI Read Cache command End */
-#define ONFI_CMD_READ_CACHE_CYCLES					0		/* ONFI Read Cache command total address cycles*/
+#define ONFI_CMD_READ_CACHE_END1					0x3F	/* ONFI Read Cache command Start */
+#define ONFI_CMD_READ_CACHE_END2					ONFI_END_CMD_NONE	/* ONFI Read Cache command End */
+#define ONFI_CMD_READ_CACHE_END_CYCLES				0		/* ONFI Read Cache command total address cycles*/
 #define ONFI_CMD_READ_CACHE_END_TIMING				ONFI_END_CMD_INVALID /* READ_CACHE End Cmd Invalid */
 
 
@@ -233,8 +250,14 @@ uint8_t Onfi_CmdReadParameter(Nand_Size_TypeDef *nandSize);
 uint8_t Onfi_CmdReadPage(uint32_t Page, uint32_t Column);
 uint8_t Onfi_CmdProgramPage(uint32_t Page, uint32_t Column);
 uint8_t Onfi_CmdBlockErase(uint32_t Page);
+/*
 uint8_t Onfi_CmdProgramCachePage(uint32_t Page, uint32_t Column);
 uint8_t Onfi_CmdReadCachePage(uint32_t Page, uint32_t Column);
+*/
+uint8_t Onfi_CmdProgramCachePage(uint32_t Page, uint32_t Column);
+uint8_t Onfi_CmdReadCachePage(uint32_t Page, uint32_t Column);
+uint8_t Onfi_CmdReadCachePageEnd(uint32_t Page, uint32_t Column);
+
 void Onfi_CmdSetFeature(uint8_t Address, uint8_t *Value);
 void Onfi_CmdGetFeature(uint8_t Address, uint8_t *Value);
 
@@ -245,15 +268,15 @@ uint8_t Nand_IsBusy(void);
 uint8_t Nand_CheakIsBadBlock(uint32_t Page, uint32_t Column, uint8_t *Buf,Nand_Size_TypeDef *nandSize);
 
 
-uint8_t Nand_HwCalculateEcc(uint8_t *Dst);
+uint8_t Nand_EnableOnDieEcc(void);
 uint8_t Nand_EccHwInit(Nand_Size_TypeDef *nandSize);
 void Nand_EccHwDisable(void);
-
+uint8_t Nand_HwCalculateEcc(uint8_t *Dst);
 uint8_t Nand_HwCorrectEcc(uint8_t *eccCode, uint8_t *eccCalc, uint8_t *buf);
 
 uint8_t Nand_ProgramPage_HwEcc(uint32_t Page, uint32_t Column, uint8_t *Buf, Nand_Size_TypeDef *nandSize);
-uint8_t Nand_ReadPage_HwEcc(uint32_t Page, uint8_t *Buf, Nand_Size_TypeDef *nandSize);
-uint8_t Nand_EnableOnDieEcc(void);
+uint8_t Nand_ReadPage_HwEcc(uint32_t Page, uint32_t Column, uint8_t *Buf, Nand_Size_TypeDef *nandSize);
+
 
 
 

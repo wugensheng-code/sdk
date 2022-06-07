@@ -1,6 +1,6 @@
 // See LICENSE for license details.
-#ifndef _AL9000_GPIO_H
-#define _AL9000_GPIO_H
+#ifndef _AL_GPIO_H
+#define _AL_GPIO_H
 
 #ifdef __cplusplus
 extern "C" {

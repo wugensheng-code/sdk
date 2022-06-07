@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include "nuclei_sdk_soc.h"
 #include "board_nuclei_fpga_eval.h"
-#include "al_dmac.h"
 
 uint8_t amount0;	//byte_data transfer number
 uint32_t rdata0_0;	//

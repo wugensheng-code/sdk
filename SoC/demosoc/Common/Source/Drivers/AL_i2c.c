@@ -1,11 +1,11 @@
 /*
- * al9000_i2c.c
+ * al_i2c.c
  *
  *  Created on: Feb.10.2022
  *      Author: haitao.liu
  */
 #include "demosoc.h"
-#include "al_i2c.h"
+#include "nuclei_sdk_soc.h"
 /**************************function definition******************************/
 /*!
     \brief      Disable I2C

@@ -5,9 +5,7 @@
  *      Author: wei.pang
  */
 
-#include "al_can.h"
 #include "demosoc.h"
-#include "al_uart.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"

@@ -8,10 +8,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
-#include "al_dmac.h"
-#include <time.h>
-
-#include "../../../../../SoC/demosoc/Common/Include/AL_uart.h"
 /*
  *instruction
  *test_mode		:reload mode

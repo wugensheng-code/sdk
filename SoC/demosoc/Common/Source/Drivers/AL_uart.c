@@ -7,7 +7,7 @@
 
 #include "demosoc.h"
 #include "stdlib.h"
-#include "al_uart.h"
+#include "nuclei_sdk_soc.h"
 #define uart_clock (40000000UL)
 /*!
     \brief  uart initialize

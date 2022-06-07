@@ -9,12 +9,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
-#include "al_uart.h"
-#include "AL_DMAC.h"
-#include "al9000_spi.h"
-#include "al9000_qspi.h"
-#include "al_can.h"
-#include <time.h>
 /*
  *instruction
  *test_mode		:reload mode

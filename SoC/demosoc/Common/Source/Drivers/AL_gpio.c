@@ -1,6 +1,5 @@
 #include "demosoc.h"
-#include "al_gpio.h"
-
+#include "nuclei_sdk_soc.h"
 //int32_t AlGpio_iof_config(GPIO_TypeDef* gpio, uint32_t mask, IOF_FUNC func)
 //{
 //    if (__RARELY(gpio == NULL)) {

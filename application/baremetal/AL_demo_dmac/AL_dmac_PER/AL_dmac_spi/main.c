@@ -9,10 +9,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
-#include "al_uart.h"
-#include "al_dmac.h"
-#include "al9000_spi.h"
-#include <time.h>
 #define S25FL512S_ID	0X00200201  // flash ID
 uint8_t tx_buf1[64];
 uint8_t tx_buf2[64];

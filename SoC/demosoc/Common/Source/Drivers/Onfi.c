@@ -348,11 +348,64 @@ uint8_t Onfi_CmdProgramCachePage(uint32_t Page, uint32_t Column)
 
 }
 
-
 uint8_t Onfi_CmdReadCachePage(uint32_t Page, uint32_t Column)
 {
+	uint8_t Status;
+#if 0
+	/* Restore the ECC mem command1 and ECC mem command2 register if the previous command is read page cache */
+	/* Set SMC_REG_ECC1_MEMCMD0 Reg*/
+	SMC_WriteReg((void *)(SMC_BASE + SMC_REG_ECC1_MEMCMD0),
+			(SMC_EccMemCmd0_InitWriteCmd| SMC_EccMemCmd0_InitReadCmd| SMC_EccMemCmd0_EndReadCacheCmd| SMC_EccMemCmd0_UseEndCmd));
 
+	SmcSendCommand(ONFI_CMD_READ_PAGE1, ONFI_CMD_READ_PAGE2, ONFI_CMD_READ_PAGE_CYCLES,
+					ONFI_CMD_READ_PAGE_END_TIMING, Page, Column);
+
+	while(Nand_IsBusy() == FAILED);
+
+	/*  Clear SMC Interrupt 1, as an alternative to an AXI read */
+	*((volatile uint32_t *)(SMC_BASE+SMC_REG_MEM_CFG_CLR)) |= SMC_MemCfgClr_ClrSmcInt1;
+
+	/* Cheak Nand Status */
+	Status = Onfi_CmdReadStatus();
+
+	if (Status & ONFI_STATUS_FAIL) {
+		return FAILED;
+	}
+#endif
+	SmcSendCommand(ONFI_CMD_READ_CACHE_ENHANCED1, ONFI_CMD_READ_CACHE_ENHANCED2, ONFI_CMD_READ_CACHE_ENHANCED_CYCLES,
+					ONFI_CMD_READ_CACHE_ENHANCED_END_TIMING, Page, Column);
+
+	while(Nand_IsBusy() == FAILED);
+
+	/*  Clear SMC Interrupt 1, as an alternative to an AXI read */
+	*((volatile uint32_t *)(SMC_BASE+SMC_REG_MEM_CFG_CLR)) |= SMC_MemCfgClr_ClrSmcInt1;
+
+
+	return SUCCESS;
 }
+
+
+uint8_t Onfi_CmdReadCachePageEnd(uint32_t Page, uint32_t Column)
+{
+	uint8_t Status;
+
+	/* Restore the ECC mem command1 and ECC mem command2 register if the previous command is read page cache */
+	/* Set SMC_REG_ECC1_MEMCMD0 Reg*/
+	SMC_WriteReg((void *)(SMC_BASE + SMC_REG_ECC1_MEMCMD0),
+			(SMC_EccMemCmd0_InitWriteCmd| SMC_EccMemCmd0_InitReadChangeColumnCmd
+					| SMC_EccMemCmd0_EndReadChangeColumnCmd| SMC_EccMemCmd0_UseEndCmd));
+
+	SmcSendCommand(ONFI_CMD_READ_CACHE_END1, ONFI_CMD_READ_CACHE_END2, ONFI_CMD_READ_CACHE_END_CYCLES,
+			ONFI_CMD_READ_CACHE_END_TIMING, ONFI_PAGE_NOT_VALID, ONFI_COLUMN_NOT_VALID);
+
+	while(Nand_IsBusy() == FAILED);
+
+	/*  Clear SMC Interrupt 1, as an alternative to an AXI read */
+	*((volatile uint32_t *)(SMC_BASE+SMC_REG_MEM_CFG_CLR)) |= SMC_MemCfgClr_ClrSmcInt1;
+
+	return SUCCESS;
+}
+
 
 
 
@@ -672,12 +725,14 @@ uint8_t Nand_ProgramPage_HwEcc(uint32_t Page, uint32_t Column, uint8_t *Buf, Nan
 
 
 
-uint8_t Nand_ReadPage_HwEcc(uint32_t Page, uint8_t *Buf, Nand_Size_TypeDef *nandSize)
+uint8_t Nand_ReadPage_HwEcc(uint32_t Page, uint32_t Column, uint8_t *Buf, Nand_Size_TypeDef *nandSize)
 {
-	uint64_t cmdPhaseAddr;
-	uint8_t Status,i,eccDataNums;
-	uint8_t eccData[6];
-	uint32_t *dataOffsetPtr;
+	//uint64_t cmdPhaseAddr;
+	uint8_t Status = 0, i = 0, eccDataNums = 0, EccOffset = 0;
+	uint8_t eccData[12] = {0};
+	uint8_t ReadEccData[12] = {0};
+	uint32_t *dataOffsetPtr = NULL;
+	uint8_t *TempBuf=Buf;
 
 
 	/* Restore the ECC mem command1 and ECC mem command2 register if the previous command is read page cache */
@@ -689,27 +744,14 @@ uint8_t Nand_ReadPage_HwEcc(uint32_t Page, uint8_t *Buf, Nand_Size_TypeDef *nand
 	SMC_WriteReg((void *)(SMC_BASE + SMC_REG_ECC1_MEMCMD1),
 			(SMC_EccMemCmd1_ColChangeWRCmd| SMC_EccMemCmd1_ColChangeRDCmd| SMC_EccMemCmd1_ColChangeEndCmd| SMC_EccMemCmd1_UseEndCmd));
 
-	Onfi_CmdReadPage(Page, 0);
+	Onfi_CmdReadPage(Page, Column);
+
+	while(Nand_IsBusy() == FAILED);
 
 	/*  Clear SMC Interrupt 1, as an alternative to an AXI read */
 	*((volatile uint32_t *)(SMC_BASE+SMC_REG_MEM_CFG_CLR)) |= SMC_MemCfgClr_ClrSmcInt1;
 
-	/* Cheak Nand Status */
-	Status = Onfi_CmdReadStatus();
 
-	if (Status & ONFI_STATUS_FAIL) {
-		return FAILED;
-	}
-
-	/* re-issue a command value of 00h to start reading data */
-	cmdPhaseAddr  = NAND_BASE 		|
-			(0 	<< 21)				|
-			(0 	<< 20)				|
-			NAND_COMMAND_PHASE_FLAG	|
-			(0 	<< 11)				|
-			(0 	<< 10);
-
-	SMC_WriteReg((void *)cmdPhaseAddr, 0x00);
 
 
 	/* Read data Page */
@@ -750,18 +792,29 @@ uint8_t Nand_ReadPage_HwEcc(uint32_t Page, uint8_t *Buf, Nand_Size_TypeDef *nand
 
 	for(i = 0; i < eccDataNums; i++)
 	{
-		if(Buf[dataOffsetPtr[i]] == (~eccData[i]))
+		ReadEccData[i] = ~TempBuf[dataOffsetPtr[i]+nandSize->dataBytesPerPage];
+
+		/*
+		if(TempBuf[dataOffsetPtr[i]+nandSize->dataBytesPerPage] == (~eccData[i]))
 		{
 			//Nand_HwCorrectEcc();
-		}
+		}*/
 	}
 
-	//Nand_HwCorrectEcc();
+	i = nandSize->dataBytesPerPage/NAND_ECC_BLOCK_SIZE;
+	for(;i;i--)
+	{
+		Status = Nand_HwCorrectEcc(&ReadEccData[EccOffset], &eccData[EccOffset], TempBuf);
+		if(Status != SUCCESS){
+			return Status;
+		}
+
+		EccOffset += NAND_ECC_BYTES;
+		TempBuf += NAND_ECC_BLOCK_SIZE;
+	}
 
 	/* keep ONFI_AXI_DATA_WIDTH bytes read to clear cs */
 	return SUCCESS;
-
-
 
 }
 
@@ -804,6 +857,7 @@ uint8_t Nand_HwCorrectEcc(uint8_t *eccCode, uint8_t *eccCalc, uint8_t *buf)
 		bitPos = eccOdd & 0x07;
 		/* Toggling error bit */
 		buf[bytePos] ^= (1 << bitPos);
+		printf("hello\r\n");
 		return SUCCESS;
 	}
 
