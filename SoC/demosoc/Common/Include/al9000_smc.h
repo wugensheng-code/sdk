@@ -29,38 +29,24 @@
 #define SMC_REG_REFRESH_0       		0x20UL
 #define SMC_REG_REFRESH_1           	0x24UL
 
-/********* Reserved reg 0x28 - 0xFC *********/
-
-
 
 #define SMC_REG_NAND_CYCLES1_0          0x180UL
-
-
 #define SMC_REG_OPMODE1_0               0x184UL
-
 
 #define SMC_REG_USER_CONFIG             0x204UL
 #define SMC_REG_USER_STATUS             0x200UL
 
-/********* Reserved reg 0x208 - 0x2FC *********/
+/********* Interface1 ecc register *********/
 
 #define SMC_REG_ECC1_STATUS             0x400UL
-
 #define SMC_REG_ECC1_CFG                0X404UL
-
 #define SMC_REG_ECC1_MEMCMD0            0X408UL
-
 #define SMC_REG_ECC1_MEMCMD1            0X40CUL
-
 #define SMC_REG_ECC1_ADDR0              0X410UL
-
 #define SMC_REG_ECC1_ADDR1              0X414UL
-
 #define SMC_REG_ECC1_BLOCK0             0X418UL
-
 #define SMC_REG_ECC1_EXTRA_BLOCK        0X428UL
 
-/********* Reserved reg 0x32C - 0x3FC *********/
 /********* Reserved reg 0x42C - 0x4FC *********/
 
 #define SMC_REG_INT_CFG                 0XE00UL
@@ -246,7 +232,7 @@
  *  When cmd_type = UpdateRegs, these bits are reserved. Write as zero
 **/
 #define SMC_DirectCmd_Addr19To0_FIELD       (0)
-//#define SMC_DirectCmd_EccInt1_DISENABLE     (1 << SMC_DirectCmd_EccInt1_DISENABLE_FIELD)
+
 
 
 
@@ -436,21 +422,24 @@
 
 /****   Bit definition for ecc<x>_memcmd0 register  ****/
 
-/* Use end command */
-#define SMC_EccMemCmd0_UseEndCmd_FIELD      (24)
-#define SMC_EccMemCmd0_UseEndCmd            (1 << SMC_EccMemCmd0_UseEndCmd_FIELD)
+ /* Use end command */
+ #define SMC_EccMemCmd0_UseEndCmd_FIELD      (24)
+ #define SMC_EccMemCmd0_UseEndCmd            (1 << SMC_EccMemCmd0_UseEndCmd_FIELD)
 
-/* The NAND<x> command to indicate the end of a read (0x30) */
-#define SMC_EccMemCmd0_EndReadCmd_FIELD     (16)
-#define SMC_EccMemCmd0_EndReadCmd           (0x30 << SMC_EccMemCmd0_EndReadCmd_FIELD)
+ /* The NAND<x> command to indicate the end of a read (0x30) */
+ #define SMC_EccMemCmd0_EndReadCmd_FIELD     (16)
+ #define SMC_EccMemCmd0_EndReadCmd           (0x30 << SMC_EccMemCmd0_EndReadCmd_FIELD)
+ #define SMC_EccMemCmd0_EndReadCacheCmd      (0x31 << SMC_EccMemCmd0_EndReadCmd_FIELD)
+ #define SMC_EccMemCmd0_EndReadChangeColumnCmd      (0xE0 << SMC_EccMemCmd0_EndReadCmd_FIELD)
 
-/* The NAND<x> command to initiate a read (0x00) */
-#define SMC_EccMemCmd0_InitReadCmd_FIELD    (8)
-#define SMC_EccMemCmd0_InitReadCmd          (0x00 << SMC_EccMemCmd0_InitReadCmd_FIELD)
+ /* The NAND<x> command to initiate a read (0x00) */
+ #define SMC_EccMemCmd0_InitReadCmd_FIELD    (8)
+ #define SMC_EccMemCmd0_InitReadCmd          (0x00 << SMC_EccMemCmd0_InitReadCmd_FIELD)
+ #define SMC_EccMemCmd0_InitReadChangeColumnCmd          (0x05 << SMC_EccMemCmd0_InitReadCmd_FIELD)
 
-/* The NAND<x> command to initiate a write (0x80) */
-#define SMC_EccMemCmd0_InitWriteCmd_FIELD   (0)
-#define SMC_EccMemCmd0_InitWriteCmd         (0x80 << SMC_EccMemCmd0_InitWriteCmd_FIELD)
+ /* The NAND<x> command to initiate a write (0x80) */
+ #define SMC_EccMemCmd0_InitWriteCmd_FIELD   (0)
+ #define SMC_EccMemCmd0_InitWriteCmd         (0x80 << SMC_EccMemCmd0_InitWriteCmd_FIELD)
 
 
 
@@ -506,12 +495,6 @@
 #define SMC_EccBlock_CheakValue_FIELD       (0)
 
 
-/*  ecc_fail_bit ecc_can_correct_bit */
-#define NO_ERROR        0x00
-#define PARITY_ERROR    0x01
-#define MULTIPLE_ERROR  0x02
-#define SINGLE_ERROR    0x03
-
 
 /****   Bit definition for ecc<x>_extra_block  register  ****/
 
@@ -535,50 +518,14 @@
 #define SMC_EccExtBlock_CheakValue_FIELD       (0)
 
 
-/****   Bit definition for periph_id_0  register  ****/
 
-/* [7:0] part_number_0 Returns 0x5x */
-#define SMC_PeriphId0_PartNum0_FIELD         (0)
-
-
-/****   Bit definition for periph_id_2  register  ****/
-
-/* [7:4] designer_0 Returns 0x1 */
-#define SMC_PeriphId1_Designed0_FIELD       (4)
-
-/* [3:0] part_number_1 Returns 0x3 */
-#define SMC_PeriphId1_PartNum1_FIELD         (0)
-
-/****   Bit definition for periph_id_2  register  ****/
-
-/* revision These bits read back as: 0x6 for r2p2 */
-#define SMC_PeriphId2_Revision_FIELD        (4)
-
-/* [3:0] designer_1 Returns 0x4 */
-#define SMC_PeriphId2_Designed1_FIELD       (0)
+ /*  ecc_fail_bit ecc_can_correct_bit */
+ #define NO_ERROR        0x00
+ #define PARITY_ERROR    0x01
+ #define MULTIPLE_ERROR  0x02
+ #define SINGLE_ERROR    0x03
 
 
-/****   Bit definition for periph_id_3  register  ****/
-/* Reserved, read undefined. */
-
-
-
-/****   Bit definition for pcell_id_0  register  ****/
-
-/* [7:0] Returns 0xB1 */
-#define SMC_PcellId_Designed1_FIELD       (0)
-
-/****   Bit definition for pcell_id_1  register  ****/
-
-/* [7:0] Returns 0x05 */
-
-/****   Bit definition for pcell_id_2  register  ****/
-
-/* [7:0] Returns 0xF0 */
-
-/****   Bit definition for pcell_id_3  register  ****/
-
-/* [7:0] Returns 0x0D */
 
 
 
