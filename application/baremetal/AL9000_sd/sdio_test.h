@@ -2,6 +2,10 @@
 #define __SDIO_TEST_H
 
 #include <stdio.h>
+
+#define XST_SUCCESS                     0L
+#define XST_FAILURE                     1L
+
 extern void SD_Test(void);
 #define REG_READ(reg_address) reg_read(reg_address)
 extern unsigned reg_read(unsigned long long reg_address);
@@ -18,30 +22,37 @@ typedef struct
 	uint16_t RSVD_BLOCKSIZE15:1;
 }BLOCKSIZE;
 
-typedef struct
+typedef union
 {
-	uint16_t DMA_EN:1;
-	uint16_t BLOCK_COUNT_ENABLE:1;
-	uint16_t AUTO_CMD_ENABLE:2;
-	uint16_t DATA_XFER_DIR:1;
-	uint16_t MULTI_BLK_SEL:1;
-	uint16_t RESP_TYPE:1;
-	uint16_t RESP_ERR_CHK_ENABLE:1;
-	uint16_t RESP_INT_DISABLE:1;
-	uint16_t RSVD:7;
+    uint16_t D16;
+    struct{
+	    uint16_t DMA_EN:1;
+	    uint16_t BLOCK_COUNT_ENABLE:1;
+	    uint16_t AUTO_CMD_ENABLE:2;
+	    uint16_t DATA_XFER_DIR:1;
+	    uint16_t MULTI_BLK_SEL:1;
+	    uint16_t RESP_TYPE:1;
+	    uint16_t RESP_ERR_CHK_ENABLE:1;
+	    uint16_t RESP_INT_DISABLE:1;
+	    uint16_t RSVD:7;
+    }BIT;
 }XFER_MODE;
 
-typedef struct
+typedef union
 {
-	uint16_t RESP_TYPE_SELECT:2;
-	uint16_t SUB_CMD_FLAG:1;
-	uint16_t CMD_CRC_CHK_ENABLE:1;
-	uint16_t CMD_IDX_CHK_ENABLE:1;
-	uint16_t DATA_PRESENT_SEL:1;
-	uint16_t CMD_TYPE:2;
-	uint16_t CMD_INDEX:6;
-	uint16_t RSVD:2;
+    uint16_t D16;
+    struct{
+	    uint16_t RESP_TYPE_SELECT:2;
+	    uint16_t SUB_CMD_FLAG:1;
+	    uint16_t CMD_CRC_CHK_ENABLE:1;
+	    uint16_t CMD_IDX_CHK_ENABLE:1;
+	    uint16_t DATA_PRESENT_SEL:1;
+	    uint16_t CMD_TYPE:2;
+	    uint16_t CMD_INDEX:6;
+	    uint16_t RSVD:2;
+    }BIT;
 }CMD;
+
 typedef struct
 {
 	uint32_t CMD_INHIBIT:1;
@@ -131,45 +142,52 @@ typedef struct
 	uint8_t RSVD_7_3:5;
 }SW_RST;
 
-typedef struct
+typedef union
 {
-	uint16_t	CMD_COMPLETE:1;
-	uint16_t	XFER_COMPLETE:1;
-	uint16_t	BGAP_EVENT:1;
-	uint16_t	DMA_INTERRUPT:1;
-	uint16_t    BUF_WR_READY:1;
-	uint16_t	BUF_RD_READY:1;
-	uint16_t    CARD_INSERTION:1;
-	uint16_t    CARD_REMOVAL:1;
-	uint16_t    CARD_INTERRUPT:1;
-	uint16_t    INT_A:1;
-	uint16_t    INT_B:1;
-	uint16_t    INT_C:1;
-	uint16_t    RE_TUNE_EVENT:1;
-	uint16_t    FX_EVENT:1;
-	uint16_t    CQE_EVENT:1;
-	uint16_t    ERR_INTERRUPT:1;
+    uint16_t D16;
+    typedef struct BIT{
+	    uint16_t	CMD_COMPLETE:1;
+	    uint16_t	XFER_COMPLETE:1;
+	    uint16_t	BGAP_EVENT:1;
+	    uint16_t	DMA_INTERRUPT:1;
+	    uint16_t    BUF_WR_READY:1;
+	    uint16_t	BUF_RD_READY:1;
+	    uint16_t    CARD_INSERTION:1;
+	    uint16_t    CARD_REMOVAL:1;
+	    uint16_t    CARD_INTERRUPT:1;
+	    uint16_t    INT_A:1;
+	    uint16_t    INT_B:1;
+	    uint16_t    INT_C:1;
+	    uint16_t    RE_TUNE_EVENT:1;
+	    uint16_t    FX_EVENT:1;
+	    uint16_t    CQE_EVENT:1;
+	    uint16_t    ERR_INTERRUPT:1;
+    }BIT;
 }NORMAL_INT_STAT;
 
 
-typedef struct
+
+typedef union
 {
-	uint16_t	CMD_TOUT_ERR:1;
-	uint16_t	CMD_CRC_ERR:1;
-	uint16_t	CMD_END_BIT_ERR:1;
-	uint16_t	CMD_IDX_ERR:1;
-	uint16_t    DATA_TOUT_ERR:1;
-	uint16_t	DATA_CRC_ERR:1;
-	uint16_t    DATA_END_BIT_ERR:1;
-	uint16_t    CUR_LMT_ERR:1;
-	uint16_t    AUTO_CMD_ERR:1;
-	uint16_t    ADMA_ERR:1;
-	uint16_t    TUNING_ERR:1;
-	uint16_t    RESP_ERR:1;
-	uint16_t    BOOT_ACK_ERR:1;
-	uint16_t    VENDOR_ERR1:1;
-	uint16_t    VENDOR_ERR2:1;
-	uint16_t    VENDOR_ERR3:1;
+    uint16_t D16;
+    typedef struct BIT{
+	    uint16_t	CMD_TOUT_ERR:1;
+	    uint16_t	CMD_CRC_ERR:1;
+	    uint16_t	CMD_END_BIT_ERR:1;
+	    uint16_t	CMD_IDX_ERR:1;
+	    uint16_t    DATA_TOUT_ERR:1;
+	    uint16_t	DATA_CRC_ERR:1;
+	    uint16_t    DATA_END_BIT_ERR:1;
+	    uint16_t    CUR_LMT_ERR:1;
+	    uint16_t    AUTO_CMD_ERR:1;
+	    uint16_t    ADMA_ERR:1;
+	    uint16_t    TUNING_ERR:1;
+	    uint16_t    RESP_ERR:1;
+	    uint16_t    BOOT_ACK_ERR:1;
+	    uint16_t    VENDOR_ERR1:1;
+	    uint16_t    VENDOR_ERR2:1;
+	    uint16_t    VENDOR_ERR3:1;
+    }BIT;
 }ERROR_INT_STAT;
 
 typedef struct
@@ -905,21 +923,21 @@ typedef struct
 	uint32_t RESP67_R;
 	uint32_t BUF_DATA_R;
 	PSTATE_REG PSTATE_REG_R;
-	HOST_CTRL1 HOST_CTRL1_R;
-	PWR_CTRL PWR_CTRL_R;
-	BGAP_CTRL BGAP_CTRL_R;
-	WUP_CTRL WUP_CTRL_R;
-	CLK_CTRL CLK_CTRL_R;
-	TOUT_CTRL TOUT_CTRL_R;
-	SW_RST SW_RST_R;
+	uint8_t HOST_CTRL1_R;
+	uint8_t PWR_CTRL_R;
+	uint8_t BGAP_CTRL_R;
+	uint8_t WUP_CTRL_R;
+	uint16_t CLK_CTRL_R;
+	uint8_t TOUT_CTRL_R;
+	uint8_t SW_RST_R;
 	NORMAL_INT_STAT NORMAL_INT_STAT_R;
 	ERROR_INT_STAT ERROR_INT_STAT_R;
 	uint16_t NORMAL_INT_STAT_EN_R;
 	uint16_t ERROR_INT_STAT_EN_R;
 	uint16_t NORMAL_INT_SIGNAL_EN_R;
 	uint16_t ERROR_INT_SIGNAL_EN_R;
-	AUTO_CMD_STAT AUTO_CMD_STAT_R;
-	HOST_CTRL2 HOST_CTRL2_R;
+	uint16_t AUTO_CMD_STAT_R;
+	uint16_t HOST_CTRL2_R;
 	CAPABILITIES1 CAPABILITIES1_R;
 	CAPABILITIES2 CAPABILITIES2_R;
 	CURR_CAPABILITIES1 CURR_CAPABILITIES1_R;
@@ -1146,12 +1164,12 @@ typedef struct
   uint8_t CardType;
 } SD_CardInfo;
 
-extern SD_Error SD_Init(void);
-extern SD_Error SD_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSize, uint32_t NumberOfBlocks);
-extern SD_Error SD_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t BlockSize, uint32_t NumberOfBlocks);
-extern SD_Error SD_WaitReadOperation();
+extern u32 SD_Init(void);
+extern u32 SD_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSize, uint32_t NumberOfBlocks);
+extern u32 SD_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t BlockSize, uint32_t NumberOfBlocks);
+extern u32 SD_WaitReadOperation();
 extern SD_CardInfo SDCardInfo;
-extern SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo);
+extern u32 SD_GetCardInfo(SD_CardInfo *cardinfo);
 
 /**
   * @brief Supported SD Memory Cards

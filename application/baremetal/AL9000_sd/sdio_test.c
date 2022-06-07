@@ -1,45 +1,61 @@
+/*****************************************************************************/
 /**
-  ******************************************************************************
-  * @file    bsp_led.c
-  * @author  fire
-  * @version V1.0
-  * @date    2015-xx-xx
-  * @brief   SDIO sd�����������������ļ�ϵͳ��
-  ******************************************************************************
-  * @attention
-  *
-  * ʵ��ƽ̨:Ұ��  STM32 F429 ������  
-  * ��̳    :http://www.firebbs.cn
-  * �Ա�    :https://fire-stm32.taobao.com
-  *
-  ******************************************************************************
-  */
+*
+* @file sd_test.c
+* @addtogroup sdps_v3_13
+* @{
+*
+* The implementation of the XSdPs component's static initialization
+* functionality.
+*
+* <pre>
+* MODIFICATION HISTORY:
+*
+* Ver   Who    Date     Changes
+* ----- ---    -------- -----------------------------------------------
+* 1.00a hk/sg  10/17/13 Initial release
+*       kvn    07/15/15 Modified the code according to MISRAC-2012.
+* 3.7   aru    03/12/19 Modified the code according to MISRAC-2012.
+*
+* </pre>
+*
+******************************************************************************/
+
 #include "sdio_test.h"
 #include <string.h>
-//#include "led/bsp_led.h"
-//#include "al9000_sdio_sd.h"
 #include <stdio.h>
 #include "ff.h"
-//#include "mshc_regs.h"
-//#include "usart/bsp_debug_usart.h"
 
-/* Private typedef -----------------------------------------------------------*/
 typedef enum {FAILED = 0, PASSED = !FAILED} TestStatus;
 
-/* Private define ------------------------------------------------------------*/
 #define BLOCK_SIZE            512 /* Block Size in Bytes */
-
 #define NUMBER_OF_BLOCKS      10  /* For Multi Blocks operation (Read/Write) */
 #define MULTI_BUFFER_SIZE    (BLOCK_SIZE * NUMBER_OF_BLOCKS)
 
 #define vfwp printf
 #define TOP_NS__CFG_CTRL_SDIO0_ADDR 0xF8800154
+#define SDIO_WRAP__SDIO0__BASE_ADDR 0xF804A000ULL
+#define TUBE_ADDRESS ((volatile char *) 0xF8800010u)
+
 SDIO_CmdInitTypeDef SDIO_CmdInitStructure;
 static uint32_t CSD_Tab[4], CID_Tab[4], RCA = 1;
 static uint32_t CardType =  SDIO_HIGH_CAPACITY_SD_CARD;
-
+FATFS fs;
+FRESULT res_sd;
+uint8_t flag = 0;
+static unsigned int rca = 0;
 SD_CardInfo SDCardInfo;
+static volatile DWC_mshc_block_registers* SDIO = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO0__BASE_ADDR;
+uint8_t Buffer_Block_Tx[BLOCK_SIZE], Buffer_Block_Rx[BLOCK_SIZE];
+uint32_t Buffer_MultiBlock_Tx[MULTI_BUFFER_SIZE], Buffer_MultiBlock_Rx[MULTI_BUFFER_SIZE];
+volatile TestStatus EraseStatus = FAILED, TransferStatus1 = FAILED, TransferStatus2 = FAILED;
+uint8_t Buffer_Block_Tx[BLOCK_SIZE], Buffer_Block_Rx[BLOCK_SIZE];
 
+static void SD_SingleBlockTest(void);
+void SD_MultiBlockTest(void);
+static void Fill_Buffer(uint8_t *pBuffer, uint32_t BufferLength, uint32_t Offset);
+static TestStatus Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint32_t BufferLength);
+static TestStatus eBuffercmp(uint8_t* pBuffer, uint32_t BufferLength);
 
 unsigned int reg_read(unsigned long long reg_address)
 {
@@ -51,29 +67,6 @@ void reg_write(unsigned long long reg_address, unsigned reg_wdata)
     *((volatile unsigned *)reg_address) = reg_wdata;
 }
 
-
-
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-uint8_t Buffer_Block_Tx[BLOCK_SIZE], Buffer_Block_Rx[BLOCK_SIZE];
-uint32_t Buffer_MultiBlock_Tx[MULTI_BUFFER_SIZE], Buffer_MultiBlock_Rx[MULTI_BUFFER_SIZE];
-volatile TestStatus EraseStatus = FAILED, TransferStatus1 = FAILED, TransferStatus2 = FAILED;
-//SD_Error Status = SD_OK;
-
-/* Private function prototypes -----------------------------------------------*/
-static void SD_EraseTest(void);
-static void SD_SingleBlockTest(void);
-void SD_MultiBlockTest(void);
-static void Fill_Buffer(uint8_t *pBuffer, uint32_t BufferLength, uint32_t Offset);
-static TestStatus Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint32_t BufferLength);
-static TestStatus eBuffercmp(uint8_t* pBuffer, uint32_t BufferLength);
-
-/* Private functions ---------------------------------------------------------*/
-#define SDIO_WRAP__SDIO0__BASE_ADDR 0xF804A000ULL
-#define TUBE_ADDRESS ((volatile char *) 0xF8800010u)
-
-
-
 static void sleep(int tick)
 {
     for (int i = 0; i < tick; i++)
@@ -81,8 +74,6 @@ static void sleep(int tick)
         asm volatile("NOP");
     }
 }
-
-uint8_t Buffer_Block_Tx[BLOCK_SIZE], Buffer_Block_Rx[BLOCK_SIZE];
 
 /**
   * @brief  Fills buffer with user predefined data.
@@ -101,7 +92,6 @@ void Fill_Buffer(uint8_t *pBuffer, uint32_t BufferLength, uint32_t Offset)
     pBuffer[index] = index + Offset;
   }
 }
-volatile DWC_mshc_block_registers* SDIO = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO0__BASE_ADDR;
 
 static void wait_command_complete()
 {
@@ -139,358 +129,388 @@ static void wait_buffer_read_ready_complete()
     }
 }
 
-
-FATFS fs;
-FRESULT res_sd;
-
-uint8_t flag = 0;
-
-SD_Error SD_Init(void)
+/*****************************************************************************/
+/**
+*
+* @brief    Performs an output operation for a memory location by writing the
+*           32 bit Value to the the specified address.
+*
+* @param	Addr contains the address to perform the output operation
+* @param	Value contains the 32 bit Value to be written at the specified
+*           address.
+*
+* @return	None.
+*
+******************************************************************************/
+static INLINE void Xil_Out32(UINTPTR Addr, u32 Value)
 {
-	if (flag == 1)
-	{
-		return SD_OK;
-	}
-	flag = 1;
-	volatile unsigned rdata0;
-    volatile unsigned int rdata9;
-    volatile unsigned rdata1;
-    volatile unsigned rdata2;
-    volatile unsigned rdata3;
-    volatile unsigned rdata4;
-    volatile unsigned rdata5;
-    volatile unsigned error_flag;
-    volatile unsigned int status;
-    volatile unsigned int response2;
-    volatile unsigned int validvoltage;
-    volatile unsigned int count = 0;
-    volatile unsigned int value = 0;
-    volatile unsigned int value1 = 0;
-    __IO SD_Error errorstatus = SD_OK;
-    unsigned int rca = 0;
-    
-    error_flag = 0;
-    int mpidr = 0x0;
+    /* write 32 bit value to specified address */
 
-    int cpunum = mpidr & 0x00ff;
+    volatile u32 *LocalAddr = (volatile u32 *)Addr;
+    *LocalAddr = Value;
+}
 
+/***************************************************************************/
+/**
+ * @brief	Write to the register
+ *
+ * @param	BaseAddress   - Contains the base address of the device
+ * @param	RegOffset     - Contains the offset from the base address of the
+ *				device
+ * @param	RegisterValue - Is the value to be written to the register
+ *
+ ******************************************************************************/
+static inline void XSecure_WriteReg(u32 BaseAddress,
+        u32 RegOffset, u32 RegisterValue)
+{
+    Xil_Out32((volatile u32 *)(BaseAddress + RegOffset), RegisterValue);
+}
 
-    //DWC_mshc__BLOCKSIZE_R__ACC_T reg0;
-
-    if (cpunum == 0) {
-    }
-
-    char  p[] = "** CPU0 TEST PASSED OK **\n";
-    char* c   = p;
-
-    while (*c)
-    {
-      *TUBE_ADDRESS = *c;
-      c++;
-    }
-    // open GPIO
-    REG_WRITE(0xF8411000, 0xFFFFFFFF);
-
-//  Write data to OCM
-     #define OCM_L 0x61000000
-     int OCM__BASE1_ADDR = OCM_L+0x00010000;
-     int OCM__BASE2_ADDR = OCM_L+0x00012000;
-     int OCM__BASE3_ADDR = OCM_L+0x00014000;
-     int OCM__BASE4_ADDR = OCM_L+0x00020000;
-     int OCM__BASE5_ADDR = OCM_L+0x00030000;
-
-     REG_WRITE(OCM__BASE4_ADDR+0x00, 0x12345678);
-     REG_WRITE(OCM__BASE4_ADDR+0x04, 0x87654321);
-     REG_WRITE(OCM__BASE4_ADDR+0x08, 0xabcddcba);
-     REG_WRITE(OCM__BASE4_ADDR+0x0C, 0xa1b2c3d4);
-//  Write ADMA2 instruction to OCM
-     REG_WRITE(OCM__BASE1_ADDR+0x00, 0x04000027);
-     REG_WRITE(OCM__BASE1_ADDR+0x04, 0x61030000);
-
-     REG_WRITE(OCM__BASE2_ADDR+0x00, 0x04000027);
-     REG_WRITE(OCM__BASE2_ADDR+0x04, 0x61020000);
-
-     REG_WRITE(OCM__BASE3_ADDR+0x00, 0x04000027);
-     REG_WRITE(OCM__BASE3_ADDR+0x04, 0x61030000);
-     value1 =  REG_READ(OCM__BASE3_ADDR+0x00);
-
-     REG_WRITE(OCM__BASE5_ADDR+0x00, 0xa5a5a5a5);
-     REG_WRITE(OCM__BASE5_ADDR+0x04, 0xa5a5a5a5);
-     REG_WRITE(OCM__BASE5_ADDR+0x08, 0xa5a5a5a5);
-     REG_WRITE(OCM__BASE5_ADDR+0x0C, 0xa5a5a5a5);
-
-
-
-//  Card Detection
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x34, 0x000002FF);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x38, 0x000000C0);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x30, 0x000000C0);
-
+/***************************************************************************/
+/**
+ * @brief	check the card inserted or not inserted
+ *
+ * @param	None
+ * @return	XST_SUCCESS
+ *
+ ******************************************************************************/
+u32 CardDetection()
+{
+    u32 Status = XST_FAILURE;
+    //  Card Detection
+    SDIO->NORMAL_INT_STAT_EN_R = 0x2FF;
+    SDIO->ERROR_INT_STAT_EN_R = 0x0;
+    SDIO->NORMAL_INT_SIGNAL_EN_R = 0xC0;
+    SDIO->ERROR_INT_SIGNAL_EN_R = 0x0;
+    SDIO->NORMAL_INT_STAT_R.D16 = 0xC0;
+    SDIO->ERROR_INT_STAT_R.D16 = 0x0;
     sleep(200);
+    u32 CardStatus = 0;
+    while (!CardStatus)
+    {
+        CardStatus = (((SDIO->PSTATE_REG_R.CARD_INSERTED) == 1) ? 1:0);
+    	if (CardStatus == 1)
+    	{
+            Status = XST_SUCCESS;
+    	    break;
+    	}
+    }
+    	
+    return Status;
+}
 
+/***************************************************************************/
+/**
+ * @brief	init the SD/EMMC host controller
+ *
+ * @param	None
+ * @return	XST_SUCCESS
+ *
+ ******************************************************************************/
+u32 HostControllerSetup()
+{
+    u32 Status;
+    //  Host Controller Setup
+    SDIO->HOST_CTRL1_R = 0x10;
+    SDIO->PWR_CTRL_R = 0xBF;
+    SDIO->BGAP_CTRL_R = 0;
+    SDIO->WUP_CTRL_R = 0;
 
+    SDIO->CLK_CTRL_R = 0xB;
+    SDIO->TOUT_CTRL_R = 0;
+    SDIO->SW_RST_R = 0;
 
-    rdata0 = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x24);
-    //vfwp("** REG  0x24 = %x",rdata0);
+    SDIO->AUTO_CMD_STAT_R = 0;
+    SDIO->HOST_CTRL2_R = 0;
 
+    Status = XST_SUCCESS;
+    return Status;
+}
 
-//  Host Controller Setup
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x28, 0x0000BF10);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x2C, 0x0000000B);
-
-    //rdata0 = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0xFC);
-    //vfwp("** REG  0xFC = %x",rdata0);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C, 0x00000000);
-
-//  Host Controller Clock Setup
-
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x2C, 0x0000000B);
+/***************************************************************************/
+/**
+ * @brief	set the SD/EMMC host clock 
+ *
+ * @param	None
+ * @return	XST_SUCCESS
+ *
+ ******************************************************************************/
+u32 HostControllerClockSetup()
+{
+    //  Host Controller Clock Setup
+    SDIO->CLK_CTRL_R = 0xB;
+    SDIO->TOUT_CTRL_R = 0;
+    SDIO->SW_RST_R = 0;
     REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000008);
     REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000000);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x2C, 0x0000000F);
+    SDIO->CLK_CTRL_R = 0xF;
+    SDIO->CLK_CTRL_R = 0xF;
 
-    rdata1 = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x2C);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x2C, 0x0000000F);
+    return XST_SUCCESS;
+}
 
-    sleep(200);
-
-    rdata0 = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x40);
-    rdata0 = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x44);
-    rdata0 = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x08);
-
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x34, 0x000002FF);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x38, 0x000000FF);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x34, 0x00FB02FF);
-    //REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C, 0xDC010000);
-    //REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x00, 0x00000004);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C, 0x00000000);
+/***************************************************************************/
+/**
+ * @brief	set interrupt controller
+ *
+ * @param	None
+ * @return	XST_SUCCESS
+ *
+ ******************************************************************************/
+u32 InitInterruptSetting()
+{
+    SDIO->NORMAL_INT_STAT_EN_R = 0x2FF;
+    SDIO->NORMAL_INT_SIGNAL_EN_R = 0x00FF;
+    SDIO->ERROR_INT_STAT_EN_R = 0x00FB;
+    SDIO->AUTO_CMD_STAT_R = 0;
 
     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x540, 0x0FFF0000);
     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x510, 0x01010004);
 
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x0, 0x00000008);//
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x4, 0x00000001);// useless
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000000);
-    sleep(200);
-//for(;;)
-{
-    // send command 0
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000000);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x00000010);
-
-    rdata0 = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x0C);
-    rdata1 = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x30);
-
-    wait_command_complete();
+    return XST_SUCCESS;
 }
-//for (;;)
 
+/***************************************************************************/
+/**
+ * @brief	send the initial command to the sd/emmc device
+ *
+ * @param	None
+ * @return	XST_SUCCESS
+ *
+ ******************************************************************************/
+u32 SendInitCmd()
 {
+    volatile unsigned int response01;
+    volatile unsigned int validvoltage;
+    
+     // send command 0
+    SDIO->ARGUMENT_R = 0;
+    SDIO->XFER_MODE_R.D16 = 0x10;
+    SDIO->CMD_R.D16 = 0;
+    wait_command_complete();
+
     // send command 8
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x1AA);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x08020010);
-    rdata9 = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x10);
-    rdata1 = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x30);
-
-
-    rdata0 = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x30);
-
     wait_command_complete();
-
-}
-
+    SDIO->ARGUMENT_R = 0x1AA;
+    SDIO->XFER_MODE_R.D16 = 0x10;
+    SDIO->CMD_R.D16 = 0x0802;
+    wait_command_complete();
+    
     // send command 55
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x0);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x370200b2);
+    SDIO->ARGUMENT_R = 0;
+    SDIO->XFER_MODE_R.D16 = 0xb2;
+    SDIO->CMD_R.D16 = 0x3702;
     wait_command_complete();
-    status = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x10);
+
     validvoltage = 0;
-    //if (status > 0)
+    while (!validvoltage)
     {
-    	while (!validvoltage)
+    	// CMD55
+    	SDIO->ARGUMENT_R = 0;
+    	SDIO->XFER_MODE_R.D16 = 0xb2;
+        SDIO->CMD_R.D16 = 0x3702;
+    	wait_command_complete();
+
+    	//CMD41
+        SDIO->ARGUMENT_R = 0xC0100000;
+        SDIO->XFER_MODE_R.D16 = 0xb2;
+        SDIO->CMD_R.D16 = 0x2902;
+    	wait_command_complete();
+
+        response01 = SDIO->RESP01_R;
+    	validvoltage = (((response01 >> 31) == 1) ? 1:0);
+    	if (validvoltage == 1)
     	{
-    		// CMD55
-    		REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x0);
-    		REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x370200b2);
-    		wait_command_complete();
-
-    		//CMD41
-    	    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0xC0100000);
-    	    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xc, 0x290200b2);
-    	    wait_command_complete();
-
-    	    response2 = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x10);
-    	    validvoltage = (((response2 >> 31) == 1) ? 1:0);
-    	    if (validvoltage == 1)
-    	    {
-    	    	break;
-    	    }
+    	    break;
     	}
-
     }
 
-
-
-
-//for(;;)
-{
     // send command 2
-	REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x0);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x020100b2);
-}
+    SDIO->ARGUMENT_R = 0;
+    SDIO->XFER_MODE_R.D16 = 0xb2;
+    SDIO->CMD_R.D16 = 0x0201;
     wait_command_complete();
-
-//while (0)
 
     // send command 3
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x0);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x030200b2);
-    rdata0 = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x0C);
-    rdata9 = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x10);
-    //rdata9 &= rdata9
-    rca = rdata9 & 0xFFFF0000;
-
-    wait_command_complete();
+    SDIO->ARGUMENT_R = 0;
+    SDIO->XFER_MODE_R.D16 = 0xb2;
+    SDIO->CMD_R.D16 = 0x0302;
+    wait_command_complete();     
+    rca = SDIO->RESP01_R & 0xFFFF0000;
 
     // send command 9
-
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, rca);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x090100b2);
+    SDIO->ARGUMENT_R = rca;
+    SDIO->CMD_R.D16 = 0x0901;
     wait_command_complete();
-    CSD_Tab[3] = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x10);
-    CSD_Tab[2] = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x14);
-    CSD_Tab[1] = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x18);
-    CSD_Tab[0] = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x1C);
+    CSD_Tab[3] = SDIO->RESP01_R;
+    CSD_Tab[2] = SDIO->RESP23_R;
+    CSD_Tab[1] = SDIO->RESP45_R;
+    CSD_Tab[0] = SDIO->RESP67_R;    
 
-
-    //REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x30, 0x00090000);
-    //REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x2C, 0x0200310F);
-    //REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x2C, 0x0000310F);
-    //REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C, 0x50C00000);
     // Set buswidth to 1 bit clock to 48MHZ
     errorstatus = SD_GetCardInfo(&SDCardInfo);
     
-
-
     // send command 7
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, rca);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x070300b2);
+    SDIO->ARGUMENT_R = rca;
+    SDIO->CMD_R.D16 = 0x0703;
     wait_command_complete();
-    //sleep(2000);
 
+    return XST_SUCCESS;
+}
+
+/***************************************************************************/
+/**
+ * @brief	change the bit width
+ *
+ * @param	None
+ * @return	XST_SUCCESS
+ *
+ ******************************************************************************/
+u32 SwitchDataWidth()
+{
     // send command 55  SET BUSWITHD TO 4 BIT
-   	REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, rca);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x370200b2);
-
+   	SDIO->ARGUMENT_R = rca;
+    SDIO->XFER_MODE_R.D16 = 0xb2;
+    SDIO->CMD_R.D16 = 0x3702;
     wait_command_complete();
 
     // send command 6
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000002); //set sd model data width=4
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x060200b2);
+    SDIO->ARGUMENT_R = 0x2; //set sd model data width=4
+    SDIO->CMD_R.BIT.CMD_INDEX = 0x6;
+    //REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x060200b2);
     SDIO->HOST_CTRL1_R.DAT_XFER_WIDTH = 0x1;
     wait_command_complete();
     sleep(2000);
-    return SD_OK;
+
+    return XST_SUCCESS;
 }
 
-SD_Error SD_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSize, uint32_t NumberOfBlocks)
+/***************************************************************************/
+/**
+ * @brief	SD init sequence
+ *
+ * @param	None
+ * @return	XST_SUCCESS
+ *
+ ******************************************************************************/
+u32 SD_Init(void)
 {
-	 volatile unsigned rdata0;
-	 volatile unsigned int rdata9;
-	 volatile unsigned rdata1;
-	 volatile unsigned rdata2;
-	 volatile unsigned rdata3;
-	 volatile unsigned rdata4;
-	 volatile unsigned rdata5;
-	 volatile unsigned error_flag;
-	 volatile unsigned int status;
-	 volatile unsigned int response2;
-	 volatile unsigned int validvoltage;
-	 volatile unsigned int count = 0;
-	 volatile unsigned int value = 0;
-	 volatile unsigned int value1 = 0;
-	 volatile unsigned int reg_value = 0;
-	 uint32_t* Buffer_SingleBlock = (uint32_t* )readbuff;
+    int Status = XST_FAILURE;
 
-	 REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x28, 0x0000BF02);
-	 REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x00, Buffer_SingleBlock);
-	 REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x58, Buffer_SingleBlock);
-	 REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x04, 0x00080200);
-	 REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x08, 0x00200000);
-	 REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C, 0x00000000);
-
-	    // send command 16
-	 REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x4, 0x00080200);
-	 SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = 0x200;
-	 SDIO->BLOCKCOUNT_R = 0x8;
-	 REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000200);
-	 REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x10020082);
-	 wait_command_complete();
-
-	    // send command 17 read single block
-	 REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000000);
-	 SDIO->ARGUMENT_R = ReadAddr;
-	 REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x11220091);
-	 value = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0xC);
-	 wait_command_complete();
-
-	 wait_transfer_complete();
-
-	return SD_OK;
-	
+    Status = CardDetection();
+    if (Status != XST_SUCCESS) {
+		goto END;
+	}
+    Status = HostControllerSetup();
+    if (Status != XST_SUCCESS) {
+		goto END;
+	}
+    Status = HostControllerClockSetup();
+    if (Status != XST_SUCCESS) {
+		goto END;
+	}
+    sleep(200);
+    Status = InitInterruptSetting();
+    if (Status != XST_SUCCESS) {
+		goto END;
+	}
+    sleep(200);
+    Status = SendInitCmd();
+    if (Status != XST_SUCCESS) {
+		goto END;
+	}
+    Status = SwitchDataWidth();
+    if (Status != XST_SUCCESS) {
+		goto END;
+	}
+    
+    Status = XST_SUCCESS;
+END:
+	return Status;
 }
 
-SD_Error SD_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t BlockSize, uint32_t NumberOfBlocks)
+/***************************************************************************/
+/**
+ * @brief	read multi block size data 
+ *
+ * @param	readbuff reading data buffer 
+ * @param	ReadAddr read start address
+ * @param	BlockSize read data block size
+ * @param	NumberOfBlocks data block number
+ * @return	XST_SUCCESS
+ *
+ ******************************************************************************/
+u32 SD_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSize, uint32_t NumberOfBlocks)
 {
-	 volatile unsigned rdata0;
-	 volatile unsigned int rdata9;
-	 volatile unsigned rdata1;
-	 volatile unsigned rdata2;
-	 volatile unsigned rdata3;
-	 volatile unsigned rdata4;
-	 volatile unsigned rdata5;
-	 volatile unsigned error_flag;
-	 volatile unsigned int status;
-	 volatile unsigned int response2;
-	 volatile unsigned int validvoltage;
-	 volatile unsigned int count = 0;
-	 volatile unsigned int value = 0;
-	 volatile unsigned int value1 = 0;
-	 volatile unsigned int reg_value = 0;
-	 uint32_t* Buffer_SingleBlock = (uint32_t* )writebuff;
+    volatile unsigned int value = 0;
+	uint32_t* Buffer_SingleBlock = (uint32_t* )readbuff;
 
-     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x28, 0x0000BF02);
-     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x00, Buffer_SingleBlock);
-     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x58, Buffer_SingleBlock);
-     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x04, 0x00080200);
-     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x08, 0x00200000);
-     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C, 0x00000000);
+	REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x28, 0x0000BF02);
+	REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x00, Buffer_SingleBlock);
+	REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x58, Buffer_SingleBlock);
+	REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C, 0x00000000);
 
-	 // send command 16
-	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x4, 0x00080200);
-	     SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = 0x200;
-	     SDIO->BLOCKCOUNT_R = 0x1;
-	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000200);
-	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x10020083);
-	     SDIO->XFER_MODE_R.DATA_XFER_DIR = 0x0;
-	     wait_command_complete();
+	// send command 16
+	SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = 0x200;
+	SDIO->BLOCKCOUNT_R = 0x8;
+    SDIO->ARGUMENT_R = 0x200;
+    SDIO->XFER_MODE_R.D16 = 0x82;
+    SDIO->CMD_R.D16 = 0x1002;
+    wait_command_complete();
 
-	     // send command 24
-	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000000);
-	     SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = BlockSize;
-	     SDIO->BLOCKCOUNT_R = NumberOfBlocks;
-	     SDIO->ARGUMENT_R = WriteAddr;
-	     REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x18220083);
-	     value = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0xC);
-	     wait_command_complete();
+	// send command 17 read single block
+	SDIO->ARGUMENT_R = ReadAddr;
+    SDIO->XFER_MODE_R.D16 = 0x91;
+    SDIO->CMD_R.D16 = 0x1122;
+	wait_command_complete();
+    wait_transfer_complete();
 
-	     wait_transfer_complete();
-
-	return SD_OK;
-
+	return XST_SUCCESS;
 }
 
-SD_Error SD_WaitReadOperation()
+/***************************************************************************/
+/**
+ * @brief	write multi block size data 
+ *
+ * @param	writebuff reading data buffer 
+ * @param	WriteAddr read start address
+ * @param	BlockSize read data block size
+ * @param	NumberOfBlocks data block number
+ * @return	XST_SUCCESS
+ *
+ ******************************************************************************/
+u32 SD_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t BlockSize, uint32_t NumberOfBlocks)
+{
+	volatile unsigned int value = 0;
+	uint32_t* Buffer_SingleBlock = (uint32_t* )writebuff;
+
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x28, 0x0000BF02);
+    SDIO->SDMASA_R = Buffer_SingleBlock;
+    SDIO->ADMA_SA_LOW_R = Buffer_SingleBlock;
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C, 0x00000000);
+
+    // send command 16
+    SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = 0x200;
+    SDIO->BLOCKCOUNT_R = 0x8;
+    SDIO->ARGUMENT_R = 0x200;
+    SDIO->XFER_MODE_R.D16 = 0x82;
+    SDIO->CMD_R.D16 = 0x1002;
+    wait_command_complete();
+
+	// send command 24
+	REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000000);
+	SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = BlockSize;
+	SDIO->BLOCKCOUNT_R = NumberOfBlocks;
+	SDIO->ARGUMENT_R = WriteAddr;
+	REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x18220083);
+	value = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0xC);
+    wait_command_complete();
+    wait_transfer_complete();
+
+	return XST_SUCCESS;
+}
+
+u32 SD_WaitReadOperation()
 {
     for (;;)
     {
@@ -503,17 +523,18 @@ SD_Error SD_WaitReadOperation()
     return SD_OK;
 }
 
-
-
+/***************************************************************************/
 /**
-  * @brief  Returns information about specific card.
-  * @param  cardinfo: pointer to a SD_CardInfo structure that contains all SD card
-  *         information.
-  * @retval SD_Error: SD Card Error code.
-  */
-SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
+ * @brief	Returns information about specific card.
+ *
+ * @param  cardinfo: pointer to a SD_CardInfo structure that contains all SD card
+ *         information.
+ * @return	XST_SUCCESS
+ *
+ ******************************************************************************/
+u32 SD_GetCardInfo(SD_CardInfo *cardinfo)
 {
-  SD_Error errorstatus = SD_OK;
+  u32 errorstatus = XST_SUCCESS;
   uint8_t tmp = 0;
 
   cardinfo->CardType = (uint8_t)CardType;
@@ -530,7 +551,6 @@ SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
   tmp = (CSD_Tab[3] & 0xFF000000) >> 24;
   memcpy(((uint8_t *)&CSD_Tab[2]), &tmp, 1);
   CSD_Tab[3] = CSD_Tab[3] << 8;
-
 
   /*!< Byte 0 */
   tmp = (uint8_t)((CSD_Tab[0] & 0xFF000000) >> 24);
@@ -569,32 +589,32 @@ SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
 
   if ((CardType == SDIO_STD_CAPACITY_SD_CARD_V1_1) || (CardType == SDIO_STD_CAPACITY_SD_CARD_V2_0))
   {
-    cardinfo->SD_csd.DeviceSize = (tmp & 0x03) << 10;
+      cardinfo->SD_csd.DeviceSize = (tmp & 0x03) << 10;
 
-    /*!< Byte 7 */
-    tmp = (uint8_t)(CSD_Tab[1] & 0x000000FF);
-    cardinfo->SD_csd.DeviceSize |= (tmp) << 2;
+      /*!< Byte 7 */
+      tmp = (uint8_t)(CSD_Tab[1] & 0x000000FF);
+      cardinfo->SD_csd.DeviceSize |= (tmp) << 2;
 
-    /*!< Byte 8 */
-    tmp = (uint8_t)((CSD_Tab[2] & 0xFF000000) >> 24);
-    cardinfo->SD_csd.DeviceSize |= (tmp & 0xC0) >> 6;
+      /*!< Byte 8 */
+      tmp = (uint8_t)((CSD_Tab[2] & 0xFF000000) >> 24);
+      cardinfo->SD_csd.DeviceSize |= (tmp & 0xC0) >> 6;
 
-    cardinfo->SD_csd.MaxRdCurrentVDDMin = (tmp & 0x38) >> 3;
-    cardinfo->SD_csd.MaxRdCurrentVDDMax = (tmp & 0x07);
+      cardinfo->SD_csd.MaxRdCurrentVDDMin = (tmp & 0x38) >> 3;
+      cardinfo->SD_csd.MaxRdCurrentVDDMax = (tmp & 0x07);
 
-    /*!< Byte 9 */
-    tmp = (uint8_t)((CSD_Tab[2] & 0x00FF0000) >> 16);
-    cardinfo->SD_csd.MaxWrCurrentVDDMin = (tmp & 0xE0) >> 5;
-    cardinfo->SD_csd.MaxWrCurrentVDDMax = (tmp & 0x1C) >> 2;
-    cardinfo->SD_csd.DeviceSizeMul = (tmp & 0x03) << 1;
-    /*!< Byte 10 */
-    tmp = (uint8_t)((CSD_Tab[2] & 0x0000FF00) >> 8);
-    cardinfo->SD_csd.DeviceSizeMul |= (tmp & 0x80) >> 7;
+      /*!< Byte 9 */
+      tmp = (uint8_t)((CSD_Tab[2] & 0x00FF0000) >> 16);
+      cardinfo->SD_csd.MaxWrCurrentVDDMin = (tmp & 0xE0) >> 5;
+      cardinfo->SD_csd.MaxWrCurrentVDDMax = (tmp & 0x1C) >> 2;
+      cardinfo->SD_csd.DeviceSizeMul = (tmp & 0x03) << 1;
+      /*!< Byte 10 */
+      tmp = (uint8_t)((CSD_Tab[2] & 0x0000FF00) >> 8);
+      cardinfo->SD_csd.DeviceSizeMul |= (tmp & 0x80) >> 7;
 
-    cardinfo->CardCapacity = (cardinfo->SD_csd.DeviceSize + 1) ;
-    cardinfo->CardCapacity *= (1 << (cardinfo->SD_csd.DeviceSizeMul + 2));
-    cardinfo->CardBlockSize = 1 << (cardinfo->SD_csd.RdBlockLen);
-    cardinfo->CardCapacity *= cardinfo->CardBlockSize;
+      cardinfo->CardCapacity = (cardinfo->SD_csd.DeviceSize + 1) ;
+      cardinfo->CardCapacity *= (1 << (cardinfo->SD_csd.DeviceSizeMul + 2));
+      cardinfo->CardBlockSize = 1 << (cardinfo->SD_csd.RdBlockLen);
+      cardinfo->CardCapacity *= cardinfo->CardBlockSize;
   }
   else if (CardType == SDIO_HIGH_CAPACITY_SD_CARD)
   {
@@ -618,7 +638,6 @@ SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
     cardinfo->CardCapacity = ((uint64_t)cardinfo->SD_csd.DeviceSize + 1) * 512 * 1024;
     cardinfo->CardBlockSize = 512;
   }
-
 
   cardinfo->SD_csd.EraseGrSize = (tmp & 0x40) >> 6;
   cardinfo->SD_csd.EraseGrMul = (tmp & 0x3F) << 1;
@@ -655,7 +674,6 @@ SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
   tmp = (uint8_t)(CSD_Tab[3] & 0x000000FF);
   cardinfo->SD_csd.CSD_CRC = (tmp & 0xFE) >> 1;
   cardinfo->SD_csd.Reserved4 = 1;
-
 
   /*!< Byte 0 */
   tmp = (uint8_t)((CID_Tab[0] & 0xFF000000) >> 24);
@@ -726,31 +744,23 @@ SD_Error SD_GetCardInfo(SD_CardInfo *cardinfo)
   return(errorstatus);
 }
 
-void SD_Test(void)
+/***************************************************************************/
+/**
+ * @brief	test SD/EMMC read/write
+ *
+ * @param  None
+ * @return XST_SUCCESS
+ *
+ ******************************************************************************/
+u32 SD_Test(void)
 {
-	volatile unsigned rdata0;
-	    volatile unsigned int rdata9;
-	    volatile unsigned rdata1;
-	    volatile unsigned rdata2;
-	    volatile unsigned rdata3;
-	    volatile unsigned rdata4;
-	    volatile unsigned rdata5;
-	    volatile unsigned error_flag;
-	    volatile unsigned int status;
-	    volatile unsigned int response2;
-	    volatile unsigned int validvoltage;
-	    volatile unsigned int count = 0;
-	    volatile unsigned int value = 0;
-	    volatile unsigned int value1 = 0;
-	    __IO SD_Error errorstatus = SD_OK;
-	    UINT fnum;            					  /* 文件成功读写数量 */
-	    BYTE ReadBuffer[1024]={0};        /* 读缓冲区 */
-	    BYTE WriteBuffer[] = "welcome777777777777777\r\n";
-	    FIL fnew;
+	UINT fnum;            			  /* 文件成功读写数量 */
+	BYTE ReadBuffer[1024]={0};        /* 读缓冲区 */
+	BYTE WriteBuffer[] = "welcome777777777777777\r\n";
+	FIL fnew;
 
-
-	    res_sd = f_mount(&fs,"0:",1);
-#if 1
+	res_sd = f_mount(&fs,"0:",1);
+#if 0
 	    if(res_sd == FR_NO_FILESYSTEM)
 	    {
 	    	res_sd=f_mkfs("0:",0,0);
@@ -761,55 +771,53 @@ void SD_Test(void)
 	    	}
 	    }
 #endif
-#if 1
-	    	res_sd = f_open(&fnew, "0:FatFs.txt",FA_CREATE_ALWAYS | FA_WRITE );
-	    	if ( res_sd == FR_OK )
-	    	{
-	    		//printf("》打开/创建FatFs读写测试文件.txt文件成功，向文件写入数据。\r\n");
-	    		res_sd=f_write(&fnew,WriteBuffer,sizeof(WriteBuffer),&fnum);
-	    		if(res_sd==FR_OK)
-	    		{
-	    			//printf("》文件写入成功，写入字节数据：%d\n",fnum);
-	    			//printf("》向文件写入的数据为：\r\n%s\r\n",WriteBuffer);
-	    		}
-	    		else
-	    		{
-	    			//printf("！！文件写入失败：(%d)\n",res_sd);
-	    		}
-	    		f_close(&fnew);
-	    	}
-	    	else
-	    	{
-	    	}
-#endif
-	    /*------------------- 文件系统测试：读测试 ------------------------------------*/
-	    	//printf("****** 即将进行文件读取测试... ******\r\n");
-	    	res_sd = f_open(&fnew, "0:FatFs.txt", FA_OPEN_EXISTING | FA_READ);
-	    	if(res_sd == FR_OK)
-	    	{
-	    		//printf("》打开文件成功。\r\n");
-	    		res_sd = f_read(&fnew, ReadBuffer, sizeof(ReadBuffer), &fnum);
-	    		if(res_sd==FR_OK)
-	    		{
-	    			//printf("》文件读取成功,读到字节数据：%d\r\n",fnum);
-	    			//printf("》读取得的文件数据为：\r\n%s \r\n", ReadBuffer);
-	    		}
-	    		else
-	    		{
-	    			//printf("！！文件读取失败：(%d)\n",res_sd);
-	    		}
-	    	}
-	    	else
-	    	{
-	    		//LED_RED;
-	    		//printf("！！打开文件失败。\r\n");
-	    	}
-	    	/* 不再读写，关闭文件 */
-	    	f_close(&fnew);
+    res_sd = f_open(&fnew, "0:FatFs.txt",FA_CREATE_ALWAYS | FA_WRITE );
+    if ( res_sd == FR_OK )
+    {
+        //printf("》打开/创建FatFs读写测试文件.txt文件成功，向文件写入数据。\r\n");
+        res_sd=f_write(&fnew,WriteBuffer,sizeof(WriteBuffer),&fnum);
+        if(res_sd==FR_OK)
+        {
+            //printf("》文件写入成功，写入字节数据：%d\n",fnum);
+            //printf("》向文件写入的数据为：\r\n%s\r\n",WriteBuffer);
+        }
+        else
+        {
+            //printf("！！文件写入失败：(%d)\n",res_sd);
+        }
+        f_close(&fnew);
+    }
+    else
+    {
+    }
+	/*------------------- 文件系统测试：读测试 ------------------------------------*/
+    //printf("****** 即将进行文件读取测试... ******\r\n");
+    res_sd = f_open(&fnew, "0:FatFs.txt", FA_OPEN_EXISTING | FA_READ);
+    if(res_sd == FR_OK)
+    {
+        //printf("》打开文件成功。\r\n");
+        res_sd = f_read(&fnew, ReadBuffer, sizeof(ReadBuffer), &fnum);
+        if(res_sd==FR_OK)
+        {
+            //printf("》文件读取成功,读到字节数据：%d\r\n",fnum);
+            //printf("》读取得的文件数据为：\r\n%s \r\n", ReadBuffer);
+        }
+        else
+        {
+            //printf("！！文件读取失败：(%d)\n",res_sd);
+        }
+    }
+    else
+    {
+        //LED_RED;
+        //printf("！！打开文件失败。\r\n");
+    }
+    /* 不再读写，关闭文件 */
+    f_close(&fnew);
 
-	    	/* 不再使用文件系统，取消挂载文件系统 */
-	    	f_mount(NULL,"0:",1);
+    /* 不再使用文件系统，取消挂载文件系统 */
+    f_mount(NULL,"0:",1);
+
+    return Status;
 }
-
-
 /*********************************************END OF FILE**********************/

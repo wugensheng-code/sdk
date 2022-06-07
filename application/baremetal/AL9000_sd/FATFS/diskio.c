@@ -174,7 +174,6 @@ DRESULT disk_write (
 			if(SD_state==SD_OK)
 			{
 				/* Check if the Transfer is finished */
-				//SD_state=SD_WaitWriteOperation();
 			}
 			if(SD_state!=SD_OK)
 				status = RES_PARERR;
