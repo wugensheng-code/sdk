@@ -109,7 +109,7 @@ typedef enum IRQn {
     SOC_INT40_IRQn           = 40,                /*!< Device Interrupt */
     SOC_INT41_IRQn           = 41,                /*!< Device Interrupt */
     SOC_INT42_IRQn           = 42,                /*!< Device Interrupt */
-    SOC_INT43_IRQn           = 43,                /*!< Device Interrupt */
+	XADC_IRQn            	 = 43,                /*!< Device Interrupt */
     SOC_INT44_IRQn           = 44,                /*!< Device Interrupt */
 	WDT_IRQn	     		 = 45,                /*!< Device Interrupt */
     SOC_INT46_IRQn           = 46,                /*!< Device Interrupt */
@@ -135,7 +135,7 @@ typedef enum IRQn {
 	SOC_INT63_IRQn           = 63,                /*!< Device Interrupt */
 	SOC_INT64_IRQn           = 64,                /*!< Device Interrupt */
 	SOC_INT65_IRQn           = 65,                /*!< Device Interrupt */
-	SOC_INT66_IRQn           = 66,                /*!< Device Interrupt */
+	SMC_IRQn           		 = 66,                /*!< Device Interrupt */
 	SOC_INT67_IRQn           = 67,                /*!< Device Interrupt */
 	SOC_INT68_IRQn           = 68,                /*!< Device Interrupt */
 	SOC_INT69_IRQn           = 69,                /*!< Device Interrupt */
@@ -1295,8 +1295,9 @@ typedef struct
 #define MEM_BASE2_ADDR           (0x61030100)
 
 #define WDT_BASE                  	(0xF8410000)
-#define SMC_BASE                  	(0x6841A000UL)
+#define SMC_BASE                  	(0xF841A000UL)
 #define NAND_BASE                  	(0x69000000UL)/* Peripheral memory map */
+
 #define GPIO_BLOCK0_BASE        (0xF8411000UL)          			/*!< (GPIO BLOCK0) Base Address */
 #define GPIO_BLOCK1_BASE        (0xF8411100UL)          			/*!< (GPIO BLOCK1) Base Address */
 #define GPIO_BLOCK2_BASE        (0xF8411200UL)          			/*!< (GPIO BLOCK2) Base Address */
