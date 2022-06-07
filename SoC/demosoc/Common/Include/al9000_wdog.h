@@ -7,11 +7,11 @@
 
 #include "demosoc.h"
 
-#ifndef _AL9000_WDT_H
-#define _AL9000_WDT_H
+#ifndef _AL9000_WDT_H_
+#define _AL9000_WDT_H_
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 

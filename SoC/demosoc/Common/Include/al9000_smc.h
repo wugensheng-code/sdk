@@ -18,98 +18,66 @@
 
 /********* Register offsets  *********/
 
-#define SMC_REG_MEMC_STATUS         	0x00
-#define SMC_REG_MEMIF_CFG         		0x04
-#define SMC_REG_MEM_CFG_SET        		0x08
-#define SMC_REG_MEM_CFG_CLR       		0x0c
-#define SMC_REG_DIRCT_CMD           	0x10
-#define SMC_REG_SET_CYCLES            	0x14
+#define SMC_REG_MEMC_STATUS         	0x00UL
+#define SMC_REG_MEMIF_CFG         		0x04UL
+#define SMC_REG_MEM_CFG_SET        		0x08UL
+#define SMC_REG_MEM_CFG_CLR       		0x0cUL
+#define SMC_REG_DIRCT_CMD           	0x10UL
+#define SMC_REG_SET_CYCLES            	0x14UL
 
-#define SMC_REG_SET_OPMODE        		0x18
-#define SMC_REG_REFRESH_0       		0x20
-#define SMC_REG_REFRESH_1           	0x24
+#define SMC_REG_SET_OPMODE        		0x18UL
+#define SMC_REG_REFRESH_0       		0x20UL
+#define SMC_REG_REFRESH_1           	0x24UL
 
 /********* Reserved reg 0x28 - 0xFC *********/
 
-#define SMC_REG_NAND_CYCLES0_0          0x100
 
-#define SMC_REG_NAND_CYCLES0_1          0x120
 
-#define SMC_REG_NAND_CYCLES0_2          0x140
+#define SMC_REG_NAND_CYCLES1_0          0x180UL
 
-#define SMC_REG_NAND_CYCLES0_3          0x160
 
-#define SMC_REG_NAND_CYCLES1_0          0x180
+#define SMC_REG_OPMODE1_0               0x184UL
 
-#define SMC_REG_NAND_CYCLES1_1          0x1A0
 
-#define SMC_REG_NAND_CYCLES1_2          0x1C0
-
-#define SMC_REG_NAND_CYCLES1_3          0x1E0
-
-#define SMC_REG_OPMODE0_0               0x104
-#define SMC_REG_OPMODE0_1               0x124
-#define SMC_REG_OPMODE0_2               0x144
-#define SMC_REG_OPMODE0_3               0x164
-#define SMC_REG_OPMODE1_0               0x184
-#define SMC_REG_OPMODE1_1               0x1A4
-#define SMC_REG_OPMODE1_2               0x1C4
-#define SMC_REG_OPMODE1_3               0x1E4
-
-#define SMC_REG_USER_CONFIG             0x204
-#define SMC_REG_USER_STATUS             0x200
+#define SMC_REG_USER_CONFIG             0x204UL
+#define SMC_REG_USER_STATUS             0x200UL
 
 /********* Reserved reg 0x208 - 0x2FC *********/
 
-#define SMC_REG_ECC0_STATUS             0x300
-#define SMC_REG_ECC1_STATUS             0x400
+#define SMC_REG_ECC1_STATUS             0x400UL
 
-#define SMC_REG_ECC0_CFG                0X304
-#define SMC_REG_ECC1_CFG                0X404
+#define SMC_REG_ECC1_CFG                0X404UL
 
-#define SMC_REG_ECC0_MEMCMD0            0X308
-#define SMC_REG_ECC1_MEMCMD0            0X408
+#define SMC_REG_ECC1_MEMCMD0            0X408UL
 
-#define SMC_REG_ECC0_MEMCMD1            0X30C
-#define SMC_REG_ECC1_MEMCMD1            0X40C
+#define SMC_REG_ECC1_MEMCMD1            0X40CUL
 
-#define SMC_REG_ECC0_ADDR0              0X310
-#define SMC_REG_ECC1_ADDR0              0X410
+#define SMC_REG_ECC1_ADDR0              0X410UL
 
-#define SMC_REG_ECC0_ADDR1              0X314
-#define SMC_REG_ECC1_ADDR1              0X414
+#define SMC_REG_ECC1_ADDR1              0X414UL
 
-#define SMC_REG_ECC0_BLOCK0             0X318
-#define SMC_REG_ECC0_BLOCK1             0X31C
-#define SMC_REG_ECC0_BLOCK2             0X320
-#define SMC_REG_ECC0_BLOCK3             0X324
+#define SMC_REG_ECC1_BLOCK0             0X418UL
 
-#define SMC_REG_ECC1_BLOCK0             0X418
-#define SMC_REG_ECC1_BLOCK1             0X41C
-#define SMC_REG_ECC1_BLOCK2             0X420
-#define SMC_REG_ECC1_BLOCK3             0X424
-
-#define SMC_REG_ECC0_EXTRA_BLOCK        0X328
-#define SMC_REG_ECC1_EXTRA_BLOCK        0X428
+#define SMC_REG_ECC1_EXTRA_BLOCK        0X428UL
 
 /********* Reserved reg 0x32C - 0x3FC *********/
 /********* Reserved reg 0x42C - 0x4FC *********/
 
-#define SMC_REG_INT_CFG                 0XE00
-#define SMC_REG_INT_INPUTS              0XE04
-#define SMC_REG_INT_OUTPUTS             0XE08
+#define SMC_REG_INT_CFG                 0XE00UL
+#define SMC_REG_INT_INPUTS              0XE04UL
+#define SMC_REG_INT_OUTPUTS             0XE08UL
 
 /********* Reserved reg 0xEOC - 0xFDC *********/
 
-#define SMC_REG_PERIPH_ID_0             0xFE0
-#define SMC_REG_PERIPH_ID_1             0xFE4
-#define SMC_REG_PERIPH_ID_2             0xFE8
-#define SMC_REG_PERIPH_ID_3             0xFEC
+#define SMC_REG_PERIPH_ID_0             0xFE0UL
+#define SMC_REG_PERIPH_ID_1             0xFE4UL
+#define SMC_REG_PERIPH_ID_2             0xFE8UL
+#define SMC_REG_PERIPH_ID_3             0xFECUL
 
-#define SMC_REG_PCELL_ID_0              0xFF0
-#define SMC_REG_PCELL_ID_1              0xFF4
-#define SMC_REG_PCELL_ID_2              0xFF8
-#define SMC_REG_PCELL_ID_3              0xFFC
+#define SMC_REG_PCELL_ID_0              0xFF0UL
+#define SMC_REG_PCELL_ID_1              0xFF4UL
+#define SMC_REG_PCELL_ID_2              0xFF8UL
+#define SMC_REG_PCELL_ID_3              0xFFCUL
 
 
 
@@ -121,28 +89,20 @@
 /* Raw status of the ecc_int1 interrupt signal */
 #define SMC_MemcStatus_EccInt1RawStatus_FIELD		(12)
 
-
 /* Raw status of the ecc_int0 interrupt signal */
 #define SMC_MemcStatus_EccInt0RawStatus_FIELD		(11)
-
 
 /* Status of the ecc_int1 interrupt signal after ANDing with its enable bit, ecc_int_en1 */
 #define SMC_MemcStatus_EccInt1Status_FIELD		(10)
 
-
 /* Status of the ecc_int0 interrupt signal after ANDing with its enable bit, ecc_int_en0 */
 #define SMC_MemcStatus_EccInt0Status_FIELD		(9)
 
-
 /* Interrupt enable status for ecc_int1 */
 #define SMC_MemcStatus_EccInt2En_FIELD		        (8)
-#define SMC_MemcStatus_EccInt2_DISABLE   		    (0 << SMC_MemcStatus_EccInt2En_FIELD)
-#define SMC_MemcStatus_EccInt2_ENABLE   	        (1 << SMC_MemcStatus_EccInt2En_FIELD)
 
 /* Interrupt enable status for ecc_int0 */
 #define SMC_MemcStatus_EccInt1En_FIELD		        (7)
-#define SMC_MemcStatus_EccInt1_DISABLE   		    (0 << SMC_MemcStatus_EccInt1En_FIELD)
-#define SMC_MemcStatus_EccInt1_ENABLE   	        (1 << SMC_MemcStatus_EccInt1En_FIELD)
 
 /* Raw status of the smc_int1 interrupt signal */
 #define SMC_MemcStatus_SmcInt1RawStatus_FIELD		(6)
@@ -158,18 +118,13 @@
 
 /* Interrupt enable status for smc_int1 */
 #define SMC_MemcStatus_IntEn1_FIELD		        (2)
-#define SMC_MemcStatus_Int1_DISABLE   		    (0 << SMC_MemcStatus_IntEn1_FIELD)
-#define SMC_MemcStatus_Int1_ENABLE   	        (1 << SMC_MemcStatus_IntEn1_FIELD)
 
 /* Interrupt enable status for smc_int0 */
 #define SMC_MemcStatus_IntEn0_FIELD		        (1)
-#define SMC_MemcStatus_Int0_DISABLE   		    (0 << SMC_MemcStatus_IntEn0_FIELD)
-#define SMC_MemcStatus_Int0_ENABLE   	        (1 << SMC_MemcStatus_IntEn0_FIELD)
 
 /* Operating state of the SMC */
 #define SMC_MemcStatus_OperaeState_FIELD		(0)
-#define SMC_MemcStatus_OperaeState_READY   		(0 << SMC_MemcStatus_OperaeState_FIELD)
-#define SMC_MemcStatus_OperaeState_LowPower   	(1 << SMC_MemcStatus_OperaeState_FIELD)
+
 
 
 /****  Bit definition for memif_cfg register  ****/
@@ -237,19 +192,19 @@
 
 /*  Clear SMC Interrupt 1, as an alternative to an AXI read */
 #define SMC_MemCfgClr_ClrSmcInt1_FIELD              (4)
-#define SMC_MemCfgClr_ClrSmcInt1_ENABLE     (1 << SMC_MemCfgClr_ClrSmcInt1_FIELD)
+#define SMC_MemCfgClr_ClrSmcInt1     (1 << SMC_MemCfgClr_ClrSmcInt1_FIELD)
 
 /* Clear SMC Interrupt 0, as an alternative to an AXI read */
 #define SMC_MemCfgClr_ClrSmcInt0_FIELD              (3)
-#define SMC_MemCfgClr_ClrSmcInt0_ENABLE     (1 << SMC_MemCfgClr_ClrSmcInt0_FIELD)
+#define SMC_MemCfgClr_ClrSmcInt0     (1 << SMC_MemCfgClr_ClrSmcInt0_FIELD)
 
 /* Request the SMC to exit Low-power state */
 #define SMC_MemCfgClr_SmcLowPowerExit_FIELD         (2)
 #define SMC_MemCfgClr_SmcLowPower_EXIT      (1 << SMC_MemCfgClr_SmcLowPowerExit_FIELD)
 
 /* Disables the smc_int1 interrupt */
-#define SMC_MemCfgClr_SmcInt1_ENABLE_FIELD          (1)
-#define SMC_MemCfgClr_SmcInt1_ENABLE   	    (1 << SMC_MemCfgClr_SmcInt1_ENABLE_FIELD)
+#define SMC_MemCfgClr_SmcInt1_DISABLE_FIELD          (1)
+#define SMC_MemCfgClr_SmcInt1_DISABLE   	(1 << SMC_MemCfgClr_SmcInt1_DISABLE_FIELD)
 
 /*  Disables the smc_int0 interrupt */
 #define SMC_MemCfgClr_SmcInt0_DISABLE_FIELD         (0)
@@ -445,6 +400,40 @@
 #define SMC_EccStatus_Block1_StatusClr          (2 << SMC_EccStatus_EccIntStatus_FIELD)
 #define SMC_EccStatus_Block0_StatusClr          (1 << SMC_EccStatus_EccIntStatus_FIELD)
 
+/****   Bit definition for ecc<x>_cfg  register  ****/
+
+/* Indicates that the memory supports column change address commands */
+#define SMC_EccCfg_EccJump_FIELD           	(5)
+
+#define SMC_EccCfg_EccNoJump     			(0 << SMC_EccCfg_EccJump_FIELD)
+#define SMC_EccCfg_EccJump_UseColChange     (1 << SMC_EccCfg_EccJump_FIELD)
+#define SMC_EccCfg_EccJump_UseFullChange    (2 << SMC_EccCfg_EccJump_FIELD)
+
+/* Indicates when ECC values are read from memory */
+#define SMC_EccCfg_EccValueOffset_FIELD           (4)
+
+#define SMC_EccCfg_EccValue_InBoundary      (0 << SMC_EccCfg_EccValueOffset_FIELD)
+#define SMC_EccCfg_EccValue_InPageEnd       (1 << SMC_EccCfg_EccValueOffset_FIELD)
+
+
+/* This specifies the mode of the ECC block */
+#define SMC_EccCfg_EccMode_FIELD           (2)
+
+#define SMC_EccCfg_EccByPasss       (0 << SMC_EccCfg_EccMode_FIELD)
+#define SMC_EccCfg_EccModeAPB       (1 << SMC_EccCfg_EccMode_FIELD)
+#define SMC_EccCfg_EccModeMem  		(2 << SMC_EccCfg_EccMode_FIELD)
+
+
+/* The number of 512 byte blocks in a page*/
+#define SMC_EccCfg_PageSize_FIELD           (0)
+
+#define SMC_EccCfg_Four_PageSize        (3 << SMC_EccCfg_PageSize_FIELD)
+#define SMC_EccCfg_Two_PageSize         (2 << SMC_EccCfg_PageSize_FIELD)
+#define SMC_EccCfg_One_PageSize         (1 << SMC_EccCfg_PageSize_FIELD)
+
+
+
+
 /****   Bit definition for ecc<x>_memcmd0 register  ****/
 
 /* Use end command */
@@ -474,7 +463,7 @@
 
 /* The NAND command to indicate the end of a column change read (0xE0) */
 #define SMC_EccMemCmd1_ColChangeEndCmd_FIELD    (16)
-#define SMC_EccMemCmd1_ColChangeEndCmd          (0xe0  << SMC_EccMemCmd1_ColChangeEndCmd_FIELD)
+#define SMC_EccMemCmd1_ColChangeEndCmd          (0xE0  << SMC_EccMemCmd1_ColChangeEndCmd_FIELD)
 
 /* The NAND command (0x05) that is either */
 #define SMC_EccMemCmd1_ColChangeRDCmd_FIELD     (8)

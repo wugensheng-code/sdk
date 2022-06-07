@@ -1,0 +1,1 @@
+cd ../../ && make SOC=demoapu COMPILE_PREFIX=aarch64-none-elf- PROGRAM=./SoC/demoapu/test/generic_timer V=1 all
