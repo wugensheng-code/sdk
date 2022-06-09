@@ -207,8 +207,21 @@ enum OnfiCmdArrayOffset{
 #define ECC_LAST			1	/* return success flag */
 
 
+#if 0
 #define SMC_WriteReg	__SW		/* Write 32bit value to address (32 bit. Address First and Value Second */
 #define SMC_ReadReg		__LW		/* Read 8bit value from address (32 bit. Address First )*/
+#endif
+
+
+
+#define SMC_WriteReg(reg,value)	\
+do{		\
+	*(volatile uint32_t *)reg = value;	\
+}while(0)
+
+
+#define SMC_ReadReg(reg)	 (*(volatile uint32_t *)reg)
+
 
 
  /**
