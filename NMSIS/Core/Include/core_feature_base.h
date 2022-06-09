@@ -402,6 +402,8 @@ typedef union {
     })
 #endif /* __ASSEMBLY__ */
 
+
+#if __riscv 
 /**
  * \brief   Enable IRQ Interrupts
  * \details Enables IRQ interrupts by setting the MIE-bit in the MSTATUS Register.
@@ -424,6 +426,12 @@ __STATIC_FORCEINLINE void __disable_irq(void)
     __RV_CSR_CLEAR(CSR_MSTATUS, MSTATUS_MIE);
 }
 
+#else
+extern void __enable_irq(void);
+
+extern void __disable_irq(void);
+
+#endif
 /**
  * \brief   Read whole 64 bits value of mcycle counter
  * \details This function will read the whole 64 bits of MCYCLE register

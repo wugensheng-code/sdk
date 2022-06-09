@@ -53,8 +53,9 @@ include $(NUCLEI_SDK_BUILD)/Makefile.misc
 
 ifeq ($(SOC), demoapu)
 include $(NUCLEI_SDK_BUILD)/Makefile.conf.apu
+include $(NUCLEI_SDK_BUILD)/Makefile.rules.apu
 else
 include $(NUCLEI_SDK_BUILD)/Makefile.conf
+include $(NUCLEI_SDK_BUILD)/Makefile.rules
 endif
 
-include $(NUCLEI_SDK_BUILD)/Makefile.rules

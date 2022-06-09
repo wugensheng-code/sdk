@@ -1,4 +1,3 @@
-INCDIRS += $(NUCLEI_SDK_SOC_COMMON)/Include
 
 #####
 INCDIRS += $(NUCLEI_SDK_SOC_COMMON)/Include/ \
@@ -9,6 +8,7 @@ INCDIRS += $(NUCLEI_SDK_SOC_COMMON)/Include/ \
 		$(NUCLEI_SDK_SOC_COMMON)/Byteorder \
 		$(NUCLEI_SDK_SOC_COMMON)/Source/Generic_timer/inc \
 		$(NUCLEI_SDK_SOC_COMMON)/Source/Gic_500/inc \
+		$(NUCLEI_SDK_ROOT)/SoC/demosoc/Board/nuclei_fpga_eval/Include/
 
 C_SRCDIRS += $(NUCLEI_SDK_SOC_COMMON)/Source \
 		$(NUCLEI_SDK_SOC_COMMON)/Source/Drivers \

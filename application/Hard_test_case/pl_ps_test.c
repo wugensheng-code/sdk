@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "nuclei_sdk_soc.h"
 #include "board_nuclei_fpga_eval.h"
-#include "al_dmac.h"
+#include "AL_dmac.h"
 
 uint32_t plps_test(){
 	uint32_t buffer[256];

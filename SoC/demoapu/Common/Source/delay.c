@@ -50,6 +50,8 @@ static u64_t syscnt_get_freq(void)
 	return freq;
 }
 
+#if 0
+
 void delay_s(u64_t count)
 {
     u64_t freq = syscnt_get_freq();
@@ -70,3 +72,5 @@ void delay_us(u64_t count)
 	u64_t delay_cnt = (u64_t)(count*(freq/1000000));
     __delay(delay_cnt);
 }
+#endif
+

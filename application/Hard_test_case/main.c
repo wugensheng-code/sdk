@@ -22,7 +22,11 @@ uint32_t main(){
 	can_test();
 	timer_test();
 	gpio_test();
+
+#if __riscv
 	benchmark_test();
+#endif
+
 	plps_test();
 	usb_test();
 }

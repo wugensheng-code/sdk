@@ -372,3 +372,22 @@ void do_irq_handle(void)
 		gic_write_eoir(int_id);
 	}
 }
+
+void __enable_irq(void)
+{
+        asm volatile(
+                "msr    daifclr, #2"
+                :
+                :
+                : "memory");
+}
+
+void __disable_irq(void)
+{
+        asm volatile(
+                "msr    daifset, #2"
+                :
+                :
+                : "memory");
+}
+

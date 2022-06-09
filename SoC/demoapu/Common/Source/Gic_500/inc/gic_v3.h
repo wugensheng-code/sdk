@@ -112,26 +112,9 @@ static inline u32 gic_read_rpr(void)
 	return read_sysreg_s(SYS_ICC_RPR_EL1);
 }
 
-static inline void __irq_enable(void)
-{
-	asm volatile(
-		"msr	daifclr, #2"
-		:
-		:
-		: "memory");
-}
 
-static inline void __irq_disable(void)
-{
-	asm volatile(
-		"msr	daifset, #2"
-		:
-		:
-		: "memory");
-}
-
-#define irq_disable()	__irq_disable()
-#define irq_enable()	__irq_enable()
+#define irq_disable()	__disable_irq()
+#define irq_enable()	__enable_irq()
 
 /* functions */
 

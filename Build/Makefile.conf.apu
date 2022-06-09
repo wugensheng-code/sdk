@@ -118,8 +118,7 @@ endif
 COMMON_FLAGS += -g -march=$(RISCV_ARCH) \
 		$(GC_CFLAGS) -fno-common -DDOWNLOAD_MODE=DOWNLOAD_MODE_$(DOWNLOAD_UPPER)
 
-CFLAGS += -mgeneral-regs-only -mstrict-align -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35
-
+CFLAGS += -mstrict-align -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35
 
 CFLAGS += $(COMMON_FLAGS) $(C_INCLUDE_OPT) $(MKDEP_OPT)
 CXXFLAGS += $(COMMON_FLAGS) $(CXX_INCLUDE_OPT) $(MKDEP_OPT)

@@ -83,6 +83,7 @@ int usb_test(void)
     }   
 }
 
+#if __riscv
 uint64_t fetch_rv_cycle(void)
 {
 
@@ -96,9 +97,7 @@ uint64_t fetch_rv_cycle(void)
     return full;
 
 }
-
-
-
+#endif
 
 
 
