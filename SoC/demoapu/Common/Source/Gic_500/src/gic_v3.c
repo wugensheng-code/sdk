@@ -53,7 +53,7 @@ static void gic_do_wait_for_rwp(void __iomem *rwp_addr)
 			return;
 		}
 		cpu_relax();
-		delay_ms(1);
+		_delay_ms(1);
 	}
 }
 
@@ -172,7 +172,7 @@ static void gic_enable_redist(bool enable)
 		if (enable ^ (bool)(val & GICR_WAKER_ChildrenAsleep))
 			break;
 		cpu_relax();
-		delay_ms(1);
+		_delay_ms(1);
 	}
 
 	if (!count)
