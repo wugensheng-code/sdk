@@ -50,27 +50,25 @@ static u64_t syscnt_get_freq(void)
 	return freq;
 }
 
-#if 0
 
-void delay_s(u64_t count)
+void _delay_s(u64_t count)
 {
-    u64_t freq = syscnt_get_freq();
-	u64_t delay_cnt = (u64_t)(count*freq);
+    u64_t freq = syscnt_get_freq();	
+    u64_t delay_cnt = (u64_t)(count*freq);
     __delay(delay_cnt);
 }
 
-void delay_ms(u64_t count)
+void _delay_ms(u64_t count)
 {
     u64_t freq = syscnt_get_freq();
-	u64_t delay_cnt = (u64_t)(count*(freq/1000));
+    u64_t delay_cnt = (u64_t)(count*(freq/1000));
     __delay(delay_cnt);
 }
 
-void delay_us(u64_t count)
+void _delay_us(u64_t count)
 {
     u64_t freq = syscnt_get_freq();
-	u64_t delay_cnt = (u64_t)(count*(freq/1000000));
+    u64_t delay_cnt = (u64_t)(count*(freq/1000000));
     __delay(delay_cnt);
 }
-#endif
 

@@ -612,7 +612,7 @@ uint8_t Nand_HwCalculateEcc(uint8_t *Dst)
 	printf("cal1\r\n");
 	for(eccReg=0; eccReg < 4; eccReg++)
 	{
-		eccValue = __LW((volatile void *)(SMC_BASE+SMC_REG_ECC1_BLOCK0+eccReg*4));
+		eccValue = SMC_ReadReg(SMC_BASE+SMC_REG_ECC1_BLOCK0+eccReg*4);
 		printf("eccValue:%x\r\n",eccValue);
 		printf("cal2\r\n");
 		if((eccValue) & (1 << SMC_EccBlock_ISCheakValueValid_FIELD))
