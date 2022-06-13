@@ -780,6 +780,33 @@ typedef struct{
 	volatile uint32_t CPR;
 }AL_UART_TypeDef;
 
+/*
+ *
+ * al9000_wdt
+ *
+ */
+typedef struct{
+
+    __IOM uint32_t CR;  		// 0x00
+    __IOM uint32_t TORR;     		// 0x04
+    __IM  uint32_t CCVR;      		// 0x08
+    __IOM uint32_t CRR;         	// 0x0c
+    __IM  uint32_t STAT;          	// 0x10
+    __IM  uint32_t EOI;         	// 0X14
+    __IOM uint32_t reserved_reg1;	// 0X18
+    __IOM uint32_t PROT_LEVEL;		// 0X1c
+    __IOM uint32_t reserved_reg2[49]; 	// 0x20-0xe4
+    __IM  uint32_t COMP_PARAMS_5;	// 0xe4
+    __IM  uint32_t COMP_PARAMS_4;       // 0xe8
+    __IM  uint32_t COMP_PARAMS_3;       // 0xec
+    __IM  uint32_t COMP_PARAMS_2;       // 0xf0
+    __IM  uint32_t COMP_PARAMS_1;       // 0xf4
+    __IM  uint32_t COMP_VERSION;        // 0xf8
+    __IM  uint32_t COMP_TYPE;           // 0xfc
+
+
+}WDT_TypeDef;
+
 /*@}*/ /* end of group demosoc_Peripherals */
 
 
