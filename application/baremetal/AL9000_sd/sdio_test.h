@@ -84,7 +84,7 @@ typedef struct
 typedef union
 {
 	__IO uint32_t D32;
-	struct{
+	typedef struct BIT{
 		__IO uint32_t LED_CTRL:1;
 		__IO uint32_t DAT_XFER_WIDTH:1;
 		__IO uint32_t HIGH_SPEED_EN:1;

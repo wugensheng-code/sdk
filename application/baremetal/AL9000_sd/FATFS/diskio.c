@@ -16,7 +16,7 @@
 
 /* Ϊÿ���豸����һ�������� */
 #define ATA			           0     // SD��
-#define SPI_FLASH		       1     // Ԥ���ⲿSPI Flashʹ��
+#define EMMC		       1     // Ԥ���ⲿSPI Flashʹ��
 
 //#define SD_BLOCKSIZE     512
 
@@ -34,7 +34,7 @@ DSTATUS disk_status (
 			status &= ~STA_NOINIT;
 			break;
     
-		case SPI_FLASH:        /* SPI Flash */   
+		case EMMC:        /* SPI Flash */   
 			break;
 
 		default:
@@ -53,7 +53,7 @@ DSTATUS disk_initialize (
 	DSTATUS status = STA_NOINIT;	
 	switch (pdrv) {
 		case ATA:	         /* SD CARD */
-			if(SD_Init()==SD_OK)
+			if(SD_Init() == XST_SUCCESS)
 			{
 				status &= ~STA_NOINIT;
 			}
@@ -64,7 +64,15 @@ DSTATUS disk_initialize (
 		
 			break;
     
-		case SPI_FLASH:    /* SPI Flash */ 
+		case EMMC:    /* EMMC */ 
+            if(EMMC_Init() == XST_SUCCESS)
+			{
+				status &= ~STA_NOINIT;
+			}
+			else 
+			{
+				status = STA_NOINIT;
+			}
 			break;
       
 		default:
@@ -111,18 +119,29 @@ DRESULT disk_read (
 #endif
 
 		SD_state=SD_ReadMultiBlocks((uint8_t *)buff,sector,SDCardInfo.CardBlockSize,count);
-		if(SD_state==SD_OK)
+		if(SD_state == XST_SUCCESS)
 		{
 			/* Check if the Transfer is finished */
 			//SD_state=SD_WaitReadOperation();
 		}
-		if(SD_state!=SD_OK)
+		if(SD_state != XST_SUCCESS)
 			status = RES_PARERR;
 		else
 			status = RES_OK;	
 		break;   
 			
-		case SPI_FLASH:
+		case EMMC:
+            SD_state=EMMC_ReadMultiBlocks((uint8_t *)buff,sector,SDCardInfo.CardBlockSize,count);
+            if(SD_state == XST_SUCCESS)
+		    {
+			/* Check if the Transfer is finished */
+			//SD_state=SD_WaitReadOperation();
+		    }
+		    if(SD_state != XST_SUCCESS)
+			    status = RES_PARERR;
+		    else
+			    status = RES_OK;	
+            
 		break;
     
 		default:
@@ -143,7 +162,7 @@ DRESULT disk_write (
 )
 {
 	DRESULT status = RES_PARERR;
-	SD_Error SD_state = SD_OK;
+	SD_Error SD_state = XST_SUCCESS;
 	
 	if (!count) {
 		return RES_PARERR;		/* Check parameter */
@@ -171,17 +190,26 @@ DRESULT disk_write (
 			}		
 #endif
 			SD_state=SD_WriteMultiBlocks((uint8_t *)buff,sector,SDCardInfo.CardBlockSize,count);
-			if(SD_state==SD_OK)
+			if(SD_state == XST_SUCCESS)
 			{
 				/* Check if the Transfer is finished */
 			}
-			if(SD_state!=SD_OK)
+			if(SD_state != XST_SUCCESS)
 				status = RES_PARERR;
 		    else
 			  status = RES_OK;	
 		break;
 
-		case SPI_FLASH:
+		case EMMC:
+            SD_state=EMMC_WriteMultiBlocks((uint8_t *)buff,sector,SDCardInfo.CardBlockSize,count);
+			if(SD_state == XST_SUCCESS)
+			{
+				/* Check if the Transfer is finished */
+			}
+			if(SD_state != XST_SUCCESS)
+				status = RES_PARERR;
+		    else
+			  status = RES_OK;	
 		break;
     
 		default:
@@ -227,7 +255,26 @@ DRESULT disk_ioctl (
 			status = RES_OK;
 			break;
     
-		case SPI_FLASH:		      
+		case EMMC:
+            switch (cmd) 
+			{
+				// Get R/W sector size (WORD) 
+				case GET_SECTOR_SIZE :    
+					*(WORD * )buff = SDCardInfo.CardBlockSize;
+				break;
+				// Get erase block size in unit of sector (DWORD)
+				case GET_BLOCK_SIZE :      
+					*(DWORD * )buff = 1;
+				break;
+
+				case GET_SECTOR_COUNT:
+					//*(DWORD * )buff = 1000;
+					*(DWORD * )buff = SDCardInfo.CardCapacity/SDCardInfo.CardBlockSize;
+					break;
+				case CTRL_SYNC :
+				break;
+			}
+			status = RES_OK;
 		break;
     
 		default:
