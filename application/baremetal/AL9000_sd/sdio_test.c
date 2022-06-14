@@ -32,9 +32,10 @@ typedef enum {FAILED = 0, PASSED = !FAILED} TestStatus;
 #define NUMBER_OF_BLOCKS      10  /* For Multi Blocks operation (Read/Write) */
 #define MULTI_BUFFER_SIZE    (BLOCK_SIZE * NUMBER_OF_BLOCKS)
 
-#define vfwp printf
 #define TOP_NS__CFG_CTRL_SDIO0_ADDR 0xF8800154
-#define SDIO_WRAP__SDIO0__BASE_ADDR 0xF804A000ULL
+#define SDIO_WRAP__SDIO0__BASE_ADDR 0xF8049000ULL
+#define SDIO_WRAP__SDIO1__BASE_ADDR 0xF804A000ULL
+
 #define TUBE_ADDRESS ((volatile char *) 0xF8800010u)
 
 SDIO_CmdInitTypeDef SDIO_CmdInitStructure;
@@ -45,7 +46,8 @@ FRESULT res_sd;
 uint8_t flag = 0;
 static unsigned int rca = 0;
 SD_CardInfo SDCardInfo;
-static volatile DWC_mshc_block_registers* SDIO = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO0__BASE_ADDR;
+static volatile DWC_mshc_block_registers* SDIO = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO1__BASE_ADDR;
+static volatile DWC_mshc_block_registers* EMMC = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO0__BASE_ADDR;
 uint8_t Buffer_Block_Tx[BLOCK_SIZE], Buffer_Block_Rx[BLOCK_SIZE];
 uint32_t Buffer_MultiBlock_Tx[MULTI_BUFFER_SIZE], Buffer_MultiBlock_Rx[MULTI_BUFFER_SIZE];
 volatile TestStatus EraseStatus = FAILED, TransferStatus1 = FAILED, TransferStatus2 = FAILED;
@@ -97,9 +99,9 @@ static void wait_command_complete()
 {
     for (;;)
     {
-        if (SDIO->NORMAL_INT_STAT_R.CMD_COMPLETE == 1)
+        if (SDIO->NORMAL_INT_STAT_R.BIT.CMD_COMPLETE == 1)
         {
-            SDIO->NORMAL_INT_STAT_R.CMD_COMPLETE = 1;
+            SDIO->NORMAL_INT_STAT_R.BIT.CMD_COMPLETE = 1;
             break;
         }
     }
@@ -109,9 +111,9 @@ static void wait_transfer_complete()
 {
     for (;;)
     {
-        if (SDIO->NORMAL_INT_STAT_R.XFER_COMPLETE == 1)
+        if (SDIO->NORMAL_INT_STAT_R.BIT.XFER_COMPLETE == 1)
         {
-            SDIO->NORMAL_INT_STAT_R.XFER_COMPLETE = 1;
+            SDIO->NORMAL_INT_STAT_R.BIT.XFER_COMPLETE = 1;
             break;
         }
     }
@@ -121,49 +123,12 @@ static void wait_buffer_read_ready_complete()
 {
     for (;;)
     {
-        if (SDIO->NORMAL_INT_STAT_R.BUF_RD_READY == 1)
+        if (SDIO->NORMAL_INT_STAT_R.BIT.BUF_RD_READY == 1)
         {
-            SDIO->NORMAL_INT_STAT_R.BUF_RD_READY = 1;
+            SDIO->NORMAL_INT_STAT_R.BIT.BUF_RD_READY = 1;
             break;
         }
     }
-}
-
-/*****************************************************************************/
-/**
-*
-* @brief    Performs an output operation for a memory location by writing the
-*           32 bit Value to the the specified address.
-*
-* @param	Addr contains the address to perform the output operation
-* @param	Value contains the 32 bit Value to be written at the specified
-*           address.
-*
-* @return	None.
-*
-******************************************************************************/
-static INLINE void Xil_Out32(UINTPTR Addr, u32 Value)
-{
-    /* write 32 bit value to specified address */
-
-    volatile u32 *LocalAddr = (volatile u32 *)Addr;
-    *LocalAddr = Value;
-}
-
-/***************************************************************************/
-/**
- * @brief	Write to the register
- *
- * @param	BaseAddress   - Contains the base address of the device
- * @param	RegOffset     - Contains the offset from the base address of the
- *				device
- * @param	RegisterValue - Is the value to be written to the register
- *
- ******************************************************************************/
-static inline void XSecure_WriteReg(u32 BaseAddress,
-        u32 RegOffset, u32 RegisterValue)
-{
-    Xil_Out32((volatile u32 *)(BaseAddress + RegOffset), RegisterValue);
 }
 
 /***************************************************************************/
@@ -177,18 +142,18 @@ static inline void XSecure_WriteReg(u32 BaseAddress,
 u32 CardDetection()
 {
     u32 Status = XST_FAILURE;
-    //  Card Detection
-    SDIO->NORMAL_INT_STAT_EN_R = 0x2FF;
-    SDIO->ERROR_INT_STAT_EN_R = 0x0;
-    SDIO->NORMAL_INT_SIGNAL_EN_R = 0xC0;
-    SDIO->ERROR_INT_SIGNAL_EN_R = 0x0;
-    SDIO->NORMAL_INT_STAT_R.D16 = 0xC0;
-    SDIO->ERROR_INT_STAT_R.D16 = 0x0;
-    sleep(200);
     u32 CardStatus = 0;
+    
+    //  Card Detection
+    SDIO->ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN_R = 0x000002FF;
+    SDIO->ERROR_INT_SIGNAL_EN_R__NORMAL_INT_SIGNAL_EN_R = 0x000000C0;
+    SDIO->ERROR_INT_STAT_R__NORMAL_INT_STAT_R = 0x000000C0;
+    sleep(200);
+    
     while (!CardStatus)
     {
-        CardStatus = (((SDIO->PSTATE_REG_R.CARD_INSERTED) == 1) ? 1:0);
+        PSTATE_REG_R reg = SDIO->PSTATE_REG;
+        CardStatus = (((reg->PSTATE_REG.CARD_INSERTED) == 1) ? 1:0);
     	if (CardStatus == 1)
     	{
             Status = XST_SUCCESS;
@@ -211,17 +176,9 @@ u32 HostControllerSetup()
 {
     u32 Status;
     //  Host Controller Setup
-    SDIO->HOST_CTRL1_R = 0x10;
-    SDIO->PWR_CTRL_R = 0xBF;
-    SDIO->BGAP_CTRL_R = 0;
-    SDIO->WUP_CTRL_R = 0;
-
-    SDIO->CLK_CTRL_R = 0xB;
-    SDIO->TOUT_CTRL_R = 0;
-    SDIO->SW_RST_R = 0;
-
-    SDIO->AUTO_CMD_STAT_R = 0;
-    SDIO->HOST_CTRL2_R = 0;
+    SDIO->WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R = 0x0000BF10;
+    SDIO->SW_RST_R__TOUT_CTRL_R__CLK_CTRL_R = 0x0000002B;
+    SDIO->HOST_CTRL2_R__AUTO_CMD_STAT = 0x00000000;
 
     Status = XST_SUCCESS;
     return Status;
@@ -238,13 +195,11 @@ u32 HostControllerSetup()
 u32 HostControllerClockSetup()
 {
     //  Host Controller Clock Setup
-    SDIO->CLK_CTRL_R = 0xB;
-    SDIO->TOUT_CTRL_R = 0;
-    SDIO->SW_RST_R = 0;
+    SDIO->SW_RST_R__TOUT_CTRL_R__CLK_CTRL = 0x0000000B;
     REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000008);
     REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000000);
-    SDIO->CLK_CTRL_R = 0xF;
-    SDIO->CLK_CTRL_R = 0xF;
+    SDIO->SW_RST_R__TOUT_CTRL_R__CLK_CTRL = 0x0000000F;
+    SDIO->SW_RST_R__TOUT_CTRL_R__CLK_CTRL = 0x0000000F;
 
     return XST_SUCCESS;
 }
@@ -259,15 +214,28 @@ u32 HostControllerClockSetup()
  ******************************************************************************/
 u32 InitInterruptSetting()
 {
-    SDIO->NORMAL_INT_STAT_EN_R = 0x2FF;
-    SDIO->NORMAL_INT_SIGNAL_EN_R = 0x00FF;
-    SDIO->ERROR_INT_STAT_EN_R = 0x00FB;
-    SDIO->AUTO_CMD_STAT_R = 0;
+    SDIO->ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN = 0x000002FF;
+    SDIO->ERROR_INT_SIGNAL_EN_R__NORMAL_INT_SIGNAL_EN = 0x000000FF;
+    SDIO->ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN = 0x00FB02FF;
+    SDIO->HOST_CTRL2_R__AUTO_CMD_STAT = 0x00000000;
 
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x540, 0x0FFF0000);
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x510, 0x01010004);
+    SDRegWrite(AT_CTRL_R, 0x0FFF0000);
+    SDRegWrite(MBIU_CTRL_R, 0x01010004);
 
     return XST_SUCCESS;
+}
+
+u32 SendCmd(CMD_R__XFER_MODE_R reg)
+{
+    int Status;
+    CMD_R__XFER_MODE_R reg = SDIO->CMD_R__XFER_MODE; 
+    reg.BIT.CMD_INDEX = Cmd;
+    reg.BIT.DATA_XFER_DIR = 0x1;
+    SDIO->ARGUMENT_R = 0;
+    SDIO->CMD_R__XFER_MODE = reg;
+    wait_command_complete();
+
+    return Status;
 }
 
 /***************************************************************************/
@@ -282,16 +250,21 @@ u32 SendInitCmd()
 {
     volatile unsigned int response01;
     volatile unsigned int validvoltage;
+    volatile unsigned int errorstatus;
+    int Status;
     
      // send command 0
-    SDIO->ARGUMENT_R = 0;
-    SDIO->XFER_MODE_R.D16 = 0x10;
-    SDIO->CMD_R.D16 = 0;
-    wait_command_complete();
+     CMD_R__XFER_MODE_R reg = SDIO->CMD_R__XFER_MODE; 
+     reg.BIT.CMD_INDEX = Cmd;
+     reg.BIT.DATA_XFER_DIR = 0x1;
+     SDIO->ARGUMENT_R = 0;
+     SDIO->CMD_R__XFER_MODE = reg;
+     wait_command_complete();
 
     // send command 8
-    wait_command_complete();
     SDIO->ARGUMENT_R = 0x1AA;
+    SDIO->CMD_R__XFER_MODE.BIT.DATA_XFER_DIR = 0x
+    SDIO->CMD_R__XFER_MODE.BIT.RESP_TYPE_SELECT = 
     SDIO->XFER_MODE_R.D16 = 0x10;
     SDIO->CMD_R.D16 = 0x0802;
     wait_command_complete();
@@ -378,7 +351,7 @@ u32 SwitchDataWidth()
     SDIO->ARGUMENT_R = 0x2; //set sd model data width=4
     SDIO->CMD_R.BIT.CMD_INDEX = 0x6;
     //REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x060200b2);
-    SDIO->HOST_CTRL1_R.DAT_XFER_WIDTH = 0x1;
+    SDIO->HOST_CTRL1_R.BIT.DAT_XFER_WIDTH = 0x1;
     wait_command_complete();
     sleep(2000);
 
@@ -514,9 +487,9 @@ u32 SD_WaitReadOperation()
 {
     for (;;)
     {
-        if (SDIO->NORMAL_INT_STAT_R.XFER_COMPLETE == 1)
+        if (SDIO->NORMAL_INT_STAT_R.BIT.XFER_COMPLETE == 1)
         {
-            SDIO->NORMAL_INT_STAT_R.XFER_COMPLETE = 1;
+            SDIO->NORMAL_INT_STAT_R.BIT.XFER_COMPLETE = 1;
             break;
         }
     }
@@ -758,6 +731,7 @@ u32 SD_Test(void)
 	BYTE ReadBuffer[1024]={0};        /* 读缓冲区 */
 	BYTE WriteBuffer[] = "welcome777777777777777\r\n";
 	FIL fnew;
+	u32 Status;
 
 	res_sd = f_mount(&fs,"0:",1);
 #if 0
@@ -771,7 +745,7 @@ u32 SD_Test(void)
 	    	}
 	    }
 #endif
-    res_sd = f_open(&fnew, "0:FatFs.txt",FA_CREATE_ALWAYS | FA_WRITE );
+    res_sd = f_open(&fnew, "0:FatFs1.txt",FA_CREATE_ALWAYS | FA_WRITE );
     if ( res_sd == FR_OK )
     {
         //printf("》打开/创建FatFs读写测试文件.txt文件成功，向文件写入数据。\r\n");
@@ -792,7 +766,7 @@ u32 SD_Test(void)
     }
 	/*------------------- 文件系统测试：读测试 ------------------------------------*/
     //printf("****** 即将进行文件读取测试... ******\r\n");
-    res_sd = f_open(&fnew, "0:FatFs.txt", FA_OPEN_EXISTING | FA_READ);
+    res_sd = f_open(&fnew, "0:FatFs1.txt", FA_OPEN_EXISTING | FA_READ);
     if(res_sd == FR_OK)
     {
         //printf("》打开文件成功。\r\n");
