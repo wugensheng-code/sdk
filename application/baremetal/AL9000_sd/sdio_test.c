@@ -252,43 +252,63 @@ u32 SendInitCmd()
     volatile unsigned int validvoltage;
     volatile unsigned int errorstatus;
     int Status;
+    CMD_R__XFER_MODE_R reg;
     
-     // send command 0
-     CMD_R__XFER_MODE_R reg = SDIO->CMD_R__XFER_MODE; 
-     reg.BIT.CMD_INDEX = Cmd;
-     reg.BIT.DATA_XFER_DIR = 0x1;
-     SDIO->ARGUMENT_R = 0;
-     SDIO->CMD_R__XFER_MODE = reg;
-     wait_command_complete();
+    // send command 0
+    SDIO->ARGUMENT_R = 0;
+    memset(&reg, 0, sizeof(reg));
+    reg.BIT.CMD_INDEX = SD_CMD_GO_IDLE_STATE;
+    reg.BIT.DATA_XFER_DIR = DATA_READ;
+    SDIO->CMD_R__XFER_MODE = reg;
+    wait_command_complete();
 
     // send command 8
     SDIO->ARGUMENT_R = 0x1AA;
-    SDIO->CMD_R__XFER_MODE.BIT.DATA_XFER_DIR = 0x
-    SDIO->CMD_R__XFER_MODE.BIT.RESP_TYPE_SELECT = 
-    SDIO->XFER_MODE_R.D16 = 0x10;
-    SDIO->CMD_R.D16 = 0x0802;
+    memset(&reg, 0, sizeof(reg));
+    reg.BIT.CMD_INDEX = SD_CMD_HS_SEND_EXT_CSD;
+    reg.BIT.DATA_XFER_DIR = DATA_READ;
+    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
+    SDIO->CMD_R__XFER_MODE = reg;
     wait_command_complete();
     
     // send command 55
     SDIO->ARGUMENT_R = 0;
-    SDIO->XFER_MODE_R.D16 = 0xb2;
-    SDIO->CMD_R.D16 = 0x3702;
+    memset(&reg, 0, sizeof(reg));
+    reg.BIT.CMD_INDEX = SD_CMD_APP_CMD;
+    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
+    reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
+    reg.BIT.DATA_XFER_DIR = DATA_READ;
+    reg.BIT.MULTI_BLK_SEL = 0x1;
+    reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
+    SDIO->CMD_R__XFER_MODE = reg;
     wait_command_complete();
 
     validvoltage = 0;
     while (!validvoltage)
     {
     	// CMD55
-    	SDIO->ARGUMENT_R = 0;
-    	SDIO->XFER_MODE_R.D16 = 0xb2;
-        SDIO->CMD_R.D16 = 0x3702;
-    	wait_command_complete();
+        SDIO->ARGUMENT_R = 0;
+        memset(&reg, 0, sizeof(reg));
+        reg.BIT.CMD_INDEX = SD_CMD_APP_CMD;
+        reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
+        reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
+        reg.BIT.DATA_XFER_DIR = DATA_READ;
+        reg.BIT.MULTI_BLK_SEL = 0x1;
+        reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
+        SDIO->CMD_R__XFER_MODE = reg;
+        wait_command_complete();
 
     	//CMD41
         SDIO->ARGUMENT_R = 0xC0100000;
-        SDIO->XFER_MODE_R.D16 = 0xb2;
-        SDIO->CMD_R.D16 = 0x2902;
-    	wait_command_complete();
+        memset(&reg, 0, sizeof(reg));
+        reg.BIT.CMD_INDEX = SD_CMD_SD_APP_OP_COND;
+        reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
+        reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
+        reg.BIT.DATA_XFER_DIR = DATA_READ;
+        reg.BIT.MULTI_BLK_SEL = 0x1;
+        reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
+        SDIO->CMD_R__XFER_MODE = reg;
+        wait_command_complete();
 
         response01 = SDIO->RESP01_R;
     	validvoltage = (((response01 >> 31) == 1) ? 1:0);
@@ -300,20 +320,24 @@ u32 SendInitCmd()
 
     // send command 2
     SDIO->ARGUMENT_R = 0;
-    SDIO->XFER_MODE_R.D16 = 0xb2;
-    SDIO->CMD_R.D16 = 0x0201;
+    reg.BIT.CMD_INDEX = SD_CMD_ALL_SEND_CID;
+    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Long;
+    SDIO->CMD_R__XFER_MODE = reg;
     wait_command_complete();
+    
 
     // send command 3
     SDIO->ARGUMENT_R = 0;
-    SDIO->XFER_MODE_R.D16 = 0xb2;
-    SDIO->CMD_R.D16 = 0x0302;
-    wait_command_complete();     
+    reg.BIT.CMD_INDEX = SD_CMD_SET_REL_ADDR;
+    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
+    SDIO->CMD_R__XFER_MODE = reg;
+    wait_command_complete();
     rca = SDIO->RESP01_R & 0xFFFF0000;
 
     // send command 9
     SDIO->ARGUMENT_R = rca;
-    SDIO->CMD_R.D16 = 0x0901;
+    reg.BIT.CMD_INDEX = SD_CMD_SEND_CSD;
+    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Long;
     wait_command_complete();
     CSD_Tab[3] = SDIO->RESP01_R;
     CSD_Tab[2] = SDIO->RESP23_R;
@@ -325,7 +349,8 @@ u32 SendInitCmd()
     
     // send command 7
     SDIO->ARGUMENT_R = rca;
-    SDIO->CMD_R.D16 = 0x0703;
+    reg.BIT.CMD_INDEX = SD_CMD_SEL_DESEL_CARD;
+    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short_48B;
     wait_command_complete();
 
     return XST_SUCCESS;
@@ -341,18 +366,27 @@ u32 SendInitCmd()
  ******************************************************************************/
 u32 SwitchDataWidth()
 {
+    CMD_R__XFER_MODE_R reg;
+    
     // send command 55  SET BUSWITHD TO 4 BIT
    	SDIO->ARGUMENT_R = rca;
-    SDIO->XFER_MODE_R.D16 = 0xb2;
-    SDIO->CMD_R.D16 = 0x3702;
+    memset(&reg, 0, sizeof(reg));
+    reg.BIT.CMD_INDEX = SD_CMD_APP_CMD;
+    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
+    reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
+    reg.BIT.DATA_XFER_DIR = DATA_READ;
+    reg.BIT.MULTI_BLK_SEL = 0x1;
+    reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
+    SDIO->CMD_R__XFER_MODE = reg;
     wait_command_complete();
 
     // send command 6
     SDIO->ARGUMENT_R = 0x2; //set sd model data width=4
-    SDIO->CMD_R.BIT.CMD_INDEX = 0x6;
-    //REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x060200b2);
-    SDIO->HOST_CTRL1_R.BIT.DAT_XFER_WIDTH = 0x1;
+    reg.BIT.CMD_INDEX = SD_CMD_HS_SWITCH;
+    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
+    SDIO->CMD_R__XFER_MODE = reg;
     wait_command_complete();
+
     sleep(2000);
 
     return XST_SUCCESS;
@@ -417,24 +451,43 @@ u32 SD_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSize,
 {
     volatile unsigned int value = 0;
 	uint32_t* Buffer_SingleBlock = (uint32_t* )readbuff;
+    CMD_R__XFER_MODE_R reg;
 
-	REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x28, 0x0000BF02);
-	REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x00, Buffer_SingleBlock);
-	REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x58, Buffer_SingleBlock);
-	REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C, 0x00000000);
+    SDIO->WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1 = 0x0000BF02;
+    SDIO->SDMASA_R = Buffer_SingleBlock;
+    SDIO->ADMA_SA_LOW_R = Buffer_SingleBlock;
+    SDIO->HOST_CTRL2_R__AUTO_CMD_STAT = 0x0;
 
 	// send command 16
-	SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = 0x200;
-	SDIO->BLOCKCOUNT_R = 0x8;
-    SDIO->ARGUMENT_R = 0x200;
-    SDIO->XFER_MODE_R.D16 = 0x82;
-    SDIO->CMD_R.D16 = 0x1002;
+	SDIO->ARGUMENT_R = 0x200;
+	BLOCKCOUNT_R__BLOCKSIZE_R block;
+    memset(&block, 0, sizeof(block));
+    block.XFER_BLOCK_SIZE = BlockSize;
+    block.BLOCKCOUNT_R = NumberOfBlocks;
+    memset(&reg, 0, sizeof(reg));
+    reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
+    reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
+    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
+    reg.BIT.CMD_INDEX = SD_CMD_SET_BLOCKLEN;
+    SDIO->BLOCKCOUNT_R__BLOCKSIZE = block;
+    SDIO->CMD_R__XFER_MODE = reg;
     wait_command_complete();
 
 	// send command 17 read single block
 	SDIO->ARGUMENT_R = ReadAddr;
-    SDIO->XFER_MODE_R.D16 = 0x91;
-    SDIO->CMD_R.D16 = 0x1122;
+    memset(&reg, 0, sizeof(reg));
+    reg.BIT.DMA_EN = 0x1;
+    reg.BIT.DATA_XFER_DIR = 0x1;
+    reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
+    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
+    reg.BIT.DATA_PRESENT_SEL = 0x1;
+    reg.BIT.CMD_INDEX = SD_CMD_READ_SINGLE_BLOCK;
+    BLOCKCOUNT_R__BLOCKSIZE_R block;
+    memset(&block, 0, sizeof(block));
+    block.XFER_BLOCK_SIZE = BlockSize;
+    block.BLOCKCOUNT_R = NumberOfBlocks;
+    SDIO->BLOCKCOUNT_R__BLOCKSIZE = block;
+    SDIO->CMD_R__XFER_MODE = reg;
 	wait_command_complete();
     wait_transfer_complete();
 
@@ -456,28 +509,46 @@ u32 SD_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t BlockSi
 {
 	volatile unsigned int value = 0;
 	uint32_t* Buffer_SingleBlock = (uint32_t* )writebuff;
+    CMD_R__XFER_MODE_R reg;
 
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x28, 0x0000BF02);
+    SDIO->WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1 = 0x0000BF02;
     SDIO->SDMASA_R = Buffer_SingleBlock;
     SDIO->ADMA_SA_LOW_R = Buffer_SingleBlock;
-    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C, 0x00000000);
+    SDIO->HOST_CTRL2_R__AUTO_CMD_STAT = 0x0;
 
-    // send command 16
-    SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = 0x200;
-    SDIO->BLOCKCOUNT_R = 0x8;
-    SDIO->ARGUMENT_R = 0x200;
-    SDIO->XFER_MODE_R.D16 = 0x82;
-    SDIO->CMD_R.D16 = 0x1002;
+	// send command 16
+	SDIO->ARGUMENT_R = 0x200;
+	BLOCKCOUNT_R__BLOCKSIZE_R block;
+    memset(&block, 0, sizeof(block));
+    block.XFER_BLOCK_SIZE = 0x200;
+    block.BLOCKCOUNT_R = 0x8;
+    memset(&reg, 0, sizeof(reg));
+    reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
+    reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
+    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
+    reg.BIT.CMD_INDEX = SD_CMD_SET_BLOCKLEN;
+    SDIO->BLOCKCOUNT_R__BLOCKSIZE = block;
+    SDIO->CMD_R__XFER_MODE = reg;
     wait_command_complete();
+
 
 	// send command 24
-	REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x8, 0x00000000);
-	SDIO->BLOCKSIZE_R.XFER_BLOCK_SIZE = BlockSize;
-	SDIO->BLOCKCOUNT_R = NumberOfBlocks;
-	SDIO->ARGUMENT_R = WriteAddr;
-	REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0xC, 0x18220083);
-	value = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0xC);
-    wait_command_complete();
+    SDIO->ARGUMENT_R = WriteAddr;
+    memset(&reg, 0, sizeof(reg));
+    reg.BIT.DMA_EN = 0x1;
+    reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
+    reg.BIT.DATA_XFER_DIR = DATA_WRITE;
+    reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
+    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
+    reg.BIT.DATA_PRESENT_SEL = 0x1;
+    reg.BIT.CMD_INDEX = SD_CMD_WRITE_SINGLE_BLOCK;
+    BLOCKCOUNT_R__BLOCKSIZE_R block;
+    memset(&block, 0, sizeof(block));
+    block.XFER_BLOCK_SIZE = BlockSize;
+    block.BLOCKCOUNT_R = NumberOfBlocks;
+    SDIO->BLOCKCOUNT_R__BLOCKSIZE = block;
+    SDIO->CMD_R__XFER_MODE = reg;
+	wait_command_complete();
     wait_transfer_complete();
 
 	return XST_SUCCESS;
@@ -493,7 +564,7 @@ u32 SD_WaitReadOperation()
             break;
         }
     }
-    return SD_OK;
+    return XST_SUCCESS;
 }
 
 /***************************************************************************/

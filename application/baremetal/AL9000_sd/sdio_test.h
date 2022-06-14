@@ -1092,6 +1092,15 @@ extern u32 SD_GetCardInfo(SD_CardInfo *cardinfo);
 #define SD_CMD_SD_APP_SECURE_WRITE_MKB             ((uint8_t)48) /*!< For SD Card only */
 
 
+#define DATA_READ 0x1
+#define DATA_WRITE 0x0
+
+#define SDIO_Response_No                    (0x0)
+#define SDIO_Response_Long                  (0x1)
+#define SDIO_Response_Short                 (0x2)
+#define SDIO_Response_Short_48B             (0x3)
+
+
 /*****************************END OF FILE**************************/
 
 #endif
