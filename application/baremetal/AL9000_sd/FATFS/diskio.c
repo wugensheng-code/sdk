@@ -93,7 +93,7 @@ DRESULT disk_read (
 )
 {
 	DRESULT status = RES_PARERR;
-	SD_Error SD_state = SD_OK;
+	u32 SD_state = XST_SUCCESS;
 	
 	switch (pdrv) {
 		case ATA:	/* SD CARD */
@@ -162,7 +162,7 @@ DRESULT disk_write (
 )
 {
 	DRESULT status = RES_PARERR;
-	SD_Error SD_state = XST_SUCCESS;
+    u32 SD_state = XST_SUCCESS;
 	
 	if (!count) {
 		return RES_PARERR;		/* Check parameter */

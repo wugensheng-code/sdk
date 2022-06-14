@@ -5,7 +5,7 @@
 
 #define XST_SUCCESS                     0L
 #define XST_FAILURE                     1L
-
+#define     __IO    volatile            
 
 #define REG_READ(reg_address) reg_read(reg_address)
 extern unsigned reg_read(unsigned long long reg_address);
@@ -33,7 +33,7 @@ typedef struct
 typedef union
 {
     __IO uint32_t D32;
-    typedef struct BIT{
+    struct BIT{
 	    __IO uint32_t DMA_EN:1;
 	    __IO uint32_t BLOCK_COUNT_ENABLE:1;
 	    __IO uint32_t AUTO_CMD_ENABLE:2;
@@ -84,7 +84,7 @@ typedef struct
 typedef union
 {
 	__IO uint32_t D32;
-	typedef struct BIT{
+	struct _BIT{
 		__IO uint32_t LED_CTRL:1;
 		__IO uint32_t DAT_XFER_WIDTH:1;
 		__IO uint32_t HIGH_SPEED_EN:1;
@@ -108,8 +108,10 @@ typedef union
 	}BIT;
 }WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R;
 
-typedef struct
+typedef union
 {
+	__IO uint32_t D32;
+	struct{
 	__IO uint32_t	INTERNAL_CLK_EN:1;
 	__IO uint32_t	INTERNAL_CLK_STABLE:1;
 	__IO uint32_t	SD_CLK_EN:1;
@@ -124,6 +126,7 @@ typedef struct
 	__IO uint32_t   SW_RST_CMD:1;
 	__IO uint32_t	SW_RST_DAT:1;
 	__IO uint32_t   RSVD_31_27:5;
+    }BIT;
 }SW_RST_R__TOUT_CTRL_R__CLK_CTRL_R;
 
 
@@ -166,43 +169,48 @@ typedef union
     }BIT;
 }ERROR_INT_STAT_R__NORMAL_INT_STAT_R;
 
-typedef struct
+typedef union
 {
-	__IO uint32_t	CMD_COMPLETE_STAT_EN:1; /* intr when response received */
-	__IO uint32_t    XFER_COMPLETE_STAT_EN:1; /* intr when data read/write xfer completed */
-	__IO uint32_t    BGAP_EVENT_STAT_EN:1;
-	__IO uint32_t	DMA_INTERRUPT_STAT_EN:1;
-	__IO uint32_t	BUF_WR_READY_STAT_EN:1;
-	__IO uint32_t    BUF_RD_READY_STAT_EN:1;
-	__IO uint32_t	CARD_INSERTION_STAT_EN:1;
-	__IO uint32_t	CARD_REMOVAL_STAT_EN:1;
-	__IO uint32_t    CARD_INTERRUPT_STAT_EN:1;
-	__IO uint32_t	INT_A_STAT_EN:1;
-	__IO uint32_t	INT_B_STAT_EN:1;
-	__IO uint32_t	INT_C_STAT_EN:1;
-	__IO uint32_t	RE_TUNE_EVENT_STAT_EN:1;
-	__IO uint32_t	FX_EVENT_STAT_EN:1;
-	__IO uint32_t    CQE_EVENT_STAT_EN:1;
-	__IO uint32_t	CMD_TOUT_ERR_STAT_EN:1;
-	__IO uint32_t	CMD_CRC_ERR_STAT_EN:1;
-	__IO uint32_t	CMD_END_BIT_ERR_STAT_EN:1;
-	__IO uint32_t	CMD_IDX_ERR_STAT_EN:1;
-	__IO uint32_t    DATA_TOUT_ERR_STAT_EN:1;
-	__IO uint32_t    DATA_CRC_ERR_STAT_EN:1;
-	__IO uint32_t    DATA_END_BIT_ERR_STAT_EN:1;
-	__IO uint32_t	CUR_LMT_ERR_STAT_EN:1;
-	__IO uint32_t    AUTO_CMD_ERR_STAT_EN:1;
-	__IO uint32_t	ADMA_ERR_STAT_EN:1;
-	__IO uint32_t	TUNING_ERR_STAT_EN:1;
-	__IO uint32_t	RESP_ERR_STAT_EN:1;
-	__IO uint32_t    BOOT_ACK_ERR_STAT_EN:1;
-	__IO uint32_t    VENDOR_ERR_STAT_EN1:1;
-	__IO uint32_t	VENDOR_ERR_STAT_EN2:1;
-	__IO uint32_t	VENDOR_ERR_STAT_EN3:1;
+    __IO uint32_t D32;
+    struct{
+	    __IO uint32_t	CMD_COMPLETE_STAT_EN:1; /* intr when response received */
+	    __IO uint32_t    XFER_COMPLETE_STAT_EN:1; /* intr when data read/write xfer completed */
+	    __IO uint32_t    BGAP_EVENT_STAT_EN:1;
+	    __IO uint32_t	DMA_INTERRUPT_STAT_EN:1;
+	    __IO uint32_t	BUF_WR_READY_STAT_EN:1;
+	    __IO uint32_t    BUF_RD_READY_STAT_EN:1;
+	    __IO uint32_t	CARD_INSERTION_STAT_EN:1;
+	    __IO uint32_t	CARD_REMOVAL_STAT_EN:1;
+	    __IO uint32_t    CARD_INTERRUPT_STAT_EN:1;
+	    __IO uint32_t	INT_A_STAT_EN:1;
+	    __IO uint32_t	INT_B_STAT_EN:1;
+	    __IO uint32_t	INT_C_STAT_EN:1;
+	    __IO uint32_t	RE_TUNE_EVENT_STAT_EN:1;
+	    __IO uint32_t	FX_EVENT_STAT_EN:1;
+	    __IO uint32_t    CQE_EVENT_STAT_EN:1;
+	    __IO uint32_t	CMD_TOUT_ERR_STAT_EN:1;
+	    __IO uint32_t	CMD_CRC_ERR_STAT_EN:1;
+	    __IO uint32_t	CMD_END_BIT_ERR_STAT_EN:1;
+	    __IO uint32_t	CMD_IDX_ERR_STAT_EN:1;
+	    __IO uint32_t    DATA_TOUT_ERR_STAT_EN:1;
+	    __IO uint32_t    DATA_CRC_ERR_STAT_EN:1;
+	    __IO uint32_t    DATA_END_BIT_ERR_STAT_EN:1;
+	    __IO uint32_t	CUR_LMT_ERR_STAT_EN:1;
+	    __IO uint32_t    AUTO_CMD_ERR_STAT_EN:1;
+	    __IO uint32_t	ADMA_ERR_STAT_EN:1;
+	    __IO uint32_t	TUNING_ERR_STAT_EN:1;
+	    __IO uint32_t	RESP_ERR_STAT_EN:1;
+	    __IO uint32_t    BOOT_ACK_ERR_STAT_EN:1;
+	    __IO uint32_t    VENDOR_ERR_STAT_EN1:1;
+	    __IO uint32_t	VENDOR_ERR_STAT_EN2:1;
+	    __IO uint32_t	VENDOR_ERR_STAT_EN3:1;
+     }BIT;
 }ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN_R;
 
-typedef struct
+typedef union
 {
+    __IO uint32_t D32;
+    struct{
 	__IO uint32_t	CMD_COMPLETE_SIGNAL_EN:1; /* intr when response received */
 	__IO uint32_t    XFER_COMPLETE_SIGNAL_EN:1; /* intr when data read/write xfer completed */
 	__IO uint32_t    BGAP_EVENT_SIGNAL_EN:1;
@@ -234,10 +242,13 @@ typedef struct
 	__IO uint32_t    VENDOR_ERR_SIGNAL_EN1:1;
 	__IO uint32_t	VENDOR_ERR_SIGNAL_EN2:1;
 	__IO uint32_t	VENDOR_ERR_SIGNAL_EN3:1;
+    }BIT;
 }ERROR_INT_SIGNAL_EN_R__NORMAL_INT_SIGNAL_EN_R;
 
-typedef struct
+typedef union
 {
+    __IO uint32_t D32;
+    struct{
 	__IO uint32_t	AUTO_CMD12_NOT_EXEC:1;
 	__IO uint32_t	AUTO_CMD_TOUT_ERR:1;
 	__IO uint32_t	AUTO_CMD_CRC_ERR:1;
@@ -260,6 +271,7 @@ typedef struct
 	__IO uint32_t    ADDRESSING:1;
 	__IO uint32_t    ASYNC_INT_ENABLE:1;
 	__IO uint32_t    PRESET_VAL_ENABLE:1;
+    }BIT;
 }HOST_CTRL2_R__AUTO_CMD_STAT_R;
 
 typedef struct
@@ -359,14 +371,14 @@ typedef struct
 
 typedef struct
 {
-	__IO uint32_t FREQ_SEL_VAL : 10;
-	__IO uint32_t CLK_GEN_SEL_VAL : 1;
+	__IO uint32_t FREQ_SEL_VAL_INIT : 10;
+	__IO uint32_t CLK_GEN_SEL_VAL_INIT : 1;
 	__IO uint32_t RSVD_13_11 : 3;
-	__IO uint32_t DRV_SEL_VAL : 2;
-    __IO uint32_t FREQ_SEL_VAL : 10;
-	__IO uint32_t CLK_GEN_SEL_VAL : 1;
+	__IO uint32_t DRV_SEL_VAL_INIT : 2;
+    __IO uint32_t FREQ_SEL_VAL_DS : 10;
+	__IO uint32_t CLK_GEN_SEL_VAL_DS : 1;
 	__IO uint32_t RSVD_29_27 : 3;
-	__IO uint32_t DRV_SEL_VAL : 2;
+	__IO uint32_t DRV_SEL_VAL_DS : 2;
 }PRESET_DS_R__PRESET_INIT_R;
 
 typedef struct
