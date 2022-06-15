@@ -13,9 +13,8 @@ extern unsigned reg_read(unsigned long long reg_address);
 
 #define SDRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO1__BASE_ADDR+reg_address), reg_wdata)
 #define EMMCRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO0__BASE_ADDR+reg_address), reg_wdata)
-
-
 extern void reg_write(unsigned long long reg_address, unsigned reg_wdata);
+
 typedef unsigned char      uint8_t;
 typedef unsigned short     uint16_t;
 typedef unsigned int       uint32_t;
@@ -1111,6 +1110,9 @@ extern u32 SD_GetCardInfo(SD_CardInfo *cardinfo);
 #define SDIO_Response_Long                  (0x1)
 #define SDIO_Response_Short                 (0x2)
 #define SDIO_Response_Short_48B             (0x3)
+
+
+u32 SD_WaitReadOperation(volatile DWC_mshc_block_registers* ptr);
 
 
 /*****************************END OF FILE**************************/

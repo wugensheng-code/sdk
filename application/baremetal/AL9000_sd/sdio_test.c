@@ -97,12 +97,12 @@ void Fill_Buffer(uint8_t *pBuffer, uint32_t BufferLength, uint32_t Offset)
 static void wait_command_complete(volatile DWC_mshc_block_registers* ptr)
 {
     ERROR_INT_STAT_R__NORMAL_INT_STAT_R reg;
-    reg = ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT;
     for (;;)
     {
+        reg = ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT;
         if (reg.BIT.CMD_COMPLETE == 1)
         {
-            reg.BIT.CMD_COMPLETE = 1;
+        	ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT.BIT.CMD_COMPLETE = 1;
             break;
         }
     }
@@ -111,12 +111,12 @@ static void wait_command_complete(volatile DWC_mshc_block_registers* ptr)
 static void wait_transfer_complete(volatile DWC_mshc_block_registers* ptr)
 {
     ERROR_INT_STAT_R__NORMAL_INT_STAT_R reg;
-    reg = ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT;
     for (;;)
     {
+    	reg = ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT;
         if (reg.BIT.XFER_COMPLETE == 1)
         {
-            reg.BIT.XFER_COMPLETE = 1;
+        	ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT.BIT.XFER_COMPLETE = 1;
             break;
         }
     }
@@ -125,12 +125,12 @@ static void wait_transfer_complete(volatile DWC_mshc_block_registers* ptr)
 static void wait_buffer_read_ready_complete(volatile DWC_mshc_block_registers* ptr)
 {
     ERROR_INT_STAT_R__NORMAL_INT_STAT_R reg;
-    reg = ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT;
     for (;;)
     {
+    	reg = ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT;
         if (reg.BIT.BUF_RD_READY == 1)
         {
-            reg.BIT.BUF_RD_READY = 1;
+        	ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT.BIT.BUF_RD_READY = 1;
             break;
         }
     }
@@ -319,17 +319,19 @@ u32 SendInitCmdSD()
     wait_command_complete(SDIO);
     
     // send command 3
-    SDIO->ARGUMENT_R = 0;
+    SDIO->ARGUMENT_R = 0x10000;
     reg.BIT.CMD_INDEX = SD_CMD_SET_REL_ADDR;
     reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
     SDIO->CMD_R__XFER_MODE = reg;
     wait_command_complete(SDIO);
     rca = SDIO->RESP01 & 0xFFFF0000;
+    rca = 0x10000;
 
     // send command 9
     SDIO->ARGUMENT_R = rca;
     reg.BIT.CMD_INDEX = SD_CMD_SEND_CSD;
     reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Long;
+    SDIO->CMD_R__XFER_MODE = reg;
     wait_command_complete(SDIO);
     CSD_Tab[3] = SDIO->RESP01;
     CSD_Tab[2] = SDIO->RESP23;
@@ -343,6 +345,7 @@ u32 SendInitCmdSD()
     SDIO->ARGUMENT_R = rca;
     reg.BIT.CMD_INDEX = SD_CMD_SEL_DESEL_CARD;
     reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short_48B;
+    SDIO->CMD_R__XFER_MODE = reg;
     wait_command_complete(SDIO);
 
     return XST_SUCCESS;
@@ -394,7 +397,9 @@ u32 SendInitCmdEmmc()
     }
 
     // send command 2
-    eMMC->ARGUMENT_R = 0;    
+    eMMC->ARGUMENT_R = 0;
+    memset(&reg, 0, sizeof(reg));
+    reg.BIT.CMD_INDEX = SD_CMD_ALL_SEND_CID;
     reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
     reg.BIT.DATA_XFER_DIR = DATA_READ;
     reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
@@ -404,17 +409,19 @@ u32 SendInitCmdEmmc()
     wait_command_complete(eMMC);
     
     // send command 3
-    eMMC->ARGUMENT_R = 0;
+    eMMC->ARGUMENT_R = 0x10000;
     reg.BIT.CMD_INDEX = SD_CMD_SET_REL_ADDR;
     reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
     eMMC->CMD_R__XFER_MODE = reg;
     wait_command_complete(eMMC);
     rca = eMMC->RESP01 & 0xFFFF0000;
+    rca = 0x10000;
 
     // send command 9
     eMMC->ARGUMENT_R = rca;
     reg.BIT.CMD_INDEX = SD_CMD_SEND_CSD;
     reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Long;
+    eMMC->CMD_R__XFER_MODE = reg;
     wait_command_complete(eMMC);
     CSD_Tab[3] = eMMC->RESP01;
     CSD_Tab[2] = eMMC->RESP23;
@@ -428,12 +435,14 @@ u32 SendInitCmdEmmc()
     eMMC->ARGUMENT_R = rca;
     reg.BIT.CMD_INDEX = SD_CMD_SEND_CID;
     reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Long;
+    eMMC->CMD_R__XFER_MODE = reg;
     wait_command_complete(eMMC);
     
     // send command 7
     eMMC->ARGUMENT_R = rca;
     reg.BIT.CMD_INDEX = SD_CMD_SEL_DESEL_CARD;
     reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short_48B;
+    eMMC->CMD_R__XFER_MODE = reg;
     wait_command_complete(eMMC);
 
     return XST_SUCCESS;
@@ -822,9 +831,11 @@ u32 EMMC_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t Block
 
 u32 SD_WaitReadOperation(volatile DWC_mshc_block_registers* ptr)
 {
+    ERROR_INT_STAT_R__NORMAL_INT_STAT_R reg;
     for (;;)
     {
-        if (ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT.BIT.XFER_COMPLETE == 1)
+        reg = ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT;
+        if (reg.BIT.XFER_COMPLETE == 1)
         {
             ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT.BIT.XFER_COMPLETE = 1;
             break;
@@ -1119,8 +1130,9 @@ u32 SD_Test(void)
 	FIL fnew;
 	u32 Status;
 
-    RawReadWriteTestSD();
+
     RawReadWriteTestEmmc();
+    RawReadWriteTestSD();
 
 	res_sd = f_mount(&fs,"0:",1);  //SD test
 #if 0
