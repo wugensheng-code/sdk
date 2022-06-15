@@ -93,7 +93,11 @@ int main(void)
 
    // printf("MISA: 0x%lx\r\n", misa);
   //  print_misa();
-
+#if __Pinmux_PRESENT == 1
+    *(uint32_t *)(0xf8803068u) =0x3;
+    *(uint32_t *)(0xf880306cu) =0x3;
+    *(uint32_t *)(0xf8803410u) =0x1;
+#endif
     for (int i = 0; i < 20; i ++) {
         printf("%d: Hello World From Nuclei RISC-V Processor!\r\n", i);
     }
