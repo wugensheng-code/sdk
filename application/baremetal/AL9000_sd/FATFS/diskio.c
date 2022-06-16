@@ -35,6 +35,7 @@ DSTATUS disk_status (
 			break;
     
 		case EMMC:        /* SPI Flash */   
+            status &= ~STA_NOINIT;
 			break;
 
 		default:

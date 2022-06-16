@@ -153,6 +153,7 @@ u32 CardDetection()
     SDIO->ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN.D32 = 0x000002FF;
     SDIO->ERROR_INT_SIGNAL_EN_R__NORMAL_INT_SIGNAL_EN.D32 = 0x000000C0;
     SDIO->ERROR_INT_STAT_R__NORMAL_INT_STAT.D32 = 0x000000C0;
+
     sleep(200);
     
     while (!CardStatus)
@@ -733,11 +734,11 @@ u32 SD_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t BlockSi
     SDIO->HOST_CTRL2_R__AUTO_CMD_STAT.D32 = 0x0;
 
 	// send command 16
-	SDIO->ARGUMENT_R = 0x200;
+	SDIO->ARGUMENT_R = BlockSize;
 	BLOCKCOUNT_R__BLOCKSIZE_R block;
     memset(&block, 0, sizeof(block));
-    block.XFER_BLOCK_SIZE = 0x200;
-    block.BLOCKCOUNT_R = 0x8;
+    block.XFER_BLOCK_SIZE = BlockSize;
+    block.BLOCKCOUNT_R = NumberOfBlocks;
     memset(&reg, 0, sizeof(reg));
     reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
     reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
@@ -1068,13 +1069,13 @@ u32 SD_GetCardInfo(SD_CardInfo *cardinfo)
 u32 RawReadWriteTestSD()
 {
     int Status;
-    BYTE WriteBuffer[] = "welcomewelcome\r\n";
+    BYTE WriteBuffer[] = "tessssssssssssttttttt\r\n";
     BYTE ReadBuffer[1024]={0}; 
     int result;
     
     SD_Init();
-    SD_WriteMultiBlocks(WriteBuffer, 1,SDCardInfo.CardBlockSize,1);
-    SD_ReadMultiBlocks(ReadBuffer, 1, SDCardInfo.CardBlockSize,1);
+    SD_WriteMultiBlocks(WriteBuffer, 0,SDCardInfo.CardBlockSize,1);
+    SD_ReadMultiBlocks(ReadBuffer, 0, SDCardInfo.CardBlockSize,1);
 
     result = strcmp(WriteBuffer, ReadBuffer);
     if (result == 0)
@@ -1096,8 +1097,8 @@ u32 RawReadWriteTestEmmc()
     BYTE WriteBuffer[] = "welcomewelcome\r\n";
     BYTE ReadBuffer[1024]={0};   
     EMMC_Init();
-    EMMC_WriteMultiBlocks(WriteBuffer, 1,SDCardInfo.CardBlockSize,1);
-    EMMC_ReadMultiBlocks(ReadBuffer, 1, SDCardInfo.CardBlockSize,1);
+    EMMC_WriteMultiBlocks(WriteBuffer, 6,SDCardInfo.CardBlockSize,1);
+    EMMC_ReadMultiBlocks(ReadBuffer, 8, SDCardInfo.CardBlockSize,1);
 
     result = strcmp(WriteBuffer, ReadBuffer);
     if (result == 0)
@@ -1131,9 +1132,10 @@ u32 SD_Test(void)
 	u32 Status;
 
 
-    RawReadWriteTestEmmc();
-    RawReadWriteTestSD();
-
+    //RawReadWriteTestEmmc();
+    //RawReadWriteTestSD();
+    //for(;;);
+#if 0
 	res_sd = f_mount(&fs,"0:",1);  //SD test
 #if 0
 	    if(res_sd == FR_NO_FILESYSTEM)
@@ -1188,17 +1190,17 @@ u32 SD_Test(void)
     }
     f_close(&fnew);
     f_mount(NULL,"0:",1);
-
+#endif
 
     res_sd = f_mount(&fs,"1:",1);  //EMMC test
-#if 0
+#if 1
             if(res_sd == FR_NO_FILESYSTEM)
             {
-                res_sd=f_mkfs("0:",0,0);
+                res_sd=f_mkfs("1:",0,0);
                 if(res_sd == FR_OK)
                 {
-                    res_sd = f_mount(NULL,"0:",1);
-                    res_sd = f_mount(&fs,"0:",1);
+                    res_sd = f_mount(NULL,"1:",1);
+                    res_sd = f_mount(&fs,"1:",1);
                 }
             }
 #endif
