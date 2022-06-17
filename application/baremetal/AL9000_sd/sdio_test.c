@@ -456,7 +456,7 @@ u32 SendInitCmdEmmc()
     wait_command_complete(eMMC);
 
     //Set Freq 10M
-    Status = HostControllerClockSetup(SDIO, FREQ_10M);
+    Status = HostControllerClockSetup(eMMC, FREQ_10M);
     
     // send command 7
     eMMC->ARGUMENT_R = rca;
