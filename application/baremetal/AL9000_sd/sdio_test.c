@@ -518,12 +518,12 @@ u32 SwitchDataWidthEmmc()
     CMD_R__XFER_MODE_R reg;
 
     // send command 6
-    eMMC->ARGUMENT_R = 0x03b70100; //set sd model data width=4
+    eMMC->ARGUMENT_R = 0x03b70200; //set sd model data width=4
     reg.BIT.CMD_INDEX = SD_CMD_HS_SWITCH;
     reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
     eMMC->CMD_R__XFER_MODE = reg;
     wait_command_complete(eMMC);
-    eMMC->WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1.BIT.DAT_XFER_WIDTH = 0x1;
+    eMMC->WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1.BIT.EXTDAT_XFER = 0x1;
     sleep(2000);
 
     return XST_SUCCESS;
