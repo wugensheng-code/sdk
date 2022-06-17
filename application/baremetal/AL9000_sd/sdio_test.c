@@ -198,14 +198,28 @@ u32 HostControllerSetup(volatile DWC_mshc_block_registers* ptr)
  * @return	XST_SUCCESS
  *
  ******************************************************************************/
-u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr)
+u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, int freq)
 {
     //  Host Controller Clock Setup
-    ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000000B;
-    REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000008);
-    REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000000);
-    ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000000F;
-    ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000000F;
+    if (freq == 0)
+    {
+        ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000000B;
+        REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000008);
+        REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000000);
+        ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000000F;
+        ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000000F;
+    }
+    else if (freq == 1)
+    {
+        ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000002B;
+        REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000008);
+        REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000000);
+        ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000002F;
+        ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000002F;
+    }
+    else
+    {
+    }
 
     return XST_SUCCESS;
 }
@@ -341,6 +355,8 @@ u32 SendInitCmdSD()
 
     // Set buswidth to 1 bit clock to 48MHZ
     errorstatus = SD_GetCardInfo(&SDCardInfo);
+    //Set Freq 10M
+    Status = HostControllerClockSetup(SDIO, FREQ_10M);
     
     // send command 7
     SDIO->ARGUMENT_R = rca;
@@ -438,6 +454,9 @@ u32 SendInitCmdEmmc()
     reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Long;
     eMMC->CMD_R__XFER_MODE = reg;
     wait_command_complete(eMMC);
+
+    //Set Freq 10M
+    Status = HostControllerClockSetup(SDIO, FREQ_10M);
     
     // send command 7
     eMMC->ARGUMENT_R = rca;
@@ -531,7 +550,7 @@ u32 SD_Init(void)
     if (Status != XST_SUCCESS) {
 		goto END;
 	}
-    Status = HostControllerClockSetup(SDIO);
+    Status = HostControllerClockSetup(SDIO, FREQ_400K);
     if (Status != XST_SUCCESS) {
 		goto END;
 	}
@@ -571,7 +590,7 @@ u32 EMMC_Init(void)
     if (Status != XST_SUCCESS) {
 		goto END;
 	}
-    Status = HostControllerClockSetup(eMMC);
+    Status = HostControllerClockSetup(eMMC, FREQ_400K);
     if (Status != XST_SUCCESS) {
 		goto END;
 	}
@@ -1074,8 +1093,8 @@ u32 RawReadWriteTestSD()
     int result;
     
     SD_Init();
-    SD_WriteMultiBlocks(WriteBuffer, 0,SDCardInfo.CardBlockSize,1);
-    SD_ReadMultiBlocks(ReadBuffer, 0, SDCardInfo.CardBlockSize,1);
+    SD_WriteMultiBlocks(WriteBuffer, 80,SDCardInfo.CardBlockSize,1);
+    SD_ReadMultiBlocks(ReadBuffer, 80, SDCardInfo.CardBlockSize,1);
 
     result = strcmp(WriteBuffer, ReadBuffer);
     if (result == 0)
@@ -1097,8 +1116,8 @@ u32 RawReadWriteTestEmmc()
     BYTE WriteBuffer[] = "welcomewelcome\r\n";
     BYTE ReadBuffer[1024]={0};   
     EMMC_Init();
-    EMMC_WriteMultiBlocks(WriteBuffer, 6,SDCardInfo.CardBlockSize,1);
-    EMMC_ReadMultiBlocks(ReadBuffer, 8, SDCardInfo.CardBlockSize,1);
+    EMMC_WriteMultiBlocks(WriteBuffer, 80,SDCardInfo.CardBlockSize,1);
+    EMMC_ReadMultiBlocks(ReadBuffer, 80, SDCardInfo.CardBlockSize,1);
 
     result = strcmp(WriteBuffer, ReadBuffer);
     if (result == 0)
@@ -1132,9 +1151,9 @@ u32 SD_Test(void)
 	u32 Status;
 
 
-    //RawReadWriteTestEmmc();
+    RawReadWriteTestEmmc();
     //RawReadWriteTestSD();
-    //for(;;);
+    for(;;);
 #if 0
 	res_sd = f_mount(&fs,"0:",1);  //SD test
 #if 0
