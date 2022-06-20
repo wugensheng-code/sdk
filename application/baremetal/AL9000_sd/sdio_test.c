@@ -812,11 +812,11 @@ u32 EMMC_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t Block
     eMMC->HOST_CTRL2_R__AUTO_CMD_STAT.D32 = 0x0;
 
 	// send command 16
-	eMMC->ARGUMENT_R = 0x200;
+	eMMC->ARGUMENT_R = BlockSize;
 	BLOCKCOUNT_R__BLOCKSIZE_R block;
     memset(&block, 0, sizeof(block));
-    block.XFER_BLOCK_SIZE = 0x200;
-    block.BLOCKCOUNT_R = 0x8;
+    block.XFER_BLOCK_SIZE = BlockSize;
+    block.BLOCKCOUNT_R = NumberOfBlocks;
     memset(&reg, 0, sizeof(reg));
     reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
     reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
