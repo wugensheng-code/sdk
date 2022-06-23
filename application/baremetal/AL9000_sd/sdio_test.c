@@ -278,7 +278,7 @@ u32 SendInitCmdSD()
     reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
     SDIO->CMD_R__XFER_MODE = reg;
     wait_command_complete(SDIO);
-    
+
     // send command 55
     SDIO->ARGUMENT_R = 0;
     memset(&reg, 0, sizeof(reg));
@@ -290,7 +290,7 @@ u32 SendInitCmdSD()
     reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
     SDIO->CMD_R__XFER_MODE = reg;
     wait_command_complete(SDIO);
-
+    
     validvoltage = 0;
     while (!validvoltage)
     {
@@ -332,6 +332,10 @@ u32 SendInitCmdSD()
     reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Long;
     SDIO->CMD_R__XFER_MODE = reg;
     wait_command_complete(SDIO);
+    CID_Tab[0] = SDIO->RESP01;
+    CID_Tab[1] = SDIO->RESP23;
+    CID_Tab[2] = SDIO->RESP45;
+    CID_Tab[3] = SDIO->RESP67;
     
     // send command 3
     SDIO->ARGUMENT_R = 0x10000;
@@ -340,7 +344,6 @@ u32 SendInitCmdSD()
     SDIO->CMD_R__XFER_MODE = reg;
     wait_command_complete(SDIO);
     rca = SDIO->RESP01 & 0xFFFF0000;
-    rca = 0x10000;
 
     // send command 9
     SDIO->ARGUMENT_R = rca;
@@ -424,7 +427,7 @@ u32 SendInitCmdEmmc()
     reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Long;
     eMMC->CMD_R__XFER_MODE = reg;
     wait_command_complete(eMMC);
-    
+
     // send command 3
     eMMC->ARGUMENT_R = 0x10000;
     reg.BIT.CMD_INDEX = SD_CMD_SET_REL_ADDR;
@@ -432,7 +435,6 @@ u32 SendInitCmdEmmc()
     eMMC->CMD_R__XFER_MODE = reg;
     wait_command_complete(eMMC);
     rca = eMMC->RESP01 & 0xFFFF0000;
-    rca = 0x10000;
 
     // send command 9
     eMMC->ARGUMENT_R = rca;
@@ -1150,8 +1152,10 @@ u32 SD_Test(void)
 	FIL fnew;
 	u32 Status;
 
+    //RawReadWriteTestEmmc();
+    RawReadWriteTestSD();
 
-    RawReadWriteTestEmmc();
+    //RawReadWriteTestEmmc();
     //RawReadWriteTestSD();
     for(;;);
 #if 0
