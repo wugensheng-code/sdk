@@ -115,7 +115,7 @@ ifeq ($(SIMU),xlspike)
 COMMON_FLAGS += -DSIMULATION_XLSPIKE
 endif
 
-COMMON_FLAGS += -g -march=$(RISCV_ARCH) \
+COMMON_FLAGS += -g -gdwarf-4 -march=$(RISCV_ARCH) \
 		$(GC_CFLAGS) -fno-common -DDOWNLOAD_MODE=DOWNLOAD_MODE_$(DOWNLOAD_UPPER)
 
 CFLAGS += -mstrict-align -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35
