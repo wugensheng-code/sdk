@@ -640,7 +640,7 @@ u32 SD_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSize,
     SDIO->HOST_CTRL2_R__AUTO_CMD_STAT.D32 = 0x0;
 
 	// send command 16
-	SDIO->ARGUMENT_R = 0x200;
+	SDIO->ARGUMENT_R = BlockSize;
 	BLOCKCOUNT_R__BLOCKSIZE_R block;
     memset(&block, 0, sizeof(block));
     block.XFER_BLOCK_SIZE = BlockSize;
@@ -1095,8 +1095,8 @@ u32 RawReadWriteTestSD()
     int result;
     
     SD_Init();
-    SD_WriteMultiBlocks(WriteBuffer, 80,SDCardInfo.CardBlockSize,1);
-    SD_ReadMultiBlocks(ReadBuffer, 80, SDCardInfo.CardBlockSize,1);
+    SD_WriteMultiBlocks(WriteBuffer,5,SDCardInfo.CardBlockSize,1);
+    SD_ReadMultiBlocks(ReadBuffer, 5, SDCardInfo.CardBlockSize,1);
 
     result = strcmp(WriteBuffer, ReadBuffer);
     if (result == 0)
