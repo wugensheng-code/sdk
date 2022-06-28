@@ -45,20 +45,14 @@ void wdt_handler(void)
 
 int main(void)
 {
-
 	WDT_InitTypeDef WDT_InitStruct;
 
-	(*WDT_PAUSE_REG) &= 0xfffffffe;
-
-	//printf("S");
-
-	ECLIC_Register_IRQ(WDT_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1, wdt_handler);
+	ECLIC_Register_IRQ(WDT_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, wdt_handler);
 	__enable_irq();
 
 	WDT_InitStruct.WDT_PuaseLength	= WDT_CR_RPL_2;
 	WDT_InitStruct.WDT_Mode		= WDT_CR_RMOD_INTERRUPT;
 	WDT_InitStruct.WDT_TimeOutValue	= WDT_TORR_TOP_327U;
-
 
 	AL9000_wdt_init(WDT,&WDT_InitStruct);
 
@@ -116,6 +110,7 @@ int AL9000_wdt_init(WDT_TypeDef *wdt,WDT_InitTypeDef *WDT_InitStruct)
 	}
 	//printf("i");
 
+	volatile unsigned int read_temp = WDT->EOI;
 
 	wdt->TORR &= TORR_CLR_MASK;
 
@@ -129,8 +124,7 @@ int AL9000_wdt_init(WDT_TypeDef *wdt,WDT_InitTypeDef *WDT_InitStruct)
 
 	wdt->CRR = WDT_CCVR_VALUE;
 
-	//printf("t");
-
+	(*WDT_PAUSE_REG) &= 0xfffffffe;
 }
 
 

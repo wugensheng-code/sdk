@@ -4,12 +4,13 @@
 
 WEAK(lowlevel_init)
 	/* Save LR */
-	mov	x29, lr
+	stp	x29, x30, [sp, #-16]!
 
 	// do cpu lowlevel init here
 	bl _premain_init
 
 	/* Restore LR */
-	mov	lr, x29
+	ldp	x29, x30, [sp],#16
+
 	ret
 ENDPROC(lowlevel_init)

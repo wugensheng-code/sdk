@@ -13,7 +13,7 @@ SECTIONS
 
 	.text :
 	{
-		*/startup64.o(.text)
+		*startup_aarch64.S.o(.text)
 		*(.text)
 	}  > ram AT>ram
 	PROVIDE(_text_end  = .);
@@ -30,18 +30,20 @@ SECTIONS
 	PROVIDE(_data_start = .);
 	.data :
 	{
-		*(.data)
+		*(.data*)
 	}  > ram AT>ram
+
 
 	/* all bss segment */
-	PROVIDE(_bss_start = .);
+	. = ALIGN(4096);
+	_bss_start = .;
 	.bss :
 	{
-		*(.bss COMMON)
+		*(.bss*)
 	}  > ram AT>ram
-	PROVIDE(_bss_end = .);
-
 	. = ALIGN(4096);
+	_bss_end = .;
+
 	PROVIDE(_end = .);
 	.stack ORIGIN(ram) + LENGTH(ram) - __stack_size :
 	{

@@ -168,16 +168,9 @@ int32_t ECLIC_Register_IRQ(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_Type trig_
 	 * RPU SPI interrupt IRQn to Apu SPI IRQn mapping from SPI_START_ID_SHARE_BETWEEN_APU_RPU:
 	 *	 APU_SPI_IDX = (RPU_SPI_IDX + SPI_OFFSET_APU_TO_RPU)
 	*/
-#define SPI_ID_OFFSET_APU_TO_RPU					(13)
-#define SPI_START_ID_SHARE_BETWEEN_APU_RPU			(30)
-
-	if (IRQn < SPI_START_ID_SHARE_BETWEEN_APU_RPU) {
-		request_irq(IRQn + SPI_ID_OFFSET_APU_TO_RPU, handler);
-		return 0;
-	}
-	else {
-		return -1;
-	}
+    #define SPI_ID_OFFSET_APU_TO_RPU					(13)
+	request_irq(IRQn + SPI_ID_OFFSET_APU_TO_RPU, handler);
+	return 0;
 }
 
 /** @} */ /* End of Doxygen Group NMSIS_Core_ExceptionAndNMI */

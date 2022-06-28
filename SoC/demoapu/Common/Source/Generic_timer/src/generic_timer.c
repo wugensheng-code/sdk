@@ -22,11 +22,11 @@ static unsigned int generic_timer_rate;
  */
 static int generic_timer_enable(void)
 {
+	unsigned int v = 1;
 	asm volatile(
-		"mov x0, #1\n"
-		"msr cntp_ctl_el0, x0"
+		"msr cntp_ctl_el0, %x[v]"
 		:
-		:
+		: [v]"r"(v)
 		: "memory");
 	return 0;
 }
