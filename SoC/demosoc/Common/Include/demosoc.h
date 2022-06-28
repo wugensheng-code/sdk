@@ -147,7 +147,7 @@ typedef enum IRQn {
 	SOC_INT75_IRQn           = 75,                /*!< Device Interrupt */
 	SOC_INT76_IRQn           = 76,                /*!< Device Interrupt */
 	XEC0_IRQn                = 77,                /*!< Device Interrupt */
-	SOC_INT78_IRQn           = 78,                /*!< Device Interrupt */
+		XEC1_IRQn                = 78,                /*!< Device Interrupt */
 	SOC_INT79_IRQn           = 79,                /*!< Device Interrupt */
 	SOC_INT80_IRQn           = 80,                /*!< Device Interrupt */
 	SOC_INT81_IRQn           = 81,                /*!< Device Interrupt */
@@ -234,6 +234,7 @@ typedef enum EXCn {
 #define __DCACHE_PRESENT          0                     /*!< Set to 1 if D-Cache is present */
 #define __Vendor_SysTickConfig    0                     /*!< Set to 1 if different SysTick Config is used */
 #define __Vendor_EXCEPTION        0                     /*!< Set to 1 if vendor exception hander is present */
+void Enablepinmux1(void);
 #define __Pinmux_PRESENT          1
 /** @} */ /* End of group Configuration_of_CMSIS */
 

@@ -262,9 +262,9 @@ void SystemBannerPrint(void)
 #error DOWNLOAD_MODE is not defined via build system, please check!
 #endif
     const char* download_modes[] = {"FLASHXIP", "FLASH", "ILM", "DDR"};
-    printf("Nuclei SDK Build Time: %s, %s\r\n", __DATE__, __TIME__);
-    printf("Download Mode: %s\r\n", download_modes[DOWNLOAD_MODE]);
-    printf("CPU Frequency %lu Hz\r\n", SystemCoreClock);
+//    printf("Nuclei SDK Build Time: %s, %s\r\n", __DATE__, __TIME__);
+//    printf("Download Mode: %s\r\n", download_modes[DOWNLOAD_MODE]);
+//    printf("CPU Frequency %lu Hz\r\n", SystemCoreClock);
 #endif
 }
 
@@ -333,9 +333,18 @@ int32_t ECLIC_Register_IRQ(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_Type trig_
  * by __libc_init_array function, so we defined a new function
  * to do initialization
  */
+void Enablepimux1(void);
 void _premain_init(void)
 {
     /* TODO: Add your own initialization code here, called before main */
+//	Enablepinmux1();
+#if __Pinmux_PRESENT == 1
+	Enablepinmux1();
+#endif
+  //  *(uint32_t *)(0xf8803410u) =0x1;
+
+
+
     /* __ICACHE_PRESENT and __DCACHE_PRESENT are defined in demosoc.h */
 #if 0   // add by hunter, 09.29.2021
 #if defined(__ICACHE_PRESENT) && __ICACHE_PRESENT == 1
