@@ -1325,6 +1325,7 @@ typedef struct
 #define WDT_BASE                  	(0xF8410000)
 #define SMC_BASE                  	(0xF841A000UL)
 #define NAND_BASE                  	(0x69000000UL)/* Peripheral memory map */
+#define XADC_BASE                  	(0xF840B000UL)/* Peripheral memory map */
 
 #define GPIO_BLOCK0_BASE        (0xF8411000UL)          			/*!< (GPIO BLOCK0) Base Address */
 #define GPIO_BLOCK1_BASE        (0xF8411100UL)          			/*!< (GPIO BLOCK1) Base Address */
@@ -1389,6 +1390,8 @@ typedef struct
 
 #define UART0                   ((UART_TypeDef *) UART0_BASE)
 #define WDT                   	((WDT_TypeDef *)  WDT_BASE)
+#define XADC                   	((XADC_TypeDef *)  XADC_BASE)
+
 #define PWM0                    ((PWM_TypeDef *) PWM0_BASE)
 #define UART1                   ((UART_TypeDef *) UART1_BASE)
 #define PWM1                    ((PWM_TypeDef *) PWM1_BASE)
