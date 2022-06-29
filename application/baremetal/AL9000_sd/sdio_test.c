@@ -731,7 +731,7 @@ u32 EMMC_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSiz
 	return XST_SUCCESS;
 }
 
-     wait_transfer_complete();    //sdma start
+     //wait_transfer_complete();    //sdma start
 
 /***************************************************************************/
 /**

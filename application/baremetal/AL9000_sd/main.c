@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
-#include "al9000_uart.h"
+//#include "al9000_uart.h"
 //#include "anl_printf.h"
 #include <time.h>
 //#include "al9000_sdio_sd.h"
@@ -20,8 +20,8 @@
 
 void SOC_INT89_IRQn_handler(void)
 {
-    printf("eq!\n\r"); 
-    uart_read(AL9000_UART0);
+    //printf("eq!\n\r");
+    //uart_read(AL9000_UART0);
 }
 
 
