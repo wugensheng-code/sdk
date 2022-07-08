@@ -66,6 +66,7 @@ typedef unsigned long long u64_t;
 #define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
+/*
 #ifndef TRUE
 #define TRUE		1U
 #endif
@@ -73,6 +74,7 @@ typedef unsigned long long u64_t;
 #ifndef FALSE
 #define FALSE		0U
 #endif
+*/
 
 #define APU_COMPONENT_IS_READY     0x11111111U  /**< In device drivers, This macro will be
                                                  assigend to "IsReady" member of driver

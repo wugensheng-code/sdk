@@ -8,7 +8,7 @@
 #include <cdefs.h>
 #include <stdio.h>
 
-
+/* remove becase libg.a has included this function
 void __dead2 __assert(const char *file, unsigned int line,
 		      const char *assertion)
 {
@@ -16,3 +16,4 @@ void __dead2 __assert(const char *file, unsigned int line,
 	while (1)
 		;
 }
+*/

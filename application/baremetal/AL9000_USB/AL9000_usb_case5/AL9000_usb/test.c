@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
 #include "nuclei_sdk_soc.h"
-#include "al9000_uart.h"
+//#include "al9000_uart.h"
 #include "usbd_cdc_vcp.h"
 #include "usbd_usr.h"
 #include "usbd_desc.h"
+
+
 
 USB_OTG_CORE_HANDLE    USB_OTG_dev;
 extern u8 bDeviceState;
@@ -20,8 +23,16 @@ int main(void)
     u8 usbstatus=0;
 
 
-    ECLIC_Register_IRQ(SOC_INT75_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,OTG_FS_IRQHandler);
+    
+
+      ECLIC_Register_IRQ(SOC_INT75_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,OTG_FS_IRQHandler);
        __enable_irq();
+	   
+	     //Initliation USB host
+	//request_irq(88, OTG_FS_IRQHandler);
+    /* enable irq after all devices are ready */
+   // irq_enable();
+
 
    // USBD_Init(&USB_OTG_dev,USB_OTG_HS_CORE_ID,&USR_desc,&USBD_CDC_cb,&USR_cb);
        USBD_Init(&USB_OTG_dev,USB_OTG_FS_CORE_ID,&USR_desc,&USBD_CDC_cb,&USR_cb);

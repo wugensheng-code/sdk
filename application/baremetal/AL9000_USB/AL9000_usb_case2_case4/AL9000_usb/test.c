@@ -3,7 +3,7 @@
 #include "string.h"
 #include <time.h>
 #include "nuclei_sdk_soc.h"
-#include "al9000_uart.h"
+//#include "al9000_uart.h"
 #include "string.h"
 #include "sys.h"
 #include "delay.h" 
@@ -58,7 +58,7 @@ int main(void)
    // f_mount(fs[1],"1:",1);      //mount FLASH.
    // f_mount(fs[2],"2:",1);      //mount NAND FLASH.
 
-    __RV_CSR_CLEAR(CSR_MMISC_CTL,MMISC_CTL_BPU);
+  //  __RV_CSR_CLEAR(CSR_MMISC_CTL,MMISC_CTL_BPU);
     printf("Anlogic usb msc udisk test\n\r");
     printf("Device connecting...");
     
@@ -90,7 +90,7 @@ uint64_t fetch_rv_cycle(void)
     volatile uint64_t full;
 
 
-    full = __RV_CSR_READ(CSR_MCYCLE);
+   // full = __RV_CSR_READ(CSR_MCYCLE);
 
 ;
     return full;
