@@ -128,7 +128,7 @@ void gicv3_init(void);
 /**
  * @desc  : register device interrupt function to interrupt handler function
  * @param {u32} int_id: device interrupt id
- * @param {void*} handler, function point of device interrupt function 
+ * @param {void*} handler, function point of device interrupt function
  * @return {*}
  */
 void request_irq(u32 int_id, void* handler);
@@ -146,4 +146,9 @@ void gicv3_disable_irq(int irq_num);
  * @return {*}
  */
 void gicv3_enable_irq(int irq_num);
+
+/*
+*/
+int gicv3_set_irq_priority(int int_id, int priority);
+
 #endif /* __GIC_V3_H */

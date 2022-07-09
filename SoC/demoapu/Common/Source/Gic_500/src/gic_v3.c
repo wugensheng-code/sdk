@@ -391,3 +391,29 @@ void __disable_irq(void)
                 : "memory");
 }
 
+/**
+ * @desc  : set gic irq priority
+ */
+int gicv3_set_irq_priority(int int_id, int priority)
+{
+	void __iomem * addr;
+	u32 pri;
+
+	if (int_id >= IRQ_MAX_NUM) {
+		gic_print("init id error int_id = %d\n", int_id);
+		return (-1);
+	}
+
+	if (int_id < 32)
+		addr = GICR_SGI_PRI;
+	else
+		addr = GICD_IPRIORITYR;
+
+	pri = readl_relaxed(addr + (int_id & 0xfffffffc));
+
+	pri = pri & (~(0xffUL << ((int_id & 0x03) << 3))) | (priority << ((int_id & 0x03) << 3));
+
+	writel_relaxed(pri, addr + (int_id & 0xfffffffc));
+
+	return 0;
+}
