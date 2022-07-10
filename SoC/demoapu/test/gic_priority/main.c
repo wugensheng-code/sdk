@@ -65,7 +65,6 @@ void generic_vtimer_irq_handler(void)
         printf("Got vtimer first, fail\n");
         result = 0;
     }
-    irq_disable();
 }
 
 
