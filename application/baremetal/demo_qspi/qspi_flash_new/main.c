@@ -275,8 +275,8 @@ int main()
 	uint32_t temp = 0;
 	uint16_t txfifo_start_level = 0;
 	uint16_t rxdata_num = 0;
-	uint8_t wrdata_a[256] = {0};
-	uint8_t rddata_a[256] = {0};
+	uint8_t wrdata_a[256];
+	uint8_t rddata_a[256];
 	uint32_t wrdata_tmp = 0;
 	uint32_t rddata_tmp = 0;
 	for (i = 0; i < 256; i++)
