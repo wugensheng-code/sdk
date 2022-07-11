@@ -42,6 +42,19 @@ setup_vector:
 	switch_el x1, el3_entry, el2_entry, el1_entry
 	/* execute el3 */
 el3_entry:
+	mrs     x0, mpidr_el1
+	ldr	x1, =0x00ff
+	and	x0, x0, x1
+
+	cmp x0, #0
+
+	/*if primary cpu, continue boot */
+	b.eq 0f
+
+	/*if secondary cpu, loop here*/
+	b .
+
+0:
 	adr	x0, vectors
 	msr vbar_el3, x0
 	mrs	x0, scr_el3
