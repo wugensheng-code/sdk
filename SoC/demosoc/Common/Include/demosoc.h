@@ -872,8 +872,8 @@ typedef struct {
 
 
 typedef struct {
-	__IOM uint32_t  MAC_Address0_High;
-	__IOM uint32_t  MAC_Address0_Low;
+	__IOM uint32_t  MAC_Address0_High;   //0x300
+	__IOM uint32_t  MAC_Address0_Low;    //0x304
 	__IOM uint32_t  MAC_Address1_High;   //0x308
 	__IOM uint32_t  MAC_Address1_Low;    //0x30c
 }ETH_MACAddrTypeDef;
@@ -1266,33 +1266,210 @@ typedef struct
 #define XEC0_DMA                      ((ETH_DMATypeDef *)XEC0_DMA_BASE)
 #define XEC0_DMA_CH                   ((ETH_DMACHTypeDef *)XEC0_DMA_CH_BASE)
 
+//----------------------XEC1------------------------------------------------------
 
+/**
+  * @brief Ethernet MAC
+  */
+typedef struct {
+    __IOM uint32_t MAC_Configuration;
+    __IOM uint32_t MAC_Ext_Configuration;
+    __IOM uint32_t MAC_Packet_Filter;
+    __IOM uint32_t MAC_Watchdog_Timeout;  //0xc
+   // __IOM uint32_t reserved_re[19];     //offset 0x10+i*0x4, i=[0..35]*/
+    __IOM uint32_t reserved_re1;          //0x10
+    __IOM uint32_t reserved_re2;          //0x14
+    __IOM uint32_t reserved_re3;          //0x18
+    __IOM uint32_t reserved_re4;          //0x1c
+    __IOM uint32_t reserved_re5;          //0x20
+    __IOM uint32_t reserved_re6;          //0x24
+    __IOM uint32_t reserved_re7;          //0x28
+    __IOM uint32_t reserved_re8;          //0x2c
+    __IOM uint32_t reserved_re9;          //0x30
+    __IOM uint32_t reserved_re10;         //0x34
+    __IOM uint32_t reserved_re11;         //0x38
+     __IOM uint32_t reserved_re12;        //0x3c
+     __IOM uint32_t reserved_re13;          //0x40
+     __IOM uint32_t reserved_re14;         //0x44
+     __IOM uint32_t reserved_re15;         //0x48
+      __IOM uint32_t reserved_re16;        //0x4c
+    __IOM uint32_t MAC_VLAN_Tag;       //0x50
+    __IOM uint32_t MAC_VLAN_Tag_Data;  //0x54
+
+} ETH1_MACTypeDef;
+
+typedef struct {
+    __IOM uint32_t MAC_Interrupt_Status;
+    __IOM uint32_t MAC_Interrupt_Enable;
+    __IOM uint32_t MAC_Rx_Tx_Status;
+} ETH1_InterruptTypeDef;
+
+
+typedef struct {
+	__IOM uint32_t  MAC_PHYIF_Control_Status;
+}ETH1_PhyifctrlstatTypeDef;
+
+typedef struct {
+	__IOM uint32_t  MAC_Version;
+	__IOM uint32_t  MAC_Debug;
+	__IOM uint32_t  Reserved2;
+	__IOM uint32_t  MAC_HW_Feature0;
+	__IOM uint32_t  MAC_HW_Feature1;
+	__IOM uint32_t  MAC_HW_Feature2;
+	__IOM uint32_t  MAC_HW_Feature3;
+}ETH1_HwTypeDef;
+
+
+typedef struct {
+	__IOM uint32_t  MAC_MDIO_Address;
+	__IOM uint32_t  MAC_MDIO_Data;
+	__IOM uint32_t  Reserved2;
+	__IOM uint32_t  MAC_ARP_Address;
+}ETH1_MdioTypeDef;
+
+
+typedef struct {
+	__IOM uint32_t  MAC_Address0_High;   //0x300
+	__IOM uint32_t  MAC_Address0_Low;    //0x304
+	__IOM uint32_t  MAC_Address1_High;   //0x308
+	__IOM uint32_t  MAC_Address1_Low;    //0x30c
+
+}ETH1_MACAddrTypeDef;
+
+typedef struct {
+    __IOM uint32_t MMC_Control;
+    __IOM uint32_t MMC_Rx_Interrupt;
+    __IOM uint32_t MMC_Tx_Interrupt;
+    __IOM uint32_t MMC_Rx_Interrupt_Mask;
+    __IOM uint32_t MMC_Tx_Interrupt_Mask;
+    __IOM uint32_t Tx_Octet_Count_Good_Bad;
+    __IOM uint32_t Tx_Packet_Count_Good_Bad;
+    __IOM uint32_t Tx_Broadcast_Packets_Good;
+    __IOM uint32_t Tx_Multicast_Packets_Good;
+    __IOM uint32_t Tx_64Octets_Packets_Good_Bad;
+    __IOM uint32_t Tx_65To127Octets_Packets_Good_Bad;
+    __IOM uint32_t Tx_128To255Octets_Packets_Good_Bad;
+    __IOM uint32_t Tx_256To511Octets_Packets_Good_Bad;
+    __IOM uint32_t Tx_512To1023Octets_Packets_Good_Bad;
+    __IOM uint32_t Tx_1024ToMaxOctets_Packets_Good_Bad;
+    __IOM uint32_t Tx_Unicast_Packets_Good_Bad;
+    __IOM uint32_t Tx_Multicast_Packets_Good_Bad;
+    __IOM uint32_t Tx_Broadcast_Packets_Good_Bad;
+    __IOM uint32_t Tx_Underflow_Error_Packets;
+    __IOM uint32_t  Reserd1;              //0X74C
+    __IOM uint32_t  Reserd2;   //0X750
+    __IOM uint32_t  Reserd3;  //0X754
+    __IOM uint32_t  Reserd4;  //0X758
+    __IOM uint32_t  Reserd5;  //0X75C
+    __IOM uint32_t  Reserd6;  //0X760
+    __IOM uint32_t  Tx_Octet_Count_Good;//0X764
+} ETH1_MMCTypeDef;
+
+
+typedef struct {
+	__IOM uint32_t MTL_Operation_Mode;
+
+}ETH1_MTLTypeDef;
+
+
+typedef struct {
+	__IOM uint32_t MTL_TxQ0_Operation_Mode;
+	__IOM uint32_t MTL_TxQ0_Underflow;
+	__IOM uint32_t MTL_TxQ0_Debug;
+	__IOM uint32_t  Reserd7;  //0Xd0c
+	__IOM uint32_t  Reserd8;  //0Xd10
+	__IOM uint32_t  Reserd9;  //0Xd14
+	__IOM uint32_t  Reserd10;  //0Xd18
+	__IOM uint32_t  Reserd11;  //0Xd1c
+	__IOM uint32_t  Reserd12;  //0Xd20
+	__IOM uint32_t  Reserd13;  //0Xd24
+	__IOM uint32_t  Reserd14;  //0Xd28
+	__IOM uint32_t  MTL_Q0_Interrupt_Control_Status;  //0Xd2c
+	__IOM uint32_t  MTL_RxQ0_Operation_Mode;  //0Xd30
+	__IOM uint32_t  MTL_RxQ0_Missed_Packet_Overflow_Cnt;  //0Xd34
+	__IOM uint32_t  MTL_RxQ0_Debug;
+}ETH1_MTLQ0TypeDef;
+
+
+
+typedef struct {
+    __IOM uint32_t DMA_Mode;
+    __IOM uint32_t DMA_SysBus_Mode;
+    __IOM uint32_t DMA_Interrupt_Status;
+    __IOM uint32_t DMA_Debug_Status0;//0X100C
+}ETH1_DMATypeDef;
+
+typedef struct {
+	 __IOM uint32_t DMA_CH0_Control;             //0X1100
+	 __IOM uint32_t DMA_CH0_Tx_Control;
+	 __IOM uint32_t DMA_CH0_Rx_Control;
+	 __IOM uint32_t Reserd15;                //0X110c
+	 __IOM uint32_t Reserd16;                //0X1110
+	 __IOM uint32_t DMA_CH0_TxDesc_List_Address; //0X1114
+	 __IOM uint32_t Reserd17;                 //0X1118
+	 __IOM uint32_t DMA_CH0_RxDesc_List_Address; //
+	 __IOM uint32_t DMA_CH0_TxDesc_Tail_Pointer; //0x1120
+	 __IOM uint32_t Reserd18;                //0X1124
+	 __IOM uint32_t DMA_CH0_RxDesc_Tail_Pointer; //0x1128
+	 __IOM uint32_t DMA_CH0_TxDesc_Ring_Length; //0x112c
+	 __IOM uint32_t DMA_CH0_RxDesc_Ring_Length; //0x1130
+	 __IOM uint32_t DMA_CH0_Interrupt_Enable;   //0x1134
+	 __IOM uint32_t DMA_CH0_Rx_Interrupt_Watchdog_Timer;//0x1138
+	 __IOM uint32_t Reserd19;
+	 __IOM uint32_t Reserd20;
+	 __IOM uint32_t DMA_CH0_Current_App_TxDesc;//0x1144
+	 __IOM uint32_t Reserd21;
+	 __IOM uint32_t DMA_CH0_Current_App_RxDesc;//0x114c
+	 __IOM uint32_t Reserd22;
+	 __IOM uint32_t DMA_CH0_Current_App_TxBuffer; //0x1154
+	 __IOM uint32_t Reserd23;
+	 __IOM uint32_t DMA_CH0_Current_App_RxBuffer;//0x115c
+	 __IOM uint32_t DMA_CH0_Status;//0x1160
+	 __IOM uint32_t DMA_CH0_Miss_Frame_Cnt;
+	 __IOM uint32_t DMA_CH0_RX_ERI_Cnt;
+}ETH1_DMACHTypeDef;
+
+
+#define XEC1_MAC_BASE                 (XEC1_BASE)
+#define XEC1_Interrupt_BASE           (XEC1_BASE+0xb0UL)
+#define XEC1_Phyifctrlstat_BASE       (XEC1_BASE+0xf8UL)
+#define XEC1_Hw_BASE                  (XEC1_BASE+0x110UL)
+#define XEC1_Mdio_BASE                (XEC1_BASE+0x200UL)
+#define XEC1_MACAddr_BASE             (XEC1_BASE+0x300UL)
+#define XEC1_MMC_BASE                 (XEC1_BASE+0x700UL)
+
+#define XEC1_EQOS_MTL_BASE            (XEC1_BASE+0xc00UL)
+#define XEC1_EQOS_MTL_Q0_BASE         (XEC1_BASE+0xd00UL)
+
+#define XEC1_DMA_BASE                 (XEC1_BASE+0x01000UL)
+#define XEC1_DMA_CH_BASE              (XEC1_BASE+0x01100UL)
+
+#define XEC1_MAC                      ((ETH1_MACTypeDef *)XEC1_MAC_BASE)                  //mac
+#define XEC1_Interrupt                ((ETH1_InterruptTypeDef *)XEC1_Interrupt_BASE)
+#define XEC1_Phyifctrlstat            ((ETH1_PhyifctrlstatTypeDef *)XEC1_Phyifctrlstat_BASE)
+#define XEC1_Hw                       ((XEC1_HwTypeDef*)XEC1_BASE)
+#define XEC1_Mdio                     ((ETH1_MdioTypeDef *)XEC1_Mdio_BASE)
+#define XEC1_MACAddr                  ((ETH1_MACAddrTypeDef *)XEC1_MACAddr_BASE)
+#define XEC1_MMC                      ((ETH1_MMCTypeDef *)XEC1_MMC_BASE)
+
+#define XEC1_EQOS_MTL                 ((ETH1_MTLTypeDef *)XEC1_EQOS_MTL_BASE)
+#define XEC1_EQOS_MTL_Q0              ((ETH1_MTLQ0TypeDef *)XEC1_EQOS_MTL_Q0_BASE)
+
+#define XEC1_DMA                      ((ETH1_DMATypeDef *)XEC1_DMA_BASE)
+#define XEC1_DMA_CH                   ((ETH1_DMACHTypeDef *)XEC1_DMA_CH_BASE)
 
 //
 //#define XEC0_IOC_CHX                  ((ETH_IOC_CHXTypeDef *)XEC0_IOC_CHX_BASE)
-#define XEC0_IOC                      ((ETH_IOCTypeDef *)XEC0_IOC_BASE)
-#define XEC0_PTP                      ((ETH_PTPTypeDef *)XEC0_PTP_BASE)
-#define XEC0_PPSX                     ((ETH_PPSXTypeDef *)XEC0_PPSX_BASE)
-#define XEC0_SWT_LUT                  ((ETH_SWT_LUTTypeDef *)XEC0_SWT_LUT_BASE)
-#define XEC0_PhyPort                  ((ETH_PhyPort_TypeDef *)XEC0_PRT_BASE)
+//#define XEC0_IOC                      ((ETH_IOCTypeDef *)XEC0_IOC_BASE)
+//#define XEC0_PTP                      ((ETH_PTPTypeDef *)XEC0_PTP_BASE)
+//#define XEC0_PPSX                     ((ETH_PPSXTypeDef *)XEC0_PPSX_BASE)
 
-#define XEC1_PRT_BASE                 (XEC1_BASE)
-#define XEC1_IOC_BASE                 (XEC1_BASE+0x0800UL)
-#define XEC1_MMC_BASE                 (XEC1_BASE+0x0100UL)
-#define XEC1_IOC_CHX_BASE             (XEC1_BASE+0x0820UL)
-#define XEC1_MAC_BASE                 (XEC1_BASE+0x0C00UL)
-#define XEC1_PTP_BASE                 (XEC1_BASE+0x1400UL)
-#define XEC1_PPSX_BASE                (XEC1_BASE+0x1420UL)
-#define XEC1_SWT_LUT_BASE             (XEC1_BASE+0x1000UL)
+//#define XEC0_PhyPort                  ((ETH_PhyPort_TypeDef *)XEC0_PRT_BASE)
 
-#define XEC1_MAC                      ((ETH_MACTypeDef *)XEC1_MAC_BASE)
-#define XEC1_MMC                      ((ETH_MMCTypeDef *)XEC1_MMC_BASE)
-#define XEC1_IOC_CHX                  ((ETH_IOC_CHXTypeDef *)XEC1_IOC_CHX_BASE)
-#define XEC1_IOC                      ((ETH_IOCTypeDef *)XEC1_IOC_BASE)
-#define XEC1_PTP                      ((ETH_PTPTypeDef *)XEC1_PTP_BASE)
-#define XEC1_PPSX                     ((ETH_PPSXTypeDef *)XEC1_PPSX_BASE)
-#define XEC1_SWT_LUT                  ((ETH_SWT_LUTTypeDef *)XEC1_SWT_LUT_BASE)
-#define XEC1_PhyPort                  ((ETH_PhyPort_TypeDef *)XEC1_PRT_BASE)
+
+
+
+
 
 /* =========================================  End of section using anonymous unions  ========================================= */
 #if defined (__GNUC__)

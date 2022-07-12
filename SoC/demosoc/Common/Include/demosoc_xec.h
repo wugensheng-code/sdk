@@ -50,9 +50,9 @@ typedef struct{
 
 #define BigLittleSwap32(A)        ((((uint32_t)(A) & 0xff000000) >> 24) |                                                        (((uint32_t)(A) & 0x00ff0000) >> 8) |                                                        (((uint32_t)(A) & 0x0000ff00) << 8) |                                                        (((uint32_t)(A) & 0x000000ff) << 24))
 
-#define ETH_RXBUFNB 4   //8
-#define ETH_TXBUFNB 4   //8
-#define ETH_MTU         1024//8192  //
+#define ETH_RXBUFNB 8   //8
+#define ETH_TXBUFNB 8   //8
+#define ETH_MTU         4096  //1024//
 #define ETH_RX_BUF_SIZE ETH_MTU
 #define ETH_TX_BUF_SIZE ETH_MTU
 #define TX_RING_LEN         ETH_TXBUFNB
@@ -4927,11 +4927,17 @@ uint16_t ETH_ReadPHYRegister(uint16_t PHYAddress, uint16_t PHYReg);
 uint32_t ETH_WritePHYRegister(uint16_t PHYAddress, uint16_t PHYReg, uint16_t PHYValue);
 
 void ETH_Init(void);
-void ETH_Init1(void);
+void ETH1_Init(void);
 FrameTypeDef ETH_Rx_Packet(void);
+FrameTypeDef ETH1_Rx_Packet(void);
 uint8_t ETH_Tx_Packet(uint32_t FrameLength);
+uint8_t ETH1_Tx_Packet(uint32_t FrameLength);
 void ETH_DMARxDescChainInit();
 void ETH_DMATxDescChainInit();
+void ETH1_DMARxDescChainInit();
+void ETH1_DMATxDescChainInit();
+
+
 
 void ETH_IOCTxCmd(FunctionalState NewState);
 void ETH_IOCRxCmd(FunctionalState NewState);

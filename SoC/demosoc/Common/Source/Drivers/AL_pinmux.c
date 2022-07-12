@@ -28,14 +28,14 @@
      *(uint32_t *)(0xf8803024u) =0x1;
 	 *(uint32_t *)(0xf880340cu) =0x1;    //sel3
 
-     *(uint32_t *)(0xf8803028u) =0x1;    //GPIO MIO10
-     *(uint32_t *)(0xf880302cu) =0x1;    //GPIO MIO11
+     *(uint32_t *)(0xf8803028u) =0x4;    //GPIO MIO10
+     *(uint32_t *)(0xf880302cu) =0x4;    //GPIO MIO11
 
      *(uint32_t *)(0xf8803030u) =0x0;    //I2C1 MIO12
      *(uint32_t *)(0xf8803034u) =0x0;    //I2C1 MIO13
 
-     *(uint32_t *)(0xf8803038u) =0x1;    //GPIO MIO14
-     *(uint32_t *)(0xf880303cu) =0x1;    //GPIO MIO15
+     *(uint32_t *)(0xf8803038u) =0x4;    //GPIO MIO14
+     *(uint32_t *)(0xf880303cu) =0x4;    //GPIO MIO15
 
      *(uint32_t *)(0xf8803040u) =0x9;    //spi0  MIO16
      *(uint32_t *)(0xf8803044u) =0x9;    //spi0  MIO17
@@ -45,8 +45,8 @@
 
 
 
-     *(uint32_t *)(0xf880304cu) =0x1;    //GPIO MIO19
-     *(uint32_t *)(0xf8803050u) =0x1;    //GPIO MIO20
+     *(uint32_t *)(0xf880304cu) =0x4;    //GPIO MIO19
+     *(uint32_t *)(0xf8803050u) =0x4;    //GPIO MIO20
 
                                          //MIO23/24/25/22 jtag
                                          //
