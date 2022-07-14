@@ -40,15 +40,16 @@
      *(uint32_t *)(0xf8803040u) =0x9;    //spi0  MIO16
      *(uint32_t *)(0xf8803044u) =0x9;    //spi0  MIO17
      *(uint32_t *)(0xf8803048u) =0x9;    //spi0  MIO18
-     *(uint32_t *)(0xf880304cu) =0x9;    //spi0  MIO21
+     *(uint32_t *)(0xf880304cu) =0x4;    //GPIO MIO19
+     *(uint32_t *)(0xf8803050u) =0x4;    //GPIO MIO20
+     *(uint32_t *)(0xf8803054u) =0x9;    //spi0  MIO21
      *(uint32_t *)(0xf8803424u) =0x1;    //emio_sel9
 
 
-
-     *(uint32_t *)(0xf880304cu) =0x4;    //GPIO MIO19
-     *(uint32_t *)(0xf8803050u) =0x4;    //GPIO MIO20
-
-                                         //MIO23/24/25/22 jtag
+     *(uint32_t *)(0xf8803058u) =0x7        //MIO23/24/25/22 jtag
+     *(uint32_t *)(0xf880305cu) =0x7 
+     *(uint32_t *)(0xf8803060u) =0x7 
+     *(uint32_t *)(0xf8803064u) =0x7 
                                          //
 	 
 	 *(uint32_t *)(0xf8803068u) =0x3;    //uart0  MIO26/27
@@ -67,20 +68,17 @@
     *(uint32_t *)(0xf8803094u) =0xe;
     *(uint32_t *)(0xf8803098u) =0xe;
     *(uint32_t *)(0xf880309cu) =0xe;
-    *(uint32_t *)(0xf88030d0u) =0xf;      //mdc1   MIO52-53
-    *(uint32_t *)(0xf88030d4u) =0xf;      //mdio1
-    *(uint32_t *)(0xf8803438u) =0x1;      //emio_sel
+  
 
     *(uint32_t *)(0xf88030a0u) =0xa;      //SDIO0 mio40-45
     *(uint32_t *)(0xf88030a4u) =0xa;
     *(uint32_t *)(0xf88030a8u) =0xa;
     *(uint32_t *)(0xf88030acu) =0xa;
     *(uint32_t *)(0xf88030b0u) =0xa;
-    *(uint32_t *)(0xf88030b4u) =0xa;
-    *(uint32_t *)(0xf88030b8u) =0xa;
+    *(uint32_t *)(0xf88030b4u) =0xa; 
     *(uint32_t *)(0xf880342cu) =0x1;     //emio_sel11
 
-    *(uint32_t *)(0xf88030b8u) =0x9;      //SDIO0 mio46-49
+    *(uint32_t *)(0xf88030b8u) =0x9;      //spi1 mio46-49
     *(uint32_t *)(0xf88030bcu) =0x9;
     *(uint32_t *)(0xf88030c0u) =0x9;
     *(uint32_t *)(0xf88030c4u) =0x9;
@@ -89,6 +87,10 @@
     *(uint32_t *)(0xf88030c8u) =0x0;      //i2c0 mio50-51
     *(uint32_t *)(0xf88030ccu) =0x0;
     *(uint32_t *)(0xf8803430u) =0x1;      //emio_sel12
+    
+    *(uint32_t *)(0xf88030d0u) =0xf;      //mdc1   MIO52-53
+    *(uint32_t *)(0xf88030d4u) =0xf;      //mdio1
+    *(uint32_t *)(0xf8803438u) =0x1;      //emio_sel
 
 }
 
