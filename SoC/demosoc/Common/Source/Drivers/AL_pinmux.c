@@ -86,7 +86,7 @@
 
     *(uint32_t *)(0xf88030c8u) =0x0;      //i2c0 mio50-51
     *(uint32_t *)(0xf88030ccu) =0x0;
-    *(uint32_t *)(0xf8803430u) =0x1;      //emio_sel12
+    *(uint32_t *)(0xf8803400u) =0x1;      //emio_sel12
     
     *(uint32_t *)(0xf88030d0u) =0xf;      //mdc1   MIO52-53
     *(uint32_t *)(0xf88030d4u) =0xf;      //mdio1
