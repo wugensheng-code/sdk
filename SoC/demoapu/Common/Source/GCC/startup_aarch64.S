@@ -111,6 +111,8 @@ main_entry:
 	/* Processor specific initialization */
 	bl	lowlevel_init
 
+	//123
+
 	/* jump to main */
 	bl	main
 

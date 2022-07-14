@@ -6,7 +6,7 @@
 
 #define TOP_CFG_CTRL_WDT_BASEADDR (0XF8800000UL+0X168UL)
 #define WDT_PAUSE_REG ((uint32_t *)TOP_CFG_CTRL_WDT_BASEADDR)
-
+#define TEMP_DDR_1 ((uint32_t *)(0X10000000UL+0X100000UL))
 
 
 /* case 1.1
@@ -28,13 +28,15 @@ uint32_t interrupt_count=0;
 void wdt_handler(void)
 {
 	uint32_t read_temp=0;
-
+	
 	if(GET_BIT(WDT->STAT,0) == 0x1)
 	{
+		//printf("WDT->STAT is %x\r\n", WDT->STAT);
 		interrupt_count++;
-		if(interrupt_count < 5)
+		if(interrupt_count < 4)
 		{
 			read_temp = WDT->EOI;	//Can clear by reading WDT_EOI
+			printf("watch irq %d\r\n", interrupt_count);
 		}
 		//wdt->CRR |= WDT_CCVR_VALUE;
 	}
@@ -47,16 +49,25 @@ int main(void)
 {
 	WDT_InitTypeDef WDT_InitStruct;
 
+	if(*TEMP_DDR_1 > 0xF){
+		*TEMP_DDR_1 = 0;
+		printf("temp ddr data is %d\r\n", *TEMP_DDR_1);
+	}
+	else{
+		*TEMP_DDR_1 = *TEMP_DDR_1 + 1;
+		printf("temp ddr data is %d\r\n", *TEMP_DDR_1);
+	}
+
 	ECLIC_Register_IRQ(WDT_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, wdt_handler);
 	__enable_irq();
 
 	WDT_InitStruct.WDT_PuaseLength	= WDT_CR_RPL_2;
 	WDT_InitStruct.WDT_Mode		= WDT_CR_RMOD_INTERRUPT;
-	WDT_InitStruct.WDT_TimeOutValue	= WDT_TORR_TOP_327U;
+	WDT_InitStruct.WDT_TimeOutValue	= *TEMP_DDR_1;
 
 	AL9000_wdt_init(WDT,&WDT_InitStruct);
 
-	//printf("E");
+	printf("E");
 	while(1);
 
 	return 0;

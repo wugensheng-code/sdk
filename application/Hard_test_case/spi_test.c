@@ -20,8 +20,8 @@
 #define FLASH_READ
 
 
-
-#define S25FL512S_ID	0X00200201  // flash ID
+#define S25FL512S_ID	0x003925c2  // flash ID
+//#define S25FL512S_ID	0X00200201  // flash ID0x003925c2
 //#define S25FL256S_ID	0x00190201  // flash ID
 
 
@@ -110,8 +110,10 @@ int spi_test()
     printf("test start\r\n");
     /*variable init*/
     uint16_t i = 0;
-    uint8_t wrdata_a[256] = {0};
-    uint8_t rddata_a[256] = {0};
+	__attribute__ ((aligned(4)));
+    uint32_t wrdata_a[256] = {0};
+    uint32_t rddata_a[256] = {0};
+	__attribute__ ((packed));
     for(i=0; i<256; i++)
     {
     	wrdata_a[i] = i;
@@ -139,6 +141,7 @@ int spi_test()
 	spi_x1_mode(SPI0);
 	/*Transfer Mode.*/
 	spi_tmod_e2prom(SPI0); // EEPROM read
+
 	//-----------------------------------------------------------
     //program TXFTLR register
     //start when 1 data items is present in tx fifo
@@ -316,6 +319,7 @@ int spi_test()
 	//256 bytes
 	for(i=0; i<256; i++)
 	{
+		while(!spi_sr_tfe(SPI0));
 		spi_data_transmit(SPI0,wrdata_a[i]); // tx data wrdata_a[i]
 	}
 	/*check status--wait busy returns to idle*/
@@ -405,7 +409,7 @@ int spi_test()
 #endif
 
     printf("test finish\r\n");
-    while(1);
+    //while(1);
 }
 
 
