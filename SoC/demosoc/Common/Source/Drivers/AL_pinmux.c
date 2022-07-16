@@ -33,6 +33,8 @@
 
      *(uint32_t *)(0xf8803030u) =0x0;    //I2C1 MIO12
      *(uint32_t *)(0xf8803034u) =0x0;    //I2C1 MIO13
+     *(uint32_t *)(0xf8803404u) =0x1;
+
 
      *(uint32_t *)(0xf8803038u) =0x4;    //GPIO MIO14
      *(uint32_t *)(0xf880303cu) =0x4;    //GPIO MIO15
