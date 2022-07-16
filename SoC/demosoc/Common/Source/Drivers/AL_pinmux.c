@@ -48,10 +48,10 @@
      *(uint32_t *)(0xf8803424u) =0x1;    //emio_sel9
 
 
-     *(uint32_t *)(0xf8803058u) =0x7        //MIO23/24/25/22 jtag
-     *(uint32_t *)(0xf880305cu) =0x7 
-     *(uint32_t *)(0xf8803060u) =0x7 
-     *(uint32_t *)(0xf8803064u) =0x7 
+     *(uint32_t *)(0xf8803058u) =0x7;        //MIO23/24/25/22 jtag
+     *(uint32_t *)(0xf880305cu) =0x7; 
+     *(uint32_t *)(0xf8803060u) =0x7; 
+     *(uint32_t *)(0xf8803064u) =0x7; 
                                          //
 	 
 	 *(uint32_t *)(0xf8803068u) =0x3;    //uart0  MIO26/27
