@@ -445,7 +445,7 @@ u32 SendInitCmdEmmc()
     CSD_Tab[3] = eMMC->RESP01;
     CSD_Tab[2] = eMMC->RESP23;
     CSD_Tab[1] = eMMC->RESP45;
-    CSD_Tab[0] = eMMC->RESP67;    
+    CSD_Tab[0] = eMMC->RESP67;
 
     // Set buswidth to 1 bit clock to 48MHZ
     errorstatus = SD_GetCardInfo(&SDCardInfo);

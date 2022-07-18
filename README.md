@@ -264,3 +264,31 @@ $NUCLEI_SDK_ROOT
 ## [Contributing](https://doc.nucleisys.com/nuclei_sdk/contribute.html)
 
 ## [Changelog](https://doc.nucleisys.com/nuclei_sdk/changelog.html)
+
+整理的git 入库时填写的信息模块如下，大家看看有遗漏的请补充：
+
+      [jira-id][type][module][scope] subject
+ 	 type   - feature:  
+ 	          fix: [rootcause] is must in body
+ 	 module -  application,driver,SoC,Build etcs
+ scope  - function module:
+          can, dmac, 
+          sd, smc, uart, 
+          usb, wdog, 
+          benchmark, eclic, gpio, i2c
+          pmp, qspi
+          spi,timer, xec
+ subject -  verb noun, limited by 50 characters
+
+ body: 72-characters wrapped. better to answer one line per question below
+why to change?
+[rootcause]:
+[side effect]:
+
+  e.g.
+ [AL90-443][feat][driver][CAN] support API can_fd 5Mbit/s
+
+ add function(description) [uart_init]_uart
+ [rootcause]:
+ [side effect]:  
+

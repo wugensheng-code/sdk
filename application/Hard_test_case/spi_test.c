@@ -107,7 +107,11 @@ uint32_t flash_wait_wip(void)
 int spi_test()
 {
    /***********************AL9000***************************/
-    printf("test start\r\n");
+    printf("\r\n");
+    printf("\r\n");
+    printf("\r\n");
+    printf("\r\n");
+    printf("***************************SPI TEST*****************************\r\n");
     /*variable init*/
     uint16_t i = 0;
 	__attribute__ ((aligned(4)));

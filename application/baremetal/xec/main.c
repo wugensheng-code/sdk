@@ -38,11 +38,11 @@ uint8_t buffer_udp[BUFFER_UDP_LEN]={
 0x30, 0x33, 0x32, 0x33, 0x0d, 0x0a
 
 };
-uint8_t buffer_udp1[64]={
+uint8_t buffer_udp1[40]={
 
 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01, 0x2b, 0x20, 0x21, 0x03, 0x23, 0x08, 0x00, 0x45, 0x00,
-0x00, 0x58, 0x12, 0x34, 0x40, 0x00, 0xff, 0x11, 0xe0, 0xb5, 0xc0, 0xa8, 0xc8, 0x02, 0xff, 0xff,
-0xff, 0xff, 0x1f, 0x90, 0x1f, 0x90, 0x00, 0x44, 0x8d, 0xe2, 0x20, 0x4e, 0x75, 0x63, 0x6c, 0x65
+0x00, 0x58, 0x12, 0x34, 0x40, 0x00, 0xff, 0x11, 0xe0, 0xb5, 0xc0, 0xa8, 0xc8, 0x02, 0xff, 0xff
+
 };
 
 uint8_t buffer_udp2[3072]={
@@ -264,7 +264,7 @@ void XEC0_IRQHandler(void)
         length = frame.length;
         buffer = (uint8_t *)frame.buffer;
       //  XEC0_DMA_CH->DMA_CH0_Rx_Control = 0x17ff8;
-        for(int i =0 ;i<155;i++)    //
+        for(int i =0 ;i<10;i++)    //
         {
          // if(buffer_udp[i] !=  buffer[i] )
          //  {
@@ -274,13 +274,33 @@ void XEC0_IRQHandler(void)
                 printf("buffer=%x\r\n",buffer[i]);
          //  }
         //	 printf("buffer=%4x\r\n",buffer[i]);
+        }
+     //   printf("XEC0 PHY ### pass ### \r\n");
+    //  XEC0_DMA_CH->DMA_CH0_Tx_Control=	XEC0_DMA_CH->DMA_CH0_Tx_Control | 0x1 | 0x1<<4;
+        }
+void XEC1_IRQHandler(void)
+{
+    XEC1_DMA_CH->DMA_CH0_Tx_Control= 0x0;
+    FrameTypeDef frame;
+    uint8_t * buffer;
+    uint32_t length;
+    uint32_t tempreg = 0;
 
+   tempreg = XEC1_DMA->DMA_Interrupt_Status;   //F8041008
+    XEC1_DMA_CH->DMA_CH0_Status =   XEC1_DMA_CH->DMA_CH0_Status | 0x1<<15 |0x1<<6;
+    tempreg = XEC1_DMA->DMA_Interrupt_Status;   //F8041008
+        frame = ETH1_Rx_Packet();
+        length = frame.length;
+        buffer = (uint8_t *)frame.buffer;
+        for(int i =0 ;i<155;i++)    //
+        {
+        	 printf("buffer=%4x\r\n",buffer[i]);
         }
         //XEC0_DMA_CH->DMA_CH0_Interrupt_Enable =  (XEC0_DMA_CH->DMA_CH0_Interrupt_Enable | 0x1<<15) & (0xffffffbf); //f8041134
        // XEC0_DMA_CH->DMA_CH0_Rx_Control = 0x17ff9;    //0xf804_1108
    //ian     printf("length:%d\r\n",length);
-     // printf("XEC PHY ### pass ### \r\n");
-      XEC0_DMA_CH->DMA_CH0_Tx_Control=	XEC0_DMA_CH->DMA_CH0_Tx_Control | 0x1 | 0x1<<4;
+      printf("XEC1 PHY ### pass ### \r\n");
+      XEC1_DMA_CH->DMA_CH0_Tx_Control=	XEC1_DMA_CH->DMA_CH0_Tx_Control | 0x1 | 0x1<<4;
 
     //}
 
@@ -289,6 +309,11 @@ void XEC0_IRQHandler(void)
 extern uint8_t Rx_Buff[ETH_RXBUFNB][ETH_RX_BUF_SIZE]  __attribute__ ((aligned (4))) ; /* Ethernet Receive Buffer */
 extern uint8_t Tx_Buff[ETH_TXBUFNB][ETH_TX_BUF_SIZE]  __attribute__ ((aligned (4))) ; /* Ethernet Transmit Buffer */
 
+extern uint8_t Rx_Buff1[ETH_RXBUFNB][ETH_RX_BUF_SIZE]  __attribute__ ((aligned (4))) ; /* Ethernet Receive Buffer */
+extern uint8_t Tx_Buff1[ETH_TXBUFNB][ETH_TX_BUF_SIZE]  __attribute__ ((aligned (4))) ; /* Ethernet Transmit Buffer */
+
+
+
 #define PHY_ADDR 0x0
 
 void main(void)
@@ -296,8 +321,9 @@ void main(void)
 
     int i = 0;
     uint32_t tempctrl = 0;
-    *(uint32_t *)(0xf8800140u) =0x321;//0x361;
-    printf("xec config start\r\n");
+    *(uint32_t *)(0xf8800140u) =0x321;//0x361;  //0X350 0x310 MII ,0x361 rgmii 1000Mbps,rgmii 100Mbps, 0x3a1,0x321  phase 180
+    *(uint32_t *)(0xf8800144u) =0x3a1; //0x350 MII
+   printf("xec config start\r\n");
    // *(uint32_t *)(0xf880107cu) =0xffffffef;
 
  //  *(uint32_t *)(0xf8101000u) =0x1;
@@ -305,7 +331,11 @@ void main(void)
     __enable_irq();
 	ECLIC_Register_IRQ(XEC0_IRQn, ECLIC_NON_VECTOR_INTERRUPT,
                                  ECLIC_LEVEL_TRIGGER, 1, 1,
-                                 XEC0_IRQHandler);
+                                XEC0_IRQHandler);
+// */
+	ECLIC_Register_IRQ(XEC1_IRQn, ECLIC_NON_VECTOR_INTERRUPT,
+	                                 ECLIC_LEVEL_TRIGGER, 1, 1,
+	                                 XEC1_IRQHandler);
 
 //	 XEC0_MAC->MAC_Configuration = XEC0_MAC->MAC_Configuration | 0x1<<15;// | 0x1<<14;
 	ETH_DMARxDescChainInit();
@@ -350,7 +380,18 @@ void main(void)
    //     	XEC0_DMA_CH->DMA_CH0_Tx_Control=	XEC0_DMA_CH->DMA_CH0_Tx_Control | 0x1 | 0x1<<4;
    // 	i++;
    // }
+    //-----------------------------xec1-------------------------------------------------
+    	ETH1_DMARxDescChainInit();
+    	ETH1_DMATxDescChainInit();
+    	ETH1_Init();
 
+   	 for(i=0;i<4;i++)   //ETH_TXBUFNB
+    	    {
+   		       memcpy((uint8_t *)Tx_Buff1[i],(uint8_t *)buffer_udp1,40);     //crc and pading
+    	    }
+    	// ETH1_Tx_Packet(BUFFER_UDP_LEN);
+    	// ETH1_Tx_Packet(3072);   //jumbo pkt
+   	        ETH1_Tx_Packet(40);     ////crc and pading
     while(1);
 
 }

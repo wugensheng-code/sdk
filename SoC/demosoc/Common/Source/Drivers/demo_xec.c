@@ -37,6 +37,20 @@ __IO ETH_DMADESCTypeDef  *DMATxDescToSet;
 __IO ETH_DMADESCTypeDef  *DMARxDescToSet;
 uint32_t ETH_DMADESC_Index =  0;
 uint32_t ETH_DMADESCRx_Index =  0;
+//--------------------xec1---------------------------------------------------------------------------------------
+ETH_DMADESCTypeDef  DMARx1DscrTab[ETH_RXBUFNB] __attribute__ ((aligned (4))); /* Ethernet Rx Descriptor */
+ETH_DMADESCTypeDef  DMATx1DscrTab[ETH_TXBUFNB] __attribute__ ((aligned (4))); /* Ethernet Tx Descriptor */
+uint8_t Rx_Buff1[ETH_RXBUFNB][ETH_RX_BUF_SIZE] __attribute__ ((aligned (4))) = {0}; /* Ethernet Receive Buffer */
+uint8_t Tx_Buff1[ETH_TXBUFNB][ETH_TX_BUF_SIZE] __attribute__ ((aligned (4))) = {0}; /* Ethernet Transmit Buffer */
+
+__IO ETH_DMADESCTypeDef  *DMATx1DescToSet;
+__IO ETH_DMADESCTypeDef  *DMARx1DescToSet;
+uint32_t ETH1_DMADESC_Index =  0;
+uint32_t ETH1_DMADESCRx_Index =  0;
+
+
+
+
 
 uint8_t DA[6]={0x00, 0x2b, 0x20, 0x21, 0x03, 0x23};
 
@@ -70,20 +84,6 @@ void ETH_MACTransmissionCmd(FunctionalState NewState)
   }
 }
 
-//void ETH_IOCTxCmd(FunctionalState NewState)
-//{
-//if (NewState != DISABLE)
-//  {
-    /* Enable the MAC reception */
-//	XEC0_MAC->MAC_Configuration  = 0x1<<1;
-//  }
-//  else
-//  {
-    /* Disable the MAC reception */
-//	  XEC0_MAC->MAC_Configuration = 0x0;
-//  }
-
-//}
 
 /**
   * @brief  Enables or disables the MAC reception.
@@ -105,19 +105,7 @@ void ETH_MACReceptionCmd(FunctionalState NewState)
   }
 }
 
-//void ETH_IOCRxCmd(FunctionalState NewState)
-//{
-//  if (NewState != DISABLE)
-//  {
-    /* */
-//     XEC1_IOC_CHX->IOC_CHX_RX_CTRL = 0x1;;
-//  }
-//  else
-//  {
-    /* Disable the MAC reception */
-//     XEC1_IOC_CHX->IOC_CHX_RX_CTRL = 0x0;
-//  }
-//}
+
 
 void ETH_Init(void)
 {
@@ -129,17 +117,17 @@ void ETH_Init(void)
     XEC0_MACAddr->MAC_Address1_Low =0x2b000801;
     XEC0_MACAddr->MAC_Address1_High =0x2220;
 
-    XEC0_MAC->MAC_Packet_Filter = //0x1<<31|                           //
-    		                       0x0<<31|
-                                   0<<16|                              //vlan filter
+    XEC0_MAC->MAC_Packet_Filter = 0x1<<31|                           //
+    		                      // 0x0<<31|
+                                  // 1<<16|                              //vlan filter
                                    0<<15|
                                    0<<8|
                                    0<<7|
                                    0<<6|
                                    0x0<<4|
                                    0x0<<2|
-								   0x0<<0;                         //filter
-                                  // 0x1<<0;                           //f804_0008  pass all incoming pkt irrespective sa/da
+								  // 0x0<<0;                         //filter
+                                   0x1<<0;                           //f804_0008  pass all incoming pkt irrespective sa/da
                         
     XEC0_Interrupt->MAC_Interrupt_Enable = 0x0<<0|
                            0x0<<2|
@@ -148,8 +136,8 @@ void ETH_Init(void)
                            0x0<<9|
                            0x1<<14;                                  //f804_00b4
 
-    XEC0_MAC->MAC_VLAN_Tag = 0x1<<27 | 0x1<<16| 0x1<<2;              //vlan filter
-    XEC0_MAC->MAC_VLAN_Tag_Data =0x1<<27 | 0x1<<16 | 0x1<<2;              //vlan filter
+    //XEC0_MAC->MAC_VLAN_Tag = 0x1<<27  | 0x1<<16 | 0x1<<20 | 0x1<<2;              //vlan filter right setting
+  //  XEC0_MAC->MAC_VLAN_Tag_Data =0x1<<27 | 0x1<<16 | 0x1<<2;              //vlan filter
     
     //XEC0_MAC->MAC_Configuration = XEC0_MAC->MAC_Configuration | 0x1 <<12;   //internal loopback
    // ETH_WritePHYRegister(PHY_DEVICE_ADDRESS,0x0,0x6000);  //f804_0200  LOOPBACK 100M
@@ -168,7 +156,7 @@ void ETH_Init(void)
 //    XEC1_IOC->IOC_Sys_Wr_config =0x1f;
   //  ETH_WritePHYRegister(PHY_DEVICE_ADDRESS,0x0,0x1<<15);  //f804_0200
   //  ETH_WritePHYRegister(PHY_DEVICE_ADDRESS,0x0,0x1<<14);  //f804_0200  LOOPBACK
-    reg0_val=ETH_ReadPHYRegister(PHY_DEVICE_ADDRESS,0x0);
+ //   reg0_val=ETH_ReadPHYRegister(PHY_DEVICE_ADDRESS,0x0);
 //    printf("%04x\r\n",reg0_val);
    /* do {
         reg0_val = ETH_ReadPHYRegister(PHY_DEVICE_ADDRESS,0x0);
@@ -190,7 +178,7 @@ void ETH_Init(void)
    // ETH_CreatLUT(1,broadcast,broadcast_mask,NULL,NULL,0);
 }
 
-void ETH_Init1(void)
+/*void ETH_Init1(void)
 {
 
   //  printf("ETH_Init\r\n");
@@ -231,7 +219,7 @@ void ETH_Init1(void)
 
 }
 
-
+*/
 
 
 FrameTypeDef ETH_Rx_Packet(void)
@@ -421,8 +409,8 @@ void ETH_DMARxDescChainInit()
 		  {
 			tempreg = XEC0_DMA-> DMA_Mode;
 		  } while (tempreg & 0x1);
-	//	XEC0_MAC->MAC_Configuration = XEC0_MAC->MAC_Configuration | 0x1<<15 | 0x1<<14; //100Mbps
-		XEC0_MAC->MAC_Configuration = XEC0_MAC->MAC_Configuration | 0x1<<15; //10Mbps
+		XEC0_MAC->MAC_Configuration = XEC0_MAC->MAC_Configuration | 0x1<<15 | 0x1<<14 | 0x1 <<13 ; //100Mbps  bit13 1 full-duplex 0:half-duplex
+	//	XEC0_MAC->MAC_Configuration = XEC0_MAC->MAC_Configuration | 0x1<<15 | 0x1 <<13; //10Mbps
 	    XEC0_DMA->DMA_SysBus_Mode = XEC0_DMA->DMA_SysBus_Mode | 0x1<<12;   //AAL   0xf804_1004
 	    XEC0_EQOS_MTL_Q0->MTL_RxQ0_Operation_Mode = XEC0_EQOS_MTL_Q0->MTL_RxQ0_Operation_Mode | 0x1<<1;
 		//XEC0_DMA->DMA_SysBus_Mode = XEC0_DMA->DMA_SysBus_Mode | 0x1 <<31;
@@ -480,6 +468,204 @@ void ETH_DMATxDescChainInit()
    // XEC0_DMA_CH->DMA_CH0_Tx_Control = XEC0_DMA_CH->DMA_CH0_Tx_Control | 0x1;
 
 }
+
+//--------------------------------------xec1 DMA RX-----------------------------------------------------------
+void ETH1_MACTransmissionCmd(FunctionalState NewState)
+{
+
+  if (NewState != DISABLE)
+  {
+    /* Enable the MAC transmission */
+	  XEC1_MAC->MAC_Configuration  = XEC1_MAC->MAC_Configuration | 0x1<<1;
+	  XEC1_MAC->MAC_Configuration  = XEC1_MAC->MAC_Configuration | 0x1<<1 | 0x1<<29 | 0x1<<1;   //tx mac address replacement
+	  XEC1_MAC->MAC_Configuration  = XEC1_MAC->MAC_Configuration | 0x1<<1 | 0x1<<16 | 0x1<<19;    //jumbo pkt
+
+  }
+  else
+  {
+    /* Disable the MAC transmission */
+	  XEC1_MAC->MAC_Configuration =  XEC1_MAC->MAC_Configuration | 0x0<<0 ;
+  }
+}
+
+/**
+  * @brief  Enables or disables the MAC reception.
+  * @param  NewState: new state of the MAC reception.
+  *   This parameter can be: ENABLE or DISABLE.
+  * @retval None
+  */
+void ETH1_MACReceptionCmd(FunctionalState NewState)
+{
+  if (NewState != DISABLE)
+  {
+    /* Enable the MAC reception */
+	  XEC1_MAC->MAC_Configuration =XEC1_MAC->MAC_Configuration | 0x1<<0;
+  }
+  else
+  {
+    /* Disable the MAC reception */
+	  XEC1_MAC->MAC_Configuration = XEC1_MAC->MAC_Configuration | 0x0<<0;
+  }
+}
+
+
+void ETH1_Init(void)
+{
+
+  //  printf("ETH_Init\r\n");
+    uint32_t ID_val=0 , CR_val=0, SR_val=0 ,reg0_val=0;
+    XEC1_MACAddr->MAC_Address0_Low =0x2b000801;
+    XEC1_MACAddr->MAC_Address0_High =0x2220;
+    XEC1_MACAddr->MAC_Address1_Low =0x2b000801;
+    XEC1_MACAddr->MAC_Address1_High =0x2221;
+
+    XEC1_MAC->MAC_Packet_Filter = 0x1<<31|                           //
+    		                      // 0x0<<31|
+                                  // 1<<16|                              //vlan filter
+                                   0<<15|
+                                   0<<8|
+                                   0<<7|
+                                   0<<6|
+                                   0x0<<4|
+                                   0x0<<2|
+								  // 0x0<<0;                         //filter
+                                   0x1<<0;                           //f811_0008  pass all incoming pkt irrespective sa/da
+
+    XEC1_Interrupt->MAC_Interrupt_Enable = 0x0<<0|
+                           0x0<<2|
+                           0x0<<5|
+                           0x0<<4|
+                           0x0<<9|
+                           0x1<<14;                                  //f811_00b4
+
+    //XEC0_MAC->MAC_VLAN_Tag = 0x1<<27  | 0x1<<16 | 0x1<<20 | 0x1<<2;              //vlan filter right setting
+  //  XEC0_MAC->MAC_VLAN_Tag_Data =0x1<<27 | 0x1<<16 | 0x1<<2;              //vlan filter
+
+  //  XEC1_MAC->MAC_Configuration = XEC1_MAC->MAC_Configuration | 0x1 <<12;   //internal loopback
+  //   ETH_WritePHYRegister(PHY_DEVICE_ADDRESS,0x0,0x6000);  //f804_0200  LOOPBACK 100M
+   // ETH_WritePHYRegister(PHY_DEVICE_ADDRESS,0x0,0x4000);  //f804_0200  phy LOOPBACK 10M
+    ETH1_MACTransmissionCmd(ENABLE);
+    ETH1_MACReceptionCmd(ENABLE);
+
+    XEC1_EQOS_MTL_Q0->MTL_RxQ0_Operation_Mode =XEC0_EQOS_MTL_Q0->MTL_RxQ0_Operation_Mode | 0x20; //F804_0d30
+    XEC1_EQOS_MTL_Q0->MTL_TxQ0_Operation_Mode=XEC0_EQOS_MTL_Q0->MTL_TxQ0_Operation_Mode | 0x1<<1;
+
+}
+
+
+
+void ETH1_DMARxDescChainInit()
+{
+	uint32_t tempreg = 0;
+	 uint32_t reg0_val = 0;
+		tempreg = XEC1_DMA-> DMA_Mode;                         //0xf811_1000
+		XEC1_DMA-> DMA_Mode = tempreg | (uint32_t)0x1;
+		do
+		  {
+			tempreg = XEC1_DMA-> DMA_Mode;
+		  } while (tempreg & 0x1);
+		XEC1_MAC->MAC_Configuration = XEC1_MAC->MAC_Configuration | 0x1<<15 | 0x1<<14 | 0x1 <<13 ; //100Mbps
+	//	XEC1_MAC->MAC_Configuration = XEC1_MAC->MAC_Configuration | 0x1<<15 ; //10Mbps
+	    XEC1_DMA->DMA_SysBus_Mode = XEC1_DMA->DMA_SysBus_Mode | 0x1<<12;   //AAL   0xf810_1004
+	    XEC1_EQOS_MTL_Q0->MTL_RxQ0_Operation_Mode = XEC1_EQOS_MTL_Q0->MTL_RxQ0_Operation_Mode | 0x1<<1;
+		//XEC0_DMA->DMA_SysBus_Mode = XEC0_DMA->DMA_SysBus_Mode | 0x1 <<31;
+		XEC1_DMA_CH->DMA_CH0_RxDesc_Ring_Length = (uint32_t)0x10;       //       0xf810_1130
+		 memset(DMATx1DscrTab,0,sizeof(ETH_DMADESCTypeDef) * ETH_TXBUFNB);
+		 memset(DMARx1DscrTab,0,sizeof(ETH_DMADESCTypeDef) * ETH_RXBUFNB);
+	ETH1_DMADESCRx_Index=0;
+    for(int i=0;i<ETH_RXBUFNB;i++)
+    {
+        DMARx1DscrTab[i].DTYPE_SPEC_0 = (uint32_t)&Rx_Buff1[i];
+        DMARx1DscrTab[i].COMM = DMARx1DscrTab[i].COMM | 0x1<<31 | 0x1<<24 | 0x1<<30;// bit30:enable interrupt
+    }
+    DMARx1DescToSet = (ETH_DMADESCTypeDef*) &(DMARx1DscrTab[ETH1_DMADESCRx_Index]);
+    XEC1_DMA_CH->DMA_CH0_RxDesc_List_Address = (uint32_t) DMARx1DscrTab;                                       //0xf811_111c   0xc101_0198     0xc101_0254
+    XEC1_DMA_CH->DMA_CH0_RxDesc_Tail_Pointer = XEC1_DMA_CH->DMA_CH0_RxDesc_List_Address + (uint32_t)0x40;     //0xf811_1128
+
+	//XEC0_DMA_CH->DMA_CH0_TxDesc_List_Address = 0x0;//XEC0_DMA_CH->DMA_CH0_TxDesc_List_Address | 0x1 <<10;
+                                                              //
+	XEC1_DMA_CH->DMA_CH0_Control = XEC1_DMA_CH->DMA_CH0_Control | 0x1<<16;                                  //0xf811_1100
+	XEC1_DMA_CH->DMA_CH0_Interrupt_Enable |= 0x1<<15 | 0x1<<6;    //DMA_CH(#i)_Interrupt_Enable  15:NIE 6:RIE
+	XEC1_DMA_CH->DMA_CH0_Rx_Control = 0x17ff9;                                                              //0xf811_1108  start
+
+}
+
+void ETH1_DMATxDescChainInit()
+{
+	XEC1_DMA_CH->DMA_CH0_TxDesc_Ring_Length = (uint32_t)0x8;                            //0xf811_112c
+	//XEC0_DMA_CH->DMA_CH0_RxDesc_List_Address= 0x0;
+
+    ETH1_DMADESC_Index=0;
+    for(int i=0;i<ETH_TXBUFNB;i++)
+    {
+        DMATx1DscrTab[i].DTYPE_SPEC_0 = (uint32_t)&Tx_Buff1[i];
+        DMATx1DscrTab[i].DTYPE_SPEC_1 =  0;
+        DMATx1DscrTab[i].DTYPE_SPEC_2 = 0x28;// 0xc00;//0x97;//FrameLength-1;   //0x40 crc pad
+        DMATx1DscrTab[i].COMM = 0xb0000028;//0xb0000097;//(FrameLength-1);//0x1 <<31;;//DMATxDscrTab[i].COMM |  0x1 <<31 | 0x1 <<28 | 0x1 <<29 | (ETH_TX_BUF_SIZE) <<0;   //0X5F8=1528
+
+
+    }
+
+    DMATx1DescToSet = (ETH_DMADESCTypeDef*) &(DMATx1DscrTab[ETH_DMADESC_Index]);
+    XEC1_DMA_CH->DMA_CH0_TxDesc_List_Address = (uint32_t)DMATx1DscrTab;                                          //0xf804_1114       c101_0218
+                                                     //0xf804_112c
+    XEC1_DMA_CH->DMA_CH0_TxDesc_Tail_Pointer = XEC1_DMA_CH->DMA_CH0_TxDesc_List_Address + 0x40;//ETH_DMADESC_Index < (TX_RING_LEN-1) ? (ETH_DMADESC_Index+1) * (0x10) : 0;
+    XEC1_DMA_CH->DMA_CH0_TxDesc_Ring_Length = (uint32_t)0x8;
+
+}
+
+FrameTypeDef ETH1_Rx_Packet(void)
+{
+    uint32_t framelength=0;
+    uint32_t Rx_Tail;
+    uint32_t rx_status,reg0_val;
+    FrameTypeDef frame={0,0};
+    uint8_t * buffer;
+
+            frame.length = DMATx1DescToSet->DTYPE_SPEC_2 & 0x7fff  ;
+            frame.buffer = (uint32_t)&Rx_Buff1[ETH1_DMADESCRx_Index];   //(uint32_t)
+            frame.descriptor =  DMARx1DescToSet;
+        buffer = (uint8_t *)frame.buffer;
+
+    if ((ETH1_DMADESCRx_Index+1)== RX_RING_LEN)
+    {
+        ETH1_DMADESCRx_Index = 0;
+    }else
+    {
+        ETH1_DMADESCRx_Index++;
+    }
+
+    DMARx1DescToSet = (ETH_DMADESCTypeDef*) &(DMARx1DscrTab[ETH1_DMADESCRx_Index]);
+
+    return frame;
+}
+
+
+
+uint8_t ETH1_Tx_Packet(uint32_t FrameLength)
+{
+    static uint8_t count=0;
+
+   // while((DMATxDescToSet->COMM & DINFO_HW)== SET);
+ //ian fang   printf("ETH_Tx_Packet successfully\r\n");
+                   //0xf804_1120
+    XEC1_DMA_CH->DMA_CH0_Tx_Control = XEC1_DMA_CH->DMA_CH0_Tx_Control | 0x1 | 0x1<<4;    //DMA transmit    start                              //f811_1104
+   //ETH_IOCTxCmd(ENABLE);
+
+    if ((ETH1_DMADESC_Index+1)== TX_RING_LEN)
+    {
+        ETH1_DMADESC_Index = 0;
+    }else
+    {
+        ETH1_DMADESC_Index++;
+    }
+
+    DMATx1DescToSet = (ETH_DMADESCTypeDef*) &(DMATx1DscrTab[ETH1_DMADESC_Index]);
+
+}
+//--------------------------------------------------------------------------------------------------------
+
+
 
 //void IOC_CHx_Interrupt_Enable( ETH_IOC_CHXTypeDef * IOC_CHx ,uint32_t IT)
 //{

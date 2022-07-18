@@ -391,7 +391,7 @@ uint32_t qspi_test(){
     	}
 		flash_get_sr();
 		temp = flash_get_cr();
-		temp &= ~(0xF << 2);
+		//temp &= ~(0xF << 2);
 		test_flash_write_enable();
 		qspi_data_transmit(QSPI0,CMD_WRR);
 		qspi_data_transmit(QSPI0,0x02);		//清空写保护

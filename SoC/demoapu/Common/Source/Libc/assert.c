@@ -8,12 +8,10 @@
 #include <cdefs.h>
 #include <stdio.h>
 
-/* remove becase libg.a has included this function
-void __dead2 __assert(const char *file, unsigned int line,
+ __attribute__((weak)) void __dead2 __assert(const char *file, unsigned int line,
 		      const char *assertion)
 {
 	printf("ASSERT: %s:%d:%s\n", file, line, assertion);
 	while (1)
 		;
 }
-*/
