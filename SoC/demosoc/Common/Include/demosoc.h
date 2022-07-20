@@ -215,11 +215,11 @@ typedef enum EXCn {
 #if defined FPGA_STAGE_7
 #define __ECLIC_BASEADDR          0x68020000UL            /*!< Set to ECLIC baseaddr of your device */
 #define __SYSTIMER_BASEADDR       0x68030000UL            /*!< Set to SysTimer baseaddr of your device */
-#define NAND_BASE                 0x69000000UL            /* Peripheral memory map */
-#else
-#define __ECLIC_BASEADDR          0xD4000000UL            /*!< Set to ECLIC baseaddr of your device */
-#define __SYSTIMER_BASEADDR       0xD4020000UL            /*!< Set to SysTimer baseaddr of your device */
 #define NAND_BASE                 0x64000000UL            /* Peripheral memory map */
+#else
+#define __ECLIC_BASEADDR          0x68000000UL            /*!< Set to ECLIC baseaddr of your device */
+#define __SYSTIMER_BASEADDR       0x68020000UL            /*!< Set to SysTimer baseaddr of your device */
+#define NAND_BASE                 0x69000000UL            /* Peripheral memory map */
 #endif
 
 //#define __ECLIC_INTCTLBITS        3                     /*!< Set to 1 - 8, the number of hardware bits are actually implemented in the clicintctl registers. */
@@ -1509,7 +1509,7 @@ typedef struct {
 
 #define WDT_BASE                  	(0xF8410000)
 #define SMC_BASE                  	(0xF841A000UL)
-#define NAND_BASE                  	(0x64000000UL)/* Peripheral memory map */
+
 #define XADC_BASE                  	(0xF840B000UL)/* Peripheral memory map */
 
 #define GPIO_BLOCK0_BASE        (0xF8411000UL)          			/*!< (GPIO BLOCK0) Base Address */
