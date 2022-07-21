@@ -25,6 +25,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "FATFS/ff.h"
+#include "mtimer.h"
 
 typedef enum {FAILED = 0, PASSED = !FAILED} TestStatus;
 
@@ -96,44 +97,74 @@ void Fill_Buffer(uint8_t *pBuffer, uint32_t BufferLength, uint32_t Offset)
 
 static void wait_command_complete(volatile DWC_mshc_block_registers* ptr)
 {
-    ERROR_INT_STAT_R__NORMAL_INT_STAT_R reg;
-    for (;;)
+    //ERROR_INT_STAT_R__NORMAL_INT_STAT_R reg;
+    MtimerParams* Mtimer;
+    Mtimer_Init(Mtimer);
+    MTIMER_OUT_CONDITION(100, Mtimer, \
+                        ptr->error_int_stat_r__normal_int_stat.BIT.cmd_complete != 1);
+    if(Mtimer_IsTimerOut(Mtimer)){
+        return XST_FAILURE;
+    }else{
+        ptr->error_int_stat_r__normal_int_stat.BIT.cmd_complete = 1;
+        return XST_SUCCESS;
+    }
+    /*for (;;)
     {
-        reg = ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT;
-        if (reg.BIT.CMD_COMPLETE == 1)
+        reg = ptr->error_int_stat_r__normal_int_stat;
+        if (reg.BIT.cmd_complete == 1)
         {
-        	ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT.BIT.CMD_COMPLETE = 1;
+        	ptr->error_int_stat_r__normal_int_stat.BIT.cmd_complete = 1;
             break;
         }
-    }
+    }*/
 }
 
 static void wait_transfer_complete(volatile DWC_mshc_block_registers* ptr)
 {
-    ERROR_INT_STAT_R__NORMAL_INT_STAT_R reg;
+    MtimerParams* Mtimer;
+    Mtimer_Init(Mtimer);
+    MTIMER_OUT_CONDITION(100, Mtimer, \
+                        ptr->error_int_stat_r__normal_int_stat.BIT.xfer_complete != 1);
+    if(Mtimer_IsTimerOut(Mtimer)){
+        return XST_FAILURE;
+    }else{
+        ptr->error_int_stat_r__normal_int_stat.BIT.xfer_complete = 1;
+        return XST_SUCCESS;
+    }
+    /*ERROR_INT_STAT_R__NORMAL_INT_STAT_R reg;
     for (;;)
     {
-    	reg = ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT;
-        if (reg.BIT.XFER_COMPLETE == 1)
+    	reg = ptr->error_int_stat_r__normal_int_stat;
+        if (reg.BIT.xfer_complete == 1)
         {
-        	ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT.BIT.XFER_COMPLETE = 1;
+        	ptr->error_int_stat_r__normal_int_stat.BIT.xfer_complete = 1;
             break;
         }
-    }
+    }*/
 }
 
 static void wait_buffer_read_ready_complete(volatile DWC_mshc_block_registers* ptr)
 {
-    ERROR_INT_STAT_R__NORMAL_INT_STAT_R reg;
+    MtimerParams* Mtimer;
+    Mtimer_Init(Mtimer);
+    MTIMER_OUT_CONDITION(100, Mtimer, \
+                    ptr->error_int_stat_r__normal_int_stat.BIT.buf_rd_ready != 1);
+    if(Mtimer_IsTimerOut(Mtimer)){
+        return XST_FAILURE;
+    }else{
+        ptr->error_int_stat_r__normal_int_stat.BIT.buf_rd_ready = 1;
+        return XST_SUCCESS;
+    }
+    /*ERROR_INT_STAT_R__NORMAL_INT_STAT_R reg;
     for (;;)
     {
-    	reg = ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT;
-        if (reg.BIT.BUF_RD_READY == 1)
+    	reg = ptr->error_int_stat_r__normal_int_stat;
+        if (reg.BIT.buf_rd_ready == 1)
         {
-        	ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT.BIT.BUF_RD_READY = 1;
+        	ptr->error_int_stat_r__normal_int_stat.BIT.buf_rd_ready = 1;
             break;
         }
-    }
+    }*/
 }
 
 /***************************************************************************/
@@ -148,18 +179,42 @@ u32 CardDetection()
 {
     u32 Status = XST_FAILURE;
     u32 CardStatus = 0;
+    ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN_R r1;
+    ERROR_INT_SIGNAL_EN_R__NORMAL_INT_SIGNAL_EN_R r2;
+    ERROR_INT_STAT_R__NORMAL_INT_STAT_R r3;
+    PSTATE_REG_R r4;
     
     //  Card Detection
-    SDIO->ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN.D32 = 0x000002FF;
-    SDIO->ERROR_INT_SIGNAL_EN_R__NORMAL_INT_SIGNAL_EN.D32 = 0x000000C0;
-    SDIO->ERROR_INT_STAT_R__NORMAL_INT_STAT.D32 = 0x000000C0;
+    r1.d32 = 0;
+    r1.BIT.cmd_complete_stat_en = 0x1;
+    r1.BIT.xfer_complete_stat_en = 0x1;
+    r1.BIT.bgap_event_stat_en = 0x1;
+    r1.BIT.dma_interrupt_stat_en = 0x1;
+    r1.BIT.buf_wr_ready_stat_en = 0x1;
+    r1.BIT.buf_rd_ready_stat_en = 0x1;
+    r1.BIT.card_insertion_stat_en = 0x1;
+    r1.BIT.card_removal_stat_en = 0x1;
+    r1.BIT.int_a_stat_en = 0x1;
+    REG_WRITE(&(SDIO->error_int_stat_en_r__normal_int_stat_en.d32), r1.d32);
+    //SDIO->error_int_stat_en_r__normal_int_stat_en.d32 = 0x000002FF;
+    r2.d32 = 0;
+    r2.BIT.card_insertion_signal_en = 0x1;
+    r2.BIT.card_removal_signal_en = 0x1;
+    REG_WRITE(&(SDIO->error_int_signal_en_r__normal_int_signal_en), r2.d32);
+    //SDIO->error_int_signal_en_r__normal_int_signal_en.d32 = 0x000000C0;
+    r3.d32 = 0;
+    r3.BIT.card_insertion = 0x1;
+    r3.BIT.card_removal = 0x1;
+    REG_WRITE(&(SDIO->error_int_stat_r__normal_int_stat), r3.d32);
+    //SDIO->error_int_stat_r__normal_int_stat.d32 = 0x000000C0;
 
     sleep(200);
     
     while (!CardStatus)
     {
-        PSTATE_REG_R reg = SDIO->PSTATE_REG;
-        CardStatus = (((reg.CARD_INSERTED) == 1) ? 1:0);
+        r4.d32 = REG_READ(&(SDIO->pstate_reg));
+        //PSTATE_REG_R reg = SDIO->pstate_reg;
+        CardStatus = (((r4.BIT.card_inserted) == 1) ? 1:0);
     	if (CardStatus == 1)
     	{
             Status = XST_SUCCESS;
@@ -181,10 +236,30 @@ u32 CardDetection()
 u32 HostControllerSetup(volatile DWC_mshc_block_registers* ptr)
 {
     u32 Status;
+    WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R r1;
+    SW_RST_R__TOUT_CTRL_R__CLK_CTRL_R r2;
+    HOST_CTRL2_R__AUTO_CMD_STAT_R r3;
+
+    r1.d32 = 0;
+    r1.BIT.dma_sel = 0x2;   //ADMA2
+    r1.BIT.sd_bus_pwr_vdd1 = 0x1;   //PWR ON
+    r1.BIT.sd_bus_vol_vdd1 = 0x7;   //3V
+    r1.BIT.sd_bus_pwr_vdd2 = 0x1;   //PWR ON
+    r1.BIT.sd_bus_vol_vdd2 = 0x5;   //1.8V
+    REG_WRITE(&(ptr->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1), r1.d32);
+    r2.d32 = 0;
+    r2.BIT.internal_clk_en = 0x1;       //Oscillate
+    r2.BIT.internal_clk_stable = 0x1;   // ro why read
+    r2.BIT.pll_enable = 0x1;            //PLL enabled
+    r2.BIT.clk_gen_select = 0x1;        //Programmable Clock Mode
+    REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r2.d32);
+    r3.d32 = 0;
+    REG_WRITE(&(ptr->host_ctrl2_r__auto_cmd_stat), r3.d32);
+
     //  Host Controller Setup
-    ptr->WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1.D32= 0x0000BF10;
-    ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000002B;
-    ptr->HOST_CTRL2_R__AUTO_CMD_STAT.D32= 0x00000000;
+    //ptr->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1.d32= 0x0000BF10;
+    //ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32 = 0x0000002B;
+    //ptr->host_ctrl2_r__auto_cmd_stat.d32= 0x00000000;
 
     Status = XST_SUCCESS;
     return Status;
@@ -200,22 +275,50 @@ u32 HostControllerSetup(volatile DWC_mshc_block_registers* ptr)
  ******************************************************************************/
 u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, int freq)
 {
+    SW_RST_R__TOUT_CTRL_R__CLK_CTRL_R r1;
     //  Host Controller Clock Setup
     if (freq == 0)
     {
-        ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000000B;
+        r1.d32 = 0;
+        r1.BIT.internal_clk_en = 0x1;       //Oscillate
+        r1.BIT.internal_clk_stable = 0x1;   // ro why read
+        r1.BIT.pll_enable = 0x1;            //PLL enabled
+        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r1.d32);
+        //ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32 = 0x0000000B;
         REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000008);
         REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000000);
-        ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000000F;
-        ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000000F;
+        r1.d32 = 0;
+        r1.BIT.internal_clk_en = 0x1;       //Oscillate
+        r1.BIT.internal_clk_stable = 0x1;   // ro why read
+        r1.BIT.sd_clk_en = 0x1;             //Enable SDCLK/RCLK
+        r1.BIT.pll_enable = 0x1;            //PLL enabled
+        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r1.d32);
+        //ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32 = 0x0000000F;
+        ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32 = 0x0000000F;
     }
     else if (freq == 1)
     {
-        ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000002B;
+        r1.d32 = 0;
+        r1.BIT.internal_clk_en = 0x1;       //Oscillate
+        r1.BIT.internal_clk_stable = 0x1;   // ro why read
+        r1.BIT.pll_enable = 0x1;            //PLL enabled
+        r1.BIT.clk_gen_select = 0x1;        //Programmable Clock Mode
+        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r1.d32);
+
+        //ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32 = 0x0000002B;
         REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000008);
         REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000000);
-        ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000002F;
-        ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000002F;
+
+        r1.d32 = 0;
+        r1.BIT.internal_clk_en = 0x1;       //Oscillate
+        r1.BIT.internal_clk_stable = 0x1;   // ro why read
+        r1.BIT.sd_clk_en = 0x1;             //Enable SDCLK/RCLK
+        r1.BIT.pll_enable = 0x1;            //PLL enabled
+        r1.BIT.clk_gen_select = 0x1;        //Programmable Clock Mode
+        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r1.d32);
+
+        //ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32 = 0x0000002F;
+        ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32 = 0x0000002F;
     }
     else
     {
@@ -234,10 +337,53 @@ u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, int freq)
  ******************************************************************************/
 u32 InitInterruptSetting(volatile DWC_mshc_block_registers* ptr)
 {
-    ptr->ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN.D32 = 0x000002FF;
-    ptr->ERROR_INT_SIGNAL_EN_R__NORMAL_INT_SIGNAL_EN.D32 = 0x000000FF;
-    ptr->ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN.D32 = 0x00FB02FF;
-    ptr->HOST_CTRL2_R__AUTO_CMD_STAT.D32 = 0x00000000;
+    ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN_R r1;
+    ERROR_INT_SIGNAL_EN_R__NORMAL_INT_SIGNAL_EN_R r2;
+    ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN_R r3;
+
+    r1.d32 = 0;
+    r1.BIT.cmd_complete_stat_en = 0x1;
+    r1.BIT.xfer_complete_stat_en = 0x1;
+    r1.BIT.bgap_event_stat_en = 0x1;
+    r1.BIT.dma_interrupt_stat_en = 0x1;
+    r1.BIT.buf_wr_ready_stat_en = 0x1;
+    r1.BIT.buf_rd_ready_stat_en = 0x1;
+    r1.BIT.card_insertion_stat_en = 0x1;
+    r1.BIT.card_removal_stat_en = 0x1;
+    r1.BIT.int_a_stat_en = 0x1;
+    REG_WRITE(&(ptr->error_int_stat_en_r__normal_int_stat_en), r1.d32);
+    //ptr->error_int_stat_en_r__normal_int_stat_en.d32 = 0x000002FF;
+    r2.d32 = 0;
+    r2.BIT.cmd_complete_signal_en = 0x1;
+    r2.BIT.xfer_complete_signal_en = 0x1;
+    r2.BIT.bgap_event_signal_en = 0x1;
+    r2.BIT.dma_interrupt_signal_en = 0x1;
+    r2.BIT.buf_wr_ready_signal_en = 0x1;
+    r2.BIT.buf_rd_ready_signal_en = 0x1;
+    r2.BIT.card_insertion_signal_en = 0x1;
+    r2.BIT.card_removal_signal_en = 0x1;
+    REG_WRITE(&(ptr->error_int_signal_en_r__normal_int_signal_en), r2.d32);
+    //ptr->error_int_signal_en_r__normal_int_signal_en.d32 = 0x000000FF;
+    r3.d32 = 0;
+    r3.BIT.cmd_complete_stat_en = 0x1;
+    r3.BIT.xfer_complete_stat_en = 0x1;
+    r3.BIT.bgap_event_stat_en = 0x1;
+    r3.BIT.dma_interrupt_stat_en = 0x1;
+    r3.BIT.buf_wr_ready_stat_en = 0x1;
+    r3.BIT.buf_rd_ready_stat_en = 0x1;
+    r3.BIT.card_insertion_stat_en = 0x1;
+    r3.BIT.card_removal_stat_en = 0x1;
+    r3.BIT.int_a_stat_en = 0x1;
+    r3.BIT.cmd_tout_err_stat_en = 0x1;
+    r3.BIT.cmd_crc_err_stat_en = 0x1;
+    r3.BIT.cmd_idx_err_stat_en = 0x1;
+    r3.BIT.data_tout_err_stat_en = 0x1;
+    r3.BIT.data_crc_err_stat_en = 0x1;
+    r3.BIT.data_end_bit_err_stat_en = 0x1;
+    r3.BIT.cur_lmt_err_stat_en = 0x1;
+    REG_WRITE(&(ptr->error_int_stat_en_r__normal_int_stat_en), r3.d32);
+    //ptr->error_int_stat_en_r__normal_int_stat_en.d32 = 0x00FB02FF;
+    ptr->host_ctrl2_r__auto_cmd_stat.d32 = 0x00000000;
 
     SDRegWrite(AT_CTRL_R, 0x0FFF0000);
     SDRegWrite(MBIU_CTRL_R, 0x01010004);
@@ -261,64 +407,86 @@ u32 SendInitCmdSD()
     volatile unsigned int errorstatus;
     int Status;
     CMD_R__XFER_MODE_R reg;
+    uint32_t arg_r;
     
     // send command 0
-    SDIO->ARGUMENT_R = 0;
-    memset(&reg, 0, sizeof(reg));
-    reg.BIT.CMD_INDEX = SD_CMD_GO_IDLE_STATE;
-    reg.BIT.DATA_XFER_DIR = DATA_READ;
-    SDIO->CMD_R__XFER_MODE = reg;
+    arg_r = 0;
+    REG_WRITE(&(SDIO->argument_r), arg_r);
+    //SDIO->argument_r = 0;
+    //memset(&reg, 0, sizeof(reg));
+    reg.d32 = REG_READ(&(SDIO->cmd_r__xfer_mode));
+    reg.BIT.cmd_index = SD_CMD_GO_IDLE_STATE;
+    reg.BIT.data_xfer_dir = DATA_READ;
+    REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
+    //SDIO->cmd_r__xfer_mode = reg;
     wait_command_complete(SDIO);
 
     // send command 8
-    SDIO->ARGUMENT_R = 0x1AA;
-    memset(&reg, 0, sizeof(reg));
-    reg.BIT.CMD_INDEX = SD_CMD_HS_SEND_EXT_CSD;
-    reg.BIT.DATA_XFER_DIR = DATA_READ;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-    SDIO->CMD_R__XFER_MODE = reg;
+    arg_r = 0x1AA;
+    REG_WRITE(&(SDIO->argument_r), arg_r);
+    //SDIO->argument_r = 0x1AA;
+    //memset(&reg, 0, sizeof(reg));
+    reg.d32 = REG_READ(&(SDIO->cmd_r__xfer_mode));
+    reg.BIT.cmd_index = SD_CMD_HS_SEND_EXT_CSD;
+    reg.BIT.data_xfer_dir = DATA_READ;
+    reg.BIT.resp_type_select = SDIO_Response_Short;
+    REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
+    //SDIO->cmd_r__xfer_mode = reg;
     wait_command_complete(SDIO);
 
     // send command 55
-    SDIO->ARGUMENT_R = 0;
-    memset(&reg, 0, sizeof(reg));
-    reg.BIT.CMD_INDEX = SD_CMD_APP_CMD;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-    reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
-    reg.BIT.DATA_XFER_DIR = DATA_READ;
-    reg.BIT.MULTI_BLK_SEL = 0x1;
-    reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
-    SDIO->CMD_R__XFER_MODE = reg;
+    arg_r = 0;
+    REG_WRITE(&(SDIO->argument_r), arg_r);
+    //SDIO->argument_r = 0;
+    //memset(&reg, 0, sizeof(reg));
+    reg.d32 = REG_READ(&(SDIO->cmd_r__xfer_mode));
+    reg.BIT.cmd_index = SD_CMD_APP_CMD;
+    reg.BIT.resp_type_select = SDIO_Response_Short;
+    reg.BIT.block_count_enable = 0x1;
+    reg.BIT.data_xfer_dir = DATA_READ;
+    reg.BIT.multi_blk_sel = 0x1;
+    reg.BIT.resp_err_chk_enable = 0x1;
+    REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
+    //SDIO->cmd_r__xfer_mode = reg;
     wait_command_complete(SDIO);
     
     validvoltage = 0;
     while (!validvoltage)
     {
     	// CMD55
-        SDIO->ARGUMENT_R = 0;
-        memset(&reg, 0, sizeof(reg));
-        reg.BIT.CMD_INDEX = SD_CMD_APP_CMD;
-        reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-        reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
-        reg.BIT.DATA_XFER_DIR = DATA_READ;
-        reg.BIT.MULTI_BLK_SEL = 0x1;
-        reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
-        SDIO->CMD_R__XFER_MODE = reg;
+        arg_r = 0;
+        REG_WRITE(&(SDIO->argument_r), arg_r);
+        //SDIO->argument_r = 0;
+        //memset(&reg, 0, sizeof(reg));
+        reg.d32 = REG_READ(&(SDIO->cmd_r__xfer_mode));
+        reg.BIT.cmd_index = SD_CMD_APP_CMD;
+        reg.BIT.resp_type_select = SDIO_Response_Short;
+        reg.BIT.block_count_enable = 0x1;
+        reg.BIT.data_xfer_dir = DATA_READ;
+        reg.BIT.multi_blk_sel = 0x1;
+        reg.BIT.resp_err_chk_enable = 0x1;
+        REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
+        //SDIO->cmd_r__xfer_mode = reg;
         wait_command_complete(SDIO);
 
     	//CMD41
-        SDIO->ARGUMENT_R = 0xC0100000;
-        memset(&reg, 0, sizeof(reg));
-        reg.BIT.CMD_INDEX = SD_CMD_SD_APP_OP_COND;
-        reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-        reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
-        reg.BIT.DATA_XFER_DIR = DATA_READ;
-        reg.BIT.MULTI_BLK_SEL = 0x1;
-        reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
-        SDIO->CMD_R__XFER_MODE = reg;
+        arg_r = 0xC0100000;
+        REG_WRITE(&(SDIO->argument_r), arg_r);
+        //SDIO->argument_r = 0xC0100000;
+        //memset(&reg, 0, sizeof(reg));
+        reg.d32 = REG_READ(&(SDIO->cmd_r__xfer_mode));
+        reg.BIT.cmd_index = SD_CMD_SD_APP_OP_COND;
+        reg.BIT.resp_type_select = SDIO_Response_Short;
+        reg.BIT.block_count_enable = 0x1;
+        reg.BIT.data_xfer_dir = DATA_READ;
+        reg.BIT.multi_blk_sel = 0x1;
+        reg.BIT.resp_err_chk_enable = 0x1;
+        REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
+        //SDIO->cmd_r__xfer_mode = reg;
         wait_command_complete(SDIO);
 
-        response01 = SDIO->RESP01;
+        response01 = REG_READ(&(SDIO->resp01));
+        //response01 = SDIO->resp01;
     	validvoltage = (((response01 >> 31) == 1) ? 1:0);
     	if (validvoltage == 1)
     	{
@@ -327,34 +495,55 @@ u32 SendInitCmdSD()
     }
 
     // send command 2
-    SDIO->ARGUMENT_R = 0;
-    reg.BIT.CMD_INDEX = SD_CMD_ALL_SEND_CID;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Long;
-    SDIO->CMD_R__XFER_MODE = reg;
+    arg_r = 0;
+    REG_WRITE(&(SDIO->argument_r), arg_r);
+    //SDIO->argument_r = 0;
+    reg.d32 = REG_READ(&(SDIO->cmd_r__xfer_mode));
+    reg.BIT.cmd_index = SD_CMD_ALL_SEND_CID;
+    reg.BIT.resp_type_select = SDIO_Response_Long;
+    REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
+    //SDIO->cmd_r__xfer_mode = reg;
     wait_command_complete(SDIO);
-    CID_Tab[0] = SDIO->RESP01;
-    CID_Tab[1] = SDIO->RESP23;
-    CID_Tab[2] = SDIO->RESP45;
-    CID_Tab[3] = SDIO->RESP67;
+    CID_Tab[0] = REG_READ(&(SDIO->resp01));
+    CID_Tab[1] = REG_READ(&(SDIO->resp23));
+    CID_Tab[2] = REG_READ(&(SDIO->resp45));
+    CID_Tab[3] = REG_READ(&(SDIO->resp67));
+    //CID_Tab[0] = SDIO->resp01;
+    //CID_Tab[1] = SDIO->resp23;
+    //CID_Tab[2] = SDIO->resp45;
+    //CID_Tab[3] = SDIO->resp67;
     
     // send command 3
-    SDIO->ARGUMENT_R = 0x10000;
-    reg.BIT.CMD_INDEX = SD_CMD_SET_REL_ADDR;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-    SDIO->CMD_R__XFER_MODE = reg;
+    arg_r = 0x10000;
+    REG_WRITE(&(SDIO->argument_r), arg_r);
+    //SDIO->argument_r = 0x10000;
+    reg.d32 = REG_READ(&(SDIO->cmd_r__xfer_mode));
+    reg.BIT.cmd_index = SD_CMD_SET_REL_ADDR;
+    reg.BIT.resp_type_select = SDIO_Response_Short;
+    REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
+    //SDIO->cmd_r__xfer_mode = reg;
     wait_command_complete(SDIO);
-    rca = SDIO->RESP01 & 0xFFFF0000;
+    rca = REG_READ(&(SDIO->resp01)) & 0xFFFF0000;
+    //rca = SDIO->resp01 & 0xFFFF0000;
 
     // send command 9
-    SDIO->ARGUMENT_R = rca;
-    reg.BIT.CMD_INDEX = SD_CMD_SEND_CSD;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Long;
-    SDIO->CMD_R__XFER_MODE = reg;
+    arg_r = rca;
+    REG_WRITE(&(SDIO->argument_r), arg_r);
+    //SDIO->argument_r = rca;
+    reg.d32 = REG_READ(&(SDIO->cmd_r__xfer_mode));
+    reg.BIT.cmd_index = SD_CMD_SEND_CSD;
+    reg.BIT.resp_type_select = SDIO_Response_Long;
+    REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
+    //SDIO->cmd_r__xfer_mode = reg;
     wait_command_complete(SDIO);
-    CSD_Tab[3] = SDIO->RESP01;
-    CSD_Tab[2] = SDIO->RESP23;
-    CSD_Tab[1] = SDIO->RESP45;
-    CSD_Tab[0] = SDIO->RESP67;    
+    CSD_Tab[3] = REG_READ(&(SDIO->resp01));
+    CSD_Tab[2] = REG_READ(&(SDIO->resp23));
+    CSD_Tab[1] = REG_READ(&(SDIO->resp45));
+    CSD_Tab[0] = REG_READ(&(SDIO->resp67));
+    //CSD_Tab[3] = SDIO->resp01;
+    //CSD_Tab[2] = SDIO->resp23;
+    //CSD_Tab[1] = SDIO->resp45;
+    //CSD_Tab[0] = SDIO->resp67;    
 
     // Set buswidth to 1 bit clock to 48MHZ
     errorstatus = SD_GetCardInfo(&SDCardInfo);
@@ -362,10 +551,14 @@ u32 SendInitCmdSD()
     Status = HostControllerClockSetup(SDIO, FREQ_10M);
     
     // send command 7
-    SDIO->ARGUMENT_R = rca;
-    reg.BIT.CMD_INDEX = SD_CMD_SEL_DESEL_CARD;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short_48B;
-    SDIO->CMD_R__XFER_MODE = reg;
+    arg_r = rca;
+    REG_WRITE(&(SDIO->argument_r), arg_r);
+    //SDIO->argument_r = rca;
+    reg.d32 = REG_READ(&(SDIO->cmd_r__xfer_mode));
+    reg.BIT.cmd_index = SD_CMD_SEL_DESEL_CARD;
+    reg.BIT.resp_type_select = SDIO_Response_Short_48B;
+    REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
+    //SDIO->cmd_r__xfer_mode = reg;
     wait_command_complete(SDIO);
 
     return XST_SUCCESS;
@@ -386,13 +579,18 @@ u32 SendInitCmdEmmc()
     volatile unsigned int errorstatus;
     int Status;
     CMD_R__XFER_MODE_R reg;
+    uint32_t arg_r;
     
     // send command 0
-    eMMC->ARGUMENT_R = 0;
-    memset(&reg, 0, sizeof(reg));
-    reg.BIT.CMD_INDEX = SD_CMD_GO_IDLE_STATE;
-    reg.BIT.DATA_XFER_DIR = DATA_READ;
-    eMMC->CMD_R__XFER_MODE = reg;
+    arg_r = 0;
+    REG_WRITE(&(eMMC->argument_r), arg_r);
+    //eMMC->argument_r = 0;
+    //memset(&reg, 0, sizeof(reg));
+    reg.d32 = REG_READ(&(eMMC->cmd_r__xfer_mode));
+    reg.BIT.cmd_index = SD_CMD_GO_IDLE_STATE;
+    reg.BIT.data_xfer_dir = DATA_READ;
+    REG_WRITE(&(eMMC->cmd_r__xfer_mode), reg.d32);
+    //eMMC->cmd_r__xfer_mode = reg;
     wait_command_complete(eMMC);
     sleep(1000);
     
@@ -400,15 +598,20 @@ u32 SendInitCmdEmmc()
     while (!validvoltage)
     {
     	//CMD1
-        eMMC->ARGUMENT_R = 0x40000080;
-        memset(&reg, 0, sizeof(reg));
-        reg.BIT.CMD_INDEX = SD_CMD_SEND_OP_COND;
-        reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-        reg.BIT.DATA_XFER_DIR = DATA_READ;
-        eMMC->CMD_R__XFER_MODE = reg;
+        arg_r = 0x40000080;
+        REG_WRITE(&(eMMC->argument_r), arg_r);
+        //eMMC->argument_r = 0x40000080;
+        //memset(&reg, 0, sizeof(reg));
+        reg.d32 = REG_READ(&(eMMC->cmd_r__xfer_mode));
+        reg.BIT.cmd_index = SD_CMD_SEND_OP_COND;
+        reg.BIT.resp_type_select = SDIO_Response_Short;
+        reg.BIT.data_xfer_dir = DATA_READ;
+        REG_WRITE(&(eMMC->cmd_r__xfer_mode), reg.d32);
+        //eMMC->cmd_r__xfer_mode = reg;
         wait_command_complete(eMMC);
 
-        response01 = eMMC->RESP01;
+        response01 = REG_READ(&(eMMC->resp01));
+        //response01 = eMMC->resp01;
     	validvoltage = (((response01 >> 31) == 1) ? 1:0);
     	if (validvoltage == 1)
     	{
@@ -417,54 +620,75 @@ u32 SendInitCmdEmmc()
     }
 
     // send command 2
-    eMMC->ARGUMENT_R = 0;
-    memset(&reg, 0, sizeof(reg));
-    reg.BIT.CMD_INDEX = SD_CMD_ALL_SEND_CID;
-    reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
-    reg.BIT.DATA_XFER_DIR = DATA_READ;
-    reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
-    reg.BIT.MULTI_BLK_SEL = 0x1;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Long;
-    eMMC->CMD_R__XFER_MODE = reg;
+    arg_r = 0;
+    REG_WRITE(&(eMMC->argument_r), arg_r);
+    //eMMC->argument_r = 0;
+    //memset(&reg, 0, sizeof(reg));
+    reg.d32 = REG_READ(&(eMMC->cmd_r__xfer_mode));
+    reg.BIT.cmd_index = SD_CMD_ALL_SEND_CID;
+    reg.BIT.block_count_enable = 0x1;
+    reg.BIT.data_xfer_dir = DATA_READ;
+    reg.BIT.resp_err_chk_enable = 0x1;
+    reg.BIT.multi_blk_sel = 0x1;
+    reg.BIT.resp_type_select = SDIO_Response_Long;
+    REG_WRITE(&(eMMC->cmd_r__xfer_mode), reg.d32);
+    //eMMC->cmd_r__xfer_mode = reg;
     wait_command_complete(eMMC);
 
     // send command 3
-    eMMC->ARGUMENT_R = 0x10000;
-    reg.BIT.CMD_INDEX = SD_CMD_SET_REL_ADDR;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-    eMMC->CMD_R__XFER_MODE = reg;
+    arg_r = 0x10000;
+    REG_WRITE(&(eMMC->argument_r), arg_r);
+    //eMMC->argument_r = 0x10000;
+    reg.BIT.cmd_index = SD_CMD_SET_REL_ADDR;
+    reg.BIT.resp_type_select = SDIO_Response_Short;
+    REG_WRITE(&(eMMC->cmd_r__xfer_mode), reg.d32);
+    //eMMC->cmd_r__xfer_mode = reg;
     wait_command_complete(eMMC);
-    rca = eMMC->RESP01 & 0xFFFF0000;
+    rca = REG_READ(&(eMMC->resp01)) & 0xFFFF0000;
+    //rca = eMMC->resp01 & 0xFFFF0000;
 
     // send command 9
-    eMMC->ARGUMENT_R = rca;
-    reg.BIT.CMD_INDEX = SD_CMD_SEND_CSD;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Long;
-    eMMC->CMD_R__XFER_MODE = reg;
+    arg_r = rca;
+    REG_WRITE(&(eMMC->argument_r), arg_r);
+    //eMMC->argument_r = rca;
+    reg.BIT.cmd_index = SD_CMD_SEND_CSD;
+    reg.BIT.resp_type_select = SDIO_Response_Long;
+    REG_WRITE(&(eMMC->cmd_r__xfer_mode), reg.d32);
+    //eMMC->cmd_r__xfer_mode = reg;
     wait_command_complete(eMMC);
-    CSD_Tab[3] = eMMC->RESP01;
-    CSD_Tab[2] = eMMC->RESP23;
-    CSD_Tab[1] = eMMC->RESP45;
-    CSD_Tab[0] = eMMC->RESP67;
+    CSD_Tab[3] = REG_READ(&(eMMC->resp01));
+    CSD_Tab[2] = REG_READ(&(eMMC->resp23));
+    CSD_Tab[1] = REG_READ(&(eMMC->resp45));
+    CSD_Tab[0] = REG_READ(&(eMMC->resp67));
+    //CSD_Tab[3] = eMMC->resp01;
+    //CSD_Tab[2] = eMMC->resp23;
+    //CSD_Tab[1] = eMMC->resp45;
+    //CSD_Tab[0] = eMMC->resp67;    
 
     // Set buswidth to 1 bit clock to 48MHZ
     errorstatus = SD_GetCardInfo(&SDCardInfo);
 
     // send command 10
-    eMMC->ARGUMENT_R = rca;
-    reg.BIT.CMD_INDEX = SD_CMD_SEND_CID;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Long;
-    eMMC->CMD_R__XFER_MODE = reg;
+    arg_r = rca;
+    REG_WRITE(&(eMMC->argument_r), arg_r);
+    //eMMC->argument_r = rca;
+    reg.BIT.cmd_index = SD_CMD_SEND_CID;
+    reg.BIT.resp_type_select = SDIO_Response_Long;
+    REG_WRITE(&(eMMC->cmd_r__xfer_mode), reg.d32);
+    //eMMC->cmd_r__xfer_mode = reg;
     wait_command_complete(eMMC);
 
     //Set Freq 10M
     Status = HostControllerClockSetup(eMMC, FREQ_10M);
     
     // send command 7
-    eMMC->ARGUMENT_R = rca;
-    reg.BIT.CMD_INDEX = SD_CMD_SEL_DESEL_CARD;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short_48B;
-    eMMC->CMD_R__XFER_MODE = reg;
+    arg_r = rca;
+    REG_WRITE(&(eMMC->argument_r), arg_r);
+    //eMMC->argument_r = rca;
+    reg.BIT.cmd_index = SD_CMD_SEL_DESEL_CARD;
+    reg.BIT.resp_type_select = SDIO_Response_Short_48B;
+    REG_WRITE(&(eMMC->cmd_r__xfer_mode), reg.d32);
+    //eMMC->cmd_r__xfer_mode = reg;
     wait_command_complete(eMMC);
 
     return XST_SUCCESS;
@@ -482,24 +706,33 @@ u32 SendInitCmdEmmc()
 u32 SwitchDataWidthSD()
 {
     CMD_R__XFER_MODE_R reg;
-    
+    uint32_t arg_r;
+
     // send command 55  SET BUSWITHD TO 4 BIT
-   	SDIO->ARGUMENT_R = rca;
-    memset(&reg, 0, sizeof(reg));
-    reg.BIT.CMD_INDEX = SD_CMD_APP_CMD;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-    reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
-    reg.BIT.DATA_XFER_DIR = DATA_READ;
-    reg.BIT.MULTI_BLK_SEL = 0x1;
-    reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
-    SDIO->CMD_R__XFER_MODE = reg;
+    arg_r = rca;
+    REG_WRITE(&(SDIO->argument_r), arg_r);
+   	//SDIO->argument_r = rca;
+    //memset(&reg, 0, sizeof(reg));
+    reg.d32 = REG_READ(&(SDIO->cmd_r__xfer_mode));
+    reg.BIT.cmd_index = SD_CMD_APP_CMD;
+    reg.BIT.resp_type_select = SDIO_Response_Short;
+    reg.BIT.block_count_enable = 0x1;
+    reg.BIT.data_xfer_dir = DATA_READ;
+    reg.BIT.multi_blk_sel = 0x1;
+    reg.BIT.resp_err_chk_enable = 0x1;
+    REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
+    //SDIO->cmd_r__xfer_mode = reg;
     wait_command_complete(SDIO);
 
     // send command 6
-    SDIO->ARGUMENT_R = 0x2; //set sd model data width=4
-    reg.BIT.CMD_INDEX = SD_CMD_HS_SWITCH;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-    SDIO->CMD_R__XFER_MODE = reg;
+    arg_r = 0x2;
+    REG_WRITE(&(SDIO->argument_r), arg_r);
+    //SDIO->argument_r = 0x2; //set sd model data width=4
+    reg.d32 = REG_READ(&(SDIO->cmd_r__xfer_mode));
+    reg.BIT.cmd_index = SD_CMD_HS_SWITCH;
+    reg.BIT.resp_type_select = SDIO_Response_Short;
+    REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
+    //SDIO->cmd_r__xfer_mode = reg;
     wait_command_complete(SDIO);
 
     sleep(2000);
@@ -518,14 +751,22 @@ u32 SwitchDataWidthSD()
 u32 SwitchDataWidthEmmc()
 {
     CMD_R__XFER_MODE_R reg;
+    uint32_t arg_r;
+    WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R r1;
 
     // send command 6
-    eMMC->ARGUMENT_R = 0x03b70200; //set sd model data width=4
-    reg.BIT.CMD_INDEX = SD_CMD_HS_SWITCH;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-    eMMC->CMD_R__XFER_MODE = reg;
+    arg_r = 0x03b70200;
+    REG_WRITE(&(eMMC->argument_r), arg_r);
+    //eMMC->argument_r = 0x03b70200; //set sd model data width=4
+    reg.BIT.cmd_index = SD_CMD_HS_SWITCH;
+    reg.BIT.resp_type_select = SDIO_Response_Short;
+    REG_WRITE(&(eMMC->cmd_r__xfer_mode), reg.d32);
+    //eMMC->cmd_r__xfer_mode = reg;
     wait_command_complete(eMMC);
-    eMMC->WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1.BIT.EXTDAT_XFER = 0x1;
+    r1.d32 = REG_READ(&(eMMC->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1));
+    r1.BIT.extdat_xfer = 0x1;
+    REG_WRITE(&(eMMC->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1), r1.d32);
+    //eMMC->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1.BIT.extdat_xfer = 0x1;
     sleep(2000);
 
     return XST_SUCCESS;
@@ -633,41 +874,68 @@ u32 SD_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSize,
     volatile unsigned int value = 0;
 	uint32_t* Buffer_SingleBlock = (uint32_t* )readbuff;
     CMD_R__XFER_MODE_R reg;
+    WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R r1;
+    HOST_CTRL2_R__AUTO_CMD_STAT_R r2;
+    uint32_t arg_r;
+    BLOCKCOUNT_R__BLOCKSIZE_R block;
 
-    SDIO->WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1.D32 = 0x0000BF02;
-    SDIO->SDMASA_R = Buffer_SingleBlock;
-    SDIO->ADMA_SA_LOW_R = Buffer_SingleBlock;
-    SDIO->HOST_CTRL2_R__AUTO_CMD_STAT.D32 = 0x0;
+    r1.d32 = 0;
+    r1.BIT.dat_xfer_width = 0x1;   //4-bit mode
+    r1.BIT.sd_bus_pwr_vdd1 = 0x1;   //PWR ON
+    r1.BIT.sd_bus_vol_vdd1 = 0x7;   //3V
+    r1.BIT.sd_bus_pwr_vdd2 = 0x1;   //PWR ON
+    r1.BIT.sd_bus_vol_vdd2 = 0x5;   //1.8V
+    REG_WRITE(&(eMMC->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1), r1.d32);
+    //eMMC->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1.d32 = 0x0000BF02;
+    REG_WRITE(&(eMMC->sdmasa_r), Buffer_SingleBlock);
+    //eMMC->sdmasa_r = Buffer_SingleBlock;
+    REG_WRITE(&(eMMC->adma_sa_low_r), Buffer_SingleBlock);
+    //eMMC->adma_sa_low_r = Buffer_SingleBlock;
+    r2.d32 = 0;
+    REG_WRITE(&(eMMC->host_ctrl2_r__auto_cmd_stat), r2.d32);
+    //eMMC->host_ctrl2_r__auto_cmd_stat.d32 = 0x0;
 
 	// send command 16
-	SDIO->ARGUMENT_R = BlockSize;
+    arg_r = BlockSize;
+    REG_WRITE(&(SDIO->argument_r), arg_r);
+	//SDIO->argument_r = BlockSize;
 	BLOCKCOUNT_R__BLOCKSIZE_R block;
-    memset(&block, 0, sizeof(block));
-    block.XFER_BLOCK_SIZE = BlockSize;
-    block.BLOCKCOUNT_R = NumberOfBlocks;
-    memset(&reg, 0, sizeof(reg));
-    reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
-    reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-    reg.BIT.CMD_INDEX = SD_CMD_SET_BLOCKLEN;
-    SDIO->BLOCKCOUNT_R__BLOCKSIZE = block;
-    SDIO->CMD_R__XFER_MODE = reg;
+    //memset(&block, 0, sizeof(block));
+    block.d32 = REG_READ(&(SDIO->blockcount_r__blocksize));
+    block.BIT.xfer_block_size = BlockSize;
+    block.BIT.blockcount_r = NumberOfBlocks;
+    //memset(&reg, 0, sizeof(reg));
+    reg.d32 = REG_READ(&(SDIO->cmd_r__xfer_mode));
+    reg.BIT.block_count_enable = 0x1;
+    reg.BIT.resp_err_chk_enable = 0x1;
+    reg.BIT.resp_type_select = SDIO_Response_Short;
+    reg.BIT.cmd_index = SD_CMD_SET_BLOCKLEN;
+    REG_WRITE(&(SDIO->blockcount_r__blocksize), block.d32);
+    //SDIO->blockcount_r__blocksize = block;
+    REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
+    //SDIO->cmd_r__xfer_mode = reg;
     wait_command_complete(SDIO);
 
 	// send command 17 read single block
-	SDIO->ARGUMENT_R = ReadAddr;
-    memset(&reg, 0, sizeof(reg));
-    reg.BIT.DMA_EN = 0x1;
-    reg.BIT.DATA_XFER_DIR = 0x1;
-    reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-    reg.BIT.DATA_PRESENT_SEL = 0x1;
-    reg.BIT.CMD_INDEX = SD_CMD_READ_SINGLE_BLOCK;
-    memset(&block, 0, sizeof(block));
-    block.XFER_BLOCK_SIZE = BlockSize;
-    block.BLOCKCOUNT_R = NumberOfBlocks;
-    SDIO->BLOCKCOUNT_R__BLOCKSIZE = block;
-    SDIO->CMD_R__XFER_MODE = reg;
+    arg_r = BlockSize;
+    REG_WRITE(&(SDIO->argument_r), ReadAddr);
+	//SDIO->argument_r = ReadAddr;
+    //memset(&reg, 0, sizeof(reg));
+    reg.d32 = REG_READ(&(SDIO->cmd_r__xfer_mode));
+    reg.BIT.dma_en = 0x1;
+    reg.BIT.data_xfer_dir = 0x1;
+    reg.BIT.resp_err_chk_enable = 0x1;
+    reg.BIT.resp_type_select = SDIO_Response_Short;
+    reg.BIT.data_present_sel = 0x1;
+    reg.BIT.cmd_index = SD_CMD_READ_SINGLE_BLOCK;
+    //memset(&block, 0, sizeof(block));
+    block.d32 = REG_READ(&(SDIO->blockcount_r__blocksize));
+    block.BIT.xfer_block_size = BlockSize;
+    block.BIT.blockcount_r = NumberOfBlocks;
+    REG_WRITE(&(SDIO->blockcount_r__blocksize), block.d32);
+    //SDIO->blockcount_r__blocksize = block;
+    REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
+    //SDIO->cmd_r__xfer_mode = reg;
 	wait_command_complete(SDIO);
     wait_transfer_complete(SDIO);
 
@@ -690,41 +958,65 @@ u32 EMMC_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSiz
     volatile unsigned int value = 0;
 	uint32_t* Buffer_SingleBlock = (uint32_t* )readbuff;
     CMD_R__XFER_MODE_R reg;
+    WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R r1;
+    HOST_CTRL2_R__AUTO_CMD_STAT_R r2;
+    uint32_t arg_r;
+    BLOCKCOUNT_R__BLOCKSIZE_R block;
 
-    eMMC->WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1.D32 = 0x0000BF02;
-    eMMC->SDMASA_R = Buffer_SingleBlock;
-    eMMC->ADMA_SA_LOW_R = Buffer_SingleBlock;
-    eMMC->HOST_CTRL2_R__AUTO_CMD_STAT.D32 = 0x0;
+    r1.d32 = 0;
+    r1.BIT.dat_xfer_width = 0x1;   //4-bit mode
+    r1.BIT.sd_bus_pwr_vdd1 = 0x1;   //PWR ON
+    r1.BIT.sd_bus_vol_vdd1 = 0x7;   //3V
+    r1.BIT.sd_bus_pwr_vdd2 = 0x1;   //PWR ON
+    r1.BIT.sd_bus_vol_vdd2 = 0x5;   //1.8V
+    REG_WRITE(&(eMMC->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1), r1.d32);
+    //eMMC->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1.d32 = 0x0000BF02;
+    REG_WRITE(&(eMMC->sdmasa_r), Buffer_SingleBlock);
+    //eMMC->sdmasa_r = Buffer_SingleBlock;
+    REG_WRITE(&(eMMC->adma_sa_low_r), Buffer_SingleBlock);
+    //eMMC->adma_sa_low_r = Buffer_SingleBlock;
+    r2.d32 = 0;
+    REG_WRITE(&(eMMC->host_ctrl2_r__auto_cmd_stat), r2.d32);
+    //eMMC->host_ctrl2_r__auto_cmd_stat.d32 = 0x0;
 
 	// send command 16
-	eMMC->ARGUMENT_R = 0x200;
-	BLOCKCOUNT_R__BLOCKSIZE_R block;
-    memset(&block, 0, sizeof(block));
-    block.XFER_BLOCK_SIZE = BlockSize;
-    block.BLOCKCOUNT_R = NumberOfBlocks;
-    memset(&reg, 0, sizeof(reg));
-    reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
-    reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-    reg.BIT.CMD_INDEX = SD_CMD_SET_BLOCKLEN;
-    eMMC->BLOCKCOUNT_R__BLOCKSIZE = block;
-    eMMC->CMD_R__XFER_MODE = reg;
+    arg_r = 0x200;
+    REG_WRITE(&(eMMC->argument_r), arg_r);
+	//eMMC->argument_r = 0x200;
+    //memset(&block, 0, sizeof(block));
+    block.d32 = REG_READ(&(eMMC->blockcount_r__blocksize));
+    block.BIT.xfer_block_size = BlockSize;
+    block.BIT.blockcount_r = NumberOfBlocks;
+    //memset(&reg, 0, sizeof(reg));
+    reg.d32 = REG_READ(&(eMMC->cmd_r__xfer_mode));
+    reg.BIT.block_count_enable = 0x1;
+    reg.BIT.resp_err_chk_enable = 0x1;
+    reg.BIT.resp_type_select = SDIO_Response_Short;
+    reg.BIT.cmd_index = SD_CMD_SET_BLOCKLEN;
+    REG_WRITE(&(eMMC->blockcount_r__blocksize), block.d32);
+    //eMMC->blockcount_r__blocksize = block;
+    REG_WRITE(&(eMMC->cmd_r__xfer_mode), reg.d32);
+    //eMMC->cmd_r__xfer_mode = reg;
     wait_command_complete(eMMC);
 
 	// send command 17 read single block
-	eMMC->ARGUMENT_R = ReadAddr;
-    memset(&reg, 0, sizeof(reg));
-    reg.BIT.DMA_EN = 0x1;
-    reg.BIT.DATA_XFER_DIR = 0x1;
-    reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-    reg.BIT.DATA_PRESENT_SEL = 0x1;
-    reg.BIT.CMD_INDEX = SD_CMD_READ_SINGLE_BLOCK;
-    memset(&block, 0, sizeof(block));
-    block.XFER_BLOCK_SIZE = BlockSize;
-    block.BLOCKCOUNT_R = NumberOfBlocks;
-    eMMC->BLOCKCOUNT_R__BLOCKSIZE = block;
-    eMMC->CMD_R__XFER_MODE = reg;
+	eMMC->argument_r = ReadAddr;
+    //memset(&reg, 0, sizeof(reg));
+    reg.d32 = REG_READ(&(eMMC->cmd_r__xfer_mode));
+    reg.BIT.dma_en = 0x1;
+    reg.BIT.data_xfer_dir = 0x1;
+    reg.BIT.resp_err_chk_enable = 0x1;
+    reg.BIT.resp_type_select = SDIO_Response_Short;
+    reg.BIT.data_present_sel = 0x1;
+    reg.BIT.cmd_index = SD_CMD_READ_SINGLE_BLOCK;
+    //memset(&block, 0, sizeof(block));
+    block.d32 = REG_READ(&(eMMC->blockcount_r__blocksize));
+    block.BIT.xfer_block_size = BlockSize;
+    block.BIT.blockcount_r = NumberOfBlocks;
+    REG_WRITE(&(eMMC->blockcount_r__blocksize), block.d32);
+    //eMMC->blockcount_r__blocksize = block;
+    REG_WRITE(&(eMMC->cmd_r__xfer_mode), reg.d32);
+    //eMMC->cmd_r__xfer_mode = reg;
 	wait_command_complete(eMMC);
     wait_transfer_complete(eMMC);
 
@@ -749,43 +1041,69 @@ u32 SD_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t BlockSi
 	volatile unsigned int value = 0;
 	uint32_t* Buffer_SingleBlock = (uint32_t* )writebuff;
     CMD_R__XFER_MODE_R reg;
+    WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R r1;
+    HOST_CTRL2_R__AUTO_CMD_STAT_R r2;
+    uint32_t arg_r;
+    BLOCKCOUNT_R__BLOCKSIZE_R block;
 
-    SDIO->WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1.D32 = 0x0000BF02;
-    SDIO->SDMASA_R = Buffer_SingleBlock;
-    SDIO->ADMA_SA_LOW_R = Buffer_SingleBlock;
-    SDIO->HOST_CTRL2_R__AUTO_CMD_STAT.D32 = 0x0;
+    r1.d32 = 0;
+    r1.BIT.dat_xfer_width = 0x1;   //4-bit mode
+    r1.BIT.sd_bus_pwr_vdd1 = 0x1;   //PWR ON
+    r1.BIT.sd_bus_vol_vdd1 = 0x7;   //3V
+    r1.BIT.sd_bus_pwr_vdd2 = 0x1;   //PWR ON
+    r1.BIT.sd_bus_vol_vdd2 = 0x5;   //1.8V
+    REG_WRITE(&(eMMC->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1), r1.d32);
+    //eMMC->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1.d32 = 0x0000BF02;
+    REG_WRITE(&(eMMC->sdmasa_r), Buffer_SingleBlock);
+    //eMMC->sdmasa_r = Buffer_SingleBlock;
+    REG_WRITE(&(eMMC->adma_sa_low_r), Buffer_SingleBlock);
+    //eMMC->adma_sa_low_r = Buffer_SingleBlock;
+    r2.d32 = 0;
+    REG_WRITE(&(eMMC->host_ctrl2_r__auto_cmd_stat), r2.d32);
+    //eMMC->host_ctrl2_r__auto_cmd_stat.d32 = 0x0;
 
 	// send command 16
-	SDIO->ARGUMENT_R = BlockSize;
-	BLOCKCOUNT_R__BLOCKSIZE_R block;
-    memset(&block, 0, sizeof(block));
-    block.XFER_BLOCK_SIZE = BlockSize;
-    block.BLOCKCOUNT_R = NumberOfBlocks;
-    memset(&reg, 0, sizeof(reg));
-    reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
-    reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-    reg.BIT.CMD_INDEX = SD_CMD_SET_BLOCKLEN;
-    SDIO->BLOCKCOUNT_R__BLOCKSIZE = block;
-    SDIO->CMD_R__XFER_MODE = reg;
+    arg_r = BlockSize;
+    REG_WRITE(&(SDIO->argument_r), arg_r);
+	//SDIO->argument_r = BlockSize;
+    //memset(&block, 0, sizeof(block));
+    block.d32 = REG_READ(&(SDIO->blockcount_r__blocksize));
+    block.BIT.xfer_block_size = BlockSize;
+    block.BIT.blockcount_r = NumberOfBlocks;
+    //memset(&reg, 0, sizeof(reg));
+    reg.d32 = REG_READ(&(SDIO->cmd_r__xfer_mode));
+    reg.BIT.block_count_enable = 0x1;
+    reg.BIT.resp_err_chk_enable = 0x1;
+    reg.BIT.resp_type_select = SDIO_Response_Short;
+    reg.BIT.cmd_index = SD_CMD_SET_BLOCKLEN;
+    REG_WRITE(&(SDIO->blockcount_r__blocksize), block.d32);
+    REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
+    //SDIO->blockcount_r__blocksize = block;
+    //SDIO->cmd_r__xfer_mode = reg;
     wait_command_complete(SDIO);
 
 
 	// send command 24
-    SDIO->ARGUMENT_R = WriteAddr;
-    memset(&reg, 0, sizeof(reg));
-    reg.BIT.DMA_EN = 0x1;
-    reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
-    reg.BIT.DATA_XFER_DIR = DATA_WRITE;
-    reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-    reg.BIT.DATA_PRESENT_SEL = 0x1;
-    reg.BIT.CMD_INDEX = SD_CMD_WRITE_SINGLE_BLOCK;
-    memset(&block, 0, sizeof(block));
-    block.XFER_BLOCK_SIZE = BlockSize;
-    block.BLOCKCOUNT_R = NumberOfBlocks;
-    SDIO->BLOCKCOUNT_R__BLOCKSIZE = block;
-    SDIO->CMD_R__XFER_MODE = reg;
+    arg_r = WriteAddr;
+    REG_WRITE(&(SDIO->argument_r), arg_r);
+    //SDIO->argument_r = WriteAddr;
+    //memset(&reg, 0, sizeof(reg));
+    reg.d32 = REG_READ(&(SDIO->cmd_r__xfer_mode));
+    reg.BIT.dma_en = 0x1;
+    reg.BIT.block_count_enable = 0x1;
+    reg.BIT.data_xfer_dir = DATA_WRITE;
+    reg.BIT.resp_err_chk_enable = 0x1;
+    reg.BIT.resp_type_select = SDIO_Response_Short;
+    reg.BIT.data_present_sel = 0x1;
+    reg.BIT.cmd_index = SD_CMD_WRITE_SINGLE_BLOCK;
+    //memset(&block, 0, sizeof(block));
+    block.d32 = REG_READ(&(SDIO->blockcount_r__blocksize));
+    block.BIT.xfer_block_size = BlockSize;
+    block.BIT.blockcount_r = NumberOfBlocks;
+    REG_WRITE(&(SDIO->blockcount_r__blocksize), block.d32);
+    REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
+    //SDIO->blockcount_r__blocksize = block;
+    //SDIO->cmd_r__xfer_mode = reg;
 	wait_command_complete(SDIO);
     wait_transfer_complete(SDIO);
 
@@ -808,43 +1126,69 @@ u32 EMMC_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t Block
 	volatile unsigned int value = 0;
 	uint32_t* Buffer_SingleBlock = (uint32_t* )writebuff;
     CMD_R__XFER_MODE_R reg;
+    WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R r1;
+    HOST_CTRL2_R__AUTO_CMD_STAT_R r2;
+    uint32_t arg_r;
+    BLOCKCOUNT_R__BLOCKSIZE_R block;
 
-    eMMC->WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1.D32 = 0x0000BF02;
-    eMMC->SDMASA_R = Buffer_SingleBlock;
-    eMMC->ADMA_SA_LOW_R = Buffer_SingleBlock;
-    eMMC->HOST_CTRL2_R__AUTO_CMD_STAT.D32 = 0x0;
+    r1.d32 = 0;
+    r1.BIT.dat_xfer_width = 0x1;   //4-bit mode
+    r1.BIT.sd_bus_pwr_vdd1 = 0x1;   //PWR ON
+    r1.BIT.sd_bus_vol_vdd1 = 0x7;   //3V
+    r1.BIT.sd_bus_pwr_vdd2 = 0x1;   //PWR ON
+    r1.BIT.sd_bus_vol_vdd2 = 0x5;   //1.8V
+    REG_WRITE(&(eMMC->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1), r1.d32);
+    //eMMC->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1.d32 = 0x0000BF02;
+    REG_WRITE(&(eMMC->sdmasa_r), Buffer_SingleBlock);
+    //eMMC->sdmasa_r = Buffer_SingleBlock;
+    REG_WRITE(&(eMMC->adma_sa_low_r), Buffer_SingleBlock);
+    //eMMC->adma_sa_low_r = Buffer_SingleBlock;
+    r2.d32 = 0;
+    REG_WRITE(&(eMMC->host_ctrl2_r__auto_cmd_stat), r2.d32);
+    //eMMC->host_ctrl2_r__auto_cmd_stat.d32 = 0x0;
 
 	// send command 16
-	eMMC->ARGUMENT_R = BlockSize;
-	BLOCKCOUNT_R__BLOCKSIZE_R block;
-    memset(&block, 0, sizeof(block));
-    block.XFER_BLOCK_SIZE = BlockSize;
-    block.BLOCKCOUNT_R = NumberOfBlocks;
-    memset(&reg, 0, sizeof(reg));
-    reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
-    reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-    reg.BIT.CMD_INDEX = SD_CMD_SET_BLOCKLEN;
-    eMMC->BLOCKCOUNT_R__BLOCKSIZE = block;
-    eMMC->CMD_R__XFER_MODE = reg;
+    arg_r = BlockSize;
+    REG_WRITE(&(eMMC->argument_r), arg_r);
+	//eMMC->argument_r = BlockSize;
+    //memset(&block, 0, sizeof(block));
+    block.d32 = REG_READ(&(eMMC->blockcount_r__blocksize));
+    block.BIT.xfer_block_size = BlockSize;
+    block.BIT.blockcount_r = NumberOfBlocks;
+    //memset(&reg, 0, sizeof(reg));
+    reg.d32 = REG_READ(&(eMMC->cmd_r__xfer_mode));
+    reg.BIT.block_count_enable = 0x1;
+    reg.BIT.resp_err_chk_enable = 0x1;
+    reg.BIT.resp_type_select = SDIO_Response_Short;
+    reg.BIT.cmd_index = SD_CMD_SET_BLOCKLEN;
+    REG_WRITE(&(eMMC->blockcount_r__blocksize), block.d32);
+    //eMMC->blockcount_r__blocksize = block;
+    REG_WRITE(&(eMMC->cmd_r__xfer_mode), reg.d32);
+    //eMMC->cmd_r__xfer_mode = reg;
     wait_command_complete(eMMC);
 
 
 	// send command 24
-    eMMC->ARGUMENT_R = WriteAddr;
-    memset(&reg, 0, sizeof(reg));
-    reg.BIT.DMA_EN = 0x1;
-    reg.BIT.BLOCK_COUNT_ENABLE = 0x1;
-    reg.BIT.DATA_XFER_DIR = DATA_WRITE;
-    reg.BIT.RESP_ERR_CHK_ENABLE = 0x1;
-    reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Short;
-    reg.BIT.DATA_PRESENT_SEL = 0x1;
-    reg.BIT.CMD_INDEX = SD_CMD_WRITE_SINGLE_BLOCK;
-    memset(&block, 0, sizeof(block));
-    block.XFER_BLOCK_SIZE = BlockSize;
-    block.BLOCKCOUNT_R = NumberOfBlocks;
-    eMMC->BLOCKCOUNT_R__BLOCKSIZE = block;
-    eMMC->CMD_R__XFER_MODE = reg;
+    arg_r = WriteAddr;
+    REG_WRITE(&(eMMC->argument_r), arg_r);
+    //eMMC->argument_r = WriteAddr;
+    //memset(&reg, 0, sizeof(reg));
+    reg.d32 = REG_READ(&(eMMC->cmd_r__xfer_mode));
+    reg.BIT.dma_en = 0x1;
+    reg.BIT.block_count_enable = 0x1;
+    reg.BIT.data_xfer_dir = DATA_WRITE;
+    reg.BIT.resp_err_chk_enable = 0x1;
+    reg.BIT.resp_type_select = SDIO_Response_Short;
+    reg.BIT.data_present_sel = 0x1;
+    reg.BIT.cmd_index = SD_CMD_WRITE_SINGLE_BLOCK;
+    //memset(&block, 0, sizeof(block));
+    block.d32 = REG_READ(&(eMMC->blockcount_r__blocksize));
+    block.BIT.xfer_block_size = BlockSize;
+    block.BIT.blockcount_r = NumberOfBlocks;
+    REG_WRITE(&(eMMC->blockcount_r__blocksize), block.d32);
+    //eMMC->blockcount_r__blocksize = block;
+    REG_WRITE(&(eMMC->cmd_r__xfer_mode), reg.d32);
+    //eMMC->cmd_r__xfer_mode = reg;
 	wait_command_complete(eMMC);
     wait_transfer_complete(eMMC);
 
@@ -854,16 +1198,26 @@ u32 EMMC_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t Block
 
 u32 SD_WaitReadOperation(volatile DWC_mshc_block_registers* ptr)
 {
-    ERROR_INT_STAT_R__NORMAL_INT_STAT_R reg;
-    for (;;)
+    //ERROR_INT_STAT_R__NORMAL_INT_STAT_R reg;
+    MtimerParams* Mtimer;
+    Mtimer_Init(Mtimer);
+    MTIMER_OUT_CONDITION(100, Mtimer, \
+                        ptr->error_int_stat_r__normal_int_stat.BIT.xfer_complete != 1);
+    if(Mtimer_IsTimerOut(Mtimer)){
+        return XST_FAILURE;
+    }else{
+        ptr->error_int_stat_r__normal_int_stat.BIT.xfer_complete = 1;
+        return XST_SUCCESS;
+    }
+    /*for (;;)
     {
-        reg = ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT;
-        if (reg.BIT.XFER_COMPLETE == 1)
+        reg = ptr->error_int_stat_r__normal_int_stat;
+        if (reg.BIT.xfer_complete == 1)
         {
-            ptr->ERROR_INT_STAT_R__NORMAL_INT_STAT.BIT.XFER_COMPLETE = 1;
+            ptr->error_int_stat_r__normal_int_stat.BIT.xfer_complete = 1;
             break;
         }
-    }
+    }*/
     return XST_SUCCESS;
 }
 
@@ -1148,12 +1502,12 @@ u32 RawReadWriteTestEmmc()
 u32 SD_Test(void)
 {
 	UINT fnum;            			  
-	BYTE ReadBuffer[1024]={0};        
+	BYTE ReadBuffer[1024]={0};
 	BYTE WriteBuffer[] = "welcome777777777777777\r\n";
 	FIL fnew;
 	u32 Status;
 
-    //RawReadWriteTestEmmc();
+    RawReadWriteTestEmmc();
     RawReadWriteTestSD();
 
     //RawReadWriteTestEmmc();

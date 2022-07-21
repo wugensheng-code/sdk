@@ -337,7 +337,7 @@ void Enablepimux1(void);
 void _premain_init(void)
 {
     /* TODO: Add your own initialization code here, called before main */
-//	Enablepinmux1();
+	//Enablepinmux1();
 #if __Pinmux_PRESENT == 1
 	Enablepinmux1();
 #endif

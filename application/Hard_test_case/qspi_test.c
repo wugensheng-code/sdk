@@ -142,7 +142,7 @@ uint32_t test_flash_wait_wip(void)
 
 uint32_t flash_get_sr(void)
 {
-	uint32_t statreg1 = 0;
+	uint32_t statreg1 = 0xFF;
 	uint32_t i=0;
 	//CFG SSIENR
 	/*dis ssi*/
@@ -184,8 +184,10 @@ uint32_t flash_get_sr(void)
 
 	qspi_data_transmit(QSPI0,CMD_RDSR); // tx read status register cmd
 	/*check status--wait busy returns to idle*/
-	while(!qspi_sr_tfe(QSPI0)); // wait TFE returns to 1
-	while(qspi_sr_busy(QSPI0));  // check busy or idle,wait BUSY returns to 0
+	while(!qspi_sr_tfe(QSPI0))
+		printf("sr_tfe"); // wait TFE returns to 1
+	while(qspi_sr_busy(QSPI0))
+		printf("sr_busy");  // check busy or idle,wait BUSY returns to 0
 
 	statreg1 = qspi_data_read(QSPI0); // read status register1
 	printf("flash_wait_wip sr:0x%x\r\n",statreg1);
@@ -195,7 +197,7 @@ uint32_t flash_get_sr(void)
 
 uint32_t flash_get_cr(void)
 {
-	uint32_t statreg1 = 0;
+	uint32_t statreg1 = 0xFF;
 	uint32_t i=0;
 	//CFG SSIENR
 	/*dis ssi*/
@@ -297,6 +299,11 @@ uint32_t qspi_test(){
     uint32_t rddata_tmp = 0;
 	uint16_t rxdata_num = 0;
 	uint16_t txfifo_start_level = 0;
+
+	for(i=0; i<256; i++)
+    {
+    	qspi_wrdata_a[i] = i;
+    }
     printf("\r\n");
     printf("\r\n");
     printf("\r\n");
@@ -310,8 +317,22 @@ uint32_t qspi_test(){
 
 		printf("first read sr and cr!\r\n");
 		flash_get_sr();
-		flash_get_cr();
+		temp = flash_get_cr();
 		printf("---------------------\r\n");
+		/*temp &= ~(0xF << 2);
+		test_flash_write_enable();
+		qspi_data_transmit(QSPI0,CMD_WRR);
+		qspi_data_transmit(QSPI0,0x02);		//清空写保护
+		qspi_data_transmit(QSPI0,temp);		//写BPNV域
+		while(!qspi_sr_tfe(QSPI0)); // wait TFE returns to 1
+    	while(qspi_sr_busy(QSPI0));
+		printf("write BPNV done!\r\n");
+
+		test_flash_wait_wip();
+		flash_get_sr();
+		flash_get_cr();*/
+
+
     	//CFG SSIENR
     	/*dis ssi*/
     	dwc_ssi_disable(QSPI0);

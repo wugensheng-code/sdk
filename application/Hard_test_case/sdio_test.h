@@ -19,444 +19,484 @@ typedef unsigned char      uint8_t;
 typedef unsigned short     uint16_t;
 typedef unsigned int       uint32_t;
 typedef unsigned long long uint64_t;
+typedef unsigned long long u64;
 #define  u32 uint32_t
 extern u32 SD_Test(void);
 
-typedef struct
+typedef union
 {
-	__IO uint32_t XFER_BLOCK_SIZE:12;
-	__IO uint32_t SDMA_BUF_BDARY:3;
-	__IO uint32_t RSVD_BLOCKSIZE15:1;
-    __IO uint32_t BLOCKCOUNT_R:16;
+	__IO uint32_t d32;
+	struct _BIT{
+		__IO uint32_t xfer_block_size:12;
+		__IO uint32_t sdma_buf_bdary:3;
+		__IO uint32_t rsvd_blocksize15:1;
+		__IO uint32_t blockcount_r:16;
+	}BIT;
 }BLOCKCOUNT_R__BLOCKSIZE_R;
 
 typedef union
 {
-    __IO uint32_t D32;
-    struct BIT{
-	    __IO uint32_t DMA_EN:1;
-	    __IO uint32_t BLOCK_COUNT_ENABLE:1;
-	    __IO uint32_t AUTO_CMD_ENABLE:2;
-	    __IO uint32_t DATA_XFER_DIR:1;
-	    __IO uint32_t MULTI_BLK_SEL:1;
-	    __IO uint32_t RESP_TYPE:1;
-	    __IO uint32_t RESP_ERR_CHK_ENABLE:1;
-	    __IO uint32_t RESP_INT_DISABLE:1;
-	    __IO uint32_t RSVD:7;
-        __IO uint32_t RESP_TYPE_SELECT:2;
-	    __IO uint32_t SUB_CMD_FLAG:1;
-	    __IO uint32_t CMD_CRC_CHK_ENABLE:1;
-	    __IO uint32_t CMD_IDX_CHK_ENABLE:1;
-	    __IO uint32_t DATA_PRESENT_SEL:1;
-	    __IO uint32_t CMD_TYPE:2;
-	    __IO uint32_t CMD_INDEX:6;
-	    __IO uint32_t RSVD_30_31:2;
+    __IO uint32_t d32;
+    struct _BIT{
+	    __IO uint32_t dma_en:1;
+	    __IO uint32_t block_count_enable:1;
+	    __IO uint32_t auto_cmd_enable:2;
+	    __IO uint32_t data_xfer_dir:1;
+	    __IO uint32_t multi_blk_sel:1;
+	    __IO uint32_t resp_type:1;
+	    __IO uint32_t resp_err_chk_enable:1;
+	    __IO uint32_t resp_int_disable:1;
+	    __IO uint32_t rsvd:7;
+        __IO uint32_t resp_type_select:2;
+	    __IO uint32_t sub_cmd_flag:1;
+	    __IO uint32_t cmd_crc_chk_enable:1;
+	    __IO uint32_t cmd_idx_chk_enable:1;
+	    __IO uint32_t data_present_sel:1;
+	    __IO uint32_t cmd_type:2;
+	    __IO uint32_t cmd_index:6;
+	    __IO uint32_t rsvd_30_31:2;
     }BIT;
 }CMD_R__XFER_MODE_R;
 
-typedef struct
+typedef union
 {
-	__IO uint32_t CMD_INHIBIT:1;
-	__IO uint32_t CMD_INHIBIT_DAT:1;
-	__IO uint32_t DAT_LINE_ACTIVE:1;
-	__IO uint32_t RE_TUNE_REQ:1;
-	__IO uint32_t DAT_7_4_MASK:4;
-	__IO uint32_t WR_XFER_ACTIVE:1;
-	__IO uint32_t RD_XFER_ACTIVE:1;
-	__IO uint32_t BUF_WR_ENABLE:1;
-	__IO uint32_t BUF_RD_ENABLE:1;
-	__IO uint32_t RSVD_15_12:4;
-	__IO uint32_t CARD_INSERTED:1;
-	__IO uint32_t CARD_STABLE:1;
-	__IO uint32_t CARD_DETECT_PIN_LEVEL:1;
-	__IO uint32_t WR_PROTECT_SW_LVL:1;
-	__IO uint32_t DAT_3_0:4;
-	__IO uint32_t CMD_LINE_LVL:1;
-	__IO uint32_t HOST_REG_VOL:1;
-	__IO uint32_t RSVD_26:1;
-	__IO uint32_t CMD_ISSUE_ERR:1;
-	__IO uint32_t SUB_CMD_STAT:1;
-	__IO uint32_t IN_DORMANT_ST:1;
-	__IO uint32_t LANE_SYNC:1;
-	__IO uint32_t UHS2_IF_DETECT:1;
+	__IO uint32_t d32;
+	struct _BIT{
+	__IO uint32_t cmd_inhibit:1;
+	__IO uint32_t cmd_inhibit_dat:1;
+	__IO uint32_t dat_line_active:1;
+	__IO uint32_t re_tune_req:1;
+	__IO uint32_t dat_7_4_mask:4;
+	__IO uint32_t wr_xfer_active:1;
+	__IO uint32_t rd_xfer_active:1;
+	__IO uint32_t buf_wr_enable:1;
+	__IO uint32_t buf_rd_enable:1;
+	__IO uint32_t rsvd_15_12:4;
+	__IO uint32_t card_inserted:1;
+	__IO uint32_t card_stable:1;
+	__IO uint32_t card_detect_pin_level:1;
+	__IO uint32_t wr_protect_sw_lvl:1;
+	__IO uint32_t dat_3_0:4;
+	__IO uint32_t cmd_line_lvl:1;
+	__IO uint32_t host_reg_vol:1;
+	__IO uint32_t rsvd_26:1;
+	__IO uint32_t cmd_issue_err:1;
+	__IO uint32_t sub_cmd_stat:1;
+	__IO uint32_t in_dormant_st:1;
+	__IO uint32_t lane_sync:1;
+	__IO uint32_t uhs2_if_detect:1;
+	}BIT;
 }PSTATE_REG_R;
 
 typedef union
 {
-	__IO uint32_t D32;
+	__IO uint32_t d32;
 	struct _BIT{
-		__IO uint32_t LED_CTRL:1;
-		__IO uint32_t DAT_XFER_WIDTH:1;
-		__IO uint32_t HIGH_SPEED_EN:1;
-		__IO uint32_t DMA_SEL:2;
-		__IO uint32_t EXTDAT_XFER:1;
-		__IO uint32_t CARD_DETECT_TEST_LVL:1;
-		__IO uint32_t CARD_DETECT_SIG_SEL:1;
-        __IO uint32_t SD_BUS_PWR_VDD1:1;
-	    __IO uint32_t SD_BUS_VOL_VDD1:3;
-	    __IO uint32_t SD_BUS_PWR_VDD2:1;
-	    __IO uint32_t SD_BUS_VOL_VDD2:3;
-        __IO uint32_t STOP_BG_REQ:1;
-	    __IO uint32_t CONTINUE_REQ:1;
-	    __IO uint32_t RD_WAIT_CTRL:1;
-	    __IO uint32_t INT_AT_BGAP:1;
-	    __IO uint32_t RSVD_23_20:4;
-        __IO uint32_t CARD_INT:1;
-	    __IO uint32_t CARD_INSERT:1;
-	    __IO uint32_t CARD_REMOVAL:1;
-	    __IO uint32_t RSVD_31_27:5;
+		__IO uint32_t led_ctrl:1;
+		__IO uint32_t dat_xfer_width:1;
+		__IO uint32_t high_speed_en:1;
+		__IO uint32_t dma_sel:2;
+		__IO uint32_t extdat_xfer:1;
+		__IO uint32_t card_detect_test_lvl:1;
+		__IO uint32_t card_detect_sig_sel:1;
+        __IO uint32_t sd_bus_pwr_vdd1:1;
+	    __IO uint32_t sd_bus_vol_vdd1:3;
+	    __IO uint32_t sd_bus_pwr_vdd2:1;
+	    __IO uint32_t sd_bus_vol_vdd2:3;
+        __IO uint32_t stop_bg_req:1;
+	    __IO uint32_t continue_req:1;
+	    __IO uint32_t rd_wait_ctrl:1;
+	    __IO uint32_t int_at_bgap:1;
+	    __IO uint32_t rsvd_23_20:4;
+        __IO uint32_t card_int:1;
+	    __IO uint32_t card_insert:1;
+	    __IO uint32_t card_removal:1;
+	    __IO uint32_t rsvd_31_27:5;
 	}BIT;
 }WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R;
 
 typedef union
 {
-	__IO uint32_t D32;
-	struct{
-	__IO uint32_t	INTERNAL_CLK_EN:1;
-	__IO uint32_t	INTERNAL_CLK_STABLE:1;
-	__IO uint32_t	SD_CLK_EN:1;
-	__IO uint32_t	PLL_ENABLE:1;
-	__IO uint32_t   RSVD_4:1;
-	__IO uint32_t	CLK_GEN_SELECT:1;
-	__IO uint32_t   UPPER_FREQ_SEL:2;
-	__IO uint32_t   FREQ_SEL:8;
-    __IO uint32_t   TOUT_CNT:4;
-	__IO uint32_t   RSVD_23_20:4;
-    __IO uint32_t	SW_RST_ALL:1;
-	__IO uint32_t   SW_RST_CMD:1;
-	__IO uint32_t	SW_RST_DAT:1;
-	__IO uint32_t   RSVD_31_27:5;
+	__IO uint32_t d32;
+	struct _BIT{
+	__IO uint32_t	internal_clk_en:1;
+	__IO uint32_t	internal_clk_stable:1;
+	__IO uint32_t	sd_clk_en:1;
+	__IO uint32_t	pll_enable:1;
+	__IO uint32_t   rsvd_4:1;
+	__IO uint32_t	clk_gen_select:1;
+	__IO uint32_t   upper_freq_sel:2;
+	__IO uint32_t   freq_sel:8;
+    __IO uint32_t   tout_cnt:4;
+	__IO uint32_t   rsvd_23_20:4;
+    __IO uint32_t	sw_rst_all:1;
+	__IO uint32_t   sw_rst_cmd:1;
+	__IO uint32_t	sw_rst_dat:1;
+	__IO uint32_t   rsvd_31_27:5;
     }BIT;
 }SW_RST_R__TOUT_CTRL_R__CLK_CTRL_R;
 
 
 typedef union
 {
-    __IO uint32_t D32;
-    struct{
-	    __IO uint32_t	 CMD_COMPLETE:1;
-	    __IO uint32_t	 XFER_COMPLETE:1;
-	    __IO uint32_t	 BGAP_EVENT:1;
-	    __IO uint32_t	 DMA_INTERRUPT:1;
-	    __IO uint32_t    BUF_WR_READY:1;
-	    __IO uint32_t	 BUF_RD_READY:1;
-	    __IO uint32_t    CARD_INSERTION:1;
-	    __IO uint32_t    CARD_REMOVAL:1;
-	    __IO uint32_t    CARD_INTERRUPT:1;
-	    __IO uint32_t    INT_A:1;
-	    __IO uint32_t    INT_B:1;
-	    __IO uint32_t    INT_C:1;
-	    __IO uint32_t    RE_TUNE_EVENT:1;
-	    __IO uint32_t    FX_EVENT:1;
-	    __IO uint32_t    CQE_EVENT:1;
-	    __IO uint32_t    ERR_INTERRUPT:1;
-        __IO uint32_t	 CMD_TOUT_ERR:1;
-	    __IO uint32_t	 CMD_CRC_ERR:1;
-	    __IO uint32_t	 CMD_END_BIT_ERR:1;
-	    __IO uint32_t	 CMD_IDX_ERR:1;
-	    __IO uint32_t    DATA_TOUT_ERR:1;
-	    __IO uint32_t	 DATA_CRC_ERR:1;
-	    __IO uint32_t    DATA_END_BIT_ERR:1;
-	    __IO uint32_t    CUR_LMT_ERR:1;
-	    __IO uint32_t    AUTO_CMD_ERR:1;
-	    __IO uint32_t    ADMA_ERR:1;
-	    __IO uint32_t    TUNING_ERR:1;
-	    __IO uint32_t    RESP_ERR:1;
-	    __IO uint32_t    BOOT_ACK_ERR:1;
-	    __IO uint32_t    VENDOR_ERR1:1;
-	    __IO uint32_t    VENDOR_ERR2:1;
-	    __IO uint32_t    VENDOR_ERR3:1;
+    __IO uint32_t d32;
+    struct _BIT{
+	    __IO uint32_t	 cmd_complete:1;
+	    __IO uint32_t	 xfer_complete:1;
+	    __IO uint32_t	 bgap_event:1;
+	    __IO uint32_t	 dma_interrupt:1;
+	    __IO uint32_t    buf_wr_ready:1;
+	    __IO uint32_t	 buf_rd_ready:1;
+	    __IO uint32_t    card_insertion:1;
+	    __IO uint32_t    card_removal:1;
+	    __IO uint32_t    card_interrupt:1;
+	    __IO uint32_t    int_a:1;
+	    __IO uint32_t    int_b:1;
+	    __IO uint32_t    int_c:1;
+	    __IO uint32_t    re_tune_event:1;
+	    __IO uint32_t    fx_event:1;
+	    __IO uint32_t    cqe_event:1;
+	    __IO uint32_t    err_interrupt:1;
+        __IO uint32_t	 cmd_tout_err:1;
+	    __IO uint32_t	 cmd_crc_err:1;
+	    __IO uint32_t	 cmd_end_bit_err:1;
+	    __IO uint32_t	 cmd_idx_err:1;
+	    __IO uint32_t    data_tout_err:1;
+	    __IO uint32_t	 data_crc_err:1;
+	    __IO uint32_t    data_end_bit_err:1;
+	    __IO uint32_t    cur_lmt_err:1;
+	    __IO uint32_t    auto_cmd_err:1;
+	    __IO uint32_t    adma_err:1;
+	    __IO uint32_t    tuning_err:1;
+	    __IO uint32_t    resp_err:1;
+	    __IO uint32_t    boot_ack_err:1;
+	    __IO uint32_t    vendor_err1:1;
+	    __IO uint32_t    vendor_err2:1;
+	    __IO uint32_t    vendor_err3:1;
     }BIT;
 }ERROR_INT_STAT_R__NORMAL_INT_STAT_R;
 
 typedef union
 {
-    __IO uint32_t D32;
-    struct{
-	    __IO uint32_t	CMD_COMPLETE_STAT_EN:1; /* intr when response received */
-	    __IO uint32_t    XFER_COMPLETE_STAT_EN:1; /* intr when data read/write xfer completed */
-	    __IO uint32_t    BGAP_EVENT_STAT_EN:1;
-	    __IO uint32_t	DMA_INTERRUPT_STAT_EN:1;
-	    __IO uint32_t	BUF_WR_READY_STAT_EN:1;
-	    __IO uint32_t    BUF_RD_READY_STAT_EN:1;
-	    __IO uint32_t	CARD_INSERTION_STAT_EN:1;
-	    __IO uint32_t	CARD_REMOVAL_STAT_EN:1;
-	    __IO uint32_t    CARD_INTERRUPT_STAT_EN:1;
-	    __IO uint32_t	INT_A_STAT_EN:1;
-	    __IO uint32_t	INT_B_STAT_EN:1;
-	    __IO uint32_t	INT_C_STAT_EN:1;
-	    __IO uint32_t	RE_TUNE_EVENT_STAT_EN:1;
-	    __IO uint32_t	FX_EVENT_STAT_EN:1;
-	    __IO uint32_t    CQE_EVENT_STAT_EN:1;
-	    __IO uint32_t	CMD_TOUT_ERR_STAT_EN:1;
-	    __IO uint32_t	CMD_CRC_ERR_STAT_EN:1;
-	    __IO uint32_t	CMD_END_BIT_ERR_STAT_EN:1;
-	    __IO uint32_t	CMD_IDX_ERR_STAT_EN:1;
-	    __IO uint32_t    DATA_TOUT_ERR_STAT_EN:1;
-	    __IO uint32_t    DATA_CRC_ERR_STAT_EN:1;
-	    __IO uint32_t    DATA_END_BIT_ERR_STAT_EN:1;
-	    __IO uint32_t	CUR_LMT_ERR_STAT_EN:1;
-	    __IO uint32_t    AUTO_CMD_ERR_STAT_EN:1;
-	    __IO uint32_t	ADMA_ERR_STAT_EN:1;
-	    __IO uint32_t	TUNING_ERR_STAT_EN:1;
-	    __IO uint32_t	RESP_ERR_STAT_EN:1;
-	    __IO uint32_t    BOOT_ACK_ERR_STAT_EN:1;
-	    __IO uint32_t    VENDOR_ERR_STAT_EN1:1;
-	    __IO uint32_t	VENDOR_ERR_STAT_EN2:1;
-	    __IO uint32_t	VENDOR_ERR_STAT_EN3:1;
+    __IO uint32_t d32;
+    struct _BIT{
+	    __IO uint32_t	cmd_complete_stat_en:1; /* intr when response received */
+	    __IO uint32_t    xfer_complete_stat_en:1; /* intr when data read/write xfer completed */
+	    __IO uint32_t    bgap_event_stat_en:1;
+	    __IO uint32_t	dma_interrupt_stat_en:1;
+	    __IO uint32_t	buf_wr_ready_stat_en:1;
+	    __IO uint32_t    buf_rd_ready_stat_en:1;
+	    __IO uint32_t	card_insertion_stat_en:1;
+	    __IO uint32_t	card_removal_stat_en:1;
+	    __IO uint32_t    card_interrupt_stat_en:1;
+	    __IO uint32_t	int_a_stat_en:1;
+	    __IO uint32_t	int_b_stat_en:1;
+	    __IO uint32_t	int_c_stat_en:1;
+	    __IO uint32_t	re_tune_event_stat_en:1;
+	    __IO uint32_t	fx_event_stat_en:1;
+	    __IO uint32_t    cqe_event_stat_en:1;
+	    __IO uint32_t	cmd_tout_err_stat_en:1;
+	    __IO uint32_t	cmd_crc_err_stat_en:1;
+	    __IO uint32_t	cmd_end_bit_err_stat_en:1;
+	    __IO uint32_t	cmd_idx_err_stat_en:1;
+	    __IO uint32_t    data_tout_err_stat_en:1;
+	    __IO uint32_t    data_crc_err_stat_en:1;
+	    __IO uint32_t    data_end_bit_err_stat_en:1;
+	    __IO uint32_t	cur_lmt_err_stat_en:1;
+	    __IO uint32_t    auto_cmd_err_stat_en:1;
+	    __IO uint32_t	adma_err_stat_en:1;
+	    __IO uint32_t	tuning_err_stat_en:1;
+	    __IO uint32_t	resp_err_stat_en:1;
+	    __IO uint32_t    boot_ack_err_stat_en:1;
+	    __IO uint32_t    vendor_err_stat_en1:1;
+	    __IO uint32_t	vendor_err_stat_en2:1;
+	    __IO uint32_t	vendor_err_stat_en3:1;
      }BIT;
 }ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN_R;
 
 typedef union
 {
-    __IO uint32_t D32;
-    struct{
-	__IO uint32_t	CMD_COMPLETE_SIGNAL_EN:1; /* intr when response received */
-	__IO uint32_t    XFER_COMPLETE_SIGNAL_EN:1; /* intr when data read/write xfer completed */
-	__IO uint32_t    BGAP_EVENT_SIGNAL_EN:1;
-	__IO uint32_t	DMA_INTERRUPT_SIGNAL_EN:1;
-	__IO uint32_t	BUF_WR_READY_SIGNAL_EN:1;
-	__IO uint32_t    BUF_RD_READY_SIGNAL_EN:1;
-	__IO uint32_t	CARD_INSERTION_SIGNAL_EN:1;
-	__IO uint32_t	CARD_REMOVAL_SIGNAL_EN:1;
-	__IO uint32_t    CARD_INTERRUPT_SIGNAL_EN:1;
-	__IO uint32_t	INT_A_SIGNAL_EN:1;
-	__IO uint32_t	INT_B_SIGNAL_EN:1;
-	__IO uint32_t	INT_C_SIGNAL_EN:1;
-	__IO uint32_t	RE_TUNE_EVENT_SIGNAL_EN:1;
-	__IO uint32_t	FX_EVENT_SIGNAL_EN:1;
-	__IO uint32_t    CQE_EVENT_SIGNAL_EN:1;
-	__IO uint32_t	CMD_TOUT_ERR_SIGNAL_EN:1;
-	__IO uint32_t	CMD_CRC_ERR_SIGNAL_EN:1;
-	__IO uint32_t	CMD_END_BIT_ERR_SIGNAL_EN:1;
-	__IO uint32_t	CMD_IDX_ERR_SIGNAL_EN:1;
-	__IO uint32_t    DATA_TOUT_ERR_SIGNAL_EN:1;
-	__IO uint32_t    DATA_CRC_ERR_SIGNAL_EN:1;
-	__IO uint32_t    DATA_END_BIT_ERR_SIGNAL_EN	:1;
-	__IO uint32_t	CUR_LMT_ERR_SIGNAL_EN:1;
-	__IO uint32_t    AUTO_CMD_ERR_SIGNAL_EN:1;
-	__IO uint32_t	ADMA_ERR_SIGNAL_EN:1;
-	__IO uint32_t	TUNING_ERR_SIGNAL_EN:1;
-	__IO uint32_t	RESP_ERR_SIGNAL_EN:1;
-	__IO uint32_t    BOOT_ACK_ERR_SIGNAL_EN:1;
-	__IO uint32_t    VENDOR_ERR_SIGNAL_EN1:1;
-	__IO uint32_t	VENDOR_ERR_SIGNAL_EN2:1;
-	__IO uint32_t	VENDOR_ERR_SIGNAL_EN3:1;
+    __IO uint32_t d32;
+    struct _BIT{
+	__IO uint32_t	cmd_complete_signal_en:1; /* intr when response received */
+	__IO uint32_t    xfer_complete_signal_en:1; /* intr when data read/write xfer completed */
+	__IO uint32_t    bgap_event_signal_en:1;
+	__IO uint32_t	dma_interrupt_signal_en:1;
+	__IO uint32_t	buf_wr_ready_signal_en:1;
+	__IO uint32_t    buf_rd_ready_signal_en:1;
+	__IO uint32_t	card_insertion_signal_en:1;
+	__IO uint32_t	card_removal_signal_en:1;
+	__IO uint32_t    card_interrupt_signal_en:1;
+	__IO uint32_t	int_a_signal_en:1;
+	__IO uint32_t	int_b_signal_en:1;
+	__IO uint32_t	int_c_signal_en:1;
+	__IO uint32_t	re_tune_event_signal_en:1;
+	__IO uint32_t	fx_event_signal_en:1;
+	__IO uint32_t    cqe_event_signal_en:1;
+	__IO uint32_t	cmd_tout_err_signal_en:1;
+	__IO uint32_t	cmd_crc_err_signal_en:1;
+	__IO uint32_t	cmd_end_bit_err_signal_en:1;
+	__IO uint32_t	cmd_idx_err_signal_en:1;
+	__IO uint32_t    data_tout_err_signal_en:1;
+	__IO uint32_t    data_crc_err_signal_en:1;
+	__IO uint32_t    data_end_bit_err_signal_en	:1;
+	__IO uint32_t	cur_lmt_err_signal_en:1;
+	__IO uint32_t    auto_cmd_err_signal_en:1;
+	__IO uint32_t	adma_err_signal_en:1;
+	__IO uint32_t	tuning_err_signal_en:1;
+	__IO uint32_t	resp_err_signal_en:1;
+	__IO uint32_t    boot_ack_err_signal_en:1;
+	__IO uint32_t    vendor_err_signal_en1:1;
+	__IO uint32_t	vendor_err_signal_en2:1;
+	__IO uint32_t	vendor_err_signal_en3:1;
     }BIT;
 }ERROR_INT_SIGNAL_EN_R__NORMAL_INT_SIGNAL_EN_R;
 
 typedef union
 {
-    __IO uint32_t D32;
-    struct{
-	__IO uint32_t	AUTO_CMD12_NOT_EXEC:1;
-	__IO uint32_t	AUTO_CMD_TOUT_ERR:1;
-	__IO uint32_t	AUTO_CMD_CRC_ERR:1;
-	__IO uint32_t	AUTO_CMD_EBIT_ERR:1;
-	__IO uint32_t    AUTO_CMD_IDX_ERR:1;
-	__IO uint32_t	AUTO_CMD_RESP_ERR:1;
-	__IO uint32_t    RSVD_6:1;
-	__IO uint32_t    CMD_NOT_ISSUED_AUTO_CMD12:1;
-	__IO uint32_t    RSVD_15_8:8;
-    __IO uint32_t	UHS_MODE_SEL:3;
-	__IO uint32_t	SIGNALING_EN:1;
-	__IO uint32_t	DRV_STRENGTH_SEL:2;
-	__IO uint32_t	EXEC_TUNING:1;
-	__IO uint32_t    SAMPLE_CLK_SEL:1;
-	__IO uint32_t	UHS2_IF_ENABLE:1;
-	__IO uint32_t    RSVD_9:1;
-	__IO uint32_t    ADMA2_LEN_MODE:1;
-	__IO uint32_t    CMD23_ENABLE:1;
-	__IO uint32_t    HOST_VER4_ENABLE:1;
-	__IO uint32_t    ADDRESSING:1;
-	__IO uint32_t    ASYNC_INT_ENABLE:1;
-	__IO uint32_t    PRESET_VAL_ENABLE:1;
+    __IO uint32_t d32;
+    struct _BIT{
+		__IO uint32_t	auto_cmd12_not_exec:1;
+		__IO uint32_t	auto_cmd_tout_err:1;
+		__IO uint32_t	auto_cmd_crc_err:1;
+		__IO uint32_t	auto_cmd_ebit_err:1;
+		__IO uint32_t    auto_cmd_idx_err:1;
+		__IO uint32_t	auto_cmd_resp_err:1;
+		__IO uint32_t    rsvd_6:1;
+		__IO uint32_t    cmd_not_issued_auto_cmd12:1;
+		__IO uint32_t    rsvd_15_8:8;
+		__IO uint32_t	uhs_mode_sel:3;
+		__IO uint32_t	signaling_en:1;
+		__IO uint32_t	drv_strength_sel:2;
+		__IO uint32_t	exec_tuning:1;
+		__IO uint32_t    sample_clk_sel:1;
+		__IO uint32_t	uhs2_if_enable:1;
+		__IO uint32_t    rsvd_9:1;
+		__IO uint32_t    adma2_len_mode:1;
+		__IO uint32_t    cmd23_enable:1;
+		__IO uint32_t    host_ver4_enable:1;
+		__IO uint32_t    addressing:1;
+		__IO uint32_t    async_int_enable:1;
+		__IO uint32_t    preset_val_enable:1;
     }BIT;
 }HOST_CTRL2_R__AUTO_CMD_STAT_R;
 
 typedef struct
 {
-	__IO uint32_t	SDR50_SUPPORT:1;
-	__IO uint32_t 	SDR104_SUPPORT:1;
-	__IO uint32_t 	DDR50_SUPPORT:1;
-	__IO uint32_t	UHS2_SUPPORT:1;
-	__IO uint32_t	DRV_TYPEA:1;
-	__IO uint32_t 	DRV_TYPEC:1;
-	__IO uint32_t	DRV_TYPED:1;
-	__IO uint32_t	RSVD_39:1;
-	__IO uint32_t 	RETUNE_CNT:4;
-	__IO uint32_t	RSVD_44:1;
-	__IO uint32_t	USE_TUNING_SDR50:1;
-	__IO uint32_t	RE_TUNING_MODES:2;
-	__IO uint32_t	CLK_MUL:8;
-	__IO uint32_t    RSVD_56_58:3;
-	__IO uint32_t	ADMA3_SUPPORT:1;
-	__IO uint32_t	VDD2_18V_SUPPORT:1;
-	__IO uint32_t	RSVD_61:1;
-	__IO uint32_t	RSVD_62_63:2;
+	__IO uint32_t d32;
+	struct _BIT{
+	__IO uint32_t	sdr50_support:1;
+	__IO uint32_t 	sdr104_support:1;
+	__IO uint32_t 	ddr50_support:1;
+	__IO uint32_t	uhs2_support:1;
+	__IO uint32_t	drv_typea:1;
+	__IO uint32_t 	drv_typec:1;
+	__IO uint32_t	drv_typed:1;
+	__IO uint32_t	rsvd_39:1;
+	__IO uint32_t 	retune_cnt:4;
+	__IO uint32_t	rsvd_44:1;
+	__IO uint32_t	use_tuning_sdr50:1;
+	__IO uint32_t	re_tuning_modes:2;
+	__IO uint32_t	clk_mul:8;
+	__IO uint32_t    rsvd_56_58:3;
+	__IO uint32_t	adma3_support:1;
+	__IO uint32_t	vdd2_18v_support:1;
+	__IO uint32_t	rsvd_61:1;
+	__IO uint32_t	rsvd_62_63:2;
+	}BIT;
 }CAPABILITIES2_R;
 
 typedef struct
 {
-	__IO uint32_t TOUT_CLK_FREQ : 6;
-	__IO uint32_t RSVD_6 : 1;
-	__IO uint32_t TOUT_CLK_UNIT : 1;
-	__IO uint32_t BASE_CLK_FREQ : 8;
-	__IO uint32_t MAX_BLK_LEN : 2;
-	__IO uint32_t Embedded_8_BIT : 1;
-	__IO uint32_t ADMA2_SUPPORT : 1;
-	__IO uint32_t RSVD_20 : 1;
-	__IO uint32_t HIGH_SPEED_SUPPORT : 1;
-	__IO uint32_t SDMA_SUPPORT : 1;
-	__IO uint32_t SUS_RES_SUPPORT : 1;
-	__IO uint32_t VOLT_33 : 1;
-	__IO uint32_t VOLT_30 : 1;
-	__IO uint32_t VOLT_18 : 1;
-	__IO uint32_t SYS_ADDR_64_V4 : 1;
-	__IO uint32_t SYS_ADDR_64_V3 : 1;
-	__IO uint32_t ASYNC_INT_SUPPORT : 1;
-	__IO uint32_t SLOT_TYPE_R : 1;
+	__IO uint32_t d32;
+	struct _BIT{
+		__IO uint32_t tout_clk_freq : 6;
+		__IO uint32_t rsvd_6 : 1;
+		__IO uint32_t tout_clk_unit : 1;
+		__IO uint32_t base_clk_freq : 8;
+		__IO uint32_t max_blk_len : 2;
+		__IO uint32_t embedded_8_bit : 1;
+		__IO uint32_t adma2_support : 1;
+		__IO uint32_t rsvd_20 : 1;
+		__IO uint32_t high_speed_support : 1;
+		__IO uint32_t sdma_support : 1;
+		__IO uint32_t sus_res_support : 1;
+		__IO uint32_t volt_33 : 1;
+		__IO uint32_t volt_30 : 1;
+		__IO uint32_t volt_18 : 1;
+		__IO uint32_t sys_addr_64_v4 : 1;
+		__IO uint32_t sys_addr_64_v3 : 1;
+		__IO uint32_t async_int_support : 1;
+		__IO uint32_t slot_type_r : 1;
+	}BIT;
 }CAPABILITIES1_R;
 
 typedef struct
 {
-	__IO uint32_t MAX_CUR_33V : 8;
-	__IO uint32_t MAX_CUR_30V : 8;
-	__IO uint32_t MAX_CUR_18V : 8;
-	__IO uint32_t RSVD_31_24 : 8;
+	__IO uint32_t d32;
+	struct _BIT{
+		__IO uint32_t max_cur_33v : 8;
+		__IO uint32_t max_cur_30v : 8;
+		__IO uint32_t max_cur_18v : 8;
+		__IO uint32_t rsvd_31_24 : 8;
+	}BIT;
 }CURR_CAPABILITIES1_R;
 
 typedef struct
 {
-	__IO uint32_t MAX_CUR_VDD2_18V : 8;
-	__IO uint32_t RSVD_63_40 : 24;
+	__IO uint32_t d32;
+	struct _BIT{
+		__IO uint32_t max_cur_vdd2_18v : 8;
+		__IO uint32_t rsvd_63_40 : 24;
+	}BIT;
 }CURR_CAPABILITIES2_R;
 
 typedef struct
 {
-	__IO uint32_t FORCE_AUTO_CMD12_NOT_EXEC : 1;
-	__IO uint32_t FORCE_AUTO_CMD_TOUT_ERR : 1;
-	__IO uint32_t FORCE_AUTO_CMD_CRC_ERR : 1;
-	__IO uint32_t FORCE_AUTO_CMD_EBIT_ERR : 1;
-	__IO uint32_t FORCE_AUTO_CMD_IDX_ERR : 1;
-	__IO uint32_t FORCE_AUTO_CMD_RESP_ERR : 1;
-	__IO uint32_t RSVD_6 : 1;
-	__IO uint32_t FORCE_CMD_NOT_ISSUED_AUTO_CMD12 : 1;
-	__IO uint32_t RSVD_15_8 : 8;
-    __IO uint32_t FORCE_CMD_TOUT_ERR : 1;
-	__IO uint32_t FORCE_CMD_CRC_ERR : 1;
-	__IO uint32_t FORCE_CMD_END_BIT_ERR : 1;
-	__IO uint32_t FORCE_CMD_IDX_ERR : 1;
-	__IO uint32_t FORCE_DATA_TOUT_ERR : 1;
-	__IO uint32_t FORCE_DATA_CRC_ERR : 1;
-	__IO uint32_t FORCE_DATA_END_BIT_ERR : 1;
-	__IO uint32_t FORCE_CUR_LMT_ERR : 1;
-	__IO uint32_t FORCE_AUTO_CMD_ERR : 1;
-	__IO uint32_t FORCE_ADMA_ERR : 1;
-	__IO uint32_t FORCE_TUNING_ERR : 1;
-	__IO uint32_t FORCE_RESP_ERR : 1;
-	__IO uint32_t FORCE_BOOT_ACK_ERR : 1;
-	__IO uint32_t FORCE_VENDOR_ERR1 : 1;
-	__IO uint32_t FORCE_VENDOR_ERR2 : 1;
-	__IO uint32_t FORCE_VENDOR_ERR3 : 1;
+	__IO uint32_t d32;
+	struct _BIT{
+		__IO uint32_t force_auto_cmd12_not_exec : 1;
+		__IO uint32_t force_auto_cmd_tout_err : 1;
+		__IO uint32_t force_auto_cmd_crc_err : 1;
+		__IO uint32_t force_auto_cmd_ebit_err : 1;
+		__IO uint32_t force_auto_cmd_idx_err : 1;
+		__IO uint32_t force_auto_cmd_resp_err : 1;
+		__IO uint32_t rsvd_6 : 1;
+		__IO uint32_t force_cmd_not_issued_auto_cmd12 : 1;
+		__IO uint32_t rsvd_15_8 : 8;
+		__IO uint32_t force_cmd_tout_err : 1;
+		__IO uint32_t force_cmd_crc_err : 1;
+		__IO uint32_t force_cmd_end_bit_err : 1;
+		__IO uint32_t force_cmd_idx_err : 1;
+		__IO uint32_t force_data_tout_err : 1;
+		__IO uint32_t force_data_crc_err : 1;
+		__IO uint32_t force_data_end_bit_err : 1;
+		__IO uint32_t force_cur_lmt_err : 1;
+		__IO uint32_t force_auto_cmd_err : 1;
+		__IO uint32_t force_adma_err : 1;
+		__IO uint32_t force_tuning_err : 1;
+		__IO uint32_t force_resp_err : 1;
+		__IO uint32_t force_boot_ack_err : 1;
+		__IO uint32_t force_vendor_err1 : 1;
+		__IO uint32_t force_vendor_err2 : 1;
+		__IO uint32_t force_vendor_err3 : 1;
+	}BIT;
 }FORCE_ERROR_INT_STAT_R__FORCE_AUTO_CMD_STAT_R;
 
 
 typedef struct
 {
-	__IO uint32_t ADMA_ERR_STATES : 2;
-	__IO uint32_t ADMA_LEN_ERR : 1;
-	__IO uint32_t RSVD_31_3 : 29;
+	__IO uint32_t d32;
+	struct _BIT{
+		__IO uint32_t adma_err_states : 2;
+		__IO uint32_t adma_len_err : 1;
+		__IO uint32_t rsvd_31_3 : 29;
+	}BIT;
 }ADMA_ERR_STAT_R;
 
 typedef struct
 {
-	__IO uint32_t FREQ_SEL_VAL_INIT : 10;
-	__IO uint32_t CLK_GEN_SEL_VAL_INIT : 1;
-	__IO uint32_t RSVD_13_11 : 3;
-	__IO uint32_t DRV_SEL_VAL_INIT : 2;
-    __IO uint32_t FREQ_SEL_VAL_DS : 10;
-	__IO uint32_t CLK_GEN_SEL_VAL_DS : 1;
-	__IO uint32_t RSVD_29_27 : 3;
-	__IO uint32_t DRV_SEL_VAL_DS : 2;
+	__IO uint32_t d32;
+	struct _BIT{
+		__IO uint32_t freq_sel_val_init : 10;
+		__IO uint32_t clk_gen_sel_val_init : 1;
+		__IO uint32_t rsvd_13_11 : 3;
+		__IO uint32_t drv_sel_val_init : 2;
+		__IO uint32_t freq_sel_val_ds : 10;
+		__IO uint32_t clk_gen_sel_val_ds : 1;
+		__IO uint32_t rsvd_29_27 : 3;
+		__IO uint32_t drv_sel_val_ds : 2;
+	}BIT;
 }PRESET_DS_R__PRESET_INIT_R;
 
 typedef struct
 {
-	__IO uint32_t FREQ_SEL_VAL_0 : 10;
-	__IO uint32_t CLK_GEN_SEL_VAL_0 : 1;
-	__IO uint32_t RSVD_13_11 : 3;
-	__IO uint32_t DRV_SEL_VAL_0 : 2;
-    __IO uint32_t FREQ_SEL_VAL_1 : 10;
-	__IO uint32_t CLK_GEN_SEL_VAL_1 : 1;
-	__IO uint32_t RSVD_29_27 : 3;
-	__IO uint32_t DRV_SEL_VAL_1 : 2;
+	__IO uint32_t d32;
+	struct _BIT{
+		__IO uint32_t freq_sel_val_0 : 10;
+		__IO uint32_t clk_gen_sel_val_0 : 1;
+		__IO uint32_t rsvd_13_11 : 3;
+		__IO uint32_t drv_sel_val_0 : 2;
+		__IO uint32_t freq_sel_val_1 : 10;
+		__IO uint32_t clk_gen_sel_val_1 : 1;
+		__IO uint32_t rsvd_29_27 : 3;
+		__IO uint32_t drv_sel_val_1 : 2;
+	}BIT;
 }PRESET_HS_R;
 
 typedef struct
 {
-	__IO uint32_t FREQ_SEL_VAL_0 : 10;
-	__IO uint32_t CLK_GEN_SEL_VAL_0 : 1;
-	__IO uint32_t RSVD_13_11 : 3;
-	__IO uint32_t DRV_SEL_VAL_0 : 2;
-    __IO uint32_t FREQ_SEL_VAL_1 : 10;
-	__IO uint32_t CLK_GEN_SEL_VAL_1 : 1;
-	__IO uint32_t RSVD_29_27 : 3;
-	__IO uint32_t DRV_SEL_VAL_1 : 2;
+	__IO uint32_t d32;
+	struct _BIT{
+		__IO uint32_t freq_sel_val_0 : 10;
+		__IO uint32_t clk_gen_sel_val_0 : 1;
+		__IO uint32_t rsvd_13_11 : 3;
+		__IO uint32_t drv_sel_val_0 : 2;
+		__IO uint32_t freq_sel_val_1 : 10;
+		__IO uint32_t clk_gen_sel_val_1 : 1;
+		__IO uint32_t rsvd_29_27 : 3;
+		__IO uint32_t drv_sel_val_1 : 2;
+	}BIT;
 }PRESET_SDR50_R__PRESET_SDR25_R;
 
 typedef struct
 {
-	__IO uint32_t FREQ_SEL_VAL_0 : 10;
-	__IO uint32_t CLK_GEN_SEL_VAL_0 : 1;
-	__IO uint32_t RSVD_13_11 : 3;
-	__IO uint32_t DRV_SEL_VAL_0 : 2;
-    __IO uint32_t FREQ_SEL_VAL_1 : 10;
-	__IO uint32_t CLK_GEN_SEL_VAL_1 : 1;
-	__IO uint32_t RSVD_29_27 : 3;
-	__IO uint32_t DRV_SEL_VAL_1 : 2;
+	__IO uint32_t d32;
+	struct _BIT{
+		__IO uint32_t freq_sel_val_0 : 10;
+		__IO uint32_t clk_gen_sel_val_0 : 1;
+		__IO uint32_t rsvd_13_11 : 3;
+		__IO uint32_t drv_sel_val_0 : 2;
+		__IO uint32_t freq_sel_val_1 : 10;
+		__IO uint32_t clk_gen_sel_val_1 : 1;
+		__IO uint32_t rsvd_29_27 : 3;
+		__IO uint32_t drv_sel_val_1 : 2;
+	}BIT;
 }PRESET_DDR50_R__PRESET_SDR104_R;
 
 typedef struct
 {
-	__IO uint32_t FREQ_SEL_VAL : 10;
-	__IO uint32_t CLK_GEN_SEL_VAL : 1;
-	__IO uint32_t RSVD_13_11 : 3;
-	__IO uint32_t DRV_SEL_VAL : 2;
-    __IO uint32_t RSVD_31_24:16;
+	__IO uint32_t d32;
+	struct _BIT{
+		__IO uint32_t freq_sel_val : 10;
+		__IO uint32_t clk_gen_sel_val : 1;
+		__IO uint32_t rsvd_13_11 : 3;
+		__IO uint32_t drv_sel_val : 2;
+		__IO uint32_t rsvd_31_24:16;
+	}BIT;
 }PRESET_UHS2;
 
 /* dwc_mshc_map/DWC_mshc_block registers */
 typedef struct
 {
-    __IO uint32_t SDMASA_R;
-    __IO BLOCKCOUNT_R__BLOCKSIZE_R BLOCKCOUNT_R__BLOCKSIZE;
-    __IO uint32_t ARGUMENT_R;
-    __IO CMD_R__XFER_MODE_R CMD_R__XFER_MODE;
-    __IO uint32_t RESP01;
-	__IO uint32_t RESP23;
-	__IO uint32_t RESP45;
-	__IO uint32_t RESP67;
-	__IO uint32_t BUF_DATA;
-	__IO PSTATE_REG_R PSTATE_REG;
-	__IO WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1;
-    __IO SW_RST_R__TOUT_CTRL_R__CLK_CTRL_R SW_RST_R__TOUT_CTRL_R__CLK_CTRL;
-	__IO ERROR_INT_STAT_R__NORMAL_INT_STAT_R ERROR_INT_STAT_R__NORMAL_INT_STAT;
-    __IO ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN_R ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN;
-    __IO ERROR_INT_SIGNAL_EN_R__NORMAL_INT_SIGNAL_EN_R ERROR_INT_SIGNAL_EN_R__NORMAL_INT_SIGNAL_EN;
-    __IO HOST_CTRL2_R__AUTO_CMD_STAT_R HOST_CTRL2_R__AUTO_CMD_STAT;
-	__IO CAPABILITIES1_R CAPABILITIES1;
-	__IO CAPABILITIES2_R CAPABILITIES2;
-	__IO CURR_CAPABILITIES1_R CURR_CAPABILITIES1;
-	__IO CURR_CAPABILITIES2_R CURR_CAPABILITIES2;
-	__IO FORCE_ERROR_INT_STAT_R__FORCE_AUTO_CMD_STAT_R FORCE_AUTO_CMD_STAT_R;
-    __IO ADMA_ERR_STAT_R ADMA_ERR_STAT_R;
-	__IO uint32_t ADMA_SA_LOW_R;
-	__IO uint32_t ADMA_SA_HIGH_R;
-	__IO PRESET_DS_R__PRESET_INIT_R PRESET_DS_R__PRESET_INIT;
-	__IO PRESET_HS_R PRESET_DS;
-	__IO PRESET_SDR50_R__PRESET_SDR25_R PRESET_SDR50_R__PRESET_SDR25;
-	__IO PRESET_DDR50_R__PRESET_SDR104_R PRESET_DDR50_R__PRESET_SDR104;
+    __IO uint32_t sdmasa_r;
+    __IO BLOCKCOUNT_R__BLOCKSIZE_R blockcount_r__blocksize;
+    __IO uint32_t argument_r;
+    __IO CMD_R__XFER_MODE_R cmd_r__xfer_mode;
+    __IO uint32_t resp01;
+	__IO uint32_t resp23;
+	__IO uint32_t resp45;
+	__IO uint32_t resp67;
+	__IO uint32_t buf_data;
+	__IO PSTATE_REG_R pstate_reg;
+	__IO WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1;
+    __IO SW_RST_R__TOUT_CTRL_R__CLK_CTRL_R sw_rst_r__tout_ctrl_r__clk_ctrl;
+	__IO ERROR_INT_STAT_R__NORMAL_INT_STAT_R error_int_stat_r__normal_int_stat;
+    __IO ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN_R error_int_stat_en_r__normal_int_stat_en;
+    __IO ERROR_INT_SIGNAL_EN_R__NORMAL_INT_SIGNAL_EN_R error_int_signal_en_r__normal_int_signal_en;
+    __IO HOST_CTRL2_R__AUTO_CMD_STAT_R host_ctrl2_r__auto_cmd_stat;
+	__IO CAPABILITIES1_R capabilities1;
+	__IO CAPABILITIES2_R capabilities2;
+	__IO CURR_CAPABILITIES1_R curr_capabilities1;
+	__IO CURR_CAPABILITIES2_R curr_capabilities2;
+	__IO FORCE_ERROR_INT_STAT_R__FORCE_AUTO_CMD_STAT_R force_auto_cmd_stat_r;
+    __IO ADMA_ERR_STAT_R adma_err_stat_r;
+	__IO uint32_t adma_sa_low_r;
+	__IO uint32_t adma_sa_high_r;
+	__IO PRESET_DS_R__PRESET_INIT_R preset_ds_r__preset_init;
+	__IO PRESET_HS_R preset_ds;
+	__IO PRESET_SDR50_R__PRESET_SDR25_R preset_sdr50_r__preset_sdr25;
+	__IO PRESET_DDR50_R__PRESET_SDR104_R preset_ddr50_r__preset_sdr104;
 }DWC_mshc_block_registers;
 
 #define AT_CTRL_R 0x540
