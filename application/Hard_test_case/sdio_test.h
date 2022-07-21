@@ -7,20 +7,22 @@
 #define XST_FAILURE                     1L
 #define     __IO    volatile            
 
+typedef unsigned int       u32;
+typedef unsigned long long u64;
+extern unsigned reg_read(u32* reg_address);
+extern void reg_write(u32* reg_address, u32 reg_wdata);
+
 #define REG_READ(reg_address) reg_read(reg_address)
-extern unsigned reg_read(unsigned int reg_address);
 #define REG_WRITE(reg_address, reg_wdata) reg_write(reg_address, reg_wdata)
 
 #define SDRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO1__BASE_ADDR+reg_address), reg_wdata)
 #define EMMCRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO0__BASE_ADDR+reg_address), reg_wdata)
-extern void reg_write(unsigned int reg_address, unsigned reg_wdata);
+
 
 typedef unsigned char      uint8_t;
 typedef unsigned short     uint16_t;
 typedef unsigned int       uint32_t;
 typedef unsigned long long uint64_t;
-typedef unsigned int       u32;
-typedef unsigned long long u64;
 #define  u32 uint32_t
 extern u32 SD_Test(void);
 
@@ -32,7 +34,7 @@ typedef union
 		__IO uint32_t sdma_buf_bdary:3;
 		__IO uint32_t rsvd_blocksize15:1;
 		__IO uint32_t blockcount_r:16;
-	}BIT;
+	}bit;
 }BLOCKCOUNT_R__BLOCKSIZE_R;
 
 typedef union
@@ -56,7 +58,7 @@ typedef union
 	    __IO uint32_t cmd_type:2;
 	    __IO uint32_t cmd_index:6;
 	    __IO uint32_t rsvd_30_31:2;
-    }BIT;
+    }bit;
 }CMD_R__XFER_MODE_R;
 
 typedef union
@@ -86,7 +88,7 @@ typedef union
 	__IO uint32_t in_dormant_st:1;
 	__IO uint32_t lane_sync:1;
 	__IO uint32_t uhs2_if_detect:1;
-	}BIT;
+	}bit;
 }PSTATE_REG_R;
 
 typedef union
@@ -113,7 +115,7 @@ typedef union
 	    __IO uint32_t card_insert:1;
 	    __IO uint32_t card_removal:1;
 	    __IO uint32_t rsvd_31_27:5;
-	}BIT;
+	}bit;
 }WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R;
 
 typedef union
@@ -134,7 +136,7 @@ typedef union
 	__IO uint32_t   sw_rst_cmd:1;
 	__IO uint32_t	sw_rst_dat:1;
 	__IO uint32_t   rsvd_31_27:5;
-    }BIT;
+    }bit;
 }SW_RST_R__TOUT_CTRL_R__CLK_CTRL_R;
 
 
@@ -174,7 +176,7 @@ typedef union
 	    __IO uint32_t    vendor_err1:1;
 	    __IO uint32_t    vendor_err2:1;
 	    __IO uint32_t    vendor_err3:1;
-    }BIT;
+    }bit;
 }ERROR_INT_STAT_R__NORMAL_INT_STAT_R;
 
 typedef union
@@ -212,7 +214,7 @@ typedef union
 	    __IO uint32_t    vendor_err_stat_en1:1;
 	    __IO uint32_t	vendor_err_stat_en2:1;
 	    __IO uint32_t	vendor_err_stat_en3:1;
-     }BIT;
+     }bit;
 }ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN_R;
 
 typedef union
@@ -250,7 +252,7 @@ typedef union
 	__IO uint32_t    vendor_err_signal_en1:1;
 	__IO uint32_t	vendor_err_signal_en2:1;
 	__IO uint32_t	vendor_err_signal_en3:1;
-    }BIT;
+    }bit;
 }ERROR_INT_SIGNAL_EN_R__NORMAL_INT_SIGNAL_EN_R;
 
 typedef union
@@ -279,7 +281,7 @@ typedef union
 		__IO uint32_t    addressing:1;
 		__IO uint32_t    async_int_enable:1;
 		__IO uint32_t    preset_val_enable:1;
-    }BIT;
+    }bit;
 }HOST_CTRL2_R__AUTO_CMD_STAT_R;
 
 typedef struct
@@ -304,7 +306,7 @@ typedef struct
 	__IO uint32_t	vdd2_18v_support:1;
 	__IO uint32_t	rsvd_61:1;
 	__IO uint32_t	rsvd_62_63:2;
-	}BIT;
+	}bit;
 }CAPABILITIES2_R;
 
 typedef struct
@@ -329,7 +331,7 @@ typedef struct
 		__IO uint32_t sys_addr_64_v3 : 1;
 		__IO uint32_t async_int_support : 1;
 		__IO uint32_t slot_type_r : 1;
-	}BIT;
+	}bit;
 }CAPABILITIES1_R;
 
 typedef struct
@@ -340,7 +342,7 @@ typedef struct
 		__IO uint32_t max_cur_30v : 8;
 		__IO uint32_t max_cur_18v : 8;
 		__IO uint32_t rsvd_31_24 : 8;
-	}BIT;
+	}bit;
 }CURR_CAPABILITIES1_R;
 
 typedef struct
@@ -349,7 +351,7 @@ typedef struct
 	struct {
 		__IO uint32_t max_cur_vdd2_18v : 8;
 		__IO uint32_t rsvd_63_40 : 24;
-	}BIT;
+	}bit;
 }CURR_CAPABILITIES2_R;
 
 typedef struct
@@ -381,7 +383,7 @@ typedef struct
 		__IO uint32_t force_vendor_err1 : 1;
 		__IO uint32_t force_vendor_err2 : 1;
 		__IO uint32_t force_vendor_err3 : 1;
-	}BIT;
+	}bit;
 }FORCE_ERROR_INT_STAT_R__FORCE_AUTO_CMD_STAT_R;
 
 
@@ -392,7 +394,7 @@ typedef struct
 		__IO uint32_t adma_err_states : 2;
 		__IO uint32_t adma_len_err : 1;
 		__IO uint32_t rsvd_31_3 : 29;
-	}BIT;
+	}bit;
 }ADMA_ERR_STAT_R;
 
 typedef struct
@@ -407,7 +409,7 @@ typedef struct
 		__IO uint32_t clk_gen_sel_val_ds : 1;
 		__IO uint32_t rsvd_29_27 : 3;
 		__IO uint32_t drv_sel_val_ds : 2;
-	}BIT;
+	}bit;
 }PRESET_DS_R__PRESET_INIT_R;
 
 typedef struct
@@ -422,7 +424,7 @@ typedef struct
 		__IO uint32_t clk_gen_sel_val_1 : 1;
 		__IO uint32_t rsvd_29_27 : 3;
 		__IO uint32_t drv_sel_val_1 : 2;
-	}BIT;
+	}bit;
 }PRESET_HS_R;
 
 typedef struct
@@ -437,7 +439,7 @@ typedef struct
 		__IO uint32_t clk_gen_sel_val_1 : 1;
 		__IO uint32_t rsvd_29_27 : 3;
 		__IO uint32_t drv_sel_val_1 : 2;
-	}BIT;
+	}bit;
 }PRESET_SDR50_R__PRESET_SDR25_R;
 
 typedef struct
@@ -452,7 +454,7 @@ typedef struct
 		__IO uint32_t clk_gen_sel_val_1 : 1;
 		__IO uint32_t rsvd_29_27 : 3;
 		__IO uint32_t drv_sel_val_1 : 2;
-	}BIT;
+	}bit;
 }PRESET_DDR50_R__PRESET_SDR104_R;
 
 typedef struct
@@ -464,7 +466,7 @@ typedef struct
 		__IO uint32_t rsvd_13_11 : 3;
 		__IO uint32_t drv_sel_val : 2;
 		__IO uint32_t rsvd_31_24:16;
-	}BIT;
+	}bit;
 }PRESET_UHS2;
 
 /* dwc_mshc_map/DWC_mshc_block registers */
