@@ -8,17 +8,18 @@
 #define     __IO    volatile            
 
 #define REG_READ(reg_address) reg_read(reg_address)
-extern unsigned reg_read(unsigned long long reg_address);
+extern unsigned reg_read(unsigned int reg_address);
 #define REG_WRITE(reg_address, reg_wdata) reg_write(reg_address, reg_wdata)
 
 #define SDRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO1__BASE_ADDR+reg_address), reg_wdata)
 #define EMMCRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO0__BASE_ADDR+reg_address), reg_wdata)
-extern void reg_write(unsigned long long reg_address, unsigned reg_wdata);
+extern void reg_write(unsigned int reg_address, unsigned reg_wdata);
 
 typedef unsigned char      uint8_t;
 typedef unsigned short     uint16_t;
 typedef unsigned int       uint32_t;
 typedef unsigned long long uint64_t;
+typedef unsigned int       u32;
 typedef unsigned long long u64;
 #define  u32 uint32_t
 extern u32 SD_Test(void);
@@ -26,7 +27,7 @@ extern u32 SD_Test(void);
 typedef union
 {
 	__IO uint32_t d32;
-	struct _BIT{
+	struct {
 		__IO uint32_t xfer_block_size:12;
 		__IO uint32_t sdma_buf_bdary:3;
 		__IO uint32_t rsvd_blocksize15:1;
@@ -37,7 +38,7 @@ typedef union
 typedef union
 {
     __IO uint32_t d32;
-    struct _BIT{
+    struct {
 	    __IO uint32_t dma_en:1;
 	    __IO uint32_t block_count_enable:1;
 	    __IO uint32_t auto_cmd_enable:2;
@@ -61,7 +62,7 @@ typedef union
 typedef union
 {
 	__IO uint32_t d32;
-	struct _BIT{
+	struct {
 	__IO uint32_t cmd_inhibit:1;
 	__IO uint32_t cmd_inhibit_dat:1;
 	__IO uint32_t dat_line_active:1;
@@ -91,7 +92,7 @@ typedef union
 typedef union
 {
 	__IO uint32_t d32;
-	struct _BIT{
+	struct {
 		__IO uint32_t led_ctrl:1;
 		__IO uint32_t dat_xfer_width:1;
 		__IO uint32_t high_speed_en:1;
@@ -118,7 +119,7 @@ typedef union
 typedef union
 {
 	__IO uint32_t d32;
-	struct _BIT{
+	struct {
 	__IO uint32_t	internal_clk_en:1;
 	__IO uint32_t	internal_clk_stable:1;
 	__IO uint32_t	sd_clk_en:1;
@@ -140,7 +141,7 @@ typedef union
 typedef union
 {
     __IO uint32_t d32;
-    struct _BIT{
+    struct {
 	    __IO uint32_t	 cmd_complete:1;
 	    __IO uint32_t	 xfer_complete:1;
 	    __IO uint32_t	 bgap_event:1;
@@ -179,7 +180,7 @@ typedef union
 typedef union
 {
     __IO uint32_t d32;
-    struct _BIT{
+    struct {
 	    __IO uint32_t	cmd_complete_stat_en:1; /* intr when response received */
 	    __IO uint32_t    xfer_complete_stat_en:1; /* intr when data read/write xfer completed */
 	    __IO uint32_t    bgap_event_stat_en:1;
@@ -217,7 +218,7 @@ typedef union
 typedef union
 {
     __IO uint32_t d32;
-    struct _BIT{
+    struct {
 	__IO uint32_t	cmd_complete_signal_en:1; /* intr when response received */
 	__IO uint32_t    xfer_complete_signal_en:1; /* intr when data read/write xfer completed */
 	__IO uint32_t    bgap_event_signal_en:1;
@@ -255,7 +256,7 @@ typedef union
 typedef union
 {
     __IO uint32_t d32;
-    struct _BIT{
+    struct {
 		__IO uint32_t	auto_cmd12_not_exec:1;
 		__IO uint32_t	auto_cmd_tout_err:1;
 		__IO uint32_t	auto_cmd_crc_err:1;
@@ -284,7 +285,7 @@ typedef union
 typedef struct
 {
 	__IO uint32_t d32;
-	struct _BIT{
+	struct {
 	__IO uint32_t	sdr50_support:1;
 	__IO uint32_t 	sdr104_support:1;
 	__IO uint32_t 	ddr50_support:1;
@@ -309,7 +310,7 @@ typedef struct
 typedef struct
 {
 	__IO uint32_t d32;
-	struct _BIT{
+	struct {
 		__IO uint32_t tout_clk_freq : 6;
 		__IO uint32_t rsvd_6 : 1;
 		__IO uint32_t tout_clk_unit : 1;
@@ -334,7 +335,7 @@ typedef struct
 typedef struct
 {
 	__IO uint32_t d32;
-	struct _BIT{
+	struct {
 		__IO uint32_t max_cur_33v : 8;
 		__IO uint32_t max_cur_30v : 8;
 		__IO uint32_t max_cur_18v : 8;
@@ -345,7 +346,7 @@ typedef struct
 typedef struct
 {
 	__IO uint32_t d32;
-	struct _BIT{
+	struct {
 		__IO uint32_t max_cur_vdd2_18v : 8;
 		__IO uint32_t rsvd_63_40 : 24;
 	}BIT;
@@ -354,7 +355,7 @@ typedef struct
 typedef struct
 {
 	__IO uint32_t d32;
-	struct _BIT{
+	struct {
 		__IO uint32_t force_auto_cmd12_not_exec : 1;
 		__IO uint32_t force_auto_cmd_tout_err : 1;
 		__IO uint32_t force_auto_cmd_crc_err : 1;
@@ -387,7 +388,7 @@ typedef struct
 typedef struct
 {
 	__IO uint32_t d32;
-	struct _BIT{
+	struct {
 		__IO uint32_t adma_err_states : 2;
 		__IO uint32_t adma_len_err : 1;
 		__IO uint32_t rsvd_31_3 : 29;
@@ -397,7 +398,7 @@ typedef struct
 typedef struct
 {
 	__IO uint32_t d32;
-	struct _BIT{
+	struct {
 		__IO uint32_t freq_sel_val_init : 10;
 		__IO uint32_t clk_gen_sel_val_init : 1;
 		__IO uint32_t rsvd_13_11 : 3;
@@ -412,7 +413,7 @@ typedef struct
 typedef struct
 {
 	__IO uint32_t d32;
-	struct _BIT{
+	struct {
 		__IO uint32_t freq_sel_val_0 : 10;
 		__IO uint32_t clk_gen_sel_val_0 : 1;
 		__IO uint32_t rsvd_13_11 : 3;
@@ -427,7 +428,7 @@ typedef struct
 typedef struct
 {
 	__IO uint32_t d32;
-	struct _BIT{
+	struct {
 		__IO uint32_t freq_sel_val_0 : 10;
 		__IO uint32_t clk_gen_sel_val_0 : 1;
 		__IO uint32_t rsvd_13_11 : 3;
@@ -442,7 +443,7 @@ typedef struct
 typedef struct
 {
 	__IO uint32_t d32;
-	struct _BIT{
+	struct {
 		__IO uint32_t freq_sel_val_0 : 10;
 		__IO uint32_t clk_gen_sel_val_0 : 1;
 		__IO uint32_t rsvd_13_11 : 3;
@@ -457,7 +458,7 @@ typedef struct
 typedef struct
 {
 	__IO uint32_t d32;
-	struct _BIT{
+	struct {
 		__IO uint32_t freq_sel_val : 10;
 		__IO uint32_t clk_gen_sel_val : 1;
 		__IO uint32_t rsvd_13_11 : 3;

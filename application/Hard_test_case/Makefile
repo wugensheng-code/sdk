@@ -14,6 +14,6 @@ COMPILE_PREFIX := /opt/toolchain/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bi
 
 PROGRAM := ./
 
-V := 1
+#V := 1
 
 include $(NUCLEI_SDK_ROOT)/Build/Makefile.base
