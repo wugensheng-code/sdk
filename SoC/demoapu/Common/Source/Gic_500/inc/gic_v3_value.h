@@ -14,13 +14,12 @@
 #define GICD_INT_EN_SET_SGI		0x0000ffff
 #define GICD_INT_EN_CLR_PPI		0xffff0000
 
-#define GICD_CTLR_RWP			(1U << 31)
-#define GICD_CTLR_nASSGIreq		(1U << 8)
-#define GICD_CTLR_DS			(1U << 6)
-#define GICD_CTLR_ARE_NS		(1U << 4)
-#define GICD_CTLR_ENABLE_G1A	(1U << 1)
-#define GICD_CTLR_ENABLE_G1		(1U << 0)
-
+#define GICD_CTLR_RWP                   (1U << 31)
+#define GICD_CTLR_nASSGIreq             (1U << 8)
+#define GICD_CTLR_DS                    (1U << 6)
+#define GICD_CTLR_ARE_NS                (1U << 4)
+#define GICD_CTLR_ENABLE_G1A            (1U << 1)
+#define GICD_CTLR_ENABLE_G1             (1U << 0)
 
 #define GICR_SGI_EDGE_TRIG      0xaaaaaaaa
 #define GICR_SGI_LEVEL_TRIG     0X0

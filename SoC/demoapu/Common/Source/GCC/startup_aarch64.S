@@ -23,6 +23,10 @@ _start:
 #undef DEBUG
 #endif
 
+#define icc_igrpen1_el3 s3_6_c12_c12_7
+#define icc_igrpen1_el1 s3_0_c12_c12_7
+#define icc_igrpen0_el1 s3_0_c12_c12_6
+
 #ifdef DEBUG
 	bl uart0_init_simple
 	bl print_boot_el
@@ -42,10 +46,9 @@ setup_vector:
 	switch_el x1, el3_entry, el2_entry, el1_entry
 	/* execute el3 */
 el3_entry:
-	mrs     x0, mpidr_el1
+	mrs x0, mpidr_el1
 	ldr	x1, =0x00ff
 	and	x0, x0, x1
-
 	cmp x0, #0
 
 	/*if primary cpu, continue boot */
@@ -55,6 +58,18 @@ el3_entry:
 	b .
 
 0:
+
+	/*init el3 gic system registers*/
+	ldr x0, =0x0f
+	msr icc_sre_el3, x0
+
+	//enable group1 secure,non-secure
+	ldr x0, =0x03
+	msr icc_igrpen1_el3, x0
+	ldr x0, =0x01
+	msr icc_igrpen1_el1, x0
+	msr icc_igrpen0_el1, x0
+
 	adr	x0, vectors
 	msr vbar_el3, x0
 	mrs	x0, scr_el3

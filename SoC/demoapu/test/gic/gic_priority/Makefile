@@ -1,6 +1,6 @@
-TARGET = nested_irq
+TARGET = irq_priority
 
-NUCLEI_SDK_ROOT = ../../../..
+NUCLEI_SDK_ROOT = ../../../../../
 
 SRCDIRS = .
 

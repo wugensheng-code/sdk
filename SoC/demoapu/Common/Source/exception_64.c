@@ -109,7 +109,7 @@ __weak void do_irq_handle()
  * @param {unsigned int} esr
  * @return {*}
  */
-__weak void do_fiq(struct pt_regs *pt_regs, unsigned int esr)
+__weak void do_fiq_handle(struct pt_regs *pt_regs, unsigned int esr)
 {
 	error_print("\"Fiq at current el with spx\" handler, but not found your handle implement.");
 	panic();
