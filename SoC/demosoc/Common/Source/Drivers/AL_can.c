@@ -327,22 +327,21 @@ int AlCan_TmitMode(AL_CAN_TypeDef *CANX,enum can_tx_mode tx_mode){
 			printf( "Full can mode\n");
 			break;
 
-		case XMIT_SEP_FIFO:
+		case XMIT_SEP_PRIO:
 			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL &=~CAN_FD_SET_FULLCAN_MASK;
 			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL |= CAN_FD_SET_FIFO_MASK;	//TSMODE
 			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL &= ~CAN_FD_SET_TBSEL_MASK;	//TBSEL
-			printf( "FIFO mode\n");
-
+			printf( "Priority mode\n");
 			break;
 
-		case XMIT_SEP_PRIO://有问题
+		case XMIT_SEP_FIFO://有问题
 			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL &=~CAN_FD_SET_FULLCAN_MASK;
 			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL &=~CAN_FD_SET_FIFO_MASK ;
 			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL |=CAN_FD_SET_TBSEL_MASK ;
 			CANX ->CFG_STAT_TCMD_TCTRL_RCTRL |= CAN_FD_SET_TENEXT_MASK;	//TSNEXT
-			printf( "Priority mode\n");
-
+			printf( "FIFO mode\n");
 			break;
+
 		case XMIT_PTB_MODE:
 			//CANX ->CFG_STAT_TCMD_TCTRL_RCTRL &= ~CAN_FD_SET_FULLCAN_MASK;
 			//CANX ->CFG_STAT_TCMD_TCTRL_RCTRL |= CAN_FD_SET_FIFO_MASK;
