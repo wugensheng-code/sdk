@@ -34,8 +34,8 @@
 
 typedef void (*interrupt_fn)();
 
-interrupt_fn irq_handler_list[IRQ_MAX_NUM + GICV3_SPECIAL_NUM];
-interrupt_fn fiq_handler_list[IRQ_MAX_NUM + GICV3_SPECIAL_NUM];
+static interrupt_fn irq_handler_list[IRQ_MAX_NUM + GICV3_SPECIAL_NUM];
+static interrupt_fn fiq_handler_list[IRQ_MAX_NUM + GICV3_SPECIAL_NUM];
 
 static void request_interrupt(u32 int_id, void* handler, interrupt_fn *fn)
 {
@@ -220,7 +220,7 @@ void gicv3_redist_init(u32 int_group)
 		writel_relaxed(0x0, GICR_SGI_IGROUPR0);
 		writel_relaxed(~0x0, GICR_SGI_IGRPMOD0);
 	} else {
-	
+
 		writel_relaxed(0x0, GICR_SGI_IGROUPR0);
 		writel_relaxed(0x0, GICR_SGI_IGRPMOD0);
 	}
@@ -408,14 +408,9 @@ void do_irq_handle(void)
 	}
 }
 
-/**
- * @desc  : irq handle implement
- * @flow  : read irq number -> deal with this irq event -> 	write eoi
- */
-void do_fiq_handle(void)
+__attribute__((weak)) unsigned int gic_fiq_get_int_id(void)
 {
-	u32	int_id;
-	void (*p_func)();
+	unsigned int int_id;
 
 	/* enable sre */
 	if (!gic_enable_sre()) {
@@ -425,6 +420,18 @@ void do_fiq_handle(void)
 		/* interrupr acknowledge by read iar*/
 		int_id = gic_read_iar_common() & 0xffffff;
 	}
+}
+
+/**
+ * @desc  : irq handle implement; this is weak function because we need to read ICC_IAR0_EL1 if group0 case
+ * @flow  : read irq number -> deal with this irq event -> 	write eoi
+ */
+void do_fiq_handle(void)
+{
+	u32	int_id;
+	void (*p_func)();
+
+	int_id = gic_fiq_get_int_id();
 
 	/* run irq handler function */
 	if (int_id < 32) {

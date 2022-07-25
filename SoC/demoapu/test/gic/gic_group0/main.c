@@ -14,11 +14,18 @@
 #include "io.h"
 #include "type.h"
 #include "timer.h"
+#include "gic_v3.h"
 #include "gic_v3_addr.h"
 
 static int fiq_happened = 0;
 static int irq_happened = 0;
 
+
+unsigned int gic_fiq_get_int_id(void)
+{
+	unsigned int int_id = gic_read_iar0_common() & 0xffffff;
+	return int_id;
+}
 
 void generic_timer_irq_handler(void)
 {
@@ -28,7 +35,7 @@ void generic_timer_irq_handler(void)
 
 	printf("irq handler: generic_timer_irq_handler\n");
 	printf("delay 1s\n");
-	
+
 	irq_happened = 1;
 }
 
@@ -94,15 +101,15 @@ void gicv3_init(void)
 int main()
 {
 	printf("\n system initial start\n");
-	
+
 	request_irq(30, generic_timer_irq_handler);
 	request_irq(1023, generic_irq_specail_handler);
 	request_fiq(1023, generic_fiq_specail_handler);
 	request_fiq(30, generic_timer_fiq_handler);
-	
+
 	/* enable irq after all devices are ready */
 	irq_enable();
-	
+
 	printf("system initial complete.\n");
 
 	int sgi_igroup0 = readl_relaxed(GICR_SGI_IGROUPR0);
@@ -111,7 +118,7 @@ int main()
 	while (fiq_happened == 0 && irq_happened == 0) {
 	    ;
 	}
-	
+
 	if (fiq_happened && sgi_igroup0 == 0 && sgi_igrpmod0 == 0)
 		printf("pass %d %x %x\n", fiq_happened, sgi_igroup0, sgi_igrpmod0);
 	else

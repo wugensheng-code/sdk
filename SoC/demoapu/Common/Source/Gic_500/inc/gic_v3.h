@@ -48,6 +48,17 @@ static inline u64 gic_read_iar_common(void)
 	return irqstat;
 }
 
+static inline u64 gic_read_iar0_common(void)
+{
+	u64 irqstat;
+
+	irqstat = read_sysreg_s(SYS_ICC_IAR0_EL1);
+
+	dsb(sy);
+
+	return irqstat;
+}
+
 /*
  * Cavium ThunderX erratum 23154
  *
