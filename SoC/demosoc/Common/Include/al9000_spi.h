@@ -52,6 +52,7 @@
 #define CMD_CHIP_ERASE      (0x60)
 #define CMD_PP     			(0x02)
 #define CMD_SREAD  			(0x03)
+
 //#define CMD_DREAD  			(0x3B)
 //#define CMD_QREAD  			(0x6B)
 #define CMD_RDSR  			(0x05)
@@ -129,6 +130,10 @@
 #define SPI_SR_TXFIFO_EMPTY					1
 #define SPI_SR_TXFIFO_NOTEMPTY				0
 
+#define SR_TFNF_MASK						(1<<1)
+#define SPI_SR_TXFIFO_NOTFULL				1
+#define SPI_SR_TXFIFO_FULL					0
+
 #define SR_RFNE_MASK						(1<<3)
 #define SPI_SR_RXFIFO_NOTEMPTY				1
 #define SPI_SR_RXFIFO_EMPTY					0
@@ -173,6 +178,7 @@
  int32_t spi_data_transmit(SPI_TypeDef *spi, uint32_t data);
  uint32_t spi_data_read(SPI_TypeDef *spi);
  uint32_t spi_sr_tfe(SPI_TypeDef *spi);
+ uint32_t spi_sr_tfnf(SPI_TypeDef *spi);
  uint32_t spi_sr_busy(SPI_TypeDef *spi);
  uint32_t spi_sr_rfne(SPI_TypeDef *spi);
  void spi_ctrl1_ndf(SPI_TypeDef *spi, uint32_t num);

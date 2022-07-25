@@ -366,6 +366,19 @@ uint32_t spi_sr_tfe(SPI_TypeDef *spi)
         return SPI_SR_TXFIFO_NOTEMPTY;
 }
 /*!
+    \brief      spi status TFE(Transmit FIFO Not Full)function
+    \param[in]  spi:
+    \param[out] none
+    \retval     none
+*/
+uint32_t spi_sr_tfnf(SPI_TypeDef *spi)
+{
+    if(spi->SR & SR_TFNF_MASK)
+        return SPI_SR_TXFIFO_NOTFULL;
+    else
+        return SPI_SR_TXFIFO_FULL;
+}
+/*!
     \brief      spi status function
     \param[in]  spi:
     \param[out] none
