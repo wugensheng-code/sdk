@@ -12,9 +12,9 @@
 #define FLASH_ERASE_WRITE
 #define FLASH_READ
 
-#define SPI_MASTER ((SPI_TypeDef *)SPI0_BASE)
+#define SPI_MASTER ((SPI_TypeDef *)SPI1_BASE)
 
-#define S25FL512S_ID 0X00200201 // flash ID
+#define S25FL512S_ID 0x003925c2 // flash ID
 //#define S25FL256S_ID	0x00190201  // flash ID
 
 /****************function define******************************/
@@ -236,7 +236,7 @@ int main()
 	// divided by 30 --(30 from design)
 	//-----------------------------------------------------------
 	/*cfg SPI Clock Divider.*/
-	spi_sckdiv_cfg(SPI_MASTER, 0x1E); // divided by 30.
+	spi_sckdiv_cfg(SPI_MASTER, 0x50); // divided by 30.
 
 	//-----------------------------------------------------------
 	// program SSIENR register
@@ -417,7 +417,7 @@ int main()
 	i = 0;
 	while (byte_cnt)
 	{
-		if ((*(uint32_t *)(0xf8404000 + 0x28) & 0x2) == 0x2) // tx fifo not full
+		if ((*(uint32_t *)(0xf8405000 + 0x28) & 0x2) == 0x2) // tx fifo not full
 		{
 			spi_data_transmit(SPI_MASTER, wrdata_a[i]); // tx data wrdata_a[i]
 			byte_cnt--;
