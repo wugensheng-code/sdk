@@ -133,6 +133,13 @@ int main()
         printf("round [%d] start\n", round);
         printf("ptimer_priority = %d, vtimer_priority = %d \n", ptimer_priority, vtimer_priority);
 
+        request_irq(25, generic_vtimer_irq_handler);
+        request_irq(26, generic_vtimer_irq_handler);
+        request_irq(27, generic_vtimer_irq_handler);
+        request_irq(28, generic_vtimer_irq_handler);
+        request_irq(29, generic_vtimer_irq_handler);
+        request_irq(30, generic_ptimer_irq_handler);
+
         //round 1: vtimer priority is higher than ptimer priority
         *(volatile unsigned int *)0xf8e05000UL = 0x0;
 
@@ -145,8 +152,8 @@ int main()
 
         /* register generic timer interrupt handler */
 
-        request_irq(27, generic_vtimer_irq_handler);
-        request_irq(30, generic_ptimer_irq_handler);
+        //request_irq(27, generic_vtimer_irq_handler);
+        //request_irq(30, generic_ptimer_irq_handler);
 
         gicv3_set_irq_priority(27, vtimer_priority);
         gicv3_set_irq_priority(30, ptimer_priority);
@@ -159,7 +166,7 @@ int main()
         //start timer clock
         *(volatile unsigned int *)0xf8e05000UL = 0x1;
 
-        while (ptimer_irq_status || vtimer_irq_status) {
+        while (1) {
             ;
         }
 

@@ -5,12 +5,18 @@
 #include "sysregs.h"
 #include "barriers.h"
 #include "compiler_attributes.h"
+#include "stdio.h"
 
-#define smp_processor_id()			0
 #define DEFAULT_PMR_VALUE	    0xf0
 
 #define read_gicreg(r)			read_sysreg_s(SYS_ ## r)
 #define write_gicreg(v, r)		write_sysreg_s(v, SYS_ ## r)
+
+typedef enum {
+	GROUP_0 = 0,
+	GROUP_1_SECURE = 1,
+	GROUP_1_NONSECURE = 2,
+} gic_group;
 
 /*
  * Low-level accessors
@@ -36,7 +42,9 @@ static inline u64 gic_read_iar_common(void)
 	u64 irqstat;
 
 	irqstat = read_sysreg_s(SYS_ICC_IAR1_EL1);
+
 	dsb(sy);
+
 	return irqstat;
 }
 

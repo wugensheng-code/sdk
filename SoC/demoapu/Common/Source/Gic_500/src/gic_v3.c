@@ -26,21 +26,45 @@
 #define gic_print(...)
 #endif
 
+#define GICV3_SPECIAL_START				(1020)
+#define GICV3_SPECIAL_END				(1023)
+
+#define GICV3_SPECIAL_NUM				(GICV3_SPECIAL_END - GICV3_SPECIAL_START +1)
 #define IRQ_MAX_NUM						(256)
 
-void (*irq_handler[IRQ_MAX_NUM])();
+typedef void (*interrupt_fn)();
 
-void request_irq(u32 int_id, void* handler)
+interrupt_fn irq_handler_list[IRQ_MAX_NUM + GICV3_SPECIAL_NUM];
+interrupt_fn fiq_handler_list[IRQ_MAX_NUM + GICV3_SPECIAL_NUM];
+
+static void request_interrupt(u32 int_id, void* handler, interrupt_fn *fn)
 {
-	if (int_id >= IRQ_MAX_NUM) {
+	/*
+	 * > IRQ_MAX_NUM && (not in the range of special range)
+	*/
+	if (int_id >= IRQ_MAX_NUM && (int_id < GICV3_SPECIAL_START || int_id > GICV3_SPECIAL_END)) {
 		gic_print("init id error int_id = %d\n", int_id);
 		return;
 	}
 
-	irq_handler[int_id] = handler;
-
-	gicv3_enable_irq(int_id);
+	if (int_id < IRQ_MAX_NUM) {
+		fn[int_id] = handler;
+		gicv3_enable_irq(int_id);
+	} else {
+		fn[int_id - GICV3_SPECIAL_START + IRQ_MAX_NUM] = handler;
+	}
 }
+
+void request_fiq(u32 int_id, void* handler)
+{
+	request_interrupt(int_id, handler, fiq_handler_list);
+}
+
+void request_irq(u32 int_id, void* handler)
+{
+	request_interrupt(int_id, handler, irq_handler_list);
+}
+
 
 static void gic_do_wait_for_rwp(void __iomem *rwp_addr)
 {
@@ -78,7 +102,7 @@ static u64 gic_mpidr_to_affinity(unsigned long mpidr)
 	return aff;
 }
 
-static void gicv3_dist_init(u32 int_group)
+void gicv3_dist_init(u32 int_group)
 {
 	u32 i;
 	u32 spi_itline_nums, cpu_nums, gic_irqs;
@@ -117,26 +141,28 @@ static void gicv3_dist_init(u32 int_group)
 	}
 	gic_dist_wait();
 	/* there setting depend the running secure state */
-	if (int_group == 2) {
+	if (int_group == GROUP_1_NONSECURE) {
 		 /* group 1 non-secure*/
 		 /* gicd.ctrl.ds = 1 */
-		for (i = 32; i < gic_irqs; i += 32)
-			writel_relaxed(0xffffffff, GICD_IGROUPR + i / 8);
-		for (i = 32; i < gic_irqs; i += 32)
+		for (i = 32; i < gic_irqs; i += 32) {
+			writel_relaxed(~0x0, GICD_IGROUPR + i / 8);
 			writel_relaxed(0, GICD_IGRPMODR + i / 8);
-		 /* Enable distributor with ARE, no secure Group1 */
-		writel_relaxed(GICD_CTLR_ARE_NS | GICD_CTLR_ENABLE_G1A | GICD_CTLR_ENABLE_G1, GICD_CTLR);
-	} else if ( int_group == 1) {
+		}
+	} else if (int_group == GROUP_1_SECURE) {
 		 /* group 1 secure*/
 		 /* gicd.ctrl.ds = 1 */
-		for (i = 32; i < gic_irqs; i += 32)
-			writel_relaxed(0, GICD_IGROUPR + i / 8);
-		for (i = 32; i < gic_irqs; i += 32)
-			writel_relaxed(0xffffffff, GICD_IGRPMODR + i / 8);
-		 /* Enable distributor with ARE, secure Group1 */
-		writel_relaxed((1<<4) | (1<<2), GICD_CTLR);
+		for (i = 32; i < gic_irqs; i += 32) {
+			writel_relaxed(0x0, GICD_IGROUPR + i / 8);
+			writel_relaxed(~0x0, GICD_IGRPMODR + i / 8);
+		}
+	} else {
+		for (i = 32; i < gic_irqs; i += 32) {
+			writel_relaxed(0x0, GICD_IGROUPR + i / 8);
+			writel_relaxed(0x0, GICD_IGRPMODR + i / 8);
+		}
 	}
 
+	writel_relaxed(0x37, GICD_CTLR);
 	gic_dist_wait();
 	/*
 	 * Set all global interrupts to the boot CPU only. ARE must be enabled.
@@ -148,7 +174,7 @@ static void gicv3_dist_init(u32 int_group)
 	gic_dist_wait();
 }
 
-static void gic_enable_redist(bool enable)
+void gic_enable_redist(bool enable)
 {
 	u32 count = 1000000;	/* 1s! */
 	u32 val;
@@ -179,20 +205,24 @@ static void gic_enable_redist(bool enable)
 		gic_print("redistributor failed to %s...\n", enable ? "wakeup" : "sleep");
 }
 
-static void gicv3_redist_init(u32 int_group)
+void gicv3_redist_init(u32 int_group)
 {
 	u32 i;
 	u32 nr = 1;
 	gic_enable_redist(true);
 
-	if (int_group == 2) {
+	if (int_group == GROUP_1_NONSECURE) {
 		/* Configure SGIs/PPIs as non-secure Group-1 */
-		writel_relaxed(0xffffffff, GICR_SGI_IGROUPR0);
-		writel_relaxed(0x0,  GICR_SGI_IGRPMOD0);
-	} else if ( int_group == 1) {
+		writel_relaxed(~0x0, GICR_SGI_IGROUPR0);
+		writel_relaxed(0x0, GICR_SGI_IGRPMOD0);
+	} else if (int_group == GROUP_1_SECURE) {
 		/* Configure SGIs/PPIs as secure Group-1 */
 		writel_relaxed(0x0, GICR_SGI_IGROUPR0);
-		writel_relaxed(0xffffffff,  GICR_SGI_IGRPMOD0);
+		writel_relaxed(~0x0, GICR_SGI_IGRPMOD0);
+	} else {
+	
+		writel_relaxed(0x0, GICR_SGI_IGROUPR0);
+		writel_relaxed(0x0, GICR_SGI_IGRPMOD0);
 	}
 
 	/*
@@ -246,7 +276,7 @@ static u32 gic_get_pribits(void)
 static void gicv3_cpu_sysregs_init(void)
 {
 	/* no nmi */
-	write_gicreg(0, ICC_AP1R1_EL1);
+	//write_gicreg(0, ICC_AP1R1_EL1);
 	/* Set priority mask register */
 	write_gicreg(DEFAULT_PMR_VALUE, ICC_PMR_EL1);
 
@@ -270,30 +300,32 @@ static void gicv3_cpu_memory_map_init(void)
 	writel_relaxed((1<0) | (1<1) | (0<9), GICC_CTRL);
 
 }
-static void gicv3_cpu_init(void)
+void gicv3_cpu_init(void)
 {
 	int i;
 	u32 pribits;
 
 	/* enable sre */
 	if (!gic_enable_sre()) {
-		gic_print("GIC: unable to init gic cpu interface by setting system register.\n");
-		gic_print("try to init gic cpu interface using memory-mapped register.\n");
+		printf("GIC: unable to init gic cpu interface by setting system register.\n");
+		printf("try to init gic cpu interface using memory-mapped register.\n");
 		gicv3_cpu_memory_map_init();
 	} else {
-		gic_print("init gic cpu interface using system register.\n");
+		printf("init gic cpu interface using system register.\n");
 		gicv3_cpu_sysregs_init();
 	}
 
 
 }
-void gicv3_init(void)
+
+__attribute__((weak)) void gicv3_init(void)
 {
-    gicv3_dist_init(1);
-    gicv3_redist_init(1);
+    gicv3_dist_init(GROUP_1_SECURE);
+    gicv3_redist_init(GROUP_1_SECURE);
+
     gicv3_cpu_init();
 
-    gic_print("gicv3          : enabled.\n");
+    gic_print("gicv3 : enabled.\n");
 }
 
 
@@ -301,7 +333,6 @@ static void gicv3_set_irq(int irq, void __iomem * reg_addr)
 {
 	u32 mask = 1 << (irq % 32);
 	void __iomem * addr = reg_addr + (irq / 32) * 4;
-	// gic_print("irq: %d, mask: 0x%08lx, addr: 0x%08lx\n", irq,mask,addr);
 	writel_relaxed(mask, addr);
 }
 
@@ -356,9 +387,51 @@ void do_irq_handle(void)
 	}
 
 	/* run irq handler function */
-	gic_print("%s: interrupt id: %d\n", __func__, int_id);
 	void (*p_func)();
-	p_func = irq_handler[int_id];
+	if (int_id < 32) {
+		p_func = irq_handler_list[int_id];
+	} else {
+		p_func = irq_handler_list[int_id -GICV3_SPECIAL_START + IRQ_MAX_NUM];
+	}
+
+	if (!p_func) {
+		gic_print("can not found your irq event handle at irq number: %d\n", int_id);
+	} else {
+		p_func();
+	}
+
+	/* write end of interrupt to deactivate the interrupt */
+	if (!gic_enable_sre()) {
+		writel_relaxed(int_id, GICC_EOIR);
+	} else {
+		gic_write_eoir(int_id);
+	}
+}
+
+/**
+ * @desc  : irq handle implement
+ * @flow  : read irq number -> deal with this irq event -> 	write eoi
+ */
+void do_fiq_handle(void)
+{
+	u32	int_id;
+	void (*p_func)();
+
+	/* enable sre */
+	if (!gic_enable_sre()) {
+		/* interrupr acknowledge by read gicc_iar*/
+		int_id = readl_relaxed(GICC_IAR) & 0xffffff;
+	} else {
+		/* interrupr acknowledge by read iar*/
+		int_id = gic_read_iar_common() & 0xffffff;
+	}
+
+	/* run irq handler function */
+	if (int_id < 32) {
+		p_func = fiq_handler_list[int_id];
+	} else {
+		p_func = fiq_handler_list[int_id - GICV3_SPECIAL_START + IRQ_MAX_NUM];
+	}
 	if (!p_func) {
 		gic_print("can not found your irq event handle at irq number: %d\n",int_id);
 	} else {
@@ -373,22 +446,23 @@ void do_irq_handle(void)
 	}
 }
 
+
 void __enable_irq(void)
 {
-        asm volatile(
-                "msr    daifclr, #2"
-                :
-                :
-                : "memory");
+	asm volatile(
+		"msr    daifclr, #3"
+		:
+		:
+		: "memory");
 }
 
 void __disable_irq(void)
 {
-        asm volatile(
-                "msr    daifset, #2"
-                :
-                :
-                : "memory");
+	asm volatile(
+		"msr    daifset, #3"
+		:
+		:
+		: "memory");
 }
 
 /**
@@ -416,4 +490,57 @@ int gicv3_set_irq_priority(int int_id, int priority)
 	writel_relaxed(pri, addr + (int_id & 0xfffffffc));
 
 	return 0;
+}
+
+
+/**
+ * @desc  : set gic group
+ */
+int gicv3_set_group(int int_id, int int_group)
+{
+	/* Disable the distributor */
+	if (int_id < 32) {
+		u32 sgi_igroup  = readl_relaxed(GICR_SGI_IGROUPR0);
+		u32 sgi_igrpmod = readl_relaxed(GICR_SGI_IGRPMOD0);
+
+		gic_enable_redist(true);
+
+		if (int_group == GROUP_1_NONSECURE) {
+			sgi_igroup  |= (0x01 << int_id);
+			sgi_igrpmod &= (~(0x01 << int_id));
+		} else if (int_group == GROUP_1_SECURE) {
+			sgi_igroup  &= (~(0x01 << int_id));
+			sgi_igrpmod |= (0x01 << int_id);
+		} else if(int_group == GROUP_0) {
+			sgi_igroup  &= (~(0x01 << int_id));
+			sgi_igrpmod &= (0x01 << int_id);
+		}
+
+		writel_relaxed(sgi_igroup, GICR_SGI_IGROUPR0);
+		writel_relaxed(sgi_igrpmod, GICR_SGI_IGRPMOD0);
+
+		gic_redist_wait();
+	} else {
+		u32 gicd_igroup  = readl_relaxed(GICD_IGROUPR  + int_id / 32);
+		u32 gicd_igrpmod = readl_relaxed(GICD_IGRPMODR + int_id / 32);
+
+		writel_relaxed(0, GICD_CTLR);
+		gic_dist_wait();
+
+		if (int_group == GROUP_1_NONSECURE) {
+			gicd_igroup  |= (0x01 << int_id);
+			gicd_igrpmod &= (~(0x01 << int_id));
+		} else if (int_group == GROUP_1_SECURE) {
+			gicd_igroup  &= (~(0x01 << int_id));
+			gicd_igrpmod |= (0x01 << int_id);
+		} else if(int_group == GROUP_0) {
+			gicd_igroup  &= (~(0x01 << int_id));
+			gicd_igrpmod &= (0x01 << int_id);
+		}
+
+		writel_relaxed(gicd_igrpmod, GICD_IGRPMODR + int_id / 8);
+		writel_relaxed(gicd_igroup, GICD_IGROUPR + int_id / 8);
+
+		gic_dist_wait();
+	}
 }

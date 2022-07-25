@@ -41,6 +41,9 @@ NEWLIB ?= nano
 ## If NOGC=1, it will not gc any sections during compiling to save code size
 NOGC ?=
 
+FPGA_BIT_VERSION ?= STAGE_7
+
+
 # Directories for SoC and RTOS chosen
 NUCLEI_SDK_SOC = $(NUCLEI_SDK_ROOT)/SoC/$(SOC)
 NUCLEI_SDK_RTOS = $(NUCLEI_SDK_ROOT)/OS/$(RTOS)

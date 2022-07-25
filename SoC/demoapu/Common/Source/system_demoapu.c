@@ -198,6 +198,7 @@ void _premain_init(void)
     gpio_iof_config(GPIO, IOF0_UART0_MASK, IOF_SEL_0);
     uart_init(SOC_DEBUG_UART, 115200);
 #else
+    Enablepinmux1();
 	AlUart_Init(AL_UART0, 115200, UART_BIT_LENGTH_8, AL_UART_STOP_BIT_1);
 	/* Display banner after UART initialized */
 	SystemBannerPrint();

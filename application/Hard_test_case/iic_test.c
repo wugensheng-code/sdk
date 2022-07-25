@@ -65,14 +65,17 @@ int TEST_I2c_E2prom(I2C_TypeDef *i2c)
 						data_cnt0++;
 						//store sent data into array for data check
 						ckdata0_0[data_cnt0-1] = data_cnt0-1;
+						//printf("write data %d is %d\r\n", i, ckdata0_0[data_cnt0-1]);
 						//the last data byte
 						if(data_cnt0 == amount0)
 						{
+							//while((AlI2c_Status(i2c) & BIT_MST_ACTIVITY) != 0);
 							AlI2c_Write(i2c, stop, data_cnt0-1);//last data
 							break;
 						}
 						else
 						{
+							//while((AlI2c_Status(i2c) & BIT_MST_ACTIVITY) != 0);
 							AlI2c_Write(i2c, normal, data_cnt0-1);//tx data
 						}
 					}
@@ -150,14 +153,17 @@ int TEST_I2c_E2prom(I2C_TypeDef *i2c)
 		}
 	}while((rdata0_0 & STOP_DET_UNMASK) == 0);// loop shen STOP_DET not detected
 
+	//while((AlI2c_Status(i2c) & BIT_MST_ACTIVITY) != 0); // until master is completed
 	//RX_FULL detected
 	rdata0_0 = AlI2c_IrqStat(i2c); // read intr stat
+	printf("rdata0_0 is %x", rdata0_0 & RX_FULL_UNMASK);
 	if((rdata0_0 & RX_FULL_UNMASK) != 0)
 	{
 		//read 2 data from rx-fifo
 		for(int i = 0; i < amount0; i++)
 		{
 			ckdata0_1[index0] = AlI2c_Read(i2c); // read rx-fifo data
+			printf("rd data %d is %d\r\n", index0, ckdata0_1[index0]);
 			index0++;
 		}
 	}
@@ -207,7 +213,7 @@ int iic_test(void)
     {
     	printf("Read and write data are the same.\r\n");
 		printf("PASS: test success!\r\n");
-    	while(1);
+    	//while(1);
     }
 
 }

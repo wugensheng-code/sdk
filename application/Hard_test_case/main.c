@@ -13,20 +13,20 @@
 #include "../../../SoC/demosoc/Common/Include/demosoc_xec.h"
 #include "al9000_test.h"
 uint32_t main(){
-	SD_Test();
+	//SD_Test();
 	iic_test();
 	qspi_test();
 	spi_test();
-	dma_test();
-	gbe_test();
-	can_test();
-	timer_test();
-	gpio_test();
+	//dma_test();
+	//gbe_test();
+	//can_test();
+	//timer_test();
+	//gpio_test();
 
 #if __riscv
 	benchmark_test();
 #endif
 
-	plps_test();
-	usb_test();
+	//plps_test();
+	//usb_test();
 }

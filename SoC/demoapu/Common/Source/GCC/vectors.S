@@ -10,7 +10,7 @@ vectors:
 	/* Current EL Synchronous exception with sp0 */
 	.align	7
 	/* store lr(x30) before entry exception */
-	stp	x29, x30, [sp, #-16]!		       
+	stp	x29, x30, [sp, #-16]!
 	bl	_exception_entry
 	bl	do_bad_sync
 	b	exception_exit
@@ -32,9 +32,9 @@ vectors:
 	b	exception_exit
 
 	/* Current EL Error with sp0 */
-	.align	7	
+	.align	7
 	/* store lr(x30) before entry exception */
-	stp	x29, x30, [sp, #-16]!	
+	stp	x29, x30, [sp, #-16]!
 	bl	_exception_entry
 	bl	do_bad_error
 	b	exception_exit
@@ -42,7 +42,7 @@ vectors:
 	/* Current EL (SP_ELx) Synchronous Handler */
 	.align	7
 	/* store lr(x30) before entry exception */
-	stp	x29, x30, [sp, #-16]!		 
+	stp	x29, x30, [sp, #-16]!
 	bl	_exception_entry
 	bl	do_sync_handle
 	b	exception_exit
@@ -56,25 +56,25 @@ vectors:
 	b	exception_exit
 
 	 /* Current EL (SP_ELx) FIQ Handler */
-	.align	7	
+	.align	7
 	/* store lr(x30) before entry exception */
-	stp	x29, x30, [sp, #-16]!	
+	stp	x29, x30, [sp, #-16]!
 	bl	_exception_entry
-	bl	do_fiq
+	bl	do_fiq_handle
 	b	exception_exit
 
 	/* Current EL (SP_ELx) Error Handler */
-	.align	7	
+	.align	7
 	/* store lr(x30) before entry exception */
-	stp	x29, x30, [sp, #-16]!	 
+	stp	x29, x30, [sp, #-16]!
 	bl	_exception_entry
 	bl	do_error
 	b	exception_exit
-	
+
 	/* sync, irq,fiq,error for 64bit and 32bit with sp_lower */
 	/* total: 128 x 8 = 1024 */
 	/* not used */
-	.align 10 
+	.align 10
 
 /* save x0~x30 to sp */
 /* return: x0=sp, x1=esr_eln,x2=elr_eln,(n=1,2,3)*/
