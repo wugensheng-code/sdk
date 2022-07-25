@@ -1,47 +1,9 @@
 #include "demosoc.h"
-#include "nuclei_sdk_soc.h"
-//int32_t AlGpio_iof_config(GPIO_TypeDef* gpio, uint32_t mask, IOF_FUNC func)
-//{
-//    if (__RARELY(gpio == NULL)) {
-//        return -1;
-//    }
-//    switch (func) {
-//        case IOF_SEL_GPIO:
-//            gpio->IOF_EN &= ~mask;
-//            break;
-//        case IOF_SEL_0:
-//            gpio->IOF_SEL &= ~mask;
-//            gpio->IOF_EN |= mask;
-//            break;
-//        case IOF_SEL_1:
-//            gpio->IOF_SEL |= mask;
-//            gpio->IOF_EN |= mask;
-//            break;
-//        default:
-//            break;
-//    }
-//    return 0;
-//}
+#include "al_gpio.h"
 
-//int32_t AlGpio_enable_output(GPIO_TypeDef* gpio, uint32_t mask)
-//{
-//    if (__RARELY(gpio == NULL)) {
-//        return -1;
-//    }
-//    gpio->OUTPUT_EN |= mask;
-//    gpio->INPUT_EN &= ~mask;
-//    return 0;
-//}
 
-//int32_t AlGpio_enable_input(GPIO_TypeDef* gpio, uint32_t mask)
-//{
-//    if (__RARELY(gpio == NULL)) {
-//        return -1;
-//    }
-//    gpio->INPUT_EN |= mask;
-//    gpio->OUTPUT_EN &= ~mask;
-//    return 0;
-//}
+
+
 
 int32_t AlGpio_EnableOutput(GPIO_TypeDef* gpio, uint32_t mask)
 {
@@ -57,23 +19,9 @@ int32_t AlGpio_EnableInput(GPIO_TypeDef* gpio, uint32_t mask)
     if (__RARELY(gpio == NULL)) {
         return -1;
     }
-    gpio->SWPORTA_DDR_CLR |= mask;
+    gpio->SWPORTA_DDR_CLR = mask;
     return 0;
 }
-
-//int32_t AlGpio_write(GPIO_TypeDef* gpio, uint32_t mask, uint32_t value)
-//{
-//    if (__RARELY(gpio == NULL)) {
-//        return -1;
-//    }
-//    // If value != 0, mean set gpio pin high, otherwise set pin low
-//    if (value) {
-//        gpio->OUTPUT_VAL |= (mask);
-//    } else {
-//        gpio->OUTPUT_VAL &= ~(mask);
-//    }
-//    return 0;
-//}
 
 int32_t AlGpio_Write(GPIO_TypeDef* gpio, uint32_t mask, uint32_t value)
 {
@@ -81,14 +29,19 @@ int32_t AlGpio_Write(GPIO_TypeDef* gpio, uint32_t mask, uint32_t value)
         return -1;
     }
     // If value != 0, mean set gpio pin high, otherwise set pin low
-    if (value) {
-        gpio->SWPORTA_DR |= (mask);
-    } else {
-        gpio->SWPORTA_DR_CLR |= (mask);
-    }
+        gpio->SWPORTA_DR |= mask;
+
     return 0;
 }
+int32_t AlGpio_WriteLow(GPIO_TypeDef* gpio, uint32_t mask, uint32_t value)
+{
+    if (__RARELY(gpio == NULL)) {
+        return -1;
+    }
+        gpio->SWPORTA_DR_CLR |= mask;
 
+    return 0;
+}
 //int32_t AlGpio_toggle(GPIO_TypeDef* gpio, uint32_t mask)
 //{
 //    if (__RARELY(gpio == NULL)) {

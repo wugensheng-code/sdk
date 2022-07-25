@@ -142,6 +142,7 @@ void AlI2c_SetTargetAddress(I2C_TypeDef *i2c, uint16_t address);
 void AlI2c_SetSlaveAddress(I2C_TypeDef *i2c, uint16_t address);
 void AlI2c_Write(I2C_TypeDef *i2c, enum i2c_cmd_type type, uint8_t data);
 BOOL AlI2c_IsRxFifoEmpty(I2C_TypeDef *i2c);
+BOOL AlI2c_IsTxFifoEmpty(I2C_TypeDef *i2c);
 uint8_t AlI2c_Read(I2C_TypeDef *i2c);
 void AlI2c_IssueRead(I2C_TypeDef *i2c, enum i2c_cmd_type type);
 void AlI2c_IrqMask(I2C_TypeDef *i2c, uint32_t mask);

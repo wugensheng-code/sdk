@@ -118,7 +118,7 @@ int main(){
 	                     SysTimer_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 0,
 	                     mtimer_irq_handler); /* register system timer interrupt */
 	__enable_irq();
-	setup_timer(); /* initialize timer */
+	//setup_timer(); /* initialize timer */
 	AlCan_SetResetMode(AL_CAN1);
 	AlCan_DeviceDriverBittimeConfiguration(AL_CAN1,rate_5Mbit,AL_TOP0,can_fd);
 	AlCan_TxMode(AL_CAN1,NORMAL);
@@ -141,7 +141,7 @@ int main(){
 		//delay(1200);
 		AlCan_SendMsg(AL_CAN1,tx_buf5,XMIT_PTB_MODE,data_length_64,0x17);
 	//}
-		//AlCan_TestError(AL_CAN0);//if you want to get some debug error information,you can open this
+		AlCan_TestError(AL_CAN0);//if you want to get some debug error information,you can open this
 	}
 #endif
 #if 0

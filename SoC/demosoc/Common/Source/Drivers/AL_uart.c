@@ -463,6 +463,31 @@ int AlUart_ResumeTx(AL_UART_TypeDef *uart)
 	        }
 	    return retval;
 }
+/**********************************************************************/
+
+int AlUart_Enable485(AL_UART_TypeDef *uart)
+{
+	uart ->TCR |=UART_485_ENABLE;
+	return 0;
+}
+/**********************************************************************/
+
+int AlUar_485TxEnable(AL_UART_TypeDef *uart)
+{
+	uart ->DE_EN |=UART_REG_DE_EN;
+	return 0;
+}
+/**********************************************************************/
+
+int AlUart_485RxEnable(AL_UART_TypeDef *uart)
+{
+	uart ->RE_EN |=UART_REG_RE_EN;
+	return 0;
+}
+int AlUart_485Type(AL_UART_TypeDef *uart){
+	uart ->TCR |=UART_485_TYPE1;
+	return 0;
+}
 
 
 
