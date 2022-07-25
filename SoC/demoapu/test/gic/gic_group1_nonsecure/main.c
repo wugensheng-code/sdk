@@ -29,7 +29,7 @@ void generic_timer_irq_handler(void)
 
 	printf("irq handler: generic_timer_irq_handler\n");
 	printf("delay 1s\n");
-	
+
 	irq_happened = 1;
 }
 
@@ -66,7 +66,7 @@ void generic_fiq_specail_handler(void)
 	generic_timer_rate *= 1;
 	generic_timer_reset(generic_timer_rate);
 
-	printf("special irq: generic_fiq_specail_handler \n");
+	printf("special fiq: generic_fiq_specail_handler \n");
 	printf("delay 1s\n");
 
 	fiq_happened = 1;
@@ -95,29 +95,29 @@ void gicv3_init(void)
 int main()
 {
 	printf("\n system initial start\n");
-	
+
 	request_irq(30, generic_timer_irq_handler);
 	request_irq(1023, generic_irq_specail_handler);
 	request_fiq(1023, generic_fiq_specail_handler);
 	request_fiq(30, generic_timer_fiq_handler);
-	
+
 	/* enable irq after all devices are ready */
 	irq_enable();
-	
+
 	printf("system initial complete.\n");
 
 
 	while ((!fiq_happened) && (!irq_happened)) {
 	    ;
 	}
-	
+
 	int sgi_igroup0 = readl_relaxed(GICR_SGI_IGROUPR0);
 	int sgi_igrpmod0 = readl_relaxed(GICR_SGI_IGRPMOD0);
 
-	if (fiq_happened && sgi_igroup0 == 0xffffff && sgi_igrpmod0 == 0)
-		printf("pass \n");
+	if (fiq_happened && sgi_igroup0 == 0xffffffff && sgi_igrpmod0 == 0)
+		printf("pass \n	fiq_happened=%d irq_happened=%d sgi_igroup0=%x sgi_igrpmod0=%x\n", fiq_happened, irq_happened, sgi_igroup0, sgi_igrpmod0);
 	else
-		printf("fail \n");
+		printf("fail \n fiq_happened=%d irq_happened=%d sgi_igroup0=%x sgi_igrpmod0=%x\n", fiq_happened, irq_happened, sgi_igroup0, sgi_igrpmod0);
 
 	return 0;
 }

@@ -120,9 +120,9 @@ int main()
 	}
 
 	if (fiq_happened && sgi_igroup0 == 0 && sgi_igrpmod0 == 0)
-		printf("pass %d %x %x\n", fiq_happened, sgi_igroup0, sgi_igrpmod0);
+		printf("pass \n	fiq_happened=%d irq_happened=%d sgi_igroup0=%x sgi_igrpmod0=%x\n", fiq_happened, irq_happened, sgi_igroup0, sgi_igrpmod0);
 	else
-		printf("fail \n");
+		printf("fail \n fiq_happened=%d irq_happened=%d sgi_igroup0=%x sgi_igrpmod0=%x\n", fiq_happened, irq_happened, sgi_igroup0, sgi_igrpmod0);
 
 	return 0;
 }
