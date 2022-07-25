@@ -23,32 +23,32 @@ int main()
     /*variable init*/
     uint16_t i = 0;
 //    uint8_t wrdata_a[256] = {0};
-    uint8_t rddata_a[256] = {0};
+    uint8_t rddata_a[256];
     /*************** data read (xip space)*************/
-    for(i=0; i<256; i++)
-//    for(i=0; i<30; i++)
+//    for(i=0; i<256; i++)
+    for(i=0; i<30; i++)
     {
     	rddata_a[i] = REG8(QSPI_XIP0_START_ADDR+i);
     }
     // print read data
     printf("xip read datas as follow:\r\n");
-    for(i=0; i<256; i++)
-//	for(i=0; i<30; i++)
+//    for(i=0; i<256; i++)
+	for(i=0; i<30; i++)
 	{
-		printf("%3d",rddata_a[i]); // print write data
+		printf("%d",rddata_a[i]); // print write data
 	}
 	printf("...");
 	printf("\n");
 
     //--------------------data check-------
-//    for(i=0;i<256;i++)
-////    for(i=0; i<30; i++)
-//    if(rddata_a[i] != i)
-//    {
-//    	printf("FAIL: datas are not same!\r\n");
-//    	return -1;
-//    }
-//    printf("PASS: qspi boot mode xip read test success!\r\n");
+////    for(i=0;i<256;i++)
+    for(i=0; i<30; i++)
+    if(rddata_a[i] != i)
+    {
+    	printf("FAIL: datas are not same!\r\n");
+    	return -1;
+    }
+    printf("PASS: qspi boot mode xip read test success!\r\n");
 
     printf("test finish\r\n");
     while(1);

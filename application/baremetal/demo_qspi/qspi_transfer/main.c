@@ -77,7 +77,7 @@ uint32_t flash_wait_wip(void)
     /*cfg QSPI Transmit FIFO Threshold Level*/
 	qspi_txftl_tft(QSPI0, 0); // default
     /*cfg QSPI Transfer start FIFO level.*/
-	qspi_txftl_txfthr(QSPI0, 0); // default
+	qspi_txfifo_start_level_set(QSPI0, 0); // default
 
 	/*en ssi*/
 	dwc_ssi_enable(QSPI0);
@@ -97,7 +97,104 @@ uint32_t flash_wait_wip(void)
 	return statreg1;
 }
 
+uint32_t flash_get_cr(void)
+{
+	uint32_t statreg1 = 0;
+	uint32_t i = 0;
+	// CFG SSIENR
+	/*dis ssi*/
+	dwc_ssi_disable(QSPI0);
+	//-----------------------------------------------------------
+	// program CTRLR0 register
+	// 8-bit data frame, x1 mode, EEPROM read
+	//-----------------------------------------------------------
+	/*cfg QSPI Data Frame Size.*/
+	qspi_dfs(QSPI0, DFS_BYTE); // byte
+	/*Slave Select Toggle disable*/
+	//	qspi_sste_dis(QSPI0);
+	/*cfg SPI Frame Format*/
+	qspi_x1_mode(QSPI0);
+	/*Transfer Mode.*/
+	qspi_tmod_e2prom(QSPI0); // e2prom read
+	//-----------------------------------------------------------
+	// program CTRLR1 register
+	// receive 1 data items
+	//-----------------------------------------------------------
+	qspi_ctrl1_ndf(QSPI0, 0);
+	//-----------------------------------------------------------
+	// program TXFTLR register
+	// start when 1 data items is present in tx fifo
+	//-----------------------------------------------------------
+	/*cfg QSPI Transmit FIFO Threshold Level*/
+	qspi_txftl_tft(QSPI0, 0);			   // default
+										   /*cfg QSPI Transfer start FIFO level.*/
+	qspi_txfifo_start_level_set(QSPI0, 0); // default
 
+	/*en ssi*/
+	dwc_ssi_enable(QSPI0);
+	//-----------------------------------------------------------
+	// read flash status register to check if flash operation complete
+	// sent:
+	// inst(0x): 05 (RDSR)
+	// receive: 1 data items
+	//-----------------------------------------------------------
+
+	qspi_data_transmit(QSPI0, 0x35); // tx read status register cmd
+	/*check status--wait busy returns to idle*/
+	while (!qspi_sr_tfe(QSPI0))
+		; // wait TFE returns to 1
+	while (qspi_sr_busy(QSPI0))
+		; // check busy or idle,wait BUSY returns to 0
+
+	statreg1 = qspi_data_read(QSPI0); // read status register1
+	printf("flash_wait_wip cr:0x%x\r\n", statreg1);
+
+	return statreg1;
+}
+
+void flash_reset()
+{
+	//CFG SSIENR
+	/*dis ssi*/
+	dwc_ssi_disable(QSPI0);
+	//-----------------------------------------------------------
+	//program CTRLR0 register
+	//8-bit data frame, x1 mode, TX only
+	//-----------------------------------------------------------
+	/*cfg QSPI Data Frame Size.*/
+	qspi_dfs(QSPI0,DFS_BYTE);   // byte
+	/*Slave Select Toggle disable*/
+//	qspi_sste_dis(QSPI0);
+	/*cfg SPI Frame Format*/
+	qspi_x1_mode(QSPI0);
+	/*Transfer Mode.*/
+	qspi_tmod_tx(QSPI0); // TX only
+
+	//-----------------------------------------------------------
+    //program TXFTLR register
+    //start when 1 data items is present in tx fifo
+    //-----------------------------------------------------------
+	qspi_txftl_tft(QSPI0, 0); // default
+    /*cfg QSPI Transfer start FIFO level.*/
+	qspi_txfifo_start_level_set(QSPI0, 0); // default
+
+	/*en ssi*/
+	dwc_ssi_enable(QSPI0);
+
+	//-----------------------------------------------------------
+	//sent:
+	//inst(0x): 06 (WREN)
+	//-----------------------------------------------------------
+	qspi_data_transmit(QSPI0,CMD_RESET); // tx wren cmd
+	/*check status--wait busy returns to idle*/
+	while(!qspi_sr_tfe(QSPI0)); // wait TFE returns to 1
+	while(qspi_sr_busy(QSPI0));  // check busy or idle,wait BUSY returns to 0
+
+	//qspi_data_transmit(QSPI0,0x99); // tx wren cmd
+		/*check status--wait busy returns to idle*/
+	//while(!qspi_sr_tfe(QSPI0)); // wait TFE returns to 1
+	//while(qspi_sr_busy(QSPI0));  // check busy or idle,wait BUSY returns to 0
+}
 
 /* main */
 int main()
@@ -106,8 +203,9 @@ int main()
     printf("test start\r\n");
     /*variable init*/
     uint16_t i = 0;
-    uint8_t wrdata_a[256] = {0};
-    uint8_t rddata_a[256] = {0};
+    uint8_t wrdata_a[256];
+    uint8_t rddata_a[256];
+	uint32_t tempcr = 0;
     for(i=0; i<256; i++)
     {
     	wrdata_a[i] = i;
@@ -177,12 +275,25 @@ int main()
 	if(flash_id != S25FL256S_ID)
 	{
 		printf("FAIL: flash ID check not ok!\r\n");
-		return -1;
+		flash_reset();
+		dwc_ssi_disable(QSPI0);
+		qspi_dfs(QSPI0,DFS_BYTE);
+		qspi_x1_mode(QSPI0);
+		qspi_tmod_e2prom(QSPI0);
+		qspi_ctrl1_ndf(QSPI0, 2); // receive 2+1 data items
+		qspi_rxftl_cfg(QSPI0,0x3F);
+		qspi_ser(QSPI0,SER_SS0_EN);
+		qspi_sckdiv_cfg(QSPI0, 0x2);
+		dwc_ssi_enable(QSPI0);
+		flash_id = SReadID();
+		printf("flash_id= 0x%08x\r\n",flash_id);
+		//return -1;
 	}
 	else
 	{
 		printf("PASS: flash ID check ok!\r\n");
 	}
+	tempcr = flash_get_cr();
 //	/******************** check flash status(WIP)*********************/
 //	flash_wait_wip();
     /***************************************************************/
@@ -215,7 +326,7 @@ int main()
     /*cfg QSPI Transmit FIFO Threshold Level*/
 	qspi_txftl_tft(QSPI0, 0); // default
     /*cfg QSPI Transfer start FIFO level.*/
-	qspi_txftl_txfthr(QSPI0, 0); // default
+	qspi_txfifo_start_level_set(QSPI0, 0); // default
 
 	//-----------------------------------------------------------
 	//program SSIENR register
@@ -271,7 +382,7 @@ int main()
     //-----------------------------------------------------------
 	qspi_txftl_tft(QSPI0, 0); // default
     /*cfg QSPI Transfer start FIFO level.*/
-	qspi_txftl_txfthr(QSPI0, 0); // default
+	qspi_txfifo_start_level_set(QSPI0, 0); // default
 
 	/*en ssi*/
 	dwc_ssi_enable(QSPI0);
@@ -295,8 +406,8 @@ int main()
     /*cfg QSPI Transmit FIFO Threshold Level*/
 	qspi_txftl_tft(QSPI0, 0); // default
     /*cfg QSPI Transfer start FIFO level.*/
-//	qspi_txftl_txfthr(QSPI0, 0xFF); // 256 start data--FIFO MAX level=64
-	qspi_txftl_txfthr(QSPI0, 0x21); // 30+1+3 start data
+//	qspi_txfifo_start_level_set(QSPI0, 0xFF); // 256 start data--FIFO MAX level=64
+	qspi_txfifo_start_level_set(QSPI0, 0x21); // 30+1+3 start data
 	/*en ssi*/
 	dwc_ssi_enable(QSPI0);
 
@@ -361,7 +472,7 @@ int main()
     //start when 4 data items is present in tx fifo: 1 inst + 3 addr
     //-----------------------------------------------------------
     /*cfg QSPI Transfer start FIFO level.*/
-	qspi_txftl_txfthr(QSPI0, 3); // start data tx at 4th data
+	qspi_txfifo_start_level_set(QSPI0, 3); // start data tx at 4th data
 
 	/*en ssi*/
 	dwc_ssi_enable(QSPI0);
@@ -452,7 +563,7 @@ int main()
     /*cfg QSPI Transmit FIFO Threshold Level*/
 	qspi_txftl_tft(QSPI0, 0); // default
     /*cfg QSPI Transfer start FIFO level.*/
-	qspi_txftl_txfthr(QSPI0, 0x1); // 2 start data
+	qspi_txfifo_start_level_set(QSPI0, 0x1); // 2 start data
 	//-----------------------------------------------------------
 	//program SER register
 	//choose ss_0_n
@@ -476,11 +587,11 @@ int main()
 	qspi_spictrlr0_inst_l(QSPI0, 0x02); //8-bit inst
 	qspi_spictrlr0_wait_cycles(QSPI0, 0x8); //8 dummy cycles
 	qspi_spictrlr0_xip_dfs_hc(QSPI0, XIP_DFS_HC_DIS);//xip data-frame-size not hardcode
-	qspi_spictrlr0_xip_inst_en(QSPI0, XIP_INST_DIS); // xip inst phase disable
+	qspi_spictrlr0_xip_inst_en(QSPI0, XIP_INST_DISABLE); // xip inst phase disable
 	qspi_spictrlr0_xip_cont_xfer_en(QSPI0, XIP_CONT_XFER_DIS);//disable continuous transfer in XIP mode
 	qspi_spictrlr0_xip_mbl(QSPI0, XIP_MBL_4); //xip4-bit mode bit length
-	qspi_spictrlr0_xip_prefetch_en(QSPI0, XIP_PREFETCH_DIS); // xip prefetch disable
-	qspi_spictrlr0_clk_stretch_en(QSPI0, CLK_STRETCH_DIS); // clk stretch dis
+	qspi_spictrlr0_xip_prefetch_en(QSPI0, XIP_PREFETCH_DISABLE); // xip prefetch disable
+	qspi_spictrlr0_clk_stretch_en(QSPI0, CLK_STRETCH_DISABLE); // clk stretch dis
 
 	//-----------------------------------------------------------
 	//program SSIENR register
@@ -561,7 +672,7 @@ int main()
 	//-----------------------------------------------------------
 	qspi_txftl_tft(QSPI0, 0); // default
 	/*cfg QSPI Transfer start FIFO level.*/
-	qspi_txftl_txfthr(QSPI0, 0); // 1 start data
+	qspi_txfifo_start_level_set(QSPI0, 0); // 1 start data
 	//-----------------------------------------------------------
 	//program BAUDR register
 	//divided by 4
@@ -590,7 +701,7 @@ int main()
 	/*cfg QSPI Transmit FIFO Threshold Level*/
 	qspi_txftl_tft(QSPI0, 0); // default
 	/*cfg QSPI Transfer start FIFO level.*/
-	qspi_txftl_txfthr(QSPI0, 0x2); // 3 start data
+	qspi_txfifo_start_level_set(QSPI0, 0x2); // 3 start data
 	/*en ssi*/
 	dwc_ssi_enable(QSPI0);
 	//-----------------------------------------------------------
@@ -600,7 +711,7 @@ int main()
 	//-----------------------------------------------------------
 	qspi_data_transmit(QSPI0,CMD_WRR); // write register cmd
 	qspi_data_transmit(QSPI0,0x02); // write status register
-	qspi_data_transmit(QSPI0,0x02); // QE,write configuration register-quad=1
+	qspi_data_transmit(QSPI0,(tempcr | 0x2)); // QE,write configuration register-quad=1
 	/*check status--wait busy returns to idle*/
 	while(!qspi_sr_tfe(QSPI0)); // wait TFE returns to 1
 	while(qspi_sr_busy(QSPI0));  // check busy or idle,wait BUSY returns to 0
@@ -638,7 +749,7 @@ int main()
 	/*cfg QSPI Transmit FIFO Threshold Level*/
 	qspi_txftl_tft(QSPI0, 0); // default
 	/*cfg QSPI Transfer start FIFO level.*/
-	qspi_txftl_txfthr(QSPI0, 0x1); // 2 start data
+	qspi_txfifo_start_level_set(QSPI0, 0x1); // 2 start data
 
 	//-----------------------------------------------------------
 	//program SPI_CTRLR0 register
@@ -651,11 +762,11 @@ int main()
 	qspi_spictrlr0_inst_l(QSPI0, 0x02); //8-bit inst
 	qspi_spictrlr0_wait_cycles(QSPI0, 0x8); //8 dummy cycles(1 byte)
 	qspi_spictrlr0_xip_dfs_hc(QSPI0, XIP_DFS_HC_DIS);//xip data-frame-size not hardcode
-	qspi_spictrlr0_xip_inst_en(QSPI0, XIP_INST_DIS); // xip inst phase disable
+	qspi_spictrlr0_xip_inst_en(QSPI0, XIP_INST_DISABLE); // xip inst phase disable
 	qspi_spictrlr0_xip_cont_xfer_en(QSPI0, XIP_CONT_XFER_DIS);//disable continuous transfer in XIP mode
 	qspi_spictrlr0_xip_mbl(QSPI0, XIP_MBL_4); //xip 4-bit mode bit length
-	qspi_spictrlr0_xip_prefetch_en(QSPI0, XIP_PREFETCH_DIS); // xip prefetch disable
-	qspi_spictrlr0_clk_stretch_en(QSPI0, CLK_STRETCH_DIS); // clk stretch dis
+	qspi_spictrlr0_xip_prefetch_en(QSPI0, XIP_PREFETCH_DISABLE); // xip prefetch disable
+	qspi_spictrlr0_clk_stretch_en(QSPI0, CLK_STRETCH_DISABLE); // clk stretch dis
 	//-----------------------------------------------------------
 	//program SSIENR register
 	//enable qspi
