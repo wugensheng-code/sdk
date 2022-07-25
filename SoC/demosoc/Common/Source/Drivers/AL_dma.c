@@ -598,20 +598,20 @@ int AlDma_SetChannelConfig(DMA_Channel_TypeDef *Channelx)
 		Channelx ->CTL_L.SRC_GATHER_EN  	= DISABLE;
 		Channelx ->CTL_L.DST_SCATTER_EN 	= DISABLE;
 		Channelx ->CTL_L.TT_FC      		= MEM2MEM ;
-		Channelx ->CTL_L.DMS			= DMS_master1;
-		Channelx ->CTL_L.SMS			= SMS_master1;
+		Channelx ->CTL_L.DMS				= DMS_master1;
+		Channelx ->CTL_L.SMS				= SMS_master1;
 		Channelx ->CTL_H.BLOCK_TS       	= 5;
 		Channelx ->CTL_H.DONE           	= ENABLE;
 
          //Set the config register
-		Channelx ->CFG_L.CH_PRIOR 		= Channel_priority_0;
-		Channelx ->CFG_L.CH_SUSP  		= DISABLE;
+		Channelx ->CFG_L.CH_PRIOR 			= Channel_priority_0;
+		Channelx ->CFG_L.CH_SUSP  			= DISABLE;
 		Channelx ->CFG_L.HS_SEL_DST     	= Hardware_handshaking;
 		Channelx ->CFG_L.HS_SEL_SRC     	= Hardware_handshaking;
 		Channelx ->CFG_L.DST_HS_POL     	= ACTIVE_HIGH;
 		Channelx ->CFG_L.SRC_HS_POL     	= ACTIVE_HIGH;
-		Channelx ->CFG_L.RELOAD_SRC		= DISABLE;
-		Channelx ->CFG_L.RELOAD_DST		= DISABLE;
+		Channelx ->CFG_L.RELOAD_SRC			= DISABLE;
+		Channelx ->CFG_L.RELOAD_DST			= DISABLE;
 
 		Channelx ->CFG_H.FCMODE         	= fc_mode_0;
 		Channelx ->CFG_H.FIFO_MODE      	= FIFO_MODE_0;

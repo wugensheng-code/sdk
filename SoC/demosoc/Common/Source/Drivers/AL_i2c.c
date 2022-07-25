@@ -192,7 +192,21 @@ BOOL AlI2c_IsRxFifoEmpty(I2C_TypeDef *i2c)
     	retval = false;
     return retval;
 }
-
+/*!
+    \brief 	This function returns whether the receive FIFO is empty or not.
+    \param[in]  i2c: struct of I2C
+    \param[out] true-- the receive FIFO is empty;false-- the receive FIFO is not empty
+    \retval
+*/
+BOOL AlI2c_IsTxFifoEmpty(I2C_TypeDef *i2c)
+{
+	BOOL retval;
+    if(i2c->IC_STATUS.BITS.TFE == 0)
+    	retval = true;
+    else
+    	retval = false;
+    return retval;
+}
 /*!
     \brief 	This function reads a single byte from the I2C receive FIFO.
     \param[in]  i2c: struct of I2C

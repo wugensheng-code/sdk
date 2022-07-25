@@ -300,7 +300,16 @@ Receiver FIFO Error bit.
 /*******************  Bit definition for UART_REG_TFL register  ********************/
 /*******************  Bit definition for UART_REG_RFL register  ********************/
 /*******************  Bit definition for UART_REG_CPR register  ********************/
- 
+
+ /*
+TX-RX Mode Enable.
+ */
+#define UART_REG_DE_EN   BIT(0)
+#define UART_REG_RE_EN   BIT(0)
+#define UART_485_ENABLE		BIT(0)
+#define UART_485_TYPE0
+#define UART_485_TYPE1		BIT(3)
+#define UART_485_TYPE2
 typedef enum AL_uart_stop_bit {
     AL_UART_STOP_BIT_1 = 0,
     AL_UART_STOP_BIT_1p5 = 1,

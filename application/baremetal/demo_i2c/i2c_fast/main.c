@@ -38,7 +38,7 @@ int i2c_master_tx(I2C_TypeDef *master,I2C_TypeDef *slave)
 	AlI2c_Disable(slave);
 //	AlI2c_Clock_Setup(slave, I2C_CLOCK);
 	AlI2c_SetSpeedMode(slave, I2c_speed_fast); // 400Kb/s
-	AlI2c_SetSlaveAddressMode(slave, I2c_7bit_address); // 7-bit
+	AlI2c_SetSlaveAddressMode(slave, I2c_10bit_address); // 7-bit
 	AlI2c_EnableSlave(slave); //slave
 	AlI2c_SetSlaveAddress(slave,SLAVE_ADDRESS);
 	AlI2c_Enable(slave);
@@ -104,7 +104,7 @@ int i2c_master_tx(I2C_TypeDef *master,I2C_TypeDef *slave)
 	return 0;
 }
 
-#if 0
+#if 1
 /*
 * master receiver, slave transmitter
 */

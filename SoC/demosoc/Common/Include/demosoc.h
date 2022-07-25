@@ -776,14 +776,21 @@ typedef struct{
 	volatile uint32_t LSR;		//0X14
 	volatile uint32_t MSR;		//0X18
 	volatile uint32_t SCR;		//0x1c
-	volatile uint32_t reserved_reg1[20];  //0x20-0x70
+	volatile uint32_t LPDLL;	//0x20
+	volatile uint32_t LPDLH;	//0x24
+	volatile uint32_t reserved_reg0[2];  //0x28-0x30
+	volatile uint32_t reserved_reg1[16];  //0x20-0x70
 	volatile uint32_t FAR;		//0x70
 	volatile uint32_t TFR;		//0x74
 	volatile uint32_t RFW;		//0x78
 	volatile uint32_t USR;		//0x7c
 	volatile uint32_t TFL;		//0x80
 	volatile uint32_t RFL;		//0x84
-	volatile uint32_t resv_reg2[7];
+	volatile uint32_t resv_reg2[9];//0x88
+	volatile uint32_t TCR;
+	volatile uint32_t DE_EN;
+	volatile uint32_t RE_EN;
+	volatile uint32_t TAT;
 	volatile uint32_t HTX;
 	volatile uint32_t DMASA;
 	volatile uint32_t CPR;

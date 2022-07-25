@@ -8,7 +8,6 @@
 
 #include <stdio.h>
 #include "nuclei_sdk_soc.h"
-#include "board_nuclei_fpga_eval.h"
 
 uint8_t amount0;	//byte_data transfer number
 uint32_t rdata0_0;	//
@@ -63,8 +62,6 @@ int i2c_e2prom(I2C_TypeDef *i2c)
 	AlI2c_Spklen(i2c,4);//spike length=4*ic_clk
 	AlI2c_IrqClrAll(i2c);//clear all interrupt
 	AlI2c_Enable(i2c);
-	//dw_dmac_enable(AL_DMAC);
-	//dw_dmac_enableChannel(AL_DMAC,dw_dmac_channel_num_0);
 	//--------------------------------------
 	// master-tx start: to page-write e2prom
 	//--------------------------------------
@@ -76,9 +73,10 @@ int i2c_e2prom(I2C_TypeDef *i2c)
 	AlDma_EnableChannel(AL_DMAC,AL_dmac_channel_num_0);
 	AlI2c_IrqClrAll(i2c);// clr all int
 	//wait MST_ACTIVITY returns to 0
-	do{
+	/*do{
 			rdata0_0 = AlI2c_Status(i2c); // read intr stat
-		}while((AlI2c_Status(i2c) & STOP_DET_UNMASK) == 0); // loop shen STOP_DET not detected
+			printf("rdata0 = %08x\r\n",rdata0_0);
+		}while((AlI2c_Status(i2c) & STOP_DET_UNMASK) == 0); // loop shen STOP_DET not detected*/
 	while((AlI2c_Status(i2c) & BIT_MST_ACTIVITY) != 0); // until master is completed
 	while(AlDma_CheckChannelBusy(AL_DMAC));
 	AlDma_Disable(AL_DMAC);
@@ -159,23 +157,6 @@ int i2c_e2prom(I2C_TypeDef *i2c)
 			AlDma_Enable(AL_DMAC);
 			AlDma_EnableChannel(AL_DMAC,AL_dmac_channel_num_0);
 		}
-
-	/*if((rdata0_0 & RX_FULL_UNMASK) != 0)
-		{
-			//read 2 data from rx-fifo
-			for(int i = 0; i < amount0; i++)
-			{
-				ckdata0_1[index0] = i2c_read(i2c); // read rx-fifo data
-				index0++;
-			}
-		}
-		int i=0;
-		for(i=0;i<amount0;i++)
-		{
-			printf("%3d",ckdata0_1[i]); // print write data
-		}
-		printf("\r\n");
-		*/
 	AlI2c_IrqClrAll(i2c);//clear all interrupt
 	//wait MST_ACTIVITY returns to 0
 	while((AlI2c_Status(i2c) & BIT_MST_ACTIVITY) != 0); // until master is completed
@@ -196,13 +177,13 @@ int main(void)
 {
 	int retval = 0;
 	uint32_t buffer[64];
-	for (volatile uint8_t i = 0 ;i < 100 ; i++)
+	for (volatile uint8_t i = 0 ;i < 64 ; i++)
 		{
 			buffer[i] = 0;
 		}
-
-	write_To_OCM((uint32_t*)buffer,64,(uint32_t*)MEM_BASE1_ADDR);
-	write_To_OCM((uint32_t*)buffer,64,(uint32_t*)MEM_BASE2_ADDR);
+	Enablepinmux1();
+	write_To_OCM((uint32_t *)buffer,64,(uint32_t*)MEM_BASE1_ADDR);
+	write_To_OCM((uint32_t *)buffer,64,(uint32_t*)MEM_BASE2_ADDR);
 	for (volatile uint8_t i = 0 ;i < 16 ; i++)
 		{
 			tx_buf1[i] = i;
@@ -214,5 +195,5 @@ int main(void)
     // poll-driven master-transmitter example
 	write_iic_data(normal,16);
     i2c_e2prom(I2C0);
-    iic_data_cheak(15);
+    iic_data_cheak(16);
 }

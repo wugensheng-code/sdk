@@ -15,7 +15,7 @@
 #else
 	#define BIT_ADDR_7
 #endif
-
+#if 0
 /****************function definition******************/
 /*
 * master transmitter, slave receiver
@@ -67,7 +67,7 @@ int i2c_master_tx(I2C_TypeDef *master,I2C_TypeDef *slave)
 	// transfer, seven bytes are sent from the master device to the
 	// slave device, from 1 to 7.  The transfer is initiated by
 	// writing to the master Tx FIFO.
-	printf("Master sending 7 bytes...\n");
+	printf("Master sending 7 bytes...\r\n");
 	for(i = 1; i <= 7; i++)
 	{
 		if(i == 7)
@@ -85,39 +85,49 @@ int i2c_master_tx(I2C_TypeDef *master,I2C_TypeDef *slave)
 	// error message is printed.
 	//
     i = 0;
-    printf("Slave received bytes: ");
-    while(i++ < 7) {
+    printf("Slave received bytes:\r\n ");
+    while(1) {
         while(AlI2c_IsRxFifoEmpty(slave) == true);
         datum = AlI2c_Read(slave);
-        if(datum != i)
+        /*if(datum != i)
         {
         	printf("\n*** ERROR: expected %d, received %d ***\n", i, datum);
         	return -1;
-        }
-        else
+        }*/
+        //else
         {
-        	printf("0x%02x ", datum);
+        	printf("0x%02x  ", datum);
+        	i++;
+        }
+        if(i == 9){
+        	printf("\n");
+        	i = 0;
         }
     }
     printf("\n");
     printf("\n");
 	return 0;
 }
-
-#if 0
+#endif
+#if 1
 /*
 * master receiver, slave transmitter
 */
 int i2c_master_rx(I2C_TypeDef *master,I2C_TypeDef *slave)
 {
 	int i;
+	uint8_t amount0 =15;
+	uint32_t rdata0_0;	//
 	uint8_t datum;
+	uint8_t data_cnt0 = 0;//record data number has been transfered
+	uint32_t delay_cnt = 0;
+	uint8_t ckdata0_0[64];	// check data array
 	printf("* Example 2: Master Rx/Slave Tx\n");
 	// MASTER DEVICE SETUP
 	AlI2c_Disable(master);
-	AlI2c_Clock_Setup(master, I2C_CLOCK); // scl setup
+	AlI2c_ClockSetup(master, I2C_CLOCK); // scl setup
 	AlI2c_SetSpeedMode(master, I2c_speed_standard); // 100Kb/s
-	AlI2c_SetMasterAddressMode(master, I2c_10bit_address); // 10-bit
+	AlI2c_SetMasterAddressMode(master, I2c_7bit_address); // 10-bit
 	AlI2c_EnableMaster(master); //master
 	// Use the start byte protocol with the target address when
 	// initiating transfer.
@@ -127,7 +137,7 @@ int i2c_master_rx(I2C_TypeDef *master,I2C_TypeDef *slave)
 	// SLAVE DEVICE SETUP
 	AlI2c_Disable(slave);
 	AlI2c_SetSpeedMode(slave, I2c_speed_standard); // 100Kb/s
-	AlI2c_SetMasterAddressMode(slave, I2c_10bit_address); // 10-bit
+	AlI2c_SetMasterAddressMode(slave, I2c_7bit_address); // 7-bit
 	AlI2c_EnableSlave(slave); //slave
 	AlI2c_SetSlaveAddress(slave,SLAVE_ADDRESS);
 	AlI2c_Enable(slave);
@@ -144,8 +154,10 @@ int i2c_master_rx(I2C_TypeDef *master,I2C_TypeDef *slave)
 	// until seven bytes are received.
 	//
 	printf("Master issuing 7 read requests...\n");
-	for(i = 1; i <= 7; i++)
-		i2c_issueRead(master, normal);
+	/*for(i = 1; i <= 7; i++){
+		while(AlI2c_IsRxFifoEmpty(slave) == true);
+	}*/
+	//AlI2c_IssueRead(master, normal);
     // On the slave side, a byte is written to the Tx FIFO each time a
     // read request is received, numbered 1 through 7.  When the master
     // has finished requesting data, the slave device indicates this by
@@ -153,9 +165,14 @@ int i2c_master_rx(I2C_TypeDef *master,I2C_TypeDef *slave)
     //
     printf("Write to slave Tx FIFO...\n");
     printf("Writing... ");
+    AlI2c_IrqMask(slave,RD_REQ_UNMASK);
+    do{
+    	rdata0_0 = AlI2c_IrqStat(slave);
+    }while((rdata0_0 & RD_REQ_UNMASK) == 0);
+
     for(i = 1; i <= 7; i++) {
 //        while(dw_i2c_isRawIrqActive(slave, I2c_irq_rd_req) == false);
-        printf("%d ", i);
+        //printf("%d ", i);
         AlI2c_Write(slave, normal, i);
 //        // clear the read request interrupt
 //        dw_i2c_clearIrq(slave, I2c_irq_rd_req);
@@ -167,26 +184,12 @@ int i2c_master_rx(I2C_TypeDef *master,I2C_TypeDef *slave)
 //    dw_i2c_clearIrq(slave, I2c_irq_rx_done);
 
     printf("Read from master Rx FIFO...\n");
-
+    //rdata0_0 = AlI2c_IrqStat(slave);
+    //while((rdata0_0 & RD_REQ_UNMASK) == 0);
     // The master Rx FIFO should now contain seven bytes which are read
     // and compared to the expected values.  If an unexpected byte is
     // received, an error message is printed.
-    i = 0;
-    printf("Master read bytes: ");
-    while(i++ < 7)
-    {
-        while(i2c_isRxFifoEmpty(master) == true);
-        datum = i2c_read(master);
-        if(datum != i)
-        {
-        	printf("\n*** ERROR: expected %d, received %d ***\n", i, datum);
-        	return -1;
-        }
-        else
-        {
-        	printf("0x%02x ", datum);
-        }
-    }
+    while(AlI2c_IsTxFifoEmpty(slave) == false);
     printf("\n");
     printf("\n");
 	return 0;
@@ -199,11 +202,12 @@ int i2c_master_rx(I2C_TypeDef *master,I2C_TypeDef *slave)
 int main(void)
 {
 	int retval = 0;
+	Enablepinmux1();
     printf("I2C test start\n");
     // poll-driven master-transmitter example
-    retval |= i2c_master_tx(I2C0, I2C1);
+    //retval |= i2c_master_tx(I2C0, I2C1);
     // poll-driven master-receiver example
-//    retval |= i2c_master_rx(I2C0, I2C1);
+    retval |= i2c_master_rx(I2C0, I2C1);
     // interrupt-driven master-transmitter example
 //    dwe_i2c_irq_master_gen_call(master, slave);
     // interrupt-driven master back-to-back example
