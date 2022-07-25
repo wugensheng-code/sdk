@@ -37,12 +37,12 @@ uint32_t SReadID(void)
 	//receive: 3 data items
 	//-----------------------------------------------------------
 	uint32_t temp = 0;
-	spi_data_transmit(SPI0,CMD_RDID); // tx read id cmd
-	while(!spi_sr_tfe(SPI0));
-	while(spi_sr_busy(SPI0));  // check busy or idle,wait BUSY returns to 0
-	temp |= spi_data_read(SPI0);
-	temp |= spi_data_read(SPI0)<<8;
-	temp |= spi_data_read(SPI0)<<16;
+	spi_data_transmit(SPI1,CMD_RDID); // tx read id cmd
+	while(!spi_sr_tfe(SPI1));
+	while(spi_sr_busy(SPI1));  // check busy or idle,wait BUSY returns to 0
+	temp |= spi_data_read(SPI1);
+	temp |= spi_data_read(SPI1)<<8;
+	temp |= spi_data_read(SPI1)<<16;
 	return temp;
 }
 
@@ -58,33 +58,33 @@ uint32_t flash_wait_wip(void)
 	uint32_t statreg1 = 0;
 	//CFG SSIENR
 	/*dis ssi*/
-	spi_dwc_ssi_disable(SPI0);
+	spi_dwc_ssi_disable(SPI1);
 	//-----------------------------------------------------------
 	//program CTRLR0 register
 	//8-bit data frame, x1 mode, EEPROM read
 	//-----------------------------------------------------------
 	/*cfg SPI Data Frame Size.*/
-	spi_dfs(SPI0,SPI_DFS_BYTE);   // byte
+	spi_dfs(SPI1,SPI_DFS_BYTE);   // byte
 	/*Slave Select Toggle disable*/
-	spi_sste_dis(SPI0);
+	spi_sste_dis(SPI1);
 	/*cfg SPI Frame Format*/
-	spi_x1_mode(SPI0);
+	spi_x1_mode(SPI1);
 	/*Transfer Mode.*/
-	spi_tmod_e2prom(SPI0); // e2prom read
+	spi_tmod_e2prom(SPI1); // e2prom read
 	//-----------------------------------------------------------
 	//program CTRLR1 register
 	//receive 1 data items
 	//-----------------------------------------------------------
-	spi_ctrl1_ndf(SPI0, 0);
+	spi_ctrl1_ndf(SPI1, 0);
 	//-----------------------------------------------------------
     //program TXFTLR register
     //start when 1 data items is present in tx fifo
     //-----------------------------------------------------------
     /*cfg SPI Transmit FIFO Threshold Level*/
-	spi_txftl_tft(SPI0, 0); // default
+	spi_txftl_tft(SPI1, 0); // default
 
 	/*en ssi*/
-	spi_dwc_ssi_enable(SPI0);
+	spi_dwc_ssi_enable(SPI1);
 	//-----------------------------------------------------------
 	//read flash status register to check if flash operation complete
 	//sent:
@@ -92,11 +92,11 @@ uint32_t flash_wait_wip(void)
 	//receive: 1 data items
 	//-----------------------------------------------------------
 	do{
-	spi_data_transmit(SPI0,CMD_RDSR); // tx read status register cmd
+	spi_data_transmit(SPI1,CMD_RDSR); // tx read status register cmd
 	/*check status--wait busy returns to idle*/
-	while(!spi_sr_tfe(SPI0)); // wait TFE returns to 1
-	while(spi_sr_busy(SPI0));  // check busy or idle,wait BUSY returns to 0
-	statreg1 = spi_data_read(SPI0); // read status register1
+	while(!spi_sr_tfe(SPI1)); // wait TFE returns to 1
+	while(spi_sr_busy(SPI1));  // check busy or idle,wait BUSY returns to 0
+	statreg1 = spi_data_read(SPI1); // read status register1
 	}while(statreg1 & SR1_WIP); // check if flash operation complete
 	return statreg1;
 }
@@ -115,10 +115,10 @@ int spi_test()
     /*variable init*/
     uint16_t i = 0;
 	__attribute__ ((aligned(4)));
-    uint32_t wrdata_a[256] = {0};
-    uint32_t rddata_a[256] = {0};
+    uint32_t wrdata_a[128] = {0};
+    uint32_t rddata_a[128] = {0};
 	__attribute__ ((packed));
-    for(i=0; i<256; i++)
+    for(i=0; i<128; i++)
     {
     	wrdata_a[i] = i;
     }
@@ -131,52 +131,52 @@ int spi_test()
 	uint32_t flash_id = 0;
 	//CFG SSIENR
 	/*dis ssi*/
-	spi_dwc_ssi_disable(SPI0);
+	spi_dwc_ssi_disable(SPI1);
 
 	//-----------------------------------------------------------
 	//program CTRLR0 register
 	//8-bit data frame, x1 mode, EEPROM read
 	//-----------------------------------------------------------
 	/*cfg SPI Data Frame Size.*/
-	spi_dfs(SPI0,SPI_DFS_BYTE);   // byte
+	spi_dfs(SPI1,SPI_DFS_BYTE);   // byte
 	/*Slave Select Toggle disable*/
-	spi_sste_dis(SPI0);
+	spi_sste_dis(SPI1);
 	/*cfg SPI Frame Format*/
-	spi_x1_mode(SPI0);
+	spi_x1_mode(SPI1);
 	/*Transfer Mode.*/
-	spi_tmod_e2prom(SPI0); // EEPROM read
+	spi_tmod_e2prom(SPI1); // EEPROM read
 
 	//-----------------------------------------------------------
     //program TXFTLR register
     //start when 1 data items is present in tx fifo
     //-----------------------------------------------------------
     /*cfg SPI Transmit FIFO Threshold Level*/
-	spi_txftl_tft(SPI0, 0); // default
+	spi_txftl_tft(SPI1, 0); // default
 	//-----------------------------------------------------------
 	//program CTRLR1 register
 	//receive 3 data items
 	//-----------------------------------------------------------
-	spi_ctrl1_ndf(SPI0, 2); // receive 2+1 data items
+	spi_ctrl1_ndf(SPI1, 2); // receive 2+1 data items
 
 	//-----------------------------------------------------------
 	//program SER register
 	//choose ss_0_n
 	//-----------------------------------------------------------
-	spi_ser(SPI0,SER_SS0_EN); // choose ss0--same to emulation platform.
+	spi_ser(SPI1,SER_SS0_EN); // choose ss0--same to emulation platform.
 
 	//-----------------------------------------------------------
 	//program BAUDR register
 	//divided by 30 --(30 from design)
 	//-----------------------------------------------------------
 	/*cfg SPI Clock Divider.*/
-	spi_sckdiv_cfg(SPI0, 0x1E);  // divided by 30.
+	spi_sckdiv_cfg(SPI1, 0x28);  // divided by 40.
 
 	//-----------------------------------------------------------
 	//program SSIENR register
 	//enable spi
 	//-----------------------------------------------------------
 	/*en ssi*/
-	spi_dwc_ssi_enable(SPI0);
+	spi_dwc_ssi_enable(SPI1);
 
 	//-----------------------------------------------------------
 	//sent:
@@ -203,42 +203,42 @@ int spi_test()
 #ifdef FLASH_ERASE_WRITE
 	//CFG SSIENR
 	/*dis ssi*/
-	spi_dwc_ssi_disable(SPI0);
+	spi_dwc_ssi_disable(SPI1);
 
 	//-----------------------------------------------------------
 	//program CTRLR0 register
 	//8-bit data frame, x1 mode, TX only
 	//-----------------------------------------------------------
 	/*cfg SPI Data Frame Size.*/
-	spi_dfs(SPI0,SPI_DFS_BYTE);   // byte
+	spi_dfs(SPI1,SPI_DFS_BYTE);   // byte
 	/*Slave Select Toggle disable*/
-	spi_sste_dis(SPI0);
+	spi_sste_dis(SPI1);
 	/*cfg SPI Frame Format*/
-	spi_x1_mode(SPI0);
+	spi_x1_mode(SPI1);
 	/*Transfer Mode.*/
-	spi_tmod_tx(SPI0); // TX only
+	spi_tmod_tx(SPI1); // TX only
 	//-----------------------------------------------------------
     //program TXFTLR register
     //start when 1 data items is present in tx fifo
     //-----------------------------------------------------------
     /*cfg SPI Transmit FIFO Threshold Level*/
-	spi_txftl_tft(SPI0, 0); // default
+	spi_txftl_tft(SPI1, 0); // default
 
 	//-----------------------------------------------------------
 	//program SSIENR register
 	//enable spi
 	//-----------------------------------------------------------
 	/*en ssi*/
-	spi_dwc_ssi_enable(SPI0);
+	spi_dwc_ssi_enable(SPI1);
 
 	//-----------------------------------------------------------
 	//sent:
 	//inst(0x): 06 (WREN)
 	//-----------------------------------------------------------
-	spi_data_transmit(SPI0,CMD_WREN); // tx read id cmd
+	spi_data_transmit(SPI1,CMD_WREN); // tx read id cmd
 	/*check status--wait busy returns to idle*/
-	while(!spi_sr_tfe(SPI0)); // wait TFE returns to 1
-	while(spi_sr_busy(SPI0));  // check busyl or idle,wait BUSY returns to 0
+	while(!spi_sr_tfe(SPI1)); // wait TFE returns to 1
+	while(spi_sr_busy(SPI1));  // check busyl or idle,wait BUSY returns to 0
 	//-----------------------------------------------------------
 	//The Chip Erase (CE) command is used to erase all the data of the chip.
 	//sent:
@@ -246,17 +246,17 @@ int spi_test()
 	//inst(0x): D8 (sector erase)
 	//-----------------------------------------------------------
 	//chip erase
-//	spi_data_transmit(SPI0,CMD_CHIP_ERASE); // tx chip erase cmd
+//	spi_data_transmit(SPI1,CMD_CHIP_ERASE); // tx chip erase cmd
 
 	//sector erase
-	spi_data_transmit(SPI0,CMD_SECTOR_ERASE); // tx sector erase cmd
-	spi_data_transmit(SPI0,0x00); // tx addr[23:16]
-	spi_data_transmit(SPI0,0x00); // tx addr[15:8]
-	spi_data_transmit(SPI0,0x00); // tx addr[7:0]
+	spi_data_transmit(SPI1,CMD_SECTOR_ERASE); // tx sector erase cmd
+	spi_data_transmit(SPI1,0x00); // tx addr[23:16]
+	spi_data_transmit(SPI1,0x00); // tx addr[15:8]
+	spi_data_transmit(SPI1,0x00); // tx addr[7:0]
 
 	/*check status--wait busy returns to idle*/
-	while(!spi_sr_tfe(SPI0)); // wait TFE returns to 1
-	while(spi_sr_busy(SPI0));  // check busy or idle,wait BUSY returns to 0
+	while(!spi_sr_tfe(SPI1)); // wait TFE returns to 1
+	while(spi_sr_busy(SPI1));  // check busy or idle,wait BUSY returns to 0
 
 	/******************** check flash status(WIP)*********************/
 	flash_wait_wip();
@@ -265,73 +265,75 @@ int spi_test()
 	/***************************************************************/
 	//CFG SSIENR
 	/*dis ssi*/
-	spi_dwc_ssi_disable(SPI0);
+	spi_dwc_ssi_disable(SPI1);
 	//-----------------------------------------------------------
 	//program CTRLR0 register
 	//8-bit data frame, x1 mode, TX only
 	//-----------------------------------------------------------
 	/*cfg SPI Data Frame Size.*/
-	spi_dfs(SPI0,SPI_DFS_BYTE);   // byte
+	spi_dfs(SPI1,SPI_DFS_BYTE);   // byte
 	/*Slave Select Toggle disable*/
-	spi_sste_dis(SPI0);
+	spi_sste_dis(SPI1);
 	/*cfg SPI Frame Format*/
-	spi_x1_mode(SPI0);
+	spi_x1_mode(SPI1);
 	/*Transfer Mode.*/
-	spi_tmod_tx(SPI0); // TX only
+	spi_tmod_tx(SPI1); // TX only
 
 	//-----------------------------------------------------------
     //program TXFTLR register
     //start when 1 data items is present in tx fifo
     //-----------------------------------------------------------
-	spi_txftl_tft(SPI0, 0); // default
+	spi_txftl_tft(SPI1, 0); // default
 	/*en ssi*/
-	spi_dwc_ssi_enable(SPI0);
+	spi_dwc_ssi_enable(SPI1);
 
 	//-----------------------------------------------------------
 	//sent:
 	//inst(0x): 06 (WREN)
 	//-----------------------------------------------------------
-	spi_data_transmit(SPI0,CMD_WREN); // tx write en cmd
+	spi_data_transmit(SPI1,CMD_WREN); // tx write en cmd
 	/*check status--wait busy returns to idle*/
-	while(!spi_sr_tfe(SPI0)); // wait TFE returns to 1
-	while(spi_sr_busy(SPI0));  // check busy or idle,wait BUSY returns to 0
+	while(!spi_sr_tfe(SPI1)); // wait TFE returns to 1
+	while(spi_sr_busy(SPI1));  // check busy or idle,wait BUSY returns to 0
 
 	//CFG SSIENR
 	/*dis ssi*/
-	spi_dwc_ssi_disable(SPI0);
+	spi_dwc_ssi_disable(SPI1);
 	//-----------------------------------------------------------
     //program TXFTLR register
     //-----------------------------------------------------------
     /*cfg SPI Transmit FIFO Threshold Level*/
-	spi_txftl_tft(SPI0, 0); // default
+	spi_txftl_tft(SPI1, 0); // default
 
 	/*en ssi*/
-	spi_dwc_ssi_enable(SPI0);
+	spi_dwc_ssi_enable(SPI1);
 
 	//-----------------------------------------------------------
-	//write flash: 1 inst + 3 addr + 256 datas
+	//write flash: 1 inst + 3 addr + 128 datas
 	//sent:
 	//inst(0x): 02 (PP)
 	//addr(0x): 00 00 00
-	//data(0x): 256 bytes
+	//data(0x): 128 bytes
 	//-----------------------------------------------------------
-	spi_data_transmit(SPI0,CMD_PP); // tx Page Program cmd
-	spi_data_transmit(SPI0,0x00); // tx addr[23:16]
-	spi_data_transmit(SPI0,0x00); // tx addr[15:8]
-	spi_data_transmit(SPI0,0x00); // tx addr[7:0]
+	spi_data_transmit(SPI1,CMD_PP); // tx Page Program cmd
+	spi_data_transmit(SPI1,0x00); // tx addr[23:16]
+	spi_data_transmit(SPI1,0x00); // tx addr[15:8]
+	spi_data_transmit(SPI1,0x00); // tx addr[7:0]
 
-	//256 bytes
-	for(i=0; i<256; i++)
+	//128 bytes
+	for(i=0; i<128; i++)
 	{
-		while(!spi_sr_tfe(SPI0));
-		spi_data_transmit(SPI0,wrdata_a[i]); // tx data wrdata_a[i]
+		//while(!spi_sr_tfe(SPI1));
+		//while(!((*(uint32_t *)(0xf8405000 + 0x28) & 0x2) == 0x2));
+		while(!spi_sr_tfnf(SPI1));	//loop until tx fifo not full
+		spi_data_transmit(SPI1,wrdata_a[i]); // tx data wrdata_a[i]
 	}
 	/*check status--wait busy returns to idle*/
-	while(!spi_sr_tfe(SPI0)); // wait TFE returns to 1
-	while(spi_sr_busy(SPI0));  // check busy or idle,wait BUSY returns to 0
-	for(i=0; i<256; i++)
+	while(!spi_sr_tfe(SPI1)); // wait TFE returns to 1
+	while(spi_sr_busy(SPI1));  // check busy or idle,wait BUSY returns to 0
+	for(i=0; i<128; i++)
 	{
-		printf("%3d",wrdata_a[i]); // print write data
+		printf("%d\r\n",wrdata_a[i]); // print write data
 	}
 	printf(" \n");
 	printf("flash write finish. \n");
@@ -345,63 +347,64 @@ int spi_test()
 	/*****cfg reg for read******/
 	//CFG SSIENR
 	/*dis ssi*/
-	spi_dwc_ssi_disable(SPI0);
+	spi_dwc_ssi_disable(SPI1);
 	//-----------------------------------------------------------
 	//program CTRLR0 register
 	//8-bit data frame, x1 mode, EEPROM read
 	//-----------------------------------------------------------
 	/*cfg SPI Data Frame Size.*/
-	spi_dfs(SPI0,SPI_DFS_BYTE);   // byte
+	spi_dfs(SPI1,SPI_DFS_BYTE);   // byte
 	/*Slave Select Toggle disable*/
-	spi_sste_dis(SPI0);
+	spi_sste_dis(SPI1);
 	/*cfg SPI Frame Format*/
-	spi_x1_mode(SPI0);
+	spi_x1_mode(SPI1);
 	/*Transfer Mode.*/
-	spi_tmod_e2prom(SPI0); // e2prom read
+	spi_tmod_e2prom(SPI1); // e2prom read
 	//-----------------------------------------------------------
 	//program CTRLR1 register
-	//receive 256 data items
+	//receive 128 data items
 	//-----------------------------------------------------------
-	spi_ctrl1_ndf(SPI0, 0xFF); // receive 256 data items--FIFO MAX level=64
-//	spi_ctrl1_ndf(SPI0, 0x1D); // receive 30 data items
+	spi_ctrl1_ndf(SPI1, 0x7F); // receive 128 data items--FIFO MAX level=64
+//	spi_ctrl1_ndf(SPI1, 0x1D); // receive 30 data items
 
 	/*en ssi*/
-	spi_dwc_ssi_enable(SPI0);
+	spi_dwc_ssi_enable(SPI1);
 
 	//-----------------------------------------------------------
 	//read flash
 	//sent:
 	//inst(0x): 03 (X1 READ)
 	//addr(0x): 00 00 00
-	//receive(0x): 256 data items
+	//receive(0x): 128 data items
 	//-----------------------------------------------------------
-	spi_data_transmit(SPI0,CMD_SREAD); // tx x1 read cmd
-	spi_data_transmit(SPI0,0x00); // tx addr[23:16]
-	spi_data_transmit(SPI0,0x00); // tx addr[15:8]
-	spi_data_transmit(SPI0,0x00); // tx addr[7:0]
+	spi_data_transmit(SPI1,CMD_SREAD); // tx x1 read cmd
+	spi_data_transmit(SPI1,0x00); // tx addr[23:16]
+	spi_data_transmit(SPI1,0x00); // tx addr[15:8]
+	spi_data_transmit(SPI1,0x00); // tx addr[7:0]
 	/*check status--wait busy returns to idle*/
-	while(!spi_sr_tfe(SPI0)); // wait TFE returns to 1
-//	while(spi_sr_busy(SPI0));  // check busy or idle,wait BUSY returns to 0
-	// read 256 bytes
+	while(!spi_sr_tfe(SPI1)); // wait TFE returns to 1
+	while (spi_sr_busy(SPI1));
+//	while(spi_sr_busy(SPI1));  // check busy or idle,wait BUSY returns to 0
+	// read 128 bytes
 	i=0;   // must init i=0; in case of RXFIFO still empty;
 	do{
-		if(spi_sr_rfne(SPI0))  // RXFIFO not empty
+		if(spi_sr_rfne(SPI1))  // RXFIFO not empty
 		{
-			rddata_a[i]= spi_data_read(SPI0);
+			rddata_a[i]= spi_data_read(SPI1);
 			i++;
 		}
-	}while(i<256);
+	}while(i<128);
 
-	for(i=0; i<256; i++)
+	for(i=0; i<128; i++)
 	{
-		printf("%3d",rddata_a[i]); // print write data
+		printf("%d\r\n",rddata_a[i]); // print write data
 	}
 	printf("\n");
 	printf("flash read finish. \n");
 
 	//----------- data check----------
-	// 256 bytes
-	for(i=0; i<256; i++)
+	// 128 bytes
+	for(i=0; i<128; i++)
 	{
 		if(wrdata_a[i] != rddata_a[i])
 		{
