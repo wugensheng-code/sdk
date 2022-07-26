@@ -112,6 +112,10 @@ el1_entry:
 	msr	vbar_el1, x0
 	mov	x0, #3 << 20
 	msr	cpacr_el1, x0			/* Enable FP/SIMD */
+	//enable icache & MMU
+	mrs x0, sctlr_el1
+	orr x0, x0, #(1 << 12)
+	msr sctlr_el1, x0
 	b   main_entry
 
 main_entry:
