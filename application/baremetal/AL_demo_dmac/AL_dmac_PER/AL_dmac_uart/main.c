@@ -33,32 +33,18 @@ void SOC_DMA_AHB_HANDLER(void)
            AlDma_ClearIrq(AL_DMAC);
          }  
 }
-    int main(void){
-	 AlDma_SetChannelConfig(AL_dmac_channel_num_1);
-	 AlDma_SetAddress(AL_dmac_channel_num_1,Dmac_src,MEM_BASE1_ADDR);
-     AlDma_SetAddress(AL_dmac_channel_num_1,Dmac_dst,AL_UART0_BASE);
-	 AlDma_SetAddressInc(AL_dmac_channel_num_1,Dmac_dst,FIX);
-	 //AlDma_SetChannelConfig(AL_dmac_channel_num_1);
-	 AlDma_SetTransferType(AL_dmac_channel_num_1,Dmac_transfer_row1);
-	 AlDma_SetMemPeriphFlowCtl(AL_dmac_channel_num_1,MEM2PER);
-	 AlDma_SetTransWidth(AL_dmac_channel_num_1,Dmac_src_dst,WIDTH_16);
-	 AlDma_SetBlockTransSize(AL_dmac_channel_num_1,50);
-	 AlDma_SetBurstTransLength(AL_dmac_channel_num_1,Dmac_src_dst,AL_DMA_MSIZE_32);
-          volatile uint32_t buffer[128];
-	 for (volatile uint32_t i = 0 ; i < 100 ; i++)
+int main(void){
+     volatile uint32_t buffer[256];
+	 for (volatile uint32_t i = 0 ; i < 256; i++)
 	 {
 		 buffer[i] = i;
 	 }
-	 write_To_OCM((uint32_t*)buffer,128,(uint32_t*)MEM_BASE1_ADDR);
-  	 /*
-	  * AlDma_Enable
-	  */
+	 write_To_OCM((uint32_t*)buffer,256,(uint32_t*)MEM_BASE1_ADDR);
+     Enablepinmux1();
 	 AlUart_SetTxTrigger(AL_UART0,FIFO_1_2full);
 	 AlUart_SetDmaMode(AL_UART0);
+	 AlUart_DmaInit(AL_DMAC_channel_1,uart0,tx,Dmac_transfer_row1,50);
 	 AlDma_Enable(AL_DMAC);
-	 /*
-	  * AlDma_EnableChannel
-	  */
 	 AlDma_EnableChannel(AL_DMAC,AL_dmac_channel_num_1);
 	return 0;
 }
