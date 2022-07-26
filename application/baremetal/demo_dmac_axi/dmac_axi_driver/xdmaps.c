@@ -327,6 +327,12 @@ void XDmaPs_Memcpy4(char *Dst, char *Src)
 	*(Dst + 3) = *(Src + 3);
 }
 
+void XDmaPs_Memcpy2(char *Dst, char *Src)
+{
+	*Dst = *Src;
+	*(Dst + 1) = *(Src + 1);
+}
+
 /****************************************************************************/
 /**
 *
@@ -657,12 +663,13 @@ int XDmaPs_Instr_DMAADDH(char *DmaProg, unsigned Ra, u16 Imm)
 	 *    0 1 0 1 0 1 ra 0
 	 *
 	 *  23 ... 8
-	 *  imm[32:0]
+	 *  imm[16:0]
 	 *
 	 * ra: 0 for SAR, 1 DAR
 	 */
 	*DmaProg = 0X54 | (Ra << 1 & 0x02); // 第一字节
-	*((u16 *)(DmaProg + 1)) = Imm;
+	// *((u16 *)(DmaProg + 1)) = Imm; // APU 会报错
+	XDmaPs_Memcpy2(DmaProg + 1, (char *)&Imm);
 
 	return 3;
 }
@@ -680,7 +687,8 @@ int XDmaPs_Instr_DMAADNH(char *DmaProg, unsigned Ra, u16 Imm)
 	 * ra: 0 for SAR, 1 DAR
 	 */
 	*DmaProg = 0X5C | (Ra << 1 & 0x02); // 第一字节
-	*((u16 *)(DmaProg + 1)) = Imm;
+	// *((u16 *)(DmaProg + 1)) = Imm;
+	XDmaPs_Memcpy2(DmaProg + 1, (char *)&Imm);
 
 	return 3;
 }
