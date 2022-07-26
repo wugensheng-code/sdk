@@ -1,7 +1,7 @@
 #ifndef __ALSOC_APU_DELAY_H__
 #define __ALSOC_APU_DELAY_H__
 
-//#include "type.h"
+#include "type.h"
 
 /**
  * @desc  : Second delay by cpu
