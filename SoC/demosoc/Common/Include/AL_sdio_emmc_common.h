@@ -2,7 +2,7 @@
 #define _AL_SDIO_EMMC_COMMON_H_
 
 #include <stdio.h>
-#include "delay.h"
+#include "../../../../demoapu/Common/Include/delay.h"
 #include "mtimer.h"
 
 #define AL_SUCCESS                    	0L
@@ -19,7 +19,7 @@ typedef unsigned int       u32;
 typedef unsigned long long u64;
 typedef unsigned char      uint8_t;
 typedef unsigned short     uint16_t;
-typedef unsigned int       uint32_t;
+//typedef unsigned int       uint32_t;
 //typedef unsigned long long uint64_t;
 
 extern unsigned reg_read(unsigned long reg_address);
@@ -703,7 +703,9 @@ extern SD_CardInfo SDCardInfo;
 extern volatile DWC_mshc_block_registers* SDIO;
 extern volatile DWC_mshc_block_registers* eMMC;
 extern volatile MtimerParams Mtimer;
-extern u32 CSD_Tab[4], CID_Tab[4], RCA;
+extern uint32_t CSD_Tab[4];
+extern uint32_t CID_Tab[4];
+extern uint32_t RCA;
 
 u32 HostControllerSetup(volatile DWC_mshc_block_registers* ptr);
 u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, int freq);
