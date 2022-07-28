@@ -388,7 +388,7 @@ void do_irq_handle(void)
 
 	/* run irq handler function */
 	void (*p_func)();
-	if (int_id < 32) {
+	if (int_id < Q_MAX_NUM) {
 		p_func = irq_handler_list[int_id];
 	} else {
 		p_func = irq_handler_list[int_id -GICV3_SPECIAL_START + IRQ_MAX_NUM];
@@ -434,7 +434,7 @@ void do_fiq_handle(void)
 	int_id = gic_fiq_get_int_id();
 
 	/* run irq handler function */
-	if (int_id < 32) {
+	if (int_id < Q_MAX_NUM) {
 		p_func = fiq_handler_list[int_id];
 	} else {
 		p_func = fiq_handler_list[int_id - GICV3_SPECIAL_START + IRQ_MAX_NUM];
