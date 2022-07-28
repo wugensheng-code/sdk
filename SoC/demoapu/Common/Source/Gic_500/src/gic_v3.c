@@ -30,7 +30,7 @@
 #define GICV3_SPECIAL_END				(1023)
 
 #define GICV3_SPECIAL_NUM				(GICV3_SPECIAL_END - GICV3_SPECIAL_START +1)
-#define IRQ_MAX_NUM						(256)
+#define IRQ_MAX_NUM					(256)
 
 typedef void (*interrupt_fn)();
 
@@ -434,7 +434,7 @@ void do_fiq_handle(void)
 	int_id = gic_fiq_get_int_id();
 
 	/* run irq handler function */
-	if (int_id < Q_MAX_NUM) {
+	if (int_id < IRQ_MAX_NUM) {
 		p_func = fiq_handler_list[int_id];
 	} else {
 		p_func = fiq_handler_list[int_id - GICV3_SPECIAL_START + IRQ_MAX_NUM];
