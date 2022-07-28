@@ -39,6 +39,18 @@ uint32_t get_cpu_freq()
     return cpu_freq;
 }
 
+void _delay_us(uint32_t count)
+{
+    uint64_t start_mtime, delta_mtime;
+    uint64_t delay_ticks = (SOC_TIMER_FREQ * (uint64_t)count) / 1000000;
+
+    start_mtime = SysTimer_GetLoadValue();
+
+    do {
+        delta_mtime = SysTimer_GetLoadValue() - start_mtime;
+    } while (delta_mtime < delay_ticks);
+}
+
 /**
  * \brief      delay a time in milliseconds
  * \details
@@ -46,7 +58,7 @@ uint32_t get_cpu_freq()
  * \param[in]  count: count in milliseconds
  * \remarks
  */
-void delay_1ms(uint32_t count)
+void _delay_ms(uint32_t count)
 {
     uint64_t start_mtime, delta_mtime;
     uint64_t delay_ticks = (SOC_TIMER_FREQ * (uint64_t)count) / 1000;
@@ -56,6 +68,18 @@ void delay_1ms(uint32_t count)
     do {
         delta_mtime = SysTimer_GetLoadValue() - start_mtime;
     } while (delta_mtime < delay_ticks);
+}
+
+
+
+uint64_t get_SystickTimer(void)
+{
+    return SysTimer->MTIMER;
+}
+
+uint64_t get_MTimerOutValue(uint64_t count)
+{
+    return (SOC_TIMER_FREQ * count) / 1000000;
 }
 
 #ifdef SIMULATION_XLSPIKE

@@ -1,28 +1,26 @@
-#ifndef _AL9000_MTIMER_H_
-#define _AL9000_MTIMER_H_
+#ifndef __MTIMER_H__
+#define __MTIMER_H__
 
 //#include "al_types.h"
+#include <stdint.h>
 
-typedef unsigned int u32;
+//typedef unsigned int uint32_t;
 typedef unsigned long long u64;
-
-#define COREN205_MTIMER_COUNTER64_LOW   (0x68000)
-#define COREN205_MTIMER_COUNTER64_HI    (0x68004)
 
 typedef struct _MtimerParams{
     u64     StartPoint;
     u64     CurPoint;
     u64     TimerOut;
-    u32     IsTimerOut;
+    uint32_t     IsTimerOut;
 }MtimerParams;
 
-u32 Mtimer_Delay(u64 Us);
+uint32_t Mtimer_Delay(u64 Us);
 
-u32 Mtimer_Init(MtimerParams* Mtimer);
-u32 Mtimer_Start(MtimerParams* Mtimer, u64 Us);
-u32 Mtimer_TimerOut(MtimerParams* Mtimer);
-u32 Mtimer_IsPeriod(MtimerParams* Mtimer);
-u32 Mtimer_IsTimerOut(MtimerParams* Mtimer);
+uint32_t Mtimer_Init(MtimerParams* Mtimer);
+uint32_t Mtimer_Start(MtimerParams* Mtimer, u64 Us);
+uint32_t Mtimer_TimerOut(MtimerParams* Mtimer);
+uint32_t Mtimer_IsPeriod(MtimerParams* Mtimer);
+uint32_t Mtimer_IsTimerOut(MtimerParams* Mtimer);
 
 static inline u64 REG64_READ(unsigned long Address)
 {

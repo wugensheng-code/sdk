@@ -22,6 +22,7 @@
  * @param {u64_t} count
  * @return {*}
  */
+
 static void __delay(u64_t count)
 {
 	u64_t tEnd, tCur;
@@ -50,25 +51,34 @@ static u64_t syscnt_get_freq(void)
 	return freq;
 }
 
-
-void _delay_s(u64_t count)
+u64 get_SystickTimer(void)
 {
-    u64_t freq = syscnt_get_freq();	
-    u64_t delay_cnt = (u64_t)(count*freq);
+	return read_sysreg(CNTPCT_EL0);
+}
+
+uint64_t get_MTimerOutValue(uint64_t count)
+{
+	u64_t freq = syscnt_get_freq();
+    return (count*(freq/2000000));
+}
+
+void _delay_us(u64_t count)
+{
+    u64_t freq = syscnt_get_freq();
+    u64_t delay_cnt = (u64_t)(count*(freq/2000000));	//寄存器50MHz实际25MHz
     __delay(delay_cnt);
 }
 
 void _delay_ms(u64_t count)
 {
     u64_t freq = syscnt_get_freq();
-    u64_t delay_cnt = (u64_t)(count*(freq/1000));
+    u64_t delay_cnt = (u64_t)(count*(freq/2000));
     __delay(delay_cnt);
 }
 
-void _delay_us(u64_t count)
+void _delay_s(u64_t count)
 {
-    u64_t freq = syscnt_get_freq();
-    u64_t delay_cnt = (u64_t)(count*(freq/1000000));
+    u64_t freq = syscnt_get_freq();	
+    u64_t delay_cnt = (u64_t)(count*freq/2);
     __delay(delay_cnt);
 }
-

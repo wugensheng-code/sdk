@@ -260,7 +260,7 @@ void Enablepinmux1(void);
 #warning Not supported compiler type
 #endif
 
-#define RTC_FREQ                    2500000
+#define RTC_FREQ                    50000000
 // The TIMER frequency is just the RTC frequency
 #define SOC_TIMER_FREQ              RTC_FREQ
 /* =========================================================================================================================== */
@@ -1637,7 +1637,7 @@ typedef struct {
 #define NUM_GPIO 32
 
 uint32_t get_cpu_freq();
-void delay_1ms(uint32_t count);
+void _delay_ms(uint32_t count);
 void pass_fail_simulation(uint32_t state);
 
 void fsbl_pass_fail_simulation(uint32_t state);

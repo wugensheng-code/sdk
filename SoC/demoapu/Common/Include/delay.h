@@ -3,6 +3,9 @@
 
 #include "type.h"
 
+u64 get_SystickTimer(void);
+uint64_t get_MTimerOutValue(uint64_t count);
+
 /**
  * @desc  : Second delay by cpu
  * @param {u64_t} count
