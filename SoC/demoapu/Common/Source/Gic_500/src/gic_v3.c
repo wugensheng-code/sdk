@@ -388,7 +388,7 @@ void do_irq_handle(void)
 
 	/* run irq handler function */
 	void (*p_func)();
-	if (int_id < Q_MAX_NUM) {
+	if (int_id < IRQ_MAX_NUM) {
 		p_func = irq_handler_list[int_id];
 	} else {
 		p_func = irq_handler_list[int_id -GICV3_SPECIAL_START + IRQ_MAX_NUM];
