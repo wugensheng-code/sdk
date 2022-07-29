@@ -11,6 +11,7 @@
 
 #define FLASH_RDID
 #define FLASH_ERASE
+#define ERASE_VERIFY
 #define FLASH_X1
 #define FLASH_X2
 #define FLASH_X4
@@ -135,8 +136,62 @@ uint32_t flash_wait_wip(void)
 	while(!qspi_sr_tfe(QSPI0)); // wait TFE returns to 1
 	while(qspi_sr_busy(QSPI0));  // check busy or idle,wait BUSY returns to 0
 	statreg1 = qspi_data_read(QSPI0); // read status register1
-	printf("statreg1 is %x\r\n", statreg1);
 	}while(statreg1 & SR1_WIP); // check if flash operation complete
+	return statreg1;
+}
+
+uint32_t flash_get_sr(void)
+{
+	uint32_t statreg1 = 0;
+	uint32_t i = 0;
+	// CFG SSIENR
+	/*dis ssi*/
+	dwc_ssi_disable(QSPI0);
+	//-----------------------------------------------------------
+	// program CTRLR0 register
+	// 8-bit data frame, x1 mode, EEPROM read
+	//-----------------------------------------------------------
+	/*cfg QSPI Data Frame Size.*/
+	qspi_dfs(QSPI0, DFS_BYTE); // byte
+	/*Slave Select Toggle disable*/
+	//	qspi_sste_dis(QSPI0);
+	/*cfg SPI Frame Format*/
+	qspi_x1_mode(QSPI0);
+	/*Transfer Mode.*/
+	qspi_tmod_e2prom(QSPI0); // e2prom read
+	//-----------------------------------------------------------
+	// program CTRLR1 register
+	// receive 1 data items
+	//-----------------------------------------------------------
+	qspi_ctrl1_ndf(QSPI0, 0);
+	//-----------------------------------------------------------
+	// program TXFTLR register
+	// start when 1 data items is present in tx fifo
+	//-----------------------------------------------------------
+	/*cfg QSPI Transmit FIFO Threshold Level*/
+	qspi_txftl_tft(QSPI0, 0);			   // default
+										   /*cfg QSPI Transfer start FIFO level.*/
+	qspi_txfifo_start_level_set(QSPI0, 0); // default
+
+	/*en ssi*/
+	dwc_ssi_enable(QSPI0);
+	//-----------------------------------------------------------
+	// read flash status register to check if flash operation complete
+	// sent:
+	// inst(0x): 05 (RDSR)
+	// receive: 1 data items
+	//-----------------------------------------------------------
+
+	qspi_data_transmit(QSPI0, CMD_RDSR); // tx read status register cmd
+	/*check status--wait busy returns to idle*/
+	while (!qspi_sr_tfe(QSPI0))
+		; // wait TFE returns to 1
+	while (qspi_sr_busy(QSPI0))
+		; // check busy or idle,wait BUSY returns to 0
+
+	statreg1 = qspi_data_read(QSPI0); // read status register1
+	//printf("flash_wait_wip sr:0x%x\r\n", statreg1);
+
 	return statreg1;
 }
 
@@ -190,13 +245,14 @@ uint32_t flash_get_cr(void)
 		; // check busy or idle,wait BUSY returns to 0
 
 	statreg1 = qspi_data_read(QSPI0); // read status register1
-	printf("flash_wait_wip cr:0x%x\r\n", statreg1);
+	//printf("flash_wait_wip cr:0x%x\r\n", statreg1);
 
 	return statreg1;
 }
 
 void flash_reset()
 {
+	uint32_t tempcr = 0;
 	//CFG SSIENR
 	/*dis ssi*/
 	dwc_ssi_disable(QSPI0);
@@ -232,12 +288,33 @@ void flash_reset()
 	/*check status--wait busy returns to idle*/
 	while(!qspi_sr_tfe(QSPI0)); // wait TFE returns to 1
 	while(qspi_sr_busy(QSPI0));  // check busy or idle,wait BUSY returns to 0
-	_delay_ms(10);
 	//qspi_data_transmit(QSPI0,0x99); // tx wren cmd
 		/*check status--wait busy returns to idle*/
 	//while(!qspi_sr_tfe(QSPI0)); // wait TFE returns to 1
 	//while(qspi_sr_busy(QSPI0));  // check busy or idle,wait BUSY returns to 0
+	//for rpu using delay_1ms(us) for delay, for apu using _delay_ms(us),  or not it will compiler failed!
+	delay_1ms(1);	//35us in spec
+	tempcr = flash_get_cr();
+	flash_write_enable();
+	dwc_ssi_disable(QSPI0);
+	//-----------------------------------------------------------
+	//program TXFTLR register
+	//start when 3 data items is present in tx fifo: 1 inst + 2 datas
+	//-----------------------------------------------------------
+	/*cfg QSPI Transmit FIFO Threshold Level*/
+	qspi_txftl_tft(QSPI0, 0); // default
+	/*cfg QSPI Transfer start FIFO level.*/
+	qspi_txfifo_start_level_set(QSPI0, 0x2); // 3 start data
+	/*en ssi*/
+	dwc_ssi_enable(QSPI0);
+	qspi_data_transmit(QSPI0,CMD_WRR);
+	qspi_data_transmit(QSPI0,0x0);		//清空写保护
+	qspi_data_transmit(QSPI0,tempcr);		//写BPNV域
+	while(!qspi_sr_tfe(QSPI0)); // wait TFE returns to 1
+	while(qspi_sr_busy(QSPI0));
+	flash_wait_wip();
 }
+
 
 /* main */
 int main()
@@ -246,13 +323,17 @@ int main()
     printf("test start\r\n");
     /*variable init*/
     uint16_t i = 0;
-	uint32_t tempcr = 0;
     uint8_t wrdata_a[256];
     uint8_t rddata_a[256];
+    uint32_t rddata_tmp;
+    uint32_t rxdata_num;
+    uint32_t tempsr=0;
+    uint32_t tempcr=0;
     for(i=0; i<256; i++)
     {
     	wrdata_a[i] = i;
     }
+
 
 	/******************** flash x1 mode id-check**********************/
 #ifdef FLASH_RDID
@@ -318,7 +399,9 @@ int main()
 	if(flash_id != S25FL256S_ID)
 	{
 		printf("FAIL: flash ID check not ok!\r\n");
-		flash_reset();
+	    flash_reset();
+		tempsr = flash_get_sr();
+		tempcr = flash_get_cr();
 		dwc_ssi_disable(QSPI0);
 		qspi_dfs(QSPI0,DFS_BYTE);
 		qspi_x1_mode(QSPI0);
@@ -329,14 +412,12 @@ int main()
 		qspi_sckdiv_cfg(QSPI0, 0x2);
 		dwc_ssi_enable(QSPI0);
 		flash_id = SReadID();
-		printf("flash_id= 0x%08x\r\n",flash_id);
-		//return -1;
+		printf("flash_id= 0x%x\r\n",flash_id);
 	}
 	else
 	{
 		printf("PASS: flash ID check ok!\r\n");
 	}
-	tempcr = flash_get_cr();
 //	/******************** check flash status(WIP)*********************/
 //	flash_wait_wip();
 #endif
@@ -354,7 +435,15 @@ int main()
 	//inst(0x): 60 (chip erase)
 	//-----------------------------------------------------------
 	//chip erase
-	qspi_data_transmit(QSPI0,CMD_CHIP_ERASE); // tx sector erase cmd
+	flash_wait_wip();
+	flash_write_enable();
+	dwc_ssi_disable(QSPI0);
+	qspi_txfifo_start_level_set(QSPI0, 3); // default
+	dwc_ssi_enable(QSPI0);
+	qspi_data_transmit(QSPI0,0xD8);// tx sector erase cmd
+	qspi_data_transmit(QSPI0,0x00); // tx addr[23:16]
+	qspi_data_transmit(QSPI0,0x00); // tx addr[15:8]
+	qspi_data_transmit(QSPI0,0x00); // tx addr[7:0]
 
 	/*check status--wait busy returns to idle*/
 	while(!qspi_sr_tfe(QSPI0)); // wait TFE returns to 1
@@ -362,7 +451,87 @@ int main()
 
 	/******************** check flash status(WIP)*********************/
 	flash_wait_wip();
+#ifdef ERASE_VERIFY
+	// CFG SSIENR
+	/*dis ssi*/
+	dwc_ssi_disable(QSPI0);
+	//-----------------------------------------------------------
+	// program CTRLR0 register
+	// 32-bit data frame, x1 mode, EEPROM read
+	//-----------------------------------------------------------
+	/*cfg QSPI Data Frame Size.*/
+	qspi_dfs(QSPI0, DFS_WORD); // word
+	/*Slave Select Toggle disable*/
+	//	qspi_sste_dis(QSPI0);
+	/*cfg SPI Frame Format*/
+	qspi_x1_mode(QSPI0);
+	/*Transfer Mode.*/
+	qspi_tmod_e2prom(QSPI0); // e2prom read
+	//-----------------------------------------------------------
+	// program CTRLR1 register
+	// receive 256-bytes data items
+	//-----------------------------------------------------------
+	rxdata_num = 0x40;					   // 64W=256B
+	qspi_ctrl1_ndf(QSPI0, rxdata_num - 1); // 64W=256B
+
+	//-----------------------------------------------------------
+	// program TXFTLR register
+	// start when 1 word data items is present in tx fifo: 1word= 1 inst + 3 addr
+	//-----------------------------------------------------------
+	/*cfg QSPI Transfer start FIFO level.*/
+	qspi_txfifo_start_level_set(QSPI0, 1 - 1); // start data tx after transmit 1 data
+
+	/*en ssi*/
+	dwc_ssi_enable(QSPI0);
+	//-----------------------------------------------------------
+	// read flash
+	// sent:
+	// inst(0x): 03 (X1 READ)
+	// addr(0x): 02 01 00
+	// receive(0x): 256 data items
+	//-----------------------------------------------------------
+	// 1 word
+	qspi_data_transmit(QSPI0, 0x00000000 | CMD_SREAD); // addr[7:0]+addr[15:8]+addr[23:16]+inst
+
+	/*check status--wait busy returns to idle*/
+	while (!qspi_sr_tfe(QSPI0))
+		; // wait TFE returns to 1
+		  //	while(qspi_sr_busy(QSPI0));  // check busy or idle,wait BUSY returns to 0
+
+	// read 256 bytes
+	i = 0; // must init i=0; in case of RXFIFO still empty;
+	do
+	{
+		if (qspi_sr_rfne(QSPI0)) // RXFIFO not empty
+		{
+			rddata_tmp = qspi_data_read(QSPI0);
+			rddata_a[i] = (uint8_t)(rddata_tmp & 0xFF);
+			rddata_a[i + 1] = (uint8_t)((rddata_tmp >> 8) & 0xFF);
+			rddata_a[i + 2] = (uint8_t)((rddata_tmp >> 16) & 0xFF);
+			rddata_a[i + 3] = (uint8_t)((rddata_tmp >> 24) & 0xFF);
+			i += 4;
+		}
+	} while (i < 256);
+
+	for (i = 0; i < 256; i++)
+	{
+		printf("%3d", rddata_a[i]); // print read data
+	}
+	printf("\n");
+	printf("flash X1-mode read finish. \n");
+	//----------- data check----------
+	// 256 bytes
+	for (i = 0; i < 256; i++)
+	{
+		if (0xFF != rddata_a[i])
+		{
+			printf("FAIL: erase is failed!\r\n");
+			return -1;
+		}
+	}
+#endif
 	printf("flash erase finish.\r\n");
+
 #endif
 
 	/***************************************************************/
@@ -410,7 +579,7 @@ int main()
 	for(i=0; i<30; i++)
 	{
 //		printf("0x%x",wrdata_a[i]); // print write data
-		printf("%d",wrdata_a[i]); // print write data
+		printf("%3d",wrdata_a[i]); // print write data
 	}
 	printf("...");
 	printf(" \n");
@@ -617,6 +786,9 @@ int main()
 	/*********************X4 mode enable (QE=1) ********************/
 	/***************************************************************/
 	printf("X4 mode enable\r\n");
+	printf("X4 mode QE=1\r\n");
+	tempcr = flash_get_cr();
+	tempcr |= 0x2;
 	//send WREN
 	flash_write_enable();
 	//CFG SSIENR
@@ -639,7 +811,7 @@ int main()
 	//-----------------------------------------------------------
 	qspi_data_transmit(QSPI0,CMD_WRR); // write register cmd
 	qspi_data_transmit(QSPI0,0x02); // write status register
-	qspi_data_transmit(QSPI0,(tempcr|0x2)); // QE,write configuration register-quad=1
+	qspi_data_transmit(QSPI0,tempcr); // QE,write configuration register-quad=1
 	/*check status--wait busy returns to idle*/
 	while(!qspi_sr_tfe(QSPI0)); // wait TFE returns to 1
 	while(qspi_sr_busy(QSPI0));  // check busy or idle,wait BUSY returns to 0
