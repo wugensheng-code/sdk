@@ -263,7 +263,7 @@ int main(void){
     	    	spi_txftl_tft(SPI_MASTER, 0); // default
     	    	spi_ctrl1_ndf(SPI_MASTER, 2); // receive 2+1 data items
     	    	spi_ser(SPI_MASTER,SER_SS0_EN); // choose ss1 -- for same to simulation code.
-    	    	spi_sckdiv_cfg(SPI_MASTER, 0x80);  // divided by 30.
+    	    	spi_sckdiv_cfg(SPI_MASTER, 70);  // divided by 30.
     	    	spi_dwc_ssi_enable(SPI_MASTER);
     	    	flash_id = SReadID();
     	    		printf("flash_id= 0x%08x\r\n",flash_id); // print flash ID

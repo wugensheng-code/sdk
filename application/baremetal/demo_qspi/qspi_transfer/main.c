@@ -292,7 +292,7 @@ void flash_reset()
 		/*check status--wait busy returns to idle*/
 	//while(!qspi_sr_tfe(QSPI0)); // wait TFE returns to 1
 	//while(qspi_sr_busy(QSPI0));  // check busy or idle,wait BUSY returns to 0
-	delay_1ms(1);	//35us in spec
+	_delay_ms(1);	//35us in spec
 	tempcr = flash_get_cr();
 	flash_write_enable();
 	dwc_ssi_disable(QSPI0);

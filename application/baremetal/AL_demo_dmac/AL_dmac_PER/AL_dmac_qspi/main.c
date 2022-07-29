@@ -306,7 +306,7 @@ void flash_reset()
 	//while(qspi_sr_busy(QSPI0));  // check busy or idle,wait BUSY returns to 0
 
 	//for rpu using delay_1ms(us) for delay, for apu using _delay_ms(us),  or not it will compiler failed!
-	delay_1ms(1);	//35us in spec
+	_delay_ms(1);	//35us in spec
 	tempcr = flash_get_cr();
 	flash_write_enable();
 	dwc_ssi_disable(QSPI0);

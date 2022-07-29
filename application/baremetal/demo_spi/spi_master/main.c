@@ -235,7 +235,7 @@ int main()
 	//divided by 30 --(30 from design)
 	//-----------------------------------------------------------
 	/*cfg SPI Clock Divider.*/
-	spi_sckdiv_cfg(SPI_MASTER, 50);  // divided by 30.0x1e not work ,0x28=40
+	spi_sckdiv_cfg(SPI_MASTER, 70);  // divided by 30.0x1e not work ,0x28=40
 
 	//-----------------------------------------------------------
 	//program SSIENR register
@@ -380,7 +380,7 @@ int main()
 
 
 	flash_wait_wip();
-	delay_1ms(1);
+	_delay_ms(1);
 
 #ifdef FLASH_ERASE_VERIFY
 	/*****cfg reg for read******/
