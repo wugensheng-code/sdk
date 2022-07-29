@@ -617,8 +617,8 @@ int AlDma_SetChannelConfig(DMA_Channel_TypeDef *Channelx)
 		Channelx ->CFG_H.FIFO_MODE      	= FIFO_MODE_0;
 		Channelx ->CFG_H.DS_UPD_EN      	= DISABLE;
 		Channelx ->CFG_H.SS_UPD_EN      	= DISABLE;
-		Channelx ->CFG_H.SRC_PER        	= 0x04;
-		Channelx ->CFG_H.DEST_PER       	= 0x04;
+		Channelx ->CFG_H.SRC_PER        	= 0x00;
+		Channelx ->CFG_H.DEST_PER       	= 0x00;
 
          //set the SAR/DAR registers
 		Channelx ->SAR_L 			= MEM_BASE1_ADDR;
@@ -1771,52 +1771,57 @@ void i2c_dma_rx_enable(I2C_TypeDef *i2c){
 }
 void AlSpi_DmaInit(DMA_Channel_TypeDef *Channelx,enum PER_type PER,enum dma_type type,uint8_t tx_data_level,uint8_t rx_data_level,enum AL_dmac_transfer_type  transfer,uint16_t block_size){
 	 AlDma_SetChannelConfig(Channelx);
-        if(type == tx)
-	{
-	     if(PER == spi0)
-		{
-    	    AlDma_SetAddress(Channelx,Dmac_dst,spi0_data_base_address);
-		    dam_handshake_interfance(Channelx,spi0_tx_hs_interfance);
-		    spi_dma_tx_enable(SPI0);
-		    spi_dma_data_level(SPI0,tx_data_level,rx_data_level);
-		}
-    	  else if(PER == spi1){
-	        AlDma_SetAddress(Channelx,Dmac_dst,spi1_data_base_adderss);
-		    dam_handshake_interfance(Channelx,spi1_tx_hs_interfance);
-		    spi_dma_tx_enable(SPI1);
+	    AlDma_SetChannelConfig(Channelx);
+	    if(PER == spi0){
+	     	if(type == tx){
+	    	    AlDma_SetAddress(Channelx,Dmac_dst,spi0_data_base_address);
+	    	    dam_handshake_interfance(Channelx,spi0_tx_hs_interfance);
+	        	AlDma_SetMemPeriphFlowCtl(Channelx,MEM2PER);
+	    	    AlDma_SetAddressInc(Channelx,Dmac_dst,FIX);
+	    	    spi_dma_tx_enable(SPI0);
+	    	    spi_dma_data_level(SPI0,tx_data_level,rx_data_level);
+	    	}
+	        	else{
+	     	     AlDma_SetAddress(Channelx,Dmac_src,spi0_data_base_address);
+	    	     dam_handshake_interfance(Channelx,spi0_rx_hs_interfance);
+	    	     AlDma_SetMemPeriphFlowCtl(Channelx,PER2MEM);
+	    	     AlDma_SetAddressInc(Channelx,Dmac_src,FIX);
+	    	     spi_dma_rx_enable(SPI0);
+	    	     spi_dma_data_level(SPI0,tx_data_level,rx_data_level);
+	    	}
+	       }
+	        else if(PER == spi1){
+	    	   if(type == tx){
+	    	    AlDma_SetAddress(Channelx,Dmac_dst,spi1_data_base_adderss);
+	    	    dam_handshake_interfance(Channelx,spi1_tx_hs_interfance);
+	        	AlDma_SetMemPeriphFlowCtl(Channelx,MEM2PER);
+	    	    AlDma_SetAddressInc(Channelx,Dmac_dst,FIX);
+	    	    spi_dma_tx_enable(SPI1);
+	    	    spi_dma_data_level(SPI1,tx_data_level,rx_data_level);
+		        AlDma_SetBurstTransLength(Channelx,Dmac_src_dst,AL_DMA_MSIZE_32);
+	    	}
+	        	else{
+	     	     AlDma_SetAddress(Channelx,Dmac_src,spi1_data_base_adderss);
+	    	     dam_handshake_interfance(Channelx,spi1_rx_hs_interfance);
+	    	     AlDma_SetMemPeriphFlowCtl(Channelx,PER2MEM);
+	    	     AlDma_SetAddressInc(Channelx,Dmac_src,FIX);
+	    	     spi_dma_rx_enable(SPI1);
+	    	     spi_dma_data_level(SPI1,tx_data_level,rx_data_level);
+	    	     AlDma_SetBurstTransLength(Channelx,Dmac_src,AL_DMA_MSIZE_32);
+	    	}
 	        }
-    	    AlDma_SetMemPeriphFlowCtl(Channelx,MEM2PER);
-    	    AlDma_SetAddressInc(Channelx,Dmac_dst,FIX);
-    	    spi_dma_data_level(SPI1,tx_data_level,rx_data_level);
-	}
-    else{
-	     if(PER == spi0)
-		{
-    	    AlDma_SetAddress(Channelx,Dmac_src,spi0_data_base_address);
-		    dam_handshake_interfance(Channelx,spi0_rx_hs_interfance);
-		    spi_dma_rx_enable(SPI0);
-		    spi_dma_data_level(SPI0,tx_data_level,rx_data_level);
-		}
-     else if(PER == spi1){
-	        AlDma_SetAddress(Channelx,Dmac_src,spi1_data_base_adderss);
-		    dam_handshake_interfance(Channelx,spi1_rx_hs_interfance);
-		    spi_dma_rx_enable(SPI1);
-	        }
-	     AlDma_SetMemPeriphFlowCtl(Channelx,PER2MEM);
-	     AlDma_SetAddressInc(Channelx,Dmac_src,FIX);
-	     spi_dma_data_level(SPI1,tx_data_level,rx_data_level);
-	}
-     AlDma_SetMemPeriphFlowCtl(Channelx,transfer);
-	 AlDma_SetTransWidth(Channelx,Dmac_src_dst,WIDTH_32);
-	 AlDma_SetBlockTransSize(Channelx,block_size);
-	 AlDma_SetBurstTransLength(Channelx,Dmac_src_dst,AL_DMA_MSIZE_1);
+	        AlDma_SetTransWidth(Channelx,Dmac_src_dst,WIDTH_32);
+	        AlDma_SetBlockTransSize(Channelx,block_size);
+	        AlDma_SetTransferType(Channelx,transfer);
+	        //AlDma_SetBurstTransLength(Channelx,Dmac_src_dst,AL_DMA_MSIZE_8);
+
 }
 void AlQspi_DmaInit(DMA_Channel_TypeDef *Channelx,enum dma_type type,uint8_t tx_data_level,uint8_t rx_data_level,enum AL_dmac_transfer_type  transfer,uint16_t block_size){
 	 AlDma_SetChannelConfig(Channelx);
         if(type == tx)
 	{
     	    AlDma_SetAddress(Channelx,Dmac_dst,qspi_data_base_address);
-	    dam_handshake_interfance(Channelx,qspi_tx_hs_interfance);
+    	    dam_handshake_interfance(Channelx,qspi_tx_hs_interfance);
             qspi_dma_tx_enable(QSPI0);
     	    AlDma_SetMemPeriphFlowCtl(Channelx,MEM2PER);
 	    AlDma_SetAddressInc(Channelx,Dmac_dst,FIX);
