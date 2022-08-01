@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
-#include "al9000_uart.h"
-#include "al9000_dmac.h"
+#include "AL_uart.h"
+#include "AL_dmac.h"
 #include <time.h>
 /*
  *instruction
@@ -22,7 +22,7 @@
 #define DRR_BASE_1 (0x)
 int count = 16384;
 int main(void){
-	__RV_CSR_CLEAR(CSR_MMISC_CTL,MMISC_CTL_BPU);
+	//__RV_CSR_CLEAR(CSR_MMISC_CTL,MMISC_CTL_BPU);
 	uint32_t test_buffer[count];
 	for(volatile int i = 0; i < count ; i ++ ){
 		test_buffer[i] = i;

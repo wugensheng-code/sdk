@@ -38,9 +38,9 @@ int main(void)
     while(1)
     {
     	AlGpio_Write(GPIO0,(uint32_t)(1<<20),19);
-        delay_1ms(1000);
+        _delay_ms(1000);
         AlGpio_WriteLow(GPIO0,(uint32_t)(1<<20),19);
-        delay_1ms(1000);
+        _delay_ms(1000);
         printf("AlGpio_Toggle\r\n");
 //            anl_printf("AlGpio_Toggle\r\n");
 
