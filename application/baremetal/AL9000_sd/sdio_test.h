@@ -2,6 +2,7 @@
 #define __SDIO_TEST_H
 
 #include <stdio.h>
+#include "nuclei_sdk_soc.h"
 
 #define XST_SUCCESS                     0L
 #define XST_FAILURE                     1L

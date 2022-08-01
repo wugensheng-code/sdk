@@ -243,7 +243,9 @@ typedef enum EXCn {
 #define __Vendor_SysTickConfig    0                     /*!< Set to 1 if different SysTick Config is used */
 #define __Vendor_EXCEPTION        0                     /*!< Set to 1 if vendor exception hander is present */
 void Enablepinmux1(void);
+void Enablepinmux1_mode2(void);
 #define __Pinmux_PRESENT          1
+//#define __Pinmux_PRESENT_MODE2      1
 /** @} */ /* End of group Configuration_of_CMSIS */
 
 

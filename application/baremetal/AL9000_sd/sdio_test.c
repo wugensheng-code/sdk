@@ -33,6 +33,7 @@ typedef enum {FAILED = 0, PASSED = !FAILED} TestStatus;
 #define MULTI_BUFFER_SIZE    (BLOCK_SIZE * NUMBER_OF_BLOCKS)
 
 #define TOP_NS__CFG_CTRL_SDIO0_ADDR 0xF8800154
+#define TOP_NS__CFG_CTRL_ADDR 0xF8800150
 #define SDIO_WRAP__SDIO0__BASE_ADDR 0xF8049000ULL
 #define SDIO_WRAP__SDIO1__BASE_ADDR 0xF804A000ULL
 
@@ -206,6 +207,7 @@ u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, int freq)
         ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000000B;
         REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000008);
         REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000000);
+        REG_WRITE(TOP_NS__CFG_CTRL_ADDR, 0x000000b0);
         ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000000F;
         ptr->SW_RST_R__TOUT_CTRL_R__CLK_CTRL.D32 = 0x0000000F;
     }
@@ -435,6 +437,7 @@ u32 SendInitCmdEmmc()
     eMMC->CMD_R__XFER_MODE = reg;
     wait_command_complete(eMMC);
     rca = eMMC->RESP01 & 0xFFFF0000;
+    rca = 0x10000;
 
     // send command 9
     eMMC->ARGUMENT_R = rca;
@@ -456,9 +459,6 @@ u32 SendInitCmdEmmc()
     reg.BIT.RESP_TYPE_SELECT = SDIO_Response_Long;
     eMMC->CMD_R__XFER_MODE = reg;
     wait_command_complete(eMMC);
-
-    //Set Freq 10M
-    Status = HostControllerClockSetup(eMMC, FREQ_10M);
     
     // send command 7
     eMMC->ARGUMENT_R = rca;
@@ -587,6 +587,7 @@ END:
 u32 EMMC_Init(void)
 {
     int Status = XST_FAILURE;
+    printf("EMMC_Init\n");
 
     Status = HostControllerSetup(eMMC);
     if (Status != XST_SUCCESS) {
@@ -691,7 +692,7 @@ u32 EMMC_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSiz
 	uint32_t* Buffer_SingleBlock = (uint32_t* )readbuff;
     CMD_R__XFER_MODE_R reg;
 
-    eMMC->WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1.D32 = 0x0000BF02;
+    eMMC->WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1.D32 = 0x0000BF20;
     eMMC->SDMASA_R = Buffer_SingleBlock;
     eMMC->ADMA_SA_LOW_R = Buffer_SingleBlock;
     eMMC->HOST_CTRL2_R__AUTO_CMD_STAT.D32 = 0x0;
@@ -728,10 +729,11 @@ u32 EMMC_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSiz
 	wait_command_complete(eMMC);
     wait_transfer_complete(eMMC);
 
+    printf("EMMC EMMC_ReadMultiBlocks Pass!\n");
+
 	return XST_SUCCESS;
 }
 
-     //wait_transfer_complete();    //sdma start
 
 /***************************************************************************/
 /**
@@ -809,7 +811,7 @@ u32 EMMC_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t Block
 	uint32_t* Buffer_SingleBlock = (uint32_t* )writebuff;
     CMD_R__XFER_MODE_R reg;
 
-    eMMC->WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1.D32 = 0x0000BF02;
+    eMMC->WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1.D32 = 0x0000BF20;
     eMMC->SDMASA_R = Buffer_SingleBlock;
     eMMC->ADMA_SA_LOW_R = Buffer_SingleBlock;
     eMMC->HOST_CTRL2_R__AUTO_CMD_STAT.D32 = 0x0;
@@ -847,6 +849,8 @@ u32 EMMC_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t Block
     eMMC->CMD_R__XFER_MODE = reg;
 	wait_command_complete(eMMC);
     wait_transfer_complete(eMMC);
+
+    printf("EMMC_WriteMultiBlocks Pass!\n");
 
 	return XST_SUCCESS;
 }
@@ -1096,16 +1100,18 @@ u32 RawReadWriteTestSD()
     int result;
     
     SD_Init();
-    SD_WriteMultiBlocks(WriteBuffer,5,SDCardInfo.CardBlockSize,1);
-    SD_ReadMultiBlocks(ReadBuffer, 5, SDCardInfo.CardBlockSize,1);
+    SD_WriteMultiBlocks(WriteBuffer, 0,SDCardInfo.CardBlockSize,1);
+    SD_ReadMultiBlocks(ReadBuffer, 0, SDCardInfo.CardBlockSize,1);
 
     result = strcmp(WriteBuffer, ReadBuffer);
     if (result == 0)
     {
+    	printf("TestCase Pass!");
         Status = XST_SUCCESS;
     }
     else
     {
+    	printf("TestCase Fail!");
         Status = XST_FAILURE;
     }
 
@@ -1119,16 +1125,18 @@ u32 RawReadWriteTestEmmc()
     BYTE WriteBuffer[] = "welcomewelcome\r\n";
     BYTE ReadBuffer[1024]={0};   
     EMMC_Init();
-    EMMC_WriteMultiBlocks(WriteBuffer, 80,SDCardInfo.CardBlockSize,1);
-    EMMC_ReadMultiBlocks(ReadBuffer, 80, SDCardInfo.CardBlockSize,1);
+    EMMC_WriteMultiBlocks(WriteBuffer, 0, SDCardInfo.CardBlockSize, 1);
+    EMMC_ReadMultiBlocks(ReadBuffer, 0, SDCardInfo.CardBlockSize, 1);
 
     result = strcmp(WriteBuffer, ReadBuffer);
     if (result == 0)
     {
+    	printf("TestCase Pass!");
         Status = XST_SUCCESS;
     }
     else
     {
+    	printf("TestCase Fail!");
         Status = XST_FAILURE;
     }
 
@@ -1152,12 +1160,11 @@ u32 SD_Test(void)
 	BYTE WriteBuffer[] = "welcome777777777777777\r\n";
 	FIL fnew;
 	u32 Status;
+	printf("SD EMMC Test Start...");
+
 
     //RawReadWriteTestEmmc();
     RawReadWriteTestSD();
-
-    //RawReadWriteTestEmmc();
-    //RawReadWriteTestSD();
     for(;;);
 #if 0
 	res_sd = f_mount(&fs,"0:",1);  //SD test
@@ -1215,7 +1222,7 @@ u32 SD_Test(void)
     f_close(&fnew);
     f_mount(NULL,"0:",1);
 #endif
-
+#if 0
     res_sd = f_mount(&fs,"1:",1);  //EMMC test
 #if 1
             if(res_sd == FR_NO_FILESYSTEM)
@@ -1271,7 +1278,7 @@ u32 SD_Test(void)
         f_close(&fnew);
         f_mount(NULL,"1:",1);
 
-    
+#endif
 
     return Status;
 }
