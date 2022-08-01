@@ -118,6 +118,7 @@ int main(){
 	                     SysTimer_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 0,
 	                     mtimer_irq_handler); /* register system timer interrupt */
 	__enable_irq();
+	Enablepinmuxmode1();
 	//setup_timer(); /* initialize timer */
 	AlCan_SetResetMode(AL_CAN1);
 	AlCan_DeviceDriverBittimeConfiguration(AL_CAN1,rate_5Mbit,AL_TOP0,can_fd);

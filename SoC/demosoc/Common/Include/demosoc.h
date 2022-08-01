@@ -1443,8 +1443,182 @@ typedef struct {
 	 __IOM uint32_t DMA_CH0_Miss_Frame_Cnt;
 	 __IOM uint32_t DMA_CH0_RX_ERI_Cnt;
 }ETH1_DMACHTypeDef;
+typedef struct{
+	__IOM  uint32_t MPU_TYPER;
+	__IOM  uint32_t MPU_CTRL;
+	__IOM  uint32_t MPU_SAR;
+	__IOM  uint32_t MPU_EAR;
+	__IOM  uint32_t MPU_RASR_REGION1;
+	__IOM  uint32_t MPU_SAR_REGION1;
+	__IOM  uint32_t MPU_EAR_REGION1	;
+	__IOM  uint32_t MPU_GROUPID_REGION1;
+	__IOM  uint32_t MPU_RASR_REGION2;
+	__IOM  uint32_t MPU_SAR_REGION2;
+	__IOM  uint32_t MPU_EAR_REGION2	;
+	__IOM  uint32_t MPU_GROUPID_REGION2;
+	__IOM  uint32_t MPU_RASR_REGION3;
+	__IOM  uint32_t MPU_SAR_REGION3;
+	__IOM  uint32_t MPU_EAR_REGION3	;
+	__IOM  uint32_t MPU_GROUPID_REGION3;
+	__IOM  uint32_t MPU_RASR_REGION4;
+	__IOM  uint32_t MPU_SAR_REGION4;
+	__IOM  uint32_t MPU_EAR_REGION4	;
+	__IOM  uint32_t MPU_GROUPID_REGION4;
+	__IOM  uint32_t MPU_RASR_REGION5;
+	__IOM  uint32_t MPU_SAR_REGION5;
+	__IOM  uint32_t MPU_EAR_REGION5	;
+	__IOM  uint32_t MPU_GROUPID_REGION5;
+	__IOM  uint32_t MPU_RASR_REGION6;
+	__IOM  uint32_t MPU_SAR_REGION6;
+	__IOM  uint32_t MPU_EAR_REGION6	;
+	__IOM  uint32_t MPU_GROUPID_REGION6;
+	__IOM  uint32_t MPU_RASR_REGION7;
+	__IOM  uint32_t MPU_SAR_REGION7;
+	__IOM  uint32_t MPU_EAR_REGION7	;
+	__IOM  uint32_t MPU_GROUPID_REGION7;
+	__IOM  uint32_t MPU_RASR_REGION8;
+	__IOM  uint32_t MPU_SAR_REGION8;
+	__IOM  uint32_t MPU_EAR_REGION8	;
+	__IOM  uint32_t MPU_GROUPID_REGION8;
+	__IOM  uint32_t MPU_RASR_REGION9;
+	__IOM  uint32_t MPU_SAR_REGION9;
+	__IOM  uint32_t MPU_EAR_REGION9	;
+	__IOM  uint32_t MPU_GROUPID_REGION9;
+	__IOM  uint32_t MPU_RASR_REGION10;
+	__IOM  uint32_t MPU_SAR_REGION10;
+	__IOM  uint32_t MPU_EAR_REGION10;
+	__IOM  uint32_t MPU_GROUPID_REGION10;
+	__IOM  uint32_t MPU_RASR_REGION11;
+	__IOM  uint32_t MPU_SAR_REGION11;
+	__IOM  uint32_t MPU_EAR_REGION11;
+	__IOM  uint32_t MPU_GROUPID_REGION11;
+	__IOM  uint32_t MPU_RASR_REGION12;
+	__IOM  uint32_t MPU_SAR_REGION12;
+	__IOM  uint32_t MPU_EAR_REGION12;
+	__IOM  uint32_t MPU_GROUPID_REGION12;
+	__IOM  uint32_t MPU_RASR_REGION13;
+	__IOM  uint32_t MPU_SAR_REGION13;
+	__IOM  uint32_t MPU_EAR_REGION13;
+	__IOM  uint32_t MPU_GROUPID_REGION13;
+	__IOM  uint32_t MPU_RASR_REGION14;
+	__IOM  uint32_t MPU_SAR_REGION14;
+	__IOM  uint32_t MPU_EAR_REGION14;
+	__IOM  uint32_t MPU_GROUPID_REGION14;
+	__IOM  uint32_t MPU_RASR_REGION15;
+	__IOM  uint32_t MPU_SAR_REGION15;
+	__IOM  uint32_t MPU_EAR_REGION15;
+	__IOM  uint32_t MPU_GROUPID_REGION15;
+	__IOM  uint32_t MPU_RASR_REGION16;
+	__IOM  uint32_t MPU_SAR_REGION16;
+	__IOM  uint32_t MPU_EAR_REGION16;
+	__IOM  uint32_t MPU_GROUPID_REGION16;
+	__IOM  uint32_t MPU_RASR_REGION17;
+	__IOM  uint32_t MPU_SAR_REGION17;
+	__IOM  uint32_t MPU_EAR_REGION17;
+	__IOM  uint32_t MPU_GROUPID_REGION17;
+	__IOM  uint32_t MPU_RASR_REGION18;
+	__IOM  uint32_t MPU_SAR_REGION18;
+	__IOM  uint32_t MPU_EAR_REGION18;
+	__IOM  uint32_t MPU_GROUPID_REGION18;
+	__IOM  uint32_t MPU_RASR_REGION19;
+	__IOM  uint32_t MPU_SAR_REGION19;
+	__IOM  uint32_t MPU_EAR_REGION19;
+	__IOM  uint32_t MPU_GROUPID_REGION19;
+	__IOM  uint32_t MPU_RASR_REGION20;
+	__IOM  uint32_t MPU_SAR_REGION20;
+	__IOM  uint32_t MPU_EAR_REGION20;
+	__IOM  uint32_t MPU_GROUPID_REGION20;
+	__IOM  uint32_t MPU_RASR_REGION21;
+	__IOM  uint32_t MPU_SAR_REGION21;
+	__IOM  uint32_t MPU_EAR_REGION21;
+	__IOM  uint32_t MPU_GROUPID_REGION21;
+	__IOM  uint32_t MPU_RASR_REGION22;
+	__IOM  uint32_t MPU_SAR_REGION22;
+	__IOM  uint32_t MPU_EAR_REGION22;
+	__IOM  uint32_t MPU_GROUPID_REGION22;
+	__IOM  uint32_t MPU_RASR_REGION23;
+	__IOM  uint32_t MPU_SAR_REGION23;
+	__IOM  uint32_t MPU_EAR_REGION23;
+	__IOM  uint32_t MPU_GROUPID_REGION23;
+	__IOM  uint32_t MPU_RASR_REGION24;
+	__IOM  uint32_t MPU_SAR_REGION24;
+	__IOM  uint32_t MPU_EAR_REGION24;
+	__IOM  uint32_t MPU_GROUPID_REGION24;
+	__IOM  uint32_t MPU_RASR_REGION25;
+	__IOM  uint32_t MPU_SAR_REGION25;
+	__IOM  uint32_t MPU_EAR_REGION25;
+	__IOM  uint32_t MPU_GROUPID_REGION25;
+	__IOM  uint32_t MPU_RASR_REGION26;
+	__IOM  uint32_t MPU_SAR_REGION26;
+	__IOM  uint32_t MPU_EAR_REGION26;
+	__IOM  uint32_t MPU_GROUPID_REGION26;
+	__IOM  uint32_t MPU_RASR_REGION27;
+	__IOM  uint32_t MPU_SAR_REGION27;
+	__IOM  uint32_t MPU_EAR_REGION27;
+	__IOM  uint32_t MPU_GROUPID_REGION27;
+	__IOM  uint32_t MPU_RASR_REGION28;
+	__IOM  uint32_t MPU_SAR_REGION28;
+	__IOM  uint32_t MPU_EAR_REGION28;
+	__IOM  uint32_t MPU_GROUPID_REGION28;
+	__IOM  uint32_t MPU_RASR_REGION29;
+	__IOM  uint32_t MPU_SAR_REGION29;
+	__IOM  uint32_t MPU_EAR_REGION29;
+	__IOM  uint32_t MPU_GROUPID_REGION29;
+	__IOM  uint32_t MPU_RASR_REGION30;
+	__IOM  uint32_t MPU_SAR_REGION30;
+	__IOM  uint32_t MPU_EAR_REGION30;
+	__IOM  uint32_t MPU_GROUPID_REGION30;
+	__IOM  uint32_t MPU_RASR_REGION31;
+	__IOM  uint32_t MPU_SAR_REGION31;
+	__IOM  uint32_t MPU_EAR_REGION31;
+	__IOM  uint32_t MPU_GROUPID_REGION31;
+	__IOM  uint32_t MPU_RASR_REGION32;
+	__IOM  uint32_t MPU_SAR_REGION32;
+	__IOM  uint32_t MPU_EAR_REGION32;
+	__IOM  uint32_t MPU_GROUPID_REGION32;
 
+}MPU_TypeDef;
 
+/*
+ *
+ * al9000_ttc_register_struct
+ *
+ */
+typedef struct{
+    	__IOM uint32_t EVENT_REG_1;		/*offset 0x00*/
+	__IOM uint32_t EVENT_REG_2;		/*offset 0x04*/
+	__IOM uint32_t EVENT_REG_3;		/*offset 0x08*/
+	__IOM uint32_t EVENT_CTRL_1;		/*offset 0x0C*/
+	__IOM uint32_t EVENT_CTRL_2;		/*offset 0x10*/
+	__IOM uint32_t EVENT_CTRL_3;		/*offset 0x14*/
+	__IOM uint32_t CNTR_CTRL_REG_1;		/*offset 0x18*/
+	__IOM uint32_t CNTR_CTRL_REG_2;		/*offset 0x1C*/
+	__IOM uint32_t CNTR_CTRL_REG_3;		/*offset 0x20*/
+	__IOM uint32_t CLK_CTRL_REG_1;		/*offset 0x24*/
+	__IOM uint32_t CLK_CTRL_REG_2;		/*offset 0x28*/
+	__IOM uint32_t CLK_CTRL_REG_3;		/*offset 0x2C*/
+	__IOM uint32_t INTERVAL_REG_1;		/*offset 0x30*/
+	__IOM uint32_t INTERVAL_REG_2;		/*offset 0x34*/
+	__IOM uint32_t INTERVAL_REG_3;		/*offset 0x38*/
+	__IOM uint32_t CNTR_VAL_REG_1;		/*offset 0x3C*/
+	__IOM uint32_t CNTR_VAL_REG_2;		/*offset 0x40*/
+	__IOM uint32_t CNTR_VAL_REG_3;		/*offset 0x44*/
+	__IOM uint32_t MATCH_1_REG_1;		/*offset 0x48*/
+	__IOM uint32_t MATCH_2_REG_1;		/*offset 0x4C*/
+	__IOM uint32_t MATCH_3_REG_1;		/*offset 0x50*/
+	__IOM uint32_t MATCH_1_REG_2;		/*offset 0x54*/
+	__IOM uint32_t MATCH_2_REG_2;		/*offset 0x58*/
+	__IOM uint32_t MATCH_3_REG_2;		/*offset 0x5C*/
+	__IOM uint32_t MATCH_1_REG_3;		/*offset 0x60*/
+	__IOM uint32_t MATCH_2_REG_3;		/*offset 0x64*/
+	__IOM uint32_t MATCH_3_REG_3;		/*offset 0x68*/
+	__IOM uint32_t IRQ_EN_REG_1;		/*offset 0x6C*/
+	__IOM uint32_t IRQ_EN_REG_2;		/*offset 0x70*/
+	__IOM uint32_t IRQ_EN_REG_3;		/*offset 0x74*/
+	__IOM uint32_t IRQ_REG_1;		/*offset 0x78*/
+	__IOM uint32_t IRQ_REG_2;		/*offset 0x7C*/
+	__IOM uint32_t IRQ_REG_3;		/*offset 0x80*/
+}TTC_AL9000_TypeDef;
 #define XEC1_MAC_BASE                 (XEC1_BASE)
 #define XEC1_Interrupt_BASE           (XEC1_BASE+0xb0UL)
 #define XEC1_Phyifctrlstat_BASE       (XEC1_BASE+0xf8UL)
@@ -1518,7 +1692,13 @@ typedef struct {
 #define SMC_BASE                  	(0xF841A000UL)
 
 #define XADC_BASE                  	(0xF840B000UL)/* Peripheral memory map */
-
+#define mpu_ddrs0 		(0xF840E000UL)
+#define mpu_ddrs1 		(0xF840F000UL)
+#define mpu_hpm0 		(0xF8412000UL)
+#define mpu_hpm1 		(0xF8413000UL)
+#define mpu_ocms2 		(0xF841B000UL)
+#define mpu_npu 		(0xF841C000UL)
+#define mpu_apu 		(0xF841D000UL)
 #define GPIO_BLOCK0_BASE        (0xF8411000UL)          			/*!< (GPIO BLOCK0) Base Address */
 #define GPIO_BLOCK1_BASE        (0xF8411100UL)          			/*!< (GPIO BLOCK1) Base Address */
 #define GPIO_BLOCK2_BASE        (0xF8411200UL)          			/*!< (GPIO BLOCK2) Base Address */
@@ -1553,6 +1733,8 @@ typedef struct {
 #define SPI1_BASE               (PERIPH_BASE + 0x00405000)	 			 /*!< (SPI1) Base Address */
 #define I2C0_BASE               (PERIPH_BASE + 0x00414000)          	 /*!< (I2C0) Base Address */
 #define I2C1_BASE               (PERIPH_BASE + 0x00415000)          	 /*!< (I2C1) Base Address */
+#define AL9000_TTC0_BASE        	(0XF840C000)
+#define AL9000_TTC1_BASE		(0XF840D000)
 //QSPI-XIP0 128M
 #define QSPI_XIP0_START_ADDR	(0x70000000UL)							/*qspi-xip0 start address*/
 #define QSPI_XIP0_END_ADDR		(0x77FFFFFFUL)							/*qspi-xip0 end address*/
@@ -1608,6 +1790,15 @@ typedef struct {
 #define SPI1			              ((SPI_TypeDef *) SPI1_BASE)
 #define I2C0                     	  ((I2C_TypeDef *) I2C0_BASE)
 #define I2C1                     	  ((I2C_TypeDef *) I2C1_BASE)
+#define AL9000_TTC0		((TTC_AL9000_TypeDef *) AL9000_TTC0_BASE)
+#define AL9000_TTC1		((TTC_AL9000_TypeDef *) AL9000_TTC1_BASE)
+#define AL_MPU_DDRS0			((MPU_TypeDef *) mpu_ddrs0)
+#define AL_MPU_DDRS1			((MPU_TypeDef *) mpu_ddrs1)
+#define AL_MPU_HPM0			((MPU_TypeDef *) mpu_hpm0)
+#define AL_MPU_HPM1			((MPU_TypeDef *) mpu_hpm1)
+#define AL_MPU_OCMS2			((MPU_TypeDef *) mpu_ocms2)
+#define AL_MPU_NPU			((MPU_TypeDef *) mpu_npu)
+#define AL_MPU_APU			((MPU_TypeDef *) mpu_apu)
 // Helper functions
 #define _REG8(p, i)             (*(volatile uint8_t *) ((p) + (i)))
 #define _REG32(p, i)            (*(volatile uint32_t *) ((p) + (i)))

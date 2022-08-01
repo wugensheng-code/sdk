@@ -96,7 +96,19 @@
 
 }
 
+ void Enablepinmuxmode1(void){
+	 *(uint32_t *)(0xf8803040u) =0x7;
+	 *(uint32_t *)(0xf8803044u) =0x7;
+	 *(uint32_t *)(0xf880341cu) =0x1; //TTC SET
 
+	 *(uint32_t *)(0xf8803048u) =0x0;
+	 *(uint32_t *)(0xf880304cu) =0x0;
+	 *(uint32_t *)(0xf8803400u) =0x1; //IIC0 SET
+
+	 *(uint32_t *)(0xf88030d0u) =0x1;
+	 *(uint32_t *)(0xf88030d4u) =0x1;
+	 *(uint32_t *)(0xf880340cu) =0x1; //CAN1 SET
+ }
 
     
 
