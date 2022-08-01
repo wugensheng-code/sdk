@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
-#include "al_uart.h"
-#include "al_can.h"
+#include "AL_uart.h"
+#include "AL_can.h"
 #include <time.h>
 
 uint8_t tx_buf1[64];
@@ -118,11 +118,11 @@ int main(){
 	                     SysTimer_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 0,
 	                     mtimer_irq_handler); /* register system timer interrupt */
 	__enable_irq();
-	//setup_timer(); /* initialize timer */
+	setup_timer(); /* initialize timer */
 	AlCan_SetResetMode(AL_CAN1);
 	AlCan_DeviceDriverBittimeConfiguration(AL_CAN1,rate_5Mbit,AL_TOP0,can_fd);
 	AlCan_TxMode(AL_CAN1,NORMAL);
-#if 1
+#if 0
 	while(1){
 		//setup_timer(); /* initialize timer */
 	//for(uint8_t i = 0 ; i < 50 ; i++){
@@ -141,12 +141,12 @@ int main(){
 		//delay(1200);
 		AlCan_SendMsg(AL_CAN1,tx_buf5,XMIT_PTB_MODE,data_length_64,0x17);
 	//}
-		AlCan_TestError(AL_CAN0);//if you want to get some debug error information,you can open this
+		AlCan_TestError(AL_CAN1);//if you want to get some debug error information,you can open this
 	}
 #endif
-#if 0
+#if 1
 	while(1){
-		AlCan_ReceiveMsg(AL_CAN0,rx_buf1,data_length_20);
+		AlCan_ReceiveMsg(AL_CAN1,rx_buf1,data_length_20);
 	}
 #endif
 
