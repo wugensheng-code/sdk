@@ -41,7 +41,7 @@ static unsigned int rca = 0;
  ******************************************************************************/
 u32 CardDetection()
 {
-    u32 Status = AL_FAILURE;
+    u32 status = AL_SUCCESS;
     u32 CardStatus = 0;
     ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN_R r1;
     ERROR_INT_SIGNAL_EN_R__NORMAL_INT_SIGNAL_EN_R r2;
@@ -71,7 +71,7 @@ u32 CardDetection()
     REG_WRITE(&(SDIO->error_int_stat_r__normal_int_stat), r3.d32);
 
     //sleep(200);
-    SDIO_EMMC_DELAY_MS(10);
+    SD_EMMC_DELAY_MS(10);
 
     while (!CardStatus)
     {
@@ -79,12 +79,12 @@ u32 CardDetection()
         CardStatus = (((r4.bit.card_inserted) == 1) ? 1:0);
     	if (CardStatus == 1)
     	{
-            Status = AL_SUCCESS;
+            status = AL_SUCCESS;
     	    break;
     	}
     }
     	
-    return Status;
+    return status;
 }
 
 /***************************************************************************/
@@ -97,10 +97,9 @@ u32 CardDetection()
  ******************************************************************************/
 u32 SendInitCmdSD()
 {
+    uint32_t status = AL_SUCCESS;
     volatile unsigned int response01;
     volatile unsigned int validvoltage;
-    volatile unsigned int errorstatus;
-    int Status;
     CMD_R__XFER_MODE_R reg;
     uint32_t arg_r;
     
@@ -111,7 +110,7 @@ u32 SendInitCmdSD()
     reg.bit.cmd_index = SD_CMD_GO_IDLE_STATE;
     reg.bit.data_xfer_dir = DATA_READ;
     REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
-    wait_command_complete(SDIO);
+    SD_EMMC_WAIT_CMD_COMPLETE(SDIO);
 
     // send command 8
     arg_r = 0x1AA;
@@ -121,10 +120,10 @@ u32 SendInitCmdSD()
     reg.bit.data_xfer_dir = DATA_READ;
     reg.bit.resp_type_select = SDIO_Response_Short;
     REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
-    wait_command_complete(SDIO);
+    SD_EMMC_WAIT_CMD_COMPLETE(SDIO);
 
-    // send command 55
-    arg_r = 0;
+    // send command 55  多余？
+    /*arg_r = 0;
     REG_WRITE(&(SDIO->argument_r), arg_r);
     reg.d32 = REG_READ(&(SDIO->cmd_r__xfer_mode));
     reg.bit.cmd_index = SD_CMD_APP_CMD;
@@ -134,11 +133,10 @@ u32 SendInitCmdSD()
     reg.bit.multi_blk_sel = 0x1;
     reg.bit.resp_err_chk_enable = 0x1;
     REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
-    wait_command_complete(SDIO);
+    SD_EMMC_WAIT_CMD_COMPLETE(SDIO);*/
     
     validvoltage = 0;
-    while (!validvoltage)
-    {
+    MTIMER_OUT_CONDITION(SDIO_GET_VALID_VOLTAGE_TIMEOUT_VAL, &mtimer, validvoltage != 1){
     	// CMD55
         arg_r = 0;
         REG_WRITE(&(SDIO->argument_r), arg_r);
@@ -150,7 +148,7 @@ u32 SendInitCmdSD()
         reg.bit.multi_blk_sel = 0x1;
         reg.bit.resp_err_chk_enable = 0x1;
         REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
-        wait_command_complete(SDIO);
+        SD_EMMC_WAIT_CMD_COMPLETE(SDIO);
 
     	//CMD41
         arg_r = 0xC0100000;
@@ -163,14 +161,14 @@ u32 SendInitCmdSD()
         reg.bit.multi_blk_sel = 0x1;
         reg.bit.resp_err_chk_enable = 0x1;
         REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
-        wait_command_complete(SDIO);
+        SD_EMMC_WAIT_CMD_COMPLETE(SDIO);
 
         response01 = REG_READ(&(SDIO->resp01));
     	validvoltage = (((response01 >> 31) == 1) ? 1:0);
-    	if (validvoltage == 1)
-    	{
-    	    break;
-    	}
+    }
+    if(Mtimer_IsTimerOut(&mtimer)){
+        status = SDIO_GET_VALID_VOLTAGE_TIMEOUT_ERROR;
+        return status;
     }
 
     // send command 2
@@ -180,7 +178,7 @@ u32 SendInitCmdSD()
     reg.bit.cmd_index = SD_CMD_ALL_SEND_CID;
     reg.bit.resp_type_select = SDIO_Response_Long;
     REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
-    wait_command_complete(SDIO);
+    SD_EMMC_WAIT_CMD_COMPLETE(SDIO);
     CID_Tab[0] = REG_READ(&(SDIO->resp01));
     CID_Tab[1] = REG_READ(&(SDIO->resp23));
     CID_Tab[2] = REG_READ(&(SDIO->resp45));
@@ -193,7 +191,7 @@ u32 SendInitCmdSD()
     reg.bit.cmd_index = SD_CMD_SET_REL_ADDR;
     reg.bit.resp_type_select = SDIO_Response_Short;
     REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
-    wait_command_complete(SDIO);
+    SD_EMMC_WAIT_CMD_COMPLETE(SDIO);
     rca = REG_READ(&(SDIO->resp01)) & 0xFFFF0000;
 
     // send command 9
@@ -203,16 +201,23 @@ u32 SendInitCmdSD()
     reg.bit.cmd_index = SD_CMD_SEND_CSD;
     reg.bit.resp_type_select = SDIO_Response_Long;
     REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
-    wait_command_complete(SDIO);
+    SD_EMMC_WAIT_CMD_COMPLETE(SDIO);
 
     CSD_Tab[3] = REG_READ(&(SDIO->resp01));
     CSD_Tab[2] = REG_READ(&(SDIO->resp23));
     CSD_Tab[1] = REG_READ(&(SDIO->resp45));
     CSD_Tab[0] = REG_READ(&(SDIO->resp67));
 
-    errorstatus = SD_GetCardInfo(&SDCardInfo);
+    //set card infomation
+    status = SD_GetCardInfo(&SDCardInfo);
+    if(status != AL_SUCCESS){
+        return status;
+    }
     //Set Freq 10M
-    Status = HostControllerClockSetup(SDIO, FREQ_10M);
+    status = HostControllerClockSetup(SDIO, SD_EMMC_FREQ_10M);
+    if(status != AL_SUCCESS){
+        return status;
+    }
     
     // send command 7
     arg_r = rca;
@@ -221,7 +226,7 @@ u32 SendInitCmdSD()
     reg.bit.cmd_index = SD_CMD_SEL_DESEL_CARD;
     reg.bit.resp_type_select = SDIO_Response_Short_48B;
     REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
-    wait_command_complete(SDIO);
+    SD_EMMC_WAIT_CMD_COMPLETE(SDIO);
 
     return AL_SUCCESS;
 }
@@ -236,6 +241,7 @@ u32 SendInitCmdSD()
  ******************************************************************************/
 u32 SwitchDataWidthSD()
 {
+    uint32_t status = AL_SUCCESS;
     CMD_R__XFER_MODE_R reg;
     uint32_t arg_r;
 
@@ -250,7 +256,7 @@ u32 SwitchDataWidthSD()
     reg.bit.multi_blk_sel = 0x1;
     reg.bit.resp_err_chk_enable = 0x1;
     REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
-    wait_command_complete(SDIO);
+    SD_EMMC_WAIT_CMD_COMPLETE(SDIO);
 
     // send command 6
     arg_r = 0x2;
@@ -259,12 +265,12 @@ u32 SwitchDataWidthSD()
     reg.bit.cmd_index = SD_CMD_HS_SWITCH;
     reg.bit.resp_type_select = SDIO_Response_Short;
     REG_WRITE(&(SDIO->cmd_r__xfer_mode), reg.d32);
-    wait_command_complete(SDIO);
+    SD_EMMC_WAIT_CMD_COMPLETE(SDIO);
 
-    //sleep(2000);
-    SDIO_EMMC_DELAY_MS(100);
+    //why delay
+    SD_EMMC_DELAY_MS(100);
 
-    return AL_SUCCESS;
+    return status;
 }
 
 

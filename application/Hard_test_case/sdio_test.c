@@ -192,18 +192,18 @@ u32 SD_Init(void)
     if (Status != AL_SUCCESS) {
 		goto END;
 	}
-    Status = HostControllerClockSetup(SDIO, FREQ_400K);
+    Status = HostControllerClockSetup(SDIO, SD_EMMC_FREQ_400K);
     if (Status != AL_SUCCESS) {
 		goto END;
 	}
     //sleep(200);
-    SDIO_EMMC_DELAY_MS(10);
+    SD_EMMC_DELAY_MS(10);
     Status = InitInterruptSetting(SDIO);
     if (Status != AL_SUCCESS) {
 		goto END;
 	}
     //sleep(200);
-    SDIO_EMMC_DELAY_MS(10);
+    SD_EMMC_DELAY_MS(10);
     Status = SendInitCmdSD();
     if (Status != AL_SUCCESS) {
 		goto END;

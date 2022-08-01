@@ -160,18 +160,18 @@ u32 EMMC_Init(void)
     if (Status != AL_SUCCESS) {
 		goto END;
 	}
-    Status = HostControllerClockSetup(eMMC, FREQ_400K);
+    Status = HostControllerClockSetup(eMMC, SD_EMMC_FREQ_400K);
     if (Status != AL_SUCCESS) {
 		goto END;
 	}
     //sleep(200);
-    SDIO_EMMC_DELAY_MS(10);
+    SD_EMMC_DELAY_MS(10);
     Status = InitInterruptSetting(eMMC);
     if (Status != AL_SUCCESS) {
 		goto END;
 	}
     //sleep(200);
-    SDIO_EMMC_DELAY_MS(10);
+    SD_EMMC_DELAY_MS(10);
     Status = SendInitCmdEmmc();
     if (Status != AL_SUCCESS) {
 		goto END;

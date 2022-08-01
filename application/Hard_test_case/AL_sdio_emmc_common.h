@@ -5,13 +5,62 @@
 #include "../../../../demoapu/Common/Include/delay.h"
 #include "mtimer.h"
 
-#define AL_SUCCESS                    	0L
-#define AL_FAILURE                     	1L
+//COMMON STATUS
+#define AL_SUCCESS                    	0UL
+#define AL_FAILURE                     	1UL
+//SD EMMC COMMON ERROR 2~100
+//TIMER OUT ERROR
+#define SD_EMMC_CMD_TIMEOUT				2UL		//send cmd timeout
+#define SD_EMMC_XFER_TIMEOUT			3UL		//wait transfer complete timeout
+#define SD_EMMC_WAIT_CLK_STABLE_TIMEOUT	4UL		//wait internal clock stable timeout
+#define SD_EMMC_BUF_RD_RDY_TIMEOUT		5UL		//wait buffer read ready complete timeout
+//Error INT Status Regitster
+#define SD_EMMC_CMD_TOUT_ERR			6UL		//no response is returned within 64 clock cycles from end bit of the cmd
+#define SD_EMMC_CMD_CRC_ERR				7UL		//cmd resp CRC err
+												//host controller detects a CMD line conflict
+#define SD_EMMC_CMD_END_BIT_ERR			8UL		//detect the end bit of a cmd resp is 0
+#define SD_EMMC_CMD_IDX_ERR				9UL		//cmd index err in the cmd resp
+#define SD_EMMC_DATA_TOUT_ERR			10UL		//busy timeout for R1b,R5b type
+												//busy timeout after write CRC status
+												//write CRC status timeout
+												//Read Data timeout
+#define SD_EMMC_DATA_CRC_ERR			11UL	//CRC err when transfer rd data use DAT line
+												//write status have a value other than 010
+												//write CRC status timeout
+#define SD_EMMC_DATA_END_BIT_ERR		12UL	//detect 0 at the end bit pos of read data use DAT line
+												//detect 0 at the end bit pos of the CRC status
+#define SD_EMMC_CUR_LMT_ERR				13UL	//not supply power to card due to some failure(DWC_mshc not support this func)
+#define SD_EMMC_AUTO_CMD_ERR			14UL	//ACMD12 and ACMD23 detect 0 to 1 at D00 to D05 in SR
+												//ACMD12 D07
+#define SD_EMMC_ADMA_ERR				15UL	//ADMA based data transfer error
+												//Error response received from System bus (Master I/F)
+												//ADMA3,ADMA2 Descriptors invalid
+												//CQE Task or Transfer descriptors invalid
+#define SD_EMMC_TUNING_ERR				16UL	//error detected in a tuning circuit except tuning procedure
+#define SD_EMMC_RESP_ERR				17UL	//Resp error during DMA execution
+#define SD_EMMC_BOOT_ACK_ERR			18UL	//boot acknowledgement error
+												//boot ack status other than 010(eMMC only)
+//
 
-#define SD_EMMC_CMD_TIMEOUT				2L
-#define SD_EMMC_XFER_TIMEOUT			3L
-#define SD_EMMC_BUF_RD_RDY_TIMEOUT		4L
+//Error INT status bits	length 13~15 reserved
+#define SD_EMMC_ERR_INT_STAT_BITS_LEN	13
 
+#define SD_EMMC_SEQUENCE_PRINT
+#ifdef SD_EMMC_SEQUENCE_PRINT
+#define SD_EMMC_PRINT	printf
+#elif
+#define SD_EMMC_PRINT
+#endif
+
+#define SD_EMMC_CMD_TIMEOUT_VAL				(150*1000)	//150ms
+#define SD_EMMC_XFER_TIMEOUT_VAL			(150*1000)	//150ms
+#define SD_EMMC_BUF_RD_RDY_TIMEOUT_VAL		(150*1000)	//150ms
+#define SD_EMMC_WAIT_CLK_STABLE_TIMEOUT_VAL	(150*1000)	//150ms
+
+//capabilities1.base_clk_freq 0 another way 1~255 -> 1~255MHz
+#define SD_EMMC_GET_INFO_ANOTHER_WAY	0x0
+//capabilities2.clk_mul 0 not support 1~255 -> 2~256
+#define SD_EMMC_CLK_MUL_NOT_SUPPORT	0x0
 
 #define     __IO    volatile            
 
@@ -30,6 +79,20 @@ extern void reg_write(unsigned long reg_address, u32 reg_wdata);
 
 #define SDRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO1__BASE_ADDR+reg_address), reg_wdata)
 #define EMMCRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO0__BASE_ADDR+reg_address), reg_wdata)
+
+#define SD_EMMC_WAIT_CLK_STABLE(ptr)		if(wait_clock_stable(ptr) != AL_SUCCESS){\
+												return status;\
+											}
+#define SD_EMMC_WAIT_CMD_COMPLETE(ptr)		if(wait_command_complete(ptr) != AL_SUCCESS){\
+												return status;\
+											}
+#define SD_EMMC_WAIT_TRANSFER_COMPLETE(ptr)	if(wait_transfer_complete(ptr) != AL_SUCCESS){\
+												return status;\
+											}
+#define SD_EMMC_WAIT_BUF_RD_RDY_COMPLETE(ptr)	if(wait_buffer_read_ready_complete(ptr) != AL_SUCCESS){\
+												return status;\
+											}
+
 
 typedef enum {
 	FAILED = 0, 
@@ -585,16 +648,6 @@ typedef struct
   uint8_t CardType;
 } SD_CardInfo;
 
-u32 wait_command_complete(volatile DWC_mshc_block_registers* ptr);
-u32 wait_transfer_complete(volatile DWC_mshc_block_registers* ptr);
-u32 wait_buffer_read_ready_complete(volatile DWC_mshc_block_registers* ptr);
-u32 HostControllerSetup(volatile DWC_mshc_block_registers* ptr);
-u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, int freq);
-u32 InitInterruptSetting(volatile DWC_mshc_block_registers* ptr);
-u32 SD_GetCardInfo(SD_CardInfo *cardinfo);
-
-extern SD_CardInfo SDCardInfo;
-
 /**
   * @brief Supported SD Memory Cards
   */
@@ -695,20 +748,26 @@ extern SD_CardInfo SDCardInfo;
 #define SDIO_Response_Short                 (0x2)
 #define SDIO_Response_Short_48B             (0x3)
 
-#define FREQ_400K                           (0)    
-#define FREQ_10M                            (1)
+#define SD_EMMC_FREQ_400K					(0)    
+#define SD_EMMC_FREQ_10M					(1)
 
-#define SDIO_EMMC_DELAY_MS(ms)				_delay_ms(ms)
+//delay func
+#define SD_EMMC_DELAY_US(us)				_delay_us(us)
+#define SD_EMMC_DELAY_MS(ms)				_delay_ms(ms)
 
+extern SD_CardInfo SDCardInfo;
 extern volatile DWC_mshc_block_registers* SDIO;
 extern volatile DWC_mshc_block_registers* eMMC;
-extern volatile MtimerParams Mtimer;
+extern volatile MtimerParams mtimer;
 extern uint32_t CSD_Tab[4];
 extern uint32_t CID_Tab[4];
 extern uint32_t RCA;
 
+u32 wait_command_complete(volatile DWC_mshc_block_registers* ptr);
+u32 wait_transfer_complete(volatile DWC_mshc_block_registers* ptr);
+u32 wait_buffer_read_ready_complete(volatile DWC_mshc_block_registers* ptr);
 u32 HostControllerSetup(volatile DWC_mshc_block_registers* ptr);
-u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, int freq);
+u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, uint32_t freq);
 u32 InitInterruptSetting(volatile DWC_mshc_block_registers* ptr);
 u32 SD_GetCardInfo(SD_CardInfo *cardinfo);
 
