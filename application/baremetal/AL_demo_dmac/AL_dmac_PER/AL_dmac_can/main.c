@@ -9,9 +9,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
-#include "al_uart.h"
-#include "al_dmac.h"
-#include "al_can.h"
+#include "AL_uart.h"
+#include "AL_dmac.h"
+#include "AL_can.h"
 #include <time.h>
 uint8_t tx_buf1[64];
 uint8_t tx_buf2[64];
@@ -85,9 +85,7 @@ int main(void){
     AlDma_EnableChannel(AL_DMAC,AL_dmac_channel_num_1);
 	while(AlDma_CheckChannelBusy(AL_DMAC));
 	can_data_cheak(64);
-
-
-        	return 0;
+    return 0;
 }
 
 

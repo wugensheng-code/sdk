@@ -1106,10 +1106,12 @@ u32 RawReadWriteTestSD()
     result = strcmp(WriteBuffer, ReadBuffer);
     if (result == 0)
     {
+    	printf("TestCase Pass!");
         Status = XST_SUCCESS;
     }
     else
     {
+    	printf("TestCase Fail!");
         Status = XST_FAILURE;
     }
 
@@ -1161,8 +1163,10 @@ u32 SD_Test(void)
 	printf("SD EMMC Test Start...");
 
 
+
     RawReadWriteTestEmmc();
-    //RawReadWriteTestSD();
+    RawReadWriteTestSD();
+
     for(;;);
 #if 0
 	res_sd = f_mount(&fs,"0:",1);  //SD test

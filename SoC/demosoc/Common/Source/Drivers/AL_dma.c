@@ -4,11 +4,17 @@
  *  Created on: 2021年11月3日
  *      Author: wei.pang
  */
+#include "AL_dmac.h"
 #include "demosoc.h"
 #include "stddef.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "AL_uart.h"
 #include "nuclei_sdk_soc.h"
+#include "AL_can.h"
+#include "al9000_spi.h"
+#include "al9000_qspi.h"
+#include "AL_i2c.h"
 #define DMAC_MAX_CHANNELS   8
 #define DMAC_MAX_INTERRUPTS 5
 #define DW_EBUSY            1
@@ -21,9 +27,9 @@
 #define num_channels        1
 #define spi0_data_base_address   0xF8404060
 #define spi1_data_base_adderss   0xF8405060
-#define qspi_data_base_address  0xF804E060
-#define i2c0_data_base_address  0xF8414010
-#define i2c1_data_base_address  0xF8415010
+#define qspi_data_base_address   0xF804E060
+#define i2c0_data_base_address   0xF8414010
+#define i2c1_data_base_address   0xF8415010
 volatile uint16_t DMA_BLOCK_LIST_reload_count = 0;
 volatile uint32_t buffer_list_parm[100][5];
 /**********************************************************************/
@@ -566,7 +572,12 @@ int AlDma_MaskIrq(
 }
     return errorCode;
 }
+int AlDma_GetInterType(
+		AL_DMAC_TypeDef *DMAC,
+		enum   AL_dmac_channel_number ch_num,
+		enum   AL_dmac_irq ch_irq){
 
+}
 /**********************************************************************/
 //pass
 int AlDma_SetAddress(DMA_Channel_TypeDef *Channelx,enum     AL_dmac_src_dst_select sd_sel,uint32_t address)
@@ -598,27 +609,27 @@ int AlDma_SetChannelConfig(DMA_Channel_TypeDef *Channelx)
 		Channelx ->CTL_L.SRC_GATHER_EN  	= DISABLE;
 		Channelx ->CTL_L.DST_SCATTER_EN 	= DISABLE;
 		Channelx ->CTL_L.TT_FC      		= MEM2MEM ;
-		Channelx ->CTL_L.DMS				= DMS_master1;
-		Channelx ->CTL_L.SMS				= SMS_master1;
+		Channelx ->CTL_L.DMS			= DMS_master1;
+		Channelx ->CTL_L.SMS			= SMS_master1;
 		Channelx ->CTL_H.BLOCK_TS       	= 5;
 		Channelx ->CTL_H.DONE           	= ENABLE;
 
          //Set the config register
-		Channelx ->CFG_L.CH_PRIOR 			= Channel_priority_0;
-		Channelx ->CFG_L.CH_SUSP  			= DISABLE;
+		Channelx ->CFG_L.CH_PRIOR 		= Channel_priority_0;
+		Channelx ->CFG_L.CH_SUSP  		= DISABLE;
 		Channelx ->CFG_L.HS_SEL_DST     	= Hardware_handshaking;
 		Channelx ->CFG_L.HS_SEL_SRC     	= Hardware_handshaking;
 		Channelx ->CFG_L.DST_HS_POL     	= ACTIVE_HIGH;
 		Channelx ->CFG_L.SRC_HS_POL     	= ACTIVE_HIGH;
-		Channelx ->CFG_L.RELOAD_SRC			= DISABLE;
-		Channelx ->CFG_L.RELOAD_DST			= DISABLE;
+		Channelx ->CFG_L.RELOAD_SRC		= DISABLE;
+		Channelx ->CFG_L.RELOAD_DST		= DISABLE;
 
 		Channelx ->CFG_H.FCMODE         	= fc_mode_0;
 		Channelx ->CFG_H.FIFO_MODE      	= FIFO_MODE_0;
 		Channelx ->CFG_H.DS_UPD_EN      	= DISABLE;
 		Channelx ->CFG_H.SS_UPD_EN      	= DISABLE;
-		Channelx ->CFG_H.SRC_PER        	= 0x00;
-		Channelx ->CFG_H.DEST_PER       	= 0x00;
+		Channelx ->CFG_H.SRC_PER        	= 0x04;
+		Channelx ->CFG_H.DEST_PER       	= 0x04;
 
          //set the SAR/DAR registers
 		Channelx ->SAR_L 			= MEM_BASE1_ADDR;
@@ -1258,114 +1269,7 @@ int AlDma_SetListPointerAddress(
     }
 	return errorcode;
 }
-/**********************************************************************/
-#if 0
-void dw_dmac_addLliItem(
-			list_t     **list_head,
-			uint32_t ctl_l_reg_par,
-			uint32_t ctl_h_reg_par,
-			uint32_t SARaddress,
-			uint32_t DSTaddress,
-			uint32_t address){
-    list_t *temp        = (list_t *)malloc(sizeof(list_t));
-    temp -> next = NULL;
-    temp -> list0.sar   = SARaddress;
-    temp -> list0.dst   = DSTaddress;
-    temp -> list0.llp   = address;
-    temp -> list0.ctl_l = ctl_l_reg_par;
-    temp -> list0.ctl_h = ctl_h_reg_par;
-    if(*list_head == NULL){
-			(*list_head) = temp;
-	}else{
-		list_t *t = (*list_head);
-		if(temp ->list0.sar < (*list_head)-> sar){
-		    temp ->next = (*list_head);
-		    (*list_head)= temp;
-		    return;
-	}
-	while(t != NULL){
-             if(t ->next == NULL){
-		t ->next = temp;
-		return;
-           }else if(t ->next->sar > temp ->list0.sar){
-	        temp ->next = t ->next;
-		t -> next   = temp;
-		return;
-	   }
-	   t =  t ->next;
-	}
-    }
-#if 0
-    dmac_node -> ctl_h = ctl_h_reg;
-    dmac_node -> ctl_l = ctl_l_reg;
-    dmac_node -> llp   = address;
-    dmac_node -> sar   = SARaddress;
-    dmac_node -> dar   = DSTaddress;
-    dmac_node -> next  =NULL;
-			if(head == NULL){
-				head = dmac_node;
-			}
-			else{
-				q -> next = dmac_node;
-			}
-			q         = dmac_node;
-#endif
-}
-#endif
-#if 0
-/**********************************************************************/
-void dw_dmac_addLliItem(
-			uint32_t ctl_l_reg_par,
-			uint32_t ctl_h_reg_par,
-			uint32_t SARaddress,
-			uint32_t DSTaddress,
-			uint32_t address){
-    temp -> sar  = SARaddress;
-    temp -> dst  = DSTaddress;
-    temp -> llp  = address;
-    temp -> ctl_l= ctl_l_reg_par;
-    temp -> ctl_h= ctl_h_reg_par;
-#if 0
-    dmac_node -> ctl_h = ctl_h_reg;
-    dmac_node -> ctl_l = ctl_l_reg;
-    dmac_node -> llp   = address;
-    dmac_node -> sar   = SARaddress;
-    dmac_node -> dar   = DSTaddress;
-    dmac_node -> next  =NULL;
-			if(head == NULL){
-				head = dmac_node;
-			}
-			else{
-				q -> next = dmac_node;
-			}
-			q         = dmac_node;
-#endif
-}
-#endif
-#if 0
-/**********************************************************************/
-void dw_dmac_addLliItem(DMA_Channel_TypeDef *Channelx,uint32_t ctl_l_parameter,uint32_t ctl_h_parameter,uint32_t list_length){
 
-
-     struct dw_dmac_lli_item *head , *dmac_node,*q;
-
-     volatile uint32_t ctl_l_reg,ctl_h_reg;
-		ctl_l_reg = ((uint32_t)0x00001008);
-		ctl_h_reg = ((uint32_t)0x18004801);
-		head = NULL;
-		dmac_node = (struct dw_dmac_lli_item *)malloc(sizeof(struct dw_dmac_lli_item));
-		dmac_node -> ctl_h = ctl_h_reg;
-		dmac_node -> ctl_l = ctl_l_reg;
-		dmac_node -> sar   = Channelx -> LLP_L.LOC + 0X4;
-		dmac_node -> dar   = Channelx -> LLP_L.LOC + 0X8;
-		dmac_node -> next  =NULL;
-			if(head == NULL)
-				head = dmac_node;
-			else
-				q -> next = dmac_node;
-				q         = dmac_node;
-}
-#endif
 /**********************************************************************/
 int AlDma_CheckChannelBusy(AL_DMAC_TypeDef *DMAC)
 {
@@ -1393,6 +1297,7 @@ void write_To_OCM(uint32_t* pSnAddr, uint32_t Count, uint32_t* pDnAddr)
         *pDnAddr++ = *pSnAddr++;
     }
 }
+
 void write_iic_data(enum i2c_cmd_type type,uint32_t transimte_data_length){
 	volatile uint32_t i = 0;
 	volatile uint32_t j = 0;
@@ -1416,30 +1321,6 @@ void write_iic_data(enum i2c_cmd_type type,uint32_t transimte_data_length){
 	else
 	{}
 }
-#if 0
-int can_dma_mode(AL_CAN_TypeDef* CANX,enum data_length len) {
-    volatile uint32_t RBUFFER[2000];
-    volatile uint8_t count,val ;
-    //val = GET_BITS(CANX -> RBUF_CTL,0,3);
-    switch (val) {
-    case 0:
-        write_To_OCM((uint32_t*)MEM_BASE1_ADDR, 80, (uint32_t*)RBUFFER);
-        /*for (count = 0; count < 2000; count++)
-        {
-           // printf("can_dma_data_length_1", RBUFFER[count]);
-        }*/
-        break;
-    default:
-    	write_To_OCM((uint32_t*)MEM_BASE1_ADDR, 80, (uint32_t*)RBUFFER);
-    	       /* for (count = 0; count < 2000; count++)
-    	        {
-    	           // printf("can_dma_data_length_1", RBUFFER[count]);
-    	        }*/
-        break;
-    }
-    return 0;
-}
-#endif
 /*
 uint8_t dma_Periphselect(uint32_t dma_mode){
     switch(tt_fc){
@@ -1455,86 +1336,18 @@ uint8_t dma_Periphselect(uint32_t dma_mode){
 }
    
 }*/
-int dma_blocklist_function(uint32_t srcaddress,uint32_t dstaddress,uint32_t llp_address,uint32_t block_number) {
+
+void AlDma_blocklist(uint32_t srcaddress,uint32_t dstaddress,enum dma_type tran_type,uint32_t block_number,uint32_t llp_address,enum PER_TransmissionType per_type){
     volatile uint8_t  block_count = 0;
     volatile uint8_t val = 0;
     volatile uint32_t buffer[5];
-    //val = dma_block_chain_select(uint32_t srcaddress,uint32_t dma_mode, enum   AL_dmac_transfer_flow  tt_fc)
-    if(srcaddress == AL_CAN0_BASE ||dstaddress == AL_CAN0_BASE || srcaddress == AL_CAN1_BASE || dstaddress == AL_CAN1_BASE ){
-        for (volatile uint8_t i = 0; i < 10; i++) {
+	if(tran_type == tx){
+        for (volatile uint8_t i = 0; i < block_number; i++) {
+        	//创建10个长度的数据链表
             for (volatile uint8_t j = 0; j < 5; j++) {
                 switch (j){
                 case 0:
-                    buffer_list_parm[i][j] = srcaddress;
-                    break;
-                case 1:
-                    buffer_list_parm[i][j] = dstaddress +i*80;
-                    break;
-                case 2:
-		    if(i ==100){
-			buffer_list_parm[i][j] = llp_address ;
-                    }
-		    else
-                    buffer_list_parm[i][j] = llp_address + (i+1)*20;
-                    break;
-                case 3:
-                    buffer_list_parm[i][j] = can_ctl_parm_l;
-                    break;
-                case 4:
-                    buffer_list_parm[i][j] = can_ctl_parm_h;
-                    break;
-                }
-            }
-        }
-      for (volatile uint32_t counti = 0 ; counti< block_number ;counti++)
-	{
-		for (volatile uint32_t countj = 0 ; countj < 5 ; countj++)
-		{
- 			buffer[countj] = (uint32_t)buffer_list_parm[counti][countj];
- 		}
-	      
-              write_To_OCM((uint32_t*)buffer,5,(uint32_t*)((uint32_t)llp_address + counti*20));
-	}
-     }
-    if(srcaddress == AL_UART0_BASE ||dstaddress == AL_UART0_BASE || srcaddress == AL_UART1_BASE ||dstaddress == AL_UART1_BASE ){
-	if(srcaddress == AL_UART0_BASE || srcaddress == AL_UART1_BASE){
-        for (volatile uint8_t i = 0; i < 10; i++) {
-            for (volatile uint8_t j = 0; j < 5; j++) {
-                switch (j){
-                case 0:
-                    buffer_list_parm[i][j] = srcaddress;
-	            break;
-                case 1:
-                    buffer_list_parm[i][j] = dstaddress +i;
-                    break;
-                case 2:
-                    buffer_list_parm[i][j] = llp_address + i*20;
-                    break;
-                case 3:
-                    buffer_list_parm[i][j] = can_ctl_parm_l;
-                    break;
-                case 4:
-                    buffer_list_parm[i][j] = can_ctl_parm_h;
-                    break;
-                }
-            }
-        }
-      for (volatile uint32_t counti = 0 ; counti< block_number ;counti++)
-	{
-		for (volatile uint32_t countj = 0 ; countj < 5 ; countj++)
-		{
- 			buffer[countj] = (uint32_t)buffer_list_parm[counti][countj];
- 		}
-	      
-              write_To_OCM((uint32_t*)buffer,5,(uint32_t*)((uint32_t)llp_address + counti*20));
-	}
-     }
-	if(dstaddress == AL_UART0_BASE || dstaddress == AL_UART1_BASE){
-        for (volatile uint8_t i = 0; i < 10; i++) {
-            for (volatile uint8_t j = 0; j < 5; j++) {
-                switch (j){
-                case 0:
-                    buffer_list_parm[i][j] = srcaddress + i;
+                    buffer_list_parm[i][j] = srcaddress + i*4; //为了提升AHB——DMA的搬运效率一般将地址数据增长提升为4byte搬运
 	            break;
                 case 1:
                     buffer_list_parm[i][j] = dstaddress;
@@ -1543,188 +1356,225 @@ int dma_blocklist_function(uint32_t srcaddress,uint32_t dstaddress,uint32_t llp_
                     buffer_list_parm[i][j] = llp_address + (i+1)*20;
                     break;
                 case 3:
-                    buffer_list_parm[i][j] = can_ctl_parm_l;
+                	switch(per_type){
+                	case 0:
+                    	if(i == (block_number - 1)){
+                    		buffer_list_parm[i][j] = i2c_ctl_parm_l_tx & (uint32_t)0x07ffffff;
+                    	}
+                    	else{
+                    		buffer_list_parm[i][j] = i2c_ctl_parm_l_tx;
+                    	}
+                		break;
+                	case 1:
+                    	if(i == (block_number - 1)){
+                    		buffer_list_parm[i][j] = spi_ctl_parm_l_tx & (uint32_t)0x07ffffff;
+                    	}
+                    	else{
+                    		buffer_list_parm[i][j] = spi_ctl_parm_l_tx;
+                    	}
+                		buffer_list_parm[i][j] = spi_ctl_parm_l_tx;
+                		break;
+                	case 2:
+                    	if(i == (block_number - 1)){
+                    		buffer_list_parm[i][j] = qspi_ctl_parm_l_tx & (uint32_t)0x07ffffff;
+                    	}
+                    	else{
+                    	}
+                		break;
+                	case 3:
+                    	if(i == (block_number - 1)){
+                    		buffer_list_parm[i][j] = uart_ctl_parm_l_tx & (uint32_t)0x07ffffff;
+                    	}
+                    	else{
+                    		buffer_list_parm[i][j] = uart_ctl_parm_l_tx;
+                    	}
+                		break;
+                	case 4:
+                    	if(i == (block_number - 1)){
+                    		buffer_list_parm[i][j] = can_ctl_parm_l & (uint32_t)0x07ffffff;
+                    	}
+                    	else{
+                    		buffer_list_parm[i][j] = can_ctl_parm_l;
+                    	}
+                		break;
+                	}
                     break;
                 case 4:
-                    buffer_list_parm[i][j] = can_ctl_parm_h;
+                	switch(per_type){
+                	case 0:
+                    		buffer_list_parm[i][j] = i2c_ctl_parm_h_tx;
+                		break;
+                	case 1:
+                    		buffer_list_parm[i][j] = spi_ctl_parm_h_tx;
+                		break;
+                	case 2:
+                    		buffer_list_parm[i][j] = qspi_ctl_parm_h_tx;
+                		break;
+                	case 3:
+                    		buffer_list_parm[i][j] = uart_ctl_parm_h_tx;
+                		break;
+                	case 4:
+                    		buffer_list_parm[i][j] = can_ctl_parm_h;
+                		break;
+                	}
                     break;
                 }
             }
         }
-      for (volatile uint32_t counti = 0 ; counti< block_number ;counti++)
-	{
-		for (volatile uint32_t countj = 0 ; countj < 5 ; countj++)
-		{
- 			buffer[countj] = (uint32_t)buffer_list_parm[counti][countj];
- 		}
-	      
-              write_To_OCM((uint32_t*)buffer,5,(uint32_t*)((uint32_t)llp_address + counti*20));
 	}
-     }
-
-     }
- if(srcaddress == spi0_data_base_address ||dstaddress == spi0_data_base_address || srcaddress == spi1_data_base_adderss||dstaddress == spi1_data_base_adderss ){
-	if(srcaddress == spi0_data_base_address || srcaddress == spi1_data_base_adderss){
-        for (volatile uint8_t i = 0; i < 10; i++) {
+	else{
+        for (volatile uint8_t i = 0; i < block_number; i++) {
             for (volatile uint8_t j = 0; j < 5; j++) {
                 switch (j){
                 case 0:
                     buffer_list_parm[i][j] = srcaddress;
 	            break;
                 case 1:
-                    buffer_list_parm[i][j] = dstaddress +i;
-                    break;
-                case 2:
-                    buffer_list_parm[i][j] = llp_address + i*20;
-                    break;
-                case 3:
-                    buffer_list_parm[i][j] = can_ctl_parm_l;
-                    break;
-                case 4:
-                    buffer_list_parm[i][j] = spi_ctl_parm_h;
-                    break;
-                }
-            }
-        }
-      for (volatile uint32_t counti = 0 ; counti< block_number ;counti++)
-	{
-		for (volatile uint32_t countj = 0 ; countj < 5 ; countj++)
-		{
- 			buffer[countj] = (uint32_t)buffer_list_parm[counti][countj];
- 		}
-	      
-              write_To_OCM((uint32_t*)buffer,5,(uint32_t*)((uint32_t)llp_address + counti*20));
-	}
-     }
-	if(dstaddress == spi0_data_base_address || dstaddress == spi1_data_base_adderss){
-        for (volatile uint8_t i = 0; i < 10; i++) {
-            for (volatile uint8_t j = 0; j < 5; j++) {
-                switch (j){
-                case 0:
-                    buffer_list_parm[i][j] = srcaddress + i;
-	            break;
-                case 1:
-                    buffer_list_parm[i][j] = dstaddress;
+                    buffer_list_parm[i][j] = dstaddress +i*4;
                     break;
                 case 2:
                     buffer_list_parm[i][j] = llp_address + (i+1)*20;
                     break;
                 case 3:
-                    buffer_list_parm[i][j] = can_ctl_parm_l;
+                	switch(per_type){
+                	case 0:
+                    	if(i == (block_number - 1)){
+                    		buffer_list_parm[i][j] = i2c_ctl_parm_l_rx & (uint32_t)0x07ffffff;
+                    	}
+                    	else{
+                    		buffer_list_parm[i][j] = i2c_ctl_parm_l_rx;
+                    	}
+                		break;
+                	case 1:
+                    	if(i == (block_number - 1)){
+                    		buffer_list_parm[i][j] = spi_ctl_parm_l_rx & (uint32_t)0x07ffffff;
+                    	}
+                    	else{
+                    		buffer_list_parm[i][j] = spi_ctl_parm_l_rx;
+                    	}
+                		break;
+                	case 2:
+                    	if(i == (block_number - 1)){
+                    		buffer_list_parm[i][j] = qspi_ctl_parm_l_rx & (uint32_t)0x07ffffff;
+                    	}
+                    	else{
+                    		buffer_list_parm[i][j] = qspi_ctl_parm_l_rx;
+                    	}
+                		break;
+                	case 3:
+                    	if(i == (block_number - 1)){
+                    		buffer_list_parm[i][j] = uart_ctl_parm_l_rx & (uint32_t)0x07ffffff;
+                    	}
+                    	else{
+                    		buffer_list_parm[i][j] = uart_ctl_parm_l_rx;
+                    	}
+                		break;
+                	case 4:
+                    	if(i == (block_number - 1)){
+                    		buffer_list_parm[i][j] = can_ctl_parm_l & (uint32_t)0x07ffffff;
+                    	}
+                    	else{
+                    		buffer_list_parm[i][j] = can_ctl_parm_l;
+                    	}
+                		break;
+                	}
                     break;
                 case 4:
-                    buffer_list_parm[i][j] = spi_ctl_parm_h;
+                	switch(per_type){
+                	case 0:
+                	        buffer_list_parm[i][j] = i2c_ctl_parm_h_rx;
+                	    break;
+                	case 1:
+                	        buffer_list_parm[i][j] = spi_ctl_parm_h_rx;
+                	   break;
+                	case 2:
+                	        buffer_list_parm[i][j] = qspi_ctl_parm_h_rx;
+                	   break;
+                	case 3:
+                	        buffer_list_parm[i][j] = uart_ctl_parm_h_rx;
+                	    break;
+                	case 4:
+                	       buffer_list_parm[i][j] = can_ctl_parm_h;
+                	     break;
+                	  }
                     break;
                 }
             }
         }
+	}
+	//将链表载入到内存中
       for (volatile uint32_t counti = 0 ; counti< block_number ;counti++)
 	{
 		for (volatile uint32_t countj = 0 ; countj < 5 ; countj++)
 		{
  			buffer[countj] = (uint32_t)buffer_list_parm[counti][countj];
  		}
-	      
+
               write_To_OCM((uint32_t*)buffer,5,(uint32_t*)((uint32_t)llp_address + counti*20));
 	}
-     }
 
-     }
- if(srcaddress == qspi_data_base_address ||dstaddress == qspi_data_base_address){
-	if(srcaddress == qspi_data_base_address ){
-        for (volatile uint8_t i = 0; i < 10; i++) {
-            for (volatile uint8_t j = 0; j < 5; j++) {
-                switch (j){
-                case 0:
-                    buffer_list_parm[i][j] = srcaddress;
-	            break;
-                case 1:
-                    buffer_list_parm[i][j] = dstaddress +i;
-                    break;
-                case 2:
-                    buffer_list_parm[i][j] = llp_address + i*20;
-                    break;
-                case 3:
-                    buffer_list_parm[i][j] = can_ctl_parm_l;
-                    break;
-                case 4:
-                    buffer_list_parm[i][j] = can_ctl_parm_h;
-                    break;
-                }
-            }
-        }
-      for (volatile uint32_t counti = 0 ; counti< block_number ;counti++)
-	{
-		for (volatile uint32_t countj = 0 ; countj < 5 ; countj++)
-		{
- 			buffer[countj] = (uint32_t)buffer_list_parm[counti][countj];
- 		}
-	      
-              write_To_OCM((uint32_t*)buffer,5,(uint32_t*)((uint32_t)llp_address + counti*20));
-	}
-     }
-	if(dstaddress == qspi_data_base_address ){
-        for (volatile uint8_t i = 0; i < 10; i++) {
-            for (volatile uint8_t j = 0; j < 5; j++) {
-                switch (j){
-                case 0:
-                    buffer_list_parm[i][j] = srcaddress + i;
-	            break;
-                case 1:
-                    buffer_list_parm[i][j] = dstaddress;
-                    break;
-                case 2:
-                    buffer_list_parm[i][j] = llp_address + (i+1)*20;
-                    break;
-                case 3:
-                    buffer_list_parm[i][j] = can_ctl_parm_l;
-                    break;
-                case 4:
-                    buffer_list_parm[i][j] = can_ctl_parm_h;
-                    break;
-                }
-            }
-        }
-      for (volatile uint32_t counti = 0 ; counti< block_number ;counti++)
-	{
-		for (volatile uint32_t countj = 0 ; countj < 5 ; countj++)
-		{
- 			buffer[countj] = (uint32_t)buffer_list_parm[counti][countj];
- 		}
-	      
-              write_To_OCM((uint32_t*)buffer,5,(uint32_t*)((uint32_t)llp_address + counti*20));
-	}
-     }
 
-     }
-
-    return 0;
 }
-uint8_t cpu_dma_read_block_num(uint32_t llp_address){
+void 	test_blocklist(uint32_t srcaddress,uint32_t dstaddress,enum dma_type tran_type,uint32_t block_number,uint32_t llp_address){
+	volatile uint8_t  block_count = 0;
+	    volatile uint8_t val = 0;
+	    volatile uint32_t buffer[5];
+		if(tran_type == tx){
+	        for (volatile uint8_t i = 0; i < block_number; i++) {
+	        	//创建10个长度的数据链表
+	            for (volatile uint8_t j = 0; j < 5; j++) {
+	                switch (j){
+	                case 0:
+	                    buffer_list_parm[i][j] = srcaddress + i*4; //为了提升AHB——DMA的搬运效率一般将地址数据增长提升为4byte搬运
+		            break;
+	                case 1:
+	                    buffer_list_parm[i][j] = dstaddress;
+	                    break;
+	                case 2:
+	                    buffer_list_parm[i][j] = llp_address + i*20;
+	                    break;
+	                case 3:
+	                    		buffer_list_parm[i][j] = can_ctl_parm_l;
+	                    break;
+	                case 4:
+	                    		buffer_list_parm[i][j] = can_ctl_parm_l;
+	                    break;
+	                }
+	            }
+	        }
+		}
+		//将链表载入到内存中
+	      for (volatile uint32_t counti = 0 ; counti< block_number ;counti++)
+		{
+			for (volatile uint32_t countj = 0 ; countj < 5 ; countj++)
+			{
+	 			buffer[countj] = (uint32_t)buffer_list_parm[counti][countj];
+	 		}
+
+	              write_To_OCM((uint32_t*)buffer,5,(uint32_t*)((uint32_t)llp_address + counti*20));
+		}
+
+
+}
+uint8_t cpu_dma_read_block_num(uint32_t llp_address,uint32_t block_number){
    volatile uint32_t count = 0;
-   volatile const uint32_t DMAC_DONE_BIT_Status = 1;
-       for(volatile uint32_t i = 0 ; i <10 ; i++ ){
-           if(DMAC_DONE_BIT_Status ==((*(uint32_t *)llp_address + i*20 + 0x10) >> 12));
-	        {
+   volatile  uint32_t DMAC_DONE_BIT_Status = 1;
+       for(volatile uint32_t i = 0 ; i <block_number ; i++ ){
+           if(DMAC_DONE_BIT_Status ==(*(uint32_t *)(llp_address + i*20 + 0x10)) >> 12){
                   count ++;
+                  //printf("done = %d\r\n",(*(uint32_t *)(llp_address + i*20 + 0x10)) >> 12);
+                  //printf("count = %d\r\n",count);
                  } 
             }
     return count;
 }
-void updata_ctl_parm_h(uint32_t llp_address){
-   volatile uint32_t count = 0; 
-   volatile uint32_t buffer[100];
-   count =  cpu_dma_read_block_num(llp_address);
-   for (volatile uint8_t i = 0; i < count; i++) {
-         buffer_list_parm[i][4] = can_ctl_parm_h;     			
- 	 buffer[i] = (uint32_t)buffer_list_parm[i][4];
-         write_To_OCM((uint32_t*)buffer,1,(uint32_t*)buffer_list_parm[i][4]);
-     }
+void updata_blocklist(uint32_t srcaddress,uint32_t dstaddress,uint32_t llp_address,uint32_t block_number,uint32_t count){
+   //count =  cpu_dma_read_block_num(llp_address,block_number);
+   //printf("updata count block %d\r\n",count);
+   can_blocklist(srcaddress,dstaddress,llp_address,block_number);
+   AlDma_SetListPointerAddress(AL_DMAC_channel_0,LMS_master1,LLP_BASE_ADDR);
 }
-void dma_interrupt_readfunction(uint32_t llp_address){
- cpu_dma_read_block_num(llp_address);
- updata_ctl_parm_h(llp_address);
-}
+
 void can_handshank_function(TOPCFG_TypeDef* TOP){
 	volatile uint8_t i;
 	GET_BITS(TOP ->can_dma,0,4);
@@ -1771,57 +1621,52 @@ void i2c_dma_rx_enable(I2C_TypeDef *i2c){
 }
 void AlSpi_DmaInit(DMA_Channel_TypeDef *Channelx,enum PER_type PER,enum dma_type type,uint8_t tx_data_level,uint8_t rx_data_level,enum AL_dmac_transfer_type  transfer,uint16_t block_size){
 	 AlDma_SetChannelConfig(Channelx);
-	    AlDma_SetChannelConfig(Channelx);
-	    if(PER == spi0){
-	     	if(type == tx){
-	    	    AlDma_SetAddress(Channelx,Dmac_dst,spi0_data_base_address);
-	    	    dam_handshake_interfance(Channelx,spi0_tx_hs_interfance);
-	        	AlDma_SetMemPeriphFlowCtl(Channelx,MEM2PER);
-	    	    AlDma_SetAddressInc(Channelx,Dmac_dst,FIX);
-	    	    spi_dma_tx_enable(SPI0);
-	    	    spi_dma_data_level(SPI0,tx_data_level,rx_data_level);
-	    	}
-	        	else{
-	     	     AlDma_SetAddress(Channelx,Dmac_src,spi0_data_base_address);
-	    	     dam_handshake_interfance(Channelx,spi0_rx_hs_interfance);
-	    	     AlDma_SetMemPeriphFlowCtl(Channelx,PER2MEM);
-	    	     AlDma_SetAddressInc(Channelx,Dmac_src,FIX);
-	    	     spi_dma_rx_enable(SPI0);
-	    	     spi_dma_data_level(SPI0,tx_data_level,rx_data_level);
-	    	}
-	       }
-	        else if(PER == spi1){
-	    	   if(type == tx){
-	    	    AlDma_SetAddress(Channelx,Dmac_dst,spi1_data_base_adderss);
-	    	    dam_handshake_interfance(Channelx,spi1_tx_hs_interfance);
-	        	AlDma_SetMemPeriphFlowCtl(Channelx,MEM2PER);
-	    	    AlDma_SetAddressInc(Channelx,Dmac_dst,FIX);
-	    	    spi_dma_tx_enable(SPI1);
-	    	    spi_dma_data_level(SPI1,tx_data_level,rx_data_level);
-		        AlDma_SetBurstTransLength(Channelx,Dmac_src_dst,AL_DMA_MSIZE_32);
-	    	}
-	        	else{
-	     	     AlDma_SetAddress(Channelx,Dmac_src,spi1_data_base_adderss);
-	    	     dam_handshake_interfance(Channelx,spi1_rx_hs_interfance);
-	    	     AlDma_SetMemPeriphFlowCtl(Channelx,PER2MEM);
-	    	     AlDma_SetAddressInc(Channelx,Dmac_src,FIX);
-	    	     spi_dma_rx_enable(SPI1);
-	    	     spi_dma_data_level(SPI1,tx_data_level,rx_data_level);
-	    	     AlDma_SetBurstTransLength(Channelx,Dmac_src,AL_DMA_MSIZE_32);
-	    	}
+        if(type == tx)
+	{
+	     if(PER == spi0)
+		{
+    	    AlDma_SetAddress(Channelx,Dmac_dst,spi0_data_base_address);
+		    dam_handshake_interfance(Channelx,spi0_tx_hs_interfance);
+		    spi_dma_tx_enable(SPI0);
+		    spi_dma_data_level(SPI0,tx_data_level,rx_data_level);
+		}
+    	  else if(PER == spi1){
+	        AlDma_SetAddress(Channelx,Dmac_dst,spi1_data_base_adderss);
+		    dam_handshake_interfance(Channelx,spi1_tx_hs_interfance);
+		    spi_dma_tx_enable(SPI1);
 	        }
-	        AlDma_SetTransWidth(Channelx,Dmac_src_dst,WIDTH_32);
-	        AlDma_SetBlockTransSize(Channelx,block_size);
-	        AlDma_SetTransferType(Channelx,transfer);
-	        //AlDma_SetBurstTransLength(Channelx,Dmac_src_dst,AL_DMA_MSIZE_8);
-
+    	    AlDma_SetMemPeriphFlowCtl(Channelx,MEM2PER);
+    	    AlDma_SetAddressInc(Channelx,Dmac_dst,FIX);
+    	    spi_dma_data_level(SPI1,tx_data_level,rx_data_level);
+	}
+    else{
+	     if(PER == spi0)
+		{
+    	    AlDma_SetAddress(Channelx,Dmac_src,spi0_data_base_address);
+		    dam_handshake_interfance(Channelx,spi0_rx_hs_interfance);
+		    spi_dma_rx_enable(SPI0);
+		    spi_dma_data_level(SPI0,tx_data_level,rx_data_level);
+		}
+     else if(PER == spi1){
+	        AlDma_SetAddress(Channelx,Dmac_src,spi1_data_base_adderss);
+		    dam_handshake_interfance(Channelx,spi1_rx_hs_interfance);
+		    spi_dma_rx_enable(SPI1);
+	        }
+	     AlDma_SetMemPeriphFlowCtl(Channelx,PER2MEM);
+	     AlDma_SetAddressInc(Channelx,Dmac_src,FIX);
+	     spi_dma_data_level(SPI1,tx_data_level,rx_data_level);
+	}
+     AlDma_SetMemPeriphFlowCtl(Channelx,transfer);
+	 AlDma_SetTransWidth(Channelx,Dmac_src_dst,WIDTH_32);
+	 AlDma_SetBlockTransSize(Channelx,block_size);
+	 AlDma_SetBurstTransLength(Channelx,Dmac_src_dst,AL_DMA_MSIZE_1);
 }
 void AlQspi_DmaInit(DMA_Channel_TypeDef *Channelx,enum dma_type type,uint8_t tx_data_level,uint8_t rx_data_level,enum AL_dmac_transfer_type  transfer,uint16_t block_size){
 	 AlDma_SetChannelConfig(Channelx);
         if(type == tx)
 	{
     	    AlDma_SetAddress(Channelx,Dmac_dst,qspi_data_base_address);
-    	    dam_handshake_interfance(Channelx,qspi_tx_hs_interfance);
+	    dam_handshake_interfance(Channelx,qspi_tx_hs_interfance);
             qspi_dma_tx_enable(QSPI0);
     	    AlDma_SetMemPeriphFlowCtl(Channelx,MEM2PER);
 	    AlDma_SetAddressInc(Channelx,Dmac_dst,FIX);
@@ -1888,10 +1733,10 @@ void AlUart_DmaInit(DMA_Channel_TypeDef *Channelx,enum PER_type PER,enum dma_typ
 	     AlDma_SetAddressInc(Channelx,Dmac_src,FIX);
 	}
     }
-    AlDma_SetTransWidth(Channelx,Dmac_src_dst,WIDTH_32);
+    AlDma_SetTransWidth(Channelx,Dmac_src_dst,WIDTH_8);
     AlDma_SetBlockTransSize(Channelx,block_size);
     AlDma_SetTransferType(Channelx,transfer);
-    AlDma_SetBurstTransLength(Channelx,Dmac_src_dst,AL_DMA_MSIZE_4);
+    AlDma_SetBurstTransLength(Channelx,Dmac_src_dst,AL_DMA_MSIZE_1);
 }
 void AlI2c_DmaInit(DMA_Channel_TypeDef *Channelx,enum PER_type PER,enum dma_type type,uint8_t tx_data_level,uint8_t rx_data_level,enum AL_dmac_transfer_type  transfer,uint16_t block_size) {
     AlDma_SetChannelConfig(Channelx);
@@ -1936,40 +1781,3 @@ void AlI2c_DmaInit(DMA_Channel_TypeDef *Channelx,enum PER_type PER,enum dma_type
         AlDma_SetTransferType(Channelx,transfer);
         AlDma_SetBurstTransLength(Channelx,Dmac_src_dst,AL_DMA_MSIZE_1);
 }
-
-#if 0
-void uart_dma_Init(){
-	 AL_dmac_setChannelConfig(AL_DMAC_channel_0);
-	 AL_dmac_setAddress(AL_DMAC_channel_0,Dmac_dst,AL_UART0_BASE);
-	 //AL_dmac_setAddress(AL_DMAC_channel_0,AL_dmac_channel_num_1,Dmac_dst,AL_UART0_BASE);
-	 AL_dmac_setTransferType(AL_DMAC_channel_0,Dmac_transfer_row4);
-	 AL_dmac_setMemPeriphFlowCtl(AL_DMAC_channel_0,MEM2PER);
-	 AL_dmac_setTransWidth(AL_DMAC_channel_0,Dmac_src_dst,WIDTH_32);
-	 AL_dmac_setBlockTransSize(AL_DMAC_channel_0,50);
-	 AL_dmac_setBurstTransLength(AL_DMAC_channel_0,Dmac_src_dst,AL_DMA_MSIZE_32);
-	 AL_dmac_setAddressInc(AL_DMAC_channel_0,Dmac_dst,FIX);
-         //AL_dmac_setLlpEnable(AL_DMAC_channel_0,AL_dmac_channel_num_1,Dmac_src_dst);
-         //dma_blocklist_function(AL_CAN0_BASE,MEM_BASE1_ADDR,LLP_BASE_ADDR);
-
-}
-void can_dma_Init(TOPCFG_TypeDef* TOP, enum can_type type, AL_CAN_TypeDef* CANX) {
-    AL_dmac_setChannelConfig(AL_DMAC_channel_0);
-    AL_dmac_setAddress(AL_DMAC_channel_0,Dmac_src,AL_CAN0_BASE);
-    AL_dmac_setAddress(AL_DMAC_channel_0,Dmac_dst,MEM_BASE1_ADDR);
-    //AL_dmac_setTransferType(AL_DMAC_channel_0,AL_dmac_channel_num_1,Dmac_transfer_row1,Dmac_src_dst);
-    AL_dmac_setListPointerAddress(AL_DMAC_channel_0,LMS_master1,LLP_BASE_ADDR);
-    //AL_dmac_setTransWidth(AL_DMAC_channel_0,AL_dmac_channel_num_1,Dmac_src_dst,WIDTH_32);
-    //AL_dmac_setTransWidth(AL_DMAC_channel_0,AL_dmac_channel_num_1,Dmac_src_dst,WIDTH_32);
-    //AL_dmac_setBurstTransLength(AL_DMAC_channel_0,AL_dmac_channel_num_1,Dmac_src_dst,AL_DMA_MSIZE_4);
-    //AL_dmac_setBlockTransSize(AL_DMAC_channel_0,AL_dmac_channel_num_1,80);
-    dw_dmac_setLlpEnable(AL_DMAC_channel_0,Dmac_src_dst);
-    dw_dmac_setMemPeriphFlowCtl(AL_DMAC_channel_0,PER2MEM);
-    //dw_dmac_setAddressInc(AL_DMAC_channel_0,dw_dmac_channel_num_1,Dmac_src,FIX);
-    can_handshank_function(TOP);
-    dma_blocklist_function(AL_CAN0_BASE,MEM_BASE1_ADDR,LLP_BASE_ADDR,10);
-    //can_dma_mode(AL_CAN0,data_length_20);
-    can_handshank_function(TOP);
-    can_dma_enable(TOP,AL_CAN0);
-}
-
-#endif

@@ -20,16 +20,36 @@
 #endif
 #include "demosoc.h"
 #include "nuclei_sdk_soc.h"
+#include "AL_can.h"
+#include "al9000_spi.h"
+#include "al9000_qspi.h"
+#include "AL_uart.h"
+#include "AL_i2c.h"
 #define AL_DMA_MAX_NR_REQUESTS	8
 #define LLP_BASE_ADDR      0x61032000
 #define LLP_1_ADDR         0x61030200
 #define LLP_2_ADDR         0x61030300
 #define LLP_3_ADDR         0x61030400
 #define LLP_4_ADDR         0x61030500
-#define can_ctl_parm_l     0x18204825
-#define can_ctl_parm_h     0x00000014
-#define spi_ctl_parm_l     0x18204825
-#define spi_ctl_parm_h     0x00000031
+#define can_ctl_parm_l     	  0x18204825
+#define can_ctl_parm_h     	  0x00000014
+#define uart_ctl_parm_l_tx    0x18104D01
+#define uart_ctl_parm_h_tx    0x00000020
+#define uart_ctl_parm_l_rx    0x18204D01
+#define uart_ctl_parm_h_rx    0x00000020
+#define spi_ctl_parm_l_tx     0x18100125
+#define spi_ctl_parm_h_tx     0x00000031
+#define spi_ctl_parm_l_rx     0x18200125
+#define spi_ctl_parm_h_rx     0x00000031
+#define qspi_ctl_parm_l_tx    0x18100125
+#define qspi_ctl_parm_h_tx    0x00000014
+#define qspi_ctl_parm_l_rx    0x18200125
+#define qspi_ctl_parm_h_rx    0x00000014
+#define i2c_ctl_parm_l_tx     0x18100125
+#define i2c_ctl_parm_h_tx     0x00000001
+#define i2c_ctl_parm_l_rx     0x18200125
+#define i2c_ctl_parm_h_rx     0x00000001
+
 
  struct AL_dmac_channel_config{
 	 uint32_t ctl_int_en;
@@ -622,6 +642,13 @@ enum PER_type{
 	can0,
 	can1
 };
+enum PER_TransmissionType{
+	ALI2C,
+	ALSPI,
+	ALQSPI,
+	ALUART,
+	ALCAN
+};
 enum dma_type{
 	tx,
 	rx,
@@ -668,8 +695,8 @@ void 	write_iic_data(enum i2c_cmd_type type,uint32_t transimte_data_length);
 //int 	can_dma_mode(AL_CAN_TypeDef* CANX,enum data_length len);
 void 	can_dma_enable(TOPCFG_TypeDef* TOP,AL_CAN_TypeDef* CANX);
 int 	dma_blocklist_function(uint32_t srcaddress,uint32_t dstaddress,uint32_t llp_address,uint32_t block_number) ;
-uint8_t cpu_dma_read_block_num(uint32_t llp_address);
-void 	updata_ctl_parm_h(uint32_t llp_address);
+uint8_t cpu_dma_read_block_num(uint32_t llp_address,uint32_t block_number);
+void 	updata_blocklist(uint32_t srcaddress,uint32_t dstaddress,uint32_t llp_address,uint32_t block_number,uint32_t count);
 void 	dma_interrupt_readfunction(uint32_t llp_address);
 uint8_t dam_handshake_interfance(DMA_Channel_TypeDef *Channelx,enum HS_interfance HS_TYPE);
 void 	spi_dma_data_level(SPI_TypeDef *spi,uint8_t tx_data_level,uint8_t rx_data_level);
@@ -678,7 +705,9 @@ void 	spi_dma_rx_enable(SPI_TypeDef *spi);
 void 	i2c_dma_data_level(I2C_TypeDef *i2c,uint8_t tx_data_level,uint8_t rx_data_level);
 void 	i2c_dma_tx_enable(I2C_TypeDef *i2c);
 void 	i2c_dma_rx_enable(I2C_TypeDef *i2c);
-
+void 	test_blocklist(uint32_t srcaddress,uint32_t dstaddress,enum dma_type tran_type,uint32_t block_number,uint32_t llp_address);
+void 	AlDma_blocklist(uint32_t srcaddress,uint32_t dstaddress,enum dma_type tran_type,uint32_t block_number,uint32_t llp_address,enum PER_TransmissionType per_type);
+void 	uart_blocklist(uint32_t srcaddress,uint32_t dstaddress,enum dma_type tran_type,uint32_t block_number,uint32_t llp_address);
 void 	AlSpi_DmaInit(DMA_Channel_TypeDef *Channelx,enum PER_type PER,enum dma_type type,uint8_t tx_data_level,uint8_t rx_data_level,enum AL_dmac_transfer_type  transfer,uint16_t block_size);
 void 	AlUart_DmaInit(DMA_Channel_TypeDef *Channelx,enum  PER_type PER,enum dma_type type,enum AL_dmac_transfer_type  transfer,uint16_t block_size);
 void 	AlQspi_DmaInit(DMA_Channel_TypeDef *Channelx,enum dma_type type,uint8_t tx_data_level,uint8_t rx_data_level,enum AL_dmac_transfer_type  transfer,uint16_t block_size);
