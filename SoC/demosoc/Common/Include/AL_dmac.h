@@ -21,8 +21,8 @@
 #include "demosoc.h"
 #include "nuclei_sdk_soc.h"
 #include "AL_can.h"
-#include "AL9000_spi.h"
-#include "AL9000_qspi.h"
+#include "al9000_spi.h"
+#include "al9000_qspi.h"
 #include "AL_uart.h"
 #include "AL_i2c.h"
 #define AL_DMA_MAX_NR_REQUESTS	8

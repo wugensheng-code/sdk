@@ -4,17 +4,17 @@
  *  Created on: 2021年11月3日
  *      Author: wei.pang
  */
-#include "al_dmac.h"
+#include "AL_dmac.h"
 #include "demosoc.h"
 #include "stddef.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "al_uart.h"
+#include "AL_uart.h"
 #include "nuclei_sdk_soc.h"
-#include "al_can.h"
+#include "AL_can.h"
 #include "al9000_spi.h"
 #include "al9000_qspi.h"
-#include "al_i2c.h"
+#include "AL_i2c.h"
 #define DMAC_MAX_CHANNELS   8
 #define DMAC_MAX_INTERRUPTS 5
 #define DW_EBUSY            1
