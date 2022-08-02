@@ -341,6 +341,9 @@ void _premain_init(void)
 #if __Pinmux_PRESENT == 1
 	Enablepinmux1();
 #endif
+#if __Pinmux_PRESENT_MODE2 == 1
+	Enablepinmux1_mode2();
+#endif
   //  *(uint32_t *)(0xf8803410u) =0x1;
 
 
