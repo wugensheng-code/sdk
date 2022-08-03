@@ -26,7 +26,7 @@
 #include "AL_sdio_emmc_common.h"
 #include "mtimer.h"
 
-
+#define AT_CTRL_R   0x540
 #define MBIU_CTRL_R 0x510   //AHB BUS burst contrl register
 //top register
 //bit 7:enable reg ctrl card write protection   0:io ctrl   1:reg ctrl
@@ -35,7 +35,8 @@
 //bit 4:reg ctrl card detect                    0:enable    1:disable
 //bit 3:clk soft rst                            0:disable   1:enable
 //bit [2:0]:clk phase select similar to tuning
-#define TOP_NS__CFG_CTRL_SDIO0_ADDR 0xF8800154ULL   
+#define TOP_NS__CFG_CTRL_SDIO0_ADDR 0xF8800154ULL 
+#define TOP_NS__CFG_CTRL_ADDR       0xF8800150  
 #define SDIO_WRAP__SDIO0__BASE_ADDR 0xF8049000ULL
 #define SDIO_WRAP__SDIO1__BASE_ADDR 0xF804A000ULL
 
@@ -44,16 +45,16 @@ uint32_t CSD_Tab[4], CID_Tab[4], RCA = 1;
 volatile MtimerParams mtimer;
 static uint32_t CardType =  SDIO_HIGH_CAPACITY_SD_CARD;
 
-volatile DWC_mshc_block_registers* SDIO = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO1__BASE_ADDR;
+volatile DWC_mshc_block_registers* SDIO = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO0__BASE_ADDR;
 volatile DWC_mshc_block_registers* eMMC = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO0__BASE_ADDR;
 
 
-unsigned int reg_read(unsigned long reg_address)
+inline unsigned int reg_read(unsigned long reg_address)
 {
     return *((volatile unsigned int *)reg_address);
 }
 
-void reg_write(unsigned long reg_address, u32 reg_wdata)
+inline void reg_write(unsigned long reg_address, u32 reg_wdata)
 {
     *((volatile unsigned int *)reg_address) = reg_wdata;
 }
@@ -121,12 +122,15 @@ u32 wait_command_complete(volatile DWC_mshc_block_registers* ptr)
 {
     __IO ERROR_INT_STAT_R__NORMAL_INT_STAT_R r;
     MTIMER_OUT_CONDITION(SD_EMMC_CMD_TIMEOUT_VAL, &mtimer, r.bit.cmd_complete != 1){
-        r.d32 = REG_READ(&(ptr->error_int_stat_r__normal_int_stat));
+        r.d32 = REG_READ(&(ptr->error_int_stat_r__normal_int_stat.d32));
     }
     if(Mtimer_IsTimerOut(&mtimer)){
         error_stat_check(r);
         return SD_EMMC_CMD_TIMEOUT;
     }else{
+        r.d32 = REG_READ(&(ptr->error_int_stat_r__normal_int_stat.d32));
+        r.bit.cmd_complete = 0x1;
+        REG_WRITE(&(ptr->error_int_stat_r__normal_int_stat.d32), r.d32);
         return AL_SUCCESS;
     }
 }
@@ -135,12 +139,15 @@ u32 wait_transfer_complete(volatile DWC_mshc_block_registers* ptr)
 {
     __IO ERROR_INT_STAT_R__NORMAL_INT_STAT_R r;
     MTIMER_OUT_CONDITION(SD_EMMC_XFER_TIMEOUT_VAL, &mtimer, r.bit.xfer_complete != 1){
-        r.d32 = REG_READ(&(ptr->error_int_stat_r__normal_int_stat));
+        r.d32 = REG_READ(&(ptr->error_int_stat_r__normal_int_stat.d32));
     }
     if(Mtimer_IsTimerOut(&mtimer)){
         error_stat_check(r);
         return SD_EMMC_XFER_TIMEOUT;
     }else{
+        r.d32 = REG_READ(&(ptr->error_int_stat_r__normal_int_stat.d32));
+        r.bit.xfer_complete = 0x1;
+        REG_WRITE(&(ptr->error_int_stat_r__normal_int_stat.d32), r.d32);
         return AL_SUCCESS;
     }
 }
@@ -149,12 +156,15 @@ u32 wait_buffer_read_ready_complete(volatile DWC_mshc_block_registers* ptr)
 {
     __IO ERROR_INT_STAT_R__NORMAL_INT_STAT_R r;
     MTIMER_OUT_CONDITION(SD_EMMC_BUF_RD_RDY_TIMEOUT_VAL, &mtimer, r.bit.buf_rd_ready != 1){
-        r.d32 = REG_READ(&(ptr->error_int_stat_r__normal_int_stat));
+        r.d32 = REG_READ(&(ptr->error_int_stat_r__normal_int_stat.d32));
     }
     if(Mtimer_IsTimerOut(&mtimer)){
         error_stat_check(r);
         return SD_EMMC_BUF_RD_RDY_TIMEOUT;
     }else{
+        r.d32 = REG_READ(&(ptr->error_int_stat_r__normal_int_stat.d32));
+        r.bit.buf_rd_ready = 0x1;
+        REG_WRITE(&(ptr->error_int_stat_r__normal_int_stat.d32), r.d32);
         return AL_SUCCESS;
     }
 }
@@ -163,7 +173,7 @@ u32 wait_clock_stable(volatile DWC_mshc_block_registers* ptr)
 {
     __IO SW_RST_R__TOUT_CTRL_R__CLK_CTRL_R r;
     MTIMER_OUT_CONDITION(SD_EMMC_WAIT_CLK_STABLE_TIMEOUT_VAL, &mtimer, r.bit.internal_clk_stable != 1){
-        r.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl));
+        r.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
     }
     if(Mtimer_IsTimerOut(&mtimer)){
         return SD_EMMC_WAIT_CLK_STABLE_TIMEOUT;
@@ -179,7 +189,7 @@ u32 set_clock_frequency(volatile DWC_mshc_block_registers* ptr)
     CAPABILITIES2_R r2;
     SD_EMMC_PRINT("set_clock_frequency\r\n");   //sequence path print
 
-    r1.d32 = REG_READ(&(ptr->capabilities1));
+    r1.d32 = REG_READ(&(ptr->capabilities1.d32));
 
     if(r1.bit.base_clk_freq == SD_EMMC_GET_INFO_ANOTHER_WAY){
         printf("Get base clk freq information through another method\r\n");
@@ -218,27 +228,30 @@ u32 HostControllerSetup(volatile DWC_mshc_block_registers* ptr)
     r1.bit.dma_sel = 0x2;   //ADMA2
     r1.bit.sd_bus_pwr_vdd1 = 0x1;   //VDD1 PWR ON support SD and eMMC
     r1.bit.sd_bus_vol_vdd1 = 0x7;   //3.3V
-    //r1.bit.sd_bus_pwr_vdd2 = 0x1;   //VDD2 PWR ON   only support for UHS-II
-    //r1.bit.sd_bus_vol_vdd2 = 0x5;   //1.8V
-    REG_WRITE(&(ptr->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1), r1.d32);
+    r1.bit.sd_bus_pwr_vdd2 = 0x1;   //VDD2 PWR ON   only support for UHS-II
+    r1.bit.sd_bus_vol_vdd2 = 0x5;   //1.8V
+    REG_WRITE(&(ptr->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1.d32), r1.d32);
+    SD_EMMC_PRINT("r1.d32 is %x\r\n", r1.d32);
 
-    status = set_clock_frequency(ptr);
+    /*status = set_clock_frequency(ptr);
     if(status != AL_SUCCESS){
         return status;
-    }
+    }*/
     r2.d32 = 0;
     r2.bit.internal_clk_en = 0x1;       //Oscillate
-    //r2.bit.internal_clk_stable = 0x1;   // read only why read
+    r2.bit.internal_clk_stable = 0x1;   // read only why read
     r2.bit.clk_gen_select = 0x1;        //Programmable Clock Mode
-    REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r2.d32);
-    SD_EMMC_WAIT_CLK_STABLE(ptr);
-    r2.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl));
+    //REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r2.d32);
+    //SD_EMMC_WAIT_CLK_STABLE(ptr);
+    //r2.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl));
     r2.bit.pll_enable = 0x1;            //PLL enabled
-    REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r2.d32);
-    SD_EMMC_WAIT_CLK_STABLE(ptr);
+    REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r2.d32);
+    //SD_EMMC_WAIT_CLK_STABLE(ptr);
+    SD_EMMC_PRINT("r2.d32 is %x\r\n", r2.d32);
 
     r3.d32 = 0; //Do not set Version 4 Parameters
-    REG_WRITE(&(ptr->host_ctrl2_r__auto_cmd_stat), r3.d32);
+    REG_WRITE(&(ptr->host_ctrl2_r__auto_cmd_stat.d32), r3.d32);
+    SD_EMMC_PRINT("r3.d32 is %x\r\n", r3.d32);
     return status;
 }
 
@@ -262,54 +275,66 @@ u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, uint32_t fr
         SD_EMMC_PRINT("SD_EMMC_FREQ_10M\r\n");
         r1.d32 = 0;
         r1.bit.internal_clk_en = 0x1;       //Oscillate
+        r1.bit.internal_clk_stable = 0x1;
         r1.bit.clk_gen_select = 0x1;        //Programmable Clock Mode
-        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r1.d32);
-        SD_EMMC_WAIT_CLK_STABLE(ptr);
-        r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl));
+        //REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r1.d32);
+        //SD_EMMC_WAIT_CLK_STABLE(ptr);
+        //r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl));
         r1.bit.pll_enable = 0x1;            //PLL enabled
-        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r1.d32);
+        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
         SD_EMMC_WAIT_CLK_STABLE(ptr);
+        SD_EMMC_PRINT("r1.d32 is %x\r\n", r1.d32);
 
         REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000008);     //clk soft reset
         REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000000);
 
         r1.d32 = 0;
         r1.bit.internal_clk_en = 0x1;       //Oscillate
+        r1.bit.internal_clk_stable = 0x1;
         r1.bit.clk_gen_select = 0x1;        //Programmable Clock Mode
-        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r1.d32);
-        SD_EMMC_WAIT_CLK_STABLE(ptr);
-        r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl));
+        //REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
+        //SD_EMMC_WAIT_CLK_STABLE(ptr);
+        //r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
         r1.bit.pll_enable = 0x1;            //PLL enabled
-        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r1.d32);
-        SD_EMMC_WAIT_CLK_STABLE(ptr);
-        r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl));
+        //REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
+        //SD_EMMC_WAIT_CLK_STABLE(ptr);
+        //r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
         r1.bit.sd_clk_en = 0x1;             //Enable SDCLK/RCLK
-        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r1.d32);
+        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
+        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
+        SD_EMMC_PRINT("r1.d32 is %x\r\n", r1.d32);
     }else{
         SD_EMMC_PRINT("SD_EMMC_FREQ_400K\r\n");
         r1.d32 = 0;
         r1.bit.internal_clk_en = 0x1;       //Oscillate
-        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r1.d32);
-        SD_EMMC_WAIT_CLK_STABLE(ptr);
-        r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl));
+        r1.bit.internal_clk_stable = 0x1;
+        //REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
+        //SD_EMMC_WAIT_CLK_STABLE(ptr);
+        //r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
         r1.bit.pll_enable = 0x1;            //PLL enabled
-        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r1.d32);
-        SD_EMMC_WAIT_CLK_STABLE(ptr);
+        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
+        //SD_EMMC_WAIT_CLK_STABLE(ptr);
+        SD_EMMC_PRINT("r1.d32 is %x\r\n", r1.d32);
 
 
         REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000008);
         REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000000);
+        REG_WRITE(TOP_NS__CFG_CTRL_ADDR, 0x000000b0);
+        
         r1.d32 = 0;
         r1.bit.internal_clk_en = 0x1;       //Oscillate
-        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r1.d32);
-        SD_EMMC_WAIT_CLK_STABLE(ptr);
-        r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl));
+        r1.bit.internal_clk_stable = 0x1;
+        //REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
+        //SD_EMMC_WAIT_CLK_STABLE(ptr);
+        //r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
         r1.bit.pll_enable = 0x1;            //PLL enabled
-        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r1.d32);
-        SD_EMMC_WAIT_CLK_STABLE(ptr);
-        r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl));
+        //REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
+        //SD_EMMC_WAIT_CLK_STABLE(ptr);
+        //r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
         r1.bit.sd_clk_en = 0x1;             //Enable SDCLK/RCLK
-        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r1.d32);
+        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
+        REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
+        SD_EMMC_PRINT("r1.d32 is %x\r\n", r1.d32);
 
         //为什么需要赋值两次？上面已经完成了一次
         //ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32 = 0x0000000F;
@@ -345,7 +370,8 @@ u32 InitInterruptSetting(volatile DWC_mshc_block_registers* ptr)
     r1.bit.card_insertion_stat_en = 0x1;
     r1.bit.card_removal_stat_en = 0x1;
     r1.bit.int_a_stat_en = 0x1;
-    REG_WRITE(&(ptr->error_int_stat_en_r__normal_int_stat_en), r1.d32);
+    REG_WRITE(&(ptr->error_int_stat_en_r__normal_int_stat_en.d32), r1.d32);
+    SD_EMMC_PRINT("r1.d32 is %x\r\n", r1.d32);
 
     r2.d32 = 0;
     r2.bit.cmd_complete_signal_en = 0x1;
@@ -356,7 +382,8 @@ u32 InitInterruptSetting(volatile DWC_mshc_block_registers* ptr)
     r2.bit.buf_rd_ready_signal_en = 0x1;
     r2.bit.card_insertion_signal_en = 0x1;
     r2.bit.card_removal_signal_en = 0x1;
-    REG_WRITE(&(ptr->error_int_signal_en_r__normal_int_signal_en), r2.d32);
+    REG_WRITE(&(ptr->error_int_signal_en_r__normal_int_signal_en.d32), r2.d32);
+    SD_EMMC_PRINT("r2.d32 is %x\r\n", r2.d32);
 
     r3.d32 = 0;
     r3.bit.cmd_complete_stat_en = 0x1;
@@ -368,18 +395,23 @@ u32 InitInterruptSetting(volatile DWC_mshc_block_registers* ptr)
     r3.bit.card_insertion_stat_en = 0x1;
     r3.bit.card_removal_stat_en = 0x1;
     r3.bit.int_a_stat_en = 0x1;
+
     r3.bit.cmd_tout_err_stat_en = 0x1;
     r3.bit.cmd_crc_err_stat_en = 0x1;
+    //r3.bit.cmd_end_bit_err_stat_en = 0x1;
     r3.bit.cmd_idx_err_stat_en = 0x1;
     r3.bit.data_tout_err_stat_en = 0x1;
     r3.bit.data_crc_err_stat_en = 0x1;
     r3.bit.data_end_bit_err_stat_en = 0x1;
     r3.bit.cur_lmt_err_stat_en = 0x1;
-    REG_WRITE(&(ptr->error_int_stat_en_r__normal_int_stat_en), r3.d32);
+    REG_WRITE(&(ptr->error_int_stat_en_r__normal_int_stat_en.d32), r3.d32);
+    SD_EMMC_PRINT("r3.d32 is %x\r\n", r3.d32);
 
     r4.d32 = 0; //Do not set Version 4 Parameters
-    REG_WRITE(&(ptr->host_ctrl2_r__auto_cmd_stat), r4.d32);
+    REG_WRITE(&(ptr->host_ctrl2_r__auto_cmd_stat.d32), r4.d32);
+    SD_EMMC_PRINT("r4.d32 is %x\r\n", r4.d32);
 
+    SDRegWrite(AT_CTRL_R, 0x0FFF0000);
     SDRegWrite(MBIU_CTRL_R, 0x01010004);    //AHB Bus Burst Mode:Undefined INCR Burst
     return status;
 }

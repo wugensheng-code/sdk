@@ -52,10 +52,10 @@
 #define SD_EMMC_PRINT
 #endif
 
-#define SD_EMMC_CMD_TIMEOUT_VAL				(150*1000)	//150ms
-#define SD_EMMC_XFER_TIMEOUT_VAL			(150*1000)	//150ms
-#define SD_EMMC_BUF_RD_RDY_TIMEOUT_VAL		(150*1000)	//150ms
-#define SD_EMMC_WAIT_CLK_STABLE_TIMEOUT_VAL	(150*1000)	//150ms
+#define SD_EMMC_CMD_TIMEOUT_VAL				(1000*1000)	//150ms
+#define SD_EMMC_XFER_TIMEOUT_VAL			(5000*1000)	//150ms
+#define SD_EMMC_BUF_RD_RDY_TIMEOUT_VAL		(1000*1000)	//150ms
+#define SD_EMMC_WAIT_CLK_STABLE_TIMEOUT_VAL	(1000*1000)	//150ms
 
 //capabilities1.base_clk_freq 0 another way 1~255 -> 1~255MHz
 #define SD_EMMC_GET_INFO_ANOTHER_WAY	0x0
@@ -71,8 +71,8 @@ typedef unsigned short     uint16_t;
 //typedef unsigned int       uint32_t;
 //typedef unsigned long long uint64_t;
 
-extern unsigned reg_read(unsigned long reg_address);
-extern void reg_write(unsigned long reg_address, u32 reg_wdata);
+extern inline unsigned reg_read(unsigned long reg_address);
+extern inline void reg_write(unsigned long reg_address, u32 reg_wdata);
 
 #define REG_READ(reg_address) reg_read(reg_address)
 #define REG_WRITE(reg_address, reg_wdata) reg_write(reg_address, reg_wdata)
@@ -80,18 +80,22 @@ extern void reg_write(unsigned long reg_address, u32 reg_wdata);
 #define SDRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO1__BASE_ADDR+reg_address), reg_wdata)
 #define EMMCRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO0__BASE_ADDR+reg_address), reg_wdata)
 
-#define SD_EMMC_WAIT_CLK_STABLE(ptr)		if(wait_clock_stable(ptr) != AL_SUCCESS){\
-												return status;\
-											}
-#define SD_EMMC_WAIT_CMD_COMPLETE(ptr)		if(wait_command_complete(ptr) != AL_SUCCESS){\
-												return status;\
-											}
-#define SD_EMMC_WAIT_TRANSFER_COMPLETE(ptr)	if(wait_transfer_complete(ptr) != AL_SUCCESS){\
-												return status;\
-											}
-#define SD_EMMC_WAIT_BUF_RD_RDY_COMPLETE(ptr)	if(wait_buffer_read_ready_complete(ptr) != AL_SUCCESS){\
-												return status;\
-											}
+#define SD_EMMC_WAIT_CLK_STABLE(ptr)			status = wait_clock_stable(ptr);\
+												if(status != AL_SUCCESS){\
+													return status;\
+												}
+#define SD_EMMC_WAIT_CMD_COMPLETE(ptr)			status = wait_command_complete(ptr);\
+												if(status != AL_SUCCESS){\
+													return status;\
+												}
+#define SD_EMMC_WAIT_TRANSFER_COMPLETE(ptr)		status = wait_transfer_complete(ptr);\
+												if(status != AL_SUCCESS){\
+													return status;\
+												}
+#define SD_EMMC_WAIT_BUF_RD_RDY_COMPLETE(ptr)	status = wait_buffer_read_ready_complete(ptr);\
+												if(status != AL_SUCCESS){\
+													return status;\
+												}
 
 
 typedef enum {
@@ -271,6 +275,7 @@ typedef union
 	    __IO uint32_t	re_tune_event_stat_en:1;
 	    __IO uint32_t	fx_event_stat_en:1;
 	    __IO uint32_t    cqe_event_stat_en:1;
+		__IO uint32_t	rsvd_15:1;
 	    __IO uint32_t	cmd_tout_err_stat_en:1;
 	    __IO uint32_t	cmd_crc_err_stat_en:1;
 	    __IO uint32_t	cmd_end_bit_err_stat_en:1;

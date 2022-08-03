@@ -32,7 +32,7 @@ static TestStatus eBuffercmp(uint8_t* pBuffer, uint32_t BufferLength);*/
 
 
 uint32_t main(){
-#if 1
+#if 0
 	MtimerParams mtimer;
 	uint32_t count = 0;
 	Mtimer_Init(&mtimer);
@@ -47,7 +47,7 @@ uint32_t main(){
 	}
 #endif 
     //EMMC_Test();
-	//SD_Test();
+	SD_Test();
 	//iic_test();
 	//qspi_test();
 	//spi_test();
