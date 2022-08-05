@@ -1,4 +1,4 @@
-#include "AL_sdio_emmc_common.h"
+#include "AL_mmc.h"
 #include "FATFS/ff.h"
 #include "AL_emmc.h"
 
@@ -13,11 +13,12 @@ static volatile TestStatus EraseStatus = FAILED, TransferStatus1 = FAILED, Trans
  * @param	ReadAddr read start address
  * @param	BlockSize read data block size
  * @param	NumberOfBlocks data block number
- * @return	AL_SUCCESS
+ * @return	MMC_SUCCESS
  *
  ******************************************************************************/
 u32 EMMC_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSize, uint32_t NumberOfBlocks)
 {
+    uint32_t status = MMC_SUCCESS;
     volatile unsigned int value = 0;
 	uint32_t* Buffer_SingleBlock = (uint32_t* )readbuff;
     CMD_R__XFER_MODE_R reg;
@@ -47,11 +48,11 @@ u32 EMMC_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSiz
     reg.d32 = REG_READ((u32*)&(eMMC->cmd_r__xfer_mode));
     reg.bit.block_count_enable = 0x1;
     reg.bit.resp_err_chk_enable = 0x1;
-    reg.bit.resp_type_select = SDIO_Response_Short;
+    reg.bit.resp_type_select = MMC_Response_Short;
     reg.bit.cmd_index = SD_CMD_SET_BLOCKLEN;
     REG_WRITE((u32*)&(eMMC->blockcount_r__blocksize), block.d32);
     REG_WRITE((u32*)&(eMMC->cmd_r__xfer_mode), reg.d32);
-    wait_command_complete(eMMC);
+    MMC_WAIT_CMD_COMPLETE(eMMC);
 
 	// send command 17 read single block
 	eMMC->argument_r = ReadAddr;
@@ -59,7 +60,7 @@ u32 EMMC_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSiz
     reg.bit.dma_en = 0x1;
     reg.bit.data_xfer_dir = 0x1;
     reg.bit.resp_err_chk_enable = 0x1;
-    reg.bit.resp_type_select = SDIO_Response_Short;
+    reg.bit.resp_type_select = MMC_Response_Short;
     reg.bit.data_present_sel = 0x1;
     reg.bit.cmd_index = SD_CMD_READ_SINGLE_BLOCK;
     block.d32 = REG_READ((u32*)&(eMMC->blockcount_r__blocksize));
@@ -67,10 +68,10 @@ u32 EMMC_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSiz
     block.bit.blockcount_r = NumberOfBlocks;
     REG_WRITE((u32*)&(eMMC->blockcount_r__blocksize), block.d32);
     REG_WRITE((u32*)&(eMMC->cmd_r__xfer_mode), reg.d32);
-	wait_command_complete(eMMC);
-    wait_transfer_complete(eMMC);
+	MMC_WAIT_CMD_COMPLETE(eMMC);
+    MMC_WAIT_TRANSFER_COMPLETE(eMMC);
 
-	return AL_SUCCESS;
+	return MMC_SUCCESS;
 }
 
 /***************************************************************************/
@@ -81,11 +82,12 @@ u32 EMMC_ReadMultiBlocks(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSiz
  * @param	WriteAddr read start address
  * @param	BlockSize read data block size
  * @param	NumberOfBlocks data block number
- * @return	AL_SUCCESS
+ * @return	MMC_SUCCESS
  *
  ******************************************************************************/
 u32 EMMC_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t BlockSize, uint32_t NumberOfBlocks)
 {
+    uint32_t status = MMC_SUCCESS;
 	volatile unsigned int value = 0;
 	uint32_t* Buffer_SingleBlock = (uint32_t* )writebuff;
     CMD_R__XFER_MODE_R reg;
@@ -115,11 +117,11 @@ u32 EMMC_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t Block
     reg.d32 = REG_READ((u32*)&(eMMC->cmd_r__xfer_mode));
     reg.bit.block_count_enable = 0x1;
     reg.bit.resp_err_chk_enable = 0x1;
-    reg.bit.resp_type_select = SDIO_Response_Short;
+    reg.bit.resp_type_select = MMC_Response_Short;
     reg.bit.cmd_index = SD_CMD_SET_BLOCKLEN;
     REG_WRITE((u32*)&(eMMC->blockcount_r__blocksize), block.d32);
     REG_WRITE((u32*)&(eMMC->cmd_r__xfer_mode), reg.d32);
-    wait_command_complete(eMMC);
+    MMC_WAIT_CMD_COMPLETE(eMMC);
 
 
 	// send command 24
@@ -130,7 +132,7 @@ u32 EMMC_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t Block
     reg.bit.block_count_enable = 0x1;
     reg.bit.data_xfer_dir = DATA_WRITE;
     reg.bit.resp_err_chk_enable = 0x1;
-    reg.bit.resp_type_select = SDIO_Response_Short;
+    reg.bit.resp_type_select = MMC_Response_Short;
     reg.bit.data_present_sel = 0x1;
     reg.bit.cmd_index = SD_CMD_WRITE_SINGLE_BLOCK;
     block.d32 = REG_READ((u32*)&(eMMC->blockcount_r__blocksize));
@@ -138,10 +140,10 @@ u32 EMMC_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t Block
     block.bit.blockcount_r = NumberOfBlocks;
     REG_WRITE((u32*)&(eMMC->blockcount_r__blocksize), block.d32);
     REG_WRITE((u32*)&(eMMC->cmd_r__xfer_mode), reg.d32);
-	wait_command_complete(eMMC);
-    wait_transfer_complete(eMMC);
+	MMC_WAIT_CMD_COMPLETE(eMMC);
+    MMC_WAIT_TRANSFER_COMPLETE(eMMC);
 
-	return AL_SUCCESS;
+	return MMC_SUCCESS;
 }
 
 /***************************************************************************/
@@ -149,64 +151,73 @@ u32 EMMC_WriteMultiBlocks(uint8_t *writebuff, uint32_t WriteAddr, uint16_t Block
  * @brief	emmc init sequence
  *
  * @param	None
- * @return	AL_SUCCESS
+ * @return	MMC_SUCCESS
  *
  ******************************************************************************/
 u32 EMMC_Init(void)
 {
-    int Status = AL_FAILURE;
+    int status = MMC_SUCCESS;
 
-    Status = HostControllerSetup(eMMC);
-    if (Status != AL_SUCCESS) {
+    status = HostControllerSetup(eMMC);
+    if (status != MMC_SUCCESS) {
 		goto END;
 	}
-    Status = HostControllerClockSetup(eMMC, FREQ_400K);
-    if (Status != AL_SUCCESS) {
-		goto END;
-	}
-    //sleep(200);
-    SDIO_EMMC_DELAY_MS(10);
-    Status = InitInterruptSetting(eMMC);
-    if (Status != AL_SUCCESS) {
+    status = HostControllerClockSetup(eMMC, MMC_FREQ_400K);
+    if (status != MMC_SUCCESS) {
 		goto END;
 	}
     //sleep(200);
-    SDIO_EMMC_DELAY_MS(10);
-    Status = SendInitCmdEmmc();
-    if (Status != AL_SUCCESS) {
+    MMC_DELAY_MS(10);
+    status = InitInterruptSetting(eMMC);
+    if (status != MMC_SUCCESS) {
 		goto END;
 	}
-    Status = SwitchDataWidthEmmc();
-    if (Status != AL_SUCCESS) {
+    //sleep(200);
+    MMC_DELAY_MS(10);
+    status = SendInitCmdEmmc();
+    if (status != MMC_SUCCESS) {
+		goto END;
+	}
+    status = SwitchDataWidthEmmc();
+    if (status != MMC_SUCCESS) {
 		goto END;
 	}
     
-    Status = AL_SUCCESS;
+    status = MMC_SUCCESS;
 END:
-	return Status;
+	return status;
 }
 
 u32 RawReadWriteTestEmmc()
 {
-    int Status;
+    int status = MMC_SUCCESS;
     int result;
     BYTE WriteBuffer[] = "welcomewelcome\r\n";
     BYTE ReadBuffer[1024]={0};   
-    EMMC_Init();
-    EMMC_WriteMultiBlocks(WriteBuffer, 80,SDCardInfo.CardBlockSize,1);
-    EMMC_ReadMultiBlocks(ReadBuffer, 80, SDCardInfo.CardBlockSize,1);
+    status = EMMC_Init();
+    if(status != MMC_SUCCESS){
+        return status;
+    }
+    status = EMMC_WriteMultiBlocks(WriteBuffer, 80,SDCardInfo.CardBlockSize,1);
+    if(status != MMC_SUCCESS){
+        return status;
+    }
+    status = EMMC_ReadMultiBlocks(ReadBuffer, 80, SDCardInfo.CardBlockSize,1);
+    if(status != MMC_SUCCESS){
+        return status;
+    }
 
     result = strcmp(WriteBuffer, ReadBuffer);
     if (result == 0)
     {
-        Status = AL_SUCCESS;
+        status = MMC_SUCCESS;
     }
     else
     {
-        Status = AL_FAILURE;
+        status = MMC_FAILURE;
     }
 
-    return Status;
+    return status;
 }
 
 
@@ -216,7 +227,7 @@ u32 RawReadWriteTestEmmc()
  * @brief	test SD/EMMC read/write
  *
  * @param  None
- * @return AL_SUCCESS
+ * @return MMC_SUCCESS
  *
  ******************************************************************************/
 u32 EMMC_Test(void)
@@ -225,7 +236,7 @@ u32 EMMC_Test(void)
 	char ReadBuffer[1024]={0};
 	char WriteBuffer[] = "welcome777777777777777\r\n";
 	FIL fnew;
-	u32 Status;
+	u32 status;
 
     RawReadWriteTestEmmc();
 
@@ -344,7 +355,7 @@ u32 EMMC_Test(void)
 
     
 
-    return Status;
+    return status;
 }
 
 

@@ -1,17 +1,68 @@
-#ifndef _AL_SDIO_EMMC_COMMON_H_
-#define _AL_SDIO_EMMC_COMMON_H_
+#ifndef _AL_MMC_H_
+#define _AL_MMC_H_
 
 #include <stdio.h>
 #include "../../../../demoapu/Common/Include/delay.h"
 #include "mtimer.h"
 
-#define AL_SUCCESS                    	0L
-#define AL_FAILURE                     	1L
+typedef enum{
+	//	COMMON STATUS
+	MMC_SUCCESS = 0,
+	MMC_FAILURE,
+	//TIMER OUT ERROR
+	MMC_CMD_TIMEOUT,				//send cmd timeout
+	MMC_XFER_TIMEOUT,				//wait transfer complete timeout
+	MMC_WAIT_CLK_STABLE_TIMEOUT,	//wait internal clock stable timeout
+	MMC_BUF_RD_RDY_TIMEOUT,			//wait buffer read ready complete timeout
+	MMC_SD_CHECK_VOLT_TIMEOUT,		//SD check voltage timeout
+	MMC_EMMC_CHECK_VOLT_TIMEOUT,	//eMMC check voltage timeout
+	//Error INT Status Regitster
+	MMC_CMD_TOUT_ERR,				//no response is returned within 64 clock cycles from end bit of the cmd
+	MMC_CMD_CRC_ERR,				//cmd resp CRC err
+									//host controller detects a CMD line conflict
+	MMC_CMD_END_BIT_ERR,			//detect the end bit of a cmd resp is 0
+	MMC_CMD_IDX_ERR,				//cmd index err in the cmd resp
+	MMC_DATA_TOUT_ERR,				//busy timeout for R1b,R5b type
+									//busy timeout after write CRC status
+									//write CRC status timeout
+									//Read Data timeout
+	MMC_DATA_CRC_ERR,				//CRC err when transfer rd data use DAT line
+									//write status have a value other than 010
+									//write CRC status timeout
+	MMC_DATA_END_BIT_ERR,			//detect 0 at the end bit pos of read data use DAT line
+									//detect 0 at the end bit pos of the CRC status
+	MMC_CUR_LMT_ERR,				//not supply power to card due to some failure(DWC_mshc not support this func)
+	MMC_AUTO_CMD_ERR,				//ACMD12 and ACMD23 detect 0 to 1 at D00 to D05 in SR
+									//ACMD12 D07
+	MMC_ADMA_ERR,					//ADMA based data transfer error
+									//Error response received from System bus (Master I/F)
+									//ADMA3,ADMA2 Descriptors invalid
+									//CQE Task or Transfer descriptors invalid
+	MMC_TUNING_ERR,					//error detected in a tuning circuit except tuning procedure
+	MMC_RESP_ERR,					//Resp error during DMA execution
+	MMC_BOOT_ACK_ERR,				//boot acknowledgement error
+									//boot ack status other than 010(eMMC only)
+}MMC_ERR_TYPE;
 
-#define SD_EMMC_CMD_TIMEOUT				2L
-#define SD_EMMC_XFER_TIMEOUT			3L
-#define SD_EMMC_BUF_RD_RDY_TIMEOUT		4L
+//Error INT status bits	length 13~15 reserved
+#define MMC_ERR_INT_STAT_BITS_LEN	13
 
+//#define MMC_SEQUENCE_PRINT
+#ifdef MMC_SEQUENCE_PRINT
+#define MMC_PRINT	printf
+#else
+#define MMC_PRINT
+#endif
+
+#define MMC_CMD_TIMEOUT_VAL				(100*1000)	//150ms
+#define MMC_XFER_TIMEOUT_VAL			(1000*1000)	//150ms
+#define MMC_BUF_RD_RDY_TIMEOUT_VAL		(100*1000)	//150ms
+#define MMC_WAIT_CLK_STABLE_TIMEOUT_VAL	(100*1000)	//150ms
+
+//capabilities1.base_clk_freq 0 another way 1~255 -> 1~255MHz
+#define MMC_GET_INFO_ANOTHER_WAY	0x0
+//capabilities2.clk_mul 0 not support 1~255 -> 2~256
+#define MMC_CLK_MUL_NOT_SUPPORT	0x0
 
 #define     __IO    volatile            
 
@@ -22,14 +73,32 @@ typedef unsigned short     uint16_t;
 //typedef unsigned int       uint32_t;
 //typedef unsigned long long uint64_t;
 
-extern unsigned reg_read(unsigned long reg_address);
-extern void reg_write(unsigned long reg_address, u32 reg_wdata);
+extern inline unsigned reg_read(unsigned long reg_address);
+extern inline void reg_write(unsigned long reg_address, u32 reg_wdata);
 
 #define REG_READ(reg_address) reg_read(reg_address)
 #define REG_WRITE(reg_address, reg_wdata) reg_write(reg_address, reg_wdata)
 
 #define SDRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO1__BASE_ADDR+reg_address), reg_wdata)
 #define EMMCRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO0__BASE_ADDR+reg_address), reg_wdata)
+
+#define MMC_WAIT_CLK_STABLE(ptr)			status = wait_clock_stable(ptr);\
+											if(status != MMC_SUCCESS){\
+												return status;\
+											}
+#define MMC_WAIT_CMD_COMPLETE(ptr)			status = wait_command_complete(ptr);\
+											if(status != MMC_SUCCESS){\
+												return status;\
+											}
+#define MMC_WAIT_TRANSFER_COMPLETE(ptr)		status = wait_transfer_complete(ptr);\
+											if(status != MMC_SUCCESS){\
+												return status;\
+											}
+#define MMC_WAIT_BUF_RD_RDY_COMPLETE(ptr)	status = wait_buffer_read_ready_complete(ptr);\
+											if(status != MMC_SUCCESS){\
+												return status;\
+											}
+
 
 typedef enum {
 	FAILED = 0, 
@@ -208,6 +277,7 @@ typedef union
 	    __IO uint32_t	re_tune_event_stat_en:1;
 	    __IO uint32_t	fx_event_stat_en:1;
 	    __IO uint32_t    cqe_event_stat_en:1;
+		__IO uint32_t	rsvd_15:1;
 	    __IO uint32_t	cmd_tout_err_stat_en:1;
 	    __IO uint32_t	cmd_crc_err_stat_en:1;
 	    __IO uint32_t	cmd_end_bit_err_stat_en:1;
@@ -585,16 +655,6 @@ typedef struct
   uint8_t CardType;
 } SD_CardInfo;
 
-u32 wait_command_complete(volatile DWC_mshc_block_registers* ptr);
-u32 wait_transfer_complete(volatile DWC_mshc_block_registers* ptr);
-u32 wait_buffer_read_ready_complete(volatile DWC_mshc_block_registers* ptr);
-u32 HostControllerSetup(volatile DWC_mshc_block_registers* ptr);
-u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, int freq);
-u32 InitInterruptSetting(volatile DWC_mshc_block_registers* ptr);
-u32 SD_GetCardInfo(SD_CardInfo *cardinfo);
-
-extern SD_CardInfo SDCardInfo;
-
 /**
   * @brief Supported SD Memory Cards
   */
@@ -686,29 +746,101 @@ extern SD_CardInfo SDCardInfo;
 #define SD_CMD_SD_APP_CHANGE_SECURE_AREA           ((uint8_t)49) /*!< For SD Card only */
 #define SD_CMD_SD_APP_SECURE_WRITE_MKB             ((uint8_t)48) /*!< For SD Card only */
 
+//host_ctrl1 register param
+#define MMC_HC1_LED_CTRL_OFF			0x0
+#define MMC_HC1_LED_CTRL_ON				0x1
+#define MMC_HC1_DAT_XFER_WIDTH_1BIT		0x0
+#define MMC_HC1_DAT_XFER_WIDTH_4BIT		0x1
+#define MMC_HC1_NORMAL_SPEED			0x0
+#define MMC_HC1_HIGH_SPEED				0x1
+#define MMC_HC1_DMA_SEL_SDMA			0x0
+#define MMC_HC1_DMA_SEL_RSV				0x1
+#define MMC_HC1_DMA_SEL_ADMA2			0x2
+#define MMC_HC1_DMA_SEL_ADMA3			0x3
+#define MMC_HC1_EXT_DAT_XFER_DEF		0x0		
+#define MMC_HC1_EXT_DAT_XFER_8BIT		0x1
+
+//pwr_ctrl register param
+#define MMC_PC_SBP_VDD1_OFF				0x0	//SD BUS PWR
+#define MMC_PC_SBP_VDD1_ON				0x1
+#define MMC_PC_SBV_VDD1_RSV				0x4	//SD BUS VOLTAGE 0x0~0x4 reserved
+#define SD_PC_SBV_VDD1_1V8					0x5
+#define SD_PC_SBV_VDD1_3V0					0x6
+#define EMMC_PC_SBV_VDD1_1V2				0x5
+#define EMMC_PC_SBV_VDD1_1V8				0x6
+#define MMC_PC_SBV_VDD1_3V3				0x7
+
+//xfer_mode register param
+#define MMC_XM_DMA_DISABLE				0x0
+#define MMC_XM_DMA_ENABLE				0x1
+#define MMC_XM_BLOCK_COUNT_DISABLE		0x0
+#define MMC_XM_BLOCK_COUNT_ENABLE		0x1
+#define MMC_XM_AUTO_CMD_DISABLE			0x0	//in SDIO, this field must be 0
+#define MMC_XM_AUTO_CMD12_ENABLE		0x1
+#define MMC_XM_AUTO_CMD23_ENABLE		0x2
+#define MMC_XM_AUTO_CMD_AUTO_ENABLE		0x3
+#define MMC_XM_DATA_XFER_DIR_WRITE		0x0
+#define MMC_XM_DATA_XFER_DIR_READ		0x1
+#define MMC_XM_SEL_SINGLE_BLOCK			0x0
+#define MMC_XM_SEL_MULTI_BLOCK			0x1
+#define MMC_XM_RESP_R1					0x0	//Memory
+#define MMC_XM_RESP_R5					0x1	//SDIO
+#define MMC_XM_RESP_ERR_CHK_DISABLE		0x0
+#define MMC_XM_RESP_ERR_CHK_ENABLE		0x1
+#define MMC_XM_RESP_INT_ENABLE			0x0
+#define MMC_XM_RESP_INT_DISABLE			0x1
+
+//cmd register param
+#define MMC_C_NO_RESP					0x0
+#define MMC_C_RESP_LEN_136				0x1
+#define MMC_C_RESP_LEN_48				0x2
+#define MMC_C_RESP_LEN_48B				0x3	//check busy after response
+#define MMC_C_CMD_FLAG_MAIN				0x0
+#define MMC_C_CMD_FLAG_SUB				0x1
+#define MMC_C_CMD_CRC_CHECK_DISABLE		0x0
+#define MMC_C_CMD_CRC_CHECK_ENABLE		0x1
+#define MMC_C_CMD_IDX_CHECK_DISABLE		0x0
+#define MMC_C_CMD_IDX_CHECK_ENABLE		0x1
+#define MMC_C_NO_DATA_PRESENT			0x0
+#define MMC_C_DATA_PRESENT				0x1
+#define MMC_C_NORMAL_CMD				0x0
+#define MMC_C_SUSPEND_CMD				0x1
+#define MMC_C_RESUME_CMD				0x2
+#define MMC_C_ABORT_CMD					0x3
+
+
+
 
 #define DATA_READ 0x1
 #define DATA_WRITE 0x0
 
-#define SDIO_Response_No                    (0x0)
-#define SDIO_Response_Long                  (0x1)
-#define SDIO_Response_Short                 (0x2)
-#define SDIO_Response_Short_48B             (0x3)
+#define MMC_Response_No                    (0x0)
+#define MMC_Response_Long                  (0x1)
+#define MMC_Response_Short                 (0x2)
+#define MMC_Response_Short_48B             (0x3)
 
-#define FREQ_400K                           (0)    
-#define FREQ_10M                            (1)
+#define MMC_FREQ_400K					(0)    
+#define MMC_FREQ_10M					(1)
 
-#define SDIO_EMMC_DELAY_MS(ms)				_delay_ms(ms)
+//delay func
+#define MMC_DELAY_US(us)				_delay_us(us)
+#define MMC_DELAY_MS(ms)				_delay_ms(ms)
 
+extern SD_CardInfo SDCardInfo;
 extern volatile DWC_mshc_block_registers* SDIO;
 extern volatile DWC_mshc_block_registers* eMMC;
-extern volatile MtimerParams Mtimer;
+extern volatile MtimerParams mtimer;
 extern uint32_t CSD_Tab[4];
 extern uint32_t CID_Tab[4];
 extern uint32_t RCA;
 
+u32 wait_command_complete(volatile DWC_mshc_block_registers* ptr);
+u32 wait_transfer_complete(volatile DWC_mshc_block_registers* ptr);
+u32 wait_buffer_read_ready_complete(volatile DWC_mshc_block_registers* ptr);
+u32 wait_dma_complete(volatile DWC_mshc_block_registers* ptr);
+void clear_dma_interrupt(volatile DWC_mshc_block_registers* ptr);
 u32 HostControllerSetup(volatile DWC_mshc_block_registers* ptr);
-u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, int freq);
+u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, uint32_t freq);
 u32 InitInterruptSetting(volatile DWC_mshc_block_registers* ptr);
 u32 SD_GetCardInfo(SD_CardInfo *cardinfo);
 

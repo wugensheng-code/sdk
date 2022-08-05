@@ -12,13 +12,13 @@
 #include "board_nuclei_fpga_eval.h"
 #include "../../../SoC/demosoc/Common/Include/demosoc_xec.h"
 #include "al9000_test.h"
-#include "FATFS/ff.h"
+#include "mtimer.h"
 
 extern u32 EMMC_Test(void);
 
-#define BLOCK_SIZE            512 /* Block Size in Bytes */
-#define NUMBER_OF_BLOCKS      10  /* For Multi Blocks operation (Read/Write) */
-#define MULTI_BUFFER_SIZE    (BLOCK_SIZE * NUMBER_OF_BLOCKS)
+//#define BLOCK_SIZE            512 /* Block Size in Bytes */
+//#define NUMBER_OF_BLOCKS      10  /* For Multi Blocks operation (Read/Write) */
+//#define MULTI_BUFFER_SIZE    (BLOCK_SIZE * NUMBER_OF_BLOCKS)
 
 /*
 //SDIO_TEST
@@ -32,21 +32,35 @@ static TestStatus eBuffercmp(uint8_t* pBuffer, uint32_t BufferLength);*/
 
 
 uint32_t main(){
+#if 0
+	MtimerParams mtimer;
+	uint32_t count = 0;
+	Mtimer_Init(&mtimer);
+	for(;count<5;){
+		MTIMER_OUT_CONDITION(1000*1000, &mtimer, 1);
+		printf("count is %d\r\n", count++);
+	}
+	printf("hard_test_case start!\r\n");
+	while(1){
+		printf("_delay_ms(1000)\r\n");
+		_delay_ms(1000);
+	}
+#endif 
     //EMMC_Test();
-	//SD_Test();
+	SD_Test();
 	//iic_test();
-	qspi_test();
+	//qspi_test();
 	//spi_test();
 	//dma_test();
 	//gbe_test();
 	//can_test();
 	//timer_test();
 	//gpio_test();
-
 #if __riscv
 	benchmark_test();
 #endif
 
 	//plps_test();
 	//usb_test();
+	
 }
