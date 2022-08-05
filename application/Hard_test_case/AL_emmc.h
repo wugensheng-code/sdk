@@ -2,7 +2,7 @@
 #define _AL_EMMC_H_
 
 #include <stdio.h>    
-#include "AL_sdio_emmc_common.h"    
+#include "AL_mmc.h"    
 
 //CMD PARAMETER
 #define EMMC_CMD0_PARA_GO_IDLE_STATE            ((uint32_t)0x0)

@@ -1,10 +1,10 @@
-TARGET = hard_test
+TARGET = 1hard_test
 
 NUCLEI_SDK_ROOT = ../..
 
-SRCDIRS = . src
+SRCDIRS = . FATFS
 
-INCDIRS = . inc
+INCDIRS = . FATFS
 
 #COMMON_FLAGS := -O2
 

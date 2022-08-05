@@ -11,7 +11,7 @@
 #include "ff.h"
 //#include "sdio/bsp_sdio_sd.h"
 #include "string.h"
-#include "sdio_test.h"
+#include "AL_sd.h"
 #include <stdio.h>
 
 /* Ϊÿ���豸����һ�������� */
@@ -54,7 +54,7 @@ DSTATUS disk_initialize (
 	DSTATUS status = STA_NOINIT;	
 	switch (pdrv) {
 		case ATA:	         /* SD CARD */
-			if(SD_Init() == XST_SUCCESS)
+			if(SD_Init() == MMC_SUCCESS)
 			{
 				status &= ~STA_NOINIT;
 			}
@@ -66,7 +66,7 @@ DSTATUS disk_initialize (
 			break;
     
 		case EMMC:    /* EMMC */ 
-            if(EMMC_Init() == XST_SUCCESS)
+            if(EMMC_Init() == MMC_SUCCESS)
 			{
 				status &= ~STA_NOINIT;
 			}
@@ -94,7 +94,8 @@ DRESULT disk_read (
 )
 {
 	DRESULT status = RES_PARERR;
-	u32 SD_state = XST_SUCCESS;
+	u32 SD_state = MMC_SUCCESS;
+	u32 blockcount = 0;
 	
 	switch (pdrv) {
 		case ATA:	/* SD CARD */
@@ -118,27 +119,27 @@ DRESULT disk_read (
 		        return res;
 		}
 #endif
-
-		SD_state=SD_ReadMultiBlocks((uint8_t *)buff,sector,SDCardInfo.CardBlockSize,count);
-		if(SD_state == XST_SUCCESS)
-		{
-			/* Check if the Transfer is finished */
-			//SD_state=SD_WaitReadOperation();
+		for(blockcount = 0; blockcount < count; blockcount++){
+			SD_state = SD_ReadSingleBlock((uint8_t *)(buff+SDCardInfo.CardBlockSize*blockcount),sector+blockcount,SDCardInfo.CardBlockSize);
+			if(SD_state != MMC_SUCCESS)
+			{
+				/* Check if the Transfer is finished */
+				status = RES_PARERR;
+				return status;
+			}else{
+				status = RES_OK;
+			}
 		}
-		if(SD_state != XST_SUCCESS)
-			status = RES_PARERR;
-		else
-			status = RES_OK;	
 		break;   
 			
 		case EMMC:
             SD_state=EMMC_ReadMultiBlocks((uint8_t *)buff,sector,SDCardInfo.CardBlockSize,count);
-            if(SD_state == XST_SUCCESS)
+            if(SD_state == MMC_SUCCESS)
 		    {
 			/* Check if the Transfer is finished */
 			//SD_state=SD_WaitReadOperation();
 		    }
-		    if(SD_state != XST_SUCCESS)
+		    if(SD_state != MMC_SUCCESS)
 			    status = RES_PARERR;
 		    else
 			    status = RES_OK;	
@@ -163,7 +164,8 @@ DRESULT disk_write (
 )
 {
 	DRESULT status = RES_PARERR;
-    u32 SD_state = XST_SUCCESS;
+    u32 SD_state = MMC_SUCCESS;
+	u32 blockcount = 0;
 	
 	if (!count) {
 		return RES_PARERR;		/* Check parameter */
@@ -190,24 +192,26 @@ DRESULT disk_write (
 		    return res;
 			}		
 #endif
-			SD_state=SD_WriteMultiBlocks((uint8_t *)buff,sector,SDCardInfo.CardBlockSize,count);
-			if(SD_state == XST_SUCCESS)
-			{
-				/* Check if the Transfer is finished */
+			for(blockcount = 0; blockcount < count; blockcount++){
+				SD_state = SD_WriteSingleBlock((uint8_t *)(buff+SDCardInfo.CardBlockSize*blockcount),sector+blockcount,SDCardInfo.CardBlockSize);
+				if(SD_state != MMC_SUCCESS)
+				{
+					/* Check if the Transfer is finished */
+					status = RES_PARERR;
+					return status;
+				}else{
+					status = RES_OK;
+				}
 			}
-			if(SD_state != XST_SUCCESS)
-				status = RES_PARERR;
-		    else
-			  status = RES_OK;	
-		break;
+			break;
 
 		case EMMC:
             SD_state=EMMC_WriteMultiBlocks((uint8_t *)buff,sector,SDCardInfo.CardBlockSize,count);
-			if(SD_state == XST_SUCCESS)
+			if(SD_state == MMC_SUCCESS)
 			{
 				/* Check if the Transfer is finished */
 			}
-			if(SD_state != XST_SUCCESS)
+			if(SD_state != MMC_SUCCESS)
 				status = RES_PARERR;
 		    else
 			  status = RES_OK;	
