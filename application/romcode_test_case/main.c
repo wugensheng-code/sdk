@@ -11,9 +11,12 @@
 #include "nuclei_sdk_soc.h"
 #include "board_nuclei_fpga_eval.h"
 #include "../../../SoC/demosoc/Common/Include/demosoc_xec.h"
-#include "al9000_test.h"
 #include "mtimer.h"
 #include "al9000_wdog.h"
+#include "demosoc.h"
+#include "string.h"
+#include "sys.h"
+//#include "delay.h"
 
 #define TEMP_DDR_1 ((volatile uint32_t *)(0X10000000UL+0X100000UL))	//timeoutvalue
 #define TEMP_DDR_2 ((volatile uint32_t *)(0X10000000UL+0X100004UL))	//int_count_num
@@ -56,24 +59,9 @@ uint32_t main(){
 		_delay_ms(1000);
 	}
 #endif
-	wdt_init(); 
+	//wdt_init(); 
     //EMMC_Test();
 	SD_Test();
-	//iic_test();
-	//qspi_test();
-	//spi_test();
-	//dma_test();
-	//gbe_test();
-	//can_test();
-	//timer_test();
-	//gpio_test();
-#if __riscv
-	benchmark_test();
-#endif
-
-	//plps_test();
-	//usb_test();
-	
 }
 
 /* case 1.2 */
