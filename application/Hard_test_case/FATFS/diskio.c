@@ -12,6 +12,9 @@
 //#include "sdio/bsp_sdio_sd.h"
 #include "string.h"
 #include "AL_sd.h"
+#include "AL_sd_write.h"
+#include "AL_emmc.h"
+#include "AL_emmc_write.h"
 #include <stdio.h>
 
 /* Ϊÿ���豸����һ�������� */
@@ -99,53 +102,28 @@ DRESULT disk_read (
 	
 	switch (pdrv) {
 		case ATA:	/* SD CARD */
-#if 0
-		  if((DWORD)buff&3)
-		 {
-				DRESULT res = RES_OK;
-				DWORD scratch[SDCardInfo.CardBlockSize / 4];
-
-				while (count--) 
+			for(blockcount = 0; blockcount < count; blockcount++){
+				status = SD_ReadSingleBlock((uint8_t *)(buff+SDCardInfo.CardBlockSize*blockcount),sector+blockcount,SDCardInfo.CardBlockSize);
+				if(status != RES_OK)
 				{
-					res = disk_read(ATA,(void *)scratch, sector++, 1);
-
-					if (res != RES_OK) 
-					{
-						break;
-					}
-					memcpy(buff, scratch, SDCardInfo.CardBlockSize);
-					buff += SDCardInfo.CardBlockSize;
-		        }
-		        return res;
-		}
-#endif
-		for(blockcount = 0; blockcount < count; blockcount++){
-			SD_state = SD_ReadSingleBlock((uint8_t *)(buff+SDCardInfo.CardBlockSize*blockcount),sector+blockcount,SDCardInfo.CardBlockSize);
-			if(SD_state != MMC_SUCCESS)
-			{
-				/* Check if the Transfer is finished */
-				status = RES_PARERR;
-				return status;
-			}else{
-				status = RES_OK;
+					/* Check if the Transfer is finished */
+					status = RES_PARERR;
+					return status;
+				}
 			}
-		}
-		break;   
+			break;   
 			
 		case EMMC:
-            SD_state=EMMC_ReadMultiBlocks((uint8_t *)buff,sector,SDCardInfo.CardBlockSize,count);
-            if(SD_state == MMC_SUCCESS)
-		    {
-			/* Check if the Transfer is finished */
-			//SD_state=SD_WaitReadOperation();
-		    }
-		    if(SD_state != MMC_SUCCESS)
-			    status = RES_PARERR;
-		    else
-			    status = RES_OK;	
-            
-		break;
-    
+            for(blockcount = 0; blockcount < count; blockcount++){
+				status = EMMC_ReadSingleBlock((uint8_t *)(buff+SDCardInfo.CardBlockSize*blockcount),sector+blockcount,SDCardInfo.CardBlockSize);
+				if(status != RES_OK)
+				{
+					/* Check if the Transfer is finished */
+					status = RES_PARERR;
+					return status;
+				}
+			}
+			break;
 		default:
 			status = RES_PARERR;
 	}
@@ -163,8 +141,7 @@ DRESULT disk_write (
 	UINT count			  /* ��������(1..128) */
 )
 {
-	DRESULT status = RES_PARERR;
-    u32 SD_state = MMC_SUCCESS;
+	DRESULT status = RES_OK;
 	u32 blockcount = 0;
 	
 	if (!count) {
@@ -173,50 +150,27 @@ DRESULT disk_write (
 
 	switch (pdrv) {
 		case ATA:	/* SD CARD */  
-#if 0
-			if((DWORD)buff&3)
-			{
-				DRESULT res = RES_OK;
-				DWORD scratch[SDCardInfo.CardBlockSize / 4];
-
-				while (count--) 
-				{
-					memcpy( scratch,buff,SDCardInfo.CardBlockSize);
-					res = disk_write(ATA,(void *)scratch, sector++, 1);
-					if (res != RES_OK) 
-					{
-						break;
-					}					
-					buff += SDCardInfo.CardBlockSize;
-		    }
-		    return res;
-			}		
-#endif
 			for(blockcount = 0; blockcount < count; blockcount++){
-				SD_state = SD_WriteSingleBlock((uint8_t *)(buff+SDCardInfo.CardBlockSize*blockcount),sector+blockcount,SDCardInfo.CardBlockSize);
-				if(SD_state != MMC_SUCCESS)
+				status = SD_WriteSingleBlock((uint8_t *)(buff+SDCardInfo.CardBlockSize*blockcount),sector+blockcount,SDCardInfo.CardBlockSize);
+				if(status != RES_OK)
 				{
 					/* Check if the Transfer is finished */
 					status = RES_PARERR;
 					return status;
-				}else{
-					status = RES_OK;
 				}
 			}
 			break;
-
 		case EMMC:
-            SD_state=EMMC_WriteMultiBlocks((uint8_t *)buff,sector,SDCardInfo.CardBlockSize,count);
-			if(SD_state == MMC_SUCCESS)
-			{
-				/* Check if the Transfer is finished */
+            for(blockcount = 0; blockcount < count; blockcount++){
+				status = EMMC_WriteSingleBlock((uint8_t *)(buff+SDCardInfo.CardBlockSize*blockcount),sector+blockcount,SDCardInfo.CardBlockSize);
+				if(status != RES_OK)
+				{
+					/* Check if the Transfer is finished */
+					status = RES_PARERR;
+					return status;
+				}
 			}
-			if(SD_state != MMC_SUCCESS)
-				status = RES_PARERR;
-		    else
-			  status = RES_OK;	
-		break;
-    
+			break;
 		default:
 			status = RES_PARERR;
 	}

@@ -43,6 +43,9 @@ SD_CardInfo SDCardInfo;
 uint32_t CSD_Tab[4], CID_Tab[4], RCA = 1;
 volatile MtimerParams mtimer;
 static uint32_t CardType =  SDIO_HIGH_CAPACITY_SD_CARD;
+__attribute__((aligned(4)))
+__IO u8 blockbuf[DEF_BLOCK_LEN];
+__attribute__((packed))
 
 volatile DWC_mshc_block_registers* SDIO = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO0__BASE_ADDR;
 volatile DWC_mshc_block_registers* eMMC = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO0__BASE_ADDR;
@@ -235,12 +238,13 @@ u32 HostControllerSetup(volatile DWC_mshc_block_registers* ptr)
         return status;
     }*/
     r2.d32 = 0;
-    r2.bit.internal_clk_en = 0x1;       //Oscillate
-    r2.bit.clk_gen_select = 0x1;        //Programmable Clock Mode
+    r2.bit.internal_clk_en = MMC_CC_INTER_CLK_ENABLE;       //Oscillate
+    r2.bit.clk_gen_select = MMC_CC_CLK_GEN_SEL_PROGRAM;        //Programmable Clock Mode
+    r2.bit.tout_cnt = MMC_TC_TOUT_CNT_2_27;
     REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r2.d32);
     MMC_WAIT_CLK_STABLE(ptr);
     r2.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl));
-    r2.bit.pll_enable = 0x1;            //PLL enabled
+    r2.bit.pll_enable = MMC_CC_PLL_ENABLE;            //PLL enabled
     REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r2.d32);
     MMC_WAIT_CLK_STABLE(ptr);
     MMC_PRINT("r2.d32 is %x\r\n", r2.d32);
@@ -270,12 +274,13 @@ u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, uint32_t fr
     {
         MMC_PRINT("MMC_FREQ_10M\r\n");
         r1.d32 = 0;
-        r1.bit.internal_clk_en = 0x1;       //Oscillate
-        r1.bit.clk_gen_select = 0x1;        //Programmable Clock Mode
+        r1.bit.internal_clk_en = MMC_CC_INTER_CLK_ENABLE;       //Oscillate
+        r1.bit.clk_gen_select = MMC_CC_CLK_GEN_SEL_PROGRAM;        //Programmable Clock Mode
+        r1.bit.tout_cnt = MMC_TC_TOUT_CNT_2_27;
         REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r1.d32);
         MMC_WAIT_CLK_STABLE(ptr);
         r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl));
-        r1.bit.pll_enable = 0x1;            //PLL enabled
+        r1.bit.pll_enable = MMC_CC_PLL_ENABLE;            //PLL enabled
         REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
         MMC_WAIT_CLK_STABLE(ptr);
         MMC_PRINT("r1.d32 is %x\r\n", r1.d32);
@@ -284,26 +289,28 @@ u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, uint32_t fr
         REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000000);
 
         r1.d32 = 0;
-        r1.bit.internal_clk_en = 0x1;       //Oscillate
-        r1.bit.clk_gen_select = 0x1;        //Programmable Clock Mode
+        r1.bit.internal_clk_en = MMC_CC_INTER_CLK_ENABLE;       //Oscillate
+        r1.bit.clk_gen_select = MMC_CC_CLK_GEN_SEL_PROGRAM;        //Programmable Clock Mode
+        r1.bit.tout_cnt = MMC_TC_TOUT_CNT_2_27;
         REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
         MMC_WAIT_CLK_STABLE(ptr);
         r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
-        r1.bit.pll_enable = 0x1;            //PLL enabled
+        r1.bit.pll_enable = MMC_CC_PLL_ENABLE;            //PLL enabled
         REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
         MMC_WAIT_CLK_STABLE(ptr);
         r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
-        r1.bit.sd_clk_en = 0x1;             //Enable SDCLK/RCLK
+        r1.bit.sd_clk_en = MMC_CC_SD_CLK_ENABLE;             //Enable SDCLK/RCLK
         REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
         MMC_PRINT("r1.d32 is %x\r\n", r1.d32);
     }else{
         MMC_PRINT("MMC_FREQ_400K\r\n");
         r1.d32 = 0;
-        r1.bit.internal_clk_en = 0x1;       //Oscillate
+        r1.bit.internal_clk_en = MMC_CC_INTER_CLK_ENABLE;       //Oscillate
+        r1.bit.tout_cnt = MMC_TC_TOUT_CNT_2_27;
         REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
         MMC_WAIT_CLK_STABLE(ptr);
         r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
-        r1.bit.pll_enable = 0x1;            //PLL enabled
+        r1.bit.pll_enable = MMC_CC_PLL_ENABLE;            //PLL enabled
         REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
         MMC_WAIT_CLK_STABLE(ptr);
         MMC_PRINT("r1.d32 is %x\r\n", r1.d32);
@@ -314,15 +321,16 @@ u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, uint32_t fr
         REG_WRITE(TOP_NS__CFG_CTRL_ADDR, 0x000000b0);
         
         r1.d32 = 0;
-        r1.bit.internal_clk_en = 0x1;       //Oscillate
+        r1.bit.internal_clk_en = MMC_CC_INTER_CLK_ENABLE;       //Oscillate
+        r1.bit.tout_cnt = MMC_TC_TOUT_CNT_2_27;
         REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
         MMC_WAIT_CLK_STABLE(ptr);
         r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
-        r1.bit.pll_enable = 0x1;            //PLL enabled
+        r1.bit.pll_enable = MMC_CC_PLL_ENABLE;            //PLL enabled
         REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
         MMC_WAIT_CLK_STABLE(ptr);
         r1.d32 = REG_READ(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
-        r1.bit.sd_clk_en = 0x1;             //Enable SDCLK/RCLK
+        r1.bit.sd_clk_en = MMC_CC_SD_CLK_ENABLE;             //Enable SDCLK/RCLK
         REG_WRITE(&(ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
         MMC_PRINT("r1.d32 is %x\r\n", r1.d32);
     }
@@ -347,48 +355,48 @@ u32 InitInterruptSetting(volatile DWC_mshc_block_registers* ptr)
 
     MMC_PRINT("InitInterruptSetting\r\n");
     r1.d32 = 0;
-    r1.bit.cmd_complete_stat_en = 0x1;
-    r1.bit.xfer_complete_stat_en = 0x1;
-    r1.bit.bgap_event_stat_en = 0x1;
-    r1.bit.dma_interrupt_stat_en = 0x1;
-    r1.bit.buf_wr_ready_stat_en = 0x1;
-    r1.bit.buf_rd_ready_stat_en = 0x1;
-    r1.bit.card_insertion_stat_en = 0x1;
-    r1.bit.card_removal_stat_en = 0x1;
-    r1.bit.int_a_stat_en = 0x1;
+    r1.bit.cmd_complete_stat_en = MMC_NORMAL_INT_STAT_EN;
+    r1.bit.xfer_complete_stat_en = MMC_NORMAL_INT_STAT_EN;
+    r1.bit.bgap_event_stat_en = MMC_NORMAL_INT_STAT_EN;
+    r1.bit.dma_interrupt_stat_en = MMC_NORMAL_INT_STAT_EN;
+    r1.bit.buf_wr_ready_stat_en = MMC_NORMAL_INT_STAT_EN;
+    r1.bit.buf_rd_ready_stat_en = MMC_NORMAL_INT_STAT_EN;
+    r1.bit.card_insertion_stat_en = MMC_NORMAL_INT_STAT_EN;
+    r1.bit.card_removal_stat_en = MMC_NORMAL_INT_STAT_EN;
+    r1.bit.int_a_stat_en = MMC_NORMAL_INT_STAT_EN;
     REG_WRITE(&(ptr->error_int_stat_en_r__normal_int_stat_en.d32), r1.d32);
     MMC_PRINT("r1.d32 is %x\r\n", r1.d32);
 
     r2.d32 = 0;
-    r2.bit.cmd_complete_signal_en = 0x1;
-    r2.bit.xfer_complete_signal_en = 0x1;
-    r2.bit.bgap_event_signal_en = 0x1;
-    r2.bit.dma_interrupt_signal_en = 0x1;
-    r2.bit.buf_wr_ready_signal_en = 0x1;
-    r2.bit.buf_rd_ready_signal_en = 0x1;
-    r2.bit.card_insertion_signal_en = 0x1;
-    r2.bit.card_removal_signal_en = 0x1;
+    r2.bit.cmd_complete_signal_en = MMC_NORMAL_INT_SIGN_EN;
+    r2.bit.xfer_complete_signal_en = MMC_NORMAL_INT_SIGN_EN;
+    r2.bit.bgap_event_signal_en = MMC_NORMAL_INT_SIGN_EN;
+    r2.bit.dma_interrupt_signal_en = MMC_NORMAL_INT_SIGN_EN;
+    r2.bit.buf_wr_ready_signal_en = MMC_NORMAL_INT_SIGN_EN;
+    r2.bit.buf_rd_ready_signal_en = MMC_NORMAL_INT_SIGN_EN;
+    r2.bit.card_insertion_signal_en = MMC_NORMAL_INT_SIGN_EN;
+    r2.bit.card_removal_signal_en = MMC_NORMAL_INT_SIGN_EN;
     REG_WRITE(&(ptr->error_int_signal_en_r__normal_int_signal_en.d32), r2.d32);
     MMC_PRINT("r2.d32 is %x\r\n", r2.d32);
 
     r3.d32 = 0;
-    r3.bit.cmd_complete_stat_en = 0x1;
-    r3.bit.xfer_complete_stat_en = 0x1;
-    r3.bit.bgap_event_stat_en = 0x1;
-    r3.bit.dma_interrupt_stat_en = 0x1;
-    r3.bit.buf_wr_ready_stat_en = 0x1;
-    r3.bit.buf_rd_ready_stat_en = 0x1;
-    r3.bit.card_insertion_stat_en = 0x1;
-    r3.bit.card_removal_stat_en = 0x1;
-    r3.bit.int_a_stat_en = 0x1;
-    r3.bit.cmd_tout_err_stat_en = 0x1;
-    r3.bit.cmd_crc_err_stat_en = 0x1;
-    r3.bit.cmd_end_bit_err_stat_en = 0x1;
-    r3.bit.cmd_idx_err_stat_en = 0x1;
-    r3.bit.data_tout_err_stat_en = 0x1;
-    r3.bit.data_crc_err_stat_en = 0x1;
-    r3.bit.data_end_bit_err_stat_en = 0x1;
-    r3.bit.cur_lmt_err_stat_en = 0x1;
+    r3.bit.cmd_complete_stat_en = MMC_NORMAL_INT_STAT_EN;
+    r3.bit.xfer_complete_stat_en = MMC_NORMAL_INT_STAT_EN;
+    r3.bit.bgap_event_stat_en = MMC_NORMAL_INT_STAT_EN;
+    r3.bit.dma_interrupt_stat_en = MMC_NORMAL_INT_STAT_EN;
+    r3.bit.buf_wr_ready_stat_en = MMC_NORMAL_INT_STAT_EN;
+    r3.bit.buf_rd_ready_stat_en = MMC_NORMAL_INT_STAT_EN;
+    r3.bit.card_insertion_stat_en = MMC_NORMAL_INT_STAT_EN;
+    r3.bit.card_removal_stat_en = MMC_NORMAL_INT_STAT_EN;
+    r3.bit.int_a_stat_en = MMC_NORMAL_INT_STAT_EN;
+    r3.bit.cmd_tout_err_stat_en = MMC_ERR_INT_STAT_EN;
+    r3.bit.cmd_crc_err_stat_en = MMC_ERR_INT_STAT_EN;
+    r3.bit.cmd_end_bit_err_stat_en = MMC_ERR_INT_STAT_EN;
+    r3.bit.cmd_idx_err_stat_en = MMC_ERR_INT_STAT_EN;
+    r3.bit.data_tout_err_stat_en = MMC_ERR_INT_STAT_EN;
+    r3.bit.data_crc_err_stat_en = MMC_ERR_INT_STAT_EN;
+    r3.bit.data_end_bit_err_stat_en = MMC_ERR_INT_STAT_EN;
+    r3.bit.cur_lmt_err_stat_en = MMC_ERR_INT_STAT_EN;
     REG_WRITE(&(ptr->error_int_stat_en_r__normal_int_stat_en.d32), r3.d32);
     MMC_PRINT("r3.d32 is %x\r\n", r3.d32);
 

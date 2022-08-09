@@ -57,14 +57,16 @@ typedef enum{
 #define MMC_CMD_TIMEOUT_VAL				(100*1000)	//150ms
 #define MMC_XFER_TIMEOUT_VAL			(1000*1000)	//150ms
 #define MMC_BUF_RD_RDY_TIMEOUT_VAL		(100*1000)	//150ms
-#define MMC_WAIT_CLK_STABLE_TIMEOUT_VAL	(100*1000)	//150ms
+#define MMC_WAIT_CLK_STABLE_TIMEOUT_VAL	(200*1000)	//200ms
 
 //capabilities1.base_clk_freq 0 another way 1~255 -> 1~255MHz
 #define MMC_GET_INFO_ANOTHER_WAY	0x0
 //capabilities2.clk_mul 0 not support 1~255 -> 2~256
 #define MMC_CLK_MUL_NOT_SUPPORT	0x0
 
-#define     __IO    volatile            
+#define     __IO    volatile      
+
+#define DEF_BLOCK_LEN   0x800
 
 typedef unsigned int       u32;
 typedef unsigned long long u64;
@@ -73,7 +75,7 @@ typedef unsigned short     uint16_t;
 //typedef unsigned int       uint32_t;
 //typedef unsigned long long uint64_t;
 
-extern inline unsigned reg_read(unsigned long reg_address);
+extern inline unsigned int reg_read(unsigned long reg_address);
 extern inline void reg_write(unsigned long reg_address, u32 reg_wdata);
 
 #define REG_READ(reg_address) reg_read(reg_address)
@@ -808,6 +810,53 @@ typedef struct
 #define MMC_C_RESUME_CMD				0x2
 #define MMC_C_ABORT_CMD					0x3
 
+//clk_ctrl register param
+#define MMC_CC_INTER_CLK_DISABLE		0x0
+#define MMC_CC_INTER_CLK_ENABLE			0x1
+#define MMC_CC_INTER_CLK_NOT_STABLE		0x0
+#define MMC_CC_INTER_CLK_STABLE			0x1
+#define MMC_CC_SD_CLK_DISABLE			0x0
+#define MMC_CC_SD_CLK_ENABLE			0x1
+#define MMC_CC_PLL_LOW_PWR_MODE			0x0
+#define MMC_CC_PLL_ENABLE				0x1
+#define MMC_CC_CLK_GEN_SEL_DIVIDED		0x0
+#define MMC_CC_CLK_GEN_SEL_PROGRAM		0x1
+
+//tout_ctrl register param
+#define MMC_TC_TOUT_CNT_2_13			0x0
+#define MMC_TC_TOUT_CNT_2_14			0x1
+#define MMC_TC_TOUT_CNT_2_15			0x2
+#define MMC_TC_TOUT_CNT_2_16			0x3
+#define MMC_TC_TOUT_CNT_2_17			0x4
+#define MMC_TC_TOUT_CNT_2_18			0x5
+#define MMC_TC_TOUT_CNT_2_19			0x6
+#define MMC_TC_TOUT_CNT_2_20			0x7
+#define MMC_TC_TOUT_CNT_2_21			0x8
+#define MMC_TC_TOUT_CNT_2_22			0x9
+#define MMC_TC_TOUT_CNT_2_23			0xA
+#define MMC_TC_TOUT_CNT_2_24			0xB
+#define MMC_TC_TOUT_CNT_2_25			0xC
+#define MMC_TC_TOUT_CNT_2_26			0xD
+#define MMC_TC_TOUT_CNT_2_27			0xE
+
+//normal_int_stat_en register param
+#define MMC_NORMAL_INT_STAT_MASKED		0x0
+#define MMC_NORMAL_INT_STAT_EN			0x1
+
+//error_int_stat_en register param
+#define MMC_ERR_INT_STAT_MASKED			0x0
+#define MMC_ERR_INT_STAT_EN				0x1
+
+//normal_int_signal_en register param
+#define MMC_NORMAL_INT_SIGN_MASKED		0x0
+#define MMC_NORMAL_INT_SIGN_EN			0x1
+
+//error_int_signal_en register param
+#define MMC_ERR_INT_SIGN_MASKED			0x0
+#define MMC_ERR_INT_SIGN_EN				0x1
+
+
+
 
 
 
@@ -833,6 +882,7 @@ extern volatile MtimerParams mtimer;
 extern uint32_t CSD_Tab[4];
 extern uint32_t CID_Tab[4];
 extern uint32_t RCA;
+extern __IO u8 blockbuf[DEF_BLOCK_LEN];
 
 u32 wait_command_complete(volatile DWC_mshc_block_registers* ptr);
 u32 wait_transfer_complete(volatile DWC_mshc_block_registers* ptr);

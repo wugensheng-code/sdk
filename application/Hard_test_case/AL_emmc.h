@@ -11,6 +11,7 @@
 #define EMMC_CMD3_PARA_DEFAULT_VAL              ((uint32_t)0x10000) //bit[31:16]    default relative addr
 #define EMMC_CMD6_PARA_4_BIT_WIDTH_BUS          ((uint32_t)0x03B70100)
 #define EMMC_CMD6_PARA_8_BIT_WIDTH_BUS          ((uint32_t)0x03B70200)
+#define EMMC_CMD16_PARA_BLOCK_LEN_512           ((uint32_t)0x200)
 //OCR register status
 #define EMMC_OCR_HIGH_VOLTAGE               0x0
 #define EMMC_OCR_DUAL_VOLTAGE               0x1
@@ -20,7 +21,7 @@
 //EMMC ONLY ERROR   101~200
 #define EMMC_GET_VALID_VOLTAGE_TIMEOUT_ERROR    101
 
-#define EMMC_GET_VALID_VOLTAGE_TIMEOUT_VAL      (150*1000)  //150ms
+#define EMMC_GET_VALID_VOLTAGE_TIMEOUT_VAL      (15000*1000)  //150ms
 
 typedef union{
     __IO uint32_t d32;
@@ -35,8 +36,17 @@ typedef union{
     }bit;
 }OCR_R;
 
+typedef struct{
+    u32 EmmcId;     //emmc device ID
+    u32 EmmcSize;   //emmc size in kBytes
+}RawEmmcParam_t;
+
 u32 SendInitCmdEmmc();
 u32 SwitchDataWidthEmmc();
+u32 EMMC_Init(void);
+u32 EMMC_ReadSingleBlock(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSize);
+u32 Csu_RawEmmcInit(RawEmmcParam_t *Param);
+u32 Csu_RawEmmcRead(u32 Offset, u8* Dest, u32 Length);
 
 
 /*****************************END OF FILE**************************/
