@@ -19,6 +19,8 @@ uint8_t rx_buf1[64];
 uint8_t tx_buf5[64];
 uint8_t rx_buf2[64];
 
+AL_CAN_TypeDef *AL_CAN_CUR = AL_CAN1;
+
 void SOC_CAN0_HANDLER(void)
 {
  uint8_t count = 0;
@@ -29,7 +31,16 @@ void SOC_CAN0_HANDLER(void)
 
 void SOC_CAN1_HANDLER(void)
 {
-
+	if(((AL_CAN_CUR->RTIE_RTIF_ERRINT_LIMIT & (1 << 15)) >> 15) == 1){
+		AL_CAN_CUR->RTIE_RTIF_ERRINT_LIMIT |= (0x1 << 15);
+		printf("cur register is %x!\r\n", AL_CAN_CUR->RTIE_RTIF_ERRINT_LIMIT);
+		printf("rcv msg!\r\n");
+		AlCan_ReceiveMsg(AL_CAN_CUR,rx_buf1,data_length_8);
+		AL_CAN_CUR->RTIE_RTIF_ERRINT_LIMIT |= (0x1 << 15);
+		printf("cur register is %x!\r\n", AL_CAN_CUR->RTIE_RTIF_ERRINT_LIMIT);
+	}else{
+		printf("cur register is %x!\r\n", AL_CAN_CUR->RTIE_RTIF_ERRINT_LIMIT);
+	}
 }
 
 int main(){
@@ -48,29 +59,33 @@ int main(){
 		tx_buf5[i]=i+4;
 	}
 	//__RV_CSR_CLEAR(CSR_MMISC_CTL,MMISC_CTL_BPU);
-    //ECLIC_Register_IRQ(SOC_CAN_0_IRQn , ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,SOC_CAN0_HANDLER);
-	//__enable_irq();
-	AlCan_SetResetMode(AL_CAN1);
-	//AlCan_SetRxFillter(AL_CAN1,AE0,0x15);
-	AlCan_DeviceDriverBittimeConfiguration(AL_CAN1,can_rate_1Mbit,AL_TOP0,can);
-	AlCan_TxMode(AL_CAN1,NORMAL);
-	AlCan_TmitMode(AL_CAN1,XMIT_PTB_MODE);
-	while(1){
+    ECLIC_Register_IRQ(SOC_INT92_IRQn , ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,SOC_CAN1_HANDLER);
+	__enable_irq();
+	AlCan_SetResetMode(AL_CAN_CUR);
+	AlCan_InterruptEnable(AL_CAN_CUR, RIE);
+	//AlCan_SetRxFillter(AL_CAN_CUR,AE0,0x15);
+	AlCan_DeviceDriverBittimeConfiguration(AL_CAN_CUR,can_rate_1Mbit,AL_TOP0,can);
+	AlCan_TxMode(AL_CAN_CUR,NORMAL);
+	AlCan_TmitMode(AL_CAN_CUR,XMIT_PTB_MODE);
+	while(0){
 	//for(uint8_t i = 0 ; i < 100 ; i++){
 
-		AlCan_SendMsg(AL_CAN1,tx_buf1,XMIT_PTB_MODE,data_length_8,0x11);
-		AlCan_SendMsg(AL_CAN1,tx_buf2,XMIT_PTB_MODE,data_length_8,0x12);
-		AlCan_SendMsg(AL_CAN1,tx_buf3,XMIT_PTB_MODE,data_length_8,0x13);
-		AlCan_SendMsg(AL_CAN1,tx_buf5,XMIT_PTB_MODE,data_length_8,0x14);
-		AlCan_SendMsg(AL_CAN1,tx_buf4,XMIT_PTB_MODE,data_length_8,0x15);
-		AlCan_SendMsg(AL_CAN1,tx_buf5,XMIT_PTB_MODE,data_length_8,0x16);
-		AlCan_SendMsg(AL_CAN1,tx_buf5,XMIT_PTB_MODE,data_length_8,0x17);
+		AlCan_SendMsg(AL_CAN_CUR,tx_buf1,XMIT_PTB_MODE,data_length_8,0x11);
+		AlCan_SendMsg(AL_CAN_CUR,tx_buf2,XMIT_PTB_MODE,data_length_8,0x12);
+		AlCan_SendMsg(AL_CAN_CUR,tx_buf3,XMIT_PTB_MODE,data_length_8,0x13);
+		AlCan_SendMsg(AL_CAN_CUR,tx_buf5,XMIT_PTB_MODE,data_length_8,0x14);
+		AlCan_SendMsg(AL_CAN_CUR,tx_buf4,XMIT_PTB_MODE,data_length_8,0x15);
+		AlCan_SendMsg(AL_CAN_CUR,tx_buf5,XMIT_PTB_MODE,data_length_8,0x16);
+		AlCan_SendMsg(AL_CAN_CUR,tx_buf5,XMIT_PTB_MODE,data_length_8,0x17);
 
 		//printf("111111");
 	for (volatile uint8_t i = 0 ;i < 8 ; i++)
 	{
-		//AlCan_Receive_Msg(AL_CAN1,rx_buf);
+		//AlCan_Receive_Msg(AL_CAN_CUR,rx_buf);
 	}
+	}
+	while(1){
+		AlCan_ReceiveMsg(AL_CAN_CUR,rx_buf1,data_length_8);
 	}
 	return 0;
 }
