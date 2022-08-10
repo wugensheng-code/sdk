@@ -611,6 +611,10 @@ u32 EMMC_Init(void)
     if (Status != XST_SUCCESS) {
 		goto END;
 	}
+    Status = HostControllerClockSetup(eMMC, FREQ_10M);
+    if (Status != XST_SUCCESS) {
+		goto END;
+	}
     
     Status = XST_SUCCESS;
 END:
