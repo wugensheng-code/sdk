@@ -58,7 +58,6 @@ el3_entry:
 	b .
 
 0:
-
 	/*init el3 gic system registers*/
 	ldr x0, =0x0f
 	msr icc_sre_el3, x0
@@ -69,6 +68,14 @@ el3_entry:
 	ldr x0, =0x01
 	msr icc_igrpen1_el1, x0
 	msr icc_igrpen0_el1, x0
+
+	//start CNTHP_CTL_EL2, so EL1 can get the interrupt
+	ldr x0, =0x01
+	msr cnthp_ctl_el2, x0 //start
+
+	//set CNTHP_CVAL_EL2 value
+	ldr x0, =0x10000
+	msr cnthp_cval_el2, x0
 
 	adr	x0, vectors
 	msr vbar_el3, x0
