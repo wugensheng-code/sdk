@@ -182,7 +182,7 @@ void printf_mem_data2(uint32_t count){
 	printf("OCMreceive  Buffer data is :\r\n");
 		for(i = 0 ; i < count ; i++){
 			//printf("%d",*(uint32_t*)(MEM_BASE2_ADDR + i*4));
-			if (*(uint32_t*)(MEM_BASE2_ADDR + i*4) != (i+1)) {
+			if (*(uint32_t*)(MEM_BASE2_ADDR + i*4) != (i+2)) {
 			    data_ok = 0;
 			}
 		}
@@ -235,9 +235,9 @@ int main(void){
  	   buffer[1] = 0;
  	   buffer[2] = 0;
  	   buffer[3] = 0;
-    		 for (i = 4 ; i < 128 ; i++)
+    		 for (i = 0 ; i < 128 ; i++)
     		 {
-    			 buffer[i] = i-3;
+    			 buffer[i] = i+2;
 
     		 }
     		 write_To_OCM((uint32_t*)buffer,128,(uint32_t*)MEM_BASE1_ADDR);
@@ -460,7 +460,7 @@ int main(void){
     	    				if ( (*(volatile uint32_t*)(SPI1_BASE + 0x28) & 0x2) == 0x2) //tx fifo not full
     	    				{
 
-    	    				   spi_data_transmit(SPI_MASTER,0x0); // tx data wrdata_a[i]
+    	    				   spi_data_transmit(SPI_MASTER,wrdata_a[i]); // tx data wrdata_a[i]
     	    				   //spi_data_transmit(SPI_MASTER,data32);
     	    				   //byte_cnt=byte_cnt -4;
     	    				   byte_cnt--;
@@ -485,6 +485,10 @@ int main(void){
     	    	AlSpi_DmaInit(AL_DMAC_channel_2,spi1,tx,1,0,Dmac_transfer_row1,64);
     	    	//AlDma_EnableChannel(AL_DMAC,AL_dmac_channel_num_2);
     	    	spi_dwc_ssi_enable(SPI_MASTER);
+				spi_data_transmit(SPI_MASTER,CMD_PP); // tx Page Program cmd
+				spi_data_transmit(SPI_MASTER,0x00); // tx addr[23:16]
+				spi_data_transmit(SPI_MASTER,0x00); // tx addr[15:8]
+				spi_data_transmit(SPI_MASTER,0x00); // tx addr[7:0]
     	    	AlDma_Enable(AL_DMAC);
     	    	AlDma_EnableChannel(AL_DMAC,AL_dmac_channel_num_2);
     	    	while(!spi_sr_tfe(SPI_MASTER)); // wait TFE returns to 1
@@ -497,26 +501,28 @@ int main(void){
     	    	AlDma_Disable(AL_DMAC);
     	    	AlDma_DisableChannel(AL_DMAC,AL_dmac_channel_num_2);
     	    	flash_wait_wip();
+				printf("DMA Write done!\r\n");
 #endif
 #if 1
+				AlSpi_DmaInit(AL_DMAC_channel_0,spi1,rx,0,3,Dmac_transfer_row1,60);
+				AlDma_Enable(AL_DMAC);
+    	    	AlDma_EnableChannel(AL_DMAC,AL_dmac_channel_num_0);
     	    	spi_dwc_ssi_disable(SPI_MASTER);
     	    	spi_dfs(SPI_MASTER,SPI_DFS_BYTE);   // byte
     	    	spi_sste_dis(SPI_MASTER);
     	    	spi_x1_mode(SPI_MASTER);
     	    	spi_tmod_e2prom(SPI_MASTER); // e2prom read
     	    	spi_ctrl1_ndf(SPI_MASTER,59); // receive 30 data items
-    	    	AlSpi_DmaInit(AL_DMAC_channel_0,spi1,rx,0,59,Dmac_transfer_row1,60);
     	    	spi_dwc_ssi_enable(SPI_MASTER);
-    	    	spi_data_transmit(SPI_MASTER,0x03); // tx x1 read cmd
-    	    	spi_data_transmit(SPI_MASTER,0x00); // tx addr[23:16]
+    	    	spi_data_transmit(SPI_MASTER,CMD_SREAD); // tx x1 read cmd
+    	    	spi_data_transmit(SPI_MASTER,0x00); // tx addr[23:16] 
     	    	spi_data_transmit(SPI_MASTER,0x00); // tx addr[15:8]
     	    	spi_data_transmit(SPI_MASTER,0x00); // tx addr[7:0]
     	    	while(!spi_sr_tfe(SPI_MASTER)); // wait TFE returns to 1
-    	    	AlDma_Enable(AL_DMAC);
-    	    	AlDma_EnableChannel(AL_DMAC,AL_dmac_channel_num_0);
     	    	while(AlDma_CheckChannelBusy(AL_DMAC));
     	        AlDma_Disable(AL_DMAC);
     	        AlDma_DisableChannel(AL_DMAC,AL_dmac_channel_num_0);
+				printf("DMA Read done!\r\n");
     	       // mem_data_check(60);
     	       // printf("spi DMA MODE TEST success");
 #endif
@@ -598,7 +604,7 @@ int main(void){
 #endif
 
 	printf_mem_data2(60);
-	while(1);
+	//while(1);
     	        return 0;
 }
 

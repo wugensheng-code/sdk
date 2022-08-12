@@ -138,6 +138,10 @@
 #define SPI_SR_RXFIFO_NOTEMPTY				1
 #define SPI_SR_RXFIFO_EMPTY					0
 
+#define SR_RFF_MASK							(1<<4)
+#define SPI_SR_RXFIFO_FULL					1
+#define SPI_SR_RXFIFO_NOT_FULL				0
+
 #define FRF_SPI								0
 #define FRF_SSP								1
 #define FRF_MICR							2
@@ -181,6 +185,7 @@
  uint32_t spi_sr_tfnf(SPI_TypeDef *spi);
  uint32_t spi_sr_busy(SPI_TypeDef *spi);
  uint32_t spi_sr_rfne(SPI_TypeDef *spi);
+ uint32_t spi_sr_rff(SPI_TypeDef *spi);
  void spi_ctrl1_ndf(SPI_TypeDef *spi, uint32_t num);
 
 #endif /* _AL9000_SPI_H_ */

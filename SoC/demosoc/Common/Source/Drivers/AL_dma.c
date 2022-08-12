@@ -32,6 +32,8 @@
 #define i2c1_data_base_address   0xF8415010
 volatile uint16_t DMA_BLOCK_LIST_reload_count = 0;
 volatile uint32_t buffer_list_parm[100][5];
+volatile uint8_t MEM_BASE1_ADDR[512];
+volatile uint8_t MEM_BASE2_ADDR[512];
 /**********************************************************************/
 //pass
 
@@ -1651,15 +1653,15 @@ void AlSpi_DmaInit(DMA_Channel_TypeDef *Channelx,enum PER_type PER,enum dma_type
 	        AlDma_SetAddress(Channelx,Dmac_src,spi1_data_base_adderss);
 		    dam_handshake_interfance(Channelx,spi1_rx_hs_interfance);
 		    spi_dma_rx_enable(SPI1);
+			spi_dma_data_level(SPI1,tx_data_level,rx_data_level);
 	        }
 	     AlDma_SetMemPeriphFlowCtl(Channelx,PER2MEM);
 	     AlDma_SetAddressInc(Channelx,Dmac_src,FIX);
-	     spi_dma_data_level(SPI1,tx_data_level,rx_data_level);
 	}
-     AlDma_SetMemPeriphFlowCtl(Channelx,transfer);
+     AlDma_SetTransferType(Channelx,transfer);
 	 AlDma_SetTransWidth(Channelx,Dmac_src_dst,WIDTH_32);
 	 AlDma_SetBlockTransSize(Channelx,block_size);
-	 AlDma_SetBurstTransLength(Channelx,Dmac_src_dst,AL_DMA_MSIZE_1);
+	 AlDma_SetBurstTransLength(Channelx,Dmac_src_dst,AL_DMA_MSIZE_4);	//set MSIZE
 }
 void AlQspi_DmaInit(DMA_Channel_TypeDef *Channelx,enum dma_type type,uint8_t tx_data_level,uint8_t rx_data_level,enum AL_dmac_transfer_type  transfer,uint16_t block_size){
 	 AlDma_SetChannelConfig(Channelx);

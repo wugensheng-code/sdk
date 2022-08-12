@@ -654,6 +654,8 @@ enum dma_type{
 	rx,
 };
 
+extern volatile uint8_t MEM_BASE1_ADDR[512];
+extern volatile uint8_t MEM_BASE2_ADDR[512];
 
 int 	AlDma_Init(AL_DMAC_TypeDef *DMAC);
 void 	AlDma_Enable(AL_DMAC_TypeDef *DMAC);

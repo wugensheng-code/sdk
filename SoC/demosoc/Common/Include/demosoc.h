@@ -1689,8 +1689,6 @@ typedef struct{
 #define ONCHIP_DLM_BASE         (0x60040000UL)//(0x90000000UL)      /*!< (DLM       ) Base Address */
 //#define DEMOSOC_PERIPH_BASE     (0x10000000UL)//(0x10000000UL)      /*!< (Peripheral) Base Address */
 #define PERIPH_BASE     		(0xF8000000UL)					    /*!< (Peripheral) Base Address */
-#define MEM_BASE1_ADDR           (0x61030000)
-#define MEM_BASE2_ADDR           (0x61030100)
 
 #define WDT_BASE                  	(0xF8410000)
 #define SMC_BASE                  	(0xF841A000UL)

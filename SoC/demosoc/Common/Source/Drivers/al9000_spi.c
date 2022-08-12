@@ -407,6 +407,20 @@ uint32_t spi_sr_rfne(SPI_TypeDef *spi)
 }
 
 /*!
+    \brief      check rx fifo full or not
+    \param[in]  spi:
+    \param[out] none
+    \retval     1- full;0-not full
+*/
+uint32_t spi_sr_rff(SPI_TypeDef *spi)
+{
+    if(spi->SR & SR_RFF_MASK)
+        return SPI_SR_RXFIFO_FULL;
+    else
+        return SPI_SR_RXFIFO_NOT_FULL;
+}
+
+/*!
     \brief      spi CTRLR1 cfg
     \param[in]  spi:
     \param[out] none
