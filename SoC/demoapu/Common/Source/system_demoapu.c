@@ -37,6 +37,12 @@
 //#define SYSTEM_CLOCK    (200000000UL)
 #endif
 
+void Enablepinmux1(void);
+void Enablepinmux1_mode2(void);
+
+//#define ENABLE_PINMUX1_MODE1
+#define ENABLE_PINMUX1_MODE2
+
 /**
  * \defgroup  NMSIS_Core_SystemConfig       System Device Configuration
  * \brief Functions for system and clock setup available in system_<device>.c.
@@ -198,7 +204,12 @@ void _premain_init(void)
     gpio_iof_config(GPIO, IOF0_UART0_MASK, IOF_SEL_0);
     uart_init(SOC_DEBUG_UART, 115200);
 #else
+#ifdef ENABLE_PINMUX1_MODE1
     Enablepinmux1();
+#endif
+#ifdef ENABLE_PINMUX1_MODE2
+    Enablepinmux1_mode2();
+#endif
 	AlUart_Init(AL_UART0, 115200, UART_BIT_LENGTH_8, AL_UART_STOP_BIT_1);
 	/* Display banner after UART initialized */
 	SystemBannerPrint();
