@@ -401,6 +401,48 @@ int XDmaPs_Instr_DMALD(char *DmaProg)
 	return 1;
 }
 
+int XDmaPs_Instr_DMALDP(char *DmaProg, unsigned int bs, unsigned int periph)
+{
+	/*
+	 * DMALDP encoding
+	 * 15-11        10 9 8 7 6 5 4 3 2 1  0
+	 * periph[4:0]   0 0 0 0 0 1 0 0 1 bs 1
+	 * bs: 0 single  1 burst
+	 * periph[4:0]: 0~3
+	 */
+	*DmaProg = 0x25 | ((bs << 1) & 0x02);
+	*(DmaProg + 1) = (u8)((periph << 3) & 0xf8);
+	return 2;
+}
+
+int XDmaPs_Instr_DMAWFP(char *DmaProg, unsigned int bs_p, unsigned int periph)
+{
+	/*
+	 * DMALDP encoding
+	 * 15-11        10 9 8 7 6 5 4 3 2 1  0
+	 * periph[4:0]   0 0 0 0 0 1 1 0 0 bs p
+	 * bs_p: 0 single  1 both 2 burst
+	 * periph[4:0]: 0~3
+	 */
+	*DmaProg = 0x30 | ((bs_p) & 0x03);
+	*(DmaProg + 1) = (u8)((periph << 3) & 0xf8);
+	return 2;
+}
+
+int XDmaPs_Instr_DMASTP(char *DmaProg, unsigned int bs, unsigned int periph)
+{
+	/*
+	 * DMALDP encoding
+	 * 15-11        10 9 8 7 6 5 4 3 2 1  0
+	 * periph[4:0]   0 0 0 0 0 1 0 1 0 bs 1
+	 * bs_p: 0 single  1 burst
+	 * periph[4:0]: 0~3
+	 */
+	*DmaProg = 0x29 | ((bs << 1) & 0x02);
+	*(DmaProg + 1) = (u8)((periph << 3) & 0xf8);
+	return 2;
+}
+
 /****************************************************************************/
 /**
 *
@@ -667,8 +709,8 @@ int XDmaPs_Instr_DMAADDH(char *DmaProg, unsigned Ra, u16 Imm)
 	 *
 	 * ra: 0 for SAR, 1 DAR
 	 */
-	*DmaProg = 0X54 | (Ra << 1 & 0x02); // 第一字节
-	// *((u16 *)(DmaProg + 1)) = Imm; // APU 会报错
+	*DmaProg = 0X54 | (Ra << 1 & 0x02); // �?一字节
+	// *((u16 *)(DmaProg + 1)) = Imm; // APU 会报�?
 	XDmaPs_Memcpy2(DmaProg + 1, (char *)&Imm);
 
 	return 3;
@@ -686,7 +728,7 @@ int XDmaPs_Instr_DMAADNH(char *DmaProg, unsigned Ra, u16 Imm)
 	 *
 	 * ra: 0 for SAR, 1 DAR
 	 */
-	*DmaProg = 0X5C | (Ra << 1 & 0x02); // 第一字节
+	*DmaProg = 0X5C | (Ra << 1 & 0x02); // �?一字节
 	// *((u16 *)(DmaProg + 1)) = Imm;
 	XDmaPs_Memcpy2(DmaProg + 1, (char *)&Imm);
 
