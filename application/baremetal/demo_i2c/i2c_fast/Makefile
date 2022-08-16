@@ -2,7 +2,7 @@ TARGET = i2c_transfer
 
 NUCLEI_SDK_ROOT = ../../../..
 
-SRCDIRS = . src
+SRCDIRS = . src ../i2c_test_example
 
 INCDIRS = . inc
 
