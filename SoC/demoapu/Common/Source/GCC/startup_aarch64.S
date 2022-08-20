@@ -58,14 +58,55 @@ el3_entry:
 	b .
 
 0:
-	/*init el3 gic system registers*/
-	ldr x0, =0x0f
-	msr icc_sre_el3, x0
 
-	//enable group1 secure,non-secure
-	ldr x0, =0x03
+	/*to access icc_igrpen1_el3, need to set icc_sre_el3 */
+
+	mov x0, #0x0f
+	msr icc_sre_el3, x0
+	isb
+
+#ifdef TEST_NVCPU_MNT
+	/*init el3 gic system registers*/
+
+	//set to NS, to access icc_sre_el2
+	mrs x1, scr_el3
+	orr x1, x1, #0x01 //(NS bit)
+	msr scr_el3, x1
+
+	msr icc_sre_el2, x0
+	isb
+
+	msr icc_sre_el1, x0
+
+	mov x0, #(1 << 6)	//;VGrp1E1E
+	orr x0, x0, #1		//;set En (bit 0)
+
+#define ich_hcr_el2		s3_4_c12_c11_0
+#define ich_vmcr_el2	s3_4_c12_c11_7
+#define ICH_MISR_EL2	s3_4_c12_c11_2
+
+	msr ich_hcr_el2, x0
+	mov x0, #0x03
+	msr ich_vmcr_el2, x0
+
+	isb
+
+	mrs x0, ICH_MISR_EL2
+
+	//restore to Secure, to access icc_sre_el2
+	mrs x1, scr_el3
+	bic x1, x1, #0x01 //(Secure bit)
+	msr scr_el3, x1
+
+#endif
+
+	/* enable group1 secure,non-secure
+	 * 	 In both Security states, and not dependent on other bits:
+	 *     — If ICC_SRE_EL3.SRE==0, accesses to this register from EL3 are trapped to EL3
+	*/
+	mov x0, #0x03
 	msr icc_igrpen1_el3, x0
-	ldr x0, =0x01
+	mov x0, #0x01
 	msr icc_igrpen1_el1, x0
 	msr icc_igrpen0_el1, x0
 

@@ -240,6 +240,7 @@ void gicv3_redist_init(u32 int_group)
 
 	/* SGI: edge-triggered */
 	writel_relaxed(GICR_SGI_EDGE_TRIG, GICR_SGI_ICFGR0);
+
 	/* PPI: level-triggered */
 	writel_relaxed(GICR_SGI_LEVEL_TRIG, GICR_SGI_ICFGR1);
 
@@ -457,7 +458,7 @@ void do_fiq_handle(void)
 void __enable_irq(void)
 {
 	asm volatile(
-		"msr    daifclr, #3"
+		"msr    daifclr, #0x3"
 		:
 		:
 		: "memory");
@@ -466,7 +467,7 @@ void __enable_irq(void)
 void __disable_irq(void)
 {
 	asm volatile(
-		"msr    daifset, #3"
+		"msr    daifset, #0x3"
 		:
 		:
 		: "memory");
