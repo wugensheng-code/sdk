@@ -12,8 +12,6 @@
 #include "xdmaps.h"
 
 #define vfwp printf
-#define REG_WRITE(reg_address, reg_wdata)  *(unsigned int*)(reg_address) = reg_wdata
-#define REG_READ(reg_address)  *(unsigned int*)reg_address
 
 #define I2S__ADDR 0x80008000
 #define I2S_RESET_REG (I2S__ADDR + 0x0) // write 0x7 to reset I2S
@@ -24,23 +22,15 @@ void XNullHandler(void *NullParameter)
 }
 
 #define TEST_ROUNDS	1	/* Number of loops that the Dma transfers run.*/
-#define DMA_LENGTH	20	 /*all number of data*/
+#define DMA_LENGTH	50	 /*all number of data*/
 
 /**************************** Type Definitions *******************************/
 int XDmaPs_Example_W_Intr(void);
 int DmaCheckHandler(int *src, int * Dst);
 /************************** Variable Definitions *****************************/
-#ifdef __ICCARM__
-#pragma data_alignment=32
 static int Src[DMA_LENGTH];
 static int Dst[DMA_LENGTH];
-#pragma data_alignment=4
-#else
-static int Src[DMA_LENGTH] __attribute__ ((aligned (32)));
-static int Dst[DMA_LENGTH] __attribute__ ((aligned (32)));
-#endif
-
-XDmaPs DmaInstance;
+static char instrctions[200];
 
 int main(void)
 {
@@ -58,7 +48,6 @@ int main(void)
 	return 0;
 }
 
-
 /*****************************************************************************/
 /**
  *  Case to test the DMA.
@@ -70,31 +59,28 @@ volatile unsigned rdata_cpc0;
 int XDmaPs_Example_W_Intr(void)
 {
 	// config I2S
-	REG_WRITE(0xF8800080, 0x00000001); //  write 0 to <gp_proten> field of PLS_PROT
-	REG_WRITE(0xF8801078, 0x00001133);
-	REG_WRITE(I2S_RESET_REG, 0x7);
-	REG_WRITE(I2S_RESET_REG, 0x0);
-	REG_WRITE(0x80008008, 0x0);
-	REG_WRITE(0x80008018, 0x0);
+	WriteReg(0xF8800080, 0x00000001); //  write 0 to <gp_proten> field of PLS_PROT
+	WriteReg(0xF8801078, 0x00001133);
+	WriteReg(I2S_RESET_REG, 0x7);
+	WriteReg(I2S_RESET_REG, 0x0);
+	WriteReg(0x80008008, 0x0);
+	WriteReg(0x80008018, 0x0);
 
 	int Index;
-
-	// OCM 61000000 DV use
-	// OCM 61010000 DMA Instruction
-	#define OCM__BASE1_ADDR 0x61010000
 
 	#define I2S_DATA_RX_REG (I2S__ADDR + 0x28) // read
 	#define I2S_DATA_TX_REG (I2S__ADDR + 0x2c) // write
 	#define I2S_CTRL_REG (I2S__ADDR + 0x4) // write 0x3 to send single request
 
 	char *DmaProgBuf;
-	DmaProgBuf = OCM__BASE1_ADDR;
-	DmaProgBuf += XDmaPs_Instr_DMAGO(DmaProgBuf, 0, OCM__BASE1_ADDR+6, 0);
+	DmaProgBuf = instrctions;
+	DmaProgBuf += XDmaPs_Instr_DMAGO(DmaProgBuf, 0, (&instrctions[0])+6, 0);
 	vfwp("Start Instruction addr:%x \n", DmaProgBuf);
 	// 5 singe transfers
 	DmaProgBuf += XDmaPs_Instr_DMAMOV(DmaProgBuf, 0x0, (u32)Src);           // SAR
 	DmaProgBuf += XDmaPs_Instr_DMAMOV(DmaProgBuf, 0x2, I2S_DATA_TX_REG);    // DAR
 	DmaProgBuf += XDmaPs_Instr_DMAMOV(DmaProgBuf, 0x1, 0x00410205);         // CCR SS32 SB1 Sinc DS32 DB1 Dfix
+	DmaProgBuf += XDmaPs_Instr_DMAFLUSHP(DmaProgBuf, 0); // init dma0 periph request interface
 	DmaProgBuf += XDmaPs_Instr_DMALP(DmaProgBuf, 0, DMA_LENGTH);
 		DmaProgBuf += XDmaPs_Instr_DMALDP(DmaProgBuf,0,0);
 		DmaProgBuf += XDmaPs_Instr_DMAWFP(DmaProgBuf,1,0);
@@ -103,6 +89,7 @@ int XDmaPs_Example_W_Intr(void)
 	DmaProgBuf += XDmaPs_Instr_DMAMOV(DmaProgBuf, 0x0, I2S_DATA_RX_REG);    // SAR
 	DmaProgBuf += XDmaPs_Instr_DMAMOV(DmaProgBuf, 0x2, (u32)Dst);           // DAR
 	DmaProgBuf += XDmaPs_Instr_DMAMOV(DmaProgBuf, 0x1, 0x00414204);         // CCR  SS 32 SB 1 Sfix DS 32 DB 1 Dinc  4bytes (0x00414204)
+	DmaProgBuf += XDmaPs_Instr_DMAFLUSHP(DmaProgBuf, 3); // init dma3 periph request interface
 	DmaProgBuf += XDmaPs_Instr_DMALP(DmaProgBuf, 0, DMA_LENGTH);
 		DmaProgBuf += XDmaPs_Instr_DMAWFP(DmaProgBuf,1,3);
 		DmaProgBuf += XDmaPs_Instr_DMALDP(DmaProgBuf,0,3);
@@ -113,12 +100,12 @@ int XDmaPs_Example_W_Intr(void)
 	vfwp("End addr:%x \n", DmaProgBuf);
 
 	 // set boot_addr
-	 REG_WRITE(TOP_NS__CFG_CTRL1_DMAC_AXI__ADDR, OCM__BASE1_ADDR);
-	 rdata0 = REG_READ(TOP_NS__CFG_CTRL1_DMAC_AXI__ADDR);
+	 WriteReg(TOP_NS__CFG_CTRL1_DMAC_AXI__ADDR, instrctions);
+	 rdata0 = ReadReg(TOP_NS__CFG_CTRL1_DMAC_AXI__ADDR);
 	 vfwp("** CFG_CTRL1_DMAC_AXI__ADDR = %x \n",rdata0);
 	 // set boot
-	 REG_WRITE(TOP_NS__CFG_CTRL0_DMAC_AXI__ADDR, 0x00000001);
-	 rdata0 = REG_READ(TOP_NS__CFG_CTRL0_DMAC_AXI__ADDR);
+	 WriteReg(TOP_NS__CFG_CTRL0_DMAC_AXI__ADDR, 0x00000001);
+	 rdata0 = ReadReg(TOP_NS__CFG_CTRL0_DMAC_AXI__ADDR);
 	 vfwp("** CFG_CTRL0_DMAC_AXI__ADDR = %x \n",rdata0);
 
 	 /* Initialize source */
@@ -131,39 +118,38 @@ int XDmaPs_Example_W_Intr(void)
 	 for (Index = 0; Index < DMA_LENGTH; Index++)
 	 	 Dst[Index] = 0;
 
-
 	 // reset dmac
-	REG_WRITE(CRP__SRST_CTRL1__ADDR, 0X00003270);
-	//rdata0 = REG_READ(0Xf8801074);
+	WriteReg(CRP__SRST_CTRL1__ADDR, 0X00003270);
+	//rdata0 = ReadReg(0Xf8801074);
 	//vfwp("** damc_SOFT_RESET = %x\n",rdata0);
-	REG_WRITE(CRP__SRST_CTRL1__ADDR, 0X00003370);
-	//rdata0 = REG_READ(0Xf8801074);
+	WriteReg(CRP__SRST_CTRL1__ADDR, 0X00003370);
+	//rdata0 = ReadReg(0Xf8801074);
     //vfwp("** damc_SOFT_RESET = %x\n",rdata0);
 
 	// send request
-	REG_WRITE(I2S_CTRL_REG, 0x3);
+	WriteReg(I2S_CTRL_REG, 0x3);
 	// wait for event0
 	while(1){
-	  rdata0 = REG_READ(DMAC_AXI_SECURE__INT_EVENT_RIS__ADDR);
+	  rdata0 = ReadReg(DMAC_AXI_SECURE__INT_EVENT_RIS__ADDR);
 	  printf("** DMAC_AXI_SECURE__INT_EVENT_RIS__ADDR = %x\n",rdata0);
 	   if(rdata0 == 0x00000001) break;
 	 }
 	 // cancel request
-	REG_WRITE(I2S_CTRL_REG, 0x0);
-	REG_WRITE(I2S_RESET_REG, 0x7);
-	REG_WRITE(I2S_RESET_REG, 0x0);
+	WriteReg(I2S_CTRL_REG, 0x0);
+	WriteReg(I2S_RESET_REG, 0x7);
+	WriteReg(I2S_RESET_REG, 0x0);
 
 		// view CPC0
-		rdata_cpc0 = REG_READ(0xF8418104);
+		rdata_cpc0 = ReadReg(0xF8418104);
 		vfwp("** CPC0 = %x \n",rdata_cpc0);
 		// view DPC
-		rdata0 = REG_READ(0xF8418004);
+		rdata0 = ReadReg(0xF8418004);
 		vfwp("** DPC = %x \n",rdata0);
 		// view CSR0
-		rdata0 = REG_READ(0xF8418100);
+		rdata0 = ReadReg(0xF8418100);
 		vfwp("** CSR0 = %x \n",rdata0);
 		// view CCR0
-		rdata0 = REG_READ(0xF8418408);
+		rdata0 = ReadReg(0xF8418408);
 		vfwp("** CCR0 = %x \n",rdata0);
 
 	rdata0 = DmaCheckHandler(Src, Dst);

@@ -191,7 +191,7 @@ typedef char char8;
 * @return	The 32 bit Value read from the specified input address.
 *
 ******************************************************************************/
-static INLINE u32 Xil_In32(UINTPTR Addr)
+static INLINE u32 ReadReg(UINTPTR Addr)
 {
 	return *(volatile u32 *) Addr;
 }
@@ -209,7 +209,7 @@ static INLINE u32 Xil_In32(UINTPTR Addr)
 * @return	None.
 *
 ******************************************************************************/
-static INLINE void Xil_Out32(UINTPTR Addr, u32 Value)
+static INLINE void WriteReg(UINTPTR Addr, u32 Value)
 {
 	/* write 32 bit value to specified address */
 	volatile u32 *LocalAddr = (volatile u32 *)Addr;
@@ -217,10 +217,10 @@ static INLINE void Xil_Out32(UINTPTR Addr, u32 Value)
 }
 
 #define XDmaPs_ReadReg(BaseAddress, RegOffset) \
-    Xil_In32((BaseAddress) + (RegOffset))
+    ReadReg((BaseAddress) + (RegOffset))
 
 #define XDmaPs_WriteReg(BaseAddress, RegOffset, RegisterValue) \
-    Xil_Out32((BaseAddress) + (RegOffset), (RegisterValue))
+    WriteReg((BaseAddress) + (RegOffset), (RegisterValue))
 
 /*
  * Perform reset operation to the dmaps interface

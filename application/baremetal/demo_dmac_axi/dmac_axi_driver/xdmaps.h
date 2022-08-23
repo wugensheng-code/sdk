@@ -224,6 +224,7 @@ int XDmaPs_Instr_DMAWMB(char *DmaProg);
 int XDmaPs_Instr_DMALDP(char *DmaProg, unsigned int bs, unsigned int periph);
 int XDmaPs_Instr_DMAWFP(char *DmaProg, unsigned int bs_p, unsigned int periph);
 int XDmaPs_Instr_DMASTP(char *DmaProg, unsigned int bs, unsigned int periph);
+int XDmaPs_Instr_DMAFLUSHP(char *DmaProg, unsigned int periph);
 unsigned XDmaPs_ToEndianSwapSizeBits(unsigned int EndianSwapSize);
 unsigned XDmaPs_ToBurstSizeBits(unsigned BurstSize);
 #endif 
