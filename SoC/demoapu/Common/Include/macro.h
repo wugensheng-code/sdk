@@ -281,6 +281,8 @@ lr	.req	x30
 	// ldr x21, =(SCR_RW_AARCH64 | SCR_NS)
 	ldr x21, =SCR_RW_AARCH64
 	msr scr_el3, x21
+	ldr x21, =(0x1<<31)
+	msr hcr_el2, x21
     /* (2) set sctlr_el1, disable mmu, LITTLE_ENDIAN */
 	ldr x21, =SCTLR_VALUE_MMU_DISABLED
 	msr sctlr_el1, x21

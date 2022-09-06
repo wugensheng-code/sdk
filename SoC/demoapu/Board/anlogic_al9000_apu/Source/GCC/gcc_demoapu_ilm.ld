@@ -13,6 +13,7 @@ SECTIONS
 
 	.text :
 	{
+		_text_start  = .;
 		*startup_aarch64.S.o(.text)
 		*(.text)
 	}  > ram AT>ram
@@ -32,7 +33,6 @@ SECTIONS
 	{
 		*(.data*)
 	}  > ram AT>ram
-
 
 	/* all bss segment */
 	. = ALIGN(4096);

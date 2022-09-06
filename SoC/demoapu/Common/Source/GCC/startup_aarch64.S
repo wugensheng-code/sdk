@@ -58,12 +58,14 @@ el3_entry:
 	b .
 
 0:
-
 	/*to access icc_igrpen1_el3, need to set icc_sre_el3 */
-
 	mov x0, #0x0f
 	msr icc_sre_el3, x0
 	isb
+
+	mov x0, #(0x01 << 6)
+	msr ACTLR_EL3, x0	//Write Xt to ACTLR_EL3.L2ACTLR_EL1
+	msr ACTLR_EL2, x0	//Write Xt to ACTLR_EL2.L2ACTLR_EL1
 
 #ifdef TEST_NVCPU_MNT
 	/*init el3 gic system registers*/
