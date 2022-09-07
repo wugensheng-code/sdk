@@ -278,14 +278,20 @@ lr	.req	x30
 	bl print_switch_el
 #endif
 	/* (1) The Execution state for EL1 is AArch64, No-Secure */
-	// ldr x21, =(SCR_RW_AARCH64 | SCR_NS)
-	ldr x21, =SCR_RW_AARCH64
+#ifdef SUPPORT_EL1_NONSECURE
+	ldr x21, =(SCR_RW_AARCH64 | SCR_NS)
+#else
+	ldr x21, =(SCR_RW_AARCH64)
+#endif
 	msr scr_el3, x21
+
 	ldr x21, =(0x1<<31)
 	msr hcr_el2, x21
+
     /* (2) set sctlr_el1, disable mmu, LITTLE_ENDIAN */
 	ldr x21, =SCTLR_VALUE_MMU_DISABLED
 	msr sctlr_el1, x21
+
 	/* (3) set spsr_el3, return to el1 */
 	ldr x21, =SPSR_EL1
 	msr spsr_el3, x21

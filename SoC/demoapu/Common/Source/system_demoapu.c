@@ -213,7 +213,9 @@ void _premain_init(void)
 	AlUart_Init(AL_UART0, 115200, UART_BIT_LENGTH_8, AL_UART_STOP_BIT_1);
 	/* Display banner after UART initialized */
 	SystemBannerPrint();
+#ifndef SUPPORT_EL1_NONSECURE
 	gicv3_init();
+#endif
 	generic_timer_init();
 #endif
 

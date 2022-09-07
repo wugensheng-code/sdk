@@ -122,11 +122,13 @@ el3_entry:
 
 	adr	x0, vectors
 	msr vbar_el3, x0
+
 	mrs	x0, scr_el3
-	/* x0 = x0 | 0xf */
-	orr	x0, x0, #0xf			/* SCR_EL3.NS|IRQ|FIQ|EA */
+	orr	x0, x0, #0xe			/* IRQ|FIQ|EA */
 	msr	scr_el3, x0
+
 	msr	cptr_el3, xzr			/* Enable FP/SIMD */
+
 	/* set up stack point */
 	ldr x28, =_sp
 	mov sp, x28
@@ -134,6 +136,12 @@ el3_entry:
 	ldr	x0, =COUNTER_FREQUENCY
 	msr	cntfrq_el0, x0			/* Initialize CNTFRQ */
 #endif
+
+#ifdef SUPPORT_EL1_NONSECURE
+	bl clear_bss
+	bl gicv3_init
+#endif
+
 /* switch to el1 */
 #ifdef SWITCH_TO_EL1_FROM_EL3
 	switch_el3_to_el1
@@ -166,7 +174,7 @@ el1_entry:
 	mrs x0, sctlr_el1
 	orr x0, x0, #(1 << 12)
 	msr sctlr_el1, x0
-	b   main_entry
+	b main_entry
 
 main_entry:
 	isb
@@ -174,13 +182,13 @@ main_entry:
 	bl uart0_init_simple
 	bl print_el
 #endif
-	/* clear bss */
+
+#ifndef SUPPORT_EL1_NONSECURE
 	bl clear_bss
+#endif
 
 	/* Processor specific initialization */
 	bl	lowlevel_init
-
-	//123
 
 	/* jump to main */
 	bl	main

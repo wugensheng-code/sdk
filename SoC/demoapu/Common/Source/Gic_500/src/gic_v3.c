@@ -21,7 +21,7 @@
 
 
 #ifdef CONFIG_PRINTK
-#define gic_print(...) printf(__VA_ARGS__)
+#define gic_print(...) gic_print(__VA_ARGS__)
 #else
 #define gic_print(...)
 #endif
@@ -250,6 +250,7 @@ void gicv3_redist_init(u32 int_group)
 
 static bool gic_enable_sre(void)
 {
+#if 1
 	u32 val;
 	val = gic_read_sre();
 	if (val & ICC_SRE_EL1_SRE)
@@ -260,6 +261,9 @@ static bool gic_enable_sre(void)
 	val = gic_read_sre();
 
 	return !!(val & ICC_SRE_EL1_SRE);
+#else
+		return 1;
+#endif
 }
 
 static u32 gic_get_pribits(void)
@@ -308,11 +312,11 @@ void gicv3_cpu_init(void)
 
 	/* enable sre */
 	if (!gic_enable_sre()) {
-		printf("GIC: unable to init gic cpu interface by setting system register.\n");
-		printf("try to init gic cpu interface using memory-mapped register.\n");
+		gic_print("GIC: unable to init gic cpu interface by setting system register.\n");
+		gic_print("try to init gic cpu interface using memory-mapped register.\n");
 		gicv3_cpu_memory_map_init();
 	} else {
-		printf("init gic cpu interface using system register.\n");
+		gic_print("init gic cpu interface using system register.\n");
 		gicv3_cpu_sysregs_init();
 	}
 
@@ -321,9 +325,13 @@ void gicv3_cpu_init(void)
 
 __attribute__((weak)) void gicv3_init(void)
 {
-    gicv3_dist_init(GROUP_1_SECURE);
+#ifdef SUPPORT_EL1_NONSECURE
+    gicv3_dist_init(GROUP_1_NONSECURE);
+    gicv3_redist_init(GROUP_1_NONSECURE);
+#else
+	gicv3_dist_init(GROUP_1_SECURE);
     gicv3_redist_init(GROUP_1_SECURE);
-
+#endif
     gicv3_cpu_init();
 
     gic_print("gicv3 : enabled.\n");
@@ -378,11 +386,14 @@ void do_irq_handle(void)
 {
 	u32	int_id;
 
+#if 0
 	/* enable sre */
 	if (!gic_enable_sre()) {
 		/* interrupr acknowledge by read gicc_iar*/
 		int_id = readl_relaxed(GICC_IAR) & 0xffffff;
-	} else {
+	} else 
+#endif	
+	{
 		/* interrupr acknowledge by read iar*/
 		int_id = gic_read_iar_common() & 0xffffff;
 	}
@@ -400,11 +411,13 @@ void do_irq_handle(void)
 	} else {
 		p_func();
 	}
-
+#if 0
 	/* write end of interrupt to deactivate the interrupt */
 	if (!gic_enable_sre()) {
 		writel_relaxed(int_id, GICC_EOIR);
-	} else {
+	} else 
+#endif
+	{
 		gic_write_eoir(int_id);
 	}
 }
