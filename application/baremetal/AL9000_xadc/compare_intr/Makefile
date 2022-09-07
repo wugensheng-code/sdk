@@ -1,10 +1,9 @@
 TARGET = AL9000_xadc
 
-NUCLEI_SDK_ROOT = ../../..
+NUCLEI_SDK_ROOT = ../../../..
 
-SRCDIRS = . 
+SRCDIRS = . src
 
-INCDIRS = . 
-
+INCDIRS = . inc
 
 include $(NUCLEI_SDK_ROOT)/Build/Makefile.base

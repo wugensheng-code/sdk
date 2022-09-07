@@ -44,8 +44,8 @@ extern "C" {
 #define ENABLE_CMD_FIFO_LTH_INTER		0	/* Enable command FIFO less level threshold interrupt */
 #define MASK_CMD_FIFO_LTH_INTER			1	/* Mask command FIFO less level threshold interrupt */
 
-#define ENABLE_DAYA_FIFO_LTH_INTER		0	/* Enable Data FIFO less level threshold interrupt */
-#define MASK_DAYA_FIFO_LTH_INTER		1	/* Mask Data FIFO less level threshold interrupt */
+#define ENABLE_DATA_FIFO_LTH_INTER		0	/* Enable Data FIFO less level threshold interrupt */
+#define MASK_DATA_FIFO_LTH_INTER		1	/* Mask Data FIFO less level threshold interrupt */
 
 #define ENABLE_SAMPLE_INTER				0	/* Enable sample interrupt from XADC */
 #define MASK_SAMPLE_INTER				1	/* Mask sample interrupt from XADC */
@@ -60,12 +60,14 @@ extern "C" {
 
 /****  Bit definition for XADC_MCTRL_R register  ****/
 
-#define FLUSH_DAYA_FIFO		1	/* Flush Data FIFO */
+#define FLUSH_DAYA_FIFO			1	/* Flush Data FIFO */
+#define RECOVER_DAYA_FIFO		0	/* Recover Data FIFO */
 
-#define FLUSH_CMD_FIFO		1	/* Flush Cmd FIFO */
+#define FLUSH_CMD_FIFO			1	/* Flush Cmd FIFO */
+#define RECOVER_CMD_FIFO		0	/* Recover Cmd FIFO */
 
-
-
+#define RESET_XADC_PS_CH	1
+#define RECOVER_XADC_PS_CH	0
 
 
 
@@ -110,6 +112,14 @@ The value is related to the latency of external mux IO and analog input IO */
 #define REG_SEL			0
 #define PIB_SEL			1
 
+#define FLAG_VC7	15
+#define FLAG_VC6	14
+#define FLAG_VC5	13
+#define FLAG_VC4	12
+#define FLAG_VC3	11
+#define FLAG_VC2	10
+#define FLAG_VC1	9
+#define FLAG_VC0	8
 
 
 
@@ -225,6 +235,31 @@ The value is related to the latency of external mux IO and analog input IO */
 #define SIGNAL_PASS_MODE		1
 #define CONTINUE_MODE			2
 
+#define CURRENT_MODE		SIGNAL_PASS_MODE
+#define CURRENT_CH 			0				//0 1
+
+
+
+#define USE_12BIT 1
+
+#if USE_12BIT
+#define CURRENT_RESOLUTION 	RES_12BIT
+#endif
+
+#if USE_10BIT
+#define CURRENT_RESOLUTION 	RES_10BIT
+#endif
+
+#if USE_8BIT
+#define CURRENT_RESOLUTION 	RES_8BIT
+#endif
+
+#if USE_6BIT
+#define CURRENT_RESOLUTION 	RES_6BIT
+#endif
+
+
+
 /* ADC PL Cmd  */
 #define READ_CMD	0x78
 #define WRITE_CMD	0x77
@@ -246,10 +281,10 @@ The value is related to the latency of external mux IO and analog input IO */
 #define		ADC_VER1		0x52
 #define		ADC_FLAG		0x5E
 
-#define		ADC_CHANNEL_0_1		0x60
-#define		ADC_CHANNEL_2_3		0x62
-#define		ADC_CHANNEL_4_5		0x64
-#define		ADC_CHANNEL_6_7		0x66
+#define		ADC_CHANNEL_10		0x60
+#define		ADC_CHANNEL_32		0x62
+#define		ADC_CHANNEL_54		0x64
+#define		ADC_CHANNEL_76		0x66
 
 #define		ADC_CONFIG0		0x68
 #define		ADC_CONFIG1		0x6A
@@ -274,6 +309,64 @@ The value is related to the latency of external mux IO and analog input IO */
 #define		ADC_CH6_GTH		0x9C
 #define		ADC_CH7_GTH		0x9E
 
+
+
+
+
+
+
+/* XADC GP0 define interface */
+#define PLS_PROT (0xF8800000+0x80)
+#define GP_PROTEN *(uint32_t *)PLS_PROT
+
+#define GP0 (0x80000000+0x4000)
+
+#define G0_XADC_VC0 	(*(uint16_t *)(GP0+0x40))
+#define G0_XADC_VC1 	(*(uint16_t *)(GP0+0x42))
+#define G0_XADC_VC2 	(*(uint16_t *)(GP0+0x44))
+#define G0_XADC_VC3 	(*(uint16_t *)(GP0+0x46))
+#define G0_XADC_VC4 	(*(uint16_t *)(GP0+0x48))
+#define G0_XADC_VC5 	(*(uint16_t *)(GP0+0x4a))
+#define G0_XADC_VC6 	(*(uint16_t *)(GP0+0x4c))
+#define G0_XADC_VC7 	(*(uint16_t *)(GP0+0x4e))
+
+#define G0_XADC_VER0 	(*(uint16_t *)(GP0+0x50))
+#define G0_XADC_VER1 	(*(uint16_t *)(GP0+0x52))
+
+#define G0_XADC_FLAG 	(*(uint16_t *)(GP0+0x5e))
+
+#define G0_XADC_CHANNEL10 	(*(uint16_t *)(GP0+0x60))
+#define G0_XADC_CHANNEL32 	(*(uint16_t *)(GP0+0x62))
+#define G0_XADC_CHANNEL54 	(*(uint16_t *)(GP0+0x64))
+#define G0_XADC_CHANNEL76 	(*(uint16_t *)(GP0+0x66))
+
+#define G0_XADC_CONFIG0 (*(uint16_t *)(GP0+0x68))
+#define G0_XADC_CONFIG1 (*(uint16_t *)(GP0+0x6a))
+#define G0_XADC_CONFIG2 (*(uint16_t *)(GP0+0x6c))
+#define G0_XADC_CONFIG3 (*(uint16_t *)(GP0+0x6e))
+
+
+#define G0_XADC_CH0_LTH 	(*(uint16_t *)(GP0+0x80))
+#define G0_XADC_CH1_LTH 	(*(uint16_t *)(GP0+0x82))
+#define G0_XADC_CH2_LTH 	(*(uint16_t *)(GP0+0x84))
+#define G0_XADC_CH3_LTH 	(*(uint16_t *)(GP0+0x86))
+#define G0_XADC_CH4_LTH 	(*(uint16_t *)(GP0+0x88))
+#define G0_XADC_CH5_LTH 	(*(uint16_t *)(GP0+0x8a))
+#define G0_XADC_CH6_LTH 	(*(uint16_t *)(GP0+0x8c))
+#define G0_XADC_CH7_LTH 	(*(uint16_t *)(GP0+0x8e))
+
+
+#define G0_XADC_CH0_GTH 	(*(uint16_t *)(GP0+0x90))
+#define G0_XADC_CH1_GTH 	(*(uint16_t *)(GP0+0x92))
+#define G0_XADC_CH2_GTH 	(*(uint16_t *)(GP0+0x94))
+#define G0_XADC_CH3_GTH 	(*(uint16_t *)(GP0+0x96))
+#define G0_XADC_CH4_GTH 	(*(uint16_t *)(GP0+0x98))
+#define G0_XADC_CH5_GTH 	(*(uint16_t *)(GP0+0x9a))
+#define G0_XADC_CH6_GTH 	(*(uint16_t *)(GP0+0x9c))
+#define G0_XADC_CH7_GTH 	(*(uint16_t *)(GP0+0x9e))
+
+
+
 #if 1
 /**
   * @brief XADC-AL9000
@@ -292,18 +385,17 @@ typedef union
 {
 	uint32_t reg;
 	struct {
-		uint32_t ENABLE_PS_ADC	:1;
-		uint32_t 				:2;
-		uint32_t READ_IGAP		:5;
-		uint32_t CMD_FIFOTH		:4;
-		uint32_t DATA_FIFOOTH	:4;
-		uint32_t 				:2;
-		uint32_t JTAG_WEDGE		:1;
-		uint32_t JTAG_REDGE		:1;
-		uint32_t 				:2;
-		uint32_t TCK_RATE		:2;
-		uint32_t 				:3;
 		uint32_t IGAP			:5;
+		uint32_t READ_IGAP		:5;
+		uint32_t TCK_RATE		:2;
+		uint32_t DATA_FIFO_LVL_L	:4;
+		uint32_t CMD_FIFO_LVL_L		:4;
+		uint32_t DATA_FIFO_LVL_H	:4;
+		uint32_t CMD_FIFO_LVL_H		:4;
+		uint32_t Reserved1		:1;
+		uint32_t JTAG_REDGE		:1;
+		uint32_t JTAG_WEDGE		:1;
+		uint32_t ENABLE_PS_ADC	:1;
 	} bitfiled;
 }CFG_TypeDef;
 
@@ -312,13 +404,13 @@ typedef union
 {
 	uint32_t reg;
 	struct {
-		uint32_t 				:20;
-		uint32_t CMD_FIFO_GTH	:1;
+		uint32_t INTR			:1;
+		uint32_t Reserved2		:7;
 		uint32_t DATA_FIFO_LTH	:1;
 		uint32_t CMD_FIFO_LTH	:1;
 		uint32_t DATA_FIFO_GTH	:1;
-		uint32_t 				:7;
-		uint32_t INTR			:1;
+		uint32_t CMD_FIFO_GTH	:1;
+		uint32_t Reserved1		:20;
 	} bitfiled;
 }INTR_TypeDef;
 
@@ -328,13 +420,13 @@ typedef union
 {
 	uint32_t reg;
 	struct {
-		uint32_t 					:20;
-		uint32_t MASK_CMD_FIFO_GTH	:1;
+		uint32_t MASK_INTR			:1;
+		uint32_t Reserved2			:7;
 		uint32_t MASK_DATA_FIFO_LTH	:1;
 		uint32_t MASK_CMD_FIFO_LTH	:1;
 		uint32_t MASK_DATA_FIFO_GTH	:1;
-		uint32_t 					:7;
-		uint32_t MASK_INTR			:1;
+		uint32_t MASK_CMD_FIFO_GTH	:1;
+		uint32_t Reserved1			:20;
 	} bitfiled;
 }INTR_MASK_TypeDef;
 
@@ -343,15 +435,15 @@ typedef union
 {
 	uint32_t reg;
 	struct {
-		uint32_t 				:12;
-		uint32_t CMD_FIFO_LVL	:4;
-		uint32_t DATA_FIFO_LVL	:4;
-		uint32_t CMD_FIFO_F		:1;
-		uint32_t CMD_FIFO_E		:1;
-		uint32_t DATA_FIFO_F	:1;
-		uint32_t DATA_FIFO_E	:1;
-		uint32_t 				:7;
 		uint32_t MASK_INTR		:1;
+		uint32_t 				:7;
+		uint32_t DATA_FIFO_E	:1;
+		uint32_t DATA_FIFO_F	:1;
+		uint32_t CMD_FIFO_E		:1;
+		uint32_t CMD_FIFO_F		:1;
+		uint32_t DATA_FIFO_LVL	:4;
+		uint32_t CMD_FIFO_LVL	:4;
+		uint32_t 				:12;
 	} bitfiled;
 }STATUS_TypeDef;
 
@@ -362,11 +454,11 @@ typedef union
 {
 	uint32_t reg;
 	struct {
-		uint32_t 					:27;
-		uint32_t RESET				:1;
-		uint32_t 					:2;
-		uint32_t DATA_FIFO_FLUSE	:1;
 		uint32_t CMD_FIFO_FLUSE		:1;
+		uint32_t DATA_FIFO_FLUSE	:1;
+		uint32_t 					:2;
+		uint32_t RESET				:1;
+		uint32_t 					:27;
 	} bitfiled;
 }CTRL_TypeDef;
 
