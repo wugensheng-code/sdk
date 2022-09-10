@@ -122,7 +122,7 @@ ifeq ($(FPGA_BIT_VERSION),STAGE_7)
 COMMON_FLAGS += -DFPGA_STAGE_7
 endif
 
-CFLAGS += -mstrict-align -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35
+CFLAGS += -mgeneral-regs-only -mstrict-align -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35
 
 CFLAGS += $(COMMON_FLAGS) $(C_INCLUDE_OPT) $(MKDEP_OPT)
 CXXFLAGS += $(COMMON_FLAGS) $(CXX_INCLUDE_OPT) $(MKDEP_OPT)

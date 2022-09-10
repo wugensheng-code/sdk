@@ -191,34 +191,28 @@ int32_t ECLIC_Register_IRQ(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_Type trig_
  */
 void _premain_init(void)
 {
-    /* TODO: Add your own initialization code here, called before main */
-    /* __ICACHE_PRESENT and __DCACHE_PRESENT are defined in demosoc.h */
-#if 0   // add by hunter, 09.29.2021
-#if defined(__ICACHE_PRESENT) && __ICACHE_PRESENT == 1
-    EnableICache();
-#endif
-#if defined(__DCACHE_PRESENT) && __DCACHE_PRESENT == 1
-    EnableDCache();
-#endif
-    SystemCoreClock = get_cpu_freq();
-    gpio_iof_config(GPIO, IOF0_UART0_MASK, IOF_SEL_0);
-    uart_init(SOC_DEBUG_UART, 115200);
-#else
 #ifdef ENABLE_PINMUX1_MODE1
     Enablepinmux1();
 #endif
+
 #ifdef ENABLE_PINMUX1_MODE2
     Enablepinmux1_mode2();
 #endif
+
 	AlUart_Init(AL_UART0, 115200, UART_BIT_LENGTH_8, AL_UART_STOP_BIT_1);
 	/* Display banner after UART initialized */
 	SystemBannerPrint();
-#ifndef SUPPORT_EL1_NONSECURE
+
+#if (defined SUPPORT_NONSECURE || defined SWITCH_TO_EL0_FROM_EL3)
+	//if SUPPORT_NONSECURE, gic-v3 init in EL3
+	//if SWITCH_TO_EL0_FROM_EL3, boot to EL0, only to test
+#else
 	gicv3_init();
 #endif
+
+#ifndef SWITCH_TO_EL0_FROM_EL3
 	generic_timer_init();
 #endif
-
 }
 
 /** @} */ /* End of Doxygen Group NMSIS_Core_SystemAndClock */

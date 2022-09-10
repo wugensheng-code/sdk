@@ -137,14 +137,14 @@ el3_entry:
 	msr	cntfrq_el0, x0			/* Initialize CNTFRQ */
 #endif
 
-#ifdef SUPPORT_EL1_NONSECURE
+#ifdef SUPPORT_NONSECURE
 	bl clear_bss
 	bl gicv3_init
 #endif
 
 /* switch to el1 */
-#ifdef SWITCH_TO_EL1_FROM_EL3
-	switch_el3_to_el1
+#ifdef SWITCH_TO_EL1_EL0_FROM_EL3
+	switch_el3_to_el1_el0
 #endif
 	b   main_entry
 
@@ -166,14 +166,22 @@ el1_entry:
 	/* set up stack point */
 	ldr x28, =_sp
 	mov sp, x28
+
+#ifdef SWITCH_TO_EL0_FROM_EL3
+
+#else
 	adr	x0, vectors
 	msr	vbar_el1, x0
+
 	mov	x0, #3 << 20
 	msr	cpacr_el1, x0			/* Enable FP/SIMD */
+
 	//enable icache & MMU
 	mrs x0, sctlr_el1
 	orr x0, x0, #(1 << 12)
 	msr sctlr_el1, x0
+#endif
+
 	b main_entry
 
 main_entry:
@@ -183,7 +191,7 @@ main_entry:
 	bl print_el
 #endif
 
-#ifndef SUPPORT_EL1_NONSECURE
+#ifndef SUPPORT_NONSECURE
 	bl clear_bss
 #endif
 

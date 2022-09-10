@@ -6,7 +6,7 @@
 /* print debug infomation */
 #define DEBUG
 /* switch el1 from el3 */
-#define SWITCH_TO_EL1_FROM_EL3
+#define SWITCH_TO_EL1_EL0_FROM_EL3
 
 /* apu system frequency */
 #define COUNTER_FREQUENCY 50000000

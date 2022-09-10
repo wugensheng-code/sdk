@@ -325,7 +325,7 @@ void gicv3_cpu_init(void)
 
 __attribute__((weak)) void gicv3_init(void)
 {
-#ifdef SUPPORT_EL1_NONSECURE
+#ifdef SUPPORT_NONSECURE
     gicv3_dist_init(GROUP_1_NONSECURE);
     gicv3_redist_init(GROUP_1_NONSECURE);
 #else

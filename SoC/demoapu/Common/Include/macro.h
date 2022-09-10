@@ -272,13 +272,13 @@ lr	.req	x30
 .endm
 
 /* switch to el1 from el3 */
-.macro	switch_el3_to_el1
+.macro	switch_el3_to_el1_el0
 #ifdef DEBUG
 	mov x0, #1
 	bl print_switch_el
 #endif
 	/* (1) The Execution state for EL1 is AArch64, No-Secure */
-#ifdef SUPPORT_EL1_NONSECURE
+#ifdef SUPPORT_NONSECURE
 	ldr x21, =(SCR_RW_AARCH64 | SCR_NS)
 #else
 	ldr x21, =(SCR_RW_AARCH64)
@@ -288,13 +288,19 @@ lr	.req	x30
 	ldr x21, =(0x1<<31)
 	msr hcr_el2, x21
 
-    /* (2) set sctlr_el1, disable mmu, LITTLE_ENDIAN */
+	/* (2) set sctlr_el1, disable mmu, LITTLE_ENDIAN */
 	ldr x21, =SCTLR_VALUE_MMU_DISABLED
 	msr sctlr_el1, x21
 
-	/* (3) set spsr_el3, return to el1 */
+	/* (3) set spsr_el3, return to el1 or el0*/
+#ifdef SWITCH_TO_EL0_FROM_EL3
+	ldr x21, =SPSR_EL0
+#else
 	ldr x21, =SPSR_EL1
+#endif
+
 	msr spsr_el3, x21
+
 	/* (4) set el1_entry adress to elr_el3 */
 	adr x21, el1_entry
 	msr elr_el3, x21
@@ -303,4 +309,3 @@ lr	.req	x30
 .endm
 
 #endif /* __ASM_ARM_MACRO_H__ */
- 

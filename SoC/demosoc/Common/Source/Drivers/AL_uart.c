@@ -26,6 +26,7 @@ int32_t AlUart_Init(AL_UART_TypeDef *uart, uint32_t baudrate,AL_UART_BIT_LENGTH 
     *(uint32_t *)(0xf8803068U) = 0x3;
 	*(uint32_t *)(0xf880306cU) = 0x3;
 	*(uint32_t *)(0xf8803410U) = 0x1;
+
     AlUart_SetBaudrate(uart, baudrate);		//set_baudrate
     AlUart_DatalengConfig(uart,bit_length);	//set_dataleng
     AlUart_ConfigStopbit(uart,stopbit);		//set_stopbit
