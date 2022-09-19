@@ -772,7 +772,7 @@ uint8_t AlCan_MessagePending(AL_CAN_TypeDef *CANX){
 	case 3:
 		state = CAN_RxStatus_Ok;
 		printf("RX buffer is full");
-		while(3 == GET_BITS(CANX ->CFG_STAT_TCMD_TCTRL_RCTRL,24,25));
+		//while(3 == GET_BITS(CANX ->CFG_STAT_TCMD_TCTRL_RCTRL,24,25));
 	break;
 	default:
 		state = CAN_RxStatus_Failed;
@@ -891,7 +891,7 @@ uint8_t AlCan_ReceiveMsg(AL_CAN_TypeDef *CANX,uint8_t *buf,enum data_length len)
 		  //printf( "can_tx_mode %08x\n",CANX ->CFG_STAT_TCMD_TCTRL_RCTRL);
 		  //printf("intr %08x\r\n",CANX ->EALCAP_TDC_RECNT_TECNT);
 		  return RxMessage.DLC;
-	      CANX ->RTIE_RTIF_ERRINT_LIMIT |= CAN_INTF_RIF;
+	      //CANX ->RTIE_RTIF_ERRINT_LIMIT |= CAN_INTF_RIF;
 	    }
 	return 0;
 }

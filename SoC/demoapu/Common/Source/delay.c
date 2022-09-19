@@ -53,6 +53,7 @@ static u64_t syscnt_get_freq(void)
 
 u64 get_SystickTimer(void)
 {
+	isb();
 	return read_sysreg(CNTPCT_EL0);
 }
 

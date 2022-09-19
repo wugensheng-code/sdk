@@ -18,11 +18,13 @@
 #include "sys.h"
 //#include "delay.h"
 
-#define TEMP_DDR_1 ((volatile uint32_t *)(0X10000000UL+0X100000UL))	//timeoutvalue
-#define TEMP_DDR_2 ((volatile uint32_t *)(0X10000000UL+0X100004UL))	//int_count_num
+//#define TEMP_DDR_1 ((volatile uint32_t *)(0X10000000UL+0X2FFF0000UL))	//timeoutvalue
+//#define TEMP_DDR_2 ((volatile uint32_t *)(0X10000000UL+0X2FFF0004UL))	//int_count_num
+#define TEMP_DDR_1 ((volatile uint32_t *)(0X6103E000UL+0X0UL))	//timeoutvalue
+#define TEMP_DDR_2 ((volatile uint32_t *)(0X6103E000UL+0X4UL))	//int_count_num
 #define TIMEOUT_VAL_S	5
 #define TIMEOUT_VAL_E	0xF
-#define INT_NUM_S		5
+#define INT_NUM_S		3
 #define INT_NUM_E		0xA
 
 #define TOP_CFG_CTRL_WDT_BASEADDR (0XF8800000UL+0X168UL)
@@ -40,27 +42,43 @@
 #define PMU_SW_PMU_SHACK 	(0XF8806080)
 #define PMU_SHACK ((volatile uint32_t *)PMU_SW_PMU_SHACK)
 
-extern u32 EMMC_Test(void);
-static void wdt_init(void);
-
+extern uint32_t EMMC_Test(void);
+extern uint32_t SD_Test(void)
+;static void wdt_init(void);
+extern u64 get_SystickTimer(void);
 
 uint32_t main(){
+	
 #if 0
 	MtimerParams mtimer;
 	uint32_t count = 0;
 	Mtimer_Init(&mtimer);
-	for(;count<5;){
-		MTIMER_OUT_CONDITION(1000*1000, &mtimer, 1);
+	for(;count<2;){
+		MTIMER_OUT_CONDITION(15000*1000, &mtimer, 1);
 		printf("count is %d\r\n", count++);
 	}
 	printf("hard_test_case start!\r\n");
-	while(1){
+	/*while(1){
 		printf("_delay_ms(1000)\r\n");
 		_delay_ms(1000);
+	}*/
+#endif
+#if 0
+	uint64_t curtime=0, pretime=0;
+	pretime = get_SystickTimer();
+	while(1){
+		curtime = get_SystickTimer();
+		if(curtime -  pretime > 25000000){
+			printf("[timer]:error\r\n");
+			printf("pre %llu, cur %llu, diff %llu\r\n", pretime, curtime, curtime-pretime);
+			break;
+		}
+		printf("pre %llu, cur %llu, diff %llu\r\n", pretime, curtime, curtime-pretime);
+		pretime = curtime;
 	}
 #endif
 	//wdt_init(); 
-    //EMMC_Test();
+	//EMMC_Test();
 	SD_Test();
 }
 
@@ -80,15 +98,16 @@ void wdt_handler(void)
 		{
 			read_temp = WDT->EOI;	//Can clear by reading WDT_EOI
 			//printf("watch irq %d\r\n", interrupt_count);
-			printf("l\r\n");
+			printf("[wdog]:i\r\n");
 		}
 		//wdt->CRR |= WDT_CCVR_VALUE;
+		//printf("[wdog]:o\r\n");
 	}
 }
 
 void pmu_handler(void)
 {
-	printf("pmu\r\n");
+	printf("[wdog]:pmu\r\n");
 	*PMU_CLR_WDT  = 0x00000100;
 }
 
@@ -102,7 +121,7 @@ int AL9000_wdt_init(WDT_TypeDef *wdt,WDT_InitTypeDef *WDT_InitStruct)
 {
 	if((__RARELY(wdt == NULL))||(__RARELY(WDT_InitStruct == NULL)))
 	{
-		printf("e1");
+		printf("[wdog]:e1");
 		return -1;
 	}
 	//printf("i");
@@ -131,26 +150,30 @@ int AL9000_wdt_init(WDT_TypeDef *wdt,WDT_InitTypeDef *WDT_InitStruct)
 static void wdt_init(void)
 {
 	WDT_InitTypeDef WDT_InitStruct;
+	uint32_t timeoutval = *(uint32_t *)TEMP_DDR_1;
 
-	if(*TEMP_DDR_1 > TIMEOUT_VAL_E){
-		*TEMP_DDR_1 = TIMEOUT_VAL_S;
-		printf("time out value is %d\r\n", *TEMP_DDR_1);
+	int_num = *(uint32_t *)TEMP_DDR_2;
+	printf("ddr1 is %d, ddr2 is %d\r\n", timeoutval, int_num);
+	if(timeoutval < TIMEOUT_VAL_E && timeoutval >= TIMEOUT_VAL_S){
+		timeoutval++;
+		printf("in time out value is %d\r\n", timeoutval);
+	}else{
+		timeoutval = TIMEOUT_VAL_S;
+		printf("out time out value is %d\r\n", timeoutval);
 	}
-	else{
-		*TEMP_DDR_1 = *TEMP_DDR_1 + 1;
-		printf("time out value is %d\r\n", *TEMP_DDR_1);
-	}
-	if(*TEMP_DDR_2 > INT_NUM_E){
-		*TEMP_DDR_2 = INT_NUM_S;
+	
+	if(int_num < INT_NUM_E && int_num >= INT_NUM_S){
+		int_num++;
+		printf("in interrupt num is %d\r\n", int_num);
+	}else{
 		int_num = INT_NUM_S;
-		printf("interrupt num is %d\r\n", *TEMP_DDR_2);
+		printf("out interrupt num is %d\r\n", int_num);
 	}
-	else{
-		*TEMP_DDR_2 = *TEMP_DDR_2 + 1;
-		int_num = *TEMP_DDR_2;
-		printf("interrupt num is %d\r\n", *TEMP_DDR_2);
-	}
-	printf("S\r\n");
+
+	*(uint32_t *)TEMP_DDR_1 = timeoutval;
+	*(uint32_t *)TEMP_DDR_2 = int_num;
+
+	printf("[wdog]:S\r\n");
 
 	ECLIC_Register_IRQ(WDT_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, wdt_handler);
 	ECLIC_Register_IRQ(39, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 2, 2, pmu_handler);
@@ -158,14 +181,14 @@ static void wdt_init(void)
 
 	WDT_InitStruct.WDT_PuaseLength	= WDT_CR_RPL_2;
 	WDT_InitStruct.WDT_Mode		= WDT_CR_RMOD_INTERRUPT;
-	//WDT_InitStruct.WDT_TimeOutValue	= WDT_TORR_TOP_167M;
-	WDT_InitStruct.WDT_TimeOutValue	= *TEMP_DDR_1;
-
+	//WDT_InitStruct.WDT_TimeOutValue	= WDT_TORR_TOP_1342M;
+	WDT_InitStruct.WDT_TimeOutValue	= timeoutval;
+	//int_num = 5;
 	AL9000_wdt_init(WDT,&WDT_InitStruct);
 
-	printf("E\r\n");
-	while(1);
+	printf("[wdog]:E\r\n");
+	//while(1);
 
-	return 0;
+	return ;
 }
 

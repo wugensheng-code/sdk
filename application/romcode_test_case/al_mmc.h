@@ -2,7 +2,8 @@
 #define _AL_MMC_H_
 
 #include <stdio.h>
-#include "../../../../demoapu/Common/Include/delay.h"
+#include <stdint.h>
+//#include "../../../../demoapu/Common/Include/delay.h"
 #include "mtimer.h"
 
 typedef enum{
@@ -10,12 +11,13 @@ typedef enum{
 	MMC_SUCCESS = 0,
 	MMC_FAILURE,
 	//TIMER OUT ERROR
-	MMC_CMD_TIMEOUT,				//send cmd timeout
-	MMC_XFER_TIMEOUT,				//wait transfer complete timeout
+	//MMC_CMD_TIMEOUT,				//send cmd timeout
+	//MMC_XFER_TIMEOUT,				//wait transfer complete timeout
 	MMC_WAIT_CLK_STABLE_TIMEOUT,	//wait internal clock stable timeout
-	MMC_BUF_RD_RDY_TIMEOUT,			//wait buffer read ready complete timeout
-	MMC_SD_CHECK_VOLT_TIMEOUT,		//SD check voltage timeout
-	MMC_EMMC_CHECK_VOLT_TIMEOUT,	//eMMC check voltage timeout
+	//MMC_BUF_RD_RDY_TIMEOUT,			//wait buffer read ready complete timeout
+	//MMC_SD_CHECK_VOLT_TIMEOUT,		//SD check voltage timeout
+	//MMC_EMMC_CHECK_VOLT_TIMEOUT,	//eMMC check voltage timeout
+	MMC_CHECK_VOLT_TIMEOUT,
 	//Error INT Status Regitster
 	MMC_CMD_TOUT_ERR,				//no response is returned within 64 clock cycles from end bit of the cmd
 	MMC_CMD_CRC_ERR,				//cmd resp CRC err
@@ -42,22 +44,69 @@ typedef enum{
 	MMC_RESP_ERR,					//Resp error during DMA execution
 	MMC_BOOT_ACK_ERR,				//boot acknowledgement error
 									//boot ack status other than 010(eMMC only)
+	MMC_WRONG_FREQ,
+	MMC_MODE_ERROR,
+	MMC_CMD_0_ERR,
+	MMC_CMD_1_ERR,
+	MMC_CMD_2_ERR,
+	MMC_CMD_3_ERR,
+	MMC_CMD_6_ERR,
+	MMC_CMD_7_ERR,
+	MMC_CMD_8_ERR,
+	MMC_CMD_9_ERR,
+	MMC_CMD_10_ERR,
+	MMC_CMD_16_ERR,
+	MMC_CMD_17_ERR,
+	MMC_CMD_23_ERR,
+	MMC_CMD_24_ERR,
+	MMC_CMD_55_ERR,
+	MMC_ACMD_41_ERR,
+	MMC_CMD_8_XFER_ERR,
+	MMC_CMD_17_XFER_ERR,
+	MMC_CMD_24_XFER_ERR,
+	MMC_ERR_MAX
 }MMC_ERR_TYPE;
 
+//error code offset
+#define MMC_ERROR_CODE_OFFSET		MMC_CMD_TOUT_ERR
+//error cmd offset
+#define MMC_ERROR_CMD_OFFSET		MMC_CMD_0_ERR
 //Error INT status bits	length 13~15 reserved
 #define MMC_ERR_INT_STAT_BITS_LEN	13
 
-//#define MMC_SEQUENCE_PRINT
+//#define _USE_SDMA
+
+#define MMC_SEQUENCE_PRINT
 #ifdef MMC_SEQUENCE_PRINT
 #define MMC_PRINT	printf
 #else
 #define MMC_PRINT
 #endif
 
-#define MMC_CMD_TIMEOUT_VAL				(100*1000)	//150ms
-#define MMC_XFER_TIMEOUT_VAL			(1000*1000)	//150ms
-#define MMC_BUF_RD_RDY_TIMEOUT_VAL		(100*1000)	//150ms
-#define MMC_WAIT_CLK_STABLE_TIMEOUT_VAL	(200*1000)	//200ms
+//IO BANK1 REF
+//bit 31-3:reserved
+//bit 2:bank1_vccio_det3v3
+//bit 1:bank1_vccio_det2v5
+//bit 0:bank1_vccio_det1v8
+#define IO_BANK1_REF                0xF8803C04ULL
+
+#define MBIU_CTRL_R 0x510   //AHB BUS burst contrl register
+//top cfg register
+//bit 7:enable reg ctrl card write protection   0:io ctrl   1:reg ctrl
+//bit 6:enable reg ctrl card detection          0:io ctrl   1:reg ctrl
+//bit 5:reg ctrl write protection               0:disable   1:enable
+//bit 4:reg ctrl card detect                    0:enable    1:disable
+//bit 3:clk soft rst                            0:disable   1:enable
+//bit [2:0]:clk phase select similar to tuning
+#define TOP_NS__CFG_CTRL_SDIO0_ADDR 0xF8800150ULL   //sd0   emmc
+#define TOP_NS__CFG_CTRL_SDIO1_ADDR 0xF8800150ULL	//0xF8800154ULL   //sd1   sd
+#define SDIO_WRAP__SDIO0__BASE_ADDR 0xF8049000ULL
+#define SDIO_WRAP__SDIO1__BASE_ADDR 0xF804A000ULL
+
+#define MMC_CMD_TIMEOUT_VAL				(10000*1000)	//10s
+#define MMC_XFER_TIMEOUT_VAL			(15000*1000)	//15s
+#define MMC_BUF_RD_RDY_TIMEOUT_VAL		(1000*1000)		//1s
+#define MMC_WAIT_CLK_STABLE_TIMEOUT_VAL	(5000*1000)		//5s
 
 //capabilities1.base_clk_freq 0 another way 1~255 -> 1~255MHz
 #define MMC_GET_INFO_ANOTHER_WAY	0x0
@@ -66,41 +115,21 @@ typedef enum{
 
 #define     __IO    volatile      
 
-#define DEF_BLOCK_LEN   0x800
+#define DEF_BLOCK_LEN   0x1000	//4KB
 
-typedef unsigned int       u32;
-typedef unsigned long long u64;
-typedef unsigned char      uint8_t;
-typedef unsigned short     uint16_t;
 //typedef unsigned int       uint32_t;
-//typedef unsigned long long uint64_t;
+//typedef unsigned long long u64;
+//typedef unsigned char      uint8_t;
+//typedef unsigned short     uint16_t;
 
-extern inline unsigned int reg_read(unsigned long reg_address);
-extern inline void reg_write(unsigned long reg_address, u32 reg_wdata);
+unsigned int reg_read(unsigned long reg_address);
+void reg_write(unsigned long reg_address, uint32_t reg_wdata);
 
 #define REG_READ(reg_address) reg_read(reg_address)
 #define REG_WRITE(reg_address, reg_wdata) reg_write(reg_address, reg_wdata)
 
 #define SDRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO1__BASE_ADDR+reg_address), reg_wdata)
 #define EMMCRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO0__BASE_ADDR+reg_address), reg_wdata)
-
-#define MMC_WAIT_CLK_STABLE(ptr)			status = wait_clock_stable(ptr);\
-											if(status != MMC_SUCCESS){\
-												return status;\
-											}
-#define MMC_WAIT_CMD_COMPLETE(ptr)			status = wait_command_complete(ptr);\
-											if(status != MMC_SUCCESS){\
-												return status;\
-											}
-#define MMC_WAIT_TRANSFER_COMPLETE(ptr)		status = wait_transfer_complete(ptr);\
-											if(status != MMC_SUCCESS){\
-												return status;\
-											}
-#define MMC_WAIT_BUF_RD_RDY_COMPLETE(ptr)	status = wait_buffer_read_ready_complete(ptr);\
-											if(status != MMC_SUCCESS){\
-												return status;\
-											}
-
 
 typedef enum {
 	FAILED = 0, 
@@ -657,6 +686,25 @@ typedef struct
   uint8_t CardType;
 } SD_CardInfo;
 
+typedef union{
+    __IO uint32_t d32;
+    struct {
+        __IO uint32_t block_num : 16;
+        __IO uint32_t reserved23_16 : 8;
+        __IO uint32_t forced_program : 1;
+        __IO uint32_t comtext_id : 4;
+        __IO uint32_t tag_request : 1;
+        __IO uint32_t request : 1;
+        __IO uint32_t reliable_write_request : 1;
+    }bit;
+}MMC_CMD23_PARAM;
+
+
+typedef enum{
+    MMC_MODE_FREQ,
+    MMC_MODE_MAX
+}MMC_MODE;
+
 /**
   * @brief Supported SD Memory Cards
   */
@@ -766,10 +814,10 @@ typedef struct
 #define MMC_PC_SBP_VDD1_OFF				0x0	//SD BUS PWR
 #define MMC_PC_SBP_VDD1_ON				0x1
 #define MMC_PC_SBV_VDD1_RSV				0x4	//SD BUS VOLTAGE 0x0~0x4 reserved
-#define SD_PC_SBV_VDD1_1V8					0x5
-#define SD_PC_SBV_VDD1_3V0					0x6
-#define EMMC_PC_SBV_VDD1_1V2				0x5
-#define EMMC_PC_SBV_VDD1_1V8				0x6
+#define SD_PC_SBV_VDD1_1V8				0x5
+#define SD_PC_SBV_VDD1_3V0				0x6
+#define EMMC_PC_SBV_VDD1_1V2			0x5
+#define EMMC_PC_SBV_VDD1_1V8			0x6
 #define MMC_PC_SBV_VDD1_3V3				0x7
 
 //xfer_mode register param
@@ -855,9 +903,10 @@ typedef struct
 #define MMC_ERR_INT_SIGN_MASKED			0x0
 #define MMC_ERR_INT_SIGN_EN				0x1
 
-
-
-
+//io bank1 vcc ref
+#define MMC_IO_BANK1_SUPPORT_1V8(reg)	(reg & 0x1)
+#define MMC_IO_BANK1_SUPPORT_2V5(reg)	((reg & 0x2) >> 1)
+#define MMC_IO_BANK1_SUPPORT_3V3(reg)	((reg & 0x4) >> 2)
 
 
 #define DATA_READ 0x1
@@ -872,27 +921,41 @@ typedef struct
 #define MMC_FREQ_10M					(1)
 
 //delay func
-#define MMC_DELAY_US(us)				_delay_us(us)
-#define MMC_DELAY_MS(ms)				_delay_ms(ms)
+#define MMC_DELAY_US(us)				Mtimer_Delay(us)
+#define MMC_DELAY_MS(ms)				Mtimer_Delay(ms*1000)
 
-extern SD_CardInfo SDCardInfo;
-extern volatile DWC_mshc_block_registers* SDIO;
-extern volatile DWC_mshc_block_registers* eMMC;
-extern volatile MtimerParams mtimer;
-extern uint32_t CSD_Tab[4];
-extern uint32_t CID_Tab[4];
-extern uint32_t RCA;
-extern __IO u8 blockbuf[DEF_BLOCK_LEN];
+uint32_t WaitCmdComplete(volatile DWC_mshc_block_registers* ptr, MMC_ERR_TYPE Err);
+uint32_t WaitTransferComplete(volatile DWC_mshc_block_registers* ptr, MMC_ERR_TYPE Err);
+uint32_t TransferWithoutDMA(volatile DWC_mshc_block_registers* Ptr, uint32_t *Addr, MMC_ERR_TYPE Err);
+uint32_t WaitClockStable(volatile DWC_mshc_block_registers* Ptr);
+#define MMC_WAIT_CLK_STABLE(ptr)					status = WaitClockStable(ptr);\
+													if(status != MMC_SUCCESS){\
+														return status;\
+													}
+#define MMC_WAIT_CMD_COMPLETE(ptr, err)				status = WaitCmdComplete(ptr, err);\
+													if(status != MMC_SUCCESS){\
+														return status;\
+													}
+#define MMC_WAIT_TRANSFER_COMPLETE(ptr, err)		status = WaitTransferComplete(ptr, err);\
+													if(status != MMC_SUCCESS){\
+														return status;\
+													}
+#define MMC_TRANSFER_WITHOUT_DMA(ptr, addr, err)	status = TransferWithoutDMA(ptr, addr, err);\
+													if(status != MMC_SUCCESS){\
+														return status;\
+													}
 
-u32 wait_command_complete(volatile DWC_mshc_block_registers* ptr);
-u32 wait_transfer_complete(volatile DWC_mshc_block_registers* ptr);
-u32 wait_buffer_read_ready_complete(volatile DWC_mshc_block_registers* ptr);
-u32 wait_dma_complete(volatile DWC_mshc_block_registers* ptr);
-void clear_dma_interrupt(volatile DWC_mshc_block_registers* ptr);
-u32 HostControllerSetup(volatile DWC_mshc_block_registers* ptr);
-u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, uint32_t freq);
-u32 InitInterruptSetting(volatile DWC_mshc_block_registers* ptr);
-u32 SD_GetCardInfo(SD_CardInfo *cardinfo);
+extern __IO DWC_mshc_block_registers* SDIO;
+extern __IO DWC_mshc_block_registers* eMMC;
+extern MtimerParams MmcMtimer;
+extern __IO uint32_t CsdTab[4];
+extern __IO uint32_t CidTab[4];
+extern __IO uint32_t Resp[4];
+extern __IO uint32_t Rca;
+extern uint8_t FlashSharedBuf[DEF_BLOCK_LEN];
+
+uint32_t HostControllerSetup(volatile DWC_mshc_block_registers* ptr);
+uint32_t InitInterruptSetting(volatile DWC_mshc_block_registers* ptr);
 
 /*****************************END OF FILE**************************/
 

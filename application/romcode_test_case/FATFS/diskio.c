@@ -6,16 +6,16 @@
 /* This is an example of glue functions to attach various exsisting      */
 /* storage control modules to the FatFs module with a defined API.       */
 /*-----------------------------------------------------------------------*/
-
+#include <stdio.h>
 #include "diskio.h"		/* FatFs lower layer API */
 #include "ff.h"
 //#include "sdio/bsp_sdio_sd.h"
 #include "string.h"
-#include "AL_sd.h"
-#include "AL_sd_write.h"
-#include "AL_emmc.h"
-#include "AL_emmc_write.h"
-#include <stdio.h>
+#include "al_sd.h"
+#include "al_sd_write.h"
+#include "al_emmc.h"
+#include "al_emmc_write.h"
+
 
 /* Ϊÿ���豸����һ�������� */
 #define ATA			           0     // SD��
@@ -57,7 +57,7 @@ DSTATUS disk_initialize (
 	DSTATUS status = STA_NOINIT;	
 	switch (pdrv) {
 		case ATA:	         /* SD CARD */
-			if(SD_Init() == MMC_SUCCESS)
+			if(AlSd_Init() == MMC_SUCCESS)
 			{
 				status &= ~STA_NOINIT;
 			}
@@ -69,7 +69,7 @@ DSTATUS disk_initialize (
 			break;
     
 		case EMMC:    /* EMMC */ 
-            if(EMMC_Init() == MMC_SUCCESS)
+            if(AlEmmc_Init() == MMC_SUCCESS)
 			{
 				status &= ~STA_NOINIT;
 			}
@@ -97,13 +97,12 @@ DRESULT disk_read (
 )
 {
 	DRESULT status = RES_PARERR;
-	u32 SD_state = MMC_SUCCESS;
-	u32 blockcount = 0;
+	uint32_t blockcount = 0;
 	
 	switch (pdrv) {
 		case ATA:	/* SD CARD */
 			for(blockcount = 0; blockcount < count; blockcount++){
-				status = SD_ReadSingleBlock((uint8_t *)(buff+SDCardInfo.CardBlockSize*blockcount),sector+blockcount,SDCardInfo.CardBlockSize);
+				status = AlSd_ReadSingleBlock((uint8_t *)(buff+SDCardInfo.CardBlockSize*blockcount),sector+blockcount,SDCardInfo.CardBlockSize);
 				if(status != RES_OK)
 				{
 					/* Check if the Transfer is finished */
@@ -115,7 +114,7 @@ DRESULT disk_read (
 			
 		case EMMC:
             for(blockcount = 0; blockcount < count; blockcount++){
-				status = EMMC_ReadSingleBlock((uint8_t *)(buff+SDCardInfo.CardBlockSize*blockcount),sector+blockcount,SDCardInfo.CardBlockSize);
+				status = AlEmmc_WriteSingleBlock((uint8_t *)(buff+EmmcCardInfo.CardBlockSize*blockcount),sector+blockcount,EmmcCardInfo.CardBlockSize);
 				if(status != RES_OK)
 				{
 					/* Check if the Transfer is finished */
@@ -142,7 +141,7 @@ DRESULT disk_write (
 )
 {
 	DRESULT status = RES_OK;
-	u32 blockcount = 0;
+	uint32_t blockcount = 0;
 	
 	if (!count) {
 		return RES_PARERR;		/* Check parameter */
@@ -151,7 +150,7 @@ DRESULT disk_write (
 	switch (pdrv) {
 		case ATA:	/* SD CARD */  
 			for(blockcount = 0; blockcount < count; blockcount++){
-				status = SD_WriteSingleBlock((uint8_t *)(buff+SDCardInfo.CardBlockSize*blockcount),sector+blockcount,SDCardInfo.CardBlockSize);
+				status = AlSd_WriteSingleBlock((uint8_t *)(buff+SDCardInfo.CardBlockSize*blockcount),sector+blockcount,SDCardInfo.CardBlockSize);
 				if(status != RES_OK)
 				{
 					/* Check if the Transfer is finished */
@@ -162,7 +161,7 @@ DRESULT disk_write (
 			break;
 		case EMMC:
             for(blockcount = 0; blockcount < count; blockcount++){
-				status = EMMC_WriteSingleBlock((uint8_t *)(buff+SDCardInfo.CardBlockSize*blockcount),sector+blockcount,SDCardInfo.CardBlockSize);
+				status = AlEmmc_WriteSingleBlock((uint8_t *)(buff+EmmcCardInfo.CardBlockSize*blockcount),sector+blockcount,EmmcCardInfo.CardBlockSize);
 				if(status != RES_OK)
 				{
 					/* Check if the Transfer is finished */
@@ -219,7 +218,7 @@ DRESULT disk_ioctl (
 			{
 				// Get R/W sector size (WORD) 
 				case GET_SECTOR_SIZE :    
-					*(WORD * )buff = SDCardInfo.CardBlockSize;
+					*(WORD * )buff = EmmcCardInfo.CardBlockSize;
 				break;
 				// Get erase block size in unit of sector (DWORD)
 				case GET_BLOCK_SIZE :      
@@ -228,7 +227,7 @@ DRESULT disk_ioctl (
 
 				case GET_SECTOR_COUNT:
 					//*(DWORD * )buff = 1000;
-					*(DWORD * )buff = SDCardInfo.CardCapacity/SDCardInfo.CardBlockSize;
+					*(DWORD * )buff = EmmcCardInfo.CardCapacity/EmmcCardInfo.CardBlockSize;
 					break;
 				case CTRL_SYNC :
 				break;

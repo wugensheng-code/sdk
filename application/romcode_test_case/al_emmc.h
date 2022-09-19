@@ -2,7 +2,7 @@
 #define _AL_EMMC_H_
 
 #include <stdio.h>    
-#include "AL_mmc.h"    
+#include "al_mmc.h"    
 
 //CMD PARAMETER
 #define EMMC_CMD0_PARA_GO_IDLE_STATE            ((uint32_t)0x0)
@@ -15,13 +15,11 @@
 //OCR register status
 #define EMMC_OCR_HIGH_VOLTAGE               0x0
 #define EMMC_OCR_DUAL_VOLTAGE               0x1
+#define EMMC_OCR_VOLTAGE_2V7_3V6            0x1FF
 #define EMMC_OCR_ACCESS_MODE_BYTE_MODE      0x0
 #define EMMC_OCR_ACCESS_MODE_SECTOR_MODE    0x2
 
-//EMMC ONLY ERROR   101~200
-#define EMMC_GET_VALID_VOLTAGE_TIMEOUT_ERROR    101
-
-#define EMMC_GET_VALID_VOLTAGE_TIMEOUT_VAL      (15000*1000)  //150ms
+#define EMMC_GET_VALID_VOLTAGE_TIMEOUT_VAL      (15000*1000)  //15s
 
 typedef union{
     __IO uint32_t d32;
@@ -29,24 +27,37 @@ typedef union{
        __IO uint32_t reserved6_0 : 7;
        __IO uint32_t voltage_mode : 1;
        __IO uint32_t reserved14_8 : 7;
-       __IO uint32_t reserved23_15 : 9;
+       __IO uint32_t voltage2v7_3v6 : 9;
        __IO uint32_t reserved28_24 : 5;
        __IO uint32_t access_mode : 2;
        __IO uint32_t card_power_up_status : 1;
     }bit;
 }OCR_R;
 
+typedef enum{
+    EMMC_FREQ_400K,
+    EMMC_FREQ_10M,
+    EMMC_FREQ_MAX
+}EMMC_FREQ;
+
 typedef struct{
-    u32 EmmcId;     //emmc device ID
-    u32 EmmcSize;   //emmc size in kBytes
+    uint32_t EmmcId;     //emmc device ID
+    uint32_t EmmcSize;   //emmc size in kBytes
+    EMMC_FREQ EmmcFreq;  //emmc freq set
 }RawEmmcParam_t;
 
-u32 SendInitCmdEmmc();
-u32 SwitchDataWidthEmmc();
-u32 EMMC_Init(void);
-u32 EMMC_ReadSingleBlock(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSize);
-u32 Csu_RawEmmcInit(RawEmmcParam_t *Param);
-u32 Csu_RawEmmcRead(u32 Offset, u8* Dest, u32 Length);
+extern SD_CardInfo EmmcCardInfo;
+
+
+uint32_t AlEmmc_HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, uint32_t freq);
+uint32_t AlEmmc_SendInitCmd();
+uint32_t AlEmmc_SwitchDataWidth();
+uint32_t AlEmmc_Init(void);
+uint32_t AlEmmc_ReadSingleBlock(uint8_t *Readbuff, uint32_t ReadAddr, uint16_t BlockSize);
+uint32_t Csu_RawEmmcInit(RawEmmcParam_t *Param);
+uint32_t Csu_RawEmmcRead(uint32_t Offset, uint8_t* Dest, uint32_t Length);
+uint32_t Csu_RawEmmcSetMode(uint32_t Mode, uint32_t Data);
+uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo);
 
 
 /*****************************END OF FILE**************************/

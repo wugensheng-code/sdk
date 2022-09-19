@@ -6,13 +6,13 @@ SRCDIRS = . FATFS
 
 INCDIRS = . FATFS
 
-#COMMON_FLAGS := -O2
+COMMON_FLAGS := -O2
 
-SOC := demoapu
+#SOC := demoapu
 
-COMPILE_PREFIX := /opt/toolchain/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+#COMPILE_PREFIX := /opt/toolchain/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
 
-PROGRAM := ./
+#PROGRAM := ./
 
 #V := 1
 

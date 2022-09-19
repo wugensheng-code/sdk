@@ -100,10 +100,9 @@ void SOC_CAN1_HANDLER(void)
 		//AlCan_Rx(AL_CAN_CUR,rx_buf1,data_length_20);
 		AL_CAN_CUR->RTIE_RTIF_ERRINT_LIMIT |= (0x1 << 15);
 		printf("cur register is %x!\r\n", AL_CAN_CUR->RTIE_RTIF_ERRINT_LIMIT);
-		AlCan_TestError(AL_CAN_CUR);	//listen error
-	}else if(((AL_CAN_CUR->RTIE_RTIF_ERRINT_LIMIT & (1 << 11)) >> 11) == 1){
-		printf("none, cur register is %x!\r\n", AL_CAN_CUR->RTIE_RTIF_ERRINT_LIMIT);
-		AL_CAN_CUR->RTIE_RTIF_ERRINT_LIMIT |= (0x1 << 11);
+	}else{
+		printf("other int!\r\n");
+		printf("cur register is %x!\r\n", AL_CAN_CUR->RTIE_RTIF_ERRINT_LIMIT);
 	}
 }
 
@@ -117,37 +116,24 @@ int main(){
 		tx_buf5[i]=i+4;
 	}
 	//__RV_CSR_CLEAR(CSR_MMISC_CTL,MMISC_CTL_BPU);
-    ECLIC_Register_IRQ(SOC_INT92_IRQn , ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,SOC_CAN1_HANDLER);
-	__enable_irq();
+    //ECLIC_Register_IRQ(SOC_INT92_IRQn , ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,SOC_CAN1_HANDLER);
+	//ECLIC_Register_IRQ(\
+	                     SysTimer_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 0,\
+	                     mtimer_irq_handler); /* register system timer interrupt */
+	//__enable_irq();
 	AlCan_SetResetMode(AL_CAN_CUR);
 	AlCan_InterruptEnable(AL_CAN_CUR, RIE);
-	AlCan_InterruptEnable(AL_CAN_CUR, TPIE);
 	AlCan_DeviceDriverBittimeConfiguration(AL_CAN_CUR,rate_5Mbit,AL_TOP0,can_fd);
-	AlCan_TxMode(AL_CAN_CUR,NORMAL);
-#if 1
-	while(1){
-		AlCan_SendMsg(AL_CAN_CUR,tx_buf1,XMIT_PTB_MODE,data_length_12,0x11);
-		_delay_ms(100);
-		AlCan_SendMsg(AL_CAN_CUR,tx_buf2,XMIT_PTB_MODE,data_length_20,0x12);
-		_delay_ms(100);
-		AlCan_SendMsg(AL_CAN_CUR,tx_buf3,XMIT_PTB_MODE,data_length_24,0x13);
-		_delay_ms(100);
-		AlCan_SendMsg(AL_CAN_CUR,tx_buf5,XMIT_PTB_MODE,data_length_32,0x14);
-		_delay_ms(100);
-		AlCan_SendMsg(AL_CAN_CUR,tx_buf4,XMIT_PTB_MODE,data_length_48,0x15);
-		_delay_ms(100);
-		AlCan_SendMsg(AL_CAN_CUR,tx_buf5,XMIT_PTB_MODE,data_length_16,0x16);
-		_delay_ms(100);
-		AlCan_SendMsg(AL_CAN_CUR,tx_buf5,XMIT_PTB_MODE,data_length_64,0x17);
-		_delay_ms(100);
-	}
-	//AlCan_TestError(AL_CAN_CUR);//if you want to get some debug error information,you can open this
-#endif
-#if 0
-	while(1){
-		//AlCan_ReceiveMsg(AL_CAN_CUR,rx_buf1,data_length_20);
-	}
-#endif
-
+	AlCan_TxMode(AL_CAN_CUR,IN_LOOPBACK);
+	AlCan_SendMsg(AL_CAN_CUR,tx_buf1,XMIT_PTB_MODE,data_length_8,0x10);
+	AlCan_ReceiveMsg(AL_CAN_CUR,rx_buf1,data_length_8);
+	for (volatile uint8_t i = 0 ;i < 8 ; i++){
+		if(tx_buf1[i] == rx_buf1[i]){
+			printf("can receive data is right\r\n");
+	    	}
+	    else{printf("can test fail\r\n");}
+	      	}
+	AlCan_TestError(AL_CAN_CUR);
+	printf("can test success \r\n");
 		return 0;
 }

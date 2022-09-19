@@ -250,7 +250,7 @@ TCHAR* f_gets (TCHAR* buff, int len, FIL* fp);						/* Get a string from the fil
 #define f_rewinddir(dp) f_readdir((dp), 0)
 
 #ifndef EOF
-#define EOF (-1)
+	#define EOF (-1)
 #endif
 
 
