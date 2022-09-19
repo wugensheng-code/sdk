@@ -5,7 +5,7 @@
 
 #include "nuclei_sdk_soc.h"
 #include "al9000_registers.h"
-
+extern int PL330_Init();
 #define TUBE_ADDRESS ((volatile char *) 0x80000000u)
 
 
@@ -61,7 +61,7 @@ void Reset_PL330() {
 void Get_DmacStatus() {
 
 }
-int main()
+int PL330_Init()
 {
 	//OCM_L 0x61000000
 #define OCM_L 0x61000000
@@ -106,4 +106,8 @@ int main()
 	vfwp("** DMAC_AXI_SECURE__INT_EVENT_RIS__ADDR = %x\n", rdata0);
 	if (rdata0 == 0x00000004) break;
 	Data_cheak(OCM__BASE2_ADDR, OCM__BASE3_ADDR, 4);
+}
+int main(){
+	PL330_Init();
+	return 0;
 }
