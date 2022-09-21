@@ -364,11 +364,13 @@ typedef enum {
 
 
 typedef struct{
-   __IOM uint32_t reverse[89];
-   __IOM uint32_t can_fd_ctrl;
-   __IOM uint32_t reverse1[18];
-   __IOM uint32_t can_dma;
-
+    __IOM uint32_t reverse[89];
+    __IOM uint32_t can_fd_ctrl;
+    __IOM uint32_t reverse1[14];
+    __IOM uint32_t CFG_CTRL0_DMAC_AXI;
+    __IOM uint32_t CFG_CTRL1_DMAC_AXI;
+    __IOM uint32_t reverse2[2];
+    __IOM uint32_t can_dma;
 }TOPCFG_TypeDef;
 /**
   * @brief GPIO-AL

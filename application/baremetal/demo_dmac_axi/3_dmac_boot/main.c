@@ -7,7 +7,7 @@
 #include "al9000_registers.h"
 extern int PL330_Init();
 #define TUBE_ADDRESS ((volatile char *) 0x80000000u)
-
+#define REG_READ(reg_address)  *(unsigned int*)reg_address
 
 #define DMAC_AXI_SECURE__DBGSTATUS__ADDR 0xF8418D00
 #define DMAC_AXI_SECURE__INT_EVENT_RIS__ADDR 0xF8418024
@@ -102,9 +102,9 @@ int PL330_Init()
 	Set_Bootaddress(AL_TOP0, 0x00000001, OCM__BASE1_ADDR);
 	// reset dmac
 	Reset_PL330();
-	rdata0 = REG_READ(DMAC_AXI_SECURE__INT_EVENT_RIS__ADDR);
-	vfwp("** DMAC_AXI_SECURE__INT_EVENT_RIS__ADDR = %x\n", rdata0);
-	if (rdata0 == 0x00000004) break;
+	uint32_t rdata0 = REG_READ(DMAC_AXI_SECURE__INT_EVENT_RIS__ADDR);
+	printf("** DMAC_AXI_SECURE__INT_EVENT_RIS__ADDR = %x\n", rdata0);
+	//if (rdata0 == 0x00000004) ;
 	Data_cheak(OCM__BASE2_ADDR, OCM__BASE3_ADDR, 4);
 }
 int main(){
