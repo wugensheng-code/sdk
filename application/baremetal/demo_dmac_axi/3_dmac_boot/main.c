@@ -61,13 +61,16 @@ void Reset_PL330() {
 void Get_DmacStatus() {
 
 }
+
+static int Src[DMA_LENGTH] __attribute__ ((aligned (32)));
+static int Dst[DMA_LENGTH] __attribute__ ((aligned (32)));
+static int Mcode[DMA_LENGTH] __attribute__ ((aligned (32)));
+
 int PL330_Init()
 {
-	//OCM_L 0x61000000
-#define OCM_L 0x61000000
-	uint32_t OCM__BASE1_ADDR = OCM_L + 0x00010000;
-	uint32_t OCM__BASE2_ADDR = OCM_L + 0x00020000;
-	uint32_t OCM__BASE3_ADDR = OCM_L + 0x00030000;
+    uint32_t OCM__BASE1_ADDR = Mcode;
+	uint32_t OCM__BASE2_ADDR = Src;
+	uint32_t OCM__BASE3_ADDR = Dst;
 
 	uint32_t OCM__BASE1H_ADDR = OCM__BASE1_ADDR >> 16;   //0x00006101
 	uint32_t OCM__BASE2H_ADDR = OCM__BASE2_ADDR >> 16;   //0x00006102
