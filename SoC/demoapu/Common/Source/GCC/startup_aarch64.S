@@ -26,6 +26,7 @@ _start:
 #define icc_igrpen1_el3 s3_6_c12_c12_7
 #define icc_igrpen1_el1 s3_0_c12_c12_7
 #define icc_igrpen0_el1 s3_0_c12_c12_6
+#define icc_sre_el3     s3_6_c12_c12_5
 
 #ifdef DEBUG
 	bl uart0_init_simple
