@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include "diskio.h"		/* FatFs lower layer API */
 #include "ff.h"
-//#include "sdio/bsp_sdio_sd.h"
 #include "string.h"
 #include "al_sd.h"
 #include "al_sd_write.h"
@@ -59,6 +58,7 @@ DSTATUS disk_initialize (
 		case ATA:	         /* SD CARD */
 			if(AlSd_Init() == MMC_SUCCESS)
 			{
+				Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
 				status &= ~STA_NOINIT;
 			}
 			else 
@@ -71,6 +71,7 @@ DSTATUS disk_initialize (
 		case EMMC:    /* EMMC */ 
             if(AlEmmc_Init() == MMC_SUCCESS)
 			{
+				Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
 				status &= ~STA_NOINIT;
 			}
 			else 
@@ -114,7 +115,7 @@ DRESULT disk_read (
 			
 		case EMMC:
             for(blockcount = 0; blockcount < count; blockcount++){
-				status = AlEmmc_WriteSingleBlock((uint8_t *)(buff+EmmcCardInfo.CardBlockSize*blockcount),sector+blockcount,EmmcCardInfo.CardBlockSize);
+				status = AlEmmc_ReadSingleBlock((uint8_t *)(buff+EmmcCardInfo.CardBlockSize*blockcount),sector+blockcount,EmmcCardInfo.CardBlockSize);
 				if(status != RES_OK)
 				{
 					/* Check if the Transfer is finished */

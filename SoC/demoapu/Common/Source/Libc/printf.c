@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include "delay.h"
 
 //#include <common/debug.h>
 
@@ -188,7 +189,7 @@ loop:
 
 	return count;
 }
-
+/*
 int printf(const char *fmt, ...)
 {
 	int count;
@@ -198,5 +199,29 @@ int printf(const char *fmt, ...)
 	count = vprintf(fmt, va);
 	va_end(va);
 
+	return count;
+}*/
+
+int printftime(const char *fmt, ...)
+{
+	int count;
+	va_list va;
+
+	va_start(va, fmt);
+	count = vprintf(fmt, va);
+	va_end(va);
+
+	return count;
+}
+
+int printf(const char *fmt, ...)
+{
+	int count;
+	va_list va;
+	//printftime("ps %llu\r\n", get_SystickTimer());
+	va_start(va, fmt);
+	count = vprintf(fmt, va);
+	va_end(va);
+	//printftime("pe %llu\r\n", get_SystickTimer());
 	return count;
 }

@@ -6,7 +6,8 @@ SRCDIRS = . FATFS
 
 INCDIRS = . FATFS
 
-COMMON_FLAGS := -O2
+COMMON_FLAGS := -O2 -Wall
+#-Werror=uninitialized
 
 #SOC := demoapu
 

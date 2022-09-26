@@ -11,3 +11,13 @@ int putchar(int c)
 {
 	return uart_write(SOC_DEBUG_UART, c);
 }
+/*
+char *logaddr = (char *)0x10000000;
+
+int putchar(int c)
+{
+	//static char *logaddr = (char *)0x10000000;
+	*logaddr++ = c;
+	return 0;
+}
+*/

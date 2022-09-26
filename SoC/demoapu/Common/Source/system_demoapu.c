@@ -40,8 +40,8 @@
 void Enablepinmux1(void);
 void Enablepinmux1_mode2(void);
 
-//#define ENABLE_PINMUX1_MODE1
-#define ENABLE_PINMUX1_MODE2
+#define ENABLE_PINMUX1_MODE1
+//#define ENABLE_PINMUX1_MODE2
 
 /**
  * \defgroup  NMSIS_Core_SystemConfig       System Device Configuration

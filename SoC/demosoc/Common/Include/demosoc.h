@@ -245,8 +245,8 @@ typedef enum EXCn {
 void Enablepinmux1(void);
 void Enablepinmux1_mode2(void);
 
-//#define __Pinmux_PRESENT          1
-#define __Pinmux_PRESENT_MODE2      1
+#define __Pinmux_PRESENT          1
+//#define __Pinmux_PRESENT_MODE2      1
 
 /** @} */ /* End of group Configuration_of_CMSIS */
 

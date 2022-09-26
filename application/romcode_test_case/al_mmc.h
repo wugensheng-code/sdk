@@ -18,6 +18,7 @@ typedef enum{
 	//MMC_SD_CHECK_VOLT_TIMEOUT,		//SD check voltage timeout
 	//MMC_EMMC_CHECK_VOLT_TIMEOUT,	//eMMC check voltage timeout
 	MMC_CHECK_VOLT_TIMEOUT,
+	MMC_WAIT_LINE_INHIBIT_TIMEOUT,
 	//Error INT Status Regitster
 	MMC_CMD_TOUT_ERR,				//no response is returned within 64 clock cycles from end bit of the cmd
 	MMC_CMD_CRC_ERR,				//cmd resp CRC err
@@ -33,17 +34,6 @@ typedef enum{
 									//write CRC status timeout
 	MMC_DATA_END_BIT_ERR,			//detect 0 at the end bit pos of read data use DAT line
 									//detect 0 at the end bit pos of the CRC status
-	MMC_CUR_LMT_ERR,				//not supply power to card due to some failure(DWC_mshc not support this func)
-	MMC_AUTO_CMD_ERR,				//ACMD12 and ACMD23 detect 0 to 1 at D00 to D05 in SR
-									//ACMD12 D07
-	MMC_ADMA_ERR,					//ADMA based data transfer error
-									//Error response received from System bus (Master I/F)
-									//ADMA3,ADMA2 Descriptors invalid
-									//CQE Task or Transfer descriptors invalid
-	MMC_TUNING_ERR,					//error detected in a tuning circuit except tuning procedure
-	MMC_RESP_ERR,					//Resp error during DMA execution
-	MMC_BOOT_ACK_ERR,				//boot acknowledgement error
-									//boot ack status other than 010(eMMC only)
 	MMC_WRONG_FREQ,
 	MMC_MODE_ERROR,
 	MMC_CMD_0_ERR,
@@ -61,6 +51,7 @@ typedef enum{
 	MMC_CMD_24_ERR,
 	MMC_CMD_55_ERR,
 	MMC_ACMD_41_ERR,
+	MMC_CMD_7_XFER_ERR,
 	MMC_CMD_8_XFER_ERR,
 	MMC_CMD_17_XFER_ERR,
 	MMC_CMD_24_XFER_ERR,
@@ -72,11 +63,13 @@ typedef enum{
 //error cmd offset
 #define MMC_ERROR_CMD_OFFSET		MMC_CMD_0_ERR
 //Error INT status bits	length 13~15 reserved
-#define MMC_ERR_INT_STAT_BITS_LEN	13
+#define MMC_ERR_INT_STAT_BITS_LEN	7
 
 //#define _USE_SDMA
+//#define _USE_MSHC_PRINT
+//#define _USE_ERR_PRINT
 
-#define MMC_SEQUENCE_PRINT
+//#define MMC_SEQUENCE_PRINT
 #ifdef MMC_SEQUENCE_PRINT
 #define MMC_PRINT	printf
 #else
@@ -101,12 +94,13 @@ typedef enum{
 #define TOP_NS__CFG_CTRL_SDIO0_ADDR 0xF8800150ULL   //sd0   emmc
 #define TOP_NS__CFG_CTRL_SDIO1_ADDR 0xF8800150ULL	//0xF8800154ULL   //sd1   sd
 #define SDIO_WRAP__SDIO0__BASE_ADDR 0xF8049000ULL
-#define SDIO_WRAP__SDIO1__BASE_ADDR 0xF804A000ULL
+#define SDIO_WRAP__SDIO1__BASE_ADDR 0xF8049000ULL	//0xF804A000ULL
 
-#define MMC_CMD_TIMEOUT_VAL				(10000*1000)	//10s
-#define MMC_XFER_TIMEOUT_VAL			(15000*1000)	//15s
-#define MMC_BUF_RD_RDY_TIMEOUT_VAL		(1000*1000)		//1s
-#define MMC_WAIT_CLK_STABLE_TIMEOUT_VAL	(5000*1000)		//5s
+#define MMC_CMD_TIMEOUT_VAL					(10000*1000)	//10s
+#define MMC_XFER_TIMEOUT_VAL				(15000*1000)	//15s
+#define MMC_BUF_RD_RDY_TIMEOUT_VAL			(1000*1000)		//1s
+#define MMC_WAIT_CLK_STABLE_TIMEOUT_VAL		(5000*1000)		//5s
+#define MMC_CHECK_LINE_INHIBIT_TIMEOUT_VAL	(1000*1000)		//1s
 
 //capabilities1.base_clk_freq 0 another way 1~255 -> 1~255MHz
 #define MMC_GET_INFO_ANOTHER_WAY	0x0
@@ -116,11 +110,6 @@ typedef enum{
 #define     __IO    volatile      
 
 #define DEF_BLOCK_LEN   0x1000	//4KB
-
-//typedef unsigned int       uint32_t;
-//typedef unsigned long long u64;
-//typedef unsigned char      uint8_t;
-//typedef unsigned short     uint16_t;
 
 unsigned int reg_read(unsigned long reg_address);
 void reg_write(unsigned long reg_address, uint32_t reg_wdata);
@@ -928,6 +917,9 @@ uint32_t WaitCmdComplete(volatile DWC_mshc_block_registers* ptr, MMC_ERR_TYPE Er
 uint32_t WaitTransferComplete(volatile DWC_mshc_block_registers* ptr, MMC_ERR_TYPE Err);
 uint32_t TransferWithoutDMA(volatile DWC_mshc_block_registers* Ptr, uint32_t *Addr, MMC_ERR_TYPE Err);
 uint32_t WaitClockStable(volatile DWC_mshc_block_registers* Ptr);
+uint32_t CheckLineInhibit(volatile DWC_mshc_block_registers* Ptr);
+void ClearErrandIntStatus(volatile DWC_mshc_block_registers* Ptr);
+void PrintfMshcBlock(DWC_mshc_block_registers *Ptr);
 #define MMC_WAIT_CLK_STABLE(ptr)					status = WaitClockStable(ptr);\
 													if(status != MMC_SUCCESS){\
 														return status;\
@@ -944,6 +936,11 @@ uint32_t WaitClockStable(volatile DWC_mshc_block_registers* Ptr);
 													if(status != MMC_SUCCESS){\
 														return status;\
 													}
+#define MMC_CHECK_LINE_INHIBIT(ptr)					status = CheckLineInhibit(ptr);\
+													if(status != MMC_SUCCESS){\
+														return status;\
+													}
+#define MMC_CLEAR_STATUS(ptr)						ClearErrandIntStatus(ptr)
 
 extern __IO DWC_mshc_block_registers* SDIO;
 extern __IO DWC_mshc_block_registers* eMMC;

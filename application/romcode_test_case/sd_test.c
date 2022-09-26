@@ -36,11 +36,12 @@
 #define CSU_TEST_LENGTH2    300
 #define CSU_TEST_LENGTH3    600
 #define FIL_PT_OFFSET       5
+#define FIL_LARGE_RDWR_SIZE 8845488
 
-static __IO FRESULT res_sd;
-static __IO FATFS fs;
-BYTE *WriteBuffer = (char *)0x6103ddf0;
-BYTE *ReadBuffer = (char *)0x6103edf0;
+static FRESULT res_sd;
+static FATFS fs;
+static BYTE *WriteBuffer = (char *)0x6103ddf0;
+static BYTE *ReadBuffer = (char *)0x6103edf0;
 //extern char *logaddr;
 
 uint32_t RawReadWriteTestSD()
@@ -62,7 +63,7 @@ uint32_t RawReadWriteTestSD()
     blocknum = SDCardInfo.CardCapacity / SDCardInfo.CardBlockSize;
     printf("block num is %d\r\n", blocknum);
     blocknum = 3;
-    for(int k = 0; k < 0x200; k+=8){
+    for(int k = 0; k < 0x10; k+=8){
         //WriteBuffer = 0x6103ddf0 + k;
         //ReadBuffer = 0x6103edf0 + k;
         WriteBuffer = 0x61038df0 + k;
@@ -193,19 +194,23 @@ uint32_t RawReadWriteTestSD()
  ******************************************************************************/
 uint32_t SD_Test(void)
 {
-	__IO uint32_t fnum = 0;            			  
-	__IO char ReadBuffer[1024]={0};
-	__IO char WriteBuffer[] = "welcome777777777777777\r\n";
+	uint32_t fnum = 0;            			  
+	//char ReadBuffer[1024]={0};
+	//char WriteBuffer[] = "welcome777777777777777\r\n";
+    char *ReadBuffer = (char *)0x11000000;
+    char *WriteBuffer = (char *)0x10000000;
     FIL fnew;
+    FILINFO fno;
 	uint32_t status = MMC_SUCCESS;
 
-while(1){
+    do{
     memset(&fnew, 0, sizeof(FIL));
+    memset(&fno, 0, sizeof(FILINFO));
 
     //clear ddr log
     //memset((char *)(0x10000000), 0, 0x100000);
     //logaddr = (char *)0x10000000;
-#if 1
+#if 0
     printf("[START]:<SD>\r\n");
     status = RawReadWriteTestSD();
     if(status != MMC_SUCCESS){
@@ -222,7 +227,6 @@ while(1){
     printf("res_sd is %d\r\n", res_sd);
     if(res_sd == FR_NO_FILESYSTEM)
     {
-        Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
         printf("sd no file system, Wait for sd mkfs...");
         res_sd=f_mkfs("0:",0,0);
         printf("res_sd is %d\r\n", res_sd);
@@ -234,43 +238,51 @@ while(1){
             printf("res_sd is %d\r\n", res_sd);
         }
     }
-    res_sd = f_open(&fnew, "0:FatFs2.txt",FA_CREATE_ALWAYS | FA_WRITE );
+    Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
+    /*res_sd = f_open(&fnew, "0:/rt_files/weight.bin",FA_CREATE_ALWAYS | FA_WRITE );
     if ( res_sd == FR_OK )
     {
-        res_sd=f_write(&fnew,WriteBuffer,sizeof(WriteBuffer),&fnum);
+        res_sd=f_write(&fnew,(const void *)WriteBuffer, FIL_LARGE_RDWR_SIZE,&fnum);
         if(res_sd==FR_OK)
         {
             printf("File write success, data byte num is %d\r\n",fnum);
-            printf("data is:\r\n%s\r\n",WriteBuffer);
+            //printf("data is:\r\n%s\r\n",WriteBuffer);
         }else{
             printf("File write fail (%d)\r\n",res_sd);
         }
         f_close(&fnew);
     }else{
         printf("File open fail!\r\n");
-    }
-    res_sd = f_open(&fnew, "0:FatFs2.txt", FA_OPEN_EXISTING | FA_READ);
+    }*///"test/READ.TXT"   /rt_files/weight.bin
+    res_sd = f_open(&fnew, "0:/rt_files/weight.bin", FA_OPEN_EXISTING | FA_READ);
     if(res_sd == FR_OK)
     {
-        res_sd = f_lseek(&fnew, FIL_PT_OFFSET);
+        /*res_sd = f_lseek(&fnew, FIL_PT_OFFSET);
         if(res_sd==FR_OK)
         {
             printf("File lseek success!\r\n");
         }else{
             printf("File lseek fail! Error code is %d\r\n", res_sd);
+        }*/
+        //memset(ReadBuffer, 0, sizeof(ReadBuffer));
+        res_sd = f_stat("0:/rt_files/weight.bin", &fno) ;
+        if (res_sd == FR_OK) {
+            printf("stat completed.\n");
+        } else {
+            printf("stat error: %d\n", res_sd);
+            return -1;
         }
-        memset(ReadBuffer, 0, sizeof(ReadBuffer));
-        res_sd = f_read(&fnew, ReadBuffer, sizeof(ReadBuffer), &fnum);
+        res_sd = f_read(&fnew, (const void *)ReadBuffer, fno.fsize, &fnum);
         if(res_sd==FR_OK)
         {
             printf("File read success, data byte num is %d\r\n",fnum);
-            for(int i = FIL_PT_OFFSET; i < sizeof(WriteBuffer)-FIL_PT_OFFSET; i++){
-                if(WriteBuffer[i] != ReadBuffer[i-FIL_PT_OFFSET]){
+            for(int i = 0; i < FIL_LARGE_RDWR_SIZE; i++){
+                if(WriteBuffer[i] != ReadBuffer[i]){
                     printf("File read error, data not match\r\n");
                     break;
                 }
             }
-            printf("data is:\r\n%s\r\n", ReadBuffer);
+            //printf("data is:\r\n%s\r\n", ReadBuffer);
         }else{
             printf("File read fail (%d)\n",res_sd);
         }
@@ -280,7 +292,7 @@ while(1){
     f_close(&fnew);
     f_mount(NULL,"0:",1);
 #endif
-}
+}while(0);
     return status;
 }
 

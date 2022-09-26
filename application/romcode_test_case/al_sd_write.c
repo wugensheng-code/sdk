@@ -13,17 +13,15 @@
 uint32_t AlSd_WriteSingleBlock(uint8_t *writebuff, uint32_t WriteAddr, uint16_t BlockSize)
 {
     MMC_ERR_TYPE status = MMC_SUCCESS;
-	volatile unsigned int value = 0;
 	uint32_t* Buffer_SingleBlock = (uint32_t* )writebuff;
     __IO CMD_R__XFER_MODE_R reg = {.d32 = 0,};
-    __IO WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R r1 = {.d32 = 0,};
-    __IO HOST_CTRL2_R__AUTO_CMD_STAT_R r2 = {.d32 = 0,};
     __IO uint32_t arg_r = 0;
     __IO BLOCKCOUNT_R__BLOCKSIZE_R block = {.d32 = 0,};
     __IO MMC_CMD23_PARAM r3 = {.d32 = 0,};
 
     MMC_PRINT("AlSd_WriteSingleBlock\r\n");
 #ifdef _USE_SDMA
+    __IO WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R r1 = {.d32 = 0,};
     r1.d32 = REG_READ((unsigned long)&(SDIO->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1.d32));
     MMC_PRINT("r1 is  %x, %d\r\n", r1.d32, r1.d32);
     r1.bit.dma_sel = MMC_HC1_DMA_SEL_SDMA;
@@ -34,6 +32,8 @@ uint32_t AlSd_WriteSingleBlock(uint8_t *writebuff, uint32_t WriteAddr, uint16_t 
 #endif
 	// send command 16  default 512 Bytes
     MMC_PRINT("send command 16\r\n");
+    MMC_CHECK_LINE_INHIBIT(SDIO);
+    MMC_CLEAR_STATUS(SDIO);
     arg_r = BlockSize;
     REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
     block.d32 = 0;//REG_READ((unsigned long)&(SDIO->blockcount_r__blocksize));
@@ -52,6 +52,8 @@ uint32_t AlSd_WriteSingleBlock(uint8_t *writebuff, uint32_t WriteAddr, uint16_t 
 
     // send command 23
     MMC_PRINT("send cmd 23\r\n");
+    MMC_CHECK_LINE_INHIBIT(SDIO);
+    MMC_CLEAR_STATUS(SDIO);
     r3.d32 = 0;
     r3.bit.block_num = 0x1;
     arg_r = r3.d32;
@@ -68,6 +70,8 @@ uint32_t AlSd_WriteSingleBlock(uint8_t *writebuff, uint32_t WriteAddr, uint16_t 
 
 	// send command 24
     MMC_PRINT("send cmd 24\r\n");
+    MMC_CHECK_LINE_INHIBIT(SDIO);
+    MMC_CLEAR_STATUS(SDIO);
     arg_r = WriteAddr;
     REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
     reg.d32 = 0;//REG_READ((unsigned long)&(SDIO->cmd_r__xfer_mode));

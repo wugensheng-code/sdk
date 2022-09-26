@@ -28,7 +28,6 @@
 #include "al_mmc.h"
 
 SD_CardInfo SDCardInfo;
-static __IO uint32_t rca = 0;
 static MtimerParams SdMtimer;
 static __IO uint32_t CardType =  SDIO_HIGH_CAPACITY_SD_CARD;
 
@@ -43,7 +42,7 @@ static __IO uint32_t CardType =  SDIO_HIGH_CAPACITY_SD_CARD;
 uint32_t AlSd_HostControllerClockSetup(volatile DWC_mshc_block_registers* Ptr, uint32_t freq)
 {
     MMC_ERR_TYPE status = MMC_SUCCESS;
-    volatile SW_RST_R__TOUT_CTRL_R__CLK_CTRL_R r1 = {.d32 = 0,};
+    __IO SW_RST_R__TOUT_CTRL_R__CLK_CTRL_R r1 = {.d32 = 0,};
     MMC_PRINT("AlSd_HostControllerClockSetup\r\n");
 
     //  Host Controller Clock Setup
@@ -131,14 +130,16 @@ uint32_t AlSd_HostControllerClockSetup(volatile DWC_mshc_block_registers* Ptr, u
 uint32_t AlSd_SendInitCmdSd()
 {
     MMC_ERR_TYPE status = MMC_SUCCESS;
-    volatile unsigned int response01 = 0;
-    volatile unsigned int validvoltage = 0;
-    volatile CMD_R__XFER_MODE_R reg = {.d32 = 0,};
-    volatile uint32_t arg_r = 0;
+    __IO uint32_t response01 = 0;
+    __IO uint32_t validvoltage = 0;
+    __IO CMD_R__XFER_MODE_R reg = {.d32 = 0,};
+    __IO uint32_t arg_r = 0;
     
     MMC_PRINT("SendInitCmdSD\r\n");
     // send command 0
     MMC_PRINT("send command 0\r\n");
+    MMC_CHECK_LINE_INHIBIT(SDIO);
+    MMC_CLEAR_STATUS(SDIO);
     arg_r = 0;
     REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
     reg.d32 = 0;
@@ -150,6 +151,8 @@ uint32_t AlSd_SendInitCmdSd()
 
     // send command 8
     MMC_PRINT("send command 8\r\n");
+    MMC_CHECK_LINE_INHIBIT(SDIO);
+    MMC_CLEAR_STATUS(SDIO);
     arg_r = SD_CMD8_PARA_2V7_3V6;//0x1AA;  //1:2v7~3v6 AA:check pattern (any 8 bit pattern is ok)   
     REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
     reg.d32 = 0;
@@ -160,10 +163,12 @@ uint32_t AlSd_SendInitCmdSd()
     MMC_WAIT_CMD_COMPLETE(SDIO, MMC_CMD_8_ERR);
     MMC_PRINT("reg.d32 is %x, %d\r\n", reg.d32, reg.d32);
     MMC_DELAY_MS(10);
-    validvoltage = 0;
+    
     MTIMER_OUT_CONDITION(SD_GET_VALID_VOLTAGE_TIMEOUT_VAL, &SdMtimer, validvoltage != 1){
     	// CMD55
-        //MMC_PRINT("send command 55\r\n");
+        MMC_PRINT("send command 55\r\n");
+        MMC_CHECK_LINE_INHIBIT(SDIO);
+        MMC_CLEAR_STATUS(SDIO);
         arg_r = 0;
         REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
         //reg.d32 = REG_READ((unsigned long)&(SDIO->cmd_r__xfer_mode));
@@ -179,6 +184,8 @@ uint32_t AlSd_SendInitCmdSd()
 
     	//ACMD41
         MMC_PRINT("send command 41\r\n");
+        MMC_CHECK_LINE_INHIBIT(SDIO);
+        MMC_CLEAR_STATUS(SDIO);
         arg_r = 0x40100000;//0xC0100000; //[31]reserved,[30]HCS=1,voltage window 3.5~3.6
         REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
         //reg.d32 = REG_READ((unsigned long)&(SDIO->cmd_r__xfer_mode));
@@ -202,6 +209,8 @@ uint32_t AlSd_SendInitCmdSd()
 
     // send command 2
     MMC_PRINT("send command 2\r\n");
+    MMC_CHECK_LINE_INHIBIT(SDIO);
+    MMC_CLEAR_STATUS(SDIO);
     arg_r = 0;
     REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
     reg.d32 = REG_READ((unsigned long)&(SDIO->cmd_r__xfer_mode));
@@ -219,6 +228,8 @@ uint32_t AlSd_SendInitCmdSd()
     
     // send command 3
     MMC_PRINT("send command 3\r\n");
+    MMC_CHECK_LINE_INHIBIT(SDIO);
+    MMC_CLEAR_STATUS(SDIO);
     arg_r = 0x0;    //0x10000;Stuff bits
     REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
     reg.d32 = REG_READ((unsigned long)&(SDIO->cmd_r__xfer_mode));
@@ -228,12 +239,14 @@ uint32_t AlSd_SendInitCmdSd()
     MMC_WAIT_CMD_COMPLETE(SDIO, MMC_CMD_3_ERR);
     MMC_PRINT("reg.d32 is %x, %d\r\n", reg.d32, reg.d32);
 
-    rca = REG_READ((unsigned long)&(SDIO->resp01)) & 0xFFFF0000;
-    MMC_PRINT("rca is %x\r\n", rca);
+    Rca = REG_READ((unsigned long)&(SDIO->resp01)) & 0xFFFF0000;
+    MMC_PRINT("rca is %x\r\n", Rca);
 
     // send command 9
     MMC_PRINT("send command 9\r\n");
-    arg_r = rca;
+    MMC_CHECK_LINE_INHIBIT(SDIO);
+    MMC_CLEAR_STATUS(SDIO);
+    arg_r = Rca;
     REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
     reg.d32 = REG_READ((unsigned long)&(SDIO->cmd_r__xfer_mode));
     reg.bit.cmd_index = SD_CMD_SEND_CSD;
@@ -257,14 +270,16 @@ uint32_t AlSd_SendInitCmdSd()
 
     // send command 7
     MMC_PRINT("send command 7\r\n");
-    arg_r = rca;
+    MMC_CHECK_LINE_INHIBIT(SDIO);
+    MMC_CLEAR_STATUS(SDIO);
+    arg_r = Rca;
     REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
     reg.d32 = REG_READ((unsigned long)&(SDIO->cmd_r__xfer_mode));
     reg.bit.cmd_index = SD_CMD_SEL_DESEL_CARD;
     reg.bit.resp_type_select = MMC_Response_Short_48B;
     REG_WRITE((unsigned long)&(SDIO->cmd_r__xfer_mode.d32), reg.d32);
     MMC_WAIT_CMD_COMPLETE(SDIO, MMC_CMD_7_ERR);
-    MMC_WAIT_TRANSFER_COMPLETE(SDIO, MMC_CMD_7_ERR);
+    MMC_WAIT_TRANSFER_COMPLETE(SDIO, MMC_CMD_7_XFER_ERR);
     MMC_PRINT("reg.d32 is %x, %d\r\n", reg.d32, reg.d32);
     
     return status;
@@ -317,13 +332,12 @@ uint32_t AlSd_ReadSingleBlock(uint8_t *readbuff, uint32_t ReadAddr, uint16_t Blo
     MMC_ERR_TYPE status = MMC_SUCCESS;
 	uint32_t* Buffer_SingleBlock = (uint32_t* )readbuff;
     __IO CMD_R__XFER_MODE_R reg = {.d32 = 0,};
-    __IO WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R r1 = {.d32 = 0,};
-    __IO HOST_CTRL2_R__AUTO_CMD_STAT_R r2 = {.d32 = 0,};
-    volatile uint32_t arg_r = 0;
+    __IO uint32_t arg_r = 0;
     __IO BLOCKCOUNT_R__BLOCKSIZE_R block = {.d32 = 0,};
     __IO MMC_CMD23_PARAM r3 = {.d32 = 0,};
 
 #ifdef _USE_SDMA
+    __IO WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R r1 = {.d32 = 0,};
     r1.d32 = REG_READ((unsigned long)&(SDIO->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1));
     r1.bit.dma_sel = MMC_HC1_DMA_SEL_SDMA;
     REG_WRITE((unsigned long)&(SDIO->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1), r1.d32);
@@ -333,6 +347,8 @@ uint32_t AlSd_ReadSingleBlock(uint8_t *readbuff, uint32_t ReadAddr, uint16_t Blo
 
 	// send command 16
     MMC_PRINT("send command 16\r\n");
+    MMC_CHECK_LINE_INHIBIT(SDIO);
+    MMC_CLEAR_STATUS(SDIO);
     arg_r = BlockSize;
     REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
     block.d32 = 0;//REG_READ((unsigned long)&(SDIO->blockcount_r__blocksize));
@@ -351,6 +367,8 @@ uint32_t AlSd_ReadSingleBlock(uint8_t *readbuff, uint32_t ReadAddr, uint16_t Blo
 
     // send command 23
     MMC_PRINT("send cmd 23\r\n");
+    MMC_CHECK_LINE_INHIBIT(SDIO);
+    MMC_CLEAR_STATUS(SDIO);
     r3.d32 = 0;
     r3.bit.block_num = 0x1;
     arg_r = r3.d32;
@@ -367,6 +385,8 @@ uint32_t AlSd_ReadSingleBlock(uint8_t *readbuff, uint32_t ReadAddr, uint16_t Blo
 
 	// send command 17 read single block
     MMC_PRINT("send command 17\r\n");
+    MMC_CHECK_LINE_INHIBIT(SDIO);
+    MMC_CLEAR_STATUS(SDIO);
     arg_r = ReadAddr;
     REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
     reg.d32 = 0;//REG_READ((unsigned long)&(SDIO->cmd_r__xfer_mode));

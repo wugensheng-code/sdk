@@ -12,11 +12,10 @@
 #define CSU_TEST_LENGTH3    600
 #define FIL_PT_OFFSET       5
 
-static __IO FRESULT res_emmc;
-static __IO FATFS fs;
-static __IO TestStatus EraseStatus = FAILED, TransferStatus1 = FAILED, TransferStatus2 = FAILED;
-static __IO uint8_t WriteBuffer[BUF_SIZE];
-static __IO uint8_t ReadBuffer[BUF_SIZE];
+static FRESULT res_emmc;
+static FATFS fs;
+static BYTE *WriteBuffer = (char *)0x6103ddf0;
+static BYTE *ReadBuffer = (char *)0x6103edf0;
 
 uint32_t RawReadWriteTestEmmc()
 {
@@ -37,10 +36,132 @@ uint32_t RawReadWriteTestEmmc()
     }
     //Csu_RawEmmcSetMode(EMMC_MODE_FREQ, EMMC_FREQ_400K);
     blocknum = EmmcCardInfo.CardCapacity / EmmcCardInfo.CardBlockSize;
-    //blocknum = 1024;
+    blocknum = 3;
     //EmmcCardInfo.CardBlockSize = 512;
     printf("[EMMC]:Read/Write Block num : %d\r\n", blocknum);
-
+    for(int k = 0; k < 0x200; k+=8){
+        //WriteBuffer = 0x6103ddf0 + k;
+        //ReadBuffer = 0x6103edf0 + k;
+        WriteBuffer = 0x61038df0 + k;
+        ReadBuffer = 0x61039df0 + k;
+        printf("[EMMC]:Block write/read addr offset is %x\r\n", k);
+        //raw 400k
+        //Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_400K);
+        printf("[EMMC]:raw 400k!\r\n");
+        for (int i = 0; i < blocknum; i++){
+            printf("[EMMC]:Block write/read check! %d\r\n", i);
+            MMC_PRINT("[EMMC]:Single Block Write! %d\r\n", i);
+            status = AlEmmc_WriteSingleBlock(WriteBuffer,i,EmmcCardInfo.CardBlockSize);
+            if(status != MMC_SUCCESS){
+                return status;
+            }
+            MMC_PRINT("[EMMC]:Single Block Read! %d\r\n", i);
+            status = AlEmmc_ReadSingleBlock(ReadBuffer, i, EmmcCardInfo.CardBlockSize);
+            if(status != MMC_SUCCESS){
+                return status;
+            }
+            #if 0
+            for (int j = 0; j < EmmcCardInfo.CardBlockSize; j++){
+                MMC_PRINT("%d\t", ReadBuffer[j]);
+            }
+            MMC_PRINT("\n");
+            #endif
+            for(int j = 0; j < EmmcCardInfo.CardBlockSize; j++){
+                if(WriteBuffer[j] != ReadBuffer[j]){
+                    printf("[EMMC]:Raw 400K write read data error %d\r\n", j);
+                    for (int j = 0; j < EmmcCardInfo.CardBlockSize; j++){
+                        printf("%d\t", WriteBuffer[j]);
+                    }
+                    printf("\r\n");
+                    for (int j = 0; j < EmmcCardInfo.CardBlockSize; j++){
+                        printf("%d\t", ReadBuffer[j]);
+                    }
+                    printf("\r\n");
+                    status = MMC_FAILURE;
+                    return status;
+                }
+            }
+            memset(ReadBuffer, 0, BUF_SIZE);
+        }
+        
+        //switch 10M
+        Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_10M); 
+        printf("[EMMC]:set 10M!\r\n");
+        for (int i = 0; i < blocknum; i++){
+            printf("[EMMC]:Block write/read check! %d\r\n", i);
+            MMC_PRINT("[EMMC]:Single Block Write! %d\r\n", i);
+            status = AlEmmc_WriteSingleBlock(WriteBuffer,i,EmmcCardInfo.CardBlockSize);
+            if(status != MMC_SUCCESS){
+                return status;
+            }
+            MMC_PRINT("[EMMC]:Single Block Read! %d\r\n", i);
+            status = AlEmmc_ReadSingleBlock(ReadBuffer, i, EmmcCardInfo.CardBlockSize);
+            if(status != MMC_SUCCESS){
+                return status;
+            }
+            #if 0
+            for (int j = 0; j < EmmcCardInfo.CardBlockSize; j++){
+                MMC_PRINT("%d\t", ReadBuffer[j]);
+            }
+            MMC_PRINT("\n");
+            #endif
+            for(int j = 0; j < EmmcCardInfo.CardBlockSize; j++){
+                if(WriteBuffer[j] != ReadBuffer[j]){
+                    printf("[EMMC]:10M write read data error %d\r\n", j);
+                    for (int j = 0; j < EmmcCardInfo.CardBlockSize; j++){
+                        printf("%d\t", WriteBuffer[j]);
+                    }
+                    printf("\r\n");
+                    for (int j = 0; j < EmmcCardInfo.CardBlockSize; j++){
+                        printf("%d\t", ReadBuffer[j]);
+                    }
+                    printf("\r\n");
+                    status = MMC_FAILURE;
+                    return status;
+                }
+            }
+            memset(ReadBuffer, 0, BUF_SIZE);
+        }
+        
+        //switch 400k
+        Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_400K);
+        printf("[EMMC]:set 400k!\r\n");
+        for (int i = 0; i < blocknum; i++){
+            printf("[EMMC]:Block write/read check! %d\r\n", i);
+            MMC_PRINT("[EMMC]:Single Block Write! %d\r\n", i);
+            status = AlEmmc_WriteSingleBlock(WriteBuffer,i,EmmcCardInfo.CardBlockSize);
+            if(status != MMC_SUCCESS){
+                return status;
+            }
+            MMC_PRINT("[EMMC]:Single Block Read! %d\r\n", i);
+            status = AlEmmc_ReadSingleBlock(ReadBuffer, i, EmmcCardInfo.CardBlockSize);
+            if(status != MMC_SUCCESS){
+                return status;
+            }
+            #if 0
+            for (int j = 0; j < EmmcCardInfo.CardBlockSize; j++){
+                MMC_PRINT("%d\t", ReadBuffer[j]);
+            }
+            MMC_PRINT("\n");
+            #endif
+            for(int j = 0; j < EmmcCardInfo.CardBlockSize; j++){
+                if(WriteBuffer[j] != ReadBuffer[j]){
+                    printf("[EMMC]:400k write read data error %d\r\n", j);
+                    for (int j = 0; j < EmmcCardInfo.CardBlockSize; j++){
+                        printf("%d\t", WriteBuffer[j]);
+                    }
+                    printf("\r\n");
+                    for (int j = 0; j < EmmcCardInfo.CardBlockSize; j++){
+                        printf("%d\t", ReadBuffer[j]);
+                    }
+                    printf("\r\n");
+                    status = MMC_FAILURE;
+                    return status;
+                }
+            }
+            memset(ReadBuffer, 0, BUF_SIZE);
+        }
+    }
 #if 0
     printf("[EMMC]:Write Block\r\n");
     for(uint64_t i = 0; i < blocknum; i++){
@@ -69,6 +190,7 @@ uint32_t RawReadWriteTestEmmc()
     
 #endif
 #if 1   //one write one read 
+    blocknum = 1024;
     for(uint64_t i = 0; i < blocknum; i++){
         printf("[EMMC]:Read/Write Block count : %d\r\n", i);
         //MMC_PRINT("[EMMC]:Single Block Write!\r\n");
@@ -82,14 +204,22 @@ uint32_t RawReadWriteTestEmmc()
         if(status != MMC_SUCCESS){
             return status;
         }
-        //_delay_ms(100);
-        status = strcmp(WriteBuffer, ReadBuffer);
-        if (status == MMC_SUCCESS){
-            MMC_PRINT("[EMMC]:Single Block Read/Write Success!\r\n");
-        }else{
-            printf("[EMMC]:Single Block Read/Write Data Not Match!\r\n");
-            return status;
+        for(int j = 0; j < EmmcCardInfo.CardBlockSize; j++){
+            if(WriteBuffer[j] != ReadBuffer[j]){
+                printf("[EMMC]:400k write read data error %d\r\n", j);
+                for (int j = 0; j < EmmcCardInfo.CardBlockSize; j++){
+                    printf("%d\t", WriteBuffer[j]);
+                }
+                printf("\r\n");
+                for (int j = 0; j < EmmcCardInfo.CardBlockSize; j++){
+                    printf("%d\t", ReadBuffer[j]);
+                }
+                printf("\r\n");
+                status = MMC_FAILURE;
+                return status;
+            }
         }
+        memset(ReadBuffer, 0, BUF_SIZE);
     }
 #endif
 
@@ -102,6 +232,7 @@ uint32_t CsuRawReadWriteTestEMMC()
     int result;
     RawEmmcParam_t emmcparam;
     uint32_t i = 0;
+    uint32_t j = 0;
 
     printf("[CSU_EMMC]:Read/Write Buf Set!\r\n");
     for(int i = 0; i < BUF_SIZE; i++){
@@ -113,8 +244,7 @@ uint32_t CsuRawReadWriteTestEMMC()
     if(status != MMC_SUCCESS){
         return status;
     }
-    Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
-
+    
 
     do{ //wait for optimize
         printf("[CSU_EMMC]:Single Block Write!\r\n");
@@ -160,7 +290,14 @@ uint32_t CsuRawReadWriteTestEMMC()
             MMC_PRINT("%d\t", ReadBuffer[i]);
         }
         MMC_PRINT("\r\n");
-    }while(0);
+        memset(ReadBuffer, 0, BUF_SIZE);
+        j++;
+        if(j == 1){
+            Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
+        }else if(j == 2){
+            Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_400K);
+        }
+    }while(j<3);
     
     return status;
 }
@@ -179,8 +316,10 @@ uint32_t EMMC_Test(void)
 	char ReadBuffer[1024]={0};
 	char WriteBuffer[] = "welcome777777777777777\r\n";
 	FIL fnew;
-	uint32_t status;
-#if 1
+	uint32_t status = MMC_SUCCESS;
+    memset((void *)0x10000000, 0, 0x10000000);
+    while(1){
+#if 0
     printf("[START]:<EMMC>\r\n");
     status = RawReadWriteTestEmmc();
     if(status != MMC_SUCCESS){
@@ -191,9 +330,9 @@ uint32_t EMMC_Test(void)
     }
     printf("[DONE]:<EMMC>\r\n");
 #endif
-
-    //CsuRawReadWriteTestEMMC();
-
+#if 1
+    CsuRawReadWriteTestEMMC();
+#endif
 #if 0
     res_emmc = f_mount(&fs,"1:",1);  //EMMC test
     printf("res_sd is %d\r\n", res_emmc);
@@ -227,30 +366,42 @@ uint32_t EMMC_Test(void)
     }else{
         printf("File open fail!\r\n");
     }
-        /*------------------- 文件系统测试：读测试 ------------------------------------*/
-        //printf("****** 即将进行文件读取测试... ******\r\n");
-        res_emmc = f_open(&fnew, "1:FatFs1.txt", FA_OPEN_EXISTING | FA_READ);
-        if(res_emmc == FR_OK)
+    res_emmc = f_open(&fnew, "1:FatFs1.txt", FA_OPEN_EXISTING | FA_READ);
+    if(res_emmc == FR_OK)
+    {
+        res_emmc = f_lseek(&fnew, FIL_PT_OFFSET);
+        if(res_emmc==FR_OK)
         {
-            //printf("》打开文件成功。\r\n");
-            res_emmc = f_read(&fnew, ReadBuffer, sizeof(ReadBuffer), &fnum);
-            if(res_emmc==FR_OK)
-            {
-                printf("File read success, data byte num is %d\r\n",fnum);
-                printf("data is:\r\n%s\r\n", ReadBuffer);
+            printf("File lseek success!\r\n");
+        }else{
+            printf("File lseek fail! Error code is %d\r\n", res_emmc);
+        }
+        memset(ReadBuffer, 0, sizeof(ReadBuffer));
+        res_emmc = f_read(&fnew, ReadBuffer, sizeof(ReadBuffer), &fnum);
+        if(res_emmc==FR_OK)
+        {
+            printf("File read success, data byte num is %d\r\n",fnum);
+            for(int i = FIL_PT_OFFSET; i < sizeof(WriteBuffer)-FIL_PT_OFFSET; i++){
+                if(WriteBuffer[i] != ReadBuffer[i-FIL_PT_OFFSET]){
+                    printf("File read error, data not match\r\n");
+                    break;
+                }
             }
-            else
-            {
-                printf("File read fail (%d)\n",res_emmc);
-            }
+            printf("data is:\r\n%s\r\n", ReadBuffer);
         }
         else
         {
-            printf("File open fail!\r\n");
+            printf("File read fail (%d)\n",res_emmc);
         }
-        f_close(&fnew);
-        f_mount(NULL,"1:",1);
+    }
+    else
+    {
+        printf("File open fail!\r\n");
+    }
+    f_close(&fnew);
+    f_mount(NULL,"1:",1);
 #endif
+    }
     
 
     return status;
