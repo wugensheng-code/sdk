@@ -96,14 +96,14 @@ typedef enum IRQn {
     SOC_INT27_IRQn           = 27,                /*!< Device Interrupt */
     SOC_INT28_IRQn           = 28,                /*!< Device Interrupt */
     SOC_INT29_IRQn           = 29,                /*!< Device Interrupt */
-    SOC_INT30_IRQn           = 30,                /*!< Device Interrupt */
-    SOC_INT31_IRQn           = 31,                /*!< Device Interrupt */
-    SOC_INT32_IRQn           = 32,                /*!< Device Interrupt */
-    SOC_INT33_IRQn           = 33,                /*!< Device Interrupt */
-    SOC_INT34_IRQn           = 34,                /*!< Device Interrupt */
-    SOC_INT35_IRQn           = 35,                /*!< Device Interrupt */
-    SOC_INT36_IRQn           = 36,                /*!< Device Interrupt */
-    SOC_INT37_IRQn           = 37,                /*!< Device Interrupt */
+    APU2CSU_IRQn             = 30,                /*!< Device Interrupt */
+    APU2CSUACK_IRQn          = 31,                /*!< Device Interrupt */
+    CSU2APU_IRQn           	 = 32,                /*!< Device Interrupt */
+    CSU2APUACK_IRQn          = 33,                /*!< Device Interrupt */
+    RPU2CSU_IRQn             = 34,                /*!< Device Interrupt */
+    RPU2CSUACK_IRQn          = 35,                /*!< Device Interrupt */
+    CSU2RPU_IRQn             = 36,                /*!< Device Interrupt */
+    CSU2RPUACK_IRQn          = 37,                /*!< Device Interrupt */
     SOC_INT38_IRQn           = 38,                /*!< Device Interrupt */
     SOC_INT39_IRQn           = 39,                /*!< Device Interrupt */
     SOC_INT40_IRQn           = 40,                /*!< Device Interrupt */
@@ -163,6 +163,63 @@ typedef enum IRQn {
 	SOC_INT91_IRQn           = 91,                /*!< Device Interrupt */
 	SOC_INT92_IRQn           = 92,                /*!< Device Interrupt */
 	SOC_INT93_IRQn           = 93,                /*!< Device Interrupt */
+	SOC_INT94_IRQn            =  94,              /*!<  Internal reserved */
+	SOC_INT95_IRQn            =  95,              /*!<  Internal reserved */
+	SOC_INT96_IRQn            =  96,              /*!<  Internal reserved */
+	SOC_INT97_IRQn             =  97,              /*!<  System Timer Interrupt */
+	SOC_INT98_IRQn            =  98,              /*!<  Internal reserved */
+	SOC_INT99_IRQn            =  99,              /*!<  Internal reserved */
+	SOC_INT100_IRQn            =  100,              /*!<  Internal reserved */
+    SOC_INT101_IRQn           =   101,              /*!<  Internal reserved */
+    SOC_INT102_IRQn           =   102,              /*!<  Internal reserved */
+    SOC_INT103_IRQn           =   103,              /*!<  System Timer SW interrupt */
+    SOC_INT104_IRQn           =   104,              /*!<  Internal reserved */
+    SOC_INT105_IRQn           =   105,              /*!<  Internal reserved */
+    SOC_INT106_IRQn           =   106,              /*!<  Internal reserved */
+    SOC_INT107_IRQn           =   107,              /*!<  System Timer Interrupt */
+    SOC_INT108_IRQn           =   108,              /*!<  Internal reserved */
+    SOC_INT109_IRQn           =   109,              /*!<  Internal reserved */
+    SOC_INT110_IRQn           =   110,              /*!<  Internal reserved */
+    SOC_INT111_IRQn           =   111,              /*!<  Internal reserved */
+    SOC_INT112_IRQn           =   112,              /*!<  Internal reserved */
+    SOC_INT113_IRQn           =   113,              /*!<  Internal reserved */
+    SOC_INT114_IRQn           =   114,              /*!<  Internal reserved */
+    SOC_INT115_IRQn           =   115,              /*!<  Internal reserved */
+    SOC_INT116_IRQn           =   116,              /*!<  Internal reserved */
+    SOC_INT117_IRQn           =   117,              /*!<  Internal reserved */
+    SOC_INT118_IRQn           =   118,              /*!<  Internal reserved */
+	SOC_INT119_IRQn           =   119,              /*!<  Internal reserved */
+	SOC_INT120_IRQn            =  120,              /*!<  Internal reserved */
+    SOC_INT121_IRQn           =   121,              /*!<  Internal reserved */
+    SOC_INT122_IRQn           =   122,              /*!<  Internal reserved */
+    SOC_INT123_IRQn           =   123,              /*!<  System Timer SW interrupt */
+    SOC_INT124_IRQn           =   124,              /*!<  Internal reserved */
+    SOC_INT125_IRQn           =   125,              /*!<  Internal reserved */
+    SOC_INT126_IRQn           =   126,              /*!<  Internal reserved */
+    SOC_INT127_IRQn           =   127,              /*!<  System Timer Interrupt */
+    SOC_INT128_IRQn           =   128,              /*!<  Internal reserved */
+    SOC_INT129_IRQn           =   129,              /*!<  Internal reserved */
+	SOC_INT130_IRQn            =  130,              /*!<  Internal reserved */
+    SOC_INT131_IRQn           =   131,              /*!<  Internal reserved */
+    SOC_INT132_IRQn           =   132,              /*!<  Internal reserved */
+    SOC_INT133_IRQn           =   133,              /*!<  System Timer SW interrupt */
+    SOC_INT134_IRQn           =   134,              /*!<  Internal reserved */
+	APU2RPU0_IRQn             =   135,              /*!<  Internal reserved */
+	APU2RPU0ACK_IRQn           =   136,              /*!<  Internal reserved */
+	RPU2APU0_IRQn              =   137,              /*!<  System Timer Interrupt */
+	RPU2APU0ACK_IRQn           =   138,              /*!<  Internal reserved */
+	APU2RPU1_IRQn              =   139,              /*!<  Internal reserved */
+	APU2RPU1ACK_IRQn           =   140,              /*!<  Internal reserved */
+	RPU2APU1_IRQn              =   141,              /*!<  Internal reserved */
+	RPU2APU1ACK_IRQn           =   142,              /*!<  Internal reserved */
+    APU2RPU2_IRQn              =   143,              /*!<  System Timer SW interrupt */
+    APU2RPU2ACK_IRQn           =   144,              /*!<  Internal reserved */
+    RPU2APU2_IRQn              =   145,              /*!<  Internal reserved */
+    RPU2APU2ACK_IRQn           =   146,              /*!<  Internal reserved */
+    APU2RPU3_IRQn              =   147,              /*!<  System Timer Interrupt */
+    APU2RPU3ACK_IRQn           =   148,              /*!<  Internal reserved */
+    RPU2APU3_IRQn              =   149,              /*!<  Internal reserved */
+	RPU2APU3ACK_IRQn           =   150,              /*!<  Internal reserved */
     SOC_INT_MAX,
 } IRQn_Type;
 
@@ -1585,6 +1642,56 @@ typedef struct{
 
 }MPU_TypeDef;
 
+typedef struct{
+	__IOM  uint32_t Mailbox_0; 
+	__IOM  uint32_t Mailbox_1; 
+	__IOM  uint32_t Mailbox_2; 
+	__IOM  uint32_t Mailbox_3; 
+	__IOM  uint32_t Mailbox_4; 
+	__IOM  uint32_t Mailbox_5; 
+	__IOM  uint32_t Mailbox_6; 
+	__IOM  uint32_t Mailbox_7; 
+	__IOM  uint32_t Mailbox_8; 
+	__IOM  uint32_t Mailbox_9; 
+	__IOM  uint32_t Mailbox_10; 
+	__IOM  uint32_t Mailbox_11; 
+	__IOM  uint32_t Mailbox_12; 
+	__IOM  uint32_t Mailbox_13; 
+	__IOM  uint32_t Mailbox_14; 
+	__IOM  uint32_t Mailbox_15; 
+	__IOM  uint32_t Rev_buffer1[240];
+	__IOM  uint32_t intr_req0;
+	__IOM  uint32_t intr_ack0;
+	__IOM  uint32_t intr_req1;
+	__IOM  uint32_t intr_ack1;
+	__IOM  uint32_t intr_req2;
+	__IOM  uint32_t intr_ack2;
+	__IOM  uint32_t intr_req3;
+	__IOM  uint32_t intr_ack3;
+	__IOM  uint32_t intr_req4;
+	__IOM  uint32_t intr_ack4;
+	__IOM  uint32_t intr_req5;
+	__IOM  uint32_t intr_ack5;
+	__IOM  uint32_t intr_req6;
+	__IOM  uint32_t intr_ack6;
+	__IOM  uint32_t intr_req7;
+	__IOM  uint32_t intr_ack7;
+	__IOM  uint32_t intr_req8;
+	__IOM  uint32_t intr_ack8;
+	__IOM  uint32_t intr_req9;
+	__IOM  uint32_t intr_ack9;
+	__IOM  uint32_t intr_req10;
+	__IOM  uint32_t intr_ack10;
+	__IOM  uint32_t intr_req11;
+	__IOM  uint32_t intr_ack11;
+	__IOM  uint32_t Rev_buffer2[232];
+	__IOM  uint32_t	Spinlock_0;
+	__IOM  uint32_t	Spinlock_1;
+	__IOM  uint32_t	Spinlock_2;
+	__IOM  uint32_t	Spinlock_3;
+	__IOM  uint32_t Rev_buffer3[508];
+	__IOM  uint32_t Err_vec;	
+}IPC_TypeDef;
 /*
  *
  * al9000_ttc_register_struct
@@ -1714,6 +1821,7 @@ typedef struct{
 //#define PWM1_BASE               (DEMOSOC_PERIPH_BASE + 0x25000)          /*!< (PWM1) Base Address */
 //#define PWM2_BASE               (DEMOSOC_PERIPH_BASE + 0x35000)          /*!< (PWM2) Base Address */
 //#define I2C_BASE                (DEMOSOC_PERIPH_BASE + 0x42000)          /*!< (I2C Master) Base Address */
+#define IPC_BASE					 (0xF841F000UL)
 #define AL_TOP_CFG_BASE     		 (0xF8800000)
 #define AL_PLPS_RESET                (0xf8801078)
 #define AL_GP0                       (0x80000000)
@@ -1779,6 +1887,7 @@ typedef struct{
 #define PWM1                    ((PWM_TypeDef *) PWM1_BASE)
 #define PWM2                    ((PWM_TypeDef *) PWM2_BASE)
 #define I2C                     ((I2C_TypeDef *) I2C_BASE)
+#define AL9000_IPC				((IPC_TypeDef *) IPC_BASE)
 #define AL_UART0		        ((AL_UART_TypeDef *) AL_UART0_BASE)
 #define AL_UART1		        ((AL_UART_TypeDef *) AL_UART1_BASE)
 #define AL_CAN0					((AL_CAN_TypeDef *) AL_CAN0_BASE)
