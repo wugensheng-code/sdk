@@ -1,10 +1,11 @@
-TARGET = AL9000_smc
+TARGET = PROGRAM_ROM
 
-NUCLEI_SDK_ROOT = ../../..
+NUCLEI_SDK_ROOT = ../../../..
 
 SRCDIRS = . 
 
 INCDIRS = . 
 
+#COMMON_FLAGS := -O0
 
 include $(NUCLEI_SDK_ROOT)/Build/Makefile.base

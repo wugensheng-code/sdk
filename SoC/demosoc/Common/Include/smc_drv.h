@@ -1,19 +1,45 @@
 /*
- * al9000_smc.h
+ * smc_drv.h
  *
- *  Created on: 2022年3月30日
+ *  Created on: 2022年6月6日
  *      Author: jian.huang
  */
 
+#ifndef _SMC_DRV_H_
+#define _SMC_DRV_H_
+
+
+#ifdef USE_CSU
+
+
+#include "al_io.h"
+#include "al_types.h"
+#include "../../common/al9000_csu_map.h"
+#define SMC_BASE (NANDC_CFG_L)
+#define NAND_BASE (NANDC_L)
+
+#else
+
 #include "demosoc.h"
+#define SMC_BASE (0XF841A000UL)
+#define NAND_BASE (0x64000000UL)
 
-#ifndef _AL9000_SMC_H
-#define _AL9000_SMC_H
-
-#ifdef __cplusplus
- extern "C" {
 #endif
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct{
+	uint32_t dataBytesPerPage;		/* per page contains data byte numbers*/
+	uint16_t spareBytesPerPage;		/* per page contains spare byte numbers*/
+	uint32_t pagesPerBlock;			/* per block contains page  numbers*/
+	uint32_t blocksPerUnit;			/* per unit contains block numbers*/
+	uint8_t totalUnit;				/* total unit numbers*/
+	uint8_t eccNum;
+	uint8_t deviceId[5];				/* total unit numbers*/
+}Nand_TypeDef;
 
 
 /********* Register offsets  *********/
@@ -272,7 +298,7 @@
 #define SMC_SetOpmode_SetMw_FIELD       (0)
 #define SMC_SetOpmode_SetMw_32BIT   	(2 << SMC_SetOpmode_SetMw_FIELD)
 #define SMC_SetOpmode_SetMw_16BIT  	    (1 << SMC_SetOpmode_SetMw_FIELD)
-#define SMC_SetOpmode_SetMw_8Bit  	    (0 << SMC_SetOpmode_SetMw_FIELD)
+#define SMC_SetOpmode_SetMw_8BIT  	    (0 << SMC_SetOpmode_SetMw_FIELD)
 
 
 
@@ -422,24 +448,21 @@
 
 /****   Bit definition for ecc<x>_memcmd0 register  ****/
 
- /* Use end command */
- #define SMC_EccMemCmd0_UseEndCmd_FIELD      (24)
- #define SMC_EccMemCmd0_UseEndCmd            (1 << SMC_EccMemCmd0_UseEndCmd_FIELD)
+/* Use end command */
+#define SMC_EccMemCmd0_UseEndCmd_FIELD      (24)
+#define SMC_EccMemCmd0_UseEndCmd            (1 << SMC_EccMemCmd0_UseEndCmd_FIELD)
 
- /* The NAND<x> command to indicate the end of a read (0x30) */
- #define SMC_EccMemCmd0_EndReadCmd_FIELD     (16)
- #define SMC_EccMemCmd0_EndReadCmd           (0x30 << SMC_EccMemCmd0_EndReadCmd_FIELD)
- #define SMC_EccMemCmd0_EndReadCacheCmd      (0x31 << SMC_EccMemCmd0_EndReadCmd_FIELD)
- #define SMC_EccMemCmd0_EndReadChangeColumnCmd      (0xE0 << SMC_EccMemCmd0_EndReadCmd_FIELD)
+/* The NAND<x> command to indicate the end of a read (0x30) */
+#define SMC_EccMemCmd0_EndReadCmd_FIELD     (16)
+#define SMC_EccMemCmd0_EndReadCmd           (0x30 << SMC_EccMemCmd0_EndReadCmd_FIELD)
 
- /* The NAND<x> command to initiate a read (0x00) */
- #define SMC_EccMemCmd0_InitReadCmd_FIELD    (8)
- #define SMC_EccMemCmd0_InitReadCmd          (0x00 << SMC_EccMemCmd0_InitReadCmd_FIELD)
- #define SMC_EccMemCmd0_InitReadChangeColumnCmd          (0x05 << SMC_EccMemCmd0_InitReadCmd_FIELD)
+/* The NAND<x> command to initiate a read (0x00) */
+#define SMC_EccMemCmd0_InitReadCmd_FIELD    (8)
+#define SMC_EccMemCmd0_InitReadCmd          (0x00 << SMC_EccMemCmd0_InitReadCmd_FIELD)
 
- /* The NAND<x> command to initiate a write (0x80) */
- #define SMC_EccMemCmd0_InitWriteCmd_FIELD   (0)
- #define SMC_EccMemCmd0_InitWriteCmd         (0x80 << SMC_EccMemCmd0_InitWriteCmd_FIELD)
+/* The NAND<x> command to initiate a write (0x80) */
+#define SMC_EccMemCmd0_InitWriteCmd_FIELD   (0)
+#define SMC_EccMemCmd0_InitWriteCmd         (0x80 << SMC_EccMemCmd0_InitWriteCmd_FIELD)
 
 
 
@@ -480,7 +503,7 @@
 #define SMC_EccBlock_ClearBlockIntFlag_FIELD        (31)
 
 /* Indicates if the ECC value for block <a> is valid */
-#define SMC_EccBlock_ISCheakValueValid_FIELD        (30)
+#define SMC_EccBlock_ISCheckValueValid_FIELD        (30)
 
 /* Indicates if the ECC value for block <a> has been read from memory */
 #define SMC_EccBlock_IsEccValueReadFormMem_FIELD    (29)
@@ -492,7 +515,7 @@
 #define SMC_EccBlock_IsCorrectable_FIELD    (27)
 
 /* ECC value of check result for block <a> */
-#define SMC_EccBlock_CheakValue_FIELD       (0)
+#define SMC_EccBlock_CheckValue_FIELD       (0)
 
 
 
@@ -503,7 +526,7 @@
 #define SMC_EccExtBlock_ClearBlockIntFlag_FIELD       (31)
 
 /* Indicates if the ECC value for extra block is valid. */
-#define SMC_EccExtBlock_ISCheakValueValid_FIELD       (30)
+#define SMC_EccExtBlock_ISCheckValueValid_FIELD       (30)
 
 /* Indicates if the ECC value for extra block has been read from memory */
 #define SMC_EccExtBlock_IsEccValueReadFormMem_FIELD       (29)
@@ -515,7 +538,7 @@
 #define SMC_EccExtBlock_IsCorrectable_FIELD       (27)
 
 /* ECC value of check result for the extra block. */
-#define SMC_EccExtBlock_CheakValue_FIELD       (0)
+#define SMC_EccExtBlock_CheckValue_FIELD       (0)
 
 
 
@@ -531,15 +554,19 @@
 
 
 
+
+
+void SmcSendCommand(uint8_t startCmd, uint8_t endCmd, uint8_t addrCycles, uint8_t endCmdPhase, int Page, int Column);
+void SmcReadPara(uint8_t endCmd, uint8_t endCmdPhase, uint8_t *Buf, uint32_t Length, Nand_TypeDef *nand);
+void SmcReadBuf(uint8_t endCmd, uint8_t endCmdPhase, uint8_t *Buf, uint32_t Length, uint32_t clearCs, uint32_t eccLast);
+void SmcWriteBuf(uint8_t endCmd, uint8_t endCmdPhase, uint8_t *Buf, uint32_t Length, uint32_t clearCs, uint32_t eccLast);
+
+
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif
 
 
-
-
-
-
-
+#endif /* _SMC_DRV_H_ */
