@@ -1,6 +1,6 @@
 TARGET = apu_fsbl_v1
 
-NUCLEI_SDK_ROOT = ../../..
+NUCLEI_SDK_ROOT = ../..
 
 SRCDIRS = . ./driver/qspi/ driver/sd_emmc/ driver/sd_emmc/FATFS/
 
