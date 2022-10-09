@@ -36,12 +36,12 @@
 #define CSU_TEST_LENGTH2    300
 #define CSU_TEST_LENGTH3    600
 #define FIL_PT_OFFSET       5
-#define FIL_LARGE_RDWR_SIZE 8845488
+#define FIL_LARGE_RDWR_SIZE 36480
 
 static FRESULT res_sd;
 static FATFS fs;
-static BYTE *WriteBuffer = (char *)0x6103ddf0;
-static BYTE *ReadBuffer = (char *)0x6103edf0;
+static BYTE *WriteBuffer = (char *)0x1003ddf0;
+static BYTE *ReadBuffer = (char *)0x1003edf0;
 //extern char *logaddr;
 
 uint32_t RawReadWriteTestSD()
@@ -63,49 +63,12 @@ uint32_t RawReadWriteTestSD()
     blocknum = SDCardInfo.CardCapacity / SDCardInfo.CardBlockSize;
     printf("block num is %d\r\n", blocknum);
     blocknum = 3;
-    for(int k = 0; k < 0x10; k+=8){
+    for(int k = 0; k < 0x20; k+=8){
         //WriteBuffer = 0x6103ddf0 + k;
         //ReadBuffer = 0x6103edf0 + k;
-        WriteBuffer = 0x61038df0 + k;
-        ReadBuffer = 0x61039df0 + k;
+        WriteBuffer = 0x6103edf0 + k;
+        ReadBuffer = 0x6103f6f0 + k;
         printf("[SD]:Block write/read addr offset is %x\r\n", k);
-        //raw 400k
-        //Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_400K);
-        printf("[SD]:raw 400k!\r\n");
-        for (int i = 0; i < blocknum; i++){
-            printf("[SD]:Block write/read check! %d\r\n", i);
-            MMC_PRINT("[SD]:Single Block Write! %d\r\n", i);
-            status = AlSd_WriteSingleBlock(WriteBuffer,i,SDCardInfo.CardBlockSize);
-            if(status != MMC_SUCCESS){
-                return status;
-            }
-            MMC_PRINT("[SD]:Single Block Read! %d\r\n", i);
-            status = AlSd_ReadSingleBlock(ReadBuffer, i, SDCardInfo.CardBlockSize);
-            if(status != MMC_SUCCESS){
-                return status;
-            }
-            #if 0
-            for (int j = 0; j < SDCardInfo.CardBlockSize; j++){
-                MMC_PRINT("%d\t", ReadBuffer[j]);
-            }
-            MMC_PRINT("\n");
-            #endif
-            for(int j = 0; j < SDCardInfo.CardBlockSize; j++){
-                if(WriteBuffer[j] != ReadBuffer[j]){
-                    printf("[SD]:Raw 400K write read data error %d\r\n", j);
-                    for (int j = 0; j < SDCardInfo.CardBlockSize; j++){
-                        printf("%d\t", WriteBuffer[j]);
-                    }
-                    printf("\r\n");
-                    for (int j = 0; j < SDCardInfo.CardBlockSize; j++){
-                        printf("%d\t", ReadBuffer[j]);
-                    }
-                    printf("\r\n");
-                    status = MMC_FAILURE;
-                    return status;
-                }
-            }
-        }
         //switch 10M
         Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M); 
         printf("[SD]:set 10M!\r\n");
@@ -121,21 +84,15 @@ uint32_t RawReadWriteTestSD()
             if(status != MMC_SUCCESS){
                 return status;
             }
-            #if 0
-            for (int j = 0; j < SDCardInfo.CardBlockSize; j++){
-                MMC_PRINT("%d\t", ReadBuffer[j]);
-            }
-            MMC_PRINT("\n");
-            #endif
             for(int j = 0; j < SDCardInfo.CardBlockSize; j++){
                 if(WriteBuffer[j] != ReadBuffer[j]){
                     printf("[SD]:10M write read data error %d\r\n", j);
                     for (int j = 0; j < SDCardInfo.CardBlockSize; j++){
-                        printf("%d\t", WriteBuffer[j]);
+                        printf("%3d\t", WriteBuffer[j]);
                     }
                     printf("\r\n");
                     for (int j = 0; j < SDCardInfo.CardBlockSize; j++){
-                        printf("%d\t", ReadBuffer[j]);
+                        printf("%3d\t", ReadBuffer[j]);
                     }
                     printf("\r\n");
                     status = MMC_FAILURE;
@@ -168,11 +125,11 @@ uint32_t RawReadWriteTestSD()
                 if(WriteBuffer[j] != ReadBuffer[j]){
                     printf("[SD]:400k write read data error %d\r\n", j);
                     for (int j = 0; j < SDCardInfo.CardBlockSize; j++){
-                        printf("%d\t", WriteBuffer[j]);
+                        printf("%3d\t", WriteBuffer[j]);
                     }
                     printf("\r\n");
                     for (int j = 0; j < SDCardInfo.CardBlockSize; j++){
-                        printf("%d\t", ReadBuffer[j]);
+                        printf("%3d\t", ReadBuffer[j]);
                     }
                     printf("\r\n");
                     status = MMC_FAILURE;
@@ -197,8 +154,8 @@ uint32_t SD_Test(void)
 	uint32_t fnum = 0;            			  
 	//char ReadBuffer[1024]={0};
 	//char WriteBuffer[] = "welcome777777777777777\r\n";
-    char *ReadBuffer = (char *)0x11000000;
-    char *WriteBuffer = (char *)0x10000000;
+    char *ReadBuffer = (char *)0x12000000;
+    char *WriteBuffer = (char *)0x11000000;
     FIL fnew;
     FILINFO fno;
 	uint32_t status = MMC_SUCCESS;
@@ -210,7 +167,7 @@ uint32_t SD_Test(void)
     //clear ddr log
     //memset((char *)(0x10000000), 0, 0x100000);
     //logaddr = (char *)0x10000000;
-#if 0
+#if 1
     printf("[START]:<SD>\r\n");
     status = RawReadWriteTestSD();
     if(status != MMC_SUCCESS){
@@ -223,12 +180,13 @@ uint32_t SD_Test(void)
 #endif
 
 #if 1
+    char *filename = "0:/image.bin";
 	res_sd = f_mount(&fs,"0:",1);  //SD test
     printf("res_sd is %d\r\n", res_sd);
     if(res_sd == FR_NO_FILESYSTEM)
     {
-        printf("sd no file system, Wait for sd mkfs...");
-        res_sd=f_mkfs("0:",0,0);
+        printf("sd no file system, Wait for sd mkfs...\r\n");
+        res_sd=f_mkfs("0:", 0, (void *)0x10000000, FF_MAX_SS);
         printf("res_sd is %d\r\n", res_sd);
         if(res_sd == FR_OK)
         {
@@ -239,22 +197,21 @@ uint32_t SD_Test(void)
         }
     }
     Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
-    /*res_sd = f_open(&fnew, "0:/rt_files/weight.bin",FA_CREATE_ALWAYS | FA_WRITE );
+    res_sd = f_open(&fnew, filename,FA_CREATE_ALWAYS | FA_WRITE );
     if ( res_sd == FR_OK )
     {
         res_sd=f_write(&fnew,(const void *)WriteBuffer, FIL_LARGE_RDWR_SIZE,&fnum);
         if(res_sd==FR_OK)
         {
             printf("File write success, data byte num is %d\r\n",fnum);
-            //printf("data is:\r\n%s\r\n",WriteBuffer);
         }else{
             printf("File write fail (%d)\r\n",res_sd);
         }
         f_close(&fnew);
     }else{
-        printf("File open fail!\r\n");
-    }*///"test/READ.TXT"   /rt_files/weight.bin
-    res_sd = f_open(&fnew, "0:/rt_files/weight.bin", FA_OPEN_EXISTING | FA_READ);
+        printf("File open fail!(%d)\r\n", res_sd);
+    }//"test/READ.TXT"   /rt_files/weight.bin
+    res_sd = f_open(&fnew, filename, FA_OPEN_EXISTING | FA_READ);
     if(res_sd == FR_OK)
     {
         /*res_sd = f_lseek(&fnew, FIL_PT_OFFSET);
@@ -265,11 +222,11 @@ uint32_t SD_Test(void)
             printf("File lseek fail! Error code is %d\r\n", res_sd);
         }*/
         //memset(ReadBuffer, 0, sizeof(ReadBuffer));
-        res_sd = f_stat("0:/rt_files/weight.bin", &fno) ;
+        res_sd = f_stat(filename, &fno) ;
         if (res_sd == FR_OK) {
-            printf("stat completed.\n");
+            printf("stat completed.\r\n");
         } else {
-            printf("stat error: %d\n", res_sd);
+            printf("stat error: %d\r\n", res_sd);
             return -1;
         }
         res_sd = f_read(&fnew, (const void *)ReadBuffer, fno.fsize, &fnum);
@@ -282,12 +239,11 @@ uint32_t SD_Test(void)
                     break;
                 }
             }
-            //printf("data is:\r\n%s\r\n", ReadBuffer);
         }else{
             printf("File read fail (%d)\n",res_sd);
         }
     }else{
-        printf("File open fail!\r\n");
+        printf("File open fail!(%d)\r\n", res_sd);
     }
     f_close(&fnew);
     f_mount(NULL,"0:",1);

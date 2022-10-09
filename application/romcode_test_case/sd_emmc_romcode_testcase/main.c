@@ -48,35 +48,6 @@ extern uint32_t SD_Test(void)
 extern u64 get_SystickTimer(void);
 
 uint32_t main(){
-	
-#if 0
-	MtimerParams mtimer;
-	uint32_t count = 0;
-	Mtimer_Init(&mtimer);
-	for(;count<2;){
-		MTIMER_OUT_CONDITION(15000*1000, &mtimer, 1);
-		printf("count is %d\r\n", count++);
-	}
-	printf("hard_test_case start!\r\n");
-	/*while(1){
-		printf("_delay_ms(1000)\r\n");
-		_delay_ms(1000);
-	}*/
-#endif
-#if 0
-	uint64_t curtime=0, pretime=0;
-	pretime = get_SystickTimer();
-	while(1){
-		curtime = get_SystickTimer();
-		if(curtime -  pretime > 25000000){
-			printf("[timer]:error\r\n");
-			printf("pre %llu, cur %llu, diff %llu\r\n", pretime, curtime, curtime-pretime);
-			break;
-		}
-		printf("pre %llu, cur %llu, diff %llu\r\n", pretime, curtime, curtime-pretime);
-		pretime = curtime;
-	}
-#endif
 	//wdt_init(); 
 	//EMMC_Test();
 	SD_Test();

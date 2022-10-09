@@ -29,24 +29,24 @@ uint32_t AlEmmc_WriteSingleBlock(uint8_t *Writebuff, uint32_t WriteAddr, uint16_
     r1.bit.dma_sel = MMC_HC1_DMA_SEL_SDMA;
     REG_WRITE((unsigned long)&(eMMC->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1), r1.d32);
     REG_WRITE((unsigned long)&(eMMC->sdmasa_r), (unsigned long)Buffer_SingleBlock);
-    REG_WRITE((unsigned long)&(eMMC->adma_sa_low_r), (unsigned long)Buffer_SingleBlock);
 #endif
 
 	// send command 16
-    printf("write send cmd 16\r\n");
-    MMC_CHECK_LINE_INHIBIT(eMMC);
-    MMC_CLEAR_STATUS(eMMC);
-    //PrintfMshcBlock(eMMC);
+    MMC_PRINT("write send cmd 16\r\n");
+    MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
     arg_r = BlockSize;
     REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
-    block.d32 = 0;//REG_READ((unsigned long)&(eMMC->blockcount_r__blocksize));
+    block.d32 = 0;
     block.bit.xfer_block_size = BlockSize;
     block.bit.blockcount_r = 0x1;
     reg.d32 = 0;
+    reg.bit.data_xfer_dir = DATA_WRITE;
     reg.bit.block_count_enable = MMC_XM_BLOCK_COUNT_ENABLE;
     reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
     reg.bit.resp_type_select = MMC_C_RESP_LEN_48;
     reg.bit.cmd_index = SD_CMD_SET_BLOCKLEN;
+    reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
+    reg.bit.cmd_idx_chk_enable = MMC_C_CMD_IDX_CHECK_ENABLE;
     REG_WRITE((unsigned long)&(eMMC->blockcount_r__blocksize), block.d32);
     REG_WRITE((unsigned long)&(eMMC->cmd_r__xfer_mode), reg.d32);
     MMC_PRINT("block.d32 is %x\r\n", block.d32);
@@ -55,17 +55,19 @@ uint32_t AlEmmc_WriteSingleBlock(uint8_t *Writebuff, uint32_t WriteAddr, uint16_
 
     // send command 23
     MMC_PRINT("send cmd 23\r\n");
-    MMC_CHECK_LINE_INHIBIT(eMMC);
-    MMC_CLEAR_STATUS(eMMC);
+    MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
     r3.d32 = 0;
     r3.bit.block_num = 0x1;
     arg_r = r3.d32;
     REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
     reg.d32 = 0;
+    reg.bit.data_xfer_dir = DATA_WRITE;
     reg.bit.block_count_enable = MMC_XM_BLOCK_COUNT_ENABLE;
     reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
     reg.bit.resp_type_select = MMC_C_RESP_LEN_48;
     reg.bit.cmd_index = SD_CMD_SET_BLOCK_COUNT;
+    reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
+    reg.bit.cmd_idx_chk_enable = MMC_C_CMD_IDX_CHECK_ENABLE;
     REG_WRITE((unsigned long)&(eMMC->cmd_r__xfer_mode), reg.d32);
     MMC_PRINT("block.d32 is %x\r\n", block.d32);
     MMC_PRINT("reg.d32 is %x\r\n", reg.d32);
@@ -74,23 +76,22 @@ uint32_t AlEmmc_WriteSingleBlock(uint8_t *Writebuff, uint32_t WriteAddr, uint16_
 
 	// send command 24
     MMC_PRINT("send cmd 24\r\n");
-    MMC_CHECK_LINE_INHIBIT(eMMC);
-    MMC_CLEAR_STATUS(eMMC);
+    MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
     arg_r = WriteAddr;
     REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
-    reg.d32 = 0;//REG_READ((unsigned long)&(eMMC->cmd_r__xfer_mode));
+    reg.d32 = 0;
 #ifdef _USE_SDMA
     reg.bit.dma_en = MMC_XM_DMA_ENABLE;
 #endif
+    reg.bit.data_xfer_dir = DATA_WRITE;
     reg.bit.block_count_enable = MMC_XM_BLOCK_COUNT_ENABLE;
-    reg.bit.data_xfer_dir = MMC_XM_DATA_XFER_DIR_WRITE;
     reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
     reg.bit.resp_type_select = MMC_C_RESP_LEN_48;
     reg.bit.data_present_sel = MMC_C_DATA_PRESENT;
     reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
     reg.bit.cmd_idx_chk_enable = MMC_C_CMD_IDX_CHECK_ENABLE;
     reg.bit.cmd_index = SD_CMD_WRITE_SINGLE_BLOCK;
-    block.d32 = 0;//REG_READ((unsigned long)&(eMMC->blockcount_r__blocksize));
+    block.d32 = 0;
     block.bit.xfer_block_size = BlockSize;
     block.bit.blockcount_r = 0x1;
     REG_WRITE((unsigned long)&(eMMC->blockcount_r__blocksize), block.d32);
