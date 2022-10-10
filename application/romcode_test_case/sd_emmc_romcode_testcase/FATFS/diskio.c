@@ -58,7 +58,7 @@ DSTATUS disk_initialize (
 		case ATA:	         /* SD CARD */
 			if(AlSd_Init() == MMC_SUCCESS)
 			{
-				Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
+				//Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
 				status &= ~STA_NOINIT;
 			}
 			else 
@@ -71,7 +71,7 @@ DSTATUS disk_initialize (
 		case EMMC:    /* EMMC */ 
             if(AlEmmc_Init() == MMC_SUCCESS)
 			{
-				Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
+				//Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
 				status &= ~STA_NOINIT;
 			}
 			else 
@@ -242,7 +242,7 @@ DRESULT disk_ioctl (
 	return status;
 }
 #endif
-typedef unsigned long	DWORD;
+//typedef unsigned long	DWORD;
 #if 1
 DWORD get_fattime(void) {
 	/* ���ص�ǰʱ��� */

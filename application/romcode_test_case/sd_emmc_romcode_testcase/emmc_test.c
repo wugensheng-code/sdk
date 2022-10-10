@@ -331,14 +331,15 @@ uint32_t EMMC_Test(void)
     CsuRawReadWriteTestEMMC();
 #endif
 #if 1
-    char *filename = "1:/test_longfilename_BOOT.bin";
+    char *filename = "0:/test.bin";
     memset(&fnew, 0, sizeof(FIL));
     memset(&fno, 0, sizeof(FILINFO));
     res_emmc = f_mount(&fs,"1:",1);  //EMMC test
     printf("res_emmc is %d\r\n", res_emmc);
     if(res_emmc == FR_NO_FILESYSTEM){
+#if _USE_MKFS
         printf("sd no file system, Wait for sd mkfs...");
-        res_emmc=f_mkfs("1:", 0, (void *)0x10000000, FF_MAX_SS);
+        res_emmc=f_mkfs("0:", FM_FAT32, 0, (void *)0x10000000, _MAX_SS);
         printf("res_emmc is %d\r\n", res_emmc);
         if(res_emmc == FR_OK){
             res_emmc = f_mount(NULL,"1:",1);
@@ -346,7 +347,9 @@ uint32_t EMMC_Test(void)
             res_emmc = f_mount(&fs,"1:",1);
             printf("res_emmc is %d\r\n", res_emmc);
         }
+#endif
     }
+#if !_FS_READONLY
     res_emmc = f_open(&fnew, filename,FA_CREATE_ALWAYS | FA_WRITE );
     if ( res_emmc == FR_OK )
     {
@@ -360,6 +363,7 @@ uint32_t EMMC_Test(void)
     }else{
         printf("File open fail!(%d)\r\n", res_emmc);
     }
+#endif
     res_emmc = f_open(&fnew, filename, FA_OPEN_EXISTING | FA_READ);
     if(res_emmc == FR_OK)
     {

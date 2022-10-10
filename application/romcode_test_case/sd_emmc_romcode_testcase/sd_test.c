@@ -167,7 +167,7 @@ uint32_t SD_Test(void)
     //clear ddr log
     //memset((char *)(0x10000000), 0, 0x100000);
     //logaddr = (char *)0x10000000;
-#if 1
+#if 0
     printf("[START]:<SD>\r\n");
     status = RawReadWriteTestSD();
     if(status != MMC_SUCCESS){
@@ -180,13 +180,14 @@ uint32_t SD_Test(void)
 #endif
 
 #if 1
-    char *filename = "0:/image.bin";
+    char *filename = "0:/test.bin";
 	res_sd = f_mount(&fs,"0:",1);  //SD test
     printf("res_sd is %d\r\n", res_sd);
     if(res_sd == FR_NO_FILESYSTEM)
     {
+#if _USE_MKFS
         printf("sd no file system, Wait for sd mkfs...\r\n");
-        res_sd=f_mkfs("0:", 0, (void *)0x10000000, FF_MAX_SS);
+        res_sd=f_mkfs("0:", FM_FAT32, 0, (void *)0x10000000, _MAX_SS);
         printf("res_sd is %d\r\n", res_sd);
         if(res_sd == FR_OK)
         {
@@ -195,8 +196,10 @@ uint32_t SD_Test(void)
             res_sd = f_mount(&fs,"0:",1);
             printf("res_sd is %d\r\n", res_sd);
         }
+#endif
     }
     Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
+#if !_FS_READONLY
     res_sd = f_open(&fnew, filename,FA_CREATE_ALWAYS | FA_WRITE );
     if ( res_sd == FR_OK )
     {
@@ -210,7 +213,8 @@ uint32_t SD_Test(void)
         f_close(&fnew);
     }else{
         printf("File open fail!(%d)\r\n", res_sd);
-    }//"test/READ.TXT"   /rt_files/weight.bin
+    }//"test/READ.TXT"   /rt_files/weight.bin*/
+#endif
     res_sd = f_open(&fnew, filename, FA_OPEN_EXISTING | FA_READ);
     if(res_sd == FR_OK)
     {
