@@ -9,10 +9,14 @@
 #define GICD_IGROUPR		   (GICD_BASE + 0x0080)
 #define GICD_ISENABLER         (GICD_BASE + 0x0100)
 #define GICD_ICENABLER         (GICD_BASE + 0x0180)
+#define GICD_ISPENDR           (GICD_BASE + 0x0200)
+#define GICD_ICPENDR           (GICD_BASE + 0x0280)
+#define GICD_ACTIVE_SET        (GICD_BASE + 0x0300)
 #define GICD_ACTIVE_CLEAR      (GICD_BASE + 0x0380)
 #define GICD_IPRIORITYR        (GICD_BASE + 0x0400)
 #define GICD_ICFGR             (GICD_BASE + 0x0c00)
 #define GICD_IGRPMODR          (GICD_BASE + 0x0d00)
+#define GICD_CPENDSGIR         (GICD_BASE + 0x0f10)
 #define GICD_IROUTER		   (GICD_BASE + 0x6000)
 
 /* GICR_* */
