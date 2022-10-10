@@ -17,7 +17,6 @@
 #include "al_emmc_write.h"
 #endif
 
-
 /* Ϊÿ���豸����һ�������� */
 #define ATA			           0     // SD��
 #define EMMC		       1     // Ԥ���ⲿSPI Flashʹ��
@@ -244,7 +243,7 @@ DRESULT disk_ioctl (
 	return status;
 }
 #endif
-typedef unsigned long	DWORD;
+//typedef unsigned long	DWORD;
 #if 1
 DWORD get_fattime(void) {
 	/* ���ص�ǰʱ��� */

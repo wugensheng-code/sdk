@@ -103,13 +103,13 @@ uint32_t AlFsbl_ChecksumCheck(uint8_t *pBuffer, uint32_t Length, uint32_t Checks
 
 	/// CRC32
 	Cal_Checksum = AlFsbl_CalcCrc32(pBuffer, Length);
-	printf("Calculated Checksum: 0x%08x\n", Cal_Checksum);
+	printf("Calculated Checksum: 0x%08x\r\n", Cal_Checksum);
 
 	if(Cal_Checksum != Checksum) {
 		Status = ALFSBL_ERROR_CHECKSUM_ERROR;
 	}
 	else {
-		printf("checksum check pass...\n");
+		printf("checksum check pass...\r\n");
 		Status = ALFSBL_SUCCESS;
 	}
 
@@ -132,7 +132,7 @@ void TriggerSecInterrupt(void)
 void MsgReceive(void)
 {
 	MsgFlag = 1;
-	printf("ack\n");
+	printf("ack\r\n");
 	return;
 }
 
@@ -148,8 +148,14 @@ void RpuCsuAckHandler()
 uint32_t SecureIrqInit(void)
 {
 	uint32_t ret;
+	IRQn_Type IRQn;
+#if __riscv
+	IRQn = RPU2CSU_ACK_IRQN;
+#else	//[MODIFY]:4
+	IRQn = APU2CSU_ACK_IRQN;
+#endif
 	ret = ECLIC_Register_IRQ(
-			RPU2CSU_ACK_IRQN,
+			IRQn,
 			ECLIC_NON_VECTOR_INTERRUPT,
 			ECLIC_POSTIVE_EDGE_TRIGGER,
 			1,
@@ -164,14 +170,14 @@ uint32_t SecureIrqInit(void)
 uint32_t CheckAckValid(AckDef *pAck)
 {
 	uint32_t Status = ALFSBL_SUCCESS;
-	printf("Check CSU ACK\n");
+	printf("Check CSU ACK\r\n");
 	while(MsgFlag == 0) {
 		/// wait for ack interrupt
 	}
 	MsgFlag = 0;  /// clear flag
 
 	if(pAck->Cmd != CMD_ACK) {
-		printf("Invalid ACK Command!\n");
+		printf("Invalid ACK Command!\r\n");
 		Status = ALFSBL_ERROR_INVALID_CSU_ACK;
 		goto END;
 	}
@@ -192,7 +198,7 @@ uint32_t CheckAckValid(AckDef *pAck)
 		goto END;
 	}
 	else {
-		printf("Invalid ACK Command!\n");
+		printf("Invalid ACK Command!\r\n");
 		Status = ALFSBL_ERROR_INVALID_CSU_ACK;
 		goto END;
 	}
@@ -272,10 +278,10 @@ uint32_t AlFsbl_CompareHash(uint8_t *pHash1, uint8_t *pHash2, uint32_t HashLen)
 	uint32_t *pHash2_word = (uint32_t *)(pHash2);
 
 	for(Idx = 0; Idx < HashLen / 4; Idx++) {
-//		printf("%08x %08x\n", pHash1_word[Idx], pHash2_word[Idx]);
+//		printf("%08x %08x\r\n", pHash1_word[Idx], pHash2_word[Idx]);
 
 		if(pHash1_word[Idx] != pHash2_word[Idx]) {
-			printf("hash different: %08x, %08x\n", pHash1_word[Idx], pHash2_word[Idx]);
+			printf("hash different: %08x, %08x\r\n", pHash1_word[Idx], pHash2_word[Idx]);
 			return ALFSBL_HASH_FAIL;
 		}
 	}

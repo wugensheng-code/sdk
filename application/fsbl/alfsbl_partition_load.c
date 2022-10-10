@@ -47,7 +47,7 @@ uint32_t AlFsbl_PartitionLoad(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx
 	DestDev = FsblInstancePtr->ImageHeader.PartitionHeader[PartitionIdx].PartitionAttribute & ALIH_PH_ATTRIB_DEST_DEV_MASK;
 
 	if(DestDev == ALIH_PH_ATTRIB_DEST_DEV_PS) {
-		printf("loading ps partition...\n");
+		printf("loading ps partition...\r\n");
 		Status = AlFsbl_LoadPsPartition(FsblInstancePtr, &FsblSecInfo, PartitionIdx);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
@@ -59,7 +59,7 @@ uint32_t AlFsbl_PartitionLoad(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx
 			Status = ALFSBL_SUCCESS;
 			goto END;
 		}
-		printf("loading pl partition...\n");
+		printf("loading pl partition...\r\n");
 		AlFsbl_LoadPlPartition(FsblInstancePtr, PartitionIdx);
 	}
 	else {
@@ -87,7 +87,7 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 	PartitionAttr = PtHdr->PartitionAttribute;
 
 	/// check checksum of partition header
-	printf("Partition Header Checksum: 0x%08x\n", PtHdr->PartiHdrChecksum);
+	printf("Partition Header Checksum: 0x%08x\r\n", PtHdr->PartiHdrChecksum);
 	Status = AlFsbl_ChecksumCheck(
 				(uint8_t *)(PtHdr),
 				sizeof(AlFsbl_PartitionHeader) - 4,   /// the last word in PartitionHeader is checksum
@@ -98,8 +98,8 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 
 	/// check partition owner
 	if((PartitionAttr & ALIH_PH_ATTRIB_PART_OWNER_MASK) != ALIH_PH_ATTRIB_PART_OWNER_FSBL) {
-		printf("Partition owner: %08x\n", PtHdr->PartitionAttribute & ALIH_PH_ATTRIB_PART_OWNER_MASK);
-		printf("Partition owner not fsbl, skip it, partition num: %d\n", PartitionIdx);
+		printf("Partition owner: %08x\r\n", PtHdr->PartitionAttribute & ALIH_PH_ATTRIB_PART_OWNER_MASK);
+		printf("Partition owner not fsbl, skip it, partition num: %d\r\n", PartitionIdx);
 		Status = ALFSBL_SUCCESS_NOT_PARTITION_OWNER;
 		goto END;
 	}
@@ -107,67 +107,67 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 
 	/// check hash type
 	PtAttrHashType = PartitionAttr & ALIH_PH_ATTRIB_HASH_TYPE_MASK;
-	printf("Hash Type: 0x%08x\n", PtAttrHashType);
+	printf("Hash Type: 0x%08x\r\n", PtAttrHashType);
 	if(PtAttrHashType == ALIH_PH_ATTRIB_HASH_TYPE_NONE) {
 		pSecureInfo->HashType = OP_HASH_NONE;
-		printf("Hash NOT enabled.\n");
+		printf("Hash NOT enabled.\r\n");
 	}
 	else if(PtAttrHashType == ALIH_PH_ATTRIB_HASH_TYPE_SHA256) {
 		pSecureInfo->HashType = OP_HASH_SHA256;
-		printf("Hash SHA256.\n");
+		printf("Hash SHA256.\r\n");
 	}
 	else if(PtAttrHashType == ALIH_PH_ATTRIB_HASH_TYPE_SM3) {
 		pSecureInfo->HashType = OP_HASH_SM3;
-		printf("Hash SM3.\n");
+		printf("Hash SM3.\r\n");
 	}
 	else {
-		printf("Invalid Hash Type\n");
+		printf("Invalid Hash Type\r\n");
 		Status = ALFSBL_INVALID_HASH_TYPE;
 		goto END;
 	}
 
 	/// check authentication type
 	PtAttrAuthType = PartitionAttr & ALIH_PH_ATTRIB_AUTH_TYPE_MASK;
-	printf("Auth Type       : %x\n", PtAttrAuthType);
-	printf("Efuse Auth Type : %x\n", EfuseCtrl & EFUSE_AUTH_TYPE_MASK);
+	printf("Auth Type       : %x\r\n", PtAttrAuthType);
+	printf("Efuse Auth Type : %x\r\n", EfuseCtrl & EFUSE_AUTH_TYPE_MASK);
 	if((PtAttrAuthType == ALIH_PH_ATTRIB_AUTH_TYPE_NONE) && ((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_HEADER_SET)) {
 		pSecureInfo->AuthType = OP_AUTH_NONE;
-		printf("Authentication NOT enabled...\n");
+		printf("Authentication NOT enabled...\r\n");
 	}
 	else if((PtAttrAuthType == ALIH_PH_ATTRIB_AUTH_TYPE_ECC256) && ((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_ECC256)) {
 		pSecureInfo->AuthType = OP_AUTH_ECC256;
 		pSecureInfo->HashType = OP_HASH_SHA256;
-		printf("Authentication SM2\n");
+		printf("Authentication SM2\r\n");
 	}
 	else if((PtAttrAuthType == ALIH_PH_ATTRIB_AUTH_TYPE_SM2) && ((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_SM2)) {
 		pSecureInfo->AuthType = OP_AUTH_SM2;
 		pSecureInfo->HashType = OP_HASH_SM3;
-		printf("Authentication ECC256\n");
+		printf("Authentication ECC256\r\n");
 	}
 	else {
-		printf("Auth type not match efuse set...\n");
+		printf("Auth type not match efuse set...\r\n");
 		Status = ALFSBL_AUTHTYPE_NOT_MATCH_EFUSE;
 		goto END;
 	}
 
 	/// check encryption type
 	PtAttrEncType  = PartitionAttr & ALIH_PH_ATTRIB_ENC_TYPE_MASK;
-	printf("Enc Type       : %x\n", PtAttrEncType);
-	printf("Efuse Enc Type : %x\n", EfuseCtrl & EFUSE_ENC_TYPE_MASK);
+	printf("Enc Type       : %x\r\n", PtAttrEncType);
+	printf("Efuse Enc Type : %x\r\n", EfuseCtrl & EFUSE_ENC_TYPE_MASK);
 	if((PtAttrEncType == ALIH_PH_ATTRIB_ENC_TYPE_NONE) && ((EfuseCtrl & EFUSE_ENC_TYPE_MASK) == EFUSE_ENC_TYPE_HEADER_SET)) {
 		pSecureInfo->EncType = OP_ENCRYPT_NONE;
-		printf("Encrypt NOT enabled.\n");
+		printf("Encrypt NOT enabled.\r\n");
 	}
 	else if((PtAttrEncType == ALIH_PH_ATTRIB_ENC_TYPE_AES256) && ((EfuseCtrl & EFUSE_ENC_TYPE_MASK) == EFUSE_ENC_TYPE_AES256)) {
 		pSecureInfo->EncType = OP_ENCRYPT_AES256;
-		printf("Encrypte AES256.\n");
+		printf("Encrypte AES256.\r\n");
 	}
 	else if((PtAttrEncType == ALIH_PH_ATTRIB_ENC_TYPE_SM4) && ((EfuseCtrl & EFUSE_ENC_TYPE_MASK) == EFUSE_ENC_TYPE_SM4)) {
 		pSecureInfo->EncType = OP_ENCRYPT_SM4;
-		printf("Encrypte SM4.\n");
+		printf("Encrypte SM4.\r\n");
 	}
 	else {
-		printf("Encrypt type not match efuse set...\n");
+		printf("Encrypt type not match efuse set...\r\n");
 		Status = ALFSBL_ENCTYPE_NOT_MATCH_EFUSE;
 		goto END;
 	}
@@ -191,7 +191,7 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 
 	/// check destination cpu
 	DestCpu = PartitionAttr & ALIH_PH_ATTRIB_DEST_CPU_MASK;
-	printf("destination cpu: 0x%08x\n", DestCpu);
+	printf("destination cpu: 0x%08x\r\n", DestCpu);
 	if(DestCpu != ALIH_PH_ATTRIB_DEST_CPU_RPU &&
 	   DestCpu != ALIH_PH_ATTRIB_DEST_CPU_APU0 &&
 	   DestCpu != ALIH_PH_ATTRIB_DEST_CPU_APU1) {
@@ -201,7 +201,7 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 
 	/// check destination device
 	DestDev = PartitionAttr & ALIH_PH_ATTRIB_DEST_DEV_MASK;
-	printf("destination dev: 0x%08x\n", DestDev);
+	printf("destination dev: 0x%08x\r\n", DestDev);
 	if(DestDev != ALIH_PH_ATTRIB_DEST_DEV_PS &&
 	   DestDev != ALIH_PH_ATTRIB_DEST_DEV_PL) {
 		Status = ALFSBL_INVALID_DEST_DEV;
@@ -209,7 +209,7 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 	}
 
 	/// check partion length
-	printf("check partition length: \n");
+	printf("check partition length: \r\n");
 	if((PtHdr->PartitionLen < PtHdr->ExtractedPartitionLen) ||
 	   (PtHdr->TotalPartitionLen < PtHdr->ExtractedPartitionLen)) {
 		Status = ALFSBL_INVALID_PARTITION_LENGTH;
@@ -294,9 +294,9 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	LoadAddress = PtHdr->DestLoadAddr;
 	Length = PtHdr->TotalPartitionLen;
 
-	printf("partition src address      : 0x%08x\n", SrcAddress);
-	printf("partition load dest address: 0x%08x\n", LoadAddress);
-	printf("partition length           : 0x%08x\n", Length);
+	printf("partition src address      : 0x%08x\r\n", SrcAddress);
+	printf("partition load dest address: 0x%08x\r\n", LoadAddress);
+	printf("partition length           : 0x%08x\r\n", Length);
 
 	Status = FsblInstancePtr->DeviceOps.DeviceCopy(SrcAddress, LoadAddress, Length);
 	if(ALFSBL_SUCCESS != Status) {
@@ -312,22 +312,22 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	pSecureInfo->EncDir      = SYM_DECRYPT;
 
 	/// check secure info
-	printf("Auth type :  %02x\n", pSecureInfo->AuthType);
-	printf("Hash type :  %02x\n", pSecureInfo->HashType);
-	printf("Enc type  :  %02x\n", pSecureInfo->EncType);
-	printf("Enc mode  :  %02x\n", pSecureInfo->EncMode);
-	printf("Key mode  :  %02x\n", pSecureInfo->KeyMode);
+	printf("Auth type :  %02x\r\n", pSecureInfo->AuthType);
+	printf("Hash type :  %02x\r\n", pSecureInfo->HashType);
+	printf("Enc type  :  %02x\r\n", pSecureInfo->EncType);
+	printf("Enc mode  :  %02x\r\n", pSecureInfo->EncMode);
+	printf("Key mode  :  %02x\r\n", pSecureInfo->KeyMode);
 
 
 	if(pSecureInfo->EncType != OP_ENCRYPT_NONE) {
-		printf("decryption\n");
+		printf("decryption\r\n");
 		Status = AlFsbl_DecHash_1(pSecureInfo);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
 	}
 	else if(pSecureInfo->HashType != OP_HASH_NONE) {
-		printf("hash\n");
+		printf("hash\r\n");
 		Status = AlFsbl_Hash_1(pSecureInfo);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
@@ -346,22 +346,22 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
-		printf("Hash check passed...\n");
+		printf("Hash check passed...\r\n");
 	}
 
 
 	if(pSecureInfo->AuthType != OP_AUTH_NONE) {
-		printf("auth\n");
+		printf("auth\r\n");
 		/// copy partition ac to local variate;
 		PartitionAcOffset = PtHdr->AcOffset;
-		printf("Partition AC offset: %08x\n", PartitionAcOffset);
+		printf("Partition AC offset: %08x\r\n", PartitionAcOffset);
 		if(PartitionAcOffset == 0) {
-			printf("ALFSBL_ERROR_PARTITION_HEADER_ACOFFSET\n");
+			printf("ALFSBL_ERROR_PARTITION_HEADER_ACOFFSET\r\n");
 			Status = ALFSBL_ERROR_PH_ACOFFSET;
 			goto END;
 		}
 		else {
-			printf("Copy Partition Header AC\n");
+			printf("Copy Partition Header AC\r\n");
 			Status = FsblInstancePtr->DeviceOps.DeviceCopy(
 					ImageOffsetAddress+PartitionAcOffset,
 					(PTRSIZE)PartitionAc,
@@ -382,10 +382,10 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	/// check decrypt result:
 	ocmptr = (uint32_t *)(LoadAddress);
 	for(i = 0; i < 4; i++) {
-		printf("%08x\n", *ocmptr);
+		printf("%08x\r\n", *ocmptr);
 		ocmptr++;
 	}
-	printf("\n\nUpdate handoff values\n");
+	printf("\r\n\r\nUpdate handoff values\r\n");
 
 
 	/// update handoff values
@@ -419,9 +419,9 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, uint32_t Par
 	LoadAddress = PtHdr->DestLoadAddr;
 	Length = PtHdr->TotalPartitionLen;
 
-	printf("partition src address      : 0x%08x\n", SrcAddress);
-	printf("partition load dest address: 0x%08x\n", LoadAddress);
-	printf("partition length           : 0x%08x\n", Length);
+	printf("partition src address      : 0x%08x\r\n", SrcAddress);
+	printf("partition load dest address: 0x%08x\r\n", LoadAddress);
+	printf("partition length           : 0x%08x\r\n", Length);
 
 /*
 	/// check pl init done
@@ -467,19 +467,19 @@ END:
 
 void AlFsbl_PrintPartitionHeaderInfo(AlFsbl_PartitionHeader *PtHdr)
 {
-	printf("\nPartition Header Infomation:\n");
-	printf("Partition Length            : 0x%08x\n", PtHdr->PartitionLen);
-	printf("Extracted Partition Length  : 0x%08x\n", PtHdr->ExtractedPartitionLen);
-	printf("Total Partition Length      : 0x%08x\n", PtHdr->TotalPartitionLen);
-	printf("Next Partition Header Offset: 0x%08x\n", PtHdr->NextPartHdrOffset);
-	printf("Dest Execution Address      : 0x%08x\n", PtHdr->DestExecAddr);
-	printf("Dest Load Address           : 0x%08x\n", PtHdr->DestLoadAddr);
-	printf("Partition Offset            : 0x%08x\n", PtHdr->PartitionOffset);
-	printf("Partition Attribute         : 0x%08x\n", PtHdr->PartitionAttribute);
-	printf("Hash Data offset            : 0x%08x\n", PtHdr->HashDataOffset);
-	printf("AC Offset                   : 0x%08x\n", PtHdr->AcOffset);
-	printf("Partition Header Checksum   : 0x%08x\n", PtHdr->PartiHdrChecksum);
-	putchar('\n');
+	printf("\r\nPartition Header Infomation:\r\n");
+	printf("Partition Length            : 0x%08x\r\n", PtHdr->PartitionLen);
+	printf("Extracted Partition Length  : 0x%08x\r\n", PtHdr->ExtractedPartitionLen);
+	printf("Total Partition Length      : 0x%08x\r\n", PtHdr->TotalPartitionLen);
+	printf("Next Partition Header Offset: 0x%08x\r\n", PtHdr->NextPartHdrOffset);
+	printf("Dest Execution Address      : 0x%08x\r\n", PtHdr->DestExecAddr);
+	printf("Dest Load Address           : 0x%08x\r\n", PtHdr->DestLoadAddr);
+	printf("Partition Offset            : 0x%08x\r\n", PtHdr->PartitionOffset);
+	printf("Partition Attribute         : 0x%08x\r\n", PtHdr->PartitionAttribute);
+	printf("Hash Data offset            : 0x%08x\r\n", PtHdr->HashDataOffset);
+	printf("AC Offset                   : 0x%08x\r\n", PtHdr->AcOffset);
+	printf("Partition Header Checksum   : 0x%08x\r\n", PtHdr->PartiHdrChecksum);
+	putchar('\r\n');
 
 	return;
 }

@@ -1,4 +1,4 @@
-TARGET = apu_fsbl_v1
+TARGET = 1apu_fsbl
 
 NUCLEI_SDK_ROOT = ../..
 

@@ -1,5 +1,5 @@
 /*
- * alfsbl_sd.c
+ * alfsbl_emmc.c
  *
  *  Created on: Sept 28, 2022
  *      Author: tfcao
@@ -9,31 +9,31 @@
 
 #include "demosoc.h"
 
+#include "alfsbl_emmc.h"
 #include "alfsbl_sd.h"
 #include "alfsbl_misc.h"
 
 #include "driver/sd_emmc/al_mmc.h"
-#include "driver/sd_emmc/al_sd.h"
+#include "driver/sd_emmc/al_emmc.h"
+#include "driver/sd_emmc/FATFS/ff.h"
 
-const char *SdImageFiles = {"0:/BOOT.bin"};
+const char *EmmcImageFiles[1] = {"1:/BOOT.bin"};
 
-FIL fil;
-FATFS fs;
-uint32_t AlFsbl_SdInit(void)
+uint32_t AlFsbl_EmmcInit(void)
 {
 	FRESULT rc = FR_OK;
-	rc = f_mount(&fs, "0:", 1);
-	//printf("sd f_mount %d\r\n", rc);
+	rc = f_mount(&fs, "1:", 1);
+
 	return rc;
 }
 
 
-uint32_t AlFsbl_SdCopy(uint32_t SrcAddress, PTRSIZE DestAddress, uint32_t Length)
+uint32_t AlFsbl_EmmcCopy(uint32_t SrcAddress, PTRSIZE DestAddress, uint32_t Length)
 {
 	FRESULT rc = FR_OK;
 	uint32_t br = 0;
 
-	rc = f_open(&fil, "0:/BOOT.bin", FA_OPEN_EXISTING | FA_READ);
+	rc = f_open(&fil, "1:/BOOT.bin", FA_OPEN_EXISTING | FA_READ);
 	if(rc == FR_OK){
 		//printf("sd read f_open %d\r\n", rc);
 		rc = f_lseek(&fil, SrcAddress - IMAGE_FLASH_OFFSET);
@@ -47,6 +47,7 @@ uint32_t AlFsbl_SdCopy(uint32_t SrcAddress, PTRSIZE DestAddress, uint32_t Length
 	}else{
 		return rc;
 	}
+
 	rc = f_close(&fil);
 	if(rc != FR_OK){
 		return rc;
@@ -56,7 +57,7 @@ uint32_t AlFsbl_SdCopy(uint32_t SrcAddress, PTRSIZE DestAddress, uint32_t Length
 }
 
 
-uint32_t AlFsbl_SdRelease(void)
+uint32_t AlFsbl_EmmcRelease(void)
 {
 	return 0;
 }

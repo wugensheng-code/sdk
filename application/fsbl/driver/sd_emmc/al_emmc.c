@@ -45,77 +45,45 @@ uint32_t AlEmmc_HostControllerClockSetup(volatile DWC_mshc_block_registers* Ptr,
     MMC_PRINT("AlEmmc_HostControllerClockSetup\r\n");
 
     //  Host Controller Clock Setup
+    r1.d32 = 0;
+    REG_WRITE((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
+    MMC_PRINT("r1.d32 is %x\r\n", r1.d32);
+
+    REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000008);     //clk soft reset
+    MMC_DELAY_MS(10);
+    REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000000);
+    MMC_DELAY_MS(MMC_DELAY_SCALE*EfuseDelayParam);
     if (freq == MMC_FREQ_10M)
     {
         MMC_PRINT("MMC_FREQ_10M\r\n");
-        /*r1.d32 = 0;
-        r1.bit.internal_clk_en = MMC_CC_INTER_CLK_ENABLE;       //Oscillate
-        r1.bit.clk_gen_select = MMC_CC_CLK_GEN_SEL_PROGRAM;        //Programmable Clock Mode
-        r1.bit.tout_cnt = MMC_TC_TOUT_CNT_2_27;
-        //r1.bit.freq_sel = 0x1;    //set freq
-        REG_WRITE((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl), r1.d32);
-        MMC_WAIT_CLK_STABLE(Ptr);*/
-        r1.d32 = 0;//REG_READ((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl));
-        //r1.bit.sd_clk_en = MMC_CC_SD_CLK_DISABLE;             //Disable SDCLK/RCLK
-        REG_WRITE((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
-        //MMC_WAIT_CLK_STABLE(Ptr);
-        MMC_PRINT("r1.d32 is %x\r\n", r1.d32);
-
-        REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000008);     //clk soft reset
-        MMC_DELAY_MS(10);
-        REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000000);
-        MMC_DELAY_MS(10);
-
         r1.d32 = 0;
         r1.bit.internal_clk_en = MMC_CC_INTER_CLK_ENABLE;       //Oscillate
         r1.bit.clk_gen_select = MMC_CC_CLK_GEN_SEL_PROGRAM;     //Programmable Clock Mode
         r1.bit.tout_cnt = MMC_TC_TOUT_CNT_2_27;
-        //r1.bit.freq_sel = 0x1;    //set freq
+        r1.bit.freq_sel = 0;    //set freq divided
         REG_WRITE((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
         MMC_WAIT_CLK_STABLE(Ptr);
-        //r1.d32 = REG_READ((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
         r1.bit.pll_enable = MMC_CC_PLL_ENABLE;            //PLL enabled
         REG_WRITE((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
         MMC_WAIT_CLK_STABLE(Ptr);
-        //r1.d32 = REG_READ((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
         r1.bit.sd_clk_en = MMC_CC_SD_CLK_ENABLE;             //Enable SDCLK/RCLK
         REG_WRITE((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
-        //MMC_WAIT_CLK_STABLE(Ptr);
-        
-        printf("r1.d32 is %x, %x\r\n", r1.d32, Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32);
+        MMC_WAIT_CLK_STABLE(Ptr);
+        MMC_PRINT("r1.d32 is %x, %x\r\n", r1.d32, Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32);
     }else{  //default
         MMC_PRINT("MMC_FREQ_400K\r\n");
-        /*r1.d32 = 0;
-        r1.bit.internal_clk_en = MMC_CC_INTER_CLK_ENABLE;       //Oscillate
-        r1.bit.tout_cnt = MMC_TC_TOUT_CNT_2_27;
-        REG_WRITE((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
-        MMC_WAIT_CLK_STABLE(Ptr);*/
-        r1.d32 = 0;//REG_READ((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
-        //r1.bit.sd_clk_en = MMC_CC_SD_CLK_DISABLE;             //Disable SDCLK/RCLK
-        REG_WRITE((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
-        //MMC_WAIT_CLK_STABLE(Ptr);
-        MMC_PRINT("r1.d32 is %x\r\n", r1.d32);
-        
-        REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000008);     //clk soft reset
-        MMC_DELAY_MS(10);
-        REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000000);
-        MMC_DELAY_MS(10);
-
         r1.d32 = 0;
         r1.bit.internal_clk_en = MMC_CC_INTER_CLK_ENABLE;       //Oscillate
         r1.bit.tout_cnt = MMC_TC_TOUT_CNT_2_27;
         REG_WRITE((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
         MMC_WAIT_CLK_STABLE(Ptr);
-        //r1.d32 = REG_READ((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
         r1.bit.pll_enable = MMC_CC_PLL_ENABLE;            //PLL enabled
         REG_WRITE((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
         MMC_WAIT_CLK_STABLE(Ptr);
-        //r1.d32 = REG_READ((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
         r1.bit.sd_clk_en = MMC_CC_SD_CLK_ENABLE;             //Enable SDCLK/RCLK
         REG_WRITE((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
-        //MMC_WAIT_CLK_STABLE(Ptr);
-        
-        printf("r1.d32 is %x, %x\r\n", r1.d32, Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32);
+        MMC_WAIT_CLK_STABLE(Ptr);
+        MMC_PRINT("r1.d32 is %x, %x\r\n", r1.d32, Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32);
     }
     return status;
 }
@@ -141,8 +109,7 @@ uint32_t AlEmmc_SendInitCmd()
     MMC_PRINT("SendInitCmdEmmc\r\n");
     // send command 0   go idle state
     MMC_PRINT("send command 0\r\n");
-    MMC_CHECK_LINE_INHIBIT(eMMC);
-    MMC_CLEAR_STATUS(eMMC);
+    MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
     arg_r = EMMC_CMD0_PARA_GO_IDLE_STATE;
     REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
     reg.d32 = 0;
@@ -156,27 +123,25 @@ uint32_t AlEmmc_SendInitCmd()
     MTIMER_OUT_CONDITION(EMMC_GET_VALID_VOLTAGE_TIMEOUT_VAL, &MmcMtimer, validvoltage != 1){
         //CMD1  arg = OCR register check voltage valid
         MMC_PRINT("send command 1\r\n");
-        MMC_CHECK_LINE_INHIBIT(eMMC);
-        MMC_CLEAR_STATUS(eMMC);
+        MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
         r1.d32 = 0;
         r = REG_READ((unsigned long)IO_BANK1_REF);
         MMC_PRINT("r is %x\r\n", r);
-        //if(MMC_IO_BANK1_SUPPORT_1V8(r) == 1){
-        if(MMC_IO_BANK1_SUPPORT_1V8(r) == 0){
+        if(MMC_IO_BANK1_SUPPORT_1V8(r) == 1){
             r1.bit.voltage_mode = EMMC_OCR_DUAL_VOLTAGE;   //1.8V and 3v3
-            MMC_PRINT("io bank1 support dual volt");
+            MMC_PRINT("io bank1 support dual volt\r\n");
         }else{
             r1.bit.voltage_mode = EMMC_OCR_HIGH_VOLTAGE;    //3v3 only
-            MMC_PRINT("io bank1 support high volt");
+            MMC_PRINT("io bank1 support high volt\r\n");
         }
         r1.bit.voltage2v7_3v6 = EMMC_OCR_VOLTAGE_2V7_3V6;  
         r1.bit.access_mode = EMMC_OCR_ACCESS_MODE_SECTOR_MODE;  //sector mode
         arg_r = r1.d32;
         REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
-        reg.d32 = REG_READ((unsigned long)&(eMMC->cmd_r__xfer_mode));
+        reg.d32 = 0;
         reg.bit.cmd_index = SD_CMD_SEND_OP_COND;
-        reg.bit.resp_type_select = MMC_Response_Short;
         reg.bit.data_xfer_dir = DATA_READ;
+        reg.bit.resp_type_select = MMC_Response_Short;
         REG_WRITE((unsigned long)&(eMMC->cmd_r__xfer_mode), reg.d32);
         MMC_WAIT_CMD_COMPLETE(eMMC, MMC_CMD_1_ERR);
         MMC_PRINT("reg.d32 is %x, %d\r\n", reg.d32, reg.d32);
@@ -189,29 +154,31 @@ uint32_t AlEmmc_SendInitCmd()
     }
 
     // send command 2 get CID   Device IDentification
-    printf("send command 2\r\n");
-    MMC_CHECK_LINE_INHIBIT(eMMC);
-    MMC_CLEAR_STATUS(eMMC);
-    //PrintfMshcBlock(eMMC);
+    MMC_PRINT("send command 2\r\n");
+    MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
     arg_r = 0;
     REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
-    reg.d32 = REG_READ((unsigned long)&(eMMC->cmd_r__xfer_mode));
+    reg.d32 = 0;
     reg.bit.cmd_index = SD_CMD_ALL_SEND_CID;
     reg.bit.data_xfer_dir = DATA_READ;
     reg.bit.resp_type_select = MMC_Response_Long;
+    reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
     REG_WRITE((unsigned long)&(eMMC->cmd_r__xfer_mode), reg.d32);
     MMC_WAIT_CMD_COMPLETE(eMMC, MMC_CMD_2_ERR);
     MMC_PRINT("reg.d32 is %x, %d\r\n", reg.d32, reg.d32);
 
     // send command 3 set relative device address
     MMC_PRINT("send command 3\r\n");
-    MMC_CHECK_LINE_INHIBIT(eMMC);
-    MMC_CLEAR_STATUS(eMMC);
+    MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
     arg_r = EMMC_CMD3_PARA_DEFAULT_VAL;
     REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
-    reg.d32 = REG_READ((unsigned long)&(eMMC->cmd_r__xfer_mode));
+    reg.d32 = 0;
     reg.bit.cmd_index = SD_CMD_SET_REL_ADDR;
+    reg.bit.data_xfer_dir = DATA_READ;
     reg.bit.resp_type_select = MMC_Response_Short;
+    reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
+    reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
+    reg.bit.cmd_idx_chk_enable = MMC_C_CMD_IDX_CHECK_ENABLE;
     REG_WRITE((unsigned long)&(eMMC->cmd_r__xfer_mode), reg.d32);
     MMC_WAIT_CMD_COMPLETE(eMMC, MMC_CMD_3_ERR);
     MMC_PRINT("reg.d32 is %x, %d\r\n", reg.d32, reg.d32);
@@ -220,13 +187,14 @@ uint32_t AlEmmc_SendInitCmd()
 
     // send command 9 get addressed device's CSD on CMD line
     MMC_PRINT("send command 9\r\n");
-    MMC_CHECK_LINE_INHIBIT(eMMC);
-    MMC_CLEAR_STATUS(eMMC);
+    MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
     arg_r = Rca;
     REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
-    reg.d32 = REG_READ((unsigned long)&(eMMC->cmd_r__xfer_mode));
+    reg.d32 = 0;//REG_READ((unsigned long)&(eMMC->cmd_r__xfer_mode));
     reg.bit.cmd_index = SD_CMD_SEND_CSD;
+    reg.bit.data_xfer_dir = DATA_READ;
     reg.bit.resp_type_select = MMC_Response_Long;
+    reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
     REG_WRITE((unsigned long)&(eMMC->cmd_r__xfer_mode), reg.d32);
     MMC_WAIT_CMD_COMPLETE(eMMC, MMC_CMD_9_ERR);
     CsdTab[3] = REG_READ((unsigned long)&(eMMC->resp01));
@@ -236,13 +204,14 @@ uint32_t AlEmmc_SendInitCmd()
     MMC_PRINT("CsdTab 0~4 is %x, %x, %x, %x\r\n", CsdTab[0], CsdTab[1], CsdTab[2], CsdTab[3]);
 
     // send command 10  get addressed device's CID on CMD line
-    MMC_CHECK_LINE_INHIBIT(eMMC);
-    MMC_CLEAR_STATUS(eMMC);
+    MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
     arg_r = Rca;
     REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
-    reg.d32 = REG_READ((unsigned long)&(eMMC->cmd_r__xfer_mode));
+    reg.d32 = 0;//REG_READ((unsigned long)&(eMMC->cmd_r__xfer_mode));
     reg.bit.cmd_index = SD_CMD_SEND_CID;
+    reg.bit.data_xfer_dir = DATA_READ;
     reg.bit.resp_type_select = MMC_Response_Long;
+    reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
     REG_WRITE((unsigned long)&(eMMC->cmd_r__xfer_mode), reg.d32);
     MMC_WAIT_CMD_COMPLETE(eMMC, MMC_CMD_10_ERR);
     CidTab[3] = REG_READ((unsigned long)&(eMMC->resp01));
@@ -254,13 +223,16 @@ uint32_t AlEmmc_SendInitCmd()
     
     // send command 7   selected/deselected card
     MMC_PRINT("send command 7\r\n");
-    MMC_CHECK_LINE_INHIBIT(eMMC);
-    MMC_CLEAR_STATUS(eMMC);
+    MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
     arg_r = Rca;
     REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
-    reg.d32 = REG_READ((unsigned long)&(eMMC->cmd_r__xfer_mode));
+    reg.d32 = 0;
     reg.bit.cmd_index = SD_CMD_SEL_DESEL_CARD;
+    reg.bit.data_xfer_dir = DATA_READ;
     reg.bit.resp_type_select = MMC_Response_Short_48B;
+    reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
+    reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
+    reg.bit.cmd_idx_chk_enable = MMC_C_CMD_IDX_CHECK_ENABLE;
     REG_WRITE((unsigned long)&(eMMC->cmd_r__xfer_mode), reg.d32);
     MMC_WAIT_CMD_COMPLETE(eMMC, MMC_CMD_7_ERR);
     MMC_WAIT_TRANSFER_COMPLETE(eMMC, MMC_CMD_7_ERR);
@@ -269,7 +241,7 @@ uint32_t AlEmmc_SendInitCmd()
     return MMC_SUCCESS;
 }
 
-#if 0
+#if _USE_8BIT
 /***************************************************************************/
 /**
  * @brief	change the bit width
@@ -290,13 +262,16 @@ uint32_t AlEmmc_SwitchDataWidth()
     REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
     reg.bit.cmd_index = SD_CMD_HS_SWITCH;
     reg.bit.resp_type_select = MMC_Response_Short;
+    reg.bit.data_xfer_dir = DATA_WRITE;
+    reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
+    reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
+    reg.bit.cmd_idx_chk_enable = MMC_C_CMD_IDX_CHECK_ENABLE;
     REG_WRITE((unsigned long)&(eMMC->cmd_r__xfer_mode), reg.d32);
-    MMC_WAIT_CMD_COMPLETE(eMMC);
+    MMC_WAIT_CMD_COMPLETE(eMMC, MMC_CMD_6_ERR);
     r1.d32 = REG_READ((unsigned long)&(eMMC->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1));
     r1.bit.extdat_xfer = 0x1;
     REG_WRITE((unsigned long)&(eMMC->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1), r1.d32);
-    //sleep(2000);
-    MMC_DELAY_MS(1);
+    MMC_DELAY_MS(10);
     return MMC_SUCCESS;
 }
 #endif
@@ -327,13 +302,11 @@ uint32_t AlEmmc_ReadSingleBlock(uint8_t *Readbuff, uint32_t ReadAddr, uint16_t B
     r1.bit.dma_sel = MMC_HC1_DMA_SEL_SDMA;
     REG_WRITE((unsigned long)&(eMMC->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1), r1.d32);
     REG_WRITE((unsigned long)&(eMMC->sdmasa_r), (unsigned long)Buffer_SingleBlock);
-    REG_WRITE((unsigned long)&(eMMC->adma_sa_low_r), (unsigned long)Buffer_SingleBlock);
 #endif
 
 	// send command 16
-    printf("read send cmd 16\r\n");
-    MMC_CHECK_LINE_INHIBIT(eMMC);
-    MMC_CLEAR_STATUS(eMMC);
+    MMC_PRINT("read send cmd 16\r\n");
+    MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
     //PrintfMshcBlock(eMMC);
     arg_r = BlockSize;  //block length  512
     REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
@@ -342,9 +315,12 @@ uint32_t AlEmmc_ReadSingleBlock(uint8_t *Readbuff, uint32_t ReadAddr, uint16_t B
     block.bit.blockcount_r = 0x1;
     reg.d32 = 0;
     reg.bit.block_count_enable = MMC_XM_BLOCK_COUNT_ENABLE;
-    reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
+    reg.bit.data_xfer_dir = DATA_WRITE;
     reg.bit.resp_type_select = MMC_C_RESP_LEN_48;
     reg.bit.cmd_index = SD_CMD_SET_BLOCKLEN;
+    reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
+    reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
+    reg.bit.cmd_idx_chk_enable = MMC_C_CMD_IDX_CHECK_ENABLE;
     REG_WRITE((unsigned long)&(eMMC->blockcount_r__blocksize), block.d32);
     REG_WRITE((unsigned long)&(eMMC->cmd_r__xfer_mode), reg.d32);
     MMC_PRINT("block.d32 is %x\r\n", block.d32);
@@ -353,17 +329,19 @@ uint32_t AlEmmc_ReadSingleBlock(uint8_t *Readbuff, uint32_t ReadAddr, uint16_t B
 
     // send command 23
     MMC_PRINT("read send cmd 23\r\n");
-    MMC_CHECK_LINE_INHIBIT(eMMC);
-    MMC_CLEAR_STATUS(eMMC);
+    MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
     r3.d32 = 0;
     r3.bit.block_num = 0x1;
     arg_r = r3.d32;
     REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
     reg.d32 = 0;
     reg.bit.block_count_enable = MMC_XM_BLOCK_COUNT_ENABLE;
-    reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
+    reg.bit.data_xfer_dir = DATA_WRITE;
     reg.bit.resp_type_select = MMC_C_RESP_LEN_48;
     reg.bit.cmd_index = SD_CMD_SET_BLOCK_COUNT;
+    reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
+    reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
+    reg.bit.cmd_idx_chk_enable = MMC_C_CMD_IDX_CHECK_ENABLE;
     REG_WRITE((unsigned long)&(eMMC->cmd_r__xfer_mode), reg.d32);
     MMC_PRINT("block.d32 is %x\r\n", block.d32);
     MMC_PRINT("reg.d32 is %x\r\n", reg.d32);
@@ -371,8 +349,7 @@ uint32_t AlEmmc_ReadSingleBlock(uint8_t *Readbuff, uint32_t ReadAddr, uint16_t B
 
 	// send command 17 read single block
     MMC_PRINT("send cmd 17\r\n");
-    MMC_CHECK_LINE_INHIBIT(eMMC);
-    MMC_CLEAR_STATUS(eMMC);
+    MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
     arg_r = ReadAddr;
     REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
     reg.d32 = 0;//REG_READ((unsigned long)&(eMMC->cmd_r__xfer_mode));
@@ -381,14 +358,13 @@ uint32_t AlEmmc_ReadSingleBlock(uint8_t *Readbuff, uint32_t ReadAddr, uint16_t B
 #endif
     reg.bit.block_count_enable = MMC_XM_BLOCK_COUNT_ENABLE;
     reg.bit.data_xfer_dir = MMC_XM_DATA_XFER_DIR_READ;
-    reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
-    //reg.bit.resp_int_disable = MMC_XM_RESP_INT_DISABLE;
     reg.bit.resp_type_select = MMC_C_RESP_LEN_48;
     reg.bit.data_present_sel = MMC_C_DATA_PRESENT;
+    reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
     reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
     reg.bit.cmd_idx_chk_enable = MMC_C_CMD_IDX_CHECK_ENABLE;
     reg.bit.cmd_index = SD_CMD_READ_SINGLE_BLOCK;
-    block.d32 = 0;//REG_READ((unsigned long)&(eMMC->blockcount_r__blocksize));
+    block.d32 = 0;
     block.bit.xfer_block_size = BlockSize;
     block.bit.blockcount_r = 0x1;
     REG_WRITE((unsigned long)&(eMMC->blockcount_r__blocksize), block.d32);
@@ -415,8 +391,6 @@ uint32_t AlEmmc_ReadSingleBlock(uint8_t *Readbuff, uint32_t ReadAddr, uint16_t B
 uint32_t AlEmmc_Init(void)
 {
     int status = MMC_SUCCESS;
-
-    memset(eMMC, 0, sizeof(DWC_mshc_block_registers));
 
     status = HostControllerSetup(eMMC);
     if (status != MMC_SUCCESS) {
@@ -455,7 +429,7 @@ uint32_t Csu_RawEmmcInit(RawEmmcParam_t *Param)
     }
     Param->EmmcId = EmmcCardInfo.SD_cid.ManufacturerID;
     Param->EmmcSize = EmmcCardInfo.CardCapacity / EmmcCardInfo.CardBlockSize / 2;
-    printf("emmc ID is %d, capacity is %ld kBytes!\r\n", Param->EmmcId, Param->EmmcSize);
+    MMC_PRINT("emmc ID is %d, capacity is %ld kBytes!\r\n", Param->EmmcId, Param->EmmcSize);
     return status;
 }
 
@@ -597,18 +571,18 @@ uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
 #endif
         // send command 16
         MMC_PRINT("send cmd 16\r\n");
-        MMC_CHECK_LINE_INHIBIT(eMMC);
-        MMC_CLEAR_STATUS(eMMC);
+        MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
         arg_r = Cardinfo->CardBlockSize;  //block length  512
         REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
-        //block.d32 = REG_READ((unsigned long)&(eMMC->blockcount_r__blocksize));
         block.d32 = 0;
         block.bit.xfer_block_size = Cardinfo->CardBlockSize;
         block.bit.blockcount_r = 0x1;
-        //reg.d32 = REG_READ((unsigned long)&(eMMC->cmd_r__xfer_mode));
         reg.d32 = 0;
         reg.bit.block_count_enable = MMC_XM_BLOCK_COUNT_ENABLE;
+        reg.bit.data_xfer_dir = DATA_WRITE;
         reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
+        reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
+        reg.bit.cmd_idx_chk_enable = MMC_C_CMD_IDX_CHECK_ENABLE;
         reg.bit.resp_type_select = MMC_C_RESP_LEN_48;
         reg.bit.cmd_index = SD_CMD_SET_BLOCKLEN;
         REG_WRITE((unsigned long)&(eMMC->blockcount_r__blocksize), block.d32);
@@ -619,8 +593,7 @@ uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
 
         // send command 23
         MMC_PRINT("send cmd 23\r\n");
-        MMC_CHECK_LINE_INHIBIT(eMMC);
-        MMC_CLEAR_STATUS(eMMC);
+        MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
         r3.d32 = 0;
         r3.bit.block_num = 0x1;
         arg_r = r3.d32;
@@ -630,7 +603,10 @@ uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
         block.bit.blockcount_r = 0x1;
         reg.d32 = 0;
         reg.bit.block_count_enable = MMC_XM_BLOCK_COUNT_ENABLE;
+        reg.bit.data_xfer_dir = DATA_WRITE;
         reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
+        reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
+        reg.bit.cmd_idx_chk_enable = MMC_C_CMD_IDX_CHECK_ENABLE;
         reg.bit.resp_type_select = MMC_C_RESP_LEN_48;
         reg.bit.cmd_index = SD_CMD_SET_BLOCK_COUNT;
         REG_WRITE((unsigned long)&(eMMC->blockcount_r__blocksize), block.d32);
@@ -644,11 +620,10 @@ uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
 
         // send command 8
         MMC_PRINT("send cmd 8\r\n");
-        MMC_CHECK_LINE_INHIBIT(eMMC);
-        MMC_CLEAR_STATUS(eMMC);
+        MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
         arg_r = 0;
         REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
-        reg.d32 = 0;//REG_READ((unsigned long)&(eMMC->cmd_r__xfer_mode));
+        reg.d32 = 0;
 #ifdef _USE_SDMA
         reg.bit.dma_en = MMC_XM_DMA_ENABLE;
 #endif
@@ -660,7 +635,7 @@ uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
         reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
         reg.bit.cmd_idx_chk_enable = MMC_C_CMD_IDX_CHECK_ENABLE;
         reg.bit.cmd_index = SD_CMD_HS_SEND_EXT_CSD;
-        block.d32 = 0;//REG_READ((unsigned long)&(eMMC->blockcount_r__blocksize));
+        block.d32 = 0;
         block.bit.xfer_block_size = Cardinfo->CardBlockSize;
         block.bit.blockcount_r = 0x1;
         REG_WRITE((unsigned long)&(eMMC->blockcount_r__blocksize), block.d32);
@@ -671,7 +646,7 @@ uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
 #ifdef _USE_SDMA
         MMC_WAIT_TRANSFER_COMPLETE(eMMC, MMC_CMD_8_XFER_ERR);
 #else
-        MMC_TRANSFER_WITHOUT_DMA(eMMC, ext_csd_addr, MMC_CMD_17_XFER_ERR);
+        MMC_TRANSFER_WITHOUT_DMA(eMMC, ext_csd_addr, MMC_CMD_8_XFER_ERR);
 #endif
         MMC_PRINT("get ext_csd\r\n");
         MMC_PRINT("%x, %x, %x, %x\r\n",ext_csd_buf[215], ext_csd_buf[214], ext_csd_buf[213], ext_csd_buf[212]);
@@ -683,5 +658,41 @@ uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
     MMC_PRINT("emmc capicity is %lld, %llx\r\n", Cardinfo->CardCapacity, Cardinfo->CardCapacity);
     return status;
 }
+
+#if 0
+uint32_t AlEmmc_GetCardStatus(void)
+{
+    MMC_ERR_TYPE status = MMC_SUCCESS;
+    __IO CMD_R__XFER_MODE_R reg = {.d32 = 0,};
+    __IO uint32_t arg_r = 0;
+    __IO MMC_DEV_STAT dev_state = {.d32 = 1,};
+
+    MMC_PRINT("send command 7\r\n");
+    MTIMER_OUT_CONDITION(MMC_CHECK_DEV_STATUS_TIMEOUT_VAL, &MmcMtimer, dev_state.d32 != 0x900){
+        MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
+        arg_r = EMMC_CMD3_PARA_DEFAULT_VAL;
+        REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
+        reg.d32 = 0;
+        reg.bit.cmd_index = SD_CMD_SEND_STATUS;
+        reg.bit.data_xfer_dir = DATA_READ;
+        reg.bit.resp_type_select = MMC_Response_Short;
+        reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
+        reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
+        reg.bit.cmd_idx_chk_enable = MMC_C_CMD_IDX_CHECK_ENABLE;
+        REG_WRITE((unsigned long)&(eMMC->cmd_r__xfer_mode), reg.d32);
+        MMC_WAIT_CMD_COMPLETE(eMMC, MMC_CMD_7_ERR);
+        MMC_PRINT("reg.d32 is %x, %d\r\n", reg.d32, reg.d32);
+        dev_state.d32 = REG_READ((unsigned long)&(eMMC->resp01));
+        MMC_PRINT("device status is %x\r\n", dev_state);
+        MMC_DELAY_MS(1);
+    }
+    if(Mtimer_IsTimerOut(&MmcMtimer)){
+        status = MMC_CHECK_VOLT_TIMEOUT;
+        return status;
+    }
+
+    return status;
+}
+#endif
 
 /*********************************************END OF FILE**********************/

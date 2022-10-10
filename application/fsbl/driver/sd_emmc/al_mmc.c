@@ -29,6 +29,7 @@
 __IO uint32_t CsdTab[4], CidTab[4], Resp[4], Rca = 1;
 MtimerParams MmcMtimer;
 uint8_t __attribute__((aligned(4))) FlashSharedBuf[DEF_BLOCK_LEN];
+uint8_t EfuseDelayParam = 0;
 
 volatile DWC_mshc_block_registers* SDIO = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO1__BASE_ADDR;
 volatile DWC_mshc_block_registers* eMMC = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO0__BASE_ADDR;
@@ -164,15 +165,14 @@ uint32_t WaitCmdComplete(volatile DWC_mshc_block_registers* Ptr, MMC_ERR_TYPE Er
 {
     MMC_ERR_TYPE status = MMC_SUCCESS;
     __IO ERROR_INT_STAT_R__NORMAL_INT_STAT_R r = {.d32 = 0,};
-    //MMC_DELAY_MS(1);
     MTIMER_OUT_CONDITION(MMC_CMD_TIMEOUT_VAL, &MmcMtimer, r.bit.cmd_complete != 1){
         r.d32 = REG_READ((unsigned long)&(Ptr->error_int_stat_r__normal_int_stat.d32));
-#ifdef _USE_MSHC_PRINT
-        if(Err == MMC_CMD_2_ERR || Err == MMC_CMD_16_ERR)
-            PrintfMshcBlock(Ptr);
-#endif
         status = ErrStatCheck(r);
 		if(status != MMC_SUCCESS){
+#ifdef _USE_MSHC_PRINT
+            if(Err == MMC_CMD_16_ERR)
+                PrintfMshcBlock(Ptr);
+#endif
             printf("error cmd code %d\r\n", Err);
             return status;
         }
@@ -241,44 +241,43 @@ uint32_t TransferWithoutDMA(volatile DWC_mshc_block_registers* Ptr, uint32_t *Ad
     MMC_ERR_TYPE status = MMC_SUCCESS;
     uint32_t *bufaddr = Addr;
     __IO ERROR_INT_STAT_R__NORMAL_INT_STAT_R r = {.d32 = 0,};
+    __IO BLOCKCOUNT_R__BLOCKSIZE_R r1 = {.d32 = 0,};
 
-	if(Err == MMC_CMD_17_XFER_ERR){
-		MTIMER_OUT_CONDITION(MMC_BUF_RD_RDY_TIMEOUT_VAL, &MmcMtimer, r.bit.buf_rd_ready != 1){
-			r.d32 = REG_READ((unsigned long)&(Ptr->error_int_stat_r__normal_int_stat.d32));
-			status = ErrStatCheck(r);
-			if(status != MMC_SUCCESS)
-				return status;
-		}
-		if(Mtimer_IsTimerOut(&MmcMtimer)){
-			return Err;
-		}else{
-			r.d32 = 0;
-			r.bit.buf_rd_ready = 0x1;
-			REG_WRITE((unsigned long)&(Ptr->error_int_stat_r__normal_int_stat.d32), r.d32);
-			r.d32 = 0;
-			for(int i = 0; i < 512; i++){
-				*(uint32_t *)(bufaddr+i) = REG_READ((unsigned long)&(Ptr->buf_data));
-			}
-		}
-	}else{
-		MTIMER_OUT_CONDITION(MMC_BUF_RD_RDY_TIMEOUT_VAL, &MmcMtimer, r.bit.buf_wr_ready != 1){
-			r.d32 = REG_READ((unsigned long)&(Ptr->error_int_stat_r__normal_int_stat.d32));
-			status = ErrStatCheck(r);
-			if(status != MMC_SUCCESS)
-				return status;
-		}
-		if(Mtimer_IsTimerOut(&MmcMtimer)){
-			return Err;
-		}else{
-			r.d32 = 0;
-			r.bit.buf_wr_ready = 0x1;
-			REG_WRITE((unsigned long)&(Ptr->error_int_stat_r__normal_int_stat.d32), r.d32);
-			r.d32 = 0;
-			for(int i = 0; i < 512; i++){
+    if((Err != MMC_CMD_17_XFER_ERR) && (Err != MMC_CMD_8_XFER_ERR) && (Err != MMC_CMD_24_XFER_ERR))
+        return MMC_CMD_XFER_ERR;
+
+    MTIMER_OUT_CONDITION(MMC_BUF_RD_RDY_TIMEOUT_VAL, &MmcMtimer, 1){
+        r.d32 = REG_READ((unsigned long)&(Ptr->error_int_stat_r__normal_int_stat.d32));
+        status = ErrStatCheck(r);
+        if(status != MMC_SUCCESS)
+            return status;
+        if((Err == MMC_CMD_17_XFER_ERR || Err == MMC_CMD_8_XFER_ERR) && (r.bit.buf_rd_ready == 1))
+            break;
+        else if((Err == MMC_CMD_24_XFER_ERR) && (r.bit.buf_wr_ready == 1))
+            break;
+        else
+            continue;
+    }
+    if(Mtimer_IsTimerOut(&MmcMtimer)){
+        return Err;
+    }else{
+        r.d32 = 0;
+        if(Err == MMC_CMD_17_XFER_ERR || Err == MMC_CMD_8_XFER_ERR)
+            r.bit.buf_rd_ready = 0x1;
+        else
+            r.bit.buf_wr_ready = 0x1;
+        REG_WRITE((unsigned long)&(Ptr->error_int_stat_r__normal_int_stat.d32), r.d32);
+        r1.d32 = REG_READ((unsigned long)&(Ptr->blockcount_r__blocksize.d32));
+        if(Err == MMC_CMD_17_XFER_ERR || Err == MMC_CMD_8_XFER_ERR){
+            for(int i = 0; i < r1.bit.xfer_block_size/4; i++){
+                *(uint32_t *)(bufaddr+i) = REG_READ((unsigned long)&(Ptr->buf_data));
+            }
+        }else{
+            for(int i = 0; i < r1.bit.xfer_block_size/4; i++){
 				REG_WRITE((unsigned long)&(Ptr->buf_data), *(uint32_t *)(bufaddr+i));
 			}
-		}
-	}
+        }
+    }
 	WaitTransferComplete(Ptr, Err);
     return status;
 }
@@ -357,7 +356,7 @@ uint32_t HostControllerSetup(volatile DWC_mshc_block_registers* Ptr)
     r1.bit.sd_bus_pwr_vdd1 = MMC_PC_SBP_VDD1_ON;    //VDD1 PWR ON support SD and eMMC
     r = REG_READ((unsigned long)IO_BANK1_REF);
     MMC_PRINT("r is %x\r\n", r);
-    if(MMC_IO_BANK1_SUPPORT_1V8(r) == 0){
+    if(MMC_IO_BANK1_SUPPORT_1V8(r) == 1){
         r1.bit.sd_bus_vol_vdd1 = EMMC_PC_SBV_VDD1_1V8;   //1.8V
     }else{
         r1.bit.sd_bus_vol_vdd1 = MMC_PC_SBV_VDD1_3V3;   //3.3V
@@ -372,13 +371,12 @@ uint32_t HostControllerSetup(volatile DWC_mshc_block_registers* Ptr)
     r2.bit.tout_cnt = MMC_TC_TOUT_CNT_2_27;
     REG_WRITE((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r2.d32);
     MMC_WAIT_CLK_STABLE(Ptr);
-    r2.d32 = REG_READ((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
     r2.bit.pll_enable = MMC_CC_PLL_ENABLE;            //PLL enabled
     REG_WRITE((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r2.d32);
     MMC_WAIT_CLK_STABLE(Ptr);
-    r2.d32 = REG_READ((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
     r2.bit.sd_clk_en = MMC_CC_SD_CLK_ENABLE;             //Enable SDCLK/RCLK
     REG_WRITE((unsigned long)&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r2.d32);
+    MMC_WAIT_CLK_STABLE(Ptr);
     MMC_PRINT("r2.d32 is %x\r\n", r2.d32);
 
     return status;
@@ -401,11 +399,11 @@ uint32_t InitInterruptSetting(volatile DWC_mshc_block_registers* Ptr){
     r1.bit.cmd_complete_stat_en = MMC_NORMAL_INT_STAT_EN;
     r1.bit.xfer_complete_stat_en = MMC_NORMAL_INT_STAT_EN;
     r1.bit.bgap_event_stat_en = MMC_NORMAL_INT_STAT_EN;
+#if _USE_SDMA
     r1.bit.dma_interrupt_stat_en = MMC_NORMAL_INT_STAT_EN;
+#endif
     r1.bit.buf_wr_ready_stat_en = MMC_NORMAL_INT_STAT_EN;
     r1.bit.buf_rd_ready_stat_en = MMC_NORMAL_INT_STAT_EN;
-    r1.bit.card_insertion_stat_en = MMC_NORMAL_INT_STAT_EN;
-    r1.bit.card_removal_stat_en = MMC_NORMAL_INT_STAT_EN;
     r1.bit.int_a_stat_en = MMC_NORMAL_INT_STAT_EN;
     r1.bit.cmd_tout_err_stat_en = MMC_ERR_INT_STAT_EN;
     r1.bit.cmd_crc_err_stat_en = MMC_ERR_INT_STAT_EN;

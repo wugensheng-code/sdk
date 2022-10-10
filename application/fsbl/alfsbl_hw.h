@@ -13,7 +13,7 @@ extern "C" {
 #endif
 
 /// simulation platform
-#define SIMU_AL9000_DV
+//#define SIMU_AL9000_DV
 
 #define IMAGE_FLASH_OFFSET 0x70000000
 

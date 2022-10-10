@@ -10,6 +10,7 @@
 #include "demosoc.h"
 #include "core_feature_eclic.h"
 #include <stdio.h>
+#include "gic_v3_addr.h"
 
 static uint32_t AlFsbl_GetResetReason(void);
 static uint32_t AlFsbl_SystemInit(AlFsblInfo *FsblInstancePtr);
@@ -32,7 +33,6 @@ uint32_t AlFsbl_Initialize(AlFsblInfo *FsblInstancePtr)
 	}
 
 	/// clear pending interrupt
-	printf("Clear all pending interrupts of rpu...\n");
 	AlFsbl_ClearPendingInterrupt();
 
 	/// processor init
@@ -99,12 +99,8 @@ static uint32_t AlFsbl_SystemInit(AlFsblInfo *FsblInstancePtr)
 
 	// reset pl, release reset before pl bitstream config
 	if(FsblInstancePtr->ResetReason == FSBL_SYSTEM_RESET) {
-
 		REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) & (~SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
 	}
-
-
-
 
 	Status = ALFSBL_SUCCESS;
 
@@ -116,12 +112,46 @@ static uint32_t AlFsbl_SystemInit(AlFsblInfo *FsblInstancePtr)
 
 static void AlFsbl_ClearPendingInterrupt(void)
 {
+	
+#if __riscv
 	IRQn_Type IrqNum;
+	printf("Clear all pending interrupts of rpu...\r\n");
 	for(IrqNum = Reserved0_IRQn; IrqNum < SOC_INT_MAX; IrqNum++) {
-		__ECLIC_ClearPendingIRQ(IrqNum);
+		__ECLIC_ClearPendingIRQ(IrqNum);	//risc-v
 	}
+#else	//[MODIFY]:1
+	//uint32_t RegVal = 0;
+	printf("Clear all pending interrupts of apu...\r\n");
+	
+	(*(volatile uint32_t *)(uint32_t)(GICD_ICENABLER)) = 0xFFFFFFFF;
+	(*(volatile uint32_t *)(uint32_t)(GICD_ICPENDR)) = 0xFFFFFFFF;
+	(*(volatile uint32_t *)(uint32_t)(GICD_ACTIVE_CLEAR)) = 0xFFFFFFFF;
 
+	//(*(volatile uint32_t *)(uint32_t)(GICD_ICENABLER+4)) = 0xFFFFFFFF;
+	(*(volatile uint32_t *)(uint32_t)(GICD_ICPENDR+4)) = 0xFFFFFFFF;
+	//(*(volatile uint32_t *)(uint32_t)(GICD_ACTIVE_CLEAR+4)) = 0xFFFFFFFF;
 
+	//(*(volatile uint32_t *)(uint32_t)(GICD_ICENABLER+8)) = 0xFFFFFFFF;
+	(*(volatile uint32_t *)(uint32_t)(GICD_ICPENDR+8)) = 0xFFFFFFFF;
+	//(*(volatile uint32_t *)(uint32_t)(GICD_ACTIVE_CLEAR+8)) = 0xFFFFFFFF;
+
+	(*(volatile uint32_t *)(uint32_t)(GICD_ICENABLER+12)) = 0xFFFFFFFF;
+	(*(volatile uint32_t *)(uint32_t)(GICD_ICPENDR+12)) = 0xFFFFFFFF;
+	(*(volatile uint32_t *)(uint32_t)(GICD_ACTIVE_CLEAR+12)) = 0xFFFFFFFF;
+
+	(*(volatile uint32_t *)(uint32_t)(GICD_ICENABLER+16)) = 0xFFFFFFFF;
+	(*(volatile uint32_t *)(uint32_t)(GICD_ICPENDR+16)) = 0xFFFFFFFF;
+	(*(volatile uint32_t *)(uint32_t)(GICD_ACTIVE_CLEAR+16)) = 0xFFFFFFFF;
+
+	(*(volatile uint32_t *)(uint32_t)(GICD_ICENABLER+20)) = 0xFFFFFFFF;
+	(*(volatile uint32_t *)(uint32_t)(GICD_ICPENDR+20)) = 0xFFFFFFFF;
+	(*(volatile uint32_t *)(uint32_t)(GICD_ACTIVE_CLEAR+20)) = 0xFFFFFFFF;
+
+	//RegVal = (*(volatile uint32_t *)(uint32_t)(+4*i));
+	/*for(int i = 0; i < 4; i++){
+		(*(volatile uint32_t *)(uint32_t)(GICD_CPENDSGIR+i)) = 0xFFFFFFFF;
+	}*/
+#endif
 	return;
 }
 
@@ -131,8 +161,11 @@ static uint32_t AlFsbl_ProcessorInit(AlFsblInfo *FsblInstancePtr)
 	uint32_t Status = ALFSBL_SUCCESS;
 
 	/// a temporary solution
+#if __riscv
 	FsblInstancePtr->ProcessorID = ALIH_PH_ATTRIB_DEST_CPU_RPU;
-
+#else
+	FsblInstancePtr->ProcessorID = ALIH_PH_ATTRIB_DEST_CPU_APU0;	//[MODIFY]:2
+#endif
 	return Status;
 }
 
@@ -176,7 +209,7 @@ static uint32_t AlFsbl_ValidateResetReason(void)
 		}
 	}
 	if(FsblStatus != ALFSBL_RUNNING) {
-		printf("mark fsbl is running...\n");
+		printf("mark fsbl is running...\r\n");
 		REG32(SYSCTRL_S_FSBL_ERR_CODE) = ALFSBL_RUNNING;
 	}
 

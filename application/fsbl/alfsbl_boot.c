@@ -11,6 +11,8 @@
 #include "alfsbl_err_code.h"
 #include "alfsbl_qspi.h"
 #include "alfsbl_sd.h"
+#include "alfsbl_emmc.h"
+#include "alfsbl_emmc_raw.h"
 
 uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 {
@@ -19,7 +21,7 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 
 	BootMode = REG32(SYSCTRL_NS_BOOT_MODE);
 
-	printf("Boot Mode: 0x%08x\n", BootMode);
+	printf("Boot Mode: 0x%08x\r\n", BootMode);
 
 	FsblInstancePtr->PrimaryBootDevice = BootMode;
 
@@ -30,19 +32,26 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 		}
 	}
 	
+	BootMode = ALFSBL_BOOTMODE_SD;
+	printf("Boot Mode: 0x%08x\r\n", BootMode);
+	
 	switch(BootMode) {
 	case ALFSBL_BOOTMODE_JTAG:
 		Status = ALFSBL_STATUS_JTAG;
 		break;
 
 	case ALFSBL_BOOTMODE_QSPI24:
-		printf("QSPI 24 bit Boot Mode\n");
+		printf("QSPI 24 bit Boot Mode\r\n");
 		FsblInstancePtr->DeviceOps.DeviceInit    = AlFsbl_Qspi24Init;
 		FsblInstancePtr->DeviceOps.DeviceCopy    = AlFsbl_Qspi24Copy;
 		FsblInstancePtr->DeviceOps.DeviceRelease = AlFsbl_Qspi24Release;
 		break;
 
 	case ALFSBL_BOOTMODE_EMMC:
+		printf("EMMC Boot Mode\r\n");
+		FsblInstancePtr->DeviceOps.DeviceInit    = AlFsbl_EmmcInit;
+		FsblInstancePtr->DeviceOps.DeviceCopy    = AlFsbl_EmmcCopy;
+		FsblInstancePtr->DeviceOps.DeviceRelease = AlFsbl_EmmcRelease;
 		break;
 
 	case ALFSBL_BOOTMODE_QSPI32:
@@ -52,20 +61,24 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 		break;
 
 	case ALFSBL_BOOTMODE_SD:
-		printf("SD Boot Mode\n");
+		printf("SD Boot Mode\r\n");
 		FsblInstancePtr->DeviceOps.DeviceInit    = AlFsbl_SdInit;
 		FsblInstancePtr->DeviceOps.DeviceCopy    = AlFsbl_SdCopy;
 		FsblInstancePtr->DeviceOps.DeviceRelease = AlFsbl_SdRelease;
 		break;
 
 	case ALFSBL_BOOTMODE_EMMC_RAW:
+		printf("EMMC Raw Boot Mode\r\n");
+		FsblInstancePtr->DeviceOps.DeviceInit    = AlFsbl_EmmcRawInit;
+		FsblInstancePtr->DeviceOps.DeviceCopy    = AlFsbl_EmmcRawCopy;
+		FsblInstancePtr->DeviceOps.DeviceRelease = AlFsbl_EmmcRawRelease;
 		break;
 
 	case ALFSBL_BOOTMODE_JTAG_QSPI:
 		break;
 
 	default:
-		printf("unsupported boot mode\n");
+		printf("unsupported boot mode\r\n");
 		Status = ALFSBL_ERROR_UNSUPPORTED_BOOT_MODE;
 	}
 
@@ -75,7 +88,7 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 
 	Status = FsblInstancePtr->DeviceOps.DeviceInit();
 	if(ALFSBL_SUCCESS != Status) {
-		printf("Device init failed: %x\n", Status);
+		printf("Device init failed: %x\r\n", Status);
 		Status = ALFSBL_ERROR_DEVICE_INIT_FAILED;
 		goto END;
 	}

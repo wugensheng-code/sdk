@@ -18,6 +18,7 @@ typedef enum{
 	//MMC_SD_CHECK_VOLT_TIMEOUT,		//SD check voltage timeout
 	//MMC_EMMC_CHECK_VOLT_TIMEOUT,	//eMMC check voltage timeout
 	MMC_CHECK_VOLT_TIMEOUT,
+	MMC_CHECK_DEV_STATUS_TIMEOUT,
 	MMC_WAIT_LINE_INHIBIT_TIMEOUT,
 	//Error INT Status Regitster
 	MMC_CMD_TOUT_ERR,				//no response is returned within 64 clock cycles from end bit of the cmd
@@ -45,6 +46,7 @@ typedef enum{
 	MMC_CMD_8_ERR,
 	MMC_CMD_9_ERR,
 	MMC_CMD_10_ERR,
+	MMC_CMD13_ERR,
 	MMC_CMD_16_ERR,
 	MMC_CMD_17_ERR,
 	MMC_CMD_23_ERR,
@@ -55,6 +57,7 @@ typedef enum{
 	MMC_CMD_8_XFER_ERR,
 	MMC_CMD_17_XFER_ERR,
 	MMC_CMD_24_XFER_ERR,
+	MMC_CMD_XFER_ERR,
 	MMC_ERR_MAX
 }MMC_ERR_TYPE;
 
@@ -66,7 +69,9 @@ typedef enum{
 #define MMC_ERR_INT_STAT_BITS_LEN	7
 
 //#define _USE_SDMA
-//#define _USE_MSHC_PRINT
+//#define _USE_4BIT
+//#define _USE_8BIT
+#define _USE_MSHC_PRINT
 //#define _USE_ERR_PRINT
 
 //#define MMC_SEQUENCE_PRINT
@@ -101,6 +106,8 @@ typedef enum{
 #define MMC_BUF_RD_RDY_TIMEOUT_VAL			(1000*1000)		//1s
 #define MMC_WAIT_CLK_STABLE_TIMEOUT_VAL		(5000*1000)		//5s
 #define MMC_CHECK_LINE_INHIBIT_TIMEOUT_VAL	(1000*1000)		//1s
+#define MMC_CHECK_DEV_STATUS_TIMEOUT_VAL	(1000*1000)		//1s
+#define MMC_DELAY_SCALE						(2)
 
 //capabilities1.base_clk_freq 0 another way 1~255 -> 1~255MHz
 #define MMC_GET_INFO_ANOTHER_WAY	0x0
@@ -688,6 +695,37 @@ typedef union{
     }bit;
 }MMC_CMD23_PARAM;
 
+typedef union{
+    __IO uint32_t d32;
+    struct {
+        __IO uint32_t reserved_mtm : 2;
+        __IO uint32_t reserved_asc : 2;
+        __IO uint32_t reserved : 1;
+        __IO uint32_t app_cmd : 1;
+        __IO uint32_t execption_event : 1;
+        __IO uint32_t switch_error : 1;
+        __IO uint32_t ready_for_data : 1;
+		__IO uint32_t current_state : 4;
+		__IO uint32_t erase_reset : 1;
+		__IO uint32_t reserved_set0 : 1;
+		__IO uint32_t wp_erase_skip : 1;
+		__IO uint32_t cid_csd_overwrite : 1;
+		__IO uint32_t obsolete : 2;
+		__IO uint32_t error : 1;
+		__IO uint32_t cc_error : 1;
+		__IO uint32_t device_ecc_failed : 1;
+		__IO uint32_t illegal_command : 1;
+		__IO uint32_t com_crc_error : 1;
+		__IO uint32_t lock_unlock_failed : 1;
+		__IO uint32_t device_is_locked : 1;
+		__IO uint32_t wp_volation : 1;
+		__IO uint32_t erase_param : 1;
+		__IO uint32_t erase_seq_error : 1;
+		__IO uint32_t block_len_error : 1;
+		__IO uint32_t address_misalign : 1;
+		__IO uint32_t address_out_of_range : 1;
+    }bit;
+}MMC_DEV_STAT;
 
 typedef enum{
     MMC_MODE_FREQ,
@@ -858,6 +896,8 @@ typedef enum{
 #define MMC_CC_PLL_ENABLE				0x1
 #define MMC_CC_CLK_GEN_SEL_DIVIDED		0x0
 #define MMC_CC_CLK_GEN_SEL_PROGRAM		0x1
+#define MMC_CC_SW_RST_ALL_DISABLE		0x0
+#define MMC_CC_SW_RST_ALL_ENABLE		0x1
 
 //tout_ctrl register param
 #define MMC_TC_TOUT_CNT_2_13			0x0
@@ -942,6 +982,12 @@ void PrintfMshcBlock(DWC_mshc_block_registers *Ptr);
 													}
 #define MMC_CLEAR_STATUS(ptr)						ClearErrandIntStatus(ptr)
 
+#define MMC_CHECK_LINE_AND_CLEAR_STATUS(ptr)		status = CheckLineInhibit(ptr);\
+													if(status != MMC_SUCCESS){\
+														return status;\
+													}\
+													ClearErrandIntStatus(ptr)
+
 extern __IO DWC_mshc_block_registers* SDIO;
 extern __IO DWC_mshc_block_registers* eMMC;
 extern MtimerParams MmcMtimer;
@@ -950,6 +996,7 @@ extern __IO uint32_t CidTab[4];
 extern __IO uint32_t Resp[4];
 extern __IO uint32_t Rca;
 extern uint8_t FlashSharedBuf[DEF_BLOCK_LEN];
+extern uint8_t EfuseDelayParam;
 
 uint32_t HostControllerSetup(volatile DWC_mshc_block_registers* ptr);
 uint32_t InitInterruptSetting(volatile DWC_mshc_block_registers* ptr);

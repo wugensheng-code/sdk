@@ -24,7 +24,7 @@ void PrintBuf(uint32_t *Buf, uint32_t ByteLength);
 int enc_test_aes(void)
 {
 	uint32_t Status = 0;
-	printf("csu security test...\n");
+	printf("csu security test...\r\n");
 
 	SecureIrqInit();
 	AesDataInit();
@@ -72,11 +72,11 @@ uint32_t CheckBuf(uint32_t *Buf0, uint32_t *Buf1, uint32_t Length)
     /* Check for DMA transfer result */
     for (i = 0; i < (Length / 4); i++) {
         if (Buf0[i] != Buf1[i]) {
-            printf("Data not equal\n");
+            printf("Data not equal\r\n");
             return AL_FAILED;
         }
     }
-    printf("Data equal\n");
+    printf("Data equal\r\n");
     return AL_SUCCESS;
 }
 
@@ -87,10 +87,10 @@ void PrintBuf(uint32_t *Buf, uint32_t ByteLength)
 	for(i = 0; i < (ByteLength / 4); i++) {
 		printf("%08x ", Buf[i]);
 		if((i + 1) % 4 == 0) {
-			printf("\n");
+			printf("\r\n");
 		}
 	}
-	printf("\n");
+	printf("\r\n");
 }
 
 

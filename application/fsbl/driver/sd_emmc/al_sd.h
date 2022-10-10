@@ -5,7 +5,7 @@
 
 #define SD_ACMD6_PARA_1BIT_MODE     0x0
 #define SD_ACMD6_PARA_4BIT_MODE     0x2
-#define SD_CMD8_PARA_2V7_3V6        0x100
+#define SD_CMD8_PARA_2V7_3V6        0x1AA
 
 #define SD_GET_VALID_VOLTAGE_TIMEOUT_VAL      (20000*1000)  //20s
 

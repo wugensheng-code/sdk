@@ -58,6 +58,7 @@ uint32_t Csu_RawEmmcInit(RawEmmcParam_t *Param);
 uint32_t Csu_RawEmmcRead(uint32_t Offset, uint8_t* Dest, uint32_t Length);
 uint32_t Csu_RawEmmcSetMode(uint32_t Mode, uint32_t Data);
 uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo);
+uint32_t AlEmmc_GetCardStatus(void);
 
 
 /*****************************END OF FILE**************************/

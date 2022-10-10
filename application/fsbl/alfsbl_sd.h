@@ -1,8 +1,8 @@
 /*
- * alfsbl_qspi.h
+ * alfsbl_sd.h
  *
- *  Created on: May 18, 2022
- *      Author: qsxu
+ *  Created on: Sept 28, 2022
+ *      Author: tfcao
  */
 
 #ifndef ALFSBL_SD_H_
@@ -15,6 +15,10 @@ extern "C" {
 #include <stdint.h>
 #include "alfsbl_data.h"
 #include "alfsbl_hw.h"
+#include "driver/sd_emmc/FATFS/ff.h"
+
+extern FIL fil;
+extern FATFS fs;
 
 uint32_t AlFsbl_SdInit(void);
 uint32_t AlFsbl_SdCopy(uint32_t SrcAddress, PTRSIZE DestAddress, uint32_t Length);
@@ -26,4 +30,4 @@ uint32_t AlFsbl_SdRelease(void);
 }
 #endif
 
-#endif /* ALFSBL_QSPI_H_ */
+#endif /* ALFSBL_SD_H_ */
