@@ -87,28 +87,46 @@ void RPU2CSUACK_IPC()
 	AlIpc_IntrAck(AL9000_IPC,rpu2csu);
 	__disable_irq();
 }
-void APU2CSU_IRQn_handler(void)
+void APU2CSUREQ_IRQn_handler(void)
 {
-	printf("APU2CSU Intr\r\n");
-	for(int i=0;i<IPC_MAILBOX_CHANNELS;i++)
-	{
-//		printf("Mailbox %d Message:%x\r\n",i,AlIpc_ReadMailbox(AL9000_IPC,i));
-	}
+	printf("APU2CSUREQ Intr\r\n");
 	AlIpc_IntrClear(AL9000_IPC,apu2csu);
-	AlIpc_SetSpinlockStatus(AL9000_IPC,spinlock0);
-	__disable_irq();
+}
+
+void APU2CSUACK_IRQn_handler(void)
+{
+	printf("APU2CSUREQ Intr\r\n");
+	AlIpc_IntrAckClear(AL9000_IPC,apu2csu);
+}
+void CSU2APU_IPC()
+{
+	ECLIC_Register_IRQ(APU2CSU_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,APU2CSUREQ_IRQn_handler);
+	ECLIC_Register_IRQ(APU2CSU_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,APU2CSUACK_IRQn_handler);
+	__enable_irq();
+	printf("enable csu intr\r\n");
+	AlIpc_IntrReq(AL9000_IPC,csu2apu);
+	AlIpc_IntrAck(AL9000_IPC,csu2apu);
+}
+void CSU2APUREQ_IRQn_handler(void)
+{
+	printf("CSU2APUREQ Intr\r\n");
+	AlIpc_IntrClear(AL9000_IPC,csu2apu);
+}
+void CSU2APUACK_IRQn_handler(void)
+{
+	printf("CSU2APUACK Intr\r\n");
+	AlIpc_IntrAckClear(AL9000_IPC,csu2apu);
 }
 void APU2CSU_IPC()
 {
-	ECLIC_Register_IRQ(APU2CSU_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,APU2CSU_IRQn_handler);
+	ECLIC_Register_IRQ(CSU2APU_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,CSU2APUREQ_IRQn_handler);
+	ECLIC_Register_IRQ(CSU2APUACK_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,CSU2APUACK_IRQn_handler);
 	__enable_irq();
-	for(int i=0;i<IPC_MAILBOX_CHANNELS;i++)
-	{
-		AlIpc_WriteMailbox(AL9000_IPC,0xabcdef00 + i,i);
-	}
-	AlIpc_IntrReq(AL9000_IPC,apu2csu);
+	printf("enable apu intr\r\n");
+	// AlIpc_IntrReq(AL9000_IPC,apu2csu);
+	// AlIpc_IntrAck(AL9000_IPC,apu2csu);
+	while(1);
 }
-
 void APU2RPUREQ0_IRQn_handler(void)
 {
 	printf("APUREQ0\r\n");
@@ -153,32 +171,32 @@ void APU2RPUACK3_IRQn_handler(void)
 void RPU2APUREQ0_IRQn_handler(void)
 {
 	printf("RPUREQ0\r\n");
-	AlIpc_IntrClear(AL9000_IPC,rpu2apu_1);
+	AlIpc_IntrClear(AL9000_IPC,rpu2apu_0);
 }
 void RPU2APUACK0_IRQn_handler(void)
 {
 	printf("RPUACK0\r\n");
-	AlIpc_IntrAckClear(AL9000_IPC,rpu2apu_1);
+	AlIpc_IntrAckClear(AL9000_IPC,rpu2apu_0);
 }
 void RPU2APUREQ1_IRQn_handler(void)
 {
 	printf("RPUREQ1\r\n");
-	AlIpc_IntrClear(AL9000_IPC,rpu2apu_2);
+	AlIpc_IntrClear(AL9000_IPC,rpu2apu_1);
 }
 void RPU2APUACK1_IRQn_handler(void)
 {
 	printf("RPUACK1\r\n");
-	AlIpc_IntrAckClear(AL9000_IPC,rpu2apu_2);
+	AlIpc_IntrAckClear(AL9000_IPC,rpu2apu_1);
 }
 void RPU2APUREQ2_IRQn_handler(void)
 {
 	printf("RPUREQ2\r\n");
-	AlIpc_IntrClear(AL9000_IPC,rpu2apu_0);
+	AlIpc_IntrClear(AL9000_IPC,rpu2apu_2);
 }
 void RPU2APUACK2_IRQn_handler(void)
 {
 	printf("RPUACK2\r\n");
-	AlIpc_IntrAckClear(AL9000_IPC,rpu2apu_0);
+	AlIpc_IntrAckClear(AL9000_IPC,rpu2apu_2);
 }
 void RPU2APUREQ3_IRQn_handler(void)
 {
@@ -241,7 +259,7 @@ void APU2RPU_IPC_test()
 	AlIpc_IntrAck(AL9000_IPC,apu2rpu_3);
 	while(1);
 }
-void RPU2APU3_IPC_test()
+void RPU2APU_IPC_test()
 {
 	ECLIC_Register_IRQ(APU2RPU0_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,APU2RPUREQ0_IRQn_handler);
 	ECLIC_Register_IRQ(APU2RPU0ACK_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,APU2RPUACK0_IRQn_handler);
@@ -271,4 +289,50 @@ void RPU2APU3_IPC_test()
 	AlIpc_SetSpinlockStatus(AL9000_IPC,spinlock3);
 
 	while(1);
+}
+void APU_spinlock_test()
+{
+	u32 apu_spinlock_cnt;
+	apu_spinlock_cnt=0;
+	REG32_WRITE(0x0a000004,apu_spinlock_cnt);
+	Xpu_RpuFsbl();
+	printf("apu boot rpu\r\n");
+	while(1)
+	{
+		while(!AlIpc_GetSpinlockStatus(AL9000_IPC,spinlock0));
+		apu_spinlock_cnt ++;
+		REG32_WRITE(0x0a000004,REG32_READ(0x0a000004) + 1);
+		AlIpc_SetSpinlockStatus(AL9000_IPC, spinlock0);
+		if(apu_spinlock_cnt >= SPINLOCK_TEST_NUM)
+			break;
+	}
+	printf("apu_spinlock0_cnt = %d\r\n",apu_spinlock_cnt);
+	while (AlIpc_ReadMailbox(AL9000_IPC,0) != 0xaabbcc00);
+	printf("apu_ddr_cnt = %d\r\n",REG32_READ(0x0a000004));
+	AlIpc_WriteMailbox(AL9000_IPC,0xaabbcc01,0);
+}
+void RPU_spinlock_test()
+{
+	u32 rpu_spinlock_cnt;
+	rpu_spinlock_cnt=0;
+	printf("RPU main test\r\n");
+	REG32_WRITE(0xf8801074,0x000073f0);
+	REG32_WRITE(0xf840e004,0);
+	printf("RPU spinlock test\r\n");
+
+	rpu_spinlock_cnt=0;
+	AlIpc_SetSpinlockStatus(AL9000_IPC, spinlock0);
+	while(1)
+	{
+		while(!AlIpc_GetSpinlockStatus(AL9000_IPC,spinlock0));
+		rpu_spinlock_cnt ++;
+		REG32_WRITE(0x0a000004,REG32_READ(0x0a000004) + 1);
+		AlIpc_SetSpinlockStatus(AL9000_IPC, spinlock0);
+		if(rpu_spinlock_cnt >= SPINLOCK_TEST_NUM)
+			break;
+	}
+	printf("rpu_spinlock0_cnt = %d\r\n",rpu_spinlock_cnt);
+	AlIpc_WriteMailbox(AL9000_IPC,0xaabbcc00,0);
+	while (AlIpc_ReadMailbox(AL9000_IPC,0) != 0xaabbcc01);
+	printf("rpu_ddr_cnt = %d\r\n",REG32_READ(0x0a000004));
 }

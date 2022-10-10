@@ -34,18 +34,18 @@
 #define TOP_S_RPU_RESET_H_ADDR (TOP_S_BASE_ADDR + 0x320ULL)
 #define TOP_S_RPU_RESET_L_ADDR (TOP_S_BASE_ADDR + 0x324ULL)
 #define XPU_SRST_ADDR TOP_S_XPU_BASE_ADDR
-
+#define SPINLOCK_TEST_NUM 30000
 
 typedef union{
 	struct{
-		unsigned apu_core_pulse_srst_n : 2;
-		unsigned Reserved_3_2 : 2;
-		unsigned apu_core_srst_n : 2;
-		unsigned Reserved_7_6 : 2;
-		unsigned rpu_pulse_srst_n : 1;
-		unsigned Reserved_9 : 1;
-		unsigned rpu_srst_n : 1;
-		unsigned Reserved_3_11 : 21;
+		unsigned int apu_core_pulse_srst_n : 2;
+		unsigned int Reserved_3_2 : 2;
+		unsigned int apu_core_srst_n : 2;
+		unsigned int Reserved_7_6 : 2;
+		unsigned int rpu_pulse_srst_n : 1;
+		unsigned int Reserved_9 : 1;
+		unsigned int rpu_srst_n : 1;
+		unsigned int Reserved_3_11 : 21;
 	};
 	unsigned reg;
 }XpuSrstReg_t;
