@@ -7,5 +7,6 @@ SRCDIRS = . FATFS
 INCDIRS = . FATFS
 
 #COMMON_FLAGS := -O2
+COMMON_FLAGS := -DSD1_MIO
 
 include $(NUCLEI_SDK_ROOT)/Build/Makefile.base

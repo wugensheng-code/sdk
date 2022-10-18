@@ -40,8 +40,11 @@
 void Enablepinmux1(void);
 void Enablepinmux1_mode2(void);
 
+#ifdef SD1_MIO
+#define ENABLE_PINMUX1_MODE2
+#else
 #define ENABLE_PINMUX1_MODE1
-//#define ENABLE_PINMUX1_MODE2
+#endif
 
 /**
  * \defgroup  NMSIS_Core_SystemConfig       System Device Configuration

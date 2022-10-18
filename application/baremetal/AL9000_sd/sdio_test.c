@@ -49,7 +49,11 @@ FRESULT res_sd;
 uint8_t flag = 0;
 static unsigned int rca = 0;
 SD_CardInfo SDCardInfo;
+#ifdef SD1_MIO
+static volatile DWC_mshc_block_registers* SDIO = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO1__BASE_ADDR;
+#else
 static volatile DWC_mshc_block_registers* SDIO = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO0__BASE_ADDR;
+#endif
 static volatile DWC_mshc_block_registers* eMMC = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO0__BASE_ADDR;
 uint8_t Buffer_Block_Tx[BLOCK_SIZE], Buffer_Block_Rx[BLOCK_SIZE];
 uint32_t Buffer_MultiBlock_Tx[MULTI_BUFFER_SIZE], Buffer_MultiBlock_Rx[MULTI_BUFFER_SIZE];
@@ -74,12 +78,12 @@ void SD0_IRQn_handler(void)
 {
     ERROR_INT_STAT_R__NORMAL_INT_STAT_R reg;
 
-    reg.D32 = REG_READ((unsigned long long)&(SDIO->ERROR_INT_STAT_R__NORMAL_INT_STAT.D32));
+    reg.D32 = REG_READ((unsigned long)&(SDIO->ERROR_INT_STAT_R__NORMAL_INT_STAT.D32));
 
     if (reg.BIT.CMD_COMPLETE == 1)
     {
         reg.BIT.CMD_COMPLETE = 1;
-        REG_WRITE((unsigned long long)&(SDIO->ERROR_INT_STAT_R__NORMAL_INT_STAT.D32), reg.D32);
+        REG_WRITE((unsigned long)&(SDIO->ERROR_INT_STAT_R__NORMAL_INT_STAT.D32), reg.D32);
         FlagCommandSD = 0;
 
     }
@@ -87,7 +91,7 @@ void SD0_IRQn_handler(void)
     if (reg.BIT.XFER_COMPLETE == 1)
     {
         reg.BIT.XFER_COMPLETE = 1;
-        REG_WRITE((unsigned long long)&(SDIO->ERROR_INT_STAT_R__NORMAL_INT_STAT.D32), reg.D32);
+        REG_WRITE((unsigned long)&(SDIO->ERROR_INT_STAT_R__NORMAL_INT_STAT.D32), reg.D32);
         FlagTransferSD = 0;
     }
 
@@ -105,7 +109,27 @@ void SD0_IRQn_handler(void)
  ******************************************************************************/
 void SD1_IRQn_handler(void)
 {
-    ;
+    printf("SOC_SD1_IRQn_handler\n\r");
+
+    ERROR_INT_STAT_R__NORMAL_INT_STAT_R reg;
+
+    reg.D32 = REG_READ((unsigned long)&(SDIO->ERROR_INT_STAT_R__NORMAL_INT_STAT.D32));
+
+    if (reg.BIT.CMD_COMPLETE == 1)
+    {
+        reg.BIT.CMD_COMPLETE = 1;
+        REG_WRITE((unsigned long)&(SDIO->ERROR_INT_STAT_R__NORMAL_INT_STAT.D32), reg.D32);
+        FlagCommandSD = 0;
+
+    }
+
+    if (reg.BIT.XFER_COMPLETE == 1)
+    {
+        reg.BIT.XFER_COMPLETE = 1;
+        REG_WRITE((unsigned long)&(SDIO->ERROR_INT_STAT_R__NORMAL_INT_STAT.D32), reg.D32);
+        FlagTransferSD = 0;
+    }
+
 }
 
 void wait_command_complete_interrupt_sd(volatile DWC_mshc_block_registers* ptr)
@@ -132,12 +156,12 @@ void wait_transfer_complete_interrupt_sd(volatile DWC_mshc_block_registers* ptr)
     FlagTransferSD = 1;
 }
 
-unsigned int reg_read(unsigned long long reg_address)
+unsigned int reg_read(unsigned long reg_address)
 {
     return *((volatile unsigned int *)reg_address);
 }
 
-void reg_write(unsigned long long reg_address, unsigned reg_wdata)
+void reg_write(unsigned long reg_address, unsigned reg_wdata)
 {
     *((volatile unsigned *)reg_address) = reg_wdata;
 }
@@ -309,10 +333,10 @@ u32 HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, int freq)
  ******************************************************************************/
 u32 InitInterruptSetting(volatile DWC_mshc_block_registers* ptr)
 {
-    ptr->ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN.D32 = 0x000002FF;
-    ptr->ERROR_INT_SIGNAL_EN_R__NORMAL_INT_SIGNAL_EN.D32 = 0x000000FF;
-    ptr->ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN.D32 = 0x00FB02FF;
-    ptr->HOST_CTRL2_R__AUTO_CMD_STAT.D32 = 0x00000000;
+    REG_WRITE((unsigned long)&(ptr->ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN.D32), 0xFFFFFFFF);
+    REG_WRITE((unsigned long)&(ptr->ERROR_INT_SIGNAL_EN_R__NORMAL_INT_SIGNAL_EN.D32), 0xFFFFFFFF);
+    REG_WRITE((unsigned long)&(ptr->ERROR_INT_STAT_EN_R__NORMAL_INT_STAT_EN.D32), 0xFFFFFFFF);
+    REG_WRITE((unsigned long)&(ptr->HOST_CTRL2_R__AUTO_CMD_STAT.D32), 0x00000000);
 
     SDRegWrite(AT_CTRL_R, 0x0FFF0000);
     SDRegWrite(MBIU_CTRL_R, 0x01010004);

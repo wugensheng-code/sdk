@@ -147,7 +147,7 @@ typedef enum IRQn {
 	SOC_INT75_IRQn           = 75,                /*!< Device Interrupt */
 	SOC_INT76_IRQn           = 76,                /*!< Device Interrupt */
 	XEC0_IRQn                = 77,                /*!< Device Interrupt */
-		XEC1_IRQn                = 78,                /*!< Device Interrupt */
+	XEC1_IRQn                = 78,                /*!< Device Interrupt */
 	SOC_INT79_IRQn           = 79,                /*!< Device Interrupt */
 	SOC_INT80_IRQn           = 80,                /*!< Device Interrupt */
 	SOC_INT81_IRQn           = 81,                /*!< Device Interrupt */

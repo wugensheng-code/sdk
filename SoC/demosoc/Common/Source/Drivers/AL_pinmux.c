@@ -102,17 +102,14 @@ void Enablepinmux1_mode2(void)
 	*(uint32_t *)(0xf880306cu) =0x3;
 	*(uint32_t *)(0xf8803410u) =0x1;
 
-    *(uint32_t *)(0xf88030a0u) =0xb;      //SDIO0 mio40-49
-    *(uint32_t *)(0xf88030a4u) =0xb;
-    *(uint32_t *)(0xf88030a8u) =0xb;
-    *(uint32_t *)(0xf88030acu) =0xb;
-    *(uint32_t *)(0xf88030b0u) =0xb;
-    *(uint32_t *)(0xf88030b4u) =0xb;
-    *(uint32_t *)(0xf88030b8u) =0xb;
-    *(uint32_t *)(0xf88030bcu) =0xb;
-    *(uint32_t *)(0xf88030c0u) =0xb;
-    *(uint32_t *)(0xf88030c4u) =0xb;   
-    *(uint32_t *)(0xf880342cu) =0x1;     //emio_sel11
+    *(uint32_t *)(0xf88030b8u) =0xa;
+    *(uint32_t *)(0xf88030bcu) =0xa;
+    *(uint32_t *)(0xf88030c0u) =0xa;
+    *(uint32_t *)(0xf88030c4u) =0xa;   
+    *(uint32_t *)(0xf88030c8u) =0xa; 
+    *(uint32_t *)(0xf88030ccu) =0xa; 
+
+    *(uint32_t *)(0xf8803430u) =0x1;     //emio_sel12
 	
 	*(uint32_t *)(0xf8803040u) =0x7;
 	*(uint32_t *)(0xf8803044u) =0x7;

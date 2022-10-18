@@ -9,12 +9,12 @@
 #define     __IO    volatile            
 
 #define REG_READ(reg_address) reg_read(reg_address)
-extern unsigned reg_read(unsigned long long reg_address);
+extern unsigned reg_read(unsigned long reg_address);
 #define REG_WRITE(reg_address, reg_wdata) reg_write(reg_address, reg_wdata)
 
 #define SDRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO1__BASE_ADDR+reg_address), reg_wdata)
 #define EMMCRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO0__BASE_ADDR+reg_address), reg_wdata)
-extern void reg_write(unsigned long long reg_address, unsigned reg_wdata);
+extern void reg_write(unsigned long reg_address, unsigned reg_wdata);
 
 typedef unsigned char      uint8_t;
 typedef unsigned short     uint16_t;
