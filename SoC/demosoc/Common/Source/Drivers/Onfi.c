@@ -421,6 +421,8 @@ uint8_t Nand_ProgramPage_EOob(uint32_t Page, uint32_t Column, uint8_t *Buf, Nand
 	return SUCCESS;
 }
 
+static uint8_t __attribute__((aligned(4))) SpareData[512] = {0xff,0xff};
+
 
 /* Variable Definitions */
 /* ECC data position in the spare data area  for different page sizes */
@@ -434,7 +436,7 @@ uint8_t Nand_ProgramPage_HwEcc(uint32_t Page, uint32_t Column, uint8_t *Buf, Nan
 	uint8_t eccData[12]={0};
 	uint32_t *dataOffsetPtr;
 	uint8_t *TempBuf=Buf;
-
+	uint8_t *TempSpareBuf=SpareData;
 
 	/* Write dataBytesPerPage*/
 	SmcWriteBuf(ONFI_CMD_PROGRAM_PAGE2, ONFI_CMD_PROGRAM_PAGE_END_TIMING, Buf, nandSize->dataBytesPerPage-ONFI_AXI_DATA_WIDTH, NO_CLEAR_CS, NO_ECC_LAST);
@@ -472,13 +474,13 @@ uint8_t Nand_ProgramPage_HwEcc(uint32_t Page, uint32_t Column, uint8_t *Buf, Nan
 	Nand_HwCalculateEcc(eccData, eccDataNums);
 
 	for(i = 0; i < eccDataNums; i++) {
-		TempBuf[dataOffsetPtr[i]+nandSize->dataBytesPerPage] = (~eccData[i]);
+		TempSpareBuf[dataOffsetPtr[i]] = (~eccData[i]);
 	}
 
-	SmcWriteBuf(ONFI_CMD_PROGRAM_PAGE2, ONFI_CMD_PROGRAM_PAGE_END_TIMING, Buf, nandSize->spareBytesPerPage-ONFI_AXI_DATA_WIDTH, NO_CLEAR_CS, NO_ECC_LAST);
-	Buf += (nandSize->spareBytesPerPage-ONFI_AXI_DATA_WIDTH);
+	SmcWriteBuf(ONFI_CMD_PROGRAM_PAGE2, ONFI_CMD_PROGRAM_PAGE_END_TIMING, TempSpareBuf, nandSize->spareBytesPerPage-ONFI_AXI_DATA_WIDTH, NO_CLEAR_CS, NO_ECC_LAST);
+	TempSpareBuf += (nandSize->spareBytesPerPage-ONFI_AXI_DATA_WIDTH);
 
-	SmcWriteBuf( ONFI_CMD_PROGRAM_PAGE2, ONFI_CMD_PROGRAM_PAGE_END_TIMING, Buf, ONFI_AXI_DATA_WIDTH, CLEAR_CS, NO_ECC_LAST);
+	SmcWriteBuf( ONFI_CMD_PROGRAM_PAGE2, ONFI_CMD_PROGRAM_PAGE_END_TIMING, TempSpareBuf, ONFI_AXI_DATA_WIDTH, CLEAR_CS, NO_ECC_LAST);
 
 	while(Nand_IsBusy() == NAND_BUSY);
 

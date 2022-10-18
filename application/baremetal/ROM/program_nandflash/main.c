@@ -16,7 +16,7 @@
 
 
 #define PAGE 		(READ_OFFSET/nand.dataBytesPerPage)
-#define END_PAGE 	((READ_SIZE+READ_OFFSET)/nand.dataBytesPerPage)
+#define END_PAGE 	((READ_SIZE+READ_OFFSET-1)/nand.dataBytesPerPage)
 
 
 #define BLOCK 		(PAGE/nand.pagesPerBlock)

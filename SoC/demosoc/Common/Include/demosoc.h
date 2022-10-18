@@ -112,8 +112,8 @@ typedef enum IRQn {
 	XADC_IRQn            	 = 43,                /*!< Device Interrupt */
     SOC_INT44_IRQn           = 44,                /*!< Device Interrupt */
 	WDT_IRQn	     		 = 45,                /*!< Device Interrupt */
-    SOC_INT46_IRQn           = 46,                /*!< Device Interrupt */
-    SOC_INT47_IRQn           = 47,                /*!< Device Interrupt */
+	WDT1_IRQn           	 = 46,                /*!< Device Interrupt */
+	WDT2_IRQn          		 = 47,                /*!< Device Interrupt */
     SOC_INT48_IRQn           = 48,                /*!< Device Interrupt */
     SOC_INT49_IRQn           = 49,                /*!< Device Interrupt */
     SOC_INT50_IRQn           = 50,                /*!< Device Interrupt */
@@ -1799,7 +1799,10 @@ typedef struct{
 //#define DEMOSOC_PERIPH_BASE     (0x10000000UL)//(0x10000000UL)      /*!< (Peripheral) Base Address */
 #define PERIPH_BASE     		(0xF8000000UL)					    /*!< (Peripheral) Base Address */
 
-#define WDT_BASE                  	(0xF8410000)
+#define WDT_BASE                  	(0xF8410000UL)
+#define WDT1_BASE                  	(0xF8410100UL)
+#define WDT2_BASE                  	(0xF8410200UL)
+
 #define SMC_BASE                  	(0xF841A000UL)
 
 #define XADC_BASE                  	(0xF840B000UL)/* Peripheral memory map */
@@ -1880,6 +1883,8 @@ typedef struct{
 
 #define UART0                   ((UART_TypeDef *) UART0_BASE)
 #define WDT                   	((WDT_TypeDef *)  WDT_BASE)
+#define WDT1                   	((WDT_TypeDef *)  WDT1_BASE)
+#define WDT2                   	((WDT_TypeDef *)  WDT2_BASE)
 #define XADC                   	((XADC_TypeDef *)  XADC_BASE)
 
 #define PWM0                    ((PWM_TypeDef *) PWM0_BASE)

@@ -8,30 +8,19 @@
 #define TOP_CFG_CTRL_WDT_BASEADDR (0XF8800000UL+0X168UL)
 #define WDT_PAUSE_REG ((volatile uint32_t *)TOP_CFG_CTRL_WDT_BASEADDR)
 
-#define PMU_ERR_HW_EN0_SET 	(0XF8806000)
+#define PMU_ERR_HW_EN0_SET 	(0XF8806000UL)
 #define PMU_SEL_WDT ((volatile uint32_t *)PMU_ERR_HW_EN0_SET)
 
-#define PMU_INT_EN0_SET 	(0XF8806010)
+#define PMU_INT_EN0_SET 	(0XF8806010UL)
 #define PMU_EN_WDT ((volatile uint32_t *)PMU_INT_EN0_SET)
 
-#define PMU_CLR_WDT_INTR 	(0XF8806030)
+#define PMU_CLR_WDT_INTR 	(0XF8806030UL)
 #define PMU_CLR_WDT ((volatile uint32_t *)PMU_CLR_WDT_INTR)
 
-#define PMU_SW_PMU_SHACK 	(0XF8806080)
+#define PMU_SW_PMU_SHACK 	(0XF8806080UL)
 #define PMU_SHACK ((volatile uint32_t *)PMU_SW_PMU_SHACK)
 
-/* case 1.1
-void wdt_handler(void)
-{
-	uint32_t read_temp=0;
 
-	if(GET_BIT(WDT->STAT,0) == 0x1)
-	{
-		read_temp = WDT->EOI;	//Can clear by reading WDT_EOI
-		printf("l\r\n");
-	}
-}
-*/
 
 
 /* case 1.2 */
@@ -58,22 +47,22 @@ void wdt_handler(void)
 void pmu_handler(void)
 {
 	printf("pmu\r\n");
-	*PMU_CLR_WDT  = 0x00000100;
+	*PMU_CLR_WDT  = 1 << 8;
 }
 
-/*
+
 int main(void)
 {
 	WDT_InitTypeDef WDT_InitStruct;
 
-	if(*TEMP_DDR_1 > 0xF){
-		*TEMP_DDR_1 = 0;
-		printf("temp ddr data is %d\r\n", *TEMP_DDR_1);
-	}
-	else{
-		*TEMP_DDR_1 = *TEMP_DDR_1 + 1;
-		printf("temp ddr data is %d\r\n", *TEMP_DDR_1);
-	}
+//	if(*TEMP_DDR_1 > 0xF){
+//		*TEMP_DDR_1 = 0;
+//		printf("temp ddr data is %d\r\n", *TEMP_DDR_1);
+//	}
+//	else{
+//		*TEMP_DDR_1 = *TEMP_DDR_1 + 1;
+//		printf("temp ddr data is %d\r\n", *TEMP_DDR_1);
+//	}
 	printf("S\r\n");
 
 	ECLIC_Register_IRQ(WDT_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, wdt_handler);
@@ -89,38 +78,6 @@ int main(void)
 
 	printf("E\r\n");
 	while(1);
-
-	return 0;
-}
-
- */
-
-/* case 2 */
-int main(void)
-{
-
-	WDT_InitTypeDef WDT_InitStruct;
-	uint32_t read_temp=0;
-
-	printf("S\r\n");
-
-
-	WDT_InitStruct.WDT_PuaseLength	= WDT_CR_RPL_2;
-	WDT_InitStruct.WDT_Mode		= WDT_CR_RMOD_RESET;
-	WDT_InitStruct.WDT_TimeOutValue	= WDT_TORR_TOP_167M;
-
-
-	AL9000_wdt_init(WDT,&WDT_InitStruct);
-
-	printf("E\r\n");
-	while(1)
-	{
-		if(WDT->CCVR <= 55)
-		{
-			WDT->CRR |= WDT_CCVR_VALUE;	//Can clear by reading WDT_EOI
-			printf("C\r\n");
-		}
-	}
 
 	return 0;
 }
@@ -142,7 +99,7 @@ int AL9000_wdt_init(WDT_TypeDef *wdt,WDT_InitTypeDef *WDT_InitStruct)
 	}
 	//printf("i");
 
-	volatile unsigned int read_temp = WDT->EOI;
+	volatile unsigned int read_temp = wdt->EOI;
 
 	wdt->TORR &= TORR_CLR_MASK;
 
@@ -158,7 +115,7 @@ int AL9000_wdt_init(WDT_TypeDef *wdt,WDT_InitTypeDef *WDT_InitStruct)
 
 	*PMU_SEL_WDT = 1 << 8;
 	*PMU_EN_WDT = 1 << 8;
-	*PMU_SHACK  = 0xfffffeff;
+	*PMU_SHACK  = 1 << 2;
 
 	(*WDT_PAUSE_REG) &= 0xfffffffe;
 }

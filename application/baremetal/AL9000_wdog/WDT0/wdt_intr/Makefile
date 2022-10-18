@@ -1,6 +1,6 @@
 TARGET = AL9000_wdt
 
-NUCLEI_SDK_ROOT = ../../..
+NUCLEI_SDK_ROOT = ../../../../..
 
 SRCDIRS = . 
 
