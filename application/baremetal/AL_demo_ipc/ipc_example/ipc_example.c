@@ -11,7 +11,6 @@ void CSU2RPU_IRQn_handler(void)
 	}
 	AlIpc_IntrClear(AL9000_IPC,csu2rpu);
 	AlIpc_SetSpinlockStatus(AL9000_IPC,spinlock0);
-	__disable_irq();
 }
 void CSU2RPU_IPC()
 {
@@ -32,7 +31,6 @@ void RPU2CSU_IRQn_handler(void)
 	}
 	AlIpc_IntrClear(AL9000_IPC,rpu2csu);
 	AlIpc_SetSpinlockStatus(AL9000_IPC,spinlock0);
-	__disable_irq();
 }
 void RPU2CSU_IPC()
 {
@@ -53,7 +51,6 @@ void CSU2RPUACK_IRQn_handler(void)
 	}
 	AlIpc_IntrAckClear(AL9000_IPC,csu2rpu);
 	AlIpc_SetSpinlockStatus(AL9000_IPC,spinlock0);
-	__disable_irq();
 }
 void CSU2RPUACK_IPC()
 {
@@ -64,7 +61,6 @@ void CSU2RPUACK_IPC()
 		AlIpc_WriteMailbox(AL9000_IPC,0xabcdef00 + i,i);
 	}
 	AlIpc_IntrAck(AL9000_IPC,csu2rpu);
-	__disable_irq();
 }
 void RPU2CSUACK_IRQn_handler(void)
 {
@@ -87,29 +83,31 @@ void RPU2CSUACK_IPC()
 	AlIpc_IntrAck(AL9000_IPC,rpu2csu);
 	__disable_irq();
 }
-void APU2CSUREQ_IRQn_handler(void)
+void APU2CSU_IRQn_handler(void)
 {
-	printf("APU2CSUREQ Intr\r\n");
+	printf("APU2CSU Intr\r\n");
+	for(int i=0;i<IPC_MAILBOX_CHANNELS;i++)
+	{
+//		printf("Mailbox %d Message:%x\r\n",i,AlIpc_ReadMailbox(AL9000_IPC,i));
+	}
 	AlIpc_IntrClear(AL9000_IPC,apu2csu);
 }
-
 void APU2CSUACK_IRQn_handler(void)
 {
-	printf("APU2CSUREQ Intr\r\n");
+	printf("APU2CSUACK Intr\r\n");
 	AlIpc_IntrAckClear(AL9000_IPC,apu2csu);
 }
-void CSU2APU_IPC()
+void APU2CSU_IPC()
 {
-	ECLIC_Register_IRQ(APU2CSU_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,APU2CSUREQ_IRQn_handler);
-	ECLIC_Register_IRQ(APU2CSU_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,APU2CSUACK_IRQn_handler);
+	ECLIC_Register_IRQ(APU2CSU_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,APU2CSU_IRQn_handler);
+	ECLIC_Register_IRQ(APU2CSUACK_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,APU2CSUACK_IRQn_handler);
 	__enable_irq();
-	printf("enable csu intr\r\n");
-	AlIpc_IntrReq(AL9000_IPC,csu2apu);
-	AlIpc_IntrAck(AL9000_IPC,csu2apu);
+	AlIpc_IntrReq(AL9000_IPC,apu2csu);
+	AlIpc_IntrAck(AL9000_IPC,apu2csu);
 }
-void CSU2APUREQ_IRQn_handler(void)
+void CSU2APU_IRQn_handler(void)
 {
-	printf("CSU2APUREQ Intr\r\n");
+	printf("CSU2APU Intr\r\n");
 	AlIpc_IntrClear(AL9000_IPC,csu2apu);
 }
 void CSU2APUACK_IRQn_handler(void)
@@ -117,15 +115,13 @@ void CSU2APUACK_IRQn_handler(void)
 	printf("CSU2APUACK Intr\r\n");
 	AlIpc_IntrAckClear(AL9000_IPC,csu2apu);
 }
-void APU2CSU_IPC()
+void CSU2APU_IPC()
 {
-	ECLIC_Register_IRQ(CSU2APU_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,CSU2APUREQ_IRQn_handler);
+	ECLIC_Register_IRQ(CSU2APU_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,CSU2APU_IRQn_handler);
 	ECLIC_Register_IRQ(CSU2APUACK_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,CSU2APUACK_IRQn_handler);
 	__enable_irq();
-	printf("enable apu intr\r\n");
-	// AlIpc_IntrReq(AL9000_IPC,apu2csu);
-	// AlIpc_IntrAck(AL9000_IPC,apu2csu);
-	while(1);
+	AlIpc_IntrReq(AL9000_IPC,csu2apu);
+	AlIpc_IntrAck(AL9000_IPC,csu2apu);
 }
 void APU2RPUREQ0_IRQn_handler(void)
 {
