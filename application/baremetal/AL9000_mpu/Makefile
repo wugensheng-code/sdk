@@ -1,13 +1,15 @@
 TARGET = AL9000_mpu
 
-
 NUCLEI_SDK_ROOT = ../../..
 
-SRCDIRS = . 
+SRCDIRS = . dmac_axi_driver npujpu_st
 
-INCDIRS = . 
-
+INCDIRS = . dmac_axi_driver npujpu_st
 
 #COMMON_FLAGS := -O2
+#COMMON_FLAGS := -DSUPPORT_NONSECURE 
+#COMMON_FLAGS := -DSWITCH_TO_EL0_FROM_EL3 
+#COMMON_FLAGS := -DSIMULATIONWAVE
+#COMMON_FLAGS := -DJUMP_PANIC
 
 include $(NUCLEI_SDK_ROOT)/Build/Makefile.base

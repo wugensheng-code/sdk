@@ -20,9 +20,12 @@
 static void panic(void)
 {
 	error_print("warning: system hang here, waiting for exiting\n");
-
-	while (1)
-		;
+#ifdef JUMP_PANIC
+    asm volatile("mrs x0, elr_el1; add x0, x0, #0x04; msr elr_el1, x0" ::: "x0");
+#else
+    while (1)
+        ;
+#endif
 }
 
 /**

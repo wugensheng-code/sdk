@@ -1640,7 +1640,7 @@ typedef struct{
 	__IOM  uint32_t MPU_EAR_REGION32;
 	__IOM  uint32_t MPU_GROUPID_REGION32;
 
-}MPU_TypeDef;
+}AlMpu;
 
 typedef struct{
 	__IOM  uint32_t Mailbox_0; 
@@ -1914,13 +1914,13 @@ typedef struct{
 #define I2C1                     	  ((I2C_TypeDef *) I2C1_BASE)
 #define AL9000_TTC0		((TTC_AL9000_TypeDef *) AL9000_TTC0_BASE)
 #define AL9000_TTC1		((TTC_AL9000_TypeDef *) AL9000_TTC1_BASE)
-#define AL_MPU_DDRS0			((MPU_TypeDef *) mpu_ddrs0)
-#define AL_MPU_DDRS1			((MPU_TypeDef *) mpu_ddrs1)
-#define AL_MPU_HPM0			((MPU_TypeDef *) mpu_hpm0)
-#define AL_MPU_HPM1			((MPU_TypeDef *) mpu_hpm1)
-#define AL_MPU_OCMS2			((MPU_TypeDef *) mpu_ocms2)
-#define AL_MPU_NPU			((MPU_TypeDef *) mpu_npu)
-#define AL_MPU_APU			((MPU_TypeDef *) mpu_apu)
+#define AL_MPU_DDRS0			((AlMpu *) mpu_ddrs0)
+#define AL_MPU_DDRS1			((AlMpu *) mpu_ddrs1)
+#define AL_MPU_HPM0			((AlMpu *) mpu_hpm0)
+#define AL_MPU_HPM1			((AlMpu *) mpu_hpm1)
+#define AL_MPU_OCMS2			((AlMpu *) mpu_ocms2)
+#define AL_MPU_NPU			((AlMpu *) mpu_npu)
+#define AL_MPU_APU			((AlMpu *) mpu_apu)
 // Helper functions
 #define _REG8(p, i)             (*(volatile uint8_t *) ((p) + (i)))
 #define _REG32(p, i)            (*(volatile uint32_t *) ((p) + (i)))
@@ -1972,7 +1972,9 @@ void print_string(uint8_t *str);
 #define BIT(x)                       ((uint32_t)((uint32_t)0x01U<<(x)))
 #define BITS(start, end)             ((0xFFFFFFFFUL << (start)) & (0xFFFFFFFFUL >> (31U - (uint32_t)(end))))
 #define GET_BITS(regval, start, end) (((regval) & BITS((start),(end))) >> (start))
-#define GET_BIT(regval, x) 	     ((((regval) & BIT(x)) >> (x)))
+#define GET_BIT(regval, x) 	         ((((regval) & BIT(x)) >> (x)))
+#define	SET_BIT(x, bit)	             ((x) |= (1 << (bit)))
+#define	CLR_BIT(x, bit)	             ((x) &= ~(1 << (bit)))
 
 #define XEC0_REG(offset)                 _REG32(XEC0_BASE, offset)
 #define XEC0_NCFG_REG(offset)            _REG32(XEC0_NCFG_BASE, offset)

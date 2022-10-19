@@ -43,6 +43,10 @@ vectors:
 	.align	7
 	/* store lr(x30) before entry exception */
 	stp	x29, x30, [sp, #-16]!
+    mrs x29, elr_el1
+    add x29, x29, 4
+    msr elr_el1, x29
+
 	bl	_exception_entry
 	bl	do_sync_handle
 	b	exception_exit

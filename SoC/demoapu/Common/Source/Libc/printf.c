@@ -193,12 +193,15 @@ loop:
 int printf(const char *fmt, ...)
 {
 	int count;
+#ifdef SIMULATIONWAVE
+    count = 0;
+#else
 	va_list va;
 
 	va_start(va, fmt);
 	count = vprintf(fmt, va);
 	va_end(va);
-
+#endif
 	return count;
 }*/
 
