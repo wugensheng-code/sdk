@@ -68,7 +68,10 @@ void generic_timer_init(void)
 	// printf("cntp freq:0x%x\r\n", generic_timer_rate);
 	// generic_timer_rate /= HZ;
 
+	//0819 and previous version bitfile
 	writel_relaxed(0x1,(void *)0xf8e05000UL);
+	//after 0819 version bitfile
+	writel_relaxed(0x1,(void *)0xf8804000UL);
 
 	generic_timer_enable();
 	generic_timer_reset(generic_timer_rate);
