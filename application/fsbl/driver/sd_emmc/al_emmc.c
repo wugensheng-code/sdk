@@ -448,8 +448,8 @@ uint32_t Csu_RawEmmcRead(uint32_t Offset, uint8_t* Dest, uint32_t Length)
     uint8_t *pdestaddr = Dest;
     uint32_t blocksize = EmmcCardInfo.CardBlockSize;       //block size
     uint32_t startblock = Offset / blocksize;
-    uint32_t endpoint = Offset + Length;
-    uint32_t endblock = endpoint / blocksize + ((endpoint % blocksize)? 1 : 0);
+    uint32_t endpoint = Offset + Length - 1;
+    uint32_t endblock = endpoint / blocksize;
     uint32_t firstblockoffset = Offset % blocksize;
     uint32_t firstblockstore = blocksize - firstblockoffset;
     uint32_t firstblockbytes = (firstblockstore > Length)? Length : firstblockstore;
@@ -458,7 +458,7 @@ uint32_t Csu_RawEmmcRead(uint32_t Offset, uint8_t* Dest, uint32_t Length)
     MMC_PRINT("offset = %d, Length = %d\r\n", Offset, Length);
     MMC_PRINT("startblock: %d\tfirstblockoffset: %d\tfirstblockbytes: %d\r\n", startblock, firstblockoffset, firstblockbytes);
     MMC_PRINT("endblock: %d\tlastblockbytes: %d\t\r\n", endblock, lastblockbytes);
-    for(uint32_t i = startblock; i < endblock; i++){
+    for(uint32_t i = startblock; i <= endblock; i++){
         if(i == startblock){
             status = AlEmmc_ReadSingleBlock(FlashSharedBuf, i, blocksize);
             if(status != MMC_SUCCESS){
@@ -466,7 +466,7 @@ uint32_t Csu_RawEmmcRead(uint32_t Offset, uint8_t* Dest, uint32_t Length)
             }
             memcpy(pdestaddr, &FlashSharedBuf[firstblockoffset], firstblockbytes);
             pdestaddr += firstblockbytes;
-        }else if(i == endblock - 1){
+        }else if(i == endblock){
             status = AlEmmc_ReadSingleBlock(FlashSharedBuf, i, blocksize);
             if(status != MMC_SUCCESS){
                 return status;
