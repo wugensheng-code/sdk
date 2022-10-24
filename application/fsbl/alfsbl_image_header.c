@@ -71,10 +71,12 @@ uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 	/// read partition headers
 	PartitionNum = FsblInstancePtr->ImageHeader.BootHeader.PartitionNum;
 	PartitionHeaderOffset = FsblInstancePtr->ImageHeader.BootHeader.FirstPartiHdrOffset;
+	
 	Status = FsblInstancePtr->DeviceOps.DeviceCopy(
 			     ImageOffsetAddress+PartitionHeaderOffset,
 				 (PTRSIZE)(&(FsblInstancePtr->ImageHeader.PartitionHeader[0])),
 				 ALIH_PH_SIZE * PartitionNum);
+	
 	if (ALFSBL_SUCCESS != Status) {
 		printf("partition headers copy failed...\r\n");
 		goto END;

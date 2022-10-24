@@ -4,12 +4,18 @@
 #include "string.h"
 
 
-#ifndef USE_CSU
+#define USE_FSBL
+
+#if defined USE_FSBL
+extern uint8_t FlashSharedBuf[4096];
+#elif defined USE_CSU
+extern uint8_t FlashSharedBuf[4096];
+#else
 uint8_t __attribute__((aligned(4))) FlashSharedBuf[4096] = {0};
 #endif
 
-
-#define csu_printf do{}while(0);
+// #define csu_printf do{}while(0);
+#define csu_printf printf
 
 static MtimerParams NandTimer;
 
@@ -137,29 +143,28 @@ static uint8_t Onfi_CmdReadParameter(Nand_TypeDef *nand)
 	SmcSendCommand(ONFI_CMD_READ_PARAMETER1, ONFI_CMD_READ_PARAMETER2, ONFI_CMD_READ_PARAMETER_CYCLES,
 			ONFI_CMD_READ_PARAMETER_END_TIMING, ONFI_PAGE_NOT_VALID, 0x00);
 
-	Mtimer_Start(&NandTimer, 500*1000);
+	// Mtimer_Start(&NandTimer, 500*1000);
 
-	/* Cheak Nand Status */
-	do
-	{
-		Status = Onfi_CmdReadStatus();
-		if(Mtimer_TimerOut(&NandTimer) == 1)
-		{
-			return SmcParaBusyStatusErr;
-		}
-	}
-	while(!(Status & ONFI_STATUS_RDY));
+	// /* Cheak Nand Status */
+	// do
+	// {
+	// 	Status = Onfi_CmdReadStatus();
+	// 	if(Mtimer_TimerOut(&NandTimer) == 1)
+	// 	{
+	// 		return SmcParaBusyStatusErr;
+	// 	}
+	// }
+	// while(!(Status & ONFI_STATUS_RDY));
 
+	// /* re-issue a command value of 00h to start reading data */
+	// cmdPhaseAddr  = NAND_BASE 					|
+	// 		(0 	<< NAND_ADDR_CYCLES_SHIFT)		|
+	// 		(0 	<< NAND_END_CMD_VALID_SHIFT)	|
+	// 		NAND_COMMAND_PHASE_FLAG				|
+	// 		(0 	<< NAND_END_CMD_SHIFT)			|
+	// 		(0 	<< NAND_ECC_LAST_SHIFT);
 
-	/* re-issue a command value of 00h to start reading data */
-	cmdPhaseAddr  = NAND_BASE 					|
-			(0 	<< NAND_ADDR_CYCLES_SHIFT)		|
-			(0 	<< NAND_END_CMD_VALID_SHIFT)	|
-			NAND_COMMAND_PHASE_FLAG				|
-			(0 	<< NAND_END_CMD_SHIFT)			|
-			(0 	<< NAND_ECC_LAST_SHIFT);
-
-	SMC_WriteReg(cmdPhaseAddr, 0x00);
+	// SMC_WriteReg(cmdPhaseAddr, 0x00);
 
 	for(Index = 0;Index < 3;Index++)
 	{
@@ -173,7 +178,7 @@ static uint8_t Onfi_CmdReadParameter(Nand_TypeDef *nand)
 			break;
 		}
 	}
-
+	
 	if(Index == 3)
 	{
 		return SmcCrcErr;
@@ -382,6 +387,7 @@ static uint8_t Nand_EccHwInit(Nand_TypeDef *nand)
 {
 	uint32_t ecc1Config;
 
+	
 	/* Set SMC_REG_ECC1_MEMCMD0 Reg*/
 	SMC_WriteReg((SMC_BASE + SMC_REG_ECC1_MEMCMD0),
 			(SMC_EccMemCmd0_InitWriteCmd| SMC_EccMemCmd0_InitReadCmd|
@@ -391,7 +397,7 @@ static uint8_t Nand_EccHwInit(Nand_TypeDef *nand)
 	SMC_WriteReg((SMC_BASE + SMC_REG_ECC1_MEMCMD1),
 			(SMC_EccMemCmd1_ColChangeWRCmd| SMC_EccMemCmd1_ColChangeRDCmd|
 				SMC_EccMemCmd1_ColChangeEndCmd| SMC_EccMemCmd1_UseEndCmd));
-
+	
 	/* Check Ecc Busy */
 	//while(SMC_ReadReg((void volatile *)(SMC_BASE + SMC_REG_ECC1_STATUS)) && SMC_EccStatus_EccBusy);
 
@@ -842,6 +848,13 @@ uint32_t Csu_NandInit(Nand_TypeDef *nand)
 	uint8_t Status = 0;
 	int extid = 0;
 
+	// Status = Nand_EccHwDisable();
+		
+	// if(Status != SmcSuccess)
+	// {
+	// 	return Status;
+	// }
+
 	Mtimer_Init(&NandTimer);
 
 	/* Reset NandFlash */
@@ -850,7 +863,7 @@ uint32_t Csu_NandInit(Nand_TypeDef *nand)
 	{
 		return Status;
 	}
-
+	
 	/* Read NandFlash ID */
 	Onfi_CmdReadId(0x00, &(nand->deviceId[0]), 5, nand);
 
@@ -860,8 +873,6 @@ uint32_t Csu_NandInit(Nand_TypeDef *nand)
 	csu_printf("%x ",nand->deviceId[2]);
 	csu_printf("%x ",nand->deviceId[3]);
 	csu_printf("%x\r\n",nand->deviceId[4]);
-
-	
 
 	/* Read NandFlash Parameter */
 	if(nand->deviceId[0] != NAND_MFR_SAMSUNG)
@@ -911,7 +922,7 @@ uint32_t Csu_NandInit(Nand_TypeDef *nand)
 	}
 
 	csu_printf("ecc:%d\r\n",nand->eccNum);
-
+	
 	/* ecc Num = 1.Use SMC IP ECC */
 	if(nand->eccNum == 1)
 	{
@@ -975,7 +986,8 @@ uint32_t Csu_NandRead(uint32_t offset, uint8_t* dest, uint32_t length, Nand_Type
 	Page = (uint32_t)(offset/nand->dataBytesPerPage);
 
 	Status = Nand_ReadSpareBytes(Page/nand->pagesPerBlock, 0, nand);
-
+	// printf("Nand_ReadSpareBytes\r\n");
+	// printf("offset:%d length:%d\r\n",offset,length);
 	if(Status != SmcSuccess)
 	{
 		csu_printf("Spare Faild\r\n");

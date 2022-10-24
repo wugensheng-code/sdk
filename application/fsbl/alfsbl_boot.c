@@ -6,13 +6,16 @@
  */
 #include <stdint.h>
 #include <stdio.h>
-
+#include "alfsbl_emmc.h"
+#include "alfsbl_emmc_raw.h"
+#include "alfsbl_nand.h"
 #include "alfsbl_boot.h"
 #include "alfsbl_err_code.h"
 #include "alfsbl_qspi.h"
 #include "alfsbl_sd.h"
-#include "alfsbl_emmc.h"
-#include "alfsbl_emmc_raw.h"
+
+
+
 
 uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 {
@@ -32,7 +35,7 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 		}
 	}
 	
-	BootMode = ALFSBL_BOOTMODE_SD;
+	BootMode = ALFSBL_BOOTMODE_NAND;
 	printf("Boot Mode: 0x%08x\r\n", BootMode);
 	
 	switch(BootMode) {
@@ -58,6 +61,10 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 		break;
 
 	case ALFSBL_BOOTMODE_NAND:
+		printf("NAND Boot Mode\r\n");
+		FsblInstancePtr->DeviceOps.DeviceInit    = AlFsbl_NandInit;
+		FsblInstancePtr->DeviceOps.DeviceCopy    = AlFsbl_NandCopy;
+		FsblInstancePtr->DeviceOps.DeviceRelease = AlFsbl_NandRelease;
 		break;
 
 	case ALFSBL_BOOTMODE_SD:
