@@ -453,7 +453,7 @@ uint32_t Csu_RawEmmcRead(uint32_t Offset, uint8_t* Dest, uint32_t Length)
     uint32_t firstblockoffset = Offset % blocksize;
     uint32_t firstblockstore = blocksize - firstblockoffset;
     uint32_t firstblockbytes = (firstblockstore > Length)? Length : firstblockstore;
-    uint32_t lastblockbytes = endpoint % blocksize;
+    uint32_t lastblockbytes = endpoint % blocksize + 1;
 
     MMC_PRINT("offset = %d, Length = %d\r\n", Offset, Length);
     MMC_PRINT("startblock: %d\tfirstblockoffset: %d\tfirstblockbytes: %d\r\n", startblock, firstblockoffset, firstblockbytes);
