@@ -20,6 +20,7 @@ volatile int gic_sgi_handler_11_happened = 0;
 volatile int gic_sgi_handler_12_happened = 0;
 volatile int gic_sgi_handler_13_happened = 0;
 volatile int gic_sgi_handler_14_happened = 0;
+volatile int gic_sgi_handler_15_happened = 0;
 
 void gic_sgi_handler_0(void)
 {
@@ -112,6 +113,12 @@ void gic_sgi_handler_14(void)
 	gic_sgi_handler_14_happened = 1;
 }
 
+void gic_sgi_handler_15(void)
+{
+	printf("sgi 15 happended \r\n");
+	gic_sgi_handler_15_happened = 1;
+}
+
 
 int main()
 {
@@ -145,6 +152,8 @@ int main()
 	request_irq(13, gic_sgi_handler_13);
 
 	request_irq(14, gic_sgi_handler_14);
+
+	request_irq(15, gic_sgi_handler_15);
 
 	irq_enable();
 
@@ -193,6 +202,9 @@ int main()
 
 	asm volatile("ldr x0, =(0x3 | (14 << 24)); msr s3_0_c12_c11_5, x0\r\n" ::: "x0");
 	while (!gic_sgi_handler_14_happened);
+
+	asm volatile("ldr x0, =(0x3 | (15 << 24)); msr s3_0_c12_c11_5, x0\r\n" ::: "x0");
+	while (!gic_sgi_handler_15_happened);
 
     return 0;
 }
