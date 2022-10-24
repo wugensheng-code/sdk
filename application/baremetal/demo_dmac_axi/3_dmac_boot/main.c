@@ -8,6 +8,7 @@
 extern int PL330_Init();
 #define TUBE_ADDRESS ((volatile char *) 0x80000000u)
 #define REG_READ(reg_address)  *(unsigned int*)reg_address
+#define DMA_LENGTH 4096
 
 #define DMAC_AXI_SECURE__DBGSTATUS__ADDR 0xF8418D00
 #define DMAC_AXI_SECURE__INT_EVENT_RIS__ADDR 0xF8418024
