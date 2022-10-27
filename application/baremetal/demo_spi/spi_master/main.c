@@ -23,6 +23,10 @@
 #define MX25U256_ID	0X003925c2  // mxic flash ID
 
 
+
+#define READ_SIZE 60
+
+
 /****************function define******************************/
 /*
 * Read Manufacture ID/ Device ID - in x1-SPI mode
@@ -235,7 +239,7 @@ int main()
 	//divided by 30 --(30 from design)
 	//-----------------------------------------------------------
 	/*cfg SPI Clock Divider.*/
-	spi_sckdiv_cfg(SPI_MASTER, 70);  // divided by 30.0x1e not work ,0x28=40
+	spi_sckdiv_cfg(SPI_MASTER, 110);  // divided by 30.0x1e not work ,0x28=40
 
 	//-----------------------------------------------------------
 	//program SSIENR register
@@ -403,7 +407,7 @@ int main()
 	//program CTRLR1 register
 	//receive 256 data items
 	//-----------------------------------------------------------
-	spi_ctrl1_ndf(SPI_MASTER, 0x7f); // receive 256 data items--FIFO MAX level=64
+	spi_ctrl1_ndf(SPI_MASTER, READ_SIZE-1); // receive 256 data items--FIFO MAX level=64
 //	spi_ctrl1_ndf(SPI_MASTER, 0x1D); // receive 30 data items
 
 	/*en ssi*/
@@ -421,9 +425,9 @@ int main()
 	spi_data_transmit(SPI_MASTER,0x00); // tx addr[15:8]
 	spi_data_transmit(SPI_MASTER,0x00); // tx addr[7:0]
 	/*check status--wait busy returns to idle*/
-	while(!spi_sr_tfe(SPI_MASTER)); // wait TFE returns to 1
-	//printf(" 2222\n");
-	while(spi_sr_busy(SPI_MASTER));  // check busy or idle,wait BUSY returns to 0
+//	while(!spi_sr_tfe(SPI_MASTER)); // wait TFE returns to 1
+//	//printf(" 2222\n");
+//	while(spi_sr_busy(SPI_MASTER));  // check busy or idle,wait BUSY returns to 0
 	// read 256 bytes
 	i=0;   // must init i=0; in case of RXFIFO still empty;
 	do{
@@ -434,8 +438,8 @@ int main()
 			//printf("fail data [%d] is: %d\r\n",i,rddata_a[i]);
 			i++;
 		}
-	}while(i<128);
-	for(i=0; i<128; i++)
+	}while(i<READ_SIZE);
+	for(i=0; i<READ_SIZE; i++)
 		{
 		   printf("%d",rddata_a[i]); // print write data
 		}
@@ -533,7 +537,7 @@ int main()
 	*/
 
 
-	byte_cnt=128;
+	byte_cnt=READ_SIZE;
 		i = 0;
 		while (byte_cnt)
 		{
@@ -556,7 +560,7 @@ int main()
 
 	while(!spi_sr_tfe(SPI_MASTER)); // wait TFE returns to 1
 	while(spi_sr_busy(SPI_MASTER));  // check busy or idle,wait BUSY returns to 0
-	for(i=0; i<128; i++)
+	for(i=0; i<READ_SIZE; i++)
 	{
 		printf("%d",wrdata_a[i]); // print write data
 	}
@@ -591,7 +595,7 @@ int main()
 	//program CTRLR1 register
 	//receive 256 data items
 	//-----------------------------------------------------------
-	spi_ctrl1_ndf(SPI_MASTER, 0x7f); // receive 256 data items--FIFO MAX level=64
+	spi_ctrl1_ndf(SPI_MASTER, READ_SIZE-1); // receive 256 data items--FIFO MAX level=64
 //	spi_ctrl1_ndf(SPI_MASTER, 0x1D); // receive 30 data items
 
 	/*en ssi*/
@@ -622,9 +626,9 @@ int main()
 			//printf("fail data [%d] is: %d\r\n",i,rddata_a[i]);
 			i++;
 		}
-	}while(i<128);
+	}while(i<READ_SIZE);
 	//printf(" 3333\n");
-	for(i=0; i<128; i++)
+	for(i=0; i<READ_SIZE; i++)
 	{
 		printf("%d",rddata_a[i]); // print write data
 	}
@@ -633,7 +637,7 @@ int main()
 
 	//----------- data check----------
 	// 256 bytes
-	for(i=0; i<128; i++)
+	for(i=0; i<READ_SIZE; i++)
 	{
 		if(wrdata_a[i] != rddata_a[i])
 		{
