@@ -15,48 +15,73 @@
 #include "driver/sd_emmc/al_mmc.h"
 #include "driver/sd_emmc/al_sd.h"
 
-const char *SdImageFiles = {"0:/BOOT.bin"};
-
 FIL fil;
 FATFS fs;
+
 uint32_t AlFsbl_SdInit(void)
 {
 	FRESULT rc = FR_OK;
-	rc = f_mount(&fs, "0:", 1);
-	//printf("sd f_mount %d\r\n", rc);
-	return rc;
-}
+	char buffer[32U]={0U};
+	char *boot_file = buffer;
+	uint32_t multibootoffset = 0;
+	uint32_t drvnum;
 
+	drvnum = REG32(SYSCTRL_NS_BOOT_MODE);
+	multibootoffset = REG32(SYSCTRL_S_MULTI_BOOT);
+	printf("multi boot offset is %d\r\n", multibootoffset);
 
-uint32_t AlFsbl_SdCopy(uint32_t SrcAddress, PTRSIZE DestAddress, uint32_t Length)
-{
-	FRESULT rc = FR_OK;
-	uint32_t br = 0;
-
-	rc = f_open(&fil, "0:/BOOT.bin", FA_OPEN_EXISTING | FA_READ);
-	if(rc == FR_OK){
-		//printf("sd read f_open %d\r\n", rc);
-		rc = f_lseek(&fil, SrcAddress - IMAGE_FLASH_OFFSET);
-		if(rc != FR_OK){
-			return rc;
-		}
-		rc = f_read(&fil, (uint8_t *)DestAddress, Length, &br);
-		if(rc != FR_OK){
-			return rc;
-		}
-	}else{
-		return rc;
+	if(drvnum == ALFSBL_SD_DRV_NUM_0){
+		rc = f_mount(&fs, "0:", 1);
+		printf("drv is sd\r\n");
+	}else if(drvnum == ALFSBL_SD_DRV_NUM_1){
+		rc = f_mount(&fs, "1:", 1);
+		printf("drv is emmc\r\n");
 	}
-	rc = f_close(&fil);
 	if(rc != FR_OK){
 		return rc;
 	}
 
+	AlFsbl_MakeSdFileName(boot_file, multibootoffset, drvnum);
+
+	if(boot_file[0] != 0){
+		rc = f_open(&fil, boot_file, FA_OPEN_EXISTING | FA_READ);
+		if(rc != FR_OK){
+			return rc;
+		}
+	}else{
+		rc = FR_NO_FILE;
+	}
+
+	return rc;
+}
+
+
+uint32_t AlFsbl_SdCopy(PTRSIZE SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo)
+{
+	FRESULT rc = FR_OK;
+	uint32_t br = 0;
+
+	rc = f_lseek(&fil, SrcAddress - IMAGE_FLASH_OFFSET);
+	if(rc != FR_OK){
+		return rc;
+	}
+	rc = f_read(&fil, (uint8_t *)DestAddress, Length, &br);
+	if(rc != FR_OK){
+		return rc;
+	}
+	
 	return rc;
 }
 
 
 uint32_t AlFsbl_SdRelease(void)
 {
+	FRESULT rc = FR_OK;
+	
+	rc = f_close(&fil);
+	if(rc != FR_OK){
+		return rc;
+	}
+
 	return 0;
 }

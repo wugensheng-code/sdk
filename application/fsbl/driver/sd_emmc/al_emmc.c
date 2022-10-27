@@ -496,24 +496,10 @@ uint32_t Csu_RawEmmcSetMode(uint32_t Mode, uint32_t Data)
     uint32_t status = MMC_SUCCESS;
     switch(Mode){
         case MMC_MODE_FREQ:
-            switch(Data){
-                case EMMC_FREQ_400K:
-                    MMC_PRINT("EMMC_FREQ_400K\r\n");
-                    status = AlEmmc_HostControllerClockSetup(eMMC, MMC_FREQ_400K);
-                    if (status != MMC_SUCCESS) {
-                        return status;
-                    }
-                    break;
-                case EMMC_FREQ_10M:
-                    MMC_PRINT("EMMC_FREQ_10M\r\n");
-                    status = AlEmmc_HostControllerClockSetup(eMMC, MMC_FREQ_10M);
-                    if (status != MMC_SUCCESS) {
-                        return status;
-                    }
-                    break;
-                default:
-                    status = MMC_WRONG_FREQ;
-                    break;
+            MMC_PRINT("set emmc freq %d\r\n", Data);
+            status = AlEmmc_HostControllerClockSetup(eMMC, Data);
+            if (status != MMC_SUCCESS) {
+                return status;
             }
             break;
     default:
