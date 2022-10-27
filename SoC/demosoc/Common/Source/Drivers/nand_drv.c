@@ -900,7 +900,8 @@ uint32_t Csu_NandInit(Nand_TypeDef *nand)
 		/* myself */
 		extid = nand->deviceId[4] >> 4;
 
-		nand->blocksPerUnit = ((8 * 1024 * 1024) << (extid & 0x07))/(nand->pagesPerBlock * nand->dataBytesPerPage);
+		nand->blocksPerUnit = ((8 * 1024 * 1024) << (extid & 0x07))/(nand->pagesPerBlock * nand->dataBytesPerPage) 
+								* ((nand->deviceId[4] >> 2) & 0x03);
 
 		nand->totalUnit = 1;
 
