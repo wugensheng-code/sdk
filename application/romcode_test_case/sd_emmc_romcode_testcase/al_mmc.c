@@ -178,7 +178,7 @@ uint32_t WaitCmdComplete(volatile DWC_mshc_block_registers* Ptr, MMC_ERR_TYPE Er
         }
     }
     if(Mtimer_IsTimerOut(&MmcMtimer)){
-        return Err;
+        return MMC_CMD_TIMEOUT;
     }else{
         MMC_PRINT("[CMD COMPLETE]cur r is 0x%x\r\n", r.d32);
         r.d32 = 0;
@@ -219,7 +219,7 @@ uint32_t WaitTransferComplete(volatile DWC_mshc_block_registers* Ptr, MMC_ERR_TY
 #endif
     }
     if(Mtimer_IsTimerOut(&MmcMtimer)){
-        return Err;
+        return MMC_XFER_TIMEOUT;
     }else{
         r.d32 = 0;
         r.bit.xfer_complete = 0x1;
@@ -259,7 +259,7 @@ uint32_t TransferWithoutDMA(volatile DWC_mshc_block_registers* Ptr, uint32_t *Ad
             continue;
     }
     if(Mtimer_IsTimerOut(&MmcMtimer)){
-        return Err;
+        return MMC_BUF_RDWR_RDY_TIMEOUT;
     }else{
         r.d32 = 0;
         if(Err == MMC_CMD_17_XFER_ERR || Err == MMC_CMD_8_XFER_ERR)

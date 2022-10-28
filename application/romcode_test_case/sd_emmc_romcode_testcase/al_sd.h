@@ -17,6 +17,7 @@ typedef struct{
 }RawSDParam_t;
 
 extern SD_CardInfo SDCardInfo;
+extern __IO uint32_t CardType;
 
 uint32_t CardDetection();
 uint32_t AlSd_SendInitCmdSD();

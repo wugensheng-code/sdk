@@ -53,29 +53,34 @@ uint32_t AlSd_WriteSingleBlock(uint8_t *writebuff, uint32_t WriteAddr, uint16_t 
     MMC_PRINT("reg.d32 is %x\r\n", reg.d32);
     MMC_WAIT_CMD_COMPLETE(SDIO, MMC_CMD_16_ERR);
 
-    // send command 23
-    MMC_PRINT("send cmd 23\r\n");
-    MMC_CHECK_LINE_AND_CLEAR_STATUS(SDIO);
-    r3.d32 = 0;
-    r3.bit.block_num = 0x1;
-    arg_r = r3.d32;
-    REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
-    reg.d32 = 0;
-    reg.bit.cmd_index = SD_CMD_SET_BLOCK_COUNT;
-    reg.bit.resp_type_select = MMC_C_RESP_LEN_48;
-    reg.bit.block_count_enable = MMC_XM_BLOCK_COUNT_ENABLE;
-    reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
-    reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
-    reg.bit.cmd_idx_chk_enable = MMC_C_CMD_IDX_CHECK_ENABLE;
-    REG_WRITE((unsigned long)&(SDIO->cmd_r__xfer_mode), reg.d32);
-    MMC_PRINT("block.d32 is %x\r\n", block.d32);
-    MMC_PRINT("reg.d32 is %x\r\n", reg.d32);
-    MMC_WAIT_CMD_COMPLETE(SDIO, MMC_CMD_23_ERR);
+    if(CardType != SDIO_STD_CAPACITY_SD_CARD_V2_0 && CardType != SDIO_STD_CAPACITY_SD_CARD_V1_1){
+        // send command 23
+        MMC_PRINT("send cmd 23\r\n");
+        MMC_CHECK_LINE_AND_CLEAR_STATUS(SDIO);
+        r3.d32 = 0;
+        r3.bit.block_num = 0x1;
+        arg_r = r3.d32;
+        REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
+        reg.d32 = 0;
+        reg.bit.cmd_index = SD_CMD_SET_BLOCK_COUNT;
+        reg.bit.resp_type_select = MMC_C_RESP_LEN_48;
+        reg.bit.block_count_enable = MMC_XM_BLOCK_COUNT_ENABLE;
+        reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
+        reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
+        reg.bit.cmd_idx_chk_enable = MMC_C_CMD_IDX_CHECK_ENABLE;
+        REG_WRITE((unsigned long)&(SDIO->cmd_r__xfer_mode), reg.d32);
+        MMC_PRINT("block.d32 is %x\r\n", block.d32);
+        MMC_PRINT("reg.d32 is %x\r\n", reg.d32);
+        MMC_WAIT_CMD_COMPLETE(SDIO, MMC_CMD_23_ERR);
+    }
 
 	// send command 24
     MMC_PRINT("send cmd 24\r\n");
     MMC_CHECK_LINE_AND_CLEAR_STATUS(SDIO);
-    arg_r = WriteAddr;
+    if(CardType != SDIO_STD_CAPACITY_SD_CARD_V2_0 && CardType != SDIO_STD_CAPACITY_SD_CARD_V1_1)
+        arg_r = WriteAddr;
+    else
+        arg_r = WriteAddr*BlockSize;
     REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
     reg.d32 = 0;//REG_READ((unsigned long)&(SDIO->cmd_r__xfer_mode));
 #ifdef _USE_SDMA

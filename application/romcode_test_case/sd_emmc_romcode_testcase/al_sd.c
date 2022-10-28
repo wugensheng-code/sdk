@@ -29,7 +29,7 @@
 
 SD_CardInfo SDCardInfo;
 static MtimerParams SdMtimer;
-static __IO uint32_t CardType =  SDIO_HIGH_CAPACITY_SD_CARD;
+__IO uint32_t CardType =  SDIO_HIGH_CAPACITY_SD_CARD;
 
 /***************************************************************************/
 /**
@@ -53,7 +53,7 @@ uint32_t AlSd_HostControllerClockSetup(volatile DWC_mshc_block_registers* Ptr, u
     REG_WRITE(TOP_NS__CFG_CTRL_SDIO1_ADDR, 0x00000008);     //clk soft reset
     MMC_DELAY_MS(10);
     REG_WRITE(TOP_NS__CFG_CTRL_SDIO1_ADDR, 0x00000000);
-    MMC_DELAY_MS(MMC_DELAY_SCALE*EfuseDelayParam);
+    MMC_DELAY_US(MMC_DELAY_SCALE*EfuseDelayParam);
     if (freq == MMC_FREQ_10M)
     {
         MMC_PRINT("MMC_FREQ_10M\r\n");
@@ -145,8 +145,6 @@ uint32_t AlSd_SwitchDataWidth()
  * @return	MMC_SUCCESS
  *
  ******************************************************************************/
-//#pragma GCC push_options
-//#pragma GCC optimize ("O0")
 uint32_t AlSd_SendInitCmdSd()
 {
     MMC_ERR_TYPE status = MMC_SUCCESS;
@@ -204,7 +202,7 @@ uint32_t AlSd_SendInitCmdSd()
     	//ACMD41
         MMC_PRINT("send command 41\r\n");
         MMC_CHECK_LINE_AND_CLEAR_STATUS(SDIO);
-        arg_r = 0x40100000;//0xC0100000; //[31]reserved,[30]HCS=1,voltage window 3.5~3.6
+        arg_r = 0x40FF8000;//0x40300000;//[31]reserved,[30]HCS=1,voltage window 3.2~3.4
         REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
         reg.d32 = 0;
         reg.bit.cmd_index = SD_CMD_SD_APP_OP_COND;
@@ -216,6 +214,15 @@ uint32_t AlSd_SendInitCmdSd()
 
         response01 = REG_READ((unsigned long)&(SDIO->resp01));
     	validvoltage = (((response01 >> 31) == 1) ? 1:0);
+        if(validvoltage == 1){
+            if(((response01 >> 30) & 0x1) == 1){
+                CardType =  SDIO_HIGH_CAPACITY_SD_CARD;
+                MMC_PRINT("This card is SDIO_HIGH_CAPACITY_SD_CARD\r\n");
+            }else{
+                CardType =  SDIO_STD_CAPACITY_SD_CARD_V2_0;
+                MMC_PRINT("This card is SDIO_STD_CAPACITY_SD_CARD_V2_0\r\n");
+            }
+        }
     }
     if(Mtimer_IsTimerOut(&SdMtimer)){
         status = MMC_CHECK_VOLT_TIMEOUT;
@@ -236,10 +243,11 @@ uint32_t AlSd_SendInitCmdSd()
     MMC_WAIT_CMD_COMPLETE(SDIO, MMC_CMD_2_ERR);
     MMC_PRINT("reg.d32 is %x, %d\r\n", reg.d32, reg.d32);
 
-    CidTab[0] = REG_READ((unsigned long)&(SDIO->resp01));
-    CidTab[1] = REG_READ((unsigned long)&(SDIO->resp23));
-    CidTab[2] = REG_READ((unsigned long)&(SDIO->resp45));
-    CidTab[3] = REG_READ((unsigned long)&(SDIO->resp67));
+    CidTab[3] = REG_READ((unsigned long)&(SDIO->resp01));
+    CidTab[2] = REG_READ((unsigned long)&(SDIO->resp23));
+    CidTab[1] = REG_READ((unsigned long)&(SDIO->resp45));
+    CidTab[0] = REG_READ((unsigned long)&(SDIO->resp67));
+    SDCardInfo.SD_cid.ManufacturerID = ((CidTab[0] >> 16)&0xFF);
     MMC_PRINT("CidTab 0~4 is %x, %x, %x, %x\r\n", CidTab[0], CidTab[1], CidTab[2], CidTab[3]);
     
     // send command 3
@@ -397,30 +405,35 @@ uint32_t AlSd_ReadSingleBlock(uint8_t *readbuff, uint32_t ReadAddr, uint16_t Blo
     MMC_PRINT("reg.d32 is %x\r\n", reg.d32);
     MMC_WAIT_CMD_COMPLETE(SDIO, MMC_CMD_16_ERR);
 
-    // send command 23
-    MMC_PRINT("send cmd 23\r\n");
-    MMC_CHECK_LINE_AND_CLEAR_STATUS(SDIO);
-    r3.d32 = 0;
-    r3.bit.block_num = 0x1;
-    arg_r = r3.d32;
-    REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
-    reg.d32 = 0;
-    reg.bit.cmd_index = SD_CMD_SET_BLOCK_COUNT;
-    reg.bit.data_xfer_dir = DATA_WRITE;
-    reg.bit.block_count_enable = MMC_XM_BLOCK_COUNT_ENABLE;
-    reg.bit.resp_type_select = MMC_C_RESP_LEN_48;
-    reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
-    reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
-    reg.bit.cmd_idx_chk_enable = MMC_C_CMD_IDX_CHECK_ENABLE;
-    REG_WRITE((unsigned long)&(SDIO->cmd_r__xfer_mode), reg.d32);
-    MMC_PRINT("block.d32 is %x\r\n", block.d32);
-    MMC_PRINT("reg.d32 is %x\r\n", reg.d32);
-    MMC_WAIT_CMD_COMPLETE(SDIO, MMC_CMD_23_ERR);
+    if(CardType != SDIO_STD_CAPACITY_SD_CARD_V2_0 && CardType != SDIO_STD_CAPACITY_SD_CARD_V1_1){
+        // send command 23
+        MMC_PRINT("send cmd 23\r\n");
+        MMC_CHECK_LINE_AND_CLEAR_STATUS(SDIO);
+        r3.d32 = 0;
+        r3.bit.block_num = 0x1;
+        arg_r = r3.d32;
+        REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
+        reg.d32 = 0;
+        reg.bit.cmd_index = SD_CMD_SET_BLOCK_COUNT;
+        reg.bit.data_xfer_dir = DATA_WRITE;
+        reg.bit.block_count_enable = MMC_XM_BLOCK_COUNT_ENABLE;
+        reg.bit.resp_type_select = MMC_C_RESP_LEN_48;
+        reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
+        reg.bit.cmd_crc_chk_enable = MMC_C_CMD_CRC_CHECK_ENABLE;
+        reg.bit.cmd_idx_chk_enable = MMC_C_CMD_IDX_CHECK_ENABLE;
+        REG_WRITE((unsigned long)&(SDIO->cmd_r__xfer_mode), reg.d32);
+        MMC_PRINT("block.d32 is %x\r\n", block.d32);
+        MMC_PRINT("reg.d32 is %x\r\n", reg.d32);
+        MMC_WAIT_CMD_COMPLETE(SDIO, MMC_CMD_23_ERR);
+    }
 
 	// send command 17 read single block
     MMC_PRINT("send command 17\r\n");
     MMC_CHECK_LINE_AND_CLEAR_STATUS(SDIO);
-    arg_r = ReadAddr;
+    if(CardType != SDIO_STD_CAPACITY_SD_CARD_V2_0 && CardType != SDIO_STD_CAPACITY_SD_CARD_V1_1)
+        arg_r = ReadAddr;
+    else
+        arg_r = ReadAddr*BlockSize;
     REG_WRITE((unsigned long)&(SDIO->argument_r), arg_r);
     reg.d32 = 0;
 #ifdef _USE_SDMA
@@ -543,8 +556,8 @@ uint32_t AlSd_GetCardInfo(SD_CardInfo *cardinfo)
 
         cardinfo->CardCapacity = (cardinfo->SD_csd.DeviceSize + 1) ;
         cardinfo->CardCapacity *= (1 << (cardinfo->SD_csd.DeviceSizeMul + 2));
-        cardinfo->CardBlockSize = 1 << (cardinfo->SD_csd.RdBlockLen);
-        cardinfo->CardCapacity *= cardinfo->CardBlockSize;
+        cardinfo->CardBlockSize = 512;
+        cardinfo->CardCapacity *= (1 << cardinfo->SD_csd.RdBlockLen);
     }else if (CardType == SDIO_HIGH_CAPACITY_SD_CARD){
         MMC_PRINT("SD card high capacity\r\n");
         /*!< Byte 7 */
@@ -670,6 +683,9 @@ uint32_t AlSd_GetCardInfo(SD_CardInfo *cardinfo)
     tmp = (uint8_t)(CidTab[3] & 0x000000FF);
     cardinfo->SD_cid.CID_CRC = (tmp & 0xFE) >> 1;
     cardinfo->SD_cid.Reserved2 = 1;
+    
+    MMC_PRINT("cardinfo->CardBlockSize is %d\r\n", cardinfo->CardBlockSize);
+    MMC_PRINT("cardinfo->CardCapacity is %d\r\n", cardinfo->CardCapacity);
 
     return status;
 }

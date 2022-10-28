@@ -11,10 +11,10 @@ typedef enum{
 	MMC_SUCCESS = 0,
 	MMC_FAILURE,
 	//TIMER OUT ERROR
-	//MMC_CMD_TIMEOUT,				//send cmd timeout
-	//MMC_XFER_TIMEOUT,				//wait transfer complete timeout
+	MMC_CMD_TIMEOUT,				//send cmd timeout
+	MMC_XFER_TIMEOUT,				//wait transfer complete timeout
 	MMC_WAIT_CLK_STABLE_TIMEOUT,	//wait internal clock stable timeout
-	//MMC_BUF_RD_RDY_TIMEOUT,			//wait buffer read ready complete timeout
+	MMC_BUF_RDWR_RDY_TIMEOUT,			//wait buffer read ready complete timeout
 	//MMC_SD_CHECK_VOLT_TIMEOUT,		//SD check voltage timeout
 	//MMC_EMMC_CHECK_VOLT_TIMEOUT,	//eMMC check voltage timeout
 	MMC_CHECK_VOLT_TIMEOUT,
@@ -46,7 +46,6 @@ typedef enum{
 	MMC_CMD_8_ERR,
 	MMC_CMD_9_ERR,
 	MMC_CMD_10_ERR,
-	MMC_CMD13_ERR,
 	MMC_CMD_16_ERR,
 	MMC_CMD_17_ERR,
 	MMC_CMD_23_ERR,

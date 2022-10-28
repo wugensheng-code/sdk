@@ -52,7 +52,7 @@ uint32_t AlEmmc_HostControllerClockSetup(volatile DWC_mshc_block_registers* Ptr,
     REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000008);     //clk soft reset
     MMC_DELAY_MS(10);
     REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000000);
-    MMC_DELAY_MS(MMC_DELAY_SCALE*EfuseDelayParam);
+    MMC_DELAY_US(MMC_DELAY_SCALE*EfuseDelayParam);
     if (freq == MMC_FREQ_10M)
     {
         MMC_PRINT("MMC_FREQ_10M\r\n");
@@ -147,6 +147,7 @@ uint32_t AlEmmc_SendInitCmd()
         MMC_PRINT("reg.d32 is %x, %d\r\n", reg.d32, reg.d32);
         response01 = REG_READ((unsigned long)&(eMMC->resp01));
     	validvoltage = (((response01 >> 31) == 1) ? 1:0);
+        MMC_DELAY_US(MMC_DELAY_SCALE*EfuseDelayParam);
     }
     if(Mtimer_IsTimerOut(&MmcMtimer)){
         status = MMC_CHECK_VOLT_TIMEOUT;
@@ -170,7 +171,8 @@ uint32_t AlEmmc_SendInitCmd()
     // send command 3 set relative device address
     MMC_PRINT("send command 3\r\n");
     MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
-    arg_r = EMMC_CMD3_PARA_DEFAULT_VAL;
+    Rca = EMMC_CMD3_PARA_DEFAULT_VAL;
+    arg_r = Rca;
     REG_WRITE((unsigned long)&(eMMC->argument_r), arg_r);
     reg.d32 = 0;
     reg.bit.cmd_index = SD_CMD_SET_REL_ADDR;
@@ -182,8 +184,6 @@ uint32_t AlEmmc_SendInitCmd()
     REG_WRITE((unsigned long)&(eMMC->cmd_r__xfer_mode), reg.d32);
     MMC_WAIT_CMD_COMPLETE(eMMC, MMC_CMD_3_ERR);
     MMC_PRINT("reg.d32 is %x, %d\r\n", reg.d32, reg.d32);
-    Rca = REG_READ((unsigned long)&(eMMC->resp01)) & 0xFFFF0000;
-    Rca = EMMC_CMD3_PARA_DEFAULT_VAL;
 
     // send command 9 get addressed device's CSD on CMD line
     MMC_PRINT("send command 9\r\n");
@@ -237,6 +237,7 @@ uint32_t AlEmmc_SendInitCmd()
     MMC_WAIT_CMD_COMPLETE(eMMC, MMC_CMD_7_ERR);
     MMC_WAIT_TRANSFER_COMPLETE(eMMC, MMC_CMD_7_ERR);
     MMC_PRINT("reg.d32 is %x, %d\r\n", reg.d32, reg.d32);
+    MMC_DELAY_US(MMC_DELAY_SCALE*EfuseDelayParam);
 
     return MMC_SUCCESS;
 }
@@ -445,35 +446,34 @@ uint32_t Csu_RawEmmcInit(RawEmmcParam_t *Param)
 uint32_t Csu_RawEmmcRead(uint32_t Offset, uint8_t* Dest, uint32_t Length) 
 {  
     uint32_t status = MMC_SUCCESS;
-    uint32_t blocksize = EmmcCardInfo.CardBlockSize;       //block size
-    uint32_t offsetblock = Offset/blocksize;             //block offset
-    uint32_t offsetbytes = Offset%blocksize;             //bytes offset in block
-    uint32_t restorebytes = blocksize - offsetbytes;    //valid bytes in first block
     uint8_t *pdestaddr = Dest;
-    uint32_t restorelength = Length % blocksize; //length needy last bytes
-    uint32_t blocknum = 1 + Length / blocksize;  //block num need to read
-    uint32_t lastblocklength = (restorelength > restorebytes)? \
-                        restorelength - restorebytes : restorelength + blocksize - restorebytes;    //valid bytes in last block
-    if(restorelength > restorebytes){
-        blocknum += 1;
-    }
-    MMC_PRINT("offsetblock: %d\toffsetbytes: %d\trestorebytes: %d\r\n", offsetblock, offsetbytes, restorebytes);
-    MMC_PRINT("blocknum: %d\tlastblocklength: %d\t\r\n", blocknum, lastblocklength);
-    for(uint32_t i = offsetblock; i < blocknum; i++){
-        if(i == offsetblock){
+    uint32_t blocksize = EmmcCardInfo.CardBlockSize;       //block size
+    uint32_t startblock = Offset / blocksize;
+    uint32_t endpoint = Offset + Length - 1;
+    uint32_t endblock = endpoint / blocksize;
+    uint32_t firstblockoffset = Offset % blocksize;
+    uint32_t firstblockstore = blocksize - firstblockoffset;
+    uint32_t firstblockbytes = (firstblockstore > Length)? Length : firstblockstore;
+    uint32_t lastblockbytes = endpoint % blocksize + 1;
+
+    MMC_PRINT("offset = %d, Length = %d\r\n", Offset, Length);
+    MMC_PRINT("startblock: %d\tfirstblockoffset: %d\tfirstblockbytes: %d\r\n", startblock, firstblockoffset, firstblockbytes);
+    MMC_PRINT("endblock: %d\tlastblockbytes: %d\t\r\n", endblock, lastblockbytes);
+    for(uint32_t i = startblock; i <= endblock; i++){
+        if(i == startblock){
             status = AlEmmc_ReadSingleBlock(FlashSharedBuf, i, blocksize);
             if(status != MMC_SUCCESS){
                 return status;
             }
-            memcpy(pdestaddr, &FlashSharedBuf[offsetbytes], restorebytes);
-            pdestaddr += restorebytes;
-        }else if(i == blocknum - 1){
+            memcpy(pdestaddr, &FlashSharedBuf[firstblockoffset], firstblockbytes);
+            pdestaddr += firstblockbytes;
+        }else if(i == endblock){
             status = AlEmmc_ReadSingleBlock(FlashSharedBuf, i, blocksize);
             if(status != MMC_SUCCESS){
                 return status;
             }
-            memcpy(pdestaddr, FlashSharedBuf, lastblocklength);
-            pdestaddr += lastblocklength;
+            memcpy(pdestaddr, FlashSharedBuf, lastblockbytes);
+            pdestaddr += lastblockbytes;
         }else{
             status = AlEmmc_ReadSingleBlock(pdestaddr, i, blocksize);
             if(status != MMC_SUCCESS){
@@ -497,24 +497,10 @@ uint32_t Csu_RawEmmcSetMode(uint32_t Mode, uint32_t Data)
     uint32_t status = MMC_SUCCESS;
     switch(Mode){
         case MMC_MODE_FREQ:
-            switch(Data){
-                case EMMC_FREQ_400K:
-                    MMC_PRINT("EMMC_FREQ_400K\r\n");
-                    status = AlEmmc_HostControllerClockSetup(eMMC, MMC_FREQ_400K);
-                    if (status != MMC_SUCCESS) {
-                        return status;
-                    }
-                    break;
-                case EMMC_FREQ_10M:
-                    MMC_PRINT("EMMC_FREQ_10M\r\n");
-                    status = AlEmmc_HostControllerClockSetup(eMMC, MMC_FREQ_10M);
-                    if (status != MMC_SUCCESS) {
-                        return status;
-                    }
-                    break;
-                default:
-                    status = MMC_WRONG_FREQ;
-                    break;
+            MMC_PRINT("set emmc freq %d\r\n", Data);
+            status = AlEmmc_HostControllerClockSetup(eMMC, Data);
+            if (status != MMC_SUCCESS) {
+                return status;
             }
             break;
     default:
@@ -533,8 +519,8 @@ uint32_t Csu_RawEmmcSetMode(uint32_t Mode, uint32_t Data)
 uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
 {
     MMC_ERR_TYPE status = MMC_SUCCESS;
-    uint32_t tmp_rdblen = 1;
-    uint32_t tmp_devsizemul = 1;
+    uint32_t tmp_rdblen = 0;
+    uint32_t tmp_devsizemul = 0;
     uint32_t i = 0;
     uint32_t sec_count = 0;
     __IO HOST_CTRL2_R__AUTO_CMD_STAT_R r2 = {.d32 = 0,};
@@ -551,12 +537,8 @@ uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
     if(Cardinfo->SD_csd.DeviceSize != 0xFFF){   //less than 2GB
         Cardinfo->SD_csd.DeviceSizeMul = (uint8_t)((CsdTab[2]>>7)&0x7);
         Cardinfo->SD_csd.RdBlockLen = ((CsdTab[1]>>8)&0xF);
-        for(i = 0; i < Cardinfo->SD_csd.RdBlockLen; i++){
-            tmp_rdblen *= 2;
-        }
-        for(i = 0; i < Cardinfo->SD_csd.DeviceSizeMul+2; i++){  //C_SIZE_MULT < 8, MULT = 2^(C_SIZE_MULT+2)
-            tmp_devsizemul *= 2;
-        }
+        tmp_rdblen = (1 << Cardinfo->SD_csd.RdBlockLen);
+        tmp_devsizemul = (1 << (Cardinfo->SD_csd.DeviceSizeMul+2));
         MMC_PRINT("rd_block_len is %d\r\n", tmp_rdblen);
         MMC_PRINT("device size mult is %d\r\n", tmp_devsizemul);
         Cardinfo->CardCapacity = (Cardinfo->SD_csd.DeviceSize + 1) * tmp_devsizemul * tmp_rdblen;
