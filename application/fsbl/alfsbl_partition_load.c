@@ -11,11 +11,16 @@
 #include "alfsbl_err_code.h"
 #include "alfsbl_hw.h"
 #include "alfsbl_data.h"
+#include "alfsbl_boot.h"
 #include "alfsbl_partition_load.h"
+
+extern uint8_t  ReadBuffer[READ_BUFFER_SIZE];
+
+
 
 static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx, SecureInfo *pSecureInfo);
 static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *pSecureInfo, uint32_t PartitionIdx);
-static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx);
+static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx) __attribute__((noinline));
 static uint32_t AlFsbl_CheckPlInitDone(void);
 static void     AlFsbl_PrintPartitionHeaderInfo(AlFsbl_PartitionHeader *PtHdr);
 
@@ -29,10 +34,10 @@ uint32_t AlFsbl_PartitionLoad(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx
 
 	/// todo: restart wdt
 
-	/// release pl reset
-	if(FsblInstancePtr->ResetReason == FSBL_SYSTEM_RESET) {
-		REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) | (SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
-	}
+//	/// release pl reset
+//	if(FsblInstancePtr->ResetReason == FSBL_SYSTEM_RESET) {
+//		REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) | (SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
+//	}
 
 	/// partition header validation
 	Status = AlFsbl_PartitionHeaderValidation(FsblInstancePtr, PartitionIdx, &FsblSecInfo);
@@ -60,7 +65,7 @@ uint32_t AlFsbl_PartitionLoad(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx
 			goto END;
 		}
 		printf("loading pl partition...\r\n");
-		AlFsbl_LoadPlPartition(FsblInstancePtr, PartitionIdx);
+		Status = AlFsbl_LoadPlPartition(FsblInstancePtr, PartitionIdx);
 	}
 	else {
 		/**do nothing**/
@@ -242,6 +247,9 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 	else if(AL9000_RPU_DTCM_BASE_ADDR <= PtHdr->DestLoadAddr && PtHdr->DestLoadAddr < AL9000_RPU_DTCM_BASE_ADDR + AL9000_RPU_ITCM_BYTE_LENGTH) {
 		// correct, do nothing
 	}
+	else if(AL9000_OCM_BASE_ADDR <= PtHdr->DestLoadAddr && PtHdr->DestLoadAddr < AL9000_OCM_BASE_ADDR + AL9000_OCM_BYTE_LENGTH) {
+		// correct, do nothing
+	}
 	else {
 		Status = ALFSBL_INVALID_LOAD_ADDR;
 	}
@@ -253,6 +261,9 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 		// correct, do nothing
 	}
 	else if(AL9000_RPU_ITCM_BASE_ADDR <= PtHdr->DestExecAddr && PtHdr->DestExecAddr < AL9000_RPU_ITCM_BASE_ADDR + AL9000_RPU_ITCM_BYTE_LENGTH) {
+		// correct, do nothing
+	}
+	else if(AL9000_OCM_BASE_ADDR <= PtHdr->DestLoadAddr && PtHdr->DestLoadAddr < AL9000_OCM_BASE_ADDR + AL9000_OCM_BYTE_LENGTH) {
 		// correct, do nothing
 	}
 	else {
@@ -298,18 +309,19 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	printf("partition load dest address: 0x%08x\r\n", LoadAddress);
 	printf("partition length           : 0x%08x\r\n", Length);
 
-	Status = FsblInstancePtr->DeviceOps.DeviceCopy(SrcAddress, LoadAddress, Length);
-	if(ALFSBL_SUCCESS != Status) {
-		goto END;
-	}
+//	Status = FsblInstancePtr->DeviceOps.DeviceCopy(SrcAddress, LoadAddress, Length, NULL);
+//	if(ALFSBL_SUCCESS != Status) {
+//		goto END;
+//	}
 
-	pSecureInfo->InputAddr   = LoadAddress;
-	pSecureInfo->OutputAddr  = LoadAddress;
-	pSecureInfo->DataLength  = PtHdr->PartitionLen;
-	pSecureInfo->HashOutAddr = (uint32_t)HashBuffer;
-	pSecureInfo->KeyMode     = OP_BHDR_KEY;
-	pSecureInfo->EncMode     = SYM_ECB;
-	pSecureInfo->EncDir      = SYM_DECRYPT;
+//	pSecureInfo->InputAddr      = LoadAddress;
+//	pSecureInfo->OutputAddr     = LoadAddress;
+//	pSecureInfo->DataLength     = PtHdr->PartitionLen;
+	pSecureInfo->HashOutAddr    = (uint32_t)HashBuffer;
+	pSecureInfo->KeyMode        = OP_BHDR_KEY;
+	pSecureInfo->EncMode        = SYM_ECB;
+	pSecureInfo->EncDir         = SYM_DECRYPT;
+	pSecureInfo->CsuAddrIncMode = CSUDMA_DST_INCR | CSUDMA_SRC_INCR;
 
 	/// check secure info
 	printf("Auth type :  %02x\r\n", pSecureInfo->AuthType);
@@ -318,37 +330,64 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	printf("Enc mode  :  %02x\r\n", pSecureInfo->EncMode);
 	printf("Key mode  :  %02x\r\n", pSecureInfo->KeyMode);
 
-
-	if(pSecureInfo->EncType != OP_ENCRYPT_NONE) {
-		printf("decryption\r\n");
-		Status = AlFsbl_DecHash_1(pSecureInfo);
-		if(Status != ALFSBL_SUCCESS) {
+	/// partition data copy
+	if((FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_QSPI24) ||
+	   (FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_QSPI32)) {
+		Status = FsblInstancePtr->DeviceOps.DeviceCopy(
+				     SrcAddress,
+					 LoadAddress,
+					 PtHdr->PartitionLen,
+					 pSecureInfo);
+		if(ALFSBL_SUCCESS != Status) {
 			goto END;
 		}
 	}
-	else if(pSecureInfo->HashType != OP_HASH_NONE) {
-		printf("hash\r\n");
+	else if(FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_NAND) {
+	}
+	else if((FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_SD)   ||
+			(FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_EMMC) ||
+			(FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_EMMC_RAW)) {
+		Status = FsblInstancePtr->DeviceOps.DeviceCopy(SrcAddress, LoadAddress, Length, NULL);
+		if(ALFSBL_SUCCESS != Status) {
+			goto END;
+		}
+	}
+	else {
+	}
+
+	/// calculate data hash without csu dma
+	if((pSecureInfo->EncType == OP_ENCRYPT_NONE) && (pSecureInfo->HashType != OP_HASH_NONE)) {
+		printf("calculate hash\r\n");
+		pSecureInfo->InputAddr = LoadAddress;
 		Status = AlFsbl_Hash_1(pSecureInfo);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
-//		if(PtHdr->HashDataOffset != 0) {
-//			HashByteLen = (pSecureInfo->HashType == OP_HASH_SHA256) ? 32 : 16;
-//			Status = AlFsbl_CompareHash(HashBuffer, (uint8_t *)(LoadAddress + PtHdr->PartitionLen), HashByteLen);
-//			if(Status != ALFSBL_SUCCESS) {
-//				goto END;
-//			}
-//		}
 	}
+
+	/// read hash from boot image and check
 	if((pSecureInfo->HashType != OP_HASH_NONE) && (PtHdr->HashDataOffset != 0)) {
+		/// read hash from boot image
 		HashByteLen = (pSecureInfo->HashType == OP_HASH_SHA256) ? 32 : 16;
-		Status = AlFsbl_CompareHash(HashBuffer, (uint8_t *)(LoadAddress + PtHdr->PartitionLen), HashByteLen);
+		Status = FsblInstancePtr->DeviceOps.DeviceCopy(
+				     ImageOffsetAddress + PtHdr->HashDataOffset,
+				     LoadAddress + PtHdr->PartitionLen,
+				     HashByteLen,
+				     NULL);
+		if(ALFSBL_SUCCESS != Status) {
+			goto END;
+		}
+
+		/// compare hash
+		Status = AlFsbl_CompareHash(
+				     HashBuffer,
+				     (uint8_t *)(LoadAddress + PtHdr->PartitionLen),
+				     HashByteLen);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
 		printf("Hash check passed...\r\n");
 	}
-
 
 	if(pSecureInfo->AuthType != OP_AUTH_NONE) {
 		printf("auth\r\n");
@@ -363,9 +402,10 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		else {
 			printf("Copy Partition Header AC\r\n");
 			Status = FsblInstancePtr->DeviceOps.DeviceCopy(
-					ImageOffsetAddress+PartitionAcOffset,
-					(PTRSIZE)PartitionAc,
-					ALFSBL_AUTH_BUFFER_SIZE);
+					     ImageOffsetAddress + PartitionAcOffset,
+					     (PTRSIZE)PartitionAc,
+					     ALFSBL_AUTH_BUFFER_SIZE,
+					     NULL);
 			if(Status != ALFSBL_SUCCESS) {
 				goto END;
 			}
@@ -409,27 +449,104 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, uint32_t Par
 
 	AlFsbl_PartitionHeader *PtHdr;
 
+	uint32_t i;
 	uint32_t SrcAddress;
 	uint32_t LoadAddress;
 	uint32_t Length;
+	uint32_t BitStreamLength_BE;  /// big endian
+	uint32_t BitStreamLength_LE;  /// little endian
 
 	PtHdr = &(FsblInstancePtr->ImageHeader.PartitionHeader[PartitionIdx]);
 
+	printf("Trigger pl reset\r\n");
+	REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) & (~SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
+
+	printf("Release pl reset\r\n");
+	REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) | (SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
+
+	printf("Set PCAP not enable\r\n");
+	REG32(CSU_PCAP_ENABLE) = 0;
+
+	printf("Set PCAP enable\r\n");
+	REG32(CSU_PCAP_ENABLE) = 1;
+
 	SrcAddress = FsblInstancePtr->ImageOffsetAddress + PtHdr->PartitionOffset;
-	LoadAddress = PtHdr->DestLoadAddr;
+
+	printf("Read Bitstream Length\r\n");
+	Status = FsblInstancePtr->DeviceOps.DeviceCopy(SrcAddress, (uint32_t)(&BitStreamLength_BE), 4, NULL);
+	if(ALFSBL_SUCCESS != Status) {
+		goto END;
+	}
+	BitStreamLength_LE = endian_convert(BitStreamLength_BE);
+	printf("Bitstream Byte Length: %08x\r\n", BitStreamLength_LE);
+	BitStreamLength_LE -= 4;
+	SrcAddress += 4;
+
+#if 0
+	BitStreamLength_LE = BitStreamLength_LE - (BitStreamLength_LE % 32);
+	printf("load bitstream to pcap through qspi xip mode\n");
+	Status = AlFsbl_CsuDmaCopy(SrcAddress + QSPI_XIP_BASEADDR, CSU_PCAP_CSULOCAL_WR_STREAM, BitStreamLength_LE, CSUDMA_DST_NOINCR | CSUDMA_SRC_INCR);
+#endif
+
+#if 1
+	printf("Read Bitstream to local buffer\r\n");
+	LoadAddress = (uint32_t)ReadBuffer;
+	Status = FsblInstancePtr->DeviceOps.DeviceCopy(SrcAddress, LoadAddress, BitStreamLength_LE, NULL);
+	if(ALFSBL_SUCCESS != Status) {
+		goto END;
+	}
+
+	BitStreamLength_LE = BitStreamLength_LE - (BitStreamLength_LE % 32);
+	Status = AlFsbl_CsuDmaCopy(LoadAddress, CSU_PCAP_CSULOCAL_WR_STREAM, BitStreamLength_LE, CSUDMA_DST_NOINCR | CSUDMA_SRC_INCR);
+	if(ALFSBL_SUCCESS != Status) {
+		return Status;
+	}
+#endif
+
+#if 0
+	/// reset pl, release reset before pl bitstream config
+	if(FsblInstancePtr->ResetReason == FSBL_SYSTEM_RESET) {
+		REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) & (~SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
+	}
+
+	/// release pl reset
+	if(FsblInstancePtr->ResetReason == FSBL_SYSTEM_RESET) {
+		REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) | (SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
+	}
+
+	PtHdr = &(FsblInstancePtr->ImageHeader.PartitionHeader[PartitionIdx]);
+
+	/// set PCAP not enable, to make the signal to config model not change
+	REG32(CSU_PCAP_ENABLE) = 0;
+
+	/// Copy PL Partition to local buffer
+	SrcAddress = FsblInstancePtr->ImageOffsetAddress + PtHdr->PartitionOffset;
+	LoadAddress = (uint32_t)ReadBuffer;
 	Length = PtHdr->TotalPartitionLen;
 
-	printf("partition src address      : 0x%08x\r\n", SrcAddress);
-	printf("partition load dest address: 0x%08x\r\n", LoadAddress);
-	printf("partition length           : 0x%08x\r\n", Length);
+	printf("partition src address      : 0x%08x\n", SrcAddress);
+	printf("partition load dest address: 0x%08x\n", LoadAddress);
+	printf("partition length           : 0x%08x\n", Length);
 
-/*
+	Status = FsblInstancePtr->DeviceOps.DeviceCopy(SrcAddress, LoadAddress, Length);
+	if(ALFSBL_SUCCESS != Status) {
+		goto END;
+	}
+
 	/// check pl init done
 	Status = AlFsbl_CheckPlInitDone();
 
 	/// enable pcap, to remove pcap-pl isolation
 	REG32(CSU_PCAP_ENABLE) = 1;
-*/
+
+	/// first four bytes is data length before program done stream
+	BitStreamLength = *((uint32_t *)(ReadBuffer));
+	SrcAddress = SrcAddress + 4;
+
+	/// write pl partition bitstream (before program done stream) to PCAP WR_STREAM
+	AlFsbl_CsuDmaCopy(SrcAddress, CSU_PCAP_CSULOCAL_WR_STREAM, BitStreamLength - 4, CSUDMA_DST_NOINCR | CSUDMA_SRC_INCR);
+#endif
+
 
 
 END:

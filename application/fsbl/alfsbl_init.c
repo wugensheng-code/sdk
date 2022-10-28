@@ -8,9 +8,13 @@
 #include "alfsbl_hw.h"
 #include "alfsbl_init.h"
 #include "demosoc.h"
-#include "core_feature_eclic.h"
 #include <stdio.h>
+
+#if __riscv
+#include "core_feature_eclic.h"
+#else
 #include "gic_v3_addr.h"
+#endif
 
 static uint32_t AlFsbl_GetResetReason(void);
 static uint32_t AlFsbl_SystemInit(AlFsblInfo *FsblInstancePtr);
@@ -94,13 +98,16 @@ static uint32_t AlFsbl_SystemInit(AlFsblInfo *FsblInstancePtr)
 	// make sure FSBL exits with isolation removed
 	REG32(CRP_ISO_CTRL) = REG32(CRP_ISO_CTRL) | CRP_ISO_CTRL_MSK_PL_OTHER_IN;
 
-	// set PCAP not enable, to make the signal to config model not change
-	REG32(CSU_PCAP_ENABLE) = 0;
+//	// set PCAP not enable, to make the signal to config model not change
+//	REG32(CSU_PCAP_ENABLE) = 0;
+//
+//	// reset pl, release reset before pl bitstream config
+//	if(FsblInstancePtr->ResetReason == FSBL_SYSTEM_RESET) {
+//		REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) & (~SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
+//	}
 
-	// reset pl, release reset before pl bitstream config
-	if(FsblInstancePtr->ResetReason == FSBL_SYSTEM_RESET) {
-		REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) & (~SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
-	}
+
+
 
 	Status = ALFSBL_SUCCESS;
 
@@ -122,35 +129,34 @@ static void AlFsbl_ClearPendingInterrupt(void)
 #else	//[MODIFY]:1
 	//uint32_t RegVal = 0;
 	printf("Clear all pending interrupts of apu...\r\n");
-	
-	(*(volatile uint32_t *)(uint32_t)(GICD_ICENABLER)) = 0xFFFFFFFF;
-	(*(volatile uint32_t *)(uint32_t)(GICD_ICPENDR)) = 0xFFFFFFFF;
-	(*(volatile uint32_t *)(uint32_t)(GICD_ACTIVE_CLEAR)) = 0xFFFFFFFF;
-
-	//(*(volatile uint32_t *)(uint32_t)(GICD_ICENABLER+4)) = 0xFFFFFFFF;
-	(*(volatile uint32_t *)(uint32_t)(GICD_ICPENDR+4)) = 0xFFFFFFFF;
-	//(*(volatile uint32_t *)(uint32_t)(GICD_ACTIVE_CLEAR+4)) = 0xFFFFFFFF;
-
-	//(*(volatile uint32_t *)(uint32_t)(GICD_ICENABLER+8)) = 0xFFFFFFFF;
-	(*(volatile uint32_t *)(uint32_t)(GICD_ICPENDR+8)) = 0xFFFFFFFF;
-	//(*(volatile uint32_t *)(uint32_t)(GICD_ACTIVE_CLEAR+8)) = 0xFFFFFFFF;
-
-	(*(volatile uint32_t *)(uint32_t)(GICD_ICENABLER+12)) = 0xFFFFFFFF;
-	(*(volatile uint32_t *)(uint32_t)(GICD_ICPENDR+12)) = 0xFFFFFFFF;
-	(*(volatile uint32_t *)(uint32_t)(GICD_ACTIVE_CLEAR+12)) = 0xFFFFFFFF;
-
-	(*(volatile uint32_t *)(uint32_t)(GICD_ICENABLER+16)) = 0xFFFFFFFF;
-	(*(volatile uint32_t *)(uint32_t)(GICD_ICPENDR+16)) = 0xFFFFFFFF;
-	(*(volatile uint32_t *)(uint32_t)(GICD_ACTIVE_CLEAR+16)) = 0xFFFFFFFF;
-
-	(*(volatile uint32_t *)(uint32_t)(GICD_ICENABLER+20)) = 0xFFFFFFFF;
-	(*(volatile uint32_t *)(uint32_t)(GICD_ICPENDR+20)) = 0xFFFFFFFF;
-	(*(volatile uint32_t *)(uint32_t)(GICD_ACTIVE_CLEAR+20)) = 0xFFFFFFFF;
-
 	//RegVal = (*(volatile uint32_t *)(uint32_t)(+4*i));
 	/*for(int i = 0; i < 4; i++){
 		(*(volatile uint32_t *)(uint32_t)(GICD_CPENDSGIR+i)) = 0xFFFFFFFF;
 	}*/
+
+	REG32(GICD_ICENABLER) = ~0;
+	REG32(GICD_ICPENDR) = ~0;
+	REG32(GICD_ACTIVE_CLEAR) = ~0;
+
+	REG32(GICD_ICENABLER+4) = ~0;
+	REG32(GICD_ICPENDR+4) = ~0;
+	REG32(GICD_ACTIVE_CLEAR+4) = ~0;
+
+	REG32(GICD_ICENABLER+8) = ~0;
+	REG32(GICD_ICPENDR+8) = ~0;
+	REG32(GICD_ACTIVE_CLEAR+8) = ~0;
+
+	REG32(GICD_ICENABLER+12) = ~0;
+	REG32(GICD_ICPENDR+12) = ~0;
+	REG32(GICD_ACTIVE_CLEAR+12) = ~0;
+
+	REG32(GICD_ICENABLER+16) = ~0;
+	REG32(GICD_ICPENDR+16) = ~0;
+	REG32(GICD_ACTIVE_CLEAR+16) = ~0;
+
+	REG32(GICD_ICENABLER+20) = ~0;
+	REG32(GICD_ICPENDR+20) = ~0;
+	REG32(GICD_ACTIVE_CLEAR+20) = ~0;
 #endif
 	return;
 }

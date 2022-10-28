@@ -154,8 +154,13 @@ extern "C" {
 #define HASH_TYPE_SHA256   (0x00U)
 #define HASH_TYPE_SM3      (0x01U)
 
-#define AUTH_TYPE_ECC256 (0x00U)
+#define AUTH_TYPE_ECC256   (0x00U)
 #define AUTH_TYPE_SM2      (0x01U)
+
+#define CSUDMA_DST_INCR     (0x0 << 1)
+#define CSUDMA_DST_NOINCR   (0x1 << 1)
+#define CSUDMA_SRC_INCR     (0x0 << 0)
+#define CSUDMA_SRC_NOINCR   (0x1 << 0)
 
 
 typedef struct _SecureInfo_ {
@@ -165,7 +170,8 @@ typedef struct _SecureInfo_ {
 	uint8_t  EncMode;        /// SYM_ECB / SYM_CBC, only ecb supported now
 	uint8_t  EncDir;         /// SYM_ENCRYPT / SYM_DECRYPT
 	uint8_t  KeyMode;        /// OP_BHDR_KEY / OP_USER_KEY, bootheader key or user key
-	uint8_t  Reserved_1[3];
+	uint8_t  CsuAddrIncMode; /// Bit1: Destination addr increment mode, Bit0: Source addr increment mode
+	uint8_t  Reserved_1[2];
 	uint32_t InputAddr;
 	uint32_t OutputAddr;
 	uint32_t DataLength;
@@ -259,21 +265,25 @@ uint32_t AlFsbl_ChecksumCheck(uint8_t *pBuffer, uint32_t Length, uint32_t Checks
 uint32_t SecureIrqInit(void);
 void TriggerSecInterrupt(void);
 void MsgReceive(void);
-uint32_t AlFsbl_Hash(uint32_t DataInAddr, uint32_t DataByteLen, uint32_t HashOutAddr, uint8_t HashType);
-uint32_t AlFsbl_Auth(uint32_t PubKeyAddr, uint32_t SignatureAddr, uint32_t DigestAddr, uint8_t AuthType);
+//uint32_t AlFsbl_Hash(uint32_t DataInAddr, uint32_t DataByteLen, uint32_t HashOutAddr, uint8_t HashType);
+//uint32_t AlFsbl_Auth(uint32_t PubKeyAddr, uint32_t SignatureAddr, uint32_t DigestAddr, uint8_t AuthType);
+//uint32_t AlFsbl_EncHash(SecEncHashIODef *pSecEncHashIOParam);
+
 uint32_t AlFsbl_CompareHash(uint8_t *pHash1, uint8_t *pHash2, uint32_t HashLen);
-uint32_t AlFsbl_EncHash(SecEncHashIODef *pSecEncHashIOParam);
 
 
 uint32_t AlFsbl_DecHash_1(SecureInfo *pSecureInfo);
 uint32_t AlFsbl_Hash_1(SecureInfo *pSecureInfo);
 uint32_t AlFsbl_Auth_1(SecureInfo *pSecureInfo);
 
+uint32_t AlFsbl_CsuDmaCopy(uint32_t SrcAddr, uint32_t DestAddr, uint32_t DataByteLen, uint8_t AddrMode);
+
 //void Alfsbl_SecMsgSend(SecMsgDef *SecMsgPtr, uint32_t CmdLen);
 
 
 
 //uint32_t cal_crc32(uint8_t *buf, uint32_t size);
+
 
 #ifdef __cplusplus
 }

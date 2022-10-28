@@ -25,7 +25,7 @@
 
 
 /********************* global variables *********************/
-//uint8_t  ReadBuffer[READ_BUFFER_SIZE]__attribute__((section(".read_buffer")));
+uint8_t  ReadBuffer[READ_BUFFER_SIZE]__attribute__((section(".read_buffer")));
 uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE]__attribute__((aligned(4))) = {0};
 AlFsblInfo FsblInstance = {0x00U, 0, 0, 0};
 SecureInfo FsblSecInfo = {0};

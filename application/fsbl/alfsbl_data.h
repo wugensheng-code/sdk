@@ -16,6 +16,7 @@ extern "C" {
 
 #include "demosoc.h"
 #include "alfsbl_defines.h"
+#include "alfsbl_sec.h"
 
 #if defined (CPU_RPU_64)
 #define PTRSIZE uint64_t
@@ -28,9 +29,16 @@ extern "C" {
 #endif
 
 
-#define READ_BUFFER_SIZE                  (56 * 1024)
+
+
+#define READ_BUFFER_SIZE                  (16 * 1024)
 #define ALFSBL_AUTH_BUFFER_SIZE           (0x180U)
 #define AL_WORD_LENGTH                    (4U)
+
+
+
+#define QSPI_FLASH_SEARCH_STEP            (32 * 1024)
+
 
 #define ALIH_MIN_PARTITIONS			      (1U)
 #define ALIH_MAX_PARTITIONS			      (6U)
@@ -197,7 +205,7 @@ typedef struct _AlFsbl_HandoffValues_ {
 typedef struct _AlFsbl_DeviceOps_ {
 	uint32_t DeviceBaseAddress;
 	uint32_t (*DeviceInit)(void);
-	uint32_t (*DeviceCopy)(PTRSIZE SrcAddress, PTRSIZE DestAddress, uint32_t Length);
+	uint32_t (*DeviceCopy)(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo);
 	uint32_t (*DeviceRelease)(void);
 } AlFsbl_DeviceOps;
 

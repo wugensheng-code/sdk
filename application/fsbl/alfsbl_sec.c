@@ -12,6 +12,10 @@
 #include "alfsbl_sec.h"
 #include "alfsbl_hw.h"
 #include "alfsbl_misc.h"
+#include "demosoc.h"
+#ifndef __riscv
+#include "gic_v3_addr.h"
+#endif
 
 //extern uint8_t  ReadBuffer[READ_BUFFER_SIZE];
 extern uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE];
@@ -133,6 +137,7 @@ void MsgReceive(void)
 {
 	MsgFlag = 1;
 	printf("ack\r\n");
+	*(volatile uint32_t *)(RPU2CSU_ACK_ADDR) = 0;
 	return;
 }
 
@@ -148,14 +153,12 @@ void RpuCsuAckHandler()
 uint32_t SecureIrqInit(void)
 {
 	uint32_t ret;
-	IRQn_Type IRQn;
-#if __riscv
-	IRQn = RPU2CSU_ACK_IRQN;
-#else	//[MODIFY]:4
-	IRQn = APU2CSU_ACK_IRQN;
+#ifndef __riscv
+	REG32(GICD_ISENABLER+8) = 0x80000000;
+	REG32(GICD_ISENABLER+12) = 0x1;
 #endif
 	ret = ECLIC_Register_IRQ(
-			IRQn,
+			RPU2CSU_ACK_IRQN,
 			ECLIC_NON_VECTOR_INTERRUPT,
 			ECLIC_POSTIVE_EDGE_TRIGGER,
 			1,
@@ -447,9 +450,37 @@ END:
 	return Status;
 }
 
+uint32_t AlFsbl_CsuDmaCopy(uint32_t SrcAddr, uint32_t DestAddr, uint32_t DataByteLen, uint8_t AddrMode)
+{
+	uint32_t Status = ALFSBL_SUCCESS;
+	uint32_t HashByteLen = 0;
+	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM);
+	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM + 64);
+
+	pMsg->Cmd = CMD_DMA;
+
+	pMsg->DmaParam.KeyAddr     = 0;
+	pMsg->DmaParam.IvAddr      = 0;
+	pMsg->DmaParam.InputAddr   = SrcAddr;
+	pMsg->DmaParam.TotalLength = DataByteLen;
+	pMsg->DmaParam.OutputAddr  = DestAddr;
+	pMsg->DmaParam.HashOutAddr = 0;
+
+	pMsg->Option0.Low  = OP_ENCRYPT_NONE;
+	pMsg->Option0.High = OP_HASH_NONE;
+	pMsg->Option1.Low  = OP_BHDR_KEY;
+	pMsg->Option1.High = AddrMode;
+
+	pMsg->DmaParam.OpMode.Bits = 0;
 
 
+	TriggerSecInterrupt();
+	Status = CheckAckValid(pAck);
 
+END:
+	return Status;
+
+}
 
 
 

@@ -6,7 +6,6 @@
  */
 #include <stdint.h>
 #include <stdio.h>
-#include "alfsbl_emmc.h"
 #include "alfsbl_emmc_raw.h"
 #include "alfsbl_nand.h"
 #include "alfsbl_boot.h"
@@ -35,9 +34,6 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 		}
 	}
 	
-	BootMode = ALFSBL_BOOTMODE_NAND;
-	printf("Boot Mode: 0x%08x\r\n", BootMode);
-	
 	switch(BootMode) {
 	case ALFSBL_BOOTMODE_JTAG:
 		Status = ALFSBL_STATUS_JTAG;
@@ -50,13 +46,6 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 		FsblInstancePtr->DeviceOps.DeviceRelease = AlFsbl_Qspi24Release;
 		break;
 
-	case ALFSBL_BOOTMODE_EMMC:
-		printf("EMMC Boot Mode\r\n");
-		FsblInstancePtr->DeviceOps.DeviceInit    = AlFsbl_EmmcInit;
-		FsblInstancePtr->DeviceOps.DeviceCopy    = AlFsbl_EmmcCopy;
-		FsblInstancePtr->DeviceOps.DeviceRelease = AlFsbl_EmmcRelease;
-		break;
-
 	case ALFSBL_BOOTMODE_QSPI32:
 		break;
 
@@ -67,8 +56,9 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 		FsblInstancePtr->DeviceOps.DeviceRelease = AlFsbl_NandRelease;
 		break;
 
+	case ALFSBL_BOOTMODE_EMMC:
 	case ALFSBL_BOOTMODE_SD:
-		printf("SD Boot Mode\r\n");
+		printf("EMMC or SD Boot Mode\r\n");
 		FsblInstancePtr->DeviceOps.DeviceInit    = AlFsbl_SdInit;
 		FsblInstancePtr->DeviceOps.DeviceCopy    = AlFsbl_SdCopy;
 		FsblInstancePtr->DeviceOps.DeviceRelease = AlFsbl_SdRelease;

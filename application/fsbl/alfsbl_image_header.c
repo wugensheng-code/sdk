@@ -25,7 +25,7 @@ uint32_t AlFsbl_BootDevInitAndHdrValidate(AlFsblInfo *FsblInstancePtr)
 	}
 
 	/// initialize security irq (RPU2CSU_ACK) as non-vector interrupt
-	SecureIrqInit();	//[MODIFY]:3
+	SecureIrqInit();
 
 	/// read and validate boot header
 	Status = AlFsbl_ValidateImageHeader(FsblInstancePtr);
@@ -49,9 +49,14 @@ uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 	uint32_t PartitionNum;
 	uint32_t PartitionHeaderOffset;
 	uint32_t EfuseCtrl;
+	uint32_t MultiBoot;
 //	uint32_t *ReadBuffer32 = (uint32_t *)(ReadBuffer);
 
-	FsblInstancePtr->ImageOffsetAddress = IMAGE_FLASH_OFFSET;
+	/// get multi boot value
+	MultiBoot = REG32(SYSCTRL_S_MULTI_BOOT);
+
+	/// get image offset address based on multi boot reg value
+	FsblInstancePtr->ImageOffsetAddress = MultiBoot * QSPI_FLASH_SEARCH_STEP;
 
 	ImageOffsetAddress = FsblInstancePtr->ImageOffsetAddress;
 	printf("FsblInstancePtr->ImageOffsetAddress: 0x%08x\r\n", ImageOffsetAddress);
@@ -60,23 +65,33 @@ uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 	Status = FsblInstancePtr->DeviceOps.DeviceCopy(
 			     ImageOffsetAddress,
 				 (PTRSIZE)(&(FsblInstancePtr->ImageHeader.BootHeader)),
-				 ALIH_BH_SIZE);
+				 ALIH_BH_SIZE,
+				 NULL);
 
 	if (ALFSBL_SUCCESS != Status) {
 		printf("boot header copy failed...\r\n");
 		goto END;
 	}
-	printf("boot header copy finished...\r\n");
+	printf("boot header copy finished...\n");
+
+#if (!defined FSBL_SIMU_SKIP_HEADERCHECK)
+	Status = AlFsbl_ChecksumCheck(
+			(uint8_t *)(&(FsblInstancePtr->ImageHeader.BootHeader.QspiWidthSel)),
+			60,
+			FsblInstancePtr->ImageHeader.BootHeader.BhChecksum);
+	if(Status != ALFSBL_SUCCESS) {
+		goto END;
+	}
+#endif
 
 	/// read partition headers
 	PartitionNum = FsblInstancePtr->ImageHeader.BootHeader.PartitionNum;
 	PartitionHeaderOffset = FsblInstancePtr->ImageHeader.BootHeader.FirstPartiHdrOffset;
-	
 	Status = FsblInstancePtr->DeviceOps.DeviceCopy(
-			     ImageOffsetAddress+PartitionHeaderOffset,
+			     PartitionHeaderOffset + ImageOffsetAddress,
 				 (PTRSIZE)(&(FsblInstancePtr->ImageHeader.PartitionHeader[0])),
-				 ALIH_PH_SIZE * PartitionNum);
-	
+				 ALIH_PH_SIZE * PartitionNum,
+				 NULL);
 	if (ALFSBL_SUCCESS != Status) {
 		printf("partition headers copy failed...\r\n");
 		goto END;
@@ -99,15 +114,7 @@ uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 		printf("image header authentication passed...\r\n");
 	}
 	else {
-		printf("image header authentication not enabled....\r\n");
-	}
-
-	Status = AlFsbl_ChecksumCheck(
-			(uint8_t *)(&(FsblInstancePtr->ImageHeader.BootHeader.QspiWidthSel)),
-			60,
-			FsblInstancePtr->ImageHeader.BootHeader.BhChecksum);
-	if(Status != ALFSBL_SUCCESS) {
-		goto END;
+		printf("image header authentication not enabled....\n");
 	}
 #endif
 
@@ -180,9 +187,12 @@ uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl)
 	ImageOffsetAddress = FsblInstancePtr->ImageOffsetAddress;
 	BootHdrAttrb = FsblInstancePtr->ImageHeader.BootHeader.BhAttr;
 
+	printf("Efuse Ctrl:   %08x\n", EfuseCtrl);
+	printf("BootHdrAttrb: %08x\n", BootHdrAttrb);
+
 	/// get image header authentication type
-	if((EfuseCtrl | EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_SM2) {
-		if(BootHdrAttrb & ALIH_BH_ATTRB_HD_AC_SEL_MASK != ALIH_BH_ATTRB_HD_AC_SEL_SM2) {
+	if((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_SM2) {
+		if((BootHdrAttrb & ALIH_BH_ATTRB_HD_AC_SEL_MASK) != ALIH_BH_ATTRB_HD_AC_SEL_SM2) {
 			Status = ALFSBL_AUTHTYPE_NOT_MATCH_EFUSE;
 			goto END;
 		}
@@ -190,7 +200,7 @@ uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl)
 		FsblIHSecInfo.HashType = OP_HASH_SM3;
 	}
 	else if((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_ECC256) {
-		if(BootHdrAttrb & ALIH_BH_ATTRB_HD_AC_SEL_MASK != ALIH_BH_ATTRB_HD_AC_SEL_ECC256) {
+		if((BootHdrAttrb & ALIH_BH_ATTRB_HD_AC_SEL_MASK) != ALIH_BH_ATTRB_HD_AC_SEL_ECC256) {
 			Status = ALFSBL_AUTHTYPE_NOT_MATCH_EFUSE;
 			goto END;
 		}
@@ -199,7 +209,7 @@ uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl)
 
 	}
 	else if((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_HEADER_SET) {
-		if(BootHdrAttrb & ALIH_BH_ATTRB_HD_AC_SEL_MASK == ALIH_BH_ATTRB_HD_AC_SEL_SM2) {
+		if((BootHdrAttrb & ALIH_BH_ATTRB_HD_AC_SEL_MASK) == ALIH_BH_ATTRB_HD_AC_SEL_SM2) {
 			FsblIHSecInfo.AuthType = OP_AUTH_SM2;
 			FsblIHSecInfo.HashType = OP_HASH_SM3;
 		}
@@ -225,9 +235,10 @@ uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl)
 		/// AC exists, copy to memory
 		printf("Copy Image Header AC\r\n");
 		Status = FsblInstancePtr->DeviceOps.DeviceCopy(
-				     ImageOffsetAddress+AcOffset,
+				     ImageOffsetAddress + AcOffset,
 					 (PTRSIZE)AuthBuffer,
-					 ALFSBL_AUTH_BUFFER_SIZE);
+					 ALFSBL_AUTH_BUFFER_SIZE,
+					 NULL);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
