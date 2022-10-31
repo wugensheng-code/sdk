@@ -10,6 +10,8 @@ NUCLEI_SDK_SOC_BOARD=$(NUCLEI_SDK_SOC)/Board/$(BOARD)
 NUCLEI_SDK_SOC_COMMON=$(NUCLEI_SDK_SOC)/Common
 
 OPENOCD_CFG ?= $(NUCLEI_SDK_SOC_BOARD)/openocd_demosoc.cfg
+
+
 ifeq ($(DOWNLOAD),ilm)
 LINKER_SCRIPT ?= $(NUCLEI_SDK_SOC_BOARD)/Source/GCC/gcc_demosoc_ilm.ld
 else
@@ -19,10 +21,16 @@ else
 ifeq ($(DOWNLOAD),flashxip)
 LINKER_SCRIPT ?= $(NUCLEI_SDK_SOC_BOARD)/Source/GCC/gcc_demosoc_flashxip.ld
 else
+ifeq ($(DOWNLOAD),ocm)
+LINKER_SCRIPT ?= $(NUCLEI_SDK_SOC_BOARD)/Source/GCC/gcc_demosoc_ocm.ld
+else
 LINKER_SCRIPT ?= $(NUCLEI_SDK_SOC_BOARD)/Source/GCC/gcc_demosoc_flash.ld
 endif
 endif
 endif
+endif
+
+
 
 CORE_UPPER = $(call uc, $(CORE))
 include $(NUCLEI_SDK_BUILD)/Makefile.core

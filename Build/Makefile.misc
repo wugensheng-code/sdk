@@ -80,8 +80,8 @@ ifeq ($(SILENT), 1)
 	override Q=@
 else
 	TRACE_CREATE_DIR    = @$(ECHO) "Creating Directory : " $(@D)
-	TRACE_COMPILE       = @$(ECHO) "Compiling  : " $<
-	TRACE_ASSEMBLE      = @$(ECHO) "Assembling : " $<
-	TRACE_LINK          = @$(ECHO) "Linking    : " $@
+	TRACE_COMPILE       = @$(ECHO) "Compiling  : " $(CFLAGS)   "\n" $<
+	TRACE_ASSEMBLE      = @$(ECHO) "Assembling : " $(ASMFLAGS) "\n" $<
+	TRACE_LINK          = @$(ECHO) "Linking    : " $(LDFLGAS)  "\n"$@
 	TRACE_ARCHIVE       = @$(ECHO) "Archiving  : " $@
 endif
