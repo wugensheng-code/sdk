@@ -1732,6 +1732,51 @@ typedef struct{
 	__IOM uint32_t IRQ_REG_2;		/*offset 0x7C*/
 	__IOM uint32_t IRQ_REG_3;		/*offset 0x80*/
 }TTC_AL9000_TypeDef;
+typedef struct{ 
+	__IOM uint32_t QOS_RECORD;		/*offset 0x000*/	
+	__IOM uint32_t QOS_CONFIG;		/*offset 0x004*/
+	__IOM uint32_t QOS_THRESHOLD;		/*offset 0x008*/
+	__IOM uint32_t REV_BUF1;		/*offset 0x00C*/		
+	__IOM uint32_t RESPTIME_CFG;		/*offset 0x010*/
+	__IOM uint32_t AWRESPTIME_MAX;		/*offset 0x014*/
+	__IOM uint32_t AWRESPTIME_ACC_H;	/*offset 0x018*/
+	__IOM uint32_t AWRESPTIME_ACC_L;	/*offset 0x01C*/
+	__IOM uint32_t AWRESPTIME_CNT;		/*offset 0x020*/
+	__IOM uint32_t ARRESPTIME_MAX;		/*offset 0x024*/
+	__IOM uint32_t ARRESPTIME_ACC_H;	/*offset 0x028*/
+	__IOM uint32_t ARRESPTIME_ACC_L;	/*offset 0x02C*/
+	__IOM uint32_t ARRESPTIME_CNT;		/*offset 0x030*/
+	__IOM uint32_t BANDWIDTH_TMWD;		/*offset 0x034*/
+	__IOM uint32_t BANDWIDTH_WR;		/*offset 0x038*/
+	__IOM uint32_t BANDWIDTH_RD;		/*offset 0x03C*/
+	__IOM uint32_t SUBPARA_CONFIG;		/*offset 0x040*/
+	__IOM uint32_t SUBPARA_AWID;		/*offset 0x044*/
+	__IOM uint32_t SUBPARA_GRPID;		/*offset 0x048*/
+	__IOM uint32_t SUBPARA_AWBURST;		/*offset 0x04C*/
+	__IOM uint32_t SUBPARA_ARID;		/*offset 0x050*/
+	__IOM uint32_t SUBPARA_ARBURST;		/*offset 0x054*/
+	__IOM uint32_t REV_BUF2[2];		/*offset 0x058-0x05c*/		
+	__IOM uint32_t CNT_AWCMD;		/*offset 0x060*/
+	__IOM uint32_t CNT_AWBTYPE;		/*offset 0x064*/
+	__IOM uint32_t CNT_AWBLEN;		/*offset 0x068*/
+	__IOM uint32_t CNT_AWBSIZE;		/*offset 0x06C*/
+	__IOM uint32_t CNT_AWID;		/*offset 0x070*/
+	__IOM uint32_t CNT_AWGID;		/*offset 0x074*/
+	__IOM uint32_t CNT_ARCMD;		/*offset 0x078*/
+	__IOM uint32_t CNT_ARBTYPE;		/*offset 0x07C*/
+	__IOM uint32_t CNT_ARBLEN;		/*offset 0x080*/
+	__IOM uint32_t CNT_ARBSIZE;		/*offset 0x084*/
+	__IOM uint32_t CNT_ARID;		/*offset 0x088*/
+	__IOM uint32_t CNT_ARGID;		/*offset 0x08c*/
+	__IOM uint32_t REV_BUF3[4];		/*offset 0x090-0x09c*/
+	__IOM uint32_t DEBUG_FLAGINFO;		/*offset 0x0A0*/
+	__IOM uint32_t DEBUG_ADDR_L;		/*offset 0x0A4*/
+	__IOM uint32_t DEBUG_ID;		/*offset 0x0A8*/
+	__IOM uint32_t DEBUG_TIMEOUT_FLAG;	/*offset 0x0AC*/
+	__IOM uint32_t DEBUG_TIMEOUT_THD;	/*offset 0x0B0*/
+	__IOM uint32_t REV_BUF4[15];		
+	__IOM uint32_t INTR;			/*offset 0x0F0*/		
+}AXIMON_TypeDef;
 #define XEC1_MAC_BASE                 (XEC1_BASE)
 #define XEC1_Interrupt_BASE           (XEC1_BASE+0xb0UL)
 #define XEC1_Phyifctrlstat_BASE       (XEC1_BASE+0xf8UL)
@@ -1943,7 +1988,49 @@ typedef struct{
 #define XEC1                     ((XEC_TypeDef *) XEC1_BASE)
 #define XEC1_NCFG               ((XEC_TypeDef *) XEC1_NCFG_BASE)
 
+#define DDR_S0_BASE			(0xF8440000UL)
+#define DDR_S1_BASE			(0xF8440400UL)
+#define DDR_S2_BASE			(0xF8440800UL)
+#define DDR_S3_BASE			(0xF8440C00UL)
+#define SX2X_M0_BASE			(0xF8441000UL)
+#define SX2X_M1_BASE			(0xF8441400UL)
+#define OCM_S2_BASE			(0xF8441800UL)
+#define SH_M2_BASE			(0xF8441C00UL)
+#define SMC_BASE_BASE       (0xF8442000UL)
+#define DMACX_BASE          (0xF8442400UL)
+#define GP_S0_BASE          (0xF8444000UL)
+#define GP_S1_BASE          (0xF8444400UL)
+#define HP_S0_BASE          (0xF8444800UL)
+#define HP_S1_BASE          (0xF8444C00UL)
+#define APU_BASE            (0xF8445000UL)
+#define JPU_BASE            (0xF8445400UL)
+#define MAIN_S6_BASE        (0xF8445800UL)
+#define MAIN_M6_BASE        (0xF8445C00UL)
+#define MAIN_S1_BASE        (0xF8446000UL)
+#define MAIN_M0_BASE        (0xF8446400UL)
+#define ACP_BASE            (0xF8446800UL)
 
+#define AL_DDR_S0			((AXIMON_TypeDef *)DDR_S0_BASE)
+#define AL_DDR_S1			((AXIMON_TypeDef *)DDR_S1_BASE)
+#define AL_DDR_S2			((AXIMON_TypeDef *)DDR_S2_BASE)
+#define AL_DDR_S3			((AXIMON_TypeDef *)DDR_S3_BASE)
+#define AL_SX2X_M0			((AXIMON_TypeDef *)SX2X_M0_BASE)
+#define AL_SX2X_M1			((AXIMON_TypeDef *)SX2X_M1_BASE)
+#define AL_OCM_S2			((AXIMON_TypeDef *)OCM_S2_BASE)
+#define AL_SH_M2			((AXIMON_TypeDef *)SH_M2_BASE)
+#define AL_SMC				((AXIMON_TypeDef *)SMC_BASE_BASE)
+#define AL_DMACX			((AXIMON_TypeDef *)DMACX_BASE)
+#define AL_GP_S0			((AXIMON_TypeDef *)GP_S0_BASE)
+#define AL_GP_S1			((AXIMON_TypeDef *)GP_S1_BASE)
+#define AL_HP_S0			((AXIMON_TypeDef *)HP_S0_BASE)
+#define AL_HP_S1			((AXIMON_TypeDef *)HP_S1_BASE)
+#define AL_APU				((AXIMON_TypeDef *)APU_BASE)
+#define AL_JPU				((AXIMON_TypeDef *)JPU_BASE)
+#define AL_MAIN_S6			((AXIMON_TypeDef *)MAIN_S6_BASE)
+#define AL_MAIN_M6			((AXIMON_TypeDef *)MAIN_M6_BASE)
+#define AL_MAIN_S1			((AXIMON_TypeDef *)MAIN_S1_BASE)
+#define AL_MAIN_M0			((AXIMON_TypeDef *)MAIN_M0_BASE)
+#define AL_ACP				((AXIMON_TypeDef *)ACP_BASE)
 
 // Misc
 
