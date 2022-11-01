@@ -24,7 +24,7 @@
 
 
 
-#define READ_SIZE 60
+#define READ_SIZE 32
 
 
 /****************function define******************************/
@@ -239,7 +239,7 @@ int main()
 	//divided by 30 --(30 from design)
 	//-----------------------------------------------------------
 	/*cfg SPI Clock Divider.*/
-	spi_sckdiv_cfg(SPI_MASTER, 110);  // divided by 30.0x1e not work ,0x28=40
+	spi_sckdiv_cfg(SPI_MASTER, 70);  // divided by 30.0x1e not work ,0x28=40
 
 	//-----------------------------------------------------------
 	//program SSIENR register
