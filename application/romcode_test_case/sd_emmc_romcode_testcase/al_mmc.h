@@ -5,6 +5,7 @@
 #include <stdint.h>
 //#include "../../../../demoapu/Common/Include/delay.h"
 #include "mtimer.h"
+#include "al_debug.h"
 
 typedef enum{
 	//	COMMON STATUS
@@ -61,23 +62,77 @@ typedef enum{
 }MMC_ERR_TYPE;
 
 //error code offset
-#define MMC_ERROR_CODE_OFFSET		MMC_CMD_TOUT_ERR
+#define MMC_ERROR_CODE_OFFSET			MMC_CMD_TOUT_ERR
 //error cmd offset
-#define MMC_ERROR_CMD_OFFSET		MMC_CMD_0_ERR
+#define MMC_ERROR_CMD_OFFSET			MMC_CMD_0_ERR
+#define MMC_ERROR_CMD_NUM				(MMC_CMD_7_XFER_ERR - MMC_CMD_0_ERR)
+//error transfer offset
+#define MMC_ERROR_TRANSFER_CMD_OFFSET	MMC_CMD_7_XFER_ERR
+#define MMC_ERROR_TRANSFER_CMD_NUM		(MMC_CMD_XFER_ERR - MMC_CMD_7_XFER_ERR)
 //Error INT status bits	length 13~15 reserved
 #define MMC_ERR_INT_STAT_BITS_LEN	7
+
+#define BRANCH_ERROR_CMD_START				0
+//#define BRANCH_ERR_STAT_CHECK_START		(BRANCH_ERROR_CMD_START+MMC_ERROR_CMD_NUM-1)
+//#define BRANCH_ERR_BIT_CHECK_START		(BRANCH_ERR_STAT_CHECK_START+MMC_ERROR_CMD_NUM-1)
+#define BRANCH_ERROR_CMD_TIMEOUT_START		(BRANCH_ERROR_CMD_START+MMC_ERROR_CMD_NUM)
+#define BRANCH_ERROR_TRANSFER_START			(BRANCH_ERROR_CMD_TIMEOUT_START+MMC_ERROR_CMD_NUM)
+#define BRANCH_ERROR_TRANSFER_TIMEOUT_START	(BRANCH_ERROR_TRANSFER_START+MMC_ERROR_TRANSFER_CMD_NUM)
+#define BRANCH_TRANSFER_RIGHT_CMD_START		(BRANCH_ERROR_TRANSFER_TIMEOUT_START+MMC_ERROR_TRANSFER_CMD_NUM)
+#define BRANCH_ERROR_RDWR_RDY_START			(BRANCH_TRANSFER_RIGHT_CMD_START+MMC_ERROR_TRANSFER_CMD_NUM)
+#define BRANCH_ERROR_RDWR_RDY_TIMEOUT_START	(BRANCH_ERROR_RDWR_RDY_START+MMC_ERROR_TRANSFER_CMD_NUM)
+#define BRANCH_CLK_STABLE					(BRANCH_ERROR_RDWR_RDY_TIMEOUT_START+MMC_ERROR_TRANSFER_CMD_NUM)
+#define BRANCH_CLK_STABLE_TIMEOUT			(BRANCH_CLK_STABLE+1)
+#define BRANCH_CHECK_LINE_INHIBIT			(BRANCH_CLK_STABLE_TIMEOUT+1)
+#define BRANCH_CHECK_LINE_INHIBIT_TIMEOUT	(BRANCH_CHECK_LINE_INHIBIT+1)
+#define BRANCH_IO_BANK1_SUPPORT				(BRANCH_CHECK_LINE_INHIBIT_TIMEOUT+1)
+#define BRANCH_EMMC_FREQ_SET				(BRANCH_IO_BANK1_SUPPORT+1)
+#define BRANCH_SD_FREQ_SET					(BRANCH_EMMC_FREQ_SET+1)
+#define BRANCH_EMMC_VOLT_CHECK				(BRANCH_SD_FREQ_SET+1)
+#define BRANCH_EMMC_VOLT_CHECK_TIMEOUT		(BRANCH_EMMC_VOLT_CHECK+1)
+#define BRANCH_SD_VOLT_CHECK				(BRANCH_EMMC_VOLT_CHECK_TIMEOUT+1)
+#define BRANCH_SD_VOLT_CHECK_TIMEOUT		(BRANCH_SD_VOLT_CHECK+1)
+#define BRANCH_SD_CARD_TYPE_CHECK			(BRANCH_SD_VOLT_CHECK_TIMEOUT+1)
+#define BRANCH_EMMC_CARD_SIZE				(BRANCH_SD_CARD_TYPE_CHECK+1)
+#define BRANCH_SD_CARD_SIZE					(BRANCH_EMMC_CARD_SIZE+1)
+#define BRANCH_RAW_EMMC_INIT				(BRANCH_SD_CARD_SIZE+1)
+#define BRANCH_RAW_EMMC_READ_FIRST			(BRANCH_RAW_EMMC_INIT+1)
+#define BRANCH_RAW_EMMC_READ_MIDDLE			(BRANCH_RAW_EMMC_READ_FIRST+1)
+#define BRANCH_RAW_EMMC_READ_LAST			(BRANCH_RAW_EMMC_READ_MIDDLE+1)
+#define BRANCH_RAW_EMMC_SET_MODE_FREQ		(BRANCH_RAW_EMMC_READ_LAST+1)
+#define BRANCH_RAW_SD_SET_MODE_FREQ			(BRANCH_RAW_EMMC_SET_MODE_FREQ+1)
+#define BRANCH_EMMC_HOST_CONTROLLER_SETUP	(BRANCH_RAW_SD_SET_MODE_FREQ+1)
+#define BRANCH_EMMC_INTR_INIT				(BRANCH_EMMC_HOST_CONTROLLER_SETUP+1)
+#define BRANCH_EMMC_INIT_CMD				(BRANCH_EMMC_INTR_INIT+1)
+#define BRANCH_EMMC_GET_CARD_INFO			(BRANCH_EMMC_INIT_CMD+1)
+#define BRANCH_SD_HOST_CONTROLLER_SETUP		(BRANCH_EMMC_GET_CARD_INFO+1)
+#define BRANCH_SD_INTR_INIT					(BRANCH_SD_HOST_CONTROLLER_SETUP+1)
+#define BRANCH_SD_INIT_CMD					(BRANCH_SD_INTR_INIT+1)
+#define BRANCH_SD_GET_CARD_INFO				(BRANCH_SD_INIT_CMD+1)
+#define BRANCH_MAX							(BRANCH_SD_GET_CARD_INFO+1)
+
+
 
 //#define _USE_SDMA
 //#define _USE_4BIT
 //#define _USE_8BIT
+//#define BRANCH_SD_FLOW_PRINT	//define for sd, comment for emmc
 #define _USE_MSHC_PRINT
 //#define _USE_ERR_PRINT
+#define MMC_BRANCHTEST
+#define MMC_INFO_PRINT
+#define MMC_GENERAL_PRINT
 
-//#define MMC_SEQUENCE_PRINT
-#ifdef MMC_SEQUENCE_PRINT
-#define MMC_PRINT	printf
+#ifdef MMC_INFO_PRINT
+#define MMC_PRINT(...)	rom_printf(DEBUG_INFO, __VA_ARGS__)
 #else
-#define MMC_PRINT
+#define MMC_PRINT(...)
+#endif
+
+#ifdef MMC_GENERAL_PRINT
+#define MMC_GPRINT(...)	rom_printf(DEBUG_GENERAL, __VA_ARGS__)
+#else
+#define MMC_GPRINT(...)
 #endif
 
 //IO BANK1 REF
@@ -115,16 +170,15 @@ typedef enum{
 
 #define     __IO    volatile      
 
-#define DEF_BLOCK_LEN   0x1000	//4KB
+#define DEF_BLOCK_LEN   	0x1000	//4KB
+#define BLOCK_128MB_NUM     0x40000	//128MB
 
-unsigned int reg_read(unsigned long reg_address);
-void reg_write(unsigned long reg_address, uint32_t reg_wdata);
+uint32_t Mmc_RegRead32(unsigned long reg_address);
+void Mmc_RegWrite32(unsigned long reg_address, uint32_t reg_wdata);
 
-#define REG_READ(reg_address) reg_read(reg_address)
-#define REG_WRITE(reg_address, reg_wdata) reg_write(reg_address, reg_wdata)
+#define REG_READ(reg_address) Mmc_RegRead32((unsigned long)reg_address)
+#define REG_WRITE(reg_address, reg_wdata) Mmc_RegWrite32((unsigned long)reg_address, reg_wdata)
 
-#define SDRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO1__BASE_ADDR+reg_address), reg_wdata)
-#define EMMCRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO0__BASE_ADDR+reg_address), reg_wdata)
 
 typedef enum {
 	FAILED = 0, 
@@ -987,18 +1041,44 @@ void PrintfMshcBlock(DWC_mshc_block_registers *Ptr);
 													}\
 													ClearErrandIntStatus(ptr)
 
+#ifdef MMC_BRANCHTEST
+#define BRANCH_NUM		BRANCH_MAX
+#define BRANCH_BRANCH	2
+extern uint32_t BranchTestCount[BRANCH_NUM][BRANCH_BRANCH];
+#define MMC_BRANCHTEST_PRINT(branch, num)		do{\
+													rom_printf(DEBUG_BRANCHTEST, "[G]:[%s][%s][%d]\t\t[%d]\t[%d]\r\n",\
+													__FILE__, __func__, __LINE__, branch, num);\
+													BranchTestCount[branch][num]++;\
+												}while(0)
+#define MMC_FLOWNUM_PRINT(...)					do{\
+													rom_printf(DEBUG_BRANCHTEST, __VA_ARGS__);\
+												}while(0)
+#else
+#define MMC_BRANCHTEST_PRINT(branch, num)
+#define MMC_FLOWNUM_PRINT(...)
+#endif
+
+typedef enum{
+	BRANCH_FLOW_MODULE_INIT,
+	BRANCH_FLOW_MODULE_BYTEREAD,
+	BRANCH_FLOW_MODULE_BLOCKREAD,
+	BRANCH_FLOW_MODULE_MODESET,
+	BRANCH_FLOW_MODULE_MAX
+}BRANCH_FLOW_MODULE;
+
 extern __IO DWC_mshc_block_registers* SDIO;
 extern __IO DWC_mshc_block_registers* eMMC;
 extern MtimerParams MmcMtimer;
-extern __IO uint32_t CsdTab[4];
-extern __IO uint32_t CidTab[4];
-extern __IO uint32_t Resp[4];
-extern __IO uint32_t Rca;
+extern uint32_t CsdTab[4];
+extern uint32_t CidTab[4];
+extern uint32_t Resp[4];
+extern uint32_t Rca;
 extern uint8_t FlashSharedBuf[DEF_BLOCK_LEN];
 extern uint8_t EfuseDelayParam;
 
 uint32_t HostControllerSetup(volatile DWC_mshc_block_registers* ptr);
 uint32_t InitInterruptSetting(volatile DWC_mshc_block_registers* ptr);
+void Mmc_BranchFlowPrint(uint32_t Module, uint32_t FlowNumS, uint32_t FlowNumE);
 
 /*****************************END OF FILE**************************/
 
