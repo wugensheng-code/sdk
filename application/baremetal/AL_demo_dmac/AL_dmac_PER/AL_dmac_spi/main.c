@@ -9,8 +9,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
+#include "mtimer.h"
 #define S25FL512S_ID	0X00200201  // flash ID
 #define MXICFLASH_ID    0X003925c2
+#define READ_SIZE    32
 //#define IO_WRITE
 #define FLASH_ERASE_VERIFY
 //#define FLASH_READ
@@ -189,13 +191,13 @@ void printf_mem_data2(uint32_t count){
 
 		if (data_ok == 1) {
 			for(i = 0 ; i < count ; i++)
-	            printf("%d",*(uint32_t*)(MEM_BASE2_ADDR + i*4));
+	            printf("%d ",*(uint32_t*)(MEM_BASE2_ADDR + i*4));
 			printf("\n\rDMA SPI Test PASS!\n\r");
 
 		}
 		else {
 			for(i = 0 ; i < count ; i++)
-				printf("%d",*(uint32_t*)(MEM_BASE2_ADDR + i*4));
+				printf("%d ",*(uint32_t*)(MEM_BASE2_ADDR + i*4));
 			printf("\n\rDMA SPI Test FAILED!\n\r");
 
 		}
@@ -215,9 +217,9 @@ void printf_mem_data2(uint32_t count){
  */
 
 int main(void){
-
-    	volatile uint32_t buffer[128];
-    	volatile uint32_t buffer1[128];
+	
+    	volatile uint32_t buffer[256];
+    	volatile uint32_t buffer1[256];
     	volatile uint32_t i;
     	uint32_t data32;
     	uint32_t byte_cnt;
@@ -249,11 +251,13 @@ int main(void){
     	    for(i=0; i<256; i++)
     	    {
     	    	wrdata_a[i] = i;
-    	    	buffer1[i]  = 0;
+    	    	//buffer1[i]  = 0;
     	    }
     	    write_To_OCM((uint32_t*)buffer1,256,(uint32_t*)MEM_BASE2_ADDR);
     	    printf_mem_data(256);
     	    printf_mem_clear_data2(256);
+    	  while(1)
+    	  {
     	    spi_dwc_ssi_disable(SPI_MASTER);
 
     	    	spi_dfs(SPI_MASTER,SPI_DFS_BYTE);   // byte
@@ -263,7 +267,7 @@ int main(void){
     	    	spi_txftl_tft(SPI_MASTER, 0); // default
     	    	spi_ctrl1_ndf(SPI_MASTER, 2); // receive 2+1 data items
     	    	spi_ser(SPI_MASTER,SER_SS0_EN); // choose ss1 -- for same to simulation code.
-    	    	spi_sckdiv_cfg(SPI_MASTER, 70);  // divided by 30.
+    	    	spi_sckdiv_cfg(SPI_MASTER, 110);  // divided by 30.
     	    	spi_dwc_ssi_enable(SPI_MASTER);
     	    	flash_id = SReadID();
     	    		printf("flash_id= 0x%08x\r\n",flash_id); // print flash ID
@@ -277,6 +281,8 @@ int main(void){
     	    		{
     	    			printf("PASS: flash ID check ok!\r\n");
     	    		}
+
+#ifdef FLASH_ERASE_VERIFY
     	    	spi_dwc_ssi_disable(SPI_MASTER);
     	    	spi_dfs(SPI_MASTER,SPI_DFS_BYTE);   // byte
     	    	spi_sste_dis(SPI_MASTER);
@@ -295,10 +301,12 @@ int main(void){
     	    	spi_data_transmit(SPI_MASTER,0x00); // tx addr[7:0]
     	    	while(!spi_sr_tfe(SPI_MASTER)); // wait TFE returns to 1
     	    	while(spi_sr_busy(SPI_MASTER));  // check busy or idle,wait BUSY returns to 0
+    	    	flash_wait_wip();
+    	    	//Mtimer_Delay(20000);
 
     	    	//delay_1ms(1);
 
-#ifdef FLASH_ERASE_VERIFY
+
 	/*****cfg reg for read******/
 	//CFG SSIENR
 	/*dis ssi*/
@@ -319,7 +327,7 @@ int main(void){
 	//program CTRLR1 register
 	//receive 256 data items
 	//-----------------------------------------------------------
-	spi_ctrl1_ndf(SPI_MASTER, 0x7f); // receive 256 data items--FIFO MAX level=64
+	spi_ctrl1_ndf(SPI_MASTER, READ_SIZE-1); // receive 256 data items--FIFO MAX level=64
 //	spi_ctrl1_ndf(SPI_MASTER, 0x1D); // receive 30 data items
 
 	/*en ssi*/
@@ -350,8 +358,8 @@ int main(void){
 			//printf("fail data [%d] is: %d\r\n",i,rddata_a[i]);
 			i++;
 		}
-	}while(i<128);
-	for(i=0; i<128; i++)
+	}while(i<READ_SIZE);
+	for(i=0; i<READ_SIZE; i++)
 		{
 		   printf("%d",rddata_a[i]); // print write data
 		   if (0xff != rddata_a[i]) {
@@ -482,7 +490,7 @@ int main(void){
 #endif
 
 #if 1
-    	    	AlSpi_DmaInit(AL_DMAC_channel_2,spi1,tx,1,0,Dmac_transfer_row1,64);
+    	    	AlSpi_DmaInit(AL_DMAC_channel_2,spi1,tx,1,0,Dmac_transfer_row1,READ_SIZE);
     	    	//AlDma_EnableChannel(AL_DMAC,AL_dmac_channel_num_2);
     	    	spi_dwc_ssi_enable(SPI_MASTER);
 				spi_data_transmit(SPI_MASTER,CMD_PP); // tx Page Program cmd
@@ -504,7 +512,7 @@ int main(void){
 				printf("DMA Write done!\r\n");
 #endif
 #if 1
-				AlSpi_DmaInit(AL_DMAC_channel_0,spi1,rx,0,3,Dmac_transfer_row1,60);
+				AlSpi_DmaInit(AL_DMAC_channel_0,spi1,rx,0,3,Dmac_transfer_row1,READ_SIZE);
 				AlDma_Enable(AL_DMAC);
     	    	AlDma_EnableChannel(AL_DMAC,AL_dmac_channel_num_0);
     	    	spi_dwc_ssi_disable(SPI_MASTER);
@@ -512,7 +520,7 @@ int main(void){
     	    	spi_sste_dis(SPI_MASTER);
     	    	spi_x1_mode(SPI_MASTER);
     	    	spi_tmod_e2prom(SPI_MASTER); // e2prom read
-    	    	spi_ctrl1_ndf(SPI_MASTER,59); // receive 30 data items
+    	    	spi_ctrl1_ndf(SPI_MASTER,READ_SIZE-1); // receive 30 data items
     	    	spi_dwc_ssi_enable(SPI_MASTER);
     	    	spi_data_transmit(SPI_MASTER,CMD_SREAD); // tx x1 read cmd
     	    	spi_data_transmit(SPI_MASTER,0x00); // tx addr[23:16] 
@@ -603,7 +611,8 @@ int main(void){
 	printf("PASS: spi x1 write / read test success!\r\n");
 #endif
 
-	printf_mem_data2(60);
+	printf_mem_data2(READ_SIZE);
+    	  }
 	//while(1);
     	        return 0;
 }
