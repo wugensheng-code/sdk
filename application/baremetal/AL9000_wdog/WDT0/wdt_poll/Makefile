@@ -1,4 +1,4 @@
-TARGET = AL9000_wdt
+TARGET = wdt0_poll
 
 NUCLEI_SDK_ROOT = ../../../../..
 
