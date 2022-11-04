@@ -171,7 +171,8 @@ typedef enum{
 #define     __IO    volatile      
 
 #define DEF_BLOCK_LEN   	0x1000	//4KB
-#define BLOCK_128MB_NUM     0x40000	//128MB
+#define BLOCK_1MB_NUM     	0x800	//2KB*512=1MB
+#define BLOCK_128MB_NUM		0x40000	//256K*512=128MB
 
 uint32_t Mmc_RegRead32(unsigned long reg_address);
 void Mmc_RegWrite32(unsigned long reg_address, uint32_t reg_wdata);
