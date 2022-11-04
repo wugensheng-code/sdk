@@ -3,9 +3,9 @@ TARGET = al_9000_aximon
 
 NUCLEI_SDK_ROOT = ../../../..
 
-SRCDIRS = . src 
+SRCDIRS = . src ../xmon_drivers
 
-INCDIRS = . inc
+INCDIRS = . inc ../xmon_drivers
 
 
 #COMMON_FLAGS := -O2

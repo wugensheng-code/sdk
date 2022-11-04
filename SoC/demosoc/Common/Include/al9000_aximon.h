@@ -52,8 +52,9 @@
 #define ARSIZE_MIN_MASK (SIZE_MASK << 8)
 #define ARLEN_MIN_MASK 	(LEN_MASK << 0)
 
-#define INTR_INTR_ENABLE BIT(4)
-#define INTR_INTR_MASK   BIT(3)
+#define INTR_INTR_ENABLE BIT(3)
+#define INTR_INTR_MASK_TIMEOUT   BIT(5)
+#define INTR_INTR_MASK_RESP   BIT(4)
 #define INTR_INTR_CLEAR   BIT(2)
 
 #define XID_MAX 		0xFFFF
@@ -72,6 +73,16 @@
 #define GROUPID_GP0 	8
 #define GROUPID_GP1 	9
 #define GROUPID_HBUS 	10
+
+#define AXIID_APU 		0x4
+#define AXIID_RPU		0x8
+#define AXIID_NPU		0x14
+#define AXIID_JPU		0x18
+#define AXIID_DMAX		0x10
+#define AXIID_GPM0		0x1
+#define AXIID_GPM1		0x5
+#define AXIID_HP0		0x1
+#define AXIID_HP1		0x6
 
 enum AXIMONParm{
 	awqos_record,
@@ -140,8 +151,12 @@ uint8_t AlAxiMon_SubparaArbtypeRange(AXIMON_TypeDef *AXIMON,uint8_t Arbtype_max,
 uint8_t AlAxiMon_SubparaArbsizeRange(AXIMON_TypeDef *AXIMON,uint8_t Arbsize_max,uint8_t Arbsize_min);
 uint8_t AlAxiMon_SubparaArblenRange(AXIMON_TypeDef *AXIMON,uint8_t Arlen_max,uint8_t Arlen_min);
 uint8_t AlAxiMon_IntrEnable(AXIMON_TypeDef *AXIMON);
+uint8_t AlAxiMon_IntrDisable(AXIMON_TypeDef *AXIMON);
 uint8_t AlAxiMon_IntrClear(AXIMON_TypeDef *AXIMON);
-uint8_t AlAxiMon_IntrMask(AXIMON_TypeDef *AXIMON);
+uint8_t AlAxiMon_IntrTimeOutMask(AXIMON_TypeDef *AXIMON);
+uint8_t AlAxiMon_IntrTimeOutUnMask(AXIMON_TypeDef *AXIMON);
+uint8_t AlAxiMon_IntrRespMask(AXIMON_TypeDef *AXIMON);
+uint8_t AlAxiMon_IntrRespUnMask(AXIMON_TypeDef *AXIMON);
 uint32_t AlAxiMon_GetMonValue(AXIMON_TypeDef *AXIMON,enum AXIMONParm type);
 uint32_t AlAxiMon_GetMonCountValue(AXIMON_TypeDef *AXIMON,enum CountParm type);
 uint32_t AlAxiMon_GetMonDebugValue(AXIMON_TypeDef *AXIMON,enum DebugParm type);
@@ -149,6 +164,7 @@ uint8_t AlAxiMon_SetBandWidthCnt(AXIMON_TypeDef *AXIMON,uint32_t cnt);
 uint32_t AlAxiMon_GetBandWidthCnt(AXIMON_TypeDef *AXIMON);
 uint32_t AlAxiMon_GetSubpara(AXIMON_TypeDef *AXIMON,enum AXIMONSubpara type);
 uint32_t AlAxiMon_GetMonTimeOutValue(AXIMON_TypeDef *AXIMON);
+void AlAxiMon_SetTimeOutValue(AXIMON_TypeDef *AXIMON,uint32_t TimeoutThre);
 void AlAxiMon_ClearDebugRecord(AXIMON_TypeDef *AXIMON);
 #ifdef __cplusplus
 }

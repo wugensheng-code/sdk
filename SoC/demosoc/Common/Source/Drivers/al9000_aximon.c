@@ -230,14 +230,29 @@ uint8_t AlAxiMon_IntrEnable(AXIMON_TypeDef *AXIMON){
 	AXIMON -> INTR |= INTR_INTR_ENABLE;
 	return 0;
 }
-
+uint8_t AlAxiMon_IntrDisable(AXIMON_TypeDef *AXIMON){
+	AXIMON -> INTR = AXIMON -> INTR &~ INTR_INTR_ENABLE;
+	return 0;
+}
 uint8_t AlAxiMon_IntrClear(AXIMON_TypeDef *AXIMON){
 	AXIMON -> INTR |= INTR_INTR_CLEAR;
 	return 0;
 }
 
-uint8_t AlAxiMon_IntrMask(AXIMON_TypeDef *AXIMON){
-	AXIMON -> INTR |=INTR_INTR_MASK;
+uint8_t AlAxiMon_IntrTimeOutMask(AXIMON_TypeDef *AXIMON){
+	AXIMON -> INTR |=INTR_INTR_MASK_TIMEOUT;
+	return 0;
+}
+uint8_t AlAxiMon_IntrTimeOutUnMask(AXIMON_TypeDef *AXIMON){
+	AXIMON -> INTR =AXIMON -> INTR &~ INTR_INTR_MASK_TIMEOUT;
+	return 0;
+}
+uint8_t AlAxiMon_IntrRespMask(AXIMON_TypeDef *AXIMON){
+	AXIMON -> INTR |=INTR_INTR_MASK_RESP;
+	return 0;
+}
+uint8_t AlAxiMon_IntrRespUnMask(AXIMON_TypeDef *AXIMON){
+	AXIMON -> INTR =AXIMON -> INTR &~ INTR_INTR_MASK_RESP;
 	return 0;
 }
 uint8_t AlAxiMon_SetBandWidthCnt(AXIMON_TypeDef *AXIMON,uint32_t cnt){
@@ -432,6 +447,9 @@ uint32_t AlAxiMon_GetMonDebugValue(AXIMON_TypeDef *AXIMON,enum DebugParm type){
 		break;
 	}
 	return value;	
+}
+void AlAxiMon_SetTimeOutValue(AXIMON_TypeDef *AXIMON,uint32_t TimeoutThre){
+	AXIMON->DEBUG_TIMEOUT_THD = TimeoutThre;
 }
 uint32_t AlAxiMon_GetMonTimeOutValue(AXIMON_TypeDef *AXIMON){
 	return GET_BITS(AXIMON -> DEBUG_TIMEOUT_FLAG,0,31);

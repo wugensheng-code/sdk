@@ -23,34 +23,37 @@
 #define XDMAPS_CHANNELS_PER_DEV 8 /* Numbel of DMA Channel*/
 
 #define TIMEOUT_THRE 0x20
-#define XMON_SX2X_M0
-#ifdef XMON_DDR_S1
-#define base0 0x01210000
-#define base1 0x01211000
-#endif
+//#define XMON_SHM2
+//#define base0 0x63E00000
+//#define base1 0x63E01000
+
+#define base0 0x63F00000
+#define base1 0x63F01000
+
+//#define base0 0x63e40000
+//#define base1 0x63e41000
+
 #ifdef XMON_SX2X_M0
 #define base0 0x80000000
 #define base1 0x80001000
 #endif
-#ifdef XMON_GP_S1
-#define base0 0x00000000
-#define base1 0x00001000
+#ifdef XMON_SX2X_M1
+#define base0 0xA0000000
+#define base1 0xA0001000
+#endif
+#ifdef XMON_DDR_S1
+#define base0 0x18000000
+#define base1 0x18001000
+#endif
+#ifdef XMON_SHM2
+#define base0 0x78000000
+#define base1 0x78001000
 #endif
 #define DMAX_TEST_CHANNELS 1
 #define vfwp printf
 #define REG_WRITE(reg_address, reg_wdata)  *(unsigned int*)(reg_address) = reg_wdata
 #define REG_READ(reg_address)  *(unsigned int*)reg_address
-void Debug_Printf(AXIMON_TypeDef *AXIMON)
-{
-	printf("AXIMON debug_access_type	= %x\r\n",AlAxiMon_GetMonDebugValue(AXIMON,debug_access_type	));
-	printf("AXIMON debug_burst_size	    = %x\r\n",AlAxiMon_GetMonDebugValue(AXIMON,debug_burst_size		));
-	printf("AXIMON debug_burst_length   = %x\r\n",AlAxiMon_GetMonDebugValue(AXIMON,debug_burst_length	));
-	printf("AXIMON debug_burst_type	    = %x\r\n",AlAxiMon_GetMonDebugValue(AXIMON,debug_burst_type		));
-	printf("AXIMON debug_addr_h		    = %x\r\n",AlAxiMon_GetMonDebugValue(AXIMON,debug_addr_h			));
-	printf("AXIMON debug_addr_l		    = %x\r\n",AlAxiMon_GetMonDebugValue(AXIMON,debug_addr_l			));
-	printf("AXIMON debug_id			    = %x\r\n",AlAxiMon_GetMonDebugValue(AXIMON,debug_id				));
-//	printf("AXIMON Timeoutflag			= %x\r\n",AlAxiMon_GetMonTimeOutValue(AXIMON					));
-}
+
 void XNullHandler(void *NullParameter)
 {
 	(void) NullParameter;
@@ -69,102 +72,7 @@ int DmaCheckHandler(int *src, int * Dst);
 
 XDmaPs DmaInstance;
 volatile uint16_t count = 0;
-uint32_t num;
-void Xmonitor_handler()
-{
-	printf("**********************************Intr******************************\r\n");
-	AlAxiMon_IntrClear(AL_DDR_S1);
-	AlAxiMon_IntrClear(AL_DMACX);
-	AlAxiMon_IntrClear(AL_OCM_S2);
-}
-void SetupIntr()
-{
-	AlAxiMon_IntrMask  (AL_DDR_S1);
-	AlAxiMon_IntrEnable(AL_DDR_S1);
-	AlAxiMon_IntrMask  (AL_DMACX);
-	AlAxiMon_IntrEnable(AL_DMACX);
-	AlAxiMon_IntrMask  (AL_OCM_S2);
-	AlAxiMon_IntrEnable(AL_OCM_S2);
-	ECLIC_Register_IRQ(SOC_INT129_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,Xmonitor_handler);
-	__enable_irq();
-}
-void config_monitor(AXIMON_TypeDef *AXIMON, uint16_t id_max, uint16_t id_min, uint16_t gid_max, uint16_t gid_min, uint16_t thre)
-{
-	AlAxiMon_ResptimeRecordClean(AXIMON);
-	AlAxiMon_ResptimeRecordEnble(AXIMON);
-	AlAxiMon_QosValue(AXIMON,XQOS_MAX);
-	AlAxiMon_QosValueRange(AXIMON,XQOS_MAX,0);
-	AlAxiMon_QosCfgEnable(AXIMON,QosInternal);
-	AlAxiMon_SbuparaCountClean(AXIMON);
-	AlAxiMon_SubparaAwidRange(AXIMON,id_max,id_min);
-	AlAxiMon_SubparaAridRange(AXIMON,id_max,id_min);
-	AlAxiMon_SubparaAwgidRange(AXIMON,gid_max,gid_min);
-	AlAxiMon_SubparaArgidRange(AXIMON,gid_max,gid_min);
-	AlAxiMon_SubparaAwbtypeRange(AXIMON,1,1);//incr
-	AlAxiMon_SubparaAwbsizeRange(AXIMON,2,2);//2^2
-	AlAxiMon_SubparaAwblenRange(AXIMON,15,15);
-	AlAxiMon_SubparaArbtypeRange(AXIMON,1,1);
-	AlAxiMon_SubparaArbsizeRange(AXIMON,XSIZE_MAX,0);
-	AlAxiMon_SubparaArblenRange(AXIMON,XLEN_MAX,0);
-	AlAxiMon_SbuparaCountEnable(AXIMON);
-	AXIMON->DEBUG_TIMEOUT_THD = thre;
-}
-void printf_monitor(AXIMON_TypeDef *AXIMON)
-{
-	printf("CASE NUM = %d\r\n",num);
-//  	printf("AXIMON awqos_record         = %x\r\n",AlAxiMon_GetMonValue(AXIMON,awqos_record      ));
-//  	printf("AXIMON arqos_record         = %x\r\n",AlAxiMon_GetMonValue(AXIMON,arqos_record      ));
-  	printf("AXIMON awresptime_max       = %x\r\n",AlAxiMon_GetMonValue(AXIMON,awresptime_max    ));
-//  	printf("AXIMON awresptime_acc_h     = %x\r\n",AlAxiMon_GetMonValue(AXIMON,awresptime_acc_h  ));
-//  	printf("AXIMON awresptime_acc_l     = %x\r\n",AlAxiMon_GetMonValue(AXIMON,awresptime_acc_l  ));
-//  	printf("AXIMON awresptime_cnt       = %x\r\n",AlAxiMon_GetMonValue(AXIMON,awresptime_cnt    ));
-  	printf("AXIMON arresptime_max       = %x\r\n",AlAxiMon_GetMonValue(AXIMON,arresptime_max    ));
-//  	printf("AXIMON arresptime_acc_h     = %x\r\n",AlAxiMon_GetMonValue(AXIMON,arresptime_acc_h  ));
-//  	printf("AXIMON arresptime_acc_l     = %x\r\n",AlAxiMon_GetMonValue(AXIMON,arresptime_acc_l  ));
-//  	printf("AXIMON arresptime_cnt       = %x\r\n",AlAxiMon_GetMonValue(AXIMON,arresptime_cnt    ));
-//  	printf("AXIMON bandwidth_wr         = %x\r\n",AlAxiMon_GetMonValue(AXIMON,bandwidth_wr      ));
-//  	printf("AXIMON bandwidth_rd         = %x\r\n",AlAxiMon_GetMonValue(AXIMON,bandwidth_rd      ));
 
- 	printf("AXIMON cnt_awcmd  	        = %x\r\n",AlAxiMon_GetMonCountValue(AXIMON,cnt_awcmd    ));
-	printf("AXIMON cnt_awbtype	        = %x\r\n",AlAxiMon_GetMonCountValue(AXIMON,cnt_awbtype  ));
-	printf("AXIMON cnt_awblen	        = %x\r\n",AlAxiMon_GetMonCountValue(AXIMON,cnt_awblen   ));
-	printf("AXIMON cnt_awbsize          = %x\r\n",AlAxiMon_GetMonCountValue(AXIMON,cnt_awbsize  ));
-	printf("AXIMON cnt_awid             = %x\r\n",AlAxiMon_GetMonCountValue(AXIMON,cnt_awid     ));
-	printf("AXIMON cnt_awgid            = %x\r\n",AlAxiMon_GetMonCountValue(AXIMON,cnt_awgid    ));
-	printf("AXIMON cnt_arcmd            = %x\r\n",AlAxiMon_GetMonCountValue(AXIMON,cnt_arcmd    ));
-	printf("AXIMON cnt_arbtype          = %x\r\n",AlAxiMon_GetMonCountValue(AXIMON,cnt_arbtype  ));
-	printf("AXIMON cnt_arblen           = %x\r\n",AlAxiMon_GetMonCountValue(AXIMON,cnt_arblen   ));
-	printf("AXIMON cnt_arbsize          = %x\r\n",AlAxiMon_GetMonCountValue(AXIMON,cnt_arbsize  ));
-	printf("AXIMON cnt_arid             = %x\r\n",AlAxiMon_GetMonCountValue(AXIMON,cnt_arid     ));
-	printf("AXIMON cnt_argid            = %x\r\n",AlAxiMon_GetMonCountValue(AXIMON,cnt_argid    ));
-
-//	printf("AXIMON subpara_awid         = %x\r\n",AlAxiMon_GetSubpara(AXIMON,subpara_awid       ));
-//	printf("AXIMON subpara_arid         = %x\r\n",AlAxiMon_GetSubpara(AXIMON,subpara_arid       ));
-//	printf("AXIMON subpara_grpid        = %x\r\n",AlAxiMon_GetSubpara(AXIMON,subpara_grpid      ));
-//	Debug_Printf(AXIMON);
-//	printf("AXIMON Intr                 = %x\r\n",AXIMON->INTR);
- 	num ++;
-}
-void config_case()
-{
-	config_monitor(AL_DMACX,XID_MAX,0, 5,5, TIMEOUT_THRE);//0
-	config_monitor(AL_DDR_S1 ,XID_MAX,0,5,5, TIMEOUT_THRE);//3 pass
-	config_monitor(AL_SX2X_M0 ,XID_MAX,0,5,5, TIMEOUT_THRE);//3 pass
-	config_monitor(AL_SX2X_M1 ,XID_MAX,0,5,5, TIMEOUT_THRE);//3 pass
-	config_monitor(AL_OCM_S2 ,XID_MAX,0,5,5, TIMEOUT_THRE);//3 pass
-	config_monitor(AL_GP_S0 ,XID_MAX,0,5,5, TIMEOUT_THRE);//3 pass
-	config_monitor(AL_GP_S1 ,XID_MAX,0,5,5, TIMEOUT_THRE);//3 pass
-}
-void print_case()
-{
-	printf_monitor(AL_DMACX);
-	printf_monitor(AL_DDR_S1);
-	printf_monitor(AL_SX2X_M0);
-	printf_monitor(AL_SX2X_M1);
-	printf_monitor(AL_OCM_S2);
-	printf_monitor(AL_GP_S0);//3 pass
-	printf_monitor(AL_GP_S1);//3 pass
-}
 int main(void)
 {
 	uint32_t midr;
@@ -175,9 +83,24 @@ int main(void)
 	{
 		buffer[i] = i;
 	}
-	write_To_OCM((uint32_t*)buffer,128,(uint32_t*)0x80000000);
-	config_case();
-	SetupIntr();
+//	write_To_OCM((uint32_t*)buffer,128,(uint32_t*)0x80000000);
+
+	config_monitor(AL_DMACX,XID_MAX,0,XID_MAX,0,0x20);
+	config_monitor(AL_SX2X_M0,XID_MAX,0,XID_MAX,0,0x20);
+	config_monitor(AL_SX2X_M1,XID_MAX,0,XID_MAX,0,0x20);
+	config_monitor(AL_GP_S0,XID_MAX,0,XID_MAX,0,0x20);
+	config_monitor(AL_GP_S1,XID_MAX,0,XID_MAX,0,0x20);
+	config_monitor(AL_HP_S0,XID_MAX,0,XID_MAX,0,0x20);
+	config_monitor(AL_HP_S1,XID_MAX,0,XID_MAX,0,0x20);
+	config_monitor(AL_DDR_S0,XID_MAX,0,XID_MAX,0,0x20);
+	config_monitor(AL_DDR_S1,XID_MAX,0,XID_MAX,0,0x20);
+	config_monitor(AL_DDR_S2,XID_MAX,0,XID_MAX,0,0x20);
+	config_monitor(AL_DDR_S3,XID_MAX,0,XID_MAX,0,0x20);
+	config_monitor(AL_SH_M2,XID_MAX,0,XID_MAX,0,0x20);
+	config_monitor(AL_MAIN_M6,XID_MAX,0,XID_MAX,0,0x20);
+	config_monitor(AL_SMC,XID_MAX,0,XID_MAX,0,0x20);
+	config_monitor(AL_MAIN_M0,XID_MAX,0,XID_MAX,0,0x20);
+	config_monitor(AL_MAIN_S1,XID_MAX,0,XID_MAX,0,0x20);
 	#ifdef _AARCH_64
 	uint64_t sctlr_el3;
 
@@ -211,11 +134,12 @@ int main(void)
 		vfwp("reset dmac\n");
 		REG_WRITE(0xF8801074, 0X00003270);
 		REG_WRITE(0xF8801074, 0X00003370);
-    	REG32_WRITE(0xf8801078,0x00001133);
-    	REG32_WRITE(0xf8801074,0x000073f0);
-    	REG32_WRITE(0xf8800080,0x0);
-    	REG32_WRITE(0xf840e004,0x0);
-    	REG32_WRITE(0xf840f004,0x0);
+    	REG_WRITE(0xf8801078,0x00001133);
+    	REG_WRITE(0xf8801074,0x000073f0);
+    	REG_WRITE(0xf8800080,0x0);
+    	REG_WRITE(0xf840e004,0x0);
+    	REG_WRITE(0xf840f004,0x0);
+
 		Status = XDmaPs_Example_W_Intr(DMA_DEVICE_ID);
 		if (Status != XST_SUCCESS) {
 			vfwp("Error: XDMaPs_Example_W_Intr failed Status=%d 0x%x\r\n", Status, Status);
@@ -359,8 +283,22 @@ void DmaDoneHandler(unsigned int Channel, XDmaPs_Cmd *DmaCmd, void *CallbackRef)
 	Src = (int *)DmaCmd->BD.SrcAddr;
 	Dst = (int *)DmaCmd->BD.DstAddr;
 	Checked[Channel] = Status;
-	print_case();
-	config_case();
+	printf_monitor(AL_DMACX);
+	printf_monitor(AL_SX2X_M0);
+	printf_monitor(AL_SX2X_M1);
+	printf_monitor(AL_GP_S0);
+	printf_monitor(AL_GP_S1);
+	printf_monitor(AL_HP_S0);
+	printf_monitor(AL_HP_S1);
+	printf_monitor(AL_DDR_S0);
+	printf_monitor(AL_DDR_S1);
+	printf_monitor(AL_DDR_S2);
+	printf_monitor(AL_DDR_S3);
+	printf_monitor(AL_SH_M2);
+	printf_monitor(AL_MAIN_M6);
+	printf_monitor(AL_SMC);
+	printf_monitor(AL_MAIN_M0);
+	printf_monitor(AL_MAIN_S1);
 }
 
 int DmaCheckHandler(int *src, int * dst)
