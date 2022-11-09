@@ -226,6 +226,7 @@ typedef union
     __IO uint32_t    RE_TUNE_EVENT_SIGNAL_EN:1;
     __IO uint32_t    FX_EVENT_SIGNAL_EN:1;
     __IO uint32_t    CQE_EVENT_SIGNAL_EN:1;
+    __IO uint32_t    RSVD_15:1;
     __IO uint32_t    CMD_TOUT_ERR_SIGNAL_EN:1;
     __IO uint32_t    CMD_CRC_ERR_SIGNAL_EN:1;
     __IO uint32_t    CMD_END_BIT_ERR_SIGNAL_EN:1;
