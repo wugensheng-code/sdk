@@ -1,4 +1,4 @@
-TARGET = AL9000_xadc
+TARGET = mux_test_xadc
 
 NUCLEI_SDK_ROOT = ../../../..
 

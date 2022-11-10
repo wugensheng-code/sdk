@@ -235,28 +235,6 @@ The value is related to the latency of external mux IO and analog input IO */
 #define SIGNAL_PASS_MODE		1
 #define CONTINUE_MODE			2
 
-#define CURRENT_MODE		SIGNAL_PASS_MODE
-#define CURRENT_CH 			0				//0 1
-
-
-
-#define USE_12BIT 1
-
-#if USE_12BIT
-#define CURRENT_RESOLUTION 	RES_12BIT
-#endif
-
-#if USE_10BIT
-#define CURRENT_RESOLUTION 	RES_10BIT
-#endif
-
-#if USE_8BIT
-#define CURRENT_RESOLUTION 	RES_8BIT
-#endif
-
-#if USE_6BIT
-#define CURRENT_RESOLUTION 	RES_6BIT
-#endif
 
 
 

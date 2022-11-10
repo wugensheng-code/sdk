@@ -14,6 +14,32 @@ volatile uint16_t flagValue = 0;
 
 
 
+#define CURRENT_MODE		CONTINUE_MODE
+#define CURRENT_CH 			7				//0 1
+
+
+
+#define USE_12BIT 1
+
+#if USE_12BIT
+#define CURRENT_RESOLUTION 	RES_12BIT
+#endif
+
+#if USE_10BIT
+#define CURRENT_RESOLUTION 	RES_10BIT
+#endif
+
+#if USE_8BIT
+#define CURRENT_RESOLUTION 	RES_8BIT
+#endif
+
+#if USE_6BIT
+#define CURRENT_RESOLUTION 	RES_6BIT
+#endif
+
+
+
+
 
 
 INTR_MASK_TypeDef intr_mask;
@@ -462,12 +488,12 @@ int main()
 	 * A new startup sequence must be made for any change in these control signals.*/
 
 //	printf("fifo_and_compare_intr\r\n");
-	ECLIC_Register_IRQ(XADC_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 0, 1, xadc_handler);
 
-	__enable_irq();
 
 	XadcFifoInit();
+	ECLIC_Register_IRQ(XADC_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 0, 1, xadc_handler);
 
+		__enable_irq();
 
 	while(1)
 	{

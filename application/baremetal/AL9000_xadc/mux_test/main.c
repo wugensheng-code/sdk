@@ -17,6 +17,32 @@ volatile uint16_t flagValue = 0;
 
 
 
+#define CURRENT_MODE		CONTINUE_MODE
+#define CURRENT_CH 			7				//0 1
+
+
+
+#define USE_12BIT 1
+
+#if USE_12BIT
+#define CURRENT_RESOLUTION 	RES_12BIT
+#endif
+
+#if USE_10BIT
+#define CURRENT_RESOLUTION 	RES_10BIT
+#endif
+
+#if USE_8BIT
+#define CURRENT_RESOLUTION 	RES_8BIT
+#endif
+
+#if USE_6BIT
+#define CURRENT_RESOLUTION 	RES_6BIT
+#endif
+
+
+
+
 uint8_t XadcInit(void)
 {
 	INTR_MASK_TypeDef intr_mask;
@@ -44,7 +70,7 @@ uint8_t XadcInit(void)
 
 
 	cfg.bitfiled.ENABLE_PS_ADC = ENABLE_ADC_PS_ACCESS;
-	//cfg.bitfiled.TCK_RATE = QQ_XADC_PCLK;
+	cfg.bitfiled.TCK_RATE = QQ_XADC_PCLK;
 	XADC->CFG |= cfg.reg;
 	printf("XADC->CFG:%x \r\n",XADC->CFG);
 
@@ -99,13 +125,13 @@ uint8_t XadcInit(void)
 
 	printf("e3\r\n");
 
-	G0_XADC_CHANNEL10 = IO_MUX_8 << 8 | IO_MUX_16;
+	G0_XADC_CHANNEL10 = IO_MUX_8| IO_MUX_9 << 8 ;
 	//G0_XADC_CHANNEL10 = IO_MUX_8 << 8 | IO_MUX_16;
-	/*G0_XADC_CHANNEL32 = IO_MUX_11 << 8 | IO_MUX_10;
+	G0_XADC_CHANNEL32 = IO_MUX_11 << 8 | IO_MUX_10;
 	G0_XADC_CHANNEL54 = IO_MUX_13 << 8 | IO_MUX_12;
 	G0_XADC_CHANNEL76 = IO_MUX_15 << 8 | IO_MUX_16;
 
-
+/*
 	G0_XADC_CHANNEL67 = IO_MUX_9 << 8 | IO_MUX_8;
 	G0_XADC_CHANNEL45 = IO_MUX_11 << 8 | IO_MUX_10;
 	G0_XADC_CHANNEL23 = IO_MUX_13 << 8 | IO_MUX_12;
@@ -392,13 +418,13 @@ int main()
 	 * A new startup sequence must be made for any change in these control signals.*/
 
 	printf("mask test\r\n");
-	ECLIC_Register_IRQ(XADC_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 0, 1, xadc_handler);
 
-	__enable_irq();
 	GP_PROTEN &= 0xfffffffd;
 
 	XadcInit();
+ECLIC_Register_IRQ(XADC_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 0, 1, xadc_handler);
 
+	__enable_irq();
 
 	while(1);
 	{

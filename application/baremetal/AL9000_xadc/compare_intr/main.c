@@ -17,6 +17,32 @@ volatile uint16_t flagValue = 0;
 
 
 
+#define CURRENT_MODE		CONTINUE_MODE
+#define CURRENT_CH 			7				//0 1
+
+
+
+#define USE_12BIT 1
+
+#if USE_12BIT
+#define CURRENT_RESOLUTION 	RES_12BIT
+#endif
+
+#if USE_10BIT
+#define CURRENT_RESOLUTION 	RES_10BIT
+#endif
+
+#if USE_8BIT
+#define CURRENT_RESOLUTION 	RES_8BIT
+#endif
+
+#if USE_6BIT
+#define CURRENT_RESOLUTION 	RES_6BIT
+#endif
+
+
+
+
 uint8_t XadcInit(void)
 {
 	INTR_MASK_TypeDef intr_mask;
@@ -68,7 +94,7 @@ uint8_t XadcInit(void)
 				(MUX_ENABLE << MUX_ENBALE_OFFSET)|
 				(NORMAL_MODE << PHY_EXTERNAL_M_OFFSET)|
 				(SINGLE_MODE << INPUT_M_OFFSET)|
-				(RES_12BIT << RES_OFFSET)|
+				(CURRENT_RESOLUTION << RES_OFFSET)|
 				(REF_INTER_REF << REF_OFFSET)|
 				(BAG_ACTIVE << BAG_SEL_OFFSET)|
 				(ADC_SW_RESET << SW_RESET_OFFSET));
@@ -90,34 +116,43 @@ uint8_t XadcInit(void)
 	printf("e1\r\n");
 
 	G0_XADC_CONFIG2 = ((ADC_PL_CLK_70M << ADC_CLK_SEL_OFFSET)|
+//			(ADC_CLK_DIV_7 << ADC_CLK_DIV_OFFSET)|
 				(1 << ADC_ENABLE_OFFSET));
 	printf("e2\r\n");
 
+	// G0_XADC_CONFIG1 = ((1 << INTR_ERROR_MASK_OFFSET)|
+	// 				(1 << INTR_LTH_MASK_OFFSET)|
+	// 				(0 << INTR_GTH_MASK_OFFSET)|
+	// 				(1 << INTR_DONE_MASK_OFFSET));
+
+
 	G0_XADC_CONFIG1 = ((1 << INTR_ERROR_MASK_OFFSET)|
-					(1 << INTR_LTH_MASK_OFFSET)|
-					(0 << INTR_GTH_MASK_OFFSET)|
-					(1 << INTR_DONE_MASK_OFFSET));
+						(0 << INTR_LTH_MASK_OFFSET)|
+						(1 << INTR_GTH_MASK_OFFSET)|
+						(1 << INTR_DONE_MASK_OFFSET));
+
 	printf("e3\r\n");
 
 
 /**/
-	G0_XADC_CH0_LTH = 0x50 << 4;
-	G0_XADC_CH1_LTH = 0;
-	G0_XADC_CH2_LTH = 0;
-	G0_XADC_CH4_LTH = 0;
-	G0_XADC_CH5_LTH = 0;
-	G0_XADC_CH6_LTH = 0;
-	G0_XADC_CH7_LTH = 0;
 
+	G0_XADC_CH0_LTH = (0x25*1) << 4; //0x25
+	G0_XADC_CH1_LTH = (0x1ff + 0x40*1 + 0x25) << 4; //264
+	G0_XADC_CH2_LTH = (0x3ff + 0x40*2 + 0x25) << 4; //4a4
+	G0_XADC_CH3_LTH = (0x5ff + 0x40*3 + 0x25) << 4; //6E4
+	G0_XADC_CH4_LTH = (0x7ff + 0x40*4 + 0x25) << 4; //924
+	G0_XADC_CH5_LTH = (0x9ff + 0x40*5 + 0x25) << 4; //B64
+	G0_XADC_CH6_LTH = (0xbff + 0x40*6 + 0x25) << 4; //DA4
+	G0_XADC_CH7_LTH = (0xdff + 0x40*7 + 0x25) << 4; //FE4
 
-	G0_XADC_CH0_GTH = 0xff << 4;
-	G0_XADC_CH1_GTH = 0;
-	G0_XADC_CH2_GTH = 0;
-	G0_XADC_CH3_GTH = 0;
-	G0_XADC_CH4_GTH = 0;
-	G0_XADC_CH5_GTH = 0;
-	G0_XADC_CH6_GTH = 0;
-	G0_XADC_CH7_GTH = 0;
+	// G0_XADC_CH0_GTH = (0x25*1) << 4; //0x25
+	// G0_XADC_CH1_GTH = (0x1ff + 0x40*1 + 0x25) << 4; //264
+	// G0_XADC_CH2_GTH = (0x3ff + 0x40*2 + 0x25) << 4; //4a4
+	// G0_XADC_CH3_GTH = (0x5ff + 0x40*3 + 0x25) << 4; //6E4
+	// G0_XADC_CH4_GTH = (0x7ff + 0x40*4 + 0x25) << 4; //924
+	// G0_XADC_CH5_GTH = (0x9ff + 0x40*5 + 0x25) << 4; //B64
+	// G0_XADC_CH6_GTH = (0xbff + 0x40*6 + 0x25) << 4; //DA4
+	// G0_XADC_CH7_GTH = (0xdff + 0x40*7 + 0x25) << 4; //FE4
 
 
 	printf("e4\r\n");
@@ -127,12 +162,12 @@ uint8_t XadcInit(void)
 				(CURRENT_MODE << MODE_SEL_OFFSET));
 
 	printf("e\r\n");
-/*
-	printf("Config0:%x \r\n", G0_XADC_CONFIG0));
-	printf("Config1:%x \r\n", G0_XADC_CONFIG1));
-	printf("Config2:%x \r\n", G0_XADC_CONFIG2));
-	printf("Config3:%x \r\n", G0_XADC_CONFIG3));
-*/
+/**/
+	printf("Config0:%x \r\n", G0_XADC_CONFIG0);
+	printf("Config1:%x \r\n", G0_XADC_CONFIG1);
+	printf("Config2:%x \r\n", G0_XADC_CONFIG2);
+	printf("Config3:%x \r\n", G0_XADC_CONFIG3);
+
 	return 0;
 }
 
@@ -180,8 +215,14 @@ void ClearErrIntr(void)
 void xadc_handler(void)
 {
 	CFG_TypeDef cfg;
-	value = G0_XADC_VC0;
-	printf("i\r\n");
+// printf("i\r\n");
+	G0_XADC_CONFIG3 = ((NO_OPERATION << REG_ADC_SOC_OFFSET)|
+					(CURRENT_CH << CH_SEL_OFFSET)|
+					(CURRENT_MODE << MODE_SEL_OFFSET));
+
+	//value = G0_XADC_VC0;
+
+printf("i\r\n");
 
 	XadcStatus = XADC->STATUS;
 
@@ -190,10 +231,10 @@ void xadc_handler(void)
 	if(XADC->INTR&0x01)
 	{
 		XadcConfig1 = G0_XADC_CONFIG1;
-	//	printf("XadcConfig1:%x \r\n",XadcConfig1);
+		printf("XadcConfig1:%x \r\n",XadcConfig1);
 
 		/* ADC Done Flag */
-		if((XadcConfig1 & (0x01 << 8))&&((~XadcConfig1) &0x1))
+		if(XadcConfig1 & (0x01 << 8))
 		{
 
 			switch(CURRENT_CH)
@@ -201,46 +242,46 @@ void xadc_handler(void)
 				/* 逻辑需要此处case不使用break*/
 				case 7:
 					value = G0_XADC_VC7;
-					printf("V7:%x\r\n",value >> 4);
+				//	printf("V7:%x\r\n",value >> 4);
 				case 6:
 					value = G0_XADC_VC6;
-					printf("V6:%x\r\n",value >> 4);
+				//	printf("V6:%x\r\n",value >> 4);
 				case 5:
 					value = G0_XADC_VC5;
-					printf("V5:%x\r\n",value >> 4);
+				//	printf("V5:%x\r\n",value >> 4);
 				case 4:
 					value = G0_XADC_VC4;
-					printf("V4:%x\r\n",value >> 4);
+				//	printf("V4:%x\r\n",value >> 4);
 				case 3:
 					value = G0_XADC_VC3;
-					printf("V3:%x\r\n",value >> 4);
+				//	printf("V3:%x\r\n",value >> 4);
 				case 2:
 					value = G0_XADC_VC2;
-					printf("V2:%x\r\n",value >> 4);
+				//	printf("V2:%x\r\n",value >> 4);
 				case 1:
 					value = G0_XADC_VC1;
-					printf("V1:%x\r\n",value >> 4);
+				//	printf("V1:%x\r\n",value >> 4);
 				case 0:
 					value = G0_XADC_VC0;
-					printf("V0:%x\r\n",value >> 4);
+					printf("V0:%d\r\n",value >> 4);
 					break;
 				default:
 					printf("ADC Done Parem Error.\r\n");
 					break;
 
 			}
-
+			printf("ClearDoneIntr.\r\n");
 			ClearDoneIntr();
 
 		}
 		/* ADC Error Happened Interrupt */
-		else if((XadcConfig1 & (0x01 << 11))&&((~XadcConfig1) &0x8))
+		else if(XadcConfig1 & (0x01 << 11))
 		{
 			ClearErrIntr();
 			printf("ADC Error\r\n");
 		}
 		/* ADC_VC* value lower than ADC_CH*_LTH Interrupt */
-		else if((XadcConfig1 & (0x01 << 10))&&((~XadcConfig1) &0x4))
+		else if(XadcConfig1 & (0x01 << 10))
 		{
 
 			flagValue = G0_XADC_FLAG;
@@ -250,37 +291,37 @@ void xadc_handler(void)
 				value = G0_XADC_VC0;
 				printf("V0:%x\r\n",value >> 4);
 			}
-			else if(flagValue&(1 << FLAG_VC1))
+			 if(flagValue&(1 << FLAG_VC1))
 			{
 				value = G0_XADC_VC1;
 				printf("V1:%x\r\n",value >> 4);
 			}
-			else if(flagValue&(1 << FLAG_VC2))
+			 if(flagValue&(1 << FLAG_VC2))
 			{
 				value = G0_XADC_VC2;
 				printf("V2:%x\r\n",value >> 4);
 			}
-			else if(flagValue&(1 << FLAG_VC3))
+			 if(flagValue&(1 << FLAG_VC3))
 			{
 				value = G0_XADC_VC3;
 				printf("V3:%x\r\n",value >> 4);
 			}
-			else if(flagValue&(1 << FLAG_VC4))
+			 if(flagValue&(1 << FLAG_VC4))
 			{
 				value = G0_XADC_VC4;
 				printf("V4:%x\r\n",value >> 4);
 			}
-			else if(flagValue&(1 << FLAG_VC5))
+			 if(flagValue&(1 << FLAG_VC5))
 			{
 				value = G0_XADC_VC5;
 				printf("V5:%x\r\n",value >> 4);
 			}
-			else if(flagValue&(1 << FLAG_VC6))
+			 if(flagValue&(1 << FLAG_VC6))
 			{
 				value = G0_XADC_VC6;
 				printf("V6:%x\r\n",value >> 4);
 			}
-			else if(flagValue&(1 << FLAG_VC7))
+			 if(flagValue&(1 << FLAG_VC7))
 			{
 				value = G0_XADC_VC7;
 				printf("V7:%x\r\n",value >> 4);
@@ -291,47 +332,47 @@ void xadc_handler(void)
 			printf("value lower than\r\n");
 		}
 		/* ADC_VC* greater greater than ADC_CH*_GTH Interrupt */
-		else if((XadcConfig1 & (0x01 << 9))&&((~XadcConfig1) &0x2))
+		else if(XadcConfig1 & (0x01 << 9))
 		{
-			printf("V0:%x\r\n",value >> 4);
+//
 			flagValue = G0_XADC_FLAG;
-
+			printf("flagValue:0x%x\r\n",flagValue);
 			if(flagValue&(1 << FLAG_VC0))
 			{
 				value = G0_XADC_VC0;
-				//printf("V0:%x\r\n",value >> 4);
+				printf("V0:%x\r\n",value >> 4);
 			}
-			else if(flagValue&(1 << FLAG_VC1))
+			 if(flagValue&(1 << FLAG_VC1))
 			{
 				value = G0_XADC_VC1;
 				printf("V1:%x\r\n",value >> 4);
 			}
-			else if(flagValue&(1 << FLAG_VC2))
+			 if(flagValue&(1 << FLAG_VC2))
 			{
 				value = G0_XADC_VC2;
 				printf("V2:%x\r\n",value >> 4);
 			}
-			else if(flagValue&(1 << FLAG_VC3))
+			 if(flagValue&(1 << FLAG_VC3))
 			{
 				value = G0_XADC_VC3;
 				printf("V3:%x\r\n",value >> 4);
 			}
-			else if(flagValue&(1 << FLAG_VC4))
+			 if(flagValue&(1 << FLAG_VC4))
 			{
 				value = G0_XADC_VC4;
 				printf("V4:%x\r\n",value >> 4);
 			}
-			else if(flagValue&(1 << FLAG_VC5))
+			 if(flagValue&(1 << FLAG_VC5))
 			{
 				value = G0_XADC_VC5;
 				printf("V5:%x\r\n",value >> 4);
 			}
-			else if(flagValue&(1 << FLAG_VC6))
+			 if(flagValue&(1 << FLAG_VC6))
 			{
 				value = G0_XADC_VC6;
 				printf("V6:%x\r\n",value >> 4);
 			}
-			else if(flagValue&(1 << FLAG_VC7))
+			 if(flagValue&(1 << FLAG_VC7))
 			{
 				value = G0_XADC_VC7;
 				printf("V7:%x\r\n",value >> 4);
@@ -346,11 +387,11 @@ void xadc_handler(void)
 	}
 
 	/* Data FIFO less level threshold interrupt. */
-	if((XADC->INTR&(0x01 << 8))&&(!(XADC->INTR_MASK&(0x01 << 8))))
+	if(XADC->INTR&(0x01 << 8))
 	{
-		printf("data less level.\r\n");
+	//	printf("data less level.\r\n");
 
-		printf("Data Fifo:%d\r\n",(XADC->STATUS >> 12)&0xf);
+		//printf("Data Fifo:%d\r\n",(XADC->STATUS >> 12)&0xf);
 
 		/* Clear PS interrupt Signal */
 		XADC->INTR |= (0x1 << 8);
@@ -358,7 +399,7 @@ void xadc_handler(void)
 	/* Data FIFO greater level threshold interrupt. */
 	else if(XADC->INTR&(0x01 << 10))
 	{
-		printf("Data greater level.\r\n");
+	//	printf("Data greater level.\r\n");
 
 		printf("Data Fifo:%d\r\n",(XADC->STATUS >> 12)&0xf);
 
@@ -388,6 +429,16 @@ void xadc_handler(void)
 		/* Clear PS interrupt Signal */
 		XADC->INTR |= (0x1 << 11);
 	}
+
+	G0_XADC_CONFIG3 = ((START_CONVER << REG_ADC_SOC_OFFSET)|
+					(CURRENT_CH << CH_SEL_OFFSET)|
+					(CURRENT_MODE << MODE_SEL_OFFSET));
+
+
+	// G0_XADC_CONFIG3 = ((NO_OPERATION << REG_ADC_SOC_OFFSET)|
+	// 					(CURRENT_CH << CH_SEL_OFFSET)|
+	// 					(CURRENT_MODE << MODE_SEL_OFFSET));
+//	printf("Cmd Fifo:\r\n");
 }
 
 
@@ -404,21 +455,16 @@ int main()
 	/* Note:selbg and selref control signals must remain unchanged after a startup sequence.
 	 * A new startup sequence must be made for any change in these control signals.*/
 
-	printf("compare_intr\r\n");
-	ECLIC_Register_IRQ(XADC_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 0, 1, xadc_handler);
+	printf("s");
 
-	__enable_irq();
 	GP_PROTEN &= 0xfffffffd;
 
 	XadcInit();
+ECLIC_Register_IRQ(XADC_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 0, 1, xadc_handler);
 
-
-	while(1)
-	{
-
-
-
-	}
+		__enable_irq();
+printf("e \r\n");
+	while(1);
 
 	return 0;
 }

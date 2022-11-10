@@ -1,4 +1,4 @@
-TARGET = AL9000_xadc
+TARGET = compare_intr_xadc
 
 NUCLEI_SDK_ROOT = ../../../..
 
