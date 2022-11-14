@@ -29,7 +29,7 @@ uint32_t AlFsbl_NandInit(void)
 }
 
 
-uint32_t AlFsbl_NandCopy(uint32_t SrcAddress, PTRSIZE DestAddress, uint32_t Length)
+uint32_t AlFsbl_NandCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length)
 {
     uint8_t Status;
 

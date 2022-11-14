@@ -21,7 +21,7 @@ extern FIL fil;
 extern FATFS fs;
 
 uint32_t AlFsbl_SdInit(void);
-uint32_t AlFsbl_SdCopy(PTRSIZE SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo);
+uint32_t AlFsbl_SdCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo);
 uint32_t AlFsbl_SdRelease(void);
 
 

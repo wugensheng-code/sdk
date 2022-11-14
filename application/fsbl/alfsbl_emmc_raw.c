@@ -26,7 +26,7 @@ uint32_t AlFsbl_EmmcRawInit(void)
 	return status;
 }
 
-uint32_t AlFsbl_EmmcRawCopy(PTRSIZE SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo)
+uint32_t AlFsbl_EmmcRawCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo)
 {
 	uint32_t status = 0;
 	status = Csu_RawEmmcRead(SrcAddress - IMAGE_FLASH_OFFSET, DestAddress, Length);

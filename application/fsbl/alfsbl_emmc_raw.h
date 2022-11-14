@@ -29,7 +29,7 @@ typedef struct{
 }RawEmmcParam_t;
 
 uint32_t AlFsbl_EmmcRawInit(void);
-uint32_t AlFsbl_EmmcRawCopy(uint32_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo);
+uint32_t AlFsbl_EmmcRawCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo);
 uint32_t AlFsbl_EmmcRawRelease(void);
 
 #ifdef __cplusplus

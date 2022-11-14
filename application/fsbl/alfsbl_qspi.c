@@ -125,7 +125,7 @@ uint32_t AlFsbl_Qspi24Init(void)
 }
 
 
-uint32_t AlFsbl_Qspi24Copy(PTRSIZE SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo)
+uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo)
 {
 	uint32_t ret;
 #ifdef QSPI_XIP_THROUTH_CSU_DMA
