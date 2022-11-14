@@ -51,7 +51,7 @@ void mtimer_irq_handler(void)
     wait_seconds(1);
     printf("MTimer IRQ handler %d\n\r", int0_cnt);
     uint64_t now = SysTimer_GetLoadValue();
-    SysTimer_SetCompareValue(now + 0.5 * SOC_TIMER_FREQ);
+    SysTimer_SetCompareValue(now + (SOC_TIMER_FREQ>>1));
     data_length =AlCan_ReceiveMsg(AL_CAN_CUR,rx_buf1,data_length_20);
     if(int0_cnt < 100 && data_length !=0){
     	int0_cnt = 0;
@@ -77,7 +77,7 @@ void setup_timer()
     printf("init timer and start\n\r");
     uint64_t now = SysTimer_GetLoadValue();
     printf("now value = %08x\r\n",now);
-    uint64_t then = now + 0.5 * SOC_TIMER_FREQ;
+    uint64_t then = now + (SOC_TIMER_FREQ>>1);
     SysTimer_SetCompareValue(then);
 }
 
@@ -116,7 +116,9 @@ int main(){
 		tx_buf4[i]=i+3;
 		tx_buf5[i]=i+4;
 	}
-	//__RV_CSR_CLEAR(CSR_MMISC_CTL,MMISC_CTL_BPU);
+#if _riscv
+	__RV_CSR_CLEAR(CSR_MMISC_CTL,MMISC_CTL_BPU);
+#endif
     ECLIC_Register_IRQ(SOC_INT92_IRQn , ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,SOC_CAN1_HANDLER);
 	__enable_irq();
 	AlCan_SetResetMode(AL_CAN_CUR);
