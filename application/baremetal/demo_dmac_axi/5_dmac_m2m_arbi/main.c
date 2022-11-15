@@ -156,7 +156,6 @@ int XDmaPs_Example_W_Intr(void)
 		vfwp("** CCR0 = %x \n",rdata0);
 
 	rdata0 = DmaCheckHandler(Src, Dst);
-	vfwp(rdata0);
 	if (rdata_cpc0 == DmaProgBuf ) {
 		return XST_SUCCESS;
 	}
