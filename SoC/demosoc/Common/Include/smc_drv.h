@@ -9,7 +9,6 @@
 #define _SMC_DRV_H_
 
 
-
 #ifdef USE_CSU
 
 

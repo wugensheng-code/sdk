@@ -13,12 +13,14 @@ void SmcSendCommand(uint8_t startCmd, uint8_t endCmd, uint8_t addrCycles, uint8_
 {
 	uint32_t endCmdReq = 0;
 	volatile unsigned long cmdPhaseAddr  = 0;
-	uint32_t cmdPhaseData  = 0;
+	volatile uint32_t cmdPhaseData  = 0;
 
 	if(endCmdPhase == ONFI_ENDIN_CMD_PHASE)
 	{
+		branch_put_char("(109) -> ");
 		endCmdReq = 1;
 	}
+	branch_put_char("(110) -> ");
 
 	/* command phase address */
 	cmdPhaseAddr  = NAND_BASE 							|
@@ -33,12 +35,14 @@ void SmcSendCommand(uint8_t startCmd, uint8_t endCmd, uint8_t addrCycles, uint8_
 	 */
 	if ((Column != NAND_COLUMN_NOT_VALID) && (Page != NAND_PAGE_NOT_VALID))
 	{
+		branch_put_char("(111) -> ");
 		/* After Reset Cmd And Read Id Cmd */
 		cmdPhaseData = Column;
 
 		cmdPhaseData |= Page << (2*8);
 		if (addrCycles > 4)
 		{
+			branch_put_char("(113) -> ");
 			/*
 			 * Send lower byte of page address
 			 */
@@ -48,15 +52,21 @@ void SmcSendCommand(uint8_t startCmd, uint8_t endCmd, uint8_t addrCycles, uint8_
 			 */
 			cmdPhaseData = Page >> (32 - (2*8));
 		}
+		branch_put_char("(114) -> ");
 	}
 	else if (Page != NAND_PAGE_NOT_VALID)
 	{
+		branch_put_char("(112) -> ");
+		branch_put_char("(115) -> ");
 		cmdPhaseData = Page;
 	}
 	else
 	{
+		branch_put_char("(112) -> ");
+		branch_put_char("(116) -> ");
 		cmdPhaseData = Column;
 	}
+
 
 	/* Send command phase */
 	SMC_WriteReg(cmdPhaseAddr, cmdPhaseData);
@@ -66,10 +76,10 @@ void SmcSendCommand(uint8_t startCmd, uint8_t endCmd, uint8_t addrCycles, uint8_
 
 void SmcReadPara(uint8_t endCmd, uint8_t endCmdPhase, uint8_t *Buf, uint32_t Length, Nand_TypeDef *nand)
 {
-	uint32_t endCmdReq = 0;
+	 uint32_t endCmdReq = 0;
 	volatile unsigned long dataPhaseAddr = 0;
-	uint32_t eccLast = 0;
-	uint32_t clearCs = 0;
+	 uint32_t eccLast = 0;
+	 uint32_t clearCs = 0;
 	volatile uint32_t Index = 0;
 
 	if(endCmdPhase == ONFI_ENDIN_DATA_PHASE)

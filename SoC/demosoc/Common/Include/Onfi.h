@@ -34,14 +34,14 @@ extern "C" {
 
 
 uint8_t Onfi_CmdProgramPage(uint32_t Page, uint32_t Column);
-uint8_t Onfi_CmdProgramCachePage(uint32_t Page, uint32_t Column);
+//uint8_t Onfi_CmdProgramCachePage(uint32_t Page, uint32_t Column);
 
 uint8_t Onfi_CmdBlockErase(uint32_t Page);
 
-uint8_t Nand_ProgramPage(uint32_t Page, uint32_t Column, uint8_t *Buf, Nand_TypeDef *nandSize);
-uint8_t Nand_ProgramPage_EOob(uint32_t Page, uint32_t Column, uint8_t *Buf, Nand_TypeDef *nandSize);
-uint8_t Nand_ProgramPage_HwEcc(uint32_t Page, uint32_t Column, uint8_t *Buf, Nand_TypeDef *nandSize);
-
+//uint8_t Nand_ProgramPage(uint8_t *Buf, Nand_TypeDef *nandSize);
+uint8_t Nand_ProgramPage_EOob(uint8_t *Buf, Nand_TypeDef *nandSize);
+uint8_t Nand_ProgramPage_HwEcc(uint8_t *Buf, Nand_TypeDef *nandSize);
+uint8_t Nand_ProgramPage_WithOob(uint8_t *Buf, Nand_TypeDef *nandSize);
 
 
 

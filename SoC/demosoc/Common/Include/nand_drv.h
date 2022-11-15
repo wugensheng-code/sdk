@@ -83,12 +83,12 @@ extern "C" {
 
 #define ONFI_CMD_SET_FEATURES1						0xEF	/* ONFI set features start command */
 #define ONFI_CMD_SET_FEATURES2						ONFI_END_CMD_NONE	/* ONFI set features end command */
-#define ONFI_CMD_SET_FEATURES_CYCLES				0		/* ONFI set features command address total cycles*/
+#define ONFI_CMD_SET_FEATURES_CYCLES				1		/* ONFI set features command address total cycles*/
 #define ONFI_CMD_SET_FEATURES_END_TIMING			ONFI_END_CMD_INVALID /* set features end command invalid */
 
 #define ONFI_CMD_GET_FEATURES1						0xEE	/* ONFI get features start command */
 #define ONFI_CMD_GET_FEATURES2						ONFI_END_CMD_NONE	/* ONFI get features end command */
-#define ONFI_CMD_GET_FEATURES_CYCLES				0		/* ONFI get features command address total cycles*/
+#define ONFI_CMD_GET_FEATURES_CYCLES				1		/* ONFI get features command address total cycles*/
 #define ONFI_CMD_GET_FEATURES_END_TIMING			ONFI_END_CMD_INVALID /* get features end command invalid */
 
 #define ONFI_CMD_READ_PAGE1							0x00	/* ONFI Read ID command Start */
@@ -355,9 +355,19 @@ uint32_t Csu_NandInit(Nand_TypeDef *nand);
 uint32_t Csu_NandRead(uint32_t offset, uint8_t* dest, uint32_t length, Nand_TypeDef *nand);
 
 
+//#define BRANCH_PUT_CHAR 1
 
+#ifdef BRANCH_PUT_CHAR
 
+void branch_put_char(char *char_ptr);
 
+void print_log(void);
+
+#else
+
+#define branch_put_char do{}while(0);
+
+#endif
 
 
 

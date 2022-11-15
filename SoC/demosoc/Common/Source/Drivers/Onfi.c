@@ -23,6 +23,65 @@ static uint8_t Nand_IsBusy(void)
 
 
 
+ uint8_t Nand_EccHwInit(Nand_TypeDef *nand)
+{
+	uint32_t ecc1Config;
+
+	/* Set SMC_REG_ECC1_MEMCMD0 Reg*/
+	SMC_WriteReg((SMC_BASE + SMC_REG_ECC1_MEMCMD0),
+			(SMC_EccMemCmd0_InitWriteCmd| SMC_EccMemCmd0_InitReadCmd|
+					SMC_EccMemCmd0_EndReadCmd| SMC_EccMemCmd0_UseEndCmd));
+
+	/* Set SMC_REG_ECC1_MEMCMD1 Reg*/
+	SMC_WriteReg((SMC_BASE + SMC_REG_ECC1_MEMCMD1),
+			(SMC_EccMemCmd1_ColChangeWRCmd| SMC_EccMemCmd1_ColChangeRDCmd|
+				SMC_EccMemCmd1_ColChangeEndCmd| SMC_EccMemCmd1_UseEndCmd));
+
+	/* Check Ecc Busy */
+	//while(SMC_ReadReg((void volatile *)(SMC_BASE + SMC_REG_ECC1_STATUS)) && SMC_EccStatus_EccBusy);
+
+	switch(nand->dataBytesPerPage)
+	{
+		case(512):
+			ecc1Config = SMC_EccCfg_One_PageSize;
+			break;
+		case(1024):
+			ecc1Config = SMC_EccCfg_Two_PageSize;
+			break;
+		case(2048):
+			ecc1Config = SMC_EccCfg_Four_PageSize;
+			break;
+		default:
+			/* Page size 256 bytes & 4096 bytes not supported by ECC block */
+			return SmcHwInitSizeErr;
+	}
+
+
+	/* Check Ecc Busy */
+	while(SMC_ReadReg((SMC_BASE + SMC_REG_ECC1_STATUS)) & SMC_EccStatus_EccBusy);
+
+	//*((uint32_t *)(SMC_BASE + SMC_REG_ECC1_STATUS)) |=
+	SMC_WriteReg((SMC_BASE + SMC_REG_ECC1_CFG),
+			(SMC_EccCfg_EccModeAPB| SMC_EccCfg_EccValue_InPageEnd| SMC_EccCfg_EccNoJump| ecc1Config));
+	return SmcSuccess;
+}
+
+
+ uint8_t Nand_EccHwDisable(void)
+{
+//	Mtimer_Start(&NandTimer, 500*1000);
+
+	/* Check Ecc Busy */
+	while(SMC_ReadReg((SMC_BASE + SMC_REG_ECC1_STATUS)) & SMC_EccStatus_EccBusy);
+
+	/* Set Ecc Model is bypass */
+	*((volatile uint32_t *)(SMC_BASE+SMC_REG_ECC1_CFG)) &= (~(3 << SMC_EccCfg_EccMode_FIELD));
+
+	return SmcSuccess;
+}
+
+
+
 
 static uint8_t Nand_HwCalculateEcc(uint8_t *Dst, uint8_t eccDataNums)
 {
@@ -121,124 +180,124 @@ static uint8_t Nand_HwCorrectEcc(uint8_t *eccCode, uint8_t *eccCalc, uint8_t *bu
 }
 
 
-
- uint8_t Nand_ReadPage_HwEcc(uint8_t *Buf, uint8_t *SpareBuf, Nand_TypeDef *nand)
-{
-	uint8_t * ptrBuf = Buf;
-	uint8_t *TempBuf = Buf;
-	uint8_t * TempSpareBuf = SpareBuf;
-	uint8_t Status = 0,  eccDataNums = 0, EccOffset = 0;
-	volatile uint32_t i = 0;
-	uint8_t __attribute__((aligned(4))) eccData[12] = {0};
-	uint8_t __attribute__((aligned(4))) ReadEccData[12] = {0};
-	uint32_t *dataOffsetPtr = NULL;
-
-	/* Read data Page */
-	SmcReadBuf(ONFI_CMD_READ_PAGE2, ONFI_CMD_READ_PAGE_END_TIMING, ptrBuf, nand->dataBytesPerPage-ONFI_AXI_DATA_WIDTH, NO_CLEAR_CS, NO_ECC_LAST);
-	ptrBuf += (nand->dataBytesPerPage-ONFI_AXI_DATA_WIDTH);
-
-	SmcReadBuf(ONFI_CMD_READ_PAGE2, ONFI_CMD_READ_PAGE_END_TIMING, ptrBuf, ONFI_AXI_DATA_WIDTH, NO_CLEAR_CS, ECC_LAST);
-	ptrBuf += ONFI_AXI_DATA_WIDTH;
-
-	switch(nand->spareBytesPerPage)
-	{
-		case(64):
-			eccDataNums = 12;
-			dataOffsetPtr = NandOob64;
-			break;
-		case(32):
-			eccDataNums = 6;
-			dataOffsetPtr = NandOob32;
-			break;
-		case(16):
-			eccDataNums = 3;
-			dataOffsetPtr = NandOob16;
-			break;
-		default:
-			/* Page size 256 bytes & 4096 bytes not supported by ECC block*/
-			return SmcHwReadSizeOver;
-	}
-
-/*
-	if((nand->spareBytesPerPage == 64)||
-		(nand->spareBytesPerPage == 32)||
-		(nand->spareBytesPerPage == 16))
-	{
-		eccDataNums = nand->spareBytesPerPage/16*3;
-		dataOffsetPtr = oobPtr[nand->spareBytesPerPage/16-1];
-	}
-	else
-	{
-		return SmcHwReadSizeOver;
-	}
-*/
-
-	/* Calculate Ecc */
-	Status =  Nand_HwCalculateEcc(eccData, eccDataNums);
-	if(Status != SmcSuccess)
-	{
-		return Status;
-	}
-
-	for(i = 0; i < eccDataNums; i++)
-	{
-		csu_printf("Cal ecc: %d ",eccData[i]);
-
-	}
-	csu_printf(" \r\n");
-
-
-	/* Read Spare data */
-	SmcReadBuf(ONFI_CMD_READ_PAGE2, ONFI_CMD_READ_PAGE_END_TIMING, TempSpareBuf, nand->spareBytesPerPage-ONFI_AXI_DATA_WIDTH, NO_CLEAR_CS, NO_ECC_LAST);
-	TempSpareBuf += (nand->spareBytesPerPage-ONFI_AXI_DATA_WIDTH);
-
-	/* keep ONFI_AXI_DATA_WIDTH bytes read to clear cs */
-	SmcReadBuf(ONFI_CMD_READ_PAGE2, ONFI_CMD_READ_PAGE_END_TIMING, TempSpareBuf, ONFI_AXI_DATA_WIDTH, CLEAR_CS, NO_ECC_LAST);
-
-	for(i = 0; i < eccDataNums; i++)
-	{
-		ReadEccData[i] = ~SpareBuf[dataOffsetPtr[i]];
-
-		csu_printf("Read Ecc: %d ",ReadEccData[i]);
-	}
-
-	csu_printf("\r\n");
-
-	i = nand->dataBytesPerPage/NAND_ECC_BLOCK_SIZE;
-	for(;i;i--)
-	{
-		Status = Nand_HwCorrectEcc(&ReadEccData[EccOffset], &eccData[EccOffset], TempBuf);
-		if(Status != SmcSuccess)
-		{
-			return Status;
-		}
-
-		EccOffset += NAND_ECC_BYTES;
-		TempBuf += NAND_ECC_BLOCK_SIZE;
-	}
-
-	return SmcSuccess;
-
-}
-
-
+//
+// uint8_t Nand_ReadPage_HwEcc(uint8_t *Buf, uint8_t *SpareBuf, Nand_TypeDef *nand)
+//{
+//	uint8_t * ptrBuf = Buf;
+//	uint8_t *TempBuf = Buf;
+//	uint8_t * TempSpareBuf = SpareBuf;
+//	uint8_t Status = 0,  eccDataNums = 0, EccOffset = 0;
+//	volatile uint32_t i = 0;
+//	uint8_t __attribute__((aligned(4))) eccData[12] = {0};
+//	uint8_t __attribute__((aligned(4))) ReadEccData[12] = {0};
+//	uint32_t *dataOffsetPtr = NULL;
+//
+//	/* Read data Page */
+//	SmcReadBuf(ONFI_CMD_READ_PAGE2, ONFI_CMD_READ_PAGE_END_TIMING, ptrBuf, nand->dataBytesPerPage-ONFI_AXI_DATA_WIDTH, NO_CLEAR_CS, NO_ECC_LAST);
+//	ptrBuf += (nand->dataBytesPerPage-ONFI_AXI_DATA_WIDTH);
+//
+//	SmcReadBuf(ONFI_CMD_READ_PAGE2, ONFI_CMD_READ_PAGE_END_TIMING, ptrBuf, ONFI_AXI_DATA_WIDTH, NO_CLEAR_CS, ECC_LAST);
+//	ptrBuf += ONFI_AXI_DATA_WIDTH;
+//
+//	switch(nand->spareBytesPerPage)
+//	{
+//		case(64):
+//			eccDataNums = 12;
+//			dataOffsetPtr = NandOob64;
+//			break;
+//		case(32):
+//			eccDataNums = 6;
+//			dataOffsetPtr = NandOob32;
+//			break;
+//		case(16):
+//			eccDataNums = 3;
+//			dataOffsetPtr = NandOob16;
+//			break;
+//		default:
+//			/* Page size 256 bytes & 4096 bytes not supported by ECC block*/
+//			return SmcHwReadSizeOver;
+//	}
+//
+///*
+//	if((nand->spareBytesPerPage == 64)||
+//		(nand->spareBytesPerPage == 32)||
+//		(nand->spareBytesPerPage == 16))
+//	{
+//		eccDataNums = nand->spareBytesPerPage/16*3;
+//		dataOffsetPtr = oobPtr[nand->spareBytesPerPage/16-1];
+//	}
+//	else
+//	{
+//		return SmcHwReadSizeOver;
+//	}
+//*/
+//
+//	/* Calculate Ecc */
+//	Status =  Nand_HwCalculateEcc(eccData, eccDataNums);
+//	if(Status != SmcSuccess)
+//	{
+//		return Status;
+//	}
+//
+//	for(i = 0; i < eccDataNums; i++)
+//	{
+//		csu_printf("Cal ecc: %d ",eccData[i]);
+//
+//	}
+//	csu_printf(" \r\n");
+//
+//
+//	/* Read Spare data */
+//	SmcReadBuf(ONFI_CMD_READ_PAGE2, ONFI_CMD_READ_PAGE_END_TIMING, TempSpareBuf, nand->spareBytesPerPage-ONFI_AXI_DATA_WIDTH, NO_CLEAR_CS, NO_ECC_LAST);
+//	TempSpareBuf += (nand->spareBytesPerPage-ONFI_AXI_DATA_WIDTH);
+//
+//	/* keep ONFI_AXI_DATA_WIDTH bytes read to clear cs */
+//	SmcReadBuf(ONFI_CMD_READ_PAGE2, ONFI_CMD_READ_PAGE_END_TIMING, TempSpareBuf, ONFI_AXI_DATA_WIDTH, CLEAR_CS, NO_ECC_LAST);
+//
+//	for(i = 0; i < eccDataNums; i++)
+//	{
+//		ReadEccData[i] = ~SpareBuf[dataOffsetPtr[i]];
+//
+//		csu_printf("Read Ecc: %d ",ReadEccData[i]);
+//	}
+//
+//	csu_printf("\r\n");
+//
+//	i = nand->dataBytesPerPage/NAND_ECC_BLOCK_SIZE;
+//	for(;i;i--)
+//	{
+//		Status = Nand_HwCorrectEcc(&ReadEccData[EccOffset], &eccData[EccOffset], TempBuf);
+//		if(Status != SmcSuccess)
+//		{
+//			return Status;
+//		}
+//
+//		EccOffset += NAND_ECC_BYTES;
+//		TempBuf += NAND_ECC_BLOCK_SIZE;
+//	}
+//
+//	return SmcSuccess;
+//
+//}
 
 
- uint8_t Onfi_CmdReadPage(uint32_t Page, uint32_t Column, Nand_TypeDef *nand)
-{
 
-	SmcSendCommand(ONFI_CMD_READ_PAGE1, ONFI_CMD_READ_PAGE2, ONFI_CMD_READ_PAGE_CYCLES,
-				ONFI_CMD_READ_PAGE_END_TIMING, Page, Column);
+//
+// uint8_t Onfi_CmdReadPage(uint32_t Page, uint32_t Column, Nand_TypeDef *nand)
+//{
+//
+//	SmcSendCommand(ONFI_CMD_READ_PAGE1, ONFI_CMD_READ_PAGE2, ONFI_CMD_READ_PAGE_CYCLES,
+//				ONFI_CMD_READ_PAGE_END_TIMING, Page, Column);
+//
+//
+//	while(Nand_IsBusy() == NAND_BUSY);
+//
+//	return SmcSuccess;
+//
+//}
 
 
-	while(Nand_IsBusy() == NAND_BUSY);
-
-	return SmcSuccess;
-
-}
-
-
-static uint8_t Onfi_CmdReadStatus(void)
+ uint8_t Onfi_CmdReadStatus(void)
 {
 	uint8_t Status = 0;
 	volatile unsigned long dataPhaseAddr = 0;
@@ -319,57 +378,58 @@ uint8_t Onfi_CmdProgramPage(uint32_t Page, uint32_t Column)
 
 
 
+//
+//
+//uint8_t Onfi_CmdProgramCachePage(uint32_t Page, uint32_t Column)
+//{
+//	uint8_t Status;
+//
+//	/* Check Nand Status */
+//	Status = Onfi_CmdReadStatus();
+//
+//	if (!(Status & ONFI_STATUS_WP))
+//	{
+//		return FAILED;
+//	}
+//
+//	SmcSendCommand(ONFI_CMD_PROGRAM_CACHE1, ONFI_CMD_PROGRAM_CACHE2, ONFI_CMD_PROGRAM_CACHE_CYCLES,
+//			ONFI_CMD_PROGRAM_CACHE_END_TIMING, Page, Column);
+//
+//	return SUCCESS;
+//
+//}
+//
 
 
-uint8_t Onfi_CmdProgramCachePage(uint32_t Page, uint32_t Column)
+
+
+
+
+
+
+ uint8_t __attribute__((aligned(4))) SpareData[512] = {0xff, 0xff};
+
+
+uint8_t Nand_ProgramPage_WithOob(uint8_t *Buf, Nand_TypeDef *nandSize)
 {
 	uint8_t Status;
 
-	/* Check Nand Status */
-	Status = Onfi_CmdReadStatus();
-
-	if (!(Status & ONFI_STATUS_WP))
-	{
-		return FAILED;
-	}
-
-	SmcSendCommand(ONFI_CMD_PROGRAM_CACHE1, ONFI_CMD_PROGRAM_CACHE2, ONFI_CMD_PROGRAM_CACHE_CYCLES,
-			ONFI_CMD_PROGRAM_CACHE_END_TIMING, Page, Column);
-
-	return SUCCESS;
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-uint8_t Nand_ProgramPage(uint32_t Page, uint32_t Column, uint8_t *Buf, Nand_TypeDef *nandSize)
-{
-	uint8_t Status;
-
+	uint8_t *TempSpareBuf=SpareData;
 	//Nand_EccHwDisable();
+
 
 
 	SmcWriteBuf(ONFI_CMD_PROGRAM_PAGE2, ONFI_CMD_PROGRAM_PAGE_END_TIMING, Buf,
 			nandSize->dataBytesPerPage, NO_CLEAR_CS, NO_ECC_LAST);
 
-	Buf += (nandSize->dataBytesPerPage);
 
-	SmcWriteBuf(ONFI_CMD_PROGRAM_PAGE2, ONFI_CMD_PROGRAM_PAGE_END_TIMING, Buf,
+	SmcWriteBuf(ONFI_CMD_PROGRAM_PAGE2, ONFI_CMD_PROGRAM_PAGE_END_TIMING, TempSpareBuf,
 			nandSize->spareBytesPerPage-ONFI_AXI_DATA_WIDTH, NO_CLEAR_CS, NO_ECC_LAST);
 
 
-	Buf += (nandSize->spareBytesPerPage-ONFI_AXI_DATA_WIDTH);
+	TempSpareBuf += (nandSize->spareBytesPerPage-ONFI_AXI_DATA_WIDTH);
 
-	SmcWriteBuf( ONFI_CMD_PROGRAM_PAGE2, ONFI_CMD_PROGRAM_PAGE_END_TIMING, Buf,
+	SmcWriteBuf( ONFI_CMD_PROGRAM_PAGE2, ONFI_CMD_PROGRAM_PAGE_END_TIMING, TempSpareBuf,
 			ONFI_AXI_DATA_WIDTH, CLEAR_CS, NO_ECC_LAST);
 
 	while(Nand_IsBusy() == NAND_BUSY);
@@ -385,6 +445,8 @@ uint8_t Nand_ProgramPage(uint32_t Page, uint32_t Column, uint8_t *Buf, Nand_Type
 		return FAILED;
 	}
 
+
+
 	return SUCCESS;
 }
 
@@ -392,7 +454,7 @@ uint8_t Nand_ProgramPage(uint32_t Page, uint32_t Column, uint8_t *Buf, Nand_Type
 
 
 
-uint8_t Nand_ProgramPage_EOob(uint32_t Page, uint32_t Column, uint8_t *Buf, Nand_TypeDef *nandSize)
+uint8_t Nand_ProgramPage_EOob(uint8_t *Buf, Nand_TypeDef *nandSize)
 {
 	uint8_t Status;
 
@@ -421,7 +483,7 @@ uint8_t Nand_ProgramPage_EOob(uint32_t Page, uint32_t Column, uint8_t *Buf, Nand
 	return SUCCESS;
 }
 
-static uint8_t __attribute__((aligned(4))) SpareData[512] = {0xff,0xff};
+
 
 
 /* Variable Definitions */
@@ -430,7 +492,7 @@ static uint8_t __attribute__((aligned(4))) SpareData[512] = {0xff,0xff};
 	/* Ecc offset for 32 bytes spare area */
 /* Ecc offset for 64 bytes spare area */
 
-uint8_t Nand_ProgramPage_HwEcc(uint32_t Page, uint32_t Column, uint8_t *Buf, Nand_TypeDef *nandSize)
+uint8_t Nand_ProgramPage_HwEcc(uint8_t *Buf, Nand_TypeDef *nandSize)
 {
 	uint8_t Status,i,eccDataNums;
 	uint8_t eccData[12]={0};
