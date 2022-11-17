@@ -73,14 +73,14 @@ int XDmaPs_Example_W_Intr(void)
 	int Index;
 
 	// OCM 61000000 DV use
-	// OCM 61010000 DMA Instruction
-	#define OCM_L 0x61000000
-	int OCM__BASE1_ADDR = OCM_L+0x00010000;
+	// OCM DMA Instruction
+    int DmaInstruction[DMA_LENGTH] __attribute__ ((aligned (32)));
+    memset(DmaInstruction, 0, sizeof(DmaInstruction));
 
 	char *DmaProgBuf;
-	DmaProgBuf = OCM__BASE1_ADDR;
+	DmaProgBuf = DmaInstruction;
 	//vfwp("Start addr:%x \n", DmaProgBuf);
-	DmaProgBuf += XDmaPs_Instr_DMAGO(DmaProgBuf, 0, OCM__BASE1_ADDR+6, 0);
+	DmaProgBuf += XDmaPs_Instr_DMAGO(DmaProgBuf, 0, DmaInstruction+6, 0);
 	vfwp("Start addr:%x \n", DmaProgBuf);
 	DmaProgBuf += XDmaPs_Instr_DMAMOV(DmaProgBuf, 0x0, (u32)Src);
 	DmaProgBuf += XDmaPs_Instr_DMAMOV(DmaProgBuf, 0x2, (u32)Dst);
@@ -107,7 +107,7 @@ int XDmaPs_Example_W_Intr(void)
 	vfwp("End addr:%x \n", DmaProgBuf);
 
 	 // set boot_addr
-	 REG_WRITE(TOP_NS__CFG_CTRL1_DMAC_AXI__ADDR, OCM__BASE1_ADDR);
+	 REG_WRITE(TOP_NS__CFG_CTRL1_DMAC_AXI__ADDR, DmaInstruction);
 	 //REG_WRITE(TOP_NS__CFG_CTRL1_DMAC_AXI__ADDR, 0);
 	 rdata0 = REG_READ(TOP_NS__CFG_CTRL1_DMAC_AXI__ADDR);
 	 //vfwp("** CFG_CTRL1_DMAC_AXI__ADDR = %x \n",rdata0);
@@ -159,7 +159,6 @@ int XDmaPs_Example_W_Intr(void)
 		vfwp("** DAR0 = %x \n",rdata0);
 
 	rdata0 = DmaCheckHandler(Src, Dst);
-	vfwp(rdata0);
 	if (rdata_cpc0 == DmaProgBuf ) {
 		return XST_SUCCESS;
 	}
