@@ -774,778 +774,778 @@ volatile unsigned fail_flag;
       fail_flag = 1;
      }
     if (rdata1 != 0x00000000 ) {//0x004
-      vfwp("** CPU0 TEST FAIL **%x ",0x004);
+      vfwp("** CPU0 TEST FAIL **%x\r\n ",0x004);
 	vfwp("%x\n", rdata1);
       fail_flag = 1;
      }
     if (rdata2 != 0x0000ffff ) {//0x020
-      vfwp("** rdata2 TEST FAIL **%x: ",0x020);
+      vfwp("** rdata2 TEST FAIL **%x:\r\n ",0x020);
 	vfwp("%x\n", rdata2);
       fail_flag = 1;
      }
     if (rdata3 != 0x00000000 ) {//0x024
-      vfwp("** CPU0 TEST FAIL **%x ",0x024);
+      vfwp("** CPU0 TEST FAIL **%x\r\n ",0x024);
       vfwp("%x\n", rdata3);
 	fail_flag = 1;
      }
     if (rdata4 != 0x00000000 ) {//0x028
-      vfwp("** CPU0 TEST FAIL **%x ",0x028);
+      vfwp("** CPU0 TEST FAIL **%x\r\n ",0x028);
 	vfwp("%x\n", rdata4);
       fail_flag = 1;
      }
     if (rdata5 != 0x00000000 ) {//0x02C
-      vfwp("** CPU0 TEST FAIL **%x ",0x02C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n ",0x02C);
 	vfwp("%x\n", rdata5);
       fail_flag = 1;
      }
     if (rdata6 != 0x00000000 ) {//0x030
-      vfwp("** CPU0 TEST FAIL **%x ",0x030);
+      vfwp("** CPU0 TEST FAIL **%x\r\n ",0x030);
 	vfwp("%x\n", rdata6);
       fail_flag = 1;
      }
     if (rdata7 != 0x00000000 ) {//0x034
-      vfwp("** CPU0 TEST FAIL **%x ",0x034);
+      vfwp("** CPU0 TEST FAIL **%x\r\n ",0x034);
 	vfwp("%x\n", rdata7);
       fail_flag = 1;
      }
     if (rdata8 != 0x00000000 ) {//0x038
-      vfwp("** CPU0 TEST FAIL **%x ",0x038);
+      vfwp("** CPU0 TEST FAIL **%x\r\n ",0x038);
 	vfwp("%x\n", rdata8);
       fail_flag = 1;
      }
     if (rdata9 != 0x00000000 ) {//0x040
-      vfwp("** CPU0 TEST FAIL **%x ",0x040);
+      vfwp("** CPU0 TEST FAIL **%x\r\n ",0x040);
 	vfwp("%x\n", rdata9);
       fail_flag = 1;
      }
     if (rdata10 != 0x00000000 ) {//0x044
-      vfwp("** CPU0 TEST FAIL **%x ",0x044);
+      vfwp("** CPU0 TEST FAIL **%x\r\n ",0x044);
 	vfwp("%x\n", rdata10);
 	fail_flag = 1;
      }
     if (rdata11 != 0x00000000 ) {//0x048
-      vfwp("** CPU0 TEST FAIL **%x ",0x048);
+      vfwp("** CPU0 TEST FAIL **%x\r\n ",0x048);
       	vfwp("%x\n", rdata11);
 	fail_flag = 1;
      }
     if (rdata12 != 0x00000000 ) {//0x04C
-      vfwp("** CPU0 TEST FAIL **%x",0x04C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x04C);
       vfwp("%x\n", rdata12);
 	fail_flag = 1;
      }
     if (rdata13 != 0x00000000 ) {//0x050
-      vfwp("** CPU0 TEST FAIL **%x",0x050);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x050);
       vfwp("%x\n", rdata13);
 	fail_flag = 1;
      }
     if (rdata14 != 0x00000000 ) {//0x054
-      vfwp("** CPU0 TEST FAIL **%x",0x054);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x054);
       vfwp("%x\n", rdata14);
 	fail_flag = 1;
      }
     if (rdata15 != 0x00000000 ) {//0x058
-      vfwp("** CPU0 TEST FAIL **%x",0x058);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x058);
 	vfwp("%x\n", rdata15);
 	fail_flag = 1;
      }
     if (rdata16 != 0x00000000 ) {//0x05C
-      vfwp("** CPU0 TEST FAIL **%x",0x05C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x05C);
       vfwp("%x\n", rdata16);
 	fail_flag = 1;
      }
     if (rdata17 != 0x00000000 ) {//0x100
-      vfwp("** CPU0 TEST FAIL **%x",0x100);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x100);
       vfwp("%x\n", rdata17);
 	fail_flag = 1;
      }
     if (rdata18 != 0x00000000 ) {//0x104
-      vfwp("** CPU0 TEST FAIL **%x",0x104);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x104);
       vfwp("%x\n", rdata18);
 	fail_flag = 1;
      }
     if (rdata19 != 0x00000000 ) {//0x108
-      vfwp("** CPU0 TEST FAIL **%x",0x108);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x108);
       vfwp("%x\n", rdata19);
 	fail_flag = 1;
      }
     if (rdata20 != 0x00000000 ) {//0x10C
-      vfwp("** CPU0 TEST FAIL **%x",0x10C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x10C);
       vfwp("%x\n", rdata20);
 	fail_flag = 1;
      }
     if (rdata21 != 0x00000000 ) {//0x110
-      vfwp("** CPU0 TEST FAIL **%x",0x110);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x110);
       vfwp("%x\n", rdata21);
 	fail_flag = 1;
      }
     if (rdata22 != 0x00000000 ) {//0x114
-      vfwp("** CPU0 TEST FAIL **%x",0x114);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x114);
       vfwp("%x\n", rdata22);
 	fail_flag = 1;
      }
     if (rdata23 != 0x00000000 ) {//0x118
-      vfwp("** CPU0 TEST FAIL **%x",0x118);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x118);
       vfwp("%x\n", rdata23);
 	fail_flag = 1;
      }
     if (rdata24 != 0x00000000 ) {//0x11C
-      vfwp("** CPU0 TEST FAIL **%x",0x11C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x11C);
       vfwp("%x\n", rdata24);
 	fail_flag = 1;
      }
     if (rdata25 != 0x00000000 ) {//0x120
-      vfwp("** CPU0 TEST FAIL **%x",0x120);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x120);
       fail_flag = 1;
      }
     if (rdata26 != 0x00000000 ) {//0x124
-      vfwp("** CPU0 TEST FAIL **%x",0x124);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x124);
       fail_flag = 1;
      }
     if (rdata27 != 0x00000000 ) {//0x128
-      vfwp("** CPU0 TEST FAIL **%x",0x128);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x128);
       fail_flag = 1;
      }
     if (rdata28 != 0x00000000 ) {//0x12C
-      vfwp("** CPU0 TEST FAIL **%x",0x12C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x12C);
       fail_flag = 1;
      }
     if (rdata29 != 0x00000000 ) {//0x130
-      vfwp("** CPU0 TEST FAIL **%x",0x130);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x130);
       fail_flag = 1;
      }
     if (rdata30 != 0x00000000 ) {//0x134
-      vfwp("** CPU0 TEST FAIL **%x",0x134);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x134);
       fail_flag = 1;
      }
     if (rdata31 != 0x00000000 ) {//0x138
-      vfwp("** CPU0 TEST FAIL **%x",0x138);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x138);
       fail_flag = 1;
      }
     if (rdata32 != 0x00000000 ) {//0x13C
-      vfwp("** CPU0 TEST FAIL **%x",0x13C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x13C);
       fail_flag = 1;
      }
     if (rdata33 != 0x00000000 ) {//0x400
-      vfwp("** CPU0 TEST FAIL **%x",0x400);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x400);
       fail_flag = 1;
      }
     if (rdata34 != 0x00000000 ) {//0x404
-      vfwp("** CPU0 TEST FAIL **%x",0x404);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x404);
       fail_flag = 1;
      }
     if (rdata35 != 0x00000000 ) {//0x408
-      vfwp("** CPU0 TEST FAIL **%x",0x408);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x408);
       fail_flag = 1;
      }
     if (rdata36 != 0x00000000 ) {//0x40C
-      vfwp("** CPU0 TEST FAIL **%x",0x40C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x40C);
       fail_flag = 1;
      }
     if (rdata37 != 0x00000000 ) {//0x410
-      vfwp("** CPU0 TEST FAIL **%x",0x410);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x410);
       fail_flag = 1;
      }
     if (rdata38 != 0x00000000 ) {//0x420
-      vfwp("** CPU0 TEST FAIL **%x",0x420);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x420);
       fail_flag = 1;
      }
     if (rdata39 != 0x00000000 ) {//0x424
-      vfwp("** CPU0 TEST FAIL **%x",0x424);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x424);
       fail_flag = 1;
      }
     if (rdata40 != 0x00000000 ) {//0x428
-      vfwp("** CPU0 TEST FAIL **%x",0x428);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x428);
       fail_flag = 1;
      }
     if (rdata41 != 0x00000000 ) {//0x42C
-      vfwp("** CPU0 TEST FAIL **%x",0x42C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x42C);
       fail_flag = 1;
      }
     if (rdata42 != 0x00000000 ) {//0x430
-      vfwp("** CPU0 TEST FAIL **%x",0x430);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x430);
       fail_flag = 1;
      }
     if (rdata43 != 0x00000000 ) {//0x440
-      vfwp("** CPU0 TEST FAIL **%x",0x440);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x440);
       fail_flag = 1;
      }
     if (rdata44 != 0x00000000 ) {//0x444
-      vfwp("** CPU0 TEST FAIL **%x",0x444);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x444);
       fail_flag = 1;
      }
     if (rdata45 != 0x00000000 ) {//0x448
-      vfwp("** CPU0 TEST FAIL **%x",0x448);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x448);
       fail_flag = 1;
      }
     if (rdata46 != 0x00000000 ) {//0x44C
-      vfwp("** CPU0 TEST FAIL **%x",0x44C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x44C);
       fail_flag = 1;
      }
     if (rdata47 != 0x00000000 ) {//0x450
-      vfwp("** CPU0 TEST FAIL **%x",0x450);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x450);
       fail_flag = 1;
      }
     if (rdata48 != 0x00000000 ) {//0x460
-      vfwp("** CPU0 TEST FAIL **%x",0x460);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x460);
       fail_flag = 1;
      }
     if (rdata49 != 0x00000000 ) {//0x464
-      vfwp("** CPU0 TEST FAIL **%x",0x464);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x464);
       fail_flag = 1;
      }
     if (rdata50 != 0x00000000 ) {//0x468
-      vfwp("** CPU0 TEST FAIL **%x",0x468);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x468);
       fail_flag = 1;
      }
     if (rdata51 != 0x00000000 ) {//0x46C
-      vfwp("** CPU0 TEST FAIL **%x",0x46C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x46C);
       fail_flag = 1;
      }
     if (rdata52 != 0x00000000 ) {//0x470
-      vfwp("** CPU0 TEST FAIL **%x",0x470);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x470);
       fail_flag = 1;
      }
     if (rdata53 != 0x00000000 ) {//0x480
-      vfwp("** CPU0 TEST FAIL **%x",0x480);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x480);
       fail_flag = 1;
      }
     if (rdata54 != 0x00000000 ) {//0x484
-      vfwp("** CPU0 TEST FAIL **%x",0x484);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x484);
       fail_flag = 1;
      }
     if (rdata55 != 0x00000000 ) {//0x488
-      vfwp("** CPU0 TEST FAIL **%x",0x488);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x488);
       fail_flag = 1;
      }
     if (rdata56 != 0x00000000 ) {//0x48c
-      vfwp("** CPU0 TEST FAIL **%x",0x48c);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x48c);
       fail_flag = 1;
      }
     if (rdata57 != 0x00000000 ) {//0x490
-      vfwp("** CPU0 TEST FAIL **%x",0x490);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x490);
       fail_flag = 1;
      }
     if (rdata58 != 0x00000000 ) {//0x4A0
-      vfwp("** CPU0 TEST FAIL **%x",0x4A0);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4A0);
       fail_flag = 1;
      }
     if (rdata59 != 0x00000000 ) {//0x4A4
-      vfwp("** CPU0 TEST FAIL **%x",0x4A4);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4A4);
       fail_flag = 1;
      }
     if (rdata60 != 0x00000000 ) {//0x4A8
-      vfwp("** CPU0 TEST FAIL **%x",0x4A8);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4A8);
       fail_flag = 1;
      }
     if (rdata61 != 0x00000000 ) {//0x4AC
-      vfwp("** CPU0 TEST FAIL **%x",0x4AC);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4AC);
       fail_flag = 1;
      }
     if (rdata62 != 0x00000000 ) {//0x4B0
-      vfwp("** CPU0 TEST FAIL **%x",0x4B0);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4B0);
       fail_flag = 1;
      }
     if (rdata63 != 0x00000000 ) {//0x4C0
-      vfwp("** CPU0 TEST FAIL **%x",0x4C0);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4C0);
       fail_flag = 1;
      }
     if (rdata64 != 0x00000000 ) {//0x4C4
-      vfwp("** CPU0 TEST FAIL **%x",0x4C4);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4C4);
       fail_flag = 1;
      }
     if (rdata65 != 0x00000000 ) {//0x4C8
-      vfwp("** CPU0 TEST FAIL **%x",0x4C8);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4C8);
       fail_flag = 1;
      }
     if (rdata66 != 0x00000000 ) {//0x4CC
-      vfwp("** CPU0 TEST FAIL **%x",0x4CC);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4CC);
       fail_flag = 1;
      }
     if (rdata67 != 0x00000000 ) {//0x4D0
-      vfwp("** CPU0 TEST FAIL **%x",0x4D0);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4D0);
       fail_flag = 1;
      }
     if (rdata68 != 0x00000000 ) {//0x4E0
-      vfwp("** CPU0 TEST FAIL **%x",0x4E0);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4E0);
       fail_flag = 1;
      }
     if (rdata69 != 0x00000000 ) {//0x4E4
-      vfwp("** CPU0 TEST FAIL **%x",0x4E4);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4E4);
       fail_flag = 1;
      }
     if (rdata70 != 0x00000000 ) {//0x4E8
-      vfwp("** CPU0 TEST FAIL **%x",0x4E8);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4E8);
       fail_flag = 1;
      }
     if (rdata71 != 0x00000000 ) {//0x4EC
-      vfwp("** CPU0 TEST FAIL **%x",0x4EC);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4EC);
       fail_flag = 1;
      }
     if (rdata72 != 0x00000000 ) {//0x4F0
-      vfwp("** CPU0 TEST FAIL **%x",0x4F0);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4F0);
       fail_flag = 1;
      }
     if (rdata73 != 0x00000000 ) {//0xD00
-      vfwp("** CPU0 TEST FAIL **%x",0xD00);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0xD00);
       fail_flag = 1;
      }
     if (rdata74 != 0x00000000 ) {//0xD04
-      vfwp("** CPU0 TEST FAIL **%x",0xD04);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0xD04);
       fail_flag = 1;
      }
     if (rdata75 != 0x00000000 ) {//0xD08
-      vfwp("** CPU0 TEST FAIL **%x",0xD08);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0xD08);
       fail_flag = 1;
      }
     if (rdata76 != 0x00000000 ) {//0xD0C
-      vfwp("** CPU0 TEST FAIL **%x",0xD0C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0xD0C);
       fail_flag = 1;
      }
     if (rdata77 != 0x001e3075 ) {//0xE00 CR0 default 0x0000_0000
-      vfwp("** CR0(rdata77) TEST FAIL **%x: ",0xE00);
+      vfwp("** CR0(rdata77) TEST FAIL **%x:\r\n ",0xE00);
       vfwp("%x\n", rdata77);
 	fail_flag = 1;
      }
     if (rdata78 != 0x000000f5 ) {//0xE04
-      vfwp("** 0xE04(rdata78) TEST FAIL **%x: ",0xE04);
+      vfwp("** 0xE04(rdata78) TEST FAIL **%x:\r\n ",0xE04);
       vfwp("%x\n", rdata78);
 	fail_flag = 1;
      }
     if (rdata79 != 0x00000000 ) {//0xE08
-      vfwp("** CPU0 TEST FAIL **%x",0xE08);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0xE08);
       fail_flag = 1;
      }
     if (rdata80 != 0x0000ffff ) {//0xE0C
-      vfwp("** rdata80 TEST FAIL **%x: ",0xE0C);
+      vfwp("** rdata80 TEST FAIL **%x:\r\n ",0xE0C);
       vfwp("%x\n", rdata80);
       fail_flag = 1;
      }
     if (rdata81 != 0x0000000f ) {//0xE10
-      vfwp("** rdata81 TEST FAIL **%x: ",0xE10);
+      vfwp("** rdata81 TEST FAIL **%x:\r\n ",0xE10);
       vfwp("%x\n", rdata81);
       fail_flag = 1;
      }
     if (rdata82 != 0x00ff7f74 ) {//0xE14
-      vfwp("** CPU0 TEST FAIL **%x: ",0xE14);
+      vfwp("** CPU0 TEST FAIL **%x\r\n: \r\n",0xE14);
       vfwp("%x\n", rdata82);
 	fail_flag = 1;
      }
     if (rdata83 != 0x00000001 ) {//0xE80
-      vfwp("** Watchdog reg(rdata83) TEST FAIL **%x: ",0xE80);
+      vfwp("** Watchdog reg(rdata83) TEST FAIL **%x: \r\n",0xE80);
       vfwp("%x\n", rdata83);
       fail_flag = 1;
      }
     if (rdata84 != 0x00000030 ) {//0xFE0
-      vfwp("** CPU0 TEST FAIL **%x: ",0xFE0);
+      vfwp("** CPU0 TEST FAIL **%x\r\n: \r\n",0xFE0);
       vfwp("%x\n", rdata84);
 	fail_flag = 1;
      }
     if (rdata85 != 0x00000013 ) {//0xFE4
-      vfwp("** CPU0 TEST FAIL **%x: ",0xFE4);
+      vfwp("** CPU0 TEST FAIL **%x\r\n: \r\n",0xFE4);
       vfwp("%x\n", rdata85);
 	fail_flag = 1;
      }
     if (rdata86 != 0x00000034 ) {//0xFE8
-      vfwp("** CPU0 TEST FAIL **%x: ",0xFE8);
+      vfwp("** CPU0 TEST FAIL **%x\r\n: \r\n",0xFE8);
       vfwp("%x\n", rdata86);
 	fail_flag = 1;
      }
     if (rdata87 != 0x00000000 ) {//0xFEC
-      vfwp("** CPU0 TEST FAIL **%x",0xFEC);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0xFEC);
       fail_flag = 1;
      }
     if (rdata88 != 0x0000000d ) {//0xFF0
-      vfwp("** CPU0 TEST FAIL **%x: ",0xFF0);
+      vfwp("** CPU0 TEST FAIL **%x\r\n: \r\n",0xFF0);
       vfwp("%x\n", rdata88);
 	fail_flag = 1;
      }
     if (rdata89 != 0x000000f0 ) {//0xFF4
-      vfwp("** CPU0 TEST FAIL **%x: ",0xFF4);
+      vfwp("** CPU0 TEST FAIL **%x\r\n: \r\n",0xFF4);
       vfwp("%x\n", rdata89);
 	fail_flag = 1;
      }
     if (rdata90 != 0x00000005 ) {//0xFF8
-      vfwp("** CPU0 TEST FAIL **%x: ",0xFF8);
+      vfwp("** CPU0 TEST FAIL **%x\r\n: \r\n",0xFF8);
 	vfwp("%x\n", rdata90);
 	fail_flag = 1;
      }
     if (rdata91 != 0x000000b1 ) {//0xFFC
-      vfwp("** CPU0 TEST FAIL **%x: ",0xFFC);
+      vfwp("** CPU0 TEST FAIL **%x\r\n: \r\n",0xFFC);
       vfwp("%x\n", rdata91);
 	fail_flag = 1;
      }
     if (rdata92 != 0x00000000 ) {//0x000
-      vfwp("** CPU0 TEST FAIL **%x",0x000);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x000);
       fail_flag = 1;
      }
     if (rdata93 != 0x00000000 ) {//0x004
-      vfwp("** CPU0 TEST FAIL **%x",0x004);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x004);
       fail_flag = 1;
      }
     if (rdata94 != 0x0000ffff ) {//0x020
-      vfwp("** rdata94 TEST FAIL **%x: ",0x020);
+      vfwp("** rdata94 TEST FAIL **%x: \r\n",0x020);
       vfwp("%x\n", rdata94);
       fail_flag = 1;
      }
     if (rdata95 != 0x00000000 ) {//0x024
-      vfwp("** CPU0 TEST FAIL **%x",0x024);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x024);
       fail_flag = 1;
      }
     if (rdata96 != 0x00000000 ) {//0x028
-      vfwp("** CPU0 TEST FAIL **%x",0x028);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x028);
       fail_flag = 1;
      }
     if (rdata97 != 0x00000000 ) {//0x02C
-      vfwp("** CPU0 TEST FAIL **%x",0x02C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x02C);
       fail_flag = 1;
      }
     if (rdata98 != 0x00000000 ) {//0x030
-      vfwp("** CPU0 TEST FAIL **%x",0x030);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x030);
       fail_flag = 1;
      }
     if (rdata99 != 0x00000000 ) {//0x034
-      vfwp("** CPU0 TEST FAIL **%x",0x034);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x034);
       fail_flag = 1;
      }
     if (rdata100 != 0x00000000 ) {//0x038
-      vfwp("** CPU0 TEST FAIL **%x",0x038);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x038);
       fail_flag = 1;
      }
     if (rdata101 != 0x00000000 ) {//0x040
-      vfwp("** CPU0 TEST FAIL **%x",0x040);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x040);
       fail_flag = 1;
      }
     if (rdata102 != 0x00000000 ) {//0x044
-      vfwp("** CPU0 TEST FAIL **%x",0x044);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x044);
       fail_flag = 1;
      }
     if (rdata103 != 0x00000000 ) {//0x048
-      vfwp("** CPU0 TEST FAIL **%x",0x048);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x048);
       fail_flag = 1;
      }
     if (rdata104 != 0x00000000 ) {//0x04C
-      vfwp("** CPU0 TEST FAIL **%x",0x04C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x04C);
       fail_flag = 1;
      }
     if (rdata105 != 0x00000000 ) {//0x050
-      vfwp("** CPU0 TEST FAIL **%x",0x050);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x050);
       fail_flag = 1;
      }
     if (rdata106 != 0x00000000 ) {//0x054
-      vfwp("** CPU0 TEST FAIL **%x",0x054);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x054);
       fail_flag = 1;
      }
     if (rdata107 != 0x00000000 ) {//0x058
-      vfwp("** CPU0 TEST FAIL **%x",0x058);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x058);
       fail_flag = 1;
      }
     if (rdata108 != 0x00000000 ) {//0x05C
-      vfwp("** CPU0 TEST FAIL **%x",0x05C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x05C);
       fail_flag = 1;
      }
     if (rdata109 != 0x00000000 ) {//0x100
-      vfwp("** CPU0 TEST FAIL **%x",0x100);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x100);
       fail_flag = 1;
      }
     if (rdata110 != 0x00000000 ) {//0x104
-      vfwp("** CPU0 TEST FAIL **%x",0x104);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x104);
       fail_flag = 1;
      }
     if (rdata111 != 0x00000000 ) {//0x108
-      vfwp("** CPU0 TEST FAIL **%x",0x108);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x108);
       fail_flag = 1;
      }
     if (rdata112 != 0x00000000 ) {//0x10C
-      vfwp("** CPU0 TEST FAIL **%x",0x10C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x10C);
       fail_flag = 1;
      }
     if (rdata113 != 0x00000000 ) {//0x110
-      vfwp("** CPU0 TEST FAIL **%x",0x110);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x110);
       fail_flag = 1;
      }
     if (rdata114 != 0x00000000 ) {//0x114
-      vfwp("** CPU0 TEST FAIL **%x",0x114);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x114);
       fail_flag = 1;
      }
     if (rdata115 != 0x00000000 ) {//0x118
-      vfwp("** CPU0 TEST FAIL **%x",0x118);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x118);
       fail_flag = 1;
      }
     if (rdata116 != 0x00000000 ) {//0x11C
-      vfwp("** CPU0 TEST FAIL **%x",0x11C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x11C);
       fail_flag = 1;
      }
     if (rdata117 != 0x00000000 ) {//0x120
-      vfwp("** CPU0 TEST FAIL **%x",0x120);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x120);
       fail_flag = 1;
      }
     if (rdata118 != 0x00000000 ) {//0x124
-      vfwp("** CPU0 TEST FAIL **%x",0x124);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x124);
       fail_flag = 1;
      }
     if (rdata119 != 0x00000000 ) {//0x128
-      vfwp("** CPU0 TEST FAIL **%x",0x128);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x128);
       fail_flag = 1;
      }
     if (rdata120 != 0x00000000 ) {//0x12C
-      vfwp("** CPU0 TEST FAIL **%x",0x12C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x12C);
       fail_flag = 1;
      }
     if (rdata121 != 0x00000000 ) {//0x130
-      vfwp("** CPU0 TEST FAIL **%x",0x130);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x130);
       fail_flag = 1;
      }
     if (rdata122 != 0x00000000 ) {//0x134
-      vfwp("** CPU0 TEST FAIL **%x",0x134);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x134);
       fail_flag = 1;
      }
     if (rdata123 != 0x00000000 ) {//0x138
-      vfwp("** CPU0 TEST FAIL **%x",0x138);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x138);
       fail_flag = 1;
      }
     if (rdata124 != 0x00000000 ) {//0x13C
-      vfwp("** CPU0 TEST FAIL **%x",0x13C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x13C);
       fail_flag = 1;
      }
     if (rdata125 != 0x00000000 ) {//0x400
-      vfwp("** CPU0 TEST FAIL **%x",0x400);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x400);
       fail_flag = 1;
      }
     if (rdata126 != 0x00000000 ) {//0x404
-      vfwp("** CPU0 TEST FAIL **%x",0x404);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x404);
       fail_flag = 1;
      }
     if (rdata127 != 0x00800200 ) {//0x408
-      vfwp("** CPU0 TEST FAIL **%x",0x408);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x408);
       fail_flag = 1;
      }
     if (rdata128 != 0x00000000 ) {//0x40C
-      vfwp("** CPU0 TEST FAIL **%x",0x40C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x40C);
       fail_flag = 1;
      }
     if (rdata129 != 0x00000000 ) {//0x410
-      vfwp("** CPU0 TEST FAIL **%x",0x410);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x410);
       fail_flag = 1;
      }
     if (rdata130 != 0x00000000 ) {//0x420
-      vfwp("** CPU0 TEST FAIL **%x",0x420);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x420);
       fail_flag = 1;
      }
     if (rdata131 != 0x00000000 ) {//0x424
-      vfwp("** CPU0 TEST FAIL **%x",0x424);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x424);
       fail_flag = 1;
      }
     if (rdata132 != 0x00800200 ) {//0x428
-      vfwp("** CPU0 TEST FAIL **%x",0x428);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x428);
       fail_flag = 1;
      }
     if (rdata133 != 0x00000000 ) {//0x42C
-      vfwp("** CPU0 TEST FAIL **%x",0x42C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x42C);
       fail_flag = 1;
      }
     if (rdata134 != 0x00000000 ) {//0x430
-      vfwp("** CPU0 TEST FAIL **%x",0x430);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x430);
       fail_flag = 1;
      }
     if (rdata135 != 0x00000000 ) {//0x440
-      vfwp("** CPU0 TEST FAIL **%x",0x440);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x440);
       fail_flag = 1;
      }
     if (rdata136 != 0x00000000 ) {//0x444
-      vfwp("** CPU0 TEST FAIL **%x",0x444);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x444);
       fail_flag = 1;
      }
     if (rdata137 != 0x00800200 ) {//0x448
-      vfwp("** CPU0 TEST FAIL **%x",0x448);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x448);
       fail_flag = 1;
      }
     if (rdata138 != 0x00000000 ) {//0x44C
-      vfwp("** CPU0 TEST FAIL **%x",0x44C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x44C);
       fail_flag = 1;
      }
     if (rdata139 != 0x00000000 ) {//0x450
-      vfwp("** CPU0 TEST FAIL **%x",0x450);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x450);
       fail_flag = 1;
      }
     if (rdata140 != 0x00000000 ) {//0x460
-      vfwp("** CPU0 TEST FAIL **%x",0x460);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x460);
       fail_flag = 1;
      }
     if (rdata141 != 0x00000000 ) {//0x464
-      vfwp("** CPU0 TEST FAIL **%x",0x464);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x464);
       fail_flag = 1;
      }
     if (rdata142 != 0x00800200 ) {//0x468
-      vfwp("** CPU0 TEST FAIL **%x",0x468);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x468);
       fail_flag = 1;
      }
     if (rdata143 != 0x00000000 ) {//0x46C
-      vfwp("** CPU0 TEST FAIL **%x",0x46C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x46C);
       fail_flag = 1;
      }
     if (rdata144 != 0x00000000 ) {//0x470
-      vfwp("** CPU0 TEST FAIL **%x",0x470);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x470);
       fail_flag = 1;
      }
     if (rdata145 != 0x00000000 ) {//0x480
-      vfwp("** CPU0 TEST FAIL **%x",0x480);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x480);
       fail_flag = 1;
      }
     if (rdata146 != 0x00000000 ) {//0x484
-      vfwp("** CPU0 TEST FAIL **%x",0x484);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x484);
       fail_flag = 1;
      }
     if (rdata147 != 0x00800200 ) {//0x488
-      vfwp("** CPU0 TEST FAIL **%x",0x488);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x488);
       fail_flag = 1;
      }
     if (rdata148 != 0x00000000 ) {//0x48c
-      vfwp("** CPU0 TEST FAIL **%x",0x48c);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x48c);
       fail_flag = 1;
      }
     if (rdata149 != 0x00000000 ) {//0x490
-      vfwp("** CPU0 TEST FAIL **%x",0x490);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x490);
       fail_flag = 1;
      }
     if (rdata150 != 0x00000000 ) {//0x4A0
-      vfwp("** CPU0 TEST FAIL **%x",0x4A0);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4A0);
       fail_flag = 1;
      }
     if (rdata151 != 0x00000000 ) {//0x4A4
-      vfwp("** CPU0 TEST FAIL **%x",0x4A4);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4A4);
       fail_flag = 1;
      }
     if (rdata152 != 0x00800200 ) {//0x4A8
-      vfwp("** CPU0 TEST FAIL **%x",0x4A8);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4A8);
       fail_flag = 1;
      }
     if (rdata153 != 0x00000000 ) {//0x4AC
-      vfwp("** CPU0 TEST FAIL **%x",0x4AC);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4AC);
       fail_flag = 1;
      }
     if (rdata154 != 0x00000000 ) {//0x4B0
-      vfwp("** CPU0 TEST FAIL **%x",0x4B0);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4B0);
       fail_flag = 1;
      }
     if (rdata155 != 0x00000000 ) {//0x4C0
-      vfwp("** CPU0 TEST FAIL **%x",0x4C0);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4C0);
       fail_flag = 1;
      }
     if (rdata156 != 0x00000000 ) {//0x4C4
-      vfwp("** CPU0 TEST FAIL **%x",0x4C4);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4C4);
       fail_flag = 1;
      }
     if (rdata157 != 0x00800200 ) {//0x4C8
-      vfwp("** CPU0 TEST FAIL **%x",0x4C8);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4C8);
       fail_flag = 1;
      }
     if (rdata158 != 0x00000000 ) {//0x4CC
-      vfwp("** CPU0 TEST FAIL **%x",0x4CC);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4CC);
       fail_flag = 1;
      }
     if (rdata159 != 0x00000000 ) {//0x4D0
-      vfwp("** CPU0 TEST FAIL **%x",0x4D0);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4D0);
       fail_flag = 1;
      }
     if (rdata160 != 0x00000000 ) {//0x4E0
-      vfwp("** CPU0 TEST FAIL **%x",0x4E0);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4E0);
       fail_flag = 1;
      }
     if (rdata161 != 0x00000000 ) {//0x4E4
-      vfwp("** CPU0 TEST FAIL **%x",0x4E4);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4E4);
       fail_flag = 1;
      }
     if (rdata162 != 0x00800200 ) {//0x4E8
-      vfwp("** CPU0 TEST FAIL **%x",0x4E8);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4E8);
       fail_flag = 1;
      }
     if (rdata163 != 0x00000000 ) {//0x4EC
-      vfwp("** CPU0 TEST FAIL **%x",0x4EC);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4EC);
       fail_flag = 1;
      }
     if (rdata164 != 0x00000000 ) {//0x4F0
-      vfwp("** CPU0 TEST FAIL **%x",0x4F0);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0x4F0);
       fail_flag = 1;
      }
     if (rdata165 != 0x00000000 ) {//0xD00
-      vfwp("** CPU0 TEST FAIL **%x",0xD00);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0xD00);
       fail_flag = 1;
      }
     if (rdata166 != 0x00000000 ) {//0xD04
-      vfwp("** CPU0 TEST FAIL **%x",0xD04);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0xD04);
       fail_flag = 1;
      }
     if (rdata167 != 0x00000000 ) {//0xD08
-      vfwp("** CPU0 TEST FAIL **%x",0xD08);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0xD08);
       fail_flag = 1;
      }
     if (rdata168 != 0x00000000 ) {//0xD0C
-      vfwp("** CPU0 TEST FAIL **%x",0xD0C);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0xD0C);
       fail_flag = 1;
      }
     if (rdata169 != 0x001e3071 ) {//0xE00
-      vfwp("** CPU0 TEST FAIL **%x",0xE00);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0xE00);
       fail_flag = 1;
      }
     if (rdata170 != 0x000000f5 ) {//0xE04
-      vfwp("** 0xE04(rdata170) TEST FAIL **%x",0xE04);
+      vfwp("** 0xE04(rdata170) TEST FAIL **%x\r\n",0xE04);
       fail_flag = 1;
      }
     if (rdata171 != 0x00000000 ) {//0xE08
-      vfwp("** CPU0 TEST FAIL **%x",0xE08);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0xE08);
       fail_flag = 1;
      }
     if (rdata172 != 0x0000ffff) {//0xE0C
-      vfwp("** rdata172 TEST FAIL **%x: ",0xE0C);
+      vfwp("** rdata172 TEST FAIL **%x: \r\n",0xE0C);
 	vfwp("%x\n", rdata172);
       fail_flag = 1;
      }
     if (rdata173 != 0x0000000f ) {//0xE10
-      vfwp("** rdata173 TEST FAIL **%x: ",0xE10);
+      vfwp("** rdata173 TEST FAIL **%x: \r\n",0xE10);
 	vfwp("%x\n", rdata173);
       fail_flag = 1;
      }
     if (rdata174 != 0x00ff7f74 ) {//0xE14
-      vfwp("** 0xE14(rdata174) TEST FAIL **%x",0xE14);
+      vfwp("** 0xE14(rdata174) TEST FAIL **%x\r\n",0xE14);
       fail_flag = 1;
      }
     if (rdata175 != 0x00000001 ) {//0xE80
-      vfwp("** rdata175 TEST FAIL **%x: ",0xE80);
+      vfwp("** rdata175 TEST FAIL **%x:\r\n ",0xE80);
       vfwp("%x\n", rdata175);
       fail_flag = 1;
      }
     if (rdata176 != 0x00000030 ) {//0xFE0
-      vfwp("** CPU0 TEST FAIL **%x",0xFE0);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0xFE0);
       fail_flag = 1;
      }
     if (rdata177 != 0x00000013 ) {//0xFE4
-      vfwp("** CPU0 TEST FAIL **%x",0xFE4);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0xFE4);
       fail_flag = 1;
      }
     if (rdata178 != 0x00000034 ) {//0xFE8
-      vfwp("** CPU0 TEST FAIL **%x",0xFE8);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0xFE8);
       fail_flag = 1;
      }
     if (rdata179 != 0x00000000 ) {//0xFEC
-      vfwp("** CPU0 TEST FAIL **%x",0xFEC);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0xFEC);
       fail_flag = 1;
      }
     if (rdata180 != 0x0000000d ) {//0xFF0
-      vfwp("** CPU0 TEST FAIL **%x",0xFF0);
+      vfwp("** CPU0 TEST FAIL **%x\r\n",0xFF0);
       fail_flag = 1;
      }
     if (rdata181 != 0x000000f0 ) {//0xFF4
-      vfwp("** CPU0 TEST FAIL **%x: ",0xFF4);
+      vfwp("** CPU0 TEST FAIL **%x\r\n: \r\n",0xFF4);
       vfwp("%x\n", rdata181);
       fail_flag = 1;
      }
     if (rdata182 != 0x00000005 ) {//0xFF8
-      vfwp("** CPU0 TEST FAIL **%x: ",0xFF8);
+      vfwp("** CPU0 TEST FAIL **%x\r\n: \r\n",0xFF8);
       vfwp("%x\n", rdata182);
       fail_flag = 1;
      }
     if (rdata183 != 0x000000b1 ) {//0xFFC
-      vfwp("** CPU0 TEST FAIL **%x: ",0xFFC);
+      vfwp("** CPU0 TEST FAIL **%x\r\n: \r\n",0xFFC);
       vfwp("%x\n", rdata183);
       fail_flag = 1;
      }

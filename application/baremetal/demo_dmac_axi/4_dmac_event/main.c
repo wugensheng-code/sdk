@@ -12,11 +12,15 @@
 
 #define DMAC_AXI_SECURE__DBGSTATUS__ADDR 0xF8418D00
 #define DMAC_AXI_SECURE__INT_EVENT_RIS__ADDR 0xF8418024
+#define DMA_LENGTH 4096
 
+static int Src[DMA_LENGTH] __attribute__ ((aligned (32)));
+static int Dst[DMA_LENGTH] __attribute__ ((aligned (32)));
+static int Mcode[DMA_LENGTH] __attribute__ ((aligned (32)));
 
 int main()
 {
-    if (1) {
+ {
 volatile unsigned rdata0;
 volatile unsigned rdata1;
 volatile unsigned rdata2;
@@ -35,18 +39,19 @@ volatile unsigned fail_flag;
 //
 //OCM_L 0x61000000
      #define OCM_L 0x61000000
-     int OCM__BASE1_ADDR = OCM_L+0x00010000;
-     int OCM__BASE2_ADDR = OCM_L+0x00020000;
-     int OCM__BASE3_ADDR = OCM_L+0x00030000;
+	uint32_t OCM__BASE1_ADDR = Mcode;
+    uint32_t OCM__BASE2_ADDR = Src;
+	uint32_t OCM__BASE3_ADDR = Dst;
 
-     int OCM__BASE1H_ADDR = OCM__BASE1_ADDR>>16;   //0x00006101
-     int OCM__BASE2H_ADDR = OCM__BASE2_ADDR>>16;   //0x00006102
-     int OCM__BASE3H_ADDR = OCM__BASE3_ADDR>>16;   //0x00006103
+
+	uint32_t OCM__BASE1H_ADDR = OCM__BASE1_ADDR >> 16;   //0x00006101
+	uint32_t OCM__BASE2H_ADDR = OCM__BASE2_ADDR >> 16;   //0x00006102
+	uint32_t OCM__BASE3H_ADDR = OCM__BASE3_ADDR >> 16;   //0x00006103
 
 
 //set thread0 and start 61010020
-   int DMAgo_0 = 0x002000A0; // secure, channel 0
-   int DMAgo_1 = OCM__BASE1H_ADDR;//0x00006101
+ 	uint32_t DMAgo_0 = ((uint32_t)Mcode << 16) | 0x2000A0; // secure, channel 0
+ 	uint32_t DMAgo_1 = OCM__BASE1H_ADDR;//0x00006101
 
 
 // real instructions
@@ -130,7 +135,7 @@ volatile unsigned fail_flag;
     if(rdata0 == 0x0000FFFF) break;
     }
 
-     if (rdata_cpc0 == 0X61010040 ) { // OCM__BASE1_ADDR+0X3C + 0X4
+     if (rdata_cpc0 == (OCM__BASE1_ADDR+0X3C + 0X4) ) { // OCM__BASE1_ADDR+0X3C + 0X4
         vfwp("** SUCCESS !!! %x",0);
      }
    }

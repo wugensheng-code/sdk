@@ -69,15 +69,16 @@ static int Mcode[DMA_LENGTH] __attribute__ ((aligned (32)));
 
 int PL330_Init()
 {
-    uint32_t OCM__BASE1_ADDR = Mcode;
-	uint32_t OCM__BASE2_ADDR = Src;
+
+	uint32_t OCM__BASE1_ADDR = Mcode;
+    uint32_t OCM__BASE2_ADDR = Src;
 	uint32_t OCM__BASE3_ADDR = Dst;
 
 	uint32_t OCM__BASE1H_ADDR = OCM__BASE1_ADDR >> 16;   //0x00006101
 	uint32_t OCM__BASE2H_ADDR = OCM__BASE2_ADDR >> 16;   //0x00006102
 	uint32_t OCM__BASE3H_ADDR = OCM__BASE3_ADDR >> 16;   //0x00006103
 //set thread0 and start 61010020
-	uint32_t DMAgo_0 = 0x002000A0; // secure, channel 0
+	uint32_t DMAgo_0 = ((int)Mcode<<16)|0x2000A0; // secure, channel 0
 	uint32_t DMAgo_1 = OCM__BASE1H_ADDR;//0x00006101
 // real instructions
    // MOV CCR 0x00824209
@@ -91,7 +92,7 @@ int PL330_Init()
 	uint32_t DMA_inst0 = 0x420901bc;
 	uint32_t DMA_inst1 = 0x00bc0082;
 	uint32_t DMA_inst2 = OCM__BASE2_ADDR;
-	uint32_t DMA_inst3 = 0x000002bc;
+	uint32_t DMA_inst3 = ((int)Dst<<16)|0x02bc;
 	uint32_t DMA_inst4 = 0x12050000 + OCM__BASE3H_ADDR;
 	uint32_t DMA_inst5 = 0x10341309;
 	uint32_t DMA_inst6 = 0x00000000;
@@ -103,13 +104,13 @@ int PL330_Init()
 	uint32_t Channel_inst[7] = { DMA_inst0,DMA_inst1,DMA_inst2,DMA_inst3,DMA_inst4,DMA_inst5,DMA_inst6 };
 	Load_Inst2MEM((uint32_t*)Manager_inst, 2, (uint32_t*)OCM__BASE1_ADDR);
 	Load_Inst2MEM((uint32_t*)Channel_inst, 7, (uint32_t*)(OCM__BASE1_ADDR + 0x20));
-	Set_Bootaddress(AL_TOP0, 0x00000001, OCM__BASE1_ADDR);
+	Set_Bootaddress(AL_TOP0, 0x00000001, Mcode);
 	// reset dmac
 	Reset_PL330();
 	uint32_t rdata0 = REG_READ(DMAC_AXI_SECURE__INT_EVENT_RIS__ADDR);
 	printf("** DMAC_AXI_SECURE__INT_EVENT_RIS__ADDR = %x\n", rdata0);
 	//if (rdata0 == 0x00000004) ;
-	Data_cheak(OCM__BASE2_ADDR, OCM__BASE3_ADDR, 4);
+	Data_cheak(Src, Dst, 4);
 }
 int main(){
 	PL330_Init();
