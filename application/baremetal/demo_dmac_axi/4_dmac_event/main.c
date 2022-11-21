@@ -20,7 +20,7 @@ static int Mcode[DMA_LENGTH] __attribute__ ((aligned (32)));
 
 int main()
 {
- {
+
 volatile unsigned rdata0;
 volatile unsigned rdata1;
 volatile unsigned rdata2;
@@ -50,8 +50,8 @@ volatile unsigned fail_flag;
 
 
 //set thread0 and start 61010020
- 	uint32_t DMAgo_0 = ((uint32_t)Mcode << 16) | 0x2000A0; // secure, channel 0
- 	uint32_t DMAgo_1 = OCM__BASE1H_ADDR;//0x00006101
+	uint32_t DMAgo_0  = (((uint32_t)Mcode + 0x20) << 16) | 0x00A0;
+	uint32_t DMAgo_1 = OCM__BASE1H_ADDR;//0x00006101
 
 
 // real instructions
@@ -74,7 +74,6 @@ volatile unsigned fail_flag;
      REG_WRITE(OCM__BASE2_ADDR+0x08, 0xabcd2468);
      REG_WRITE(OCM__BASE2_ADDR+0x0C, 0xa1b2c3d4);
 
-    if(1){
     // write instructions 
       REG_WRITE(OCM__BASE1_ADDR+0x0 , DMAgo_0);
       REG_WRITE(OCM__BASE1_ADDR+0x4 , DMAgo_1);
@@ -130,15 +129,15 @@ volatile unsigned fail_flag;
 
     // wait for dmac process until event status = FFFF
     while(1){
-    rdata0 = REG_READ(DMAC_AXI_SECURE__INT_EVENT_RIS__ADDR);
-    vfwp("** DMAC_AXI_SECURE__INT_EVENT_RIS__ADDR = %x\n",rdata0);
-    if(rdata0 == 0x0000FFFF) break;
+        rdata0 = REG_READ(DMAC_AXI_SECURE__INT_EVENT_RIS__ADDR);
+        vfwp("** DMAC_AXI_SECURE__INT_EVENT_RIS__ADDR = %x\n",rdata0);
+        if(rdata0 == 0x0000FFFF) 
+        {
+            vfwp("** SUCCESS !!! %x",0);
+            break;
+        }
+
     }
 
-     if (rdata_cpc0 == (OCM__BASE1_ADDR+0X3C + 0X4) ) { // OCM__BASE1_ADDR+0X3C + 0X4
-        vfwp("** SUCCESS !!! %x",0);
-     }
-   }
-  }
-
+    return 0;
 }
