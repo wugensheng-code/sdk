@@ -8,17 +8,20 @@
 
 #include "nuclei_sdk_soc.h"
 #include "al9000_aximon.h"
-#define XMON_CNT_PRINT
-#define XMON_DEBUG_PRINT
+//#define XMON_CNT_PRINT
+//#define XMON_DEBUG_PRINT
+ #define XMON_QOS_PRINT
+// #define XMON_BANDWIDTH_PRINT
+//#define XMON_RESPTIME_PRINT
 uint32_t num=0;
 #define REG_WRITE(reg_address, reg_wdata)  *(unsigned int*)(reg_address) = reg_wdata
 #define REG_READ(reg_address)  *(unsigned int*)reg_address
-void config_monitor(AXIMON_TypeDef *AXIMON, uint16_t id_max, uint16_t id_min, uint16_t gid_max, uint16_t gid_min, uint32_t thre)
+void config_monitor(AXIMON_TypeDef *AXIMON, uint16_t id_max, uint16_t id_min, uint16_t gid_max, uint16_t gid_min, uint8_t qos_max, uint32_t thre)
 {
 	AlAxiMon_ResptimeRecordClean(AXIMON);
 	AlAxiMon_ResptimeRecordEnble(AXIMON);
-	AlAxiMon_QosValue(AXIMON,XQOS_MAX);
-	AlAxiMon_QosValueRange(AXIMON,XQOS_MAX,0);
+	AlAxiMon_QosValue(AXIMON,qos_max);
+	AlAxiMon_QosValueRange(AXIMON,qos_max,0);
 	AlAxiMon_QosCfgEnable(AXIMON,QosInternal);
 	AlAxiMon_SbuparaCountClean(AXIMON);
 	AlAxiMon_SubparaAwidRange(AXIMON,id_max,id_min);
@@ -50,6 +53,8 @@ void printf_monitor(AXIMON_TypeDef *AXIMON)
   	printf("AXIMON arresptime_acc_h     = %x\r\n",AlAxiMon_GetMonValue(AXIMON,arresptime_acc_h  ));
   	printf("AXIMON arresptime_acc_l     = %x\r\n",AlAxiMon_GetMonValue(AXIMON,arresptime_acc_l  ));
   	printf("AXIMON arresptime_cnt       = %x\r\n",AlAxiMon_GetMonValue(AXIMON,arresptime_cnt    ));
+#endif
+#ifdef XMON_BANDWIDTH_PRINT
   	printf("AXIMON bandwidth_wr         = %x\r\n",AlAxiMon_GetMonValue(AXIMON,bandwidth_wr      ));
   	printf("AXIMON bandwidth_rd         = %x\r\n",AlAxiMon_GetMonValue(AXIMON,bandwidth_rd      ));
 #endif

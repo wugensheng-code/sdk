@@ -18,51 +18,21 @@
 #define INTC_DEVICE_ID			XPAR_SCUGIC_SINGLE_DEVICE_ID
 
 #define TEST_ROUNDS	1	/* Number of loops that the Dma transfers run.*/
-#define DMA_LENGTH	128	/* Length of the Dma Transfers */
-#define DMA_BURST_LEN 32
+#define DMA_LENGTH	4096	/* Length of the Dma Transfers */
 #define TIMEOUT_LIMIT 	0x2000	/* Loop count for timeout */
 #define XDMAPS_CHANNELS_PER_DEV 8 /* Numbel of DMA Channel*/
-
+#define TEST_MAX_NUM 30
 #define TIMEOUT_THRE 0x20
 #define XMON_DDR_S1
-//#define base0 0x63E00000
-//#define base1 0x63E01000
-#ifdef XMON_NPU
-#define base0 0x61030000
-#define base1 0x63E01000
-#endif
-#ifdef XMON_SMC
-#define base0 0x64001000
-#define base1 0x61030000
-#endif
-//#define base0 0x63e40000
-//#define base1 0x63e41000
-
-#ifdef XMON_SX2X_M0
-#define base0 0x80000000
-#define base1 0x80001000
-#endif
-#ifdef XMON_SX2X_M1
-#define base0 0xA0000000
-#define base1 0xA0001000
-#endif
 #ifdef XMON_DDR_S1
-#define base0 0x18000000
-#define base1 0x18001000
-#endif
-#ifdef XMON_SHM2
-#define base0 0x78000000
-#define base1 0x78001000
-#endif
-#ifdef XMON_DDR_S3
-#define base0 0x61030000
-#define base1 0xc0001000
+#define base0 0x1a100000
+#define base1 0x1a200000
 #endif
 #define DMAX_TEST_CHANNELS 1
 #define vfwp printf
 #define REG_WRITE(reg_address, reg_wdata)  *(unsigned int*)(reg_address) = reg_wdata
 #define REG_READ(reg_address)  *(unsigned int*)reg_address
-
+u32 dma_test_num=0;
 void XNullHandler(void *NullParameter)
 {
 	(void) NullParameter;
@@ -81,36 +51,20 @@ int DmaCheckHandler(int *src, int * Dst);
 
 XDmaPs DmaInstance;
 volatile uint16_t count = 0;
-
 int main(void)
 {
 	uint32_t midr;
 	uint64_t cpunum = 0;
 	uint64_t mpidr;
-    volatile uint32_t buffer[128];
-	for (volatile uint32_t i = 0 ; i < 100 ; i++)
+    volatile uint32_t buffer[DMA_LENGTH];
+	for (volatile uint32_t i = 0 ; i < DMA_LENGTH ; i++)
 	{
 		buffer[i] = i;
 	}
-	write_To_OCM((uint32_t*)buffer,128,(uint32_t*)0x61030000);
-
-	config_monitor(AL_DMACX,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
-	config_monitor(AL_SX2X_M0,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
-	config_monitor(AL_SX2X_M1,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
-	config_monitor(AL_GP_S0,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
-	config_monitor(AL_GP_S1,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
-	config_monitor(AL_HP_S0,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
-	config_monitor(AL_HP_S1,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
-	config_monitor(AL_DDR_S0,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
-	config_monitor(AL_DDR_S1,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
-	config_monitor(AL_DDR_S2,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
-	config_monitor(AL_DDR_S3,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
-	config_monitor(AL_SH_M2,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
-	config_monitor(AL_MAIN_M6,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
-	config_monitor(AL_OCM_S2,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
-	config_monitor(AL_SMC,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
-	config_monitor(AL_MAIN_M0,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
-	config_monitor(AL_MAIN_S1,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
+	config_monitor(AL_DMACX, XID_MAX, 0, XID_MAX, 0, XQOS_MAX, 0x20);
+	config_monitor(AL_OCM_S2, XID_MAX, 0, XID_MAX, 0, XQOS_MAX - 4, 0x20);
+	config_monitor(AL_DDR_S1, XID_MAX, 0, XID_MAX, 0, XQOS_MAX, 0x20);
+	write_To_OCM((uint32_t*)buffer,DMA_LENGTH,(uint32_t*)(base0));
 	#ifdef _AARCH_64
 	uint64_t sctlr_el3;
 
@@ -124,48 +78,62 @@ int main(void)
 	asm volatile("mrc p15,0,%0,c0,c0,0":"=r"(midr)::"memory");
 	asm volatile("mrc p15,0,%0,c0,c0,5":"=r"(mpidr)::"memory");
 	#endif
-
 	cpunum = mpidr & 0x00ff;
-
 		int Status;
-
 	#ifdef _AARCH_64
 		asm volatile("mrs %0, sctlr_el3":"=r"(sctlr_el3)::"memory");
 		vfwp("ctlr_el3 ** %x", (unsigned int)(sctlr_el3 & 0xffffffff));
 	#endif
-
-		//vfwp("set manager secure mode\n");
-		vfwp("set manager non-secure mode\n");
-		vfwp("set irq and periph non-secure mode\n");
-		REG_WRITE(0xF88060A0, 0x001FFFFF);
-		//REG_WRITE(0xF88060A0, 0x00100000);
-
-		vfwp("reset dmac\n");
-		REG_WRITE(0xF8801074, 0X00003270);
-		REG_WRITE(0xF8801074, 0X00003370);
-    	REG_WRITE(0xf8801078,0x00001133);
-//    	 REG_WRITE(0xf8801074,0x000073f0);
-		REG_WRITE(0xf8801074,0x000063b0);
-    	REG_WRITE(0xf8800080,0x0);
-    	REG_WRITE(0xf840e004,0x0);
-    	REG_WRITE(0xf840f004,0x0);
-    	REG_WRITE(0xf8412004,0x0);
-    	REG_WRITE(0xf8413004,0x0);
-		// REG_WRITE(0xf8801074,0x000073b0);//smc reset
-		// REG_WRITE(0xf8801074,0x000063f0);//npu reset
+	REG_WRITE(0xF88060A0, 0x001FFFFF);
+	REG_WRITE(0xF8801074, 0X00003270);
+	REG_WRITE(0xF8801074, 0X00003370);
+	REG_WRITE(0xf8801078,0x00001133);
+	REG_WRITE(0xf8801074,0x000073f0);
+	REG_WRITE(0xf8800080,0x0);
+	REG_WRITE(0xf840e004,0x0);
+	REG_WRITE(0xf840f004,0x0);
+	REG_WRITE(0xf8412004,0x0);
+	REG_WRITE(0xf8413004,0x0);
+	do{
 		Status = XDmaPs_Example_W_Intr(DMA_DEVICE_ID);
-		if (Status != XST_SUCCESS) {
-			vfwp("Error: XDMaPs_Example_W_Intr failed Status=%d 0x%x\r\n", Status, Status);
-			return XST_FAILURE;
-		}
-		if((AlAxiMon_GetMonCountValue(AL_DMACX,cnt_awcmd) == (DMA_LENGTH / DMA_BURST_LEN)))
-		{
-			vfwp("Axi monitor Dmax ran Successfully\r\n");
-			return XST_SUCCESS;
-		}else{
-			vfwp("Axi monitor Dmax ran fail\r\n");
-			return XST_FAILURE;
-		}
+	}while (dma_test_num < TEST_MAX_NUM);
+
+	if (Status != XST_SUCCESS) {
+		vfwp("Error: XDMaPs_Example_W_Intr failed Status=%d 0x%x\r\n", Status, Status);
+		return XST_FAILURE;
+	}
+//
+//	uint32_t ocm_num=0;
+//	config_monitor(AL_DDR_S1, XID_MAX, 0, XID_MAX, 0, XQOS_MAX - 1, 0x1f);
+//	while(1)
+//	{
+//		if(ocm_num < 10)
+//			printf_monitor(AL_DDR_S1);
+//		else
+//			break;
+//		ocm_num ++;
+//	}
+//	config_monitor(AL_DDR_S1, XID_MAX, 0, XID_MAX, 0, XQOS_MAX - 1, 0x20);
+//	printf_monitor(AL_DDR_S1);
+//	printf_monitor(AL_DDR_S1);
+//	printf_monitor(AL_DDR_S1);
+	uint32_t ocm_num=0;
+	config_monitor(AL_OCM_S2, XID_MAX, 0, XID_MAX, 0, XQOS_MAX - 1, 0x1f);
+	while(1)
+	{
+		if(ocm_num < 10)
+			printf_monitor(AL_OCM_S2);
+		else
+			break;
+		ocm_num ++;
+	}
+	config_monitor(AL_OCM_S2, XID_MAX, 0, XID_MAX, 0, XQOS_MAX - 1, 0x20);
+	printf_monitor(AL_OCM_S2);
+	printf_monitor(AL_OCM_S2);
+	printf_monitor(AL_OCM_S2);
+
+
+	return 0;
 }
 
 /*****************************************************************************/
@@ -177,7 +145,7 @@ int main(void)
  * @return	XST_SUCCESS to indicate success, otherwise XST_FAILURE.
  *
  ****************************************************************************/
-int XDmaPs_Example_W_Intr(u16 DeviceId)
+int XDmaPs_Example_W_Intr(u16 DeviceId )
 {
 	int Index;
 	unsigned int Channel = 0;
@@ -192,11 +160,11 @@ int XDmaPs_Example_W_Intr(u16 DeviceId)
 
 	memset(&DmaCmd, 0, sizeof(XDmaPs_Cmd));
 
-	DmaCmd.ChanCtrl.SrcBurstSize = 4;
-	DmaCmd.ChanCtrl.SrcBurstLen = DMA_BURST_LEN;
+	DmaCmd.ChanCtrl.SrcBurstSize = 8;
+	DmaCmd.ChanCtrl.SrcBurstLen = 16;
 	DmaCmd.ChanCtrl.SrcInc = 1;
-	DmaCmd.ChanCtrl.DstBurstSize = 4;
-	DmaCmd.ChanCtrl.DstBurstLen = DMA_BURST_LEN;
+	DmaCmd.ChanCtrl.DstBurstSize = 8;
+	DmaCmd.ChanCtrl.DstBurstLen = 16;
 	DmaCmd.ChanCtrl.DstInc = 1;
 	DmaCmd.BD.SrcAddr = base0;
 	DmaCmd.BD.DstAddr = base1;
@@ -296,6 +264,11 @@ void DmaDoneHandler(unsigned int Channel, XDmaPs_Cmd *DmaCmd, void *CallbackRef)
 	Src = (int *)DmaCmd->BD.SrcAddr;
 	Dst = (int *)DmaCmd->BD.DstAddr;
 	Checked[Channel] = Status;
+	dma_test_num++;
+//	printf_monitor(AL_DMACX);
+	printf_monitor(AL_OCM_S2);
+//	printf_monitor(AL_APU);
+//	printf_monitor(AL_DDR_S1);
 }
 
 int DmaCheckHandler(int *src, int * dst)
