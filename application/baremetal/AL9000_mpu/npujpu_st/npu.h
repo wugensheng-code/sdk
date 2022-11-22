@@ -337,5 +337,6 @@ int layer16_frame0_fpga_test();
 int layer16_grid0_all_frame1_fpga_test();
 int layer16_grid1_all_frame1_fpga_test();
 int layer16_frame1_fpga_test();
+int main_npujpu();
 
 #endif /* __ALSOC_NPU_H */

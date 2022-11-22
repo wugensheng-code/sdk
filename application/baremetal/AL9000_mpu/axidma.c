@@ -85,7 +85,7 @@ int axidma(void)
 
 	cpunum = mpidr & 0x00ff;
 
-	if (cpunum == 0) {
+	if (1) {
 		int Status;
 		
 	#ifdef _AARCH_64
