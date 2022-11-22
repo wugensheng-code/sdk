@@ -308,7 +308,7 @@ uint32_t AlSd_SendInitCmdSd()
 #ifdef BRANCH_SD_FLOW_PRINT
     Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 23, 24);
 #endif
-
+do{
     MMC_CHECK_LINE_AND_CLEAR_STATUS(SDIO);
 
     arg_r = 0x0;    //Stuff bits
@@ -318,7 +318,7 @@ uint32_t AlSd_SendInitCmdSd()
     reg.d32                     = 0;
     reg.bit.cmd_index           = SD_CMD_SET_REL_ADDR;
     reg.bit.data_xfer_dir       = DATA_READ;
-    reg.bit.resp_type_select    = MMC_Response_Short;
+    reg.bit.resp_type_select    = MMC_Response_Short_48B;
     reg.bit.cmd_crc_chk_enable  = MMC_C_CMD_CRC_CHECK_ENABLE;
     reg.bit.cmd_idx_chk_enable  = MMC_C_CMD_IDX_CHECK_ENABLE;
     REG_WRITE(&(SDIO->cmd_r__xfer_mode.d32), reg.d32);
@@ -328,7 +328,8 @@ uint32_t AlSd_SendInitCmdSd()
 
     Rca = REG_READ(&(SDIO->resp01)) & 0xFFFF0000;
     MMC_PRINT("rca is %x\r\n", Rca);
-
+    } while (Rca == 0);
+    
     // send command 9
     MMC_PRINT("send command 9\r\n");
 #ifdef BRANCH_SD_FLOW_PRINT
@@ -381,16 +382,16 @@ uint32_t AlSd_SendInitCmdSd()
     reg.d32                     = 0;
     reg.bit.cmd_index           = SD_CMD_SEL_DESEL_CARD;
     reg.bit.data_xfer_dir       = DATA_READ;
-    reg.bit.resp_type_select    = MMC_Response_Short_48B;
+    reg.bit.resp_type_select    = MMC_Response_Short;
     reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
     reg.bit.cmd_crc_chk_enable  = MMC_C_CMD_CRC_CHECK_ENABLE;
     reg.bit.cmd_idx_chk_enable  = MMC_C_CMD_IDX_CHECK_ENABLE;
     REG_WRITE(&(SDIO->cmd_r__xfer_mode.d32), reg.d32);
 
     MMC_WAIT_CMD_COMPLETE(SDIO, MMC_CMD_7_ERR);
-    MMC_WAIT_TRANSFER_COMPLETE(SDIO, MMC_CMD_7_XFER_ERR);
+    //MMC_WAIT_TRANSFER_COMPLETE(SDIO, MMC_CMD_7_XFER_ERR);
     MMC_PRINT("reg.d32 is %x, %d\r\n", reg.d32, reg.d32);
-    
+
     return status;
 }
 
@@ -486,7 +487,7 @@ uint32_t AlSd_ReadSingleBlock(uint8_t *readbuff, uint32_t ReadAddr, uint16_t Blo
 
     reg.d32                     = 0;
     reg.bit.cmd_index           = SD_CMD_SET_BLOCKLEN;
-    reg.bit.data_xfer_dir       = DATA_WRITE;
+    reg.bit.data_xfer_dir       = MMC_XM_DATA_XFER_DIR_READ;
     reg.bit.resp_type_select    = MMC_C_RESP_LEN_48;
     reg.bit.block_count_enable  = MMC_XM_BLOCK_COUNT_ENABLE;
     reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
@@ -817,11 +818,16 @@ uint32_t AlSd_GetCardInfo(SD_CardInfo *cardinfo)
 uint32_t Csu_RawSdSetMode(uint32_t Mode, uint32_t Data)
 {
     uint32_t status = MMC_SUCCESS;
-
+#ifdef BRANCH_SD_FLOW_PRINT
     Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_MODESET, 1, 7);
+#endif
 
     switch (Mode) {
         case MMC_MODE_FREQ:
+            if (Data >= MMC_FREQ_MAX) {
+                status = MMC_WRONG_FREQ;
+                break;
+            }
             status = AlSd_HostControllerClockSetup(SDIO, Data);
             if (status != MMC_SUCCESS) {
                 MMC_BRANCHTEST_PRINT(BRANCH_RAW_SD_SET_MODE_FREQ,0);

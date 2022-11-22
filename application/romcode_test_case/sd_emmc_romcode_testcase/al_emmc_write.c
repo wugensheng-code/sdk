@@ -44,7 +44,7 @@ uint32_t AlEmmc_WriteSingleBlock(uint8_t *Writebuff, uint32_t WriteAddr, uint16_
     REG_WRITE(&(eMMC->blockcount_r__blocksize), block.d32);
 
     reg.d32                     = 0;
-    reg.bit.data_xfer_dir       = DATA_WRITE;
+    reg.bit.data_xfer_dir       = MMC_XM_DATA_XFER_DIR_READ;
     reg.bit.block_count_enable  = MMC_XM_BLOCK_COUNT_ENABLE;
     reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
     reg.bit.resp_type_select    = MMC_C_RESP_LEN_48;

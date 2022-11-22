@@ -114,14 +114,15 @@ uint32_t AlEmmc_SendInitCmd()
     __IO CMD_R__XFER_MODE_R reg = {.d32 = 0,};
     __IO OCR_R r1               = {.d32 = 0,};
 
-#ifndef BRANCH_SD_FLOW_PRINT
+#ifdef BRANCH_EMMC_FLOW_PRINT
     Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 7, 24);
 #endif
 
     MMC_PRINT("SendInitCmdEmmc\r\n");
     // send command 0   go idle state
     MMC_PRINT("send command 0\r\n");
-#ifndef BRANCH_SD_FLOW_PRINT
+
+#ifdef BRANCH_EMMC_FLOW_PRINT
     Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 7, 8);
 #endif
 
@@ -140,7 +141,7 @@ uint32_t AlEmmc_SendInitCmd()
 
     MMC_DELAY_MS(10);
 
-#ifndef BRANCH_SD_FLOW_PRINT
+#ifdef BRANCH_EMMC_FLOW_PRINT
     Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 9, 13);
 #endif
     MTIMER_OUT_CONDITION(EMMC_GET_VALID_VOLTAGE_TIMEOUT_VAL, &MmcMtimer, validvoltage != 1) {
@@ -164,6 +165,7 @@ uint32_t AlEmmc_SendInitCmd()
         r1.bit.access_mode      = EMMC_OCR_ACCESS_MODE_SECTOR_MODE;  //sector mode
         arg_r                   = r1.d32;
         REG_WRITE(&(eMMC->argument_r), arg_r);
+        MMC_PRINT("arg_r is %x, %d\r\n", arg_r, arg_r);
 
         reg.d32                     = 0;
         reg.bit.cmd_index           = SD_CMD_SEND_OP_COND;
@@ -190,7 +192,7 @@ uint32_t AlEmmc_SendInitCmd()
 
     // send command 2 get CID   Device IDentification
     MMC_PRINT("send command 2\r\n");
-#ifndef BRANCH_SD_FLOW_PRINT
+#ifdef BRANCH_EMMC_FLOW_PRINT
     Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 14, 15);
 #endif
 
@@ -211,7 +213,7 @@ uint32_t AlEmmc_SendInitCmd()
 
     // send command 3 set relative device address
     MMC_PRINT("send command 3\r\n");
-#ifndef BRANCH_SD_FLOW_PRINT
+#ifdef BRANCH_EMMC_FLOW_PRINT
     Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 16, 17);
 #endif
 
@@ -235,7 +237,7 @@ uint32_t AlEmmc_SendInitCmd()
 
     // send command 9 get addressed device's CSD on CMD line
     MMC_PRINT("send command 9\r\n");
-#ifndef BRANCH_SD_FLOW_PRINT
+#ifdef BRANCH_EMMC_FLOW_PRINT
     Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 18, 19);
 #endif
 
@@ -252,6 +254,7 @@ uint32_t AlEmmc_SendInitCmd()
     REG_WRITE(&(eMMC->cmd_r__xfer_mode), reg.d32);
 
     MMC_WAIT_CMD_COMPLETE(eMMC, MMC_CMD_9_ERR);
+    MMC_PRINT("reg.d32 is %x, %d\r\n", reg.d32, reg.d32);
 
     CsdTab[3] = REG_READ(&(eMMC->resp01));
     CsdTab[2] = REG_READ(&(eMMC->resp23));
@@ -261,7 +264,7 @@ uint32_t AlEmmc_SendInitCmd()
 
     // send command 10  get addressed device's CID on CMD line
     MMC_PRINT("send command 10\r\n");
-#ifndef BRANCH_SD_FLOW_PRINT
+#ifdef BRANCH_EMMC_FLOW_PRINT
     Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 20, 21);
 #endif
 
@@ -278,6 +281,7 @@ uint32_t AlEmmc_SendInitCmd()
     REG_WRITE(&(eMMC->cmd_r__xfer_mode), reg.d32);
 
     MMC_WAIT_CMD_COMPLETE(eMMC, MMC_CMD_10_ERR);
+    MMC_PRINT("reg.d32 is %x, %d\r\n", reg.d32, reg.d32);
 
     CidTab[3] = REG_READ(&(eMMC->resp01));
     CidTab[2] = REG_READ(&(eMMC->resp23));
@@ -288,7 +292,7 @@ uint32_t AlEmmc_SendInitCmd()
     
     // send command 7   selected/deselected card
     MMC_PRINT("send command 7\r\n");
-#ifndef BRANCH_SD_FLOW_PRINT
+#ifdef BRANCH_EMMC_FLOW_PRINT
     Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 22, 24);
 #endif
 
@@ -307,7 +311,6 @@ uint32_t AlEmmc_SendInitCmd()
     REG_WRITE(&(eMMC->cmd_r__xfer_mode), reg.d32);
     
     MMC_WAIT_CMD_COMPLETE(eMMC, MMC_CMD_7_ERR);
-    MMC_WAIT_TRANSFER_COMPLETE(eMMC, MMC_CMD_7_ERR);
     MMC_PRINT("reg.d32 is %x, %d\r\n", reg.d32, reg.d32);
 
     MMC_DELAY_MS(MMC_DELAY_SCALE*EfuseDelayParam);
@@ -382,7 +385,7 @@ uint32_t AlEmmc_ReadSingleBlock(uint8_t *Readbuff, uint32_t ReadAddr, uint16_t B
 
 	// send command 16
     MMC_PRINT("read send cmd 16\r\n");
-#ifndef BRANCH_SD_FLOW_PRINT
+#ifdef BRANCH_EMMC_FLOW_PRINT
     Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_BLOCKREAD, 1, 2);
 #endif
 
@@ -398,7 +401,7 @@ uint32_t AlEmmc_ReadSingleBlock(uint8_t *Readbuff, uint32_t ReadAddr, uint16_t B
 
     reg.d32                     = 0;
     reg.bit.block_count_enable  = MMC_XM_BLOCK_COUNT_ENABLE;
-    reg.bit.data_xfer_dir       = DATA_WRITE;
+    reg.bit.data_xfer_dir       = MMC_XM_DATA_XFER_DIR_READ;
     reg.bit.resp_type_select    = MMC_C_RESP_LEN_48;
     reg.bit.cmd_index           = SD_CMD_SET_BLOCKLEN;
     reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
@@ -412,7 +415,7 @@ uint32_t AlEmmc_ReadSingleBlock(uint8_t *Readbuff, uint32_t ReadAddr, uint16_t B
 
     // send command 23
     MMC_PRINT("read send cmd 23\r\n");
-#ifndef BRANCH_SD_FLOW_PRINT
+#ifdef BRANCH_EMMC_FLOW_PRINT
     Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_BLOCKREAD, 3, 4);
 #endif
 
@@ -439,7 +442,7 @@ uint32_t AlEmmc_ReadSingleBlock(uint8_t *Readbuff, uint32_t ReadAddr, uint16_t B
 
 	// send command 17 read single block
     MMC_PRINT("send cmd 17\r\n");
-#ifndef BRANCH_SD_FLOW_PRINT
+#ifdef BRANCH_EMMC_FLOW_PRINT
     Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_BLOCKREAD, 5, 8);
 #endif
 
@@ -568,7 +571,7 @@ uint32_t Csu_RawEmmcRead(uint32_t Offset, uint8_t* Dest, uint32_t Length)
     uint32_t firstblockbytes    = (firstblockstore > Length)? Length : firstblockstore;
     uint32_t lastblockbytes     = endpoint % blocksize + 1;
 
-#ifndef BRANCH_SD_FLOW_PRINT
+#ifdef BRANCH_EMMC_FLOW_PRINT
     Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_BYTEREAD, 1, 11);
 #endif
 
@@ -622,16 +625,20 @@ uint32_t Csu_RawEmmcRead(uint32_t Offset, uint8_t* Dest, uint32_t Length)
 uint32_t Csu_RawEmmcSetMode(uint32_t Mode, uint32_t Data)
 {
     uint32_t status = MMC_SUCCESS;
-
+#ifdef BRANCH_EMMC_FLOW_PRINT
     Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_MODESET, 1, 7);
-
+#endif
     switch (Mode) {
         case MMC_MODE_FREQ:
             MMC_PRINT("set emmc freq %d\r\n", Data);
+            if (Data >= MMC_FREQ_MAX) {
+                status = MMC_WRONG_FREQ;
+                break;
+            }
             status = AlEmmc_HostControllerClockSetup(eMMC, Data);
             if (status != MMC_SUCCESS) {
                 MMC_BRANCHTEST_PRINT(BRANCH_RAW_EMMC_SET_MODE_FREQ,0);
-                return status;
+                return status;                                          
             }
             MMC_BRANCHTEST_PRINT(BRANCH_RAW_EMMC_SET_MODE_FREQ,1);
             break;
@@ -654,17 +661,14 @@ uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
     MMC_ERR_TYPE status                         = MMC_SUCCESS;
     uint32_t tmp_rdblen                         = 0;
     uint32_t tmp_devsizemul                     = 0;
-    uint32_t i                                  = 0;
     uint32_t sec_count                          = 0;
     uint32_t arg_r                              = 0;
     uint32_t *ext_csd_addr                      = (uint32_t *)ext_csd_buf;
-    __IO HOST_CTRL2_R__AUTO_CMD_STAT_R r2       = {.d32 = 0,};
-    __IO SW_RST_R__TOUT_CTRL_R__CLK_CTRL_R r4   = {.d32 = 0,};
     __IO BLOCKCOUNT_R__BLOCKSIZE_R block        = {.d32 = 0,};
     __IO CMD_R__XFER_MODE_R reg                 = {.d32 = 0,};
     __IO MMC_CMD23_PARAM r3                     = {.d32 = 0,};
 
-#ifndef BRANCH_SD_FLOW_PRINT
+#ifdef BRANCH_EMMC_FLOW_PRINT
     Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 25, 35);
 #endif
 

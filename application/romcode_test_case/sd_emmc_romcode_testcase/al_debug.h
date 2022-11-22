@@ -15,7 +15,7 @@ extern "C" {
 #ifdef DEBUG_MACRO
 #define DebugCurType  ((DEBUG_GENERAL))
 #else
-extern uint32_t DebugCurType;
+uint32_t __attribute__((weak)) DebugCurType;
 #endif
 
 #define rom_printf(type, ...)\

@@ -53,6 +53,7 @@ uint32_t AlSd_WriteSingleBlock(uint8_t *writebuff, uint32_t WriteAddr, uint16_t 
     reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
     reg.bit.cmd_crc_chk_enable  = MMC_C_CMD_CRC_CHECK_ENABLE;
     reg.bit.cmd_idx_chk_enable  = MMC_C_CMD_IDX_CHECK_ENABLE;
+    reg.bit.data_xfer_dir       = MMC_XM_DATA_XFER_DIR_READ;
     REG_WRITE(&(SDIO->cmd_r__xfer_mode.d32), reg.d32);
     
     MMC_WAIT_CMD_COMPLETE(SDIO, MMC_CMD_16_ERR);
