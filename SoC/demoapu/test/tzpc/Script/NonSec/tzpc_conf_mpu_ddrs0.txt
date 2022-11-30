@@ -1,0 +1,5 @@
+loadfile "D:\jpbai\tzpc_testcases\NonSec\tzpc_test_non_sec.elf"
+set debug-from *$ENTRYPOINT
+memory set_typed 0xF88060B0 (unsigned int) 0b00000001
+start
+wait
