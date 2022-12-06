@@ -22,10 +22,10 @@
 //#define TEMP_DDR_2 ((volatile uint32_t *)(0X10000000UL+0X2FFF0004UL))	//int_count_num
 #define TEMP_DDR_1 ((volatile uint32_t *)(0X6103E000UL+0X0UL))	//timeoutvalue
 #define TEMP_DDR_2 ((volatile uint32_t *)(0X6103E000UL+0X4UL))	//int_count_num
-#define TIMEOUT_VAL_S	5
-#define TIMEOUT_VAL_E	0xF
-#define INT_NUM_S		3
-#define INT_NUM_E		0xA
+#define TIMEOUT_VAL_S	0x1
+#define TIMEOUT_VAL_E	0x7
+#define INT_NUM_S		0x3
+#define INT_NUM_E		0x20
 
 #define TOP_CFG_CTRL_WDT_BASEADDR (0XF8800000UL+0X168UL)
 #define WDT_PAUSE_REG ((volatile uint32_t *)TOP_CFG_CTRL_WDT_BASEADDR)
@@ -42,15 +42,20 @@
 #define PMU_SW_PMU_SHACK 	(0XF8806080)
 #define PMU_SHACK ((volatile uint32_t *)PMU_SW_PMU_SHACK)
 
+#define DDR_RDWR_SIZE	50
+
 extern uint32_t EMMC_Test(void);
-extern uint32_t SD_Test(void)
-;static void wdt_init(void);
+extern uint32_t SD_Test(void);
+static void wdt_init(void);
 extern u64 get_SystickTimer(void);
 
 uint32_t main(){
-	//wdt_init(); 
-	//EMMC_Test();
-	SD_Test();
+#if 0
+	wdt_init();
+#endif
+	//SD_Test();
+	EMMC_Test();
+
 }
 
 /* case 1.2 */
@@ -124,6 +129,11 @@ static void wdt_init(void)
 	uint32_t timeoutval = *(uint32_t *)TEMP_DDR_1;
 
 	int_num = *(uint32_t *)TEMP_DDR_2;
+	if(timeoutval == TIMEOUT_VAL_E && (int_num == INT_NUM_E)){
+		printf("[wdt]:wdt test done!\r\n");
+		return;
+	}
+
 	printf("ddr1 is %d, ddr2 is %d\r\n", timeoutval, int_num);
 	if(timeoutval < TIMEOUT_VAL_E && timeoutval >= TIMEOUT_VAL_S){
 		timeoutval++;
@@ -145,7 +155,7 @@ static void wdt_init(void)
 	*(uint32_t *)TEMP_DDR_2 = int_num;
 
 	printf("[wdog]:S\r\n");
-
+	volatile unsigned int read_temp = WDT->EOI;
 	ECLIC_Register_IRQ(WDT_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, wdt_handler);
 	ECLIC_Register_IRQ(39, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 2, 2, pmu_handler);
 	__enable_irq();

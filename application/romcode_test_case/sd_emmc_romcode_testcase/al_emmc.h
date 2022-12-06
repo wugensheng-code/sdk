@@ -43,7 +43,6 @@ typedef enum{
 typedef struct{
     uint32_t EmmcId;     //emmc device ID
     uint32_t EmmcSize;   //emmc size in kBytes
-    EMMC_FREQ EmmcFreq;  //emmc freq set
 }RawEmmcParam_t;
 
 extern SD_CardInfo EmmcCardInfo;

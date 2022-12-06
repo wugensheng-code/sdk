@@ -62,6 +62,7 @@ uint32_t AlSd_WriteSingleBlock(uint8_t *writebuff, uint32_t WriteAddr, uint16_t 
     MMC_PRINT("reg.d32 is %x\r\n", reg.d32);
 
     if (CardType != SDIO_STD_CAPACITY_SD_CARD_V2_0 && CardType != SDIO_STD_CAPACITY_SD_CARD_V1_1) {
+        MMC_BRANCHTEST_PRINT(BRANCH_SD_WRITE_USE_CMD23);
         // send command 23
         MMC_PRINT("send cmd 23\r\n");
 
@@ -86,6 +87,8 @@ uint32_t AlSd_WriteSingleBlock(uint8_t *writebuff, uint32_t WriteAddr, uint16_t 
         MMC_PRINT("arg is %x\r\n", arg_r);
         MMC_PRINT("block.d32 is %x\r\n", block.d32);
         MMC_PRINT("reg.d32 is %x\r\n", reg.d32);
+    } else {
+        MMC_BRANCHTEST_PRINT(BRANCH_SD_WRITE_NOTUSE_CMD23);
     }
 
 	// send command 24
@@ -93,10 +96,14 @@ uint32_t AlSd_WriteSingleBlock(uint8_t *writebuff, uint32_t WriteAddr, uint16_t 
 
     MMC_CHECK_LINE_AND_CLEAR_STATUS(SDIO);
 
-    if (CardType != SDIO_STD_CAPACITY_SD_CARD_V2_0 && CardType != SDIO_STD_CAPACITY_SD_CARD_V1_1)
+    if (CardType != SDIO_STD_CAPACITY_SD_CARD_V2_0 && CardType != SDIO_STD_CAPACITY_SD_CARD_V1_1) {
+        MMC_BRANCHTEST_PRINT(BRANCH_SD_WRITE_BLOCK);
         arg_r = WriteAddr;
-    else
+    } else {
+        MMC_BRANCHTEST_PRINT(BRANCH_SD_WRITE_BYTE);
         arg_r = WriteAddr*BlockSize;
+    }
+        
     REG_WRITE(&(SDIO->argument_r), arg_r);
 
     block.d32                   = 0;

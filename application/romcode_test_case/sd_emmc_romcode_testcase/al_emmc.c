@@ -27,6 +27,7 @@
 #include "al_emmc.h"
 #include "al_mmc.h"
 
+static MtimerParams EmmcMtimer;
 SD_CardInfo EmmcCardInfo;
 static uint8_t __attribute__((aligned(4))) ext_csd_buf[512];
 
@@ -42,60 +43,44 @@ uint32_t AlEmmc_HostControllerClockSetup(volatile DWC_mshc_block_registers* Ptr,
     MMC_ERR_TYPE status                         = MMC_SUCCESS;
     __IO SW_RST_R__TOUT_CTRL_R__CLK_CTRL_R r1   = {.d32 = 0,};
 
-    //Host Controller Clock Setup
+    //  Host Controller Clock Setup
     MMC_PRINT("AlEmmc_HostControllerClockSetup\r\n");
 
-    r1.d32 = 0;
+    if (freq != MMC_FREQ_10M) {
+        MMC_BRANCHTEST_PRINT(BRANCH_EMMC_FREQ_400K);
+        return MMC_WRONG_FREQ;
+    }
+    MMC_BRANCHTEST_PRINT(BRANCH_EMMC_FREQ_10M);
+    MMC_PRINT("MMC_FREQ_10M\r\n");
+
+    //disable sd_clk_on
+    r1.d32              = REG_READ(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
+    r1.bit.sd_clk_en    = MMC_CC_SD_CLK_DISABLE;
     REG_WRITE(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
     MMC_PRINT("r1.d32 is %x\r\n", r1.d32);
 
-    REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000008);     //clk soft reset
+    //clk soft rst
+    uint32_t top_reg = REG_READ(TOP_NS__CFG_CTRL_SDIO1_ADDR);
+    top_reg |= TOP_CFG_REG_CLK_RST;
+    REG_WRITE(TOP_NS__CFG_CTRL_SDIO1_ADDR, top_reg);     //clk soft reset
     MMC_DELAY_MS(10);
-    REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, 0x00000000);
+    //set programerable_mode
+    r1.bit.clk_gen_select   = MMC_CC_CLK_GEN_SEL_PROGRAM;        //Programmable Clock Mode
+    r1.bit.freq_sel         = 0;
+    r1.bit.tout_cnt         = MMC_TC_TOUT_CNT_2_27;
+    REG_WRITE(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
+    MMC_WAIT_CLK_STABLE(Ptr);
+    MMC_PRINT("r1.d32 is %x\r\n", r1.d32);
+    //soft rst release
+    top_reg &= TOP_CFG_REG_CLK_RST_RELEASE;
+    REG_WRITE(TOP_NS__CFG_CTRL_SDIO1_ADDR, top_reg);
     MMC_DELAY_MS(MMC_DELAY_SCALE*EfuseDelayParam);
+    //sd_clk_on
+    r1.bit.sd_clk_en        = MMC_CC_SD_CLK_ENABLE;             //Enable SDCLK/RCLK
+    REG_WRITE(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
+    MMC_WAIT_CLK_STABLE(Ptr);
+    MMC_PRINT("r1.d32 is %x\r\n", r1.d32);
 
-    if (freq == MMC_FREQ_10M)
-    {
-        MMC_BRANCHTEST_PRINT(BRANCH_EMMC_FREQ_SET,0);
-        MMC_PRINT("MMC_FREQ_10M\r\n");
-
-        r1.d32                  = 0;
-        r1.bit.internal_clk_en  = MMC_CC_INTER_CLK_ENABLE;       //Oscillate
-        r1.bit.clk_gen_select   = MMC_CC_CLK_GEN_SEL_PROGRAM;     //Programmable Clock Mode
-        r1.bit.tout_cnt         = MMC_TC_TOUT_CNT_2_27;
-        r1.bit.freq_sel         = 0;    //set freq divided
-        REG_WRITE(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
-        MMC_WAIT_CLK_STABLE(Ptr);
-
-        r1.bit.pll_enable       = MMC_CC_PLL_ENABLE;            //PLL enabled
-        REG_WRITE(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
-        MMC_WAIT_CLK_STABLE(Ptr);
-
-        r1.bit.sd_clk_en        = MMC_CC_SD_CLK_ENABLE;             //Enable SDCLK/RCLK
-        REG_WRITE(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
-        MMC_WAIT_CLK_STABLE(Ptr);
-
-        MMC_PRINT("r1.d32 is %x, %x\r\n", r1.d32, Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32);
-    } else {  //default
-        MMC_BRANCHTEST_PRINT(BRANCH_EMMC_FREQ_SET,1);
-        MMC_PRINT("MMC_FREQ_400K\r\n");
-
-        r1.d32                  = 0;
-        r1.bit.internal_clk_en  = MMC_CC_INTER_CLK_ENABLE;       //Oscillate
-        r1.bit.tout_cnt         = MMC_TC_TOUT_CNT_2_27;
-        REG_WRITE(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
-        MMC_WAIT_CLK_STABLE(Ptr);
-
-        r1.bit.pll_enable       = MMC_CC_PLL_ENABLE;            //PLL enabled
-        REG_WRITE(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
-        MMC_WAIT_CLK_STABLE(Ptr);
-
-        r1.bit.sd_clk_en        = MMC_CC_SD_CLK_ENABLE;             //Enable SDCLK/RCLK
-        REG_WRITE(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
-        MMC_WAIT_CLK_STABLE(Ptr);
-
-        MMC_PRINT("r1.d32 is %x, %x\r\n", r1.d32, Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32);
-    }
     return status;
 }
 
@@ -108,23 +93,14 @@ uint32_t AlEmmc_SendInitCmd()
 {
     uint32_t status             = MMC_SUCCESS;
     uint32_t arg_r              = 0;
-    __IO uint32_t r             = 0;
     __IO uint32_t response01    = 0;
     __IO uint32_t validvoltage  = 0;
     __IO CMD_R__XFER_MODE_R reg = {.d32 = 0,};
     __IO OCR_R r1               = {.d32 = 0,};
 
-#ifdef BRANCH_EMMC_FLOW_PRINT
-    Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 7, 24);
-#endif
-
     MMC_PRINT("SendInitCmdEmmc\r\n");
     // send command 0   go idle state
     MMC_PRINT("send command 0\r\n");
-
-#ifdef BRANCH_EMMC_FLOW_PRINT
-    Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 7, 8);
-#endif
 
     MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
 
@@ -141,23 +117,26 @@ uint32_t AlEmmc_SendInitCmd()
 
     MMC_DELAY_MS(10);
 
-#ifdef BRANCH_EMMC_FLOW_PRINT
-    Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 9, 13);
-#endif
-    MTIMER_OUT_CONDITION(EMMC_GET_VALID_VOLTAGE_TIMEOUT_VAL, &MmcMtimer, validvoltage != 1) {
-        MMC_BRANCHTEST_PRINT(BRANCH_EMMC_VOLT_CHECK,0);
+    MTIMER_OUT_CONDITION(EMMC_GET_VALID_VOLTAGE_TIMEOUT_VAL, &EmmcMtimer, validvoltage != 1) {
+        MMC_BRANCHTEST_PRINT(BRANCH_EMMC_VOLT_VALID_REG_READ);
         //CMD1  arg = OCR register check voltage valid
         MMC_PRINT("send command 1\r\n");
 
         MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
 
         r1.d32                  = 0;
-        r                       = REG_READ(IO_BANK1_REF);
-        MMC_PRINT("r is %x\r\n", r);
-        if (MMC_IO_BANK1_SUPPORT_1V8(r) == 1) {
+#ifdef USE_ERROR_BRANCH
+    if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_IOBANK1_1V8)) {
+        IoBank1Ref |= 0x1;
+        ERROR_BRANCH_BIT_SET(BERROR_BRANCH_EMMC_IOBANK1_1V8);
+    }
+#endif
+        if (MMC_IO_BANK1_SUPPORT_1V8(IoBank1Ref) == 1) {
+            MMC_BRANCHTEST_PRINT(BRANCH_EMMC_IOBANK1_1V8);
             r1.bit.voltage_mode = EMMC_OCR_DUAL_VOLTAGE;   //1.8V and 3v3
             MMC_PRINT("io bank1 support dual volt\r\n");
         } else {
+            MMC_BRANCHTEST_PRINT(BRANCH_EMMC_IOBANK1_3V3);
             r1.bit.voltage_mode = EMMC_OCR_HIGH_VOLTAGE;    //3v3 only
             MMC_PRINT("io bank1 support high volt\r\n");
         }
@@ -180,21 +159,31 @@ uint32_t AlEmmc_SendInitCmd()
     	validvoltage = (((response01 >> 31) == 1) ? 1:0);
 
         MMC_DELAY_MS(MMC_DELAY_SCALE*EfuseDelayParam);
+#ifdef USE_ERROR_BRANCH
+        if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_VOLT_VALID_TIMEOUT)) {
+            if (validvoltage == 1) {
+                EmmcMtimer.IsTimerOut = 1;
+                break;
+            }
+        }
+#endif
     }
-    MMC_BRANCHTEST_PRINT(BRANCH_EMMC_VOLT_CHECK,1);
+    MMC_BRANCHTEST_PRINT(BRANCH_EMMC_VOLT_VALID_DONE);
 
-    if (Mtimer_IsTimerOut(&MmcMtimer)) {
-        MMC_BRANCHTEST_PRINT(BRANCH_EMMC_VOLT_CHECK_TIMEOUT,0);
+    if (Mtimer_IsTimerOut(&EmmcMtimer)) {
+#ifdef USE_ERROR_BRANCH
+        if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_VOLT_VALID_TIMEOUT)) {
+            ERROR_BRANCH_BIT_SET(BERROR_BRANCH_EMMC_VOLT_VALID_TIMEOUT);
+        }
+#endif
+        MMC_BRANCHTEST_PRINT(BRANCH_EMMC_VOLT_VALID_TIMEOUT);
         status = MMC_CHECK_VOLT_TIMEOUT;
         return status;
     }
-    MMC_BRANCHTEST_PRINT(BRANCH_EMMC_VOLT_CHECK_TIMEOUT,1);
+    MMC_BRANCHTEST_PRINT(BRANCH_EMMC_VOLT_VALID_SUCCESS);
 
     // send command 2 get CID   Device IDentification
     MMC_PRINT("send command 2\r\n");
-#ifdef BRANCH_EMMC_FLOW_PRINT
-    Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 14, 15);
-#endif
 
     MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
 
@@ -213,9 +202,6 @@ uint32_t AlEmmc_SendInitCmd()
 
     // send command 3 set relative device address
     MMC_PRINT("send command 3\r\n");
-#ifdef BRANCH_EMMC_FLOW_PRINT
-    Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 16, 17);
-#endif
 
     MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
 
@@ -237,9 +223,6 @@ uint32_t AlEmmc_SendInitCmd()
 
     // send command 9 get addressed device's CSD on CMD line
     MMC_PRINT("send command 9\r\n");
-#ifdef BRANCH_EMMC_FLOW_PRINT
-    Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 18, 19);
-#endif
 
     MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
 
@@ -264,9 +247,6 @@ uint32_t AlEmmc_SendInitCmd()
 
     // send command 10  get addressed device's CID on CMD line
     MMC_PRINT("send command 10\r\n");
-#ifdef BRANCH_EMMC_FLOW_PRINT
-    Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 20, 21);
-#endif
 
     MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
 
@@ -292,9 +272,6 @@ uint32_t AlEmmc_SendInitCmd()
     
     // send command 7   selected/deselected card
     MMC_PRINT("send command 7\r\n");
-#ifdef BRANCH_EMMC_FLOW_PRINT
-    Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 22, 24);
-#endif
 
     MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
 
@@ -385,9 +362,6 @@ uint32_t AlEmmc_ReadSingleBlock(uint8_t *Readbuff, uint32_t ReadAddr, uint16_t B
 
 	// send command 16
     MMC_PRINT("read send cmd 16\r\n");
-#ifdef BRANCH_EMMC_FLOW_PRINT
-    Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_BLOCKREAD, 1, 2);
-#endif
 
     MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
     
@@ -415,9 +389,6 @@ uint32_t AlEmmc_ReadSingleBlock(uint8_t *Readbuff, uint32_t ReadAddr, uint16_t B
 
     // send command 23
     MMC_PRINT("read send cmd 23\r\n");
-#ifdef BRANCH_EMMC_FLOW_PRINT
-    Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_BLOCKREAD, 3, 4);
-#endif
 
     MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
 
@@ -442,9 +413,6 @@ uint32_t AlEmmc_ReadSingleBlock(uint8_t *Readbuff, uint32_t ReadAddr, uint16_t B
 
 	// send command 17 read single block
     MMC_PRINT("send cmd 17\r\n");
-#ifdef BRANCH_EMMC_FLOW_PRINT
-    Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_BLOCKREAD, 5, 8);
-#endif
 
     MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
 
@@ -494,35 +462,30 @@ uint32_t AlEmmc_Init(void)
 {
     int status = MMC_SUCCESS;
 
-    status = HostControllerSetup(eMMC);
-    if (status != MMC_SUCCESS) {
-        MMC_BRANCHTEST_PRINT(BRANCH_EMMC_HOST_CONTROLLER_SETUP,0);
-		goto END;
-	}
-    MMC_BRANCHTEST_PRINT(BRANCH_EMMC_HOST_CONTROLLER_SETUP,1);
+    HostControllerSetup(eMMC);
 
-    status = InitInterruptSetting(eMMC);
+    /*status = Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_400K);
     if (status != MMC_SUCCESS) {
-        MMC_BRANCHTEST_PRINT(BRANCH_EMMC_INTR_INIT,0);
 		goto END;
 	}
-    MMC_BRANCHTEST_PRINT(BRANCH_EMMC_INTR_INIT,1);
+    MMC_BRANCHTEST_PRINT(BRANCH_EMMC_SETDEFAULTMODE_SUCCESS);*/
+
+    InitInterruptSetting(eMMC);
 
     status = AlEmmc_SendInitCmd();
     if (status != MMC_SUCCESS) {
-        MMC_BRANCHTEST_PRINT(BRANCH_EMMC_INIT_CMD,0);
 		goto END;
 	}
-    MMC_BRANCHTEST_PRINT(BRANCH_EMMC_INIT_CMD,1);
+    MMC_BRANCHTEST_PRINT(BRANCH_EMMC_SENDINITCMD_SUCCESS);
 
     status = AlEmmc_GetCardInfo(&EmmcCardInfo);
     if (status != MMC_SUCCESS) {
-        MMC_BRANCHTEST_PRINT(BRANCH_EMMC_GET_CARD_INFO,0);
 		goto END;
 	}
-    MMC_BRANCHTEST_PRINT(BRANCH_EMMC_GET_CARD_INFO,1);
+    MMC_BRANCHTEST_PRINT(BRANCH_EMMC_GETCARDINFO_SUCCESS);
     
 END:
+    MMC_BRANCHTEST_PRINT(BRANCH_EMMC_INIT_ERROR);
 	return status;
 }
 
@@ -538,10 +501,10 @@ uint32_t Csu_RawEmmcInit(RawEmmcParam_t *Param)
 
     status = AlEmmc_Init();
     if (status != MMC_SUCCESS) {
-        MMC_BRANCHTEST_PRINT(BRANCH_RAW_EMMC_INIT,0);
+        MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_INIT_ERROR);
         return status;
     }
-    MMC_BRANCHTEST_PRINT(BRANCH_RAW_EMMC_INIT,1);
+    MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_INIT_SUCCESS);
 
     Param->EmmcId = EmmcCardInfo.SD_cid.ManufacturerID;
     Param->EmmcSize = EmmcCardInfo.CardCapacity / EmmcCardInfo.CardBlockSize / 2;
@@ -571,42 +534,65 @@ uint32_t Csu_RawEmmcRead(uint32_t Offset, uint8_t* Dest, uint32_t Length)
     uint32_t firstblockbytes    = (firstblockstore > Length)? Length : firstblockstore;
     uint32_t lastblockbytes     = endpoint % blocksize + 1;
 
-#ifdef BRANCH_EMMC_FLOW_PRINT
-    Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_BYTEREAD, 1, 11);
-#endif
-
     MMC_PRINT("offset = %d, Length = %d\r\n", Offset, Length);
     MMC_PRINT("startblock: %d\tfirstblockoffset: %d\tfirstblockbytes: %d\r\n", startblock, firstblockoffset, firstblockbytes);
     MMC_PRINT("endblock: %d\tlastblockbytes: %d\t\r\n", endblock, lastblockbytes);
 
     for (uint32_t i = startblock; i <= endblock; i++) {
         if (i == startblock) {
+            MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_READ_STARTBLOCK);
+#ifdef USE_ERROR_BRANCH
+            if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_RAW_READ_STARTBLOCK_ERROR)) {
+                if (ERROR_BRANCH_CHECK_BIT_SET(BERROR_BRANCH_XFER_COMPLETE_ERROR)) {
+                    ERROR_BRANCH_BIT_RESET(BERROR_BRANCH_XFER_COMPLETE_ERROR);
+                    ERROR_BRANCH_BIT_SET(BERROR_BRANCH_EMMC_RAW_READ_STARTBLOCK_ERROR);
+                }
+            }
+#endif
             status = AlEmmc_ReadSingleBlock(FlashSharedBuf, i, blocksize);
             if (status != MMC_SUCCESS) {
-                MMC_BRANCHTEST_PRINT(BRANCH_RAW_EMMC_READ_FIRST,0);
+                MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_READ_STARTBLOCK_ERROR);
                 return status;
             }
-            MMC_BRANCHTEST_PRINT(BRANCH_RAW_EMMC_READ_FIRST,1);
+            MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_READ_STARTBLOCK_SUCCESS);
 
             memcpy(pdestaddr, &FlashSharedBuf[firstblockoffset], firstblockbytes);
             pdestaddr += firstblockbytes;
-        }else if (i == endblock) {
+        } else if (i == endblock) {
+            MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_READ_ENDBLOCK);
+#ifdef USE_ERROR_BRANCH
+            if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_RAW_READ_ENDBLOCK_ERROR)) {
+                if (ERROR_BRANCH_CHECK_BIT_SET(BERROR_BRANCH_XFER_COMPLETE_ERROR)) {
+                    ERROR_BRANCH_BIT_RESET(BERROR_BRANCH_XFER_COMPLETE_ERROR);
+                    ERROR_BRANCH_BIT_SET(BERROR_BRANCH_EMMC_RAW_READ_ENDBLOCK_ERROR);
+                }
+            }
+#endif
             status = AlEmmc_ReadSingleBlock(FlashSharedBuf, i, blocksize);
             if (status != MMC_SUCCESS) {
-                MMC_BRANCHTEST_PRINT(BRANCH_RAW_EMMC_READ_LAST,0);
+                MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_READ_ENDBLOCK_ERROR);
                 return status;
             }
-            MMC_BRANCHTEST_PRINT(BRANCH_RAW_EMMC_READ_LAST,1);
+            MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_READ_ENDBLOCK_SUCCESS);
 
             memcpy(pdestaddr, FlashSharedBuf, lastblockbytes);
             pdestaddr += lastblockbytes;
         } else {
+            MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_READ_MIDDLEBLOCK);
+#ifdef USE_ERROR_BRANCH
+            if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_RAW_READ_MIDDLEBLOCK_ERROR)) {
+                if (ERROR_BRANCH_CHECK_BIT_SET(BERROR_BRANCH_XFER_COMPLETE_ERROR)) {
+                    ERROR_BRANCH_BIT_RESET(BERROR_BRANCH_XFER_COMPLETE_ERROR);
+                    ERROR_BRANCH_BIT_SET(BERROR_BRANCH_EMMC_RAW_READ_MIDDLEBLOCK_ERROR);
+                }
+            }
+#endif
             status = AlEmmc_ReadSingleBlock(pdestaddr, i, blocksize);
             if (status != MMC_SUCCESS) {
-                MMC_BRANCHTEST_PRINT(BRANCH_RAW_EMMC_READ_MIDDLE,0);
+                MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_READ_MIDDLEBLOCK_ERROR);
                 return status;
             }
-            MMC_BRANCHTEST_PRINT(BRANCH_RAW_EMMC_READ_MIDDLE,1);
+            MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_READ_MIDDLEBLOCK_SUCCESS);
 
             pdestaddr += blocksize;
         }
@@ -625,24 +611,40 @@ uint32_t Csu_RawEmmcRead(uint32_t Offset, uint8_t* Dest, uint32_t Length)
 uint32_t Csu_RawEmmcSetMode(uint32_t Mode, uint32_t Data)
 {
     uint32_t status = MMC_SUCCESS;
-#ifdef BRANCH_EMMC_FLOW_PRINT
-    Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_MODESET, 1, 7);
+
+#ifdef USE_ERROR_BRANCH
+    if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_RAW_SET_MODE_DEFAULT)) {
+        Mode = MMC_MODE_MAX;
+        ERROR_BRANCH_BIT_SET(BERROR_BRANCH_EMMC_RAW_SET_MODE_DEFAULT);
+    }
 #endif
     switch (Mode) {
         case MMC_MODE_FREQ:
+            MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_SET_MODE_FREQ);
             MMC_PRINT("set emmc freq %d\r\n", Data);
+
+#ifdef USE_ERROR_BRANCH
+            if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_RAW_SET_MODE_FREQ_INVALIDFREQ)) {
+                Data = MMC_FREQ_MAX;
+                ERROR_BRANCH_BIT_SET(BERROR_BRANCH_EMMC_RAW_SET_MODE_FREQ_INVALIDFREQ);
+            }
+#endif
             if (Data >= MMC_FREQ_MAX) {
+                MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_SET_MODE_FREQ_INVALIDFREQ);
                 status = MMC_WRONG_FREQ;
                 break;
             }
+            MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_SET_MODE_FREQ_VALIDFREQ);
+
             status = AlEmmc_HostControllerClockSetup(eMMC, Data);
             if (status != MMC_SUCCESS) {
-                MMC_BRANCHTEST_PRINT(BRANCH_RAW_EMMC_SET_MODE_FREQ,0);
+                MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_SET_MODE_FREQ_ERROR);
                 return status;                                          
             }
-            MMC_BRANCHTEST_PRINT(BRANCH_RAW_EMMC_SET_MODE_FREQ,1);
+            MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_SET_MODE_FREQ_SUCCESS);
             break;
     default:
+        MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_SET_MODE_DEFAULT);
         status = MMC_MODE_ERROR;
         break;
     }
@@ -668,16 +670,18 @@ uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
     __IO CMD_R__XFER_MODE_R reg                 = {.d32 = 0,};
     __IO MMC_CMD23_PARAM r3                     = {.d32 = 0,};
 
-#ifdef BRANCH_EMMC_FLOW_PRINT
-    Mmc_BranchFlowPrint(BRANCH_FLOW_MODULE_INIT, 25, 35);
-#endif
-
     Cardinfo->CardBlockSize     = 512;
     Cardinfo->SD_csd.DeviceSize = ((CsdTab[1]&0x3)<<10)|((CsdTab[2]>>22)&0x3FF);
 
     MMC_PRINT("csize is %d\r\n", Cardinfo->SD_csd.DeviceSize);
+#ifdef USE_ERROR_BRANCH
+    if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_CARDSIZE_LESS2G)) {
+        Cardinfo->SD_csd.DeviceSize = 0xFFE;
+        ERROR_BRANCH_BIT_SET(BERROR_BRANCH_EMMC_CARDSIZE_LESS2G);
+    }
+#endif    
     if (Cardinfo->SD_csd.DeviceSize != 0xFFF) {   //less than 2GB
-        MMC_BRANCHTEST_PRINT(BRANCH_EMMC_CARD_SIZE,0);
+        MMC_BRANCHTEST_PRINT(BRANCH_EMMC_CARDSIZE_LESS2G);
 
         Cardinfo->SD_csd.DeviceSizeMul  = (uint8_t)((CsdTab[2]>>7)&0x7);
         Cardinfo->SD_csd.RdBlockLen     = ((CsdTab[1]>>8)&0xF);
@@ -688,7 +692,7 @@ uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
         MMC_PRINT("rd_block_len is %d\r\n", tmp_rdblen);
         MMC_PRINT("device size mult is %d\r\n", tmp_devsizemul);
     } else {  //greater than 2GB, use ext_csd register
-        MMC_BRANCHTEST_PRINT(BRANCH_EMMC_CARD_SIZE,1);
+        MMC_BRANCHTEST_PRINT(BRANCH_EMMC_CARDSIZE_MORE2G);
 
 #ifdef _USE_SDMA
         __IO WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R r1 = {.d32 = 0,};
@@ -803,51 +807,5 @@ uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
 
     return status;
 }
-
-#if 0
-/**
- * @brief get card status
- * 
- * @return uint32_t status
- */
-uint32_t AlEmmc_GetCardStatus(void)
-{
-    MMC_ERR_TYPE status         = MMC_SUCCESS;
-    uint32_t arg_r              = 0;
-    __IO CMD_R__XFER_MODE_R reg = {.d32 = 0,};
-    __IO MMC_DEV_STAT dev_state = {.d32 = 1,};
-
-    MMC_PRINT("send command 7\r\n");
-    MTIMER_OUT_CONDITION(MMC_CHECK_DEV_STATUS_TIMEOUT_VAL, &MmcMtimer, dev_state.d32 != 0x900) {
-        MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
-
-        arg_r = EMMC_CMD3_PARA_DEFAULT_VAL;
-        REG_WRITE(&(eMMC->argument_r), arg_r);
-
-        reg.d32                     = 0;
-        reg.bit.cmd_index           = SD_CMD_SEND_STATUS;
-        reg.bit.data_xfer_dir       = DATA_READ;
-        reg.bit.resp_type_select    = MMC_Response_Short;
-        reg.bit.resp_err_chk_enable = MMC_XM_RESP_ERR_CHK_ENABLE;
-        reg.bit.cmd_crc_chk_enable  = MMC_C_CMD_CRC_CHECK_ENABLE;
-        reg.bit.cmd_idx_chk_enable  = MMC_C_CMD_IDX_CHECK_ENABLE;
-        REG_WRITE(&(eMMC->cmd_r__xfer_mode), reg.d32);
-
-        MMC_WAIT_CMD_COMPLETE(eMMC, MMC_CMD_7_ERR);
-        MMC_PRINT("reg.d32 is %x, %d\r\n", reg.d32, reg.d32);
-
-        dev_state.d32 = REG_READ(&(eMMC->resp01));
-        MMC_PRINT("device status is %x\r\n", dev_state);
-        MMC_DELAY_MS(1);
-    }
-    
-    if (Mtimer_IsTimerOut(&MmcMtimer)) {
-        status = MMC_CHECK_VOLT_TIMEOUT;
-        return status;
-    }
-
-    return status;
-}
-#endif
 
 /*********************************************END OF FILE**********************/

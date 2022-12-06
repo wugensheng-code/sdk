@@ -8,6 +8,7 @@
 #define SD_CMD8_PARA_2V7_3V6        0x1AA
 
 #define SD_GET_VALID_VOLTAGE_TIMEOUT_VAL      (20000*1000)  //20s
+#define SD_GET_RCA_TIMEOUT_VAL                (5000*1000)
 
 
 

@@ -36,26 +36,24 @@
 #define CSU_TEST_LENGTH2    300
 #define CSU_TEST_LENGTH3    600
 #define FIL_PT_OFFSET       5
-#define FIL_LARGE_RDWR_SIZE 36480
+#define FIL_LARGE_RDWR_SIZE 8845488
+#define DDR_TEST_LENGTH     1000
 
 
-#define SD_TRAVERSETEST
+// #define SD_TRAVERSETEST
 #define SD_BRANCHTEST
-#define SD_BOUNDARYTEST
-#define SD_FATFSTEST
-#define SD_PRINTREGTEST
+// #define SD_BOUNDARYTEST
+// #define SD_FATFSTEST
+// #define SD_PRINTREGTEST
+// #define SD_DDRREADWRITETEST
 
-uint32_t DebugCurType = DEBUG_GENERAL;
-//static FRESULT res_sd;
-//static FATFS fs;
-static BYTE *WriteBuffer = (char *)0x1003ddf0;
-static BYTE *ReadBuffer = (char *)0x1003edf0;
-//extern char *logaddr;
+static BYTE *WriteBuffer = (uint8_t *)0x1003ddf0;
+static BYTE *ReadBuffer = (uint8_t *)0x1003edf0;
+extern void Enablepinmux1(void);
 
 uint32_t RawReadWriteTestSD()
 {
     int status;
-    int result;
     uint64_t blocknum = 0;
     MMC_PRINT("[SD]:Read/Write Buf Set!\r\n");
     for (int i = 0; i < BUF_SIZE; i++) {
@@ -69,13 +67,13 @@ uint32_t RawReadWriteTestSD()
     }
     
     blocknum = SDCardInfo.CardCapacity / SDCardInfo.CardBlockSize;
-    printf("block num is %d\r\n", blocknum);
+    printf("block num is %ld\r\n", blocknum);
     blocknum = 3;
     for (int k = 0; k < 0x20; k+=8) {
         //WriteBuffer = 0x6103ddf0 + k;
         //ReadBuffer = 0x6103edf0 + k;
-        WriteBuffer = 0x1003edf0 + k;
-        ReadBuffer = 0x1003f6f0 + k;
+        WriteBuffer = (BYTE *)(0x1003edf0 + k);
+        ReadBuffer = (BYTE *)(0x1003f6f0 + k);
         printf("[SD]:Block write/read addr offset is %x\r\n", k);
         //switch 10M
         Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M); 
@@ -149,18 +147,57 @@ uint32_t RawReadWriteTestSD()
     return status;
 }
 
-void __attribute__((inline)) Sd_PrintBS(uint64_t num)
+uint32_t Sd_DdrReadWriteTest(void)
 {
-    static uint32_t prenum = 0;
-    if ((num >> 8) != prenum) {
-        prenum = num;
-        do{
-            MMC_GPRINT("\b");
-            num >>=4;
-        }while(num);
-        MMC_GPRINT("%x", prenum);
-        prenum >>= 8;
-    }
+    uint32_t status = MMC_SUCCESS;
+    uint8_t *writebuffer = (uint8_t *)0x10000000;
+    uint8_t *readbuffer = (uint8_t *)0x20000000;
+
+    do {
+        MMC_GPRINT("writeaddr 0x%x, readaddr 0x%x\r\n", writebuffer, readbuffer);
+        for (uint32_t i = 0; i < DDR_TEST_LENGTH; i++) {
+            if (writebuffer[i] != i%10+0x32) {
+                MMC_GPRINT("origin buffer data error!\r\n");
+                for (uint32_t j = 0; j < DDR_TEST_LENGTH; j++) {
+                    MMC_GPRINT("[0x%x]:0x%x\t", j, writebuffer[j]);
+                }
+                MMC_GPRINT("\r\n");
+                break;
+            }
+        }
+
+        for (uint32_t i = 0; i < DDR_TEST_LENGTH; i++) {
+            writebuffer[i] = i%10+0x32;
+        }
+
+        for (uint32_t i = 0; i < DDR_TEST_LENGTH; i++) {
+            readbuffer[i] = writebuffer[i];
+        }
+
+        for (uint32_t i = 0; i < DDR_TEST_LENGTH; i++) {
+            if (writebuffer[i] != i%10+0x32) {
+                MMC_GPRINT("write buffer data error!\r\n");
+                for (uint32_t j = 0; j < DDR_TEST_LENGTH; j++) {
+                    MMC_GPRINT("[0x%x]:0x%x\t", j, writebuffer[j]);
+                }
+                MMC_GPRINT("\r\n");
+                break;
+            }
+            if (writebuffer[i] != readbuffer[i]) {
+                MMC_GPRINT("read buffer data error!\r\n");
+                for (uint32_t j = 0; j < DDR_TEST_LENGTH; j++) {
+                    MMC_GPRINT("[0x%x]:0x%x\t", j, readbuffer[j]);
+                }
+                MMC_GPRINT("\r\n");
+                break;
+            }
+        }
+        writebuffer += 0x200;
+        readbuffer += 0x200;
+        MMC_DELAY_US(50);
+    } while(0);
+
+    return status;
 }
 
 //Traverse test: write, read, check every block
@@ -168,40 +205,38 @@ uint32_t Sd_TraverseTest(void)
 {
     uint32_t status = MMC_SUCCESS;
     uint64_t blocknum = 0;
-    char *writebuffer = (char *)0x10040000;
-    char *readbuffer = (char *)0x10041000;
+    uint8_t *writebuffer = (uint8_t *)0x6103f000;
+    uint8_t *readbuffer = (uint8_t *)0x6103f400;
     MMC_GPRINT("[G]:==========Sd Traverse Test!==========\r\n");
     for (uint32_t i = 0; i < BUF_SIZE; i++) {
         writebuffer[i] = i%10+0x32;
     }
+
+    for (uint32_t i = 0; i < BUF_SIZE; i++) {
+        readbuffer[i] = writebuffer[i];
+    }
+
     MMC_GPRINT("[G]:Sd Init!\r\n");
     status = AlSd_Init();
     if (status != MMC_SUCCESS) {
         return status;
     }
-    MMC_GPRINT("[G]:Sd Change Freq 10M!\r\n");
-    Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
+    
 
     blocknum = SDCardInfo.CardCapacity / SDCardInfo.CardBlockSize;
-    MMC_GPRINT("[G]:Sd <blocknum> is 0x%x!\r\n", blocknum);
+    MMC_GPRINT("[G]:Sd <blocknum> is 0x%lx!\r\n", blocknum);
     blocknum = BLOCK_128MB_NUM;
-    MMC_GPRINT("[G]:Sd <blocknum> checked is 0x%x!\r\n", blocknum);
+    MMC_GPRINT("[G]:Sd <blocknum> checked is 0x%lx!\r\n", blocknum);
     MMC_GPRINT("[G]:Sd Write, Read Block!\r\n");
-    uint64_t prei = 0, tempi = 0;
-    uint64_t i = 0;
+    uint32_t i = 0;
     for (; i < blocknum; i++) {
-        MMC_GPRINT("[G]:Write, Read Block 0x%x\r\n", i);
-        //Sd_PrintBS(i);
-        /*if ((i >> 8) != prei) {
-            tempi = prei;
-            MMC_GPRINT("\b\b");
-            do{
-                MMC_GPRINT("\b");
-                tempi >>=4;
-            }while(tempi);
-            MMC_GPRINT("%x", i);
-            prei = (i >> 8);
-        }*/
+        if (i == blocknum/2) {
+            MMC_GPRINT("[G]:Sd Change Freq 10M!\r\n");
+            Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
+        }
+
+        if(((i+1) % 0x40) ==0 )
+            MMC_GPRINT("[G]:Write, Read Block 0x%x\r\n", i);
         status = AlSd_WriteSingleBlock(writebuffer,i,SDCardInfo.CardBlockSize);
         if (status != MMC_SUCCESS) {
             goto END;
@@ -210,8 +245,11 @@ uint32_t Sd_TraverseTest(void)
         if (status != MMC_SUCCESS) {
             goto END;
         }
-        status = strncmp(writebuffer, readbuffer, SDCardInfo.CardBlockSize);
+        status = strncmp((const char *)writebuffer, (const char *)readbuffer, SDCardInfo.CardBlockSize);
         if (status != MMC_SUCCESS) {
+            for(uint32_t j = 0; j < SDCardInfo.CardBlockSize; j++){
+                printf("write 0x%x, read 0x%x\r\n", writebuffer[j], readbuffer[j]);
+            }
             goto END;
         }
         memset(readbuffer, 0, SDCardInfo.CardBlockSize);
@@ -228,8 +266,8 @@ uint32_t Sd_BoundaryTest(void)
 {
     uint32_t status = MMC_SUCCESS;
     uint64_t blocknum = 0;
-    char *writebuffer = (char *)0x1003ddf0;
-    char *readbuffer = (char *)0x1003edf0;
+    uint8_t *writebuffer = (uint8_t *)0x1003ddf0;
+    uint8_t *readbuffer = (uint8_t *)0x1003edf0;
     MMC_GPRINT("[G]:==========Sd Boundary Test!==========\r\n");
     for (uint32_t i = 0; i < BUF_SIZE; i++) {
         writebuffer[i] = i%10+0x32;
@@ -247,8 +285,8 @@ uint32_t Sd_BoundaryTest(void)
     for (uint32_t k = 0; k < 0x200; k+=8) {
         writebuffer += k;
         readbuffer += k;
-        MMC_GPRINT("[G]:writebuffer is %x, readbuffer is %x\r\n", writebuffer, readbuffer);
-        for (uint64_t i = 0; i < blocknum; i++) {
+        MMC_GPRINT("[G]:writebuffer is %x, readbuffer is %x\r\n", (uint32_t)writebuffer, (uint32_t)readbuffer);
+        for (uint32_t i = 0; i < blocknum; i++) {
             MMC_GPRINT("[G]:write, read test block%d\r\n", i);
             status = AlSd_WriteSingleBlock(writebuffer,i,SDCardInfo.CardBlockSize);
             if (status != MMC_SUCCESS) {
@@ -258,7 +296,7 @@ uint32_t Sd_BoundaryTest(void)
             if (status != MMC_SUCCESS) {
                 goto END;
             }
-            status = strncmp(writebuffer, readbuffer, SDCardInfo.CardBlockSize);
+            status = strncmp((const char *)writebuffer, (const char *)readbuffer, SDCardInfo.CardBlockSize);
             if (status != MMC_SUCCESS) {
                 goto END;
             }
@@ -278,9 +316,9 @@ uint32_t Sd_FatfsTest(void)
     FATFS fs;
     FIL fnew;
     FILINFO fno;
-    char *filename = "0:/BOOT.bin";
-    char *writebuffer = (char *)0x20000000;
-    char *readbuffer = (char *)0x30000000;
+    const char *filename = "0:/BOOT.bin";
+    uint8_t *writebuffer = (uint8_t *)0x20000000;
+    uint8_t *readbuffer = (uint8_t *)0x30000000;
 
     MMC_GPRINT("[G]:==========Sd Fatfs Test!==========\r\n");
     res_sd = f_mount(&fs,"0:",1);
@@ -335,11 +373,11 @@ uint32_t Sd_FatfsTest(void)
             MMC_GPRINT("[G]:stat error: %d\r\n", res_sd);
             return -1;
         }
-        res_sd = f_read(&fnew, (const void *)readbuffer, fno.fsize, &fnum);
+        res_sd = f_read(&fnew, (void *)readbuffer, fno.fsize, &fnum);
         if (res_sd==FR_OK)
         {
             MMC_GPRINT("[G]:File read success, data byte num is %d\r\n",fnum);
-            status = strncmp(writebuffer, readbuffer, FIL_LARGE_RDWR_SIZE);
+            status = strncmp((const char *)writebuffer, (const char *)readbuffer, FIL_LARGE_RDWR_SIZE);
             if (status != MMC_SUCCESS) {
                 MMC_GPRINT("[G]:File read error, data not match!\r\n");
                 goto END;
@@ -360,43 +398,85 @@ END:
 uint32_t Sd_BranchTest(void)
 {
     uint32_t status = MMC_SUCCESS;
-    uint64_t blocknum = 0;
-    char *writebuffer = (char *)0x10040000;
-    char *readbuffer = (char *)0x10041000;
+    uint8_t *writebuffer = (uint8_t *)0x10040000;
+    uint8_t *readbuffer = (uint8_t *)0x10041000;
 
-    MMC_GPRINT("[G]:==========Sd Branch Test!==========\r\n");
+    MMC_GPRINT("[G]:==========Sd Branch Test Start!==========\r\n");
     for (uint32_t i = 0; i < BUF_SIZE; i++) {
         writebuffer[i] = i%10+0x32;
     }
-
-    MMC_GPRINT("[G]:Sd Init!\r\n");
+    //correct branch
+#ifdef USE_ERROR_BRANCH
+    ERROR_BRANCH_STOP();
+#endif
+    MMC_GPRINT("[G]:==========Correct Branch!==========\r\n");
     status = AlSd_Init();
     if (status != MMC_SUCCESS) {
         return status;
     }
-    MMC_GPRINT("[G]:Sd Change Freq 10M!\r\n");
+
     Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
 
     status = AlSd_WriteSingleBlock(writebuffer,0,SDCardInfo.CardBlockSize);
     if (status != MMC_SUCCESS) {
         goto END;
     }
+    Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_400K);
     status = AlSd_ReadSingleBlock(readbuffer, 0, SDCardInfo.CardBlockSize);
     if (status != MMC_SUCCESS) {
         goto END;
     }
-    status = strncmp(writebuffer, readbuffer, SDCardInfo.CardBlockSize);
+    status = strncmp((const char *)writebuffer, (const char *)readbuffer, SDCardInfo.CardBlockSize);
     if (status != MMC_SUCCESS) {
         goto END;
     }
+#ifdef AL_DEBUG_PRINT
     MMC_GPRINT("[G]:Sd Branch Count!\r\n");
-    for (uint32_t i = 0; i < BRANCH_NUM; i++) {
-        MMC_GPRINT("[G]: [%d]\t", i);
-        for (uint32_t j = 0; j < BRANCH_BRANCH; j++) {
-            MMC_GPRINT("[%d]\t", BranchTestCount[i][j]);
-        }
-        MMC_GPRINT("\r\n");
+    for (uint32_t i = 0; i < BRANCH_MAX; i++) {
+        MMC_GPRINT("[BRANCH_COUNT]: [%d]\t[%d]\r\n", i, BranchTestCount[i]);
     }
+#endif
+
+#ifdef USE_ERROR_BRANCH
+    //coverage error branch
+    MMC_GPRINT("[G]:==========Error Branch!==========\r\n");
+    ERROR_BRANCH_START();
+    while (SD_ERROR_BRANCH_CHECK_NOTDONE(BERROR_MAX)) {
+        MMC_GPRINT("[ERROR_BRANCH]:0x%x\r\n", ErrBranchCtrl);
+
+        ResetHostComtroller(SDIO);
+
+        status = AlSd_Init();
+        if (status != MMC_SUCCESS) {
+            goto ERROR_STATUS;
+        }
+        Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
+
+        status = AlSd_WriteSingleBlock(writebuffer,0,SDCardInfo.CardBlockSize);
+        if (status != MMC_SUCCESS) {
+            goto ERROR_STATUS;
+        }
+        Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_400K);
+        status = AlSd_ReadSingleBlock(readbuffer, 0, SDCardInfo.CardBlockSize);
+        if (status != MMC_SUCCESS) {
+            goto ERROR_STATUS;
+        }
+        status = strncmp((const char *)writebuffer, (const char *)readbuffer, SDCardInfo.CardBlockSize);
+        if (status != MMC_SUCCESS) {
+            goto ERROR_STATUS;
+        }
+ERROR_STATUS:
+        MMC_GPRINT("[G]:Status = %d\r\n", status);
+    }
+#endif
+    MMC_GPRINT("[G]:==========Sd Branch Test Done!==========\r\n");
+
+#ifdef AL_DEBUG_PRINT
+    MMC_GPRINT("[G]:Sd Branch Count!\r\n");
+    for (uint32_t i = 0; i < BRANCH_MAX; i++) {
+        MMC_GPRINT("[BRANCH_COUNT]: [%d]\t[%d]\r\n", i, BranchTestCount[i]);
+    }
+#endif
 END:
     return status;
 }
@@ -405,8 +485,8 @@ END:
 uint32_t Sd_PrintRegTest(void)
 {
     uint32_t status = MMC_SUCCESS;
-    char *writebuffer = (char *)0x10040000;
-    char *readbuffer = (char *)0x10041000;
+    uint8_t *writebuffer = (uint8_t *)0x10040000;
+    uint8_t *readbuffer = (uint8_t *)0x10041000;
 
     MMC_GPRINT("[G]:==========Sd Print Reg Test!==========\r\n");
     for (uint32_t i = 0; i < BUF_SIZE; i++) {
@@ -429,7 +509,7 @@ uint32_t Sd_PrintRegTest(void)
     if (status != MMC_SUCCESS) {
         goto END;
     }
-    status = strncmp(writebuffer, readbuffer, SDCardInfo.CardBlockSize);
+    status = strncmp((const char *)writebuffer, (const char *)readbuffer, SDCardInfo.CardBlockSize);
     if (status != MMC_SUCCESS) {
         goto END;
     }
@@ -442,54 +522,87 @@ uint32_t SD_Test(void)
 {
     uint32_t status = 0;
 
+    Enablepinmux1();
+
+#ifdef USE_ERROR_BRANCH
+    ERROR_BRANCH_STOP();
+#endif
+
 #ifdef SD_BRANCHTEST
+#ifdef AL_DEBUG_PRINT
     DebugCurType = ((DEBUG_BRANCHTEST) | (DEBUG_GENERAL));
+#endif
+    ResetHostComtroller(SDIO);
     status = Sd_BranchTest();
     if (status != MMC_SUCCESS) {
         MMC_GPRINT("[G]:Sd Branch Test Error %d\r\n", status);
+        PrintfMshcBlock(SDIO);
     } else {
         MMC_GPRINT("[G]:Sd Branch Test Success\r\n");
     }
 #endif
 
 #ifdef SD_PRINTREGTEST
+#ifdef AL_DEBUG_PRINT
     DebugCurType = ((DEBUG_INFO) | (DEBUG_GENERAL));
+#endif
+    ResetHostComtroller(SDIO);
     status = Sd_PrintRegTest();
     if (status != MMC_SUCCESS) {
         MMC_GPRINT("[G]:Sd Print Reg Test Error %d\r\n", status);
+        PrintfMshcBlock(SDIO);
     } else {
         MMC_GPRINT("[G]:Sd Print Reg Test Success\r\n");
     }
 #endif
 
 #ifdef SD_BOUNDARYTEST
+#ifdef AL_DEBUG_PRINT
     DebugCurType = ((DEBUG_GENERAL));
+#endif
+    ResetHostComtroller(SDIO);
     status = Sd_BoundaryTest();
     if (status != MMC_SUCCESS) {
         MMC_GPRINT("[G]:Sd Boundary Test Error %d\r\n", status);
+        PrintfMshcBlock(SDIO);
     } else {
         MMC_GPRINT("[G]:Sd Boundary Test Success\r\n");
     }
 #endif
 
 #ifdef SD_FATFSTEST
+#ifdef AL_DEBUG_PRINT
     DebugCurType = ((DEBUG_GENERAL));
+#endif
+    ResetHostComtroller(SDIO);
     status = Sd_FatfsTest();
     if (status != MMC_SUCCESS) {
         MMC_GPRINT("[G]:Sd Fatfs Test Error %d\r\n", status);
+        PrintfMshcBlock(SDIO);
     } else {
         MMC_GPRINT("[G]:Sd Fatfs Test Success\r\n");
     }
 #endif
 
 #ifdef SD_TRAVERSETEST
+#ifdef AL_DEBUG_PRINT
     DebugCurType = ((DEBUG_GENERAL));
+#endif
+    ResetHostComtroller(SDIO);
     status = Sd_TraverseTest();
     if (status != MMC_SUCCESS) {
         MMC_GPRINT("[G]:Sd Traverse Test Error %d\r\n", status);
+        PrintfMshcBlock(SDIO);
     } else {
         MMC_GPRINT("[G]:Sd Traverse Test Success\r\n");
     }
+#endif
+
+#ifdef SD_DDRREADWRITETEST
+#ifdef AL_DEBUG_PRINT
+    DebugCurType = ((DEBUG_GENERAL));
+#endif
+    Sd_DdrReadWriteTest();
 #endif
     return status;
 }
@@ -507,8 +620,8 @@ uint32_t SD_Test(void)
 	uint32_t fnum = 0;            			  
 	//char ReadBuffer[1024]={0};
 	//char WriteBuffer[] = "welcome777777777777777\r\n";
-    char *ReadBuffer = (char *)0x12000000;
-    char *WriteBuffer = (char *)0x11000000;
+    uint8_t *ReadBuffer = (uint8_t *)0x12000000;
+    uint8_t *WriteBuffer = (uint8_t *)0x11000000;
     FIL fnew;
     FILINFO fno;
 	uint32_t status = MMC_SUCCESS;
@@ -518,8 +631,8 @@ uint32_t SD_Test(void)
     memset(&fno, 0, sizeof(FILINFO));
 
     //clear ddr log
-    //memset((char *)(0x10000000), 0, 0x100000);
-    //logaddr = (char *)0x10000000;
+    //memset((uint8_t *)(0x10000000), 0, 0x100000);
+    //logaddr = (uint8_t *)0x10000000;
 #if 1
     printf("[START]:<SD>\r\n");
     status = RawReadWriteTestSD();
@@ -533,7 +646,7 @@ uint32_t SD_Test(void)
 #endif
 
 #if 1
-    char *filename = "0:/BOOT.bin";
+    uint8_t *filename = "0:/BOOT.bin";
 	res_sd = f_mount(&fs,"0:",1);  //SD test
     printf("res_sd is %d\r\n", res_sd);
     if (res_sd == FR_NO_FILESYSTEM)

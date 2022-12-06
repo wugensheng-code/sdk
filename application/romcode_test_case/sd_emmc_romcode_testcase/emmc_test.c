@@ -15,17 +15,20 @@
 
 static BYTE *WriteBuffer = (char *)0x6103ddf0;
 static BYTE *ReadBuffer = (char *)0x6103edf0;
+extern void Enablepinmux1_mode2(void);
 
-#define EMMC_TRAVERSETEST
+// #define EMMC_TRAVERSETEST
 // #define EMMC_BRANCHTEST
-// #define EMMC_BOUNDARYTEST
-// #define EMMC_FATFSTEST
-// #define EMMC_PRINTREGTEST
-// #define EMMC_BYTEREADTEST
+#define EMMC_BOUNDARYTEST
+#define EMMC_FATFSTEST
+#define EMMC_PRINTREGTEST
+#define EMMC_BYTEREADTEST
 
 #define EMMC_OFFSETSTEP         0x5700    //random none aligned num
 #define EMMC_LENGTHSTEP         0x21210    //random none aligned num
 #define EMMC_READ_LENGTH        0x2100  
+#define EMMC_OFFSET_START       100
+#define EMMC_LENGTH_START       100
 #define BRANCHTEST_EMMC_READ_OFFSET 400
 #define BRANCHTEST_EMMC_READ_LENGTH 700
 
@@ -325,9 +328,7 @@ uint32_t Emmc_TraverseTest(void)
     if (status != MMC_SUCCESS) {
         return status;
     }
-    MMC_GPRINT("[G]:Emmc Change Freq 10M!\r\n");
-    Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
-
+    
     blocknum = EmmcCardInfo.CardCapacity / EmmcCardInfo.CardBlockSize;
     MMC_GPRINT("[G]:Emmc <blocknum> is 0x%x!\r\n", blocknum);
     blocknum = BLOCK_128MB_NUM;
@@ -336,19 +337,14 @@ uint32_t Emmc_TraverseTest(void)
     uint64_t prei = 0, tempi = 0;
     uint64_t i = 0;
     for (; i < blocknum; i++) {
+        if (i == blocknum/2) {
+            MMC_GPRINT("[G]:Emmc Change Freq 10M!\r\n");
+            Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
+        }
+
         if(((i+1) % 0x40) ==0 )
             MMC_GPRINT("[G]:Write, Read Block 0x%x\r\n", i);
-        //Emmc_PrintBS(i);
-        /*if ((i >> 8) != prei) {
-            tempi = prei;
-            MMC_GPRINT("\b\b");
-            do{
-                MMC_GPRINT("\b");
-                tempi >>=4;
-            }while(tempi);
-            MMC_GPRINT("%x", i);
-            prei = (i >> 8);
-        }*/
+
         status = AlEmmc_WriteSingleBlock(writebuffer,i,EmmcCardInfo.CardBlockSize);
         if (status != MMC_SUCCESS) {
             goto END;
@@ -431,6 +427,9 @@ uint32_t Emmc_FatfsTest(void)
     char *writebuffer = (char *)0x20000000;
     char *readbuffer = (char *)0x30000000;
 
+    MMC_GPRINT("[G]:Emmc print MSHC reg before test flow!\r\n");
+    PrintfMshcBlock(eMMC);
+
     MMC_GPRINT("[G]:==========Emmc Fatfs Test!==========\r\n");
     res_sd = f_mount(&fs,"1:",1);
     MMC_GPRINT("[G]:res_sd is %d\r\n", res_sd);
@@ -499,10 +498,15 @@ uint32_t Emmc_FatfsTest(void)
     } else {
         MMC_GPRINT("[G]:File open fail!(%d)\r\n", res_sd);
     }
+
+    MMC_GPRINT("[G]:Emmc print MSHC reg after test flow!\r\n");
+    PrintfMshcBlock(eMMC);
     MMC_GPRINT("[G]:==========Emmc Fatfs Test Success!==========\r\n");
 END:
     f_close(&fnew);
     f_mount(NULL,"1:",1);
+    MMC_GPRINT("[G]:Emmc print MSHC reg after test flow!\r\n");
+    PrintfMshcBlock(eMMC);
     return status;
 }
 
@@ -519,13 +523,15 @@ uint32_t Emmc_BranchTest(void)
     for (uint32_t i = 0; i < BUF_SIZE; i++) {
         writebuffer[i] = i%10+0x32;
     }
-
-    MMC_GPRINT("[G]:Emmc Init!\r\n");
+#ifdef USE_ERROR_BRANCH
+    ERROR_BRANCH_STOP();
+#endif
+    MMC_GPRINT("[G]:==========Correct Branch!==========\r\n");
     status = Csu_RawEmmcInit(&emmcparam);
     if (status != MMC_SUCCESS) {
         return status;
     }
-    MMC_GPRINT("[G]:Emmc Change Freq 10M!\r\n");
+
     Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
 
     for (uint32_t i = 0; i < 3; i++) {
@@ -534,7 +540,7 @@ uint32_t Emmc_BranchTest(void)
             goto END;
         }
     }
-    
+    Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_400K);
     status = Csu_RawEmmcRead(BRANCHTEST_EMMC_READ_OFFSET, readbuffer, BRANCHTEST_EMMC_READ_LENGTH);
     if (status != MMC_SUCCESS) {
         goto END;
@@ -547,15 +553,57 @@ uint32_t Emmc_BranchTest(void)
             goto END;
         }
     }
-    
 #ifdef AL_DEBUG_PRINT
     MMC_GPRINT("[G]:Emmc Branch Count!\r\n");
-    for (uint32_t i = 0; i < BRANCH_NUM; i++) {
-        MMC_GPRINT("[G]: [%d]\t", i);
-        for (uint32_t j = 0; j < BRANCH_BRANCH; j++) {
-            MMC_GPRINT("[%d]\t", BranchTestCount[i][j]);
+    for (uint32_t i = 0; i < BRANCH_MAX; i++) {
+        MMC_GPRINT("[BRANCH_COUNT]: [%d]\t[%d]\r\n", i, BranchTestCount[i]);
+    }
+#endif
+#ifdef USE_ERROR_BRANCH
+    //coverage error branch
+    MMC_GPRINT("[G]:==========Error Branch!==========\r\n");
+    ERROR_BRANCH_START();
+    while (EMMC_ERROR_BRANCH_CHECK_NOTDONE(BERROR_MAX)) {
+        MMC_GPRINT("[ERROR_BRANCH]:0x%x\r\n", ErrBranchCtrl);
+
+        ResetHostComtroller(eMMC);
+
+        status = Csu_RawEmmcInit(&emmcparam);
+        if (status != MMC_SUCCESS) {
+            goto ERROR_STATUS;
         }
-        MMC_GPRINT("\r\n");
+
+        Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
+
+        for (uint32_t i = 0; i < 3; i++) {
+            status = AlEmmc_WriteSingleBlock(writebuffer,i,EmmcCardInfo.CardBlockSize);
+            if (status != MMC_SUCCESS) {
+                goto ERROR_STATUS;
+            }
+        }
+        Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_400K);
+        status = Csu_RawEmmcRead(BRANCHTEST_EMMC_READ_OFFSET, readbuffer, BRANCHTEST_EMMC_READ_LENGTH);
+        if (status != MMC_SUCCESS) {
+            goto ERROR_STATUS;
+        }
+        
+        for (uint32_t i = 0; i < BRANCHTEST_EMMC_READ_LENGTH; i++) {
+            if (writebuffer[(i+BRANCHTEST_EMMC_READ_OFFSET)%EmmcCardInfo.CardBlockSize] != readbuffer[i]) {
+                MMC_GPRINT("[G]:Emmc barnch test data check failed!\r\n");
+                status = MMC_FAILURE;
+                goto ERROR_STATUS;
+            }
+        }
+ERROR_STATUS:
+        MMC_GPRINT("[G]:Status = %d\r\n", status);
+    }
+#endif
+    MMC_GPRINT("[G]:==========Emmc Branch Test Done!==========\r\n");
+
+#ifdef AL_DEBUG_PRINT
+    MMC_GPRINT("[G]:Emmc Branch Count!\r\n");
+    for (uint32_t i = 0; i < BRANCH_MAX; i++) {
+        MMC_GPRINT("[BRANCH_COUNT]: [%d]\t[%d]\r\n", i, BranchTestCount[i]);
     }
 #endif
     MMC_GPRINT("[G]:==========Emmc Branch Test Success!==========\r\n");
@@ -593,7 +641,22 @@ uint32_t Emmc_ByteReadTest(void)
     }
     uint64_t bytelength = BLOCK_1MB_NUM * EmmcCardInfo.CardBlockSize;
     MMC_GPRINT("[G]:Emmc Read ByteLength %llu!\r\n", bytelength);
-    for (uint64_t i = 0; i < bytelength - EMMC_LENGTHSTEP; i+=EMMC_OFFSETSTEP) {
+    for (uint64_t i = EMMC_OFFSET_START; i < bytelength - EMMC_LENGTH_START; i+=i) {
+        for (uint64_t j = EMMC_LENGTH_START; i + j < bytelength - i; j+=j) {
+            MMC_GPRINT("[G]:Emmc Read Byte offset %llu, length %llu!\r\n", i, j);
+            Csu_RawEmmcRead(i, readbuffer, j);
+            if (status != MMC_SUCCESS) {
+                return status;
+            }
+            for (uint64_t k = 0; k < j; k++) {
+                if (readbuffer[k] != writebuffer[(i+k)%EmmcCardInfo.CardBlockSize]) {
+                    status = MMC_FAILURE;
+                    goto END;
+                }
+            }
+        }
+    }
+    /*for (uint64_t i = 0; i < bytelength - EMMC_LENGTHSTEP; i+=EMMC_OFFSETSTEP) {
         for (uint64_t j = EMMC_LENGTHSTEP; j < bytelength - i; j+=EMMC_LENGTHSTEP) {
             MMC_GPRINT("[G]:Emmc Read Byte offset %llu, length %llu!\r\n", i, j);
             Csu_RawEmmcRead(i, readbuffer, j);
@@ -607,18 +670,7 @@ uint32_t Emmc_ByteReadTest(void)
                 }
             }
         }
-        /*MMC_GPRINT("[G]:Emmc Read Byte offset %llu, length %llu!\r\n", i, EMMC_READ_LENGTH);
-        Csu_RawEmmcRead(i, readbuffer, EMMC_READ_LENGTH);
-        if (status != MMC_SUCCESS) {
-            return status;
-        }
-        for (uint64_t k = 0; k < EMMC_READ_LENGTH; k++) {
-            if (readbuffer[k] != writebuffer[(i+k)%EmmcCardInfo.CardBlockSize]) {
-                status = MMC_FAILURE;
-                goto END;
-            }
-        }*/
-    }
+    }*/
     MMC_GPRINT("[G]:==========Emmc Byte Read Test Success!==========\r\n");
 
 END:
@@ -631,11 +683,15 @@ uint32_t Emmc_PrintRegTest(void)
     uint32_t status = MMC_SUCCESS;
     char *writebuffer = (char *)0x10040000;
     char *readbuffer = (char *)0x10041000;
+    uint32_t j = 0;
 
     MMC_GPRINT("[G]:==========Emmc Print Reg Test!==========\r\n");
     for (uint32_t i = 0; i < BUF_SIZE; i++) {
         writebuffer[i] = i%10+0x32;
     }
+
+    MMC_GPRINT("[G]:Emmc print MSHC reg before test flow!\r\n");
+    PrintfMshcBlock(eMMC);
 
     MMC_GPRINT("[G]:Emmc Init!\r\n");
     status = AlEmmc_Init();
@@ -657,6 +713,10 @@ uint32_t Emmc_PrintRegTest(void)
     if (status != MMC_SUCCESS) {
         goto END;
     }
+
+    MMC_GPRINT("[G]:Emmc print MSHC reg after test flow!\r\n");
+    PrintfMshcBlock(eMMC);
+    
     MMC_GPRINT("[G]:==========Emmc Print Reg Test Success!==========\r\n");
 END:
     return status;
@@ -666,10 +726,17 @@ uint32_t EMMC_Test(void)
 {
     uint32_t status = 0;
 
+    Enablepinmux1_mode2();
+
+#ifdef USE_ERROR_BRANCH
+    ERROR_BRANCH_STOP();
+#endif
+
 #ifdef EMMC_BRANCHTEST
 #ifdef AL_DEBUG_PRINT
     DebugCurType = ((DEBUG_BRANCHTEST) | (DEBUG_GENERAL));
 #endif
+    ResetHostComtroller(eMMC);
     status = Emmc_BranchTest();
     if (status != MMC_SUCCESS) {
         MMC_GPRINT("[G]:Emmc Branch Test Error %d\r\n", status);
@@ -682,6 +749,7 @@ uint32_t EMMC_Test(void)
 #ifdef AL_DEBUG_PRINT
     DebugCurType = ((DEBUG_INFO) | (DEBUG_GENERAL));
 #endif
+    ResetHostComtroller(eMMC);
     status = Emmc_PrintRegTest();
     if (status != MMC_SUCCESS) {
         MMC_GPRINT("[G]:Emmc Print Reg Test Error %d\r\n", status);
@@ -694,6 +762,7 @@ uint32_t EMMC_Test(void)
 #ifdef AL_DEBUG_PRINT
     DebugCurType = ((DEBUG_GENERAL));
 #endif
+    ResetHostComtroller(eMMC);
     status = Emmc_BoundaryTest();
     if (status != MMC_SUCCESS) {
         MMC_GPRINT("[G]:Emmc Boundary Test Error %d\r\n", status);
@@ -706,6 +775,7 @@ uint32_t EMMC_Test(void)
 #ifdef AL_DEBUG_PRINT
     DebugCurType = ((DEBUG_GENERAL));
 #endif
+    ResetHostComtroller(eMMC);
     status = Emmc_FatfsTest();
     if (status != MMC_SUCCESS) {
         MMC_GPRINT("[G]:Emmc Fatfs Test Error %d\r\n", status);
@@ -718,6 +788,7 @@ uint32_t EMMC_Test(void)
 #ifdef AL_DEBUG_PRINT
     DebugCurType = ((DEBUG_GENERAL));
 #endif
+    ResetHostComtroller(eMMC);
     status = Emmc_ByteReadTest();
     if (status != MMC_SUCCESS) {
         MMC_GPRINT("[G]:Emmc Byte Read Test Error %d\r\n", status);
@@ -730,6 +801,7 @@ uint32_t EMMC_Test(void)
 #ifdef AL_DEBUG_PRINT
     DebugCurType = ((DEBUG_GENERAL));
 #endif
+    ResetHostComtroller(eMMC);
     status = Emmc_TraverseTest();
     if (status != MMC_SUCCESS) {
         MMC_GPRINT("[G]:Emmc Traverse Test Error %d\r\n", status);
