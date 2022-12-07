@@ -4,9 +4,9 @@
 #include "al_emmc_write.h"
 #include <string.h>
 
-#define BLOCK_LEN   0x200
-#define BLOCK_NUM   2
-#define BUF_SIZE    (BLOCK_LEN*BLOCK_NUM)
+#define BLOCK_LEN           0x200
+#define BLOCK_NUM           2
+#define BUF_SIZE            (BLOCK_LEN*BLOCK_NUM)
 #define CSU_TEST_LENGTH1    300
 #define CSU_TEST_LENGTH2    300
 #define CSU_TEST_LENGTH3    600
@@ -24,13 +24,13 @@ extern void Enablepinmux1_mode2(void);
 #define EMMC_PRINTREGTEST
 #define EMMC_BYTEREADTEST
 
-#define EMMC_OFFSETSTEP         0x5700    //random none aligned num
-#define EMMC_LENGTHSTEP         0x21210    //random none aligned num
-#define EMMC_READ_LENGTH        0x2100  
-#define EMMC_OFFSET_START       100
-#define EMMC_LENGTH_START       100
-#define BRANCHTEST_EMMC_READ_OFFSET 400
-#define BRANCHTEST_EMMC_READ_LENGTH 700
+#define EMMC_OFFSETSTEP                 0x5700    //random none aligned num
+#define EMMC_LENGTHSTEP                 0x21210    //random none aligned num
+#define EMMC_READ_LENGTH                0x2100  
+#define EMMC_OFFSET_START               100
+#define EMMC_LENGTH_START               100
+#define BRANCHTEST_EMMC_READ_OFFSET     400
+#define BRANCHTEST_EMMC_READ_LENGTH     700
 
 uint32_t RawReadWriteTestEmmc()
 {

@@ -32,20 +32,14 @@ uint8_t EfuseDelayParam = 0;
 uint32_t CsdTab[4], CidTab[4], Resp[4], Rca = 0;
 uint32_t IoBank1Ref = 0;
 
-#if (defined AL_DEBUG_PRINT) && (defined MMC_BRANCHTEST)
+#ifdef AL_DEBUG_PRINT
 uint32_t BranchTestCount[BRANCH_MAX] = {0};
-#endif
-
-#ifdef USE_ERROR_BRANCH
 uint32_t ErrBranchCtrl = 0;
-#else
-uint32_t ErrBranchCtrl = ~0;
 #endif
 
 __IO DWC_mshc_block_registers* SDIO = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO1__BASE_ADDR;
 __IO DWC_mshc_block_registers* eMMC = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO0__BASE_ADDR;
 
-const char *BranchModuleName[] = {"Init","ByteRead","BlockRead","ModeSet"};
 
 /**
  * @brief read value in RegAddress
@@ -189,12 +183,10 @@ uint32_t WaitCmdComplete(volatile DWC_mshc_block_registers* Ptr, MMC_ERR_TYPE Er
         r.d32 = REG_READ(&(Ptr->error_int_stat_r__normal_int_stat.d32));
 
         status = ErrStatCheck(r);
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_CMD_COMPLETE_ERROR_NOTCMD8)) {
             status = MMC_FAILURE;
             ERROR_BRANCH_BIT_SET(BERROR_BRANCH_CMD_COMPLETE_ERROR_NOTCMD8);
         }
-#endif
 		if (status != MMC_SUCCESS) {
             MMC_BRANCHTEST_PRINT(BRANCH_CMD_COMPLETE_ERROR);
 #ifdef _USE_MSHC_PRINT
@@ -218,20 +210,16 @@ uint32_t WaitCmdComplete(volatile DWC_mshc_block_registers* Ptr, MMC_ERR_TYPE Er
                     MMC_BRANCHTEST_PRINT(BRANCH_CMDLINE_RST_COMPLETE_REG_READ);
                     r1.d32 = REG_READ(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
                     MMC_PRINT("[CMD COMPLETE]rst r is 0x%x\r\n", r1.d32);
-#ifdef USE_ERROR_BRANCH
                     if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_CMDLINE_RST_COMPLETE_TIMEOUT)) {
                         r1.bit.sw_rst_cmd = 1;
                     }
-#endif
                 }
                 MMC_BRANCHTEST_PRINT(BRANCH_CMDLINE_RST_COMPLETE_DONE);
                 
                 if (Mtimer_IsTimerOut(&Mmc1Mtimer)) {
-#ifdef USE_ERROR_BRANCH
                     if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_CMDLINE_RST_COMPLETE_TIMEOUT)) {
                         ERROR_BRANCH_BIT_SET(BERROR_BRANCH_CMDLINE_RST_COMPLETE_TIMEOUT);
                     }
-#endif
                     MMC_BRANCHTEST_PRINT(BRANCH_CMDLINE_RST_COMPLETE_TIMEOUT);
                     return MMC_CMD_TIMEOUT;
                 }
@@ -244,20 +232,16 @@ uint32_t WaitCmdComplete(volatile DWC_mshc_block_registers* Ptr, MMC_ERR_TYPE Er
             }
         }
         MMC_BRANCHTEST_PRINT(BRANCH_CMD_COMPLETE_NOTERROR);
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_CMD_COMPLETE_TIMEOUT)) {
             r.bit.cmd_complete  = 0x0;
         }
-#endif
     }
     MMC_BRANCHTEST_PRINT(BRANCH_CMD_COMPLETE_DONE);
 
     if (Mtimer_IsTimerOut(&MmcMtimer)) {
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_CMD_COMPLETE_TIMEOUT)) {
             ERROR_BRANCH_BIT_SET(BERROR_BRANCH_CMD_COMPLETE_TIMEOUT);
         }
-#endif
         MMC_BRANCHTEST_PRINT(BRANCH_CMD_COMPLETE_TIMEOUT);
         return MMC_CMD_TIMEOUT;
     } else {
@@ -288,12 +272,10 @@ uint32_t WaitTransferComplete(volatile DWC_mshc_block_registers* Ptr, MMC_ERR_TY
         r.d32 = REG_READ(&(Ptr->error_int_stat_r__normal_int_stat.d32));
 
         status = ErrStatCheck(r);
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_XFER_COMPLETE_ERROR)) {
             status = MMC_FAILURE;
             ERROR_BRANCH_BIT_SET(BERROR_BRANCH_XFER_COMPLETE_ERROR);
         }
-#endif
 		if (status != MMC_SUCCESS) {
             MMC_BRANCHTEST_PRINT(BRANCH_XFER_COMPLETE_ERROR);
             PrintfMshcBlock(Ptr);
@@ -311,20 +293,16 @@ uint32_t WaitTransferComplete(volatile DWC_mshc_block_registers* Ptr, MMC_ERR_TY
             REG_WRITE(&(Ptr->sdmasa_r), Buffer_SingleBlock);
         }
 #endif
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_XFER_COMPLETE_TIMEOUT)) {
             r.bit.xfer_complete = 0;
         }
-#endif
     }
     MMC_BRANCHTEST_PRINT(BRANCH_XFER_COMPLETE_DONE);
 
     if (Mtimer_IsTimerOut(&MmcMtimer)) {
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_XFER_COMPLETE_TIMEOUT)) {
             ERROR_BRANCH_BIT_SET(BERROR_BRANCH_XFER_COMPLETE_TIMEOUT);
         }
-#endif
         MMC_BRANCHTEST_PRINT(BRANCH_XFER_COMPLETE_TIMEOUT);
         return MMC_XFER_TIMEOUT;
     } else {
@@ -352,12 +330,10 @@ uint32_t TransferWithoutDMA(volatile DWC_mshc_block_registers* Ptr, uint32_t *Ad
     __IO ERROR_INT_STAT_R__NORMAL_INT_STAT_R r  = {.d32 = 0,};
     __IO BLOCKCOUNT_R__BLOCKSIZE_R r1           = {.d32 = 0,};
 
-#ifdef USE_ERROR_BRANCH
-        if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_NOT_XFER_CMD)) {
-            Err = MMC_CMD_XFER_ERR;
-            ERROR_BRANCH_BIT_SET(BERROR_BRANCH_NOT_XFER_CMD);
-        }
-#endif
+    if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_NOT_XFER_CMD)) {
+        Err = MMC_CMD_XFER_ERR;
+        ERROR_BRANCH_BIT_SET(BERROR_BRANCH_NOT_XFER_CMD);
+    }
     if ((Err != MMC_CMD_17_XFER_ERR) && (Err != MMC_CMD_8_XFER_ERR) && (Err != MMC_CMD_24_XFER_ERR)) {
         MMC_BRANCHTEST_PRINT(BRANCH_NOT_XFER_CMD);
         return MMC_CMD_XFER_ERR;
@@ -369,18 +345,15 @@ uint32_t TransferWithoutDMA(volatile DWC_mshc_block_registers* Ptr, uint32_t *Ad
         r.d32 = REG_READ(&(Ptr->error_int_stat_r__normal_int_stat.d32));
 
         status = ErrStatCheck(r);
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_BUF_RDY_ERROR)) {
             status = MMC_FAILURE;
             ERROR_BRANCH_BIT_SET(BERROR_BRANCH_BUF_RDY_ERROR);
         }
-#endif
         if (status != MMC_SUCCESS) {
             MMC_BRANCHTEST_PRINT(BRANCH_BUF_RDY_ERROR);
             return Err;
         }
         MMC_BRANCHTEST_PRINT(BRANCH_BUF_RDY_NOTERROR);
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_BUF_RDY_TIMEOUT)) {
             r.bit.buf_rd_ready = 0;
             r.bit.buf_wr_ready = 0;
@@ -394,17 +367,14 @@ uint32_t TransferWithoutDMA(volatile DWC_mshc_block_registers* Ptr, uint32_t *Ad
                     Err == MMC_CMD_24_XFER_ERR) {
             r.bit.buf_wr_ready = 0;
         }
-#endif
         if (Err == MMC_CMD_17_XFER_ERR) {
             if (r.bit.buf_rd_ready == 1) {
                 MMC_BRANCHTEST_PRINT(BRANCH_RDCMD17_AND_RDBUF_READY);
                 break;
             } else {
-#ifdef USE_ERROR_BRANCH
                 if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_RDCMD17BUF_RDY_NOT_READY)) {
                     ERROR_BRANCH_BIT_SET(BERROR_BRANCH_RDCMD17BUF_RDY_NOT_READY);
                 }
-#endif
                 MMC_BRANCHTEST_PRINT(BRANCH_RDCMD17BUF_RDY_NOT_READY);
                 continue;
             }
@@ -413,11 +383,9 @@ uint32_t TransferWithoutDMA(volatile DWC_mshc_block_registers* Ptr, uint32_t *Ad
                 MMC_BRANCHTEST_PRINT(BRANCH_RDCMD8_AND_RDBUF_READY);
                 break;
             } else {
-#ifdef USE_ERROR_BRANCH
                 if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_RDCMD8BUF_RDY_NOT_READY)) {
                     ERROR_BRANCH_BIT_SET(BERROR_BRANCH_RDCMD8BUF_RDY_NOT_READY);
                 }
-#endif
                 MMC_BRANCHTEST_PRINT(BRANCH_RDCMD8BUF_RDY_NOT_READY);
                 continue;
             }
@@ -426,11 +394,9 @@ uint32_t TransferWithoutDMA(volatile DWC_mshc_block_registers* Ptr, uint32_t *Ad
                 MMC_BRANCHTEST_PRINT(BRANCH_WRCMD24_AND_WRBUF_READY);
                 break;
             } else {
-#ifdef USE_ERROR_BRANCH
                 if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_WRCMD24BUF_RDY_NOT_READY)) {
                     ERROR_BRANCH_BIT_SET(BERROR_BRANCH_WRCMD24BUF_RDY_NOT_READY);
                 }
-#endif
                 MMC_BRANCHTEST_PRINT(BRANCH_WRCMD24BUF_RDY_NOT_READY);
                 continue;
             }
@@ -440,11 +406,9 @@ uint32_t TransferWithoutDMA(volatile DWC_mshc_block_registers* Ptr, uint32_t *Ad
     MMC_BRANCHTEST_PRINT(BRANCH_BUF_RDY_DONE);
 
     if (Mtimer_IsTimerOut(&MmcMtimer)) {
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_BUF_RDY_TIMEOUT)) {
             ERROR_BRANCH_BIT_SET(BERROR_BRANCH_BUF_RDY_TIMEOUT);
         }
-#endif
         MMC_BRANCHTEST_PRINT(BRANCH_BUF_RDY_TIMEOUT);
         return MMC_BUF_RDWR_RDY_TIMEOUT;
     } else {
@@ -493,20 +457,16 @@ uint32_t WaitClockStable(volatile DWC_mshc_block_registers* Ptr)
     MTIMER_OUT_CONDITION(MMC_WAIT_CLK_STABLE_TIMEOUT_VAL, &MmcMtimer, r.bit.internal_clk_stable != 1) {
         MMC_BRANCHTEST_PRINT(BRANCH_CLKSTABLE_REG_READ);
         r.d32 = REG_READ(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_CLKSTABLE_TIMEOUT)) {
             r.bit.internal_clk_stable = 0;
         }
-#endif
     }
     MMC_BRANCHTEST_PRINT(BRANCH_CLKSTABLE_DONE);
 
     if (Mtimer_IsTimerOut(&MmcMtimer)) {
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_CLKSTABLE_TIMEOUT)) {
             ERROR_BRANCH_BIT_SET(BERROR_BRANCH_CLKSTABLE_TIMEOUT);
         }
-#endif
         MMC_BRANCHTEST_PRINT(BRANCH_CLKSTABLE_TIMEOUT);
         status = MMC_WAIT_CLK_STABLE_TIMEOUT;
     } else {
@@ -529,17 +489,14 @@ uint32_t CheckLineInhibit(volatile DWC_mshc_block_registers* Ptr)
     __IO PSTATE_REG_R r = {.d32 = 0,};
 
     r.d32 = REG_READ(&(Ptr->pstate_reg.d32));
-#ifdef USE_ERROR_BRANCH
     if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_LINEINHIBIT_REG_READ)) {
         r.bit.cmd_inhibit = 1;
         ERROR_BRANCH_BIT_SET(BERROR_BRANCH_LINEINHIBIT_REG_READ);
     }
-#endif
     MTIMER_OUT_CONDITION(MMC_CHECK_LINE_INHIBIT_TIMEOUT_VAL, &MmcMtimer, \
                         (r.bit.cmd_inhibit == 1 || r.bit.cmd_inhibit_dat == 1) ) {
         MMC_BRANCHTEST_PRINT(BRANCH_LINEINHIBIT_REG_READ);
         r.d32 = REG_READ(&(Ptr->pstate_reg.d32));
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_LINEINHIBIT_CMD_NOTREADY)) {
             r.bit.cmd_inhibit = 1;
             ERROR_BRANCH_BIT_SET(BERROR_BRANCH_LINEINHIBIT_CMD_NOTREADY);
@@ -554,7 +511,6 @@ uint32_t CheckLineInhibit(volatile DWC_mshc_block_registers* Ptr)
             r.bit.cmd_inhibit = 1;
             r.bit.cmd_inhibit_dat = 1;
         }
-#endif
         if ((r.bit.cmd_inhibit == 1) && (r.bit.cmd_inhibit_dat == 0)) {
             MMC_BRANCHTEST_PRINT(BRANCH_LINEINHIBIT_CMD_NOTREADY);
         } else if((r.bit.cmd_inhibit == 0) && (r.bit.cmd_inhibit_dat == 1)) {
@@ -566,11 +522,9 @@ uint32_t CheckLineInhibit(volatile DWC_mshc_block_registers* Ptr)
     MMC_BRANCHTEST_PRINT(BRANCH_LINEINHIBIT_DONE);
 
     if (Mtimer_IsTimerOut(&MmcMtimer)) {
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_LINEINHIBIT_TIMEOUT)) {
             ERROR_BRANCH_BIT_SET(BERROR_BRANCH_LINEINHIBIT_TIMEOUT);
         }
-#endif
         MMC_BRANCHTEST_PRINT(BRANCH_LINEINHIBIT_TIMEOUT);
         status = MMC_WAIT_LINE_INHIBIT_TIMEOUT;
     } else {
@@ -615,12 +569,10 @@ uint32_t HostControllerSetup(volatile DWC_mshc_block_registers* Ptr)
 #endif
     r1.bit.sd_bus_pwr_vdd1  = MMC_PC_SBP_VDD1_ON;    //VDD1 PWR ON support SD and eMMC
     IoBank1Ref = REG_READ(IO_BANK1_REF);
-#ifdef USE_ERROR_BRANCH
     if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_IOBANK1_1V8)) {
         IoBank1Ref |= 0x1;
         ERROR_BRANCH_BIT_SET(BERROR_BRANCH_IOBANK1_1V8);
     }
-#endif
     MMC_PRINT("IoBank1Ref is %x\r\n", IoBank1Ref);
     if (MMC_IO_BANK1_SUPPORT_1V8(IoBank1Ref) == 1) {
         MMC_BRANCHTEST_PRINT(BRANCH_IOBANK1_1V8);

@@ -47,7 +47,6 @@ typedef struct{
 
 extern SD_CardInfo EmmcCardInfo;
 
-
 uint32_t AlEmmc_HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, uint32_t freq);
 uint32_t AlEmmc_SendInitCmd();
 uint32_t AlEmmc_SwitchDataWidth();

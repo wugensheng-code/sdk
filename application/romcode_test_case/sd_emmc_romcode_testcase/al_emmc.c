@@ -125,12 +125,12 @@ uint32_t AlEmmc_SendInitCmd()
         MMC_CHECK_LINE_AND_CLEAR_STATUS(eMMC);
 
         r1.d32                  = 0;
-#ifdef USE_ERROR_BRANCH
-    if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_IOBANK1_1V8)) {
-        IoBank1Ref |= 0x1;
-        ERROR_BRANCH_BIT_SET(BERROR_BRANCH_EMMC_IOBANK1_1V8);
-    }
-#endif
+
+        if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_IOBANK1_1V8)) {
+            IoBank1Ref |= 0x1;
+            ERROR_BRANCH_BIT_SET(BERROR_BRANCH_EMMC_IOBANK1_1V8);
+        }
+
         if (MMC_IO_BANK1_SUPPORT_1V8(IoBank1Ref) == 1) {
             MMC_BRANCHTEST_PRINT(BRANCH_EMMC_IOBANK1_1V8);
             r1.bit.voltage_mode = EMMC_OCR_DUAL_VOLTAGE;   //1.8V and 3v3
@@ -159,23 +159,22 @@ uint32_t AlEmmc_SendInitCmd()
     	validvoltage = (((response01 >> 31) == 1) ? 1:0);
 
         MMC_DELAY_MS(MMC_DELAY_SCALE*EfuseDelayParam);
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_VOLT_VALID_TIMEOUT)) {
             if (validvoltage == 1) {
                 EmmcMtimer.IsTimerOut = 1;
                 break;
             }
         }
-#endif
+
     }
     MMC_BRANCHTEST_PRINT(BRANCH_EMMC_VOLT_VALID_DONE);
 
     if (Mtimer_IsTimerOut(&EmmcMtimer)) {
-#ifdef USE_ERROR_BRANCH
+
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_VOLT_VALID_TIMEOUT)) {
             ERROR_BRANCH_BIT_SET(BERROR_BRANCH_EMMC_VOLT_VALID_TIMEOUT);
         }
-#endif
+
         MMC_BRANCHTEST_PRINT(BRANCH_EMMC_VOLT_VALID_TIMEOUT);
         status = MMC_CHECK_VOLT_TIMEOUT;
         return status;
@@ -541,14 +540,12 @@ uint32_t Csu_RawEmmcRead(uint32_t Offset, uint8_t* Dest, uint32_t Length)
     for (uint32_t i = startblock; i <= endblock; i++) {
         if (i == startblock) {
             MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_READ_STARTBLOCK);
-#ifdef USE_ERROR_BRANCH
             if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_RAW_READ_STARTBLOCK_ERROR)) {
                 if (ERROR_BRANCH_CHECK_BIT_SET(BERROR_BRANCH_XFER_COMPLETE_ERROR)) {
                     ERROR_BRANCH_BIT_RESET(BERROR_BRANCH_XFER_COMPLETE_ERROR);
                     ERROR_BRANCH_BIT_SET(BERROR_BRANCH_EMMC_RAW_READ_STARTBLOCK_ERROR);
                 }
             }
-#endif
             status = AlEmmc_ReadSingleBlock(FlashSharedBuf, i, blocksize);
             if (status != MMC_SUCCESS) {
                 MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_READ_STARTBLOCK_ERROR);
@@ -560,14 +557,12 @@ uint32_t Csu_RawEmmcRead(uint32_t Offset, uint8_t* Dest, uint32_t Length)
             pdestaddr += firstblockbytes;
         } else if (i == endblock) {
             MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_READ_ENDBLOCK);
-#ifdef USE_ERROR_BRANCH
             if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_RAW_READ_ENDBLOCK_ERROR)) {
                 if (ERROR_BRANCH_CHECK_BIT_SET(BERROR_BRANCH_XFER_COMPLETE_ERROR)) {
                     ERROR_BRANCH_BIT_RESET(BERROR_BRANCH_XFER_COMPLETE_ERROR);
                     ERROR_BRANCH_BIT_SET(BERROR_BRANCH_EMMC_RAW_READ_ENDBLOCK_ERROR);
                 }
             }
-#endif
             status = AlEmmc_ReadSingleBlock(FlashSharedBuf, i, blocksize);
             if (status != MMC_SUCCESS) {
                 MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_READ_ENDBLOCK_ERROR);
@@ -579,14 +574,12 @@ uint32_t Csu_RawEmmcRead(uint32_t Offset, uint8_t* Dest, uint32_t Length)
             pdestaddr += lastblockbytes;
         } else {
             MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_READ_MIDDLEBLOCK);
-#ifdef USE_ERROR_BRANCH
             if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_RAW_READ_MIDDLEBLOCK_ERROR)) {
                 if (ERROR_BRANCH_CHECK_BIT_SET(BERROR_BRANCH_XFER_COMPLETE_ERROR)) {
                     ERROR_BRANCH_BIT_RESET(BERROR_BRANCH_XFER_COMPLETE_ERROR);
                     ERROR_BRANCH_BIT_SET(BERROR_BRANCH_EMMC_RAW_READ_MIDDLEBLOCK_ERROR);
                 }
             }
-#endif
             status = AlEmmc_ReadSingleBlock(pdestaddr, i, blocksize);
             if (status != MMC_SUCCESS) {
                 MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_READ_MIDDLEBLOCK_ERROR);
@@ -612,23 +605,19 @@ uint32_t Csu_RawEmmcSetMode(uint32_t Mode, uint32_t Data)
 {
     uint32_t status = MMC_SUCCESS;
 
-#ifdef USE_ERROR_BRANCH
     if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_RAW_SET_MODE_DEFAULT)) {
         Mode = MMC_MODE_MAX;
         ERROR_BRANCH_BIT_SET(BERROR_BRANCH_EMMC_RAW_SET_MODE_DEFAULT);
     }
-#endif
     switch (Mode) {
         case MMC_MODE_FREQ:
             MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_SET_MODE_FREQ);
             MMC_PRINT("set emmc freq %d\r\n", Data);
 
-#ifdef USE_ERROR_BRANCH
             if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_RAW_SET_MODE_FREQ_INVALIDFREQ)) {
                 Data = MMC_FREQ_MAX;
                 ERROR_BRANCH_BIT_SET(BERROR_BRANCH_EMMC_RAW_SET_MODE_FREQ_INVALIDFREQ);
             }
-#endif
             if (Data >= MMC_FREQ_MAX) {
                 MMC_BRANCHTEST_PRINT(BRANCH_EMMC_RAW_SET_MODE_FREQ_INVALIDFREQ);
                 status = MMC_WRONG_FREQ;
@@ -674,12 +663,10 @@ uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
     Cardinfo->SD_csd.DeviceSize = ((CsdTab[1]&0x3)<<10)|((CsdTab[2]>>22)&0x3FF);
 
     MMC_PRINT("csize is %d\r\n", Cardinfo->SD_csd.DeviceSize);
-#ifdef USE_ERROR_BRANCH
     if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_EMMC_CARDSIZE_LESS2G)) {
         Cardinfo->SD_csd.DeviceSize = 0xFFE;
         ERROR_BRANCH_BIT_SET(BERROR_BRANCH_EMMC_CARDSIZE_LESS2G);
     }
-#endif    
     if (Cardinfo->SD_csd.DeviceSize != 0xFFF) {   //less than 2GB
         MMC_BRANCHTEST_PRINT(BRANCH_EMMC_CARDSIZE_LESS2G);
 
@@ -693,7 +680,8 @@ uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
         MMC_PRINT("device size mult is %d\r\n", tmp_devsizemul);
     } else {  //greater than 2GB, use ext_csd register
         MMC_BRANCHTEST_PRINT(BRANCH_EMMC_CARDSIZE_MORE2G);
-
+        Cardinfo->CardCapacity = 0x80000000;    //if more than 2G ,default 2G
+#if 0
 #ifdef _USE_SDMA
         __IO WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R r1 = {.d32 = 0,};
 
@@ -802,6 +790,7 @@ uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
         sec_count = (ext_csd_buf[215] << 24)|(ext_csd_buf[214] << 16)|(ext_csd_buf[213] << 8)|ext_csd_buf[212];
         MMC_PRINT("sec count is %d\r\n", sec_count);
         Cardinfo->CardCapacity = (uint64_t)sec_count * Cardinfo->CardBlockSize;
+#endif
     }
     MMC_PRINT("emmc capicity is %lld, %llx\r\n", Cardinfo->CardCapacity, Cardinfo->CardCapacity);
 

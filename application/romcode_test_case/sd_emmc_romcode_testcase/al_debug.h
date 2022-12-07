@@ -11,15 +11,12 @@ extern "C" {
 #define DEBUG_INFO          0x2     //GENERAL and cmd register info
 #define DEBUG_BRANCHTEST    0x4     //branch test log
 
-//#define DEBUG_MACRO
-#ifdef DEBUG_MACRO
-#define DebugCurType  ((DEBUG_GENERAL))
-#else
-uint32_t __attribute__((weak)) DebugCurType;
-#endif
+extern uint32_t DebugCurType;
 
 #define rom_printf(type, ...)\
         if (((type) & DebugCurType))  {printf (__VA_ARGS__); }
+
+extern void PrintSetDebugCurType(uint32_t level);
 
 #ifdef __cplusplus
 }

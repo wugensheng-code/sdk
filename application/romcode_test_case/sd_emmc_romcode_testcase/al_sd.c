@@ -69,12 +69,12 @@ uint32_t AlSd_HostControllerClockSetup(volatile DWC_mshc_block_registers* Ptr, u
     r1.bit.freq_sel         = 0;
     r1.bit.tout_cnt         = MMC_TC_TOUT_CNT_2_27;
     REG_WRITE(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
-    MMC_WAIT_CLK_STABLE(Ptr);
     MMC_PRINT("r1.d32 is %x\r\n", r1.d32);
     //soft rst release
     top_reg &= TOP_CFG_REG_CLK_RST_RELEASE;
     REG_WRITE(TOP_NS__CFG_CTRL_SDIO0_ADDR, top_reg);
     MMC_DELAY_MS(MMC_DELAY_SCALE*EfuseDelayParam);
+    MMC_WAIT_CLK_STABLE(Ptr);
     //sd_clk_on
     r1.bit.sd_clk_en        = MMC_CC_SD_CLK_ENABLE;             //Enable SDCLK/RCLK
     REG_WRITE(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
@@ -243,23 +243,19 @@ uint32_t AlSd_SendInitCmdSd()
             }
         }
         MMC_BRANCHTEST_PRINT(BRANCH_SD_VOLT_VALID_INVALIDVOLT);
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_SD_VOLT_VALID_TIMEOUT)) {
             if (validvoltage == 1) {
                 SdMtimer.IsTimerOut = 1;
                 break;
             }
         }
-#endif
     }
     MMC_BRANCHTEST_PRINT(BRANCH_SD_VOLT_VALID_DONE);
 
     if (Mtimer_IsTimerOut(&SdMtimer)) {
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_SD_VOLT_VALID_TIMEOUT)) {
             ERROR_BRANCH_BIT_SET(BERROR_BRANCH_SD_VOLT_VALID_TIMEOUT);
         }
-#endif
         MMC_BRANCHTEST_PRINT(BRANCH_SD_VOLT_VALID_TIMEOUT);
         return MMC_CHECK_VOLT_TIMEOUT;
     }
@@ -316,23 +312,19 @@ uint32_t AlSd_SendInitCmdSd()
 
         Rca = REG_READ(&(SDIO->resp01)) & 0xFFFF0000;
         MMC_PRINT("rca is %x\r\n", Rca);
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_SD_WAIT_RCA_TIMEOUT)) {
             if (Rca != 0) {
                 SdMtimer.IsTimerOut = 1;
                 break;
             }
         }
-#endif
     }
     MMC_BRANCHTEST_PRINT(BRANCH_SD_WAIT_RCA_DONE);
 
     if (Mtimer_IsTimerOut(&SdMtimer)) {
-#ifdef USE_ERROR_BRANCH
         if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_SD_WAIT_RCA_TIMEOUT)) {
             ERROR_BRANCH_BIT_SET(BERROR_BRANCH_SD_WAIT_RCA_TIMEOUT);
         }
-#endif
         MMC_BRANCHTEST_PRINT(BRANCH_SD_WAIT_RCA_TIMEOUT);
         return MMC_CHECK_RCA_TIMEOUT;
     }
@@ -798,6 +790,11 @@ uint32_t Csu_RawSdSetMode(uint32_t Mode, uint32_t Data)
 {
     uint32_t status = MMC_SUCCESS;
 
+    if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_SD_RAW_SET_MODE_DEFAULT)) {
+        Mode = MMC_MODE_MAX;
+        ERROR_BRANCH_BIT_SET(BERROR_BRANCH_SD_RAW_SET_MODE_DEFAULT);
+    }
+
 #ifdef USE_ERROR_BRANCH
     if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_SD_RAW_SET_MODE_DEFAULT)) {
         Mode = MMC_MODE_MAX;
@@ -808,12 +805,10 @@ uint32_t Csu_RawSdSetMode(uint32_t Mode, uint32_t Data)
         case MMC_MODE_FREQ:
             MMC_BRANCHTEST_PRINT(BRANCH_SD_RAW_SET_MODE_FREQ);
             MMC_PRINT("set sd freq %d\r\n", Data);
-#ifdef USE_ERROR_BRANCH
             if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_SD_RAW_SET_MODE_FREQ_INVALIDFREQ)) {
                 Data = MMC_FREQ_MAX;
                 ERROR_BRANCH_BIT_SET(BERROR_BRANCH_SD_RAW_SET_MODE_FREQ_INVALIDFREQ);
             }
-#endif
             if (Data >= MMC_FREQ_MAX) {
                 MMC_BRANCHTEST_PRINT(BRANCH_SD_RAW_SET_MODE_FREQ_INVALIDFREQ);
                 status = MMC_WRONG_FREQ;

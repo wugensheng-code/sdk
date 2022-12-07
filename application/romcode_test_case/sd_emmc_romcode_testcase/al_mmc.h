@@ -3,9 +3,8 @@
 
 #include <stdio.h>
 #include <stdint.h>
-//#include "../../../../demoapu/Common/Include/delay.h"
 #include "mtimer.h"
-#define AL_DEBUG_PRINT
+//#define AL_DEBUG_PRINT
 #ifdef AL_DEBUG_PRINT
 #include "al_debug.h"
 #endif
@@ -73,7 +72,7 @@ typedef enum{
 #define MMC_ERROR_TRANSFER_CMD_OFFSET	MMC_CMD_8_XFER_ERR
 #define MMC_ERROR_TRANSFER_CMD_NUM		(MMC_CMD_XFER_ERR - MMC_CMD_8_XFER_ERR)
 //Error INT status bits	length 13~15 reserved
-#define MMC_ERR_INT_STAT_BITS_LEN	7
+#define MMC_ERR_INT_STAT_BITS_LEN		7
 
 typedef enum {
 	BRANCH_WAITCLOCKSTABLE_ERROR,
@@ -237,56 +236,9 @@ typedef enum {
 //#define _USE_SDMA
 //#define _USE_4BIT
 //#define _USE_8BIT
-#ifdef AL_DEBUG_PRINT
 //#define _USE_MSHC_PRINT
-//#define _USE_ERR_PRINT	
-#define MMC_BRANCHTEST
-#define MMC_INFO_PRINT
-#define MMC_GENERAL_PRINT
+//#define _USE_ERR_PRINT
 
-#ifdef MMC_INFO_PRINT
-#define MMC_PRINT(...)	rom_printf(DEBUG_INFO, __VA_ARGS__)
-#else
-#define MMC_PRINT(...)
-#endif
-
-#ifdef MMC_GENERAL_PRINT
-#define MMC_GPRINT(...)	rom_printf(DEBUG_GENERAL, __VA_ARGS__)
-#else
-#define MMC_GPRINT(...)
-#endif
-//error branch support
-#define USE_ERROR_BRANCH
-#ifdef USE_ERROR_BRANCH
-#define SD_ERROR_BRANCH_DONE_MASK						0x3C03FDFF
-#define EMMC_ERROR_BRANCH_DONE_MASK						0x03FFFFFE
-#define ERROR_BRANCH_CHECK_BIT_NOTSET(erroroffset)		((ErrBranchCtrl & (1 << erroroffset)) == 0)
-#define ERROR_BRANCH_CHECK_BIT_SET(erroroffset)			((ErrBranchCtrl & (1 << erroroffset)) != 0)
-#define ERROR_BRANCH_BIT_SET(erroroffset)				do { \
-															ErrBranchCtrl |= (1 << erroroffset);\
-														} while(0)
-#define ERROR_BRANCH_BIT_RESET(erroroffset)				do { \
-															ErrBranchCtrl &= ~(1 << erroroffset);\
-														} while(0)
-#define SD_ERROR_BRANCH_CHECK_NOTDONE(erroroffset)		((ErrBranchCtrl | (0x1)) != (SD_ERROR_BRANCH_DONE_MASK))
-#define EMMC_ERROR_BRANCH_CHECK_NOTDONE(erroroffset)	((ErrBranchCtrl) != (EMMC_ERROR_BRANCH_DONE_MASK))
-#define ERROR_BRANCH_STOP()								(ErrBranchCtrl = ~0)
-#define ERROR_BRANCH_START()							(ErrBranchCtrl = 0)
-extern uint32_t ErrBranchCtrl;
-#else
-#define ERROR_BRANCH_CHECK_BIT_NOTSET(erroroffset)		
-#define ERROR_BRANCH_CHECK_BIT_SET(erroroffset)			
-#define ERROR_BRANCH_BIT_SET(erroroffset)				
-#define ERROR_BRANCH_BIT_RESET(erroroffset)				
-#define ERROR_BRANCH_CHECK_NOTDONE(erroroffset)			
-#define ERROR_BRANCH_STOP()								
-#define ERROR_BRANCH_START()		
-extern uint32_t ErrBranchCtrl;					
-#endif
-#else
-#define MMC_PRINT(...)
-#define MMC_GPRINT(...)
-#endif
 //IO BANK1 REF
 //bit 31-3:reserved
 //bit 2:bank1_vccio_det3v3
@@ -295,6 +247,14 @@ extern uint32_t ErrBranchCtrl;
 #define IO_BANK1_REF                0xF8803C04ULL
 
 #define MBIU_CTRL_R 0x510   //AHB BUS burst contrl register
+
+#define TOP_CFG_REG_CARD_PROT_SEL_REG		(0x1 << 7)
+#define TOP_CFG_REG_CARD_PROT_SEL_IO		(~TOP_CFG_REG_CARD_PROT_SEL_REG)
+#define TOP_CFG_REG_CARD_DETECT_SEL_REG		(0x1 << 6)
+#define TOP_CFG_REG_CARD_DETECT_SEL_IO		(~TOP_CFG_REG_CARD_DETECT_SEL_REG)
+#define TOP_CFG_REG_CLK_RST					(0x1 << 3)
+#define TOP_CFG_REG_CLK_RST_RELEASE			(~TOP_CFG_REG_CLK_RST)
+
 //top cfg register
 //bit 7:enable reg ctrl card write protection   0:io ctrl   1:reg ctrl
 //bit 6:enable reg ctrl card detection          0:io ctrl   1:reg ctrl
@@ -340,7 +300,6 @@ void Mmc_RegWrite32(unsigned long reg_address, uint32_t reg_wdata);
 
 #define REG_READ(reg_address) Mmc_RegRead32((unsigned long)reg_address)
 #define REG_WRITE(reg_address, reg_wdata) Mmc_RegWrite32((unsigned long)reg_address, reg_wdata)
-
 
 typedef enum {
 	FAILED = 0, 
@@ -1157,10 +1116,10 @@ typedef enum{
 #define DATA_READ 0x1
 #define DATA_WRITE 0x0
 
-#define MMC_Response_No                    (0x0)
-#define MMC_Response_Long                  (0x1)
-#define MMC_Response_Short                 (0x2)
-#define MMC_Response_Short_48B             (0x3)
+#define MMC_Response_No					(0x0)
+#define MMC_Response_Long				(0x1)
+#define MMC_Response_Short				(0x2)
+#define MMC_Response_Short_48B			(0x3)
 
 #define MMC_FREQ_400K					(0)    
 #define MMC_FREQ_10M					(1)
@@ -1221,31 +1180,54 @@ void ClearErrandIntStatus(volatile DWC_mshc_block_registers* Ptr);
 														ClearErrandIntStatus(ptr);\
 													} while(0)
 
-// if (ErrBranchCtrl == ~0) {\
-// 	rom_printf(DEBUG_BRANCHTEST, "[BRANCH_NUM]:[%d]\r\n",branch);\
-// }\
-
 #ifdef AL_DEBUG_PRINT
-#ifdef MMC_BRANCHTEST
 extern uint32_t BranchTestCount[BRANCH_MAX];
-#define MMC_BRANCHTEST_PRINT(branch)		do { \
-												if (ErrBranchCtrl == ~0) {\
-													rom_printf(DEBUG_BRANCHTEST, "[BRANCH_NUM]:[%d]\r\n",branch);\
-												}\
-												BranchTestCount[branch]++;\
-											} while(0)
-#define MMC_BRANCHTEST_CMD_PRINT(cmd)	do { \
-												rom_printf(DEBUG_BRANCHTEST, "[BRANCH_CMD]:cmdindex = [%d]\r\n",cmd);\
-											} while(0)
+extern uint32_t ErrBranchCtrl;
+#define MMC_PRINT(...)									do { \
+															rom_printf(DEBUG_INFO, __VA_ARGS__);\
+														} while(0)
+#define MMC_GPRINT(...)									do { \
+															rom_printf(DEBUG_GENERAL, __VA_ARGS__);\
+														} while(0)
+#define MMC_BRANCHTEST_PRINT(branch)					do { \
+															if (ErrBranchCtrl == ~0) {\
+																rom_printf(DEBUG_BRANCHTEST, "[BRANCH_NUM]:[%d]\r\n",branch);\
+															}\
+															BranchTestCount[branch]++;\
+														} while(0)
+#define MMC_BRANCHTEST_CMD_PRINT(cmd)					do { \
+															rom_printf(DEBUG_BRANCHTEST, "[BRANCH_CMD]:cmdindex = [%d]\r\n",cmd);\
+														} while(0)
+
+#define SD_ERROR_BRANCH_DONE_MASK						0x3C03FDFF
+#define EMMC_ERROR_BRANCH_DONE_MASK						0x03FFFFFE
+#define ERROR_BRANCH_CHECK_BIT_NOTSET(erroroffset)		((ErrBranchCtrl & (1 << erroroffset)) == 0)
+#define ERROR_BRANCH_CHECK_BIT_SET(erroroffset)			((ErrBranchCtrl & (1 << erroroffset)) != 0)
+#define ERROR_BRANCH_BIT_SET(erroroffset)				do { \
+															ErrBranchCtrl |= (1 << erroroffset);\
+														} while(0)
+#define ERROR_BRANCH_BIT_RESET(erroroffset)				do { \
+															ErrBranchCtrl &= ~(1 << erroroffset);\
+														} while(0)
+#define SD_ERROR_BRANCH_CHECK_NOTDONE(erroroffset)		((ErrBranchCtrl | (0x1)) != (SD_ERROR_BRANCH_DONE_MASK))
+#define EMMC_ERROR_BRANCH_CHECK_NOTDONE(erroroffset)	((ErrBranchCtrl) != (EMMC_ERROR_BRANCH_DONE_MASK))
+#define ERROR_BRANCH_STOP()								(ErrBranchCtrl = ~0)
+#define ERROR_BRANCH_START()							(ErrBranchCtrl = 0)
 #else
-#define MMC_BRANCHTEST_PRINT(branch, num)
+#define MMC_PRINT(...)
+#define MMC_GPRINT(...)
+#define MMC_BRANCHTEST_PRINT(branch)
 #define MMC_BRANCHTEST_CMD_PRINT(cmd)
+#define ERROR_BRANCH_CHECK_BIT_NOTSET(erroroffset)		(0)
+#define ERROR_BRANCH_CHECK_BIT_SET(erroroffset)			(0)
+#define ERROR_BRANCH_BIT_SET(erroroffset)				(0)
+#define ERROR_BRANCH_BIT_RESET(erroroffset)				(0)
+#define SD_ERROR_BRANCH_CHECK_NOTDONE(erroroffset)		(0)
+#define EMMC_ERROR_BRANCH_CHECK_NOTDONE(erroroffset)	(0)
+#define ERROR_BRANCH_STOP()								(0)
+#define ERROR_BRANCH_START()							(0)
 #endif
 
-#else
-#define MMC_BRANCHTEST_PRINT(branch, num)
-#define MMC_BRANCHTEST_CMD_PRINT(cmd)
-#endif
 
 extern __IO DWC_mshc_block_registers* SDIO;
 extern __IO DWC_mshc_block_registers* eMMC;
