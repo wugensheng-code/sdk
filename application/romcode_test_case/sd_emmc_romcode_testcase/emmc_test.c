@@ -523,9 +523,9 @@ uint32_t Emmc_BranchTest(void)
     for (uint32_t i = 0; i < BUF_SIZE; i++) {
         writebuffer[i] = i%10+0x32;
     }
-#ifdef USE_ERROR_BRANCH
+
     ERROR_BRANCH_STOP();
-#endif
+
     MMC_GPRINT("[G]:==========Correct Branch!==========\r\n");
     status = Csu_RawEmmcInit(&emmcparam);
     if (status != MMC_SUCCESS) {
@@ -559,7 +559,7 @@ uint32_t Emmc_BranchTest(void)
         MMC_GPRINT("[BRANCH_COUNT]: [%d]\t[%d]\r\n", i, BranchTestCount[i]);
     }
 #endif
-#ifdef USE_ERROR_BRANCH
+
     //coverage error branch
     MMC_GPRINT("[G]:==========Error Branch!==========\r\n");
     ERROR_BRANCH_START();
@@ -597,7 +597,7 @@ uint32_t Emmc_BranchTest(void)
 ERROR_STATUS:
         MMC_GPRINT("[G]:Status = %d\r\n", status);
     }
-#endif
+    ERROR_BRANCH_STOP();
     MMC_GPRINT("[G]:==========Emmc Branch Test Done!==========\r\n");
 
 #ifdef AL_DEBUG_PRINT
@@ -656,21 +656,7 @@ uint32_t Emmc_ByteReadTest(void)
             }
         }
     }
-    /*for (uint64_t i = 0; i < bytelength - EMMC_LENGTHSTEP; i+=EMMC_OFFSETSTEP) {
-        for (uint64_t j = EMMC_LENGTHSTEP; j < bytelength - i; j+=EMMC_LENGTHSTEP) {
-            MMC_GPRINT("[G]:Emmc Read Byte offset %llu, length %llu!\r\n", i, j);
-            Csu_RawEmmcRead(i, readbuffer, j);
-            if (status != MMC_SUCCESS) {
-                return status;
-            }
-            for (uint64_t k = 0; k < j; k++) {
-                if (readbuffer[k] != writebuffer[(i+k)%EmmcCardInfo.CardBlockSize]) {
-                    status = MMC_FAILURE;
-                    goto END;
-                }
-            }
-        }
-    }*/
+
     MMC_GPRINT("[G]:==========Emmc Byte Read Test Success!==========\r\n");
 
 END:
@@ -727,10 +713,6 @@ uint32_t EMMC_Test(void)
     uint32_t status = 0;
 
     Enablepinmux1_mode2();
-
-#ifdef USE_ERROR_BRANCH
-    ERROR_BRANCH_STOP();
-#endif
 
 #ifdef EMMC_BRANCHTEST
 #ifdef AL_DEBUG_PRINT
@@ -812,113 +794,3 @@ uint32_t EMMC_Test(void)
     return status;
 }
 
-/***************************************************************************/
-/**
- * @brief	test EMMC/EMMC read/write
- *
- * @param  None
- * @return MMC_SUCCESS
- *
- ******************************************************************************/
-/*uint32_t EMMC_Test(void)
-{
-	uint32_t fnum;            			  
-	char *ReadBuffer = (char *)0x12000000;
-	char *WriteBuffer =  (char *)0x11000000;
-	FIL fnew;
-    FILINFO fno;
-	uint32_t status = MMC_SUCCESS;
-    //memset((void *)0x10000000, 0, 0x10000000);
-    while(1) {
-#if 0
-    printf("[START]:<EMMC>\r\n");
-    status = RawReadWriteTestEmmc();
-    if (status != MMC_SUCCESS) {
-        printf("[FAIL]:<EMMC>, [ERRORCODE]:<%d>\r\n", status);
-        return status;
-    } else {
-        printf("[SUCCESS]:<EMMC>\r\n");   //方括号[]内为关键词，尖括号<>内为参数
-    }
-    printf("[DONE]:<EMMC>\r\n");
-#endif
-#if 0
-    CsuRawReadWriteTestEMMC();
-#endif
-#if 1
-    char *filename = "0:/test.bin";
-    memset(&fnew, 0, sizeof(FIL));
-    memset(&fno, 0, sizeof(FILINFO));
-    res_emmc = f_mount(&fs,"1:",1);  //EMMC test
-    printf("res_emmc is %d\r\n", res_emmc);
-    if (res_emmc == FR_NO_FILESYSTEM) {
-#if _USE_MKFS
-        printf("sd no file system, Wait for sd mkfs...");
-        res_emmc=f_mkfs("0:", FM_FAT32, 0, (void *)0x10000000, _MAX_SS);
-        printf("res_emmc is %d\r\n", res_emmc);
-        if (res_emmc == FR_OK) {
-            res_emmc = f_mount(NULL,"1:",1);
-            printf("res_emmc is %d\r\n", res_emmc);
-            res_emmc = f_mount(&fs,"1:",1);
-            printf("res_emmc is %d\r\n", res_emmc);
-        }
-#endif
-    }
-#if !_FS_READONLY
-    res_emmc = f_open(&fnew, filename,FA_CREATE_ALWAYS | FA_WRITE );
-    if ( res_emmc == FR_OK )
-    {
-        res_emmc=f_write(&fnew,(const void *)WriteBuffer,FIL_LARGE_RDWR_SIZE,&fnum);
-        if (res_emmc==FR_OK) {
-            printf("File write success, data byte num is %d\r\n",fnum);
-        } else {
-            printf("File write fail (%d)\r\n",res_emmc);
-        }
-        f_close(&fnew);
-    } else {
-        printf("File open fail!(%d)\r\n", res_emmc);
-    }
-#endif
-    res_emmc = f_open(&fnew, filename, FA_OPEN_EXISTING | FA_READ);
-    if (res_emmc == FR_OK)
-    {
-        res_emmc = f_lseek(&fnew, FIL_PT_OFFSET);
-        if (res_emmc==FR_OK)
-        {
-            printf("File lseek success!\r\n");
-        } else {
-            printf("File lseek fail! Error code is %d\r\n", res_emmc);
-        }
-        res_emmc = f_stat(filename, &fno) ;
-        if (res_emmc == FR_OK) {
-            printf("stat completed.\r\n");
-        } else {
-            printf("stat error: %d\r\n", res_emmc);
-            return -1;
-        }
-        //memset(ReadBuffer, 0, sizeof(ReadBuffer));
-        res_emmc = f_read(&fnew, (const void *)ReadBuffer, fno.fsize, &fnum);
-        if (res_emmc==FR_OK)
-        {
-            printf("File read success, data byte num is %d\r\n",fnum);
-            for (int i = FIL_PT_OFFSET; i < sizeof(WriteBuffer)-FIL_PT_OFFSET; i++) {
-                if (WriteBuffer[i] != ReadBuffer[i-FIL_PT_OFFSET]) {
-                    printf("File read error, data not match\r\n");
-                    break;
-                }
-            }
-        } else {
-            printf("File read fail (%d)\n",res_emmc);
-        }
-    } else {
-        printf("File open fail!(%d)\r\n", res_emmc);
-    }
-    f_close(&fnew);
-    f_mount(NULL,"1:",1);
-#endif
-    }
-    
-
-    return status;
-}
-
-*/

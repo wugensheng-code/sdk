@@ -29,9 +29,9 @@
 #include "al_sd.h"
 #include "al_sd_write.h"
 
-#define BLOCK_LEN   0x200
-#define BLOCK_NUM   1
-#define BUF_SIZE    (BLOCK_LEN*BLOCK_NUM)
+#define BLOCK_LEN           0x200
+#define BLOCK_NUM           1
+#define BUF_SIZE            (BLOCK_LEN*BLOCK_NUM)
 #define CSU_TEST_LENGTH1    300
 #define CSU_TEST_LENGTH2    300
 #define CSU_TEST_LENGTH3    600
@@ -406,9 +406,8 @@ uint32_t Sd_BranchTest(void)
         writebuffer[i] = i%10+0x32;
     }
     //correct branch
-#ifdef USE_ERROR_BRANCH
     ERROR_BRANCH_STOP();
-#endif
+
     MMC_GPRINT("[G]:==========Correct Branch!==========\r\n");
     status = AlSd_Init();
     if (status != MMC_SUCCESS) {
@@ -437,7 +436,6 @@ uint32_t Sd_BranchTest(void)
     }
 #endif
 
-#ifdef USE_ERROR_BRANCH
     //coverage error branch
     MMC_GPRINT("[G]:==========Error Branch!==========\r\n");
     ERROR_BRANCH_START();
@@ -468,8 +466,9 @@ uint32_t Sd_BranchTest(void)
 ERROR_STATUS:
         MMC_GPRINT("[G]:Status = %d\r\n", status);
     }
-#endif
     MMC_GPRINT("[G]:==========Sd Branch Test Done!==========\r\n");
+
+    ERROR_BRANCH_STOP();
 
 #ifdef AL_DEBUG_PRINT
     MMC_GPRINT("[G]:Sd Branch Count!\r\n");
@@ -498,13 +497,13 @@ uint32_t Sd_PrintRegTest(void)
     if (status != MMC_SUCCESS) {
         return status;
     }
-    MMC_GPRINT("[G]:Sd Change Freq 10M!\r\n");
-    Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
 
     status = AlSd_WriteSingleBlock(writebuffer,0,SDCardInfo.CardBlockSize);
     if (status != MMC_SUCCESS) {
         goto END;
     }
+    MMC_GPRINT("[G]:Sd Change Freq 10M!\r\n");
+    Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
     status = AlSd_ReadSingleBlock(readbuffer, 0, SDCardInfo.CardBlockSize);
     if (status != MMC_SUCCESS) {
         goto END;
@@ -523,10 +522,6 @@ uint32_t SD_Test(void)
     uint32_t status = 0;
 
     Enablepinmux1();
-
-#ifdef USE_ERROR_BRANCH
-    ERROR_BRANCH_STOP();
-#endif
 
 #ifdef SD_BRANCHTEST
 #ifdef AL_DEBUG_PRINT
@@ -606,120 +601,5 @@ uint32_t SD_Test(void)
 #endif
     return status;
 }
-
-/***************************************************************************/
-/**
- * @brief	test SD/EMMC read/write
- *
- * @param  None
- * @return MMC_SUCCESS
- *
- ******************************************************************************/
-/*uint32_t SD_Test(void)
-{
-	uint32_t fnum = 0;            			  
-	//char ReadBuffer[1024]={0};
-	//char WriteBuffer[] = "welcome777777777777777\r\n";
-    uint8_t *ReadBuffer = (uint8_t *)0x12000000;
-    uint8_t *WriteBuffer = (uint8_t *)0x11000000;
-    FIL fnew;
-    FILINFO fno;
-	uint32_t status = MMC_SUCCESS;
-
-    do{
-    memset(&fnew, 0, sizeof(FIL));
-    memset(&fno, 0, sizeof(FILINFO));
-
-    //clear ddr log
-    //memset((uint8_t *)(0x10000000), 0, 0x100000);
-    //logaddr = (uint8_t *)0x10000000;
-#if 1
-    printf("[START]:<SD>\r\n");
-    status = RawReadWriteTestSD();
-    if (status != MMC_SUCCESS) {
-        printf("[FAIL]:<SD>, [ERRORCODE]:<%d>\r\n", status);
-        return status;
-    } else {
-        printf("[SUCCESS]:<SD>\r\n");   //方括号[]内为关键词，尖括号<>内为参数
-    }
-    printf("[DONE]:<SD>\r\n");
-#endif
-
-#if 1
-    uint8_t *filename = "0:/BOOT.bin";
-	res_sd = f_mount(&fs,"0:",1);  //SD test
-    printf("res_sd is %d\r\n", res_sd);
-    if (res_sd == FR_NO_FILESYSTEM)
-    {
-#if _USE_MKFS
-        printf("sd no file system, Wait for sd mkfs...\r\n");
-        res_sd=f_mkfs("0:", FM_FAT32, 0, (void *)0x10000000, _MAX_SS);
-        printf("res_sd is %d\r\n", res_sd);
-        if (res_sd == FR_OK)
-        {
-            res_sd = f_mount(NULL,"0:",1);
-            printf("res_sd is %d\r\n", res_sd);
-            res_sd = f_mount(&fs,"0:",1);
-            printf("res_sd is %d\r\n", res_sd);
-        }
-#endif
-    }
-    Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
-#if !_FS_READONLY
-    res_sd = f_open(&fnew, filename,FA_CREATE_ALWAYS | FA_WRITE );
-    if ( res_sd == FR_OK )
-    {
-        res_sd=f_write(&fnew,(const void *)WriteBuffer, FIL_LARGE_RDWR_SIZE,&fnum);
-        if (res_sd==FR_OK)
-        {
-            printf("File write success, data byte num is %d\r\n",fnum);
-        } else {
-            printf("File write fail (%d)\r\n",res_sd);
-        }
-        f_close(&fnew);
-    } else {
-        printf("File open fail!(%d)\r\n", res_sd);
-    }//"test/READ.TXT"   /rt_files/weight.bin
-#endif
-    res_sd = f_open(&fnew, filename, FA_OPEN_EXISTING | FA_READ);
-    if (res_sd == FR_OK)
-    {
-        res_sd = f_lseek(&fnew, FIL_PT_OFFSET);
-        if (res_sd==FR_OK)
-        {
-            printf("File lseek success!\r\n");
-        } else {
-            printf("File lseek fail! Error code is %d\r\n", res_sd);
-        }
-        //memset(ReadBuffer, 0, sizeof(ReadBuffer));
-        res_sd = f_stat(filename, &fno) ;
-        if (res_sd == FR_OK) {
-            printf("stat completed.\r\n");
-        } else {
-            printf("stat error: %d\r\n", res_sd);
-            return -1;
-        }
-        res_sd = f_read(&fnew, (const void *)ReadBuffer, fno.fsize, &fnum);
-        if (res_sd==FR_OK)
-        {
-            printf("File read success, data byte num is %d\r\n",fnum);
-            for (int i = 0; i < FIL_LARGE_RDWR_SIZE; i++) {
-                if (WriteBuffer[i] != ReadBuffer[i]) {
-                    printf("File read error, data not match\r\n");
-                    break;
-                }
-            }
-        } else {
-            printf("File read fail (%d)\n",res_sd);
-        }
-    } else {
-        printf("File open fail!(%d)\r\n", res_sd);
-    }
-    f_close(&fnew);
-    f_mount(NULL,"0:",1);
-#endif
-}while(0);
-    return status;
-}*/
 
 /*********************************************END OF FILE**********************/

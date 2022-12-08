@@ -34,7 +34,7 @@ uint32_t IoBank1Ref = 0;
 
 #ifdef AL_DEBUG_PRINT
 uint32_t BranchTestCount[BRANCH_MAX] = {0};
-uint32_t ErrBranchCtrl = 0;
+uint32_t ErrBranchCtrl = ~0;
 #endif
 
 __IO DWC_mshc_block_registers* SDIO = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO1__BASE_ADDR;
@@ -583,6 +583,11 @@ uint32_t HostControllerSetup(volatile DWC_mshc_block_registers* Ptr)
     }
     REG_WRITE(&(Ptr->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1.d32), r1.d32);
     MMC_PRINT("r1.d32 is %x\r\n", r1.d32);
+
+    r2.d32 = REG_READ(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32));
+    r2.bit.tout_cnt = MMC_TC_TOUT_CNT_2_27;
+    REG_WRITE(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r2.d32);
+    MMC_PRINT("r2.d32 is %x\r\n", r2.d32);
 
     MMC_DELAY_MS(40);   //1msec+0.1~35msec+1msec+(74 clock)
 

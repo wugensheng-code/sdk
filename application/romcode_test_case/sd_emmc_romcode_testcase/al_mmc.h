@@ -1224,8 +1224,8 @@ extern uint32_t ErrBranchCtrl;
 #define ERROR_BRANCH_BIT_RESET(erroroffset)				(0)
 #define SD_ERROR_BRANCH_CHECK_NOTDONE(erroroffset)		(0)
 #define EMMC_ERROR_BRANCH_CHECK_NOTDONE(erroroffset)	(0)
-#define ERROR_BRANCH_STOP()								(0)
-#define ERROR_BRANCH_START()							(0)
+#define ERROR_BRANCH_STOP()
+#define ERROR_BRANCH_START()
 #endif
 
 
