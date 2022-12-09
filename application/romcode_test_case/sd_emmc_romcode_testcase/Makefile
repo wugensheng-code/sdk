@@ -1,4 +1,4 @@
-TARGET = 1romcode_test
+TARGET = 1romcode_test_apu_sd
 
 NUCLEI_SDK_ROOT = ../../..
 
@@ -6,7 +6,7 @@ SRCDIRS = . FATFS
 
 INCDIRS = . FATFS
 
-COMMON_FLAGS := -O2 -Wall
+COMMON_FLAGS := -O2 -Wall -DAL_DEBUG_PRINT -D_USE_WRITE=1 -D_FS_READONLY=0 -D_USE_MKFS=1
 #-Werror=uninitialized
 
 #SOC := demoapu

@@ -9,7 +9,9 @@
 extern "C" {
 #endif
 
-#define _USE_WRITE	1	/* 1: Enable disk_write function */
+#ifndef _USE_WRITE
+#define _USE_WRITE	0
+#endif
 #define _USE_IOCTL	1	/* 1: Enable disk_ioctl fucntion */
 
 #include "ff.h"

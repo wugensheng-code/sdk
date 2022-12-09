@@ -8,7 +8,9 @@
 / Function Configurations
 /---------------------------------------------------------------------------*/
 
-#define _FS_READONLY	0
+#ifndef _FS_READONLY
+#define _FS_READONLY	1
+#endif
 /* This option switches read-only configuration. (0:Read/Write or 1:Read-only)
 /  Read-only configuration removes writing API functions, f_write(), f_sync(),
 /  f_unlink(), f_mkdir(), f_chmod(), f_rename(), f_truncate(), f_getfree()
@@ -38,8 +40,9 @@
 /* This option switches filtered directory read functions, f_findfirst() and
 /  f_findnext(). (0:Disable, 1:Enable 2:Enable with matching altname[] too) */
 
-
-#define	_USE_MKFS		1
+#ifndef _USE_MKFS
+#define	_USE_MKFS		0
+#endif
 /* This option switches f_mkfs() function. (0:Disable or 1:Enable) */
 
 
