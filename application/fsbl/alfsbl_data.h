@@ -16,7 +16,7 @@ extern "C" {
 
 #include "demosoc.h"
 #include "alfsbl_defines.h"
-#include "alfsbl_sec.h"
+#include "al9000_secure.h"
 
 #if defined (CPU_RPU_64)
 #define PTRSIZE uint64_t
@@ -83,7 +83,7 @@ extern "C" {
 #define ALIH_PH_ATTRIB_AUTH_TYPE_MASK      (0x03 << 14)
 #define ALIH_PH_ATTRIB_AUTH_TYPE_NONE      (0x00 << 14)
 #define ALIH_PH_ATTRIB_AUTH_TYPE_SM2       (0x01 << 14)
-#define ALIH_PH_ATTRIB_AUTH_TYPE_ECC256  (0x02 << 14)
+#define ALIH_PH_ATTRIB_AUTH_TYPE_ECC256    (0x02 << 14)
 #define ALIH_PH_ATTRIB_AUTH_TYPE_MAXVAL    (0x02 << 14)
 
 #define ALIH_PH_ATTRIB_ENC_TYPE_MASK       (0x03 << 12)
@@ -141,22 +141,8 @@ typedef struct _AlFsbl_BootHeaderFull_ {
 	uint8_t  EncKey[32];           // 0xa0~0xbc,   encryption key
 	uint8_t  SecHdrIv[32];         // 0xc0~0xdc,   secure header iv
 	uint8_t  Reserved_E0[32];      // 0xe0~0xfc,   reserved
-	uint32_t RegInitVal[128];       // 0x100~0x2fc, register intialization data
+	uint32_t RegInitVal[128];      // 0x100~0x2fc, register intialization data
 } AlFsbl_BootHeaderFull;
-
-
-typedef struct _AlFsbl_BootHeader_ {
-	uint32_t QspiWidthSel;
-	uint32_t ImageId;
-	uint32_t EncStatus;
-	uint32_t BhAttr;
-	uint32_t BhAcOffset;
-	uint32_t BhChecksum;
-	uint32_t FirstPartiHdrOffset;
-	uint32_t PartitionNum;
-	uint8_t  EncKey[32];
-	uint8_t  SecHdrIv[32];
-} AlFsbl_BootHeader;
 
 
 typedef struct _AlFsbl_PartitionHeader_ {
@@ -177,19 +163,6 @@ typedef struct _AlFsbl_PartitionHeader_ {
 } AlFsbl_PartitionHeader;
 
 
-//typedef struct {
-//	uint32_t Version;                /**< 0x00 bootgen version used  */
-//	uint32_t NoOfPartitions;         /**< 0x04 No of partition present  */
-//	uint32_t PartitionHeaderAddress; /**< 0x08 Address to start of partition header*/
-//	uint32_t Reserved_0xC;           /**< 0x0C Reserved */
-//	uint32_t AuthCertificateOffset;  /**  0x10 Authentication certificate address */
-//	uint32_t PartitionPresentDevice; /**< 0x14 Reserved for AL9000 */
-//	uint32_t Reserved[9];            /**< ~ 0x38 Reserved */
-//	uint32_t Checksum;               /**< 0x3C Checksum of the image header table */
-//} AlFsbl_ImageHeaderTable;
-
-
-
 typedef struct _AlFsbl_ImageHeader_ {
 	AlFsbl_BootHeaderFull   BootHeader;
 	AlFsbl_PartitionHeader  PartitionHeader[ALIH_MAX_PARTITIONS];
@@ -204,20 +177,21 @@ typedef struct _AlFsbl_HandoffValues_ {
 
 typedef struct _AlFsbl_DeviceOps_ {
 	uint32_t DeviceBaseAddress;
-	uint32_t (*DeviceInit)(void);
-	uint32_t (*DeviceCopy)(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo);
+	uint32_t BlockSizeMax;
+	uint32_t (*DeviceInit)(uint32_t *pBlockSizeMax);
+	uint32_t (*DeviceCopy)(PTRSIZE SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo);
 	uint32_t (*DeviceRelease)(void);
 } AlFsbl_DeviceOps;
 
 
 typedef struct _AlFsblInfo_ {
-	uint32_t    Version;
-	uint32_t    ProcessorID;
-	PTRSIZE     ImageOffsetAddress;
-	uint32_t    ErrorCode;
-	uint32_t    PrimaryBootDevice;
-	uint32_t    HandoffCpuNum;
-	uint32_t    ResetReason;
+	uint32_t             Version;
+	uint32_t             ProcessorID;
+	PTRSIZE              ImageOffsetAddress;
+	uint32_t             ErrorCode;
+	uint32_t             PrimaryBootDevice;
+	uint32_t             HandoffCpuNum;
+	uint32_t             ResetReason;
 	AlFsbl_DeviceOps     DeviceOps;
 	AlFsbl_ImageHeader   ImageHeader;  /// todo, need to definition
 	AlFsbl_HandoffValues HandoffValues[3];

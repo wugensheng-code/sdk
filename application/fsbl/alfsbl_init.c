@@ -5,10 +5,13 @@
  *      Author: qsxu
  */
 
+#include <stdio.h>
+
+#include "demosoc.h"
+
 #include "alfsbl_hw.h"
 #include "alfsbl_init.h"
-#include "demosoc.h"
-#include <stdio.h>
+#include "psu_init.h"
 
 #if __riscv
 #include "core_feature_eclic.h"
@@ -37,11 +40,18 @@ uint32_t AlFsbl_Initialize(AlFsblInfo *FsblInstancePtr)
 	}
 
 	/// clear pending interrupt
+	printf("Clear all pending interrupts of rpu...\r\n");
 	AlFsbl_ClearPendingInterrupt();
 
 	/// processor init
 	/// to get running cpu ID and its running status
 	Status = AlFsbl_ProcessorInit(FsblInstancePtr);
+	if(Status != ALFSBL_SUCCESS) {
+		goto END;
+	}
+
+	/// psu init
+	Status = psu_init();
 	if(Status != ALFSBL_SUCCESS) {
 		goto END;
 	}
@@ -78,9 +88,11 @@ static uint32_t AlFsbl_GetResetReason(void)
 	uint32_t Ret;
 
 	if((REG32(SYSCTRL_S_GLOBAL_SRSTN)) & SYSCTRL_S_GLOBAL_SRSTN_MSK_PSONLY) {
+		printf("PS only reset\r\n");
 		Ret = FSBL_PS_ONLY_RESET;
 	}
 	else {
+		printf("System reset\r\n");
 		Ret = FSBL_SYSTEM_RESET;
 	}
 

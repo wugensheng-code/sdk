@@ -12,16 +12,16 @@
 #include "alfsbl_partition_load.h"
 #include "alfsbl_handoff.h"
 #include "alfsbl_err_lockdown.h"
-#include "alfsbl_sec.h"
+#include "al9000_secure.h"
 #include "alfsbl_misc.h"
+#include "alfsbl_hw.h"
 
 #include "demosoc.h"
-#include "driver/qspi/qspi_drv.h"
-#include "driver/qspi/qspi_flash_drv.h"
+#include "qspi_drv.h"
+#include "qspi_flash_drv.h"
 
 #include "alfsbl_qspi.h"
 
-#include "enc_test.h"
 
 
 /********************* global variables *********************/
@@ -35,11 +35,13 @@ SecureInfo FsblSecInfo = {0};
 #define SIMU_FAIL (0x0bad0bad)
 void simu_report(uint32_t status)
 {
-	/*__asm__ __volatile__(
+#if defined SIMU_AL9000_DV
+	__asm__ __volatile__(
 	"csrw mscratch, %[src]"
 	:
 	:[src]"r"(status)
-	);*/
+	);
+#endif
 	return;
 }
 
@@ -57,7 +59,6 @@ int main(void)
 #if defined SIMU_AL9000_DV
 	REG32(SYSCTRL_NS_PLS_PROT) = REG32(SYSCTRL_NS_PLS_PROT) & (~0x2);
 #endif
-
 
 	while (FsblStage <= ALFSBL_STAGE_DFT) {
 		switch (FsblStage) {
@@ -155,7 +156,7 @@ int main(void)
 		case ALFSBL_STAGE_ERR:
 			printf("=================== In Stage Err ===================\r\n");
 			printf("fsbl error: %x\r\n", FsblStatus);
-			AlFsbl_ErrorLockDown(FsblStatus);
+			AlFsbl_ErrorLockDown(&FsblInstance, FsblStatus);
 
 			/// we should never be here
 			FsblStage = ALFSBL_STAGE_DFT;
@@ -164,7 +165,7 @@ int main(void)
 		case ALFSBL_STAGE_DFT:
 		default:
 			printf("================= In Stage Default =================\r\n");
-			printf("In default stage: we should never be here");
+			printf("In default stage: we should never be here\r\n");
 			break;
 		}
 

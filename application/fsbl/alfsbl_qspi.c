@@ -11,7 +11,7 @@
 
 #include "alfsbl_qspi.h"
 #include "alfsbl_misc.h"
-#include "alfsbl_sec.h"
+#include "al9000_secure.h"
 #include "qspi_drv.h"
 #include "qspi_flash_drv.h"
 
@@ -106,7 +106,7 @@ void QSPI_FLASH_SR_BIT_SET (unsigned bit_num, unsigned bit_val)
 
 
 
-uint32_t AlFsbl_Qspi24Init(void)
+uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
 {
 	QspiParams qspi_params;
 	Csu_QspiInit(&qspi_params);
@@ -120,6 +120,8 @@ uint32_t AlFsbl_Qspi24Init(void)
 	g_pdev->regs->SPI_CTRLR0 = (g_pdev->regs->SPI_CTRLR0) | (1 << 30);
 
     Qspi_Enable(g_pdev);
+
+    *pBlockSizeMax = 512;   // this is only for simulation test
 
 	return 0;
 }

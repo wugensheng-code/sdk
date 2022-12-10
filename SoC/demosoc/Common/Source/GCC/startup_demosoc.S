@@ -234,15 +234,19 @@ _start:
      */
     li t0, (1<<3) /*li t0, MMISC_CTL_NMI_CAUSE_FFF  old one*/
     csrs CSR_MMISC_CTL, t0
+
  #if defined FPGA_STAGE_7
-  //  li t0, (1<<3)
-  //  csrc CSR_MMISC_CTL, t0       //BPU: 1(default) enable, 0: disable ,csrc clear the enable bit 
-  //   li t0, (1<<12)
-  //  csrs CSR_MMISC_CTL, t0
+ #if defined RPU_FSBL_SIMU
+    li t0, (1<<3)
+    csrc CSR_MMISC_CTL, t0       //BPU: 1(default) enable, 0: disable ,csrc clear the enable bit
+    li t0, (1<<12)
+    csrs CSR_MMISC_CTL, t0
+ #endif
  #else
    li t0, MMISC_CTL_NMI_CAUSE_FFF
    csrs CSR_MMISC_CTL, t0
  #endif
+
     /*
      * Intialize ECLIC vector interrupt
      * base address mtvt to vector_base

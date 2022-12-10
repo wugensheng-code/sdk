@@ -8,6 +8,7 @@
 #include "demosoc.h"
 #include "alfsbl_misc.h"
 
+
 void *AlFsbl_MemCpy(void *DestPtr, const void *SrcPtr, uint32_t Len)
 {
 	uint32_t *Dst = DestPtr;

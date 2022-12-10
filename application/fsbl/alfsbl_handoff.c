@@ -60,7 +60,7 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 
 	RunningCpu = FsblInstancePtr->ProcessorID;
 
-	printf("Mark FSBL is completed...");
+	printf("Mark FSBL is completed...\r\n");
 	REG32(SYSCTRL_S_FSBL_ERR_CODE) = ALFSBL_COMPLETED;
 
 	/// remove isolation of ps-pl cross interface
@@ -69,11 +69,17 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 	/// disable pcap to restore pcap-pl isolation
 	REG32(CSU_PCAP_ENABLE) = 0;
 
+	if(FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_JTAG) {
+		printf("jump to a infinite loop\r\n");
+		REG32(0x60000000) = 0xa001a001;
+		AlFsbl_HandoffExit(0x60000000);
+	}
+
 	for(HandoffIdx = 0; HandoffIdx < FsblInstancePtr->HandoffCpuNum; HandoffIdx++) {
 		CpuSettings = FsblInstancePtr->HandoffValues[HandoffIdx].CpuSettings;
 		HandoffAddress = FsblInstancePtr->HandoffValues[HandoffIdx].HandoffAddress;
-		printf("handoff cpu : %08x\n", FsblInstancePtr->HandoffValues[HandoffIdx].CpuSettings);
-		printf("handoff addr: %08x\n", FsblInstancePtr->HandoffValues[HandoffIdx].HandoffAddress);
+		printf("handoff cpu : %08x\r\n", FsblInstancePtr->HandoffValues[HandoffIdx].CpuSettings);
+		printf("handoff addr: %08x\r\n", FsblInstancePtr->HandoffValues[HandoffIdx].HandoffAddress);
 
 		if(RunningCpu != CpuSettings) {
 			/// handoff to a different cpu

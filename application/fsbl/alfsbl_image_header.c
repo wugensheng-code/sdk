@@ -6,12 +6,10 @@
  */
 #include <stdio.h>
 #include "alfsbl_image_header.h"
-#include "alfsbl_sec.h"
+#include "al9000_secure.h"
+#include "demosoc.h"
 
-//extern uint8_t  ReadBuffer[READ_BUFFER_SIZE];
 extern uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE];
-//extern uint32_t Iv[ALIH_BH_IV_LENGTH / 4U];
-//extern SecureInfo FsblSecInfo;
 
 
 uint32_t AlFsbl_BootDevInitAndHdrValidate(AlFsblInfo *FsblInstancePtr)
@@ -114,7 +112,7 @@ uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 		printf("image header authentication passed...\r\n");
 	}
 	else {
-		printf("image header authentication not enabled....\n");
+		printf("image header authentication not enabled....\r\n");
 	}
 #endif
 
@@ -187,8 +185,8 @@ uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl)
 	ImageOffsetAddress = FsblInstancePtr->ImageOffsetAddress;
 	BootHdrAttrb = FsblInstancePtr->ImageHeader.BootHeader.BhAttr;
 
-	printf("Efuse Ctrl:   %08x\n", EfuseCtrl);
-	printf("BootHdrAttrb: %08x\n", BootHdrAttrb);
+	printf("Efuse Ctrl:   %08x\r\n", EfuseCtrl);
+	printf("BootHdrAttrb: %08x\r\n", BootHdrAttrb);
 
 	/// get image header authentication type
 	if((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_SM2) {
@@ -363,16 +361,6 @@ uint32_t AlFsbl_SpkVerification(AlFsblInfo *FsblInstancePtr, SecureInfo *pFsblIH
 END:
 	return Status;
 }
-
-
-
-
-
-
-
-
-
-
 
 
 

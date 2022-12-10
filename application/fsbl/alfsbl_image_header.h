@@ -18,18 +18,17 @@ extern "C" {
 #include "alfsbl_boot.h"
 #include "alfsbl_misc.h"
 #include "alfsbl_hw.h"
-#include "alfsbl_sec.h"
+#include "al9000_secure.h"
 
 
 uint32_t AlFsbl_BootDevInitAndHdrValidate(AlFsblInfo *FsblInstancePtr);
-//uint32_t AlFsbl_ValidateHeader(AlFsblInfo *FsblInstancePtr);
 uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr);
-//uint32_t AlFsbl_ReadPartitionHeader(AlFsblInfo *AlFsblInstancePtr, uint32_t ImageAddr);
 
 uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl);
 uint32_t AlFsbl_PpkVerification(AlFsblInfo *FsblInstancePtr, uint32_t BootHdrAttrb, uint32_t EfuseCtrl);
-//uint32_t AlFsbl_SpkVerification(AlFsblInfo *FsblInstancePtr, uint32_t BootHdrAttrb, uint32_t EfuseCtrl);
 uint32_t AlFsbl_SpkVerification(AlFsblInfo *FsblInstancePtr, SecureInfo *pFsblIHSecInfo);
+
+
 
 #ifdef __cplusplus
 }

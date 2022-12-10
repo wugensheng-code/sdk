@@ -20,6 +20,7 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 {
 	uint32_t Status = ALFSBL_SUCCESS;
 	uint32_t BootMode;
+	uint32_t BlockSizeMax;
 
 	BootMode = REG32(SYSCTRL_NS_BOOT_MODE);
 
@@ -33,7 +34,7 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 			goto END;
 		}
 	}
-	
+
 	switch(BootMode) {
 	case ALFSBL_BOOTMODE_JTAG:
 		Status = ALFSBL_STATUS_JTAG;
@@ -75,7 +76,7 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 		break;
 
 	default:
-		printf("unsupported boot mode\r\n");
+		printf("Unsupported boot mode\r\n");
 		Status = ALFSBL_ERROR_UNSUPPORTED_BOOT_MODE;
 	}
 
@@ -83,12 +84,14 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 		goto END;
 	}
 
-	Status = FsblInstancePtr->DeviceOps.DeviceInit();
+	Status = FsblInstancePtr->DeviceOps.DeviceInit(&BlockSizeMax);
 	if(ALFSBL_SUCCESS != Status) {
 		printf("Device init failed: %x\r\n", Status);
 		Status = ALFSBL_ERROR_DEVICE_INIT_FAILED;
 		goto END;
 	}
+
+	FsblInstancePtr->DeviceOps.BlockSizeMax = BlockSizeMax;
 
 END:
 	return Status;

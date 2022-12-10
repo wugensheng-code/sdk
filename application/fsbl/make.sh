@@ -1,5 +1,5 @@
 #!/bin/csh
 
 
-make DOWNLOAD=ocm SOC=demosoc CORE=ux600 dasm
+make DOWNLOAD=ocm SOC=demosoc CORE=ux600 dasm FSBL_SIMU_SKIP_HEADERCHECK=yes FSBL_SIMU_PL_TEST_MODE=1
 

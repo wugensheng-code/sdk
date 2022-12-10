@@ -15,6 +15,7 @@ extern "C" {
 #include <stdint.h>
 #include "alfsbl_err_code.h"
 #include "alfsbl_data.h"
+#include "alfsbl_boot.h"
 
 void AlFsbl_HandoffExit(uint64_t HandoffAddress);
 

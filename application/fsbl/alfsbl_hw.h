@@ -13,9 +13,9 @@ extern "C" {
 #endif
 
 /// simulation platform
-//#define SIMU_AL9000_DV
+#define SIMU_AL9000_DV
 
-#define IMAGE_FLASH_OFFSET 0x00000000
+#define IMAGE_FLASH_OFFSET (0x00000000)
 
 #define QSPI_XIP_BASEADDR  (0x70000000)
 

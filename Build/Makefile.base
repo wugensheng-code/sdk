@@ -30,6 +30,17 @@ V ?=
 ## If SILENT=1, it will not display any compiling messsage
 SILENT ?=
 
+## FSBL Simu flag:
+FSBL_SIMU_SKIP_HEADERCHECK ?= no
+
+## FSBL PL Partition Load Mode:
+## 0: regular,
+## 1: in blocks, directly to PCAP WR STREAM
+## 2: in blocks, firstly to buffer in ocm, then to PCAP WR STREAM
+## 3: whole block, to buffer in ocm, then to PCAP WR STREAM
+FSBL_SIMU_PL_TEST_MODE ?= 0
+
+
 # Variables should be defined in Application Makefile
 ## Available choices:
 ## The name of sub directories in $(NUCLEI_SDK_ROOT)/OS/

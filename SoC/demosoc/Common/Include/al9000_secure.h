@@ -5,6 +5,7 @@
  *      Author: qsxu
  */
 
+
 #ifndef ALFSBL_SEC_H_
 #define ALFSBL_SEC_H_
 
@@ -13,12 +14,14 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-#include "alfsbl_hw.h"
+//#include "alfsbl_hw.h"
 
 #define PPK_BYTE_LENGTH  (64U)
 #define SPK_BYTE_LENGTH  (64U)
 
 #define HASH_BYTE_LENGTH (32U)
+
+#define CSU_MSG_RAM_BASEADDR             (0XF8080000UL)
 
 #define EFUSE_SEC_CTRL                   (SYSCTRL_S_EFUSE_GLB18)
 #define EFUSE_AUTH_TYPE_OFFSET           (8U)
@@ -90,9 +93,9 @@ extern "C" {
 #define OP_ENCRYPT_SM4     (0x64)
 #define OP_ENCRYPT_NONE    (0x65)
 
-#define OP_HASH_SHA256     (0x66)
-#define OP_HASH_SM3        (0x67)
-#define OP_HASH_NONE       (0x68)
+#define OP_HASH_SHA256     (0b10)
+#define OP_HASH_SM3        (0b11)
+#define OP_HASH_NONE       (0b00)
 
 #define OP_AUTH_PASS       (0x69)
 #define OP_AUTH_FAIL       (0x6A)
@@ -162,6 +165,21 @@ extern "C" {
 #define CSUDMA_SRC_INCR     (0x0 << 0)
 #define CSUDMA_SRC_NOINCR   (0x1 << 0)
 
+#define FIRST_BLOCK         (0x1 << 2)
+#define LAST_BLOCK          (0x2 << 2)
+#define MIDDLE_BLOCK        (0x3 << 2)
+#define WHOLE_BLOCK         (0x0 << 2)
+
+#define BLOCK_LENGTH        (0x2048)
+
+/// Error Code
+#define SEC_ERROR_CHECKSUM_ERROR          (0x60U)
+#define SEC_ERROR_SEC_PARAM_INVALID       (0x65U)
+#define SEC_ERROR_INVALID_CSU_ACK         (0x66U)
+#define SEC_ERROR_HASH_FAIL               (0x67U)
+#define SEC_ERROR_AUTH_FAIL               (0x68U)
+#define SEC_ERROR_NO_VALID_PPK            (0x69U)
+
 
 typedef struct _SecureInfo_ {
 	uint8_t  AuthType;       /// OP_AUTH_ECC256 / OP_AUTH_SM2 / OP_AUTH_NONE
@@ -171,9 +189,10 @@ typedef struct _SecureInfo_ {
 	uint8_t  EncDir;         /// SYM_ENCRYPT / SYM_DECRYPT
 	uint8_t  KeyMode;        /// OP_BHDR_KEY / OP_USER_KEY, bootheader key or user key
 	uint8_t  CsuAddrIncMode; /// Bit1: Destination addr increment mode, Bit0: Source addr increment mode
-	uint8_t  Reserved_1[2];
+	uint8_t  BlockMode;      /// Bit2: mark firt block, Bit3: mark last block, all zero: one whole block, all one: mark middle block
 	uint32_t InputAddr;
 	uint32_t OutputAddr;
+	uint32_t HashDataAddr;
 	uint32_t DataLength;
 	uint32_t KeyAddr;
 	uint32_t IvAddr;
@@ -284,9 +303,10 @@ uint32_t AlFsbl_CsuDmaCopy(uint32_t SrcAddr, uint32_t DestAddr, uint32_t DataByt
 
 //uint32_t cal_crc32(uint8_t *buf, uint32_t size);
 
-
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* ALFSBL_SEC_H_ */
+
+

@@ -5,77 +5,25 @@
  *      Author: qsxu
  */
 
+
 #include <stdio.h>
 
-#include "alfsbl_err_code.h"
-#include "alfsbl_data.h"
-#include "alfsbl_sec.h"
-#include "alfsbl_hw.h"
-#include "alfsbl_misc.h"
 #include "demosoc.h"
-#ifndef __riscv
-#include "gic_v3_addr.h"
-#endif
+#include "al9000_secure.h"
+
+//#include "alfsbl_err_code.h"
+//#include "alfsbl_data.h"
+
+//#include "alfsbl_hw.h"
+//#include "alfsbl_misc.h"
 
 //extern uint8_t  ReadBuffer[READ_BUFFER_SIZE];
-extern uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE];
-
-/// for temporary test only, will remove later, xuqingsong
-
-//uint8_t aes256_key0[] = {
-//		0x7B,0xCD,0xD8,0xD1,
-//		0x91,0x6E,0xA8,0x38,
-//		0xBE,0x2F,0x41,0x0D,
-//		0x7E,0xC4,0x59,0xC6,
-//		0xF9,0x52,0x8F,0xCF,
-//		0xD9,0x1B,0x22,0x10,
-//		0x03,0x5D,0xB4,0xE3,
-//		0x78,0xD6,0x09,0x55};
-
-uint8_t aes256_key0[] = {
-		0x78, 0xd6, 0x09, 0x55,
-		0x03, 0x5d, 0xb4, 0xe3,
-		0xd9, 0x1b, 0x22, 0x10,
-		0xf9, 0x52, 0x8f, 0xcf,
-		0x7e, 0xc4, 0x59, 0xc6,
-		0xbe, 0x2f, 0x41, 0x0d,
-		0x91, 0x6e, 0xa8, 0x38,
-		0x7b, 0xcd, 0xd8, 0xd1};
+//extern uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE];
 
 
 
-//uint8_t aes256_key0[] = {0xD1,0xD8,0xCD,0x7B, 0x38,0xA8,0x6E,0x91,
-//		                 0x0D,0x41,0x2F,0xBE, 0xC6,0x59,0xC4,0x7E,
-//						 0xCF,0x8F,0x52,0xF9, 0x10,0x22,0x1B,0xD9,
-//						 0xE3,0xB4,0x5D,0x03, 0x55,0x09,0xD6,0x78};
 
-uint8_t aes256_key1[] = {0x51,0x37,0xDC,0x62, 0x09,0xF9,0xBA,0x00,
-		                 0xD7,0x03,0x98,0xBC, 0xEF,0xB9,0x1D,0x58,
-						 0xDD,0x9A,0xE1,0xE7, 0x5F,0x1A,0x0A,0xCB,
-						 0x23,0x51,0xCF,0xD5, 0xC0,0x03,0x40,0x54};
 
-uint8_t sm4_key0[]    = {0x55,0x09,0xD6,0x78, 0xE3,0xB4,0x5D,0x03,
-		                 0x10,0x22,0x1B,0xD9, 0xCF,0x8F,0x52,0xF9};
-
-uint8_t sm4_key1[]    = {0x51,0x37,0xDC,0x62, 0x09,0xF9,0xBA,0x00,
-		                 0xD7,0x03,0x98,0xBC, 0xEF,0xB9,0x1D,0x58};
-
-//uint8_t aes256_key0[] = {0x55,0x09,0xD6,0x78, 0xE3,0xB4,0x5D,0x03,
-//		                 0x10,0x22,0x1B,0xD9, 0xCF,0x8F,0x52,0xF9,
-//						 0xC6,0x59,0xC4,0x7E, 0x0D,0x41,0x2F,0xBE,
-//						 0x38,0xA8,0x6E,0x91, 0xD1,0xD8,0xCD,0x7B};
-//
-//uint8_t aes256_key1[] = {0x51,0x37,0xDC,0x62, 0x09,0xF9,0xBA,0x00,
-//		                 0xD7,0x03,0x98,0xBC, 0xEF,0xB9,0x1D,0x58,
-//						 0xDD,0x9A,0xE1,0xE7, 0x5F,0x1A,0x0A,0xCB,
-//						 0x23,0x51,0xCF,0xD5, 0xC0,0x03,0x40,0x54};
-//
-//uint8_t sm4_key0[]    = {0x55,0x09,0xD6,0x78, 0xE3,0xB4,0x5D,0x03,
-//		                 0x10,0x22,0x1B,0xD9, 0xCF,0x8F,0x52,0xF9};
-//
-//uint8_t sm4_key1[]    = {0x51,0x37,0xDC,0x62, 0x09,0xF9,0xBA,0x00,
-//		                 0xD7,0x03,0x98,0xBC, 0xEF,0xB9,0x1D,0x58};
-//SecMsgDef SecCmd;
 volatile uint32_t MsgFlag = 0;
 
 uint32_t AlFsbl_CalcCrc32(uint8_t *pBuffer, uint32_t Length)
@@ -101,26 +49,25 @@ uint32_t AlFsbl_CalcCrc32(uint8_t *pBuffer, uint32_t Length)
 
 uint32_t AlFsbl_ChecksumCheck(uint8_t *pBuffer, uint32_t Length, uint32_t Checksum)
 {
-	uint32_t Status = ALFSBL_SUCCESS;
+	uint32_t Status = 0;
 	uint32_t Cal_Checksum = 0;
 	uint32_t Count;
 
 	/// CRC32
 	Cal_Checksum = AlFsbl_CalcCrc32(pBuffer, Length);
-	printf("Calculated Checksum: 0x%08x\r\n", Cal_Checksum);
+	printf("Calculated Checksum: 0x%08x\n", Cal_Checksum);
 
 	if(Cal_Checksum != Checksum) {
-		Status = ALFSBL_ERROR_CHECKSUM_ERROR;
+		Status = SEC_ERROR_CHECKSUM_ERROR;
 	}
 	else {
-		printf("checksum check pass...\r\n");
-		Status = ALFSBL_SUCCESS;
+		printf("checksum check pass...\n");
+		Status = 0;
 	}
 
 
 	return Status;
 }
-
 
 
 void TriggerSecInterrupt(void)
@@ -132,15 +79,12 @@ void TriggerSecInterrupt(void)
 }
 
 
-
 void MsgReceive(void)
 {
 	MsgFlag = 1;
-	printf("ack\r\n");
-	*(volatile uint32_t *)(RPU2CSU_ACK_ADDR) = 0;
+	printf("ack\n");
 	return;
 }
-
 
 
 void RpuCsuAckHandler()
@@ -149,14 +93,9 @@ void RpuCsuAckHandler()
 }
 
 
-
 uint32_t SecureIrqInit(void)
 {
 	uint32_t ret;
-#ifndef __riscv
-	REG32(GICD_ISENABLER+8) = 0x80000000;
-	REG32(GICD_ISENABLER+12) = 0x1;
-#endif
 	ret = ECLIC_Register_IRQ(
 			RPU2CSU_ACK_IRQN,
 			ECLIC_NON_VECTOR_INTERRUPT,
@@ -169,24 +108,24 @@ uint32_t SecureIrqInit(void)
 }
 
 
-
 uint32_t CheckAckValid(AckDef *pAck)
 {
-	uint32_t Status = ALFSBL_SUCCESS;
-	printf("Check CSU ACK\r\n");
+	uint32_t Status = 0;
+	printf("Check CSU ACK\n");
 	while(MsgFlag == 0) {
 		/// wait for ack interrupt
 	}
 	MsgFlag = 0;  /// clear flag
 
 	if(pAck->Cmd != CMD_ACK) {
-		printf("Invalid ACK Command!\r\n");
-		Status = ALFSBL_ERROR_INVALID_CSU_ACK;
+		printf("Invalid ACK Command: %08x\n", pAck->Cmd);
+		Status = SEC_ERROR_INVALID_CSU_ACK;
 		goto END;
 	}
 	else {
 		pAck->Cmd = 0;   /// clear ack
 	}
+	printf("ack: %02x\n", pAck->Option0.Low);
 
 	if(pAck->Option0.Low == OP_DMA_DONE) {
 		goto END;
@@ -195,14 +134,14 @@ uint32_t CheckAckValid(AckDef *pAck)
 		goto END;
 	}
 	else if(pAck->Option0.Low == OP_AUTH_FAIL) {
-		Status = ALFSBL_ERROR_AUTH_FAIL;
+		Status = SEC_ERROR_AUTH_FAIL;
 	}
 	else if(pAck->Option0.Low == OP_HASH_DONE) {
 		goto END;
 	}
 	else {
-		printf("Invalid ACK Command!\r\n");
-		Status = ALFSBL_ERROR_INVALID_CSU_ACK;
+		printf("Invalid ACK Command!\n");
+		Status = SEC_ERROR_INVALID_CSU_ACK;
 		goto END;
 	}
 
@@ -212,66 +151,39 @@ END:
 }
 
 
-
 uint32_t AlFsbl_Hash_1(SecureInfo *pSecureInfo)
 {
 	uint32_t Status = 0;
-	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM);
-	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM + 64);
+	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM_BASEADDR);
+	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM_BASEADDR + 64);
 	uint32_t HashByteLen = 0;
 
 	if((pSecureInfo->HashType != OP_HASH_SHA256) &&
 	   (pSecureInfo->HashType != OP_HASH_SM3) &&
 	   (pSecureInfo->HashType != OP_HASH_NONE)) {
-		Status = ALFSBL_ERROR_SEC_PARAM_INVALID;
+		Status = SEC_ERROR_SEC_PARAM_INVALID;
 	}
 	if(pSecureInfo->HashType == OP_HASH_NONE) {
 		goto END;
 	}
 
 	pMsg->Cmd = CMD_HASH;
-	pMsg->Option0.Low           = pSecureInfo->HashType;
-	pMsg->HashParam.DataInAddr  = pSecureInfo->InputAddr;
+//	pMsg->HashParam.DataInAddr  = pSecureInfo->InputAddr;
+	pMsg->HashParam.DataInAddr  = pSecureInfo->HashDataAddr;
 	pMsg->HashParam.DataLen     = pSecureInfo->DataLength;
 	pMsg->HashParam.HashOutAddr = pSecureInfo->HashOutAddr;
+
+	pMsg->Option0.Low           = pSecureInfo->HashType;
+	pMsg->Option1.High          = pSecureInfo->BlockMode;
+
 	TriggerSecInterrupt();
 	Status = CheckAckValid(pAck);
-	if(Status != ALFSBL_SUCCESS) {
+	if(Status != 0) {
 		goto END;
 	}
 END:
 	return Status;
 }
-
-
-
-uint32_t AlFsbl_Hash(uint32_t DataInAddr, uint32_t DataByteLen, uint32_t HashOutAddr, uint8_t HashType)
-{
-	uint32_t Status;
-	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM);
-	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM + 64);
-
-	pMsg->Cmd = CMD_HASH;
-
-	//if(EfuseCtrl & EFUSE_PPK_HASH_TYPE_MASK == EFUSE_PPK_HASH_TYPE_SM3) {
-	if(HashType == HASH_TYPE_SM3) {
-		pMsg->Option0.Low = OP_HASH_SM3;
-	}
-	//else if(EfuseCtrl & EFUSE_PPK_HASH_TYPE_MASK == EFUSE_PPK_HASH_TYPE_SHA256) {
-	else if(HashType == HASH_TYPE_SHA256) {
-		pMsg->Option0.Low = OP_HASH_SHA256;
-	}
-
-	pMsg->HashParam.DataInAddr  = DataInAddr;
-	pMsg->HashParam.DataLen     = DataByteLen;
-	pMsg->HashParam.HashOutAddr = HashOutAddr;
-
-	TriggerSecInterrupt();
-	Status = CheckAckValid(pAck);
-
-	return Status;
-}
-
 
 
 uint32_t AlFsbl_CompareHash(uint8_t *pHash1, uint8_t *pHash2, uint32_t HashLen)
@@ -281,27 +193,26 @@ uint32_t AlFsbl_CompareHash(uint8_t *pHash1, uint8_t *pHash2, uint32_t HashLen)
 	uint32_t *pHash2_word = (uint32_t *)(pHash2);
 
 	for(Idx = 0; Idx < HashLen / 4; Idx++) {
-//		printf("%08x %08x\r\n", pHash1_word[Idx], pHash2_word[Idx]);
+//		printf("%08x %08x\n", pHash1_word[Idx], pHash2_word[Idx]);
 
 		if(pHash1_word[Idx] != pHash2_word[Idx]) {
-			printf("hash different: %08x, %08x\r\n", pHash1_word[Idx], pHash2_word[Idx]);
-			return ALFSBL_HASH_FAIL;
+			printf("hash different: %08x, %08x\n", pHash1_word[Idx], pHash2_word[Idx]);
+			return SEC_ERROR_HASH_FAIL;
 		}
 	}
-	return ALFSBL_SUCCESS;
+	return 0;
 }
-
 
 
 uint32_t AlFsbl_Auth_1(SecureInfo *pSecureInfo)
 {
 	uint32_t Status = 0;
-	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM);
-	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM + 64);
+	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM_BASEADDR);
+	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM_BASEADDR + 64);
 
 	if((pSecureInfo->AuthType != OP_AUTH_ECC256) &&
 	   (pSecureInfo->AuthType != OP_AUTH_SM2)) {
-		Status = ALFSBL_ERROR_SEC_PARAM_INVALID;
+		Status = SEC_ERROR_SEC_PARAM_INVALID;
 		goto END;
 	}
 
@@ -318,59 +229,32 @@ END:
 }
 
 
-
-uint32_t AlFsbl_Auth(uint32_t PubKeyAddr, uint32_t SignatureAddr, uint32_t DigestAddr, uint8_t AuthType)
-{
-	uint32_t Status;
-	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM);
-	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM + 64);
-
-	pMsg->Cmd = CMD_AUTH;
-	if(AuthType == AUTH_TYPE_ECC256) {
-		pMsg->Option0.Low = OP_AUTH_ECC256;
-	}
-	else if(AuthType == AUTH_TYPE_SM2) {
-		pMsg->Option0.Low = OP_AUTH_SM2;
-	}
-	pMsg->AuthParam.PubkeyAddr    = PubKeyAddr;
-	pMsg->AuthParam.SignatureAddr = SignatureAddr;
-	pMsg->AuthParam.DigestAddr    = DigestAddr;
-
-	TriggerSecInterrupt();
-	Status = CheckAckValid(pAck);
-
-	return Status;
-}
-
-
-
 uint32_t AlFsbl_DecHash_1(SecureInfo *pSecureInfo)
 {
-	uint32_t Status = ALFSBL_SUCCESS;
+	uint32_t Status = 0;
 	uint32_t HashByteLen = 0;
-	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM);
-	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM + 64);
+	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM_BASEADDR);
+	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM_BASEADDR + 64);
 
 	if((pSecureInfo->EncType != OP_ENCRYPT_AES256) &&
 	   (pSecureInfo->EncType != OP_ENCRYPT_SM4) &&
 	   (pSecureInfo->EncType != OP_ENCRYPT_NONE)) {
-		Status = ALFSBL_ERROR_SEC_PARAM_INVALID;
+		Status = SEC_ERROR_SEC_PARAM_INVALID;
 		goto END;
 	}
 	if((pSecureInfo->HashType != OP_HASH_SHA256) &&
 	   (pSecureInfo->HashType != OP_HASH_SM3) &&
 	   (pSecureInfo->HashType != OP_HASH_NONE)) {
-		Status = ALFSBL_ERROR_SEC_PARAM_INVALID;
+		Status = SEC_ERROR_SEC_PARAM_INVALID;
 		goto END;
 	}
 	if((pSecureInfo->KeyMode != OP_BHDR_KEY) &&
 	   (pSecureInfo->KeyMode != OP_USER_KEY)) {
-		Status = ALFSBL_ERROR_SEC_PARAM_INVALID;
+		Status = SEC_ERROR_SEC_PARAM_INVALID;
 		goto END;
 	}
 
 	pMsg->Cmd = CMD_DMA;
-	/// bootrom and bootgen not support this, use userkey instead for temporary test, xuqingsong
 	pMsg->DmaParam.KeyAddr     = pSecureInfo->KeyAddr;
 	pMsg->DmaParam.IvAddr      = pSecureInfo->IvAddr;
 	pMsg->DmaParam.InputAddr   = pSecureInfo->InputAddr;
@@ -381,16 +265,17 @@ uint32_t AlFsbl_DecHash_1(SecureInfo *pSecureInfo)
 	pMsg->DmaParam.OpMode.Bits = SYM_256BIT | (pSecureInfo->EncDir) | SYM_ECB;
 
 	pMsg->Option0.Low  = pSecureInfo->EncType;
-	pMsg->Option0.High = pSecureInfo->HashType;
+	pMsg->Option1.High = (pSecureInfo->CsuAddrIncMode) | (pSecureInfo->BlockMode);
 	pMsg->Option1.Low  = pSecureInfo->KeyMode;
 
-	if(pSecureInfo->EncType == OP_ENCRYPT_AES256) {
-		pMsg->DmaParam.KeyAddr = aes256_key0;
+	/// if encryption type is none, and hash calculation required, only do data copy through csu dma,
+	/// calculate hash by hash module after data copy.
+	if(pSecureInfo->EncType != OP_ENCRYPT_NONE) {
+		pMsg->Option0.High = pSecureInfo->HashType;
 	}
-	else if(pSecureInfo->EncType == OP_ENCRYPT_SM4) {
-		pMsg->DmaParam.KeyAddr = sm4_key0;
+	else {
+		pMsg->Option0.High =  OP_HASH_NONE;
 	}
-
 
 	TriggerSecInterrupt();
 	Status = CheckAckValid(pAck);
@@ -401,61 +286,13 @@ END:
 
 
 
-uint32_t AlFsbl_EncHash(SecEncHashIODef *pSecEncHashIOParam)
-{
-	uint32_t Status = ALFSBL_SUCCESS;
-	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM);
-	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM + 64);
-
-	pMsg->Cmd = CMD_DMA;
-	pMsg->DmaParam.KeyAddr     = pSecEncHashIOParam->KeyAddr;
-	pMsg->DmaParam.IvAddr      = pSecEncHashIOParam->IvAddr;
-	pMsg->DmaParam.InputAddr   = pSecEncHashIOParam->InputAddr;
-	pMsg->DmaParam.TotalLength = pSecEncHashIOParam->TotalLength;
-	pMsg->DmaParam.OutputAddr  = pSecEncHashIOParam->OutputAddr;
-	pMsg->DmaParam.HashOutAddr = pSecEncHashIOParam->HashOutAddr;
-
-	if(pSecEncHashIOParam->EncMethod == OP_ENCRYPT_AES256) {
-		pMsg->DmaParam.OpMode.Bits = SYM_256BIT |  SYM_DECRYPT | SYM_ECB;
-		pMsg->Option0.Low = OP_ENCRYPT_AES256;
-		if(pSecEncHashIOParam->HashEnable) {
-			pMsg->Option0.High = OP_HASH_SHA256;
-		}
-		else {
-			pMsg->Option0.High = OP_HASH_NONE;
-		}
-	}
-	else if(pSecEncHashIOParam->EncMethod == OP_ENCRYPT_SM4){
-		pMsg->DmaParam.OpMode.Bits = SYM_256BIT |  SYM_DECRYPT | SYM_ECB;
-		pMsg->Option0.Low = OP_ENCRYPT_SM4;
-		if(pSecEncHashIOParam->HashEnable) {
-			pMsg->Option0.High = OP_HASH_SM3;
-		}
-		else {
-			pMsg->Option0.High = OP_HASH_NONE;
-		}	}
-	pMsg->Option1.Low = pSecEncHashIOParam->KeyMode;
-
-	TriggerSecInterrupt();
-	Status = CheckAckValid(pAck);
-	if(Status != ALFSBL_SUCCESS) {
-		goto END;
-	}
-
-	Status = AlFsbl_CompareHash(0, 0, 0);
-	if(Status != ALFSBL_SUCCESS) {
-		goto END;
-	}
-END:
-	return Status;
-}
 
 uint32_t AlFsbl_CsuDmaCopy(uint32_t SrcAddr, uint32_t DestAddr, uint32_t DataByteLen, uint8_t AddrMode)
 {
-	uint32_t Status = ALFSBL_SUCCESS;
+	uint32_t Status = 0;
 	uint32_t HashByteLen = 0;
-	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM);
-	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM + 64);
+	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM_BASEADDR);
+	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM_BASEADDR + 64);
 
 	pMsg->Cmd = CMD_DMA;
 
@@ -573,5 +410,108 @@ uint32_t cal_crc32(uint8_t *buf, uint32_t size)
 	return crc ^ 0xFFFFFFFF;
 }
 */
+
+//uint32_t AlFsbl_Hash(uint32_t DataInAddr, uint32_t DataByteLen, uint32_t HashOutAddr, uint8_t HashType)
+//{
+//	uint32_t Status;
+//	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM);
+//	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM + 64);
+//
+//	pMsg->Cmd = CMD_HASH;
+//
+//	//if(EfuseCtrl & EFUSE_PPK_HASH_TYPE_MASK == EFUSE_PPK_HASH_TYPE_SM3) {
+//	if(HashType == HASH_TYPE_SM3) {
+//		pMsg->Option0.Low = OP_HASH_SM3;
+//	}
+//	//else if(EfuseCtrl & EFUSE_PPK_HASH_TYPE_MASK == EFUSE_PPK_HASH_TYPE_SHA256) {
+//	else if(HashType == HASH_TYPE_SHA256) {
+//		pMsg->Option0.Low = OP_HASH_SHA256;
+//	}
+//
+//	pMsg->HashParam.DataInAddr  = DataInAddr;
+//	pMsg->HashParam.DataLen     = DataByteLen;
+//	pMsg->HashParam.HashOutAddr = HashOutAddr;
+//
+//	TriggerSecInterrupt();
+//	Status = CheckAckValid(pAck);
+//
+//	return Status;
+//}
+
+
+//uint32_t AlFsbl_EncHash(SecEncHashIODef *pSecEncHashIOParam)
+//{
+//	uint32_t Status = 0;
+//	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM);
+//	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM + 64);
+//
+//	pMsg->Cmd = CMD_DMA;
+//	pMsg->DmaParam.KeyAddr     = pSecEncHashIOParam->KeyAddr;
+//	pMsg->DmaParam.IvAddr      = pSecEncHashIOParam->IvAddr;
+//	pMsg->DmaParam.InputAddr   = pSecEncHashIOParam->InputAddr;
+//	pMsg->DmaParam.TotalLength = pSecEncHashIOParam->TotalLength;
+//	pMsg->DmaParam.OutputAddr  = pSecEncHashIOParam->OutputAddr;
+//	pMsg->DmaParam.HashOutAddr = pSecEncHashIOParam->HashOutAddr;
+//
+//	if(pSecEncHashIOParam->EncMethod == OP_ENCRYPT_AES256) {
+//		pMsg->DmaParam.OpMode.Bits = SYM_256BIT |  SYM_DECRYPT | SYM_ECB;
+//		pMsg->Option0.Low = OP_ENCRYPT_AES256;
+//		if(pSecEncHashIOParam->HashEnable) {
+//			pMsg->Option0.High = OP_HASH_SHA256;
+//		}
+//		else {
+//			pMsg->Option0.High = OP_HASH_NONE;
+//		}
+//	}
+//	else if(pSecEncHashIOParam->EncMethod == OP_ENCRYPT_SM4){
+//		pMsg->DmaParam.OpMode.Bits = SYM_256BIT |  SYM_DECRYPT | SYM_ECB;
+//		pMsg->Option0.Low = OP_ENCRYPT_SM4;
+//		if(pSecEncHashIOParam->HashEnable) {
+//			pMsg->Option0.High = OP_HASH_SM3;
+//		}
+//		else {
+//			pMsg->Option0.High = OP_HASH_NONE;
+//		}	}
+//	pMsg->Option1.Low = pSecEncHashIOParam->KeyMode;
+//
+//	TriggerSecInterrupt();
+//	Status = CheckAckValid(pAck);
+//	if(Status != 0) {
+//		goto END;
+//	}
+//
+//	Status = AlFsbl_CompareHash(0, 0, 0);
+//	if(Status != 0) {
+//		goto END;
+//	}
+//END:
+//	return Status;
+//}
+
+
+//uint32_t AlFsbl_Auth(uint32_t PubKeyAddr, uint32_t SignatureAddr, uint32_t DigestAddr, uint8_t AuthType)
+//{
+//	uint32_t Status;
+//	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM);
+//	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM + 64);
+//
+//	pMsg->Cmd = CMD_AUTH;
+//	if(AuthType == AUTH_TYPE_ECC256) {
+//		pMsg->Option0.Low = OP_AUTH_ECC256;
+//	}
+//	else if(AuthType == AUTH_TYPE_SM2) {
+//		pMsg->Option0.Low = OP_AUTH_SM2;
+//	}
+//	pMsg->AuthParam.PubkeyAddr    = PubKeyAddr;
+//	pMsg->AuthParam.SignatureAddr = SignatureAddr;
+//	pMsg->AuthParam.DigestAddr    = DigestAddr;
+//
+//	TriggerSecInterrupt();
+//	Status = CheckAckValid(pAck);
+//
+//	return Status;
+//}
+
+
 
 

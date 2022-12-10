@@ -14,7 +14,9 @@ extern "C" {
 
 #include <stdint.h>
 
-void AlFsbl_ErrorLockDown(uint32_t ErrorStatus);
+#include "alfsbl_data.h"
+
+void AlFsbl_ErrorLockDown(AlFsblInfo *FsblInstancePtr, uint32_t ErrorStatus);
 
 #ifdef __cplusplus
 }

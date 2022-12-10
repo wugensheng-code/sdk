@@ -14,20 +14,17 @@ extern "C" {
 #endif
 
 
-/// error code format (16 bits): XXYY
+/// error code format (32 bits): AABBCCCC
 ///
-/// YY: error code irrespective of stage
+/// CCCC: error code irrespective of stage
 ///
-/// XX -> x1 x2 x3 x4 x5 x6 x7 x8
-///
-/// x1: FSBL / CSUROM error
-///
-/// x2x3: stage which error happened at
+/// AA: stage which error happened at
 ///       00 -> error at stage 1
 ///       01 -> error at stage 2
 ///       02 -> error at stage 3
-///       04 -> error at stage 4
-/// x4x5x6x7x8: reserved for now
+///       03 -> error at stage 4
+///
+/// BB: reserved for now
 
 
 #define ALFSBL_SUCCESS		                   (0x0)
@@ -37,6 +34,10 @@ extern "C" {
 
 #define ALFSBL_ERROR_UNSUPPORTED_BOOT_MODE   (0x06U)
 #define ALFSBL_ERROR_DEVICE_INIT_FAILED      (0x07U)
+
+/// error code 0x10~0x16 is each kind of cfg state error status
+#define ALFSBL_ERROR_PL_CFG_STATE_ERROR      (0x17U)
+#define ALFSBL_ERROR_PL_INIT_TIMEOUT         (0x18U)
 
 #define ALFSBL_ERROR_CHECKSUM_ERROR          (0x60U)
 #define ALFSBL_ERROR_IMAGE_HEADER_ACOFFSET   (0x64U)
@@ -61,12 +62,12 @@ extern "C" {
 #define ALFSBL_ERROR_AUTH_FAIL               (0x68U)
 #define ALFSBL_NO_VALID_PPK                  (0x69U)
 
-#define ALFSBL_ERROR_PL_INIT_TIMEOUT         (0x07U)
 
-#define ALFSBL_ERROR_STAGE_1          (uint32_t)(0x0000)
-#define ALFSBL_ERROR_STAGE_2          (uint32_t)(0x2000)
-#define ALFSBL_ERROR_STAGE_3          (uint32_t)(0x4000)
-#define ALFSBL_ERROR_STAGE_4          (uint32_t)(0x6000)
+
+#define ALFSBL_ERROR_STAGE_1          (uint32_t)(0x01000000UL)
+#define ALFSBL_ERROR_STAGE_2          (uint32_t)(0x02000000UL)
+#define ALFSBL_ERROR_STAGE_3          (uint32_t)(0x03000000UL)
+#define ALFSBL_ERROR_STAGE_4          (uint32_t)(0x04000000UL)
 
 #define ALFSBL_ERR_SYS_WDT_RESET      (0x9U)
 

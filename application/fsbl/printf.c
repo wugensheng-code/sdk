@@ -26,10 +26,14 @@
 #include <stdarg.h>
 
 #include "alfsbl_hw.h"
-/*
+
 int putchar(int c)
 {
+#if defined SIMU_AL9000_DV
 	*(volatile unsigned char *)(0x80000000ULL) = c;
+#else
+	/// todo
+#endif
 
 	return c;
 }
@@ -79,7 +83,7 @@ static int  __attribute__((optimize("Os"))) prints(char **out, const char *strin
 	return pc;
 }
 
-// the following should be enough for 32 bit int 
+/* the following should be enough for 32 bit int */
 #define PRINT_BUF_LEN 12
 
 static int  __attribute__((optimize("Os"))) printi(char **out, int i, int b, int sg, int width, int pad, int letbase)
@@ -171,7 +175,7 @@ static int  __attribute__((optimize("Os"))) print( char **out, const char *forma
 				continue;
 			}
 			if( *format == 'c' ) {
-				// char are converted to int then pushed on the stack 
+				/* char are converted to int then pushed on the stack */
 				scr[0] = (char)va_arg( args, int );
 				scr[1] = '\0';
 				pc += prints (out, scr, width, pad);
@@ -215,10 +219,9 @@ int  __attribute__((optimize("Os"))) snprintf( char *buf, unsigned int count, co
         return print( &buf, format, args );
 }
 
-// To keep linker happy. 
+/* To keep linker happy. */
 int	 __attribute__((optimize("Os"))) write( int i, char* c, int n)
 {
 	return 0;
 }
 
-*/

@@ -15,6 +15,8 @@ extern "C" {
 #include <stdint.h>
 #include "alfsbl_data.h"
 #include "alfsbl_hw.h"
+#include "al9000_secure.h"
+
 
 typedef enum{
     EMMC_FREQ_400K,
