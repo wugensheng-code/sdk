@@ -246,6 +246,10 @@ typedef enum {
 //bit 0:bank1_vccio_det1v8
 #define IO_BANK1_REF                0xF8803C04ULL
 
+//NVM delay register
+//check method, low 16 bit and high 16 bit orr
+#define EFUSE_NVM_DELAY_REG			0xF880624CULL
+
 #define MBIU_CTRL_R 0x510   //AHB BUS burst contrl register
 
 #define TOP_CFG_REG_CARD_PROT_SEL_REG		(0x1 << 7)
@@ -275,14 +279,14 @@ typedef enum {
 #define SDIO_WRAP__SDIO0__BASE_ADDR 0xF8049000ULL
 #define SDIO_WRAP__SDIO1__BASE_ADDR 0xF8049000ULL	//0xF804A000ULL
 
-#define MMC_CMD_TIMEOUT_VAL					(10000*1000)	//10s
-#define MMC_CMDLINE_RESET_TIMEOUT_VAL		(10000*1000)	//10s
-#define MMC_XFER_TIMEOUT_VAL				(15000*1000)	//15s
+#define MMC_CMD_TIMEOUT_VAL					(5000*1000)		//5s
+#define MMC_CMDLINE_RESET_TIMEOUT_VAL		(5000*1000)		//5s
+#define MMC_XFER_TIMEOUT_VAL				(5000*1000)		//5s
 #define MMC_BUF_RD_RDY_TIMEOUT_VAL			(1000*1000)		//1s
 #define MMC_WAIT_CLK_STABLE_TIMEOUT_VAL		(5000*1000)		//5s
 #define MMC_CHECK_LINE_INHIBIT_TIMEOUT_VAL	(1000*1000)		//1s
 #define MMC_CHECK_DEV_STATUS_TIMEOUT_VAL	(1000*1000)		//1s
-#define MMC_DELAY_SCALE						(2)
+#define MMC_DELAY_SCALE						(1)
 
 //capabilities1.base_clk_freq 0 another way 1~255 -> 1~255MHz
 #define MMC_GET_INFO_ANOTHER_WAY	0x0
@@ -1237,14 +1241,16 @@ extern uint32_t CidTab[4];
 extern uint32_t Resp[4];
 extern uint32_t Rca;
 extern uint8_t FlashSharedBuf[DEF_BLOCK_LEN];
-extern uint8_t EfuseDelayParam;
+extern uint32_t EfuseDelayParam;
 extern uint32_t IoBank1Ref;
+extern uint32_t CardType;
 
 uint32_t HostControllerSetup(volatile DWC_mshc_block_registers* ptr);
 uint32_t InitInterruptSetting(volatile DWC_mshc_block_registers* ptr);
 void Mmc_BranchFlowPrint(uint32_t Module, uint32_t FlowNumS, uint32_t FlowNumE);
 void PrintfMshcBlock(volatile DWC_mshc_block_registers *Ptr);
 uint32_t ResetHostComtroller(volatile DWC_mshc_block_registers* Ptr);
+void EfuseDelayVlueCheck(void);
 
 /*****************************END OF FILE**************************/
 

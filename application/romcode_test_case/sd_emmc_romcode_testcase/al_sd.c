@@ -29,7 +29,6 @@
 
 SD_CardInfo SDCardInfo;
 static MtimerParams SdMtimer;
-uint32_t CardType =  SDIO_HIGH_CAPACITY_SD_CARD;
 
 /**
  * @brief set host controller clock frequency 
@@ -213,8 +212,11 @@ uint32_t AlSd_SendInitCmdSd()
     	//ACMD41
         MMC_PRINT("send command 41\r\n");
         MMC_CHECK_LINE_AND_CLEAR_STATUS(SDIO);
-
-        arg_r = 0x40FF8000;//0x40300000;//[31]reserved,[30]HCS=1,voltage window 3.2~3.4
+        
+        arg_r = 0xFF8000; //[31]reserved,[30]HCS=1,voltage window 2.7~3.6
+        if (CardType != SDIO_STD_CAPACITY_SD_CARD_V1_1) {
+            arg_r |= (0x1 << 30);   //HCS=1
+        }
         REG_WRITE(&(SDIO->argument_r), arg_r);
         MMC_PRINT("arg is %x\r\n", arg_r);
 
@@ -392,6 +394,8 @@ uint32_t AlSd_SendInitCmdSd()
 uint32_t AlSd_Init(void)
 {
     MMC_ERR_TYPE status = MMC_SUCCESS;
+
+    EfuseDelayVlueCheck();
 
     HostControllerSetup(SDIO);
 
@@ -578,28 +582,6 @@ uint32_t AlSd_GetCardInfo(SD_CardInfo *cardinfo)
     memcpy(((uint8_t *)&CsdTab[2]), &tmp, 1);
     CsdTab[3]   = CsdTab[3] << 8;
 
-    /*!< Byte 0 */
-    tmp = (uint8_t)((CsdTab[0] & 0xFF000000) >> 24);
-    cardinfo->SD_csd.CSDStruct      = (tmp & 0xC0) >> 6;
-    cardinfo->SD_csd.SysSpecVersion = (tmp & 0x3C) >> 2;
-    cardinfo->SD_csd.Reserved1      = tmp & 0x03;
-
-    /*!< Byte 1 */
-    tmp = (uint8_t)((CsdTab[0] & 0x00FF0000) >> 16);
-    cardinfo->SD_csd.TAAC = tmp;
-
-    /*!< Byte 2 */
-    tmp = (uint8_t)((CsdTab[0] & 0x0000FF00) >> 8);
-    cardinfo->SD_csd.NSAC = tmp;
-
-    /*!< Byte 3 */
-    tmp = (uint8_t)(CsdTab[0] & 0x000000FF);
-    cardinfo->SD_csd.MaxBusClkFrec = tmp;
-
-    /*!< Byte 4 */
-    tmp = (uint8_t)((CsdTab[1] & 0xFF000000) >> 24);
-    cardinfo->SD_csd.CardComdClasses = tmp << 4;
-
     /*!< Byte 5 */
     tmp = (uint8_t)((CsdTab[1] & 0x00FF0000) >> 16);
     cardinfo->SD_csd.CardComdClasses    |= (tmp & 0xF0) >> 4;
@@ -670,111 +652,9 @@ uint32_t AlSd_GetCardInfo(SD_CardInfo *cardinfo)
         cardinfo->CardCapacity  = ((uint64_t)cardinfo->SD_csd.DeviceSize + 1) * 512 * 1024;
         cardinfo->CardBlockSize = 512;
     }
-
-    cardinfo->SD_csd.EraseGrSize    = (tmp & 0x40) >> 6;
-    cardinfo->SD_csd.EraseGrMul     = (tmp & 0x3F) << 1;
-
-    /*!< Byte 11 */
-    tmp = (uint8_t)(CsdTab[2] & 0x000000FF);
-    cardinfo->SD_csd.EraseGrMul         |= (tmp & 0x80) >> 7;
-    cardinfo->SD_csd.WrProtectGrSize    = (tmp & 0x7F);
-
-    /*!< Byte 12 */
-    tmp = (uint8_t)((CsdTab[3] & 0xFF000000) >> 24);
-    cardinfo->SD_csd.WrProtectGrEnable  = (tmp & 0x80) >> 7;
-    cardinfo->SD_csd.ManDeflECC         = (tmp & 0x60) >> 5;
-    cardinfo->SD_csd.WrSpeedFact        = (tmp & 0x1C) >> 2;
-    cardinfo->SD_csd.MaxWrBlockLen      = (tmp & 0x03) << 2;
-
-    /*!< Byte 13 */
-    tmp = (uint8_t)((CsdTab[3] & 0x00FF0000) >> 16);
-    cardinfo->SD_csd.MaxWrBlockLen          |= (tmp & 0xC0) >> 6;
-    cardinfo->SD_csd.WriteBlockPaPartial    = (tmp & 0x20) >> 5;
-    cardinfo->SD_csd.Reserved3              = 0;
-    cardinfo->SD_csd.ContentProtectAppli    = (tmp & 0x01);
-
-    /*!< Byte 14 */
-    tmp = (uint8_t)((CsdTab[3] & 0x0000FF00) >> 8);
-    cardinfo->SD_csd.FileFormatGrouop   = (tmp & 0x80) >> 7;
-    cardinfo->SD_csd.CopyFlag           = (tmp & 0x40) >> 6;
-    cardinfo->SD_csd.PermWrProtect      = (tmp & 0x20) >> 5;
-    cardinfo->SD_csd.TempWrProtect      = (tmp & 0x10) >> 4;
-    cardinfo->SD_csd.FileFormat         = (tmp & 0x0C) >> 2;
-    cardinfo->SD_csd.ECC                = (tmp & 0x03);
-
-    /*!< Byte 15 */
-    tmp = (uint8_t)(CsdTab[3] & 0x000000FF);
-    cardinfo->SD_csd.CSD_CRC    = (tmp & 0xFE) >> 1;
-    cardinfo->SD_csd.Reserved4  = 1;
-
-    /*!< Byte 0 */
-    tmp = (uint8_t)((CidTab[0] & 0xFF000000) >> 24);
-    cardinfo->SD_cid.ManufacturerID = tmp;
-
-    /*!< Byte 1 */
-    tmp = (uint8_t)((CidTab[0] & 0x00FF0000) >> 16);
-    cardinfo->SD_cid.OEM_AppliID = tmp << 8;
-
-    /*!< Byte 2 */
-    tmp = (uint8_t)((CidTab[0] & 0x000000FF00) >> 8);
-    cardinfo->SD_cid.OEM_AppliID |= tmp;
-
-    /*!< Byte 3 */
-    tmp = (uint8_t)(CidTab[0] & 0x000000FF);
-    cardinfo->SD_cid.ProdName1 = tmp << 24;
-
-    /*!< Byte 4 */
-    tmp = (uint8_t)((CidTab[1] & 0xFF000000) >> 24);
-    cardinfo->SD_cid.ProdName1 |= tmp << 16;
-
-    /*!< Byte 5 */
-    tmp = (uint8_t)((CidTab[1] & 0x00FF0000) >> 16);
-    cardinfo->SD_cid.ProdName1 |= tmp << 8;
-
-    /*!< Byte 6 */
-    tmp = (uint8_t)((CidTab[1] & 0x0000FF00) >> 8);
-    cardinfo->SD_cid.ProdName1 |= tmp;
-
-    /*!< Byte 7 */
-    tmp = (uint8_t)(CidTab[1] & 0x000000FF);
-    cardinfo->SD_cid.ProdName2 = tmp;
-
-    /*!< Byte 8 */
-    tmp = (uint8_t)((CidTab[2] & 0xFF000000) >> 24);
-    cardinfo->SD_cid.ProdRev = tmp;
-
-    /*!< Byte 9 */
-    tmp = (uint8_t)((CidTab[2] & 0x00FF0000) >> 16);
-    cardinfo->SD_cid.ProdSN = tmp << 24;
-
-    /*!< Byte 10 */
-    tmp = (uint8_t)((CidTab[2] & 0x0000FF00) >> 8);
-    cardinfo->SD_cid.ProdSN |= tmp << 16;
-
-    /*!< Byte 11 */
-    tmp = (uint8_t)(CidTab[2] & 0x000000FF);
-    cardinfo->SD_cid.ProdSN |= tmp << 8;
-
-    /*!< Byte 12 */
-    tmp = (uint8_t)((CidTab[3] & 0xFF000000) >> 24);
-    cardinfo->SD_cid.ProdSN |= tmp;
-
-    /*!< Byte 13 */
-    tmp = (uint8_t)((CidTab[3] & 0x00FF0000) >> 16);
-    cardinfo->SD_cid.Reserved1      |= (tmp & 0xF0) >> 4;
-    cardinfo->SD_cid.ManufactDate   = (tmp & 0x0F) << 8;
-
-    /*!< Byte 14 */
-    tmp = (uint8_t)((CidTab[3] & 0x0000FF00) >> 8);
-    cardinfo->SD_cid.ManufactDate |= tmp;
-
-    /*!< Byte 15 */
-    tmp = (uint8_t)(CidTab[3] & 0x000000FF);
-    cardinfo->SD_cid.CID_CRC    = (tmp & 0xFE) >> 1;
-    cardinfo->SD_cid.Reserved2  = 1;
     
-    MMC_PRINT("cardinfo->CardBlockSize is %d\r\n", cardinfo->CardBlockSize);
-    MMC_PRINT("cardinfo->CardCapacity is %llu\r\n", cardinfo->CardCapacity);
+    MMC_PRINT("cardinfo->CardBlockSize is 0x%x\r\n", cardinfo->CardBlockSize);
+    MMC_PRINT("cardinfo->CardCapacity is 0x%x\r\n", cardinfo->CardCapacity);
 
     return status;
 }

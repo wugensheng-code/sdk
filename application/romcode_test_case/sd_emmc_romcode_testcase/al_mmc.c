@@ -28,9 +28,10 @@
 
 MtimerParams MmcMtimer, Mmc1Mtimer;
 uint8_t __attribute__((aligned(4))) FlashSharedBuf[DEF_BLOCK_LEN];
-uint8_t EfuseDelayParam = 0;
+uint32_t EfuseDelayParam = 0;
 uint32_t CsdTab[4], CidTab[4], Resp[4], Rca = 0;
 uint32_t IoBank1Ref = 0;
+uint32_t CardType =  SDIO_HIGH_CAPACITY_SD_CARD;
 
 #ifdef AL_DEBUG_PRINT
 uint32_t BranchTestCount[BRANCH_MAX] = {0};
@@ -223,6 +224,7 @@ uint32_t WaitCmdComplete(volatile DWC_mshc_block_registers* Ptr, MMC_ERR_TYPE Er
                     MMC_BRANCHTEST_PRINT(BRANCH_CMDLINE_RST_COMPLETE_TIMEOUT);
                     return MMC_CMD_TIMEOUT;
                 }
+                CardType = SDIO_STD_CAPACITY_SD_CARD_V1_1;
                 MMC_BRANCHTEST_PRINT(BRANCH_CMDLINE_RST_COMPLETE_SUCCESS);
                 MMC_PRINT("[CMD COMPLETE]MMC CMD line rst success!\r\n");
                 return MMC_SUCCESS;
@@ -547,6 +549,18 @@ void ClearErrandIntStatus(volatile DWC_mshc_block_registers* Ptr)
     r.d32 = REG_READ(&(Ptr->error_int_stat_r__normal_int_stat.d32));
     MMC_PRINT("err and int stat is %x\r\n", r.d32);
     REG_WRITE(&(Ptr->error_int_stat_r__normal_int_stat.d32), ~0);
+}
+
+/**
+ * @brief read efuse delay value for increase delay somewhere
+ * 
+ */
+void EfuseDelayVlueCheck(void)
+{
+    uint32_t reg = REG_READ(EFUSE_NVM_DELAY_REG);
+    EfuseDelayParam = (((reg >> 16) | (reg)) & 0xFF);
+    MMC_PRINT("EFUSE_NVM_DELAY_REG is 0x%x\r\n", reg);
+    MMC_PRINT("EfuseDelayParam is %d\r\n", EfuseDelayParam);
 }
 
 /**

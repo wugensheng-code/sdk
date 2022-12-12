@@ -461,6 +461,8 @@ uint32_t AlEmmc_Init(void)
 {
     int status = MMC_SUCCESS;
 
+    EfuseDelayVlueCheck();
+
     HostControllerSetup(eMMC);
 
     /*status = Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_400K);
@@ -652,12 +654,6 @@ uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
     MMC_ERR_TYPE status                         = MMC_SUCCESS;
     uint32_t tmp_rdblen                         = 0;
     uint32_t tmp_devsizemul                     = 0;
-    uint32_t sec_count                          = 0;
-    uint32_t arg_r                              = 0;
-    uint32_t *ext_csd_addr                      = (uint32_t *)ext_csd_buf;
-    __IO BLOCKCOUNT_R__BLOCKSIZE_R block        = {.d32 = 0,};
-    __IO CMD_R__XFER_MODE_R reg                 = {.d32 = 0,};
-    __IO MMC_CMD23_PARAM r3                     = {.d32 = 0,};
 
     Cardinfo->CardBlockSize     = 512;
     Cardinfo->SD_csd.DeviceSize = ((CsdTab[1]&0x3)<<10)|((CsdTab[2]>>22)&0x3FF);
@@ -682,6 +678,12 @@ uint32_t AlEmmc_GetCardInfo(SD_CardInfo *Cardinfo)
         MMC_BRANCHTEST_PRINT(BRANCH_EMMC_CARDSIZE_MORE2G);
         Cardinfo->CardCapacity = 0x80000000;    //if more than 2G ,default 2G
 #if 0
+        uint32_t sec_count                          = 0;
+        uint32_t arg_r                              = 0;
+        uint8_t ext_csd_addr[512]                   = {0};
+        __IO BLOCKCOUNT_R__BLOCKSIZE_R block        = {.d32 = 0,};
+        __IO CMD_R__XFER_MODE_R reg                 = {.d32 = 0,};
+        __IO MMC_CMD23_PARAM r3                     = {.d32 = 0,};
 #ifdef _USE_SDMA
         __IO WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R r1 = {.d32 = 0,};
 
