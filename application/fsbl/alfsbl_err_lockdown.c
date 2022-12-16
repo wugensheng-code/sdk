@@ -24,19 +24,26 @@ void AlFsbl_ErrorLockDown(AlFsblInfo *FsblInstancePtr, uint32_t ErrorStatus)
 
 	uint32_t BootMode;
 	BootMode = FsblInstancePtr->PrimaryBootDevice;
-	uint32_t LoopAddr = 0x6101fffc;
+	uint32_t LoopAddr = 0;
 
 	/// update error status register
 	REG32(SYSCTRL_S_FSBL_ERR_CODE) = ErrorStatus;
 
 	if(BootMode == ALFSBL_BOOTMODE_JTAG) {
 		/// JTAG BOOT MODE not support multi-boot, jump to a infinite loop
-		REG32(LoopAddr) = 0xa001a001;
+#if __riscv
+		LoopAddr = RPU_LOOP_ADDR;
+		REG32(LoopAddr) = RPU_LOOP_INSTRUCTION;
 		__asm__ __volatile__(
 		"jr %[src]"
 		:
 		:[src]"r"(LoopAddr)
 		);
+#else
+		LoopAddr = APU_LOOP_ADDR;
+		REG32(LoopAddr) = APU_LOOP_INSTRUCTION;
+		__asm__ __volatile__("mov x30, %0"::"r"(LoopAddr):"x30");
+#endif
 	}
 	else {
 		/// Multi-boot: update MULTBOOT register

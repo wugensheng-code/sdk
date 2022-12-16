@@ -103,7 +103,7 @@ static void unsigned_num_print(char **s, size_t n, size_t *chars_printed,
  * buffer was big enough. If it returns a value lower than n, the
  * whole string has been written.
  *******************************************************************/
-int vsnprintf(char *s, size_t n, const char *fmt, va_list args)
+int __attribute__((weak)) vsnprintf(char *s, size_t n, const char *fmt, va_list args)
 {
 	int num;
 	unsigned long long int unum;
@@ -247,7 +247,7 @@ loop:
  * buffer was big enough. If it returns a value lower than n, the
  * whole string has been written.
  *******************************************************************/
-int snprintf(char *s, size_t n, const char *fmt, ...)
+int __attribute__((weak)) snprintf(char *s, size_t n, const char *fmt, ...)
 {
 	int count;
 	va_list all_args;

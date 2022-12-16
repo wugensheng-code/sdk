@@ -217,7 +217,7 @@ int printftime(const char *fmt, ...)
 	return count;
 }
 
-int printf(const char *fmt, ...)
+int __attribute__((weak)) printf(const char *fmt, ...)
 {
 	int count;
 	va_list va;

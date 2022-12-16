@@ -54,7 +54,12 @@ uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 	MultiBoot = REG32(SYSCTRL_S_MULTI_BOOT);
 
 	/// get image offset address based on multi boot reg value
-	FsblInstancePtr->ImageOffsetAddress = MultiBoot * QSPI_FLASH_SEARCH_STEP;
+	if ((FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_EMMC) || \
+			(FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_SD)) {
+		FsblInstancePtr->ImageOffsetAddress = 0;
+	} else {
+		FsblInstancePtr->ImageOffsetAddress = MultiBoot * QSPI_FLASH_SEARCH_STEP;
+	}
 
 	ImageOffsetAddress = FsblInstancePtr->ImageOffsetAddress;
 	printf("FsblInstancePtr->ImageOffsetAddress: 0x%08x\r\n", ImageOffsetAddress);
@@ -260,7 +265,7 @@ uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl)
 	printf("spk verify passed...\r\n");
 
 	printf("image header authentication...\r\n");
-	FsblIHSecInfo.InputAddr   = (uint32_t)(&(FsblInstancePtr->ImageHeader));
+	FsblIHSecInfo.HashDataAddr   = (uint32_t)(&(FsblInstancePtr->ImageHeader));
 	FsblIHSecInfo.DataLength  = ALIH_BH_SIZE + ALIH_PH_SIZE * (FsblInstancePtr->ImageHeader.BootHeader.PartitionNum);
 	FsblIHSecInfo.HashOutAddr = (uint32_t)(HashBuffer);
 	Status = AlFsbl_Hash_1(&FsblIHSecInfo);
@@ -311,7 +316,7 @@ uint32_t AlFsbl_PpkVerification(AlFsblInfo *FsblInstancePtr, uint32_t BootHdrAtt
 		printf("ALFSBL_ERROR_EFUSE_VALUE_INVALID\r\n");
 		Status = ALFSBL_ERROR_SEC_PARAM_INVALID;
 	}
-	FsblPpkSecInfo.InputAddr = (uint32_t)(AuthBuffer + ALAC_PPK_OFFSET);
+	FsblPpkSecInfo.HashDataAddr = (uint32_t)(AuthBuffer + ALAC_PPK_OFFSET);
 	FsblPpkSecInfo.DataLength = PPK_BYTE_LENGTH;
 	FsblPpkSecInfo.HashOutAddr = (uint32_t)(HashBuffer);
 	Status = AlFsbl_Hash_1(&FsblPpkSecInfo);
@@ -343,7 +348,7 @@ uint32_t AlFsbl_SpkVerification(AlFsblInfo *FsblInstancePtr, SecureInfo *pFsblIH
 	uint8_t AuthType;
 	uint8_t HashBuffer[32];
 
-	pFsblIHSecInfo->InputAddr = (uint32_t)(AuthBuffer + ALAC_SPK_OFFSET);
+	pFsblIHSecInfo->HashDataAddr = (uint32_t)(AuthBuffer + ALAC_SPK_OFFSET);
 	pFsblIHSecInfo->DataLength = SPK_BYTE_LENGTH;
 	pFsblIHSecInfo->HashOutAddr = (uint32_t)(HashBuffer);
 	Status = AlFsbl_Hash_1(pFsblIHSecInfo);

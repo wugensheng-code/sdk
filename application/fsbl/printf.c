@@ -24,7 +24,7 @@
 	replace outbyte(c) by your own function call.
 */
 #include <stdarg.h>
-
+#include "nuclei_sdk_hal.h"
 #include "alfsbl_hw.h"
 
 int putchar(int c)
@@ -32,9 +32,9 @@ int putchar(int c)
 #if defined SIMU_AL9000_DV
 	*(volatile unsigned char *)(0x80000000ULL) = c;
 #else
-	/// todo
+	uart_write(SOC_DEBUG_UART, c);
 #endif
-
+	
 	return c;
 }
 
@@ -209,7 +209,7 @@ int  __attribute__((optimize("Os"))) sprintf(char *out, const char *format, ...)
         return print( &out, format, args );
 }
 
-int  __attribute__((optimize("Os"))) snprintf( char *buf, unsigned int count, const char *format, ... )
+int  __attribute__((optimize("Os"))) snprintf( char *buf, unsigned long count, const char *format, ... )
 {
         va_list args;
 

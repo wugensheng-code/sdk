@@ -38,6 +38,7 @@ uint32_t AlFsbl_SdInit(void)
 		printf("drv is emmc\r\n");
 	}
 	if(rc != FR_OK){
+		printf("drv disk error:%d\r\n", rc);
 		return rc;
 	}
 

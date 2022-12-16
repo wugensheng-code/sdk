@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include "nuclei_sdk_hal.h"
 
-int putchar(int c)
+int __attribute__((weak)) putchar(int c)
 {
 	return uart_write(SOC_DEBUG_UART, c);
 }
