@@ -1,17 +1,19 @@
+
 #include "mtimer.h"
 #include "qspi_drv.h"
 #include "qspi_flash_drv.h"
 
 
+
 /************************** Variable Definitions *****************************/
 
-static MtimerParams Timer1;  
+static MtimerParams Timer1;
 static MtimerParams Timer2;
 
- MtimerParams* QspiTimer1 = &Timer1;  
- MtimerParams* QspiTimer2 = &Timer2;
+static MtimerParams* QspiTimer1 = &Timer1;
+static MtimerParams* QspiTimer2 = &Timer2;
 
- u32 QspiFlashSize=0U;
+static u32 QspiFlashSize=0U;
 static u32 QspiFlashMake=0U;
 static u32 ReadCommand=0U;
 
@@ -22,50 +24,52 @@ static u8 WriteBuffer[10] __attribute__ ((aligned(32)));
 QSPI_CORE_HANDLE    QSPI_dev;
 QSPI_CORE_HANDLE    *g_pdev=&QSPI_dev;
 
+#define EFUSE_NVM_DELAY_REG (0xF880624CULL)
 
- void Config_QspiTx(QSPI_CORE_HANDLE *pdev, u32 start_level)
+static void Config_QspiTx(QSPI_CORE_HANDLE *pdev, u32 start_level)
 {
     Qspi_TxfifoStartLevelSet(pdev,start_level-1); //transfer will start on serial line
 }
 
 
- void Config_QspiRx(QSPI_CORE_HANDLE *pdev, u32 rx_numfame)
+static void Config_QspiRx(QSPI_CORE_HANDLE *pdev, u32 rx_numfame)
 {
     Qspi_Ctrl1Ndf(pdev,rx_numfame-1);
-    
+
 }
 
- u32 Wait_TxCompl(QSPI_CORE_HANDLE *pdev)
+static u32 Wait_TxCompl(QSPI_CORE_HANDLE *pdev)
 {
     //Mtimer_Start(30);
     //while( (!Qspi_TxfifoEmpty(pdev)) && (Mtimer_TimerOut()==0) ); // wait TFE returns to 1,txfifoempty
-	MTIMER_OUT_CONDITION(30,QspiTimer2,!Qspi_TxfifoEmpty(pdev));
-        
+	MTIMER_OUT_CONDITION(300000,QspiTimer2,!Qspi_TxfifoEmpty(pdev));
+
 	if (Mtimer_IsTimerOut(QspiTimer2) == 1) {
 		 return TIMER_OUT_ERR0;
 	}
 
 	return AL_SUCCESS;
-    
+
 }
 
 
 void Config_EhanceMode(QSPI_CORE_HANDLE *pdev)
 {
     Qspi_TransType(pdev, SPI_TRANSFER_TYPE0); //Instruction and Address will be sent in Standard SPI Mode.  the next transfer data will be in enhance mode spi
- 
+
     Qspi_InstructionLength(pdev,0x2);
-    
+
     Qspi_WaitCycles(pdev,0x8); //different vendor and device , different wait cycle
-    
+
     //qspi_clk_stretch_en(pdev,0x1);
-    
+
 }
 
 
 u32 Qspi_ResetFlashMode0(QSPI_CORE_HANDLE *pdev)
 {
-    
+     uint32_t reg = 0, EfuseDelayParam = 0;
+
      Qspi_Disable(pdev);
      Qspi_Mode(pdev, TMOD_TX_ONLY);
      Config_QspiTx(pdev,1);
@@ -76,38 +80,45 @@ u32 Qspi_ResetFlashMode0(QSPI_CORE_HANDLE *pdev)
      Wait_TxCompl(pdev);
      //Mtimer_Start(30);
      //while(Qspi_Busy(pdev) && (Mtimer_TimerOut() == 0));
-	 MTIMER_OUT_CONDITION(30,QspiTimer2,Qspi_Busy(pdev));
+	 MTIMER_OUT_CONDITION(300000,QspiTimer2,Qspi_Busy(pdev));
 
 	 if (Mtimer_IsTimerOut(QspiTimer2) == 1)
 	 {
 		 return TIMER_OUT_ERR1;
 	 }
-     
+
      Qspi_Disable(pdev);
      Qspi_Mode(pdev, TMOD_TX_ONLY);
      Config_QspiTx(pdev,1);
      Config_QspiRx(pdev,0);
      Qspi_Enable(pdev);
-     
+
      Qspi_DataTransmit(pdev,0x99);
      Wait_TxCompl(pdev);
      //Mtimer_Start(30);
      //while(Qspi_Busy(pdev) && (Mtimer_TimerOut() == 0));
-     MTIMER_OUT_CONDITION(30,QspiTimer2,Qspi_Busy(pdev));
-     
-     Mtimer_Delay(100);
+     MTIMER_OUT_CONDITION(300000,QspiTimer2,Qspi_Busy(pdev));
+
 	 if (Mtimer_IsTimerOut(QspiTimer2) == 1)
 	 {
 		 return TIMER_OUT_ERR2;
 	 }
 
+     Mtimer_Delay(300);
+
+     reg = REG32_READ(EFUSE_NVM_DELAY_REG);
+     EfuseDelayParam = (((reg >> 16) || (reg)) & 0xff);
+     //printf("Qspi_ResetFlashMode0 EfuseDelayParam:%d\r\n",EfuseDelayParam);
+     Mtimer_Delay(EfuseDelayParam*5000);
+
      return AL_SUCCESS;
-	 
+
 }
 
 
 u32 Qspi_ResetFlashMode1(QSPI_CORE_HANDLE *pdev)
 {
+	uint32_t reg = 0, EfuseDelayParam = 0;
 
      Qspi_Disable(pdev);
      Qspi_Mode(pdev, TMOD_TX_ONLY);
@@ -119,59 +130,32 @@ u32 Qspi_ResetFlashMode1(QSPI_CORE_HANDLE *pdev)
      Wait_TxCompl(pdev);
      //Mtimer_Start(30);
      //while( Qspi_Busy(pdev) && (Mtimer_TimerOut() == 0));
-	 MTIMER_OUT_CONDITION(30,QspiTimer2,Qspi_Busy(pdev));
+	 MTIMER_OUT_CONDITION(300000,QspiTimer2,Qspi_Busy(pdev));
 
-    
-     Mtimer_Delay(100);
 	 if (Mtimer_IsTimerOut(QspiTimer2) == 1)
 	 {
 		 return TIMER_OUT_ERR3;
 	 }
+     Mtimer_Delay(300);
 
-	 return AL_SUCCESS;
-      
-}
-
-//for mxic,gd exit enhance mode
-u32 Qspi_ReturnCase0(QSPI_CORE_HANDLE *pdev)
-{
-	 Qspi_Disable(pdev);
-     Qspi_Mode(pdev, TMOD_TX_ONLY);	
-     Qspi_TransType(pdev,SPI_TRANSFER_TYPE0);
-     Config_QspiTx(pdev,1);
-     Config_QspiRx(pdev,0);
-     Qspi_Enable(pdev);
-	 Qspi_DataTransmit(pdev,0xFF);
-     Wait_TxCompl(pdev);
-     //Mtimer_Start(30);
-     //while( Qspi_Busy(pdev) && (Mtimer_TimerOut() == 0));
-	 MTIMER_OUT_CONDITION(30,QspiTimer2,Qspi_Busy(pdev));
-	 if (Mtimer_IsTimerOut(QspiTimer2) == 1)
-	 {
-		 return TIMER_OUT_ERR4;
-	 }
-
-	 Qspi_DataTransmit(pdev,0x00);
-     Wait_TxCompl(pdev);
-     //Mtimer_Start(30);
-     //while( Qspi_Busy(pdev) && (Mtimer_TimerOut() == 0));
-	 MTIMER_OUT_CONDITION(30,QspiTimer2,Qspi_Busy(pdev));
-	 if (Mtimer_IsTimerOut(QspiTimer2) == 1)
-	 {
-		 return TIMER_OUT_ERR5;
-	 }
+	 reg = REG32_READ(EFUSE_NVM_DELAY_REG);
+	 EfuseDelayParam = (((reg >> 16) || (reg)) & 0xff);
+	 //printf("Qspi_ResetFlashMode1 EfuseDelayParam:%d\r\n",EfuseDelayParam);
+	 Mtimer_Delay(EfuseDelayParam*5000);
 
 	 return AL_SUCCESS;
 
 }
+
+
 
 //for gd, disable QPI, 0xff cmd
 u32 Qspi_ReturnCase1(QSPI_CORE_HANDLE *pdev)
 {
 	 Qspi_Disable(pdev);
-     Qspi_Mode(pdev, TMOD_TX_ONLY);	
+     Qspi_Mode(pdev, TMOD_TX_ONLY);
 	 Qspi_TransType(pdev,SPI_TRANSFER_TYPE2);
-	 Qspi_AddrMode(pdev,SPI_NO_ADDR);
+	 Qspi_AddrMode(pdev,0);
      Config_QspiTx(pdev,1);
      Config_QspiRx(pdev,0);
      Qspi_Enable(pdev);
@@ -179,13 +163,13 @@ u32 Qspi_ReturnCase1(QSPI_CORE_HANDLE *pdev)
      Wait_TxCompl(pdev);
      //Mtimer_Start(30);
      //while( Qspi_Busy(pdev) && (Mtimer_TimerOut() == 0));
-	
-	 MTIMER_OUT_CONDITION(30,QspiTimer2,Qspi_Busy(pdev));
+
+	 MTIMER_OUT_CONDITION(300000,QspiTimer2,Qspi_Busy(pdev));
 	 if (Mtimer_IsTimerOut(QspiTimer2) == 1)
 	 {
 		 return TIMER_OUT_ERR6;
 	 }
-	
+
 
 	 return AL_SUCCESS;
 }
@@ -193,33 +177,12 @@ u32 Qspi_ReturnCase1(QSPI_CORE_HANDLE *pdev)
 //for mxic, five 0xff exit ehnace mode, 0xf5 exit QPI
 u32 Qspi_ReturnCase2(QSPI_CORE_HANDLE *pdev)
 {
-	 Qspi_Disable(pdev);
-     Qspi_Mode(pdev, TMOD_TX_ONLY);	
-	 Qspi_TransType(pdev,SPI_TRANSFER_TYPE2);
-	 Qspi_AddrMode(pdev,SPI_NO_ADDR);
-     Config_QspiTx(pdev,5);
-     Config_QspiRx(pdev,0);
-     Qspi_Enable(pdev);
-	 Qspi_DataTransmit(pdev,0xFF);
-	 Qspi_DataTransmit(pdev,0xFF);
-	 Qspi_DataTransmit(pdev,0xFF);
-	 Qspi_DataTransmit(pdev,0xFF);
-	 Qspi_DataTransmit(pdev,0xFF);
-     Wait_TxCompl(pdev);
-     //Mtimer_Start(30);
-     //while( Qspi_Busy(pdev) && (Mtimer_TimerOut() == 0));
-
-	 MTIMER_OUT_CONDITION(30,QspiTimer2,Qspi_Busy(pdev));
-	 if (Mtimer_IsTimerOut(QspiTimer2) == 1)
-	 {
-		 return TIMER_OUT_ERR7;
-	 }
 
 
 	 Qspi_Disable(pdev);
-     Qspi_Mode(pdev, TMOD_TX_ONLY);	
+     Qspi_Mode(pdev, TMOD_TX_ONLY);
 	 Qspi_TransType(pdev,SPI_TRANSFER_TYPE2);
-	 Qspi_AddrMode(pdev,SPI_NO_ADDR);
+	 Qspi_AddrMode(pdev,0);
      Config_QspiTx(pdev,1);
      Config_QspiRx(pdev,0);
      Qspi_Enable(pdev);
@@ -229,7 +192,7 @@ u32 Qspi_ReturnCase2(QSPI_CORE_HANDLE *pdev)
      //Mtimer_Start(30);
      //while( Qspi_Busy(pdev) && (Mtimer_TimerOut() == 0));
 
-	 MTIMER_OUT_CONDITION(30,QspiTimer2,Qspi_Busy(pdev));
+	 MTIMER_OUT_CONDITION(300000,QspiTimer2,Qspi_Busy(pdev));
 	 if (Mtimer_IsTimerOut(QspiTimer2) == 1)
 	 {
 		 return TIMER_OUT_ERR8;
@@ -253,7 +216,7 @@ u32 Qspi_ReturnCase2(QSPI_CORE_HANDLE *pdev)
 * @return
 *
 * @note     None.
-* becase spi width and dfs, address mode 24/32, three factor impact the spi format, so wo can only support 
+* becase spi width and dfs, address mode 24/32, three factor impact the spi format, so wo can only support
 * spi x1: 24/32, dfs = 8
 * spi x2/x4: 24/31,dfs = 8
 *
@@ -270,26 +233,27 @@ static u32 Qspi_PolledTransfer(QSPI_CORE_HANDLE *pdev, QspiFlash_Msg *Msg)
      * Set the busy flag, which will be cleared when the transfer is
      * entirely done.
      */
-     
+
     Index = 0;
     if (Msg->BusWidth == QSPI_WIDTH_X1) {
         //Mtimer_Start(30);
         //while ((Msg->txByteCount > 0) && (Mtimer_TimerOut() ==  0) ) {
-		MTIMER_OUT_CONDITION(30,QspiTimer2,Msg->txByteCount > 0) {
+		MTIMER_OUT_CONDITION(500000,QspiTimer2,Msg->txByteCount > 0) {
             Qspi_DataTransmit(pdev,Msg->TxBfrPtr[Index]);
             Index++;
             Msg->txByteCount--;
         }
+
 		if (Mtimer_IsTimerOut(QspiTimer2) == 1)
 		{
 			return DATA_XFER_ERR0;
-		}    
+		}
 
         Status=Wait_TxCompl(pdev);
         Index = 0;
         //Mtimer_Start(1000);
         //while ((Msg->rxByteCount > 0) && (Mtimer_TimerOut() ==  0)) {
-		MTIMER_OUT_CONDITION(1000,QspiTimer2,Msg->rxByteCount > 0) {
+		MTIMER_OUT_CONDITION(500000,QspiTimer2,Msg->rxByteCount > 0) {
                 if(Qspi_RxNotempty(pdev))  // RXFIFO not empty
                 {
                     Msg->RxBfrPtr[Index]= Qspi_DataRead(pdev) & 0xFF;
@@ -302,10 +266,10 @@ static u32 Qspi_PolledTransfer(QSPI_CORE_HANDLE *pdev, QspiFlash_Msg *Msg)
 			return DATA_XFER_ERR1;
 		}
     }
-    else if (Msg->BusWidth == QSPI_WIDTH_X2 || Msg->BusWidth == QSPI_WIDTH_X4) {
+    else if ((Msg->BusWidth == QSPI_WIDTH_X2) || (Msg->BusWidth == QSPI_WIDTH_X4)) {
          //Mtimer_Start(30);
          //while ( (Msg->txByteCount > 0) && (Mtimer_TimerOut() ==  0) ) {
-		 MTIMER_OUT_CONDITION(30,QspiTimer2,Msg->txByteCount > 0) {
+		 MTIMER_OUT_CONDITION(1000000,QspiTimer2,Msg->txByteCount > 0) {
             if (Index == 0) {
                 Tdata = Msg->TxBfrPtr[0];
                 Qspi_DataTransmit(pdev,Tdata);
@@ -325,13 +289,13 @@ static u32 Qspi_PolledTransfer(QSPI_CORE_HANDLE *pdev, QspiFlash_Msg *Msg)
                 }
                   Qspi_DataTransmit(pdev,Tdata);
             }
-            else {      
+            else {
               // never run here error
                Index += 4;
                Msg->txByteCount -= 4;
             }
          }
-		 
+
 		 if (Mtimer_IsTimerOut(QspiTimer2) == 1) {
 			return DATA_XFER_ERR2;
 		 }
@@ -340,7 +304,7 @@ static u32 Qspi_PolledTransfer(QSPI_CORE_HANDLE *pdev, QspiFlash_Msg *Msg)
             Index = 0;
             //Mtimer_Start(1000);
             //while ( (Msg->rxByteCount > 0) && (Mtimer_TimerOut()==0)  ) {
-			MTIMER_OUT_CONDITION(1000,QspiTimer2,Msg->rxByteCount > 0) {
+			MTIMER_OUT_CONDITION(1000000,QspiTimer2,Msg->rxByteCount > 0) {
                 if(Qspi_RxNotempty(pdev))  // RXFIFO not empty, is must 4byte aligned
                 {
                     Rdata = Qspi_DataRead(pdev);
@@ -349,20 +313,20 @@ static u32 Qspi_PolledTransfer(QSPI_CORE_HANDLE *pdev, QspiFlash_Msg *Msg)
                     Msg->rxByteCount --;
                 }
         }
-         
+
 		if (Mtimer_IsTimerOut(QspiTimer2) == 1) {
 			return DATA_XFER_ERR3;
 		 }
 
     }
-    
+
     return Status;
 }
 
 /******************************************************************************
 *
 * This function reads serial FLASH ID connected to the SPI interface.
-* It then deduces the make and size of the flash 
+* It then deduces the make and size of the flash
 * The flash driver will function based on this and
 * it presently supports Micron and Spansion - 128, 256 and 512Mbit and
 * Winbond 128Mbit
@@ -376,17 +340,17 @@ static u32 Qspi_PolledTransfer(QSPI_CORE_HANDLE *pdev, QspiFlash_Msg *Msg)
 ******************************************************************************/
 static u32 Flash_ReadID(QSPI_CORE_HANDLE *pdev)
 {
-    
+
     u32 index;
     uint32_t  flashID=0;
     s32 UStatus = AL_SUCCESS;
-    
+
     Qspi_Disable(pdev);
     Config_QspiRx(pdev,3);
     Config_QspiTx(pdev,1); //when rdid cmd send,transfer will start on serial line
     Qspi_Enable(pdev);
 
-    
+
     //bellow read flash ID
 
     Qspi_DataTransmit(pdev,READ_ID_CMD);
@@ -396,7 +360,7 @@ static u32 Flash_ReadID(QSPI_CORE_HANDLE *pdev)
     index=0;
     //Mtimer_Start(30);
     //while ( (index < 3) && (Mtimer_TimerOut() == 0)) {
-	MTIMER_OUT_CONDITION(30,QspiTimer2,index < 3) {
+	MTIMER_OUT_CONDITION(500000,QspiTimer2,index < 3) {
         if (Qspi_RxNotempty(pdev)) {
             ReadBuffer[index] = Qspi_DataRead(pdev) & 0xff;
             index++;
@@ -419,18 +383,19 @@ static u32 Flash_ReadID(QSPI_CORE_HANDLE *pdev)
 	QspiFlashMake = ReadBuffer[0];
     }
 
+
     /*
      * Deduce flash Size
      */
-     
+
      QspiFlashSize = FLASH_SIZE_128M;
-     
+
     if (ReadBuffer[2] == FLASH_SIZE_ID_2M) {
         QspiFlashSize = FLASH_SIZE_2M;
-    } 
+    }
     else if (ReadBuffer[2] == FLASH_SIZE_ID_4M) {
         QspiFlashSize = FLASH_SIZE_4M;
-    } 
+    }
     else if (ReadBuffer[2] == FLASH_SIZE_ID_8M) {
         QspiFlashSize = FLASH_SIZE_8M;
     } else if (ReadBuffer[2] == FLASH_SIZE_ID_16M) {
@@ -457,29 +422,30 @@ static u32 Flash_ReadID(QSPI_CORE_HANDLE *pdev)
             || (ReadBuffer[2] == MACRONIX_FLASH_1_8_V_SIZE_ID_2G)) {
                 QspiFlashSize = FLASH_SIZE_2G;
     }else {
-        UStatus = FLASH_ID_ERR2;
+        //UStatus = FLASH_ID_ERR2;
+    	QspiFlashSize = FLASH_SIZE_128M;
     }
-    
+
     if (QspiFlashSize > FLASH_SIZE_128M) {
          ReadCommand = BASE_READ_CMD_32BIT;
     }
     else {
          ReadCommand = BASE_READ_CMD_24BIT;
     }
-    
+
     pdev->cfg.flashSize = QspiFlashSize;
-    
+
     return UStatus;
-    
+
 }
 
 static u32 Qspi_Copy(u32 SrcAddress, u8* DestAddress, u32 Length)
 {
     u32 Status=AL_SUCCESS;
     u32 DiscardByteCnt = 0;
-    
+
     WriteBuffer[COMMAND_OFFSET]   = (u8)ReadCommand;
-    
+
     if (ReadCommand == BASE_READ_CMD_24BIT || ReadCommand == DUAL_READ_CMD_24BIT || ReadCommand == QUAD_READ_CMD_24BIT) {
         WriteBuffer[ADDRESS_1_OFFSET] = (u8)((SrcAddress & 0xFF0000U) >> 16);
         WriteBuffer[ADDRESS_2_OFFSET] = (u8)((SrcAddress & 0xFF00U) >> 8);
@@ -493,7 +459,7 @@ static u32 Qspi_Copy(u32 SrcAddress, u8* DestAddress, u32 Length)
         WriteBuffer[ADDRESS_4_OFFSET] = (u8)(SrcAddress & 0xFFU);
         DiscardByteCnt = 5;
     }
-    
+
     FlashMsg.TxBfrPtr = WriteBuffer;
     FlashMsg.RxBfrPtr = (u8 *)DestAddress;
     FlashMsg.txByteCount = DiscardByteCnt;
@@ -533,91 +499,85 @@ u32 Csu_QspiInit(QspiParams *params)
 {
     u32 Status = AL_SUCCESS;
 
+
+
 	Mtimer_Init(QspiTimer1);
 	Mtimer_Init(QspiTimer2);
 
     Qspi_Init(g_pdev);
 
     Csu_QspiSetMode(QSPI_WIDTH_X1,QSPI_ADDR_24);
-    
+
     Status = Flash_ReadID(g_pdev);
-  
-    if (g_pdev->cfg.flashID ==  0xffffff || g_pdev->cfg.flashID == 0x0) {
-        
+
+   if ((g_pdev->cfg.flashID&0xff) ==  0xff || (g_pdev->cfg.flashID&0xff) == 0x0) {
+
         Qspi_ResetFlashMode0(g_pdev);
 	    Csu_QspiSetMode(QSPI_WIDTH_X1,QSPI_ADDR_24);
-        Status = Flash_ReadID(g_pdev);    
+        Status = Flash_ReadID(g_pdev);
     }
 
-    if (g_pdev->cfg.flashID ==  0xffffff || g_pdev->cfg.flashID == 0x0) {
+    if ((g_pdev->cfg.flashID&0xff) ==  0xff || (g_pdev->cfg.flashID&0xff) == 0x0) {
+
         Qspi_ResetFlashMode1(g_pdev);
 		Csu_QspiSetMode(QSPI_WIDTH_X1,QSPI_ADDR_24);
-        Status = Flash_ReadID(g_pdev);	
-    }
-    
-	if (g_pdev->cfg.flashID ==  0xffffff || g_pdev->cfg.flashID == 0x0) {
-        Qspi_ReturnCase0(g_pdev);
-		Csu_QspiSetMode(QSPI_WIDTH_X1,QSPI_ADDR_24);
-	   	Qspi_ResetFlashMode0(g_pdev);
-		Csu_QspiSetMode(QSPI_WIDTH_X1,QSPI_ADDR_24);
-        Status = Flash_ReadID(g_pdev);	
+        Status = Flash_ReadID(g_pdev);
     }
 
-	if (g_pdev->cfg.flashID ==  0xffffff || g_pdev->cfg.flashID == 0x0) {
+	if ((g_pdev->cfg.flashID&0xff) ==  0xff || (g_pdev->cfg.flashID&0xff) == 0x0) {
 		Csu_QspiSetMode(QSPI_WIDTH_X4,QSPI_ADDR_24);
         Qspi_ReturnCase1(g_pdev);
 		Csu_QspiSetMode(QSPI_WIDTH_X1,QSPI_ADDR_24);
 		Qspi_ResetFlashMode0(g_pdev);
 		Csu_QspiSetMode(QSPI_WIDTH_X1,QSPI_ADDR_24);
         Status = Flash_ReadID(g_pdev);
-	
+
     }
 
-	if (g_pdev->cfg.flashID ==  0xffffff || g_pdev->cfg.flashID == 0x0) {
+	if ((g_pdev->cfg.flashID&0xff) ==  0xff || (g_pdev->cfg.flashID&0xff) == 0x0) {
+
 		Csu_QspiSetMode(QSPI_WIDTH_X4,QSPI_ADDR_24);
         Qspi_ReturnCase2(g_pdev);
 		Csu_QspiSetMode(QSPI_WIDTH_X1,QSPI_ADDR_24);
 		Qspi_ResetFlashMode0(g_pdev);
 		Csu_QspiSetMode(QSPI_WIDTH_X1,QSPI_ADDR_24);
         Status = Flash_ReadID(g_pdev);
-		
+
     }
 
-	
-
-     if (g_pdev->cfg.flashID ==  0xffffff || g_pdev->cfg.flashID == 0x0) {
+     if ((g_pdev->cfg.flashID&0xff) ==  0xff || (g_pdev->cfg.flashID&0xff) == 0x0) {
          Status = FLASH_ID_ERR3; //flashID read error!!!
      }
-    
-   
+
+
     params->flashID     =  g_pdev->cfg.flashID;
     params->flashSize   =  g_pdev->cfg.flashSize; //return size in byte
- 
+
     return Status;
-    
+
 }
 
 /*!
     \brief       Csu_QspiSetMode：QSPI width set.
     \param[in]  : Mode is spi width:
-                  QSPI_WIDTH_X1: QSPI X1 
-                  QSPI_WIDTH_X2: QSPI X2 
-                  QSPI_WIDTH_X4: QSPI X4 
+                  QSPI_WIDTH_X1: QSPI X1
+                  QSPI_WIDTH_X2: QSPI X2
+                  QSPI_WIDTH_X4: QSPI X4
                 : AddrMode
                  QSPI_ADDR_24: force 24bit address width
                  QSPI_ADDR_32: force 32bit address width
-                  
+
     \param[out] : no
     \retval     : 0
 */
 u32 Csu_QspiSetMode(u32 Mode, u32 AddrMode)
 {
     Qspi_Disable(g_pdev);
-     
+
     if (Mode == QSPI_WIDTH_X1 || Mode == QSPI_WIDTH_X2 || Mode == QSPI_WIDTH_X4) {
         Qspi_Width(g_pdev,Mode);
 
-        
+
         if (Mode == QSPI_WIDTH_X1) {
             Qspi_Mode(g_pdev,TMOD_EEPROM);
             Qspi_Dfs(g_pdev,DFS_BYTE);
@@ -644,7 +604,7 @@ u32 Csu_QspiSetMode(u32 Mode, u32 AddrMode)
             Config_EhanceMode(g_pdev);
         }
     }
-    
+
     if (Mode == QSPI_WIDTH_X1) {
         if (AddrMode == QSPI_ADDR_24) {  //force address to 24BIT
             ReadCommand = BASE_READ_CMD_24BIT;
@@ -652,7 +612,7 @@ u32 Csu_QspiSetMode(u32 Mode, u32 AddrMode)
         else if (AddrMode == QSPI_ADDR_32) { //force address to 32BIT
             ReadCommand = BASE_READ_CMD_32BIT;
         }
-         
+
     } else if (Mode == QSPI_WIDTH_X2) {
         if (AddrMode == QSPI_ADDR_24) {  //force address to 24BIT
             ReadCommand = DUAL_READ_CMD_24BIT;
@@ -669,9 +629,9 @@ u32 Csu_QspiSetMode(u32 Mode, u32 AddrMode)
             ReadCommand = QUAD_READ_CMD_32BIT;
         }
     }
-    
+
      Qspi_Enable(g_pdev);
-     
+
      return AL_SUCCESS;
 }
 
@@ -689,7 +649,7 @@ u32 Csu_QspiRead(u32 offset, u8* dest, u32 length)
     u32 RemainingBytes=0;
     u32 TransferBytes=0;
 	u32 Status=AL_SUCCESS;
-    
+
      /**
      * Check the read length with Qspi flash size
      */
@@ -697,20 +657,20 @@ u32 Csu_QspiRead(u32 offset, u8* dest, u32 length)
     {
         return  FLASH_READ_ERR0;
     }
-    
+
     RemainingBytes = length;
-   
-     MTIMER_OUT_CONDITION(1000000,QspiTimer1,RemainingBytes > 0U) {
-        
+
+     MTIMER_OUT_CONDITION(10000000,QspiTimer1,RemainingBytes > 0U) {
+
         if (RemainingBytes > QSPI_FIFO_MAX_SIZE)
              TransferBytes = QSPI_FIFO_MAX_SIZE;
-         else 
+         else
              TransferBytes = RemainingBytes;
 
-		  Status=Qspi_Copy(offset,dest,TransferBytes);
-    
+		Status=Qspi_Copy(offset,dest,TransferBytes);
+
         if ( Status == AL_SUCCESS ) {
-    
+
             /**
             * Update the variables
             */
@@ -722,7 +682,7 @@ u32 Csu_QspiRead(u32 offset, u8* dest, u32 length)
             return Status;
         }
     }
-    
+
 	if (Mtimer_IsTimerOut(QspiTimer1) == 1) {
 		return FLASH_READ_ERR1;
 	}

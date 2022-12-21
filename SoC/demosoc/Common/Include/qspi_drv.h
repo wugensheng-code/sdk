@@ -3,7 +3,7 @@
 #define _AL9000_QSPI_DRV_H_
 
 #include <stdio.h>
-#include <stdint.h>
+#include "al_io.h"
 
 #define     __IOM           volatile
 
@@ -12,11 +12,10 @@
 
 #define QSPI_READ_REG32(reg)  (*(__IOM uint32_t *)(reg))
 #define QSPI_WRITE_REG32(reg,value) (*(__IOM uint32_t *)(reg) = (value))
+
 #define QSPI_MODIFY_REG32(reg,clear_mask,set_mask) \
    QSPI_WRITE_REG32((reg), ((( QSPI_READ_REG32(reg)) & ~(clear_mask)) | (set_mask)) )
    
-#define REG32_READ(reg)        QSPI_READ_REG32(reg) 
-#define REG32_WRITE(reg,value) QSPI_WRITE_REG32(reg,value)
    
    /* bits definitions */
 #define QSPI_EN             1   /*Enables DWC_ssi*/
@@ -480,7 +479,6 @@ int32_t Qspi_Disable(QSPI_CORE_HANDLE *pdev);
 int32_t Qspi_Enable(QSPI_CORE_HANDLE *pdev);
 int32_t Qspi_Width(QSPI_CORE_HANDLE *pdev, uint32_t spi_width);
 int32_t Qspi_Mode(QSPI_CORE_HANDLE *pdev, uint32_t mode);
-
 int32_t Qspi_TransType(QSPI_CORE_HANDLE *pdev, uint32_t type);
 int32_t Qspi_Dfs(QSPI_CORE_HANDLE *pdev, uint32_t len);
 int32_t Qspi_Ser(QSPI_CORE_HANDLE *pdev, uint32_t slv);
@@ -497,9 +495,6 @@ void Qspi_Ctrl1Ndf(QSPI_CORE_HANDLE *pdev, uint32_t num);
 void Qspi_AddrMode(QSPI_CORE_HANDLE *pdev, uint32_t val);
 void Qspi_InstructionLength(QSPI_CORE_HANDLE *pdev, uint32_t val);
 void Qspi_WaitCycles(QSPI_CORE_HANDLE *pdev, uint32_t val);
-
-
-
 
 
 #endif /* _AL9000_QSPI_DRV_H_ */

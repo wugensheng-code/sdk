@@ -1,10 +1,7 @@
 #ifndef _AL9000_QSPI_FLASH_H_
 #define _AL9000_QSPI_FLASH_H_
 
-#include "../../../../../application/fsbl/al_types.h"
-
-
-
+#include "al_types.h"
 
 #define QSPI_ENHANCE_MODE_INCLUDE   1
 
@@ -26,6 +23,7 @@
 #define TIMER_OUT_ERR7 17
 #define TIMER_OUT_ERR8 18
 #define TIMER_OUT_ERR9 19
+
 
 #define DATA_XFER_ERR0 20
 #define DATA_XFER_ERR1 21

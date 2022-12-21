@@ -1,5 +1,7 @@
-#include "../../../../../application/fsbl/al_types.h"
+
 #include "qspi_drv.h"
+
+
 
 /**************************AL9000******************************/
 /*!
@@ -49,7 +51,6 @@ int32_t Qspi_Enable(QSPI_CORE_HANDLE *pdev)
 int32_t Qspi_Width(QSPI_CORE_HANDLE *pdev, uint32_t spi_width)
 {
     CTRLR0_TypeDef ctrlr0;
-
     
 	ctrlr0.d32 = REG32_READ((UINTPTR)&pdev->regs->CTRLR0);
     
@@ -59,11 +60,8 @@ int32_t Qspi_Width(QSPI_CORE_HANDLE *pdev, uint32_t spi_width)
         ctrlr0.b.SPI_FRF = SPI_FRF_X2_MODE;
     else if (spi_width == SPI_FRF_X4_MODE)
         ctrlr0.b.SPI_FRF =  SPI_FRF_X4_MODE;
-    else
-        return -1;
     
     REG32_WRITE((UINTPTR)&pdev->regs->CTRLR0,ctrlr0.d32);
-
     
     pdev->cfg.width = ctrlr0.b.SPI_FRF;
     
@@ -96,7 +94,6 @@ int32_t Qspi_Mode(QSPI_CORE_HANDLE *pdev, uint32_t mode)
 {
     CTRLR0_TypeDef ctrlr0;
 
-
 	ctrlr0.d32 = REG32_READ((UINTPTR)&pdev->regs->CTRLR0);
     if (mode == TMOD_TX_RX ) 
         ctrlr0.b.TMOD = TMOD_TX_RX;
@@ -106,8 +103,6 @@ int32_t Qspi_Mode(QSPI_CORE_HANDLE *pdev, uint32_t mode)
         ctrlr0.b.TMOD =  TMOD_RX_ONLY;
     else if (mode == TMOD_EEPROM )
         ctrlr0.b.TMOD =  TMOD_EEPROM;
-    else
-        return -1;
     
     REG32_WRITE((UINTPTR)&pdev->regs->CTRLR0,ctrlr0.d32);
     
@@ -115,7 +110,6 @@ int32_t Qspi_Mode(QSPI_CORE_HANDLE *pdev, uint32_t mode)
     pdev->cfg.mode = ctrlr0.b.TMOD;
     return 0;
 }
-
 
 
 /*!
@@ -132,7 +126,6 @@ int32_t Qspi_Dfs(QSPI_CORE_HANDLE *pdev, uint32_t len)
     ctrlr0.d32 = REG32_READ((UINTPTR)&pdev->regs->CTRLR0);
     ctrlr0.b.DFS = len;
     REG32_WRITE((UINTPTR)&pdev->regs->CTRLR0,ctrlr0.d32);
-
 
     pdev->cfg.dfs = len+1;
     return 0;
@@ -156,8 +149,6 @@ int32_t Qspi_Ser(QSPI_CORE_HANDLE *pdev, uint32_t slv)
         ser.b.SER = SLAVE_CS1_SEL;
     else if (slv == SLAVE_ALL_SEL)
         ser.b.SER = SLAVE_ALL_SEL;
-    else
-        return -1;
     
     REG32_WRITE((UINTPTR)&pdev->regs->SER,ser.d32);
     return 0;
@@ -191,7 +182,6 @@ int32_t Qspi_SckdivCfg(QSPI_CORE_HANDLE *pdev, uint32_t div)
 int32_t Qspi_TxftlTft(QSPI_CORE_HANDLE *pdev, uint32_t Threshold)
 {
     TXFTLR_TypeDef txftlr;
-
     
     txftlr.d32 = REG32_READ((UINTPTR)&pdev->regs->TXFTLR);
     
@@ -211,8 +201,10 @@ int32_t Qspi_TxftlTft(QSPI_CORE_HANDLE *pdev, uint32_t Threshold)
 int32_t Qspi_TxfifoStartLevelSet(QSPI_CORE_HANDLE *pdev, uint32_t start_level)
 {
     TXFTLR_TypeDef txftlr;
+
     txftlr.d32 = REG32_READ((UINTPTR)&pdev->regs->TXFTLR);
     
+
     txftlr.b.TXFTHR = start_level;
     
     REG32_WRITE((UINTPTR)&pdev->regs->TXFTLR,txftlr.d32);
@@ -364,8 +356,6 @@ int32_t Qspi_TransType(QSPI_CORE_HANDLE *pdev, uint32_t type)
         spi_ctrlr0.b.TRANS_TYPE = SPI_TRANSFER_TYPE1; 
      else if (type == SPI_TRANSFER_TYPE2)
         spi_ctrlr0.b.TRANS_TYPE = SPI_TRANSFER_TYPE2;
-    else
-        return -1;
     
     REG32_WRITE((UINTPTR)&pdev->regs->SPI_CTRLR0,spi_ctrlr0.d32);
 
@@ -396,7 +386,8 @@ void Qspi_AddrMode(QSPI_CORE_HANDLE *pdev, uint32_t val)
         pdev->cfg.addr_mode = SPI_FLASH_ADDR32;
     }
 	else {
-		 spi_ctrlr0.b.ADDR_L = 0;
+		 spi_ctrlr0.b.ADDR_L = val;
+		 pdev->cfg.addr_mode = val;
 	}
     
     
@@ -419,7 +410,8 @@ void Qspi_InstructionLength(QSPI_CORE_HANDLE *pdev, uint32_t val)
     
     spi_ctrlr0.d32 = REG32_READ((UINTPTR)&pdev->regs->SPI_CTRLR0);
     spi_ctrlr0.b.INST_L = val;
- 
+
+
     REG32_WRITE((UINTPTR)&pdev->regs->SPI_CTRLR0,spi_ctrlr0.d32);
 }
 
@@ -441,6 +433,3 @@ void Qspi_WaitCycles(QSPI_CORE_HANDLE *pdev, uint32_t val)
     REG32_WRITE((UINTPTR)&pdev->regs->SPI_CTRLR0,spi_ctrlr0.d32);
    
 }
-
-
-
