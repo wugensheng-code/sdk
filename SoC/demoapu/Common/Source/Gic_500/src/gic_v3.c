@@ -241,9 +241,13 @@ void gicv3_redist_init(u32 int_group)
 	/* SGI: edge-triggered */
 	writel_relaxed(GICR_SGI_EDGE_TRIG, GICR_SGI_ICFGR0);
 
-	/* PPI: level-triggered */
-	writel_relaxed(GICR_SGI_LEVEL_TRIG, GICR_SGI_ICFGR1);
 
+#ifdef PPI_EDGE_TRIGGER
+	writel_relaxed(GICR_SGI_EDGE_TRIG, GICR_SGI_ICFGR1);
+#else
+/* PPI: level-triggered */
+	writel_relaxed(GICR_SGI_LEVEL_TRIG, GICR_SGI_ICFGR1);
+#endif
 	gic_redist_wait();
 }
 
@@ -391,8 +395,8 @@ void do_irq_handle(void)
 	if (!gic_enable_sre()) {
 		/* interrupr acknowledge by read gicc_iar*/
 		int_id = readl_relaxed(GICC_IAR) & 0xffffff;
-	} else 
-#endif	
+	} else
+#endif
 	{
 		/* interrupr acknowledge by read iar*/
 		int_id = gic_read_iar_common() & 0xffffff;
@@ -415,7 +419,7 @@ void do_irq_handle(void)
 	/* write end of interrupt to deactivate the interrupt */
 	if (!gic_enable_sre()) {
 		writel_relaxed(int_id, GICC_EOIR);
-	} else 
+	} else
 #endif
 	{
 		gic_write_eoir(int_id);

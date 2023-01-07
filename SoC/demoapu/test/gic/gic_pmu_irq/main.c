@@ -54,6 +54,8 @@ int main()
 	//Performance Monitors Count Enable Set Register
 	write_sysreg_s((0x01 << 31), SYS_PMCNTENSET_EL0);
 
+	printf("Please wait a while for overflow interrupt !!\r\n");
+
 	while (pmu_irq_happened == 0) {
 	}
 
