@@ -220,11 +220,15 @@ int printftime(const char *fmt, ...)
 int __attribute__((weak)) printf(const char *fmt, ...)
 {
 	int count;
+#ifdef SIMULATIONWAVE
+    count = 0;
+#else
 	va_list va;
 	//printftime("ps %llu\r\n", get_SystickTimer());
 	va_start(va, fmt);
 	count = vprintf(fmt, va);
 	va_end(va);
 	//printftime("pe %llu\r\n", get_SystickTimer());
+#endif
 	return count;
 }
