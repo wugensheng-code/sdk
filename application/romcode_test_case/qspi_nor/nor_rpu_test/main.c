@@ -45,6 +45,11 @@ void main(void)
     printf("flashSize:0x%x\r\n", norParams.flashSize);
     printf("flashSize:%dMB\r\n", norParams.flashSize/1024/1024);
 
+    nor_printf("\r\n\r\n\r\n");
+  	nor_printf("Csu_QspiInit:  ");
+  	print_log();
+  	nor_printf("\r\n\r\n\r\n");
+
 
     //*TEMP_DDR_3 = 123456;
 
@@ -66,6 +71,11 @@ void main(void)
 		{
 			printf("!!!!!!!Csu_QspiRead error:%d\r\n", status);
 		}
+
+		nor_printf("\r\n\r\n\r\n");
+		nor_printf("Csu_QspiRead:  ");
+		print_log();
+		nor_printf("\r\n\r\n\r\n");
 
 
 		printf("Qspi_ChipErase:");
@@ -325,6 +335,11 @@ void main(void)
 			i = norParams.flashSize - j;
 			status = Csu_QspiRead(j, test_buf, i);
 		}
+
+		nor_printf("\r\n\r\n\r\n");
+		nor_printf("Csu_QspiRead:  ");
+		print_log();
+		nor_printf("\r\n\r\n\r\n");
 
 		if(AL_SUCCESS != status)
 		{

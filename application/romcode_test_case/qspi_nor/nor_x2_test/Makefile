@@ -6,6 +6,7 @@ SRCDIRS = .
 
 INCDIRS = . 
 
-COMMON_FLAGS := -O2
+#COMMON_FLAGS := -O2 -DNOR_BRANCH_PUT_CHAR 
+COMMON_FLAGS := -O2  
 
 include $(NUCLEI_SDK_ROOT)/Build/Makefile.base

@@ -9,9 +9,26 @@ uint8_t WriteBuf[100] = {0};
 
 #define TEMP_DDR_3 ((volatile uint32_t *)(0X6103E000UL+0X8UL))	//int_count_num
 
-uint8_t __attribute__ ((aligned(32))) test_buf[88888] = {0};
+
 #define READ_SIZE sizeof(test_buf)
+
+
+
+#ifndef NOR_BRANCH_PUT_CHAR
+uint8_t __attribute__ ((aligned(32))) test_buf[88888] = {0};
+#else
+uint8_t __attribute__ ((aligned(32))) test_buf[8888] = {0};
+#endif
+
+
+#define READ_SIZE sizeof(test_buf)
+
+#ifndef NOR_BRANCH_PUT_CHAR
 #define WRITE_SIZE 10000
+#else
+#define WRITE_SIZE 1000
+#endif
+
 
 void main(void)
 {
@@ -47,10 +64,17 @@ void main(void)
     printf("flashSize:0x%x\r\n", norParams.flashSize);
     printf("flashSize:%dMB\r\n", norParams.flashSize/1024/1024);
 
+    nor_printf("\r\n\r\n\r\n");
+  	nor_printf("Csu_QspiInit:  ");
+  	print_log();
+  	nor_printf("\r\n\r\n\r\n");
+
 
     //*TEMP_DDR_3 = 123456;
-
+#ifndef NOR_BRANCH_PUT_CHAR
 #define PROGRAM_AND_ERASE_PAGE 1
+#endif
+
 #ifdef PROGRAM_AND_ERASE_PAGE
 
 	if(*TEMP_DDR_3 != 123456)
@@ -69,6 +93,10 @@ void main(void)
 			printf("!!!!!!!Csu_QspiRead error:%d\r\n", status);
 		}
 
+		nor_printf("\r\n\r\n\r\n");
+		nor_printf("Csu_QspiRead:  ");
+		print_log();
+		nor_printf("\r\n\r\n\r\n");
 
 		printf("Qspi_ChipErase:");
 		for(i = 0; i < 100; i++)
@@ -96,6 +124,11 @@ void main(void)
 			{
 				status = Test_QspiProgram(k*4, test_buf, norParams.flashSize-k*4);
 			}
+
+			nor_printf("\r\n\r\n\r\n");
+			nor_printf("Test_QspiProgram:  ");
+			print_log();
+			nor_printf("\r\n\r\n\r\n");
 
 			if(AL_SUCCESS != status)
 			{
@@ -150,6 +183,11 @@ void main(void)
 		while(1);
 	}
 
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiSetMode:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
+
 
 
 
@@ -165,6 +203,12 @@ void main(void)
 			i = norParams.flashSize - j;
 			status = Csu_QspiRead(j, test_buf, i);
 		}
+
+		nor_printf("\r\n\r\n\r\n");
+		nor_printf("Csu_QspiRead:  ");
+		print_log();
+		nor_printf("\r\n\r\n\r\n");
+
 
 		if(AL_SUCCESS != status)
 		{

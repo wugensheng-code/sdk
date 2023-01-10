@@ -1,13 +1,13 @@
-TARGET = nor_gd_mode_test
+TARGET = nor_gd_new_mode_test
 
 NUCLEI_SDK_ROOT = ../../../..
 
 SRCDIRS = . src
 
 INCDIRS = . inc
-
-COMMON_FLAGS := -O2 -DQUAD -DQUAD_4ADDR_Performance_Enhance_Mode -DDUAL_3ADDR_Performance_Enhance_Mode -DDUAL_4ADDR_Performance_Enhance_Mode
-
+#COMMON_FLAGS := -O2 -DQPI -DQUAD -DQUAD_4ADDR_Performance_Enhance_Mode -DQPI_DUMMY=6 -DNOR_BRANCH_PUT_CHAR
+#COMMON_FLAGS := -O2 -DQPI -DQUAD -DQUAD_4ADDR_Performance_Enhance_Mode -DQPI_DUMMY=6 
+COMMON_FLAGS := -O2  -DQPI_QUAD_3ADDR_Performance_Enhance_Mode -DQPI_DUMMY=6 
 include $(NUCLEI_SDK_ROOT)/Build/Makefile.base
 
 

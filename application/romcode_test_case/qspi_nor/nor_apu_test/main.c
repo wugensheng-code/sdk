@@ -34,6 +34,11 @@ void main(void)
     printf("flashSize:0x%x\r\n", norParams.flashSize);
     printf("flashSize:%dMB\r\n", norParams.flashSize/1024/1024);
 
+    nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiInit:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
+
      //Qspi_ResetFlashMode0(g_pdev);
 
     Qspi_ReadStatusAndRemovePortection();
@@ -147,6 +152,10 @@ void main(void)
 			printf("Csu_QspiRead error!!!!!!!!!!!!!!!!:%d\r\n", status);
 		}
 
+		nor_printf("\r\n\r\n\r\n");
+		nor_printf("Csu_QspiRead:  ");
+		print_log();
+		nor_printf("\r\n\r\n\r\n");
 
 		for(l = 0; l < 100; l++)
 		{
@@ -194,6 +203,10 @@ void main(void)
 			printf("Csu_QspiRead error:%d\r\n", status);
 		}
 
+		nor_printf("\r\n\r\n\r\n");
+		nor_printf("Csu_QspiRead:  ");
+		print_log();
+		nor_printf("\r\n\r\n\r\n");
 
 		for(l = 0; l < i; l++)
 		{

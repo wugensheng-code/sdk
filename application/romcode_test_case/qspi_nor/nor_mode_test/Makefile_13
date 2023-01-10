@@ -6,6 +6,6 @@ SRCDIRS = . src
 
 INCDIRS = . inc
 
-COMMON_FLAGS := -O2 -DQUAD -DDUAL_3ADDR_Performance_Enhance_Mode 
+COMMON_FLAGS := -O2 -DQUAD -DDUAL_3ADDR_Performance_Enhance_Mode -DNOR_BRANCH_PUT_CHAR
 
 include $(NUCLEI_SDK_ROOT)/Build/Makefile.base

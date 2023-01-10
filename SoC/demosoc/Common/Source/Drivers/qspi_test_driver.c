@@ -748,7 +748,7 @@ uint8_t Qspi_ChipErase(void)
 
 
 
-u32 Test_QspiTransfer(QSPI_CORE_HANDLE *pdev, QspiFlash_Msg *Msg)
+static u32 Test_QspiTransfer(QSPI_CORE_HANDLE *pdev, QspiFlash_Msg *Msg)
 {
 
     volatile u32 Index = 0, i = 0;
@@ -886,7 +886,7 @@ u32 Test_QspiTransfer(QSPI_CORE_HANDLE *pdev, QspiFlash_Msg *Msg)
 }
 
 
-uint32_t Qspi_Program(u32 SrcAddress, u8* DestAddress, u32 Length)
+static uint32_t Qspi_Program(u32 SrcAddress, u8* DestAddress, u32 Length)
 {
 
     s32 Status=0;
@@ -992,6 +992,7 @@ uint32_t Test_QspiProgram(u32 offset, u8* dest, u32 length)
 
 	while(RemainingBytes > 0U ) {
 
+
 		if (RemainingBytes > 110)
 			TransferBytes = 110;
 		else
@@ -1022,6 +1023,7 @@ uint32_t Test_QspiProgram(u32 offset, u8* dest, u32 length)
 		}
 
 		Mtimer_Delay(3500);
+
 	}
 
 	Qspi_Disable(g_pdev);
@@ -1151,14 +1153,17 @@ static u32 Qspi_PolledTransfer(QSPI_CORE_HANDLE *pdev, QspiFlash_Msg *Msg)
             		printf(" SPI_FLASH_ADDR40\r\n");
 
             		if (pdev->cfg.addr_mode == 0x0a) {
+            		//if (pdev->cfg.addr_mode == 12) {
 						Tdata = (Msg->TxBfrPtr[1] << 24) | (Msg->TxBfrPtr[2] << 16) | (Msg->TxBfrPtr[3] << 8) | (Msg->TxBfrPtr[4]);
 						Index += 4;
 						Msg->txByteCount -= 4;
 						Qspi_DataTransmit(pdev,Tdata);
 
 						Tdata = (Msg->TxBfrPtr[5]);
+						//Tdata =((Msg->TxBfrPtr[5]) << 16) | (0xff << 8) | 0xff;
 						Index += 1;
 						Msg->txByteCount -= 1;
+						//Msg->txByteCount = 0;
 						Qspi_DataTransmit(pdev,Tdata);
 					}
             	}
@@ -1306,6 +1311,7 @@ static u32 Qspi_TestCopy(u32 SrcAddress, u8* DestAddress, u32 Length)
     else if (g_pdev->cfg.width == SPI_FRF_X2_MODE || g_pdev->cfg.width == SPI_FRF_X4_MODE) {
         Qspi_Disable(g_pdev);
         Config_QspiTx(g_pdev,DiscardByteCnt/4+1);
+        //Config_QspiTx(g_pdev, 3);
 
         if(DiscardByteCnt == 6)
         {

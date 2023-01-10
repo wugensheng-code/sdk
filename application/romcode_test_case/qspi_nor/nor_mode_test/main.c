@@ -14,6 +14,7 @@ extern u32 ReadCommand;
 extern uint8_t firstCmdSend;
 
 
+
 #define TEMP_DDR_3 ((volatile uint32_t *)(0X6103E000UL+0X8UL))	//int_count_num
 
 
@@ -44,6 +45,11 @@ void DataTest(void)
 	printf("flashSize:0x%x\r\n", norParams.flashSize);
 	printf("flashSize:%dMB\r\n", norParams.flashSize/1024/1024);
 
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiInit:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
+
 	for(j =200;j < TEST_SIZE;)
 	{
 		printf("Csu_QspiRead Start addr:%d\r\n", j);
@@ -54,6 +60,11 @@ void DataTest(void)
 			j += i;
 			printf("Csu_QspiRead error:%d\r\n", status);
 		}
+
+		nor_printf("\r\n\r\n\r\n");
+		nor_printf("Csu_QspiRead:  ");
+		print_log();
+		nor_printf("\r\n\r\n\r\n");
 
 
 		for(l = 0; l < i; l++)
@@ -100,6 +111,11 @@ void QUAD_Read_Test(void)
 		while(1);
 	}
 
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiInit:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
+
 	if((norParams.flashID&0xff) != 0x01)
 	{
 
@@ -129,6 +145,11 @@ void QUAD_Read_Test(void)
 		status = Csu_QspiSetMode(QSPI_WIDTH_X4, QSPI_ADDR_32);
 	}
 
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiSetMode:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
+
 	if(status != AL_SUCCESS)
 	{
 		printf("QUAD_Read_Test Csu_QspiSetMode error:%d\r\n",status);
@@ -150,6 +171,11 @@ void QUAD_Read_Test(void)
 			j += i;
 			printf("Csu_QspiRead error:%d\r\n", status);
 		}
+
+		nor_printf("\r\n\r\n\r\n");
+		nor_printf("Csu_QspiRead:  ");
+		print_log();
+		nor_printf("\r\n\r\n\r\n");
 
 
 		for(l = 0; l < i; l++)
@@ -201,6 +227,11 @@ void QPI_Read_Test(void)
 	printf("flashSize:0x%x\r\n", norParams.flashSize);
 	printf("flashSize:%dMB\r\n", norParams.flashSize/1024/1024);
 
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiInit:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
+
 	if((norParams.flashID&0xff) != 0x01)
 	{
 		if( ((norParams.flashID&0xff) != 0x9d) && ((norParams.flashID&0xff) != 0xc2) )
@@ -232,6 +263,11 @@ void QPI_Read_Test(void)
 		while(1);
 	}
 
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiSetMode:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
+
 	Qspi_Disable(g_pdev);
 	Qspi_TransType(g_pdev, SPI_TRANSFER_TYPE2);
 
@@ -246,7 +282,7 @@ void QPI_Read_Test(void)
 		j = 0;
 		i =200;
 
-		printf("Csu_QspiRead Start addr:%d\r\n", j);
+		printf("Csu_TestQspiRead Start addr:%d\r\n", j);
 
 		status = Csu_TestQspiRead(j, test_buf, i);
 		if(AL_SUCCESS != status)
@@ -292,6 +328,7 @@ extern uint8_t QPI_Performance_Enhance;
 void QPI_QUAD_3ADDR_Performance_Enhance_Mode_Test(void)
 {
 	volatile uint32_t status, i = 0, j = 0, l = 0, temp1 =0,temp2 = 0,k = 0,value = 0;
+	firstCmdSend = 0;
 
 	printf("QPI_QUAD_3ADDR_Performance_Enhance_Mode_Test Start\r\n");
 
@@ -305,6 +342,11 @@ void QPI_QUAD_3ADDR_Performance_Enhance_Mode_Test(void)
 	printf("flashID:%x\r\n", norParams.flashID);
 	printf("flashSize:0x%x\r\n", norParams.flashSize);
 	printf("flashSize:%dMB\r\n", norParams.flashSize/1024/1024);
+
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiInit:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
 
 
 	if((norParams.flashID&0xff) != 0x01)
@@ -338,10 +380,19 @@ void QPI_QUAD_3ADDR_Performance_Enhance_Mode_Test(void)
 		while(1);
 	}
 
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiSetMode:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
+
+
 	Qspi_Disable(g_pdev);
 	Qspi_TransType(g_pdev, SPI_TRANSFER_TYPE2);
 	Qspi_WaitCycles(g_pdev,QPI_DUMMY-2);
 	Qspi_AddrMode(g_pdev, 0x08); /* 32 addr*/
+
+//	Qspi_WaitCycles(g_pdev,0);
+//	Qspi_AddrMode(g_pdev, 12); /* 32+16 addr*/
 	Qspi_Enable(g_pdev);
 
 	ReadCommand = 0xEB;
@@ -401,6 +452,7 @@ void DUAL_3ADDR_Performance_Enhance_Mode_Test(void)
 {
 	volatile uint32_t status, i = 0, j = 0, l = 0, temp1 =0,temp2 = 0,k = 0,value = 0;
 
+	firstCmdSend = 0;
 	printf("DUAL_3ADDR_Performance_Enhance_Mode_Test Start\r\n");
 
 	status = Csu_QspiInit(&norParams);
@@ -414,6 +466,11 @@ void DUAL_3ADDR_Performance_Enhance_Mode_Test(void)
 	printf("flashSize:0x%x\r\n", norParams.flashSize);
 	printf("flashSize:%dMB\r\n", norParams.flashSize/1024/1024);
 
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiInit:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
+
 
 	status = Csu_QspiSetMode(QSPI_WIDTH_X2, QSPI_ADDR_32);
 
@@ -422,6 +479,12 @@ void DUAL_3ADDR_Performance_Enhance_Mode_Test(void)
 		printf("DUAL_3ADDR_Performance_Enhance_Mode_Test Csu_QspiSetMode error:%d\r\n",status);
 		while(1);
 	}
+
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiSetMode:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
+
 
 	Qspi_Disable(g_pdev);
 	Qspi_WaitCycles(g_pdev,0);
@@ -492,6 +555,7 @@ void DUAL_3ADDR_Performance_Enhance_Mode_Test(void)
 void QUAD_4ADDR_Performance_Enhance_Mode_Test(void)
 {
 	volatile uint32_t status, i = 0, j = 0, l = 0, temp1 =0,temp2 = 0,k = 0,value = 0;
+	firstCmdSend = 0;
 
 	printf("QUAD_4ADDR_Performance_Enhance_Mode_Test Start\r\n");
 
@@ -505,6 +569,11 @@ void QUAD_4ADDR_Performance_Enhance_Mode_Test(void)
 	printf("flashID:%x\r\n", norParams.flashID);
 	printf("flashSize:0x%x\r\n", norParams.flashSize);
 	printf("flashSize:%dMB\r\n", norParams.flashSize/1024/1024);
+
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiInit:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
 
 
 	if((norParams.flashID&0xff) != 0x01)
@@ -532,6 +601,12 @@ void QUAD_4ADDR_Performance_Enhance_Mode_Test(void)
 		printf("QPI_Read_Test Csu_QspiSetMode error:%d\r\n",status);
 		while(1);
 	}
+
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiSetMode:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
+
 
 	Qspi_Disable(g_pdev);
 	Qspi_TransType(g_pdev, SPI_TRANSFER_TYPE1);
@@ -592,6 +667,7 @@ void QUAD_4ADDR_Performance_Enhance_Mode_Test(void)
 void DUAL_4ADDR_Performance_Enhance_Mode_Test(void)
 {
 	volatile uint32_t status, i = 0, j = 0, l = 0, temp1 =0,temp2 = 0,k = 0,value = 0;
+	firstCmdSend = 0;
 
 	printf("DUAL_4ADDR_Performance_Enhance_Mode_Test Start\r\n");
 
@@ -606,6 +682,13 @@ void DUAL_4ADDR_Performance_Enhance_Mode_Test(void)
 	printf("flashSize:0x%x\r\n", norParams.flashSize);
 	printf("flashSize:%dMB\r\n", norParams.flashSize/1024/1024);
 
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiInit:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
+
+
+
 	status = Csu_QspiSetMode(QSPI_WIDTH_X2, QSPI_ADDR_32);
 
 	if(status != AL_SUCCESS)
@@ -613,6 +696,12 @@ void DUAL_4ADDR_Performance_Enhance_Mode_Test(void)
 		printf("DUAL_Performance_Enhance_Mode_Test Csu_QspiSetMode error:%d\r\n",status);
 		while(1);
 	}
+
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiSetMode:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
+
 
 	Qspi_Disable(g_pdev);
 	Qspi_WaitCycles(g_pdev,0);
@@ -702,6 +791,11 @@ void QPI_Deep_Power_Read_Test(void)
 	printf("flashSize:0x%x\r\n", norParams.flashSize);
 	printf("flashSize:%dMB\r\n", norParams.flashSize/1024/1024);
 
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiInit:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
+
 	if((norParams.flashID&0xff) != 0x01)
 	{
 		if( ((norParams.flashID&0xff) != 0x9d) && ((norParams.flashID&0xff) != 0xc2) )
@@ -733,6 +827,12 @@ void QPI_Deep_Power_Read_Test(void)
 		while(1);
 	}
 
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiSetMode:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
+
+
 	Nor_SendCmd(DEEP_POWER_DOWN_CMD);
 
 
@@ -763,6 +863,11 @@ void program_nor(void)
 	printf("flashSize:0x%x\r\n", norParams.flashSize);
 	printf("flashSize:%dMB\r\n", norParams.flashSize/1024/1024);
 
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiInit:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
+
 	printf("Qspi_ChipErase Start\r\n");
 
 	EnableWrite();
@@ -774,6 +879,11 @@ void program_nor(void)
 	{
 		printf("!!!!!!!Csu_QspiRead error:%d\r\n", status);
 	}
+
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiRead:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
 
 	printf("Qspi_ChipErase:");
 	for(i = 0; i < 100; i++)
@@ -908,6 +1018,11 @@ void main(void)
 	printf("flashSize:0x%x\r\n", norParams.flashSize);
 	printf("flashSize:%dMB\r\n", norParams.flashSize/1024/1024);
 
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiInit:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
+
 	Nor_SendCmd(DEEP_POWER_DOWN_CMD);
 	DataTest();
 
@@ -927,6 +1042,11 @@ void main(void)
 	printf("flashID:%x\r\n", norParams.flashID);
 	printf("flashSize:0x%x\r\n", norParams.flashSize);
 	printf("flashSize:%dMB\r\n", norParams.flashSize/1024/1024);
+
+	nor_printf("\r\n\r\n\r\n");
+	nor_printf("Csu_QspiInit:  ");
+	print_log();
+	nor_printf("\r\n\r\n\r\n");
 
 	QPI_Deep_Power_Read_Test();
 	DataTest();
@@ -948,6 +1068,11 @@ void main(void)
 			j += i;
 			printf("Csu_QspiRead error:%d\r\n", status);
 		}
+
+		nor_printf("\r\n\r\n\r\n");
+		nor_printf("Csu_QspiRead:  ");
+		print_log();
+		nor_printf("\r\n\r\n\r\n");
 
 
 		for(l = 0; l < i; l++)

@@ -5,6 +5,109 @@
 #include <stdio.h>
 #include "al_io.h"
 
+
+
+
+
+#ifdef NOR_BRANCH_PUT_CHAR
+
+void branch_put_char(char *char_ptr);
+
+void print_log();
+
+
+#define	NOR_TEST_IF		if
+#define	NOR_TEST_ELSE	else
+#define	NOR_TEST_ELSE_IF	else if
+#define nor_printf			printf
+
+#else
+
+#define branch_put_char(...)	do{}while(0)
+#define print_log() 			do{}while(0)
+#define nor_printf(...)			do{}while(0)
+
+#define	NOR_TEST_IF(value) 			if(0)
+#define	NOR_TEST_ELSE				if(0)
+#define	NOR_TEST_ELSE_IF(value) 	else if(0)
+
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+#ifdef NOR_ERROR_CODE_BRANCH_TEST
+
+
+#define	NOR_ERROR_IF		if
+#define	NOR_ERROR_ELSE		else
+#define	NOR_ERROR_ELSE_IF	else if
+
+
+#define NOR_SET_NUM_TO_ONE(addr) do{*(addr) =  1;}while(0)
+#define NOR_NUM_UNEQUAL_ONE(addr) (*(addr) != 1)
+
+
+#define nor_error_branch_num1 ((volatile uint32_t *)(0X6103E000UL+0X800UL))
+#define nor_error_branch_num2 ((volatile uint32_t *)(0X6103E000UL+0X804UL))
+#define nor_error_branch_num3 ((volatile uint32_t *)(0X6103E000UL+0X808UL))
+#define nor_error_branch_num4 ((volatile uint32_t *)(0X6103E000UL+0X80CUL))
+#define nor_error_branch_num5 ((volatile uint32_t *)(0X6103E000UL+0X810UL))
+#define nor_error_branch_num6 ((volatile uint32_t *)(0X6103E000UL+0X814UL))
+#define nor_error_branch_num7 ((volatile uint32_t *)(0X6103E000UL+0X818UL))
+#define nor_error_branch_num8 ((volatile uint32_t *)(0X6103E000UL+0X81CUL))
+#define nor_error_branch_num9 ((volatile uint32_t *)(0X6103E000UL+0X820UL))
+#define nor_error_branch_num10 ((volatile uint32_t *)(0X6103E000UL+0X824UL))
+#define nor_error_branch_num11 ((volatile uint32_t *)(0X6103E000UL+0X828UL))
+#define nor_error_branch_num12 ((volatile uint32_t *)(0X6103E000UL+0X82CUL))
+
+
+#else
+
+
+#define	NOR_ERROR_IF(value) 			if(0)
+#define	NOR_ERROR_ELSE				if(0)
+#define	NOR_ERROR_ELSE_IF(value) 	else if(0)
+
+#define nor_error_branch_num1
+#define nor_error_branch_num2
+#define nor_error_branch_num3
+#define nor_error_branch_num4
+#define nor_error_branch_num5
+#define nor_error_branch_num6
+#define nor_error_branch_num7
+#define nor_error_branch_num8
+#define nor_error_branch_num9
+#define nor_error_branch_num10
+#define nor_error_branch_num11
+#define nor_error_branch_num12
+
+
+
+#define NOR_SET_NUM_TO_ONE(addr)	do{}while(0)
+#define NOR_NUM_UNEQUAL_ONE(addr)	do{}while(0)
+
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
 #define     __IOM           volatile
 
 #define PERIPH_BASE         (0xF8000000UL)                      /*!< (Peripheral) Base Address */
@@ -65,7 +168,7 @@
 #define     SPI_TRANSFER_TYPE1                        1
 #define     SPI_TRANSFER_TYPE2                        2
 
-#define     SPI_NO_ADDR                               4
+#define     SPI_FLASH_ADDR0                           0
 #define     SPI_FLASH_ADDR24                          6
 #define     SPI_FLASH_ADDR32                          8
 

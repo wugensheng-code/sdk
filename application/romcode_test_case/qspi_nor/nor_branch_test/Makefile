@@ -1,4 +1,4 @@
-TARGET = nor_x4_test
+TARGET = nor_branch_test
 
 NUCLEI_SDK_ROOT = ../../../..
 
@@ -7,6 +7,7 @@ SRCDIRS = .
 INCDIRS = . 
 
 #COMMON_FLAGS := -O2 -DNOR_BRANCH_PUT_CHAR
-COMMON_FLAGS := -O2 
+#COMMON_FLAGS := -O2 
+COMMON_FLAGS := -O2 -DNOR_BRANCH_PUT_CHAR -DNOR_ERROR_CODE_BRANCH_TEST
 
 include $(NUCLEI_SDK_ROOT)/Build/Makefile.base
