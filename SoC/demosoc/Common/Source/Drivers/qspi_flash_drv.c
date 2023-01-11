@@ -369,15 +369,7 @@ static u32 Qspi_PolledTransfer(QSPI_CORE_HANDLE *pdev, QspiFlash_Msg *Msg)
 				}
 
 				Qspi_DataTransmit(pdev, Tdata);
-			} else {
-				branch_put_char("(76) -> ");
-				branch_put_char("(80) -> ");
-
-				// never run here error
-				Index += 4;
-				Msg->txByteCount -= 4;
-			}
-
+			} 
 		}
 		branch_put_char("(73) -> ");
 
@@ -783,15 +775,15 @@ u32 Csu_QspiInit(QspiParams *params)
 
 	Status = Flash_ReadID(g_pdev);
 
-	if (Status == FLASH_ID_ERR1) {
+	if (Status != AL_SUCCESS) {
 		branch_put_char("(2) -> ");
 		Qspi_ResetFlashMode0(g_pdev);
 		Csu_QspiSetMode(QSPI_WIDTH_X1, QSPI_ADDR_24);
-		Status = Flash_ReadID(g_pdev);
+		Status = Flash_ReadID(g_pdev);	
 	}
 	branch_put_char("(1) -> ");
 
-	if (Status == FLASH_ID_ERR1) {
+	if (Status != AL_SUCCESS) {
 		branch_put_char("(4) -> ");
 		Qspi_ResetFlashMode1(g_pdev);
 		Csu_QspiSetMode(QSPI_WIDTH_X1, QSPI_ADDR_24);
@@ -799,7 +791,7 @@ u32 Csu_QspiInit(QspiParams *params)
 	}
 	branch_put_char("(3) -> ");
 
-	if (Status == FLASH_ID_ERR1) {
+	if (Status != AL_SUCCESS) {
 		branch_put_char("(6) -> ");
 		Csu_QspiSetMode(QSPI_WIDTH_X4, QSPI_ADDR_24);
 		Qspi_ReturnCase1(g_pdev);
@@ -810,7 +802,7 @@ u32 Csu_QspiInit(QspiParams *params)
 	}
 	branch_put_char("(5) -> ");
 
-	if (Status == FLASH_ID_ERR1) {
+	if (Status != AL_SUCCESS) {
 		branch_put_char("(8) -> ");
 		Csu_QspiSetMode(QSPI_WIDTH_X4, QSPI_ADDR_24);
 		Qspi_ReturnCase2(g_pdev);
