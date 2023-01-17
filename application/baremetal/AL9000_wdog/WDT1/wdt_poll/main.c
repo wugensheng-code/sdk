@@ -41,7 +41,7 @@ int main(void)
 	printf("E\r\n");
 	while(1)
 	{
-		if(WDT1->CCVR <= 55)
+		if(WDT1->CCVR <= 550)
 		{
 			WDT1->CRR |= WDT_CCVR_VALUE;	//Can clear by reading WDT_EOI
 			printf("C\r\n");
