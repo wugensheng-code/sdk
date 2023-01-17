@@ -2,7 +2,7 @@
 /*
  * main.c
  *
- *  Created on: 2021�?11�?10�?
+ *  Created on: 2021閿燂拷?11閿燂拷?10閿燂拷?
  *      Author: wei.pang
  */
 
@@ -295,7 +295,15 @@ int main(void){
     	    	while(spi_sr_busy(SPI_MASTER));  // check busyl or idle,wait BUSY returns to 0
     	    	//spi_data_transmit(SPI_MASTER,CMD_CHIP_ERASE); // tx chip erase cmd
 
-    	    	spi_data_transmit(SPI_MASTER,0x20); // tx sector erase cmd
+    	    	if((flash_id&0xff) == 0x01)
+				{
+					spi_data_transmit(SPI_MASTER,0xD8); // tx sector erase cmd
+				}
+				else
+				{
+					spi_data_transmit(SPI_MASTER,0x20); // tx sector erase cmd
+				}
+
     	    	spi_data_transmit(SPI_MASTER,0x00); // tx addr[23:16]
     	    	spi_data_transmit(SPI_MASTER,0x00); // tx addr[15:8]
     	    	spi_data_transmit(SPI_MASTER,0x00); // tx addr[7:0]
@@ -613,7 +621,7 @@ int main(void){
 
 	printf_mem_data2(READ_SIZE);
     	  }
-	//while(1);
+	while(1);
     	        return 0;
 }
 

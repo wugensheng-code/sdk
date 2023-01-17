@@ -338,8 +338,8 @@ void mem_data_check(uint32_t count){
 		printf("OCM Read Buffer data is :\r\n");
 	for(i = 0 ; i < count ; i++){
 
-		printf(" %3d",*(uint32_t*)(MEM_BASE2_ADDR + i*4));
-		if( i != (*(uint32_t*)(MEM_BASE2_ADDR + i*4)))
+		printf(" %d",*(volatile uint32_t*)(MEM_BASE2_ADDR + i*4));
+		if( i != (*(volatile uint32_t*)(MEM_BASE2_ADDR + i*4)))
 		{
 			             data_ok = 1;
 		}
@@ -356,7 +356,7 @@ void printf_mem_data(uint32_t count){
 	volatile uint32_t i = 0;
 	printf("OCM write buffer data is :\r\n");
 		for(i = 0 ; i < count ; i++){
-			printf("%3d",*(uint32_t*)(MEM_BASE1_ADDR + i*4));
+			printf("%d ",*(volatile uint32_t*)(MEM_BASE1_ADDR + i*4));
 		}
 		printf("\r\n");
 }
@@ -364,7 +364,7 @@ void printf_mem2_data(uint32_t count){
 	volatile uint32_t i = 0;
 	printf("OCM read buffer data is :\r\n");
 		for(i = 0 ; i < count ; i++){
-			printf("%3d",*(uint32_t*)(MEM_BASE2_ADDR + i*4));
+			printf("%d",*(volatile uint32_t*)(MEM_BASE2_ADDR + i*4));
 		}
 		printf("\r\n");
 }
