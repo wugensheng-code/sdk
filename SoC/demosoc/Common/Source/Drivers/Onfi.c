@@ -3,7 +3,7 @@
 
 
 
-#define csu_printf do{}while(0);
+#define nand_printf do{}while(0);
 
 
 static uint32_t __attribute__((aligned(4))) NandOob64[12] = {52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63};
@@ -95,25 +95,25 @@ static uint8_t Nand_HwCalculateEcc(uint8_t *Dst, uint8_t eccDataNums)
 	for(eccReg=0; eccReg < eccDataNums/3; eccReg++)
 	{
 		eccValue = SMC_ReadReg(SMC_BASE+SMC_REG_ECC1_BLOCK0+eccReg*4);
-		csu_printf("eccValue:%x\r\n",eccValue);
+		nand_printf("eccValue:%x\r\n",eccValue);
 
 		if((eccValue) & (1 << SMC_EccBlock_ISCheckValueValid_FIELD))
 		{
 			for(Count=0; Count < 3; Count++)
 			{
 				*Dst = eccValue & 0xFF;
-				csu_printf("Dst: %d\r\n",*Dst);
+				nand_printf("Dst: %d\r\n",*Dst);
 				eccValue = eccValue >> 8;
 				Dst++;
 			}
 		}
 		else
 		{
-			csu_printf("EccInvalidErr\r\n");
+			nand_printf("EccInvalidErr\r\n");
 			return SmcEccDataInvalidErr;
 		}
 	}
-	csu_printf("cal ecc end\r\n");
+	nand_printf("cal ecc end\r\n");
 
 	return SmcSuccess;
 }
@@ -147,7 +147,7 @@ static uint8_t Nand_HwCorrectEcc(uint8_t *eccCode, uint8_t *eccCalc, uint8_t *bu
 	/* No Error */
 	if ((eccOdd == 0) && (eccEven == 0))
 	{
-		csu_printf("0 bit error\r\n");
+		nand_printf("0 bit error\r\n");
 		return SmcSuccess;
 	}
 
@@ -160,8 +160,8 @@ static uint8_t Nand_HwCorrectEcc(uint8_t *eccCode, uint8_t *eccCalc, uint8_t *bu
 		/* Toggling error bit */
 		buf[bytePos] ^= (1 << bitPos);
 
-		csu_printf("one bit error\r\n");
-		csu_printf("bytePos:%u bitPos:%u \r\n",bytePos,bitPos);
+		nand_printf("one bit error\r\n");
+		nand_printf("bytePos:%u bitPos:%u \r\n",bytePos,bitPos);
 
 		return SmcSuccess;
 	}
@@ -169,11 +169,11 @@ static uint8_t Nand_HwCorrectEcc(uint8_t *eccCode, uint8_t *eccCalc, uint8_t *bu
 	/* Two bits Error */
 	if (OneHot((eccOdd | eccEven)) == SmcSuccess)
 	{
-		csu_printf("Two bits Error\r\n");
+		nand_printf("Two bits Error\r\n");
 		return SmcTwoBitsErr;
 	}
 
-	csu_printf("Multiple bits error\r\n");
+	nand_printf("Multiple bits error\r\n");
 	/* Multiple bits error */
 	return SmcMultipleBitsErr;
 
@@ -241,10 +241,10 @@ static uint8_t Nand_HwCorrectEcc(uint8_t *eccCode, uint8_t *eccCalc, uint8_t *bu
 //
 //	for(i = 0; i < eccDataNums; i++)
 //	{
-//		csu_printf("Cal ecc: %d ",eccData[i]);
+//		nand_printf("Cal ecc: %d ",eccData[i]);
 //
 //	}
-//	csu_printf(" \r\n");
+//	nand_printf(" \r\n");
 //
 //
 //	/* Read Spare data */
@@ -258,10 +258,10 @@ static uint8_t Nand_HwCorrectEcc(uint8_t *eccCode, uint8_t *eccCalc, uint8_t *bu
 //	{
 //		ReadEccData[i] = ~SpareBuf[dataOffsetPtr[i]];
 //
-//		csu_printf("Read Ecc: %d ",ReadEccData[i]);
+//		nand_printf("Read Ecc: %d ",ReadEccData[i]);
 //	}
 //
-//	csu_printf("\r\n");
+//	nand_printf("\r\n");
 //
 //	i = nand->dataBytesPerPage/NAND_ECC_BLOCK_SIZE;
 //	for(;i;i--)
@@ -528,7 +528,7 @@ uint8_t Nand_ProgramPage_HwEcc(uint8_t *Buf, Nand_TypeDef *nandSize)
 			break;
 		default:
 			/* Page size 256 bytes & 4096 bytes not supported by ECC block */
-			csu_printf("[smc hw write page]:Page size error\r\n");
+			nand_printf("[smc hw write page]:Page size error\r\n");
 			return FAILED;
 	}
 
