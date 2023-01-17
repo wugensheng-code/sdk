@@ -111,8 +111,8 @@ uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
 	QspiParams qspi_params;
 	Csu_QspiInit(&qspi_params);
 
-	QSPI_FLASH_SR_BIT_SET(9, 1);
-    Csu_QspiSetMode(QSPI_WIDTH_X2, QSPI_ADDR_24);
+	//QSPI_FLASH_SR_BIT_SET(9, 1);
+    Csu_QspiSetMode(QSPI_WIDTH_X1, QSPI_ADDR_24);
 
     Qspi_Disable(g_pdev);
 	Qspi_SckdivCfg(g_pdev,0x2); // ahb: 200M, spi: 200 / 4 = 50M
@@ -122,6 +122,10 @@ uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
     Qspi_Enable(g_pdev);
 
     *pBlockSizeMax = 512;   // this is only for simulation test
+
+    printf("flashID:%x\r\n", qspi_params.flashID);
+    printf("flashSize:0x%x\r\n", qspi_params.flashSize);
+    printf("flashSize:%dMB\r\n", qspi_params.flashSize/1024/1024);
 
 	return 0;
 }
