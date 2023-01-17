@@ -9,11 +9,51 @@
 
 #include "nand_drv.h"
 
+
+
+
+#ifdef NAND_BRANCH_PUT_CHAR
+
+volatile char branch_log_array[512];
+volatile char *branch_log_ptr = branch_log_array;
+
+void branch_put_char(char *char_ptr)
+{
+	//printf("char_ptr:%s",char_ptr);
+
+	while(*char_ptr != '\0')
+	{
+		*branch_log_ptr = *char_ptr;
+		branch_log_ptr++;
+		char_ptr++;
+	}
+	*branch_log_ptr = '\0';
+
+
+}
+void print_log(void)
+{
+
+	printf("%s\r\n",branch_log_array);
+
+	branch_log_ptr = &branch_log_array[0];
+//	memset(branch_log_array, 0, sizeof(branch_log_array));
+	printf("\r\n\r\n\r\n\r\n");
+
+}
+
+#endif
+
+
+
+
+
+
 void SmcSendCommand(uint8_t startCmd, uint8_t endCmd, uint8_t addrCycles, uint8_t endCmdPhase, int Page, int Column )
 {
 	uint32_t endCmdReq = 0;
-	volatile unsigned long cmdPhaseAddr  = 0;
-	volatile uint32_t cmdPhaseData  = 0;
+	unsigned long cmdPhaseAddr  = 0;
+	uint32_t cmdPhaseData  = 0;
 
 	if(endCmdPhase == ONFI_ENDIN_CMD_PHASE)
 	{
@@ -77,10 +117,10 @@ void SmcSendCommand(uint8_t startCmd, uint8_t endCmd, uint8_t addrCycles, uint8_
 void SmcReadPara(uint8_t endCmd, uint8_t endCmdPhase, uint8_t *Buf, uint32_t Length, Nand_TypeDef *nand)
 {
 	 uint32_t endCmdReq = 0;
-	volatile unsigned long dataPhaseAddr = 0;
+	 unsigned long dataPhaseAddr = 0;
 	 uint32_t eccLast = 0;
 	 uint32_t clearCs = 0;
-	volatile uint32_t Index = 0;
+	 uint32_t Index = 0;
 
 	if(endCmdPhase == ONFI_ENDIN_DATA_PHASE)
 	{
@@ -114,8 +154,8 @@ void SmcWriteBuf(uint8_t endCmd, uint8_t endCmdPhase, uint8_t *Buf, uint32_t Len
 	uint32_t tempLength = Length >> 2;
 
 	uint32_t endCmdReq = 0;
-	volatile unsigned long dataPhaseAddr = 0;
-	volatile uint32_t Index = 0;
+	unsigned long dataPhaseAddr = 0;
+	uint32_t Index = 0;
 
 	if(endCmdPhase == ONFI_ENDIN_DATA_PHASE)
 	{
@@ -141,8 +181,8 @@ void SmcWriteBuf(uint8_t endCmd, uint8_t endCmdPhase, uint8_t *Buf, uint32_t Len
 void SmcReadBuf(uint8_t endCmd, uint8_t endCmdPhase, uint8_t *Buf, uint32_t Length, uint32_t clearCs, uint32_t eccLast)
 {
 	uint32_t endCmdReq = 0;
-	volatile unsigned long dataPhaseAddr = 0;
-	volatile uint32_t Index = 0;
+	unsigned long dataPhaseAddr = 0;
+	uint32_t Index = 0;
 
 	uint32_t *tempBuff = (uint32_t *)Buf;
 	uint32_t tempLength = Length >> 2;

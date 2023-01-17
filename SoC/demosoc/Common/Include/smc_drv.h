@@ -9,27 +9,60 @@
 #define _SMC_DRV_H_
 
 
-#ifdef USE_CSU
 
 
 #include "al_io.h"
 #include "al_types.h"
-#include "../../common/al9000_csu_map.h"
+#include "al9000_csu_map.h"
 #define SMC_BASE (NANDC_CFG_L)
 #define NAND_BASE (NANDC_L)
 
-#else
 
-#include "demosoc.h"
-#define SMC_BASE (0XF841A000UL)
-#define NAND_BASE (0x64000000UL)
-
-#endif
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+
+
+#ifdef NAND_BRANCH_PUT_CHAR
+
+void branch_put_char(char *char_ptr);
+
+void print_log();
+
+
+#define	NAND_TEST_IF		if
+#define	NAND_TEST_ELSE	else
+#define	NAND_TEST_ELSE_IF	else if
+#define nand_printf			printf
+
+#else
+
+#define branch_put_char(...)	do{}while(0)
+#define print_log() 			do{}while(0)
+#define nand_printf(...)			do{}while(0)
+
+#define	NAND_TEST_IF(value) 			if(0)
+#define	NAND_TEST_ELSE					if(0)
+#define	NAND_TEST_ELSE_IF(value) 		else if(0)
+
+#endif
+
+
+#ifdef NAND_PRINTF
+
+#define nand_printf			printf
+
+#else
+
+#define nand_printf(...)			do{}while(0)
+
+#endif
+
+
 
 typedef struct{
 	uint32_t dataBytesPerPage;		/* per page contains data byte numbers*/

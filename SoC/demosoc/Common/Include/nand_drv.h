@@ -4,25 +4,10 @@
  *  Created on: 2022年6月6日
  *      Author: jian.huang
  */
-
-#include "smc_drv.h"
-
-#ifdef USE_CSU
-
-#include "al_printf.h"
-
-#else
-
-#define csu_printf printf
-#define FPGA_STAGE_7 1
-
-#endif
-
-
-
 #ifndef _SMC_NAND_DRV_H_
 #define _SMC_NAND_DRV_H_
 
+#include "smc_drv.h"
 
 
 #ifdef __cplusplus
@@ -168,27 +153,10 @@ extern "C" {
 #define NO_ECC_LAST			0	/* return failed flag */
 #define ECC_LAST			1	/* return success flag */
 
-//#define CSU_PRINT
 
 
-#ifdef USE_CSU
-
-#define SMC_WriteReg(reg,value)		REG32_WRITE((reg),(value))
-#define SMC_ReadReg(reg)	 		REG32_READ((reg))
-
-#else
-
-#define SMC_WriteReg(reg,value)	\
-do{		\
-	*(volatile uint32_t *)(reg) = (value);	\
-}while(0)
-
-
-#define SMC_ReadReg(reg)	 (*(volatile uint32_t *)(reg))
-
-#endif
-
-
+#define SMC_WriteReg(reg, value)		REG32_WRITE((reg), (value))
+#define SMC_ReadReg(reg)	 				REG32_READ((reg))
 #define SMC_Read8BitReg(reg)	 	(*(volatile uint8_t *)(reg))
 
 
@@ -353,23 +321,6 @@ enum SMC_ERROR_CODE{
 
 uint32_t Csu_NandInit(Nand_TypeDef *nand);
 uint32_t Csu_NandRead(uint32_t offset, uint8_t* dest, uint32_t length, Nand_TypeDef *nand);
-
-
-//#define BRANCH_PUT_CHAR 1
-
-#ifdef BRANCH_PUT_CHAR
-
-void branch_put_char(char *char_ptr);
-
-void print_log(void);
-
-#else
-
-#define branch_put_char do{}while(0);
-
-#endif
-
-
 
 
 #ifdef __cplusplus
