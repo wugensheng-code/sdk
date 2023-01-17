@@ -1,4 +1,4 @@
-TARGET = ROM
+TARGET = x16ModeAndInterrupt
 
 NUCLEI_SDK_ROOT = ../../../..
 

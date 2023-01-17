@@ -6,7 +6,7 @@
  */
 #include "nand_drv.h"
 #include "smc_drv.h"
-#include "onfi.h"
+#include "Onfi.h"
 
 
 #define MY_PAGE_SIZE 2048
@@ -2416,13 +2416,13 @@ int main(void)
 	volatile uint32_t i=0,j=0,temp=0;
 	uint8_t Status = 0;
 
-	csu_printf("G\r\n");
-	csu_printf("abc\r\n");
+	printf("G\r\n");
+	printf("abc\r\n");
 
 	Status = Csu_NandInit(&nand);
 	if(Status != SmcSuccess)
 	{
-		csu_printf("init error:%d\r\n",Status);
+		printf("init error:%d\r\n",Status);
 		return Status;
 	}
 
@@ -2520,7 +2520,7 @@ int main(void)
 #endif
 
 
-	csu_printf("\r\n\r\n\r\n\r\n start read \r\n\r\n\r\n\r\n");
+	printf("\r\n\r\n\r\n\r\n start read \r\n\r\n\r\n\r\n");
 
 
 
@@ -2529,7 +2529,7 @@ int main(void)
 //	Status =  Onfi_CmdReadPage(2, 0, nand);
 //	if(Status != SmcSuccess)
 //	{
-//		csu_printf("Read Cmd Faild\r\n");
+//		printf("Read Cmd Faild\r\n");
 //		return Status;
 //	}
 //
@@ -2542,20 +2542,20 @@ int main(void)
 	Status = Csu_NandRead(0, Buf, READ_SIZE, &nand);
 	if(Status != SmcSuccess)
 	{
-		//csu_printf("read error\r\n");
-		csu_printf("read error:%d\r\n",Status);
+		//printf("read error\r\n");
+		printf("read error:%d\r\n",Status);
 		return Status;
 	}
 
 	for(i = 0; i < READ_SIZE; i++)
 	{
-		csu_printf(" %d",Buf[i]);
+		printf(" %d",Buf[i]);
 	}
 
-	//csu_printf(" %d",temp);
+	//printf(" %d",temp);
 
 
-	csu_printf(" end \r\n");
+	printf(" end \r\n");
 	return 0;
 }
 

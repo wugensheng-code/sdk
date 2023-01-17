@@ -1,4 +1,4 @@
-TARGET = ROM
+TARGET = readId_readPage
 
 NUCLEI_SDK_ROOT = ../../../..
 

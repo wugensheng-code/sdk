@@ -108,30 +108,30 @@ int main(void)
 	volatile uint32_t i=0,j=0,temp=0;
 	uint8_t Status = 0;
 
-	csu_printf("G\r\n");
+	printf("G\r\n");
 
 	Csu_NandInit(&nand);
 
 	if(Status != SmcSuccess)
 	{
-		csu_printf("init error\r\n");
+		printf("init error\r\n");
 	}
 
 	Status = Csu_NandRead(0, Buf, READ_SIZE, &nand);
 	if(Status != SmcSuccess)
 	{
-		csu_printf("init error\r\n");
+		printf("init error\r\n");
 	}
 
 	for(i = 0; i < READ_SIZE; i++)
 	{
-		csu_printf(" %d",Buf[i]);
+		printf(" %d",Buf[i]);
 	}
 
-	//csu_printf(" %d",temp);
+	//printf(" %d",temp);
 
 
-	csu_printf(" end \r\n");
+	printf(" end \r\n");
 	return 0;
 }
 
