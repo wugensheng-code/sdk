@@ -266,7 +266,7 @@ void Qspi_ReadStatus(void)
 }
 
 
-uint32_t flash_get_cr(void)
+static uint32_t flash_get_cr(void)
 {
 	uint32_t config_reg = 0;
 	uint32_t i = 0,Status = 0;
