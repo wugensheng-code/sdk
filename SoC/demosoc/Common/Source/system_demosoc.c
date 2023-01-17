@@ -348,6 +348,14 @@ void _premain_init(void)
 
 
 
+    /* Set Nand Timing Efuse */
+    *(volatile uint32_t *)(0x69000 + 0x150) =0x0024ABCC;
+    *(volatile uint32_t *)(0x69000 + 0x154) =0x0024ABCC;
+#ifdef NOR_BRANCH_PUT_CHAR
+    /* Set Nor reset delay times and qspi clk div */
+    *(volatile uint32_t *)(0x69000 + 0x158) =0x0A000200;
+#endif
+
     /* __ICACHE_PRESENT and __DCACHE_PRESENT are defined in demosoc.h */
 #if 0   // add by hunter, 09.29.2021
 #if defined(__ICACHE_PRESENT) && __ICACHE_PRESENT == 1
