@@ -176,17 +176,17 @@ int main(void)
 	volatile uint32_t i=0,j=0;
 	uint8_t Status = 0;
 
-	csu_printf("[smc init]:Start\r\n");
+	nand_printf("[smc init]:Start\r\n");
 
 	Status = Csu_NandInit(&nand);
 	if(Status != SmcSuccess)
 	{
-		csu_printf("[smc init]:init error:%d\r\n",Status);
+		nand_printf("[smc init]:init error:%d\r\n",Status);
 		return Status;
 	}
 
 
-	csu_printf("[smc_write]:Start\r\n");
+	nand_printf("[smc_write]:Start\r\n");
 
 
 

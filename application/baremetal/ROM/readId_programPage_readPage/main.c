@@ -110,19 +110,19 @@ int main(void)
 	volatile uint32_t i=0,j=0;
 	uint8_t Status = 0;
 
-	csu_printf("[smc init]:Start\r\n");
+	nand_printf("[smc init]:Start\r\n");
 
 	Status = Csu_NandInit(&nand);
 	if(Status != SmcSuccess)
 	{
-		csu_printf("[smc init]:init error:%d\r\n",Status);
+		nand_printf("[smc init]:init error:%d\r\n",Status);
 		return Status;
 	}
 
 
 #ifdef WRITE_PAGE
 
-	csu_printf("[smc_write]:Start\r\n");
+	nand_printf("[smc_write]:Start\r\n");
 
 	for(j=0; j<nand.dataBytesPerPage; j++)
 	{
@@ -180,7 +180,7 @@ int main(void)
 #endif
 
 
-	csu_printf("[smc read]:start read\r\n");
+	nand_printf("[smc read]:start read\r\n");
 
 	for(j=0; j<sizeof(Buf); j++)
 	{
@@ -192,7 +192,7 @@ int main(void)
 //	Status =  Onfi_CmdReadPage(2, 0, nand);
 //	if(Status != SmcSuccess)
 //	{
-//		csu_printf("Read Cmd Faild\r\n");
+//		nand_printf("Read Cmd Faild\r\n");
 //		return Status;
 //	}
 //
@@ -205,15 +205,15 @@ int main(void)
 	Status = Csu_NandRead(READ_OFFSET, Buf, READ_SIZE, &nand);
 	if(Status != SmcSuccess)
 	{
-		csu_printf("[smc read]:read error %d\r\n",Status);
+		nand_printf("[smc read]:read error %d\r\n",Status);
 		return Status;
 	}
 
 //	for(i = 0; i < READ_SIZE; i++)
 //	{
-//		csu_printf(" %d",Buf[i]);
+//		nand_printf(" %d",Buf[i]);
 //	}
-//	csu_printf("\r\n");
+//	nand_printf("\r\n");
 
 	for(i = 0; i < READ_SIZE-1; i++)
 	{
@@ -223,15 +223,15 @@ int main(void)
 		}
 		else
 		{
-//			csu_printf(" %d\r\n",Buf[i-1]);
-//			csu_printf(" %d\r\n",Buf[i]);
-//			csu_printf(" %d\r\n",Buf[i+1]);
-			csu_printf("[smc read]: data error \r\n");
+//			nand_printf(" %d\r\n",Buf[i-1]);
+//			nand_printf(" %d\r\n",Buf[i]);
+//			nand_printf(" %d\r\n",Buf[i+1]);
+			nand_printf("[smc read]: data error \r\n");
 			return 0;
 		}
 	}
 
-	csu_printf("[smc read]: end \r\n");
+	nand_printf("[smc read]: end \r\n");
 
 	return 0;
 }
