@@ -361,7 +361,15 @@ int main()
 
 	//sector erase
 
-	spi_data_transmit(SPI_MASTER,0x20); // tx sector erase cmd
+	if((flash_id&0xff) == 0x01)
+	{
+		spi_data_transmit(SPI_MASTER,0xD8); // tx sector erase cmd
+	}
+	else
+	{
+		spi_data_transmit(SPI_MASTER,0x20); // tx sector erase cmd
+	}
+	
 	spi_data_transmit(SPI_MASTER,0x00); // tx addr[23:16]
 	spi_data_transmit(SPI_MASTER,0x00); // tx addr[15:8]
 	spi_data_transmit(SPI_MASTER,0x00); // tx addr[7:0]
