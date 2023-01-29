@@ -206,6 +206,9 @@ void _premain_init(void)
 	/* Display banner after UART initialized */
 	SystemBannerPrint();
 
+    *(volatile uint32_t *)(0xF8801000ULL + 0x150ULL) =0x0024ABCCULL;
+	*(volatile uint32_t *)(0xF8801000ULL + 0x154ULL) =0x0024ABCCULL;
+
 #if (defined SUPPORT_NONSECURE || defined SWITCH_TO_EL0_FROM_EL3)
 	//if SUPPORT_NONSECURE, gic-v3 init in EL3
 	//if SWITCH_TO_EL0_FROM_EL3, boot to EL0, only to test

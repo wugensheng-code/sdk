@@ -911,8 +911,8 @@ uint32_t Csu_NandInit(Nand_TypeDef *nand)
 		branch_put_char("(120) -> ");
 		/* Setup the timings */
 		SMC_WriteReg((SMC_BASE + SMC_REG_SET_CYCLES), (Reg1 | Reg2));
-		//SMC_WriteReg((SMC_BASE + SMC_REG_DIRCT_CMD), (SMC_DirectCmd_SelChip_Interface1Chip1 | SMC_DirectCmd_CmdType_UpdateRegs));
-		SMC_WriteReg((SMC_BASE + SMC_REG_DIRCT_CMD), (SMC_DirectCmd_SelChip_Interface1Chip1 | SMC_DirectCmd_CmdType_UpdateRegsAndAXI));
+		SMC_WriteReg((SMC_BASE + SMC_REG_DIRCT_CMD), (SMC_DirectCmd_SelChip_Interface1Chip1 | SMC_DirectCmd_CmdType_UpdateRegs));
+		//SMC_WriteReg((SMC_BASE + SMC_REG_DIRCT_CMD), (SMC_DirectCmd_SelChip_Interface1Chip1 | SMC_DirectCmd_CmdType_UpdateRegsAndAXI));
 	}
 
 	/* Reset NandFlash */
