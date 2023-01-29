@@ -558,7 +558,7 @@ void ClearErrandIntStatus(volatile DWC_mshc_block_registers* Ptr)
 void EfuseDelayVlueCheck(void)
 {
     uint32_t reg = REG_READ(EFUSE_NVM_DELAY_REG);
-    EfuseDelayParam = (((reg >> 16) | (reg)) & 0xFF);
+    EfuseDelayParam = (((reg >> 16) | (reg)) & 0xFFFF);
     MMC_PRINT("EFUSE_NVM_DELAY_REG is 0x%x\r\n", reg);
     MMC_PRINT("EfuseDelayParam is %d\r\n", EfuseDelayParam);
 }
