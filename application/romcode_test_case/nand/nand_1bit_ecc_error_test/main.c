@@ -101,6 +101,10 @@ int main(void)
 		SMC_WriteReg(PS_MIO12, 0x02);
 		SMC_WriteReg(PS_MIO13, 0x02);
 		SMC_WriteReg(PS_MIO14, 0x02);
+	
+	 /* Set Nand Timing Efuse */
+    *(volatile uint32_t *)(0xF8801000ULL + 0x150ULL) =0x0024ABCCULL;
+	*(volatile uint32_t *)(0xF8801000ULL + 0x154ULL) =0x0024ABCCULL;
 
 	volatile uint32_t i=0,j=0, temp1 =0,temp2 = 0,status =0;
 	volatile uint8_t Status = 0;

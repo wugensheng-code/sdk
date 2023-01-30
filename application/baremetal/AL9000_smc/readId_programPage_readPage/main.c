@@ -2416,6 +2416,10 @@ int main(void)
 	volatile uint32_t i=0,j=0,temp=0;
 	uint8_t Status = 0;
 
+	/* Set Nand Timing Efuse */
+    *(volatile uint32_t *)(0xF8801000ULL + 0x150ULL) =0x0024ABCCULL;
+	*(volatile uint32_t *)(0xF8801000ULL + 0x154ULL) =0x0024ABCCULL;
+
 	printf("G\r\n");
 	printf("abc\r\n");
 

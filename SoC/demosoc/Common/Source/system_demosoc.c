@@ -346,11 +346,6 @@ void _premain_init(void)
 #endif
   //  *(uint32_t *)(0xf8803410u) =0x1;
 
-
-
-    /* Set Nand Timing Efuse */
-    *(volatile uint32_t *)(0xF8801000ULL + 0x150ULL) =0x0024ABCCULL;
-	*(volatile uint32_t *)(0xF8801000ULL + 0x154ULL) =0x0024ABCCULL;
 #ifdef NOR_BRANCH_PUT_CHAR
     /* Set Nor reset delay times and qspi clk div */
     *(volatile uint32_t *)(0x69000 + 0x158) =0x0A000200;
