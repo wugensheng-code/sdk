@@ -11,14 +11,16 @@
 #include "ff.h"
 #include "string.h"
 #include "al_sd.h"
-#include "al_sd_write.h"
 #include "al_emmc.h"
+#if _USE_WRITE
+#include "al_sd_write.h"
 #include "al_emmc_write.h"
+#endif
 
 
 /* Ϊÿ���豸����һ�������� */
-#define ATA			           0     // SD��
-#define EMMC		       1     // Ԥ���ⲿSPI Flashʹ��
+#define SD			           0     // SD��
+#define EMMC		       1     // Ԥ���ⲿEMMC ʹ��
 
 //#define SD_BLOCKSIZE     512
 
@@ -32,11 +34,11 @@ DSTATUS disk_status (
 	DSTATUS status = STA_NOINIT;
 	
 	switch (pdrv) {
-		case ATA:	/* SD CARD */
+		case SD:	/* SD CARD */
 			status &= ~STA_NOINIT;
 			break;
     
-		case EMMC:        /* SPI Flash */   
+		case EMMC:        /* EMMC */   
             status &= ~STA_NOINIT;
 			break;
 
@@ -55,7 +57,7 @@ DSTATUS disk_initialize (
 {
 	DSTATUS status = STA_NOINIT;	
 	switch (pdrv) {
-		case ATA:	         /* SD CARD */
+		case SD:	         /* SD CARD */
 			if(AlSd_Init() == MMC_SUCCESS)
 			{
 				//Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
@@ -101,7 +103,7 @@ DRESULT disk_read (
 	uint32_t blockcount = 0;
 	
 	switch (pdrv) {
-		case ATA:	/* SD CARD */
+		case SD:	/* SD CARD */
 			for(blockcount = 0; blockcount < count; blockcount++){
 				status = AlSd_ReadSingleBlock((uint8_t *)(buff+SDCardInfo.CardBlockSize*blockcount),sector+blockcount,SDCardInfo.CardBlockSize);
 				if(status != RES_OK)
@@ -149,7 +151,7 @@ DRESULT disk_write (
 	}
 
 	switch (pdrv) {
-		case ATA:	/* SD CARD */  
+		case SD:	/* SD CARD */  
 			for(blockcount = 0; blockcount < count; blockcount++){
 				status = AlSd_WriteSingleBlock((uint8_t *)(buff+SDCardInfo.CardBlockSize*blockcount),sector+blockcount,SDCardInfo.CardBlockSize);
 				if(status != RES_OK)
@@ -192,7 +194,7 @@ DRESULT disk_ioctl (
 {
 	DRESULT status = RES_PARERR;
 	switch (pdrv) {
-		case ATA:	/* SD CARD */
+		case SD:	/* SD CARD */
 			switch (cmd) 
 			{
 				// Get R/W sector size (WORD) 
@@ -242,8 +244,7 @@ DRESULT disk_ioctl (
 	return status;
 }
 #endif
-//typedef unsigned long	DWORD;
-#if 1
+
 DWORD get_fattime(void) {
 	/* ���ص�ǰʱ��� */
 	return	  ((DWORD)(2015 - 1980) << 25)	/* Year 2015 */
@@ -253,4 +254,4 @@ DWORD get_fattime(void) {
 			| ((DWORD)0 << 5)				  /* Min 0 */
 			| ((DWORD)0 >> 1);				/* Sec 0 */
 }
-#endif
+

@@ -5,7 +5,7 @@
 #include <string.h>
 #include "npujpu_st/npu.h"
 
-
+#define APU_GROUPID 0x4
 
 //#define OCM_TEST
 
@@ -450,14 +450,26 @@ uint32_t AlMpu_CompareTest(AlMpu *InstancePtr,  uint32_t Reg_Sel, RegionAttr Att
             if (DefValue == value) {
                 printf("ProtectRegion testcase Pass!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x DefValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.Access, Attr.RegionEnable, Attr.GroupId, InstancePtr, DefValue, value);
             } else {
-                printf("ProtectRegion testcase Fail!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x DefValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.Access, Attr.RegionEnable, Attr.GroupId, InstancePtr, DefValue, value);
+                if (Attr.GroupId == APU_GROUPID) {
+                    printf("ProtectRegion testcase Pass!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x DefValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.Access, Attr.RegionEnable, Attr.GroupId, InstancePtr, DefValue, value);
+                }
+                else
+                {
+                    printf("ProtectRegion testcase Fail!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x DefValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.Access, Attr.RegionEnable, Attr.GroupId, InstancePtr, DefValue, value);
+                }
+
+                
             }
         break;
         case READONLY:
             if (InitialValue == value) {
                 printf("ProtectRegion testcase Pass!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x DefValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.Access, Attr.RegionEnable, Attr.GroupId, InstancePtr, DefValue, value);
             } else {
-                printf("ProtectRegion testcase Fail!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x DefValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.Access, Attr.RegionEnable, Attr.GroupId, InstancePtr, DefValue, value);
+                 if (Attr.GroupId == APU_GROUPID) {
+                    printf("ProtectRegion testcase Pass!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x DefValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.Access, Attr.RegionEnable, Attr.GroupId, InstancePtr, DefValue, value);
+                } else {
+                    printf("ProtectRegion testcase Fail!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x DefValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.Access, Attr.RegionEnable, Attr.GroupId, InstancePtr, DefValue, value);
+                }
             }
         break;
         case WRITEONLY:
@@ -470,7 +482,11 @@ uint32_t AlMpu_CompareTest(AlMpu *InstancePtr,  uint32_t Reg_Sel, RegionAttr Att
             if (DefValue == ValueRenew) {
                 printf("ProtectRegion testcase Pass!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x DefValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.Access, Attr.RegionEnable, Attr.GroupId, InstancePtr, DefValue, ValueRenew);
             } else {
-                printf("ProtectRegion testcase Fail!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x DefValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.Access, Attr.RegionEnable, Attr.GroupId, InstancePtr, DefValue, ValueRenew);
+                if (Attr.GroupId == APU_GROUPID) {
+                    printf("ProtectRegion testcase Pass!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x DefValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.Access, Attr.RegionEnable, Attr.GroupId, InstancePtr, DefValue, ValueRenew);
+                }else {
+                    printf("ProtectRegion testcase Fail!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x DefValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.Access, Attr.RegionEnable, Attr.GroupId, InstancePtr, DefValue, ValueRenew);
+                }
             }
 
         break;
@@ -478,7 +494,11 @@ uint32_t AlMpu_CompareTest(AlMpu *InstancePtr,  uint32_t Reg_Sel, RegionAttr Att
             if ((InitialValue != value) && (value != DefValue)) {
                 printf("ProtectRegion testcase Pass!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x DefValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.Access, Attr.RegionEnable, Attr.GroupId, InstancePtr, DefValue, value);
             } else {
-                printf("ProtectRegion testcase Fail!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x DefValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.Access, Attr.RegionEnable, Attr.GroupId, InstancePtr, DefValue, value);
+                 if (Attr.GroupId == APU_GROUPID) {
+                     printf("ProtectRegion testcase Pass!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x DefValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.Access, Attr.RegionEnable, Attr.GroupId, InstancePtr, DefValue, value);
+                 }else {
+                    printf("ProtectRegion testcase Fail!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x DefValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.Access, Attr.RegionEnable, Attr.GroupId, InstancePtr, DefValue, value);
+                 }
             }
         break;
     }  

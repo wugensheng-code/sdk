@@ -59,14 +59,15 @@ uint32_t AlEmmc_HostControllerClockSetup(volatile DWC_mshc_block_registers* Ptr,
     REG_WRITE(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
     MMC_PRINT("r1.d32 is %x\r\n", r1.d32);
 
+    MMC_DELAY_MS(10);   //delay for clk sync
+
     //clk soft rst
     uint32_t top_reg = REG_READ(TOP_NS__CFG_CTRL_SDIO1_ADDR);
     top_reg |= TOP_CFG_REG_CLK_RST;
     REG_WRITE(TOP_NS__CFG_CTRL_SDIO1_ADDR, top_reg);     //clk soft reset
-    MMC_DELAY_MS(10);
     //set programerable_mode
     r1.bit.clk_gen_select   = MMC_CC_CLK_GEN_SEL_PROGRAM;        //Programmable Clock Mode
-    r1.bit.freq_sel         = 0;
+    r1.bit.freq_sel         = MMC_DIV_10M;
     r1.bit.tout_cnt         = MMC_TC_TOUT_CNT_2_27;
     REG_WRITE(&(Ptr->sw_rst_r__tout_ctrl_r__clk_ctrl.d32), r1.d32);
     MMC_WAIT_CLK_STABLE(Ptr);

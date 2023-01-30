@@ -288,6 +288,12 @@ typedef enum {
 #define MMC_CHECK_DEV_STATUS_TIMEOUT_VAL	(1000*1000)		//1s
 #define MMC_DELAY_SCALE						(1)
 
+#ifdef MMC_COMPILE_FOR_EMU
+#define MMC_DIV_10M		(0)
+#else
+#define MMC_DIV_10M		(0x9)
+#endif
+
 //capabilities1.base_clk_freq 0 another way 1~255 -> 1~255MHz
 #define MMC_GET_INFO_ANOTHER_WAY	0x0
 //capabilities2.clk_mul 0 not support 1~255 -> 2~256
@@ -1204,7 +1210,7 @@ extern uint32_t ErrBranchCtrl;
 														} while(0)
 
 #define SD_ERROR_BRANCH_DONE_MASK						0x3C03FDFF
-#define EMMC_ERROR_BRANCH_DONE_MASK						0x03FFFFFE
+#define EMMC_ERROR_BRANCH_DONE_MASK						0x03FFFDFE
 #define ERROR_BRANCH_CHECK_BIT_NOTSET(erroroffset)		((ErrBranchCtrl & (1 << erroroffset)) == 0)
 #define ERROR_BRANCH_CHECK_BIT_SET(erroroffset)			((ErrBranchCtrl & (1 << erroroffset)) != 0)
 #define ERROR_BRANCH_BIT_SET(erroroffset)				do { \
