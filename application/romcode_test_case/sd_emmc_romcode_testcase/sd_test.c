@@ -39,14 +39,6 @@
 #define FIL_LARGE_RDWR_SIZE 8845488
 #define DDR_TEST_LENGTH     1000
 
-
-// #define SD_TRAVERSETEST
-#define SD_BRANCHTEST
-// #define SD_BOUNDARYTEST
-// #define SD_FATFSTEST
-// #define SD_PRINTREGTEST
-// #define SD_DDRREADWRITETEST
-
 static BYTE *WriteBuffer = (uint8_t *)0x1003ddf0;
 static BYTE *ReadBuffer = (uint8_t *)0x1003edf0;
 extern void Enablepinmux1(void);
@@ -230,12 +222,12 @@ uint32_t Sd_TraverseTest(void)
     MMC_GPRINT("[G]:Sd Write, Read Block!\r\n");
     uint32_t i = 0;
     for (; i < blocknum; i++) {
-        if (i == blocknum/2) {
+        if (i == 0x800) {
             MMC_GPRINT("[G]:Sd Change Freq 10M!\r\n");
             Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
         }
 
-        if(((i+1) % 0x40) ==0 )
+        if(((i+1) % 0x40) ==0 || i < 0x800)
             MMC_GPRINT("[G]:Write, Read Block 0x%x\r\n", i);
         status = AlSd_WriteSingleBlock(writebuffer,i,SDCardInfo.CardBlockSize);
         if (status != MMC_SUCCESS) {

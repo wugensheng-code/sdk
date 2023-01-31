@@ -17,13 +17,6 @@ static BYTE *WriteBuffer = (char *)0x6103ddf0;
 static BYTE *ReadBuffer = (char *)0x6103edf0;
 extern void Enablepinmux1_mode2(void);
 
-// #define EMMC_TRAVERSETEST
-// #define EMMC_BRANCHTEST
-#define EMMC_BOUNDARYTEST
-#define EMMC_FATFSTEST
-#define EMMC_PRINTREGTEST
-#define EMMC_BYTEREADTEST
-
 #define EMMC_OFFSETSTEP                 0x5700    //random none aligned num
 #define EMMC_LENGTHSTEP                 0x21210    //random none aligned num
 #define EMMC_READ_LENGTH                0x2100  
@@ -337,12 +330,12 @@ uint32_t Emmc_TraverseTest(void)
     uint64_t prei = 0, tempi = 0;
     uint64_t i = 0;
     for (; i < blocknum; i++) {
-        if (i == blocknum/2) {
+        if (i == 0x800) {
             MMC_GPRINT("[G]:Emmc Change Freq 10M!\r\n");
             Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
         }
 
-        if(((i+1) % 0x40) ==0 )
+        if(((i+1) % 0x40) == 0 || i < 0x800)
             MMC_GPRINT("[G]:Write, Read Block 0x%x\r\n", i);
 
         status = AlEmmc_WriteSingleBlock(writebuffer,i,EmmcCardInfo.CardBlockSize);
@@ -563,6 +556,7 @@ uint32_t Emmc_BranchTest(void)
     //coverage error branch
     MMC_GPRINT("[G]:==========Error Branch!==========\r\n");
     ERROR_BRANCH_START();
+    ErrBranchCtrl = 0x800;
     while (EMMC_ERROR_BRANCH_CHECK_NOTDONE(BERROR_MAX)) {
         MMC_GPRINT("[ERROR_BRANCH]:0x%x\r\n", ErrBranchCtrl);
 

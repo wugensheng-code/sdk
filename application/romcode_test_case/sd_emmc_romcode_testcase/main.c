@@ -50,11 +50,15 @@ static void wdt_init(void);
 extern u64 get_SystickTimer(void);
 
 uint32_t main(){
-#if 0
+#ifdef _USE_WDT
 	wdt_init();
 #endif
-	//SD_Test();
+#ifdef _USE_SD_TEST
+	SD_Test();
+#endif
+#ifdef _USE_EMMC_TEST
 	EMMC_Test();
+#endif
 
 }
 
