@@ -28,6 +28,7 @@
 #include "mtimer.h"
 #include "al_sd.h"
 #include "al_sd_write.h"
+#include "fatfs_test.h"
 
 #define BLOCK_LEN           0x200
 #define BLOCK_NUM           1
@@ -591,6 +592,73 @@ uint32_t SD_Test(void)
 #endif
     Sd_DdrReadWriteTest();
 #endif
+
+#ifdef SD_ADMA3TEST
+#ifdef AL_DEBUG_PRINT
+    DebugCurType = ((DEBUG_GENERAL));
+#endif
+    ResetHostComtroller(SDIO);
+    status = Sd_Adma3Test();
+    if (status != MMC_SUCCESS) {
+        MMC_GPRINT("[G]:SD Byte Read Test Error %d\r\n", status);
+    } else {
+        MMC_GPRINT("[G]:SD Byte Read Test Success\r\n");
+    }
+#endif
+
+#ifdef SD_ADMA2TEST
+#ifdef AL_DEBUG_PRINT
+    DebugCurType = ((DEBUG_GENERAL));
+#endif
+    ResetHostComtroller(SDIO);
+    status = Sd_Adma2Test();
+    if (status != MMC_SUCCESS) {
+        MMC_GPRINT("[G]:SD Byte Read Test Error %d\r\n", status);
+    } else {
+        MMC_GPRINT("[G]:SD Byte Read Test Success\r\n");
+    }
+#endif
+
+#ifdef SD_SDMATEST
+#ifdef AL_DEBUG_PRINT
+    DebugCurType = ((DEBUG_GENERAL));
+#endif
+    ResetHostComtroller(SDIO);
+    status = Sd_SdmaTest();
+    if (status != MMC_SUCCESS) {
+        MMC_GPRINT("[G]:SD Byte Read Test Error %d\r\n", status);
+    } else {
+        MMC_GPRINT("[G]:SD Byte Read Test Success\r\n");
+    }
+#endif
+
+#ifdef SD_INTERRUPTTEST
+#ifdef AL_DEBUG_PRINT
+    DebugCurType = ((DEBUG_GENERAL));
+#endif
+    ResetHostComtroller(SDIO);
+    status = Sd_InterruptTest();
+    if (status != MMC_SUCCESS) {
+        MMC_GPRINT("[G]:SD Byte Read Test Error %d\r\n", status);
+    } else {
+        MMC_GPRINT("[G]:SD Byte Read Test Success\r\n");
+    }
+#endif
+
+#ifdef SD_FATFSBOUNDARYTEST
+#ifdef AL_DEBUG_PRINT
+    DebugCurType = ((DEBUG_GENERAL));
+#endif
+    ResetHostComtroller(SDIO);
+    status = Sd_FatfsBoundaryCoverageTest();
+    if (status != MMC_SUCCESS) {
+        MMC_GPRINT("[G]:Sd Fatfs Test Error %d\r\n", status);
+        PrintfMshcBlock(SDIO);
+    } else {
+        MMC_GPRINT("[G]:Sd Fatfs Test Success\r\n");
+    }
+#endif
+
     return status;
 }
 

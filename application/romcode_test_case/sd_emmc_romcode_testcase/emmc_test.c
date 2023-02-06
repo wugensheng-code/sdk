@@ -657,6 +657,230 @@ END:
     return status;
 }
 
+uint32_t EMMC_WriteMultiBlocks_ADMA3() {
+
+    volatile unsigned int value = 0;
+    volatile unsigned int rdata0 = 0;
+    uint32_t writebuff[1024]={0};
+    uint32_t* Buffer_SingleBlock = (uint32_t*)writebuff;
+    uint8_t ReadBuffer1[1024]={0};
+
+    // XSdPs_Adma2Descriptor32 adma2Buf[32];
+    // memset(adma2Buf, 0, sizeof(adma2Buf));
+    *(uint32_t *)(0xf88030a0u) =0xb;      //SDIO0 mio40-49
+    *(uint32_t *)(0xf88030a4u) =0xb;
+    *(uint32_t *)(0xf88030a8u) =0xb;
+    *(uint32_t *)(0xf88030acu) =0xb;
+    *(uint32_t *)(0xf88030b0u) =0xb;
+    *(uint32_t *)(0xf88030b4u) =0xb;
+    *(uint32_t *)(0xf88030b8u) =0xb;
+    *(uint32_t *)(0xf88030bcu) =0xb;
+    *(uint32_t *)(0xf88030c0u) =0xb;
+    *(uint32_t *)(0xf88030c4u) =0xb;   
+    *(uint32_t *)(0xf880342cu) =0x1;     //emio_sel11
+
+ #define OCM_L 0x0
+     int OCM__BASE_CMD18_ADDR = OCM_L+0x00011000;
+     int OCM__BASE_CMD25_ADDR = OCM_L+0x00012000;
+     int OCM__BASE_CMD3_ADDR = OCM_L+0x00013000;
+     int OCM__BASE_DATA_STORE_ADDR = OCM_L+0x00020000;
+     int OCM__BASE_DATA_LOAD_ADDR = OCM_L+0x00030000;
+     int OCM__BASE_ICMD1_ADDR = OCM_L+0x00017000;
+     int OCM__BASE_ICMD2_ADDR = OCM_L+0x00018000;
+     int OCM__BASE_ICMD3_ADDR = OCM_L+0x00019000;
+
+     REG_WRITE(OCM__BASE_DATA_STORE_ADDR+0x00, 0x12345678);
+     REG_WRITE(OCM__BASE_DATA_STORE_ADDR+0x04, 0x87654321);
+     REG_WRITE(OCM__BASE_DATA_STORE_ADDR+0x08, 0xabcddcba);
+     REG_WRITE(OCM__BASE_DATA_STORE_ADDR+0x0C, 0xa1b2c3d4);
+//  Write ADMA2 instruction to OCM
+
+
+     // CMD_18 
+     REG_WRITE(OCM__BASE_CMD18_ADDR+0x00, 0x00000009);
+     REG_WRITE(OCM__BASE_CMD18_ADDR+0x04, 0x00000001);//00
+     REG_WRITE(OCM__BASE_CMD18_ADDR+0x08, 0x00000009);
+     REG_WRITE(OCM__BASE_CMD18_ADDR+0x0C, 0x00010200);//04
+     REG_WRITE(OCM__BASE_CMD18_ADDR+0x10, 0x00000009);
+     REG_WRITE(OCM__BASE_CMD18_ADDR+0x14, 0x00000000);//08
+     REG_WRITE(OCM__BASE_CMD18_ADDR+0x18, 0x00000009);
+     REG_WRITE(OCM__BASE_CMD18_ADDR+0x1C, 0x113a0193);//0C
+     // ADM2_18
+     REG_WRITE(OCM__BASE_CMD18_ADDR+0x20, 0x02000023);
+     REG_WRITE(OCM__BASE_CMD18_ADDR+0x24, OCM__BASE_DATA_LOAD_ADDR);
+
+     // CMD_25 
+     REG_WRITE(OCM__BASE_CMD25_ADDR+0x00, 0x00000009);
+     REG_WRITE(OCM__BASE_CMD25_ADDR+0x04, 0x00000001);//00
+     REG_WRITE(OCM__BASE_CMD25_ADDR+0x08, 0x00000009);
+     REG_WRITE(OCM__BASE_CMD25_ADDR+0x0C, 0x00010200);//04
+     REG_WRITE(OCM__BASE_CMD25_ADDR+0x10, 0x00000009);
+     REG_WRITE(OCM__BASE_CMD25_ADDR+0x14, 0x00000000);//08
+     REG_WRITE(OCM__BASE_CMD25_ADDR+0x18, 0x00000009);
+     REG_WRITE(OCM__BASE_CMD25_ADDR+0x1C, 0x183a0183);//0C
+     // ADM2_25
+     REG_WRITE(OCM__BASE_CMD25_ADDR+0x20, 0x02000023);
+     REG_WRITE(OCM__BASE_CMD25_ADDR+0x24, OCM__BASE_DATA_STORE_ADDR);
+
+
+
+//  Write ADMA3 Intergrated Command to OCM
+     REG_WRITE(OCM__BASE_ICMD1_ADDR+0x00, 0x00000039);
+     REG_WRITE(OCM__BASE_ICMD1_ADDR+0x04, OCM__BASE_CMD18_ADDR);
+     REG_WRITE(OCM__BASE_ICMD1_ADDR+0x08, 0x0000003B);
+     REG_WRITE(OCM__BASE_ICMD1_ADDR+0x0C, OCM__BASE_CMD25_ADDR);
+
+// ADMA3
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C, 0x18000000); //HOST_VER4_ENABLE[12] = 1 CMD23_ENABLE[11] = 1 
+    #ifdef _USE_4BIT
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x28, 0x0000BF1A);
+    #endif
+    #ifdef _USE_8BIT
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x28, 0x0000BF38);
+    #endif
+    #ifdef _USE_1BIT
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x28, 0x0000BF18);
+    #endif
+    rdata0 = REG_READ(SDIO_WRAP__SDIO0__BASE_ADDR+0x3C);
+
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x00, 0x00000008);
+    REG_WRITE(SDIO_WRAP__SDIO0__BASE_ADDR+0x78, OCM__BASE_ICMD1_ADDR);
+
+    sdio_wait_for_xfer_response ();
+
+
+    rdata0 = REG_READ(OCM__BASE_DATA_LOAD_ADDR+0x00);
+    return MMC_SUCCESS;
+}
+
+uint32_t Emmc_Adma3Test(void)
+{
+    uint32_t status = MMC_SUCCESS;
+    RawEmmcParam_t emmcparam;
+    char *writebuffer = (char *)0x10040000;
+    char *readbuffer = (char *)0x20000000;
+
+    MMC_GPRINT("[G]:==========Emmc Byte Read Test!==========\r\n");
+    for (uint32_t i = 0; i < BUF_SIZE; i++) {
+        writebuffer[i] = i%10+0x32;
+    }
+
+    MMC_GPRINT("[G]:Emmc Init!\r\n");
+    status = Csu_RawEmmcInit(&emmcparam);
+    if (status != MMC_SUCCESS) {
+        return status;
+    }
+    MMC_GPRINT("[G]:Emmc Change Freq 10M!\r\n");
+    Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
+
+    status = EMMC_WriteMultiBlocks_ADMA3();
+    if (status != MMC_SUCCESS) {
+        return status;
+    }
+    MMC_GPRINT("[G]:==========Emmc Byte Read Test Success!==========\r\n");
+
+END:
+    return status;
+}
+
+uint32_t Emmc_Adma2Test(void)
+{
+    uint32_t status = MMC_SUCCESS;
+    RawEmmcParam_t emmcparam;
+    char *writebuffer = (char *)0x10040000;
+    char *readbuffer = (char *)0x20000000;
+
+    MMC_GPRINT("[G]:==========Emmc Byte Read Test!==========\r\n");
+    for (uint32_t i = 0; i < BUF_SIZE; i++) {
+        writebuffer[i] = i%10+0x32;
+    }
+
+    MMC_GPRINT("[G]:Emmc Init!\r\n");
+    status = Csu_RawEmmcInit(&emmcparam);
+    if (status != MMC_SUCCESS) {
+        return status;
+    }
+    MMC_GPRINT("[G]:Emmc Change Freq 10M!\r\n");
+    Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
+
+    status = EMMC_WriteMultiBlocks_ADMA3();
+    if (status != MMC_SUCCESS) {
+        return status;
+    }
+    MMC_GPRINT("[G]:==========Emmc Byte Read Test Success!==========\r\n");
+
+END:
+    return status;
+}
+
+uint32_t Emmc_SdmaTest(void)
+{
+    uint32_t status = MMC_SUCCESS;
+    RawEmmcParam_t emmcparam;
+    char *writebuffer = (char *)0x10040000;
+    char *readbuffer = (char *)0x20000000;
+
+    MMC_GPRINT("[G]:==========Emmc Byte Read Test!==========\r\n");
+    for (uint32_t i = 0; i < BUF_SIZE; i++) {
+        writebuffer[i] = i%10+0x32;
+    }
+
+    MMC_GPRINT("[G]:Emmc Init!\r\n");
+    status = Csu_RawEmmcInit(&emmcparam);
+    if (status != MMC_SUCCESS) {
+        return status;
+    }
+    MMC_GPRINT("[G]:Emmc Change Freq 10M!\r\n");
+    Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
+
+    status = EMMC_WriteMultiBlocks_ADMA3();
+    if (status != MMC_SUCCESS) {
+        return status;
+    }
+    MMC_GPRINT("[G]:==========Emmc Byte Read Test Success!==========\r\n");
+
+END:
+    return status;
+}
+
+void SOC_INT89_IRQn_handler(void)
+{
+    printf("emmc int irq handler!\n\r");
+}
+
+uint32_t Emmc_InterruptTest(void)
+{
+    uint32_t status = MMC_SUCCESS;
+    RawEmmcParam_t emmcparam;
+    char *writebuffer = (char *)0x10040000;
+    char *readbuffer = (char *)0x20000000;
+
+    MMC_GPRINT("[G]:==========Emmc Byte Read Test!==========\r\n");
+    for (uint32_t i = 0; i < BUF_SIZE; i++) {
+        writebuffer[i] = i%10+0x32;
+    }
+
+    MMC_GPRINT("[G]:Emmc Init!\r\n");
+    status = Csu_RawEmmcInit(&emmcparam);
+    if (status != MMC_SUCCESS) {
+        return status;
+    }
+    MMC_GPRINT("[G]:Emmc Change Freq 10M!\r\n");
+    Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
+
+    //ECLIC_Register_IRQ(SOC_INT89_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,SOC_INT89_IRQn_handler);
+   //__enable_irq();
+
+    status = EMMC_WriteMultiBlocks_ADMA3();
+    if (status != MMC_SUCCESS) {
+        return status;
+    }
+    MMC_GPRINT("[G]:==========Emmc Byte Read Test Success!==========\r\n");
+
+END:
+    return status;
+}
+
 //Print Reg test: print branch log
 uint32_t Emmc_PrintRegTest(void)
 {
@@ -773,6 +997,58 @@ uint32_t EMMC_Test(void)
     }
 #endif
 
+#ifdef EMMC_ADMA3TEST
+#ifdef AL_DEBUG_PRINT
+    DebugCurType = ((DEBUG_GENERAL));
+#endif
+    ResetHostComtroller(eMMC);
+    status = Emmc_Adma3Test();
+    if (status != MMC_SUCCESS) {
+        MMC_GPRINT("[G]:Emmc Byte Read Test Error %d\r\n", status);
+    } else {
+        MMC_GPRINT("[G]:Emmc Byte Read Test Success\r\n");
+    }
+#endif
+
+#ifdef EMMC_ADMA2TEST
+#ifdef AL_DEBUG_PRINT
+    DebugCurType = ((DEBUG_GENERAL));
+#endif
+    ResetHostComtroller(eMMC);
+    status = Emmc_Adma3Test();
+    if (status != MMC_SUCCESS) {
+        MMC_GPRINT("[G]:Emmc Byte Read Test Error %d\r\n", status);
+    } else {
+        MMC_GPRINT("[G]:Emmc Byte Read Test Success\r\n");
+    }
+#endif
+
+#ifdef EMMC_SDMATEST
+#ifdef AL_DEBUG_PRINT
+    DebugCurType = ((DEBUG_GENERAL));
+#endif
+    ResetHostComtroller(eMMC);
+    status = Emmc_Adma3Test();
+    if (status != MMC_SUCCESS) {
+        MMC_GPRINT("[G]:Emmc Byte Read Test Error %d\r\n", status);
+    } else {
+        MMC_GPRINT("[G]:Emmc Byte Read Test Success\r\n");
+    }
+#endif
+
+#ifdef EMMC_INTERRUPTTEST
+#ifdef AL_DEBUG_PRINT
+    DebugCurType = ((DEBUG_GENERAL));
+#endif
+    ResetHostComtroller(eMMC);
+    status = Emmc_Adma3Test();
+    if (status != MMC_SUCCESS) {
+        MMC_GPRINT("[G]:Emmc Byte Read Test Error %d\r\n", status);
+    } else {
+        MMC_GPRINT("[G]:Emmc Byte Read Test Success\r\n");
+    }
+#endif
+
 #ifdef EMMC_TRAVERSETEST
 #ifdef AL_DEBUG_PRINT
     DebugCurType = ((DEBUG_GENERAL));
@@ -785,6 +1061,21 @@ uint32_t EMMC_Test(void)
         MMC_GPRINT("[G]:Emmc Traverse Test Success\r\n");
     }
 #endif
+
+#ifdef EMMC_FATFSBOUNDARYTEST
+#ifdef AL_DEBUG_PRINT
+    DebugCurType = ((DEBUG_GENERAL));
+#endif
+    ResetHostComtroller(eMMC);
+    status = Emmc_FatfsBoundaryCoverageTest();
+    if (status != MMC_SUCCESS) {
+        MMC_GPRINT("[G]:Sd Fatfs Test Error %d\r\n", status);
+        PrintfMshcBlock(eMMC);
+    } else {
+        MMC_GPRINT("[G]:Sd Fatfs Test Success\r\n");
+    }
+#endif
+
     return status;
 }
 

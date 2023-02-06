@@ -295,9 +295,9 @@ uint32_t AlEmmc_SendInitCmd()
     return MMC_SUCCESS;
 }
 
-#if _USE_8BIT
+
 /**
- * @brief switch data width to 8 bit
+ * @brief switch data width to 4/8 bit
  * 
  * @return uint32_t status
  */
@@ -306,10 +306,16 @@ uint32_t AlEmmc_SwitchDataWidth()
     uint32_t status = MMC_SUCCESS;
     uint32_t arg_r = 0;
     CMD_R__XFER_MODE_R reg = {.d32 = 0,};
-    WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R r1{.d32 = 0,};
+    WUP_CTRL_R__BGAP_CTRL_R__PWR_CTRL_R__HOST_CTRL1_R r1={.d32 = 0,};
 
     // send command 6
+#if _USE_4BIT
+    arg_r = EMMC_CMD6_PARA_4_BIT_WIDTH_BUS;     //set sd model data width=4
+#endif
+#if _USE_8BIT
     arg_r = EMMC_CMD6_PARA_8_BIT_WIDTH_BUS;     //set sd model data width=8
+#endif
+
     REG_WRITE(&(eMMC->argument_r), arg_r);
 
     reg.bit.cmd_index           = SD_CMD_HS_SWITCH;
@@ -323,14 +329,19 @@ uint32_t AlEmmc_SwitchDataWidth()
     MMC_WAIT_CMD_COMPLETE(eMMC, MMC_CMD_6_ERR);
 
     r1.d32              = REG_READ(&(eMMC->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1));
+#if _USE_4BIT
+    r1.bit.dat_xfer_width  = 0x1;
+#endif
+#if _USE_8BIT
     r1.bit.extdat_xfer  = 0x1;
+#endif
     REG_WRITE(&(eMMC->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1), r1.d32);
 
     MMC_DELAY_MS(10);
 
     return MMC_SUCCESS;
 }
-#endif
+
 
 /**
  * @brief read single block size data 
@@ -486,6 +497,19 @@ uint32_t AlEmmc_Init(void)
 	}
     MMC_BRANCHTEST_PRINT(BRANCH_EMMC_GETCARDINFO_SUCCESS);
     
+    #ifdef _USE_4BIT
+    status = AlEmmc_SwitchDataWidth();
+    if (status != MMC_SUCCESS) {
+		goto END;
+	}
+    #endif
+
+    #ifdef _USE_8BIT
+    status = AlEmmc_SwitchDataWidth();
+    if (status != MMC_SUCCESS) {
+		goto END;
+	}
+    #endif
 END:
     MMC_BRANCHTEST_PRINT(BRANCH_EMMC_INIT_ERROR);
 	return status;
