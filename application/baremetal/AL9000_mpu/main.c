@@ -18,12 +18,12 @@ extern int main_npujpu();
  * @return None
  *
  ******************************************************************************/
-void Mpu_IRQn_handler(void)
+#ifdef MPU_INTERRUPTTEST
+void Mpu_IRQn_Handler(void)
 {
-
-    printf("SOC_MPU_IRQn_handler\n\r");
-
+    printf("SOC_MPU_IRQn_Handler\n\r");
 }
+#endif
 
 void SimulationWave()
 {
@@ -144,28 +144,109 @@ void AxiDmaTest()
     axidma();
 }
 
-int main()
+uint32_t main(void)
 {
-    ECLIC_Register_IRQ(SOC_INT130_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,Mpu_IRQn_handler);
+    uint32_t Status = MPU_SUCCESS;
+#ifdef MPU_OCMTEST
+    Status = OcmMpuTest();
+    if (Status != MPU_SUCCESS)
+    {
+        printf("OcmMpuTest Failed: %d\n\r", Status);
+    }
+    else
+    {
+        printf("OcmMpuTest Test Success\n\r");
+    }
+#endif
+
+#ifdef MPU_APUTEST
+    Status = ApuMpuTest();
+    if (Status != MPU_SUCCESS)
+    {
+        printf("ApuMpuTest Failed: %d\n\r", Status);
+    }
+    else
+    {
+        printf("ApuMpuTest Test Success\n\r");
+    }
+#endif
+
+#ifdef MPU_DDRS0TEST
+    Status = Ddrs0MpuTest();
+    if (Status != MPU_SUCCESS)
+    {
+        printf("Ddrs0MpuTest Failed: %d\n\r", Status);
+    }
+    else
+    {
+        printf("Ddrs0MpuTest Test Success\n\r");
+    }
+#endif
+
+#ifdef MPU_DDRS1TEST
+    Status = Ddrs1MpuTest();
+    if (Status != MPU_SUCCESS)
+    {
+        printf("Ddrs1MpuTest Failed: %d\n\r", Status);
+    }
+    else
+    {
+        printf("Ddrs1MpuTest Test Success\n\r");
+    }
+#endif
+
+#ifdef MPU_NPUTEST
+    Status = NpuMpuTest();
+    if (Status != MPU_SUCCESS)
+    {
+        printf("NpuMpuTest Failed: %d\n\r", Status);
+    }
+    else
+    {
+        printf("NpuMpuTest Test Success\n\r");
+    }
+#endif
+
+#ifdef MPU_HP0TEST
+    Status = Hp0MpuTest();
+    if (Status != MPU_SUCCESS)
+    {
+        printf("Hp0MpuTest Failed: %d\n\r", Status);
+    }
+    else
+    {
+        printf("Hp0MpuTest Test Success\n\r");
+    }
+#endif
+
+#ifdef MPU_HP1TEST
+    Status = Hp1MpuTest();
+    if (Status != MPU_SUCCESS)
+    {
+        printf("Hp1MpuTest Failed: %d\n\r", Status);
+    }
+    else
+    {
+        printf("Hp1MpuTest Test Success\n\r");
+    }
+#endif
+
+#ifdef MPU_SIMULATIONWAVE
+    Status = SimulationWave();
+    if (Status != MPU_SUCCESS)
+    {
+        printf("SimulationWave Failed: %d\n\r", Status);
+    }
+    else
+    {
+        printf("SimulationWave Test Success\n\r");
+    }
+#endif
+
+#ifdef MPU_INTERRUPTTEST
+    ECLIC_Register_IRQ(SOC_INT130_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,Mpu_IRQn_Handler);
     __enable_irq();
+#endif
 
-    //AxiDmaTest();
-
-   //main_npujpu();
-
-    /* release memory */
-    //*(uint32_t *)(0xf8801074) |= 0x4000; 
-    //AlMpu_AllTest();
-    //ApuMpuTest();
-    //OcmMpuTest();
-    //Ddrs0MpuTest();
-    //Ddrs1MpuTest();
-    //NpuMpuTest();
-    //Hp0MpuTest();
-    //Hp1MpuTest();
-    SimulationWave();
-    //hp0_mpu_simulation();
-    while(1)
-        ;
-    return 0;
+    return Status;
 }
