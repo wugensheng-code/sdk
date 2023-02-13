@@ -83,3 +83,10 @@ void printf_monitor(AXIMON_TypeDef *AXIMON)
 #endif
  	num ++;
 }
+void clear_monitor()
+{
+	AlAxiMon_SbuparaCountClean(AL_DMACX );
+	AlAxiMon_SbuparaCountClean(AL_SX2X_M0 );
+	AlAxiMon_SbuparaCountClean(AL_OCM_S2 );
+	AlAxiMon_SbuparaCountClean(AL_MAIN_S1 );
+}
