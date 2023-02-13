@@ -6,6 +6,7 @@
 
 int main(){
 	// __RV_CSR_CLEAR(CSR_MMISC_CTL,MMISC_CTL_BPU);
-	RPU2APU3_IPC_test();
+	// RPU2APU_IPC_test();
+	IPC_local_test();
 	return 0;
 }
