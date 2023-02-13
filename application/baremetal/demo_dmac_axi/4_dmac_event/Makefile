@@ -1,4 +1,4 @@
-TARGET = dmac_axi
+TARGET = dmac_event
 
 NUCLEI_SDK_ROOT = ../../../..
 

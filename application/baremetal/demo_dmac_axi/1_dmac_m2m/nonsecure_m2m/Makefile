@@ -1,4 +1,4 @@
-TARGET = dmac_axi
+TARGET = nonsecure_m2m
 
 NUCLEI_SDK_ROOT = ../../../../..
 

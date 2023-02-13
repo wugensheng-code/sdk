@@ -1,4 +1,4 @@
-TARGET = dmac_axi
+TARGET = dmac_boot
 
 NUCLEI_SDK_ROOT = ../../../..
 

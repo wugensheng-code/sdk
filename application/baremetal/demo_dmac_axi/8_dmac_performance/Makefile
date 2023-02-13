@@ -1,4 +1,4 @@
-TARGET = dmac_axi
+TARGET = dmac_performance
 
 NUCLEI_SDK_ROOT = ../../../..
 

@@ -1550,10 +1550,10 @@ volatile unsigned fail_flag;
       fail_flag = 1;
      }
     if (fail_flag != 1 ) {
-      vfwp("** REG WRITE and READ test SUCCESS!!!");
+      vfwp("[AUTOTEST]:[DMAC_AXI]:[DMAC_RW]:[PASS]\r\n");
      }
     else{
-      vfwp("** REG WRITE and READ test FAIL !!! %x\n",0);
+      vfwp("[AUTOTEST]:[DMAC_AXI]:[DMAC_RW]:[FAIL]\r\n");
      }
 
     return 0;

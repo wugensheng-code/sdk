@@ -1,4 +1,4 @@
-TARGET = dmac_axi
+TARGET = dmac_m2m_arbi
 
 NUCLEI_SDK_ROOT = ../../../..
 
