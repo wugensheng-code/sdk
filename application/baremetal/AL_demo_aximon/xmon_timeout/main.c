@@ -59,7 +59,7 @@ volatile uint16_t count = 0;
 
 void Xmonitor_handler()
 {
-	printf("Xmon Timeout Intr Run Successfully\r\n");
+	printf("[AUTOTEST]:[XMON]:[XMON_TIMEOUT]:[PASS]\r\n");
 	AlAxiMon_IntrClear(AL_DMACX);
 	AlAxiMon_IntrDisable(AL_DMACX);
 }
@@ -110,12 +110,12 @@ int main(void)
 	#endif
 
 		//vfwp("set manager secure mode\n");
-		vfwp("set manager non-secure mode\n");
-		vfwp("set irq and periph non-secure mode\n");
+		// vfwp("set manager non-secure mode\n");
+		// vfwp("set irq and periph non-secure mode\n");
 		REG_WRITE(0xF88060A0, 0x001FFFFF);
 		//REG_WRITE(0xF88060A0, 0x00100000);
 
-		vfwp("reset dmac\n");
+		// vfwp("reset dmac\n");
 		REG_WRITE(0xF8801074, 0X00003270);
 		REG_WRITE(0xF8801074, 0X00003370);
 		REG_WRITE(0xf8801078,0x00001133);
@@ -129,7 +129,7 @@ int main(void)
 			return XST_FAILURE;
 		}
 
-		vfwp("Successfully ran XDMaPs_Example_W_Intr");
+		// vfwp("Successfully ran XDMaPs_Example_W_Intr");
 		return XST_SUCCESS;
 
 	} else {
@@ -180,7 +180,7 @@ int XDmaPs_Example_W_Intr(u16 DeviceId)
 		xil_printf("%s %d \n", __FUNCTION__, __LINE__);
 		return XST_FAILURE;
 	} else {
-		vfwp("dmacfg addr: ** %x \n", DmaCfg->BaseAddress);
+		// vfwp("dmacfg addr: ** %x \n", DmaCfg->BaseAddress);
 	}
 
 	Status = XDmaPs_CfgInitialize(DmaInst, DmaCfg, DmaCfg->BaseAddress);
@@ -203,7 +203,7 @@ int XDmaPs_Example_W_Intr(u16 DeviceId)
 			// Set the Done interrupt handler
 			XDmaPs_SetDoneHandler(DmaInst, Channel, DmaDoneHandler, (void *)Checked);
 
-			vfwp("set Channel thead non-secure\n");
+			// vfwp("set Channel thead non-secure\n");
 			Status = XDmaPs_Start(DmaInst, Channel, &DmaCmd, 0, 1);
 
 			TimeOutCnt = 0;
@@ -248,7 +248,7 @@ int SetupInterruptSystem(XDmaPs *DmaPtr)
 	 * Connect the Done ISR for all 8 channels of DMA 0
 	 */
 	Status = ECLIC_Register_IRQ(SOC_INT57_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, XDmaPs_DoneISR_0);
-	vfwp("setup interrupt system status:%d \n", Status);
+	// vfwp("setup interrupt system status:%d \n", Status);
 	__enable_irq();
 	return XST_SUCCESS;
 

@@ -92,6 +92,7 @@ int main(void)
 		buffer[i] = i;
 	}
 //	write_To_OCM((uint32_t*)buffer,128,(uint32_t*)base0);
+	clear_monitor();
 	AlAxiMon_GlobalEnable();
 	#ifdef _AARCH_64
 	uint64_t sctlr_el3;

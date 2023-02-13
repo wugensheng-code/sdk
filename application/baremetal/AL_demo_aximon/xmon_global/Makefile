@@ -1,4 +1,4 @@
-TARGET = al_9000_aximon
+TARGET = xmon_global
 
 
 NUCLEI_SDK_ROOT = ../../../..

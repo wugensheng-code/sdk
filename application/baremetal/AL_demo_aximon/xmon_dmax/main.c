@@ -160,10 +160,10 @@ int main(void)
 		}
 		if((AlAxiMon_GetMonCountValue(AL_DMACX,cnt_awcmd) == (DMA_LENGTH / DMA_BURST_LEN)))
 		{
-			vfwp("Axi monitor Dmax ran Successfully\r\n");
+			printf("[AUTOTEST]:[XMON]:[XMON_DMAX]:[PASS]\r\n");
 			return XST_SUCCESS;
 		}else{
-			vfwp("Axi monitor Dmax ran fail\r\n");
+			printf("[AUTOTEST]:[XMON]:[XMON_DMAX]:[FAIL]\r\n");
 			return XST_FAILURE;
 		}
 }
