@@ -63,10 +63,10 @@ uint8_t TTC_Counter_Disable(TTC_AL9000_TypeDef *TTCX,enum clk_number clk){
 			TTCX -> CNTR_CTRL_REG_1 |=CNTR_CTRL_REG_1_DIS;
 		break;
 		case clk2:
-			TTCX -> CNTR_CTRL_REG_1 |=CNTR_CTRL_REG_2_DIS;
+			TTCX -> CNTR_CTRL_REG_2 |=CNTR_CTRL_REG_2_DIS;
 		break;
 		case clk3:
-			TTCX -> CNTR_CTRL_REG_1 |=CNTR_CTRL_REG_3_DIS;
+			TTCX -> CNTR_CTRL_REG_3 |=CNTR_CTRL_REG_3_DIS;
 		break;
 		defalut:
 			TTCX -> CNTR_CTRL_REG_1 |=CNTR_CTRL_REG_1_DIS;
