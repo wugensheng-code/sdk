@@ -14,42 +14,42 @@ void SOC_TTC0_HANDLER(void)
 	uint8_t intr_value;
 	intr_value = TTC_clear_interrput(AL9000_TTC,clk1);
    	TTC_Counter_Disable(AL9000_TTC,clk1);
-	printf("TTC Value=%d\r\n",AL9000_TTC->CNTR_VAL_REG_1);
+	// printf("TTC Value=%d\r\n",AL9000_TTC->CNTR_VAL_REG_1);
 	if(intr_value == 0x1)
-		printf("TTC0 Iv INTR\r\n");
+		printf("[AUTOTEST]:[TTC0]:[Iv_INTR]:[PASS]\r\n");
 	else if(intr_value == 0x2)
-		printf("TTC0 M1 INTR\r\n");
+		printf("[AUTOTEST]:[TTC0]:[M1_INTR]:[PASS]\r\n");
 	else if(intr_value == 0x4)
-		printf("TTC0 M2 INTR\r\n");
+		printf("[AUTOTEST]:[TTC0]:[M2_INTR]:[PASS]\r\n");
 	else if(intr_value == 0x8)
-		printf("TTC0 M3 INTR\r\n");
+		printf("[AUTOTEST]:[TTC0]:[M3_INTR]:[PASS]\r\n");
 	else if(intr_value == 0x10)
-		printf("TTC0 ov INTR\r\n");
+		printf("[AUTOTEST]:[TTC0]:[Ov_INTR]:[PASS]\r\n");
 	else if(intr_value == 0x20)
-		printf("TTC0 ev INTR\r\n");
+		printf("[AUTOTEST]:[TTC0]:[Ev_INTR]:[PASS]\r\n");
 	else
-		printf("TTC0 INTR value = %x\r\n",intr_value);
+		printf("[AUTOTEST]:[TTC0]:[INTR]:[Fail]\r\n");
 }
 void SOC_TTC1_HANDLER(void)
 {
 	uint8_t intr_value;
 	intr_value = TTC_clear_interrput(AL9000_TTC,clk1);
    	TTC_Counter_Disable(AL9000_TTC,clk1);
-	printf("TTC Value=%d\r\n",AL9000_TTC->CNTR_VAL_REG_1);
+	// printf("TTC Value=%d\r\n",AL9000_TTC->CNTR_VAL_REG_1);
 	if(intr_value == 0x1)
-		printf("TTC1 Iv INTR\r\n");
+		printf("[AUTOTEST]:[TTC1]:[Iv_INTR]:[PASS]\r\n");
 	else if(intr_value == 0x2)
-		printf("TTC1 M1 INTR\r\n");
+		printf("[AUTOTEST]:[TTC1]:[M1_INTR]:[PASS]\r\n");
 	else if(intr_value == 0x4)
-		printf("TTC1 M2 INTR\r\n");
+		printf("[AUTOTEST]:[TTC1]:[M2_INTR]:[PASS]\r\n");
 	else if(intr_value == 0x8)
-		printf("TTC1 M3 INTR\r\n");
+		printf("[AUTOTEST]:[TTC1]:[M3_INTR]:[PASS]\r\n");
 	else if(intr_value == 0x10)
-		printf("TTC1 ov INTR\r\n");
+		printf("[AUTOTEST]:[TTC1]:[Ov_INTR]:[PASS]\r\n");
 	else if(intr_value == 0x20)
-		printf("TTC1 ev INTR\r\n");
+		printf("[AUTOTEST]:[TTC1]:[Ev_INTR]:[PASS]\r\n");
 	else
-		printf("TTC1 INTR value = %x\r\n",intr_value);
+		printf("[AUTOTEST]:[TTC1]:[INTR]:[Fail]\r\n");
 }
 int main(void){
 	// __RV_CSR_CLEAR(CSR_MMISC_CTL,MMISC_CTL_BPU);
@@ -61,7 +61,7 @@ int main(void){
 	ECLIC_Register_IRQ(SOC_INT53_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,SOC_TTC1_HANDLER);
 	__enable_irq();
 
-#if 0
+#ifdef M1_intr
 	TTC_Counter_Disable(AL9000_TTC,clk1);
 	TTC_Presacle_Enable(AL9000_TTC,clk1);
 	TTC_PS_V(AL9000_TTC,clk1,2);
@@ -72,7 +72,29 @@ int main(void){
 	TTC_wave_Enable(AL9000_TTC,clk1);
 	TTC_Counter_Enable(AL9000_TTC,clk1);
 #endif
-#if 0
+#ifdef M2_intr
+	TTC_Counter_Disable(AL9000_TTC,clk1);
+	TTC_Presacle_Enable(AL9000_TTC,clk1);
+	TTC_PS_V(AL9000_TTC,clk1,2);
+	Set_TTC_wave_pol(AL9000_TTC,clk1);
+	TTC_Match_Mode(AL9000_TTC,clk1);
+	Set_Match_counter_level(AL9000_TTC,match2,250);//32768/65535 50%
+	enable_interrupt_type(AL9000_TTC,M2,clk1);
+	TTC_wave_Enable(AL9000_TTC,clk1);
+	TTC_Counter_Enable(AL9000_TTC,clk1);
+#endif
+#ifdef M3_intr
+	TTC_Counter_Disable(AL9000_TTC,clk1);
+	TTC_Presacle_Enable(AL9000_TTC,clk1);
+	TTC_PS_V(AL9000_TTC,clk1,2);
+	Set_TTC_wave_pol(AL9000_TTC,clk1);
+	TTC_Match_Mode(AL9000_TTC,clk1);
+	Set_Match_counter_level(AL9000_TTC,match3,250);//32768/65535 50%
+	enable_interrupt_type(AL9000_TTC,M3,clk1);
+	TTC_wave_Enable(AL9000_TTC,clk1);
+	TTC_Counter_Enable(AL9000_TTC,clk1);
+#endif
+#ifdef Iv_intr
 	TTC_Counter_Disable(AL9000_TTC,clk1);
 	TTC_Presacle_Enable(AL9000_TTC,clk1);
 	TTC_PS_V(AL9000_TTC,clk1,2);
@@ -83,7 +105,7 @@ int main(void){
 	TTC_wave_Enable(AL9000_TTC,clk1);
 	TTC_Counter_Enable(AL9000_TTC,clk1);
 #endif
-#if 0
+#ifdef Ov_intr
 	TTC_Counter_Disable(AL9000_TTC,clk1);
 	TTC_Presacle_Enable(AL9000_TTC,clk1);
 	TTC_PS_V(AL9000_TTC,clk1,2);
@@ -93,7 +115,7 @@ int main(void){
 	TTC_wave_Enable(AL9000_TTC,clk1);
 	TTC_Counter_Enable(AL9000_TTC,clk1);
 #endif
-#if 0
+#ifdef Ev_intr
 	TTC_Counter_Disable(AL9000_TTC,clk1);
 	TTC_Clock_Select_Ext_clock(AL9000_TTC,clk1);
 	TTC_Clock_Select_Ext_clock_edge(AL9000_TTC,clk1);

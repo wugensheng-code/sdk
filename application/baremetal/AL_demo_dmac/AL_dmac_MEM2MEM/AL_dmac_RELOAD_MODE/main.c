@@ -67,7 +67,7 @@ void SOC_DMA_AHB_HANDLER(void)
 	 AlDma_SetAddress(AL_DMAC_channel_0,Dmac_src,MEM_BASE1_ADDR);
      AlDma_SetAddress(AL_DMAC_channel_0,Dmac_dst,MEM_BASE2_ADDR);
 	 AlDma_SetChannelConfig(AL_DMAC_channel_0);
-	 AlDma_SetTransferType(AL_DMAC_channel_0,Dmac_transfer_row2);
+	 AlDma_SetTransferType(AL_DMAC_channel_0,Dmac_transfer_row4);
 	 AlDma_SetMemPeriphFlowCtl(AL_DMAC_channel_0,MEM2MEM);
 	 AlDma_SetTransWidth(AL_DMAC_channel_0,Dmac_src_dst,WIDTH_32);
 	 AlDma_SetBlockTransSize(AL_DMAC_channel_0,10);
@@ -80,11 +80,11 @@ void SOC_DMA_AHB_HANDLER(void)
 	 AlDma_SetFlowCtlMode(AL_DMAC_channel_0,fc_mode_0);
 
           volatile uint32_t buffer[128];
-	/* for (volatile uint32_t i = 0 ; i < 128 ; i++)
+	 for (volatile uint32_t i = 0 ; i < 128 ; i++)
 	 {
 		 buffer[i] = i;
 	 }
-	 write_To_OCM((uint32_t*)buffer,128,(uint32_t*)MEM_BASE1_ADDR);*/
+	 write_To_OCM((uint32_t*)buffer,128,(uint32_t*)MEM_BASE1_ADDR);
   	 /*
 	  * AL_dmac_enable
 	  */
