@@ -20,30 +20,31 @@
 #define LLP_2_ADDR         0x61030300
 #define LLP_3_ADDR         0x61030400
 #define LLP_4_ADDR         0x61030500
-
+#define base0 0x61030000
+#define base1 0x61030100
 void SOC_DMA_AHB_HANDLER(void)
 {
-    printf("enter_irq_sucess\n\r");
-    printf("DMAC_MEM2MEM_LLP_MODE has been completed\n\r");
+    // printf("enter_irq_sucess\n\r");
+    // printf("DMAC_MEM2MEM_LLP_MODE has been completed\n\r");
     for(int i = 0 ; i< 5 ; i++)
     {
-
-    	printf("ocm_data LLP_1_ADDR = %.2x\r\n",*(uint32_t*)(LLP_1_ADDR + i*4));
-    	printf("ocm_data LLP_2_ADDR = %.2x\r\n",*(uint32_t*)(LLP_2_ADDR + i*4));
-    	printf("ocm_data LLP_3_ADDR = %.2x\r\n",*(uint32_t*)(LLP_3_ADDR + i*4));
-    	printf("ocm_data LLP_4_ADDR = %.2x\r\n",*(uint32_t*)(LLP_4_ADDR + i*4));
-    	printf("ocm_data MEM_BASE1_ADDR = %.2x\r\n",*(uint32_t*)(MEM_BASE1_ADDR + i*4));
-    	printf("ocm_data MEM_BASE2_ADDR = %.2x\r\n",*(uint32_t*)(MEM_BASE2_ADDR + i*4));
-
-    	if((*(uint32_t*)(MEM_BASE1_ADDR + i*4)) == (*(uint32_t*)(MEM_BASE2_ADDR + i*4)))
+		// printf("ocm_data LLP_1_ADDR = %.2x\r\n",*(uint32_t*)(LLP_1_ADDR + i*4));
+		// printf("ocm_data LLP_2_ADDR = %.2x\r\n",*(uint32_t*)(LLP_2_ADDR + i*4));
+		// printf("ocm_data LLP_3_ADDR = %.2x\r\n",*(uint32_t*)(LLP_3_ADDR + i*4));
+		// printf("ocm_data LLP_4_ADDR = %.2x\r\n",*(uint32_t*)(LLP_4_ADDR + i*4));
+		// printf("ocm_data MEM_BASE1_ADDR = %.2x\r\n",*(uint32_t*)(base0 + i*4));
+		// printf("ocm_data MEM_BASE2_ADDR = %.2x\r\n",*(uint32_t*)(base1 + i*4));
+    	if((*(uint32_t*)(base0 + i*4)) == (*(uint32_t*)(base1 + i*4)))
     	{
-    		printf("dmac_transmissiom_pass\r\n");
+    		// printf("dmac_transmissiom_pass\r\n");
     	}
     	else
     	{
-    		printf("dmac_transmissiom_fail\r\n");
+    		printf("[AUTOTEST]:[DMAC]:[LLP_MODE]:[FAIL]\r\n");
+			while(1);
     	}
     }
+	printf("[AUTOTEST]:[DMAC]:[LLP_MODE]:[PASS]\r\n");
     while(1);
 }
     int main(void){
@@ -52,8 +53,8 @@ void SOC_DMA_AHB_HANDLER(void)
 	__enable_irq();
     AlDma_EnableChannelIrq(AL_DMAC_channel_0);
     AlDma_UnmaskIrq(AL_DMAC,AL_dmac_channel_num_0,block_1);
-	AlDma_SetAddress(AL_DMAC_channel_0,Dmac_src,MEM_BASE1_ADDR);
-    AlDma_SetAddress(AL_DMAC_channel_0,Dmac_dst,MEM_BASE2_ADDR);
+	AlDma_SetAddress(AL_DMAC_channel_0,Dmac_src,base0);
+    AlDma_SetAddress(AL_DMAC_channel_0,Dmac_dst,base1);
 	AlDma_SetChannelConfig(AL_DMAC_channel_0);
 	AlDma_SetTransferType(AL_DMAC_channel_0,Dmac_transfer_row10);
 	AlDma_SetMemPeriphFlowCtl(AL_DMAC_channel_0,MEM2MEM);
@@ -77,7 +78,7 @@ void SOC_DMA_AHB_HANDLER(void)
 	 {
 		 buffer[i] = i;
 	 }
-	 write_To_OCM((uint32_t*)buffer,10,(uint32_t*)MEM_BASE1_ADDR);
+	 write_To_OCM((uint32_t*)buffer,10,(uint32_t*)base0);
     for (volatile uint32_t i = 0 ; i < 4 ; i++){
 		for (volatile uint32_t j = 0 ; j < 5 ; j++){
  			buffer[j] = (uint32_t)buffer_list_parm[i][j];

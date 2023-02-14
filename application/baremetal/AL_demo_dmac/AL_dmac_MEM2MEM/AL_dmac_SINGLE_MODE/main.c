@@ -21,21 +21,23 @@ volatile uint16_t count = 0;
 void SOC_DMA_AHB_HANDLER(void)
 {
     //printf("enter_irq_number%d\n\r",count);
-    printf("enter_irq_sucess\n\r");
-    printf("DMAC_MEM2MEM_SINGLE_MODE has been completed\n\r");
+//    printf("enter_irq_sucess\n\r");
+//    printf("DMAC_MEM2MEM_SINGLE_MODE has been completed\n\r");
 	 for(int i = 0 ; i<10; i++)
 	 {
-	 	printf("ocm_data1 = %.2x\r\n",*(uint32_t*)(MEM_BASE1_ADDR + i*4));
-	 	printf("ocm_data2 = %.2x\r\n",*(uint32_t*)(MEM_BASE2_ADDR + i*4));
+//	 	printf("ocm_data1 = %.2x\r\n",*(uint32_t*)(MEM_BASE1_ADDR + i*4));
+//	 	printf("ocm_data2 = %.2x\r\n",*(uint32_t*)(MEM_BASE2_ADDR + i*4));
     	if((*(uint32_t*)(MEM_BASE1_ADDR + i*4)) == (*(uint32_t*)(MEM_BASE2_ADDR + i*4)))
     	{
-    		printf("dmac_transmissiom_pass\r\n");
+//    		printf("dmac_transmissiom_pass\r\n");
     	}
     	else
     	{
-    		printf("dmac_transmissiom_fail\r\n");
+    		printf("[AUTOTEST]:[DMAC]:[SINGLE_MODE]:[FAIL]\r\n");
+    		while(1);
     	}
 	 }
+	 printf("[AUTOTEST]:[DMAC]:[SINGLE_MODE]:[PASS]\r\n");
 	 while(1);
 	 /*
       count ++;

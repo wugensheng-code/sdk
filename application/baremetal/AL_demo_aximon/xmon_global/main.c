@@ -134,15 +134,15 @@ int main(void)
 
 		Status = XDmaPs_Example_W_Intr(DMA_DEVICE_ID);
 		if (Status != XST_SUCCESS) {
-			vfwp("Error: XDMaPs_Example_W_Intr failed Status=%d 0x%x\r\n", Status, Status);
+			// vfwp("Error: XDMaPs_Example_W_Intr failed Status=%d 0x%x\r\n", Status, Status);
 			return XST_FAILURE;
 		}
 		if((AlAxiMon_GetMonCountValue(AL_DMACX,cnt_arcmd) - AlAxiMon_GetMonCountValue(AL_SX2X_M0,cnt_arcmd)) == ((AlAxiMon_GetMonCountValue(AL_OCM_S2,cnt_arcmd) - AlAxiMon_GetMonCountValue(AL_MAIN_S1,cnt_arcmd))))
 		{
-			vfwp("Axi monitor global ran Successfully\r\n");
+			printf("[AUTOTEST]:[XMON]:[XMON_GLOBAL]:[PASS]\r\n");
 			return XST_SUCCESS;
 		}else{
-			vfwp("Axi monitor global ran fail\r\n");
+			printf("[AUTOTEST]:[XMON]:[XMON_GLOBAL]:[FAIL]\r\n");
 			return XST_FAILURE;
 		}
 }

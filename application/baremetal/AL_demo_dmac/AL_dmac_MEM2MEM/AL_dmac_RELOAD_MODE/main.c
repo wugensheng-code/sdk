@@ -20,7 +20,7 @@ volatile uint16_t count = 0;
 
 void SOC_DMA_AHB_HANDLER(void)
 {
-    printf("enter_irq_number = %d\n\r",count);
+//    printf("enter_irq_number = %d\n\r",count);
      if(count == 10){
        AlDma_SetSingle(AL_DMAC_channel_0,Dmac_src_dst);
        AlDma_ClearIrq(AL_DMAC);
@@ -28,19 +28,19 @@ void SOC_DMA_AHB_HANDLER(void)
        //count = 0;
   	 for(int i = 0 ; i< 10; i++)
   	 {
-  	 	printf("ocm_data1 = %.2x\r\n",*(uint32_t*)(MEM_BASE1_ADDR + i*4));
-  	 	printf("ocm_data2 = %.2x\r\n",*(uint32_t*)(MEM_BASE2_ADDR + i*4));
+//  	 	 printf("ocm_data1 = %.2x\r\n",*(uint32_t*)(MEM_BASE1_ADDR + i*4));
+//  	 	 printf("ocm_data2 = %.2x\r\n",*(uint32_t*)(MEM_BASE2_ADDR + i*4));
   	 	if((*(uint32_t*)(MEM_BASE1_ADDR + i*4)) == (*(uint32_t*)(MEM_BASE2_ADDR + i*4)))
   	 	    	{
-  	 	    		printf("dmac_transmissiom_pass\r\n");
+  	 	    		// printf("dmac_transmissiom_pass\r\n");
   	 	    	}
   	 	    	else
   	 	    	{
-  	 	    		printf("dmac_transmissiom_fail\r\n");
+  	 	    		printf("[AUTOTEST]:[DMAC]:[RELOAD_MODE]:[FAIL]\r\n");
   	 	    		while(1);
   	 	    	}
   	 }
-       printf("DMAC_MEM2MEM_RELOAD_MODE has been completed\n\r");
+       printf("[AUTOTEST]:[DMAC]:[RELOAD_MODE]:[PASS]\r\n");
     }
     else{
            AlDma_ClearIrq(AL_DMAC);
