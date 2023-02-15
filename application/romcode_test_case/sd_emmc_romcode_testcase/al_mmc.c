@@ -581,7 +581,6 @@ uint32_t HostControllerSetup(volatile DWC_mshc_block_registers* Ptr)
 #ifdef _USE_SDMA
     r1.bit.dma_sel          = MMC_HC1_DMA_SEL_SDMA;  //SDMA
 #endif
-    r1.bit.sd_bus_pwr_vdd1  = MMC_PC_SBP_VDD1_ON;    //VDD1 PWR ON support SD and eMMC
     IoBank1Ref = REG_READ(IO_BANK1_REF);
     if (ERROR_BRANCH_CHECK_BIT_NOTSET(BERROR_BRANCH_IOBANK1_1V8)) {
         IoBank1Ref |= 0x1;
@@ -595,6 +594,10 @@ uint32_t HostControllerSetup(volatile DWC_mshc_block_registers* Ptr)
         MMC_BRANCHTEST_PRINT(BRANCH_IOBANK1_3V3);
         r1.bit.sd_bus_vol_vdd1 = MMC_PC_SBV_VDD1_3V3;   //3.3V
     }
+    REG_WRITE(&(Ptr->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1.d32), r1.d32);
+    MMC_PRINT("r1.d32 is %x\r\n", r1.d32);
+
+    r1.bit.sd_bus_pwr_vdd1  = MMC_PC_SBP_VDD1_ON;    //VDD1 PWR ON support SD and eMMC
     REG_WRITE(&(Ptr->wup_ctrl_r__bgap_ctrl_r__pwr_ctrl_r__host_ctrl1.d32), r1.d32);
     MMC_PRINT("r1.d32 is %x\r\n", r1.d32);
 
