@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include "nuclei_sdk_soc.h"
-#include "al9000_uart.h"
 #include "usbd_cdc_vcp.h"
 #include "usbd_usr.h"
 #include "usbd_desc.h"

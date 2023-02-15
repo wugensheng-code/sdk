@@ -1,4 +1,4 @@
-TARGET = AL9000_usb
+TARGET = AL9000_usb_case13
 
 NUCLEI_SDK_ROOT = ../../../../..
 
