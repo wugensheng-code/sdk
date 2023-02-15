@@ -1,4 +1,4 @@
-TARGET = test_ddr
+TARGET = test_ddr_ocm
 
 NUCLEI_SDK_ROOT = ../../..
 
