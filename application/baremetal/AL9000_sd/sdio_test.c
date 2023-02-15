@@ -1272,9 +1272,16 @@ u32 SD_Test(void)
 
 
     //RawReadWriteTestEmmc();
-    RawReadWriteTestSD();
+    Status = RawReadWriteTestSD();
+    if (Status != 0)
+    {
+        printf("[AUTOTEST]:[SD]:[RawReadWrite]:[FAIL]]\r\n");
+    }
+    else
+    {
+        printf("[AUTOTEST]:[SD]:[RawReadWrite]:[PASS]]\r\n");
+    }
 
-    for(;;);
 #if 0
     res_sd = f_mount(&fs,"0:",1);  //SD test
 #if 0
