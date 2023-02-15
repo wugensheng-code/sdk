@@ -66,9 +66,21 @@ include $(NUCLEI_SDK_BUILD)/gmsl/gmsl
 include $(NUCLEI_SDK_BUILD)/Makefile.misc
 
 ifeq ($(SOC), demoapu)
+TARGET:=$(TARGET)_apu
+ifeq ($(OS),Windows_NT)
+    COMPILE_PREFIX?=D:\tfcao\fpsoc\gcc\aarch64\bin\aarch64-none-elf-
+else
+    COMPILE_PREFIX ?= /opt/toolchain/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+endif
 include $(NUCLEI_SDK_BUILD)/Makefile.conf.apu
 include $(NUCLEI_SDK_BUILD)/Makefile.rules.apu
 else
+TARGET:=$(TARGET)_rpu
+ifeq ($(OS),Windows_NT)
+    COMPILE_PREFIX ?= D:\tfcao\fpsoc\gcc\riscv\bin\riscv-nuclei-elf-
+else
+    COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
+endif
 include $(NUCLEI_SDK_BUILD)/Makefile.conf
 include $(NUCLEI_SDK_BUILD)/Makefile.rules
 endif
