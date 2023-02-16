@@ -49,7 +49,7 @@ FRESULT res_sd;
 uint8_t flag = 0;
 static unsigned int rca = 0;
 SD_CardInfo SDCardInfo;
-#ifdef SD1_MIO
+#ifdef ENABLE_PINMUX_MODE_SD1 == 1
 static volatile DWC_mshc_block_registers* SDIO = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO1__BASE_ADDR;
 #else
 static volatile DWC_mshc_block_registers* SDIO = (DWC_mshc_block_registers*)SDIO_WRAP__SDIO0__BASE_ADDR;

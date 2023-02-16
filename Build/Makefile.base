@@ -81,6 +81,18 @@ ifeq ($(OS),Windows_NT)
 else
     COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
+ifeq ($(PINMUX_MODE), PINMUX_MODE1)
+    ENABLE_PINMUX_MODE1 ?= 1
+else ifeq ($(PINMUX_MODE), PINMUX_MODE2)
+    ENABLE_PINMUX_MODE2 ?= 1
+else ifeq ($(PINMUX_MODE), PINMUX_MODE3)
+    ENABLE_PINMUX_MODE3 ?= 1
+else
+    ENABLE_PINMUX_MODE1 ?= 1
+endif
+ifeq ($(PINMUX_MODE_SD1), PINMUX_MODE_SD1)
+    ENABLE_PINMUX_MODE_SD1 ?= 1
+endif
 include $(NUCLEI_SDK_BUILD)/Makefile.conf
 include $(NUCLEI_SDK_BUILD)/Makefile.rules
 endif

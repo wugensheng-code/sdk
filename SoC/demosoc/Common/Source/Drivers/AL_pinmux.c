@@ -101,7 +101,7 @@ void Enablepinmux1_mode2(void)
 	*(uint32_t *)(0xf8803068u) =0x3;    //uart0  MIO26/27
 	*(uint32_t *)(0xf880306cu) =0x3;
 	*(uint32_t *)(0xf8803410u) =0x1;
-#ifdef SD1_MIO
+#if ENABLE_PINMUX_MODE_SD1 == 1
     *(uint32_t *)(0xf88030b8u) =0xa;
     *(uint32_t *)(0xf88030bcu) =0xa;
     *(uint32_t *)(0xf88030c0u) =0xa;

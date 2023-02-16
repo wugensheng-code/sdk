@@ -302,11 +302,7 @@ typedef enum EXCn {
 void Enablepinmux1(void);
 void Enablepinmux1_mode2(void);
 
-#define __Pinmux_PRESENT          1
-//#define __Pinmux_PRESENT_MODE2      1
-
 /** @} */ /* End of group Configuration_of_CMSIS */
-
 
 #include <nmsis_core.h>                         /*!< Nuclei N/NX class processor and core peripherals */
 /* ToDo: include your system_demosoc.h file

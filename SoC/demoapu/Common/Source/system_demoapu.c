@@ -40,12 +40,6 @@
 void Enablepinmux1(void);
 void Enablepinmux1_mode2(void);
 
-#ifdef SD1_MIO
-#define ENABLE_PINMUX1_MODE2
-#else
-#define ENABLE_PINMUX1_MODE1
-#endif
-
 /**
  * \defgroup  NMSIS_Core_SystemConfig       System Device Configuration
  * \brief Functions for system and clock setup available in system_<device>.c.
@@ -196,12 +190,12 @@ void _premain_init(void)
 {
      *(uint32_t *)(0xf8803068u) =0x3;    //uart0  MIO26/27
 	 *(uint32_t *)(0xf880306cu) =0x3;
-#ifdef ENABLE_PINMUX1_MODE1
-   // Enablepinmux1();
+#if ENABLE_PINMUX_MODE1 == 1
+    Enablepinmux1();
 #endif
 
-#ifdef ENABLE_PINMUX1_MODE2
-   // Enablepinmux1_mode2();
+#if ENABLE_PINMUX_MODE2 == 1
+    Enablepinmux1_mode2();
 #endif
 
 	AlUart_Init(AL_UART0, 115200, UART_BIT_LENGTH_8, AL_UART_STOP_BIT_1);

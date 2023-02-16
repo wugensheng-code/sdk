@@ -338,10 +338,10 @@ void _premain_init(void)
 {
     /* TODO: Add your own initialization code here, called before main */
 	//Enablepinmux1();
-#if __Pinmux_PRESENT == 1
+#if ENABLE_PINMUX_MODE1 == 1
 	Enablepinmux1();
 #endif
-#if __Pinmux_PRESENT_MODE2 == 1
+#if ENABLE_PINMUX_MODE2 == 1
 	Enablepinmux1_mode2();
 #endif
   //  *(uint32_t *)(0xf8803410u) =0x1;
