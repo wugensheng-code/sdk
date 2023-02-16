@@ -12,6 +12,7 @@
 #define CSU_TEST_LENGTH3    600
 #define FIL_PT_OFFSET       5
 #define FIL_LARGE_RDWR_SIZE 8845488
+#define BLOCK_32MB_NUM     	0x10000	//64KB*512=32MB
 
 static BYTE *WriteBuffer = (char *)0x6103ddf0;
 static BYTE *ReadBuffer = (char *)0x6103edf0;
@@ -926,6 +927,30 @@ END:
     return status;
 }
 
+uint32_t Emmc_DownloadImage(void)
+{
+    uint32_t status = MMC_SUCCESS;
+    char *writebuffer = (char *)0x20000000;
+
+    MMC_GPRINT("[G]:Emmc Init!\r\n");
+    status = AlEmmc_Init();
+    if (status != MMC_SUCCESS) {
+        return status;
+    }
+    MMC_GPRINT("[G]:Emmc Change Freq 10M!\r\n");
+    Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
+
+    for (uint32_t i = 0; i < BLOCK_32MB_NUM; i++) {
+        status = AlEmmc_WriteSingleBlock((writebuffer + (i * 0x200)), i, EmmcCardInfo.CardBlockSize);
+        if (status != MMC_SUCCESS) {
+            goto END;
+        }
+    }
+
+END:
+    return status;
+}
+
 uint32_t EMMC_Test(void)
 {
     uint32_t status = 0;
@@ -1073,6 +1098,20 @@ uint32_t EMMC_Test(void)
         PrintfMshcBlock(eMMC);
     } else {
         MMC_GPRINT("[G]:Sd Fatfs Test Success\r\n");
+    }
+#endif
+
+#ifdef EMMC_DOWNLOADIMAGE
+#ifdef AL_DEBUG_PRINT
+    DebugCurType = ((DEBUG_GENERAL));
+#endif
+    ResetHostComtroller(eMMC);
+    status = Emmc_DownloadImage();
+    if (status != MMC_SUCCESS) {
+        MMC_GPRINT("[G]:Download Image Error %d\r\n", status);
+        PrintfMshcBlock(eMMC);
+    } else {
+        MMC_GPRINT("[G]:Download Image Success\r\n");
     }
 #endif
 

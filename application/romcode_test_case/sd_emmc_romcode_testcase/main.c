@@ -16,6 +16,7 @@
 #include "demosoc.h"
 #include "string.h"
 #include "sys.h"
+#include "al_mmc.h"
 //#include "delay.h"
 
 //#define TEMP_DDR_1 ((volatile uint32_t *)(0X10000000UL+0X2FFF0000UL))	//timeoutvalue
@@ -50,14 +51,63 @@ static void wdt_init(void);
 extern u64 get_SystickTimer(void);
 
 uint32_t main(){
+	uint32_t Status = 0;
 #ifdef _USE_WDT
 	wdt_init();
 #endif
 #ifdef _USE_SD_TEST
-	SD_Test();
+	Status = SD_Test();
+	if (Status == MMC_SUCCESS) {
+		#ifdef SD_BRANCHTEST
+		MMC_PRINT("[AUTOTEST]:[SD]:[BRANCH]:[PASS]\r\n");
+		#endif
+		#ifdef SD_BYTEREADTEST
+		MMC_PRINT("[AUTOTEST]:[SD]:[OTHER]:[PASS]\r\n");
+		#endif
+		#ifdef SD_TRAVERSETEST
+		MMC_PRINT("[AUTOTEST]:[SD]:[TRAVERSE]:[PASS]\r\n");
+		#endif
+	} else {
+		#ifdef SD_BRANCHTEST
+		MMC_PRINT("[AUTOTEST]:[SD]:[BRANCH]:[FAIL]\r\n");
+		#endif
+		#ifdef SD_BYTEREADTEST
+		MMC_PRINT("[AUTOTEST]:[SD]:[OTHER]:[FAIL]\r\n");
+		#endif
+		#ifdef SD_TRAVERSETEST
+		MMC_PRINT("[AUTOTEST]:[SD]:[TRAVERSE]:[FAIL]\r\n");
+		#endif
+	}
 #endif
 #ifdef _USE_EMMC_TEST
-	EMMC_Test();
+	Status = EMMC_Test();
+	if (Status == MMC_SUCCESS) {
+		#ifdef EMMC_BRANCHTEST
+		MMC_PRINT("[AUTOTEST]:[EMMC]:[BRANCH]:[PASS]\r\n");
+		#endif
+		#ifdef EMMC_BYTEREADTEST
+		MMC_PRINT("[AUTOTEST]:[EMMC]:[OTHER]:[PASS]\r\n");
+		#endif
+		#ifdef EMMC_TRAVERSETEST
+		MMC_PRINT("[AUTOTEST]:[EMMC]:[TRAVERSE]:[PASS]\r\n");
+		#endif
+		#ifdef EMMC_DOWNLOADIMAGE
+		MMC_PRINT("[AUTOTEST]:[EMMC]:[DOWNLOADIMAGE]:[PASS]\r\n");
+		#endif
+	} else {
+		#ifdef EMMC_BRANCHTEST
+		MMC_PRINT("[AUTOTEST]:[EMMC]:[BRANCH]:[FAIL]\r\n");
+		#endif
+		#ifdef EMMC_BYTEREADTEST
+		MMC_PRINT("[AUTOTEST]:[EMMC]:[OTHER]:[FAIL]\r\n");
+		#endif
+		#ifdef EMMC_TRAVERSETEST
+		MMC_PRINT("[AUTOTEST]:[EMMC]:[TRAVERSE]:[FAIL]\r\n");
+		#endif
+		#ifdef EMMC_DOWNLOADIMAGE
+		MMC_PRINT("[AUTOTEST]:[EMMC]:[DOWNLOADIMAGE]:[FAIL]\r\n");
+		#endif
+	}
 #endif
 
 }
