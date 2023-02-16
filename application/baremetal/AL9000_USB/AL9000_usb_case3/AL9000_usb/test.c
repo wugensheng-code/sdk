@@ -9,13 +9,13 @@
 USB_OTG_CORE_HANDLE    USB_OTG_dev;
 extern u8 bDeviceState;
 extern void OTG_FS_IRQHandler(void);
- 
+
 int main(void)
-{   
+{
     u8 led0sta=1;
     u16 t;
-    u16 len;    
-    u16 times=0;    
+    u16 len;
+    u16 times=0;
     u8 usbstatus=0;
 
 
@@ -41,7 +41,7 @@ int main(void)
             }
         }
         if(USB_USART_RX_STA&0x8000)
-        {                      
+        {
             len=USB_USART_RX_STA&0x3FFF;
 
             for(t=0;t<len;t++)

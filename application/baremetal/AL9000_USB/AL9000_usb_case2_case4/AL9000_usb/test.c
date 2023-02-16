@@ -3,7 +3,7 @@
 #include "string.h"
 #include <time.h>
 #include "nuclei_sdk_soc.h"
-//#include "al9000_uart.h"
+#include "AL_uart.h"
 #include "string.h"
 #include "sys.h"
 #include "delay.h" 

@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
-//#include "al9000_uart.h"
+#include "AL_uart.h"
 //#include "anl_printf.h"
 #include <time.h>
 //#include "al9000_sdio_sd.h"
