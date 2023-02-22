@@ -514,8 +514,6 @@ uint32_t SD_Test(void)
 {
     uint32_t status = 0;
 
-    Enablepinmux1();
-
 #ifdef SD_BRANCHTEST
 #ifdef AL_DEBUG_PRINT
     DebugCurType = ((DEBUG_BRANCHTEST) | (DEBUG_GENERAL));

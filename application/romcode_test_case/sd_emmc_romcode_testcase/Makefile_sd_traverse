@@ -1,8 +1,4 @@
-ifeq ($(SOC), demoapu)
-TARGET = 1romcode_test_apu_sd_traverse
-else
-TARGET = 1romcode_test_rpu_sd_traverse
-endif
+TARGET = 1romcode_test_sd_traverse
 
 NUCLEI_SDK_ROOT = ../../..
 

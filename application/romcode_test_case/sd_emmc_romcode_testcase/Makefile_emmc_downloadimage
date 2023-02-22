@@ -1,8 +1,4 @@
-ifeq ($(SOC), demoapu)
-TARGET = 1romcode_test_apu_emmc_downloadimage
-else
-TARGET = 1romcode_test_rpu_emmc_downloadimage
-endif
+TARGET = 1romcode_test_emmc_downloadimage
 
 NUCLEI_SDK_ROOT = ../../..
 

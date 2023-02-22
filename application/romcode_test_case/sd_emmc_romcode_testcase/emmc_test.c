@@ -955,8 +955,6 @@ uint32_t EMMC_Test(void)
 {
     uint32_t status = 0;
 
-    Enablepinmux1_mode2();
-
 #ifdef EMMC_BRANCHTEST
 #ifdef AL_DEBUG_PRINT
     DebugCurType = ((DEBUG_BRANCHTEST) | (DEBUG_GENERAL));
