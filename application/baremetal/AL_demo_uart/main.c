@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
-#include "al_uart.h"
+#include "AL_uart.h"
 #include <time.h>
 /*
  *baudrate:115200
