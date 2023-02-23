@@ -458,3 +458,11 @@ void AlAxiMon_ClearDebugRecord(AXIMON_TypeDef *AXIMON)
 {
 	AXIMON->DEBUG_FLAGINFO = AXIMON->DEBUG_FLAGINFO &~ (0x1 << 22);
 }
+void AlAxiMon_GlobalEnable()
+{
+	*(unsigned int*)(0xF88014B8) = 0x1;
+}
+void AlAxiMon_GlobalDisable()
+{
+	*(unsigned int*)(0xF88014B8) = 0x0;
+}
