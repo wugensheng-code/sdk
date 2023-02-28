@@ -13,17 +13,17 @@
 */
 
  void Enablepinmux1(void)
-{ 
+{
      *(uint32_t *)(0xf8803000u) =0x1;	  //QSPI  MIO0
      *(uint32_t *)(0xf8803004u) =0x1;
      *(uint32_t *)(0xf8803008u) =0x1;
      *(uint32_t *)(0xf880300cu) =0x1;
      *(uint32_t *)(0xf8803010u) =0x1;
      *(uint32_t *)(0xf8803014u) =0x1;
-     *(uint32_t *)(0xf8803018u) =0x1;   
+     *(uint32_t *)(0xf8803018u) =0x1;
 
      *(uint32_t *)(0xf880301cu) =0x4;    //GPIO MIO7
-	 
+
      *(uint32_t *)(0xf8803020u) =0x1;    //CAN1 MIO8
      *(uint32_t *)(0xf8803024u) =0x1;
 	 *(uint32_t *)(0xf880340cu) =0x1;    //sel3
@@ -49,11 +49,11 @@
 
 
      *(uint32_t *)(0xf8803058u) =0x7;        //MIO23/24/25/22 jtag
-     *(uint32_t *)(0xf880305cu) =0x7; 
-     *(uint32_t *)(0xf8803060u) =0x7; 
-     *(uint32_t *)(0xf8803064u) =0x7; 
+     *(uint32_t *)(0xf880305cu) =0x7;
+     *(uint32_t *)(0xf8803060u) =0x7;
+     *(uint32_t *)(0xf8803064u) =0x7;
                                          //
-	 
+
 	 *(uint32_t *)(0xf8803068u) =0x3;    //uart0  MIO26/27
 	 *(uint32_t *)(0xf880306cu) =0x3;
 	 *(uint32_t *)(0xf8803410u) =0x1;
@@ -70,14 +70,14 @@
     *(uint32_t *)(0xf8803094u) =0xe;
     *(uint32_t *)(0xf8803098u) =0xe;
     *(uint32_t *)(0xf880309cu) =0xe;
-  
+
 
     *(uint32_t *)(0xf88030a0u) =0xa;      //SDIO0 mio40-45
     *(uint32_t *)(0xf88030a4u) =0xa;
     *(uint32_t *)(0xf88030a8u) =0xa;
     *(uint32_t *)(0xf88030acu) =0xa;
     *(uint32_t *)(0xf88030b0u) =0xa;
-    *(uint32_t *)(0xf88030b4u) =0xa; 
+    *(uint32_t *)(0xf88030b4u) =0xa;
     *(uint32_t *)(0xf880342cu) =0x1;     //emio_sel11
 
     *(uint32_t *)(0xf88030b8u) =0x9;      //spi1 mio46-49
@@ -89,7 +89,7 @@
     *(uint32_t *)(0xf88030c8u) =0x0;      //i2c0 mio50-51
     *(uint32_t *)(0xf88030ccu) =0x0;
     *(uint32_t *)(0xf8803400u) =0x1;      //emio_sel12
-    
+
     *(uint32_t *)(0xf88030d0u) =0xf;      //mdc1   MIO52-53
     *(uint32_t *)(0xf88030d4u) =0xf;      //mdio1
     *(uint32_t *)(0xf8803438u) =0x1;      //emio_sel
@@ -97,7 +97,7 @@
 }
 
 void Enablepinmux1_mode2(void)
-{ 
+{
 	*(uint32_t *)(0xf8803068u) =0x3;    //uart0  MIO26/27
 	*(uint32_t *)(0xf880306cu) =0x3;
 	*(uint32_t *)(0xf8803410u) =0x1;
@@ -105,9 +105,9 @@ void Enablepinmux1_mode2(void)
     *(uint32_t *)(0xf88030b8u) =0xa;
     *(uint32_t *)(0xf88030bcu) =0xa;
     *(uint32_t *)(0xf88030c0u) =0xa;
-    *(uint32_t *)(0xf88030c4u) =0xa;   
-    *(uint32_t *)(0xf88030c8u) =0xa; 
-    *(uint32_t *)(0xf88030ccu) =0xa; 
+    *(uint32_t *)(0xf88030c4u) =0xa;
+    *(uint32_t *)(0xf88030c8u) =0xa;
+    *(uint32_t *)(0xf88030ccu) =0xa;
 
     *(uint32_t *)(0xf8803430u) =0x1;     //emio_sel12
 #else
@@ -120,10 +120,25 @@ void Enablepinmux1_mode2(void)
     *(uint32_t *)(0xf88030b8u) =0xb;
     *(uint32_t *)(0xf88030bcu) =0xb;
     *(uint32_t *)(0xf88030c0u) =0xb;
-    *(uint32_t *)(0xf88030c4u) =0xb;   
+    *(uint32_t *)(0xf88030c4u) =0xb;
     *(uint32_t *)(0xf880342cu) =0x1;     //emio_sel11
 #endif
-	
+
+	//USB mode2
+	*(uint32_t *)(0xf8803070u) =0xf;     //USB pinmux config
+	*(uint32_t *)(0xf8803074u) =0xf;
+    *(uint32_t *)(0xf8803078u) =0xf;
+    *(uint32_t *)(0xf880307cu) =0xf;
+    *(uint32_t *)(0xf8803080u) =0xf;
+    *(uint32_t *)(0xf8803084u) =0xf;
+    *(uint32_t *)(0xf8803088u) =0xf;
+    *(uint32_t *)(0xf880308cu) =0xf;
+    *(uint32_t *)(0xf8803090u) =0xf;
+    *(uint32_t *)(0xf8803094u) =0xf;
+    *(uint32_t *)(0xf8803098u) =0xf;
+    *(uint32_t *)(0xf880309cu) =0xf;
+	//USB mode2
+
 	*(uint32_t *)(0xf8803040u) =0x7;
 	*(uint32_t *)(0xf8803044u) =0x7;
 	*(uint32_t *)(0xf880341cu) =0x1; //TTC SET
@@ -139,5 +154,5 @@ void Enablepinmux1_mode2(void)
 }
 
 
-    
+
 
