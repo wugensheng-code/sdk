@@ -522,21 +522,23 @@ uint8_t Set_TTC_wave_pol(TTC_AL9000_TypeDef *TTCX,enum clk_number clk){
 }
 
 uint8_t TTC_clear_interrput(TTC_AL9000_TypeDef *TTCX,enum clk_number clk){
+    uint8_t intr_value = 0;
+
 	switch(clk){
 		case clk1:
-			GET_BITS(TTCX -> IRQ_REG_1,0,5);
+			intr_value = GET_BITS(TTCX -> IRQ_REG_1,0,5);
 		break;
 		case clk2:
-			GET_BITS(TTCX -> IRQ_REG_2,0,5);
+			intr_value = GET_BITS(TTCX -> IRQ_REG_2,0,5);
 		break;
 		case clk3:
-			GET_BITS(TTCX -> IRQ_REG_3,0,5);	
+			intr_value = GET_BITS(TTCX -> IRQ_REG_3,0,5);
 		break;
 		defalut:
-			GET_BITS(TTCX -> IRQ_REG_1,0,5);		
+			intr_value = GET_BITS(TTCX -> IRQ_REG_1,0,5);
 		break;
     	}
-	return 0;
+	return intr_value;
 
 
 }
