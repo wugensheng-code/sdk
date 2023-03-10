@@ -1847,13 +1847,13 @@ typedef struct{
 #define SMC_BASE                  	(0xF841A000UL)
 
 #define XADC_BASE                  	(0xF840B000UL)/* Peripheral memory map */
-#define mpu_ddrs0 		(0xF840E000UL)
-#define mpu_ddrs1 		(0xF840F000UL)
-#define mpu_hpm0 		(0xF8412000UL)
-#define mpu_hpm1 		(0xF8413000UL)
-#define mpu_ocms2 		(0xF841B000UL)
-#define mpu_npu 		(0xF841C000UL)
-#define mpu_apu 		(0xF841D000UL)
+#define MpuDdrs0 		(0xF840E000UL)
+#define MpuDdrs1 		(0xF840F000UL)
+#define MpuHpm0 		(0xF8412000UL)
+#define MpuHpm1 		(0xF8413000UL)
+#define MpuOcms2 		(0xF841B000UL)
+#define MpuNpu 		(0xF841C000UL)
+#define MpuApu 		(0xF841D000UL)
 #define GPIO_BLOCK0_BASE        (0xF8411000UL)          			/*!< (GPIO BLOCK0) Base Address */
 #define GPIO_BLOCK1_BASE        (0xF8411100UL)          			/*!< (GPIO BLOCK1) Base Address */
 #define GPIO_BLOCK2_BASE        (0xF8411200UL)          			/*!< (GPIO BLOCK2) Base Address */
@@ -1955,13 +1955,13 @@ typedef struct{
 #define I2C1                     	  ((I2C_TypeDef *) I2C1_BASE)
 #define AL9000_TTC0		((TTC_AL9000_TypeDef *) AL9000_TTC0_BASE)
 #define AL9000_TTC1		((TTC_AL9000_TypeDef *) AL9000_TTC1_BASE)
-#define AL_MPU_DDRS0			((AlMpu *) mpu_ddrs0)
-#define AL_MPU_DDRS1			((AlMpu *) mpu_ddrs1)
-#define AL_MPU_HPM0			((AlMpu *) mpu_hpm0)
-#define AL_MPU_HPM1			((AlMpu *) mpu_hpm1)
-#define AL_MPU_OCMS2			((AlMpu *) mpu_ocms2)
-#define AL_MPU_NPU			((AlMpu *) mpu_npu)
-#define AL_MPU_APU			((AlMpu *) mpu_apu)
+#define AL_MPU_DDRS0			((AlMpu *) MpuDdrs0)
+#define AL_MPU_DDRS1			((AlMpu *) MpuDdrs1)
+#define AL_MPU_HPM0			((AlMpu *) MpuHpm0)
+#define AL_MPU_HPM1			((AlMpu *) MpuHpm1)
+#define AL_MPU_OCMS2			((AlMpu *) MpuOcms2)
+#define AL_MPU_NPU			((AlMpu *) MpuNpu)
+#define AL_MPU_APU			((AlMpu *) MpuApu)
 // Helper functions
 #define _REG8(p, i)             (*(volatile uint8_t *) ((p) + (i)))
 #define _REG32(p, i)            (*(volatile uint32_t *) ((p) + (i)))

@@ -1,8 +1,8 @@
 
-#include "config.h"
+//#include "config.h"
 #include "npu.h"
-#include "delay.h"
-#include "io.h"
+//#include "delay.h"
+//#include "io.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

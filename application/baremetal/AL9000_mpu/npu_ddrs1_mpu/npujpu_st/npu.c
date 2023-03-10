@@ -6,10 +6,11 @@
  * @Description: driver for npu
  * @FilePath: /master_sdk/SoC/demoapu/Common/Source/NPU/npu.c
  */
-#include "io.h"
+
 #include "npu.h"
 #include <stdio.h>
 #include "nuclei_sdk_soc.h"
+#include <io.h>
 
 //#include "gic.h"
 

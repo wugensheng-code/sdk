@@ -1,0 +1,50 @@
+TARGET = al9000_interrupt_mpu_nonsecure_el0
+
+NUCLEI_SDK_ROOT = ../../../..
+
+SRCDIRS = . .. ../dmac_axi_driver ../npujpu_st
+
+INCDIRS = . .. ../dmac_axi_driver ../npujpu_st
+
+COMMON_FLAGS := -O2
+
+# check ARM switch from EL3 to EL0
+COMMON_FLAGS += -DSWITCH_TO_EL0_FROM_EL3
+
+# check when panic happens, stop at error or jump back to normal state
+#COMMON_FLAGS += -DJUMP_PANIC
+
+# ARM jump from secure to non-secure
+COMMON_FLAGS += -DSUPPORT_NONSECURE
+
+# check running mpu ocm testcase
+COMMON_FLAGS += -DMPU_OCMTEST
+
+# check running mpu apu testcase
+#COMMON_FLAGS += -DMPU_APUTEST
+
+# check running mpu ddrs0 testcase
+#COMMON_FLAGS += -DMPU_DDRS0TEST
+
+# check running mpu ddrs1 testcase
+#COMMON_FLAGS += -DMPU_DDRS1TEST
+
+# check running mpu npu testcase
+#COMMON_FLAGS += -DMPU_NPUTEST
+
+# check running mpu hp0 testcase
+#COMMON_FLAGS += -DMPU_HP0TEST
+
+# check running mpu hp1 testcase
+#COMMON_FLAGS += -DMPU_HP1TEST
+
+# check running mpu interrupt testcase
+#COMMON_FLAGS += -DMPU_INTERRUPTTEST
+
+# check running apu 
+COMMON_FLAGS += -DMPU_APU_RUN
+
+# check running rpu
+#COMMON_FLAGS += -DMPU_RPU_RUN
+
+include $(NUCLEI_SDK_ROOT)/Build/Makefile.base

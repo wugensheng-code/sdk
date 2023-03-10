@@ -63,7 +63,7 @@ static int Dst[DMA_LENGTH] __attribute__ ((aligned (32)));
 
 XDmaPs DmaInstance;
 
-int axidma(void)
+int DmaAxi(void)
 {    
 	uint32_t midr;
 	uint64_t cpunum = 0;

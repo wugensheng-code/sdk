@@ -1,0 +1,9 @@
+TARGET = AL9000_mpu
+
+NUCLEI_SDK_ROOT = ../../../..
+
+SRCDIRS = . .. ../dmac_axi_driver ../npujpu_st
+
+INCDIRS = . .. ../dmac_axi_driver ../npujpu_st
+
+include $(NUCLEI_SDK_ROOT)/Build/Makefile.base

@@ -1,7 +1,7 @@
 #ifndef __JPU_H
 #define __JPU_H
 
-#include <type.h>
+//#include <type.h>
 
 
 #define                   JPU_BASE  0xf8460000

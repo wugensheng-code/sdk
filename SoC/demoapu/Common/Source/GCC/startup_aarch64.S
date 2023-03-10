@@ -125,7 +125,11 @@ el3_entry:
 	msr vbar_el3, x0
 
 	mrs	x0, scr_el3
+#ifdef ENABLE_ARM_EA_BIT
 	orr	x0, x0, #0xe			/* IRQ|FIQ|EA */
+#else
+    orr	x0, x0, #0x6			/* IRQ|FIQ */
+#endif
 	msr	scr_el3, x0
 
 	msr	cptr_el3, xzr			/* Enable FP/SIMD */

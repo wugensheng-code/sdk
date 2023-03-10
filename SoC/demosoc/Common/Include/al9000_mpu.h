@@ -56,7 +56,7 @@ typedef struct {
     uint32_t EndAddr;
     uint32_t Privilege;
     uint32_t Secure;
-    uint32_t Access;
+    uint32_t ReadWrite;
     uint32_t RegionEnable;
     uint32_t GroupId;
 }RegionAttr;
