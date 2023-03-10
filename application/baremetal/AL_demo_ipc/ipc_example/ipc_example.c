@@ -126,32 +126,32 @@ void CSU2APU_IPC()
 void APU2RPUREQ0_IRQn_handler(void)
 {
 	printf("APUREQ0\r\n");
-	AlIpc_IntrClear(AL9000_IPC,apu2rpu_1);
+	AlIpc_IntrClear(AL9000_IPC,apu2rpu_0);
 }
 void APU2RPUACK0_IRQn_handler(void)
 {
 	printf("APUACK0\r\n");
-	AlIpc_IntrAckClear(AL9000_IPC,apu2rpu_1);
+	AlIpc_IntrAckClear(AL9000_IPC,apu2rpu_0);
 }
 void APU2RPUREQ1_IRQn_handler(void)
 {
 	printf("APUREQ1\r\n");
-	AlIpc_IntrClear(AL9000_IPC,apu2rpu_2);
+	AlIpc_IntrClear(AL9000_IPC,apu2rpu_1);
 }
 void APU2RPUACK1_IRQn_handler(void)
 {
 	printf("APUACK1\r\n");
-	AlIpc_IntrAckClear(AL9000_IPC,apu2rpu_2);
+	AlIpc_IntrAckClear(AL9000_IPC,apu2rpu_1);
 }
 void APU2RPUREQ2_IRQn_handler(void)
 {
 	printf("APUREQ2\r\n");
-	AlIpc_IntrClear(AL9000_IPC,apu2rpu_0);
+	AlIpc_IntrClear(AL9000_IPC,apu2rpu_2);
 }
 void APU2RPUACK2_IRQn_handler(void)
 {
 	printf("APUACK2\r\n");
-	AlIpc_IntrAckClear(AL9000_IPC,apu2rpu_0);
+	AlIpc_IntrAckClear(AL9000_IPC,apu2rpu_2);
 }
 void APU2RPUREQ3_IRQn_handler(void)
 {
