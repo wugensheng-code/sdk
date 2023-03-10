@@ -14,8 +14,11 @@ uint32_t rdata0_0;	//
 uint8_t ckdata0_0[64];	// check data array
 uint8_t ckdata0_1[64];	// check data array
 uint8_t tx_buf1[64];
-void iic_data_cheak(uint32_t count){
+
+void iic_data_cheak(uint32_t count)
+{
 	volatile uint8_t i = 0 ;
+
 	for(i = 0 ; i < count ; i ++ ){
 		if(tx_buf1[i] == (*(uint32_t*)(MEM_BASE2_ADDR + i*4)))
 		{
@@ -24,16 +27,20 @@ void iic_data_cheak(uint32_t count){
 			printf("MEM2_DATA = %3d",*(uint32_t*)(MEM_BASE2_ADDR + i*4));
 			printf("\r\n");
 			printf("check data is right\r\n");
-			}
-		else{
+			printf("[AUTOTEST]:[DMAC]:[I2C]:[PASS]\r\n");
+		}
+		else
+		{
 			printf("MEM1_DATA = %3d",*(uint32_t*)(MEM_BASE1_ADDR + i*4));
 			printf("\r\n");
 			printf("MEM2_DATA = %3d",*(uint32_t*)(MEM_BASE2_ADDR + i*4));
 			printf("\r\n");
 			printf("check data is fail please check you dma set data\r\n");
+
+			printf("[AUTOTEST]:[DMAC]:[I2C]:[FAIL]\r\n");
 		}
 
-			printf("\r\n");
+		printf("\r\n");
 	}
 }
 /****************function definition******************/
