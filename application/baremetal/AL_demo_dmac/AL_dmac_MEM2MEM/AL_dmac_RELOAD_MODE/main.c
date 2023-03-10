@@ -48,7 +48,9 @@ void SOC_DMA_AHB_HANDLER(void)
      count ++;
 }
     int main(void){
+#if __riscv
 	__RV_CSR_CLEAR(CSR_MMISC_CTL,MMISC_CTL_BPU);
+#endif
 	__enable_irq();
     //setvbuf(stdout, NULL, _IONBF, 0);
 	/*mem2men mode

@@ -48,7 +48,10 @@ void SOC_DMA_AHB_HANDLER(void)
     while(1);
 }
     int main(void){
+#if __riscv
 	__RV_CSR_CLEAR(CSR_MMISC_CTL,MMISC_CTL_BPU);
+#endif
+
     ECLIC_Register_IRQ(SOC_INT65_IRQn, ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,SOC_DMA_AHB_HANDLER);
 	__enable_irq();
     AlDma_EnableChannelIrq(AL_DMAC_channel_0);
