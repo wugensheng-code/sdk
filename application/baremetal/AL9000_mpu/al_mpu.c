@@ -151,7 +151,6 @@ uint32_t AlMpu_CompareTest(AlMpu *InstancePtr,  uint32_t Reg_Sel, RegionAttr Att
     uint32_t ModifyValue = 0xa5a5a5a5;
     uint32_t InitialValue = 0x12345678;
     uint32_t MPU_Status = MPU_SUCCESS;
-    uint32_t value = 0;
     uint32_t TempValue = Attr.ReadWrite;
 
     /* Initial data to 0x12345678*/
