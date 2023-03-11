@@ -36,11 +36,15 @@
 #define REGION_ENABLED 0x1
 #define REGION_DISABLED 0x0
 
+#define INTERRUPT_ENABLED 0x1
+#define INTERRUPT_DISABLED 0x0
+
 #define REGIONEN      0
 #define SECURE_BIT        6 
 #define PRIVILEGE_BIT    7
 #define WRITE_BIT         8
 #define READ_BIT          9
+#define INTERRUPT_BIT     12
 
 #define MPU_DDR_START_ADDR 0x44a00
 #define MPU_DDR_END_ADDR 0x44a02

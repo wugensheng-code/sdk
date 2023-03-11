@@ -27,6 +27,7 @@ uint32_t InterruptTest(void)
     Attr.GroupId = DMA_AXI_GROUPID_NUM;
     Attr.ReadWrite = NOREADWRITE;
     Attr.RegionEnable = REGION_ENABLED;
+    Attr.InterruptEnable = INTERRUPT_ENABLED;
 
     AlMpu_Disable(InstancePtr);
     AlMpu_SetRegionAttr(InstancePtr, 1, Attr);

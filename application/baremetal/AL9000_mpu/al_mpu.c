@@ -76,6 +76,12 @@ uint32_t AlMpu_SetRegionAttr(AlMpu* InstancePtr, uint32_t Region, RegionAttr Att
         CLR_BIT((*ptr), PRIVILEGE_BIT);
     }
 
+    if (Attr.InterruptEnable == 1) {
+        SET_BIT((*ptr), INTERRUPT_BIT);
+    } else {
+        CLR_BIT((*ptr), INTERRUPT_BIT);
+    }
+
 
     *(++ptr) = (uint32_t)Attr.StartAddr;
     *(++ptr) = (uint32_t)Attr.EndAddr;
