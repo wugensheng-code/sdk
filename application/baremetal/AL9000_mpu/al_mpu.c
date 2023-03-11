@@ -250,7 +250,7 @@ uint32_t AlMpu_CompareTest(AlMpu *InstancePtr,  uint32_t Reg_Sel, RegionAttr Att
 
         case WRITEONLY:
             #if defined(MPU_APUTEST)
-                if (ModifyValue != value) {
+                if (ModifyValue == value) {
                     printf("ProtectRegion testcase Pass!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x ModifyValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.ReadWrite, Attr.RegionEnable, Attr.GroupId, InstancePtr, ModifyValue, value);
                 } else {
                     printf("ProtectRegion testcase Fail!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x ModifyValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.ReadWrite, Attr.RegionEnable, Attr.GroupId, InstancePtr, ModifyValue, value);
@@ -276,7 +276,7 @@ uint32_t AlMpu_CompareTest(AlMpu *InstancePtr,  uint32_t Reg_Sel, RegionAttr Att
         break;
         case NOREADWRITE:
             #if defined(MPU_APUTEST)
-                if (InitialValue != value)
+                if (InitialValue == value)
                 {
                     printf("ProtectRegion testcase Pass!  saddr %08x eaddr %08x Pri %02x Sec %02x Acc %02x RegEn %02x GrpId %08x Mpu %08x ModifyValue %08x readvalue %08x\r\n", Attr.StartAddr * (0x1000), Attr.EndAddr * (0x1000), Attr.Privilege, Attr.Secure, Attr.ReadWrite, Attr.RegionEnable, Attr.GroupId, InstancePtr, ModifyValue, value);
                 } else {
