@@ -59,6 +59,7 @@ typedef struct {
     uint32_t ReadWrite;
     uint32_t RegionEnable;
     uint32_t GroupId;
+    uint32_t InterruptEnable;
 }RegionAttr;
 
 #ifdef __cplusplus
