@@ -24,7 +24,7 @@ COMMON_FLAGS := -O2
 #COMMON_FLAGS += -DMPU_OCMTEST
 
 # check running mpu apu testcase
-# COMMON_FLAGS += -DMPU_APUTEST -DJUMP_PANIC
+COMMON_FLAGS += -DMPU_APUTEST
 
 # check running mpu ddrs0 testcase
 #COMMON_FLAGS += -DMPU_DDRS0TEST

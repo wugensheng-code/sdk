@@ -160,6 +160,10 @@ uint32_t SetAttrAndCompare(AlMpu *InstancePtr, RegionAttr Attr)
     uint32_t region = 0;
     uint32_t RegionSize = REGIONSIZE;
 
+#ifdef MPU_APUTEST
+    RegionSize = APU_REGIONSIZE;
+#endif
+
     for (region = 1; region <= RegionSize; region++) {
         AlMpu_Disable(InstancePtr);
 
