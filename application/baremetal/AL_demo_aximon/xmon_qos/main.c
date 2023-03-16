@@ -66,7 +66,7 @@ int main(void)
 	config_monitor(AL_OCM_S2,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
 	config_monitor(AL_DDR_S1,XID_MAX,0,XID_MAX,0,XQOS_MAX,0x20);
 	write_To_OCM((uint32_t*)buffer,DMA_LENGTH,(uint32_t*)(base0));
-	#ifdef _AARCH_64
+	#ifdef __aarch64__
 	uint64_t sctlr_el3;
 
 	asm volatile("mrs %0, midr_el1":"=r"(midr)::"memory");
@@ -82,7 +82,7 @@ int main(void)
 	cpunum = mpidr & 0x00ff;
 	if (cpunum == 0) {
 		int Status;
-	#ifdef _AARCH_64
+	#ifdef __aarch64__
 		asm volatile("mrs %0, sctlr_el3":"=r"(sctlr_el3)::"memory");
 		vfwp("ctlr_el3 ** %x", (unsigned int)(sctlr_el3 & 0xffffffff));
 	#endif

@@ -10,9 +10,25 @@ extern int DmaAxi(void);
 extern int main_npujpu();
 
 /**
+ * @desc  : do_bad_sync handles the impossible case in the Synchronous Abort vector,
+ * 		     you must re-implement event handle.
+ * @param {pt_regs} *pt_regs
+ * @param {unsigned int} esr
+ * @return {*}
+ */
+
+unsigned int sync_flag = 0;
+void do_sync_handle(struct pt_regs *pt_regs, unsigned int esr)
+{
+	asm volatile("mrs x25, elr_el1; add x25, x25, #0x04; msr elr_el1, x25" ::: "x25");
+	sync_flag = 1;
+	printf("sync handle \r\n");
+}
+
+/**
  * @brief Function is used to check all mpu of system
  */
-uint32_t ApuMpuTest(void) 
+uint32_t ApuMpuTest(void)
 {
     uint32_t MPU_Status = 0;
 

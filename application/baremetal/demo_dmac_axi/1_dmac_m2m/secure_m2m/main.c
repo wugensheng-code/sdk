@@ -68,7 +68,7 @@ int main(void)
 	uint64_t cpunum = 0;
 	uint64_t mpidr;
 	
-	#ifdef _AARCH_64
+	#ifdef __aarch64__
 	uint64_t sctlr_el3;
 	
 	asm volatile("mrs %0, midr_el1":"=r"(midr)::"memory");
@@ -87,7 +87,7 @@ int main(void)
 	if (cpunum == 0) {
 		int Status;
 		
-	#ifdef _AARCH_64
+	#ifdef __aarch64__
 		asm volatile("mrs %0, sctlr_el3":"=r"(sctlr_el3)::"memory");
 		vfwp("ctlr_el3 ** %x", (unsigned int)(sctlr_el3 & 0xffffffff));
 	#endif

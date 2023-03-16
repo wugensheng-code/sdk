@@ -39,11 +39,11 @@ void USB_HOST_CHAN_INIT ();
 //-----------------------------------------------------------
 
 	unsigned int    membuffer[400] __attribute__ ((aligned (512)));
-#define  _AARCH_64
+#define  __aarch64__
 int main()
 {
     uint32_t midr;
-    #ifdef _AARCH_64
+    #ifdef __aarch64__
     uint64_t cpunum = 0;
     uint64_t mpidr;
 

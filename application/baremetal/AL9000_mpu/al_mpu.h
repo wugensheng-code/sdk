@@ -8,7 +8,7 @@
 #define MAX_PRIVILEGE  2
 #define MAX_SECUREMODE 2
 #define MAX_GROUPIDNUMBER 6
-#define MAX_ACCESSMODE 4
+
 
 #define PRIVILEGE_PROTECTED 0x1
 #define PRIVILEGE_UNPROTECTED 0x0
@@ -20,6 +20,7 @@
 #define WRITEONLY 0x2
 #define READWRITE 0x0
 #define NOREADWRITE 0x3
+#define MAX_ACCESSMODE 4
 
 #define CSU_GROUPID_NUM 0x1
 #define RPU_GROUPID_NUM 0x2
@@ -40,7 +41,7 @@
 #define INTERRUPT_DISABLED 0x0
 
 #define REGIONEN      0
-#define SECURE_BIT        6 
+#define SECURE_BIT        6
 #define PRIVILEGE_BIT    7
 #define WRITE_BIT         8
 #define READ_BIT          9
