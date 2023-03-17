@@ -12,7 +12,7 @@ COMMON_FLAGS := -O2
 COMMON_FLAGS += -DSWITCH_TO_EL0_FROM_EL3
 
 # check when panic happens, stop at error or jump back to normal state
-COMMON_FLAGS += -DJUMP_PANIC
+# COMMON_FLAGS += -DJUMP_PANIC
 
 # ARM jump from secure to non-secure
 COMMON_FLAGS += -DSUPPORT_NONSECURE

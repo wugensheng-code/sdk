@@ -12,8 +12,8 @@ all:
 	echo COMPILE_PREFIX = $(COMPILE_PREFIX)
 
 ifeq ($(SOC), demoapu)
-	make clean -f Makefile_clean
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_secure_el0
+	#make clean
+	#make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_secure_el0
 
 	make clean
 	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_secure_el1
@@ -21,17 +21,18 @@ ifeq ($(SOC), demoapu)
 	make clean
 	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_nonsecure_el1
 
-	make clean
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_nonsecure_el0
+	#make clean
+	#make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_nonsecure_el0
 
 else
-	make clean -f Makefile_clean
+	make clean
 	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_rpu
 endif
 
 
 clean:
-	make clean -f Makefile_clean
+	make clean -f Makefile_clean SOC=demoapu
+	make clean -f Makefile_clean SOC=demosoc
 
 cleanelf:
 	rm -rf *.elf *.map *.dasm *.dump *.hex *.verilog

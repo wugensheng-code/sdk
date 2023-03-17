@@ -8,6 +8,9 @@ INCDIRS = . .. ../dmac_axi_driver ../npujpu_st
 
 COMMON_FLAGS := -O2
 
+# check build for simulation and debugging, remove print so that system will run more fast
+#COMMON_FLAGS += -DSIMULATIONWAVE
+
 # check ARM switch from EL3 to EL0
 COMMON_FLAGS += -DSWITCH_TO_EL0_FROM_EL3
 
@@ -41,7 +44,7 @@ COMMON_FLAGS += -DMPU_APUTEST
 # check running mpu interrupt testcase
 #COMMON_FLAGS += -DMPU_INTERRUPTTEST
 
-# check running apu 
+# check running apu
 COMMON_FLAGS += -DMPU_APU_RUN
 
 # check running rpu

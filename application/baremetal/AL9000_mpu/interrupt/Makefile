@@ -30,7 +30,8 @@ endif
 
 
 clean:
-	make clean
+	make clean -f Makefile_clean SOC=demoapu
+	make clean -f Makefile_clean SOC=demosoc
 
 cleanelf:
 	rm -rf *.elf *.map *.dasm *.dump *.hex *.verilog

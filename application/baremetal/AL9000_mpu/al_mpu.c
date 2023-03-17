@@ -16,6 +16,7 @@ int cpu_in_secure_mode = 0;
 int cpu_in_secure_mode = 1;
 #endif
 
+#if 0
 /**
  * @desc  : do_bad_sync handles the impossible case in the Synchronous Abort vector,
  * 		     you must re-implement event handle.
@@ -27,8 +28,15 @@ int cpu_in_secure_mode = 1;
 void do_sync_handle(struct pt_regs *pt_regs, unsigned int esr)
 {
 	asm volatile("mrs x25, elr_el1; add x25, x25, #0x04; msr elr_el1, x25" ::: "x25");
-}
 
+	#ifdef sync_handle_print
+	{
+		extern char * out_msg;
+		printf("%s \r\n", out_msg);
+	}
+	#endif
+}
+#endif
 
 static void sleep(unsigned long tick)
 {

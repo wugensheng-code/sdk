@@ -123,6 +123,8 @@ el3_entry:
 
 	adr	x0, vectors
 	msr vbar_el3, x0
+	msr vbar_el2, x0
+	msr vbar_el1, x0
 
 	mrs	x0, scr_el3
 #ifdef ENABLE_ARM_EA_BIT

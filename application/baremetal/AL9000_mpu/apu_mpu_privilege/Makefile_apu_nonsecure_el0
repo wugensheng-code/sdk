@@ -1,10 +1,10 @@
-TARGET = al9000_ddrs1_mpu_secure_el0
+TARGET = al9000_apu_mpu_nonsecure_el0
 
 NUCLEI_SDK_ROOT = ../../../..
 
-SRCDIRS = . .. dmac_axi_driver npujpu_st
+SRCDIRS = . .. ../dmac_axi_driver ../npujpu_st
 
-INCDIRS = . .. dmac_axi_driver npujpu_st
+INCDIRS = . .. ../dmac_axi_driver ../npujpu_st
 
 COMMON_FLAGS := -O2
 
@@ -18,19 +18,19 @@ COMMON_FLAGS += -DSWITCH_TO_EL0_FROM_EL3
 #COMMON_FLAGS += -DJUMP_PANIC
 
 # ARM jump from secure to non-secure
-#COMMON_FLAGS += -DSUPPORT_NONSECURE
+COMMON_FLAGS += -DSUPPORT_NONSECURE
 
 # check running mpu ocm testcase
 #COMMON_FLAGS += -DMPU_OCMTEST
 
 # check running mpu apu testcase
-#COMMON_FLAGS += -DMPU_APUTEST
+COMMON_FLAGS += -DMPU_APUTEST
 
 # check running mpu ddrs0 testcase
 #COMMON_FLAGS += -DMPU_DDRS0TEST
 
 # check running mpu ddrs1 testcase
-COMMON_FLAGS += -DMPU_DDRS1TEST
+#COMMON_FLAGS += -DMPU_DDRS1TEST
 
 # check running mpu npu testcase
 #COMMON_FLAGS += -DMPU_NPUTEST
@@ -44,7 +44,7 @@ COMMON_FLAGS += -DMPU_DDRS1TEST
 # check running mpu interrupt testcase
 #COMMON_FLAGS += -DMPU_INTERRUPTTEST
 
-# check running apu 
+# check running apu
 COMMON_FLAGS += -DMPU_APU_RUN
 
 # check running rpu
