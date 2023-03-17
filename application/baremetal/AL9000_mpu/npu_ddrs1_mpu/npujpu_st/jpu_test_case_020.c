@@ -35,7 +35,7 @@ void jpu_test_case_020(void)
     volatile unsigned fail_flag ;
     if (cpunum == 0) {
     // Ensure all writes to system registers have taken place
-    #if (defined __aarch64__ || defined __aarch64__)
+    #if (defined _AARCH_64 || defined __aarch64__)
     asm volatile("dsb     sy");
     asm volatile("isb     sy");
     asm volatile("dmb     sy");
@@ -293,7 +293,7 @@ void jpu_test_case_020(void)
         {
             for (int i=0; i<100; i++){
                 //end_cnt++;
-                #if (defined __aarch64__ || defined __aarch64__)
+                #if (defined _AARCH_64 || defined __aarch64__)
                 asm volatile("dsb     sy");
                 asm volatile("isb     sy");
                 asm volatile("dmb     sy");
@@ -314,7 +314,7 @@ void jpu_test_case_020(void)
         {
             for (int i=0; i<100; i++){
                 //end_cnt++;
-                #if (defined __aarch64__ || defined __aarch64__)
+                #if (defined _AARCH_64 || defined __aarch64__)
                 asm volatile("dsb     sy");
                 asm volatile("isb     sy");
                 asm volatile("dmb     sy");
@@ -354,7 +354,7 @@ void jpu_test_case_020(void)
         mem_write(JPU__MJPEG_PIC_STATUS_REG_1__ADDR,0x000003ff);
         mem_write(JPU__MJPEG_PIC_START_REG_1__ADDR,0x00000010);
 
-        #if (defined __aarch64__ || defined __aarch64__)
+        #if (defined _AARCH_64 || defined __aarch64__)
         asm volatile("dsb     sy");
         asm volatile("isb     sy");
         asm volatile("dmb     sy");
@@ -366,7 +366,7 @@ void jpu_test_case_020(void)
         {
             for (int i=0; i<100; i++){
                 //end_cnt++;
-                #if (defined __aarch64__ || defined __aarch64__)
+                #if (defined _AARCH_64 || defined __aarch64__)
                 asm volatile("dsb     sy");
                 asm volatile("isb     sy");
                 asm volatile("dmb     sy");

@@ -22,7 +22,7 @@ static void sleep(unsigned long tick)
     {
         asm volatile("NOP");
     }
-#if (defined __aarch64__ || defined __aarch64__)
+#if (defined _AARCH_64 || defined __aarch64__)
     asm volatile("dsb     sy" :::"memory");
     asm volatile("isb     sy" :::"memory");
     asm volatile("dmb     sy" :::"memory");
@@ -246,7 +246,7 @@ uint32_t AlMpu_CompareTest(AlMpu *InstancePtr,  uint32_t Reg_Sel, RegionAttr Att
 		// can't write & and can't  read case
 		if (((Attr.Secure == 1) && (cpu_in_secure_mode == 0))				//secure match
 				|| ((Attr.Privilege == PRIVILEGE_PROTECTED) && (cpu_in_priviledge_mode == 0))	//secure match
-#if (defined __aarch64__ || defined __aarch64__)
+#if (defined _AARCH_64 || defined __aarch64__)
 				|| (Attr.GroupId == APU_GROUPID_NUM)
 #else
 				|| (Attr.GroupId == RPU_GROUPID_NUM)

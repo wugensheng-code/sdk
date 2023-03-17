@@ -94,7 +94,7 @@ int main(void)
 //	write_To_OCM((uint32_t*)buffer,128,(uint32_t*)base0);
 	clear_monitor();
 	AlAxiMon_GlobalEnable();
-	#if (defined __aarch64__ || defined __aarch64__)
+	#if (defined _AARCH_64 || defined __aarch64__)
 	uint64_t sctlr_el3;
 
 	asm volatile("mrs %0, midr_el1":"=r"(midr)::"memory");
@@ -112,7 +112,7 @@ int main(void)
 
 		int Status;
 
-	#if (defined __aarch64__ || defined __aarch64__)
+	#if (defined _AARCH_64 || defined __aarch64__)
 		asm volatile("mrs %0, sctlr_el3":"=r"(sctlr_el3)::"memory");
 		vfwp("ctlr_el3 ** %x", (unsigned int)(sctlr_el3 & 0xffffffff));
 	#endif

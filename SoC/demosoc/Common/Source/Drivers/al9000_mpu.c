@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
 
-#if (defined __aarch64__ || defined __aarch64__)
+#if (defined _AARCH_64 || defined __aarch64__)
 #define __DSB() asm volatile("dsb sy" :::"memory");
 #define __ISB() asm volatile("isb sy" :::"memory");
 #define __DMB() asm volatile("dmb sy" :::"memory");

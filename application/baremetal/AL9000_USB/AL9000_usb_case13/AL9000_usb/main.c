@@ -43,7 +43,7 @@ void USB_HOST_CHAN_INIT ();
 int main()
 {
     uint32_t midr;
-    #if (defined __aarch64__ || defined __aarch64__)
+    #if (defined _AARCH_64 || defined __aarch64__)
     uint64_t cpunum = 0;
     uint64_t mpidr;
 
