@@ -66,7 +66,7 @@ int main(void)
 
 	printf("check INTR_XMON_STATE \r\n");
 
-	#ifdef __aarch64__
+	#if (defined __aarch64__ || defined __aarch64__)
 	uint64_t sctlr_el3	= 0;
 
 	asm volatile("mrs %0, midr_el1":"=r"(midr)::"memory");
@@ -85,7 +85,7 @@ int main(void)
 	if (cpunum == 0) {
 		printf("cpunum == 0 \r\n");
 
-	#ifdef __aarch64__
+	#if (defined __aarch64__ || defined __aarch64__)
 		asm volatile("mrs %0, sctlr_el3":"=r"(sctlr_el3)::"memory");
 		vfwp("ctlr_el3 ** %x", (unsigned int)(sctlr_el3 & 0xffffffff));
 	#endif

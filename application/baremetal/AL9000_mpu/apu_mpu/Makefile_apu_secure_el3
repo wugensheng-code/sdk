@@ -23,9 +23,6 @@ COMMON_FLAGS := -O2
 # check running mpu ocm testcase
 #COMMON_FLAGS += -DMPU_OCMTEST
 
-# check running mpu apu testcase
-COMMON_FLAGS += -DMPU_APUTEST
-
 # check running mpu ddrs0 testcase
 #COMMON_FLAGS += -DMPU_DDRS0TEST
 
@@ -43,11 +40,5 @@ COMMON_FLAGS += -DMPU_APUTEST
 
 # check running mpu interrupt testcase
 #COMMON_FLAGS += -DMPU_INTERRUPTTEST
-
-# check running apu
-COMMON_FLAGS += -DMPU_APU_RUN
-
-# check running rpu
-#COMMON_FLAGS += -DMPU_RPU_RUN
 
 include $(NUCLEI_SDK_ROOT)/Build/Makefile.base

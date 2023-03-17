@@ -35,7 +35,7 @@ void jpu_test_case_020(void)
     volatile unsigned fail_flag ;
     if (cpunum == 0) {
     // Ensure all writes to system registers have taken place
-    #ifdef __aarch64__
+    #if (defined __aarch64__ || defined __aarch64__)
     asm volatile("dsb     sy");
     asm volatile("isb     sy");
     asm volatile("dmb     sy");
@@ -293,14 +293,14 @@ void jpu_test_case_020(void)
         {
             for (int i=0; i<100; i++){
                 //end_cnt++;
-                #ifdef __aarch64__
+                #if (defined __aarch64__ || defined __aarch64__)
                 asm volatile("dsb     sy");
                 asm volatile("isb     sy");
                 asm volatile("dmb     sy");
                 #endif
             }
             rdata = mem_read(JPU__MJPEG_BBC_BUSY_REG_1__ADDR);
-        
+
         }
 
         mem_write(JPU__MJPEG_BBC_CUR_POS_REG_1__ADDR,0x00000024);
@@ -314,7 +314,7 @@ void jpu_test_case_020(void)
         {
             for (int i=0; i<100; i++){
                 //end_cnt++;
-                #ifdef __aarch64__
+                #if (defined __aarch64__ || defined __aarch64__)
                 asm volatile("dsb     sy");
                 asm volatile("isb     sy");
                 asm volatile("dmb     sy");
@@ -354,26 +354,26 @@ void jpu_test_case_020(void)
         mem_write(JPU__MJPEG_PIC_STATUS_REG_1__ADDR,0x000003ff);
         mem_write(JPU__MJPEG_PIC_START_REG_1__ADDR,0x00000010);
 
-        #ifdef __aarch64__
+        #if (defined __aarch64__ || defined __aarch64__)
         asm volatile("dsb     sy");
         asm volatile("isb     sy");
         asm volatile("dmb     sy");
         #endif
         }
-    
+
         rdata = mem_read(JPU__MJPEG_PIC_STATUS_REG_1__ADDR);
         while (rdata != 0x1)
         {
             for (int i=0; i<100; i++){
                 //end_cnt++;
-                #ifdef __aarch64__
+                #if (defined __aarch64__ || defined __aarch64__)
                 asm volatile("dsb     sy");
                 asm volatile("isb     sy");
                 asm volatile("dmb     sy");
                 #endif
             }
             rdata = mem_read(JPU__MJPEG_PIC_STATUS_REG_1__ADDR);
-        
+
         }
 
         mem_write(JPU__MJPEG_PIC_STATUS_REG_1__ADDR,0x00000001);

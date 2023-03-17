@@ -43,7 +43,7 @@ void USB_HOST_CHAN_INIT ();
 int main()
 {
     uint32_t midr;
-    #ifdef __aarch64__
+    #if (defined __aarch64__ || defined __aarch64__)
     uint64_t cpunum = 0;
     uint64_t mpidr;
 
@@ -158,7 +158,7 @@ int main()
     //-----------------------------------------------------------
     if(1) {
     	printf("##PRINT##: test0 start  %d",0);
-        
+
         //usb controller initialization
         USB_CTRL_INIT(1, 1);  //enable dma
         //usb host initialization

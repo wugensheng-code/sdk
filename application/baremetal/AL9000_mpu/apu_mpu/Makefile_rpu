@@ -1,4 +1,4 @@
-TARGET = al9000_apu_mpu_secure_el3
+TARGET = al9000_apu_mpu_secure_el0
 
 NUCLEI_SDK_ROOT = ../../../..
 
@@ -10,9 +10,6 @@ COMMON_FLAGS := -O2
 
 # check build for simulation and debugging, remove print so that system will run more fast
 #COMMON_FLAGS += -DSIMULATIONWAVE
-
-# check ARM switch from EL3 to EL0
-#COMMON_FLAGS += -DSWITCH_TO_EL0_FROM_EL3
 
 # check when panic happens, stop at error or jump back to normal state
 #COMMON_FLAGS += -DJUMP_PANIC
@@ -43,11 +40,5 @@ COMMON_FLAGS += -DMPU_APUTEST
 
 # check running mpu interrupt testcase
 #COMMON_FLAGS += -DMPU_INTERRUPTTEST
-
-# check running apu 
-#COMMON_FLAGS += -DMPU_APU_RUN
-
-# check running rpu
-COMMON_FLAGS += -DMPU_RPU_RUN
 
 include $(NUCLEI_SDK_ROOT)/Build/Makefile.base

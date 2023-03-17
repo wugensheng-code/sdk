@@ -22,7 +22,7 @@ static void sleep(unsigned long tick)
     {
         asm volatile("NOP");
     }
-#ifdef __aarch64__
+#if (defined __aarch64__ || defined __aarch64__)
     asm volatile("dsb     sy" :::"memory");
     asm volatile("isb     sy" :::"memory");
     asm volatile("dmb     sy" :::"memory");
@@ -140,12 +140,6 @@ uint32_t AlMpu_SetRegionAttr(AlMpu* InstancePtr, uint32_t Region, RegionAttr Att
         CLR_BIT((*PtrMpuRasrRegion), REGIONEN);
     }
 
-#ifdef __aarch64__
-    asm volatile("dsb     sy" :::"memory");
-    asm volatile("isb     sy" :::"memory");
-    asm volatile("dmb     sy" :::"memory");
-#endif
-
     AlMpu_Enable(InstancePtr);
 
     return Status;
@@ -160,9 +154,9 @@ uint32_t SetAttrAndCompare(AlMpu *InstancePtr, RegionAttr Attr)
     uint32_t region = 0;
     uint32_t RegionSize = REGIONSIZE;
 
-#ifdef MPU_APUTEST
-    RegionSize = APU_REGIONSIZE;
-#endif
+	if (InstancePtr == MpuApu) {
+		RegionSize = APU_REGIONSIZE;
+	}
 
     for (region = 1; region <= RegionSize; region++) {
         AlMpu_Disable(InstancePtr);
@@ -252,7 +246,11 @@ uint32_t AlMpu_CompareTest(AlMpu *InstancePtr,  uint32_t Reg_Sel, RegionAttr Att
 		// can't write & and can't  read case
 		if (((Attr.Secure == 1) && (cpu_in_secure_mode == 0))				//secure match
 				|| ((Attr.Privilege == PRIVILEGE_PROTECTED) && (cpu_in_priviledge_mode == 0))	//secure match
+#if (defined __aarch64__ || defined __aarch64__)
 				|| (Attr.GroupId == APU_GROUPID_NUM)
+#else
+				|| (Attr.GroupId == RPU_GROUPID_NUM)
+#endif
 				|| (Attr.ReadWrite == NOREADWRITE))
 		{
 			if ((read_value_before_mpu_disable != ModifyValue) && (read_value_after_mpu_disable != ModifyValue)) {

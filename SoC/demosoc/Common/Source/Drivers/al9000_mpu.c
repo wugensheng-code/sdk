@@ -11,40 +11,36 @@
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
 
+#if (defined __aarch64__ || defined __aarch64__)
+#define __DSB() asm volatile("dsb sy" :::"memory");
+#define __ISB() asm volatile("isb sy" :::"memory");
+#define __DMB() asm volatile("dmb sy" :::"memory");
+#endif
+
+inline void do_sync(void)
+{
+	__ISB();
+	__DSB();
+	__DMB();
+}
+
+
 uint32_t AlMpu_Enable(AlMpu *InstancePtr)
 {
-	#ifdef __aarch64__
-	asm volatile("dsb     sy" :::"memory");
-	asm volatile("isb     sy" :::"memory");
-	asm volatile("dmb     sy" :::"memory");
-	#endif
-
+	do_sync();
 	SET_BIT(InstancePtr->MPU_CTRL, 0);
-
-	#ifdef __aarch64__
-	asm volatile("dsb     sy" :::"memory");
-	asm volatile("isb     sy" :::"memory");
-	asm volatile("dmb     sy" :::"memory");
-	#endif
+	do_sync();
 
 	return 0;
 }
 
 uint32_t AlMpu_Disable(AlMpu *InstancePtr)
 {
-	#ifdef __aarch64__
-	asm volatile("dsb     sy" :::"memory");
-	asm volatile("isb     sy" :::"memory");
-	asm volatile("dmb     sy" :::"memory");
-	#endif
+	do_sync();
 
 	CLR_BIT(InstancePtr->MPU_CTRL, 0);
 
-	#ifdef __aarch64__
-	asm volatile("dsb     sy" :::"memory");
-	asm volatile("isb     sy" :::"memory");
-	asm volatile("dmb     sy" :::"memory");
-	#endif
+	do_sync();
 
 	return 0;
 }

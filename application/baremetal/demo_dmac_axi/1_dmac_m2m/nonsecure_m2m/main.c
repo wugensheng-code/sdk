@@ -32,15 +32,15 @@ void XNullHandler(void *NullParameter)
 #define XDMAPS_CHANNELS_PER_DEV 8 /* Numbel of DMA Channel*/
 
 /* form demosoc.h, interrupt ID*/
-IRQn_Type DMA_FAULT_INTR  = SOC_INT56_IRQn; 
-IRQn_Type DMA_DONE_INTR_0 = SOC_INT57_IRQn; 
-IRQn_Type DMA_DONE_INTR_1 = SOC_INT58_IRQn; 
-IRQn_Type DMA_DONE_INTR_2 = SOC_INT59_IRQn; 
+IRQn_Type DMA_FAULT_INTR  = SOC_INT56_IRQn;
+IRQn_Type DMA_DONE_INTR_0 = SOC_INT57_IRQn;
+IRQn_Type DMA_DONE_INTR_1 = SOC_INT58_IRQn;
+IRQn_Type DMA_DONE_INTR_2 = SOC_INT59_IRQn;
 IRQn_Type DMA_DONE_INTR_3 = SOC_INT60_IRQn;
 IRQn_Type DMA_DONE_INTR_4 = SOC_INT61_IRQn;
-IRQn_Type DMA_DONE_INTR_5 = SOC_INT62_IRQn; 
-IRQn_Type DMA_DONE_INTR_6 = SOC_INT63_IRQn;   
-IRQn_Type DMA_DONE_INTR_7 = SOC_INT64_IRQn; 
+IRQn_Type DMA_DONE_INTR_5 = SOC_INT62_IRQn;
+IRQn_Type DMA_DONE_INTR_6 = SOC_INT63_IRQn;
+IRQn_Type DMA_DONE_INTR_7 = SOC_INT64_IRQn;
 
 /**************************** Type Definitions *******************************/
 
@@ -64,14 +64,14 @@ static int Dst[DMA_LENGTH] __attribute__ ((aligned (32)));
 XDmaPs DmaInstance;
 
 int main(void)
-{    
+{
 	uint32_t midr;
 	uint64_t cpunum = 0;
 	uint64_t mpidr;
-	
-	#ifdef __aarch64__
+
+	#if (defined __aarch64__ || defined __aarch64__)
 	uint64_t sctlr_el3;
-	
+
 	asm volatile("mrs %0, midr_el1":"=r"(midr)::"memory");
 	asm volatile("mrs %0, mpidr_el1":"=r"(mpidr)::"memory");
 	#endif
@@ -87,8 +87,8 @@ int main(void)
 
 	if (cpunum == 0) {
 		int Status;
-		
-	#ifdef __aarch64__
+
+	#if (defined __aarch64__ || defined __aarch64__)
 		asm volatile("mrs %0, sctlr_el3":"=r"(sctlr_el3)::"memory");
 		vfwp("ctlr_el3 ** %x", (unsigned int)(sctlr_el3 & 0xffffffff));
 	#endif
@@ -102,7 +102,7 @@ int main(void)
 		vfwp("reset dmac\n");
 		REG_WRITE(0xF8801074, 0X00003270);
 		REG_WRITE(0xF8801074, 0X00003370);
-		
+
 		Status = XDmaPs_Example_W_Intr(DMA_DEVICE_ID);
 		if (Status != XST_SUCCESS) {
 			vfwp("Error: XDMaPs_Example_W_Intr failed Status=%d 0x%x\r\n", Status, Status);
@@ -191,7 +191,7 @@ int XDmaPs_Example_W_Intr(u16 DeviceId)
 				Dst[Index] = 0;
 
 			Checked[Channel] = 0;
-			// Set the Done interrupt handler 
+			// Set the Done interrupt handler
 			XDmaPs_SetDoneHandler(DmaInst, Channel, DmaDoneHandler, (void *)Checked);
 
 			vfwp("set Channel thead non-secure\n");
@@ -257,7 +257,7 @@ int SetupInterruptSystem(XDmaPs *DmaPtr)
 	Status = ECLIC_Register_IRQ(SOC_INT62_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, XDmaPs_DoneISR_5);
 	Status = ECLIC_Register_IRQ(SOC_INT63_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, XDmaPs_DoneISR_6);
 	Status = ECLIC_Register_IRQ(SOC_INT64_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, XDmaPs_DoneISR_7);
-	
+
 	vfwp("setup interrupt system status:%d \n", Status);
 
 #if 0
