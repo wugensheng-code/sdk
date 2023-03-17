@@ -1,4 +1,4 @@
-TARGET = al9000_interrupt_mpu_secure_el3
+TARGET = al9000_ocm_mpu_nonsecure_el1
 
 NUCLEI_SDK_ROOT = ../../../..
 
@@ -8,17 +8,14 @@ INCDIRS = . .. ../dmac_axi_driver ../npujpu_st
 
 COMMON_FLAGS := -O2
 
-# check build for simulation and debugging, remove print so that system will run more fast
-#COMMON_FLAGS += -DSIMULATIONWAVE
-
 # check ARM switch from EL3 to EL0
 #COMMON_FLAGS += -DSWITCH_TO_EL0_FROM_EL3
 
 # check when panic happens, stop at error or jump back to normal state
-#COMMON_FLAGS += -DJUMP_PANIC
+COMMON_FLAGS += -DJUMP_PANIC
 
 # ARM jump from secure to non-secure
-#COMMON_FLAGS += -DSUPPORT_NONSECURE
+COMMON_FLAGS += -DSUPPORT_NONSECURE
 
 # check running mpu ocm testcase
 COMMON_FLAGS += -DMPU_OCMTEST
@@ -44,7 +41,7 @@ COMMON_FLAGS += -DMPU_OCMTEST
 # check running mpu interrupt testcase
 #COMMON_FLAGS += -DMPU_INTERRUPTTEST
 
-# check running apu 
+# check running apu
 COMMON_FLAGS += -DMPU_APU_RUN
 
 # check running rpu

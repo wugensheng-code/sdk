@@ -1,4 +1,4 @@
-TARGET = al9000_ddrs0_mpu_secure_el3
+TARGET = al9000_interrupt_mpu_secure_el1
 
 NUCLEI_SDK_ROOT = ../../../..
 
@@ -21,13 +21,13 @@ COMMON_FLAGS := -O2
 #COMMON_FLAGS += -DSUPPORT_NONSECURE
 
 # check running mpu ocm testcase
-#COMMON_FLAGS += -DMPU_OCMTEST
+COMMON_FLAGS += -DMPU_OCMTEST
 
 # check running mpu apu testcase
 #COMMON_FLAGS += -DMPU_APUTEST
 
 # check running mpu ddrs0 testcase
-COMMON_FLAGS += -DMPU_DDRS0TEST
+#COMMON_FLAGS += -DMPU_DDRS0TEST
 
 # check running mpu ddrs1 testcase
 #COMMON_FLAGS += -DMPU_DDRS1TEST
@@ -44,7 +44,7 @@ COMMON_FLAGS += -DMPU_DDRS0TEST
 # check running mpu interrupt testcase
 #COMMON_FLAGS += -DMPU_INTERRUPTTEST
 
-# check running apu 
+# check running apu
 COMMON_FLAGS += -DMPU_APU_RUN
 
 # check running rpu

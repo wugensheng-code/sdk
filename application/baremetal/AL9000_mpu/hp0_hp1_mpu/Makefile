@@ -3,9 +3,9 @@ TARGET = all
 SOC ?= demosoc
 
 ifeq ($(SOC), demoapu)
-COMPILE_PREFIX := /opt/toolchain/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+COMPILE_PREFIX ?= /opt/toolchain/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
 else
-COMPILE_PREFIX := /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
+COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
 all:
@@ -14,27 +14,24 @@ all:
 ifeq ($(SOC), demoapu)
 	make clean -f Makefile_clean
 	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_secure_el0
+
 	make clean
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_secure_el3
+	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_secure_el1
+
 	make clean
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_nonsecure_el3
+	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_nonsecure_el1
+
 	make clean
 	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_nonsecure_el0
-	make clean
+
 else
 	make clean -f Makefile_clean
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_rpu_secure_el0
-	make clean
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_rpu_secure_el3
-	make clean
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_rpu_nonsecure_el3
-	make clean
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_rpu_nonsecure_el0
-	make clean
+	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_rpu
 endif
 
 
 clean:
 	make clean -f Makefile_clean
+
 cleanelf:
 	rm -rf *.elf *.map *.dasm *.dump *.hex *.verilog

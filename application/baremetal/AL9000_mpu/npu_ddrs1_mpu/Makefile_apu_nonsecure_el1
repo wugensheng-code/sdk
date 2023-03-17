@@ -1,10 +1,10 @@
-TARGET = al9000_ddrs0_mpu_nonsecure_el3
+TARGET = al9000_ddrs1_mpu_nonsecure_el1
 
 NUCLEI_SDK_ROOT = ../../../..
 
-SRCDIRS = . .. ../dmac_axi_driver ../npujpu_st
+SRCDIRS = . .. dmac_axi_driver npujpu_st
 
-INCDIRS = . .. ../dmac_axi_driver ../npujpu_st
+INCDIRS = . .. dmac_axi_driver npujpu_st
 
 COMMON_FLAGS := -O2
 
@@ -24,10 +24,10 @@ COMMON_FLAGS += -DSUPPORT_NONSECURE
 #COMMON_FLAGS += -DMPU_APUTEST
 
 # check running mpu ddrs0 testcase
-COMMON_FLAGS += -DMPU_DDRS0TEST
+#COMMON_FLAGS += -DMPU_DDRS0TEST
 
 # check running mpu ddrs1 testcase
-#COMMON_FLAGS += -DMPU_DDRS1TEST
+COMMON_FLAGS += -DMPU_DDRS1TEST
 
 # check running mpu npu testcase
 #COMMON_FLAGS += -DMPU_NPUTEST
@@ -41,7 +41,7 @@ COMMON_FLAGS += -DMPU_DDRS0TEST
 # check running mpu interrupt testcase
 #COMMON_FLAGS += -DMPU_INTERRUPTTEST
 
-# check running apu 
+# check running apu
 COMMON_FLAGS += -DMPU_APU_RUN
 
 # check running rpu
