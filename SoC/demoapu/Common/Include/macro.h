@@ -298,6 +298,7 @@ lr	.req	x30
 #else
 	ldr x21, =SPSR_EL1
 #endif
+	bic x21, x21, #(0x01 << 8)
 
 	msr spsr_el3, x21
 

@@ -6,23 +6,6 @@
 #include <time.h>
 #include "../al_mpu.h"
 
-#define REG_WRITE(reg_address, reg_wdata)  *(unsigned int*)(reg_address) = reg_wdata
-#define REG_READ(reg_address)  *(unsigned int*)reg_address
-
-/**
- * @desc  : do_bad_sync handles the impossible case in the Synchronous Abort vector,
- * 		     you must re-implement event handle.
- * @param {pt_regs} *pt_regs
- * @param {unsigned int} esr
- * @return {*}
- */
-#define vfwp printf
-void do_sync_handle(struct pt_regs *pt_regs, unsigned int esr)
-{
-	vfwp("test pass \r\n");
-}
-
-
 /**
  * @brief Function is used to check all mpu of system
  */
@@ -40,37 +23,32 @@ uint32_t ApuMpu_PriviledgeTest(void)
 
 	AlMpu_SetRegionAttr((AlMpu *)MpuApu, 0, Attr);
 
-	__enable_irq_abort();
-
 	while (1)
 	{
-		vfwp("loop = %d\r\n", loop++);
+		printf("loop = %d\r\n", loop++);
+
+		/*
+	 	* readme: write this register will casue abort
+		* and EL1 cpu does not initilize,
+		* so if run to abort handler, this case pass;
+		*/
+
 		*(unsigned int *)(Attr.StartAddr * 0x1000 + 4) = 0x87654321;
 	}
 
 	return MPU_FAILURE;
 }
 
-/*
-* For this case, cpu run at EL0;
-* Abort need to be disable to avoid return to EL1
-*/
 
 uint32_t main(void)
 {
 	int Status = ApuMpu_PriviledgeTest();
 
 	if (Status != MPU_SUCCESS) {
-			vfwp("[AUTOTEST]:[MPU]:[APU]:[FAIL]]\r\n");
-		#ifdef SIMULATIION
-			FAIL();
-		#endif
+		printf("[AUTOTEST]:[MPU]:[APU]:[FAIL]]\r\n");
 	}
 	else {
-		vfwp("[AUTOTEST]:[MPU]:[APU]:[PASS]]\r\n");
-		#ifdef SIMULATIION
-			SUCCESS();
-		#endif
+		printf("[AUTOTEST]:[MPU]:[APU]:[PASS]]\r\n");
 	}
 
     return Status;

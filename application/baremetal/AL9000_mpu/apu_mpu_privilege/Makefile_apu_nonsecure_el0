@@ -18,7 +18,7 @@ COMMON_FLAGS += -DSWITCH_TO_EL0_FROM_EL3
 #COMMON_FLAGS += -DJUMP_PANIC
 
 # ARM jump from secure to non-secure
-# COMMON_FLAGS += -DSUPPORT_NONSECURE
+COMMON_FLAGS += -DSUPPORT_NONSECURE
 
 # check running mpu ocm testcase
 #COMMON_FLAGS += -DMPU_OCMTEST
@@ -49,5 +49,6 @@ COMMON_FLAGS += -DMPU_APU_RUN
 
 # check running rpu
 #COMMON_FLAGS += -DMPU_RPU_RUN
+
 
 include $(NUCLEI_SDK_ROOT)/Build/Makefile.base
