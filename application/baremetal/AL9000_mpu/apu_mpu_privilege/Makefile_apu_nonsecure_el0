@@ -9,7 +9,7 @@ INCDIRS = . .. ../dmac_axi_driver ../npujpu_st
 COMMON_FLAGS := -O2
 
 # check build for simulation and debugging, remove print so that system will run more fast
-#COMMON_FLAGS += -DSIMULATIONWAVE
+# COMMON_FLAGS += -DSIMULATION
 
 # check ARM switch from EL3 to EL0
 COMMON_FLAGS += -DSWITCH_TO_EL0_FROM_EL3
@@ -18,7 +18,7 @@ COMMON_FLAGS += -DSWITCH_TO_EL0_FROM_EL3
 #COMMON_FLAGS += -DJUMP_PANIC
 
 # ARM jump from secure to non-secure
-COMMON_FLAGS += -DSUPPORT_NONSECURE
+# COMMON_FLAGS += -DSUPPORT_NONSECURE
 
 # check running mpu ocm testcase
 #COMMON_FLAGS += -DMPU_OCMTEST

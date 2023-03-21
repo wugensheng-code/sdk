@@ -12,10 +12,10 @@ all:
 	echo COMPILE_PREFIX = $(COMPILE_PREFIX)
 
 ifeq ($(SOC), demoapu)
-	make clean
+	#make clean
 	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_nonsecure_el0
 else
-	#make clean -f Makefile_clean
+	make clean
 	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_rpu
 endif
 

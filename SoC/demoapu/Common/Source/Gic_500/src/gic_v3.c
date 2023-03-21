@@ -490,6 +490,16 @@ void __disable_irq(void)
 		: "memory");
 }
 
+void __enable_irq_abort(void)
+{
+	asm volatile(
+		"msr    daifclr, #0x7"
+		:
+		:
+		: "memory");
+}
+
+
 /**
  * @desc  : set gic irq priority
  */

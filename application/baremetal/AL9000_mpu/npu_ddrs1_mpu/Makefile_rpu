@@ -10,7 +10,7 @@ INCDIRS = . .. dmac_axi_driver npujpu_st
 COMMON_FLAGS := -O2
 
 # check build for simulation and debugging, remove print so that system will run more fast
-#COMMON_FLAGS += -DSIMULATIONWAVE
+#COMMON_FLAGS += -DSIMULATION
 
 # check when panic happens, stop at error or jump back to normal state
 #COMMON_FLAGS += -DJUMP_PANIC

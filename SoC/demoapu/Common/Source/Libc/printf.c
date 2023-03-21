@@ -189,21 +189,7 @@ loop:
 
 	return count;
 }
-/*
-int printf(const char *fmt, ...)
-{
-	int count;
-#ifdef SIMULATIONWAVE
-    count = 0;
-#else
-	va_list va;
 
-	va_start(va, fmt);
-	count = vprintf(fmt, va);
-	va_end(va);
-#endif
-	return count;
-}*/
 
 int printftime(const char *fmt, ...)
 {
@@ -217,18 +203,19 @@ int printftime(const char *fmt, ...)
 	return count;
 }
 
+
 int __attribute__((weak)) printf(const char *fmt, ...)
 {
 	int count;
-#ifdef SIMULATIONWAVE
+
+#ifdef SIMULATIION
     count = 0;
 #else
 	va_list va;
-	//printftime("ps %llu\r\n", get_SystickTimer());
 	va_start(va, fmt);
 	count = vprintf(fmt, va);
 	va_end(va);
-	//printftime("pe %llu\r\n", get_SystickTimer());
 #endif
+
 	return count;
 }

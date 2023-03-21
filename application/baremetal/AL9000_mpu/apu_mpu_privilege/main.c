@@ -6,6 +6,8 @@
 #include <time.h>
 #include "../al_mpu.h"
 
+#define REG_WRITE(reg_address, reg_wdata)  *(unsigned int*)(reg_address) = reg_wdata
+#define REG_READ(reg_address)  *(unsigned int*)reg_address
 
 /**
  * @desc  : do_bad_sync handles the impossible case in the Synchronous Abort vector,
@@ -14,11 +16,12 @@
  * @param {unsigned int} esr
  * @return {*}
  */
-
+#define vfwp printf
 void do_sync_handle(struct pt_regs *pt_regs, unsigned int esr)
 {
-	printf("test pass \r\n");
+	vfwp("test pass \r\n");
 }
+
 
 /**
  * @brief Function is used to check all mpu of system
@@ -37,13 +40,12 @@ uint32_t ApuMpu_PriviledgeTest(void)
 
 	AlMpu_SetRegionAttr((AlMpu *)MpuApu, 0, Attr);
 
-	while (!loop);
+	__enable_irq_abort();
 
-	//if abort happend, the case pass;
-	*(volatile unsigned int *)(Attr.StartAddr * 0x1000 + 4) = 0x12345678;
-
-	if (*(volatile unsigned int *)(Attr.StartAddr * 0x1000 + 4) != 0x12345678) {
-		return MPU_SUCCESS;
+	while (1)
+	{
+		vfwp("loop = %d\r\n", loop++);
+		*(unsigned int *)(Attr.StartAddr * 0x1000 + 4) = 0x87654321;
 	}
 
 	return MPU_FAILURE;
@@ -56,17 +58,20 @@ uint32_t ApuMpu_PriviledgeTest(void)
 
 uint32_t main(void)
 {
-    uint32_t Status = MPU_SUCCESS;
+	int Status = ApuMpu_PriviledgeTest();
 
-    Status = ApuMpu_PriviledgeTest();
-    if (Status != MPU_SUCCESS)
-    {
-        printf("[AUTOTEST]:[MPU]:[APU]:[FAIL]]\r\n");
-    }
-    else
-    {
-        printf("[AUTOTEST]:[MPU]:[APU]:[PASS]]\r\n");
-    }
+	if (Status != MPU_SUCCESS) {
+			vfwp("[AUTOTEST]:[MPU]:[APU]:[FAIL]]\r\n");
+		#ifdef SIMULATIION
+			FAIL();
+		#endif
+	}
+	else {
+		vfwp("[AUTOTEST]:[MPU]:[APU]:[PASS]]\r\n");
+		#ifdef SIMULATIION
+			SUCCESS();
+		#endif
+	}
 
     return Status;
 }
