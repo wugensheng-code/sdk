@@ -98,55 +98,11 @@ uint32_t NpuMpuTest(void)
     return MPU_Status;
 }
 
-/**
- * @brief Function is used to check all mpu of system
- */
-uint32_t Hp0MpuTest(void)
-{
-    uint32_t MPU_Status = 0;
 
-    RegionAttr Attr;
-    AlMpu *InstancePtr = (AlMpu *)MpuHpm0;
-    AlMpu_Disable(InstancePtr);
-    Attr.StartAddr = MPU_DDR_START_ADDR;
-    Attr.EndAddr = MPU_DDR_END_ADDR;
-    Attr.Privilege = PRIVILEGE_UNPROTECTED;
-    Attr.Secure = NON_SECURE;
-    Attr.GroupId = HP0_GROUPID_NUM;
-    Attr.ReadWrite = NOREADWRITE;
-    Attr.RegionEnable = REGION_ENABLED;
 
-    AlMpu_Disable(InstancePtr);
-    AlMpu_SetRegionAttr(InstancePtr, 1, Attr);
-    AlMpu_Enable(InstancePtr);
 
-    return MPU_Status;
-}
 
-/**
- * @brief Function is used to check all mpu of system
- */
-uint32_t Hp1MpuTest(void)
-{
-    uint32_t MPU_Status = 0;
 
-    RegionAttr Attr;
-    AlMpu *InstancePtr = (AlMpu *)MpuHpm1;
-    AlMpu_Disable(InstancePtr);
-    Attr.StartAddr = MPU_DDR_START_ADDR;
-    Attr.EndAddr = MPU_DDR_END_ADDR;
-    Attr.Privilege = PRIVILEGE_UNPROTECTED;
-    Attr.Secure = NON_SECURE;
-    Attr.GroupId = HP1_GROUPID_NUM;
-    Attr.ReadWrite = NOREADWRITE;
-    Attr.RegionEnable = REGION_ENABLED;
-
-    AlMpu_Disable(InstancePtr);
-    AlMpu_SetRegionAttr(InstancePtr, 1, Attr);
-    AlMpu_Enable(InstancePtr);
-
-    return MPU_Status;
-}
 
 
 /**
