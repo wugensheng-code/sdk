@@ -21,7 +21,7 @@
 
 
 #ifdef CONFIG_PRINTK
-#define gic_print(...) gic_print(__VA_ARGS__)
+#define gic_print(...) printf(__VA_ARGS__)
 #else
 #define gic_print(...)
 #endif
