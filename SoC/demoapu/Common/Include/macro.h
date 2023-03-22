@@ -298,7 +298,10 @@ lr	.req	x30
 #else
 	ldr x21, =SPSR_EL1
 #endif
+
+#ifdef ENABLE_APU_ABORT_AT_ERET
 	bic x21, x21, #(0x01 << 8)
+#endif
 
 	msr spsr_el3, x21
 

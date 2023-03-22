@@ -47,6 +47,9 @@ COMMON_FLAGS += -DMPU_APUTEST
 # check running apu
 COMMON_FLAGS += -DMPU_APU_RUN
 
+# ENABLE_APU_ABORT_A_ERET: enable next exception level abort at el3 eret to EL1/EL0
+COMMON_FLAGS += -DENABLE_APU_ABORT_AT_ERET
+
 # check running rpu
 #COMMON_FLAGS += -DMPU_RPU_RUN
 
