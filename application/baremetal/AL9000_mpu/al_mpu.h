@@ -46,6 +46,7 @@
 #define WRITE_BIT         8
 #define READ_BIT          9
 #define INTERRUPT_BIT     12
+#define INTERRUPT_CLR_BIT 14
 
 #define MPU_DDR_START_ADDR 0x44a00
 #define MPU_DDR_END_ADDR 0x44a02
@@ -61,6 +62,20 @@
 #define MPU_SAR_REGION_R     0x14
 #define MPU_EAR_REGION_R     0x18
 #define MPU_GROUPID_REGION_R 0x1c
+
+/* MPU interrupt state register */
+#define INTR_MPU_STATE      0xf8800214
+
+typedef enum
+{
+    MPU_DDRS0 = 0x1,
+    MPU_DDRS1 = 0x2,
+    MPU_HPM0 = 0x4,
+    MPU_HPM1 = 0x8,
+    MPU_NPU = 0x10,
+    MPU_OCMS2 = 0x20,
+    MPU_APU = 0x40,
+} MPU_INTERRUPT_ID;
 
 uint32_t AlMpu_AllTest(void);
 uint32_t AlMpu_CompareTest(AlMpu *InstancePtr,  uint32_t Reg_Sel, RegionAttr Attr);

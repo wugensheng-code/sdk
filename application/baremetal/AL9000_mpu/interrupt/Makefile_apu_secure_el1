@@ -2,9 +2,9 @@ TARGET = al9000_interrupt_mpu_secure_el1
 
 NUCLEI_SDK_ROOT = ../../../..
 
-SRCDIRS = . .. ../dmac_axi_driver ../npujpu_st
+SRCDIRS = . ..
 
-INCDIRS = . .. ../dmac_axi_driver ../npujpu_st
+INCDIRS = . ..
 
 COMMON_FLAGS := -O2
 
@@ -20,8 +20,11 @@ COMMON_FLAGS := -O2
 # ARM jump from secure to non-secure
 #COMMON_FLAGS += -DSUPPORT_NONSECURE
 
+# Manual testing is required, and is disabled by default
+#COMMON_FLAGS += -DDDRS0_HP_INTERRUPT_TEST
+
 # check running mpu ocm testcase
-COMMON_FLAGS += -DMPU_OCMTEST
+#COMMON_FLAGS += -DMPU_OCMTEST
 
 # check running mpu apu testcase
 #COMMON_FLAGS += -DMPU_APUTEST
@@ -45,7 +48,7 @@ COMMON_FLAGS += -DMPU_OCMTEST
 #COMMON_FLAGS += -DMPU_INTERRUPTTEST
 
 # check running apu
-COMMON_FLAGS += -DMPU_APU_RUN
+#COMMON_FLAGS += -DMPU_APU_RUN
 
 # check running rpu
 #COMMON_FLAGS += -DMPU_RPU_RUN
