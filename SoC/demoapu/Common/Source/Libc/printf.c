@@ -208,7 +208,7 @@ int __attribute__((weak)) printf(const char *fmt, ...)
 {
 	int count;
 
-#ifdef SIMULATIION
+#ifdef SIMULATION
     count = 0;
 #else
 	va_list va;
