@@ -48,6 +48,8 @@
 #define INTERRUPT_BIT     12
 #define INTERRUPT_CLR_BIT 14
 
+#define MPU_DDR0_START_ADDR 0x0
+
 #define MPU_DDR_START_ADDR 0x44a00
 #define MPU_DDR_END_ADDR 0x44a02
 

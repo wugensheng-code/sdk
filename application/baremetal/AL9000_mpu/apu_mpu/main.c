@@ -18,7 +18,7 @@ uint32_t ApuMpuTest(void)
 
     RegionAttr Attr;
     memset(&Attr, 0, sizeof(Attr));
-    Attr.EndAddr = 0x61010;
+    Attr.EndAddr = MPU_DDR0_START_ADDR;
 
     AlMpu *InstancePtr = (AlMpu *)MpuApu;
     MPU_Status = SetAttrAndCompare(InstancePtr, Attr);
