@@ -20,6 +20,8 @@ COMMON_FLAGS += -DSWITCH_TO_EL0_FROM_EL3
 # ARM jump from secure to non-secure
 COMMON_FLAGS += -DSUPPORT_NONSECURE
 
+COMMON_FLAGS += -DMPU_PRIVILEGE_TEST
+
 # check running mpu ocm testcase
 #COMMON_FLAGS += -DMPU_OCMTEST
 
