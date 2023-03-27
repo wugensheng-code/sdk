@@ -6,6 +6,14 @@
 #include <time.h>
 #include "../al_mpu.h"
 
+/*
+  For dma axi test, note that this address should be outside
+  the address where the code is running if it is running ocm.
+  And this address is 32 byte aligned for dma axi test.
+ */
+volatile unsigned int *Src = (unsigned int *)(MPU_DMA_AXI_START_ADDR << 12);
+volatile unsigned int *Dst = (unsigned int *)(MPU_DMA_AXI_START_ADDR << 12) + 0x400;
+
 uint32_t NpuMpuTest(void);
 unsigned int RegRead(uint32_t reg_address);
 void RegWrite(uint32_t reg_address, uint32_t reg_wdata);
@@ -60,6 +68,7 @@ uint32_t Ddrs1MpuTest(void)
     MPU_Status = Gp1Test();
 #endif
 
+    /* With secure dma, only secure mode is supported */
     MPU_Status = DmaAxiTest();
 
     return MPU_Status;
@@ -160,6 +169,7 @@ uint32_t Gp1Test(void)
  */
 uint32_t DmaAxiTest(void)
 {
+    int ret;
     uint32_t MPU_Status = 0;
 
     RegionAttr Attr;
@@ -177,7 +187,16 @@ uint32_t DmaAxiTest(void)
     AlMpu_SetRegionAttr(InstancePtr, 1, Attr);
     AlMpu_Enable(InstancePtr);
 
-    MPU_Status = DmaAxi();
+    /*
+      A return value of 1 indicates that the dma failed to transfer the data,
+      that the mpu protected the data properly, and that the test was successful,
+      whereas the test failed.
+     */
+    ret = DmaAxi();
+    if (ret == 1)
+        MPU_Status = MPU_SUCCESS;
+    else
+        MPU_Status = MPU_FAILURE;
 
     return MPU_Status;
 }

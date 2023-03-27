@@ -53,8 +53,12 @@
 #define MPU_DDR_START_ADDR 0x44a00
 #define MPU_DDR_END_ADDR 0x44a02
 
-#define MPU_DMA_AXI_START_ADDR 0x61007
-#define MPU_DMA_AXI_END_ADDR 0x61009
+/*
+  The ocm address used for the dma axi test, note that this address should
+  be outside the address where the code is running if it is running ocm.
+ */
+#define MPU_DMA_AXI_START_ADDR 0x61030
+#define MPU_DMA_AXI_END_ADDR 0x61032
 
 #define MPU_DDR_NPU_START_ADDR 0x3007e
 #define MPU_DDR_NPU_END_ADDR   0x30080
