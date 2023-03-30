@@ -38,6 +38,8 @@ uint32_t NpuJpuTest(void)
     RegionAttr Attr;
     AlMpu *InstancePtr = (AlMpu *)MpuDdrs1;
     AlMpu_Disable(InstancePtr);
+
+    // JPU access ddrs1
     Attr.StartAddr = RegionStartAddr;
     Attr.EndAddr = RegionEndAddr;
     Attr.Privilege = PRIVILEGE_UNPROTECTED;
@@ -46,6 +48,11 @@ uint32_t NpuJpuTest(void)
     Attr.ReadWrite = NOREADWRITE;
     Attr.RegionEnable = REGION_ENABLED;
 
+    // NPU access ddrs1
+    RegWrite((MpuDdrs1 + 0x20), 0x301);
+    RegWrite((MpuDdrs1 + 0x24), 0x10000);
+    RegWrite((MpuDdrs1 + 0x28), 0x10001);
+    RegWrite((MpuDdrs1 + 0x2c), 0x8);
 
     AlMpu_Disable(InstancePtr);
     AlMpu_SetRegionAttr(InstancePtr, 1, Attr);
@@ -62,11 +69,9 @@ uint32_t Ddrs1MpuTest(void)
 {
     uint32_t MPU_Status = 0;
 
-#if 0
     MPU_Status = NpuJpuTest();
     MPU_Status = Gp0Test();
     MPU_Status = Gp1Test();
-#endif
 
     /* With secure dma, only secure mode is supported */
     MPU_Status = DmaAxiTest();

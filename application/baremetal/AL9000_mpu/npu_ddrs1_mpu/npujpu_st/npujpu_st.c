@@ -38,6 +38,14 @@ int main_npujpu() {
 
 
     printf("this is jpu send begin\n");
+    /*
+       JPU output address
+       Before invoking the jpu interface, clear the data of this address,
+       because there may be invalid data from the last time. Even if the
+       jpu fails to access ddrs1, the test may fail because of the data from the last time.
+     */
+    memset((char *)0x00500000, 0, (416*416*3/2));
+
    	jpu_test_case_020();//jpu case
     //jpu result compare
     int com_jpu_out_num = 0 ;
@@ -46,7 +54,7 @@ int main_npujpu() {
     int fail_jpu = 0 ;
     for(com_jpu_out_num=0;com_jpu_out_num<(416*416*3/2);com_jpu_out_num++){
         if(JPU_OFM[com_jpu_out_num]!=YUV_GLD[com_jpu_out_num]){
-            printf("fail at %d , sim is %x , golden is %x\n",com_jpu_out_num,JPU_OFM[com_jpu_out_num],YUV_GLD[com_jpu_out_num]) ;
+//            printf("fail at %d , sim is %x , golden is %x\n",com_jpu_out_num,JPU_OFM[com_jpu_out_num],YUV_GLD[com_jpu_out_num]) ;
             fail_jpu = 1 ;
         }
     }

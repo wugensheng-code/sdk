@@ -63,6 +63,7 @@ void jpu_test_case_020(void)
         mem_write(JPU__MJPEG_PIC_SETMB_REG_1__ADDR,0x00000000);
         mem_write(JPU__MJPEG_BBC_WR_PTR_REG_1__ADDR,0x000151a0);
 
+        //jpg store addr
         mem_write(JPU__MJPEG_BBC_ENDADDR_REG_1__ADDR,0x00015200);
         mem_write(JPU__MJPEG_BBC_BAS_ADDR_REG_1__ADDR,0x00000000);
 
@@ -343,6 +344,7 @@ void jpu_test_case_020(void)
         mem_write(JPU__MJPEG_GBU_CTRL_REG_1__ADDR,0x00000003);
         mem_write(JPU__MJPEG_ROT_INFO_REG_1__ADDR,0x00000000);
 
+        //decode output addr
         mem_write(JPU__MJPEG_DPB_BASE00_REG_1__ADDR,0x00500000);
         mem_write(JPU__MJPEG_DPB_BASE01_REG_1__ADDR,0x0052a400);
         mem_write(JPU__MJPEG_DPB_BASE02_REG_1__ADDR,0x00534d00);

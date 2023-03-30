@@ -56,6 +56,15 @@ int frame0_layer1_grid2_fpga_normal_test() {
 
 int frame0_layer1_fpga_normal_test() {
     int res ;
+
+    /*
+       NPU output address
+       Before invoking the npu interface, clear the data of this address,
+       because there may be invalid data from the last time. Even if the
+       npu fails to access ddrs1, the test may fail because of the data from the last time.
+     */
+    memset(((char *)0x10000000 + 0x7ec00), 0, 692224);
+
     frame0_layer1_grid0_fpga_normal_test() ;
      res = hard_reg_read(HARDNPU__CCU__INTERRUPT_STATUS__ADDR) ;
      //printf("interrupt status is %d\n",res);
@@ -94,6 +103,7 @@ int frame0_layer1_fpga_normal_test() {
     
     int fail = 0 ;
     char* ofm_golden = (char *)0x30000000 + 0x7ec00;
+    //output addr 0x1007ec00, input addr 0x10000000
     char* ofm_sim = (char *)0x10000000 + 0x7ec00;
     printf("layer1 frame0 data in compare!!\n");
     for(int i = 0 ; i < 692224; i++){
