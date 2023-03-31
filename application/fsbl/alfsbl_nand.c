@@ -11,6 +11,7 @@
 
 #include "alfsbl_nand.h"
 #include "alfsbl_misc.h"
+#include "alfsbl_boot.h"
 
 #include "./../../SoC/demosoc/Common/Include/nand_drv.h"
 #include "./../../SoC/demosoc/Common/Include/smc_drv.h"
@@ -25,23 +26,28 @@ uint32_t AlFsbl_NandInit(void)
 
     Status = Csu_NandInit(&nand);
 
+    if(Status != 0) {
+    	Status = Status | (ALFSBL_BOOTMODE_NAND << 16);
+    }
     return Status;
 }
 
 
-uint32_t AlFsbl_NandCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length)
+uint32_t AlFsbl_NandCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo)
 {
     uint8_t Status;
 
     printf("AlFsbl_NandCopy...\r\n");
 	Status = Csu_NandRead(SrcAddress - IMAGE_FLASH_OFFSET, (uint8_t *)(DestAddress), Length,  &nand);
 
+	if(Status != 0) {
+		Status = Status | (ALFSBL_BOOTMODE_NAND << 16);
+	}
     return Status;
 }
 
 
 uint32_t AlFsbl_NandRelease(void)
 {
-
 	return 0;
 }

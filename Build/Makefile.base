@@ -33,12 +33,13 @@ SILENT ?=
 ## FSBL Simu flag:
 FSBL_SIMU_SKIP_HEADERCHECK ?= no
 
-## FSBL PL Partition Load Mode:
-## 0: regular,
-## 1: in blocks, directly to PCAP WR STREAM
-## 2: in blocks, firstly to buffer in ocm, then to PCAP WR STREAM
-## 3: whole block, to buffer in ocm, then to PCAP WR STREAM
-FSBL_SIMU_PL_TEST_MODE ?= 0
+## compile for al9000 dv simulation
+SIMU_AL9000_DV ?=no
+
+## QSPI XIP
+FSBL_QSPI_XIP ?= yes
+
+
 
 
 # Variables should be defined in Application Makefile

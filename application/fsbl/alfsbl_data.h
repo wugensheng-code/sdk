@@ -16,7 +16,7 @@ extern "C" {
 
 #include "demosoc.h"
 #include "alfsbl_defines.h"
-#include "al9000_secure.h"
+#include <alfsbl_secure.h>
 
 #if defined (CPU_RPU_64)
 #define PTRSIZE uint64_t

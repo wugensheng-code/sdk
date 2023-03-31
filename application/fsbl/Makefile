@@ -17,7 +17,6 @@ INCDIRS = . ./driver/qspi/ driver/sd_emmc/ driver/sd_emmc/FATFS/
 
 COMMON_FLAGS := -O2 -fno-builtin-printf -fno-builtin-sprintf -fno-builtin-snprintf	#-msave-restore -msmall-data-limit=8
 
-COMMON_FLAGS += -DRPU_FSBL_SIMU
 
 #LDFLAGS += -Xlinker --gc-sections
 

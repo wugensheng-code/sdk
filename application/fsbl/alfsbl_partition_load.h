@@ -16,7 +16,7 @@ extern "C" {
 #include "alfsbl_data.h"
 #include "alfsbl_hw.h"
 #include "alfsbl_err_code.h"
-#include "al9000_secure.h"
+#include <alfsbl_secure.h>
 
 
 

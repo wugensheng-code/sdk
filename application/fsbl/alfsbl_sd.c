@@ -11,6 +11,7 @@
 
 #include "alfsbl_sd.h"
 #include "alfsbl_misc.h"
+#include "alfsbl_boot.h"
 
 #include "driver/sd_emmc/al_mmc.h"
 #include "driver/sd_emmc/al_sd.h"
@@ -33,12 +34,14 @@ uint32_t AlFsbl_SdInit(void)
 	if(drvnum == ALFSBL_SD_DRV_NUM_0){
 		rc = f_mount(&fs, "0:", 1);
 		printf("drv is sd\r\n");
-	}else if(drvnum == ALFSBL_SD_DRV_NUM_1){
+	}
+	else if(drvnum == ALFSBL_SD_DRV_NUM_1){
 		rc = f_mount(&fs, "1:", 1);
 		printf("drv is emmc\r\n");
 	}
 	if(rc != FR_OK){
 		printf("drv disk error:%d\r\n", rc);
+		rc = rc | ((ALFSBL_BOOTMODE_SD << 16));
 		return rc;
 	}
 
@@ -47,12 +50,17 @@ uint32_t AlFsbl_SdInit(void)
 	if(boot_file[0] != 0){
 		rc = f_open(&fil, boot_file, FA_OPEN_EXISTING | FA_READ);
 		if(rc != FR_OK){
+			rc = rc | ((ALFSBL_BOOTMODE_SD << 16));
 			return rc;
 		}
-	}else{
+	}
+	else{
 		rc = FR_NO_FILE;
 	}
 
+	if(rc != 0) {
+		rc = rc | ((ALFSBL_BOOTMODE_SD << 16));
+	}
 	return rc;
 }
 
@@ -64,13 +72,18 @@ uint32_t AlFsbl_SdCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length
 
 	rc = f_lseek(&fil, SrcAddress - IMAGE_FLASH_OFFSET);
 	if(rc != FR_OK){
+		rc = rc | ((ALFSBL_BOOTMODE_SD << 16));
 		return rc;
 	}
 	rc = f_read(&fil, (uint8_t *)DestAddress, Length, &br);
 	if(rc != FR_OK){
+		rc = rc | ((ALFSBL_BOOTMODE_SD << 16));
 		return rc;
 	}
 	
+	if(rc != 0) {
+		rc = rc | ((ALFSBL_BOOTMODE_SD << 16));
+	}
 	return rc;
 }
 
@@ -80,9 +93,9 @@ uint32_t AlFsbl_SdRelease(void)
 	FRESULT rc = FR_OK;
 	
 	rc = f_close(&fil);
-	if(rc != FR_OK){
-		return rc;
-	}
 
-	return 0;
+	if(rc != FR_OK){
+		rc = rc | ((ALFSBL_BOOTMODE_SD << 16));
+	}
+	return rc;
 }

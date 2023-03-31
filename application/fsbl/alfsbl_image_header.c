@@ -4,9 +4,9 @@
  *  Created on: May 18, 2022
  *      Author: qsxu
  */
+#include <alfsbl_secure.h>
 #include <stdio.h>
 #include "alfsbl_image_header.h"
-#include "al9000_secure.h"
 #include "demosoc.h"
 
 extern uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE];
@@ -268,7 +268,7 @@ uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl)
 	FsblIHSecInfo.HashDataAddr   = (uint32_t)(&(FsblInstancePtr->ImageHeader));
 	FsblIHSecInfo.DataLength  = ALIH_BH_SIZE + ALIH_PH_SIZE * (FsblInstancePtr->ImageHeader.BootHeader.PartitionNum);
 	FsblIHSecInfo.HashOutAddr = (uint32_t)(HashBuffer);
-	Status = AlFsbl_Hash_1(&FsblIHSecInfo);
+	Status = AlFsbl_Hash(&FsblIHSecInfo);
 	if(Status != ALFSBL_SUCCESS) {
 		goto END;
 	}
@@ -276,7 +276,7 @@ uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl)
 
 	FsblIHSecInfo.PubKeyAddr    = (uint32_t)(AuthBuffer + ALAC_SPK_OFFSET);
 	FsblIHSecInfo.SignatureAddr = (uint32_t)(AuthBuffer + ALAC_BTHDR_SIGNATURE_OFFSET);
-	Status = AlFsbl_Auth_1(&FsblIHSecInfo);
+	Status = AlFsbl_Auth(&FsblIHSecInfo);
 	if(Status != ALFSBL_SUCCESS) {
 		goto END;
 	}
@@ -293,33 +293,38 @@ uint32_t AlFsbl_PpkVerification(AlFsblInfo *FsblInstancePtr, uint32_t BootHdrAtt
 	uint32_t Status;
 	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM);
 	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM + 64);
-	uint8_t HashType;
 	uint8_t HashBuffer[32];
 	uint8_t *pPpkHashAddr;
 	SecureInfo FsblPpkSecInfo = {0};
 
 	if((EfuseCtrl & EFUSE_PPK_HASH_TYPE_MASK) == EFUSE_PPK_HASH_TYPE_SM3) {
-		//HashType = HASH_TYPE_SM3;
 		FsblPpkSecInfo.HashType = OP_HASH_SM3;
 	}
 	else if((EfuseCtrl & EFUSE_PPK_HASH_TYPE_MASK) == EFUSE_PPK_HASH_TYPE_SHA256) {
-		//HashType = HASH_TYPE_SHA256;
 		FsblPpkSecInfo.HashType = OP_HASH_SHA256;
 	}
-	else if(((EfuseCtrl & EFUSE_PPK_HASH_TYPE_MASK) == EFUSE_PPK_HASH_TYPE_HEADER_SET) &&
-			((BootHdrAttrb & ALIH_BH_ATTRB_HD_PPK_HASH_MASK) == ALIH_BH_ATTRB_HD_PPK_HASH_MASK)) {
-		/// do not hash ppk
-		Status = ALFSBL_SUCCESS;
-		goto END;
+	else if((EfuseCtrl & EFUSE_PPK_HASH_TYPE_MASK) == EFUSE_PPK_HASH_TYPE_HEADER_SET) {
+		if((BootHdrAttrb & ALIH_BH_ATTRB_HD_PPK_HASH_MASK) == ALIH_BH_ATTRB_HD_PPK_HASH_MASK) {
+			/// do not hash ppk
+			Status = ALFSBL_SUCCESS;
+			goto END;
+		}
+		else if((BootHdrAttrb & ALIH_BH_ATTRB_HD_AC_SEL_MASK) == ALIH_BH_ATTRB_HD_AC_SEL_SM2) {
+			FsblPpkSecInfo.HashType = OP_HASH_SM3;
+		}
+		else if((BootHdrAttrb & ALIH_BH_ATTRB_HD_AC_SEL_MASK) == ALIH_BH_ATTRB_HD_AC_SEL_ECC256) {
+			FsblPpkSecInfo.HashType = OP_HASH_SHA256;
+		}
 	}
 	else {
 		printf("ALFSBL_ERROR_EFUSE_VALUE_INVALID\r\n");
 		Status = ALFSBL_ERROR_SEC_PARAM_INVALID;
+		goto END;
 	}
 	FsblPpkSecInfo.HashDataAddr = (uint32_t)(AuthBuffer + ALAC_PPK_OFFSET);
 	FsblPpkSecInfo.DataLength = PPK_BYTE_LENGTH;
 	FsblPpkSecInfo.HashOutAddr = (uint32_t)(HashBuffer);
-	Status = AlFsbl_Hash_1(&FsblPpkSecInfo);
+	Status = AlFsbl_Hash(&FsblPpkSecInfo);
 	if(Status != ALFSBL_SUCCESS) {
 		goto END;
 	}
@@ -341,7 +346,6 @@ END:
 }
 
 
-//uint32_t AlFsbl_SpkVerification(AlFsblInfo *FsblInstancePtr, uint32_t BootHdrAttrb, uint32_t EfuseCtrl)
 uint32_t AlFsbl_SpkVerification(AlFsblInfo *FsblInstancePtr, SecureInfo *pFsblIHSecInfo)
 {
 	uint32_t Status;
@@ -351,14 +355,14 @@ uint32_t AlFsbl_SpkVerification(AlFsblInfo *FsblInstancePtr, SecureInfo *pFsblIH
 	pFsblIHSecInfo->HashDataAddr = (uint32_t)(AuthBuffer + ALAC_SPK_OFFSET);
 	pFsblIHSecInfo->DataLength = SPK_BYTE_LENGTH;
 	pFsblIHSecInfo->HashOutAddr = (uint32_t)(HashBuffer);
-	Status = AlFsbl_Hash_1(pFsblIHSecInfo);
+	Status = AlFsbl_Hash(pFsblIHSecInfo);
 	if(Status != ALFSBL_SUCCESS) {
 		goto END;
 	}
 
 	pFsblIHSecInfo->PubKeyAddr = (uint32_t)(AuthBuffer + ALAC_PPK_OFFSET);
 	pFsblIHSecInfo->SignatureAddr = (uint32_t)(AuthBuffer + ALAC_SPK_SIGNATURE_OFFSET);
-	Status = AlFsbl_Auth_1(pFsblIHSecInfo);
+	Status = AlFsbl_Auth(pFsblIHSecInfo);
 	if(Status != ALFSBL_SUCCESS) {
 		goto END;
 	}

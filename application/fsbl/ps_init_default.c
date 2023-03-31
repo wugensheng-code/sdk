@@ -5,11 +5,11 @@
  *      Author: xuqingsong
  */
 
+#include <ps_init.h>
 #include <stdio.h>
-#include "psu_init.h"
 
-uint32_t __attribute__((weak)) psu_init(void)
+uint32_t __attribute__((weak)) ps_init(void)
 {
-	printf("Default psu init\n");
+	printf("Default ps init\r\n");
 	return 0;
 }

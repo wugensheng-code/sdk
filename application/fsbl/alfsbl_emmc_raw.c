@@ -11,6 +11,7 @@
 
 #include "alfsbl_sd.h"
 #include "alfsbl_misc.h"
+#include "alfsbl_boot.h"
 
 #include "driver/sd_emmc/al_mmc.h"
 #include "driver/sd_emmc/al_emmc.h"
@@ -23,6 +24,9 @@ uint32_t AlFsbl_EmmcRawInit(void)
 	uint32_t status = MMC_SUCCESS;
 	status = Csu_RawEmmcInit(&RawEmmcParam);
 
+	if(status != 0) {
+		status = status | (ALFSBL_BOOTMODE_EMMC << 16);
+	}
 	return status;
 }
 
@@ -30,6 +34,10 @@ uint32_t AlFsbl_EmmcRawCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t L
 {
 	uint32_t status = 0;
 	status = Csu_RawEmmcRead(SrcAddress - IMAGE_FLASH_OFFSET, DestAddress, Length);
+
+	if(status != 0) {
+		status = status | (ALFSBL_BOOTMODE_EMMC << 16);
+	}
 
 	return status;
 }

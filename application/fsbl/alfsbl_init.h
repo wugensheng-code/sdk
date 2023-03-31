@@ -19,6 +19,7 @@ extern "C" {
 
 uint32_t AlFsbl_Initialize(AlFsblInfo *FsblInstancePtr);
 
+
 #ifdef __cplusplus
 }
 #endif

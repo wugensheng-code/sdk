@@ -16,7 +16,7 @@ extern "C" {
 #include "alfsbl_data.h"
 #include "alfsbl_hw.h"
 #include "driver/sd_emmc/FATFS/ff.h"
-#include "al9000_secure.h"
+#include <alfsbl_secure.h>
 
 
 extern FIL fil;

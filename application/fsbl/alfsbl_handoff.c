@@ -84,9 +84,36 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 		if(RunningCpu != CpuSettings) {
 			/// handoff to a different cpu
 			/// update reset vector
-			/// soft reset the handoff target cpu
+			/// soft reset the handoff target cpu, pulse reset
+			if(CpuSettings == ALIH_PH_ATTRIB_DEST_CPU_RPU) {
+				REG32(SYSCTRL_S_RPU_RESET_VECTOR_H) = HandoffAddress >> 32;
+				REG32(SYSCTRL_S_RPU_RESET_VECTOR_H) = HandoffAddress & 0xffffffff;
+				REG32(SYSCTRL_S_XPU_SRST) = REG32(SYSCTRL_S_XPU_SRST) & (~(1 << 8));
+			}
+			else if(CpuSettings == ALIH_PH_ATTRIB_DEST_CPU_APU0) {
+				REG32(SYSCTRL_S_APU0_RESET_VECTOR_H) = HandoffAddress >> 32;
+				REG32(SYSCTRL_S_APU0_RESET_VECTOR_L) = HandoffAddress & 0xffffffff;
+				REG32(SYSCTRL_S_XPU_SRST) = REG32(SYSCTRL_S_XPU_SRST) & (~(1 << 0));
+			}
+			else if(CpuSettings == ALIH_PH_ATTRIB_DEST_CPU_APU1) {
+				REG32(SYSCTRL_S_APU1_RESET_VECTOR_H) = HandoffAddress >> 32;
+				REG32(SYSCTRL_S_APU1_RESET_VECTOR_L) = HandoffAddress & 0xffffffff;
+				REG32(SYSCTRL_S_XPU_SRST) = REG32(SYSCTRL_S_XPU_SRST) & (~(1 << 1));
+			}
 		}
 		else {
+			if(RunningCpu == ALIH_PH_ATTRIB_DEST_CPU_RPU) {
+				REG32(SYSCTRL_S_RPU_RESET_VECTOR_H) = HandoffAddress >> 32;
+				REG32(SYSCTRL_S_RPU_RESET_VECTOR_H) = HandoffAddress & 0xffffffff;
+			}
+			else if(RunningCpu == ALIH_PH_ATTRIB_DEST_CPU_APU0) {
+				REG32(SYSCTRL_S_APU0_RESET_VECTOR_H) = HandoffAddress >> 32;
+				REG32(SYSCTRL_S_APU0_RESET_VECTOR_L) = HandoffAddress & 0xffffffff;
+			}
+			else if(RunningCpu == ALIH_PH_ATTRIB_DEST_CPU_APU1) {
+				REG32(SYSCTRL_S_APU1_RESET_VECTOR_H) = HandoffAddress >> 32;
+				REG32(SYSCTRL_S_APU1_RESET_VECTOR_L) = HandoffAddress & 0xffffffff;
+			}
 			AlFsbl_HandoffExit(HandoffAddress);
 		}
 	}

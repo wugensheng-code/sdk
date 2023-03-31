@@ -5,13 +5,13 @@
  *      Author: qsxu
  */
 
+#include <ps_init.h>
 #include <stdio.h>
 
 #include "demosoc.h"
 
 #include "alfsbl_hw.h"
 #include "alfsbl_init.h"
-#include "psu_init.h"
 
 #if __riscv
 #include "core_feature_eclic.h"
@@ -25,6 +25,8 @@ static void     AlFsbl_ClearPendingInterrupt(void);
 static uint32_t AlFsbl_ProcessorInit(AlFsblInfo *FsblInstancePtr);
 static uint32_t AlFsbl_TcmInit(AlFsblInfo *FsblInstancePtr);
 static uint32_t AlFsbl_DdrInit(void);
+static uint32_t AlFsbl_PmuInit(AlFsblInfo *FsblInstancePtr);
+static uint32_t AlFsbl_WdtInit(AlFsblInfo *FsblInstancePtr);
 static uint32_t AlFsbl_ValidateResetReason(void);
 
 
@@ -40,7 +42,6 @@ uint32_t AlFsbl_Initialize(AlFsblInfo *FsblInstancePtr)
 	}
 
 	/// clear pending interrupt
-	printf("Clear all pending interrupts of rpu...\r\n");
 	AlFsbl_ClearPendingInterrupt();
 
 	/// processor init
@@ -50,8 +51,13 @@ uint32_t AlFsbl_Initialize(AlFsblInfo *FsblInstancePtr)
 		goto END;
 	}
 
-	/// psu init
-	Status = psu_init();
+	Status = AlFsbl_PmuInit(FsblInstancePtr);
+	if(Status != ALFSBL_SUCCESS) {
+		goto END;
+	}
+
+	/// ps init
+	Status = ps_init();
 	if(Status != ALFSBL_SUCCESS) {
 		goto END;
 	}
@@ -188,6 +194,43 @@ static uint32_t AlFsbl_ProcessorInit(AlFsblInfo *FsblInstancePtr)
 }
 
 
+static uint32_t AlFsbl_PmuInit(AlFsblInfo *FsblInstancePtr)
+{
+	uint32_t Status = ALFSBL_SUCCESS;
+	printf("PMU Error Config Init\r\n");
+
+
+	REG32(SYSCTRL_S_ERR_HW_EN0_SET) = REG32(SYSCTRL_S_ERR_HW_EN0_SET)   |
+			                          SYSCTRL_S_ERR_HW0_MSK_BUS_TIMEOUT |
+									  SYSCTRL_S_ERR_HW0_MSK_WDT0        |
+									  SYSCTRL_S_ERR_HW0_MSK_OCM_ECC;
+
+	REG32(SYSCTRL_S_INT_EN0_SET) = REG32(SYSCTRL_S_INT_EN0_SET)      |
+			                       SYSCTRL_S_ERR_HW0_MSK_BUS_TIMEOUT |
+								   SYSCTRL_S_ERR_HW0_MSK_WDT0        |
+								   SYSCTRL_S_ERR_HW0_MSK_OCM_ECC;
+
+	if((REG32(CRP_CLK_SEL) & CRP_CLK_SEL_MSK_SLOW_SEL) == CRP_CLK_SEL_MSK_SLOW_SEL) {
+		/// pll bypassed
+	}
+	else {
+		/// pll enabled
+		REG32(SYSCTRL_S_ERR_HW_EN1_SET) = REG32(SYSCTRL_S_ERR_HW_EN1_SET)     |
+				                          SYSCTRL_S_ERR_HW1_MSK_CSU_PLL1_LOCK |
+				                          SYSCTRL_S_ERR_HW1_MSK_CSU_PLL0_LOCK;
+
+		REG32(SYSCTRL_S_INT_EN1_SET) = REG32(SYSCTRL_S_INT_EN1_SET)        |
+				                       SYSCTRL_S_ERR_HW1_MSK_CSU_PLL1_LOCK |
+				                       SYSCTRL_S_ERR_HW1_MSK_CSU_PLL0_LOCK;
+	}
+
+
+
+	return Status;
+}
+
+
+
 static uint32_t AlFsbl_TcmInit(AlFsblInfo *FsblInstancePtr)
 {
 	uint32_t Status = ALFSBL_SUCCESS;
@@ -198,6 +241,14 @@ static uint32_t AlFsbl_TcmInit(AlFsblInfo *FsblInstancePtr)
 
 
 static uint32_t AlFsbl_DdrInit(void)
+{
+	uint32_t Status = ALFSBL_SUCCESS;
+	/// todo
+
+	return Status;
+}
+
+static uint32_t AlFsbl_WdtInit(AlFsblInfo *FsblInstancePtr)
 {
 	uint32_t Status = ALFSBL_SUCCESS;
 	/// todo

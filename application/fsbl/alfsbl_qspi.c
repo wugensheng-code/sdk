@@ -5,13 +5,15 @@
  *      Author: qsxu
  */
 
+#include <alfsbl_secure.h>
 #include <stdio.h>
 
 #include "demosoc.h"
 
 #include "alfsbl_qspi.h"
 #include "alfsbl_misc.h"
-#include "al9000_secure.h"
+#include "alfsbl_boot.h"
+
 #include "qspi_drv.h"
 #include "qspi_flash_drv.h"
 
@@ -105,7 +107,28 @@ void QSPI_FLASH_SR_BIT_SET (unsigned bit_num, unsigned bit_val)
 }  //QSPI_FLASH_SR_BIT_SE
 
 
+#ifdef SIMU_AL9000_DV
+uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
+{
+	QspiParams qspi_params;
+	Csu_QspiInit(&qspi_params);
 
+//	QSPI_FLASH_SR_BIT_SET(9, 1);
+    Csu_QspiSetMode(QSPI_WIDTH_X2, QSPI_ADDR_24);
+
+    Qspi_Disable(g_pdev);
+	Qspi_SckdivCfg(g_pdev,0x2); // ahb: 200M, spi: 200 / 4 = 50M
+
+	g_pdev->regs->SPI_CTRLR0 = (g_pdev->regs->SPI_CTRLR0) | (1 << 30);
+
+    Qspi_Enable(g_pdev);
+
+    *pBlockSizeMax = 512;   // this is only for simulation test
+
+	return 0;
+}
+
+#else
 uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
 {
 	QspiParams qspi_params;
@@ -129,18 +152,19 @@ uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
 
 	return 0;
 }
-
+#endif
 
 uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo)
 {
 	uint32_t ret;
 #ifdef QSPI_XIP_THROUTH_CSU_DMA
+	printf("xip mode\r\n");
 	if(pSecureInfo != NULL) {
 		pSecureInfo->InputAddr  = SrcAddress + QSPI_XIP_BASEADDR;
 		pSecureInfo->OutputAddr = DestAddress;
 		pSecureInfo->DataLength = Length;
 
-		ret = AlFsbl_DecHash_1(pSecureInfo);
+		ret = AlFsbl_DecHash(pSecureInfo);
 	}
 	else {
 		ret = AlFsbl_CsuDmaCopy(
@@ -150,10 +174,28 @@ uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Le
 				CSUDMA_DST_INCR | CSUDMA_SRC_INCR);
 	}
 #else
+	printf("none xip mode\r\n");
+
+#ifndef SIMU_AL9000_DV
 	ret = Csu_QspiRead(SrcAddress, (uint8_t *)(DestAddress), Length);
+#else
+	ret = AlFsbl_CsuDmaCopy(
+			SrcAddress + QSPI_XIP_BASEADDR,
+			DestAddress,
+			Length,
+			CSUDMA_DST_INCR | CSUDMA_SRC_INCR);
 #endif
+
+#endif
+
+	if(ret != 0) {
+		ret = ret | (ALFSBL_BOOTMODE_QSPI24 << 16);
+	}
+
 	return ret;
 }
+
+
 
 
 uint32_t AlFsbl_Qspi24Release(void)

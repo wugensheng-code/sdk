@@ -7,12 +7,12 @@
 
 
 //#include "nuclei_sdk_soc.h"
+#include <alfsbl_secure.h>
 #include "alfsbl_main.h"
 #include "alfsbl_image_header.h"
 #include "alfsbl_partition_load.h"
 #include "alfsbl_handoff.h"
 #include "alfsbl_err_lockdown.h"
-#include "al9000_secure.h"
 #include "alfsbl_misc.h"
 #include "alfsbl_hw.h"
 
@@ -166,6 +166,7 @@ int main(void)
 		default:
 			printf("================= In Stage Default =================\r\n");
 			printf("In default stage: we should never be here\r\n");
+			simu_report(SIMU_PASS);
 			break;
 		}
 

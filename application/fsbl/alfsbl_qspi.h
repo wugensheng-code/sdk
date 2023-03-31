@@ -13,7 +13,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-#include "al9000_secure.h"
+#include <alfsbl_secure.h>
 #include "alfsbl_data.h"
 #include "alfsbl_hw.h"
 
@@ -21,6 +21,9 @@ extern "C" {
 
 uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax);
 uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo);
+
+
+
 uint32_t AlFsbl_Qspi24Release(void);
 
 uint32_t AlFsbl_Qspi32Init(uint32_t *pBlockSizeMax);

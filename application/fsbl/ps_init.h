@@ -5,12 +5,12 @@
  *      Author: xuqingsong
  */
 
-#ifndef PSU_INIT_H_
-#define PSU_INIT_H_
+#ifndef PS_INIT_H_
+#define PS_INIT_H_
 
 #include <stdint.h>
 
-uint32_t psu_init(void);
+uint32_t ps_init(void);
 
 
-#endif /* PSU_INIT_H_ */
+#endif /* PS_INIT_H_ */

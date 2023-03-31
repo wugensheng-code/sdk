@@ -4,11 +4,10 @@
  *  Created on: May 18, 2022
  *      Author: qsxu
  */
+#include <alfsbl_secure.h>
 #include <stdio.h>
 #include <stdint.h>
 #include "alfsbl_misc.h"
-#include "al9000_secure.h"
-
 #include "alfsbl_err_code.h"
 #include "alfsbl_hw.h"
 #include "alfsbl_data.h"
@@ -145,16 +144,30 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 	PtAttrAuthType = PartitionAttr & ALIH_PH_ATTRIB_AUTH_TYPE_MASK;
 	printf("Auth Type       : %x\r\n", PtAttrAuthType);
 	printf("Efuse Auth Type : %x\r\n", EfuseCtrl & EFUSE_AUTH_TYPE_MASK);
-	if((PtAttrAuthType == ALIH_PH_ATTRIB_AUTH_TYPE_NONE) && ((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_HEADER_SET)) {
-		pSecureInfo->AuthType = OP_AUTH_NONE;
-		printf("Authentication NOT enabled...\r\n");
+	if((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_HEADER_SET) {
+		if(PtAttrAuthType == ALIH_PH_ATTRIB_AUTH_TYPE_NONE) {
+			pSecureInfo->AuthType = OP_AUTH_NONE;
+			printf("Authentication NOT enabled...\r\n");
+		}
+		else if(PtAttrAuthType == ALIH_PH_ATTRIB_AUTH_TYPE_ECC256) {
+			pSecureInfo->AuthType = OP_AUTH_ECC256;
+			pSecureInfo->HashType = OP_HASH_SHA256;
+			printf("Authentication ECC256\r\n");
+		}
+		else if(PtAttrAuthType == ALIH_PH_ATTRIB_AUTH_TYPE_SM2) {
+			pSecureInfo->AuthType = OP_AUTH_SM2;
+			pSecureInfo->HashType = OP_HASH_SM3;
+			printf("Authentication SM2\r\n");
+		}
 	}
-	else if((PtAttrAuthType == ALIH_PH_ATTRIB_AUTH_TYPE_ECC256) && ((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_ECC256)) {
+	else if(((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_ECC256) &&
+			(PtAttrAuthType == ALIH_PH_ATTRIB_AUTH_TYPE_ECC256)) {
 		pSecureInfo->AuthType = OP_AUTH_ECC256;
 		pSecureInfo->HashType = OP_HASH_SHA256;
 		printf("Authentication ECC256\r\n");
 	}
-	else if((PtAttrAuthType == ALIH_PH_ATTRIB_AUTH_TYPE_SM2) && ((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_SM2)) {
+	else if(((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_SM2) &&
+			(PtAttrAuthType == ALIH_PH_ATTRIB_AUTH_TYPE_SM2)) {
 		pSecureInfo->AuthType = OP_AUTH_SM2;
 		pSecureInfo->HashType = OP_HASH_SM3;
 		printf("Authentication SM2\r\n");
@@ -169,15 +182,27 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 	PtAttrEncType  = PartitionAttr & ALIH_PH_ATTRIB_ENC_TYPE_MASK;
 	printf("Enc Type       : %x\r\n", PtAttrEncType);
 	printf("Efuse Enc Type : %x\r\n", EfuseCtrl & EFUSE_ENC_TYPE_MASK);
-	if((PtAttrEncType == ALIH_PH_ATTRIB_ENC_TYPE_NONE) && ((EfuseCtrl & EFUSE_ENC_TYPE_MASK) == EFUSE_ENC_TYPE_HEADER_SET)) {
-		pSecureInfo->EncType = OP_ENCRYPT_NONE;
-		printf("Encrypt NOT enabled.\r\n");
+	if((EfuseCtrl & EFUSE_ENC_TYPE_MASK) == EFUSE_ENC_TYPE_HEADER_SET) {
+		if(PtAttrEncType == ALIH_PH_ATTRIB_ENC_TYPE_NONE) {
+			pSecureInfo->EncType = OP_ENCRYPT_NONE;
+			printf("Encrypt NOT enabled.\r\n");
+		}
+		else if(PtAttrEncType == ALIH_PH_ATTRIB_ENC_TYPE_AES256) {
+			pSecureInfo->EncType = OP_ENCRYPT_AES256;
+			printf("Encrypt AES256.\r\n");
+		}
+		else if(PtAttrEncType == ALIH_PH_ATTRIB_ENC_TYPE_SM4) {
+			pSecureInfo->EncType = OP_ENCRYPT_SM4;
+			printf("Encrypt SM4.\r\n");
+		}
 	}
-	else if((PtAttrEncType == ALIH_PH_ATTRIB_ENC_TYPE_AES256) && ((EfuseCtrl & EFUSE_ENC_TYPE_MASK) == EFUSE_ENC_TYPE_AES256)) {
+	else if(((EfuseCtrl & EFUSE_ENC_TYPE_MASK) == EFUSE_ENC_TYPE_AES256) &&
+			(PtAttrEncType == ALIH_PH_ATTRIB_ENC_TYPE_AES256)) {
 		pSecureInfo->EncType = OP_ENCRYPT_AES256;
 		printf("Encrypt AES256.\r\n");
 	}
-	else if((PtAttrEncType == ALIH_PH_ATTRIB_ENC_TYPE_SM4) && ((EfuseCtrl & EFUSE_ENC_TYPE_MASK) == EFUSE_ENC_TYPE_SM4)) {
+	else if(((EfuseCtrl & EFUSE_ENC_TYPE_MASK) == EFUSE_ENC_TYPE_SM4) &&
+			(PtAttrEncType == ALIH_PH_ATTRIB_ENC_TYPE_SM4)) {
 		pSecureInfo->EncType = OP_ENCRYPT_SM4;
 		printf("Encrypt SM4.\r\n");
 	}
@@ -264,7 +289,10 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 		Status = ALFSBL_INVALID_LOAD_ADDR;
 	}
 
-	if(AL9000_DDR1_BASE_ADDR <= PtHdr->DestExecAddr && PtHdr->DestExecAddr < AL9000_DDR1_BASE_ADDR + AL9000_DDR1_BYTE_LENGTH) {
+	if(PtHdr->DestExecAddr == 0xFFFFFFFF) {
+		// correct, do nothing, it is a none handoff ps partition
+	}
+	else if(AL9000_DDR1_BASE_ADDR <= PtHdr->DestExecAddr && PtHdr->DestExecAddr < AL9000_DDR1_BASE_ADDR + AL9000_DDR1_BYTE_LENGTH) {
 		// correct, do nothing
 	}
 	else if(AL9000_DDR2_BASE_ADDR <= PtHdr->DestExecAddr && PtHdr->DestExecAddr < AL9000_DDR2_BASE_ADDR + AL9000_DDR2_BYTE_LENGTH) {
@@ -273,7 +301,7 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 	else if(AL9000_RPU_ITCM_BASE_ADDR <= PtHdr->DestExecAddr && PtHdr->DestExecAddr < AL9000_RPU_ITCM_BASE_ADDR + AL9000_RPU_ITCM_BYTE_LENGTH) {
 		// correct, do nothing
 	}
-	else if(AL9000_OCM_BASE_ADDR <= PtHdr->DestLoadAddr && PtHdr->DestLoadAddr < AL9000_OCM_BASE_ADDR + AL9000_OCM_BYTE_LENGTH) {
+	else if(AL9000_OCM_BASE_ADDR <= PtHdr->DestExecAddr && PtHdr->DestExecAddr < AL9000_OCM_BASE_ADDR + AL9000_OCM_BYTE_LENGTH) {
 		// correct, do nothing
 	}
 	else {
@@ -344,13 +372,48 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		if(ALFSBL_SUCCESS != Status) {
 			goto END;
 		}
+#ifndef QSPI_XIP_THROUTH_CSU_DMA
+		if(pSecureInfo->EncType != OP_ENCRYPT_NONE) {
+			pSecureInfo->InputAddr  = LoadAddress;
+			pSecureInfo->OutputAddr = LoadAddress;
+			pSecureInfo->DataLength = Length;
+			Status = AlFsbl_DecHash(pSecureInfo);
+		}
+		if(ALFSBL_SUCCESS != Status) {
+			goto END;
+		}
+#endif
 	}
 	else if(FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_NAND) {
+		Status = FsblInstancePtr->DeviceOps.DeviceCopy(SrcAddress, LoadAddress, Length, NULL);
+		if(ALFSBL_SUCCESS != Status) {
+			goto END;
+		}
+		/// if encrypt enabled, do decrypt (and hash if necessary) through csu dma
+		if(pSecureInfo->EncType != OP_ENCRYPT_NONE) {
+			pSecureInfo->InputAddr  = LoadAddress;
+			pSecureInfo->OutputAddr = LoadAddress;
+			pSecureInfo->DataLength = Length;
+			Status = AlFsbl_DecHash(pSecureInfo);
+		}
+		if(ALFSBL_SUCCESS != Status) {
+			goto END;
+		}
 	}
 	else if((FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_SD)   ||
 			(FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_EMMC) ||
 			(FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_EMMC_RAW)) {
 		Status = FsblInstancePtr->DeviceOps.DeviceCopy(SrcAddress, LoadAddress, Length, NULL);
+		if(ALFSBL_SUCCESS != Status) {
+			goto END;
+		}
+		/// if encrypt enabled, do decrypt (and hash if necessary) through csu dma
+		if(pSecureInfo->EncType != OP_ENCRYPT_NONE) {
+			pSecureInfo->InputAddr  = LoadAddress;
+			pSecureInfo->OutputAddr = LoadAddress;
+			pSecureInfo->DataLength = Length;
+			Status = AlFsbl_DecHash(pSecureInfo);
+		}
 		if(ALFSBL_SUCCESS != Status) {
 			goto END;
 		}
@@ -362,7 +425,7 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	if((pSecureInfo->EncType == OP_ENCRYPT_NONE) && (pSecureInfo->HashType != OP_HASH_NONE)) {
 		printf("calculate hash\r\n");
 		pSecureInfo->HashDataAddr = LoadAddress;
-		Status = AlFsbl_Hash_1(pSecureInfo);
+		Status = AlFsbl_Hash(pSecureInfo);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
@@ -371,7 +434,7 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	/// read hash from boot image and check
 	if((pSecureInfo->HashType != OP_HASH_NONE) && (PtHdr->HashDataOffset != 0)) {
 		/// read hash from boot image
-		HashByteLen = (pSecureInfo->HashType == OP_HASH_SHA256) ? 32 : 16;
+		//HashByteLen = (pSecureInfo->HashType == OP_HASH_SHA256) ? 32 : 16;
 		Status = FsblInstancePtr->DeviceOps.DeviceCopy(
 				     ImageOffsetAddress + PtHdr->HashDataOffset,
 				     LoadAddress + PtHdr->PartitionLen,
@@ -385,7 +448,7 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		Status = AlFsbl_CompareHash(
 				     HashBuffer,
 				     (uint8_t *)(LoadAddress + PtHdr->PartitionLen),
-				     HashByteLen);
+				     32);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
@@ -416,7 +479,7 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		/// initial auth parameters;
 		pSecureInfo->PubKeyAddr = (uint32_t)(PartitionAc + ALAC_SPK_OFFSET);
 		pSecureInfo->SignatureAddr = (uint32_t)(PartitionAc + ALAC_PART_SIGNATURE_OFFSET);
-		Status = AlFsbl_Auth_1(pSecureInfo);
+		Status = AlFsbl_Auth(pSecureInfo);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
@@ -429,11 +492,12 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		printf("%08x\r\n", *ocmptr);
 		ocmptr++;
 	}
+
 	printf("Update handoff values\r\n");
 
 
 	/// update handoff values
-	if(LoadAddress != 0xFFFFFFFFU) {
+	if((PtHdr->DestExecAddr) != 0xFFFFFFFFU) {
 		HandoffNum = FsblInstancePtr->HandoffCpuNum;
 		FsblInstancePtr->HandoffValues[HandoffNum].CpuSettings = DestCpu;
 		FsblInstancePtr->HandoffValues[HandoffNum].HandoffAddress = PtHdr->DestExecAddr;
@@ -464,11 +528,6 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	PtHdr = &(FsblInstancePtr->ImageHeader.PartitionHeader[PartitionIdx]);
 	ImageOffsetAddress = FsblInstancePtr->ImageOffsetAddress;
 
-	printf("Trigger pl reset\r\n");
-	REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) & (~SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
-
-	printf("Release pl reset\r\n");
-	REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) | (SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
 
 	printf("Set PCAP not enable\r\n");
 	REG32(CSU_PCAP_ENABLE) = 0;
@@ -493,7 +552,8 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	pSecureInfo->KeyMode        = OP_BHDR_KEY;
 	pSecureInfo->EncMode        = SYM_ECB;
 	pSecureInfo->EncDir         = SYM_DECRYPT;
-	pSecureInfo->CsuAddrIncMode = CSUDMA_DST_INCR | CSUDMA_SRC_INCR;
+	//pSecureInfo->CsuAddrIncMode = CSUDMA_DST_INCR | CSUDMA_SRC_INCR;
+	pSecureInfo->CsuAddrIncMode = CSUDMA_DST_NOINCR | CSUDMA_SRC_INCR;
 
 	/// check secure info
 	printf("Auth type :  %02x\r\n", pSecureInfo->AuthType);
@@ -504,63 +564,46 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 
 	BootDevice = FsblInstancePtr->PrimaryBootDevice;
 
+	/// if hash enabled and data is not encrypted, read data first then do hash check
+	/// if boot device is not xip-qspi, read data first then decrypt and hash check
+
 	if(((pSecureInfo->HashType != OP_HASH_NONE) && (pSecureInfo->EncType == OP_ENCRYPT_NONE)) ||
 	   ((BootDevice != ALFSBL_BOOTMODE_QSPI24) && (BootDevice != ALFSBL_BOOTMODE_QSPI32))) {
 		if(DdrAvailable) {
-			/// todo
+			printf("to ddr in a whole block, then to pcap\r\n");
+			/// todo, to ddr, whole block, then to pcap
 		}
 		else {
-
-#if defined FSBL_PL_SIMU_MODE_3
-			pSecureInfo->CsuAddrIncMode = CSUDMA_DST_INCR | CSUDMA_SRC_INCR;
-			printf("to ocm in blocks\r\n");
-			Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)ReadBuffer, 0);
-			if(Status != ALFSBL_SUCCESS) {
-				goto END;
-			}
-#else
-			pSecureInfo->CsuAddrIncMode = CSUDMA_DST_INCR | CSUDMA_SRC_INCR;
-			printf("to ocm in blocks\r\n");
+			//pSecureInfo->CsuAddrIncMode = CSUDMA_DST_INCR | CSUDMA_SRC_INCR;
+			printf("to ocm in blocks, Block size: %d\r\n", BlockSizeMax);
 			Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)ReadBuffer, BlockSizeMax);
 			if(Status != ALFSBL_SUCCESS) {
 				goto END;
 			}
-#endif
 		}
 	}
 	else {
-		//printf("to pcap\n");
-		//pSecureInfo->CsuAddrIncMode = CSUDMA_DST_NOINCR | CSUDMA_SRC_INCR;
-#if defined FSBL_PL_SIMU_MODE_1
-		/// test mode 1: transfer bitstream in blocks, directly to PCAP WR STREAM
-		printf("to pcap in blocks\r\n");
-		pSecureInfo->CsuAddrIncMode = CSUDMA_DST_NOINCR | CSUDMA_SRC_INCR;
-		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, CSU_PCAP_WR_STREAM, BlockSizeMax);
-#elif defined FSBL_PL_SIMU_MODE_2
-		/// test mode 2: transfer bitstream in blocks, firstly to buffer in ocm, then to PCAP WR STREAM
-		printf("to buffer in ocm in blocks\r\n");
-		pSecureInfo->CsuAddrIncMode = CSUDMA_DST_INCR | CSUDMA_SRC_INCR;
-		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)ReadBuffer, BlockSizeMax);
-#elif defined FSBL_PL_SIMU_MODE_3
-		printf("to buffer in ocm, whole block\r\n");
-		pSecureInfo->CsuAddrIncMode = CSUDMA_DST_INCR | CSUDMA_SRC_INCR;
-		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)ReadBuffer, 0);
-#else
+#ifdef QSPI_XIP_THROUTH_CSU_DMA
 		printf("to pcap, whole block\r\n");
-		pSecureInfo->CsuAddrIncMode = CSUDMA_DST_NOINCR | CSUDMA_SRC_INCR;
+		//pSecureInfo->CsuAddrIncMode = CSUDMA_DST_NOINCR | CSUDMA_SRC_INCR;
 		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, CSU_PCAP_WR_STREAM, 0);
-#endif
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
+#else
+		printf("to ocm in blocks, Block size: %d\r\n", BlockSizeMax);
+		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)ReadBuffer, BlockSizeMax);
+		if(Status != ALFSBL_SUCCESS) {
+			goto END;
+		}
+#endif
 	}
-
 
 	/// read hash from boot image and check
 	if((pSecureInfo->HashType != OP_HASH_NONE) && (PtHdr->HashDataOffset != 0)) {
 		/// read hash from boot image
 		printf("read hash\r\n");
-		HashByteLen = (pSecureInfo->HashType == OP_HASH_SHA256) ? 32 : 16;
+		//HashByteLen = (pSecureInfo->HashType == OP_HASH_SHA256) ? 32 : 16;
 		Status = FsblInstancePtr->DeviceOps.DeviceCopy(
 				     ImageOffsetAddress + PtHdr->HashDataOffset,
 					 (uint32_t)HashData,
@@ -574,7 +617,7 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		Status = AlFsbl_CompareHash(
 				     HashBuffer,
 					 HashData,
-				     HashByteLen);
+				     32);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
@@ -606,7 +649,7 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		/// initial auth parameters;
 		pSecureInfo->PubKeyAddr = (uint32_t)(PartitionAc + ALAC_SPK_OFFSET);
 		pSecureInfo->SignatureAddr = (uint32_t)(PartitionAc + ALAC_PART_SIGNATURE_OFFSET);
-		Status = AlFsbl_Auth_1(pSecureInfo);
+		Status = AlFsbl_Auth(pSecureInfo);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
@@ -688,39 +731,50 @@ static uint32_t AlFsbl_BitstreamDataTransfer(AlFsblInfo *FsblInstancePtr, Secure
 	while(Length != 0) {
 		/// data transfer
 		printf("transfer data, Block num: %d\r\n", BlockCnt);
-		Status = FsblInstancePtr->DeviceOps.DeviceCopy(
-				     BlockSrcAddr,
-					 BlockDestAddr,
-					 BlockLength,
-					 pSecureInfo);
-		if(Status != ALFSBL_SUCCESS) {
-			goto END;
-		}
 
-		/// calculate hash if hash only but not encrytped.
-		if((pSecureInfo->EncType == OP_ENCRYPT_NONE) &&
-		   (pSecureInfo->HashType != OP_HASH_NONE)   &&
-		   (BlockDestAddr != CSU_PCAP_WR_STREAM)) {
-			printf("calculate hash\r\n");
-			pSecureInfo->HashDataAddr = BlockDestAddr;
-			Status = AlFsbl_Hash_1(pSecureInfo);
-			if(Status != ALFSBL_SUCCESS) {
-				goto END;
-			}
-		}
-
-		/// if dest addr is not pcap_wstream, transfer data to pcap wstream
-		if(BlockDestAddr != CSU_PCAP_WR_STREAM) {
-			printf("transfer data to pcap\r\n");
-			Status = AlFsbl_CsuDmaCopy(
-					     BlockDestAddr,
-					     CSU_PCAP_WR_STREAM,
+		if(DestAddr == CSU_PCAP_WR_STREAM) {
+			/// transfer to pcap, only when boot device is xip-qspi and not hash only
+			Status = FsblInstancePtr->DeviceOps.DeviceCopy(
+					     BlockSrcAddr,
+						 BlockDestAddr,
 						 BlockLength,
-						 CSUDMA_DST_NOINCR | CSUDMA_SRC_INCR);
+						 pSecureInfo);
 			if(Status != ALFSBL_SUCCESS) {
 				goto END;
 			}
 		}
+		else {
+			/// transfer to a buffer, if boot device is none-xip-qspi, sd/emmc, nand, or xip-qspi with hash only
+			/// step 1: transfer to buffer,
+			Status = FsblInstancePtr->DeviceOps.DeviceCopy(
+					     BlockSrcAddr,
+						 BlockDestAddr,
+						 BlockLength,
+						 NULL);
+			if(Status != ALFSBL_SUCCESS) {
+				goto END;
+			}
+
+			/// step 2: transfer to pcap
+			/// if enc enabled, do decrypt
+			pSecureInfo->HashDataAddr = BlockDestAddr;
+			pSecureInfo->InputAddr    = BlockDestAddr;
+			pSecureInfo->OutputAddr   = CSU_PCAP_WR_STREAM;
+			pSecureInfo->DataLength   = BlockLength;
+			Status = AlFsbl_DecHash(pSecureInfo);
+
+			/// step 3: if hash enabled without enc, calculate hash
+			if((pSecureInfo->EncType == OP_ENCRYPT_NONE) &&
+			   (pSecureInfo->HashType != OP_HASH_NONE)) {
+				printf("calculate hash\r\n");
+				pSecureInfo->HashDataAddr = BlockDestAddr;
+				Status = AlFsbl_Hash(pSecureInfo);
+				if(Status != ALFSBL_SUCCESS) {
+					goto END;
+				}
+			}
+		}
+
 		if(BlockSizeMax == 0)
 			goto END;
 
@@ -779,6 +833,8 @@ uint32_t ALFsbl_BitStreamProgDone(void)
 	REG32(CSU_PCAP_WR_STREAM) = ProgDone[1];
 	REG32(CSU_PCAP_WR_STREAM) = ProgDone[2];
 
+	printf("\n");
+
 	Status = AlFsbl_CsuDmaCopy(
 			     (uint32_t)(&BitStreamNoop),
 				 CSU_PCAP_CSULOCAL_WR_STREAM,
@@ -804,7 +860,7 @@ void AlFsbl_PrintPartitionHeaderInfo(AlFsbl_PartitionHeader *PtHdr)
 	printf("Hash Data offset            : 0x%08x\r\n", PtHdr->HashDataOffset);
 	printf("AC Offset                   : 0x%08x\r\n", PtHdr->AcOffset);
 	printf("Partition Header Checksum   : 0x%08x\r\n", PtHdr->PartiHdrChecksum);
-	putchar('\r\n');
+	printf("\r\n");
 
 	return;
 }

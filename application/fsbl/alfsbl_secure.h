@@ -13,11 +13,12 @@
 extern "C" {
 #endif
 
-
-#if 0   /// no use
-
 #include <stdint.h>
 //#include "alfsbl_hw.h"
+
+//#define CSUDMA_BLOCK_LENGTH_MAX   (0xFFC0UL)
+#define CSUDMA_BLOCK_LENGTH_MAX   (512UL)
+
 
 #define PPK_BYTE_LENGTH  (64U)
 #define SPK_BYTE_LENGTH  (64U)
@@ -81,10 +82,14 @@ extern "C" {
 #define SM4_BLOCK_BYTE 16  /// 128 bit
 
 /// msgram command type definition
-#define CMD_AUTH    (0XCD01)
-#define CMD_DMA     (0XCD02)
-#define CMD_ENCRYPT (0XCD03)
-#define CMD_HASH    (0XCD04)
+#define CMD_AUTH    (0xCD01)
+#define CMD_DMA     (0xCD02)
+#define CMD_ENCRYPT (0xCD03)
+#define CMD_HASH    (0xCD04)
+#define CMD_SIGN    (0xCD05)
+#define CMD_GENKEY  (0xCD06)
+#define CMD_GETZ    (0xCD07)
+
 #define CMD_ACK     (0xAC01)
 
 /// msgram command options definition
@@ -106,6 +111,9 @@ extern "C" {
 #define OP_DMA_DONE        (0x6B)
 #define OP_ENCRYPT_DONE    (0x6C)
 #define OP_HASH_DONE       (0x6D)
+#define OP_SIGN_DONE       (0x6E)
+#define OP_GENKEY_DONE     (0x6F)
+#define OP_GETZ_DONE       (0x71)
 
 #define OP_BHDR_KEY        (0x6E)
 #define OP_USER_KEY        (0x6F)
@@ -193,15 +201,29 @@ typedef struct _SecureInfo_ {
 	uint8_t  KeyMode;        /// OP_BHDR_KEY / OP_USER_KEY, bootheader key or user key
 	uint8_t  CsuAddrIncMode; /// Bit1: Destination addr increment mode, Bit0: Source addr increment mode
 	uint8_t  BlockMode;      /// Bit2: mark firt block, Bit3: mark last block, all zero: one whole block, all one: mark middle block
-	uint32_t InputAddr;
-	uint32_t OutputAddr;
+	union {
+		uint32_t InputAddr;
+		uint32_t IdaAddr;
+	};
+	union {
+		uint32_t DataLength;
+		uint32_t IdaLength;
+	};
+	union {
+		uint32_t OutputAddr;
+		uint32_t ZaOutAddr;
+	};
 	uint32_t HashDataAddr;
-	uint32_t DataLength;
+	//uint32_t DataLength;
 	uint32_t KeyAddr;
 	uint32_t IvAddr;
 	uint32_t SignatureAddr;
 	uint32_t PubKeyAddr;
-	uint32_t HashOutAddr;    /// HashOut Address for Hash process, Digest Address for Auth process
+	uint32_t PriKeyAddr;
+	union {
+		uint32_t HashOutAddr;
+		uint32_t DigestAddr;
+	};
 } SecureInfo;
 
 
@@ -263,17 +285,62 @@ typedef struct _MsgOptDef_ {
 } MsgOptDef;
 
 
+typedef struct _SignatureParamDef_ {
+	uint32_t PriKeyAddr;
+	uint32_t DigestAddr;
+	uint32_t SignatureAddr;
+} SignatureParamDef;
+
+
+typedef struct _KeyPairGenParamDef_ {
+	uint32_t PubKeyAddr;
+	uint32_t PriKeyAddr;
+} KeyPairGenParamDef;
+
+
+//typedef struct _Sm2GetZaParamDef_ {
+//	uint32_t PubKeyAddr;
+//	uint32_t IdaAddr;
+//	uint32_t IdaLength;
+//	uint32_t ZaOutAddr;
+//} Sm2GetZaParamDef;
+
+
 typedef struct _SecMsgDef_ {
 	uint32_t Cmd;
 	MsgOptDef Option0;
 	MsgOptDef Option1;
 	union {
-		AuthParamDef AuthParam;
-		HashParamDef HashParam;
-		DmaParamDef  DmaParam;
-		uint32_t     Data[7];
+		AuthParamDef       AuthParam;
+		HashParamDef       HashParam;
+		DmaParamDef        DmaParam;
+		SignatureParamDef  SignatureParam;
+		KeyPairGenParamDef KeyPairGenParam;
+//		Sm2GetZaParamDef   Sm2GetZaParam;
+		uint32_t           Data[7];
 	};
 } SecMsgDef;
+
+typedef union _PubKey_ {
+	uint32_t All[16];
+	struct {
+		uint32_t X[8];
+		uint32_t Y[8];
+	} Value;
+} PubKey;
+
+typedef struct _PriKey_ {
+	uint32_t Value[8];
+} PriKey;
+
+typedef union _Signature_ {
+	uint32_t All[16];
+	struct {
+		uint32_t R[8];
+		uint32_t S[8];
+	} Value;
+} Signature;
+
 
 
 typedef struct _AckDef_ {
@@ -285,29 +352,25 @@ uint32_t AlFsbl_CalcCrc32(uint8_t *pBuffer, uint32_t Length);
 uint32_t AlFsbl_ChecksumCheck(uint8_t *pBuffer, uint32_t Length, uint32_t Checksum);
 
 uint32_t SecureIrqInit(void);
-void TriggerSecInterrupt(void);
-void MsgReceive(void);
-//uint32_t AlFsbl_Hash(uint32_t DataInAddr, uint32_t DataByteLen, uint32_t HashOutAddr, uint8_t HashType);
-//uint32_t AlFsbl_Auth(uint32_t PubKeyAddr, uint32_t SignatureAddr, uint32_t DigestAddr, uint8_t AuthType);
-//uint32_t AlFsbl_EncHash(SecEncHashIODef *pSecEncHashIOParam);
+void     TriggerSecInterrupt(void);
+void     MsgReceive(void);
 
 uint32_t AlFsbl_CompareHash(uint8_t *pHash1, uint8_t *pHash2, uint32_t HashLen);
 
 
-uint32_t AlFsbl_DecHash_1(SecureInfo *pSecureInfo);
-uint32_t AlFsbl_Hash_1(SecureInfo *pSecureInfo);
-uint32_t AlFsbl_Auth_1(SecureInfo *pSecureInfo);
+uint32_t AlFsbl_DecHash(SecureInfo *pSecureInfo);
+uint32_t AlFsbl_Hash(SecureInfo *pSecureInfo);
+uint32_t AlFsbl_Auth(SecureInfo *pSecureInfo);
 
 uint32_t AlFsbl_CsuDmaCopy(uint32_t SrcAddr, uint32_t DestAddr, uint32_t DataByteLen, uint8_t AddrMode);
 
-//void Alfsbl_SecMsgSend(SecMsgDef *SecMsgPtr, uint32_t CmdLen);
+uint32_t AlFsbl_Signature(uint8_t AuthType, uint32_t PriKeyAddr, uint32_t DigestAddr, uint32_t SigAddr);
+uint32_t AlFsbl_KeyPairGen(uint8_t AuthType, uint32_t PubKeyAddr, uint32_t PriKeyAddr);
+//uint32_t AlFsbl_Sm2GetZa(uint32_t PubKeyAddr, uint32_t IdaAddr, uint32_t IdaLength, uint32_t ZaOutAddr);
 
 
 
 //uint32_t cal_crc32(uint8_t *buf, uint32_t size);
-
-
-#endif
 
 #ifdef __cplusplus
 }
