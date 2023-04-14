@@ -29,14 +29,13 @@ typedef enum
 #define AL_DEF_ERR_LAYER( module, level, layer, errid) \
     ((AL_S32)( (AL_ERR_BAREMETAL) | ((module) << 16 ) | ((level)<<13) | ((layer)<<10) | (errid)))
 
-#define LOW_LEVEL            (0x01)
+#define LOW_LEVEL             (0x01)
 
 #define AL_DEF_ERR(module, level, errid)  AL_DEF_ERR_LAYER(module, level, LOW_LEVEL, errid)
 
 #define AL_GET_ERRID(err)     ((AL_S32)(err & ((1 << 10)-1)))
 
-
-#define AL_ERR_OK               (0x00U)
+#define AL_ERR_OK             (0x00U)
 
 /* NOTE! the following defined all common error code,
 ** all module must reserved 0~63 for their common error code
@@ -65,8 +64,8 @@ typedef enum
 
 typedef enum
 {
-    AL_UART                 = 1,
-    AL_MPU                  = 2,
+    AL_UART     = 1,
+    AL_MPU      = 2,
 } AL_MODULE_TYPE;
 
 #ifdef __cplusplus

@@ -17,7 +17,7 @@ AL_S32 AlMpu_Hal_ConfigRegion(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Conf
 
     /* Check the configure parameter */
     if (!(MPU_IS_VALID_MPU(Instance))) {
-         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
+        return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
     if (!(MPU_IS_VALID_REGION_NUMBER(Instance, Config->RegionNumber))) {
         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
@@ -59,7 +59,7 @@ AL_S32 AlMpu_Hal_DisableRegion(AL_REG32 Instance, AL_U8 RegionNumber)
 
     /* Check the Instance */
     if (!(MPU_IS_VALID_MPU(Instance))) {
-         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
+        return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
 
     RegionBaseAddr = MPU_REGION_I_BASE_ADDR(Instance, RegionNumber);
@@ -72,7 +72,7 @@ AL_S32 AlMpu_Hal_MpuEnable(AL_REG32 Instance)
 {
     /* Check the Instance */
     if (!(MPU_IS_VALID_MPU(Instance))) {
-         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
+        return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
 
     AlMpu_ll_MpuEnable(Instance);
@@ -84,7 +84,7 @@ AL_S32 AlMpu_Hal_MpuDisable(AL_REG32 Instance)
 {
     /* Check the Instance */
     if (!(MPU_IS_VALID_MPU(Instance))) {
-         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
+        return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
 
     AlMpu_ll_MpuDisable(Instance);
