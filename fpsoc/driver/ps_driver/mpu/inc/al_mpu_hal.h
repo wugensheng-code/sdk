@@ -13,40 +13,40 @@ extern "C" {
  */
 
 /* Common region number define */
-#define MPU_COMMON_REGION_NUMBER1       (0x00)
-#define MPU_COMMON_REGION_NUMBER2       (0x01)
-#define MPU_COMMON_REGION_NUMBER3       (0x02)
-#define MPU_COMMON_REGION_NUMBER4       (0x03)
-#define MPU_COMMON_REGION_NUMBER5       (0x04)
-#define MPU_COMMON_REGION_NUMBER6       (0x05)
-#define MPU_COMMON_REGION_NUMBER7       (0x06)
-#define MPU_COMMON_REGION_NUMBER8       (0x07)
+#define MPU_COMMON_REGION_NUMBER1       (0x01)
+#define MPU_COMMON_REGION_NUMBER2       (0x02)
+#define MPU_COMMON_REGION_NUMBER3       (0x03)
+#define MPU_COMMON_REGION_NUMBER4       (0x04)
+#define MPU_COMMON_REGION_NUMBER5       (0x05)
+#define MPU_COMMON_REGION_NUMBER6       (0x06)
+#define MPU_COMMON_REGION_NUMBER7       (0x07)
+#define MPU_COMMON_REGION_NUMBER8       (0x08)
 
 /* Just for apu mpu, apu mpu has 32 regions */
-#define MPU_APU_REGION_NUMBER9          (0x08)
-#define MPU_APU_REGION_NUMBER10         (0x09)
-#define MPU_APU_REGION_NUMBER11         (0x0A)
-#define MPU_APU_REGION_NUMBER12         (0x0B)
-#define MPU_APU_REGION_NUMBER13         (0x0C)
-#define MPU_APU_REGION_NUMBER14         (0x0D)
-#define MPU_APU_REGION_NUMBER15         (0x0E)
-#define MPU_APU_REGION_NUMBER16         (0x0F)
-#define MPU_APU_REGION_NUMBER17         (0x10)
-#define MPU_APU_REGION_NUMBER18         (0x11)
-#define MPU_APU_REGION_NUMBER19         (0x12)
-#define MPU_APU_REGION_NUMBER20         (0x13)
-#define MPU_APU_REGION_NUMBER21         (0x14)
-#define MPU_APU_REGION_NUMBER22         (0x15)
-#define MPU_APU_REGION_NUMBER23         (0x16)
-#define MPU_APU_REGION_NUMBER24         (0x17)
-#define MPU_APU_REGION_NUMBER25         (0x18)
-#define MPU_APU_REGION_NUMBER26         (0x19)
-#define MPU_APU_REGION_NUMBER27         (0x1A)
-#define MPU_APU_REGION_NUMBER28         (0x1B)
-#define MPU_APU_REGION_NUMBER29         (0x1C)
-#define MPU_APU_REGION_NUMBER30         (0x1D)
-#define MPU_APU_REGION_NUMBER31         (0x1E)
-#define MPU_APU_REGION_NUMBER32         (0x1F)
+#define MPU_APU_REGION_NUMBER9          (0x09)
+#define MPU_APU_REGION_NUMBER10         (0x0A)
+#define MPU_APU_REGION_NUMBER11         (0x0B)
+#define MPU_APU_REGION_NUMBER12         (0x0C)
+#define MPU_APU_REGION_NUMBER13         (0x0D)
+#define MPU_APU_REGION_NUMBER14         (0x0E)
+#define MPU_APU_REGION_NUMBER15         (0x0F)
+#define MPU_APU_REGION_NUMBER16         (0x10)
+#define MPU_APU_REGION_NUMBER17         (0x11)
+#define MPU_APU_REGION_NUMBER18         (0x12)
+#define MPU_APU_REGION_NUMBER19         (0x13)
+#define MPU_APU_REGION_NUMBER20         (0x14)
+#define MPU_APU_REGION_NUMBER21         (0x15)
+#define MPU_APU_REGION_NUMBER22         (0x16)
+#define MPU_APU_REGION_NUMBER23         (0x17)
+#define MPU_APU_REGION_NUMBER24         (0x18)
+#define MPU_APU_REGION_NUMBER25         (0x19)
+#define MPU_APU_REGION_NUMBER26         (0x1A)
+#define MPU_APU_REGION_NUMBER27         (0x1B)
+#define MPU_APU_REGION_NUMBER28         (0x1C)
+#define MPU_APU_REGION_NUMBER29         (0x1D)
+#define MPU_APU_REGION_NUMBER30         (0x1E)
+#define MPU_APU_REGION_NUMBER31         (0x1F)
+#define MPU_APU_REGION_NUMBER32         (0x20)
 
 /* Check the config parameter */
 #define MPU_IS_VALID_MPU(INSTANCE) (((INSTANCE) == MPU_DDRS1_BASE_ADDR)     || \
@@ -83,7 +83,7 @@ extern "C" {
 
  typedef struct
 {
-    /* Region number， The number starts with 0, which represents the first region */
+    /* Region number， The number starts with 1, which represents the first region */
     AL_U8 RegionNumber;
 
     AL_MPU_RegionEnEnum RegionEnable;
@@ -185,6 +185,26 @@ AL_S32 AlMpu_Hal_MpuEnable(AL_REG32 Instance);
  * @note
  */
 AL_S32 AlMpu_Hal_MpuDisable(AL_REG32 Instance);
+
+/**
+ * This function is MPU interrupt handler
+ * @param
+ *
+ * @return
+ *
+ * @note
+ */
+AL_VOID AlMpu_Hal_MpuIntrHandler();
+
+/**
+ * This function register MPU interrupt
+ * @param
+ *
+ * @return
+ *
+ * @note
+ */
+AL_VOID AlMpu_Hal_MpuRegisterIntr();
 
 #ifdef __cplusplus
 }

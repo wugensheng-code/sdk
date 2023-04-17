@@ -6,7 +6,9 @@ extern "C" {
 #endif
 
 /* MPU interrupt state register */
-#define INTR_MPU_STATE              (0xf8800214UL)
+#define MPU_INTR_STATE_BASE_ADDR    (0xf8800214UL)
+#define MPU_INTR_STATE_SHIFT        0
+#define MPU_INTR_STATE_SHIFT_SIZE   7
 
 /* MPU base addrress */
 #define MPU_DDRS0_BASE_ADDR         (0xF840E000UL)
@@ -27,8 +29,7 @@ extern "C" {
 #define MPU_EAR_OFFSET              0xC
 #define MPU_RASR_REGION1_OFFSET     0x10
 
-#define MPU_REGION_I_BASE_ADDR(MPU_BASE_ADDR, REGION_NUMBER) \
-(MPU_BASE_ADDR + MPU_RASR_REGION1_OFFSET + (REGION_NUMBER * 0x10))
+#define MPU_REGION_I_BASE_ADDR(MPU_BASE_ADDR, REGION_NUMBER)    (MPU_BASE_ADDR + (REGION_NUMBER * 0x10))
 
 #define MPU_REGION_RASR_REGION_OFFSET       0x0
 #define MPU_RASR_REGION_REGIONEN_SHIFT      0

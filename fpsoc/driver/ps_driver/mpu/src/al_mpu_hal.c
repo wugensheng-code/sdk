@@ -1,6 +1,14 @@
 #include "al_mpu_hal.h"
 #include "al_errno.h"
 
+#include "nuclei_sdk_soc.h"
+#include "gic_v3.h"
+
+static interrupt_table AL_MPU_IntrTable = {
+    .handler = AlMpu_Hal_MpuIntrHandler,
+    .ref = NULL
+};
+
 static AL_VOID AlMpu_Hal_SetRegionAttr(AL_REG32 RegionBaseAddr, AL_MPU_RegionConfigStruct *RegionConfig)
 {
     AlMpu_ll_SetRegionAttrSecure(RegionBaseAddr, RegionConfig->Secure);
@@ -90,4 +98,80 @@ AL_S32 AlMpu_Hal_MpuDisable(AL_REG32 Instance)
     AlMpu_ll_MpuDisable(Instance);
 
     return AL_ERR_OK;
+}
+
+static AL_U32 AlMpu_Hal_GetInstance(AL_MPU_InterruptIdEnum IntrId)
+{
+    AL_U32 Instance;
+
+    switch (IntrId) {
+        case MPU_DDRS0:
+            Instance = (AL_U32)MPU_DDRS0_BASE_ADDR;
+            break;
+
+        case MPU_DDRS1:
+            Instance = (AL_U32)MPU_DDRS1_BASE_ADDR;
+            break;
+
+        case MPU_HPM0:
+            Instance = (AL_U32)MPU_HPM0_BASE_ADDR;
+            break;
+
+        case MPU_HPM1:
+            Instance = (AL_U32)MPU_HPM1_BASE_ADDR;
+            break;
+
+        case MPU_NPU:
+            Instance = (AL_U32)MPU_NPU_BASE_ADDR;
+            break;
+
+        case MPU_APU:
+            Instance = (AL_U32)MPU_APU_BASE_ADDR;
+            break;
+
+        case MPU_OCMS2:
+            Instance = (AL_U32)MPU_OCMS2_BASE_ADDR;
+            break;
+
+        default:
+            Instance = AL_NULL;
+            break;
+    }
+
+    return Instance;
+}
+
+static AL_U32 AlMpu_Hal_GetIntrRegionNumber(AL_REG32 Instance)
+{
+    return AlMpu_ll_GetIntrRegionNumber(Instance);
+}
+
+AL_VOID AlMpu_Hal_MpuIntrHandler()
+{
+    AL_MPU_InterruptIdEnum MpuIntrId;
+    AL_U32 Instance;
+    AL_U32 IntrRegionNumber;
+    AL_REG32 RegionBaseAddr;
+
+    /* Get MPU interrupt id */
+    MpuIntrId = AlMpu_ll_GetMpuIntrId();
+
+    /* Get MPU base address */
+    Instance = AlMpu_Hal_GetInstance(MpuIntrId);
+    if (Instance == AL_NULL) {
+        return;
+    }
+
+    /* Get intrrupt region number and region base addrress */
+    IntrRegionNumber = AlMpu_Hal_GetIntrRegionNumber(Instance);
+    RegionBaseAddr = MPU_REGION_I_BASE_ADDR(Instance, IntrRegionNumber);
+
+    /* Clear the interrupt */
+    AlMpu_ll_ClrRegionIntr(RegionBaseAddr);
+}
+
+AL_VOID AlMpu_Hal_MpuRegisterIntr()
+{
+    ECLIC_Register_IRQ(SOC_INT130_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, &AL_MPU_IntrTable);
+    __enable_irq();
 }
