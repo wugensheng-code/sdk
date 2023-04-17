@@ -32,12 +32,10 @@
 #define GICV3_SPECIAL_NUM				(GICV3_SPECIAL_END - GICV3_SPECIAL_START +1)
 #define IRQ_MAX_NUM					(256)
 
-typedef void (*interrupt_fn)();
+static interrupt_table irq_handler_list[IRQ_MAX_NUM + GICV3_SPECIAL_NUM];
+static interrupt_table fiq_handler_list[IRQ_MAX_NUM + GICV3_SPECIAL_NUM];
 
-static interrupt_fn irq_handler_list[IRQ_MAX_NUM + GICV3_SPECIAL_NUM];
-static interrupt_fn fiq_handler_list[IRQ_MAX_NUM + GICV3_SPECIAL_NUM];
-
-static void request_interrupt(u32 int_id, void* handler, interrupt_fn *fn)
+static void request_interrupt(u32 int_id, void* handler, void *ref, interrupt_table *intr)
 {
 	/*
 	 * > IRQ_MAX_NUM && (not in the range of special range)
@@ -48,21 +46,23 @@ static void request_interrupt(u32 int_id, void* handler, interrupt_fn *fn)
 	}
 
 	if (int_id < IRQ_MAX_NUM) {
-		fn[int_id] = handler;
+		intr[int_id].handler = handler;
+		intr[int_id].ref = ref;
 		gicv3_enable_irq(int_id);
 	} else {
-		fn[int_id - GICV3_SPECIAL_START + IRQ_MAX_NUM] = handler;
+		intr[int_id - GICV3_SPECIAL_START + IRQ_MAX_NUM].handler = handler;
+		intr[int_id - GICV3_SPECIAL_START + IRQ_MAX_NUM].ref = ref;
 	}
 }
 
-void request_fiq(u32 int_id, void* handler)
+void request_fiq(u32 int_id, void* handler, void *ref)
 {
-	request_interrupt(int_id, handler, fiq_handler_list);
+	request_interrupt(int_id, handler, ref, fiq_handler_list);
 }
 
-void request_irq(u32 int_id, void* handler)
+void request_irq(u32 int_id, void* handler, void *ref)
 {
-	request_interrupt(int_id, handler, irq_handler_list);
+	request_interrupt(int_id, handler, ref, irq_handler_list);
 }
 
 
@@ -403,17 +403,20 @@ void do_irq_handle(void)
 	}
 
 	/* run irq handler function */
-	void (*p_func)();
+	void (*p_func)(void *instance);
+	void *instance;
 	if (int_id < IRQ_MAX_NUM) {
-		p_func = irq_handler_list[int_id];
+		p_func = irq_handler_list[int_id].handler;
+		instance = irq_handler_list[int_id].ref;
 	} else {
-		p_func = irq_handler_list[int_id -GICV3_SPECIAL_START + IRQ_MAX_NUM];
+		p_func = irq_handler_list[int_id -GICV3_SPECIAL_START + IRQ_MAX_NUM].handler;
+		instance = irq_handler_list[int_id -GICV3_SPECIAL_START + IRQ_MAX_NUM].ref;
 	}
 
 	if (!p_func) {
 		gic_print("can not found your irq event handle at irq number: %d\n", int_id);
 	} else {
-		p_func();
+		p_func(instance);
 	}
 #if 0
 	/* write end of interrupt to deactivate the interrupt */
@@ -448,19 +451,22 @@ void do_fiq_handle(void)
 {
 	u32	int_id;
 	void (*p_func)();
+	void *instance;
 
 	int_id = gic_fiq_get_int_id();
 
 	/* run irq handler function */
 	if (int_id < IRQ_MAX_NUM) {
-		p_func = fiq_handler_list[int_id];
+		p_func = fiq_handler_list[int_id].handler;
+		instance = fiq_handler_list[int_id].ref;
 	} else {
-		p_func = fiq_handler_list[int_id - GICV3_SPECIAL_START + IRQ_MAX_NUM];
+		p_func = fiq_handler_list[int_id - GICV3_SPECIAL_START + IRQ_MAX_NUM].handler;
+		instance = fiq_handler_list[int_id - GICV3_SPECIAL_START + IRQ_MAX_NUM].ref;
 	}
 	if (!p_func) {
 		gic_print("can not found your irq event handle at irq number: %d\n",int_id);
 	} else {
-		p_func();
+		p_func(instance);
 	}
 	/* write end of interrupt to deactivate the interrupt */
 

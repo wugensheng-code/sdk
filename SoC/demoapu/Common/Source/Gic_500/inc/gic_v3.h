@@ -18,6 +18,15 @@ typedef enum {
 	GROUP_1_NONSECURE = 2,
 } gic_group;
 
+typedef void (*interrupt_fn)(void *instance);
+
+typedef struct
+{
+	interrupt_fn	handler;
+	void			*ref;
+}interrupt_table;
+
+
 /*
  * Low-level accessors
  *
@@ -150,8 +159,8 @@ void gicv3_init(void);
  * @param {void*} handler, function point of device interrupt function
  * @return {*}
  */
-void request_irq(u32 int_id, void* handler);
-
+void request_irq(u32 int_id, void* handler, void *ref);
+void request_fiq(u32 int_id, void* handler, void *ref);
 /**
  * @desc  : disable irq
  * @param {int} irq_num

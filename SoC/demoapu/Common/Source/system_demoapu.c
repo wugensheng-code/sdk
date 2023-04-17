@@ -26,6 +26,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "nuclei_sdk_hal.h"
+#include "config.h"
+#include "gic_v3_addr.h"
+#include "gic_v3.h"
 
 /*----------------------------------------------------------------------------
   Define clocks
@@ -172,7 +175,28 @@ int32_t ECLIC_Register_IRQ(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_Type trig_
 	 *	 APU_SPI_IDX = (RPU_SPI_IDX + SPI_OFFSET_APU_TO_RPU)
 	*/
     #define SPI_ID_OFFSET_APU_TO_RPU					(13)
-	request_irq(IRQn + SPI_ID_OFFSET_APU_TO_RPU, handler);
+
+    interrupt_table *callback = (interrupt_table *)handler;
+
+    //is edge triger?
+    if (trig_mode != 0) {
+        uint32_t *addr = GICD_ICFGR + ((IRQn + SPI_ID_OFFSET_APU_TO_RPU) / 16) * 4;
+        uint32_t mask = *(uint32_t *)addr;
+        uint32_t offset = (((IRQn + SPI_ID_OFFSET_APU_TO_RPU) % 16) << 1);
+        mask &= ~(0x3 << offset);
+        mask |= 0x2 << offset;
+        // writel_relaxed(mask, addr);
+        *(uint32_t *)addr = mask;
+    }
+
+#ifndef SWITCH_TO_EL1_EL0_FROM_EL3
+    request_fiq(IRQn + SPI_ID_OFFSET_APU_TO_RPU, callback->handler, callback->ref);
+    printf("currentel is el3, request fiq!\r\n");
+#else
+    request_irq(IRQn + SPI_ID_OFFSET_APU_TO_RPU, callback->handler, callback->ref);
+    printf("currentel is not el3, request irq!\r\n");
+#endif
+    //asm volatile("msr %w0, [%1]" : : "rZ" (val), "r" (addr));
 	return 0;
 }
 
