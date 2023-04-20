@@ -34,9 +34,9 @@ typedef enum
 
 typedef enum
 {
-    MPU_REGION_UNPRIVILEDGE = 0,
-    MPU_REGION_PRIVILEDGE   = 1,
-} AL_MPU_RegionPriviledgeEnum;
+    MPU_REGION_UNPRIVILEGE = 0,
+    MPU_REGION_PRIVILEGE   = 1,
+} AL_MPU_RegionPrivilegeEnum;
 
 typedef enum
 {
@@ -126,15 +126,15 @@ static inline AL_VOID AlMpu_ll_SetRegionAttrSecure(AL_REG32 RegionBaseAddr, AL_M
 /**
  * This function set RASR priviledge
  * @param RegionBaseAddr region base address
- * @param Priviledge priviledge attribute
+ * @param Privilege privilege attribute
  *
  * @return
  *
  * @note
  */
-static inline AL_VOID AlMpu_ll_SetRegionAttrPriviledge(AL_REG32 RegionBaseAddr, AL_MPU_RegionPriviledgeEnum Priviledge)
+static inline AL_VOID AlMpu_ll_SetRegionAttrPrivilege(AL_REG32 RegionBaseAddr, AL_MPU_RegionPrivilegeEnum Privilege)
 {
-    SET_BIT((RegionBaseAddr + MPU_REGION_RASR_REGION_OFFSET), MPU_RASR_REGION_PRIVILEDGE_SHIFT, Priviledge);
+    SET_BIT((RegionBaseAddr + MPU_REGION_RASR_REGION_OFFSET), MPU_RASR_REGION_PRIVILEDGE_SHIFT, Privilege);
 }
 
 /**

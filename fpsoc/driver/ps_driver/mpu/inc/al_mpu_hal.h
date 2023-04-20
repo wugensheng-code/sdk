@@ -70,8 +70,8 @@ extern "C" {
 #define MPU_IS_VALID_REGION_SECURE(SECURE) (((SECURE) == MPU_REGION_SECURE)   || \
                                             ((SECURE) == MPU_REGION_NONSECURE))
 
-#define MPU_IS_VALID_REGION_PRIVILEDGE(PRIVILEDGE) (((PRIVILEDGE) == MPU_REGION_UNPRIVILEDGE) || \
-                                                    ((PRIVILEDGE) == MPU_REGION_PRIVILEDGE))
+#define MPU_IS_VALID_REGION_PRIVILEDGE(PRIVILEGE) (((PRIVILEGE) == MPU_REGION_UNPRIVILEGE) || \
+                                                   ((PRIVILEGE) == MPU_REGION_PRIVILEGE))
 
 #define MPU_IS_VALID_READ_WRITE(READWRITE) (((READWRITE) == MPU_REGION_READWRITE)   || \
                                             ((READWRITE) == MPU_REGION_READONLY)    || \
@@ -92,7 +92,7 @@ extern "C" {
     AL_U8 RegionSize;
 
     AL_MPU_RegionSecureEnum Secure;
-    AL_MPU_RegionPriviledgeEnum Priviledge;
+    AL_MPU_RegionPrivilegeEnum Privilege;
     AL_MPU_RegionReadWriteEnum ReadWrite;
     AL_MPU_RegionInterruptEnEnum InterruptEnable;
 
@@ -148,6 +148,19 @@ typedef enum
  * @note
  */
 AL_S32 AlMpu_Hal_ConfigRegion(AL_REG32 Instance, AL_MPU_RegionConfigStruct *RegionConfig);
+
+/**
+ * This function enable the mpu region
+ * @param Instance mpu base address
+ * @param RegionNumber the region number
+ *
+ * @return
+ *        - 0 on success
+ *        - Numbers greater than zero on failure
+ *
+ * @note
+ */
+AL_S32 AlMpu_Hal_EnableRegion(AL_REG32 Instance, AL_U8 RegionNumber);
 
 /**
  * This function disable the mpu region

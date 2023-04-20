@@ -12,7 +12,7 @@ static interrupt_table AL_MPU_IntrTable = {
 static AL_VOID AlMpu_Hal_SetRegionAttr(AL_REG32 RegionBaseAddr, AL_MPU_RegionConfigStruct *RegionConfig)
 {
     AlMpu_ll_SetRegionAttrSecure(RegionBaseAddr, RegionConfig->Secure);
-    AlMpu_ll_SetRegionAttrPriviledge(RegionBaseAddr, RegionConfig->Priviledge);
+    AlMpu_ll_SetRegionAttrPrivilege(RegionBaseAddr, RegionConfig->Privilege);
     AlMpu_ll_SetRegionAttrRw(RegionBaseAddr, RegionConfig->ReadWrite);
     AlMpu_ll_SetRegionAttrIntrEn(RegionBaseAddr, RegionConfig->InterruptEnable);
     AlMpu_ll_SetRegionAttrEnable(RegionBaseAddr, RegionConfig->RegionEnable);
@@ -36,7 +36,7 @@ AL_S32 AlMpu_Hal_ConfigRegion(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Conf
     if (!(MPU_IS_VALID_REGION_SECURE(Config->Secure))) {
         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
-    if (!(MPU_IS_VALID_REGION_PRIVILEDGE(Config->Priviledge))) {
+    if (!(MPU_IS_VALID_REGION_PRIVILEDGE(Config->Privilege))) {
         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
     if (!(MPU_IS_VALID_READ_WRITE(Config->ReadWrite))) {
@@ -57,6 +57,21 @@ AL_S32 AlMpu_Hal_ConfigRegion(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Conf
     AlMpu_Hal_SetRegionAttr(RegionBaseAddr, Config);
 
     AlMpu_ll_SetRegionGroupId(RegionBaseAddr, Config->GroupId);
+
+    return AL_ERR_OK;
+}
+
+AL_S32 AlMpu_Hal_EnableRegion(AL_REG32 Instance, AL_U8 RegionNumber)
+{
+    AL_REG32 RegionBaseAddr;
+
+    /* Check the Instance */
+    if (!(MPU_IS_VALID_MPU(Instance))) {
+        return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
+    }
+
+    RegionBaseAddr = MPU_REGION_I_BASE_ADDR(Instance, RegionNumber);
+    AlMpu_ll_SetRegionAttrEnable(RegionBaseAddr, MPU_REGION_ENABLE);
 
     return AL_ERR_OK;
 }
