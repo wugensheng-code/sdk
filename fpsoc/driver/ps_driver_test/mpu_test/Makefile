@@ -1,6 +1,21 @@
-TARGET = all
-
 SOC ?= demosoc
+SECURE ?=
+
+ifeq ($(SECURE), 1)
+TARGET = fpsoc_mpu_secure_el1
+else
+TARGET = fpsoc_mpu_nonsecure_el1
+endif
+
+NUCLEI_SDK_ROOT = ../../../../
+
+SRCDIRS = .
+
+INCDIRS = .
+
+COMMON_FLAGS := -O0 -g3
+
+include $(NUCLEI_SDK_ROOT)/Build/Makefile.base
 
 ifeq ($(SOC), demoapu)
 COMPILE_PREFIX ?= /opt/toolchain/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
@@ -8,22 +23,19 @@ else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
-all:
-	echo COMPILE_PREFIX = $(COMPILE_PREFIX)
-
-ifeq ($(SOC), demoapu)
-
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_secure_el1
-
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_nonsecure_el1
+ifeq ($(SECURE), 1)
+COMMON_FLAGS +=
 else
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_rpu
-endif
+COMMON_FLAGS += -DSUPPORT_NONSECURE
 
+# For APU privilege test, disable by default
+#COMMON_FLAGS += -DAPU_MPU_PRIVILEGE_TEST
+#COMMON_FLAGS += -DSWITCH_TO_EL0_FROM_EL3
+#COMMON_FLAGS += -DENABLE_APU_ABORT_AT_ERET
+
+endif
 
 clean:
 	make clean -f Makefile_clean SOC=demoapu
 	make clean -f Makefile_clean SOC=demosoc
-
-cleanelf:
 	rm -rf *.o *.d *.elf *.map *.dasm *.dump *.hex *.verilog
