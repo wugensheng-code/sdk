@@ -64,8 +64,9 @@ typedef enum
 
 typedef enum
 {
-    AL_UART     = 1,
-    AL_MPU      = 2,
+    AL_UART                 = 1,
+    AL_MPU                  = 2,
+    AL_CAN                  = 3,
 } AL_MODULE_TYPE;
 
 #ifdef __cplusplus
