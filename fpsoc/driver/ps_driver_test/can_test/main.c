@@ -263,7 +263,7 @@ AL_U32 main(AL_VOID)
     AL_CAN_InitStruct Config;
     AL_CAN_FrameStruct Frame;
     AL_U32 DeviceId = 1;
-    AL_U32 Ret = AL_ERR_OK;
+    AL_U32 Ret = AL_OK;
     AL_U32 Timeout = 1000;
 
 #if CONFIG_CAN_LISTEN_ONLY_TEST

@@ -96,15 +96,14 @@ typedef struct
 
 typedef enum
 {
-	MODEM_STATUS			= 0x0,
-	NO_INTERRUPT_PENDING    = 0x1,
-    THR_EMPTY				= 0x2,
-	RECEIVED_DATA_AVAILABLE	= 0x4,
-	RECEIVER_LINE_STATUS	= 0x6,
-	BUSY_DETECT				= 0x7,
-	CHARACTER_TIMEOUT		= 0xc
+    MODEM_STATUS             = 0x0,
+    NO_INTERRUPT_PENDING     = 0x1,
+    THR_EMPTY                = 0x2,
+    RECEIVED_DATA_AVAILABLE  = 0x4,
+    RECEIVER_LINE_STATUS     = 0x6,
+    BUSY_DETECT              = 0x7,
+    CHARACTER_TIMEOUT        = 0xc
 } InterruptID;
-
 
 
 AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_UART_InitStruct *InitConfig, AL_U32 DevID);

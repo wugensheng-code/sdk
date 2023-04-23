@@ -50,7 +50,7 @@ static AlCan_Hal_IntrHandler(AL_CAN_HalStruct *Handle, AL_U32 Event, AL_U32 Even
  * @param   Handle is pointer to AL_CAN_HalStruct
  * @param   Timeout is max wait time for send done
  * @return  
- *          - AL_ERR_OK
+ *          - AL_OK
  * @note
 */
 static AL_S32 AlCan_Hal_WaitSendDoneOrTimeout(AL_CAN_HalStruct *Handle, AL_U32 Timeout)
@@ -62,7 +62,7 @@ static AL_S32 AlCan_Hal_WaitSendDoneOrTimeout(AL_CAN_HalStruct *Handle, AL_U32 T
         return AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_TIMEOUT);
     }
 
-    return AL_ERR_OK;
+    return AL_OK;
 }
 
 /**
@@ -70,7 +70,7 @@ static AL_S32 AlCan_Hal_WaitSendDoneOrTimeout(AL_CAN_HalStruct *Handle, AL_U32 T
  * @param   Handle is pointer to AL_CAN_HalStruct
  * @param   Timeout is max wait time for send done
  * @return  
- *          - AL_ERR_OK
+ *          - AL_OK
  * @note
 */
 static AL_S32 AlCan_Hal_WaitRecvNotEmptyOrTimeout(AL_CAN_HalStruct *Handle, AL_U32 Timeout)
@@ -82,7 +82,7 @@ static AL_S32 AlCan_Hal_WaitRecvNotEmptyOrTimeout(AL_CAN_HalStruct *Handle, AL_U
         return AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_TIMEOUT);
     }
 
-    return AL_ERR_OK;
+    return AL_OK;
 }
 
 
@@ -151,13 +151,13 @@ static AL_VOID AlCan_Hal_DefEventCallBack(AL_CAN_EventStruct *Event, AL_VOID *Ca
  * @param   CallBack is call back struct with AL_CAN_CallBackStruct
  * @param   DevId is hardware module id
  * @return
- *          - AL_ERR_OK
+ *          - AL_OK
  * @note
 */
 AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct *Handle, AL_CAN_InitStruct *InitConfig, \
     AL_CAN_CallBackStruct *CallBack, AL_U32 DevId)
 {
-    AL_S32 Ret = AL_ERR_OK;
+    AL_S32 Ret = AL_OK;
     AL_CAN_HwConfigStruct *HwConfig;
     AL_CAN_CallBackStruct EventCallBack;
 
@@ -175,7 +175,7 @@ AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct *Handle, AL_CAN_InitStruct *InitConfig, \
 
     /* 2. Init IP */
     Ret = AlCan_Dev_Init(Handle->Dev, HwConfig, InitConfig);
-    if (Ret != AL_ERR_OK) {
+    if (Ret != AL_OK) {
         /* TODO: Err return */
     }
 
@@ -211,12 +211,12 @@ AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct *Handle, AL_CAN_InitStruct *InitConfig, \
  * @param   AL_CAN_HalStruct is pointer to AL_CAN_HalStruct
  * @param   Frame is tx buffer data with AL_CAN_FrameStruct
  * @return
- *          - AL_ERR_OK
+ *          - AL_OK
  * @note
 */
 AL_S32 AlCan_Hal_SendFrame(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
 {
-    AL_S32 Ret = AL_ERR_OK;
+    AL_S32 Ret = AL_OK;
 
     if (Handle == AL_NULL) {
         return AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
@@ -225,7 +225,7 @@ AL_S32 AlCan_Hal_SendFrame(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
     AL_CAN_HAL_LOCK(Handle);
 
     Ret = AlCan_Dev_SendFrame(Handle->Dev, Frame);
-    if (Ret != AL_ERR_OK) {
+    if (Ret != AL_OK) {
         AL_CAN_HAL_UNLOCK(Handle);
         return Ret;
     }
@@ -240,12 +240,12 @@ AL_S32 AlCan_Hal_SendFrame(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
  * @param   AL_CAN_HalStruct is pointer to AL_CAN_HalStruct
  * @param   Frame is tx buffer data with AL_CAN_FrameStruct
  * @return
- *          - AL_ERR_OK
+ *          - AL_OK
  * @note
 */
 AL_S32 AlCan_Hal_RecvFrame(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
 {
-    AL_S32 Ret = AL_ERR_OK;
+    AL_S32 Ret = AL_OK;
 
     if (Handle == AL_NULL) {
         return AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
@@ -254,7 +254,7 @@ AL_S32 AlCan_Hal_RecvFrame(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
     AL_CAN_HAL_LOCK(Handle);
 
     Ret = AlCan_Dev_RecvFrame(Handle->Dev, Frame);
-    if (Ret != AL_ERR_OK) {
+    if (Ret != AL_OK) {
         AL_CAN_HAL_UNLOCK(Handle);
         return Ret;
     }
@@ -270,12 +270,12 @@ AL_S32 AlCan_Hal_RecvFrame(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
  * @param   Frame is tx buffer data with AL_CAN_FrameStruct
  * @param   Timeout is max wait time for send done
  * @return
- *          - AL_ERR_OK
+ *          - AL_OK
  * @note
 */
 AL_S32 AlCan_Hal_SendFrameBlock(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame, AL_U32 Timeout)
 {
-    AL_S32 Ret = AL_ERR_OK;
+    AL_S32 Ret = AL_OK;
 
     if (Handle == AL_NULL) {
         return AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
@@ -284,13 +284,13 @@ AL_S32 AlCan_Hal_SendFrameBlock(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Fr
     AL_CAN_HAL_LOCK(Handle);
 
     Ret = AlCan_Dev_SendFrame(Handle->Dev, Frame);
-    if (Ret != AL_ERR_OK) {
+    if (Ret != AL_OK) {
         AL_CAN_HAL_UNLOCK(Handle);
         return Ret;
     }
 
     Ret = AlCan_Hal_WaitSendDoneOrTimeout(Handle, Timeout);
-    if (Ret != AL_ERR_OK) {
+    if (Ret != AL_OK) {
         Ret = AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_TIMEOUT);
     }
 
@@ -305,12 +305,12 @@ AL_S32 AlCan_Hal_SendFrameBlock(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Fr
  * @param   Frame is tx buffer data with AL_CAN_FrameStruct
  * @param   Timeout is max wait time for send done
  * @return
- *          - AL_ERR_OK
+ *          - AL_OK
  * @note
 */
 AL_S32 AlCan_Hal_RecvFrameBlock(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame, AL_U32 Timeout)
 {
-    AL_S32 Ret = AL_ERR_OK;
+    AL_S32 Ret = AL_OK;
 
     if (Handle == AL_NULL) {
         return AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
@@ -319,12 +319,12 @@ AL_S32 AlCan_Hal_RecvFrameBlock(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Fr
     AL_CAN_HAL_LOCK(Handle);
 
     Ret = AlCan_Hal_WaitRecvNotEmptyOrTimeout(Handle, Timeout);
-    if (Ret != AL_ERR_OK) {
+    if (Ret != AL_OK) {
         Ret = AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_TIMEOUT);
     }
 
     Ret = AlCan_Dev_RecvFrame(Handle->Dev, Frame);
-    if (Ret != AL_ERR_OK) {
+    if (Ret != AL_OK) {
         AL_CAN_HAL_UNLOCK(Handle);
         return Ret;
     }
@@ -336,7 +336,7 @@ AL_S32 AlCan_Hal_RecvFrameBlock(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Fr
 
 AL_S32 AlCan_Hal_RecvFrameDma(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
 {
-    AL_S32 Ret = AL_ERR_OK;
+    AL_S32 Ret = AL_OK;
 
     if (Handle == AL_NULL) {
         return AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);

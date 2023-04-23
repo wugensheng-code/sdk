@@ -47,13 +47,13 @@ static AL_U32 AlCan_Dev_Dlc2Len(AL_CAN_DataLenEnum Dlc)
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   Type is protocol of CAN with type AL_CAN_TypeEnum
  * @return  
- *          - AL_ERR_OK for successfully set
+ *          - AL_OK for successfully set
  * @note
 */
 static AL_S32 AlCan_Dev_SetCanType(AL_CAN_DevStruct *Dev, AL_CAN_TypeEnum Type)
 {
     if (Dev->Config.Type == Type) {
-        return AL_ERR_OK; 
+        return AL_OK; 
     }
 
     switch (Type) {
@@ -70,7 +70,7 @@ static AL_S32 AlCan_Dev_SetCanType(AL_CAN_DevStruct *Dev, AL_CAN_TypeEnum Type)
         break;
     }
 
-    return AL_ERR_OK;
+    return AL_OK;
 }
 
 /**
@@ -78,13 +78,13 @@ static AL_S32 AlCan_Dev_SetCanType(AL_CAN_DevStruct *Dev, AL_CAN_TypeEnum Type)
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   OpsMode is running mode with type AL_CAN_OpsModeEnum
  * @return  
- *          - AL_ERR_OK for successfully set
+ *          - AL_OK for successfully set
  * @note
 */
 static AL_S32 AlCan_Dev_SetOpsMode(AL_CAN_DevStruct *Dev, AL_CAN_OpsModeEnum OpsMode)
 {
     if (Dev->Config.OpsMode == OpsMode) {
-        return AL_ERR_OK; 
+        return AL_OK; 
     }
 
     switch (OpsMode) {
@@ -113,7 +113,7 @@ static AL_S32 AlCan_Dev_SetOpsMode(AL_CAN_DevStruct *Dev, AL_CAN_OpsModeEnum Ops
         break;
     }
 
-    return AL_ERR_OK;
+    return AL_OK;
 }
 
 /**
@@ -477,7 +477,7 @@ AL_VOID AlCan_Dev_IntrHandler(void *Instance)
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   CallBack is call back struct with AL_CAN_CallBackStruct
  * @return
- *          - AL_ERR_OK is register correct
+ *          - AL_OK is register correct
  * @note
 */
 AL_S32 AlCan_Dev_RegisterEventCallBack(AL_CAN_DevStruct *Dev, AL_CAN_CallBackStruct *CallBack)
@@ -497,14 +497,14 @@ AL_S32 AlCan_Dev_RegisterEventCallBack(AL_CAN_DevStruct *Dev, AL_CAN_CallBackStr
     Dev->EventCallBack.Func = CallBack->Func;
     Dev->EventCallBack.Ref  = CallBack->Ref;
 
-    return AL_ERR_OK;
+    return AL_OK;
 }
 
 /**
  * This function unregister interrupt call back function
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @return
- *          - AL_ERR_OK is register correct
+ *          - AL_OK is register correct
  * @note
 */
 AL_S32 AlCan_Dev_UnRegisterEventCallBack(AL_CAN_DevStruct *Dev)
@@ -515,7 +515,7 @@ AL_S32 AlCan_Dev_UnRegisterEventCallBack(AL_CAN_DevStruct *Dev)
 
     Dev->EventCallBack.Func = (AL_CAN_EventCallBack)AL_NULL;
 
-    return AL_ERR_OK;
+    return AL_OK;
 }
 
 /**
@@ -562,7 +562,7 @@ AL_VOID AlCan_Dev_SetReset(AL_CAN_DevStruct *Dev, AL_BOOL IsReset)
  * @param   HwConfig is hardware config structure with AL_CAN_HwConfigStruct
  * @param   InitConfig is module config structure with AL_CAN_InitStruct
  * @return
- *          - AL_ERR_OK is init done
+ *          - AL_OK is init done
  * @note
 */
 AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, \
@@ -614,7 +614,7 @@ AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, \
 
     }
 
-    return AL_ERR_OK;
+    return AL_OK;
 }
 
 /**
@@ -688,7 +688,7 @@ AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, \
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   Frame is tx buffer data with AL_CAN_FrameStruct
  * @return  
- *          - AL_ERR_OK is send done
+ *          - AL_OK is send done
  * @note
 */
 AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
@@ -755,7 +755,7 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
 
     AlCan_Dev_SetState(Dev, AL_CAN_STATE_SEND_BUSY);
 
-    return AL_ERR_OK;
+    return AL_OK;
 }
 
 /**
@@ -763,7 +763,7 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   Frame is pointer to store frame buffer with AL_CAN_FrameStruct
  * @return  
- *          - AL_ERR_OK is send done
+ *          - AL_OK is send done
  * @note
 */
 AL_S32 AlCan_Dev_RecvFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
@@ -807,7 +807,7 @@ AL_S32 AlCan_Dev_RecvFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
         AlCan_Dev_SetState(Dev, AL_CAN_STATE_RECV_EMPTY);
     }
     
-    return AL_ERR_OK;
+    return AL_OK;
 }
 
 /**
@@ -815,7 +815,7 @@ AL_S32 AlCan_Dev_RecvFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   FilterCfg is pointer to filter configuration with AL_CAN_FilterCfgStruct
  * @return  
- *          - AL_ERR_OK is send done
+ *          - AL_OK is send done
  * @note
 */
 AL_S32 AlCan_Dev_SetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *FilterCfg)
@@ -833,7 +833,7 @@ AL_S32 AlCan_Dev_SetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *Filter
     AlCan_ll_SetSelmask(Dev->BaseAddr, AL_CAN_SELMASK_ACCEPT_CODE);
     AlCan_ll_WriteAcodexAmaskx(Dev->BaseAddr, FilterCfg->IdValue);
 
-    return AL_ERR_OK;
+    return AL_OK;
 }
 
 /**
@@ -841,7 +841,7 @@ AL_S32 AlCan_Dev_SetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *Filter
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   FilterCfg is pointer to store filter configuration with AL_CAN_FilterCfgStruct
  * @return  
- *          - AL_ERR_OK is send done
+ *          - AL_OK is send done
  * @note
 */
 AL_S32 AlCan_Dev_GetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *FilterCfg)
@@ -865,14 +865,14 @@ AL_S32 AlCan_Dev_GetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *Filter
     AlCan_ll_SetSelmask(Dev->BaseAddr, AL_CAN_SELMASK_ACCEPT_CODE);
     FilterCfg->IdValue = AlCan_ll_ReadAcodexAmaskx(Dev->BaseAddr);
 
-    return AL_ERR_OK;
+    return AL_OK;
 }
 
 /**
  * This function get filter parameter
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @return  
- *          - AL_ERR_OK is send done
+ *          - AL_OK is send done
  * @note
 */
 AL_S32 AlCan_Dev_GetDecodeError(AL_CAN_DevStruct *Dev)
@@ -939,7 +939,7 @@ AL_S32 AlCan_Dev_GetDecodeError(AL_CAN_DevStruct *Dev)
         break;
     }
 
-    return AL_ERR_OK;
+    return AL_OK;
 }
 
 #ifdef CAN_DEBUG
@@ -947,7 +947,7 @@ AL_S32 AlCan_Dev_GetDecodeError(AL_CAN_DevStruct *Dev)
  * This function display received frame
  * @param   Frame is pointer to received buffer with AL_CAN_FrameStruct
  * @return  
- *          - AL_ERR_OK is send done
+ *          - AL_OK is send done
  * @note
 */
 AL_S32 AlCan_Dev_DisplayFrame(AL_CAN_FrameStruct *Frame)
