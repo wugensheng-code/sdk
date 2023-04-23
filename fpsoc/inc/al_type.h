@@ -5,8 +5,10 @@
 #define __AL_TYPE_H__
 
 #ifdef __cplusplus
+#if __cplusplus
 extern "C"{
 #endif
+#endif /* __cplusplus */
 
 /*----------------------------------------------*
  * The common data type, will be used in the whole project.*
@@ -33,25 +35,29 @@ typedef long                    AL_INTPTR;
 
 typedef unsigned long           AL_UINTPTR;
 
+
 /*----------------------------------------------*
  * const defination                             *
  *----------------------------------------------*/
 typedef enum
 {
     AL_FALSE = 0,
-    AL_TRUE  = 1,
+    AL_TRUE  = 1
 } AL_BOOL;
 
 typedef enum
 {
-    AL_FUNC_DISABLE = 0,
-    AL_FUNC_ENABLE  = 1
-} AL_FUNCTIONEnum;
+    AL_FUNC_DISABLE   = 0,
+    AL_FUNC_ENABLE    = 1
+} AL_FUNCTION;
 
-#define AL_NULL         0L
+#define AL_NULL         ((void *)0L)
 
 #ifdef __cplusplus
+#if __cplusplus
 }
 #endif
+#endif /* __cplusplus */
 
-#endif /* __AL_TYPE_H__ */
+#endif /* __HI_TYPE_H__ */
+

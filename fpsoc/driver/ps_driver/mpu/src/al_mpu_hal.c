@@ -58,7 +58,7 @@ AL_S32 AlMpu_Hal_ConfigRegion(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Conf
 
     AlMpu_ll_SetRegionGroupId(RegionBaseAddr, Config->GroupId);
 
-    return AL_ERR_OK;
+    return AL_OK;
 }
 
 AL_S32 AlMpu_Hal_EnableRegion(AL_REG32 Instance, AL_U8 RegionNumber)
@@ -73,7 +73,7 @@ AL_S32 AlMpu_Hal_EnableRegion(AL_REG32 Instance, AL_U8 RegionNumber)
     RegionBaseAddr = MPU_REGION_I_BASE_ADDR(Instance, RegionNumber);
     AlMpu_ll_SetRegionAttrEnable(RegionBaseAddr, MPU_REGION_ENABLE);
 
-    return AL_ERR_OK;
+    return AL_OK;
 }
 
 AL_S32 AlMpu_Hal_DisableRegion(AL_REG32 Instance, AL_U8 RegionNumber)
@@ -88,7 +88,7 @@ AL_S32 AlMpu_Hal_DisableRegion(AL_REG32 Instance, AL_U8 RegionNumber)
     RegionBaseAddr = MPU_REGION_I_BASE_ADDR(Instance, RegionNumber);
     AlMpu_ll_SetRegionAttrEnable(RegionBaseAddr, MPU_REGION_DISABLE);
 
-    return AL_ERR_OK;
+    return AL_OK;
 }
 
 AL_S32 AlMpu_Hal_MpuEnable(AL_REG32 Instance)
@@ -100,7 +100,7 @@ AL_S32 AlMpu_Hal_MpuEnable(AL_REG32 Instance)
 
     AlMpu_ll_MpuEnable(Instance);
 
-    return AL_ERR_OK;
+    return AL_OK;
 }
 
 AL_S32 AlMpu_Hal_MpuDisable(AL_REG32 Instance)
@@ -112,7 +112,7 @@ AL_S32 AlMpu_Hal_MpuDisable(AL_REG32 Instance)
 
     AlMpu_ll_MpuDisable(Instance);
 
-    return AL_ERR_OK;
+    return AL_OK;
 }
 
 static AL_U32 AlMpu_Hal_GetInstance(AL_MPU_InterruptIdEnum IntrId)

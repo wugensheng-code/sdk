@@ -1,0 +1,15 @@
+TARGET = fpsoc_mpu_nonsecure_el1
+
+NUCLEI_SDK_ROOT = ../../../../
+
+SRCDIRS = .
+
+INCDIRS = ../../ps_driver/uart/inc
+
+COMMON_FLAGS := -O2
+
+# ARM jump from secure to non-secure
+COMMON_FLAGS += -DSUPPORT_NONSECURE
+
+
+include $(NUCLEI_SDK_ROOT)/Build/Makefile.base

@@ -26,6 +26,8 @@ C_SRCDIRS += $(NUCLEI_SDK_SOC_COMMON)/Source \
 		$(NUCLEI_SDK_ROOT)/SoC/demosoc/Common/Source/Drivers/
 
 #For fpsoc compile
+C_SRCDIRS += $(FPSOC_ROOT)/driver/ps_driver/mpu/src \
+			 $(FPSOC_ROOT)/driver/ps_driver/uart/src
 C_SRCDIRS += $(FPSOC_ROOT)/driver/ps_driver/mpu/src
 C_SRCDIRS += $(FPSOC_ROOT)/driver/ps_driver/can/src
 

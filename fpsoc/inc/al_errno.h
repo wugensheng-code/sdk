@@ -2,10 +2,13 @@
 #define __AL_ERRNO_H__
 
 #ifdef __cplusplus
+#if __cplusplus
 extern "C"{
 #endif
 
-#define AL_ERR_BAREMETAL        (0x0)
+#endif
+
+#define AL_ERR_BAREMETAL        (0x1 << 31)
 
 typedef enum
 {
@@ -20,47 +23,38 @@ typedef enum
     AL_ERR_LEVEL_BUTT
 } ENUM_AL_ERR_LEVEL;
 
+
 /******************************************************************************
-|----------------------------------------------------------------|
-| 1 |   APP_ID   |   MOD_ID    | ERR_LEVEL | LAYER_ID |  ERR_ID  |
-|----------------------------------------------------------------|
-|<--><--7bits----><----8bits---><--3bits--><--3bits---><-10bits->|
+|--------------------------------------|
+| 1 |   MOD_ID  |  LEVEL    |  ERR_ID  |
+|---------------------------------------|
+|<--><--8bits-->|<--8bits-->|<-16bits->|
 ******************************************************************************/
-#define AL_DEF_ERR_LAYER( module, level, layer, errid) \
-    ((AL_S32)( (AL_ERR_BAREMETAL) | ((module) << 16 ) | ((level)<<13) | ((layer)<<10) | (errid)))
-
-#define LOW_LEVEL             (0x01)
-
-#define AL_DEF_ERR(module, level, errid)  AL_DEF_ERR_LAYER(module, level, LOW_LEVEL, errid)
-
-#define AL_GET_ERRID(err)     ((AL_S32)(err & ((1 << 10)-1)))
-
-#define AL_ERR_OK             (0x00U)
+#define AL_DEF_ERR(module, level, errid) \
+     ((AL_S32)((AL_ERR_BAREMETAL) | ((module) << 24 ) | (level << 16) | (errid)))
 
 /* NOTE! the following defined all common error code,
 ** all module must reserved 0~63 for their common error code
 */
 typedef enum
 {
-    AL_ERR_INVALID_DEVID = 1, /* invlalid device ID                           */
-    AL_ERR_INVALID_CHNID = 2, /* invlalid channel ID                          */
-    AL_ERR_ILLEGAL_PARAM = 3, /* at lease one parameter is illagal
-                               * eg, an illegal enumeration value             */
-    AL_ERR_EXIST         = 4, /* resource exists                              */
-    AL_ERR_UNEXIST       = 5, /* resource unexists                            */
+    AL_ERR_NULL_PTR       = 1,
 
-    AL_ERR_NULL_PTR      = 6, /* using a NULL point                           */
+    AL_ERR_ILLEGAL_PARAM  = 2,
 
-    AL_ERR_NOT_CONFIG    = 7, /* try to enable or initialize system, device
-                              ** or channel, before configing attribute       */
+    AL_ERR_NOT_READY      = 3,
 
-    AL_ERR_NOT_SUPPORT   = 8, /* operation or type is not supported by NOW    */
+    AL_ERR_NOT_SUPPORT    = 4,
 
-    AL_ERR_TIMEOUT       = 9, /* operation or type is not supported by NOW    */
+    AL_ERR_TIMEOUT        = 5,
 
-    AL_ERR_BUSY          = 0xa, /* Device is in busy status                   */
+    AL_ERR_BUSY           = 6,
 
 } AL_ERR_CODE;
+
+
+#define    AL_OK    (0x00U)
+
 
 typedef enum
 {
@@ -70,7 +64,10 @@ typedef enum
 } AL_MODULE_TYPE;
 
 #ifdef __cplusplus
+#if __cplusplus
 }
 #endif
+#endif /* __cplusplus */
 
 #endif  /* __AL_ERRNO_H__ */
+
