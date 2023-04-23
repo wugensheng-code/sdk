@@ -49,19 +49,18 @@ extern "C" {
 #define MPU_APU_REGION_NUMBER32         (0x20)
 
 /* Check the config parameter */
-#define MPU_IS_VALID_MPU(INSTANCE) (((INSTANCE) == MPU_DDRS1_BASE_ADDR)     || \
-                                    ((INSTANCE) == MPU_DDRS0_BASE_ADDR)     || \
-                                    ((INSTANCE) == MPU_HPM0_BASE_ADDR)      || \
-                                    ((INSTANCE) == MPU_HPM1_BASE_ADDR)      || \
-                                    ((INSTANCE) == MPU_HPM1_BASE_ADDR)      || \
-                                    ((INSTANCE) == MPU_OCMS2_BASE_ADDR)     || \
-                                    ((INSTANCE) == MPU_NPU_BASE_ADDR)       || \
-                                    ((INSTANCE) == MPU_APU_BASE_ADDR))
+#define MPU_IS_VALID_MPU(INSTANCE) (((INSTANCE) == MPU__MPU_DDRS0__BASE_ADDR)   || \
+                                    ((INSTANCE) == MPU__MPU_DDRS1__BASE_ADDR)   || \
+                                    ((INSTANCE) == MPU__MPU_HPM0__BASE_ADDR)    || \
+                                    ((INSTANCE) == MPU__MPU_HPM1__BASE_ADDR)    || \
+                                    ((INSTANCE) == MPU__MPU_NPU__BASE_ADDR)     || \
+                                    ((INSTANCE) == MPU__MPU_OCMS2__BASE_ADDR)   || \
+                                    ((INSTANCE) == MPU__MPU_APU__BASE_ADDR))
 
 #define MPU_IS_VALID_REGION_NUMBER(INSTANCE, NUMBER)                                        \
-    ((((INSTANCE) == MPU_APU_BASE_ADDR) &&                                                  \
+    ((((INSTANCE) == MPU__MPU_APU__BASE_ADDR) &&                                            \
      (((NUMBER) >= MPU_COMMON_REGION_NUMBER1) && ((NUMBER) <= MPU_APU_REGION_NUMBER32))) || \
-    ((((INSTANCE) != MPU_APU_BASE_ADDR) &&                                                  \
+    ((((INSTANCE) != MPU__MPU_APU__BASE_ADDR) &&                                            \
      (((NUMBER) >= MPU_COMMON_REGION_NUMBER1) && ((NUMBER) <= MPU_COMMON_REGION_NUMBER8)))))
 
 #define MPU_IS_VALID_REGION_ENABLE(ENABLE) (((ENABLE) == MPU_REGION_ENABLE) || \

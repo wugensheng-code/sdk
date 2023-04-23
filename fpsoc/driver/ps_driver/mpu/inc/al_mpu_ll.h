@@ -62,7 +62,7 @@ typedef enum
  */
 static inline AL_VOID AlMpu_ll_MpuEnable(AL_REG32 MpuBaseAddr)
 {
-    SET_BIT((MpuBaseAddr + MPU_CTRL_OFFSET), MPU_CTRL_ENABLE_SHIFT, MPU_ENABLE);
+    SET_BIT((MpuBaseAddr + MPU__CTRL__OFFSET), MPU__CTRL__ENABLE__SHIFT, MPU_ENABLE);
 
     /* Ensure MPU setting take effects */
 #if (defined __AARCH_64 || defined __aarch64__)
@@ -90,7 +90,7 @@ static inline AL_VOID AlMpu_ll_MpuDisable(AL_REG32 MpuBaseAddr)
     // Todo
 #endif /* defined _AARCH_64 || defined _aarch64_ */
 
-    SET_BIT((MpuBaseAddr + MPU_CTRL_OFFSET), MPU_CTRL_ENABLE_SHIFT, MPU_DISABLE);
+    SET_BIT((MpuBaseAddr + MPU__CTRL__OFFSET), MPU__CTRL__ENABLE__SHIFT, MPU_DISABLE);
 }
 
 /**
@@ -106,8 +106,8 @@ static inline AL_VOID AlMpu_ll_MpuDisable(AL_REG32 MpuBaseAddr)
 static inline AL_VOID AlMpu_ll_SetRegionAddr(AL_REG32 RegionBaseAddr,
                                              AL_U32 StartAddr, AL_U32 EndAddr)
 {
-    WRITE_REG((RegionBaseAddr + MPU_REGION_SAR_REGION_OFFSET), StartAddr);
-    WRITE_REG((RegionBaseAddr + MPU_REGION_EAR_REGION_OFFSET), EndAddr);
+    WRITE_REG((RegionBaseAddr + MPU__SAR_REGION__OFFSET), StartAddr);
+    WRITE_REG((RegionBaseAddr + MPU__EAR_REGION__OFFSET), EndAddr);
 }
 
 /**
@@ -122,7 +122,7 @@ static inline AL_VOID AlMpu_ll_SetRegionAddr(AL_REG32 RegionBaseAddr,
 static inline AL_VOID AlMpu_ll_SetRegionAttrSecure(AL_REG32 RegionBaseAddr,
                                                    AL_MPU_RegionSecureEnum Secure)
 {
-    SET_BIT((RegionBaseAddr + MPU_REGION_RASR_REGION_OFFSET), MPU_RASR_REGION_SECURE_SHIFT, Secure);
+    SET_BIT((RegionBaseAddr + MPU__RASR_REGION__OFFSET), MPU__RASR_REGION__SECURE__SHIFT, Secure);
 }
 
 /**
@@ -137,8 +137,8 @@ static inline AL_VOID AlMpu_ll_SetRegionAttrSecure(AL_REG32 RegionBaseAddr,
 static inline AL_VOID AlMpu_ll_SetRegionAttrPrivilege(AL_REG32 RegionBaseAddr,
                                                       AL_MPU_RegionPrivilegeEnum Privilege)
 {
-    SET_BIT((RegionBaseAddr + MPU_REGION_RASR_REGION_OFFSET),
-            MPU_RASR_REGION_PRIVILEDGE_SHIFT, Privilege);
+    SET_BIT((RegionBaseAddr + MPU__RASR_REGION__OFFSET),
+            MPU__RASR_REGION__PRIVILEGE__SHIFT, Privilege);
 }
 
 /**
@@ -153,8 +153,8 @@ static inline AL_VOID AlMpu_ll_SetRegionAttrPrivilege(AL_REG32 RegionBaseAddr,
 static inline AL_VOID AlMpu_ll_SetRegionAttrRw(AL_REG32 RegionBaseAddr,
                                                AL_MPU_RegionReadWriteEnum ReadWrite)
 {
-    SET_BITS((RegionBaseAddr + MPU_REGION_RASR_REGION_OFFSET),
-             MPU_RASR_REGION_RW_SHIFT, MPU_RASR_REGION_RW_SIZE, ReadWrite);
+    SET_BITS((RegionBaseAddr + MPU__RASR_REGION__OFFSET),
+             MPU__RASR_REGION__RW__SHIFT, MPU__RASR_REGION__RW__SIZE, ReadWrite);
 }
 
 /**
@@ -169,8 +169,8 @@ static inline AL_VOID AlMpu_ll_SetRegionAttrRw(AL_REG32 RegionBaseAddr,
 static inline AL_VOID AlMpu_ll_SetRegionAttrIntrEn(AL_REG32 RegionBaseAddr,
                                                    AL_MPU_RegionInterruptEnEnum IntrEn)
 {
-    SET_BIT((RegionBaseAddr + MPU_REGION_RASR_REGION_OFFSET),
-            MPU_RASR_REGION_INTR_EN_SHIFT, IntrEn);
+    SET_BIT((RegionBaseAddr + MPU__RASR_REGION__OFFSET),
+            MPU__RASR_REGION__INTR_EN__SHIFT, IntrEn);
 }
 
 /**
@@ -192,8 +192,8 @@ static inline AL_VOID AlMpu_ll_SetRegionAttrEnable(AL_REG32 RegionBaseAddr,
     // Todo
 #endif /* defined _AARCH_64 || defined _aarch64_ */
 
-    SET_BIT((RegionBaseAddr + MPU_REGION_RASR_REGION_OFFSET),
-            MPU_RASR_REGION_REGIONEN_SHIFT, RegionEn);
+    SET_BIT((RegionBaseAddr + MPU__RASR_REGION__OFFSET),
+            MPU__RASR_REGION__REGIONEN__SHIFT, RegionEn);
 
     /* Ensure MPU setting take effects */
 #if (defined _AARCH_64 || defined _aarch64_)
@@ -214,8 +214,8 @@ static inline AL_VOID AlMpu_ll_SetRegionAttrEnable(AL_REG32 RegionBaseAddr,
  */
 static inline AL_MPU_RegionEnEnum AlMpu_ll_GetRegionAttrEnable(AL_REG32 RegionBaseAddr)
 {
-    return GET_BIT((RegionBaseAddr + MPU_REGION_RASR_REGION_OFFSET),
-                   MPU_RASR_REGION_REGIONEN_SHIFT);
+    return GET_BIT((RegionBaseAddr + MPU__RASR_REGION__OFFSET),
+                   MPU__RASR_REGION__REGIONEN__SHIFT);
 }
 
 /**
@@ -229,7 +229,7 @@ static inline AL_MPU_RegionEnEnum AlMpu_ll_GetRegionAttrEnable(AL_REG32 RegionBa
  */
 static inline AL_VOID AlMpu_ll_SetRegionAttr(AL_REG32 RegionBaseAddr, AL_U32 RegionAttr)
 {
-    WRITE_REG((RegionBaseAddr + MPU_REGION_RASR_REGION_OFFSET), RegionAttr);
+    WRITE_REG((RegionBaseAddr + MPU__RASR_REGION__OFFSET), RegionAttr);
 }
 
 /**
@@ -243,7 +243,7 @@ static inline AL_VOID AlMpu_ll_SetRegionAttr(AL_REG32 RegionBaseAddr, AL_U32 Reg
  */
 static inline AL_VOID AlMpu_ll_SetRegionGroupId(AL_REG32 RegionBaseAddr, AL_U32 RegionGroupId)
 {
-    WRITE_REG((RegionBaseAddr + MPU_REGION_GROUPID_REGION_OFFSET), RegionGroupId);
+    WRITE_REG((RegionBaseAddr + MPU__GROUPID_REGION__OFFSET), RegionGroupId);
 }
 
 /**
@@ -256,8 +256,8 @@ static inline AL_VOID AlMpu_ll_SetRegionGroupId(AL_REG32 RegionBaseAddr, AL_U32 
  */
 static inline AL_VOID AlMpu_ll_ClrRegionIntr(AL_REG32 RegionBaseAddr)
 {
-    SET_BIT((RegionBaseAddr + MPU_REGION_RASR_REGION_OFFSET),
-            MPU_RASR_REGION_INTR_CLR_SHIFT, AL_FUNC_ENABLE);
+    SET_BIT((RegionBaseAddr + MPU__RASR_REGION__OFFSET),
+            MPU__RASR_REGION__INTR_CLR__SHIFT, AL_FUNC_ENABLE);
 }
 
 /**
@@ -270,7 +270,7 @@ static inline AL_VOID AlMpu_ll_ClrRegionIntr(AL_REG32 RegionBaseAddr)
  */
 static inline AL_U32 AlMpu_ll_GetIntrRegionNumber(AL_REG32 MpuBaseAddr)
 {
-    return READ_REG(MpuBaseAddr + MPU_TYPER_OFFSET);
+    return READ_REG(MpuBaseAddr + MPU__TYPER__OFFSET);
 }
 
 /**

@@ -106,7 +106,7 @@ AL_S32 AlMpu_Test(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Config)
     AL_U8 GroupId;
 
     /* APU MPU has 32 regions and others have 8 regions */
-    if (Instance == MPU_APU_BASE_ADDR) {
+    if (Instance == MPU__MPU_APU__BASE_ADDR) {
         MaxRegionNumber = MPU_APU_REGION_NUMBER32;
     }
 
@@ -194,7 +194,7 @@ AL_S32 AlMpu_ConfigTest(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Config)
     AL_U8 GroupId;
 
     /* APU MPU has 32 regions and others have 8 regions */
-    if (Instance == MPU_APU_BASE_ADDR) {
+    if (Instance == MPU__MPU_APU__BASE_ADDR) {
         MaxRegionNumber = MPU_APU_REGION_NUMBER32;
     }
 

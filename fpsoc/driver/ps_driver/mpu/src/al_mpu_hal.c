@@ -175,31 +175,31 @@ static AL_U32 AlMpu_Hal_GetInstance(AL_MPU_InterruptIdEnum IntrId)
 
     switch (IntrId) {
         case MPU_DDRS0:
-            Instance = (AL_U32)MPU_DDRS0_BASE_ADDR;
+            Instance = (AL_U32)MPU__MPU_DDRS0__BASE_ADDR;
             break;
 
         case MPU_DDRS1:
-            Instance = (AL_U32)MPU_DDRS1_BASE_ADDR;
+            Instance = (AL_U32)MPU__MPU_DDRS1__BASE_ADDR;
             break;
 
         case MPU_HPM0:
-            Instance = (AL_U32)MPU_HPM0_BASE_ADDR;
+            Instance = (AL_U32)MPU__MPU_HPM0__BASE_ADDR;
             break;
 
         case MPU_HPM1:
-            Instance = (AL_U32)MPU_HPM1_BASE_ADDR;
+            Instance = (AL_U32)MPU__MPU_HPM1__BASE_ADDR;
             break;
 
         case MPU_NPU:
-            Instance = (AL_U32)MPU_NPU_BASE_ADDR;
+            Instance = (AL_U32)MPU__MPU_NPU__BASE_ADDR;
             break;
 
         case MPU_APU:
-            Instance = (AL_U32)MPU_APU_BASE_ADDR;
+            Instance = (AL_U32)MPU__MPU_APU__BASE_ADDR;
             break;
 
         case MPU_OCMS2:
-            Instance = (AL_U32)MPU_OCMS2_BASE_ADDR;
+            Instance = (AL_U32)MPU__MPU_OCMS2__BASE_ADDR;
             break;
 
         default:
