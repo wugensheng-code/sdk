@@ -18,6 +18,17 @@ static AL_VOID AlMpu_Hal_SetRegionAttr(AL_REG32 RegionBaseAddr, AL_MPU_RegionCon
     AlMpu_ll_SetRegionAttrEnable(RegionBaseAddr, RegionConfig->RegionEnable);
 }
 
+/**
+ * This function configure the mpu region
+ * @param Instance mpu base address
+ * @param RegionConfig Configured parameter
+ *
+ * @return
+ *        - 0 on success
+ *        - Numbers greater than zero on failure
+ *
+ * @note
+ */
 AL_S32 AlMpu_Hal_ConfigRegion(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Config)
 {
     AL_REG32 RegionBaseAddr;
@@ -61,6 +72,17 @@ AL_S32 AlMpu_Hal_ConfigRegion(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Conf
     return AL_OK;
 }
 
+/**
+ * This function enable the mpu region
+ * @param Instance mpu base address
+ * @param RegionNumber the region number
+ *
+ * @return
+ *        - 0 on success
+ *        - Numbers greater than zero on failure
+ *
+ * @note
+ */
 AL_S32 AlMpu_Hal_EnableRegion(AL_REG32 Instance, AL_U8 RegionNumber)
 {
     AL_REG32 RegionBaseAddr;
@@ -76,6 +98,17 @@ AL_S32 AlMpu_Hal_EnableRegion(AL_REG32 Instance, AL_U8 RegionNumber)
     return AL_OK;
 }
 
+/**
+ * This function disable the mpu region
+ * @param Instance mpu base address
+ * @param RegionNumber the region number
+ *
+ * @return
+ *        - 0 on success
+ *        - Numbers greater than zero on failure
+ *
+ * @note
+ */
 AL_S32 AlMpu_Hal_DisableRegion(AL_REG32 Instance, AL_U8 RegionNumber)
 {
     AL_REG32 RegionBaseAddr;
@@ -91,6 +124,16 @@ AL_S32 AlMpu_Hal_DisableRegion(AL_REG32 Instance, AL_U8 RegionNumber)
     return AL_OK;
 }
 
+/**
+ * This function enable the mpu
+ * @param Instance mpu base address
+ *
+ * @return
+ *        - 0 on success
+ *        - Numbers greater than zero on failure
+ *
+ * @note
+ */
 AL_S32 AlMpu_Hal_MpuEnable(AL_REG32 Instance)
 {
     /* Check the Instance */
@@ -103,6 +146,16 @@ AL_S32 AlMpu_Hal_MpuEnable(AL_REG32 Instance)
     return AL_OK;
 }
 
+/**
+ * This function disable the mpu
+ * @param Instance mpu base address
+ *
+ * @return
+ *        - 0 on success
+ *        - Numbers greater than zero on failure
+ *
+ * @note
+ */
 AL_S32 AlMpu_Hal_MpuDisable(AL_REG32 Instance)
 {
     /* Check the Instance */
@@ -161,6 +214,14 @@ static AL_U32 AlMpu_Hal_GetIntrRegionNumber(AL_REG32 Instance)
     return AlMpu_ll_GetIntrRegionNumber(Instance);
 }
 
+/**
+ * This function is MPU interrupt handler
+ * @param
+ *
+ * @return
+ *
+ * @note
+ */
 AL_VOID AlMpu_Hal_MpuIntrHandler()
 {
     AL_MPU_InterruptIdEnum MpuIntrId;
@@ -185,6 +246,14 @@ AL_VOID AlMpu_Hal_MpuIntrHandler()
     AlMpu_ll_ClrRegionIntr(RegionBaseAddr);
 }
 
+/**
+ * This function register MPU interrupt
+ * @param
+ *
+ * @return
+ *
+ * @note
+ */
 AL_VOID AlMpu_Hal_MpuRegisterIntr()
 {
     ECLIC_Register_IRQ(SOC_INT130_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, &AL_MPU_IntrTable);

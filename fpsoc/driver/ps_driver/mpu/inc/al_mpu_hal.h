@@ -136,87 +136,18 @@ typedef enum
     MPU_APU   = 0x40,
 } AL_MPU_InterruptIdEnum;
 
-/**
- * This function configure the mpu region
- * @param Instance mpu base address
- * @param RegionConfig Configured parameter
- *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
- *
- * @note
- */
 AL_S32 AlMpu_Hal_ConfigRegion(AL_REG32 Instance, AL_MPU_RegionConfigStruct *RegionConfig);
 
-/**
- * This function enable the mpu region
- * @param Instance mpu base address
- * @param RegionNumber the region number
- *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
- *
- * @note
- */
 AL_S32 AlMpu_Hal_EnableRegion(AL_REG32 Instance, AL_U8 RegionNumber);
 
-/**
- * This function disable the mpu region
- * @param Instance mpu base address
- * @param RegionNumber the region number
- *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
- *
- * @note
- */
 AL_S32 AlMpu_Hal_DisableRegion(AL_REG32 Instance, AL_U8 RegionNumber);
 
-/**
- * This function enable the mpu
- * @param Instance mpu base address
- *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
- *
- * @note
- */
 AL_S32 AlMpu_Hal_MpuEnable(AL_REG32 Instance);
 
-/**
- * This function disable the mpu
- * @param Instance mpu base address
- *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
- *
- * @note
- */
 AL_S32 AlMpu_Hal_MpuDisable(AL_REG32 Instance);
 
-/**
- * This function is MPU interrupt handler
- * @param
- *
- * @return
- *
- * @note
- */
 AL_VOID AlMpu_Hal_MpuIntrHandler();
 
-/**
- * This function register MPU interrupt
- * @param
- *
- * @return
- *
- * @note
- */
 AL_VOID AlMpu_Hal_MpuRegisterIntr();
 
 #ifdef __cplusplus
