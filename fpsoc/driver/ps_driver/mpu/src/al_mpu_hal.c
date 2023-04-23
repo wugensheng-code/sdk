@@ -9,7 +9,8 @@ static interrupt_table AL_MPU_IntrTable = {
     .ref = NULL
 };
 
-static AL_VOID AlMpu_Hal_SetRegionAttr(AL_REG32 RegionBaseAddr, AL_MPU_RegionConfigStruct *RegionConfig)
+static AL_VOID AlMpu_Hal_SetRegionAttr(AL_REG32 RegionBaseAddr,
+                                       AL_MPU_RegionConfigStruct *RegionConfig)
 {
     AlMpu_ll_SetRegionAttrSecure(RegionBaseAddr, RegionConfig->Secure);
     AlMpu_ll_SetRegionAttrPrivilege(RegionBaseAddr, RegionConfig->Privilege);
@@ -256,6 +257,7 @@ AL_VOID AlMpu_Hal_MpuIntrHandler()
  */
 AL_VOID AlMpu_Hal_MpuRegisterIntr()
 {
-    ECLIC_Register_IRQ(SOC_INT130_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, &AL_MPU_IntrTable);
+    ECLIC_Register_IRQ(SOC_INT130_IRQn, ECLIC_NON_VECTOR_INTERRUPT,
+                       ECLIC_LEVEL_TRIGGER, 1, 1, &AL_MPU_IntrTable);
     __enable_irq();
 }
