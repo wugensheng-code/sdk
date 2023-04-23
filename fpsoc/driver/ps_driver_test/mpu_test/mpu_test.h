@@ -8,6 +8,6 @@
 
 AL_S32 AlMpu_Test(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Config);
 
-AL_S32 AlMpu_ManualTest(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Config);
+AL_S32 AlMpu_ConfigTest(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Config);
 
 #endif /* MPU_TEST_H */

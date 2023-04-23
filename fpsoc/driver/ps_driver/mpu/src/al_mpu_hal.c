@@ -245,6 +245,9 @@ AL_VOID AlMpu_Hal_MpuIntrHandler()
 
     /* Clear the interrupt */
     AlMpu_ll_ClrRegionIntr(RegionBaseAddr);
+
+    printf("[MPU][INTERRUPT]:MPU Instance is 0x%x, The region number "
+            "that triggers the interrupt is number %d.\r\n", Instance, IntrRegionNumber);
 }
 
 /**

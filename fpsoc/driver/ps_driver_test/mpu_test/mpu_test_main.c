@@ -1,5 +1,6 @@
 #include "mpu_test.h"
 
+#include <stdio.h>
 #include <string.h>
 
 AL_S32 AL_MPU_Ddrs0MpuTest(void)
@@ -22,6 +23,8 @@ AL_S32 AL_MPU_Ddrs0MpuTest(void)
     printf("DDRS0 MPU test done<<<\r\n");
 
     AlMpu_Hal_MpuDisable(Instance);
+
+    return 0;
 }
 
 AL_S32 AL_MPU_ApuMpuTest(void)
@@ -47,6 +50,8 @@ AL_S32 AL_MPU_ApuMpuTest(void)
     printf("APU MPU test done<<<\r\n");
 
     AlMpu_Hal_MpuDisable(Instance);
+
+    return 0;
 }
 
 AL_S32 AL_MPU_Ocms2MpuTest(void)
@@ -73,6 +78,8 @@ AL_S32 AL_MPU_Ocms2MpuTest(void)
     printf("OCMS2 MPU test done<<<\r\n");
 
     AlMpu_Hal_MpuDisable(Instance);
+
+    return 0;
 }
 
 AL_S32 AL_MPU_NpuMpuTest(void)
@@ -94,6 +101,8 @@ AL_S32 AL_MPU_NpuMpuTest(void)
     printf("NPU MPU test done<<<\r\n");
 
     AlMpu_Hal_MpuDisable(Instance);
+
+    return 0;
 }
 
 AL_S32 AL_MPU_Hp0Hp1MpuTest(void)
@@ -133,6 +142,8 @@ AL_S32 AL_MPU_Hp0Hp1MpuTest(void)
     printf("HP1 MPU test done<<<\r\n");
 
     AlMpu_Hal_MpuDisable(Instance);
+
+    return 0;
 }
 
 AL_S32 AL_MPU_Ddrs1MpuTest(void)
@@ -153,9 +164,35 @@ AL_S32 AL_MPU_Ddrs1MpuTest(void)
     printf("DDRS1 MPU test done<<<\r\n");
 
     AlMpu_Hal_MpuDisable(Instance);
+
+    return 0;
 }
 
-AL_S32 AL_MPU_ApuPrivilegeTest()
+AL_VOID AL_MPU_InterruptTest()
+{
+    AL_MPU_RegionConfigStruct Config;
+
+    AL_REG32 Instance = (AL_REG32)MPU__MPU_DDRS0__BASE_ADDR;
+
+    /* Register the MPU interrrupt */
+    AlMpu_Hal_MpuRegisterIntr();
+
+    memset(&Config, 0, sizeof(Config));
+    Config.RegionNumber = MPU_COMMON_REGION_NUMBER1;
+    Config.StartAddr = 0x0;
+    Config.EndAddr = 0x1;
+    Config.ReadWrite = MPU_REGION_NOREADWRITE;
+    Config.InterruptEnable = MPU_REGION_INTERRUPT_ENABLE;
+    Config.RegionEnable = MPU_REGION_ENABLE;
+
+    AlMpu_Hal_ConfigRegion(Instance, &Config);
+
+    AlMpu_Hal_MpuEnable(Instance);
+
+    *(unsigned int *)(Config.StartAddr * 0x1000 + 4) = 0x87654321;
+}
+
+AL_VOID AL_MPU_ApuPrivilegeTest()
 {
     AL_U8 PrivilegeTestLoop = 0;
     AL_MPU_RegionConfigStruct Config;
@@ -233,7 +270,11 @@ int main()
     AL_MPU_Hp0Hp1MpuTest();
     AL_MPU_Ddrs1MpuTest();
 
+    AL_MPU_InterruptTest();
+
     printf("[MPU]:[PASS]\r\n");
+
+    while(1);
 
     return 0;
 }

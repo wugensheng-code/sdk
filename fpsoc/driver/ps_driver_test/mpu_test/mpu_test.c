@@ -1,5 +1,7 @@
 #include "mpu_test.h"
 
+#include <stdio.h>
+
 #ifdef SWITCH_TO_EL0_FROM_EL3
 static AL_U8 CpuInPrivilegeMode = 0;
 #else
