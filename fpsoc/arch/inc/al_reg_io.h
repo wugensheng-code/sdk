@@ -1,5 +1,5 @@
-#ifndef AL_MMIO_H
-#define AL_MMIO_H
+#ifndef AL_REG_IO_H
+#define AL_REG_IO_H
 
 #ifdef __cplusplus
 extern "C" {

@@ -87,7 +87,6 @@ typedef struct
     AL_UART_InitStruct            Configs;
     AL_Uart_BufferStruct          SendBuffer;
     AL_Uart_BufferStruct          RecvBuffer;
-
     UART_EventCallBack            EventCallBack;
     AL_VOID                       *EventCallBackRef;
     AL_U32                        ErrorCode;

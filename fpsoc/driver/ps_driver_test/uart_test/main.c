@@ -6,8 +6,8 @@
 #include "nuclei_sdk_soc.h"
 #include "gic_v3.h"
 
-AL_U8 tx_buffer[] = "ABCDEFGH12345678\r\n";
-
+AL_U8 tx_buffer[] = "ABCDEFGH12345678ABCDEFGH12345678ABCDEFGH12345678\r\n";
+AL_U8 rx_buffer[] = "00000000000000000000";
 
 
 void main()
@@ -21,7 +21,16 @@ void main()
         .StopBits     = UART_STOP_1BIT,
     };
 
-    AL_S32 ret = AlUart_Hal_Init(&uart0_hal,&UART_InitStruct,1);
+    AL_S32 ret = AlUart_Hal_Init(&uart0_hal,&UART_InitStruct, AL_NULL, 0);
 
+    while (1)
+    {
+        ret = AlUart_Hal_RecvDataBlock(&uart0_hal,rx_buffer, 50, 50);
+        ret = AlUart_Hal_SendDataBlock(&uart0_hal,tx_buffer, 50);
+    }
 
+    printf("rx_buffer is ret = 0x%x %s \r\n", ret, uart0_hal.Dev->RecvBuffer.BufferPtr);
+
+    while(1) {
+    }
 }

@@ -15,7 +15,7 @@ extern "C" {
 /***************** Macros (Inline Functions) Definitions ********************/
 
 
-#define AL_UART_NUM_INSTANCE	(1)
+#define AL_UART_NUM_INSTANCE    (2)
 
 #define UART__UART0__BASE_ADDR 0xF8400000UL
 #define UART__UART1__BASE_ADDR 0xF8401000UL
@@ -479,10 +479,10 @@ extern "C" {
 
 /**************************** Type Definitions ******************************/
 typedef struct {
-	AL_U32                  DeviceId;
-	AL_U32                  BaseAddress;
-	AL_U32                  InputClockHz;
-	AL_U32                  ModemPinsConnected;
+    AL_U32                  DeviceId;
+    AL_U32                  BaseAddress;
+    AL_U32                  InputClockHz;
+    AL_U32                  ModemPinsConnected;
 } AL_UART_HwConfigStruct;
 
 #ifdef __cplusplus

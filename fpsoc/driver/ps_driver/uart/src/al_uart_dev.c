@@ -31,17 +31,17 @@ extern AL_UART_HwConfigStruct AlUart_HwCfg[AL_UART_NUM_INSTANCE];
 /********************************************************/
 AL_UART_HwConfigStruct *AlUart_Dev_LookupConfig(AL_U32 DeviceId)
 {
-	AL_U32 Index;
-	AL_UART_HwConfigStruct *CfgPtr = AL_NULL;
+    AL_U32 Index;
+    AL_UART_HwConfigStruct *CfgPtr = AL_NULL;
 
-	for (Index = 0; Index < AL_UART_NUM_INSTANCE; Index++) {
-		if (AlUart_HwCfg[Index].DeviceId == DeviceId) {
-			CfgPtr = &AlUart_HwCfg[Index];
-			break;
-		}
-	}
-    
-	return CfgPtr;
+    for (Index = 0; Index < AL_UART_NUM_INSTANCE; Index++) {
+        if (AlUart_HwCfg[Index].DeviceId == DeviceId) {
+            CfgPtr = &AlUart_HwCfg[Index];
+            break;
+        }
+    }
+
+    return CfgPtr;
 }
 
 
@@ -91,13 +91,14 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_UART_InitStruct *InitConfig, 
     }
 
     Uart->Configs     = (InitConfig == AL_NULL) ? UartDefInitConfigs : (*InitConfig);
-    Uart->BaseAddr = AlUart_Dev_LookupConfig(DevID)->BaseAddress;
+    Uart->BaseAddr    = AlUart_Dev_LookupConfig(DevID)->BaseAddress;
 
     AlUart_ll_SetBaudRate(Uart->BaseAddr, InitConfig->BaudRate);
     AlUart_ll_CfgCharacter(Uart->BaseAddr, InitConfig->WordLength, InitConfig->Parity, InitConfig->StopBits);
 
     AlUart_ll_SetFifo(Uart->BaseAddr, AL_FUNC_ENABLE);
     AlUart_ll_SetFifoThreshold(Uart->BaseAddr);
+    AlUart_ll_SetIERPTIME(Uart->BaseAddr,AL_FUNC_ENABLE);
 
     Uart->State |= AL_UART_STATE_READY;
 
@@ -126,12 +127,12 @@ AL_S32 AlUart_Dev_SendData(AL_UART_DevStruct *Uart, AL_U8 *SendData,AL_U32 SendS
     //change status
     AlUart_Dev_SetTxBusy(Uart);
 
-
     Uart->SendBuffer.BufferPtr      = SendData;
     Uart->SendBuffer.RequestedCnt   = SendSize;
     Uart->SendBuffer.HandledCnt     = 0;
 
     AlUart_ll_SetTxIntr(Uart->BaseAddr, AL_FUNC_ENABLE);
+
 
 
     return AL_OK;
@@ -146,7 +147,7 @@ AL_S32 AlUart_Dev_RecvData(AL_UART_DevStruct *Uart, AL_U8 *ReceiveBuf, AL_U32 Re
         return AL_UART_ERR_ILLEGAL_PARAM;
     }
 
-    if ((Uart->State & AL_UART_STATE_READY) == 0) {
+    if ((Uart->State & AL_UART_STATE_READY) != AL_UART_STATE_READY) {
         return AL_UART_ERR_NOT_READY;
     }
 
@@ -161,7 +162,7 @@ AL_S32 AlUart_Dev_RecvData(AL_UART_DevStruct *Uart, AL_U8 *ReceiveBuf, AL_U32 Re
      * Loop until there is no more data in RX Fifo or the specified
      * number of bytes has been received
      */
-    while ((ReceivedCount < ReceiveSize) && (AlUart_ll_RxDataReady(Uart))) {
+    while ((ReceivedCount < ReceiveSize) && (AlUart_ll_RxDataReady(Uart->BaseAddr))) {
         ReceiveBuf[ReceivedCount] = (AL_U8)AlUart_ll_RecvByte(Uart->BaseAddr);
         ReceivedCount++;
     }
@@ -170,10 +171,10 @@ AL_S32 AlUart_Dev_RecvData(AL_UART_DevStruct *Uart, AL_U8 *ReceiveBuf, AL_U32 Re
     if (ReceivedCount < ReceiveSize) {
         Uart->RecvBuffer.RequestedCnt   = ReceiveSize;
         Uart->RecvBuffer.HandledCnt     = ReceivedCount;
-        Uart->RecvBuffer.BufferPtr      = ReceiveBuf;
+        Uart->RecvBuffer.BufferPtr      = ReceiveBuf + ReceivedCount;
 
         /*
-        * trigger intrrupt to recevie data in interrupt
+        * trigger interrupt to receive data in interrupt
         */
         AlUart_ll_SetRxIntr(Uart->BaseAddr, AL_FUNC_ENABLE);
     } else {
@@ -232,7 +233,7 @@ AL_S32 AlUart_Dev_UnRegisterEventCallBack(AL_UART_DevStruct *Uart)
 
 static AL_VOID AlUart_Dev_RecvDataHandler(AL_UART_DevStruct *Uart, AL_BOOL Timeout)
 {
-    while ((AlUart_ll_RxDataReady(Uart->BaseAddr) != AL_FALSE) &&
+    while ((AlUart_ll_RxDataReady(Uart->BaseAddr) == AL_TRUE) &&
             (Uart->RecvBuffer.HandledCnt < Uart->RecvBuffer.RequestedCnt)) {
         Uart->RecvBuffer.BufferPtr[Uart->RecvBuffer.HandledCnt] = (AL_U8)AlUart_ll_RecvByte(Uart->BaseAddr);
         Uart->RecvBuffer.HandledCnt ++;
@@ -257,7 +258,7 @@ static AL_VOID AlUart_Dev_RecvDataHandler(AL_UART_DevStruct *Uart, AL_BOOL Timeo
 
 static void AlUart_Dev_SendDataHandler(AL_UART_DevStruct *Uart)
 {
-    if (Uart->SendBuffer.HandledCnt == Uart->RecvBuffer.RequestedCnt) {
+    if (Uart->SendBuffer.HandledCnt == Uart->SendBuffer.RequestedCnt) {
         AlUart_ll_SetTxIntr(Uart->BaseAddr, AL_FUNC_DISABLE);
 
         if (Uart->EventCallBack) {
@@ -273,9 +274,11 @@ static void AlUart_Dev_SendDataHandler(AL_UART_DevStruct *Uart)
         AlUart_Dev_ClrTxBusy(Uart);
 
     } else {
-        while ((AlUart_ll_ThreIntrEnabled(Uart->BaseAddr) != 0x1) && (Uart->SendBuffer.HandledCnt < Uart->RecvBuffer.RequestedCnt)) {
-            AlUart_ll_SendByte(Uart->BaseAddr, Uart->RecvBuffer.BufferPtr[Uart->RecvBuffer.HandledCnt]);
-            Uart->RecvBuffer.HandledCnt ++;
+        while (!(AlUart_ll_ThreIntrEnabled(Uart->BaseAddr)) &&
+                (Uart->SendBuffer.HandledCnt < Uart->SendBuffer.RequestedCnt))
+        {
+            AlUart_ll_SendByte(Uart->BaseAddr, Uart->SendBuffer.BufferPtr[Uart->SendBuffer.HandledCnt]);
+            Uart->SendBuffer.HandledCnt ++;
         }
     }
 
@@ -284,11 +287,11 @@ static void AlUart_Dev_SendDataHandler(AL_UART_DevStruct *Uart)
 
 
 
-#define UART_IN_RX_INTR(Status)               (Status == RECEIVER_LINE_STATUS)
+#define UART_IN_RX_INTR(Status)               (Status == RECEIVED_DATA_AVAILABLE)
 
-#define UART_IN_TX_INTR(Status)               (Status == RECEIVED_DATA_AVAILABLE)
+#define UART_IN_TX_INTR(Status)               (Status == THR_EMPTY)
 
-#define UART_CHARACTER_TIMEOUT(Status)        (0)
+#define UART_CHARACTER_TIMEOUT(Status)        (Status == CHARACTER_TIMEOUT)
 
 #define UART_IN_STATUS_ERROR(Status)          (0)
 
@@ -297,6 +300,9 @@ AL_VOID AlUart_Dev_IntrHandler(AL_UART_DevStruct *Uart)
 {
     AL_UART_InterruptEnum IntrStatus = AlUart_ll_GetIntrStatus(Uart->BaseAddr);
 
+    /*
+     * Todo: UART_IN_RX_INTR, UART_CHARACTER_TIMEOUT
+    */
     if (UART_IN_RX_INTR(IntrStatus) || UART_CHARACTER_TIMEOUT(IntrStatus)) {
         AlUart_Dev_RecvDataHandler(Uart, UART_CHARACTER_TIMEOUT(IntrStatus));
     }
@@ -305,8 +311,12 @@ AL_VOID AlUart_Dev_IntrHandler(AL_UART_DevStruct *Uart)
         AlUart_Dev_SendDataHandler(Uart);
     }
 
-    /* Clear the interrupt status. */
-    AlUart_ll_ClearIntrReg(Uart->BaseAddr, IntrStatus);
+    /*
+     * Todo: handle error interrupt
+    */
+    if (UART_IN_STATUS_ERROR(IntrStatus)) {
+
+    }
 
     return;
 }

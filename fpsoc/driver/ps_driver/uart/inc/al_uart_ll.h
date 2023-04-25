@@ -133,11 +133,19 @@ static inline AL_VOID AlUart_ll_CfgCharacter(AL_REG32 BaseAddr, AL_UART_DataWidt
     SET_BITS(BaseAddr + UART__LCR__OFFSET, UART__LCR__PARITY__SHIFT, UART__LCR__PARITY__SIZE, Parity);
     SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__STOP__SHIFT, StopBits);
 }
+
 static inline AL_VOID AlUart_ll_SetFifoThreshold(AL_REG32 BaseAddr)
 {
-	SET_BITS(BaseAddr + UART__FCR__IIR__OFFSET, UART__FCR__IIR__TET__RSVD_IIR__SHIFT, 2, 0x3);
+    /*
+     * todo: hard code fix
+    */
+    SET_BITS(BaseAddr + UART__FCR__IIR__OFFSET, UART__FCR__IIR__TET__RSVD_IIR__SHIFT, 2, 0x3);
 }
-static inline AL_VOID AlUart_ll_Set_IER_PTIME(AL_REG32 BaseAddr, AL_FUNCTION State)
+
+/*
+ * todo:
+*/
+static inline AL_VOID AlUart_ll_SetIERPTIME(AL_REG32 BaseAddr, AL_FUNCTION State)
 {
     SET_BIT(BaseAddr + UART__IER_DLH__OFFSET, UART__IER_DLH__PTIME__DLH__SHIFT, State);
 }
@@ -145,6 +153,17 @@ static inline AL_VOID AlUart_ll_Set_IER_PTIME(AL_REG32 BaseAddr, AL_FUNCTION Sta
 static inline AL_BOOL AlUart_ll_RxDataReady(AL_REG32 BaseAddr)
 {
     return GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__DR__SHIFT);
+}
+
+//test
+static inline AL_BOOL AL_LL_UART_GetTXInt(AL_REG32 BaseAddr)
+{
+	return GET_BIT(BaseAddr + UART__IER_DLH__OFFSET, UART__IER_DLH__ETBEI__DLH__SHIFT);
+}
+
+static inline AL_BOOL AL_LL_UART_THREIntrEnabled(AL_REG32 BaseAddr)
+{
+    return GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__THRE__SHIFT);
 }
 
 #ifdef __cplusplus
