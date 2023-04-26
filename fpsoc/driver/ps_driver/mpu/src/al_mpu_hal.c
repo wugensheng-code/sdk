@@ -35,30 +35,30 @@ AL_S32 AlMpu_Hal_ConfigRegion(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Conf
     AL_MPU_RegionEnEnum EnableState;
 
     /* Check the configure parameter */
-    if (!(MPU_IS_VALID_MPU(Instance))) {
+    if (!(AL_MPU_IS_VALID_MPU(Instance))) {
         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
-    if (!(MPU_IS_VALID_REGION_NUMBER(Instance, Config->RegionNumber))) {
+    if (!(AL_MPU_IS_VALID_REGION_NUMBER(Instance, Config->RegionNumber))) {
         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
-    if (!(MPU_IS_VALID_REGION_ENABLE(Config->RegionEnable))) {
+    if (!(AL_MPU_IS_VALID_REGION_ENABLE(Config->RegionEnable))) {
         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
-    if (!(MPU_IS_VALID_REGION_SECURE(Config->Secure))) {
+    if (!(AL_MPU_IS_VALID_REGION_SECURE(Config->Secure))) {
         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
-    if (!(MPU_IS_VALID_REGION_PRIVILEDGE(Config->Privilege))) {
+    if (!(AL_MPU_IS_VALID_REGION_PRIVILEGE(Config->Privilege))) {
         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
-    if (!(MPU_IS_VALID_READ_WRITE(Config->ReadWrite))) {
+    if (!(AL_MPU_IS_VALID_READ_WRITE(Config->ReadWrite))) {
         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
-    if (!(MPU_IS_VALID_REGION_INTR_EN(Config->InterruptEnable))) {
+    if (!(AL_MPU_IS_VALID_REGION_INTR_EN(Config->InterruptEnable))) {
         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
 
     /* Check whether the region is configured */
-    RegionBaseAddr = MPU_REGION_I_BASE_ADDR(Instance, Config->RegionNumber);
+    RegionBaseAddr = MPU_REGION_BASE_ADDR(Instance, Config->RegionNumber);
     EnableState = AlMpu_ll_GetRegionAttrEnableStatus(RegionBaseAddr);
     if (EnableState == MPU_REGION_ENABLE) {
         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_WARNING, AL_ERR_ILLEGAL_PARAM);
@@ -88,11 +88,11 @@ AL_S32 AlMpu_Hal_EnableRegion(AL_REG32 Instance, AL_U8 RegionNumber)
     AL_REG32 RegionBaseAddr;
 
     /* Check the Instance */
-    if (!(MPU_IS_VALID_MPU(Instance))) {
+    if (!(AL_MPU_IS_VALID_MPU(Instance))) {
         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
 
-    RegionBaseAddr = MPU_REGION_I_BASE_ADDR(Instance, RegionNumber);
+    RegionBaseAddr = MPU_REGION_BASE_ADDR(Instance, RegionNumber);
     AlMpu_ll_SetRegionAttrEnable(RegionBaseAddr, MPU_REGION_ENABLE);
 
     return AL_OK;
@@ -114,11 +114,11 @@ AL_S32 AlMpu_Hal_DisableRegion(AL_REG32 Instance, AL_U8 RegionNumber)
     AL_REG32 RegionBaseAddr;
 
     /* Check the Instance */
-    if (!(MPU_IS_VALID_MPU(Instance))) {
+    if (!(AL_MPU_IS_VALID_MPU(Instance))) {
         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
 
-    RegionBaseAddr = MPU_REGION_I_BASE_ADDR(Instance, RegionNumber);
+    RegionBaseAddr = MPU_REGION_BASE_ADDR(Instance, RegionNumber);
     AlMpu_ll_SetRegionAttrEnable(RegionBaseAddr, MPU_REGION_DISABLE);
 
     return AL_OK;
@@ -137,7 +137,7 @@ AL_S32 AlMpu_Hal_DisableRegion(AL_REG32 Instance, AL_U8 RegionNumber)
 AL_S32 AlMpu_Hal_MpuEnable(AL_REG32 Instance)
 {
     /* Check the Instance */
-    if (!(MPU_IS_VALID_MPU(Instance))) {
+    if (!(AL_MPU_IS_VALID_MPU(Instance))) {
         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
 
@@ -159,7 +159,7 @@ AL_S32 AlMpu_Hal_MpuEnable(AL_REG32 Instance)
 AL_S32 AlMpu_Hal_MpuDisable(AL_REG32 Instance)
 {
     /* Check the Instance */
-    if (!(MPU_IS_VALID_MPU(Instance))) {
+    if (!(AL_MPU_IS_VALID_MPU(Instance))) {
         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
 
@@ -174,31 +174,31 @@ static AL_U32 AlMpu_Hal_GetInstance(AL_MPU_InterruptIdEnum IntrId)
 
     switch (IntrId) {
         case MPU_DDRS0:
-            Instance = (AL_U32)MPU__MPU_DDRS0__BASE_ADDR;
+            Instance = (AL_U32)MPU_DDRS0_BASE_ADDR;
             break;
 
         case MPU_DDRS1:
-            Instance = (AL_U32)MPU__MPU_DDRS1__BASE_ADDR;
+            Instance = (AL_U32)MPU_DDRS1_BASE_ADDR;
             break;
 
         case MPU_HPM0:
-            Instance = (AL_U32)MPU__MPU_HPM0__BASE_ADDR;
+            Instance = (AL_U32)MPU_HPM0_BASE_ADDR;
             break;
 
         case MPU_HPM1:
-            Instance = (AL_U32)MPU__MPU_HPM1__BASE_ADDR;
+            Instance = (AL_U32)MPU_HPM1_BASE_ADDR;
             break;
 
         case MPU_NPU:
-            Instance = (AL_U32)MPU__MPU_NPU__BASE_ADDR;
+            Instance = (AL_U32)MPU_NPU_BASE_ADDR;
             break;
 
         case MPU_APU:
-            Instance = (AL_U32)MPU__MPU_APU__BASE_ADDR;
+            Instance = (AL_U32)MPU_APU_BASE_ADDR;
             break;
 
         case MPU_OCMS2:
-            Instance = (AL_U32)MPU__MPU_OCMS2__BASE_ADDR;
+            Instance = (AL_U32)MPU_OCMS2_BASE_ADDR;
             break;
 
         default:
@@ -240,7 +240,7 @@ AL_VOID AlMpu_Hal_MpuIntrHandler()
 
     /* Get intrrupt region number and region base addrress */
     IntrRegionNumber = AlMpu_Hal_GetIntrRegionNumber(Instance);
-    RegionBaseAddr = MPU_REGION_I_BASE_ADDR(Instance, IntrRegionNumber);
+    RegionBaseAddr = MPU_REGION_BASE_ADDR(Instance, IntrRegionNumber);
 
     /* Clear the interrupt */
     AlMpu_ll_ClrRegionIntr(RegionBaseAddr);

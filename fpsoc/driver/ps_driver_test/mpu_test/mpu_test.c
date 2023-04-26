@@ -104,15 +104,15 @@ AL_S32 AlMpu_Test(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Config)
     AL_U8 PrivilegeMode;
     AL_U8 ReadWrite;
     AL_U8 RegionNumber;
-    AL_U8 MaxRegionNumber = MPU_COMMON_REGION_NUMBER8;
+    AL_U8 MaxRegionNumber = AL_MPU_COMMON_REGION_8;
     AL_U8 GroupId;
 
     /* APU MPU has 32 regions and others have 8 regions */
-    if (Instance == MPU__MPU_APU__BASE_ADDR) {
-        MaxRegionNumber = MPU_APU_REGION_NUMBER32;
+    if (Instance == MPU_APU_BASE_ADDR) {
+        MaxRegionNumber = AL_MPU_APU_REGION_32;
     }
 
-    for (RegionNumber = MPU_COMMON_REGION_NUMBER1; RegionNumber <= MaxRegionNumber; RegionNumber++) {
+    for (RegionNumber = AL_MPU_COMMON_REGION_1; RegionNumber <= MaxRegionNumber; RegionNumber++) {
         for (int PrivilegeMode = 0; PrivilegeMode <= MPU_REGION_UNPRIVILEGE; PrivilegeMode++) {
             for (int SecureMode = 0; SecureMode <= MPU_REGION_SECURE; SecureMode++) {
                 for (GroupId = 0; GroupId <= MAX_GROUPID_NUMBER; GroupId++) {
@@ -192,15 +192,15 @@ AL_S32 AlMpu_ConfigTest(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Config)
     AL_U8 PrivilegeMode;
     AL_U8 ReadWrite;
     AL_U8 RegionNumber;
-    AL_U8 MaxRegionNumber = MPU_COMMON_REGION_NUMBER8;
+    AL_U8 MaxRegionNumber = AL_MPU_COMMON_REGION_8;
     AL_U8 GroupId;
 
     /* APU MPU has 32 regions and others have 8 regions */
-    if (Instance == MPU__MPU_APU__BASE_ADDR) {
-        MaxRegionNumber = MPU_APU_REGION_NUMBER32;
+    if (Instance == MPU_APU_BASE_ADDR) {
+        MaxRegionNumber = AL_MPU_APU_REGION_32;
     }
 
-    for (RegionNumber = MPU_COMMON_REGION_NUMBER1; RegionNumber <= MaxRegionNumber; RegionNumber++) {
+    for (RegionNumber = AL_MPU_COMMON_REGION_1; RegionNumber <= MaxRegionNumber; RegionNumber++) {
         for (int PrivilegeMode = 0; PrivilegeMode <= MPU_REGION_UNPRIVILEGE; PrivilegeMode++) {
             for (int SecureMode = 0; SecureMode <= MPU_REGION_SECURE; SecureMode++) {
                 for (GroupId = 0; GroupId <= MAX_GROUPID_NUMBER; GroupId++) {

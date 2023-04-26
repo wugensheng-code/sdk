@@ -7,7 +7,7 @@ AL_S32 AlMpu_Ddrs0MpuTest(void)
 {
     AL_MPU_RegionConfigStruct Config;
 
-    AL_REG32 Instance = (AL_REG32)MPU__MPU_DDRS0__BASE_ADDR;
+    AL_REG32 Instance = (AL_REG32)MPU_DDRS0_BASE_ADDR;
 
     /* The actual start address is 0x0000, end address is 0x1FFF */
     memset(&Config, 0, sizeof(Config));
@@ -31,7 +31,7 @@ AL_S32 AlMpu_ApuMpuTest(void)
 {
     AL_MPU_RegionConfigStruct Config;
 
-    AL_REG32 Instance = (AL_REG32)MPU__MPU_APU__BASE_ADDR;
+    AL_REG32 Instance = (AL_REG32)MPU_APU_BASE_ADDR;
 
     /*
       Apu are configured to access ddrs0, so the protected address is the ddrs0 address.
@@ -58,7 +58,7 @@ AL_S32 AlMpu_Ocms2MpuTest(void)
 {
     AL_MPU_RegionConfigStruct Config;
 
-    AL_REG32 Instance = (AL_REG32)MPU__MPU_OCMS2__BASE_ADDR;
+    AL_REG32 Instance = (AL_REG32)MPU_OCMS2_BASE_ADDR;
 
     /*
       Configure the protected address of the ocm, using the last 128K.
@@ -86,7 +86,7 @@ AL_S32 AlMpu_NpuMpuTest(void)
 {
     AL_MPU_RegionConfigStruct Config;
 
-    AL_REG32 Instance = (AL_REG32)MPU__MPU_NPU__BASE_ADDR;
+    AL_REG32 Instance = (AL_REG32)MPU_NPU_BASE_ADDR;
 
     memset(&Config, 0, sizeof(Config));
     Config.StartAddr = 0x63e00;
@@ -110,7 +110,7 @@ AL_S32 AlMpu_Hp0Hp1MpuTest(void)
     AL_MPU_RegionConfigStruct Config;
 
     /* HP0 test */
-    AL_REG32 Instance = (AL_REG32)MPU__MPU_HPM0__BASE_ADDR;
+    AL_REG32 Instance = (AL_REG32)MPU_HPM0_BASE_ADDR;
 
     memset(&Config, 0, sizeof(Config));
     Config.StartAddr = 0x100;
@@ -127,7 +127,7 @@ AL_S32 AlMpu_Hp0Hp1MpuTest(void)
     AlMpu_Hal_MpuDisable(Instance);
 
     /* HP1 test */
-    Instance = (AL_REG32)MPU__MPU_HPM1__BASE_ADDR;
+    Instance = (AL_REG32)MPU_HPM1_BASE_ADDR;
 
     memset(&Config, 0, sizeof(Config));
     Config.StartAddr = 0x100;
@@ -149,7 +149,7 @@ AL_S32 AlMpu_Hp0Hp1MpuTest(void)
 AL_S32 AlMpu_Ddrs1MpuTest(void)
 {
     AL_MPU_RegionConfigStruct Config;
-    AL_REG32 Instance = (AL_REG32)MPU__MPU_DDRS1__BASE_ADDR;
+    AL_REG32 Instance = (AL_REG32)MPU_DDRS1_BASE_ADDR;
 
     memset(&Config, 0, sizeof(Config));
     Config.StartAddr = 0x100;
@@ -172,13 +172,13 @@ AL_VOID AlMpu_InterruptTest()
 {
     AL_MPU_RegionConfigStruct Config;
 
-    AL_REG32 Instance = (AL_REG32)MPU__MPU_DDRS0__BASE_ADDR;
+    AL_REG32 Instance = (AL_REG32)MPU_DDRS0_BASE_ADDR;
 
     /* Register the MPU interrrupt */
     AlMpu_Hal_MpuRegisterIntr();
 
     memset(&Config, 0, sizeof(Config));
-    Config.RegionNumber = MPU_COMMON_REGION_NUMBER1;
+    Config.RegionNumber = AL_MPU_COMMON_REGION_1;
     Config.StartAddr = 0x0;
     Config.EndAddr = 0x1;
     Config.ReadWrite = MPU_REGION_NOREADWRITE;
@@ -197,10 +197,10 @@ AL_VOID AlMpu_ApuPrivilegeTest()
     AL_U8 PrivilegeTestLoop = 0;
     AL_MPU_RegionConfigStruct Config;
 
-    AL_REG32 Instance = (AL_REG32)MPU__MPU_DDRS0__BASE_ADDR;
+    AL_REG32 Instance = (AL_REG32)MPU_DDRS0_BASE_ADDR;
 
     memset(&Config, 0, sizeof(Config));
-    Config.RegionNumber = MPU_COMMON_REGION_NUMBER1;
+    Config.RegionNumber = AL_MPU_COMMON_REGION_1;
     Config.StartAddr = 0x0;
     Config.EndAddr   = 0x1;
 
@@ -225,10 +225,9 @@ AL_VOID AlMpu_ApuPrivilegeTest()
         *(unsigned int *)(Config.StartAddr * 0x1000 + 4) = 0x87654321;
     }
 
-    AlMpu_Hal_DisableRegion(Instance, MPU_COMMON_REGION_NUMBER1);
+    AlMpu_Hal_DisableRegion(Instance, AL_MPU_COMMON_REGION_1);
 
     AlMpu_Hal_MpuDisable(Instance);
-
 }
 
 /*
