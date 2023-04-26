@@ -7,6 +7,7 @@ extern "C" {
 
 #include "al_type.h"
 #include "al_mpu_ll.h"
+#include "al_errno.h"
 
 /*
   Region number define
@@ -79,6 +80,16 @@ extern "C" {
 
 #define AL_MPU_IS_VALID_REGION_INTR_EN(ENABLE) (((ENABLE) == MPU_REGION_INTERRUPT_DISABLE) || \
                                                 ((ENABLE) == MPU_REGION_INTERRUPT_ENABLE))
+
+/* MPU error code define */
+typedef enum
+{
+    MPU_REGION_CONFIGURED = 0x100,
+} AL_MPU_ErrorCodeEnum;
+
+#define AL_MPU_ERR_ILLEGAL_PARAM            (AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
+
+#define AL_MPU_ERROR_REGION_CONFIGURED      (AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, MPU_REGION_CONFIGURED))
 
  typedef struct
 {
