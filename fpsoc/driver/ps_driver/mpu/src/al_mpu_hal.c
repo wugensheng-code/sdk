@@ -9,8 +9,7 @@ static interrupt_table AL_MPU_IntrTable = {
     .ref = NULL
 };
 
-static AL_VOID AlMpu_Hal_SetRegionAttr(AL_REG32 RegionBaseAddr,
-                                       AL_MPU_RegionConfigStruct *RegionConfig)
+static AL_VOID AlMpu_Hal_SetRegionAttr(AL_REG32 RegionBaseAddr, AL_MPU_RegionConfigStruct *RegionConfig)
 {
     AlMpu_ll_SetRegionAttrSecure(RegionBaseAddr, RegionConfig->Secure);
     AlMpu_ll_SetRegionAttrPrivilege(RegionBaseAddr, RegionConfig->Privilege);
@@ -60,7 +59,7 @@ AL_S32 AlMpu_Hal_ConfigRegion(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Conf
 
     /* Check whether the region is configured */
     RegionBaseAddr = MPU_REGION_I_BASE_ADDR(Instance, Config->RegionNumber);
-    EnableState = AlMpu_ll_GetRegionAttrEnable(RegionBaseAddr);
+    EnableState = AlMpu_ll_GetRegionAttrEnableStatus(RegionBaseAddr);
     if (EnableState == MPU_REGION_ENABLE) {
         return AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_WARNING, AL_ERR_ILLEGAL_PARAM);
     }
@@ -247,7 +246,7 @@ AL_VOID AlMpu_Hal_MpuIntrHandler()
     AlMpu_ll_ClrRegionIntr(RegionBaseAddr);
 
     printf("[MPU][INTERRUPT]:MPU Instance is 0x%x, The region number "
-            "that triggers the interrupt is number %d.\r\n", Instance, IntrRegionNumber);
+           "that triggers the interrupt is number %d.\r\n", Instance, IntrRegionNumber);
 }
 
 /**

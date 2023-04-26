@@ -19,6 +19,7 @@ extern "C" {
 #define MPU__MPU_OCMS2__BASE_ADDR   0xF841B000UL
 #define MPU__MPU_APU__BASE_ADDR     0xF841D000UL
 
+/* The RASR register address of Region i */
 #define MPU_REGION_I_BASE_ADDR(MPU_BASE_ADDR, REGION_NUMBER) \
                               (MPU_BASE_ADDR + (REGION_NUMBER * 0x10))
 

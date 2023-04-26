@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-AL_S32 AL_MPU_Ddrs0MpuTest(void)
+AL_S32 AlMpu_Ddrs0MpuTest(void)
 {
     AL_MPU_RegionConfigStruct Config;
 
@@ -27,7 +27,7 @@ AL_S32 AL_MPU_Ddrs0MpuTest(void)
     return 0;
 }
 
-AL_S32 AL_MPU_ApuMpuTest(void)
+AL_S32 AlMpu_ApuMpuTest(void)
 {
     AL_MPU_RegionConfigStruct Config;
 
@@ -54,7 +54,7 @@ AL_S32 AL_MPU_ApuMpuTest(void)
     return 0;
 }
 
-AL_S32 AL_MPU_Ocms2MpuTest(void)
+AL_S32 AlMpu_Ocms2MpuTest(void)
 {
     AL_MPU_RegionConfigStruct Config;
 
@@ -82,7 +82,7 @@ AL_S32 AL_MPU_Ocms2MpuTest(void)
     return 0;
 }
 
-AL_S32 AL_MPU_NpuMpuTest(void)
+AL_S32 AlMpu_NpuMpuTest(void)
 {
     AL_MPU_RegionConfigStruct Config;
 
@@ -105,7 +105,7 @@ AL_S32 AL_MPU_NpuMpuTest(void)
     return 0;
 }
 
-AL_S32 AL_MPU_Hp0Hp1MpuTest(void)
+AL_S32 AlMpu_Hp0Hp1MpuTest(void)
 {
     AL_MPU_RegionConfigStruct Config;
 
@@ -146,7 +146,7 @@ AL_S32 AL_MPU_Hp0Hp1MpuTest(void)
     return 0;
 }
 
-AL_S32 AL_MPU_Ddrs1MpuTest(void)
+AL_S32 AlMpu_Ddrs1MpuTest(void)
 {
     AL_MPU_RegionConfigStruct Config;
     AL_REG32 Instance = (AL_REG32)MPU__MPU_DDRS1__BASE_ADDR;
@@ -168,7 +168,7 @@ AL_S32 AL_MPU_Ddrs1MpuTest(void)
     return 0;
 }
 
-AL_VOID AL_MPU_InterruptTest()
+AL_VOID AlMpu_InterruptTest()
 {
     AL_MPU_RegionConfigStruct Config;
 
@@ -192,7 +192,7 @@ AL_VOID AL_MPU_InterruptTest()
     *(unsigned int *)(Config.StartAddr * 0x1000 + 4) = 0x87654321;
 }
 
-AL_VOID AL_MPU_ApuPrivilegeTest()
+AL_VOID AlMpu_ApuPrivilegeTest()
 {
     AL_U8 PrivilegeTestLoop = 0;
     AL_MPU_RegionConfigStruct Config;
@@ -239,7 +239,7 @@ AL_VOID AL_MPU_ApuPrivilegeTest()
 #if defined (APU_MPU_PRIVILEGE_TEST) && defined(SWITCH_TO_EL0_FROM_EL3)
 int main()
 {
-    AL_MPU_ApuPrivilegeTest();
+    AlMpu_ApuPrivilegeTest();
 
     return 0;
 }
@@ -254,23 +254,23 @@ int main()
       All of the test case were tested in EL1 mode
       except for apu privilege test case, which runn at EL0.
      */
-    AL_MPU_Ddrs0MpuTest();
+    AlMpu_Ddrs0MpuTest();
 
-    AL_MPU_ApuMpuTest();
+    AlMpu_ApuMpuTest();
 
-    AL_MPU_Ocms2MpuTest();
+    AlMpu_Ocms2MpuTest();
 
-    AL_MPU_NpuMpuTest();
+    AlMpu_NpuMpuTest();
 
     /*
        Because HP and DDRS1 MPU requires manual testing,
        Check only the register data after the driver API configuration
        to ensure that the driver API is working properly.
      */
-    AL_MPU_Hp0Hp1MpuTest();
-    AL_MPU_Ddrs1MpuTest();
+    AlMpu_Hp0Hp1MpuTest();
+    AlMpu_Ddrs1MpuTest();
 
-    AL_MPU_InterruptTest();
+    AlMpu_InterruptTest();
 
     printf("[MPU]:[PASS]\r\n");
 
