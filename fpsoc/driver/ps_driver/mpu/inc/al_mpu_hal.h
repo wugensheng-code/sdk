@@ -137,13 +137,13 @@ typedef enum
 /* MPU interrupt id enum */
 typedef enum
 {
-    MPU_DDRS0 = 0x1,
-    MPU_DDRS1 = 0x2,
-    MPU_HPM0  = 0x4,
-    MPU_HPM1  = 0x8,
-    MPU_NPU   = 0x10,
-    MPU_OCMS2 = 0x20,
-    MPU_APU   = 0x40,
+    MPU_INTR_DDRS0_ID   = 0x1,
+    MPU_INTR_DDRS1_ID   = 0x2,
+    MPU_INTR_HPM0_ID    = 0x4,
+    MPU_INTR_HPM1_ID    = 0x8,
+    MPU_INTR_NPU_ID     = 0x10,
+    MPU_INTR_OCMS2_ID   = 0x20,
+    MPU_INTR_APU_ID     = 0x40,
 } AL_MPU_InterruptIdEnum;
 
 AL_S32 AlMpu_Hal_ConfigRegion(AL_REG32 Instance, AL_MPU_RegionConfigStruct *RegionConfig);

@@ -168,36 +168,66 @@ AL_S32 AlMpu_Hal_MpuDisable(AL_REG32 Instance)
     return AL_OK;
 }
 
+AL_MPU_InterruptIdEnum AlMpu_hal_GetMpuIntrId(AL_U32 *MpuIntrState)
+{
+    AL_U32 IntrState = *MpuIntrState;
+
+    if (IntrState & MPU_INTR_DDRS0_ID) {
+        (*MpuIntrState) = (*MpuIntrState) & (~MPU_INTR_DDRS0_ID);
+        return MPU_INTR_DDRS0_ID;
+    } else if (IntrState & MPU_INTR_DDRS1_ID) {
+        (*MpuIntrState) = (*MpuIntrState) & (~MPU_INTR_DDRS1_ID);
+        return MPU_INTR_DDRS1_ID;
+    } else if (IntrState & MPU_INTR_HPM0_ID) {
+        (*MpuIntrState) = (*MpuIntrState) & (~MPU_INTR_HPM0_ID);
+        return MPU_INTR_HPM0_ID;
+    } else if (IntrState & MPU_INTR_HPM1_ID) {
+        (*MpuIntrState) = (*MpuIntrState) & (~MPU_INTR_HPM1_ID);
+        return MPU_INTR_HPM1_ID;
+    } else if (IntrState & MPU_INTR_NPU_ID) {
+        (*MpuIntrState) = (*MpuIntrState) & (~MPU_INTR_NPU_ID);
+        return MPU_INTR_NPU_ID;
+    } else if (IntrState & MPU_INTR_OCMS2_ID) {
+        (*MpuIntrState) = (*MpuIntrState) & (~MPU_INTR_OCMS2_ID);
+        return MPU_INTR_OCMS2_ID;
+    } else if (IntrState & MPU_INTR_APU_ID) {
+        (*MpuIntrState) = (*MpuIntrState) & (~MPU_INTR_APU_ID);
+        return MPU_INTR_APU_ID;
+    } else {
+        return 0;
+    }
+}
+
 static AL_U32 AlMpu_Hal_GetInstance(AL_MPU_InterruptIdEnum IntrId)
 {
     AL_U32 Instance;
 
     switch (IntrId) {
-        case MPU_DDRS0:
+        case MPU_INTR_DDRS0_ID:
             Instance = (AL_U32)MPU_DDRS0_BASE_ADDR;
             break;
 
-        case MPU_DDRS1:
+        case MPU_INTR_DDRS1_ID:
             Instance = (AL_U32)MPU_DDRS1_BASE_ADDR;
             break;
 
-        case MPU_HPM0:
+        case MPU_INTR_HPM0_ID:
             Instance = (AL_U32)MPU_HPM0_BASE_ADDR;
             break;
 
-        case MPU_HPM1:
+        case MPU_INTR_HPM1_ID:
             Instance = (AL_U32)MPU_HPM1_BASE_ADDR;
             break;
 
-        case MPU_NPU:
+        case MPU_INTR_NPU_ID:
             Instance = (AL_U32)MPU_NPU_BASE_ADDR;
             break;
 
-        case MPU_APU:
+        case MPU_INTR_APU_ID:
             Instance = (AL_U32)MPU_APU_BASE_ADDR;
             break;
 
-        case MPU_OCMS2:
+        case MPU_INTR_OCMS2_ID:
             Instance = (AL_U32)MPU_OCMS2_BASE_ADDR;
             break;
 
@@ -209,9 +239,24 @@ static AL_U32 AlMpu_Hal_GetInstance(AL_MPU_InterruptIdEnum IntrId)
     return Instance;
 }
 
-static AL_U32 AlMpu_Hal_GetIntrRegionNumber(AL_REG32 Instance)
+static AL_U8 AlMpu_Hal_GetIntrRegionNumber(AL_REG32 Instance)
 {
-    return AlMpu_ll_GetIntrRegionNumber(Instance);
+    AL_U32 IntrRegion;
+    AL_U8 RegionNumber = 0;
+
+    IntrRegion = AlMpu_ll_GetIntrRegionNumber(Instance);
+
+    while (IntrRegion) {
+
+        RegionNumber++;
+
+        if (IntrRegion & 0x1)
+            break;
+
+        IntrRegion = (IntrRegion >> 1);
+    }
+
+    return RegionNumber;
 }
 
 /**
@@ -222,31 +267,39 @@ static AL_U32 AlMpu_Hal_GetIntrRegionNumber(AL_REG32 Instance)
  *
  * @note
  */
-AL_VOID AlMpu_Hal_MpuIntrHandler()
+AL_VOID AlMpu_Hal_MpuIntrHandler(void *Ptr)
 {
+    AL_U32 MpuIntrState = 0;
     AL_MPU_InterruptIdEnum MpuIntrId;
     AL_U32 Instance;
-    AL_U32 IntrRegionNumber;
+    AL_U8 IntrRegionNumber;
     AL_REG32 RegionBaseAddr;
 
     /* Get MPU interrupt id */
-    MpuIntrId = AlMpu_ll_GetMpuIntrId();
+    MpuIntrState = AlMpu_ll_GetMpuIntrState();
 
-    /* Get MPU base address */
-    Instance = AlMpu_Hal_GetInstance(MpuIntrId);
-    if (Instance == AL_NULL) {
-        return;
+    /* The loop handles all mpu interrupts */
+    while (MpuIntrState) {
+        MpuIntrId = AlMpu_hal_GetMpuIntrId(&MpuIntrState);
+        if (MpuIntrId == 0)
+            continue;
+
+        /* Get MPU base address */
+        Instance = AlMpu_Hal_GetInstance(MpuIntrId);
+        if (Instance == AL_NULL) {
+            continue;
+        }
+
+        /* Get intrrupt region number and region base addrress */
+        IntrRegionNumber = AlMpu_Hal_GetIntrRegionNumber(Instance);
+        RegionBaseAddr = MPU_REGION_BASE_ADDR(Instance, IntrRegionNumber);
+
+        /* Clear the interrupt */
+        AlMpu_ll_ClrRegionIntr(RegionBaseAddr);
+
+        printf("[MPU][INTERRUPT]:MPU Instance is 0x%x, The region number "
+               "that triggers the interrupt is region%d.\r\n", Instance, IntrRegionNumber);
     }
-
-    /* Get intrrupt region number and region base addrress */
-    IntrRegionNumber = AlMpu_Hal_GetIntrRegionNumber(Instance);
-    RegionBaseAddr = MPU_REGION_BASE_ADDR(Instance, IntrRegionNumber);
-
-    /* Clear the interrupt */
-    AlMpu_ll_ClrRegionIntr(RegionBaseAddr);
-
-    printf("[MPU][INTERRUPT]:MPU Instance is 0x%x, The region number "
-           "that triggers the interrupt is number %d.\r\n", Instance, IntrRegionNumber);
 }
 
 /**

@@ -256,7 +256,7 @@ static inline AL_U32 AlMpu_ll_GetIntrRegionNumber(AL_REG32 MpuBaseAddr)
  *
  * @note
  */
-static inline AL_U32 AlMpu_ll_GetMpuIntrId()
+static inline AL_U32 AlMpu_ll_GetMpuIntrState()
 {
     return GET_BITS(MPU_INTR_STATE_BASE_ADDR, MPU_INTR_STATE_SHIFT, MPU_INTR_STATE_SHIFT_SIZE);
 }
