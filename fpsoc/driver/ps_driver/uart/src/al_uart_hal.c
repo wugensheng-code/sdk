@@ -42,7 +42,7 @@ static AL_S32 AlUart_Hal_WaitRxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 T
 
 static AL_S32 AlUart_Hal_WaitTxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 Timeout)
 {
-    while (AlUart_Dev_IsTxBusy(Handle->Dev) & Timeout);
+    while (AlUart_Dev_IsTxBusy(Handle->Dev));
 
     if (Timeout == 0) {
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Uart wait send done time out!\r\n");
@@ -54,7 +54,7 @@ static AL_S32 AlUart_Hal_WaitTxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 T
 
 static AL_S32 AlUart_Hal_WaitRxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 Timeout)
 {
-    while (AlUart_Dev_IsRxBusy(Handle->Dev) & Timeout);
+    while (AlUart_Dev_IsRxBusy(Handle->Dev));
 
     if (Timeout == 0) {
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Uart wait recv done time out!\r\n");
