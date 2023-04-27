@@ -46,14 +46,14 @@ static AL_U32 AlCan_Dev_Dlc2Len(AL_CAN_DataLenEnum Dlc)
  * This function set CAN protocol type
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   Type is protocol of CAN with type AL_CAN_TypeEnum
- * @return  
+ * @return
  *          - AL_OK for successfully set
  * @note
 */
 static AL_S32 AlCan_Dev_SetCanType(AL_CAN_DevStruct *Dev, AL_CAN_TypeEnum Type)
 {
     if (Dev->Config.Type == Type) {
-        return AL_OK; 
+        return AL_OK;
     }
 
     switch (Type) {
@@ -77,14 +77,14 @@ static AL_S32 AlCan_Dev_SetCanType(AL_CAN_DevStruct *Dev, AL_CAN_TypeEnum Type)
  * This function set CAN running mode
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   OpsMode is running mode with type AL_CAN_OpsModeEnum
- * @return  
+ * @return
  *          - AL_OK for successfully set
  * @note
 */
 static AL_S32 AlCan_Dev_SetOpsMode(AL_CAN_DevStruct *Dev, AL_CAN_OpsModeEnum OpsMode)
 {
     if (Dev->Config.OpsMode == OpsMode) {
-        return AL_OK; 
+        return AL_OK;
     }
 
     switch (OpsMode) {
@@ -123,7 +123,7 @@ static AL_S32 AlCan_Dev_SetOpsMode(AL_CAN_DevStruct *Dev, AL_CAN_OpsModeEnum Ops
  * @param   TimeSeg1 is pointer to bit timing segment 1
  * @param   TimeSeg2 is pointer to bit timing segment 2
  * @param   SyncJumpWidth is pointer to synchronization jump width
- * @return  
+ * @return
  * @note
 */
 AL_VOID AlCan_Dev_SetBitTiming(AL_CAN_DevStruct *Dev, AL_CAN_BitTimingTypeEnum Type, \
@@ -154,7 +154,7 @@ AL_VOID AlCan_Dev_SetBitTiming(AL_CAN_DevStruct *Dev, AL_CAN_BitTimingTypeEnum T
  * @param   TimeSeg1 is pointer to bit timing segment 1
  * @param   TimeSeg2 is pointer to bit timing segment 2
  * @param   SyncJumpWidth is pointer to synchronization jump width
- * @return  
+ * @return
  * @note
 */
 AL_VOID AlCan_Dev_GetBitTiming(AL_CAN_DevStruct *Dev, AL_CAN_BitTimingTypeEnum Type, \
@@ -183,7 +183,7 @@ AL_VOID AlCan_Dev_GetBitTiming(AL_CAN_DevStruct *Dev, AL_CAN_BitTimingTypeEnum T
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   Type is bit timing type to AL_CAN_BitTimingTypeEnum
  * @param   Prescaler is to divides the system clock to get the time quanta clock
- * @return  
+ * @return
  * @note
 */
 AL_VOID AlCan_Dev_SetBaudRatePrescaler(AL_CAN_DevStruct *Dev, AL_CAN_BitTimingTypeEnum Type, \
@@ -201,7 +201,7 @@ AL_VOID AlCan_Dev_SetBaudRatePrescaler(AL_CAN_DevStruct *Dev, AL_CAN_BitTimingTy
     default:
         break;
     }
-    
+
 }
 
 /**
@@ -225,7 +225,7 @@ AL_U8 AlCan_Dev_GetBaudRatePrescaler(AL_CAN_DevStruct *Dev, AL_CAN_BitTimingType
     default:
         break;
     }
-    
+
 }
 
 /**
@@ -300,7 +300,7 @@ AL_BOOL AlCan_Dev_GetState(AL_CAN_DevStruct *Dev, AL_CAN_StateEnum State)
  * This function set module status
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   State is enum to AL_CAN_StateEnum
- * @return  
+ * @return
  * @note
 */
 AL_VOID AlCan_Dev_SetState(AL_CAN_DevStruct *Dev, AL_CAN_StateEnum State)
@@ -312,7 +312,7 @@ AL_VOID AlCan_Dev_SetState(AL_CAN_DevStruct *Dev, AL_CAN_StateEnum State)
  * This function clr module status
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   State is enum to AL_CAN_StateEnum
- * @return  
+ * @return
  * @note
 */
 AL_VOID AlCan_Dev_ClrState(AL_CAN_DevStruct *Dev, AL_CAN_StateEnum State)
@@ -600,7 +600,7 @@ AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, \
     if (Config->Type == AL_CAN_TYPE_FD) {
         AlCan_Dev_SetDefBitTimingAndPrescaler(Dev, AL_CAN_BIT__FD__F, Config->FastBitTiming);
     }
-    
+
     AlCan_Dev_SetOpsMode(Dev, Config->OpsMode);
     AlCan_Dev_SetTransMode(Dev, Config->TransMode);
     AlCan_ll_SetAfwl(Dev->BaseAddr, Config->RbAfwl);
@@ -642,7 +642,7 @@ AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, \
 /**
  * This function set module send busy status
  * @param   Dev is pointer to AL_CAN_DevStruct
- * @return  
+ * @return
  * @note
 */
 // AL_VOID AlCan_Dev_SetSendBusy(AL_CAN_DevStruct *Dev)
@@ -653,7 +653,7 @@ AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, \
 /**
  * This function set module recv busy status
  * @param   Dev is pointer to AL_CAN_DevStruct
- * @return  
+ * @return
  * @note
 */
 // AL_VOID AlCan_Dev_SetRecvBusy(AL_CAN_DevStruct *Dev)
@@ -664,7 +664,7 @@ AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, \
 /**
  * This function clr module send busy status
  * @param   Dev is pointer to AL_CAN_DevStruct
- * @return  
+ * @return
  * @note
 */
 // AL_VOID AlCan_Dev_ClrSendBusy(AL_CAN_DevStruct *Dev)
@@ -675,7 +675,7 @@ AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, \
 /**
  * This function clr module recv busy status
  * @param   Dev is pointer to AL_CAN_DevStruct
- * @return  
+ * @return
  * @note
 */
 // AL_VOID AlCan_Dev_ClrRecvBusy(AL_CAN_DevStruct *Dev)
@@ -687,7 +687,7 @@ AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, \
  * This function send frame
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   Frame is tx buffer data with AL_CAN_FrameStruct
- * @return  
+ * @return
  *          - AL_OK is send done
  * @note
 */
@@ -715,7 +715,7 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
 
     Id = Frame->Id;
     Id |= (Frame->IsEnTts << CAN__TBUF_0_3__TTSEN__SHIFT);
-    
+
     AlCan_ll_WriteWordSendBuffer(Dev->BaseAddr, 0, Id);
 
     Ctrl = Frame->DataLen & 0xF;
@@ -728,7 +728,7 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
     }
 
     Ctrl |= ((Frame->IsIdExt == AL_TRUE) ? 0x1 : 0x0 ) << CAN__TBUF_4_7__IDE__SHIFT;
-    
+
     AlCan_ll_WriteWordSendBuffer(Dev->BaseAddr, 1, Ctrl);
 
     for (AL_U32 i = 0; i < AL_CAN_DataLenArray[Frame->DataLen]; i++) {
@@ -762,7 +762,7 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
  * This function decode a received frame
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   Frame is pointer to store frame buffer with AL_CAN_FrameStruct
- * @return  
+ * @return
  *          - AL_OK is send done
  * @note
 */
@@ -794,7 +794,7 @@ AL_S32 AlCan_Dev_RecvFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
     Frame->DataLen      = Ctrl.Bit.Dlc;
     Frame->IsBitSwitch  = Ctrl.Bit.Brs;
     Frame->IsRemote     = Ctrl.Bit.Rtr;
-    
+
     Frame->Id = AlCan_ll_GetRecvExtId(Dev->BaseAddr, Frame->IsIdExt);
     DataWordLen = AlCan_Dev_Dlc2Len(Frame->DataLen);
     for (AL_U32 i = 0; i < DataWordLen; i++) {
@@ -806,7 +806,7 @@ AL_S32 AlCan_Dev_RecvFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
     if (AlCan_ll_GetRstat(Dev->BaseAddr) == AL_CAN_RSTAT_EMPTY) {
         AlCan_Dev_SetState(Dev, AL_CAN_STATE_RECV_EMPTY);
     }
-    
+
     return AL_OK;
 }
 
@@ -814,7 +814,7 @@ AL_S32 AlCan_Dev_RecvFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
  * This function set filter parameter
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   FilterCfg is pointer to filter configuration with AL_CAN_FilterCfgStruct
- * @return  
+ * @return
  *          - AL_OK is send done
  * @note
 */
@@ -840,7 +840,7 @@ AL_S32 AlCan_Dev_SetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *Filter
  * This function get filter parameter
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   FilterCfg is pointer to store filter configuration with AL_CAN_FilterCfgStruct
- * @return  
+ * @return
  *          - AL_OK is send done
  * @note
 */
@@ -871,7 +871,7 @@ AL_S32 AlCan_Dev_GetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *Filter
 /**
  * This function get filter parameter
  * @param   Dev is pointer to AL_CAN_DevStruct
- * @return  
+ * @return
  *          - AL_OK is send done
  * @note
 */
@@ -946,7 +946,7 @@ AL_S32 AlCan_Dev_GetDecodeError(AL_CAN_DevStruct *Dev)
 /**
  * This function display received frame
  * @param   Frame is pointer to received buffer with AL_CAN_FrameStruct
- * @return  
+ * @return
  *          - AL_OK is send done
  * @note
 */
@@ -975,7 +975,7 @@ AL_S32 AlCan_Dev_DisplayFrame(AL_CAN_FrameStruct *Frame)
     for (AL_U32 i = 0; i < DataWordLen; i++) {
         AL_LOG(AL_ERR_LEVEL_INFO, "| Data %02d: 0x%08x\r\n", i, Frame->Data[i]);
     }
-    
+
     AL_LOG(AL_ERR_LEVEL_INFO, "-----Recv Frame Done-----\r\n");
 }
 #endif

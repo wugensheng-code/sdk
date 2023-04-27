@@ -42,15 +42,26 @@ static AL_S32 AlUart_Hal_WaitRxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 T
 
 static AL_S32 AlUart_Hal_WaitTxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 Timeout)
 {
-    while (AlUart_Dev_IsTxBusy(Handle->Dev));
+    while (AlUart_Dev_IsTxBusy(Handle->Dev) & Timeout);
+
+    if (Timeout == 0) {
+        AL_LOG(AL_ERR_LEVEL_DEBUG, "Uart wait send done time out!\r\n");
+        return AL_UART_ERR_TIMEOUT;
+    }
+
+    return AL_OK;
 }
 
-/*
- * todo: check timeout
-*/
 static AL_S32 AlUart_Hal_WaitRxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 Timeout)
 {
-    while (AlUart_Dev_IsRxBusy(Handle->Dev));
+    while (AlUart_Dev_IsRxBusy(Handle->Dev) & Timeout);
+
+    if (Timeout == 0) {
+        AL_LOG(AL_ERR_LEVEL_DEBUG, "Uart wait recv done time out!\r\n");
+        return AL_UART_ERR_TIMEOUT;
+    }
+
+    return AL_OK;
 }
 
 #define AL_UART_HAL_LOCK(Handle)          do {} while (0)
@@ -65,17 +76,10 @@ static AL_VOID AlUart_Hal_EventHandler(AL_UART_EventStruct UartEvent, AL_VOID *C
     switch (UartEvent.Event)
     {
     case AL_UART_SEND_DONE:
-        /*
-        * todo: Al_SendEvent(Handle->TxEvent);
-        */
-
         break;
 
     case AL_UART_RECEIVE_DONE:
     case AL_UART_RECEIVE_TIMEOUT:
-        /*
-        * todo: Al_SendEvent(Handle->RxEvent);
-        */
         break;
 
     case AL_UART_EVENT_PARE_FRAME_BRKE:
@@ -86,9 +90,8 @@ static AL_VOID AlUart_Hal_EventHandler(AL_UART_EventStruct UartEvent, AL_VOID *C
     }
 }
 
-
-AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_UART_InitStruct *InitConfig,\
-    AL_UART_EventStruct *CallBack , AL_U32 DevId)
+AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_UART_InitStruct *InitConfig,
+                       AL_Uart_EventCallBack CallBack , AL_U32 DevId)
 {
     AL_S32 ret = AL_OK;
     interrupt_table callback;
@@ -104,12 +107,9 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_UART_InitStruct *InitConfig
     if (HwConfig != AL_NULL) {
         Handle->Dev = &AL_UART_DevInstance[DevId];
     } else {
-        /*
-        * todo: return error
-        */
+        return AL_UART_ERR_ILLEGAL_PARAM;
     }
 
-    Handle->Dev = &AL_UART_DevInstance[HwConfig->DeviceId];
     ret = AlUart_Dev_Init(Handle->Dev, InitConfig, DevId);
     if (ret != AL_OK) {
         AL_UART_HAL_UNLOCK(Handle);
@@ -126,12 +126,12 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_UART_InitStruct *InitConfig
     callback.ref        = Handle->Dev;
     ECLIC_Register_IRQ(SOC_INT89_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, &callback);
     __enable_irq();
+    AlUart_ll_SetThreIntr(Handle->Dev->BaseAddr,AL_FUNC_ENABLE);
 
     AL_UART_HAL_UNLOCK(Handle);
 
     return ret;
 }
-
 
 AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
@@ -168,7 +168,7 @@ AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
 }
 
 
-AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
+AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 *RecvSize, AL_U32 Timeout)
 {
     AL_S32 ret = AL_OK;
 
@@ -194,6 +194,8 @@ AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
     if (ret != AL_OK) {
         AlUart_ll_SetRxIntr(Handle->Dev->BaseAddr, AL_FUNC_DISABLE);
     }
+
+    *RecvSize = Handle->Dev->RecvBuffer.HandledCnt;
 
     AL_UART_HAL_UNLOCK(Handle);
 

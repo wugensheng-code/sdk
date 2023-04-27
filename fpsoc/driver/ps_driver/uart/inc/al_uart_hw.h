@@ -17,8 +17,8 @@ extern "C" {
 
 #define AL_UART_NUM_INSTANCE    (2)
 
-#define UART__UART0__BASE_ADDR 0xF8400000UL
-#define UART__UART1__BASE_ADDR 0xF8401000UL
+#define UART0__BASE_ADDR 0xF8400000UL
+#define UART1__BASE_ADDR 0xF8401000UL
 
 #define UART_CLOCK  40000000
 
@@ -32,17 +32,17 @@ extern "C" {
 // (DLL): Divisor Latch (Low).
 // If UART_16550_COMPATIBLE = No, then this register can be accessed only when the DLAB bit (LCR[7]) is set and the UART is not busy - that is, USR[0] is 0; otherwise this register can be accessed only when the DLAB bit (LCR[7]) is set.
 ///////////////////////////////////////////////////////
-#define UART__RBR__THR__DLL__OFFSET 0x0
-#define UART__RBR__THR__DLL__NUM  0x1
-#define UART__RBR__THR__DLL__WIDTH  8
+#define UART__RBR__THR__DLL__OFFSET                        0x0
+#define UART__RBR__THR__DLL__NUM                           0x1
+#define UART__RBR__THR__DLL__WIDTH                         8
 
-#define UART__RBR__THR__DLL__RBR__THR__DLL__SHIFT    0
-#define UART__RBR__THR__DLL__RSVD_RBR__THR__DLL__SHIFT    8
+#define UART__RBR__THR__DLL__RBR__THR__DLL__SHIFT          0
+#define UART__RBR__THR__DLL__RSVD_RBR__THR__DLL__SHIFT     8
 
-#define UART__RBR__THR__DLL__RBR__THR__DLL__MASK    0x000000ff
-#define UART__RBR__THR__DLL__RSVD_RBR__THR__DLL__MASK    0xffffff00
+#define UART__RBR__THR__DLL__RBR__THR__DLL__MASK           0x000000ff
+#define UART__RBR__THR__DLL__RSVD_RBR__THR__DLL__MASK      0xffffff00
 
-#define UART__RBR__THR__DLL__RBR__THR__DLL__POR_VALUE    0x0
+#define UART__RBR__THR__DLL__RBR__THR__DLL__POR_VALUE      0x0
 #define UART__RBR__THR__DLL__RSVD_RBR__THR__DLL__POR_VALUE    0x0
 
 
@@ -53,37 +53,37 @@ extern "C" {
 //
 // (DLH): Divisor Latch High (DLH) Register.If UART_16550_COMPATIBLE = No, then this register can be accessed only when the DLAB bit (LCR[7]) is set and the UART is not busy, that is, USR[0] is 0; otherwise this register can be accessed only when the DLAB bit (LCR[7]) is set.
 ///////////////////////////////////////////////////////
-#define UART__IER_DLH__OFFSET 0x4
-#define UART__IER_DLH__NUM  0x1
+#define UART__IER_DLH__OFFSET       0x4
+#define UART__IER_DLH__NUM          0x1
 #define UART__IER_DLH__dlh__SHIFT   0
 #define UART__IER_DLH__dlh__SIZE    8
 
-#define UART__IER_DLH__ERBFI__DLH__SHIFT    0
-#define UART__IER_DLH__ETBEI__DLH__SHIFT    1
-#define UART__IER_DLH__ELSI__DLH__SHIFT    2
-#define UART__IER_DLH__EDSSI__DLH__SHIFT    3
-#define UART__IER_DLH__ELCOLR__DLH__SHIFT    4
-#define UART__IER_DLH__RSVD_IER__DLH_6TO5__SHIFT    5
-#define UART__IER_DLH__PTIME__DLH__SHIFT    7
-#define UART__IER_DLH__RSVD_IER__DLH__SHIFT    8
+#define UART__IER_DLH__ERBFI__DLH__SHIFT           0
+#define UART__IER_DLH__ETBEI__DLH__SHIFT           1
+#define UART__IER_DLH__ELSI__DLH__SHIFT            2
+#define UART__IER_DLH__EDSSI__DLH__SHIFT           3
+#define UART__IER_DLH__ELCOLR__DLH__SHIFT          4
+#define UART__IER_DLH__RSVD_IER__DLH_6TO5__SHIFT   5
+#define UART__IER_DLH__PTIME__DLH__SHIFT           7
+#define UART__IER_DLH__RSVD_IER__DLH__SHIFT        8
 
-#define UART__IER_DLH__ERBFI__DLH__MASK    0x00000001
-#define UART__IER_DLH__ETBEI__DLH__MASK    0x00000002
-#define UART__IER_DLH__ELSI__DLH__MASK    0x00000004
-#define UART__IER_DLH__EDSSI__DLH__MASK    0x00000008
-#define UART__IER_DLH__ELCOLR__DLH__MASK    0x00000010
-#define UART__IER_DLH__RSVD_IER__DLH_6TO5__MASK    0x00000060
-#define UART__IER_DLH__PTIME__DLH__MASK    0x00000080
-#define UART__IER_DLH__RSVD_IER__DLH__MASK    0xffffff00
+#define UART__IER_DLH__ERBFI__DLH__MASK             0x00000001
+#define UART__IER_DLH__ETBEI__DLH__MASK             0x00000002
+#define UART__IER_DLH__ELSI__DLH__MASK              0x00000004
+#define UART__IER_DLH__EDSSI__DLH__MASK             0x00000008
+#define UART__IER_DLH__ELCOLR__DLH__MASK            0x00000010
+#define UART__IER_DLH__RSVD_IER__DLH_6TO5__MASK     0x00000060
+#define UART__IER_DLH__PTIME__DLH__MASK             0x00000080
+#define UART__IER_DLH__RSVD_IER__DLH__MASK          0xffffff00
 
-#define UART__IER_DLH__ERBFI__DLH__POR_VALUE    0x0
-#define UART__IER_DLH__ETBEI__DLH__POR_VALUE    0x0
-#define UART__IER_DLH__ELSI__DLH__POR_VALUE    0x0
-#define UART__IER_DLH__EDSSI__DLH__POR_VALUE    0x0
-#define UART__IER_DLH__ELCOLR__DLH__POR_VALUE    0x0
+#define UART__IER_DLH__ERBFI__DLH__POR_VALUE            0x0
+#define UART__IER_DLH__ETBEI__DLH__POR_VALUE            0x0
+#define UART__IER_DLH__ELSI__DLH__POR_VALUE             0x0
+#define UART__IER_DLH__EDSSI__DLH__POR_VALUE            0x0
+#define UART__IER_DLH__ELCOLR__DLH__POR_VALUE           0x0
 #define UART__IER_DLH__RSVD_IER__DLH_6TO5__POR_VALUE    0x0
-#define UART__IER_DLH__PTIME__DLH__POR_VALUE    0x0
-#define UART__IER_DLH__RSVD_IER__DLH__POR_VALUE    0x0
+#define UART__IER_DLH__PTIME__DLH__POR_VALUE            0x0
+#define UART__IER_DLH__RSVD_IER__DLH__POR_VALUE         0x0
 
 
 ///////////////////////////////////////////////////////
@@ -96,22 +96,24 @@ extern "C" {
 #define UART__FCR__IIR__OFFSET  0x8
 #define UART__FCR__IIR__NUM  0x1
 
-#define UART__FCR__IIR__FIFOE__IID__SHIFT    0
-#define UART__FCR__IIR__FIFOE__IID__SIZE     4
-#define UART__FCR__IIR__RFIFOR__IID__SHIFT    1
-#define UART__FCR__IIR__XFIFOR__IID__SHIFT    2
-#define UART__FCR__IIR__DMAM__IID__SHIFT    3
+#define UART__FCR__IIR__FIFOE__IID__SHIFT       0
+#define UART__FCR__IIR__FIFOE__IID__SIZE        4
+#define UART__FCR__IIR__RFIFOR__IID__SHIFT      1
+#define UART__FCR__IIR__XFIFOR__IID__SHIFT      2
+#define UART__FCR__IIR__DMAM__IID__SHIFT        3
 #define UART__FCR__IIR__TET__RSVD_IIR__SHIFT    4
-#define UART__FCR__IIR__RT__FIFOSE__SHIFT    6
+#define UART__FCR__IIR__TET__RSVD_IIR__SIZE     2
+#define UART__FCR__IIR__RT__FIFOSE__SHIFT       6
+#define UART__FCR__IIR__RT__FIFOSE__SSIZE       2
 #define UART__FCR__IIR__RSVD_FCR__IIR__SHIFT    8
 
-#define UART__FCR__IIR__FIFOE__IID__MASK    0x00000001
-#define UART__FCR__IIR__RFIFOR__IID__MASK    0x00000002
-#define UART__FCR__IIR__XFIFOR__IID__MASK    0x00000004
-#define UART__FCR__IIR__DMAM__IID__MASK    0x00000008
-#define UART__FCR__IIR__TET__RSVD_IIR__MASK    0x00000030
-#define UART__FCR__IIR__RT__FIFOSE__MASK    0x000000c0
-#define UART__FCR__IIR__RSVD_FCR__IIR__MASK    0xffffff00
+#define UART__FCR__IIR__FIFOE__IID__MASK        0x00000001
+#define UART__FCR__IIR__RFIFOR__IID__MASK       0x00000002
+#define UART__FCR__IIR__XFIFOR__IID__MASK       0x00000004
+#define UART__FCR__IIR__DMAM__IID__MASK         0x00000008
+#define UART__FCR__IIR__TET__RSVD_IIR__MASK     0x00000030
+#define UART__FCR__IIR__RT__FIFOSE__MASK        0x000000c0
+#define UART__FCR__IIR__RSVD_FCR__IIR__MASK     0xffffff00
 
 ///////////////////////////////////////////////////////
 // Register: LCR
@@ -478,7 +480,8 @@ extern "C" {
 
 
 /**************************** Type Definitions ******************************/
-typedef struct {
+typedef struct
+{
     AL_U32                  DeviceId;
     AL_U32                  BaseAddress;
     AL_U32                  InputClockHz;

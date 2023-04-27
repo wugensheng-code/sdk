@@ -34,7 +34,7 @@ int putchar(int c)
 #else
 	uart_write(SOC_DEBUG_UART, c);
 #endif
-	
+
 	return c;
 }
 
