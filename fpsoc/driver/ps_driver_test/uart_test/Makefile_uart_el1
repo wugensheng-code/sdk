@@ -8,4 +8,4 @@ INCDIRS = ../../ps_driver/uart/inc
 
 COMMON_FLAGS := -O2
 
-include $(NUCLEI_SDK_ROOT)/Build/Makefile.base
+include $(NUCLEI_SDK_ROOT)/tools/make/Makefile.base

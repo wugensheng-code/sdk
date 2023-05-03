@@ -26,12 +26,12 @@ typedef char                    AL_CHAR;
 typedef unsigned char           AL_UCHAR;
 typedef unsigned int            AL_HANDLE;
 
-typedef volatile AL_U32         AL_REG32;
+typedef unsigned long           AL_UINTPTR;
+typedef volatile AL_UINTPTR     AL_REG;
 
 typedef void                    AL_VOID;
 typedef long                    AL_INTPTR;
 
-typedef unsigned long           AL_UINTPTR;
 
 
 /*----------------------------------------------*

@@ -37,6 +37,8 @@
  * @{
  */
 /** \brief Instruction Synchronization Barrier, compatiable with ARM */
+
+#ifdef __riscv
 #define __ISB()                             __RWMB()
 
 /** \brief Data Synchronization Barrier, compatiable with ARM */
@@ -44,6 +46,7 @@
 
 /** \brief Data Memory Barrier, compatiable with ARM */
 #define __DMB()                             __RWMB()
+#endif
 
 /** \brief LDRT Unprivileged (8 bit), ARM Compatiable */
 #define __LDRBT(ptr)                        __LB((ptr))

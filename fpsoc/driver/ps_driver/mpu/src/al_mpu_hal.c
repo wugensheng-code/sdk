@@ -9,7 +9,7 @@ static interrupt_table AL_MPU_IntrTable = {
     .ref = NULL
 };
 
-static AL_VOID AlMpu_Hal_SetRegionAttr(AL_REG32 RegionBaseAddr, AL_MPU_RegionConfigStruct *RegionConfig)
+static AL_VOID AlMpu_Hal_SetRegionAttr(AL_REG RegionBaseAddr, AL_MPU_RegionConfigStruct *RegionConfig)
 {
     AlMpu_ll_SetRegionAttrSecure(RegionBaseAddr, RegionConfig->Secure);
     AlMpu_ll_SetRegionAttrPrivilege(RegionBaseAddr, RegionConfig->Privilege);
@@ -29,9 +29,9 @@ static AL_VOID AlMpu_Hal_SetRegionAttr(AL_REG32 RegionBaseAddr, AL_MPU_RegionCon
  *
  * @note
  */
-AL_S32 AlMpu_Hal_ConfigRegion(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Config)
+AL_S32 AlMpu_Hal_ConfigRegion(AL_REG Instance, AL_MPU_RegionConfigStruct *Config)
 {
-    AL_REG32 RegionBaseAddr;
+    AL_REG RegionBaseAddr;
     AL_MPU_RegionEnEnum EnableState;
 
     /* Check the configure parameter */
@@ -83,9 +83,9 @@ AL_S32 AlMpu_Hal_ConfigRegion(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Conf
  *
  * @note
  */
-AL_S32 AlMpu_Hal_EnableRegion(AL_REG32 Instance, AL_U8 RegionNumber)
+AL_S32 AlMpu_Hal_EnableRegion(AL_REG Instance, AL_U8 RegionNumber)
 {
-    AL_REG32 RegionBaseAddr;
+    AL_REG RegionBaseAddr;
 
     /* Check the Instance */
     if (!(AL_MPU_IS_VALID_MPU(Instance))) {
@@ -109,9 +109,9 @@ AL_S32 AlMpu_Hal_EnableRegion(AL_REG32 Instance, AL_U8 RegionNumber)
  *
  * @note
  */
-AL_S32 AlMpu_Hal_DisableRegion(AL_REG32 Instance, AL_U8 RegionNumber)
+AL_S32 AlMpu_Hal_DisableRegion(AL_REG Instance, AL_U8 RegionNumber)
 {
-    AL_REG32 RegionBaseAddr;
+    AL_REG RegionBaseAddr;
 
     /* Check the Instance */
     if (!(AL_MPU_IS_VALID_MPU(Instance))) {
@@ -134,7 +134,7 @@ AL_S32 AlMpu_Hal_DisableRegion(AL_REG32 Instance, AL_U8 RegionNumber)
  *
  * @note
  */
-AL_S32 AlMpu_Hal_MpuEnable(AL_REG32 Instance)
+AL_S32 AlMpu_Hal_MpuEnable(AL_REG Instance)
 {
     /* Check the Instance */
     if (!(AL_MPU_IS_VALID_MPU(Instance))) {
@@ -156,7 +156,7 @@ AL_S32 AlMpu_Hal_MpuEnable(AL_REG32 Instance)
  *
  * @note
  */
-AL_S32 AlMpu_Hal_MpuDisable(AL_REG32 Instance)
+AL_S32 AlMpu_Hal_MpuDisable(AL_REG Instance)
 {
     /* Check the Instance */
     if (!(AL_MPU_IS_VALID_MPU(Instance))) {
@@ -239,7 +239,7 @@ static AL_U32 AlMpu_Hal_GetInstance(AL_MPU_InterruptIdEnum IntrId)
     return Instance;
 }
 
-static AL_U8 AlMpu_Hal_GetIntrRegionNumber(AL_REG32 Instance)
+static AL_U8 AlMpu_Hal_GetIntrRegionNumber(AL_REG Instance)
 {
     AL_U32 IntrRegion;
     AL_U8 RegionNumber = 0;
@@ -273,7 +273,7 @@ AL_VOID AlMpu_Hal_MpuIntrHandler(void *Ptr)
     AL_MPU_InterruptIdEnum MpuIntrId;
     AL_U32 Instance;
     AL_U8 IntrRegionNumber;
-    AL_REG32 RegionBaseAddr;
+    AL_REG RegionBaseAddr;
 
     /* Get MPU interrupt id */
     MpuIntrState = AlMpu_ll_GetMpuIntrState();

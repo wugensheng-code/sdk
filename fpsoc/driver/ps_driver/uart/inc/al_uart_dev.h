@@ -77,7 +77,7 @@ typedef AL_VOID (*AL_Uart_EventCallBack)(AL_UART_EventStruct UartEvent, AL_VOID 
 
 typedef struct
 {
-    AL_REG32                      BaseAddr;
+    AL_REG                      BaseAddr;
     AL_UART_InitStruct            Configs;
     AL_Uart_BufferStruct          SendBuffer;
     AL_Uart_BufferStruct          RecvBuffer;

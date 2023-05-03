@@ -25,7 +25,7 @@ void do_sync_handle(struct pt_regs *pt_regs, unsigned int esr)
 }
 #endif /* APU_MPU_PRIVILEGE_TEST */
 
-static AL_U32 AlMpu_ProtectCheck(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Config)
+static AL_U32 AlMpu_ProtectCheck(AL_REG Instance, AL_MPU_RegionConfigStruct *Config)
 {
     AL_U32 RetValue = 0;
     /* get the actual address */
@@ -98,7 +98,7 @@ static AL_U32 AlMpu_ProtectCheck(AL_REG32 Instance, AL_MPU_RegionConfigStruct *C
     return RetValue;
 }
 
-AL_S32 AlMpu_Test(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Config)
+AL_S32 AlMpu_Test(AL_REG Instance, AL_MPU_RegionConfigStruct *Config)
 {
     AL_U8 SecureMode;
     AL_U8 PrivilegeMode;
@@ -143,7 +143,7 @@ AL_S32 AlMpu_Test(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Config)
     return 0;
 }
 
-static AL_U32 AlMpu_ProtectConfigCheck(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Config)
+static AL_U32 AlMpu_ProtectConfigCheck(AL_REG Instance, AL_MPU_RegionConfigStruct *Config)
 {
     AL_MPU_RegionEnEnum RegionEnable;
     AL_MPU_RegionSecureEnum Secure;
@@ -155,7 +155,7 @@ static AL_U32 AlMpu_ProtectConfigCheck(AL_REG32 Instance, AL_MPU_RegionConfigStr
     AL_U32 GroupId;
     AL_U32 RegisterRASA;
 
-    AL_REG32 RegionBaseAddr = Instance + (0x10 * (Config->RegionNumber));
+    AL_REG RegionBaseAddr = Instance + (0x10 * (Config->RegionNumber));
 
     StartAddr = *((volatile AL_U32 *)(RegionBaseAddr + 0x4));
     EndAddr = *((volatile AL_U32 *)(RegionBaseAddr + 0x8));
@@ -186,7 +186,7 @@ static AL_U32 AlMpu_ProtectConfigCheck(AL_REG32 Instance, AL_MPU_RegionConfigStr
     return 0;
 }
 
-AL_S32 AlMpu_ConfigTest(AL_REG32 Instance, AL_MPU_RegionConfigStruct *Config)
+AL_S32 AlMpu_ConfigTest(AL_REG Instance, AL_MPU_RegionConfigStruct *Config)
 {
     AL_U8 SecureMode;
     AL_U8 PrivilegeMode;

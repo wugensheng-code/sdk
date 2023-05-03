@@ -22,7 +22,10 @@
 #define _UL(x)		(_AC(x, UL))
 #define _ULL(x)		(_AC(x, ULL))
 
+#ifndef BIT
 #define BIT(nr)		(1UL << (nr))
+#endif
+
 #define _BITUL(x)	(_UL(1) << (x))
 #define _BITULL(x)	(_ULL(1) << (x))
 
@@ -60,21 +63,9 @@ typedef signed long long  s64;
 typedef unsigned long long u64_t;
 
 
+#ifndef min
 #define min(a, b) (((a) < (b))?(a):(b))
-#define max(a, b) (((a) > (b))?(a):(b))
-
-#define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
-#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-
-/*
-#ifndef TRUE
-#define TRUE		1U
 #endif
-
-#ifndef FALSE
-#define FALSE		0U
-#endif
-*/
 
 #define APU_COMPONENT_IS_READY     0x11111111U  /**< In device drivers, This macro will be
                                                  assigend to "IsReady" member of driver

@@ -146,15 +146,15 @@ typedef enum
     MPU_INTR_APU_ID     = 0x40,
 } AL_MPU_InterruptIdEnum;
 
-AL_S32 AlMpu_Hal_ConfigRegion(AL_REG32 Instance, AL_MPU_RegionConfigStruct *RegionConfig);
+AL_S32 AlMpu_Hal_ConfigRegion(AL_REG Instance, AL_MPU_RegionConfigStruct *RegionConfig);
 
-AL_S32 AlMpu_Hal_EnableRegion(AL_REG32 Instance, AL_U8 RegionNumber);
+AL_S32 AlMpu_Hal_EnableRegion(AL_REG Instance, AL_U8 RegionNumber);
 
-AL_S32 AlMpu_Hal_DisableRegion(AL_REG32 Instance, AL_U8 RegionNumber);
+AL_S32 AlMpu_Hal_DisableRegion(AL_REG Instance, AL_U8 RegionNumber);
 
-AL_S32 AlMpu_Hal_MpuEnable(AL_REG32 Instance);
+AL_S32 AlMpu_Hal_MpuEnable(AL_REG Instance);
 
-AL_S32 AlMpu_Hal_MpuDisable(AL_REG32 Instance);
+AL_S32 AlMpu_Hal_MpuDisable(AL_REG Instance);
 
 AL_VOID AlMpu_Hal_MpuIntrHandler();
 

@@ -58,119 +58,119 @@ typedef enum
     UART_RxFIFO_FULL_2               = 0x3
 } AL_UART_RxFifoThrEnum;
 
-static inline AL_VOID AlUart_ll_SetParity(AL_REG32 BaseAddr, AL_UART_ParityEnum Parity)
+static inline AL_VOID AlUart_ll_SetParity(AL_REG BaseAddr, AL_UART_ParityEnum Parity)
 {
-    SET_BITS(BaseAddr + UART__LCR__OFFSET, UART__LCR__PARITY__SHIFT, UART__LCR__PARITY__SIZE, Parity);
+    AL_REG32_SET_BITS(BaseAddr + UART__LCR__OFFSET, UART__LCR__PARITY__SHIFT, UART__LCR__PARITY__SIZE, Parity);
 }
 
-static inline AL_VOID AlUart_ll_SetDataWidth(AL_REG32 BaseAddr, AL_UART_DataWidthEnum DataWidth)
+static inline AL_VOID AlUart_ll_SetDataWidth(AL_REG BaseAddr, AL_UART_DataWidthEnum DataWidth)
 {
-    SET_BITS(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLS__SHIFT, UART__LCR__DLS__SIZE, DataWidth);
+    AL_REG32_SET_BITS(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLS__SHIFT, UART__LCR__DLS__SIZE, DataWidth);
 }
 
-static inline AL_VOID AlUart_ll_SetStopBitsLength(AL_REG32 BaseAddr, AL_UART_StopBitsEnum StopBits)
+static inline AL_VOID AlUart_ll_SetStopBitsLength(AL_REG BaseAddr, AL_UART_StopBitsEnum StopBits)
 {
-    SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__STOP__SHIFT, StopBits);
+    AL_REG32_SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__STOP__SHIFT, StopBits);
 }
 
-static inline AL_VOID AlUart_ll_SetFifo(AL_REG32 BaseAddr, AL_FUNCTION State)
+static inline AL_VOID AlUart_ll_SetFifo(AL_REG BaseAddr, AL_FUNCTION State)
 {
-    SET_BIT(BaseAddr + UART__FCR__IIR__OFFSET, UART__FCR__IIR__FIFOE__IID__SHIFT, State);
+    AL_REG32_SET_BIT(BaseAddr + UART__FCR__IIR__OFFSET, UART__FCR__IIR__FIFOE__IID__SHIFT, State);
 }
 
-static inline AL_VOID AlUart_ll_SetTxFifoThr(AL_REG32 BaseAddr,AL_UART_TxFifoThrEnum FifoThr)
+static inline AL_VOID AlUart_ll_SetTxFifoThr(AL_REG BaseAddr,AL_UART_TxFifoThrEnum FifoThr)
 {
-    SET_BITS(BaseAddr + UART__FCR__IIR__OFFSET, UART__FCR__IIR__TET__RSVD_IIR__SHIFT,
+    AL_REG32_SET_BITS(BaseAddr + UART__FCR__IIR__OFFSET, UART__FCR__IIR__TET__RSVD_IIR__SHIFT,
              UART__FCR__IIR__TET__RSVD_IIR__SIZE, FifoThr);
 }
 
-static inline AL_VOID AlUart_ll_SetRxFifoThr(AL_REG32 BaseAddr,AL_UART_RxFifoThrEnum FifoThr)
+static inline AL_VOID AlUart_ll_SetRxFifoThr(AL_REG BaseAddr,AL_UART_RxFifoThrEnum FifoThr)
 {
-    SET_BITS(BaseAddr + UART__FCR__IIR__OFFSET, UART__FCR__IIR__RT__FIFOSE__SHIFT,
+    AL_REG32_SET_BITS(BaseAddr + UART__FCR__IIR__OFFSET, UART__FCR__IIR__RT__FIFOSE__SHIFT,
              UART__FCR__IIR__RT__FIFOSE__SSIZE, FifoThr);
 }
 
-static inline AL_VOID AlUart_ll_SendByte(AL_REG32 BaseAddr, AL_U8 Data)
+static inline AL_VOID AlUart_ll_SendByte(AL_REG BaseAddr, AL_U8 Data)
 {
-    WRITE_REG(BaseAddr + UART__RBR__THR__DLL__OFFSET, Data);
+    AL_REG32_WRITE(BaseAddr + UART__RBR__THR__DLL__OFFSET, Data);
 }
 
-static inline AL_U8 AlUart_ll_RecvByte(AL_REG32 BaseAddr)
+static inline AL_U8 AlUart_ll_RecvByte(AL_REG BaseAddr)
 {
-    return READ_REG(BaseAddr + UART__RBR__THR__DLL__OFFSET);
+    return AL_REG32_READ(BaseAddr + UART__RBR__THR__DLL__OFFSET);
 }
 
-static inline AL_BOOL AlUart_ll_IsThrEmpty(AL_REG32 BaseAddr)
+static inline AL_BOOL AlUart_ll_IsThrEmpty(AL_REG BaseAddr)
 {
-    return GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__THRE__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__THRE__SHIFT);
 }
 
-static inline AL_BOOL AlUart_ll_IsRxDataReady(AL_REG32 BaseAddr)
+static inline AL_BOOL AlUart_ll_IsRxDataReady(AL_REG BaseAddr)
 {
-    return GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__DR__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__DR__SHIFT);
 }
 
-static inline AL_BOOL AlUart_ll_IsTransmitFifoFull(AL_REG32 BaseAddr)
+static inline AL_BOOL AlUart_ll_IsTransmitFifoFull(AL_REG BaseAddr)
 {
-    return GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__THRE__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__THRE__SHIFT);
 }
 
-static inline AL_VOID AlUart_ll_SetThreIntr(AL_REG32 BaseAddr, AL_FUNCTION State)
+static inline AL_VOID AlUart_ll_SetThreIntr(AL_REG BaseAddr, AL_FUNCTION State)
 {
-    SET_BIT(BaseAddr + UART__IER_DLH__OFFSET, UART__IER_DLH__PTIME__DLH__SHIFT, State);
+    AL_REG32_SET_BIT(BaseAddr + UART__IER_DLH__OFFSET, UART__IER_DLH__PTIME__DLH__SHIFT, State);
 }
 
-static inline AL_VOID AlUart_ll_SetTxIntr(AL_REG32 BaseAddr, AL_FUNCTION State)
+static inline AL_VOID AlUart_ll_SetTxIntr(AL_REG BaseAddr, AL_FUNCTION State)
 {
-    SET_BIT(BaseAddr + UART__IER_DLH__OFFSET, UART__IER_DLH__ETBEI__DLH__SHIFT, State);
+    AL_REG32_SET_BIT(BaseAddr + UART__IER_DLH__OFFSET, UART__IER_DLH__ETBEI__DLH__SHIFT, State);
 }
 
-static inline AL_VOID AlUart_ll_SetRxIntr(AL_REG32 BaseAddr, AL_FUNCTION State)
+static inline AL_VOID AlUart_ll_SetRxIntr(AL_REG BaseAddr, AL_FUNCTION State)
 {
-    SET_BIT(BaseAddr + UART__IER_DLH__OFFSET, UART__IER_DLH__ERBFI__DLH__SHIFT, State);
+    AL_REG32_SET_BIT(BaseAddr + UART__IER_DLH__OFFSET, UART__IER_DLH__ERBFI__DLH__SHIFT, State);
 }
 
-static inline AL_UART_InterruptEnum AlUart_ll_GetIntrStatus(AL_REG32 BaseAddr)
+static inline AL_UART_InterruptEnum AlUart_ll_GetIntrStatus(AL_REG BaseAddr)
 {
-    return GET_BITS(BaseAddr + UART__FCR__IIR__OFFSET, UART__FCR__IIR__FIFOE__IID__SHIFT,
+    return AL_REG32_GET_BITS(BaseAddr + UART__FCR__IIR__OFFSET, UART__FCR__IIR__FIFOE__IID__SHIFT,
                     UART__FCR__IIR__FIFOE__IID__SIZE);
 }
 
-static inline AL_BOOL AlUart_ll_IsOeIntr(AL_REG32 BaseAddr)
+static inline AL_BOOL AlUart_ll_IsOeIntr(AL_REG BaseAddr)
 {
-    return GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__OE__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__OE__SHIFT);
 }
 
-static inline AL_BOOL AlUart_ll_IsPeIntr(AL_REG32 BaseAddr)
+static inline AL_BOOL AlUart_ll_IsPeIntr(AL_REG BaseAddr)
 {
-    return GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__PE__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__PE__SHIFT);
 }
 
-static inline AL_BOOL AlUart_ll_IsFeIntr(AL_REG32 BaseAddr)
+static inline AL_BOOL AlUart_ll_IsFeIntr(AL_REG BaseAddr)
 {
-    return GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__FE__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__FE__SHIFT);
 }
 
-static inline AL_BOOL AlUart_ll_IsBiIntr(AL_REG32 BaseAddr)
+static inline AL_BOOL AlUart_ll_IsBiIntr(AL_REG BaseAddr)
 {
-    return GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__BI__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__BI__SHIFT);
 }
 
-static inline AL_VOID AlUart_ll_SetBaudRate(AL_REG32 BaseAddr, AL_U32 BaudRate)
+static inline AL_VOID AlUart_ll_SetBaudRate(AL_REG BaseAddr, AL_U32 BaudRate)
 {
-    SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_ENABLE);
-    WRITE_REG(BaseAddr + UART__IER_DLH__OFFSET, ((AL_U16)(UART_CLOCK / (BaudRate*16))) >> 8);
-    WRITE_REG(BaseAddr + UART__RBR__THR__DLL__OFFSET, ((AL_U8)(UART_CLOCK / (BaudRate*16))));
-    SET_BIT(BaseAddr + UART__MCR__ADDR_OFFSET, UART__MCR__DTR__SHIFT, AL_FUNC_ENABLE);
-    SET_BIT(BaseAddr + UART__MCR__ADDR_OFFSET, UART__MCR__RTS__SHIFT, AL_FUNC_ENABLE);
-    SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_DISABLE);
+    AL_REG32_SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_ENABLE);
+    AL_REG32_WRITE(BaseAddr + UART__IER_DLH__OFFSET, ((AL_U16)(UART_CLOCK / (BaudRate*16))) >> 8);
+    AL_REG32_WRITE(BaseAddr + UART__RBR__THR__DLL__OFFSET, ((AL_U8)(UART_CLOCK / (BaudRate*16))));
+    AL_REG32_SET_BIT(BaseAddr + UART__MCR__ADDR_OFFSET, UART__MCR__DTR__SHIFT, AL_FUNC_ENABLE);
+    AL_REG32_SET_BIT(BaseAddr + UART__MCR__ADDR_OFFSET, UART__MCR__RTS__SHIFT, AL_FUNC_ENABLE);
+    AL_REG32_SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_DISABLE);
 }
 
-static inline AL_VOID AlUart_ll_CfgCharacter(AL_REG32 BaseAddr, AL_UART_DataWidthEnum DataWidth, AL_UART_ParityEnum Parity, AL_UART_StopBitsEnum StopBits)
+static inline AL_VOID AlUart_ll_CfgCharacter(AL_REG BaseAddr, AL_UART_DataWidthEnum DataWidth, AL_UART_ParityEnum Parity, AL_UART_StopBitsEnum StopBits)
 {
-    SET_BITS(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLS__SHIFT, UART__LCR__DLS__SIZE, DataWidth);
-    SET_BITS(BaseAddr + UART__LCR__OFFSET, UART__LCR__PARITY__SHIFT, UART__LCR__PARITY__SIZE, Parity);
-    SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__STOP__SHIFT, StopBits);
+    AL_REG32_SET_BITS(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLS__SHIFT, UART__LCR__DLS__SIZE, DataWidth);
+    AL_REG32_SET_BITS(BaseAddr + UART__LCR__OFFSET, UART__LCR__PARITY__SHIFT, UART__LCR__PARITY__SIZE, Parity);
+    AL_REG32_SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__STOP__SHIFT, StopBits);
 }
 
 #ifdef __cplusplus

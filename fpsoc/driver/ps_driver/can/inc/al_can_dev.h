@@ -12,7 +12,7 @@ extern "C" {
 #define AL_CAN_MAX_S_SJW        15
 #define AL_CAN_MAX_FS_SEG_1     63
 #define AL_CAN_MAX_FS_SEG_2     31
-#define AL_CAN_MAX_FS_SJW       15  
+#define AL_CAN_MAX_FS_SJW       15
 #define AL_CAN_MAX_FF_SEG_1     15
 #define AL_CAN_MAX_FF_SEG_2     7
 #define AL_CAN_MAX_FF_SJW       7
@@ -290,7 +290,7 @@ typedef struct
 
 typedef struct
 {
-    AL_REG32                BaseAddr;
+    AL_REG                BaseAddr;
     AL_CAN_InitStruct       Config;
     AL_CAN_CallBackStruct   EventCallBack;
     AL_CAN_StateEnum        State;
