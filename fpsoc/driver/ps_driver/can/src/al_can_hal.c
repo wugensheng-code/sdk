@@ -49,7 +49,7 @@ static AlCan_Hal_IntrHandler(AL_CAN_HalStruct *Handle, AL_U32 Event, AL_U32 Even
  * This function wait for frame send done or timeout
  * @param   Handle is pointer to AL_CAN_HalStruct
  * @param   Timeout is max wait time for send done
- * @return  
+ * @return
  *          - AL_OK
  * @note
 */
@@ -69,7 +69,7 @@ static AL_S32 AlCan_Hal_WaitSendDoneOrTimeout(AL_CAN_HalStruct *Handle, AL_U32 T
  * This function wait for frame recv done or timeout
  * @param   Handle is pointer to AL_CAN_HalStruct
  * @param   Timeout is max wait time for send done
- * @return  
+ * @return
  *          - AL_OK
  * @note
 */
@@ -131,7 +131,7 @@ static AL_VOID AlCan_Hal_DefEventCallBack(AL_CAN_EventStruct *Event, AL_VOID *Ca
         break;
     case AL_CAN_EVENT_BUS_ERR:
         AL_LOG(AL_ERR_LEVEL_DEBUG, "can bus error!\r\n");
-        
+
         break;
     case AL_CAN_EVENT_ARBITRATION_LOST:
         AL_LOG(AL_ERR_LEVEL_DEBUG, "can arbitration lost!\r\n");

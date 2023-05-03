@@ -1,6 +1,6 @@
 TARGET = fpsoc_can_fd_listen_only
 
-NUCLEI_SDK_ROOT = ../../../../
+NUCLEI_SDK_ROOT = ../../../..
 
 SRCDIRS = .
 
@@ -12,4 +12,4 @@ COMMON_FLAGS := -O2 -DCAN_DEBUG -DCONFIG_CAN_LISTEN_ONLY_TEST=1
 # COMMON_FLAGS += -DSUPPORT_NONSECURE
 
 
-include $(NUCLEI_SDK_ROOT)/Build/Makefile.base
+include $(NUCLEI_SDK_ROOT)/tools/make/Makefile.base

@@ -1,0 +1,28 @@
+INCDIRS += $(FPSOC_ROOT)/arch/inc/nmsis/core/inc \
+           $(FPSOC_ROOT)/arch/inc/nmsis/dsp/inc \
+           $(FPSOC_ROOT)/arch/inc/nmsis/nn/inc
+
+INCDIRS += $(FPSOC_ROOT)/driver/ps_driver/can/inc \
+           $(FPSOC_ROOT)/driver/ps_driver/mpu/inc \
+           $(FPSOC_ROOT)/driver/ps_driver/uart/inc \
+           $(FPSOC_ROOT)/driver/ps_driver/lagecy/include \
+		   $(FPSOC_ROOT)/inc \
+		   $(FPSOC_ROOT)/arch/inc \
+
+
+
+C_SRCDIRS += $(FPSOC_ARCH)/rv64/src \
+             $(FPSOC_ARCH)/rv64/src/stubs \
+             $(FPSOC_ROOT)/driver/ps_driver/can/src \
+             $(FPSOC_ROOT)/driver/ps_driver/mpu/src \
+             $(FPSOC_ROOT)/driver/ps_driver/uart/src \
+             $(FPSOC_ROOT)/driver/ps_driver/lagecy/drivers
+
+ASM_SRCDIRS += $(FPSOC_ARCH)/rv64/src/
+
+# Add extra board related source files and header files
+VALID_NUCLEI_SDK_SOC_BOARD=$(wildcard $(NUCLEI_SDK_SOC_BOARD))
+ifneq ($(VALID_NUCLEI_SDK_SOC_BOARD),)
+INCDIRS += $(VALID_NUCLEI_SDK_SOC_BOARD)/Include
+C_SRCDIRS += $(VALID_NUCLEI_SDK_SOC_BOARD)/Source
+endif

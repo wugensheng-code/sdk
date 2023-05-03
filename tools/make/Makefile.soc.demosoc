@@ -1,0 +1,46 @@
+# BOARD ?= nuclei_fpga_eval
+CORE ?= n307fd
+
+# ifeq ($(BOARD),hbird_eval)
+# $(warning BOARD hbird_eval is renamed to nuclei_fpga_eval since Nuclei SDK 0.3.1, please use BOARD=nuclei_fpga_eval now)
+# override BOARD := nuclei_fpga_eval
+# endif
+
+FPSOC_ARCH=$(FPSOC_ROOT)/arch/riscv
+
+OPENOCD_CFG ?= $(NUCLEI_SDK_SOC_BOARD)/openocd_demosoc.cfg
+
+
+ifeq ($(DOWNLOAD),ilm)
+LINKER_SCRIPT ?= $(NUCLEI_SDK_SOC_CHIP)/lds/gcc_dr1v90_ilm.ld
+else
+ifeq ($(DOWNLOAD),ddr)
+LINKER_SCRIPT ?= $(NUCLEI_SDK_SOC_CHIP)/lds/gcc_dr1v90_ddr.ld
+else
+ifeq ($(DOWNLOAD),flashxip)
+LINKER_SCRIPT ?= $(NUCLEI_SDK_SOC_CHIP)/lds/gcc_dr1v90_flashxip.ld
+else
+ifeq ($(DOWNLOAD),ocm)
+LINKER_SCRIPT ?= $(NUCLEI_SDK_SOC_CHIP)/lds/gcc_dr1v90_ocm.ld
+else
+LINKER_SCRIPT ?= $(NUCLEI_SDK_SOC_CHIP)/lds/gcc_dr1v90_flash.ld
+endif
+endif
+endif
+endif
+
+
+
+CORE_UPPER = $(call uc, $(CORE))
+include $(NUCLEI_SDK_BUILD)/Makefile.core
+
+CORE_ARCH_ABI = $($(CORE_UPPER)_CORE_ARCH_ABI)
+ifneq ($(words $(CORE_ARCH_ABI)), 2)
+$(warning Here we only support these cores: $(SUPPORTED_CORES))
+$(error There is no coresponding ARCH_ABI setting for CORE $(CORE), please check Makefile.core)
+endif
+RISCV_ARCH ?= $(word 1, $(CORE_ARCH_ABI))
+RISCV_ABI ?= $(word 2, $(CORE_ARCH_ABI))
+
+# Extra openocd and gdb commands
+GDB_UPLOAD_CMDS += -ex "monitor reset halt"

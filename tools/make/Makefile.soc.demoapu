@@ -1,0 +1,17 @@
+# BOARD ?= anlogic_al9000_apu
+CORE ?= a35
+
+FPSOC_ARCH=$(FPSOC_ROOT)/arch/arm
+
+ifeq ($(DOWNLOAD),ilm)
+LINKER_SCRIPT ?= $(NUCLEI_SDK_SOC_CHIP)/lds/gcc_dr1m90_ocm.ld
+else
+$(error not defined download mode: $(DOWNLOAD))
+endif
+
+
+RISCV_ARCH ?= armv8-a
+RISCV_ABI ?= aapcs
+
+# Extra openocd and gdb commands
+GDB_UPLOAD_CMDS += -ex "monitor reset halt"

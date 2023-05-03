@@ -1,5 +1,0 @@
-loadfile "D:\jpbai\tzpc_testcases\Sec\tzpc_test_sec.elf"
-set debug-from *$ENTRYPOINT
-memory set_typed 0xF88060B0 (unsigned int) 0b00000100
-start
-wait

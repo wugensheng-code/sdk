@@ -1,13 +1,11 @@
 /*****************************************************************************
 *****************************************************************************/
 
-#ifndef __AL_TYPE_H__
-#define __AL_TYPE_H__
+#ifndef AL_TYPE_H
+#define AL_TYPE_H
 
 #ifdef __cplusplus
-#if __cplusplus
 extern "C"{
-#endif
 #endif /* __cplusplus */
 
 /*----------------------------------------------*
@@ -54,10 +52,8 @@ typedef enum
 #define AL_NULL         ((void *)0L)
 
 #ifdef __cplusplus
-#if __cplusplus
 }
-#endif
 #endif /* __cplusplus */
 
-#endif /* __HI_TYPE_H__ */
+#endif /* AL_TYPE_H */
 

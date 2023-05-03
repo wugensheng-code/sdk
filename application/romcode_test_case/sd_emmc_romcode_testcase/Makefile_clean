@@ -1,9 +1,0 @@
-TARGET = all
-
-NUCLEI_SDK_ROOT = ../../..
-
-SRCDIRS = . FATFS
-
-INCDIRS = . FATFS
-
-include $(NUCLEI_SDK_ROOT)/Build/Makefile.base
