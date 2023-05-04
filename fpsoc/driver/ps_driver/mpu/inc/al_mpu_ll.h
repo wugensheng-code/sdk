@@ -85,7 +85,7 @@ static inline AL_VOID AlMpu_ll_MpuDisable(AL_REG MpuBaseAddr)
 {
     /* Make sure outstanding transfers are done */
 #if (defined _AARCH_64 || defined __aarch64__)
-    __DSB();
+    __DMB();
 #else
     // Todo
 #endif /* defined _AARCH_64 || defined __aarch64__ */
@@ -205,7 +205,7 @@ static inline AL_VOID AlMpu_ll_SetRegionAttrEnable(AL_REG RegionBaseAddr, AL_MPU
  */
 static inline AL_MPU_RegionEnEnum AlMpu_ll_GetRegionAttrEnableStatus(AL_REG RegionBaseAddr)
 {
-    return (AL_MPU_RegionEnEnum)AL_REG32_GET_BIT((RegionBaseAddr + MPU_RASR_REGION_OFFSET), MPU_RASR_REGION_REGIONEN_SHIFT);
+    return AL_REG32_GET_BIT((RegionBaseAddr + MPU_RASR_REGION_OFFSET), MPU_RASR_REGION_REGIONEN_SHIFT);
 }
 
 /**

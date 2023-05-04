@@ -5,6 +5,12 @@
 extern "C" {
 #endif
 
+#include "al_type.h"
+
+#define AL_MPU_NUM_INSTANCE         (7)
+/* apu mpu is not included here */
+#define AL_MPU_NUM_COMMON_INSTANCE  (6)
+
 /* MPU interrupt state register */
 #define MPU_INTR_STATE_BASE_ADDR    (0xf8800214UL)
 #define MPU_INTR_STATE_SHIFT        0
@@ -112,6 +118,14 @@ extern "C" {
 #define MPU_GROUPID_REGION_NUM            0x1
 
 #define MPU_GROUPID_REGION_GROUPID_SHIF   0
+
+/**************************** Type Definitions ******************************/
+typedef struct {
+    AL_U32                  DeviceId;
+    AL_U32                  BaseAddress;
+    AL_U32                  IntrId;
+    AL_U32                  IntrStateId;
+} AL_MPU_HwConfigStruct;
 
 #ifdef __cplusplus
 }
