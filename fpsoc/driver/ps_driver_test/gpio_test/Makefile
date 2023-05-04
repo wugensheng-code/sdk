@@ -1,6 +1,6 @@
 TARGET = gpio_led
 
-NUCLEI_SDK_ROOT = ../../../../
+NUCLEI_SDK_ROOT = ../../../..
 
 SRCDIRS = . src
 
@@ -8,5 +8,5 @@ INCDIRS = . inc
 
 #COMMON_FLAGS := -O2
 
-include $(NUCLEI_SDK_ROOT)/Build/Makefile.base
+include $(NUCLEI_SDK_ROOT)/tools/make/Makefile.base
 

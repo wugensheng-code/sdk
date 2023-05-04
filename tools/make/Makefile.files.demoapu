@@ -11,6 +11,7 @@ INCDIRS += $(FPSOC_ROOT)/inc \
            $(FPSOC_ROOT)/driver/ps_driver/uart/inc \
            $(FPSOC_ROOT)/driver/ps_driver/spi/inc \
            $(FPSOC_ROOT)/driver/ps_driver/smc/inc \
+           $(FPSOC_ROOT)/driver/ps_driver/gpio/inc \
            $(FPSOC_ARCH)/common/gic_v3/inc \
            $(FPSOC_ARCH)/common/sys_timer/inc \
            $(FPSOC_ARCH)/armv8/aarch64/cortex-a/inc/libc/aarch64 \
@@ -37,6 +38,7 @@ C_SRCDIRS += $(FPSOC_ROOT)/driver/ps_driver/can/src \
              $(FPSOC_ROOT)/driver/ps_driver/uart/src \
              $(FPSOC_ROOT)/driver/ps_driver/spi/src \
              $(FPSOC_ROOT)/driver/ps_driver/smc/src \
+             $(FPSOC_ROOT)/driver/ps_driver/gpio/src \
              $(FPSOC_ROOT)/driver/ps_driver/lagecy/drivers
 
 ASM_SRCDIRS += $(FPSOC_ARCH)/armv8/aarch64/cortex-a/src

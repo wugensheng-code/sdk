@@ -33,7 +33,7 @@ typedef void (*Gpio_Handler) (AL_VOID *CallBackRef, AL_U32 Bank, AL_U32 Status);
 
 typedef struct 
 {
-	AL_REG32       BaseAddr;	    /**< Register base address */
+	AL_REG       BaseAddr;	    /**< Register base address */
 } AL_GPIO_InitStruct;
 
 typedef struct
