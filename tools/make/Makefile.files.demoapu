@@ -1,17 +1,8 @@
 
 
-INCDIRS += $(FPSOC_ROOT)/arch/inc \
-		$(FPSOC_ROOT)/driver/ps_driver/lagecy/include
-
 #For fpsoc compile
 INCDIRS += $(FPSOC_ROOT)/inc \
            $(FPSOC_ROOT)/arch/inc \
-           $(FPSOC_ROOT)/driver/ps_driver/mpu/inc \
-           $(FPSOC_ROOT)/driver/ps_driver/can/inc \
-           $(FPSOC_ROOT)/driver/ps_driver/uart/inc \
-           $(FPSOC_ROOT)/driver/ps_driver/spi/inc \
-           $(FPSOC_ROOT)/driver/ps_driver/smc/inc \
-           $(FPSOC_ROOT)/driver/ps_driver/gpio/inc \
            $(FPSOC_ARCH)/common/gic_v3/inc \
            $(FPSOC_ARCH)/common/sys_timer/inc \
            $(FPSOC_ARCH)/armv8/aarch64/cortex-a/inc/libc/aarch64 \
@@ -19,27 +10,11 @@ INCDIRS += $(FPSOC_ROOT)/inc \
            $(FPSOC_ARCH)/common/libc/inc \
            $(FPSOC_ARCH)/common/libc/inc/aarch64
 
-## deprecated header files for arm
-INCDIRS += $(FPSOC_ROOT)/arch/inc/nmsis/core/inc \
-           $(FPSOC_ROOT)/arch/inc/nmsis/dsp/inc \
-           $(FPSOC_ROOT)/arch/inc/nmsis/nn/inc
-
 # fpsoc arch
 C_SRCDIRS += $(FPSOC_ARCH)/armv8/aarch64/cortex-a/src \
         $(FPSOC_ARCH)/common/gic_v3/src \
         $(FPSOC_ARCH)/common/sys_timer/src \
         $(FPSOC_ARCH)/common/libc/src \
-        $(FPSOC_ROOT)/driver/ps_driver/lagecy/drivers \
-
-
-# fpsoc driver
-C_SRCDIRS += $(FPSOC_ROOT)/driver/ps_driver/can/src \
-             $(FPSOC_ROOT)/driver/ps_driver/mpu/src \
-             $(FPSOC_ROOT)/driver/ps_driver/uart/src \
-             $(FPSOC_ROOT)/driver/ps_driver/spi/src \
-             $(FPSOC_ROOT)/driver/ps_driver/smc/src \
-             $(FPSOC_ROOT)/driver/ps_driver/gpio/src \
-             $(FPSOC_ROOT)/driver/ps_driver/lagecy/drivers
 
 ASM_SRCDIRS += $(FPSOC_ARCH)/armv8/aarch64/cortex-a/src
 

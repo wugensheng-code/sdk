@@ -10,15 +10,15 @@ extern "C" {
 #include "al_errno.h"
 #include "al_gpio_hw.h"
 
-#define GPIO_BANK0               0x00U  
-#define GPIO_BANK1               0x01U 
-#define GPIO_BANK2               0x02U  
-#define GPIO_BANK3               0x03U 
-#define GPIO_REG_OFFSET          0x100U  
-#define GPIO_MAX_BANKS		     (AL_U8)4  
-#define GPIO_BANK_MAX_PINS		 (AL_U32)32 
-#define GPIO_MAX_PIN_NUM	     (AL_U32)118 
-					      
+#define GPIO_BANK0               0x00U
+#define GPIO_BANK1               0x01U
+#define GPIO_BANK2               0x02U
+#define GPIO_BANK3               0x03U
+#define GPIO_REG_OFFSET          0x100U
+#define GPIO_MAX_BANKS		     (AL_U8)4
+#define GPIO_BANK_MAX_PINS		 (AL_U32)32
+#define GPIO_MAX_PIN_NUM	     (AL_U32)118
+
 #define AL_OUTPUT_DIRECTION      0x1
 #define AL_INPUT_DIRECTION       0x0
 #define AL_ENABLE                0x1
@@ -31,7 +31,7 @@ extern "C" {
 
 typedef void (*Gpio_Handler) (AL_VOID *CallBackRef, AL_U32 Bank, AL_U32 Status);
 
-typedef struct 
+typedef struct
 {
 	AL_REG       BaseAddr;	    /**< Register base address */
 } AL_GPIO_InitStruct;
@@ -39,10 +39,10 @@ typedef struct
 typedef struct
 {
     AL_GPIO_InitStruct       Configs;
-    //AL_REG32                 BaseAddr;
+    //AL_REG                 BaseAddr;
     AL_VOID                  *EventCallBackRef;
-    AL_U32                   MaxPinNum; 
-	AL_U32                   MaxBanks;  
+    AL_U32                   MaxPinNum;
+	AL_U32                   MaxBanks;
     Gpio_Handler             Handler;
 } AL_GPIO_DevStruct;
 
@@ -52,7 +52,7 @@ AL_GPIO_HwConfigStruct *AlGpio_Dev_LookupConfig(AL_U32 DeviceId);
 AL_S32 AlGpio_Dev_Init(AL_GPIO_DevStruct *Gpio, AL_GPIO_InitStruct *InitConfig);
 AL_VOID AlGpio_dev_GetBankPin(AL_U8 PinNumber, AL_U8 *BankNumber, AL_U8 *PinNumberInBank);
 
-/* 
+/*
  * Bank APIs
 */
 AL_S32 AlGpio_Dev_OutputRead(AL_GPIO_DevStruct *Gpio, AL_U8 Bank);
@@ -64,7 +64,7 @@ AL_VOID AlGpio_Dev_ClrDirection(AL_GPIO_DevStruct *Gpio, AL_U8 Bank, AL_U32 Dire
 AL_S32 AlGpio_Dev_GetDirection(AL_GPIO_DevStruct *Gpio, AL_U8 Bank);
 AL_VOID AlGpio_Dev_OutputEnable(AL_GPIO_DevStruct *Gpio, AL_U8 Bank, AL_U32 OpEnable);
 
-/* 
+/*
  * Pin APIs
 */
 AL_U32 AlGpio_Dev_OutputReadPin(AL_GPIO_DevStruct *Gpio, AL_U32 Pin);
@@ -76,7 +76,7 @@ AL_VOID AlGpio_Dev_ClrDirectionPin(AL_GPIO_DevStruct *Gpio, AL_U32 Pin, AL_U32 D
 AL_U32 AlGpio_Dev_GetDirectionPin(AL_GPIO_DevStruct *Gpio, AL_U32 Pin, AL_U32 Direction);
 AL_VOID AlGpio_Dev_OutputEnablePin(AL_GPIO_DevStruct *Gpio, AL_U32 Pin, AL_U32 OpEnable);
 
-/* 
+/*
  * Bank intr APIs
 */
 AL_VOID AlGpio_Dev_IntrEnable(AL_GPIO_DevStruct *Gpio, AL_U8 Bank, AL_U32 Raw);
@@ -97,7 +97,7 @@ AL_U32 AlGpio_Dev_GetDebounceClrEnable(AL_GPIO_DevStruct *Gpio, AL_U8 Bank);
 AL_VOID AlGpio_Dev_SyncEnable(AL_GPIO_DevStruct *Gpio, AL_U8 Bank, AL_U32 Debounce);
 AL_U32 AlGpio_Dev_GetSyncEnable(AL_GPIO_DevStruct *Gpio, AL_U8 Bank);
 
-/* 
+/*
  * Pin intr APIs
 */
 AL_VOID AlGpio_Dev_IntrEnablePin(AL_GPIO_DevStruct *Gpio, AL_U32 Pin);

@@ -42,8 +42,14 @@
 #define RESTART_ENABLE			(1<<10)   /*I2C Master Issue RESTART before this command*/
 #define RESTART_DISABLE			(0<<10)   /*I2C Master Do not Issue RESTART before this command*/
 
+#ifndef true
 #define true  1
+#endif
+
+#ifndef false
 #define false 0
+#endif
+
 #define RxFullSclHoldLowEn			1
 #define RxFullSclHoldLowDis			0
 #define BUS_CLEAR_FEATURE_ENABLE	1
