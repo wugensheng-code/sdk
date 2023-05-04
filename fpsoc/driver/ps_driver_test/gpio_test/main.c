@@ -17,6 +17,7 @@ AL_GPIO_HalStruct GPIO;
 
 int main(void)
 {
+    //*(AL_U32 *)(0xf8803054u) =0x4;
     printf("test start\r\n");
 
     AL_GPIO_InitStruct GPIO_InitStruct ={
@@ -28,26 +29,21 @@ int main(void)
     if(&GPIO == AL_NULL) {
         printf("No &GPIO\r\n");
     }
-    
-    //test ddr, dr register and outputread,writePin
+        
+    // test ddr, dr register and outputread,writePin (already ok!)
     AlGpio_Hal_WritePin(&GPIO,1,0x1);
     AlGpio_Hal_WritePin(&GPIO,100,0x1);  
     
-    printf("GPIO 1 output data value is %x\r\n", AlGpio_Hal_OutputReadPin(&GPIO,1));//0
-    printf("GPIO 3 output data value is %x\r\n", AlGpio_Hal_OutputReadPin(&GPIO,3));//0
-    printf("GPIO 100 output data value is %x\r\n", AlGpio_Hal_OutputReadPin(&GPIO,100));//0
-    
-    ////test eoi register
-    printf("GPIO 1 input data value is %x\r\n", AlGpio_Hal_ReadEOIRegisterOut(&GPIO,1));//
-    printf("GPIO 3 input data value is %x\r\n", AlGpio_Hal_ReadEOIRegisterOut(&GPIO,3));//
-    
-    // test inputread  
-    //printf("GPIO 21 output data value is %x\r\n", AlGpio_Hal_InputReadPin(&GPIO,21));//0
-    //printf("GPIO 22 output data value is %x\r\n", AlGpio_Hal_InputReadPin(&GPIO,22));//1
-        
-     
-    
+    printf("GPIO 1 output data value is %x\r\n", AlGpio_Hal_OutputReadPin(&GPIO,1));
+    printf("GPIO 100 output data value is %x\r\n", AlGpio_Hal_OutputReadPin(&GPIO,100));
 
-    
+    //test eoi register
+    printf("GPIO 1 input data value is %x\r\n", AlGpio_Hal_ReadEXTRegisterOut(&GPIO,1));
+    printf("GPIO 100 input data value is %x\r\n", AlGpio_Hal_ReadEXTRegisterOut(&GPIO,100));
+
+    // test inputread  
+    //printf("GPIO 21 input data value is %x\r\n", AlGpio_Hal_ReadEXTRegisterIn(&GPIO,21));
+    //printf("GPIO 22 input data value is %x\r\n", AlGpio_Hal_ReadEXTRegisterIn(&GPIO,22));
+        
     return 0;
 }

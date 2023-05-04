@@ -19,8 +19,6 @@ AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct *Handle, AL_GPIO_InitStruct *InitConfig
     HwConfig = AlGpio_Dev_LookupConfig(DevId);
     
     if(HwConfig != AL_NULL) {
-        //printf("config BaseAddress is %x\r\n", HwConfig->BaseAddress);
-        //printf("config DeviceId is %x\r\n", HwConfig->DeviceId);
         Handle->Dev = &AL_GPIO_DevInstance[DevId];
     }
 
@@ -29,6 +27,7 @@ AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct *Handle, AL_GPIO_InitStruct *InitConfig
     if(ret != AL_OK) {
         //
     }
+    printf("config BaseAddress is %x\r\n", Handle->Dev->Configs.BaseAddr);
 
     return ret;
 }
@@ -37,45 +36,46 @@ AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct *Handle, AL_GPIO_InitStruct *InitConfig
 AL_VOID AlGpio_Hal_WritePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U32 Data)
 {
     AL_U8 i;
+    AL_S32 Ret = AL_OK;
     if (Handle == AL_NULL) {
         return AL_GPIO_ERR_ILLEGAL_PARAM;
     }
-    AlGpio_Dev_ClrWritePin(Handle, Pin, AL_ENABLE);
-    AlGpio_Dev_SetDirectionPin(Handle, Pin, AL_OUTPUT_DIRECTION);
-    AlGpio_Dev_WritePin(Handle, Pin, Data);
+    AlGpio_Dev_ClrWritePin(Handle->Dev, Pin, AL_ENABLE);
+    AlGpio_Dev_SetDirectionPin(Handle->Dev, Pin, AL_OUTPUT_DIRECTION);
+    AlGpio_Dev_WritePin(Handle->Dev, Pin, Data);
 }
 
 // ReadDRRegister
-AL_U32 AlGpio_Hal_OutputReadPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
+AL_S32 AlGpio_Hal_OutputReadPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
 {
     if (Handle == AL_NULL) {
         return AL_GPIO_ERR_ILLEGAL_PARAM;
     } 
-    AlGpio_Dev_ClrDirectionPin(Handle, Pin, AL_ENABLE);
-    AlGpio_Dev_SetDirectionPin(Handle, Pin, AL_OUTPUT_DIRECTION);
-    AlGpio_Dev_OutputReadPin(Handle, Pin);
+    AlGpio_Dev_ClrDirectionPin(Handle->Dev, Pin, AL_ENABLE);
+    AlGpio_Dev_SetDirectionPin(Handle->Dev, Pin, AL_OUTPUT_DIRECTION);
+    AlGpio_Dev_OutputReadPin(Handle->Dev, Pin);
 }
 
-// ReadEOIRegisterIn
-AL_U32 AlGpio_Hal_ReadEOIRegisterIn(AL_GPIO_HalStruct *Handle, AL_U8 Pin)
+// ReadEXTRegisterIn
+AL_S32 AlGpio_Hal_ReadEXTRegisterIn(AL_GPIO_HalStruct *Handle, AL_U8 Pin)
 {
     if (Handle == AL_NULL) {
         return AL_GPIO_ERR_ILLEGAL_PARAM;
     } 
-    AlGpio_Dev_ClrDirectionPin(Handle, Pin, AL_ENABLE);
-    AlGpio_Dev_SetDirectionPin(Handle, Pin, AL_INPUT_DIRECTION);
-    AlGpio_Dev_InputReadPin(Handle, Pin);
+    AlGpio_Dev_ClrDirectionPin(Handle->Dev, Pin, AL_ENABLE);
+    AlGpio_Dev_SetDirectionPin(Handle->Dev, Pin, AL_INPUT_DIRECTION);
+    AlGpio_Dev_InputReadPin(Handle->Dev, Pin);
 }
 
-// ReadEOIRegisterOut
-AL_U32 AlGpio_Hal_ReadEOIRegisterOut(AL_GPIO_HalStruct *Handle, AL_U8 Pin)
+// ReadEXTRegisterOut
+AL_S32 AlGpio_Hal_ReadEXTRegisterOut(AL_GPIO_HalStruct *Handle, AL_U8 Pin)
 {
     if (Handle == AL_NULL) {
         return AL_GPIO_ERR_ILLEGAL_PARAM;
     } 
-    AlGpio_Dev_ClrDirectionPin(Handle, Pin, AL_ENABLE);
-    AlGpio_Dev_SetDirectionPin(Handle, Pin, AL_OUTPUT_DIRECTION);
-    AlGpio_Dev_InputReadPin(Handle, Pin);
+    AlGpio_Dev_ClrDirectionPin(Handle->Dev, Pin, AL_ENABLE);
+    AlGpio_Dev_SetDirectionPin(Handle->Dev, Pin, AL_OUTPUT_DIRECTION);
+    AlGpio_Dev_InputReadPin(Handle->Dev, Pin);
 }
 
 AL_VOID AlGpio_Hal_IntrCallbackHandler(AL_GPIO_HalStruct *Handle, AL_VOID *CallBackRef, Gpio_Handler FunPointer)
@@ -101,10 +101,10 @@ AL_VOID AlGpio_Hal_IntrHandler(AL_GPIO_HalStruct *Handle)
     }
 
     for(Bank = 0U; Bank < Handle->Dev->MaxBanks; Bank++) {
-        IntrStatus = AlGpio_Dev_IntrGetStatus(Handle, Bank);
-        IntrEnable = AlGpio_Dev_IntrGetEnable(Handle, Bank);
+        IntrStatus = AlGpio_Dev_IntrGetStatus(Handle->Dev, Bank);
+        IntrEnable = AlGpio_Dev_IntrGetEnable(Handle->Dev, Bank);
         if((IntrStatus & IntrEnable) != (AL_U32)0) {
-            AlGpio_Dev_IntrClrEnable(Handle, Bank, IntrStatus & IntrEnable);
+            AlGpio_Dev_IntrClrEnable(Handle->Dev, Bank, IntrStatus & IntrEnable);
             Handle->Dev->Handler(Handle->Dev->EventCallBackRef, Bank, (IntrStatus & IntrEnable));
         }
     }
