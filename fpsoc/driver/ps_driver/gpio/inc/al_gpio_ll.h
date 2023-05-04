@@ -12,11 +12,11 @@ extern "C" {
 
 typedef enum
 {
-    GPIO_INTR_TYPE_EDGE_RISING    =	 0x00U,   
-    GPIO_INTR_TYPE_EDGE_FALLING   =  0x01U,   
-    GPIO_INTR_TYPE_EDGE_BOTH      =	 0x02U,   
-    GPIO_INTR_TYPE_LEVEL_HIGH     =	 0x03U,   
-    GPIO_INTR_TYPE_LEVEL_LOW      =	 0x04U,    
+    GPIO_INTR_TYPE_EDGE_RISING    =	 0x00U,
+    GPIO_INTR_TYPE_EDGE_FALLING   =  0x01U,
+    GPIO_INTR_TYPE_EDGE_BOTH      =	 0x02U,
+    GPIO_INTR_TYPE_LEVEL_HIGH     =	 0x03U,
+    GPIO_INTR_TYPE_LEVEL_LOW      =	 0x04U,
 } AL_GPIO_InterruptEnum;
 
 

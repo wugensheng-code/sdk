@@ -18,6 +18,11 @@ typedef long ptrdiff_t;
 #define _PTRDIFF_T
 #endif
 
+#ifndef __WINT_TYPE__
+#define __WINT_TYPE__ unsigned int
+#endif
+typedef __WINT_TYPE__ wint_t;
+
 #ifndef NULL
 #define NULL ((void *) 0)
 #endif

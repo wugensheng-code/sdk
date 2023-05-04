@@ -1,22 +1,6 @@
-INCDIRS += $(FPSOC_ROOT)/arch/inc/nmsis/core/inc \
-           $(FPSOC_ROOT)/arch/inc/nmsis/dsp/inc \
-           $(FPSOC_ROOT)/arch/inc/nmsis/nn/inc
-
-INCDIRS += $(FPSOC_ROOT)/driver/ps_driver/can/inc \
-           $(FPSOC_ROOT)/driver/ps_driver/mpu/inc \
-           $(FPSOC_ROOT)/driver/ps_driver/uart/inc \
-           $(FPSOC_ROOT)/driver/ps_driver/lagecy/include \
-		   $(FPSOC_ROOT)/inc \
-		   $(FPSOC_ROOT)/arch/inc \
-
-
 
 C_SRCDIRS += $(FPSOC_ARCH)/rv64/src \
-             $(FPSOC_ARCH)/rv64/src/stubs \
-             $(FPSOC_ROOT)/driver/ps_driver/can/src \
-             $(FPSOC_ROOT)/driver/ps_driver/mpu/src \
-             $(FPSOC_ROOT)/driver/ps_driver/uart/src \
-             $(FPSOC_ROOT)/driver/ps_driver/lagecy/drivers
+             $(FPSOC_ARCH)/rv64/src/stubs
 
 ASM_SRCDIRS += $(FPSOC_ARCH)/rv64/src/
 

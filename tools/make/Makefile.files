@@ -1,10 +1,33 @@
-INCDIRS += $(NUCLEI_SDK_ROOT)/NMSIS/Core/Include
 C_INCDIRS +=
+
+INCDIRS += $(FPSOC_ROOT)/driver/ps_driver/can/inc \
+           $(FPSOC_ROOT)/driver/ps_driver/mpu/inc \
+           $(FPSOC_ROOT)/driver/ps_driver/uart/inc \
+           $(FPSOC_ROOT)/driver/ps_driver/gpio/inc \
+           $(FPSOC_ROOT)/driver/ps_driver/spi/inc \
+           $(FPSOC_ROOT)/driver/ps_driver/smc/inc \
+           $(FPSOC_ROOT)/driver/ps_driver/lagecy/include \
+		   $(FPSOC_ROOT)/inc \
+		   $(FPSOC_ROOT)/arch/inc \
+
+INCDIRS += $(FPSOC_ROOT)/arch/inc/nmsis/core/inc \
+           $(FPSOC_ROOT)/arch/inc/nmsis/dsp/inc \
+           $(FPSOC_ROOT)/arch/inc/nmsis/nn/inc
+
 CXX_INCDIRS +=
 ASM_INCDIRS +=
 
 SRCDIRS +=
-C_SRCDIRS +=
+
+# fpsoc driver
+C_SRCDIRS += $(FPSOC_ROOT)/driver/ps_driver/can/src \
+             $(FPSOC_ROOT)/driver/ps_driver/mpu/src \
+             $(FPSOC_ROOT)/driver/ps_driver/uart/src \
+             $(FPSOC_ROOT)/driver/ps_driver/spi/src \
+             $(FPSOC_ROOT)/driver/ps_driver/smc/src \
+             $(FPSOC_ROOT)/driver/ps_driver/gpio/src \
+             $(FPSOC_ROOT)/driver/ps_driver/lagecy/drivers \
+
 CXX_SRCDIRS +=
 ASM_SRCDIRS +=
 
