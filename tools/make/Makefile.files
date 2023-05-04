@@ -25,8 +25,8 @@ C_SRCDIRS += $(FPSOC_ROOT)/driver/ps_driver/can/src \
              $(FPSOC_ROOT)/driver/ps_driver/uart/src \
              $(FPSOC_ROOT)/driver/ps_driver/spi/src \
              $(FPSOC_ROOT)/driver/ps_driver/smc/src \
-			 $(FPSOC_ROOT)/driver/ps_driver/gpio/src \
-             $(FPSOC_ROOT)/driver/ps_driver/lagecy/drivers
+             $(FPSOC_ROOT)/driver/ps_driver/gpio/src \
+             $(FPSOC_ROOT)/driver/ps_driver/lagecy/drivers \
 
 CXX_SRCDIRS +=
 ASM_SRCDIRS +=
