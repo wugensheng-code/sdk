@@ -61,8 +61,12 @@ typedef enum
     AL_UART                 = 1,
     AL_MPU                  = 2,
     AL_CAN                  = 3,
+<<<<<<< Updated upstream
     AL_SPI                  = 4,
     AL_SMC                  = 5,
+=======
+    AL_GPIO                 = 4,
+>>>>>>> Stashed changes
 } AL_MODULE_TYPE;
 
 #ifdef __cplusplus
