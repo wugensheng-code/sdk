@@ -1,3 +1,11 @@
+/**
+ * @file    al_can_dev.h
+ * @author  Anlogic esw team
+ * @version V0.0.1
+ * @date    2023-04-7
+ * @brief   can device driver
+ */
+
 #ifndef AL_CAN_DEV_H
 #define AL_CAN_DEV_H
 
@@ -5,21 +13,18 @@
 extern "C" {
 #endif
 
+/***************************** Include Files *********************************/
 #include "al_can_ll.h"
 
-#define AL_CAN_MAX_S_SEG_1      63
-#define AL_CAN_MAX_S_SEG_2      7
-#define AL_CAN_MAX_S_SJW        15
-#define AL_CAN_MAX_FS_SEG_1     63
-#define AL_CAN_MAX_FS_SEG_2     31
-#define AL_CAN_MAX_FS_SJW       15
-#define AL_CAN_MAX_FF_SEG_1     15
-#define AL_CAN_MAX_FF_SEG_2     7
-#define AL_CAN_MAX_FF_SJW       7
+/************************** Constant Definitions *****************************/
 
+/***************** Macros (Inline Functions) Definitions *********************/
+/**
+ * @brief  Error code enum
+ */
 typedef enum
 {
-    CAN_ERR_RECV = 0x100,    /* receive message with error*/
+    CAN_ERR_RECV                    = 0x100,    /* receive message with error*/
     CAN_ERR_WRONG_KOER_PARAMETER,
     CAN_ERR_KOER_RECV_BIT,
     CAN_ERR_KOER_SEND_BIT,
@@ -32,8 +37,20 @@ typedef enum
     CAN_ERR_KOER_OTHER,
     CAN_ERR_RECV_EMPTY,
     CAN_ERR_STATE_NOT_READY,
-} CAN_ERR_CODE;
+    CAN_ERR_STATE_RESET,
+    CAN_ERR_IOCTL_CMD,
+} AL_CAN_ErrCodeEnum;
 
+#define AL_CAN_ERR_INVALID_DEVID        AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_INVALID_DEVID)
+#define AL_CAN_ERR_INVALID_CHNID        AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_INVALID_CHNID)
+#define AL_CAN_ERR_ILLEGAL_PARAM        AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM)
+#define AL_CAN_ERR_EXIST                AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_EXIST)
+#define AL_CAN_ERR_UNEXIST              AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_UNEXIST)
+#define AL_CAN_ERR_NULL_PTR             AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_NULL_PTR)
+#define AL_CAN_ERR_NOT_CONFIG           AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_NOT_CONFIG)
+#define AL_CAN_ERR_NOT_SUPPORT          AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_NOT_SUPPORT)
+#define AL_CAN_ERR_TIMEOUT              AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_TIMEOUT)
+#define AL_CAN_ERR_BUSY                 AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, AL_ERR_BUSY)
 #define AL_CAN_ERR_RECV                 AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, CAN_ERR_RECV)
 #define AL_CAN_ERR_WRONG_KOER_PARAMETER AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, CAN_ERR_WRONG_KOER_PARAMETER)
 #define AL_CAN_ERR_KOER_RECV_BIT        AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, CAN_ERR_KOER_RECV_BIT)
@@ -47,44 +64,62 @@ typedef enum
 #define AL_CAN_ERR_KOER_OTHER           AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, CAN_ERR_KOER_OTHER)
 #define AL_CAN_ERR_RECV_EMPTY           AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_INFO, CAN_ERR_RECV_EMPTY)
 #define AL_CAN_ERR_STATE_NOT_READY      AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, CAN_ERR_STATE_NOT_READY)
+#define AL_CAN_ERR_STATE_RESET          AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, CAN_ERR_STATE_RESET)
+#define AL_CAN_ERR_IOCTL_CMD            AL_DEF_ERR(AL_CAN, AL_ERR_LEVEL_ERROR, CAN_ERR_IOCTL_CMD)
 
+/**************************** Type Definitions *******************************/
+/**
+ * @brief  Run mode enum
+ */
 typedef enum
 {
     AL_CAN_RUN_NOT_SET      = (0x0),
-    AL_CAN_RUN_INTR         = (0x1 << 1),
-    AL_CAN_RUN_INTR_DMA     = (0x1 << 2)
-}AL_CAN_RunModeEnum;
+    AL_CAN_RUN_INTR         = BIT_32(1),
+    AL_CAN_RUN_INTR_DMA     = BIT_32(2)
+} AL_CAN_RunModeEnum;
 
+/**
+ * @brief  Protocol type enum
+ */
 typedef enum
 {
     AL_CAN_TYPE_NOT_SET = (0x0),
-    AL_CAN_TYPE_2_0B    = (0x1),
-    AL_CAN_TYPE_FD      = (0x1 << 1)
-}AL_CAN_TypeEnum;
+    AL_CAN_TYPE_2_0B    = BIT_32(1),
+    AL_CAN_TYPE_FD      = BIT_32(2)
+} AL_CAN_TypeEnum;
 
+/**
+ * @brief  Frame id enum
+ */
 typedef enum
 {
-    AL_CAN_ID_STD       = (0x0),
-    AL_CAN_ID_EXT       = (0x1)
-}AL_CAN_IdTypeEnum;
+    AL_CAN_ID_STD,
+    AL_CAN_ID_EXT
+} AL_CAN_IdTypeEnum;
 
+/**
+ * @brief  Bit rate enum
+ */
 typedef enum
 {
-    AL_CAN_ARBITRATION__0_25M,
-    AL_CAN_ARBITRATION__0_5M,
-    AL_CAN__0_5M,
-    AL_CAN__0_833M,
-    AL_CAN__1_M,
-    AL_CAN__1_538M,
-    AL_CAN__2M,
-    AL_CAN__3_077M,
-    AL_CAN__4M,
-    AL_CAN__5M,
-    AL_CAN__6_667M,
-    AL_CAN__8M,
-    AL_CAN__10M
-}AL_CAN_BitTimingEnum;
+    AL_CAN_ARBITRATION_0_25M,
+    AL_CAN_ARBITRATION_0_5M,
+    AL_CAN_0_5M,
+    AL_CAN_0_833M,
+    AL_CAN_1_M,
+    AL_CAN_1_538M,
+    AL_CAN_2M,
+    AL_CAN_3_077M,
+    AL_CAN_4M,
+    AL_CAN_5M,
+    AL_CAN_6_667M,
+    AL_CAN_8M,
+    AL_CAN_10M
+} AL_CAN_BitRateEnum;
 
+/**
+ * @brief  Frame data length DLC enum
+ */
 typedef enum
 {
     AL_CAN_LEN_0,
@@ -104,25 +139,34 @@ typedef enum
     AL_CAN_LEN_48,
     AL_CAN_LEN_64,
     AL_CAN_LEN_MAX
-}AL_CAN_DataLenEnum;
+} AL_CAN_DataLenEnum;
 
+/**
+ * @brief  Frame bit rate type enum
+ */
 typedef enum
 {
-    AL_CAN_BIT__2_0B__S = (0x1),
-    AL_CAN_BIT__FD__S   = (0x1 << 1),
-    AL_CAN_BIT__FD__F   = (0x1 << 2)
-}AL_CAN_BitTimingTypeEnum;
+    AL_CAN_BIT_2_0B_S = BIT_32(0),
+    AL_CAN_BIT_FD_S   = BIT_32(1),
+    AL_CAN_BIT_FD_F   = BIT_32(2)
+} AL_CAN_BitRateTypeEnum;
 
+/**
+ * @brief  Operation mode enum
+ */
 typedef enum
 {
     AL_CAN_MODE_NOT_SET     = (0x0),
-    AL_CAN_MODE_NORMAL      = (0x1 << 1),
-    AL_CAN_MODE_IN_LOOPBACK = (0x1 << 2),
-    AL_CAN_MODE_EX_LOOPBACK = (0x1 << 3),
-    AL_CAN_MODE_STANDBY     = (0x1 << 4),
-    AL_CAN_MODE_LISTENONLY  = (0x1 << 5)
-}AL_CAN_OpsModeEnum;
+    AL_CAN_MODE_NORMAL      = BIT_32(1),
+    AL_CAN_MODE_IN_LOOPBACK = BIT_32(2),
+    AL_CAN_MODE_EX_LOOPBACK = BIT_32(3),
+    AL_CAN_MODE_STANDBY     = BIT_32(4),
+    AL_CAN_MODE_LISTENONLY  = BIT_32(5)
+} AL_CAN_OpsModeEnum;
 
+/**
+ * @brief  Frame trans mode enum
+ */
 typedef enum
 {
     AL_CAN_TRANS_FULL,
@@ -130,14 +174,20 @@ typedef enum
     AL_CAN_TRANS_STB_FIFO,
     AL_CAN_TRANS_STB_PRIO,
     AL_CAN_TRANS_MAX
-}AL_CAN_TransModeEnum;
+} AL_CAN_TransModeEnum;
 
+/**
+ * @brief  ACF mask mode enum
+ */
 typedef enum
 {
     AL_CAN_SELMASK_ACODE,
     AL_CAN_SELMASK_AMASK
-}AL_CAN_SelMaskEnum;
+} AL_CAN_SelMaskEnum;
 
+/**
+ * @brief  Recv buffer almost full limit enum
+ */
 typedef enum
 {
     AL_CAN_RB_LIMIT_0_1 = (0x1),
@@ -156,66 +206,114 @@ typedef enum
     AL_CAN_RB_LIMIT_14,
     AL_CAN_RB_LIMIT_15,
     AL_CAN_RB_LIMIT_MAX
-}AL_CAN_RbAwflEnum;
+} AL_CAN_RbAwflEnum;
 
+/**
+ * @brief  Interrupt type enum
+ */
 typedef enum
 {
-    AL_CAN_INTR_AIF     = (0x1 << 8),
-    AL_CAN_INTR_EIF     = (0x1 << 9),
-    AL_CAN_INTR_TSIF    = (0x1 << 10),
-    AL_CAN_INTR_TPIF    = (0x1 << 11),
-    AL_CAN_INTR_RAFIF   = (0x1 << 12),
-    AL_CAN_INTR_RFIF    = (0x1 << 13),
-    AL_CAN_INTR_ROIF    = (0x1 << 14),
-    AL_CAN_INTR_RIF     = (0x1 << 15),
-    AL_CAN_INTR_BEIF    = (0x1 << 16),
-    AL_CAN_INTR_ALIF    = (0x1 << 18),
-    AL_CAN_INTR_EPIF    = (0x1 << 20)
-}AL_CAN_IntrTypeEnum;
+    AL_CAN_INTR_AIF     = BIT_32(8),
+    AL_CAN_INTR_EIF     = BIT_32(9),
+    AL_CAN_INTR_TSIF    = BIT_32(10),
+    AL_CAN_INTR_TPIF    = BIT_32(11),
+    AL_CAN_INTR_RAFIF   = BIT_32(12),
+    AL_CAN_INTR_RFIF    = BIT_32(13),
+    AL_CAN_INTR_ROIF    = BIT_32(14),
+    AL_CAN_INTR_RIF     = BIT_32(15),
+    AL_CAN_INTR_BEIF    = BIT_32(16),
+    AL_CAN_INTR_ALIF    = BIT_32(18),
+    AL_CAN_INTR_EPIF    = BIT_32(20)
+} AL_CAN_IntrTypeEnum;
 
+/**
+ * @brief  Event id enum
+ */
 typedef enum
 {
-    AL_CAN_EVENT_SEND_DONE          = (0x1),
-    AL_CAN_EVENT_RECV_DONE          = (0x1 << 1),
-    AL_CAN_EVENT_RBUFF_ALMOST_FULL  = (0x1 << 2),
-    AL_CAN_EVENT_RBUFF_FULL         = (0x1 << 3),
-    AL_CAN_EVENT_RBUFF_OVERFLOW     = (0x1 << 4),
-    AL_CAN_EVENT_ABORT              = (0x1 << 5),
-    AL_CAN_EVENT_ERR                = (0x1 << 6),
-    AL_CAN_EVENT_BUS_ERR            = (0x1 << 7),
-    AL_CAN_EVENT_ARBITRATION_LOST   = (0x1 << 8),
-    AL_CAN_EVENT_ERR_PASSIVE        = (0x1 << 9)
-}AL_CAN_EventIdEnum;
+    AL_CAN_EVENT_SEND_DONE          = BIT_32(0),
+    AL_CAN_EVENT_RECV_DONE          = BIT_32(1),
+    AL_CAN_EVENT_RBUFF_ALMOST_FULL  = BIT_32(2),
+    AL_CAN_EVENT_RBUFF_FULL         = BIT_32(3),
+    AL_CAN_EVENT_RBUFF_OVERFLOW     = BIT_32(4),
+    AL_CAN_EVENT_ABORT              = BIT_32(5),
+    AL_CAN_EVENT_ERR                = BIT_32(6),
+    AL_CAN_EVENT_BUS_ERR            = BIT_32(7),
+    AL_CAN_EVENT_ARBITRATION_LOST   = BIT_32(8),
+    AL_CAN_EVENT_ERR_PASSIVE        = BIT_32(9)
+} AL_CAN_EventIdEnum;
 
+/**
+ * @brief  Filter enum
+ */
 typedef enum
 {
     AL_CAN_FILTER_0,
     AL_CAN_FILTER_1,
     AL_CAN_FILTER_2,
     AL_CAN_FILTER_MAX
-}AL_CAN_FilterIndexEnum;
+} AL_CAN_FilterIndexEnum;
 
+/**
+ * @brief  Filter mask type enum
+ */
 typedef enum
 {
     AL_CAN_FILTER_MASK_BOTH = (0b00),
     AL_CAN_FILTER_MASK_STD  = (0b10),
     AL_CAN_FILTER_MASK_EXT  = (0b11)
-}AL_CAN_FilterMaskTypeEnum;
+} AL_CAN_FilterMaskTypeEnum;
 
-typedef struct
+/**
+ * @brief  Frame error enum
+ */
+typedef enum
 {
-    AL_CAN_EventIdEnum  EventId;
-    AL_U32              EventData;
-}AL_CAN_EventStruct;
+    AL_CAN_KOER_NONE,
+    AL_CAN_KOER_BIT,
+    AL_CAN_KOER_FORM,
+    AL_CAN_KOER_STUFF,
+    AL_CAN_KOER_ACK,
+    AL_CAN_KOER_CRC,
+    AL_CAN_KOER_OTHER,
+    AL_CAN_KOER_NOT_USED
+} AL_CAN_KoerEnum;
 
-typedef AL_VOID (*AL_CAN_EventCallBack)(AL_CAN_EventStruct *Event, AL_VOID *CallBackRef);
+/**
+ * @brief  Module running state enum
+ */
+typedef enum {
+    AL_CAN_STATE_NOT_INIT           = (0x0),
+    AL_CAN_STATE_READY              = BIT_32(1),
+    AL_CAN_STATE_RESET              = BIT_32(2),
+    AL_CAN_STATE_SEND_BUSY          = BIT_32(3),
+    AL_CAN_STATE_RECV_BUSY          = BIT_32(4),
+    AL_CAN_STATE_RECV_EMPTY         = BIT_32(5),
+    AL_CAN_STATE_RECV_ALMOST_FULL   = BIT_32(6),
+    AL_CAN_STATE_RECV_FULL          = BIT_32(7),
+    AL_CAN_STATE_RECV_OVERFLOW      = BIT_32(8),
+} AL_CAN_StateEnum;
 
-typedef struct
+/**
+ * @brief  Io ctl cmd enum
+ */
+typedef enum
 {
-    AL_CAN_EventCallBack    Func;
-    AL_VOID                 *Ref;
-}AL_CAN_CallBackStruct;
+    AL_CAN_IOCTL_SET_BIT_RATE,
+    AL_CAN_IOCTL_GET_BIT_RATE,
+    AL_CAN_IOCTL_SET_DEF_BIT_RATE,
+    AL_CAN_IOCTL_SET_RESET,
+    AL_CAN_IOCTL_SET_FILTER,
+    AL_CAN_IOCTL_GET_FILTER,
+    AL_CAN_IOCTL_GET_KOER,
+    AL_CAN_IOCTL_GET_STATE,
+    AL_CAN_IOCTL_SET_STATE,
+    AL_CAN_IOCTL_CLR_STATE
+} AL_CAN_IoCtlCmdEnum;
 
+/**
+ * @brief  Frame control registers union
+ */
 typedef union
 {
     AL_U32  Reg;
@@ -230,28 +328,63 @@ typedef union
         AL_U32  Koer:3;
         AL_U32  CycleTime:16;
     }Bit;
-}AL_CAN_FrameCtrlUnion;
+} AL_CAN_FrameCtrlUnion;
 
+/**
+ * @brief  Frame bit rate struct
+ */
+typedef struct
+{
+    AL_CAN_BitRateTypeEnum      Type;
+    AL_U8                       TimeSeg1;
+    AL_U8                       TimeSeg2;
+    AL_U8                       SyncJumpWidth;
+    AL_U8                       Prescaler;
+} AL_CAN_BitRateStruct;
+
+/**
+ * @brief  Frame bit rate struct
+ */
+typedef struct
+{
+    AL_CAN_BitRateTypeEnum      Type;
+    AL_CAN_BitRateEnum          Index;
+} AL_CAN_DefBitRateStruct;
+
+/**
+ * @brief  Event struct
+ */
+typedef struct
+{
+    AL_CAN_EventIdEnum  EventId;
+    AL_U32              EventData;
+} AL_CAN_EventStruct;
+
+typedef AL_VOID (*AL_CAN_EventCallBack)(AL_CAN_EventStruct *Event, AL_VOID *CallBackRef);
+
+/**
+ * @brief  Event callback struct
+ */
+typedef struct
+{
+    AL_CAN_EventCallBack    Func;
+    AL_VOID                 *Ref;
+} AL_CAN_CallBackStruct;
+
+/**
+ * @brief  Filter config struct
+ */
 typedef struct
 {
     AL_CAN_FilterIndexEnum      FilterIndex;
     AL_CAN_FilterMaskTypeEnum   MaskType;
     AL_U32                      MaskValue;
     AL_U32                      IdValue;
-}AL_CAN_FilterCfgStruct;
+} AL_CAN_FilterCfgStruct;
 
-typedef enum
-{
-    AL_CAN_KOER_NONE    = (0x0),
-    AL_CAN_KOER_BIT,
-    AL_CAN_KOER_FORM,
-    AL_CAN_KOER_STUFF,
-    AL_CAN_KOER_ACK,
-    AL_CAN_KOER_CRC,
-    AL_CAN_KOER_OTHER,
-    AL_CAN_KOER_NOT_USED
-}AL_CAN_KoerEnum;
-
+/**
+ * @brief  Frame struct
+ */
 typedef struct
 {
     AL_U32              Id;
@@ -263,61 +396,55 @@ typedef struct
     AL_CAN_DataLenEnum  DataLen;
     AL_U32              Data[16];
     AL_U32              Rts[2];
-}AL_CAN_FrameStruct;
+} AL_CAN_FrameStruct;
 
-typedef enum {
-    AL_CAN_STATE_NOT_INIT           = (0x0),
-    AL_CAN_STATE_READY              = (0x01 << 0),
-    AL_CAN_STATE_RESET              = (0x01 << 1),
-    AL_CAN_STATE_SEND_BUSY          = (0x01 << 2),
-    AL_CAN_STATE_RECV_BUSY          = (0x01 << 3),
-    AL_CAN_STATE_RECV_EMPTY         = (0x01 << 4),
-    AL_CAN_STATE_RECV_ALMOST_FULL   = (0x01 << 5),
-    AL_CAN_STATE_RECV_FULL          = (0x01 << 6),
-    AL_CAN_STATE_RECV_OVERFLOW      = (0x01 << 7),
-} AL_CAN_StateEnum;
-
+/**
+ * @brief  Module Init config struct
+ */
 typedef struct
 {
     AL_CAN_TypeEnum         Type;
     AL_CAN_OpsModeEnum      OpsMode;
     AL_CAN_RunModeEnum      RunMode;
     AL_CAN_TransModeEnum    TransMode;
-    AL_CAN_BitTimingEnum    SlowBitTiming;
-    AL_CAN_BitTimingEnum    FastBitTiming;
-    AL_CAN_RbAwflEnum       RbAfwl;     /* receive buffer Almost Full Warning Limit */
-}AL_CAN_InitStruct;
+    AL_CAN_BitRateEnum      SlowBitRate;
+    AL_CAN_BitRateEnum      FastBitRate;
+    AL_CAN_RbAwflEnum       RbAfwl;         /* receive buffer Almost Full Warning Limit */
+} AL_CAN_InitStruct;
 
+/**
+ * @brief  Module device struct
+ */
 typedef struct
 {
-    AL_REG                BaseAddr;
+    AL_REG                  BaseAddr;
     AL_CAN_InitStruct       Config;
     AL_CAN_CallBackStruct   EventCallBack;
     AL_CAN_StateEnum        State;
     AL_CAN_FrameStruct      *RecvBuffer;
 } AL_CAN_DevStruct;
 
+/************************** Variable Definitions *****************************/
+
+/************************** Function Prototypes ******************************/
 AL_CAN_HwConfigStruct *AlCan_Dev_LookupConfig(AL_U32 DeviceId);
-AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, \
-    AL_CAN_InitStruct *InitConfig);
-AL_VOID AlCan_Dev_SetBitTiming(AL_CAN_DevStruct *Dev, AL_CAN_BitTimingTypeEnum Type, \
-    AL_U8 TimeSeg1, AL_U8 TimeSeg2, AL_U8 SyncJumpWidth);
-AL_VOID AlCan_Dev_GetBitTiming(AL_CAN_DevStruct *Dev, AL_CAN_BitTimingTypeEnum Type, \
-    AL_U8 *TimeSeg1, AL_U8 *TimeSeg2, AL_U8 *SyncJumpWidth);
-AL_VOID AlCan_Dev_SetBaudRatePrescaler(AL_CAN_DevStruct *Dev, AL_CAN_BitTimingTypeEnum Type, \
-    AL_U8 Prescaler);
-AL_U8 AlCan_Dev_GetBaudRatePrescaler(AL_CAN_DevStruct *Dev, AL_CAN_BitTimingTypeEnum Type);
-AL_VOID AlCan_Dev_SetDefBitTimingAndPrescaler(AL_CAN_DevStruct *Dev, \
-    AL_CAN_BitTimingTypeEnum Type, AL_CAN_BitTimingEnum BitTiming);
-AL_VOID AlCan_Dev_IntrHandler(void *Instance);
+
+AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, AL_CAN_InitStruct *InitConfig);
+
+AL_VOID AlCan_Dev_IntrHandler(AL_VOID *Instance);
+
 AL_S32 AlCan_Dev_RegisterEventCallBack(AL_CAN_DevStruct *Dev, AL_CAN_CallBackStruct *CallBack);
+
 AL_S32 AlCan_Dev_UnRegisterEventCallBack(AL_CAN_DevStruct *Dev);
-AL_VOID AlCan_Dev_SetReset(AL_CAN_DevStruct *Dev, AL_BOOL IsReset);
+
 AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame);
+
 AL_S32 AlCan_Dev_RecvFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame);
-AL_S32 AlCan_Dev_SetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *FilterCfg);
-AL_S32 AlCan_Dev_GetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *FilterCfg);
+
 AL_S32 AlCan_Dev_GetDecodeError(AL_CAN_DevStruct *Dev);
+
+AL_S32 AlCan_Dev_IoCtl(AL_CAN_DevStruct *Dev, AL_CAN_IoCtlCmdEnum Cmd, AL_VOID *Data);
+
 AL_S32 AlCan_Dev_DisplayFrame(AL_CAN_FrameStruct *Frame);
 
 #ifdef __cplusplus
