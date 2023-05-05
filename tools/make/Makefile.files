@@ -1,6 +1,7 @@
 C_INCDIRS +=
 
 INCDIRS += $(FPSOC_ROOT)/driver/ps_driver/can/inc \
+           $(FPSOC_ROOT)/driver/ps_driver/dmacahb/inc \
            $(FPSOC_ROOT)/driver/ps_driver/mpu/inc \
            $(FPSOC_ROOT)/driver/ps_driver/uart/inc \
            $(FPSOC_ROOT)/driver/ps_driver/gpio/inc \
@@ -21,6 +22,7 @@ SRCDIRS +=
 
 # fpsoc driver
 C_SRCDIRS += $(FPSOC_ROOT)/driver/ps_driver/can/src \
+             $(FPSOC_ROOT)/driver/ps_driver/dmacahb/src \
              $(FPSOC_ROOT)/driver/ps_driver/mpu/src \
              $(FPSOC_ROOT)/driver/ps_driver/uart/src \
              $(FPSOC_ROOT)/driver/ps_driver/spi/src \
