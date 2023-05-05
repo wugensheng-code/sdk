@@ -3,7 +3,7 @@
 #include "al_errno.h"
 
 /************************** Constant Definitions *****************************/
-/* Default Init config */
+/* Default init config */
 static AL_CAN_InitStruct AlCan_DefInitConfig = {
     .Type           = AL_CAN_TYPE_FD,
     .OpsMode        = AL_CAN_MODE_NORMAL,
@@ -42,7 +42,7 @@ static AL_U8 AL_CAN_DataLenArray[] = {0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 8, 
 #define AL_CAN_MAX_S_SJW        15
 #define AL_CAN_MAX_FS_SEG_1     63
 #define AL_CAN_MAX_FS_SEG_2     31
-#define AL_CAN_MAX_FS_SJW       15  
+#define AL_CAN_MAX_FS_SJW       15
 #define AL_CAN_MAX_FF_SEG_1     15
 #define AL_CAN_MAX_FF_SEG_2     7
 #define AL_CAN_MAX_FF_SJW       7
@@ -151,7 +151,7 @@ static AL_S32 AlCan_Dev_SetOpsMode(AL_CAN_DevStruct *Dev, AL_CAN_OpsModeEnum Ops
  * This function set CAN slow or fast speed bit rate patameter
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   BitRate is pointer to AL_CAN_BitRateStruct
- * @return  
+ * @return
  * @note
 */
 AL_VOID AlCan_Dev_SetBitRate(AL_CAN_DevStruct *Dev, AL_CAN_BitRateStruct *BitRate)
@@ -180,7 +180,7 @@ AL_VOID AlCan_Dev_SetBitRate(AL_CAN_DevStruct *Dev, AL_CAN_BitRateStruct *BitRat
  * This function get CAN slow or fast speed bit rate patameter
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   BitRate is pointer to AL_CAN_BitRateStruct
- * @return  
+ * @return
  * @note
 */
 AL_VOID AlCan_Dev_GetBitRate(AL_CAN_DevStruct *Dev, AL_CAN_BitRateStruct *BitRate)
@@ -263,7 +263,7 @@ static AL_VOID AlCan_Dev_SetTransMode(AL_CAN_DevStruct *Dev, AL_CAN_TransModeEnu
  * This function get module status
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   State is enum to AL_CAN_StateEnum
- * @return  current is tx busy or not
+ * @return  is this state active or not
  * @note
 */
 AL_BOOL AlCan_Dev_GetState(AL_CAN_DevStruct *Dev, AL_CAN_StateEnum State)
@@ -479,7 +479,7 @@ AL_S32 AlCan_Dev_RegisterEventCallBack(AL_CAN_DevStruct *Dev, AL_CAN_CallBackStr
  * This function unregister interrupt call back function
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @return
- *          - AL_OK is register correct
+ *          - AL_OK is unregister correct
  * @note
 */
 AL_S32 AlCan_Dev_UnRegisterEventCallBack(AL_CAN_DevStruct *Dev)
@@ -628,7 +628,7 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
 
     Id = Frame->Id;
     Id |= (Frame->IsEnTts << CAN_TBUF_0_3_TTSEN_SHIFT);
-    
+
     AlCan_ll_WriteWordSendBuffer(Dev->BaseAddr, 0, Id);
 
     Ctrl = Frame->DataLen & 0xF;
@@ -640,7 +640,7 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
     }
 
     Ctrl |= ((Frame->IsIdExt == AL_TRUE) ? 0x1 : 0x0 ) << CAN_TBUF_4_7_IDE_SHIFT;
-    
+
     AlCan_ll_WriteWordSendBuffer(Dev->BaseAddr, 1, Ctrl);
 
     for (AL_U32 i = 0; i < AL_CAN_DataLenArray[Frame->DataLen]; i++) {
@@ -857,7 +857,7 @@ AL_S32 AlCan_Dev_GetDecodeError(AL_CAN_DevStruct *Dev)
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   Cmd is io ctl operation to AL_CAN_IoCtlCmdEnum
  * @param   Data is pointer reference to Cmd
- * @return  
+ * @return
  *          - AL_OK is send done
  * @note
 */
@@ -911,7 +911,7 @@ AL_S32 AlCan_Dev_IoCtl(AL_CAN_DevStruct *Dev, AL_CAN_IoCtlCmdEnum Cmd, AL_VOID *
         return AL_CAN_ERR_IOCTL_CMD;
         break;
     }
-    
+
     return Ret;
 }
 

@@ -3,6 +3,7 @@
 #include "al_can_dev.h"
 #include "al_can_ll.h"
 #include "al_errno.h"
+/* TODO: Remove after irq driver done */
 #include "nuclei_sdk_soc.h"
 #include "gic_v3.h"
 
@@ -13,6 +14,7 @@
 /***************** Macros (Inline Functions) Definitions *********************/
 
 /************************** Variable Definitions *****************************/
+/* Static CAN controller instance */
 static AL_CAN_DevStruct AL_CAN_DevInstance[AL_CAN_NUM_INSTANCE];
 
 /************************** Function Prototypes ******************************/
