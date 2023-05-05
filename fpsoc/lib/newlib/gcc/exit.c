@@ -4,6 +4,5 @@
 __WEAK void _exit(int fd)
 {
     while (1) {
-        __WFI();
     }
 }

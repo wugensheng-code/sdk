@@ -1,6 +1,5 @@
 
-C_SRCDIRS += $(FPSOC_ARCH)/rv64/src \
-             $(FPSOC_ARCH)/rv64/src/stubs
+C_SRCDIRS += $(FPSOC_ARCH)/rv64/src
 
 ASM_SRCDIRS += $(FPSOC_ARCH)/rv64/src/
 

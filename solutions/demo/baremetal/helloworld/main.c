@@ -11,7 +11,7 @@ int main(void)
     char *p;
 
     for (int i = 0; i < 20; i ++) {
-        printf("%d strlen=%d %s\r\n", i, strtol(str, &p, 10),  str);
+        printf("%s\r\n", str);
     }
 
     return 0;
