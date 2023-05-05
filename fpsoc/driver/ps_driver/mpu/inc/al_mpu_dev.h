@@ -71,11 +71,13 @@ typedef enum
 {
     MPU_INVALID_DEVICE_ID   = 0x100,
     MPU_REGION_ENABLED      = 0x101,
+    MPU_INVALID_REGION      = 0x102,
 } AL_MPU_ErrorCodeEnum;
 
 #define AL_MPU_ERR_ILLEGAL_PARAM            (AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
 #define AL_MPU_ERR_INVALID_DEVICE_ID        (AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, MPU_INVALID_DEVICE_ID))
 #define AL_MPU_ERROR_REGION_ENABLED         (AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, MPU_REGION_ENABLED))
+#define AL_MPU_ERROR_REGION_NUMBER          (AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, MPU_INVALID_REGION))
 
  typedef struct
 {
@@ -128,34 +130,6 @@ typedef struct
     AL_U8   AL_RegionEnableStatus[AL_MPU_APU_MAX_REGION];
 } AL_MPU_ApuRegionStatusStruct;
 
-/*
-   Common region address protection lengths,The default region size is 4k.
-   Therefore, the protect address length of a region must be a multiple of 4k.
- */
-typedef enum {
-    MPU_REGION_4K   = 0x1000,
-    MPU_REGION_8K   = 0x2000,
-    MPU_REGION_16K  = 0x4000,
-    MPU_REGION_32K  = 0x8000,
-    MPU_REGION_64K  = 0x10000,
-    MPU_REGION_128K = 0x20000,
-    MPU_REGION_256K = 0x40000,
-    MPU_REGION_512K = 0x80000,
-    MPU_REGION_1M   = 0x100000,
-    MPU_REGION_2M   = 0x200000,
-    MPU_REGION_4M   = 0x400000,
-    MPU_REGION_8M   = 0x800000,
-    MPU_REGION_16M  = 0x1000000,
-    MPU_REGION_32M  = 0x2000000,
-    MPU_REGION_64M  = 0x4000000,
-    MPU_REGION_128M = 0x8000000,
-    MPU_REGION_256M = 0x10000000,
-    MPU_REGION_512M = 0x20000000,
-    MPU_REGION_1G   = 0x40000000,
-    MPU_REGION_2G   = 0x80000000,
-    MPU_REGION_4G   = 0x100000000
-} AL_MPU_RegionSizeEnum;
-
 /* Master group id enum */
 typedef enum
 {
@@ -184,13 +158,13 @@ typedef enum
     MPU_INTR_APU_ID     = 0x40,
 } AL_MPU_InterruptIdEnum;
 
-AL_S32 AlMpu_Dev_MpuEnable(AL_U8 DevId);
+AL_S32 AlMpu_Dev_MpuEnable(AL_MPU_DevStruct *Mpu);
 
-AL_S32 AlMpu_Dev_MpuDisable(AL_U8 DevId);
+AL_S32 AlMpu_Dev_MpuDisable(AL_MPU_DevStruct *Mpu);
 
-AL_S32 AlMpu_Dev_DisableRegion(AL_U8 DevId, AL_U8 RegionNumber);
+AL_S32 AlMpu_Dev_DisableRegion(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber);
 
-AL_S32 AlMpu_Dev_EnableRegion(AL_U8 DevId, AL_U8 RegionNumber, AL_MPU_RegionConfigStruct *InitRegionConfig);
+AL_S32 AlMpu_Dev_EnableRegion(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber, AL_MPU_RegionConfigStruct *InitRegionConfig);
 
 AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
                       AL_MPU_RegionConfigStruct *InitRegionConfig, AL_U8 ConfigNumber);
@@ -199,7 +173,7 @@ AL_MPU_HwConfigStruct *AlMpu_Dev_LookupConfigByDevId(AL_U8 DevId);
 
 AL_S32 AlMpu_Dev_RegisterEventCallBack(AL_MPU_DevStruct *Mpu, AL_Mpu_EventCallBack Callback, void *CallbackRef);
 
-AL_VOID AlMpu_Dev_MpuIntrHandler();
+AL_VOID AlMpu_Dev_MpuIntrHandler(void *Ptr);
 
 #ifdef __cplusplus
 }

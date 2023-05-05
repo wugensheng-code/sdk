@@ -25,6 +25,9 @@ AL_VOID AlMpu_Hal_MpuRegisterIntr()
 static AL_VOID AlMpu_Hal_EventCallBack(AL_MPU_EventStruct MpuEvent, AL_VOID *CallbackRef)
 {
     AL_MPU_HalStruct *Handle = (AL_MPU_HalStruct *)CallbackRef;
+
+    AL_LOG(AL_ERR_LEVEL_INFO, "AlMpu_Hal_EventCallBack\r\n");
+
     switch (MpuEvent.EventId) {
         case AL_MPU_DENY_ACCESS:
             break;
@@ -34,24 +37,44 @@ static AL_VOID AlMpu_Hal_EventCallBack(AL_MPU_EventStruct MpuEvent, AL_VOID *Cal
     }
 }
 
-AL_S32 AlMpu_Hal_MpuEnable(AL_U8 DevId)
+AL_S32 AlMpu_Hal_MpuEnable(AL_MPU_HalStruct *Handle)
 {
-    return AlMpu_Dev_MpuEnable(DevId);
+    if (Handle == AL_NULL) {
+        AL_LOG(AL_ERR_LEVEL_ERROR, "AlMpu_Hal_MpuEnable illegal parameter\r\n");
+        return AL_MPU_ERR_ILLEGAL_PARAM;
+    }
+
+    return AlMpu_Dev_MpuEnable(Handle->Dev);
 }
 
-AL_S32 AlMpu_Hal_MpuDisable(AL_U8 DevId)
+AL_S32 AlMpu_Hal_MpuDisable(AL_MPU_HalStruct *Handle)
 {
-    return AlMpu_Dev_MpuDisable(DevId);
+    if (Handle == AL_NULL) {
+        AL_LOG(AL_ERR_LEVEL_ERROR, "AlMpu_Hal_MpuDisable illegal parameter\r\n");
+        return AL_MPU_ERR_ILLEGAL_PARAM;
+    }
+
+    return AlMpu_Dev_MpuDisable(Handle->Dev);
 }
 
-AL_S32 AlMpu_Hal_DisableRegion(AL_U8 DevId, AL_U8 RegionNumber)
+AL_S32 AlMpu_Hal_DisableRegion(AL_MPU_HalStruct *Handle, AL_U8 RegionNumber)
 {
-    return AlMpu_Dev_DisableRegion(DevId, RegionNumber);
+    if (Handle == AL_NULL) {
+        AL_LOG(AL_ERR_LEVEL_ERROR, "AlMpu_Hal_DisableRegion illegal parameter\r\n");
+        return AL_MPU_ERR_ILLEGAL_PARAM;
+    }
+
+    return AlMpu_Dev_DisableRegion(Handle->Dev, RegionNumber);
 }
 
-AL_S32 AlMpu_Hal_EnableRegion(AL_U8 DevId, AL_U8 RegionNumber, AL_MPU_RegionConfigStruct *InitRegionConfig)
+AL_S32 AlMpu_Hal_EnableRegion(AL_MPU_HalStruct *Handle, AL_U8 RegionNumber, AL_MPU_RegionConfigStruct *InitRegionConfig)
 {
-    return AlMpu_Dev_EnableRegion(DevId, RegionNumber, InitRegionConfig);
+    if (Handle == AL_NULL) {
+        AL_LOG(AL_ERR_LEVEL_ERROR, "AlMpu_Hal_EnableRegion illegal parameter\r\n");
+        return AL_MPU_ERR_ILLEGAL_PARAM;
+    }
+
+    return AlMpu_Dev_EnableRegion(Handle->Dev, RegionNumber, InitRegionConfig);
 }
 
 AL_S32 AlMpu_Hal_Init(AL_U8 MpuDevId, AL_MPU_HalStruct *Handle, AL_Mpu_EventCallBack EventCallBack,
@@ -85,17 +108,12 @@ AL_S32 AlMpu_Hal_Init(AL_U8 MpuDevId, AL_MPU_HalStruct *Handle, AL_Mpu_EventCall
 
     AlMpu_Hal_MpuRegisterIntr();
 
-    AlMpu_Hal_MpuDisable(MpuDevId);
-
     RetValue = AlMpu_Dev_Init(Handle->Dev, HwConfig, InitRegionConfig, ConfigNumber);
     if (RetValue != AL_OK) {
-        AlMpu_Hal_MpuEnable(MpuDevId);
         AL_MPU_HAL_UNLOCK(Handle);
         AL_LOG(AL_ERR_LEVEL_ERROR, "AlMpu_Hal_Init initialize failed\r\n");
         return RetValue;
     }
-
-    AlMpu_Hal_MpuEnable(MpuDevId);
 
     AL_MPU_HAL_UNLOCK(Handle);
 
