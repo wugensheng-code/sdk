@@ -3,21 +3,25 @@
 
 #include <stdio.h>
 #include <stdint.h>
-//#include "../../../../demoapu/Common/Include/delay.h"
 #include "mtimer.h"
+//#define AL_DEBUG_PRINT
+#ifdef AL_DEBUG_PRINT
+#include "al_debug.h"
+#endif
 
 typedef enum{
 	//	COMMON STATUS
 	MMC_SUCCESS = 0,
 	MMC_FAILURE,
 	//TIMER OUT ERROR
-	//MMC_CMD_TIMEOUT,				//send cmd timeout
-	//MMC_XFER_TIMEOUT,				//wait transfer complete timeout
+	MMC_CMD_TIMEOUT,				//send cmd timeout
+	MMC_XFER_TIMEOUT,				//wait transfer complete timeout
 	MMC_WAIT_CLK_STABLE_TIMEOUT,	//wait internal clock stable timeout
-	//MMC_BUF_RD_RDY_TIMEOUT,			//wait buffer read ready complete timeout
+	MMC_BUF_RDWR_RDY_TIMEOUT,			//wait buffer read ready complete timeout
 	//MMC_SD_CHECK_VOLT_TIMEOUT,		//SD check voltage timeout
 	//MMC_EMMC_CHECK_VOLT_TIMEOUT,	//eMMC check voltage timeout
 	MMC_CHECK_VOLT_TIMEOUT,
+	MMC_CHECK_RCA_TIMEOUT,
 	MMC_CHECK_DEV_STATUS_TIMEOUT,
 	MMC_WAIT_LINE_INHIBIT_TIMEOUT,
 	//Error INT Status Regitster
@@ -46,14 +50,12 @@ typedef enum{
 	MMC_CMD_8_ERR,
 	MMC_CMD_9_ERR,
 	MMC_CMD_10_ERR,
-	MMC_CMD13_ERR,
 	MMC_CMD_16_ERR,
 	MMC_CMD_17_ERR,
 	MMC_CMD_23_ERR,
 	MMC_CMD_24_ERR,
 	MMC_CMD_55_ERR,
 	MMC_ACMD_41_ERR,
-	MMC_CMD_7_XFER_ERR,
 	MMC_CMD_8_XFER_ERR,
 	MMC_CMD_17_XFER_ERR,
 	MMC_CMD_24_XFER_ERR,
@@ -62,24 +64,180 @@ typedef enum{
 }MMC_ERR_TYPE;
 
 //error code offset
-#define MMC_ERROR_CODE_OFFSET		MMC_CMD_TOUT_ERR
+#define MMC_ERROR_CODE_OFFSET			MMC_CMD_TOUT_ERR
 //error cmd offset
-#define MMC_ERROR_CMD_OFFSET		MMC_CMD_0_ERR
+#define MMC_ERROR_CMD_OFFSET			MMC_CMD_0_ERR
+#define MMC_ERROR_CMD_NUM				(MMC_CMD_8_XFER_ERR - MMC_CMD_0_ERR)
+//error transfer offset
+#define MMC_ERROR_TRANSFER_CMD_OFFSET	MMC_CMD_8_XFER_ERR
+#define MMC_ERROR_TRANSFER_CMD_NUM		(MMC_CMD_XFER_ERR - MMC_CMD_8_XFER_ERR)
 //Error INT status bits	length 13~15 reserved
-#define MMC_ERR_INT_STAT_BITS_LEN	7
+#define MMC_ERR_INT_STAT_BITS_LEN		7
 
-//#define _USE_SDMA
-//#define _USE_4BIT
+typedef enum {
+	BRANCH_WAITCLOCKSTABLE_ERROR,
+	BRANCH_WAITCLOCKSTABLE_SUCCESS,
+	BRANCH_WAITCMDCOMPLETE_ERROR,
+	BRANCH_WAITCMDCOMPLETE_SUCCESS,
+	BRANCH_WAITTRANSFERCOMPLETE_ERROR,
+	BRANCH_WAITTRANSFERCOMPLETE_SUCCESS,
+	BRANCH_TRANSFERWITHOUTDMA_ERROR,
+	BRANCH_TRANSFERWITHOUTDMA_SUCCESS,
+	BRANCH_CHECKLINEINHIBIT_ERROR,
+	BRANCH_CHECKLINEINHIBIT_SUCCESS,
+	BRANCH_CMD_COMPLETE_REG_READ,			//10
+	BRANCH_CMD_COMPLETE_ERROR,
+	BRANCH_CMD_COMPLETE_ERROR_CMD8,
+	BRANCH_CMDLINE_RST_COMPLETE_REG_READ,
+	BRANCH_CMDLINE_RST_COMPLETE_DONE,
+	BRANCH_CMDLINE_RST_COMPLETE_TIMEOUT,
+	BRANCH_CMDLINE_RST_COMPLETE_SUCCESS,
+	BRANCH_CMD_COMPLETE_ERROR_NOTCMD8,
+	BRANCH_CMD_COMPLETE_NOTERROR,
+	BRANCH_CMD_COMPLETE_DONE,
+	BRANCH_CMD_COMPLETE_TIMEOUT,			//20
+	BRANCH_CMD_COMPLETE_SUCCESS,
+	BRANCH_XFER_COMPLETE_REG_READ,
+	BRANCH_XFER_COMPLETE_ERROR,
+	BRANCH_XFER_COMPLETE_NOTERROR,
+	BRANCH_XFER_COMPLETE_DONE,
+	BRANCH_XFER_COMPLETE_TIMEOUT,
+	BRANCH_XFER_COMPLETE_SUCCESS,
+	BRANCH_NOT_XFER_CMD,
+	BRANCH_IS_XFER_CMD,
+	BRANCH_BUF_RDY_REG_READ,				//30
+	BRANCH_BUF_RDY_ERROR,
+	BRANCH_BUF_RDY_NOTERROR,
+	BRANCH_RDCMD17_AND_RDBUF_READY,
+	BRANCH_RDCMD17BUF_RDY_NOT_READY,
+	BRANCH_RDCMD8_AND_RDBUF_READY,
+	BRANCH_RDCMD8BUF_RDY_NOT_READY,
+	BRANCH_WRCMD24_AND_WRBUF_READY,
+	BRANCH_WRCMD24BUF_RDY_NOT_READY,
+	BRANCH_BUF_RDY_DONE,
+	BRANCH_BUF_RDY_TIMEOUT,					//40
+	BRANCH_BUF_RDY_SUCCESS,
+	BRANCH_BUF_RDY_CLEAR_RDRDY,
+	BRANCH_BUF_RDY_CLEAR_WRRDY,
+	BRANCH_READ_DATA_BUF,
+	BRANCH_WRITE_DATA_BUF,
+	BRANCH_CLKSTABLE_REG_READ,
+	BRANCH_CLKSTABLE_DONE,
+	BRANCH_CLKSTABLE_TIMEOUT,
+	BRANCH_CLKSTABLE_SUCCESS,
+	BRANCH_LINEINHIBIT_REG_READ,			//50
+	BRANCH_LINEINHIBIT_CMD_NOTREADY,
+	BRANCH_LINEINHIBIT_DATA_NOTREADY,
+	BRANCH_LINEINHIBIT_CMD_DATA_NOTREADY,
+	BRANCH_LINEINHIBIT_DONE,
+	BRANCH_LINEINHIBIT_TIMEOUT,
+	BRANCH_LINEINHIBIT_SUCCESS,
+	BRANCH_IOBANK1_1V8,
+	BRANCH_IOBANK1_3V3,
+	BRANCH_EMMC_FREQ_10M,
+	BRANCH_EMMC_FREQ_400K,					//60
+	BRANCH_EMMC_VOLT_VALID_REG_READ,
+	BRANCH_EMMC_IOBANK1_1V8,
+	BRANCH_EMMC_IOBANK1_3V3,
+	BRANCH_EMMC_VOLT_VALID_DONE,
+	BRANCH_EMMC_VOLT_VALID_TIMEOUT,
+	BRANCH_EMMC_VOLT_VALID_SUCCESS,
+	BRANCH_EMMC_INIT_ERROR,
+	BRANCH_EMMC_SENDINITCMD_SUCCESS,
+	BRANCH_EMMC_GETCARDINFO_SUCCESS,		//70
+	BRANCH_EMMC_RAW_INIT_ERROR,
+	BRANCH_EMMC_RAW_INIT_SUCCESS,
+	BRANCH_EMMC_RAW_READ_STARTBLOCK,
+	BRANCH_EMMC_RAW_READ_STARTBLOCK_ERROR,
+	BRANCH_EMMC_RAW_READ_STARTBLOCK_SUCCESS,
+	BRANCH_EMMC_RAW_READ_ENDBLOCK,
+	BRANCH_EMMC_RAW_READ_ENDBLOCK_ERROR,
+	BRANCH_EMMC_RAW_READ_ENDBLOCK_SUCCESS,
+	BRANCH_EMMC_RAW_READ_MIDDLEBLOCK,
+	BRANCH_EMMC_RAW_READ_MIDDLEBLOCK_ERROR,	//80
+	BRANCH_EMMC_RAW_READ_MIDDLEBLOCK_SUCCESS,
+	BRANCH_EMMC_RAW_SET_MODE_FREQ,
+	BRANCH_EMMC_RAW_SET_MODE_DEFAULT,
+	BRANCH_EMMC_RAW_SET_MODE_FREQ_VALIDFREQ,
+	BRANCH_EMMC_RAW_SET_MODE_FREQ_INVALIDFREQ,
+	BRANCH_EMMC_RAW_SET_MODE_FREQ_ERROR,
+	BRANCH_EMMC_RAW_SET_MODE_FREQ_SUCCESS,
+	BRANCH_EMMC_CARDSIZE_LESS2G,
+	BRANCH_EMMC_CARDSIZE_MORE2G,
+	BRANCH_SD_FREQ_10M,						//90
+	BRANCH_SD_FREQ_400K,
+	BRANCH_SD_VOLT_VALID_REG_READ,
+	BRANCH_SD_VOLT_VALID_REG_READ_VALIDVOLT,
+	BRANCH_SD_VOLT_VALID_INVALIDVOLT,
+	BRANCH_SD_VOLT_VALID_CARDTYPE_HC,
+	BRANCH_SD_VOLT_VALID_CARDTYPE_2V0,
+	BRANCH_SD_VOLT_VALID_DONE,
+	BRANCH_SD_VOLT_VALID_TIMEOUT,
+	BRANCH_SD_VOLT_VALID_SUCCESS,
+	BRANCH_SD_WAIT_RCA_REG_READ,			//100
+	BRANCH_SD_WAIT_RCA_DONE,
+	BRANCH_SD_WAIT_RCA_TIMEOUT,
+	BRANCH_SD_WAIT_RCA_SUCCESS,
+	BRANCH_SD_INIT_ERROR,
+	BRANCH_SD_SENDINITCMD_SUCCESS,
+	BRANCH_SD_READ_USE_CMD23,
+	BRANCH_SD_READ_NOTUSE_CMD23,
+	BRANCH_SD_READ_BYTE,
+	BRANCH_SD_READ_BLOCK,					//110
+	BRANCH_SD_CARDSIZE_V2_0,
+	BRANCH_SD_CARDSIZE_HC,
+	BRANCH_SD_RAW_SET_MODE_FREQ,
+	BRANCH_SD_RAW_SET_MODE_FREQ_INVALIDFREQ,
+	BRANCH_SD_RAW_SET_MODE_FREQ_VALIDFREQ,
+	BRANCH_SD_RAW_SET_MODE_FREQ_ERROR,
+	BRANCH_SD_RAW_SET_MODE_FREQ_SUCCESS,
+	BRANCH_SD_RAW_SET_MODE_DEFAULT,
+	BRANCH_SD_WRITE_USE_CMD23,
+	BRANCH_SD_WRITE_NOTUSE_CMD23,			//120
+	BRANCH_SD_WRITE_BYTE,
+	BRANCH_SD_WRITE_BLOCK,
+	BRANCH_MAX
+} MMC_BRANCH_NUM;
+
+typedef enum {
+	BERROR_BRANCH_CMDLINE_RST_COMPLETE_TIMEOUT,
+	BERROR_BRANCH_CMD_COMPLETE_ERROR_NOTCMD8,
+	BERROR_BRANCH_CMD_COMPLETE_TIMEOUT,
+	BERROR_BRANCH_XFER_COMPLETE_ERROR,
+	BERROR_BRANCH_XFER_COMPLETE_TIMEOUT,
+	BERROR_BRANCH_NOT_XFER_CMD,
+	BERROR_BRANCH_BUF_RDY_ERROR,
+	BERROR_BRANCH_BUF_RDY_TIMEOUT,
+	BERROR_BRANCH_RDCMD17BUF_RDY_NOT_READY,
+	BERROR_BRANCH_RDCMD8BUF_RDY_NOT_READY,
+	BERROR_BRANCH_WRCMD24BUF_RDY_NOT_READY,
+	BERROR_BRANCH_CLKSTABLE_TIMEOUT,
+	BERROR_BRANCH_LINEINHIBIT_REG_READ,
+	BERROR_BRANCH_LINEINHIBIT_CMD_NOTREADY,
+	BERROR_BRANCH_LINEINHIBIT_DATA_NOTREADY,
+	BERROR_BRANCH_LINEINHIBIT_CND_DATA_NOTREADY,
+	BERROR_BRANCH_LINEINHIBIT_TIMEOUT,
+	BERROR_BRANCH_IOBANK1_1V8,
+	BERROR_BRANCH_EMMC_IOBANK1_1V8,
+	BERROR_BRANCH_EMMC_VOLT_VALID_TIMEOUT,
+	BERROR_BRANCH_EMMC_RAW_READ_STARTBLOCK_ERROR,
+	BERROR_BRANCH_EMMC_RAW_READ_ENDBLOCK_ERROR,
+	BERROR_BRANCH_EMMC_RAW_READ_MIDDLEBLOCK_ERROR,
+	BERROR_BRANCH_EMMC_RAW_SET_MODE_DEFAULT,
+	BERROR_BRANCH_EMMC_RAW_SET_MODE_FREQ_INVALIDFREQ,
+	BERROR_BRANCH_EMMC_CARDSIZE_LESS2G,
+	BERROR_BRANCH_SD_VOLT_VALID_TIMEOUT,
+	BERROR_BRANCH_SD_WAIT_RCA_TIMEOUT,
+	BERROR_BRANCH_SD_RAW_SET_MODE_FREQ_INVALIDFREQ,
+	BERROR_BRANCH_SD_RAW_SET_MODE_DEFAULT,
+	BERROR_MAX,
+}MMC_ERROR_BRANCH;
+
+#define _USE_SDMA 1
+#define _USE_4BIT 1
 //#define _USE_8BIT
-#define _USE_MSHC_PRINT
+//#define _USE_MSHC_PRINT
 //#define _USE_ERR_PRINT
-
-//#define MMC_SEQUENCE_PRINT
-#ifdef MMC_SEQUENCE_PRINT
-#define MMC_PRINT	printf
-#else
-#define MMC_PRINT
-#endif
 
 //IO BANK1 REF
 //bit 31-3:reserved
@@ -88,7 +246,19 @@ typedef enum{
 //bit 0:bank1_vccio_det1v8
 #define IO_BANK1_REF                0xF8803C04ULL
 
+//NVM delay register
+//check method, low 16 bit and high 16 bit orr
+#define EFUSE_NVM_DELAY_REG			0xF880624CULL
+
 #define MBIU_CTRL_R 0x510   //AHB BUS burst contrl register
+
+#define TOP_CFG_REG_CARD_PROT_SEL_REG		(0x1 << 7)
+#define TOP_CFG_REG_CARD_PROT_SEL_IO		(~TOP_CFG_REG_CARD_PROT_SEL_REG)
+#define TOP_CFG_REG_CARD_DETECT_SEL_REG		(0x1 << 6)
+#define TOP_CFG_REG_CARD_DETECT_SEL_IO		(~TOP_CFG_REG_CARD_DETECT_SEL_REG)
+#define TOP_CFG_REG_CLK_RST					(0x1 << 3)
+#define TOP_CFG_REG_CLK_RST_RELEASE			(~TOP_CFG_REG_CLK_RST)
+
 //top cfg register
 //bit 7:enable reg ctrl card write protection   0:io ctrl   1:reg ctrl
 //bit 6:enable reg ctrl card detection          0:io ctrl   1:reg ctrl
@@ -96,39 +266,53 @@ typedef enum{
 //bit 4:reg ctrl card detect                    0:enable    1:disable
 //bit 3:clk soft rst                            0:disable   1:enable
 //bit [2:0]:clk phase select similar to tuning
+
+#define TOP_CFG_REG_CARD_PROT_SEL_REG		(0x1 << 7)
+#define TOP_CFG_REG_CARD_PROT_SEL_IO		(~TOP_CFG_REG_CARD_PROT_SEL_REG)
+#define TOP_CFG_REG_CARD_DETECT_SEL_REG		(0x1 << 6)
+#define TOP_CFG_REG_CARD_DETECT_SEL_IO		(~TOP_CFG_REG_CARD_DETECT_SEL_REG)
+#define TOP_CFG_REG_CLK_RST					(0x1 << 3)
+#define TOP_CFG_REG_CLK_RST_RELEASE			(~TOP_CFG_REG_CLK_RST)
+
 #define TOP_NS__CFG_CTRL_SDIO0_ADDR 0xF8800150ULL   //sd0   emmc
 #define TOP_NS__CFG_CTRL_SDIO1_ADDR 0xF8800150ULL	//0xF8800154ULL   //sd1   sd
 #define SDIO_WRAP__SDIO0__BASE_ADDR 0xF8049000ULL
 #define SDIO_WRAP__SDIO1__BASE_ADDR 0xF8049000ULL	//0xF804A000ULL
 
-#define MMC_CMD_TIMEOUT_VAL					(10000*1000)	//10s
-#define MMC_XFER_TIMEOUT_VAL				(15000*1000)	//15s
+#define MMC_CMD_TIMEOUT_VAL					(5000*1000)		//5s
+#define MMC_CMDLINE_RESET_TIMEOUT_VAL		(5000*1000)		//5s
+#define MMC_XFER_TIMEOUT_VAL				(5000*1000)		//5s
 #define MMC_BUF_RD_RDY_TIMEOUT_VAL			(1000*1000)		//1s
 #define MMC_WAIT_CLK_STABLE_TIMEOUT_VAL		(5000*1000)		//5s
 #define MMC_CHECK_LINE_INHIBIT_TIMEOUT_VAL	(1000*1000)		//1s
 #define MMC_CHECK_DEV_STATUS_TIMEOUT_VAL	(1000*1000)		//1s
-#define MMC_DELAY_SCALE						(2)
+#define MMC_DELAY_SCALE						(1)
+
+#ifdef MMC_COMPILE_FOR_EMU
+#define MMC_DIV_10M		(0)
+#else
+#define MMC_DIV_10M		(0x9)
+#endif
 
 //capabilities1.base_clk_freq 0 another way 1~255 -> 1~255MHz
 #define MMC_GET_INFO_ANOTHER_WAY	0x0
 //capabilities2.clk_mul 0 not support 1~255 -> 2~256
 #define MMC_CLK_MUL_NOT_SUPPORT	0x0
 
-#define     __IO    volatile      
+#define     __IO    volatile
 
-#define DEF_BLOCK_LEN   0x1000	//4KB
+#define DEF_BLOCK_LEN   	0x1000	//4KB
+#define BLOCK_1MB_NUM     	0x800	//2KB*512=1MB
+#define BLOCK_128MB_NUM		0x40000	//256K*512=128MB
 
-unsigned int reg_read(unsigned long reg_address);
-void reg_write(unsigned long reg_address, uint32_t reg_wdata);
+uint32_t Mmc_RegRead32(unsigned long reg_address);
+void Mmc_RegWrite32(unsigned long reg_address, uint32_t reg_wdata);
 
-#define REG_READ(reg_address) reg_read(reg_address)
-#define REG_WRITE(reg_address, reg_wdata) reg_write(reg_address, reg_wdata)
-
-#define SDRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO1__BASE_ADDR+reg_address), reg_wdata)
-#define EMMCRegWrite(reg_address, reg_wdata) REG_WRITE((SDIO_WRAP__SDIO0__BASE_ADDR+reg_address), reg_wdata)
+#define REG_READ(reg_address) Mmc_RegRead32((unsigned long)reg_address)
+#define REG_WRITE(reg_address, reg_wdata) Mmc_RegWrite32((unsigned long)reg_address, reg_wdata)
 
 typedef enum {
-	FAILED = 0, 
+	FAILED = 0,
 	PASSED = !FAILED
 } TestStatus;
 
@@ -343,6 +527,7 @@ typedef union
 	__IO uint32_t	re_tune_event_signal_en:1;
 	__IO uint32_t	fx_event_signal_en:1;
 	__IO uint32_t    cqe_event_signal_en:1;
+	__IO uint32_t	rsvd_15:1;
 	__IO uint32_t	cmd_tout_err_signal_en:1;
 	__IO uint32_t	cmd_crc_err_signal_en:1;
 	__IO uint32_t	cmd_end_bit_err_signal_en:1;
@@ -744,8 +929,8 @@ typedef enum{
 #define SDIO_SECURE_DIGITAL_IO_COMBO_CARD          ((uint32_t)0x00000006)
 #define SDIO_HIGH_CAPACITY_MMC_CARD                ((uint32_t)0x00000007)
 
-/** 
-  * @brief SDIO Commands  Index 
+/**
+  * @brief SDIO Commands  Index
   */
 #define SD_CMD_GO_IDLE_STATE                       ((uint8_t)0)
 #define SD_CMD_SEND_OP_COND                        ((uint8_t)1)
@@ -794,9 +979,9 @@ typedef enum{
 #define SD_CMD_GEN_CMD                             ((uint8_t)56)
 #define SD_CMD_NO_CMD                              ((uint8_t)64)
 
-/** 
+/**
   * @brief Following commands are SD Card Specific commands.
-  *        SDIO_APP_CMD should be sent before sending these commands. 
+  *        SDIO_APP_CMD should be sent before sending these commands.
   */
 #define SD_CMD_APP_SD_SET_BUSWIDTH                 ((uint8_t)6)  /*!< For SD Card only */
 #define SD_CMD_SD_APP_STAUS                        ((uint8_t)13) /*!< For SD Card only */
@@ -807,9 +992,9 @@ typedef enum{
 #define SD_CMD_SDIO_RW_DIRECT                      ((uint8_t)52) /*!< For SD I/O Card only */
 #define SD_CMD_SDIO_RW_EXTENDED                    ((uint8_t)53) /*!< For SD I/O Card only */
 
-/** 
+/**
   * @brief Following commands are SD Card Specific security commands.
-  *        SDIO_APP_CMD should be sent before sending these commands. 
+  *        SDIO_APP_CMD should be sent before sending these commands.
   */
 #define SD_CMD_SD_APP_GET_MKB                      ((uint8_t)43) /*!< For SD Card only */
 #define SD_CMD_SD_APP_GET_MID                      ((uint8_t)44) /*!< For SD Card only */
@@ -834,7 +1019,7 @@ typedef enum{
 #define MMC_HC1_DMA_SEL_RSV				0x1
 #define MMC_HC1_DMA_SEL_ADMA2			0x2
 #define MMC_HC1_DMA_SEL_ADMA3			0x3
-#define MMC_HC1_EXT_DAT_XFER_DEF		0x0		
+#define MMC_HC1_EXT_DAT_XFER_DEF		0x0
 #define MMC_HC1_EXT_DAT_XFER_8BIT		0x1
 
 //pwr_ctrl register param
@@ -941,13 +1126,14 @@ typedef enum{
 #define DATA_READ 0x1
 #define DATA_WRITE 0x0
 
-#define MMC_Response_No                    (0x0)
-#define MMC_Response_Long                  (0x1)
-#define MMC_Response_Short                 (0x2)
-#define MMC_Response_Short_48B             (0x3)
+#define MMC_Response_No					(0x0)
+#define MMC_Response_Long				(0x1)
+#define MMC_Response_Short				(0x2)
+#define MMC_Response_Short_48B			(0x3)
 
-#define MMC_FREQ_400K					(0)    
+#define MMC_FREQ_400K					(0)
 #define MMC_FREQ_10M					(1)
+#define MMC_FREQ_MAX					(2)
 
 //delay func
 #define MMC_DELAY_US(us)				Mtimer_Delay(us)
@@ -959,47 +1145,118 @@ uint32_t TransferWithoutDMA(volatile DWC_mshc_block_registers* Ptr, uint32_t *Ad
 uint32_t WaitClockStable(volatile DWC_mshc_block_registers* Ptr);
 uint32_t CheckLineInhibit(volatile DWC_mshc_block_registers* Ptr);
 void ClearErrandIntStatus(volatile DWC_mshc_block_registers* Ptr);
-void PrintfMshcBlock(DWC_mshc_block_registers *Ptr);
-#define MMC_WAIT_CLK_STABLE(ptr)					status = WaitClockStable(ptr);\
-													if(status != MMC_SUCCESS){\
-														return status;\
-													}
-#define MMC_WAIT_CMD_COMPLETE(ptr, err)				status = WaitCmdComplete(ptr, err);\
-													if(status != MMC_SUCCESS){\
-														return status;\
-													}
-#define MMC_WAIT_TRANSFER_COMPLETE(ptr, err)		status = WaitTransferComplete(ptr, err);\
-													if(status != MMC_SUCCESS){\
-														return status;\
-													}
-#define MMC_TRANSFER_WITHOUT_DMA(ptr, addr, err)	status = TransferWithoutDMA(ptr, addr, err);\
-													if(status != MMC_SUCCESS){\
-														return status;\
-													}
-#define MMC_CHECK_LINE_INHIBIT(ptr)					status = CheckLineInhibit(ptr);\
-													if(status != MMC_SUCCESS){\
-														return status;\
-													}
-#define MMC_CLEAR_STATUS(ptr)						ClearErrandIntStatus(ptr)
+#define MMC_WAIT_CLK_STABLE(ptr)					do { \
+														status = WaitClockStable(ptr);\
+														if(status != MMC_SUCCESS){\
+															MMC_BRANCHTEST_PRINT(BRANCH_WAITCLOCKSTABLE_ERROR);\
+															return status;\
+														}\
+														MMC_BRANCHTEST_PRINT(BRANCH_WAITCLOCKSTABLE_SUCCESS);\
+													} while(0)
+#define MMC_WAIT_CMD_COMPLETE(ptr, err)				do { \
+														status = WaitCmdComplete(ptr, err);\
+														MMC_BRANCHTEST_CMD_PRINT(err);\
+														if(status != MMC_SUCCESS){\
+															MMC_BRANCHTEST_PRINT(BRANCH_WAITCMDCOMPLETE_ERROR);\
+															return status;\
+														}\
+														MMC_BRANCHTEST_PRINT(BRANCH_WAITCMDCOMPLETE_SUCCESS);\
+													} while(0)
+#define MMC_WAIT_TRANSFER_COMPLETE(ptr, err)		do { \
+														status = WaitTransferComplete(ptr, err);\
+														MMC_BRANCHTEST_CMD_PRINT(err);\
+														if(status != MMC_SUCCESS){\
+															MMC_BRANCHTEST_PRINT(BRANCH_WAITTRANSFERCOMPLETE_ERROR);\
+															return status;\
+														}\
+														MMC_BRANCHTEST_PRINT(BRANCH_WAITTRANSFERCOMPLETE_SUCCESS);\
+													} while(0)
+#define MMC_TRANSFER_WITHOUT_DMA(ptr, addr, err)	do { \
+														status = TransferWithoutDMA(ptr, addr, err);\
+														MMC_BRANCHTEST_CMD_PRINT(err);\
+														if(status != MMC_SUCCESS){\
+															MMC_BRANCHTEST_PRINT(BRANCH_TRANSFERWITHOUTDMA_ERROR);\
+															return status;\
+														}\
+														MMC_BRANCHTEST_PRINT(BRANCH_TRANSFERWITHOUTDMA_SUCCESS);\
+													} while(0)
+#define MMC_CHECK_LINE_AND_CLEAR_STATUS(ptr)		do { \
+														status = CheckLineInhibit(ptr);\
+														if(status != MMC_SUCCESS){\
+															MMC_BRANCHTEST_PRINT(BRANCH_CHECKLINEINHIBIT_ERROR);\
+															return status;\
+														}\
+														MMC_BRANCHTEST_PRINT(BRANCH_CHECKLINEINHIBIT_SUCCESS);\
+														ClearErrandIntStatus(ptr);\
+													} while(0)
 
-#define MMC_CHECK_LINE_AND_CLEAR_STATUS(ptr)		status = CheckLineInhibit(ptr);\
-													if(status != MMC_SUCCESS){\
-														return status;\
-													}\
-													ClearErrandIntStatus(ptr)
+#ifdef AL_DEBUG_PRINT
+extern uint32_t BranchTestCount[BRANCH_MAX];
+extern uint32_t ErrBranchCtrl;
+#define MMC_PRINT(...)									do { \
+															rom_printf(DEBUG_INFO, __VA_ARGS__);\
+														} while(0)
+#define MMC_GPRINT(...)									do { \
+															rom_printf(DEBUG_GENERAL, __VA_ARGS__);\
+														} while(0)
+#define MMC_BRANCHTEST_PRINT(branch)					do { \
+															if (ErrBranchCtrl == ~0) {\
+																rom_printf(DEBUG_BRANCHTEST, "[BRANCH_NUM]:[%d]\r\n",branch);\
+															}\
+															BranchTestCount[branch]++;\
+														} while(0)
+#define MMC_BRANCHTEST_CMD_PRINT(cmd)					do { \
+															rom_printf(DEBUG_BRANCHTEST, "[BRANCH_CMD]:cmdindex = [%d]\r\n",cmd);\
+														} while(0)
+
+#define SD_ERROR_BRANCH_DONE_MASK						0x3C03FDFF
+#define EMMC_ERROR_BRANCH_DONE_MASK						0x03FFFDFE
+#define ERROR_BRANCH_CHECK_BIT_NOTSET(erroroffset)		((ErrBranchCtrl & (1 << erroroffset)) == 0)
+#define ERROR_BRANCH_CHECK_BIT_SET(erroroffset)			((ErrBranchCtrl & (1 << erroroffset)) != 0)
+#define ERROR_BRANCH_BIT_SET(erroroffset)				do { \
+															ErrBranchCtrl |= (1 << erroroffset);\
+														} while(0)
+#define ERROR_BRANCH_BIT_RESET(erroroffset)				do { \
+															ErrBranchCtrl &= ~(1 << erroroffset);\
+														} while(0)
+#define SD_ERROR_BRANCH_CHECK_NOTDONE(erroroffset)		((ErrBranchCtrl | (0x1)) != (SD_ERROR_BRANCH_DONE_MASK))
+#define EMMC_ERROR_BRANCH_CHECK_NOTDONE(erroroffset)	((ErrBranchCtrl) != (EMMC_ERROR_BRANCH_DONE_MASK))
+#define ERROR_BRANCH_STOP()								(ErrBranchCtrl = ~0)
+#define ERROR_BRANCH_START()							(ErrBranchCtrl = 0)
+#else
+#define MMC_PRINT(...)
+#define MMC_GPRINT(...)
+#define MMC_BRANCHTEST_PRINT(branch)
+#define MMC_BRANCHTEST_CMD_PRINT(cmd)
+#define ERROR_BRANCH_CHECK_BIT_NOTSET(erroroffset)		(0)
+#define ERROR_BRANCH_CHECK_BIT_SET(erroroffset)			(0)
+#define ERROR_BRANCH_BIT_SET(erroroffset)				(0)
+#define ERROR_BRANCH_BIT_RESET(erroroffset)				(0)
+#define SD_ERROR_BRANCH_CHECK_NOTDONE(erroroffset)		(0)
+#define EMMC_ERROR_BRANCH_CHECK_NOTDONE(erroroffset)	(0)
+#define ERROR_BRANCH_STOP()
+#define ERROR_BRANCH_START()
+#endif
+
 
 extern __IO DWC_mshc_block_registers* SDIO;
 extern __IO DWC_mshc_block_registers* eMMC;
 extern MtimerParams MmcMtimer;
-extern __IO uint32_t CsdTab[4];
-extern __IO uint32_t CidTab[4];
-extern __IO uint32_t Resp[4];
-extern __IO uint32_t Rca;
+extern uint32_t CsdTab[4];
+extern uint32_t CidTab[4];
+extern uint32_t Resp[4];
+extern uint32_t Rca;
 extern uint8_t FlashSharedBuf[DEF_BLOCK_LEN];
-extern uint8_t EfuseDelayParam;
+extern uint32_t EfuseDelayParam;
+extern uint32_t IoBank1Ref;
+extern uint32_t CardType;
 
 uint32_t HostControllerSetup(volatile DWC_mshc_block_registers* ptr);
 uint32_t InitInterruptSetting(volatile DWC_mshc_block_registers* ptr);
+void Mmc_BranchFlowPrint(uint32_t Module, uint32_t FlowNumS, uint32_t FlowNumE);
+void PrintfMshcBlock(volatile DWC_mshc_block_registers *Ptr);
+uint32_t ResetHostComtroller(volatile DWC_mshc_block_registers* Ptr);
+void EfuseDelayVlueCheck(void);
 
 /*****************************END OF FILE**************************/
 

@@ -43,11 +43,9 @@ typedef enum{
 typedef struct{
     uint32_t EmmcId;     //emmc device ID
     uint32_t EmmcSize;   //emmc size in kBytes
-    EMMC_FREQ EmmcFreq;  //emmc freq set
 }RawEmmcParam_t;
 
 extern SD_CardInfo EmmcCardInfo;
-
 
 uint32_t AlEmmc_HostControllerClockSetup(volatile DWC_mshc_block_registers* ptr, uint32_t freq);
 uint32_t AlEmmc_SendInitCmd();

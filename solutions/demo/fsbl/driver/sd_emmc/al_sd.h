@@ -8,6 +8,7 @@
 #define SD_CMD8_PARA_2V7_3V6        0x1AA
 
 #define SD_GET_VALID_VOLTAGE_TIMEOUT_VAL      (20000*1000)  //20s
+#define SD_GET_RCA_TIMEOUT_VAL                (5000*1000)
 
 
 
@@ -26,6 +27,7 @@ uint32_t AlSd_Init(void);
 uint32_t AlSd_ReadSingleBlock(uint8_t *readbuff, uint32_t ReadAddr, uint16_t BlockSize);
 uint32_t AlSd_GetCardInfo(SD_CardInfo *cardinfo);
 uint32_t Csu_RawSdSetMode(uint32_t Mode, uint32_t Data);
-/*****************************END OF FILE**************************/
 
 #endif
+
+/*****************************END OF FILE**************************/

@@ -8,7 +8,7 @@ INCDIRS += $(FPSOC_ROOT)/driver/ps_driver/can/inc \
            $(FPSOC_ROOT)/driver/ps_driver/smc/inc \
            $(FPSOC_ROOT)/driver/ps_driver/lagecy/include \
 		   $(FPSOC_ROOT)/inc \
-		   $(FPSOC_ROOT)/arch/inc \
+		   $(FPSOC_ROOT)/arch/inc
 
 INCDIRS += $(FPSOC_ROOT)/arch/inc/nmsis/core/inc \
            $(FPSOC_ROOT)/arch/inc/nmsis/dsp/inc \
