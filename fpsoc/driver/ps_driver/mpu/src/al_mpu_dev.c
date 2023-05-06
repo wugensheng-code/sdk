@@ -154,7 +154,7 @@ static AL_S32 AlMpu_Dev_ConfigRegion(AL_REG RegionBaseAddr, AL_MPU_RegionConfigS
     return AL_OK;
 }
 
-static AL_U8 AlMpu_Dev_GetValidRegionByDevId(AL_U8 DevId)
+static AL_U8 AlMpu_Dev_GetAvailableRegionByDevId(AL_U8 DevId)
 {
     AL_U32 MpuNumIndex;
     AL_U32 MpuRegionIndex = 0;
@@ -189,6 +189,7 @@ AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
     AL_REG MpuInstance;
     AL_REG RegionBaseAddr;
     AL_U8 RegionCount;
+    AL_U8 ConfigCount = 0;
 
     if (Mpu == AL_NULL) {
         return AL_MPU_ERR_ILLEGAL_PARAM;
@@ -205,8 +206,9 @@ AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
     /* Config all the regions */
     for (RegionCount = 0; RegionCount < ConfigNumber; RegionCount++) {
 
-        /* Get a valid region */
-        if ((RegionNumber = AlMpu_Dev_GetValidRegionByDevId(Mpu->HwConfig.DeviceId)) == 0) {
+        /* Get a available region */
+        if ((RegionNumber = AlMpu_Dev_GetAvailableRegionByDevId(Mpu->HwConfig.DeviceId)) == 0) {
+            RetValue = AL_MPU_ERROR_NO_AVAILABLE_REGION;
             break;
         }
 
@@ -222,11 +224,18 @@ AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
 
         /* Update region enable status */
         AlMpu_Dev_UpdateRegionEnableStatus(Mpu->HwConfig.DeviceId, RegionNumber, MPU_REGION_ENABLE);
+        ConfigCount++;
     }
 
     AlMpu_Dev_MpuEnable(Mpu);
 
-    return AL_OK;
+    if (ConfigCount == 0) {
+        AL_LOG(AL_ERR_LEVEL_ERROR, "[ERROR], Region config all failed\r\n");
+    } else {
+        RetValue = AL_OK;
+    }
+
+    return RetValue;
 }
 
 /**
