@@ -186,7 +186,7 @@ AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
 {
     AL_S32 RetValue;
     AL_U8 RegionNumber;
-    AL_REG MpuInstance;
+    AL_REG MpuBaseAddr;
     AL_REG RegionBaseAddr;
     AL_U8 RegionCount;
     AL_U8 ConfigCount = 0;
@@ -199,7 +199,7 @@ AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
     Mpu->ConfigNumber  = ConfigNumber;
     memcpy(&(Mpu->HwConfig), HwConfig, sizeof(AL_MPU_HwConfigStruct));
 
-    MpuInstance = Mpu->HwConfig.BaseAddress;
+    MpuBaseAddr = Mpu->HwConfig.BaseAddress;
 
     AlMpu_Dev_MpuDisable(Mpu);
 
@@ -213,7 +213,7 @@ AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
         }
 
         /* Get region base address */
-        RegionBaseAddr = MPU_REGION_BASE_ADDR(MpuInstance, RegionNumber);
+        RegionBaseAddr = MPU_REGION_BASE_ADDR(MpuBaseAddr, RegionNumber);
 
         /* Config region register */
         if ((RetValue = AlMpu_Dev_ConfigRegion(RegionBaseAddr, &(Mpu->RegionConfig[RegionCount]))) != AL_OK) {
@@ -240,7 +240,7 @@ AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
 
 /**
  * This function enable the mpu region
- * @param DevId mpu device id
+ * @param Mpu is pointer to AL_MPU_DevStruct
  * @param RegionNumber the region number
  * @param InitRegionConfig Configured parameter
  *
@@ -252,13 +252,13 @@ AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
  */
 AL_S32 AlMpu_Dev_EnableRegion(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber, AL_MPU_RegionConfigStruct *InitRegionConfig)
 {
-    AL_REG Instance;
+    AL_REG MpuBaseAddr;
     AL_REG RegionBaseAddr;
     AL_U8 RegionEnableStatus = 0;
     AL_U32 DevId;
 
     DevId = Mpu->HwConfig.DeviceId;
-    Instance = (AL_REG)Mpu->HwConfig.BaseAddress;
+    MpuBaseAddr = (AL_REG)Mpu->HwConfig.BaseAddress;
 
     /* Apu mpu */
     if (DevId == ApuMpuRegionStatusStruct.DevId) {
@@ -281,7 +281,7 @@ AL_S32 AlMpu_Dev_EnableRegion(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber, AL_MPU_
         return AL_MPU_ERROR_REGION_ENABLED;
     }
 
-    RegionBaseAddr = MPU_REGION_BASE_ADDR(Instance, RegionNumber);
+    RegionBaseAddr = MPU_REGION_BASE_ADDR(MpuBaseAddr, RegionNumber);
     AlMpu_ll_SetRegionAttrEnable(RegionBaseAddr, MPU_REGION_ENABLE);
 
     /* Config region register */
@@ -294,7 +294,7 @@ AL_S32 AlMpu_Dev_EnableRegion(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber, AL_MPU_
 
 /**
  * This function disable the mpu region
- * @param DevId mpu device id
+ * @param Mpu is pointer to AL_MPU_DevStruct
  * @param RegionNumber the region number
  *
  * @return
@@ -305,12 +305,12 @@ AL_S32 AlMpu_Dev_EnableRegion(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber, AL_MPU_
  */
 AL_S32 AlMpu_Dev_DisableRegion(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber)
 {
-    AL_REG Instance;
+    AL_REG MpuBaseAddr;
     AL_REG RegionBaseAddr;
     AL_U32 DevId;
 
     DevId = Mpu->HwConfig.DeviceId;
-    Instance = (AL_REG)Mpu->HwConfig.BaseAddress;
+    MpuBaseAddr = (AL_REG)Mpu->HwConfig.BaseAddress;
 
     if (DevId == ApuMpuRegionStatusStruct.DevId) {
         if (RegionNumber == 0 || RegionNumber > AL_MPU_APU_MAX_REGION) {
@@ -324,7 +324,7 @@ AL_S32 AlMpu_Dev_DisableRegion(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber)
         }
     }
 
-    RegionBaseAddr = MPU_REGION_BASE_ADDR(Instance, RegionNumber);
+    RegionBaseAddr = MPU_REGION_BASE_ADDR(MpuBaseAddr, RegionNumber);
     AlMpu_ll_SetRegionAttrEnable(RegionBaseAddr, MPU_REGION_DISABLE);
 
     AlMpu_Dev_UpdateRegionEnableStatus(Mpu->HwConfig.DeviceId, RegionNumber, MPU_REGION_DISABLE);
@@ -334,7 +334,7 @@ AL_S32 AlMpu_Dev_DisableRegion(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber)
 
 /**
  * This function enable the mpu
- * @param DevId mpu device id
+ * @param Mpu is pointer to AL_MPU_DevStruct
  *
  * @return
  *        - 0 on success
@@ -344,18 +344,18 @@ AL_S32 AlMpu_Dev_DisableRegion(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber)
  */
 AL_S32 AlMpu_Dev_MpuEnable(AL_MPU_DevStruct *Mpu)
 {
-    AL_REG Instance;
+    AL_REG MpuBaseAddr;
 
-    Instance = (AL_REG)Mpu->HwConfig.BaseAddress;
+    MpuBaseAddr = (AL_REG)Mpu->HwConfig.BaseAddress;
 
-    AlMpu_ll_MpuEnable(Instance);
+    AlMpu_ll_MpuEnable(MpuBaseAddr);
 
     return AL_OK;
 }
 
 /**
  * This function disable the mpu
- * @param DevId mpu device id
+ * @param Mpu is pointer to AL_MPU_DevStruct
  *
  * @return
  *        - 0 on success
@@ -365,11 +365,11 @@ AL_S32 AlMpu_Dev_MpuEnable(AL_MPU_DevStruct *Mpu)
  */
 AL_S32 AlMpu_Dev_MpuDisable(AL_MPU_DevStruct *Mpu)
 {
-    AL_REG Instance;
+    AL_REG MpuBaseAddr;
 
-    Instance = (AL_REG)Mpu->HwConfig.BaseAddress;
+    MpuBaseAddr = (AL_REG)Mpu->HwConfig.BaseAddress;
 
-    AlMpu_ll_MpuDisable(Instance);
+    AlMpu_ll_MpuDisable(MpuBaseAddr);
 
     return AL_OK;
 }
@@ -417,12 +417,12 @@ static AL_MPU_InterruptIdEnum AlMpu_Dev_GetMpuIntrId(AL_U32 *MpuIntrState)
     }
 }
 
-static AL_U8 AlMpu_Dev_GetIntrRegionNumber(AL_REG Instance)
+static AL_U8 AlMpu_Dev_GetIntrRegionNumber(AL_REG MpuBaseAddr)
 {
     AL_U32 IntrRegion;
     AL_U8 RegionNumber = 0;
 
-    IntrRegion = AlMpu_ll_GetIntrRegionNumber(Instance);
+    IntrRegion = AlMpu_ll_GetIntrRegionNumber(MpuBaseAddr);
 
     while (IntrRegion) {
 
@@ -450,7 +450,7 @@ AL_VOID AlMpu_Dev_MpuIntrHandler(void *Ptr)
     AL_U32 MpuIntrState = 0;
     AL_MPU_InterruptIdEnum MpuIntrStateId;
     AL_MPU_HwConfigStruct *HwConfig;
-    AL_U32 Instance;
+    AL_U32 MpuBaseAddr;
     AL_U8 IntrRegionNumber;
     AL_REG RegionBaseAddr;
     AL_MPU_DevStruct *Mpu;
@@ -468,12 +468,12 @@ AL_VOID AlMpu_Dev_MpuIntrHandler(void *Ptr)
         if (HwConfig == AL_NULL) {
             continue;
         }
-        Instance = HwConfig->BaseAddress;
+        MpuBaseAddr = HwConfig->BaseAddress;
         Mpu = &(AL_MPU_DevInstance[HwConfig->DeviceId]);
 
         /* Get intrrupt region number and region base addrress */
-        IntrRegionNumber = AlMpu_Dev_GetIntrRegionNumber(Instance);
-        RegionBaseAddr = MPU_REGION_BASE_ADDR(Instance, IntrRegionNumber);
+        IntrRegionNumber = AlMpu_Dev_GetIntrRegionNumber(MpuBaseAddr);
+        RegionBaseAddr = MPU_REGION_BASE_ADDR(MpuBaseAddr, IntrRegionNumber);
 
         /* Clear the interrupt */
         AlMpu_ll_ClrRegionIntr(RegionBaseAddr);
@@ -481,7 +481,7 @@ AL_VOID AlMpu_Dev_MpuIntrHandler(void *Ptr)
         AlMpu_Dev_EventHandler(Mpu);
 
         AL_LOG(AL_ERR_LEVEL_INFO, "[MPU][INTERRUPT]:MPU Instance is 0x%x, The region number "
-               "that triggers the interrupt is region%d.\r\n", Instance, IntrRegionNumber);
+               "that triggers the interrupt is region%d.\r\n", MpuBaseAddr, IntrRegionNumber);
     }
 }
 
