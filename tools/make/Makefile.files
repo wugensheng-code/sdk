@@ -41,7 +41,10 @@ C_SRCDIRS += $(FPSOC_ROOT)/driver/ps_driver/can/src \
 
 
 
-C_SRCDIRS += $(FPSOC_LIB)/newlib/gcc/
+C_SRCDIRS += $(FPSOC_LIB)/newlib/gcc/ \
+             $(FPSOC_LIB)/log/src
+
+INCDIRS += $(FPSOC_LIB)/log/inc
 
 ifeq ($(NPU_ENABLE), y)
 

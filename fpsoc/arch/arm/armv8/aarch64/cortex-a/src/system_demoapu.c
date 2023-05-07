@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "nuclei_sdk_hal.h"
+#include "al_log.h"
 #include "config.h"
 #include "gic_v3_addr.h"
 #include "gic_v3.h"
@@ -222,10 +223,7 @@ void _premain_init(void)
     Enablepinmux1_mode2();
 #endif
 
-    /*
-     * todo: replace AlUart_Init
-    */
-	AlUart_Init(AL_UART0, 115200, UART_BIT_LENGTH_8, AL_UART_STOP_BIT_1);
+    AlLog_Init();
 
 	/* Display banner after UART initialized */
 	SystemBannerPrint();

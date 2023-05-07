@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "nuclei_sdk_hal.h"
+#include "al_log.h"
 
 /*----------------------------------------------------------------------------
   Define clocks
@@ -361,11 +362,9 @@ void _premain_init(void)
 #endif
     SystemCoreClock = get_cpu_freq();
     gpio_iof_config(GPIO, IOF0_UART0_MASK, IOF_SEL_0);
-    uart_init(SOC_DEBUG_UART, 115200);
 #endif
-    //uart init
-    //dma_init();
-	AlUart_Init(AL_UART0, 115200,UART_BIT_LENGTH_8, AL_UART_STOP_BIT_1);
+    AlLog_Init();
+
 	__RV_CSR_CLEAR(CSR_MMISC_CTL,MMISC_CTL_BPU);
 	//dma_init();
     /* Display banner after UART initialized */

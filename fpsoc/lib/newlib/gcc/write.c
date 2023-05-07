@@ -4,19 +4,11 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <nuclei_sdk_hal.h>
+#include "al_uart_hal.h"
 
 __WEAK ssize_t _write(int fd, const void* ptr, size_t len)
 {
-    if (!isatty(fd)) {
-        return -1;
-    }
+    (void)fd;
 
-    const uint8_t* writebuf = (const uint8_t*)ptr;
-    for (size_t i = 0; i < len; i++) {
-        if (writebuf[i] == '\n') {
-            uart_write(SOC_DEBUG_UART, '\r');
-        }
-        uart_write(SOC_DEBUG_UART, writebuf[i]);
-    }
-    return len;
+    return AlLog_Write(ptr, len);
 }

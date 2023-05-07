@@ -50,6 +50,8 @@ typedef enum
 } AL_FUNCTION;
 
 #define AL_NULL         ((void *)0L)
+#define WAIT_FOREVER    (~0UL)
+
 
 #ifdef __cplusplus
 }
