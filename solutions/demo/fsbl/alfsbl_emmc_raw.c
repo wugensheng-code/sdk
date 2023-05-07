@@ -13,9 +13,9 @@
 #include "alfsbl_misc.h"
 #include "alfsbl_boot.h"
 
-#include "driver/sd_emmc/al_mmc.h"
-#include "driver/sd_emmc/al_emmc.h"
-#include "driver/sd_emmc/FATFS/ff.h"
+#include "al_mmc.h"
+#include "al_emmc.h"
+#include "ff.h"
 
 static RawEmmcParam_t RawEmmcParam;
 

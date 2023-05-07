@@ -159,8 +159,8 @@ void gicv3_init(void);
  * @param {void*} handler, function point of device interrupt function
  * @return {*}
  */
-void request_irq(u32 int_id, void* handler, void *ref);
-void request_fiq(u32 int_id, void* handler, void *ref);
+void request_irq(u32 int_id, interrupt_fn* handler, void *ref);
+void request_fiq(u32 int_id, interrupt_fn* handler, void *ref);
 /**
  * @desc  : disable irq
  * @param {int} irq_num

@@ -13,8 +13,8 @@
 #include "alfsbl_misc.h"
 #include "alfsbl_boot.h"
 
-#include "driver/sd_emmc/al_mmc.h"
-#include "driver/sd_emmc/al_sd.h"
+#include "al_mmc.h"
+#include "al_sd.h"
 
 FIL fil;
 FATFS fs;
@@ -80,7 +80,7 @@ uint32_t AlFsbl_SdCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length
 		rc = rc | ((ALFSBL_BOOTMODE_SD << 16));
 		return rc;
 	}
-	
+
 	if(rc != 0) {
 		rc = rc | ((ALFSBL_BOOTMODE_SD << 16));
 	}
@@ -91,7 +91,7 @@ uint32_t AlFsbl_SdCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length
 uint32_t AlFsbl_SdRelease(void)
 {
 	FRESULT rc = FR_OK;
-	
+
 	rc = f_close(&fil);
 
 	if(rc != FR_OK){

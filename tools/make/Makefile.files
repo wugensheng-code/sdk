@@ -1,6 +1,11 @@
+FPSOC_LIB = $(FPSOC_ROOT)/lib
+FPSOC_3RD_PARTY_LIB = $(NUCLEI_SDK_ROOT)/3rdparty/lib
+
 C_INCDIRS +=
 
-INCDIRS += $(FPSOC_ROOT)/driver/ps_driver/can/inc \
+INCDIRS += $(FPSOC_ROOT)/inc \
+           $(FPSOC_ROOT)/arch/inc \
+           $(FPSOC_ROOT)/driver/ps_driver/can/inc \
            $(FPSOC_ROOT)/driver/ps_driver/dmacahb/inc \
            $(FPSOC_ROOT)/driver/ps_driver/mpu/inc \
            $(FPSOC_ROOT)/driver/ps_driver/uart/inc \
@@ -8,8 +13,9 @@ INCDIRS += $(FPSOC_ROOT)/driver/ps_driver/can/inc \
            $(FPSOC_ROOT)/driver/ps_driver/spi/inc \
            $(FPSOC_ROOT)/driver/ps_driver/smc/inc \
            $(FPSOC_ROOT)/driver/ps_driver/lagecy/include \
-		   $(FPSOC_ROOT)/inc \
-		   $(FPSOC_ROOT)/arch/inc
+           $(FPSOC_ROOT)/driver/ps_driver/lagecy/qspi/ \
+           $(FPSOC_ROOT)/driver/ps_driver/lagecy/sd_emmc
+
 
 INCDIRS += $(FPSOC_ROOT)/arch/inc/nmsis/core/inc \
            $(FPSOC_ROOT)/arch/inc/nmsis/dsp/inc \
@@ -29,7 +35,65 @@ C_SRCDIRS += $(FPSOC_ROOT)/driver/ps_driver/can/src \
              $(FPSOC_ROOT)/driver/ps_driver/smc/src \
              $(FPSOC_ROOT)/driver/ps_driver/gpio/src \
              $(FPSOC_ROOT)/driver/ps_driver/lagecy/drivers \
-             $(FPSOC_ROOT)/lib/newlib/gcc/ \
+             $(FPSOC_ROOT)/driver/ps_driver/lagecy/qspi/ \
+             $(FPSOC_ROOT)/driver/ps_driver/lagecy/sd_emmc
+
+
+
+
+C_SRCDIRS += $(FPSOC_LIB)/newlib/gcc/
+
+ifeq ($(NPU_ENABLE), y)
+
+C_SRCS += $(FPSOC_LIB)/npu_runtime/image_process/blas.c
+C_SRCS += $(FPSOC_LIB)/npu_runtime/image_process/list.c
+C_SRCS += $(FPSOC_LIB)/npu_runtime/image_process/image.c
+C_SRCS += $(FPSOC_LIB)/npu_runtime/uio_driver/bare_metal_io.c
+C_SRCS += $(FPSOC_LIB)/npu_runtime/uio_driver/uio_npu_driver.c
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_arm_op/armv8/dw_k3s1p1_int8_a72.S
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_arm_op/armv8/dw_k3s2p1_int8_a72.S
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_arm_op/armv8/dw_k7s1p0_int8_a72.S
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_arm_op/armv8/dw_k3s1p1_int16_a72.S
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_arm_op/armv8/dw_k3s2p1_int16_a72.S
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_arm_op/armv8/dw_k7s1p0_int16_a72.S
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_arm_op/armv8/dw_k5s1.S
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_arm_op/npu_arm_op.c
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_rt_graph/src/npu_rt_graph.c
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_rt_graph/src/npu_rt_graph_util.c
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_rt_graph/src/rgb_deserializer.c
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_util/npu_util.c
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_util/npu_util_func.c
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_util/npu_util_test.c
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_util/new_op_func.c
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_util/fifo.c
+C_SRCS += $(FPSOC_LIB)/npu_runtime/fm_mem_alloc/buddy_allocator.c
+C_SRCS += $(FPSOC_LIB)/npu_runtime/fm_mem_alloc/fm_mem_alloc.c
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_init/npu_init.c
+C_SRCS += $(FPSOC_LIB)/npu_runtime/npu_scheduler/npu_scheduler.c
+
+#npu runtime
+C_SRCDIRS += $(FPSOC_LIB)/npu_runtime/jpu_driver
+
+INCDIRS += $(FPSOC_LIB)/npu_runtime/npu_rt_graph/inc
+INCDIRS += $(FPSOC_LIB)/npu_runtime/fm_mem_alloc
+INCDIRS += $(FPSOC_LIB)/npu_runtime/npu_arm_op
+INCDIRS += $(FPSOC_LIB)/npu_runtime/npu_init
+INCDIRS += $(FPSOC_LIB)/npu_runtime/npu_scheduler
+INCDIRS += $(FPSOC_LIB)/npu_runtime/npu_util
+INCDIRS += $(FPSOC_LIB)/npu_runtime/image_process
+INCDIRS += $(FPSOC_LIB)/npu_runtime/uio_driver
+INCDIRS += $(FPSOC_LIB)/npu_runtime/jpu_driver
+INCDIRS += $(FPSOC_LIB)/npu_runtime/
+
+C_SRCDIRS += $(FPSOC_3RD_PARTY_LIB)/jpu_driver
+INCDIRS   += $(FPSOC_3RD_PARTY_LIB)/jpu_driver
+
+endif
+
+
+C_SRCDIRS += $(FPSOC_3RD_PARTY_LIB)/FATFS
+INCDIRS   += $(FPSOC_3RD_PARTY_LIB)/FATFS
+
 
 CXX_SRCDIRS +=
 ASM_SRCDIRS +=

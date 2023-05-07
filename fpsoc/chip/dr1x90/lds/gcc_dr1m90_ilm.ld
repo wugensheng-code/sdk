@@ -4,12 +4,12 @@ ENTRY(_start)
 
 MEMORY
 {
-	ram	: ORIGIN = 0x61000000, LENGTH = 0x3B000
+	ram	: ORIGIN = 0x61000000, LENGTH = 0x40000
 }
 
 SECTIONS
 {
-	__stack_size = DEFINED(__stack_size) ? __stack_size : 16K;
+	__stack_size = DEFINED(__stack_size) ? __stack_size : 4K;
 
 	.text :
 	{
@@ -43,12 +43,16 @@ SECTIONS
 	}  > ram AT>ram
 	. = ALIGN(4096);
 	_bss_end = .;
+	_end = .;
+	_heap_start = .;
 
-	PROVIDE(_end = .);
-	.stack ORIGIN(ram) + LENGTH(ram) - __stack_size :
+	.stack ORIGIN(ram) + LENGTH(ram) - __stack_size (NOLOAD) :
 	{
 		PROVIDE(_heap_end = .);
+		PROVIDE(stack_start = .);
 		. = __stack_size;
+		PROVIDE(stack_top = .);
 		PROVIDE(_sp = .);
+
 	} > ram AT>ram
 }

@@ -3,10 +3,13 @@ CORE ?= a35
 
 FPSOC_ARCH=$(FPSOC_ROOT)/arch/arm
 
+
 ifeq ($(DOWNLOAD),ilm)
-LINKER_SCRIPT ?= $(NUCLEI_SDK_SOC_CHIP)/lds/gcc_dr1m90_ocm.ld
+LINKER_SCRIPT ?= $(NUCLEI_SDK_SOC_CHIP)/lds/gcc_dr1m90_ilm.ld
 else
-$(error not defined download mode: $(DOWNLOAD))
+ifeq ($(DOWNLOAD),ddr)
+LINKER_SCRIPT ?= $(NUCLEI_SDK_SOC_CHIP)/lds/gcc_dr1m90_ddr.ld
+endif
 endif
 
 

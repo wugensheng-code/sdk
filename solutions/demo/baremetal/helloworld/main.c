@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include "nuclei_sdk_soc.h"
 
+extern void * stack_top; /* Defined by the linker */
+extern void * _sp;   /* Defined by the linker */
 
 int main(void)
 {
@@ -11,7 +13,7 @@ int main(void)
     char *p;
 
     for (int i = 0; i < 20; i ++) {
-        printf("%s\r\n", str);
+        printf("%s %p %p\r\n", str, stack_top, _sp);
     }
 
     return 0;

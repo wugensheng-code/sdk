@@ -1,7 +1,6 @@
 TARGET_ELF = $(TARGET).elf
 
-ALL_CSRCS = $(filter-out ./dhry_1.c ./dhry_2.c ./dhry_stubs.c ./demosoc_common.c, $(sort $(C_SRCS) $(call get_csrcs, $(SRCDIRS) $(C_SRCDIRS))))
-
+ALL_CSRCS = $(sort $(C_SRCS) $(call get_csrcs, $(SRCDIRS) $(C_SRCDIRS)))
 ALL_CXXSRCS = $(sort $(CXX_SRCS) $(call get_cxxsrcs, $(SRCDIRS) $(CXX_SRCDIRS)))
 ALL_ASMSRCS = $(sort $(ASM_SRCS) $(call get_asmsrcs, $(SRCDIRS) $(ASM_SRCDIRS)))
 

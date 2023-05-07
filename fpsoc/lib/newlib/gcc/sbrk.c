@@ -4,16 +4,23 @@
 #include <stddef.h>
 #include <unistd.h>
 
+extern void * _heap_start; /* Defined by the linker */
+extern void * _heap_end;   /* Defined by the linker */
+static void * cur_heap_end;
+
 __WEAK void* _sbrk(ptrdiff_t incr)
 {
-    extern char _end[];
-    extern char _heap_end[];
-    static char* curbrk = _end;
+    void * next_end;
 
-    if ((curbrk + incr < _end) || (curbrk + incr > _heap_end)) {
+    if (cur_heap_end == 0)
+        cur_heap_end = _heap_start;
+
+    next_end = cur_heap_end + incr;
+
+    if ((next_end < _heap_start) || (next_end > _heap_end)) {
         return (void*)(-1);
     }
 
-    curbrk += incr;
-    return (void*)(curbrk - incr);
+    cur_heap_end = next_end;
+    return (void*)(next_end - incr);
 }

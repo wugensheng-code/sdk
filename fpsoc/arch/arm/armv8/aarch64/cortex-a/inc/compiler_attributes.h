@@ -14,10 +14,11 @@
 #define __iomem
 #define __force
 
-
 #endif
 
+#ifndef __weak
 #define __weak     __attribute__((__weak__))
+#endif
 
 #define cacheline_aligned __attribute__((__aligned__(64)))
 
@@ -27,7 +28,8 @@
 # define fallthrough                    do {} while (0)  /* fallthrough */
 #endif
 
-#define __always_inline	inline
-//__attribute__((always_inline))
+#ifndef __always_inline
+#define __always_inline	inline __attribute__((always_inline))
+#endif
 
 #endif /* __COMPILER_ATTRIBUTES_H__ */

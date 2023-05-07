@@ -55,12 +55,12 @@ static void request_interrupt(u32 int_id, void* handler, void *ref, interrupt_ta
 	}
 }
 
-void request_fiq(u32 int_id, void* handler, void *ref)
+void request_fiq(u32 int_id, interrupt_fn* handler, void *ref)
 {
 	request_interrupt(int_id, handler, ref, fiq_handler_list);
 }
 
-void request_irq(u32 int_id, void* handler, void *ref)
+void request_irq(u32 int_id, interrupt_fn* handler, void *ref)
 {
 	request_interrupt(int_id, handler, ref, irq_handler_list);
 }

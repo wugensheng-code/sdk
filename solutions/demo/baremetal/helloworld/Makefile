@@ -13,11 +13,11 @@ all:
 
 ifeq ($(SOC), demoapu)
 
-	make clean
+	#make clean
 	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_secure_el1
 
 else
-	make clean
+	#make clean
 	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_rpu
 endif
 

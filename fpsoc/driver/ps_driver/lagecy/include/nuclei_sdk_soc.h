@@ -7,8 +7,6 @@ extern "C" {
 #endif
 
 #include "demosoc.h"
-#include "al9000_qspi.h"
-#include "al9000_spi.h"
 #include "AL_uart.h"
 
 #ifdef __cplusplus

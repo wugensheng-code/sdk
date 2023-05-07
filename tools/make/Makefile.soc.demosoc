@@ -30,7 +30,6 @@ endif
 endif
 
 
-
 CORE_UPPER = $(call uc, $(CORE))
 include $(NUCLEI_SDK_BUILD)/Makefile.core
 
