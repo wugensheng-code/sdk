@@ -44,7 +44,8 @@
      *(uint32_t *)(0xf8803048u) =0x9;    //spi0  MIO18
      *(uint32_t *)(0xf880304cu) =0x4;    //GPIO MIO19
      *(uint32_t *)(0xf8803050u) =0x4;    //GPIO MIO20
-     *(uint32_t *)(0xf8803054u) =0x9;    //spi0  MIO21
+     *(uint32_t *)(0xf8803054u) =0x4;
+     //*(uint32_t *)(0xf8803054u) =0x9;    //spi0  MIO21
      *(uint32_t *)(0xf8803424u) =0x1;    //emio_sel9
 
 
