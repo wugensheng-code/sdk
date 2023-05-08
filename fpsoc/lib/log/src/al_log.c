@@ -16,10 +16,7 @@ AL_S32 AlLog_Init()
 
 AL_U32 AlLog_Write(const void* Data, AL_U32 Len)
 {
-    AL_S32 ret = AlUart_Hal_SendDataBlock(&uart0_hal, Data, Len, WAIT_FOREVER);
+    AL_S32 ret = AlUart_Hal_SendDataPolling(&uart0_hal, Data, Len);
 
-    /*
-     * fixme
-     */
     return Len;
 }

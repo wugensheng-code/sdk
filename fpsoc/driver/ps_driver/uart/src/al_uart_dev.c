@@ -96,6 +96,7 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_UART_InitStruct *InitConfig, 
     AlUart_ll_SetTxFifoThr(Uart->BaseAddr, UART_TxFIFO_HALF_FULL);
     AlUart_ll_SetRxFifoThr(Uart->BaseAddr, UART_RxFIFO_CHAR_1);
     AlUart_ll_SetThreIntr(Uart->BaseAddr, AL_FUNC_ENABLE);
+    AlUart_ll_SetTxIntr(Uart->BaseAddr, AL_FUNC_DISABLE);
 
     Uart->State |= AL_UART_STATE_READY;
 
@@ -270,6 +271,19 @@ static AL_VOID AlUart_Dev_SendDataHandler(AL_UART_DevStruct *Uart)
             Uart->SendBuffer.HandledCnt ++;
         }
     }
+}
+
+AL_S32 AlUart_Dev_SendDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 Size)
+{
+    AL_U32 HandledCnt = 0;
+    while (HandledCnt < Size) {
+        if (!(AlUart_ll_IsTransmitFifoFull(Uart->BaseAddr))) {
+            AlUart_ll_SendByte(Uart->BaseAddr, Data[HandledCnt]);
+            HandledCnt ++;
+        }
+    }
+
+    return AL_OK;
 }
 
 static AL_VOID AlUart_Dev_ErrorHandler(AL_UART_DevStruct *Uart, AL_UART_InterruptEnum IntrStatus)

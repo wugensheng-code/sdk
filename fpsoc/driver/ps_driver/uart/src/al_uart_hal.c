@@ -136,6 +136,28 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_UART_InitStruct *InitConfig
     return ret;
 }
 
+AL_S32 AlUart_Hal_SendDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
+{
+    AL_S32 ret = AL_OK;
+
+    if (Handle == AL_NULL || Handle->Dev == AL_NULL) {
+        return AL_UART_ERR_ILLEGAL_PARAM;
+    }
+
+    AL_UART_HAL_LOCK(Handle);
+
+    ret = AlUart_Dev_SendDataPolling(Handle->Dev, Data, Size);
+    if (ret != AL_OK) {
+        AL_UART_HAL_UNLOCK(Handle);
+        return ret;
+    }
+
+    AL_UART_HAL_UNLOCK(Handle);
+
+    return ret;
+}
+
+
 AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_S32 ret = AL_OK;
