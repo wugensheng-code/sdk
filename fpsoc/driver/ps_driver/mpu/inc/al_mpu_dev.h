@@ -13,6 +13,7 @@ extern "C" {
  */
 
 /* Common region number define */
+#define AL_MPU_COMMON_REGION_0          (0x00)
 #define AL_MPU_COMMON_REGION_1          (0x01)
 #define AL_MPU_COMMON_REGION_2          (0x02)
 #define AL_MPU_COMMON_REGION_3          (0x03)
@@ -20,10 +21,10 @@ extern "C" {
 #define AL_MPU_COMMON_REGION_5          (0x05)
 #define AL_MPU_COMMON_REGION_6          (0x06)
 #define AL_MPU_COMMON_REGION_7          (0x07)
-#define AL_MPU_COMMON_REGION_8          (0x08)
-#define AL_MPU_COMMON_MAX_REGION        AL_MPU_COMMON_REGION_8
+#define AL_MPU_COMMON_MAX_REGION        (AL_MPU_COMMON_REGION_7 + 1)
 
 /* Just for apu mpu, apu mpu has 32 regions */
+#define AL_MPU_APU_REGION_8             (0x08)
 #define AL_MPU_APU_REGION_9             (0x09)
 #define AL_MPU_APU_REGION_10            (0x0A)
 #define AL_MPU_APU_REGION_11            (0x0B)
@@ -47,8 +48,9 @@ extern "C" {
 #define AL_MPU_APU_REGION_29            (0x1D)
 #define AL_MPU_APU_REGION_30            (0x1E)
 #define AL_MPU_APU_REGION_31            (0x1F)
-#define AL_MPU_APU_REGION_32            (0x20)
-#define AL_MPU_APU_MAX_REGION           AL_MPU_APU_REGION_32
+#define AL_MPU_APU_MAX_REGION           (AL_MPU_APU_REGION_31 + 1)
+
+#define AL_MPU_INVALID_REGION_NUMBER    (AL_MPU_APU_REGION_31 + 1)
 
 #define AL_MPU_DEFAULT_REGION_GRANULARITY_SIZE   (4096)
 
@@ -73,6 +75,7 @@ typedef enum
     MPU_REGION_ENABLED          = 0x101,
     MPU_INVALID_REGION_NUMBER   = 0x102,
     MPU_NO_AVAILABLE_REGION     = 0x103,
+    MPU_INITIALIZE_FAILED       = 0x104,
 } AL_MPU_ErrorCodeEnum;
 
 #define AL_MPU_ERR_ILLEGAL_PARAM            (AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
@@ -80,6 +83,7 @@ typedef enum
 #define AL_MPU_ERROR_REGION_ENABLED         (AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, MPU_REGION_ENABLED))
 #define AL_MPU_ERROR_REGION_NUMBER          (AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, MPU_INVALID_REGION_NUMBER))
 #define AL_MPU_ERROR_NO_AVAILABLE_REGION    (AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, MPU_NO_AVAILABLE_REGION))
+#define AL_MPU_ERROR_INITIALIZE_FAILED      (AL_DEF_ERR(AL_MPU, AL_ERR_LEVEL_ERROR, MPU_INITIALIZE_FAILED))
 
  typedef struct
 {
@@ -148,25 +152,16 @@ typedef enum
     MPU_GROUP_ID_HBUS    = 0x400,
 } AL_MPU_GroupIdEnum;
 
-/* MPU interrupt id enum */
-typedef enum
-{
-    MPU_INTR_DDRS0_ID   = 0x1,
-    MPU_INTR_DDRS1_ID   = 0x2,
-    MPU_INTR_HPM0_ID    = 0x4,
-    MPU_INTR_HPM1_ID    = 0x8,
-    MPU_INTR_NPU_ID     = 0x10,
-    MPU_INTR_OCMS2_ID   = 0x20,
-    MPU_INTR_APU_ID     = 0x40,
-} AL_MPU_InterruptIdEnum;
-
 AL_S32 AlMpu_Dev_MpuEnable(AL_MPU_DevStruct *Mpu);
 
 AL_S32 AlMpu_Dev_MpuDisable(AL_MPU_DevStruct *Mpu);
 
-AL_S32 AlMpu_Dev_DisableRegion(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber);
+AL_S32 AlMpu_Dev_ConfigRegion(AL_MPU_DevStruct *Mpu, AL_MPU_RegionConfigStruct *InitRegionConfig);
 
-AL_S32 AlMpu_Dev_EnableRegion(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber, AL_MPU_RegionConfigStruct *InitRegionConfig);
+AL_S32 AlMpu_Dev_ConfigRegionByRegionNum(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber,
+                                         AL_MPU_RegionConfigStruct *InitRegionConfig);
+
+AL_S32 AlMpu_Dev_SetRegionEnableStatus(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber, AL_MPU_RegionEnEnum EnableStatus);
 
 AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
                       AL_MPU_RegionConfigStruct *InitRegionConfig, AL_U8 ConfigNumber);
@@ -175,11 +170,10 @@ AL_MPU_HwConfigStruct *AlMpu_Dev_LookupConfigByDevId(AL_U8 DevId);
 
 AL_S32 AlMpu_Dev_RegisterEventCallBack(AL_MPU_DevStruct *Mpu, AL_Mpu_EventCallBack Callback, void *CallbackRef);
 
-AL_VOID AlMpu_Dev_MpuIntrHandler(void *Ptr);
+AL_VOID AlMpu_Dev_MpuIntrHandler(void *Instance);
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* AL_MPU_DEV_H */
-

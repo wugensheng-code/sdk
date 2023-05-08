@@ -26,7 +26,7 @@ extern "C" {
 #define MPU_APU_BASE_ADDR           0xF841D000UL
 
 /* The RASR register address of Region number */
-#define MPU_REGION_BASE_ADDR(MPU_BASE_ADDR, REGION_NUMBER)  (MPU_BASE_ADDR + (REGION_NUMBER * 0x10))
+#define MPU_REGION_BASE_ADDR(MPU_BASE_ADDR, REGION_NUMBER)  (MPU_BASE_ADDR + 0x10 + (REGION_NUMBER * 0x10))
 
 ///////////////////////////////////////////////////////
 // Register: MPU_TYPER
@@ -123,8 +123,6 @@ extern "C" {
 typedef struct {
     AL_U32                  DeviceId;
     AL_U32                  BaseAddress;
-    AL_U32                  IntrId;
-    AL_U32                  IntrStateId;
 } AL_MPU_HwConfigStruct;
 
 #ifdef __cplusplus

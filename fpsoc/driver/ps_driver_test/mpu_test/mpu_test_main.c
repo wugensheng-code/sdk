@@ -3,11 +3,14 @@
 #include <stdio.h>
 #include <string.h>
 
+AL_MPU_HalStruct ApuHandle;
+AL_MPU_HalStruct NpuHandle;
+
 AL_S32 AlMpu_ApuTest()
 {
     AL_U32 RetValue = 0;
     AL_U32 Index;
-    AL_MPU_HalStruct ApuHandle;
+
     AL_MPU_RegionConfigStruct RegionConfigTest;
     AL_U32 StartAddr = 0x0;
 
@@ -29,11 +32,11 @@ AL_S32 AlMpu_ApuTest()
 
         StartAddr = StartAddr + ApuRegionConfig[Index].Size;
     }
-    RetValue = AlMpu_Hal_Init(6, &ApuHandle, AL_NULL, ApuRegionConfig, 32);
+    RetValue = AlMpu_Hal_ConfigInit(6, &ApuHandle, AL_NULL, ApuRegionConfig, 32);
     if (RetValue == AL_OK)
-        printf("APU AlMpu_Hal_Init success\r\n");
+        printf("APU AlMpu_Hal_ConfigInit success\r\n");
     else
-        printf("APU AlMpu_Hal_Init failed\r\n");
+        printf("APU AlMpu_Hal_ConfigInit failed\r\n");
 
     return RetValue;
 }
@@ -42,7 +45,6 @@ AL_S32 AlMpu_NpuTest()
 {
     AL_U32 RetValue = 0;
     AL_U32 Index;
-    AL_MPU_HalStruct NpuHandle;
     AL_MPU_RegionConfigStruct RegionConfigTest;
     AL_U32 StartAddr = 0x0;
 
@@ -66,17 +68,19 @@ AL_S32 AlMpu_NpuTest()
 
         StartAddr = StartAddr +  NpuRegionConfig[Index].Size;
     }
-    RetValue = AlMpu_Hal_Init(4, &NpuHandle, AL_NULL, NpuRegionConfig, 8);
+    RetValue = AlMpu_Hal_ConfigInit(4, &NpuHandle, AL_NULL, NpuRegionConfig, 8);
     if (RetValue == AL_OK)
-        printf("NPU AlMpu_Hal_Init success\r\n");
+        printf("NPU AlMpu_Hal_ConfigInit success\r\n");
     else
-        printf("NPU AlMpu_Hal_Init failed\r\n");
+        printf("NPU AlMpu_Hal_ConfigInit failed\r\n");
 
     return RetValue;
 }
 
 int main()
 {
+    AlMpu_Hal_Init();
+
     AlMpu_ApuTest();
 
     AlMpu_NpuTest();
