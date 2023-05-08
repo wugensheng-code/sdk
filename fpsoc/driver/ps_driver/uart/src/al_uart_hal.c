@@ -96,6 +96,7 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_UART_InitStruct *InitConfig
     AL_S32 ret = AL_OK;
     interrupt_table callback;
     AL_UART_HwConfigStruct *HwConfig = AL_NULL;
+    AL_UART_DevStruct *Dev;
 
     if (Handle == AL_NULL) {
         return AL_UART_ERR_ILLEGAL_PARAM;
@@ -105,28 +106,30 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_UART_InitStruct *InitConfig
 
     HwConfig = AlUart_Dev_LookupConfig(DevId);
     if (HwConfig != AL_NULL) {
-        Handle->Dev = &AL_UART_DevInstance[DevId];
+        Dev = &AL_UART_DevInstance[DevId];
     } else {
         return AL_UART_ERR_ILLEGAL_PARAM;
     }
 
-    ret = AlUart_Dev_Init(Handle->Dev, InitConfig, DevId);
+    ret = AlUart_Dev_Init(Dev, InitConfig, DevId);
     if (ret != AL_OK) {
         AL_UART_HAL_UNLOCK(Handle);
         return ret;
     }
 
-    ret = AlUart_Dev_RegisterEventCallBack(Handle->Dev, AlUart_Hal_EventHandler, (void *)Handle);
+    ret = AlUart_Dev_RegisterEventCallBack(Dev, AlUart_Hal_EventHandler, (void *)Handle);
     if (ret != AL_OK) {
         AL_UART_HAL_UNLOCK(Handle);
         return ret;
     }
 
     callback.handler    = AlUart_Dev_IntrHandler;
-    callback.ref        = Handle->Dev;
+    callback.ref        = Dev;
     ECLIC_Register_IRQ(SOC_INT89_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, &callback);
+
     __enable_irq();
-    AlUart_ll_SetThreIntr(Handle->Dev->BaseAddr,AL_FUNC_ENABLE);
+
+    Handle->Dev         = Dev;
 
     AL_UART_HAL_UNLOCK(Handle);
 
@@ -140,7 +143,7 @@ AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
     /*
      * check only Handle, more checks in AlUart_Dev_Init function;
     */
-    if (Handle == AL_NULL) {
+    if (Handle == AL_NULL || Handle->Dev == AL_NULL) {
         return AL_UART_ERR_ILLEGAL_PARAM;
     }
 

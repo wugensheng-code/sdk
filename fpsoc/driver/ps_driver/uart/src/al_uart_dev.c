@@ -95,6 +95,7 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_UART_InitStruct *InitConfig, 
     AlUart_ll_SetFifo(Uart->BaseAddr, AL_FUNC_ENABLE);
     AlUart_ll_SetTxFifoThr(Uart->BaseAddr, UART_TxFIFO_HALF_FULL);
     AlUart_ll_SetRxFifoThr(Uart->BaseAddr, UART_RxFIFO_CHAR_1);
+    AlUart_ll_SetThreIntr(Uart->BaseAddr, AL_FUNC_ENABLE);
 
     Uart->State |= AL_UART_STATE_READY;
 

@@ -213,8 +213,12 @@ int32_t ECLIC_Register_IRQ(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_Type trig_
  */
 void _premain_init(void)
 {
-     *(uint32_t *)(0xf8803068u) =0x3;    //uart0  MIO26/27
-	 *(uint32_t *)(0xf880306cu) =0x3;
+#if 0
+    *(uint32_t *)(0xf8803068U) = 0x3;
+	*(uint32_t *)(0xf880306cU) = 0x3;
+	*(uint32_t *)(0xf8803410U) = 0x1;
+#endif
+
 #if ENABLE_PINMUX_MODE1 == 1
     Enablepinmux1();
 #endif
@@ -223,17 +227,15 @@ void _premain_init(void)
     Enablepinmux1_mode2();
 #endif
 
-    AlLog_Init();
-
-	/* Display banner after UART initialized */
-	SystemBannerPrint();
-
 #if (defined SUPPORT_NONSECURE || defined SWITCH_TO_EL0_FROM_EL3)
 	//if SUPPORT_NONSECURE, gic-v3 init in EL3
 	//if SWITCH_TO_EL0_FROM_EL3, boot to EL0, only to test
 #else
 	gicv3_init();
 #endif
+
+    AlLog_Init();
+	SystemBannerPrint();
 
 #ifndef SWITCH_TO_EL0_FROM_EL3
 	generic_timer_init();
