@@ -335,11 +335,9 @@ AL_VOID AlDmacAhb_Dev_FillLliWithCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_Ll
 }
 
 /**
- * This function enable trans of specified channel
+ * This function set channel trans params
  * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @param   SrcAddr is data source address
- * @param   DstAddr is data destination address
- * @param   TransSize is data size in source trans width
+ * @param   TransParams is pointer to AL_DMACAHB_ChTransUnion
  * @return
  *          - AL_DMACAHB_ERR_NULL_PTR Channel is NULL
  *          - AL_DMACAHB_ERR_ADDR_NOT_ALIGN src or dst address not align with their trans width
@@ -347,72 +345,91 @@ AL_VOID AlDmacAhb_Dev_FillLliWithCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_Ll
  *          - AL_OK start success
  * @note
 */
-AL_S32 AlDmacAhb_Dev_Start(AL_DMACAHB_ChStruct *Channel, AL_REG SrcAddr, AL_REG DstAddr, AL_U32 TransSize)
+AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
 {
-    AL_U32 ChOffset = Channel->Param.ChBaseOffset;
-    AL_REG BaseAddr = Channel->Dmac->BaseAddr;
-
     if (Channel == AL_NULL) {
         return AL_DMACAHB_ERR_NULL_PTR;
     }
 
-    if ((SrcAddr & ((1 << (Channel->Config.SrcTransWidth + 1)) - 1)) ||
-        (DstAddr & ((1 << (Channel->Config.DstTransWidth + 1)) - 1))) {
-        return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
+    AL_S32 Ret = AL_OK;
+    AL_U32 ChOffset = Channel->Param.ChBaseOffset;
+    AL_U32 ChMask   = Channel->Param.ChMask;
+    AL_REG BaseAddr = Channel->Dmac->BaseAddr;
+    AL_DMACAHB_ChTransStruct *Trans = &Channel->Trans;
+    AL_DMACAHB_ChStateEnum State;
+    AL_U32 SrcAddr, DstAddr, TransSize;
+
+    Ret = AlDmacAhb_Dev_TransTypeToState(Channel->Config.TransType, &State);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
+    if (State == AL_DMACAHB_STATE_LLP_MODE_BUSY || State == AL_DMACAHB_STATE_LLP_RELOAD_MODE_BUSY) {
+        if (Trans->Lli == AL_NULL) {
+            return AL_DMACAHB_ERR_NULL_PTR;
+        } else if (((AL_U32)Trans->Lli) & 0x3){
+            return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
+        }
+    } else {
+        SrcAddr     = Trans->SrcAddr;
+        DstAddr     = Trans->DstAddr;
+        TransSize   = Trans->TransSize;
+
+        if ((SrcAddr & ((1 << (Channel->Config.SrcTransWidth + 1)) - 1)) ||
+            (DstAddr & ((1 << (Channel->Config.DstTransWidth + 1)) - 1))) {
+            return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
+        }
     }
 
     if (!AlDmacAhb_Dev_GetState(Channel, AL_DMACAHB_STATE_READY)) {
         return AL_DMACAHB_ERR_STATE_NOT_READY;
     }
 
-    AlDmacAhb_ll_WriteSrcAddr(BaseAddr, ChOffset, SrcAddr);
-    AlDmacAhb_ll_WriteDstAddr(BaseAddr, ChOffset, DstAddr);
-    AlDmacAhb_ll_SetBlkTransSize(BaseAddr, ChOffset, TransSize);
-    AlDmacAhb_ll_SetChannelEn(Channel->Dmac->BaseAddr, Channel->Param.ChMask, AL_TRUE);
-
-    if (Channel->Config.TransType == AL_DMACAHB_TRANS_TYPE_1 || Channel->Config.TransType == AL_DMACAHB_TRANS_TYPE_5) {
-        AlDmacAhb_Dev_SetState(Channel, AL_DMACAHB_STATE_TRANS_BUSY);
-    } else {
-        AlDmacAhb_Dev_SetState(Channel, AL_DMACAHB_STATE_BLOCK_TRANS_BUSY);
+    if (AlDmacAhb_Dev_GetState(Channel, (AL_DMACAHB_STATE_SINGLE_MODE_BUSY | AL_DMACAHB_STATE_RELOAD_MODE_BUSY |
+                                         AL_DMACAHB_STATE_LLP_MODE_BUSY | AL_DMACAHB_STATE_LLP_RELOAD_MODE_BUSY))) {
+        return AL_DMACAHB_ERR_TRANS_BUSY;
     }
 
-    return AL_OK;
+    AlDmacAhb_Dev_SetState(Channel, State);
+
+    if (State == AL_DMACAHB_STATE_LLP_MODE_BUSY) {
+        AlDmacAhb_ll_SetLinkStartAddr(BaseAddr, ChOffset, (AL_REG)Trans->Lli);
+        AlDmacAhb_ll_SetLms(BaseAddr, ChOffset, Channel->Config.ListMasterSel);
+    } else if (State == AL_DMACAHB_STATE_LLP_RELOAD_MODE_BUSY) {
+        AlDmacAhb_ll_SetLinkStartAddr(BaseAddr, ChOffset, (AL_REG)Trans->Lli);
+        AlDmacAhb_ll_SetLms(BaseAddr, ChOffset, Channel->Config.ListMasterSel);
+        /* Write these register for contiguous src/dst or auto-reload src/dst */
+        AlDmacAhb_ll_WriteSrcAddr(BaseAddr, ChOffset, Trans->SrcAddr);
+        AlDmacAhb_ll_WriteDstAddr(BaseAddr, ChOffset, Trans->DstAddr);
+    } else {
+        AlDmacAhb_ll_WriteSrcAddr(BaseAddr, ChOffset, SrcAddr);
+        AlDmacAhb_ll_WriteDstAddr(BaseAddr, ChOffset, DstAddr);
+        AlDmacAhb_ll_SetBlkTransSize(BaseAddr, ChOffset, TransSize);
+    }
+
+    return Ret;
 }
 
 /**
- * This function enable llp mode trans of specified channel
+ * This function set channel trans params and enable it
  * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @param   Lli is pointer to AL_DMACAHB_LliStruct
  * @return
  *          - AL_DMACAHB_ERR_NULL_PTR Channel is NULL
- *          - AL_DMACAHB_ERR_ADDR_NOT_ALIGN Lli not align
+ *          - AL_DMACAHB_ERR_ADDR_NOT_ALIGN src or dst address not align with their trans width
  *          - AL_DMACAHB_ERR_STATE_NOT_READY channel not ready
  *          - AL_OK start success
  * @note
 */
-AL_S32 AlDmacAhb_Dev_LlpModeStart(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_LliStruct *Lli)
+AL_S32 AlDmacAhb_Dev_Start(AL_DMACAHB_ChStruct *Channel)
 {
-    AL_U32 ChOffset     = Channel->Param.ChBaseOffset;
-    AL_U32 ChMask       = Channel->Param.ChMask;
-    AL_REG BaseAddr   = Channel->Dmac->BaseAddr;
+    AL_S32 Ret;
 
-    if (Channel == AL_NULL || Lli == AL_NULL) {
-        return AL_DMACAHB_ERR_NULL_PTR;
+    Ret = AlDmacAhb_Dev_SetTransParams(Channel);
+    if (Ret != AL_OK) {
+        return Ret;
     }
 
-    if (((AL_U32)Lli) & 0x3) {
-        return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
-    }
-
-    if (!AlDmacAhb_Dev_GetState(Channel, AL_DMACAHB_STATE_READY)) {
-        return AL_DMACAHB_ERR_STATE_NOT_READY;
-    }
-
-    AlDmacAhb_ll_SetLinkStartAddr(BaseAddr, ChOffset, (AL_REG)Lli);
-    AlDmacAhb_ll_SetLms(BaseAddr, ChOffset, Channel->Config.ListMasterSel);
-    AlDmacAhb_ll_SetChannelEn(BaseAddr, ChMask, AL_TRUE);
-
-    AlDmacAhb_Dev_SetState(Channel, AL_DMACAHB_STATE_BLOCK_TRANS_BUSY);
+    AlDmacAhb_ll_SetChannelEn(Channel->Dmac->BaseAddr, Channel->Param.ChMask, AL_TRUE);
 
     return AL_OK;
 }
@@ -580,8 +597,13 @@ AL_VOID AlDmacAhb_Dev_ClrState(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChStateE
 */
 static AL_VOID AlDmacAhb_Dev_TransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
+    AL_DMACAHB_ChStateEnum State;
     AL_LOG(AL_ERR_LEVEL_DEBUG, "Dmacahb Channel %d trans complete!\r\n", Channel->Config.Id);
-    AlDmacAhb_Dev_ClrState(Channel, AL_DMACAHB_STATE_TRANS_BUSY);
+
+    /* multi-block trans done with trans complete intr */
+    AlDmacAhb_Dev_TransTypeToState(Channel->Config.TransType, &State);
+    AlDmacAhb_Dev_ClrState(Channel, State);
+
     AL_DMACAHB_EventStruct Event = {
         .EventId    = AL_DMACAHB_EVENT_TRANS_COMP,
         .EventData  = 0
@@ -597,8 +619,25 @@ static AL_VOID AlDmacAhb_Dev_TransCompHandler(AL_DMACAHB_ChStruct *Channel)
 */
 static AL_VOID AlDmacAhb_Dev_BlockTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
+    AL_DMACAHB_ChStateEnum State;
     AL_LOG(AL_ERR_LEVEL_DEBUG, "Dmacahb Channel %d block trans complete!\r\n", Channel->Config.Id);
-    AlDmacAhb_Dev_ClrState(Channel, AL_DMACAHB_STATE_BLOCK_TRANS_BUSY);
+
+    /* Abandon BLOCK_TRANS_BUSY state, to be remove */
+    // AlDmacAhb_Dev_ClrState(Channel, AL_DMACAHB_STATE_BLOCK_TRANS_BUSY);
+
+    AlDmacAhb_Dev_TransTypeToState(Channel->Config.TransType, &State);
+    /* In reload mode, before the last trans, set reload_src and reload_dst to AL_FALSE */
+    if (State == AL_DMACAHB_STATE_RELOAD_MODE_BUSY || State == AL_DMACAHB_STATE_LLP_RELOAD_MODE_BUSY) {
+        Channel->Trans.ReloadCount++;
+        if (Channel->Trans.ReloadCount == Channel->Trans.ReloadCountNum) {
+            AlDmacAhb_Dev_ClrState(Channel, State);
+        } else if ((Channel->Trans.ReloadCount == (Channel->Trans.ReloadCountNum - 1)) &&
+                   (State == AL_DMACAHB_STATE_RELOAD_MODE_BUSY)) {
+            AL_BOOL IsLastTransSet = AL_TRUE;
+            AlDmacAhb_Dev_IoCtl(Channel, AL_DMACAHB_IOCTL_SET_RELOAD_LAST_TRANS, &IsLastTransSet);
+        }
+    }
+
     AL_DMACAHB_EventStruct Event = {
         .EventId    = AL_DMACAHB_EVENT_BLOCK_TRANS_COMP,
         .EventData  = 0
@@ -733,54 +772,66 @@ AL_S32 AlDmacAhb_Dev_IoCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_IoCtlCmdEnum
 
     switch (Cmd)
     {
-    case AL_DMACAHB_IOCTL_FILL_LLI_WITH_CTL:
+    case AL_DMACAHB_IOCTL_FILL_LLI_WITH_CTL:{
         AL_DMACAHB_LliStruct *Lli = (AL_DMACAHB_LliStruct *)Data;
         AlDmacAhb_Dev_FillLliWithCtl(Channel, Lli);
         break;
-    case AL_DMACAHB_IOCTL_GET_STATE:
+    }
+    case AL_DMACAHB_IOCTL_GET_STATE:{
         AL_DMACAHB_ChStateEnum *GetState = (AL_DMACAHB_ChStateEnum *)Data;
         *GetState = Channel->State;
         break;
-    case AL_DMACAHB_IOCTL_SET_STATE:
+    }
+    case AL_DMACAHB_IOCTL_SET_STATE:{
         AL_DMACAHB_ChStateEnum SetState = *(AL_DMACAHB_ChStateEnum *)Data;
         AlDmacAhb_Dev_SetState(Channel, SetState);
         break;
-    case AL_DMACAHB_IOCTL_CLR_STATE:
+    }
+    case AL_DMACAHB_IOCTL_CLR_STATE:{
         AL_DMACAHB_ChStateEnum ClrState = *(AL_DMACAHB_ChStateEnum *)Data;
         AlDmacAhb_Dev_ClrState(Channel, ClrState);
         break;
-    case AL_DMACAHB_IOCTL_READ_CTL_LO_REG:
+    }
+    case AL_DMACAHB_IOCTL_READ_CTL_LO_REG:{
         AL_DMACAHB_CtlLoUnion *ReadCtlLo = (AL_DMACAHB_CtlLoUnion *)Data;
         ReadCtlLo->Reg = AlDmacAhb_ll_ReadCtlLo(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset);
         break;
-    case AL_DMACAHB_IOCTL_READ_CTL_HI_REG:
+    }
+    case AL_DMACAHB_IOCTL_READ_CTL_HI_REG:{
         AL_DMACAHB_CtlHiUnion *ReadCtlHi = (AL_DMACAHB_CtlHiUnion *)Data;
         ReadCtlHi->Reg = AlDmacAhb_ll_ReadCtlHi(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset);
         break;
-    case AL_DMACAHB_IOCTL_READ_CFG_LO_REG:
+    }
+    case AL_DMACAHB_IOCTL_READ_CFG_LO_REG:{
         AL_DMACAHB_CfgLoUnion *ReadCfgLo = (AL_DMACAHB_CfgLoUnion *)Data;
         ReadCfgLo->Reg = AlDmacAhb_ll_ReadCfgLo(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset);
         break;
-    case AL_DMACAHB_IOCTL_READ_CFG_HI_REG:
+    }
+    case AL_DMACAHB_IOCTL_READ_CFG_HI_REG:{
         AL_DMACAHB_CfgHiUnion *ReadCfgHi = (AL_DMACAHB_CfgHiUnion *)Data;
         ReadCfgHi->Reg = AlDmacAhb_ll_ReadCfgHi(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset);
         break;
-    case AL_DMACAHB_IOCTL_WRITE_CTL_LO_REG:
+    }
+    case AL_DMACAHB_IOCTL_WRITE_CTL_LO_REG:{
         AL_DMACAHB_CtlLoUnion *WriteCtlLo = (AL_DMACAHB_CtlLoUnion *)Data;
         AlDmacAhb_ll_WriteCtlLo(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset, WriteCtlLo->Reg);
         break;
-    case AL_DMACAHB_IOCTL_WRITE_CTL_HI_REG:
+    }
+    case AL_DMACAHB_IOCTL_WRITE_CTL_HI_REG:{
         AL_DMACAHB_CtlHiUnion *WriteCtlHi = (AL_DMACAHB_CtlHiUnion *)Data;
         AlDmacAhb_ll_WriteCtlHi(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset, WriteCtlHi->Reg);
         break;
-    case AL_DMACAHB_IOCTL_WRITE_CFG_LO_REG:
+    }
+    case AL_DMACAHB_IOCTL_WRITE_CFG_LO_REG:{
         AL_DMACAHB_CfgLoUnion *WriteCfgLo = (AL_DMACAHB_CfgLoUnion *)Data;
         AlDmacAhb_ll_WriteCfgLo(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset, WriteCfgLo->Reg);
         break;
-    case AL_DMACAHB_IOCTL_WRITE_CFG_HI_REG:
+    }
+    case AL_DMACAHB_IOCTL_WRITE_CFG_HI_REG:{
         AL_DMACAHB_CfgHiUnion *WriteCfgHi = (AL_DMACAHB_CfgHiUnion *)Data;
         AlDmacAhb_ll_WriteCfgHi(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset, WriteCfgHi->Reg);
         break;
+    }
     case AL_DMACAHB_IOCTL_GET_PARAM_CHANNEL_0:
     case AL_DMACAHB_IOCTL_GET_PARAM_CHANNEL_1:
     case AL_DMACAHB_IOCTL_GET_PARAM_CHANNEL_2:
@@ -788,17 +839,69 @@ AL_S32 AlDmacAhb_Dev_IoCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_IoCtlCmdEnum
     case AL_DMACAHB_IOCTL_GET_PARAM_CHANNEL_4:
     case AL_DMACAHB_IOCTL_GET_PARAM_CHANNEL_5:
     case AL_DMACAHB_IOCTL_GET_PARAM_CHANNEL_6:
-    case AL_DMACAHB_IOCTL_GET_PARAM_CHANNEL_7:
+    case AL_DMACAHB_IOCTL_GET_PARAM_CHANNEL_7:{
         AL_DMACAHB_DmaCompChParamsUnion *ChParam = (AL_DMACAHB_DmaCompChParamsUnion *)Data;
         ChParam->Reg = AlDmacAhb_ll_ReadDmaCompChannelx(Channel->Dmac->BaseAddr,
                                                         (Cmd - AL_DMACAHB_IOCTL_GET_PARAM_CHANNEL_0));
         break;
-    case AL_DMACAHB_IOCTL_SET_CHANNEL_EN:
+    }
+    case AL_DMACAHB_IOCTL_SET_CHANNEL_EN:{
         AL_BOOL IsChEn = *(AL_BOOL *)Data;
         AlDmacAhb_ll_SetChannelEn(Channel->Dmac->BaseAddr, Channel->Param.ChMask, IsChEn);
         break;
+    }
+    case AL_DMACAHB_IOCTL_SET_RELOAD_LAST_TRANS:{
+        AL_BOOL IsSet = *(AL_BOOL *)Data;
+        AlDmacAhb_ll_SetSrcAutoReload(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset, ~IsSet);
+        AlDmacAhb_ll_SetDstAutoReload(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset, ~IsSet);
+        break;
+    }
     default:
         return AL_DMACAHB_ERR_IOCTL_CMD;
+        break;
+    }
+
+    return AL_OK;
+}
+
+/**
+ * This function switch trans type to state
+ * @param   Type is enum to AL_DMACAHB_TransTypeEnum
+ * @param   State is pointer to AL_DMACAHB_ChStateEnum
+ * @return
+ *          - AL_OK switch type to state correct
+ *          - AL_DMACAHB_ERR_NULL_PTR
+ *          - AL_DMACAHB_ERR_ILLEGAL_PARAM
+ * @note
+*/
+AL_S32 AlDmacAhb_Dev_TransTypeToState(AL_DMACAHB_TransTypeEnum Type, AL_DMACAHB_ChStateEnum *State)
+{
+    if (State == AL_NULL) {
+        return AL_DMACAHB_ERR_NULL_PTR;
+    }
+
+    switch (Type)
+    {
+    case AL_DMACAHB_TRANS_TYPE_1:
+    case AL_DMACAHB_TRANS_TYPE_5:
+        *State = AL_DMACAHB_STATE_SINGLE_MODE_BUSY;
+        break;
+    case AL_DMACAHB_TRANS_TYPE_2:
+    case AL_DMACAHB_TRANS_TYPE_3:
+    case AL_DMACAHB_TRANS_TYPE_4:
+        *State = AL_DMACAHB_STATE_RELOAD_MODE_BUSY;
+        break;
+    case AL_DMACAHB_TRANS_TYPE_6:
+    case AL_DMACAHB_TRANS_TYPE_8:
+    case AL_DMACAHB_TRANS_TYPE_10:
+        *State = AL_DMACAHB_STATE_LLP_MODE_BUSY;
+        break;
+    case AL_DMACAHB_TRANS_TYPE_7:
+    case AL_DMACAHB_TRANS_TYPE_9:
+        *State = AL_DMACAHB_STATE_LLP_RELOAD_MODE_BUSY;
+        break;
+    default:
+        return AL_DMACAHB_ERR_ILLEGAL_PARAM;
         break;
     }
 
