@@ -13,7 +13,8 @@
 #include "al_gpio_dev.h"
 #include "al_gpio_hal.h"
 
-static void IntrHandler(AL_VOID *CallBackRef, AL_U32 Bank, AL_U32 Status) {
+static void IntrHandler(AL_VOID *CallBackRef, AL_U32 Bank, AL_U32 Status)
+{
     AL_GPIO_DevStruct *GPIO = (AL_GPIO_DevStruct *)CallBackRef;
     printf("Enter CallbackHandler!\r\n");
 }
@@ -32,10 +33,10 @@ int main(void)
     if(&GPIO == AL_NULL) {
         printf("No &GPIO\r\n");
     }
-        
-    // test ddr, dr register and outputread,writePin (already ok!)
+
+    // test outputread,writePin (already ok!)
     AlGpio_Hal_WritePin(&GPIO,3,0x1);
-    AlGpio_Hal_WritePin(&GPIO,99,0x1);  
+    AlGpio_Hal_WritePin(&GPIO,99,0x1);
     PinVal[0] = AlGpio_Hal_OutputReadPin(&GPIO,3);
     PinVal[1] = AlGpio_Hal_OutputReadPin(&GPIO,99);
     printf("GPIO 3 output data value is %x\r\n", PinVal[0]);
@@ -46,15 +47,23 @@ int main(void)
     printf("GPIO 1 input data value is %x\r\n", AlGpio_Hal_InputReadPin(&GPIO,1));
     printf("GPIO 100 input data value is %x\r\n", AlGpio_Hal_InputReadPin(&GPIO,100));
 #endif
-    
-    // test intr
+
+    // test intr (already ok!)
     AlGpio_Hal_IntrCallbackHandler(&GPIO, (void *)(&GPIO), (Gpio_Handler)IntrHandler);
-    
-    printf("GPIO 21 input data value is %x\r\n", AlGpio_Hal_InputReadPin(&GPIO,21));
-    
+
+    for(int i = 0;i < 15;i++)
+    {
+        printf("GPIO 21 input data value is %x\r\n", AlGpio_Hal_InputReadPin(&GPIO,21));
+    }
+
     printf("=====> Enabling interrupts on bank ...\n");
-    
-    AlGpio_Hal_IntrHandler(&GPIO, 21, GPIO_INTR_TYPE_EDGE_RISING);
+
+    while(1)
+    {
+        AlGpio_Hal_IntrHandler(&GPIO, 21, GPIO_INTR_TYPE_EDGE_FALLING);
+        _delay_ms(500);
+    }
+
 
     while(1);
 
@@ -67,37 +76,86 @@ int main(void)
 #include <math.h>
 #include <time.h>
 #include <stdlib.h>
+#include <string.h>
 #include <al_type.h>
 #include "nuclei_sdk_soc.h"
+#include <sys/errno.h>
 
-extern char *_heap_start;
-extern char *_heap_end;
+static int errors = 0;
+static void merror(const char *msg)
+{
+    ++errors;
+    printf("Error: %s\r\n", msg);
+}
 
 int main(void)
 {
-    AL_U8 *str = "Hello World From Anlogic!";
-    AL_U8 *p;
-    AL_U32 Size = 0x1;
+    void *p;
+    int save;
 
-    //test printf
-    for (int i = 0; i < 20; i ++) {
-        printf("str = %s %p %p \r\n", str, _heap_start, _heap_end);
-    }
+    errno = 0;
 
-    //test malloc & free
-    for (int i = 0; i < 20; i ++)
+    printf("----------------以下malloc(-1)-------------------\r\n");
+    p = malloc(-1);
+    save = errno;
+
+    if (p != NULL)
+        merror("malloc (-1) succeeded.");
+
+    if (p == NULL && save != ENOMEM)
+        merror("errno is not set correctly");
+
+    if(p == NULL)
+        merror("malloc (-1) returns NULL");
+
+
+    printf("----------------以下malloc(10)-------------------\r\n");
+//第一次内存分配
+    p = malloc(10);
+    if (p == NULL)
+        merror("malloc (10) failed.");
+	memcpy(p, "anlogic", 10);
+	printf("first: p value is %s, p address is %p\r\n", p,p);
+
+//重新分配内存
+    printf("---------------以下realloc(p, 20)-------------------\r\n");
+    /* realloc (p, 0) == free (p).  */
+    p = realloc(p, 20);
+    if (p != NULL)
+        merror("realloc (p, 0) failed.");
+	//check contents existed
+	printf("second: p value is %s, p address is %p\r\n", p,p);
+	free(p);
+
+	printf("first case end\r\n");
+
+	//p = realloc(NULL, 10);
+	//write
+	//strcpy(p, ".com");
+	//read
+	//printf("p value is %s, p address is %p\r\n", p,p);
+	//free(p);
+
+
+printf("---------------以下malloc(0)-------------------\r\n");
+    p = malloc(0);
+    if (p == NULL)
     {
-        p = malloc(Size);
-        if (p == NULL) {
-            printf("malloc failed");
-        } else {
-            printf("malloc succeed");
-            
-        }
-        Size <<= 1;
-        free(p);
+        printf("malloc(0) returns NULL\r\n");
+    } else {
+        printf("malloc(0) is not NULL\r\n");
     }
 
-    return 0;
+
+printf("---------------以下realloc(p, 0)-------------------\r\n");
+    p = realloc(p, 0);
+    if (p != NULL) {
+        merror("realloc (p, 0) failed.\r\n");
+    } else {
+        merror("realloc (p, 0) succeed.\r\n");
+    }
+
+
+    return errors != 0;
 }
 #endif

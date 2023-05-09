@@ -5,21 +5,13 @@
 extern "C" {
 #endif
 
+/********************************** Include Files ********************************/
 #include "al_type.h"
 #include "al_reg_io.h"
 #include "al_errno.h"
 #include "al_gpio_hw.h"
 
-typedef enum
-{
-    GPIO_INTR_TYPE_EDGE_RISING    =	 0x00U,
-    GPIO_INTR_TYPE_EDGE_FALLING   =  0x01U,
-    GPIO_INTR_TYPE_EDGE_BOTH      =	 0x02U,
-    GPIO_INTR_TYPE_LEVEL_HIGH     =	 0x03U,
-    GPIO_INTR_TYPE_LEVEL_LOW      =	 0x04U,
-} AL_GPIO_InterruptEnum;
-
-
+/****************************** Exported Function ******************************/
 static inline AL_U32 AlGpio_ll_OutputRead(AL_REG BaseAddr)
 {
     return AL_REG32_READ(BaseAddr + GPIO__SWPORTA__DR__BLK0__OFFSET);
@@ -174,7 +166,6 @@ static inline AL_U32 AlGpio_ll_IntrGetBothEdge(AL_REG BaseAddr)
 {
     return AL_REG32_READ(BaseAddr + GPIO__INT__BOTHEDGE__BLK0__OFFSET);
 }
-
 
 #ifdef __cplusplus
 }

@@ -5,17 +5,18 @@
 extern "C" {
 #endif
 
+/********************************** Include Files ********************************/
 #include "al_type.h"
 
-
+/********************************* Exported Constant ****************************/
 #define AL_GPIO_NUM_INSTANCE	 (1)
 #define GPIO_BASE_ADDR           0xF8411000UL
 #define GPIO_MAX_BANKS		     (AL_U8)4
 #define GPIO_BANK_MAX_PINS		 (AL_U32)32
 #define GPIO_MAX_PIN_NUM	     (AL_U32)118
 
-/** 
- *  Register offsets for the GPIO. 
+/**
+ *  Register offsets for the GPIO.
  */
 #define GPIO__SWPORTA__DR__BLK0__OFFSET 0x0
 #define GPIO__SWPORTA__DDR__BLK0__OFFSET 0x4
@@ -24,8 +25,8 @@ extern "C" {
 #define GPIO__EXT__PORTA__BLK0__OFFSET 0x50
 #define GPIO__LS__SYNC__BLK0__OFFSET 0x60
 
-/** 
- *  Register for interrupt. 
+/**
+ *  Register for interrupt.
  */
 #define GPIO__INTEN__CLR__BLK0__OFFSET 0x10
 #define GPIO__INTMASK__CLR__BLK0__OFFSET 0x14
@@ -48,7 +49,7 @@ extern "C" {
 #define GPIO__CONFIG__REG2__BLK0__OFFSET 0x70
 #define GPIO__CONFIG__REG1__BLK0__OFFSET 0x74
 
-
+/******************************** Exported Typedef *******************************/
 typedef struct {
 	AL_U32                  DeviceId;
 	AL_U32                  BaseAddress;
