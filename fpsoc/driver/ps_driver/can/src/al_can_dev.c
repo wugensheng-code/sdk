@@ -871,41 +871,50 @@ AL_S32 AlCan_Dev_IoCtl(AL_CAN_DevStruct *Dev, AL_CAN_IoCtlCmdEnum Cmd, AL_VOID *
 
     switch (Cmd)
     {
-    case AL_CAN_IOCTL_SET_BIT_RATE:
+    case AL_CAN_IOCTL_SET_BIT_RATE: {
         AL_CAN_BitRateStruct *SetBitRate = (AL_CAN_BitRateStruct *)Data;
         AlCan_Dev_SetBitRate(Dev, SetBitRate);
+        }
         break;
-    case AL_CAN_IOCTL_GET_BIT_RATE:
+    case AL_CAN_IOCTL_GET_BIT_RATE: {
         AL_CAN_BitRateStruct *GetBitRate = (AL_CAN_BitRateStruct *)Data;
         AlCan_Dev_GetBitRate(Dev, GetBitRate);
+        }
         break;
-    case AL_CAN_IOCTL_SET_DEF_BIT_RATE:
+    case AL_CAN_IOCTL_SET_DEF_BIT_RATE: {
         AL_CAN_DefBitRateStruct *DefBitRate = (AL_CAN_DefBitRateStruct *)Data;
         AlCan_Dev_SetDefBitRate(Dev, DefBitRate);
+        }
         break;
-    case AL_CAN_IOCTL_SET_RESET:
+    case AL_CAN_IOCTL_SET_RESET: {
         AL_BOOL IsResetEnabled = *(AL_BOOL *)Data;
         AlCan_Dev_SetReset(Dev, IsResetEnabled);
+        }
         break;
-    case AL_CAN_IOCTL_SET_FILTER:
+    case AL_CAN_IOCTL_SET_FILTER: {
         AL_CAN_FilterCfgStruct *SetFilterCfg = (AL_CAN_FilterCfgStruct *)Data;
         AlCan_Dev_SetFilter(Dev, SetFilterCfg);
+        }
         break;
-    case AL_CAN_IOCTL_GET_FILTER:
+    case AL_CAN_IOCTL_GET_FILTER: {
         AL_CAN_FilterCfgStruct *GetFilterCfg = (AL_CAN_FilterCfgStruct *)Data;
         AlCan_Dev_GetFilter(Dev, GetFilterCfg);
+        }
         break;
-    case AL_CAN_IOCTL_GET_STATE:
+    case AL_CAN_IOCTL_GET_STATE: {
         AL_CAN_StateEnum *GetState = (AL_CAN_StateEnum *)Data;
         *GetState = Dev->State;
+        }
         break;
-    case AL_CAN_IOCTL_SET_STATE:
+    case AL_CAN_IOCTL_SET_STATE: {
         AL_CAN_StateEnum SetState = *(AL_CAN_StateEnum *)Data;
         AlCan_Dev_SetState(Dev, SetState);
+        }
         break;
-    case AL_CAN_IOCTL_CLR_STATE:
+    case AL_CAN_IOCTL_CLR_STATE: {
         AL_CAN_StateEnum ClrState = *(AL_CAN_StateEnum *)Data;
         AlCan_Dev_ClrState(Dev, ClrState);
+        }
         break;
     default:
         return AL_CAN_ERR_IOCTL_CMD;

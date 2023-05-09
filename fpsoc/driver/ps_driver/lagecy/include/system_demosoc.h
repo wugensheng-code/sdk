@@ -64,13 +64,6 @@ extern unsigned long Exception_Get_EXC(uint32_t EXCn);
  */
 extern void ECLIC_Init(void);
 
-/**
- * \brief  Initialize a specific IRQ and register the handler
- * \details
- * This function set vector mode, trigger mode and polarity, interrupt level and priority,
- * assign handler for specific IRQn.
- */
-extern int32_t ECLIC_Register_IRQ(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_Type trig_mode, uint8_t lvl, uint8_t priority, void* handler);
 
 #ifdef __cplusplus
 }

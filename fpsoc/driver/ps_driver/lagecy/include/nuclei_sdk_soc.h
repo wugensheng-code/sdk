@@ -7,7 +7,6 @@ extern "C" {
 #endif
 
 #include "demosoc.h"
-#include "AL_uart.h"
 
 #ifdef __cplusplus
 }

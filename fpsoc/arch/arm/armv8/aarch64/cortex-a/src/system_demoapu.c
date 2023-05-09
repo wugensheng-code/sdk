@@ -151,55 +151,6 @@ void SystemBannerPrint(void)
 #endif
 }
 
-/**
- * \brief: Initialize a specific IRQ and register the handler
-
- * \details
- * This function set vector mode, trigger mode and polarity, interrupt level and priority,
- * assign handler for specific IRQn.
- * \param [in]  IRQn        IRQn is the rpu irq_id, the apu id is
- * \param [in]  shv         \ref ECLIC_NON_VECTOR_INTERRUPT means non-vector mode, and \ref ECLIC_VECTOR_INTERRUPT is vector mode
- * \param [in]  trig_mode   see \ref ECLIC_TRIGGER_Type
- * \param [in]  lvl         interupt level
- * \param [in]  priority    interrupt priority
- * \param [in]  handler     interrupt handler, if NULL, handler will not be installed
- * \return       -1 means invalid input parameter. 0 means successful.
- * \remarks
-
- * - This function use to configure specific eclic interrupt and register its interrupt handler and enable its interrupt.
- * - If the vector table is placed in read-only section(FLASHXIP mode), handler could not be installed
- */
-int32_t ECLIC_Register_IRQ(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_Type trig_mode, uint8_t lvl, uint8_t priority, void* handler)
-{
-	/*
-	 * RPU SPI interrupt IRQn to Apu SPI IRQn mapping from SPI_START_ID_SHARE_BETWEEN_APU_RPU:
-	 *	 APU_SPI_IDX = (RPU_SPI_IDX + SPI_OFFSET_APU_TO_RPU)
-	*/
-    #define SPI_ID_OFFSET_APU_TO_RPU					(13)
-
-    interrupt_table *callback = (interrupt_table *)handler;
-
-    //is edge triger?
-    if (trig_mode != 0) {
-        uint32_t *addr = GICD_ICFGR + ((IRQn + SPI_ID_OFFSET_APU_TO_RPU) / 16) * 4;
-        uint32_t mask = *(uint32_t *)addr;
-        uint32_t offset = (((IRQn + SPI_ID_OFFSET_APU_TO_RPU) % 16) << 1);
-        mask &= ~(0x3 << offset);
-        mask |= 0x2 << offset;
-        // writel_relaxed(mask, addr);
-        *(uint32_t *)addr = mask;
-    }
-
-#ifndef SWITCH_TO_EL1_EL0_FROM_EL3
-    request_fiq(IRQn + SPI_ID_OFFSET_APU_TO_RPU, callback->handler, callback->ref);
-    printf("currentel is el3, request fiq!\r\n");
-#else
-    request_irq(IRQn + SPI_ID_OFFSET_APU_TO_RPU, callback->handler, callback->ref);
-    printf("currentel is not el3, request irq!\r\n");
-#endif
-    //asm volatile("msr %w0, [%1]" : : "rZ" (val), "r" (addr));
-	return 0;
-}
 
 /** @} */ /* End of Doxygen Group NMSIS_Core_ExceptionAndNMI */
 

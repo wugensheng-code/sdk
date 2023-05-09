@@ -10,6 +10,8 @@
 
 #include "demosoc.h"
 #include "alfsbl_secure.h"
+#include "al_intr.h"
+
 
 //#include "alfsbl_err_code.h"
 //#include "alfsbl_data.h"
@@ -96,13 +98,20 @@ void RpuCsuAckHandler()
 uint32_t SecureIrqInit(void)
 {
 	uint32_t ret;
-	ret = ECLIC_Register_IRQ(
-			RPU2CSU_ACK_IRQN,
-			ECLIC_NON_VECTOR_INTERRUPT,
-			ECLIC_POSTIVE_EDGE_TRIGGER,
-			1,
-			0,
-			RpuCsuAckHandler);
+	AL_INTR_AttrStrct Attr = {
+		.TrigMode   =  ECLIC_POSTIVE_EDGE_TRIGGER,
+		.Priority   =  1,
+#if (defined __riscv || defined __riscv__)
+		.VectorMode =  NON_VECTOR_INTERRUPT,
+#endif
+	};
+
+	AL_INTR_HandlerStruct Handle = {
+		.Func = RpuCsuAckHandler,
+		.Param = NULL
+	};
+
+	ret = AlIntr_RegHandler(RPU2CSU_ACK_IRQN, &Attr, &Handle);
 	__enable_irq();
 	return ret;
 }

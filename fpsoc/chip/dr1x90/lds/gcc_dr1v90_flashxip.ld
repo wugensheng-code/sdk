@@ -274,6 +274,8 @@ SECTIONS
   . = ALIGN(8);
   PROVIDE( _end = . );
   PROVIDE( end = . );
+  PROVIDE(_heap_start = . );
+
   /* Define stack and head location at ram */
   .stack ORIGIN(ram) + LENGTH(ram) - __STACK_SIZE :
   {

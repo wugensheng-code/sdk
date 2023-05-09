@@ -60,7 +60,7 @@ typedef enum uart_stop_bit {
 
 int32_t uart_init(UART_TypeDef* uart, uint32_t baudrate);
 int32_t uart_config_stopbit(UART_TypeDef* uart, UART_STOP_BIT stopbit);
-//int32_t uart_write(UART_TypeDef* uart, uint8_t val);
+int32_t uart_write(UART_TypeDef* uart, uint8_t val);
 //uint8_t uart_read(UART_TypeDef* uart);
 int32_t uart_set_tx_watermark(UART_TypeDef* uart, uint32_t watermark);
 int32_t uart_enable_txint(UART_TypeDef* uart);

@@ -32,7 +32,8 @@ int putchar(int c)
 #if defined SIMU_AL9000_DV
 	*(volatile unsigned char *)(0x80000000ULL) = c;
 #else
-	uart_write(SOC_DEBUG_UART, c);
+	#define AL_UART0_BASE ((AL_UART_TypeDef *)0xF8400000)
+	uart_write(AL_UART0_BASE, c);
 #endif
 
 	return c;

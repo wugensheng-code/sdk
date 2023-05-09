@@ -6,7 +6,7 @@
 extern "C" {
 #endif
 
-#include "board_nuclei_fpga_eval.h"
+#include "demosoc.h"
 
 #ifndef NUCLEI_BANNER
 #define NUCLEI_BANNER       1

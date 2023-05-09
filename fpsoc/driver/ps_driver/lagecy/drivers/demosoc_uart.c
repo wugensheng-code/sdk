@@ -22,7 +22,7 @@ int32_t uart_config_stopbit(UART_TypeDef* uart, UART_STOP_BIT stopbit)
     uart->TXCTRL &= stopval | (~UART_TXCTRL_TXCNT_MASK);
     return 0;
 }
-/*
+
 int32_t uart_write(UART_TypeDef* uart, uint8_t val)
 {
     if (__RARELY(uart == NULL)) {
@@ -34,8 +34,8 @@ int32_t uart_write(UART_TypeDef* uart, uint8_t val)
     uart->TXFIFO = val;
     return 0;
 }
-*/
-/*
+
+
 uint8_t uart_read(UART_TypeDef* uart)
 {
     uint32_t reg;
@@ -47,7 +47,7 @@ uint8_t uart_read(UART_TypeDef* uart)
     } while (reg & UART_RXFIFO_EMPTY);
     return (uint8_t)(reg & 0xFF);
 }
-*/
+
 int32_t uart_set_tx_watermark(UART_TypeDef* uart, uint32_t watermark)
 {
     if (__RARELY(uart == NULL)) {

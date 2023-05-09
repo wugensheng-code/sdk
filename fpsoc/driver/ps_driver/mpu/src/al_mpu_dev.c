@@ -2,7 +2,7 @@
 #include "al_errno.h"
 
 #include "nuclei_sdk_soc.h"
-#include "gic_v3.h"
+#include "al_intr.h"
 
 #include <string.h>
 

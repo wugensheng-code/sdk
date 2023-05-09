@@ -4,7 +4,7 @@
 #include "al_uart_dev.h"
 #include "al_errno.h"
 #include "nuclei_sdk_soc.h"
-#include "gic_v3.h"
+#include "al_intr.h"
 
 /************************** Constant Definitions *****************************/
 
@@ -90,13 +90,11 @@ static AL_VOID AlUart_Hal_EventHandler(AL_UART_EventStruct UartEvent, AL_VOID *C
     }
 }
 
-AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_UART_InitStruct *InitConfig,
-                       AL_Uart_EventCallBack CallBack , AL_U32 DevId)
+AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStruct *InitConfig)
 {
-    AL_S32 ret = AL_OK;
-    interrupt_table callback;
-    AL_UART_HwConfigStruct *HwConfig = AL_NULL;
+    AL_S32 Ret;
     AL_UART_DevStruct *Dev;
+    AL_UART_HwConfigStruct *HwConfig;
 
     if (Handle == AL_NULL) {
         return AL_UART_ERR_ILLEGAL_PARAM;
@@ -111,34 +109,37 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_UART_InitStruct *InitConfig
         return AL_UART_ERR_ILLEGAL_PARAM;
     }
 
-    ret = AlUart_Dev_Init(Dev, InitConfig, DevId);
-    if (ret != AL_OK) {
+    Ret = AlUart_Dev_Init(Dev, InitConfig, DevId);
+    if (Ret != AL_OK) {
         AL_UART_HAL_UNLOCK(Handle);
-        return ret;
+        return Ret;
     }
 
-    ret = AlUart_Dev_RegisterEventCallBack(Dev, AlUart_Hal_EventHandler, (void *)Handle);
-    if (ret != AL_OK) {
+    Ret = AlUart_Dev_RegisterEventCallBack(Dev, AlUart_Hal_EventHandler, (void *)Handle);
+    if (Ret != AL_OK) {
         AL_UART_HAL_UNLOCK(Handle);
-        return ret;
+        return Ret;
     }
 
-    callback.handler    = AlUart_Dev_IntrHandler;
-    callback.ref        = Dev;
-    ECLIC_Register_IRQ(SOC_INT89_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, &callback);
+    {
+        AL_INTR_HandlerStruct IntrHandler = {
+            .Func  = AlUart_Dev_IntrHandler,
+            .Param = (AL_VOID *)Dev
+        };
+        AL_DEFAULT_ATTR(Attr);
 
-    __enable_irq();
+        (AL_VOID)AlIntr_RegHandler(SOC_INT89_IRQn, &Attr, &IntrHandler);
+    }
 
-    Handle->Dev         = Dev;
-
+    Handle->Dev  = Dev;
     AL_UART_HAL_UNLOCK(Handle);
 
-    return ret;
+    return Ret;
 }
 
 AL_S32 AlUart_Hal_SendDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     if (Handle == AL_NULL || Handle->Dev == AL_NULL) {
         return AL_UART_ERR_ILLEGAL_PARAM;
@@ -146,21 +147,21 @@ AL_S32 AlUart_Hal_SendDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32
 
     AL_UART_HAL_LOCK(Handle);
 
-    ret = AlUart_Dev_SendDataPolling(Handle->Dev, Data, Size);
-    if (ret != AL_OK) {
+    Ret = AlUart_Dev_SendDataPolling(Handle->Dev, Data, Size);
+    if (Ret != AL_OK) {
         AL_UART_HAL_UNLOCK(Handle);
-        return ret;
+        return Ret;
     }
 
     AL_UART_HAL_UNLOCK(Handle);
 
-    return ret;
+    return Ret;
 }
 
 
 AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     /*
      * check only Handle, more checks in AlUart_Dev_Init function;
@@ -171,31 +172,31 @@ AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
 
     AL_UART_HAL_LOCK(Handle);
 
-    ret = AlUart_Dev_SendData(Handle->Dev, Data, Size);
-    if (ret != AL_OK) {
+    Ret = AlUart_Dev_SendData(Handle->Dev, Data, Size);
+    if (Ret != AL_OK) {
         AL_UART_HAL_UNLOCK(Handle);
-        return ret;
+        return Ret;
     }
 
     /*
      * wait until data send done
     */
-    ret = AlUart_Hal_WaitTxDoneOrTimeout(Handle, Timeout);
-    if (ret != AL_OK) {
+    Ret = AlUart_Hal_WaitTxDoneOrTimeout(Handle, Timeout);
+    if (Ret != AL_OK) {
         AlUart_ll_SetTxIntr(Handle->Dev->BaseAddr, AL_FUNC_DISABLE);
         AL_UART_HAL_UNLOCK(Handle);
-        return ret;
+        return Ret;
     }
 
     AL_UART_HAL_UNLOCK(Handle);
 
-    return ret;
+    return Ret;
 }
 
 
 AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 *RecvSize, AL_U32 Timeout)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     /*
      * check only Handle, more checks in AlUart_Dev_Init function;
@@ -206,17 +207,17 @@ AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
 
     AL_UART_HAL_LOCK(Handle);
 
-    ret = AlUart_Dev_RecvData(Handle->Dev, Data, Size);
-    if (ret != AL_OK) {
+    Ret = AlUart_Dev_RecvData(Handle->Dev, Data, Size);
+    if (Ret != AL_OK) {
         AL_UART_HAL_UNLOCK(Handle);
-        return ret;
+        return Ret;
     }
 
     /*
      * wait until data receive done
     */
-    ret = AlUart_Hal_WaitRxDoneOrTimeout(Handle, Timeout);
-    if (ret != AL_OK) {
+    Ret = AlUart_Hal_WaitRxDoneOrTimeout(Handle, Timeout);
+    if (Ret != AL_OK) {
         AlUart_ll_SetRxIntr(Handle->Dev->BaseAddr, AL_FUNC_DISABLE);
     }
 
@@ -229,7 +230,7 @@ AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
 
 AL_S32 AlUart_Hal_SendData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     /*
      * check only Handle, more checks in AlUart_Dev_Init function;
@@ -240,17 +241,17 @@ AL_S32 AlUart_Hal_SendData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
 
     AL_UART_HAL_LOCK(Handle);
 
-    ret = AlUart_Dev_SendData(Handle->Dev, Data, Size);
+    Ret = AlUart_Dev_SendData(Handle->Dev, Data, Size);
 
     AL_UART_HAL_UNLOCK(Handle);
 
-    return ret;
+    return Ret;
 }
 
 
 AL_S32 AlUart_Hal_RecvData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     if (Handle == AL_NULL) {
         return AL_UART_ERR_ILLEGAL_PARAM;
@@ -258,10 +259,10 @@ AL_S32 AlUart_Hal_RecvData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
 
     AL_UART_HAL_LOCK(Handle);
 
-    ret = AlUart_Dev_RecvData(Handle->Dev, Data, Size);
-    if (ret != AL_OK) {
+    Ret = AlUart_Dev_RecvData(Handle->Dev, Data, Size);
+    if (Ret != AL_OK) {
         AL_UART_HAL_UNLOCK(Handle);
-        return ret;
+        return Ret;
     }
 
     AL_UART_HAL_UNLOCK(Handle);

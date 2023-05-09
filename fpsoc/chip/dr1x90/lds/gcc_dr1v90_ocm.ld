@@ -26,10 +26,10 @@ OUTPUT_ARCH( "riscv" )
 ENTRY( _start )
 
 MEMORY
-{  
+{
   ilm (rxai!w) : ORIGIN = 0x61000000, LENGTH = 128K    /*for 9000 dv simulation*/
   ram (wxa!ri) : ORIGIN = 0x61020000, LENGTH = 128K
-  
+
 }
 
 
@@ -191,7 +191,7 @@ SECTIONS
   .bss            :
   {
     . = ALIGN(4);
-    _sbss = .;  
+    _sbss = .;
     *(.sbss*)
     *(.gnu.linkonce.sb.*)
     *(.bss .bss.*)
@@ -204,12 +204,14 @@ SECTIONS
   . = ALIGN(8);
   PROVIDE( _end = . );
   PROVIDE( end = . );
-  
+
   .read_buffer (NOLOAD) :  {
 	. = ALIGN(32);
 	*(.read_buffer)
   } >ram AT>ram
-  
+
+  PROVIDE(_heap_start = . );
+
   .stack ORIGIN(ram) + LENGTH(ram) - __stack_size :
   {
     PROVIDE( _heap_end = . );

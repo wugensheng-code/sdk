@@ -13,7 +13,7 @@ INCDIRS += $(FPSOC_ROOT)/inc \
            $(FPSOC_ROOT)/driver/ps_driver/spi/inc \
            $(FPSOC_ROOT)/driver/ps_driver/smc/inc \
            $(FPSOC_ROOT)/driver/ps_driver/lagecy/include \
-           $(FPSOC_ROOT)/driver/ps_driver/lagecy/qspi/ \
+           $(FPSOC_ROOT)/driver/ps_driver/lagecy/qspi \
            $(FPSOC_ROOT)/driver/ps_driver/lagecy/sd_emmc
 
 
@@ -27,7 +27,8 @@ ASM_INCDIRS +=
 SRCDIRS +=
 
 # fpsoc driver
-C_SRCDIRS += $(FPSOC_ROOT)/driver/ps_driver/can/src \
+C_SRCDIRS += $(FPSOC_ROOT)/arch \
+             $(FPSOC_ROOT)/driver/ps_driver/can/src \
              $(FPSOC_ROOT)/driver/ps_driver/dmacahb/src \
              $(FPSOC_ROOT)/driver/ps_driver/mpu/src \
              $(FPSOC_ROOT)/driver/ps_driver/uart/src \
@@ -35,13 +36,13 @@ C_SRCDIRS += $(FPSOC_ROOT)/driver/ps_driver/can/src \
              $(FPSOC_ROOT)/driver/ps_driver/smc/src \
              $(FPSOC_ROOT)/driver/ps_driver/gpio/src \
              $(FPSOC_ROOT)/driver/ps_driver/lagecy/drivers \
-             $(FPSOC_ROOT)/driver/ps_driver/lagecy/qspi/ \
+             $(FPSOC_ROOT)/driver/ps_driver/lagecy/qspi \
              $(FPSOC_ROOT)/driver/ps_driver/lagecy/sd_emmc
 
 
 
 
-C_SRCDIRS += $(FPSOC_LIB)/newlib/gcc/ \
+C_SRCDIRS += $(FPSOC_LIB)/newlib/gcc \
              $(FPSOC_LIB)/log/src
 
 INCDIRS += $(FPSOC_LIB)/log/inc

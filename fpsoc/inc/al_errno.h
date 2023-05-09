@@ -65,6 +65,7 @@ typedef enum
     AL_SMC                  = 5,
     AL_GPIO                 = 6,
     AL_DMACAHB              = 7,
+    AL_INTR                 = 8,
 } AL_MODULE_TYPE;
 
 #ifdef __cplusplus

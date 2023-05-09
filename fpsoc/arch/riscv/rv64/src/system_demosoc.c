@@ -129,132 +129,6 @@ void SystemInit(void)
     SysTimer_clk_sel();
 }
 
-/**
- * \defgroup  NMSIS_Core_IntExcNMI_Handling   Interrupt and Exception and NMI Handling
- * \brief Functions for interrupt, exception and nmi handle available in system_<device>.c.
- * \details
- * Nuclei provide a template for interrupt, exception and NMI handling. Silicon Vendor could adapat according
- * to their requirement. Silicon vendor could implement interface for different exception code and
- * replace current implementation.
- *
- * @{
- */
-/** \brief Max exception handler number, don't include the NMI(0xFFF) one */
-#define MAX_SYSTEM_EXCEPTION_NUM        12
-/**
- * \brief      Store the exception handlers for each exception ID
- * \note
- * - This SystemExceptionHandlers are used to store all the handlers for all
- * the exception codes Nuclei N/NX core provided.
- * - Exception code 0 - 11, totally 12 exceptions are mapped to SystemExceptionHandlers[0:11]
- * - Exception for NMI is also re-routed to exception handling(exception code 0xFFF) in startup code configuration, the handler itself is mapped to SystemExceptionHandlers[MAX_SYSTEM_EXCEPTION_NUM]
- */
-static unsigned long SystemExceptionHandlers[MAX_SYSTEM_EXCEPTION_NUM + 1];
-
-/**
- * \brief      Exception Handler Function Typedef
- * \note
- * This typedef is only used internal in this system_<Device>.c file.
- * It is used to do type conversion for registered exception handler before calling it.
- */
-typedef void (*EXC_HANDLER)(unsigned long mcause, unsigned long sp);
-
-/**
- * \brief      System Default Exception Handler
- * \details
- * This function provided a default exception and NMI handling code for all exception ids.
- * By default, It will just print some information for debug, Vendor can customize it according to its requirements.
- */
-static void system_default_exception_handler(unsigned long mcause, unsigned long sp)
-{
-    /* TODO: Uncomment this if you have implement printf function */
-    printf("MCAUSE : 0x%lx\r\n", mcause);
-    printf("MDCAUSE: 0x%lx\r\n", __RV_CSR_READ(CSR_MDCAUSE));
-    printf("MEPC   : 0x%lx\r\n", __RV_CSR_READ(CSR_MEPC));
-    printf("MTVAL  : 0x%lx\r\n", __RV_CSR_READ(CSR_MTVAL));
-    while (1);
-}
-
-/**
- * \brief      Initialize all the default core exception handlers
- * \details
- * The core exception handler for each exception id will be initialized to \ref system_default_exception_handler.
- * \note
- * Called in \ref _init function, used to initialize default exception handlers for all exception IDs
- */
-static void Exception_Init(void)
-{
-    for (int i = 0; i < MAX_SYSTEM_EXCEPTION_NUM + 1; i++) {
-        SystemExceptionHandlers[i] = (unsigned long)system_default_exception_handler;
-    }
-}
-
-/**
- * \brief       Register an exception handler for exception code EXCn
- * \details
- * * For EXCn < \ref MAX_SYSTEM_EXCEPTION_NUM, it will be registered into SystemExceptionHandlers[EXCn-1].
- * * For EXCn == NMI_EXCn, it will be registered into SystemExceptionHandlers[MAX_SYSTEM_EXCEPTION_NUM].
- * \param   EXCn    See \ref EXCn_Type
- * \param   exc_handler     The exception handler for this exception code EXCn
- */
-void Exception_Register_EXC(uint32_t EXCn, unsigned long exc_handler)
-{
-    if ((EXCn < MAX_SYSTEM_EXCEPTION_NUM) && (EXCn >= 0)) {
-        SystemExceptionHandlers[EXCn] = exc_handler;
-    } else if (EXCn == NMI_EXCn) {
-        SystemExceptionHandlers[MAX_SYSTEM_EXCEPTION_NUM] = exc_handler;
-    }
-}
-
-/**
- * \brief       Get current exception handler for exception code EXCn
- * \details
- * * For EXCn < \ref MAX_SYSTEM_EXCEPTION_NUM, it will return SystemExceptionHandlers[EXCn-1].
- * * For EXCn == NMI_EXCn, it will return SystemExceptionHandlers[MAX_SYSTEM_EXCEPTION_NUM].
- * \param   EXCn    See \ref EXCn_Type
- * \return  Current exception handler for exception code EXCn, if not found, return 0.
- */
-unsigned long Exception_Get_EXC(uint32_t EXCn)
-{
-    if ((EXCn < MAX_SYSTEM_EXCEPTION_NUM) && (EXCn >= 0)) {
-        return SystemExceptionHandlers[EXCn];
-    } else if (EXCn == NMI_EXCn) {
-        return SystemExceptionHandlers[MAX_SYSTEM_EXCEPTION_NUM];
-    } else {
-        return 0;
-    }
-}
-
-/**
- * \brief      Common NMI and Exception handler entry
- * \details
- * This function provided a command entry for NMI and exception. Silicon Vendor could modify
- * this template implementation according to requirement.
- * \remarks
- * - RISCV provided common entry for all types of exception. This is proposed code template
- *   for exception entry function, Silicon Vendor could modify the implementation.
- * - For the core_exception_handler template, we provided exception register function \ref Exception_Register_EXC
- *   which can help developer to register your exception handler for specific exception number.
- */
-uint32_t core_exception_handler(unsigned long mcause, unsigned long sp)
-{
-    uint32_t EXCn = (uint32_t)(mcause & 0X00000fff);
-    EXC_HANDLER exc_handler;
-
-    if ((EXCn < MAX_SYSTEM_EXCEPTION_NUM) && (EXCn >= 0)) {
-        exc_handler = (EXC_HANDLER)SystemExceptionHandlers[EXCn];
-    } else if (EXCn == NMI_EXCn) {
-        exc_handler = (EXC_HANDLER)SystemExceptionHandlers[MAX_SYSTEM_EXCEPTION_NUM];
-    } else {
-        exc_handler = (EXC_HANDLER)system_default_exception_handler;
-    }
-    if (exc_handler != NULL) {
-        exc_handler(mcause, sp);
-    }
-    return 0;
-}
-/** @} */ /* End of Doxygen Group NMSIS_Core_ExceptionAndNMI */
-
 /** Banner Print for Nuclei SDK */
 void SystemBannerPrint(void)
 {
@@ -270,63 +144,6 @@ void SystemBannerPrint(void)
 }
 
 /**
- * \brief initialize eclic config
- * \details
- * ECLIC needs be initialized after boot up,
- * Vendor could also change the initialization
- * configuration.
- */
-void ECLIC_Init(void)
-{
-    /* Global Configuration about MTH and NLBits.
-     * TODO: Please adapt it according to your system requirement.
-     * This function is called in _init function */
-    ECLIC_SetMth(0);
-    ECLIC_SetCfgNlbits(__ECLIC_INTCTLBITS);
-}
-
-/**
- * \brief  Initialize a specific IRQ and register the handler
- * \details
- * This function set vector mode, trigger mode and polarity, interrupt level and priority,
- * assign handler for specific IRQn.
- * \param [in]  IRQn        NMI interrupt handler address
- * \param [in]  shv         \ref ECLIC_NON_VECTOR_INTERRUPT means non-vector mode, and \ref ECLIC_VECTOR_INTERRUPT is vector mode
- * \param [in]  trig_mode   see \ref ECLIC_TRIGGER_Type
- * \param [in]  lvl         interupt level
- * \param [in]  priority    interrupt priority
- * \param [in]  handler     interrupt handler, if NULL, handler will not be installed
- * \return       -1 means invalid input parameter. 0 means successful.
- * \remarks
- * - This function use to configure specific eclic interrupt and register its interrupt handler and enable its interrupt.
- * - If the vector table is placed in read-only section(FLASHXIP mode), handler could not be installed
- */
-int32_t ECLIC_Register_IRQ(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_Type trig_mode, uint8_t lvl, uint8_t priority, void* handler)
-{
-    if ((IRQn > SOC_INT_MAX) || (shv > ECLIC_VECTOR_INTERRUPT) \
-        || (trig_mode > ECLIC_NEGTIVE_EDGE_TRIGGER)) {
-        return -1;
-    }
-
-    /* set interrupt vector mode */
-    ECLIC_SetShvIRQ(IRQn, shv);
-    /* set interrupt trigger mode and polarity */
-    ECLIC_SetTrigIRQ(IRQn, trig_mode);
-    /* set interrupt level */
-    ECLIC_SetLevelIRQ(IRQn, lvl);
-    /* set interrupt priority */
-    ECLIC_SetPriorityIRQ(IRQn, priority);
-    if (handler != NULL) {
-        /* set interrupt handler entry to vector table */
-        ECLIC_SetVector(IRQn, (rv_csr_t)handler);
-    }
-    /* enable interrupt */
-    ECLIC_EnableIRQ(IRQn);
-    return 0;
-}
-/** @} */ /* End of Doxygen Group NMSIS_Core_ExceptionAndNMI */
-
-/**
  * \brief early init function before main
  * \details
  * This function is executed right before main function.
@@ -338,14 +155,12 @@ void Enablepimux1(void);
 void _premain_init(void)
 {
     /* TODO: Add your own initialization code here, called before main */
-	//Enablepinmux1();
 #if ENABLE_PINMUX_MODE1 == 1
 	Enablepinmux1();
 #endif
 #if ENABLE_PINMUX_MODE2 == 1
 	Enablepinmux1_mode2();
 #endif
-  //  *(uint32_t *)(0xf8803410u) =0x1;
 
 #ifdef NOR_BRANCH_PUT_CHAR
     /* Set Nor reset delay times and qspi clk div */
@@ -363,7 +178,6 @@ void _premain_init(void)
     SystemCoreClock = get_cpu_freq();
     gpio_iof_config(GPIO, IOF0_UART0_MASK, IOF_SEL_0);
 #endif
-    AlLog_Init();
 
 	__RV_CSR_CLEAR(CSR_MMISC_CTL,MMISC_CTL_BPU);
 	//dma_init();
@@ -374,6 +188,8 @@ void _premain_init(void)
     /* ECLIC initialization, mainly MTH and NLBIT */
 
     ECLIC_Init();
+
+    AlLog_Init();
 }
 
 /**

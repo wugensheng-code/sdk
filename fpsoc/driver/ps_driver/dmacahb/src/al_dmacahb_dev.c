@@ -773,8 +773,8 @@ AL_S32 AlDmacAhb_Dev_IoCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_IoCtlCmdEnum
     case AL_DMACAHB_IOCTL_FILL_LLI_WITH_CTL:{
         AL_DMACAHB_LliStruct *Lli = (AL_DMACAHB_LliStruct *)Data;
         AlDmacAhb_Dev_FillLliWithCtl(Channel, Lli);
-        break;
     }
+        break;
     case AL_DMACAHB_IOCTL_GET_STATE:{
         AL_DMACAHB_ChStateEnum *GetState = (AL_DMACAHB_ChStateEnum *)Data;
         *GetState = Channel->State;

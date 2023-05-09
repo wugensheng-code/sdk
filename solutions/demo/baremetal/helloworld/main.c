@@ -4,8 +4,6 @@
 #include <al_type.h>
 #include <stdlib.h>
 
-extern char *_heap_start;
-extern char *_heap_end;
 
 AL_VOID main()
 {

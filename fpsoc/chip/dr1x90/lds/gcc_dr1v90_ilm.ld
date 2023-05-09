@@ -200,6 +200,7 @@ SECTIONS
   . = ALIGN(8);
   PROVIDE( _end = . );
   PROVIDE( end = . );
+  PROVIDE(_heap_start = . );
 
   .stack ORIGIN(ram) + LENGTH(ram) - __stack_size :
   {

@@ -2,7 +2,7 @@
 #include "al_errno.h"
 
 #include "nuclei_sdk_soc.h"
-#include "gic_v3.h"
+#include "al_intr.h"
 
 AL_MPU_DevStruct AL_MPU_DevInstance[AL_MPU_NUM_INSTANCE];
 
@@ -12,13 +12,14 @@ AL_MPU_DevStruct AL_MPU_DevInstance[AL_MPU_NUM_INSTANCE];
 
 static AL_VOID AlMpu_Hal_MpuRegisterIntr()
 {
-    interrupt_table AL_MPU_IntrTable = {
-        .handler = AlMpu_Dev_MpuIntrHandler,
-        .ref     = AL_MPU_DevInstance,
+    AL_INTR_HandlerStruct IntrHandle = {
+        .Func  = AlMpu_Dev_MpuIntrHandler,
+        .Param = AL_MPU_DevInstance,
     };
 
-    ECLIC_Register_IRQ(SOC_INT130_IRQn, ECLIC_NON_VECTOR_INTERRUPT,
-                       ECLIC_LEVEL_TRIGGER, 1, 1, &AL_MPU_IntrTable);
+    AL_DEFAULT_ATTR(Attr);
+    AlIntr_RegHandler(SOC_INT130_IRQn, &Attr, &IntrHandle);
+
     __enable_irq();
 }
 

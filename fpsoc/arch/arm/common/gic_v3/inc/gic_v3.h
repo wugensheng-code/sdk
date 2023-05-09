@@ -20,12 +20,6 @@ typedef enum {
 
 typedef void (*interrupt_fn)(void *instance);
 
-typedef struct
-{
-	interrupt_fn	handler;
-	void			*ref;
-}interrupt_table;
-
 
 /*
  * Low-level accessors

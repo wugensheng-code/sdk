@@ -1,6 +1,6 @@
 /***************************** Include Files *********************************/
 #include "al_spi_hal.h"
-#include "gic_v3.h"
+#include "al_intr.h"
 /************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/
@@ -10,9 +10,9 @@
 /************************** Variable Definitions *****************************/
 static AL_SPI_DevStruct AL_SPI_DevInstance[AL_SPI_NUM_INSTANCE];
 
-static interrupt_table AL_Spi_IntrTable = {
-    .handler = AlSpi_Dev_IntrHandler,
-    .ref = AL_NULL
+static AL_INTR_HandlerStruct AL_Spi_IntrHandle = {
+    .Func  = AlSpi_Dev_IntrHandler,
+    .Param = AL_NULL
 };
 
 /********************************************************/
@@ -54,7 +54,7 @@ static AlSpi_Hal_IntrHandler(AL_SPI_HalStruct *Handle, AL_U32 Event, AL_U32 Even
 static AL_S32 AlSpi_Hal_WaitTxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_U32 Timeout)
 {
     extern AL_BOOL AlSpi_Dev_IsTxBusy(AL_SPI_DevStruct *Spi);
-    
+
     while(AlSpi_Dev_IsTxBusy(Handle->Dev));
     while(SPI_SR_BUSY == AlSpi_ll_IsBusy(Handle->Dev->BaseAddr));
 
@@ -64,8 +64,8 @@ static AL_S32 AlSpi_Hal_WaitTxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_U32 Tim
 static AL_S32 AlSpi_Hal_WaitRxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_U32 Timeout)
 {
     extern AL_BOOL AlSpi_Dev_IsRxBusy(AL_SPI_DevStruct *Spi);
-    
-    
+
+
     while(AlSpi_Dev_IsRxBusy(Handle->Dev));
     while(SPI_SR_BUSY == AlSpi_ll_IsBusy(Handle->Dev->BaseAddr));
 
@@ -93,7 +93,7 @@ static AL_S32 AlSpi_Hal_WaitTxRxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_U32 T
 
 static AL_S32 AlSpi_DefIntrCallBack(AL_SPI_EventStruct SpiEvent, void *CallbackRef)
 {
-    switch (SpiEvent.Event) {  
+    switch (SpiEvent.Event) {
     case AL_SPI_SEND_DONE:
 #ifdef SPI_DEBUG
         printf("AlSpi_DefIntrCallBack AL_SPI_SEND_DONE\r\n");
@@ -103,22 +103,22 @@ static AL_S32 AlSpi_DefIntrCallBack(AL_SPI_EventStruct SpiEvent, void *CallbackR
 #ifdef SPI_DEBUG
         printf("AlSpi_DefIntrCallBack AL_SPI_RECEIVE_DONE\r\n");
 #endif
-        break;  
-    case AL_SPI_SEND_TIMEOUT:  
+        break;
+    case AL_SPI_SEND_TIMEOUT:
 #ifdef SPI_DEBUG
         printf("AlSpi_DefIntrCallBack AL_SPI_SEND_TIMEOUT\r\n");
 #endif
         break;
-    case AL_SPI_RECEIVE_TIMEOUT:  
+    case AL_SPI_RECEIVE_TIMEOUT:
 #ifdef SPI_DEBUG
         printf("AlSpi_DefIntrCallBack AL_SPI_RECEIVE_TIMEOUT\r\n");
 #endif
         break;
-    default:  
+    default:
 #ifdef SPI_DEBUG
         printf("AlSpi_DefIntrCallBack default\r\n");
 #endif
-        break;  
+        break;
     }
 
     return AL_OK;
@@ -126,8 +126,7 @@ static AL_S32 AlSpi_DefIntrCallBack(AL_SPI_EventStruct SpiEvent, void *CallbackR
 
 
 
-
-AL_S32 AlSpi_Hal_Init(AL_SPI_HalStruct *Handle, AL_SPI_ConfigsStruct *InitConfig, SPI_EventCallBack Callback, 
+AL_S32 AlSpi_Hal_Init(AL_SPI_HalStruct *Handle, AL_SPI_ConfigsStruct *InitConfig, SPI_EventCallBack Callback,
                       AL_VOID *CallbackRef, AL_U32 DevId)
 {
     AL_S32 ret = AL_OK;
@@ -155,9 +154,16 @@ AL_S32 AlSpi_Hal_Init(AL_SPI_HalStruct *Handle, AL_SPI_ConfigsStruct *InitConfig
         return ret;
     }
 
-    AL_Spi_IntrTable.ref = Handle->Dev;
-    ECLIC_Register_IRQ(CfgPtr->InterrupId, 0, 0, 1, 1, &AL_Spi_IntrTable);
-    
+    {
+        AL_INTR_HandlerStruct IntrHandle = {
+            .Func  = AlSpi_Dev_IntrHandler,
+            .Param = Handle->Dev,
+        };
+
+        AL_DEFAULT_ATTR(Attr);
+        AlIntr_RegHandler(CfgPtr->InterrupId, &Attr, &IntrHandle);
+    }
+
     ret = AlSpi_Dev_Init(Handle->Dev, InitConfig);
 
     AL_SPI_HAL_UNLOCK(Handle);
@@ -184,7 +190,7 @@ AL_S32 AlSpi_Hal_SendDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *Data, AL_U32 Siz
         AL_SPI_HAL_UNLOCK(Handle);
         return ret;
     }
-   
+
     /*
      * wait until data send done
     */
@@ -229,7 +235,7 @@ AL_S32 AlSpi_Hal_RecvDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *Data, AL_U32 Siz
     return ret;
 }
 
-AL_S32 AlSpi_Hal_SendRecvDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL_U32 SendSize, 
+AL_S32 AlSpi_Hal_SendRecvDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL_U32 SendSize,
                                    AL_U8 *RecvData, AL_U16 RecvSize, AL_U32 Timeout)
 {
     AL_S32 ret = AL_OK;

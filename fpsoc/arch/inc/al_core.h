@@ -8,7 +8,7 @@ extern "C" {
 #include "al_barrier.h"
 #include "al_cache.h"
 #include "al_io.h"
-#include "al_irq.h"
+#include "al_intr.h"
 #include "al_systimer.h"
 
 AL_VOID al_mmu_disable(AL_VOID);

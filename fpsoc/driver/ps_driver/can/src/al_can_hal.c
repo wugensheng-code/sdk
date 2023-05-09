@@ -5,7 +5,7 @@
 #include "al_errno.h"
 /* TODO: Remove after irq driver done */
 #include "nuclei_sdk_soc.h"
-#include "gic_v3.h"
+#include "al_intr.h"
 
 /************************** Constant Definitions *****************************/
 
@@ -165,12 +165,15 @@ AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct *Handle, AL_CAN_InitStruct *InitConfig, A
     AlCan_Dev_RegisterEventCallBack(Handle->Dev, &EventCallBack);
 
     /* 4. register intr */
-    /* TODO: replace intr handler reference function with al_irq.h api */
+    /* replace intr handler reference function with al_intr.h api */
     if (Handle->Dev->Config.RunMode & (AL_CAN_RUN_INTR_DMA | AL_CAN_RUN_INTR)) {
-        interrupt_table callback;
-        callback.handler    = AlCan_Dev_IntrHandler;
-        callback.ref        = Handle->Dev;
-        ECLIC_Register_IRQ(HwConfig->IntrId , ECLIC_NON_VECTOR_INTERRUPT,ECLIC_LEVEL_TRIGGER, 1, 1,&callback);
+        AL_INTR_HandlerStruct IntrHandle = {
+            .Func  = AlCan_Dev_IntrHandler,
+            .Param = Handle->Dev,
+        };
+
+        AL_DEFAULT_ATTR(Attr);
+        AlIntr_RegHandler(HwConfig->IntrId, &Attr, &IntrHandle);
         __enable_irq();
     }
 

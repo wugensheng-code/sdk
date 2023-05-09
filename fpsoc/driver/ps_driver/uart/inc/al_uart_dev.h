@@ -96,6 +96,8 @@ AL_S32 AlUart_Dev_UnRegisterEventCallBack(AL_UART_DevStruct *Uart);
 AL_UART_HwConfigStruct *AlUart_Dev_LookupConfig(AL_U32 DevId);
 AL_VOID AlUart_Dev_IntrHandler(void *Instance);
 
+AL_S32 AlUart_Dev_SendDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 Size);
+
 #ifdef __cplusplus
 }
 #endif
