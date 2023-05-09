@@ -30,14 +30,9 @@ AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_ChInitStruct 
 
 AL_S32 AlDmacAhb_Hal_DeInit(AL_DMACAHB_HalStruct *Handle);
 
-AL_S32 AlDmacAhb_Hal_Start(AL_DMACAHB_HalStruct *Handle, AL_REG SrcAddr, AL_REG DstAddr, AL_U32 TransSize);
+AL_S32 AlDmacAhb_Hal_Start(AL_DMACAHB_HalStruct *Handle);
 
-AL_S32 AlDmacAhb_Hal_LlpModeStart(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_LliStruct *Lli);
-
-AL_S32 AlDmacAhb_Hal_StartBlock(AL_DMACAHB_HalStruct *Handle, AL_REG SrcAddr, AL_REG DstAddr, AL_U32 TransSize,
-                                AL_U32 Timeout);
-
-AL_S32 AlDmacAhb_Hal_LlpModeStartBlock(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_LliStruct *Lli, AL_U32 Timeout);
+AL_S32 AlDmacAhb_Hal_StartBlock(AL_DMACAHB_HalStruct *Handle, AL_U32 Timeout);
 
 AL_S32 AlDmacAhb_Hal_IoCtl(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_IoCtlCmdEnum Cmd, AL_VOID *Data);
 

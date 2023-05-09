@@ -30,6 +30,8 @@ typedef enum
     DMACAHB_ERR_CH_WITHOUT_DMAC,
     DMACAHB_ERR_IOCTL_CMD,
     DMACAHB_ERR_ADDR_NOT_ALIGN,
+    DMACAHB_ERR_TRANS_TYPE,
+    DMACAHB_ERR_TRANS_BUSY,
     DMACAHB_ERR_STATE_NOT_READY,
 } AL_DMACAHB_ErrCodeEnum;
 
@@ -49,6 +51,8 @@ typedef enum
 #define AL_DMACAHB_ERR_CH_WITHOUT_DMAC      AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, DMACAHB_ERR_CH_WITHOUT_DMAC)
 #define AL_DMACAHB_ERR_IOCTL_CMD            AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, DMACAHB_ERR_IOCTL_CMD)
 #define AL_DMACAHB_ERR_ADDR_NOT_ALIGN       AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, DMACAHB_ERR_ADDR_NOT_ALIGN)
+#define AL_DMACAHB_ERR_TRANS_TYPE           AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, DMACAHB_ERR_TRANS_TYPE)
+#define AL_DMACAHB_ERR_TRANS_BUSY           AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, DMACAHB_ERR_TRANS_BUSY)
 #define AL_DMACAHB_ERR_STATE_NOT_READY      AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, DMACAHB_ERR_STATE_NOT_READY)
 
 /**************************** Type Definitions *******************************/
@@ -103,9 +107,7 @@ typedef enum
 typedef enum
 {
     AL_DMACAHB_MASTER_SEL_1,
-    AL_DMACAHB_MASTER_SEL_2,
-    AL_DMACAHB_MASTER_SEL_3,
-    AL_DMACAHB_MASTER_SEL_4
+    AL_DMACAHB_MASTER_SEL_2
 } AL_DMACAHB_MasterSelEnum;
 
 /**
@@ -131,7 +133,7 @@ typedef enum
     AL_DMACAHB_TRANS_TYPE_5,    /* Single-block or last transfer of multi-block */
     AL_DMACAHB_TRANS_TYPE_6,    /* Linked list multi-block transfer with contiguous SAR */
     AL_DMACAHB_TRANS_TYPE_7,    /* Linked list multi-block transfer with auto-reload SAR */
-    AL_DMACAHB_TRANS_TYPE_8,    /* Linked list multi-block transfer with contiguous DAR  */
+    AL_DMACAHB_TRANS_TYPE_8,    /* Linked list multi-block transfer with contiguous DAR */
     AL_DMACAHB_TRANS_TYPE_9,    /* Linked list multi-block transfer with auto-reload DAR */
     AL_DMACAHB_TRANS_TYPE_10    /* Linked list multi-block transfer */
 } AL_DMACAHB_TransTypeEnum;
@@ -153,10 +155,14 @@ typedef enum
  */
 typedef enum
 {
-    AL_DMACAHB_STATE_NOT_INIT           = (0x0),
-    AL_DMACAHB_STATE_READY              = BIT_32(1),
-    AL_DMACAHB_STATE_TRANS_BUSY         = BIT_32(2),
-    AL_DMACAHB_STATE_BLOCK_TRANS_BUSY   = BIT_32(3),
+    AL_DMACAHB_STATE_NOT_INIT               = (0x0),
+    AL_DMACAHB_STATE_READY                  = BIT_32(1),
+    AL_DMACAHB_STATE_TRANS_BUSY             = BIT_32(2),    /*Not use, to be remove*/
+    AL_DMACAHB_STATE_BLOCK_TRANS_BUSY       = BIT_32(3),    /*Not use, to be remove*/
+    AL_DMACAHB_STATE_SINGLE_MODE_BUSY       = BIT_32(4),
+    AL_DMACAHB_STATE_RELOAD_MODE_BUSY       = BIT_32(5),
+    AL_DMACAHB_STATE_LLP_MODE_BUSY          = BIT_32(6),
+    AL_DMACAHB_STATE_LLP_RELOAD_MODE_BUSY   = BIT_32(7),
 }AL_DMACAHB_ChStateEnum;
 
 /**
@@ -185,6 +191,7 @@ typedef enum
     AL_DMACAHB_IOCTL_GET_PARAM_CHANNEL_6,
     AL_DMACAHB_IOCTL_GET_PARAM_CHANNEL_7,
     AL_DMACAHB_IOCTL_SET_CHANNEL_EN,
+    AL_DMACAHB_IOCTL_SET_RELOAD_LAST_TRANS,
 }AL_DMACAHB_IoCtlCmdEnum;
 
 /**
@@ -256,7 +263,7 @@ typedef union
 /**
  * @brief  Dmac ahb config low register union
  */
-typedef struct
+typedef union
 {
     AL_U32 Reg;
     struct {
@@ -278,7 +285,7 @@ typedef struct
 /**
  * @brief  Dmac ahb config high register union
  */
-typedef struct
+typedef union
 {
     AL_U32 Reg;
     struct {
@@ -297,12 +304,25 @@ typedef struct
  */
 typedef struct
 {
-    AL_REG                      SrcAddr;
-    AL_REG                      DstAddr;
-    struct DMACAHB_LliStruct    *LlpNext;
+    AL_U32                      SrcAddr;
+    AL_U32                      DstAddr;
+    AL_U32                      LlpNext;
     AL_DMACAHB_CtlLoUnion       CtlLow;
     AL_DMACAHB_CtlHiUnion       CtlHigh;
 } AL_DMACAHB_LliStruct;
+
+/**
+ * @brief  Dmac ahb trans config struct
+ */
+typedef struct
+{
+    AL_U32                  SrcAddr;
+    AL_U32                  DstAddr;
+    AL_U32                  TransSize;
+    AL_U32                  ReloadCountNum;
+    AL_U32                  ReloadCount;
+    AL_DMACAHB_LliStruct    *Lli;
+} AL_DMACAHB_ChTransStruct;
 
 /**
  * @brief  Dmac ahb current state struct
@@ -391,9 +411,6 @@ typedef struct
 {
     AL_DMACAHB_ChIdEnum         Id;
     AL_DMACAHB_TransTypeEnum    TransType;
-    AL_REG                      SrcAddr;
-    AL_REG                      DstAddr;
-    AL_U32                      BlockTransSize;
     AL_DMACAHB_ChIntrStruct     Intr;
     AL_DMACAHB_TransWidthEnum   SrcTransWidth;
     AL_DMACAHB_TransWidthEnum   DstTransWidth;
@@ -420,6 +437,7 @@ typedef struct DMACAHB_ChStruct
     AL_DMACAHB_ChParamStruct    Param;
     AL_DMACAHB_DmacStruct       *Dmac;
     AL_DMACAHB_ChInitStruct     Config;
+    AL_DMACAHB_ChTransStruct    Trans;
     AL_DMACAHB_ChStateEnum      State;
     AL_DMACAHB_ChCallBackStruct EventCallBack;
 } AL_DMACAHB_ChStruct;
@@ -436,9 +454,9 @@ AL_S32 AlDmacAhb_Dev_DeInit(AL_DMACAHB_ChStruct *Channel);
 
 AL_VOID AlDmacAhb_Dev_FillLliWithCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_LliStruct *Lli);
 
-AL_S32 AlDmacAhb_Dev_Start(AL_DMACAHB_ChStruct *Channel, AL_REG SrcAddr, AL_REG DstAddr, AL_U32 TransSize);
+AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel);
 
-AL_S32 AlDmacAhb_Dev_LlpModeStart(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_LliStruct *Lli);
+AL_S32 AlDmacAhb_Dev_Start(AL_DMACAHB_ChStruct *Channel);
 
 AL_S32 AlDmacAhb_Dev_UnRegisterIntrHandler(AL_DMACAHB_ChStruct *Channel);
 
@@ -449,6 +467,8 @@ AL_S32 AlDmacAhb_Dev_UnRegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel);
 AL_VOID AlDmacAhb_Dev_IntrHandler(AL_VOID *Instance);
 
 AL_S32 AlDmacAhb_Dev_IoCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_IoCtlCmdEnum Cmd, AL_VOID *Data);
+
+AL_S32 AlDmacAhb_Dev_TransTypeToState(AL_DMACAHB_TransTypeEnum Type, AL_DMACAHB_ChStateEnum *State);
 
 #ifdef __cplusplus
 }

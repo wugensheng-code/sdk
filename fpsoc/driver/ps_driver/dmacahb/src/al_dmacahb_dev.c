@@ -357,7 +357,6 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
     AL_REG BaseAddr = Channel->Dmac->BaseAddr;
     AL_DMACAHB_ChTransStruct *Trans = &Channel->Trans;
     AL_DMACAHB_ChStateEnum State;
-    AL_U32 SrcAddr, DstAddr, TransSize;
 
     Ret = AlDmacAhb_Dev_TransTypeToState(Channel->Config.TransType, &State);
     if (Ret != AL_OK) {
@@ -371,12 +370,8 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
             return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
         }
     } else {
-        SrcAddr     = Trans->SrcAddr;
-        DstAddr     = Trans->DstAddr;
-        TransSize   = Trans->TransSize;
-
-        if ((SrcAddr & ((1 << (Channel->Config.SrcTransWidth + 1)) - 1)) ||
-            (DstAddr & ((1 << (Channel->Config.DstTransWidth + 1)) - 1))) {
+        if ((Trans->SrcAddr & ((1 << (Channel->Config.SrcTransWidth + 1)) - 1)) ||
+            (Trans->DstAddr & ((1 << (Channel->Config.DstTransWidth + 1)) - 1))) {
             return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
         }
     }
@@ -395,16 +390,19 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
     if (State == AL_DMACAHB_STATE_LLP_MODE_BUSY) {
         AlDmacAhb_ll_SetLinkStartAddr(BaseAddr, ChOffset, (AL_REG)Trans->Lli);
         AlDmacAhb_ll_SetLms(BaseAddr, ChOffset, Channel->Config.ListMasterSel);
+        /* Write these register for contiguous src/dst */
+        AlDmacAhb_ll_WriteSrcAddr(BaseAddr, ChOffset, Trans->SrcAddr);
+        AlDmacAhb_ll_WriteDstAddr(BaseAddr, ChOffset, Trans->DstAddr);
     } else if (State == AL_DMACAHB_STATE_LLP_RELOAD_MODE_BUSY) {
         AlDmacAhb_ll_SetLinkStartAddr(BaseAddr, ChOffset, (AL_REG)Trans->Lli);
         AlDmacAhb_ll_SetLms(BaseAddr, ChOffset, Channel->Config.ListMasterSel);
-        /* Write these register for contiguous src/dst or auto-reload src/dst */
+        /* Write these register for auto-reload src/dst */
         AlDmacAhb_ll_WriteSrcAddr(BaseAddr, ChOffset, Trans->SrcAddr);
         AlDmacAhb_ll_WriteDstAddr(BaseAddr, ChOffset, Trans->DstAddr);
     } else {
-        AlDmacAhb_ll_WriteSrcAddr(BaseAddr, ChOffset, SrcAddr);
-        AlDmacAhb_ll_WriteDstAddr(BaseAddr, ChOffset, DstAddr);
-        AlDmacAhb_ll_SetBlkTransSize(BaseAddr, ChOffset, TransSize);
+        AlDmacAhb_ll_WriteSrcAddr(BaseAddr, ChOffset, Trans->SrcAddr);
+        AlDmacAhb_ll_WriteDstAddr(BaseAddr, ChOffset, Trans->DstAddr);
+        AlDmacAhb_ll_SetBlkTransSize(BaseAddr, ChOffset, Trans->TransSize);
     }
 
     return Ret;

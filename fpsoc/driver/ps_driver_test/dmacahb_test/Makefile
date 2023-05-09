@@ -13,14 +13,13 @@ all:
 
 ifeq ($(SOC), demoapu)
 	make clean
-	rm -rf *.o
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ -f Makefile_single_mode
+	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_single_mode
 	make clean
-	rm -rf *.o
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_auto_reload_mode
+	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_reload_mode
 	make clean
-	rm -rf *.o
 	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_llp_mode
+	make clean
+	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_other_trans_type
 else
 endif
 
@@ -28,6 +27,7 @@ endif
 clean:
 	make clean -f Makefile_clean SOC=demoapu
 	make clean -f Makefile_clean SOC=demosoc
+	rm -rf *.o
 
 cleanelf:
 	rm -rf *.o *.d *.elf *.map *.dasm *.dump *.hex *.verilog

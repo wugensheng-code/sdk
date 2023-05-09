@@ -66,15 +66,14 @@ static AlDmacAhb_Hal_IntrHandler(AL_DMACAHB_HalStruct *Handle, AL_U32 Event, AL_
 */
 static AL_S32 AlDmacAhb_Hal_WaitTransDoneOrTimeout(AL_DMACAHB_HalStruct *Handle, AL_U32 Timeout)
 {
-    AL_DMACAHB_TransTypeEnum Type = Handle->Channel->Config.TransType;
-    AL_DMACAHB_ChStateEnum State;
-
+    AL_S32 Ret = AL_OK;
     extern AL_BOOL AlDmacAhb_Dev_GetState(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChStateEnum State);
 
-    if (Type == AL_DMACAHB_TRANS_TYPE_1 || Type == AL_DMACAHB_TRANS_TYPE_5) {
-        State = AL_DMACAHB_STATE_TRANS_BUSY;
-    } else {
-        State = AL_DMACAHB_STATE_BLOCK_TRANS_BUSY;
+    AL_DMACAHB_ChStateEnum State;
+
+    Ret = AlDmacAhb_Dev_TransTypeToState(Handle->Channel->Config.TransType, &State);
+    if (Ret != AL_OK) {
+        return Ret;
     }
 
     while(AlDmacAhb_Dev_GetState(Handle->Channel, State) && Timeout);
@@ -84,7 +83,7 @@ static AL_S32 AlDmacAhb_Hal_WaitTransDoneOrTimeout(AL_DMACAHB_HalStruct *Handle,
         return AL_DMACAHB_ERR_TIMEOUT;
     }
 
-    return AL_OK;
+    return Ret;
 }
 
 #define AL_DMACAHB_HAL_LOCK(Handle)          do {} while (0)
@@ -219,14 +218,11 @@ AL_S32 AlDmacAhb_Hal_DeInit(AL_DMACAHB_HalStruct *Handle)
 /**
  * This function start dma
  * @param   Handle is pointer to AL_DMACAHB_HalStruct
- * @param   SrcAddr is data source address
- * @param   DstAddr is data destination address
- * @param   TransSize is data size in source trans width
  * @return
  *          - AL_OK
  * @note
 */
-AL_S32 AlDmacAhb_Hal_Start(AL_DMACAHB_HalStruct *Handle, AL_REG SrcAddr, AL_REG DstAddr, AL_U32 TransSize)
+AL_S32 AlDmacAhb_Hal_Start(AL_DMACAHB_HalStruct *Handle)
 {
     AL_S32 Ret = AL_OK;
 
@@ -236,7 +232,7 @@ AL_S32 AlDmacAhb_Hal_Start(AL_DMACAHB_HalStruct *Handle, AL_REG SrcAddr, AL_REG 
 
     AL_DMACAHB_HAL_LOCK(Handle);
 
-    Ret = AlDmacAhb_Dev_Start(Handle->Channel, SrcAddr, DstAddr, TransSize);
+    Ret = AlDmacAhb_Dev_Start(Handle->Channel);
     if (Ret != AL_OK) {
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Dmacahb start error:%x\r\n", Ret);
     }
@@ -247,48 +243,14 @@ AL_S32 AlDmacAhb_Hal_Start(AL_DMACAHB_HalStruct *Handle, AL_REG SrcAddr, AL_REG 
 }
 
 /**
- * This function start llp mode dma
- * @param   Handle is pointer to AL_DMACAHB_HalStruct
- * @param   Lli is pointer to AL_DMACAHB_LliStruct
- * @return
- *          - AL_OK
- * @note
-*/
-AL_S32 AlDmacAhb_Hal_LlpModeStart(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_LliStruct *Lli)
-{
-    AL_S32 Ret = AL_OK;
-
-    if (Handle == AL_NULL) {
-        return AL_DMACAHB_ERR_NULL_PTR;
-    }
-
-    AL_DMACAHB_HAL_LOCK(Handle);
-
-    AlDmacAhb_Dev_FillLliWithCtl(Handle->Channel, Lli);
-
-    Ret = AlDmacAhb_Dev_LlpModeStart(Handle->Channel, Lli);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "Dmacahb llp mode start error:%x\r\n", Ret);
-    }
-
-    AL_DMACAHB_HAL_UNLOCK(Handle);
-
-    return Ret;
-}
-
-/**
  * This function start dma blocked
  * @param   Handle is pointer to AL_DMACAHB_HalStruct
- * @param   SrcAddr is data source address
- * @param   DstAddr is data destination address
- * @param   TransSize is data size in source trans width
  * @param   Timeout is max wait time for dma done
  * @return
  *          - AL_OK
  * @note
 */
-AL_S32 AlDmacAhb_Hal_StartBlock(AL_DMACAHB_HalStruct *Handle, AL_REG SrcAddr, AL_REG DstAddr, AL_U32 TransSize,
-                                AL_U32 Timeout)
+AL_S32 AlDmacAhb_Hal_StartBlock(AL_DMACAHB_HalStruct *Handle, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
 
@@ -298,7 +260,7 @@ AL_S32 AlDmacAhb_Hal_StartBlock(AL_DMACAHB_HalStruct *Handle, AL_REG SrcAddr, AL
 
     AL_DMACAHB_HAL_LOCK(Handle);
 
-    Ret = AlDmacAhb_Dev_Start(Handle->Channel, SrcAddr, DstAddr, TransSize);
+    Ret = AlDmacAhb_Dev_Start(Handle->Channel);
     if (Ret != AL_OK) {
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Dmacahb start block error:0x%x\r\n", Ret);
         AL_DMACAHB_HAL_UNLOCK(Handle);
@@ -308,40 +270,6 @@ AL_S32 AlDmacAhb_Hal_StartBlock(AL_DMACAHB_HalStruct *Handle, AL_REG SrcAddr, AL
     Ret = AlDmacAhb_Hal_WaitTransDoneOrTimeout(Handle, Timeout);
     if (Ret != AL_OK) {
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Dmacahb wait trans done error:%x\r\n", Ret);
-    }
-
-    AL_DMACAHB_HAL_UNLOCK(Handle);
-
-    return Ret;
-}
-
-/**
- * This function start llp mode dma blocked
- * @param   Handle is pointer to AL_DMACAHB_HalStruct
- * @param   Lli is pointer to AL_DMACAHB_LliStruct
- * @param   Timeout is max wait time for dma done
- * @return
- *          - AL_OK
- * @note
-*/
-AL_S32 AlDmacAhb_Hal_LlpModeStartBlock(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_LliStruct *Lli, AL_U32 Timeout)
-{
-    AL_S32 Ret = AL_OK;
-
-    if (Handle == AL_NULL) {
-        return AL_DMACAHB_ERR_NULL_PTR;
-    }
-
-    AL_DMACAHB_HAL_LOCK(Handle);
-
-    Ret = AlDmacAhb_Dev_LlpModeStart(Handle->Channel, Lli);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "Dmacahb llp mode start error:%x\r\n", Ret);
-    }
-
-    Ret = AlDmacAhb_Hal_WaitTransDoneOrTimeout(Handle, Timeout);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "Dmacahb llp mode wait trans done error:%x\r\n", Ret);
     }
 
     AL_DMACAHB_HAL_UNLOCK(Handle);
