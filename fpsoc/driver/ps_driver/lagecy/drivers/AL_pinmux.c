@@ -94,6 +94,9 @@
     *(uint32_t *)(0xf88030d4u) =0xf;      //mdio1
     *(uint32_t *)(0xf8803438u) =0x1;      //emio_sel
 
+    *(uint32_t *)(0xf840e004u) =0x0;      //close mpu ddr0
+    *(uint32_t *)(0xf840f004u) =0x0;      //close mpu ddr1
+    *(uint32_t *)(0xf8801074u) |=0x4000;  //reset release ddr
 }
 
 void Enablepinmux1_mode2(void)
@@ -151,6 +154,9 @@ void Enablepinmux1_mode2(void)
 	*(uint32_t *)(0xf88030d4u) =0x1;
 	*(uint32_t *)(0xf880340cu) =0x1; //CAN1 SET
 
+    *(uint32_t *)(0xf840e004u) =0x0;      //close mpu ddr0
+    *(uint32_t *)(0xf840f004u) =0x0;      //close mpu ddr1
+    *(uint32_t *)(0xf8801074u) |=0x4000;  //reset release ddr
 }
 
 
