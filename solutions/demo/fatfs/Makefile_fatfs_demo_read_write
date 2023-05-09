@@ -1,0 +1,15 @@
+TARGET = fpsoc_fatfs_demo_read_write
+
+NUCLEI_SDK_ROOT = ../../../
+
+C_SRCDIRS = .
+
+INCDIRS = .
+
+COMMON_FLAGS := -O2 -Wno-int-to-pointer-cast
+
+# ARM jump from secure to non-secure
+# COMMON_FLAGS += -DSUPPORT_NONSECURE
+
+
+include $(NUCLEI_SDK_ROOT)/tools/make/Makefile.base

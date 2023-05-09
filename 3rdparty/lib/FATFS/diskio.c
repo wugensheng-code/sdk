@@ -36,8 +36,8 @@ DSTATUS disk_status (
 		case ATA:	/* SD CARD */
 			status &= ~STA_NOINIT;
 			break;
-    
-		case EMMC:        /* SPI Flash */   
+
+		case EMMC:        /* SPI Flash */
             status &= ~STA_NOINIT;
 			break;
 
@@ -54,7 +54,7 @@ DSTATUS disk_initialize (
 	BYTE pdrv				/* ������ */
 )
 {
-	DSTATUS status = STA_NOINIT;	
+	DSTATUS status = STA_NOINIT;
 	switch (pdrv) {
 		case ATA:	         /* SD CARD */
 			if(AlSd_Init() == MMC_SUCCESS)
@@ -62,25 +62,25 @@ DSTATUS disk_initialize (
 				Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
 				status &= ~STA_NOINIT;
 			}
-			else 
+			else
 			{
 				status = STA_NOINIT;
 			}
-		
+
 			break;
-    
-		case EMMC:    /* EMMC */ 
+
+		case EMMC:    /* EMMC */
             if(AlEmmc_Init() == MMC_SUCCESS)
 			{
 				Csu_RawEmmcSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
 				status &= ~STA_NOINIT;
 			}
-			else 
+			else
 			{
 				status = STA_NOINIT;
 			}
 			break;
-      
+
 		default:
 			status = STA_NOINIT;
 	}
@@ -100,7 +100,7 @@ DRESULT disk_read (
 {
 	DRESULT status = RES_PARERR;
 	uint32_t blockcount = 0;
-	
+
 	switch (pdrv) {
 		case ATA:	/* SD CARD */
 			for(blockcount = 0; blockcount < count; blockcount++){
@@ -112,8 +112,8 @@ DRESULT disk_read (
 					return status;
 				}
 			}
-			break;   
-			
+			break;
+
 		case EMMC:
             for(blockcount = 0; blockcount < count; blockcount++){
 				status = AlEmmc_ReadSingleBlock((uint8_t *)(buff+EmmcCardInfo.CardBlockSize*blockcount),sector+blockcount,EmmcCardInfo.CardBlockSize);
@@ -144,13 +144,13 @@ DRESULT disk_write (
 {
 	DRESULT status = RES_OK;
 	uint32_t blockcount = 0;
-	
+
 	if (!count) {
 		return RES_PARERR;		/* Check parameter */
 	}
 
 	switch (pdrv) {
-		case ATA:	/* SD CARD */  
+		case ATA:	/* SD CARD */
 			for(blockcount = 0; blockcount < count; blockcount++){
 				status = AlSd_WriteSingleBlock((uint8_t *)(buff+SDCardInfo.CardBlockSize*blockcount),sector+blockcount,SDCardInfo.CardBlockSize);
 				if(status != RES_OK)
@@ -194,14 +194,14 @@ DRESULT disk_ioctl (
 	DRESULT status = RES_PARERR;
 	switch (pdrv) {
 		case ATA:	/* SD CARD */
-			switch (cmd) 
+			switch (cmd)
 			{
-				// Get R/W sector size (WORD) 
-				case GET_SECTOR_SIZE :    
+				// Get R/W sector size (WORD)
+				case GET_SECTOR_SIZE :
 					*(WORD * )buff = SDCardInfo.CardBlockSize;
 				break;
 				// Get erase block size in unit of sector (DWORD)
-				case GET_BLOCK_SIZE :      
+				case GET_BLOCK_SIZE :
 					*(DWORD * )buff = 1;
 				break;
 
@@ -214,16 +214,16 @@ DRESULT disk_ioctl (
 			}
 			status = RES_OK;
 			break;
-    
+
 		case EMMC:
-            switch (cmd) 
+            switch (cmd)
 			{
-				// Get R/W sector size (WORD) 
-				case GET_SECTOR_SIZE :    
+				// Get R/W sector size (WORD)
+				case GET_SECTOR_SIZE :
 					*(WORD * )buff = EmmcCardInfo.CardBlockSize;
 				break;
 				// Get erase block size in unit of sector (DWORD)
-				case GET_BLOCK_SIZE :      
+				case GET_BLOCK_SIZE :
 					*(DWORD * )buff = 1;
 				break;
 
@@ -236,7 +236,7 @@ DRESULT disk_ioctl (
 			}
 			status = RES_OK;
 		break;
-    
+
 		default:
 			status = RES_PARERR;
 	}
