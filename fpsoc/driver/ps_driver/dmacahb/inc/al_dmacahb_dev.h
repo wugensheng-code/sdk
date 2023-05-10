@@ -306,9 +306,9 @@ typedef struct
 {
     AL_U32                      SrcAddr;
     AL_U32                      DstAddr;
-    AL_U32                      LlpNext;
+    AL_U32                      LlpNext;    /* Addr of next link list item */
     AL_DMACAHB_CtlLoUnion       CtlLow;
-    AL_DMACAHB_CtlHiUnion       CtlHigh;
+    AL_DMACAHB_CtlHiUnion       CtlHigh;    /* Ctl high reg, if write back enabled, save trans state in done bit */
 } AL_DMACAHB_LliStruct;
 
 /**
@@ -318,10 +318,10 @@ typedef struct
 {
     AL_U32                  SrcAddr;
     AL_U32                  DstAddr;
-    AL_U32                  TransSize;
-    AL_U32                  ReloadCountNum;
-    AL_U32                  ReloadCount;
-    AL_DMACAHB_LliStruct    *Lli;
+    AL_U32                  TransSize;      /* Size in Src trans width */
+    AL_U32                  ReloadCountNum; /* use in reload mode, save reload times */
+    AL_U32                  ReloadCount;    /* save current reload times */
+    AL_DMACAHB_LliStruct    *Lli;           /* Pointer to link list item */
 } AL_DMACAHB_ChTransStruct;
 
 /**
@@ -357,16 +357,16 @@ typedef struct
 struct DMACAHB_ChStruct;
 
 /**
- * @brief  Dmac ahb dev struct
+ * @brief  Dmac ahb dev struct, basicly corresponds to AlDmacAhb_HwConfig
  */
 typedef struct
 {
-    AL_REG                  BaseAddr;
-    AL_U32                  DevId;
-    AL_U32                  IntrId;
-    AL_U32                  ChannelNum;
-    AL_DMACAHB_StateStruct  State;
-    struct DMACAHB_ChStruct *Channel[AL_DMACAHB_CHANNEL_NUM];
+    AL_REG                  BaseAddr;                           /* Dmac Base address */
+    AL_U32                  DevId;                              /* Num of Dmac, start from 0 */
+    AL_U32                  IntrId;                             /* Intr id in intr list */
+    AL_U32                  ChannelNum;                         /* How many Channel in this controller */
+    AL_DMACAHB_StateStruct  State;                              /* Controller state */
+    struct DMACAHB_ChStruct *Channel[AL_DMACAHB_CHANNEL_NUM];   /* Poniter to its channel struct */
 } AL_DMACAHB_DmacStruct;
 
 /**
@@ -374,12 +374,12 @@ typedef struct
  */
 typedef struct
 {
-    AL_DMACAHB_HsSelEnum        SrcHsSel;
-    AL_DMACAHB_HsSelEnum        DstHsSel;
-    AL_DMACAHB_HsPolSelEnum     SrcHsPol;
-    AL_DMACAHB_HsPolSelEnum     DstHsPol;
-    AL_DMACAHB_PerSelEnum       SrcPer;
-    AL_DMACAHB_PerSelEnum       DstPer;
+    AL_DMACAHB_HsSelEnum        SrcHsSel;   /* Src handshaking, Soft or hard */
+    AL_DMACAHB_HsSelEnum        DstHsSel;   /* Dst handshaking, Soft or hard */
+    AL_DMACAHB_HsPolSelEnum     SrcHsPol;   /* Src handshaking polarity */
+    AL_DMACAHB_HsPolSelEnum     DstHsPol;   /* Dst handshaking polarity */
+    AL_DMACAHB_PerSelEnum       SrcPer;     /* Src hardware handshaking select, ignore in soft handshaking */
+    AL_DMACAHB_PerSelEnum       DstPer;     /* Dst hardware handshaking select, ignore in soft handshaking */
 } AL_DMACAHB_ChHsStruct;
 
 /**
@@ -388,11 +388,11 @@ typedef struct
 typedef struct
 {
     AL_BOOL         IsSrcGatherEn;
-    AL_U32          SrcGatherCount;
-    AL_U32          SrcGatherInterval;
+    AL_U32          SrcGatherCount;         /* Src contiguous trans count */
+    AL_U32          SrcGatherInterval;      /* Src gather interval between contiguous trans in system memory */
     AL_BOOL         IsDstScatterEn;
-    AL_U32          DstScatterCount;
-    AL_U32          DstScatterInterval;
+    AL_U32          DstScatterCount;        /* Dst contiguous recv count */
+    AL_U32          DstScatterInterval;     /* Src scatter interval between contiguous recv in system memory */
 } AL_DMACAHB_ChSgrDsrStruct;
 
 /**
@@ -400,8 +400,8 @@ typedef struct
  */
 typedef struct
 {
-    AL_BOOL                 IsIntrEn;
-    AL_DMACAHB_ChIntrEnum   IntrUnMask;
+    AL_BOOL IsIntrEn;
+    AL_U8   IntrUnMask;     /* Intr unmask state, reference to AL_DMACAHB_ChIntrEnum */
 } AL_DMACAHB_ChIntrStruct;
 
 /**
@@ -409,24 +409,24 @@ typedef struct
  */
 typedef struct
 {
-    AL_DMACAHB_ChIdEnum         Id;
-    AL_DMACAHB_TransTypeEnum    TransType;
-    AL_DMACAHB_ChIntrStruct     Intr;
-    AL_DMACAHB_TransWidthEnum   SrcTransWidth;
-    AL_DMACAHB_TransWidthEnum   DstTransWidth;
-    AL_DMACAHB_AddrIncEnum      SrcAddrIncMode;
-    AL_DMACAHB_AddrIncEnum      DstAddrIncMode;
-    AL_DMACAHB_MsizeEnum        SrcBurstLength;
-    AL_DMACAHB_MsizeEnum        DstBurstLength;
-    AL_DMACAHB_TtFcEnum         Direction;
-    AL_DMACAHB_MasterSelEnum    SrcMasterSel;
-    AL_DMACAHB_MasterSelEnum    DstMasterSel;
-    AL_DMACAHB_MasterSelEnum    ListMasterSel;
-    AL_DMACAHB_ChPriorEnum      ChPrior;
-    AL_DMACAHB_FifoModeEnum     FifoMode;
-    AL_DMACAHB_ProtCtlSelEnum   ProtCtl;
-    AL_DMACAHB_ChHsStruct       HandShaking;
-    AL_DMACAHB_ChSgrDsrStruct   SgrDsr;
+    AL_DMACAHB_ChIdEnum         Id;             /* Channel Num */
+    AL_DMACAHB_TransTypeEnum    TransType;      /* reference to AL_DMACAHB_TransTypeEnum */
+    AL_DMACAHB_ChIntrStruct     Intr;           /* Intr enable/disable and umask state */
+    AL_DMACAHB_TransWidthEnum   SrcTransWidth;  /* Src trans width in bit */
+    AL_DMACAHB_TransWidthEnum   DstTransWidth;  /* Dst trans width in bit */
+    AL_DMACAHB_AddrIncEnum      SrcAddrIncMode; /* Src address auto inc mode, reference to AL_DMACAHB_AddrIncEnum */
+    AL_DMACAHB_AddrIncEnum      DstAddrIncMode; /* Dst address auto inc mode, reference to AL_DMACAHB_AddrIncEnum */
+    AL_DMACAHB_MsizeEnum        SrcBurstLength; /* Src burst trans length in SrcTransWidth */
+    AL_DMACAHB_MsizeEnum        DstBurstLength; /* Dst burst trans length in DstTransWidth */
+    AL_DMACAHB_TtFcEnum         Direction;      /* Trans direction, reference to AL_DMACAHB_TtFcEnum */
+    AL_DMACAHB_MasterSelEnum    SrcMasterSel;   /* Src trans master interface select */
+    AL_DMACAHB_MasterSelEnum    DstMasterSel;   /* Dst trans master interface select */
+    AL_DMACAHB_MasterSelEnum    ListMasterSel;  /* Link list item trans master interface select */
+    AL_DMACAHB_ChPriorEnum      ChPrior;        /* Channel priority, 7 is highest priority */
+    AL_DMACAHB_FifoModeEnum     FifoMode;       /* reference to AL_DMACAHB_FifoModeEnum */
+    AL_DMACAHB_ProtCtlSelEnum   ProtCtl;        /* Corresponds to AHB bus prot wire */
+    AL_DMACAHB_ChHsStruct       HandShaking;    /* Hardware handshaking cofig */
+    AL_DMACAHB_ChSgrDsrStruct   SgrDsr;         /* Src gather and Dst scatter */
 } AL_DMACAHB_ChInitStruct;
 
 /**
@@ -434,12 +434,12 @@ typedef struct
  */
 typedef struct DMACAHB_ChStruct
 {
-    AL_DMACAHB_ChParamStruct    Param;
-    AL_DMACAHB_DmacStruct       *Dmac;
-    AL_DMACAHB_ChInitStruct     Config;
-    AL_DMACAHB_ChTransStruct    Trans;
-    AL_DMACAHB_ChStateEnum      State;
-    AL_DMACAHB_ChCallBackStruct EventCallBack;
+    AL_DMACAHB_ChParamStruct    Param;          /* Channel register offset and mask */
+    AL_DMACAHB_DmacStruct       *Dmac;          /* Pointer to which dmac belogs to */
+    AL_DMACAHB_ChInitStruct     Config;         /* Function config */
+    AL_DMACAHB_ChTransStruct    Trans;          /* Trans addr, size, count and Link list item */
+    AL_DMACAHB_ChStateEnum      State;          /* Current Channel state */
+    AL_DMACAHB_ChCallBackStruct EventCallBack;  /* Callback for user to handle */
 } AL_DMACAHB_ChStruct;
 
 /************************** Variable Definitions *****************************/

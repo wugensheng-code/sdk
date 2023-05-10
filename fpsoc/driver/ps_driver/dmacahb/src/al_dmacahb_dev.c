@@ -627,13 +627,16 @@ static AL_VOID AlDmacAhb_Dev_BlockTransCompHandler(AL_DMACAHB_ChStruct *Channel)
     /* In reload mode, before the last trans, set reload_src and reload_dst to AL_FALSE */
     if (State == AL_DMACAHB_STATE_RELOAD_MODE_BUSY || State == AL_DMACAHB_STATE_LLP_RELOAD_MODE_BUSY) {
         Channel->Trans.ReloadCount++;
-        if (Channel->Trans.ReloadCount == Channel->Trans.ReloadCountNum) {
-            AlDmacAhb_Dev_ClrState(Channel, State);
-        } else if ((Channel->Trans.ReloadCount == (Channel->Trans.ReloadCountNum - 1)) &&
-                   (State == AL_DMACAHB_STATE_RELOAD_MODE_BUSY)) {
-            AL_BOOL IsLastTransSet = AL_TRUE;
-            AlDmacAhb_Dev_IoCtl(Channel, AL_DMACAHB_IOCTL_SET_RELOAD_LAST_TRANS, &IsLastTransSet);
+        if (Channel->Trans.ReloadCountNum != 0xFFFFFFFF) {
+            if (Channel->Trans.ReloadCount == Channel->Trans.ReloadCountNum) {
+                AlDmacAhb_Dev_ClrState(Channel, State);
+            } else if ((Channel->Trans.ReloadCount == (Channel->Trans.ReloadCountNum - 1)) &&
+                    (State == AL_DMACAHB_STATE_RELOAD_MODE_BUSY)) {
+                AL_BOOL IsLastTransSet = AL_TRUE;
+                AlDmacAhb_Dev_IoCtl(Channel, AL_DMACAHB_IOCTL_SET_RELOAD_LAST_TRANS, &IsLastTransSet);
+            }
         }
+
     }
 
     AL_DMACAHB_EventStruct Event = {
@@ -770,62 +773,61 @@ AL_S32 AlDmacAhb_Dev_IoCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_IoCtlCmdEnum
 
     switch (Cmd)
     {
-    case AL_DMACAHB_IOCTL_FILL_LLI_WITH_CTL:{
+    case AL_DMACAHB_IOCTL_FILL_LLI_WITH_CTL: {
         AL_DMACAHB_LliStruct *Lli = (AL_DMACAHB_LliStruct *)Data;
         AlDmacAhb_Dev_FillLliWithCtl(Channel, Lli);
     }
-        break;
-    case AL_DMACAHB_IOCTL_GET_STATE:{
+    case AL_DMACAHB_IOCTL_GET_STATE: {
         AL_DMACAHB_ChStateEnum *GetState = (AL_DMACAHB_ChStateEnum *)Data;
         *GetState = Channel->State;
         break;
     }
-    case AL_DMACAHB_IOCTL_SET_STATE:{
+    case AL_DMACAHB_IOCTL_SET_STATE: {
         AL_DMACAHB_ChStateEnum SetState = *(AL_DMACAHB_ChStateEnum *)Data;
         AlDmacAhb_Dev_SetState(Channel, SetState);
         break;
     }
-    case AL_DMACAHB_IOCTL_CLR_STATE:{
+    case AL_DMACAHB_IOCTL_CLR_STATE: {
         AL_DMACAHB_ChStateEnum ClrState = *(AL_DMACAHB_ChStateEnum *)Data;
         AlDmacAhb_Dev_ClrState(Channel, ClrState);
         break;
     }
-    case AL_DMACAHB_IOCTL_READ_CTL_LO_REG:{
+    case AL_DMACAHB_IOCTL_READ_CTL_LO_REG: {
         AL_DMACAHB_CtlLoUnion *ReadCtlLo = (AL_DMACAHB_CtlLoUnion *)Data;
         ReadCtlLo->Reg = AlDmacAhb_ll_ReadCtlLo(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset);
         break;
     }
-    case AL_DMACAHB_IOCTL_READ_CTL_HI_REG:{
+    case AL_DMACAHB_IOCTL_READ_CTL_HI_REG: {
         AL_DMACAHB_CtlHiUnion *ReadCtlHi = (AL_DMACAHB_CtlHiUnion *)Data;
         ReadCtlHi->Reg = AlDmacAhb_ll_ReadCtlHi(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset);
         break;
     }
-    case AL_DMACAHB_IOCTL_READ_CFG_LO_REG:{
+    case AL_DMACAHB_IOCTL_READ_CFG_LO_REG: {
         AL_DMACAHB_CfgLoUnion *ReadCfgLo = (AL_DMACAHB_CfgLoUnion *)Data;
         ReadCfgLo->Reg = AlDmacAhb_ll_ReadCfgLo(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset);
         break;
     }
-    case AL_DMACAHB_IOCTL_READ_CFG_HI_REG:{
+    case AL_DMACAHB_IOCTL_READ_CFG_HI_REG: {
         AL_DMACAHB_CfgHiUnion *ReadCfgHi = (AL_DMACAHB_CfgHiUnion *)Data;
         ReadCfgHi->Reg = AlDmacAhb_ll_ReadCfgHi(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset);
         break;
     }
-    case AL_DMACAHB_IOCTL_WRITE_CTL_LO_REG:{
+    case AL_DMACAHB_IOCTL_WRITE_CTL_LO_REG: {
         AL_DMACAHB_CtlLoUnion *WriteCtlLo = (AL_DMACAHB_CtlLoUnion *)Data;
         AlDmacAhb_ll_WriteCtlLo(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset, WriteCtlLo->Reg);
         break;
     }
-    case AL_DMACAHB_IOCTL_WRITE_CTL_HI_REG:{
+    case AL_DMACAHB_IOCTL_WRITE_CTL_HI_REG: {
         AL_DMACAHB_CtlHiUnion *WriteCtlHi = (AL_DMACAHB_CtlHiUnion *)Data;
         AlDmacAhb_ll_WriteCtlHi(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset, WriteCtlHi->Reg);
         break;
     }
-    case AL_DMACAHB_IOCTL_WRITE_CFG_LO_REG:{
+    case AL_DMACAHB_IOCTL_WRITE_CFG_LO_REG: {
         AL_DMACAHB_CfgLoUnion *WriteCfgLo = (AL_DMACAHB_CfgLoUnion *)Data;
         AlDmacAhb_ll_WriteCfgLo(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset, WriteCfgLo->Reg);
         break;
     }
-    case AL_DMACAHB_IOCTL_WRITE_CFG_HI_REG:{
+    case AL_DMACAHB_IOCTL_WRITE_CFG_HI_REG: {
         AL_DMACAHB_CfgHiUnion *WriteCfgHi = (AL_DMACAHB_CfgHiUnion *)Data;
         AlDmacAhb_ll_WriteCfgHi(Channel->Dmac->BaseAddr, Channel->Param.ChBaseOffset, WriteCfgHi->Reg);
         break;

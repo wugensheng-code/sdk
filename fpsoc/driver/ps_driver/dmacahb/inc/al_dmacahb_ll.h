@@ -14,7 +14,7 @@ typedef enum
     AL_DMACAHB_TT_FC_MEM2MEM, /* Transfer type is Memory to Memory and Flow Controller is DW_ahb_dmac */
     AL_DMACAHB_TT_FC_MEM2PER, /* Transfer type is Memory to Peripheral and Flow Controller is DW_ahb_dmac */
     AL_DMACAHB_TT_FC_PER2MEM, /* Transfer type is Peripheral to Memory and Flow Controller is DW_ahb_dmac */
-    AL_DMACAHB_TT_FC_PER2PER  /* Transfer type is Peripheral to Peripheral and Flow Controller is DW_ahb_dmac */
+    AL_DMACAHB_TT_FC_PER2PER  /* Not support */
 } AL_DMACAHB_TtFcEnum;
 
 typedef enum
@@ -566,7 +566,7 @@ static inline AL_VOID AlDmacAhb_ll_SetSgi(AL_REG BaseAddr, AL_REG ChannelOffset,
 static inline AL_U32 AlDmacAhb_ll_GetSgc(AL_REG BaseAddr, AL_REG ChannelOffset)
 {
     return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_SGR_OFFSET + ChannelOffset, DMAC_AHB_SGR_SGC_SHIFT,
-                    DMAC_AHB_SGR_SGC_SHIFT);
+                    DMAC_AHB_SGR_SGC_SIZE);
 }
 
 static inline AL_VOID AlDmacAhb_ll_SetSgc(AL_REG BaseAddr, AL_REG ChannelOffset, AL_U32 Value)
@@ -889,7 +889,7 @@ static inline AL_U32 AlDmacAhb_ll_GetSrcReq(AL_REG BaseAddr)
 
 static inline AL_VOID AlDmacAhb_ll_SetSrcReqAct(AL_REG BaseAddr, AL_U32 ChannelMask, AL_BOOL IsEnable)
 {
-    AL_REG32_WRITE(BaseAddr + DMAC_AHB_REQSRCREG_OFFSET, 
+    AL_REG32_WRITE(BaseAddr + DMAC_AHB_REQSRCREG_OFFSET,
                    ((IsEnable ? ChannelMask : 0) | (ChannelMask << DMAC_AHB_REQSRCREG_SRC_REQ_WE_SHIFT)));
 }
 
@@ -902,7 +902,7 @@ static inline AL_U32 AlDmacAhb_ll_GetDstReq(AL_REG BaseAddr)
 
 static inline AL_VOID AlDmacAhb_ll_SetDstReqAct(AL_REG BaseAddr, AL_U32 ChannelMask, AL_BOOL IsEnable)
 {
-    AL_REG32_WRITE(BaseAddr + DMAC_AHB_REQDSTREG_OFFSET, 
+    AL_REG32_WRITE(BaseAddr + DMAC_AHB_REQDSTREG_OFFSET,
                    ((IsEnable ? ChannelMask : 0) | (ChannelMask << DMAC_AHB_REQDSTREG_DST_REQ_WE_SHIFT)));
 }
 
@@ -915,7 +915,7 @@ static inline AL_U32 AlDmacAhb_ll_GetSrcSglReq(AL_REG BaseAddr)
 
 static inline AL_VOID AlDmacAhb_ll_SetSrcSglReqAct(AL_REG BaseAddr, AL_U32 ChannelMask, AL_BOOL IsEnable)
 {
-    AL_REG32_WRITE(BaseAddr + DMAC_AHB_SGLRQSRCREG_OFFSET, 
+    AL_REG32_WRITE(BaseAddr + DMAC_AHB_SGLRQSRCREG_OFFSET,
                    ((IsEnable ? ChannelMask : 0) | (ChannelMask << DMAC_AHB_SGLRQSRCREG_SRC_SGLREQ_WE_SHIFT)));
 }
 
@@ -928,7 +928,7 @@ static inline AL_U32 AlDmacAhb_ll_GetDstSglReq(AL_REG BaseAddr)
 
 static inline AL_VOID AlDmacAhb_ll_SetDstSglReqAct(AL_REG BaseAddr, AL_U32 ChannelMask, AL_BOOL IsEnable)
 {
-    AL_REG32_WRITE(BaseAddr + DMAC_AHB_SGLRQDSTREG_OFFSET, 
+    AL_REG32_WRITE(BaseAddr + DMAC_AHB_SGLRQDSTREG_OFFSET,
                 ((IsEnable ? ChannelMask : 0) | (ChannelMask << DMAC_AHB_SGLRQDSTREG_DST_SGLREQ_WE_SHIFT)));
 }
 
@@ -941,7 +941,7 @@ static inline AL_U32 AlDmacAhb_ll_GetLstSrc(AL_REG BaseAddr)
 
 static inline AL_VOID AlDmacAhb_ll_SetLstSrcAct(AL_REG BaseAddr, AL_U32 ChannelMask, AL_BOOL IsEnable)
 {
-    AL_REG32_WRITE(BaseAddr + DMAC_AHB_LSTSRCREG_OFFSET, 
+    AL_REG32_WRITE(BaseAddr + DMAC_AHB_LSTSRCREG_OFFSET,
                 ((IsEnable ? ChannelMask : 0) | (ChannelMask << DMAC_AHB_LSTSRCREG_LSTSRC_WE_SHIFT)));
 }
 
@@ -954,7 +954,7 @@ static inline AL_U32 AlDmacAhb_ll_GetLstDstReq(AL_REG BaseAddr)
 
 static inline AL_VOID AlDmacAhb_ll_SetLstDstReqAct(AL_REG BaseAddr, AL_U32 ChannelMask, AL_BOOL IsEnable)
 {
-    AL_REG32_WRITE(BaseAddr + DMAC_AHB_LSTDSTREG_OFFSET, 
+    AL_REG32_WRITE(BaseAddr + DMAC_AHB_LSTDSTREG_OFFSET,
                 ((IsEnable ? ChannelMask : 0) | (ChannelMask << DMAC_AHB_LSTDSTREG_LSTDST_WE_SHIFT)));
 }
 
