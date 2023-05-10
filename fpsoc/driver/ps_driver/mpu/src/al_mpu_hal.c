@@ -12,13 +12,7 @@ AL_MPU_DevStruct AL_MPU_DevInstance[AL_MPU_NUM_INSTANCE];
 
 static AL_VOID AlMpu_Hal_MpuRegisterIntr()
 {
-    AL_INTR_HandlerStruct IntrHandle = {
-        .Func  = AlMpu_Dev_MpuIntrHandler,
-        .Param = AL_MPU_DevInstance,
-    };
-
-    AL_DEFAULT_ATTR(Attr);
-    AlIntr_RegHandler(SOC_INT130_IRQn, &Attr, &IntrHandle);
+    AlIntr_RegHandler(SOC_INT130_IRQn, AL_NULL, AlMpu_Dev_MpuIntrHandler, AL_MPU_DevInstance);
 
     __enable_irq();
 }

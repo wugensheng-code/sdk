@@ -35,7 +35,7 @@ typedef enum {
     DOUBLE_EDGE_TRIGGER     = 0x4,
 } AL_INTR_TriggerMode;
 
-typedef void (*AL_INTR_Func)(AL_VOID *param);
+typedef AL_VOID (*AL_INTR_Func)(AL_VOID *Param);
 
 typedef struct {
 #ifdef __riscv
@@ -73,7 +73,7 @@ AL_VOID AlIntr_ControllerInit(void);
 
 AL_S32 AlIntr_SetInterrupt(AL_U32 IntrId, AL_FUNCTION state);
 
-AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_HandlerStruct *Handler);
+AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Func *Func, AL_VOID *Paran);
 
 #ifdef __cplusplus
 }

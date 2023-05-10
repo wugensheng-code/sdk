@@ -309,7 +309,7 @@ static AL_VOID AlUart_Dev_ErrorHandler(AL_UART_DevStruct *Uart, AL_UART_Interrup
 
 #define UART_IS_CHARACTER_TIMEOUT(Status)        (Status == UART_CHARACTER_TIMEOUT)
 
-AL_VOID AlUart_Dev_IntrHandler(void *Instance)
+AL_VOID AlUart_Dev_IntrHandler(AL_VOID *Instance)
 {
     AL_UART_DevStruct *Uart = (AL_UART_DevStruct *)Instance;
     AL_UART_InterruptEnum IntrStatus = AlUart_ll_GetIntrStatus(Uart->BaseAddr);

@@ -5,15 +5,19 @@
 #include "al_intr.h"
 #include "al_reg_io.h"
 
-AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_HandlerStruct *Handler)
+AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Func *Func, AL_VOID *Param)
 {
 	/*
 	 * RPU SPI interrupt IRQn to Apu SPI IRQn mapping from SPI_START_ID_SHARE_BETWEEN_APU_RPU:
 	 * APU_SPI_IDX = (RPU_SPI_IDX + SPI_OFFSET_APU_TO_RPU)
 	*/
     #define SPI_ID_OFFSET_APU_TO_RPU		(13)
+    AL_INTR_AttrStrct *Attr;
+    AL_DEFAULT_ATTR(DefAttr);
 
-    if (IntrAttr->TrigMode == 0) {
+    Attr = (IntrAttr != AL_NULL) ? IntrAttr : &DefAttr;
+
+    if (Attr->TrigMode == 0) {
         uint32_t *addr  = GICD_ICFGR + ((IntrId + SPI_ID_OFFSET_APU_TO_RPU) / 16) * 4;
         uint32_t mask   = *(uint32_t *)addr;
         uint32_t offset = (((IntrId + SPI_ID_OFFSET_APU_TO_RPU) % 16) << 1);
@@ -23,10 +27,10 @@ AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Han
     }
 
 #ifndef SWITCH_TO_EL1_EL0_FROM_EL3
-    request_fiq(IntrId + SPI_ID_OFFSET_APU_TO_RPU, Handler->Func, Handler->Param);
+    request_fiq(IntrId + SPI_ID_OFFSET_APU_TO_RPU, Func, Param);
     printf("currentel is el3, request fiq!\r\n");
 #else
-    request_irq(IntrId + SPI_ID_OFFSET_APU_TO_RPU, Handler->Func, Handler->Param);
+    request_irq(IntrId + SPI_ID_OFFSET_APU_TO_RPU, Func, Param);
     printf("currentel is not el3, request irq!\r\n");
 #endif
 

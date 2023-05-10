@@ -17,9 +17,9 @@ INCDIRS += $(FPSOC_ROOT)/inc \
            $(FPSOC_ROOT)/driver/ps_driver/lagecy/sd_emmc
 
 
-INCDIRS += $(FPSOC_ROOT)/arch/inc/nmsis/core/inc \
-           $(FPSOC_ROOT)/arch/inc/nmsis/dsp/inc \
-           $(FPSOC_ROOT)/arch/inc/nmsis/nn/inc
+INCDIRS += $(FPSOC_ROOT)/arch/riscv/nmsis/core/inc \
+           $(FPSOC_ROOT)/arch/riscv/nmsis/dsp/inc \
+           $(FPSOC_ROOT)/arch/riscv/nmsis/nn/inc
 
 CXX_INCDIRS +=
 ASM_INCDIRS +=

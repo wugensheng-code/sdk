@@ -4,7 +4,6 @@
 #include "al_gpio_dev.h"
 #include "al_gpio_hal.h"
 #include "al_errno.h"
-#include "gic_v3.h"
 #include "nuclei_sdk_soc.h"
 #include "al_intr.h"
 
@@ -100,15 +99,7 @@ AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct *Handle, AL_U32 DevId)
     }
 
     /* 3. register intr */
-    AL_INTR_HandlerStruct IntrHandler = {
-            .Func  = AlGpio_Dev_IntrHandler,
-            .Param = (AL_VOID *)(Handle->Dev)
-        };
-    AL_DEFAULT_ATTR(Attr);
-    //callback.handler    = AlGpio_Dev_IntrHandler;
-    //callback.ref        = Handle->Dev;
-    //ECLIC_Register_IRQ(GPIO0_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, &callback);
-    (AL_VOID)AlIntr_RegHandler(GPIO0_IRQn, &Attr, &IntrHandler);
+    (AL_VOID)AlIntr_RegHandler(GPIO0_IRQn, NULL, AlGpio_Dev_IntrHandler, (AL_VOID *)(Handle->Dev));
     __enable_irq();
 
     printf("config BaseAddress is %x\r\n", Handle->Dev->HwConfig.BaseAddress);

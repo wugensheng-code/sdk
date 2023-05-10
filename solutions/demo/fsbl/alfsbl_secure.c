@@ -106,12 +106,7 @@ uint32_t SecureIrqInit(void)
 #endif
 	};
 
-	AL_INTR_HandlerStruct Handle = {
-		.Func = RpuCsuAckHandler,
-		.Param = NULL
-	};
-
-	ret = AlIntr_RegHandler(RPU2CSU_ACK_IRQN, &Attr, &Handle);
+	ret = AlIntr_RegHandler(RPU2CSU_ACK_IRQN, &Attr, RpuCsuAckHandler, NULL);
 	__enable_irq();
 	return ret;
 }

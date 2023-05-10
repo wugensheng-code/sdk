@@ -197,12 +197,20 @@ int32_t ECLIC_Register_IRQ(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_Type trig_
 }
 /** @} */ /* End of Doxygen Group NMSIS_Core_ExceptionAndNMI */
 
-AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_HandlerStruct *Handler)
+AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Func *Func, AL_VOID *Paran)
 {
-	AL_U8              TrigLevel;
-    ECLIC_TRIGGER_Type TrigMode;
+	AL_U8                 TrigLevel;
+    ECLIC_TRIGGER_Type    TrigMode;
+    AL_INTR_HandlerStruct Handler = {
+        .Func       = Func,
+        .Param      = Paran
+    };
+    AL_INTR_AttrStrct *Attr;
+    AL_DEFAULT_ATTR(DefAttr);
 
-    switch (IntrAttr->TrigMode) {
+    Attr = (IntrAttr != AL_NULL) ? IntrAttr : &DefAttr;
+
+    switch (Attr->TrigMode) {
     case LEVEL_HIGH_TRIGGER:
         TrigMode  = ECLIC_LEVEL_TRIGGER;
         TrigLevel = 1;
@@ -225,7 +233,7 @@ AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Han
         break;
     }
 
-	return ECLIC_Register_IRQ(IntrId, IntrAttr->VectorMode, TrigMode, TrigLevel, IntrAttr->Priority, Handler);
+	return ECLIC_Register_IRQ(IntrId, Attr->VectorMode, TrigMode, TrigLevel, Attr->Priority, &Handler);
 }
 
 AL_S32 AlIntr_SetInterrupt(AL_U32 IntrId, AL_FUNCTION State)
