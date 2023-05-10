@@ -6,6 +6,7 @@
 #include "al_errno.h"
 #include "gic_v3.h"
 #include "nuclei_sdk_soc.h"
+#include "al_intr.h"
 
 /************************** Variable Definitions *****************************/
 static AL_GPIO_DevStruct AL_GPIO_DevInstance[AL_GPIO_NUM_INSTANCE];
@@ -80,7 +81,6 @@ AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct *Handle, AL_U32 DevId)
 {
     AL_S32 ret = AL_OK;
     AL_GPIO_HwConfigStruct *HwConfig;
-    interrupt_table callback;
     AL_GPIO_DevStruct *Dev;
 
     if (Handle == AL_NULL) {
@@ -100,12 +100,16 @@ AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct *Handle, AL_U32 DevId)
     }
 
     /* 3. register intr */
-    callback.handler    = AlGpio_Dev_IntrHandler;
-    callback.ref        = Handle->Dev;
-    ECLIC_Register_IRQ(GPIO0_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, &callback);
+    AL_INTR_HandlerStruct IntrHandler = {
+            .Func  = AlGpio_Dev_IntrHandler,
+            .Param = (AL_VOID *)(Handle->Dev)
+        };
+    AL_DEFAULT_ATTR(Attr);
+    //callback.handler    = AlGpio_Dev_IntrHandler;
+    //callback.ref        = Handle->Dev;
+    //ECLIC_Register_IRQ(GPIO0_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, &callback);
+    (AL_VOID)AlIntr_RegHandler(GPIO0_IRQn, &Attr, &IntrHandler);
     __enable_irq();
-    //if(callback.handler != AL_NULL) printf("handler\r\n");
-    //if(callback.ref != AL_NULL) printf("ref\r\n");
 
     printf("config BaseAddress is %x\r\n", Handle->Dev->HwConfig.BaseAddress);
     return ret;
