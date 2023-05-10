@@ -2,9 +2,9 @@
 #include "al_can_hal.h"
 #include "al_can_dev.h"
 #include "al_can_ll.h"
+#include "al_dmacahb_hal.h"
+#include "al_dmacahb_dev.h"
 #include "al_errno.h"
-/* TODO: Remove after irq driver done */
-#include "nuclei_sdk_soc.h"
 #include "al_intr.h"
 
 /************************** Constant Definitions *****************************/
@@ -142,16 +142,19 @@ AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct *Handle, AL_CAN_InitStruct *InitConfig, A
 
     /* 1. look up hardware config */
     HwConfig = AlCan_Dev_LookupConfig(DevId);
-    if (HwConfig != AL_NULL) {
-        Handle->Dev = &AL_CAN_DevInstance[DevId];
+    if (HwConfig == AL_NULL) {
+        AL_CAN_HAL_UNLOCK(Handle);
+        return AL_CAN_ERR_NULL_PTR;
     }
+    Handle->Dev = &AL_CAN_DevInstance[DevId];
 
     /* 2. Init IP */
     Ret = AlCan_Dev_Init(Handle->Dev, HwConfig, InitConfig);
     if (Ret != AL_OK) {
         /* TODO: Err return */
+        AL_CAN_HAL_UNLOCK(Handle);
+        return Ret;
     }
-
 
     /* 3. register callback */
     if (CallBack == AL_NULL) {
@@ -162,7 +165,12 @@ AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct *Handle, AL_CAN_InitStruct *InitConfig, A
         EventCallBack.Ref   = CallBack->Ref;
     }
 
-    AlCan_Dev_RegisterEventCallBack(Handle->Dev, &EventCallBack);
+    Ret = AlCan_Dev_RegisterEventCallBack(Handle->Dev, &EventCallBack);
+    if (Ret != AL_OK) {
+        /* TODO: Err return */
+        AL_CAN_HAL_UNLOCK(Handle);
+        return Ret;
+    }
 
     /* 4. register intr */
     /* replace intr handler reference function with al_intr.h api */

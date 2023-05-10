@@ -14,7 +14,7 @@ extern "C" {
 
 /***************** Macros (Inline Functions) Definitions ********************/
 
-#define AL_CAN_NUM_INSTANCE     (1)
+#define AL_CAN_NUM_INSTANCE     (2)
 
 #define CAN_TOP_NS_CFG_CTRL     0xF8800164ULL
 #define CAN_CAN0_BASE_ADDR      0xF8408000ULL

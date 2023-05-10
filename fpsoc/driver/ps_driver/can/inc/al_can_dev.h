@@ -73,9 +73,9 @@ typedef enum
  */
 typedef enum
 {
-    AL_CAN_RUN_NOT_SET      = (0x0),
-    AL_CAN_RUN_INTR         = BIT_32(1),
-    AL_CAN_RUN_INTR_DMA     = BIT_32(2)
+    AL_CAN_RUN_NOT_SET,
+    AL_CAN_RUN_INTR,
+    AL_CAN_RUN_INTR_DMA
 } AL_CAN_RunModeEnum;
 
 /**
@@ -83,9 +83,9 @@ typedef enum
  */
 typedef enum
 {
-    AL_CAN_TYPE_NOT_SET = (0x0),
-    AL_CAN_TYPE_2_0B    = BIT_32(1),
-    AL_CAN_TYPE_FD      = BIT_32(2)
+    AL_CAN_TYPE_NOT_SET,
+    AL_CAN_TYPE_2_0B,
+    AL_CAN_TYPE_FD
 } AL_CAN_TypeEnum;
 
 /**
@@ -146,9 +146,8 @@ typedef enum
  */
 typedef enum
 {
-    AL_CAN_BIT_2_0B_S = BIT_32(0),
-    AL_CAN_BIT_FD_S   = BIT_32(1),
-    AL_CAN_BIT_FD_F   = BIT_32(2)
+    AL_CAN_BIT_S,
+    AL_CAN_BIT_F
 } AL_CAN_BitRateTypeEnum;
 
 /**
@@ -156,12 +155,12 @@ typedef enum
  */
 typedef enum
 {
-    AL_CAN_MODE_NOT_SET     = (0x0),
-    AL_CAN_MODE_NORMAL      = BIT_32(1),
-    AL_CAN_MODE_IN_LOOPBACK = BIT_32(2),
-    AL_CAN_MODE_EX_LOOPBACK = BIT_32(3),
-    AL_CAN_MODE_STANDBY     = BIT_32(4),
-    AL_CAN_MODE_LISTENONLY  = BIT_32(5)
+    AL_CAN_MODE_NOT_SET,
+    AL_CAN_MODE_NORMAL,
+    AL_CAN_MODE_IN_LOOPBACK,
+    AL_CAN_MODE_EX_LOOPBACK,
+    AL_CAN_MODE_STANDBY,
+    AL_CAN_MODE_LISTENONLY
 } AL_CAN_OpsModeEnum;
 
 /**
@@ -287,7 +286,7 @@ typedef enum {
     AL_CAN_STATE_READY              = BIT_32(1),
     AL_CAN_STATE_RESET              = BIT_32(2),
     AL_CAN_STATE_SEND_BUSY          = BIT_32(3),
-    AL_CAN_STATE_RECV_BUSY          = BIT_32(4),
+    AL_CAN_STATE_RECV_BUSY          = BIT_32(4),     /* to be removed, after align with yonbo */
     AL_CAN_STATE_RECV_EMPTY         = BIT_32(5),
     AL_CAN_STATE_RECV_ALMOST_FULL   = BIT_32(6),
     AL_CAN_STATE_RECV_FULL          = BIT_32(7),
@@ -440,6 +439,8 @@ AL_S32 AlCan_Dev_UnRegisterEventCallBack(AL_CAN_DevStruct *Dev);
 AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame);
 
 AL_S32 AlCan_Dev_RecvFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame);
+
+AL_S32 AlCan_Dev_DecodeFrame(AL_U32 *BuffAddr, AL_CAN_FrameStruct *Frame);
 
 AL_S32 AlCan_Dev_GetDecodeError(AL_CAN_DevStruct *Dev);
 

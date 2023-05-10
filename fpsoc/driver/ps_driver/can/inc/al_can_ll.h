@@ -131,23 +131,23 @@ static inline AL_VOID AlCan_ll_SetFdEnabled(AL_REG BaseAddr, AL_BOOL IsEnabled)
 //                             CAN_TOP_NS_CFG_CTRL_CAN0_DMA_ENABLE_SHIFT : CAN_TOP_NS_CFG_CTRL_CAN1_DMA_ENABLE_SHIFT));
 // }
 
-// static inline AL_VOID AlCan_ll_SetDmaEnabled(AL_REG BaseAddr, AL_BOOL IsEnabled)
-// {
-//     AL_REG32_SET_BIT(CAN_TOP_NS_CFG_CTRL, ((BaseAddr == CAN_CAN0_BASE_ADDR) ? CAN_TOP_NS_CFG_CTRL_CAN0_DMA_ENABLE_SHIFT :
-//             CAN_TOP_NS_CFG_CTRL_CAN1_DMA_ENABLE_SHIFT), IsEnabled);
-// }
+static inline AL_VOID AlCan_ll_SetDmaEnabled(AL_REG BaseAddr, AL_BOOL IsEnabled)
+{
+    AL_REG32_SET_BIT(CAN_TOP_NS_CFG_CTRL, ((BaseAddr == CAN_CAN0_BASE_ADDR) ? CAN_TOP_NS_CFG_CTRL_CAN0_DMA_ENABLE_SHIFT :
+            CAN_TOP_NS_CFG_CTRL_CAN1_DMA_ENABLE_SHIFT), IsEnabled);
+}
 
-// static inline AL_BOOL AlCan_ll_IsBusOff(AL_REG BaseAddr)
-// {
-//     return (AL_BOOL)AL_REG32_GET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET,
-//                             CAN_RCTRL_TCTRL_TCMD_CFG_STAT_BUSOFF_SHIFT);
-// }
+static inline AL_BOOL AlCan_ll_IsBusOff(AL_REG BaseAddr)
+{
+    return (AL_BOOL)AL_REG32_GET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET,
+                            CAN_RCTRL_TCTRL_TCMD_CFG_STAT_BUSOFF_SHIFT);
+}
 
-// static inline AL_VOID AlCan_ll_SetBusOff(AL_REG BaseAddr, AL_BOOL IsEnabled)
-// {
-//     AL_REG32_SET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET, CAN_RCTRL_TCTRL_TCMD_CFG_STAT_BUSOFF_SHIFT,
-//             IsEnabled);
-// }
+static inline AL_VOID AlCan_ll_SetBusOff(AL_REG BaseAddr, AL_BOOL IsEnabled)
+{
+    AL_REG32_SET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET, CAN_RCTRL_TCTRL_TCMD_CFG_STAT_BUSOFF_SHIFT,
+            IsEnabled);
+}
 
 // /* Transmission Secondary Single Shot(TSSS) mode for STB */
 // static inline AL_BOOL AlCan_ll_IsTsssEnabled(AL_REG BaseAddr)
@@ -885,7 +885,7 @@ static inline AL_U32 AlCan_ll_GetKoer(AL_REG BaseAddr)
 static inline AL_VOID AlCan_ll_SetSspoff(AL_REG BaseAddr, AL_U32 Value)
 {
     AL_REG32_SET_BITS(BaseAddr + CAN_TECNT_REVNT_TDC_EALCAP_OFFSET, CAN_TECNT_REVNT_TDC_EALCAP_SSPOFF_SHIFT,
-             CAN_TECNT_REVNT_TDC_EALCAP_SSPOFF_SIZE, (Value - 2));
+             CAN_TECNT_REVNT_TDC_EALCAP_SSPOFF_SIZE, Value);    /* Equal to tseg_1, page80 */
 }
 
 // /* Transmitter Delay Compensation ENable(TDCEN) */

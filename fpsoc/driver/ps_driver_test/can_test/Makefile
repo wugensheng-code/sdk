@@ -24,6 +24,8 @@ ifeq ($(SOC), demoapu)
 	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_can_fd_listen_only
 	make clean
 	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_can_fd_stb_fifo
+	make clean
+	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_can_fd_dma
 else
 endif
 
@@ -31,6 +33,7 @@ endif
 clean:
 	make clean -f Makefile_clean SOC=demoapu
 	make clean -f Makefile_clean SOC=demosoc
+	rm -rf *.o
 
 cleanelf:
 	rm -rf *.o *.d *.elf *.map *.dasm *.dump *.hex *.verilog

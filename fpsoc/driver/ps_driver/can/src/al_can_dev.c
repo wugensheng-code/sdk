@@ -32,6 +32,7 @@ static AL_CAN_BitRateStruct AL_CAN_DefBitRateArray[] = {
 
 /* Data length in word catch up with DLC */
 static AL_U8 AL_CAN_DataLenArray[] = {0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 4, 5, 6, 8, 12, 16};
+static AL_U8 AL_CAN_DataLenInByteArray[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20, 24, 32, 48, 64};
 
 /**************************** Type Definitions *******************************/
 
@@ -74,30 +75,33 @@ static AL_U32 AlCan_Dev_Dlc2Len(AL_CAN_DataLenEnum Dlc)
 }
 
 /**
+ * This function switch DLC to data size in byte
+ * @param   Dlc is Enum to DLC
+ * @return  data size in word
+ * @note    CAN domian only support word read/write
+*/
+static AL_U32 AlCan_Dev_Dlc2LenInByte(AL_CAN_DataLenEnum Dlc)
+{
+    return AL_CAN_DataLenInByteArray[Dlc];
+}
+
+/**
  * This function set CAN protocol type
  * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   Type is protocol of CAN with type AL_CAN_TypeEnum
  * @return
  *          - AL_OK for successfully set
  * @note
 */
-static AL_S32 AlCan_Dev_SetCanType(AL_CAN_DevStruct *Dev, AL_CAN_TypeEnum Type)
+static AL_S32 AlCan_Dev_SetCanType(AL_CAN_DevStruct *Dev)
 {
-    if (Dev->Config.Type == Type) {
-        return AL_OK;
-    }
-
-    switch (Type) {
+    switch (Dev->Config.Type) {
     case AL_CAN_TYPE_2_0B:
         AlCan_ll_SetFdEnabled(Dev->BaseAddr, AL_FALSE);
-        Dev->Config.Type = AL_CAN_TYPE_2_0B;
         break;
     case AL_CAN_TYPE_FD:
         AlCan_ll_SetFdEnabled(Dev->BaseAddr, AL_TRUE);
-        Dev->Config.Type = AL_CAN_TYPE_FD;
         break;
     default:
-        Dev->Config.Type = AL_CAN_TYPE_NOT_SET;
         break;
     }
 
@@ -107,40 +111,30 @@ static AL_S32 AlCan_Dev_SetCanType(AL_CAN_DevStruct *Dev, AL_CAN_TypeEnum Type)
 /**
  * This function set CAN running mode
  * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   OpsMode is running mode with type AL_CAN_OpsModeEnum
  * @return
  *          - AL_OK for successfully set
  * @note
 */
-static AL_S32 AlCan_Dev_SetOpsMode(AL_CAN_DevStruct *Dev, AL_CAN_OpsModeEnum OpsMode)
+static AL_S32 AlCan_Dev_SetOpsMode(AL_CAN_DevStruct *Dev)
 {
-    if (Dev->Config.OpsMode == OpsMode) {
-        return AL_OK;
-    }
-
-    switch (OpsMode) {
+    switch (Dev->Config.OpsMode) {
     case AL_CAN_MODE_NORMAL:
         // AlCan_ll_SetCanCtrlReset(Dev->BaseAddr, AL_TRUE);
         // AlCan_ll_SetCanCtrlReset(Dev->BaseAddr, AL_FALSE);
         // AlCan_Dev_WaitResetRelease(Dev);
         AlCan_ll_SetLbmi(Dev->BaseAddr, AL_FALSE);
         AlCan_ll_SetLbme(Dev->BaseAddr, AL_FALSE);
-        Dev->Config.OpsMode |= AL_CAN_MODE_NORMAL;
         break;
     case AL_CAN_MODE_IN_LOOPBACK:
         AlCan_ll_SetLbmi(Dev->BaseAddr, AL_TRUE);
-        Dev->Config.OpsMode |= AL_CAN_MODE_IN_LOOPBACK;
         break;
     case AL_CAN_MODE_EX_LOOPBACK:
         AlCan_ll_SetLbme(Dev->BaseAddr, AL_TRUE);
-        Dev->Config.OpsMode |= AL_CAN_MODE_EX_LOOPBACK;
         break;
     case AL_CAN_MODE_LISTENONLY:
         AlCan_ll_SetLom(Dev->BaseAddr, AL_TRUE);
-        Dev->Config.OpsMode |= AL_CAN_MODE_LISTENONLY;
         break;
     default:
-        Dev->Config.OpsMode |= AL_CAN_MODE_NOT_SET;
         break;
     }
 
@@ -158,14 +152,13 @@ AL_VOID AlCan_Dev_SetBitRate(AL_CAN_DevStruct *Dev, AL_CAN_BitRateStruct *BitRat
 {
     switch (BitRate->Type)
     {
-    case AL_CAN_BIT_2_0B_S:
-    case AL_CAN_BIT_FD_S:
+    case AL_CAN_BIT_S:
         AlCan_ll_SetSseg1(Dev->BaseAddr, BitRate->TimeSeg1);
         AlCan_ll_SetSseg2(Dev->BaseAddr, BitRate->TimeSeg2);
         AlCan_ll_SetSsjw(Dev->BaseAddr, BitRate->SyncJumpWidth);
         AlCan_ll_SetSpresc(Dev->BaseAddr, BitRate->Prescaler);
         break;
-    case AL_CAN_BIT_FD_F:
+    case AL_CAN_BIT_F:
         AlCan_ll_SetFseg1(Dev->BaseAddr, BitRate->TimeSeg1);
         AlCan_ll_SetFseg2(Dev->BaseAddr, BitRate->TimeSeg2);
         AlCan_ll_SetFsjw(Dev->BaseAddr, BitRate->SyncJumpWidth);
@@ -187,14 +180,13 @@ AL_VOID AlCan_Dev_GetBitRate(AL_CAN_DevStruct *Dev, AL_CAN_BitRateStruct *BitRat
 {
     switch (BitRate->Type)
     {
-    case AL_CAN_BIT_2_0B_S:
-    case AL_CAN_BIT_FD_S:
+    case AL_CAN_BIT_S:
         BitRate->TimeSeg1       = (AL_U8)AlCan_ll_GetSseg1(Dev->BaseAddr);
         BitRate->TimeSeg2       = (AL_U8)AlCan_ll_GetSseg2(Dev->BaseAddr);
         BitRate->SyncJumpWidth  = (AL_U8)AlCan_ll_GetSsjw(Dev->BaseAddr);
         BitRate->Prescaler      = (AL_U8)AlCan_ll_GetSpresc(Dev->BaseAddr);
         break;
-    case AL_CAN_BIT_FD_F:
+    case AL_CAN_BIT_F:
         BitRate->TimeSeg1       = (AL_U8)AlCan_ll_GetFseg1(Dev->BaseAddr);
         BitRate->TimeSeg2       = (AL_U8)AlCan_ll_GetFseg2(Dev->BaseAddr);
         BitRate->SyncJumpWidth  = (AL_U8)AlCan_ll_GetFsjw(Dev->BaseAddr);
@@ -218,39 +210,32 @@ AL_VOID AlCan_Dev_SetDefBitRate(AL_CAN_DevStruct *Dev, AL_CAN_DefBitRateStruct *
     BitRate.Type = DefBitRate->Type;
     AlCan_Dev_SetBitRate(Dev, &BitRate);
 
-    if (DefBitRate->Type == AL_CAN_BIT_FD_F) {
+    if (BitRate.Type == AL_CAN_BIT_F) {
         AlCan_ll_SetSspoff(Dev->BaseAddr, BitRate.TimeSeg1);
         AlCan_ll_SetTdcen(Dev->BaseAddr, AL_TRUE);
-        Dev->Config.FastBitRate = DefBitRate->Index;
-    } else {
-        Dev->Config.SlowBitRate = DefBitRate->Index;
     }
 }
 
 /**
  * This function set CAN transmit mode
  * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   TransMode is transmit mode with AL_CAN_TransModeEnum
  * @return
  * @note
 */
-static AL_VOID AlCan_Dev_SetTransMode(AL_CAN_DevStruct *Dev, AL_CAN_TransModeEnum TransMode)
+static AL_VOID AlCan_Dev_SetTransMode(AL_CAN_DevStruct *Dev)
 {
-    switch (TransMode)
+    switch (Dev->Config.TransMode)
     {
     case AL_CAN_TRANS_PTB:
         AlCan_ll_SetTbsel(Dev->BaseAddr, AL_CAN_TBSEL_PTB);
-        Dev->Config.TransMode = AL_CAN_TRANS_PTB;
         break;
     case AL_CAN_TRANS_STB_FIFO:
         AlCan_ll_SetTbsel(Dev->BaseAddr, AL_CAN_TBSEL_STB);
         AlCan_ll_SetTsmode(Dev->BaseAddr, AL_CAN_TSMODE_FIFO);
-        Dev->Config.TransMode = AL_CAN_TRANS_STB_FIFO;
         break;
     case AL_CAN_TRANS_STB_PRIO:
         AlCan_ll_SetTbsel(Dev->BaseAddr, AL_CAN_TBSEL_STB);
         AlCan_ll_SetTsmode(Dev->BaseAddr, AL_CAN_TSMODE_PRIORITY);
-        Dev->Config.TransMode = AL_CAN_TRANS_STB_PRIO;
         break;
     case AL_CAN_TRANS_FULL:
         break;
@@ -304,7 +289,8 @@ AL_VOID AlCan_Dev_ClrState(AL_CAN_DevStruct *Dev, AL_CAN_StateEnum State)
 */
 static AL_VOID AlCan_Dev_RecvFrameHandler(AL_CAN_DevStruct *Dev, AL_U32 IntrStatus)
 {
-    /* IP has if loop buffer, so nothing to do here */
+    AL_LOG(AL_ERR_LEVEL_DEBUG, "AlCan_Dev_RecvFrameHandler: Recv a frame!\r\n");
+    /* IP has loop buffer, so nothing to do here */
     AlCan_Dev_ClrState(Dev, AL_CAN_STATE_RECV_EMPTY);
     AL_CAN_EventStruct Event = {
         .EventId    = AL_CAN_EVENT_RECV_DONE,
@@ -425,8 +411,8 @@ AL_VOID AlCan_Dev_IntrHandler(void *Instance)
         /**
          * TODO: handle error status
         */
-        AlCan_Dev_ErrHandler(Dev, IntrStatus);
 #endif
+        AlCan_Dev_ErrHandler(Dev, IntrStatus);
     }
 
     if (AL_CAN_RECV_INTR(IntrStatus)) {
@@ -542,52 +528,51 @@ AL_VOID AlCan_Dev_SetReset(AL_CAN_DevStruct *Dev, AL_BOOL IsReset)
 */
 AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, AL_CAN_InitStruct *InitConfig)
 {
-    AL_CAN_InitStruct *Config;
+    AL_CAN_DefBitRateStruct DefBitRate;
 
     Dev->Config     = (InitConfig == AL_NULL) ? AlCan_DefInitConfig : (*InitConfig);
     Dev->BaseAddr   = HwConfig->BaseAddress;
 
-    AlCan_Dev_SetCanType(Dev, Config->Type);
+    AlCan_Dev_SetCanType(Dev);
     AlCan_Dev_SetReset(Dev, AL_TRUE);
 
-    if (Config->TransMode == AL_CAN_TRANS_PTB) {
+    if (Dev->Config.TransMode == AL_CAN_TRANS_PTB) {
         AlCan_ll_SetTpss(Dev->BaseAddr, AL_TRUE);
     } else {
         AlCan_ll_SetTsss(Dev->BaseAddr, AL_TRUE);
     }
 
-    if (Config->RunMode & (AL_CAN_RUN_INTR | AL_CAN_RUN_INTR_DMA)) {
+    if (Dev->Config.RunMode == AL_CAN_RUN_INTR) {
         AlCan_ll_SetAllIntrEnabled(Dev->BaseAddr, AL_TRUE);
+    } else if (Dev->Config.RunMode == AL_CAN_RUN_INTR_DMA) {
+        AlCan_ll_SetAllIntrEnabled(Dev->BaseAddr, AL_TRUE);
+        AlCan_ll_SetDmaEnabled(Dev->BaseAddr, AL_TRUE);
     } else {
         AlCan_ll_SetAllIntrEnabled(Dev->BaseAddr, AL_FALSE);
     }
 
-    AL_CAN_DefBitRateStruct DefBitRate;
-    if (Config->Type == AL_CAN_TYPE_2_0B) {
-        DefBitRate.Type = AL_CAN_BIT_2_0B_S;
-    } else {
-        DefBitRate.Type = AL_CAN_BIT_FD_S;
-    }
-    DefBitRate.Index    = Config->SlowBitRate;
+    DefBitRate.Type     = AL_CAN_BIT_S;
+    DefBitRate.Index    = Dev->Config.SlowBitRate;
     AlCan_Dev_SetDefBitRate(Dev, &DefBitRate);
-    if (Config->Type == AL_CAN_TYPE_FD) {
-        DefBitRate.Type     = AL_CAN_BIT_FD_F;
-        DefBitRate.Index    = Config->FastBitRate;
+
+    if (Dev->Config.Type == AL_CAN_TYPE_FD) {
+        DefBitRate.Type     = AL_CAN_BIT_F;
+        DefBitRate.Index    = Dev->Config.FastBitRate;
         AlCan_Dev_SetDefBitRate(Dev, &DefBitRate);
     }
 
-    AlCan_Dev_SetOpsMode(Dev, Config->OpsMode);
-    AlCan_Dev_SetTransMode(Dev, Config->TransMode);
-    AlCan_ll_SetAfwl(Dev->BaseAddr, Config->RbAfwl);
+    AlCan_Dev_SetOpsMode(Dev);
+    AlCan_Dev_SetTransMode(Dev);
+    AlCan_ll_SetAfwl(Dev->BaseAddr, Dev->Config.RbAfwl);
     AlCan_ll_SetAcfen(Dev->BaseAddr, AL_FALSE);
     AlCan_Dev_SetReset(Dev, AL_FALSE);
-
-    AlCan_Dev_SetState(Dev, AL_CAN_STATE_READY);
 
     /* TODO: wait for modify, delay for host controler reset release ready */
     for(volatile AL_U32 i = 0; i < 10000; i++){
 
     }
+
+    AlCan_Dev_SetState(Dev, AL_CAN_STATE_READY);
 
     return AL_OK;
 }
@@ -618,7 +603,7 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
         return AL_CAN_ERR_STATE_RESET;
     }
 
-    if (~AlCan_Dev_GetState(Dev, AL_CAN_STATE_READY)) {
+    if (!AlCan_Dev_GetState(Dev, AL_CAN_STATE_READY)) {
         return AL_CAN_ERR_STATE_NOT_READY;
     }
 
@@ -626,20 +611,22 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
         return AL_CAN_ERR_BUSY;
     }
 
+    AlCan_Dev_SetState(Dev, AL_CAN_STATE_SEND_BUSY);
+
     Id = Frame->Id;
-    Id |= (Frame->IsEnTts << CAN_TBUF_0_3_TTSEN_SHIFT);
+    // Id |= (Frame->IsEnTts << CAN_TBUF_0_3_TTSEN_SHIFT);  /* Not support TTCAN */
 
     AlCan_ll_WriteWordSendBuffer(Dev->BaseAddr, 0, Id);
 
     Ctrl = Frame->DataLen & 0xF;
 
     if (Dev->Config.Type == AL_CAN_TYPE_FD) {
-        Ctrl |= ((Frame->IsBitSwitch & 0x1) << CAN_TBUF_4_7_BRS_SHIFT) | (0x1 << CAN_TBUF_4_7_FDF_SHIFT);
+        Ctrl |= (((Frame->IsBitSwitch & 0x1) << CAN_TBUF_4_7_BRS_SHIFT) | (0x1 << CAN_TBUF_4_7_FDF_SHIFT));
     } else {
-        Ctrl |= (Frame->IsRemote << CAN_TBUF_4_7_RTR_SHIFT);
+        Ctrl |= ((Frame->IsRemote & 0x1) << CAN_TBUF_4_7_RTR_SHIFT);
     }
 
-    Ctrl |= ((Frame->IsIdExt == AL_TRUE) ? 0x1 : 0x0 ) << CAN_TBUF_4_7_IDE_SHIFT;
+    Ctrl |= ((Frame->IsIdExt & 0x1) << CAN_TBUF_4_7_IDE_SHIFT);
 
     AlCan_ll_WriteWordSendBuffer(Dev->BaseAddr, 1, Ctrl);
 
@@ -665,13 +652,47 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
         break;
     }
 
-    AlCan_Dev_SetState(Dev, AL_CAN_STATE_SEND_BUSY);
+    return AL_OK;
+}
+
+/**
+ * This function decode a frame
+ * @param   BuffAddr is pointer to a frame buffer
+ * @param   Frame is pointer to store frame buffer with AL_CAN_FrameStruct
+ * @return
+ *          - AL_OK is send done
+ * @note
+*/
+AL_S32 AlCan_Dev_DecodeFrame(AL_U32 *BuffAddr, AL_CAN_FrameStruct *Frame)
+{
+    if (BuffAddr == AL_NULL) {
+        return AL_CAN_ERR_NULL_PTR;
+    }
+
+    AL_CAN_FrameCtrlUnion Ctrl;
+    AL_U32 IdSize;
+    AL_U32 DataWordLen;
+
+    Ctrl.Reg = BuffAddr[1];
+    Frame->Koer         = Ctrl.Bit.Koer;
+    Frame->IsIdExt      = Ctrl.Bit.Ide;
+    Frame->DataLen      = Ctrl.Bit.Dlc;
+    Frame->IsBitSwitch  = Ctrl.Bit.Brs;
+    Frame->IsRemote     = Ctrl.Bit.Rtr;
+
+    IdSize = Frame->IsIdExt ? CAN_RBUF_0_3_ID_EXT_SIZE : CAN_RBUF_0_3_ID_STD_SIZE;
+    Frame->Id = BuffAddr[0] & ((0x1 << IdSize) - 1);
+
+    DataWordLen = AlCan_Dev_Dlc2Len(Frame->DataLen);
+    for (AL_U32 i = 0; i < DataWordLen; i++) {
+        Frame->Data[i] = BuffAddr[2 + i];
+    }
 
     return AL_OK;
 }
 
 /**
- * This function decode a received frame
+ * This function receive a frame
  * @param   Dev is pointer to AL_CAN_DevStruct
  * @param   Frame is pointer to store frame buffer with AL_CAN_FrameStruct
  * @return
@@ -692,7 +713,7 @@ AL_S32 AlCan_Dev_RecvFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
         return AL_CAN_ERR_STATE_RESET;
     }
 
-    if (~AlCan_Dev_GetState(Dev, AL_CAN_STATE_READY)) {
+    if (!AlCan_Dev_GetState(Dev, AL_CAN_STATE_READY)) {
         return AL_CAN_ERR_STATE_NOT_READY;
     }
 
@@ -874,48 +895,48 @@ AL_S32 AlCan_Dev_IoCtl(AL_CAN_DevStruct *Dev, AL_CAN_IoCtlCmdEnum Cmd, AL_VOID *
     case AL_CAN_IOCTL_SET_BIT_RATE: {
         AL_CAN_BitRateStruct *SetBitRate = (AL_CAN_BitRateStruct *)Data;
         AlCan_Dev_SetBitRate(Dev, SetBitRate);
-        }
         break;
+    }
     case AL_CAN_IOCTL_GET_BIT_RATE: {
         AL_CAN_BitRateStruct *GetBitRate = (AL_CAN_BitRateStruct *)Data;
         AlCan_Dev_GetBitRate(Dev, GetBitRate);
-        }
         break;
+    }
     case AL_CAN_IOCTL_SET_DEF_BIT_RATE: {
         AL_CAN_DefBitRateStruct *DefBitRate = (AL_CAN_DefBitRateStruct *)Data;
         AlCan_Dev_SetDefBitRate(Dev, DefBitRate);
-        }
         break;
+    }
     case AL_CAN_IOCTL_SET_RESET: {
         AL_BOOL IsResetEnabled = *(AL_BOOL *)Data;
         AlCan_Dev_SetReset(Dev, IsResetEnabled);
-        }
         break;
+    }
     case AL_CAN_IOCTL_SET_FILTER: {
         AL_CAN_FilterCfgStruct *SetFilterCfg = (AL_CAN_FilterCfgStruct *)Data;
         AlCan_Dev_SetFilter(Dev, SetFilterCfg);
-        }
         break;
+    }
     case AL_CAN_IOCTL_GET_FILTER: {
         AL_CAN_FilterCfgStruct *GetFilterCfg = (AL_CAN_FilterCfgStruct *)Data;
         AlCan_Dev_GetFilter(Dev, GetFilterCfg);
-        }
         break;
+    }
     case AL_CAN_IOCTL_GET_STATE: {
         AL_CAN_StateEnum *GetState = (AL_CAN_StateEnum *)Data;
         *GetState = Dev->State;
-        }
         break;
+    }
     case AL_CAN_IOCTL_SET_STATE: {
         AL_CAN_StateEnum SetState = *(AL_CAN_StateEnum *)Data;
         AlCan_Dev_SetState(Dev, SetState);
-        }
         break;
+    }
     case AL_CAN_IOCTL_CLR_STATE: {
         AL_CAN_StateEnum ClrState = *(AL_CAN_StateEnum *)Data;
         AlCan_Dev_ClrState(Dev, ClrState);
-        }
         break;
+    }
     default:
         return AL_CAN_ERR_IOCTL_CMD;
         break;
@@ -937,16 +958,17 @@ AL_S32 AlCan_Dev_DisplayFrame(AL_CAN_FrameStruct *Frame)
     AL_U32 DataWordLen;
     AL_LOG(AL_ERR_LEVEL_INFO, "-------Recv Frame--------\r\n");
     AL_LOG(AL_ERR_LEVEL_INFO, "| Id: 0x%08x\r\n", Frame->Id);
-    AL_LOG(AL_ERR_LEVEL_INFO, "| Data len: 0x%08x\r\n", Frame->DataLen);
+    AL_LOG(AL_ERR_LEVEL_INFO, "| Dlc: 0x%08x\r\n", Frame->DataLen);
+    AL_LOG(AL_ERR_LEVEL_INFO, "| Data len: 0x%d\r\n", AlCan_Dev_Dlc2LenInByte(Frame->DataLen));
     if (Frame->IsIdExt == AL_TRUE) {
         AL_LOG(AL_ERR_LEVEL_INFO, "| Extern Id\r\n");
     } else {
         AL_LOG(AL_ERR_LEVEL_INFO, "| Standard Id\r\n");
     }
     if (Frame->IsRemote == AL_TRUE) {
-        AL_LOG(AL_ERR_LEVEL_INFO, "| Not remote frame\r\n");
-    } else {
         AL_LOG(AL_ERR_LEVEL_INFO, "| Remote frame\r\n");
+    } else {
+        AL_LOG(AL_ERR_LEVEL_INFO, "| Not remote frame\r\n");
     }
     if (Frame->IsBitSwitch == AL_TRUE) {
         AL_LOG(AL_ERR_LEVEL_INFO, "| Switch fast bit rate\r\n");
@@ -954,6 +976,7 @@ AL_S32 AlCan_Dev_DisplayFrame(AL_CAN_FrameStruct *Frame)
         AL_LOG(AL_ERR_LEVEL_INFO, "| Nominal bit rate\r\n");
     }
     DataWordLen = AlCan_Dev_Dlc2Len(Frame->DataLen);
+    AL_LOG(AL_ERR_LEVEL_INFO, "| Data length in byte is %d\r\n", DataWordLen);
     for (AL_U32 i = 0; i < DataWordLen; i++) {
         AL_LOG(AL_ERR_LEVEL_INFO, "| Data %02d: 0x%08x\r\n", i, Frame->Data[i]);
     }

@@ -1,4 +1,4 @@
-TARGET = fpsoc_can_stb_fifo
+TARGET = fpsoc_can_fd_dma
 
 NUCLEI_SDK_ROOT = ../../../..
 
@@ -6,7 +6,7 @@ SRCDIRS = .
 
 INCDIRS = .
 
-COMMON_FLAGS := -O2 -DCAN_DEBUG -DCONFIG_CAN_FD_STB_FIFO_TEST=1
+COMMON_FLAGS := -O2 -DCAN_DEBUG -DCONFIG_CAN_FD_DMA_TEST=1
 
 # ARM jump from secure to non-secure
 # COMMON_FLAGS += -DSUPPORT_NONSECURE
