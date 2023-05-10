@@ -45,6 +45,16 @@ static AL_MPU_ApuRegionStatusStruct ApuMpuRegionStatusStruct = {
 
 extern AL_MPU_HwConfigStruct AlMpu_HwConfig[AL_MPU_NUM_INSTANCE];
 
+/**
+ * This function return AL_MPU_HwConfigStruct by MPU device id
+ * @param MpuDevId unique MPU device id
+ *
+ * @return
+ *        - A pointer on success
+ *        - NULL on failure
+ *
+ * @note
+ */
 AL_MPU_HwConfigStruct *AlMpu_Dev_LookupConfigByDevId(AL_U8 DevId)
 {
     AL_U32 Index;
@@ -66,7 +76,7 @@ static AL_U8 AlMpu_Dev_GetAvailableRegionByDevId(AL_U8 DevId)
     AL_U32 MpuRegionIndex;
 
     if (DevId == ApuMpuRegionStatusStruct.DevId) {
-        for (MpuRegionIndex = 0; MpuRegionIndex <= AL_MPU_APU_MAX_REGION; MpuRegionIndex++) {
+        for (MpuRegionIndex = 0; MpuRegionIndex <= AL_MPU_APU_MAX_REGION_NUMBER; MpuRegionIndex++) {
             if (ApuMpuRegionStatusStruct.AL_RegionEnableStatus[MpuRegionIndex] == MPU_REGION_DISABLE) {
                 return MpuRegionIndex;
             }
@@ -74,7 +84,7 @@ static AL_U8 AlMpu_Dev_GetAvailableRegionByDevId(AL_U8 DevId)
     } else {
         for (MpuNumIndex = 0; MpuNumIndex < AL_MPU_NUM_COMMON_INSTANCE; MpuNumIndex++) {
             if (CommonMpuRegionStatusStruct[MpuNumIndex].DevId == DevId) {
-                for (MpuRegionIndex = 0; MpuRegionIndex <= AL_MPU_COMMON_MAX_REGION; MpuRegionIndex++) {
+                for (MpuRegionIndex = 0; MpuRegionIndex <= AL_MPU_COMMON_MAX_REGION_NUMBER; MpuRegionIndex++) {
                     if (CommonMpuRegionStatusStruct[MpuNumIndex].AL_RegionEnableStatus[MpuRegionIndex]
                                                                                         == MPU_REGION_DISABLE) {
                         return MpuRegionIndex;
@@ -105,12 +115,12 @@ static AL_S32 AlMpu_Dev_UpdateRegionEnableStatus(AL_U8 DevId, AL_U8 RegionNumber
     return AL_OK;
 }
 
-static AL_VOID AlMpu_Dev_SetRegionAttr(AL_REG RegionBaseAddr, AL_MPU_RegionConfigStruct *RegionConfig)
+static AL_VOID AlMpu_Dev_SetRegionAttr(AL_REG RegionBaseAddr, AL_MPU_RegionConfigStruct *Config)
 {
-    AlMpu_ll_SetRegionAttrSecure(RegionBaseAddr, RegionConfig->Secure);
-    AlMpu_ll_SetRegionAttrPrivilege(RegionBaseAddr, RegionConfig->Privilege);
-    AlMpu_ll_SetRegionAttrRw(RegionBaseAddr, RegionConfig->ReadWrite);
-    AlMpu_ll_SetRegionAttrIntrEn(RegionBaseAddr, RegionConfig->InterruptEnable);
+    AlMpu_ll_SetRegionAttrSecure(RegionBaseAddr, Config->Secure);
+    AlMpu_ll_SetRegionAttrPrivilege(RegionBaseAddr, Config->Privilege);
+    AlMpu_ll_SetRegionAttrRw(RegionBaseAddr, Config->ReadWrite);
+    AlMpu_ll_SetRegionAttrIntrEn(RegionBaseAddr, Config->InterruptEnable);
     AlMpu_ll_SetRegionAttrEnable(RegionBaseAddr, MPU_REGION_ENABLE);
 }
 
@@ -165,10 +175,10 @@ static AL_S32 AlMpu_Dev_SetRegion(AL_REG RegionBaseAddr, AL_MPU_RegionConfigStru
 }
 
 /**
- * This function enable the mpu region
+ * This function config a region by region number
  * @param Mpu is pointer to AL_MPU_DevStruct
- * @param RegionNumber the region number
- * @param InitRegionConfig Configured parameter
+ * @param RegionNumber region number
+ * @param InitRegionConfig pointer to AL_MPU_RegionConfigStruct
  *
  * @return
  *        - 0 on success
@@ -190,14 +200,14 @@ AL_S32 AlMpu_Dev_ConfigRegionByRegionNum(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumb
 
     /* Apu mpu */
     if (DevId == ApuMpuRegionStatusStruct.DevId) {
-        if (RegionNumber > AL_MPU_APU_MAX_REGION) {
+        if (RegionNumber > AL_MPU_APU_MAX_REGION_NUMBER) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Region number unvalid\r\n");
             return AL_MPU_ERROR_REGION_NUMBER;
         }
 
         RegionEnableStatus = ApuMpuRegionStatusStruct.AL_RegionEnableStatus[RegionNumber];
     } else {
-        if (RegionNumber > AL_MPU_COMMON_MAX_REGION) {
+        if (RegionNumber > AL_MPU_COMMON_MAX_REGION_NUMBER) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Region number unvalid\r\n");
             return AL_MPU_ERROR_REGION_NUMBER;
         }
@@ -224,6 +234,19 @@ AL_S32 AlMpu_Dev_ConfigRegionByRegionNum(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumb
     return AL_OK;
 }
 
+/**
+ * This function initialize the mpu region configs
+ * @param Mpu is pointer to AL_MPU_DevStruct
+ * @param HwConfig is pointer to AL_MPU_HwConfigStruct
+ * @param InitRegionConfig pointer to AL_MPU_RegionConfigStruct
+ * @param ConfigNumber config number of AL_MPU_RegionConfigStruct
+ *
+ * @return
+ *        - 0 on success
+ *        - Numbers greater than zero on failure
+ *
+ * @note
+ */
 AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
                       AL_MPU_RegionConfigStruct *InitRegionConfig, AL_U8 ConfigNumber)
 {
@@ -249,7 +272,8 @@ AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
     for (RegionCount = 0; RegionCount < ConfigNumber; RegionCount++) {
 
         /* Get a available region */
-        if ((RegionNumber = AlMpu_Dev_GetAvailableRegionByDevId(Mpu->HwConfig.DeviceId)) == AL_MPU_INVALID_REGION_NUMBER) {
+        if ((RegionNumber = AlMpu_Dev_GetAvailableRegionByDevId(Mpu->HwConfig.DeviceId))
+                                                                == AL_MPU_INVALID_REGION_NUMBER) {
             RetValue = AL_MPU_ERROR_NO_AVAILABLE_REGION;
             break;
         }
@@ -269,6 +293,17 @@ AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
     return ConfigCount;
 }
 
+/**
+ * This function config a region and enable the region
+ * @param Mpu is pointer to AL_MPU_DevStruct
+ * @param InitRegionConfig is pointer to AL_MPU_RegionConfigStruct
+ *
+ * @return
+ *        - 0 on success
+ *        - Numbers greater than zero on failure
+ *
+ * @note
+ */
 AL_S32 AlMpu_Dev_ConfigRegion(AL_MPU_DevStruct *Mpu, AL_MPU_RegionConfigStruct *InitRegionConfig)
 {
     AL_S32 RetValue;
@@ -292,9 +327,10 @@ AL_S32 AlMpu_Dev_ConfigRegion(AL_MPU_DevStruct *Mpu, AL_MPU_RegionConfigStruct *
 }
 
 /**
- * This function disable the mpu region
+ * This function disable or enable a region
  * @param Mpu is pointer to AL_MPU_DevStruct
  * @param RegionNumber the region number
+ * @param EnableStatus region MPU_REGION_DISABLE or MPU_REGION_ENABLE
  *
  * @return
  *        - 0 on success
@@ -312,12 +348,12 @@ AL_S32 AlMpu_Dev_SetRegionEnableStatus(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber
     MpuBaseAddr = (AL_REG)(Mpu->HwConfig.BaseAddress);
 
     if (DevId == ApuMpuRegionStatusStruct.DevId) {
-        if (RegionNumber > AL_MPU_APU_MAX_REGION) {
+        if (RegionNumber > AL_MPU_APU_MAX_REGION_NUMBER) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Region number unvalid\r\n");
             return AL_MPU_ERROR_REGION_NUMBER;
         }
     } else {
-        if (RegionNumber > AL_MPU_COMMON_MAX_REGION) {
+        if (RegionNumber > AL_MPU_COMMON_MAX_REGION_NUMBER) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Region number unvalid\r\n");
             return AL_MPU_ERROR_REGION_NUMBER;
         }
@@ -445,6 +481,18 @@ AL_VOID AlMpu_Dev_MpuIntrHandler(void *Instance)
     }
 }
 
+/**
+ * This function register event callback
+ * @param Mpu is pointer to AL_MPU_DevStruct
+ * @param Callback the callback function
+ * @param CallbackRef pointer a handle
+ *
+ * @return
+ *        - 0 on success
+ *        - Numbers greater than zero on failure
+ *
+ * @note
+ */
 AL_S32 AlMpu_Dev_RegisterEventCallBack(AL_MPU_DevStruct *Mpu, AL_Mpu_EventCallBack Callback, void *CallbackRef)
 {
     if (Mpu == AL_NULL || Callback == AL_NULL) {

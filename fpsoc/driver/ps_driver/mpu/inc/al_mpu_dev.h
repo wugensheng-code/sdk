@@ -12,7 +12,7 @@ extern "C" {
   Region number define
  */
 
-/* Common region number define */
+/* Common region number define, Note that regions are numbered from 0 */
 #define AL_MPU_COMMON_REGION_0          (0x00)
 #define AL_MPU_COMMON_REGION_1          (0x01)
 #define AL_MPU_COMMON_REGION_2          (0x02)
@@ -21,7 +21,7 @@ extern "C" {
 #define AL_MPU_COMMON_REGION_5          (0x05)
 #define AL_MPU_COMMON_REGION_6          (0x06)
 #define AL_MPU_COMMON_REGION_7          (0x07)
-#define AL_MPU_COMMON_MAX_REGION        (AL_MPU_COMMON_REGION_7 + 1)
+#define AL_MPU_COMMON_MAX_REGION_NUMBER (AL_MPU_COMMON_REGION_7)
 
 /* Just for apu mpu, apu mpu has 32 regions */
 #define AL_MPU_APU_REGION_8             (0x08)
@@ -48,7 +48,7 @@ extern "C" {
 #define AL_MPU_APU_REGION_29            (0x1D)
 #define AL_MPU_APU_REGION_30            (0x1E)
 #define AL_MPU_APU_REGION_31            (0x1F)
-#define AL_MPU_APU_MAX_REGION           (AL_MPU_APU_REGION_31 + 1)
+#define AL_MPU_APU_MAX_REGION_NUMBER    (AL_MPU_APU_REGION_31)
 
 #define AL_MPU_INVALID_REGION_NUMBER    (AL_MPU_APU_REGION_31 + 1)
 
@@ -127,13 +127,13 @@ typedef struct
 typedef struct
 {
     AL_U8   DevId;
-    AL_U8   AL_RegionEnableStatus[AL_MPU_COMMON_MAX_REGION];
+    AL_U8   AL_RegionEnableStatus[AL_MPU_COMMON_MAX_REGION_NUMBER + 1];
 } AL_MPU_CommonMpuRegionStatusStruct;
 
 typedef struct
 {
     AL_U8   DevId;
-    AL_U8   AL_RegionEnableStatus[AL_MPU_APU_MAX_REGION];
+    AL_U8   AL_RegionEnableStatus[AL_MPU_APU_MAX_REGION_NUMBER + 1];
 } AL_MPU_ApuRegionStatusStruct;
 
 /* Master group id enum */

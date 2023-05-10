@@ -38,6 +38,16 @@ static AL_VOID AlMpu_Hal_EventCallBack(AL_MPU_EventStruct MpuEvent, AL_VOID *Cal
     }
 }
 
+/**
+ * This function enable MPU
+ * @param Handle is pointer to AL_MPU_HalStruct
+ *
+ * @return
+ *        - 0 on success
+ *        - Numbers greater than zero on failure
+ *
+ * @note
+ */
 AL_S32 AlMpu_Hal_MpuEnable(AL_MPU_HalStruct *Handle)
 {
     AL_S32 RetValue;
@@ -56,6 +66,16 @@ AL_S32 AlMpu_Hal_MpuEnable(AL_MPU_HalStruct *Handle)
     return RetValue;
 }
 
+/**
+ * This function disable MPU
+ * @param Handle is pointer to AL_MPU_HalStruct
+ *
+ * @return
+ *        - 0 on success
+ *        - Numbers greater than zero on failure
+ *
+ * @note
+ */
 AL_S32 AlMpu_Hal_MpuDisable(AL_MPU_HalStruct *Handle)
 {
     AL_S32 RetValue;
@@ -74,6 +94,17 @@ AL_S32 AlMpu_Hal_MpuDisable(AL_MPU_HalStruct *Handle)
     return RetValue;
 }
 
+/**
+ * This function enable a region
+ * @param Handle is pointer to AL_MPU_HalStruct
+ * @param RegionNumber region number
+ *
+ * @return
+ *        - 0 on success
+ *        - Numbers greater than zero on failure
+ *
+ * @note
+ */
 AL_S32 AlMpu_Hal_EnableRegion(AL_MPU_HalStruct *Handle, AL_U8 RegionNumber)
 {
     AL_S32 RetValue;
@@ -92,6 +123,17 @@ AL_S32 AlMpu_Hal_EnableRegion(AL_MPU_HalStruct *Handle, AL_U8 RegionNumber)
     return RetValue;
 }
 
+/**
+ * This function disable a region
+ * @param Handle is pointer to AL_MPU_HalStruct
+ * @param RegionNumber region number
+ *
+ * @return
+ *        - 0 on success
+ *        - Numbers greater than zero on failure
+ *
+ * @note
+ */
 AL_S32 AlMpu_Hal_DisableRegion(AL_MPU_HalStruct *Handle, AL_U8 RegionNumber)
 {
     AL_S32 RetValue;
@@ -110,6 +152,18 @@ AL_S32 AlMpu_Hal_DisableRegion(AL_MPU_HalStruct *Handle, AL_U8 RegionNumber)
     return RetValue;
 }
 
+/**
+ * This function config a region by region number
+ * @param Handle is pointer to AL_MPU_HalStruct
+ * @param RegionNumber region number
+ * @param InitRegionConfig pointer to AL_MPU_RegionConfigStruct
+ *
+ * @return
+ *        - 0 on success
+ *        - Numbers greater than zero on failure
+ *
+ * @note
+ */
 AL_S32 AlMpu_Hal_ConfigRegionByRegionNum(AL_MPU_HalStruct *Handle, AL_U8 RegionNumber,
                                          AL_MPU_RegionConfigStruct *InitRegionConfig)
 {
@@ -129,6 +183,17 @@ AL_S32 AlMpu_Hal_ConfigRegionByRegionNum(AL_MPU_HalStruct *Handle, AL_U8 RegionN
     return RetValue;
 }
 
+/**
+ * This function config a region
+ * @param Handle is pointer to AL_MPU_HalStruct
+ * @param InitRegionConfig pointer to AL_MPU_RegionConfigStruct
+ *
+ * @return
+ *        - 0 on success
+ *        - Numbers greater than zero on failure
+ *
+ * @note
+ */
 AL_S32 AlMpu_Hal_ConfigRegion(AL_MPU_HalStruct *Handle, AL_MPU_RegionConfigStruct *InitRegionConfig)
 {
     AL_S32 RetValue;
@@ -147,6 +212,20 @@ AL_S32 AlMpu_Hal_ConfigRegion(AL_MPU_HalStruct *Handle, AL_MPU_RegionConfigStruc
     return RetValue;
 }
 
+/**
+ * This function initialize the mpu region configs
+ * @param MpuDevId unique MPU device id
+ * @param Handle is pointer to AL_MPU_HalStruct
+ * @param EventCallBack Event CallBack
+ * @param InitRegionConfig pointer to AL_MPU_RegionConfigStruct
+ * @param ConfigNumber config number of AL_MPU_RegionConfigStruct
+ *
+ * @return
+ *        - 0 on success
+ *        - Numbers greater than zero on failure
+ *
+ * @note
+ */
 AL_S32 AlMpu_Hal_ConfigInit(AL_U8 MpuDevId, AL_MPU_HalStruct *Handle, AL_Mpu_EventCallBack EventCallBack,
                             AL_MPU_RegionConfigStruct *InitRegionConfig, AL_U8 ConfigNumber)
 {
@@ -195,6 +274,14 @@ AL_S32 AlMpu_Hal_ConfigInit(AL_U8 MpuDevId, AL_MPU_HalStruct *Handle, AL_Mpu_Eve
     return RetValue;
 }
 
+/**
+ * This function initialize the mpu related interrupt
+ * @param
+ *
+ * @return
+ *
+ * @note
+ */
 AL_VOID AlMpu_Hal_Init()
 {
     AlMpu_Hal_MpuRegisterIntr();
