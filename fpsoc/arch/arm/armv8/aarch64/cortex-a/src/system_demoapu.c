@@ -27,7 +27,6 @@
 #include <stdio.h>
 #include "nuclei_sdk_hal.h"
 #include "al_log.h"
-#include "config.h"
 #include "gic_v3_addr.h"
 #include "gic_v3.h"
 

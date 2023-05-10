@@ -1,4 +1,3 @@
-#include <config.h>
 #include <linkage.h>
 #include <macro.h>
 

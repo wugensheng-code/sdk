@@ -9,7 +9,6 @@
 
 #include "gic.h"
 #include "io.h"
-#include "config.h"
 #include "cpu.h"
 #include "type.h"
 #include "delay.h"

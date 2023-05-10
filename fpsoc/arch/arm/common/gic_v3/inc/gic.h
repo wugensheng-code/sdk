@@ -10,7 +10,6 @@
 #ifndef __GIC_H__
 #define __GIC_H__
 
-#include "config.h"
 #include "gic_v3.h"
 
 #define gic_init()  gicv3_init()

@@ -7,7 +7,6 @@
  * @FilePath: /alsoc-embedded-DE/bsp/boot/apu/src/startup64.S
  */
 
-#include <config.h>
 #include <linkage.h>
 #include <macro.h>
 #include <sysregs.h>

@@ -1,7 +1,6 @@
 
 #ifndef __ASM_ARM_MACRO_H__
 #define __ASM_ARM_MACRO_H__
-#include <config.h>
 #include <sysregs.h>
 
 #ifdef DEBUG

@@ -122,6 +122,14 @@ ifeq ($(FPGA_BIT_VERSION),STAGE_7)
 COMMON_FLAGS += -DFPGA_STAGE_7
 endif
 
+# temp code, set core to EL1
+ifneq ($(SOLUTION_DEMO),SD_FSBL)
+COMMON_FLAGS += -DSWITCH_TO_EL1_EL0_FROM_EL3
+endif
+
+# temp code, delete after board init done
+COMMON_FLAGS += -DCOUNTER_FREQUENCY=50000000
+
 CFLAGS += -mstrict-align -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35
 
 CFLAGS += $(COMMON_FLAGS) $(C_INCLUDE_OPT) $(MKDEP_OPT)

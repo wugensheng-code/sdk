@@ -8,7 +8,6 @@
  */
 
 #include "../inc/compiler_attributes.h"
-#include "config.h"
 #include "exception.h"
 
 #ifdef CONFIG_PRINTK
