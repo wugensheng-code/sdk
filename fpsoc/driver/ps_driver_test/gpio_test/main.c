@@ -42,28 +42,17 @@ int main(void)
     printf("GPIO 3 output data value is %x\r\n", PinVal[0]);
     printf("GPIO 99 output data value is %x\r\n", PinVal[1]);
 
-#if 0
-    //test eoi register
-    printf("GPIO 1 input data value is %x\r\n", AlGpio_Hal_InputReadPin(&GPIO,1));
-    printf("GPIO 100 input data value is %x\r\n", AlGpio_Hal_InputReadPin(&GPIO,100));
-#endif
-
-    // test intr (already ok!)
-    AlGpio_Hal_IntrCallbackHandler(&GPIO, (void *)(&GPIO), (Gpio_Handler)IntrHandler);
-
+    // test eoi register (already ok!)
     for(int i = 0;i < 15;i++)
     {
         printf("GPIO 21 input data value is %x\r\n", AlGpio_Hal_InputReadPin(&GPIO,21));
     }
 
+    // test intr
+    AlGpio_Dev_IntrCallbackHandler((&GPIO)->Dev, (void *)(&GPIO), (Gpio_Handler)IntrHandler);
+    printf("config BaseAddress is %x\r\n", (&GPIO)->Dev->HwConfig.BaseAddress);
     printf("=====> Enabling interrupts on bank ...\n");
-
-    while(1)
-    {
-        AlGpio_Hal_IntrHandler(&GPIO, 21, GPIO_INTR_TYPE_EDGE_FALLING);
-        _delay_ms(500);
-    }
-
+    AlGpio_Hal_IntrCfg(&GPIO, 21, GPIO_INTR_TYPE_LEVEL_HIGH);
 
     while(1);
 

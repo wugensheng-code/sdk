@@ -760,3 +760,63 @@ AL_BOOL AlGpio_Dev_GetSyncEnablePin(AL_GPIO_DevStruct *Gpio, AL_U32 Pin)
     SyncReg = AlGpio_ll_GetSyncEnable(Gpio->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
     return ((SyncReg & ((AL_U32)1 << PinNumber)) == (AL_U32)0 ? (AL_U32)AL_FALSE : (AL_U32)AL_TRUE);
 }
+
+/**
+ * @brief  This function sets the status callback function. The callback function is called by the
+ *         AL_GPIO_IntrHandler when an interrupt occurs.
+ * @param  Gpio is a pointer to the AL_GPIO instance.
+ * @param  CallBackRef
+ * @param  FunPointer is the pointer to the callback function.
+ * @return AL_S32
+ */
+AL_S32 AlGpio_Dev_IntrCallbackHandler(AL_GPIO_DevStruct *Gpio, AL_VOID *CallBackRef, Gpio_Handler FunPointer)
+{
+    if (Gpio == AL_NULL) {
+        return AL_GPIO_ERR_ILLEGAL_PARAM;
+    }
+
+    if (FunPointer == AL_NULL) {
+        return AL_GPIO_ERR_ILLEGAL_PARAM;
+    }
+    Gpio->Handler = FunPointer;
+    Gpio->EventCallBackRef = CallBackRef;
+
+    return AL_OK;
+}
+
+/**
+ * @brief  This function is the interrupt handler for GPIO interrupts.It checks the interrupt status registers
+ * of all the banks to determine the actual bank in which interrupt have been triggered. It then calls the
+ * upper layer callback handler set by the function AlGpio_Hal_IntrCallbackHandler.
+ * @param  Gpio is a pointer to the AL_GPIO instance.
+ * @param  Pin is the pin number to which the Data is to be written.
+ * @param  IntrType is the IRQ type for GPIO Pin.
+ * @return AL_S32
+ */
+AL_S32 AlGpio_Dev_IntrHandler(AL_GPIO_DevStruct *Gpio)
+{
+    AL_U8 Bank;
+	AL_U32 IntrStatus;
+	AL_U32 IntrEnable;
+    AL_U32 IntrReg;
+	AL_U8 PinNumber;
+
+    if (Gpio == AL_NULL) {
+        return AL_GPIO_ERR_ILLEGAL_PARAM;
+    }
+
+    printf("Enter handler!\r\n");
+
+    for(Bank = 0U; Bank < Gpio->HwConfig.MaxBanks; Bank++) {
+        IntrStatus = AlGpio_Dev_IntrGetStatus(Gpio, Bank);
+        IntrEnable = AlGpio_Dev_IntrGetEnable(Gpio, Bank);
+        printf("IntrStatus %d is %x\r\n", Bank, IntrStatus);
+        printf("IntrEnable %d is %x\r\n", Bank, IntrEnable);
+        if((IntrStatus & IntrEnable) != (AL_U32)0) {
+            AlGpio_Dev_IntrClr(Gpio, Bank, IntrStatus & IntrEnable);
+            Gpio->Handler(Gpio->EventCallBackRef, Bank, (IntrStatus & IntrEnable));
+        }
+    }
+
+    return AL_OK;
+}
