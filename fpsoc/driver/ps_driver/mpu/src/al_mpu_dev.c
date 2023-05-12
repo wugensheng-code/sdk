@@ -280,7 +280,7 @@ AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
 
         RetValue = AlMpu_Dev_ConfigRegionByRegionNum(Mpu, RegionNumber, &(Mpu->RegionConfig[RegionCount]));
         if (RetValue != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_WARNING, "AlMpu_Dev_ConfigRegion failed, "
+            AL_LOG(AL_ERR_LEVEL_WARNING, "AlMpu_Dev_ConfigRegionByRegionNum failed, "
                    "and the current configuration is ignored!\r\n");
             continue;
         }
