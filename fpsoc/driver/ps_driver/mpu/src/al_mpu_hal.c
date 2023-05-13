@@ -17,14 +17,14 @@ static AL_VOID AlMpu_Hal_MpuRegisterIntr()
     __enable_irq();
 }
 
-static AL_VOID AlMpu_Hal_EventCallBack(AL_MPU_EventStruct MpuEvent, AL_VOID *CallbackRef)
+static AL_VOID AlMpu_Hal_EventCallBack(AL_MPU_EventStruct *MpuEvent, AL_VOID *CallbackRef)
 {
     AL_MPU_HalStruct *Handle = (AL_MPU_HalStruct *)CallbackRef;
 
-    switch (MpuEvent.EventId) {
+    switch (MpuEvent->EventId) {
         case AL_MPU_DENY_ACCESS:
             AL_LOG(AL_ERR_LEVEL_INFO, "AlMpu_Hal_EventCallBack MPU Instance is 0x%x, The region number "
-               "that triggers the event is region%d.\r\n", Handle->Dev->HwConfig.BaseAddress, MpuEvent.EventData);
+               "that triggers the event is region%d.\r\n", Handle->Dev->HwConfig.BaseAddress, MpuEvent->EventData);
             break;
 
         default:
