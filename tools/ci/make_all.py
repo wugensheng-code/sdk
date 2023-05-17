@@ -4,7 +4,7 @@ from pathlib import Path
 
 from loguru import logger
 
-def make_all(path):
+def make_all(path, argv):
    
     makefiles_p = Path(path).rglob('Makefile')
 
