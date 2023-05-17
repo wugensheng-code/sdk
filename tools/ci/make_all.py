@@ -13,7 +13,7 @@ def make_all(path):
             logger.info(f'======> start make project: {str(makefile_p)}', colorize=True, format="<green>{time}</green> <level>{message}</level>")
 
             try:
-                subprocess.run('make', shell=True, capture_output=True, cwd=makefile_p.parent, check=True)
+                subprocess.run(f'make {argv}', shell=True, capture_output=True, cwd=makefile_p.parent, check=True)
                 logger.info(f'======> make successful\n', colorize=True, format="<green>{time}</green> <level>{message}</level>")
             except subprocess.CalledProcessError as e:                
                 logger.error(f'======> make filed {str(makefile_p)}\r', colorize=True, format="<red>{time}</red> <level>{message}</level>")
@@ -24,4 +24,5 @@ def make_all(path):
 
 if __name__ == '__main__':
     path = sys.argv[1]
-    make_all(path)
+    argv = sys.argv[2]
+    make_all(path, argv)
