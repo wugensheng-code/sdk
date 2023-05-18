@@ -1,6 +1,6 @@
 /***************************** Include Files *********************************/
 #include "al_smc_hal.h"
-#include "gic_v3.h"
+#include "al_intr.h"
 #include <string.h>
 /************************** Constant Definitions *****************************/
 
@@ -116,12 +116,12 @@ AL_U32 AlSmc_Hal_Init(AL_SMC_HalStruct *Handle, AL_SMC_ConfigsStruct *InitConfig
 			goto HAL_INIT_END;
 		}
 	}
-	
+
 HAL_INIT_END:
 	AL_SMC_HAL_UNLOCK(Handle);
 
     return ret;
-    
+
 }
 
 
@@ -153,7 +153,7 @@ AL_U32 AlSmc_Hal_ReadPage(AL_SMC_HalStruct *Handle, AL_U32 Offset, AL_U8 *Data, 
 		// 		return Status;
 		// 	}
 		// }
-		
+
 		/* Check if partial read */
 		if (NumOfBytes < Handle->NandInfo->Size.DataBytesPerPage) {
 			BufPtr = Handle->NandInfo->DataBuf;
@@ -219,7 +219,7 @@ AL_U32 AlSmc_Hal_WritePage(AL_SMC_HalStruct *Handle, AL_U32 Offset, AL_U8 *Data,
 		// 		return Status;
 		// 	}
 		// }
-		
+
 		/* Check if partial read */
 		if (NumOfBytes < Handle->NandInfo->Size.DataBytesPerPage) {
 			BufPtr = Handle->NandInfo->DataBuf;
@@ -246,7 +246,7 @@ AL_U32 AlSmc_Hal_WritePage(AL_SMC_HalStruct *Handle, AL_U32 Offset, AL_U8 *Data,
 		NumOfBytes = (Size > Handle->NandInfo->Size.DataBytesPerPage) ? Handle->NandInfo->Size.DataBytesPerPage : Size;
 		CopyOffset = 0;
 	}
-    
+
 }
 
 

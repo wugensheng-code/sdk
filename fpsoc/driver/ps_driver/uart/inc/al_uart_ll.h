@@ -105,6 +105,11 @@ static inline AL_BOOL AlUart_ll_IsThrEmpty(AL_REG BaseAddr)
     return AL_REG32_GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__THRE__SHIFT);
 }
 
+static inline AL_BOOL AlUart_ll_IsTxDown(AL_REG BaseAddr)
+{
+    return AL_REG32_GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__TEMT__SHIFT);
+}
+
 static inline AL_BOOL AlUart_ll_IsRxDataReady(AL_REG BaseAddr)
 {
     return AL_REG32_GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__DR__SHIFT);

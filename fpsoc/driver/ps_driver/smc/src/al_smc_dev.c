@@ -122,7 +122,7 @@ static AL_VOID ALSmc_Dev_WriteData(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_
 
 static AL_VOID ALSmc_Dev_ReadData(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_U32 Length)
 {
-	
+
 	AL_UINTPTR DataPhaseAddr;
 	AL_U32 Index, EndCmdReq;
 
@@ -324,7 +324,7 @@ AL_U32 ALSmc_Dev_ReadParam(AL_NAND_InfoStruct *NandInfo)
 	if(((Crc & 0xff) != Temp[CRC16_LEN]) || (((Crc >> 8) & 0xff) != Temp[CRC16_LEN+1])){
 		/* Return Error */
 		while (1);
-	} 
+	}
 
 	NandInfo->Size.DataBytesPerPage  = 	*((AL_U32 *)(&Temp[DATA_PER_PAGE_POS]));
 	NandInfo->Size.SpareBytesPerPage = 	*((AL_U16 *)(&Temp[SPARE_PER_PAGE_POS]));
@@ -493,6 +493,7 @@ AL_U8 ALSmc_Dev_HwEccWritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandIn
 	default:
 		/* Page size 256 bytes & 4096 bytes not supported by ECC block*/
 		// return SmcHwReadSizeOver;
+		break;
 	}
 
 	Status = AlSmc_Dev_HwCalculateEcc(Smc, NandInfo->EccCalc, EccDataNums);
@@ -575,6 +576,7 @@ AL_U8 ALSmc_Dev_HwEccReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInf
 	default:
 		/* Page size 256 bytes & 4096 bytes not supported by ECC block*/
 		// return SmcHwReadSizeOver;
+		break;
 	}
 
 	Status = AlSmc_Dev_HwCalculateEcc(Smc, NandInfo->EccCalc, EccDataNums);
@@ -915,11 +917,12 @@ AL_U8 AlSmc_Dev_EccHwInit(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo)
 	default:
 		/* Page size 256 bytes & 4096 bytes not supported by ECC block */
 		// return SmcHwInitSizeErr;
+		break;
 	}
 
 	/* Check Ecc Busy */
 	while(ECC_BUSY == AlSmc_ll_IsEccBusy(Smc->SmcBaseAddr));
-	
+
 	AlSmc_ll_SetEccMode(Smc->SmcBaseAddr, ECC_MODE_APB);
 	AlSmc_ll_SetEccReadEnd(Smc->SmcBaseAddr, InPageEnd);
 	AlSmc_ll_SetEccJump(Smc->SmcBaseAddr, ECC_NOJUMP);
@@ -978,7 +981,7 @@ AL_VOID AlSmc_Dev_InitCyclesAndMemWidth(AL_SMC_DevStruct *Smc)
 	if (Smc->Configs.Cycles.d32 != 0) {
 		AlSmc_ll_SetCycles(Smc->SmcBaseAddr, Smc->Configs.Cycles);
 	}
-	
+
 	AlSmc_ll_SetMemWidth(Smc->SmcBaseAddr, Smc->Configs.SmcWidth);
 	AlSmc_ll_SetCmdTypeAndChipNum(Smc->SmcBaseAddr, UPDATE_REGS, INTF1_CHIP1);
 }

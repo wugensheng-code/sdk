@@ -32,7 +32,7 @@ AL_S32 AlFatfs_Demo_SdReadWrite(AL_VOID)
         .n_root     = 0,            /* align to sector_size/size_root_dir(512/32)=16 */
         .au_size    = 0x4000,       /* max size of cluster in byte, max 64kB, buf if card capacity is to small ,max 32kB */
     };
-    const char *FileName = "0:/Exp.txt";
+    const char *FileName = "0:/npu_demo/input_resize.txt";
 
     /* destroy file system for pass f_mkfs */
     AlSd_Init();
@@ -59,6 +59,12 @@ AL_S32 AlFatfs_Demo_SdReadWrite(AL_VOID)
         goto ERROR_MOUNT;
     } else {
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Mount sd card success!\r\n");
+    }
+
+    Ret = f_mkdir("0:/npu_demo");
+    if (Ret != AL_OK) {
+        AL_LOG(AL_ERR_LEVEL_ERROR, "Create directory error!\r\n");
+        goto ERROR_MKDIR;
     }
 
     Ret = f_open(&File, FileName, FA_CREATE_ALWAYS | FA_WRITE);
@@ -120,6 +126,7 @@ AL_S32 AlFatfs_Demo_SdReadWrite(AL_VOID)
 ERROR_WRITE:
 ERROR_READ:
     f_close(&File);
+ERROR_MKDIR:
 ERROR_OPEN:
 ERROR_CLOSE:
 ERROR_DATA:

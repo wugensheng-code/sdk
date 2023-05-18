@@ -40,6 +40,14 @@ static AL_S32 AlUart_Hal_WaitRxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 T
 
 #else
 
+/**
+ * This function wait for uart send done or timeout
+ * @param   Handle is pointer to AL_UART_HalStruct
+ * @param   Timeout is max wait time for send done
+ * @return
+ *          - AL_OK
+ * @note
+*/
 static AL_S32 AlUart_Hal_WaitTxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 Timeout)
 {
     while (AlUart_Dev_IsTxBusy(Handle->Dev));
@@ -52,6 +60,14 @@ static AL_S32 AlUart_Hal_WaitTxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 T
     return AL_OK;
 }
 
+/**
+ * This function wait for uart receive done or timeout
+ * @param   Handle is pointer to AL_UART_HalStruct
+ * @param   Timeout is max wait time for receive done
+ * @return
+ *          - AL_OK
+ * @note
+*/
 static AL_S32 AlUart_Hal_WaitRxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 Timeout)
 {
     while (AlUart_Dev_IsRxBusy(Handle->Dev));
@@ -70,6 +86,14 @@ static AL_S32 AlUart_Hal_WaitRxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 T
 
 #endif
 
+/**
+ * This function action when receive or send data down
+ * @param   UartEvent is pointer to AL_UART_EventStruct
+ * @param   CallbackRef
+ * @return
+ *          - AL_OK
+ * @note
+*/
 static AL_VOID AlUart_Hal_EventHandler(AL_UART_EventStruct UartEvent, AL_VOID *CallbackRef)
 {
     AL_UART_HalStruct *Handle = (AL_UART_HalStruct *)CallbackRef;
@@ -90,6 +114,15 @@ static AL_VOID AlUart_Hal_EventHandler(AL_UART_EventStruct UartEvent, AL_VOID *C
     }
 }
 
+/**
+ * This function init Uart module
+ * @param   Handle is pointer to AL_UART_HalStruct
+ * @param   DevId is hardware module id
+ * @param   InitConfig is module config structure with AL_UART_InitStruct
+ * @return
+ *          - AL_OK
+ * @note
+*/
 AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStruct *InitConfig)
 {
     AL_S32 Ret;
@@ -122,6 +155,7 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStru
     }
 
     (AL_VOID)AlIntr_RegHandler(SOC_INT89_IRQn, AL_NULL, AlUart_Dev_IntrHandler, Dev);
+    __enable_irq();
 
     Handle->Dev  = Dev;
     AL_UART_HAL_UNLOCK(Handle);
@@ -129,6 +163,15 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStru
     return Ret;
 }
 
+/**
+ * This function send datas with polling
+ * @param   Handle is pointer to AL_UART_HalStruct
+ * @param   Data is pointer to the datas to be send
+ * @param   Size indicates how much data to send 
+ * @return
+ *          - AL_OK
+ * @note
+*/
 AL_S32 AlUart_Hal_SendDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
 {
     AL_S32 Ret = AL_OK;
@@ -150,7 +193,16 @@ AL_S32 AlUart_Hal_SendDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32
     return Ret;
 }
 
-
+/**
+ * This function send datas with timeout
+ * @param   Handle is pointer to AL_UART_HalStruct
+ * @param   Data is pointer to the datas buffer to be send
+ * @param   Size indicates how much data to send 
+ * @param   Timeout indicates the time limit for sending data
+ * @return
+ *          - AL_OK
+ * @note
+*/
 AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -185,7 +237,16 @@ AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
     return Ret;
 }
 
-
+/**
+ * This function receive datas with timeout
+ * @param   Handle is pointer to AL_UART_HalStruct
+ * @param   Data is pointer to the receive data buffer
+ * @param   Size indicates how much data to receive 
+ * @param   Timeout indicates the time limit for receiving data
+ * @return
+ *          - AL_OK
+ * @note
+*/
 AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 *RecvSize, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -220,6 +281,15 @@ AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
     return AL_OK;
 }
 
+/**
+ * This function send datas 
+ * @param   Handle is pointer to AL_UART_HalStruct
+ * @param   Data is pointer to the datas buffer to be send
+ * @param   Size indicates how much data to send 
+ * @return
+ *          - AL_OK
+ * @note
+*/
 AL_S32 AlUart_Hal_SendData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
 {
     AL_S32 Ret = AL_OK;
@@ -240,7 +310,15 @@ AL_S32 AlUart_Hal_SendData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
     return Ret;
 }
 
-
+/**
+ * This function receive datas
+ * @param   Handle is pointer to AL_UART_HalStruct
+ * @param   Data is pointer to the receive data buffer
+ * @param   Size indicates how much data to receive 
+ * @return
+ *          - AL_OK
+ * @note
+*/
 AL_S32 AlUart_Hal_RecvData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
 {
     AL_S32 Ret = AL_OK;
