@@ -244,7 +244,6 @@ AL_S32 AlUart_Dev_RecvData(AL_UART_DevStruct *Uart, AL_U8 *ReceiveBuf, AL_U32 Re
     if (ReceivedCount < ReceiveSize) {
         Uart->RecvBuffer.RequestedCnt   = ReceiveSize;
         Uart->RecvBuffer.HandledCnt     = ReceivedCount;
-        // Uart->RecvBuffer.BufferPtr      = ReceiveBuf + ReceivedCount;
         Uart->RecvBuffer.BufferPtr      = ReceiveBuf;
 
         /*
