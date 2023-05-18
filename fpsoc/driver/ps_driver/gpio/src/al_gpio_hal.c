@@ -99,16 +99,7 @@ AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct *Handle, AL_U32 DevId)
     }
 
     /* 3. register intr */
-<<<<<<< HEAD
-    AL_INTR_HandlerStruct IntrHandler = {
-            .Func  = AlGpio_Dev_IntrHandler,
-            .Param = (AL_VOID *)(Handle->Dev)
-        };
-    AL_DEFAULT_ATTR(Attr);
-    AlIntr_RegHandler(GPIO0_IRQn, &Attr, &IntrHandler);
-=======
     (AL_VOID)AlIntr_RegHandler(GPIO0_IRQn, NULL, AlGpio_Dev_IntrHandler, (AL_VOID *)(Handle->Dev));
->>>>>>> a3b660865b58eae3a8e924a2f7c0965f0b439df9
     __enable_irq();
 
     printf("config BaseAddress is %x\r\n", Handle->Dev->HwConfig.BaseAddress);
