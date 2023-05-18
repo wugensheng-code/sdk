@@ -11,23 +11,20 @@ endif
 all:
 	echo COMPILE_PREFIX = $(COMPILE_PREFIX)
 
-ifeq ($(SOC), demoapu)
 	make clean
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_can_fd_intr
+	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ -f Makefile_can_fd_intr dasm
 	make clean
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_can_2_0B_intr
+	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ -f Makefile_can_2_0B_intr dasm
 	make clean
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_can_2_0B_in_loopback
+	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ -f Makefile_can_2_0B_in_loopback dasm
 	make clean
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_can_2_0B_ex_loopback
+	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ -f Makefile_can_2_0B_ex_loopback dasm
 	make clean
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_can_fd_listen_only
+	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ -f Makefile_can_fd_listen_only dasm
 	make clean
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_can_fd_stb_fifo
+	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ -f Makefile_can_fd_stb_fifo dasm
 	make clean
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_apu_can_fd_dma
-else
-endif
+	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ -f Makefile_can_fd_dma dasm
 
 
 clean:
