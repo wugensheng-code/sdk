@@ -20,14 +20,61 @@ static void IntrHandler(AL_VOID *CallBackRef, AL_U32 Bank, AL_U32 Status)
 }
 
 AL_GPIO_HalStruct GPIO;
+
+int main(void)
+{
+    printf("dev test start\r\n");
+    AL_S32 ret = AlGpio_Hal_Init(&GPIO, 0);
+    printf("ret is %x\r\n", ret);
+    if((&GPIO)->Dev == AL_NULL) {
+        printf("No &GPIO\r\n");
+    }
+
+#if 0
+    AlGpio_Dev_WritePin((&GPIO)->Dev, 13, 0x1);
+    printf("GPIO Pin 13 output data value is %x\r\n", AlGpio_Dev_OutputReadPin((&GPIO)->Dev, 13));
+    AlGpio_Dev_WritePin((&GPIO)->Dev, 13, 0x0);
+    printf("GPIO Pin 13 output data value is %x\r\n", AlGpio_Dev_OutputReadPin((&GPIO)->Dev, 13));
+
+    printf("-------------------------------------------------------\r\n");
+    AlGpio_Dev_WriteBank((&GPIO)->Dev, 1, 0xfed0);
+    printf("GPIO Bank 1 output data value is %x\r\n", AlGpio_Dev_OutputRead((&GPIO)->Dev, 1));
+    AlGpio_Dev_WriteBank((&GPIO)->Dev, 1, 0x10);
+    printf("GPIO Bank 1 output data value is %x\r\n", AlGpio_Dev_OutputRead((&GPIO)->Dev, 1));
+#endif
+
+#if 0
+    printf("GPIO Pin 17 input data value is %x\r\n", AlGpio_Hal_InputReadPin(&GPIO,17));
+    printf("GPIO Pin 15 input data value is %x\r\n", AlGpio_Hal_InputReadPin(&GPIO,15));
+    printf("GPIO Bank 0 input data value is %x\r\n", AlGpio_Dev_InputRead((&GPIO)->Dev, 0));
+#endif
+
+
+
+    AlGpio_Dev_IntrCallbackHandler((&GPIO)->Dev, (void *)(&GPIO), (Gpio_Handler)IntrHandler);
+    AlGpio_Dev_SetDirectionPin((&GPIO)->Dev, 0, GPIO_INPUT);
+    AlGpio_Dev_IntrSetTypePin((&GPIO)->Dev, 0, GPIO_INTR_TYPE_LEVEL_LOW);
+    AlGpio_Dev_IntrEnablePin((&GPIO)->Dev, 0);
+
+    while(1);
+
+    return 0;
+}
+
+#if 0
+static void IntrHandler(AL_VOID *CallBackRef, AL_U32 Bank, AL_U32 Status)
+{
+    AL_GPIO_DevStruct *GPIO = (AL_GPIO_DevStruct *)CallBackRef;
+    printf("Enter CallbackHandler!\r\n");
+}
+
+AL_GPIO_HalStruct GPIO;
 AL_S32 PinVal[4];
 
 int main(void)
 {
-    //*(AL_U32 *)(0xf8803054u) =0x4;
-    printf("test start\r\n");
+    printf("hal test start\r\n");
     AL_S32 IntrVal;
-
     AL_S32 ret = AlGpio_Hal_Init(&GPIO, 0);
     printf("ret is %x\r\n", ret);
     if(&GPIO == AL_NULL) {
@@ -58,6 +105,7 @@ int main(void)
 
     return 0;
 }
+#endif
 
 
 #if 0

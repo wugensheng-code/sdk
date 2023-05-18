@@ -114,7 +114,7 @@ AL_S32 AlGpio_Dev_InputRead(AL_GPIO_DevStruct *Gpio, AL_U8 Bank)
  */
 AL_VOID AlGpio_Dev_WriteBank(AL_GPIO_DevStruct *Gpio, AL_U8 Bank, AL_U32 Data)
 {
-    AlGpio_ll_ClrWrite(Gpio->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Data);
+    AlGpio_ll_ClrWrite(Gpio->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_ALL_ENABLE);
     AlGpio_ll_Write(Gpio->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Data);
 }
 
@@ -127,7 +127,7 @@ AL_VOID AlGpio_Dev_WriteBank(AL_GPIO_DevStruct *Gpio, AL_U8 Bank, AL_U32 Data)
  */
 AL_VOID AlGpio_Dev_SetDirection(AL_GPIO_DevStruct *Gpio, AL_U8 Bank, AL_U32 Direction)
 {
-    AlGpio_ll_ClrDirection(Gpio->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Direction);
+    AlGpio_ll_ClrDirection(Gpio->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_ALL_ENABLE);
     AlGpio_ll_SetDirection(Gpio->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Direction);
 }
 
@@ -812,8 +812,11 @@ AL_S32 AlGpio_Dev_IntrHandler(AL_GPIO_DevStruct *Gpio)
         IntrEnable = AlGpio_Dev_IntrGetEnable(Gpio, Bank);
         printf("IntrStatus %d is %x\r\n", Bank, IntrStatus);
         printf("IntrEnable %d is %x\r\n", Bank, IntrEnable);
+
         if((IntrStatus & IntrEnable) != (AL_U32)0) {
             AlGpio_Dev_IntrClr(Gpio, Bank, IntrStatus & IntrEnable);
+            //AlGpio_Dev_IntrEnableMask(Gpio, Bank, IntrStatus & IntrEnable);
+            AlGpio_Dev_IntrEnable(Gpio, Bank, IntrStatus & IntrEnable);
             Gpio->Handler(Gpio->EventCallBackRef, Bank, (IntrStatus & IntrEnable));
         }
     }

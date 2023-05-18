@@ -105,10 +105,7 @@ AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct *Handle, AL_U32 DevId)
             .Param = (AL_VOID *)(Handle->Dev)
         };
     AL_DEFAULT_ATTR(Attr);
-    //callback.handler    = AlGpio_Dev_IntrHandler;
-    //callback.ref        = Handle->Dev;
-    //ECLIC_Register_IRQ(GPIO0_IRQn, ECLIC_NON_VECTOR_INTERRUPT, ECLIC_LEVEL_TRIGGER, 1, 1, &callback);
-    (AL_VOID)AlIntr_RegHandler(GPIO0_IRQn, &Attr, &IntrHandler);
+    AlIntr_RegHandler(GPIO0_IRQn, &Attr, &IntrHandler);
     __enable_irq();
 
     printf("config BaseAddress is %x\r\n", Handle->Dev->HwConfig.BaseAddress);
@@ -194,7 +191,7 @@ AL_S32 AlGpio_Hal_IntrCfg(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U8 IntrType)
     AlGpio_Dev_IntrSetTypePin(Handle->Dev, Pin, IntrType);
     AlGpio_Dev_IntrEnablePin(Handle->Dev, Pin);
 
-    AlGpio_Dev_IntrGetStatus(Handle->Dev, 0);
+    //AlGpio_Dev_IntrGetStatus(Handle->Dev, 0);
     printf("IntrStatus %d is %x\r\n", 0, AlGpio_Dev_IntrGetStatus(Handle->Dev, 0));
     printf("IntrEnable %d is %x\r\n", 0, AlGpio_Dev_IntrGetEnable(Handle->Dev, 0));
 
