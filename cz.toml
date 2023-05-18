@@ -1,0 +1,117 @@
+[tool.commitizen]
+name = "cz_customize"
+tag_format = "v$version"
+version_type = "semver"
+version = "5.0.1"
+update_changelog_on_bump = true
+
+[tool.commitizen.customize]
+message_template = "[{{issue_jira_prefix}}{{jira_id}}][{{change_type}}][{{scope}}]{{subject}}\n\n{{body}}\n\n"
+example = "[ES-136][feature][CAN]support api can_fd 5Mbit/s"
+schema = ''' \
+        <issue_jira_prefix><jira_id><type><scope>: <subject>\n \
+        <BLANK LINE>\n \
+        <body>\n \
+        '''
+    # (?s)\    To explictly make . match new line
+    # (\\[ES-[0-9]+\\])\    type
+    # (\\[(feat|fix|docs|style|refactor|perf|test|build|ci)+\\])\    scope
+    # (\\[.+\\])\    subject
+schema_pattern = """\
+    (?s)\
+    (\\[ES-[0-9]+\\])\
+    (\\[(feat|fix|docs|style|refactor|perf|test|build|ci)+\\])\
+    (\\[.+\\])\
+                """
+bump_pattern = "^(break|new|fix|hotfix)"
+bump_map = {"break" = "MAJOR", "new" = "MINOR", "fix" = "PATCH", "hotfix" = "PATCH"}
+change_type_order = ["BREAKING CHANGE", "feat", "fix", "refactor", "perf"]
+info_path = "CONTRIBUTING.md"
+# info = """
+# This is customized info
+# """
+commit_parser = "^(?P<change_type>feature|bug fix):\\s(?P<message>.*)?"
+changelog_pattern = "^(feature|bug fix)?(!)?"
+change_type_map = {"feat" = "Feat", "fix" = "Fix", "refactor" = "Refactor", "perf" = "Perf"}
+
+[[tool.commitizen.customize.questions]]
+type = "list"
+name = "change_type"
+choices = [
+    {value = "feat", name = "feat: A new feature. Correlates with MINOR in SemVer"},
+    {value = "fix", name = "fix: A bug fix. Correlates with PATCH in SemVer"},
+    {value = "docs", name = "docs: Documentation only changes"},
+    {value = "style", name = "style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)"},
+    {value = "refactor", name = "refactor: A code change that neither fixes a bug nor adds a feature"},
+    {value = "perf", name = "perf: A code change that improves performance"},
+    {value = "test", name = "test: Adding missing or correcting existing tests"},
+    {value = "build", name = "build: Changes that affect the build system or external dependencies (example scopes: pip, docker, npm)"},
+    {value = "ci", name = "ci: Changes to our CI configuration files and scripts (example scopes: GitLabCI)"}]
+message = "Select the type of change you are committing"
+
+[[tool.commitizen.customize.questions]]
+type = "list"
+name = "issue_jira_prefix"
+choices = [
+    {value = "ES-", name = "ES-"}
+]
+message = "JIRA project"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "jira_id"
+message = "JIRA issue number"
+
+[[tool.commitizen.customize.questions]]
+type = "list"
+name = "scope"
+choices = [
+    {value = "sw-arch", name = "sw-arch"},
+    {value = "infrastructure", name = "infrastructure"},
+    {value = "spi", name = "spi"},
+    {value = "adc", name = "adc"},
+    {value = "qspi-nor", name = "qspi-nor"},
+    {value = "smc", name = "smc"},
+    {value = "spi-dma", name = "spi-dma"},
+    {value = "elic", name = "elic"},
+    {value = "risc-v-boot", name = "risc-v-boot"},
+    {value = "risc-v-backtrace", name = "risc-v-backtrace"},
+    {value = "mpu", name = "mpu"},
+    {value = "cli", name = "i2c"},
+    {value = "i2c-dma", name = "i2c-dma"},
+    {value = "emac-lwip", name = "emac-lwip"},
+    {value = "axi-dma", name = "axi-dma"},
+    {value = "ttc", name = "ttc"},
+    {value = "can", name = "can"},
+    {value = "ahb-dma", name = "ahb-dma"},
+    {value = "can-dma", name = "can-dma"},
+    {value = "mmc", name = "mmc"},
+    {value = "fatfs", name = "fatfs"},
+    {value = "cipher", name = "cipher"},
+    {value = "gic-v3", name = "gic-v3"},
+    {value = "aarch64-boot", name = "aarch64-boot"},
+    {value = "aarch64-backtrace", name = "aarch64-backtrace"},
+    {value = "gpio", name = "gpio"},
+    {value = "pwm", name = "pwm"},
+    {value = "uart", name = "uart"},
+    {value = "xmon", name = "xmon"},
+    {value = "usb", name = "usb"},
+    {value = "ipc", name = "ipc"},
+    {value = "devops", name = "devops"},
+    ]
+message = "Select the type of change you are committing"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "subject"
+message = "Write a short and imperative summary of the code changes: (lower case and no period)"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "body"
+message = "Provide additional contextual information about the code changes: (press [enter] to skip)"
+
+[[tool.commitizen.customize.questions]]
+type = "confirm"
+name = "is_breaking_change"
+message = "Is this a BREAKING CHANGE? Correlates with MAJOR in SemVer"
