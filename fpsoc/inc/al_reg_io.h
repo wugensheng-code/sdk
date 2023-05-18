@@ -8,9 +8,13 @@ extern "C" {
 #include "al_type.h"
 #include "al_utils_def.h"
 
+#define AL_REG8_WRITE(reg_addr, value)             do {*(volatile AL_U8 *)(reg_addr) = value;} while (0)
+#define AL_REG16_WRITE(reg_addr, value)            do {*(volatile AL_U16 *)(reg_addr) = value;} while (0)
 #define AL_REG32_WRITE(reg_addr, value)            do {*(volatile AL_U32 *)(reg_addr) = value;} while (0)
 #define AL_REG64_WRITE(reg_addr, value)            do {*(volatile AL_U64 *)(reg_addr) = value;} while (0)
 
+#define AL_REG8_READ(reg_addr)                     (*(volatile AL_U8 *)(reg_addr))
+#define AL_REG16_READ(reg_addr)                    (*(volatile AL_U16 *)(reg_addr))
 #define AL_REG32_READ(reg_addr)                    (*(volatile AL_U32 *)(reg_addr))
 #define AL_REG64_READ(reg_addr)                    (*(volatile AL_U64 *)(reg_addr))
 

@@ -164,14 +164,7 @@ AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_ChInitStruct 
     /* TODO: replace intr handler reference function with al_intr.h api */
     if (Handle->Channel->Dmac->State.IntrEn == AL_FALSE) {
         Handle->Channel->Dmac->State.IntrEn = AL_TRUE;
-
-        AL_INTR_HandlerStruct IntrHandle = {
-            .Func  = AlDmacAhb_Dev_IntrHandler,
-            .Param = Handle->Channel->Dmac,
-        };
-
-        AL_DEFAULT_ATTR(Attr);
-        AlIntr_RegHandler(HwConfig->IntrId, &Attr, &IntrHandle);
+        AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlDmacAhb_Dev_IntrHandler, Handle->Channel->Dmac);
         __enable_irq();
     }
 

@@ -175,13 +175,7 @@ AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct *Handle, AL_CAN_InitStruct *InitConfig, A
     /* 4. register intr */
     /* replace intr handler reference function with al_intr.h api */
     if (Handle->Dev->Config.RunMode & (AL_CAN_RUN_INTR_DMA | AL_CAN_RUN_INTR)) {
-        AL_INTR_HandlerStruct IntrHandle = {
-            .Func  = AlCan_Dev_IntrHandler,
-            .Param = Handle->Dev,
-        };
-
-        AL_DEFAULT_ATTR(Attr);
-        AlIntr_RegHandler(HwConfig->IntrId, &Attr, &IntrHandle);
+        AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlCan_Dev_IntrHandler, Handle->Dev);
         __enable_irq();
     }
 

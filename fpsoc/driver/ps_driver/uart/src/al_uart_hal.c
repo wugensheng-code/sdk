@@ -121,15 +121,7 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStru
         return Ret;
     }
 
-    {
-        AL_INTR_HandlerStruct IntrHandler = {
-            .Func  = AlUart_Dev_IntrHandler,
-            .Param = (AL_VOID *)Dev
-        };
-        AL_DEFAULT_ATTR(Attr);
-
-        (AL_VOID)AlIntr_RegHandler(SOC_INT89_IRQn, &Attr, &IntrHandler);
-    }
+    (AL_VOID)AlIntr_RegHandler(SOC_INT89_IRQn, AL_NULL, AlUart_Dev_IntrHandler, Dev);
 
     Handle->Dev  = Dev;
     AL_UART_HAL_UNLOCK(Handle);

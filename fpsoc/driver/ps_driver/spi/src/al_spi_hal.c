@@ -10,11 +10,6 @@
 /************************** Variable Definitions *****************************/
 static AL_SPI_DevStruct AL_SPI_DevInstance[AL_SPI_NUM_INSTANCE];
 
-static AL_INTR_HandlerStruct AL_Spi_IntrHandle = {
-    .Func  = AlSpi_Dev_IntrHandler,
-    .Param = AL_NULL
-};
-
 /********************************************************/
 #ifdef USE_RTOS
 static AL_S32 AlSpi_Hal_WaitTxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_U32 Timeout)
@@ -91,7 +86,7 @@ static AL_S32 AlSpi_Hal_WaitTxRxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_U32 T
 
 #endif
 
-static AL_S32 AlSpi_DefIntrCallBack(AL_SPI_EventStruct SpiEvent, void *CallbackRef)
+static AL_S32 AlSpi_DefEventCallBack(AL_SPI_EventStruct SpiEvent, void *CallbackRef)
 {
     switch (SpiEvent.Event) {
     case AL_SPI_SEND_DONE:
@@ -141,10 +136,10 @@ AL_S32 AlSpi_Hal_Init(AL_SPI_HalStruct *Handle, AL_SPI_ConfigsStruct *InitConfig
     CfgPtr = AlSpi_Dev_LookupConfig(DevId);
     Handle->Dev = &AL_SPI_DevInstance[CfgPtr->DeviceId];
     Handle->Dev->BaseAddr = CfgPtr->BaseAddress;
-    Handle->Dev->Fifolen = CfgPtr->FifoLen;
+    Handle->Dev->Fifolen  = CfgPtr->FifoLen;
 
     if(AL_NULL == Callback) {
-        ret = AlSpi_Dev_RegisterIntrCallBack(Handle->Dev, AlSpi_DefIntrCallBack, AL_NULL);
+        ret = AlSpi_Dev_RegisterIntrCallBack(Handle->Dev, AlSpi_DefEventCallBack, AL_NULL);
     } else {
         ret = AlSpi_Dev_RegisterIntrCallBack(Handle->Dev, Callback, CallbackRef);
     }
@@ -154,15 +149,7 @@ AL_S32 AlSpi_Hal_Init(AL_SPI_HalStruct *Handle, AL_SPI_ConfigsStruct *InitConfig
         return ret;
     }
 
-    {
-        AL_INTR_HandlerStruct IntrHandle = {
-            .Func  = AlSpi_Dev_IntrHandler,
-            .Param = Handle->Dev,
-        };
-
-        AL_DEFAULT_ATTR(Attr);
-        AlIntr_RegHandler(CfgPtr->InterrupId, &Attr, &IntrHandle);
-    }
+    AlIntr_RegHandler(CfgPtr->InterrupId, AL_NULL, AlSpi_Dev_IntrHandler, Handle->Dev);
 
     ret = AlSpi_Dev_Init(Handle->Dev, InitConfig);
 

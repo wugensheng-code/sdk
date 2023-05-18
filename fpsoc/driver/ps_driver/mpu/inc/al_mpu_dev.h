@@ -52,7 +52,8 @@ extern "C" {
 
 #define AL_MPU_INVALID_REGION_NUMBER    (AL_MPU_APU_REGION_31 + 1)
 
-#define AL_MPU_DEFAULT_REGION_GRANULARITY_SIZE   (4096)
+#define AL_MPU_DEFAULT_REGION_GRANULARITY_SIZE          (0x1000)
+#define AL_MPU_DEFAULT_REGION_GRANULARITY_SIZE_MASK     (0xFFFFF000)
 
 #define AL_MPU_IS_VALID_REGION_SECURE(SECURE) (((SECURE) == MPU_REGION_SECURE) || \
                                                ((SECURE) == MPU_REGION_NONSECURE))
@@ -99,6 +100,8 @@ typedef enum
        or multiple group id can be grouped together
      */
     AL_U32 GroupId;
+
+    AL_U8 ConfigRegionNumber;
 } AL_MPU_RegionConfigStruct;
 
 typedef enum
@@ -112,28 +115,25 @@ typedef struct
     AL_U32                  EventData;
 } AL_MPU_EventStruct;
 
-typedef AL_VOID (*AL_Mpu_EventCallBack)(AL_MPU_EventStruct MpuEvent, AL_VOID *CallbackRef);
+typedef AL_VOID (*AL_Mpu_EventCallBack)(AL_MPU_EventStruct *MpuEvent, AL_VOID *CallbackRef);
 
 typedef struct
 {
     AL_MPU_HwConfigStruct       HwConfig;
-    AL_MPU_RegionConfigStruct   *RegionConfig;
-    AL_U8                       ConfigNumber;
-
     AL_Mpu_EventCallBack        EventCallBack;
     AL_VOID                     *EventCallBackRef;
 } AL_MPU_DevStruct;
 
 typedef struct
 {
-    AL_U8   DevId;
-    AL_U8   AL_RegionEnableStatus[AL_MPU_COMMON_MAX_REGION_NUMBER + 1];
+    AL_U8               DevId;
+    AL_MPU_RegionEnEnum RegionEnableStatus[AL_MPU_COMMON_MAX_REGION_NUMBER + 1];
 } AL_MPU_CommonMpuRegionStatusStruct;
 
 typedef struct
 {
-    AL_U8   DevId;
-    AL_U8   AL_RegionEnableStatus[AL_MPU_APU_MAX_REGION_NUMBER + 1];
+    AL_U8               DevId;
+    AL_MPU_RegionEnEnum RegionEnableStatus[AL_MPU_APU_MAX_REGION_NUMBER + 1];
 } AL_MPU_ApuRegionStatusStruct;
 
 /* Master group id enum */
@@ -156,10 +156,10 @@ AL_S32 AlMpu_Dev_MpuEnable(AL_MPU_DevStruct *Mpu);
 
 AL_S32 AlMpu_Dev_MpuDisable(AL_MPU_DevStruct *Mpu);
 
-AL_S32 AlMpu_Dev_ConfigRegion(AL_MPU_DevStruct *Mpu, AL_MPU_RegionConfigStruct *InitRegionConfig);
+AL_S32 AlMpu_Dev_ConfigRegion(AL_MPU_DevStruct *Mpu, AL_MPU_RegionConfigStruct *RegionConfig);
 
 AL_S32 AlMpu_Dev_ConfigRegionByRegionNum(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber,
-                                         AL_MPU_RegionConfigStruct *InitRegionConfig);
+                                         AL_MPU_RegionConfigStruct *RegionConfig);
 
 AL_S32 AlMpu_Dev_SetRegionEnableStatus(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber, AL_MPU_RegionEnEnum EnableStatus);
 
