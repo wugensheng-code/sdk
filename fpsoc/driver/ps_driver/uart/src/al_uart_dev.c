@@ -145,6 +145,11 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_UART_InitStruct *InitConfig, 
         return AL_UART_ERR_ILLEGAL_PARAM;
     }
 
+    /* clear receive fifo before init */
+    while(AlUart_ll_IsRxDataReady(Uart->BaseAddr)){
+        AL_U8 tmp = (AL_U8)AlUart_ll_RecvByte(Uart->BaseAddr);
+    }
+
     Uart->Configs  = (InitConfig == AL_NULL) ? UartDefInitConfigs : (*InitConfig);
     Uart->BaseAddr = AlUart_Dev_LookupConfig(DevId)->BaseAddress;
 
@@ -224,7 +229,6 @@ AL_S32 AlUart_Dev_RecvData(AL_UART_DevStruct *Uart, AL_U8 *ReceiveBuf, AL_U32 Re
     }
 
     if (AlUart_Dev_IsRxBusy(Uart)) {
-        printf("AlUart_Dev_IsRxBusy\r\n");
         return AL_UART_ERR_BUSY;
     }
 

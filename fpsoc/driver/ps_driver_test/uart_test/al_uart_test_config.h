@@ -22,7 +22,7 @@ extern "C" {
 #include <string.h>
 
 /************************** Constant Definitions *****************************/
-#define BUF_SIZE 1024
+#define BUF_SIZE 256
 #define TIME_OUT 10
 
 /***************** Macros (Inline Functions) Definitions *********************/
