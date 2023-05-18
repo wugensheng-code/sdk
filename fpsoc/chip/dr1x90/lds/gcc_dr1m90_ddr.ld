@@ -17,40 +17,39 @@ SECTIONS
 		*/startup64.o(.text)
 		*boot/arm/*(.text)
 		*(.text)
+		PROVIDE(_text_end  = .);
 	}  > ram AT>ram
-	PROVIDE(_text_end  = .);
 
 	/* read only data segment */
-	. = ALIGN(16);
-	PROVIDE(_rodata_start = .);
 	.rodata :
 	{
+		. = ALIGN(16);
+		PROVIDE(_rodata_start = .);
 		*(.rodata)
+		PROVIDE(_rodata_end   = .);
 	}  > ram AT>ram
-	PROVIDE(_rodata_end   = .);
 
 	/* all data segment */
-	. = ALIGN(16);
-	PROVIDE(_data_start = .);
 	.data :
 	{
+		. = ALIGN(16);
+		PROVIDE(_data_start = .);
 		*(.data*)
+		PROVIDE(_data_end = .);
 	}  > ram AT>ram
-	PROVIDE(_data_end = .);
 
 	/* all bss segment */
-	. = ALIGN(16);
-	PROVIDE(_bss_start = .);
-	.bss :
+	.bss (NOLOAD):
 	{
-		*(.bss*)
+		. = ALIGN(16);
+		PROVIDE(_bss_start = .);
+		*(*bss .bss*)
+		*(COMMON)
+		PROVIDE(_bss_end = .);
 	}  > ram AT>ram
-	PROVIDE(_bss_end = .);
 
 	/* end */
 	. = ALIGN(16);
-	_end = .;
-	_bss_end = .;
 	_end = .;
 	_heap_start = .;
 

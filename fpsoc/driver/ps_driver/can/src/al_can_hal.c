@@ -176,7 +176,9 @@ AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct *Handle, AL_CAN_InitStruct *InitConfig, A
     /* replace intr handler reference function with al_intr.h api */
     if (Handle->Dev->Config.RunMode & (AL_CAN_RUN_INTR_DMA | AL_CAN_RUN_INTR)) {
         AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlCan_Dev_IntrHandler, Handle->Dev);
-        __enable_irq();
+        Al_Intr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+        /* Already call in AlIntr_RegHandler */
+        // AlIntr_SetInterrupt(HwConfig->IntrId, AL_FUNC_ENABLE);
     }
 
     AL_CAN_HAL_UNLOCK(Handle);

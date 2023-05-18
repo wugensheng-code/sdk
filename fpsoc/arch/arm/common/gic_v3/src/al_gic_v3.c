@@ -49,7 +49,7 @@ AL_S32 AlIntr_SetInterrupt(AL_U32 IntrId, AL_FUNCTION state)
         break;
 
     case AL_FUNC_ENABLE:
-        gicv3_disable_irq(IntrId);
+        gicv3_enable_irq(IntrId);
         Ret = AL_OK;
         break;
 
