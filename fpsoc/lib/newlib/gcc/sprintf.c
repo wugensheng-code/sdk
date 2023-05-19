@@ -32,13 +32,13 @@
 static void printchar(char **str, int c)
 {
 	//extern int putchar(int c);
-	
+
 	if (str) {
 		**str = (char)c;
 		++(*str);
 	}
 	else
-	{ 
+	{
 		(void)putchar(c);
 	}
 }
@@ -186,27 +186,27 @@ static int print( char **out, const char *format, va_list args )
 	return pc;
 }
 
-int sprintf(char *out, const char *format, ...)
+__attribute__((weak)) int sprintf(char *out, const char *format, ...)
 {
         va_list args;
-        
+
         va_start( args, format );
         return print( &out, format, args );
 }
 
 
-int snprintf( char *buf, unsigned int count, const char *format, ... )
+__attribute__((weak)) int snprintf( char *buf, unsigned int count, const char *format, ... )
 {
         va_list args;
-        
+
         ( void ) count;
-        
+
         va_start( args, format );
         return print( &buf, format, args );
 }
 
 /* To keep linker happy. */
-int	write( int i, char* c, int n)
+__attribute__((weak)) int	write( int i, char* c, int n)
 {
 	(void)i;
 	(void)n;
