@@ -4,8 +4,12 @@ SOC ?= demosoc
 
 ifeq ($(SOC), demoapu)
 COMPILE_PREFIX ?= /opt/toolchain/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+CORE = a35
+DOWNLOAD = ilm
 else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
+CORE = ux600fd
+DOWNLOAD = ilm
 endif
 
 all:
@@ -13,7 +17,7 @@ all:
 
 
 	make clean
-	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) PROGRAM=./ V=1 -f Makefile_gpio_el1
+	make SOC=$(SOC) COMPILE_PREFIX=$(COMPILE_PREFIX) DOWNLOAD=$(DOWNLOAD) CORE=$(CORE) PROGRAM=./ V=1 -f Makefile_gpio_el1
 
 
 clean:

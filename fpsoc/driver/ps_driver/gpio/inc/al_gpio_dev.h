@@ -29,6 +29,24 @@ typedef enum
 
 typedef enum
 {
+    GPIO_INTR_LEVEL   =  0x0U,
+    GPIO_INTR_EDGE    =  0x1U
+} AL_GPIO_IntrTypeEnum;
+
+typedef enum
+{
+    GPIO_INTR_LOW     =  0x0U,
+    GPIO_INTR_HIGH    =  0x1U
+} AL_GPIO_IntrPolarityEnum;
+
+typedef enum
+{
+    GPIO_INTR_Single    =  0x0U,
+    GPIO_INTR_Both      =  0x1U
+} AL_GPIO_IntrBothEdgeEnum;
+
+typedef enum
+{
     GPIO_OUTPUT  =  0x1,
     GPIO_INPUT   =  0x0,
 } AL_GPIO_DirEnum;
