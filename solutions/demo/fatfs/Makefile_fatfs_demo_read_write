@@ -6,7 +6,7 @@ C_SRCDIRS = .
 
 INCDIRS = .
 
-COMMON_FLAGS := -O2 -Wno-int-to-pointer-cast
+COMMON_FLAGS := -O2 -Wno-int-to-pointer-cast -DMMC_COMPILE_FOR_EMU
 
 # ARM jump from secure to non-secure
 # COMMON_FLAGS += -DSUPPORT_NONSECURE

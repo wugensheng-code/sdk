@@ -8,7 +8,8 @@
 #define AL_FATFS_DEMO_WRITE_BUFFER_PTR  (0x10000000UL)
 #define AL_FATFS_DEMO_READ_BUFFER_PTR   (0x20000000UL)
 #define AL_FATFS_DEMO_WORK_BUFFER_PTR   (0x30000000UL)
-#define AL_FATFS_DEMO_READ_WRITE_SIZE   (0x100000UL)
+#define AL_FATFS_DEMO_READ_WRITE_SIZE   (0x100000UL)    //1MB
+#define AL_FATFS_DEMO_LSEEK_OFFSET      (0x1000UL)
 
 AL_S32 AlFatfs_Demo_SdReadWrite(AL_VOID);
 
@@ -36,6 +37,7 @@ AL_S32 AlFatfs_Demo_SdReadWrite(AL_VOID)
 
     /* destroy file system for pass f_mkfs */
     AlSd_Init();
+    Csu_RawSdSetMode(MMC_MODE_FREQ, MMC_FREQ_10M);
     AlSd_WriteSingleBlock((uint8_t *)AL_FATFS_DEMO_WRITE_BUFFER_PTR, 0, 512);
 
     AL_LOG(AL_ERR_LEVEL_DEBUG, "Sd read/write test!\r\n");
@@ -66,6 +68,7 @@ AL_S32 AlFatfs_Demo_SdReadWrite(AL_VOID)
         AL_LOG(AL_ERR_LEVEL_ERROR, "Create directory error!\r\n");
         goto ERROR_MKDIR;
     }
+    AL_LOG(AL_ERR_LEVEL_DEBUG, "Create directory success!\r\n");
 
     Ret = f_open(&File, FileName, FA_CREATE_ALWAYS | FA_WRITE);
     if (Ret != AL_OK) {
@@ -97,8 +100,15 @@ AL_S32 AlFatfs_Demo_SdReadWrite(AL_VOID)
     }
     AL_LOG(AL_ERR_LEVEL_DEBUG, "Open existing file success!\r\n");
 
-    Ret = f_read(&File, (const void *)AL_FATFS_DEMO_READ_BUFFER_PTR, AL_FATFS_DEMO_READ_WRITE_SIZE, &OpsNum);
-    if (Ret != AL_OK || OpsNum != AL_FATFS_DEMO_READ_WRITE_SIZE) {
+    Ret = f_lseek(&File, AL_FATFS_DEMO_LSEEK_OFFSET);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_ERR_LEVEL_ERROR, "Lseek file error!\r\n");
+        goto ERROR_LSEEK;
+    }
+    AL_LOG(AL_ERR_LEVEL_DEBUG, "Lseek size in byte %d in file %s success!\r\n", AL_FATFS_DEMO_LSEEK_OFFSET, FileName);
+
+    Ret = f_read(&File, (const void *)AL_FATFS_DEMO_READ_BUFFER_PTR, AL_FATFS_DEMO_READ_WRITE_SIZE - AL_FATFS_DEMO_LSEEK_OFFSET, &OpsNum);
+    if (Ret != AL_OK || OpsNum != AL_FATFS_DEMO_READ_WRITE_SIZE - AL_FATFS_DEMO_LSEEK_OFFSET) {
         AL_LOG(AL_ERR_LEVEL_ERROR, "Read file error!\r\n");
         goto ERROR_READ;
     }
@@ -111,7 +121,7 @@ AL_S32 AlFatfs_Demo_SdReadWrite(AL_VOID)
     }
     AL_LOG(AL_ERR_LEVEL_DEBUG, "Close after read file success!\r\n");
 
-    Ret = memcmp(AL_FATFS_DEMO_WRITE_BUFFER_PTR, AL_FATFS_DEMO_READ_BUFFER_PTR, AL_FATFS_DEMO_READ_WRITE_SIZE);
+    Ret = memcmp(AL_FATFS_DEMO_WRITE_BUFFER_PTR + AL_FATFS_DEMO_LSEEK_OFFSET, AL_FATFS_DEMO_READ_BUFFER_PTR, AL_FATFS_DEMO_READ_WRITE_SIZE - AL_FATFS_DEMO_LSEEK_OFFSET);
     if (Ret != 0) {
         AL_LOG(AL_ERR_LEVEL_ERROR, "Read/write data check error!\r\n");
         goto ERROR_DATA;
@@ -125,6 +135,7 @@ AL_S32 AlFatfs_Demo_SdReadWrite(AL_VOID)
 
 ERROR_WRITE:
 ERROR_READ:
+ERROR_LSEEK:
     f_close(&File);
 ERROR_MKDIR:
 ERROR_OPEN:
