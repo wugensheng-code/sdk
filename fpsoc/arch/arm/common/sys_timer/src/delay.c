@@ -11,14 +11,14 @@
  * @Date: 2022-03-07 14:18:48
  * @LastEditors: Guangxiang Rao
  * @LastEditTime: 2022-03-07 15:58:38
- * @Description: delay function for a35 
+ * @Description: delay function for a35
  * @FilePath: /alsoc-embedded-sw/bsp/common/lib/src/delay.c
  */
 #include "type.h"
 #include "io.h"
 #include "sysregs.h"
 /**
- * @desc  : cpu delay by reading system counter 
+ * @desc  : cpu delay by reading system counter
  * @param {u64_t} count
  * @return {*}
  */
@@ -60,26 +60,26 @@ u64 get_SystickTimer(void)
 uint64_t get_MTimerOutValue(uint64_t count)
 {
 	u64_t freq = syscnt_get_freq();
-    return (count*(freq/2000000));
+    return (count*(freq/1000000));
 }
 
 void _delay_us(u64_t count)
 {
     u64_t freq = syscnt_get_freq();
-    u64_t delay_cnt = (u64_t)(count*(freq/2000000));	//寄存器50MHz实际25MHz
+    u64_t delay_cnt = (u64_t)(count*(freq/1000000));
     __delay(delay_cnt);
 }
 
 void _delay_ms(u64_t count)
 {
     u64_t freq = syscnt_get_freq();
-    u64_t delay_cnt = (u64_t)(count*(freq/2000));
+    u64_t delay_cnt = (u64_t)(count*(freq/1000));
     __delay(delay_cnt);
 }
 
 void _delay_s(u64_t count)
 {
-    u64_t freq = syscnt_get_freq();	
-    u64_t delay_cnt = (u64_t)(count*freq/2);
+    u64_t freq = syscnt_get_freq();
+    u64_t delay_cnt = (u64_t)(count*freq);
     __delay(delay_cnt);
 }
