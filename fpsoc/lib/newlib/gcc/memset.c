@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdint.h>
 
+#if (defined _AARCH_64 || defined __aarch64__)
+
 void *memset(void *dst, int val, size_t count)
 {
     uint8_t *ptr = dst;
@@ -43,3 +45,5 @@ void *memset(void *dst, int val, size_t count)
 
     return dst;
 }
+
+#endif

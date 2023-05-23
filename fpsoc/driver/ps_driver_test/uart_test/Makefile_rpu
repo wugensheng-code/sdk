@@ -1,0 +1,12 @@
+TARGET = helloworld
+
+NUCLEI_SDK_ROOT = ../../../..
+
+SRCDIRS = .
+
+INCDIRS = .
+
+
+COMMON_FLAGS := -O0 -DCONFIG_AlUart_Recv_Send_Loop_Back_TEST=1
+
+include $(NUCLEI_SDK_ROOT)/tools/make/Makefile.base
