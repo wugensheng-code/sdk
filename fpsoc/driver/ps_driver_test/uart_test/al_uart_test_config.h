@@ -15,7 +15,6 @@ extern "C" {
 
 /***************************** Include Files *********************************/
 #include "al_uart_hal.h"
-#include "gic_v3.h"
 #include "nuclei_sdk_soc.h"
 #include <stdio.h>
 #include <stdlib.h>

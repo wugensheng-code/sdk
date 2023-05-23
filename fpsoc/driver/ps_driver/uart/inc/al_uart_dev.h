@@ -56,6 +56,7 @@ typedef enum
 
 typedef enum
 {
+    AL_UART_BUSY_DETECT              = (0x00),
     AL_UART_SEND_DONE                = (0x01),
     AL_UART_RECEIVE_DONE             = (0x01 << 1),
     AL_UART_RECEIVE_TIMEOUT          = (0x01 << 2),
@@ -65,6 +66,21 @@ typedef enum
     AL_UART_EVENT_FRAMING_ERR        = (0x01 << 6),
     AL_UART_EVENT_BREAK_INTR         = (0x01 << 7)
 } AL_UART_EventIdEnum;
+
+/**
+ * @brief  Io ctl cmd enum
+ */
+typedef enum
+{
+    AL_UART_IOCTL_SET_BAUD_RATE,
+    AL_UART_IOCTL_GET_BAUD_RATE,
+    AL_UART_IOCTL_SET_DATA_WIDTH,
+    AL_UART_IOCTL_GET_DATA_WIDTH,
+    AL_UART_IOCTL_SET_STOP_BITS,
+    AL_UART_IOCTL_GET_STOP_BITS,
+    AL_UART_IOCTL_SET_PARITY,
+    AL_UART_IOCTL_GET_PARITY
+} AL_Uart_IoCtlCmdEnum;
 
 
 typedef struct
@@ -77,7 +93,7 @@ typedef AL_VOID (*AL_Uart_EventCallBack)(AL_UART_EventStruct UartEvent, AL_VOID 
 
 typedef struct
 {
-    AL_REG                      BaseAddr;
+    AL_REG                        BaseAddr;
     AL_UART_InitStruct            Configs;
     AL_Uart_BufferStruct          SendBuffer;
     AL_Uart_BufferStruct          RecvBuffer;
@@ -95,6 +111,7 @@ AL_S32 AlUart_Dev_RegisterEventCallBack(AL_UART_DevStruct *Uart, AL_Uart_EventCa
 AL_S32 AlUart_Dev_UnRegisterEventCallBack(AL_UART_DevStruct *Uart);
 AL_UART_HwConfigStruct *AlUart_Dev_LookupConfig(AL_U32 DevId);
 AL_VOID AlUart_Dev_IntrHandler(void *Instance);
+AL_S32 AlUart_Dev_IoCtl(AL_UART_DevStruct *Uart, AL_Uart_IoCtlCmdEnum Cmd, AL_VOID *Data);
 
 AL_S32 AlUart_Dev_SendDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 Size);
 

@@ -1,8 +1,5 @@
 /***************************** Include Files *********************************/
 #include "al_uart_hal.h"
-#include "al_uart_ll.h"
-#include "al_uart_dev.h"
-#include "al_errno.h"
 #include "nuclei_sdk_soc.h"
 #include "al_intr.h"
 
@@ -109,6 +106,9 @@ static AL_VOID AlUart_Hal_EventHandler(AL_UART_EventStruct UartEvent, AL_VOID *C
     case AL_UART_EVENT_PARE_FRAME_BRKE:
         break;
 
+    case AL_UART_BUSY_DETECT:
+        break;
+
     default:
         break;
     }
@@ -142,6 +142,15 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStru
         return AL_UART_ERR_ILLEGAL_PARAM;
     }
 
+    /* If there's external data during the initialization process, it will cause busy detect interrupt,
+     * so don't repeat the initialization, which is not safe, is ok to return AL_OK */
+    if (Dev->State != AL_UART_STATE_NOT_INIT) {
+        AL_LOG(AL_ERR_LEVEL_DEBUG, "AlUart%d already initialized\r\n", DevId);
+        Handle->Dev  = Dev;
+        AL_UART_HAL_UNLOCK(Handle);
+        return AL_OK;
+    }
+
     Ret = AlUart_Dev_Init(Dev, InitConfig, DevId);
     if (Ret != AL_OK) {
         AL_UART_HAL_UNLOCK(Handle);
@@ -167,7 +176,7 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStru
  * This function send datas with polling
  * @param   Handle is pointer to AL_UART_HalStruct
  * @param   Data is pointer to the datas to be send
- * @param   Size indicates how much data to send 
+ * @param   Size indicates how much data to send
  * @return
  *          - AL_OK
  * @note
@@ -197,7 +206,7 @@ AL_S32 AlUart_Hal_SendDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32
  * This function send datas with timeout
  * @param   Handle is pointer to AL_UART_HalStruct
  * @param   Data is pointer to the datas buffer to be send
- * @param   Size indicates how much data to send 
+ * @param   Size indicates how much data to send
  * @param   Timeout indicates the time limit for sending data
  * @return
  *          - AL_OK
@@ -241,7 +250,7 @@ AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
  * This function receive datas with timeout
  * @param   Handle is pointer to AL_UART_HalStruct
  * @param   Data is pointer to the receive data buffer
- * @param   Size indicates how much data to receive 
+ * @param   Size indicates how much data to receive
  * @param   Timeout indicates the time limit for receiving data
  * @return
  *          - AL_OK
@@ -282,10 +291,10 @@ AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
 }
 
 /**
- * This function send datas 
+ * This function send datas
  * @param   Handle is pointer to AL_UART_HalStruct
  * @param   Data is pointer to the datas buffer to be send
- * @param   Size indicates how much data to send 
+ * @param   Size indicates how much data to send
  * @return
  *          - AL_OK
  * @note
@@ -314,7 +323,7 @@ AL_S32 AlUart_Hal_SendData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
  * This function receive datas
  * @param   Handle is pointer to AL_UART_HalStruct
  * @param   Data is pointer to the receive data buffer
- * @param   Size indicates how much data to receive 
+ * @param   Size indicates how much data to receive
  * @return
  *          - AL_OK
  * @note
@@ -340,7 +349,31 @@ AL_S32 AlUart_Hal_RecvData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
     return AL_OK;
 }
 
-AL_S32 AlUart_Hal_Ioctl(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 *Size, AL_U32 Timeout)
+/**
+ * This function excute operations to set or check uart status
+ * @param   Handle is pointer to AL_UART_HalStruct
+ * @param   Cmd is io ctl cmd to AL_Uart_IoCtlCmdEnum
+ * @param   Data is pointer to cmd args
+ * @return
+ *          - AL_OK
+ * @note
+*/
+AL_S32 AlUart_Hal_IoCtl(AL_UART_HalStruct *Handle, AL_Uart_IoCtlCmdEnum Cmd, AL_VOID *Data)
 {
+    AL_S32 Ret = AL_OK;
 
+    if (Handle == AL_NULL) {
+        return AL_UART_ERR_NULL_PTR;
+    }
+
+    AL_UART_HAL_LOCK(Handle);
+
+    Ret = AlUart_Dev_IoCtl(Handle->Dev, Cmd, Data);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_ERR_LEVEL_ERROR, "Uart io ctl cmd error:%d\r\n", Ret);
+    }
+
+    AL_UART_HAL_LOCK(Handle);
+
+    return Ret;
 }

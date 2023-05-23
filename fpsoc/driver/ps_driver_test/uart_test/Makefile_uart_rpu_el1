@@ -1,0 +1,11 @@
+TARGET = fpsoc_uart_el1
+
+NUCLEI_SDK_ROOT = ../../../../
+
+SRCDIRS = .
+
+INCDIRS = ../../ps_driver/uart/inc
+
+COMMON_FLAGS := -O2 -DCONFIG_AlUart_Recv_Send_Block_Loop_Back_TEST=1
+
+include $(NUCLEI_SDK_ROOT)/tools/make/Makefile.base
