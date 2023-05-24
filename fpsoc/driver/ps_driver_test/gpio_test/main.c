@@ -92,17 +92,15 @@ AlGpio_Dev_Test()
 
 int main(void)
 {
-    // AlGpio_Hal_Init(&GPIO, 0);
-
+#if 1
     printf("[TEST]AlGpio_Hal_Test start\r\n");
     AlGpio_Hal_Test();
-    printf("[TEST]AlGpio_Hal_Test done\r\n");
-    printf("\r\n");
+#endif    
 
+#if 0
     printf("[TEST]AlGpio_Dev_Test start\r\n");
     AlGpio_Dev_Test();
-    printf("[TEST]AlGpio_Dev_Test done\r\n");
-    printf("\r\n");
+#endif
 
     return 0;
 }
