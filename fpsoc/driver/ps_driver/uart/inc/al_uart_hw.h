@@ -7,6 +7,7 @@ extern "C" {
 
 /***************************** Include Files ********************************/
 #include "al_type.h"
+#include "demosoc.h"
 
 /************************** Constant Definitions ****************************/
 
@@ -20,7 +21,16 @@ extern "C" {
 #define UART0__BASE_ADDR 0xF8400000UL
 #define UART1__BASE_ADDR 0xF8401000UL
 
+#define CRP__BASE_ADDR 0xF8801000UL
+
 #define UART_CLOCK  40000000
+
+///////////////////////////////////////////////////////
+// Register: SRST_CTRL3
+///////////////////////////////////////////////////////
+#define CRP__SRST_CTRL3__OFFSET                        0x07c
+#define CRP__SRST_CTRL3__UART0__SRST__N__SHIFT         12
+#define CRP__SRST_CTRL3__UART1__SRST__N__SHIFT         13
 
 ///////////////////////////////////////////////////////
 // Register: RBR__THR__DLL
@@ -486,6 +496,7 @@ typedef struct
     AL_U32                  BaseAddress;
     AL_U32                  InputClockHz;
     AL_U32                  ModemPinsConnected;
+    AL_U32                  IrqNum;
 } AL_UART_HwConfigStruct;
 
 #ifdef __cplusplus

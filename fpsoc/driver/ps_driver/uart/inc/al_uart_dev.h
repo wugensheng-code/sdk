@@ -101,6 +101,9 @@ typedef struct
     AL_VOID                       *EventCallBackRef;
     AL_U32                        ErrorCode;
     AL_UART_StateEnum             State;
+    AL_U32                        IrqNum;
+    AL_U32                        DevId;
+    AL_U32                        InputClockHz;
 } AL_UART_DevStruct;
 
 

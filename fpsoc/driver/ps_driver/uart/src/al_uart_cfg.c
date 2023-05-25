@@ -21,14 +21,16 @@ AL_UART_HwConfigStruct AlUart_HwConfig[AL_UART_NUM_INSTANCE] =
     {
         .DeviceId           = 0,
         .BaseAddress        = UART0__BASE_ADDR,
-        .InputClockHz       = 25000000,
+        .InputClockHz       = UART_CLOCK,
+        .IrqNum             = SOC_INT89_IRQn,
         .ModemPinsConnected = 1
     },
 
     {
         .DeviceId           = 1,
         .BaseAddress        = UART1__BASE_ADDR,
-        .InputClockHz       = 25000000,
+        .InputClockHz       = UART_CLOCK,
+        .IrqNum             = SOC_INT89_IRQn,
         .ModemPinsConnected = 1
     }
 };
