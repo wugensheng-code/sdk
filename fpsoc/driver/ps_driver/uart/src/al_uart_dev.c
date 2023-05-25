@@ -531,7 +531,6 @@ static AL_VOID AlUart_Dev_BusBusyHandler(AL_UART_DevStruct *Uart)
 #ifdef UART_DEBUG
     AL_LOG(AL_ERR_LEVEL_DEBUG,"uart bus busy, bus reset then reinitialize\r\n");
 #endif
-
     /* soft reset uart bus */
     if (Uart->BaseAddr == UART0__BASE_ADDR) {
         AL_REG32_SET_BIT(CRP__BASE_ADDR + CRP__SRST_CTRL3__OFFSET, CRP__SRST_CTRL3__UART0__SRST__N__SHIFT, AL_FUNC_DISABLE);
@@ -540,7 +539,6 @@ static AL_VOID AlUart_Dev_BusBusyHandler(AL_UART_DevStruct *Uart)
         AL_REG32_SET_BIT(CRP__BASE_ADDR + CRP__SRST_CTRL3__OFFSET, CRP__SRST_CTRL3__UART0__SRST__N__SHIFT, AL_FUNC_DISABLE);
         AL_REG32_SET_BIT(CRP__BASE_ADDR + CRP__SRST_CTRL3__OFFSET, CRP__SRST_CTRL3__UART0__SRST__N__SHIFT, AL_FUNC_ENABLE);
     }
-
     /* Reinitialize with the original configuration of the uart port in question */
     AlUart_Dev_Init(Uart, &(Uart->Configs), Uart->DevId);
 }
