@@ -4,7 +4,7 @@ from pathlib import Path
 
 from loguru import logger
 
-def make_all(path, argv):
+def make_all(path, cpu):
    
     makefiles_p = Path(path).rglob('Makefile')
     build_pass = True
@@ -14,7 +14,18 @@ def make_all(path, argv):
             logger.info(f'======> start make project: {str(makefile_p)}', colorize=True, format="<green>{time}</green> <level>{message}</level>")
 
             try:
-                subprocess.run(f'make {argv}', shell=True, capture_output=True, cwd=makefile_p.parent, check=True)
+                if cpu == 'apu':
+                    subprocess.run(f'make \
+                        SOC=demoapu \
+                        COMPILE_PREFIX=/opt/toolchain/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin/aarch64-none-elf- \
+                        DOWNLOAD=ilm', shell=True, capture_output=True, cwd=makefile_p.parent, check=True)
+                else:
+                    subprocess.run(f'make \
+                        SOC=demosoc \
+                        COMPILE_PREFIX=/opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf- \
+                        CORE=ux600fd \
+                        DOWNLOAD=ilm', shell=True, capture_output=True, cwd=makefile_p.parent, check=True)
+
                 logger.info(f'======> make successful\n', colorize=True, format="<green>{time}</green> <level>{message}</level>")
             except subprocess.CalledProcessError as e:
                 build_pass = False               
@@ -28,5 +39,5 @@ def make_all(path, argv):
 
 if __name__ == '__main__':
     path = sys.argv[1]
-    argv = sys.argv[2]
-    make_all(path, argv)
+    cpu = sys.argv[2]
+    make_all(path, cpu)

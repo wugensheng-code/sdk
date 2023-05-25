@@ -18,14 +18,23 @@ stages:          # List of stages for jobs, and their order of execution
   - test
   - deploy
 
-build-job:       # This job runs in the build stage, which runs first.
+build-apu-job:       # This job runs in the build stage, which runs first.
   stage: build
   tags: 
     - build
   image: 
     name: anlogic/al9000-ci:v1
   script:
-    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/driver/ps_driver_test SOC=demoapu
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/driver/ps_driver_test apu
+
+build-rpu-job:       # This job runs in the build stage, which runs first.
+  stage: build
+  tags: 
+    - build
+  image: 
+    name: anlogic/al9000-ci:v1
+  script:
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/driver/ps_driver_test rpu
 
 # unit-test-job:   # This job runs in the test stage.
 #   stage: test    # It only starts when the job in the build stage completes successfully.

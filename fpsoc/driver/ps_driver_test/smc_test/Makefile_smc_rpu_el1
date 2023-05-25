@@ -1,0 +1,11 @@
+TARGET = fpsoc_smc_el1
+
+NUCLEI_SDK_ROOT = ../../../..
+
+SRCDIRS = .
+
+INCDIRS = ../../ps_driver/smc/inc
+
+COMMON_FLAGS := -O2
+
+include $(NUCLEI_SDK_ROOT)/tools/make/Makefile.base
