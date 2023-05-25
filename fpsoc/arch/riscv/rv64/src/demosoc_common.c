@@ -81,13 +81,3 @@ uint64_t get_MTimerOutValue(uint64_t count)
 {
     return (SOC_TIMER_FREQ * count) / 1000000;
 }
-
-#ifdef SIMULATION_XLSPIKE
-// never return for xlspike
-void xlspike_exit(int status)
-{
-    // pass exit status via rxfifo register
-    UART0->RXFIFO = status;
-    uart_write(UART0, 4);
-}
-#endif

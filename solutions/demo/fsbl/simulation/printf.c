@@ -23,18 +23,13 @@
 	If not, uncomment the define below and
 	replace outbyte(c) by your own function call.
 */
+#if defined SIMU_AL9000_DV
+
 #include <stdarg.h>
-#include "nuclei_sdk_hal.h"
-#include "alfsbl_hw.h"
 
 int putchar(int c)
 {
-#if defined SIMU_AL9000_DV
 	*(volatile unsigned char *)(0x80000000ULL) = c;
-#else
-	#define AL_UART0_BASE ((AL_UART_TypeDef *)0xF8400000)
-	uart_write(AL_UART0_BASE, c);
-#endif
 
 	return c;
 }
@@ -226,3 +221,4 @@ int	 __attribute__((optimize("Os"))) write( int i, char* c, int n)
 	return 0;
 }
 
+#endif

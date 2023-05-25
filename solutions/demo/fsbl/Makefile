@@ -11,9 +11,9 @@ endif
 
 NUCLEI_SDK_ROOT = ../../..
 
-SRCDIRS = . ./driver/qspi/ driver/sd_emmc/ driver/sd_emmc/FATFS/
+SRCDIRS = . simulation 
 
-INCDIRS = . ./driver/qspi/ driver/sd_emmc/ driver/sd_emmc/FATFS/
+INCDIRS = .
 
 COMMON_FLAGS := -O2 -fno-builtin-printf -fno-builtin-sprintf -fno-builtin-snprintf	#-msave-restore -msmall-data-limit=8
 
