@@ -18,7 +18,19 @@ stages:          # List of stages for jobs, and their order of execution
   - test
   - deploy
 
-build-apu-job:       # This job runs in the build stage, which runs first.
+check:              # This job runs in the .pre stage, which runs first.
+  stage: .pre
+  tags: 
+    - test
+  image: 
+    name: anlogic/al9000-ci:v1
+  script:
+    - |
+      echo commit message: ${CI_COMMIT_MESSAGE}
+      echo commit sha: ${CI_COMMIT_SHA}
+      echo ${CI_COMMIT_MESSAGE} | cz check
+
+build-apu-job:       # This job runs in the build stage.
   stage: build
   tags: 
     - build
