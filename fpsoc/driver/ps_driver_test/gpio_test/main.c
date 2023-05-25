@@ -47,9 +47,7 @@ AlGpio_Hal_Test()
     // 4、Test intr
     AlGpio_Dev_IntrCallbackHandler((&GPIO)->Dev, (void *)(&GPIO), (Gpio_Handler)IntrHandler);
     AlGpio_Hal_IntrCfg(&GPIO, 21, GPIO_INTR_TYPE_LEVEL_HIGH);
-    while(1){
-        printf("hhhhhhh");
-    }
+    while(1);
 
     return 0;
 }
@@ -95,7 +93,7 @@ int main(void)
 #if 1
     printf("[TEST]AlGpio_Hal_Test start\r\n");
     AlGpio_Hal_Test();
-#endif    
+#endif
 
 #if 0
     printf("[TEST]AlGpio_Dev_Test start\r\n");
