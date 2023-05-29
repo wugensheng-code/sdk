@@ -156,12 +156,12 @@ void vPortSetupTimerInterrupt(void)
     ECLIC_DisableIRQ(SysTimer_IRQn);
     ECLIC_SetLevelIRQ(SysTimer_IRQn, configKERNEL_INTERRUPT_PRIORITY);
     ECLIC_SetShvIRQ(SysTimer_IRQn, ECLIC_NON_VECTOR_INTERRUPT);
-    ECLIC_EnableIRQ(SysTimer_IRQn);
+    AlIntr_SetInterrupt(SysTimer_IRQn);
 
     /* Set SWI interrupt level to lowest level/priority, SysTimerSW as Vector Interrupt */
     ECLIC_SetShvIRQ(SysTimerSW_IRQn, ECLIC_VECTOR_INTERRUPT);
     ECLIC_SetLevelIRQ(SysTimerSW_IRQn, configKERNEL_INTERRUPT_PRIORITY);
-    ECLIC_EnableIRQ(SysTimerSW_IRQn);
+    AlIntr_SetInterrupt(SysTimerSW_IRQn);
 }
 
 

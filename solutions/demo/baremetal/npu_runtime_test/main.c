@@ -5,13 +5,12 @@
 #include "npu_util_func.h"
 #include "npu_defines.h"
 #include "io.h"
-// #include "image.h"
 
 #include "npu_util_test.h"
 #include "npu_util.h"
 
 #ifdef RUN_PLATFORM_BM
-#include "gic.h"
+#include "al_intr.h"
 #endif
 
 #define TOP_NS_BASE_ADDR 0xf8800000
@@ -46,7 +45,7 @@ int main () {
 #endif
 
     /* ---------------3. run npu runtime graph for once ------------------------------ */
-    
+
      rt_graph_t* graph = load_network ("npu_demo/rt.bin", "npu_demo/weight.bin") ;
 
      npu_input_param_t* input_param = get_input_param ((void*)graph) ;
@@ -54,7 +53,7 @@ int main () {
      void* addr = 0 ;
      uint32_t length = 0 ;
 
-    // for (int i = 0; i < 1; i++) { 
+    // for (int i = 0; i < 1; i++) {
 
         get_input_tensor_addr((void*)graph, &addr, &length) ;
 

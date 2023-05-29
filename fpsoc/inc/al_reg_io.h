@@ -5,7 +5,7 @@
 extern "C" {
 #endif  /* __cplusplus */
 
-#include "al_type.h"
+#include "al_core.h"
 #include "al_utils_def.h"
 
 #define AL_REG8_WRITE(reg_addr, value)             do {*(volatile AL_U8 *)(reg_addr) = value;} while (0)

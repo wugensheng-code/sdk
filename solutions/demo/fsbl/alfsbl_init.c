@@ -12,16 +12,10 @@
 
 #include "alfsbl_hw.h"
 #include "alfsbl_init.h"
-
-#if __riscv
-#include "core_feature_eclic.h"
-#else
-#include "gic_v3_addr.h"
-#endif
+#include "al_core.h"
 
 static uint32_t AlFsbl_GetResetReason(void);
 static uint32_t AlFsbl_SystemInit(AlFsblInfo *FsblInstancePtr);
-static void     AlFsbl_ClearPendingInterrupt(void);
 static uint32_t AlFsbl_ProcessorInit(AlFsblInfo *FsblInstancePtr);
 static uint32_t AlFsbl_TcmInit(AlFsblInfo *FsblInstancePtr);
 static uint32_t AlFsbl_DdrInit(void);
@@ -42,7 +36,7 @@ uint32_t AlFsbl_Initialize(AlFsblInfo *FsblInstancePtr)
 	}
 
 	/// clear pending interrupt
-	AlFsbl_ClearPendingInterrupt();
+	AlIntr_ClearAllPending();
 
 	/// processor init
 	/// to get running cpu ID and its running status
@@ -124,59 +118,9 @@ static uint32_t AlFsbl_SystemInit(AlFsblInfo *FsblInstancePtr)
 //		REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) & (~SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
 //	}
 
-
-
-
 	Status = ALFSBL_SUCCESS;
 
 	return Status;
-}
-
-
-
-
-static void AlFsbl_ClearPendingInterrupt(void)
-{
-	
-#if __riscv
-	IRQn_Type IrqNum;
-	printf("Clear all pending interrupts of rpu...\r\n");
-	for(IrqNum = Reserved0_IRQn; IrqNum < SOC_INT_MAX; IrqNum++) {
-		__ECLIC_ClearPendingIRQ(IrqNum);	//risc-v
-	}
-#else	//[MODIFY]:1
-	//uint32_t RegVal = 0;
-	printf("Clear all pending interrupts of apu...\r\n");
-	//RegVal = (*(volatile uint32_t *)(uint32_t)(+4*i));
-	/*for(int i = 0; i < 4; i++){
-		(*(volatile uint32_t *)(uint32_t)(GICD_CPENDSGIR+i)) = 0xFFFFFFFF;
-	}*/
-
-	REG32(GICD_ICENABLER) = ~0;
-	REG32(GICD_ICPENDR) = ~0;
-	REG32(GICD_ACTIVE_CLEAR) = ~0;
-
-	REG32(GICD_ICENABLER+4) = ~0;
-	REG32(GICD_ICPENDR+4) = ~0;
-	REG32(GICD_ACTIVE_CLEAR+4) = ~0;
-
-	REG32(GICD_ICENABLER+8) = ~0;
-	REG32(GICD_ICPENDR+8) = ~0;
-	REG32(GICD_ACTIVE_CLEAR+8) = ~0;
-
-	REG32(GICD_ICENABLER+12) = ~0;
-	REG32(GICD_ICPENDR+12) = ~0;
-	REG32(GICD_ACTIVE_CLEAR+12) = ~0;
-
-	REG32(GICD_ICENABLER+16) = ~0;
-	REG32(GICD_ICPENDR+16) = ~0;
-	REG32(GICD_ACTIVE_CLEAR+16) = ~0;
-
-	REG32(GICD_ICENABLER+20) = ~0;
-	REG32(GICD_ICPENDR+20) = ~0;
-	REG32(GICD_ACTIVE_CLEAR+20) = ~0;
-#endif
-	return;
 }
 
 

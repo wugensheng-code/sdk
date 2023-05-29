@@ -2,7 +2,7 @@
 #ifndef TEST_DATA_H
 #define TEST_DATA_H
 
-#include "al_types.h"
+#include "al_type.h"
 
 /* Data size in words */
 #define DATA_BUFF_SIZE 64 /* 256 bytes */

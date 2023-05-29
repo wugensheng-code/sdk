@@ -1,26 +1,21 @@
 #include "gic_v3.h"
 #include "gic_v3_addr.h"
-#include "al_type.h"
+#include "al_core.h"
 #include "al_errno.h"
 #include "al_intr.h"
 #include "al_reg_io.h"
 
 AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Func *Func, AL_VOID *Param)
 {
-	/*
-	 * RPU SPI interrupt IRQn to Apu SPI IRQn mapping from SPI_START_ID_SHARE_BETWEEN_APU_RPU:
-	 * APU_SPI_IDX = (RPU_SPI_IDX + SPI_OFFSET_APU_TO_RPU)
-	*/
-    #define SPI_ID_OFFSET_APU_TO_RPU		(13)
     AL_INTR_AttrStrct *Attr;
     AL_DEFAULT_ATTR(DefAttr);
 
     Attr = (IntrAttr != AL_NULL) ? IntrAttr : &DefAttr;
 
     if (Attr->TrigMode == 0) {
-        uint32_t *addr  = GICD_ICFGR + ((IntrId + SPI_ID_OFFSET_APU_TO_RPU) / 16) * 4;
+        uint32_t *addr  = GICD_ICFGR + ((IntrId) / 16) * 4;
         uint32_t mask   = *(uint32_t *)addr;
-        uint32_t offset = (((IntrId + SPI_ID_OFFSET_APU_TO_RPU) % 16) << 1);
+        uint32_t offset = (((IntrId) % 16) << 1);
         mask &= ~(0x3 << offset);
         mask |= 0x2 << offset;
         AL_REG32_WRITE(addr, mask);
@@ -30,7 +25,7 @@ AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Fun
     request_fiq(IntrId + SPI_ID_OFFSET_APU_TO_RPU, Func, Param);
     printf("currentel is el3, request fiq!\r\n");
 #else
-    request_irq(IntrId + SPI_ID_OFFSET_APU_TO_RPU, Func, Param);
+    request_irq(IntrId, Func, Param);
     printf("currentel is not el3, request irq!\r\n");
 #endif
 
@@ -61,7 +56,7 @@ AL_S32 AlIntr_SetInterrupt(AL_U32 IntrId, AL_FUNCTION state)
     return Ret;
 }
 
-AL_S32 Al_Intr_SetGlobalInterrupt(AL_FUNCTION state)
+AL_S32 AlIntr_SetGlobalInterrupt(AL_FUNCTION state)
 {
     AL_S32 Ret = AL_OK;
 
@@ -81,4 +76,34 @@ AL_S32 Al_Intr_SetGlobalInterrupt(AL_FUNCTION state)
     }
 
     return Ret;
+}
+
+
+AL_VOID AlIntr_ClearAllPending(AL_VOID)
+{
+    AL_REG32_WRITE(GICD_ICENABLER,  ~0);
+	AL_REG32_WRITE(GICD_ICPENDR,    ~0);
+	AL_REG32_WRITE(GICD_ACTIVE_CLEAR, ~0);
+
+	AL_REG32_WRITE(GICD_ICENABLER+4, ~0);
+	AL_REG32_WRITE(GICD_ICPENDR+4, ~0);
+	AL_REG32_WRITE(GICD_ACTIVE_CLEAR+4, ~0);
+
+	AL_REG32_WRITE(GICD_ICENABLER+8, ~0);
+	AL_REG32_WRITE(GICD_ICPENDR+8, ~0);
+	AL_REG32_WRITE(GICD_ACTIVE_CLEAR+8, ~0);
+
+	AL_REG32_WRITE(GICD_ICENABLER+12, ~0);
+	AL_REG32_WRITE(GICD_ICPENDR+12, ~0);
+	AL_REG32_WRITE(GICD_ACTIVE_CLEAR+12, ~0);
+
+	AL_REG32_WRITE(GICD_ICENABLER+16, ~0);
+	AL_REG32_WRITE(GICD_ICPENDR+16, ~0);
+	AL_REG32_WRITE(GICD_ACTIVE_CLEAR+16, ~0);
+
+	AL_REG32_WRITE(GICD_ICENABLER+20, ~0);
+	AL_REG32_WRITE(GICD_ICPENDR+20, ~0);
+	AL_REG32_WRITE(GICD_ACTIVE_CLEAR+20, ~0);
+
+	return;
 }

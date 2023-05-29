@@ -1,7 +1,5 @@
 #include "al_mpu_hal.h"
 #include "al_errno.h"
-
-#include "nuclei_sdk_soc.h"
 #include "al_intr.h"
 
 AL_MPU_DevStruct AL_MPU_DevInstance[AL_MPU_NUM_INSTANCE];
@@ -14,7 +12,7 @@ static AL_VOID AlMpu_Hal_MpuRegisterIntr()
 {
     AlIntr_RegHandler(SOC_INT130_IRQn, AL_NULL, AlMpu_Dev_MpuIntrHandler, AL_MPU_DevInstance);
 
-    __enable_irq();
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 }
 
 static AL_VOID AlMpu_Hal_EventCallBack(AL_MPU_EventStruct *MpuEvent, AL_VOID *CallbackRef)

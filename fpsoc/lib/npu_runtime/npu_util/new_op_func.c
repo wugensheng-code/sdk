@@ -2,7 +2,7 @@
 #include "npu_init.h"
 #include "npu_scheduler.h"
 #include "fm_mem_alloc.h"
-#include "gic.h"
+#include "al_intr.h"
 #include "npu_util_func.h"
 #include "npu_arm_op.h"
 #include <math.h>
@@ -232,6 +232,6 @@ int8_t npu_sigmoid_node_int8(npu_sigmoid_param_t *param)
 
 int8_t npu_sigmoid_node_uint8(npu_sigmoid_param_t *param)
 {
- 
+
   return 0;
 }

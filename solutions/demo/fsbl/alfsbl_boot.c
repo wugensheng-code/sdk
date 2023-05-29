@@ -12,7 +12,7 @@
 #include "alfsbl_err_code.h"
 #include "alfsbl_qspi.h"
 #include "alfsbl_sd.h"
-
+#include "demosoc.h"
 
 
 

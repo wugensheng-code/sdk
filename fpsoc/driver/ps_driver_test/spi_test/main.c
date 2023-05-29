@@ -1,7 +1,6 @@
 #include "al_spi_hal.h"
 #include "al_spinor.h"
-#include "gic_v3.h"
-#include "nuclei_sdk_soc.h"
+#include "al_intr.h"
 
 AL_SPI_HalStruct Spi0Hal;
 
@@ -52,7 +51,7 @@ void AL_NOR_WREN(void)
 void AL_NOR_SETSTATUS(AL_U8 data)
 {
     AL_S32 ret = AL_OK;
-    
+
 	Spi0Hal.Dev->Configs.TransMode = SPI_TX_ONLY;
 	SendData[0] = NOR_OP_WRSR;
     SendData[1] = data;
@@ -106,7 +105,7 @@ void AL_NOR_ERASE(void)
     SendData[1] = 0;
     SendData[2] = 0;
     SendData[3] = 0;
-    
+
     ret = AlSpi_Hal_SendDataBlock(&Spi0Hal, SendData, 4, 0);
     if (ret != AL_OK) {
         printf("AL_NOR_ERASE error!!!!!\r\n");
@@ -120,7 +119,7 @@ void AL_NOR_ERASECHIP(void)
 
     Spi0Hal.Dev->Configs.TransMode  = SPI_TX_ONLY;
     SendData[0] = NOR_OP_CE;
-    
+
     ret = AlSpi_Hal_SendDataBlock(&Spi0Hal, SendData, 1, 0);
     if (ret != AL_OK) {
         printf("AL_NOR_ERASECHIP error!!!!!\r\n");
@@ -177,7 +176,7 @@ AL_VOID AL_NOR_READID(AL_VOID)
     printf("Flash ID:0x%x, 0x%x, 0x%x\r\n", FlashId[0], FlashId[1], FlashId[2]);
 }
 
-    
+
 void main(void)
 {
     AL_U32 i;
@@ -197,7 +196,7 @@ void main(void)
     }
 
     /**/
-    __enable_irq();
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
     /**/
     AL_NOR_READID();

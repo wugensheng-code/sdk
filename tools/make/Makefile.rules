@@ -59,7 +59,7 @@ help:
 	@$(ECHO) "           to load your program, then use gdb to debug it."
 	@$(ECHO) ""
 	@$(ECHO) "== Example Usage =="
-	@$(ECHO) "1. cd $NUCLEI_SDK_ROOT/application/helloworld"
+	@$(ECHO) "1. cd $SDK_ROOT/application/helloworld"
 	@$(ECHO) "2. Build for ILM download mode: make DOWNLOAD=ilm all"
 	@$(ECHO) "3. Download application to board: make DOWNLOAD=ilm upload"
 	@$(ECHO) "4.(Option 1) Debug application:"
@@ -91,7 +91,7 @@ dasm: $(TARGET).elf
 	$(OBJDUMP) -d $< > $(TARGET).dasm
 	$(OBJCOPY) $< -O ihex $(TARGET).hex
 	$(OBJCOPY) $< -O verilog $(TARGET).verilog
-	$(OBJCOPY) $< -O binary $(TARGET).bin 
+	$(OBJCOPY) $< -O binary $(TARGET).bin
 
 bin: $(TARGET).elf
 	$(OBJCOPY) $< -O binary $(TARGET).bin

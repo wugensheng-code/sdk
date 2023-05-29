@@ -14,7 +14,7 @@
 #include "npu_init.h"
 #include "npu_scheduler.h"
 #include "fm_mem_alloc.h"
-#include "gic.h"
+#include "al_intr.h"
 
 //void depthwise_k3s1p1_int8_a72(int8_t* input, int8_t* kernel, int8_t* out, int* bias, long out_h, long out_w,
 //                               long multi, long shift, long input_w, long act_min, long act_max);

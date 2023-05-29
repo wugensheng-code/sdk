@@ -1,6 +1,5 @@
 /***************************** Include Files *********************************/
 #include "al_uart_hal.h"
-#include "nuclei_sdk_soc.h"
 #include "al_intr.h"
 
 /************************** Constant Definitions *****************************/
@@ -28,7 +27,6 @@ static AL_S32 AlUart_Hal_WaitRxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 T
 {
     Al_WaitEvent(Handle->RxEvent);
 }
-
 
 
 #define AL_UART_HAL_LOCK(Handle)        do {} while (0)
@@ -152,7 +150,7 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStru
     }
 
     (AL_VOID)AlIntr_RegHandler(Dev->IrqNum, AL_NULL, AlUart_Dev_IntrHandler, Dev);
-    __enable_irq();
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
     Handle->Dev  = Dev;
     AL_UART_HAL_UNLOCK(Handle);

@@ -8,6 +8,8 @@
 extern "C" {
 #endif  /* __cplusplus */
 
+#include <stdio.h>
+
 #define ARRAY_SIZE(a)         (sizeof(a) / sizeof((a)[0]))
 
 #define BIT_32(nr)            ((1U) << (nr))

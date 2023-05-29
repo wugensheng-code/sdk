@@ -14,7 +14,7 @@ extern "C" {
 #endif
 
 /******************************* Exported Includes ************************************/
-#include "al_type.h"
+#include "al_core.h"
 #include "al_errno.h"
 #include "al_spi_ll.h"
 

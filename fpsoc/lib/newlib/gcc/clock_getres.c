@@ -1,12 +1,13 @@
 /* See LICENSE of license details. */
-#include "nuclei_sdk_soc.h"
 #include <errno.h>
 #include <time.h>
+#include <al_core.h>
 #include <stdint.h>
 
 /* Get resolution of clock. */
 __WEAK int clock_getres(clockid_t clock_id, struct timespec* res)
 {
+    extern uint32_t SystemCoreClock;
     res->tv_sec = 0;
     res->tv_nsec = 1000000000 / SystemCoreClock;
 

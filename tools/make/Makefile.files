@@ -1,25 +1,17 @@
-FPSOC_LIB = $(FPSOC_ROOT)/lib
-FPSOC_3RD_PARTY_LIB = $(NUCLEI_SDK_ROOT)/3rdparty/lib
 
 C_INCDIRS +=
 
 INCDIRS += $(FPSOC_ROOT)/inc \
-           $(FPSOC_ROOT)/arch/inc \
            $(FPSOC_ROOT)/driver/ps_driver/can/inc \
            $(FPSOC_ROOT)/driver/ps_driver/dmacahb/inc \
            $(FPSOC_ROOT)/driver/ps_driver/mpu/inc \
            $(FPSOC_ROOT)/driver/ps_driver/uart/inc \
            $(FPSOC_ROOT)/driver/ps_driver/gpio/inc \
            $(FPSOC_ROOT)/driver/ps_driver/spi/inc \
-           $(FPSOC_ROOT)/driver/ps_driver/smc/inc \
-           $(FPSOC_ROOT)/driver/ps_driver/lagecy/include \
-           $(FPSOC_ROOT)/driver/ps_driver/lagecy/qspi \
-           $(FPSOC_ROOT)/driver/ps_driver/lagecy/sd_emmc
+           $(FPSOC_ROOT)/driver/ps_driver/smc/inc
 
+INCDIRS += $(LAGECY_INCDIRS)
 
-INCDIRS += $(FPSOC_ROOT)/arch/riscv/nmsis/core/inc \
-           $(FPSOC_ROOT)/arch/riscv/nmsis/dsp/inc \
-           $(FPSOC_ROOT)/arch/riscv/nmsis/nn/inc
 
 CXX_INCDIRS +=
 ASM_INCDIRS +=
@@ -34,20 +26,20 @@ C_SRCDIRS += $(FPSOC_ROOT)/arch \
              $(FPSOC_ROOT)/driver/ps_driver/uart/src \
              $(FPSOC_ROOT)/driver/ps_driver/spi/src \
              $(FPSOC_ROOT)/driver/ps_driver/smc/src \
-             $(FPSOC_ROOT)/driver/ps_driver/gpio/src \
-             $(FPSOC_ROOT)/driver/ps_driver/lagecy/drivers \
-             $(FPSOC_ROOT)/driver/ps_driver/lagecy/qspi \
-             $(FPSOC_ROOT)/driver/ps_driver/lagecy/sd_emmc
-
-
-
+             $(FPSOC_ROOT)/driver/ps_driver/gpio/src
 
 C_SRCDIRS += $(FPSOC_LIB)/newlib/gcc \
              $(FPSOC_LIB)/log/src
 
+ifneq ($(BOARD),)
+C_SRCDIRS   += $(FPSOC_BOARDS)/$(BOARD)
+endif
+
 INCDIRS += $(FPSOC_LIB)/log/inc
 
 ifeq ($(NPU_ENABLE), y)
+
+override FATFS_ENABLE = y
 
 C_SRCS += $(FPSOC_LIB)/npu_runtime/image_process/blas.c
 C_SRCS += $(FPSOC_LIB)/npu_runtime/image_process/list.c
@@ -94,10 +86,24 @@ INCDIRS   += $(FPSOC_3RD_PARTY_LIB)/jpu_driver
 
 endif
 
+ifeq ($(FATFS_ENABLE), y)
+C_SRCDIRS += $(FPSOC_3RD_PARTY_LIB)/FATFS \
+             $(FPSOC_3RD_PARTY_LIB)/FATFS/lagecy/drivers \
+             $(FPSOC_3RD_PARTY_LIB)/FATFS/lagecy/qspi \
+             $(FPSOC_3RD_PARTY_LIB)/FATFS/lagecy/sd_emmc
 
-C_SRCDIRS += $(FPSOC_3RD_PARTY_LIB)/FATFS
-INCDIRS   += $(FPSOC_3RD_PARTY_LIB)/FATFS
 
+INCDIRS   += $(FPSOC_3RD_PARTY_LIB)/FATFS \
+             $(FPSOC_3RD_PARTY_LIB)/FATFS/lagecy/include \
+             $(FPSOC_3RD_PARTY_LIB)/FATFS/lagecy/qspi \
+             $(FPSOC_3RD_PARTY_LIB)/FATFS/lagecy/sd_emmc
+
+endif
+
+C_SRCDIRS   += $(FPSOC_CHIP_ROOT) \
+               $(FPSOC_CHIP)
+
+INCDIRS     += $(FPSOC_CHIP)
 
 CXX_SRCDIRS +=
 ASM_SRCDIRS +=
@@ -107,5 +113,3 @@ CXX_SRCS +=
 ASM_SRCS +=
 
 LIBDIRS +=
-
-include $(NUCLEI_SDK_BUILD)/Makefile.files.$(SOC)

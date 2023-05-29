@@ -1,6 +1,6 @@
 TARGET = fpsoc_dmacahb_reload_mode
 
-NUCLEI_SDK_ROOT = ../../../../
+SDK_ROOT = ../../../../
 
 SRCDIRS = .
 
@@ -12,4 +12,4 @@ COMMON_FLAGS := -O2 -DDMACAHB_DEBUG -DCONFIG_RELOAD_MODE_TEST=1 -Wno-int-to-poin
 # COMMON_FLAGS += -DSUPPORT_NONSECURE
 
 
-include $(NUCLEI_SDK_ROOT)/tools/make/Makefile.base
+include $(SDK_ROOT)/tools/make/Makefile.base

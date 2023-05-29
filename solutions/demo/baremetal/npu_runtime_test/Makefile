@@ -2,17 +2,19 @@ TARGET = npu_runtime_test
 
 SOC ?= demoapu
 
-# enable lib npu runtime
+# enable lib npu runtime, and runtime depends on FATFS & LAGECY driver
 NPU_ENABLE = y
+
+FATFS_ENABLE = y
 
 # link using ddr address
 DOWNLOAD = ddr
 
-NUCLEI_SDK_ROOT = ../../../..
+SDK_ROOT = ../../../..
 
 SRCDIRS = .
 
-INCDIRS = .
+INCDIRS = . $(SDK_ROOT)/fpsoc/arch/arm/armv8/aarch64/cortex-a/inc
 
 COMMON_FLAGS := -O2
 
@@ -24,4 +26,4 @@ COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
 
-include $(NUCLEI_SDK_ROOT)/tools/make/Makefile.base
+include $(SDK_ROOT)/tools/make/Makefile.base

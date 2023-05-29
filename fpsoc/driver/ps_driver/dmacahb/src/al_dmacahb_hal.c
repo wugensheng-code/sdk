@@ -2,10 +2,7 @@
 #include "al_dmacahb_hal.h"
 #include "al_dmacahb_dev.h"
 #include "al_dmacahb_ll.h"
-#include "al_errno.h"
-/* TODO: Remove after irq driver done */
-#include "nuclei_sdk_soc.h"
-#include "al_intr.h"
+#include "al_core.h"
 
 /************************** Constant Definitions *****************************/
 
@@ -165,7 +162,7 @@ AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_ChInitStruct 
     if (Handle->Channel->Dmac->State.IntrEn == AL_FALSE) {
         Handle->Channel->Dmac->State.IntrEn = AL_TRUE;
         AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlDmacAhb_Dev_IntrHandler, Handle->Channel->Dmac);
-        __enable_irq();
+        AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     }
 
     AL_DMACAHB_HAL_UNLOCK(Handle);

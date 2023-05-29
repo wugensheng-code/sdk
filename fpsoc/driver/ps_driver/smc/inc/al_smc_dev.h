@@ -14,7 +14,7 @@ extern "C" {
 #endif
 
 /******************************* Exported Includes ************************************/
-#include "al_type.h"
+#include "al_core.h"
 #include "al_errno.h"
 #include "al_smc_ll.h"
 
@@ -276,7 +276,7 @@ typedef struct{
 
 typedef enum
 {
-    NAND_8BITS      = 0, 
+    NAND_8BITS      = 0,
     NAND_16BITS     = 1
 } AL_Nand_Width;
 

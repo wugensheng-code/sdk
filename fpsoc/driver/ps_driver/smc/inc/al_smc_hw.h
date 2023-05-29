@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 /***************************** Include Files ********************************/
-#include "al_type.h"
+#include "al_core.h"
 
 /************************** Constant Definitions ****************************/
 

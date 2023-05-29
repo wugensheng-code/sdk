@@ -1,4 +1,4 @@
-#include "nuclei_sdk_soc.h"
+#include <al_core.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <unistd.h>

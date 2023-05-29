@@ -13,8 +13,6 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-
-#include "demosoc.h"
 #include "alfsbl_defines.h"
 #include <alfsbl_secure.h>
 

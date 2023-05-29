@@ -7,6 +7,7 @@
 #include <alfsbl_secure.h>
 #include <stdio.h>
 #include <stdint.h>
+#include "demosoc.h"
 #include "alfsbl_misc.h"
 #include "alfsbl_err_code.h"
 #include "alfsbl_hw.h"
@@ -673,7 +674,6 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		Status = ALFSBL_ERROR_PL_CFG_STATE_ERROR & (REG32(CRP_CFG_STATE) | 0xFFFFFFF8UL);
 		goto END;
 	}
-
 
 	/// set PCAP not enable, to make the signal to config model not change
 	REG32(CSU_PCAP_ENABLE) = 0;

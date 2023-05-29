@@ -16,7 +16,7 @@
 #include "gic_v3_mask.h"
 #include "gic_v3_addr.h"
 #include "gic_v3_value.h"
-#include "al_intr.h"
+#include "al_core.h"
 #include "compiler_attributes.h"
 
 
@@ -30,28 +30,27 @@
 #define GICV3_SPECIAL_END				(1023)
 
 #define GICV3_SPECIAL_NUM				(GICV3_SPECIAL_END - GICV3_SPECIAL_START +1)
-#define IRQ_MAX_NUM					(256)
 
-static AL_INTR_HandlerStruct irq_handler_list[IRQ_MAX_NUM + GICV3_SPECIAL_NUM];
-static AL_INTR_HandlerStruct fiq_handler_list[IRQ_MAX_NUM + GICV3_SPECIAL_NUM];
+static AL_INTR_HandlerStruct irq_handler_list[SOC_INT_MAX + GICV3_SPECIAL_NUM];
+static AL_INTR_HandlerStruct fiq_handler_list[SOC_INT_MAX + GICV3_SPECIAL_NUM];
 
 static void request_interrupt(u32 int_id, void* handler, void *Param, AL_INTR_HandlerStruct *intr)
 {
 	/*
-	 * > IRQ_MAX_NUM && (not in the range of special range)
+	 * > SOC_INT_MAX && (not in the range of special range)
 	*/
-	if (int_id >= IRQ_MAX_NUM && (int_id < GICV3_SPECIAL_START || int_id > GICV3_SPECIAL_END)) {
+	if (int_id >= SOC_INT_MAX && (int_id < GICV3_SPECIAL_START || int_id > GICV3_SPECIAL_END)) {
 		gic_print("init id error int_id = %d\n", int_id);
 		return;
 	}
 
-	if (int_id < IRQ_MAX_NUM) {
+	if (int_id < SOC_INT_MAX) {
 		intr[int_id].Func    = handler;
 		intr[int_id].Param   = Param;
 		gicv3_enable_irq(int_id);
 	} else {
-		intr[int_id - GICV3_SPECIAL_START + IRQ_MAX_NUM].Func = handler;
-		intr[int_id - GICV3_SPECIAL_START + IRQ_MAX_NUM].Param = Param;
+		intr[int_id - GICV3_SPECIAL_START + SOC_INT_MAX].Func = handler;
+		intr[int_id - GICV3_SPECIAL_START + SOC_INT_MAX].Param = Param;
 	}
 }
 
@@ -403,10 +402,10 @@ void do_irq_handle(void)
 		int_id = gic_read_iar_common() & 0xffffff;
 	}
 
-	if (int_id < IRQ_MAX_NUM) {
+	if (int_id < SOC_INT_MAX) {
 		Handler = irq_handler_list[int_id];
 	} else {
-		Handler = irq_handler_list[int_id -GICV3_SPECIAL_START + IRQ_MAX_NUM];
+		Handler = irq_handler_list[int_id -GICV3_SPECIAL_START + SOC_INT_MAX];
 	}
 
 	if (Handler.Func == NULL) {
@@ -451,10 +450,10 @@ void do_fiq_handle(void)
 
 	int_id = gic_fiq_get_int_id();
 
-	if (int_id < IRQ_MAX_NUM) {
+	if (int_id < SOC_INT_MAX) {
 		Handler = fiq_handler_list[int_id];
 	} else {
-		Handler = fiq_handler_list[int_id -GICV3_SPECIAL_START + IRQ_MAX_NUM];
+		Handler = fiq_handler_list[int_id -GICV3_SPECIAL_START + SOC_INT_MAX];
 	}
 
 	if (Handler.Func == NULL) {
@@ -508,7 +507,7 @@ int gicv3_set_irq_priority(int int_id, int priority)
 	void __iomem * addr;
 	u32 pri;
 
-	if (int_id >= IRQ_MAX_NUM) {
+	if (int_id >= SOC_INT_MAX) {
 		gic_print("init id error int_id = %d\n", int_id);
 		return (-1);
 	}

@@ -7,7 +7,7 @@ else
 TARGET = fpsoc_mpu_nonsecure_el1
 endif
 
-NUCLEI_SDK_ROOT = ../../../..
+SDK_ROOT = ../../../..
 
 SRCDIRS = .
 
@@ -15,7 +15,7 @@ INCDIRS = .
 
 COMMON_FLAGS := -O0 -g3
 
-include $(NUCLEI_SDK_ROOT)/tools/make/Makefile.base
+include $(SDK_ROOT)/tools/make/Makefile.base
 
 ifeq ($(SOC), demoapu)
 COMPILE_PREFIX ?= /opt/toolchain/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin/aarch64-none-elf-

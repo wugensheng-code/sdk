@@ -1,7 +1,5 @@
 #include "al_mpu_dev.h"
 #include "al_errno.h"
-
-#include "nuclei_sdk_soc.h"
 #include "al_intr.h"
 
 #include <string.h>

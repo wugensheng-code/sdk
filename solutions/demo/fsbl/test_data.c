@@ -1,4 +1,5 @@
 #include "test_data.h"
+#include "stdint.h"
 
 unsigned int input_data_buff[DATA_BUFF_SIZE];
 unsigned int output_data_buff[DATA_BUFF_SIZE];
@@ -45,7 +46,7 @@ unsigned int const SM4_de_gold_128byte[] = {
  */
 void TestDataInit()
 {
-    u32 i;
+    unsigned int i;
     for (i = 0; i < DATA_BUFF_SIZE; i++) {
         input_data_buff[i] = 0x12345678 + i;
     }
@@ -56,7 +57,7 @@ void TestDataInit()
  */
 void AesDataInit(void)
 {
-    u32 i;
+    unsigned int i;
 
     for (i = 0; i < KEY_BUFF_SIZE; i++) {
         key_data_buff[i] = 0x11111111 * (i + 1);
@@ -80,7 +81,7 @@ void AesDataInit(void)
  */
 void Sm4DataInit(void)
 {
-    u32 i;
+    unsigned int i;
 
     key_data_buff[0] = 0x01234567;
     key_data_buff[1] = 0x89abcdef;

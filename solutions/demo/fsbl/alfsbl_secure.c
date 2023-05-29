@@ -89,8 +89,9 @@ void MsgReceive(void)
 }
 
 
-void RpuCsuAckHandler()
+void RpuCsuAckHandler(void *Param)
 {
+	(void)Param;
 	MsgReceive();
 }
 
@@ -99,7 +100,7 @@ uint32_t SecureIrqInit(void)
 {
 	uint32_t ret;
 	AL_INTR_AttrStrct Attr = {
-		.TrigMode   =  ECLIC_POSTIVE_EDGE_TRIGGER,
+		.TrigMode   =  POSTIVE_EDGE_TRIGGER,
 		.Priority   =  1,
 #if (defined __riscv || defined __riscv__)
 		.VectorMode =  NON_VECTOR_INTERRUPT,
@@ -107,7 +108,8 @@ uint32_t SecureIrqInit(void)
 	};
 
 	ret = AlIntr_RegHandler(RPU2CSU_ACK_IRQN, &Attr, RpuCsuAckHandler, NULL);
-	__enable_irq();
+	AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+
 	return ret;
 }
 

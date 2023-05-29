@@ -24,7 +24,7 @@
 
 #ifdef RUN_PLATFORM_BM
 #include "ff.h"
-#include "gic.h"
+#include "al_intr.h"
 #endif
 
 #define READY_QUEUE_SIZE 350

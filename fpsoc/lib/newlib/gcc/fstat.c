@@ -1,5 +1,5 @@
 /* See LICENSE of license details. */
-#include "nuclei_sdk_soc.h"
+#include <al_core.h>
 #include <errno.h>
 #include <sys/stat.h>
 #include <unistd.h>

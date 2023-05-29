@@ -1,7 +1,8 @@
-NUCLEI_SDK_BUILD = $(NUCLEI_SDK_ROOT)/tools/make
+NUCLEI_SDK_BUILD = $(SDK_ROOT)/tools/make
+
 # Include your local and global makefile variables
 # SOC, DOWNLOAD, PFLOAT, NEWLIB etc.
-# Makefile.global should be placed in $(NUCLEI_SDK_ROOT)/Build
+# Makefile.global should be placed in $(SDK_ROOT)/Build
 # Makefile.local should be placed together with application Makefile in your own application folder
 # Sample content for this Makefile.local or Makefile.global
 # SOC ?= demosoc
@@ -16,7 +17,7 @@ endif
 # NOTE: CORE and BOARD are defined in Makefile.soc.$(SOC)
 # BOARD and SOC name should always be lower-case
 ## Available choices:
-## The name of sub directories in $(NUCLEI_SDK_ROOT)/SoC/
+## The name of sub directories in $(SDK_ROOT)/SoC/
 SOC ?= demosoc
 ## Available choices:
 ## ilm: Program will be download into ilm/ram and run directly in ilm/ram, program lost when poweroff
@@ -40,11 +41,9 @@ SIMU_AL9000_DV ?=no
 FSBL_QSPI_XIP ?= yes
 
 
-
-
 # Variables should be defined in Application Makefile
 ## Available choices:
-## The name of sub directories in $(NUCLEI_SDK_ROOT)/OS/
+## The name of sub directories in $(SDK_ROOT)/OS/
 RTOS ?=
 ## If PFLOAT=1, it will enable float point print when using nano newlib
 PFLOAT ?= 0
@@ -56,9 +55,27 @@ NOGC ?=
 FPGA_BIT_VERSION ?= STAGE_7
 
 
+ifeq ($(SOC), demosoc)
+CHIP = dr1v90
+else
+ifeq ($(SOC), demoapu)
+CHIP = dr1m90
+endif
+endif
+
+BOARD           ?= board_dr1x90_emulation
+
 # Directories for SoC and RTOS chosen
-FPSOC_ROOT = $(NUCLEI_SDK_ROOT)/fpsoc
-NUCLEI_SDK_RTOS = $(NUCLEI_SDK_ROOT)/3rdparty/os/$(RTOS)
+FPSOC_ROOT      = $(SDK_ROOT)/fpsoc
+FPSOC_CHIP_ROOT = $(SDK_ROOT)/fpsoc/chip
+FPSOC_CHIP      = $(FPSOC_CHIP_ROOT)/$(CHIP)
+
+FPSOC_BOARDS    = $(SDK_ROOT)/solutions/boards
+
+NUCLEI_SDK_RTOS = $(SDK_ROOT)/3rdparty/os/$(RTOS)
+
+FPSOC_LIB       = $(FPSOC_ROOT)/lib
+FPSOC_3RD_PARTY_LIB = $(SDK_ROOT)/3rdparty/lib
 
 ## Include GNU Make Standard Library
 ## Website: http://gmsl.sourceforge.net/

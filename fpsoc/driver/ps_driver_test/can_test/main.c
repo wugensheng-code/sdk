@@ -1,6 +1,5 @@
 #include "al_can_test_config.h"
 #include "al_errno.h"
-#include "mtimer.h"
 
 AL_U32 __attribute__((aligned(4))) AL_CAN_TEST_DST_MEM[AL_CAN_DMAC_RECV_DATA_IN_WORD];
 

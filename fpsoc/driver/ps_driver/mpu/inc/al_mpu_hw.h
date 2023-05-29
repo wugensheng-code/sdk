@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#include "al_type.h"
+#include "al_core.h"
 
 #define AL_MPU_NUM_INSTANCE         (7)
 /* apu mpu is not included here */
@@ -30,7 +30,7 @@ extern "C" {
 
 ///////////////////////////////////////////////////////
 // Register: MPU_TYPER
-// 
+//
 ///////////////////////////////////////////////////////
 #define MPU_TYPER_OFFSET        0x0
 #define MPU_TYPER_NUM           0x1
@@ -112,7 +112,7 @@ extern "C" {
 #define MPU_EAR_REGION_END_ADDR_SHIFT     0
 ///////////////////////////////////////////////////////
 // Register: MPU_GROUPID_REGION
-// 
+//
 ///////////////////////////////////////////////////////
 #define MPU_GROUPID_REGION_OFFSET         0xC
 #define MPU_GROUPID_REGION_NUM            0x1

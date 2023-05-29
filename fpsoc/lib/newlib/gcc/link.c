@@ -1,11 +1,11 @@
 /* See LICENSE of license details. */
-#include "nuclei_sdk_soc.h"
+#include <al_core.h>
 #include <errno.h>
 
 #undef errno
 extern int errno;
 
-int _link(char* old, char* new)
+__WEAK int _link(char* old, char* new)
 {
     errno = EMLINK;
     return -1;

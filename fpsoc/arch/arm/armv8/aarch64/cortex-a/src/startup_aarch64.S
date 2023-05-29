@@ -138,6 +138,7 @@ el3_entry:
 	/* set up stack point */
 	ldr x28, =_sp
 	mov sp, x28
+
 #ifdef COUNTER_FREQUENCY
 	ldr	x0, =COUNTER_FREQUENCY
 	msr	cntfrq_el0, x0			/* Initialize CNTFRQ */
@@ -203,6 +204,8 @@ main_entry:
 
 	/* Processor specific initialization */
 	bl	lowlevel_init
+
+	bl	board_init
 
 	/* jump to main */
 	bl	main

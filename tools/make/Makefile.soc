@@ -1,8 +1,0 @@
-ifeq ($(SOC),hbird)
-$(warning SOC hbird is renamed to demosoc since Nuclei SDK 0.3.1, please use SOC=demosoc now)
-override SOC := demosoc
-endif
-
-NUCLEI_SDK_SOC_CHIP=$(FPSOC_ROOT)/chip/dr1x90
-
-include $(NUCLEI_SDK_BUILD)/Makefile.soc.$(SOC)

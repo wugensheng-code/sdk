@@ -6,12 +6,11 @@ else
 TARGET = rpu_fsbl
 endif
 
-#apu compile: make SOC=demoapu all
-#rpu compile: make COMPILE_PREFIX=/opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf- CORE=ux600fd dasm
+FATFS_ENABLE = y
 
-NUCLEI_SDK_ROOT = ../../..
+SDK_ROOT = ../../..
 
-SRCDIRS = . simulation 
+SRCDIRS = . simulation
 
 INCDIRS = .
 
@@ -24,5 +23,5 @@ PROGRAM=./
 
 NEWLIB := nano
 
-include $(NUCLEI_SDK_ROOT)/tools/make/Makefile.base
+include $(SDK_ROOT)/tools/make/Makefile.base
 
