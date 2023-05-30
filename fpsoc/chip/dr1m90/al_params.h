@@ -14,13 +14,17 @@ typedef enum {
     SOC_INT130_IRQn      =  (130 + 13),
     SOC_INT89_IRQn       =  (89  + 13),
     SOC_INT_MAX          =  256,
-};
+} AL_IrqNumEnum;
 
 /*----------------------------------------------------------------------------
   Define clocks
  *----------------------------------------------------------------------------*/
 #ifndef SYSTEM_CLOCK
 #define SYSTEM_CLOCK    (50000000UL)
+#endif
+
+#ifndef __SYSTIMER_BASEADDR
+#define __SYSTIMER_BASEADDR     (0x68020000UL)
 #endif
 
 #ifdef __cplusplus

@@ -28,7 +28,10 @@ extern "C" {
 #define __DCACHE_PRESENT          0                     /*!< Set to 1 if D-Cache is present */
 
 #define __ECLIC_BASEADDR        (0x68000000UL)            /*!< Set to ECLIC baseaddr of your device */
+
+#ifndef __SYSTIMER_BASEADDR
 #define __SYSTIMER_BASEADDR     (0x68020000UL)            /*!< Set to SysTimer baseaddr of your device */
+#endif
 
 typedef enum {
     SysTimer_IRQn        =  7,
@@ -36,7 +39,7 @@ typedef enum {
     SOC_INT130_IRQn      =  130,
     SOC_INT89_IRQn       =  89,
     SOC_INT_MAX          =  256,
-};
+} AL_IrqNumEnum;
 
 /*----------------------------------------------------------------------------
   Define clocks

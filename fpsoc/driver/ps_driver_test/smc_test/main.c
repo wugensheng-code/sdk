@@ -1,6 +1,5 @@
 #include "al_smc_hal.h"
-#include "gic_v3.h"
-#include "nuclei_sdk_soc.h"
+#include "al_core.h"
 
 AL_SMC_HalStruct SmcHal;
 
@@ -118,6 +117,6 @@ void main(void)
     // ALSmc_Hal_ReadSpare(&SmcHal, 0, *RecvData, 500, 0);
     // ALSmc_Hal_WriteSpare(&SmcHal, 0, *SendData, 500, 0);
 
-    
+
 
 }

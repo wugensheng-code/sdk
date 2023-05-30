@@ -40,8 +40,10 @@ int main () {
 
     /* ---------------2. init interrupt ---------------------------------------------- */
 #ifdef RUN_PLATFORM_BM
-   gic_init();
-   irq_enable();
+    /* Remove bacause the system boot will do this;
+    gic_init();
+    irq_enable();
+    */
 #endif
 
     /* ---------------3. run npu runtime graph for once ------------------------------ */

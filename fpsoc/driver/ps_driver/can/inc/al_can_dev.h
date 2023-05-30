@@ -212,17 +212,17 @@ typedef enum
  */
 typedef enum
 {
-    AL_CAN_INTR_AIF     = BIT_32(8),
-    AL_CAN_INTR_EIF     = BIT_32(9),
-    AL_CAN_INTR_TSIF    = BIT_32(10),
-    AL_CAN_INTR_TPIF    = BIT_32(11),
-    AL_CAN_INTR_RAFIF   = BIT_32(12),
-    AL_CAN_INTR_RFIF    = BIT_32(13),
-    AL_CAN_INTR_ROIF    = BIT_32(14),
-    AL_CAN_INTR_RIF     = BIT_32(15),
-    AL_CAN_INTR_BEIF    = BIT_32(16),
-    AL_CAN_INTR_ALIF    = BIT_32(18),
-    AL_CAN_INTR_EPIF    = BIT_32(20)
+    AL_CAN_INTR_AIF     = BIT(8),
+    AL_CAN_INTR_EIF     = BIT(9),
+    AL_CAN_INTR_TSIF    = BIT(10),
+    AL_CAN_INTR_TPIF    = BIT(11),
+    AL_CAN_INTR_RAFIF   = BIT(12),
+    AL_CAN_INTR_RFIF    = BIT(13),
+    AL_CAN_INTR_ROIF    = BIT(14),
+    AL_CAN_INTR_RIF     = BIT(15),
+    AL_CAN_INTR_BEIF    = BIT(16),
+    AL_CAN_INTR_ALIF    = BIT(18),
+    AL_CAN_INTR_EPIF    = BIT(20)
 } AL_CAN_IntrTypeEnum;
 
 /**
@@ -230,16 +230,16 @@ typedef enum
  */
 typedef enum
 {
-    AL_CAN_EVENT_SEND_DONE          = BIT_32(0),
-    AL_CAN_EVENT_RECV_DONE          = BIT_32(1),
-    AL_CAN_EVENT_RBUFF_ALMOST_FULL  = BIT_32(2),
-    AL_CAN_EVENT_RBUFF_FULL         = BIT_32(3),
-    AL_CAN_EVENT_RBUFF_OVERFLOW     = BIT_32(4),
-    AL_CAN_EVENT_ABORT              = BIT_32(5),
-    AL_CAN_EVENT_ERR                = BIT_32(6),
-    AL_CAN_EVENT_BUS_ERR            = BIT_32(7),
-    AL_CAN_EVENT_ARBITRATION_LOST   = BIT_32(8),
-    AL_CAN_EVENT_ERR_PASSIVE        = BIT_32(9)
+    AL_CAN_EVENT_SEND_DONE          = BIT(0),
+    AL_CAN_EVENT_RECV_DONE          = BIT(1),
+    AL_CAN_EVENT_RBUFF_ALMOST_FULL  = BIT(2),
+    AL_CAN_EVENT_RBUFF_FULL         = BIT(3),
+    AL_CAN_EVENT_RBUFF_OVERFLOW     = BIT(4),
+    AL_CAN_EVENT_ABORT              = BIT(5),
+    AL_CAN_EVENT_ERR                = BIT(6),
+    AL_CAN_EVENT_BUS_ERR            = BIT(7),
+    AL_CAN_EVENT_ARBITRATION_LOST   = BIT(8),
+    AL_CAN_EVENT_ERR_PASSIVE        = BIT(9)
 } AL_CAN_EventIdEnum;
 
 /**
@@ -283,14 +283,14 @@ typedef enum
  */
 typedef enum {
     AL_CAN_STATE_NOT_INIT           = (0x0),
-    AL_CAN_STATE_READY              = BIT_32(1),
-    AL_CAN_STATE_RESET              = BIT_32(2),
-    AL_CAN_STATE_SEND_BUSY          = BIT_32(3),
-    AL_CAN_STATE_RECV_BUSY          = BIT_32(4),     /* to be removed, after align with yonbo */
-    AL_CAN_STATE_RECV_EMPTY         = BIT_32(5),
-    AL_CAN_STATE_RECV_ALMOST_FULL   = BIT_32(6),
-    AL_CAN_STATE_RECV_FULL          = BIT_32(7),
-    AL_CAN_STATE_RECV_OVERFLOW      = BIT_32(8),
+    AL_CAN_STATE_READY              = BIT(1),
+    AL_CAN_STATE_RESET              = BIT(2),
+    AL_CAN_STATE_SEND_BUSY          = BIT(3),
+    AL_CAN_STATE_RECV_BUSY          = BIT(4),     /* to be removed, after align with yonbo */
+    AL_CAN_STATE_RECV_EMPTY         = BIT(5),
+    AL_CAN_STATE_RECV_ALMOST_FULL   = BIT(6),
+    AL_CAN_STATE_RECV_FULL          = BIT(7),
+    AL_CAN_STATE_RECV_OVERFLOW      = BIT(8),
 } AL_CAN_StateEnum;
 
 /**

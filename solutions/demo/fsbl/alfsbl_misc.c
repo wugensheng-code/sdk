@@ -5,7 +5,7 @@
  *      Author: qsxu
  */
 
-#include "demosoc.h"
+#include "al_core.h"
 #include "alfsbl_misc.h"
 
 
@@ -59,9 +59,9 @@ void delay_us(unsigned int us)
 #define NUM2STR_RANGE	2
 
 /**
- * @brief num to str 
- * 
- * @param str 
+ * @brief num to str
+ *
+ * @param str
  * @param num range 0~999
  */
 static void AlFsbl_Num2Str(char *Str, uint32_t Num, uint32_t *StrLen)
@@ -94,7 +94,7 @@ const char filesuffix[] = ".bin";
 void AlFsbl_MakeSdFileName(char *FileName, uint32_t MultiBootReg, uint32_t DrvNum)
 {
 	uint32_t filenamelen = 0;
-	char strnum[5] = {0}; 
+	char strnum[5] = {0};
 	uint32_t num2strlen = 0;
 	if (0x0 == MultiBootReg) {
 		if (DrvNum == ALFSBL_SD_DRV_NUM_0) {
@@ -108,8 +108,8 @@ void AlFsbl_MakeSdFileName(char *FileName, uint32_t MultiBootReg, uint32_t DrvNu
 		if (DrvNum != ALFSBL_SD_DRV_NUM_0) {
 			AlFsbl_MemCpy(FileName, disk1name, sizeof(disk1name)-1);
 			filenamelen = sizeof(disk1name)-1;
-		} 
-		
+		}
+
 		AlFsbl_MemCpy(&FileName[filenamelen], bootname, sizeof(bootname)-1);
 		filenamelen += sizeof(bootname)-1;
 

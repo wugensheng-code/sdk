@@ -52,6 +52,13 @@ typedef enum
 #define AL_NULL         ((void *)0L)
 #define WAIT_FOREVER    (~0UL)
 
+#ifndef BIT
+#define BIT(nr)         ((1UL) << (nr))
+#endif
+
+#ifndef BITULL
+#define BITULL(x)	    ((1ULL) << (x))
+#endif
 
 #ifdef __cplusplus
 }

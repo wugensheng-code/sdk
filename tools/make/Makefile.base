@@ -88,7 +88,7 @@ TARGET:=$(TARGET)_apu
 ifeq ($(OS),Windows_NT)
     COMPILE_PREFIX?=D:\tfcao\fpsoc\gcc\aarch64\bin\aarch64-none-elf-
 else
-    COMPILE_PREFIX ?= /opt/toolchain/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+    COMPILE_PREFIX ?= /opt/toolchain/7.5.0/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-elf/bin/aarch64-elf-
 endif
 
 ifeq ($(PINMUX_MODE), PINMUX_MODE1)

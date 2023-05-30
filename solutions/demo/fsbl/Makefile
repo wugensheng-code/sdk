@@ -1,5 +1,5 @@
 ifeq ($(SOC),demoapu)
-COMPILE_PREFIX=/opt/toolchain/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+COMPILE_PREFIX=/opt/toolchain/7.5.0/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-elf/bin/aarch64-elf-
 TARGET = 1apu_fsbl
 V=1
 else

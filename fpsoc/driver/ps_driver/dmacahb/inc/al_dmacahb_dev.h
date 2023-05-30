@@ -94,11 +94,11 @@ typedef struct
  */
 typedef enum
 {
-    AL_DMACAHB_CH_INTR_TFR   = BIT_32(0),
-    AL_DMACAHB_CH_INTR_BLOCK = BIT_32(1),
-    AL_DMACAHB_CH_INTR_SRCT  = BIT_32(2),
-    AL_DMACAHB_CH_INTR_DSTT  = BIT_32(3),
-    AL_DMACAHB_CH_INTR_ERR   = BIT_32(4)
+    AL_DMACAHB_CH_INTR_TFR   = BIT(0),
+    AL_DMACAHB_CH_INTR_BLOCK = BIT(1),
+    AL_DMACAHB_CH_INTR_SRCT  = BIT(2),
+    AL_DMACAHB_CH_INTR_DSTT  = BIT(3),
+    AL_DMACAHB_CH_INTR_ERR   = BIT(4)
 } AL_DMACAHB_ChIntrEnum;
 
 /**
@@ -143,11 +143,11 @@ typedef enum
  */
 typedef enum
 {
-    AL_DMACAHB_EVENT_TRANS_COMP         = BIT_32(1),
-    AL_DMACAHB_EVENT_BLOCK_TRANS_COMP   = BIT_32(2),
-    AL_DMACAHB_EVENT_SRC_TRANS_COMP     = BIT_32(3),
-    AL_DMACAHB_EVENT_DST_TRANS_COMP     = BIT_32(4),
-    AL_DMACAHB_EVENT_ERR                = BIT_32(5),
+    AL_DMACAHB_EVENT_TRANS_COMP         = BIT(1),
+    AL_DMACAHB_EVENT_BLOCK_TRANS_COMP   = BIT(2),
+    AL_DMACAHB_EVENT_SRC_TRANS_COMP     = BIT(3),
+    AL_DMACAHB_EVENT_DST_TRANS_COMP     = BIT(4),
+    AL_DMACAHB_EVENT_ERR                = BIT(5),
 } AL_DMACAHB_EventIdEnum;
 
 /**
@@ -156,13 +156,13 @@ typedef enum
 typedef enum
 {
     AL_DMACAHB_STATE_NOT_INIT               = (0x0),
-    AL_DMACAHB_STATE_READY                  = BIT_32(1),
-    AL_DMACAHB_STATE_TRANS_BUSY             = BIT_32(2),    /*Not use, to be remove*/
-    AL_DMACAHB_STATE_BLOCK_TRANS_BUSY       = BIT_32(3),    /*Not use, to be remove*/
-    AL_DMACAHB_STATE_SINGLE_MODE_BUSY       = BIT_32(4),
-    AL_DMACAHB_STATE_RELOAD_MODE_BUSY       = BIT_32(5),
-    AL_DMACAHB_STATE_LLP_MODE_BUSY          = BIT_32(6),
-    AL_DMACAHB_STATE_LLP_RELOAD_MODE_BUSY   = BIT_32(7),
+    AL_DMACAHB_STATE_READY                  = BIT(1),
+    AL_DMACAHB_STATE_TRANS_BUSY             = BIT(2),    /*Not use, to be remove*/
+    AL_DMACAHB_STATE_BLOCK_TRANS_BUSY       = BIT(3),    /*Not use, to be remove*/
+    AL_DMACAHB_STATE_SINGLE_MODE_BUSY       = BIT(4),
+    AL_DMACAHB_STATE_RELOAD_MODE_BUSY       = BIT(5),
+    AL_DMACAHB_STATE_LLP_MODE_BUSY          = BIT(6),
+    AL_DMACAHB_STATE_LLP_RELOAD_MODE_BUSY   = BIT(7),
 }AL_DMACAHB_ChStateEnum;
 
 /**

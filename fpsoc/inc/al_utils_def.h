@@ -9,22 +9,13 @@ extern "C" {
 #endif  /* __cplusplus */
 
 #include <stdio.h>
+#include "al_type.h"
 
 #define ARRAY_SIZE(a)         (sizeof(a) / sizeof((a)[0]))
-
-#define BIT_32(nr)            ((1U) << (nr))
-#define BIT_64(nr)            ((1ULL) << (nr))
 
 #define BITS_32(start, size)  ((0xFFFFFFFFU << (start)) & (0xFFFFFFFFU >> (32U - (start) - (size))))
 #define BITS_64(start, size)  (((~0x0UL) << (start)) & ((~0x0UL) >> (64U - (start) - (size))))
 
-#if (defined __aarch64__ || defined _AARCH_64 || defined __riscv64)
-#define BIT_X                 BIT_64
-#define BITS_X                BITS_64
-#else
-#define BIT_X                 BIT_32
-#define BITS_X                BITS_32
-#endif
 
 #define DIV_ROUND_UP(val, div) __extension__ ({    \
     __typeof__(div) _div = (div);        \
