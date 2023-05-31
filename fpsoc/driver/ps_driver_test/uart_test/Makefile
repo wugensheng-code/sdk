@@ -1,6 +1,6 @@
 TARGET = all
 
-# SOC ?= demosoc
+#SOC ?= demosoc
 SOC ?= demoapu
 
 ifeq ($(SOC), demoapu)

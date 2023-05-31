@@ -15,15 +15,6 @@ extern "C" {
 /***************** Macros (Inline Functions) Definitions ********************/
 
 
-#define AL_UART_NUM_INSTANCE    (2)
-
-#define UART0__BASE_ADDR 0xF8400000UL
-#define UART1__BASE_ADDR 0xF8401000UL
-
-#define CRP__BASE_ADDR 0xF8801000UL
-
-#define UART_CLOCK  40000000
-
 ///////////////////////////////////////////////////////
 // Register: SRST_CTRL3
 ///////////////////////////////////////////////////////

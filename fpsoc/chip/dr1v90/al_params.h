@@ -9,44 +9,64 @@
 extern "C" {
 #endif
 
-#define __ECLIC_PRESENT           1                     /*!< Set to 1 if ECLIC is present */
-#define __SYSTIMER_PRESENT        1                     /*!< Set to 1 if System Timer is present */
-
-
-/*!< Set to 0, 1, or 2, 0 not present, 1 single floating point unit present, 2 double floating point unit present */
-#if !defined(__riscv_flen)
-#define __FPU_PRESENT             0
-#elif __riscv_flen == 32
-#define __FPU_PRESENT             1
-#else
-#define __FPU_PRESENT             2
-#endif
-
-#define __PMP_PRESENT             1                     /*!< Set to 1 if PMP is present */
-#define __PMP_ENTRY_NUM           16                    /*!< Set to 8 or 16, the number of PMP entries */
-#define __ICACHE_PRESENT          0                     /*!< Set to 1 if I-Cache is present */
-#define __DCACHE_PRESENT          0                     /*!< Set to 1 if D-Cache is present */
-
-#define __ECLIC_BASEADDR        (0x68000000UL)            /*!< Set to ECLIC baseaddr of your device */
-
-#ifndef __SYSTIMER_BASEADDR
-#define __SYSTIMER_BASEADDR     (0x68020000UL)            /*!< Set to SysTimer baseaddr of your device */
-#endif
-
+/*----------------------------------------------------------------------------
+* Define Interrupt Number
+*----------------------------------------------------------------------------*/
 typedef enum {
     SysTimer_IRQn        =  7,
     GPIO0_IRQn           =  71,
     SOC_INT130_IRQn      =  130,
-    SOC_INT89_IRQn       =  89,
+    SOC_UART0_IRQn       =  89,
+    SOC_UART1_IRQn       =  90,
     SOC_INT_MAX          =  256,
 } AL_IrqNumEnum;
 
 /*----------------------------------------------------------------------------
-  Define clocks
+  Define System clocks
  *----------------------------------------------------------------------------*/
-#ifndef SYSTEM_CLOCK
-#define SYSTEM_CLOCK           (50000000UL)
-#endif
+#define SYSTEM_CLOCK            (50000000UL)
+
+/*----------------------------------------------------------------------------
+  Define System base addr
+ *----------------------------------------------------------------------------*/
+#define SYSTIMER__BASE_ADDR     (0x68020000UL)
+#define ECLIC__BASE_ADDR        (0x68000000UL)
+#define CRP__BASE_ADDR          (0xF8801000UL)
+
+/*----------------------------------------------------------------------------
+  Define Uart params
+ *----------------------------------------------------------------------------*/
+#define HAVE_UARTPS_DRIVER
+
+#define AL_UART_NUM_INSTANCE    (2)
+
+#define UART0__BASE_ADDR        (0xF8400000UL)
+#define UART1__BASE_ADDR        (0xF8401000UL)
+
+#define UART_CLOCK              (40000000UL)
+
+/*----------------------------------------------------------------------------
+  Define SPI params
+ *----------------------------------------------------------------------------*/
+#define HAVE_SPIPS_DRIVER
+
+
+/*----------------------------------------------------------------------------
+  Define CAN params
+ *----------------------------------------------------------------------------*/
+#define HAVE_CANPS_DRIVER
+
+
+/*----------------------------------------------------------------------------
+  Define QSPI params
+ *----------------------------------------------------------------------------*/
+#define HAVE_QSPIPS_DRIVER
+
+
+/*----------------------------------------------------------------------------
+  Define I2C params
+ *----------------------------------------------------------------------------*/
+#define HAVE_I2CPS_DRIVER
 
 
 #ifdef __cplusplus

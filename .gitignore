@@ -18,3 +18,5 @@ si
 cscope*
 *.txt
 gdb.init
+.vscode/*.*
+.vscode/settings.json

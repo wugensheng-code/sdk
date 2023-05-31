@@ -46,9 +46,9 @@ void delay_us(unsigned int us)
 
 	delay_cnt = us * 10;
 
-	start = *((volatile uint32_t *)(__SYSTIMER_BASEADDR));
+	start = *((volatile uint32_t *)(SYSTIMER__BASE_ADDR));
 	do {
-		end = *((volatile uint32_t *)(__SYSTIMER_BASEADDR));
+		end = *((volatile uint32_t *)(SYSTIMER__BASE_ADDR));
 		t_consumed = end - start;
 	}while(t_consumed < delay_cnt);
 

@@ -26,7 +26,7 @@
  * 1. __SYSTIMER_PRESENT:  Define whether Private System Timer is present or not.
  *   * 0: Not present
  *   * 1: Present
- * 2. __SYSTIMER_BASEADDR:  Define the base address of the System Timer.
+ * 2. SYSTIMER__BASE_ADDR:  Define the base address of the System Timer.
  */
 #ifdef __cplusplus
  extern "C" {
@@ -79,12 +79,12 @@ typedef struct {
 
 #define SysTimer_MSFRST_KEY                 (0x80000A5FUL)                              /*!< SysTick Timer Software Reset Request Key */
 
-#ifndef __SYSTIMER_BASEADDR
-/* Base address of SYSTIMER(__SYSTIMER_BASEADDR) should be defined in <Device.h> */
-#error "__SYSTIMER_BASEADDR is not defined, please check!"
+#ifndef SYSTIMER__BASE_ADDR
+/* Base address of SYSTIMER(SYSTIMER__BASE_ADDR) should be defined in <Device.h> */
+#error "SYSTIMER__BASE_ADDR is not defined, please check!"
 #endif
 /* System Timer Memory mapping of Device  */
-#define SysTimer_BASE                       __SYSTIMER_BASEADDR                         /*!< SysTick Base Address */
+#define SysTimer_BASE                       SYSTIMER__BASE_ADDR                         /*!< SysTick Base Address */
 #define SysTimer                            ((SysTimer_Type *) SysTimer_BASE)           /*!< SysTick configuration struct */
 /** @} */ /* end of group NMSIS_Core_SysTimer_Registers */
 

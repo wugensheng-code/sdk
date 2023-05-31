@@ -26,7 +26,7 @@
  * 1. __ECLIC_PRESENT:  Define whether Enhanced Core Local Interrupt Controller (ECLIC) Unit is present or not
  *   * 0: Not present
  *   * 1: Present
- * 2. __ECLIC_BASEADDR:  Base address of the ECLIC unit.
+ * 2. ECLIC__BASE_ADDR:  Base address of the ECLIC unit.
  * 3. ECLIC_GetInfoCtlbits():  Define the number of hardware bits are actually implemented in the clicintctl registers.
  *   Valid number is 1 - 8.
  * 4. __ECLIC_INTNUM  : Define the external interrupt number of ECLIC Unit
@@ -130,9 +130,9 @@ typedef enum ECLIC_TRIGGER {
     ECLIC_MAX_TRIGGER = 0x3             /*!< MAX Supported Trigger Mode */
 } ECLIC_TRIGGER_Type;
 
-#ifndef __ECLIC_BASEADDR
-/* Base address of ECLIC(__ECLIC_BASEADDR) should be defined in <Device.h> */
-#error "__ECLIC_BASEADDR is not defined, please check!"
+#ifndef ECLIC__BASE_ADDR
+/* Base address of ECLIC(ECLIC__BASE_ADDR) should be defined in <Device.h> */
+#error "ECLIC__BASE_ADDR is not defined, please check!"
 #endif
 
 #ifndef __ECLIC_INTCTLBITS
@@ -141,7 +141,7 @@ typedef enum ECLIC_TRIGGER {
 #endif
 
 /* ECLIC Memory mapping of Device */
-#define ECLIC_BASE                          __ECLIC_BASEADDR                            /*!< ECLIC Base Address */
+#define ECLIC_BASE                          ECLIC__BASE_ADDR                            /*!< ECLIC Base Address */
 #define ECLIC                               ((CLIC_Type *) ECLIC_BASE)                  /*!< CLIC configuration struct */
 
 
