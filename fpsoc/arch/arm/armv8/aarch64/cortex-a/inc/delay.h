@@ -5,6 +5,7 @@
 
 u64 get_SystickTimer(void);
 uint64_t get_MTimerOutValue(uint64_t count);
+u64 get_Us(u64 start, u64 end);
 
 /**
  * @desc  : Second delay by cpu

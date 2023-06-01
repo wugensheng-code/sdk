@@ -83,3 +83,29 @@ void _delay_s(u64_t count)
     u64_t delay_cnt = (u64_t)(count*freq);
     __delay(delay_cnt);
 }
+
+u64 get_Us(u64 start, u64 end)
+{
+    u64_t freq = syscnt_get_freq();
+    return ((end - start)/(freq/1000000));
+}
+
+void AlDelay_Us(u64 Count)
+{
+	_delay_us(Count);
+}
+
+void AlDelay_Ms(u64 Count)
+{
+	_delay_ms(Count);
+}
+
+void AlDelay_S(u64 Count)
+{
+	_delay_s(Count);
+}
+
+u64 AlDelay_CalcUs(u64 Start, u64 End)
+{
+	return get_Us(Start, End);
+}

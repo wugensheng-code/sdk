@@ -43,7 +43,7 @@ uint32_t get_cpu_freq()
     return cpu_freq;
 }
 
-void _delay_us(uint32_t count)
+void _delay_us(uint64_t count)
 {
     uint64_t start_mtime, delta_mtime;
     uint64_t delay_ticks = (get_timer_freq() * (uint64_t)count) / 1000000;
@@ -62,7 +62,7 @@ void _delay_us(uint32_t count)
  * \param[in]  count: count in milliseconds
  * \remarks
  */
-void _delay_ms(uint32_t count)
+void _delay_ms(uint64_t count)
 {
     uint64_t start_mtime, delta_mtime;
     uint64_t delay_ticks = (get_timer_freq() * (uint64_t)count) / 1000;
@@ -82,4 +82,37 @@ uint64_t get_SystickTimer(void)
 uint64_t get_MTimerOutValue(uint64_t count)
 {
     return (get_timer_freq() * count) / 1000000;
+}
+
+uint64_t get_Us(uint64_t start, uint64_t end)
+{
+    uint64_t freq = get_timer_freq();
+    return ((end - start)/(freq/1000000));
+}
+
+void AlDelay_Us(unsigned long long Count)
+{
+    _delay_us(Count);
+}
+
+void AlDelay_Ms(unsigned long long Count)
+{
+    _delay_ms(Count);
+}
+
+void AlDelay_S(unsigned long long Count)
+{
+    uint64_t start_mtime, delta_mtime;
+    uint64_t delay_ticks = (get_timer_freq() * (uint64_t)Count);
+
+    start_mtime = SysTimer_GetLoadValue();
+
+    do {
+        delta_mtime = SysTimer_GetLoadValue() - start_mtime;
+    } while (delta_mtime < delay_ticks);
+}
+
+unsigned long long AlDelay_CalcUs(unsigned long long Start, unsigned long long End)
+{
+    return get_Us(Start, End);
 }
