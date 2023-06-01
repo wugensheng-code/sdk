@@ -96,7 +96,7 @@ void Exception_Init(void)
  * \param   EXCn    See \ref EXCn_Type
  * \param   exc_handler     The exception handler for this exception code EXCn
  */
-void Exception_Register_EXC(uint32_t EXCn, unsigned long exc_handler)
+void Exception_Register_EXC(uint32_t EXCn, EXC_HANDLER exc_handler)
 {
     if ((EXCn < MAX_SYSTEM_EXCEPTION_NUM) && (EXCn >= 0)) {
         SystemExceptionHandlers[EXCn] = exc_handler;
@@ -113,7 +113,7 @@ void Exception_Register_EXC(uint32_t EXCn, unsigned long exc_handler)
  * \param   EXCn    See \ref EXCn_Type
  * \return  Current exception handler for exception code EXCn, if not found, return 0.
  */
-unsigned long Exception_Get_EXC(uint32_t EXCn)
+EXC_HANDLER Exception_Get_EXC(uint32_t EXCn)
 {
     if ((EXCn < MAX_SYSTEM_EXCEPTION_NUM) && (EXCn >= 0)) {
         return SystemExceptionHandlers[EXCn];
@@ -217,7 +217,7 @@ int32_t ECLIC_Register_IRQ(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_Type trig_
 }
 /** @} */ /* End of Doxygen Group NMSIS_Core_ExceptionAndNMI */
 
-AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Func *Func, AL_VOID *Paran)
+AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Func Func, AL_VOID *Paran)
 {
 	AL_U8                 TrigLevel;
     ECLIC_TRIGGER_Type    TrigMode;

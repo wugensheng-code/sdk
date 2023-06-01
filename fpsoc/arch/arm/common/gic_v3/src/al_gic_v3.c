@@ -62,12 +62,12 @@ AL_S32 AlIntr_SetGlobalInterrupt(AL_FUNCTION state)
 
     switch (state) {
     case AL_FUNC_DISABLE:
-        __disable_irq();
+        irq_disable();
         Ret = AL_OK;
         break;
 
     case AL_FUNC_ENABLE:
-        __enable_irq();
+        irq_enable();
         break;
 
     default:

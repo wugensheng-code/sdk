@@ -4,6 +4,8 @@
 #include "gic_v3_addr.h"
 #include "gic_v3.h"
 
+#include "timer.h"
+
 AL_VOID AlChip_Dr1m90Init(AL_VOID)
 {
 	#if (defined SUPPORT_NONSECURE || defined SWITCH_TO_EL0_FROM_EL3)

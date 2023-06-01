@@ -466,12 +466,12 @@ AL_S32 AlUart_Dev_IoCtl(AL_UART_DevStruct *Uart, AL_Uart_IoCtlCmdEnum Cmd, AL_VO
         break;
     }
     case AL_UART_IOCTL_SET_PARITY: {
-        AL_U32 Parity = *(AL_U32 *)Parity;
+        AL_U32 Parity = *(AL_U32 *)Data;
         AlUart_ll_SetParity(Uart->BaseAddr, Parity);
         break;
     }
     case AL_UART_IOCTL_GET_PARITY: {
-        AL_U32 *Parity = (AL_U32 *)Parity;
+        AL_U32 *Parity = (AL_U32 *)Data;
         *Parity = AlUart_ll_GetParity(Uart->BaseAddr);
         break;
     }
@@ -496,19 +496,19 @@ static AL_VOID AlUart_Dev_ErrorHandler(AL_UART_DevStruct *Uart, AL_UART_Interrup
 
     if (AlUart_ll_IsOeIntr(Uart->BaseAddr)) {
         UartEvent.Event = AL_UART_EVENT_OVER_RUN_ERR;
-        UartEvent.EventData = AL_NULL;
+        UartEvent.EventData = (AL_U32)(AL_UINTPTR)AL_NULL;
     }
     if (AlUart_ll_IsPeIntr(Uart->BaseAddr)) {
         UartEvent.Event = AL_UART_EVENT_PARITY_ERR;
-        UartEvent.EventData = AL_NULL;
+        UartEvent.EventData = (AL_U32)(AL_UINTPTR)AL_NULL;
     }
     if (AlUart_ll_IsFeIntr(Uart->BaseAddr)) {
         UartEvent.Event = AL_UART_EVENT_FRAMING_ERR;
-        UartEvent.EventData = AL_NULL;
+        UartEvent.EventData = (AL_U32)(AL_UINTPTR)AL_NULL;
     }
     if (AlUart_ll_IsBiIntr(Uart->BaseAddr)) {
         UartEvent.Event = AL_UART_EVENT_BREAK_INTR;
-        UartEvent.EventData = AL_NULL;
+        UartEvent.EventData = (AL_U32)(AL_UINTPTR)AL_NULL;
     }
     /* trigger EventCallBack */
     if (Uart->EventCallBack) {

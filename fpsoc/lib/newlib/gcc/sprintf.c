@@ -147,7 +147,7 @@ static int print( char **out, const char *format, va_list args )
 				width += *format - '0';
 			}
 			if( *format == 's' ) {
-				register char *s = (char *)va_arg( args, int );
+				register char *s = (char *)(unsigned long)va_arg( args, int );
 				pc += prints (out, s?s:"(null)", width, pad);
 				continue;
 			}
@@ -195,7 +195,7 @@ __attribute__((weak)) int sprintf(char *out, const char *format, ...)
 }
 
 
-__attribute__((weak)) int snprintf( char *buf, unsigned int count, const char *format, ... )
+__attribute__((weak)) int snprintf( char *buf, unsigned long count, const char *format, ... )
 {
         va_list args;
 

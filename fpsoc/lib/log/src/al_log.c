@@ -32,7 +32,7 @@ AL_S32 AlLog_Init()
 AL_U32 AlLog_Write(const void* Data, AL_U32 Len)
 {
 #if (LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1)
-    AL_S32 ret = AlUart_Hal_SendDataPolling(&Log, Data, Len);
+    AL_S32 ret = AlUart_Hal_SendDataPolling(&Log, (AL_U8 *)Data, Len);
 #else
     (AL_VOID)Data;
     (AL_VOID)Len;

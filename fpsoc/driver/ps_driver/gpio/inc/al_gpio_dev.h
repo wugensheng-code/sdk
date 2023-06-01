@@ -141,7 +141,7 @@ AL_VOID AlGpio_Dev_SyncEnablePin(AL_GPIO_DevStruct *Gpio, AL_U32 Pin);
 AL_BOOL AlGpio_Dev_GetSyncEnablePin(AL_GPIO_DevStruct *Gpio, AL_U32 Pin);
 
 AL_S32 AlGpio_Dev_IntrCallbackHandler(AL_GPIO_DevStruct *Gpio, AL_VOID *CallBackRef, Gpio_Handler FunPointer);
-AL_S32 AlGpio_Dev_IntrHandler(AL_GPIO_DevStruct *Gpio);
+AL_VOID AlGpio_Dev_IntrHandler(void *Instance);
 
 #ifdef __cplusplus
 }

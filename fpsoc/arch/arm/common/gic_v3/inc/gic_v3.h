@@ -34,7 +34,7 @@ static inline void gic_write_eoir(u32 irq)
 	isb();
 }
 
-static __always_inline void gic_write_dir(u32 irq)
+static __always_inline inline void gic_write_dir(u32 irq)
 {
 	write_sysreg_s(irq, SYS_ICC_DIR_EL1);
 	isb();
@@ -124,7 +124,7 @@ static inline u32 gic_read_pmr(void)
 	return read_sysreg_s(SYS_ICC_PMR_EL1);
 }
 
-static __always_inline void gic_write_pmr(u32 val)
+static __always_inline inline void gic_write_pmr(u32 val)
 {
 	write_sysreg_s(val, SYS_ICC_PMR_EL1);
 }
@@ -134,6 +134,8 @@ static inline u32 gic_read_rpr(void)
 	return read_sysreg_s(SYS_ICC_RPR_EL1);
 }
 
+void __disable_irq(void);
+void __enable_irq(void);
 
 #define irq_disable()	__disable_irq()
 #define irq_enable()	__enable_irq()

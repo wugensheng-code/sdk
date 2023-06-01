@@ -21,9 +21,9 @@ void *fast_memcpy(void *dst, const void *src, size_t length)
         uint32_t *lpint;
     }d;
 
-    char *suffix = (void*)(((uint32_t)src) + length);
-    char *prefix = (void*)(((uint32_t)src) & (~(sizeof(uint32_t)-1)));
-    uint32_t *middle = (void*)(((uint32_t)suffix) & (~(sizeof(uint32_t)-1)));
+    char *suffix = (void*)(((uint64_t)src) + length);
+    char *prefix = (void*)(((uint64_t)src) & (~(sizeof(uint32_t)-1)));
+    uint32_t *middle = (void*)(((uint64_t)suffix) & (~(sizeof(uint32_t)-1)));
 
 
     s.lpstr = (void*)src;
@@ -71,7 +71,7 @@ void *fast_memcpy(void *dst, const void *src, size_t length)
 
 void *memcpy(void *dst, const void *src, size_t length)
 {
-    if ((((uint32_t)src) & (~(sizeof(uint32_t)-1))) != (((uint32_t)dst) & (~(sizeof(uint32_t)-1))))
+    if ((((uint32_t)(uint64_t)src) & (~(sizeof(uint32_t)-1))) != (((uint32_t)(uint64_t)dst) & (~(sizeof(uint32_t)-1))))
     {
         char *lpSrc = (void*)src;
         char *lpDst = (void*)dst;

@@ -793,17 +793,14 @@ AL_S32 AlGpio_Dev_IntrCallbackHandler(AL_GPIO_DevStruct *Gpio, AL_VOID *CallBack
  * @param  IntrType is the IRQ type for GPIO Pin.
  * @return AL_S32
  */
-AL_S32 AlGpio_Dev_IntrHandler(AL_GPIO_DevStruct *Gpio)
+AL_VOID AlGpio_Dev_IntrHandler(void *Instance)
 {
     AL_U8 Bank;
 	AL_U32 IntrStatus;
 	AL_U32 IntrEnable;
     AL_U32 IntrReg;
 	AL_U8 PinNumber;
-
-    if (Gpio == AL_NULL) {
-        return AL_GPIO_ERR_ILLEGAL_PARAM;
-    }
+    AL_GPIO_DevStruct *Gpio = (AL_GPIO_DevStruct *)Instance;
 
     printf("Enter handler!\r\n");
 
@@ -820,6 +817,4 @@ AL_S32 AlGpio_Dev_IntrHandler(AL_GPIO_DevStruct *Gpio)
             Gpio->Handler(Gpio->EventCallBackRef, Bank, (IntrStatus & IntrEnable));
         }
     }
-
-    return AL_OK;
 }
