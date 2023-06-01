@@ -1,11 +1,11 @@
 #include "al_mmc_test_config.h"
 #include "al_errno.h"
 
-static AL_U8 *WriteBuff = AL_MMC_TEST_WR_BUFF_ADDR;
-static AL_U8 *ReadBuff = AL_MMC_TEST_RD_BUFF_ADDR;
+static AL_U8 *WriteBuff = (AL_U8 *)AL_MMC_TEST_WR_BUFF_ADDR;
+static AL_U8 *ReadBuff = (AL_U8 *)AL_MMC_TEST_RD_BUFF_ADDR;
 
-static AL_VOID AlMmc_Test_InitSrc(AL_REG Addr, AL_U32 ByteSize, AL_U32 DataOffset);
-static AL_S32 AlMmc_Test_DataCheck(AL_MMC_HalStruct *Handle, AL_REG SrcAddr, AL_REG DstAddr, AL_U32 ByteSize);
+static AL_VOID AlMmc_Test_InitSrc(AL_U8 *Addr, AL_U32 ByteSize, AL_U32 DataOffset);
+static AL_S32 AlMmc_Test_DataCheck(AL_MMC_HalStruct *Handle, AL_U8 *SrcAddr, AL_U8 *DstAddr, AL_U32 BlockCnt);
 static AL_VOID AlMmc_Test_Sd(AL_VOID);
 static AL_VOID AlMmc_Test_CalcStart(AL_MMC_PerCalcStruct *PerCalc);
 static AL_VOID AlMmc_Test_CalcEnd(AL_MMC_HalStruct *Handle, AL_MMC_PerCalcStruct *PerCalc, AL_UINTPTR BlkCnt);
@@ -23,15 +23,15 @@ AL_U32 main(AL_VOID)
     return 0;
 }
 
-static AL_VOID AlMmc_Test_InitSrc(AL_REG Addr, AL_U32 ByteSize, AL_U32 DataOffset)
+static AL_VOID AlMmc_Test_InitSrc(AL_U8 *Addr, AL_U32 ByteSize, AL_U32 DataOffset)
 {
-    AL_U8 *Char = (AL_U32 *)Addr;
+    AL_U8 *Char = (AL_U8 *)Addr;
     for (AL_U32 i = 0; i < ByteSize; i++) {
         *Char++ = i + DataOffset;
     }
 }
 
-static AL_S32 AlMmc_Test_DataCheck(AL_MMC_HalStruct *Handle, AL_REG SrcAddr, AL_REG DstAddr, AL_U32 BlockCnt)
+static AL_S32 AlMmc_Test_DataCheck(AL_MMC_HalStruct *Handle, AL_U8 *SrcAddr, AL_U8 *DstAddr, AL_U32 BlockCnt)
 {
     AL_U32 *SrcData = (AL_U32 *)SrcAddr;
     AL_U32 *DstData = (AL_U32 *)DstAddr;
@@ -124,13 +124,13 @@ static AL_VOID AlMmc_Test_Sd(AL_VOID)
 
 static AL_VOID AlMmc_Test_CalcStart(AL_MMC_PerCalcStruct *PerCalc)
 {
-    PerCalc->Start = get_SystickTimer();
+    PerCalc->Start = AlSys_GetTimer();
 }
 
 static AL_VOID AlMmc_Test_CalcEnd(AL_MMC_HalStruct *Handle, AL_MMC_PerCalcStruct *PerCalc, AL_UINTPTR BlkCnt)
 {
-    PerCalc->End = get_SystickTimer();
-    PerCalc->TimeInUs = get_Us(PerCalc->Start, PerCalc->End);
+    PerCalc->End = AlSys_GetTimer();
+    PerCalc->TimeInUs = AlDelay_CalcUs(PerCalc->Start, PerCalc->End);
     PerCalc->DatInByte = BlkCnt * Handle->Dev->CardInfo.BlkLen;
     PerCalc->BytePerSec = ((AL_DOUBLE)PerCalc->DatInByte / PerCalc->TimeInUs);
 

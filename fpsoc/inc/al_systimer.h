@@ -9,6 +9,8 @@ extern "C" {
 
 AL_VOID AlSys_Delay(AL_U32 Us);
 
+AL_U64 AlSys_GetTimer(AL_VOID);
+
 #ifdef __cplusplus
 }
 #endif  /* __cplusplus */

@@ -109,3 +109,8 @@ u64 AlDelay_CalcUs(u64 Start, u64 End)
 {
 	return get_Us(Start, End);
 }
+
+u64 AlSys_GetTimer(void)
+{
+	return get_SystickTimer();
+}

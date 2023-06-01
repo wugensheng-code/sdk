@@ -116,3 +116,8 @@ unsigned long long AlDelay_CalcUs(unsigned long long Start, unsigned long long E
 {
     return get_Us(Start, End);
 }
+
+unsigned long long AlSys_GetTimer(void)
+{
+    return SysTimer->MTIMER;
+}
