@@ -1,10 +1,10 @@
 TARGET = fpsoc_spi_el1
 
-SDK_ROOT = ../../../../
+SDK_ROOT = ../../../..
 
 SRCDIRS = .
 
-INCDIRS = ../../ps_driver/spi/inc
+INCDIRS = .
 
 COMMON_FLAGS := -O2
 

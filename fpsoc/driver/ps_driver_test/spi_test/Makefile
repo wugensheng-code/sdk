@@ -1,11 +1,14 @@
 TARGET = all
 
 SOC ?= demosoc
+DOWNLOAD ?= ilm
 
 ifeq ($(SOC), demoapu)
 COMPILE_PREFIX ?= /opt/toolchain/7.5.0/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-elf/bin/aarch64-elf-
+CORE = a35
 else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
+CORE = ux600fd
 endif
 #COMMON_FLAGS += -DSPI_DEBUG
 
