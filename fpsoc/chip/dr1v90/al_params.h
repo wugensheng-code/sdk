@@ -18,6 +18,8 @@ typedef enum {
     SOC_INT130_IRQn      =  130,
     SOC_UART0_IRQn       =  89,
     SOC_UART1_IRQn       =  90,
+    SOC_CAN0_IRQn        =  91,
+    SOC_CAN1_IRQn        =  92,
     SOC_INT_MAX          =  256,
 } AL_IrqNumEnum;
 

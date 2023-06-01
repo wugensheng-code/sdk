@@ -5,7 +5,6 @@
 extern "C" {
 #endif
 
-#include "al_reg_io.h"
 #include "al_can_hw.h"
 
 typedef enum

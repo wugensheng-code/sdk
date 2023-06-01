@@ -1,11 +1,6 @@
 /***************************** Include Files *********************************/
 #include "al_can_hal.h"
-#include "al_can_dev.h"
-#include "al_can_ll.h"
 #include "al_dmacahb_hal.h"
-#include "al_dmacahb_dev.h"
-#include "al_errno.h"
-#include "al_intr.h"
 
 /************************** Constant Definitions *****************************/
 

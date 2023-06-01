@@ -1,6 +1,5 @@
 /***************************** Include Files *********************************/
 #include "al_can_dev.h"
-#include "al_errno.h"
 
 /************************** Constant Definitions *****************************/
 /* Default init config */

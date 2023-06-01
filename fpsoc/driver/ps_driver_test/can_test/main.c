@@ -104,73 +104,73 @@ static AL_VOID AlCan_Test_InLoopBack(AL_VOID)
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame1 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame3, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame3 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame5, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame5 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame7, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame7 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame9, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame9 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame11, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame11 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame13, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame13 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame15, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame15 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame16, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame16 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame17, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame17 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame18, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame18 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame19, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame19 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
     }
 }
 
@@ -201,73 +201,73 @@ static AL_VOID AlCan_Test_ExLoopBack(AL_VOID)
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame1 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame3, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame3 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame5, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame5 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame7, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame7 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame9, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame9 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame11, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame11 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame13, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame13 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame15, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame15 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame16, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame16 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame17, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame17 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame18, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame18 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame19, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame19 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
     }
 }
 
@@ -331,73 +331,73 @@ static AL_VOID AlCan_Test_StdIntr(AL_VOID)
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame1 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame3, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame3 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame3 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame5, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame5 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame5 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame7, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame7 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame7 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame9, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame9 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame9 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame11, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame11 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame11 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame13, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame13 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame13 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame15, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame15 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame15 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame16, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame16 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame16 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame17, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame17 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame17 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame18, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame18 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame18 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &Frame19, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame19 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can 2.0B Frame19 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
     }
 }
 static AL_VOID AlCan_Test_FdIntr(AL_VOID)
@@ -424,73 +424,73 @@ static AL_VOID AlCan_Test_FdIntr(AL_VOID)
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame1 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame3, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame3 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame3 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame5, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame5 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame5 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame7, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame7 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame7 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame9, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame9 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame9 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame11, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame11 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame11 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame13, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame13 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame13 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame15, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame15 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame15 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame16, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame16 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame16 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame17, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame17 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame17 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame18, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame18 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame18 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame19, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame19 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame19 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
     }
 }
 
@@ -523,73 +523,73 @@ static AL_VOID AlCan_Test_FdStbFifo(AL_VOID)
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame1 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame3, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame3 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame5, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame5 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame7, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame7 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame9, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame9 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame11, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame11 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame13, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame13 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame15, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame15 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame16, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame16 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame17, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame17 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame18, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame18 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame19, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_ERR_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Can Fd Frame19 example\r\n");
-        _delay_ms(500);
+        AlDelay_Ms(500);
     }
 }
 
@@ -602,7 +602,7 @@ static AL_VOID AlCan_Test_DmaCallBack(AL_DMACAHB_EventStruct *Event, AL_VOID *Ca
     case AL_DMACAHB_EVENT_BLOCK_TRANS_COMP:{
         AL_CAN_FrameStruct Frame;
         AL_LOG(AL_ERR_LEVEL_DEBUG, "Dmacahb trans can frame count:%d!\r\n", Handle->Channel->Trans.ReloadCount);
-        AlCan_Dev_DecodeFrame(Handle->Channel->Trans.DstAddr, &Frame);
+        AlCan_Dev_DecodeFrame((AL_U32 *)(AL_UINTPTR)Handle->Channel->Trans.DstAddr, &Frame);
         AlCan_Dev_DisplayFrame(&Frame);
         break;
     }
@@ -660,7 +660,8 @@ static AL_VOID AlCan_Test_FdDmaRecv(AL_VOID)
     DmacChTrans->TransSize      = AL_CAN_DMAC_RECV_DATA_IN_WORD;
     DmacChTrans->ReloadCountNum = AL_CAN_DMAC_RELOAD_COUNT_MAX;   /* max AL_U32 for trans forever */
 
-    AlDmacAhb_Dev_Start(DmacHandle.Channel);
+    // AlDmacAhb_Dev_Start(DmacHandle.Channel);
+    AlDmacAhb_Hal_Start(&DmacHandle);
 
     while (1);
 }
