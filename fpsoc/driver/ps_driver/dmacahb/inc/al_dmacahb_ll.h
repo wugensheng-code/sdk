@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#include "al_reg_io.h"
+#include "al_core.h"
 #include "al_dmacahb_hw.h"
 
 /* Transfer Type and Flow Control(TT_FC) */
@@ -121,6 +121,30 @@ typedef enum
     AL_DMACAHB_PER_CAN0_RX,
     AL_DMACAHB_PER_CAN1_RX
 } AL_DMACAHB_PerSelEnum;
+
+/* --------------------DMAC/Lock control-------------------- */
+
+
+
+static inline AL_BOOL AlDmacAhb_ll_FetchLock(AL_REG LockAddr)
+{
+    return AL_REG32_GET_BIT(LockAddr, DMAC_AHB_LOCK_ADDR_SHIFT);
+}
+
+static inline AL_VOID AlDmacAhb_ll_ReleaseLock(AL_REG LockAddr)
+{
+    AL_REG32_SET_BIT(LockAddr, DMAC_AHB_LOCK_ADDR_SHIFT, AL_FUNC_ENABLE);
+}
+
+static inline AL_U32 AlDmacAhb_ll_GetChannelState(AL_REG ChStateAddr)
+{
+    return AL_REG32_READ(ChStateAddr);
+}
+
+static inline AL_U32 AlDmacAhb_ll_SetChannelState(AL_REG ChStateAddr, AL_U32 Value)
+{
+    AL_REG32_WRITE(ChStateAddr, Value);
+}
 
 /* --------------------DMAC/Channel_x_Registers-------------------- */
 
@@ -571,7 +595,7 @@ static inline AL_U32 AlDmacAhb_ll_GetSgc(AL_REG BaseAddr, AL_REG ChannelOffset)
 
 static inline AL_VOID AlDmacAhb_ll_SetSgc(AL_REG BaseAddr, AL_REG ChannelOffset, AL_U32 Value)
 {
-    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_SGR_OFFSET + ChannelOffset, DMAC_AHB_SGR_SGC_SHIFT, DMAC_AHB_SGR_SGC_SHIFT,
+    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_SGR_OFFSET + ChannelOffset, DMAC_AHB_SGR_SGC_SHIFT, DMAC_AHB_SGR_SGC_SIZE,
              Value);
 }
 
@@ -985,6 +1009,7 @@ static inline AL_VOID AlDmacAhb_ll_SetChannelEn(AL_REG BaseAddr, AL_U32 ChannelM
 {
     AL_U32 Reg = AL_REG32_READ(BaseAddr + DMAC_AHB_CHENREG_OFFSET);
     Reg |= ((IsEnable ? ChannelMask : 0) | (ChannelMask << DMAC_AHB_CHENREG_CH_EN_WE_SHIFT));
+    /* TODO: SYNC */
     AL_REG32_WRITE(BaseAddr + DMAC_AHB_CHENREG_OFFSET, Reg);
 }
 

@@ -18,6 +18,24 @@ extern "C" {
 
 #define DMAC_AHB_BASE_ADDR 0xF804D000ULL
 
+#define DMAC_AHB_INTR_ID    (65)
+
+#define DMAC_AHB_CH_NUM_8   (8)
+
+/* 0xF841F800 - 0xF841F80C */
+#define DMAC_AHB_LOCK_ADDR      0xF841F80CULL
+
+#define DMAC_AHB_CH_STATE_ADDR  0xF88001B0ULL
+
+///////////////////////////////////////////////////////
+// Register: SAR
+// Source Address for Channel 0
+///////////////////////////////////////////////////////
+
+#define DMAC_AHB_LOCK_ADDR_SHIFT    0
+
+#define DMAC_AHB_LOCK_ADDR_SIZE     1
+
 ///////////////////////////////////////////////////////
 // Register: SAR
 // Source Address for Channel 0
@@ -1106,6 +1124,8 @@ typedef struct {
     AL_U32      BaseAddress;
     AL_U32      ChannelNum;
     AL_U32      IntrId;
+    AL_U32      LockAddress;    /* Spin lock address */
+    AL_U32      ChStateAddr;    /* Channel state address */
 } AL_DMACAHB_HwConfigStruct;
 
 #ifdef __cplusplus

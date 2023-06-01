@@ -117,6 +117,7 @@ AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_ChInitStruct 
     AL_S32 Ret = AL_OK;
     AL_DMACAHB_HwConfigStruct   *HwConfig;
     AL_DMACAHB_ChCallBackStruct EventCallBack;
+    AL_DMACAHB_ChIdEnum AvailableId;
 
     if (Handle == AL_NULL) {
         return AL_DMACAHB_ERR_NULL_PTR;
@@ -131,11 +132,13 @@ AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_ChInitStruct 
         return AL_DMACAHB_ERR_NULL_PTR;
     }
 
-    if (InitConfig->Id > HwConfig->ChannelNum) {
+    Ret = AlDmacAhb_Dev_RequestCh(HwConfig, InitConfig->Id, &AvailableId);
+    if (Ret != AL_OK) {
         AL_DMACAHB_HAL_UNLOCK(Handle);
-        return AL_DMACAHB_ERR_INVALID_CH_ID;
+        return Ret;
     }
 
+    InitConfig->Id = AvailableId;
     Handle->Channel = &AL_DMACAHB_ChInstance[DevId][InitConfig->Id];
 
     /* 2. Init IP */

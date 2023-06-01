@@ -25,7 +25,7 @@ extern "C" {
 typedef enum
 {
     DMACAHB_ERR_ENABLED_CHANNEL = 0x100,    /* receive message with error*/
-    DMACAHB_ERR_INVALID_CH_ID,
+    DMACAHB_ERR_NONE_AVAILABLE_CH,
     DMACAHB_ERR_HANDLE_WITHOUT_CH,
     DMACAHB_ERR_CH_WITHOUT_DMAC,
     DMACAHB_ERR_IOCTL_CMD,
@@ -33,6 +33,7 @@ typedef enum
     DMACAHB_ERR_TRANS_TYPE,
     DMACAHB_ERR_TRANS_BUSY,
     DMACAHB_ERR_STATE_NOT_READY,
+    DMACAHB_ERR_FETCH_LOCK,
 } AL_DMACAHB_ErrCodeEnum;
 
 #define AL_DMACAHB_ERR_INVALID_DEVID        AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, AL_ERR_INVALID_DEVID)
@@ -46,7 +47,7 @@ typedef enum
 #define AL_DMACAHB_ERR_TIMEOUT              AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, AL_ERR_TIMEOUT)
 #define AL_DMACAHB_ERR_BUSY                 AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, AL_ERR_BUSY)
 #define AL_DMACAHB_ERR_ENABLED_CHANNEL      AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, DMACAHB_ERR_ENABLED_CHANNEL)
-#define AL_DMACAHB_ERR_INVALID_CH_ID        AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, DMACAHB_ERR_INVALID_CH_ID)
+#define AL_DMACAHB_ERR_NONE_AVAILABLE_CH    AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, DMACAHB_ERR_NONE_AVAILABLE_CH)
 #define AL_DMACAHB_ERR_HANDLE_WITHOUT_CH    AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, DMACAHB_ERR_HANDLE_WITHOUT_CH)
 #define AL_DMACAHB_ERR_CH_WITHOUT_DMAC      AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, DMACAHB_ERR_CH_WITHOUT_DMAC)
 #define AL_DMACAHB_ERR_IOCTL_CMD            AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, DMACAHB_ERR_IOCTL_CMD)
@@ -54,6 +55,7 @@ typedef enum
 #define AL_DMACAHB_ERR_TRANS_TYPE           AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, DMACAHB_ERR_TRANS_TYPE)
 #define AL_DMACAHB_ERR_TRANS_BUSY           AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, DMACAHB_ERR_TRANS_BUSY)
 #define AL_DMACAHB_ERR_STATE_NOT_READY      AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, DMACAHB_ERR_STATE_NOT_READY)
+#define AL_DMACAHB_ERR_FETCH_LOCK           AL_DEF_ERR(AL_DMACAHB, AL_ERR_LEVEL_ERROR, DMACAHB_ERR_FETCH_LOCK)
 
 /**************************** Type Definitions *******************************/
 /**
@@ -126,16 +128,16 @@ typedef enum
  */
 typedef enum
 {
-    AL_DMACAHB_TRANS_TYPE_1,    /* Single-block or last transfer of multi-block,  */
-    AL_DMACAHB_TRANS_TYPE_2,    /* Auto-reload multi-block transfer with contiguous SAR */
-    AL_DMACAHB_TRANS_TYPE_3,    /* Auto-reload multi-block transfer with contiguous DAR */
-    AL_DMACAHB_TRANS_TYPE_4,    /* Auto-reload multi-block transfer */
-    AL_DMACAHB_TRANS_TYPE_5,    /* Single-block or last transfer of multi-block */
-    AL_DMACAHB_TRANS_TYPE_6,    /* Linked list multi-block transfer with contiguous SAR */
-    AL_DMACAHB_TRANS_TYPE_7,    /* Linked list multi-block transfer with auto-reload SAR */
-    AL_DMACAHB_TRANS_TYPE_8,    /* Linked list multi-block transfer with contiguous DAR */
-    AL_DMACAHB_TRANS_TYPE_9,    /* Linked list multi-block transfer with auto-reload DAR */
-    AL_DMACAHB_TRANS_TYPE_10    /* Linked list multi-block transfer */
+    AL_DMACAHB_TRANS_TYPE_1,    /* Single-block or last transfer of multi-block, tfr intr done */
+    AL_DMACAHB_TRANS_TYPE_2,    /* Auto-reload multi-block transfer with contiguous SAR, blk intr done */
+    AL_DMACAHB_TRANS_TYPE_3,    /* Auto-reload multi-block transfer with contiguous DAR, blk intr done */
+    AL_DMACAHB_TRANS_TYPE_4,    /* Auto-reload multi-block transfer, blk intr done */
+    AL_DMACAHB_TRANS_TYPE_5,    /* Single-block or last transfer of multi-block, tfr intr done */
+    AL_DMACAHB_TRANS_TYPE_6,    /* Linked list multi-block transfer with contiguous SAR, tfr intr done */
+    AL_DMACAHB_TRANS_TYPE_7,    /* Linked list multi-block transfer with auto-reload SAR, blk intr done */
+    AL_DMACAHB_TRANS_TYPE_8,    /* Linked list multi-block transfer with contiguous DAR, tfr intr done */
+    AL_DMACAHB_TRANS_TYPE_9,    /* Linked list multi-block transfer with auto-reload DAR, blk intr done */
+    AL_DMACAHB_TRANS_TYPE_10    /* Linked list multi-block transfer, tfr intr done */
 } AL_DMACAHB_TransTypeEnum;
 
 /**
@@ -191,7 +193,7 @@ typedef enum
     AL_DMACAHB_IOCTL_GET_PARAM_CHANNEL_6,
     AL_DMACAHB_IOCTL_GET_PARAM_CHANNEL_7,
     AL_DMACAHB_IOCTL_SET_CHANNEL_EN,
-    AL_DMACAHB_IOCTL_SET_RELOAD_LAST_TRANS,
+    AL_DMACAHB_IOCTL_SET_RELOAD_LAST_TRANS, /* TODO: increase width/size... params set */
 }AL_DMACAHB_IoCtlCmdEnum;
 
 /**
@@ -331,7 +333,7 @@ typedef struct
 {
     AL_BOOL     DmacEn;
     AL_BOOL     IntrEn;
-    AL_U8       ChEn;       /* channel enabled status */
+    AL_U8       ChEn;       /* indicate used channel in this core for intr handler */
 } AL_DMACAHB_StateStruct;
 
 /**
@@ -365,6 +367,8 @@ typedef struct
     AL_U32                  DevId;                              /* Num of Dmac, start from 0 */
     AL_U32                  IntrId;                             /* Intr id in intr list */
     AL_U32                  ChannelNum;                         /* How many Channel in this controller */
+    AL_U32                  LockAddress;                        /* Spin lock address */
+    AL_U32                  ChStateAddr;                        /* Channel state address */
     AL_DMACAHB_StateStruct  State;                              /* Controller state */
     struct DMACAHB_ChStruct *Channel[AL_DMACAHB_CHANNEL_NUM];   /* Poniter to its channel struct */
 } AL_DMACAHB_DmacStruct;
@@ -469,6 +473,9 @@ AL_VOID AlDmacAhb_Dev_IntrHandler(AL_VOID *Instance);
 AL_S32 AlDmacAhb_Dev_IoCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_IoCtlCmdEnum Cmd, AL_VOID *Data);
 
 AL_S32 AlDmacAhb_Dev_TransTypeToState(AL_DMACAHB_TransTypeEnum Type, AL_DMACAHB_ChStateEnum *State);
+
+AL_S32 AlDmacAhb_Dev_RequestCh(AL_DMACAHB_HwConfigStruct   *HwConfig, AL_DMACAHB_ChIdEnum RequestId,
+                               AL_DMACAHB_ChIdEnum *AvailableId);
 
 #ifdef __cplusplus
 }
