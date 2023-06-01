@@ -1,0 +1,15 @@
+TARGET = fpsoc_mmc_sd
+
+NUCLEI_SDK_ROOT = ../../../../
+
+SRCDIRS = .
+
+INCDIRS = .
+
+COMMON_FLAGS := -O2 -DMMC_DEBUG -DCONFIG_PERFORMANCE_CALC -DCONFIG_SD_TEST=1 -Wno-int-to-pointer-cast
+
+# ARM jump from secure to non-secure
+# COMMON_FLAGS += -DSUPPORT_NONSECURE
+
+
+include $(NUCLEI_SDK_ROOT)/tools/make/Makefile.base

@@ -8,7 +8,8 @@ INCDIRS += $(FPSOC_ROOT)/inc \
            $(FPSOC_ROOT)/driver/ps_driver/uart/inc \
            $(FPSOC_ROOT)/driver/ps_driver/gpio/inc \
            $(FPSOC_ROOT)/driver/ps_driver/spi/inc \
-           $(FPSOC_ROOT)/driver/ps_driver/smc/inc
+           $(FPSOC_ROOT)/driver/ps_driver/smc/inc \
+           $(FPSOC_ROOT)/driver/ps_driver/mmc/inc
 
 INCDIRS += $(LAGECY_INCDIRS)
 
@@ -26,6 +27,7 @@ C_SRCDIRS += $(FPSOC_ROOT)/arch \
              $(FPSOC_ROOT)/driver/ps_driver/uart/src \
              $(FPSOC_ROOT)/driver/ps_driver/spi/src \
              $(FPSOC_ROOT)/driver/ps_driver/smc/src \
+             $(FPSOC_ROOT)/driver/ps_driver/mmc/src \
              $(FPSOC_ROOT)/driver/ps_driver/gpio/src
 
 C_SRCDIRS += $(FPSOC_LIB)/newlib/gcc \
