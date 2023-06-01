@@ -5,7 +5,7 @@
 #include "al_intr.h"
 #include "al_reg_io.h"
 
-AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Func *Func, AL_VOID *Param)
+AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Func Func, AL_VOID *Param)
 {
     AL_INTR_AttrStrct *Attr;
     AL_DEFAULT_ATTR(DefAttr);
