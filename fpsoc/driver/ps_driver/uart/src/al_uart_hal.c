@@ -11,7 +11,6 @@
 /************************** Variable Definitions *****************************/
 static AL_UART_DevStruct AL_UART_DevInstance[AL_UART_NUM_INSTANCE];
 
-
 extern AL_BOOL AlUart_Dev_IsTxBusy(AL_UART_DevStruct *Uart);
 
 extern AL_BOOL AlUart_Dev_IsRxBusy(AL_UART_DevStruct *Uart);
@@ -36,10 +35,12 @@ static AL_S32 AlUart_Hal_WaitRxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 T
 #else
 
 /**
- * @brief   waiting for uart send done or timeout.
+ * This function waiting for uart send done or timeout.
  * @param   Handle Pointer to a AL_UART_HalStruct structure that contains uart dev instance
  * @param   Timeout is max wait time for send done
- * @return  HAL status
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
  * @note
 */
 static AL_S32 AlUart_Hal_WaitTxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 Timeout)
@@ -55,10 +56,12 @@ static AL_S32 AlUart_Hal_WaitTxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 T
 }
 
 /**
- * @brief   waiting for uart receive done or timeout.
+ * This function waiting for uart receive done or timeout.
  * @param   Handle Pointer to a AL_UART_HalStruct structure that contains uart dev instance
  * @param   Timeout is max wait time for receive done
- * @return  HAL status
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
  * @note
 */
 static AL_S32 AlUart_Hal_WaitRxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 Timeout)
@@ -80,10 +83,11 @@ static AL_S32 AlUart_Hal_WaitRxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 T
 #endif
 
 /**
- * @brief   action when receive or send data down.
+ * This function action when receive or send data down.
  * @param   UartEvent Pointer to AL_UART_EventStruct contains event datas
  * @param   CallbackRef Pointer to a AL_UART_HalStruct structure that contains uart dev instance
- * @note    None
+ * @return
+ * @note
 */
 static AL_VOID AlUart_Hal_EventHandler(AL_UART_EventStruct UartEvent, AL_VOID *CallbackRef)
 {
@@ -109,13 +113,15 @@ static AL_VOID AlUart_Hal_EventHandler(AL_UART_EventStruct UartEvent, AL_VOID *C
 }
 
 /**
- * @brief   Initialize the UART mode according to the specified
+ * This function initialize the UART mode according to the specified
  *          parameters in the AL_UART_InitStruct and initialize the associated handle.
  * @param   Handle Pointer to a AL_UART_HalStruct structure that contains uart dev instance
  * @param   DevId is hardware module id
  * @param   InitConfig pointer to a AL_UART_InitStruct structure
  *          that contains the configuration information for the specified UART peripheral
- * @return  HAL status
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
  * @note
 */
 AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStruct *InitConfig)
@@ -149,7 +155,8 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStru
         return Ret;
     }
 
-    (AL_VOID)AlIntr_RegHandler(Dev->IrqNum, AL_NULL, AlUart_Dev_IntrHandler, Dev);
+    (AL_VOID)AlIntr_RegHandler(Dev->IntrNum, AL_NULL, AlUart_Dev_IntrHandler, Dev);
+
     AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
     Handle->Dev  = Dev;
@@ -159,11 +166,13 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStru
 }
 
 /**
- * Send an amount of data in polling mode.
+ * This function send an amount of data in polling mode.
  * @param   Handle Pointer to a AL_UART_HalStruct structure that contains uart device instance
  * @param   Data Pointer to data buffer
  * @param   Size Amount of data to be sent
- * @return  HAL status
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
  * @note
 */
 AL_S32 AlUart_Hal_SendDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
@@ -188,12 +197,14 @@ AL_S32 AlUart_Hal_SendDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32
 }
 
 /**
- * Send an amount of data in blocking mode.
+ * This function send an amount of data in blocking mode.
  * @param   Handle Pointer to a AL_UART_HalStruct structure that contains uart device instance
  * @param   Data Pointer to data buffer
  * @param   Size Amount of data to be sent
  * @param   Timeout Timeout duration
- * @return  HAL status
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
  * @note
 */
 AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
@@ -231,13 +242,15 @@ AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
 }
 
 /**
- * Receive an amount of data in blocking mode.
+ * This function receive an amount of data in blocking mode.
  * @param   Handle Pointer to a AL_UART_HalStruct structure that contains uart device instance
  * @param   Data Pointer to data buffer
  * @param   Size Amount of data to be received
  * @param   RecvSize Pointer to Amount how much data has been received
  * @param   Timeout Timeout duration
- * @return  HAL status
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
  * @note
 */
 AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 *RecvSize, AL_U32 Timeout)
@@ -275,11 +288,13 @@ AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
 }
 
 /**
- * Send an amount of data in non-blocking mode.
+ * This function send an amount of data in non-blocking mode.
  * @param   Handle Pointer to a AL_UART_HalStruct structure that contains uart device instance
  * @param   Data Pointer to data buffer
  * @param   Size Amount of data to be sent
- * @return  HAL status
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
  * @note
 */
 AL_S32 AlUart_Hal_SendData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
@@ -303,11 +318,13 @@ AL_S32 AlUart_Hal_SendData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
 }
 
 /**
- * Receive an amount of data in non-blocking mode.
+ * This function receive an amount of data in non-blocking mode.
  * @param   Handle Pointer to a AL_UART_HalStruct structure that contains uart device instance
  * @param   Data Pointer to data buffer
  * @param   Size Amount of data to be received
- * @return  HAL status
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
  * @note
 */
 AL_S32 AlUart_Hal_RecvData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
@@ -336,7 +353,9 @@ AL_S32 AlUart_Hal_RecvData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
  * @param   Handle Pointer to a AL_UART_HalStruct structure that contains uart device instance
  * @param   Cmd is io ctl cmd to AL_Uart_IoCtlCmdEnum
  * @param   Data Pointer to cmd args
- * @return  HAL status
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
  * @note
 */
 AL_S32 AlUart_Hal_IoCtl(AL_UART_HalStruct *Handle, AL_Uart_IoCtlCmdEnum Cmd, AL_VOID *Data)

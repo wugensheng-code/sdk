@@ -1,7 +1,6 @@
 /***************************** Include Files *********************************/
 #include "al_uart_dev.h"
 
-
 /************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/
@@ -26,9 +25,10 @@ extern AL_UART_HwConfigStruct AlUart_HwConfig[AL_UART_NUM_INSTANCE];
 /********************************************************/
 
 /**
- * @brief   look up hardware config structure.
+ * This function look up hardware config structure.
  * @param   DeviceId is hardware module id
- * @return  hardware config structure with AL_UART_HwConfigStruct
+ * @return
+ *          - AL_UART_HwConfigStruct for hardware config
  * @note
 */
 AL_UART_HwConfigStruct *AlUart_Dev_LookupConfig(AL_U32 DevId)
@@ -47,11 +47,12 @@ AL_UART_HwConfigStruct *AlUart_Dev_LookupConfig(AL_U32 DevId)
 }
 
 /**
- * @brief   get default hardware config structure.
+ * This function get default hardware config structure.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
  * @param   Init pointer to a AL_UART_InitStruct structure
  *          that contains the configuration information for the specified UART peripheral
- * @return  - AL_OK
+ * @return
+ *          - AL_OK for function success
  * @note
 */
 AL_S32 AL_Uart_GetDefaultConf(AL_UART_DevStruct *Uart, AL_UART_InitStruct *Init)
@@ -61,9 +62,10 @@ AL_S32 AL_Uart_GetDefaultConf(AL_UART_DevStruct *Uart, AL_UART_InitStruct *Init)
 }
 
 /**
- * @brief   check whether the uart tx is busy.
+ * This function check whether the uart tx is busy.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
- * @return  uart tx status
+ * @return
+ *          - AL_BOOL for uart tx status
  * @note
 */
 AL_BOOL AlUart_Dev_IsTxBusy(AL_UART_DevStruct *Uart)
@@ -72,9 +74,10 @@ AL_BOOL AlUart_Dev_IsTxBusy(AL_UART_DevStruct *Uart)
 }
 
 /**
- * @brief   check whether the uart rx is busy.
+ * This function check whether the uart rx is busy.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
- * @return  uart tx status
+ * @return
+ *          - AL_BOOL for uart rx status
  * @note
 */
 AL_BOOL AlUart_Dev_IsRxBusy(AL_UART_DevStruct *Uart)
@@ -83,9 +86,9 @@ AL_BOOL AlUart_Dev_IsRxBusy(AL_UART_DevStruct *Uart)
 }
 
 /**
- * @brief   set uart tx status to busy.
+ * This function set uart tx status to busy.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
- * @return  None
+ * @return
  * @note
 */
 AL_VOID AlUart_Dev_SetTxBusy(AL_UART_DevStruct *Uart)
@@ -94,9 +97,9 @@ AL_VOID AlUart_Dev_SetTxBusy(AL_UART_DevStruct *Uart)
 }
 
 /**
- * @brief   set uart tx status to busy.
+ * This function set uart tx status to busy.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
- * @return  None
+ * @return
  * @note
 */
 AL_VOID AlUart_Dev_SetRxBusy(AL_UART_DevStruct *Uart)
@@ -105,9 +108,9 @@ AL_VOID AlUart_Dev_SetRxBusy(AL_UART_DevStruct *Uart)
 }
 
 /**
- * @brief   clear uart tx busy status.
+ * This function clear uart tx busy status.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
- * @return  None
+ * @return
  * @note
 */
 AL_VOID AlUart_Dev_ClrTxBusy(AL_UART_DevStruct *Uart)
@@ -116,7 +119,7 @@ AL_VOID AlUart_Dev_ClrTxBusy(AL_UART_DevStruct *Uart)
 }
 
 /**
- * @brief   clear uart rx busy status.
+ * This function clear uart rx busy status.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
  * @return
  * @note
@@ -127,12 +130,14 @@ AL_VOID AlUart_Dev_ClrRxBusy(AL_UART_DevStruct *Uart)
 }
 
 /**
- * @brief   Initialize UART registers according to the specified parameters in AL_UART_InitStruct.
+ * This function initialize UART registers according to the specified parameters in AL_UART_InitStruct.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
  * @param   DevId is hardware module id
  * @param   InitConfig pointer to a AL_UART_InitStruct structure
  *          that contains the configuration information for the specified UART peripheral
- * @return  - AL_OK UART registers are initialized according to AL_UART_InitStruct content
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
  * @note    access baudrate(LCR, DLL, DLH) related register during a transaction will cause busy detect interrupt
 */
 AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_UART_InitStruct *InitConfig, AL_U32 DevId)
@@ -146,10 +151,10 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_UART_InitStruct *InitConfig, 
     }
 
     /* Save the relevant configuration to the uart device structure */
-    Uart->DevId = DevId;
-    Uart->Configs  = (InitConfig == AL_NULL) ? UartDefInitConfigs : (*InitConfig);
-    Uart->BaseAddr = AlUart_Dev_LookupConfig(DevId)->BaseAddress;
-    Uart->IrqNum = AlUart_Dev_LookupConfig(DevId)->IrqNum;
+    Uart->DevId        = DevId;
+    Uart->Configs      = (InitConfig == AL_NULL) ? UartDefInitConfigs : (*InitConfig);
+    Uart->BaseAddr     = AlUart_Dev_LookupConfig(DevId)->BaseAddress;
+    Uart->IntrNum      = AlUart_Dev_LookupConfig(DevId)->IntrNum;
     Uart->InputClockHz = AlUart_Dev_LookupConfig(DevId)->InputClockHz;
 
     /* in the initialization stage ensure that no characters during this time period are received/transmitted */
@@ -182,16 +187,17 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_UART_InitStruct *InitConfig, 
 }
 
 /**
- * @brief   Sends an amount of data in interrupt mode.
+ * This function send an amount of data in interrupt mode.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
  * @param   SendData Pointer to data buffer
  * @param   SendSize Amount of data to be sent
- * @return  - AL_OK
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
  * @note
 */
 AL_S32 AlUart_Dev_SendData(AL_UART_DevStruct *Uart, AL_U8 *SendData, AL_U32 SendSize)
 {
-
 #ifdef UART_DEBUG
     AL_LOG(AL_ERR_LEVEL_DEBUG, "uart=%p SendDataAddr=%p SendSize=%d\n", Uart, SendData, SendSize);
 #endif
@@ -221,11 +227,13 @@ AL_S32 AlUart_Dev_SendData(AL_UART_DevStruct *Uart, AL_U8 *SendData, AL_U32 Send
 }
 
 /**
- * @brief   Receives an amount of data in interrupt mode.
+ * This function receive an amount of data in interrupt mode.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
  * @param   Data Pointer to data buffer
  * @param   Size Amount of data to be received
- * @return  - AL_OK
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
  * @note
 */
 AL_S32 AlUart_Dev_RecvData(AL_UART_DevStruct *Uart, AL_U8 *ReceiveBuf, AL_U32 ReceiveSize)
@@ -278,11 +286,13 @@ AL_S32 AlUart_Dev_RecvData(AL_UART_DevStruct *Uart, AL_U8 *ReceiveBuf, AL_U32 Re
 }
 
 /**
- * @brief   Register a User UART Callback To be used when send or receive done.
+ * This function register a User UART Callback To be used when send or receive done.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
  * @param   CallBack pointer to the Callback function
  * @param   CallbackRef pointer to the Callback function params
- * @return  - AL_OK
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
  * @note
 */
 AL_S32 AlUart_Dev_RegisterEventCallBack(AL_UART_DevStruct *Uart, AL_Uart_EventCallBack Callback, void *CallbackRef)
@@ -306,9 +316,11 @@ AL_S32 AlUart_Dev_RegisterEventCallBack(AL_UART_DevStruct *Uart, AL_Uart_EventCa
 }
 
 /**
- * @brief   Unregister a User UART Callback To be used when send or receive done.
+ * This function unregister a User UART Callback To be used when send or receive done.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
- * @return  - AL_OK
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
  * @note
 */
 AL_S32 AlUart_Dev_UnRegisterEventCallBack(AL_UART_DevStruct *Uart)
@@ -327,10 +339,10 @@ AL_S32 AlUart_Dev_UnRegisterEventCallBack(AL_UART_DevStruct *Uart)
 }
 
 /**
- * @brief   receive data interrupt handler.
+ * This function receive data interrupt handler.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
  * @param   Timeout Timeout duration
- * @return  None
+ * @return
  * @note
 */
 static AL_VOID AlUart_Dev_RecvDataHandler(AL_UART_DevStruct *Uart, AL_BOOL Timeout)
@@ -355,9 +367,9 @@ static AL_VOID AlUart_Dev_RecvDataHandler(AL_UART_DevStruct *Uart, AL_BOOL Timeo
 }
 
 /**
- * @brief   send data interrupt handler.
+ * This function send data interrupt handler.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
- * @return  None
+ * @return
  * @note
 */
 static AL_VOID AlUart_Dev_SendDataHandler(AL_UART_DevStruct *Uart)
@@ -384,11 +396,12 @@ static AL_VOID AlUart_Dev_SendDataHandler(AL_UART_DevStruct *Uart)
 }
 
 /**
- * @brief   Send an amount of data in polling mode.
+ * This function send an amount of data in polling mode.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
  * @param   Data Pointer to data buffer
  * @param   Size Amount of data to be sent
- * @return  - AL_OK
+ * @return
+ *          - AL_OK for function success
  * @note
 */
 AL_S32 AlUart_Dev_SendDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 Size)
@@ -403,18 +416,20 @@ AL_S32 AlUart_Dev_SendDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 S
         }
     }
 
-    /* this bit is set whenever the Transmitter Shift Register and the FIFO are both empty. */
+    /* Waiting for transmitter Shift Register and the FIFO both empty. */
     while (!(AlUart_ll_IsTxDone(Uart->BaseAddr)));
 
     return AL_OK;
 }
 
 /**
- * @brief   excute operations to set or get uart status
+ * This function excute operations to set or get uart status
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
  * @param   Cmd is io ctl operation to AL_Uart_IoCtlCmdEnum
  * @param   Data is pointer reference to Cmd
- * @return  IoCtl status
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
  * @note
 */
 AL_S32 AlUart_Dev_IoCtl(AL_UART_DevStruct *Uart, AL_Uart_IoCtlCmdEnum Cmd, AL_VOID *Data)
@@ -425,23 +440,20 @@ AL_S32 AlUart_Dev_IoCtl(AL_UART_DevStruct *Uart, AL_Uart_IoCtlCmdEnum Cmd, AL_VO
         return AL_UART_ERR_NULL_PTR;
     }
 
+    if(AlUart_ll_IsUartBusy(Uart->BaseAddr)){
+        AL_LOG(AL_ERR_LEVEL_ERROR, "access during a transaction\r\n");
+        return AL_UART_ERR_BUSY;
+    }
+
     switch (Cmd)
     {
     case AL_UART_IOCTL_SET_BAUD_RATE: {
         AL_U32 BaudRate = *(AL_U32 *)Data;
-        if(AlUart_ll_IsUartBusy(Uart->BaseAddr)){
-            AL_LOG(AL_ERR_LEVEL_ERROR, "access during a transaction\r\n");
-            return AL_UART_ERR_BUSY;
-        }
         AlUart_ll_SetBaudRate(Uart->BaseAddr, BaudRate, Uart->InputClockHz);
         break;
     }
     case AL_UART_IOCTL_GET_BAUD_RATE: {
         AL_U32 *BaudRate = (AL_U32 *)Data;
-        if(AlUart_ll_IsUartBusy(Uart->BaseAddr)){
-            AL_LOG(AL_ERR_LEVEL_ERROR, "access during a transaction\r\n");
-            return AL_UART_ERR_BUSY;
-        }
         *BaudRate = AlUart_ll_GetBaudRate(Uart->BaseAddr, Uart->InputClockHz);
         break;
     }
@@ -484,10 +496,10 @@ AL_S32 AlUart_Dev_IoCtl(AL_UART_DevStruct *Uart, AL_Uart_IoCtlCmdEnum Cmd, AL_VO
 }
 
 /**
- * @brief   error interrupt handler.
+ * This function is error interrupt handler.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
  * @param   IntrStatus is interrupt register status
- * @return  None
+ * @return
  * @note
 */
 static AL_VOID AlUart_Dev_ErrorHandler(AL_UART_DevStruct *Uart, AL_UART_InterruptEnum IntrStatus)
@@ -510,6 +522,7 @@ static AL_VOID AlUart_Dev_ErrorHandler(AL_UART_DevStruct *Uart, AL_UART_Interrup
         UartEvent.Event = AL_UART_EVENT_BREAK_INTR;
         UartEvent.EventData = (AL_U32)(AL_UINTPTR)AL_NULL;
     }
+
     /* trigger EventCallBack */
     if (Uart->EventCallBack) {
         (*Uart->EventCallBack)(UartEvent, Uart->EventCallBackRef);
@@ -520,9 +533,9 @@ static AL_VOID AlUart_Dev_ErrorHandler(AL_UART_DevStruct *Uart, AL_UART_Interrup
 }
 
 /**
- * @brief   bus busy interrupt handler.
+ * This function is bus busy interrupt handler.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
- * @return  None
+ * @return
  * @note    Busy detect; Busy functionality helps to safe guard against errors if the LCR, DLL, and/or DLH registers
  *          are changed during a transaction even though they should only be set during initialization
 */
@@ -550,9 +563,9 @@ static AL_VOID AlUart_Dev_BusBusyHandler(AL_UART_DevStruct *Uart)
 #define UART_IN_RECV_LINE_STATUS_INTR(Status)       (Status == UART_RECEIVER_LINE_STATUS)
 
 /**
- * @brief   uart all interrupt entries handler.
+ * This function is uart's all interrupt entries handler.
  * @param   Instance is pointer to interrupts call back reference
- * @return  none
+ * @return
  * @note
 */
 AL_VOID AlUart_Dev_IntrHandler(AL_VOID *Instance)

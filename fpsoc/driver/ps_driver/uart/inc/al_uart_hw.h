@@ -486,7 +486,7 @@ typedef struct
     AL_U32                  BaseAddress;
     AL_U32                  InputClockHz;
     AL_U32                  ModemPinsConnected;
-    AL_U32                  IrqNum;
+    AL_U32                  IntrNum;
 } AL_UART_HwConfigStruct;
 
 #ifdef __cplusplus
