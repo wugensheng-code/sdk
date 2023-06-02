@@ -7,6 +7,7 @@ static AL_U8 *ReadBuff = (AL_U8 *)AL_MMC_TEST_RD_BUFF_ADDR;
 static AL_VOID AlMmc_Test_InitSrc(AL_U8 *Addr, AL_U32 ByteSize, AL_U32 DataOffset);
 static AL_S32 AlMmc_Test_DataCheck(AL_MMC_HalStruct *Handle, AL_U8 *SrcAddr, AL_U8 *DstAddr, AL_U32 BlockCnt);
 static AL_VOID AlMmc_Test_Sd(AL_VOID);
+static AL_VOID AlMmc_Test_Emmc(AL_VOID);
 static AL_VOID AlMmc_Test_CalcStart(AL_MMC_PerCalcStruct *PerCalc);
 static AL_VOID AlMmc_Test_CalcEnd(AL_MMC_HalStruct *Handle, AL_MMC_PerCalcStruct *PerCalc, AL_UINTPTR BlkCnt);
 static AL_VOID AlMmc_Test_CalcDisplay(AL_MMC_PerCalcStruct *PerCalc);
@@ -16,6 +17,10 @@ AL_U32 main(AL_VOID)
 {
 #if CONFIG_SD_TEST
     AlMmc_Test_Sd();
+#endif
+
+#if CONFIG_EMMC_TEST
+    AlMmc_Test_Emmc();
 #endif
 
     while (1);
@@ -122,6 +127,79 @@ static AL_VOID AlMmc_Test_Sd(AL_VOID)
     }
 }
 
+static AL_VOID AlMmc_Test_Emmc(AL_VOID)
+{
+    AL_S32 Ret = AL_OK;
+    AL_U32 Timeout  = 1000;
+    AL_U32 DevId    = 0;
+    AL_MMC_HalStruct Handle;
+    AL_MMC_InitStruct *InitConfig[AL_MMC_TEST_EMMC_CASE_NUM];
+    AL_S8 *CaseName[AL_MMC_TEST_EMMC_CASE_NUM] = {"Non-DMA", "SDMA", "ADMA2"};
+    AL_MMC_PerCalcStruct PerCalc;
+
+    InitConfig[0] = &EmmcNoDmaInit;
+    InitConfig[1] = &EmmcSdmaInit;
+    InitConfig[2] = &EmmcAdma2Init;
+
+    for (AL_U32 i = 0; i < AL_MMC_TEST_EMMC_CASE_NUM; i++) {
+
+        AL_LOG(AL_ERR_LEVEL_INFO, "----------MMC test %s mode start----------\r\n", CaseName[i]);
+
+        Ret = AlMmc_Hal_Init(&Handle, InitConfig[i], AL_NULL, DevId);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal init error 0x%x\r\n", Ret);
+            return ;
+        }
+
+        Ret = AlMmc_Hal_WriteBlocked(&Handle, WriteBuff, 0, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal write single block error 0x%x\r\n", Ret);
+            return ;
+        }
+
+        Ret = AlMmc_Hal_ReadBlocked(&Handle, ReadBuff, 0, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal read single block error 0x%x\r\n", Ret);
+            return ;
+        }
+
+        Ret = AlMmc_Test_DataCheck(&Handle, WriteBuff, ReadBuff, AL_MMC_TEST_SINGLE_BLK_CNT);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal single block check error!\r\n");
+            return ;
+        }
+#ifdef CONFIG_PERFORMANCE_CALC
+        AlMmc_Test_CalcStart(&PerCalc);
+#endif
+        Ret = AlMmc_Hal_WriteBlocked(&Handle, WriteBuff, 1, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal write multi block error 0x%x\r\n", Ret);
+            return ;
+        }
+#ifdef CONFIG_PERFORMANCE_CALC
+        AlMmc_Test_CalcEnd(&Handle, &PerCalc, AL_MMC_TEST_MULTI_BLK_CNT);
+#endif
+#ifdef CONFIG_PERFORMANCE_CALC
+        AlMmc_Test_CalcStart(&PerCalc);
+#endif
+        Ret = AlMmc_Hal_ReadBlocked(&Handle, ReadBuff, 1, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal read multi block error 0x%x\r\n", Ret);
+            return ;
+        }
+#ifdef CONFIG_PERFORMANCE_CALC
+        AlMmc_Test_CalcEnd(&Handle, &PerCalc, AL_MMC_TEST_MULTI_BLK_CNT);
+#endif
+        Ret = AlMmc_Test_DataCheck(&Handle, WriteBuff, ReadBuff, AL_MMC_TEST_MULTI_BLK_CNT);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal single block check error!\r\n");
+            return ;
+        }
+
+        AL_LOG(AL_ERR_LEVEL_INFO, "----------MMC test %s mode done----------\r\n", CaseName[i]);
+    }
+}
+
 static AL_VOID AlMmc_Test_CalcStart(AL_MMC_PerCalcStruct *PerCalc)
 {
     PerCalc->Start = AlSys_GetTimer();
@@ -130,7 +208,7 @@ static AL_VOID AlMmc_Test_CalcStart(AL_MMC_PerCalcStruct *PerCalc)
 static AL_VOID AlMmc_Test_CalcEnd(AL_MMC_HalStruct *Handle, AL_MMC_PerCalcStruct *PerCalc, AL_UINTPTR BlkCnt)
 {
     PerCalc->End = AlSys_GetTimer();
-    PerCalc->TimeInUs = AlDelay_CalcUs(PerCalc->Start, PerCalc->End);
+    PerCalc->TimeInUs = (PerCalc->End - PerCalc->Start)/(AlSys_GetFreq()/1000000);
     PerCalc->DatInByte = BlkCnt * Handle->Dev->CardInfo.BlkLen;
     PerCalc->BytePerSec = ((AL_DOUBLE)PerCalc->DatInByte / PerCalc->TimeInUs);
 

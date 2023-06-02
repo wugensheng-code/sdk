@@ -105,12 +105,12 @@ void AlDelay_S(u64 Count)
 	_delay_s(Count);
 }
 
-u64 AlDelay_CalcUs(u64 Start, u64 End)
-{
-	return get_Us(Start, End);
-}
-
 u64 AlSys_GetTimer(void)
 {
 	return get_SystickTimer();
+}
+
+u64 AlSys_GetFreq(void)
+{
+	return syscnt_get_freq();
 }

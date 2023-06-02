@@ -13,8 +13,6 @@ AL_VOID AlDelay_Ms(AL_U64 Count);
 
 AL_VOID AlDelay_S(AL_U64 Count);
 
-AL_U64 AlDelay_CalcUs(AL_U64 Start, AL_U64 End);
-
 #ifdef __cplusplus
 }
 #endif  /* __cplusplus */

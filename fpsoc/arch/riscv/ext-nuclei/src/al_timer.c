@@ -112,12 +112,12 @@ void AlDelay_S(unsigned long long Count)
     } while (delta_mtime < delay_ticks);
 }
 
-unsigned long long AlDelay_CalcUs(unsigned long long Start, unsigned long long End)
-{
-    return get_Us(Start, End);
-}
-
 unsigned long long AlSys_GetTimer(void)
 {
     return SysTimer->MTIMER;
+}
+
+unsigned long long AlSys_GetFreq(void)
+{
+	return get_timer_freq();
 }
