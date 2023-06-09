@@ -7,22 +7,23 @@ extern "C" {
 #endif
 
 #include "driver_api.h"
+#include "npu_defines.h"
 
 /* rgb is the shortcut of runtime graph bin */
 #define RGB_NOT_SET 0x00
 
 /* Type define */
-typedef uint32_t rgb_uoffset_t ;  /* offset is 4-byte unsigned integer */
-typedef uint32_t rgb_size_t ;     /* size is 4-byte unsigned integer */
-typedef uint8_t rgb_bool_t ;      /* bool is 1-byte unsigned integer */
-typedef int16_t rgb_index_t ;     /* index is 4-byte signed integer */
-typedef uint16_t rgb_scale_t ;     /* scale is 2-byte unsigned integer */
-typedef uint8_t rgb_rshift_t ;     /* rshift is 1-byte unsigned integer */
-typedef int32_t rgb_multi_t ;     /* rshift is 4-byte signed integer */
-typedef int32_t rgb_qshift_t ;     /* rshift is 4-byte signed integer */
-typedef int16_t rgb_zp_t ;     /* zero point is 2-byte signed integer */
-typedef int32_t rgb_bias_t ;     /* bias is 4-byte signed integer */
-typedef int32_t rgb_anchor_t ;     /* anchor for yolo is 4-byte signed integer */
+typedef AL_U32 rgb_uoffset_t ;  /* offset is 4-byte unsigned integer */
+typedef AL_U32 rgb_size_t ;     /* size is 4-byte unsigned integer */
+typedef AL_U8 rgb_bool_t ;      /* bool is 1-byte unsigned integer */
+typedef AL_S16 rgb_index_t ;     /* index is 4-byte signed integer */
+typedef AL_U16 rgb_scale_t ;     /* scale is 2-byte unsigned integer */
+typedef AL_U8 rgb_rshift_t ;     /* rshift is 1-byte unsigned integer */
+typedef AL_S32 rgb_multi_t ;     /* rshift is 4-byte signed integer */
+typedef AL_S32 rgb_qshift_t ;     /* rshift is 4-byte signed integer */
+typedef AL_S16 rgb_zp_t ;     /* zero point is 2-byte signed integer */
+typedef AL_S32 rgb_bias_t ;     /* bias is 4-byte signed integer */
+typedef AL_S32 rgb_anchor_t ;     /* anchor for yolo is 4-byte signed integer */
 
 /* --------------------- -------- RGB objects -------------------------------- */
 
@@ -35,20 +36,20 @@ typedef struct
 
 typedef struct
 {
-    uint32_t sp_c_num;
-    uint32_t sp_h_num;
+    AL_U32 sp_c_num;
+    AL_U32 sp_h_num;
     rgb_uoffset_t offset_vt_sub_params ;         /* offset of RGB_Vector_tensor_param */
     rgb_uoffset_t offset_vuint32_addr_offsets ;  /* offset of RGB_Vector_uint32 */
 } RGB_sp_param ;
 
 typedef struct
 {
-    uint32_t tensor_id ;
-    uint32_t tensor_type ;
-    uint32_t allocated ;
+    AL_U32 tensor_id ;
+    AL_U32 tensor_type ;
+    AL_U32 allocated ;
     tensor_param_t param ;
-    uint32_t p_split_num ;
-    uint32_t c_split_num ;
+    AL_U32 p_split_num ;
+    AL_U32 c_split_num ;
     rgb_uoffset_t offset_s_tname;                /* offset of string <tensor name> */
     rgb_uoffset_t offset_vi_producer_nodes ;     /* offset of RGB_Vector_indices <indices of producer nodes> */
     rgb_uoffset_t offset_vi_consumer_nodes ;     /* offset of RGB_Vector_indices <indices of consumer nodes> */
@@ -58,11 +59,11 @@ typedef struct
 
 typedef struct
 {
-    uint32_t node_id ;                         /* node id */
-    uint32_t node_type ;                       /* npu node type */
-    uint8_t is_sub_nd ;
-    uint8_t c_sp_idx ;
-    uint16_t sub_nd_id ;
+    AL_U32 node_id ;                         /* node id */
+    AL_U32 node_type ;                       /* npu node type */
+    AL_U8 is_sub_nd ;
+    AL_U8 c_sp_idx ;
+    AL_U16 sub_nd_id ;
     rgb_uoffset_t offset_s_nname;              /* offset of string <node name> */
     rgb_uoffset_t offset_vi_input_tensors ;    /* offset of RGB_Vector_indices <indices of input tensors> */
     rgb_uoffset_t offset_vi_output_tensors ;   /* offset of RGB_Vector_indices <indices of output tensors> */
@@ -71,8 +72,8 @@ typedef struct
 
 typedef struct
 {
-    uint32_t node_id ;                         /* node id */
-    uint32_t node_type ;                       /* scheduler node type */
+    AL_U32 node_id ;                         /* node id */
+    AL_U32 node_type ;                       /* scheduler node type */
     rgb_uoffset_t offset_node_content ;        /* offset of node content */
 } RGB_Scheduler_Node;
 
@@ -98,7 +99,7 @@ typedef struct
 typedef struct
 {
     rgb_size_t v_num; /* number of vector elements */
-    uint32_t elems[0];
+    AL_U32 elems[0];
 } RGB_Vector_uint32;
 
 typedef struct
@@ -170,23 +171,23 @@ typedef struct
 {
     /* conv param */
     conv_param_t param ;
-    uint8_t conv_type ;
-    uint8_t mode_load_data ;
+    AL_U8 conv_type ;
+    AL_U8 mode_load_data ;
 
     /* fixed-point parameters */
-    int32_t input_zero_point ;
-    int32_t weight_zero_point ;
-    int32_t output_zero_point ;
+    AL_S32 input_zero_point ;
+    AL_S32 weight_zero_point ;
+    AL_S32 output_zero_point ;
     
     /* for hardware */
-    int32_t ifm_dims[4] ; //n,c,h,w
-    int32_t ofm_dims[4] ; //n,c,h,w
+    AL_S32 ifm_dims[4] ; //n,c,h,w
+    AL_S32 ofm_dims[4] ; //n,c,h,w
 
     /* for act node */
-    uint8_t has_act ;
+    AL_U8 has_act ;
 
     /* for pooling node */
-    uint8_t has_pooling ;
+    AL_U8 has_pooling ;
 
     /* pointers */
     rgb_uoffset_t offset_vbias ; /* offset of RGB_Vector_bias*/
@@ -200,17 +201,17 @@ typedef struct
 {
     /* conv param */
     conv_param_t param ;
-    uint8_t conv_type ;
-    uint8_t mode_load_data ;
+    AL_U8 conv_type ;
+    AL_U8 mode_load_data ;
 
     /* fixed-point parameters */
-    int32_t input_zero_point ;
-    int32_t weight_zero_point ;
-    int32_t output_zero_point ;
+    AL_S32 input_zero_point ;
+    AL_S32 weight_zero_point ;
+    AL_S32 output_zero_point ;
 
     /* for hardware */
-    int32_t ifm_dims[4] ; //n,c,h,w
-    int32_t ofm_dims[4] ; //n,c,h,w
+    AL_S32 ifm_dims[4] ; //n,c,h,w
+    AL_S32 ofm_dims[4] ; //n,c,h,w
 
     /* pointers */
     rgb_uoffset_t offset_vbias ; /* offset of RGB_Vector_bias */
@@ -221,17 +222,17 @@ typedef struct
     rgb_uoffset_t offset_act_param ;
 
     /* int8 params */
-    int32_t* q_shift;
-    int32_t* multi;
-    int32_t activation_min;
-    int32_t activation_max;
+    AL_S32* q_shift;
+    AL_S32* multi;
+    AL_S32 activation_min;
+    AL_S32 activation_max;
 
 } RGB_NPUDWConvParam ;
 
 typedef struct
 {
     /* reshape param */
-    int32_t dim_size ;
+    AL_S32 dim_size ;
     // npu_reshape_param_t param ;
 
 } RGB_NPUReshapeParam;
@@ -239,46 +240,46 @@ typedef struct
 typedef struct
 {
     /* for quant */
-    // uint16_t scale_io ;
-    // uint8_t rshift_io ;
+    // AL_U16 scale_io ;
+    // AL_U8 rshift_io ;
     // npu_sigmoid_param_t param ;
     float scale_i;
     float scale_o;
-    int16_t zp_i ;
-    int16_t zp_o ;
+    AL_S16 zp_i ;
+    AL_S16 zp_o ;
 
 } RGB_NPUSigmoidParam;
 
 typedef struct
 {
    /* for quant */
-    uint16_t scale_io ;
-    uint8_t rshift_io ;
-    int16_t zp_i ;
-    int16_t zp_o ;
+    AL_U16 scale_io ;
+    AL_U8 rshift_io ;
+    AL_S16 zp_i ;
+    AL_S16 zp_o ;
 
     /* pooling param */
-    int32_t pool_method ; // 0:max    1:avg
-    int32_t kernel_h ;
-    int32_t kernel_w ;
-    int32_t stride_h ;
-    int32_t stride_w ;
-    int32_t pad_h0 ;
-    int32_t pad_h1 ;
-    int32_t pad_w0 ;
-    int32_t pad_w1 ;
+    AL_S32 pool_method ; // 0:max    1:avg
+    AL_S32 kernel_h ;
+    AL_S32 kernel_w ;
+    AL_S32 stride_h ;
+    AL_S32 stride_w ;
+    AL_S32 pad_h0 ;
+    AL_S32 pad_h1 ;
+    AL_S32 pad_w0 ;
+    AL_S32 pad_w1 ;
 
 } RGB_NPUPoolingParam ;
 
 typedef struct
 {
     /* concat param */
-    int32_t axis ;
+    AL_S32 axis ;
 
-    uint8_t ifm_order ;
+    AL_U8 ifm_order ;
     
     /* for quant: array length for input is input_num */
-    int16_t zp_o ;
+    AL_S16 zp_o ;
 
     /* for pointers */
     rgb_uoffset_t offset_vscale ; /* offset of RGB_Vector_scale*/
@@ -290,23 +291,23 @@ typedef struct
 typedef struct
 {
     /* for quant */
-    uint16_t scale_io ;
-    uint8_t rshift_io ;
-    int16_t zp_i ;
-    int16_t zp_o ;
+    AL_U16 scale_io ;
+    AL_U8 rshift_io ;
+    AL_S16 zp_i ;
+    AL_S16 zp_o ;
 
 } RGB_NPUUpsampleParam;
 
 typedef struct
 {
    /* eltwise param */
-    uint8_t type ;
+    AL_U8 type ;
 
     /* for quant: array length for input is input_num */
-    int16_t zp_o ;
+    AL_S16 zp_o ;
 
-    uint8_t ifm_order ;
-    uint8_t state ;
+    AL_U8 ifm_order ;
+    AL_U8 state ;
 
     /* for pointers */
     rgb_uoffset_t offset_vscale ; /* offset of RGB_Vector_scale*/
@@ -318,14 +319,14 @@ typedef struct
 typedef struct
 {
     /* prelu param */
-    uint16_t slope_size;
+    AL_U16 slope_size;
 
     /* for quant */
-    uint8_t up_scale;
-    uint16_t scale_o;
-    uint8_t rshift_o;
-    int16_t zp_i;
-    int16_t zp_o;
+    AL_U8 up_scale;
+    AL_U16 scale_o;
+    AL_U8 rshift_o;
+    AL_S16 zp_i;
+    AL_S16 zp_o;
 
     /* pointers */
     rgb_uoffset_t offset_vscale;
@@ -336,59 +337,59 @@ typedef struct
 typedef struct
 {
     /* for quant */
-    uint16_t scale_io ;
-    uint8_t rshift_io ;
-    int16_t zp_i ;
-    int16_t zp_o ;
+    AL_U16 scale_io ;
+    AL_U8 rshift_io ;
+    AL_S16 zp_i ;
+    AL_S16 zp_o ;
 
 } RGB_NPUInterpParam;
 
 typedef struct
 {
     /* input param: */
-    int16_t input_c ;
-    int16_t input_h ;
-    int16_t input_w ;
+    AL_S16 input_c ;
+    AL_S16 input_h ;
+    AL_S16 input_w ;
     float mean[3] ;
     float scale[3] ;
 
-    int8_t focus ;
-    int16_t letterbox_rows ;
-    int16_t letterbox_cols ;
+    AL_S8 focus ;
+    AL_S16 letterbox_rows ;
+    AL_S16 letterbox_cols ;
     
     /* for quant */
     float scale_q ;
-    int16_t zero_point ;
+    AL_S16 zero_point ;
 
     /* for yuv2rgb quant */
-    int8_t r_mean_rshift ;
-    int16_t r_mean_param ;
-    int8_t g_mean_rshift ;
-    int16_t g_mean_param ;
-    int8_t b_mean_rshift ;
-    int16_t b_mean_param ;
-    int8_t r_quant_rshift ;
-    int16_t r_quant_param ;
-    int8_t g_quant_rshift ;
-    int16_t g_quant_param ;
-    int8_t b_quant_rshift ;
-    int16_t b_quant_param ;
+    AL_S8 r_mean_rshift ;
+    AL_S16 r_mean_param ;
+    AL_S8 g_mean_rshift ;
+    AL_S16 g_mean_param ;
+    AL_S8 b_mean_rshift ;
+    AL_S16 b_mean_param ;
+    AL_S8 r_quant_rshift ;
+    AL_S16 r_quant_param ;
+    AL_S8 g_quant_rshift ;
+    AL_S16 g_quant_param ;
+    AL_S8 b_quant_rshift ;
+    AL_S16 b_quant_param ;
 
 } RGB_NPUInputParam;
 
 typedef struct
 {
     /* yolov param */
-    uint8_t anchor_num ;
+    AL_U8 anchor_num ;
     
-    uint16_t iou_thresh ;
-    uint16_t prob_thresh ;
-    uint8_t class_num ;
+    AL_U16 iou_thresh ;
+    AL_U16 prob_thresh ;
+    AL_U8 class_num ;
     
     // for yolov5s
-    uint8_t is_yolo_5s ;
-    uint16_t letter_box_w ; // or input_w
-    uint16_t letter_box_h ; // or input_h
+    AL_U8 is_yolo_5s ;
+    AL_U16 letter_box_w ; // or input_w
+    AL_U16 letter_box_h ; // or input_h
 
     /* for pointers */
     rgb_uoffset_t offset_vo_vanchors ; /* offset of RGB_Vector_offsets <RGB_Vector_anchors> */
@@ -403,22 +404,22 @@ typedef struct
 
 typedef struct {
 
-    int16_t index ; // point to rt_node in rt_graph
-    int16_t parent ; // idx of scheduler node
+    AL_S16 index ; // point to rt_node in rt_graph
+    AL_S16 parent ; // idx of scheduler node
 
 } RGB_BasicBlock ;
 
 typedef struct {
     
-    int16_t parent ;
-    uint8_t is_split ;
+    AL_S16 parent ;
+    AL_U8 is_split ;
     rgb_uoffset_t offset_vi_nodes ; // child node idxs
 
 } RGB_ParallelGroup ;
 
 typedef struct {
     
-    int16_t parent ;
+    AL_S16 parent ;
     rgb_uoffset_t offset_vi_nodes ; // child node idxs
 
 } RGB_SequentialList ;

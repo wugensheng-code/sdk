@@ -32,7 +32,6 @@
 static void printchar(char **str, int c)
 {
 	//extern int putchar(int c);
-
 	if (str) {
 		**str = (char)c;
 		++(*str);

@@ -13,16 +13,12 @@
 #include "fm_mem_alloc.h"
 #include "image.h"
 #include "driver_api.h"
+#include "file_ops.h"
 
-#ifdef RUN_PLATFORM_LINUX
-#include <dirent.h>
-#endif
+#define LOG_TAG "NPU_UTIL_FUNC"
+#include "elog.h"
 
-#ifdef RUN_PLATFORM_BM
-#include "ff.h"
-#endif
-
-npu_input_param_t* get_input_param (void * graph) {
+npu_input_param_t* get_input_param (AL_VOID * graph) {
     rt_graph_t* rt_graph = (rt_graph_t*) graph ;
 
     // find input node, possible to support multiple input nodes if necessary
@@ -37,37 +33,33 @@ npu_input_param_t* get_input_param (void * graph) {
     return param ;
 }
 
-int8_t get_input_tensor_addr (void* graph, void** addr, uint32_t* length) {
+AL_S8 get_input_tensor_addr (AL_VOID* graph, AL_VOID** addr, AL_U32* length) {
     rt_graph_t* rt_graph = (rt_graph_t*) graph ;
 
     // find input tensor, possible to support multiple input tensors if necessary
     rt_tensor_t* input_tensor = get_rt_graph_tensor(rt_graph, 0) ;
 
     // alloc mem for input_tensor
-#ifdef MEM_ALLOC_LINEAR
-        alloc_mem(input_tensor, 1);
-#else
-        alloc_mem_buddy(input_tensor) ;
-#endif
+    alloc_mem_buddy(input_tensor) ;
 
-    extern int16_t* ts_usage_rec;
+    extern AL_S16* ts_usage_rec;
     ts_usage_rec[input_tensor->index] = input_tensor->consumer_num ;
 
-    extern uint64_t* ts_vaddr_rec;
-    (*addr) = (void*) ts_vaddr_rec[input_tensor->index] ;
+    extern AL_U64* ts_vaddr_rec;
+    (*addr) = (AL_VOID*) ts_vaddr_rec[input_tensor->index] ;
     *length = input_tensor->param->size ;
 
     return 0;
 }
 
-int8_t get_output_tensor_addr (void* graph, void** addr, uint32_t* length) {
+AL_S8 get_output_tensor_addr (AL_VOID* graph, AL_VOID** addr, AL_U32* length) {
     rt_graph_t* rt_graph = (rt_graph_t*) graph ;
 
     // find output tensor, possible to support multiple output tensors if necessary
     rt_tensor_t* output_tensor = get_rt_graph_tensor(rt_graph, (rt_graph->tensor_num - 1)) ;
 
-    extern uint64_t* ts_vaddr_rec;
-    (*addr) = (void*) ts_vaddr_rec[output_tensor->index] ;
+    extern AL_U64* ts_vaddr_rec;
+    (*addr) = (AL_VOID*) ts_vaddr_rec[output_tensor->index] ;
     *length = output_tensor->param->size ;
 
     return 0;
@@ -75,59 +67,17 @@ int8_t get_output_tensor_addr (void* graph, void** addr, uint32_t* length) {
 }
 
 
-int8_t load_input_data (char* input_fn, void* addr, uint32_t length) {
-#ifdef RUN_PLATFORM_LINUX
+AL_S8 load_input_data (char* input_fn, AL_VOID* addr, AL_U32 length) {
 
-    struct stat stat;
-    int fd = open(input_fn, O_RDONLY);
-
-    if (fd < 0)
-    {
-        printf("cannot open file %s\n", input_fn);
+    if (read_file(input_fn, addr, (AL_S64) length)) {
+        log_e("load input data failed\n");
         return -1;
     }
-
-    fstat(fd, &stat);
-
-    uint32_t file_len = stat.st_size;
-    if (file_len != length) {
-        printf("the file_len is not the same as input tensor size. file_len: %u input tensor size: %u\n", file_len, length) ;
-        return -1 ;
-    }
-
-    int ret = read(fd, addr, file_len);
-    if (ret != file_len) {
-        printf("Read file %s failed, file length: %u read length: %d\n", input_fn, file_len, ret) ;
-        return -1 ;
-    }
-
-    close(fd) ;
-#else
-    FILINFO fno ;
-    FIL fd ;
-    int ret = f_open(&fd, input_fn, FA_READ) ;
-    if (ret) {
-        printf("Fail to open file %s, err no: %d\n", input_fn, ret) ;
-        return NULL ;
-    }
-    f_stat(input_fn, &fno) ;
-    uint32_t file_len = fno.fsize ;
-    if (file_len != length) {
-        printf("the file_len is not the same as input tensor size. file_len: %u input tensor size: %u\n", file_len, length) ;
-        return -1 ;
-    }
-    UINT br = 0 ;
-    ret = f_read(&fd, addr, file_len, &br) ;
-    if (ret) {
-        printf("Fail to read file: %s, err no: %d\n", input_fn, ret) ;
-        return NULL ;
-    }
-#endif
 
     return 0;
 }
 
-int8_t process_input_image (char* input_fn, void* addr, uint32_t length,  npu_input_param_t* input_param) {
+AL_S8 process_input_image (char* input_fn, AL_VOID* addr, AL_U32 length,  npu_input_param_t* input_param) {
 
     /* input parameters */
     int img_h = input_param->input_h;
@@ -140,80 +90,28 @@ int8_t process_input_image (char* input_fn, void* addr, uint32_t length,  npu_in
 
     image img_input ;
 
-#ifdef RUN_PLATFORM_LINUX 
-    img_input = load_image_color(input_fn, 0, 0);
-#else
-
-    FILINFO fno ;
-    FIL fd ;
-    int ret = f_open(&fd, input_fn, FA_READ) ;
-    if (ret) {
-        printf("Fail to open file %s, err no: %d\n", input_fn, ret) ;
-        return NULL ;
+    AL_S64 file_len = get_file_size(input_fn);
+    if (-1 == file_len) {
+        log_e("get file length failed\n");
+        return -1;
     }
-    f_stat(input_fn, &fno) ;
-    int file_len = fno.fsize ;
-    printf("start read input pic\n") ;
+
+    log_i("start read input pic\n") ;
 
     #define IMAGE_START_ADDR 0x40000000
     char* image_start_addr = IMAGE_START_ADDR ;
-    UINT br = 0 ;
-    ret = f_read(&fd, (void*)image_start_addr, file_len, &br) ;
-    if (ret) {
-        printf("Fail to read file: %s, err no: %d\n", input_fn, ret) ;
-        return NULL ;
-    }
-    if (file_len != br) {
-        printf("Fail to read expected length from file %s, expected length: %d, actual length: %d\n", input_fn, file_len, br) ;
-        return NULL ;
+    if (read_file(input_fn, (AL_VOID*)(image_start_addr), file_len)) {
+        log_e("read file: %s failed\n", input_fn);
+        return -1;
     }
 
-    ret = f_close(&fd) ;
-    if (ret) {
-        printf("Fail to close file %s, err no: %d\n", input_fn, ret) ;
-        return 0 ;
-    }
     img_input = load_image_from_memory(image_start_addr,file_len, 0, 0, 3) ;
-
-    // /* save rgb data*/
-    // // FATFS fatfs;
-    // // TCHAR  *Path = "0:/";
-    // // FRESULT Res = f_mount(&fatfs, Path, 0);
-    // // if (Res != FR_OK) {
-    // //     printf("f_mount failed\n");
-    // // }
-
-    // char name[20] = "rgb_data_stbi";
-    // FIL   fil;
-    // FRESULT Res = f_open(&fil, name, FA_CREATE_ALWAYS | FA_WRITE | FA_READ);
-    // if (Res) {
-    //     printf("open file: %s failed\n", name);
-    //     printf("res num: %d\n", Res) ;
-    // }
-    // int raw_img_size = img_input.h * img_input.w * img_input.c;
-    // char* buf0 = (char*) malloc (raw_img_size) ;
-    // for (int c = 0; c < img_input.c; c++) {
-    //     for (int h = 0; h < img_input.h; h++) {
-    //         for (int w = 0; w < img_input.w; w++) {
-    //             int idx = c*img_input.h*img_input.w + h*img_input.w + w;
-    //             buf0[idx] = (int)(img_input.data[idx] * 255);
-    //         }
-    //     }
-    // }
-    // int num_wr = 0 ;
-    // f_write (&fil, buf0, raw_img_size, &num_wr) ;
-    // if(num_wr != raw_img_size) {
-    //     printf("write failed: img_size: %d\t num_wr: %d\n", raw_img_size, num_wr) ;
-    // }
-    // f_close (&fil) ;
-
-#endif
 
     if (input_param->letterbox_rows == 0 && input_param->letterbox_cols == 0) {
         image resized = resize_image(img_input, img_w, img_h) ;
         free_image(img_input) ;
         img_input = resized ;
-        printf("finish load_image_from_memory\n") ;
+        log_i("finish load_image_from_memory\n") ;
     } else {
        // process letterbox
        img_w = input_param->letterbox_cols ;
@@ -258,10 +156,10 @@ int8_t process_input_image (char* input_fn, void* addr, uint32_t length,  npu_in
     }
    
     float* img_data = img_input.data;
-    uint8_t* input_data = (uint8_t*) addr;
-    uint32_t img_size = (img_input.c * img_input.h * img_input.w) ;
+    AL_U8* input_data = (AL_U8*) addr;
+    AL_U32 img_size = (img_input.c * img_input.h * img_input.w) ;
     if (length != img_size) {
-        printf("the input image size is not the same as input tensor size. input image size: %d input tensor size: %u\n", img_size, length) ;
+        log_e("the input image size is not the same as input tensor size. input image size: %d input tensor size: %u\n", img_size, length) ;
         return -1 ;
     }
 
@@ -301,7 +199,7 @@ int8_t process_input_image (char* input_fn, void* addr, uint32_t length,  npu_in
                                 else if (udata < -128)
                                     udata = -128;
                             } else {
-                                printf("unsupported data type for input_op: %d", input_param->output_tensor->data_type) ;
+                                log_e("unsupported data type for input_op: %d", input_param->output_tensor->data_type) ;
                                 return -1 ;
                             }
 
@@ -313,7 +211,7 @@ int8_t process_input_image (char* input_fn, void* addr, uint32_t length,  npu_in
         }
     } else {
         /* quant data */
-        printf("start quant_data\n") ;
+        log_i("start quant_data\n") ;
         for (int c = 0; c < img_c; c++)
         {
             for (int h = 0; h < img_h; h++)
@@ -340,37 +238,21 @@ int8_t process_input_image (char* input_fn, void* addr, uint32_t length,  npu_in
 
                         input_data[idx] = udata;
                     } else {
-                        printf("unsupported data type for input_op: %d", input_param->output_tensor->data_type) ;
+                        log_e("unsupported data type for input_op: %d", input_param->output_tensor->data_type) ;
                         return -1 ;
                     }
                 }
             }
         }
-       printf("finish quant_data\n") ;
+       log_i("finish quant_data\n") ;
     }
 
-    printf("free img_input") ;
+    log_i("free img_input") ;
     free_image(img_input) ;
 
-    printf("finish gen_input_data\n") ;
+    log_i("finish gen_input_data\n") ;
 
     return 0 ;
-}
-
-static void stbi_write_func_sd(void *context, void *data, int size) {
-
-#ifdef RUN_PLATFORM_BM
-
-    FIL* fp = (FIL*)(context) ;
-    int num_wr = 0 ;
-    FRESULT res = f_write(fp, data, size, &num_wr) ;
-    if (size != num_wr) {
-        printf("Write failed in stbi_write_func_sd, size: %d num_wr: %d\n", size, num_wr) ;
-    }
-
-#endif
-
-    return ;
 }
 
 static struct predictions {
@@ -446,7 +328,7 @@ unsigned char Alphabet[][16] =
     {0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x83,0xDB,0xEF,0xF7,0xBB,0x83,0xFF,0xFF,0xFF,0xFF},/*"z",25*/
 }; 
 
-static void Write_Alphbet_RGB(image img, int x, int y, char alphabet) {
+static AL_VOID Write_Alphbet_RGB(image img, int x, int y, char alphabet) {
     int i, j;
     int delta_x, delta_y;
     char shift_data;
@@ -482,37 +364,30 @@ static void Write_Alphbet_RGB(image img, int x, int y, char alphabet) {
     return;
 }
 
-int8_t dump_yolo_res (char* output_fn, void* addr, uint32_t length,  npu_input_param_t* input_param) {
+AL_S8 dump_yolo_res (char* output_fn, AL_VOID* addr, AL_U32 length,  npu_input_param_t* input_param) {
 
-#ifdef RUN_PLATFORM_LINUX
-
-#else 
-
-    FIL   fil;
-    FRESULT Res = f_open(&fil, output_fn, FA_CREATE_ALWAYS | FA_WRITE | FA_READ);
-    if (Res) {
-       printf("open file: %s failed\n", output_fn);
-       printf("open sd file res num: %d\n", Res) ;
+    AL_VOID* context = get_wr_fd(output_fn);
+    if (NULL == context) {
+        log_e("open file: %s failed\n", output_fn);
+        return -1;
     }
 
     /* gen yolo result */
     // now we only support yolo series, to support more result generation later on 
-    int16_t* data = (int16_t*) (addr) ;
-    int16_t yolo_len = *(data) ;
+    AL_S16* data = (AL_S16*) (addr) ;
+    AL_S16 yolo_len = *(data) ;
     if (yolo_len%12 != 0) {
-        printf("data length modulo 12 is not zero: %d\n", yolo_len) ;
+        log_e("data length modulo 12 is not zero: %d\n", yolo_len) ;
+        return -1;
     }
-    int16_t num_res = yolo_len/12 ;
+    AL_S16 num_res = yolo_len/12 ;
     if (num_res < 0 || num_res > 340) {
-        printf("ERROR: invalid yolo num_res: %d\n", num_res) ;
+        log_e("ERROR: invalid yolo num_res: %d\n", num_res) ;
+        return -1;
     }
     data += 4 ; //skip lenth 
 
-    int num_wr = 0 ;
-    f_write (&fil, &num_res, sizeof(num_res), &num_wr) ;
-    if(num_wr != sizeof(num_res)) {
-       printf("write failed: size: %d\t num_wr: %d\n", sizeof(num_res), num_wr) ;
-    }
+    write_func(context, &num_res, sizeof(num_res));
 
     int img_h = input_param->input_h;
     int img_w = input_param->input_w;
@@ -524,74 +399,59 @@ int8_t dump_yolo_res (char* output_fn, void* addr, uint32_t length,  npu_input_p
         img_c = 3 ; // hardcode here, maybe need one more parameter from user.
     } ;
 
-    for (int16_t i = 0; i < num_res; i++) {
+    for (AL_S16 i = 0; i < num_res; i++) {
         // printf("\n prob: %\tlabel: %d\trect.x_l: %d\trect.y_l: %d\trect.x_h: %d\trect.y_h: %d\n",*(data),*(data+1),*(data+2),*(data+3),*(data+4),*(data+5)) ;
         float prob = (float)(*(data))/1024/16 ;
-        int16_t prob_int = prob*100 ;
-        int16_t label = *(data+1) ;
-        int16_t x0 = *(data+2) ;
+        AL_S16 prob_int = prob*100 ;
+        AL_S16 label = *(data+1) ;
+        AL_S16 x0 = *(data+2) ;
         x0 = x0*img_w/32/1024 ;
-        int16_t y0 = *(data+3) ;
+        AL_S16 y0 = *(data+3) ;
         y0 = y0*img_h/32/1024 ;
-        int16_t w = *(data+4) ;
+        AL_S16 w = *(data+4) ;
         w = w*img_w/32/1024 ;
-        int16_t h = *(data+5) ;
+        AL_S16 h = *(data+5) ;
         h = h*img_h/32/1024 ;
-        int16_t x_l = x0 - w/2 ;
-        int16_t y_l = y0 - h/2 ;
-        int16_t x_h = x0 + w/2 ;
-        int16_t y_h = y0 + h/2 ;
+        AL_S16 x_l = x0 - w/2 ;
+        AL_S16 y_l = y0 - h/2 ;
+        AL_S16 x_h = x0 + w/2 ;
+        AL_S16 y_h = y0 + h/2 ;
 
-        printf("\n prob: %d%%\tlabel: %d\trect.x_l: %d\trect.y_l: %d\trect.x_h: %d\trect.y_h: %d\n",(int)(prob*100),label,x_l,y_l,x_h,y_h) ;
+        log_i("\n prob: %d%%\tlabel: %d\trect.x_l: %d\trect.y_l: %d\trect.x_h: %d\trect.y_h: %d\n",(int)(prob*100),label,x_l,y_l,x_h,y_h) ;
 
-        f_write (&fil, &prob_int, sizeof(prob_int), &num_wr) ;
-        if(num_wr != sizeof(prob_int)) {
-            printf("write failed: size: %d\t num_wr: %d\n", sizeof(prob_int), num_wr) ;
-        }
-        f_write (&fil, &label, sizeof(label), &num_wr) ;
-        if(num_wr != sizeof(label)) {
-            printf("write failed: size: %d\t num_wr: %d\n", sizeof(label), num_wr) ;
-        }
-        f_write (&fil, &x_l, sizeof(x_l), &num_wr) ;
-        if(num_wr != sizeof(x_l)) {
-            printf("write failed: size: %d\t num_wr: %d\n", sizeof(x_l), num_wr) ;
-        }
-        f_write (&fil, &y_l, sizeof(y_l), &num_wr) ;
-        if(num_wr != sizeof(y_l)) {
-            printf("write failed: size: %d\t num_wr: %d\n", sizeof(y_l), num_wr) ;
-        }
-        f_write (&fil, &x_h, sizeof(x_h), &num_wr) ;
-        if(num_wr != sizeof(x_h)) {
-            printf("write failed: size: %d\t num_wr: %d\n", sizeof(x_h), num_wr) ;
-        }
-        f_write (&fil, &y_h, sizeof(y_h), &num_wr) ;
-        if(num_wr != sizeof(y_h)) {
-            printf("write failed: size: %d\t num_wr: %d\n", sizeof(y_h), num_wr) ;
-        }
+        write_func(context, &prob_int, sizeof(prob_int));
+        write_func(context, &label, sizeof(label));
+        write_func(context, &x_l, sizeof(x_l));
+        write_func(context, &y_l, sizeof(y_l));
+        write_func(context, &x_h, sizeof(x_h));
+        write_func(context, &y_h, sizeof(y_h));
 
         data += 6 ;
     }
 
-    f_close (&fil) ;
-
-#endif
+    if (close_fp(context)) {
+        log_e("close file: %s failed\n", output_fn);
+        return -1;
+    }
 
     return 0;
 
 }
 
-int8_t draw_yolo_res (char* input_fn, void* addr, uint32_t length,  npu_input_param_t* input_param) {
+AL_S8 draw_yolo_res (char* input_fn, AL_VOID* addr, AL_U32 length,  npu_input_param_t* input_param) {
 
     /* gen yolo result */
     // now we only support yolo series, to support more result generation later on 
-    int16_t* data = (int16_t*) (addr) ;
-    int16_t yolo_len = *(data) ;
+    AL_S16* data = (AL_S16*) (addr) ;
+    AL_S16 yolo_len = *(data) ;
     if (yolo_len%12 != 0) {
-        printf("data length modulo 12 is not zero: %d\n", yolo_len) ;
+        log_e("data length modulo 12 is not zero: %d\n", yolo_len) ;
+        return -1;
     }
-    int16_t num_res = yolo_len/12 ;
+    AL_S16 num_res = yolo_len/12 ;
     if (num_res < 0 || num_res > 340) {
-        printf("ERROR: invalid yolo num_res: %d\n", num_res) ;
+        log_e("invalid yolo num_res: %d\n", num_res) ;
+        return -1;
     }
     data += 4 ; //skip lenth 
 
@@ -628,23 +488,22 @@ int8_t draw_yolo_res (char* input_fn, void* addr, uint32_t length,  npu_input_pa
         img_c = 3 ; // hardcode here, maybe need one more parameter from user.
     } ;
 
-    for (int16_t i = 0; i < num_res; i++) {
-        // printf("\n prob: %\tlabel: %d\trect.x_l: %d\trect.y_l: %d\trect.x_h: %d\trect.y_h: %d\n",*(data),*(data+1),*(data+2),*(data+3),*(data+4),*(data+5)) ;
+    for (AL_S16 i = 0; i < num_res; i++) {
         float prob = (float)(*(data))/1024/16 ;
         int prob_int = prob*100 ;
-        int16_t label = *(data+1) ;
-        int16_t x0 = *(data+2) ;
+        AL_S16 label = *(data+1) ;
+        AL_S16 x0 = *(data+2) ;
         x0 = x0*img_w/32/1024 ;
-        int16_t y0 = *(data+3) ;
+        AL_S16 y0 = *(data+3) ;
         y0 = y0*img_h/32/1024 ;
-        int16_t w = *(data+4) ;
+        AL_S16 w = *(data+4) ;
         w = w*img_w/32/1024 ;
-        int16_t h = *(data+5) ;
+        AL_S16 h = *(data+5) ;
         h = h*img_h/32/1024 ;
-        int16_t x_l = x0 - w/2 ;
-        int16_t y_l = y0 - h/2 ;
-        int16_t x_h = x0 + w/2 ;
-        int16_t y_h = y0 + h/2 ;
+        AL_S16 x_l = x0 - w/2 ;
+        AL_S16 y_l = y0 - h/2 ;
+        AL_S16 x_h = x0 + w/2 ;
+        AL_S16 y_h = y0 + h/2 ;
 
         printf("\n prob: %d%%\tlabel: %d\trect.x_l: %d\trect.y_l: %d\trect.x_h: %d\trect.y_h: %d\n",(int)(prob*100),label,x_l,y_l,x_h,y_h) ;
         pred_res[i].prob = prob;
@@ -661,36 +520,24 @@ int8_t draw_yolo_res (char* input_fn, void* addr, uint32_t length,  npu_input_pa
         image img_input ;
         image **alphabet = NULL;
 
-#ifdef RUN_PLATFORM_LINUX
-        img_input = load_image_color(input_fn, 0, 0);
-#else
-        FILINFO fno ;
-        FIL fd ;
-        int ret = f_open(&fd, input_fn, FA_READ) ;
-        if (ret) {
-            printf("Fail to open file %s, err no: %d\n", input_fn, ret) ;
-            return NULL ;
+        AL_S64 file_len = get_file_size(input_fn);
+        if (-1 == file_len) {
+            log_e("fail to get file size\n");
+            free(pred_res);
+            return -1;
         }
-        f_stat(input_fn, &fno) ;
-        int file_len = fno.fsize ;
 
         #define IMAGE_START_ADDR 0x40000000
         char* image_start_addr = IMAGE_START_ADDR ;
-        UINT br = 0 ;
-        ret = f_read(&fd, (void*)image_start_addr, file_len, &br) ;
-        if (ret) {
-            printf("Fail to read file: %s, err no: %d\n", input_fn, ret) ;
-            return NULL ;
-        }
-        ret = f_close(&fd) ;
-        if (ret) {
-            printf("Fail to close file %s, err no: %d\n", input_fn, ret) ;
-            return 0 ;
+
+        if (read_file(input_fn, (AL_VOID*)image_start_addr, file_len)) {
+            log_e("fail to read file: %s\n", input_fn);
+            free(pred_res);
+            return -1;
         }
 
         img_input = load_image_from_memory(image_start_addr,file_len,0,0,3);
 
-#endif
 
         // alphabet = load_alphabet();
 
@@ -735,19 +582,12 @@ int8_t draw_yolo_res (char* input_fn, void* addr, uint32_t length,  npu_input_pa
 
             // draw_label(img_input, y+img_label.h, x, img_label, rgb);
         }
-        
-#ifdef RUN_PLATFORM_LINUX
 
-        save_image(img_input, out_image_file) ;
-
-#else
-
-        // FILINFO fno ;
-        // FIL fd ;
-        ret = f_open(&fd, out_image_file, (FA_CREATE_ALWAYS | FA_WRITE) ) ;
-        if (ret) {
-            printf("fail to open file %s, err no: %d\n", out_image_file, ret) ;
-            return NULL ;
+        AL_VOID* context = get_wr_fd(out_image_file);
+        if (NULL == context) {
+            log_e("get fd failed\n");
+            free(pred_res);
+            return -1 ;
         }
 
         unsigned char *data = calloc(img_input.w*img_input.h*img_input.c, sizeof(char));
@@ -757,21 +597,21 @@ int8_t draw_yolo_res (char* input_fn, void* addr, uint32_t length,  npu_input_pa
                 data[i*img_input.c+k] = (unsigned char) (255*img_input.data[i + k*img_input.w*img_input.h]);
             }
         }
-        stbi_write_jpg_to_func(stbi_write_func_sd, (void*)(&fd), img_input.w, img_input.h, img_input.c, data, 80);
+        stbi_write_jpg_to_func(write_func, context, img_input.w, img_input.h, img_input.c, data, 80);
 
-        ret = f_close(&fd) ;
-        if (ret) {
-            printf("cannot close file %s\n", out_image_file) ;
-            return 0 ;
+        if (close_fp(context)) {
+            log_e("cannot close file %s\n", out_image_file) ;
+            free(data) ;
+            free(pred_res);
+            return -1 ;
         }
         
         free(data) ;
 
-#endif
 
         free_image(img_input) ;
 
-        printf("finish draw_yolo_result\n") ;
+        log_i("finish draw_yolo_result\n") ;
     }
 
     free(pred_res);

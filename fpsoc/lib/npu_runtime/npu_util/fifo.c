@@ -47,16 +47,16 @@ int set_fifo_data(fifo_t* v, int idx, any_data_t data)
 
     switch (v->elem_size) {
         case 1:
-            *((uint8_t*)v->mem + idx) = data.u8[0] ;
+            *((AL_U8*)v->mem + idx) = data.u8[0] ;
             break;
         case 2:
-            *((uint16_t*)v->mem + idx) = data.u16[0] ;
+            *((AL_U16*)v->mem + idx) = data.u16[0] ;
             break;
         case 4:
-            *((uint32_t*)v->mem + idx) = data.u32[0] ;
+            *((AL_U32*)v->mem + idx) = data.u32[0] ;
             break;
         case 8:
-            *((uint64_t*)v->mem + idx) = data.u64 ;
+            *((AL_U64*)v->mem + idx) = data.u64 ;
             break;
     }
 
@@ -73,16 +73,16 @@ any_data_t get_fifo_data(fifo_t* v, int idx)
 
     switch (v->elem_size) {
         case 1:
-            ret.u8[0] = *((uint8_t*)v->mem + idx) ;
+            ret.u8[0] = *((AL_U8*)v->mem + idx) ;
             break;
         case 2:
-            ret.u16[0] = *((uint16_t*)v->mem + idx) ;
+            ret.u16[0] = *((AL_U16*)v->mem + idx) ;
             break;
         case 4:
-            ret.u32[0] = *((uint32_t*)v->mem + idx) ;
+            ret.u32[0] = *((AL_U32*)v->mem + idx) ;
             break;
         case 8:
-            ret.u64    = *((uint64_t*)v->mem + idx) ;
+            ret.u64    = *((AL_U64*)v->mem + idx) ;
             break;
     }
 

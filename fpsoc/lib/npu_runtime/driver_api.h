@@ -10,6 +10,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <stddef.h>
+#include "al_type.h"
 
 #define RT_MAX_SHAPE_DIM_NUM        8 
 
@@ -38,14 +39,14 @@ extern "C" {
 
 typedef struct {
 
-    uint8_t data_type ;
-    uint8_t layout ;
-    uint8_t dim_num ;
-    int32_t dims[RT_MAX_SHAPE_DIM_NUM] ;
+    AL_U8 data_type ;
+    AL_U8 layout ;
+    AL_U8 dim_num ;
+    AL_S32 dims[RT_MAX_SHAPE_DIM_NUM] ;
 
-    uint32_t addr ;
+    AL_U32 addr ;
 
-    size_t size ; // the size of tensor data
+    AL_U64 size ; // the size of tensor data
 
 } tensor_param_t ;
 
@@ -54,73 +55,73 @@ typedef struct {
 
 typedef struct {
 
-    int32_t kernel_h ;
-    int32_t kernel_w ;
-    int32_t stride_h ;
-    int32_t stride_w ;
-    int32_t pad_h0 ;
-    int32_t pad_h1 ;
-    int32_t pad_w0 ;
-    int32_t pad_w1 ;
-    int32_t dilation_h ;
-    int32_t dilation_w ;
-    int32_t group ;
-    int32_t input_channel ;
-    int32_t output_channel ;
+    AL_S32 kernel_h ;
+    AL_S32 kernel_w ;
+    AL_S32 stride_h ;
+    AL_S32 stride_w ;
+    AL_S32 pad_h0 ;
+    AL_S32 pad_h1 ;
+    AL_S32 pad_w0 ;
+    AL_S32 pad_w1 ;
+    AL_S32 dilation_h ;
+    AL_S32 dilation_w ;
+    AL_S32 group ;
+    AL_S32 input_channel ;
+    AL_S32 output_channel ;
 } conv_param_t ;
 
 typedef struct {
 
     /* act type select */
-    uint8_t func_sel ;
+    AL_U8 func_sel ;
 
     /* in/out quant param */
-    uint8_t  up_scale ;
-    uint16_t scale_i ;
-    uint16_t scale_o ;
-    uint16_t scale_p ;
-    uint16_t scale_n ;
-    uint8_t rshift_i ;
-    uint8_t rshift_o ;
-    uint8_t rshift_p ;
-    uint8_t rshift_n ;
+    AL_U8  up_scale ;
+    AL_U16 scale_i ;
+    AL_U16 scale_o ;
+    AL_U16 scale_p ;
+    AL_U16 scale_n ;
+    AL_U8 rshift_i ;
+    AL_U8 rshift_o ;
+    AL_U8 rshift_p ;
+    AL_U8 rshift_n ;
 
-    int32_t output_zero_point ;
+    AL_S32 output_zero_point ;
 } act_param_t ;
 
 typedef struct {
 
     /* input/output tensor info, assigned during run time */
-    uint8_t input_num ;
+    AL_U8 input_num ;
     tensor_param_t** input_tensors ;
     tensor_param_t* output_tensor ;
 
     /* bias data. if it's null, there is no bias tensor. */
-    int32_t* bias_data ; // fc needed fixed
+    AL_S32* bias_data ; // fc needed fixed
 
     /* conv param */
     conv_param_t param ;
-    uint8_t conv_type ;
-    uint8_t mode_load_data ;
+    AL_U8 conv_type ;
+    AL_U8 mode_load_data ;
 
     /* fixed-point parameters */
     int fx_param_count ; // at least 1 should be present
-    uint16_t* fx_scales ;  
-    uint8_t* fx_rshifts ;
-    int32_t input_zero_point ;
-    int32_t weight_zero_point ;
-    int32_t output_zero_point ;
+    AL_U16* fx_scales ;  
+    AL_U8* fx_rshifts ;
+    AL_S32 input_zero_point ;
+    AL_S32 weight_zero_point ;
+    AL_S32 output_zero_point ;
     
     /* for hardware */
-    int32_t ifm_dims[4] ; //n,c,h,w
-    int32_t ofm_dims[4] ; //n,c,h,w
+    AL_S32 ifm_dims[4] ; //n,c,h,w
+    AL_S32 ofm_dims[4] ; //n,c,h,w
 
     /* for act node */
-    uint8_t has_act ;
+    AL_U8 has_act ;
     act_param_t* act_param ;
 
     /* for pooling node */
-    uint8_t has_pooling ;
+    AL_U8 has_pooling ;
 
 } npu_hard_param_t ;
 
@@ -130,27 +131,27 @@ typedef struct {
 typedef struct {
 
     /* input/output tensor info */
-    //uint8_t input_num ;
+    //AL_U8 input_num ;
     tensor_param_t* input_tensor ;
-    // uint8_t output_num ;
+    // AL_U8 output_num ;
     tensor_param_t* output_tensor ;
 
     /* for quant */
-    uint16_t scale_io ;
-    uint8_t rshift_io ;
-    int16_t zp_i ;
-    int16_t zp_o ;
+    AL_U16 scale_io ;
+    AL_U8 rshift_io ;
+    AL_S16 zp_i ;
+    AL_S16 zp_o ;
 
     /* pooling param */
-    int32_t pool_method ; // 0:max    1:avg
-    int32_t kernel_h ;
-    int32_t kernel_w ;
-    int32_t stride_h ;
-    int32_t stride_w ;
-    int32_t pad_h0 ;
-    int32_t pad_h1 ;
-    int32_t pad_w0 ;
-    int32_t pad_w1 ;
+    AL_S32 pool_method ; // 0:max    1:avg
+    AL_S32 kernel_h ;
+    AL_S32 kernel_w ;
+    AL_S32 stride_h ;
+    AL_S32 stride_w ;
+    AL_S32 pad_h0 ;
+    AL_S32 pad_h1 ;
+    AL_S32 pad_w0 ;
+    AL_S32 pad_w1 ;
 
 } npu_pooling_param_t ;
 
@@ -160,22 +161,22 @@ typedef struct {
 typedef struct {
 
     /* input/output tensor info */
-    uint8_t input_num ;
+    AL_U8 input_num ;
     tensor_param_t** input_tensors ;
-    // uint8_t output_num ;
+    // AL_U8 output_num ;
     tensor_param_t* output_tensor ;
 
     /* concat param */
-    int32_t axis ;
+    AL_S32 axis ;
     
     /* ifm order select */
-    uint8_t ifm_order ; // 0: ifm order by increase address, 1: ifm order by decrease address
+    AL_U8 ifm_order ; // 0: ifm order by increase address, 1: ifm order by decrease address
 
     /* for quant: array length for input is input_num */
-    uint16_t* scale_i ; 
-    uint8_t* rshift_i ;
-    int16_t* zp_i ;
-    int16_t zp_o ;
+    AL_U16* scale_i ; 
+    AL_U8* rshift_i ;
+    AL_S16* zp_i ;
+    AL_S16 zp_o ;
 
 } npu_concat_param_t ;
 
@@ -185,16 +186,16 @@ typedef struct {
 typedef struct {
 
     /* input/output tensor info */
-    //uint8_t input_num ;
+    //AL_U8 input_num ;
     tensor_param_t* input_tensor ;
-    // uint8_t output_num ;
+    // AL_U8 output_num ;
     tensor_param_t* output_tensor ;
 
     /* for quant */
-    uint16_t scale_io ;
-    uint8_t rshift_io ;
-    int16_t zp_i ;
-    int16_t zp_o ;
+    AL_U16 scale_io ;
+    AL_U8 rshift_io ;
+    AL_S16 zp_i ;
+    AL_S16 zp_o ;
 
 } npu_upsample_param_t ;
 
@@ -204,25 +205,25 @@ typedef struct {
 typedef struct {
 
     /* input/output tensor info */
-    uint8_t input_num ;
+    AL_U8 input_num ;
     tensor_param_t** input_tensors ;
-    // uint8_t output_num ;
+    // AL_U8 output_num ;
     tensor_param_t* output_tensor ;
 
     /* eltwise param */
-    uint8_t type ;
+    AL_U8 type ;
 
     /* state select */
-    uint8_t state ;
+    AL_U8 state ;
 
     /* ifm order select */
-    uint8_t ifm_order ; // 0: ifm order by increase address, 1: ifm order by decrease address
+    AL_U8 ifm_order ; // 0: ifm order by increase address, 1: ifm order by decrease address
 
     /* for quant: array length for input is input_num */
-    uint16_t* scale_io ;
-    uint8_t* rshift_io ;
-    int16_t* zp_i ;
-    int16_t zp_o ;
+    AL_U16* scale_io ;
+    AL_U8* rshift_io ;
+    AL_S16* zp_i ;
+    AL_S16 zp_o ;
 
 } npu_eltwise_param_t ;
 
@@ -233,17 +234,17 @@ typedef struct {
 
     /* input/output tensor info */
     tensor_param_t* input_tensor ;
-    // uint8_t output_num ;
+    // AL_U8 output_num ;
     tensor_param_t* output_tensor ;
 
     /* prelu param TODO: */
     // slope data ?
 
     /* for quant */
-    // ?: uint16_t scale_io ;
-    // ?: uint8_t rshift_io ;
-    int16_t zp_i ;
-    int16_t zp_o ;
+    // ?: AL_U16 scale_io ;
+    // ?: AL_U8 rshift_io ;
+    AL_S16 zp_i ;
+    AL_S16 zp_o ;
 
 } npu_prelu_param_t ;
 
@@ -253,16 +254,16 @@ typedef struct {
 typedef struct {
 
     /* input/output tensor info */
-    //uint8_t input_num ;
+    //AL_U8 input_num ;
     tensor_param_t* input_tensor ;
-    // uint8_t output_num ;
+    // AL_U8 output_num ;
     tensor_param_t* output_tensor ;
 
     /* for quant */
-    uint16_t scale_io ;
-    uint8_t rshift_io ;
-    int16_t zp_i ;
-    int16_t zp_o ;
+    AL_U16 scale_io ;
+    AL_U8 rshift_io ;
+    AL_S16 zp_i ;
+    AL_S16 zp_o ;
 
 } npu_interp_param_t ;
 
@@ -270,54 +271,54 @@ typedef struct {
 /* following struct(s) is(are) for deconv node */
 
 typedef struct {
-    uint8_t input_num ;
+    AL_U8 input_num ;
     tensor_param_t** input_tensors ;
     tensor_param_t* output_tensor ;
 
     /* bias data. if it's null, there is no bias tensor. */
-    int32_t* bias_data ; // fc needed fixed
+    AL_S32* bias_data ; // fc needed fixed
 
     conv_param_t param;
-    uint8_t conv_type ;
-    uint8_t mode_load_data ;
+    AL_U8 conv_type ;
+    AL_U8 mode_load_data ;
 
     /* fixed-point parameters */
     int fx_param_count ; // at least 1 should be present
-    uint16_t* fx_scales ;
-    uint8_t* fx_rshifts ;
-    int32_t* fx_multi ;
-    int32_t* fx_qshifts ;
-    int32_t input_zero_point ;
-    int32_t weight_zero_point ;
-    int32_t output_zero_point ;
+    AL_U16* fx_scales ;
+    AL_U8* fx_rshifts ;
+    AL_S32* fx_multi ;
+    AL_S32* fx_qshifts ;
+    AL_S32 input_zero_point ;
+    AL_S32 weight_zero_point ;
+    AL_S32 output_zero_point ;
 
     /* for hardware */
-    int32_t ifm_dims[4] ; //n,c,h,w
-    int32_t ofm_dims[4] ; //n,c,h,w
+    AL_S32 ifm_dims[4] ; //n,c,h,w
+    AL_S32 ofm_dims[4] ; //n,c,h,w
 
-    int32_t activation;
-    int32_t activation_min;
-    int32_t activation_max;
+    AL_S32 activation;
+    AL_S32 activation_min;
+    AL_S32 activation_max;
 
     /* for pooling node */
-    uint8_t has_pooling ;
+    AL_U8 has_pooling ;
 
 } npu_dwconv_param_t ;
 
 
 typedef struct {
 
-    // uint8_t input_num;
+    // AL_U8 input_num;
     tensor_param_t* input_tensor ;
     tensor_param_t* output_tensor ;
-    int32_t dim_size;
-    // int32_t* re_shape;
+    AL_S32 dim_size;
+    // AL_S32* re_shape;
 
     // /* for quant */
-    // uint16_t* scale_io ;
-    // uint8_t* rshift_io ;
-    // int16_t* zp_i ;
-    // int16_t zp_o ;
+    // AL_U16* scale_io ;
+    // AL_U8* rshift_io ;
+    // AL_S16* zp_i ;
+    // AL_S16 zp_o ;
 
 } npu_reshape_param_t ;
 
@@ -327,49 +328,49 @@ typedef struct {
     tensor_param_t* output_tensor ;
 
     /* for quant */
-    // uint16_t* scale_io ;
-    // uint8_t* rshift_io ;
+    // AL_U16* scale_io ;
+    // AL_U8* rshift_io ;
     float scale_i;
     float scale_o;
-    int16_t zp_i ;
-    int16_t zp_o ;
+    AL_S16 zp_i ;
+    AL_S16 zp_o ;
 
 } npu_sigmoid_param_t ;
 
 typedef struct {
 
     /* input/output tensor info */
-    // uint8_t output_num ;
+    // AL_U8 output_num ;
     tensor_param_t* output_tensor ;
 
     /* input param: */
-    int16_t input_c ;
-    int16_t input_h ;
-    int16_t input_w ;
+    AL_S16 input_c ;
+    AL_S16 input_h ;
+    AL_S16 input_w ;
     float mean[3] ;
     float scale[3] ;
 
-    int8_t focus ;
-    int16_t letterbox_rows ;
-    int16_t letterbox_cols ;
+    AL_S8 focus ;
+    AL_S16 letterbox_rows ;
+    AL_S16 letterbox_cols ;
     
     /* for quant */
     float scale_q ;
-    int16_t zero_point ;
+    AL_S16 zero_point ;
 
     /* for yuv2rgb quant */
-    int8_t r_mean_rshift ;
-    int16_t r_mean_param ;
-    int8_t g_mean_rshift ;
-    int16_t g_mean_param ;
-    int8_t b_mean_rshift ;
-    int16_t b_mean_param ;
-    int8_t r_quant_rshift ;
-    int16_t r_quant_param ;
-    int8_t g_quant_rshift ;
-    int16_t g_quant_param ;
-    int8_t b_quant_rshift ;
-    int16_t b_quant_param ;
+    AL_S8 r_mean_rshift ;
+    AL_S16 r_mean_param ;
+    AL_S8 g_mean_rshift ;
+    AL_S16 g_mean_param ;
+    AL_S8 b_mean_rshift ;
+    AL_S16 b_mean_param ;
+    AL_S8 r_quant_rshift ;
+    AL_S16 r_quant_param ;
+    AL_S8 g_quant_rshift ;
+    AL_S16 g_quant_param ;
+    AL_S8 b_quant_rshift ;
+    AL_S16 b_quant_param ;
 
 } npu_input_param_t ;
 
@@ -377,39 +378,39 @@ typedef struct {
 typedef struct {
 
     /* input/output tensor info */
-    uint8_t input_num ;
+    AL_U8 input_num ;
     tensor_param_t** input_tensors ;
     tensor_param_t* output_tensor ;
 
     /* yolov param */
-    uint8_t anchor_num ;
+    AL_U8 anchor_num ;
     //two dimensional vector: [input_num][anchor_num*2]
-    uint16_t** anchors ;
+    AL_U16** anchors ;
     
-    uint16_t iou_thresh ;
-    uint16_t prob_thresh ;
-    uint8_t class_num ;
+    AL_U16 iou_thresh ;
+    AL_U16 prob_thresh ;
+    AL_U8 class_num ;
     
     // for yolov5s
-    uint8_t is_yolo_5s ;
-    uint16_t letter_box_w ; // or input_w
-    uint16_t letter_box_h ; // or input_h
+    AL_U8 is_yolo_5s ;
+    AL_U16 letter_box_w ; // or input_w
+    AL_U16 letter_box_h ; // or input_h
 
     /* for quant: array length for input is input_num */
-    uint16_t* scale ;
-    uint8_t* rshift ;
-    int16_t* zp ;
+    AL_U16* scale ;
+    AL_U8* rshift ;
+    AL_S16* zp ;
 
 } npu_yolov_param_t ;
 
 // for package info for hard/soft_npu 
 typedef struct {
     /* package addr */
-    uint32_t addr ;
-    uint64_t virt_addr ;
+    AL_U32 addr ;
+    AL_U64 virt_addr ;
 
     /* package length */
-    uint32_t length ;
+    AL_U32 length ;
 } pkg_info_t;
 
 
@@ -417,10 +418,10 @@ typedef struct {
     pkg_info_t pkg_info ;
 
     /* extra info for hard npu */
-    uint32_t mode_load_data ;
-    uint32_t ifm_base_addr ;
-    uint32_t flt_base_addr ;
-    uint32_t ofm_base_addr ;
+    AL_U32 mode_load_data ;
+    AL_U32 ifm_base_addr ;
+    AL_U32 flt_base_addr ;
+    AL_U32 ofm_base_addr ;
 
 } hard_npu_pkg_info_t;
 
@@ -428,14 +429,14 @@ typedef struct {
     pkg_info_t pkg_info ;
 
     /* extra info for soft npu */
-    uint32_t ofm_base_addr ;
-    uint32_t ifm0_base_addr ;
-    uint32_t ifm1_base_addr ;
-    uint32_t ifm2_base_addr ;
-    uint32_t ifm3_base_addr ;
+    AL_U32 ofm_base_addr ;
+    AL_U32 ifm0_base_addr ;
+    AL_U32 ifm1_base_addr ;
+    AL_U32 ifm2_base_addr ;
+    AL_U32 ifm3_base_addr ;
 
     /* first reg content for soft node */
-    uint32_t first_reg ;
+    AL_U32 first_reg ;
 
 } soft_npu_pkg_info_t;
 
@@ -445,11 +446,11 @@ typedef struct {
     pkg_info_t pkg_info ;
 
     /* extra info for yolo node */
-    uint32_t ofm_base_addr ;
-    uint32_t ifm0_base_addr ;
+    AL_U32 ofm_base_addr ;
+    AL_U32 ifm0_base_addr ;
 
     /* first reg content for soft node */
-    uint32_t first_reg ;
+    AL_U32 first_reg ;
 
 } yolo_pkg_info_t;
 

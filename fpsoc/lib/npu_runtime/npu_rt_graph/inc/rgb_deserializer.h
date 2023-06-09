@@ -9,7 +9,7 @@ extern "C" {
 
 rt_graph_t* load_rt_graph(const char* fname);
 
-rt_graph_t* load_rt_graph_from_mem(const void* addr);
+rt_graph_t* load_rt_graph_from_mem(const AL_VOID* addr);
 
 #ifdef __cplusplus
 }

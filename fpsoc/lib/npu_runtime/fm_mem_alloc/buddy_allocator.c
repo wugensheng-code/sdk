@@ -13,31 +13,31 @@
 
 struct buddy {
 	int level; // 7, 2**7 * 32k = 4M
-	uint8_t tree[1];
+	AL_U8 tree[1];
 };
 
 struct buddy * 
 buddy_new(int level) {
 	int size = 1 << level;
-	struct buddy * self = malloc(sizeof(struct buddy) + sizeof(uint8_t) * (size * 2 - 2));
+	struct buddy * self = malloc(sizeof(struct buddy) + sizeof(AL_U8) * (size * 2 - 2));
 	self->level = level;
 	memset(self->tree , NODE_UNUSED , size*2-1);
 
 	return self;
 }
 
-void
+AL_VOID
 buddy_delete(struct buddy * self) {
 	free(self);
 }
 
 static inline int
-is_pow_of_2(uint32_t x) {
+is_pow_of_2(AL_U32 x) {
 	return !(x & (x-1));
 }
 
-static inline uint32_t
-next_pow_of_2(uint32_t x) {
+static inline AL_U32
+next_pow_of_2(AL_U32 x) {
 	if ( is_pow_of_2(x) )
 		return x;
 	x |= x>>1;
@@ -53,7 +53,7 @@ _index_offset(int index, int level, int max_level) {
 	return ((index + 1) - (1 << level)) << (max_level - level);
 }
 
-static void 
+static AL_VOID 
 _mark_parent(struct buddy * self, int index) {
 	for (;;) {
 		int buddy = index - 1 + (index & 1) * 2;
@@ -66,8 +66,8 @@ _mark_parent(struct buddy * self, int index) {
 	}
 }
 
-int buddy_alloc(struct buddy * self , uint32_t s) {
-	uint32_t normalized_size = 0 ;
+int buddy_alloc(struct buddy * self , AL_U32 s) {
+	AL_U32 normalized_size = 0 ;
 	if (s & FM_SIZE_MASK) {
 		normalized_size = (s >> 15) + 1 ;
 	} else {
@@ -133,7 +133,7 @@ int buddy_alloc(struct buddy * self , uint32_t s) {
 	return -1;
 }
 
-static void 
+static AL_VOID 
 _combine(struct buddy * self, int index) {
 	for (;;) {
 		int buddy = index - 1 + (index & 1) * 2;
@@ -148,7 +148,7 @@ _combine(struct buddy * self, int index) {
 	}
 }
 
-void
+AL_VOID
 buddy_free(struct buddy * self, int offset) {
 	assert( offset < (1<< self->level));
 	int left = 0;
@@ -205,7 +205,7 @@ buddy_size(struct buddy * self, int offset) {
 	}
 }
 
-static void
+static AL_VOID
 _dump(struct buddy * self, int index , int level) {
 	switch (self->tree[index]) {
 	case NODE_UNUSED:
@@ -229,7 +229,7 @@ _dump(struct buddy * self, int index , int level) {
 	}
 }
 
-void
+AL_VOID
 buddy_dump(struct buddy * self) {
 	_dump(self, 0 , 0);
 	printf("\n");

@@ -4,23 +4,24 @@
 #include "npu_rt_graph.h"
 #include "npu_rt_graph_util.h"
 
-
+#define LOG_TAG "RUNTIME GRAPH"
+#include "elog.h"
 
 // ################## rt_tensor related functions ######################
 
-static void init_rt_tensor (rt_tensor_t* tensor, int tensor_index) {
+static AL_VOID init_rt_tensor (rt_tensor_t* tensor, int tensor_index) {
 
     tensor->index = tensor_index;
     tensor->name = NULL ;
 
-    tensor->producer = (int16_t*)malloc(sizeof(int16_t) * RT_GRAPH_MAX_PRODUCER_NUM) ;
+    tensor->producer = (AL_S16*)malloc(sizeof(AL_S16) * RT_GRAPH_MAX_PRODUCER_NUM) ;
     for (int i = 0; i < RT_GRAPH_MAX_PRODUCER_NUM; i++)
     {
         tensor->producer[i] = -1 ;
     }
     tensor->producer_num = 0 ;
 
-    tensor->consumer = (int16_t*)malloc(sizeof(int16_t) * RT_GRAPH_MAX_CONSUMER_NUM) ;
+    tensor->consumer = (AL_S16*)malloc(sizeof(AL_S16) * RT_GRAPH_MAX_CONSUMER_NUM) ;
     for (int i = 0; i < RT_GRAPH_MAX_CONSUMER_NUM; i++)
     {
         tensor->consumer[i] = -1 ;
@@ -43,33 +44,35 @@ static void init_rt_tensor (rt_tensor_t* tensor, int tensor_index) {
 
 rt_tensor_t* create_rt_tensor (rt_graph_t* graph) {
 
-    rt_tensor_t* rt_tensor = (rt_tensor_t*) malloc(sizeof(rt_tensor_t)) ;
+    rt_tensor_t* rt_tensor = (rt_tensor_t*) malloc(sizeof(rt_tensor_t));
 
     if (NULL == rt_tensor)
     {
+        log_e("Malloc failed\n");
         return NULL;
     }
 
     init_rt_tensor(rt_tensor, graph->tensor_num);
 
-    rt_tensor_t** new_tensor_list = (rt_tensor_t**)realloc(graph->tensor_list, sizeof(rt_tensor_t*) * (graph->tensor_num + 1)) ;
+    rt_tensor_t** new_tensor_list = (rt_tensor_t**)realloc(graph->tensor_list, sizeof(rt_tensor_t*) * (graph->tensor_num + 1));
 
     if (NULL == new_tensor_list)
     {
-        free(rt_tensor) ;
-        return NULL ;
+        free(rt_tensor);
+        log_e("Realloc failed\n");
+        return NULL;
     }
 
-    new_tensor_list[graph->tensor_num] = rt_tensor ;
+    new_tensor_list[graph->tensor_num] = rt_tensor;
 
-    graph->tensor_list = new_tensor_list ;
-    graph->tensor_num++ ;
+    graph->tensor_list = new_tensor_list;
+    graph->tensor_num++;
 
-    return rt_tensor ;
+    return rt_tensor;
 
 }
 
-void destroy_rt_tensor (rt_graph_t* graph, rt_tensor_t* tensor) {
+AL_VOID destroy_rt_tensor (rt_graph_t* graph, rt_tensor_t* tensor) {
 
     if (tensor->name != NULL) {
         free(tensor->name) ;
@@ -122,9 +125,10 @@ int set_rt_tensor_producer (rt_tensor_t* tensor, const int index) {
 
     if (RT_GRAPH_MAX_PRODUCER_NUM <= tensor->producer_num)
     {
-        int16_t* new_producer = (int16_t*)realloc(tensor->producer, sizeof(int16_t) * (tensor->producer_num + 1));
+        AL_S16* new_producer = (AL_S16*)realloc(tensor->producer, sizeof(AL_S16) * (tensor->producer_num + 1));
         if (NULL == new_producer)
         {
+            log_e("Realloc failed\n");
             return -1;
         }
 
@@ -142,9 +146,10 @@ int set_rt_tensor_consumer (rt_tensor_t* tensor, const int index) {
 
     if (RT_GRAPH_MAX_CONSUMER_NUM <= tensor->consumer_num)
     {
-        int16_t* new_consumer = (int16_t*)realloc(tensor->consumer, sizeof(int16_t) * (tensor->consumer_num + 1));
+        AL_S16* new_consumer = (AL_S16*)realloc(tensor->consumer, sizeof(AL_S16) * (tensor->consumer_num + 1));
         if (NULL == new_consumer)
         {
+            log_e("Realloc failed\n");
             return -1;
         }
 
@@ -158,29 +163,29 @@ int set_rt_tensor_consumer (rt_tensor_t* tensor, const int index) {
 
 }
 
-void dump_rt_tensor (rt_graph_t* graph, rt_tensor_t* tensor) {
+AL_VOID dump_rt_tensor (rt_graph_t* graph, rt_tensor_t* tensor) {
 
-    printf("tensor_%d type: %s", tensor->index, get_rt_tensor_type_string(tensor->tensor_type));
+    log_d("tensor_%d type: %s", tensor->index, get_rt_tensor_type_string(tensor->tensor_type));
 
     if (tensor->name != NULL) {
-        printf(" name: %s", tensor->name);
+        log_d(" name: %s", tensor->name);
     }
 
     if (tensor->producer_num > 0)
-        printf(" (producer: %d)", tensor->producer_num);
+        log_d(" (producer: %d)", tensor->producer_num);
 
     if (tensor->consumer_num > 0)
-        printf(" (consumer: %d)", tensor->consumer_num);
+        log_d(" (consumer: %d)", tensor->consumer_num);
 
-    printf(" (data_type: %d) (dim_num: %d)", tensor->param->data_type, tensor->param->dim_num);
+    log_d(" (data_type: %d) (dim_num: %d)", tensor->param->data_type, tensor->param->dim_num);
 
-    printf("\n");
+    log_d("\n");
 }
 
 
 // ################## rt_node related functions ######################
 
-static void init_rt_node(rt_node_t* node, uint16_t node_type, uint16_t node_index) {
+static AL_VOID init_rt_node(rt_node_t* node, AL_U16 node_type, AL_U16 node_index) {
 
     node->index = node_index ;
     node->name = NULL ;
@@ -196,11 +201,12 @@ static void init_rt_node(rt_node_t* node, uint16_t node_type, uint16_t node_inde
 
 }
 
-rt_node_t* create_rt_node (rt_graph_t* graph, uint16_t node_type) {
+rt_node_t* create_rt_node (rt_graph_t* graph, AL_U16 node_type) {
     
     rt_node_t* node = (rt_node_t*)malloc(sizeof(rt_node_t)) ;
     if (NULL == node)
     {
+        log_e("Malloc failed\n");
         return NULL ;
     }
 
@@ -212,6 +218,7 @@ rt_node_t* create_rt_node (rt_graph_t* graph, uint16_t node_type) {
     if (NULL == new_node_list)
     {
 	    free(node) ;
+        log_e("Realloc failed\n");
         return NULL;
     }
 
@@ -226,11 +233,11 @@ rt_node_t* create_rt_node (rt_graph_t* graph, uint16_t node_type) {
 
 }
 
-static void free_rt_node_param (rt_node_t* node) {
+static AL_VOID free_rt_node_param (rt_node_t* node) {
     if (node->param == NULL) {
         return ;
     }
-    uint16_t nd_type = node->node_type ;
+    AL_U16 nd_type = node->node_type ;
     switch (nd_type) {
         case RT_NPU_HARD: 
         {
@@ -314,7 +321,7 @@ static void free_rt_node_param (rt_node_t* node) {
     return ;
 }
 
-void destroy_rt_node (rt_graph_t* graph, rt_node_t* node) {
+AL_VOID destroy_rt_node (rt_graph_t* graph, rt_node_t* node) {
 
     if (node->name != NULL) {
         free(node->name);
@@ -343,10 +350,11 @@ int set_rt_node_input_tensor (rt_node_t* node, int input_idx, rt_tensor_t* tenso
 
     if (input_idx >= node->input_num)
     {
-        int16_t* new_tensor = (int16_t*)realloc(node->input_tensors, sizeof(int16_t) * (input_idx + 1));
+        AL_S16* new_tensor = (AL_S16*)realloc(node->input_tensors, sizeof(AL_S16) * (input_idx + 1));
 
         if (NULL == new_tensor)
         {
+            log_e("Realloc failed\n");
             return -1;
         }
 
@@ -355,13 +363,14 @@ int set_rt_node_input_tensor (rt_node_t* node, int input_idx, rt_tensor_t* tenso
             new_tensor[i] = -1;
         }
 
-        node->input_tensors = (uint16_t*)new_tensor;
+        node->input_tensors = (AL_U16*)new_tensor;
         node->input_num = input_idx + 1;
     }
 
     node->input_tensors[input_idx] = tensor->index;
     if (set_rt_tensor_consumer(tensor, node->index) < 0)
     {
+        log_e("Set rt_tensor consumer failed\n");
         return -1;
     }
     return 0;
@@ -372,7 +381,11 @@ int set_rt_node_output_tensor (rt_node_t* node, int output_idx, rt_tensor_t* ten
 
     if (output_idx >= node->output_num)
     {
-        uint16_t* new_tensor = (uint16_t*)realloc(node->output_tensors, sizeof(int16_t) * (output_idx + 1));
+        AL_U16* new_tensor = (AL_U16*)realloc(node->output_tensors, sizeof(AL_S16) * (output_idx + 1));
+        if (new_tensor == NULL) {
+            log_e("Realloc failed\n");
+            return -1;
+        }
 
         for (int i = node->output_num; i < output_idx + 1; i++)
         {
@@ -386,42 +399,43 @@ int set_rt_node_output_tensor (rt_node_t* node, int output_idx, rt_tensor_t* ten
     node->output_tensors[output_idx] = tensor->index;
     if (set_rt_tensor_producer(tensor, node->index) < 0)
     {
+        log_e("Set rt_tensor producer failed\n");
         return -1;
     }
 
     return 0;
 }
 
-void dump_rt_node (rt_graph_t* graph, rt_node_t* node) {
+AL_VOID dump_rt_node (rt_graph_t* graph, rt_node_t* node) {
 
-    printf("\nnode: %d type: %s is_sub_nd: %d sub_nd_id: %d\n", node->index, get_rt_node_type_string(node->node_type), node->is_sub_nd, node->sub_nd_id);
+    log_d("\nnode: %d type: %s is_sub_nd: %d sub_nd_id: %d\n", node->index, get_rt_node_type_string(node->node_type), node->is_sub_nd, node->sub_nd_id);
 
     if (node->name != NULL) {
-        printf("\tname: %s\n", node->name);
+        log_d("\tname: %s\n", node->name);
     }
 
     if (0 < node->input_num)
     {
-        printf("\tinput tensors: %d\n", node->input_num);
+        log_d("\tinput tensors: %d\n", node->input_num);
     }
 
     for (int i = 0; i < node->input_num; i++)
     {
         rt_tensor_t* rt_tensor = get_rt_graph_tensor(graph, node->input_tensors[i]);
 
-        printf("\t    %d: [id: %d] ", i, rt_tensor->index);
+        log_d("\t    %d: [id: %d] ", i, rt_tensor->index);
 
         dump_rt_tensor(graph, rt_tensor);
     }
 
     if (0 < node->output_num)
-        printf("\toutput tensors: %d\n", node->output_num);
+        log_d("\toutput tensors: %d\n", node->output_num);
 
     for (int i = 0; i < node->output_num; i++)
     {
         rt_tensor_t* rt_tensor = get_rt_graph_tensor(graph, node->output_tensors[i]);
 
-        printf("\t    %d: [id: %d] ", i, rt_tensor->index);
+        log_d("\t    %d: [id: %d] ", i, rt_tensor->index);
 
         dump_rt_tensor(graph, rt_tensor);
     }
@@ -429,10 +443,11 @@ void dump_rt_node (rt_graph_t* graph, rt_node_t* node) {
 
 // ################## scheduler_node related functions ######################
 
-basic_node_t* create_basic_node (int16_t rt_node_idx, int16_t parent_idx) {
+basic_node_t* create_basic_node (AL_S16 rt_node_idx, AL_S16 parent_idx) {
 
     basic_node_t* node = (basic_node_t*)malloc(sizeof(basic_node_t)) ;
     if (node == NULL) {
+        log_e("Malloc failed\n");
         return NULL ;
     }
 
@@ -444,11 +459,12 @@ basic_node_t* create_basic_node (int16_t rt_node_idx, int16_t parent_idx) {
 }
 
 
-parallel_group_t* create_parallel_group (int16_t parent_idx) {
+parallel_group_t* create_parallel_group (AL_S16 parent_idx) {
 
     parallel_group_t* pg = (parallel_group_t*)malloc(sizeof(parallel_group_t)) ;
     if (pg == NULL) {
-        return NULL ;
+        log_e("Malloc failed\n");
+        return NULL;
     }
 
     pg->parent = parent_idx ;
@@ -463,19 +479,19 @@ parallel_group_t* create_parallel_group (int16_t parent_idx) {
 int add_child_pg (parallel_group_t* pg, scheduler_node_t* child_node) {
 
     if (pg == NULL) {
-        printf("ERROR: parallel group is null point in add_child for parallel group.\n") ;
-        return -1 ;
+        log_e("Parallel group is null point in add_child for parallel group.\n");
+        return -1;
     } else {
-        int16_t* nodes = NULL ;
+        AL_S16* nodes = NULL ;
 
         if (pg->node_num == 0) {
-            nodes = (int16_t*)malloc(sizeof(int16_t) * (pg->node_num + 1)) ;
+            nodes = (AL_S16*)malloc(sizeof(AL_S16) * (pg->node_num + 1)) ;
         } else {
-            nodes = (int16_t*)realloc(pg->nodes, sizeof(int16_t) * (pg->node_num + 1)) ;
+            nodes = (AL_S16*)realloc(pg->nodes, sizeof(AL_S16) * (pg->node_num + 1)) ;
         }
             
         if (nodes == NULL) {
-            printf("ERROR: alloc failed in add_child for parallel group.\n") ;
+            log_e("Alloc failed in add_child for parallel group.\n") ;
             return -1 ;
         } else {
             pg->nodes = nodes ;
@@ -489,37 +505,38 @@ int add_child_pg (parallel_group_t* pg, scheduler_node_t* child_node) {
 }
 
 
-sequential_list_t* create_sequential_list (int16_t parent_idx) {
+sequential_list_t* create_sequential_list (AL_S16 parent_idx) {
 
-    sequential_list_t* sl = (sequential_list_t*)malloc(sizeof(sequential_list_t)) ;
+    sequential_list_t* sl = (sequential_list_t*)malloc(sizeof(sequential_list_t));
     if (sl == NULL) {
-        return NULL ;
+        log_e("Malloc failed\n");
+        return NULL;
     }
 
-    sl->parent = parent_idx ;
-    sl->node_num = 0 ;
-    sl->nodes = NULL ;
+    sl->parent = parent_idx;
+    sl->node_num = 0;
+    sl->nodes = NULL;
 
-    return sl ;
+    return sl;
     
 }
 
 int add_child_sl (sequential_list_t* sl, scheduler_node_t* child_node) {
 
     if (sl == NULL) {
-        printf("ERROR: sequential list is null point in add_child for sequential list.\n") ;
+        log_e("Sequential list is null point in add_child for sequential list.\n") ;
         return -1 ;
     } else {
-        int16_t* nodes = NULL ;
+        AL_S16* nodes = NULL ;
 
         if (sl->node_num == 0) {
-            nodes = (int16_t*)malloc(sizeof(int16_t) * (sl->node_num + 1)) ;
+            nodes = (AL_S16*)malloc(sizeof(AL_S16) * (sl->node_num + 1)) ;
         } else {
-            nodes = (int16_t*)realloc(sl->nodes, sizeof(int16_t) * (sl->node_num + 1)) ;
+            nodes = (AL_S16*)realloc(sl->nodes, sizeof(AL_S16) * (sl->node_num + 1)) ;
         }
             
         if (nodes == NULL) {
-            printf("ERROR: alloc failed in add_child for sequential list.\n") ;
+            log_e("Alloc failed in add_child for sequential list.\n") ;
             return -1 ;
         } else {
             sl->nodes = nodes ;
@@ -532,11 +549,12 @@ int add_child_sl (sequential_list_t* sl, scheduler_node_t* child_node) {
     
 }
 
-scheduler_node_t* create_scheduler_node (rt_graph_t* graph, uint16_t node_type, void* content) {
+scheduler_node_t* create_scheduler_node (rt_graph_t* graph, AL_U16 node_type, AL_VOID* content) {
     
     scheduler_node_t* node = (scheduler_node_t*)malloc(sizeof(scheduler_node_t)) ;
     if (NULL == node)
     {
+        log_e("Malloc failed\n") ;
         return NULL ;
     }
 
@@ -548,7 +566,7 @@ scheduler_node_t* create_scheduler_node (rt_graph_t* graph, uint16_t node_type, 
     } else if (node_type == 2) {
         node->sl = (sequential_list_t*) content ;
     } else {
-        printf("ERROR: unsupported node type for scheduler node.\n") ;
+        log_e("Unsupported node type for scheduler node.\n") ;
         free (node) ;
         return NULL ;
     }
@@ -560,6 +578,7 @@ scheduler_node_t* create_scheduler_node (rt_graph_t* graph, uint16_t node_type, 
     if (NULL == new_node_list)
     {
 	    free(node) ;
+        log_e("Realloc failed\n") ;
         return NULL;
     }
 
@@ -574,7 +593,7 @@ scheduler_node_t* create_scheduler_node (rt_graph_t* graph, uint16_t node_type, 
 
 }
 
-void destroy_scheduler_node (rt_graph_t* graph, scheduler_node_t* node) {
+AL_VOID destroy_scheduler_node (rt_graph_t* graph, scheduler_node_t* node) {
 
     if (node->node_type == 0) {
         free (node->nd) ;
@@ -583,7 +602,7 @@ void destroy_scheduler_node (rt_graph_t* graph, scheduler_node_t* node) {
     } else if (node->node_type == 2) {
         free (node->sl) ;
     } else {
-        printf("ERROR: unexpected node type in destroy scheduler node.\n") ;
+        log_e("Unexpected node type in destroy scheduler node.\n") ;
     }
 
     free(node);
@@ -601,7 +620,7 @@ int add_child_sn (scheduler_node_t* node, scheduler_node_t* child_node) {
         sequential_list_t* sl = node->sl ;
         ret = add_child_sl (sl, child_node) ;
     } else {
-        printf("ERROR: unexpected node type in add_child for scheduler node.\n") ;
+        log_e("Unexpected node type in add_child for scheduler node.\n") ;
         ret = -1 ;
     }
 
@@ -613,7 +632,7 @@ int get_child_num (scheduler_node_t* node) {
 
     int ret = -1 ;
     if (node == NULL) {
-        printf("ERROR: the scheduler node pointer is null in get_child_num.\n") ;
+        log_e("The scheduler node pointer is null in get_child_num.\n") ;
         return ret ;
     } else {
         if (node->node_type == RT_S_BASIC) {
@@ -621,7 +640,7 @@ int get_child_num (scheduler_node_t* node) {
         } else if (node->node_type == RT_S_PARALLEL) {
             parallel_group_t* pg = node->pg ;
             if (pg == NULL) {
-                printf("ERROR: pg in scheduler node is null.\n") ;
+                log_e("Pg in scheduler node is null.\n") ;
                 return ret ;
             } else {
                 ret = pg->node_num ;
@@ -629,44 +648,56 @@ int get_child_num (scheduler_node_t* node) {
         } else if (node->node_type == RT_S_SEQUENTIAL) {
             sequential_list_t* sl = node->sl ;
             if (sl == NULL) {
-                printf("ERROR: sl in scheduler node is null.\n") ;
+                log_e("Sl in scheduler node is null.\n") ;
                 return ret ;
             } else {
                 ret = sl->node_num ;
             }
         } else {
-            printf("ERROR: unsupported node type for scheduler node.\n") ;
+            log_e("Unsupported node type for scheduler node.\n") ;
             return ret ;
         }
     }
     return ret ;
 }
 
-int set_parent (scheduler_node_t* node, int16_t parent_idx) {
+int set_parent (scheduler_node_t* node, AL_S16 parent_idx) {
 
     int ret = 0 ;
     if (node == NULL) {
-        printf("ERROR: the scheduler node pointer is null in set_parent.\n") ;
+        log_e("The scheduler node pointer is null in set_parent.\n") ;
         return -1 ;
     } else {
         if (node->node_type == RT_S_BASIC) {
             //check_pointer (node->nd) ;
+            if (node->nd == NULL) {
+                log_e("Nd in scheduler node is NULL\n");
+                return -1;
+            }
             node->nd->parent = parent_idx ;
         } else if (node->node_type == RT_S_PARALLEL) {
             //check_pointer (node->pg) ;
+            if (node->pg == NULL) {
+                log_e("Pg in node is NULL\n");
+                return -1;
+            }
             node->pg->parent = parent_idx ;
         } else if (node->node_type == RT_S_SEQUENTIAL) {
             //check_pointer (node->sl) ;
+            if (node->sl == NULL) {
+                log_e("Sl in node is NULL\n");
+                return -1;
+            }
             node->sl->parent = parent_idx ;
         } else {
-            printf("ERROR: unsupported node type for scheduler node.\n") ;
+            log_e("Unsupported node type for scheduler node.\n") ;
             return -1 ;
         }
     }
     return ret ;
 }
 
-void dump_scheduler_node (rt_graph_t* graph, scheduler_node_t* node, int level) {
+AL_VOID dump_scheduler_node (rt_graph_t* graph, scheduler_node_t* node, int level) {
 
     char* node_buf = (char*)malloc(sizeof(char) * 1024 * 4) ;
 
@@ -674,21 +705,21 @@ void dump_scheduler_node (rt_graph_t* graph, scheduler_node_t* node, int level) 
 
     if (node->node_type == RT_S_BASIC) {
         rt_node_t* rt_nd = get_rt_graph_node (graph, node->nd->index) ;
-        printf("\n%s+ basic node: %s sn index: %d sn_parent: %d \n", node_buf, get_rt_node_type_string(rt_nd->node_type), node->index, node->nd->parent);
+        log_d("\n%s+ basic node: %s sn index: %d sn_parent: %d \n", node_buf, get_rt_node_type_string(rt_nd->node_type), node->index, node->nd->parent);
     } else if (node->node_type == RT_S_PARALLEL) {
-        printf("\n%s+ parallel: %d cmds sn index: %d sn_parent: %d ", node_buf, node->pg->node_num, node->index, node->pg->parent);
+        log_d("\n%s+ parallel: %d cmds sn index: %d sn_parent: %d ", node_buf, node->pg->node_num, node->index, node->pg->parent);
         for (int i = 0; i < node->pg->node_num; i++) {
             scheduler_node_t* sn = get_rt_graph_scheduler_node (graph, node->pg->nodes[i]) ;
             dump_scheduler_node (graph, sn, level + 1) ;
         }
     } else if (node->node_type == RT_S_SEQUENTIAL) {
-        printf("\n%s+ sequential: %d cmds sn index: %d sn_parent: %d ", node_buf, node->sl->node_num, node->index, node->sl->parent);
+        log_d("\n%s+ sequential: %d cmds sn index: %d sn_parent: %d ", node_buf, node->sl->node_num, node->index, node->sl->parent);
         for (int i = 0; i < node->sl->node_num; i++) {
             scheduler_node_t* sn = get_rt_graph_scheduler_node (graph, node->sl->nodes[i]) ;
             dump_scheduler_node (graph, sn, level + 1) ;
         }
     } else {
-        printf("ERROR: \nunsupported scheduler node type\n");
+        log_d("ERROR: \nunsupported scheduler node type\n");
     }
 
     free(node_buf) ;
@@ -703,6 +734,7 @@ rt_graph_t* create_rt_graph () {
     rt_graph_t* graph = (rt_graph_t*)malloc(sizeof(rt_graph_t));
     if (NULL == graph)
     {
+        log_e("Malloc failed\n");
         return NULL;
     }
 
@@ -712,7 +744,7 @@ rt_graph_t* create_rt_graph () {
 
 }
 
-void init_rt_graph (rt_graph_t* graph) {
+AL_VOID init_rt_graph (rt_graph_t* graph) {
 
     graph->tensor_list = NULL;
     graph->node_list = NULL;
@@ -725,7 +757,11 @@ void init_rt_graph (rt_graph_t* graph) {
 
 }
 
-void destroy_rt_graph (rt_graph_t* graph) {
+AL_VOID destroy_rt_graph (rt_graph_t* graph) {
+
+    if (NULL == graph) {
+        return;
+    }
 
     //!< 1, destroy tensors
     for (int i = 0; i < graph->tensor_num; i++)
@@ -765,9 +801,9 @@ scheduler_node_t* get_rt_graph_scheduler_node (rt_graph_t* graph, int index) {
     return graph->scheduler_node_list[index];
 }
 
-void dump_rt_graph (rt_graph_t* graph) {
+AL_VOID dump_rt_graph (rt_graph_t* graph) {
 
-    printf("\n graph node_num %u tensor_num: %u \n", graph->node_num, graph->tensor_num);
+    log_d("\n graph node_num %u tensor_num: %u \n", graph->node_num, graph->tensor_num);
 
     for (int i = 0; i < graph->node_num; i++)
     {
@@ -775,7 +811,7 @@ void dump_rt_graph (rt_graph_t* graph) {
         dump_rt_node(graph, node);
     }
 
-    printf("\n dump scheduler node structure:\n");
+    log_d("\n dump scheduler node structure:\n");
 
     if (graph->scheduler_node_num > 0) {
         scheduler_node_t* first = graph->scheduler_node_list[0] ;

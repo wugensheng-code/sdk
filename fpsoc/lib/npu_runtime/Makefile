@@ -20,7 +20,7 @@ src-$(CONFIG_NPU_RUNTIME) += npu_rt_graph/src/npu_rt_graph_util.c
 src-$(CONFIG_NPU_RUNTIME) += npu_rt_graph/src/rgb_deserializer.c
 src-$(CONFIG_NPU_RUNTIME) += npu_util/npu_util.c
 src-$(CONFIG_NPU_RUNTIME) += npu_util/npu_util_func.c
-src-$(CONFIG_NPU_RUNTIME) += npu_util/npu_util_test.c
+src-$(CONFIG_NPU_RUNTIME) += npu_util/image_process_func.c
 src-$(CONFIG_NPU_RUNTIME) += npu_util/new_op_func.c
 src-$(CONFIG_NPU_RUNTIME) += npu_util/fifo.c
 src-$(CONFIG_NPU_RUNTIME) += fm_mem_alloc/buddy_allocator.c
@@ -28,8 +28,8 @@ src-$(CONFIG_NPU_RUNTIME) += fm_mem_alloc/fm_mem_alloc.c
 src-$(CONFIG_NPU_RUNTIME) += npu_init/npu_init.c
 src-$(CONFIG_NPU_RUNTIME) += npu_scheduler/npu_scheduler.c
 src-$(CONFIG_NPU_RUNTIME) += $(wildcard jpu_driver/*.c)
-
-
+src-$(CONFIG_NPU_RUNTIME) += $(wildcard elog/src/*.c)
+src-$(CONFIG_NPU_RUNTIME) += $(wildcard elog/port/*.c)
 
 # (1.2) add submodule include file to /bsp/inc for calling
 inc-$(CONFIG_NPU_RUNTIME) += npu_rt_graph/inc
@@ -41,6 +41,7 @@ inc-$(CONFIG_NPU_RUNTIME) += npu_util
 inc-$(CONFIG_NPU_RUNTIME) += image_process
 inc-$(CONFIG_NPU_RUNTIME) += uio_driver
 inc-$(CONFIG_NPU_RUNTIME) += jpu_driver
+inc-$(CONFIG_NPU_RUNTIME) += elog/inc
 inc-$(CONFIG_NPU_RUNTIME) += ./
 
 # (3) set specificity FLAGS

@@ -72,7 +72,7 @@ const char* get_scheduler_node_type_string (int type) {
     }
 }
 
-void sn_level_str(char* buf, int level, char blank) {
+AL_VOID sn_level_str(char* buf, int level, char blank) {
     strcpy (buf, "") ;
     for (int i = 0; i < level; i++) {
         if (blank == '\t')

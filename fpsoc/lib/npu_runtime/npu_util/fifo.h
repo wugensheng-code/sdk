@@ -15,7 +15,7 @@ typedef struct
     int   elem_num;  //!< size of fifo
     int   wrptr;
     int   rdptr;
-    void* mem;       //!< visual aligned address which point to the very begging of elements
+    AL_VOID* mem;       //!< visual aligned address which point to the very begging of elements
 } fifo_t;
 
 /*!

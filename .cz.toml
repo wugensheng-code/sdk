@@ -98,6 +98,8 @@ choices = [
     {value = "usb", name = "usb"},
     {value = "ipc", name = "ipc"},
     {value = "devops", name = "devops"},
+    {value = "rtos", name = "rtos"},
+    {value = "npu", name = "npu"}
     ]
 message = "Select the type of change you are committing"
 

@@ -7,7 +7,7 @@
 #define INOUT_DATA_MODE_SD_ARM 1
 #define INOUT_DATA_MODE_SD_JPU 2
 
-int8_t run_npu_graph (rt_graph_t* graph) ;
+AL_S8 run_npu_graph (rt_graph_t* graph) ;
 
 
 

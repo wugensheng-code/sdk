@@ -19,17 +19,16 @@
 #include "rt_graph_bin_format.h"
 #include "npu_rt_graph.h"
 #include "npu_defines.h"
+#include "file_ops.h"
 
-#ifdef RUN_PLATFORM_BM
-#include "ff.h"
-#endif
+#define LOG_TAG "GRAPH_DESERIALIZER"
+#include "elog.h"
 
 static char* strdup_name(char* buf, int size)
 {
     char* p = (char*)malloc(size + 1);
     memcpy(p, buf, size);
     p[size] = 0x0;
-
     return p;
 }
 
@@ -56,8 +55,13 @@ static int load_graph_tensors(rt_graph_t* graph, const char* base, RGB_Vector_of
 		RGB_Tensor* rgb_tensor = (RGB_Tensor*)(base + vo_tensors->offsets[i]) ;
 		
 		rt_tensor_t* rt_tensor = create_rt_tensor (graph) ;
+		if (rt_tensor == NULL) {
+			log_e("Create rt_tensor failed\n");
+			return -1;
+		}
 		if (rt_tensor->index != rgb_tensor->tensor_id) {
-			printf ("rt_tensor index check failed, tensor_idx: %d \t rgb_tensor_id: %d\n", rt_tensor->index, rgb_tensor->tensor_id) ;
+			log_e("Rt_tensor index check failed, tensor_idx: %d \t rgb_tensor_id: %d\n", rt_tensor->index, rgb_tensor->tensor_id);
+			return -1;
 		}
 
 		rt_tensor->tensor_type = rgb_tensor->tensor_type ;
@@ -81,14 +85,14 @@ static int load_graph_tensors(rt_graph_t* graph, const char* base, RGB_Vector_of
 		// load producer and consumer
 		RGB_Vector_indices* v_producers = (RGB_Vector_indices*)(base + rgb_tensor->offset_vi_producer_nodes) ;
 		rt_tensor->producer_num = v_producers->v_num ;
-		rt_tensor->producer = (uint16_t*)realloc(rt_tensor->producer, sizeof(uint16_t) * v_producers->v_num) ;
+		rt_tensor->producer = (AL_U16*)realloc(rt_tensor->producer, sizeof(AL_U16) * v_producers->v_num) ;
 		for( unsigned int j = 0; j < v_producers->v_num; j++) {
 			rt_tensor->producer[j] = v_producers->indices[j] ;
 		}
 
 		RGB_Vector_indices* v_consumers = (RGB_Vector_indices*)(base + rgb_tensor->offset_vi_consumer_nodes) ;
 		rt_tensor->consumer_num = v_consumers->v_num ;
-		rt_tensor->consumer = (uint16_t*)realloc(rt_tensor->consumer, sizeof(uint16_t) * v_consumers->v_num) ;
+		rt_tensor->consumer = (AL_U16*)realloc(rt_tensor->consumer, sizeof(AL_U16) * v_consumers->v_num) ;
 		for( unsigned int j = 0; j < v_consumers->v_num; j++) {
 			rt_tensor->consumer[j] = v_consumers->indices[j] ;
 		}
@@ -106,7 +110,7 @@ static int load_graph_tensors(rt_graph_t* graph, const char* base, RGB_Vector_of
 				rt_tensor->p_sp_params[sp_idx].sub_params = (tensor_param_t**) malloc (sizeof(tensor_param_t*) * total) ;
 				RGB_Vector_tensor_param* v_t_params = (RGB_Vector_tensor_param*)(base + sp_param.offset_vt_sub_params) ;
 							
-				rt_tensor->p_sp_params[sp_idx].addr_offsets = (uint32_t*)malloc(sizeof(uint32_t) * total) ;
+				rt_tensor->p_sp_params[sp_idx].addr_offsets = (AL_U32*)malloc(sizeof(AL_U32) * total) ;
 				RGB_Vector_uint32* v_addr_offset = (RGB_Vector_uint32*)(base + sp_param.offset_vuint32_addr_offsets) ;
 
 				for (int sub_idx = 0; sub_idx < total; sub_idx++) {
@@ -131,7 +135,7 @@ static int load_graph_tensors(rt_graph_t* graph, const char* base, RGB_Vector_of
 				rt_tensor->c_sp_params[sp_idx].sub_params = (tensor_param_t**) malloc (sizeof(tensor_param_t*) * total) ;
 				RGB_Vector_tensor_param* v_t_params = (RGB_Vector_tensor_param*)(base + sp_param.offset_vt_sub_params) ;
 							
-				rt_tensor->c_sp_params[sp_idx].addr_offsets = (uint32_t*)malloc(sizeof(uint32_t) * total) ;
+				rt_tensor->c_sp_params[sp_idx].addr_offsets = (AL_U32*)malloc(sizeof(AL_U32) * total) ;
 				RGB_Vector_uint32* v_addr_offset = (RGB_Vector_uint32*)(base + sp_param.offset_vuint32_addr_offsets) ;
 
 				for (int sub_idx = 0; sub_idx < total; sub_idx++) {
@@ -146,7 +150,7 @@ static int load_graph_tensors(rt_graph_t* graph, const char* base, RGB_Vector_of
     return 0;
 }
 
-static void* get_param_from_rgb_node (uint16_t node_type, rgb_uoffset_t offset, const char* base) {
+static AL_VOID* get_param_from_rgb_node (AL_U16 node_type, rgb_uoffset_t offset, const char* base) {
 
     switch (node_type) {
         case RT_NPU_HARD : 
@@ -157,7 +161,7 @@ static void* get_param_from_rgb_node (uint16_t node_type, rgb_uoffset_t offset, 
 
             memcpy (hpi, rgb_hpi, sizeof(hard_npu_pkg_info_t)) ;
 
-			return (void*) hpi ;
+			return (AL_VOID*) hpi ;
 		}
         case RT_POOLING:
         case RT_CONCAT:
@@ -172,7 +176,7 @@ static void* get_param_from_rgb_node (uint16_t node_type, rgb_uoffset_t offset, 
 
             memcpy (spi, rgb_spi, sizeof(soft_npu_pkg_info_t)) ;
 
-			return (void*) spi ;
+			return (AL_VOID*) spi ;
 		}
         case RT_DWCONV : {
             RGB_NPUDWConvParam *rgb_dwconv_param = (RGB_NPUDWConvParam *) (base + offset);
@@ -191,12 +195,12 @@ static void* get_param_from_rgb_node (uint16_t node_type, rgb_uoffset_t offset, 
             npu_dwconv_param->input_zero_point = rgb_dwconv_param->input_zero_point;
             npu_dwconv_param->weight_zero_point = rgb_dwconv_param->weight_zero_point;
             npu_dwconv_param->output_zero_point = rgb_dwconv_param->output_zero_point;
-            memcpy(npu_dwconv_param->ifm_dims, rgb_dwconv_param->ifm_dims, sizeof(int32_t) * 4);
-            memcpy(npu_dwconv_param->ofm_dims, rgb_dwconv_param->ofm_dims, sizeof(int32_t) * 4);
+            memcpy(npu_dwconv_param->ifm_dims, rgb_dwconv_param->ifm_dims, sizeof(AL_S32) * 4);
+            memcpy(npu_dwconv_param->ofm_dims, rgb_dwconv_param->ofm_dims, sizeof(AL_S32) * 4);
 
             // load bias data
             RGB_Vector_bias *v_bias = (RGB_Vector_bias *) (base + rgb_dwconv_param->offset_vbias);
-            npu_dwconv_param->bias_data = (int32_t *) malloc(sizeof(int32_t) * v_bias->v_num);
+            npu_dwconv_param->bias_data = (AL_S32 *) malloc(sizeof(AL_S32) * v_bias->v_num);
             for (unsigned int i = 0; i < v_bias->v_num; i++) {
                 npu_dwconv_param->bias_data[i] = v_bias->elems[i];
             }
@@ -230,7 +234,7 @@ static void* get_param_from_rgb_node (uint16_t node_type, rgb_uoffset_t offset, 
             npu_dwconv_param->activation_max = rgb_dwconv_param->activation_max;
             npu_dwconv_param->activation_min = rgb_dwconv_param->activation_min;
 
-            return (void *)npu_dwconv_param;
+            return (AL_VOID *)npu_dwconv_param;
         }
 		case RT_RESHAPE:{
 			RGB_NPUReshapeParam *rgb_reshape_param = (RGB_NPUReshapeParam *) (base + offset);
@@ -239,7 +243,7 @@ static void* get_param_from_rgb_node (uint16_t node_type, rgb_uoffset_t offset, 
 			npu_reshape_param->output_tensor = NULL;
 			npu_reshape_param->dim_size = rgb_reshape_param->dim_size;
 			// memcpy(&(npu_reshape_param), &(rgb_reshape_param->param), sizeof(npu_reshape_param_t));
-			return (void *)npu_reshape_param;
+			return (AL_VOID *)npu_reshape_param;
 			
 		}
 		case RT_SIGMOID:{
@@ -251,7 +255,7 @@ static void* get_param_from_rgb_node (uint16_t node_type, rgb_uoffset_t offset, 
 			npu_sigmoid_param->scale_o = rgb_sigmoid_param->scale_o;
 			npu_sigmoid_param->zp_i = rgb_sigmoid_param->zp_i;
 			npu_sigmoid_param->zp_o = rgb_sigmoid_param->zp_o;
-			return (void *)npu_sigmoid_param;
+			return (AL_VOID *)npu_sigmoid_param;
 		}
         case RT_INPUT:
 		{
@@ -293,7 +297,7 @@ static void* get_param_from_rgb_node (uint16_t node_type, rgb_uoffset_t offset, 
 			nip->b_quant_rshift = rgb_nip->b_quant_rshift ;
 			nip->b_quant_param = rgb_nip->b_quant_param ;
 	    
-            return (void*) nip ;
+            return (AL_VOID*) nip ;
 		}
         case RT_YOLO:
 		{
@@ -309,11 +313,11 @@ static void* get_param_from_rgb_node (uint16_t node_type, rgb_uoffset_t offset, 
 				ypi_vec[i] = ypi ;
 			}
 
-            return (void*) ypi_vec ;
+            return (AL_VOID*) ypi_vec ;
 		}
         default:
 		{
-            printf("unsupported node type:%d \n", node_type);
+            log_e("Unsupported node type:%d in runtime graph\n", node_type);
             return NULL;
 		}
     }
@@ -326,8 +330,13 @@ static int load_graph_nodes(rt_graph_t* graph, const char* base, RGB_Vector_offs
 		RGB_Node* rgb_node = (RGB_Node*)(base + vo_nodes->offsets[i]) ;
 		
 		rt_node_t* rt_node = create_rt_node (graph, rgb_node->node_type) ;
+		if (rt_node == NULL) {
+			log_e("Create rt_node failed\n");
+			return -1;
+		}
 		if (rt_node->index != rgb_node->node_id) {
-			printf ("rt_node index check failed\n") ;
+			log_e("Rt_node index check failed\n") ;
+			return -1;
 		}
 		rt_node->is_sub_nd = rgb_node->is_sub_nd ;
 		rt_node->c_sp_idx = rgb_node->c_sp_idx ;
@@ -344,50 +353,61 @@ static int load_graph_nodes(rt_graph_t* graph, const char* base, RGB_Vector_offs
 		// load input tensors and output tensors
 		RGB_Vector_indices* v_input = (RGB_Vector_indices*)(base + rgb_node->offset_vi_input_tensors) ;
 		rt_node->input_num = v_input->v_num ;
-		rt_node->input_tensors = (uint16_t*)malloc(sizeof(uint16_t) * v_input->v_num) ;
+		rt_node->input_tensors = (AL_U16*)malloc(sizeof(AL_U16) * v_input->v_num) ;
 		for( unsigned int j = 0; j < v_input->v_num; j++) {
 			rt_node->input_tensors[j] = v_input->indices[j] ;
 		}
 
 		RGB_Vector_indices* v_output = (RGB_Vector_indices*)(base + rgb_node->offset_vi_output_tensors) ;
 		rt_node->output_num = v_output->v_num ;
-		rt_node->output_tensors = (uint16_t*)malloc(sizeof(uint16_t) * v_output->v_num) ;
+		rt_node->output_tensors = (AL_U16*)malloc(sizeof(AL_U16) * v_output->v_num) ;
 		for( unsigned int j = 0; j < v_output->v_num; j++) {
 			rt_node->output_tensors[j] = v_output->indices[j] ;
 		}
 
 		// load param
 		rt_node->param = get_param_from_rgb_node (rgb_node->node_type, rgb_node->offset_param, base) ;
+		if (rt_node->param == NULL) {
+			return -1;
+		}
 
     }
 
     return 0;
 }
 
-static void* get_content_from_rgb_scheduler_node (uint8_t node_type, rgb_uoffset_t offset, const char* base) {
+static AL_VOID* get_content_from_rgb_scheduler_node (AL_U8 node_type, rgb_uoffset_t offset, const char* base) {
     switch (node_type) {
         case RT_S_BASIC: 
 		{
             RGB_BasicBlock* rgb_basic_block = (RGB_BasicBlock*)(base + offset) ;
 	    	basic_node_t* nd = create_basic_node (rgb_basic_block->index, rgb_basic_block->parent) ;
+			if (nd == NULL) {
+				log_e("Create basic node failed\n");
+				return NULL;
+			}
 
-            return (void*) nd ;
+            return (AL_VOID*) nd ;
 		}
         case RT_S_PARALLEL:
 		{
             RGB_ParallelGroup* rgb_pg = (RGB_ParallelGroup*)(base + offset) ;
 			parallel_group_t* pg = create_parallel_group (rgb_pg->parent) ;
+			if (pg == NULL) {
+				log_e("Create parallel group failed\n");
+				return NULL;
+			}
 			pg->is_split = rgb_pg->is_split ;
 
 			// load child nodes
 			RGB_Vector_indices* vi = (RGB_Vector_indices*)(base + rgb_pg->offset_vi_nodes) ;
 			pg->node_num = vi->v_num ;
-			pg->nodes = (int16_t*)malloc(sizeof(int16_t) * vi->v_num) ;
+			pg->nodes = (AL_S16*)malloc(sizeof(AL_S16) * vi->v_num) ;
 			for (unsigned int i = 0; i < vi->v_num; i++) {
 				pg->nodes[i] = vi->indices[i] ;
 			}
 
-            return (void*) pg ;
+            return (AL_VOID*) pg ;
 		}
         case RT_S_SEQUENTIAL:
 		{
@@ -397,16 +417,16 @@ static void* get_content_from_rgb_scheduler_node (uint8_t node_type, rgb_uoffset
 			// load child nodes
 			RGB_Vector_indices* vi = (RGB_Vector_indices*)(base + rgb_sl->offset_vi_nodes) ;
 			sl->node_num = vi->v_num ;
-			sl->nodes = (int16_t*)malloc(sizeof(int16_t) * vi->v_num) ;
+			sl->nodes = (AL_S16*)malloc(sizeof(AL_S16) * vi->v_num) ;
 			for (unsigned int i = 0; i < vi->v_num; i++) {
 				sl->nodes[i] = vi->indices[i] ;
 			}
 
-            return (void*) sl ;
+            return (AL_VOID*) sl ;
 		}
         default:
 		{
-            printf("unsupported scheduler node type:%d \n", node_type);
+            log_e("Unsupported scheduler node type:%d in runtime graph\n", node_type);
             return NULL;
 		}
     }
@@ -419,11 +439,19 @@ static int load_graph_scheduler_nodes(rt_graph_t* graph, const char* base, RGB_V
 		RGB_Scheduler_Node* rgb_snode = (RGB_Scheduler_Node*)(base + vo_scheduler_nodes->offsets[i]) ;
 		
 		// create content
-		void* content = get_content_from_rgb_scheduler_node(rgb_snode->node_type, rgb_snode->offset_node_content, base); 
+		AL_VOID* content = get_content_from_rgb_scheduler_node(rgb_snode->node_type, rgb_snode->offset_node_content, base); 
+		if (content == NULL) {
+			return -1;
+		}
 
 		scheduler_node_t* rt_snode = create_scheduler_node (graph, rgb_snode->node_type, content) ;
+		if (rt_snode == NULL) {
+			log_e("Create scheduler node failed\n");
+			return -1;
+		}
 		if (rt_snode->index != rgb_snode->node_id) {
-			printf ("rt_node index check failed\n") ;
+			log_e("Scheduler node index check failed\n") ;
+			return -1;
 		}
     }
 
@@ -433,63 +461,25 @@ static int load_graph_scheduler_nodes(rt_graph_t* graph, const char* base, RGB_V
 
 rt_graph_t* load_rt_graph(const char* fname) {
 
-	void* mem_base = NULL ;
+	AL_VOID* mem_base = NULL;
 
-#ifdef RUN_PLATFORM_LINUX
-    struct stat stat;
-
-    int fd = open(fname, O_RDONLY);
-
-    if (fd < 0)
-    {
-        printf("cannot open file %s\n", fname);
-        return NULL;
-    }
-
-    fstat(fd, &stat);
-
-    int file_len = stat.st_size;
-
-  
-    mem_base = (void*)malloc(file_len) ;
-    int ret = read(fd, mem_base, file_len);
-    if (ret != file_len) {
-        printf("Read file %s failed, err no: %d\n", fname, ret) ;
-        return NULL ;
-    }
-
-    close(fd) ;
-#else
-
-	FILINFO fno ;
-	FIL fd ;
-	int ret = f_open(&fd, fname, FA_READ) ;
-	if (ret) {
-		printf("Fail to open file %s\n", fname) ;
-		return NULL ;
-	}
-	f_stat(fname, &fno) ;
-	size_t file_len = fno.fsize ;
-
-	UINT br = 0 ;
-	mem_base = (void*)malloc(file_len) ;	
-	ret = f_read(&fd, mem_base, file_len, &br) ;
-	if (ret) {
-		printf("Read file failed: %s, err no: %d\n", fname, ret) ;
-		return NULL ;
-	}
-	if (file_len != br) {
-		printf("Fail to read expected length from file %s, expected length: %lu, actual length: %lu\n", fname, file_len, (size_t)br) ;
-		return NULL ;
+	AL_S64 file_len = get_file_size(fname);
+	if (-1 == file_len) {
+		log_e("get file length failed\n");
+		return NULL;
 	}
 
-	ret = f_close(&fd) ;
-	if (ret) {
-		printf("Fail to close file %s, err no: %d\n", fname, ret) ;
-		return 0 ;
+	mem_base = (AL_VOID*)malloc(file_len);	
+	if (mem_base == NULL) {
+		log_e("malloc failed\n");
+		return NULL;
 	}
 
-#endif
+	if (read_file(fname, mem_base, file_len)) {
+		log_e("read file: %s failed\n", fname);
+		free(mem_base);
+		return NULL;
+	}
 
     rt_graph_t* graph = create_rt_graph() ;
 
@@ -514,7 +504,7 @@ error:
 
 }
 
-rt_graph_t* load_rt_graph_from_mem (const void* addr) {
+rt_graph_t* load_rt_graph_from_mem (const AL_VOID* addr) {
  	rt_graph_t* graph = create_rt_graph() ;
 
     RGB_Header* header = get_rgb_file_header( addr) ;

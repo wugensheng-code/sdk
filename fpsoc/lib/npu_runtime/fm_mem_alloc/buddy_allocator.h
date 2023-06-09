@@ -4,10 +4,10 @@
 struct buddy;
 
 struct buddy * buddy_new(int level) ;
-void buddy_delete(struct buddy *);
-int buddy_alloc(struct buddy * self, uint32_t s);
-void buddy_free(struct buddy *, int offset);
+AL_VOID buddy_delete(struct buddy *);
+int buddy_alloc(struct buddy * self, AL_U32 s);
+AL_VOID buddy_free(struct buddy *, int offset);
 int buddy_size(struct buddy *, int offset);
-void buddy_dump(struct buddy *);
+AL_VOID buddy_dump(struct buddy *);
 
 #endif
