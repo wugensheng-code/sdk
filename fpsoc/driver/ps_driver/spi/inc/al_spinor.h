@@ -5,6 +5,9 @@
 extern "C" {
 #endif
 
+#ifndef BIT
+#define BIT(nr)		(1UL << (nr))
+#endif
 
 /* Flash opcodes. */
 #define NOR_OP_WRDI		0x04	/* Write disable */

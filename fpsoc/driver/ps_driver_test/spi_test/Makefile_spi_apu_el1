@@ -1,11 +1,13 @@
 TARGET = fpsoc_spi_el1
 
-SDK_ROOT = ../../../..
+SDK_ROOT = ../../../../
 
 SRCDIRS = .
 
-INCDIRS = .
+INCDIRS = ../../ps_driver/uart/inc
 
 COMMON_FLAGS := -O2
+#COMMON_FLAGS += -DSPI_TX_DEBUG
 
 include $(SDK_ROOT)/tools/make/Makefile.base
+

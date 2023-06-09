@@ -1,4 +1,4 @@
-TARGET = AL9000_mpu
+TARGET = AL9000_spi
 
 SDK_ROOT = ../../../..
 

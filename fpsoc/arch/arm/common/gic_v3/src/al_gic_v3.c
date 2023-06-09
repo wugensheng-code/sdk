@@ -12,7 +12,7 @@ AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Fun
 
     Attr = (IntrAttr != AL_NULL) ? IntrAttr : &DefAttr;
 
-    if (Attr->TrigMode == 0) {
+    if (Attr->TrigMode != 0) {
         uint32_t *addr  = GICD_ICFGR + ((IntrId) / 16) * 4;
         uint32_t mask   = *(uint32_t *)addr;
         uint32_t offset = (((IntrId) % 16) << 1);

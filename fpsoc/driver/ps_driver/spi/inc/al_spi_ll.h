@@ -6,79 +6,8 @@ extern "C" {
 #endif
 
 #include "al_spi_hw.h"
-#include "al_reg_io.h"
 #include "stdio.h"
-
-/*
- * ffs: find first bit set. This is defined the same way as
- * the libc and compiler builtin ffs routines, therefore
- * differs in spirit from the above ffz (man ffs).
- */
-
-static inline int generic_fls(AL_U32 x)
-{
-	int r = 1;
-
-	if (!x)
-		return 0;
-	if (!(x & 0xffff)) {
-		x >>= 16;
-		r += 16;
-	}
-	if (!(x & 0xff)) {
-		x >>= 8;
-		r += 8;
-	}
-	if (!(x & 0xf)) {
-		x >>= 4;
-		r += 4;
-	}
-	if (!(x & 3)) {
-		x >>= 2;
-		r += 2;
-	}
-	if (!(x & 1)) {
-		x >>= 1;
-		r += 1;
-	}
-	return r;
-}
-
-/**
- * fls - find last (most-significant) bit set
- * @x: the word to search
- *
- * This is defined the same way as ffs.
- * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
- */
-static inline int GenericFfs(int x)
-{
-	int r = 32;
-
-	if (!x)
-		return 0;
-	if (!(x & 0xffff0000u)) {
-		x <<= 16;
-		r -= 16;
-	}
-	if (!(x & 0xff000000u)) {
-		x <<= 8;
-		r -= 8;
-	}
-	if (!(x & 0xf0000000u)) {
-		x <<= 4;
-		r -= 4;
-	}
-	if (!(x & 0xc0000000u)) {
-		x <<= 2;
-		r -= 2;
-	}
-	if (!(x & 0x80000000u)) {
-		x <<= 1;
-		r -= 1;
-	}
-	return r;
-}
+#include "al_core.h"
 
 typedef enum
 {
@@ -156,6 +85,15 @@ typedef enum
     SPI_SER_SS2_EN      = (1 << 2)
 } AL_SPI_SlvSelEnum;
 
+/**
+ * @brief  Run mode enum
+ */
+typedef enum
+{
+    AL_SPI_RUN_INTR,
+    AL_SPI_RUN_DMA
+} AL_SPI_RunModeEnum;
+
 typedef enum
 {
     SPI_SR_TXFIFO_NOTEMPTY   = 0,    
@@ -205,7 +143,6 @@ typedef struct
  */
 typedef struct
 {
-    // AL_U32                  DevID;
     AL_SPI_Mode             Mode;
     AL_SPI_TransferMode     TransMode;
     AL_SPI_ProtFormat       ProtFormat;
@@ -223,17 +160,17 @@ typedef enum
     RXUIS           = 0x4,      /* Receive FIFO Underflow Interrupt Status */
     RXOIS           = 0x8,      /* Receive FIFO Overflow Interrupt Status */
     RXFIS           = 0x10,     /* Receive FIFO Full Interrupt Status */
-} AL_SPI_InterruptEnum;
+} AL_SPI_IntrStatusEnum;
 
 typedef enum
 {
-    SPI_MASK_TXEIM    = (1 << SPI_IMR_MST_TXEIM_SHIFT),   /* Transmit FIFO Empty Interrupt */
-    SPI_MASK_TXOIM    = (1 << SPI_IMR_MST_TXOIM_SHIFT),   /* Transmit FIFO Overflow Interrupt  */
-    SPI_MASK_RXUIM    = (1 << SPI_IMR_MST_RXUIM_SHIFT),   /* Receive FIFO Underflow Interrupt */
-    SPI_MASK_RXOIM    = (1 << SPI_IMR_MST_RXOIM_SHIFT),   /* Receive FIFO Overflow Interrupt */
-    SPI_MASK_RXFIM    = (1 << SPI_IMR_MST_RXFIM_SHIFT),   /* Receive FIFO Full Interrupt */
-    SPI_MASK_MSTIM    = (1 << SPI_IMR_MST_MSTIM_SHIFT)    /* Multi-Master Contention Interrupt */
-} AL_SPI_IntrShiftEnum;
+    SPI_TXEIM    = 1 << 0,   /* Transmit FIFO Empty Interrupt */
+    SPI_TXOIM    = 1 << 1,   /* Transmit FIFO Overflow Interrupt  */
+    SPI_RXUIM    = 1 << 2,   /* Receive FIFO Underflow Interrupt */
+    SPI_RXOIM    = 1 << 3,   /* Receive FIFO Overflow Interrupt */
+    SPI_RXFIM    = 1 << 4,   /* Receive FIFO Full Interrupt */
+    SPI_MSTIM    = 1 << 5    /* Multi-Master Contention Interrupt */
+} AL_SPI_IntrTypeEnum;
 
 
 /**  
@@ -279,12 +216,12 @@ static inline AL_VOID AlSpi_ll_Enable(AL_REG SpiBaseAddr)
  * @param   SpiBaseAddr is the spi base addr
  * @param   SpiTransfMode is spi transfer mode
  * @return  AL_VOID 
- * @note    none GenericFfs(SPI_CTRLR0_MST_TMOD_MASK >> SPI_CTRLR0_MST_TMOD_SHIFT)
+ * @note    None
  */ 
 static inline AL_VOID AlSpi_ll_SetTransfMode(AL_REG SpiBaseAddr, AL_SPI_TransferMode SpiTransfMode)
 {
 	AL_REG32_SET_BITS(SpiBaseAddr + SPI_CTRLR0_MST_OFFSET, SPI_CTRLR0_MST_TMOD_SHIFT, 
-             GenericFfs(SPI_CTRLR0_MST_TMOD_MASK >> SPI_CTRLR0_MST_TMOD_SHIFT), SpiTransfMode);
+             SPI_CTRLR0_MST_TMOD_SIZE, SpiTransfMode);
 }
 
 /**  
@@ -297,7 +234,7 @@ static inline AL_VOID AlSpi_ll_SetTransfMode(AL_REG SpiBaseAddr, AL_SPI_Transfer
 static inline AL_VOID AlSpi_ll_SetProtFormat(AL_REG SpiBaseAddr, AL_SPI_ProtFormat SpiProtFormat)
 {
     AL_REG32_SET_BITS(SpiBaseAddr + SPI_CTRLR0_MST_OFFSET, SPI_CTRLR0_MST_FRF_SHIFT, 
-             GenericFfs(SPI_CTRLR0_MST_FRF_MASK >> SPI_CTRLR0_MST_FRF_SHIFT), SpiProtFormat);
+             SPI_CTRLR0_MST_FRF_SIZE, SpiProtFormat);
 }
 
 /**  
@@ -310,7 +247,7 @@ static inline AL_VOID AlSpi_ll_SetProtFormat(AL_REG SpiBaseAddr, AL_SPI_ProtForm
 static inline AL_VOID AlSpi_ll_SetCpolAndCpha(AL_REG SpiBaseAddr, AL_SPI_ClockEnum SpiClockEnum)
 {
     AL_REG32_SET_BITS(SpiBaseAddr + SPI_CTRLR0_MST_OFFSET, SPI_CTRLR0_MST_SCPH_SHIFT, 
-             GenericFfs((SPI_CTRLR0_MST_SCPH_MASK + SPI_CTRLR0_MST_SCPOL_MASK) >> SPI_CTRLR0_MST_SCPH_SHIFT), SpiClockEnum);
+             SPI_CTRLR0_MST_SCPH_SIZE, SpiClockEnum);
 }
 
 /**  
@@ -323,7 +260,19 @@ static inline AL_VOID AlSpi_ll_SetCpolAndCpha(AL_REG SpiBaseAddr, AL_SPI_ClockEn
 static inline AL_VOID AlSpi_ll_SetDataFrameSize(AL_REG SpiBaseAddr, AL_SPI_DataFrameSize SpiDataFrameSize)
 {
     AL_REG32_SET_BITS(SpiBaseAddr + SPI_CTRLR0_MST_OFFSET, SPI_CTRLR0_MST_DFS_32_SHIFT, 
-             GenericFfs(SPI_CTRLR0_MST_DFS_32_MASK >> SPI_CTRLR0_MST_DFS_32_SHIFT), SpiDataFrameSize);
+             SPI_CTRLR0_MST_DFS_32_SIZE, SpiDataFrameSize);
+}
+
+static inline AL_VOID AlSpi_ll_SetEndianConver(AL_REG SpiBaseAddr)
+{
+    AL_REG32_SET_BITS(SpiBaseAddr + SPI_CTRLR0_MST_OFFSET, SPI_CTRLR0_MST_SECONV_SHIFT, 
+             SPI_CTRLR0_MST_SECONV_SIZE, 1);
+}
+
+static inline AL_VOID AlSpi_ll_DisableEndianConver(AL_REG SpiBaseAddr)
+{
+    AL_REG32_SET_BITS(SpiBaseAddr + SPI_CTRLR0_MST_OFFSET, SPI_CTRLR0_MST_SECONV_SHIFT, 
+             SPI_CTRLR0_MST_SECONV_SIZE, 0);
 }
 
 /**  
@@ -338,7 +287,7 @@ static inline AL_VOID AlSpi_ll_SetDataFrameSize(AL_REG SpiBaseAddr, AL_SPI_DataF
 static inline AL_VOID AlSpi_ll_SetClkDiv(AL_REG SpiBaseAddr, AL_U16 SpiClkDiv)
 {
     AL_REG32_SET_BITS(SpiBaseAddr + SPI_BAUDR_MST_OFFSET, SPI_BAUDR_MST_SCKDV_SHIFT, 
-             GenericFfs(SPI_BAUDR_MST_SCKDV_MASK >> SPI_BAUDR_MST_SCKDV_SHIFT), SpiClkDiv);
+             SPI_BAUDR_MST_SCKDV_SIZE, SpiClkDiv);
 }
 
 /**  
@@ -353,25 +302,22 @@ static inline AL_VOID AlSpi_ll_SetClkDiv(AL_REG SpiBaseAddr, AL_U16 SpiClkDiv)
 static inline AL_VOID AlSpi_ll_SetSlvSelToggle(AL_REG SpiBaseAddr, AL_SPI_SlvSelToggleEnum SpiSlvSelToggleEnum)
 {
     AL_REG32_SET_BITS(SpiBaseAddr + SPI_CTRLR0_MST_OFFSET, SPI_CTRLR0_MST_SSTE_SHIFT, 
-             GenericFfs(SPI_CTRLR0_MST_SSTE_MASK >> SPI_CTRLR0_MST_SSTE_SHIFT), SpiSlvSelToggleEnum);
+             SPI_CTRLR0_MST_SSTE_SIZE, SpiSlvSelToggleEnum);
 }
 
 
 /**  
- * This function set spi clock divider.
+ * This function set spi slave select.
  * @param   SpiBaseAddr is the spi base addr
- * @param   SpiClkDiv is spi clk divider
+ * @param   SpiSlvSelEnum is spi slave select
  * @return  AL_VOID 
- * @note    The LSB for this field is always set to 0 and is unaffected by a
- * write operation, which ensures an even value is held in this register.
- * For Fssi_clk = 50MHz and SCKDV =2. Fsclk_out = 50/(2 << 1) = 12.5MHz
+ * @note    none
  */ 
 static inline AL_VOID AlSpi_ll_SetSlvSel(AL_REG SpiBaseAddr, AL_SPI_SlvSelEnum SpiSlvSelEnum)
 {
     AL_REG32_SET_BITS(SpiBaseAddr + SPI_SER_MST_OFFSET, SPI_SER_MST_SER_SHIFT, 
-             GenericFfs(SPI_SER_MST_SER_MASK >> SPI_SER_MST_SER_SHIFT), SpiSlvSelEnum);
+             SPI_SER_MST_SER_SIZE, SpiSlvSelEnum);
 }
-
 
 /**  
  * This function set spi transmit FIFO threshold level.
@@ -383,7 +329,7 @@ static inline AL_VOID AlSpi_ll_SetSlvSel(AL_REG SpiBaseAddr, AL_SPI_SlvSelEnum S
 static inline AL_VOID AlSpi_ll_SetTxFifoThrLevel(AL_REG SpiBaseAddr, AL_U8 SpiTxFifoThrLevel)
 {
     AL_REG32_SET_BITS(SpiBaseAddr + SPI_TXFTLR_MST_OFFSET, SPI_TXFTLR_MST_TFT_SHIFT, 
-             GenericFfs(SPI_TXFTLR_MST_TFT_MASK >> SPI_TXFTLR_MST_TFT_SHIFT), SpiTxFifoThrLevel);
+             SPI_TXFTLR_MST_TFT_SIZE, SpiTxFifoThrLevel);
 }
 
 /**  
@@ -396,10 +342,8 @@ static inline AL_VOID AlSpi_ll_SetTxFifoThrLevel(AL_REG SpiBaseAddr, AL_U8 SpiTx
 static inline AL_VOID AlSpi_ll_SetRxFifoThrLevel(AL_REG SpiBaseAddr, AL_U8 SpiRxFifoThrLevel)
 {
     AL_REG32_SET_BITS(SpiBaseAddr + SPI_RXFTLR_MST_OFFSET, SPI_RXFTLR_MST_RFT_SHIFT, 
-             GenericFfs(SPI_RXFTLR_MST_RFT_MASK >> SPI_RXFTLR_MST_RFT_SHIFT), SpiRxFifoThrLevel);
+             SPI_RXFTLR_MST_RFT_SIZE, SpiRxFifoThrLevel);
 }
-
-
 
 static inline AL_U32 AlSpi_ll_ReadTxFifoLevel(AL_REG SpiBaseAddr)
 {
@@ -425,7 +369,7 @@ static inline AL_U32 AlSpi_ll_ReadRawIntrStatus(AL_REG SpiBaseAddr)
  */ 
 static inline AL_VOID AlSpi_ll_DataTransmit(AL_REG SpiBaseAddr, AL_U32 Data)
 {
-	AL_REG32_WRITE(SpiBaseAddr + SPI_DR0_MST_OFFSET, Data);
+    AL_REG32_WRITE(SpiBaseAddr + SPI_DR0_MST_OFFSET, Data);
 }
 
 /**  
@@ -447,8 +391,7 @@ static inline AL_U32 AlSpi_ll_DataReceive(AL_REG SpiBaseAddr)
  */ 
 static inline AL_SPI_TxFifoEmptyEnum AlSpi_ll_IsTxFifoEmpty(AL_REG SpiBaseAddr)
 {
-    return  AL_REG32_GET_BITS(SpiBaseAddr + SPI_SR_MST_OFFSET, SPI_SR_MST_TFE_SHIFT, 
-            GenericFfs(SPI_SR_MST_TFE_MASK >> SPI_SR_MST_TFE_SHIFT));
+    return  AL_REG32_GET_BITS(SpiBaseAddr + SPI_SR_MST_OFFSET, SPI_SR_MST_TFE_SHIFT, SPI_SR_MST_TFE_SIZE);
 }
 
 /**  
@@ -459,8 +402,7 @@ static inline AL_SPI_TxFifoEmptyEnum AlSpi_ll_IsTxFifoEmpty(AL_REG SpiBaseAddr)
  */ 
 static inline AL_SPI_TxFifoFullEnum AlSpi_ll_IsTxFifoFull(AL_REG SpiBaseAddr)
 {
-    return  AL_REG32_GET_BITS(SpiBaseAddr + SPI_SR_MST_OFFSET, SPI_SR_MST_TFNF_SHIFT, 
-            GenericFfs(SPI_SR_MST_TFNF_MASK >> SPI_SR_MST_TFNF_SHIFT));
+    return  AL_REG32_GET_BITS(SpiBaseAddr + SPI_SR_MST_OFFSET, SPI_SR_MST_TFNF_SHIFT, SPI_SR_MST_TFNF_SIZE);
 }
 
 /**  
@@ -471,8 +413,7 @@ static inline AL_SPI_TxFifoFullEnum AlSpi_ll_IsTxFifoFull(AL_REG SpiBaseAddr)
  */ 
 static inline AL_SPI_BusyEnum AlSpi_ll_IsBusy(AL_REG SpiBaseAddr)
 {
-    return  AL_REG32_GET_BITS(SpiBaseAddr + SPI_SR_MST_OFFSET, SPI_SR_MST_BUSY_SHIFT, 
-            GenericFfs(SPI_SR_MST_BUSY_MASK >> SPI_SR_MST_BUSY_SHIFT));
+    return  AL_REG32_GET_BITS(SpiBaseAddr + SPI_SR_MST_OFFSET, SPI_SR_MST_BUSY_SHIFT, SPI_SR_MST_BUSY_SIZE);
 }
 
 /**  
@@ -483,8 +424,7 @@ static inline AL_SPI_BusyEnum AlSpi_ll_IsBusy(AL_REG SpiBaseAddr)
  */ 
 static inline AL_SPI_RxFifoEmptyEnum AlSpi_ll_IsRxFifoEmpty(AL_REG SpiBaseAddr)
 {
-    return  AL_REG32_GET_BITS(SpiBaseAddr + SPI_SR_MST_OFFSET, SPI_SR_MST_RFNE_SHIFT, 
-            GenericFfs(SPI_SR_MST_RFNE_MASK >> SPI_SR_MST_RFNE_SHIFT));
+    return  AL_REG32_GET_BITS(SpiBaseAddr + SPI_SR_MST_OFFSET, SPI_SR_MST_RFNE_SHIFT, SPI_SR_MST_RFNE_SIZE);
 }
 
 /**  
@@ -496,44 +436,34 @@ static inline AL_SPI_RxFifoEmptyEnum AlSpi_ll_IsRxFifoEmpty(AL_REG SpiBaseAddr)
  */ 
 static inline AL_SPI_RxFifoFullEnum AlSpi_ll_IsRxFifoFull(AL_REG SpiBaseAddr)
 {
-    return  AL_REG32_GET_BITS(SpiBaseAddr + SPI_SR_MST_OFFSET, SPI_SR_MST_RFF_SHIFT, 
-            GenericFfs(SPI_SR_MST_RFF_MASK >> SPI_SR_MST_RFF_SHIFT));
+    return  AL_REG32_GET_BITS(SpiBaseAddr + SPI_SR_MST_OFFSET, SPI_SR_MST_RFF_SHIFT, SPI_SR_MST_RFF_SIZE);
 }
-
 
 static inline AL_VOID AlSpi_ll_SetRecvNumOfDataFrames(AL_REG SpiBaseAddr, AL_U16 SpiRecvDataFramesNum)
 {
      AL_REG32_SET_BITS(SpiBaseAddr + SPI_CTRLR1_MST_OFFSET, SPI_CTRLR1_MST_NDF_SHIFT, 
-             GenericFfs(SPI_CTRLR1_MST_NDF_MASK >> SPI_CTRLR1_MST_NDF_SHIFT), SpiRecvDataFramesNum);
+                     SPI_CTRLR1_MST_NDF_SIZE, SpiRecvDataFramesNum);
 }
-
 
 static inline AL_VOID AlSpi_ll_MaskAllIntr(AL_REG SpiBaseAddr)
 {
-     AL_REG32_WRITE(SpiBaseAddr + SPI_IMR_MST_OFFSET,  SPI_IMR_MST_RESERVED_31_6_MASK);
+    AL_REG32_WRITE(SpiBaseAddr + SPI_IMR_MST_OFFSET,  0);
 }
 
- 
-static inline AL_VOID AlSpi_ll_MaskIntr(AL_REG SpiBaseAddr, AL_SPI_IntrShiftEnum SpiMaskIntr)
+static inline AL_VOID AlSpi_ll_MaskIntr(AL_REG SpiBaseAddr, AL_SPI_IntrTypeEnum SpiMaskIntr)
 {
-      AL_REG32_SET_BITS(SpiBaseAddr + SPI_IMR_MST_OFFSET, GenericFfs(SpiMaskIntr)-1, 
-             1, 0);
+    AL_REG32_WRITE(SpiBaseAddr + SPI_IMR_MST_OFFSET, AL_REG32_READ(SpiBaseAddr + SPI_IMR_MST_OFFSET) & (~SpiMaskIntr));
 }
 
-
-static inline AL_VOID AlSpi_ll_EnableIntr(AL_REG SpiBaseAddr, AL_SPI_IntrShiftEnum SpiEnableIntr)
+static inline AL_VOID AlSpi_ll_EnableIntr(AL_REG SpiBaseAddr, AL_SPI_IntrTypeEnum SpiEnableIntr)
 {
-     AL_REG32_SET_BITS(SpiBaseAddr + SPI_IMR_MST_OFFSET, GenericFfs(SpiEnableIntr)-1, 
-             1, 1);
+    AL_REG32_WRITE(SpiBaseAddr + SPI_IMR_MST_OFFSET, AL_REG32_READ(SpiBaseAddr + SPI_IMR_MST_OFFSET) | SpiEnableIntr);
 }
-
 
 static inline AL_U32 AlSpi_ll_GetIntrStatus(AL_REG SpiBaseAddr)
 {
     return AL_REG32_READ(SpiBaseAddr + SPI_ISR_MST_OFFSET);
 }
-
-
 
 static inline AL_VOID AlSpi_ll_ClearAllIntr(AL_REG BaseAddr)
 {
@@ -555,7 +485,30 @@ static inline AL_VOID AlSpi_ll_ClearTxoicrIntr(AL_REG BaseAddr)
     AL_REG32_READ(BaseAddr + SPI_TXOICR_MST_OFFSET);
 }
 
+static inline AL_VOID AlSpi_ll_TxDmaEnable(AL_REG BaseAddr)
+{
+    AL_REG32_SET_BIT(BaseAddr + SPI_DMACR_MST_OFFSET, SPI_DMACR_MST_RDMAE_SHIFT, AL_FUNC_ENABLE);
+}
 
+static inline AL_VOID AlSpi_ll_RxDmaEnable(AL_REG BaseAddr)
+{
+    AL_REG32_SET_BIT(BaseAddr + SPI_DMACR_MST_OFFSET, SPI_DMACR_MST_RDMAE_SHIFT, AL_FUNC_ENABLE);
+}
+
+static inline AL_VOID AlSpi_ll_DmaDisable(AL_REG BaseAddr)
+{
+    AL_REG32_WRITE(BaseAddr + SPI_DMACR_MST_OFFSET, AL_FUNC_DISABLE);
+}
+
+static inline AL_VOID AlSpi_ll_SetDmaTransLevel(AL_REG BaseAddr, AL_U8 Level)
+{
+    AL_REG32_WRITE(BaseAddr + SPI_DMATDLR_MST_OFFSET, Level);
+}
+
+static inline AL_VOID AlSpi_ll_SetDmaRecevLevel(AL_REG BaseAddr, AL_U8 Level)
+{
+    AL_REG32_WRITE(BaseAddr + SPI_DMARDLR_MST_OFFSET, Level);
+}
 
 #ifdef __cplusplus
 }

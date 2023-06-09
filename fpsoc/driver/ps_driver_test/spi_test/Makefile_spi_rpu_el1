@@ -1,11 +1,11 @@
 TARGET = fpsoc_spi_el1
 
-SDK_ROOT = ../../../..
+NUCLEI_SDK_ROOT = ../../../..
 
 SRCDIRS = .
 
-INCDIRS = .
+INCDIRS = ../../ps_driver/spi/inc
 
 COMMON_FLAGS := -O2
 
-include $(SDK_ROOT)/tools/make/Makefile.base
+include $(NUCLEI_SDK_ROOT)/tools/make/Makefile.base
