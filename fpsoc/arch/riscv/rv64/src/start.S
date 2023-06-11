@@ -216,3 +216,4 @@ _start:
 .weak board_init
 board_init:
     NOP
+    ret

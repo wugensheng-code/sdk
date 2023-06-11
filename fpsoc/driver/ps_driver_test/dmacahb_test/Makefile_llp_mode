@@ -6,10 +6,10 @@ SRCDIRS = .
 
 INCDIRS = .
 
-COMMON_FLAGS := -O2 -DDMACAHB_DEBUG -DCONFIG_LLP_MODE_TEST=1 -Wno-int-to-pointer-cast
+CFLAGS := -O2 -DDMACAHB_DEBUG -DCONFIG_LLP_MODE_TEST=1 -Wno-int-to-pointer-cast
 
 # ARM jump from secure to non-secure
-# COMMON_FLAGS += -DSUPPORT_NONSECURE
+# CFLAGS += -DSUPPORT_NONSECURE
 
 
 include $(SDK_ROOT)/tools/make/Makefile.base

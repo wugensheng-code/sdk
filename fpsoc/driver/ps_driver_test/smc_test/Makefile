@@ -7,7 +7,7 @@ COMPILE_PREFIX ?= /opt/toolchain/7.5.0/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-e
 else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
-#COMMON_FLAGS += -DSPI_DEBUG
+#CFLAGS += -DSPI_DEBUG
 
 all:
 	echo COMPILE_PREFIX = $(COMPILE_PREFIX)

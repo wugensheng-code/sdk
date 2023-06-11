@@ -24,9 +24,9 @@ BOARD_NAME ?= board_dr1x90_emulation
 #    ASM_SRCS: asm sources for application
 #########################################################################
 SRC_DIR  = ./
-INC_DIR  = . \
-           $(SDK_ROOT)/fpsoc/lib/npu_runtime/jpu_driver \
-           $(SDK_ROOT)/fpsoc/lib/npu_runtime/elog/inc
+INC_DIR +=  $(SDK_ROOT)/3rdparty/lib/FATFS/lagecy/include \
+            $(SDK_ROOT)/3rdparty/lib/FATFS/lagecy/qspi \
+            $(SDK_ROOT)/3rdparty/lib/FATFS/lagecy/sd_emmc
 
 LD_LIBS  =
 LIB_DIR  =
@@ -38,7 +38,11 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O2 -g
+CFLAGS := -O2 -Wno-int-to-pointer-cast -DMMC_COMPILE_FOR_EMU
+
+# ARM jump from secure to non-secure
+# CFLAGS += -DSUPPORT_NONSECURE
+
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
@@ -60,9 +64,8 @@ PINMUX_MODE ?= PINMUX_MODE1
 #########################################################################
 # 5. define build target, using ddr address
 #########################################################################
-TARGET := npu_runtime_test
+TARGET := fpsoc_fatfs_demo_read_write
 DOWNLOAD = ddr
-
 
 all: $(TARGET)
 	@$(ECHO) COMPILE_PREFIX = $(COMPILE_PREFIX)

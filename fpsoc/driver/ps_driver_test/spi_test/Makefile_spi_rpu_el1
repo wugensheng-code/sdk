@@ -6,6 +6,6 @@ SRCDIRS = .
 
 INCDIRS = ../../ps_driver/spi/inc
 
-COMMON_FLAGS := -O2
+CFLAGS := -O2
 
 include $(NUCLEI_SDK_ROOT)/tools/make/Makefile.base

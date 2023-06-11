@@ -6,6 +6,6 @@ SRCDIRS = .
 
 INCDIRS = ../../ps_driver/gpio/inc
 
-COMMON_FLAGS := -O2
+CFLAGS := -O2
 
 include $(SDK_ROOT)/tools/make/Makefile.base

@@ -22,7 +22,7 @@ AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Fun
     }
 
 #ifndef SWITCH_TO_EL1_EL0_FROM_EL3
-    request_fiq(IntrId + SPI_ID_OFFSET_APU_TO_RPU, Func, Param);
+    request_fiq(IntrId, Func, Param);
     printf("currentel is el3, request fiq!\r\n");
 #else
     request_irq(IntrId, Func, Param);

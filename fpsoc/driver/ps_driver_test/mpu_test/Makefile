@@ -13,7 +13,7 @@ SRCDIRS = .
 
 INCDIRS = .
 
-COMMON_FLAGS := -O0 -g3
+CFLAGS := -O0 -g3
 
 include $(SDK_ROOT)/tools/make/Makefile.base
 
@@ -24,14 +24,14 @@ COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
 ifeq ($(SECURE), 1)
-COMMON_FLAGS +=
+CFLAGS +=
 else
-COMMON_FLAGS += -DSUPPORT_NONSECURE
+CFLAGS += -DSUPPORT_NONSECURE
 
 # For APU privilege test, disable by default
-#COMMON_FLAGS += -DAPU_MPU_PRIVILEGE_TEST
-#COMMON_FLAGS += -DSWITCH_TO_EL0_FROM_EL3
-#COMMON_FLAGS += -DENABLE_APU_ABORT_AT_ERET
+#CFLAGS += -DAPU_MPU_PRIVILEGE_TEST
+#CFLAGS += -DSWITCH_TO_EL0_FROM_EL3
+#CFLAGS += -DENABLE_APU_ABORT_AT_ERET
 
 endif
 

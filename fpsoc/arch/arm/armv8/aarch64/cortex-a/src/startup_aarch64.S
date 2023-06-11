@@ -213,3 +213,8 @@ main_entry:
 	/* hang */
 	b .
 
+.global board_init
+.weak board_init
+board_init:
+    NOP
+    ret

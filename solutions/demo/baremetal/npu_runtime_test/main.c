@@ -3,11 +3,11 @@
 #include "al_reg_io.h"
 #include "npu_c_api.h"
 #include "jpu_oneshot_api.h"
+#include "al_intr.h"
 
 #define RUN_PLATFORM_BM
 
 #ifdef RUN_PLATFORM_BM
-#include "gic_v3.h"
 #include "ff.h"
 #endif
 
@@ -41,7 +41,7 @@ int main () {
 
     /* ---------------2. init interrupt ---------------------------------------------- */
 #ifdef RUN_PLATFORM_BM
-   irq_enable();
+   AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 #endif
 
     /* ---------------3. run npu runtime graph for once ------------------------------ */
@@ -57,7 +57,6 @@ int main () {
     elog_set_fmt(ELOG_LVL_VERBOSE, ELOG_FMT_LVL | ELOG_FMT_TAG);
 
     // elog_set_filter_lvl(ELOG_LVL_WARN);
-    
     elog_start();
     elog_set_filter_lvl(ELOG_LVL_INFO);
 
@@ -72,7 +71,6 @@ int main () {
         log_e("fail to init npu interrupt\n");
         return -1;
     }
-    
     graph_t* graph = load_model ("npu_demo/rt.bin", "npu_demo/weight.bin") ;
     if (NULL == graph) {
         log_e("load_model failed\n");
@@ -84,7 +82,7 @@ int main () {
     void* addr = 0 ;
     uint32_t length = 0 ;
 
-    // for (int i = 0; i < 1; i++) { 
+    // for (int i = 0; i < 1; i++) {
 
     if (obtain_input_tensor_addr(graph, &addr, &length)) {
         printf ("fail to get the info of input tensor\n");
@@ -180,7 +178,7 @@ int main () {
                 log_e("unsupported yuv format: %d\n", decPicInfo.subsample);
                 destroy_graph(graph);
                 return -1;
-            } 
+            }
         }
 
         log_i("start run yuv2rgb\n");

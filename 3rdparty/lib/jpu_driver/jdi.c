@@ -1,13 +1,13 @@
 //-----------------------------------------------------------------------------
 // COPYRIGHT (C) 2020   CHIPS&MEDIA INC. ALL RIGHTS RESERVED
-// 
+//
 // This file is distributed under BSD 3 clause and LGPL2.1 (dual license)
 // SPDX License Identifier: BSD-3-Clause
 // SPDX License Identifier: LGPL-2.1-only
-// 
+//
 // The entire notice above must be reproduced on all authorized copies.
-// 
-// Description  : 
+//
+// Description  :
 //-----------------------------------------------------------------------------
 #if defined(_WIN32) || defined(__WIN32__) || defined(_WIN64) || defined(WIN32) || defined(__MINGW32__)
 #elif defined(linux) || defined(__linux) || defined(ANDROID)
@@ -15,11 +15,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "io.h"
+#include "al_core.h"
 #include "jdi.h"
 #include "jpulog.h"
 #include "regdefine.h"
 
+#define  readl(addr)  AL_REG32_READ(addr)
+#define  writel(val,addr)  AL_REG32_WRITE(addr, val)
 
 #define JPU_BIT_REG_SIZE		0x300
 // #define JPU_BIT_REG_BASE		(0x10000000 + 0x3000)	// ???
@@ -135,7 +137,6 @@ ERR_JDI_INIT:
 
 int jdi_release()
 {
-
 	if (s_jpu_fd == -1 || s_jpu_fd == 0x00)
 		return 0;
 
@@ -162,7 +163,6 @@ int jdi_release()
 	s_pjip = NULL;
 
 	jdi_unlock();
-
 
 	return 0;
 }
@@ -239,11 +239,6 @@ void jdi_write_register(unsigned long addr, unsigned int data)
 		return;
 
 	reg_addr = (unsigned long *)(addr + (unsigned long)s_jdb_register.virt_addr);
-
-	// JLOG(TRACE, "jdi_write_reg 0x%x: 0x%x\n", reg_addr, data);
-	// *(volatile unsigned long *)reg_addr = data;
-
-	// writel_relaxed(data, reg_addr);
 	writel(data, reg_addr);
 }
 
@@ -253,10 +248,10 @@ unsigned long jdi_read_register(unsigned long addr)
 	unsigned long data;
 
 	reg_addr = (unsigned long *)(addr + (unsigned long)s_jdb_register.virt_addr);
-	
+
 	// data = *(volatile unsigned long *)reg_addr;	// 这么写可能会进exception, 也许是读写顺序的关系? memory barrier
 	data = readl(reg_addr);
-	
+
 	// JLOG(TRACE, "jdi_read_reg 0x%x: 0x%x\n", reg_addr, data);
 	return data;
 }

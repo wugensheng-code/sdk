@@ -9,6 +9,7 @@
 #include "npu_util.h"
 #include "npu_defines.h"
 #include "file_ops.h"
+#include "al_core.h"
 
 
 #define LOG_TAG "NPU_UTIL"
@@ -44,11 +45,5 @@ char* strdup(const char* src) {
 }
 
 unsigned long get_sys_counter_val(AL_VOID) {
-    unsigned int sys_cnt_val;
-	asm volatile(
-		"mrs %0, cntpct_el0"
-		: "=r" (sys_cnt_val)
-		:
-		: "memory");
-	return sys_cnt_val;
+    return AlSys_GetTimer();
 }

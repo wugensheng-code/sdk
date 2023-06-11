@@ -13,6 +13,3 @@ void board_init()
     Enablepinmux1_mode2();
 #endif
 }
-
-
-

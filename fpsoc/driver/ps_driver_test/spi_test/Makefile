@@ -12,7 +12,7 @@ COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 CORE = ux600fd
 DOWNLOAD = ilm
 endif
-# COMMON_FLAGS += -DSPI_DEBUG
+CFLAGS += -DSPI_DEBUG
 
 all:
 	echo COMPILE_PREFIX = $(COMPILE_PREFIX)

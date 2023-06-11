@@ -6,6 +6,6 @@ SRCDIRS = .
 
 INCDIRS = ../../ps_driver/uart/inc
 
-COMMON_FLAGS := -O2 -DCONFIG_AlUart_Recv_Send_Block_Loop_Back_TEST=1
+CFLAGS := -O2 -DCONFIG_AlUart_Recv_Send_Block_Loop_Back_TEST=1
 
 include $(SDK_ROOT)/tools/make/Makefile.base

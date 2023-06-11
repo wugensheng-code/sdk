@@ -1,0 +1,261 @@
+
+include $(SDK_ROOT)/tools/make/config.mk
+
+CC      = ${Q}$(COMPILE_PREFIX)gcc
+CXX     = ${Q}$(COMPILE_PREFIX)g++
+AR      = ${Q}$(COMPILE_PREFIX)ar
+LD      = ${Q}$(COMPILE_PREFIX)ld
+OBJCOPY = ${Q}$(COMPILE_PREFIX)objcopy
+OBJDUMP = ${Q}$(COMPILE_PREFIX)objdump
+NM      = ${Q}$(COMPILE_PREFIX)nm
+AS      = ${Q}$(COMPILE_PREFIX)as
+GDB     = ${Q}$(COMPILE_PREFIX)gdb
+SIZE    = ${Q}$(COMPILE_PREFIX)size
+ECHO    = echo
+MAKE    = make
+
+ARFLAGS = -cr
+
+#########################################################################
+ifeq ($(CHIP),dr1v90)
+CORE            := riscv
+CHIP_ARCH       := rv64imafdc
+ARCH_ABI        := lp64d
+ARCH_EXT        := ext-nuclei
+else ifeq ($(CHIP),dr1m90)
+CORE            := arm
+CHIP_ARCH       := armv8-a
+MTUNE           := cortex-a35
+endif
+
+export CHIP_ARCH
+export ARCH_EXT
+
+#########################################################################
+BSP_PATH = $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/*/Makefile))
+export BSP_PATH
+
+ifeq ($(DOWNLOAD),ocm)
+LINKER_SCRIPT ?= $(BSP_PATH)/chip/$(CHIP)/lds/gcc_$(CHIP)_ocm.ld
+else ifeq ($(DOWNLOAD),ddr)
+LINKER_SCRIPT ?= $(BSP_PATH)/chip/$(CHIP)/lds/gcc_$(CHIP)_ddr.ld
+endif
+
+
+#########################################################################
+# gcc arm option:   https://gcc.gnu.org/onlinedocs/gcc/ARM-Options.html
+# gcc riscv option: https://gcc.gnu.org/onlinedocs/gcc/RISC-V-Options.html
+#
+
+ifeq ($(CORE), arm)
+AL_CFLAGS   += -mtune=cortex-a35 -march=$(CHIP_ARCH) -fno-builtin \
+               $(GC_CFLAGS) -fno-common -DDOWNLOAD_MODE=$(DOWNLOAD)
+else ifeq ($(CORE), riscv)
+AL_CFLAGS   += -march=$(CHIP_ARCH) -mabi=$(ARCH_ABI) -mcmodel=medany \
+               $(GC_CFLAGS) -fno-common -DDOWNLOAD_MODE=$(DOWNLOAD)
+
+ifeq ($(NEWLIB),nano)
+NEWLIB_LDFLAGS = --specs=nano.specs
+endif
+
+endif
+
+MKDEP_OPT      = -MMD -MT $@ -MF $@.d
+
+#########################################################################
+# all public inc
+PUBLIC_INC_PATH :=  $(BSP_PATH)/inc \
+               $(BSP_PATH)/chip/$(CHIP)/inc \
+               $(wildcard $(BSP_PATH)/driver/pl_driver/*/inc) \
+               $(wildcard $(BSP_PATH)/driver/ps_driver/*/inc) \
+               $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/lib/*/Makefile)) \
+			   $(wildcard $(BSP_PATH)/lib/*/inc) \
+               $(wildcard $(BSP_PATH)/lib/*/api/inc) \
+
+PUBLIC_INC  :=  $(foreach subdir,$(sort $(PUBLIC_INC_PATH)), -I$(subdir))
+
+## module inc
+MODULE_INC  :=  $(foreach subdir,$(sort $(INC_DIR)), -I$(subdir))
+
+#########################################################################
+
+ifeq ($(CORE),arm)
+CFLAGS += -mstrict-align -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35
+endif
+
+AL_CFLAGS   += $(CFLAGS) $(PUBLIC_INC) $(MODULE_INC) $(MKDEP_OPT)
+AL_CXXFLAGS += $(CFLAGS) $(PUBLIC_INC) $(MODULE_INC) $(MKDEP_OPT)
+AL_ASMFLAGS += $(CFLAGS) $(PUBLIC_INC) $(MODULE_INC) $(MKDEP_OPT)
+
+
+#########################################################################
+# ldflags
+ifneq ($(NOGC),1)
+GC_LDFLAGS += -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--check-sections
+else
+GC_LDFLAGS += -flto
+endif
+
+ifeq ($(PFLOAT),1)
+NEWLIB_LDFLAGS += -u _printf_float
+endif
+
+LIB_OPT  = $(addprefix -L, $(sort $(LIB_DIR)))
+LDFLAGS += -T$(LINKER_SCRIPT) -Wl,--start-group $(ld_libs) -Wl,--end-group -L$(LIB_OUTPUT_DIR)/ \
+           $(LIB_OPT) -nostartfiles -Wl,-M,-Map=$(TARGET).map \
+           $(GC_LDFLAGS) $(NEWLIB_LDFLAGS) --specs=nosys.specs -Wl,--build-id=none \
+           -u _isatty -u _write -u _sbrk -u _read -u _close -u _fstat -u _lseek -u memset -u memcpy
+
+#########################################################################
+# source
+
+C_SRCS     += $(foreach subdir, $(SRC_DIR), $(wildcard $(subdir)/*.c $(subdir)/*.C))
+CXX_SRCS   += $(foreach subdir, $(SRC_DIR), $(wildcard $(subdir)/*.cpp $(subdir)/*.CPP))
+ASM_SRCS   += $(foreach subdir, $(SRC_DIR), $(wildcard $(subdir)/*.s $(subdir)/*.S))
+
+C_OBJS     := $(C_SRCS:=.o)
+ASM_OBJS   := $(ASM_SRCS:=.o)
+
+CXX_OBJS   := $(CXX_SRCS:=.o)
+
+ALL_OBJS   =  $(ASM_OBJS) $(C_OBJS) $(CXX_OBJS)
+ALL_DEPS   := $(ALL_OBJS:=.d)
+
+CLEAN_OBJS += $(TARGET).elf $(TARGET).map $(TARGET).bin $(TARGET).dump $(TARGET).dasm \
+              $(TARGET).hex $(TARGET).verilog $(ALL_OBJS) $(ALL_DEPS)
+
+REAL_CLEAN_OBJS = $(subst /,$(PS), $(CLEAN_OBJS))
+
+#########################################################################
+# target: build elf, or build libs
+#
+ifneq ($(TARGET),)
+
+TARGET_ELF = $(TARGET).elf
+$(TARGET): $(TARGET_ELF)
+
+endif
+
+# Default goal, placed before dependency includes
+all: info $(TARGET_ELF)
+#########################################################################
+
+# include dependency files of application
+ifneq ($(MAKECMDGOALS),clean)
+-include $(ALL_DEPS)
+endif
+
+.PHONY: all info help clean
+
+info:
+	@$(ECHO) CHIP=$(CHIP) CORE=$(CORE) BOARD=$(BOARD) V=$(V) RTOS=$(RTOS) PFLOAT=$(PFLOAT) NOGC:$(NOGC) DOWNLOAD: $(DOWNLOAD)
+
+help:
+	@$(ECHO) "Anlogic FPSoc Software Development Kit "
+	@$(ECHO) "== Make variables used in FPSoc SDK =="
+	@$(ECHO) "SOC:         Select SoC built in FPSoc SDK, will select board_dr1x90_emulation by default"
+	@$(ECHO) "BOARD:       Select SoC's Board built in FPSoc SDK, will select nuclei_fpga_eval by default"
+	@$(ECHO) "DOWNLOAD:    Select SoC's download mode, use ocm by default, optional ocm/ddr"
+	@$(ECHO) "V:           V=1 verbose make, will print more information, by default V=0"
+	@$(ECHO) "== Example Usage =="
+	@$(ECHO) "1. cd $SDK_ROOT/solutions/demo/baremetal/helloworld make DOWNLOAD=ocm"
+
+#########################################################################
+$(ASM_OBJS): %.o: % $(COMMON_PREREQS)
+	$(ECHO) "Compling: " $(notdir $@)
+	$(CC) $(AL_ASMFLAGS) -c -o $@ $<
+
+#########################################################################
+$(C_OBJS): %.o: % $(COMMON_PREREQS)
+	$(ECHO) "Compling: " $(notdir $@)
+	$(CC) $(AL_CFLAGS) -c -o $@ $<
+
+#########################################################################
+$(CXX_OBJS): %.o: % $(COMMON_PREREQS)
+	$(ECHO) "Compling: " $(notdir $@)
+	$(CC) $(CXXFLAGS) -c -o $@ $<
+
+
+#########################################################################
+#### if target is elf
+####
+
+ifeq ($(RTOS), freertos)
+	filterout_lib = %libfreertos.a
+else ifeq ($(RTOS), rtthread)
+	filterout_lib = %librtthread.a
+else
+	filterout_lib = %libfreertos.a %librtthread.a
+endif
+
+
+$(TARGET_ELF): bsp make_all_libs $(ALL_OBJS)
+	$(eval ld_libs := $(patsubst lib%.a,-l%,$(filter-out $(filterout_lib), $(notdir $(wildcard $(LIB_OUTPUT_DIR)/*.a)))) $(LD_LIBS) -lgcc -lc -lm )
+	$(CC) $(ALL_OBJS) -o $@ $(AL_CFLAGS) $(LDFLAGS)
+	$(OBJCOPY) $@ -O binary $(TARGET).bin
+	$(SIZE) $@
+
+
+########################################################################
+# get bsp library path: bps folder name is different between
+# sdk workspace and embedded workspace
+
+.PHONY: bsp
+bsp:
+ifneq ($(BSP_PATH),)
+	@$(MAKE) -C $(BSP_PATH) lib
+endif
+
+.PHONY: bsp_clean
+bsp_clean:
+ifneq ($(BSP_PATH),)
+	@$(MAKE) -C $(BSP_PATH) lib.do.clean
+endif
+
+
+#########################################################################
+# 3rdparty, libnpuruntime may not include in sdk workspace
+#########################################################################
+LIBS_PATH = $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/lib/*/Makefile $(BSP_PATH)/lib/*/Makefile))
+
+.PHONY: make_all_libs
+make_all_libs: $(addsuffix /make.lib, $(LIBS_PATH))
+
+.PHONY:
+%/make.lib:
+	$(MAKE) -C $(patsubst %/make.lib,%,$@) lib
+
+.PHONY: all_libs_clean
+all_libs_clean: $(addsuffix /make.clean, $(LIBS_PATH))
+
+.PHONY:
+%/make.clean:
+	$(MAKE) -C $(patsubst %/make.clean,%,$@) lib.do.clean
+
+.PHONY:
+lib.do.clean:
+	$(RM) -rf $(ALL_OBJS) $(ALL_DEPS) $(LIB_OUTPUT_DIR)/lib$(LIBNAME).a
+
+#########################################################################
+#### if target is lib
+####
+
+lib: $(LIB_OUTPUT_DIR)/lib$(LIBNAME).a
+$(LIB_OUTPUT_DIR)/lib$(LIBNAME).a: $(ALL_OBJS)
+	@mkdir -p $(LIB_OUTPUT_DIR)
+	$(AR) $(ARFLAGS) $@ $(C_OBJS) $(ASM_OBJS)
+
+#########################################################################
+dasm: $(TARGET_ELF)
+	$(OBJDUMP) -S -d --all-headers --demangle --line-numbers --wide $< > $(TARGET).dump
+	$(OBJDUMP) -d $< > $(TARGET).dasm
+	$(OBJCOPY) $< -O ihex $(TARGET).hex
+	$(OBJCOPY) $< -O verilog $(TARGET).verilog
+	$(OBJCOPY) $< -O binary $(TARGET).bin
+
+#########################################################################
+clean: all_libs_clean bsp_clean
+	@$(ECHO) "Clean all build objects"
+	$(RM) $(CLEAN_OBJS)
+
+# vim: syntax=make

@@ -23,8 +23,6 @@
 	If not, uncomment the define below and
 	replace outbyte(c) by your own function call.
 */
-#if defined SIMU_AL9000_DV
-
 #include <stdarg.h>
 
 int putchar(int c)
@@ -220,5 +218,3 @@ int	 __attribute__((optimize("Os"))) write( int i, char* c, int n)
 {
 	return 0;
 }
-
-#endif

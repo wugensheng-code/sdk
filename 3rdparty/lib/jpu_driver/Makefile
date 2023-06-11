@@ -1,12 +1,19 @@
 # (0) include config file
-include $(core)/config.mk
 
 # (1.1) add submodule resource file
-src-$(CONFIG_JPU_DRIVER) += $(wildcard *.c)
+C_SRCS += $(wildcard ./*.c)
 
-# (1.2)add submodule include file path
-inc-$(CONFIG_JPU_DRIVER) += ./
+# (1.2) add submodule include file to /bsp/inc for calling
+INC_DIR += ./
+
+
+# (3) set specificity FLAGS
+LIBNAME := jpu_driver
+
+
+
 
 # (2) compile and return obj-y
-include $(core)/build.mk
+# include $(SDK_ROOT)/tools/make/rules.mk
 
+include ../../../tools/make/rules.mk

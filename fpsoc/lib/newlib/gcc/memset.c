@@ -4,7 +4,7 @@
 
 #if (defined _AARCH_64 || defined __aarch64__)
 
-void *memset(void *dst, int val, size_t count)
+void __attribute__((used)) *memset(void *dst, int val, size_t count)
 {
     uint8_t *ptr = dst;
     uint64_t *ptr64;

@@ -1,54 +1,60 @@
 # (0) include config file
-include $(core)/config.mk
 
 # (1.1) add submodule resource file
-src-$(CONFIG_NPU_RUNTIME) += image_process/blas.c
-src-$(CONFIG_NPU_RUNTIME) += image_process/list.c
-src-$(CONFIG_NPU_RUNTIME) += image_process/image.c
-src-$(CONFIG_NPU_RUNTIME) += uio_driver/bare_metal_io.c
-src-$(CONFIG_NPU_RUNTIME) += uio_driver/uio_npu_driver.c
-src-$(CONFIG_NPU_RUNTIME) += npu_arm_op/armv8/dw_k3s1p1_int8_a72.S
-src-$(CONFIG_NPU_RUNTIME) += npu_arm_op/armv8/dw_k3s2p1_int8_a72.S
-src-$(CONFIG_NPU_RUNTIME) += npu_arm_op/armv8/dw_k7s1p0_int8_a72.S
-src-$(CONFIG_NPU_RUNTIME) += npu_arm_op/armv8/dw_k3s1p1_int16_a72.S
-src-$(CONFIG_NPU_RUNTIME) += npu_arm_op/armv8/dw_k3s2p1_int16_a72.S
-src-$(CONFIG_NPU_RUNTIME) += npu_arm_op/armv8/dw_k7s1p0_int16_a72.S
-src-$(CONFIG_NPU_RUNTIME) += npu_arm_op/armv8/dw_k5s1.S
-src-$(CONFIG_NPU_RUNTIME) += npu_arm_op/npu_arm_op.c
-src-$(CONFIG_NPU_RUNTIME) += npu_rt_graph/src/npu_rt_graph.c
-src-$(CONFIG_NPU_RUNTIME) += npu_rt_graph/src/npu_rt_graph_util.c
-src-$(CONFIG_NPU_RUNTIME) += npu_rt_graph/src/rgb_deserializer.c
-src-$(CONFIG_NPU_RUNTIME) += npu_util/npu_util.c
-src-$(CONFIG_NPU_RUNTIME) += npu_util/npu_util_func.c
-src-$(CONFIG_NPU_RUNTIME) += npu_util/image_process_func.c
-src-$(CONFIG_NPU_RUNTIME) += npu_util/new_op_func.c
-src-$(CONFIG_NPU_RUNTIME) += npu_util/fifo.c
-src-$(CONFIG_NPU_RUNTIME) += fm_mem_alloc/buddy_allocator.c
-src-$(CONFIG_NPU_RUNTIME) += fm_mem_alloc/fm_mem_alloc.c
-src-$(CONFIG_NPU_RUNTIME) += npu_init/npu_init.c
-src-$(CONFIG_NPU_RUNTIME) += npu_scheduler/npu_scheduler.c
-src-$(CONFIG_NPU_RUNTIME) += $(wildcard jpu_driver/*.c)
-src-$(CONFIG_NPU_RUNTIME) += $(wildcard elog/src/*.c)
-src-$(CONFIG_NPU_RUNTIME) += $(wildcard elog/port/*.c)
+SRC_DIR += image_process \
+          uio_driver \
+          npu_arm_op \
+          npu_rt_graph/src \
+          npu_driver \
+          npu_util \
+          npu_init \
+          fm_mem_alloc \
+          npu_scheduler \
+          jpu_driver \
+          elog/src \
+          elog/port \
+          api/src \
+          port/cma_mem/nonos \
+          port/file_ops/nonos \
+          port/intr/nonos \
+          port/npu_driver/nonos \
+          port/npu_lock/nonos \
+          port/rg_main/nonos \
+          cpu_aclr_op/src \
+          cpu_op/src
 
-# (1.2) add submodule include file to /bsp/inc for calling
-inc-$(CONFIG_NPU_RUNTIME) += npu_rt_graph/inc
-inc-$(CONFIG_NPU_RUNTIME) += fm_mem_alloc
-inc-$(CONFIG_NPU_RUNTIME) += npu_arm_op
-inc-$(CONFIG_NPU_RUNTIME) += npu_init
-inc-$(CONFIG_NPU_RUNTIME) += npu_scheduler
-inc-$(CONFIG_NPU_RUNTIME) += npu_util
-inc-$(CONFIG_NPU_RUNTIME) += image_process
-inc-$(CONFIG_NPU_RUNTIME) += uio_driver
-inc-$(CONFIG_NPU_RUNTIME) += jpu_driver
-inc-$(CONFIG_NPU_RUNTIME) += elog/inc
-inc-$(CONFIG_NPU_RUNTIME) += ./
+
+ifeq ($(CHIP_ARCH),armv8-a)
+SRC_DIR += cpu_aclr_op/armv8
+endif
+
+# (1.2) add submodule includes
+INC_DIR += . \
+           npu_rt_graph/inc \
+           fm_mem_alloc \
+           npu_arm_op \
+           npu_init \
+           npu_scheduler \
+           npu_util \
+           image_process \
+           uio_driver \
+           jpu_driver \
+           elog/inc \
+           api/inc \
+           port/cma_mem/inc \
+           port/cma_mem/inc \
+           port/file_ops/inc \
+           port/intr/inc \
+           port/npu_driver/inc \
+           port/npu_lock/inc \
+           port/rg_main/inc \
+           npu_driver \
+           cpu_aclr_op/inc \
+           cpu_op/inc
 
 # (3) set specificity FLAGS
-# LIBNAME := libnpu_runtime.a
+LIBNAME := npu_runtime
 
-# (2) compile and return obj-y
-include $(core)/build.mk
+CFLAGS := -O2
 
-
-
+include ../../../tools/make/rules.mk

@@ -34,7 +34,7 @@ void find_replace(char *str, char *orig, char *rep, char *output);
 float sec(clock_t clocks);
 void top_k(float *a, int n, int k, int *index);
 void error(const char *s);
-unsigned char *read_file(char *filename);
+//unsigned char *read_file(char *filename);
 void malloc_error();
 void file_error(char *s);
 list *split_str(char *s, char delim);

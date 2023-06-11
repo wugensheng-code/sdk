@@ -14,7 +14,6 @@
 #include "npu_init.h"
 #include "npu_scheduler.h"
 #include "fm_mem_alloc.h"
-#include "gic.h"
 
 //AL_VOID depthwise_k3s1p1_int8_a72(AL_S8* input, AL_S8* kernel, AL_S8* out, int* bias, long out_h, long out_w,
 //                               long multi, long shift, long input_w, long act_min, long act_max);
