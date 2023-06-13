@@ -150,6 +150,17 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_UART_InitStruct *InitConfig, 
         return AL_UART_ERR_ILLEGAL_PARAM;
     }
 
+    /* soft reset uart bus */
+    if(Uart->State != AL_UART_STATE_NOT_INIT) {
+        if (Uart->BaseAddr == UART0__BASE_ADDR) {
+            AL_REG32_SET_BIT(CRP__BASE_ADDR + CRP__SRST_CTRL3__OFFSET, CRP__SRST_CTRL3__UART0__SRST__N__SHIFT, AL_FUNC_DISABLE);
+            AL_REG32_SET_BIT(CRP__BASE_ADDR + CRP__SRST_CTRL3__OFFSET, CRP__SRST_CTRL3__UART0__SRST__N__SHIFT, AL_FUNC_ENABLE);
+        } else {
+            AL_REG32_SET_BIT(CRP__BASE_ADDR + CRP__SRST_CTRL3__OFFSET, CRP__SRST_CTRL3__UART1__SRST__N__SHIFT, AL_FUNC_DISABLE);
+            AL_REG32_SET_BIT(CRP__BASE_ADDR + CRP__SRST_CTRL3__OFFSET, CRP__SRST_CTRL3__UART1__SRST__N__SHIFT, AL_FUNC_ENABLE);
+        }
+    }
+
     /* Save the relevant configuration to the uart device structure */
     Uart->DevId        = DevId;
     Uart->Configs      = (InitConfig == AL_NULL) ? UartDefInitConfigs : (*InitConfig);

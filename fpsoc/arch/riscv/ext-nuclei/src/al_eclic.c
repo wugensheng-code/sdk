@@ -189,6 +189,34 @@ void ECLIC_Init(void)
  * - This function use to configure specific eclic interrupt and register its interrupt handler and enable its interrupt.
  * - If the vector table is placed in read-only section(FLASHXIP mode), handler could not be installed
  */
+void ECLIC_Isr_Nonvect(void)
+{
+	rv_csr_t IRQn = (__RV_CSR_READ(CSR_MCAUSE) & 0xFFF);
+
+	if (IRQn < SOC_INT_MAX && AL_IrqHandlerList[IRQn].Func) {
+		AL_IrqHandlerList[IRQn].Func(AL_IrqHandlerList[IRQn].Param);
+	} else
+		while(1);
+}
+extern void ECLIC_Isr_Vect(void);
+
+
+/**
+ * \brief  Initialize a specific IRQ and register the handler
+ * \details
+ * This function set vector mode, trigger mode and polarity, interrupt level and priority,
+ * assign handler for specific IRQn.
+ * \param [in]  IRQn        NMI interrupt handler address
+ * \param [in]  shv         \ref ECLIC_NON_VECTOR_INTERRUPT means non-vector mode, and \ref ECLIC_VECTOR_INTERRUPT is vector mode
+ * \param [in]  trig_mode   see \ref ECLIC_TRIGGER_Type
+ * \param [in]  lvl         interupt level
+ * \param [in]  priority    interrupt priority
+ * \param [in]  handler     interrupt handler, if NULL, handler will not be installed
+ * \return       -1 means invalid input parameter. 0 means successful.
+ * \remarks
+ * - This function use to configure specific eclic interrupt and register its interrupt handler and enable its interrupt.
+ * - If the vector table is placed in read-only section(FLASHXIP mode), handler could not be installed
+ */
 int32_t ECLIC_Register_IRQ(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_Type trig_mode, uint8_t lvl, uint8_t priority, AL_INTR_HandlerStruct* handler)
 {
     if ((IRQn > SOC_INT_MAX) || (shv > ECLIC_VECTOR_INTERRUPT) \
@@ -207,7 +235,11 @@ int32_t ECLIC_Register_IRQ(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_Type trig_
 
     if (handler != NULL) {
         /* set interrupt handler entry to vector table */
-        ECLIC_SetVector(IRQn, (rv_csr_t)handler);
+	if (shv == ECLIC_NON_VECTOR_INTERRUPT)
+		ECLIC_SetVector(IRQn, (rv_csr_t)ECLIC_Isr_Nonvect);
+	else
+		ECLIC_SetVector(IRQn, (rv_csr_t)ECLIC_Isr_Vect);
+
         AL_IrqHandlerList[IRQn] = *handler;
     }
     /* enable interrupt */
@@ -215,6 +247,7 @@ int32_t ECLIC_Register_IRQ(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_Type trig_
 
     return 0;
 }
+
 /** @} */ /* End of Doxygen Group NMSIS_Core_ExceptionAndNMI */
 
 AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Func Func, AL_VOID *Paran)

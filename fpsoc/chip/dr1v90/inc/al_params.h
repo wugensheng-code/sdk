@@ -33,8 +33,8 @@ typedef enum {
 /*----------------------------------------------------------------------------
   Define System base addr
  *----------------------------------------------------------------------------*/
-#define SYSTIMER__BASE_ADDR     (0x68020000UL)
-#define ECLIC__BASE_ADDR        (0x68000000UL)
+#define SYSTIMER__BASE_ADDR     (0x68030000UL)
+#define ECLIC__BASE_ADDR        (0x68020000UL)
 #define CRP__BASE_ADDR          (0xF8801000UL)
 
 /*----------------------------------------------------------------------------

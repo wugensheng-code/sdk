@@ -63,7 +63,7 @@ static AL_S32 AlUart_Test_SendDataPollingOnly(AL_VOID)
 
     AL_U8 *Data = (AL_U8 *)malloc(BUF_SIZE);
     memset(Data, 0, (sizeof(AL_U8) * BUF_SIZE));
-    for (int i = 0; i < BUF_SIZE; i ++) {
+    for (int i = 0; i < BUF_SIZE; i++) {
         Data[i] = i;
     }
 
@@ -91,7 +91,7 @@ static AL_S32 AlUart_Test_SendDataBlockOnly(AL_VOID)
 
     AL_U8 *Data = (AL_U8 *)malloc(BUF_SIZE);
     memset(Data, 0, (sizeof(AL_U8) * BUF_SIZE));
-    for (int i = 0; i < BUF_SIZE; i ++) {
+    for (int i = 0; i < BUF_SIZE; i++) {
         Data[i] = i;
     }
 

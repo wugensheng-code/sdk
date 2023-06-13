@@ -223,6 +223,25 @@ irq_entry:
     /* Return to regular code */
     mret
 
+.align 2
+.global ECLIC_Isr_Vect
+ECLIC_Isr_Vect:
+    /* Save the caller saving registers (context) */
+    SAVE_CONTEXT
+    /* Save the necessary CSR registers */
+    SAVE_CSR_CONTEXT
+
+    call ECLIC_Isr_Nonvect
+
+    /* Restore the necessary CSR registers */
+    RESTORE_CSR_CONTEXT
+    /* Restore the caller saving registers (context) */
+    RESTORE_CONTEXT
+
+    /* Return to regular code */
+    mret
+
+
 /* Default Handler for Exceptions / Interrupts */
 .global default_intexc_handler
 .weak default_intexc_handler
