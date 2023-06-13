@@ -17,6 +17,7 @@
 #include "type.h"
 #include "io.h"
 #include "sysregs.h"
+#include "al_params.h"
 /**
  * @desc  : cpu delay by reading system counter
  * @param {u64_t} count
@@ -40,15 +41,16 @@ static void __delay(u64_t count)
  */
 static u64_t syscnt_get_freq(void)
 {
-	unsigned int freq;
+	// unsigned int freq;
 
-	asm volatile(
-		"mrs %0, cntfrq_el0"
-		: "=r" (freq)
-		:
-		: "memory");
+	// asm volatile(
+	// 	"mrs %0, cntfrq_el0"
+	// 	: "=r" (freq)
+	// 	:
+	// 	: "memory");
 
-	return freq;
+	// return freq;
+	return SYSTEM_CLOCK;
 }
 
 u64 get_SystickTimer(void)
