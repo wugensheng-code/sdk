@@ -20,5 +20,8 @@ uint32_t SystemCoreClock = SYSTEM_CLOCK;  /* System Clock Frequency (Core Clock)
 void _premain_init(void)
 {
     AlChip_Init();
+
+#ifndef RTOS_RTTHREAD
     AlLog_Init();
+#endif
 }

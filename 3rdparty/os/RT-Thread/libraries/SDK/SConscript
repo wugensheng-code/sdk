@@ -1,0 +1,110 @@
+# RT-Thread building script for component
+
+Import('rtconfig')
+Import('RTT_ROOT')
+import os
+import re
+import rtconfig
+
+from building import *
+from rtconfig import SDK_ROOT
+from rtconfig import CHIP_ROOT
+from rtconfig import ARCH_ROOT
+
+BUILTIN_ALL_DOWNLOADED_MODES = {
+    "gd32vf103": ("flashxip"),
+    "demosoc": ("ilm", "flash", "flashxip", "ddr")
+}
+
+# Get configurations from rtconfig
+build_soc = getattr(rtconfig, "NUCLEI_SDK_SOC").lower().strip()
+build_board = getattr(rtconfig, "NUCLEI_SDK_BOARD").lower().strip()
+build_download_mode = getattr(rtconfig, "NUCLEI_SDK_DOWNLOAD", "").lower().strip()
+build_core = 'ux900'
+build_march = 'rv64imac'
+build_mabi = 'lp64'
+build_mcmodel = getattr(rtconfig, "NUCLEI_SDK_RISCV_MCMODEL", "medany").lower().strip()
+build_ldscript = getattr(rtconfig, "NUCLEI_SDK_LDSCRIPT", "").strip()
+
+
+if build_soc in BUILTIN_ALL_DOWNLOADED_MODES:
+    supported_download_modes = BUILTIN_ALL_DOWNLOADED_MODES[build_soc]
+else:
+    print("SoC={} is not supported in Nuclei SDK".format(build_soc))
+    exit(0)
+
+build_core_options = " -march=%s -mabi=%s -mcmodel=%s " % (build_march, build_mabi, build_mcmodel)
+
+if build_soc == "hbird":
+    if build_download_mode not in supported_download_modes:
+        # If build.download not defined for hbird SoC, use default "ILM"
+        chosen_download_mode = "ilm" if len(supported_download_modes) == 0 else supported_download_modes[0]
+        print("Download mode %s is not supported for SOC %s, use default download mode %s" \
+             % (build_download_mode, build_soc, chosen_download_mode))
+        build_download_mode = chosen_download_mode
+else:
+    if build_download_mode not in supported_download_modes:
+        chosen_download_mode = "flashxip" if len(supported_download_modes) == 0 else supported_download_modes[0]
+        print("Download mode %s is not supported for SOC %s, use default download mode %s" \
+             % (build_download_mode, build_soc, chosen_download_mode))
+        build_download_mode = chosen_download_mode
+
+print("Supported downloaded modes for board %s are %s, chosen downloaded mode is %s" \
+    % (build_board, supported_download_modes, build_download_mode))
+
+if not build_ldscript:
+    ld_script = "gcc_%s_%s.ld" % (
+        build_soc, build_download_mode) if build_download_mode else "gcc_%s.ld" % build_soc
+    build_ldscript = os.path.join(
+        FRAMEWORK_DIR, "SoC", build_soc, "Board", build_board, "Source", "GCC", ld_script)
+else:
+    print("Use user defined ldscript %s" % build_ldscript)
+
+# Use correct downloaded modes
+DOWNLOAD_MODE = "DOWNLOAD_MODE_%s" % build_download_mode.upper()
+build_download_mode_upper = build_download_mode.upper()
+
+src = Glob(SDK_ROOT + '/solutions/boards/board_dr1x90_emulation/*.c')
+src += Glob(ARCH_ROOT + '/ext-nuclei/src/*.c')
+src += Glob(ARCH_ROOT + '/ext-nuclei/src/*.S')
+src += Glob(ARCH_ROOT + '/rv64/src/*.S')
+src += Glob(CHIP_ROOT + '/*.c')
+src += Glob(CHIP_ROOT + '/../*.c')
+src += Glob(CHIP_ROOT + '/../../*.c')
+src += Glob(SDK_ROOT + '/fpsoc/lib/log/src/*.c')
+src += Glob(SDK_ROOT + '/fpsoc/lib/newlib/gcc/*.c')
+
+CPPPATH = [ ARCH_ROOT + '/ext-nuclei/inc',
+            ARCH_ROOT + '/rv64/inc',
+            CHIP_ROOT,
+            SDK_ROOT + 'fpsoc/inc',
+            SDK_ROOT + 'fpsoc/lib/log/inc']
+
+# LIBPATH = [ cwd + '/NMSIS/Library/DSP/GCC',
+#             cwd + '/NMSIS/Library/NN/GCC' ]
+LIBPATH = []
+
+CPPDEFINES = [ 'DOWNLOAD_MODE={}'.format(DOWNLOAD_MODE),
+               'DOWNLOAD_MODE_STRING=\"{}\"'.format(build_download_mode_upper),
+               'RTOS_RTTHREAD', 'NUCLEI_BANNER=0' ]
+
+# Flash download mode vector table need to remapped
+if build_download_mode_upper == "FLASH":
+    CPPDEFINES.extend(['VECTOR_TABLE_REMAPPED'])
+
+extra_flags = build_core_options
+extra_lflags = "{} -T {}".format(build_core_options, build_ldscript)
+
+# rtconfig.CFLAGS = "{} {}".format(build_core_options, rtconfig.CFLAGS)
+# rtconfig.AFLAGS = "{} {}".format(build_core_options, rtconfig.AFLAGS)
+# rtconfig.LFLAGS = "{} {} -T {}".format(build_core_options, rtconfig.LFLAGS, build_ldscript)
+
+# print(rtconfig.CFLAGS)
+# print(rtconfig.AFLAGS)
+# print(rtconfig.LFLAGS)
+
+group = DefineGroup('nuclei_sdk', src, depend = [''], \
+    CCFLAGS=extra_flags, ASFLAGS=extra_flags, LINKFLAGS=extra_lflags, \
+    CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES, LIBPATH=LIBPATH)
+
+Return('group')

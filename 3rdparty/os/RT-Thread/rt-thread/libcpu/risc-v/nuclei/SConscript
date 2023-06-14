@@ -1,0 +1,14 @@
+# RT-Thread building script for component
+from rtconfig import ARCH_ROOT
+from building import *
+
+Import('rtconfig')
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c') + Glob('*.cpp') + Glob('*_gcc.S') + Glob(ARCH_ROOT + '/ext-nuclei/src/*.S')
+CPPPATH = [cwd]
+ASFLAGS = ''
+
+group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
+
+Return('group')
