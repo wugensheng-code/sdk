@@ -49,7 +49,11 @@ el3_entry:
 	mrs x0, mpidr_el1
 	ldr	x1, =0x00ff
 	and	x0, x0, x1
+#ifdef ARM_CORE_1
+	cmp x0, #1
+#else
 	cmp x0, #0
+#endif
 
 	/*if primary cpu, continue boot */
 	b.eq 0f

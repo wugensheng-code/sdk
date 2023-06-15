@@ -20,7 +20,12 @@
 #define GICD_IROUTER		   (GICD_BASE + 0x6000)
 
 /* GICR_* */
+#ifdef ARM_CORE_1
+#define GICR_RD_BASE           ((void *)0xdd060000UL)
+#else
 #define GICR_RD_BASE           ((void *)0xdd040000UL)
+#endif
+
 /* GICR_WEAKER */
 #define GICR_WAKER             (GICR_RD_BASE + 0x14)
 

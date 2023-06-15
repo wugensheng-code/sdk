@@ -166,7 +166,7 @@ void gicv3_dist_init(u32 int_group)
 	/*
 	 * Set all global interrupts to the boot CPU only. ARE must be enabled.
 	 */
-	affinity = gic_mpidr_to_affinity(0);
+	affinity = gic_mpidr_to_affinity(read_sysreg(mpidr_el1));
 	for (i = 32; i < gic_irqs; i++)
 		writeq_relaxed(affinity, GICD_IROUTER + i * 8);
 

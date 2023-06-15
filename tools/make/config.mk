@@ -7,8 +7,10 @@ CHIP            ?= dr1m90
 ## Available choices:
 ## ARMv8_STATE: 32,  64
 ## ARMv8_EL:    EL1, EL3
+## ARMv8_CORE:  0, 1
 ARMv8_STATE     ?= 64
 ARMv8_EL        ?= EL1
+ARMv8_CORE		?= 0
 
 #########################################################################
 ## Available choices:
@@ -55,6 +57,7 @@ SDK_ROOT := $(abspath $(SDK_ROOT))
 export CHIP
 export ARMv8_STATE
 export ARMv8_EL
+export ARMv8_CORE
 export LIB_OUTPUT_DIR
 export COMPILE_PREFIX
 export V
