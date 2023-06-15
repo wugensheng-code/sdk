@@ -1,15 +1,24 @@
-TARGET = fpsoc_can_stb_fifo
-
-SDK_ROOT = ../../../..
-
-SRCDIRS = .
-
-INCDIRS = .
+#########################################################################
+# 3. CFLAGS
+#########################################################################
 
 CFLAGS := -O2 -DCAN_DEBUG -DCONFIG_CAN_FD_STB_FIFO_TEST=1
 
-# ARM jump from secure to non-secure
-# CFLAGS += -DSUPPORT_NONSECURE
+
+#########################################################################
+# 5. define build target
+#########################################################################
+
+TARGET = fpsoc_can_stb_fifo
 
 
-include $(SDK_ROOT)/tools/make/Makefile.base
+ifneq ($(PINMUX_MODE),)
+CFLAGS += -DENABLE_$(PINMUX_MODE)=1
+TARGET:=$(TARGET)_$(CHIP)_$(PINMUX_MODE)
+endif
+
+all: $(TARGET)
+	@$(ECHO) COMPILE_PREFIX = $(COMPILE_PREFIX)
+
+# include rules.mk
+include $(SDK_ROOT)/tools/make/rules.mk

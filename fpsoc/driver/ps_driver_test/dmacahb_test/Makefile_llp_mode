@@ -1,15 +1,22 @@
-TARGET = fpsoc_dmacahb_llp_mode
-
-SDK_ROOT = ../../../../
-
-SRCDIRS = .
-
-INCDIRS = .
+#########################################################################
+# 3. CFLAGS
+#########################################################################
 
 CFLAGS := -O2 -DDMACAHB_DEBUG -DCONFIG_LLP_MODE_TEST=1 -Wno-int-to-pointer-cast
 
-# ARM jump from secure to non-secure
-# CFLAGS += -DSUPPORT_NONSECURE
+#########################################################################
+# 5. define build target
+#########################################################################
 
+TARGET := fpsoc_dmacahb_llp_mode
 
-include $(SDK_ROOT)/tools/make/Makefile.base
+ifneq ($(PINMUX_MODE),)
+CFLAGS += -DENABLE_$(PINMUX_MODE)=1
+TARGET:=$(TARGET)_$(CHIP)_$(PINMUX_MODE)
+endif
+
+all: $(TARGET)
+	@$(ECHO) COMPILE_PREFIX = $(COMPILE_PREFIX)
+
+# include rules.mk
+include $(SDK_ROOT)/tools/make/rules.mk

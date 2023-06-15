@@ -48,7 +48,7 @@ endif
 #
 
 ifeq ($(CORE), arm)
-AL_CFLAGS   += -mtune=cortex-a35 -march=$(CHIP_ARCH) -fno-builtin \
+AL_CFLAGS   += -mtune=$(MTUNE) -march=$(CHIP_ARCH) -fno-builtin \
                $(GC_CFLAGS) -fno-common -DDOWNLOAD_MODE=$(DOWNLOAD)
 else ifeq ($(CORE), riscv)
 AL_CFLAGS   += -march=$(CHIP_ARCH) -mabi=$(ARCH_ABI) -mcmodel=medany \
@@ -60,7 +60,7 @@ endif
 
 endif
 
-MKDEP_OPT      = -MMD -MT $@ -MF $@.d
+MKDEP_OPT   = -MMD -MT $@ -MF $@.d
 
 #########################################################################
 # all public inc
@@ -69,7 +69,7 @@ PUBLIC_INC_PATH :=  $(BSP_PATH)/inc \
                $(wildcard $(BSP_PATH)/driver/pl_driver/*/inc) \
                $(wildcard $(BSP_PATH)/driver/ps_driver/*/inc) \
                $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/lib/*/Makefile)) \
-			   $(wildcard $(BSP_PATH)/lib/*/inc) \
+               $(wildcard $(BSP_PATH)/lib/*/inc) \
                $(wildcard $(BSP_PATH)/lib/*/api/inc) \
 
 PUBLIC_INC  :=  $(foreach subdir,$(sort $(PUBLIC_INC_PATH)), -I$(subdir))
@@ -83,10 +83,7 @@ ifeq ($(CORE),arm)
 CFLAGS += -mstrict-align -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35
 endif
 
-AL_CFLAGS   += $(CFLAGS) $(PUBLIC_INC) $(MODULE_INC) $(MKDEP_OPT)
-AL_CXXFLAGS += $(CFLAGS) $(PUBLIC_INC) $(MODULE_INC) $(MKDEP_OPT)
-AL_ASMFLAGS += $(CFLAGS) $(PUBLIC_INC) $(MODULE_INC) $(MKDEP_OPT)
-
+AL_CFLAGS  += $(CFLAGS) $(PUBLIC_INC) $(MODULE_INC) $(MKDEP_OPT)
 
 #########################################################################
 # ldflags
@@ -101,7 +98,7 @@ NEWLIB_LDFLAGS += -u _printf_float
 endif
 
 LIB_OPT  = $(addprefix -L, $(sort $(LIB_DIR)))
-LDFLAGS += -T$(LINKER_SCRIPT) -Wl,--start-group $(ld_libs) -Wl,--end-group -L$(LIB_OUTPUT_DIR)/ \
+LDFLAGS += -T$(LINKER_SCRIPT) -Wl,--start-group -Wl,--whole-archive $(ld_libs) -Wl,--no-whole-archive -lgcc -lc -lm -L$(LIB_OUTPUT_DIR) -Wl,--end-group \
            $(LIB_OPT) -nostartfiles -Wl,-M,-Map=$(TARGET).map \
            $(GC_LDFLAGS) $(NEWLIB_LDFLAGS) --specs=nosys.specs -Wl,--build-id=none \
            -u _isatty -u _write -u _sbrk -u _read -u _close -u _fstat -u _lseek -u memset -u memcpy
@@ -163,7 +160,7 @@ help:
 #########################################################################
 $(ASM_OBJS): %.o: % $(COMMON_PREREQS)
 	$(ECHO) "Compling: " $(notdir $@)
-	$(CC) $(AL_ASMFLAGS) -c -o $@ $<
+	$(CC) $(AL_CFLAGS) -c -o $@ $<
 
 #########################################################################
 $(C_OBJS): %.o: % $(COMMON_PREREQS)
@@ -173,7 +170,7 @@ $(C_OBJS): %.o: % $(COMMON_PREREQS)
 #########################################################################
 $(CXX_OBJS): %.o: % $(COMMON_PREREQS)
 	$(ECHO) "Compling: " $(notdir $@)
-	$(CC) $(CXXFLAGS) -c -o $@ $<
+	$(CC) $(AL_CFLAGS) -c -o $@ $<
 
 
 #########################################################################
@@ -190,7 +187,7 @@ endif
 
 
 $(TARGET_ELF): bsp make_all_libs $(ALL_OBJS)
-	$(eval ld_libs := $(patsubst lib%.a,-l%,$(filter-out $(filterout_lib), $(notdir $(wildcard $(LIB_OUTPUT_DIR)/*.a)))) $(LD_LIBS) -lgcc -lc -lm )
+	$(eval ld_libs := $(patsubst lib%.a,-l%,$(filter-out $(filterout_lib), $(notdir $(wildcard $(LIB_OUTPUT_DIR)/*.a)))) $(LD_LIBS))
 	$(CC) $(ALL_OBJS) -o $@ $(AL_CFLAGS) $(LDFLAGS)
 	$(OBJCOPY) $@ -O binary $(TARGET).bin
 	$(SIZE) $@

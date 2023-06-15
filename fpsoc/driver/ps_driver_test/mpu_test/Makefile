@@ -1,41 +1,71 @@
-SOC ?= demosoc
-SECURE ?=
+#########################################################################
+# 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
+#########################################################################
+SDK_ROOT   ?= ../../../..
 
-ifeq ($(SECURE), 1)
-TARGET = fpsoc_mpu_secure_el1
-else
-TARGET = fpsoc_mpu_nonsecure_el1
-endif
+CHIP       ?= dr1v90
 
-SDK_ROOT = ../../../..
-
-SRCDIRS = .
-
-INCDIRS = .
-
-CFLAGS := -O0 -g3
-
-include $(SDK_ROOT)/tools/make/Makefile.base
-
-ifeq ($(SOC), demoapu)
+ifeq ($(CHIP),dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/7.5.0/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-elf/bin/aarch64-elf-
 else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
-ifeq ($(SECURE), 1)
-CFLAGS +=
-else
-CFLAGS += -DSUPPORT_NONSECURE
+BOARD_DIR  ?= $(SDK_ROOT)/solutions/boards/
+BOARD_NAME ?= board_dr1x90_emulation
 
-# For APU privilege test, disable by default
-#CFLAGS += -DAPU_MPU_PRIVILEGE_TEST
-#CFLAGS += -DSWITCH_TO_EL0_FROM_EL3
-#CFLAGS += -DENABLE_APU_ABORT_AT_ERET
+#########################################################################
+# 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
+#    LD_LIBS: External library files that the app depends on
+#    LIB_DIR: The path where the external library file resides
+#    C_SRCS:   c sources for application
+#    CXX_SRCS: cpp sources for application
+#    ASM_SRCS: asm sources for application
+#########################################################################
+SRC_DIR  = ./
+INC_DIR += ./
 
+LD_LIBS  =
+LIB_DIR  =
+
+C_SRCS   :=
+CXX_SRCS :=
+ASM_SRCS :=
+
+#########################################################################
+# 3. CFLAGS
+#########################################################################
+CFLAGS := -O2 -g -DCONFIG_AlUart_Recv_Send_Block_Loop_Back_TEST=1
+
+#########################################################################
+# 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
+#    Fixme: where to add board init source files and headers files
+#########################################################################
+ifneq ($(BOARD_NAME),)
+SRC_DIR  += $(BOARD_DIR)/$(BOARD_NAME)/src
+INC_DIR  += $(BOARD_DIR)/$(BOARD_NAME)/inc
 endif
 
-clean:
-	make clean -f Makefile_clean SOC=demoapu
-	make clean -f Makefile_clean SOC=demosoc
-	rm -rf *.o *.d *.elf *.map *.dasm *.dump *.hex *.verilog
+#########################################################################
+# put these option to board_dr1x90_emulation Makefile
+## Available choices:
+## PINMUX_MODE1, PINMUX_MODE2, PINMUX_MODE3, PINMUX_MODE_SD1
+#########################################################################
+PINMUX_MODE ?= PINMUX_MODE1
+
+
+#########################################################################
+# 5. define build target
+#########################################################################
+TARGET := fpsoc_mpu
+
+ifneq ($(PINMUX_MODE),)
+CFLAGS += -DENABLE_$(PINMUX_MODE)=1
+TARGET:=$(TARGET)_$(CHIP)_$(PINMUX_MODE)
+endif
+
+all: $(TARGET)
+	@$(ECHO) COMPILE_PREFIX = $(COMPILE_PREFIX)
+
+# include rules.mk
+include $(SDK_ROOT)/tools/make/rules.mk

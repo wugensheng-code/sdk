@@ -1,7 +1,7 @@
 # (0) include config file
 
 # (1.1) add submodule resource file
-SRC_DIR += image_process \
+SRC_DIR = image_process \
           uio_driver \
           npu_arm_op \
           npu_rt_graph/src \

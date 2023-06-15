@@ -1,5 +1,0 @@
-TARGET = AL9000_spi
-
-SDK_ROOT = ../../../..
-
-include $(SDK_ROOT)/tools/make/Makefile.base

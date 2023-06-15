@@ -209,11 +209,12 @@ _start:
     call main
 #endif
 
+
 1:
     j 1b
 
 .global board_init
 .weak board_init
 board_init:
-    NOP
+    nop
     ret
