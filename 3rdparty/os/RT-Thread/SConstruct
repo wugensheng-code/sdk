@@ -15,7 +15,7 @@ if not os.getenv("RTT_ROOT"):
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
 
-TARGET = 'rtthread'
+TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 
 AddOption('--run',
         dest = 'run',

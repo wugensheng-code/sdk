@@ -5,10 +5,21 @@ from building import *
 Import('rtconfig')
 
 cwd     = GetCurrentDir()
-src     = Glob('*.c') + Glob('*.cpp') + Glob('*_gcc.S') + Glob(ARCH_ROOT + '/ext-nuclei/src/*.S')
-CPPPATH = [cwd]
+
+src     =  Glob('*.c') 
+src     += Glob('*.cpp') 
+src     += Glob('*_gcc.S')
+src     += Glob(ARCH_ROOT + '/ext-nuclei/src/*.S')
+src     += Glob(ARCH_ROOT + '/ext-nuclei/src/*.c')
+src     += Glob(ARCH_ROOT + '/rv64/src/*.S')
+
+CPPPATH =  [cwd]
+CPPPATH += [ARCH_ROOT + '/ext-nuclei/inc']
+
+CPPDEFINES = ['__ECLIC_PRESENT=1', '__SYSTIMER_PRESENT=1', '__Vendor_SysTickConfig=0']
+
 ASFLAGS = ''
 
-group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
+group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS, CPPDEFINES = CPPDEFINES)
 
 Return('group')

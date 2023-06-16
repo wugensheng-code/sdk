@@ -13,6 +13,7 @@ extern "C" {
 * Define Interrupt Number
 *----------------------------------------------------------------------------*/
 typedef enum {
+    SysTimerSW_IRQn      =  3,
     SysTimer_IRQn        =  7,
     GPIO0_IRQn           =  71,
     SOC_INT130_IRQn      =  130,

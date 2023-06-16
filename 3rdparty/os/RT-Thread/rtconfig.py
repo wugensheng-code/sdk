@@ -37,7 +37,7 @@ NUCLEI_SDK_BOARD = 'nuclei_fpga_eval'
 NUCLEI_SDK_DOWNLOAD = 'ilm'
 # CORE: See https://doc.nucleisys.com/nuclei_sdk/develop/buildsystem.html#core
 NUCLEI_SDK_CORE = 'ux900'
-NUCLEI_SDK_LDSCRIPT = CHIP_ROOT + r'/gcc/gcc_dr1v90_ilm.ld'
+NUCLEI_SDK_LDSCRIPT = CHIP_ROOT + r'/lds/gcc_dr1v90_ocm.ld'
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -48,7 +48,7 @@ if PLATFORM == 'gcc':
     AR      = PREFIX + 'ar'
     LINK    = PREFIX + 'gcc'
     GDB     = PREFIX + 'gdb'
-    # TARGET_EXT = 'elf'
+    TARGET_EXT = 'elf'
     SIZE    = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY  = PREFIX + 'objcopy'

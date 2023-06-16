@@ -65,23 +65,20 @@ DOWNLOAD_MODE = "DOWNLOAD_MODE_%s" % build_download_mode.upper()
 build_download_mode_upper = build_download_mode.upper()
 
 src = Glob(SDK_ROOT + '/solutions/boards/board_dr1x90_emulation/*.c')
-src += Glob(ARCH_ROOT + '/ext-nuclei/src/*.c')
-src += Glob(ARCH_ROOT + '/ext-nuclei/src/*.S')
-src += Glob(ARCH_ROOT + '/rv64/src/*.S')
 src += Glob(CHIP_ROOT + '/*.c')
 src += Glob(CHIP_ROOT + '/../*.c')
 src += Glob(CHIP_ROOT + '/../../*.c')
+src += Glob(CHIP_ROOT + '/src/*.c')
 src += Glob(SDK_ROOT + '/fpsoc/lib/log/src/*.c')
 src += Glob(SDK_ROOT + '/fpsoc/lib/newlib/gcc/*.c')
+src += Glob(SDK_ROOT + '/fpsoc/chip/common/src/*.c')
 
 CPPPATH = [ ARCH_ROOT + '/ext-nuclei/inc',
             ARCH_ROOT + '/rv64/inc',
-            CHIP_ROOT,
+            CHIP_ROOT + '/inc',
             SDK_ROOT + 'fpsoc/inc',
             SDK_ROOT + 'fpsoc/lib/log/inc']
 
-# LIBPATH = [ cwd + '/NMSIS/Library/DSP/GCC',
-#             cwd + '/NMSIS/Library/NN/GCC' ]
 LIBPATH = []
 
 CPPDEFINES = [ 'DOWNLOAD_MODE={}'.format(DOWNLOAD_MODE),
@@ -94,14 +91,6 @@ if build_download_mode_upper == "FLASH":
 
 extra_flags = build_core_options
 extra_lflags = "{} -T {}".format(build_core_options, build_ldscript)
-
-# rtconfig.CFLAGS = "{} {}".format(build_core_options, rtconfig.CFLAGS)
-# rtconfig.AFLAGS = "{} {}".format(build_core_options, rtconfig.AFLAGS)
-# rtconfig.LFLAGS = "{} {} -T {}".format(build_core_options, rtconfig.LFLAGS, build_ldscript)
-
-# print(rtconfig.CFLAGS)
-# print(rtconfig.AFLAGS)
-# print(rtconfig.LFLAGS)
 
 group = DefineGroup('nuclei_sdk', src, depend = [''], \
     CCFLAGS=extra_flags, ASFLAGS=extra_flags, LINKFLAGS=extra_lflags, \

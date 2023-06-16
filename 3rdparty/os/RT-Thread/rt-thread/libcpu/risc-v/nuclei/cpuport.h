@@ -18,7 +18,6 @@
 #include <ext_timer.h>
 #include <ext_eclic.h>
 
-// #include <nuclei_sdk_soc.h>
 
 #ifdef __cplusplus
 extern "C" {

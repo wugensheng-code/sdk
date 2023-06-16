@@ -778,8 +778,7 @@ def DoBuilding(target, objects):
         for group in Projects:
             local_group(group, objects)
 
-        # program = Env.Program(target, objects)
-        rt_thread_StaticLibrary = Env.StaticLibrary(target, objects)
+        program = Env.Program(target, objects)
 
     EndBuilding(target, program)
 
