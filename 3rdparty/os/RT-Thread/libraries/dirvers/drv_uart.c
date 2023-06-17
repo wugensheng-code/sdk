@@ -39,8 +39,6 @@ enum
 #endif
 };
 
-static struct al_uart uart_obj[AL_UART_NUM_INSTANCE] = {0};
-
 static struct al_uart_config uart_config[] = {
 #ifdef BSP_USING_UART0
     {
@@ -53,10 +51,11 @@ static struct al_uart_config uart_config[] = {
     },
     .DevId = 0,
     .IntrId = 89,
-    }
+    },
 #endif
 
 #ifdef BSP_USING_UART1
+    {
     .name = "uart1",
     .UART_InitStruct = {
         .BaudRate     = 115200,
@@ -66,8 +65,11 @@ static struct al_uart_config uart_config[] = {
     },
     .DevId = 1,
     .IntrId = 90,
+    },
 #endif 
 };
+
+static struct al_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] = {0};
 
 #define UART_IN_THRE_EMPTY_INTR(Status)             (Status == UART_THR_EMPTY)
 #define UART_IN_BUSY_DETECT_INTR(Status)            (Status == UART_BUSY_DETECT)
@@ -192,12 +194,7 @@ static void uart_isr(struct rt_serial_device *serial)
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     } else if (UART_IN_THRE_EMPTY_INTR(IntrStatus)) {
 
-
-        if ((serial->parent.open_flag & RT_DEVICE_FLAG_DMA_TX) != 0)
-        {
-            RT_AlUart_Dev_SendDataHandler(Uart_dev);
-        }
-
+        RT_AlUart_Dev_SendDataHandler(Uart_dev);
    
     } else if (UART_IN_RECV_LINE_STATUS_INTR(IntrStatus)) {
         RT_AlUart_Dev_ErrorHandler(Uart_dev, IntrStatus);
@@ -341,7 +338,7 @@ int rt_hw_uart_init(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     rt_err_t result = 0;
 
-    for (int i = 0; i < AL_UART_NUM_INSTANCE; i++)
+    for (rt_size_t i = 0; i < sizeof(uart_obj) / sizeof(struct al_uart); i++)
     {
         /* init UART object */
         uart_obj[i].config = &uart_config[i];
@@ -362,4 +359,4 @@ int rt_hw_uart_init(void)
     return result;
 }
 
-#endif /* RT_USING_SERIAL_V2 */
+#endif

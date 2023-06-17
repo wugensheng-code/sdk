@@ -79,4 +79,5 @@
 #ifdef __cplusplus
 }
 #endif
+#endif
 #endif /** __RISCV_EXT_FPU_H__  */
