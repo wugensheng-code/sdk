@@ -1,30 +1,36 @@
+import os
 import subprocess
 import sys
 from pathlib import Path
 
 from loguru import logger
 
-def make_all(path, cpu):
-   
+APU_TOOLCHAIN_PATH = os.getenv('APU_TOOLCHAIN_PATH')
+RPU_TOOLCHAIN_PATH = os.getenv('RPU_TOOLCHAIN_PATH')
+
+def make_all(path, chip, download, sdk_root, debug):
+
     makefiles_p = Path(path).rglob('Makefile')
     build_pass = True
+    CAPTURE_OUTPUT = True
+    
+    logger.info(f'======> Debug enable: {debug}', colorize=True, format="<green>{time}</green> <level>{message}</level>")
+
+    if debug == 'true':
+        CAPTURE_OUTPUT = False
+
+    if chip == 'dr1m90':
+        COMPILE_PREFIX = APU_TOOLCHAIN_PATH + '/aarch64-none-elf-'
+    if chip == 'dr1v90':
+        COMPILE_PREFIX = RPU_TOOLCHAIN_PATH + '/riscv-nuclei-elf-'
 
     for makefile_p in makefiles_p:
         if makefile_p.is_file():
-            logger.info(f'======> start make project: {str(makefile_p)}', colorize=True, format="<green>{time}</green> <level>{message}</level>")
+            logger.info(f'======> start make project: {str(makefile_p)}  -- chip: {chip} -- download: {download}', colorize=True, format="<green>{time}</green> <level>{message}</level>")
 
             try:
-                if cpu == 'apu':
-                    subprocess.run(f'make \
-                        SOC=demoapu \
-                        COMPILE_PREFIX=/opt/toolchain/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin/aarch64-none-elf- \
-                        DOWNLOAD=ilm', shell=True, capture_output=True, cwd=makefile_p.parent, check=True)
-                else:
-                    subprocess.run(f'make \
-                        SOC=demosoc \
-                        COMPILE_PREFIX=/opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf- \
-                        CORE=ux600fd \
-                        DOWNLOAD=ilm', shell=True, capture_output=True, cwd=makefile_p.parent, check=True)
+                subprocess.run(f'git clean -xfd', shell=True, capture_output=CAPTURE_OUTPUT, cwd=sdk_root, check=True)
+                subprocess.run(f'make CHIP={chip} DOWNLOAD={download} COMPILE_PREFIX={COMPILE_PREFIX}', shell=True, capture_output=CAPTURE_OUTPUT, cwd=makefile_p.parent, check=True)
 
                 logger.info(f'======> make successful\n', colorize=True, format="<green>{time}</green> <level>{message}</level>")
             except subprocess.CalledProcessError as e:
@@ -39,5 +45,8 @@ def make_all(path, cpu):
 
 if __name__ == '__main__':
     path = sys.argv[1]
-    cpu = sys.argv[2]
-    make_all(path, cpu)
+    chip = sys.argv[2]
+    download = sys.argv[3]
+    sdk_root = sys.argv[4]
+    debug = sys.argv[5]
+    make_all(path, chip, download, sdk_root, debug)
