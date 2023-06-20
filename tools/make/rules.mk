@@ -62,6 +62,8 @@ endif
 
 MKDEP_OPT   = -MMD -MT $@ -MF $@.d
 
+
+
 #########################################################################
 # all public inc
 PUBLIC_INC_PATH :=  $(BSP_PATH)/inc \
@@ -69,7 +71,9 @@ PUBLIC_INC_PATH :=  $(BSP_PATH)/inc \
                $(wildcard $(BSP_PATH)/driver/pl_driver/*/inc) \
                $(wildcard $(BSP_PATH)/driver/ps_driver/*/inc) \
                $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/lib/*/Makefile)) \
-               $(wildcard $(BSP_PATH)/lib/*/inc) \
+			   $(wildcard $(SDK_ROOT)/3rdparty/lib/*/inc) \
+			   $(wildcard $(SDK_ROOT)/3rdparty/lib/*/*/inc) \
+			   $(wildcard $(BSP_PATH)/lib/*/inc) \
                $(wildcard $(BSP_PATH)/lib/*/api/inc) \
 
 PUBLIC_INC  :=  $(foreach subdir,$(sort $(PUBLIC_INC_PATH)), -I$(subdir))

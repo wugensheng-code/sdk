@@ -1,11 +1,18 @@
 # (0) include config file
 
 # (1.1) add submodule resource file
-SRC_DIR = .
-C_SRCS  =
+C_SRCS += $(wildcard ./src/*.c) \
+			$(wildcard ./jdi/src/*.c) \
+			$(wildcard ./jdi/nonos/*.c) \
+			$(wildcard ./jpuapi/src/*.c) \
+			$(wildcard ./helper/src/*.c)
 
 # (1.2) add submodule include file to /bsp/inc for calling
-INC_DIR += ./
+INC_DIR += inc \
+			jdi/inc \
+			jpuapi/inc \
+			helper/inc 
+
 
 
 # (3) set specificity FLAGS

@@ -3,7 +3,7 @@
 extern void Enablepinmux1(void);
 extern void Enablepinmux1_mode2(void);
 
-void board_init()
+__attribute__((__used__)) void board_init()
 {
 #if ENABLE_PINMUX_MODE1 == 1
     Enablepinmux1();

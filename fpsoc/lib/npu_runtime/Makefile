@@ -10,7 +10,6 @@ SRC_DIR = image_process \
           npu_init \
           fm_mem_alloc \
           npu_scheduler \
-          jpu_driver \
           elog/src \
           elog/port \
           api/src \
@@ -26,6 +25,8 @@ SRC_DIR = image_process \
 
 ifeq ($(CHIP_ARCH),armv8-a)
 SRC_DIR += cpu_aclr_op/armv8
+else 
+SRC_DIR += cpu_aclr_op/riscv
 endif
 
 # (1.2) add submodule includes
@@ -38,7 +39,6 @@ INC_DIR += . \
            npu_util \
            image_process \
            uio_driver \
-           jpu_driver \
            elog/inc \
            api/inc \
            port/cma_mem/inc \

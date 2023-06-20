@@ -25,7 +25,6 @@ BOARD_NAME ?= board_dr1x90_emulation
 #########################################################################
 SRC_DIR  = ./
 INC_DIR  = . \
-           $(SDK_ROOT)/fpsoc/lib/npu_runtime/jpu_driver \
            $(SDK_ROOT)/fpsoc/lib/npu_runtime/elog/inc
 
 LD_LIBS  =
@@ -63,6 +62,10 @@ PINMUX_MODE ?= PINMUX_MODE1
 TARGET := npu_runtime_test
 DOWNLOAD = ddr
 
+ifneq ($(PINMUX_MODE),)
+CFLAGS += -DENABLE_$(PINMUX_MODE)=1
+TARGET:=$(TARGET)_$(CHIP)_$(PINMUX_MODE)
+endif
 
 all: $(TARGET)
 	@$(ECHO) COMPILE_PREFIX = $(COMPILE_PREFIX)
