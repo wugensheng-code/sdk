@@ -1,4 +1,4 @@
-#!/bin/csh
+#!/bin/bsh
 
 
 make DOWNLOAD=ocm CHIP=dr1v90 dasm SIMU_AL9000_DV=no FSBL_SIMU_SKIP_HEADERCHECK=yes FSBL_QSPI_XIP=yes V=1

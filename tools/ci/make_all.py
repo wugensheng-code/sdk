@@ -29,6 +29,7 @@ def make_all(path, chip, download, sdk_root, debug):
             logger.info(f'======> start make project: {str(makefile_p)}  -- chip: {chip} -- download: {download}', colorize=True, format="<green>{time}</green> <level>{message}</level>")
 
             try:
+                subprocess.run(f'make clean', shell=True, capture_output=CAPTURE_OUTPUT, cwd=makefile_p.parent, check=True)
                 subprocess.run(f'git clean -xfd', shell=True, capture_output=CAPTURE_OUTPUT, cwd=sdk_root, check=True)
                 subprocess.run(f'make CHIP={chip} DOWNLOAD={download} COMPILE_PREFIX={COMPILE_PREFIX}', shell=True, capture_output=CAPTURE_OUTPUT, cwd=makefile_p.parent, check=True)
 
