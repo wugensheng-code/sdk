@@ -155,6 +155,8 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStru
     }
 
     // (AL_VOID)AlIntr_RegHandler(Dev->IrqNum, AL_NULL, AlUart_Dev_IntrHandler, Dev);
+    (AL_VOID)AlIntr_RegHandler(Dev->IntrNum, AL_NULL, AlUart_Dev_IntrHandler, Dev);
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
     Handle->Dev  = Dev;
     AL_UART_HAL_UNLOCK(Handle);

@@ -28,15 +28,15 @@ ENTRY( _start )
 MEMORY
 {
   /* Emulate ROM using DDR */
-  rom (rxai!w) : ORIGIN = 0xA0000000, LENGTH = 32M
+  rom (rxai!w) : ORIGIN = 0x00100000, LENGTH = 2M
   /* Emulate RAM using DDR */
-  ram (wxa!ri) : ORIGIN = 0xA2000000, LENGTH = 32M
+  ram (wxa!ri) : ORIGIN = 0x00300000, LENGTH = 0x0f000000
 }
 
 
 SECTIONS
 {
-  __stack_size = DEFINED(__stack_size) ? __stack_size : 2K;
+  __stack_size = DEFINED(__stack_size) ? __stack_size : 4K;
 
   .init           :
   {
