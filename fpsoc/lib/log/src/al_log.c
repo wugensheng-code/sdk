@@ -7,7 +7,7 @@
 #if (LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1)
 
 #include "al_uart_hal.h"
-static AL_UART_HalStruct Log;
+AL_UART_HalStruct Log;
 
 #else
 #endif

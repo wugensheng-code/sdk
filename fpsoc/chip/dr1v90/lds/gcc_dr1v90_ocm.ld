@@ -86,6 +86,22 @@ SECTIONS
 
   } >ilm AT>ilm
 
+  . = ALIGN(4096);
+  .cli_section :
+  {
+    _cli_section_start = .;
+    KEEP(*(cli_section))
+    _cli_section_end   = .;
+  }  > ilm AT>ilm
+
+  . = ALIGN(4096);
+  .unity_section :
+  {
+    _unity_test_start = .;
+    KEEP(*(unity_section))
+    _unity_test_end   = .;
+  }  > ilm AT>ilm
+
   .fini           :
   {
     KEEP (*(SORT_NONE(.fini)))

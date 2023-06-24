@@ -28,6 +28,22 @@ SECTIONS
 	PROVIDE(_rodata_end   = .);
 
 	. = ALIGN(4096);
+	.cli_section :
+	{
+	_cli_section_start = .;
+		KEEP(*(cli_section))
+		_cli_section_end   = .;
+	}  > ram AT>ram
+
+	. = ALIGN(4096);
+	.unity_section :
+	{
+		_unity_test_start = .;
+		KEEP(*(unity_section))
+		_unity_test_end   = .;
+	}  > ram AT>ram
+
+	. = ALIGN(4096);
 	PROVIDE(_data_start = .);
 	.data :
 	{
