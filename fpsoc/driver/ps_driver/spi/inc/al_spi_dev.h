@@ -42,11 +42,11 @@ typedef enum {
     AL_SPI_STATE_ERROR        = (1 << 3)
 } AL_SPI_StateEnum;
 
-#define AL_SPI_ERR_ILLEGAL_PARAM    AL_DEF_ERR(AL_SPI, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM)
-#define AL_SPI_ERR_BUSY             AL_DEF_ERR(AL_SPI, AL_ERR_LEVEL_ERROR, AL_ERR_BUSY)
-#define AL_SPI_ERR_TIMEOUT          AL_DEF_ERR(AL_SPI, AL_ERR_LEVEL_ERROR, AL_ERR_TIMEOUT)
-#define AL_SPI_ERR_NOT_SUPPORT      AL_DEF_ERR(AL_SPI, AL_ERR_LEVEL_ERROR, AL_ERR_NOT_SUPPORT)
-#define AL_SPI_ERR_NOT_READY        AL_DEF_ERR(AL_SPI, AL_ERR_LEVEL_ERROR, AL_ERR_NOT_READY)
+#define AL_SPI_ERR_ILLEGAL_PARAM    AL_DEF_ERR(AL_SPI, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM)
+#define AL_SPI_ERR_BUSY             AL_DEF_ERR(AL_SPI, AL_LOG_LEVEL_ERROR, AL_ERR_BUSY)
+#define AL_SPI_ERR_TIMEOUT          AL_DEF_ERR(AL_SPI, AL_LOG_LEVEL_ERROR, AL_ERR_TIMEOUT)
+#define AL_SPI_ERR_NOT_SUPPORT      AL_DEF_ERR(AL_SPI, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_SUPPORT)
+#define AL_SPI_ERR_NOT_READY        AL_DEF_ERR(AL_SPI, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_READY)
 
 typedef AL_S32 (*SPI_EventCallBack)(AL_SPI_EventStruct SpiEvent, AL_VOID *CallbackRef);
 
@@ -82,10 +82,13 @@ AL_S32 AlSpi_Dev_RegisterIntrCallBack(AL_SPI_DevStruct *Spi, SPI_EventCallBack C
 AL_S32 AlSpi_Dev_UnRegisterIntrCallBack(AL_SPI_DevStruct *Spi);
 AL_VOID AlSpi_Dev_IntrHandler(AL_VOID *instance);
 AL_SPI_HwConfigStruct *AlSpi_Dev_LookupConfig(AL_U32 DeviceId);
+AL_S32 AlSpi_Dev_DmaSendData(AL_SPI_DevStruct *Spi);
+AL_S32 AlSpi_Dev_DmaRecvData(AL_SPI_DevStruct *Spi, AL_U16 RecvSize);
+AL_S32 AlSpi_Dev_DmaTranferData(AL_SPI_DevStruct *Spi, AL_U16 RecvSize);
 
-// #ifdef SPI_DEBUG || SPI_TX_DEBUG
+#ifdef SPI_DEBUG
 AL_VOID AlSpi_Dev_DumpReg(AL_REG SpiBaseAddr);
-// #endif
+#endif
 
 
 #ifdef __cplusplus

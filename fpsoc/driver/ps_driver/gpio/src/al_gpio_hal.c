@@ -43,10 +43,10 @@ AL_S32 AlGpio_Hal_IntrCallbackHandler(AL_GPIO_HalStruct *Handle, AL_VOID *CallBa
 AL_S32 AlGpio_Hal_IntrHandler(AL_GPIO_HalStruct *Handle)
 {
     AL_U8 Bank;
-	AL_U32 IntrStatus;
-	AL_U32 IntrEnable;
+    AL_U32 IntrStatus;
+    AL_U32 IntrEnable;
     AL_U32 IntrReg;
-	AL_U8 PinNumber;
+    AL_U8 PinNumber;
 
     if (Handle == AL_NULL) {
         return AL_GPIO_ERR_ILLEGAL_PARAM;

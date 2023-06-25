@@ -9,11 +9,11 @@ extern "C" {
 #include "al_core.h"
 
 /********************************* Exported Constant ****************************/
-#define AL_GPIO_NUM_INSTANCE	 (1)
-#define GPIO_BASE_ADDR           0xF8411000UL
-#define GPIO_MAX_BANKS		     (AL_U8)4
-#define GPIO_BANK_MAX_PINS		 (AL_U32)32
-#define GPIO_MAX_PIN_NUM	     (AL_U32)118
+#define AL_GPIO_NUM_INSTANCE    (1)
+#define GPIO_BASE_ADDR          0xF8411000UL
+#define GPIO_MAX_BANKS          (AL_U8)4
+#define GPIO_BANK_MAX_PINS      (AL_U32)32
+#define GPIO_MAX_PIN_NUM        (AL_U32)118
 
 /**
  *  Register offsets for the GPIO.
@@ -51,10 +51,10 @@ extern "C" {
 
 /******************************** Exported Typedef *******************************/
 typedef struct {
-	AL_U32                  DeviceId;
-	AL_U32                  BaseAddress;
-	AL_U32                  BankMaxPins;
-	AL_U32                  MaxBanks;
+    AL_U32                  DeviceId;
+    AL_U32                  BaseAddress;
+    AL_U32                  BankMaxPins;
+    AL_U32                  MaxBanks;
 } AL_GPIO_HwConfigStruct;
 
 #ifdef __cplusplus

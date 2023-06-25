@@ -210,7 +210,7 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_UART_InitStruct *InitConfig, 
 AL_S32 AlUart_Dev_SendData(AL_UART_DevStruct *Uart, AL_U8 *SendData, AL_U32 SendSize)
 {
 #ifdef UART_DEBUG
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "uart=%p SendDataAddr=%p SendSize=%d\n", Uart, SendData, SendSize);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "uart=%p SendDataAddr=%p SendSize=%d\n", Uart, SendData, SendSize);
 #endif
 
     if (SendData == AL_NULL || SendSize == 0) {
@@ -315,7 +315,7 @@ AL_S32 AlUart_Dev_RegisterEventCallBack(AL_UART_DevStruct *Uart, AL_Uart_EventCa
     if (Uart->EventCallBack != AL_NULL) {
 
 #ifdef UART_DEBUG
-        AL_LOG(AL_ERR_LEVEL_WARNING, "uart=%p duplicate register callback: replace old:%p with New: %p\n", \
+        AL_LOG(AL_LOG_LEVEL_WARNING, "uart=%p duplicate register callback: replace old:%p with New: %p\n", \
                 Uart, Uart->EventCallBack, Callback);
 #endif
     }
@@ -338,7 +338,7 @@ AL_S32 AlUart_Dev_UnRegisterEventCallBack(AL_UART_DevStruct *Uart)
 {
     if (Uart == AL_NULL) {
 #ifdef UART_DEBUG
-        AL_LOG(AL_ERR_LEVEL_ERROR, "uart=%p duplicate register callback: replace old:%p with New: %p\n", \
+        AL_LOG(AL_LOG_LEVEL_ERROR, "uart=%p duplicate register callback: replace old:%p with New: %p\n", \
             Uart, Uart->EventCallBack, Callback);
 #endif
         return AL_UART_ERR_ILLEGAL_PARAM;
@@ -452,7 +452,7 @@ AL_S32 AlUart_Dev_IoCtl(AL_UART_DevStruct *Uart, AL_Uart_IoCtlCmdEnum Cmd, AL_VO
     }
 
     if(AlUart_ll_IsUartBusy(Uart->BaseAddr)){
-        AL_LOG(AL_ERR_LEVEL_ERROR, "access during a transaction\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "access during a transaction\r\n");
         return AL_UART_ERR_BUSY;
     }
 
@@ -553,7 +553,7 @@ static AL_VOID AlUart_Dev_ErrorHandler(AL_UART_DevStruct *Uart, AL_UART_Interrup
 static AL_VOID AlUart_Dev_BusBusyHandler(AL_UART_DevStruct *Uart)
 {
 #ifdef UART_DEBUG
-    AL_LOG(AL_ERR_LEVEL_DEBUG,"uart bus busy, bus reset then reinitialize\r\n");
+    AL_LOG(AL_LOG_LEVEL_DEBUG,"uart bus busy, bus reset then reinitialize\r\n");
 #endif
     /* soft reset uart bus */
     if (Uart->BaseAddr == UART0__BASE_ADDR) {

@@ -1,6 +1,6 @@
 
 /********************************* including Files *********************************/
-#include "al_smc_hw.h"
+#include "al_qspi_hw.h"
 
 /********************************* Constant Definitions *****************************/
 
@@ -16,11 +16,18 @@
 
 /******************************** Variable Prototypes ******************************/
 
-AL_SMC_HwConfigStruct AlSmc_HwCfg[AL_SMC_NUM_INSTANCE] =
+AL_QSPI_HwConfigStruct AlQSPI_HwCfg[AL_QSPI_NUM_INSTANCE] =
 {
     {
         .DeviceId           = 0,
-        .NandBaseAddr       = NAND_BASE_ADDR,
-        .SmcBaseAddr        = SMC_BASE_ADDR
+        .BaseAddress        = QSPI0_BASE_ADDR,
+        .InterrupId         = 85,
+        .FifoLen            = 32
+    },
+    {
+        .DeviceId           = 1,
+        .BaseAddress        = QSPI1_BASE_ADDR,
+        .InterrupId         = 87,
+        .FifoLen            = 32
     }
 };

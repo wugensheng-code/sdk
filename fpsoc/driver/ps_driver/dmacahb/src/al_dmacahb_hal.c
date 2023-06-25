@@ -76,7 +76,7 @@ static AL_S32 AlDmacAhb_Hal_WaitTransDoneOrTimeout(AL_DMACAHB_HalStruct *Handle,
     while(AlDmacAhb_Dev_GetState(Handle->Channel, State) && Timeout);
 
     if (Timeout == 0) {
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "DmacAhb wait send done time out!\r\n");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "DmacAhb wait send done time out!\r\n");
         return AL_DMACAHB_ERR_TIMEOUT;
     }
 
@@ -164,7 +164,7 @@ AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_ChInitStruct 
     /* TODO: replace intr handler reference function with al_intr.h api */
     if (Handle->Channel->Dmac->State.IntrEn == AL_FALSE) {
         Handle->Channel->Dmac->State.IntrEn = AL_TRUE;
-        AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlDmacAhb_Dev_IntrHandler, Handle->Channel->Dmac);
+        AlIntr_RegHandler(HwConfig->IntrId + 13, AL_NULL, AlDmacAhb_Dev_IntrHandler, Handle->Channel->Dmac);
         AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     }
 
@@ -231,7 +231,7 @@ AL_S32 AlDmacAhb_Hal_Start(AL_DMACAHB_HalStruct *Handle)
 
     Ret = AlDmacAhb_Dev_Start(Handle->Channel);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "Dmacahb start error:%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb start error:%x\r\n", Ret);
     }
 
     AL_DMACAHB_HAL_UNLOCK(Handle);
@@ -259,14 +259,14 @@ AL_S32 AlDmacAhb_Hal_StartBlock(AL_DMACAHB_HalStruct *Handle, AL_U32 Timeout)
 
     Ret = AlDmacAhb_Dev_Start(Handle->Channel);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "Dmacahb start block error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb start block error:0x%x\r\n", Ret);
         AL_DMACAHB_HAL_UNLOCK(Handle);
         return Ret;
     }
 
     Ret = AlDmacAhb_Hal_WaitTransDoneOrTimeout(Handle, Timeout);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "Dmacahb wait trans done error:%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb wait trans done error:%x\r\n", Ret);
     }
 
     AL_DMACAHB_HAL_UNLOCK(Handle);

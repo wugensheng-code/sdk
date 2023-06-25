@@ -9,97 +9,154 @@
 /***************** Macros (Inline Functions) Definitions *********************/
 
 /************************** Variable Definitions *****************************/
+/* Default init config */
 static AL_SPI_ConfigsStruct SpiDefInitConfigs =
 {
     .Mode               = SPI_MASTER_MODE,
     .TransMode          = SPI_TX_ONLY,
     .ProtFormat         = MOTOROLA_SPI,
     .ClockEnum          = SPI_CLK_MODE0,
-    .DataFrameSize      = SPI_FRAME_08BITS,
+    .DataFrameSize      = SPI_FRAME_8BITS,
     .ClkDiv             = 70,
     .SlvToggleEnum      = SPI_SLV_TOGGLE_DISABLE,
     .SlvSelEnum         = SPI_SER_SS0_EN,
+    .IsUseDma           = AL_SPI_USE_INTR
 };
 
 extern AL_SPI_HwConfigStruct AlSpi_HwCfg[AL_SPI_NUM_INSTANCE];
 /************************** Function Prototypes ******************************/
 
 /********************************************************/
+/**
+ * This function look up hardware config structure
+ * @param   DeviceId is hardware module id
+ * @return  hardware config structure pointer with AL_SPI_HwConfigStruct
+ * @note    None
+*/
 AL_SPI_HwConfigStruct *AlSpi_Dev_LookupConfig(AL_U32 DeviceId)
 {
-	AL_U32 Index;
-	AL_SPI_HwConfigStruct *CfgPtr = AL_NULL;
+    AL_U32 Index;
+    AL_SPI_HwConfigStruct *CfgPtr = AL_NULL;
 
-	for (Index = 0; Index < AL_SPI_NUM_INSTANCE; Index++) {
-		if (AlSpi_HwCfg[Index].DeviceId == DeviceId) {
-			CfgPtr = &AlSpi_HwCfg[Index];
-			break;
-		}
-	}
+    for (Index = 0; Index < AL_SPI_NUM_INSTANCE; Index++) {
+        if (AlSpi_HwCfg[Index].DeviceId == DeviceId) {
+            CfgPtr = &AlSpi_HwCfg[Index];
+            break;
+        }
+    }
 
-	return CfgPtr;
+    return CfgPtr;
 }
 
+/**
+ * This function look up hardware config structure
+ * @param   Spi is structure pointer to spi device
+ * @return  AL_VOID
+ * @note    None
+*/
 AL_BOOL AlSpi_Dev_IsTxBusy(AL_SPI_DevStruct *Spi)
 {
     return (AL_BOOL)(Spi->State & AL_SPI_STATE_TX_BUSY);
 }
 
+/**
+ * This function is set spi AL_SPI_DevStruct struct rx busy state
+ * @param   Spi is structure pointer to spi device
+ * @return  AL_VOID
+ * @note    None
+*/
 AL_BOOL AlSpi_Dev_IsRxBusy(AL_SPI_DevStruct *Spi)
 {
     return (AL_BOOL)(Spi->State & AL_SPI_STATE_RX_BUSY);
 }
 
+/**
+ * This function is set spi AL_SPI_DevStruct struct tx busy state
+ * @param   Spi is structure pointer to spi device
+ * @return  AL_VOID
+ * @note    None
+*/
 static AL_VOID AlSpi_Dev_SetTxBusy(AL_SPI_DevStruct *Spi)
 {
     Spi->State |= AL_SPI_STATE_TX_BUSY;
 }
 
+/**
+ * This function is clear spi AL_SPI_DevStruct struct rx busy state
+ * @param   Spi is structure pointer to spi device
+ * @return  AL_VOID
+ * @note    None
+*/
 static AL_VOID AlSpi_Dev_SetRxBusy(AL_SPI_DevStruct *Spi)
 {
     Spi->State |= AL_SPI_STATE_RX_BUSY;
 }
 
+/**
+ * This function is clear spi AL_SPI_DevStruct struct tx busy state
+ * @param   Spi is structure pointer to spi device
+ * @return  AL_VOID
+ * @note    None
+*/
 static AL_VOID AlSpi_Dev_ClrTxBusy(AL_SPI_DevStruct *Spi)
 {
     Spi->State &= (~AL_SPI_STATE_TX_BUSY);
 }
 
+/**
+ * This function is clear spi AL_SPI_DevStruct struct rx busy state
+ * @param   Spi is structure pointer to spi device
+ * @return  AL_VOID
+ * @note    None
+*/
 static AL_VOID AlSpi_Dev_ClrRxBusy(AL_SPI_DevStruct *Spi)
 {
     Spi->State &= (~AL_SPI_STATE_RX_BUSY);
 }
 
-// #ifdef SPI_DEBUG || SPI_TX_DEBUG
+#ifdef SPI_DEBUG
+/**
+ * This function prints the values of all registers in the spi
+ * @param   SpiBaseAddr is spi base address
+ * @return  AL_VOID
+ * @note    None
+*/
 AL_VOID AlSpi_Dev_DumpReg(AL_REG SpiBaseAddr)
 {
-    printf("CTRLR0:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_CTRLR0_MST_OFFSET));
-    printf("CTRLR1:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_CTRLR1_MST_OFFSET));
-    printf("SSIENR:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_SSIENR_MST_OFFSET));
-    printf("MWCR:0x%x\r\n",    AL_REG32_READ(SpiBaseAddr + SPI_MWCR_MST_OFFSET));
-    printf("SER:0x%x\r\n",     AL_REG32_READ(SpiBaseAddr + SPI_SER_MST_OFFSET));
-    printf("BAUDR:0x%x\r\n",   AL_REG32_READ(SpiBaseAddr + SPI_BAUDR_MST_OFFSET));
-    printf("TXFTLR:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_TXFTLR_MST_OFFSET));
-    printf("RXFTLR:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_RXFTLR_MST_OFFSET));
-    printf("TXFLR:0x%x\r\n",   AL_REG32_READ(SpiBaseAddr + SPI_TXFLR_MST_OFFSET));
-    printf("RXFLR:0x%x\r\n",   AL_REG32_READ(SpiBaseAddr + SPI_RXFLR_MST_OFFSET));
-    printf("SR:0x%x\r\n",      AL_REG32_READ(SpiBaseAddr + SPI_SR_MST_OFFSET));
-    printf("IMR:0x%x\r\n",     AL_REG32_READ(SpiBaseAddr + SPI_IMR_MST_OFFSET));
-    printf("ISR:0x%x\r\n",     AL_REG32_READ(SpiBaseAddr + SPI_ISR_MST_OFFSET));
-    printf("RISR:0x%x\r\n",    AL_REG32_READ(SpiBaseAddr + SPI_RISR_MST_OFFSET));
-    printf("TXOICR:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_TXOICR_MST_OFFSET));
-    printf("RXOICR:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_RXOICR_MST_OFFSET));
-    printf("RXUICR:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_RXUICR_MST_OFFSET));
-    printf("MSTICR:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_MSTICR_MST_OFFSET));
-    printf("ICR:0x%x\r\n",     AL_REG32_READ(SpiBaseAddr + SPI_ICR_MST_OFFSET));
-    printf("DMACR:0x%x\r\n",   AL_REG32_READ(SpiBaseAddr + SPI_DMACR_MST_OFFSET));
-    printf("DMATDLR:0x%x\r\n", AL_REG32_READ(SpiBaseAddr + SPI_DMATDLR_MST_OFFSET));
-    printf("DMARDLR:0x%x\r\n", AL_REG32_READ(SpiBaseAddr + SPI_DMARDLR_MST_OFFSET));
-    printf("IDR:0x%x\r\n",     AL_REG32_READ(SpiBaseAddr + SPI_IDR_MST_OFFSET));
-    printf("SSI_VERSION_ID:0x%x\r\n", AL_REG32_READ(SpiBaseAddr + SPI_SSI_VERSION_ID_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "CTRLR0:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_CTRLR0_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "CTRLR1:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_CTRLR1_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "SSIENR:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_SSIENR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "MWCR:0x%x\r\n",    AL_REG32_READ(SpiBaseAddr + SPI_MWCR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "SER:0x%x\r\n",     AL_REG32_READ(SpiBaseAddr + SPI_SER_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "BAUDR:0x%x\r\n",   AL_REG32_READ(SpiBaseAddr + SPI_BAUDR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "TXFTLR:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_TXFTLR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "RXFTLR:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_RXFTLR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "TXFLR:0x%x\r\n",   AL_REG32_READ(SpiBaseAddr + SPI_TXFLR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "RXFLR:0x%x\r\n",   AL_REG32_READ(SpiBaseAddr + SPI_RXFLR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "SR:0x%x\r\n",      AL_REG32_READ(SpiBaseAddr + SPI_SR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "IMR:0x%x\r\n",     AL_REG32_READ(SpiBaseAddr + SPI_IMR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "ISR:0x%x\r\n",     AL_REG32_READ(SpiBaseAddr + SPI_ISR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "RISR:0x%x\r\n",    AL_REG32_READ(SpiBaseAddr + SPI_RISR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "TXOICR:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_TXOICR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "RXOICR:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_RXOICR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "RXUICR:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_RXUICR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "MSTICR:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_MSTICR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "ICR:0x%x\r\n",     AL_REG32_READ(SpiBaseAddr + SPI_ICR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "DMACR:0x%x\r\n",   AL_REG32_READ(SpiBaseAddr + SPI_DMACR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "DMATDLR:0x%x\r\n", AL_REG32_READ(SpiBaseAddr + SPI_DMATDLR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "DMARDLR:0x%x\r\n", AL_REG32_READ(SpiBaseAddr + SPI_DMARDLR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "IDR:0x%x\r\n",     AL_REG32_READ(SpiBaseAddr + SPI_IDR_MST_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "SSI_VERSION_ID:0x%x\r\n", AL_REG32_READ(SpiBaseAddr + SPI_SSI_VERSION_ID_MST_OFFSET));
 }
-// #endif
+#endif
 
+/**
+ * This function initializes spi through the AL_SPI_ConfigsStruct struct
+ * @param   Spi is structure pointer to spi device
+ * @param   InitConfig is spi configuration parameter struct
+ * @return  Whether the spi is initialized successfully
+ * @note    if InitConfig is null will use SpiDefInitConfigs
+*/
 AL_S32 AlSpi_Dev_Init(AL_SPI_DevStruct *Spi, AL_SPI_ConfigsStruct *InitConfig)
 {
     if (Spi == AL_NULL) {
@@ -107,7 +164,7 @@ AL_S32 AlSpi_Dev_Init(AL_SPI_DevStruct *Spi, AL_SPI_ConfigsStruct *InitConfig)
     }
 
     Spi->Configs = (InitConfig == AL_NULL) ? SpiDefInitConfigs : (*InitConfig);
-  
+
     AlSpi_ll_Disable(Spi->BaseAddr);
     AlSpi_ll_SetSpiMode(Spi->BaseAddr, Spi->Configs.Mode);
     AlSpi_ll_SetProtFormat(Spi->BaseAddr, Spi->Configs.ProtFormat);
@@ -123,6 +180,14 @@ AL_S32 AlSpi_Dev_Init(AL_SPI_DevStruct *Spi, AL_SPI_ConfigsStruct *InitConfig)
     return AL_OK;
 }
 
+/**
+ * This function is spi send data
+ * @param   Spi is structure pointer to spi device
+ * @param   SendBuf is send data buffer pointer
+ * @param   SendSize is receive data size
+ * @return  Whether the spi send data successfully
+ * @note    None
+*/
 AL_S32 AlSpi_Dev_SendData(AL_SPI_DevStruct *Spi, AL_U8 *SendBuf, AL_U32 SendSize)
 {
     AL_U32 SendLevel, SendValue = 0xFFFFFFFF;
@@ -149,6 +214,7 @@ AL_S32 AlSpi_Dev_SendData(AL_SPI_DevStruct *Spi, AL_U8 *SendBuf, AL_U32 SendSize
     Spi->SendBuffer.HandledCnt   = 0;
     Spi->SendBuffer.RequestedCnt = SendSize;
 
+    /* Different fifo widths are set depending on the amount of data */
     if (0 == (SendSize % 4)) {
         Spi->Configs.DataFrameSize = SPI_FRAME_32BITS;
         Spi->BitsPerWord = 32;
@@ -156,7 +222,7 @@ AL_S32 AlSpi_Dev_SendData(AL_SPI_DevStruct *Spi, AL_U8 *SendBuf, AL_U32 SendSize
         Spi->Configs.DataFrameSize = SPI_FRAME_16BITS;
         Spi->BitsPerWord = 16;
     } else {
-        Spi->Configs.DataFrameSize = SPI_FRAME_08BITS;
+        Spi->Configs.DataFrameSize = SPI_FRAME_8BITS;
         Spi->BitsPerWord = 8;
     }
 
@@ -164,17 +230,13 @@ AL_S32 AlSpi_Dev_SendData(AL_SPI_DevStruct *Spi, AL_U8 *SendBuf, AL_U32 SendSize
     AlSpi_ll_SetTransfMode(Spi->BaseAddr, Spi->Configs.TransMode);
     AlSpi_ll_SetDataFrameSize(Spi->BaseAddr, Spi->Configs.DataFrameSize);
 
-    if (Spi->BitsPerWord != 8) {
-        AlSpi_ll_SetEndianConver(Spi->BaseAddr);
-    } else {
-        AlSpi_ll_DisableEndianConver(Spi->BaseAddr);
-    }
+
 
     AlSpi_ll_Enable(Spi->BaseAddr);
 
-    SendLevel = MIN(Spi->Fifolen - AlSpi_ll_ReadTxFifoLevel(Spi->BaseAddr), Spi->SendBuffer.RequestedCnt / (Spi->BitsPerWord >> 3));
+    SendLevel = MIN((AL_U32)(Spi->Fifolen - AlSpi_ll_ReadTxFifoLevel(Spi->BaseAddr)), Spi->SendBuffer.RequestedCnt / (Spi->BitsPerWord >> 3));
 
-	while (SendLevel--) {
+    while (SendLevel--) {
         if (Spi->BitsPerWord == 8) {
             SendValue = *(AL_U8 *)(Spi->SendBuffer.BufferPtr + Spi->SendBuffer.HandledCnt);
         } else if (Spi->BitsPerWord == 16) {
@@ -184,20 +246,28 @@ AL_S32 AlSpi_Dev_SendData(AL_SPI_DevStruct *Spi, AL_U8 *SendBuf, AL_U32 SendSize
             SendValue = *(AL_U32 *)(Spi->SendBuffer.BufferPtr + Spi->SendBuffer.HandledCnt);
             SendValue = SPI_ENDIAN_SWAP32(SendValue);
         }
-      
+
         AlSpi_ll_DataTransmit(Spi->BaseAddr, SendValue);
-		Spi->SendBuffer.HandledCnt += Spi->BitsPerWord >> 3;
+        Spi->SendBuffer.HandledCnt += Spi->BitsPerWord >> 3;
     }
 
-    SendLevel = MIN((Spi->Fifolen / 2), SendSize / (Spi->BitsPerWord >> 3));
+    SendLevel = MIN((AL_U32)(Spi->Fifolen / 2), SendSize / (Spi->BitsPerWord >> 3));
     AlSpi_ll_SetTxFifoThrLevel(Spi->BaseAddr, SendLevel);
-    
+
     AlSpi_ll_SetSlvSel(Spi->BaseAddr, Spi->Configs.SlvSelEnum);
     AlSpi_ll_EnableIntr(Spi->BaseAddr, SPI_TXEIM);
-    // AlSpi_Dev_DumpReg(Spi->BaseAddr);
+
     return AL_OK;
 }
 
+/**
+ * This function is to start spi receive data
+ * @param   Spi is structure pointer to spi device
+ * @param   ReceiveBuf is send data buffer pointer
+ * @param   ReceiveSize is receive data size
+ * @return  Whether the spi receive data successfully
+ * @note    None
+*/
 AL_S32 AlSpi_Dev_RecvData(AL_SPI_DevStruct *Spi, AL_U8 *ReceiveBuf, AL_U16 ReceiveSize)
 {
     AL_U32 Temp;
@@ -213,7 +283,7 @@ AL_S32 AlSpi_Dev_RecvData(AL_SPI_DevStruct *Spi, AL_U8 *ReceiveBuf, AL_U16 Recei
     if (SPI_SR_RXFIFO_NOTEMPTY== AlSpi_ll_IsRxFifoEmpty(Spi->BaseAddr)) {
         return AL_SPI_ERR_NOT_SUPPORT;
     }
-    
+
     if (AlSpi_Dev_IsRxBusy(Spi)) {
         return AL_SPI_ERR_BUSY;
     }
@@ -231,7 +301,7 @@ AL_S32 AlSpi_Dev_RecvData(AL_SPI_DevStruct *Spi, AL_U8 *ReceiveBuf, AL_U16 Recei
         Spi->Configs.DataFrameSize = SPI_FRAME_16BITS;
         Spi->BitsPerWord = 16;
     } else {
-        Spi->Configs.DataFrameSize = SPI_FRAME_08BITS;
+        Spi->Configs.DataFrameSize = SPI_FRAME_8BITS;
         Spi->BitsPerWord = 8;
     }
 
@@ -242,21 +312,33 @@ AL_S32 AlSpi_Dev_RecvData(AL_SPI_DevStruct *Spi, AL_U8 *ReceiveBuf, AL_U16 Recei
     AlSpi_ll_SetSlvSel(Spi->BaseAddr, Spi->Configs.SlvSelEnum);
     AlSpi_ll_SetDataFrameSize(Spi->BaseAddr, Spi->Configs.DataFrameSize);
 
+    /* If the fifo width is set to more than 8, the received data will have byte order problems,
+     * you can enable byte order reversal */
     if (Spi->BitsPerWord != 8) {
-        AlSpi_ll_SetEndianConver(Spi->BaseAddr);
+        AlSpi_ll_EnableEndianConver(Spi->BaseAddr);
     } else {
         AlSpi_ll_DisableEndianConver(Spi->BaseAddr);
     }
 
     AlSpi_ll_Enable(Spi->BaseAddr);
-    Temp = MIN(ReceiveSize / (Spi->BitsPerWord >> 3), Spi->Fifolen / 2);
+    Temp = MIN(ReceiveSize / (Spi->BitsPerWord >> 3), (AL_U16)(Spi->Fifolen / 2));
     AlSpi_ll_SetRxFifoThrLevel(Spi->BaseAddr, Temp ? Temp - 1 : 0);
     //  AlSpi_ll_SetRxFifoThrLevel(Spi->BaseAddr, 0);
     AlSpi_ll_EnableIntr(Spi->BaseAddr, SPI_RXFIM);
-    
+
     return AL_OK;
 }
 
+/**
+ * This function is to spi tranfer in full-duplex mode
+ * @param   Spi is structure pointer to spi device
+ * @param   SendBuf is send data buffer pointer
+ * @param   SendSize is send data size
+ * @param   ReceiveBuf is send data buffer pointer
+ * @param   ReceiveSize is receive data size
+ * @return  Whether the spi transfer data successfully
+ * @note    None
+*/
 AL_S32 AlSpi_Dev_TranferData(AL_SPI_DevStruct *Spi, AL_U8 *SendBuf, AL_U32 SendSize, AL_U8 *ReceiveBuf, AL_U16 ReceiveSize)
 {
     AL_U32 ReceiveLevel, SendLevel, SendValue = 0xffffffff, Temp;
@@ -275,7 +357,7 @@ AL_S32 AlSpi_Dev_TranferData(AL_SPI_DevStruct *Spi, AL_U8 *SendBuf, AL_U32 SendS
 
     AlSpi_Dev_SetRxBusy(Spi);
     AlSpi_Dev_SetTxBusy(Spi);
-   
+
     Spi->SendBuffer.BufferPtr    = SendBuf;
     Spi->SendBuffer.RequestedCnt = SendSize;
     Spi->SendBuffer.HandledCnt   = 0;
@@ -290,27 +372,34 @@ AL_S32 AlSpi_Dev_TranferData(AL_SPI_DevStruct *Spi, AL_U8 *SendBuf, AL_U32 SendS
         Spi->Configs.DataFrameSize = SPI_FRAME_16BITS;
         Spi->BitsPerWord = 16;
     } else {
-        Spi->Configs.DataFrameSize = SPI_FRAME_08BITS;
+        Spi->Configs.DataFrameSize = SPI_FRAME_8BITS;
         Spi->BitsPerWord = 8;
     }
 
     AlSpi_ll_Disable(Spi->BaseAddr);
     AlSpi_ll_SetTransfMode(Spi->BaseAddr, Spi->Configs.TransMode);
-   
+
     Temp = ReceiveSize / (Spi->BitsPerWord >> 3);
-    AlSpi_ll_SetRecvNumOfDataFrames(Spi->BaseAddr, Temp ? Temp - 1 : 0);             
+    AlSpi_ll_SetRecvNumOfDataFrames(Spi->BaseAddr, Temp ? Temp - 1 : 0);
     AlSpi_ll_SetDataFrameSize(Spi->BaseAddr, Spi->Configs.DataFrameSize);
-    
 
-   
-AlSpi_ll_Enable(Spi->BaseAddr);
+    /* If the fifo width is set to more than 8, the received data will have byte order problems,
+     * you can enable byte order reversal */
+    if (Spi->BitsPerWord != 8) {
+        AlSpi_ll_EnableEndianConver(Spi->BaseAddr);
+    } else {
+        AlSpi_ll_DisableEndianConver(Spi->BaseAddr);
+    }
+
+    AlSpi_ll_Enable(Spi->BaseAddr);
 
 
-// printf("RecvNumOfDataFrames:%d\r\n", (ReceiveSize / (Spi->BitsPerWord >> 3)) ? ((ReceiveSize / (Spi->BitsPerWord >> 3)) - 1) : 0);
     SendLevel = MIN3(Spi->Fifolen - AlSpi_ll_ReadTxFifoLevel(Spi->BaseAddr), Spi->SendBuffer.RequestedCnt / (Spi->BitsPerWord >> 3),
                      Spi->Fifolen - (Spi->RecvBuffer.RequestedCnt - Spi->SendBuffer.RequestedCnt)/ (Spi->BitsPerWord >> 3));
-    
-	while (SendLevel--) {
+
+    while (SendLevel--) {
+
+        /* spi send data can only be to adjust the byte order by software */
         if (Spi->BitsPerWord == 8) {
             SendValue = *(AL_U8 *)(Spi->SendBuffer.BufferPtr + Spi->SendBuffer.HandledCnt);
         } else if (Spi->BitsPerWord == 16) {
@@ -322,30 +411,30 @@ AlSpi_ll_Enable(Spi->BaseAddr);
         }
 
         AlSpi_ll_DataTransmit(Spi->BaseAddr, SendValue);
-		Spi->SendBuffer.HandledCnt += Spi->BitsPerWord >> 3;
+        Spi->SendBuffer.HandledCnt += Spi->BitsPerWord >> 3;
     }
 
-      SendLevel = MIN((Spi->Fifolen / 2), SendSize / (Spi->BitsPerWord >> 3));
- // AlSpi_ll_SetRxFifoThrLevel(Spi->BaseAddr, 0);
-    Temp =  MIN(ReceiveSize / (Spi->BitsPerWord >> 3), Spi->Fifolen / 2);
+    SendLevel = MIN((AL_U32)(Spi->Fifolen / 2), SendSize / (Spi->BitsPerWord >> 3));
+    Temp =  MIN(ReceiveSize / (Spi->BitsPerWord >> 3), (AL_U16)(Spi->Fifolen / 2));
     AlSpi_ll_SetRxFifoThrLevel(Spi->BaseAddr, Temp ? Temp - 1 : 0);
     AlSpi_ll_SetTxFifoThrLevel(Spi->BaseAddr, SendLevel);
 
     /* Set cs to start transfer */
     AlSpi_ll_SetSlvSel(Spi->BaseAddr, Spi->Configs.SlvSelEnum);
     AlSpi_ll_EnableIntr(Spi->BaseAddr, SPI_RXFIM | SPI_TXEIM);
-    
-    // printf("IMR III:0x%x\r\n",     AL_REG32_READ(Spi->BaseAddr + SPI_IMR_MST_OFFSET));
+
+
     return AL_OK;
 }
 
-
-
-
+/**
+ * This function
+ * @param   Spi is structure pointer to spi device
+ * @return
+ * @note    None
+*/
 AL_S32 AlSpi_Dev_DmaSendData(AL_SPI_DevStruct *Spi)
 {
-    AL_U32 DefBurst = Spi->Fifolen / 2;
-
     if (Spi == AL_NULL) {
         return AL_SPI_ERR_ILLEGAL_PARAM;
     }
@@ -362,16 +451,26 @@ AL_S32 AlSpi_Dev_DmaSendData(AL_SPI_DevStruct *Spi)
         return AL_SPI_ERR_BUSY;
     }
 
-    AlSpi_Dev_SetTxBusy(Spi);
-
+    AlSpi_ll_Disable(Spi->BaseAddr);
+    AlSpi_ll_SetTransfMode(Spi->BaseAddr, Spi->Configs.TransMode);
+    AlSpi_ll_SetDataFrameSize(Spi->BaseAddr, SPI_FRAME_8BITS);
+    AlSpi_ll_SetTxFifoThrLevel(Spi->BaseAddr, 0);
     AlSpi_ll_TxDmaEnable(Spi->BaseAddr);
+    AlSpi_ll_SetDmaTransLevel(Spi->BaseAddr, 0);
+    AlSpi_ll_Enable(Spi->BaseAddr);
 
-    AlSpi_ll_SetDmaTransLevel(Spi->BaseAddr, MIN(DefBurst, 256));
+    AlSpi_ll_SetSlvSel(Spi->BaseAddr, Spi->Configs.SlvSelEnum);
 
     return AL_OK;
 }
 
-AL_S32 AlSpi_Dev_DmaRecvData(AL_SPI_DevStruct *Spi)
+/**
+ * This function
+ * @param   Spi is structure pointer to spi device
+ * @return
+ * @note    None
+*/
+AL_S32 AlSpi_Dev_DmaRecvData(AL_SPI_DevStruct *Spi, AL_U16 RecvSize)
 {
     if (Spi == AL_NULL) {
         return AL_SPI_ERR_ILLEGAL_PARAM;
@@ -384,23 +483,35 @@ AL_S32 AlSpi_Dev_DmaRecvData(AL_SPI_DevStruct *Spi)
     if (SPI_SR_RXFIFO_NOTEMPTY== AlSpi_ll_IsRxFifoEmpty(Spi->BaseAddr)) {
         return AL_SPI_ERR_NOT_SUPPORT;
     }
-    
+
     if (AlSpi_Dev_IsRxBusy(Spi)) {
         return AL_SPI_ERR_BUSY;
     }
 
-    AL_U32 DefBurst = Spi->Fifolen / 2;
+    AlSpi_ll_Disable(Spi->BaseAddr);
+    AlSpi_ll_SetTransfMode(Spi->BaseAddr, Spi->Configs.TransMode);
+    AlSpi_ll_SetRecvNumOfDataFrames(Spi->BaseAddr, RecvSize - 1);
+
+    AlSpi_ll_SetDataFrameSize(Spi->BaseAddr, SPI_FRAME_8BITS);
+    AlSpi_ll_SetRxFifoThrLevel(Spi->BaseAddr, 0);
 
     AlSpi_ll_RxDmaEnable(Spi->BaseAddr);
+    AlSpi_ll_SetDmaRecevLevel(Spi->BaseAddr, 0);
+    AlSpi_ll_Enable(Spi->BaseAddr);
 
-    AlSpi_ll_SetDmaRecevLevel(Spi->BaseAddr, MIN(DefBurst, 256) - 1);
-    
+    AlSpi_ll_SetSlvSel(Spi->BaseAddr, Spi->Configs.SlvSelEnum);
+
     return AL_OK;
 }
 
-AL_S32 AlSpi_Dev_DmaTranferData(AL_SPI_DevStruct *Spi)
+/**
+ * This function
+ * @param   Spi is structure pointer to spi device
+ * @return
+ * @note    None
+*/
+AL_S32 AlSpi_Dev_DmaTranferData(AL_SPI_DevStruct *Spi, AL_U16 RecvSize)
 {
-    AL_U32 DefBurst = Spi->Fifolen / 2;
 
     if (Spi == AL_NULL) {
         return AL_SPI_ERR_ILLEGAL_PARAM;
@@ -414,22 +525,38 @@ AL_S32 AlSpi_Dev_DmaTranferData(AL_SPI_DevStruct *Spi)
         return AL_SPI_ERR_BUSY;
     }
 
+    AlSpi_ll_Disable(Spi->BaseAddr);
+    AlSpi_ll_SetTransfMode(Spi->BaseAddr, Spi->Configs.TransMode);
+    AlSpi_ll_SetRecvNumOfDataFrames(Spi->BaseAddr, RecvSize - 1);
+    AlSpi_ll_SetDataFrameSize(Spi->BaseAddr, SPI_FRAME_8BITS);
+
+    AlSpi_ll_SetRxFifoThrLevel(Spi->BaseAddr, 0);
+    AlSpi_ll_SetTxFifoThrLevel(Spi->BaseAddr, 0);
+
     AlSpi_ll_TxDmaEnable(Spi->BaseAddr);
     AlSpi_ll_RxDmaEnable(Spi->BaseAddr);
 
-    AlSpi_ll_SetDmaRecevLevel(Spi->BaseAddr, MIN(DefBurst, 256) - 1);
-    AlSpi_ll_SetDmaTransLevel(Spi->BaseAddr, MIN(DefBurst, 256));
-    
+    // AlSpi_ll_SetDmaRecevLevel(Spi->BaseAddr, Spi->Fifolen / 2 - 1);
+    // AlSpi_ll_SetDmaTransLevel(Spi->BaseAddr, Spi->Fifolen / 2);
+
+    AlSpi_ll_SetDmaRecevLevel(Spi->BaseAddr, 0);
+    AlSpi_ll_SetDmaTransLevel(Spi->BaseAddr, 0);
+
+    AlSpi_ll_Enable(Spi->BaseAddr);
+    /* Set cs to start transfer */
+    AlSpi_ll_SetSlvSel(Spi->BaseAddr, Spi->Configs.SlvSelEnum);
+
     return AL_OK;
 }
 
-
-
-
-
-
-
-
+/**
+ * This function
+ * @param   Spi is structure pointer to spi device
+ * @param   Cmd is io ctrl enum to set spi status
+ * @param   Data is AL_VOID pointer converted to AL_SPI_SlvSelEnum pointer
+ * @return  Whether the spi is io ctrl successfully
+ * @note    None
+*/
 AL_S32 AlSpi_Dev_IoCtl(AL_SPI_DevStruct *Spi, AL_Spi_IoCtlCmdEnum Cmd, AL_VOID *Data)
 {
     AL_S32 Ret = AL_OK;
@@ -451,7 +578,7 @@ AL_S32 AlSpi_Dev_IoCtl(AL_SPI_DevStruct *Spi, AL_Spi_IoCtlCmdEnum Cmd, AL_VOID *
         *SlvSel = Spi->Configs.SlvSelEnum;
         break;
     }
-   
+
     default:
         return AL_SPI_ERR_NOT_SUPPORT;
         break;
@@ -460,6 +587,14 @@ AL_S32 AlSpi_Dev_IoCtl(AL_SPI_DevStruct *Spi, AL_Spi_IoCtlCmdEnum Cmd, AL_VOID *
     return Ret;
 }
 
+/**
+ * This function is register spi intrrupt callback function
+ * @param   Spi is structure pointer to spi device
+ * @param   Callback is a function pointer to spi event callback function
+ * @param   CallbackRef is parameter of callback function
+ * @return  Whether the spi register intrrupt callback function successfully
+ * @note    None
+*/
 AL_S32 AlSpi_Dev_RegisterIntrCallBack(AL_SPI_DevStruct *Spi, SPI_EventCallBack Callback, AL_VOID *CallbackRef)
 {
     if (Spi == AL_NULL || Callback == AL_NULL) {
@@ -476,6 +611,12 @@ AL_S32 AlSpi_Dev_RegisterIntrCallBack(AL_SPI_DevStruct *Spi, SPI_EventCallBack C
     return AL_OK;
 }
 
+/**
+ * This function is unregister spi intrrupt callback function
+ * @param   Spi is structure pointer to spi device
+ * @return  Whether the spi unregister intrrupt callback function successfully
+ * @note    None
+*/
 AL_S32 AlSpi_Dev_UnRegisterIntrCallBack(AL_SPI_DevStruct *Spi)
 {
     if (Spi == AL_NULL) {
@@ -487,32 +628,34 @@ AL_S32 AlSpi_Dev_UnRegisterIntrCallBack(AL_SPI_DevStruct *Spi)
     return AL_OK;
 }
 
+/**
+ * This function is spi receive intrrupt handler
+ * @param   Spi is structure pointer to spi device
+ * @return  AL_VOID
+ * @note    None
+*/
 static AL_VOID AlSpi_Dev_RecvDataHandler(AL_SPI_DevStruct *Spi)
-{ 
+{
     AL_U32 Length, RxFifoLevel, Status, Temp;
 
-    if (Spi == AL_NULL) {
-        return AL_SPI_ERR_ILLEGAL_PARAM;
-    }
+
 
     Length = Spi->RecvBuffer.RequestedCnt - Spi->RecvBuffer.HandledCnt;
 
-    if(Length)
-    {
+    if(Length) {
         RxFifoLevel = AlSpi_ll_ReadRxFifoLevel(Spi->BaseAddr);
-        if(!RxFifoLevel)
-        {
+        if(!RxFifoLevel) {
             Status = AlSpi_ll_ReadRawIntrStatus(Spi->BaseAddr);
             if (Status & RXOIS) {
                 /* FIFO overflow on Rx */
-                printf("Error FIFO overflow on Rx\r\n");
+                AL_LOG(AL_LOG_LEVEL_INFO, "Error FIFO overflow on Rx\r\n");
                 Spi->State |= AL_SPI_STATE_ERROR;
             }
         } else if ((Spi->Fifolen == RxFifoLevel) && (Spi->Configs.TransMode == SPI_EEPROM)) {
-            printf("Error FIFO Full on Rx, cs high\r\n");
+            AL_LOG(AL_LOG_LEVEL_INFO, "Error FIFO Full on Rx, cs high\r\n");
             Spi->State |= AL_SPI_STATE_ERROR;
         }
-        
+
         RxFifoLevel = MIN(RxFifoLevel, Length / (Spi->BitsPerWord >> 3));
         for (; RxFifoLevel; --RxFifoLevel) {
             if (Spi->BitsPerWord == 8) {
@@ -524,22 +667,18 @@ static AL_VOID AlSpi_Dev_RecvDataHandler(AL_SPI_DevStruct *Spi)
             }
             Spi->RecvBuffer.HandledCnt += Spi->BitsPerWord >> 3;
             Length = Spi->RecvBuffer.RequestedCnt - Spi->RecvBuffer.HandledCnt;
-            // printf("Spi->RecvBuffer.HandledCnt += Spi->BitsPerWord >> 3\r\n");
+
         }
     }
 
-    //AlSpi_ll_SetRxFifoThrLevel(Spi->BaseAddr, MIN(Length / (Spi->BitsPerWord >> 3), Spi->Fifolen / 2) - 1);
-    Temp =  MIN(Length / (Spi->BitsPerWord >> 3), Spi->Fifolen / 2);
+
+    Temp =  MIN(Length / (Spi->BitsPerWord >> 3), (AL_U32)(Spi->Fifolen / 2));
     AlSpi_ll_SetRxFifoThrLevel(Spi->BaseAddr, Temp ? Temp - 1 : 0);
 
-    // printf("IMR2:0x%x\r\n",     AL_REG32_READ(Spi->BaseAddr + SPI_IMR_MST_OFFSET));
-    // printf("Length:%d\r\n", Length);
-    // printf("Spi->BitsPerWord:%d\r\n", Spi->BitsPerWord);
-    // printf("HandledCnt:%d\r\n", Spi->RecvBuffer.HandledCnt);
-    // printf("RequestedCnt:%d\r\n", Spi->RecvBuffer.RequestedCnt);
+
     if (Spi->RecvBuffer.HandledCnt == Spi->RecvBuffer.RequestedCnt) {
         AlSpi_ll_MaskIntr(Spi->BaseAddr, SPI_RXFIM);
-       
+
         if (Spi->EventCallBack) {
             AL_SPI_EventStruct SpiEvent = {
                 .Event        = AL_SPI_RECEIVE_DONE,
@@ -548,28 +687,32 @@ static AL_VOID AlSpi_Dev_RecvDataHandler(AL_SPI_DevStruct *Spi)
             AlSpi_Dev_ClrRxBusy(Spi);
             Spi->EventCallBack(SpiEvent, Spi->EventCallBackRef);
         }
-    } 
+    }
 }
 
+/**
+ * This function is spi send intrrupt handler
+ * @param   Spi is structure pointer to spi device
+ * @return  AL_VOID
+ * @note    None
+*/
 static AL_VOID AlSpi_Dev_SendDataHandler(AL_SPI_DevStruct *Spi)
 {
-	AL_U32 TxFifoLevel, Length, Room, SendValue = 0xffffffff;
+    AL_U32 TxFifoLevel, Length, Room, SendValue = 0xffffffff;
 
-    if (Spi == AL_NULL) {
-        return AL_SPI_ERR_ILLEGAL_PARAM;
-    }
+
     Length = Spi->SendBuffer.RequestedCnt - Spi->SendBuffer.HandledCnt;
 
     if (Length) {
-	    TxFifoLevel = AlSpi_ll_ReadTxFifoLevel(Spi->BaseAddr);
+        TxFifoLevel = AlSpi_ll_ReadTxFifoLevel(Spi->BaseAddr);
 
         if (!TxFifoLevel) {
             /* return error fifo entries */
-            printf("Error Tx fifo enteries, cs high\r\n");
+            AL_LOG(AL_LOG_LEVEL_INFO, "Error Tx fifo enteries, cs high\r\n");
             Spi->State |= AL_SPI_STATE_ERROR;
         }
-        
-        Room = MIN((Spi->Fifolen - TxFifoLevel), Length / (Spi->BitsPerWord >> 3));
+
+        Room = MIN((AL_U32)(Spi->Fifolen - TxFifoLevel), Length / (Spi->BitsPerWord >> 3));
         for (; Room; --Room) {
             if (Spi->BitsPerWord == 8) {
                 SendValue = *(AL_U8 *)(Spi->SendBuffer.BufferPtr + Spi->SendBuffer.HandledCnt);
@@ -580,18 +723,14 @@ static AL_VOID AlSpi_Dev_SendDataHandler(AL_SPI_DevStruct *Spi)
                 SendValue = *(AL_U32 *)(Spi->SendBuffer.BufferPtr + Spi->SendBuffer.HandledCnt);
                 SendValue = SPI_ENDIAN_SWAP32(SendValue);
             }
-            
+
             AlSpi_ll_DataTransmit(Spi->BaseAddr, SendValue);
             Spi->SendBuffer.HandledCnt += Spi->BitsPerWord >> 3;
             Length = Spi->SendBuffer.RequestedCnt - Spi->SendBuffer.HandledCnt;
         }
     }
 
-// printf("IMR2:0x%x\r\n",     AL_REG32_READ(Spi->BaseAddr + SPI_IMR_MST_OFFSET));
-//     printf("Length:%d\r\n", Length);
-//     printf("Spi->BitsPerWord:%d\r\n", Spi->BitsPerWord);
-//     printf("HandledCnt:%d\r\n", Spi->RecvBuffer.HandledCnt);
-//     printf("RequestedCnt:%d\r\n", Spi->RecvBuffer.RequestedCnt);
+
     if (Spi->SendBuffer.HandledCnt == Spi->SendBuffer.RequestedCnt) {
         AlSpi_ll_MaskIntr(Spi->BaseAddr, SPI_TXEIM);
 
@@ -603,7 +742,7 @@ static AL_VOID AlSpi_Dev_SendDataHandler(AL_SPI_DevStruct *Spi)
             AlSpi_Dev_ClrTxBusy(Spi);
             Spi->EventCallBack(event, Spi->EventCallBackRef);
         }
-    } 
+    }
 }
 
 #define SPI_IN_TX_FE_INTR(Status)  (Status & TXEIS)
@@ -614,16 +753,19 @@ static AL_VOID AlSpi_Dev_SendDataHandler(AL_SPI_DevStruct *Spi)
 
 #define SPI_IN_STATUS_ERROR(Status)  0
 
-
+/**
+ * This function is spi intrrupt handler function
+ * @param   instance is AL_VOID pointer converted to AL_SPI_DevStruct pointer
+ * @return  AL_VOID
+ * @note    None
+*/
 AL_VOID AlSpi_Dev_IntrHandler(AL_VOID *instance)
 {
-	AL_SPI_DevStruct *Spi = (AL_SPI_DevStruct *) instance;
-	AL_SPI_IntrStatusEnum IntrStatus = AlSpi_ll_GetIntrStatus(Spi->BaseAddr);
-// #ifdef SPI_DEBUG
-    // printf("IntrStatus:0x%x\r\n", IntrStatus);
-// #endif
+    AL_SPI_DevStruct *Spi = (AL_SPI_DevStruct *) instance;
+    AL_SPI_IntrStatusEnum IntrStatus = AlSpi_ll_GetIntrStatus(Spi->BaseAddr);
+
     if (SPI_IN_RX_FF_INTR(IntrStatus)) {
-		AlSpi_Dev_RecvDataHandler(Spi);
+        AlSpi_Dev_RecvDataHandler(Spi);
     }
 
     if (SPI_IN_TX_FE_INTR(IntrStatus)) {
@@ -631,41 +773,32 @@ AL_VOID AlSpi_Dev_IntrHandler(AL_VOID *instance)
     }
 
     if (SPI_IN_TX_FO_INTR(IntrStatus)) {
-// #ifdef SPI_DEBUG
-        // AL_LOG(AL_ERR_LEVEL_ERROR, "spi tx fifo over,STATUS_ERROR intr 0x%x\r\n", IntrStatus);
-        printf("IntrStatus:0x%x\r\n", IntrStatus);
-        printf("Error spi tx fifo over intr\r\n");
-        printf("TXFLR:0x%x\r\n", AlSpi_ll_ReadTxFifoLevel(Spi->BaseAddr));
-// #endif
+        AL_LOG(AL_LOG_LEVEL_ERROR, "IntrStatus:0x%x\r\n", IntrStatus);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Error spi tx fifo over intr\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "TXFLR:0x%x\r\n", AlSpi_ll_ReadTxFifoLevel(Spi->BaseAddr));
         Spi->State |= AL_SPI_STATE_ERROR;
         /* A read clears the txo_intr, rxu_intr, rxo_intr interrupts. */
         AlSpi_ll_ClearAllIntr(Spi->BaseAddr);
     }
 
     if (SPI_IN_RX_FO_INTR(IntrStatus)) {
-// #ifdef SPI_DEBUG
-        // AL_LOG(AL_ERR_LEVEL_ERROR, "spi rx fifo over, STATUS_ERROR intr 0x%x\r\n", IntrStatus);
-        printf("IntrStatus:0x%x\r\n", IntrStatus);
-        printf("Error spi rx fifo over intr\r\n");
-        printf("RXFLR:0x%x\r\n", AlSpi_ll_ReadRxFifoLevel(Spi->BaseAddr));
-// #endif
+        AL_LOG(AL_LOG_LEVEL_ERROR, "IntrStatus:0x%x\r\n", IntrStatus);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Error spi rx fifo over intr\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "RXFLR:0x%x\r\n", AlSpi_ll_ReadRxFifoLevel(Spi->BaseAddr));
         Spi->State |= AL_SPI_STATE_ERROR;
         /* A read clears the txo_intr, rxu_intr, rxo_intr interrupts. */
         AlSpi_ll_ClearAllIntr(Spi->BaseAddr);
     }
 
     if (SPI_IN_RX_FU_INTR(IntrStatus)) {
-// #ifdef SPI_DEBUG
-        // AL_LOG(AL_ERR_LEVEL_WARNING, "spi rx fifo underflow, STATUS_ERROR intr 0x%x", IntrStatus);
-        printf("IntrStatus:0x%x\r\n", IntrStatus);
-        printf("Error spi rx fifo underflow intr\r\n");
-        printf("RXFLR:0x%x\r\n", AlSpi_ll_ReadRxFifoLevel(Spi->BaseAddr));
-// #endif
-        Spi->State |= AL_SPI_STATE_ERROR; 
+        AL_LOG(AL_LOG_LEVEL_ERROR, "IntrStatus:0x%x\r\n", IntrStatus);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Error spi rx fifo underflow intr\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "RXFLR:0x%x\r\n", AlSpi_ll_ReadRxFifoLevel(Spi->BaseAddr));
+        Spi->State |= AL_SPI_STATE_ERROR;
         /* A read clears the txo_intr, rxu_intr, rxo_intr interrupts. */
         AlSpi_ll_ClearAllIntr(Spi->BaseAddr);
     }
-    
+
 }
 
 

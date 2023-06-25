@@ -9,7 +9,7 @@
 
 #if !defined(BSP_USING_UART0) && !defined(BSP_USING_UART1)
     #error "Please define at least one BSP_USING_UARTx"
-    /* this driver can be enabled at menuconfig -> 
+    /* this driver can be enabled at menuconfig ->
     Hardware Drivers Config -> On-chip Peripheral Drivers -> Enable UART */
 #endif
 
@@ -24,7 +24,7 @@
 
 #if !defined(BSP_USING_UART0) && !defined(BSP_USING_UART1)
     #error "Please define at least one BSP_USING_UARTx"
-    /* this driver can be enabled at menuconfig -> 
+    /* this driver can be enabled at menuconfig ->
     Hardware Drivers Config -> On-chip Peripheral Drivers -> Enable UART */
 #endif
 
@@ -47,7 +47,7 @@ static struct al_uart_config uart_config[] = {
         .BaudRate     = 115200,
         .Parity       = UART_NO_PARITY,
         .WordLength   = UART_CHAR_8BITS,
-        .StopBits     = UART_STOP_1BIT,     
+        .StopBits     = UART_STOP_1BIT,
     },
     .DevId = 0,
     .IntrId = 89,
@@ -61,12 +61,12 @@ static struct al_uart_config uart_config[] = {
         .BaudRate     = 115200,
         .Parity       = UART_NO_PARITY,
         .WordLength   = UART_CHAR_8BITS,
-        .StopBits     = UART_STOP_1BIT,     
+        .StopBits     = UART_STOP_1BIT,
     },
     .DevId = 1,
     .IntrId = 90,
     },
-#endif 
+#endif
 };
 
 static struct al_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] = {0};
@@ -81,7 +81,7 @@ static struct al_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] = {
 static AL_VOID RT_AlUart_Dev_BusBusyHandler(AL_UART_DevStruct *Uart)
 {
 #ifdef UART_DEBUG
-    AL_LOG(AL_ERR_LEVEL_DEBUG,"uart bus busy, bus reset then reinitialize\r\n");
+    AL_LOG(AL_LOG_LEVEL_DEBUG,"uart bus busy, bus reset then reinitialize\r\n");
 #endif
     /* soft reset uart bus */
     if (Uart->BaseAddr == UART0__BASE_ADDR) {
@@ -187,15 +187,15 @@ static void uart_isr(struct rt_serial_device *serial)
         struct rt_serial_rx_fifo *rx_fifo;
         rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
         RT_ASSERT(rx_fifo != RT_NULL);
-    
+
 
         RT_AlUart_Dev_RecvDataHandler(Uart_dev, UART_IN_CHAR_RECEV_TIMEOUT(IntrStatus));
-        
+
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     } else if (UART_IN_THRE_EMPTY_INTR(IntrStatus)) {
 
         RT_AlUart_Dev_SendDataHandler(Uart_dev);
-   
+
     } else if (UART_IN_RECV_LINE_STATUS_INTR(IntrStatus)) {
         RT_AlUart_Dev_ErrorHandler(Uart_dev, IntrStatus);
     } else if (UART_IN_BUSY_DETECT_INTR(IntrStatus)) {
@@ -223,7 +223,7 @@ AL_VOID RT_AlUart_Dev_IntrHandler(AL_VOID *Instance)
 static rt_err_t al_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     struct al_uart *uart;
-    
+
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
 
@@ -235,12 +235,12 @@ static rt_err_t al_configure(struct rt_serial_device *serial, struct serial_conf
     }
 
     (AL_VOID)AlIntr_RegHandler(uart->config->IntrId, AL_NULL, RT_AlUart_Dev_IntrHandler, &uart->config->UART_InitStruct);
-    
+
     return RT_EOK;
 }
 
 static int al_putc(struct rt_serial_device *serial, char c)
-{   
+{
     struct al_uart *uart;
     RT_ASSERT(serial != RT_NULL);
 
@@ -249,7 +249,7 @@ static int al_putc(struct rt_serial_device *serial, char c)
     while (AlUart_Hal_SendDataPolling(&uart->handle, &c, 1) != AL_OK);
 
     return 1;
-    
+
 }
 
 static int al_getc(struct rt_serial_device *serial)
@@ -266,7 +266,7 @@ static int al_getc(struct rt_serial_device *serial)
     {
         AlUart_Hal_RecvData(&uart->handle, &ch, 1);
     }
-    
+
     return (int)ch;
 }
 
@@ -323,7 +323,7 @@ static rt_err_t al_control(struct rt_serial_device *serial, int cmd, void *arg)
     return RT_EOK;
 }
 
-static const struct rt_uart_ops al_uart_ops = 
+static const struct rt_uart_ops al_uart_ops =
 {
     .configure = al_configure,
     .control = al_control,

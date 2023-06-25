@@ -47,7 +47,7 @@ static AL_S32 AlUart_Hal_WaitTxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 T
     while (AlUart_Dev_IsTxBusy(Handle->Dev));
 
     if (Timeout == 0) {
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "Uart wait send done time out!\r\n");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Uart wait send done time out!\r\n");
         return AL_UART_ERR_TIMEOUT;
     }
 
@@ -68,7 +68,7 @@ static AL_S32 AlUart_Hal_WaitRxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 T
     while (AlUart_Dev_IsRxBusy(Handle->Dev));
 
     if (Timeout == 0) {
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "Uart wait recv done time out!\r\n");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Uart wait recv done time out!\r\n");
         return AL_UART_ERR_TIMEOUT;
     }
 
@@ -369,7 +369,7 @@ AL_S32 AlUart_Hal_IoCtl(AL_UART_HalStruct *Handle, AL_Uart_IoCtlCmdEnum Cmd, AL_
 
     Ret = AlUart_Dev_IoCtl(Handle->Dev, Cmd, Data);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Uart io ctl cmd error:%d\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Uart io ctl cmd error:%d\r\n", Ret);
     }
 
     AL_UART_HAL_LOCK(Handle);

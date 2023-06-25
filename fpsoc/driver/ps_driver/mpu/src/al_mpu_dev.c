@@ -154,7 +154,7 @@ static AL_S32 AlMpu_Dev_SetRegion(AL_REG RegionBaseAddr, AL_MPU_RegionConfigStru
 
     if ((!((Config->StartAddr) & AL_MPU_DEFAULT_REGION_GRANULARITY_SIZE_MASK) && (Config->StartAddr != 0)) ||
          !((Config->Size) & AL_MPU_DEFAULT_REGION_GRANULARITY_SIZE_MASK)) {
-            AL_LOG(AL_ERR_LEVEL_WARNING, "The protected address and length must be a multiple of 4K! "
+            AL_LOG(AL_LOG_LEVEL_WARNING, "The protected address and length must be a multiple of 4K! "
                    "and the current configuration is ignored!\r\n");
             return AL_MPU_ERR_ILLEGAL_PARAM;
         }
@@ -201,21 +201,21 @@ AL_S32 AlMpu_Dev_ConfigRegionByRegionNum(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumb
     /* Apu mpu */
     if (DevId == ApuMpuRegionStatus.DevId) {
         if (RegionNumber > AL_MPU_APU_MAX_REGION_NUMBER) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Region number unvalid\r\n");
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Region number unvalid\r\n");
             return AL_MPU_ERROR_REGION_NUMBER;
         }
 
         RegionEnableStatus = ApuMpuRegionStatus.RegionEnableStatus[RegionNumber];
     } else {
         if (RegionNumber > AL_MPU_COMMON_MAX_REGION_NUMBER) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Region number unvalid\r\n");
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Region number unvalid\r\n");
             return AL_MPU_ERROR_REGION_NUMBER;
         }
 
         RegionEnableStatus = CommonMpuRegionStatus[DevId].RegionEnableStatus[RegionNumber];
     }
     if (RegionEnableStatus == MPU_REGION_ENABLE) {
-        AL_LOG(AL_ERR_LEVEL_NOTICE, "Region already enabled\r\n");
+        AL_LOG(AL_LOG_LEVEL_NOTICE, "Region already enabled\r\n");
         return AL_MPU_ERROR_REGION_ENABLED;
     }
 
@@ -223,7 +223,7 @@ AL_S32 AlMpu_Dev_ConfigRegionByRegionNum(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumb
     RegionBaseAddr = MPU_REGION_BASE_ADDR(MpuBaseAddr, RegionNumber);
 
     if ((RetValue = AlMpu_Dev_SetRegion(RegionBaseAddr, RegionConfig)) != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_WARNING, "AlMpu_Dev_SetRegion failed, "
+        AL_LOG(AL_LOG_LEVEL_WARNING, "AlMpu_Dev_SetRegion failed, "
                "and the current configuration is ignored!\r\n");
         return RetValue;
     }
@@ -272,13 +272,13 @@ AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
         /* Get a available region */
         RegionNumber = AlMpu_Dev_GetAvailableRegionByDevId(Mpu->HwConfig.DeviceId);
         if (RegionNumber == AL_MPU_INVALID_REGION_NUMBER) {
-            AL_LOG(AL_ERR_LEVEL_WARNING, "AlMpu_Dev_GetAvailableRegionByDevId failed\r\n");
+            AL_LOG(AL_LOG_LEVEL_WARNING, "AlMpu_Dev_GetAvailableRegionByDevId failed\r\n");
             break;
         }
 
         RetValue = AlMpu_Dev_ConfigRegionByRegionNum(Mpu, RegionNumber, &(InitRegionConfig[RegionCount]));
         if (RetValue != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_WARNING, "AlMpu_Dev_ConfigRegionByRegionNum failed, "
+            AL_LOG(AL_LOG_LEVEL_WARNING, "AlMpu_Dev_ConfigRegionByRegionNum failed, "
                    "and the current configuration is ignored!\r\n");
             continue;
         }
@@ -358,12 +358,12 @@ AL_S32 AlMpu_Dev_SetRegionEnableStatus(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber
 
     if (DevId == ApuMpuRegionStatus.DevId) {
         if (RegionNumber > AL_MPU_APU_MAX_REGION_NUMBER) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Region number unvalid\r\n");
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Region number unvalid\r\n");
             return AL_MPU_ERROR_REGION_NUMBER;
         }
     } else {
         if (RegionNumber > AL_MPU_COMMON_MAX_REGION_NUMBER) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Region number unvalid\r\n");
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Region number unvalid\r\n");
             return AL_MPU_ERROR_REGION_NUMBER;
         }
     }
@@ -519,7 +519,7 @@ AL_S32 AlMpu_Dev_RegisterEventCallBack(AL_MPU_DevStruct *Mpu, AL_Mpu_EventCallBa
     if (Mpu->EventCallBack != AL_NULL) {
 
 #ifdef MPU_DEBUG
-        AL_LOG(AL_ERR_LEVEL_WARNING, "mpu=%p duplicate register callback: replace old:%p with New: %p\n", \
+        AL_LOG(AL_LOG_LEVEL_WARNING, "mpu=%p duplicate register callback: replace old:%p with New: %p\n", \
                 Mpu, Mpu->EventCallBack, Callback);
 #endif
     }

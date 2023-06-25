@@ -12,16 +12,16 @@ extern "C"{
 
 typedef enum
 {
-    AL_ERR_LEVEL_DEBUG = 0,      /* debug-level                                  */
-    AL_ERR_LEVEL_INFO,           /* informational                                */
-    AL_ERR_LEVEL_NOTICE,         /* normal but significant condition             */
-    AL_ERR_LEVEL_WARNING,        /* warning conditions                           */
-    AL_ERR_LEVEL_ERROR,          /* error conditions                             */
-    AL_ERR_LEVEL_CRIT,           /* critical conditions                          */
-    AL_ERR_LEVEL_ALERT,          /* action must be taken immediately             */
-    AL_ERR_LEVEL_FATAL,          /* just for compatibility with previous version */
-    AL_ERR_LEVEL_BUTT
-} ENUM_AL_ERR_LEVEL;
+    AL_LOG_LEVEL_DEBUG = 0,      /* debug-level                                  */
+    AL_LOG_LEVEL_INFO,           /* informational                                */
+    AL_LOG_LEVEL_NOTICE,         /* normal but significant condition             */
+    AL_LOG_LEVEL_WARNING,        /* warning conditions                           */
+    AL_LOG_LEVEL_ERROR,          /* error conditions                             */
+    AL_LOG_LEVEL_CRIT,           /* critical conditions                          */
+    AL_LOG_LEVEL_ALERT,          /* action must be taken immediately             */
+    AL_LOG_LEVEL_FATAL,          /* just for compatibility with previous version */
+    AL_LOG_LEVEL_BUTT
+} ENUM_AL_LOG_LEVEL;
 
 
 /******************************************************************************
@@ -67,6 +67,7 @@ typedef enum
     AL_DMACAHB              = 7,
     AL_INTR                 = 8,
     AL_MMC                  = 9,
+    AL_QSPI                 = 10
 } AL_MODULE_TYPE;
 
 #ifdef __cplusplus

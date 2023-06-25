@@ -18,8 +18,8 @@ typedef enum
 
 
 /* Error define */
-#define AL_INTR_ERR_ILLEGAL_MODE         (AL_DEF_ERR(AL_INTR, AL_ERR_LEVEL_ERROR, ILLEGAL_TRIG_MODE))
-#define AL_INTR_ERR_ILLEGAL_PARAM        (AL_DEF_ERR(AL_INTR, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
+#define AL_INTR_ERR_ILLEGAL_MODE         (AL_DEF_ERR(AL_INTR, AL_LOG_LEVEL_ERROR, ILLEGAL_TRIG_MODE))
+#define AL_INTR_ERR_ILLEGAL_PARAM        (AL_DEF_ERR(AL_INTR, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
 
 
 typedef enum
@@ -51,8 +51,8 @@ typedef struct {
 
 typedef struct
 {
-    AL_INTR_Func 	        Func;
-    AL_VOID            	    *Param;
+    AL_INTR_Func    Func;
+    AL_VOID         *Param;
 } AL_INTR_HandlerStruct;
 
 

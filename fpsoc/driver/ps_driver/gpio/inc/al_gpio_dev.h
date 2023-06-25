@@ -13,18 +13,18 @@ extern "C" {
 /********************************* Exported Constant *****************************/
 #define GPIO_REG_OFFSET              0x100U
 
-#define AL_GPIO_ERR_ILLEGAL_PARAM    (AL_DEF_ERR(AL_GPIO, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
+#define AL_GPIO_ERR_ILLEGAL_PARAM    (AL_DEF_ERR(AL_GPIO, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
 
 typedef void (*Gpio_Handler) (AL_VOID *CallBackRef, AL_U32 Bank, AL_U32 Status);
 
 /******************************** Exported Typedef *******************************/
 typedef enum
 {
-    GPIO_INTR_TYPE_EDGE_RISING    =	 0x00U,
+    GPIO_INTR_TYPE_EDGE_RISING    =  0x00U,
     GPIO_INTR_TYPE_EDGE_FALLING   =  0x01U,
-    GPIO_INTR_TYPE_EDGE_BOTH      =	 0x02U,
-    GPIO_INTR_TYPE_LEVEL_HIGH     =	 0x03U,
-    GPIO_INTR_TYPE_LEVEL_LOW      =	 0x04U,
+    GPIO_INTR_TYPE_EDGE_BOTH      =  0x02U,
+    GPIO_INTR_TYPE_LEVEL_HIGH     =  0x03U,
+    GPIO_INTR_TYPE_LEVEL_LOW      =  0x04U,
 } AL_GPIO_IntrEnum;
 
 typedef enum

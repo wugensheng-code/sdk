@@ -18,7 +18,7 @@
 
 AL_SPI_HwConfigStruct AlSpi_HwCfg[AL_SPI_NUM_INSTANCE] =
 {
-	{
+    {
         .DeviceId           = 0,
         .BaseAddress        = SPI0_BASE_ADDR,
         .InterrupId         = 85,

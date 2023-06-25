@@ -70,29 +70,29 @@ static AL_VOID AlMmc_Test_Sd(AL_VOID)
 
     for (AL_U32 i = 0; i < AL_MMC_TEST_SD_CASE_NUM; i++) {
 
-        AL_LOG(AL_ERR_LEVEL_INFO, "----------MMC test %s mode start----------\r\n", CaseName[i]);
+        AL_LOG(AL_LOG_LEVEL_INFO, "----------MMC test %s mode start----------\r\n", CaseName[i]);
 
         Ret = AlMmc_Hal_Init(&Handle, InitConfig[i], AL_NULL, DevId);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal init error 0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal init error 0x%x\r\n", Ret);
             return ;
         }
 
         Ret = AlMmc_Hal_WriteBlocked(&Handle, WriteBuff, 0, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal write single block error 0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal write single block error 0x%x\r\n", Ret);
             return ;
         }
 
         Ret = AlMmc_Hal_ReadBlocked(&Handle, ReadBuff, 0, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal read single block error 0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal read single block error 0x%x\r\n", Ret);
             return ;
         }
 
         Ret = AlMmc_Test_DataCheck(&Handle, WriteBuff, ReadBuff, AL_MMC_TEST_SINGLE_BLK_CNT);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal single block check error!\r\n");
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal single block check error!\r\n");
             return ;
         }
 #ifdef CONFIG_PERFORMANCE_CALC
@@ -100,7 +100,7 @@ static AL_VOID AlMmc_Test_Sd(AL_VOID)
 #endif
         Ret = AlMmc_Hal_WriteBlocked(&Handle, WriteBuff, 1, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal write multi block error 0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal write multi block error 0x%x\r\n", Ret);
             return ;
         }
 #ifdef CONFIG_PERFORMANCE_CALC
@@ -111,7 +111,7 @@ static AL_VOID AlMmc_Test_Sd(AL_VOID)
 #endif
         Ret = AlMmc_Hal_ReadBlocked(&Handle, ReadBuff, 1, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal read multi block error 0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal read multi block error 0x%x\r\n", Ret);
             return ;
         }
 #ifdef CONFIG_PERFORMANCE_CALC
@@ -119,11 +119,11 @@ static AL_VOID AlMmc_Test_Sd(AL_VOID)
 #endif
         Ret = AlMmc_Test_DataCheck(&Handle, WriteBuff, ReadBuff, AL_MMC_TEST_MULTI_BLK_CNT);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal single block check error!\r\n");
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal single block check error!\r\n");
             return ;
         }
 
-        AL_LOG(AL_ERR_LEVEL_INFO, "----------MMC test %s mode done----------\r\n", CaseName[i]);
+        AL_LOG(AL_LOG_LEVEL_INFO, "----------MMC test %s mode done----------\r\n", CaseName[i]);
     }
 }
 
@@ -143,29 +143,29 @@ static AL_VOID AlMmc_Test_Emmc(AL_VOID)
 
     for (AL_U32 i = 0; i < AL_MMC_TEST_EMMC_CASE_NUM; i++) {
 
-        AL_LOG(AL_ERR_LEVEL_INFO, "----------MMC test %s mode start----------\r\n", CaseName[i]);
+        AL_LOG(AL_LOG_LEVEL_INFO, "----------MMC test %s mode start----------\r\n", CaseName[i]);
 
         Ret = AlMmc_Hal_Init(&Handle, InitConfig[i], AL_NULL, DevId);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal init error 0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal init error 0x%x\r\n", Ret);
             return ;
         }
 
         Ret = AlMmc_Hal_WriteBlocked(&Handle, WriteBuff, 0, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal write single block error 0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal write single block error 0x%x\r\n", Ret);
             return ;
         }
 
         Ret = AlMmc_Hal_ReadBlocked(&Handle, ReadBuff, 0, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal read single block error 0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal read single block error 0x%x\r\n", Ret);
             return ;
         }
 
         Ret = AlMmc_Test_DataCheck(&Handle, WriteBuff, ReadBuff, AL_MMC_TEST_SINGLE_BLK_CNT);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal single block check error!\r\n");
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal single block check error!\r\n");
             return ;
         }
 #ifdef CONFIG_PERFORMANCE_CALC
@@ -173,7 +173,7 @@ static AL_VOID AlMmc_Test_Emmc(AL_VOID)
 #endif
         Ret = AlMmc_Hal_WriteBlocked(&Handle, WriteBuff, 1, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal write multi block error 0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal write multi block error 0x%x\r\n", Ret);
             return ;
         }
 #ifdef CONFIG_PERFORMANCE_CALC
@@ -184,7 +184,7 @@ static AL_VOID AlMmc_Test_Emmc(AL_VOID)
 #endif
         Ret = AlMmc_Hal_ReadBlocked(&Handle, ReadBuff, 1, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal read multi block error 0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal read multi block error 0x%x\r\n", Ret);
             return ;
         }
 #ifdef CONFIG_PERFORMANCE_CALC
@@ -192,11 +192,11 @@ static AL_VOID AlMmc_Test_Emmc(AL_VOID)
 #endif
         Ret = AlMmc_Test_DataCheck(&Handle, WriteBuff, ReadBuff, AL_MMC_TEST_MULTI_BLK_CNT);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Hal single block check error!\r\n");
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal single block check error!\r\n");
             return ;
         }
 
-        AL_LOG(AL_ERR_LEVEL_INFO, "----------MMC test %s mode done----------\r\n", CaseName[i]);
+        AL_LOG(AL_LOG_LEVEL_INFO, "----------MMC test %s mode done----------\r\n", CaseName[i]);
     }
 }
 
@@ -217,10 +217,10 @@ static AL_VOID AlMmc_Test_CalcEnd(AL_MMC_HalStruct *Handle, AL_MMC_PerCalcStruct
 
 static AL_VOID AlMmc_Test_CalcDisplay(AL_MMC_PerCalcStruct *PerCalc)
 {
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "----------Performance----------\r\n");
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Start: %llu, 0x%llx\r\n", PerCalc->Start,  PerCalc->Start);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-End: %llu, 0x%llx\r\n", PerCalc->End,  PerCalc->End);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-DatInByte: %llu, 0x%llx\r\n", PerCalc->DatInByte,  PerCalc->DatInByte);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-TimeInUs: %llu, 0x%llx\r\n", PerCalc->TimeInUs,  PerCalc->TimeInUs);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-BytePerSec: %f MB/s\r\n", PerCalc->BytePerSec);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "----------Performance----------\r\n");
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Start: %llu, 0x%llx\r\n", PerCalc->Start,  PerCalc->Start);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-End: %llu, 0x%llx\r\n", PerCalc->End,  PerCalc->End);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-DatInByte: %llu, 0x%llx\r\n", PerCalc->DatInByte,  PerCalc->DatInByte);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-TimeInUs: %llu, 0x%llx\r\n", PerCalc->TimeInUs,  PerCalc->TimeInUs);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-BytePerSec: %f MB/s\r\n", PerCalc->BytePerSec);
 }

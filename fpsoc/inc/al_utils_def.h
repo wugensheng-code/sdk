@@ -60,10 +60,10 @@ extern "C" {
     ((value) & ~ROUND_BOUNDARY(value, boundary))
 
 #define AL_LOG(level, format, ...) \
-	do {  \
-		if(level >= AL_ERR_LEVEL_DEBUG) \
-		printf(format, ##__VA_ARGS__); \
-	} while (0);
+    do {  \
+        if(level >= AL_LOG_LEVEL_DEBUG) \
+        printf(format, ##__VA_ARGS__); \
+    } while (0);
 
 #ifdef __cplusplus
 }

@@ -368,8 +368,8 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
             return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
         }
     } else {
-        if ((Trans->SrcAddr & ((1 << (Channel->Config.SrcTransWidth + 1)) - 1)) ||
-            (Trans->DstAddr & ((1 << (Channel->Config.DstTransWidth + 1)) - 1))) {
+        if ((Trans->SrcAddr & ((1 << (Channel->Config.SrcTransWidth)) - 1)) ||
+            (Trans->DstAddr & ((1 << (Channel->Config.DstTransWidth)) - 1))) {
             return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
         }
     }
@@ -510,7 +510,7 @@ AL_S32 AlDmacAhb_Dev_RegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel, AL_DM
     if (Channel->EventCallBack.Func != AL_NULL) {
 
 #ifdef DMACAHB_DEBUG
-        AL_LOG(AL_ERR_LEVEL_WARNING, "dmacahb=%p duplicate register callback: replace old:%p with New: %p\r\n",
+        AL_LOG(AL_LOG_LEVEL_WARNING, "dmacahb=%p duplicate register callback: replace old:%p with New: %p\r\n",
                Channel, Channel->EventCallBack, CallBack);
 #endif
     }
@@ -584,7 +584,7 @@ AL_VOID AlDmacAhb_Dev_ClrState(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChStateE
 static AL_VOID AlDmacAhb_Dev_TransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
     AL_DMACAHB_ChStateEnum State;
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "Dmacahb Channel %d trans complete!\r\n", Channel->Config.Id);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb Channel %d trans complete!\r\n", Channel->Config.Id);
 
     /* multi-block trans done with trans complete intr */
     AlDmacAhb_Dev_TransTypeToState(Channel->Config.TransType, &State);
@@ -606,7 +606,7 @@ static AL_VOID AlDmacAhb_Dev_TransCompHandler(AL_DMACAHB_ChStruct *Channel)
 static AL_VOID AlDmacAhb_Dev_BlockTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
     AL_DMACAHB_ChStateEnum State;
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "Dmacahb Channel %d block trans complete!\r\n", Channel->Config.Id);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb Channel %d block trans complete!\r\n", Channel->Config.Id);
 
     /* Abandon BLOCK_TRANS_BUSY state, to be remove */
     // AlDmacAhb_Dev_ClrState(Channel, AL_DMACAHB_STATE_BLOCK_TRANS_BUSY);
@@ -642,7 +642,7 @@ static AL_VOID AlDmacAhb_Dev_BlockTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 */
 static AL_VOID AlDmacAhb_Dev_SrcTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "Dmacahb Channel %d src trans complete!\r\n", Channel->Config.Id);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb Channel %d src trans complete!\r\n", Channel->Config.Id);
     AL_DMACAHB_EventStruct Event = {
         .EventId    = AL_DMACAHB_EVENT_SRC_TRANS_COMP,
         .EventData  = 0
@@ -658,7 +658,7 @@ static AL_VOID AlDmacAhb_Dev_SrcTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 */
 static AL_VOID AlDmacAhb_Dev_DstTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "Dmacahb Channel %d dst trans complete!\r\n", Channel->Config.Id);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb Channel %d dst trans complete!\r\n", Channel->Config.Id);
     AL_DMACAHB_EventStruct Event = {
         .EventId    = AL_DMACAHB_EVENT_DST_TRANS_COMP,
         .EventData  = 0
@@ -674,7 +674,7 @@ static AL_VOID AlDmacAhb_Dev_DstTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 */
 static AL_VOID AlDmacAhb_Dev_ErrHandler(AL_DMACAHB_ChStruct *Channel)
 {
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "DmacAhb ErrHandler\r\n");
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "DmacAhb ErrHandler\r\n");
     AL_DMACAHB_EventStruct Event = {
         .EventId    = AL_DMACAHB_EVENT_ERR,
         .EventData  = 0
@@ -901,7 +901,7 @@ AL_S32 AlDmacAhb_Dev_RequestCh(AL_DMACAHB_HwConfigStruct *HwConfig, AL_DMACAHB_C
 {
     AL_U32 Timeout = 1000;
     if (RequestId > HwConfig->ChannelNum) {
-        AL_LOG(AL_ERR_LEVEL_INFO, "Request channel Id is not support!\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "Request channel Id is not support!\r\n");
     }
 
     while ((!AlDmacAhb_ll_FetchLock(HwConfig->LockAddress)) && Timeout--) {
@@ -909,24 +909,24 @@ AL_S32 AlDmacAhb_Dev_RequestCh(AL_DMACAHB_HwConfigStruct *HwConfig, AL_DMACAHB_C
     }
 
     if (!Timeout) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Lock fetch timeout!\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Lock fetch timeout!\r\n");
         return AL_DMACAHB_ERR_FETCH_LOCK;
     }
 
     AL_U32 ChState = AlDmacAhb_ll_GetChannelState(HwConfig->ChStateAddr);
     if (ChState & AlDmacAhb_ChParam[RequestId].ChMask) {
-        AL_LOG(AL_ERR_LEVEL_INFO, "Request channel Id is used!\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "Request channel Id is used!\r\n");
     } else {
         /* TODO: owner channel */
     }
 
-    AL_LOG(AL_ERR_LEVEL_INFO, "Auto assign a channel!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Auto assign a channel!\r\n");
 
     AL_U32 i;
     for (i = 0; i < HwConfig->ChannelNum; i++) {
-        if (!(ChState & AlDmacAhb_ChParam[RequestId].ChMask)) {
-            AlDmacAhb_ll_SetChannelState(HwConfig->ChStateAddr, (ChState | AlDmacAhb_ChParam[RequestId].ChMask));
-            AL_LOG(AL_ERR_LEVEL_INFO, "Assign an available channel %d!\r\n", i);
+        if (!(ChState & AlDmacAhb_ChParam[i].ChMask)) {
+            AlDmacAhb_ll_SetChannelState(HwConfig->ChStateAddr, (ChState | AlDmacAhb_ChParam[i].ChMask));
+            AL_LOG(AL_LOG_LEVEL_INFO, "Assign an available channel %d!\r\n", i);
             *AvailableId = i;
             break;
         }
@@ -935,7 +935,7 @@ AL_S32 AlDmacAhb_Dev_RequestCh(AL_DMACAHB_HwConfigStruct *HwConfig, AL_DMACAHB_C
     AlDmacAhb_ll_ReleaseLock(HwConfig->LockAddress);
 
     if (i == HwConfig->ChannelNum) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "No available channel here!\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "No available channel here!\r\n");
         return AL_DMACAHB_ERR_NONE_AVAILABLE_CH;
     }
 
@@ -955,7 +955,7 @@ AL_S32 AlDmacAhb_Dev_ReleaseCh(AL_DMACAHB_ChStruct *Channel)
     }
 
     if (!Timeout) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Lock fetch timeout!\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Lock fetch timeout!\r\n");
         return AL_DMACAHB_ERR_FETCH_LOCK;
     }
 

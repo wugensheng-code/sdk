@@ -66,7 +66,7 @@ static AL_S32 AlCan_Hal_WaitSendDoneOrTimeout(AL_CAN_HalStruct *Handle, AL_U32 T
     while(AlCan_Dev_GetState(Handle->Dev, AL_CAN_STATE_SEND_BUSY) && Timeout);
 
     if (Timeout == 0) {
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "Can wait send done time out!\r\n");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Can wait send done time out!\r\n");
         return AL_CAN_ERR_TIMEOUT;
     }
 
@@ -86,7 +86,7 @@ static AL_S32 AlCan_Hal_WaitRecvNotEmptyOrTimeout(AL_CAN_HalStruct *Handle, AL_U
     while(AlCan_Dev_GetState(Handle->Dev, AL_CAN_STATE_RECV_EMPTY) & Timeout);
 
     if (Timeout == 0) {
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "Can wait recv done time out!\r\n");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Can wait recv done time out!\r\n");
         return AL_CAN_ERR_TIMEOUT;
     }
 
@@ -348,7 +348,7 @@ AL_S32 AlCan_Hal_IoCtl(AL_CAN_HalStruct *Handle, AL_CAN_IoCtlCmdEnum Cmd, AL_VOI
 
     Ret = AlCan_Dev_IoCtl(Handle->Dev, Cmd, Data);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Can io ctl cmd error:%d\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Can io ctl cmd error:%d\r\n", Ret);
     }
 
     AL_CAN_HAL_UNLOCK(Handle);

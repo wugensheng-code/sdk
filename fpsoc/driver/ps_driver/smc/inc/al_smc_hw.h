@@ -17,10 +17,10 @@ extern "C" {
 
 
 
-#define SMC_BASE_ADDR 	0xF841A000ULL
-#define NAND_BASE_ADDR 	0x64000000ULL
+#define SMC_BASE_ADDR     0xF841A000ULL
+#define NAND_BASE_ADDR     0x64000000ULL
 
-#define AL_SMC_NUM_INSTANCE	(1)
+#define AL_SMC_NUM_INSTANCE    (1)
 
 ///////////////////////////////////////////////////////
 // Register: memc_status
@@ -803,9 +803,9 @@ extern "C" {
 
 /**************************** Type Definitions ******************************/
 typedef struct {
-	AL_U16 					DeviceId;		/**< Unique ID  of device */
-	AL_UINTPTR 				NandBaseAddr;	/**< Base address of the device */
-	AL_UINTPTR 				SmcBaseAddr;	/**< Base address of the device */
+    AL_U16                     DeviceId;        /**< Unique ID  of device */
+    AL_UINTPTR                 NandBaseAddr;    /**< Base address of the device */
+    AL_UINTPTR                 SmcBaseAddr;    /**< Base address of the device */
 } AL_SMC_HwConfigStruct;
 
 #ifdef __cplusplus

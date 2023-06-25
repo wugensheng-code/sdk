@@ -57,7 +57,7 @@ typedef enum
 #endif
 
 #ifndef BITULL
-#define BITULL(x)	    ((1ULL) << (x))
+#define BITULL(x)       ((1ULL) << (x))
 #endif
 
 #ifdef __cplusplus

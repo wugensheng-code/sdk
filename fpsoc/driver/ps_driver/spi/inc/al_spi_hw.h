@@ -18,7 +18,7 @@ extern "C" {
 
 ///////////////////////////////////////////////////////
 // Register: CFG_CTRL_SPI
-// 
+//
 ///////////////////////////////////////////////////////
 
 #define TOP_NS_CFG_CTRL_SPI_OFFSET 0x160UL
@@ -33,7 +33,7 @@ extern "C" {
 
 #define TOP_NS_CFG_CTRL_SPI_ADDR (TOP_NS_BASE_ADDR + TOP_NS_CFG_CTRL_SPI_OFFSET)
 
-#define AL_SPI_NUM_INSTANCE	(2)
+#define AL_SPI_NUM_INSTANCE    (2)
 
 #define SPI0_BASE_ADDR 0xF8404000UL
 #define SPI1_BASE_ADDR 0xF8405000UL
@@ -153,7 +153,7 @@ extern "C" {
 
 ///////////////////////////////////////////////////////
 // Register: TXFTLR_MST
-// This register controls the threshold value for the transmit FIFO memory. 
+// This register controls the threshold value for the transmit FIFO memory.
 ///////////////////////////////////////////////////////
 
 #define SPI_TXFTLR_MST_OFFSET 0x18UL
@@ -166,7 +166,7 @@ extern "C" {
 
 ///////////////////////////////////////////////////////
 // Register: RXFTLR_MST
-// This register controls the threshold value for the receive FIFO memory. 
+// This register controls the threshold value for the receive FIFO memory.
 ///////////////////////////////////////////////////////
 
 #define SPI_RXFTLR_MST_OFFSET 0x1CUL
@@ -180,7 +180,7 @@ extern "C" {
 
 ///////////////////////////////////////////////////////
 // Register: TXFLR_MST
-// This register contains the number of valid data entries in the transmit FIFO memory. 
+// This register contains the number of valid data entries in the transmit FIFO memory.
 ///////////////////////////////////////////////////////
 
 #define SPI_TXFLR_MST_OFFSET 0x20UL
@@ -193,7 +193,7 @@ extern "C" {
 
 ///////////////////////////////////////////////////////
 // Register: RXFLR_MST
-// This register contains the number of valid data entries in the receive FIFO memory. 
+// This register contains the number of valid data entries in the receive FIFO memory.
 ///////////////////////////////////////////////////////
 
 #define SPI_RXFLR_MST_OFFSET 0x24UL
@@ -462,11 +462,11 @@ extern "C" {
 
 /**************************** Type Definitions ******************************/
 typedef struct {
-	AL_U16 					DeviceId;		/**< Unique ID  of device */
-	AL_UINTPTR 				BaseAddress;	/**< Base address of the device */
-	AL_U16 					InterrupId;		/**< Unique ID  of interrupt */
-	AL_U16 					FifoLen;		/**< Fifo length */
-	AL_U16 					NumSlvSel;		/**< Num slave select */
+    AL_U16                     DeviceId;        /**< Unique ID  of device */
+    AL_UINTPTR                 BaseAddress;    /**< Base address of the device */
+    AL_U16                     InterrupId;        /**< Unique ID  of interrupt */
+    AL_U16                     FifoLen;        /**< Fifo length */
+    AL_U16                     NumSlvSel;        /**< Num slave select */
 } AL_SPI_HwConfigStruct;
 
 #ifdef __cplusplus

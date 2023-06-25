@@ -2,7 +2,7 @@
 
 void Enablepinmux1(void)
 {
-     *(AL_U32 *)(0xf8803000u) =0x1;	  //QSPI  MIO0
+     *(AL_U32 *)(0xf8803000u) =0x1;      //QSPI  MIO0
      *(AL_U32 *)(0xf8803004u) =0x1;
      *(AL_U32 *)(0xf8803008u) =0x1;
      *(AL_U32 *)(0xf880300cu) =0x1;
@@ -14,7 +14,7 @@ void Enablepinmux1(void)
 
      *(AL_U32 *)(0xf8803020u) =0x1;    //CAN1 MIO8
      *(AL_U32 *)(0xf8803024u) =0x1;
-	 *(AL_U32 *)(0xf880340cu) =0x1;    //sel3
+     *(AL_U32 *)(0xf880340cu) =0x1;    //sel3
 
      *(AL_U32 *)(0xf8803028u) =0x4;    //GPIO MIO10
      *(AL_U32 *)(0xf880302cu) =0x4;    //GPIO MIO11
@@ -37,18 +37,18 @@ void Enablepinmux1(void)
      *(AL_U32 *)(0xf8803424u) =0x1;    //emio_sel9
 
 
-     *(AL_U32 *)(0xf8803058u) =0x7;        //MIO23/24/25/22 jtag
-     *(AL_U32 *)(0xf880305cu) =0x7;
-     *(AL_U32 *)(0xf8803060u) =0x7;
-     *(AL_U32 *)(0xf8803064u) =0x7;
+    *(AL_U32 *)(0xf8803058u) =0x7;        //MIO23/24/25/22 jtag
+    *(AL_U32 *)(0xf880305cu) =0x7;
+    *(AL_U32 *)(0xf8803060u) =0x7;
+    *(AL_U32 *)(0xf8803064u) =0x7;
                                          //
 
-	 *(AL_U32 *)(0xf8803068u) =0x3;    //uart0  MIO26/27
-	 *(AL_U32 *)(0xf880306cu) =0x3;
-	 *(AL_U32 *)(0xf8803410u) =0x1;
+    *(AL_U32 *)(0xf8803068u) =0x3;    //uart0  MIO26/27
+    *(AL_U32 *)(0xf880306cu) =0x3;
+    *(AL_U32 *)(0xf8803410u) =0x1;
 
-	*(AL_U32 *)(0xf8803070u) =0xe;     //rgmii1 mio 28-39
-	*(AL_U32 *)(0xf8803074u) =0xe;
+    *(AL_U32 *)(0xf8803070u) =0xe;     //rgmii1 mio 28-39
+    *(AL_U32 *)(0xf8803074u) =0xe;
     *(AL_U32 *)(0xf8803078u) =0xe;
     *(AL_U32 *)(0xf880307cu) =0xe;
     *(AL_U32 *)(0xf8803080u) =0xe;
@@ -90,9 +90,9 @@ void Enablepinmux1(void)
 
 void Enablepinmux1_mode2(void)
 {
-	*(AL_U32 *)(0xf8803068u) =0x3;    //uart0  MIO26/27
-	*(AL_U32 *)(0xf880306cu) =0x3;
-	*(AL_U32 *)(0xf8803410u) =0x1;
+    *(AL_U32 *)(0xf8803068u) =0x3;    //uart0  MIO26/27
+    *(AL_U32 *)(0xf880306cu) =0x3;
+    *(AL_U32 *)(0xf8803410u) =0x1;
 #if ENABLE_PINMUX_MODE_SD1 == 1
     *(AL_U32 *)(0xf88030b8u) =0xa;
     *(AL_U32 *)(0xf88030bcu) =0xa;
@@ -116,9 +116,9 @@ void Enablepinmux1_mode2(void)
     *(AL_U32 *)(0xf880342cu) =0x1;     //emio_sel11
 #endif
 
-	//USB mode2
-	*(AL_U32 *)(0xf8803070u) =0xf;     //USB pinmux config
-	*(AL_U32 *)(0xf8803074u) =0xf;
+    //USB mode2
+    *(AL_U32 *)(0xf8803070u) =0xf;     //USB pinmux config
+    *(AL_U32 *)(0xf8803074u) =0xf;
     *(AL_U32 *)(0xf8803078u) =0xf;
     *(AL_U32 *)(0xf880307cu) =0xf;
     *(AL_U32 *)(0xf8803080u) =0xf;
@@ -129,19 +129,19 @@ void Enablepinmux1_mode2(void)
     *(AL_U32 *)(0xf8803094u) =0xf;
     *(AL_U32 *)(0xf8803098u) =0xf;
     *(AL_U32 *)(0xf880309cu) =0xf;
-	//USB mode2
+    //USB mode2
 
-	*(AL_U32 *)(0xf8803040u) =0x7;
-	*(AL_U32 *)(0xf8803044u) =0x7;
-	*(AL_U32 *)(0xf880341cu) =0x1; //TTC SET
+    *(AL_U32 *)(0xf8803040u) =0x7;
+    *(AL_U32 *)(0xf8803044u) =0x7;
+    *(AL_U32 *)(0xf880341cu) =0x1; //TTC SET
 
-	*(AL_U32 *)(0xf8803048u) =0x0;
-	*(AL_U32 *)(0xf880304cu) =0x0;
-	*(AL_U32 *)(0xf8803400u) =0x1; //IIC0 SET
+    *(AL_U32 *)(0xf8803048u) =0x0;
+    *(AL_U32 *)(0xf880304cu) =0x0;
+    *(AL_U32 *)(0xf8803400u) =0x1; //IIC0 SET
 
-	*(AL_U32 *)(0xf88030d0u) =0x1;
-	*(AL_U32 *)(0xf88030d4u) =0x1;
-	*(AL_U32 *)(0xf880340cu) =0x1; //CAN1 SET
+    *(AL_U32 *)(0xf88030d0u) =0x1;
+    *(AL_U32 *)(0xf88030d4u) =0x1;
+    *(AL_U32 *)(0xf880340cu) =0x1; //CAN1 SET
 
     *(AL_U32 *)(0xf840e004u) =0x0;      //close mpu ddr0
     *(AL_U32 *)(0xf840f004u) =0x0;      //close mpu ddr1

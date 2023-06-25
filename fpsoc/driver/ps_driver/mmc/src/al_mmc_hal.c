@@ -53,7 +53,7 @@ static AL_S32 AlMmc_Hal_WaitWriteDoneOrTimeout(AL_MMC_HalStruct *Handle, AL_U32 
     while(AlMmc_Dev_GetState(Handle->Dev, AL_MMC_STATE_WRITE_BUSY) && Timeout);
 
     if (Timeout == 0) {
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "Mmc wait send done time out!\r\n");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Mmc wait send done time out!\r\n");
         return AL_MMC_ERR_TIMEOUT;
     }
 
@@ -73,7 +73,7 @@ static AL_S32 AlMmc_Hal_WaitReadDoneOrTimeout(AL_MMC_HalStruct *Handle, AL_U32 T
     while(AlMmc_Dev_GetState(Handle->Dev, AL_MMC_STATE_READ_BUSY) && Timeout);
 
     if (Timeout == 0) {
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "Mmc wait recv done time out!\r\n");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Mmc wait recv done time out!\r\n");
         return AL_MMC_ERR_TIMEOUT;
     }
 
@@ -290,7 +290,7 @@ AL_S32 AlMmc_Hal_IoCtl(AL_MMC_HalStruct *Handle, AL_MMC_IoCtlCmdEnum Cmd, AL_VOI
 
     Ret = AlMmc_Dev_IoCtl(Handle->Dev, Cmd, Data);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Ioctrl error\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Ioctrl error\r\n");
     }
 
     AL_MMC_HAL_UNLOCK(Handle);

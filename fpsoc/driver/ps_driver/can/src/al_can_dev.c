@@ -288,7 +288,7 @@ AL_VOID AlCan_Dev_ClrState(AL_CAN_DevStruct *Dev, AL_CAN_StateEnum State)
 */
 static AL_VOID AlCan_Dev_RecvFrameHandler(AL_CAN_DevStruct *Dev, AL_U32 IntrStatus)
 {
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "AlCan_Dev_RecvFrameHandler: Recv a frame!\r\n");
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "AlCan_Dev_RecvFrameHandler: Recv a frame!\r\n");
     /* IP has loop buffer, so nothing to do here */
     AlCan_Dev_ClrState(Dev, AL_CAN_STATE_RECV_EMPTY);
     AL_CAN_EventStruct Event = {
@@ -339,7 +339,7 @@ static AL_VOID AlCan_Dev_ErrHandler(AL_CAN_DevStruct *Dev, AL_U32 IntrStatus)
 
     if (IntrStatus & AL_CAN_INTR_BEIF) {
         if (Dev->Config.OpsMode == AL_CAN_MODE_LISTENONLY) {
-            AL_LOG(AL_ERR_LEVEL_DEBUG, "can bus error with listen only mode: 0x%x!\r\n",
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "can bus error with listen only mode: 0x%x!\r\n",
                    AlCan_ll_GetKoer(Dev->BaseAddr));
             AlCan_Dev_GetDecodeError(Dev);
         }
@@ -449,7 +449,7 @@ AL_S32 AlCan_Dev_RegisterEventCallBack(AL_CAN_DevStruct *Dev, AL_CAN_CallBackStr
     if (Dev->EventCallBack.Func != AL_NULL) {
 
 #ifdef CAN_DEBUG
-        AL_LOG(AL_ERR_LEVEL_WARNING, "can=%p duplicate register callback: replace old:%p with New: %p\r\n",
+        AL_LOG(AL_LOG_LEVEL_WARNING, "can=%p duplicate register callback: replace old:%p with New: %p\r\n",
                Dev, Dev->EventCallBack, CallBack);
 #endif
     }
@@ -819,52 +819,52 @@ AL_S32 AlCan_Dev_GetDecodeError(AL_CAN_DevStruct *Dev)
     switch (State)
     {
     case AL_CAN_KOER_NONE:
-        AL_LOG(AL_ERR_LEVEL_INFO, "CAN success reception!\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "CAN success reception!\r\n");
         break;
     case AL_CAN_KOER_BIT:
-        AL_LOG(AL_ERR_LEVEL_ERROR, "CAN bit error!\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "CAN bit error!\r\n");
         // if (Dev->State == AL_CAN_STATE_RECV_BUSY) {
-        //     AL_LOG(AL_ERR_LEVEL_DEBUG, "CAN recv bit error, only in ACK slot, data valid!\r\n");
+        //     AL_LOG(AL_LOG_LEVEL_DEBUG, "CAN recv bit error, only in ACK slot, data valid!\r\n");
         //     return AL_CAN_ERR_KOER_RECV_BIT;
         // } else {
-        //     AL_LOG(AL_ERR_LEVEL_DEBUG, "CAN send bit error, data invalid!\r\n");
+        //     AL_LOG(AL_LOG_LEVEL_DEBUG, "CAN send bit error, data invalid!\r\n");
         //     return AL_CAN_ERR_KOER_SEND_BIT;
         // }
         break;
     case AL_CAN_KOER_FORM:
-        AL_LOG(AL_ERR_LEVEL_ERROR, "CAN form error!\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "CAN form error!\r\n");
         return AL_CAN_ERR_KOER_FORM;
         break;
     case AL_CAN_KOER_STUFF:
-        AL_LOG(AL_ERR_LEVEL_ERROR, "CAN stuff error!\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "CAN stuff error!\r\n");
         // if (Dev->State == AL_CAN_STATE_RECV_BUSY) {
-        //     AL_LOG(AL_ERR_LEVEL_DEBUG, "CAN recv stuff error, data invalid!\r\n");
+        //     AL_LOG(AL_LOG_LEVEL_DEBUG, "CAN recv stuff error, data invalid!\r\n");
         //     return AL_CAN_ERR_KOER_RECV_STUFF;
         // } else {
-        //     AL_LOG(AL_ERR_LEVEL_DEBUG, "CAN send stuff error, only happen during arbitration, data invalid!\r\n");
+        //     AL_LOG(AL_LOG_LEVEL_DEBUG, "CAN send stuff error, only happen during arbitration, data invalid!\r\n");
         //     return AL_CAN_ERR_KOER_SEND_STUFF;
         // }
         break;
     case AL_CAN_KOER_ACK:
-        AL_LOG(AL_ERR_LEVEL_ERROR, "CAN ack error!\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "CAN ack error!\r\n");
         // if (Dev->State == AL_CAN_STATE_RX_BUSY) {
-        //     AL_LOG(AL_ERR_LEVEL_DEBUG, "CAN recv ack error, only in LOM, data valid!\r\n");
+        //     AL_LOG(AL_LOG_LEVEL_DEBUG, "CAN recv ack error, only in LOM, data valid!\r\n");
         //     return AL_CAN_ERR_KOER_RECV_ACK;
         // } else {
-        //     AL_LOG(AL_ERR_LEVEL_DEBUG, "CAN send ack error, only loop back without self-ack, data valid!\r\n");
+        //     AL_LOG(AL_LOG_LEVEL_DEBUG, "CAN send ack error, only loop back without self-ack, data valid!\r\n");
         //     return AL_CAN_ERR_KOER_SEND_ACK;
         // }
         break;
     case AL_CAN_KOER_CRC:
-        AL_LOG(AL_ERR_LEVEL_ERROR, "CAN crc error, data invalid!\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "CAN crc error, data invalid!\r\n");
         return AL_CAN_ERR_KOER_CRC;
         break;
     case AL_CAN_KOER_OTHER:
-        AL_LOG(AL_ERR_LEVEL_ERROR, "CAN other error!\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "CAN other error!\r\n");
         return AL_CAN_ERR_KOER_OTHER;
         break;
     default :
-        AL_LOG(AL_ERR_LEVEL_ERROR, "CAN wrong KOER parameter\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "CAN wrong KOER parameter\r\n");
         return AL_CAN_ERR_WRONG_KOER_PARAMETER;
         break;
     }
@@ -955,31 +955,31 @@ AL_S32 AlCan_Dev_IoCtl(AL_CAN_DevStruct *Dev, AL_CAN_IoCtlCmdEnum Cmd, AL_VOID *
 AL_S32 AlCan_Dev_DisplayFrame(AL_CAN_FrameStruct *Frame)
 {
     AL_U32 DataWordLen;
-    AL_LOG(AL_ERR_LEVEL_INFO, "-------Recv Frame--------\r\n");
-    AL_LOG(AL_ERR_LEVEL_INFO, "| Id: 0x%08x\r\n", Frame->Id);
-    AL_LOG(AL_ERR_LEVEL_INFO, "| Dlc: 0x%08x\r\n", Frame->DataLen);
-    AL_LOG(AL_ERR_LEVEL_INFO, "| Data len: 0x%d\r\n", AlCan_Dev_Dlc2LenInByte(Frame->DataLen));
+    AL_LOG(AL_LOG_LEVEL_INFO, "-------Recv Frame--------\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "| Id: 0x%08x\r\n", Frame->Id);
+    AL_LOG(AL_LOG_LEVEL_INFO, "| Dlc: 0x%08x\r\n", Frame->DataLen);
+    AL_LOG(AL_LOG_LEVEL_INFO, "| Data len: 0x%d\r\n", AlCan_Dev_Dlc2LenInByte(Frame->DataLen));
     if (Frame->IsIdExt == AL_TRUE) {
-        AL_LOG(AL_ERR_LEVEL_INFO, "| Extern Id\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "| Extern Id\r\n");
     } else {
-        AL_LOG(AL_ERR_LEVEL_INFO, "| Standard Id\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "| Standard Id\r\n");
     }
     if (Frame->IsRemote == AL_TRUE) {
-        AL_LOG(AL_ERR_LEVEL_INFO, "| Remote frame\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "| Remote frame\r\n");
     } else {
-        AL_LOG(AL_ERR_LEVEL_INFO, "| Not remote frame\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "| Not remote frame\r\n");
     }
     if (Frame->IsBitSwitch == AL_TRUE) {
-        AL_LOG(AL_ERR_LEVEL_INFO, "| Switch fast bit rate\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "| Switch fast bit rate\r\n");
     } else {
-        AL_LOG(AL_ERR_LEVEL_INFO, "| Nominal bit rate\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "| Nominal bit rate\r\n");
     }
     DataWordLen = AlCan_Dev_Dlc2Len(Frame->DataLen);
-    AL_LOG(AL_ERR_LEVEL_INFO, "| Data length in byte is %d\r\n", DataWordLen);
+    AL_LOG(AL_LOG_LEVEL_INFO, "| Data length in byte is %d\r\n", DataWordLen);
     for (AL_U32 i = 0; i < DataWordLen; i++) {
-        AL_LOG(AL_ERR_LEVEL_INFO, "| Data %02d: 0x%08x\r\n", i, Frame->Data[i]);
+        AL_LOG(AL_LOG_LEVEL_INFO, "| Data %02d: 0x%08x\r\n", i, Frame->Data[i]);
     }
 
-    AL_LOG(AL_ERR_LEVEL_INFO, "-----Recv Frame Done-----\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "-----Recv Frame Done-----\r\n");
 }
 #endif

@@ -89,7 +89,7 @@ static AL_VOID AlDmacAhb_Test_OtherTransTypeEgCallBack(AL_DMACAHB_EventStruct *E
         }
         break;
     case AL_DMACAHB_EVENT_ERR:
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Dmac ahb auto reload call back err!\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Dmac ahb auto reload call back err!\r\n");
         break;
     default :
         break;
@@ -106,13 +106,13 @@ static AL_VOID AlDmacAhb_Test_SingleMode(AL_VOID)
     AL_U32 Ret = AL_OK;
     AL_U32 Timeout = 1000;
 
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb single mode test!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb single mode test!\r\n");
 
     ChConfig = ChSingleModeEg1;
 
     Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
 
     Trans = &(Handle.Channel->Trans);
@@ -125,20 +125,20 @@ static AL_VOID AlDmacAhb_Test_SingleMode(AL_VOID)
 
     Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
 
     Ret = AlDmacAhb_Test_DataCheck(Trans->SrcAddr, Trans->DstAddr, AL_DMACAHB_TEST_ARRAY_SIZE);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
     }
 
     Ret = AlDmacAhb_Hal_DeInit(&Handle);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
 
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb single mode test done!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb single mode test done!\r\n");
 }
 
 static AL_VOID AlDmacAhb_Test_AutoReloadMode(AL_VOID)
@@ -151,7 +151,7 @@ static AL_VOID AlDmacAhb_Test_AutoReloadMode(AL_VOID)
     AL_U32 Ret = AL_OK;
     AL_U32 Timeout = 1000;
 
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb auto-reload mode test!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb auto-reload mode test!\r\n");
 
     ChConfig = ChAutoReloadModeEg1;
 
@@ -160,7 +160,7 @@ static AL_VOID AlDmacAhb_Test_AutoReloadMode(AL_VOID)
 
     Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
 
     Trans = &(Handle.Channel->Trans);
@@ -175,20 +175,20 @@ static AL_VOID AlDmacAhb_Test_AutoReloadMode(AL_VOID)
 
     Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
 
     Ret = AlDmacAhb_Test_DataCheck(Trans->SrcAddr, Trans->DstAddr, AL_DMACAHB_TEST_ARRAY_SIZE);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
     }
 
     Ret = AlDmacAhb_Hal_DeInit(&Handle);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
 
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb auto-reload mode test done!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb auto-reload mode test done!\r\n");
 }
 
 static AL_VOID AlDmacAhb_Test_LlpMode(AL_VOID)
@@ -200,13 +200,13 @@ static AL_VOID AlDmacAhb_Test_LlpMode(AL_VOID)
     AL_U32 Ret = AL_OK;
     AL_U32 Timeout = 1000;
 
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb LLP mode test!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb LLP mode test!\r\n");
 
     ChConfig = ChLlpModeEg1;
 
     Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
 
     AL_U32 TransSize = AL_DMACAHB_TEST_ARRAY_SIZE / (1 << ChConfig.SrcTransWidth);
@@ -235,23 +235,23 @@ static AL_VOID AlDmacAhb_Test_LlpMode(AL_VOID)
 
     Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
 
     for (AL_U32 i = 0; i < AL_DMACAHB_LLI_STRUCT_NUM; i++) {
         Ret = AlDmacAhb_Test_DataCheck(Lli[i].SrcAddr, Lli[i].DstAddr, AL_DMACAHB_TEST_ARRAY_SIZE);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Llp[%d] data check error:0x%x\r\n", i, Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Llp[%d] data check error:0x%x\r\n", i, Ret);
             break;
         }
     }
 
     Ret = AlDmacAhb_Hal_DeInit(&Handle);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
 
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb LLP mode test done!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb LLP mode test done!\r\n");
 }
 
 static AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
@@ -264,13 +264,13 @@ static AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
     AL_U32 Timeout = 1000;
 
     /*-------------------- trans type 2 --------------------*/
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb other trans type 2 test!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb other trans type 2 test!\r\n");
 
     ChConfig = ChOtherTransTypeEg1;
 
     Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
 
     //init SRC_MEM and DST_MEM
@@ -289,31 +289,31 @@ static AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
 
     Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
 
     Ret = AlDmacAhb_Test_DataCheck(SRC_MEM[AL_DMACAHB_RELOAD_COUNT_MAX - 1], Trans->DstAddr,
                                    AL_DMACAHB_TEST_ARRAY_SIZE);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
     }
 
     Ret = AlDmacAhb_Hal_DeInit(&Handle);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
 
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb other trans type 2 test done!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb other trans type 2 test done!\r\n");
 
     /*-------------------- trans type 2 --------------------*/
     /*-------------------- trans type 3 --------------------*/
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb other trans type 3 test!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb other trans type 3 test!\r\n");
 
     ChConfig = ChOtherTransTypeEg2;
 
     Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
 
     //init SRC_MEM and DST_MEM
@@ -330,33 +330,33 @@ static AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
 
     Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
 
     Ret = AlDmacAhb_Test_DataCheck(Trans->SrcAddr, DST_MEM[AL_DMACAHB_RELOAD_COUNT_MAX - 1],
                                    AL_DMACAHB_TEST_ARRAY_SIZE);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
     }
 
     Ret = AlDmacAhb_Hal_DeInit(&Handle);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
 
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb other trans type 3 test done!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb other trans type 3 test done!\r\n");
 
     /*-------------------- trans type 3 --------------------*/
     AL_U32 TransSize;
     AL_DMACAHB_LliStruct Lli[AL_DMACAHB_LLI_STRUCT_NUM];
     /*-------------------- trans type 6 --------------------*/
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb other trans type 6 test!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb other trans type 6 test!\r\n");
 
     ChConfig = ChOtherTransTypeEg3;
 
     Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
 
     memset(SRC_MEM[0], 0, (AL_DMACAHB_TEST_MEM_SIZE * AL_DMACAHB_TEST_ARRAY_SIZE));
@@ -387,32 +387,32 @@ static AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
 
     Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
 
     for (AL_U32 i = 0; i < AL_DMACAHB_LLI_STRUCT_NUM; i++) {
         Ret = AlDmacAhb_Test_DataCheck(SRC_MEM[i], DST_MEM[i], AL_DMACAHB_TEST_ARRAY_SIZE);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Llp[%d] data check error:0x%x\r\n", i, Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Llp[%d] data check error:0x%x\r\n", i, Ret);
             break;
         }
     }
 
     Ret = AlDmacAhb_Hal_DeInit(&Handle);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
 
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb other trans type 6 test done!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb other trans type 6 test done!\r\n");
     /*-------------------- trans type 6 --------------------*/
     /*-------------------- trans type 7 --------------------*/
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb other trans type 7 test!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb other trans type 7 test!\r\n");
 
     ChConfig = ChOtherTransTypeEg4;
 
     Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
 
     TransSize = AL_DMACAHB_TEST_ARRAY_SIZE / (1 << ChConfig.SrcTransWidth);
@@ -445,32 +445,32 @@ static AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
 
     Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
 
     for (AL_U32 i = 0; i < AL_DMACAHB_LLI_STRUCT_NUM; i++) {
         Ret = AlDmacAhb_Test_DataCheck(SRC_MEM[0], DST_MEM[i], AL_DMACAHB_TEST_ARRAY_SIZE);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
             break;
         }
     }
 
     Ret = AlDmacAhb_Hal_DeInit(&Handle);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
 
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb other trans type 7 test done!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb other trans type 7 test done!\r\n");
     /*-------------------- trans type 7 --------------------*/
     /*-------------------- trans type 8 --------------------*/
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb other trans type 8 test!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb other trans type 8 test!\r\n");
 
     ChConfig = ChOtherTransTypeEg5;
 
     Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
 
     TransSize = AL_DMACAHB_TEST_ARRAY_SIZE / (1 << ChConfig.SrcTransWidth);
@@ -502,32 +502,32 @@ static AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
 
     Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
 
     for (AL_U32 i = 0; i < AL_DMACAHB_LLI_STRUCT_NUM; i++) {
         Ret = AlDmacAhb_Test_DataCheck(SRC_MEM[i], DST_MEM[i], AL_DMACAHB_TEST_ARRAY_SIZE);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Llp[%d] data check error:0x%x\r\n", i, Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Llp[%d] data check error:0x%x\r\n", i, Ret);
             break;
         }
     }
 
     Ret = AlDmacAhb_Hal_DeInit(&Handle);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
 
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb other trans type 8 test done!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb other trans type 8 test done!\r\n");
     /*-------------------- trans type 8 --------------------*/
     /*-------------------- trans type 9 --------------------*/
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb other trans type 9 test!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb other trans type 9 test!\r\n");
 
     ChConfig = ChOtherTransTypeEg6;
 
     Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
 
     TransSize = AL_DMACAHB_TEST_ARRAY_SIZE / (1 << ChConfig.SrcTransWidth);
@@ -561,20 +561,20 @@ static AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
 
     Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
 
     Ret = AlDmacAhb_Test_DataCheck(SRC_MEM[AL_DMACAHB_LLI_STRUCT_NUM-1], DST_MEM[0],
                                    AL_DMACAHB_TEST_ARRAY_SIZE);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
     }
 
     Ret = AlDmacAhb_Hal_DeInit(&Handle);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
 
-    AL_LOG(AL_ERR_LEVEL_INFO, "Dmacahb other trans type 9 test done!\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb other trans type 9 test done!\r\n");
     /*-------------------- trans type 9 --------------------*/
 }

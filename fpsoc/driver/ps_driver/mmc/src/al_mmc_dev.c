@@ -55,7 +55,7 @@ AL_S32 AlMmc_Dev_RstHostController(AL_MMC_DevStruct *Dev, AL_MMC_RstHostEnum Rst
 {
     AL_U32 Timeout = 100;   /* 1ms */
     if ((Rst != AL_MMC_RST_HOST_ALL) && (Rst != AL_MMC_RST_HOST_CMD) && (Rst != AL_MMC_RST_HOST_DAT)) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Host reset enum error\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Host reset enum error\r\n");
         return AL_MMC_ERR_HOST_RST;
     }
 
@@ -264,7 +264,7 @@ static AL_U32 AlMmc_Dev_GetCmdRegParam(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum 
         TmpReg.Bit.DatPresentSel    = AL_TRUE;
         break;
     default:
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Invalid cmd index %d\r\n", Cmd);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Invalid cmd index %d\r\n", Cmd);
         break;
     }
 
@@ -366,8 +366,8 @@ static AL_S32 AlMmc_Dev_CheckCmdDone(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum Cm
         }
 
         if (IntrStat.Bit.ErrIntr) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Response: 0x%x\r\n", AlMmc_ll_ReadResp01(Dev->HwConfig.BaseAddress));
-            AL_LOG(AL_ERR_LEVEL_ERROR, "%s %d send err, code: 0x%x\r\n", ((Cmd & 0x100) ? "ACMD" : "CMD"), (Cmd & 0xFF),
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Response: 0x%x\r\n", AlMmc_ll_ReadResp01(Dev->HwConfig.BaseAddress));
+            AL_LOG(AL_LOG_LEVEL_ERROR, "%s %d send err, code: 0x%x\r\n", ((Cmd & 0x100) ? "ACMD" : "CMD"), (Cmd & 0xFF),
                                                                            IntrStat);
             return AlMmc_Dev_CheckErrStat(IntrStat);
         }
@@ -376,12 +376,12 @@ static AL_S32 AlMmc_Dev_CheckCmdDone(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum Cm
     } while ((!IntrStat.Bit.CmdComp) && Timeout);
 
     if (!Timeout) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "%s %d send timeout\r\n", ((Cmd & 0x100) ? "ACMD" : "CMD"), (Cmd & 0xFF));
+        AL_LOG(AL_LOG_LEVEL_ERROR, "%s %d send timeout\r\n", ((Cmd & 0x100) ? "ACMD" : "CMD"), (Cmd & 0xFF));
         return Ret;
     }
 
 #ifdef MMC_DEBUG
-    // AL_LOG(AL_ERR_LEVEL_DEBUG, "Cmd done state: 0x%x\r\n", IntrStat.Reg);
+    // AL_LOG(AL_LOG_LEVEL_DEBUG, "Cmd done state: 0x%x\r\n", IntrStat.Reg);
 #endif
 
     IntrStat.Reg = 0;
@@ -397,7 +397,7 @@ static AL_S32 AlMmc_Dev_CmdTransfer(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum Cmd
     AL_S32 Ret                  = AL_OK;
 
 #ifdef MMC_DEBUG
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "Send: %s%d, Arg: 0x%x, BlkCnt: %d\r\n", ((Cmd & 0x100) ? "ACMD" : "CMD"), (Cmd & 0xFF),
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Send: %s%d, Arg: 0x%x, BlkCnt: %d\r\n", ((Cmd & 0x100) ? "ACMD" : "CMD"), (Cmd & 0xFF),
                                                                         Arg, BlkCnt);
 #endif
 
@@ -456,29 +456,29 @@ static AL_S32 AlMmc_Dev_SetClkFreq(AL_MMC_DevStruct *Dev, AL_MMC_FreqKhzEnum Fre
 
     /* First init is default 400k, so do not need set defualt clk freq */
     if ((TmpReg.Bit.ClkGenSel == AL_MMC_CLK_GEN_DIV) && (Freq == AL_MMC_FREQ_KHZ_DEF)) {
-        AL_LOG(AL_ERR_LEVEL_INFO, "Cur freq is default 400Khz\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "Cur freq is default 400Khz\r\n");
         return AL_OK;
     }
 
     if (Freq != AL_MMC_FREQ_KHZ_DEF) {
         if (0 == FreqDiv) {
-            AL_LOG(AL_ERR_LEVEL_INFO, "Freq is large than input clk, set freq to input clk %d Khz\r\n", InputClk);
+            AL_LOG(AL_LOG_LEVEL_INFO, "Freq is large than input clk, set freq to input clk %d Khz\r\n", InputClk);
             FreqSel = 0;
         } else if (FreqMod) {
             if (FreqDiv - 1 == TmpReg.Bit.FreqSel) {
-                AL_LOG(AL_ERR_LEVEL_INFO, "Freq(not divisible by input clk) need to config %d Khz equeal to cur set\r\n", Freq - FreqMod);
+                AL_LOG(AL_LOG_LEVEL_INFO, "Freq(not divisible by input clk) need to config %d Khz equeal to cur set\r\n", Freq - FreqMod);
                 return AL_OK;
             } else {
-                AL_LOG(AL_ERR_LEVEL_INFO, "Freq is not divisible by input clk, floor this freq to %d Khz\r\n", Freq - FreqMod);
+                AL_LOG(AL_LOG_LEVEL_INFO, "Freq is not divisible by input clk, floor this freq to %d Khz\r\n", Freq - FreqMod);
                 FreqSel = FreqDiv - 1;
             }
         } else {
-            AL_LOG(AL_ERR_LEVEL_INFO, "Set freq to %d Khz\r\n", Freq);
+            AL_LOG(AL_LOG_LEVEL_INFO, "Set freq to %d Khz\r\n", Freq);
             FreqSel = FreqDiv - 1;
         }
 
         if ((TmpReg.Bit.ClkGenSel == AL_MMC_CLK_GEN_PROGRAM) && (TmpReg.Bit.FreqSel == FreqSel)) {
-            AL_LOG(AL_ERR_LEVEL_INFO, "Request req %d Khz equeal to cur set\r\n", Freq);
+            AL_LOG(AL_LOG_LEVEL_INFO, "Request req %d Khz equeal to cur set\r\n", Freq);
             return AL_OK;
         }
     }
@@ -513,9 +513,9 @@ static AL_S32 AlMmc_Dev_SetClkFreq(AL_MMC_DevStruct *Dev, AL_MMC_FreqKhzEnum Fre
     AlMmc_ll_WriteSwRst_Ctrl_Tout_Clk(Dev->HwConfig.BaseAddress, TmpReg.Reg);
 
 #ifdef MMC_DEBUG
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "Request: %d KHz, Set: %d KHz\r\n", Freq, Dev->CardInfo.FreqKhz);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Request: %d KHz, Set: %d KHz\r\n", Freq, Dev->CardInfo.FreqKhz);
     TmpReg.Reg = AlMmc_ll_ReadSwRst_Ctrl_Tout_Clk(Dev->HwConfig.BaseAddress);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, " Clk mode is %s, Freq sel is %d\r\n",
+    AL_LOG(AL_LOG_LEVEL_DEBUG, " Clk mode is %s, Freq sel is %d\r\n",
                                ((TmpReg.Bit.ClkGenSel == AL_MMC_CLK_GEN_PROGRAM) ? "Program" : "Diveded"), TmpReg.Bit.FreqSel);
 #endif
 
@@ -581,7 +581,7 @@ static AL_S32 AlMmc_Dev_IdentifyCard(AL_MMC_DevStruct *Dev)
 
     Ret = AlMmc_Dev_RstHostController(Dev, AL_MMC_RST_HOST_CMD);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "CMD line reset error\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "CMD line reset error\r\n");
         return Ret;
     }
 
@@ -619,7 +619,7 @@ static AL_S32 AlMmc_Dev_CardReset(AL_MMC_DevStruct *Dev)
 
     Ret = AlMmc_Dev_CmdTransfer(Dev, AL_MMC_CMD_IDX_0, 0, 0);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Card reset error, code 0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Card reset error, code 0x%x\r\n", Ret);
     }
 
     return Ret;
@@ -631,14 +631,14 @@ static AL_S32 AlMmc_Dev_CardIfCond(AL_MMC_DevStruct *Dev)
 
     Ret = AlMmc_Dev_CmdTransfer(Dev, AL_MMC_CMD_IDX_8, AL_MMC_CMD8_VOL_PATTERN, 0);
     if ((Ret != AL_OK) && (Ret != AL_MMC_ERR_CMD_TOUT)) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Card reset error, code 0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Card reset error, code 0x%x\r\n", Ret);
         return Ret;
     }
 
     if (Ret == AL_MMC_ERR_CMD_TOUT) {
         Ret = AlMmc_Dev_RstHostController(Dev, AL_MMC_RST_HOST_CMD);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "CMD line reset error\r\n");
+            AL_LOG(AL_LOG_LEVEL_ERROR, "CMD line reset error\r\n");
             return Ret;
         }
     }
@@ -755,7 +755,7 @@ static AL_S32 AlMmc_Dev_GetCardCfg(AL_MMC_DevStruct *Dev)
     Scr.Reg[1] = Temp;
 
 #ifdef MMC_DEBUG
-    // AL_LOG(AL_ERR_LEVEL_DEBUG, "Scr: [0] 0x%08x, [1] 0x%08x\r\n", Scr.Reg[0], Scr.Reg[1]);
+    // AL_LOG(AL_LOG_LEVEL_DEBUG, "Scr: [0] 0x%08x, [1] 0x%08x\r\n", Scr.Reg[0], Scr.Reg[1]);
 #endif
 
     if (Scr.Sd.SdSpec4) {
@@ -774,21 +774,21 @@ static AL_S32 AlMmc_Dev_GetCardCfg(AL_MMC_DevStruct *Dev)
     }
 
 #ifdef MMC_DEBUG
-    // AL_LOG(AL_ERR_LEVEL_DEBUG, "Card ver: 0x%x\r\n", Dev->CardInfo.CardVer);
+    // AL_LOG(AL_LOG_LEVEL_DEBUG, "Card ver: 0x%x\r\n", Dev->CardInfo.CardVer);
 #endif
 
     if (Scr.Sd.SdBusWidth & AL_MMC_BUS_WIDTH_4BIT) {
         /* Card support 1-bit and 4-bit bus width */
         if (Dev->Config.BusWidth > AL_MMC_BUS_WIDTH_4BIT) {
-            AL_LOG(AL_ERR_LEVEL_INFO, "Config bus width %d-bit not support, modify to %d-bit\r\n", Dev->Config.BusWidth,
+            AL_LOG(AL_LOG_LEVEL_INFO, "Config bus width %d-bit not support, modify to %d-bit\r\n", Dev->Config.BusWidth,
                    AL_MMC_BUS_WIDTH_4BIT);
             Dev->Config.BusWidth = AL_MMC_BUS_WIDTH_4BIT;
         } else {
-            AL_LOG(AL_ERR_LEVEL_INFO, "Bus width is 4-bit\r\n");
+            AL_LOG(AL_LOG_LEVEL_INFO, "Bus width is 4-bit\r\n");
         }
     } else {
         /* Card only support 1-bit bus width */
-        AL_LOG(AL_ERR_LEVEL_INFO, "Card only support bus width %d-bit\r\n", AL_MMC_BUS_WIDTH_1BIT);
+        AL_LOG(AL_LOG_LEVEL_INFO, "Card only support bus width %d-bit\r\n", AL_MMC_BUS_WIDTH_1BIT);
         Dev->Config.BusWidth = AL_MMC_BUS_WIDTH_1BIT;
     }
 
@@ -862,8 +862,8 @@ static AL_S32 AlMmc_Dev_GetCsd(AL_MMC_DevStruct *Dev)
     Dev->CardInfo.CardSpecDat.Reg[3] = AlMmc_ll_ReadResp67(Dev->HwConfig.BaseAddress);
 
 #ifdef MMC_DEBUG
-    // AL_LOG(AL_ERR_LEVEL_DEBUG,"CSD [135:8]\r\n");
-    // AL_LOG(AL_ERR_LEVEL_DEBUG, "CSD: [3] 0X%08x, [2] 0x%08x, [1] 0x%08x, [0] 0x%08x\r\n",
+    // AL_LOG(AL_LOG_LEVEL_DEBUG,"CSD [135:8]\r\n");
+    // AL_LOG(AL_LOG_LEVEL_DEBUG, "CSD: [3] 0X%08x, [2] 0x%08x, [1] 0x%08x, [0] 0x%08x\r\n",
     //                                  Dev->CardInfo.CardSpecDat.Reg[3],
     //                                  Dev->CardInfo.CardSpecDat.Reg[2],
     //                                  Dev->CardInfo.CardSpecDat.Reg[1],
@@ -879,8 +879,8 @@ static AL_S32 AlMmc_Dev_GetCsd(AL_MMC_DevStruct *Dev)
     Dev->CardInfo.CardSpecDat.Reg[0] = (Dev->CardInfo.CardSpecDat.Reg[0] << 8);
 
 #ifdef MMC_DEBUG
-    // AL_LOG(AL_ERR_LEVEL_DEBUG,"CSD [127:0]\r\n");
-    // AL_LOG(AL_ERR_LEVEL_DEBUG, "CSD: [3] 0X%08x, [2] 0x%08x, [1] 0x%08x, [0] 0x%08x\r\n",
+    // AL_LOG(AL_LOG_LEVEL_DEBUG,"CSD [127:0]\r\n");
+    // AL_LOG(AL_LOG_LEVEL_DEBUG, "CSD: [3] 0X%08x, [2] 0x%08x, [1] 0x%08x, [0] 0x%08x\r\n",
     //                                  Dev->CardInfo.CardSpecDat.Reg[3],
     //                                  Dev->CardInfo.CardSpecDat.Reg[2],
     //                                  Dev->CardInfo.CardSpecDat.Reg[1],
@@ -898,7 +898,7 @@ static AL_S32 AlMmc_Dev_GetCardCap(AL_MMC_DevStruct *Dev)
 
     if (Dev->CardInfo.CardType == AL_MMC_CARD_TYPE_SD) {
 #ifdef MMC_DEBUG
-        // AL_LOG(AL_ERR_LEVEL_DEBUG, "Sd CSD struct is ver %d \r\n",Dev->CardInfo.CardSpecDat.SdV1.CsdStruct+1);
+        // AL_LOG(AL_LOG_LEVEL_DEBUG, "Sd CSD struct is ver %d \r\n",Dev->CardInfo.CardSpecDat.SdV1.CsdStruct+1);
 #endif
         if (Dev->CardInfo.CardSpecDat.SdV1.CsdStruct == AL_MMC_CSD_VER_SD10_EMMC10) {
             /* Memory capacity = BLOCKNR * BLOCK_LEN */
@@ -928,7 +928,7 @@ static AL_S32 AlMmc_Dev_GetCardCap(AL_MMC_DevStruct *Dev)
         } else {
             /* large than 2GB, capacity store in EXT_CSD */
 #ifdef MMC_DEBUG
-            AL_LOG(AL_ERR_LEVEL_DEBUG, "Emmc capacity large than 2GB\r\n");
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "Emmc capacity large than 2GB\r\n");
 #endif
         }
         Dev->CardInfo.BlkLen    = 2 << Dev->CardInfo.CardSpecDat.Emmc.RdBlkLen;
@@ -938,7 +938,7 @@ static AL_S32 AlMmc_Dev_GetCardCap(AL_MMC_DevStruct *Dev)
     Dev->CardInfo.BlkLen    = AL_MMC_FIXED_BLK_LEN;
 
 #ifdef MMC_DEBUG
-            AL_LOG(AL_ERR_LEVEL_DEBUG, "Card capacity is %d KByte, blk len is %d\r\n", Dev->CardInfo.CardCap,
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "Card capacity is %d KByte, blk len is %d\r\n", Dev->CardInfo.CardCap,
                                                                                        Dev->CardInfo.BlkLen);
 #endif
 
@@ -1074,7 +1074,7 @@ static AL_S32 AlMmc_Dev_SetBusWidth(AL_MMC_DevStruct *Dev)
         }
     } else {
         if ((!Dev->HostCap.Cap1.Bit.Embedded8Bit) && (Dev->Config.BusWidth == AL_MMC_BUS_WIDTH_8BIT)) {
-            AL_LOG(AL_ERR_LEVEL_INFO, "Host not support 8-bit, set to 4-bit\r\n");
+            AL_LOG(AL_LOG_LEVEL_INFO, "Host not support 8-bit, set to 4-bit\r\n");
             Dev->Config.BusWidth = AL_MMC_BUS_WIDTH_4BIT;
         }
 
@@ -1134,13 +1134,13 @@ static AL_S32 AlMmc_Dev_SetBlkSize(AL_MMC_DevStruct *Dev, AL_MMC_BlkLenEnum BlkL
                                        AL_MMC_STATE_MASK_WR_ACTIVE |
                                        AL_MMC_STATE_MASK_RD_ACTIVE);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Set blk size check line idle error\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Set blk size check line idle error\r\n");
         return Ret;
     }
 
     Ret = AlMmc_Dev_CmdTransfer(Dev, AL_MMC_CMD_IDX_16, BlkLen, 0);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Set blk size CMD 16 error\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Set blk size CMD 16 error\r\n");
         return Ret;
     }
 
@@ -1303,13 +1303,13 @@ AL_S32 AlMmc_Dev_Init(AL_MMC_DevStruct *Dev, AL_MMC_HwConfigStruct *HwConfig, AL
 #endif
 
     if (Dev->Config.CardType >= AL_MMC_CARD_TYPE_MAX) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Invalid card type config\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Invalid card type config\r\n");
         return AL_MMC_ERR_INVALID_CARD;
     } else if (Dev->Config.CardType == AL_MMC_CARD_TYPE_AUTO_DETECT) {
         /* Identify detected card is SD or eMMC */
         Ret = AlMmc_Dev_IdentifyCard(Dev);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Identify Card failed, err code 0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Identify Card failed, err code 0x%x\r\n", Ret);
             return Ret;
         }
     } else {
@@ -1321,12 +1321,12 @@ AL_S32 AlMmc_Dev_Init(AL_MMC_DevStruct *Dev, AL_MMC_HwConfigStruct *HwConfig, AL
     } else if (Dev->CardInfo.CardType == AL_MMC_CARD_TYPE_EMMC) {
         Ret = AlMmc_Dev_EmmcCardInit(Dev);
     } else {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Invalid or not support card\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Invalid or not support card\r\n");
         return AL_MMC_ERR_INVALID_CARD;
     }
 
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Card %s Init error, err code 0x%x\r\n",
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Card %s Init error, err code 0x%x\r\n",
                (Dev->CardInfo.CardType == AL_MMC_CARD_TYPE_SD) ? "SD" : "eMMC", Ret);
         return Ret;
     }
@@ -1351,7 +1351,7 @@ AL_S32 AlMmc_Dev_RegisterEventCallBack(AL_MMC_DevStruct *Dev, AL_MMC_CallBackStr
     if (Dev->EventCallBack.Func != AL_NULL) {
 
 #ifdef MMC_DEBUG
-        AL_LOG(AL_ERR_LEVEL_WARNING, "mmc=%p duplicate register callback: replace old:%p with New: %p\r\n",
+        AL_LOG(AL_LOG_LEVEL_WARNING, "mmc=%p duplicate register callback: replace old:%p with New: %p\r\n",
                Dev, Dev->EventCallBack, CallBack);
 #endif
     }
@@ -1426,7 +1426,7 @@ static AL_S32 AlMmc_Dev_SetUpAdma2DescTable(AL_MMC_DevStruct *Dev, AL_U8 *Buf, A
         }
 
         if (TotalDescSize > AL_MMC_ADMA_TABLE_SIZE) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Trans size out of range, need increase AL_MMC_ADMA_TABLE_SIZE\r\n");
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Trans size out of range, need increase AL_MMC_ADMA_TABLE_SIZE\r\n");
         }
     }
 
@@ -1497,7 +1497,7 @@ static AL_S32 AlMmc_Dev_CheckTransferDone(AL_MMC_DevStruct *Dev)
 
 #ifdef MMC_DEBUG
         // if (IntrStat.Reg != 0)
-        //     AL_LOG(AL_ERR_LEVEL_DEBUG, "Transfer state: 0x%x\r\n", IntrStat.Reg);
+        //     AL_LOG(AL_LOG_LEVEL_DEBUG, "Transfer state: 0x%x\r\n", IntrStat.Reg);
 #endif
 
         if (IntrStat.Bit.ErrIntr) {
@@ -1505,7 +1505,7 @@ static AL_S32 AlMmc_Dev_CheckTransferDone(AL_MMC_DevStruct *Dev)
                                          (Dev->Config.DmaMode == AL_MMC_DMA_MODE_ADMA2) ||
                                          (Dev->Config.DmaMode == AL_MMC_DMA_MODE_ADMA3))) {
                 /* TODO: ADMA abort operation */
-                AL_LOG(AL_ERR_LEVEL_ERROR, "Adma error\r\n");
+                AL_LOG(AL_LOG_LEVEL_ERROR, "Adma error\r\n");
             }
 
             return AlMmc_Dev_CheckErrStat(IntrStat);
@@ -1521,7 +1521,7 @@ static AL_S32 AlMmc_Dev_CheckTransferDone(AL_MMC_DevStruct *Dev)
             IntrStat.Bit.DmaIntr = AL_TRUE;
             AlMmc_ll_WriteIntrStat(Dev->HwConfig.BaseAddress, IntrStat.Reg);
 #ifdef MMC_DEBUG
-            // AL_LOG(AL_ERR_LEVEL_DEBUG, "Sdma intr Addr: 0x%x\r\n", SdmaAddr);
+            // AL_LOG(AL_LOG_LEVEL_DEBUG, "Sdma intr Addr: 0x%x\r\n", SdmaAddr);
 #endif
             AlMmc_ll_WriteAdmaSysAddrLow(Dev->HwConfig.BaseAddress, SdmaAddr);
         }
@@ -1535,8 +1535,8 @@ static AL_S32 AlMmc_Dev_CheckTransferDone(AL_MMC_DevStruct *Dev)
     }
 
 #ifdef MMC_DEBUG
-    // AL_LOG(AL_ERR_LEVEL_DEBUG, "Cur timeout: %d\r\n", Timeout);
-    // AL_LOG(AL_ERR_LEVEL_DEBUG, "Transfer done state: 0x%x\r\n", IntrStat.Reg);
+    // AL_LOG(AL_LOG_LEVEL_DEBUG, "Cur timeout: %d\r\n", Timeout);
+    // AL_LOG(AL_LOG_LEVEL_DEBUG, "Transfer done state: 0x%x\r\n", IntrStat.Reg);
 #endif
 
     IntrStat.Reg            = 0;
@@ -1586,12 +1586,12 @@ static AL_S32 AlMmc_Dev_TransferNoDma(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 
                 AL_MMC_LOOP_REG_DELAY;
                 Timeout--;
 #ifdef MMC_DEBUG
-                // AL_LOG(AL_ERR_LEVEL_DEBUG, "Write no dma state 0x%x\r\n", IntrStat.Reg);
+                // AL_LOG(AL_LOG_LEVEL_DEBUG, "Write no dma state 0x%x\r\n", IntrStat.Reg);
 #endif
             } while ((!IntrStat.Bit.BuffWrRdy) && Timeout);
 
             if (!Timeout) {
-                AL_LOG(AL_ERR_LEVEL_ERROR, "Wait write ready timeout\r\n");
+                AL_LOG(AL_LOG_LEVEL_ERROR, "Wait write ready timeout\r\n");
                 return AL_MMC_ERR_WR_RDY_TIMEOUT;
             }
 
@@ -1601,7 +1601,7 @@ static AL_S32 AlMmc_Dev_TransferNoDma(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 
             AlMmc_ll_WriteIntrStat(Dev->HwConfig.BaseAddress, IntrStat.Reg);
 
 #ifdef MMC_DEBUG
-            // AL_LOG(AL_ERR_LEVEL_DEBUG, "Write no dma blk cnt %d, mem addr  0x%x\r\n", i, MemAddr);
+            // AL_LOG(AL_LOG_LEVEL_DEBUG, "Write no dma blk cnt %d, mem addr  0x%x\r\n", i, MemAddr);
 #endif
             AlMmc_Dev_CarryBlkData(Dev, AL_MMC_TRANS_DIR_WRITE, MemAddr);
             MemAddr += Dev->CardInfo.BlkLen;
@@ -1615,12 +1615,12 @@ static AL_S32 AlMmc_Dev_TransferNoDma(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 
                 AL_MMC_LOOP_REG_DELAY;
                 Timeout--;
 #ifdef MMC_DEBUG
-                // AL_LOG(AL_ERR_LEVEL_DEBUG, "Read no dma state 0x%x\r\n", IntrStat.Reg);
+                // AL_LOG(AL_LOG_LEVEL_DEBUG, "Read no dma state 0x%x\r\n", IntrStat.Reg);
 #endif
             } while ((!IntrStat.Bit.BuffRdRdy) && Timeout);
 
             if (!Timeout) {
-                AL_LOG(AL_ERR_LEVEL_ERROR, "Wait read ready timeout\r\n");
+                AL_LOG(AL_LOG_LEVEL_ERROR, "Wait read ready timeout\r\n");
                 return AL_MMC_ERR_RD_RDY_TIMEOUT;
             }
 
@@ -1630,7 +1630,7 @@ static AL_S32 AlMmc_Dev_TransferNoDma(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 
             AlMmc_ll_WriteIntrStat(Dev->HwConfig.BaseAddress, IntrStat.Reg);
 
 #ifdef MMC_DEBUG
-            // AL_LOG(AL_ERR_LEVEL_DEBUG, "Read no dma blk cnt %d, mem addr  0x%x\r\n", i, MemAddr);
+            // AL_LOG(AL_LOG_LEVEL_DEBUG, "Read no dma blk cnt %d, mem addr  0x%x\r\n", i, MemAddr);
 #endif
 
             AlMmc_Dev_CarryBlkData(Dev, AL_MMC_TRANS_DIR_READ, MemAddr);
@@ -1653,14 +1653,14 @@ static AL_S32 AlMmc_Dev_TransferData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 B
     if ((Dev->Config.DmaMode == AL_MMC_DMA_MODE_NONE) || (!AlMmc_Dev_GetState(Dev, AL_MMC_STATE_READY))) {
         Ret = AlMmc_Dev_TransferNoDma(Dev, Buf, BlkCnt);
         if (Ret != AL_OK) {
-            AL_LOG(AL_ERR_LEVEL_ERROR, "Transfer no dma error\r\n");
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Transfer no dma error\r\n");
             return Ret;
         }
     }
 
     Ret = AlMmc_Dev_CheckTransferDone(Dev);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Check transfer done error\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Check transfer done error\r\n");
         return Ret;
     }
 #endif
@@ -1729,7 +1729,7 @@ AL_S32 AlMmc_Dev_Write(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkOffset, AL_U
     }
 
 #ifdef MMC_DEBUG
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "Write addr: 0x%x, Offset: 0x%x, BlkCnt = %d\r\n", Buf, BlkOffset, BlkCnt);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Write addr: 0x%x, Offset: 0x%x, BlkCnt = %d\r\n", Buf, BlkOffset, BlkCnt);
 #endif
 
     Ret = AlMmc_Dev_TransferConfig(Dev);
@@ -1806,7 +1806,7 @@ AL_S32 AlMmc_Dev_Read(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkOffset, AL_U3
     }
 
 #ifdef MMC_DEBUG
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "Read addr: 0x%x, Offset: 0x%x, BlkCnt = %d\r\n", Buf, BlkOffset, BlkCnt);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Read addr: 0x%x, Offset: 0x%x, BlkCnt = %d\r\n", Buf, BlkOffset, BlkCnt);
 #endif
 
     Ret = AlMmc_Dev_TransferConfig(Dev);
@@ -1878,87 +1878,87 @@ AL_S32 AlMmc_Dev_IoCtl(AL_MMC_DevStruct *Dev, AL_MMC_IoCtlCmdEnum Cmd, AL_VOID *
 
 static AL_VOID AlMmc_Dev_DisplayCsd(AL_MMC_DevStruct *Dev)
 {
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "-----CSD-----\r\n");
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Rsvd0: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Rsvd0);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Crc: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Crc);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Rsvd9_8: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Rsvd9_8);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-FileFormat: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.FileFormat);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-TmpWrProt: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.TmpWrProt);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-PermWrProt: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.PermWrProt);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-CpyFlag: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.CpyFlag);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-FileFormatGrp: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.FileFormatGrp);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Rsvd20_16: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Rsvd20_16);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-WrBlkPartial: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.WrBlkPartial);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-WrBlkLen: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.WrBlkLen);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-WrSpdFactor: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.WrSpdFactor);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Rsvd30_29: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Rsvd30_29);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-WrProtGrpEn: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.WrProtGrpEn);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-WrProtGrpSize: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.WrProtGrpSize);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-EraseSectorSize: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.EraseSectorSize);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-EraseBlkEn: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.EraseBlkEn);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-DevSizeMulti: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.DevSizeMulti);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-VddWrCurMax: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.VddWrCurMax);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-VddWrCurMin: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.VddWrCurMin);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-VddRdCurMax: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.VddRdCurMax);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-VddRdCurMin: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.VddRdCurMin);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-DevSize63_62: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.DevSize63_62);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-DevSize73_64: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.DevSize73_64);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Rsvd75_74: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Rsvd75_74);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-DsrImp: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.DsrImp);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-RdBlkMisalign: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.RdBlkMisalign);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-WrBlkMisalign: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.WrBlkMisalign);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-RdBlkPartial: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.RdBlkPartial);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-RdBlkLen: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.RdBlkLen);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-CardCmdClass: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.CardCmdClass);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-TransSpd: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.TransSpd);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Nsac: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Nsac);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Taac: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Taac);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Rsvd125_120: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Rsvd125_120);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-CsdStruct: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.CsdStruct);
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "-----CSD-----\r\n");
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "-----CSD-----\r\n");
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Rsvd0: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Rsvd0);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Crc: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Crc);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Rsvd9_8: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Rsvd9_8);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-FileFormat: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.FileFormat);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-TmpWrProt: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.TmpWrProt);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-PermWrProt: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.PermWrProt);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-CpyFlag: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.CpyFlag);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-FileFormatGrp: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.FileFormatGrp);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Rsvd20_16: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Rsvd20_16);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-WrBlkPartial: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.WrBlkPartial);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-WrBlkLen: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.WrBlkLen);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-WrSpdFactor: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.WrSpdFactor);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Rsvd30_29: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Rsvd30_29);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-WrProtGrpEn: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.WrProtGrpEn);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-WrProtGrpSize: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.WrProtGrpSize);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-EraseSectorSize: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.EraseSectorSize);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-EraseBlkEn: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.EraseBlkEn);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-DevSizeMulti: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.DevSizeMulti);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-VddWrCurMax: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.VddWrCurMax);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-VddWrCurMin: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.VddWrCurMin);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-VddRdCurMax: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.VddRdCurMax);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-VddRdCurMin: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.VddRdCurMin);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-DevSize63_62: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.DevSize63_62);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-DevSize73_64: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.DevSize73_64);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Rsvd75_74: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Rsvd75_74);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-DsrImp: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.DsrImp);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-RdBlkMisalign: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.RdBlkMisalign);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-WrBlkMisalign: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.WrBlkMisalign);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-RdBlkPartial: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.RdBlkPartial);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-RdBlkLen: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.RdBlkLen);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-CardCmdClass: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.CardCmdClass);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-TransSpd: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.TransSpd);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Nsac: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Nsac);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Taac: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Taac);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Rsvd125_120: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.Rsvd125_120);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-CsdStruct: %d\r\n", Dev->CardInfo.CardSpecDat.SdV1.CsdStruct);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "-----CSD-----\r\n");
 }
 
 static AL_VOID AlMmc_Dev_DisplayAdmaDesc(AL_MMC_AdmaDescUnion *TablePtr, AL_U32 Size)
 {
     for (AL_U32 i = 0; i < Size; i++) {
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "-----Table[%d]-----\r\n", i);
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Desc[0]: 0x%x\r\n", TablePtr[i].Desc[0]);
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Desc[1]: 0x%x\r\n", TablePtr[i].Desc[1]);
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Addr: 0x%x\r\n", TablePtr[i].Bit.AddrArgPtr);
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "|-LowerLen: 0x%x\r\n", TablePtr[i].Bit.LowerLen);
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "|-UpperLen: 0x%x\r\n", TablePtr[i].Bit.UpperLen);
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Act: 0x%x\r\n", TablePtr[i].Bit.Act);
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Int: 0x%x\r\n", TablePtr[i].Bit.Int);
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "|-End: 0x%x\r\n", TablePtr[i].Bit.End);
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Valid: 0x%x\r\n", TablePtr[i].Bit.Valid);
-        AL_LOG(AL_ERR_LEVEL_DEBUG, "-----Table[%d] end-----\r\n", i);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "-----Table[%d]-----\r\n", i);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Desc[0]: 0x%x\r\n", TablePtr[i].Desc[0]);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Desc[1]: 0x%x\r\n", TablePtr[i].Desc[1]);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Addr: 0x%x\r\n", TablePtr[i].Bit.AddrArgPtr);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "|-LowerLen: 0x%x\r\n", TablePtr[i].Bit.LowerLen);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "|-UpperLen: 0x%x\r\n", TablePtr[i].Bit.UpperLen);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Act: 0x%x\r\n", TablePtr[i].Bit.Act);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Int: 0x%x\r\n", TablePtr[i].Bit.Int);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "|-End: 0x%x\r\n", TablePtr[i].Bit.End);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Valid: 0x%x\r\n", TablePtr[i].Bit.Valid);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "-----Table[%d] end-----\r\n", i);
     }
 }
 
 static AL_VOID AlMmc_Dev_DisplayAllReg(AL_MMC_DevStruct *Dev)
 {
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "----------Host Controller Register----------\r\n");
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-BlkCnt_SdmaSysAddr: 0x%x\r\n", AlMmc_ll_ReadBlkCnt_SdmaSysAddr(Dev->HwConfig.BaseAddress));
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-BlkCnt_BlkSize: 0x%x\r\n", AlMmc_ll_ReadBlkCnt_BlkSize(Dev->HwConfig.BaseAddress));
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Argument: 0x%x\r\n", AlMmc_ll_ReadArgument(Dev->HwConfig.BaseAddress));
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Cmd_XferMode: 0x%x\r\n", AlMmc_ll_ReadCmd_XferMode(Dev->HwConfig.BaseAddress));
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-ReadResp01: 0x%x\r\n", AlMmc_ll_ReadResp01(Dev->HwConfig.BaseAddress));
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-ReadResp23: 0x%x\r\n", AlMmc_ll_ReadResp23(Dev->HwConfig.BaseAddress));
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-ReadResp45: 0x%x\r\n", AlMmc_ll_ReadResp45(Dev->HwConfig.BaseAddress));
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-ReadResp67: 0x%x\r\n", AlMmc_ll_ReadResp67(Dev->HwConfig.BaseAddress));
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-BufferData: 0x%x\r\n", AlMmc_ll_ReadBufferData(Dev->HwConfig.BaseAddress));
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-CurState: 0x%x\r\n", AlMmc_ll_ReadCurState(Dev->HwConfig.BaseAddress));
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-Ctrl_Wup_Bgap_Pwr_Host1: 0x%x\r\n", AlMmc_ll_ReadCtrl_Wup_Bgap_Pwr_Host1(Dev->HwConfig.BaseAddress));
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-SwRst_Ctrl_Tout_Clk: 0x%x\r\n", AlMmc_ll_ReadSwRst_Ctrl_Tout_Clk(Dev->HwConfig.BaseAddress));
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-IntrStat: 0x%x\r\n", AlMmc_ll_ReadIntrStat(Dev->HwConfig.BaseAddress));
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-IntrStatEn: 0x%x\r\n", AlMmc_ll_ReadIntrStatEn(Dev->HwConfig.BaseAddress));
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-IntrSigEn: 0x%x\r\n", AlMmc_ll_ReadIntrSigEn(Dev->HwConfig.BaseAddress));
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-AutoCmdStat_CtrlHost2: 0x%x\r\n", AlMmc_ll_ReadAutoCmdStat_CtrlHost2(Dev->HwConfig.BaseAddress));
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-AdmaErrStat: 0x%x\r\n", AlMmc_ll_ReadAdmaErrStat(Dev->HwConfig.BaseAddress));
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "|-AdmaSysAddrLow: 0x%x\r\n", AlMmc_ll_ReadAdmaSysAddrLow(Dev->HwConfig.BaseAddress));
-    // AL_LOG(AL_ERR_LEVEL_DEBUG, "|-PresetDs_Init: 0x%x\r\n", AlMmc_ll_ReadPresetDs_Init(Dev->HwConfig.BaseAddress));
-    // AL_LOG(AL_ERR_LEVEL_DEBUG, "|-AutoCmdStat_CtrlHost2: 0x%x\r\n", AlMmc_ll_ReadPresetSdr12_Hs(Dev->HwConfig.BaseAddress));
-    // AL_LOG(AL_ERR_LEVEL_DEBUG, "|-AutoCmdStat_CtrlHost2: 0x%x\r\n", AlMmc_ll_ReadPresetSdr50_Sdr25(Dev->HwConfig.BaseAddress));
-    // AL_LOG(AL_ERR_LEVEL_DEBUG, "|-AutoCmdStat_CtrlHost2: 0x%x\r\n", AlMmc_ll_ReadPresetDdr50_Sdr104(Dev->HwConfig.BaseAddress))
-    AL_LOG(AL_ERR_LEVEL_DEBUG, "----------Host Controller Register Done----------\r\n");
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "----------Host Controller Register----------\r\n");
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-BlkCnt_SdmaSysAddr: 0x%x\r\n", AlMmc_ll_ReadBlkCnt_SdmaSysAddr(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-BlkCnt_BlkSize: 0x%x\r\n", AlMmc_ll_ReadBlkCnt_BlkSize(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Argument: 0x%x\r\n", AlMmc_ll_ReadArgument(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Cmd_XferMode: 0x%x\r\n", AlMmc_ll_ReadCmd_XferMode(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-ReadResp01: 0x%x\r\n", AlMmc_ll_ReadResp01(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-ReadResp23: 0x%x\r\n", AlMmc_ll_ReadResp23(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-ReadResp45: 0x%x\r\n", AlMmc_ll_ReadResp45(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-ReadResp67: 0x%x\r\n", AlMmc_ll_ReadResp67(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-BufferData: 0x%x\r\n", AlMmc_ll_ReadBufferData(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-CurState: 0x%x\r\n", AlMmc_ll_ReadCurState(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Ctrl_Wup_Bgap_Pwr_Host1: 0x%x\r\n", AlMmc_ll_ReadCtrl_Wup_Bgap_Pwr_Host1(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-SwRst_Ctrl_Tout_Clk: 0x%x\r\n", AlMmc_ll_ReadSwRst_Ctrl_Tout_Clk(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-IntrStat: 0x%x\r\n", AlMmc_ll_ReadIntrStat(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-IntrStatEn: 0x%x\r\n", AlMmc_ll_ReadIntrStatEn(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-IntrSigEn: 0x%x\r\n", AlMmc_ll_ReadIntrSigEn(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-AutoCmdStat_CtrlHost2: 0x%x\r\n", AlMmc_ll_ReadAutoCmdStat_CtrlHost2(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-AdmaErrStat: 0x%x\r\n", AlMmc_ll_ReadAdmaErrStat(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-AdmaSysAddrLow: 0x%x\r\n", AlMmc_ll_ReadAdmaSysAddrLow(Dev->HwConfig.BaseAddress));
+    // AL_LOG(AL_LOG_LEVEL_DEBUG, "|-PresetDs_Init: 0x%x\r\n", AlMmc_ll_ReadPresetDs_Init(Dev->HwConfig.BaseAddress));
+    // AL_LOG(AL_LOG_LEVEL_DEBUG, "|-AutoCmdStat_CtrlHost2: 0x%x\r\n", AlMmc_ll_ReadPresetSdr12_Hs(Dev->HwConfig.BaseAddress));
+    // AL_LOG(AL_LOG_LEVEL_DEBUG, "|-AutoCmdStat_CtrlHost2: 0x%x\r\n", AlMmc_ll_ReadPresetSdr50_Sdr25(Dev->HwConfig.BaseAddress));
+    // AL_LOG(AL_LOG_LEVEL_DEBUG, "|-AutoCmdStat_CtrlHost2: 0x%x\r\n", AlMmc_ll_ReadPresetDdr50_Sdr104(Dev->HwConfig.BaseAddress))
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "----------Host Controller Register Done----------\r\n");
 }

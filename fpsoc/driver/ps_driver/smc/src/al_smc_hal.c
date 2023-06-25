@@ -14,6 +14,12 @@ static AL_NAND_InfoStruct AL_NAND_InfoInstance[AL_SMC_NUM_INSTANCE];
 
 /********************************************************/
 #ifdef USE_RTOS
+/**
+ * This function
+ * @param
+ * @return
+ * @note    None
+*/
 static AL_S32 AlSmc_Hal_WaitTxDoneOrTimeout(AL_SMC_HalStruct *Handle, AL_U32 Timeout)
 {
     /*
@@ -23,6 +29,12 @@ static AL_S32 AlSmc_Hal_WaitTxDoneOrTimeout(AL_SMC_HalStruct *Handle, AL_U32 Tim
     (void) Timeout;
 }
 
+/**
+ * This function
+ * @param
+ * @return
+ * @note    None
+*/
 static AL_S32 AlSmc_Hal_WaitRxDoneOrTimeout(AL_SMC_HalStruct *Handle, AL_U32 Timeout)
 {
     /*
@@ -32,6 +44,12 @@ static AL_S32 AlSmc_Hal_WaitRxDoneOrTimeout(AL_SMC_HalStruct *Handle, AL_U32 Tim
     (void) Timeout;
 }
 
+/**
+ * This function
+ * @param
+ * @return
+ * @note    None
+*/
 static AlSmc_Hal_IntrHandler(AL_SMC_HalStruct *Handle, AL_U32 Event, AL_U32 EventData)
 {
     /*
@@ -55,13 +73,19 @@ static AlSmc_Hal_IntrHandler(AL_SMC_HalStruct *Handle, AL_U32 Event, AL_U32 Even
 
 #endif
 
+/**
+ * This function
+ * @param   Handle is pointer to AL_SMC_HalStruct
+ * @return
+ * @note    None
+*/
 AL_U32 AlSmc_Hal_Init(AL_SMC_HalStruct *Handle, AL_SMC_ConfigsStruct *InitConfig, AL_U32 DevId)
 {
     AL_S32 ret = AL_OK;
     AL_SMC_HwConfigStruct *CfgPtr = AL_NULL;
 
     if (Handle == AL_NULL) {
-        return AL_DEF_ERR(AL_SMC, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
+        return AL_DEF_ERR(AL_SMC, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM);
     }
 
     AL_SMC_HAL_LOCK(Handle);
@@ -73,32 +97,32 @@ AL_U32 AlSmc_Hal_Init(AL_SMC_HalStruct *Handle, AL_SMC_ConfigsStruct *InitConfig
 	Handle->NandInfo = &AL_NAND_InfoInstance[CfgPtr->DeviceId];
 
 	// AlSmc_Dev_InitCyclesAndMemWidth(Handle->Dev);
-	printf("ALSmc_Dev_Reset\r\n");
+
 	ret = ALSmc_Dev_Reset(Handle->NandInfo);
 	if(AL_OK != ret) {
 		goto HAL_INIT_END;
 	}
-	printf("ALSmc_Dev_ReadId\r\n");
+
 	ALSmc_Dev_ReadId(Handle->NandInfo);
 
-	printf("NandFlash ID:0x%x", Handle->NandInfo->Size.DeviceId[0]);
-	printf(" 0x%x", Handle->NandInfo->Size.DeviceId[1]);
-	printf(" 0x%x", Handle->NandInfo->Size.DeviceId[2]);
-	printf(" 0x%x", Handle->NandInfo->Size.DeviceId[3]);
-	printf(" 0x%x\r\n", Handle->NandInfo->Size.DeviceId[4]);
+	AL_LOG(AL_LOG_LEVEL_INFO, "NandFlash ID:0x%x", Handle->NandInfo->Size.DeviceId[0]);
+	AL_LOG(AL_LOG_LEVEL_INFO, " 0x%x", Handle->NandInfo->Size.DeviceId[1]);
+	AL_LOG(AL_LOG_LEVEL_INFO, " 0x%x", Handle->NandInfo->Size.DeviceId[2]);
+	AL_LOG(AL_LOG_LEVEL_INFO, " 0x%x", Handle->NandInfo->Size.DeviceId[3]);
+	AL_LOG(AL_LOG_LEVEL_INFO, " 0x%x\r\n", Handle->NandInfo->Size.DeviceId[4]);
 
-	printf("ALSmc_Dev_ReadParam\r\n");
+
 	ret = ALSmc_Dev_ReadParam(Handle->NandInfo);
 	if(AL_OK != ret) {
 		goto HAL_INIT_END;
 	}
 
-	printf("SpareBytesPerPage: %d\r\n", Handle->NandInfo->Size.SpareBytesPerPage);
-	printf("DataBytesPerPage: %d\r\n", Handle->NandInfo->Size.DataBytesPerPage);
-	printf("PagesPerBlock: %d\r\n", Handle->NandInfo->Size.PagesPerBlock);
-	printf("BlocksPerUnit: %d\r\n", Handle->NandInfo->Size.BlocksPerUnit);
-	printf("TotalUnit: %d\r\n", Handle->NandInfo->Size.TotalUnit);
-	printf("EccNum: %d\r\n", Handle->NandInfo->Size.EccNum);
+	AL_LOG(AL_LOG_LEVEL_INFO, "SpareBytesPerPage: %d\r\n", Handle->NandInfo->Size.SpareBytesPerPage);
+	AL_LOG(AL_LOG_LEVEL_INFO, "DataBytesPerPage: %d\r\n", Handle->NandInfo->Size.DataBytesPerPage);
+	AL_LOG(AL_LOG_LEVEL_INFO, "PagesPerBlock: %d\r\n", Handle->NandInfo->Size.PagesPerBlock);
+	AL_LOG(AL_LOG_LEVEL_INFO, "BlocksPerUnit: %d\r\n", Handle->NandInfo->Size.BlocksPerUnit);
+	AL_LOG(AL_LOG_LEVEL_INFO, "TotalUnit: %d\r\n", Handle->NandInfo->Size.TotalUnit);
+	AL_LOG(AL_LOG_LEVEL_INFO, "EccNum: %d\r\n", Handle->NandInfo->Size.EccNum);
 
 	if (Handle->NandInfo->Size.EccNum == 1) {
 		ret = AlSmc_Dev_EccHwInit(Handle->Dev, Handle->NandInfo);
@@ -124,7 +148,13 @@ HAL_INIT_END:
 
 }
 
-
+/**
+ * This function
+ * @param   Handle is pointer to AL_SMC_HalStruct
+ * @param   Timeout is max wait time for send done
+ * @return
+ * @note    None
+*/
 AL_U32 AlSmc_Hal_ReadPage(AL_SMC_HalStruct *Handle, AL_U32 Offset, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_U8 Status;
@@ -189,7 +219,13 @@ AL_U32 AlSmc_Hal_ReadPage(AL_SMC_HalStruct *Handle, AL_U32 Offset, AL_U8 *Data, 
 	return AL_OK;
 }
 
-
+/**
+ * This function
+ * @param   Handle is pointer to AL_SMC_HalStruct
+ * @param   Timeout is max wait time for send done
+ * @return
+ * @note    None
+*/
 AL_U32 AlSmc_Hal_WritePage(AL_SMC_HalStruct *Handle, AL_U32 Offset, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_U8 Status;
@@ -249,7 +285,13 @@ AL_U32 AlSmc_Hal_WritePage(AL_SMC_HalStruct *Handle, AL_U32 Offset, AL_U8 *Data,
 
 }
 
-
+/**
+ * This function
+ * @param   Handle is pointer to AL_SMC_HalStruct
+ * @param   Timeout is max wait time for send done
+ * @return
+ * @note    None
+*/
 AL_U32 AlSmc_Hal_ReadSpare(AL_SMC_HalStruct *Handle, AL_U32 Page, AL_U8 *Data, AL_U32 Timeout)
 {
     AL_U8 Status;
@@ -257,7 +299,13 @@ AL_U32 AlSmc_Hal_ReadSpare(AL_SMC_HalStruct *Handle, AL_U32 Page, AL_U8 *Data, A
     return Status;
 }
 
-
+/**
+ * This function
+ * @param   Handle is pointer to AL_SMC_HalStruct
+ * @param   Timeout is max wait time for send done
+ * @return
+ * @note    None
+*/
 AL_U32 AlSmc_Hal_WriteSpare(AL_SMC_HalStruct *Handle, AL_U32 Page, AL_U8 *Data, AL_U32 Timeout)
 {
    	AL_U8 Status;
@@ -265,12 +313,18 @@ AL_U32 AlSmc_Hal_WriteSpare(AL_SMC_HalStruct *Handle, AL_U32 Page, AL_U8 *Data, 
     return Status;
 }
 
-
+/**
+ * This function
+ * @param   Handle is pointer to AL_SMC_HalStruct
+ * @param   Timeout is max wait time for send done
+ * @return
+ * @note    None
+*/
 AL_U32 AlSmc_Hal_EraseBlock(AL_SMC_HalStruct *Handle, AL_U32 Page, AL_U32 Timeout)
 {
-	AL_U8 Status;
+    AL_U8 Status;
     Status = ALSmc_Dev_EraseBlock(Handle->Dev, Handle->NandInfo, Page);
-	return Status;
+    return Status;
 }
 
 
