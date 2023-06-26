@@ -478,6 +478,7 @@ AL_S32 AlDmacAhb_Dev_Init(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_HwConfigStruc
 AL_S32 AlDmacAhb_Dev_DeInit(AL_DMACAHB_ChStruct *Channel)
 {
     /* TODO: modify for sync baremetal and kernel */
+    AlDmacAhb_Dev_ReleaseCh(Channel);
     /* Firstly, clear channel status in dmac struct */
     Channel->Dmac->State.ChEn &= ~(Channel->Param.ChMask);
     if (!Channel->Dmac->State.ChEn) {

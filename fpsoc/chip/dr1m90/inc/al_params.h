@@ -13,7 +13,10 @@ extern "C" {
 * Define Interrupt Number
 *----------------------------------------------------------------------------*/
 typedef enum {
+    SOC_DMACAHB_IRQn     =  78,
     GPIO0_IRQn           =  84,
+    SOC_MMC0_IRQn        =  94,
+    SOC_MMC1_IRQn        =  95,
     SOC_INT130_IRQn      =  143,
     SOC_UART0_IRQn       =  102,
     SOC_UART1_IRQn       =  103,
@@ -53,6 +56,53 @@ typedef enum {
  *----------------------------------------------------------------------------*/
 #define HAVE_SPIPS_DRIVER       (2)
 
+/*----------------------------------------------------------------------------
+  Define CAN params
+ *----------------------------------------------------------------------------*/
+#define HAVE_CANPS_DRIVER
+
+#define AL_CAN_NUM_INSTANCE     (2)
+
+#define CAN0__BASE_ADDR         (0xF8408000UL)
+#define CAN1__BASE_ADDR         (0xF8409000UL)
+
+#define CAN_CLOCK               (80000000UL)
+
+#define CAN_TOP_CFG_CTRL_ADDR   (0xF8800164UL)
+
+/*----------------------------------------------------------------------------
+  Define DMACAHB params
+ *----------------------------------------------------------------------------*/
+#define HAVE_DMACAHBPS_DRIVER
+
+#define AL_DMACAHB_NUM_INSTANCE (2)
+
+#define DMACAHB__BASE_ADDR      (0xF804D000UL)
+
+#define DMACAHB_CH_NUM          (8)
+
+/* 0xF841F800 - 0xF841F80C */
+#define DMACAHB_LOCK_ADDR       (0xF841F80CUL)
+#define DMACAHB_CH_STATE_ADDR   (0xF88001B0UL)
+
+/*----------------------------------------------------------------------------
+  Define MMC params
+ *----------------------------------------------------------------------------*/
+#define HAVE_MMCPS_DRIVER
+
+#define AL_MMC_NUM_INSTANCE     (2)
+
+#define MMC0__BASE_ADDR         (0xF8049000UL)
+#define MMC1__BASE_ADDR         (0xF804A000UL)
+
+#define MMC0_TOP_CFG_CTRL_ADDR  (0xF8800150UL)
+#define MMC1_TOP_CFG_CTRL_ADDR  (0xF8800154UL)
+
+#define MMC0_BUS_WIDTH          (8)
+#define MMC1_BUS_WIDTH          (4)
+
+#define MMC0_CLK_IN_KHZ         (10000UL)
+#define MMC1_CLK_IN_KHZ         (10000UL)
 
 #ifdef __cplusplus
 }

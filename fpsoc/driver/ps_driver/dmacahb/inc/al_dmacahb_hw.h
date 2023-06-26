@@ -14,19 +14,6 @@ extern "C" {
 
 /***************** Macros (Inline Functions) Definitions ********************/
 
-#define AL_DMACAHB_NUM_INSTANCE     (1)
-
-#define DMAC_AHB_BASE_ADDR 0xF804D000ULL
-
-#define DMAC_AHB_INTR_ID    (65)
-
-#define DMAC_AHB_CH_NUM_8   (8)
-
-/* 0xF841F800 - 0xF841F80C */
-#define DMAC_AHB_LOCK_ADDR      0xF841F80CULL
-
-#define DMAC_AHB_CH_STATE_ADDR  0xF88001B0ULL
-
 ///////////////////////////////////////////////////////
 // Register: SAR
 // Source Address for Channel 0

@@ -14,25 +14,19 @@ extern "C" {
 
 /***************** Macros (Inline Functions) Definitions ********************/
 
-#define AL_CAN_NUM_INSTANCE     (2)
-
-#define CAN_TOP_NS_CFG_CTRL     0xF8800164ULL
-#define CAN_CAN0_BASE_ADDR      0xF8408000ULL
-#define CAN_CAN1_BASE_ADDR      0xF8409000ULL
-
 ///////////////////////////////////////////////////////
-// Register: CAN_TOP_NS_CFG_CTRL
+// Register: CAN_TOP_CFG_CTRL_ADDR
 // Top Nonsecure Config Contrl
 ///////////////////////////////////////////////////////
-#define CAN_TOP_NS_CFG_CTRL_CAN0_FD_ENABLE_SHIFT    0
-#define CAN_TOP_NS_CFG_CTRL_CAN0_DMA_ENABLE_SHIFT   1
-#define CAN_TOP_NS_CFG_CTRL_CAN1_FD_ENABLE_SHIFT    8
-#define CAN_TOP_NS_CFG_CTRL_CAN1_DMA_ENABLE_SHIFT   9
+#define CAN_TOP_CFG_CTRL_ADDR_CAN0_FD_ENABLE_SHIFT    0
+#define CAN_TOP_CFG_CTRL_ADDR_CAN0_DMA_ENABLE_SHIFT   1
+#define CAN_TOP_CFG_CTRL_ADDR_CAN1_FD_ENABLE_SHIFT    8
+#define CAN_TOP_CFG_CTRL_ADDR_CAN1_DMA_ENABLE_SHIFT   9
 
-#define CAN_TOP_NS_CFG_CTRL_CAN0_FD_ENABLE_SIZE     1
-#define CAN_TOP_NS_CFG_CTRL_CAN0_DMA_ENABLE_SIZE    1
-#define CAN_TOP_NS_CFG_CTRL_CAN1_FD_ENABLE_SIZE     1
-#define CAN_TOP_NS_CFG_CTRL_CAN1_DMA_ENABLE_SIZE    1
+#define CAN_TOP_CFG_CTRL_ADDR_CAN0_FD_ENABLE_SIZE     1
+#define CAN_TOP_CFG_CTRL_ADDR_CAN0_DMA_ENABLE_SIZE    1
+#define CAN_TOP_CFG_CTRL_ADDR_CAN1_FD_ENABLE_SIZE     1
+#define CAN_TOP_CFG_CTRL_ADDR_CAN1_DMA_ENABLE_SIZE    1
 
 ///////////////////////////////////////////////////////
 // Register: RBUF_0_3

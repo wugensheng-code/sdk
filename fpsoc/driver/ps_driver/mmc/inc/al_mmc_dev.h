@@ -47,6 +47,7 @@ typedef enum
     MMC_ERR_WR_RDY_TIMEOUT,
     MMC_ERR_RD_RDY_TIMEOUT,
     MMC_ERR_XFER_COMP_TIMEOUT,
+    MMC_ERR_BUF_NOT_ALIGN,
 } AL_MMC_ErrCodeEnum;
 
 #define AL_MMC_ERR_INVALID_DEVID        AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, AL_ERR_INVALID_DEVID)
@@ -82,7 +83,7 @@ typedef enum
 #define AL_MMC_ERR_WR_RDY_TIMEOUT       AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, MMC_ERR_WR_RDY_TIMEOUT)
 #define AL_MMC_ERR_RD_RDY_TIMEOUT       AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, MMC_ERR_RD_RDY_TIMEOUT)
 #define AL_MMC_ERR_XFER_COMP_TIMEOUT    AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, MMC_ERR_XFER_COMP_TIMEOUT)
-
+#define AL_MMC_ERR_BUF_NOT_ALIGN        AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, MMC_ERR_BUF_NOT_ALIGN)
 
 #define AL_MMC_CMD8_VOL_PATTERN     0x1AAU  /* CMD8 voltage pattern */
 
@@ -142,9 +143,15 @@ typedef enum
 typedef enum
 {
     AL_MMC_FREQ_KHZ_100     = 100,
+    AL_MMC_FREQ_KHZ_200     = 200,
     AL_MMC_FREQ_KHZ_DEF     = 400,
     AL_MMC_FREQ_KHZ_500     = 500,
+    AL_MMC_FREQ_KHZ_600     = 600,
+    AL_MMC_FREQ_KHZ_700     = 700,
+    AL_MMC_FREQ_KHZ_800     = 800,
     AL_MMC_FREQ_KHZ_1000    = 1000,
+    AL_MMC_FREQ_KHZ_2000    = 2000,
+    AL_MMC_FREQ_KHZ_2500    = 2500,
     AL_MMC_FREQ_KHZ_5000    = 5000,
     AL_MMC_FREQ_KHZ_10000   = 10000,
     AL_MMC_FREQ_KHZ_25000   = 25000,
@@ -281,13 +288,15 @@ typedef struct
     AL_U32                  Switch1v8;
     AL_U32                  AutoGenAdmaTblEn;   /* When dma mode is ADMA2/ADMA3, is enable auto generate describe table or not */
     AL_MMC_BuffBdaryEnum    DmaBdary;
+    AL_BOOL                 ForceVer3;
 } AL_MMC_InitStruct;
 
 typedef struct
 {
     AL_MMC_Cap1Union        Cap1;
     AL_MMC_Cap2Union        Cap2;
-} AL_MMC_HostCapStruct;
+    AL_MMC_HostVerEnum      HostVer;
+} AL_MMC_HostInfoStruct;
 
 typedef struct
 {
@@ -296,19 +305,21 @@ typedef struct
     AL_MMC_FreqKhzEnum      FreqKhz;
     AL_MMC_BusWidthEnum     BusWidth;
     AL_BOOL                 HiCap;
-    AL_MMC_RegCidUnion      CardId;
-    AL_MMC_RegCsdUnion      CardSpecDat;
+    AL_MMC_RegCidUnion      Cid;         //CardId
+    AL_MMC_RegCsdUnion      Csd;    //CardSpecDat
+    AL_MMC_RegScrUnion      Scr;
     AL_U32                  RealAddr;
     AL_U32                  CardCap;        /* KByte */
     AL_MMC_BlkLenEnum       BlkLen;
     AL_U32                  DevSize;
+    AL_MMC_SpdModeEnum      SpdMode;
 } AL_MMC_CardInfoStruct;
 
 typedef struct
 {
     AL_MMC_HwConfigStruct   HwConfig;
     AL_MMC_InitStruct       Config;
-    AL_MMC_HostCapStruct    HostCap;
+    AL_MMC_HostInfoStruct   HostInfo;
     AL_MMC_CardInfoStruct   CardInfo;
     AL_MMC_CallBackStruct   EventCallBack;
     AL_MMC_StateEnum        State;

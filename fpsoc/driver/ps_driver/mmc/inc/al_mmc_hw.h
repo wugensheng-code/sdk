@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 /***************************** Include Files ********************************/
-#include "al_type.h"
+#include "al_core.h"
 
 /************************** Constant Definitions ****************************/
 
@@ -34,23 +34,6 @@ extern "C" {
 
 #define MMC_TOP_NS_CFG_CTRL_SWITCH_CARD_WRITE_PROT_EMIO_MIO     (0)
 #define MMC_TOP_NS_CFG_CTRL_SWITCH_CARD_WRITE_PROT_CONFIGURED   (1)
-
-#define AL_MMC_NUM_INSTANCE     (2)
-
-#define MMC_MMC0_TOP_NS_CFG_CTRL    0xF8800150ULL
-#define MMC_MMC1_TOP_NS_CFG_CTRL    0xF8800154ULL
-
-#define MMC_MMC0_BASE_ADDR          0xF8049000ULL
-#define MMC_MMC1_BASE_ADDR          0xF804A000ULL
-
-#define MMC_MMC0_INTR_ID            (81)
-#define MMC_MMC1_INTR_ID            (82)
-
-#define MMC_MMC0_BUS_WIDTH          (8)
-#define MMC_MMC1_BUS_WIDTH          (4)
-
-#define MMC_MMC0_PROGRAM_INPUT_CLK_KHZ  (10000)
-#define MMC_MMC1_PROGRAM_INPUT_CLK_KHZ  (10000)
 
 #define MMC_MMC0_CLK_PHASE          MMC_TOP_NS_CFG_CTRL_CLK_PHASE_SEL_0_DEF
 #define MMC_MMC1_CLK_PHASE          MMC_TOP_NS_CFG_CTRL_CLK_PHASE_SEL_0_DEF

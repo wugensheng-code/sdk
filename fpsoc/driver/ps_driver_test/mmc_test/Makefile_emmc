@@ -7,6 +7,7 @@ CFLAGS := -O2 -DMMC_DEBUG -DCONFIG_PERFORMANCE_CALC -DCONFIG_EMMC_TEST=1
 #########################################################################
 # 5. define build target
 #########################################################################
+PINMUX_MODE := PINMUX_MODE2
 
 TARGET := fpsoc_mmc_emmc
 

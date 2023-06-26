@@ -89,3 +89,6 @@ cleanapp:
 clean:
 	make clean -f Makefile_clean CHIP=dr1m90
 	make clean -f Makefile_clean CHIP=dr1v90
+
+cleanelf:
+	rm -rf *.bin *.dasm *.dump *.elf *.hex *.map *.verilog

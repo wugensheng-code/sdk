@@ -164,7 +164,7 @@ AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_ChInitStruct 
     /* TODO: replace intr handler reference function with al_intr.h api */
     if (Handle->Channel->Dmac->State.IntrEn == AL_FALSE) {
         Handle->Channel->Dmac->State.IntrEn = AL_TRUE;
-        AlIntr_RegHandler(HwConfig->IntrId + 13, AL_NULL, AlDmacAhb_Dev_IntrHandler, Handle->Channel->Dmac);
+        AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlDmacAhb_Dev_IntrHandler, Handle->Channel->Dmac);
         AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     }
 

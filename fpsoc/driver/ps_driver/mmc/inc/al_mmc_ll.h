@@ -20,12 +20,17 @@ extern "C" {
 #define AL_MMC_EXT_CSD_IDX_BUS_WIDTH    183
 
 #define AL_MMC_FIXED_BLK_LEN    (0x200)
+#define AL_MMC_EXT_CSD_LEN      (0x200)
 
-#define AL_MMC_ADMA_TABLE_SIZE          (4)
-#define AL_MMC_ADMA2_DESC_MAX_LENGTH    (0x3FFFFFF)
-#define AL_MMC_ADMA2_LENGTH_SIZE        (26)
-#define AL_MMC_ADMA2_LENGHT_SIZE_HI     (10)
-#define AL_MMC_ADMA2_LENGHT_SIZE_LO     (16)
+#define AL_MMC_ADMA_TABLE_SIZE              (4)
+#define AL_MMC_ADMA2_DESC_16BIT_LENGTH      (0xFFFF)
+#define AL_MMC_ADMA2_DESC_26BIT_LENGTH      (0x3FFFFFF)
+#define AL_MMC_ADMA2_16BIT_LENGTH_SIZE      (16)
+#define AL_MMC_ADMA2_16BIT_LENGTH_SIZE_HI   (0)
+#define AL_MMC_ADMA2_16BIT_LENGTH_SIZE_LO   (16)
+#define AL_MMC_ADMA2_26BIT_LENGTH_SIZE      (26)
+#define AL_MMC_ADMA2_26BIT_LENGTH_SIZE_HI   (10)
+#define AL_MMC_ADMA2_26BIT_LENGTH_SIZE_LO   (16)
 
 
 typedef enum
@@ -411,6 +416,12 @@ typedef enum
     AL_MMC_RST_HOST_DAT     = BITS_32(MMC_SW_RST_R_TOUT_CTRL_R_CLK_CTRL_R_SW_RST_DAT_SHIFT,1)
 } AL_MMC_RstHostEnum;
 
+typedef enum
+{
+    AL_MMC_HOST_VER_3,
+    AL_MMC_HOST_VER_4
+} AL_MMC_HostVerEnum;
+
 typedef union
 {
     AL_U32 Reg;
@@ -725,11 +736,14 @@ typedef union
         AL_U32 Crc:7;
         AL_U32 Mdt:12;              /* Manufacturing date */
         AL_U32 Rsvd23_20:4;
-        AL_U32 Psn31_24:8;              /* Product serial number */
-        AL_U32 Psn55_32:24;              /* Product serial number */
+        AL_U32 Psn31_24:8;          /* Product serial number */
+        AL_U32 Psn55_32:24;         /* Product serial number */
         AL_U32 Prv:8;               /* Product revision */
-        AL_U32 Pnm71_64:8;              /* Product name */
-        AL_U32 Pnm103_72:32;              /* Product name */
+        AL_U32 Pnm71_64:8;          /* Product name */
+        AL_U32 Pnm79_72:8;          /* Product name */
+        AL_U32 Pnm87_80:8;          /* Product name */
+        AL_U32 Pnm95_88:8;          /* Product name */
+        AL_U32 Pnm103_96:8;         /* Product name */
         AL_U32 Oid:16;              /* OEM/Application ID */
         AL_U32 Mid:8;               /* Manufacturer ID */
     } Sd;
@@ -740,9 +754,12 @@ typedef union
         AL_U32 Psn31_16:16;
         AL_U32 Psn47_32:16;
         AL_U32 Prv:8;
-        AL_U32 Pnm63_56:8;
-        AL_U32 Pnm71_64:8;
-        AL_U32 Pnm103_72:32;
+        AL_U32 Pnm63_56:8;          /* Product name */
+        AL_U32 Pnm71_64:8;          /* Product name */
+        AL_U32 Pnm79_72:8;          /* Product name */
+        AL_U32 Pnm87_80:8;          /* Product name */
+        AL_U32 Pnm95_88:8;          /* Product name */
+        AL_U32 Pnm103_96:8;         /* Product name */
         AL_U32 Oid:8;
         AL_U32 Cbx:2;               /* Device/BGA */
         AL_U32 Rsvd119_114:6;
@@ -869,6 +886,17 @@ typedef union
 
 typedef union
 {
+    AL_U8 Reg[AL_MMC_EXT_CSD_LEN];
+    struct {
+        AL_U8 Rsvd211_0[212];
+        AL_U8 SecCount[4];          /*[215:212]*/
+        AL_U8 Rsvd505_216[290];
+        AL_U8 Rsvd511_506[6];
+    } Emmc;
+} AL_MMC_RegExtCsdUnion;
+
+typedef union
+{
     AL_U32 Reg[2];
     struct {
         AL_U32 Rsvd31_0:32;
@@ -964,91 +992,91 @@ typedef union
 /* Phase about cclk_rx clock signal */
 static inline AL_U32 AlMmc_ll_GetClkPhase(AL_REG BaseAddr)
 {
-    return AL_REG32_GET_BITS((BaseAddr == MMC_MMC0_BASE_ADDR) ? MMC_MMC0_TOP_NS_CFG_CTRL :
-                             MMC_MMC1_TOP_NS_CFG_CTRL, MMC_TOP_NS_CFG_CTRL_CLK_PHASE_SEL_SHIFT,
+    return AL_REG32_GET_BITS((BaseAddr == MMC0__BASE_ADDR) ? MMC0_TOP_CFG_CTRL_ADDR :
+                             MMC1_TOP_CFG_CTRL_ADDR, MMC_TOP_NS_CFG_CTRL_CLK_PHASE_SEL_SHIFT,
                              MMC_TOP_NS_CFG_CTRL_CLK_PHASE_SEL_SIZE);
 }
 
 static inline AL_VOID AlMmc_ll_SetClkPhase(AL_REG BaseAddr, AL_U32 Phase)
 {
-    AL_REG32_SET_BITS((BaseAddr == MMC_MMC0_BASE_ADDR) ? MMC_MMC0_TOP_NS_CFG_CTRL : MMC_MMC1_TOP_NS_CFG_CTRL,
+    AL_REG32_SET_BITS((BaseAddr == MMC0__BASE_ADDR) ? MMC0_TOP_CFG_CTRL_ADDR : MMC1_TOP_CFG_CTRL_ADDR,
                       MMC_TOP_NS_CFG_CTRL_CLK_PHASE_SEL_SHIFT, MMC_TOP_NS_CFG_CTRL_CLK_PHASE_SEL_SIZE, Phase);
 }
 
 /* clock soft reset */
 static inline AL_BOOL AlMmc_ll_IsClkSoftRst(AL_REG BaseAddr)
 {
-    return (AL_BOOL)AL_REG32_GET_BIT((BaseAddr == MMC_MMC0_BASE_ADDR) ? MMC_MMC0_TOP_NS_CFG_CTRL :
-                                     MMC_MMC1_TOP_NS_CFG_CTRL, MMC_TOP_NS_CFG_CTRL_CCLK_SOFT_RST_SHIFT);
+    return (AL_BOOL)AL_REG32_GET_BIT((BaseAddr == MMC0__BASE_ADDR) ? MMC0_TOP_CFG_CTRL_ADDR :
+                                     MMC1_TOP_CFG_CTRL_ADDR, MMC_TOP_NS_CFG_CTRL_CCLK_SOFT_RST_SHIFT);
 }
 
 static inline AL_VOID AlMmc_ll_SetClkSoftRst(AL_REG BaseAddr, AL_BOOL IsEnable)
 {
-    AL_REG32_SET_BIT((BaseAddr == MMC_MMC0_BASE_ADDR) ? MMC_MMC0_TOP_NS_CFG_CTRL : MMC_MMC1_TOP_NS_CFG_CTRL,
+    AL_REG32_SET_BIT((BaseAddr == MMC0__BASE_ADDR) ? MMC0_TOP_CFG_CTRL_ADDR : MMC1_TOP_CFG_CTRL_ADDR,
                       MMC_TOP_NS_CFG_CTRL_CCLK_SOFT_RST_SHIFT, IsEnable);
 }
 
 /* Card detect signal, 0 valid, valid when switch_card_detect_n is 1 */
 static inline AL_BOOL AlMmc_ll_IsCardNotDetect(AL_REG BaseAddr)
 {
-    return (AL_BOOL)AL_REG32_GET_BIT((BaseAddr == MMC_MMC0_BASE_ADDR) ? MMC_MMC0_TOP_NS_CFG_CTRL :
-                                     MMC_MMC1_TOP_NS_CFG_CTRL, MMC_TOP_NS_CFG_CTRL_CFG_CARD_DETECT_N_SHIFT);
+    return (AL_BOOL)AL_REG32_GET_BIT((BaseAddr == MMC0__BASE_ADDR) ? MMC0_TOP_CFG_CTRL_ADDR :
+                                     MMC1_TOP_CFG_CTRL_ADDR, MMC_TOP_NS_CFG_CTRL_CFG_CARD_DETECT_N_SHIFT);
 }
 
 static inline AL_VOID AlMmc_ll_SetCardNotDetect(AL_REG BaseAddr, AL_BOOL IsEnable)
 {
-    AL_REG32_SET_BIT((BaseAddr == MMC_MMC0_BASE_ADDR) ? MMC_MMC0_TOP_NS_CFG_CTRL : MMC_MMC1_TOP_NS_CFG_CTRL,
+    AL_REG32_SET_BIT((BaseAddr == MMC0__BASE_ADDR) ? MMC0_TOP_CFG_CTRL_ADDR : MMC1_TOP_CFG_CTRL_ADDR,
                       MMC_TOP_NS_CFG_CTRL_CFG_CARD_DETECT_N_SHIFT, IsEnable);
 }
 
 /* Card write protect signal, valid when switch_card_write_prot is 1 */
 static inline AL_BOOL AlMmc_ll_IsCardWrProt(AL_REG BaseAddr)
 {
-    return (AL_BOOL)AL_REG32_GET_BIT((BaseAddr == MMC_MMC0_BASE_ADDR) ? MMC_MMC0_TOP_NS_CFG_CTRL :
-                                     MMC_MMC1_TOP_NS_CFG_CTRL, MMC_TOP_NS_CFG_CTRL_CFG_CARD_WRITE_PROT_SHIFT);
+    return (AL_BOOL)AL_REG32_GET_BIT((BaseAddr == MMC0__BASE_ADDR) ? MMC0_TOP_CFG_CTRL_ADDR :
+                                     MMC1_TOP_CFG_CTRL_ADDR, MMC_TOP_NS_CFG_CTRL_CFG_CARD_WRITE_PROT_SHIFT);
 }
 
 static inline AL_VOID AlMmc_ll_SetCardWrProt(AL_REG BaseAddr, AL_BOOL IsEnable)
 {
-    AL_REG32_SET_BIT((BaseAddr == MMC_MMC0_BASE_ADDR) ? MMC_MMC0_TOP_NS_CFG_CTRL : MMC_MMC1_TOP_NS_CFG_CTRL,
+    AL_REG32_SET_BIT((BaseAddr == MMC0__BASE_ADDR) ? MMC0_TOP_CFG_CTRL_ADDR : MMC1_TOP_CFG_CTRL_ADDR,
                       MMC_TOP_NS_CFG_CTRL_CFG_CARD_WRITE_PROT_SHIFT, IsEnable);
 }
 
 /* Switch card detect, 1 for configured card detect, 0 for signal from EMIO or MIO */
 static inline AL_MMC_SwCardSigEnum AlMmc_ll_GetSwCardDetect(AL_REG BaseAddr)
 {
-    return (AL_MMC_SwCardSigEnum)AL_REG32_GET_BIT((BaseAddr == MMC_MMC0_BASE_ADDR) ? MMC_MMC0_TOP_NS_CFG_CTRL :
-                                                  MMC_MMC1_TOP_NS_CFG_CTRL, MMC_TOP_NS_CFG_CTRL_SWITCH_CARD_DETECT_N_SHIFT);
+    return (AL_MMC_SwCardSigEnum)AL_REG32_GET_BIT((BaseAddr == MMC0__BASE_ADDR) ? MMC0_TOP_CFG_CTRL_ADDR :
+                                                  MMC1_TOP_CFG_CTRL_ADDR, MMC_TOP_NS_CFG_CTRL_SWITCH_CARD_DETECT_N_SHIFT);
 }
 
 static inline AL_VOID AlMmc_ll_SetSwCardDetect(AL_REG BaseAddr, AL_MMC_SwCardSigEnum Signal)
 {
-    AL_REG32_SET_BIT((BaseAddr == MMC_MMC0_BASE_ADDR) ? MMC_MMC0_TOP_NS_CFG_CTRL : MMC_MMC1_TOP_NS_CFG_CTRL,
+    AL_REG32_SET_BIT((BaseAddr == MMC0__BASE_ADDR) ? MMC0_TOP_CFG_CTRL_ADDR : MMC1_TOP_CFG_CTRL_ADDR,
                       MMC_TOP_NS_CFG_CTRL_SWITCH_CARD_DETECT_N_SHIFT, Signal);
 }
 
 /* Switch card write protect, 1 for configured card detect, 0 for signal from EMIO or MIO */
 static inline AL_MMC_SwCardSigEnum AlMmc_ll_GetSwCardWrPort(AL_REG BaseAddr)
 {
-    return (AL_MMC_SwCardSigEnum)AL_REG32_GET_BIT((BaseAddr == MMC_MMC0_BASE_ADDR) ? MMC_MMC0_TOP_NS_CFG_CTRL :
-                                     MMC_MMC1_TOP_NS_CFG_CTRL, MMC_TOP_NS_CFG_CTRL_SWITCH_CARD_WRITE_PROT_SHIFT);
+    return (AL_MMC_SwCardSigEnum)AL_REG32_GET_BIT((BaseAddr == MMC0__BASE_ADDR) ? MMC0_TOP_CFG_CTRL_ADDR :
+                                     MMC1_TOP_CFG_CTRL_ADDR, MMC_TOP_NS_CFG_CTRL_SWITCH_CARD_WRITE_PROT_SHIFT);
 }
 
 static inline AL_VOID AlMmc_ll_SetSwCardWrPort(AL_REG BaseAddr, AL_MMC_SwCardSigEnum Signal)
 {
-    AL_REG32_SET_BIT((BaseAddr == MMC_MMC0_BASE_ADDR) ? MMC_MMC0_TOP_NS_CFG_CTRL : MMC_MMC1_TOP_NS_CFG_CTRL,
+    AL_REG32_SET_BIT((BaseAddr == MMC0__BASE_ADDR) ? MMC0_TOP_CFG_CTRL_ADDR : MMC1_TOP_CFG_CTRL_ADDR,
                       MMC_TOP_NS_CFG_CTRL_SWITCH_CARD_WRITE_PROT_SHIFT, Signal);
 }
 
 /* Top config register */
 static inline AL_U32 AlMmc_ll_ReadTopCfg(AL_REG BaseAddr)
 {
-    return AL_REG32_READ((BaseAddr == MMC_MMC0_BASE_ADDR) ? MMC_MMC0_TOP_NS_CFG_CTRL : MMC_MMC1_TOP_NS_CFG_CTRL);
+    return AL_REG32_READ((BaseAddr == MMC0__BASE_ADDR) ? MMC0_TOP_CFG_CTRL_ADDR : MMC1_TOP_CFG_CTRL_ADDR);
 }
 
 static inline AL_VOID AlMmc_ll_WriteTopCfg(AL_REG BaseAddr, AL_U32 Val)
 {
-    AL_REG32_WRITE((BaseAddr == MMC_MMC0_BASE_ADDR) ? MMC_MMC0_TOP_NS_CFG_CTRL : MMC_MMC1_TOP_NS_CFG_CTRL, Val);
+    AL_REG32_WRITE((BaseAddr == MMC0__BASE_ADDR) ? MMC0_TOP_CFG_CTRL_ADDR : MMC1_TOP_CFG_CTRL_ADDR, Val);
 }
 
 /* --------------------MMC/Block Register-------------------- */
@@ -1113,8 +1141,8 @@ static inline AL_VOID AlMmc_ll_SetSdmaBufBdary(AL_REG BaseAddr, AL_MMC_BuffBdary
 static inline AL_U32 AlMmc_ll_GetBlkCnt(AL_REG BaseAddr)
 {
     return AL_REG32_GET_BITS(BaseAddr + MMC_BLOCKCOUNT_R_BLOCKSIZE_R_OFFSET,
-                                                   MMC_BLOCKCOUNT_R_BLOCKSIZE_R_SDMA_BUF_BDARY_SHIFT,
-                                                   MMC_BLOCKCOUNT_R_BLOCKSIZE_R_SDMA_BUF_BDARY_SIZE);
+                                                   MMC_BLOCKCOUNT_R_BLOCKSIZE_R_BLOCK_CNT_SHIFT,
+                                                   MMC_BLOCKCOUNT_R_BLOCKSIZE_R_BLOCK_CNT_SIZE);
 }
 
 static inline AL_VOID AlMmc_ll_SetBlkCnt(AL_REG BaseAddr, AL_U32 BlkCnt)
