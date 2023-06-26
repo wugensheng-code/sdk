@@ -8,6 +8,8 @@
 extern "C"{
 #endif /* __cplusplus */
 
+#include "al_errno.h"
+
 /*----------------------------------------------*
  * The common data type, will be used in the whole project.*
  *----------------------------------------------*/
@@ -50,7 +52,7 @@ typedef enum
 } AL_FUNCTION;
 
 #define AL_NULL         ((void *)0L)
-#define WAIT_FOREVER    (~0UL)
+#define AL_WAITFOREVER    (~0UL)
 
 #ifndef BIT
 #define BIT(nr)         ((1UL) << (nr))

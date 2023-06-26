@@ -154,7 +154,6 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStru
         return Ret;
     }
 
-    // (AL_VOID)AlIntr_RegHandler(Dev->IrqNum, AL_NULL, AlUart_Dev_IntrHandler, Dev);
     (AL_VOID)AlIntr_RegHandler(Dev->IntrNum, AL_NULL, AlUart_Dev_IntrHandler, Dev);
     AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
@@ -345,34 +344,4 @@ AL_S32 AlUart_Hal_RecvData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
     AL_UART_HAL_UNLOCK(Handle);
 
     return AL_OK;
-}
-
-/**
- * This function excute operations to set or check uart status.
- * @param   Handle Pointer to a AL_UART_HalStruct structure that contains uart device instance
- * @param   Cmd is io ctl cmd to AL_Uart_IoCtlCmdEnum
- * @param   Data Pointer to cmd args
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
-AL_S32 AlUart_Hal_IoCtl(AL_UART_HalStruct *Handle, AL_Uart_IoCtlCmdEnum Cmd, AL_VOID *Data)
-{
-    AL_S32 Ret = AL_OK;
-
-    if (Handle == AL_NULL) {
-        return AL_UART_ERR_NULL_PTR;
-    }
-
-    AL_UART_HAL_LOCK(Handle);
-
-    Ret = AlUart_Dev_IoCtl(Handle->Dev, Cmd, Data);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Uart io ctl cmd error:%d\r\n", Ret);
-    }
-
-    AL_UART_HAL_LOCK(Handle);
-
-    return Ret;
 }

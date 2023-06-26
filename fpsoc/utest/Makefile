@@ -1,7 +1,8 @@
+
 #########################################################################
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
 #########################################################################
-SDK_ROOT   ?= ../../../..
+SDK_ROOT   ?= ../..
 
 CHIP       ?= dr1m90
 
@@ -22,9 +23,8 @@ BOARD_NAME ?= board_dr1x90_emulation
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
-SRC_DIR += ./
-
-INC_DIR += ./
+SRC_DIR  = ./src
+INC_DIR += ./inc
 
 LD_LIBS  =
 LIB_DIR  =
@@ -33,10 +33,10 @@ C_SRCS   :=
 CXX_SRCS :=
 ASM_SRCS :=
 
-
 #########################################################################
 # 3. CFLAGS
 #########################################################################
+CFLAGS := -O2 -g
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
@@ -58,7 +58,7 @@ PINMUX_MODE ?= PINMUX_MODE1
 #########################################################################
 # 5. define build target
 #########################################################################
-TARGET := cli_test
+TARGET := utest
 
 ifneq ($(PINMUX_MODE),)
 CFLAGS += -DENABLE_$(PINMUX_MODE)=1
@@ -71,4 +71,4 @@ all: $(TARGET)
 # include rules.mk
 include $(SDK_ROOT)/tools/make/rules.mk
 
-# etValuentax=make
+# vim: syntax=make

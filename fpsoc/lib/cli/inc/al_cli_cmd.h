@@ -39,7 +39,7 @@ struct cli_region
 #define AL_CLI_CMD_REGISTER(Name, Cmd, Desc)                             \
     const char __clisym_##Cmd##_Name[] SECTION(".rodata") = #Cmd;        \
     const char __clisym_##Cmd##_Desc[] SECTION(".rodata") = #Desc;       \
-    static void Name##_stub(AL_S32 Argc, AL_S8 **Argv)   \
+    static void Name##_stub(AL_S32 Argc, AL_S8 *Argv[])   \
     {                                                                    \
         Name(Argc, Argv);                                                \
     }                                                                    \

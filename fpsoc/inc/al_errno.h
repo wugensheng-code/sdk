@@ -39,16 +39,12 @@ typedef enum
 typedef enum
 {
     AL_ERR_NULL_PTR       = 1,
-
     AL_ERR_ILLEGAL_PARAM  = 2,
-
     AL_ERR_NOT_READY      = 3,
-
     AL_ERR_NOT_SUPPORT    = 4,
-
     AL_ERR_TIMEOUT        = 5,
-
     AL_ERR_BUSY           = 6,
+    AL_ERR_NOMEM          = 7,
 
 } AL_ERR_CODE;
 
@@ -67,7 +63,8 @@ typedef enum
     AL_DMACAHB              = 7,
     AL_INTR                 = 8,
     AL_MMC                  = 9,
-    AL_QSPI                 = 10
+    AL_QSPI                 = 0x0A,
+    AL_UTEST                = 0x0B,
 } AL_MODULE_TYPE;
 
 #ifdef __cplusplus
