@@ -11,8 +11,8 @@ extern "C"{
 #include "al_type.h"
 #include <stdio.h>
 
-#define AL_UTEST_ERR_ILLEGAL_PARAM       (AL_DEF_ERR(AL_UTEST, AL_ERR_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
-#define AL_UTEST_ERR_NOMEM               (AL_DEF_ERR(AL_UTEST, AL_ERR_LEVEL_ERROR, AL_ERR_NOMEM))
+#define AL_UTEST_ERR_ILLEGAL_PARAM       (AL_DEF_ERR(AL_UTEST, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
+#define AL_UTEST_ERR_NOMEM               (AL_DEF_ERR(AL_UTEST, AL_LOG_LEVEL_ERROR, AL_ERR_NOMEM))
 
 
 #define AL_UTEST_PRINT_START(cmdid, fmt, arg...)                \

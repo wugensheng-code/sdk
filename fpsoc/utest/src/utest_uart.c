@@ -47,7 +47,7 @@ static AL_S32 AlUart_Dev_IoCtl(AL_UART_DevStruct *Uart, AL_Uart_IoCtlCmdEnum Cmd
     }
 
     if(AlUart_ll_IsUartBusy(Uart->BaseAddr)){
-        AL_LOG(AL_ERR_LEVEL_ERROR, "access during a transaction\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "access during a transaction\r\n");
         return AL_UART_ERR_BUSY;
     }
 
@@ -124,7 +124,7 @@ static AL_S32 AlUart_Hal_IoCtl(AL_UART_HalStruct *Handle, AL_Uart_IoCtlCmdEnum C
 
     Ret = AlUart_Dev_IoCtl(Handle->Dev, Cmd, Data);
     if (Ret != AL_OK) {
-        AL_LOG(AL_ERR_LEVEL_ERROR, "Uart io ctl cmd error:%d\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Uart io ctl cmd error:%d\r\n", Ret);
     }
 
     AL_UART_HAL_UNLOCK(Handle);
