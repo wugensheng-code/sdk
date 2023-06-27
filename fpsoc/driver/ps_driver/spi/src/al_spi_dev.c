@@ -165,8 +165,9 @@ AL_S32 AlSpi_Dev_Init(AL_SPI_DevStruct *Spi, AL_SPI_ConfigsStruct *InitConfig)
 
     Spi->Configs = (InitConfig == AL_NULL) ? SpiDefInitConfigs : (*InitConfig);
 
+    Spi->BaseAddr = AlSpi_ll_SetSpiMasterSlave(Spi->BaseAddr, Spi->Configs.Mode);
+
     AlSpi_ll_Disable(Spi->BaseAddr);
-    AlSpi_ll_SetSpiMode(Spi->BaseAddr, Spi->Configs.Mode);
     AlSpi_ll_SetProtFormat(Spi->BaseAddr, Spi->Configs.ProtFormat);
     AlSpi_ll_SetCpolAndCpha(Spi->BaseAddr, Spi->Configs.ClockEnum);
     AlSpi_ll_SetDataFrameSize(Spi->BaseAddr, Spi->Configs.DataFrameSize);
@@ -229,8 +230,6 @@ AL_S32 AlSpi_Dev_SendData(AL_SPI_DevStruct *Spi, AL_U8 *SendBuf, AL_U32 SendSize
     AlSpi_ll_Disable(Spi->BaseAddr);
     AlSpi_ll_SetTransfMode(Spi->BaseAddr, Spi->Configs.TransMode);
     AlSpi_ll_SetDataFrameSize(Spi->BaseAddr, Spi->Configs.DataFrameSize);
-
-
 
     AlSpi_ll_Enable(Spi->BaseAddr);
 

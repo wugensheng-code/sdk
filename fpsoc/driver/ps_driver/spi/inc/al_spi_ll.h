@@ -174,20 +174,27 @@ typedef enum
 } AL_SPI_IntrTypeEnum;
 
 
-/**
- * This function set spi master or slave.
- * @param   SpiBaseAddr is the spi base addr
- * @param   SpiMode is spi master or slave enmu
- * @return  AL_VOID
- * @note    none.
- */
-static inline AL_VOID AlSpi_ll_SetSpiMode(AL_REG SpiBaseAddr, AL_SPI_Mode SpiMode)
+static inline AL_REG AlSpi_ll_SetSpiMasterSlave(AL_REG SpiBaseAddr, AL_SPI_Mode SpiMode)
 {
+    AL_REG TempSpiBaseAddr;
+
     if (SPI_MASTER_MODE == SpiMode) {
-
-    } else if (SPI_SLAVE_MODE == SpiMode) {
-
+        TempSpiBaseAddr = SpiBaseAddr;
+        if (SpiBaseAddr == SPI0_BASE_ADDR) {
+            AL_REG32_SET_BIT(TOP_NS_CFG_CTRL_SPI_ADDR, TOP_NS_CFG_CTRL_SPI_CTRL_SPI0_SHIFT, 0);
+        } else {
+            AL_REG32_SET_BIT(TOP_NS_CFG_CTRL_SPI_ADDR, TOP_NS_CFG_CTRL_SPI_CTRL_SPI1_SHIFT, 0);
+        }
+    } else {
+        TempSpiBaseAddr = SpiBaseAddr + 0x100;
+        if (SpiBaseAddr == SPI0_BASE_ADDR) {
+            AL_REG32_SET_BIT(TOP_NS_CFG_CTRL_SPI_ADDR, TOP_NS_CFG_CTRL_SPI_CTRL_SPI0_SHIFT, 1);
+        } else {
+            AL_REG32_SET_BIT(TOP_NS_CFG_CTRL_SPI_ADDR, TOP_NS_CFG_CTRL_SPI_CTRL_SPI1_SHIFT, 1);
+        }
     }
+
+    return TempSpiBaseAddr;
 }
 
 /**

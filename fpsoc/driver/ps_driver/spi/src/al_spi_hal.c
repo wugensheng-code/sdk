@@ -11,6 +11,16 @@
 /************************** Variable Definitions *****************************/
 static AL_SPI_DevStruct AL_SPI_DevInstance[AL_SPI_NUM_INSTANCE];
 
+AL_DMACAHB_ChInitStruct     Spi0TxDmacChConfig;
+AL_DMACAHB_HalStruct        Spi0TxDmacHandle;
+AL_DMACAHB_ChInitStruct     Spi0RxDmacChConfig;
+AL_DMACAHB_HalStruct        Spi0RxDmacHandle;
+
+AL_DMACAHB_ChInitStruct     Spi1TxDmacChConfig;
+AL_DMACAHB_HalStruct        Spi1TxDmacHandle;
+AL_DMACAHB_ChInitStruct     Spi1RxDmacChConfig;
+AL_DMACAHB_HalStruct        Spi1RxDmacHandle;
+
 /********************************************************/
 #ifdef USE_RTOS
 /**
@@ -221,8 +231,6 @@ AL_S32 AlSpi_Hal_Init(AL_SPI_HalStruct *Handle, AL_SPI_ConfigsStruct *InitConfig
     Handle->Dev->BaseAddr = CfgPtr->BaseAddress;
     Handle->Dev->Fifolen  = CfgPtr->FifoLen;
 
-
-
     if (ret != AL_OK) {
         AL_SPI_HAL_UNLOCK(Handle);
         return ret;
@@ -327,8 +335,13 @@ AL_S32 AlSpi_Hal_RecvDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *Data, AL_U32 Siz
     return ret;
 }
 
+
+
+
+
+
 /**
- * This function
+ * This function is spi blocking tranfer data
  * @param   Handle is pointer to AL_SPI_HalStruct
  * @param   SendData is pointer to send data
  * @param   SendSize is send data size
@@ -368,21 +381,37 @@ AL_S32 AlSpi_Hal_TranferDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL_
     return ret;
 }
 
-
-/*TransSize(AL_DMACAHB_ChTransStruct) * SrcTransWidth = Data Size */
-/* Data Size % SrcBurstLength = 0 */
+/**
+ * This function is spi dma blocking send data
+ * @param   Handle is pointer to AL_SPI_HalStruct
+ * @param   Data is pointer to send data
+ * @param   Size is send data size
+ * @param   Timeout is max wait time for send done
+ * @return  The state of function execution
+ * @note    TransSize(AL_DMACAHB_ChTransStruct) * SrcTransWidth = Data Size
+ *          Data Size % SrcBurstLength = 0
+*/
 AL_S32 AlSpi_Hal_DmaStartBlockSend(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL_U32 SendSize, AL_U32 Timeout)
 {
-    AL_DMACAHB_ChInitStruct     Spi1TxDmacChConfig;
-    AL_DMACAHB_HalStruct        Spi1TxDmacHandle;
-    AL_DMACAHB_ChTransStruct    *Spi1TxDmacChTrans;
+    AL_DMACAHB_ChTransStruct    *SpiTxDmacChTrans;
 
     AL_U32                      DmacDevId = 0;
     AL_S32                      Ret = AL_OK;
 
+    AL_DMACAHB_ChInitStruct     *SpiTxDmacChConfigPtr;
+    AL_DMACAHB_HalStruct        *SpiTxDmacHandlePtr;
+
     /* check only Handle, more checks in AlSpi_Dev_Init function */
     if (Handle == AL_NULL) {
         return AL_SPI_ERR_ILLEGAL_PARAM;
+    }
+
+    if(Handle->Dev->BaseAddr < SPI1_BASE_ADDR) {
+        SpiTxDmacChConfigPtr = &Spi0TxDmacChConfig;
+        SpiTxDmacHandlePtr = &Spi0TxDmacHandle;
+    } else {
+        SpiTxDmacChConfigPtr = &Spi1TxDmacChConfig;
+        SpiTxDmacHandlePtr = &Spi1TxDmacHandle;
     }
 
     AL_SPI_HAL_LOCK(Handle);
@@ -393,46 +422,52 @@ AL_S32 AlSpi_Hal_DmaStartBlockSend(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL
         return Ret;
     }
 
-    Spi1TxDmacChConfig.Id = AL_DMACAHB_CHANNEL_6;
-    Spi1TxDmacChConfig.TransType = AL_DMACAHB_TRANS_TYPE_1;
-    Spi1TxDmacChConfig.Intr.IsIntrEn = AL_TRUE;
-    Spi1TxDmacChConfig.Intr.IntrUnMask = AL_DMACAHB_CH_INTR_TFR | AL_DMACAHB_CH_INTR_ERR;
-    Spi1TxDmacChConfig.SrcTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
-    Spi1TxDmacChConfig.DstTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
-    Spi1TxDmacChConfig.SrcAddrIncMode = AL_DMACAHB_ADDR_INC_INC;
-    //Spi1TxDmacChConfig.DstAddrIncMode = AL_DMACAHB_ADDR_INC_INC;
-    Spi1TxDmacChConfig.DstAddrIncMode = AL_DMACAHB_ADDR_INC_NO0;
-    Spi1TxDmacChConfig.SrcBurstLength = AL_DMACAHB_MSIZE_1;
-    Spi1TxDmacChConfig.DstBurstLength = AL_DMACAHB_MSIZE_1;
+    if(SpiTxDmacHandlePtr->Channel == NULL) {
+        SpiTxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_6;
+        SpiTxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
+        SpiTxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
+        SpiTxDmacChConfigPtr->Intr.IntrUnMask = AL_DMACAHB_CH_INTR_TFR | AL_DMACAHB_CH_INTR_ERR;
+        SpiTxDmacChConfigPtr->SrcTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
+        SpiTxDmacChConfigPtr->DstTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
+        SpiTxDmacChConfigPtr->SrcAddrIncMode = AL_DMACAHB_ADDR_INC_INC;
+        //SpiTxDmacChConfigPtr->DstAddrIncMode = AL_DMACAHB_ADDR_INC_INC;
+        SpiTxDmacChConfigPtr->DstAddrIncMode = AL_DMACAHB_ADDR_INC_NO0;
+        SpiTxDmacChConfigPtr->SrcBurstLength = AL_DMACAHB_MSIZE_1;
+        SpiTxDmacChConfigPtr->DstBurstLength = AL_DMACAHB_MSIZE_1;
 
-    Spi1TxDmacChConfig.Direction = AL_DMACAHB_TT_FC_MEM2PER;
-    Spi1TxDmacChConfig.HandShaking.DstPer = AL_DMACAHB_PER_SPI1_TX;
-    Spi1TxDmacChConfig.HandShaking.DstHsSel = AL_DMACAHB_HAND_SHAKING_HARDWARE;
-    Spi1TxDmacChConfig.HandShaking.DstHsPol = AL_DMACAHB_HS_POL_ACTIVE_HI;
+        SpiTxDmacChConfigPtr->Direction = AL_DMACAHB_TT_FC_MEM2PER;
+        if(Handle->Dev->BaseAddr < SPI1_BASE_ADDR) {
+            SpiTxDmacChConfigPtr->HandShaking.DstPer = AL_DMACAHB_PER_SPI0_TX;
+        } else {
+            SpiTxDmacChConfigPtr->HandShaking.DstPer = AL_DMACAHB_PER_SPI1_TX;
+        }
+        SpiTxDmacChConfigPtr->HandShaking.DstHsSel = AL_DMACAHB_HAND_SHAKING_HARDWARE;
+        SpiTxDmacChConfigPtr->HandShaking.DstHsPol = AL_DMACAHB_HS_POL_ACTIVE_HI;
 
-    Spi1TxDmacChConfig.SrcMasterSel = AL_DMACAHB_MASTER_SEL_1;
-    Spi1TxDmacChConfig.DstMasterSel = AL_DMACAHB_MASTER_SEL_2;
-    Spi1TxDmacChConfig.ChPrior = AL_DMACAHB_CH_PRIOR_6;
-    Spi1TxDmacChConfig.FifoMode = AL_DMACAHB_FIFO_MODE_0;
-    Spi1TxDmacChConfig.ProtCtl = AL_DMACAHB_PROT_0;
-    Spi1TxDmacChConfig.SgrDsr.IsSrcGatherEn = AL_FALSE;
-    Spi1TxDmacChConfig.SgrDsr.IsDstScatterEn = AL_FALSE;
+        SpiTxDmacChConfigPtr->SrcMasterSel = AL_DMACAHB_MASTER_SEL_1;
+        SpiTxDmacChConfigPtr->DstMasterSel = AL_DMACAHB_MASTER_SEL_2;
+        SpiTxDmacChConfigPtr->ChPrior = AL_DMACAHB_CH_PRIOR_6;
+        SpiTxDmacChConfigPtr->FifoMode = AL_DMACAHB_FIFO_MODE_0;
+        SpiTxDmacChConfigPtr->ProtCtl = AL_DMACAHB_PROT_0;
+        SpiTxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
+        SpiTxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
 
-    Ret = AlDmacAhb_Hal_Init(&Spi1TxDmacHandle, &Spi1TxDmacChConfig, AL_NULL, DmacDevId);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Spi1Tx Dmacahb hal Init error:0x%x\r\n", Ret);
-        AL_SPI_HAL_UNLOCK(Handle);
-        return Ret;
+        Ret = AlDmacAhb_Hal_Init(SpiTxDmacHandlePtr, SpiTxDmacChConfigPtr, AL_NULL, DmacDevId);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "SpiTx Dmacahb hal Init error:0x%x\r\n", Ret);
+            AL_SPI_HAL_UNLOCK(Handle);
+            return Ret;
+        }
     }
 
-    Spi1TxDmacChTrans = &(Spi1TxDmacHandle.Channel->Trans);
-    Spi1TxDmacChTrans->SrcAddr        = (AL_REG)SendData;
-    Spi1TxDmacChTrans->DstAddr        = Handle->Dev->BaseAddr + SPI_DR0_MST_OFFSET;
-    Spi1TxDmacChTrans->TransSize      = SendSize;
+    SpiTxDmacChTrans = &(SpiTxDmacHandlePtr->Channel->Trans);
+    SpiTxDmacChTrans->SrcAddr        = (AL_REG)SendData;
+    SpiTxDmacChTrans->DstAddr        = Handle->Dev->BaseAddr + SPI_DR0_MST_OFFSET;
+    SpiTxDmacChTrans->TransSize      = SendSize;
 
-    Ret = AlDmacAhb_Hal_StartBlock(&Spi1TxDmacHandle, 1000000);
+    Ret = AlDmacAhb_Hal_StartBlock(SpiTxDmacHandlePtr, Timeout);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Spi1Tx Dmacahb hal Start Block error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "SpiTx Dmacahb hal Start Block error:0x%x\r\n", Ret);
     }
 
     AL_SPI_HAL_UNLOCK(Handle);
@@ -441,19 +476,36 @@ AL_S32 AlSpi_Hal_DmaStartBlockSend(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL
 }
 
 
-
+/**
+ * This function is spi dma blocking receive data
+ * @param   Handle is pointer to AL_SPI_HalStruct
+ * @param   Data is pointer to receive data
+ * @param   Size is receive data size
+ * @param   Timeout is max wait time for receive done
+ * @return  The state of function execution
+ * @note    None
+*/
 AL_S32 AlSpi_Hal_DmaStartBlockReceive(AL_SPI_HalStruct *Handle, AL_U8 *RecvData, AL_U16 RecvSize, AL_U32 Timeout)
 {
-    AL_DMACAHB_ChInitStruct     Spi1RxDmacChConfig;
-    AL_DMACAHB_HalStruct        Spi1RxDmacHandle;
-    AL_DMACAHB_ChTransStruct    *Spi1RxDmacChTrans;
+    AL_DMACAHB_ChTransStruct    *SpiRxDmacChTrans;
 
     AL_U32                      DmacDevId = 0;
     AL_S32                      Ret = AL_OK;
 
+    AL_DMACAHB_ChInitStruct     *SpiRxDmacChConfigPtr;
+    AL_DMACAHB_HalStruct        *SpiRxDmacHandlePtr;
+
     /* check only Handle, more checks in AlSpi_Dev_Init function */
     if (Handle == AL_NULL) {
         return AL_SPI_ERR_ILLEGAL_PARAM;
+    }
+
+    if(Handle->Dev->BaseAddr < SPI1_BASE_ADDR) {
+        SpiRxDmacChConfigPtr = &Spi0RxDmacChConfig;
+        SpiRxDmacHandlePtr = &Spi0RxDmacHandle;
+    } else {
+        SpiRxDmacChConfigPtr = &Spi1RxDmacChConfig;
+        SpiRxDmacHandlePtr = &Spi1RxDmacHandle;
     }
 
     AL_SPI_HAL_LOCK(Handle);
@@ -464,45 +516,50 @@ AL_S32 AlSpi_Hal_DmaStartBlockReceive(AL_SPI_HalStruct *Handle, AL_U8 *RecvData,
         return Ret;
     }
 
-    Spi1RxDmacChConfig.Id = AL_DMACAHB_CHANNEL_7;
-    Spi1RxDmacChConfig.TransType = AL_DMACAHB_TRANS_TYPE_1;
-    Spi1RxDmacChConfig.Intr.IsIntrEn = AL_TRUE;
-    Spi1RxDmacChConfig.Intr.IntrUnMask = AL_DMACAHB_CH_INTR_TFR | AL_DMACAHB_CH_INTR_ERR;
-    Spi1RxDmacChConfig.SrcTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
-    Spi1RxDmacChConfig.DstTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
-    Spi1RxDmacChConfig.SrcAddrIncMode = AL_DMACAHB_ADDR_INC_NO0;
-    //Spi1RxDmacChConfig.SrcAddrIncMode = AL_DMACAHB_ADDR_INC_INC;
-    Spi1RxDmacChConfig.DstAddrIncMode = AL_DMACAHB_ADDR_INC_INC;
-    Spi1RxDmacChConfig.SrcBurstLength = AL_DMACAHB_MSIZE_1;
-    Spi1RxDmacChConfig.DstBurstLength = AL_DMACAHB_MSIZE_1;
-    Spi1RxDmacChConfig.Direction = AL_DMACAHB_TT_FC_PER2MEM;
-    Spi1RxDmacChConfig.HandShaking.SrcPer = AL_DMACAHB_PER_SPI1_RX;
-    Spi1RxDmacChConfig.HandShaking.SrcHsSel = AL_DMACAHB_HAND_SHAKING_HARDWARE;
-    Spi1RxDmacChConfig.HandShaking.SrcHsPol = AL_DMACAHB_HS_POL_ACTIVE_HI;
+    if(SpiRxDmacHandlePtr->Channel == NULL) {
+        SpiRxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_7;
+        SpiRxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
+        SpiRxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
+        SpiRxDmacChConfigPtr->Intr.IntrUnMask = AL_DMACAHB_CH_INTR_TFR | AL_DMACAHB_CH_INTR_ERR;
+        SpiRxDmacChConfigPtr->SrcTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
+        SpiRxDmacChConfigPtr->DstTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
+        SpiRxDmacChConfigPtr->SrcAddrIncMode = AL_DMACAHB_ADDR_INC_NO0;
+        SpiRxDmacChConfigPtr->DstAddrIncMode = AL_DMACAHB_ADDR_INC_INC;
+        SpiRxDmacChConfigPtr->SrcBurstLength = AL_DMACAHB_MSIZE_1;
+        SpiRxDmacChConfigPtr->DstBurstLength = AL_DMACAHB_MSIZE_1;
+        SpiRxDmacChConfigPtr->Direction = AL_DMACAHB_TT_FC_PER2MEM;
+        if(Handle->Dev->BaseAddr < SPI1_BASE_ADDR) {
+            SpiRxDmacChConfigPtr->HandShaking.SrcPer = AL_DMACAHB_PER_SPI0_RX;
+        } else {
+            SpiRxDmacChConfigPtr->HandShaking.SrcPer = AL_DMACAHB_PER_SPI1_RX;
+        }
+        SpiRxDmacChConfigPtr->HandShaking.SrcHsSel = AL_DMACAHB_HAND_SHAKING_HARDWARE;
+        SpiRxDmacChConfigPtr->HandShaking.SrcHsPol = AL_DMACAHB_HS_POL_ACTIVE_HI;
 
-    Spi1RxDmacChConfig.SrcMasterSel = AL_DMACAHB_MASTER_SEL_1;
-    Spi1RxDmacChConfig.DstMasterSel = AL_DMACAHB_MASTER_SEL_2;
-    Spi1RxDmacChConfig.ChPrior = AL_DMACAHB_CH_PRIOR_7;
-    Spi1RxDmacChConfig.FifoMode = AL_DMACAHB_FIFO_MODE_0;
-    Spi1RxDmacChConfig.ProtCtl = AL_DMACAHB_PROT_0;
-    Spi1RxDmacChConfig.SgrDsr.IsSrcGatherEn = AL_FALSE;
-    Spi1RxDmacChConfig.SgrDsr.IsDstScatterEn = AL_FALSE;
+        SpiRxDmacChConfigPtr->SrcMasterSel = AL_DMACAHB_MASTER_SEL_1;
+        SpiRxDmacChConfigPtr->DstMasterSel = AL_DMACAHB_MASTER_SEL_2;
+        SpiRxDmacChConfigPtr->ChPrior = AL_DMACAHB_CH_PRIOR_7;
+        SpiRxDmacChConfigPtr->FifoMode = AL_DMACAHB_FIFO_MODE_0;
+        SpiRxDmacChConfigPtr->ProtCtl = AL_DMACAHB_PROT_0;
+        SpiRxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
+        SpiRxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
 
-    Ret = AlDmacAhb_Hal_Init(&Spi1RxDmacHandle, &Spi1RxDmacChConfig, AL_NULL, DmacDevId);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Spi1Rx Dmacahb hal Init error:0x%x\r\n", Ret);
-        AL_SPI_HAL_UNLOCK(Handle);
-        return Ret;
+        Ret = AlDmacAhb_Hal_Init(SpiRxDmacHandlePtr, SpiRxDmacChConfigPtr, AL_NULL, DmacDevId);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "SpiRx Dmacahb hal Init error:0x%x\r\n", Ret);
+            AL_SPI_HAL_UNLOCK(Handle);
+            return Ret;
+        }
     }
 
-    Spi1RxDmacChTrans = &(Spi1RxDmacHandle.Channel->Trans);
-    Spi1RxDmacChTrans->SrcAddr        = Handle->Dev->BaseAddr + SPI_DR0_MST_OFFSET;
-    Spi1RxDmacChTrans->DstAddr        = (AL_REG)RecvData;
-    Spi1RxDmacChTrans->TransSize      = RecvSize;
+    SpiRxDmacChTrans = &(SpiRxDmacHandlePtr->Channel->Trans);
+    SpiRxDmacChTrans->SrcAddr        = Handle->Dev->BaseAddr + SPI_DR0_MST_OFFSET;
+    SpiRxDmacChTrans->DstAddr        = (AL_REG)RecvData;
+    SpiRxDmacChTrans->TransSize      = RecvSize;
 
-    Ret = AlDmacAhb_Hal_StartBlock(&Spi1RxDmacHandle, 1000000);
+    Ret = AlDmacAhb_Hal_StartBlock(SpiRxDmacHandlePtr, Timeout);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Spi1Rx Dmacahb hal Start Block error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "SpiRx Dmacahb hal Start Block error:0x%x\r\n", Ret);
     }
 
     AL_SPI_HAL_UNLOCK(Handle);
@@ -512,17 +569,27 @@ AL_S32 AlSpi_Hal_DmaStartBlockReceive(AL_SPI_HalStruct *Handle, AL_U8 *RecvData,
 
 
 
-
+/**
+ * This function is spi dma blocking tranfer data
+ * @param   Handle is pointer to AL_SPI_HalStruct
+ * @param   SendData is pointer to send data
+ * @param   SendSize is send data size
+ * @param   RecvData is pointer to receive data
+ * @param   RecvSize is receive data size
+ * @param   Timeout is max wait time for send done
+ * @return  The state of function execution
+ * @note    None
+*/
 AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL_U32 SendSize,
                                        AL_U8 *RecvData, AL_U16 RecvSize, AL_U32 Timeout)
 {
-    AL_DMACAHB_ChInitStruct     Spi1TxDmacChConfig;
-    AL_DMACAHB_HalStruct        Spi1TxDmacHandle;
-    AL_DMACAHB_ChTransStruct    *Spi1TxDmacChTrans;
+    AL_DMACAHB_ChTransStruct    *SpiTxDmacChTrans;
+    AL_DMACAHB_ChTransStruct    *SpiRxDmacChTrans;
 
-    AL_DMACAHB_ChInitStruct     Spi1RxDmacChConfig;
-    AL_DMACAHB_HalStruct        Spi1RxDmacHandle;
-    AL_DMACAHB_ChTransStruct    *Spi1RxDmacChTrans;
+    AL_DMACAHB_ChInitStruct     *SpiTxDmacChConfigPtr;
+    AL_DMACAHB_HalStruct        *SpiTxDmacHandlePtr;
+    AL_DMACAHB_ChInitStruct     *SpiRxDmacChConfigPtr;
+    AL_DMACAHB_HalStruct        *SpiRxDmacHandlePtr;
 
     AL_U32                      DmacDevId = 0;
     AL_S32                      Ret = AL_OK;
@@ -530,6 +597,18 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
     /* check only Handle, more checks in AlSpi_Dev_Init function */
     if (Handle == AL_NULL) {
         return AL_SPI_ERR_ILLEGAL_PARAM;
+    }
+
+    if(Handle->Dev->BaseAddr < SPI1_BASE_ADDR) {
+        SpiTxDmacChConfigPtr = &Spi0TxDmacChConfig;
+        SpiTxDmacHandlePtr = &Spi0TxDmacHandle;
+        SpiRxDmacChConfigPtr = &Spi0RxDmacChConfig;
+        SpiRxDmacHandlePtr = &Spi0RxDmacHandle;
+    } else {
+        SpiTxDmacChConfigPtr = &Spi1TxDmacChConfig;
+        SpiTxDmacHandlePtr = &Spi1TxDmacHandle;
+        SpiRxDmacChConfigPtr = &Spi1RxDmacChConfig;
+        SpiRxDmacHandlePtr = &Spi1RxDmacHandle;
     }
 
     AL_SPI_HAL_LOCK(Handle);
@@ -540,89 +619,103 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
         return Ret;
     }
 
-    Spi1TxDmacChConfig.Id = AL_DMACAHB_CHANNEL_6;
-    Spi1TxDmacChConfig.TransType = AL_DMACAHB_TRANS_TYPE_1;
-    Spi1TxDmacChConfig.Intr.IsIntrEn = AL_TRUE;
-    Spi1TxDmacChConfig.Intr.IntrUnMask = AL_DMACAHB_CH_INTR_TFR | AL_DMACAHB_CH_INTR_ERR;
-    Spi1TxDmacChConfig.SrcTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
-    Spi1TxDmacChConfig.DstTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
-    Spi1TxDmacChConfig.SrcAddrIncMode = AL_DMACAHB_ADDR_INC_INC;
-    //Spi1TxDmacChConfig.DstAddrIncMode = AL_DMACAHB_ADDR_INC_INC;
-    Spi1TxDmacChConfig.DstAddrIncMode = AL_DMACAHB_ADDR_INC_NO0;
-    Spi1TxDmacChConfig.SrcBurstLength = AL_DMACAHB_MSIZE_1;
-    Spi1TxDmacChConfig.DstBurstLength = AL_DMACAHB_MSIZE_1;
+    if(SpiTxDmacHandlePtr->Channel == NULL) {
+        SpiTxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_6;
+        SpiTxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
+        SpiTxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
+        SpiTxDmacChConfigPtr->Intr.IntrUnMask = AL_DMACAHB_CH_INTR_TFR | AL_DMACAHB_CH_INTR_ERR;
+        SpiTxDmacChConfigPtr->SrcTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
+        SpiTxDmacChConfigPtr->DstTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
+        SpiTxDmacChConfigPtr->SrcAddrIncMode = AL_DMACAHB_ADDR_INC_INC;
+        SpiTxDmacChConfigPtr->DstAddrIncMode = AL_DMACAHB_ADDR_INC_NO0;
+        SpiTxDmacChConfigPtr->SrcBurstLength = AL_DMACAHB_MSIZE_1;
+        SpiTxDmacChConfigPtr->DstBurstLength = AL_DMACAHB_MSIZE_1;
 
-    Spi1TxDmacChConfig.Direction = AL_DMACAHB_TT_FC_MEM2PER;
-    Spi1TxDmacChConfig.HandShaking.DstPer = AL_DMACAHB_PER_SPI1_TX;
-    Spi1TxDmacChConfig.HandShaking.DstHsSel = AL_DMACAHB_HAND_SHAKING_HARDWARE;
-    Spi1TxDmacChConfig.HandShaking.DstHsPol = AL_DMACAHB_HS_POL_ACTIVE_HI;
+        SpiTxDmacChConfigPtr->Direction = AL_DMACAHB_TT_FC_MEM2PER;
 
-    Spi1TxDmacChConfig.SrcMasterSel = AL_DMACAHB_MASTER_SEL_1;
-    Spi1TxDmacChConfig.DstMasterSel = AL_DMACAHB_MASTER_SEL_2;
-    Spi1TxDmacChConfig.ChPrior = AL_DMACAHB_CH_PRIOR_6;
-    Spi1TxDmacChConfig.FifoMode = AL_DMACAHB_FIFO_MODE_0;
-    Spi1TxDmacChConfig.ProtCtl = AL_DMACAHB_PROT_0;
-    Spi1TxDmacChConfig.SgrDsr.IsSrcGatherEn = AL_FALSE;
-    Spi1TxDmacChConfig.SgrDsr.IsDstScatterEn = AL_FALSE;
+        if(Handle->Dev->BaseAddr < SPI1_BASE_ADDR) {
+            SpiTxDmacChConfigPtr->HandShaking.DstPer = AL_DMACAHB_PER_SPI0_TX;
+        } else {
+            SpiTxDmacChConfigPtr->HandShaking.DstPer = AL_DMACAHB_PER_SPI1_TX;
+        }
 
-    Spi1RxDmacChConfig.Id = AL_DMACAHB_CHANNEL_7;
-    Spi1RxDmacChConfig.TransType = AL_DMACAHB_TRANS_TYPE_1;
-    Spi1RxDmacChConfig.Intr.IsIntrEn = AL_TRUE;
-    Spi1RxDmacChConfig.Intr.IntrUnMask = AL_DMACAHB_CH_INTR_TFR | AL_DMACAHB_CH_INTR_ERR;
-    Spi1RxDmacChConfig.SrcTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
-    Spi1RxDmacChConfig.DstTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
-    Spi1RxDmacChConfig.SrcAddrIncMode = AL_DMACAHB_ADDR_INC_NO0;
-    //Spi1RxDmacChConfig.SrcAddrIncMode = AL_DMACAHB_ADDR_INC_INC;
-    Spi1RxDmacChConfig.DstAddrIncMode = AL_DMACAHB_ADDR_INC_INC;
-    Spi1RxDmacChConfig.SrcBurstLength = AL_DMACAHB_MSIZE_1;
-    Spi1RxDmacChConfig.DstBurstLength = AL_DMACAHB_MSIZE_1;
-    Spi1RxDmacChConfig.Direction = AL_DMACAHB_TT_FC_PER2MEM;
-    Spi1RxDmacChConfig.HandShaking.SrcPer = AL_DMACAHB_PER_SPI1_RX;
-    Spi1RxDmacChConfig.HandShaking.SrcHsSel = AL_DMACAHB_HAND_SHAKING_HARDWARE;
-    Spi1RxDmacChConfig.HandShaking.SrcHsPol = AL_DMACAHB_HS_POL_ACTIVE_HI;
+        SpiTxDmacChConfigPtr->HandShaking.DstHsSel = AL_DMACAHB_HAND_SHAKING_HARDWARE;
+        SpiTxDmacChConfigPtr->HandShaking.DstHsPol = AL_DMACAHB_HS_POL_ACTIVE_HI;
 
-    Spi1RxDmacChConfig.SrcMasterSel = AL_DMACAHB_MASTER_SEL_1;
-    Spi1RxDmacChConfig.DstMasterSel = AL_DMACAHB_MASTER_SEL_2;
-    Spi1RxDmacChConfig.ChPrior = AL_DMACAHB_CH_PRIOR_7;
-    Spi1RxDmacChConfig.FifoMode = AL_DMACAHB_FIFO_MODE_0;
-    Spi1RxDmacChConfig.ProtCtl = AL_DMACAHB_PROT_0;
-    Spi1RxDmacChConfig.SgrDsr.IsSrcGatherEn = AL_FALSE;
-    Spi1RxDmacChConfig.SgrDsr.IsDstScatterEn = AL_FALSE;
+        SpiTxDmacChConfigPtr->SrcMasterSel = AL_DMACAHB_MASTER_SEL_1;
+        SpiTxDmacChConfigPtr->DstMasterSel = AL_DMACAHB_MASTER_SEL_2;
+        SpiTxDmacChConfigPtr->ChPrior = AL_DMACAHB_CH_PRIOR_6;
+        SpiTxDmacChConfigPtr->FifoMode = AL_DMACAHB_FIFO_MODE_0;
+        SpiTxDmacChConfigPtr->ProtCtl = AL_DMACAHB_PROT_0;
+        SpiTxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
+        SpiTxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
 
-    Ret = AlDmacAhb_Hal_Init(&Spi1TxDmacHandle, &Spi1TxDmacChConfig, AL_NULL, DmacDevId);
+        Ret = AlDmacAhb_Hal_Init(SpiTxDmacHandlePtr, SpiTxDmacChConfigPtr, AL_NULL, DmacDevId);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "SpiTx Dmacahb hal Init error:0x%x\r\n", Ret);
+            AL_SPI_HAL_UNLOCK(Handle);
+            return Ret;
+        }
+    }
+
+    if(SpiRxDmacHandlePtr->Channel == NULL) {
+        SpiRxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_7;
+        SpiRxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
+        SpiRxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
+        SpiRxDmacChConfigPtr->Intr.IntrUnMask = AL_DMACAHB_CH_INTR_TFR | AL_DMACAHB_CH_INTR_ERR;
+        SpiRxDmacChConfigPtr->SrcTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
+        SpiRxDmacChConfigPtr->DstTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
+        SpiRxDmacChConfigPtr->SrcAddrIncMode = AL_DMACAHB_ADDR_INC_NO0;
+        SpiRxDmacChConfigPtr->DstAddrIncMode = AL_DMACAHB_ADDR_INC_INC;
+        SpiRxDmacChConfigPtr->SrcBurstLength = AL_DMACAHB_MSIZE_1;
+        SpiRxDmacChConfigPtr->DstBurstLength = AL_DMACAHB_MSIZE_1;
+        SpiRxDmacChConfigPtr->Direction = AL_DMACAHB_TT_FC_PER2MEM;
+
+        if(Handle->Dev->BaseAddr < SPI1_BASE_ADDR) {
+            SpiRxDmacChConfigPtr->HandShaking.SrcPer = AL_DMACAHB_PER_SPI0_RX;
+        } else {
+            SpiRxDmacChConfigPtr->HandShaking.SrcPer = AL_DMACAHB_PER_SPI1_RX;
+        }
+
+        SpiRxDmacChConfigPtr->HandShaking.SrcHsSel = AL_DMACAHB_HAND_SHAKING_HARDWARE;
+        SpiRxDmacChConfigPtr->HandShaking.SrcHsPol = AL_DMACAHB_HS_POL_ACTIVE_HI;
+
+        SpiRxDmacChConfigPtr->SrcMasterSel = AL_DMACAHB_MASTER_SEL_1;
+        SpiRxDmacChConfigPtr->DstMasterSel = AL_DMACAHB_MASTER_SEL_2;
+        SpiRxDmacChConfigPtr->ChPrior = AL_DMACAHB_CH_PRIOR_7;
+        SpiRxDmacChConfigPtr->FifoMode = AL_DMACAHB_FIFO_MODE_0;
+        SpiRxDmacChConfigPtr->ProtCtl = AL_DMACAHB_PROT_0;
+        SpiRxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
+        SpiRxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
+
+        Ret = AlDmacAhb_Hal_Init(SpiRxDmacHandlePtr, SpiRxDmacChConfigPtr, AL_NULL, DmacDevId);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "SpiRx Dmacahb hal Init error:0x%x\r\n", Ret);
+            AL_SPI_HAL_UNLOCK(Handle);
+            return Ret;
+        }
+    }
+
+    SpiTxDmacChTrans = &(SpiTxDmacHandlePtr->Channel->Trans);
+    SpiTxDmacChTrans->SrcAddr        = (AL_REG)SendData;
+    SpiTxDmacChTrans->DstAddr        = Handle->Dev->BaseAddr + SPI_DR0_MST_OFFSET;
+    SpiTxDmacChTrans->TransSize      = SendSize;
+
+    SpiRxDmacChTrans = &(SpiRxDmacHandlePtr->Channel->Trans);
+    SpiRxDmacChTrans->SrcAddr        = Handle->Dev->BaseAddr + SPI_DR0_MST_OFFSET;
+    SpiRxDmacChTrans->DstAddr        = (AL_REG)RecvData;
+    SpiRxDmacChTrans->TransSize      = RecvSize;
+
+    Ret = AlDmacAhb_Hal_Start(SpiRxDmacHandlePtr);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Spi1Tx Dmacahb hal Init error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "SpiRx Dmacahb hal Start error:0x%x\r\n", Ret);
         AL_SPI_HAL_UNLOCK(Handle);
         return Ret;
     }
 
-    Ret = AlDmacAhb_Hal_Init(&Spi1RxDmacHandle, &Spi1RxDmacChConfig, AL_NULL, DmacDevId);
+    Ret = AlDmacAhb_Hal_StartBlock(SpiTxDmacHandlePtr, Timeout);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Spi1Rx Dmacahb hal Init error:0x%x\r\n", Ret);
-        AL_SPI_HAL_UNLOCK(Handle);
-        return Ret;
-    }
-
-    Spi1TxDmacChTrans = &(Spi1TxDmacHandle.Channel->Trans);
-    Spi1TxDmacChTrans->SrcAddr        = (AL_REG)SendData;
-    Spi1TxDmacChTrans->DstAddr        = Handle->Dev->BaseAddr + SPI_DR0_MST_OFFSET;
-    Spi1TxDmacChTrans->TransSize      = SendSize;
-
-    Spi1RxDmacChTrans = &(Spi1RxDmacHandle.Channel->Trans);
-    Spi1RxDmacChTrans->SrcAddr        = Handle->Dev->BaseAddr + SPI_DR0_MST_OFFSET;
-    Spi1RxDmacChTrans->DstAddr        = (AL_REG)RecvData;
-    Spi1RxDmacChTrans->TransSize      = RecvSize;
-
-    Ret = AlDmacAhb_Hal_Start(&Spi1RxDmacHandle);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Spi1Rx Dmacahb hal Start error:0x%x\r\n", Ret);
-        AL_SPI_HAL_UNLOCK(Handle);
-        return Ret;
-    }
-
-    Ret = AlDmacAhb_Hal_StartBlock(&Spi1TxDmacHandle, 1000000);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Spi1Tx Dmacahb hal Start Block error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "SpiTx Dmacahb hal Start Block error:0x%x\r\n", Ret);
     }
 
     AL_SPI_HAL_UNLOCK(Handle);
