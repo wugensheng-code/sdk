@@ -12,6 +12,7 @@
 #include <type.h>
 #include <gic.h>
 #include <stdio.h>
+#include "al_params.h"
 
 static unsigned int generic_timer_rate;
 
@@ -49,15 +50,16 @@ int generic_timer_reset(unsigned int val)
 
 unsigned int generic_timer_get_freq(void)
 {
-	unsigned int freq;
+	// unsigned int freq;
 
-	asm volatile(
-		"mrs %0, cntfrq_el0"
-		: "=r" (freq)
-		:
-		: "memory");
+	// asm volatile(
+	// 	"mrs %0, cntfrq_el0"
+	// 	: "=r" (freq)
+	// 	:
+	// 	: "memory");
 
-	return freq;
+	// return freq;
+	return SYSTEM_CLOCK;
 }
 
 
