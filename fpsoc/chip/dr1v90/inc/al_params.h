@@ -20,6 +20,8 @@ typedef enum {
     SOC_INT130_IRQn      =  130,
     SOC_MMC0_IRQn        =  81,
     SOC_MMC1_IRQn        =  82,
+    SOC_IIC0_IRQn        =  83,
+    SOC_IIC1_IRQn        =  84,
     SOC_UART0_IRQn       =  89,
     SOC_UART1_IRQn       =  90,
     SOC_CAN0_IRQn        =  91,
@@ -118,6 +120,17 @@ typedef enum {
 #define MMC0_CLK_IN_KHZ         (10000UL)
 #define MMC1_CLK_IN_KHZ         (10000UL)
 
+/*----------------------------------------------------------------------------
+  Define IIC params
+ *----------------------------------------------------------------------------*/
+#define HAVE_IICPS_DRIVER
+
+#define AL_IIC_NUM_INSTANCE     (2)
+
+#define I2C0__BASE_ADDR         0xF8414000ULL
+#define I2C1__BASE_ADDR         0xF8415000ULL
+
+#define I2C_CLOCK               (40000000UL)
 
 #ifdef __cplusplus
 }

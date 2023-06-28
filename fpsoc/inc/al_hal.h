@@ -19,6 +19,9 @@ extern "C" {
 #include "al_can_hal.h"
 #endif
 
+#ifdef HAVE_IICPS_DRIVER
+#include "al_iic_hal.h"
+#endif
 
 #ifdef __cplusplus
 }

@@ -65,6 +65,7 @@ typedef enum
     AL_MMC                  = 9,
     AL_QSPI                 = 0x0A,
     AL_UTEST                = 0x0B,
+    AL_IIC                  = 0x0C,
 } AL_MODULE_TYPE;
 
 #ifdef __cplusplus
