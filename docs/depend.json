@@ -2,7 +2,7 @@
 	"board": {
 		"name": "BOARD_DR1X90_EMULATION",
 		"depends": ["solutions/boards/board_dr1x90_emulation"],
-		"help": "pinmux mode1/mode2"
+		"help": "board init: init pinmux"
 	},
 	"chip": {
 		"CHIP_DR1M90": {
