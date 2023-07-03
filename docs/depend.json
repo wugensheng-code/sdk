@@ -1,0 +1,172 @@
+{
+	"board": {
+		"name": "BOARD_DR1X90_EMULATION",
+		"depends": ["solutions/boards/board_dr1x90_emulation"],
+		"help": "pinmux mode1/mode2"
+	},
+	"chip": {
+		"CHIP_DR1M90": {
+			"name": "CHIP_DR1M90",
+			"depends": [
+				"fpsoc/chip/common",
+				"fpsoc/chip/dr1m90",
+				"fpsoc/arch/arm",
+				"fpsoc/inc"
+			]
+		},
+		"CHIP_DR1V90": {
+			"name": "CHIP_DR1M90",
+			"depends": [
+				"fpsoc/chip/common",
+				"fpsoc/chip/dr1v90",
+				"fpsoc/arch/riscv",
+				"fpsoc/inc"
+			]
+		}
+	},
+	"driver": {
+		"PS_DRIVER_CAN_V1_0": {
+			"name": "PS_DRIVER_CAN_V1_0",
+			"version": "1.0",
+			"depends": ["fpsoc/driver/ps_driver/can"]
+		},
+		"PS_DRIVER_DMACAHB_V1_0": {
+			"name": "PS_DRIVER_DMACAHB_V1_0",
+			"version": "1.0",
+			"depends": [
+				"fpsoc/driver/ps_driver/dmacahb",
+				"PS_DRIVER_CAN_V1_0",
+				"PS_DRIVER_SPI_V1_0"
+			]
+		},
+		"PS_DRIVER_GPIO_V1_0": {
+			"name": "PS_DRIVER_GPIO_V1_0",
+			"version": "1.0",
+			"depends": ["fpsoc/driver/ps_driver/gpio"]
+		},
+		"PS_DRIVER_IIC_V1_0": {
+			"name": "PS_DRIVER_IIC_V1_0",
+			"version": "1.0",
+			"depends": ["fpsoc/driver/ps_driver/iic"]
+		},
+		"PS_DRIVER_MMC_V1_0": {
+			"name": "PS_DRIVER_MMC_V1_0",
+			"version": "1.0",
+			"depends": ["fpsoc/driver/ps_driver/mmc"]
+		}
+		"PS_DRIVER_MPU_V1_0": {
+			"name": "PS_DRIVER_MPU_V1_0",
+			"version": "1.0",
+			"depends": ["fpsoc/driver/ps_driver/mpu"]
+		},
+		"PS_DRIVER_QSPI_V1_0": {
+			"name": "PS_DRIVER_QSPI_V1_0",
+			"version": "1.0",
+			"depends": ["fpsoc/driver/ps_driver/qspi"]
+		},
+		"PS_DRIVER_SMC_V1_0": {
+			"name": "PS_DRIVER_SMC_V1_0",
+			"version": "1.0",
+			"depends": ["fpsoc/driver/ps_driver/smc"]
+		},
+		"PS_DRIVER_SPI_V1_0": {
+			"name": "PS_DRIVER_SPI_V1_0",
+			"version": "1.0",
+			"depends": ["fpsoc/driver/ps_driver/spi"]
+		},
+		"PS_DRIVER_UART_V1_0": {
+			"name": "PS_DRIVER_UART_V1_0",
+			"version": "1.0",
+			"depends": ["fpsoc/driver/ps_driver/uart"],
+			"default": true
+		},
+	},
+	"library": {
+		"LIB_LOG_V1_0": {
+			"name": "LIB_LOG_V1_0",
+			"version": "1.0",
+			"depends": ["fpsoc/lib/log"],
+			"default": true
+		},
+		"LIB_GCC_V1_0": {
+			"name": "LIB_GCC_V1_0",
+			"version": "1.0",
+			"depends": ["fpsoc/lib/newlib/gcc"],
+			"default": true
+		},
+		"LIB_NPU_RUNTIME_V1_0": {
+			"name": "LIB_NPU_RUNTIME_V1_0",
+			"version": "1.0",
+			"depends": ["fpsoc/lib/npu_runtime"]
+		}
+		"LIB_CLI_V1_0": {
+			"name": "LIB_CLI_V1_0",
+			"version": "1.0",
+			"depends": ["fpsoc/lib/cli"],
+		},
+		"LIB_FATFS_V1_0": {
+			"name": "LIB_FATFS_V1_0",
+			"version": "1.0",
+			"depends": ["3rdparty/lib/FATFS"]
+		},
+		"LIB_JPU_V1_0": {
+			"name": "LIB_JPU_V1_0",
+			"version": "1.0",
+			"depends": ["3rdparty/lib/jpu_driver"]
+		},
+	},
+	"app": {
+		"DEMO_BM_NPU_RUNTIME_TEST_V1_0": {
+			"name": "DEMO_BM_NPU_RUNTIME_TEST_V1_0",
+			"version": "1.0",
+			"depends": [
+				"solutions/demo/baremetal/npu_runtime_test",
+				"LIB_NPU_RUNTIME_V1_0",
+				"LIB_JPU_V1_0",
+				"LIB_FATFS_V1_0"
+			],
+			"description": "Baremetal npu_runtime_test demo",
+			"supportedOS": ["standalone"],
+			"supportedProc": ["apu-0", "apu-1", "rpu"]
+		},		
+		"DEMO_BM_HELLOWORLD_V1_0": {
+			"name": "DEMO_BM_HELLOWORLD_V1_0",
+			"version": "1.0",
+			"depends": [
+				"solutions/demo/baremetal/helloworld"
+			],
+			"description": "Baremetal helloworld demo",
+			"supportedOS": ["standalone"],
+			"supportedProc": ["apu-0", "apu-1", "rpu"]
+		},		
+		"DEMO_BM_FATFS_V1_0": {
+			"name": "DEMO_BM_FATFS_V1_0",
+			"version": "1.0",
+			"depends": [
+				"solutions/demo/baremetal/fatfs",
+				"LIB_FATFS_V1_0"
+			],
+			"description": "Baremetal fatfs demo",
+			"supportedOS": ["standalone"],
+			"supportedProc": ["apu-0", "apu-1", "rpu"]
+		},		
+		"DEMO_FSBL_V1_0": {
+			"name": "DEMO_FSBL_V1_0",
+			"version": "1.0",
+			"depends": [
+				"solutions/demo/fsbl",
+				"LIB_FATFS_V1_0"
+			],
+			"description": "fsbl demo",
+			"supportedOS": ["standalone"],
+			"supportedProc": ["apu-0", "apu-1", "rpu"]
+		}
+	}
+	"doc":{
+		"DOCS_DOXYGEN": {
+			"name": "DOCS_DOXYGEN",
+			"version": "1.0",
+			"depends": ["docs/doxygen"]
+		}
+	},
+}
