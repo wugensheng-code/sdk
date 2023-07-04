@@ -812,8 +812,7 @@ AL_VOID AlGpio_Dev_IntrHandler(void *Instance)
 
         if((IntrStatus & IntrEnable) != (AL_U32)0) {
             AlGpio_Dev_IntrClr(Gpio, Bank, IntrStatus & IntrEnable);
-            //AlGpio_Dev_IntrEnableMask(Gpio, Bank, IntrStatus & IntrEnable);
-            //AlGpio_Dev_IntrEnable(Gpio, Bank, IntrStatus & IntrEnable);
+            AlGpio_Dev_IntrEnableMask(Gpio, Bank, IntrStatus & IntrEnable);
             Gpio->Handler(Gpio->EventCallBackRef, Bank, (IntrStatus & IntrEnable));
         }
     }

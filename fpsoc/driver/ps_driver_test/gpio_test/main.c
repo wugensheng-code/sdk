@@ -33,10 +33,13 @@ AlGpio_Hal_Test()
         printf("[TEST] APU AlGpio_Hal_Init failed\r\n");
 
     // 2、Test Write and Read DR register
-    AlGpio_Hal_WritePin(&GPIO,4,0x1);
-    printf("GPIO 4 output data value is %x\r\n", AlGpio_Hal_OutputReadPin(&GPIO,4));
-    AlGpio_Hal_WritePin(&GPIO,4,0x0);
-    printf("GPIO 4 output data value is %x\r\n", AlGpio_Hal_OutputReadPin(&GPIO,4));
+    AlGpio_Hal_WritePin(&GPIO,19,0x1);
+    _delay_ms(2000);
+    printf("GPIO 19 output data value is %x\r\n", AlGpio_Hal_OutputReadPin(&GPIO,19));
+    AlGpio_Hal_WritePin(&GPIO,19,0x0);
+    _delay_ms(2000);
+    printf("GPIO 19 output data value is %x\r\n", AlGpio_Hal_OutputReadPin(&GPIO,19));
+
 
     // 3、Test InputRead EOI register
     for(int i = 0;i < 15;i++)

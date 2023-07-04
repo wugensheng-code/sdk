@@ -119,6 +119,7 @@ AL_S32 AlGpio_Hal_WritePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U32 Data)
         return AL_GPIO_ERR_ILLEGAL_PARAM;
     }
 
+    AlGpio_Dev_SetDirectionPin(Handle->Dev, Pin, GPIO_OUTPUT);
     AlGpio_Dev_WritePin(Handle->Dev, Pin, Data);
 
     return AL_OK;
