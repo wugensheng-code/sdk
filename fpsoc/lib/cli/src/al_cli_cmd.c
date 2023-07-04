@@ -6,7 +6,7 @@
 static void AlCli_HelpCmd(AL_S32 Argc, AL_S8 **Argv);
 
 static const AL_CLI_CmdStruct DefaultCmd[] = {
-    {"help", "print this", AlCli_HelpCmd},
+    {"help", "print this", (AlCli_CmdFunction)AlCli_HelpCmd},
 };
 
 static AL_CLI_CmdListStruct *CliCmdList;
@@ -14,6 +14,7 @@ static AL_CLI_CmdListStruct *CliCmdList;
 static void AlCli_HelpCmd(AL_S32 Argc, AL_S8 **Argv)
 {
     AL_CLI_CmdListStruct *ListPtr = CliCmdList->Next;
+    AL_S8 HelpNull[] = " ";
 
     AL_CLI_PRINTF("\r\nAnLogic Cli Commands:\r\n");
     AL_CLI_PRINTF("\r\n");
@@ -21,7 +22,8 @@ static void AlCli_HelpCmd(AL_S32 Argc, AL_S8 **Argv)
     /* Display all command, show name and help */
     while (ListPtr != AL_NULL) {
         if (ListPtr->CliCmd && ListPtr->CliCmd->Name) {
-            AL_CLI_PRINTF("  %-15s :%s\r\n", ListPtr->CliCmd->Name, ListPtr->CliCmd->Help ? ListPtr->CliCmd->Help : "");
+            AL_CLI_PRINTF("  %-15s :%s\r\n", ListPtr->CliCmd->Name,
+                          ListPtr->CliCmd->Help ? ListPtr->CliCmd->Help : HelpNull);
         }
         ListPtr = ListPtr->Next;
     }
@@ -89,7 +91,7 @@ AL_S32 AlCli_RegisterCmd(AL_CLI_CmdListStruct *List, const AL_CLI_CmdStruct *Cmd
     if (ListNode == AL_NULL)
         return AL_CLI_ERROR_MALLOC_FAILED;
 
-    ListNode->CliCmd = Cmd;
+    ListNode->CliCmd = (AL_CLI_CmdStruct *)Cmd;
     ListNode->Next = AL_NULL;
     ListPtr->Next = ListNode;
 
@@ -134,14 +136,14 @@ extern AL_U32 _cli_section_start, _cli_section_end;
 AL_S32 AlCli_RegisterUsrCmds(AL_CLI_CmdListStruct *List)
 {
     AL_S32 RetValue;
-    AL_U32 Ptr;
+    AL_UINTPTR Ptr;
     struct cli_region *UsrCmd;
     AL_CLI_CmdStruct *Cmd;
 
     if (List == AL_NULL)
         return AL_CLI_ERROR_ILLEGAL_PARAM;
 
-    for (Ptr = (AL_U32)&_cli_section_start; Ptr < (AL_U32)&_cli_section_end;) {
+    for (Ptr = (AL_UINTPTR)(&_cli_section_start); Ptr < (AL_UINTPTR)&_cli_section_end;) {
         UsrCmd = (struct cli_region *)Ptr;
         Ptr += sizeof(struct cli_region);
 
