@@ -69,11 +69,83 @@ static AL_VOID AlCan_Test_ListenOnly(AL_VOID)
     }
 
     while (1) {
-        AlCan_Hal_RecvFrameBlock(&Handle, &Frame, Timeout);
+        // Ret = AlCan_Hal_RecvFrameBlock(&Handle, &Frame, Timeout);
+        // if (Ret != AL_OK) {
+        //     AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
+        // }
+        // AlCan_Dev_DisplayFrame(&Frame);
+        Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame1, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         }
-        AlCan_Dev_DisplayFrame(&Frame);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd Frame1 example\r\n");
+        AlDelay_Ms(500);
+        Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame3, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame3 Error:0x%x\r\n", Ret);
+        }
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd Frame3 example\r\n");
+        AlDelay_Ms(500);
+        Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame5, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame5 Error:0x%x\r\n", Ret);
+        }
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd Frame5 example\r\n");
+        AlDelay_Ms(500);
+        Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame7, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame7 Error:0x%x\r\n", Ret);
+        }
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd Frame7 example\r\n");
+        AlDelay_Ms(500);
+        Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame9, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame9 Error:0x%x\r\n", Ret);
+        }
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd Frame9 example\r\n");
+        AlDelay_Ms(500);
+        Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame11, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame11 Error:0x%x\r\n", Ret);
+        }
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd Frame11 example\r\n");
+        AlDelay_Ms(500);
+        Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame13, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame13 Error:0x%x\r\n", Ret);
+        }
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd Frame13 example\r\n");
+        AlDelay_Ms(500);
+        Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame15, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame15 Error:0x%x\r\n", Ret);
+        }
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd Frame15 example\r\n");
+        AlDelay_Ms(500);
+        Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame16, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame16 Error:0x%x\r\n", Ret);
+        }
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd Frame16 example\r\n");
+        AlDelay_Ms(500);
+        Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame17, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame17 Error:0x%x\r\n", Ret);
+        }
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd Frame17 example\r\n");
+        AlDelay_Ms(500);
+        Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame18, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame18 Error:0x%x\r\n", Ret);
+        }
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd Frame18 example\r\n");
+        AlDelay_Ms(500);
+        Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame19, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame19 Error:0x%x\r\n", Ret);
+        }
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd Frame19 example\r\n");
+        AlDelay_Ms(500);
     };
 }
 
@@ -508,7 +580,8 @@ static AL_VOID AlCan_Test_FdStbFifo(AL_VOID)
     Config.OpsMode      = AL_CAN_MODE_NORMAL;
     Config.RunMode      = AL_CAN_RUN_INTR;
     Config.Type         = AL_CAN_TYPE_FD;
-    Config.SlowBitRate  = AL_CAN_ARBITRATION_0_25M;
+    Config.SlowBitRate  = AL_CAN_ARBITRATION_0_5M,
+    Config.FastBitRate  = AL_CAN_1_M,
     Config.TransMode    = AL_CAN_TRANS_STB_FIFO;
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 

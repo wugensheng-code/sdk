@@ -174,12 +174,12 @@ static inline AL_VOID AlCan_ll_SetTpss(AL_REG BaseAddr, AL_BOOL IsEnabled)
             IsEnabled);
 }
 
-// /* Loop Back Mode, Internal(LBMI) */
-// static inline AL_BOOL AlCan_ll_IsLbmiEnabled(AL_REG BaseAddr)
-// {
-//     return (AL_BOOL)AL_REG32_GET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET,
-//                             CAN_RCTRL_TCTRL_TCMD_CFG_STAT_LBMI_SHIFT);
-// }
+/* Loop Back Mode, Internal(LBMI) */
+static inline AL_BOOL AlCan_ll_IsLbmiEnabled(AL_REG BaseAddr)
+{
+    return (AL_BOOL)AL_REG32_GET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET,
+                            CAN_RCTRL_TCTRL_TCMD_CFG_STAT_LBMI_SHIFT);
+}
 
 static inline AL_VOID AlCan_ll_SetLbmi(AL_REG BaseAddr, AL_BOOL IsEnabled)
 {
@@ -187,12 +187,12 @@ static inline AL_VOID AlCan_ll_SetLbmi(AL_REG BaseAddr, AL_BOOL IsEnabled)
             IsEnabled);
 }
 
-// /* Loop Back Mode, External(LBME) */
-// static inline AL_BOOL AlCan_ll_IsLbmeEnabled(AL_REG BaseAddr)
-// {
-//     return (AL_BOOL)AL_REG32_GET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET,
-//                             CAN_RCTRL_TCTRL_TCMD_CFG_STAT_LBME_SHIFT);
-// }
+/* Loop Back Mode, External(LBME) */
+static inline AL_BOOL AlCan_ll_IsLbmeEnabled(AL_REG BaseAddr)
+{
+    return (AL_BOOL)AL_REG32_GET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET,
+                            CAN_RCTRL_TCTRL_TCMD_CFG_STAT_LBME_SHIFT);
+}
 
 static inline AL_VOID AlCan_ll_SetLbme(AL_REG BaseAddr, AL_BOOL IsEnabled)
 {
@@ -290,12 +290,12 @@ static inline AL_VOID AlCan_ll_SetStby(AL_REG BaseAddr, AL_BOOL IsEnabled)
             IsEnabled);
 }
 
-// /* Listen Only Mode(LOM) */
-// static inline AL_BOOL AlCan_ll_IsLom(AL_REG BaseAddr)
-// {
-//     return (AL_BOOL)AL_REG32_GET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET,
-//                             CAN_RCTRL_TCTRL_TCMD_CFG_STAT_LOM_SHIFT);
-// }
+/* Listen Only Mode(LOM) */
+static inline AL_BOOL AlCan_ll_IsLom(AL_REG BaseAddr)
+{
+    return (AL_BOOL)AL_REG32_GET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET,
+                            CAN_RCTRL_TCTRL_TCMD_CFG_STAT_LOM_SHIFT);
+}
 
 static inline AL_VOID AlCan_ll_SetLom(AL_REG BaseAddr, AL_BOOL IsEnabled)
 {
@@ -357,11 +357,11 @@ static inline AL_VOID AlCan_ll_SetTsmode(AL_REG BaseAddr, AL_CAN_TsmodeEnum Mode
 //                                       CAN_RCTRL_TCTRL_TCMD_CFG_STAT_TSNEXT_SHIFT);
 // }
 
-// static inline AL_VOID AlCan_ll_SetTsnext(AL_REG BaseAddr, AL_CAN_TsnextEnum Mode)
-// {
-//     AL_REG32_SET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET,  CAN_RCTRL_TCTRL_TCMD_CFG_STAT_TSNEXT_SHIFT,
-//             Mode);
-// }
+static inline AL_VOID AlCan_ll_SetTsnext(AL_REG BaseAddr, AL_CAN_TsnextEnum Mode)
+{
+    AL_REG32_SET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET,  CAN_RCTRL_TCTRL_TCMD_CFG_STAT_TSNEXT_SHIFT,
+            Mode);
+}
 
 // /* CAN FD ISO mode(FD_ISO) */
 // static inline AL_CAN_FdIsoEnum AlCan_ll_GetFdIso(AL_REG BaseAddr)
@@ -435,10 +435,10 @@ static inline AL_VOID AlCan_ll_SetRrel(AL_REG BaseAddr, AL_CAN_RrelEnum Mode)
 //                                     CAN_RCTRL_TCTRL_TCMD_CFG_STAT_SACK_SHIFT);
 // }
 
-// static inline AL_VOID AlCan_ll_SetSack(AL_REG BaseAddr, AL_CAN_SackEnum Mode)
-// {
-//     AL_REG32_SET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET, CAN_RCTRL_TCTRL_TCMD_CFG_STAT_SACK_SHIFT, Mode);
-// }
+static inline AL_VOID AlCan_ll_SetSack(AL_REG BaseAddr, AL_CAN_SackEnum Mode)
+{
+    AL_REG32_SET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET, CAN_RCTRL_TCTRL_TCMD_CFG_STAT_SACK_SHIFT, Mode);
+}
 
 // /* Transmit Secondary buffer Full Flag(TSFF) */
 // static inline AL_CAN_TsffEnum AlCan_ll_GetTsff(AL_REG BaseAddr)

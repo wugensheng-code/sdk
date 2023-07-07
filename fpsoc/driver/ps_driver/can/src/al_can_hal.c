@@ -83,7 +83,7 @@ static AL_S32 AlCan_Hal_WaitSendDoneOrTimeout(AL_CAN_HalStruct *Handle, AL_U32 T
 */
 static AL_S32 AlCan_Hal_WaitRecvNotEmptyOrTimeout(AL_CAN_HalStruct *Handle, AL_U32 Timeout)
 {
-    while(AlCan_Dev_GetState(Handle->Dev, AL_CAN_STATE_RECV_EMPTY) & Timeout);
+    while(AlCan_Dev_GetState(Handle->Dev, AL_CAN_STATE_RECV_EMPTY) && Timeout);
 
     if (Timeout == 0) {
         AL_LOG(AL_LOG_LEVEL_DEBUG, "Can wait recv done time out!\r\n");
@@ -340,7 +340,7 @@ AL_S32 AlCan_Hal_IoCtl(AL_CAN_HalStruct *Handle, AL_CAN_IoCtlCmdEnum Cmd, AL_VOI
 {
     AL_S32 Ret = AL_OK;
 
-    if (Handle == AL_NULL) {
+    if (Handle == AL_NULL || Data == AL_NULL) {
         return AL_CAN_ERR_NULL_PTR;
     }
 
