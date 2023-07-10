@@ -53,7 +53,7 @@
 			"name": "PS_DRIVER_MMC_V1_0",
 			"version": "1.0",
 			"depends": ["fpsoc/driver/ps_driver/mmc"]
-		}
+		},
 		"PS_DRIVER_MPU_V1_0": {
 			"name": "PS_DRIVER_MPU_V1_0",
 			"version": "1.0",
@@ -79,7 +79,7 @@
 			"version": "1.0",
 			"depends": ["fpsoc/driver/ps_driver/uart"],
 			"default": true
-		},
+		}
 	},
 	"library": {
 		"LIB_LOG_V1_0": {
@@ -98,11 +98,11 @@
 			"name": "LIB_NPU_RUNTIME_V1_0",
 			"version": "1.0",
 			"depends": ["fpsoc/lib/npu_runtime"]
-		}
+		},
 		"LIB_CLI_V1_0": {
 			"name": "LIB_CLI_V1_0",
 			"version": "1.0",
-			"depends": ["fpsoc/lib/cli"],
+			"depends": ["fpsoc/lib/cli"]
 		},
 		"LIB_FATFS_V1_0": {
 			"name": "LIB_FATFS_V1_0",
@@ -113,7 +113,7 @@
 			"name": "LIB_JPU_V1_0",
 			"version": "1.0",
 			"depends": ["3rdparty/lib/jpu_driver"]
-		},
+		}
 	},
 	"app": {
 		"DEMO_BM_NPU_RUNTIME_TEST_V1_0": {
@@ -160,13 +160,23 @@
 			"description": "fsbl demo",
 			"supportedOS": ["standalone"],
 			"supportedProc": ["apu-0", "apu-1", "rpu"]
+		},
+		"DEMO_NMSIS_V1_0": {
+			"name": "DEMO_NMSIS_V1_0",
+			"version": "1.0",
+			"depends": [
+				"solutions/demo/baremetal/NMSIS"
+			],
+			"description": "NMSIS demo",
+			"supportedOS": ["standalone"],
+			"supportedProc": ["rpu"]
 		}
-	}
+	},
 	"doc":{
 		"DOCS_DOXYGEN": {
 			"name": "DOCS_DOXYGEN",
 			"version": "1.0",
 			"depends": ["docs/doxygen"]
 		}
-	},
+	}
 }
