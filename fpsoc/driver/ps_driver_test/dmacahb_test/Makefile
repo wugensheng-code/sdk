@@ -49,10 +49,9 @@ HPF_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 PINMUX_MODE ?= PINMUX_MODE1
 
 export SDK_ROOT
+export HPF_DIR
 export CHIP
 
-export BOARD_DIR
-export BOARD_NAME
 export SRC_DIR
 export INC_DIR
 

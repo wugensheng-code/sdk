@@ -206,7 +206,7 @@ cfg_version=v3.0
 
 board_name=
 bsp_version=
-bsp_path=
+BSP_DIR=
 chip_name=
 project_base_rtt_bsp=true
 is_use_scons_build=true

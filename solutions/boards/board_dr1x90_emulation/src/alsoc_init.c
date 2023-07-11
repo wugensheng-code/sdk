@@ -13,3 +13,17 @@ __attribute__((__used__)) void board_init()
     Enablepinmux1_mode2();
 #endif
 }
+
+/*
+ * generate by FD
+*/
+int get_device_version ()
+{
+    return AL_OK;
+}
+
+
+int soc_platform_init()
+{
+    return AL_OK;
+}

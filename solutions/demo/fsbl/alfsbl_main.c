@@ -21,7 +21,7 @@
 #include "qspi_flash_drv.h"
 
 #include "alfsbl_qspi.h"
-
+#include "alsoc_init.h"
 
 
 /********************* global variables *********************/
@@ -59,6 +59,8 @@ int main(void)
 #if defined SIMU_AL9000_DV
 	REG32(SYSCTRL_NS_PLS_PROT) = REG32(SYSCTRL_NS_PLS_PROT) & (~0x2);
 #endif
+
+    (void)soc_platform_init();
 
 	while (FsblStage <= ALFSBL_STAGE_DFT) {
 		switch (FsblStage) {

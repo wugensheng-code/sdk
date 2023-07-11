@@ -13,10 +13,6 @@ ARMv8_EL        ?= EL1
 ARMv8_CORE		?= 0
 
 #########################################################################
-## Available choices:
-## The name of sub directories in $(SDK_ROOT)/solutions/boards
-BOARD_DIR  ?= $(SDK_ROOT)/solutions/boards/
-BOARD_NAME ?=
 
 #########################################################################
 # options for compile command
@@ -52,6 +48,9 @@ NOGC ?= 0
 LIB_OUTPUT_DIR  ?= $(SDK_ROOT)/output
 
 SDK_ROOT := $(abspath $(SDK_ROOT))
+HPF_DIR := $(abspath $(HPF_DIR))
+BSP_DIR ?= $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/*/Makefile))
+
 #########################################################################
 
 export CHIP
@@ -65,5 +64,7 @@ export SILENT
 export RTOS
 export SDK_ROOT
 export CFLAGS
+export BSP_DIR
+export HPF_DIR
 
 # vim: syntax=make

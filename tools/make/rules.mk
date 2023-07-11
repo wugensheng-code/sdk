@@ -32,13 +32,11 @@ export CHIP_ARCH
 export ARCH_EXT
 
 #########################################################################
-BSP_PATH = $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/*/Makefile))
-export BSP_PATH
 
 ifeq ($(DOWNLOAD),ocm)
-LINKER_SCRIPT ?= $(BSP_PATH)/chip/$(CHIP)/lds/gcc_$(CHIP)_ocm.ld
+LINKER_SCRIPT ?= $(BSP_DIR)/chip/$(CHIP)/lds/gcc_$(CHIP)_ocm.ld
 else ifeq ($(DOWNLOAD),ddr)
-LINKER_SCRIPT ?= $(BSP_PATH)/chip/$(CHIP)/lds/gcc_$(CHIP)_ddr.ld
+LINKER_SCRIPT ?= $(BSP_DIR)/chip/$(CHIP)/lds/gcc_$(CHIP)_ddr.ld
 endif
 
 
@@ -63,23 +61,22 @@ endif
 MKDEP_OPT   = -MMD -MT $@ -MF $@.d
 
 
-
 #########################################################################
 # all public inc
-PUBLIC_INC_PATH :=  $(BSP_PATH)/inc \
-               $(BSP_PATH)/chip/$(CHIP)/inc \
-               $(wildcard $(BSP_PATH)/driver/pl_driver/*/inc) \
-               $(wildcard $(BSP_PATH)/driver/ps_driver/*/inc) \
+PUBLIC_INC_DIR :=  $(BSP_DIR)/inc \
+               $(BSP_DIR)/chip/$(CHIP)/inc \
+               $(wildcard $(BSP_DIR)/driver/pl_driver/*/inc) \
+               $(wildcard $(BSP_DIR)/driver/ps_driver/*/inc) \
                $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/lib/*/Makefile)) \
 			   $(wildcard $(SDK_ROOT)/3rdparty/lib/*/inc) \
 			   $(wildcard $(SDK_ROOT)/3rdparty/lib/*/*/inc) \
-			   $(wildcard $(BSP_PATH)/lib/*/inc) \
-               $(wildcard $(BSP_PATH)/lib/*/api/inc) \
+			   $(wildcard $(BSP_DIR)/lib/*/inc) \
+               $(wildcard $(BSP_DIR)/lib/*/api/inc) \
 
-PUBLIC_INC  :=  $(foreach subdir,$(sort $(PUBLIC_INC_PATH)), -I$(subdir))
+PUBLIC_INC  :=  $(foreach subdir,$(sort $(PUBLIC_INC_DIR)), -I$(subdir))
 
 ## module inc
-MODULE_INC  :=  $(foreach subdir,$(sort $(INC_DIR)), -I$(subdir))
+MODULE_INC  :=  $(foreach subdir,$(sort $(INC_DIR)), -I$(subdir)) -I$(HPF_DIR)/inc
 
 #########################################################################
 
@@ -203,31 +200,31 @@ $(TARGET_ELF): bsp make_all_libs $(ALL_OBJS)
 
 .PHONY: bsp
 bsp:
-ifneq ($(BSP_PATH),)
-	@$(MAKE) -C $(BSP_PATH) lib
+ifneq ($(BSP_DIR),)
+	@$(MAKE) -C $(BSP_DIR) lib
 endif
 
 .PHONY: bsp_clean
 bsp_clean:
-ifneq ($(BSP_PATH),)
-	@$(MAKE) -C $(BSP_PATH) lib.do.clean
+ifneq ($(BSP_DIR),)
+	@$(MAKE) -C $(BSP_DIR) lib.do.clean
 endif
 
 
 #########################################################################
-# 3rdparty, libnpuruntime may not include in sdk workspace
+# 3rdparty, hpf lib, libnpuruntime may not include in sdk workspace
 #########################################################################
-LIBS_PATH = $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/lib/*/Makefile $(BSP_PATH)/lib/*/Makefile))
+LIBS_DIR = $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/lib/*/Makefile $(BSP_DIR)/lib/*/Makefile)) $(HPF_DIR)
 
 .PHONY: make_all_libs
-make_all_libs: $(addsuffix /make.lib, $(LIBS_PATH))
+make_all_libs: $(addsuffix /make.lib, $(LIBS_DIR))
 
 .PHONY:
 %/make.lib:
 	$(MAKE) -C $(patsubst %/make.lib,%,$@) lib
 
 .PHONY: all_libs_clean
-all_libs_clean: $(addsuffix /make.clean, $(LIBS_PATH))
+all_libs_clean: $(addsuffix /make.clean, $(LIBS_DIR))
 
 .PHONY:
 %/make.clean:
