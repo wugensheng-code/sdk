@@ -95,15 +95,18 @@ static AL_VOID AlUart_Hal_EventHandler(AL_UART_EventStruct UartEvent, AL_VOID *C
     {
     case AL_UART_SEND_DONE:
         break;
-
     case AL_UART_RECEIVE_DONE:
-    case AL_UART_RECEIVE_TIMEOUT:
+    case AL_UART_CHAR_TIMEOUT:
         break;
-
-    case AL_UART_EVENT_PARE_FRAME_BRKE:
-        break;
-
     case AL_UART_BUSY_DETECT:
+        break;
+    case AL_UART_EVENT_RECV_ERROR:
+        break;
+    case AL_UART_EVENT_OVER_RUN_ERR:
+        break;
+    case AL_UART_NO_INTR_PEDING:
+        break;
+    case AL_UART_MODEM_STATUS_INTR:
         break;
 
     default:
@@ -120,7 +123,7 @@ static AL_VOID AlUart_Hal_EventHandler(AL_UART_EventStruct UartEvent, AL_VOID *C
  *          that contains the configuration information for the specified UART peripheral
  * @return
  *          - AL_OK for function success
- *          - Other for function failure
+ *          - Other for function failuregit
  * @note
 */
 AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStruct *InitConfig)
@@ -184,6 +187,27 @@ AL_S32 AlUart_Hal_SendDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32
     AL_UART_HAL_LOCK(Handle);
 
     Ret = AlUart_Dev_SendDataPolling(Handle->Dev, Data, Size);
+    if (Ret != AL_OK) {
+        AL_UART_HAL_UNLOCK(Handle);
+        return Ret;
+    }
+
+    AL_UART_HAL_UNLOCK(Handle);
+
+    return Ret;
+}
+
+AL_S32 AlUart_Hal_RecvDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
+{
+    AL_S32 Ret = AL_OK;
+
+    if (Handle == AL_NULL || Handle->Dev == AL_NULL) {
+        return AL_UART_ERR_ILLEGAL_PARAM;
+    }
+
+    AL_UART_HAL_LOCK(Handle);
+
+    Ret = AlUart_Dev_RecvDataPolling(Handle->Dev, Data, Size);
     if (Ret != AL_OK) {
         AL_UART_HAL_UNLOCK(Handle);
         return Ret;
@@ -344,4 +368,34 @@ AL_S32 AlUart_Hal_RecvData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
     AL_UART_HAL_UNLOCK(Handle);
 
     return AL_OK;
+}
+
+/**
+ * This function excute operations to set or check uart status.
+ * @param   Handle Pointer to a AL_UART_HalStruct structure that contains uart device instance
+ * @param   Cmd is io ctl cmd to AL_Uart_IoCtlCmdEnum
+ * @param   Data Pointer to cmd args
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
+AL_S32 AlUart_Hal_IoCtl(AL_UART_HalStruct *Handle, AL_Uart_IoCtlCmdEnum Cmd, AL_VOID *Data)
+{
+    AL_S32 Ret = AL_OK;
+
+    if (Handle == AL_NULL) {
+        return AL_UART_ERR_NULL_PTR;
+    }
+
+    AL_UART_HAL_LOCK(Handle);
+
+    Ret = AlUart_Dev_IoCtl(Handle->Dev, Cmd, Data);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Uart io ctl cmd error:%d\r\n", Ret);
+    }
+
+    AL_UART_HAL_UNLOCK(Handle);
+
+    return Ret;
 }

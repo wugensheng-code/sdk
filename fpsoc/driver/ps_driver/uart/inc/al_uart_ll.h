@@ -58,6 +58,11 @@ typedef enum
     UART_RxFIFO_FULL_2               = 0x3
 } AL_UART_RxFifoThrEnum;
 
+static inline AL_VOID AlUart_ll_Set_LoopBack(AL_REG BaseAddr, AL_FUNCTION State)
+{
+    AL_REG32_SET_BIT(BaseAddr + UART__MCR__ADDR_OFFSET, UART__MCR__LOOPBACK__SHIFT, State);
+}
+
 static inline AL_VOID AlUart_ll_SetParity(AL_REG BaseAddr, AL_UART_ParityEnum Parity)
 {
     AL_REG32_SET_BITS(BaseAddr + UART__LCR__OFFSET, UART__LCR__PARITY__SHIFT, UART__LCR__PARITY__SIZE, Parity);
@@ -147,7 +152,7 @@ static inline AL_VOID AlUart_ll_SetThreIntr(AL_REG BaseAddr, AL_FUNCTION State)
 
 static inline AL_VOID AlUart_ll_SetLineIntr(AL_REG BaseAddr, AL_FUNCTION State)
 {
-    AL_REG32_SET_BIT(BaseAddr + UART__IER_DLH__OFFSET, UART__IER_DLH__ELSI__DLH__SHIFT, 1);
+    AL_REG32_SET_BIT(BaseAddr + UART__IER_DLH__OFFSET, UART__IER_DLH__ELSI__DLH__SHIFT, State);
 }
 
 static inline AL_VOID AlUart_ll_SetTxIntr(AL_REG BaseAddr, AL_FUNCTION State)
@@ -205,16 +210,19 @@ static inline AL_U32 AlUart_ll_GetBaudRate(AL_REG BaseAddr, AL_U32 InputClockHz)
     return BaudRate;
 }
 
+/* set LCR register(data size, stop bits, and so on) */
 static inline AL_VOID AlUart_ll_CfgCharacter(AL_REG BaseAddr, AL_UART_DataWidthEnum DataWidth, AL_UART_ParityEnum Parity, AL_UART_StopBitsEnum StopBits)
 {
-    /* step 2. set LCR register(data size, stop bits, and so on */
     AlUart_ll_SetDataWidth(BaseAddr, DataWidth);
     AlUart_ll_SetParity(BaseAddr, Parity);
     AlUart_ll_SetStopBitsLength(BaseAddr, StopBits);
+}
 
-    /* step 3. set the MCR register */
-    AL_REG32_SET_BIT(BaseAddr + UART__MCR__ADDR_OFFSET, UART__MCR__DTR__SHIFT, AL_FUNC_ENABLE);
-    AL_REG32_SET_BIT(BaseAddr + UART__MCR__ADDR_OFFSET, UART__MCR__RTS__SHIFT, AL_FUNC_ENABLE);
+/* set MCR register(open or close aotu flow control)*/
+static inline AL_VOID AlUart_ll_SetAutoFlowCtl(AL_REG BaseAddr, AL_FUNCTION State)
+{
+    AL_REG32_SET_BIT(BaseAddr + UART__MCR__ADDR_OFFSET, UART__MCR__RTS__SHIFT, State);
+    AL_REG32_SET_BIT(BaseAddr + UART__MCR__ADDR_OFFSET, UART__MCR__AFCE__SHIFT, State);
 }
 
 #ifdef __cplusplus

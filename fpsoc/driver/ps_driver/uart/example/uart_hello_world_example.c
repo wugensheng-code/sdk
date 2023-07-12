@@ -1,0 +1,67 @@
+/**
+ * @file    uart hello_world_example file
+ * @author  Anlogic esw team
+ * @version V0.0.1
+ * @date    2023-05-17
+ * @brief   uart hello_world_example file
+ */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/***************************** Include Files *********************************/
+#include "al_uart_hal.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+AL_S32 UartHelloWorldExample();
+
+static AL_UART_InitStruct UART_InitStruct = {
+        .BaudRate     = 115200,
+        .Parity       = UART_NO_PARITY,
+        .WordLength   = UART_CHAR_8BITS,
+        .StopBits     = UART_STOP_1BIT,
+    };
+
+AL_S32 main(void)
+{
+    AL_S32 Status;
+
+    Status = UartHelloWorldExample();
+
+    if (Status != AL_OK) {
+        printf("Uart Hello World Example Failed\r\n");
+    }
+
+    printf("Successfully run Uart Hello World Example\r\n");
+
+    return Status;
+}
+
+AL_S32 UartHelloWorldExample(AL_VOID)
+{
+    AL_UART_HalStruct uart0_hal;
+    int SentCount = 0;
+    AL_U32 RecvSize;
+    AL_U8 HelloWorld[] = "Hello World";
+
+    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 0, &UART_InitStruct);
+    if (ret != AL_OK) {
+        printf("AlUart_Hal_Init error\r\n");
+        return ret;
+    }
+
+    for (SentCount ; SentCount < (sizeof(HelloWorld) - 1) ; SentCount++) {
+        AlUart_Hal_SendDataPolling(&uart0_hal, &HelloWorld[SentCount], 1);
+    }
+    printf("Hello Test Passed\r\n");
+
+    return AL_OK;
+}
+
+
+#ifdef __cplusplus
+}
+#endif
