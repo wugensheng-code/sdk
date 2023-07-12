@@ -11,8 +11,6 @@ else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
-BOARD_DIR  ?= $(SDK_ROOT)/solutions/boards/
-BOARD_NAME ?= board_dr1x90_emulation
 
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
@@ -43,10 +41,7 @@ CFLAGS := -O2
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-ifneq ($(BOARD_NAME),)
-SRC_DIR  += $(BOARD_DIR)/$(BOARD_NAME)/src
-INC_DIR  += $(BOARD_DIR)/$(BOARD_NAME)/inc
-endif
+HPF_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile
