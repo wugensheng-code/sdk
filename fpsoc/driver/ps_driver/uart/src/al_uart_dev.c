@@ -169,7 +169,7 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_UART_InitStruct *InitConfig, 
     Uart->InputClockHz = AlUart_Dev_LookupConfig(DevId)->InputClockHz;
 
     /* step 0. Set AutoFlowControl */
-    if (Uart->Configs.IsAutoFlowCtl) {
+    if (Uart->Configs.AutoFlowCtlEnable) {
         AlUart_ll_SetAutoFlowCtl(Uart->BaseAddr , AL_FUNC_ENABLE);
     }
 

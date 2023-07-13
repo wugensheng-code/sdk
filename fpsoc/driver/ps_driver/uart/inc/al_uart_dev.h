@@ -38,7 +38,7 @@ typedef struct
     AL_U32                  Mode;
     AL_U32                  HwFlowCtl;
     AL_BOOL                 CharTimeoutEnable;
-    AL_BOOL                 IsAutoFlowCtl;
+    AL_BOOL                 AutoFlowCtlEnable;
 } AL_UART_InitStruct;
 
 typedef struct
