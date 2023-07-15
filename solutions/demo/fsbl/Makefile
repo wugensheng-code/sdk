@@ -13,10 +13,9 @@ endif
 
 SDK_ROOT = ../../..
 
-HPF_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
+PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 
-
-SRC_DIR  = . simulation
+SRC_DIR  = .
 
 INC_DIR  = . \
            $(SDK_ROOT)/3rdparty/lib/FATFS/lagecy/include \

@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-#include "alsoc_init.h"
+#include "platform_init.h"
 
 /*----------------------------------------------------------------------------
 * Define Interrupt Number

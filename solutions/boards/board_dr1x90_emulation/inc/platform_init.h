@@ -48,8 +48,8 @@ extern "C" {
  * @desc  : init soc platform according to user configuration
  * @return {int} status code of platform init
  */
-int  soc_platform_init();
-int  get_device_version();
+int soc_platform_init();
+int get_device_version();
 
 #ifdef __cplusplus
 }

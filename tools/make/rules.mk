@@ -64,19 +64,19 @@ MKDEP_OPT   = -MMD -MT $@ -MF $@.d
 #########################################################################
 # all public inc
 PUBLIC_INC_DIR :=  $(BSP_DIR)/inc \
-               $(BSP_DIR)/chip/$(CHIP)/inc \
-               $(wildcard $(BSP_DIR)/driver/pl_driver/*/inc) \
-               $(wildcard $(BSP_DIR)/driver/ps_driver/*/inc) \
-               $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/lib/*/Makefile)) \
-			   $(wildcard $(SDK_ROOT)/3rdparty/lib/*/inc) \
-			   $(wildcard $(SDK_ROOT)/3rdparty/lib/*/*/inc) \
-			   $(wildcard $(BSP_DIR)/lib/*/inc) \
-               $(wildcard $(BSP_DIR)/lib/*/api/inc) \
+                   $(BSP_DIR)/chip/$(CHIP)/inc \
+                   $(wildcard $(BSP_DIR)/driver/pl_driver/*/inc) \
+                   $(wildcard $(BSP_DIR)/driver/ps_driver/*/inc) \
+                   $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/lib/*/Makefile)) \
+                   $(wildcard $(SDK_ROOT)/3rdparty/lib/*/inc) \
+                   $(wildcard $(SDK_ROOT)/3rdparty/lib/*/*/inc) \
+                   $(wildcard $(BSP_DIR)/lib/*/inc) \
+                   $(wildcard $(BSP_DIR)/lib/*/api/inc)
 
 PUBLIC_INC  :=  $(foreach subdir,$(sort $(PUBLIC_INC_DIR)), -I$(subdir))
 
 ## module inc
-MODULE_INC  :=  $(foreach subdir,$(sort $(INC_DIR)), -I$(subdir)) -I$(HPF_DIR)/inc
+MODULE_INC  :=  $(foreach subdir,$(sort $(INC_DIR)), -I$(subdir)) -I$(PLAT_DIR)/inc -I$(PLAT_DIR)
 
 #########################################################################
 
@@ -212,9 +212,9 @@ endif
 
 
 #########################################################################
-# 3rdparty, hpf lib, libnpuruntime may not include in sdk workspace
+# 3rdparty, libnpuruntime may not include in sdk workspace
 #########################################################################
-LIBS_DIR = $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/lib/*/Makefile $(BSP_DIR)/lib/*/Makefile)) $(HPF_DIR)
+LIBS_DIR = $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/lib/*/Makefile $(BSP_DIR)/lib/*/Makefile))
 
 .PHONY: make_all_libs
 make_all_libs: $(addsuffix /make.lib, $(LIBS_DIR))

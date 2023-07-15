@@ -41,7 +41,7 @@ CFLAGS := -O2
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-HPF_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
+PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile

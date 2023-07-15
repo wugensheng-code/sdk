@@ -21,7 +21,6 @@
 #include "qspi_flash_drv.h"
 
 #include "alfsbl_qspi.h"
-#include "alsoc_init.h"
 
 
 /********************* global variables *********************/
@@ -30,6 +29,7 @@ uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE]__attribute__((aligned(4))) = {0};
 AlFsblInfo FsblInstance = {0x00U, 0, 0, 0};
 SecureInfo FsblSecInfo = {0};
 
+extern int soc_platform_init();
 
 #define SIMU_PASS (0x600d600d)
 #define SIMU_FAIL (0x0bad0bad)

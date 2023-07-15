@@ -48,8 +48,14 @@ NOGC ?= 0
 LIB_OUTPUT_DIR  ?= $(SDK_ROOT)/output
 
 SDK_ROOT := $(abspath $(SDK_ROOT))
-HPF_DIR := $(abspath $(HPF_DIR))
-BSP_DIR ?= $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/*/Makefile))
+
+ifeq ($(PLAT_DIR),)
+PLAT_DIR := $(patsubst %/platform_init.h, %, $(wildcard $(SDK_ROOT)/*/platform_init.h))
+endif
+
+PLAT_DIR := $(abspath $(PLAT_DIR))
+
+BSP_DIR  ?= $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/*/Makefile))
 
 #########################################################################
 
@@ -65,6 +71,6 @@ export RTOS
 export SDK_ROOT
 export CFLAGS
 export BSP_DIR
-export HPF_DIR
+export PLAT_DIR
 
 # vim: syntax=make
