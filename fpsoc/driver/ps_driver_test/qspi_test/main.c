@@ -1,6 +1,5 @@
 #include "al_qspi_hal.h"
 #include "al_spinor.h"
-
 #include "al_dmacahb_hal.h"
 
 AL_QSPI_HalStruct QspiHal;
