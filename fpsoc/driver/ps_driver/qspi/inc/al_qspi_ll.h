@@ -25,9 +25,9 @@ typedef enum
 
 typedef enum
 {
-    MOTOROLA_QSPI         = 0,   /* Motorola QSPI Frame Format */
-    TEXAS_SSP            = 1,   /* Texas Instruments SSP Frame */
-    NS_MICROWIRE         = 2    /* National Microwire Format */
+    QSPI_MOTOROLA_QSPI         = 0,   /* Motorola QSPI Frame Format */
+    QSPI_TEXAS_SSP            = 1,   /* Texas Instruments SSP Frame */
+    QSPI_NS_MICROWIRE         = 2    /* National Microwire Format */
 } AL_QSPI_ProtFormat;
 
 typedef enum
@@ -155,11 +155,11 @@ typedef struct
 
 typedef enum
 {
-    TXEIS           = 0x1,      /* Transmit FIFO Empty Interrupt Status */
-    TXOIS           = 0x2,      /* Transmit FIFO Overflow Interrupt Status */
-    RXUIS           = 0x4,      /* Receive FIFO Underflow Interrupt Status */
-    RXOIS           = 0x8,      /* Receive FIFO Overflow Interrupt Status */
-    RXFIS           = 0x10,     /* Receive FIFO Full Interrupt Status */
+    QSPI_TXEIS           = 0x1,      /* Transmit FIFO Empty Interrupt Status */
+    QSPI_TXOIS           = 0x2,      /* Transmit FIFO Overflow Interrupt Status */
+    QSPI_RXUIS           = 0x4,      /* Receive FIFO Underflow Interrupt Status */
+    QSPI_RXOIS           = 0x8,      /* Receive FIFO Overflow Interrupt Status */
+    QSPI_RXFIS           = 0x10,     /* Receive FIFO Full Interrupt Status */
 } AL_QSPI_IntrStatusEnum;
 
 typedef enum

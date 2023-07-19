@@ -21,7 +21,5 @@ void _premain_init(void)
 {
     AlChip_Init();
 
-#ifndef RTOS_RTTHREAD
     AlLog_Init();
-#endif
 }

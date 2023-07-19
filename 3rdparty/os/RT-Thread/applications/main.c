@@ -169,9 +169,11 @@ static int uart_sample()
 
 int main()
 {
-    // uart_sample();
+    rt_kprintf("hello world");
 
-    // ulog_example();
+    uart_sample();
+
+    ulog_example();
     
     return 0;
 }

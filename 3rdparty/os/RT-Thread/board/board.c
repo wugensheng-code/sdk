@@ -14,11 +14,8 @@
 #include "cpuport.h"
 #include <unistd.h>
 #include <stdio.h>
+#include <al_log.h>
 
-#ifdef RT_USING_SERIAL
-    #include <rtdevice.h>
-    #include <drv_uart.h>
-#endif
 
 /** _end symbol defined in linker script of Nuclei SDK */
 extern void *_end;
@@ -49,10 +46,6 @@ void rt_hw_board_init(void)
 
     // _init(); // __libc_init_array is not used in RT-Thread
 
-    /* UART driver initialization is open by default */
-#ifdef RT_USING_SERIAL
-    rt_hw_uart_init();
-#endif
 
     /* Set the shell console output device */
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
@@ -71,8 +64,6 @@ void rt_hw_console_output(const char* str)
     rt_int32_t ret = RT_EOK;
     char cr = '\r';
 
-    rt_enter_critical();
-
     while (*str != '\0')
     {
 		// 换行
@@ -84,7 +75,6 @@ void rt_hw_console_output(const char* str)
         ret = AlLog_Write(str++, 1);
     }
     
-    rt_exit_critical();
 }
 /******************** end of file *******************/
 

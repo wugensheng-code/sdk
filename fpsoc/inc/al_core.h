@@ -19,6 +19,7 @@ extern "C" {
 #include "al_errno.h"
 #include "al_intr.h"
 #include "al_systimer.h"
+#include "al_osal.h"
 
 
 #ifdef __cplusplus

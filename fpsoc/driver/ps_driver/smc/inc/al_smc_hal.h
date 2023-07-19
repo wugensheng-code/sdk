@@ -13,9 +13,9 @@ typedef struct
     AL_SMC_DevStruct            *Dev;
     AL_NAND_InfoStruct          *NandInfo;
 
-#ifdef USE_RTOS
-    AL_Lock                      Lock;
-#endif
+// #ifdef USE_RTOS
+//     AL_Lock                      Lock;
+// #endif
 
 } AL_SMC_HalStruct;
 

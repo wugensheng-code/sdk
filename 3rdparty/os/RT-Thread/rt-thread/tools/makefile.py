@@ -4,20 +4,25 @@ import sys
 from utils import *
 from utils import _make_path_relative
 import rtconfig
-
-makefile = '''phony := all
-all:
-
+import pdb
+makefile = '''# (0) include config file
 include config.mk
-
-ifneq ($(MAKE_LIB),1)
-TARGET := rtthread.elf
 include src.mk
-endif
 
-$(if $(strip $(RTT_ROOT)),,$(error RTT_ROOT not defined))
+# (1.1) add submodule resource file
+SRC_DIR = ./
 
-include $(RTT_ROOT)/tools/rtthread.mk
+# (1.2) add submodule include
+INC_DIR += ./
+
+
+# (3) set specificity FLAGS
+LIBNAME := rtthread
+CFLAGS += $(DEFINES)
+
+
+include ../../../tools/make/rules.mk
+# include $(RTT_ROOT)/tools/rtthread.mk
 '''
 
 def TargetMakefile(env):
@@ -86,12 +91,15 @@ def TargetMakefile(env):
     path = ''
     paths = CPPPATH
     for item in paths:
-        path += '\t-I%s \\\n' % item
+        item = item.rstrip(",").strip("\"")
+        path += f'\t{item} \\\n'
+        # pdb.set_trace()
 
-    make.write('CPPPATHS :=')
+    make.write('INC_DIR +=')
     if path[0] == '\t': path = path[1:]
     length = len(path)
     if path[length - 2] == '\\': path = path[:length - 2]
+    # pdb.set_trace()
     make.write(path)
     make.write('\n')
     make.write('\n')
@@ -123,9 +131,9 @@ def TargetMakefile(env):
 
     src = open('src.mk', 'w')
     files = Files
-    src.write('SRC_FILES :=\n')
+    # src.write('SRC_FILES :=\n')
     for item in files:
-        src.write('SRC_FILES +=%s\n' % item.replace('\\', '/'))
+        src.write('C_SRCS +=%s\n' % item.replace('\\', '/'))
 
     make = open('Makefile', 'w')
     make.write(makefile)

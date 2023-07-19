@@ -178,13 +178,13 @@ $(CXX_OBJS): %.o: % $(COMMON_PREREQS)
 #### if target is elf
 ####
 
-ifeq ($(RTOS), freertos)
-	filterout_lib = %libfreertos.a
-else ifeq ($(RTOS), rtthread)
-	filterout_lib = %librtthread.a
-else
-	filterout_lib = %libfreertos.a %librtthread.a
-endif
+# ifeq ($(RTOS), freertos)
+# 	filterout_lib = %libfreertos.a
+# else ifeq ($(RTOS), rtthread)
+# 	filterout_lib = %librtthread.a
+# else
+# 	filterout_lib = %libfreertos.a %librtthread.a
+# endif
 
 
 $(TARGET_ELF): bsp make_all_libs $(ALL_OBJS)
@@ -215,6 +215,23 @@ endif
 # 3rdparty, libnpuruntime may not include in sdk workspace
 #########################################################################
 LIBS_DIR = $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/lib/*/Makefile $(BSP_DIR)/lib/*/Makefile))
+
+ifeq ($(RTOS), freertos)
+    LIBS_DIR += $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/os/FreeRTOS/Makefile))
+else ifeq ($(RTOS), rtthread)
+	LIBS_DIR += $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/os/RT-Thread/Makefile))
+	GENMAKE:=$(shell scons -C $(SDK_ROOT)/3rdparty/os/RT-Thread --target=makefile)
+
+.PHONY: menuconfig
+menuconfig:
+	@scons -C $(SDK_ROOT)/3rdparty/os/RT-Thread --menuconfig
+
+.PHONY: sconsclean
+sconsclean:
+	@scons -C $(SDK_ROOT)/3rdparty/os/RT-Thread -c
+
+endif
+
 
 .PHONY: make_all_libs
 make_all_libs: $(addsuffix /make.lib, $(LIBS_DIR))

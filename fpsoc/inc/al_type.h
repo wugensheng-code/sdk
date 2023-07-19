@@ -52,7 +52,8 @@ typedef enum
 } AL_FUNCTION;
 
 #define AL_NULL         ((void *)0L)
-#define AL_WAITFOREVER    (~0UL)
+
+#define AL_UNUSED(x)    (void)(x)
 
 #ifndef BIT
 #define BIT(nr)         ((1UL) << (nr))

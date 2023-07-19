@@ -48,7 +48,7 @@ if PLATFORM == 'gcc':
     AR      = PREFIX + 'ar'
     LINK    = PREFIX + 'gcc'
     GDB     = PREFIX + 'gdb'
-    TARGET_EXT = 'elf'
+
     SIZE    = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY  = PREFIX + 'objcopy'

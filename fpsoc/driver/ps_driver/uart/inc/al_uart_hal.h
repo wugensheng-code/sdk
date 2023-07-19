@@ -10,13 +10,11 @@ extern "C" {
 typedef struct
 {
     AL_UART_DevStruct            *Dev;
-
-#ifdef USE_RTOS
-    AL_Lock                      Lock;
-    AL_OsEvent                   RxEvent;
-    AL_OsEvent                   TxEvent;
-#endif
-
+    AL_Mutex                     TxLock;
+    AL_Mutex                     RxLock; 
+    AL_Semaphore                 TxDoneSem;
+    AL_Semaphore                 RxDoneSem;
+    AL_S32                       Error;
 } AL_UART_HalStruct;
 
 

@@ -13,7 +13,7 @@ static AL_QSPI_ConfigsStruct QSPIDefInitConfigs =
 {
     .Mode               = QSPI_MASTER_MODE,
     .TransMode          = QSPI_TX_ONLY,
-    .ProtFormat         = MOTOROLA_QSPI,
+    .ProtFormat         = QSPI_MOTOROLA_QSPI,
     .ClockEnum          = QSPI_CLK_MODE0,
     .DataFrameSize      = QSPI_FRAME_8BITS,
     .ClkDiv             = 70,
@@ -613,7 +613,7 @@ static AL_VOID AlQSPI_Dev_RecvDataHandler(AL_QSPI_DevStruct *Qspi)
         RxFifoLevel = AlQSPI_ll_ReadRxFifoLevel(Qspi->BaseAddr);
         if(!RxFifoLevel) {
             Status = AlQSPI_ll_ReadRawIntrStatus(Qspi->BaseAddr);
-            if (Status & RXOIS) {
+            if (Status & QSPI_RXOIS) {
                 /* FIFO overflow on Rx */
                 AL_LOG(AL_LOG_LEVEL_INFO, "Error FIFO overflow on Rx\r\n");
                 Qspi->State |= AL_QSPI_STATE_ERROR;
@@ -708,11 +708,11 @@ static AL_VOID AlQSPI_Dev_SendDataHandler(AL_QSPI_DevStruct *Qspi)
     }
 }
 
-#define QSPI_IN_TX_FE_INTR(Status)  (Status & TXEIS)
-#define QSPI_IN_TX_FO_INTR(Status)  (Status & TXOIS)
-#define QSPI_IN_RX_FU_INTR(Status)  (Status & RXUIS)
-#define QSPI_IN_RX_FO_INTR(Status)  (Status & RXOIS)
-#define QSPI_IN_RX_FF_INTR(Status)  (Status & RXFIS)
+#define QSPI_IN_TX_FE_INTR(Status)  (Status & QSPI_TXEIS)
+#define QSPI_IN_TX_FO_INTR(Status)  (Status & QSPI_TXOIS)
+#define QSPI_IN_RX_FU_INTR(Status)  (Status & QSPI_RXUIS)
+#define QSPI_IN_RX_FO_INTR(Status)  (Status & QSPI_RXOIS)
+#define QSPI_IN_RX_FF_INTR(Status)  (Status & QSPI_RXFIS)
 
 #define QSPI_IN_STATUS_ERROR(Status)  0
 

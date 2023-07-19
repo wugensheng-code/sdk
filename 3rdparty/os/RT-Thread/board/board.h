@@ -14,7 +14,7 @@
 
 #include "nmsis_core.h"
 #include "al_intr.h"
-#include "al_uart_hal.h"
+#include "al_hal.h"
 #include "ext_eclic.h"
 
 #define BSP_UART0_RX_BUFSIZE   256

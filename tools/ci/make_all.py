@@ -26,6 +26,9 @@ def make_all(path, chip, download, sdk_root, debug):
 
     for makefile_p in makefiles_p:
         if makefile_p.is_file():
+            if 'rt-thread' in str(makefile_p) and chip == 'dr1m90':
+                continue
+
             logger.info(f'======> start make project: {str(makefile_p)}  -- chip: {chip} -- download: {download}', colorize=True, format="<green>{time}</green> <level>{message}</level>")
 
             try:

@@ -11,9 +11,9 @@ typedef struct
 {
     AL_MPU_DevStruct    *Dev;
 
-#ifdef USE_RTOS
-    AL_Lock             Lock;
-#endif
+// #ifdef USE_RTOS
+//     AL_Lock             Lock;
+// #endif
 } AL_MPU_HalStruct;
 
 AL_VOID AlMpu_Hal_Init();

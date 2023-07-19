@@ -21,8 +21,8 @@ build_soc = getattr(rtconfig, "NUCLEI_SDK_SOC").lower().strip()
 build_board = getattr(rtconfig, "NUCLEI_SDK_BOARD").lower().strip()
 build_download_mode = getattr(rtconfig, "NUCLEI_SDK_DOWNLOAD", "").lower().strip()
 build_core = 'ux900'
-build_march = 'rv64imac'
-build_mabi = 'lp64'
+build_march = 'rv64imafdc'
+build_mabi = 'lp64d'
 build_mcmodel = getattr(rtconfig, "NUCLEI_SDK_RISCV_MCMODEL", "medany").lower().strip()
 build_ldscript = getattr(rtconfig, "NUCLEI_SDK_LDSCRIPT", "").strip()
 
@@ -64,25 +64,21 @@ else:
 DOWNLOAD_MODE = "DOWNLOAD_MODE_%s" % build_download_mode.upper()
 build_download_mode_upper = build_download_mode.upper()
 
-src = Glob(SDK_ROOT + '/solutions/boards/board_dr1x90_emulation/*.c')
-src += Glob(CHIP_ROOT + '/*.c')
-src += Glob(CHIP_ROOT + '/../*.c')
-src += Glob(CHIP_ROOT + '/../../*.c')
-src += Glob(CHIP_ROOT + '/src/*.c')
-src += Glob(SDK_ROOT + '/fpsoc/lib/log/src/*.c')
-src += Glob(SDK_ROOT + '/fpsoc/lib/newlib/gcc/*.c')
-src += Glob(SDK_ROOT + '/fpsoc/chip/common/src/*.c')
+src = list()
 
 CPPPATH = [ ARCH_ROOT + '/ext-nuclei/inc',
             ARCH_ROOT + '/rv64/inc',
             CHIP_ROOT + '/inc',
             SDK_ROOT + 'fpsoc/inc',
+            SDK_ROOT + 'solutions/boards/board_dr1x90_emulation/inc',
             SDK_ROOT + 'fpsoc/lib/log/inc']
 
 LIBPATH = []
 
 CPPDEFINES = [ 'DOWNLOAD_MODE={}'.format(DOWNLOAD_MODE),
                'DOWNLOAD_MODE_STRING=\"{}\"'.format(build_download_mode_upper),
+               'ENABLE_PINMUX_MODE1',
+               'USE_RTOS',
                'RTOS_RTTHREAD', 'NUCLEI_BANNER=0' ]
 
 # Flash download mode vector table need to remapped

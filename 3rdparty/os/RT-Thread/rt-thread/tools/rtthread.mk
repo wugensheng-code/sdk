@@ -1,6 +1,6 @@
-$(if $(strip $(TARGET)),,$(error TARGET not defined))
-$(if $(strip $(SRC_FILES)),,$(error No source files))
-$(if $(strip $(BSP_ROOT)),,$(error BSP_ROOT not defined))
+# $(if $(strip $(TARGET)),,$(error TARGET not defined))
+# $(if $(strip $(SRC_FILES)),,$(error No source files))
+# $(if $(strip $(BSP_ROOT)),,$(error BSP_ROOT not defined))
 
 ifneq ($(MAKE_LIB),1)
 BUILD_DIR := $(BSP_ROOT)/build
@@ -114,26 +114,26 @@ CFLAGS += $(DEFINES)
 CXXFLAGS += $(DEFINES)
 AFLAGS += $(DEFINES)
 
-all: $(TARGET)
+# all: $(TARGET)
 
-ifeq ($(MAKE_LIB),1)
-$(TARGET): $(OBJS)
-	@echo ------------------------------------------------
-	@echo ar $(TARGET)
-	@$(CROSS_COMPILE)ar -rv $@ $(OBJS)
-else
-$(TARGET): $(OBJS)
-	@echo ------------------------------------------------
-	@echo link $(TARGET)
-	@$(CROSS_COMPILE)g++ -o $@ $(LFLAGS) $(OBJS) $(EXTERN_LIB)
-	@echo ------------------------------------------------
-	@$(CROSS_COMPILE)objcopy -O binary $@ rtthread.bin
-	@$(CROSS_COMPILE)size $@
-endif
+# ifeq ($(MAKE_LIB),1)
+# $(TARGET): $(OBJS)
+# 	@echo ------------------------------------------------
+# 	@echo ar $(TARGET)
+# 	@$(CROSS_COMPILE)ar -rv $@ $(OBJS)
+# else
+# $(TARGET): $(OBJS)
+# 	@echo ------------------------------------------------
+# 	@echo link $(TARGET)
+# 	@$(CROSS_COMPILE)g++ -o $@ $(LFLAGS) $(OBJS) $(EXTERN_LIB)
+# 	@echo ------------------------------------------------
+# 	@$(CROSS_COMPILE)objcopy -O binary $@ rtthread.bin
+# 	@$(CROSS_COMPILE)size $@
+# endif
 
-phony += clean
-clean:
-	@echo clean
-	@rm -rf $(TARGET) $(BUILD_DIR)
+# phony += clean
+# clean:
+# 	@echo clean
+# 	@rm -rf $(TARGET) $(BUILD_DIR)
 
-.PHONY: $(phony)
+# .PHONY: $(phony)

@@ -10,6 +10,8 @@ extern "C" {
 
 #include <stdio.h>
 #include "al_type.h"
+#include "al_systimer.h"
+
 
 #define ARRAY_SIZE(a)         (sizeof(a) / sizeof((a)[0]))
 
@@ -64,6 +66,22 @@ extern "C" {
         if(level >= AL_LOG_LEVEL_DEBUG) \
         printf(format, ##__VA_ARGS__); \
     } while (0);
+
+
+/********************************************************/
+/*
+ * wait until the Condition are met or timeout
+ * al_true: if Condition are met
+ * else   : timeout
+*/
+#define AL_WAIT_COND_UNTIL_TIMEOUT(Condition, Timeout)   ({                             \
+    AL_BOOL Flag;                                                                       \
+    AL_U64  Now = AlSys_GetTimer();                                                     \
+    while (((Flag = (Condition)) != AL_TRUE) && (Now + Timeout) < AlSys_GetTimer());    \
+    Flag;                                                                               \
+})
+
+
 
 #ifdef __cplusplus
 }

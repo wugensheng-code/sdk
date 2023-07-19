@@ -9,9 +9,9 @@ cwd     = GetCurrentDir()
 src     =  Glob('*.c') 
 src     += Glob('*.cpp') 
 src     += Glob('*_gcc.S')
-src     += Glob(ARCH_ROOT + '/ext-nuclei/src/*.S')
-src     += Glob(ARCH_ROOT + '/ext-nuclei/src/*.c')
-src     += Glob(ARCH_ROOT + '/rv64/src/*.S')
+# src     += Glob(ARCH_ROOT + '/ext-nuclei/src/*.S')
+# src     += Glob(ARCH_ROOT + '/ext-nuclei/src/*.c')
+# src     += Glob(ARCH_ROOT + '/rv64/src/*.S')
 
 CPPPATH =  [cwd]
 CPPPATH += [ARCH_ROOT + '/ext-nuclei/inc']

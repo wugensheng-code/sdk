@@ -11,7 +11,7 @@ CPPPATH = [cwd]
 
 if rtconfig.PLATFORM in ['gcc']:
     LIBS += ['c', 'm'] # link libc and libm
-    src += Glob('*.c')
+    # src += Glob('*.c')
 
     #report newlib version
     print('Newlib version:' + GetNewLibVersion(rtconfig))

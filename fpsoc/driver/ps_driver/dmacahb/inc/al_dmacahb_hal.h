@@ -17,9 +17,9 @@ typedef struct
 {
     AL_DMACAHB_ChStruct    *Channel;
 
-#ifdef USE_RTOS
-    AL_Lock             Lock;
-#endif
+// #ifdef USE_RTOS
+//     AL_Lock             Lock;
+// #endif
 } AL_DMACAHB_HalStruct;
 
 /************************** Variable Definitions *****************************/

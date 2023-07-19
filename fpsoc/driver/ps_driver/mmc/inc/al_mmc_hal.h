@@ -11,9 +11,9 @@ typedef struct
 {
     AL_MMC_DevStruct    *Dev;
 
-#ifdef USE_RTOS
-    AL_Lock             Lock;
-#endif
+// #ifdef USE_RTOS
+//     AL_Lock             Lock;
+// #endif
 } AL_MMC_HalStruct;
 
 AL_S32 AlMmc_Hal_Init(AL_MMC_HalStruct *Handle, AL_MMC_InitStruct *InitConfig, AL_MMC_CallBackStruct *CallBack,

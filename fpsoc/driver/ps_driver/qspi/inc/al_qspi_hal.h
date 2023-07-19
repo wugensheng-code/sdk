@@ -12,9 +12,9 @@ typedef struct
 {
     AL_QSPI_DevStruct            *Dev;
 
-#ifdef USE_RTOS
-    AL_Lock                      Lock;
-#endif
+// #ifdef USE_RTOS
+//     AL_Lock                      Lock;
+// #endif
 
 } AL_QSPI_HalStruct;
 
