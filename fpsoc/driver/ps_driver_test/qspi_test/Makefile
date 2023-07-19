@@ -4,6 +4,7 @@
 SDK_ROOT   ?= ../../../..
 
 CHIP       ?= dr1m90
+# CHIP       ?= dr1v90
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/7.5.0/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-elf/bin/aarch64-elf-
@@ -11,13 +12,10 @@ else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
-BOARD_DIR  ?= $(SDK_ROOT)/solutions/boards/
-BOARD_NAME ?= board_dr1x90_emulation
+
 
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
-#    SRC_DIR: application source path
-#    INC_DIR  application header path
 #    LD_LIBS: External library files that the app depends on
 #    LIB_DIR: The path where the external library file resides
 #    C_SRCS:   c sources for application
@@ -25,10 +23,11 @@ BOARD_NAME ?= board_dr1x90_emulation
 #    ASM_SRCS: asm sources for application
 #########################################################################
 SRC_DIR  = ./
-INC_DIR  += ../../ps_driver/uart/inc ../../../arch/arm/common/gic_v3/inc  ../../../arch/arm/armv8/aarch64/cortex-a/inc
 
-LD_LIBS  :=
-LIB_DIR  :=
+INC_DIR += ./
+
+LD_LIBS  =
+LIB_DIR  =
 
 C_SRCS   :=
 CXX_SRCS :=
@@ -37,17 +36,13 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O2
-# C_OPS +=  -g -fno-omit-frame-pointer
-CFLAGS +=  -g -fno-omit-frame-pointer
+CFLAGS := -O2 -g
+CFLAGS += -fno-omit-frame-pointer
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-ifneq ($(BOARD_NAME),)
-SRC_DIR  += $(BOARD_DIR)/$(BOARD_NAME)/src
-INC_DIR  += $(BOARD_DIR)/$(BOARD_NAME)/inc
-endif
+PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile
@@ -60,7 +55,7 @@ PINMUX_MODE ?= PINMUX_MODE1
 #########################################################################
 # 5. define build target
 #########################################################################
-TARGET := fpsoc_qspi
+TARGET := qspi_test
 
 ifneq ($(PINMUX_MODE),)
 CFLAGS += -DENABLE_$(PINMUX_MODE)=1
@@ -72,3 +67,6 @@ all: $(TARGET)
 
 # include rules.mk
 include $(SDK_ROOT)/tools/make/rules.mk
+
+# vim: syntax=make
+
