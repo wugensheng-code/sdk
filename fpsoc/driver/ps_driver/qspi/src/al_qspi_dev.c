@@ -943,7 +943,7 @@ static AL_VOID AlQspi_Dev_RecvDataHandler(AL_QSPI_DevStruct *Qspi)
         RxFifoLevel = AlQspi_ll_ReadRxFifoLevel(Qspi->BaseAddr);
         if(!RxFifoLevel) {
             Status = AlQspi_ll_ReadRawIntrStatus(Qspi->BaseAddr);
-            if (Status & RXOIS) {
+            if (Status & QSPI_RXOIS) {
                 /* FIFO overflow on Rx */
                 AL_LOG(AL_LOG_LEVEL_INFO, "Error FIFO overflow on Rx\r\n");
                 Qspi->State |= AL_QSPI_STATE_ERROR;
