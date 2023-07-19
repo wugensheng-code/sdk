@@ -20,13 +20,13 @@ extern "C" {
 /******************************* Exported Typedef ************************************/
 #define MIN3(x, y, z) MIN((typeof(x))MIN(x, y), z)
 
-#define QSPI_ENDIAN_SWAP16(A) ((((AL_U32)(A) & 0x0000ff00) >> 8) | \
-                              (((AL_U32)(A) & 0x000000ff) << 8))
+// #define QSPI_ENDIAN_SWAP16(A) ((((AL_U32)(A) & 0x0000ff00) >> 8) | \
+//                               (((AL_U32)(A) & 0x000000ff) << 8))
 
-#define QSPI_ENDIAN_SWAP32(A) ((((AL_U32)(A) & 0xff000000) >> 24) | \
-                              (((AL_U32)(A) & 0x00ff0000) >> 8 ) | \
-                              (((AL_U32)(A) & 0x0000ff00) << 8 ) | \
-                              (((AL_U32)(A) & 0x000000ff) << 24))
+// #define QSPI_ENDIAN_SWAP32(A) ((((AL_U32)(A) & 0xff000000) >> 24) | \
+//                               (((AL_U32)(A) & 0x00ff0000) >> 8 ) | \
+//                               (((AL_U32)(A) & 0x0000ff00) << 8 ) | \
+//                               (((AL_U32)(A) & 0x000000ff) << 24))
 
 typedef struct {
     AL_U8                     *BufferPtr;
@@ -77,15 +77,18 @@ AL_S32 AlQspi_Dev_Init(AL_QSPI_DevStruct *Qspi, AL_QSPI_ConfigsStruct *Init);
 AL_S32 AlQspi_Dev_SendData(AL_QSPI_DevStruct *Qspi, AL_U8 *Data, AL_U32 SendSize);
 AL_S32 AlQspi_Dev_RecvData(AL_QSPI_DevStruct *Qspi, AL_U8 *Data, AL_U16 ReceiveSize);
 AL_S32 AlQspi_Dev_TranferData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 SendSize, AL_U8 *ReceiveBuf, AL_U16 ReceiveSize);
+AL_S32 AlQspi_Dev_DmaSendData(AL_QSPI_DevStruct *Qspi, AL_U32 SendSize);
+AL_S32 AlQspi_Dev_DmaRecvData(AL_QSPI_DevStruct *Qspi, AL_U16 RecvSize);
+AL_S32 AlQspi_Dev_DmaTranferData(AL_QSPI_DevStruct *Qspi, AL_U32 SendSize, AL_U16 RecvSize);
 AL_S32 AlQspi_Dev_IoCtl(AL_QSPI_DevStruct *Qspi, AL_Qspi_IoCtlCmdEnum Cmd, AL_VOID *Data);
 AL_S32 AlQspi_Dev_RegisterIntrCallBack(AL_QSPI_DevStruct *Qspi, QSPI_EventCallBack Callback, AL_VOID *CallbackRef);
 AL_S32 AlQspi_Dev_UnRegisterIntrCallBack(AL_QSPI_DevStruct *Qspi);
 AL_VOID AlQspi_Dev_IntrHandler(AL_VOID *instance);
 AL_QSPI_HwConfigStruct *AlQspi_Dev_LookupConfig(AL_U32 DeviceId);
 
-#ifdef QSPI_DEBUG
+// #ifdef QSPI_DEBUG
 AL_VOID AlQspi_Dev_DumpReg(AL_REG QspiBaseAddr);
-#endif
+// #endif
 
 
 #ifdef __cplusplus
