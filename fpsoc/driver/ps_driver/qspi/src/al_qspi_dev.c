@@ -1040,17 +1040,17 @@ static AL_VOID AlQspi_Dev_SendDataHandler(AL_QSPI_DevStruct *Qspi)
     }
 }
 
-#define QSPI_IN_TX_FE_INTR(Status)  (Status & TXEIS)
-#define QSPI_IN_TX_FO_INTR(Status)  (Status & TXOIS)
-#define QSPI_IN_RX_FU_INTR(Status)  (Status & RXUIS)
-#define QSPI_IN_RX_FO_INTR(Status)  (Status & RXOIS)
-#define QSPI_IN_RX_FF_INTR(Status)  (Status & RXFIS)
+#define QSPI_IN_TX_FE_INTR(Status)  (Status & QSPI_TXEIS)
+#define QSPI_IN_TX_FO_INTR(Status)  (Status & QSPI_TXOIS)
+#define QSPI_IN_RX_FU_INTR(Status)  (Status & QSPI_RXUIS)
+#define QSPI_IN_RX_FO_INTR(Status)  (Status & QSPI_RXOIS)
+#define QSPI_IN_RX_FF_INTR(Status)  (Status & QSPI_RXFIS)
 
-#define QSPI_IN_XIP_RX_FO_INTR(Status)  (Status & XRXOIS)
-#define QSPI_IN_TX_FU_INTR(Status)      (Status & TXUIS)
-#define QSPI_IN_AXI_ERR_INTR(Status)    (Status & AXIES)
-#define QSPI_IN_TFER_ERR_INTR(Status)   (Status & SPITES)
-#define QSPI_IN_DONE_INTR(Status)       (Status & DONES)
+#define QSPI_IN_XIP_RX_FO_INTR(Status)  (Status & QSPI_XRXOIS)
+#define QSPI_IN_TX_FU_INTR(Status)      (Status & QSPI_TXUIS)
+#define QSPI_IN_AXI_ERR_INTR(Status)    (Status & QSPI_AXIES)
+#define QSPI_IN_TFER_ERR_INTR(Status)   (Status & QSPI_SPITES)
+#define QSPI_IN_DONE_INTR(Status)       (Status & QSPI_DONES)
 
 
 

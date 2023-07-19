@@ -161,18 +161,18 @@ typedef enum
 
 typedef enum
 {
-    TXEIS           = 0x1,      /* Transmit FIFO Empty Interrupt Status */
-    TXOIS           = 0x2,      /* Transmit FIFO Overflow Interrupt Status */
-    RXUIS           = 0x4,      /* Receive FIFO Underflow Interrupt Status */
-    RXOIS           = 0x8,      /* Receive FIFO Overflow Interrupt Status */
-    RXFIS           = 0x10,     /* Receive FIFO Full Interrupt Status */
-    // MSTIS           = 0x20,     /* Multi-Master Contention Interrupt Status */
+    QSPI_TXEIS           = 0x1,      /* Transmit FIFO Empty Interrupt Status */
+    QSPI_TXOIS           = 0x2,      /* Transmit FIFO Overflow Interrupt Status */
+    QSPI_RXUIS           = 0x4,      /* Receive FIFO Underflow Interrupt Status */
+    QSPI_RXOIS           = 0x8,      /* Receive FIFO Overflow Interrupt Status */
+    QSPI_RXFIS           = 0x10,     /* Receive FIFO Full Interrupt Status */
+    // QSPI_MSTIS           = 0x20,     /* Multi-Master Contention Interrupt Status */
 
-    XRXOIS          = 0x40,     /* XIP Receive FIFO Overflow Interrupt Status */
-    TXUIS           = 0x80,     /* Transmit FIFO Underflow Interrupt Status */
-    AXIES           = 0x100,    /* AXI Error Interrupt Status */
-    SPITES          = 0x400,    /* SPI Transmit Error Interrupt */
-    DONES           = 0x800     /* SSI Done Interrupt Status */
+    QSPI_XRXOIS          = 0x40,     /* XIP Receive FIFO Overflow Interrupt Status */
+    QSPI_TXUIS           = 0x80,     /* Transmit FIFO Underflow Interrupt Status */
+    QSPI_AXIES           = 0x100,    /* AXI Error Interrupt Status */
+    QSPI_SPITES          = 0x400,    /* SPI Transmit Error Interrupt */
+    QSPI_DONES           = 0x800     /* SSI Done Interrupt Status */
 } AL_QSPI_IntrStatusEnum;
 
 typedef enum
