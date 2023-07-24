@@ -165,7 +165,6 @@ AL_S32 AlMmc_Hal_Init(AL_MMC_HalStruct *Handle, AL_MMC_InitStruct *InitConfig, A
 
     /* 4. register intr */
     AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlMmc_Dev_IntrHandler, Handle->Dev);
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 #endif
 
     AL_MMC_HAL_UNLOCK(Handle);

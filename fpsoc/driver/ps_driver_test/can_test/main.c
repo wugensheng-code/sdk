@@ -64,6 +64,7 @@ static AL_VOID AlCan_Test_ListenOnly(AL_VOID)
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
     Ret = AlCan_Hal_Init(&Handle, &Config, AL_NULL, DeviceId);
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init Error:0x%x\r\n", Ret);
     }
@@ -166,6 +167,7 @@ static AL_VOID AlCan_Test_InLoopBack(AL_VOID)
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
     Ret = AlCan_Hal_Init(&Handle, &Config, AL_NULL, DeviceId);
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init Error:0x%x\r\n", Ret);
     }
@@ -263,6 +265,7 @@ static AL_VOID AlCan_Test_ExLoopBack(AL_VOID)
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
     Ret = AlCan_Hal_Init(&Handle, &Config, AL_NULL, DeviceId);
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init Error:0x%x\r\n", Ret);
     }
@@ -393,6 +396,7 @@ static AL_VOID AlCan_Test_StdIntr(AL_VOID)
     CallBack.Ref = &Handle;
 
     Ret = AlCan_Hal_Init(&Handle, &Config, &CallBack, DeviceId);
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init Error:0x%x\r\n", Ret);
     }
@@ -486,6 +490,7 @@ static AL_VOID AlCan_Test_FdIntr(AL_VOID)
     CallBack.Ref = &Handle;
 
     Ret = AlCan_Hal_Init(&Handle, AL_NULL, &CallBack, DeviceId);
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init Error:0x%x\r\n", Ret);
     }
@@ -586,6 +591,7 @@ static AL_VOID AlCan_Test_FdStbFifo(AL_VOID)
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
     Ret = AlCan_Hal_Init(&Handle, AL_NULL, AL_NULL, DeviceId);
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init Error:0x%x\r\n", Ret);
     }
@@ -707,6 +713,7 @@ static AL_VOID AlCan_Test_FdDmaRecv(AL_VOID)
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
     Ret = AlCan_Hal_Init(&Handle, &Config, AL_NULL, DeviceId);
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Can hal Init error:0x%x\r\n", Ret);
     }

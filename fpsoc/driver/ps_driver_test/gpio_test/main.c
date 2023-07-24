@@ -25,7 +25,7 @@ static void IntrHandler(AL_VOID *CallBackRef, AL_U32 Bank, AL_U32 Status)
 AlGpio_Hal_Test()
 {
     AL_S32 ret = AlGpio_Hal_Init(&GPIO, 0);
-
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     // 1、Test AlGpio_Hal_Init
     if (ret == AL_OK)
         printf("[TEST] APU AlGpio_Hal_Init success\r\n");
@@ -59,7 +59,7 @@ AlGpio_Hal_Test()
 AlGpio_Dev_Test()
 {
     AL_S32 ret = AlGpio_Hal_Init(&GPIO, 0);
-
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     // 1.1、Test Write and Read DR register (Pin)
     AlGpio_Dev_WritePin((&GPIO)->Dev, 13, 0x1);
     printf("GPIO Pin 13 output data value is %x\r\n", AlGpio_Dev_OutputReadPin((&GPIO)->Dev, 13));

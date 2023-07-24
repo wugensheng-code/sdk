@@ -98,7 +98,6 @@ AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct *Handle, AL_U32 DevId)
 
     /* 3. register intr */
     (AL_VOID)AlIntr_RegHandler(GPIO0_IRQn, AL_NULL, AlGpio_Dev_IntrHandler, (AL_VOID *)(Handle->Dev));
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
     printf("config BaseAddress is %x\r\n", Handle->Dev->HwConfig.BaseAddress);
     return ret;

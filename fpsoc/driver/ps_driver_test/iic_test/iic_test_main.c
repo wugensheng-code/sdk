@@ -39,6 +39,7 @@ AL_S32 AlIic_E2promTest()
     AL_U8 ReadBuffer[128] = {0};
 
     Ret = AlIic_Hal_Init(&Handle, 0, &InitConfig, AL_NULL);
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     if (Ret != AL_OK) {
         printf("AlIic_Hal_Init Failed\r\n");
     }
@@ -156,6 +157,7 @@ AL_S32 AlIic_TransRecvTest()
 #else
     Ret = AlIic_Hal_Init(&Handle, 1, &SlaveInitConfig, AL_NULL);
 #endif
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     if (Ret != AL_OK) {
         printf("AlIic_Hal_Init Failed\r\n");
     }

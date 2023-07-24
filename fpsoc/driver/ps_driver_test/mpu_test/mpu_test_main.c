@@ -334,7 +334,7 @@ AL_S32 AlMpu_ProtectTest()
 int main()
 {
     AlMpu_Hal_Init();
-
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     printf("[TEST]AlMpu_ApuTest start\r\n");
     AlMpu_ApuTest();
     printf("[TEST]AlMpu_ApuTest done\r\n");
