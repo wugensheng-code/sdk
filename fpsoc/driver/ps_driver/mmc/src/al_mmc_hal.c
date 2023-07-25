@@ -141,7 +141,6 @@ AL_S32 AlMmc_Hal_Init(AL_MMC_HalStruct *Handle, AL_MMC_InitStruct *InitConfig, A
     AlMmc_Dev_RegisterEventCallBack(Handle->Dev, &EventCallBack);
 
     AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlMmc_Dev_IntrHandler, Handle->Dev);
-    Al_Intr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 #endif
 
     /* 2. Init IP, do not use intr */
