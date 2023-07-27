@@ -32,7 +32,7 @@ extern "C" {
 #endif
 
 #ifdef HAVE_QSPIPS_DRIVER
-#include "al_qspi_hal.h"
+// #include "al_qspi_hal.h"
 #endif
 
 #ifdef HAVE_SMCPS_DRIVER
@@ -40,7 +40,7 @@ extern "C" {
 #endif
 
 #ifdef HAVE_SPIPS_DRIVER
-#include "al_spi_hal.h"
+// #include "al_spi_hal.h"
 #endif
 
 #ifdef HAVE_UARTPS_DRIVER

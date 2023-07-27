@@ -22,6 +22,7 @@ extern "C"{
  *----------------------------------------------*/
 
 #define AL_WAITFOREVER           RT_WAITING_FOREVER
+#define AL_WAITING_NO            RT_WAITING_NO
 typedef volatile struct rt_mutex     AL_Mutex;
 typedef volatile struct rt_mutex_t*  AL_Mutex_t;
 
@@ -63,11 +64,105 @@ static inline AL_S32 Al_OSAL_Sem_Release(AL_Semaphore_t Semaphore)
 }
 
 /*----------------------------------------------*
+ * Mailbox API.*
+ *----------------------------------------------*/
+
+typedef volatile struct
+{
+    AL_Semaphore    Semaphore;
+    AL_U64          msg;
+    AL_S32          size;
+    volatile AL_S16 entry;                         /**< index of messages in msg_pool */
+} AL_MailBox;
+typedef volatile AL_MailBox*  AL_MailBox_t;
+
+static inline AL_S32 Al_OSAL_Mb_Init(AL_MailBox_t MailBox, const char* name)
+{
+    AL_S64 ret = AL_OK;
+
+    ret = rt_sem_init(&MailBox->Semaphore, name, 0, RT_IPC_FLAG_PRIO);
+    if (ret != AL_OK) {
+        return ret;
+    }
+
+    MailBox->msg   = 0;
+    MailBox->size  = 1;
+    MailBox->entry = 0;
+
+}
+
+static inline AL_S32 Al_OSAL_Mb_Send(AL_MailBox_t MailBox, AL_VOID * msg)
+{
+    AL_BOOL flag = (AL_BOOL)rt_sem_release(&MailBox->Semaphore);
+
+    if (flag == AL_TRUE) {
+        AL_U32 *mvalue = (AL_U32 *)msg;
+        *mvalue        = (AL_U32)((MailBox->msg >> 32) & 0xFFFF);
+        *(mvalue + 1)  =  (AL_U32)(MailBox->msg & 0xFFFF);
+        MailBox->entry = 0;
+
+        return AL_OK;
+    }
+}
+
+static inline AL_S32 Al_OSAL_Mb_Recive(AL_MailBox_t MailBox, AL_VOID* msg, AL_S32 timeout)
+{
+    AL_BOOL flag = (AL_BOOL)rt_sem_take(&MailBox->Semaphore, AL_WAITFOREVER);
+
+    if (flag == AL_TRUE) {
+        AL_U32 *mvalue = (AL_U32 *)msg;
+        *mvalue        = (AL_U32)((MailBox->msg >> 32) & 0xFFFF);
+        *(mvalue + 1)  =  (AL_U32)(MailBox->msg & 0xFFFF);
+        MailBox->entry = 0;
+
+        return AL_OK;
+    }
+
+    return AL_ERR_UNAVAILABLE;
+}
+
+/*----------------------------------------------*
+ * Critical API for specific devices*
+ *----------------------------------------------*/
+
+static inline AL_VOID Al_OSAL_EnterDevCtritical(AL_U32 DevIntrId, AL_BOOL Condition)
+{
+    (AL_VOID)DevIntrId;
+    (AL_VOID)Condition;
+    rt_enter_critical();
+}
+
+
+static inline AL_VOID Al_OSAL_ExitDevCtritical(AL_U32 DevIntrId, AL_BOOL Condition)
+{
+    (AL_VOID)DevIntrId;
+    (AL_VOID)Condition;
+    rt_exit_critical();
+}
+
+
+/*----------------------------------------------*
  * Critical API.*
  *----------------------------------------------*/
 
-#define AL_OSAL_ENTER_CRITICAL                rt_enter_critical
-#define AL_OSAL_EXIT_CRITICAL                 rt_exit_critical
+static inline AL_OSAL_EnterCritical(AL_VOID)
+{
+    rt_enter_critical();
+}
+
+static inline AL_OSAL_ExitCritical(AL_VOID)
+{
+    rt_exit_critical();
+}
+
+/*----------------------------------------------*
+ * Critical API.*
+ *----------------------------------------------*/
+
+static inline AL_VOID Al_OSAL_Sleep(AL_U32 Time)
+{
+    rt_thread_mdelay(Time);
+}
 
 #elif RTOS_FREERTOS
 
@@ -79,11 +174,12 @@ static inline AL_S32 Al_OSAL_Sem_Release(AL_Semaphore_t Semaphore)
  * Semaphore API.*
  *----------------------------------------------*/
 
-#define AL_WAITFOREVER          (~0UL)
+#define AL_WAITFOREVER          (-1UL)
+#define AL_WAITING_NO           (0)
 typedef volatile struct
 {
   volatile AL_S32 count;
-}AL_Semaphore; 
+}AL_Semaphore;
 typedef volatile AL_Semaphore* AL_Semaphore_t;
 
 static inline AL_S32 Al_OSAL_Sem_Init(AL_Semaphore_t Semaphore, const char* name, AL_S32 value)
@@ -107,7 +203,7 @@ static inline AL_S32 Al_OSAL_Sem_Take(AL_Semaphore_t Semaphore, AL_S32 Timeout)
 static inline AL_S32 Al_OSAL_Sem_Release(AL_Semaphore_t Semaphore)
 {
     Semaphore->count++;
-    
+
     return AL_OK;
 }
 
@@ -122,46 +218,111 @@ static inline AL_S32 Al_OSAL_Mutex_Init(AL_Mutex_t mutex, const char* name)
 {
     AL_UNUSED(name);
 
-    mutex->count = 1;
+    AL_UNUSED(mutex);
 
     return AL_OK;
 }
 
 static inline AL_S32 Al_OSAL_Mutex_Take(AL_Mutex_t mutex, AL_S32 Timeout)
 {
-    AL_WAIT_COND_UNTIL_TIMEOUT((mutex->count > 0), Timeout);
-    
-    Al_OSAL_Sem_Take((AL_Semaphore_t)mutex, Timeout);
+    AL_UNUSED(Timeout);
+
+    AL_UNUSED(mutex);
+
+    return AL_OK;
 }
 
 static inline AL_S32 Al_OSAL_Mutex_Release(AL_Mutex_t mutex)
 {
-    return Al_OSAL_Sem_Release((AL_Semaphore_t)mutex);
+    AL_UNUSED(mutex);
+
+    return AL_OK;
 }
 
 /*----------------------------------------------*
- * Critical API.*
+ * MailBox API.*
  *----------------------------------------------*/
 
-static inline AL_VOID AL_OSAL_ENTER_CRITICAL(AL_VOID)
+typedef volatile struct
+{
+    AL_U64          msg;
+    AL_S32          size;
+    volatile AL_S16 entry;                         /**< index of messages in msg_pool */
+} AL_MailBox;
+typedef volatile AL_MailBox*  AL_MailBox_t;
+
+static inline AL_S32 Al_OSAL_Mb_Init(AL_MailBox_t MailBox, const char* name)
+{
+    AL_UNUSED(name);
+
+    MailBox->msg   = 0;
+    MailBox->size  = 1;
+    MailBox->entry = 0;
+}
+
+static inline AL_S32 Al_OSAL_Mb_Send(AL_MailBox_t MailBox, AL_VOID * msg)
+{
+    AL_U32 *mvalue = (AL_U32 *)msg;
+    MailBox->msg = ((AL_U64)(*mvalue) << 32) | (AL_U64)*(mvalue + 1);
+    MailBox->entry = 1;
+
+    return AL_OK;
+}
+
+static inline AL_S32 Al_OSAL_Mb_Recive(AL_MailBox_t MailBox, AL_VOID* msg, AL_S32 timeout)
+{
+    AL_BOOL flag = AL_WAIT_COND_UNTIL_TIMEOUT((MailBox->entry == 1), timeout);
+
+    if (flag == AL_TRUE) {
+        AL_U32 *mvalue = (AL_U32 *)msg;
+        *mvalue        = (AL_U32)((MailBox->msg >> 32) & 0xFFFFFFFF);
+        *(mvalue + 1)  =  (AL_U32)(MailBox->msg & 0xFFFFFFFF);
+        MailBox->entry = 0;
+
+        return AL_OK;
+    }
+
+    return AL_ERR_UNAVAILABLE;
+}
+/*----------------------------------------------------------------------
+ * Critical API.
+ *----------------------------------------------------------*/
+
+static inline AL_VOID AL_OSAL_EnterCritical(AL_VOID)
 {
     AlIntr_SetGlobalInterrupt(AL_FUNC_DISABLE);
-} 
+}
 
-static inline AL_VOID AL_OSAL_EXIT_CRITICAL(AL_VOID)
+static inline AL_VOID AL_OSAL_ExitCritical(AL_VOID)
 {
     AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 }
 
-#define OSAL_CHECK(Ret)                \
-{                                      \
-    if(Ret != AL_OK)                   \
-    {                                  \
-        return Ret;                    \
-    }                                  \
-}
-#endif
+/*----------------------------------------------*
+ * Critical API for specific devices*
+ *----------------------------------------------*/
 
+static inline AL_VOID Al_OSAL_EnterDevCtritical(AL_U32 DevIntrId, AL_BOOL Condition)
+{
+    if (Condition) {
+        AlIntr_SetInterrupt(DevIntrId, AL_FUNC_DISABLE);
+    }
+}
+
+
+static inline AL_VOID Al_OSAL_ExitDevCtritical(AL_U32 DevIntrId, AL_BOOL Condition)
+{
+    if (Condition) {
+    AlIntr_SetInterrupt(DevIntrId, AL_FUNC_ENABLE);
+    }
+}
+
+static inline AL_VOID Al_OSAL_Sleep(AL_U32 Time)
+{
+
+}
+
+#endif
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

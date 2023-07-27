@@ -7,14 +7,30 @@ extern "C" {
 
 #include "al_uart_dev.h"
 
+
+typedef enum {
+    UART_TX_BLOCK    = 0,
+    UART_TX_NONBLOCK = 1,
+} AL_UART_TxModeEnum;
+
+
+typedef enum {
+    UART_RECV_BLOCK    = 0,
+    UART_RECV_NONBLOCK = 1,
+} AL_UART_RxModeEnum;
+
+
 typedef struct
 {
     AL_UART_DevStruct            *Dev;
     AL_Mutex                     TxLock;
-    AL_Mutex                     RxLock; 
-    AL_Semaphore                 TxDoneSem;
-    AL_Semaphore                 RxDoneSem;
-    AL_S32                       Error;
+    AL_Mutex                     RxLock;
+    AL_UART_TxModeEnum           RequestTxMode;
+    AL_UART_RxModeEnum           RequestRxMode;
+    AL_UART_TxModeEnum           CurTxMode;
+    AL_UART_RxModeEnum           CurRxMode;
+    AL_MailBox                   TxEventQueue[2];
+    AL_MailBox                   RxEventQueue[2];
 } AL_UART_HalStruct;
 
 

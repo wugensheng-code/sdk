@@ -23,6 +23,8 @@ extern "C" {
 #define AL_UART_ERR_NOT_SUPPORT          (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_SUPPORT))
 #define AL_UART_ERR_TIMEOUT              (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_TIMEOUT))
 #define AL_UART_ERR_BUSY                 (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_BUSY))
+#define AL_UART_EVENTS_TO_ERRS(Events)          (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, Events))
+
 
 /******************************* Exported Typedef ************************************/
 /**
@@ -58,18 +60,20 @@ typedef enum
 
 typedef enum
 {
-    AL_UART_BUSY_DETECT              = (0x00),
-    AL_UART_SEND_DONE                = (0x01),
-    AL_UART_RECEIVE_DONE             = (0x01 << 1),
-    AL_UART_CHAR_TIMEOUT             = (0x01 << 2),
-    AL_UART_EVENT_PARE_FRAME_BRKE    = (0x01 << 3),
-    AL_UART_EVENT_OVER_RUN_ERR       = (0x01 << 4),
-    AL_UART_EVENT_PARITY_ERR         = (0x01 << 5),
-    AL_UART_EVENT_FRAMING_ERR        = (0x01 << 6),
-    AL_UART_EVENT_BREAK_INTR         = (0x01 << 7),
-    AL_UART_NO_INTR_PEDING           = (0x01 << 8),
-    AL_UART_MODEM_STATUS_INTR        = (0x01 << 9),
-    AL_UART_EVENT_RECV_ERROR         = (0x01 << 10),
+    AL_UART_EVENT_SEND_DONE            = BIT(0),
+    AL_UART_EVENT_RECEIVE_DONE         = BIT(1),
+    AL_UART_EVENT_READY_TO_RECEIVE     = BIT(2),
+    AL_UART_EVENT_READY_TO_SEND        = BIT(3),
+    AL_UART_EVENT_BUSY_DETECT_RX       = BIT(4),
+    AL_UART_EVENT_BUSY_DETECT_TX       = BIT(5),
+    AL_UART_EVENT_CHAR_TIMEOUT         = BIT(6),
+    AL_UART_EVENT_PARE_FRAME_BRKE      = BIT(7),
+    AL_UART_EVENT_OVER_RUN_ERR         = BIT(8),
+    AL_UART_EVENT_PARITY_ERR           = BIT(9),
+    AL_UART_EVENT_FRAMING_ERR          = BIT(10),
+    AL_UART_EVENT_BREAK_INTR           = BIT(11),
+    AL_UART_EVENT_NO_INTR_PEDING       = BIT(12),
+    AL_UART_EVENT_MODEM_STATUS_INTR    = BIT(13),
 } AL_UART_EventIdEnum;
 
 typedef enum
@@ -88,20 +92,11 @@ typedef enum
 
 typedef struct
 {
-    AL_UART_EventIdEnum     Event;
+    AL_UART_EventIdEnum     Events;
     AL_U32                  EventData;
 } AL_UART_EventStruct;
 
 typedef AL_VOID (*AL_Uart_EventCallBack)(AL_UART_EventStruct UartEvent, AL_VOID *CallbackRef);
-
-typedef enum
-{
-    AL_UART_CharTimeout,
-    AL_UART_OVER_RUN_ERR,
-    AL_UART_PARITY_ERR,
-    AL_UART_FRAMING_ERR,
-    AL_UART_BREAK_INTR
-} AL_UART_ErrorEnum;
 
 typedef struct
 {
@@ -111,12 +106,10 @@ typedef struct
     AL_Uart_BufferStruct          RecvBuffer;
     AL_Uart_EventCallBack         EventCallBack;
     AL_VOID                       *EventCallBackRef;
-    AL_U32                        ErrorCode;
     AL_UART_StateEnum             State;
     AL_U32                        IntrNum;
     AL_U32                        DevId;
     AL_U32                        InputClockHz;
-    AL_UART_ErrorEnum             ErrorType;
 } AL_UART_DevStruct;
 
 

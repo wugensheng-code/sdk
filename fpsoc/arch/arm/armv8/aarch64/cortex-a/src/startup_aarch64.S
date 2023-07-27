@@ -206,10 +206,11 @@ main_entry:
 	bl clear_bss
 #endif
 
-	/* Processor specific initialization */
-	bl	lowlevel_init
 
 	bl	board_init
+
+	/* Processor specific initialization */
+	bl	lowlevel_init
 
 	/* jump to main */
 	bl	main

@@ -56,5 +56,8 @@ INC_DIR += . \
 LIBNAME := npu_runtime
 
 CFLAGS := -O2
+# CFLAGS += -DUSE_RTOS
+# CFLAGS += -DRTOS_RTTHREAD
+# RTOS   := rtthread
 
 include ../../../tools/make/rules.mk

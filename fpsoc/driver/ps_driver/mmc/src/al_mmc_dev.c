@@ -388,7 +388,7 @@ static AL_S32 AlMmc_Dev_CheckCmdDone(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum Cm
 
 #ifdef USE_RTOS
     /*TODO: Use intr signal */
-    while ();
+    // while ();
 #else
     do {
         IntrStat.Reg = AlMmc_ll_ReadIntrStat(Dev->HwConfig.BaseAddress);

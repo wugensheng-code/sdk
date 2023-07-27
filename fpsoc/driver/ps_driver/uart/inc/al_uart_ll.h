@@ -171,6 +171,11 @@ static inline AL_UART_InterruptEnum AlUart_ll_GetIntrStatus(AL_REG BaseAddr)
                     UART__FCR__IIR__FIFOE__IID__SIZE);
 }
 
+static inline AL_U32 AlUart_ll_GetLineRegStatus(AL_REG BaseAddr)
+{
+    return AL_REG32_READ(BaseAddr + UART__LSR__OFFSET);
+}
+
 static inline AL_BOOL AlUart_ll_IsOeIntr(AL_REG BaseAddr)
 {
     return AL_REG32_GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__OE__SHIFT);

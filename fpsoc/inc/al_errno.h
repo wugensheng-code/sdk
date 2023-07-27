@@ -28,10 +28,10 @@ typedef enum
 |--------------------------------------|
 | 1 |   MOD_ID  |  LEVEL    |  ERR_ID  |
 |---------------------------------------|
-|<--><--8bits-->|<--8bits-->|<-16bits->|
+|<--><--5bits-->|<--3bits-->|<-23bits->|
 ******************************************************************************/
 #define AL_DEF_ERR(module, level, errid) \
-     ((AL_S32)((AL_ERR_BAREMETAL) | ((module) << 24 ) | (level << 16) | (errid)))
+     ((AL_S32)((AL_ERR_BAREMETAL) | ((module) << 5 ) | (level << 3) | (errid)))
 
 /* NOTE! the following defined all common error code,
 ** all module must reserved 0~63 for their common error code
@@ -45,6 +45,7 @@ typedef enum
     AL_ERR_TIMEOUT        = 5,
     AL_ERR_BUSY           = 6,
     AL_ERR_NOMEM          = 7,
+    AL_ERR_UNAVAILABLE    = 8,
 
 } AL_ERR_CODE;
 

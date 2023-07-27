@@ -60,6 +60,13 @@ endif
 
 MKDEP_OPT   = -MMD -MT $@ -MF $@.d
 
+ifeq ($(RTOS), freertos)
+# AL_CFLAGS += -DRTOS_RTTHREAD
+# CFLAGS += -DRTOS_RTTHREAD
+else ifeq ($(RTOS), rtthread)
+AL_CFLAGS += -DRTOS_RTTHREAD
+CFLAGS += -DRTOS_RTTHREAD
+endif
 
 #########################################################################
 # all public inc
@@ -72,6 +79,12 @@ PUBLIC_INC_DIR :=  $(BSP_DIR)/inc \
                    $(wildcard $(SDK_ROOT)/3rdparty/lib/*/*/inc) \
                    $(wildcard $(BSP_DIR)/lib/*/inc) \
                    $(wildcard $(BSP_DIR)/lib/*/api/inc)
+
+ifeq ($(RTOS), rtthread)
+PUBLIC_INC_DIR +=   $(SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/include \
+					$(SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/finsh \
+					$(SDK_ROOT)/3rdparty/os/RT-Thread
+endif
 
 PUBLIC_INC  :=  $(foreach subdir,$(sort $(PUBLIC_INC_DIR)), -I$(subdir))
 
