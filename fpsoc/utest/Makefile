@@ -4,6 +4,7 @@
 #########################################################################
 SDK_ROOT   ?= ../..
 
+AL_SDK_ROOT ?= $(SDK_ROOT)
 CHIP       ?= dr1m90
 
 ifeq ($(CHIP), dr1m90)
@@ -65,6 +66,6 @@ all: $(TARGET)
 	@$(ECHO) COMPILE_PREFIX = $(COMPILE_PREFIX)
 
 # include rules.mk
-include $(SDK_ROOT)/tools/make/rules.mk
+include $(AL_SDK_ROOT)/tools/make/rules.mk
 
 # vim: syntax=make

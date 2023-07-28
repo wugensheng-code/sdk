@@ -1,5 +1,5 @@
-
-include $(SDK_ROOT)/tools/make/config.mk
+AL_SDK_ROOT ?= $(SDK_ROOT)
+include $(AL_SDK_ROOT)/tools/make/config.mk
 
 CC      = ${Q}$(COMPILE_PREFIX)gcc
 CXX     = ${Q}$(COMPILE_PREFIX)g++
@@ -74,16 +74,16 @@ PUBLIC_INC_DIR :=  $(BSP_DIR)/inc \
                    $(BSP_DIR)/chip/$(CHIP)/inc \
                    $(wildcard $(BSP_DIR)/driver/pl_driver/*/inc) \
                    $(wildcard $(BSP_DIR)/driver/ps_driver/*/inc) \
-                   $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/lib/*/Makefile)) \
-                   $(wildcard $(SDK_ROOT)/3rdparty/lib/*/inc) \
-                   $(wildcard $(SDK_ROOT)/3rdparty/lib/*/*/inc) \
+                   $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/lib/*/Makefile)) \
+                   $(wildcard $(AL_SDK_ROOT)/3rdparty/lib/*/inc) \
+                   $(wildcard $(AL_SDK_ROOT)/3rdparty/lib/*/*/inc) \
                    $(wildcard $(BSP_DIR)/lib/*/inc) \
                    $(wildcard $(BSP_DIR)/lib/*/api/inc)
 
 ifeq ($(RTOS), rtthread)
-PUBLIC_INC_DIR +=   $(SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/include \
-					$(SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/finsh \
-					$(SDK_ROOT)/3rdparty/os/RT-Thread
+PUBLIC_INC_DIR +=   $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/include \
+					$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/finsh \
+					$(AL_SDK_ROOT)/3rdparty/os/RT-Thread
 endif
 
 PUBLIC_INC  :=  $(foreach subdir,$(sort $(PUBLIC_INC_DIR)), -I$(subdir))
@@ -169,7 +169,7 @@ help:
 	@$(ECHO) "DOWNLOAD:    Select SoC's download mode, use ocm by default, optional ocm/ddr"
 	@$(ECHO) "V:           V=1 verbose make, will print more information, by default V=0"
 	@$(ECHO) "== Example Usage =="
-	@$(ECHO) "1. cd $SDK_ROOT/solutions/demo/baremetal/helloworld make DOWNLOAD=ocm"
+	@$(ECHO) "1. cd $AL_SDK_ROOT/solutions/demo/baremetal/helloworld make DOWNLOAD=ocm"
 
 #########################################################################
 $(ASM_OBJS): %.o: % $(COMMON_PREREQS)
@@ -227,21 +227,21 @@ endif
 #########################################################################
 # 3rdparty, libnpuruntime may not include in sdk workspace
 #########################################################################
-LIBS_DIR = $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/lib/*/Makefile $(BSP_DIR)/lib/*/Makefile))
+LIBS_DIR = $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/lib/*/Makefile $(BSP_DIR)/lib/*/Makefile))
 
 ifeq ($(RTOS), freertos)
-    LIBS_DIR += $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/os/FreeRTOS/Makefile))
+    LIBS_DIR += $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/Makefile))
 else ifeq ($(RTOS), rtthread)
-	LIBS_DIR += $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/3rdparty/os/RT-Thread/Makefile))
-	GENMAKE:=$(shell scons -C $(SDK_ROOT)/3rdparty/os/RT-Thread --target=makefile)
+	LIBS_DIR += $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/Makefile))
+	GENMAKE:=$(shell scons -C $(AL_SDK_ROOT)/3rdparty/os/RT-Thread --target=makefile)
 
 .PHONY: menuconfig
 menuconfig:
-	@scons -C $(SDK_ROOT)/3rdparty/os/RT-Thread --menuconfig
+	@scons -C $(AL_SDK_ROOT)/3rdparty/os/RT-Thread --menuconfig
 
 .PHONY: sconsclean
 sconsclean:
-	@scons -C $(SDK_ROOT)/3rdparty/os/RT-Thread -c
+	@scons -C $(AL_SDK_ROOT)/3rdparty/os/RT-Thread -c
 
 endif
 

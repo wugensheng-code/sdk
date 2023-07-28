@@ -80,7 +80,7 @@ CFLAGS += $(CPU_FEATURE)
 #########################################################################
 # include rules
 #########################################################################
-include $(SDK_ROOT)/tools/make/rules.mk
+include $(AL_SDK_ROOT)/tools/make/rules.mk
 
 
 # vim: syntax=make

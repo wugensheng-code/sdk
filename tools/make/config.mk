@@ -1,6 +1,6 @@
 #########################################################################
 ## Available choices:
-## The name of sub directories in $(SDK_ROOT)/fpsoc/arch
+## The name of sub directories in $(AL_SDK_ROOT)/fpsoc/arch
 CHIP            ?= dr1m90
 
 #########################################################################
@@ -32,7 +32,7 @@ SILENT ?= 1
 
 # Variables should be defined in Application Makefile
 ## Available choices:
-## The name of sub directories in $(SDK_ROOT)/OS/
+## The name of sub directories in $(AL_SDK_ROOT)/OS/
 RTOS ?=
 
 ## If PFLOAT=1, it will enable float point print when using nano newlib
@@ -45,17 +45,17 @@ NEWLIB ?= nano
 NOGC ?= 0
 
 
-LIB_OUTPUT_DIR  ?= $(SDK_ROOT)/output
+LIB_OUTPUT_DIR  ?= $(AL_SDK_ROOT)/output
 
-SDK_ROOT := $(abspath $(SDK_ROOT))
+AL_SDK_ROOT := $(abspath $(AL_SDK_ROOT))
 
 ifeq ($(PLAT_DIR),)
-PLAT_DIR := $(patsubst %/platform_init.h, %, $(wildcard $(SDK_ROOT)/*/platform_init.h))
+PLAT_DIR := $(patsubst %/platform_init.h, %, $(wildcard $(AL_SDK_ROOT)/*/platform_init.h))
 endif
 
 PLAT_DIR := $(abspath $(PLAT_DIR))
 
-BSP_DIR  ?= $(patsubst %/Makefile, %, $(wildcard $(SDK_ROOT)/*/Makefile))
+BSP_DIR  ?= $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/*/Makefile))
 
 #########################################################################
 
@@ -68,6 +68,7 @@ export COMPILE_PREFIX
 export V
 export SILENT
 export RTOS
+export AL_SDK_ROOT
 export SDK_ROOT
 export CFLAGS
 export BSP_DIR
