@@ -12,9 +12,6 @@ COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
 
-
-
-
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
 #    SRC_DIR: application source path
