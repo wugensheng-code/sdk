@@ -111,10 +111,10 @@ static AL_VOID AlDmacAhb_Test_SingleMode(AL_VOID)
     ChConfig = ChSingleModeEg1;
 
     Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
     Trans = &(Handle.Channel->Trans);
     Trans->SrcAddr = (AL_REG)SRC_MEM[0];
@@ -160,10 +160,10 @@ static AL_VOID AlDmacAhb_Test_AutoReloadMode(AL_VOID)
     // CallBack.Ref = &Handle;
 
     Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
     Trans = &(Handle.Channel->Trans);
     Trans->SrcAddr    = (AL_REG)SRC_MEM[1];
@@ -207,10 +207,10 @@ static AL_VOID AlDmacAhb_Test_LlpMode(AL_VOID)
     ChConfig = ChLlpModeEg1;
 
     Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
     AL_U32 TransSize = AL_DMACAHB_TEST_ARRAY_SIZE / (1 << ChConfig.SrcTransWidth);
 
@@ -272,10 +272,10 @@ static AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
     ChConfig = ChOtherTransTypeEg1;
 
     Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
     //init SRC_MEM and DST_MEM
     memset(SRC_MEM[0], 0, (AL_DMACAHB_TEST_MEM_SIZE * AL_DMACAHB_TEST_ARRAY_SIZE));

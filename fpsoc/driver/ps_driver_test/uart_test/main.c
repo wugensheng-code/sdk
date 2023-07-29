@@ -58,11 +58,11 @@ static AL_S32 AlUart_Test_SendDataPollingOnly(AL_VOID)
     }
 
     AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 0, &UART_InitStruct);
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     if (ret != AL_OK) {
         printf("AlUart_Hal_Init error\r\n");
         return ret;
     }
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
     while (1) {
         ret = AlUart_Hal_SendDataPolling(&uart0_hal, Data, BUF_SIZE);
@@ -87,11 +87,11 @@ static AL_S32 AlUart_Test_SendDataBlockOnly(AL_VOID)
     }
 
     AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 0, &UART_InitStruct);
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     if (ret != AL_OK){
         printf("AlUart_Hal_Init error\r\n");
         return ret;
     }
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
     while (1) {
         ret = AlUart_Hal_SendDataBlock(&uart0_hal, Data, BUF_SIZE, TIME_OUT);
@@ -113,11 +113,11 @@ static AL_S32 AlUart_Test_RecvSendBlockLoopBack(AL_VOID)
     memset(Data, 0, (sizeof(AL_U8) * BUF_SIZE));
 
     AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 0, &UART_InitStruct);
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     if (ret != AL_OK){
         printf("AlUart_Hal_Init error\r\n");
         return ret;
     }
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
     /* Block send recv show back test */
     printf("use Block send and recv\r\n");
@@ -150,11 +150,11 @@ static AL_S32 AlUart_Test_RecvSendNoBlockLoopBack(AL_VOID)
     memset(Data, 0, (sizeof(AL_U8) * BUF_SIZE));
 
     AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 0, &UART_InitStruct);
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     if (ret != AL_OK){
         printf("AlUart_Hal_Init error\r\n");
         return ret;
     }
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
     /* no Block send recv show back test */
     printf("use No Block send and recv\r\n");
