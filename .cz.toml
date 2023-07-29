@@ -99,7 +99,8 @@ choices = [
     {value = "ipc", name = "ipc"},
     {value = "devops", name = "devops"},
     {value = "rtos", name = "rtos"},
-    {value = "npu", name = "npu"}
+    {value = "npu", name = "npu"},
+    {value = "fsbl", name = "fsbl"}
     ]
 message = "Select the type of change you are committing"
 
