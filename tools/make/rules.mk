@@ -79,15 +79,15 @@ PUBLIC_INC_DIR :=  $(BSP_DIR)/inc \
                    $(wildcard $(AL_SDK_ROOT)/3rdparty/lib/*/*/inc) \
                    $(wildcard $(BSP_DIR)/lib/*/inc) \
                    $(wildcard $(BSP_DIR)/lib/*/api/inc) \
-                   $(SDK_ROOT)/3rdparty/lib/FATFS/lagecy/include \
-                   $(SDK_ROOT)/3rdparty/lib/FATFS/lagecy/qspi \
-                   $(SDK_ROOT)/3rdparty/lib/FATFS/lagecy/sd_emmc
+                   $(AL_SDK_ROOT)/3rdparty/lib/FATFS/lagecy/include \
+                   $(AL_SDK_ROOT)/3rdparty/lib/FATFS/lagecy/qspi \
+                   $(AL_SDK_ROOT)/3rdparty/lib/FATFS/lagecy/sd_emmc
 
 
 ifeq ($(RTOS), rtthread)
-PUBLIC_INC_DIR +=   $(SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/include \
-                    $(SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/finsh \
-                    $(SDK_ROOT)/3rdparty/os/RT-Thread
+PUBLIC_INC_DIR +=   $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/include \
+                    $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/finsh \
+                    $(AL_SDK_ROOT)/3rdparty/os/RT-Thread
 endif
 
 PUBLIC_INC  :=  $(foreach subdir,$(sort $(PUBLIC_INC_DIR)), -I$(subdir))
