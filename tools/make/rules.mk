@@ -39,6 +39,15 @@ else ifeq ($(DOWNLOAD),ddr)
 LINKER_SCRIPT ?= $(BSP_DIR)/chip/$(CHIP)/lds/gcc_$(CHIP)_ddr.ld
 endif
 
+ifeq ($(ENABLE_MMU),1)
+AL_CFLAGS   += -DENABLE_MMU=1
+ifeq ($(DDR_2M_MAPPING),1)
+AL_CFLAGS   += -DDDR_2M_MAPPING=1
+ifeq ($(CODE_READONLY),1)
+AL_CFLAGS   += -DCODE_READONLY=1
+endif
+endif
+endif
 
 #########################################################################
 # gcc arm option:   https://gcc.gnu.org/onlinedocs/gcc/ARM-Options.html

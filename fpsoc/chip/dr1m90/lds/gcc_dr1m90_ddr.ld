@@ -29,6 +29,14 @@ SECTIONS
 		PROVIDE(_rodata_end   = .);
 	}  > ram AT>ram
 
+	.pagetable :
+	{
+		. = ALIGN(4096);
+		PROVIDE(_pagetable_start = .);
+		*(.page_table)
+		PROVIDE(_pagetable_end   = .);
+	}  > ram AT>ram
+
 	  . = ALIGN(4096);
 	.cli_section :
 	{

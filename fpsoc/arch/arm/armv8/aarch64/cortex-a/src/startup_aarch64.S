@@ -197,6 +197,10 @@ el1_entry:
 
 main_entry:
 	isb
+#ifdef ENABLE_MMU
+	bl enable_mmu
+#endif
+
 #ifdef DEBUG
 	bl uart0_init_simple
 	bl print_el

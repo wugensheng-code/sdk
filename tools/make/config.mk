@@ -15,6 +15,13 @@ ARMv8_CORE		?= 0
 #########################################################################
 
 #########################################################################
+# options for enable mmu, available choices: 0/1
+#########################################################################
+ENABLE_MMU  ?= 0
+DDR_2M_MAPPING ?= 1
+CODE_READONLY ?= 1
+
+#########################################################################
 # options for compile command
 #########################################################################
 COMPILE_PREFIX  ?=
@@ -73,5 +80,8 @@ export SDK_ROOT
 export CFLAGS
 export BSP_DIR
 export PLAT_DIR
+export ENABLE_MMU
+export DDR_2M_MAPPING
+export CODE_READONLY
 
 # vim: syntax=make
