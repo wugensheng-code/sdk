@@ -16,6 +16,7 @@ extern "C"{
 #ifdef RTOS_RTTHREAD
 
 #include <rtthread.h>
+#include <rthw.h>
 
 /*----------------------------------------------*
  * MUTEX API.*
@@ -23,34 +24,54 @@ extern "C"{
 
 #define AL_WAITFOREVER           RT_WAITING_FOREVER
 #define AL_WAITING_NO            RT_WAITING_NO
-typedef volatile struct rt_mutex     AL_Mutex;
-typedef volatile struct rt_mutex_t*  AL_Mutex_t;
-
-static inline AL_S32 Al_OSAL_Mutex_Init(AL_Mutex_t mutex, const char* name)
+typedef struct 
 {
-    return rt_mutex_init(mutex, name, RT_IPC_FLAG_PRIO);
+    struct rt_mutex     Thread_Lock;
+    AL_S64              Isr_Lock;
+} AL_Lock;
+typedef AL_Lock* AL_Lock_t;
+
+static inline AL_S32 Al_OSAL_Lock_Init(AL_Lock_t Lock, const char* Name)
+{
+    return rt_mutex_init(&Lock->Thread_Lock, Name, RT_IPC_FLAG_PRIO);
 }
 
-static inline AL_S32 Al_OSAL_Mutex_Take(AL_Mutex_t mutex, AL_S32 Timeout)
+static inline AL_S32 Al_OSAL_Lock_Take(AL_Lock_t Lock, AL_S32 Timeout)
 {
-    return rt_mutex_take(mutex, Timeout);
+    /* If the scheduler is started and in thread context */
+    if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
+    {
+        return rt_mutex_take(&Lock->Thread_Lock, Timeout);
+    }
+    else
+    {
+        Lock->Isr_Lock = rt_hw_interrupt_disable();
+    }
 }
 
-static inline AL_S32 Al_OSAL_Mutex_Release(AL_Mutex_t mutex)
+static inline AL_S32 Al_OSAL_Lock_Release(AL_Lock_t Lock)
 {
-    return rt_mutex_release(mutex);
+    /* If the scheduler is started and in thread context */
+    if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
+    {
+        return rt_mutex_release(&Lock->Thread_Lock);
+    }
+    else
+    {
+        rt_hw_interrupt_enable(Lock->Isr_Lock);
+    }
 }
 
 /*----------------------------------------------*
  * Semaphore API.*
  *----------------------------------------------*/
 
-typedef volatile struct rt_semaphore  AL_Semaphore;
-typedef volatile struct rt_semaphore* AL_Semaphore_t;
+typedef struct rt_semaphore  AL_Semaphore;
+typedef struct rt_semaphore* AL_Semaphore_t;
 
-static inline AL_S32 Al_OSAL_Sem_Init(AL_Semaphore_t Semaphore, const char* name, AL_S32 value)
+static inline AL_S32 Al_OSAL_Sem_Init(AL_Semaphore_t Semaphore, const char* Name, AL_S32 Value)
 {
-    return rt_sem_init(Semaphore, name, value, RT_IPC_FLAG_PRIO);
+    return rt_sem_init(Semaphore, Name, Value, RT_IPC_FLAG_PRIO);
 }
 
 static inline AL_S32 Al_OSAL_Sem_Take(AL_Semaphore_t Semaphore, AL_S32 Timeout)
@@ -67,52 +88,52 @@ static inline AL_S32 Al_OSAL_Sem_Release(AL_Semaphore_t Semaphore)
  * Mailbox API.*
  *----------------------------------------------*/
 
-typedef volatile struct
+typedef struct
 {
     AL_Semaphore    Semaphore;
-    AL_U64          msg;
+    AL_U64          Msg;
     AL_S32          size;
     volatile AL_S16 entry;                         /**< index of messages in msg_pool */
 } AL_MailBox;
-typedef volatile AL_MailBox*  AL_MailBox_t;
+typedef AL_MailBox*  AL_MailBox_t;
 
-static inline AL_S32 Al_OSAL_Mb_Init(AL_MailBox_t MailBox, const char* name)
+static inline AL_S32 Al_OSAL_Mb_Init(AL_MailBox_t MailBox, const char* Name)
 {
     AL_S64 ret = AL_OK;
 
-    ret = rt_sem_init(&MailBox->Semaphore, name, 0, RT_IPC_FLAG_PRIO);
+    ret = rt_sem_init(&MailBox->Semaphore, Name, 0, RT_IPC_FLAG_PRIO);
     if (ret != AL_OK) {
         return ret;
     }
 
-    MailBox->msg   = 0;
+    MailBox->Msg   = 0;
     MailBox->size  = 1;
     MailBox->entry = 0;
 
 }
 
-static inline AL_S32 Al_OSAL_Mb_Send(AL_MailBox_t MailBox, AL_VOID * msg)
+static inline AL_S32 Al_OSAL_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
 {
     AL_BOOL flag = (AL_BOOL)rt_sem_release(&MailBox->Semaphore);
 
     if (flag == AL_TRUE) {
-        AL_U32 *mvalue = (AL_U32 *)msg;
-        *mvalue        = (AL_U32)((MailBox->msg >> 32) & 0xFFFF);
-        *(mvalue + 1)  =  (AL_U32)(MailBox->msg & 0xFFFF);
+        AL_U32 *mvalue = (AL_U32 *)Msg;
+        *mvalue        = (AL_U32)((MailBox->Msg >> 32) & 0xFFFF);
+        *(mvalue + 1)  =  (AL_U32)(MailBox->Msg & 0xFFFF);
         MailBox->entry = 0;
 
         return AL_OK;
     }
 }
 
-static inline AL_S32 Al_OSAL_Mb_Recive(AL_MailBox_t MailBox, AL_VOID* msg, AL_S32 timeout)
+static inline AL_S32 Al_OSAL_Mb_Recive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)
 {
     AL_BOOL flag = (AL_BOOL)rt_sem_take(&MailBox->Semaphore, AL_WAITFOREVER);
 
     if (flag == AL_TRUE) {
-        AL_U32 *mvalue = (AL_U32 *)msg;
-        *mvalue        = (AL_U32)((MailBox->msg >> 32) & 0xFFFF);
-        *(mvalue + 1)  =  (AL_U32)(MailBox->msg & 0xFFFF);
+        AL_U32 *mvalue = (AL_U32 *)Msg;
+        *mvalue        = (AL_U32)((MailBox->Msg >> 32) & 0xFFFF);
+        *(mvalue + 1)  =  (AL_U32)(MailBox->Msg & 0xFFFF);
         MailBox->entry = 0;
 
         return AL_OK;
@@ -145,12 +166,12 @@ static inline AL_VOID Al_OSAL_ExitDevCtritical(AL_U32 DevIntrId, AL_BOOL Conditi
  * Critical API.*
  *----------------------------------------------*/
 
-static inline AL_OSAL_EnterCritical(AL_VOID)
+static inline AL_VOID AL_OSAL_EnterCritical(AL_VOID)
 {
     rt_enter_critical();
 }
 
-static inline AL_OSAL_ExitCritical(AL_VOID)
+static inline AL_VOID AL_OSAL_ExitCritical(AL_VOID)
 {
     rt_exit_critical();
 }
@@ -182,11 +203,11 @@ typedef volatile struct
 }AL_Semaphore;
 typedef volatile AL_Semaphore* AL_Semaphore_t;
 
-static inline AL_S32 Al_OSAL_Sem_Init(AL_Semaphore_t Semaphore, const char* name, AL_S32 value)
+static inline AL_S32 Al_OSAL_Sem_Init(AL_Semaphore_t Semaphore, const char* Name, AL_S32 Value)
 {
-    AL_UNUSED(name);
+    AL_UNUSED(Name);
 
-    Semaphore->count = value;
+    Semaphore->count = Value;
 
     return AL_OK;
 }
@@ -211,30 +232,30 @@ static inline AL_S32 Al_OSAL_Sem_Release(AL_Semaphore_t Semaphore)
  * MUTEX API.*
  *----------------------------------------------*/
 
-typedef AL_Semaphore AL_Mutex;
-typedef AL_Semaphore_t AL_Mutex_t;
+typedef AL_Semaphore AL_Lock;
+typedef AL_Semaphore_t AL_Lock_t;
 
-static inline AL_S32 Al_OSAL_Mutex_Init(AL_Mutex_t mutex, const char* name)
+static inline AL_S32 Al_OSAL_Lock_Init(AL_Lock_t Lock, const char* Name)
 {
-    AL_UNUSED(name);
+    AL_UNUSED(Name);
 
-    AL_UNUSED(mutex);
+    AL_UNUSED(Lock);
 
     return AL_OK;
 }
 
-static inline AL_S32 Al_OSAL_Mutex_Take(AL_Mutex_t mutex, AL_S32 Timeout)
+static inline AL_S32 Al_OSAL_Lock_Take(AL_Lock_t Lock, AL_S32 Timeout)
 {
     AL_UNUSED(Timeout);
 
-    AL_UNUSED(mutex);
+    AL_UNUSED(Lock);
 
     return AL_OK;
 }
 
-static inline AL_S32 Al_OSAL_Mutex_Release(AL_Mutex_t mutex)
+static inline AL_S32 Al_OSAL_Lock_Release(AL_Lock_t Lock)
 {
-    AL_UNUSED(mutex);
+    AL_UNUSED(Lock);
 
     return AL_OK;
 }
@@ -245,38 +266,38 @@ static inline AL_S32 Al_OSAL_Mutex_Release(AL_Mutex_t mutex)
 
 typedef volatile struct
 {
-    AL_U64          msg;
+    AL_U64          Msg;
     AL_S32          size;
     volatile AL_S16 entry;                         /**< index of messages in msg_pool */
 } AL_MailBox;
 typedef volatile AL_MailBox*  AL_MailBox_t;
 
-static inline AL_S32 Al_OSAL_Mb_Init(AL_MailBox_t MailBox, const char* name)
+static inline AL_S32 Al_OSAL_Mb_Init(AL_MailBox_t MailBox, const char* Name)
 {
-    AL_UNUSED(name);
+    AL_UNUSED(Name);
 
-    MailBox->msg   = 0;
+    MailBox->Msg   = 0;
     MailBox->size  = 1;
     MailBox->entry = 0;
 }
 
-static inline AL_S32 Al_OSAL_Mb_Send(AL_MailBox_t MailBox, AL_VOID * msg)
+static inline AL_S32 Al_OSAL_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
 {
-    AL_U32 *mvalue = (AL_U32 *)msg;
-    MailBox->msg = ((AL_U64)(*mvalue) << 32) | (AL_U64)*(mvalue + 1);
+    AL_U32 *mvalue = (AL_U32 *)Msg;
+    MailBox->Msg = ((AL_U64)(*mvalue) << 32) | (AL_U64)*(mvalue + 1);
     MailBox->entry = 1;
 
     return AL_OK;
 }
 
-static inline AL_S32 Al_OSAL_Mb_Recive(AL_MailBox_t MailBox, AL_VOID* msg, AL_S32 timeout)
+static inline AL_S32 Al_OSAL_Mb_Recive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)
 {
-    AL_BOOL flag = AL_WAIT_COND_UNTIL_TIMEOUT((MailBox->entry == 1), timeout);
+    AL_BOOL flag = AL_WAIT_COND_UNTIL_TIMEOUT((MailBox->entry == 1), Timeout);
 
     if (flag == AL_TRUE) {
-        AL_U32 *mvalue = (AL_U32 *)msg;
-        *mvalue        = (AL_U32)((MailBox->msg >> 32) & 0xFFFFFFFF);
-        *(mvalue + 1)  =  (AL_U32)(MailBox->msg & 0xFFFFFFFF);
+        AL_U32 *mvalue = (AL_U32 *)Msg;
+        *mvalue        = (AL_U32)((MailBox->Msg >> 32) & 0xFFFFFFFF);
+        *(mvalue + 1)  =  (AL_U32)(MailBox->Msg & 0xFFFFFFFF);
         MailBox->entry = 0;
 
         return AL_OK;

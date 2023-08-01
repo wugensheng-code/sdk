@@ -24,10 +24,7 @@ endif
 #    ASM_SRCS: asm sources for application
 #########################################################################
 SRC_DIR  = ./
-INC_DIR += ./ \
-			$(SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/include \
-			$(SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/finsh \
-			$(SDK_ROOT)/3rdparty/os/RT-Thread
+INC_DIR += ./
 
 
 LD_LIBS  =

@@ -23,8 +23,8 @@ typedef enum {
 typedef struct
 {
     AL_UART_DevStruct            *Dev;
-    AL_Mutex                     TxLock;
-    AL_Mutex                     RxLock;
+    AL_Lock                      TxLock;
+    AL_Lock                      RxLock;
     AL_UART_TxModeEnum           RequestTxMode;
     AL_UART_RxModeEnum           RequestRxMode;
     AL_UART_TxModeEnum           CurTxMode;

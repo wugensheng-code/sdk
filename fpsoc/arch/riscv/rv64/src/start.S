@@ -195,8 +195,8 @@ _start:
     call __libc_init_array
 
     /* do pre-init steps before main */
-    call _premain_init
     call board_init
+    call _premain_init
     /* ===== Call Main Function  ===== */
     /* argc = argv = 0 */
     li a0, 0

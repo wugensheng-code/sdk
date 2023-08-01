@@ -61,7 +61,6 @@ else:
     print("Use user defined ldscript %s" % build_ldscript)
 
 # Use correct downloaded modes
-DOWNLOAD_MODE = "DOWNLOAD_MODE_%s" % build_download_mode.upper()
 build_download_mode_upper = build_download_mode.upper()
 
 src = list()
@@ -75,8 +74,7 @@ CPPPATH = [ ARCH_ROOT + '/ext-nuclei/inc',
 
 LIBPATH = []
 
-CPPDEFINES = [ 'DOWNLOAD_MODE={}'.format(DOWNLOAD_MODE),
-               'DOWNLOAD_MODE_STRING=\"{}\"'.format(build_download_mode_upper),
+CPPDEFINES = [ 'DOWNLOAD_MODE_STRING=\"{}\"'.format(build_download_mode_upper),
                'ENABLE_PINMUX_MODE1',
                'USE_RTOS',
                'RTOS_RTTHREAD', 'NUCLEI_BANNER=0' ]

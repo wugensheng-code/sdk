@@ -1,7 +1,7 @@
 #include <rtthread.h>
 
 #define THREAD_PRIORITY         25
-#define THREAD_STACK_SIZE       512
+#define THREAD_STACK_SIZE       2048
 #define THREAD_TIMESLICE        5
 
 static rt_thread_t tid1 = RT_NULL;
@@ -32,6 +32,7 @@ static void thread2_entry(void *param)
     {
         /* 线程 2 打印计数值 */
         rt_kprintf("thread2 count: %d\n", count);
+        rt_thread_mdelay(500);
     }
     rt_kprintf("thread2 exit\n");
     /* 线程 2 运行结束后也将自动被系统脱离 */

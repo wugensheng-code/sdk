@@ -27,8 +27,8 @@ ENTRY( _start )
 
 MEMORY
 {
-  ilm (rxai!w) : ORIGIN = 0x61000000, LENGTH = 128K    /*for 9000 dv simulation*/
-  ram (wxa!ri) : ORIGIN = 0x61020000, LENGTH = 128K
+  ilm (rxa!w) : ORIGIN = 0x61000000, LENGTH = 128K    /*for 9000 dv simulation*/
+  ram (wxa!r) : ORIGIN = 0x61020000, LENGTH = 128K
 
 }
 
@@ -180,7 +180,7 @@ SECTIONS
   {
     . = ALIGN(4);
     PROVIDE( _data = . );
-  } >ram AT>ilm
+  } >ilm AT>ilm
 
   .data          :
   {
@@ -196,7 +196,7 @@ SECTIONS
     *(.srodata.cst4)
     *(.srodata.cst2)
     *(.srodata .srodata.*)
-  } >ram AT>ilm
+  } >ilm AT>ilm
 
   . = ALIGN(4);
   PROVIDE( _edata = . );
@@ -215,7 +215,7 @@ SECTIONS
     *(COMMON)
     . = ALIGN(4);
     _ebss = .;
-  } >ram AT>ram
+  } >ilm AT>ilm
 
   . = ALIGN(8);
   PROVIDE( _end = . );
@@ -224,14 +224,14 @@ SECTIONS
   .read_buffer (NOLOAD) :  {
 	. = ALIGN(32);
 	*(.read_buffer)
-  } >ram AT>ram
+  } >ilm AT>ilm
 
   PROVIDE(_heap_start = . );
 
-  .stack ORIGIN(ram) + LENGTH(ram) - __stack_size :
+  .stack ORIGIN(ilm) + LENGTH(ilm) - __stack_size :
   {
     PROVIDE( _heap_end = . );
     . = __stack_size;
     PROVIDE( _sp = . );
-  } >ram AT>ram
+  } >ilm AT>ilm
 }

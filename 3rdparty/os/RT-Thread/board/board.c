@@ -18,11 +18,11 @@
 
 
 /** _end symbol defined in linker script of Nuclei SDK */
-extern void *_end;
+extern void *_heap_start;
 
 /** _heap_end symbol defined in linker script of Nuclei SDK */
 extern void *_heap_end;
-#define HEAP_BEGIN  &_end
+#define HEAP_BEGIN  &_heap_start
 #define HEAP_END    &_heap_end
 
 /*
