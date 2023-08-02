@@ -5,28 +5,31 @@
  extern "C" {
 #endif
 
-
-__STATIC_FORCEINLINE void EnableICache (void)
+AL_VOID AlCache_EnableICache(AL_VOID)
 {
     __RV_CSR_SET(CSR_MCACHE_CTL, CSR_MCACHE_CTL_IE);
+    isb();
 }
 
 
-__STATIC_FORCEINLINE void DisableICache (void)
+AL_VOID AlCache_DisableICache(AL_VOID)
 {
     __RV_CSR_CLEAR(CSR_MCACHE_CTL, CSR_MCACHE_CTL_IE);
+    isb();
 }
 
 
-__STATIC_FORCEINLINE void EnableDCache (void)
+AL_VOID AlCache_EnableDCache(AL_VOID)
 {
     __RV_CSR_SET(CSR_MCACHE_CTL, CSR_MCACHE_CTL_DE);
+    isb();
 }
 
 
-__STATIC_FORCEINLINE void DisableDCache (void)
+AL_VOID AlCache_DisableDCache(AL_VOID)
 {
     __RV_CSR_CLEAR(CSR_MCACHE_CTL, CSR_MCACHE_CTL_DE);
+    isb();
 }
 
 #define __enable_FPU()          __RV_CSR_SET(CSR_MSTATUS, MSTATUS_FS)

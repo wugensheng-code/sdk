@@ -55,8 +55,8 @@ static AL_U8 AL_CAN_DataLenInByteArray[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 2
 #define AL_CAN_ERR_INTR(Status)     (Status & (AL_CAN_INTR_AIF | AL_CAN_INTR_EIF | \
                                     AL_CAN_INTR_BEIF | AL_CAN_INTR_ALIF | AL_CAN_INTR_EPIF))
 
-#define AL_CAN_LOOP_MODE_DELAY      do {AlDelay_Us(10);} while (0)
-#define AL_CAN_RESET_RELEASE_DELAY  do {AlDelay_Us(100);} while (0)
+#define AL_CAN_LOOP_MODE_DELAY      do {AlSys_UDelay(10);} while (0)
+#define AL_CAN_RESET_RELEASE_DELAY  do {AlSys_UDelay(100);} while (0)
 
 #define AL_CAN_CHK_TOUT_SET_MODE    (100)   /* 1ms */
 

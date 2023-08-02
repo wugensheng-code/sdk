@@ -109,27 +109,27 @@ AL_VOID ccm_flush_cache(AL_UINTPTR Start, AL_UINTPTR Size)
 }
 
 
-AL_VOID AlIcache_InvalidateAll(AL_VOID)
+AL_VOID AlCache_InvalidateIcacheAll(AL_VOID)
 {
     ccm_invalidate_icache_all();
 }
 
-AL_VOID AlDcache_FlushRange(AL_UINTPTR Start, AL_UINTPTR End)
+AL_VOID AlCache_FlushDcacheRange(AL_UINTPTR Start, AL_UINTPTR End)
 {
     ccm_invalidate_dcache_range(Start, End);
 }
 
-AL_VOID AlDcache_InvalidateRange(AL_UINTPTR Start, AL_UINTPTR End)
+AL_VOID AlCache_InvalidateDcacheRange(AL_UINTPTR Start, AL_UINTPTR End)
 {
     ccm_invalidate_dcache_range(Start, End);
 }
 
-AL_VOID AlDcache_InvalidateAll(AL_VOID)
+AL_VOID AlCache_InvalidateDcacheAll(AL_VOID)
 {
     ccm_invalidate_dcache_all();
 }
 
-AL_VOID AlDcache_FlushAll(AL_VOID)
+AL_VOID AlCache_FlushDcacheAll(AL_VOID)
 {
     ccm_flush_dcache_all();
 }

@@ -33,14 +33,14 @@ AlGpio_Hal_Test()
         printf("[TEST] APU AlGpio_Hal_Init failed\r\n");
 
     AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
-    
+
 
     // 2、Test Write and Read DR register
     AlGpio_Hal_WritePin(&GPIO,19,0x1);
-    _delay_ms(2000);
+    AlSys_MDelay(2000);
     printf("GPIO 19 output data value is %x\r\n", AlGpio_Hal_OutputReadPin(&GPIO,19));
     AlGpio_Hal_WritePin(&GPIO,19,0x0);
-    _delay_ms(2000);
+    AlSys_MDelay(2000);
     printf("GPIO 19 output data value is %x\r\n", AlGpio_Hal_OutputReadPin(&GPIO,19));
 
 

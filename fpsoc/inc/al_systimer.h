@@ -7,11 +7,16 @@ extern "C" {
 
 #include "al_type.h"
 
-AL_VOID AlSys_Delay(AL_U32 Us);
+AL_U64 AlSys_GetFreq(AL_VOID);
 
 AL_U64 AlSys_GetTimer(AL_VOID);
 
-AL_U64 AlSys_GetFreq(AL_VOID);
+AL_VOID AlSys_UDelay(AL_U64 Usec);
+
+AL_VOID AlSys_MDelay(AL_U64 Msec);
+
+AL_VOID AlDelay_SDelay(AL_U64 Second);
+
 
 #ifdef __cplusplus
 }

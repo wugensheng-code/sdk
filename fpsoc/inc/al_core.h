@@ -15,7 +15,6 @@ extern "C" {
 #include "al_barrier.h"
 #include "al_cache.h"
 #include "al_core.h"
-#include "al_delay.h"
 #include "al_errno.h"
 #include "al_intr.h"
 #include "al_systimer.h"

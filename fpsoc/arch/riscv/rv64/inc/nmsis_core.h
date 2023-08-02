@@ -26,17 +26,9 @@
  extern "C" {
 #endif
 
-
 #include "al_compiler.h"     /* NMSIS compiler specific defines */
 
-/* === Include Nuclei Core Related Headers === */
-/* Include core base feature header file */
 #include "core_feature_base.h"
-
-
-/* Include core pmp feature header file */
-//#include "core_feature_pmp.h"
-
 
 #ifdef __cplusplus
 }

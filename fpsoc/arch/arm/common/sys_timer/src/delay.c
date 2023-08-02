@@ -1,37 +1,16 @@
-/*
- * @Author: Guangxiang Rao
- * @Date: 2022-04-22 20:15:18
- * @LastEditors: Guangxiang Rao
- * @LastEditTime: 2022-04-25 17:02:27
- * @Description: ...
- * @FilePath: /alsoc-embedded-DE/bsp/armv8/src/delay.c
- */
-/*
- * @Author: Guangxiang Rao
- * @Date: 2022-03-07 14:18:48
- * @LastEditors: Guangxiang Rao
- * @LastEditTime: 2022-03-07 15:58:38
- * @Description: delay function for a35
- * @FilePath: /alsoc-embedded-sw/bsp/common/lib/src/delay.c
- */
-#include "type.h"
+#include "al_type.h"
 #include "io.h"
 #include "sysregs.h"
 #include "al_params.h"
-/**
- * @desc  : cpu delay by reading system counter
- * @param {u64_t} count
- * @return {*}
- */
 
-static void __delay(u64_t count)
+static void __delay(AL_U64 count)
 {
-	u64_t tEnd, tCur;
-	tCur = read_sysreg(CNTPCT_EL0);
-	tEnd = tCur +count;
-	do {
-		tCur = read_sysreg(CNTPCT_EL0);
-	} while (tCur < tEnd);
+    AL_U64 tEnd, tCur;
+    tCur = read_sysreg(CNTPCT_EL0);
+    tEnd = tCur +count;
+    do {
+        tCur = read_sysreg(CNTPCT_EL0);
+    } while (tCur < tEnd);
 }
 
 /**
@@ -39,80 +18,70 @@ static void __delay(u64_t count)
  * @param {*}
  * @return: system counter freq
  */
-static u64_t syscnt_get_freq(void)
+static AL_U64 syscnt_get_freq(void)
 {
-	// unsigned int freq;
-
-	// asm volatile(
-	// 	"mrs %0, cntfrq_el0"
-	// 	: "=r" (freq)
-	// 	:
-	// 	: "memory");
-
-	// return freq;
-	return SYSTEM_CLOCK;
+    return SYSTEM_CLOCK;
 }
 
-u64 get_SystickTimer(void)
+ AL_U64 get_SystickTimer(void)
 {
-	isb();
-	return read_sysreg(CNTPCT_EL0);
+    return read_sysreg(CNTPCT_EL0);
 }
 
 uint64_t get_MTimerOutValue(uint64_t count)
 {
-	u64_t freq = syscnt_get_freq();
+    AL_U64 freq = syscnt_get_freq();
     return (count*(freq/1000000));
 }
 
-void _delay_us(u64_t count)
+void _delay_us(AL_U64 count)
 {
-    u64_t freq = syscnt_get_freq();
-    u64_t delay_cnt = (u64_t)(count*(freq/1000000));
+    AL_U64 freq = syscnt_get_freq();
+    AL_U64 delay_cnt = (AL_U64)(count*(freq/1000000));
     __delay(delay_cnt);
 }
 
-void _delay_ms(u64_t count)
+static void _delay_ms(AL_U64 count)
 {
-    u64_t freq = syscnt_get_freq();
-    u64_t delay_cnt = (u64_t)(count*(freq/1000));
+    AL_U64 freq = syscnt_get_freq();
+    AL_U64 delay_cnt = (AL_U64)(count*(freq/1000));
     __delay(delay_cnt);
 }
 
-void _delay_s(u64_t count)
+static void _delay_s(AL_U64 count)
 {
-    u64_t freq = syscnt_get_freq();
-    u64_t delay_cnt = (u64_t)(count*freq);
+    AL_U64 freq = syscnt_get_freq();
+    AL_U64 delay_cnt = (AL_U64)(count*freq);
     __delay(delay_cnt);
 }
 
-u64 get_Us(u64 start, u64 end)
+AL_U64 get_Us(AL_U64 start, AL_U64 end)
 {
-    u64_t freq = syscnt_get_freq();
+    AL_U64 freq = syscnt_get_freq();
     return ((end - start)/(freq/1000000));
 }
 
-void AlDelay_Us(u64 Count)
+void AlSys_UDelay(AL_U32 Usec)
 {
-	_delay_us(Count);
+    _delay_us(Usec);
 }
 
-void AlDelay_Ms(u64 Count)
+void AlSys_MDelay(AL_U32 Msec)
 {
-	_delay_ms(Count);
+    _delay_ms(Msec);
 }
 
-void AlDelay_S(u64 Count)
+void AlDelay_SDelay(AL_U64 Second)
 {
-	_delay_s(Count);
+    _delay_s(Second);
 }
 
-u64 AlSys_GetTimer(void)
+ AL_U64 AlSys_GetTimer(void)
 {
-	return get_SystickTimer();
+    return get_SystickTimer();
 }
 
-u64 AlSys_GetFreq(void)
+ AL_U64 AlSys_GetFreq(void)
 {
-	return syscnt_get_freq();
+    return syscnt_get_freq();
 }

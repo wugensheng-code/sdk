@@ -1,29 +1,30 @@
 #include "al_chip.h"
+#include "al_type.h"
 #include "core_feature_base.h"
 #include "ext_timer.h"
 
-extern uint32_t SystemCoreClock;
+extern AL_U32 SystemCoreClock;
 
-static uint32_t get_timer_freq()
+static AL_U32 get_timer_freq()
 {
     return SystemCoreClock;
 }
 
-uint32_t measure_cpu_freq(uint32_t n)
+AL_U32 measure_cpu_freq(AL_U32 n)
 {
-    uint32_t start_mcycle, delta_mcycle;
-    uint32_t start_mtime, delta_mtime;
-    uint32_t mtime_freq = get_timer_freq();
+    AL_U32 start_mcycle, delta_mcycle;
+    AL_U32 start_mtime, delta_mtime;
+    AL_U32 mtime_freq = get_timer_freq();
 
     // Don't start measuruing until we see an mtime tick
-    uint32_t tmp = (uint32_t)SysTimer_GetLoadValue();
+    AL_U32 tmp = (AL_U32)SysTimer_GetLoadValue();
     do {
-        start_mtime = (uint32_t)SysTimer_GetLoadValue();
+        start_mtime = (AL_U32)SysTimer_GetLoadValue();
         start_mcycle = __RV_CSR_READ(CSR_MCYCLE);
     } while (start_mtime == tmp);
 
     do {
-        delta_mtime = (uint32_t)SysTimer_GetLoadValue() - start_mtime;
+        delta_mtime = (AL_U32)SysTimer_GetLoadValue() - start_mtime;
         delta_mcycle = __RV_CSR_READ(CSR_MCYCLE) - start_mcycle;
     } while (delta_mtime < n);
 
@@ -31,9 +32,9 @@ uint32_t measure_cpu_freq(uint32_t n)
            + ((delta_mcycle % delta_mtime) * mtime_freq) / delta_mtime;
 }
 
-uint32_t get_cpu_freq()
+AL_U32 get_cpu_freq()
 {
-    uint32_t cpu_freq;
+    AL_U32 cpu_freq;
 
     // warm up
     measure_cpu_freq(1);
@@ -43,10 +44,10 @@ uint32_t get_cpu_freq()
     return cpu_freq;
 }
 
-void _delay_us(uint64_t count)
+void _delay_us(AL_U64 count)
 {
-    uint64_t start_mtime, delta_mtime;
-    uint64_t delay_ticks = (get_timer_freq() * (uint64_t)count) / 1000000;
+    AL_U64 start_mtime, delta_mtime;
+    AL_U64 delay_ticks = (get_timer_freq() * (AL_U64)count) / 1000000;
 
     start_mtime = SysTimer_GetLoadValue();
 
@@ -62,10 +63,10 @@ void _delay_us(uint64_t count)
  * \param[in]  count: count in milliseconds
  * \remarks
  */
-void _delay_ms(uint64_t count)
+void _delay_ms(AL_U64 count)
 {
-    uint64_t start_mtime, delta_mtime;
-    uint64_t delay_ticks = (get_timer_freq() * (uint64_t)count) / 1000;
+    AL_U64 start_mtime, delta_mtime;
+    AL_U64 delay_ticks = (get_timer_freq() * (AL_U64)count) / 1000;
 
     start_mtime = SysTimer_GetLoadValue();
 
@@ -74,36 +75,36 @@ void _delay_ms(uint64_t count)
     } while (delta_mtime < delay_ticks);
 }
 
-uint64_t get_SystickTimer(void)
+AL_U64 get_SystickTimer(void)
 {
     return SysTimer->MTIMER;
 }
 
-uint64_t get_MTimerOutValue(uint64_t count)
+AL_U64 get_MTimerOutValue(AL_U64 count)
 {
     return (get_timer_freq() * count) / 1000000;
 }
 
-uint64_t get_Us(uint64_t start, uint64_t end)
+AL_U64 get_Us(AL_U64 start, AL_U64 end)
 {
-    uint64_t freq = get_timer_freq();
+    AL_U64 freq = get_timer_freq();
     return ((end - start)/(freq/1000000));
 }
 
-void AlDelay_Us(unsigned long long Count)
+void AlSys_UDelay(AL_U64 Usec)
 {
-    _delay_us(Count);
+    _delay_us(Usec);
 }
 
-void AlDelay_Ms(unsigned long long Count)
+void AlSys_MDelay(AL_U64 Msec)
 {
-    _delay_ms(Count);
+    _delay_ms(Msec);
 }
 
-void AlDelay_S(unsigned long long Count)
+void AlDelay_SDelay(AL_U64 Second)
 {
-    uint64_t start_mtime, delta_mtime;
-    uint64_t delay_ticks = (get_timer_freq() * (uint64_t)Count);
+    AL_U64 start_mtime, delta_mtime;
+    AL_U64 delay_ticks = (get_timer_freq() * Second);
 
     start_mtime = SysTimer_GetLoadValue();
 
@@ -112,12 +113,12 @@ void AlDelay_S(unsigned long long Count)
     } while (delta_mtime < delay_ticks);
 }
 
-unsigned long long AlSys_GetTimer(void)
+AL_U64 AlSys_GetTimer(void)
 {
     return SysTimer->MTIMER;
 }
 
-unsigned long long AlSys_GetFreq(void)
+AL_U64 AlSys_GetFreq(void)
 {
 	return get_timer_freq();
 }

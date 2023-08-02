@@ -11,7 +11,6 @@
 #include "io.h"
 #include "cpu.h"
 #include "type.h"
-#include "delay.h"
 #include "sysregs.h"
 #include "gic_v3_mask.h"
 #include "gic_v3_addr.h"
@@ -76,7 +75,7 @@ static void gic_do_wait_for_rwp(void __iomem *rwp_addr)
 			return;
 		}
 		cpu_relax();
-		_delay_ms(1);
+		AlSys_MDelay(1);
 	}
 }
 
@@ -197,7 +196,7 @@ void gic_enable_redist(bool enable)
 		if (enable ^ (bool)(val & GICR_WAKER_ChildrenAsleep))
 			break;
 		cpu_relax();
-		_delay_ms(1);
+		AlSys_MDelay(1);
 	}
 
 	if (!count)

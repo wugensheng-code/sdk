@@ -21,9 +21,9 @@ static AL_U8 AlMmc_CapacityDot[16] = {0, 1, 1, 2, 2, 3, 4, 4, 5, 6, 6, 7, 8, 8, 
 
 /***************** Macros (Inline Functions) Definitions *********************/
 
-#define AL_MMC_LOOP_REG_DELAY   do {AlDelay_Us(10);} while (0)
-#define AL_MMC_CLK_SYNC_DELAY   do {AlDelay_Us(100);} while (0)
-#define AL_MMC_SWITCH_DELAY     do {AlDelay_Us(1000);} while (0)
+#define AL_MMC_LOOP_REG_DELAY   do {AlSys_UDelay(10);} while (0)
+#define AL_MMC_CLK_SYNC_DELAY   do {AlSys_UDelay(100);} while (0)
+#define AL_MMC_SWITCH_DELAY     do {AlSys_UDelay(1000);} while (0)
 
 #define AL_MMC_CHK_TOUT_RST_HOST    (100)       /* 1ms */
 #define AL_MMC_CHK_TOUT_LINE_IDLE   (100000)     /* 1000ms */
