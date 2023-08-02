@@ -7,7 +7,7 @@
  * @FilePath: /alsoc-embedded-DE/bsp/drives/apu/src/exception_64.c
  */
 
-#include "../inc/compiler_attributes.h"
+#include "al_compiler.h"
 #include "exception.h"
 
 #ifdef CONFIG_PRINTK
@@ -34,7 +34,7 @@ static void panic(void)
  * @param {unsigned int} esr
  * @return {*}
  */
-__weak void do_bad_sync(struct pt_regs *pt_regs, unsigned int esr)
+__WEAK void do_bad_sync(struct pt_regs *pt_regs, unsigned int esr)
 {
 	error_print("Bad mode in \"Synchronous Abort at current el with sp0\" handler, but not found your handle implement.\n");
 	panic();
@@ -47,7 +47,7 @@ __weak void do_bad_sync(struct pt_regs *pt_regs, unsigned int esr)
  * @param {unsigned int} esr
  * @return {*}
  */
-__weak void do_bad_irq(struct pt_regs *pt_regs, unsigned int esr)
+__WEAK void do_bad_irq(struct pt_regs *pt_regs, unsigned int esr)
 {
 	error_print("Bad mode in \"Irq at current el with sp0 \" handler\n, but not found your handle implement.");
 	panic();
@@ -60,7 +60,7 @@ __weak void do_bad_irq(struct pt_regs *pt_regs, unsigned int esr)
  * @param {unsigned int} esr
  * @return {*}
  */
-__weak void do_bad_fiq(struct pt_regs *pt_regs, unsigned int esr)
+__WEAK void do_bad_fiq(struct pt_regs *pt_regs, unsigned int esr)
 {
 	error_print("Bad mode in \"Fiq at current el with sp0\" handler, but not found your handle implement.\n");
 	panic();
@@ -73,7 +73,7 @@ __weak void do_bad_fiq(struct pt_regs *pt_regs, unsigned int esr)
  * @param {unsigned int} esr
  * @return {*}
  */
-__weak void do_bad_error(struct pt_regs *pt_regs, unsigned int esr)
+__WEAK void do_bad_error(struct pt_regs *pt_regs, unsigned int esr)
 {
 	error_print("Bad mode in \"Error at current el with sp0\" handler, but not found your handle implement.\n");
 	panic();
@@ -86,7 +86,7 @@ __weak void do_bad_error(struct pt_regs *pt_regs, unsigned int esr)
  * @param {unsigned int} esr
  * @return {*}
  */
-__weak void do_sync_handle(struct pt_regs *pt_regs, unsigned int esr)
+__WEAK void do_sync_handle(struct pt_regs *pt_regs, unsigned int esr)
 {
 	error_print("\"Synchronous Abort at current el with spx\" handler, but not found your handle implement.\n\r");
 	panic();
@@ -99,7 +99,7 @@ __weak void do_sync_handle(struct pt_regs *pt_regs, unsigned int esr)
  * @param {unsigned int} esr
  * @return {*}
  */
-__weak void do_irq_handle()
+__WEAK void do_irq_handle()
 {
 	error_print("do Irq handler at current el with spx, but can not found your irq handle.\n");
 	panic();
@@ -111,7 +111,7 @@ __weak void do_irq_handle()
  * @param {unsigned int} esr
  * @return {*}
  */
-__weak void do_fiq_handle(struct pt_regs *pt_regs, unsigned int esr)
+__WEAK void do_fiq_handle(struct pt_regs *pt_regs, unsigned int esr)
 {
 	error_print("\"Fiq at current el with spx\" handler, but not found your handle implement.");
 	panic();
@@ -124,7 +124,7 @@ __weak void do_fiq_handle(struct pt_regs *pt_regs, unsigned int esr)
  * @param {unsigned int} esr
  * @return {*}
  */
-__weak void do_error(struct pt_regs *pt_regs, unsigned int esr)
+__WEAK void do_error(struct pt_regs *pt_regs, unsigned int esr)
 {
 	error_print("\"Error at current el with spx\" handler, but not found your handle implement.");
 	panic();

@@ -149,6 +149,8 @@ typedef enum {
 
 #define I2C_CLOCK               (40000000UL)
 
+#define ARCH_DMA_MINALIGN       (64)
+
 #ifdef __cplusplus
 }
 #endif

@@ -17,10 +17,7 @@ si
 .project
 cscope*
 *.txt
+*.swap
 gdb.init
 .vscode/*.*
 .vscode/settings.json
-__pycache__/
-3rdparty/os/RT-Thread/config.mk
-3rdparty/os/RT-Thread/src.mk
-3rdparty/os/RT-Thread/Makefile

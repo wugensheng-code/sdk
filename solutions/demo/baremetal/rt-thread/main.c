@@ -1,4 +1,5 @@
 #include <rtthread.h>
+#include <al_core.h>
 
 #define THREAD_PRIORITY         25
 #define THREAD_STACK_SIZE       2048
@@ -67,6 +68,6 @@ int thread_sample(void)
 int main()
 {
     thread_sample();
-    
+
     return 0;
 }

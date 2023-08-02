@@ -7,9 +7,9 @@ extern "C" {
 
 AL_VOID AlIcache_InvalidateAll(AL_VOID);
 
-AL_VOID AlDcache_FlushRange(AL_UINTPTR start, AL_UINTPTR stop);
+AL_VOID AlDcache_FlushRange(AL_UINTPTR Start, AL_UINTPTR End);
 
-AL_VOID AlDcache_InvalidateRange(AL_UINTPTR start, AL_UINTPTR stop);
+AL_VOID AlDcache_InvalidateRange(AL_UINTPTR Start, AL_UINTPTR End);
 
 AL_VOID AlDcache_InvalidateAll(AL_VOID);
 

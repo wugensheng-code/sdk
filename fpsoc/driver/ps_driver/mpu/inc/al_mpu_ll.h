@@ -9,9 +9,9 @@ extern "C" {
 #include "al_reg_io.h"
 
 #if (defined _AARCH_64 || defined __aarch64__)
-#define __DSB() asm volatile("dsb sy" :::"memory");
-#define __ISB() asm volatile("isb sy" :::"memory");
-#define __DMB() asm volatile("dmb sy" :::"memory");
+#define dsb() asm volatile("dsb sy" :::"memory");
+#define isb() asm volatile("isb sy" :::"memory");
+#define dmb() asm volatile("dmb sy" :::"memory");
 #endif /* defined _AARCH_64 || defined __aarch64__ */
 
 typedef enum
@@ -66,8 +66,8 @@ static inline AL_VOID AlMpu_ll_MpuEnable(AL_REG MpuBaseAddr)
 
     /* Ensure MPU setting take effects */
 #if (defined _AARCH_64 || defined __aarch64__)
-    __DSB();
-    __ISB();
+    dsb();
+    isb();
 #else
     // Todo
 #endif /* defined _AARCH_64 || defined  __aarch64__ */
@@ -85,7 +85,7 @@ static inline AL_VOID AlMpu_ll_MpuDisable(AL_REG MpuBaseAddr)
 {
     /* Make sure outstanding transfers are done */
 #if (defined _AARCH_64 || defined __aarch64__)
-    __DMB();
+    dmb();
 #else
     // Todo
 #endif /* defined _AARCH_64 || defined __aarch64__ */
@@ -179,7 +179,7 @@ static inline AL_VOID AlMpu_ll_SetRegionAttrEnable(AL_REG RegionBaseAddr, AL_MPU
 {
     /* Make sure outstanding transfers are done */
 #if (defined _AARCH_64 || defined __aarch64__)
-    __DSB();
+    dsb();
 #else
     // Todo
 #endif /* defined _AARCH_64 || defined __aarch64__ */
@@ -188,8 +188,8 @@ static inline AL_VOID AlMpu_ll_SetRegionAttrEnable(AL_REG RegionBaseAddr, AL_MPU
 
     /* Ensure MPU setting take effects */
 #if (defined _AARCH_64 || defined __aarch64__)
-    __DSB();
-    __ISB();
+    dsb();
+    isb();
 #else
     // Todo
 #endif /* defined _AARCH_64 || defined __aarch64__ */

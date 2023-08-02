@@ -358,7 +358,7 @@ __STATIC_FORCEINLINE uint32_t SysTick_Reload(uint64_t ticks)
     uint64_t cur_ticks = SysTimer->MTIMER;
     uint64_t reload_ticks = ticks + cur_ticks;
 
-    if (__USUALLY(reload_ticks > cur_ticks)) {
+    if (LIKELY(reload_ticks > cur_ticks)) {
         SysTimer->MTIMERCMP = reload_ticks;
     } else {
         /* When added the ticks value, then the MTIMERCMP < TIMER,

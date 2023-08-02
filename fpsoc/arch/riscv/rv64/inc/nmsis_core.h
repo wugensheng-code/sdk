@@ -33,15 +33,10 @@
 /* Include core base feature header file */
 #include "core_feature_base.h"
 
-/* Include core fpu feature header file */
-#include "core_feature_fpu.h"
-/* Include core pmp feature header file */
-#include "core_feature_pmp.h"
-/* Include core cache feature header file */
-#include "core_feature_cache.h"
 
-/* Include compatiable functions header file */
-#include "core_compatiable.h"
+/* Include core pmp feature header file */
+//#include "core_feature_pmp.h"
+
 
 #ifdef __cplusplus
 }

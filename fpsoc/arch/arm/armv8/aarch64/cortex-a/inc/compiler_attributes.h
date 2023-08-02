@@ -1,8 +1,6 @@
 #ifndef __COMPILER_ATTRIBUTES_H__
 #define __COMPILER_ATTRIBUTES_H__
 
-
-
 #ifdef __CHECKER__
 
 #define __iomem    __attribute__((noderef, address_space(2)))
@@ -16,9 +14,6 @@
 
 #endif
 
-#ifndef __weak
-#define __weak     __attribute__((__weak__))
-#endif
 
 #define cacheline_aligned __attribute__((__aligned__(64)))
 

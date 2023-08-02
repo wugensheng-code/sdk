@@ -1,5 +1,11 @@
+/**************************************************************************//**
+ * @file     cmsis_gcc.h
+ * @brief    CMSIS compiler GCC header file
+ * @version  V5.0.4
+ * @date     09. April 2018
+ ******************************************************************************/
 /*
- * Copyright (c) 2019 Nuclei Limited. All rights reserved.
+ * Copyright (c) 2009-2018 Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,30 +24,13 @@
 
 #ifndef __NMSIS_GCC_H__
 #define __NMSIS_GCC_H__
-/*!
- * @file     nmsis_gcc.h
- * @brief    NMSIS compiler GCC header file
- */
+
 #include <stdint.h>
 
 #ifdef __cplusplus
  extern "C" {
 #endif
 
-/* #########################  Startup and Lowlevel Init  ######################## */
-/**
- * \defgroup NMSIS_Core_CompilerControl    Compiler Control
- * \ingroup  NMSIS_Core
- * \brief    Compiler agnostic \#define symbols for generic c/c++ source code
- * \details
- *
- * The NMSIS-Core provides the header file <b>nmsis_compiler.h</b> with consistent \#define symbols for generate C or C++ source files that should be compiler agnostic.
- * Each NMSIS compliant compiler should support the functionality described in this section.
- *
- * The header file <b>nmsis_compiler.h</b> is also included by each Device Header File <device.h> so that these definitions are available.
- *   @{
- */
-/* ignore some GCC warnings */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 #pragma GCC diagnostic ignored "-Wconversion"
@@ -175,38 +164,30 @@
   #define __COMPILER_BARRIER()                   __ASM volatile("":::"memory")
 #endif
 
-/** \brief provide the compiler with branch prediction information, the branch is usually true */
-#ifndef   __USUALLY
-  #define __USUALLY(exp)                         __builtin_expect((exp), 1)
-#endif
+#define __branch_check__(x, expect, is_constant) ({            \
+        long ______r;                    \
+        ______r = __builtin_expect(!!(x), expect);    \
+        ______r;                    \
+    })
 
-/** \brief provide the compiler with branch prediction information, the branch is rarely true */
-#ifndef   __RARELY
-  #define __RARELY(exp)                          __builtin_expect((exp), 0)
-#endif
+/*
+ * Using __builtin_constant_p(x) to ignore cases where the return
+ * value is always the same.  This idea is taken from a similar patch
+ * written by Daniel Walker.
+ */
+# ifndef LIKELY
+#  define LIKELY(x)    (__branch_check__(x, 1, __builtin_constant_p(x)))
+# endif
+
+# ifndef UNLIKELY
+#  define UNLIKELY(x)    (__branch_check__(x, 0, __builtin_constant_p(x)))
+# endif
 
 /** \brief Use this attribute to indicate that the specified function is an interrupt handler. */
 #ifndef   __INTERRUPT
   #define __INTERRUPT                            __attribute__((interrupt))
 #endif
 
-/** @} */ /* End of Doxygen Group NMSIS_Core_CompilerControl */
-
-/* IO definitions (access restrictions to peripheral registers) */
-/**
- * \defgroup NMSIS_Core_PeriphAccess     Peripheral Access
- * \brief  Naming conventions and optional features for accessing peripherals.
- *
- * The section below describes the naming conventions, requirements, and optional features
- * for accessing device specific peripherals.
- * Most of the rules also apply to the core peripherals.
- *
- * The **Device Header File <device.h>** contains typically these definition
- * and also includes the core specific header files.
- *
- * @{
- */
-/** \brief Defines 'read only' permissions */
 #ifdef __cplusplus
   #define   __I     volatile
 #else
@@ -225,40 +206,7 @@
 /** \brief Defines 'read/write' structure member permissions */
 #define     __IOM    volatile
 
-/**
- * \brief   Mask and shift a bit field value for use in a register bit range.
- * \details The macro \ref _VAL2FLD uses the #define's _Pos and _Msk of the related bit
- * field to shift bit-field values for assigning to a register.
- *
- * **Example**:
- * \code
- * ECLIC->CFG = _VAL2FLD(CLIC_CLICCFG_NLBIT, 3);
- * \endcode
- * \param[in] field  Name of the register bit field.
- * \param[in] value  Value of the bit field. This parameter is interpreted as an uint32_t type.
- * \return           Masked and shifted value.
- */
-#define _VAL2FLD(field, value)    (((uint32_t)(value) << field ## _Pos) & field ## _Msk)
-
-/**
- * \brief   Mask and shift a register value to extract a bit filed value.
- * \details The macro \ref _FLD2VAL uses the #define's _Pos and _Msk of the related bit
- * field to extract the value of a bit field from a register.
- *
- * **Example**:
- * \code
- * nlbits = _FLD2VAL(CLIC_CLICCFG_NLBIT, ECLIC->CFG);
- * \endcode
- * \param[in] field  Name of the register bit field.
- * \param[in] value  Value of register. This parameter is interpreted as an uint32_t type.
- * \return           Masked and shifted bit field value.
- */
-#define _FLD2VAL(field, value)    (((uint32_t)(value) & field ## _Msk) >> field ## _Pos)
-
-/** @} */ /* end of group NMSIS_Core_PeriphAccess */
-
-
 #ifdef __cplusplus
 }
 #endif
-#endif /* __NMSIS_GCC_H__ */
+#endif

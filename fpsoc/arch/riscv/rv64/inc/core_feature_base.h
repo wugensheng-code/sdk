@@ -403,7 +403,6 @@ typedef union {
 #endif /* __ASSEMBLY__ */
 
 
-#if __riscv
 /**
  * \brief   Enable IRQ Interrupts
  * \details Enables IRQ interrupts by setting the MIE-bit in the MSTATUS Register.
@@ -426,12 +425,6 @@ __STATIC_FORCEINLINE void __disable_irq(void)
     __RV_CSR_CLEAR(CSR_MSTATUS, MSTATUS_MIE);
 }
 
-#else
-extern void __enable_irq(void);
-
-extern void __disable_irq(void);
-
-#endif
 /**
  * \brief   Read whole 64 bits value of mcycle counter
  * \details This function will read the whole 64 bits of MCYCLE register
@@ -724,112 +717,6 @@ __STATIC_FORCEINLINE void __FENCE_I(void)
 
 /** \brief CPU relax for busy loop */
 #define __CPU_RELAX()   __ASM volatile ("" : : : "memory")
-
-
-/* ===== Load/Store Operations ===== */
-/**
- * \brief  Load 8bit value from address (8 bit)
- * \details Load 8 bit value.
- * \param [in]    addr  Address pointer to data
- * \return              value of type uint8_t at (*addr)
- */
-__STATIC_FORCEINLINE uint8_t __LB(volatile void *addr)
-{
-    uint8_t result;
-
-    __ASM volatile ("lb %0, 0(%1)" : "=r" (result) : "r" (addr));
-    return result;
-}
-
-/**
- * \brief  Load 16bit value from address (16 bit)
- * \details Load 16 bit value.
- * \param [in]    addr  Address pointer to data
- * \return              value of type uint16_t at (*addr)
- */
-__STATIC_FORCEINLINE uint16_t __LH(volatile void *addr)
-{
-    uint16_t result;
-
-    __ASM volatile ("lh %0, 0(%1)" : "=r" (result) : "r" (addr));
-    return result;
-}
-
-/**
- * \brief  Load 32bit value from address (32 bit)
- * \details Load 32 bit value.
- * \param [in]    addr  Address pointer to data
- * \return              value of type uint32_t at (*addr)
- */
-__STATIC_FORCEINLINE uint32_t __LW(volatile void *addr)
-{
-    uint32_t result;
-
-    __ASM volatile ("lw %0, 0(%1)" : "=r" (result) : "r" (addr));
-    return result;
-}
-
-#if __RISCV_XLEN != 32
-/**
- * \brief  Load 64bit value from address (64 bit)
- * \details Load 64 bit value.
- * \param [in]    addr  Address pointer to data
- * \return              value of type uint64_t at (*addr)
- * \remarks RV64 only macro
- */
-__STATIC_FORCEINLINE uint64_t __LD(volatile void *addr)
-{
-    uint64_t result;
-    __ASM volatile ("ld %0, 0(%1)" : "=r" (result) : "r" (addr));
-    return result;
-}
-#endif
-
-/**
- * \brief  Write 8bit value to address (8 bit)
- * \details Write 8 bit value.
- * \param [in]    addr  Address pointer to data
- * \param [in]    val   Value to set
- */
-__STATIC_FORCEINLINE void __SB(volatile void *addr, uint8_t val)
-{
-    __ASM volatile ("sb %0, 0(%1)" : : "r" (val), "r" (addr));
-}
-
-/**
- * \brief  Write 16bit value to address (16 bit)
- * \details Write 16 bit value.
- * \param [in]    addr  Address pointer to data
- * \param [in]    val   Value to set
- */
-__STATIC_FORCEINLINE void __SH(volatile void *addr, uint16_t val)
-{
-    __ASM volatile ("sh %0, 0(%1)" : : "r" (val), "r" (addr));
-}
-
-/**
- * \brief  Write 32bit value to address (32 bit)
- * \details Write 32 bit value.
- * \param [in]    addr  Address pointer to data
- * \param [in]    val   Value to set
- */
-__STATIC_FORCEINLINE void __SW(volatile void *addr, uint32_t val)
-{
-    __ASM volatile ("sw %0, 0(%1)" : : "r" (val), "r" (addr));
-}
-
-#if __RISCV_XLEN != 32
-/**
- * \brief  Write 64bit value to address (64 bit)
- * \details Write 64 bit value.
- * \param [in]    addr  Address pointer to data
- * \param [in]    val   Value to set
- */
-__STATIC_FORCEINLINE void __SD(volatile void *addr, uint64_t val)
-{
-    __ASM volatile ("sd %0, 0(%1)" : : "r" (val), "r" (addr));
-}
-#endif
 
 /**
  * \brief  Compare and Swap 32bit value using LR and SC
