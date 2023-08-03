@@ -13,6 +13,10 @@ else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
+BOARD_DIR  ?= $(SDK_ROOT)/solutions/boards/
+BOARD_NAME ?= board_dr1x90_emulation
+DOWNLOAD = ddr
+
 
 
 #########################################################################
@@ -23,8 +27,8 @@ endif
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
-SRC_DIR  = ./src
-INC_DIR += ./inc
+SRC_DIR  = ./src ./emb_gcov
+INC_DIR += ./inc ./emb_gcov
 
 LD_LIBS  =
 LIB_DIR  =
@@ -36,7 +40,7 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O2 -g
+CFLAGS := -O0 -g -Wall -fprofile-arcs -ftest-coverage
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
