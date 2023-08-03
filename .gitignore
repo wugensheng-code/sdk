@@ -22,3 +22,4 @@ gdb.init
 .vscode/*.*
 .vscode/settings.json
 *.gcno
+

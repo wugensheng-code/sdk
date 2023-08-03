@@ -1,5 +1,7 @@
 #include "al_type.h"
+#include "al_core.h"
 #include "al_params.h"
+#include "core_feature_base.h"
 
 /* === Nuclei CCM Registers === */
 #define CSR_CCM_MBEGINADDR      0x7CB
@@ -35,33 +37,33 @@ typedef enum CCM_CMD {
 
 AL_VOID ccm_invalidate_icache_all(AL_VOID)
 {
-    csr_write(CSR_CCM_SCOMMAND, CCM_IC_INVAL_ALL);
-    csr_write(CSR_CCM_FPIPE, 0x1);
+    __RV_CSR_WRITE(CSR_CCM_SCOMMAND, CCM_IC_INVAL_ALL);
+    __RV_CSR_WRITE(CSR_CCM_FPIPE, 0x1);
 }
 
 AL_VOID ccm_flush_dcache_all(AL_VOID)
 {
-    csr_write(CSR_CCM_SCOMMAND, CCM_DC_WB_ALL);
-    csr_write(CSR_CCM_FPIPE, 0x1);
+    __RV_CSR_WRITE(CSR_CCM_SCOMMAND, CCM_DC_WB_ALL);
+    __RV_CSR_WRITE(CSR_CCM_FPIPE, 0x1);
 }
 
 
 AL_VOID ccm_invalidate_dcache_all(AL_VOID)
 {
-    csr_write(CSR_CCM_SCOMMAND, CCM_DC_INVAL_ALL);
-    csr_write(CSR_CCM_FPIPE, 0x1);
+    __RV_CSR_WRITE(CSR_CCM_SCOMMAND, CCM_DC_INVAL_ALL);
+    __RV_CSR_WRITE(CSR_CCM_FPIPE, 0x1);
 }
 
 
 AL_VOID ccm_flush_dcache_range(AL_UINTPTR Start, AL_UINTPTR End)
 {
     AL_UINTPTR _start = Start;
-    csr_write(CSR_CCM_SBEGINADDR, _start);
+    __RV_CSR_WRITE(CSR_CCM_SBEGINADDR, _start);
     while (_start < End) {
-        csr_write(CSR_CCM_SCOMMAND, CCM_DC_WB);
+        __RV_CSR_WRITE(CSR_CCM_SCOMMAND, CCM_DC_WB);
         _start += ARCH_DMA_MINALIGN;
     }
-    csr_write(CSR_CCM_FPIPE, 0x1);
+    __RV_CSR_WRITE(CSR_CCM_FPIPE, 0x1);
 }
 
 AL_VOID ccm_invalidate_icache_range(AL_UINTPTR Start, AL_UINTPTR End)
@@ -71,41 +73,41 @@ AL_VOID ccm_invalidate_icache_range(AL_UINTPTR Start, AL_UINTPTR End)
      * instruction cache. Invalidate all of it instead.
      */
     AL_UINTPTR _start = Start;
-    csr_write(CSR_CCM_SBEGINADDR, _start);
+    __RV_CSR_WRITE(CSR_CCM_SBEGINADDR, _start);
     while (_start < End) {
-        csr_write(CSR_CCM_SCOMMAND, CCM_IC_INVAL);
+        __RV_CSR_WRITE(CSR_CCM_SCOMMAND, CCM_IC_INVAL);
         _start += ARCH_DMA_MINALIGN;
     }
 
-    csr_write(CSR_CCM_FPIPE, 0x1);
+    __RV_CSR_WRITE(CSR_CCM_FPIPE, 0x1);
 }
 
 AL_VOID ccm_invalidate_dcache_range(AL_UINTPTR Start, AL_UINTPTR End)
 {
     AL_UINTPTR _start = Start;
 
-    csr_write(CSR_CCM_SBEGINADDR, _start);
+    __RV_CSR_WRITE(CSR_CCM_SBEGINADDR, _start);
     while (_start < End) {
-        csr_write(CSR_CCM_SCOMMAND, CCM_DC_INVAL);
+        __RV_CSR_WRITE(CSR_CCM_SCOMMAND, CCM_DC_INVAL);
         _start += ARCH_DMA_MINALIGN;
     }
 
-    csr_write(CSR_CCM_FPIPE, 0x1);
+    __RV_CSR_WRITE(CSR_CCM_FPIPE, 0x1);
 }
 
 
 AL_VOID ccm_cache_flush(AL_VOID)
 {
-    invalidate_icache_all();
-    flush_dcache_all();
+    ccm_invalidate_icache_all();
+    ccm_flush_dcache_all();
 
-    csr_write(CSR_CCM_FPIPE, 0x1);
+    __RV_CSR_WRITE(CSR_CCM_FPIPE, 0x1);
 }
 
 AL_VOID ccm_flush_cache(AL_UINTPTR Start, AL_UINTPTR Size)
 {
-    invalidate_icache_range(Start, Start + Size);
-    flush_dcache_range(Start, Start + Size);
+    ccm_invalidate_icache_range(Start, Start + Size);
+    ccm_flush_dcache_range(Start, Start + Size);
 }
 
 
