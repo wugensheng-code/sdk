@@ -18,7 +18,7 @@
 
 int32_t dwc_ssi_disable(QSPI_TypeDef *qspi)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}
@@ -34,7 +34,7 @@ int32_t dwc_ssi_disable(QSPI_TypeDef *qspi)
 
 int32_t dwc_ssi_enable(QSPI_TypeDef *qspi)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}
@@ -52,7 +52,7 @@ int32_t dwc_ssi_enable(QSPI_TypeDef *qspi)
 
 int32_t qspi_x1_mode(QSPI_TypeDef *qspi)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}
@@ -69,7 +69,7 @@ int32_t qspi_x1_mode(QSPI_TypeDef *qspi)
 */
 int32_t qspi_x2_mode(QSPI_TypeDef *qspi)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}
@@ -87,7 +87,7 @@ int32_t qspi_x2_mode(QSPI_TypeDef *qspi)
 
 int32_t qspi_x4_mode(QSPI_TypeDef *qspi)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}
@@ -104,7 +104,7 @@ int32_t qspi_x4_mode(QSPI_TypeDef *qspi)
 */
 int32_t qspi_tmod_tx_rx(QSPI_TypeDef *qspi)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}
@@ -120,7 +120,7 @@ int32_t qspi_tmod_tx_rx(QSPI_TypeDef *qspi)
 */
 int32_t qspi_tmod_tx(QSPI_TypeDef *qspi)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}
@@ -137,7 +137,7 @@ int32_t qspi_tmod_tx(QSPI_TypeDef *qspi)
 */
 int32_t qspi_tmod_rx(QSPI_TypeDef *qspi)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}
@@ -154,7 +154,7 @@ int32_t qspi_tmod_rx(QSPI_TypeDef *qspi)
 */
 int32_t qspi_tmod_e2prom(QSPI_TypeDef *qspi)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}
@@ -170,7 +170,7 @@ int32_t qspi_tmod_e2prom(QSPI_TypeDef *qspi)
 */
 int32_t qspi_frf_spi(QSPI_TypeDef *qspi)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}
@@ -186,7 +186,7 @@ int32_t qspi_frf_spi(QSPI_TypeDef *qspi)
 */
 int32_t qspi_sste_dis(QSPI_TypeDef *qspi)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}
@@ -203,7 +203,7 @@ int32_t qspi_sste_dis(QSPI_TypeDef *qspi)
 */
 int32_t qspi_dfs(QSPI_TypeDef *qspi, uint32_t len)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}
@@ -221,7 +221,7 @@ int32_t qspi_dfs(QSPI_TypeDef *qspi, uint32_t len)
 */
 int32_t qspi_ser(QSPI_TypeDef *qspi, uint32_t slv)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}
@@ -238,7 +238,7 @@ int32_t qspi_ser(QSPI_TypeDef *qspi, uint32_t slv)
 */
 int32_t qspi_sckdiv_cfg(QSPI_TypeDef *qspi, uint32_t div)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}
@@ -254,7 +254,7 @@ int32_t qspi_sckdiv_cfg(QSPI_TypeDef *qspi, uint32_t div)
 */
 int32_t qspi_txftl_tft(QSPI_TypeDef *qspi, uint32_t Threshold)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}
@@ -271,7 +271,7 @@ int32_t qspi_txftl_tft(QSPI_TypeDef *qspi, uint32_t Threshold)
 */
 int32_t qspi_txfifo_start_level_set(QSPI_TypeDef *qspi, uint32_t start_level)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}
@@ -287,7 +287,7 @@ int32_t qspi_txfifo_start_level_set(QSPI_TypeDef *qspi, uint32_t start_level)
 */
 int32_t qspi_rxftl_cfg(QSPI_TypeDef *qspi, uint32_t Threshold)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}
@@ -304,7 +304,7 @@ int32_t qspi_rxftl_cfg(QSPI_TypeDef *qspi, uint32_t Threshold)
 */
 int32_t qspi_data_transmit(QSPI_TypeDef *qspi, uint32_t data)
 {
-	if (__RARELY(qspi == NULL))
+	if (UNLIKELY(qspi == NULL))
 	{
 		return -1;
 	}

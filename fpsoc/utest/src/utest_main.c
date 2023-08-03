@@ -1,7 +1,7 @@
 #include "al_hal.h"
 #include "al_cli.h"
 #include "gcov_public.h"
-#include "gcov_gcc.h
+#include "gcov_gcc.h"
 
 
 AL_U32 main(AL_VOID)
