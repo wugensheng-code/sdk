@@ -127,6 +127,9 @@ AL_S32 AlMmc_Hal_Init(AL_MMC_HalStruct *Handle, AL_MMC_InitStruct *InitConfig, A
     if (HwConfig != AL_NULL) {
         Handle->Dev = &AL_MMC_DevInstance[DevId];
         // memset(Handle->Dev, 0, sizeof(AL_MMC_DevStruct));
+    } else {
+        AL_MMC_HAL_UNLOCK(Handle);
+        return AL_MMC_ERR_INVALID_DEVID;
     }
 
 #ifdef USE_RTOS

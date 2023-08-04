@@ -969,11 +969,14 @@ typedef union
 {
     AL_U32 Reg;
     struct {
-        AL_U32 Access:4;
-        AL_U32 CmdSys:4;
-        AL_U32 DrvStren:4;
-        AL_U32 PwrLmt:4;
-        AL_U32 Rsvd31_16:16;
+        AL_U32 Grp1AccMode:4;   /* Function group 1 for access mode */
+        AL_U32 Grp2Cmd:4;       /* Function group 2 for cmd system */
+        AL_U32 RsvdGrp3:4;      /* Rsvd for function group 3, set all 0 or 0xF */
+        AL_U32 RsvdGrp4:4;      /* Rsvd for function group 4, set all 0 or 0xF */
+        AL_U32 RsvdGrp5:4;      /* Rsvd for function group 5, set all 0 or 0xF */
+        AL_U32 RsvdGrp6:4;      /* Rsvd for function group 6, set all 0 or 0xF */
+        AL_U32 Rsvd30_24:7;     /* Rsvd, set all 0 */
+        AL_U32 Mode:1;          /* Mode, 0: check function, 1: switch function */
     } Sd;
     struct {
         AL_U32 CmdSet:3;

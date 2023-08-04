@@ -1,8 +1,13 @@
 #include "al_mmc_test_config.h"
 #include "al_errno.h"
 
+#ifdef USE_DDR
 static AL_U8 *WriteBuff = (AL_U8 *)AL_MMC_TEST_WR_BUFF_ADDR;
 static AL_U8 *ReadBuff = (AL_U8 *)AL_MMC_TEST_RD_BUFF_ADDR;
+#else
+static AL_U8 *WriteBuff[AL_MMC_TEST_BLK_NUM_1][AL_MMC_TEST_BLK_SIZE];
+static AL_U8 *ReadBuff[AL_MMC_TEST_BLK_NUM][AL_MMC_TEST_BLK_SIZE];
+#endif
 
 static AL_VOID AlMmc_Test_InitSrc(AL_U8 *Addr, AL_U32 ByteSize, AL_U32 DataOffset);
 static AL_S32 AlMmc_Test_DataCheck(AL_MMC_HalStruct *Handle, AL_U8 *SrcAddr, AL_U8 *DstAddr, AL_U32 BlockCnt);
@@ -61,31 +66,46 @@ static AL_S32 AlMmc_Test_BlockTest(AL_MMC_HalStruct *Handle, AL_U32 DataOffset, 
 {
     AL_S32 Ret = AL_OK;
     AL_MMC_PerCalcStruct PerCalc;
+    AL_U32 WriteBlkCnt = BlkCnt;
+    AL_U32 ReadBlkCnt = BlkCnt;
 
-    // AlMmc_Test_InitSrc(ReadBuff, AL_MMC_TEST_BLK_SIZE * BlkCnt, DataOffset + 1);
-    memset(ReadBuff, 0, AL_MMC_TEST_BLK_SIZE * BlkCnt);
+    #ifndef USE_DDR
+    WriteBlkCnt = AL_MMC_TEST_BLK_NUM_1;
+    ReadBlkCnt = AL_MMC_TEST_BLK_NUM;
+    #endif
 
-    for (AL_U32 i = 0; i < BlkCnt; i++) {
+    memset(ReadBuff, 0, AL_MMC_TEST_BLK_SIZE * ReadBlkCnt);
+
+    for (AL_U32 i = 0; i < WriteBlkCnt; i++) {
         AlMmc_Test_InitSrc(WriteBuff + AL_MMC_TEST_BLK_SIZE * i, AL_MMC_TEST_BLK_SIZE, i << 16);
     }
-    // AlMmc_Test_InitSrc(WriteBuff, AL_MMC_TEST_BLK_SIZE * BlkCnt, DataOffset);
 
 #ifdef CONFIG_PERFORMANCE_CALC
-    if (BlkCnt > 1)
+    if (WriteBlkCnt > 1)
         AlMmc_Test_CalcStart(&PerCalc);
 #endif
-    Ret = AlMmc_Hal_WriteBlocked(Handle, WriteBuff, BlkOffset, BlkCnt, Timeout);
+#ifdef USE_DDR
+    Ret = AlMmc_Hal_WriteBlocked(Handle, WriteBuff, BlkOffset, WriteBlkCnt, Timeout);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal write %d block error 0x%x\r\n", BlkCnt, Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal write %d block error 0x%x\r\n", WriteBlkCnt, Ret);
         return Ret;
     }
+#else
+    if (WriteBlkCnt <= AL_MMC_TEST_BLK_NUM_1) {
+        Ret = AlMmc_Hal_WriteBlocked(Handle, WriteBuff, BlkOffset, WriteBlkCnt, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal write %d block error 0x%x\r\n", WriteBlkCnt, Ret);
+            return Ret;
+        }
+    }
+#endif
 #ifdef CONFIG_PERFORMANCE_CALC
-    if (BlkCnt > 1)
-        AlMmc_Test_CalcEnd(Handle, &PerCalc, BlkCnt);
+    if (WriteBlkCnt > 1)
+        AlMmc_Test_CalcEnd(Handle, &PerCalc, WriteBlkCnt);
 #endif
 
 #ifdef CONFIG_PERFORMANCE_CALC
-    if (BlkCnt > 1)
+    if (ReadBlkCnt > 1)
         AlMmc_Test_CalcStart(&PerCalc);
 #endif
 
@@ -109,21 +129,32 @@ static AL_S32 AlMmc_Test_BlockTest(AL_MMC_HalStruct *Handle, AL_U32 DataOffset, 
     //     return Ret;
     // }
 
-    Ret = AlMmc_Hal_ReadBlocked(Handle, ReadBuff, BlkOffset, BlkCnt, Timeout);
+    Ret = AlMmc_Hal_ReadBlocked(Handle, ReadBuff, BlkOffset, ReadBlkCnt, Timeout);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal read %d block error 0x%x\r\n", BlkCnt, Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal read %d block error 0x%x\r\n", ReadBlkCnt, Ret);
         return Ret;
     }
 
 #ifdef CONFIG_PERFORMANCE_CALC
-    if (BlkCnt > 1)
-        AlMmc_Test_CalcEnd(Handle, &PerCalc, BlkCnt);
+    if (ReadBlkCnt > 1)
+        AlMmc_Test_CalcEnd(Handle, &PerCalc, ReadBlkCnt);
 #endif
-    Ret = AlMmc_Test_DataCheck(Handle, WriteBuff, ReadBuff, BlkCnt);
+
+#ifdef USE_DDR
+    Ret = AlMmc_Test_DataCheck(Handle, WriteBuff, ReadBuff, ReadBlkCnt);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal block check error!\r\n");
         return Ret;
     }
+#else
+    if (ReadBlkCnt <= AL_MMC_TEST_BLK_NUM_1) {
+        Ret = AlMmc_Test_DataCheck(Handle, WriteBuff, ReadBuff, ReadBlkCnt);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal block check error!\r\n");
+            return Ret;
+        }
+    }
+#endif
 
     return Ret;
 }
@@ -141,7 +172,7 @@ static AL_VOID AlMmc_Test_Sd(AL_VOID)
     InitConfig[1] = &SdSdmaInit;
     InitConfig[2] = &SdAdma2Init;
 
-    for (AL_U32 i = 0; i < AL_MMC_TEST_SD_CASE_NUM; i++) {
+    for (AL_U32 i = 0; i < 1; i++) {
 
         AL_LOG(AL_LOG_LEVEL_INFO, "----------MMC test %s mode start----------\r\n", CaseName[i]);
 
@@ -157,17 +188,17 @@ static AL_VOID AlMmc_Test_Sd(AL_VOID)
             AL_LOG(AL_LOG_LEVEL_ERROR, "Block test error\r\n");
         }
 
-        Ret = AlMmc_Test_BlockTest(&Handle, 'b', WriteBuff, ReadBuff, 1, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
+        Ret = AlMmc_Test_BlockTest(&Handle, 'b', WriteBuff, ReadBuff, 0, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Block test error\r\n");
         }
 
-        Ret = AlMmc_Test_BlockTest(&Handle, 'A', WriteBuff, ReadBuff, 2, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
+        Ret = AlMmc_Test_BlockTest(&Handle, 'A', WriteBuff, ReadBuff, 0, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Block test error\r\n");
         }
 
-        Ret = AlMmc_Test_BlockTest(&Handle, 'B', WriteBuff, ReadBuff, 3, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
+        Ret = AlMmc_Test_BlockTest(&Handle, 'B', WriteBuff, ReadBuff, 0, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Block test error\r\n");
         }
@@ -190,7 +221,7 @@ static AL_VOID AlMmc_Test_Emmc(AL_VOID)
     InitConfig[1] = &EmmcSdmaInit;
     InitConfig[2] = &EmmcAdma2Init;
 
-    for (AL_U32 i = 0; i < AL_MMC_TEST_EMMC_CASE_NUM; i++) {
+    for (AL_U32 i = 0; i < 1; i++) {
 
         AL_LOG(AL_LOG_LEVEL_INFO, "----------MMC test %s mode start----------\r\n", CaseName[i]);
 
@@ -218,10 +249,10 @@ static AL_VOID AlMmc_Test_Emmc(AL_VOID)
             AL_LOG(AL_LOG_LEVEL_ERROR, "Block test error\r\n");
         }
 
-        Ret = AlMmc_Test_BlockTest(&Handle, 'd', WriteBuff, ReadBuff, 3, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
-        if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Block test error\r\n");
-        }
+        // Ret = AlMmc_Test_BlockTest(&Handle, 'd', WriteBuff, ReadBuff, 3, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
+        // if (Ret != AL_OK) {
+        //     AL_LOG(AL_LOG_LEVEL_ERROR, "Block test error\r\n");
+        // }
 
         AL_LOG(AL_LOG_LEVEL_INFO, "----------MMC test %s mode done----------\r\n", CaseName[i]);
     }

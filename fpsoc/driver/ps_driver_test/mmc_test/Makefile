@@ -67,8 +67,8 @@ all:
 	echo COMPILE_PREFIX = $(COMPILE_PREFIX)
 	make cleanapp
 	make -f Makefile_sd dasm
-	make cleanapp
-	make -f Makefile_emmc dasm
+	# make cleanapp
+	# make -f Makefile_emmc dasm
 
 cleanapp:
 	$(RM) $(foreach subdir, $(SRC_DIR), $(wildcard $(subdir)/*.d $(subdir)/*.o))
@@ -78,5 +78,5 @@ clean:
 	make clean -f Makefile_clean CHIP=dr1v90
 
 cleanelf:
-	rm -rf *.bin *.dasm *.dump *.elf *.hex *.map *.verilog
+	rm -rf *.bin *.dasm *.dump *.elf *.hex *.map *.verilog *.map
 

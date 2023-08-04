@@ -86,7 +86,7 @@ AL_S32 AlMmc_Dev_RstHostController(AL_MMC_DevStruct *Dev, AL_MMC_RstHostEnum Rst
     if (Timeout) {
         return AL_OK;
     } else {
-        return AL_MMC_ERR_TIMEOUT;
+        return AL_MMC_ERR_RST_LINE_TIMEOUT;
     }
 }
 
@@ -317,8 +317,8 @@ static AL_S32 AlMmc_Dev_CmdSend(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum Cmd, AL
     }
 
     /* Only read cmd set dir to read */
-    if ((Cmd == AL_MMC_CMD_IDX_8) || (Cmd == AL_MMC_CMD_IDX_17) || (Cmd == AL_MMC_CMD_IDX_18) ||
-        (Cmd == AL_MMC_ACMD_IDX_51)) {
+    if ((Cmd == AL_MMC_CMD_IDX_6) || (Cmd == AL_MMC_CMD_IDX_8) || (Cmd == AL_MMC_CMD_IDX_17) ||
+        (Cmd == AL_MMC_CMD_IDX_18) || (Cmd == AL_MMC_ACMD_IDX_51)) {
         TmpReg.Bit.DatXferDir = AL_MMC_TRANS_DIR_READ;
     } else {
         TmpReg.Bit.DatXferDir = AL_MMC_TRANS_DIR_WRITE;
@@ -412,7 +412,7 @@ static AL_S32 AlMmc_Dev_CheckCmdDone(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum Cm
 
     if (!Timeout) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "%s %d send timeout\r\n", ((Cmd & 0x100) ? "ACMD" : "CMD"), (Cmd & 0xFF));
-        return Ret;
+        return AL_MMC_ERR_CMD_COMP_TIMEOUT;
     }
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Cmd done state: 0x%x\r\n", IntrStat.Reg);
@@ -489,10 +489,13 @@ static AL_S32 AlMmc_Dev_SetClkFreq(AL_MMC_DevStruct *Dev, AL_MMC_FreqKhzEnum Fre
     AL_U32 FreqMod  = InputClk % Freq;
     AL_U32 FreqSel;
 
+    AL_LOG(AL_LOG_LEVEL_INFO, "Req freq %d Khz, div: %d, mod: %d\r\n", Freq, FreqDiv, FreqMod);
+
     TmpReg.Reg = AlMmc_ll_ReadSwRst_Ctrl_Tout_Clk(Dev->HwConfig.BaseAddress);
 
     /* First init is default 400k, so do not need set defualt clk freq */
     if ((TmpReg.Bit.ClkGenSel == AL_MMC_CLK_GEN_DIV) && (Freq == AL_MMC_FREQ_KHZ_DEF)) {
+        Dev->CardInfo.FreqKhz   = AL_MMC_FREQ_KHZ_DEF;
         AL_LOG(AL_LOG_LEVEL_INFO, "Cur freq is default 400Khz\r\n");
         return AL_OK;
     }
@@ -503,15 +506,15 @@ static AL_S32 AlMmc_Dev_SetClkFreq(AL_MMC_DevStruct *Dev, AL_MMC_FreqKhzEnum Fre
             FreqSel = 0;
         } else if (FreqMod) {
             if (FreqDiv == TmpReg.Bit.FreqSel) {
-                AL_LOG(AL_LOG_LEVEL_INFO, "Freq(not divisible by input clk) need to config %d Khz equeal to cur set\r\n", Freq - FreqMod);
+                AL_LOG(AL_LOG_LEVEL_INFO, "Freq(not divisible by input clk) need to config %d Khz equeal to cur set\r\n", InputClk / (FreqDiv + 1));
                 return Ret;
             } else {
-                AL_LOG(AL_LOG_LEVEL_INFO, "Freq is not divisible by input clk, floor this freq to %d Khz\r\n", Freq - FreqMod);
+                AL_LOG(AL_LOG_LEVEL_INFO, "Freq is not divisible by input clk, floor this freq to %d Khz\r\n", InputClk / (FreqDiv + 1));
                 FreqSel = FreqDiv;
             }
         } else {
-            AL_LOG(AL_LOG_LEVEL_INFO, "Set freq to %d Khz, divide is %d\r\n", Freq, FreqSel);
             FreqSel = FreqDiv - 1;
+            AL_LOG(AL_LOG_LEVEL_INFO, "Set freq to %d Khz, divide is %d\r\n", Freq, FreqSel);
         }
 
         if ((TmpReg.Bit.ClkGenSel == AL_MMC_CLK_GEN_PROGRAM) && (TmpReg.Bit.FreqSel == FreqSel)) {
@@ -559,7 +562,7 @@ static AL_S32 AlMmc_Dev_SetClkFreq(AL_MMC_DevStruct *Dev, AL_MMC_FreqKhzEnum Fre
         return Ret;
     }
 
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "Request: %d KHz, Set: %d KHz\r\n", Freq, Dev->CardInfo.FreqKhz);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Request: %d KHz, Set: %d KHz, Divide: %d \r\n", Freq, Dev->CardInfo.FreqKhz, TmpReg.Bit.FreqSel);
     TmpReg.Reg = AlMmc_ll_ReadSwRst_Ctrl_Tout_Clk(Dev->HwConfig.BaseAddress);
     AL_LOG(AL_LOG_LEVEL_DEBUG, " Clk mode is %s, Freq sel is %d\r\n",
                                ((TmpReg.Bit.ClkGenSel == AL_MMC_CLK_GEN_PROGRAM) ? "Program" : "Diveded"), TmpReg.Bit.FreqSel);
@@ -581,6 +584,7 @@ static AL_S32 AlMmc_Dev_SetUpHostController(AL_MMC_DevStruct *Dev)
         AL_MMC_CtrlWuBgPwHc1Union Ctrl1;
         Ctrl1.Reg = AlMmc_ll_ReadCtrl_Wup_Bgap_Pwr_Host1(Dev->HwConfig.BaseAddress);
         Ctrl1.Bit.DmaSel = Dev->Config.DmaMode;
+        // Ctrl1.Bit.HiSpdEn = 0x1;
         AlMmc_ll_WriteCtrl_Wup_Bgap_Pwr_Host1(Dev->HwConfig.BaseAddress, Ctrl1.Reg);
         /* Set dma buffer boundary */
         AlMmc_ll_SetSdmaBufBdary(Dev->HwConfig.BaseAddress, Dev->Config.DmaBdary);
@@ -786,9 +790,14 @@ static AL_S32 AlMmc_Dev_GetCardCfg(AL_MMC_DevStruct *Dev)
 
     Dev->CardInfo.BlkLen = RestoreBlkLen;
 
+    for (AL_U32 j = 0; j < 8; j++) {
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "[%d]:0x%02x ", j, *((AL_U8 *)&Dev->CardInfo.Scr.Reg[0] + j));
+    }
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "\r\n");
+
     Temp = Dev->CardInfo.Scr.Reg[0];
     Dev->CardInfo.Scr.Reg[0] = Dev->CardInfo.Scr.Reg[1];
-    Dev->CardInfo.Scr.Reg[1] = Temp;
+    Dev->CardInfo.Scr.Reg[1] = (Temp >> 24) | ((Temp & 0xFF) << 24) | ((Temp & 0xFF00) << 8) | ((Temp & 0xFF0000 >> 8));
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Scr: [0] 0x%08x, [1] 0x%08x\r\n", Dev->CardInfo.Scr.Reg[0], Dev->CardInfo.Scr.Reg[1]);
 
@@ -952,6 +961,8 @@ static AL_S32 AlMmc_Dev_SetCardVer(AL_MMC_DevStruct *Dev)
     } else {
         Dev->CardInfo.CardVer = Dev->CardInfo.Csd.Emmc.SpecVers;
     }
+
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Card version is %d\r\n", Dev->CardInfo.CardVer);
 
     return Ret;
 }
@@ -1221,7 +1232,58 @@ static AL_S32 AlMmc_Dev_GetBusSpeed(AL_MMC_DevStruct *Dev)
 static AL_S32 AlMmc_Dev_SetBusSpeed(AL_MMC_DevStruct *Dev)
 {
     AL_S32 Ret = AL_OK;
-    /* TODO: */
+
+    if (Dev->CardInfo.CardType == AL_MMC_CARD_TYPE_SD) {
+        AL_U32 RestoreBlkLen = Dev->CardInfo.BlkLen;
+        AL_U8 Temp[64] = {0};
+        AL_MMC_Cmd6ArgUnion Arg;
+
+        AlMmc_Dev_SetBlkSize(Dev, AL_MMC_BLK_LEN_64B);
+        Dev->CardInfo.BlkLen = AL_MMC_BLK_LEN_64B;
+
+        Arg.Reg             = 0x0;
+        Arg.Sd.Mode         = 0x1;
+        Arg.Sd.Rsvd30_24    = 0x0;
+        Arg.Sd.RsvdGrp6     = 0xF;
+        Arg.Sd.RsvdGrp5     = 0xF;
+        Arg.Sd.RsvdGrp4     = 0xF;
+        Arg.Sd.RsvdGrp3     = 0xF;
+        Arg.Sd.Grp2Cmd      = 0xF;
+        Arg.Sd.Grp1AccMode  = 0x1;
+
+        Ret = AlMmc_Dev_CmdTransfer(Dev, AL_MMC_CMD_IDX_6, Arg.Reg, 1);
+        if (Ret != AL_OK) {
+            return Ret;
+        }
+
+        Ret = AlMmc_Dev_TransferData(Dev, &Temp[0], 1);
+        if (Ret != AL_OK) {
+            return Ret;
+        }
+
+        Dev->CardInfo.BlkLen = RestoreBlkLen;
+
+        for (AL_U32 j = 0; j < AL_MMC_BLK_LEN_64B; j++) {
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "[%d]:0x%02x ", j, Temp[j]);
+        }
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "\r\n");
+    } else {
+        /* TODO: */
+    }
+
+    /* Delay for switch complete */
+    AL_MMC_SWITCH_DELAY;
+
+    // AL_MMC_CtrlWuBgPwHc1Union Ctrl1;
+    // Ctrl1.Reg = AlMmc_ll_ReadCtrl_Wup_Bgap_Pwr_Host1(Dev->HwConfig.BaseAddress);
+    // Ctrl1.Bit.HiSpdEn = 0x1;
+    // AlMmc_ll_WriteCtrl_Wup_Bgap_Pwr_Host1(Dev->HwConfig.BaseAddress, Ctrl1.Reg);
+
+    // AL_MMC_Hc2AcUnion Ctrl2;
+    // Ctrl2.Reg = AlMmc_ll_ReadAutoCmdStat_CtrlHost2(Dev->HwConfig.BaseAddress);
+    // Ctrl2.Bit.UhsModeSel = 0x1;
+    // AlMmc_ll_WriteAutoCmdStat_CtrlHost2(Dev->HwConfig.BaseAddress, Ctrl2.Reg);
+
     return Ret;
 }
 
@@ -1404,7 +1466,7 @@ static AL_S32 AlMmc_Dev_EmmcModeInit(AL_MMC_DevStruct *Dev)
     }
 
     /* Do a transfer to check the configuration */
-    Ret = AlMmc_Dev_GetExtCsd(Dev, &ExtCsd);
+    Ret = AlMmc_Dev_GetExtCsd(Dev, (AL_U8 *)&ExtCsd);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -1764,9 +1826,9 @@ static AL_S32 AlMmc_Dev_TransferNoDma(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 
     do {
         IntrStat.Reg = AlMmc_ll_ReadIntrStat(Dev->HwConfig.BaseAddress);
 
-        if (IntrStat.Reg) {
-            AL_LOG(AL_LOG_LEVEL_DEBUG, "No dma state 0x%x\r\n", IntrStat.Reg);
-        }
+        // if (IntrStat.Reg) {
+        //     AL_LOG(AL_LOG_LEVEL_DEBUG, "No dma state 0x%x\r\n", IntrStat.Reg);
+        // }
 
         if (IntrStat.Bit.ErrIntr) {
             return AlMmc_Dev_CheckErrStat(Dev, IntrStat);
@@ -1784,7 +1846,7 @@ static AL_S32 AlMmc_Dev_TransferNoDma(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 
 
             AlMmc_Dev_CarryBlkData(Dev, TmpReg.Bit.DatXferDir, MemAddr);
 
-            AL_LOG(AL_LOG_LEVEL_DEBUG, "No dma blk cnt %d, mem addr  0x%x\r\n", Cnt, MemAddr);
+            // AL_LOG(AL_LOG_LEVEL_DEBUG, "No dma blk cnt %d, mem addr  0x%x\r\n", Cnt, MemAddr);
 
             MemAddr += Dev->CardInfo.BlkLen;
             Timeout = AL_MMC_CHK_TOUT_XFER_NO_DMA;
@@ -1795,11 +1857,12 @@ static AL_S32 AlMmc_Dev_TransferNoDma(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 
         }
 
         AL_MMC_LOOP_REG_DELAY;
-    } while (!IntrStat.Bit.XferComp && Timeout--);
+    } while ((!IntrStat.Bit.XferComp) && (--Timeout));
 
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "No dma blk cnt %d, mem addr  0x%x\r\n", Cnt, MemAddr);
     if (!Timeout) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Transfer no dma timeout\r\n");
-        return AL_MMC_ERR_TIMEOUT;
+        return AL_MMC_ERR_XFER_COMP_TIMEOUT;
     }
 #endif
 
@@ -2129,6 +2192,8 @@ static AL_VOID AlMmc_Dev_DisplayAllReg(AL_MMC_DevStruct *Dev)
     AL_LOG(AL_LOG_LEVEL_DEBUG, "|-AutoCmdStat_CtrlHost2: 0x%x\r\n", AlMmc_ll_ReadAutoCmdStat_CtrlHost2(Dev->HwConfig.BaseAddress));
     AL_LOG(AL_LOG_LEVEL_DEBUG, "|-AdmaErrStat: 0x%x\r\n", AlMmc_ll_ReadAdmaErrStat(Dev->HwConfig.BaseAddress));
     AL_LOG(AL_LOG_LEVEL_DEBUG, "|-AdmaSysAddrLow: 0x%x\r\n", AlMmc_ll_ReadAdmaSysAddrLow(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Capability1: 0x%x\r\n", AlMmc_ll_ReadCapability1(Dev->HwConfig.BaseAddress));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-Capability2: 0x%x\r\n", AlMmc_ll_ReadCapability2(Dev->HwConfig.BaseAddress));
     AL_LOG(AL_LOG_LEVEL_DEBUG, "----------Host Controller Register Done----------\r\n");
 }
 

@@ -2,7 +2,9 @@
 # 3. CFLAGS
 #########################################################################
 
-CFLAGS := -O2 -DMMC_DEBUG -DCONFIG_PERFORMANCE_CALC -DCONFIG_EMMC_TEST=1
+CFLAGS := -O2 -DMMC_DEBUG -DCONFIG_EMMC_TEST=1 -g
+CFLAGS += -DAL9000_BRINGUP
+# CFLAGS += -DCONFIG_PERFORMANCE_CALC
 
 #########################################################################
 # 5. define build target
