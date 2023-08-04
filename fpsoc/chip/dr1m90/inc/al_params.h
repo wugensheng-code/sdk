@@ -43,8 +43,12 @@ typedef enum {
 /*----------------------------------------------------------------------------
   Define System clocks
  *----------------------------------------------------------------------------*/
-#ifdef AL9000_BRINGUP
+#ifdef AL9000_OSC_25
+#define SYSTEM_CLOCK            (25000000UL)
+#elif AL9000_OSC_33
 #define SYSTEM_CLOCK            (33333333UL)
+#elif AL9000_OSC_50
+#define SYSTEM_CLOCK            (50000000UL)
 #else
 #define SYSTEM_CLOCK            (50000000UL)
 #endif
@@ -65,7 +69,11 @@ typedef enum {
 #define UART0__BASE_ADDR        (0xF8400000UL)
 #define UART1__BASE_ADDR        (0xF8401000UL)
 
-#ifdef AL9000_BRINGUP
+#ifdef AL9000_OSC_25
+#define UART_CLOCK              (50000000UL)
+#elif AL9000_OSC_33
+#define UART_CLOCK              (50000000UL)
+#elif AL9000_OSC_50
 #define UART_CLOCK              (50000000UL)
 #else
 #define UART_CLOCK              (40000000UL)
