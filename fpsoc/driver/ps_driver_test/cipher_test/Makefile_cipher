@@ -1,0 +1,25 @@
+#########################################################################
+# 3. CFLAGS
+#########################################################################
+
+CFLAGS := -O2
+CFLAGS += -DAL9000_BRINGUP
+# CFLAGS += -DUSE_RTOS
+# CFLAGS += -DRTOS_RTTHREAD
+
+#########################################################################
+# 5. define build target
+#########################################################################
+
+TARGET = fpsoc_cipher
+
+ifneq ($(PINMUX_MODE),)
+CFLAGS += -DENABLE_$(PINMUX_MODE)=1
+TARGET:=$(TARGET)_$(CHIP)_$(PINMUX_MODE)
+endif
+
+all: $(TARGET)
+	@$(ECHO) COMPILE_PREFIX = $(COMPILE_PREFIX)
+
+# include rules.mk
+include $(SDK_ROOT)/tools/make/rules.mk

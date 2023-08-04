@@ -1,0 +1,4 @@
+TARGET = all
+
+# include rules.mk
+include $(SDK_ROOT)/tools/make/rules.mk
