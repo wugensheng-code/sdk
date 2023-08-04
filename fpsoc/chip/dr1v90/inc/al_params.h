@@ -17,6 +17,14 @@ extern "C" {
 typedef enum {
     SysTimerSW_IRQn      =  3,
     SysTimer_IRQn        =  7,
+    SOC_REQ0_IRQn        =  30,
+    SOC_ACK0_IRQn        =  31,
+    SOC_REQ1_IRQn        =  32,
+    SOC_ACK1_IRQn        =  33,
+    SOC_REQ2_IRQn        =  34,
+    SOC_ACK2_IRQn        =  35,
+    SOC_REQ3_IRQn        =  36,
+    SOC_ACK3_IRQn        =  37,
     SOC_DMACAHB_IRQn     =  65,
     GPIO0_IRQn           =  71,
     SOC_INT130_IRQn      =  130,
@@ -36,7 +44,12 @@ typedef enum {
 /*----------------------------------------------------------------------------
   Define System clocks
  *----------------------------------------------------------------------------*/
+#ifdef AL9000_BRINGUP
+#define SYSTEM_CLOCK            (33333333UL)
+#else
 #define SYSTEM_CLOCK            (50000000UL)
+#endif
+
 
 /*----------------------------------------------------------------------------
   Define System base addr
@@ -55,7 +68,12 @@ typedef enum {
 #define UART0__BASE_ADDR        (0xF8400000UL)
 #define UART1__BASE_ADDR        (0xF8401000UL)
 
+#ifdef AL9000_BRINGUP
+#define UART_CLOCK              (50000000UL)
+#else
 #define UART_CLOCK              (40000000UL)
+#endif
+
 
 /*----------------------------------------------------------------------------
   Define GPIO params
@@ -99,11 +117,22 @@ typedef enum {
 #define CAN_TOP_CFG_CTRL_ADDR   (0xF8800164UL)
 
 /*----------------------------------------------------------------------------
+  Define CIPHER params
+ *----------------------------------------------------------------------------*/
+#define HAVE_CIPHERPS_DRIVER
+
+#define AL_CIPHER_NUM_INSTANCE     (1)
+
+#define CIPHER__BASE_ADDR       (0xF8080000UL)
+
+#define CIPHER_REQ_INTR_ADDR    (0xF841F410UL)
+
+/*----------------------------------------------------------------------------
   Define DMACAHB params
  *----------------------------------------------------------------------------*/
 #define HAVE_DMACAHBPS_DRIVER
 
-#define AL_DMACAHB_NUM_INSTANCE (2)
+#define AL_DMACAHB_NUM_INSTANCE (1)
 
 #define DMACAHB__BASE_ADDR      (0xF804D000UL)
 
@@ -134,8 +163,8 @@ typedef enum {
 #define MMC0_BUS_WIDTH          (8)
 #define MMC1_BUS_WIDTH          (4)
 
-#define MMC0_CLK_IN_KHZ         (10000UL)
-#define MMC1_CLK_IN_KHZ         (10000UL)
+#define MMC0_CLK_IN_KHZ         (100000UL)
+#define MMC1_CLK_IN_KHZ         (100000UL)
 
 /*----------------------------------------------------------------------------
   Define IIC params
