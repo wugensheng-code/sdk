@@ -22,9 +22,11 @@ extern "C" {
 #define AL_DMACAHB_CHANNEL_NUM  (8)
 #define AL_DMACAHB_CH_INTR_NUM  (5)
 
+#define DMACAHB_EVENT_START_BIT 6
+
 typedef enum
 {
-    DMACAHB_ERR_ENABLED_CHANNEL = 0x100,    /* receive message with error*/
+    DMACAHB_ERR_ENABLED_CHANNEL = AL_ERR_MAX,    /* receive message with error*/
     DMACAHB_ERR_NONE_AVAILABLE_CH,
     DMACAHB_ERR_HANDLE_WITHOUT_CH,
     DMACAHB_ERR_CH_WITHOUT_DMAC,
@@ -36,13 +38,8 @@ typedef enum
     DMACAHB_ERR_FETCH_LOCK,
 } AL_DMACAHB_ErrCodeEnum;
 
-#define AL_DMACAHB_ERR_INVALID_DEVID        AL_DEF_ERR(AL_DMACAHB, AL_LOG_LEVEL_ERROR, AL_ERR_INVALID_DEVID)
-#define AL_DMACAHB_ERR_INVALID_CHNID        AL_DEF_ERR(AL_DMACAHB, AL_LOG_LEVEL_ERROR, AL_ERR_INVALID_CHNID)
 #define AL_DMACAHB_ERR_ILLEGAL_PARAM        AL_DEF_ERR(AL_DMACAHB, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM)
-#define AL_DMACAHB_ERR_EXIST                AL_DEF_ERR(AL_DMACAHB, AL_LOG_LEVEL_ERROR, AL_ERR_EXIST)
-#define AL_DMACAHB_ERR_UNEXIST              AL_DEF_ERR(AL_DMACAHB, AL_LOG_LEVEL_ERROR, AL_ERR_UNEXIST)
 #define AL_DMACAHB_ERR_NULL_PTR             AL_DEF_ERR(AL_DMACAHB, AL_LOG_LEVEL_ERROR, AL_ERR_NULL_PTR)
-#define AL_DMACAHB_ERR_NOT_CONFIG           AL_DEF_ERR(AL_DMACAHB, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_CONFIG)
 #define AL_DMACAHB_ERR_NOT_SUPPORT          AL_DEF_ERR(AL_DMACAHB, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_SUPPORT)
 #define AL_DMACAHB_ERR_TIMEOUT              AL_DEF_ERR(AL_DMACAHB, AL_LOG_LEVEL_ERROR, AL_ERR_TIMEOUT)
 #define AL_DMACAHB_ERR_BUSY                 AL_DEF_ERR(AL_DMACAHB, AL_LOG_LEVEL_ERROR, AL_ERR_BUSY)
@@ -56,6 +53,8 @@ typedef enum
 #define AL_DMACAHB_ERR_TRANS_BUSY           AL_DEF_ERR(AL_DMACAHB, AL_LOG_LEVEL_ERROR, DMACAHB_ERR_TRANS_BUSY)
 #define AL_DMACAHB_ERR_STATE_NOT_READY      AL_DEF_ERR(AL_DMACAHB, AL_LOG_LEVEL_ERROR, DMACAHB_ERR_STATE_NOT_READY)
 #define AL_DMACAHB_ERR_FETCH_LOCK           AL_DEF_ERR(AL_DMACAHB, AL_LOG_LEVEL_ERROR, DMACAHB_ERR_FETCH_LOCK)
+#define AL_DMACAHB_EVENTS_TO_ERRS(Events)   (AL_DEF_ERR(AL_DMACAHB, AL_LOG_LEVEL_ERROR, \
+                                                        (Events << DMACAHB_EVENT_START_BIT)))
 
 /**************************** Type Definitions *******************************/
 /**
@@ -145,11 +144,13 @@ typedef enum
  */
 typedef enum
 {
+    AL_DMACAHB_EVENT_TRANS_READY        = BIT(0),
     AL_DMACAHB_EVENT_TRANS_COMP         = BIT(1),
     AL_DMACAHB_EVENT_BLOCK_TRANS_COMP   = BIT(2),
     AL_DMACAHB_EVENT_SRC_TRANS_COMP     = BIT(3),
     AL_DMACAHB_EVENT_DST_TRANS_COMP     = BIT(4),
     AL_DMACAHB_EVENT_ERR                = BIT(5),
+    AL_DMACAHB_EVENT_RELOAD             = BIT(6),
 } AL_DMACAHB_EventIdEnum;
 
 /**
@@ -462,8 +463,6 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel);
 
 AL_S32 AlDmacAhb_Dev_Start(AL_DMACAHB_ChStruct *Channel);
 
-AL_S32 AlDmacAhb_Dev_UnRegisterIntrHandler(AL_DMACAHB_ChStruct *Channel);
-
 AL_S32 AlDmacAhb_Dev_RegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChCallBackStruct *CallBack);
 
 AL_S32 AlDmacAhb_Dev_UnRegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel);
@@ -476,6 +475,8 @@ AL_S32 AlDmacAhb_Dev_TransTypeToState(AL_DMACAHB_TransTypeEnum Type, AL_DMACAHB_
 
 AL_S32 AlDmacAhb_Dev_RequestCh(AL_DMACAHB_HwConfigStruct   *HwConfig, AL_DMACAHB_ChIdEnum RequestId,
                                AL_DMACAHB_ChIdEnum *AvailableId);
+
+AL_S32 AlDmacAhb_Dev_ReleaseCh(AL_DMACAHB_ChStruct *Channel);
 
 #ifdef __cplusplus
 }

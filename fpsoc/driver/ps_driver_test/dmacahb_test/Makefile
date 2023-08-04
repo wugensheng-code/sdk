@@ -4,6 +4,7 @@
 
 SDK_ROOT   ?= ../../../..
 CHIP       ?= dr1m90
+# RTOS := rtthread
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/7.5.0/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-elf/bin/aarch64-elf-
@@ -11,8 +12,8 @@ else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
-
-
+BOARD_DIR  ?= $(SDK_ROOT)/solutions/boards/
+BOARD_NAME ?= board_dr1x90_emulation
 
 
 #########################################################################
@@ -87,3 +88,5 @@ clean:
 
 cleanelf:
 	rm -rf *.bin *.dasm *.dump *.elf *.hex *.map *.verilog
+
+include $(SDK_ROOT)/tools/make/rules.mk

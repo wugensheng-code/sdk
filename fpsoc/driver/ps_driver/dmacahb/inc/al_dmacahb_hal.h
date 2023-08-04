@@ -13,13 +13,20 @@ extern "C" {
 /***************** Macros (Inline Functions) Definitions *********************/
 
 /**************************** Type Definitions *******************************/
+#define AL_DMACAHB_API_MODE_NUM     2
+
+typedef enum {
+    DMACAHB_BLOCK    = 0,
+    DMACAHB_NONBLOCK = 1,
+} AL_DMACAHB_ModeEnum;
+
 typedef struct
 {
-    AL_DMACAHB_ChStruct    *Channel;
-
-// #ifdef USE_RTOS
-//     AL_Lock             Lock;
-// #endif
+    AL_DMACAHB_ChStruct     *Channel;
+    AL_Lock                 Lock;
+    AL_DMACAHB_ModeEnum     ReqMode;
+    AL_DMACAHB_ModeEnum     CurMode;
+    AL_MailBox              EventQueue;
 } AL_DMACAHB_HalStruct;
 
 /************************** Variable Definitions *****************************/

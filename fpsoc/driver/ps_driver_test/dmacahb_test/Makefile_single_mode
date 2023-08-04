@@ -2,7 +2,10 @@
 # 3. CFLAGS
 #########################################################################
 
-CFLAGS := -O2 -DDMACAHB_DEBUG -DCONFIG_SINGLE_MODE_TEST=1 -Wno-int-to-pointer-cast
+CFLAGS := -O2 -DDMACAHB_DEBUG -DCONFIG_SINGLE_MODE_TEST=1 -Wno-int-to-pointer-cast -g
+CFLAGS += -DAL9000_BRINGUP
+# CFLAGS += -DUSE_RTOS
+# CFLAGS += -DRTOS_RTTHREAD
 
 #########################################################################
 # 5. define build target

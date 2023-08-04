@@ -332,6 +332,17 @@ AL_VOID AlDmacAhb_Dev_FillLliWithCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_Ll
     Lli->CtlHigh.Reg = AlDmacAhb_ll_ReadCtlHi(BaseAddr, ChOffset);
 }
 
+static AL_VOID AlCan_Dev_SetTransBusy(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChStateEnum State)
+{
+    AL_DMACAHB_EventStruct Event = {
+        .EventId    = AL_DMACAHB_EVENT_TRANS_READY,
+        .EventData  = 0
+    };
+    Channel->EventCallBack.Func(&Event, Channel->EventCallBack.Ref);
+
+    AlDmacAhb_Dev_SetState(Channel, State);
+}
+
 /**
  * This function set channel trans params
  * @param   Channel is pointer to AL_DMACAHB_ChStruct
@@ -383,7 +394,7 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
         return AL_DMACAHB_ERR_TRANS_BUSY;
     }
 
-    AlDmacAhb_Dev_SetState(Channel, State);
+    AlCan_Dev_SetTransBusy(Channel, State);
 
     if ((State == AL_DMACAHB_STATE_LLP_MODE_BUSY) || (State == AL_DMACAHB_STATE_LLP_RELOAD_MODE_BUSY)) {
         AlDmacAhb_ll_SetLinkStartAddr(BaseAddr, ChOffset, (AL_REG)Trans->Lli);
@@ -436,6 +447,7 @@ AL_S32 AlDmacAhb_Dev_Start(AL_DMACAHB_ChStruct *Channel)
 AL_S32 AlDmacAhb_Dev_Init(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_HwConfigStruct *HwConfig,
                           AL_DMACAHB_ChInitStruct *InitConfig)
 {
+    AL_S32 Ret = AL_OK;
     Channel->Config = (InitConfig == AL_NULL) ? AlDmacAhb_ChDefInitConfig : (*InitConfig);
     Channel->Dmac   = &AlDmacAhb_DmacInstance[HwConfig->DeviceId];
 
@@ -457,7 +469,10 @@ AL_S32 AlDmacAhb_Dev_Init(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_HwConfigStruc
 
     AlDmacAhb_Dev_ClrChAllIntr(Channel);
     AlDmacAhb_Dev_UnmaskChIntr(Channel);
-    AlDmacAhb_Dev_SetTransType(Channel);
+    Ret = AlDmacAhb_Dev_SetTransType(Channel);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
     AlDmacAhb_Dev_SetCtlLoReg(Channel);
     AlDmacAhb_Dev_SetCfgLoReg(Channel);
     AlDmacAhb_Dev_SetCfgHiReg(Channel);
@@ -465,7 +480,7 @@ AL_S32 AlDmacAhb_Dev_Init(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_HwConfigStruc
 
     AlDmacAhb_Dev_SetState(Channel, AL_DMACAHB_STATE_READY);
 
-    return AL_OK;
+    return Ret;
 }
 
 /**
@@ -497,7 +512,7 @@ AL_S32 AlDmacAhb_Dev_DeInit(AL_DMACAHB_ChStruct *Channel)
 /**
  * This function register interrupt call back function
  * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @param   CallBack is call back struct with AL_CAN_CallBackStruct
+ * @param   CallBack is call back struct with AL_DMACAHB_CallBackStruct
  * @return
  *          - AL_OK is register correct
  * @note
@@ -607,6 +622,7 @@ static AL_VOID AlDmacAhb_Dev_TransCompHandler(AL_DMACAHB_ChStruct *Channel)
 static AL_VOID AlDmacAhb_Dev_BlockTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
     AL_DMACAHB_ChStateEnum State;
+    AL_DMACAHB_EventStruct Event;
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb Channel %d block trans complete!\r\n", Channel->Config.Id);
 
     /* Abandon BLOCK_TRANS_BUSY state, to be remove */
@@ -619,20 +635,20 @@ static AL_VOID AlDmacAhb_Dev_BlockTransCompHandler(AL_DMACAHB_ChStruct *Channel)
         if (Channel->Trans.ReloadCountNum != 0xFFFFFFFF) {
             if (Channel->Trans.ReloadCount == Channel->Trans.ReloadCountNum) {
                 AlDmacAhb_Dev_ClrState(Channel, State);
+                Event.EventId = AL_DMACAHB_EVENT_BLOCK_TRANS_COMP;
+                Event.EventData = 0;
+                Channel->EventCallBack.Func(&Event, Channel->EventCallBack.Ref);
             } else if ((Channel->Trans.ReloadCount == (Channel->Trans.ReloadCountNum - 1)) &&
                     (State == AL_DMACAHB_STATE_RELOAD_MODE_BUSY)) {
                 AL_BOOL IsLastTransSet = AL_TRUE;
                 AlDmacAhb_Dev_IoCtl(Channel, AL_DMACAHB_IOCTL_SET_RELOAD_LAST_TRANS, &IsLastTransSet);
             }
+        } else {
+            Event.EventId = AL_DMACAHB_EVENT_RELOAD;
+            Event.EventData = Channel->Trans.ReloadCount;
+            Channel->EventCallBack.Func(&Event, Channel->EventCallBack.Ref);
         }
-
     }
-
-    AL_DMACAHB_EventStruct Event = {
-        .EventId    = AL_DMACAHB_EVENT_BLOCK_TRANS_COMP,
-        .EventData  = 0
-    };
-    Channel->EventCallBack.Func(&Event, Channel->EventCallBack.Ref);
 }
 
 /**
@@ -643,7 +659,7 @@ static AL_VOID AlDmacAhb_Dev_BlockTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 */
 static AL_VOID AlDmacAhb_Dev_SrcTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb Channel %d src trans complete!\r\n", Channel->Config.Id);
+    // AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb Channel %d src trans complete!\r\n", Channel->Config.Id);
     AL_DMACAHB_EventStruct Event = {
         .EventId    = AL_DMACAHB_EVENT_SRC_TRANS_COMP,
         .EventData  = 0
@@ -659,7 +675,7 @@ static AL_VOID AlDmacAhb_Dev_SrcTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 */
 static AL_VOID AlDmacAhb_Dev_DstTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb Channel %d dst trans complete!\r\n", Channel->Config.Id);
+    // AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb Channel %d dst trans complete!\r\n", Channel->Config.Id);
     AL_DMACAHB_EventStruct Event = {
         .EventId    = AL_DMACAHB_EVENT_DST_TRANS_COMP,
         .EventData  = 0
