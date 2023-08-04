@@ -3,6 +3,8 @@
 #########################################################################
 
 CFLAGS := -O2 -DCAN_DEBUG -DCONFIG_CAN_FD_INTR_TEST=1
+# CFLAGS += -DUSE_RTOS
+# CFLAGS += -DRTOS_RTTHREAD
 
 #########################################################################
 # 5. define build target

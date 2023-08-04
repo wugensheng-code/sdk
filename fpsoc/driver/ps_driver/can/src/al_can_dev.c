@@ -332,7 +332,7 @@ AL_VOID AlCan_Dev_ClrState(AL_CAN_DevStruct *Dev, AL_CAN_StateEnum State)
 */
 static AL_VOID AlCan_Dev_RecvFrameHandler(AL_CAN_DevStruct *Dev, AL_U32 IntrStatus)
 {
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "AlCan_Dev_RecvFrameHandler: Recv a frame!\r\n");
+    // AL_LOG(AL_LOG_LEVEL_DEBUG, "AlCan_Dev_RecvFrameHandler: Recv a frame!\r\n");
     /* IP has loop buffer, so nothing to do here */
     AlCan_Dev_ClrState(Dev, AL_CAN_STATE_RECV_EMPTY);
     AL_CAN_EventStruct Event = {
@@ -623,6 +623,17 @@ AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, AL
     return Ret;
 }
 
+static AL_VOID AlCan_Dev_SetSendBusy(AL_CAN_DevStruct *Dev)
+{
+    AL_CAN_EventStruct Event = {
+        .EventId    = AL_CAN_EVENT_SEND_READY,
+        .EventData  = 0
+    };
+    Dev->EventCallBack.Func(&Event, Dev->EventCallBack.Ref);
+
+    AlCan_Dev_SetState(Dev, AL_CAN_STATE_SEND_BUSY);
+}
+
 /**
  * This function send frame
  * @param   Dev is pointer to AL_CAN_DevStruct
@@ -657,7 +668,7 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
         return AL_CAN_ERR_BUSY;
     }
 
-    AlCan_Dev_SetState(Dev, AL_CAN_STATE_SEND_BUSY);
+    AlCan_Dev_SetSendBusy(Dev);
 
     Id = Frame->Id;
     // Id |= (Frame->IsEnTts << CAN_TBUF_0_3_TTSEN_SHIFT);  /* Not support TTCAN */
@@ -1023,7 +1034,7 @@ AL_S32 AlCan_Dev_DisplayFrame(AL_CAN_FrameStruct *Frame)
         AL_LOG(AL_LOG_LEVEL_INFO, "| Nominal bit rate\r\n");
     }
     DataWordLen = AlCan_Dev_Dlc2Len(Frame->DataLen);
-    AL_LOG(AL_LOG_LEVEL_INFO, "| Data length in byte is %d\r\n", DataWordLen);
+    AL_LOG(AL_LOG_LEVEL_INFO, "| Data length in word is %d\r\n", DataWordLen);
     for (AL_U32 i = 0; i < DataWordLen; i++) {
         AL_LOG(AL_LOG_LEVEL_INFO, "| Data %02d: 0x%08x\r\n", i, Frame->Data[i]);
     }

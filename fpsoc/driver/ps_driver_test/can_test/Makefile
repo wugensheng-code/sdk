@@ -3,14 +3,14 @@
 #########################################################################
 
 SDK_ROOT   ?= ../../../..
-CHIP       ?= dr1m90
+CHIP       ?= dr1v90
+# RTOS       := rtthread
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/7.5.0/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-elf/bin/aarch64-elf-
 else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
-
 
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
@@ -64,20 +64,20 @@ export COMPILE_PREFIX
 all:
 	echo COMPILE_PREFIX = $(COMPILE_PREFIX)
 
-	make cleanapp
-	make -f Makefile_can_fd_intr dasm
-	make cleanapp
-	make -f Makefile_can_2_0B_intr dasm
+	# make cleanapp
+	# make -f Makefile_can_fd_intr dasm
+	# make cleanapp
+	# make -f Makefile_can_2_0B_intr dasm
 	make cleanapp
 	make -f Makefile_can_2_0B_in_loopback dasm
-	make cleanapp
-	make -f Makefile_can_2_0B_ex_loopback dasm
-	make cleanapp
-	make -f Makefile_can_fd_listen_only dasm
-	make cleanapp
-	make -f Makefile_can_fd_stb_fifo dasm
-	make cleanapp
-	make -f Makefile_can_fd_dma dasm
+	# make cleanapp
+	# make -f Makefile_can_2_0B_ex_loopback dasm
+	# make cleanapp
+	# make -f Makefile_can_fd_listen_only dasm
+	# make cleanapp
+	# make -f Makefile_can_fd_stb_fifo dasm
+	# make cleanapp
+	# make -f Makefile_can_fd_dma dasm
 
 cleanapp:
 	$(RM) $(foreach subdir, $(SRC_DIR), $(wildcard $(subdir)/*.d $(subdir)/*.o))

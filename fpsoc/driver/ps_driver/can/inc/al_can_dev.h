@@ -19,12 +19,15 @@ extern "C" {
 /************************** Constant Definitions *****************************/
 
 /***************** Macros (Inline Functions) Definitions *********************/
+
+#define CAN_EVENT_START_BIT     6
+
 /**
  * @brief  Error code enum
  */
 typedef enum
 {
-    CAN_ERR_RECV                    = 0x100,    /* receive message with error*/
+    CAN_ERR_RECV                    = AL_ERR_MAX,
     CAN_ERR_WRONG_KOER_PARAMETER,
     CAN_ERR_KOER_RECV_BIT,
     CAN_ERR_KOER_SEND_BIT,
@@ -39,6 +42,7 @@ typedef enum
     CAN_ERR_STATE_NOT_READY,
     CAN_ERR_STATE_RESET,
     CAN_ERR_IOCTL_CMD,
+    CAN_ERR_DMA_CONFIG,
 } AL_CAN_ErrCodeEnum;
 
 #define AL_CAN_ERR_ILLEGAL_PARAM        AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM)
@@ -61,6 +65,8 @@ typedef enum
 #define AL_CAN_ERR_STATE_NOT_READY      AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, CAN_ERR_STATE_NOT_READY)
 #define AL_CAN_ERR_STATE_RESET          AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, CAN_ERR_STATE_RESET)
 #define AL_CAN_ERR_IOCTL_CMD            AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, CAN_ERR_IOCTL_CMD)
+#define AL_CAN_ERR_DMA_CONFIG           AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, CAN_ERR_DMA_CONFIG)
+#define AL_CAN_EVENTS_TO_ERRS(Events)   (AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, (Events << CAN_EVENT_START_BIT)))
 
 /**************************** Type Definitions *******************************/
 /**
@@ -225,16 +231,18 @@ typedef enum
  */
 typedef enum
 {
-    AL_CAN_EVENT_SEND_DONE          = BIT(0),
-    AL_CAN_EVENT_RECV_DONE          = BIT(1),
-    AL_CAN_EVENT_RBUFF_ALMOST_FULL  = BIT(2),
-    AL_CAN_EVENT_RBUFF_FULL         = BIT(3),
-    AL_CAN_EVENT_RBUFF_OVERFLOW     = BIT(4),
-    AL_CAN_EVENT_ABORT              = BIT(5),
-    AL_CAN_EVENT_ERR                = BIT(6),
-    AL_CAN_EVENT_BUS_ERR            = BIT(7),
-    AL_CAN_EVENT_ARBITRATION_LOST   = BIT(8),
-    AL_CAN_EVENT_ERR_PASSIVE        = BIT(9)
+    AL_CAN_EVENT_SEND_READY         = BIT(0),
+    AL_CAN_EVENT_SEND_DONE          = BIT(1),
+    AL_CAN_EVENT_RECV_READY         = BIT(2),
+    AL_CAN_EVENT_RECV_DONE          = BIT(3),
+    AL_CAN_EVENT_RBUFF_ALMOST_FULL  = BIT(4),
+    AL_CAN_EVENT_RBUFF_FULL         = BIT(5),
+    AL_CAN_EVENT_RBUFF_OVERFLOW     = BIT(6),
+    AL_CAN_EVENT_ABORT              = BIT(7),
+    AL_CAN_EVENT_ERR                = BIT(8),
+    AL_CAN_EVENT_BUS_ERR            = BIT(9),
+    AL_CAN_EVENT_ARBITRATION_LOST   = BIT(10),
+    AL_CAN_EVENT_ERR_PASSIVE        = BIT(11)
 } AL_CAN_EventIdEnum;
 
 /**
@@ -372,8 +380,8 @@ typedef struct
 {
     AL_CAN_FilterIndexEnum      FilterIndex;
     AL_CAN_FilterMaskTypeEnum   MaskType;
-    AL_U32                      MaskValue;
-    AL_U32                      IdValue;
+    AL_U32                      MaskValue;      /* Mask bit */
+    AL_U32                      IdValue;        /* Compare bit */
 } AL_CAN_FilterCfgStruct;
 
 /**
@@ -389,7 +397,7 @@ typedef struct
     AL_CAN_KoerEnum     Koer;
     AL_CAN_DataLenEnum  DataLen;
     AL_U32              Data[16];
-    AL_U32              Rts[2];
+    AL_U32              Rts[2];         /* Reception Time Stamps(CiA 603) */
 } AL_CAN_FrameStruct;
 
 /**
@@ -403,7 +411,7 @@ typedef struct
     AL_CAN_TransModeEnum    TransMode;
     AL_CAN_BitRateEnum      SlowBitRate;
     AL_CAN_BitRateEnum      FastBitRate;
-    AL_CAN_RbAwflEnum       RbAfwl;         /* receive buffer Almost Full Warning Limit */
+    AL_CAN_RbAwflEnum       RbAfwl;         /* Receive buffer Almost Full Warning Limit */
 } AL_CAN_InitStruct;
 
 /**
@@ -415,7 +423,6 @@ typedef struct
     AL_CAN_InitStruct       Config;
     AL_CAN_CallBackStruct   EventCallBack;
     AL_CAN_StateEnum        State;
-    AL_CAN_FrameStruct      *RecvBuffer;
 } AL_CAN_DevStruct;
 
 /************************** Variable Definitions *****************************/

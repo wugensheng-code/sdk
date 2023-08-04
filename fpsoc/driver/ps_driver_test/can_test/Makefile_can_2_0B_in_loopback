@@ -2,7 +2,8 @@
 # 3. CFLAGS
 #########################################################################
 
-CFLAGS := -O2 -DCAN_DEBUG -DCONFIG_CAN_IN_LOOPBACK_TEST=1
+CFLAGS := -O2 -DCAN_DEBUG -DCONFIG_CAN_IN_LOOPBACK_TEST=1 -g
+CFLAGS += -DAL9000_BRINGUP
 
 #########################################################################
 # 5. define build target

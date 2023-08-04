@@ -31,7 +31,7 @@ static AL_CAN_FrameStruct Frame1 = {
     .IsBitSwitch    = 0x0,
     .IsEnTts        = 0x0,
     .IsIdExt        = 0x0,
-    .IsRemote       = 0x0,
+    .IsRemote       = 0x1,
     .DataLen        = AL_CAN_LEN_0,
     .Data           = {0x01020304},
 };

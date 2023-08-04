@@ -46,7 +46,7 @@ typedef enum
     AL_ERR_BUSY           = 6,
     AL_ERR_NOMEM          = 7,
     AL_ERR_UNAVAILABLE    = 8,
-
+    AL_ERR_MAX
 } AL_ERR_CODE;
 
 
@@ -67,6 +67,7 @@ typedef enum
     AL_QSPI                 = 0x0A,
     AL_UTEST                = 0x0B,
     AL_IIC                  = 0x0C,
+    AL_CIPHER               = 0x0D,
 } AL_MODULE_TYPE;
 
 #ifdef __cplusplus
