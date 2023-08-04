@@ -199,8 +199,8 @@ static inline AL_BOOL AlUart_ll_IsBiIntr(AL_REG BaseAddr)
 static inline AL_VOID AlUart_ll_SetBaudRate(AL_REG BaseAddr, AL_U32 BaudRate, AL_U32 InputClockHz)
 {
     AL_REG32_SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_ENABLE);
-    AL_REG8_WRITE(BaseAddr + UART__IER_DLH__OFFSET, (AL_U16)(((InputClockHz >> 4) + (BaudRate >> 1)) / BaudRate) >> 8);
-    AL_REG8_WRITE(BaseAddr + UART__RBR__THR__DLL__OFFSET, (AL_U8)(((InputClockHz >> 4) + (BaudRate >> 1)) / BaudRate));
+    AL_REG32_WRITE(BaseAddr + UART__IER_DLH__OFFSET, (((InputClockHz >> 4) + (BaudRate >> 1)) / BaudRate) >> 8);
+    AL_REG32_WRITE(BaseAddr + UART__RBR__THR__DLL__OFFSET, (((InputClockHz >> 4) + (BaudRate >> 1)) / BaudRate));
     AL_REG32_SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_DISABLE);
 }
 
@@ -209,7 +209,7 @@ static inline AL_U32 AlUart_ll_GetBaudRate(AL_REG BaseAddr, AL_U32 InputClockHz)
     AL_U16 Divisor;
     AL_U32 BaudRate;
     AL_REG32_SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_ENABLE);
-    Divisor = (AL_REG8_READ(BaseAddr + UART__IER_DLH__OFFSET) << 8) | (AL_REG8_READ(BaseAddr + UART__RBR__THR__DLL__OFFSET));
+    Divisor = (AL_REG32_READ(BaseAddr + UART__IER_DLH__OFFSET) << 8) | (AL_REG32_READ(BaseAddr + UART__RBR__THR__DLL__OFFSET));
     BaudRate = (AL_U32)(InputClockHz / (16 * Divisor));
     AL_REG32_SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_DISABLE);
     return BaudRate;

@@ -193,8 +193,8 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_UART_InitStruct *InitConfig, 
     /* in the initialization stage ensure that no characters during this time period are received/transmitted */
     /* step 1. Set DLL and DLH to 0 */
     AL_REG32_SET_BIT(Uart->BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_ENABLE);
-    AL_REG8_WRITE(Uart->BaseAddr + UART__IER_DLH__OFFSET, 0);
-    AL_REG8_WRITE(Uart->BaseAddr + UART__RBR__THR__DLL__OFFSET, 0);
+    AL_REG32_WRITE(Uart->BaseAddr + UART__IER_DLH__OFFSET, 0);
+    AL_REG32_WRITE(Uart->BaseAddr + UART__RBR__THR__DLL__OFFSET, 0);
     AL_REG32_SET_BIT(Uart->BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_DISABLE);
 
     /* step 2 & step 3 */
