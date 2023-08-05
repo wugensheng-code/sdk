@@ -70,6 +70,6 @@ all: $(TARGET)
 	@$(ECHO) COMPILE_PREFIX = $(COMPILE_PREFIX)
 
 # include rules.mk
-include $(AL_SDK_ROOT)/tools/make/rules.mk
+include $(SDK_ROOT)/tools/make/rules.mk
 
 # vim: syntax=make

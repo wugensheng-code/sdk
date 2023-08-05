@@ -17,6 +17,7 @@ extern "C"{
 
 #include <rtthread.h>
 #include <rthw.h>
+#include <rthw.h>
 
 /*----------------------------------------------*
  * MUTEX API.*
@@ -114,26 +115,23 @@ static inline AL_S32 Al_OSAL_Mb_Init(AL_MailBox_t MailBox, const char* Name)
 
 static inline AL_S32 Al_OSAL_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
 {
-    AL_BOOL flag = (AL_BOOL)rt_sem_release(&MailBox->Semaphore);
 
-    if (flag == AL_TRUE) {
-        AL_U32 *mvalue = (AL_U32 *)Msg;
-        *mvalue        = (AL_U32)((MailBox->Msg >> 32) & 0xFFFF);
-        *(mvalue + 1)  =  (AL_U32)(MailBox->Msg & 0xFFFF);
-        MailBox->entry = 0;
 
-        return AL_OK;
-    }
+    AL_U32 *mvalue = (AL_U64 *)Msg;
+    MailBox->Msg = ((AL_U64)(*mvalue) << 32) | (AL_U64)*(mvalue + 1);
+    MailBox->entry = 1;
+    
+    rt_sem_release(&MailBox->Semaphore);
 }
 
 static inline AL_S32 Al_OSAL_Mb_Recive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)
 {
-    AL_BOOL flag = (AL_BOOL)rt_sem_take(&MailBox->Semaphore, AL_WAITFOREVER);
+    AL_S32 flag = (AL_S32)rt_sem_take(&MailBox->Semaphore, AL_WAITFOREVER);
 
-    if (flag == AL_TRUE) {
+    if (flag == AL_OK) {
         AL_U32 *mvalue = (AL_U32 *)Msg;
-        *mvalue        = (AL_U32)((MailBox->Msg >> 32) & 0xFFFF);
-        *(mvalue + 1)  =  (AL_U32)(MailBox->Msg & 0xFFFF);
+        *mvalue        = (AL_U32)((MailBox->Msg >> 32) & 0xFFFFFFFF);
+        *(mvalue + 1)  =  (AL_U32)(MailBox->Msg & 0xFFFFFFFF);
         MailBox->entry = 0;
 
         return AL_OK;
@@ -283,7 +281,7 @@ static inline AL_S32 Al_OSAL_Mb_Init(AL_MailBox_t MailBox, const char* Name)
 
 static inline AL_S32 Al_OSAL_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
 {
-    AL_U32 *mvalue = (AL_U32 *)Msg;
+    AL_U32 *mvalue = (AL_U64 *)Msg;
     MailBox->Msg = ((AL_U64)(*mvalue) << 32) | (AL_U64)*(mvalue + 1);
     MailBox->entry = 1;
 

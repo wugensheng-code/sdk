@@ -77,7 +77,7 @@ extern "C" {
 #define AL_WAIT_COND_UNTIL_TIMEOUT(Condition, Timeout)   ({                             \
     AL_BOOL Flag;                                                                       \
     AL_U64  Now = AlSys_GetTimer();                                                     \
-    while (((Flag = (Condition)) != AL_TRUE) && (Now + Timeout) < AlSys_GetTimer());    \
+    while (((Flag = (Condition)) != AL_TRUE) /*&& (Now + Timeout) > AlSys_GetTimer()*/);\
     Flag;                                                                               \
 })
 

@@ -18,6 +18,7 @@ CPPPATH += [SDK_ROOT + r'fpsoc/driver/ps_driver/mpu/inc']
 CPPPATH += [SDK_ROOT + r'fpsoc/driver/ps_driver/qspi/inc']
 CPPPATH += [SDK_ROOT + r'fpsoc/driver/ps_driver/smc/inc']
 CPPPATH += [SDK_ROOT + r'fpsoc/driver/ps_driver/spi/inc']
+CPPPATH += [SDK_ROOT + r'fpsoc/lib/cli/inc']
 
 
 group = DefineGroup('Board', src, depend = [''], CPPPATH = CPPPATH)

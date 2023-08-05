@@ -31,7 +31,7 @@ typedef enum
 |<--><--5bits-->|<--3bits-->|<-23bits->|
 ******************************************************************************/
 #define AL_DEF_ERR(module, level, errid) \
-     ((AL_S32)((AL_ERR_BAREMETAL) | ((module) << 5 ) | (level << 3) | (errid)))
+     ((AL_S32)((AL_ERR_BAREMETAL) | ((module) << 26 ) | (level << 23) | (errid)))
 
 /* NOTE! the following defined all common error code,
 ** all module must reserved 0~63 for their common error code

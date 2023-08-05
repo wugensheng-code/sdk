@@ -59,6 +59,7 @@ PINMUX_MODE ?= PINMUX_MODE1
 # 5. define build target
 #########################################################################
 TARGET := rtthread
+DOWNLOAD = ddr
 
 ifneq ($(PINMUX_MODE),)
 CFLAGS += -DENABLE_$(PINMUX_MODE)=1

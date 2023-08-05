@@ -11,19 +11,38 @@ static AL_CLI_ConsoleStruct *CliConsole;
 static AL_S32 AlCli_ProcessCmd(AL_S32 Argc, AL_S8 *Argv[])
 {
     const AL_CLI_CmdStruct *Cmd = AL_NULL;
+    AL_S32 Ret = AL_OK;
 
     if (Argv == AL_NULL || Argc < 1) {
         return AL_CLI_ERROR_ILLEGAL_PARAM;
     }
+
+    AL_CLI_PRINTF("\n");
+
+#ifdef USE_RTOS
+#ifdef RTOS_RTTHREAD
+    Ret = msh_exec(Argv[0], strlen(Argv[0]));
+    if (Ret == AL_OK)
+    {
+        AL_CLI_PRINTF("\n");
+        return AL_CLI_OK;
+    }
+#elif RTOS_FREERTOS
+
+#endif
+#endif
 
     Cmd = AlCli_LookUpCmdByName(CliCmdInfo->CmdList, Argv[0], strlen(Argv[0]));
     if (Cmd == AL_NULL) {
         return AL_CLI_ERROR_CMD_NOT_EXIST;
     }
 
-    Cmd->AlCli_CmdFun(Argc, Argv);
-
-    return AL_CLI_OK;
+    Ret = Cmd->AlCli_CmdFun(Argc, Argv);
+    if (Ret == AL_OK)
+    {
+        AL_CLI_PRINTF("\n");
+        return AL_CLI_OK;
+    }
 }
 
 static AL_S32 AlCli_SplitCmdBuf2Argv(AL_S8 *CmdBuf, AL_U32 CmdLen, AL_S8 *Argv[AL_CLI_MAX_ARGC_NUM])
@@ -157,6 +176,38 @@ static AL_S32 AlCli_GetCmd(AL_U8 *Buf, AL_U32 BufSize)
             return AL_CLI_OK;
         }
 
+        /* handle backspace*/
+        if (Character == 0x7f || Character == 0x08) {
+
+            if (CliCmdInfo->CmdCurPos == 0)
+                continue;
+
+            CliCmdInfo->CmdCurPos--;
+            CliCmdInfo->CmdEndPos--;
+
+            if (CliCmdInfo->CmdEndPos >  CliCmdInfo->CmdCurPos)
+            {
+                int i;
+
+                AL_CLI_MEMMOVE(&CliCmdInfo->CliInputBuf[CliCmdInfo->CmdCurPos],
+                           &CliCmdInfo->CliInputBuf[CliCmdInfo->CmdCurPos + 1],
+                           CliCmdInfo->CmdEndPos - CliCmdInfo->CmdCurPos);
+                CliCmdInfo->CliInputBuf[CliCmdInfo->CmdEndPos] = 0;
+
+                AL_CLI_PRINTF("\b%s  \b", &CliCmdInfo->CliInputBuf[CliCmdInfo->CmdCurPos]);
+
+                for (i = CliCmdInfo->CmdCurPos; i <= CliCmdInfo->CmdEndPos; i++)
+                    AL_CLI_PRINTF("\b");
+            }
+            else
+            {
+                AL_CLI_PRINTF("\b \b");
+                CliCmdInfo->CliInputBuf[CliCmdInfo->CmdEndPos] = 0;
+            }
+
+            continue;
+        }
+
         /* others: handle normal character */
         if (CliCmdInfo->CmdCurPos < CliCmdInfo->CmdEndPos) {
             memmove(&CliCmdInfo->CliInputBuf[CliCmdInfo->CmdCurPos + 1],
@@ -200,6 +251,16 @@ void AlCli_Main(void *data)
     AL_S8  *Buf = CliConsole->CliConsoleBuf;
     AL_U32 BufSize = AL_CLI_BUF_SIZE;
 
+    AL_CLI_PRINTF("\r\n");
+    AL_CLI_PRINTF("   _           _                _       \r\n");
+    AL_CLI_PRINTF("  /_\\   _ __  | |  ___    __ _ (_)  ___ \r\n");
+    AL_CLI_PRINTF(" //_\\\\ | '_ \\ | | / _ \\  / _` || | / __|\r\n");
+    AL_CLI_PRINTF("/  _  \\| | | || || (_) || (_| || || (__ \r\n");
+    AL_CLI_PRINTF("\\_/ \\_/|_| |_||_| \\___/  \\__, ||_| \\___|\r\n");
+    AL_CLI_PRINTF("                         |___/          \r\n");
+
+    AL_CLI_PRINTF("%s", CliCmdInfo->prompt);
+
     while (1) {
 
         /* get a whole command and handle it */
@@ -209,13 +270,16 @@ void AlCli_Main(void *data)
             switch (RetValue) {
                 case AL_CLI_ERROR_INVALID_CMD:
                     AL_CLI_PRINTF("syntax error\r\n");
+                    AL_CLI_PRINTF("%s", CliCmdInfo->prompt);
                     break;
 
                 case AL_CLI_ERROR_CMD_NOT_EXIST:
                     AL_CLI_PRINTF("cmd not found\r\n");
+                    AL_CLI_PRINTF("%s", CliCmdInfo->prompt);
                     break;
 
                 default:
+                    AL_CLI_PRINTF("%s", CliCmdInfo->prompt);
                     break;
             }
 
@@ -235,6 +299,8 @@ static AL_S32 AlCli_InitCliCmd()
     if (CliCmdInfo == AL_NULL) {
         return AL_CLI_ERROR_MALLOC_FAILED;
     }
+
+    CliCmdInfo->prompt = AL_CLI_PROMT;
 
 #ifdef AL_CLI_ECHO_DISABLE
     CliCmdInfo->EchoEnable = 0;
@@ -301,12 +367,6 @@ AL_S32 AlCli_Init(AL_CLI_ConsoleTypeEnum ConsoleType)
     if (RetValue != AL_CLI_OK) {
         return RetValue;
     }
-
-    /* if support os, create cli_main task */
-#ifdef SUPPORT_OS
-    // ToDo
-    AlCli_TaskCreate("CliMain", &CliMainArg, StackSize, Priority)
-#endif /* SUPPORT_OS */
 
     return AL_CLI_OK;
 }

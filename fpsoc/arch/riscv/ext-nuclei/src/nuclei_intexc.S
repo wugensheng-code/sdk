@@ -47,8 +47,14 @@
 */
 /* Save caller registers */
 .macro SAVE_CONTEXT
+
+#ifdef USE_RTOS
+#ifdef RTOS_RTTHREAD
     csrrw sp, CSR_MSCRATCHCSWL, sp
     /* Allocate stack space for context saving */
+#endif
+#endif
+
 #ifndef __riscv_32e
     addi sp, sp, -20*REGBYTES
 #else
@@ -111,7 +117,13 @@
     /* De-allocate the stack space */
     addi sp, sp, 14*REGBYTES
 #endif /* __riscv_32e */
+
+#ifdef USE_RTOS
+#ifdef RTOS_RTTHREAD
     csrrw sp, CSR_MSCRATCHCSWL, sp
+#endif
+#endif
+
 .endm
 
 /**

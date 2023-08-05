@@ -8,6 +8,8 @@ extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 
+#define AL_CLI_PROMT                            "alsh >"
+
 /* define error code */
 #define AL_CLI_OK                               0x0
 
@@ -23,17 +25,27 @@ extern "C" {
 #define AL_CLI_ERROR_UART_QUEUE_SEND_FAILED     0x10a
 #define AL_CLI_ERROR_UART_QUEUE_RECV_FAILED     0x10b
 
+#ifdef USE_RTOS
+#ifdef RTOS_RTTHREAD
+#define AL_CLI_MALLOC       rt_malloc
+#define AL_CLI_CALLOC       rt_calloc
+#define AL_CLI_FREE         rt_free
+#define AL_CLI_MEMMOVE      rt_memmove
+
+#define AL_CLI_PRINTF       rt_kprintf
+#elif RTOS_FREERTOS
+
+#endif
+#else
 #define AL_CLI_MALLOC       malloc
 #define AL_CLI_CALLOC       calloc
 #define AL_CLI_FREE         free
 
 #define AL_CLI_PRINTF       printf
+#define AL_CLI_MEMMOVE      memmove
 
-/* Adapt OS */
-#ifdef SUPPORT_OS
-// ToDo
-#define AlCli_TaskCreate(TaskName, TaskFunc, Arg, StackSize, Priority)
-#endif /* SIUPPORT_OS */
+#endif
+
 
 #ifdef __cplusplus
 }

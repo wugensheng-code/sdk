@@ -4,12 +4,19 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include "al_type.h"
+#include "al_core.h"
 
 #include "al_cli_common.h"
 #include "al_cli_cmd.h"
 #include "al_cli_console.h"
+
+#ifdef USE_RTOS
+#ifdef RTOS_RTTHREAD
+#include <msh.h>
+#elif RTOS_FREERTOS
+
+#endif
+#endif
 
 #define AL_CLI_MAX_ARGC_NUM     16
 
@@ -23,6 +30,8 @@ typedef struct
     AL_U32 CmdEndPos;
 
     AL_U8 EchoEnable;
+
+    AL_S32 *prompt;
 } AL_CLI_CmdInfoStruct;
 
 AL_S32 AlCli_Init(AL_CLI_ConsoleTypeEnum ConsoleType);

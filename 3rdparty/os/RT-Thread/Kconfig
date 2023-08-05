@@ -18,6 +18,7 @@ config PKGS_DIR
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "board/Kconfig"
+source "$BSP_DIR/utest/testcases/Kconfig"
 
 config SOC_DEMOSOC
     bool

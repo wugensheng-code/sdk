@@ -69,6 +69,7 @@ SECTIONS
     *(.rdata)
     *(.rodata .rodata.*)
     /* section information for initial. */
+    
     . = ALIGN(4);
     __rt_init_start = .;
     KEEP(*(SORT(.rti_fn*)))
@@ -82,6 +83,11 @@ SECTIONS
     __vsymtab_start = .;
     KEEP(*(VSymTab))
     __vsymtab_end = .;
+    . = ALIGN(4);
+    /* section information for utest */
+    __rt_utest_tc_tab_start = .;
+    KEEP(*(UtestTcTab))
+    __rt_utest_tc_tab_end = .;
     *(.gnu.linkonce.r.*)
 
   } >rom AT>rom

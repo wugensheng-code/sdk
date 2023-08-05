@@ -480,7 +480,7 @@ void finsh_thread_entry(void *parameter)
     finsh_wait_auth();
 #endif
 
-    rt_kprintf(FINSH_PROMPT);
+    // rt_kprintf(FINSH_PROMPT);
 
     while (1)
     {

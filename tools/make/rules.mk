@@ -96,7 +96,8 @@ PUBLIC_INC_DIR :=  $(BSP_DIR)/inc \
 ifeq ($(RTOS), rtthread)
 PUBLIC_INC_DIR +=   $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/include \
                     $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/finsh \
-                    $(AL_SDK_ROOT)/3rdparty/os/RT-Thread
+                    $(AL_SDK_ROOT)/3rdparty/os/RT-Thread \
+					${AL_SDK_ROOT}/3rdparty/os/RT-Thread/rt-thread/components/finsh
 endif
 
 PUBLIC_INC  :=  $(foreach subdir,$(sort $(PUBLIC_INC_DIR)), -I$(subdir))
@@ -204,13 +205,13 @@ $(CXX_OBJS): %.o: % $(COMMON_PREREQS)
 #### if target is elf
 ####
 
-# ifeq ($(RTOS), freertos)
-# 	filterout_lib = %libfreertos.a
-# else ifeq ($(RTOS), rtthread)
-# 	filterout_lib = %librtthread.a
-# else
-# 	filterout_lib = %libfreertos.a %librtthread.a
-# endif
+ifeq ($(RTOS), freertos)
+	filterout_lib = %librtthread
+else ifeq ($(RTOS), rtthread)
+	filterout_lib = %libfreertos
+else
+	filterout_lib = %libfreertos %librtthread
+endif
 
 
 $(TARGET_ELF): bsp make_all_libs $(ALL_OBJS)

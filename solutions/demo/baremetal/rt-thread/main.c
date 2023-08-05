@@ -64,10 +64,9 @@ int thread_sample(void)
 
     return 0;
 }
+MSH_CMD_EXPORT(thread_sample, thread sample);
 
 int main()
 {
-    thread_sample();
-
     return 0;
 }

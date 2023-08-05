@@ -82,6 +82,10 @@ SECTIONS
     __vsymtab_start = .;
     KEEP(*(VSymTab))
     __vsymtab_end = .;
+    . = ALIGN(4);
+    __rt_utest_tc_tab_start = .;
+    KEEP(*(UtestTcTab))
+    __rt_utest_tc_tab_end = .;
     *(.gnu.linkonce.r.*)
 
   } >ilm AT>ilm

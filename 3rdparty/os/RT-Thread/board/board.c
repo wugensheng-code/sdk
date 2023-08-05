@@ -17,6 +17,14 @@
 #include <al_log.h>
 
 
+#ifndef RT_USING_HEAP
+    static struct rt_thread cli_thread;
+    ALIGN(RT_ALIGN_SIZE)
+    static char cli_thread_stack[CLI_THREAD_STACK_SIZE];
+#endif
+
+extern AL_CLI_CmdInfoStruct *CliCmdInfo;
+
 /** _end symbol defined in linker script of Nuclei SDK */
 extern void *_heap_start;
 
@@ -76,5 +84,47 @@ void rt_hw_console_output(const char* str)
     }
     
 }
+
+
+void cli_thread_entry(void *parameter)
+{
+    AL_S32 Ret = AL_OK;
+
+    Ret = AlCli_Init(AL_CLI_CONSOLE_UART);
+    if (Ret) {
+        AL_CLI_PRINTF("Cli Init failed");
+        return;
+    }
+
+    AlCli_Main(AL_NULL);
+}
+
+int cli_system_init(void)
+{
+    rt_err_t result = RT_EOK;
+    rt_thread_t tid;
+
+
+#ifdef RT_USING_HEAP
+    /* create or set shell structure */
+    tid = rt_thread_create(CLI_THREAD_NAME,
+                           cli_thread_entry, RT_NULL,
+                           CLI_THREAD_STACK_SIZE, CLI_THREAD_PRIORITY, 10);
+#else
+    shell = &_shell;
+    tid = &finsh_thread;
+    result = rt_thread_init(&cli_thread,
+                            CLI_THREAD_NAME,
+                            cli_thread_entry, RT_NULL,
+                            &cli_thread_stack[0], sizeof(cli_thread_stack),
+                            CLI_THREAD_PRIORITY, 10);
+#endif /* RT_USING_HEAP */
+
+    if (tid != NULL && result == RT_EOK)
+        rt_thread_startup(tid);
+    return 0;
+}
+INIT_APP_EXPORT(cli_system_init);
+
 /******************** end of file *******************/
 
