@@ -3,7 +3,6 @@
 
 #include "type.h"
 #include "barriers.h"
-#include "compiler_attributes.h"
 
 /*
  * Generic IO read/write.  These perform native-endian accesses.
@@ -27,7 +26,7 @@ static __always_inline inline void __raw_writel(u32 val, volatile void __iomem *
 }
 
 #define __raw_writeq __raw_writeq
-static inline void __raw_writeq(u64 val, volatile void __iomem *addr)
+static inline void __raw_writeq(AL_U64 val, volatile void __iomem *addr)
 {
 	asm volatile("str %x0, [%1]" : : "rZ" (val), "r" (addr));
 }
@@ -62,9 +61,9 @@ static __always_inline inline u32 __raw_readl(const volatile void __iomem *addr)
 }
 
 #define __raw_readq __raw_readq
-static inline u64 __raw_readq(const volatile void __iomem *addr)
+static inline AL_U64 __raw_readq(const volatile void __iomem *addr)
 {
-	u64 val;
+	AL_U64 val;
 	asm volatile("ldr %0, [%1]" \
 		     : "=r" (val) : "r" (addr));
 	return val;
@@ -101,7 +100,7 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
 #define readb_relaxed(addr)	({ u8  __r = __raw_readb(addr); __r; })
 #define readw_relaxed(addr)	({ u16 __r = __raw_readw(addr); __r; })
 #define readl_relaxed(addr)	({ u32 __r = __raw_readl(addr); __r; })
-#define readq_relaxed(addr)	({ u64 __r = __raw_readq(addr); __r; })
+#define readq_relaxed(addr)	({ AL_U64 __r = __raw_readq(addr); __r; })
 
 #define writeb_relaxed(val,addr)	((void)__raw_writeb((val),(addr)))
 #define writew_relaxed(val,addr)	((void)__raw_writew((val),(addr)))
@@ -116,7 +115,7 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
 #define readb(addr)		({ u8  __v = readb_relaxed(addr); __iormb(__v); __v; })
 #define readw(addr)		({ u16 __v = readw_relaxed(addr); __iormb(__v); __v; })
 #define readl(addr)		({ u32 __v = readl_relaxed(addr); __iormb(__v); __v; })
-#define readq(addr)		({ u64 __v = readq_relaxed(addr); __iormb(__v); __v; })
+#define readq(addr)		({ AL_U64 __v = readq_relaxed(addr); __iormb(__v); __v; })
 
 #define writeb(val,addr)		({ __iowmb(); writeb_relaxed((val),(addr)); })
 #define writew(val,addr)		({ __iowmb(); writew_relaxed((val),(addr)); })

@@ -4,7 +4,6 @@
 #include "type.h"
 #include "sysregs.h"
 #include "barriers.h"
-#include "compiler_attributes.h"
 #include "stdio.h"
 
 #define DEFAULT_PMR_VALUE	    0xf0
@@ -40,9 +39,9 @@ static __always_inline inline void gic_write_dir(u32 irq)
 	isb();
 }
 
-static inline u64 gic_read_iar_common(void)
+static inline AL_U64 gic_read_iar_common(void)
 {
-	u64 irqstat;
+	AL_U64 irqstat;
 
 	irqstat = read_sysreg_s(SYS_ICC_IAR1_EL1);
 
@@ -51,9 +50,9 @@ static inline u64 gic_read_iar_common(void)
 	return irqstat;
 }
 
-static inline u64 gic_read_iar0_common(void)
+static inline AL_U64 gic_read_iar0_common(void)
 {
-	u64 irqstat;
+	AL_U64 irqstat;
 
 	irqstat = read_sysreg_s(SYS_ICC_IAR0_EL1);
 
@@ -69,9 +68,9 @@ static inline u64 gic_read_iar0_common(void)
  * IAR status to ensure data synchronization (access to icc_iar1_el1
  * is not sync'ed before and after).
  */
-static inline u64 gic_read_iar_cavium_thunderx(void)
+static inline AL_U64 gic_read_iar_cavium_thunderx(void)
 {
-	u64 irqstat;
+	AL_U64 irqstat;
 
 	nops(8);
 	irqstat = read_sysreg_s(SYS_ICC_IAR1_EL1);
@@ -98,7 +97,7 @@ static inline void gic_write_grpen1(u32 val)
 	isb();
 }
 
-static inline void gic_write_sgi1r(u64 val)
+static inline void gic_write_sgi1r(AL_U64 val)
 {
 	write_sysreg_s(val, SYS_ICC_SGI1R_EL1);
 }

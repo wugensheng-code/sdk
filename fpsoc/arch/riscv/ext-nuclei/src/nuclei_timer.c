@@ -44,7 +44,7 @@ AL_U32 get_cpu_freq()
     return cpu_freq;
 }
 
-void _delay_us(AL_U64 count)
+AL_VOID _delay_us(AL_U64 count)
 {
     AL_U64 start_mtime, delta_mtime;
     AL_U64 delay_ticks = (get_timer_freq() * (AL_U64)count) / 1000000;
@@ -63,7 +63,7 @@ void _delay_us(AL_U64 count)
  * \param[in]  count: count in milliseconds
  * \remarks
  */
-void _delay_ms(AL_U64 count)
+AL_VOID _delay_ms(AL_U64 count)
 {
     AL_U64 start_mtime, delta_mtime;
     AL_U64 delay_ticks = (get_timer_freq() * (AL_U64)count) / 1000;
@@ -75,7 +75,7 @@ void _delay_ms(AL_U64 count)
     } while (delta_mtime < delay_ticks);
 }
 
-AL_U64 get_SystickTimer(void)
+AL_U64 AlSys_GetTimerTick(AL_VOID)
 {
     return SysTimer->MTIMER;
 }
@@ -85,40 +85,18 @@ AL_U64 get_MTimerOutValue(AL_U64 count)
     return (get_timer_freq() * count) / 1000000;
 }
 
-AL_U64 get_Us(AL_U64 start, AL_U64 end)
-{
-    AL_U64 freq = get_timer_freq();
-    return ((end - start)/(freq/1000000));
-}
-
-void AlSys_UDelay(AL_U64 Usec)
+AL_VOID AlSys_UDelay(AL_U64 Usec)
 {
     _delay_us(Usec);
 }
 
-void AlSys_MDelay(AL_U64 Msec)
+AL_VOID AlSys_MDelay(AL_U64 Msec)
 {
     _delay_ms(Msec);
 }
 
-void AlDelay_SDelay(AL_U64 Second)
+
+AL_U64 AlSys_GetTimerFreq(AL_VOID)
 {
-    AL_U64 start_mtime, delta_mtime;
-    AL_U64 delay_ticks = (get_timer_freq() * Second);
-
-    start_mtime = SysTimer_GetLoadValue();
-
-    do {
-        delta_mtime = SysTimer_GetLoadValue() - start_mtime;
-    } while (delta_mtime < delay_ticks);
-}
-
-AL_U64 AlSys_GetTimer(void)
-{
-    return SysTimer->MTIMER;
-}
-
-AL_U64 AlSys_GetFreq(void)
-{
-	return get_timer_freq();
+    return get_timer_freq();
 }

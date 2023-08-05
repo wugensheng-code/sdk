@@ -206,6 +206,27 @@
 /** \brief Defines 'read/write' structure member permissions */
 #define     __IOM    volatile
 
+
+#ifdef __CHECKER__
+
+#define __iomem    __attribute__((noderef, address_space(2)))
+#define __force	   __attribute__((force))
+
+#else
+
+#define __iomem
+#define __force
+
+#endif
+
+#define cacheline_aligned __attribute__((__aligned__(64)))
+
+#if __has_attribute(__fallthrough__)
+# define fallthrough                    __attribute__((__fallthrough__))
+#else
+# define fallthrough                    do {} while (0)  /* fallthrough */
+#endif
+
 #ifdef __cplusplus
 }
 #endif

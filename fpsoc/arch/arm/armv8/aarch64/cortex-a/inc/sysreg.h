@@ -1026,7 +1026,7 @@
  * optimized away or replaced with synthetic values.
  */
 #define read_sysreg(r) ({					\
-	u64 __val;						\
+	AL_U64 __val;						\
 	asm volatile("mrs %0, " __stringify(r) : "=r" (__val));	\
 	__val;							\
 })
@@ -1036,7 +1036,7 @@
  * the "%x0" template means XZR.
  */
 #define write_sysreg(v, r) do {					\
-	u64 __val = (u64)(v);					\
+	AL_U64 __val = (AL_U64)(v);					\
 	asm volatile("msr " __stringify(r) ", %x0"		\
 		     : : "rZ" (__val));				\
 } while (0)
@@ -1046,13 +1046,13 @@
  * GAS.
  */
 #define read_sysreg_s(r) ({						\
-	u64 __val;							\
+	AL_U64 __val;							\
 	asm volatile(__mrs_s("%0", r) : "=r" (__val));			\
 	__val;								\
 })
 
 #define write_sysreg_s(v, r) do {					\
-	u64 __val = (u64)(v);						\
+	AL_U64 __val = (AL_U64)(v);						\
 	asm volatile(__msr_s(r, "%x0") : : "rZ" (__val));		\
 } while (0)
 
@@ -1061,21 +1061,21 @@
  * set mask are set. Other bits are left as-is.
  */
 #define sysreg_clear_set(sysreg, clear, set) do {			\
-	u64 __scs_val = read_sysreg(sysreg);				\
-	u64 __scs_new = (__scs_val & ~(u64)(clear)) | (set);		\
+	AL_U64 __scs_val = read_sysreg(sysreg);				\
+	AL_U64 __scs_new = (__scs_val & ~(AL_U64)(clear)) | (set);		\
 	if (__scs_new != __scs_val)					\
 		write_sysreg(__scs_new, sysreg);			\
 } while (0)
 
 #define sysreg_clear_set_s(sysreg, clear, set) do {			\
-	u64 __scs_val = read_sysreg_s(sysreg);				\
-	u64 __scs_new = (__scs_val & ~(u64)(clear)) | (set);		\
+	AL_U64 __scs_val = read_sysreg_s(sysreg);				\
+	AL_U64 __scs_new = (__scs_val & ~(AL_U64)(clear)) | (set);		\
 	if (__scs_new != __scs_val)					\
 		write_sysreg_s(__scs_new, sysreg);			\
 } while (0)
 
 #define read_sysreg_par() ({						\
-	u64 par;							\
+	AL_U64 par;							\
 	asm("dmb sy");	\
 	par = read_sysreg(par_el1);					\
 	asm("dmb sy");	\

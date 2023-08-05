@@ -175,8 +175,8 @@ typedef enum {
 
 #define AL_IIC_NUM_INSTANCE     (2)
 
-#define I2C0__BASE_ADDR         0xF8414000ULL
-#define I2C1__BASE_ADDR         0xF8415000ULL
+#define I2C0__BASE_ADDR         (0xF8414000ULL)
+#define I2C1__BASE_ADDR         (0xF8415000ULL)
 
 #define I2C_CLOCK               (40000000UL)
 

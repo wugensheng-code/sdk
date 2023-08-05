@@ -7,6 +7,30 @@ void __asm_invalidate_dcache_all(void);
 void __asm_flush_dcache_all(void);
 
 
+AL_VOID AlCache_EnableICache(AL_VOID)
+{
+
+}
+
+
+AL_VOID AlCache_DisableICache(AL_VOID)
+{
+
+}
+
+
+AL_VOID AlCache_EnableDCache(AL_VOID)
+{
+
+}
+
+
+AL_VOID AlCache_DisableDCache(AL_VOID)
+{
+
+}
+
+
 AL_VOID AlCache_InvalidateIcacheAll(AL_VOID)
 {
     __asm_invalidate_icache_all();

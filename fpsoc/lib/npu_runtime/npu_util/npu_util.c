@@ -45,5 +45,5 @@ char* strdup(const char* src) {
 }
 
 unsigned long get_sys_counter_val(AL_VOID) {
-    return AlSys_GetTimer();
+    return AlSys_GetTimerTick();
 }

@@ -1,10 +1,6 @@
 #include "al_type.h"
 #include "al_chip.h"
-
-#include "gic_v3_addr.h"
 #include "gic_v3.h"
-
-#include "timer.h"
 
 AL_VOID AlChip_Dr1m90Init(AL_VOID)
 {
@@ -16,6 +12,6 @@ AL_VOID AlChip_Dr1m90Init(AL_VOID)
     #endif
 
     #ifndef SWITCH_TO_EL0_FROM_EL3
-        generic_timer_init();
+        AlSys_StartTimer();
     #endif
 }

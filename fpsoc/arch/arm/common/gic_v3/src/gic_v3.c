@@ -8,7 +8,6 @@
  */
 
 #include "gic.h"
-#include "io.h"
 #include "cpu.h"
 #include "type.h"
 #include "sysregs.h"
@@ -16,7 +15,7 @@
 #include "gic_v3_addr.h"
 #include "gic_v3_value.h"
 #include "al_core.h"
-#include "compiler_attributes.h"
+#include "io.h"
 
 
 #ifdef CONFIG_PRINTK
@@ -89,10 +88,10 @@ static void gic_redist_wait(void)
 	gic_do_wait_for_rwp(GICR_RD_BASE);
 }
 
-static u64 gic_mpidr_to_affinity(unsigned long mpidr)
+static AL_U64 gic_mpidr_to_affinity(unsigned long mpidr)
 {
-	u64 aff;
-	aff = ((u64)MPIDR_AFFINITY_LEVEL(mpidr, 3) << 32 |
+	AL_U64 aff;
+	aff = ((AL_U64)MPIDR_AFFINITY_LEVEL(mpidr, 3) << 32 |
 		MPIDR_AFFINITY_LEVEL(mpidr, 2) << 16 |
 		MPIDR_AFFINITY_LEVEL(mpidr, 1) << 8  |
 		MPIDR_AFFINITY_LEVEL(mpidr, 0));
@@ -105,7 +104,7 @@ void gicv3_dist_init(u32 int_group)
 	u32 i;
 	u32 spi_itline_nums, cpu_nums, gic_irqs;
 	u32 gicd_typer;
-	u64 affinity;
+	AL_U64 affinity;
 
 	/* Disable the distributor */
 	writel_relaxed(0, GICD_CTLR);

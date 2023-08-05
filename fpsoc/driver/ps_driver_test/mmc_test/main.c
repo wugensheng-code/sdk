@@ -260,13 +260,13 @@ static AL_VOID AlMmc_Test_Emmc(AL_VOID)
 
 static AL_VOID AlMmc_Test_CalcStart(AL_MMC_PerCalcStruct *PerCalc)
 {
-    PerCalc->Start = AlSys_GetTimer();
+    PerCalc->Start = AlSys_GetTimerTick();
 }
 
 static AL_VOID AlMmc_Test_CalcEnd(AL_MMC_HalStruct *Handle, AL_MMC_PerCalcStruct *PerCalc, AL_UINTPTR BlkCnt)
 {
-    PerCalc->End = AlSys_GetTimer();
-    PerCalc->TimeInUs = (PerCalc->End - PerCalc->Start)/(AlSys_GetFreq()/1000000);
+    PerCalc->End = AlSys_GetTimerTick();
+    PerCalc->TimeInUs = (PerCalc->End - PerCalc->Start)/(AlSys_GetTimerFreq()/1000000);
     PerCalc->DatInByte = BlkCnt * Handle->Dev->CardInfo.BlkLen;
     PerCalc->BytePerSec = ((AL_DOUBLE)PerCalc->DatInByte / PerCalc->TimeInUs);
 

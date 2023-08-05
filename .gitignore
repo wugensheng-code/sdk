@@ -17,7 +17,7 @@ si
 .project
 cscope*
 *.txt
-*.swap
+*.swp
 gdb.init
 .vscode/*.*
 .vscode/settings.json

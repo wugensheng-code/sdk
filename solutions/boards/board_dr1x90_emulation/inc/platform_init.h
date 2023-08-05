@@ -41,8 +41,19 @@ extern "C" {
 
 /* Freq of all peripherals */
 #define MHZ                 1000000U
+
 #define UART_FREQ           (40*MHZ )
 #define ALSOC_APU_FREQ      (100*MHZ)
+
+#if 0
+
+#define UART_CLOCK
+#define I2C_CLOCK
+#define SPI_CLOCK
+#define QSPI_CLOCK
+
+#endif
+
 
 /**
  * @desc  : init soc platform according to user configuration

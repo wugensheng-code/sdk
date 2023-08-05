@@ -205,6 +205,15 @@ typedef enum {
 
 #define ARCH_DMA_MINALIGN       (64)
 
+
+/*----------------------------------------------------------------------------
+  Define SYSCNT_S
+ *----------------------------------------------------------------------------*/
+#define SYSCNT_S_BASE           (0xF8804000UL)
+
+#define TSG_CTRL_CNTCR          SYSCNT_S_BASE
+
+
 #ifdef __cplusplus
 }
 #endif

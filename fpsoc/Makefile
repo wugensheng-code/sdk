@@ -8,7 +8,8 @@ LIBNAME = albsp
 # arch sources & inc
 #########################################################################
 
-INC_DIR += inc
+INC_DIR += inc \
+           chip/common/inc
 
 ifeq ($(CHIP_ARCH),armv8-a)
 
@@ -24,6 +25,7 @@ else
 
 SRC_DIR += arch/riscv/rv64/src
 INC_DIR += arch/riscv/rv64/inc
+
 
 ifeq ($(ARCH_EXT),ext-nuclei)
 SRC_DIR += arch/riscv/ext-nuclei/src
