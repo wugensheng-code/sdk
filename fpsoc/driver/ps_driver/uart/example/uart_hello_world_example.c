@@ -33,6 +33,7 @@ AL_S32 main(void)
 
     if (Status != AL_OK) {
         printf("Uart Hello World Example Failed\r\n");
+        return Status;
     }
 
     printf("Successfully run Uart Hello World Example\r\n");
@@ -53,9 +54,12 @@ AL_S32 UartHelloWorldExample(AL_VOID)
         return ret;
     }
 
-    for (SentCount ; SentCount < (sizeof(HelloWorld) - 1) ; SentCount++) {
-        AlUart_Hal_SendDataPolling(&uart0_hal, &HelloWorld[SentCount], 1);
+    AL_S32 ret = AlUart_Hal_SendDataPolling(&uart0_hal, &HelloWorld[SentCount], sizeof(HelloWorld));
+    if (ret != AL_OK) {
+        printf("AlUart_Hal_SendDataPolling error\r\n");
+        return ret;
     }
+
     printf("Hello Test Passed\r\n");
 
     return AL_OK;

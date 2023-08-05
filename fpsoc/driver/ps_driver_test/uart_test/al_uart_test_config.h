@@ -21,7 +21,7 @@ extern "C" {
 
 /************************** Constant Definitions *****************************/
 #define BUF_SIZE 0X10
-#define TIME_OUT 10
+#define TIME_OUT 1000000
 
 /***************** Macros (Inline Functions) Definitions *********************/
 
@@ -29,10 +29,11 @@ extern "C" {
 
 /************************** Variable Definitions *****************************/
 static AL_UART_InitStruct UART_InitStruct = {
-        .BaudRate     = 115200,
-        .Parity       = UART_NO_PARITY,
-        .WordLength   = UART_CHAR_8BITS,
-        .StopBits     = UART_STOP_1BIT,
+        .BaudRate           = 115200,
+        .Parity             = UART_NO_PARITY,
+        .WordLength         = UART_CHAR_8BITS,
+        .StopBits           = UART_STOP_1BIT,
+        .CharTimeoutEnable  = AL_TRUE
     };
 
 /************************** Function Prototypes ******************************/

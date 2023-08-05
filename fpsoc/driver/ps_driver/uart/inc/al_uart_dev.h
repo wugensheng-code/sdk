@@ -17,13 +17,13 @@ extern "C" {
 #include "al_errno.h"
 #include "al_uart_ll.h"
 
-#define AL_UART_ERR_NULL_PTR             (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_NULL_PTR))
-#define AL_UART_ERR_ILLEGAL_PARAM        (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
-#define AL_UART_ERR_NOT_READY            (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_READY))
-#define AL_UART_ERR_NOT_SUPPORT          (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_SUPPORT))
-#define AL_UART_ERR_TIMEOUT              (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_TIMEOUT))
-#define AL_UART_ERR_BUSY                 (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_BUSY))
-#define AL_UART_EVENTS_TO_ERRS(Events)          (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, Events))
+#define AL_UART_ERR_NULL_PTR                 (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_NULL_PTR))
+#define AL_UART_ERR_ILLEGAL_PARAM            (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
+#define AL_UART_ERR_NOT_READY                (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_READY))
+#define AL_UART_ERR_NOT_SUPPORT              (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_SUPPORT))
+#define AL_UART_ERR_TIMEOUT                  (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_TIMEOUT))
+#define AL_UART_ERR_BUSY                     (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_BUSY))
+#define AL_UART_EVENTS_TO_ERRS(Events)       (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, Events))
 
 
 /******************************* Exported Typedef ************************************/
@@ -88,7 +88,16 @@ typedef enum
     AL_UART_IOCTL_GET_PARITY,
     AL_UART_IOCTL_SET_AUTO_FLOW_CTL,
     AL_UART_IOCTL_SET_LOOPBACK
-} AL_Uart_IoCtlCmdEnum;
+} AL_UART_IoCtlCmdEnum;
+
+typedef union {
+    AL_U32 BaudRate;
+    AL_U32 DataWidth;
+    AL_U32 StopBits;
+    AL_U32 Parity;
+    AL_BOOL AutoFlowState;
+    AL_BOOL LoopBack;
+}AL_UART_IoctlParamUnion;
 
 typedef struct
 {
@@ -123,7 +132,9 @@ AL_VOID AlUart_Dev_IntrHandler(void *Instance);
 AL_BOOL AlUart_Dev_IsRxBusy(AL_UART_DevStruct *Uart);
 AL_S32 AlUart_Dev_SendDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 Size);
 AL_S32 AlUart_Dev_RecvDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 Size);
-AL_S32 AlUart_Dev_IoCtl(AL_UART_DevStruct *Uart, AL_Uart_IoCtlCmdEnum Cmd, AL_VOID *Data);
+AL_S32 AlUart_Dev_IoCtl(AL_UART_DevStruct *Uart, AL_UART_IoCtlCmdEnum Cmd, AL_UART_IoctlParamUnion *IoctlParam);
+AL_VOID AlUart_Dev_StopSend(AL_UART_DevStruct *Uart);
+AL_VOID AlUart_Dev_StopReceive(AL_UART_DevStruct *Uart);
 
 #ifdef __cplusplus
 }

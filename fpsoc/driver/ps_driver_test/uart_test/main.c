@@ -96,7 +96,7 @@ static AL_S32 AlUart_Test_SendDataBlockOnly(AL_VOID)
     while (1) {
         ret = AlUart_Hal_SendDataBlock(&uart0_hal, Data, BUF_SIZE, TIME_OUT);
         if (ret != AL_OK) {
-            printf("AlUart_Hal_SendDataBlock Error\r\n");
+            printf("AlUart_Hal_SendDataBlock Error! ret: 0x%x\r\n", ret);
             return ret;
         }
         printf("\r\n\r\n");
@@ -127,17 +127,35 @@ static AL_S32 AlUart_Test_RecvSendBlockLoopBack(AL_VOID)
         /* step 1. ues AlUart_Hal_RecvDataBlock to receve datas */
         ret = AlUart_Hal_RecvDataBlock(&uart0_hal, Data, BUF_SIZE, &RecvSize, TIME_OUT);
         if (ret != AL_OK) {
-            printf("AlUart_Hal_RecvDataBlock Error\r\n");
-            return ret;
+            switch ((AL_ERR_CODE)ret)
+            {
+            case AL_ERR_TIMEOUT:
+            case AL_ERR_UNAVAILABLE:
+            case AL_ERR_BUSY:
+                break;
+
+            case AL_ERR_NOMEM:
+            case AL_ERR_NOT_READY:
+            case AL_ERR_NULL_PTR:
+            case AL_ERR_ILLEGAL_PARAM:
+            case AL_ERR_NOT_SUPPORT:
+                printf("AlUart_Hal_RecvDataBlock Error! ret: 0x%x\r\n", ret);
+                return;
+
+            default:
+                printf("Unknown error type for AlUart_Hal_RecvDataBlock!!! ret: 0x%x\r\n", ret);
+                return;
+            }
         }
 
         /* step 2. ues AlUart_Hal_SendDataBlock to send datas */
-        ret = AlUart_Hal_SendDataBlock(&uart0_hal, Data, RecvSize, TIME_OUT);
-        if (ret != AL_OK) {
-            printf("AlUart_Hal_SendDataBlock Error\r\n");
-            return ret;
+        if (ret == AL_OK) {
+            ret = AlUart_Hal_SendDataBlock(&uart0_hal, Data, RecvSize, TIME_OUT);
+            if (ret != AL_OK) {
+                printf("AlUart_Hal_SendDataBlock Error\r\n");
+            }
         }
-        printf("\r\n");
+
     }
 }
 

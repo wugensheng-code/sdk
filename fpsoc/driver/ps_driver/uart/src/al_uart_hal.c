@@ -55,16 +55,15 @@ static AL_VOID AlUart_Hal_EventHandler(AL_UART_EventStruct UartEvent, AL_VOID *C
     switch (UartEvent.Events)
     {
     case AL_UART_EVENT_SEND_DONE:
-         AL_UART_EVENT_BUSY_DETECT_TX:
-        Al_OSAL_Mb_Send(&Handle->TxEventQueue[Handle->CurTxMode], &UartEvent);
+    case AL_UART_EVENT_BUSY_DETECT_TX:
+         Al_OSAL_Mb_Send(&Handle->TxEventQueue[Handle->CurTxMode], &UartEvent);
         break;
 
     case AL_UART_EVENT_RECEIVE_DONE:
-         AL_UART_EVENT_CHAR_TIMEOUT:
-         AL_UART_EVENT_OVER_RUN_ERR:
-         AL_UART_EVENT_BUSY_DETECT_RX:
-
-        Al_OSAL_Mb_Send(&Handle->TxEventQueue[Handle->CurRxMode], &UartEvent);
+    case AL_UART_EVENT_CHAR_TIMEOUT:
+    case AL_UART_EVENT_OVER_RUN_ERR:
+    case AL_UART_EVENT_BUSY_DETECT_RX:
+        Al_OSAL_Mb_Send(&Handle->RxEventQueue[Handle->CurRxMode], &UartEvent);
         break;
 
     case AL_UART_EVENT_MODEM_STATUS_INTR:
@@ -232,8 +231,6 @@ AL_S32 AlUart_Hal_RecvDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32
         Al_OSAL_Sleep(1);
     }
 
-    Ret = AlUart_Dev_RecvDataPolling(Handle->Dev, Data, Size);
-
     (AL_VOID)Al_OSAL_Lock_Release(&Handle->RxLock);
 
     return Ret;
@@ -284,7 +281,7 @@ AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
         /*
         * if timeout, force stop sending
         */
-        AlUart_Dev_StopSend(Handle);
+        AlUart_Dev_StopSend(Handle->Dev);
         (AL_VOID)Al_OSAL_Mb_Recive(&Handle->TxEventQueue[UART_TX_BLOCK], &UartEvent, AL_WAITING_NO);
     }
 
@@ -339,13 +336,13 @@ AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
         return Ret;
     }
 
-    Ret = AlUart_Hal_WaitRxDoneOrTimeout(&Handle->RxEventQueue, Timeout, &UartEvent);
+    Ret = AlUart_Hal_WaitRxDoneOrTimeout(Handle, Timeout, &UartEvent);
     if (Ret != AL_OK) {
         /*
         * if timeout, force stop receiving
         */
-        AlUart_Dev_StopReceive(Handle);
-        (AL_VOID)Al_OSAL_Mb_Recive(&Handle->RxLock, &UartEvent, AL_WAITING_NO);
+        AlUart_Dev_StopReceive(Handle->Dev);
+        (AL_VOID)Al_OSAL_Mb_Recive(&Handle->TxEventQueue[UART_TX_BLOCK], &UartEvent, AL_WAITING_NO);
     }
 
     *RecvSize =  UartEvent.EventData;
@@ -422,7 +419,7 @@ AL_S32 AlUart_Hal_RecvData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
         return Ret;
     }
 
-    Ret = AlUart_Dev_RecvData(&Handle->Dev, Data, Size);
+    Ret = AlUart_Dev_RecvData(Handle->Dev, Data, Size);
     (AL_VOID)Al_OSAL_Lock_Release(&Handle->RxLock);
 
     return Ret;
@@ -451,14 +448,14 @@ AL_S32 AlUart_Hal_TryGetSendLastEvent(AL_UART_HalStruct *Handle, AL_UART_EventSt
 /**
  * This function excute operations to set or check uart status.
  * @param   Handle Pointer to a AL_UART_HalStruct structure that contains uart device instance
- * @param   Cmd is io ctl cmd to AL_Uart_IoCtlCmdEnum
+ * @param   Cmd is io ctl cmd to AL_UART_IoCtlCmdEnum
  * @param   Data Pointer to cmd args
  * @return
  *          - AL_OK for function success
  *          - Other for function failure
  * @note
 */
-AL_S32 AlUart_Hal_IoCtl(AL_UART_HalStruct *Handle, AL_Uart_IoCtlCmdEnum Cmd, AL_VOID *Data)
+AL_S32 AlUart_Hal_IoCtl(AL_UART_HalStruct *Handle, AL_UART_IoCtlCmdEnum Cmd, AL_UART_IoctlParamUnion *IoctlParam)
 {
     AL_S32 Ret = AL_OK;
 
@@ -476,9 +473,9 @@ AL_S32 AlUart_Hal_IoCtl(AL_UART_HalStruct *Handle, AL_Uart_IoCtlCmdEnum Cmd, AL_
         goto ERR_0;
     }
 
-    Ret = AlUart_Dev_IoCtl(Handle->Dev, Cmd, Data);
+    Ret = AlUart_Dev_IoCtl(Handle->Dev, Cmd, IoctlParam);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Uart io ctl cmd error:%d\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Uart Ioctl cmd error:%d\r\n", Ret);
     }
 
 ERR_0:
@@ -486,6 +483,7 @@ ERR_0:
 
 ERR_1:
     (AL_VOID)Al_OSAL_Lock_Release(&Handle->RxLock);
+
 
     return Ret;
 }
