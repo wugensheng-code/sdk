@@ -38,7 +38,7 @@ endif
 # chip sources dir
 #########################################################################
 SRC_DIR += chip/common/src \
-           chip/$(CHIP)/src
+           chip/$(AL_CHIP)/src
 
 #########################################################################
 # driver sources dir
@@ -63,7 +63,8 @@ SRC_DIR +=  $(PLAT_DIR) \
 #########################################################################
 # chip feature definition
 #########################################################################
-ifeq ($(CHIP),dr1v90)
+
+ifeq ($(AL_CHIP),dr1v90)
 CPU_FEATURE += -D__ECLIC_PRESENT=1  -D__SYSTIMER_PRESENT=1
 CPU_FEATURE += -D__PMP_PRESENT=1    -D__PMP_ENTRY_NUM=16
 CPU_FEATURE += -D__ICACHE_PRESENT=0 -D__DCACHE_PRESENT=0

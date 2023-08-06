@@ -25,7 +25,7 @@ extern "C"{
 
 #define AL_WAITFOREVER           RT_WAITING_FOREVER
 #define AL_WAITING_NO            RT_WAITING_NO
-typedef struct 
+typedef struct
 {
     struct rt_mutex     Thread_Lock;
     AL_S64              Isr_Lock;
@@ -115,12 +115,10 @@ static inline AL_S32 Al_OSAL_Mb_Init(AL_MailBox_t MailBox, const char* Name)
 
 static inline AL_S32 Al_OSAL_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
 {
-
-
-    AL_U32 *mvalue = (AL_U64 *)Msg;
-    MailBox->Msg = ((AL_U64)(*mvalue) << 32) | (AL_U64)*(mvalue + 1);
+    MailBox->Msg = *(AL_U64 *)Msg;
+    __COMPILER_BARRIER();
     MailBox->entry = 1;
-    
+
     rt_sem_release(&MailBox->Semaphore);
 }
 
@@ -129,11 +127,9 @@ static inline AL_S32 Al_OSAL_Mb_Recive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S3
     AL_S32 flag = (AL_S32)rt_sem_take(&MailBox->Semaphore, AL_WAITFOREVER);
 
     if (flag == AL_OK) {
-        AL_U32 *mvalue = (AL_U32 *)Msg;
-        *mvalue        = (AL_U32)((MailBox->Msg >> 32) & 0xFFFFFFFF);
-        *(mvalue + 1)  =  (AL_U32)(MailBox->Msg & 0xFFFFFFFF);
         MailBox->entry = 0;
-
+        __COMPILER_BARRIER();
+        MailBox->Msg = *(AL_U64 *)Msg;
         return AL_OK;
     }
 
@@ -193,7 +189,7 @@ static inline AL_VOID Al_OSAL_Sleep(AL_U32 Time)
  * Semaphore API.*
  *----------------------------------------------*/
 
-#define AL_WAITFOREVER          (-1UL)
+#define AL_WAITFOREVER          (-1)
 #define AL_WAITING_NO           (0)
 typedef volatile struct
 {
@@ -281,8 +277,8 @@ static inline AL_S32 Al_OSAL_Mb_Init(AL_MailBox_t MailBox, const char* Name)
 
 static inline AL_S32 Al_OSAL_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
 {
-    AL_U32 *mvalue = (AL_U64 *)Msg;
-    MailBox->Msg = ((AL_U64)(*mvalue) << 32) | (AL_U64)*(mvalue + 1);
+    MailBox->Msg = *(AL_U64 *)Msg;
+    __COMPILER_BARRIER();
     MailBox->entry = 1;
 
     return AL_OK;
@@ -293,11 +289,9 @@ static inline AL_S32 Al_OSAL_Mb_Recive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S3
     AL_BOOL flag = AL_WAIT_COND_UNTIL_TIMEOUT((MailBox->entry == 1), Timeout);
 
     if (flag == AL_TRUE) {
-        AL_U32 *mvalue = (AL_U32 *)Msg;
-        *mvalue        = (AL_U32)((MailBox->Msg >> 32) & 0xFFFFFFFF);
-        *(mvalue + 1)  =  (AL_U32)(MailBox->Msg & 0xFFFFFFFF);
         MailBox->entry = 0;
-
+        __COMPILER_BARRIER();
+        *(AL_U64 *)Msg = MailBox->Msg;
         return AL_OK;
     }
 
@@ -309,12 +303,12 @@ static inline AL_S32 Al_OSAL_Mb_Recive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S3
 
 static inline AL_VOID AL_OSAL_EnterCritical(AL_VOID)
 {
-    AlIntr_SetGlobalInterrupt(AL_FUNC_DISABLE);
+    (AL_VOID)AlIntr_SetGlobalInterrupt(AL_FUNC_DISABLE);
 }
 
 static inline AL_VOID AL_OSAL_ExitCritical(AL_VOID)
 {
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+    (AL_VOID)AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 }
 
 /*----------------------------------------------*
@@ -332,7 +326,7 @@ static inline AL_VOID Al_OSAL_EnterDevCtritical(AL_U32 DevIntrId, AL_BOOL Condit
 static inline AL_VOID Al_OSAL_ExitDevCtritical(AL_U32 DevIntrId, AL_BOOL Condition)
 {
     if (Condition) {
-    AlIntr_SetInterrupt(DevIntrId, AL_FUNC_ENABLE);
+        AlIntr_SetInterrupt(DevIntrId, AL_FUNC_ENABLE);
     }
 }
 

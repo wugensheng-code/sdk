@@ -1,7 +1,7 @@
 #########################################################################
 ## Available choices:
 ## The name of sub directories in $(AL_SDK_ROOT)/fpsoc/arch
-CHIP            ?= dr1m90
+AL_CHIP     ?= $(CHIP)
 
 #########################################################################
 ## Available choices:
@@ -66,7 +66,7 @@ BSP_DIR  ?= $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/*/Makefile))
 
 #########################################################################
 
-export CHIP
+export AL_CHIP
 export ARMv8_STATE
 export ARMv8_EL
 export ARMv8_CORE

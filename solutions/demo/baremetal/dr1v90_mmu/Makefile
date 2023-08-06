@@ -4,8 +4,8 @@
 #########################################################################
 SDK_ROOT   ?= ../../../..
 
-CHIP       ?= dr1v90
-DOWNLOAD    := ddr
+override CHIP   = dr1v90
+DOWNLOAD        := ddr
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/7.5.0/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-elf/bin/aarch64-elf-
@@ -23,7 +23,7 @@ endif
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
-SRC_DIR  = ./
+SRC_DIR  = .
 INC_DIR += ./ \
 		   $(SDK_ROOT)/3rdparty/lib/FATFS/lagecy/include
 

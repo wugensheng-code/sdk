@@ -3,10 +3,6 @@
 #include "al_params.h"
 #include "al_top.h"
 
-#include "al_type.h"
-#include "sysregs.h"
-#include "al_params.h"
-
 
 AL_VOID AlSys_StartTimer(AL_VOID)
 {

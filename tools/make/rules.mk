@@ -1,4 +1,6 @@
+#########################################################################
 AL_SDK_ROOT ?= $(SDK_ROOT)
+
 include $(AL_SDK_ROOT)/tools/make/config.mk
 
 CC      = ${Q}$(COMPILE_PREFIX)gcc
@@ -17,12 +19,12 @@ MAKE    = make
 ARFLAGS = -cr
 
 #########################################################################
-ifeq ($(CHIP),dr1v90)
+ifeq ($(AL_CHIP),dr1v90)
 CORE            := riscv
 CHIP_ARCH       := rv64imafdc
 ARCH_ABI        := lp64d
 ARCH_EXT        := ext-nuclei
-else ifeq ($(CHIP),dr1m90)
+else ifeq ($(AL_CHIP),dr1m90)
 CORE            := arm
 CHIP_ARCH       := armv8-a
 MTUNE           := cortex-a35
@@ -34,9 +36,9 @@ export ARCH_EXT
 #########################################################################
 
 ifeq ($(DOWNLOAD),ocm)
-LINKER_SCRIPT ?= $(BSP_DIR)/chip/$(CHIP)/lds/gcc_$(CHIP)_ocm.ld
+LINKER_SCRIPT ?= $(BSP_DIR)/chip/$(AL_CHIP)/lds/gcc_$(AL_CHIP)_ocm.ld
 else ifeq ($(DOWNLOAD),ddr)
-LINKER_SCRIPT ?= $(BSP_DIR)/chip/$(CHIP)/lds/gcc_$(CHIP)_ddr.ld
+LINKER_SCRIPT ?= $(BSP_DIR)/chip/$(AL_CHIP)/lds/gcc_$(AL_CHIP)_ddr.ld
 endif
 
 ifeq ($(ENABLE_MMU),1)
@@ -80,7 +82,7 @@ endif
 #########################################################################
 # all public inc
 PUBLIC_INC_DIR :=  $(BSP_DIR)/inc \
-                   $(BSP_DIR)/chip/$(CHIP)/inc \
+                   $(BSP_DIR)/chip/$(AL_CHIP)/inc \
                    $(wildcard $(BSP_DIR)/driver/pl_driver/*/inc) \
                    $(wildcard $(BSP_DIR)/driver/ps_driver/*/inc) \
                    $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/lib/*/Makefile)) \
@@ -180,7 +182,7 @@ endif
 .PHONY: all info help clean
 
 info:
-	@$(ECHO) CHIP=$(CHIP) CORE=$(CORE) BOARD=$(BOARD) V=$(V) RTOS=$(RTOS) PFLOAT=$(PFLOAT) NOGC:$(NOGC) DOWNLOAD: $(DOWNLOAD)
+	@$(ECHO) AL_CHIP=$(AL_CHIP) CORE=$(CORE) BOARD=$(BOARD) V=$(V) RTOS=$(RTOS) PFLOAT=$(PFLOAT) NOGC:$(NOGC) DOWNLOAD: $(DOWNLOAD)
 
 help:
 	@$(ECHO) "Anlogic FPSoc Software Development Kit "

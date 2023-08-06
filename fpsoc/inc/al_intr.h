@@ -1,13 +1,13 @@
-#ifndef AL_INTR_H
-#define AL_INTR_H
+#ifndef __AL_INTR_H_
+#define __AL_INTR_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif  /* __cplusplus */
 
-#include "al_core.h"
 #include "al_errno.h"
 #include "al_chip.h"
+
 
 #define   AL_INTR_NAME_MAX       (32)
 

@@ -14,12 +14,12 @@ uint64_t PerformanceTime[PERFORMANCE_IMAGE_NUM][PERFORMANCE_CASE_NUM] = {0};
 
 AL_U64 AlCipher_Test_GetCurTime(void)
 {
-    return AlSys_GetTimer();
+    return AlSys_GetTimerTick();
 }
 
 AL_U64 AlCipher_Test_SwitchTimeToUs(AL_U64 Time)
 {
-    return Time * 1000000 / AlSys_GetFreq();
+    return Time * 1000000 / AlSys_GetTimerFreq();
 }
 
 AL_U64 AlCipher_Test_CalcTimeToUs(AL_U64 StartTime, AL_U64 EndTime)

@@ -77,7 +77,7 @@ extern "C" {
 #define AL_WAIT_COND_UNTIL_TIMEOUT(Condition, DelayMs)   ({                                                         \
     AL_BOOL Flag;                                                                                                   \
     AL_U64  Start = AlSys_GetTimerTick();                                                                           \
-    while (((Flag = (Condition)) != AL_TRUE) && (Start + DelayMs * AlSys_GetTimerFreq()) < AlSys_GetTimerTick());   \
+    while (((Flag = (Condition)) != AL_TRUE) && ((AL_U64)Start + DelayMs * AlSys_GetTimerFreq()) < AlSys_GetTimerTick());   \
     Flag;                                                                                                           \
 })
 
