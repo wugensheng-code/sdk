@@ -88,10 +88,42 @@ void Enablepinmux1(void)
     *(AL_U32 *)(0xf840f004u) =0x0;      //close mpu ddr1
     *(AL_U32 *)(0xf8801074u) |=0x4000;  //reset release ddr
 #endif
+    //DEBUG UART1
+    *(AL_U32 *)(0xf88030c0u) = 0x3; //PS_UART_TX    PS_IO48 uart1_tx__emio_o_5 (out)    Function_3 
+    *(AL_U32 *)(0xf88030c4u) = 0x3; //PS_UART_RX    PS_IO49 uart1_rx__emio_i_5 (in)     Function_3
+    *(AL_U32 *)(0xf8803414u) = 0x1; //EMIOSEL_5     1:MIO 0:EMIO
 
-    *(AL_U32 *)(0xf88030c0u) =0x3; //uart0  MIO48
-    *(AL_U32 *)(0xf88030c4u) =0x3; //uart1  MIO49
-    *(AL_U32 *)(0xf8803414u) =0x1;
+    //USB0
+    *(AL_U32 *)(0xf8803070u) = 0xf; //PS_USB_DATA4  PS_IO28 usb0_data[4] (inout)    Function_15
+    *(AL_U32 *)(0xf8803074u) = 0xf; //PS_USB_DIR    PS_IO29 usb0_dir (in)           Function_15
+    *(AL_U32 *)(0xf8803078u) = 0xf; //PS_USB_STP    PS_IO30 usb0_stp (out)          Function_15
+    *(AL_U32 *)(0xf880307cu) = 0xf; //PS_USB_NXT    PS_IO31 usb0_nxt (in)           Function_15
+    *(AL_U32 *)(0xf8803080u) = 0xf; //PS_USB_DATA0  PS_IO32 usb0_data[0] (inout)    Function_15
+    *(AL_U32 *)(0xf8803084u) = 0xf; //PS_USB_DATA1  PS_IO33 usb0_data[1] (inout)    Function_15
+    *(AL_U32 *)(0xf8803088u) = 0xf; //PS_USB_DATA2  PS_IO34 usb0_data[2] (inout)    Function_15
+    *(AL_U32 *)(0xf880308cu) = 0xf; //PS_USB_DATA3  PS_IO35 usb0_data[3] (inout)    Function_15
+    *(AL_U32 *)(0xf8803090u) = 0xf; //PS_USB_CLKOUT PS_IO36 usb0_clk (in)           Function_15
+    *(AL_U32 *)(0xf8803094u) = 0xf; //PS_USB_DATA5  PS_IO37 usb0_data[5] (inout)    Function_15
+    *(AL_U32 *)(0xf8803098u) = 0xf; //PS_USB_DATA6  PS_IO38 usb0_data[6] (inout)    Function_15
+    *(AL_U32 *)(0xf880309cu) = 0xf; //PS_USB_DATA7  PS_IO39 usb0_data[7] (inout)    Function_15
+
+    //ETH0
+    *(AL_U32 *)(0xf8803040u) = 0xe; //PS_ETH_TXC     PS_IO16 rgmii_rmii_0_tx_clk (out)    Function_14
+    *(AL_U32 *)(0xf8803044u) = 0xe; //PS_ETH_TXD0    PS_IO17 rgmii_rmii_0_txd[0] (out)    Function_14
+    *(AL_U32 *)(0xf8803048u) = 0xe; //PS_ETH_TXD1    PS_IO18 rgmii_rmii_0_txd[1] (out)    Function_14
+    *(AL_U32 *)(0xf880304cu) = 0xe; //PS_ETH_TXD2    PS_IO19 rgmii0_txd[2] (out)          Function_14
+    *(AL_U32 *)(0xf8803050u) = 0xe; //PS_ETH_TXD3    PS_IO20 rgmii0_txd[3] (out)          Function_14
+    *(AL_U32 *)(0xf8803054u) = 0xe; //PS_ETH_TXCTL   PS_IO21 rgmii_rmii_0_tx_ctl (out)    Function_14
+    *(AL_U32 *)(0xf8803058u) = 0xe; //PS_ETH_RXC     PS_IO22 rgmii_rmii_0_rx_clk (in)     Function_14
+    *(AL_U32 *)(0xf880305cu) = 0xe; //PS_ETH_RXD0    PS_IO23 rgmii_rmii_0_rxd[0] (in)     Function_14
+    *(AL_U32 *)(0xf8803060u) = 0xe; //PS_ETH_RXD1    PS_IO24 rgmii_rmii_0_rxd[1] (in)     Function_14
+    *(AL_U32 *)(0xf8803064u) = 0xe; //PS_ETH_RXD2    PS_IO25 rgmii0_rxd[2] (in)           Function_14
+    *(AL_U32 *)(0xf8803068u) = 0xe; //PS_ETH_RXD3    PS_IO26 rgmii0_rxd[3] (in)           Function_14
+    *(AL_U32 *)(0xf880306cu) = 0xe; //PS_ETH_RXCTL   PS_IO27 rgmii_rmii_0_rx_ctl (in)     Function_14
+	                                  
+    *(AL_U32 *)(0xf88030d0u) = 0xe; //PS_ETH_MDC     PS_IO52 mdc0__emio_o_13 (out)        Function_14
+    *(AL_U32 *)(0xf88030d4u) = 0xe; //PS_ETH_MDIO    PS_IO53 mdio0__emio_io_13 (inout)    Function_14
+    *(AL_U32 *)(0xf8803434u) = 0x1; //EMIOSEL_13     1:MIO 0:EMIO
 }
 
 void Enablepinmux1_mode2(void)
