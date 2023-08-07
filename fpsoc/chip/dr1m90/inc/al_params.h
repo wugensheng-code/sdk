@@ -70,9 +70,9 @@ typedef enum {
 #define UART1__BASE_ADDR        (0xF8401000UL)
 
 #ifdef AL9000_OSC_25
-#define UART_CLOCK              (50000000UL)
+#define UART_CLOCK              (25000000UL)
 #elif AL9000_OSC_33
-#define UART_CLOCK              (50000000UL)
+#define UART_CLOCK              (33333333UL)
 #elif AL9000_OSC_50
 #define UART_CLOCK              (50000000UL)
 #else
