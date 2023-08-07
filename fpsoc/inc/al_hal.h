@@ -47,6 +47,10 @@ extern "C" {
 #include "al_uart_hal.h"
 #endif
 
+#ifdef HAVE_GBEPS_DRIVER
+#include "al_gbe_hal.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

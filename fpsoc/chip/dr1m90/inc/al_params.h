@@ -25,6 +25,8 @@ typedef enum {
     SOC_ACK3_IRQn        =  50,
     SOC_DMACAHB_IRQn     =  78,
     GPIO0_IRQn           =  84,
+    SOC_GBE0_IRQn        =  90,
+    SOC_GBE1_IRQn        =  91,
     SOC_MMC0_IRQn        =  94,
     SOC_MMC1_IRQn        =  95,
     SOC_IIC0_IRQn        =  96,
@@ -175,6 +177,21 @@ typedef enum {
 #define I2C1__BASE_ADDR         0xF8415000ULL
 
 #define I2C_CLOCK               (40000000UL)
+
+/*----------------------------------------------------------------------------
+  Define GBE params
+ *----------------------------------------------------------------------------*/
+#define HAVE_GBEPS_DRIVER
+
+#define AL_GBE_NUM_INSTANCE     (2)
+
+#define CFG_CTRL_GBE0_ADDR  0xf8800140u
+#define CFG_CTRL_GBE1_ADDR  0xf8800144u
+
+#define GBE0__BASE_ADDR       0xF8100000ULL
+#define GBE1__BASE_ADDR       0xF8110000ULL
+
+#define GBE_CLOCK               (25000000UL)
 
 #ifdef __cplusplus
 }
