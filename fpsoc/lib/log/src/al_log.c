@@ -1,5 +1,9 @@
 #include "al_log.h"
 
+#ifdef BOARD_DR1X90_AD101_V10
+#define LOG_DEV AL_LOG_UART1
+#endif
+
 #ifndef LOG_DEV
 #define LOG_DEV AL_LOG_UART0
 #endif
@@ -24,6 +28,15 @@ AL_S32 AlLog_Init()
     };
 
     return AlUart_Hal_Init(&Log, AL_LOG_UART0, &UART_InitStruct);
+#elif (LOG_DEV == AL_LOG_UART1)
+    AL_UART_InitStruct UART_InitStruct = {
+        .BaudRate     = 115200,
+        .Parity       = UART_NO_PARITY,
+        .WordLength   = UART_CHAR_8BITS,
+        .StopBits     = UART_STOP_1BIT,
+    };
+
+    return AlUart_Hal_Init(&Log, AL_LOG_UART1, &UART_InitStruct);
 #else
     return AL_OK;
 #endif
