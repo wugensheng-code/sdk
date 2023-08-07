@@ -56,25 +56,39 @@ extern AL_BOOL AlIic_Dev_IsRxBusy(AL_IIC_DevStruct *Iic);
 static AL_S32 AlIic_Hal_WaitMasterTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_U32 Timeout)
 {
     while(AlIic_Dev_IsTxBusy(Handle->Dev));
-    while(AlIic_ll_IsMasterActivity(Handle->Dev->HwConfig.BaseAddress));
+
+    if (Handle->Dev->CmdOption == AL_IIC_CMD_OPTION_STOP) {
+        while(AlIic_ll_IsMasterActivity(Handle->Dev->HwConfig.BaseAddress));
+    }
+
+    return AL_OK;
 }
 
 static AL_S32 AlIic_Hal_WaitMasterRxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_U32 Timeout)
 {
     while(AlIic_Dev_IsRxBusy(Handle->Dev));
-    while(AlIic_ll_IsMasterActivity(Handle->Dev->HwConfig.BaseAddress));
+
+    if (Handle->Dev->CmdOption == AL_IIC_CMD_OPTION_STOP) {
+        while(AlIic_ll_IsMasterActivity(Handle->Dev->HwConfig.BaseAddress));
+    }
+
+    return AL_OK;
 }
 
 static AL_S32 AlIic_Hal_WaitSlaveTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_U32 Timeout)
 {
     while(AlIic_Dev_IsTxBusy(Handle->Dev));
     while(AlIic_ll_IsSlaveActivity(Handle->Dev->HwConfig.BaseAddress));
+
+    return AL_OK;
 }
 
 static AL_S32 AlIic_Hal_WaitSlaveRxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_U32 Timeout)
 {
     while(AlIic_Dev_IsRxBusy(Handle->Dev));
     while(AlIic_ll_IsSlaveActivity(Handle->Dev->HwConfig.BaseAddress));
+
+    return AL_OK;
 }
 
 #define AL_IIC_HAL_LOCK(Handle)          do {} while (0)
@@ -100,7 +114,7 @@ static AL_VOID AlIic_DefEventCallBack(AL_IIC_EventStruct *IicEvent, void *Callba
         break;
 
         case AL_IIC_EVENT_TX_ABRT:
-        printf("AL_IIC_EVENT_TX_ABRT source:%d\r\n", IicEvent->EventData);
+        printf("AL_IIC_EVENT_TX_ABRT source:0x%x\r\n", IicEvent->EventData);
         break;
 
         case AL_IIC_EVENT_RX_DONE:
@@ -277,6 +291,43 @@ AL_S32 AlIic_Hal_SlaveRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
     AL_IIC_HAL_UNLOCK(Handle);
 
     return Ret;
+}
+
+AL_S32 AlIic_Hal_MasterSetCmdOption(AL_IIC_HalStruct *Handle, AL_IIC_CmdOptionEnum CmdOption)
+{
+    AL_S32 Ret = AL_OK;
+
+    if (Handle == AL_NULL) {
+        return AL_IIC_ERR_ILLEGAL_PARAM;
+    }
+
+    AL_IIC_HAL_LOCK(Handle);
+
+    Ret = AlIic_Dev_MasterSetCmdOption(Handle->Dev, CmdOption);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_Dev_MasetSetCmdOption error:%d\r\n", Ret);
+    }
+
+    AL_IIC_HAL_UNLOCK(Handle);
+
+    return Ret;
+}
+
+AL_IIC_CmdOptionEnum AlIic_Hal_MastertGetCmdOption(AL_IIC_HalStruct *Handle)
+{
+    AL_IIC_CmdOptionEnum CmdOption;
+
+    if (Handle == AL_NULL) {
+        return AL_IIC_CMD_OPTION_NONE;
+    }
+
+    AL_IIC_HAL_LOCK(Handle);
+
+    CmdOption = AlIic_Dev_MasterGetCmdOption(Handle->Dev);
+
+    AL_IIC_HAL_UNLOCK(Handle);
+
+    return CmdOption;
 }
 
 AL_S32 AlIic_Hal_IoCtl(AL_IIC_HalStruct *Handle, AL_IIC_IoCtlCmdEnum Cmd, AL_VOID *Data)

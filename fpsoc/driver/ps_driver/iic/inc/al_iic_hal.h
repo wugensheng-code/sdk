@@ -27,6 +27,12 @@ AL_S32 AlIic_Hal_SlaveSendDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
 
 AL_S32 AlIic_Hal_SlaveRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout);
 
+AL_S32 AlIic_Hal_MasterSetCmdOption(AL_IIC_HalStruct *Handle, AL_IIC_CmdOptionEnum CmdOption);
+
+AL_IIC_CmdOptionEnum AlIic_Hal_MasterGetCmdOption(AL_IIC_HalStruct *Handle);
+
+AL_S32 AlIic_Hal_IoCtl(AL_IIC_HalStruct *Handle, AL_IIC_IoCtlCmdEnum Cmd, AL_VOID *Data);
+
 #ifdef __cplusplus
 }
 #endif

@@ -606,7 +606,7 @@ extern "C" {
 // I2C SCL Stuck at Low Timeout
 ///////////////////////////////////////////////////////
 
-#define I2C__IC_SCL_STUCK_AT_LOW_TIMEOUT__OFFSET I2C__BASE_ADDR + 0xACULL
+#define I2C__IC_SCL_STUCK_AT_LOW_TIMEOUT__OFFSET 0xACULL
 #define I2C__IC_SCL_STUCK_AT_LOW_TIMEOUT__NUM  0x1
 
 #define I2C__IC_SCL_STUCK_AT_LOW_TIMEOUT__IC_SCL_STUCK_LOW_TIMEOUT__SHIFT    0

@@ -44,11 +44,25 @@ typedef enum
     AL_IIC_ABRT_SLV_ARBLOST         = (0x1 << 14),
     AL_IIC_ABRT_SLVRD_INTX          = (0x1 << 15),
     AL_IIC_ABRT_USER_ABRT           = (0x1 << 16),
+    AL_IIC_ABRT_SDA_STUCK_AT_LOW    = (0x1 << 17),
+    AL_IIC_ABRT_DEVICE_NOACK        = (0x1 << 18),
+    AL_IIC_ABRT_SLAVEADDR_NOACK     = (0x1 << 19),
+    AL_IIC_ABRT_DEVICE_WRITE        = (0x1 << 20),
 } AL_IIC_AbrtSrcEnum;
 
 static inline AL_VOID AlIic_ll_SetEnable(AL_REG BaseAddr, AL_IIC_FunctionEnum State)
 {
     AL_REG32_SET_BIT(BaseAddr + I2C__IC_ENABLE__OFFSET, I2C__IC_ENABLE__ENABLE__SHIFT, State);
+}
+
+static inline AL_VOID AlIic_ll_SetSdaStuckRecoveryEnable(AL_REG BaseAddr, AL_IIC_FunctionEnum State)
+{
+    AL_REG32_SET_BIT(BaseAddr + I2C__IC_ENABLE__OFFSET, I2C__IC_ENABLE__SDA_STUCK_RECOVERY_ENABLE__SHIFT, State);
+}
+
+static inline AL_IIC_FunctionEnum AlIic_ll_GetSdaStuckRecoveryEnableStatus(AL_REG BaseAddr)
+{
+    return AL_REG32_GET_BIT(BaseAddr + I2C__IC_ENABLE__OFFSET, I2C__IC_ENABLE__SDA_STUCK_RECOVERY_ENABLE__SHIFT);
 }
 
 static inline AL_VOID AlIic_ll_SetSlaveDisable(AL_REG BaseAddr, AL_IIC_FunctionEnum State)
@@ -94,6 +108,11 @@ static inline AL_VOID AlIic_ll_SetMaterEnable(AL_REG BaseAddr, AL_IIC_FunctionEn
 static inline AL_VOID AlIic_ll_SetTxEmptyCtrl(AL_REG BaseAddr, AL_IIC_FunctionEnum State)
 {
     AL_REG32_SET_BIT(BaseAddr + I2C__IC_CON__OFFSET, I2C__IC_CON__TX_EMPTY_CTRL__SHIFT, State);
+}
+
+static inline AL_VOID AlIic_ll_SetBusClrFeatureCtrl(AL_REG BaseAddr, AL_IIC_FunctionEnum State)
+{
+    AL_REG32_SET_BIT(BaseAddr + I2C__IC_CON__OFFSET, I2C__IC_CON__BUS_CLEAR_FEATURE_CTRL__SHIFT, State);
 }
 
 static inline AL_VOID AlIic_ll_SetTar(AL_REG BaseAddr, AL_U16 Addr)
@@ -207,6 +226,11 @@ static inline AL_VOID AlIic_ll_SetRestartDetIntr(AL_REG BaseAddr, AL_IIC_Functio
     AL_REG32_SET_BIT(BaseAddr + I2C__IC_INTR_MASK__OFFSET, I2C__IC_INTR_MASK__M_RESTART_DET__SHIFT, State);
 }
 
+static inline AL_VOID AlIic_ll_SetSclStuckAtLowIntr(AL_REG BaseAddr, AL_IIC_FunctionEnum State)
+{
+    AL_REG32_SET_BIT(BaseAddr + I2C__IC_INTR_MASK__OFFSET, I2C__IC_INTR_MASK__M_SCL_STUCK_AT_LOW__SHIFT, State);
+}
+
 static inline AL_VOID AlIic_ll_MaskAllIntr(AL_REG BaseAddr)
 {
     AL_REG32_SET_BITS(BaseAddr + I2C__IC_INTR_MASK__OFFSET, I2C__IC_INTR_MASK__M_RX_UNDER__SHIFT,
@@ -294,6 +318,11 @@ static inline AL_BOOL AlIic_ll_IsRxFifoNotEmpty(AL_REG BaseAddr)
     return AL_REG32_GET_BIT(BaseAddr + I2C__IC_STATUS__OFFSET, I2C__IC_STATUS__RFNE__SHIFT);
 }
 
+static inline AL_BOOL AlIic_ll_IsSdaStuckNotRecovery(AL_REG BaseAddr)
+{
+    return AL_REG32_GET_BIT(BaseAddr + I2C__IC_STATUS__OFFSET, I2C__IC_STATUS__SDA_STUCK_NOT_RECOVERED__SHIFT);
+}
+
 static inline AL_VOID AlIic_ll_ClrRxUnder(AL_REG BaseAddr)
 {
     AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_RX_UNDER__OFFSET, I2C__IC_CLR_RX_UNDER__CLR_RX_UNDER__SHIFT);
@@ -344,6 +373,11 @@ static inline AL_VOID AlIic_ll_ClrGenCall(AL_REG BaseAddr)
     AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_GEN_CALL__OFFSET, I2C__IC_CLR_GEN_CALL__CLR_GEN_CALL__SHIFT);
 }
 
+static inline AL_VOID AlIic_ll_ClrSclStuckDet(AL_REG BaseAddr)
+{
+    AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_SCL_STUCK_DET__OFFSET, I2C__IC_CLR_SCL_STUCK_DET__CLR_SCL_STUCK_DET__SHIFT);
+}
+
 static inline AL_IIC_AbrtSrcEnum AlIic_ll_GetAbrtSrc(AL_REG BaseAddr)
 {
     return AL_REG32_GET_BITS(BaseAddr + I2C__IC_TX_ABRT_SOURCE__OFFSET,
@@ -372,6 +406,16 @@ static inline AL_VOID AlIic_ll_SetSdaRxHold(AL_REG BaseAddr, AL_U8 Count)
 {
     AL_REG32_SET_BITS(BaseAddr + I2C__IC_SDA_HOLD__OFFSET,
                       I2C__IC_SDA_HOLD__IC_SDA_RX_HOLD__SHIFT, I2C__IC_SDA_HOLD__IC_SDA_RX_HOLD__SIZE, Count);
+}
+
+static inline AL_VOID AlIic_ll_SetSclStuckLowTimeout(AL_REG BaseAddr, AL_U32 Value)
+{
+    AL_REG32_WRITE(BaseAddr + I2C__IC_SCL_STUCK_AT_LOW_TIMEOUT__OFFSET, Value);
+}
+
+static inline AL_VOID AlIic_ll_SetSdaStuckLowTimeout(AL_REG BaseAddr, AL_U32 Value)
+{
+    AL_REG32_WRITE(BaseAddr + I2C__IC_SDA_STUCK_AT_LOW_TIMEOUT__OFFSET, Value);
 }
 
 #ifdef __cplusplus

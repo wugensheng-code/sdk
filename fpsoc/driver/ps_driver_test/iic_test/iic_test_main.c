@@ -1,5 +1,45 @@
 #include "al_iic_hal.h"
 
+AL_S32 AlIic_SclRecoveryTest()
+{
+    AL_S32 Ret;
+    AL_IIC_HalStruct Handle;
+
+    AL_IIC_InitStruct MasterInitConfig =
+    {
+        .Mode           = AL_IIC_MODE_MASTER,
+        .AddrMode       = AL_IIC_ADDR_7BIT,
+        .SpeedMode      = AL_IIC_FAST_MODE,
+    };
+
+    AL_U8 SendData[8] =
+    {
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+    };
+    AL_U16 SlaveAddr = 0x77;
+
+    Ret = AlIic_Hal_Init(&Handle, 1, &MasterInitConfig, AL_NULL);
+    if (Ret != AL_OK) {
+        printf("AlIic_Hal_Init Failed\r\n");
+    }
+
+    /* Last byte without STOP command will cause SCL at low */
+    AlIic_Hal_MasterSetCmdOption(&Handle, AL_IIC_CMD_OPTION_NO_STOP_RESTART);
+
+    Ret = AlIic_Hal_MasterSendDataBlock(&Handle, SlaveAddr, SendData, 8, 0);
+    if (Ret != AL_OK) {
+        printf("AlIic_Hal_MasterSendDataBlock Failed\r\n");
+    }
+
+    return AL_OK;
+}
+
+AL_S32 AlIic_BusClearFeatureTest()
+{
+    AlIic_SclRecoveryTest();
+
+}
+
 AL_S32 AlIic_E2promTest()
 {
     AL_S32 Ret;
@@ -44,7 +84,6 @@ AL_S32 AlIic_E2promTest()
     }
     AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
-
     /* Page write, Include address */
     Ret = AlIic_Hal_MasterSendDataBlock(&Handle, SlaveAddr, WriteBuffer, 130, 0);
     if (Ret != AL_OK) {
@@ -80,7 +119,6 @@ AL_S32 AlIic_E2promTest()
         printf("E2prom write read test pass\r\n");
     }
 
-    while(1);
 }
 
 #define AL_IIC_TEST_MASTER_TX
@@ -209,8 +247,6 @@ AL_S32 AlIic_TransRecvTest()
     printf("\r\n");
 #endif
 
-    while(1);
-
     return 0;
 }
 
@@ -219,6 +255,8 @@ int main()
     AlIic_TransRecvTest();
 
     AlIic_E2promTest();
+
+    AlIic_BusClearFeatureTest();
 
     return 0;
 }

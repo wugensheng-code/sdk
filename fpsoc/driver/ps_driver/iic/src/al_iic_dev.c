@@ -146,11 +146,19 @@ AL_S32 AlIic_Dev_Init(AL_IIC_DevStruct *Iic, AL_IIC_HwConfigStruct *HwConfig, AL
         AlIic_ll_SetMaterEnable(IicBaseAddr, AL_IIC_FUNC_ENABLE);
 //        AlIic_ll_SetTar(IicBaseAddr, InitConfig->Address);
         AlIic_Dev_InitSclHighLowCout(Iic, InitConfig->SpeedMode);
+
+        Iic->CmdOption = AL_IIC_CMD_OPTION_STOP;
     } else {
         AlIic_ll_SetMaterEnable(IicBaseAddr, AL_IIC_FUNC_DISABLE);
     }
 
     AlIic_ll_MaskAllIntr(IicBaseAddr);
+
+    /* Bus clear feture */
+    AlIic_ll_SetBusClrFeatureCtrl(IicBaseAddr, AL_IIC_FUNC_ENABLE);
+    AlIic_ll_SetSclStuckLowTimeout(IicBaseAddr, DEFAULT_SDA_SCL_AT_LOW_TIMEOUT);
+    AlIic_ll_SetSdaStuckLowTimeout(IicBaseAddr, DEFAULT_SDA_SCL_AT_LOW_TIMEOUT);
+    AlIic_ll_SetSclStuckAtLowIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
 
     AlIic_ll_SetSdaTxHold(IicBaseAddr, 4);
     AlIic_ll_SetSdaRxHold(IicBaseAddr, 1);
@@ -360,8 +368,16 @@ static AL_VOID AlIic_Dev_MasterSendDataHandler(AL_IIC_DevStruct *Iic)
 
         if (Iic->SendBuffer.HandledCnt != Iic->SendBuffer.RequestedCnt - 1 )
             DataCmd = AL_IIC_CMD_WRITE | Data;
-        else
-            DataCmd = AL_IIC_CMD_WRITE | AL_IIC_STOP_ENABLE | Data; // Last byte
+        else {
+            /* Last byte, need set cmd by option */
+            if (Iic->CmdOption == AL_IIC_CMD_OPTION_STOP)
+                DataCmd = AL_IIC_CMD_WRITE | AL_IIC_STOP_ENABLE | Data;
+            else if (Iic->CmdOption == AL_IIC_CMD_OPTION_RESTART)
+                DataCmd = AL_IIC_CMD_WRITE | AL_IIC_RESTART_ENABLE | Data;
+            else
+                DataCmd = AL_IIC_CMD_WRITE | Data;
+        }
+
 
         AlIic_ll_SetDataCmd(IicBaseAddr, DataCmd);
 
@@ -386,8 +402,15 @@ static AL_VOID AlIic_Dev_MasterRecvDataIssueReadCmd(AL_IIC_DevStruct *Iic)
 
         if (Iic->SendBuffer.HandledCnt != (Iic->SendBuffer.RequestedCnt - 1))
             Cmd = AL_IIC_CMD_READ;
-        else
-            Cmd = AL_IIC_CMD_READ | AL_IIC_STOP_ENABLE;
+        else {
+            /* Last byte, need set cmd by option */
+            if (Iic->CmdOption == AL_IIC_CMD_OPTION_STOP)
+                Cmd = AL_IIC_CMD_READ | AL_IIC_STOP_ENABLE;
+            else if (Iic->CmdOption == AL_IIC_CMD_OPTION_RESTART)
+                Cmd = AL_IIC_CMD_READ | AL_IIC_RESTART_ENABLE;
+            else
+                Cmd = AL_IIC_CMD_WRITE;
+        }
 
         AlIic_ll_SetDataCmd(IicBaseAddr, Cmd);
 
@@ -515,6 +538,19 @@ static AL_VOID AlIic_Dev_TxAbrtHandler(AL_IIC_DevStruct *Iic)
         (*Iic->EventCallBack)(&IicEvent, Iic->EventCallBackRef);
     }
 
+    if (AbrtSrc == AL_IIC_ABRT_SDA_STUCK_AT_LOW) {
+        AlIic_ll_SetSdaStuckRecoveryEnable(Iic->HwConfig.BaseAddress, AL_IIC_FUNC_ENABLE);
+
+        /* Poll for 9 scl clocks */
+        while(AlIic_ll_GetSdaStuckRecoveryEnableStatus(Iic->HwConfig.BaseAddress));
+
+        if (AlIic_ll_IsSdaStuckNotRecovery(Iic->HwConfig.BaseAddress)) {
+            AL_LOG(AL_LOG_LEVEL_ALERT,"SDA at low timeout, Bus not recovered, need reset entire IIC\r\n");
+        } else {
+            AL_LOG(AL_LOG_LEVEL_NOTICE,"SDA at low timeout, Bus recovered\r\n");
+        }
+    }
+
 }
 
 static AL_VOID AlIic_Dev_ErrorHandler(AL_IIC_DevStruct *Iic, AL_IIC_EventIdEnum EventId)
@@ -541,6 +577,8 @@ static AL_VOID AlIic_Dev_ErrorHandler(AL_IIC_DevStruct *Iic, AL_IIC_EventIdEnum 
 #define IIC_IN_START_DET_INTR(Status)           (Status & AL_IIC_INTR_START_DET)
 #define IIC_IN_GEN_CALL_INTR(Status)            (Status & AL_IIC_INTR_GEN_CALL)
 #define IIC_IN_RESTART_DET_INTR(Status)         (Status & AL_IIC_INTR_RESTART_DET)
+#define IIC_INTR_MASTER_ON_HOLD_INTR(Status)    (Status & AL_IIC_INTR_MASTER_ON_HOLD)
+#define IIC_INTR_SCL_STUCK_ATLOW_INTR(Status)   (Status & AL_IIC_INTR_SCL_STUCK_ATLOW)
 
 AL_VOID AlIic_Dev_IntrHandler(AL_VOID *instance)
 {
@@ -616,6 +654,9 @@ AL_VOID AlIic_Dev_IntrHandler(AL_VOID *instance)
     } else if (IIC_IN_GEN_CALL_INTR(IntrStatus)) {
         AlIic_ll_ClrGenCall(IicBaseAddr);
 
+    } else if (IIC_INTR_SCL_STUCK_ATLOW_INTR(IntrStatus)) {
+        AlIic_ll_ClrSclStuckDet(IicBaseAddr);
+        AL_LOG(AL_LOG_LEVEL_ALERT,"SCL at low, Need reset entire IIC\r\n");
     }
 
 }
@@ -630,6 +671,36 @@ AL_S32 AlIic_Dev_RegisterEventCallBack(AL_IIC_DevStruct *Iic, AL_IIC_EventCallBa
     Iic->EventCallBackRef     = CallbackRef;
 
     return AL_OK;
+}
+
+AL_S32 AlIic_Dev_MasterSetCmdOption(AL_IIC_DevStruct *Iic, AL_IIC_CmdOptionEnum CmdOption)
+{
+    if (Iic == AL_NULL) {
+        return AL_IIC_ERR_ILLEGAL_PARAM;
+    }
+
+    switch (CmdOption)
+    {
+    case AL_IIC_CMD_OPTION_NO_STOP_RESTART:
+    case AL_IIC_CMD_OPTION_STOP:
+    case AL_IIC_CMD_OPTION_RESTART:
+        Iic->CmdOption = CmdOption;
+        break;
+
+    default:
+        return AL_IIC_ERR_ILLEGAL_PARAM;
+    }
+
+    return AL_OK;
+}
+
+AL_IIC_CmdOptionEnum AlIic_Dev_MasterGetCmdOption(AL_IIC_DevStruct *Iic)
+{
+    if (Iic == AL_NULL) {
+        return AL_IIC_CMD_OPTION_NONE;
+    }
+
+    return Iic->CmdOption;
 }
 
 AL_S32 AlIic_Dev_IoCtl(AL_IIC_DevStruct *Iic, AL_IIC_IoCtlCmdEnum Cmd, AL_VOID *Data)
