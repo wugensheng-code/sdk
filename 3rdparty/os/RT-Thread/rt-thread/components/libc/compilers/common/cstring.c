@@ -157,6 +157,7 @@ int strncasecmp(const char* s1, const char* s2, size_t n)
     return 0;
 }
 
+#if 0
 char *strdup(const char *s)
 {
     char *news = (char *)malloc(strlen(s) + 1);
@@ -168,6 +169,7 @@ char *strdup(const char *s)
 
     return news;
 }
+#endif
 
 char *strndup(const char *s, size_t size)
 {
@@ -182,6 +184,7 @@ char *strndup(const char *s, size_t size)
     return news;
 }
 
+#if 0
 char *strtok_r(char *str, const char *delim, char **saveptr)
 {
     char *pbegin;
@@ -221,3 +224,4 @@ char *strtok_r(char *str, const char *delim, char **saveptr)
 
     return pbegin;
 }
+#endif
