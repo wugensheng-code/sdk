@@ -28,13 +28,17 @@ def make_all(path, chip, download, sdk_root, debug):
         if makefile_p.is_file():
             if 'rt-thread' in str(makefile_p) and chip == 'dr1m90':
                 continue
+            
+            if 'dr1v90_mmu' in str(makefile_p):
+                chip = 'dr1v90'
+                COMPILE_PREFIX = RPU_TOOLCHAIN_PATH + '/riscv-nuclei-elf-'
 
             logger.info(f'======> start make project: {str(makefile_p)}  -- chip: {chip} -- download: {download}', colorize=True, format="<green>{time}</green> <level>{message}</level>")
 
             try:
                 subprocess.run(f'make clean', shell=True, capture_output=CAPTURE_OUTPUT, cwd=makefile_p.parent, check=True)
                 subprocess.run(f'git clean -xfd', shell=True, capture_output=CAPTURE_OUTPUT, cwd=sdk_root, check=True)
-                subprocess.run(f'make CHIP={chip} DOWNLOAD={download} COMPILE_PREFIX={COMPILE_PREFIX}', shell=True, capture_output=CAPTURE_OUTPUT, cwd=makefile_p.parent, check=True)
+                subprocess.run(f'make CHIP={chip} DOWNLOAD={download} COMPILE_PREFIX={COMPILE_PREFIX} -j8', shell=True, capture_output=CAPTURE_OUTPUT, cwd=makefile_p.parent, check=True)
 
                 logger.info(f'======> make successful\n', colorize=True, format="<green>{time}</green> <level>{message}</level>")
             except subprocess.CalledProcessError as e:
