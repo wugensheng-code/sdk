@@ -9,7 +9,7 @@ LIBNAME = albsp
 #########################################################################
 
 INC_DIR += inc \
-           chip/common/inc
+           $(CHIP_DIR)/../common/inc
 
 ifeq ($(CHIP_ARCH),armv8-a)
 
@@ -37,8 +37,8 @@ endif
 #########################################################################
 # chip sources dir
 #########################################################################
-SRC_DIR += chip/common/src \
-           chip/$(AL_CHIP)/src
+SRC_DIR += $(CHIP_DIR)/../common/src \
+           $(CHIP_DIR)/src
 
 #########################################################################
 # driver sources dir

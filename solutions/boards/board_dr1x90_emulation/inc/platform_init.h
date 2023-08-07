@@ -47,10 +47,19 @@ extern "C" {
 
 #if 0
 
+#define ALSOC_APU_CLOCK
+
+#define SYSTEM_CLOCK            (50000000UL)
 #define UART_CLOCK
 #define I2C_CLOCK
 #define SPI_CLOCK
 #define QSPI_CLOCK
+#define CAN_CLOCK               (80000000UL)
+#define QSPI_CLOCK
+#define SPI_CLOCK
+#define XADC_CLOCK
+#define TTC_CLOCK
+#define GBE_CLOCK
 
 #endif
 

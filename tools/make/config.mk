@@ -1,7 +1,5 @@
 #########################################################################
-## Available choices:
-## The name of sub directories in $(AL_SDK_ROOT)/fpsoc/arch
-AL_CHIP     ?= $(CHIP)
+AL_CHIP         ?= $(CHIP)
 
 #########################################################################
 ## Available choices:
@@ -64,6 +62,8 @@ PLAT_DIR := $(abspath $(PLAT_DIR))
 
 BSP_DIR  ?= $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/*/Makefile))
 
+CHIP_DIR ?= $(wildcard $(BSP_DIR)/*/$(AL_CHIP)) $(wildcard $(BSP_DIR)/chip/*/$(AL_CHIP))
+
 #########################################################################
 
 export AL_CHIP
@@ -79,6 +79,7 @@ export AL_SDK_ROOT
 export SDK_ROOT
 export CFLAGS
 export BSP_DIR
+export CHIP_DIR
 export PLAT_DIR
 export ENABLE_MMU
 export DDR_2M_MAPPING

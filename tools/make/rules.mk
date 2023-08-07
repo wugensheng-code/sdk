@@ -34,12 +34,7 @@ export CHIP_ARCH
 export ARCH_EXT
 
 #########################################################################
-
-ifeq ($(DOWNLOAD),ocm)
-LINKER_SCRIPT ?= $(BSP_DIR)/chip/$(AL_CHIP)/lds/gcc_$(AL_CHIP)_ocm.ld
-else ifeq ($(DOWNLOAD),ddr)
-LINKER_SCRIPT ?= $(BSP_DIR)/chip/$(AL_CHIP)/lds/gcc_$(AL_CHIP)_ddr.ld
-endif
+LINKER_SCRIPT ?= $(CHIP_DIR)/lds/gcc_$(AL_CHIP)_$(DOWNLOAD).ld
 
 ifeq ($(ENABLE_MMU),1)
 AL_CFLAGS   += -DENABLE_MMU=1
@@ -82,7 +77,7 @@ endif
 #########################################################################
 # all public inc
 PUBLIC_INC_DIR :=  $(BSP_DIR)/inc \
-                   $(BSP_DIR)/chip/$(AL_CHIP)/inc \
+                   $(CHIP_DIR)/inc \
                    $(wildcard $(BSP_DIR)/driver/pl_driver/*/inc) \
                    $(wildcard $(BSP_DIR)/driver/ps_driver/*/inc) \
                    $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/lib/*/Makefile)) \
