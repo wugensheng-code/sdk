@@ -539,7 +539,7 @@ AL_S32 AlGbe_Dev_PhyInit(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress)
     }
 
     /* Delay at least 10 ms */
-    AlDelay_SDelay(5);
+    AlSys_MDelay(5000);
 
     /* Check reset status complete */
     Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BCR_ADDR, &RegValue);
@@ -599,7 +599,7 @@ AL_S32 AlGbe_Dev_PhyInit(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress)
             return Ret;
         }
 
-        AlDelay_SDelay(4);
+        AlSys_MDelay(4000);
 
         Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_SSR_ADDR, &TmpReg);
         if ((Ret != AL_OK) || (TmpReg & PHY_SSR_LINK_STATUS) == 0) {
@@ -617,7 +617,7 @@ AL_S32 AlGbe_Dev_PhyInit(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress)
         return Ret;
     }
 
-    AlDelay_SDelay(3);
+    AlSys_MDelay(3000);
 
     /* Wait until the auto-negotiation will be completed */
     Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BSR_ADDR, &RegValue);
