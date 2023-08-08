@@ -20,8 +20,8 @@ extern "C" {
 #include <string.h>
 
 /************************** Constant Definitions *****************************/
-#define BUF_SIZE 0X10
-#define TIME_OUT 1000000
+#define BUF_SIZE    0x10
+#define UART_TIME_OUT_MS 10000
 
 /***************** Macros (Inline Functions) Definitions *********************/
 

@@ -94,7 +94,7 @@ static AL_S32 AlUart_Test_SendDataBlockOnly(AL_VOID)
     AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
     while (1) {
-        ret = AlUart_Hal_SendDataBlock(&uart0_hal, Data, BUF_SIZE, TIME_OUT);
+        ret = AlUart_Hal_SendDataBlock(&uart0_hal, Data, BUF_SIZE, UART_TIME_OUT_MS);
         if (ret != AL_OK) {
             printf("AlUart_Hal_SendDataBlock Error! ret: 0x%x\r\n", ret);
             return ret;
@@ -125,7 +125,7 @@ static AL_S32 AlUart_Test_RecvSendBlockLoopBack(AL_VOID)
 
     while (1) {
         /* step 1. ues AlUart_Hal_RecvDataBlock to receve datas */
-        ret = AlUart_Hal_RecvDataBlock(&uart0_hal, Data, BUF_SIZE, &RecvSize, TIME_OUT);
+        ret = AlUart_Hal_RecvDataBlock(&uart0_hal, Data, BUF_SIZE, &RecvSize, UART_TIME_OUT_MS);
         if (ret != AL_OK) {
             switch ((AL_ERR_CODE)ret)
             {
@@ -150,7 +150,7 @@ static AL_S32 AlUart_Test_RecvSendBlockLoopBack(AL_VOID)
 
         /* step 2. ues AlUart_Hal_SendDataBlock to send datas */
         if (ret == AL_OK) {
-            ret = AlUart_Hal_SendDataBlock(&uart0_hal, Data, RecvSize, TIME_OUT);
+            ret = AlUart_Hal_SendDataBlock(&uart0_hal, Data, RecvSize, UART_TIME_OUT_MS);
             if (ret != AL_OK) {
                 printf("AlUart_Hal_SendDataBlock Error\r\n");
             }
