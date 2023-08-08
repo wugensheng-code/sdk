@@ -124,6 +124,39 @@ void Enablepinmux1(void)
     *(AL_U32 *)(0xf88030d0u) = 0xe; //PS_ETH_MDC     PS_IO52 mdc0__emio_o_13 (out)        Function_14
     *(AL_U32 *)(0xf88030d4u) = 0xe; //PS_ETH_MDIO    PS_IO53 mdio0__emio_io_13 (inout)    Function_14
     *(AL_U32 *)(0xf8803434u) = 0x1; //EMIOSEL_13     1:MIO 0:EMIO
+
+    //I2C0
+    *(AL_U32 *)(0xf88030c8u) = 0x0; //PS_IIC_SCL_MAIN     PS_IO50    i2c0_scl__emio_io_0 (inout)    Function_0
+    *(AL_U32 *)(0xf88030ccu) = 0x0; //PS_IIC_SDA_MAIN     PS_IO51    i2c0_sda__emio_io_0 (inout)    Function_0
+    *(AL_U32 *)(0xf880303cu) = 0x4; //PS_IIC_MUX_RESET    PS_IO15    GPIO15                         Function_4
+    *(AL_U32 *)(0xf8803400u) = 0x1; //EMIOSEL_0           1:MIO 0:EMIO
+
+    //CAN0
+    *(AL_U32 *)(0xf88030b8u) = 0x1; //PS_CAN_RXD     PS_IO46    can0_rx__emio_i_2 (in)     Function_1
+    *(AL_U32 *)(0xf88030bcu) = 0x1; //PS_CAN_TXD     PS_IO47    can0_tx__emio_o_2 (out)    Function_1
+    *(AL_U32 *)(0xf8803024u) = 0x4; //PS_CAN_STBY    PS_IO9     GPIO9                      Function_4
+    *(AL_U32 *)(0xf8803408u) = 0x1; //EMIOSEL_2      1:MIO 0:EMIO
+
+    //LED1
+    *(AL_U32 *)(0xf8803038u) = 0x4; //PS_LED_1     PS_IO14    GPIO14    Function_4
+
+    //SD0
+    *(AL_U32 *)(0xf88030a0u) = 0xa; //PS_SD_CLK    PS_IO40    sd0_clk__emio_io_11 (inout)        Function_10
+    *(AL_U32 *)(0xf88030a4u) = 0xa; //PS_SD_CMD    PS_IO41    sd0_cmd__emio_io_11 (inout)        Function_10
+    *(AL_U32 *)(0xf88030a8u) = 0xa; //PS_SD_D0     PS_IO42    sd0_data[0]__emio_io_11 (inout)    Function_10
+    *(AL_U32 *)(0xf88030acu) = 0xa; //PS_SD_D1     PS_IO43    sd0_data[1]__emio_io_11 (inout)    Function_10
+    *(AL_U32 *)(0xf88030b0u) = 0xa; //PS_SD_D2     PS_IO44    sd0_data[2]__emio_io_11 (inout)    Function_10
+    *(AL_U32 *)(0xf88030b4u) = 0xa; //PS_SD_D3     PS_IO45    sd0_data[3]__emio_io_11 (inout)    Function_10
+    *(AL_U32 *)(0xf8803000u) = 0xc; //PS_SD_DET    PS_IO0     sd0_cd__emio_i_11 (in)             Function_12
+    *(AL_U32 *)(0xf880342cu) = 0x1; //EMIOSEL_11   1:MIO 0:EMIO
+
+    //QSPI NOR FLASH 0
+    *(AL_U32 *)(0xf8803004u) = 0x0; //PS_FLASH_CS_B    PS_IO1    qspi0_ss_b  (out)      Function_0
+    *(AL_U32 *)(0xf8803008u) = 0x0; //PS_FLASH_DQ0     PS_IO2    qspi0_io[0] (inout)    Function_0
+    *(AL_U32 *)(0xf880300cu) = 0x0; //PS_FLASH_DQ1     PS_IO3    qspi0_io[1] (inout)    Function_0
+    *(AL_U32 *)(0xf8803010u) = 0x0; //PS_FLASH_DQ2     PS_IO4    qspi0_io[2] (inout)    Function_0
+    *(AL_U32 *)(0xf8803014u) = 0x0; //PS_FLASH_DQ3     PS_IO5    qspi0_io[3] (inout)    Function_0
+    *(AL_U32 *)(0xf8803018u) = 0x0; //PS_FLASH_CLK     PS_IO6    qspi0_sclk  (out)      Function_0
 }
 
 void Enablepinmux1_mode2(void)
