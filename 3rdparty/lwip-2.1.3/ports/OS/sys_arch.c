@@ -591,7 +591,7 @@ u32_t sys_now(void)
 
 u32_t sys_now(void)
 {
-    u64_t tick = AlSys_GetTimer();
+    u64_t tick = AlSys_GetTimerTick();
     return (tick / 50 /1000);
 }
 
