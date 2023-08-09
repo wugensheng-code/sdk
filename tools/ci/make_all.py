@@ -13,7 +13,7 @@ def make_all(path, chip, download, sdk_root, debug):
     makefiles_p = Path(path).rglob('Makefile')
     build_pass = True
     CAPTURE_OUTPUT = True
-    
+
     logger.info(f'======> Debug enable: {debug}', colorize=True, format="<green>{time}</green> <level>{message}</level>")
 
     if debug == 'true':
@@ -32,7 +32,7 @@ def make_all(path, chip, download, sdk_root, debug):
             if 'NMSIS' in str(makefile_p) and chip == 'dr1m90':
                 continue
 
-            if not str(makefile_p.parent).endswith('baremetal'):
+            if not str(makefile_p.parent).endswith('baremetal') and 'NMSIS' in str(makefile_p):
                 continue
             
             if 'dr1v90_mmu' in str(makefile_p):
@@ -56,6 +56,21 @@ def make_all(path, chip, download, sdk_root, debug):
     if build_pass is not True:
         exit(1)
 
+def check_file_permissions(check_path):
+
+    paths = Path(check_path).rglob('*')
+    for path in paths:
+        if path.is_file():
+            path.chmod(644)
+        if path.is_dir():
+            path.chmod(755)
+
+def main(path, chip, download, sdk_root, debug):
+
+    check_file_permissions(check_path=sdk_root)
+
+    make_all(path, chip, download, sdk_root, debug)
+
 
 if __name__ == '__main__':
     path = sys.argv[1]
@@ -63,4 +78,4 @@ if __name__ == '__main__':
     download = sys.argv[3]
     sdk_root = sys.argv[4]
     debug = sys.argv[5]
-    make_all(path, chip, download, sdk_root, debug)
+    main(path, chip, download, sdk_root, debug)
