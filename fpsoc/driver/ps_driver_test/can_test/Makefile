@@ -3,7 +3,7 @@
 #########################################################################
 
 SDK_ROOT   ?= ../../../..
-CHIP       ?= dr1v90
+CHIP       ?= dr1m90
 # RTOS       := rtthread
 
 ifeq ($(CHIP), dr1m90)
@@ -64,20 +64,20 @@ export COMPILE_PREFIX
 all:
 	echo COMPILE_PREFIX = $(COMPILE_PREFIX)
 
-	# make cleanapp
-	# make -f Makefile_can_fd_intr dasm
-	# make cleanapp
-	# make -f Makefile_can_2_0B_intr dasm
+	make cleanapp
+	make -f Makefile_can_fd_intr dasm
+	make cleanapp
+	make -f Makefile_can_2_0B_intr dasm
 	make cleanapp
 	make -f Makefile_can_2_0B_in_loopback dasm
-	# make cleanapp
-	# make -f Makefile_can_2_0B_ex_loopback dasm
-	# make cleanapp
-	# make -f Makefile_can_fd_listen_only dasm
-	# make cleanapp
-	# make -f Makefile_can_fd_stb_fifo dasm
-	# make cleanapp
-	# make -f Makefile_can_fd_dma dasm
+	make cleanapp
+	make -f Makefile_can_2_0B_ex_loopback dasm
+	make cleanapp
+	make -f Makefile_can_fd_listen_only dasm
+	make cleanapp
+	make -f Makefile_can_fd_stb_fifo dasm
+	make cleanapp
+	make -f Makefile_can_fd_dma dasm
 
 cleanapp:
 	$(RM) $(foreach subdir, $(SRC_DIR), $(wildcard $(subdir)/*.d $(subdir)/*.o))
