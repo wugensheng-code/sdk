@@ -48,7 +48,12 @@ typedef struct
 static AL_MMC_InitStruct SdNoDmaInit = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
     .DmaMode            = AL_MMC_DMA_MODE_NONE,
+#ifdef AUTO_TEST
+    .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
+#else
     .FreqKhz            = AL_MMC_FREQ_KHZ_25000,
+#endif
+    .SpdMode            = AL_MMC_SPD_DS_SDR12,
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_DISABLE,
@@ -59,7 +64,12 @@ static AL_MMC_InitStruct SdNoDmaInit = {
 static AL_MMC_InitStruct SdSdmaInit = {
     .CardType           = AL_MMC_CARD_TYPE_SD,
     .DmaMode            = AL_MMC_DMA_MODE_SDMA,
+#ifdef AUTO_TEST
+    .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
+#else
     .FreqKhz            = AL_MMC_FREQ_KHZ_25000,
+#endif
+    .SpdMode            = AL_MMC_SPD_DS_SDR12,
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_DISABLE,
@@ -70,7 +80,12 @@ static AL_MMC_InitStruct SdSdmaInit = {
 static AL_MMC_InitStruct SdAdma2Init = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
     .DmaMode            = AL_MMC_DMA_MODE_ADMA2,
+#ifdef AUTO_TEST
+    .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
+#else
     .FreqKhz            = AL_MMC_FREQ_KHZ_25000,
+#endif
+    .SpdMode            = AL_MMC_SPD_DS_SDR12,
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_ENABLE,
@@ -81,8 +96,13 @@ static AL_MMC_InitStruct SdAdma2Init = {
 static AL_MMC_InitStruct EmmcNoDmaInit = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
     .DmaMode            = AL_MMC_DMA_MODE_NONE,
-    .FreqKhz            = AL_MMC_FREQ_KHZ_10000,
-    .BusWidth           = AL_MMC_BUS_WIDTH_8BIT,
+#ifdef AUTO_TEST
+    .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
+#else
+    .FreqKhz            = AL_MMC_FREQ_KHZ_25000,
+#endif
+    .SpdMode            = AL_MMC_SPD_DS_SDR12,
+    .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_DISABLE,
     .DmaBdary           = AL_MMC_BDARY_32K,
@@ -92,7 +112,12 @@ static AL_MMC_InitStruct EmmcNoDmaInit = {
 static AL_MMC_InitStruct EmmcSdmaInit = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
     .DmaMode            = AL_MMC_DMA_MODE_SDMA,
+#ifdef AUTO_TEST
     .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
+#else
+    .FreqKhz            = AL_MMC_FREQ_KHZ_25000,
+#endif
+    .SpdMode            = AL_MMC_SPD_DS_SDR12,
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_DISABLE,
@@ -103,8 +128,13 @@ static AL_MMC_InitStruct EmmcSdmaInit = {
 static AL_MMC_InitStruct EmmcAdma2Init = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
     .DmaMode            = AL_MMC_DMA_MODE_ADMA2,
+#ifdef AUTO_TEST
     .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
-    .BusWidth           = AL_MMC_BUS_WIDTH_8BIT,
+#else
+    .FreqKhz            = AL_MMC_FREQ_KHZ_25000,
+#endif
+    .SpdMode            = AL_MMC_SPD_DS_SDR12,
+    .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_ENABLE,
     .DmaBdary           = AL_MMC_BDARY_32K,

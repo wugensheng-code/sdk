@@ -1151,6 +1151,85 @@ static AL_S32 AlMmc_Dev_SetExtCsd(AL_MMC_DevStruct *Dev, AL_U32 Arg)
     return Ret;
 }
 
+static AL_S32 AlMmc_Dev_GenCmd6Param(AL_MMC_DevStruct *Dev, AL_MMC_Cmd6FuncEnum Func, AL_MMC_Cmd6ArgUnion *Arg)
+{
+    AL_S32 Ret = AL_OK;
+
+    if (Dev->CardInfo.CardType == AL_MMC_CARD_TYPE_SD) {
+        if (Func == AL_MMC_CMD6_SD_SPD_MODE) {
+            switch (Dev->Config.SpdMode)
+            {
+            case AL_MMC_SPD_DS_SDR12:
+                Arg->Reg             = 0x0;
+                Arg->Sd.Mode         = 0x1;
+                Arg->Sd.Rsvd30_24    = 0x0;
+                Arg->Sd.RsvdGrp6     = 0xF;
+                Arg->Sd.RsvdGrp5     = 0xF;
+                Arg->Sd.RsvdGrp4     = 0xF;
+                Arg->Sd.RsvdGrp3     = 0xF;
+                Arg->Sd.Grp2Cmd      = 0xF;
+                Arg->Sd.Grp1AccMode  = AL_MMC_SPD_DS_SDR12;
+                break;
+            case AL_MMC_SPD_HS_SDR25:
+                Arg->Reg             = 0x0;
+                Arg->Sd.Mode         = 0x1;
+                Arg->Sd.Rsvd30_24    = 0x0;
+                Arg->Sd.RsvdGrp6     = 0xF;
+                Arg->Sd.RsvdGrp5     = 0xF;
+                Arg->Sd.RsvdGrp4     = 0xF;
+                Arg->Sd.RsvdGrp3     = 0xF;
+                Arg->Sd.Grp2Cmd      = 0xF;
+                Arg->Sd.Grp1AccMode  = AL_MMC_SPD_HS_SDR25;
+                break;
+            default:
+                Ret = AL_MMC_ERR_UNSPT_SPD_MODE;
+                break;
+            }
+        } else {
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "Unsupport SD Cmd6 func\r\n");
+            Ret = AL_MMC_ERR_UNSPT_CMD6_FUNC;
+        }
+    } else {
+        if (Func == AL_MMC_CMD6_EMMC_FUNC_BUS_WIDTH) {
+            Arg->Reg         = 0;
+            Arg->Emmc.Index  = AL_MMC_CMD6_EMMC_FUNC_BUS_WIDTH;
+            /* 1-bit enum 1 >> 2 -> 0b00, 4-bit enum 4 >> 2 -> 0b01, 8-bit enum 8 >> 2 -> 0b10 */
+            Arg->Emmc.Value  = Dev->Config.BusWidth >> 2;
+            Arg->Emmc.Access = AL_MMC_CMD6_EMMC_ACCESS_WR_BYTE;
+        } else if (Func == AL_MMC_CMD6_EMMC_FUNC_HS_TIMING) {
+            switch (Dev->Config.SpdMode)
+            {
+            case AL_MMC_SPD_DS_SDR12:
+                Arg->Reg                = 0x0;
+                Arg->Emmc.SetZero31_26  = 0x0;
+                Arg->Emmc.Access        = AL_MMC_CMD6_EMMC_ACCESS_WR_BYTE;
+                Arg->Emmc.Index         = AL_MMC_CMD6_EMMC_FUNC_HS_TIMING;
+                Arg->Emmc.Value         = AL_MMC_SPD_DS_SDR12;
+                Arg->Emmc.SetZero7_3    = 0x0;
+                Arg->Emmc.CmdSet        = 0x0;
+                break;
+            case AL_MMC_SPD_HS_SDR25:
+                Arg->Reg                = 0x0;
+                Arg->Emmc.SetZero31_26  = 0x0;
+                Arg->Emmc.Access        = AL_MMC_CMD6_EMMC_ACCESS_WR_BYTE;
+                Arg->Emmc.Index         = AL_MMC_CMD6_EMMC_FUNC_HS_TIMING;
+                Arg->Emmc.Value         = AL_MMC_SPD_HS_SDR25;
+                Arg->Emmc.SetZero7_3    = 0x0;
+                Arg->Emmc.CmdSet        = 0x0;
+                break;
+            default:
+                Ret = AL_MMC_ERR_UNSPT_SPD_MODE;
+                break;
+            }
+        } else {
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "Unsupport eMMC Cmd6 func\r\n");
+            Ret = AL_MMC_ERR_UNSPT_CMD6_FUNC;
+        }
+    }
+
+    return Ret;
+}
+
 static AL_S32 AlMmc_Dev_SetBusWidth(AL_MMC_DevStruct *Dev)
 {
     AL_S32 Ret = AL_OK;
@@ -1189,11 +1268,8 @@ static AL_S32 AlMmc_Dev_SetBusWidth(AL_MMC_DevStruct *Dev)
         }
 
         AL_MMC_Cmd6ArgUnion Arg;
-        Arg.Reg         = 0;
-        Arg.Emmc.Index  = AL_MMC_EXT_CSD_IDX_BUS_WIDTH;
-        /* 1-bit enum 1 >> 2 -> 0b00, 4-bit enum 4 >> 2 -> 0b01, 8-bit enum 8 >> 2 -> 0b10 */
-        Arg.Emmc.Value  = Dev->Config.BusWidth >> 2;
-        Arg.Emmc.Access = AL_MMC_EMMC_CMD6_ACCESS_WR_BYTE;
+        AlMmc_Dev_GenCmd6Param(Dev, AL_MMC_CMD6_EMMC_FUNC_BUS_WIDTH, &Arg);
+
         Ret = AlMmc_Dev_SetExtCsd(Dev, Arg.Reg);
         if (Ret != AL_OK) {
             return Ret;
@@ -1232,24 +1308,19 @@ static AL_S32 AlMmc_Dev_GetBusSpeed(AL_MMC_DevStruct *Dev)
 static AL_S32 AlMmc_Dev_SetBusSpeed(AL_MMC_DevStruct *Dev)
 {
     AL_S32 Ret = AL_OK;
+    AL_MMC_Cmd6ArgUnion Arg;
 
     if (Dev->CardInfo.CardType == AL_MMC_CARD_TYPE_SD) {
         AL_U32 RestoreBlkLen = Dev->CardInfo.BlkLen;
         AL_U8 Temp[64] = {0};
-        AL_MMC_Cmd6ArgUnion Arg;
 
         AlMmc_Dev_SetBlkSize(Dev, AL_MMC_BLK_LEN_64B);
         Dev->CardInfo.BlkLen = AL_MMC_BLK_LEN_64B;
 
-        Arg.Reg             = 0x0;
-        Arg.Sd.Mode         = 0x1;
-        Arg.Sd.Rsvd30_24    = 0x0;
-        Arg.Sd.RsvdGrp6     = 0xF;
-        Arg.Sd.RsvdGrp5     = 0xF;
-        Arg.Sd.RsvdGrp4     = 0xF;
-        Arg.Sd.RsvdGrp3     = 0xF;
-        Arg.Sd.Grp2Cmd      = 0xF;
-        Arg.Sd.Grp1AccMode  = 0x1;
+        Ret = AlMmc_Dev_GenCmd6Param(Dev, AL_MMC_CMD6_SD_SPD_MODE, &Arg);
+        if (Ret != AL_OK) {
+            return Ret;
+        }
 
         Ret = AlMmc_Dev_CmdTransfer(Dev, AL_MMC_CMD_IDX_6, Arg.Reg, 1);
         if (Ret != AL_OK) {
@@ -1263,21 +1334,50 @@ static AL_S32 AlMmc_Dev_SetBusSpeed(AL_MMC_DevStruct *Dev)
 
         Dev->CardInfo.BlkLen = RestoreBlkLen;
 
+        /* Check bus speed bit set result */
+        if (!(Temp[16] & 0x1)) {
+            return AL_MMC_ERR_SET_BUS_SPEED;
+        }
+
         for (AL_U32 j = 0; j < AL_MMC_BLK_LEN_64B; j++) {
             AL_LOG(AL_LOG_LEVEL_DEBUG, "[%d]:0x%02x ", j, Temp[j]);
         }
         AL_LOG(AL_LOG_LEVEL_DEBUG, "\r\n");
     } else {
-        /* TODO: */
+        Ret = AlMmc_Dev_GenCmd6Param(Dev, AL_MMC_CMD6_EMMC_FUNC_HS_TIMING, &Arg);
+        if (Ret != AL_OK) {
+            return Ret;
+        }
+
+        Ret = AlMmc_Dev_SetExtCsd(Dev, Arg.Reg);
+        if (Ret != AL_OK) {
+            return Ret;
+        }
+
+        AL_MMC_RegExtCsdUnion ExtCsd;
+        Ret = AlMmc_Dev_GetExtCsd(Dev, (AL_U8 *)&ExtCsd);
+        if (Ret != AL_OK) {
+            return Ret;
+        }
+
+        if (Dev->Config.SpdMode == AL_MMC_SPD_HS_SDR25) {
+            if (ExtCsd.Emmc.HsTiming != AL_MMC_SPD_HS_SDR25) {
+                AL_LOG(AL_LOG_LEVEL_DEBUG, "eMMC set bus high speed err\r\n");
+                return MMC_ERR_SET_BUS_SPEED;
+            }
+        }
     }
 
     /* Delay for switch complete */
     AL_MMC_SWITCH_DELAY;
 
-    // AL_MMC_CtrlWuBgPwHc1Union Ctrl1;
-    // Ctrl1.Reg = AlMmc_ll_ReadCtrl_Wup_Bgap_Pwr_Host1(Dev->HwConfig.BaseAddress);
-    // Ctrl1.Bit.HiSpdEn = 0x1;
-    // AlMmc_ll_WriteCtrl_Wup_Bgap_Pwr_Host1(Dev->HwConfig.BaseAddress, Ctrl1.Reg);
+    AL_MMC_CtrlWuBgPwHc1Union Ctrl1;
+    Ctrl1.Reg = AlMmc_ll_ReadCtrl_Wup_Bgap_Pwr_Host1(Dev->HwConfig.BaseAddress);
+    Ctrl1.Bit.HiSpdEn = 0x1;
+    AlMmc_ll_WriteCtrl_Wup_Bgap_Pwr_Host1(Dev->HwConfig.BaseAddress, Ctrl1.Reg);
+
+    /* Delay for switch complete */
+    AL_MMC_SWITCH_DELAY;
 
     // AL_MMC_Hc2AcUnion Ctrl2;
     // Ctrl2.Reg = AlMmc_ll_ReadAutoCmdStat_CtrlHost2(Dev->HwConfig.BaseAddress);
@@ -1320,22 +1420,25 @@ static AL_S32 AlMmc_Dev_SdModeInit(AL_MMC_DevStruct *Dev)
         return Ret;
     }
 
-    /* TODO: Config and host controller freq both more than DS, so change card bus speed */
-    if ((Dev->Config.FreqKhz > AL_MMC_FREQ_KHZ_25000) && (Dev->HwConfig.InputClkKhz > AL_MMC_FREQ_KHZ_25000)) {
+    if (Dev->Config.SpdMode != AL_MMC_SPD_DS_SDR12) {
         Ret = AlMmc_Dev_GetBusSpeed(Dev);
-
-        if (Dev->Config.Switch1v8) {
-
-        }
-        /* TODO: if support 1.8V, set card to 1.8V */
-
 
         /* Support CMD6 */
         if (Dev->CardInfo.CardVer != AL_MMC_CARD_VER_101) {
             Ret = AlMmc_Dev_SetBusSpeed(Dev);
+            if (Ret != AL_OK) {
+                AL_LOG(AL_LOG_LEVEL_DEBUG, "Request high speed mode error, set default mode\r\n");
+                Dev->CardInfo.SpdMode = AL_MMC_SPD_DS_SDR12;
+                /* Modify speed for default mode */
+                if (Dev->Config.FreqKhz > AL_MMC_FREQ_KHZ_25000) {
+                    Dev->Config.FreqKhz = AL_MMC_FREQ_KHZ_25000;
+                }
+            } else {
+                Dev->CardInfo.SpdMode = AL_MMC_SPD_HS_SDR25;
+            }
         }
     } else {
-        Dev->CardInfo.SpdMode = AL_MMC_MAX_SPD_DS;
+        Dev->CardInfo.SpdMode = AL_MMC_SPD_DS_SDR12;
     }
 
     /* Change host controller freq */
@@ -1443,20 +1546,20 @@ static AL_S32 AlMmc_Dev_EmmcModeInit(AL_MMC_DevStruct *Dev)
         return Ret;
     }
 
-    /* TODO: Config and host controller freq both more than DS, so change card bus speed */
-    if ((Dev->Config.FreqKhz > AL_MMC_FREQ_KHZ_25000) && (Dev->HwConfig.InputClkKhz > AL_MMC_FREQ_KHZ_25000)) {
+    if (Dev->Config.SpdMode != AL_MMC_SPD_DS_SDR12) {
         Ret = AlMmc_Dev_GetBusSpeed(Dev);
 
         if (Dev->Config.Switch1v8) {
 
         }
-        /* TODO: if support 1.8V, set card to 1.8V */
 
-
-        /* Support CMD6 */
         Ret = AlMmc_Dev_SetBusSpeed(Dev);
+        if (Ret != AL_OK) {
+            return Ret;
+        }
+        Dev->CardInfo.SpdMode = AL_MMC_SPD_HS_SDR25;
     } else {
-        Dev->CardInfo.SpdMode = AL_MMC_MAX_SPD_DS;
+        Dev->CardInfo.SpdMode = AL_MMC_SPD_DS_SDR12;
     }
 
     /* Change host controller freq */

@@ -1,7 +1,7 @@
 #########################################################################
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
 #########################################################################
-CHIP ?= dr1v90
+CHIP ?= dr1m90
 SDK_ROOT   ?= ../../../..
 
 ifeq ($(CHIP), dr1m90)
@@ -36,6 +36,7 @@ ASM_SRCS :=
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
+# PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 
 
@@ -44,7 +45,6 @@ PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 ## Available choices:
 ## PINMUX_MODE1, PINMUX_MODE2, PINMUX_MODE3, PINMUX_MODE_SD1
 #########################################################################.
-PINMUX_MODE ?= PINMUX_MODE1
 
 export SOC
 export SDK_ROOT
@@ -67,8 +67,8 @@ all:
 	echo COMPILE_PREFIX = $(COMPILE_PREFIX)
 	make cleanapp
 	make -f Makefile_sd dasm
-	# make cleanapp
-	# make -f Makefile_emmc dasm
+	make cleanapp
+	make -f Makefile_emmc dasm
 
 cleanapp:
 	$(RM) $(foreach subdir, $(SRC_DIR), $(wildcard $(subdir)/*.d $(subdir)/*.o))

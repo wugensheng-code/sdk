@@ -1,14 +1,24 @@
 #########################################################################
 # 3. CFLAGS
+# AL9000_OSC_33: for chip pll enable and call clk_simple_config func
+# AL9000_BRINGUP: for chip bypass mpu disable flow
+# BOARD_DR1X90_AD101_V10: for demo board select uart 1 as log output
+# AUTO_TEST: for emulation platform auto test config
+# USE_DDR: for test case read/write buffer in ddr
+# CONFIG_PERFORMANCE_CALC: for performace calc
 #########################################################################
-
 CFLAGS := -O2 -DMMC_DEBUG -DCONFIG_SD_TEST=1 -g
-CFLAGS += -DAL9000_BRINGUP
+# CFLAGS += -DAL9000_OSC_33
+# CFLAGS += -DAL9000_BRINGUP
+# CFLAGS += -DBOARD_DR1X90_AD101_V10
+CFLAGS += -DAUTO_TEST
+CFLAGS += -DUSE_DDR
 # CFLAGS += -DCONFIG_PERFORMANCE_CALC
 
 #########################################################################
 # 5. define build target
 #########################################################################
+PINMUX_MODE ?= PINMUX_MODE1
 
 TARGET := fpsoc_mmc_sd
 

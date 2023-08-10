@@ -50,6 +50,9 @@ typedef enum
     MMC_ERR_CMD_COMP_TIMEOUT,
     MMC_ERR_XFER_COMP_TIMEOUT,
     MMC_ERR_BUF_NOT_ALIGN,
+    MMC_ERR_SET_BUS_SPEED,
+    MMC_ERR_UNSPT_SPD_MODE,
+    MMC_ERR_UNSPT_CMD6_FUNC,
 } AL_MMC_ErrCodeEnum;
 
 #define AL_MMC_ERR_ILLEGAL_PARAM        AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM)
@@ -83,6 +86,9 @@ typedef enum
 #define AL_MMC_ERR_CMD_COMP_TIMEOUT     AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, MMC_ERR_CMD_COMP_TIMEOUT)
 #define AL_MMC_ERR_XFER_COMP_TIMEOUT    AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, MMC_ERR_XFER_COMP_TIMEOUT)
 #define AL_MMC_ERR_BUF_NOT_ALIGN        AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, MMC_ERR_BUF_NOT_ALIGN)
+#define AL_MMC_ERR_SET_BUS_SPEED        AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, MMC_ERR_SET_BUS_SPEED)
+#define AL_MMC_ERR_UNSPT_SPD_MODE       AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, MMC_ERR_UNSPT_SPD_MODE)
+#define AL_MMC_ERR_UNSPT_CMD6_FUNC      AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, MMC_ERR_UNSPT_CMD6_FUNC)
 
 #define AL_MMC_CMD8_VOL_PATTERN     0x1AAU  /* CMD8 voltage pattern */
 
@@ -122,11 +128,8 @@ typedef enum
 
 typedef enum
 {
-    AL_MMC_MAX_SPD_DS,      /* Max 25MHz, 12MB/s(4-bit), 26MB/s(eMMC 8-bit), 3.3V */
-    AL_MMC_MAX_SPD_HS,      /* Max 50MHz, 25MB/s(4-bit), 52MB/s(eMMC 8-bit), 3.3V */
-    AL_MMC_MAX_SPD_SDR12,   /* 25MHz, 12MB/s, 1.8V */
-    AL_MMC_MAX_SPD_SDR25,   /* 50MHz, 25MB/s, 1.8V */
-    AL_MMC_MAX_SPD_SDR50    /* 100MHz, 50MB/s, 1.8V */
+    AL_MMC_SPD_DS_SDR12,      /* Max 25MHz, 12MB/s(4-bit), 26MB/s(eMMC 8-bit), 3.3V */
+    AL_MMC_SPD_HS_SDR25,      /* Max 50MHz, 25MB/s(4-bit), 52MB/s(eMMC 8-bit), 3.3V */
 } AL_MMC_SpdModeEnum;
 
 /**
@@ -284,6 +287,7 @@ typedef struct
 {
     AL_MMC_CardTypeEnum     CardType;       /* Card set */
     AL_MMC_FreqKhzEnum      FreqKhz;
+    AL_MMC_SpdModeEnum      SpdMode;
     AL_MMC_DmaModeEnum      DmaMode;
     AL_MMC_BusWidthEnum     BusWidth;
     AL_U32                  Switch1v8;

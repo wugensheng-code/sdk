@@ -17,8 +17,6 @@ extern "C" {
 
 #define AL_MMC_OCR_VOLT_27_36   (0x1FF)
 
-#define AL_MMC_EXT_CSD_IDX_BUS_WIDTH    183
-
 #define AL_MMC_FIXED_BLK_LEN    (0x200)
 #define AL_MMC_EXT_CSD_LEN      (0x200)
 
@@ -888,7 +886,9 @@ typedef union
 {
     AL_U8 Reg[AL_MMC_EXT_CSD_LEN];
     struct {
-        AL_U8 Rsvd211_0[212];
+        AL_U8 Rsvd184_0[185];
+        AL_U8 HsTiming;
+        AL_U8 Rsvd211_186[26];
         AL_U8 SecCount[4];          /*[215:212]*/
         AL_U8 Rsvd505_216[290];
         AL_U8 Rsvd511_506[6];
@@ -950,20 +950,18 @@ typedef union
 
 typedef enum
 {
-    AL_MMC_EMMC_CMD6_ACCESS_CMD_SET,
-    AL_MMC_EMMC_CMD6_ACCESS_SET_BITS,
-    AL_MMC_EMMC_CMD6_ACCESS_CLR_BITS,
-    AL_MMC_EMMC_CMD6_ACCESS_WR_BYTE
-} AL_MMC_EmmcCmd6AccessEnum;
+    AL_MMC_CMD6_EMMC_ACCESS_CMD_SET,
+    AL_MMC_CMD6_EMMC_ACCESS_SET_BITS,
+    AL_MMC_CMD6_EMMC_ACCESS_CLR_BITS,
+    AL_MMC_CMD6_EMMC_ACCESS_WR_BYTE
+} AL_MMC_Cmd6EmmcAccEnum;
 
 typedef enum
 {
-    AL_MMC_SD_CMD6_ACCESS_DS_SDR12,
-    AL_MMC_SD_CMD6_ACCESS_HS_SDR25,
-    AL_MMC_SD_CMD6_ACCESS_SDR50,
-    AL_MMC_SD_CMD6_ACCESS_SDR104,
-    AL_MMC_SD_CMD6_ACCESS_DDR50
-} AL_MMC_SdCmd6AccessEnum;
+    AL_MMC_CMD6_SD_SPD_MODE         = (0),
+    AL_MMC_CMD6_EMMC_FUNC_BUS_WIDTH = (183),
+    AL_MMC_CMD6_EMMC_FUNC_HS_TIMING = (185),
+} AL_MMC_Cmd6FuncEnum;
 
 typedef union
 {
