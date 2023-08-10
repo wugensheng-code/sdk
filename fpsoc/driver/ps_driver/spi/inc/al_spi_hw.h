@@ -14,7 +14,6 @@ extern "C" {
 
 /***************** Macros (Inline Functions Definitions ********************/
 // #define SPI_DEBUG 1
-#define TOP_NS_BASE_ADDR 0xF8800000ULL
 
 ///////////////////////////////////////////////////////
 // Register: CFG_CTRL_SPI
@@ -33,12 +32,6 @@ extern "C" {
 
 #define TOP_NS_CFG_CTRL_SPI_ADDR (TOP_NS_BASE_ADDR + TOP_NS_CFG_CTRL_SPI_OFFSET)
 
-#define AL_SPI_NUM_INSTANCE    (2)
-
-#define SPI0_BASE_ADDR 0xF8404000UL
-#define SPI1_BASE_ADDR 0xF8405000UL
-
-#define SPI_CLOCK  50000000
 
 ///////////////////////////////////////////////////////
 // Register: CTRLR0_MST

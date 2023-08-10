@@ -26,6 +26,8 @@ typedef enum {
     SOC_REQ3_IRQn        =  36,
     SOC_ACK3_IRQn        =  37,
     SOC_DMACAHB_IRQn     =  65,
+    SOC_SMC_IRQn         =  68,
+    SOC_QSPI_IRQn        =  69,
     GPIO0_IRQn           =  71,
     SOC_GBE0_IRQn        =  77,
     SOC_GBE1_IRQn        =  78,
@@ -34,6 +36,10 @@ typedef enum {
     SOC_MMC1_IRQn        =  82,
     SOC_IIC0_IRQn        =  83,
     SOC_IIC1_IRQn        =  84,
+    SOC_SPI0_MST_IRQn    =  85,
+    SOC_SPI0_SLV_IRQn    =  86,
+    SOC_SPI1_MST_IRQn    =  87,
+    SOC_SPI1_SLV_IRQn    =  88,
     SOC_UART0_IRQn       =  89,
     SOC_UART1_IRQn       =  90,
     SOC_CAN0_IRQn        =  91,
@@ -111,6 +117,16 @@ typedef enum {
  *----------------------------------------------------------------------------*/
 #define HAVE_SPIPS_DRIVER
 
+#define TOP_NS_BASE_ADDR 0xF8800000ULL
+
+#define AL_SPI_NUM_INSTANCE    (2)
+
+#define SPI0_BASE_ADDR 0xF8404000UL
+#define SPI1_BASE_ADDR 0xF8405000UL
+
+#define SPI_CLOCK  50000000
+#define SPI_FIFO_LENGTH 32
+
 
 /*----------------------------------------------------------------------------
   Define CAN params
@@ -156,6 +172,10 @@ typedef enum {
   Define QSPI params
  *----------------------------------------------------------------------------*/
 #define HAVE_QSPIPS_DRIVER
+
+#define AL_QSPI_NUM_INSTANCE 1
+#define QSPI_BASE_ADDR 0xF804E000ULL
+#define QSPI_FIFO_LENGTH 128
 
 /*----------------------------------------------------------------------------
   Define MMC params

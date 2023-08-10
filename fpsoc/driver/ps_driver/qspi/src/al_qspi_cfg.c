@@ -21,7 +21,7 @@ AL_QSPI_HwConfigStruct AlQSPI_HwCfg[AL_QSPI_NUM_INSTANCE] =
     {
         .DeviceId           = 0,
         .BaseAddress        = QSPI_BASE_ADDR,
-        .InterrupId         = 67,
-        .FifoLen            = 128
+        .InterrupId         = SOC_QSPI_IRQn,
+        .FifoLen            = QSPI_FIFO_LENGTH
     }
 };

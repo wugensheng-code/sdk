@@ -21,13 +21,13 @@ AL_SPI_HwConfigStruct AlSpi_HwCfg[AL_SPI_NUM_INSTANCE] =
     {
         .DeviceId           = 0,
         .BaseAddress        = SPI0_BASE_ADDR,
-        .InterrupId         = 85,
-        .FifoLen            = 32
+        .InterrupId         = SOC_SPI0_MST_IRQn,
+        .FifoLen            = SPI_FIFO_LENGTH
     },
     {
         .DeviceId           = 1,
         .BaseAddress        = SPI1_BASE_ADDR,
-        .InterrupId         = 87,
-        .FifoLen            = 32
+        .InterrupId         = SOC_SPI1_MST_IRQn,
+        .FifoLen            = SPI_FIFO_LENGTH
     }
 };

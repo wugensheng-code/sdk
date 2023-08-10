@@ -14,9 +14,6 @@ extern "C" {
 
 /***************** Macros (Inline Functions Definitions ********************/
 // #define QSPI_DEBUG 1
-#define TOP_NS_BASE_ADDR 0xF8800000ULL
-
-#define AL_QSPI_NUM_INSTANCE 1
 
 ///////////////////////////////////////////////////////
 // Register: CFG_CTRL_QSPI
@@ -31,7 +28,6 @@ extern "C" {
 
 #define TOP_NS_CFG_CTRL_QSPI_ADDR (TOP_NS_BASE_ADDR + TOP_NS_CFG_CTRL_QSPI_OFFSET)
 
-#define QSPI_BASE_ADDR 0xF804E000ULL
 ///////////////////////////////////////////////////////
 // Register: CTRLR0
 // This register controls the serial data transfer. It is impossible to write to this register when the DWC_ssi is enabled.
