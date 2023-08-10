@@ -90,7 +90,7 @@ AL_S32 AlCipher_Hal_Init(AL_CIPHER_HalStruct *Handle, AL_CIPHER_CallBackStruct *
     /* 3. register callback */
     if (CallBack == AL_NULL) {
         EventCallBack.Func  = AlCipher_Hal_DefEventCallBack;
-        EventCallBack.Ref   = Handle->Dev;
+        EventCallBack.Ref   = Handle;
     } else {
         EventCallBack.Func  = CallBack->Func;
         EventCallBack.Ref   = CallBack->Ref;
@@ -109,11 +109,6 @@ AL_S32 AlCipher_Hal_Init(AL_CIPHER_HalStruct *Handle, AL_CIPHER_CallBackStruct *
     AlIntr_RegHandler(HwConfig->AckIntrId, &IntrAttr, AlCipher_Dev_IntrHandler, Handle->Dev);
 
     Ret = Al_OSAL_Lock_Init(&Handle->StartLock, "Cipher-StartLock");
-    if (Ret != AL_OK) {
-        return Ret;
-    }
-
-    Ret = Al_OSAL_Lock_Init(&Handle->AckLock, "Cipher-AckLock");
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -193,5 +188,5 @@ AL_S32 AlCipher_Hal_StartBlock(AL_CIPHER_HalStruct *Handle, AL_CIPHER_CmdEnum Cm
 
     (AL_VOID)Al_OSAL_Lock_Release(&Handle->StartLock);
 
-    return (Ret != AL_OK) ? Ret : AL_CIPHER_EVENTS_TO_ERRS(Event.EventId);
+    return (Ret != AL_OK) ? Ret : Event.EventData;
 }

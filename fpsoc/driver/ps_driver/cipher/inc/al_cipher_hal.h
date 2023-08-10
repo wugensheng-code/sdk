@@ -24,7 +24,6 @@ typedef struct
 {
     AL_CIPHER_DevStruct *Dev;
     AL_Lock             StartLock;
-    AL_Lock             AckLock;
     AL_CIPHER_ModeEnum  ReqStartMode;
     AL_CIPHER_ModeEnum  CurStartMode;
     AL_MailBox          StartEventQueue[AL_CIPHER_API_MODE_NUM];
