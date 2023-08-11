@@ -117,7 +117,7 @@ static AL_VOID AlIic_DefEventCallBack(AL_IIC_EventStruct *IicEvent, void *Callba
         printf("AL_IIC_EVENT_TX_ABRT source:0x%x\r\n", IicEvent->EventData);
         break;
 
-        case AL_IIC_EVENT_RX_DONE:
+        case AL_IIC_EVENT_TX_DONE:
         break;
 
         case AL_IIC_EVENT_ACTIVITY:

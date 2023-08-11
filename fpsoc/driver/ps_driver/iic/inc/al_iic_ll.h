@@ -97,10 +97,10 @@ static inline AL_VOID AlIic_ll_SetSpeedMode(AL_REG BaseAddr, AL_IIC_SpeedModeEnu
 
 static inline AL_IIC_SpeedModeEnum AlIic_ll_GetSpeedMode(AL_REG BaseAddr)
 {
-    AL_REG32_GET_BITS(BaseAddr + I2C__IC_CON__OFFSET, I2C__IC_CON__SPEED__SHIFT, I2C__IC_CON__SPEED__SIZE);
+    return AL_REG32_GET_BITS(BaseAddr + I2C__IC_CON__OFFSET, I2C__IC_CON__SPEED__SHIFT, I2C__IC_CON__SPEED__SIZE);
 }
 
-static inline AL_VOID AlIic_ll_SetMaterEnable(AL_REG BaseAddr, AL_IIC_FunctionEnum State)
+static inline AL_VOID AlIic_ll_SetMasterEnable(AL_REG BaseAddr, AL_IIC_FunctionEnum State)
 {
     AL_REG32_SET_BIT(BaseAddr + I2C__IC_CON__OFFSET, I2C__IC_CON__MASTER_MODE__SHIFT, State);
 }

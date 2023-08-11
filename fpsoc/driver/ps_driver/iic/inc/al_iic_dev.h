@@ -41,7 +41,7 @@ typedef struct
     AL_IIC_SpeedModeEnum        SpeedMode;
 
     /* Just for slave, master not used */
-    AL_U16                      SarAddress;
+    AL_U16                      SlaveAddr;
 } AL_IIC_InitStruct;
 
 typedef struct
@@ -85,7 +85,7 @@ typedef enum
     AL_IIC_EVENT_TX_OVER        = (0x1 << 2),
     AL_IIC_EVENT_RD_REQ         = (0x1 << 3),
     AL_IIC_EVENT_TX_ABRT        = (0x1 << 4),
-    AL_IIC_EVENT_RX_DONE        = (0x1 << 5),
+    AL_IIC_EVENT_TX_DONE        = (0x1 << 5),
     AL_IIC_EVENT_ACTIVITY       = (0x1 << 6),
     AL_IIC_EVENT_STOP_DET       = (0x1 << 7),
     AL_IIC_EVENT_START_DET      = (0x1 << 8),

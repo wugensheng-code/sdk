@@ -22,6 +22,7 @@ AL_S32 AlIic_SclRecoveryTest()
     if (Ret != AL_OK) {
         printf("AlIic_Hal_Init Failed\r\n");
     }
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
     /* Last byte without STOP command will cause SCL at low */
     AlIic_Hal_MasterSetCmdOption(&Handle, AL_IIC_CMD_OPTION_NO_STOP_RESTART);
@@ -143,8 +144,7 @@ AL_S32 AlIic_TransRecvTest()
     {
         .Mode           = AL_IIC_MODE_SLAVE,
         .AddrMode       = AL_IIC_ADDR_7BIT,
-        .SpeedMode      = AL_IIC_FAST_MODE,
-        .SarAddress     = 0x77,
+        .SlaveAddr      = 0x77,
     };
 #endif
 

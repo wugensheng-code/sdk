@@ -96,8 +96,9 @@ static AL_S32 AlIic_Dev_CheckConfigParam(AL_IIC_InitStruct *InitConfig)
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    if (!(InitConfig->SpeedMode == AL_IIC_STANDARD_MODE || InitConfig->SpeedMode == AL_IIC_FAST_MODE ||
-          InitConfig->SpeedMode == AL_IIC_HIGH_SPEED_MODE)) {
+    if ((InitConfig->Mode == AL_IIC_MODE_MASTER) &&
+        (!(InitConfig->SpeedMode == AL_IIC_STANDARD_MODE || InitConfig->SpeedMode == AL_IIC_FAST_MODE ||
+          InitConfig->SpeedMode == AL_IIC_HIGH_SPEED_MODE))) {
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
@@ -134,22 +135,17 @@ AL_S32 AlIic_Dev_Init(AL_IIC_DevStruct *Iic, AL_IIC_HwConfigStruct *HwConfig, AL
         AlIic_ll_SetSlaveDisable(IicBaseAddr, AL_IIC_FUNC_ENABLE);
         AlIic_ll_SetRestartEnable(IicBaseAddr, AL_IIC_FUNC_ENABLE);
         AlIic_ll_SetMasterAddrMode(IicBaseAddr, InitConfig->AddrMode);
-    } else {
-        AlIic_ll_SetSar(IicBaseAddr, InitConfig->SarAddress);
-        AlIic_ll_SetSlaveDisable(IicBaseAddr, AL_IIC_FUNC_DISABLE);
-        AlIic_ll_SetSlaveAddrMode(IicBaseAddr, InitConfig->AddrMode);
-    }
 
-    AlIic_ll_SetSpeedMode(IicBaseAddr, InitConfig->SpeedMode);
-
-    if (InitConfig->Mode == AL_IIC_MODE_MASTER) {
-        AlIic_ll_SetMaterEnable(IicBaseAddr, AL_IIC_FUNC_ENABLE);
-//        AlIic_ll_SetTar(IicBaseAddr, InitConfig->Address);
+        AlIic_ll_SetSpeedMode(IicBaseAddr, InitConfig->SpeedMode);
+        AlIic_ll_SetMasterEnable(IicBaseAddr, AL_IIC_FUNC_ENABLE);
         AlIic_Dev_InitSclHighLowCout(Iic, InitConfig->SpeedMode);
 
         Iic->CmdOption = AL_IIC_CMD_OPTION_STOP;
     } else {
-        AlIic_ll_SetMaterEnable(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+        AlIic_ll_SetSar(IicBaseAddr, InitConfig->SlaveAddr);
+        AlIic_ll_SetSlaveDisable(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+        AlIic_ll_SetSlaveAddrMode(IicBaseAddr, InitConfig->AddrMode);
+        AlIic_ll_SetMasterEnable(IicBaseAddr, AL_IIC_FUNC_DISABLE);
     }
 
     AlIic_ll_MaskAllIntr(IicBaseAddr);
@@ -190,7 +186,8 @@ AL_S32 AlIic_Dev_MasterSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *
     AL_U8 Data;
     AL_REG IicBaseAddr;
 
-    if (SendBuf == AL_NULL || SendSize == 0 || SlaveAddr > AL_IIC_MAX_SLAVE_ADDR) {
+    if (Iic == AL_NULL || (Iic->Configs.Mode != AL_IIC_MODE_MASTER) ||
+        SendBuf == AL_NULL || SendSize == 0 || SlaveAddr > AL_IIC_MAX_SLAVE_ADDR) {
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
@@ -229,7 +226,8 @@ AL_S32 AlIic_Dev_MasterRecvData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *
     AL_REG IicBaseAddr;
     AL_U8 RxFifoThrLevel;
 
-    if (RecvBuf == AL_NULL || RecvSize == 0 || SlaveAddr > AL_IIC_MAX_SLAVE_ADDR) {
+    if (Iic == AL_NULL || (Iic->Configs.Mode != AL_IIC_MODE_MASTER) ||
+        RecvBuf == AL_NULL || RecvSize == 0 || SlaveAddr > AL_IIC_MAX_SLAVE_ADDR) {
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
@@ -280,7 +278,8 @@ AL_S32 AlIic_Dev_SlaveSendData(AL_IIC_DevStruct *Iic, AL_U8 *SendBuf, AL_U32 Sen
     AL_U8 Data;
     AL_REG IicBaseAddr;
 
-    if (SendBuf == AL_NULL || SendSize == 0) {
+    if (Iic == AL_NULL || (Iic->Configs.Mode != AL_IIC_MODE_SLAVE) ||
+        SendBuf == AL_NULL || SendSize == 0) {
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
@@ -321,7 +320,8 @@ AL_S32 AlIic_Dev_SlaveRecvData(AL_IIC_DevStruct *Iic, AL_U8 *RecvBuf, AL_U32 Rec
     AL_REG IicBaseAddr;
     AL_U8 RxFifoThrLevel;
 
-    if (RecvBuf == AL_NULL || RecvSize == 0) {
+    if (Iic == AL_NULL || (Iic->Configs.Mode != AL_IIC_MODE_SLAVE) ||
+        RecvBuf == AL_NULL || RecvSize == 0) {
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
@@ -386,6 +386,7 @@ static AL_VOID AlIic_Dev_MasterSendDataHandler(AL_IIC_DevStruct *Iic)
 
     if (Iic->SendBuffer.HandledCnt == Iic->SendBuffer.RequestedCnt) {
         AlIic_ll_SetTxEmptyIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+        AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
 
         /* Clear Status */
         AlIic_Dev_ClrTxBusy(Iic);
@@ -419,6 +420,7 @@ static AL_VOID AlIic_Dev_MasterRecvDataIssueReadCmd(AL_IIC_DevStruct *Iic)
 
     if (Iic->SendBuffer.HandledCnt == Iic->SendBuffer.RequestedCnt) {
         AlIic_ll_SetTxEmptyIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+        AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
     }
 
 }
@@ -447,7 +449,7 @@ static AL_VOID AlIic_Dev_MasterRecvDataHandler(AL_IIC_DevStruct *Iic)
             AlIic_ll_SetRxFifoThr(IicBaseAddr, RxRemainCnt - 1);
         }
     } else if (Iic->RecvBuffer.HandledCnt == Iic->RecvBuffer.RequestedCnt) {
-        AlIic_ll_SetTxEmptyIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+        AlIic_ll_SetRxFullIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
         AlIic_Dev_ClrRxBusy(Iic);
     }
 
@@ -477,6 +479,7 @@ static AL_VOID AlIic_Dev_SlaveRecvDataHandler(AL_IIC_DevStruct *Iic)
         }
     } else if (Iic->RecvBuffer.HandledCnt == Iic->RecvBuffer.RequestedCnt ) {
 
+        AlIic_ll_SetRxFullIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
         /* Clear Status */
         AlIic_Dev_ClrRxBusy(Iic);
     }
@@ -508,6 +511,9 @@ static AL_VOID AlIic_Dev_SlaveSendDataHandler(AL_IIC_DevStruct *Iic)
             (*Iic->EventCallBack)(&IicEvent, Iic->EventCallBackRef);
         }
 
+        AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+        AlIic_ll_SetRdReqIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+
         /* Clear Status */
         AlIic_Dev_ClrTxBusy(Iic);
     }
@@ -515,14 +521,17 @@ static AL_VOID AlIic_Dev_SlaveSendDataHandler(AL_IIC_DevStruct *Iic)
 
 static AL_VOID AlIic_Dev_SlaveSendDataDoneHandler(AL_IIC_DevStruct *Iic)
 {
+    AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
+
     if (Iic->EventCallBack) {
         AL_IIC_EventStruct IicEvent = {
-            .Event         = AL_IIC_EVENT_RX_DONE,
+            .Event         = AL_IIC_EVENT_TX_DONE,
             .EventData     =  Iic->SendBuffer.HandledCnt,
         };
         (*Iic->EventCallBack)(&IicEvent, Iic->EventCallBackRef);
     }
 
+    AlIic_ll_SetRxDoneIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
     AlIic_Dev_ClrRxBusy(Iic);
 }
 
@@ -713,6 +722,9 @@ AL_S32 AlIic_Dev_IoCtl(AL_IIC_DevStruct *Iic, AL_IIC_IoCtlCmdEnum Cmd, AL_VOID *
 
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
 
+    /* Need disable IIC first */
+    AlIic_ll_SetEnable(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+
     switch (Cmd)
     {
     case AL_IIC_IOCTL_SET_ADDR_MODE: {
@@ -740,6 +752,9 @@ AL_S32 AlIic_Dev_IoCtl(AL_IIC_DevStruct *Iic, AL_IIC_IoCtlCmdEnum Cmd, AL_VOID *
         return AL_IIC_ERR_IOCTL_CMD_NOT_SUPPORT;
         break;
     }
+
+    /* Need Enable IIC here */
+    AlIic_ll_SetEnable(IicBaseAddr, AL_IIC_FUNC_ENABLE);
 
     return Ret;
 }
