@@ -1,6 +1,5 @@
 
 #include "al_intr.h"
-#include "al_params.h"
 #include "npu_interrupt.h"
 #include "npu_driver.h"
 

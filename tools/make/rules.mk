@@ -78,7 +78,7 @@ endif
 # all public inc
 PUBLIC_INC_DIR :=  $(BSP_DIR)/inc \
                    $(CHIP_DIR)/inc \
-				   $(CHIP_DIR)/inc \
+                   $(CHIP_DIR)/../common/inc \
                    $(wildcard $(BSP_DIR)/driver/pl_driver/*/inc) \
                    $(wildcard $(BSP_DIR)/driver/ps_driver/*/inc) \
                    $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/lib/*/Makefile)) \
@@ -95,7 +95,7 @@ ifeq ($(RTOS), rtthread)
 PUBLIC_INC_DIR +=   $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/include \
                     $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/finsh \
                     $(AL_SDK_ROOT)/3rdparty/os/RT-Thread \
-					${AL_SDK_ROOT}/3rdparty/os/RT-Thread/rt-thread/components/finsh
+                    ${AL_SDK_ROOT}/3rdparty/os/RT-Thread/rt-thread/components/finsh
 endif
 
 ifeq ($(USE_LWIP),1)

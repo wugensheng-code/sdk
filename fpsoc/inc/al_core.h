@@ -9,7 +9,6 @@ extern "C" {
 #include "al_errno.h"
 #include "al_utils_def.h"
 #include "al_compiler.h"
-#include "al_params.h"
 #include "al_reg_io.h"
 #include "al_backtrace.h"
 #include "al_barrier.h"

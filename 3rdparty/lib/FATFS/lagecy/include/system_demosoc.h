@@ -32,8 +32,10 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include "al_type.h"
 
-extern uint32_t SystemCoreClock;     /*!< System Clock Frequency (Core Clock)  */
+
+extern AL_U64 SystemCoreClock;     /*!< System Clock Frequency (Core Clock)  */
 
 /**
  * \brief Setup the microcontroller system.

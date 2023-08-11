@@ -40,9 +40,72 @@ extern "C" {
 #define ALSOC_POST_CONFIG
 
 /* Freq of all peripherals */
-#define MHZ                 1000000U
-#define UART_FREQ           (40*MHZ )
-#define ALSOC_APU_FREQ      (100*MHZ)
+#define MHZ                     1000000U
+
+
+#define ALSOC_APU_FREQ          (100*MHZ)
+
+#ifdef AL9000_OSC_25
+#define SYSTEM_CLOCK            (25000000UL)
+#elif AL9000_OSC_33
+#define SYSTEM_CLOCK            (33333333UL)
+#elif AL9000_OSC_50
+#define SYSTEM_CLOCK            (50000000UL)
+#else
+#define SYSTEM_CLOCK            (50000000UL)
+#endif
+
+
+
+#define HAVE_UARTPS_DRIVER
+
+#ifdef AL9000_OSC_25
+#define UART_CLOCK              (25000000UL)
+#elif AL9000_OSC_33
+#define UART_CLOCK              (33333333UL)
+#elif AL9000_OSC_50
+#define UART_CLOCK              (50000000UL)
+#else
+#define UART_CLOCK              (40000000UL)
+#endif
+
+
+#define HAVE_IICPS_DRIVER
+#define I2C_CLOCK               (40*MHZ)
+
+#define HAVE_MMCPS_DRIVER
+#define MMC_CLOCK               (100*MHZ)
+
+#define HAVE_CANPS_DRIVER
+#define CAN_CLOCK               (80*MHZ)
+
+#define HAVE_QSPIPS_DRIVER
+#define QSPI_CLOCK              (50*MHZ)
+
+#define HAVE_SPIPS_DRIVER
+#define SPI_CLOCK               (50*MHZ)
+
+
+#define HAVE_SMCPS_DRIVER
+#define SMC_CLOCK               (50*MHZ)
+
+
+#define HAVE_XADC_DRIVER
+
+#define HAVE_GBEPS_DRIVER
+#define GBE_CLOCK               (25*MHZ)
+
+
+#define HAVE_GPIOPS_DRIVER
+
+#define HAVE_MPUPS_DRIVER
+
+#define HAVE_CIPHERPS_DRIVER
+
+#define HAVE_DMACAHBPS_DRIVER
+
+#define HAVE_GPIOPS_DRIVER
+
 
 /**
  * @desc  : init soc platform according to user configuration

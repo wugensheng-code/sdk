@@ -7,7 +7,7 @@
 /* Get resolution of clock. */
 __WEAK int clock_getres(clockid_t clock_id, struct timespec* res)
 {
-    extern uint32_t SystemCoreClock;
+    extern AL_U64 SystemCoreClock;
     res->tv_sec = 0;
     res->tv_nsec = 1000000000 / SystemCoreClock;
 

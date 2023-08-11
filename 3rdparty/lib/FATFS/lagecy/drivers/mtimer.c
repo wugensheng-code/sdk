@@ -10,7 +10,7 @@ uint32_t Mtimer_Delay(AL_U64 Usec)
     AL_U64 End;
     AL_U64 Tconsumed;
 
-    DelayCnt = (AL_U64)Usec * AlSys_GetTimerFreq() / 1000000;
+    DelayCnt = Usec * AlSys_GetTimerFreq() / 1000000;
     Start = AlSys_GetTimerTick();
 
     do{
@@ -30,11 +30,11 @@ uint32_t Mtimer_Init(MtimerParams* Mtimer)
     return 0;
 }
 
-uint32_t Mtimer_Start(MtimerParams* Mtimer, AL_U64 Us)
+uint32_t Mtimer_Start(MtimerParams* Mtimer, AL_U64 Usec)
 {
     Mtimer->StartPoint = AlSys_GetTimerTick();
     Mtimer->CurPoint = Mtimer->StartPoint;
-    Mtimer->TimerOut = get_MTimerOutValue(Us);
+    Mtimer->TimerOut = (AL_U64)Usec * AlSys_GetTimerFreq() / 1000000;
     Mtimer->IsTimerOut = 0;
     return 0;
 }

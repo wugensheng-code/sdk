@@ -3,9 +3,9 @@
 #include "core_feature_base.h"
 #include "ext_timer.h"
 
-extern AL_U32 SystemCoreClock;
+extern AL_U64 SystemCoreClock;
 
-static AL_U32 get_timer_freq()
+static AL_U64 get_timer_freq()
 {
     return SystemCoreClock;
 }
@@ -80,10 +80,6 @@ AL_U64 AlSys_GetTimerTick(AL_VOID)
     return SysTimer->MTIMER;
 }
 
-AL_U64 get_MTimerOutValue(AL_U64 count)
-{
-    return (get_timer_freq() * count) / 1000000;
-}
 
 AL_VOID AlSys_UDelay(AL_U64 Usec)
 {

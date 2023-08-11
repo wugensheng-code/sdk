@@ -6,7 +6,7 @@
 #include "al_chip.h"
 
 
-uint32_t SystemCoreClock = SYSTEM_CLOCK;  /* System Clock Frequency (Core Clock) */
+AL_U64 SystemCoreClock = SYSTEM_CLOCK;  /* System Clock Frequency (Core Clock) */
 
 
 /**

@@ -1,6 +1,5 @@
 #include "sysregs.h"
 #include "al_type.h"
-#include "al_params.h"
 #include "al_top.h"
 
 
@@ -29,10 +28,10 @@ AL_U64 AlSys_GetTimerTick(AL_VOID)
     return (AL_U64)read_sysreg(CNTPCT_EL0);
 }
 
-
 AL_U64 AlSys_GetTimerFreq(AL_VOID)
 {
-    return (AL_U64)SYSTEM_CLOCK;
+    extern AL_U64 SystemCoreClock;
+    return SystemCoreClock;
 }
 
 
