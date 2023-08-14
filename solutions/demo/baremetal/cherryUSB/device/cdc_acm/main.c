@@ -88,9 +88,12 @@ AL_VOID AlUsb_Dev_IntrHandler(AL_VOID *Instance)
     USBD_IRQHandler();
 }
 
+static AL_USB_DevStruct AL_USB_DevInstance[AL_USB_NUM_INSTANCE];
+
 AL_S32 AlUsb_Hal_Init(AL_USB_HalStruct *Handle, AL_U32 DevId, AL_USB_InitStruct *InitConfig)
 {
     AL_USB_DevStruct *Dev;
+    Dev = &AL_USB_DevInstance[DevId];
 	
 	Dev->DevId        = DevId;
     Dev->BaseAddr     = AlUsb_Dev_LookupConfig(DevId)->BaseAddress;

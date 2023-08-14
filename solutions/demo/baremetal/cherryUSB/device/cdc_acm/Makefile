@@ -12,7 +12,7 @@ else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
-DOWNLOAD        ?= ddr
+DOWNLOAD        ?= ocm
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
 #    LD_LIBS: External library files that the app depends on
@@ -41,21 +41,21 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O0 -g -DAL9000_BRINGUP -DBOARD_DR1X90_AD101_V10 -DAL9000_OSC_33
+CFLAGS := -O2 -g -DAL9000_BRINGUP -DBOARD_DR1X90_AD101_V10 -DAL9000_OSC_33
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
-#PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
+#PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
+PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile
 ## Available choices:
 ## PINMUX_MODE1, PINMUX_MODE2, PINMUX_MODE3, PINMUX_MODE_SD1
 #########################################################################
-PINMUX_MODE ?= PINMUX_MODE2
+PINMUX_MODE ?= PINMUX_MODE1
 
 
 #########################################################################
