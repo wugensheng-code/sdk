@@ -120,7 +120,7 @@ static inline AL_VOID AlIic_ll_SetTar(AL_REG BaseAddr, AL_U16 Addr)
     AL_REG32_SET_BITS(BaseAddr + I2C__IC_TAR__OFFSET, I2C__IC_TAR__IC_TAR__SHIFT, I2C__IC_TAR__IC_TAR__SIZE, Addr);
 }
 
-static inline AL_VOID AlIic_ll_SetSar(AL_REG BaseAddr, AL_U16 Addr)
+static inline AL_VOID AlIic_ll_SetSlaveAddr(AL_REG BaseAddr, AL_U16 Addr)
 {
     AL_REG32_SET_BITS(BaseAddr + I2C__IC_SAR__OFFSET, I2C__IC_SAR__IC_SAR__SHIFT, I2C__IC_SAR__IC_SAR__SIZE, Addr);
 }
@@ -416,6 +416,18 @@ static inline AL_VOID AlIic_ll_SetSclStuckLowTimeout(AL_REG BaseAddr, AL_U32 Val
 static inline AL_VOID AlIic_ll_SetSdaStuckLowTimeout(AL_REG BaseAddr, AL_U32 Value)
 {
     AL_REG32_WRITE(BaseAddr + I2C__IC_SDA_STUCK_AT_LOW_TIMEOUT__OFFSET, Value);
+}
+
+static inline AL_U32 AlIic_ll_GetRxBufferDepth(AL_REG BaseAddr)
+{
+    return (AL_REG32_GET_BITS(BaseAddr + I2C__IC_COMP_PARAM_1__OFFSET, I2C__IC_COMP_PARAM_1__RX_BUFFER_DEPTH__SHIFT,
+                             I2C__IC_COMP_PARAM_1__RX_BUFFER_DEPTH__SIZE) + 1);
+}
+
+static inline AL_U32 AlIic_ll_GetTxBufferDepth(AL_REG BaseAddr)
+{
+    return (AL_REG32_GET_BITS(BaseAddr + I2C__IC_COMP_PARAM_1__OFFSET, I2C__IC_COMP_PARAM_1__TX_BUFFER_DEPTH__SHIFT,
+                             I2C__IC_COMP_PARAM_1__TX_BUFFER_DEPTH__SIZE) + 1);
 }
 
 #ifdef __cplusplus

@@ -80,21 +80,24 @@ typedef enum
 
 typedef enum
 {
-    AL_IIC_EVENT_RX_UNDER       = (0x1 << 0),
-    AL_IIC_EVENT_RX_OVER        = (0x1 << 1),
-    AL_IIC_EVENT_TX_OVER        = (0x1 << 2),
-    AL_IIC_EVENT_RD_REQ         = (0x1 << 3),
-    AL_IIC_EVENT_TX_ABRT        = (0x1 << 4),
-    AL_IIC_EVENT_TX_DONE        = (0x1 << 5),
-    AL_IIC_EVENT_ACTIVITY       = (0x1 << 6),
-    AL_IIC_EVENT_STOP_DET       = (0x1 << 7),
-    AL_IIC_EVENT_START_DET      = (0x1 << 8),
-    AL_IIC_EVENT_GEN_CALL       = (0x1 << 9),
+    AL_IIC_EVENT_READY_TO_RX    = (0x1 << 0),
+    AL_IIC_EVENT_READY_TO_TX    = (0x1 << 1),
+    AL_IIC_EVENT_RX_UNDER       = (0x1 << 2),
+    AL_IIC_EVENT_RX_OVER        = (0x1 << 3),
+    AL_IIC_EVENT_TX_OVER        = (0x1 << 4),
+    AL_IIC_EVENT_RD_REQ         = (0x1 << 5),
+    AL_IIC_EVENT_TX_ABRT        = (0x1 << 6),
+    AL_IIC_EVENT_TX_DONE        = (0x1 << 7),
+    AL_IIC_EVENT_RX_DONE        = (0x1 << 8),
+    AL_IIC_EVENT_ACTIVITY       = (0x1 << 9),
+    AL_IIC_EVENT_STOP_DET       = (0x1 << 10),
+    AL_IIC_EVENT_START_DET      = (0x1 << 11),
+    AL_IIC_EVENT_GEN_CALL       = (0x1 << 12),
 } AL_IIC_EventIdEnum;
 
 typedef struct
 {
-    AL_IIC_EventIdEnum      Event;
+    AL_IIC_EventIdEnum      Events;
     AL_U32                  EventData;
 } AL_IIC_EventStruct;
 
@@ -153,6 +156,7 @@ typedef enum
 #define AL_IIC_ERR_NOT_READY                (AL_DEF_ERR(AL_IIC, AL_LOG_LEVEL_ERROR, AL_IIC_NOT_READY))
 #define AL_IIC_ERR_BUSY                     (AL_DEF_ERR(AL_IIC, AL_LOG_LEVEL_ERROR, AL_IIC_BUSY))
 #define AL_IIC_ERR_IOCTL_CMD_NOT_SUPPORT    (AL_DEF_ERR(AL_IIC, AL_LOG_LEVEL_ERROR, AL_IIC_ERR_IOCTL_CMD))
+#define AL_IIC_EVENTS_TO_ERRS(Event)        (AL_DEF_ERR(AL_IIC, AL_LOG_LEVEL_ERROR, Event))
 
 AL_IIC_HwConfigStruct *AlIic_Dev_LookupConfig(AL_U32 DevId);
 
@@ -160,11 +164,23 @@ AL_S32 AlIic_Dev_Init(AL_IIC_DevStruct *Iic, AL_IIC_HwConfigStruct *HwConfig, AL
 
 AL_S32 AlIic_Dev_MasterSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *SendBuf, AL_U32 SendSize);
 
+AL_VOID AlIic_Dev_StopMasterSend(AL_IIC_DevStruct *Iic);
+
+AL_S32 AlIic_Dev_MasterSendDataPolling(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *SendBuf, AL_U32 SendSize);
+
 AL_S32 AlIic_Dev_MasterRecvData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *RecvBuf, AL_U32 RecvSize);
+
+AL_VOID AlIic_Dev_StopMasterRecv(AL_IIC_DevStruct *Iic);
+
+AL_S32 AlIic_Dev_MasterRecvDataPolling(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *RecvBuf, AL_U32 RecvSize);
 
 AL_S32 AlIic_Dev_SlaveSendData(AL_IIC_DevStruct *Iic, AL_U8 *SendBuf, AL_U32 SendSize);
 
+AL_VOID AlIic_Dev_StopSlaveSend(AL_IIC_DevStruct *Iic);
+
 AL_S32 AlIic_Dev_SlaveRecvData(AL_IIC_DevStruct *Iic, AL_U8 *RecvBuf, AL_U32 RecvSize);
+
+AL_VOID AlIic_Dev_StopSlaveRecv(AL_IIC_DevStruct *Iic);
 
 AL_VOID AlIic_Dev_IntrHandler(AL_VOID *instance);
 

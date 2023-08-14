@@ -7,13 +7,19 @@ extern "C" {
 
 #include "al_iic_dev.h"
 
+typedef enum {
+    AL_IIC_MODE_BLOCK    = 0,
+    AL_IIC_MODE_NONBLOCK = 1,
+} AL_IIC_TxRxModeEnum;
+
 typedef struct
 {
-    AL_IIC_DevStruct    *Dev;
+    AL_IIC_DevStruct             *Dev;
 
-// #ifdef USE_RTOS
-//     AL_Lock             Lock;
-// #endif
+    AL_Lock                      Lock;
+    AL_IIC_TxRxModeEnum          RequestTxOrRxMode;
+    AL_IIC_TxRxModeEnum          CurTxOrRxMode;
+    AL_MailBox                   TxRxEventQueue[2];
 } AL_IIC_HalStruct;
 
 AL_S32 AlIic_Hal_Init(AL_IIC_HalStruct *Handle, AL_U32 DevId,
@@ -21,7 +27,11 @@ AL_S32 AlIic_Hal_Init(AL_IIC_HalStruct *Handle, AL_U32 DevId,
 
 AL_S32 AlIic_Hal_MasterSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout);
 
+AL_S32 AlIic_Hal_MasterSendDataPolling(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U8 *Data, AL_U32 Size);
+
 AL_S32 AlIic_Hal_MasterRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout);
+
+AL_S32 AlIic_Hal_MasterRecvDataPolling(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U8 *Data, AL_U32 Size);
 
 AL_S32 AlIic_Hal_SlaveSendDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout);
 

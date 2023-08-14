@@ -1,5 +1,10 @@
 #include "al_iic_hal.h"
 
+
+#define TEST_SLAVE_ADDR                 0x77
+#define IIC_MASTER_TEST_TIMEOUT_MS      1000
+#define IIC_SLAVE_TEST_TIMEOUT_MS       100000
+
 AL_S32 AlIic_SclRecoveryTest()
 {
     AL_S32 Ret;
@@ -16,11 +21,12 @@ AL_S32 AlIic_SclRecoveryTest()
     {
         0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
     };
-    AL_U16 SlaveAddr = 0x77;
+    AL_U16 SlaveAddr = TEST_SLAVE_ADDR;
 
     Ret = AlIic_Hal_Init(&Handle, 1, &MasterInitConfig, AL_NULL);
     if (Ret != AL_OK) {
         printf("AlIic_Hal_Init Failed\r\n");
+        return Ret;
     }
     AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
@@ -30,6 +36,7 @@ AL_S32 AlIic_SclRecoveryTest()
     Ret = AlIic_Hal_MasterSendDataBlock(&Handle, SlaveAddr, SendData, 8, 0);
     if (Ret != AL_OK) {
         printf("AlIic_Hal_MasterSendDataBlock Failed\r\n");
+        return Ret;
     }
 
     return AL_OK;
@@ -82,13 +89,15 @@ AL_S32 AlIic_E2promTest()
     Ret = AlIic_Hal_Init(&Handle, 0, &InitConfig, AL_NULL);
     if (Ret != AL_OK) {
         printf("AlIic_Hal_Init Failed\r\n");
+        return Ret;
     }
     AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
     /* Page write, Include address */
-    Ret = AlIic_Hal_MasterSendDataBlock(&Handle, SlaveAddr, WriteBuffer, 130, 0);
+    Ret = AlIic_Hal_MasterSendDataBlock(&Handle, SlaveAddr, WriteBuffer, 130, IIC_MASTER_TEST_TIMEOUT_MS);
     if (Ret != AL_OK) {
         printf("AlIic_Hal_MasterSendDataBlock Failed\r\n");
+        return Ret;
     }
 
     /* delay > 10ms for write complete */
@@ -97,18 +106,20 @@ AL_S32 AlIic_E2promTest()
     } while(DelayCnt < 0xFFF);
 
     /* Send read address */
-    Ret = AlIic_Hal_MasterSendDataBlock(&Handle, SlaveAddr, (AL_U8*)&ReadWriteAddr, 2, 0);
+    Ret = AlIic_Hal_MasterSendDataBlock(&Handle, SlaveAddr, (AL_U8*)&ReadWriteAddr, 2, IIC_MASTER_TEST_TIMEOUT_MS);
     if (Ret != AL_OK) {
         printf("AlIic_Hal_MasterSendDataBlock Failed\r\n");
+        return Ret;
     }
 
     /* Read data from e2prom */
-    Ret = AlIic_Hal_MasterRecvDataBlock(&Handle, SlaveAddr, ReadBuffer, 128, 0);
+    Ret = AlIic_Hal_MasterRecvDataBlock(&Handle, SlaveAddr, ReadBuffer, 128, IIC_MASTER_TEST_TIMEOUT_MS);
     if (Ret != AL_OK) {
         printf("AlIic_Hal_MasterRecvDataBlock Failed\r\n");
+        return Ret;
     }
 
-    for(Index = 0; Index < 128; Index++) {
+    for (Index = 0; Index < 128; Index++) {
         if (WriteBuffer[Index+2] != ReadBuffer[Index]) {
             TestFail = 1;
             break;
@@ -122,31 +133,217 @@ AL_S32 AlIic_E2promTest()
 
 }
 
-#define AL_IIC_TEST_MASTER_TX
-//#define AL_IIC_TEST_MASTER_RX
-//#define AL_IIC_TEST_SLAVE_TX
-//#define AL_IIC_TEST_SLAVE_RX
-
-AL_S32 AlIic_TransRecvTest()
+AL_S32 AlIic_SlaveRecvBlockTest()
 {
     AL_S32 Ret;
     AL_IIC_HalStruct Handle;
-#if defined (AL_IIC_TEST_MASTER_TX) || defined (AL_IIC_TEST_MASTER_RX)
+
+    AL_IIC_InitStruct SlaveInitConfig =
+    {
+        .Mode           = AL_IIC_MODE_SLAVE,
+        .AddrMode       = AL_IIC_ADDR_7BIT,
+        .SlaveAddr      = TEST_SLAVE_ADDR,
+    };
+
+    AL_U8 RecvData[256] =
+    {
+        0,
+    };
+
+    Ret = AlIic_Hal_Init(&Handle, 1, &SlaveInitConfig, AL_NULL);
+    if (Ret != AL_OK) {
+        printf("AlIic_Hal_Init Failed\r\n");
+        return Ret;
+    }
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+
+    Ret = AlIic_Hal_SlaveRecvDataBlock(&Handle, RecvData, 256, IIC_SLAVE_TEST_TIMEOUT_MS);
+    if (Ret != AL_OK) {
+        printf("AlIic_Hal_SlaveRecvDataBlock Failed\r\n");
+        return Ret;
+    }
+    printf("AlIic_Hal_SlaveRecvDataBlock data:\r\n");
+
+    for (int i = 0; i < 256; i++)
+    {
+        printf("0x%x ", RecvData[i]);
+        if ((i+1) % 16 == 0) {
+            printf("\r\n");
+        }
+    }
+    printf("\r\n");
+
+    return AL_OK;
+}
+
+AL_S32 AlIic_SlaveSendBlockTest()
+{
+    AL_S32 Ret;
+    AL_IIC_HalStruct Handle;
+
+    AL_IIC_InitStruct SlaveInitConfig =
+    {
+        .Mode           = AL_IIC_MODE_SLAVE,
+        .AddrMode       = AL_IIC_ADDR_7BIT,
+        .SlaveAddr      = TEST_SLAVE_ADDR,
+    };
+
+    AL_U8 SendData[256] =
+    {
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+    };
+
+    Ret = AlIic_Hal_Init(&Handle, 1, &SlaveInitConfig, AL_NULL);
+    if (Ret != AL_OK) {
+        printf("AlIic_Hal_Init Failed\r\n");
+        return Ret;
+    }
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+
+    Ret = AlIic_Hal_SlaveSendDataBlock(&Handle, SendData, 256, IIC_SLAVE_TEST_TIMEOUT_MS);
+    if (Ret != AL_OK) {
+        printf("AlIic_Hal_SlaveSendDataBlock Failed\r\n");
+    } else {
+        printf("AlIic_Hal_SlaveSendDataBlock pass\r\n");
+    }
+
+    return Ret;
+}
+
+AL_S32 AlIic_MasterRecvPollingTest()
+{
+    AL_S32 Ret;
+    AL_IIC_HalStruct Handle;
+
     AL_IIC_InitStruct MasterInitConfig =
     {
         .Mode           = AL_IIC_MODE_MASTER,
         .AddrMode       = AL_IIC_ADDR_7BIT,
         .SpeedMode      = AL_IIC_FAST_MODE,
     };
-#else
 
-    AL_IIC_InitStruct SlaveInitConfig =
+    AL_U8 RecvData[256] =
     {
-        .Mode           = AL_IIC_MODE_SLAVE,
-        .AddrMode       = AL_IIC_ADDR_7BIT,
-        .SlaveAddr      = 0x77,
+        0,
     };
-#endif
+
+    AL_U16 SlaveAddr = TEST_SLAVE_ADDR;
+
+    Ret = AlIic_Hal_Init(&Handle, 1, &MasterInitConfig, AL_NULL);
+
+    if (Ret != AL_OK) {
+        printf("AlIic_Hal_Init Failed\r\n");
+        return Ret;
+    }
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+
+    Ret = AlIic_Hal_MasterRecvDataPolling(&Handle, SlaveAddr, RecvData , 256);
+    if (Ret != AL_OK) {
+        printf("AlIic_Hal_MasterRecvDataPolling Failed\r\n");
+        return Ret;
+    }
+
+    printf("AlIic_Hal_MasterRecvDataPolling data:\r\n");
+    for (int i = 0; i < 256; i++)
+    {
+        printf("0x%x ", RecvData[i]);
+        if ((i+1) % 16 == 0) {
+            printf("\r\n");
+        }
+    }
+    printf("\r\n");
+
+    return AL_OK;
+}
+
+AL_S32 AlIic_MasterRecvBlockTest()
+{
+    AL_S32 Ret;
+    AL_IIC_HalStruct Handle;
+
+    AL_IIC_InitStruct MasterInitConfig =
+    {
+        .Mode           = AL_IIC_MODE_MASTER,
+        .AddrMode       = AL_IIC_ADDR_7BIT,
+        .SpeedMode      = AL_IIC_FAST_MODE,
+    };
+
+    AL_U8 RecvData[256] =
+    {
+        0,
+    };
+
+    AL_U16 SlaveAddr = TEST_SLAVE_ADDR;
+
+    Ret = AlIic_Hal_Init(&Handle, 1, &MasterInitConfig, AL_NULL);
+
+    if (Ret != AL_OK) {
+        printf("AlIic_Hal_Init Failed\r\n");
+        return Ret;
+    }
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+
+    Ret = AlIic_Hal_MasterRecvDataBlock(&Handle, SlaveAddr, RecvData , 256, IIC_MASTER_TEST_TIMEOUT_MS);
+    if (Ret != AL_OK) {
+        printf("AlIic_Hal_MasterRecvDataBlock Failed\r\n");
+        return Ret;
+    }
+
+    printf("AlIic_Hal_MasterRecvDataBlock Data:\r\n");
+    for (int i = 0; i < 256; i++)
+    {
+        printf("0x%x ", RecvData[i]);
+        if ((i+1) % 16 == 0) {
+            printf("\r\n");
+        }
+    }
+    printf("\r\n");
+
+    return AL_OK;
+}
+
+AL_S32 AlIic_MasterSendPollingTest()
+{
+    AL_S32 Ret;
+    AL_IIC_HalStruct Handle;
+
+    AL_IIC_InitStruct MasterInitConfig =
+    {
+        .Mode           = AL_IIC_MODE_MASTER,
+        .AddrMode       = AL_IIC_ADDR_7BIT,
+        .SpeedMode      = AL_IIC_FAST_MODE,
+    };
 
     AL_U8 SendData[256] =
     {
@@ -189,74 +386,119 @@ AL_S32 AlIic_TransRecvTest()
         0,
     };
 
-#if defined (AL_IIC_TEST_MASTER_TX) || defined (AL_IIC_TEST_MASTER_RX)
-    AL_U16 SlaveAddr = 0x77;
+    AL_U16 SlaveAddr = TEST_SLAVE_ADDR;
 
     Ret = AlIic_Hal_Init(&Handle, 1, &MasterInitConfig, AL_NULL);
-#else
-    Ret = AlIic_Hal_Init(&Handle, 1, &SlaveInitConfig, AL_NULL);
-#endif
+
     if (Ret != AL_OK) {
         printf("AlIic_Hal_Init Failed\r\n");
+        return Ret;
     }
     AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
 
-#ifdef AL_IIC_TEST_MASTER_TX
-    Ret = AlIic_Hal_MasterSendDataBlock(&Handle, SlaveAddr, SendData, 256, 0);
+    Ret = AlIic_Hal_MasterSendDataPolling(&Handle, SlaveAddr, SendData, 256);
     if (Ret != AL_OK) {
-        printf("AlIic_Hal_MasterSendDataBlock Failed\r\n");
-    }
-#endif
-
-#ifdef AL_IIC_TEST_MASTER_RX
-    Ret = AlIic_Hal_MasterRecvDataBlock(&Handle, SlaveAddr, RecvData , 256, 0);
-    if (Ret != AL_OK) {
-        printf("AlIic_Hal_MasterRecvDataBlock Failed\r\n");
+        printf("AlIic_Hal_MasterSendDataPolling Failed\r\n");
+    } else {
+        printf("AlIic_Hal_MasterSendDataPolling pass\r\n");
     }
 
-    for (int i = 0; i < 256; i++)
+    return Ret;
+}
+
+AL_S32 AlIic_MasterSendBlockTest()
+{
+    AL_S32 Ret;
+    AL_IIC_HalStruct Handle;
+    AL_IIC_InitStruct MasterInitConfig =
     {
-        printf("0x%x ", RecvData[i]);
-        if ((i+1) % 32 == 0) {
-            printf("\r\n");
-        }
-    }
-    printf("\r\n");
-#endif
+        .Mode           = AL_IIC_MODE_MASTER,
+        .AddrMode       = AL_IIC_ADDR_7BIT,
+        .SpeedMode      = AL_IIC_FAST_MODE,
+    };
 
-#ifdef AL_IIC_TEST_SLAVE_TX
-    Ret = AlIic_Hal_SlaveSendDataBlock(&Handle, SendData, 256, 0);
-    if (Ret != AL_OK) {
-        printf("AlIic_Hal_SlaveSendDataBlock Failed\r\n");
-    }
-#endif
-
-#ifdef AL_IIC_TEST_SLAVE_RX
-    Ret = AlIic_Hal_SlaveRecvDataBlock(&Handle, RecvData, 256, 0);
-    if (Ret != AL_OK) {
-        printf("AlIic_Hal_SlaveRecvDataBlock Failed\r\n");
-    }
-
-    for (int i = 0; i < 256; i++)
+    AL_U8 SendData[256] =
     {
-        printf("0x%x ", RecvData[i]);
-        if ((i+1) % 32 == 0) {
-            printf("\r\n");
-        }
-    }
-    printf("\r\n");
-#endif
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+    };
 
-    return 0;
+    AL_U16 SlaveAddr = TEST_SLAVE_ADDR;
+
+    Ret = AlIic_Hal_Init(&Handle, 1, &MasterInitConfig, AL_NULL);
+    if (Ret != AL_OK) {
+        printf("AlIic_Hal_Init Failed\r\n");
+        return Ret;
+    }
+    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+
+    Ret = AlIic_Hal_MasterSendDataBlock(&Handle, SlaveAddr, SendData, 256, IIC_MASTER_TEST_TIMEOUT_MS);
+    if (Ret != AL_OK) {
+        printf("AlIic_Hal_MasterSendDataBlock test Failed\r\n");
+    } else {
+        printf("AlIic_Hal_MasterSendDataBlock test pass\r\n");
+    }
+
+    return Ret;
 }
 
 int main()
 {
-    AlIic_TransRecvTest();
+#ifdef IIC_TEST_MASTER_TX
+    AlIic_MasterSendBlockTest();
+    AlIic_MasterSendPollingTest();
+#endif
 
+#ifdef IIC_TEST_MASTER_RX
+    AlIic_MasterRecvBlockTest();
+    AlIic_MasterRecvPollingTest();
+#endif
+
+#ifdef IIC_TEST_SLAVE_TX
+    AlIic_SlaveSendBlockTest();
+#endif
+
+#ifdef IIC_TEST_SLAVE_RX
+    AlIic_SlaveRecvBlockTest();
+#endif
+
+#ifdef IIC_TEST_EEPROM
     AlIic_E2promTest();
+#endif
 
+#ifdef IIC_TEST_BUS_CLEAR
     AlIic_BusClearFeatureTest();
+#endif
 
     return 0;
 }

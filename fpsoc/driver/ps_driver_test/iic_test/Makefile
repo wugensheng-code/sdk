@@ -37,6 +37,7 @@ ASM_SRCS :=
 #########################################################################
 CFLAGS :=
 
+CFLAGS += -DIIC_TEST_MASTER_TX
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
