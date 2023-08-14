@@ -51,6 +51,23 @@ static AL_S32 AlQspi_Hal_WaitRxDoneOrTimeout(AL_QSPI_HalStruct *Handle, AL_U32 T
 }
 
 /**
+ * This function is wait receive done and send done or timeout
+ * @param   Handle is pointer to AL_QSPI_HalStruct
+ * @param   Timeout is max wait time
+ * @return  Return whether to send and receive timeout
+ * @note    None
+*/
+static AL_S32 AlQspi_Hal_WaitTxRxDoneOrTimeout(AL_QSPI_HalStruct *Handle, AL_U32 Timeout)
+{
+    /*
+     * TODO:wait for event timeout
+    */
+    (void) Handle;
+    (void) Timeout;
+}
+
+
+/**
  * This function
  * @param   Handle is pointer to AL_QSPI_HalStruct
  * @param

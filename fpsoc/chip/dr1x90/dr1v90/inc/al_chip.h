@@ -32,6 +32,8 @@ typedef enum {
     SOC_SMC_IRQn         =  68,
     SOC_QSPI_IRQn        =  69,
     GPIO0_IRQn           =  71,
+    SOC_USB0_IRQn        =  75,
+    SOC_USB1_IRQn        =  76,
     SOC_GBE0_IRQn        =  77,
     SOC_GBE1_IRQn        =  78,
     SOC_INT130_IRQn      =  130,

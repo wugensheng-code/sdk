@@ -4,7 +4,8 @@
 C_SRCS += $(wildcard ./port/dwc2/*.c) \
 			$(wildcard ./core/*.c) \
 			$(wildcard ./class/cdc/*.c) \
-			$(wildcard ./class/hub/*.c)
+			$(wildcard ./class/hub/*.c) \
+			osal/usb_osal_null.c
 
 # (1.2) add submodule include file to /bsp/inc for calling
 INC_DIR += common \
@@ -13,8 +14,7 @@ INC_DIR += common \
 			class/cdc \
 			class/hub \
 			config \
-			osal
-
+			osal 
 
 
 # (3) set specificity FLAGS

@@ -87,6 +87,11 @@ SECTIONS
     KEEP(*(UtestTcTab))
     __rt_utest_tc_tab_end = .;
     *(.gnu.linkonce.r.*)
+    /* section information for usbh class */
+    . = ALIGN(4);
+    __usbh_class_info_start__ = .;
+    KEEP(*(.usbh_class_info))
+    __usbh_class_info_end__ = .;
 
   } >ilm AT>ilm
 

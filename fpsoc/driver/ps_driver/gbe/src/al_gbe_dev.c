@@ -1182,7 +1182,7 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
 }
 
 
-extern void HAL_ETH_TxFreeCallback(AL_U32 * buff);
+// extern void HAL_ETH_TxFreeCallback(AL_U32 * buff);
 
 AL_S32 AlGbe_Dev_ReleaseTxPacket(AL_GBE_DevStruct *Gbe)
 {
@@ -1208,7 +1208,7 @@ AL_S32 AlGbe_Dev_ReleaseTxPacket(AL_GBE_DevStruct *Gbe)
             if (!AlGbe_ll_IsTxDescOwnByDma(&(Gbe->InitConfig.TxDescList[Index].DESC3))) {
 
                 /* Release the packet.  */
-                HAL_ETH_TxFreeCallback(DmaTxDescList->PacketAddress[Index]);
+                // HAL_ETH_TxFreeCallback(DmaTxDescList->PacketAddress[Index]);
 
                 /* Clear the entry in the in-use array.  */
                 DmaTxDescList->PacketAddress[Index] = AL_NULL;
@@ -1352,8 +1352,8 @@ static AL_VOID AlGbe_Dev_RxHandler(AL_GBE_DevStruct *Gbe)
 #define GBE_IN_ABNORMAL_SUMMARY_INTR(Status)        (Status & AL_GBE_INTR_ABNORMAL_SUMMARY)
 #define GBE_IN_NORMAL_SUMMARY_INTR(Status)          (Status & AL_GBE_INTR_NORMAL_SUMMARY)
 
-extern void HAL_ETH_TxDoneCallback();
-extern void HAL_ETH_RxDoneCallback();
+// extern void HAL_ETH_TxDoneCallback();
+// extern void HAL_ETH_RxDoneCallback();
 
 AL_VOID AlGbe_Dev_IntrHandler(AL_VOID *Instance)
 {
@@ -1367,7 +1367,7 @@ AL_VOID AlGbe_Dev_IntrHandler(AL_VOID *Instance)
         AlGbe_ll_ClrRxCompletrIntr(GbeBaseAddr);
         AlGbe_ll_ClrNormalSummaryIntr(GbeBaseAddr);
 
-        HAL_ETH_RxDoneCallback();
+        // HAL_ETH_RxDoneCallback();
 
     }
 
@@ -1377,7 +1377,7 @@ AL_VOID AlGbe_Dev_IntrHandler(AL_VOID *Instance)
         AlGbe_ll_ClrTxCompletrIntr(GbeBaseAddr);
         AlGbe_ll_ClrNormalSummaryIntr(GbeBaseAddr);
 
-        HAL_ETH_TxDoneCallback();
+        // HAL_ETH_TxDoneCallback();
     }
 
     if (GBE_IN_ABNORMAL_SUMMARY_INTR(IntrStatus)) {

@@ -287,7 +287,7 @@ int _unlink_r(struct _reent *ptr, const char *file)
     return -1;
 #endif /* DFS_USING_POSIX */
 }
-
+#if 1
 _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
 #ifdef DFS_USING_POSIX
@@ -317,11 +317,13 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
     rc = write(fd, buf, nbytes);
     return rc;
 #else
-    LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
-    ptr->_errno = ENOTSUP;
-    return -1;
+    // LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
+    // ptr->_errno = ENOTSUP;
+    // return -1;
+    return rt_hw_console_output(ptr);
 #endif /* DFS_USING_POSIX */
 }
+#endif
 
 /* for exit() and abort() */
 __attribute__ ((noreturn)) void _exit (int status)

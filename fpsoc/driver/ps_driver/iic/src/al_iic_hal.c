@@ -144,7 +144,7 @@ AL_S32 AlIic_Hal_Init(AL_IIC_HalStruct *Handle, AL_U32 DevId,
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    AL_IIC_HAL_LOCK(Handle);
+    // AL_IIC_HAL_LOCK(Handle);
 
     HwConfig = AlIic_Dev_LookupConfig(DevId);
     if (HwConfig != AL_NULL) {
@@ -155,7 +155,7 @@ AL_S32 AlIic_Hal_Init(AL_IIC_HalStruct *Handle, AL_U32 DevId,
 
     Ret = AlIic_Dev_Init(Handle->Dev, HwConfig, InitConfig);
     if (Ret != AL_OK) {
-        AL_IIC_HAL_UNLOCK(Handle);
+        //AL_IIC_HAL_UNLOCK(Handle);
         return Ret;
     }
 
@@ -165,13 +165,13 @@ AL_S32 AlIic_Hal_Init(AL_IIC_HalStruct *Handle, AL_U32 DevId,
         Ret = AlIic_Dev_RegisterEventCallBack(Handle->Dev, Callback, (void *)Handle);
     }
     if (Ret != AL_OK) {
-        AL_IIC_HAL_UNLOCK(Handle);
+        //AL_IIC_HAL_UNLOCK(Handle);
         return Ret;
     }
 
     (AL_VOID)AlIntr_RegHandler(Handle->Dev->HwConfig.IntrId, AL_NULL, AlIic_Dev_IntrHandler, Handle->Dev);
 
-    AL_IIC_HAL_UNLOCK(Handle);
+    //AL_IIC_HAL_UNLOCK(Handle);
 
     return AL_OK;
 }
@@ -184,11 +184,11 @@ AL_S32 AlIic_Hal_MasterSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    AL_IIC_HAL_LOCK(Handle);
+    // AL_IIC_HAL_LOCK(Handle);
 
     Ret = AlIic_Dev_MasterSendData(Handle->Dev, SlaveAddr, Data, Size);
     if (Ret != AL_OK) {
-        AL_IIC_HAL_UNLOCK(Handle);
+        //AL_IIC_HAL_UNLOCK(Handle);
         return Ret;
     }
 
@@ -200,7 +200,7 @@ AL_S32 AlIic_Hal_MasterSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
         Ret = AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    AL_IIC_HAL_UNLOCK(Handle);
+    //AL_IIC_HAL_UNLOCK(Handle);
 
     return Ret;
 }
@@ -214,11 +214,11 @@ AL_S32 AlIic_Hal_MasterRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    AL_IIC_HAL_LOCK(Handle);
+    // AL_IIC_HAL_LOCK(Handle);
 
     Ret = AlIic_Dev_MasterRecvData(Handle->Dev, SlaveAddr, Data, Size);
     if (Ret != AL_OK) {
-        AL_IIC_HAL_UNLOCK(Handle);
+        //AL_IIC_HAL_UNLOCK(Handle);
         return Ret;
     }
 
@@ -228,7 +228,7 @@ AL_S32 AlIic_Hal_MasterRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
         Ret = AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    AL_IIC_HAL_UNLOCK(Handle);
+    //AL_IIC_HAL_UNLOCK(Handle);
 
     return Ret;
 }
@@ -244,11 +244,11 @@ AL_S32 AlIic_Hal_SlaveSendDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    AL_IIC_HAL_LOCK(Handle);
+    // AL_IIC_HAL_LOCK(Handle);
 
     Ret = AlIic_Dev_SlaveSendData(Handle->Dev, Data, Size);
     if (Ret != AL_OK) {
-        AL_IIC_HAL_UNLOCK(Handle);
+        //AL_IIC_HAL_UNLOCK(Handle);
         return Ret;
     }
 
@@ -260,7 +260,7 @@ AL_S32 AlIic_Hal_SlaveSendDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
         Ret = AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    AL_IIC_HAL_UNLOCK(Handle);
+    //AL_IIC_HAL_UNLOCK(Handle);
 
     return Ret;
 }
@@ -274,11 +274,11 @@ AL_S32 AlIic_Hal_SlaveRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    AL_IIC_HAL_LOCK(Handle);
+    // AL_IIC_HAL_LOCK(Handle);
 
     Ret = AlIic_Dev_SlaveRecvData(Handle->Dev, Data, Size);
     if (Ret != AL_OK) {
-        AL_IIC_HAL_UNLOCK(Handle);
+        //AL_IIC_HAL_UNLOCK(Handle);
         return Ret;
     }
 
@@ -288,7 +288,7 @@ AL_S32 AlIic_Hal_SlaveRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
         Ret = AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    AL_IIC_HAL_UNLOCK(Handle);
+    //AL_IIC_HAL_UNLOCK(Handle);
 
     return Ret;
 }
@@ -301,14 +301,14 @@ AL_S32 AlIic_Hal_MasterSetCmdOption(AL_IIC_HalStruct *Handle, AL_IIC_CmdOptionEn
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    AL_IIC_HAL_LOCK(Handle);
+    // AL_IIC_HAL_LOCK(Handle);
 
     Ret = AlIic_Dev_MasterSetCmdOption(Handle->Dev, CmdOption);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_Dev_MasetSetCmdOption error:%d\r\n", Ret);
     }
 
-    AL_IIC_HAL_UNLOCK(Handle);
+    //AL_IIC_HAL_UNLOCK(Handle);
 
     return Ret;
 }
@@ -321,11 +321,11 @@ AL_IIC_CmdOptionEnum AlIic_Hal_MastertGetCmdOption(AL_IIC_HalStruct *Handle)
         return AL_IIC_CMD_OPTION_NONE;
     }
 
-    AL_IIC_HAL_LOCK(Handle);
+    // AL_IIC_HAL_LOCK(Handle);
 
     CmdOption = AlIic_Dev_MasterGetCmdOption(Handle->Dev);
 
-    AL_IIC_HAL_UNLOCK(Handle);
+    //AL_IIC_HAL_UNLOCK(Handle);
 
     return CmdOption;
 }
@@ -338,14 +338,14 @@ AL_S32 AlIic_Hal_IoCtl(AL_IIC_HalStruct *Handle, AL_IIC_IoCtlCmdEnum Cmd, AL_VOI
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    AL_IIC_HAL_LOCK(Handle);
+    // AL_IIC_HAL_LOCK(Handle);
 
     Ret = AlIic_Dev_IoCtl(Handle->Dev, Cmd, Data);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_Dev_IoCtl error:%d\r\n", Ret);
     }
 
-    AL_IIC_HAL_UNLOCK(Handle);
+    //AL_IIC_HAL_UNLOCK(Handle);
 
     return Ret;
 }

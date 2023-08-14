@@ -129,7 +129,7 @@ static inline AL_S32 Al_OSAL_Mb_Recive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S3
     if (flag == AL_OK) {
         MailBox->entry = 0;
         __COMPILER_BARRIER();
-        MailBox->Msg = *(AL_U64 *)Msg;
+        *(AL_U64 *)Msg = MailBox->Msg;
         return AL_OK;
     }
 

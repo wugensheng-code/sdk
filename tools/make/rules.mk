@@ -70,7 +70,9 @@ ifeq ($(RTOS), freertos)
 # AL_CFLAGS += -DRTOS_RTTHREAD
 # CFLAGS += -DRTOS_RTTHREAD
 else ifeq ($(RTOS), rtthread)
+AL_CFLAGS += -DUSE_RTOS
 AL_CFLAGS += -DRTOS_RTTHREAD
+CFLAGS += -DUSE_RTOS
 CFLAGS += -DRTOS_RTTHREAD
 endif
 
@@ -113,7 +115,7 @@ MODULE_INC  :=  $(foreach subdir,$(sort $(INC_DIR)), -I$(subdir)) -I$(PLAT_DIR)/
 #########################################################################
 
 ifeq ($(CORE),arm)
-CFLAGS += -mstrict-align -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35
+CFLAGS += -mstrict-align -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35 
 endif
 
 AL_CFLAGS  += $(CFLAGS) $(PUBLIC_INC) $(MODULE_INC) $(MKDEP_OPT)
@@ -121,7 +123,8 @@ AL_CFLAGS  += $(CFLAGS) $(PUBLIC_INC) $(MODULE_INC) $(MKDEP_OPT)
 #########################################################################
 # ldflags
 ifneq ($(NOGC),1)
-GC_LDFLAGS += -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--check-sections
+GC_CFLAGS  =   -ffunction-sections -fdata-sections
+GC_LDFLAGS +=  -Wl,--gc-sections -Wl,--check-sections
 else
 GC_LDFLAGS += -flto
 endif
@@ -134,7 +137,7 @@ LIB_OPT  = $(addprefix -L, $(sort $(LIB_DIR)))
 LDFLAGS += -T$(LINKER_SCRIPT) -Wl,--start-group -Wl,--whole-archive $(ld_libs) -Wl,--no-whole-archive -lgcc -lc -lm -L$(LIB_OUTPUT_DIR) -Wl,--end-group \
            $(LIB_OPT) -nostartfiles -Wl,-M,-Map=$(TARGET).map \
            $(GC_LDFLAGS) $(NEWLIB_LDFLAGS) --specs=nosys.specs -Wl,--build-id=none \
-           -u _isatty -u _write -u _sbrk -u _read -u _close -u _fstat -u _lseek -u memset -u memcpy -u _printf_float
+           -u _isatty -u _write -u _sbrk -u _read -u _close -u _fstat -u _lseek -u memset -u memcpy
 
 #########################################################################
 # source
