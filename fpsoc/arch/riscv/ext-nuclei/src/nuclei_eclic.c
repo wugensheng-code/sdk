@@ -1,8 +1,7 @@
 #include "al_core.h"
 #include "stdio.h"
 #include "al_chip.h"
-#include "riscv_encoding.h"
-#include "core_feature_base.h"
+#include "al_rv_core.h"
 #include "ext_eclic.h"
 
 /* =========================================================================================================================== */

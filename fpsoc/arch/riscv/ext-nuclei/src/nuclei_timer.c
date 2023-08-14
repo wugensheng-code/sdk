@@ -1,6 +1,6 @@
 #include "al_chip.h"
 #include "al_type.h"
-#include "core_feature_base.h"
+#include "al_rv_core.h"
 #include "ext_timer.h"
 
 extern AL_U64 SystemCoreClock;

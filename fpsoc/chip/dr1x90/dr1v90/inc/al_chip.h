@@ -54,6 +54,8 @@ typedef enum {
 
 #define ECLIC__BASE_ADDR        (0x68020000UL)
 
+#define PMP_ENTRY_NUM           (16)
+
 #ifdef __cplusplus
 }
 #endif

@@ -4,7 +4,7 @@
 #########################################################################
 SDK_ROOT   ?= ../../../..
 
-CHIP       ?= dr1m90
+CHIP       ?= dr1v90
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/7.5.0/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-elf/bin/aarch64-elf-

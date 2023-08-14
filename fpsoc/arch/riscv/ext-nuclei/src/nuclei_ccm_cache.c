@@ -1,6 +1,5 @@
 #include "al_type.h"
-#include "al_core.h"
-#include "core_feature_base.h"
+#include "al_rv_core.h"
 
 /* === Nuclei CCM Registers === */
 #define CSR_CCM_MBEGINADDR      0x7CB

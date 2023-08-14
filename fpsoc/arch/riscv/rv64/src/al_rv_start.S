@@ -24,7 +24,7 @@
  *
  ******************************************************************************/
 
-#include "riscv_encoding.h"
+#include "al_rv_sysregs.h"
 
 #define MAX_INTR    (130)
 
