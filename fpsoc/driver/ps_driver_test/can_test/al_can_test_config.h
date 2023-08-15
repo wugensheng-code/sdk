@@ -293,7 +293,11 @@ static AL_DMACAHB_ChInitStruct CanDmaChExample1 = {
     .Direction              = AL_DMACAHB_TT_FC_PER2MEM,
     .SrcMasterSel           = AL_DMACAHB_MASTER_SEL_1,
     .DstMasterSel           = AL_DMACAHB_MASTER_SEL_1,
+#ifdef BOARD_DR1X90_AD101_V10
+    .HandShaking.SrcPer     = AL_DMACAHB_PER_CAN0_RX,
+#else
     .HandShaking.SrcPer     = AL_DMACAHB_PER_CAN1_RX,
+#endif
     .HandShaking.SrcHsSel   = AL_DMACAHB_HAND_SHAKING_HARDWARE,
     .HandShaking.SrcHsPol   = AL_DMACAHB_HS_POL_ACTIVE_HI,
     .ChPrior                = AL_DMACAHB_CH_PRIOR_7,

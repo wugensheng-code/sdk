@@ -35,7 +35,8 @@ ASM_SRCS :=
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
+PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
+# PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile
@@ -64,20 +65,20 @@ export COMPILE_PREFIX
 all:
 	echo COMPILE_PREFIX = $(COMPILE_PREFIX)
 
-	make cleanapp
-	make -f Makefile_can_fd_intr dasm
-	make cleanapp
-	make -f Makefile_can_2_0B_intr dasm
+	# make cleanapp
+	# make -f Makefile_can_fd_intr dasm
+	# make cleanapp
+	# make -f Makefile_can_2_0B_intr dasm
 	make cleanapp
 	make -f Makefile_can_2_0B_in_loopback dasm
-	make cleanapp
-	make -f Makefile_can_2_0B_ex_loopback dasm
-	make cleanapp
-	make -f Makefile_can_fd_listen_only dasm
-	make cleanapp
-	make -f Makefile_can_fd_stb_fifo dasm
-	make cleanapp
-	make -f Makefile_can_fd_dma dasm
+	# make cleanapp
+	# make -f Makefile_can_2_0B_ex_loopback dasm
+	# make cleanapp
+	# make -f Makefile_can_fd_listen_only dasm
+	# make cleanapp
+	# make -f Makefile_can_fd_stb_fifo dasm
+	# make cleanapp
+	# make -f Makefile_can_fd_dma dasm
 
 cleanapp:
 	$(RM) $(foreach subdir, $(SRC_DIR), $(wildcard $(subdir)/*.d $(subdir)/*.o))

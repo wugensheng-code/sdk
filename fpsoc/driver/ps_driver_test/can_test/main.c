@@ -56,9 +56,13 @@ static AL_VOID AlCan_Test_ListenOnly(AL_VOID)
     AL_CAN_HalStruct Handle;
     AL_CAN_InitStruct Config;
     AL_CAN_FrameStruct Frame;
+#ifdef BOARD_DR1X90_AD101_V10
+    AL_U32 DeviceId = 0;
+#else
     AL_U32 DeviceId = 1;
+#endif
     AL_U32 Ret = AL_OK;
-    AL_U32 Timeout = 10000000;
+    AL_U32 Timeout = 1000;
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Can FD listen only example\r\n");
     Config.OpsMode      = AL_CAN_MODE_LISTENONLY;
@@ -80,7 +84,6 @@ static AL_VOID AlCan_Test_ListenOnly(AL_VOID)
         // if (Ret != AL_OK) {
         //     AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
         // }
-        // AlCan_Dev_DisplayFrame(&Frame);
         Ret = AlCan_Hal_SendFrameBlock(&Handle, &FdFrame1, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
@@ -161,9 +164,13 @@ static AL_VOID AlCan_Test_InLoopBack(AL_VOID)
     AL_CAN_HalStruct Handle;
     AL_CAN_InitStruct Config;
     AL_CAN_FrameStruct Frame;
+#ifdef BOARD_DR1X90_AD101_V10
+    AL_U32 DeviceId = 0;
+#else
     AL_U32 DeviceId = 1;
+#endif
     AL_U32 Ret = AL_OK;
-    AL_U32 Timeout = 10000000;
+    AL_U32 Timeout = 1000;
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Can 2.0B in loopback example\r\n");
     Config.OpsMode      = AL_CAN_MODE_IN_LOOPBACK;
@@ -320,9 +327,13 @@ static AL_VOID AlCan_Test_ExLoopBack(AL_VOID)
     AL_CAN_HalStruct Handle;
     AL_CAN_InitStruct Config;
     AL_CAN_FrameStruct Frame;
+#ifdef BOARD_DR1X90_AD101_V10
+    AL_U32 DeviceId = 0;
+#else
     AL_U32 DeviceId = 1;
+#endif
     AL_U32 Ret = AL_OK;
-    AL_U32 Timeout = 10000000;
+    AL_U32 Timeout = 1000;
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Can 2.0B extern loopback example\r\n");
     Config.OpsMode      = AL_CAN_MODE_EX_LOOPBACK;
@@ -508,9 +519,13 @@ static AL_VOID AlCan_Test_StdIntr(AL_VOID)
     AL_CAN_InitStruct Config;
     AL_CAN_FrameStruct Frame;
     AL_CAN_CallBackStruct CallBack;
+#ifdef BOARD_DR1X90_AD101_V10
+    AL_U32 DeviceId = 0;
+#else
     AL_U32 DeviceId = 1;
+#endif
     AL_U32 Ret = AL_OK;
-    AL_U32 Timeout = 10000000;
+    AL_U32 Timeout = 1000;
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Can 2.0B intr example\r\n");
 
@@ -616,9 +631,13 @@ static AL_VOID AlCan_Test_FdIntr(AL_VOID)
     AL_CAN_HalStruct Handle;
     AL_CAN_CallBackStruct CallBack;
     AL_CAN_FrameStruct Frame;
+#ifdef BOARD_DR1X90_AD101_V10
+    AL_U32 DeviceId = 0;
+#else
     AL_U32 DeviceId = 1;
+#endif
     AL_U32 Ret = AL_OK;
-    AL_U32 Timeout = 10000000;
+    AL_U32 Timeout = 1000;
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd intr example\r\n");
 
@@ -718,9 +737,13 @@ static AL_VOID AlCan_Test_FdStbFifo(AL_VOID)
     AL_CAN_HalStruct Handle;
     AL_CAN_InitStruct Config;
     AL_CAN_CallBackStruct CallBack;
+#ifdef BOARD_DR1X90_AD101_V10
+    AL_U32 DeviceId = 0;
+#else
     AL_U32 DeviceId = 1;
+#endif
     AL_U32 Ret = AL_OK;
-    AL_U32 Timeout = 10000000;
+    AL_U32 Timeout = 1000;
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd STB fifo example\r\n");
 
@@ -820,20 +843,30 @@ static AL_VOID AlCan_Test_DmaCallBack(AL_DMACAHB_EventStruct *Event, AL_VOID *Ca
 
     switch (Event->EventId)
     {
-    case AL_DMACAHB_EVENT_BLOCK_TRANS_COMP:{
+    case AL_DMACAHB_EVENT_TRANS_READY:
+        Handle->CurMode = Handle->ReqMode;
+        break;
+    case AL_DMACAHB_EVENT_TRANS_COMP:
+    case AL_DMACAHB_EVENT_BLOCK_TRANS_COMP:
+        Al_OSAL_Mb_Send(&Handle->EventQueue, Event);
+        break;
+    case AL_DMACAHB_EVENT_SRC_TRANS_COMP:
+    case AL_DMACAHB_EVENT_DST_TRANS_COMP:
+        /* Not use, do nothing here */
+        break;
+    case AL_DMACAHB_EVENT_ERR:
+        /* ???????? */
+        break;
+    case AL_DMACAHB_EVENT_RELOAD:{
         AL_CAN_FrameStruct Frame;
         AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb trans can frame count:%d!\r\n", Handle->Channel->Trans.ReloadCount);
         AlCan_Dev_DecodeFrame((AL_U32 *)(AL_UINTPTR)Handle->Channel->Trans.DstAddr, &Frame);
         AlCan_Dev_DisplayFrame(&Frame);
         break;
     }
-    case AL_DMACAHB_EVENT_ERR:
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Dmac ahb auto reload call back err!\r\n");
-        break;
-    default :
+    default:
         break;
     }
-
 }
 
 static AL_VOID AlCan_Test_FdDmaRecv(AL_VOID)
@@ -841,9 +874,13 @@ static AL_VOID AlCan_Test_FdDmaRecv(AL_VOID)
     AL_CAN_HalStruct Handle;
     AL_CAN_InitStruct Config;
     AL_CAN_FrameStruct Frame;
+#ifdef BOARD_DR1X90_AD101_V10
+    AL_U32 DeviceId = 0;
+#else
     AL_U32 DeviceId = 1;
+#endif
     AL_U32 Ret = AL_OK;
-    AL_U32 Timeout = 10000000;
+    AL_U32 Timeout = 1000;
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Can fd dma example\r\n");
     Config.OpsMode      = AL_CAN_MODE_NORMAL;
@@ -886,11 +923,5 @@ static AL_VOID AlCan_Test_FdDmaRecv(AL_VOID)
     AlDmacAhb_Hal_Start(&DmacHandle);
 
     while (1) {
-        Ret = AlCan_Hal_RecvFrameBlock(&Handle, &Frame, Timeout);
-        if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Recv Frame Error:0x%x\r\n", Ret);
-        } else {
-            AlCan_Dev_DisplayFrame(&Frame);
-        }
     }
 }
