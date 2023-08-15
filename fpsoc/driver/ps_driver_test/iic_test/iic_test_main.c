@@ -474,6 +474,10 @@ AL_S32 AlIic_MasterSendBlockTest()
 
 int main()
 {
+#ifdef IIC_TEST_DEMO_BOARD_EEPROM
+    AlIic_DemoBoardE2promTest();
+#endif
+
 #ifdef IIC_TEST_MASTER_TX
     AlIic_MasterSendBlockTest();
     AlIic_MasterSendPollingTest();
