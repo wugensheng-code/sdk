@@ -484,9 +484,9 @@ static AL_S32 AlMmc_Dev_SetClkFreq(AL_MMC_DevStruct *Dev, AL_MMC_FreqKhzEnum Fre
 {
     AL_S32 Ret = AL_OK;
     AL_MMC_CtrlSrToClkUnion TmpReg = {0};
-    AL_U32 InputClk = Dev->HwConfig.InputClkKhz;
-    AL_U32 FreqDiv  = InputClk / Freq;
-    AL_U32 FreqMod  = InputClk % Freq;
+    AL_U32 InputClkKhz = Dev->HwConfig.InputClk / 1000;
+    AL_U32 FreqDiv  = InputClkKhz / Freq;
+    AL_U32 FreqMod  = InputClkKhz % Freq;
     AL_U32 FreqSel;
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Req freq %d Khz, div: %d, mod: %d\r\n", Freq, FreqDiv, FreqMod);
@@ -502,14 +502,14 @@ static AL_S32 AlMmc_Dev_SetClkFreq(AL_MMC_DevStruct *Dev, AL_MMC_FreqKhzEnum Fre
 
     if (Freq != AL_MMC_FREQ_KHZ_DEF) {
         if (0 == FreqDiv) {
-            AL_LOG(AL_LOG_LEVEL_INFO, "Freq is large than input clk, set freq to input clk %d Khz\r\n", InputClk);
+            AL_LOG(AL_LOG_LEVEL_INFO, "Freq is large than input clk, set freq to input clk %d Khz\r\n", InputClkKhz);
             FreqSel = 0;
         } else if (FreqMod) {
             if (FreqDiv == TmpReg.Bit.FreqSel) {
-                AL_LOG(AL_LOG_LEVEL_INFO, "Freq(not divisible by input clk) need to config %d Khz equeal to cur set\r\n", InputClk / (FreqDiv + 1));
+                AL_LOG(AL_LOG_LEVEL_INFO, "Freq(not divisible by input clk) need to config %d Khz equeal to cur set\r\n", InputClkKhz / (FreqDiv + 1));
                 return Ret;
             } else {
-                AL_LOG(AL_LOG_LEVEL_INFO, "Freq is not divisible by input clk, floor this freq to %d Khz\r\n", InputClk / (FreqDiv + 1));
+                AL_LOG(AL_LOG_LEVEL_INFO, "Freq is not divisible by input clk, floor this freq to %d Khz\r\n", InputClkKhz / (FreqDiv + 1));
                 FreqSel = FreqDiv;
             }
         } else {
@@ -540,7 +540,7 @@ static AL_S32 AlMmc_Dev_SetClkFreq(AL_MMC_DevStruct *Dev, AL_MMC_FreqKhzEnum Fre
         TmpReg.Bit.ClkGenSel    = AL_MMC_CLK_GEN_PROGRAM;
         TmpReg.Bit.FreqSel      = FreqSel;
         /*Save cur card freq to card info*/
-        Dev->CardInfo.FreqKhz   = InputClk /(FreqSel + 1);
+        Dev->CardInfo.FreqKhz   = InputClkKhz /(FreqSel + 1);
     }
 
     AlMmc_ll_WriteSwRst_Ctrl_Tout_Clk(Dev->HwConfig.BaseAddress, TmpReg.Reg);

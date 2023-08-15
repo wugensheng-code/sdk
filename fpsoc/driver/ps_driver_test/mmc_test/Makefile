@@ -36,8 +36,8 @@ ASM_SRCS :=
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-# PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
-PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
+PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
+# PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 
 
 #########################################################################
@@ -45,6 +45,7 @@ PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 ## Available choices:
 ## PINMUX_MODE1, PINMUX_MODE2, PINMUX_MODE3, PINMUX_MODE_SD1
 #########################################################################.
+PINMUX_MODE ?= PINMUX_MODE1
 
 export SOC
 export SDK_ROOT
@@ -65,8 +66,8 @@ export COMPILE_PREFIX
 
 all:
 	echo COMPILE_PREFIX = $(COMPILE_PREFIX)
-	make cleanapp
-	make -f Makefile_sd dasm
+	# make cleanapp
+	# make -f Makefile_sd dasm
 	make cleanapp
 	make -f Makefile_emmc dasm
 

@@ -886,7 +886,9 @@ typedef union
 {
     AL_U8 Reg[AL_MMC_EXT_CSD_LEN];
     struct {
-        AL_U8 Rsvd184_0[185];
+        AL_U8 Rsvd182_0[183];
+        AL_U8 BusWidth;
+        AL_U8 Rsvd184;
         AL_U8 HsTiming;
         AL_U8 Rsvd211_186[26];
         AL_U8 SecCount[4];          /*[215:212]*/

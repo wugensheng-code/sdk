@@ -51,9 +51,9 @@ static AL_MMC_InitStruct SdNoDmaInit = {
 #ifdef AUTO_TEST
     .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
 #else
-    .FreqKhz            = AL_MMC_FREQ_KHZ_25000,
+    .FreqKhz            = AL_MMC_FREQ_KHZ_50000,
 #endif
-    .SpdMode            = AL_MMC_SPD_DS_SDR12,
+    .SpdMode            = AL_MMC_SPD_HS_SDR25,
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_DISABLE,
@@ -67,9 +67,9 @@ static AL_MMC_InitStruct SdSdmaInit = {
 #ifdef AUTO_TEST
     .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
 #else
-    .FreqKhz            = AL_MMC_FREQ_KHZ_25000,
+    .FreqKhz            = AL_MMC_FREQ_KHZ_50000,
 #endif
-    .SpdMode            = AL_MMC_SPD_DS_SDR12,
+    .SpdMode            = AL_MMC_SPD_HS_SDR25,
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_DISABLE,
@@ -83,9 +83,9 @@ static AL_MMC_InitStruct SdAdma2Init = {
 #ifdef AUTO_TEST
     .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
 #else
-    .FreqKhz            = AL_MMC_FREQ_KHZ_25000,
+    .FreqKhz            = AL_MMC_FREQ_KHZ_50000,
 #endif
-    .SpdMode            = AL_MMC_SPD_DS_SDR12,
+    .SpdMode            = AL_MMC_SPD_HS_SDR25,
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_ENABLE,
@@ -99,10 +99,10 @@ static AL_MMC_InitStruct EmmcNoDmaInit = {
 #ifdef AUTO_TEST
     .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
 #else
-    .FreqKhz            = AL_MMC_FREQ_KHZ_25000,
+    .FreqKhz            = AL_MMC_FREQ_KHZ_50000,
 #endif
-    .SpdMode            = AL_MMC_SPD_DS_SDR12,
-    .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
+    .SpdMode            = AL_MMC_SPD_HS_SDR25,
+    .BusWidth           = AL_MMC_BUS_WIDTH_8BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_DISABLE,
     .DmaBdary           = AL_MMC_BDARY_32K,
@@ -115,10 +115,10 @@ static AL_MMC_InitStruct EmmcSdmaInit = {
 #ifdef AUTO_TEST
     .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
 #else
-    .FreqKhz            = AL_MMC_FREQ_KHZ_25000,
+    .FreqKhz            = AL_MMC_FREQ_KHZ_50000,
 #endif
-    .SpdMode            = AL_MMC_SPD_DS_SDR12,
-    .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
+    .SpdMode            = AL_MMC_SPD_HS_SDR25,
+    .BusWidth           = AL_MMC_BUS_WIDTH_8BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_DISABLE,
     .DmaBdary           = AL_MMC_BDARY_4K,
@@ -131,10 +131,10 @@ static AL_MMC_InitStruct EmmcAdma2Init = {
 #ifdef AUTO_TEST
     .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
 #else
-    .FreqKhz            = AL_MMC_FREQ_KHZ_25000,
+    .FreqKhz            = AL_MMC_FREQ_KHZ_50000,
 #endif
-    .SpdMode            = AL_MMC_SPD_DS_SDR12,
-    .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
+    .SpdMode            = AL_MMC_SPD_HS_SDR25,
+    .BusWidth           = AL_MMC_BUS_WIDTH_8BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_ENABLE,
     .DmaBdary           = AL_MMC_BDARY_32K,
