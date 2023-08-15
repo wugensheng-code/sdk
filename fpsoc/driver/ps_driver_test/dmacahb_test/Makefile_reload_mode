@@ -3,7 +3,9 @@
 #########################################################################
 
 CFLAGS := -O2 -DDMACAHB_DEBUG -DCONFIG_RELOAD_MODE_TEST=1 -Wno-int-to-pointer-cast -g
+CFLAGS += -DAL9000_OSC_33
 CFLAGS += -DAL9000_BRINGUP
+CFLAGS += -DBOARD_DR1X90_AD101_V10
 # CFLAGS += -DUSE_RTOS
 # CFLAGS += -DRTOS_RTTHREAD
 

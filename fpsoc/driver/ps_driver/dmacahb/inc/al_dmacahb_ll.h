@@ -122,6 +122,12 @@ typedef enum
     AL_DMACAHB_PER_CAN1_RX
 } AL_DMACAHB_PerSelEnum;
 
+typedef enum
+{
+    AL_DMACAHB_INTR_MASK,
+    AL_DMACAHB_INTR_UNMASK
+} AL_DMACAHB_IntrMaskEnum;
+
 /* --------------------DMAC/Lock control-------------------- */
 
 
@@ -814,9 +820,9 @@ static inline AL_U32 AlDmacAhb_ll_GetMaskTfr(AL_REG BaseAddr)
                     DMAC_AHB_MASKTFR_INT_MASK_SIZE);
 }
 
-static inline AL_VOID AlDmacAhb_ll_SetMaskTfr(AL_REG BaseAddr, AL_U32 Value)
+static inline AL_VOID AlDmacAhb_ll_SetMaskTfr(AL_REG BaseAddr, AL_U32 Value, AL_DMACAHB_IntrMaskEnum Unmask)
 {
-    AL_REG32_WRITE(BaseAddr + DMAC_AHB_MASKTFR_OFFSET, (Value | (Value << DMAC_AHB_MASKTFR_INT_MASK_WE_SHIFT)));
+    AL_REG32_WRITE(BaseAddr + DMAC_AHB_MASKTFR_OFFSET, ((Unmask ? Value : 0) | (Value << DMAC_AHB_MASKTFR_INT_MASK_WE_SHIFT)));
 }
 
 /* Mask for IntBlock Interrupt(MaskBlock) */
@@ -826,9 +832,9 @@ static inline AL_U32 AlDmacAhb_ll_GetMaskBlock(AL_REG BaseAddr)
                     DMAC_AHB_MASKBLOCK_INT_MASK_SIZE);
 }
 
-static inline AL_VOID AlDmacAhb_ll_SetMaskBlock(AL_REG BaseAddr, AL_U32 Value)
+static inline AL_VOID AlDmacAhb_ll_SetMaskBlock(AL_REG BaseAddr, AL_U32 Value, AL_DMACAHB_IntrMaskEnum Unmask)
 {
-    AL_REG32_WRITE(BaseAddr + DMAC_AHB_MASKBLOCK_OFFSET, (Value | (Value << DMAC_AHB_MASKBLOCK_INT_MASK_WE_SHIFT)));
+    AL_REG32_WRITE(BaseAddr + DMAC_AHB_MASKBLOCK_OFFSET, ((Unmask ? Value : 0) | (Value << DMAC_AHB_MASKBLOCK_INT_MASK_WE_SHIFT)));
 }
 
 /* Mask for IntSrcTran Interrupt(MaskSrcTran) */
@@ -838,9 +844,9 @@ static inline AL_U32 AlDmacAhb_ll_GetMaskSrcTran(AL_REG BaseAddr)
                     DMAC_AHB_MASKSRCTRAN_INT_MASK_SIZE);
 }
 
-static inline AL_VOID AlDmacAhb_ll_SetMaskSrcTran(AL_REG BaseAddr, AL_U32 Value)
+static inline AL_VOID AlDmacAhb_ll_SetMaskSrcTran(AL_REG BaseAddr, AL_U32 Value, AL_DMACAHB_IntrMaskEnum Unmask)
 {
-    AL_REG32_WRITE(BaseAddr + DMAC_AHB_MASKSRCTRAN_OFFSET, (Value | (Value << DMAC_AHB_MASKSRCTRAN_INT_MASK_WE_SHIFT)));
+    AL_REG32_WRITE(BaseAddr + DMAC_AHB_MASKSRCTRAN_OFFSET, ((Unmask ? Value : 0) | (Value << DMAC_AHB_MASKSRCTRAN_INT_MASK_WE_SHIFT)));
 }
 
 /* Mask for IntDstTran Interrupt(MaskDstTran) */
@@ -850,9 +856,9 @@ static inline AL_U32 AlDmacAhb_ll_GetMaskDstTran(AL_REG BaseAddr)
                     DMAC_AHB_MASKDSTTRAN_INT_MASK_SIZE);
 }
 
-static inline AL_VOID AlDmacAhb_ll_SetMaskDstTran(AL_REG BaseAddr, AL_U32 Value)
+static inline AL_VOID AlDmacAhb_ll_SetMaskDstTran(AL_REG BaseAddr, AL_U32 Value, AL_DMACAHB_IntrMaskEnum Unmask)
 {
-    AL_REG32_WRITE(BaseAddr + DMAC_AHB_MASKDSTTRAN_OFFSET, (Value | (Value << DMAC_AHB_MASKDSTTRAN_INT_MASK_WE_SHIFT)));
+    AL_REG32_WRITE(BaseAddr + DMAC_AHB_MASKDSTTRAN_OFFSET, ((Unmask ? Value : 0) | (Value << DMAC_AHB_MASKDSTTRAN_INT_MASK_WE_SHIFT)));
 }
 
 /* Mask for IntErr Interrupt(MaskErr) */
@@ -862,9 +868,9 @@ static inline AL_U32 AlDmacAhb_ll_GetMaskErr(AL_REG BaseAddr)
                     DMAC_AHB_MASKERR_INT_MASK_SIZE);
 }
 
-static inline AL_VOID AlDmacAhb_ll_SetMaskErr(AL_REG BaseAddr, AL_U32 Value)
+static inline AL_VOID AlDmacAhb_ll_SetMaskErr(AL_REG BaseAddr, AL_U32 Value, AL_DMACAHB_IntrMaskEnum Unmask)
 {
-    AL_REG32_WRITE(BaseAddr + DMAC_AHB_MASKERR_OFFSET, (Value | Value << DMAC_AHB_MASKERR_INT_MASK_WE_SHIFT));
+    AL_REG32_WRITE(BaseAddr + DMAC_AHB_MASKERR_OFFSET, ((Unmask ? Value : 0) | Value << DMAC_AHB_MASKERR_INT_MASK_WE_SHIFT));
 }
 
 static inline AL_VOID AlDmacAhb_ll_WriteClearTfr(AL_REG BaseAddr, AL_U32 Value)

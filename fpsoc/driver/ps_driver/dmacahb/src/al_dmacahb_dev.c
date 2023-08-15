@@ -117,19 +117,47 @@ AL_VOID AlDmacAhb_Dev_UnmaskChIntr(AL_DMACAHB_ChStruct *Channel)
     AL_REG BaseAddr = Channel->Dmac->BaseAddr;
 
     if (Channel->Config.Intr.IntrUnMask & AL_DMACAHB_CH_INTR_TFR) {
-        AlDmacAhb_ll_SetMaskTfr(BaseAddr, ChMask);
+        AlDmacAhb_ll_SetMaskTfr(BaseAddr, ChMask, AL_DMACAHB_INTR_UNMASK);
     }
     if (Channel->Config.Intr.IntrUnMask & AL_DMACAHB_CH_INTR_BLOCK) {
-        AlDmacAhb_ll_SetMaskBlock(BaseAddr, ChMask);
+        AlDmacAhb_ll_SetMaskBlock(BaseAddr, ChMask, AL_DMACAHB_INTR_UNMASK);
     }
     if (Channel->Config.Intr.IntrUnMask & AL_DMACAHB_CH_INTR_SRCT) {
-        AlDmacAhb_ll_SetMaskSrcTran(BaseAddr, ChMask);
+        AlDmacAhb_ll_SetMaskSrcTran(BaseAddr, ChMask, AL_DMACAHB_INTR_UNMASK);
     }
     if (Channel->Config.Intr.IntrUnMask & AL_DMACAHB_CH_INTR_DSTT) {
-        AlDmacAhb_ll_SetMaskDstTran(BaseAddr, ChMask);
+        AlDmacAhb_ll_SetMaskDstTran(BaseAddr, ChMask, AL_DMACAHB_INTR_UNMASK);
     }
     if (Channel->Config.Intr.IntrUnMask & AL_DMACAHB_CH_INTR_ERR) {
-        AlDmacAhb_ll_SetMaskErr(BaseAddr, ChMask);
+        AlDmacAhb_ll_SetMaskErr(BaseAddr, ChMask, AL_DMACAHB_INTR_UNMASK);
+    }
+}
+
+/**
+ * This function mask intr of specified channel
+ * @param   Channel is pointer to AL_DMACAHB_ChStruct
+ * @return
+ * @note
+*/
+AL_VOID AlDmacAhb_Dev_MaskChIntr(AL_DMACAHB_ChStruct *Channel)
+{
+    AL_U32 ChMask = Channel->Param.ChMask;
+    AL_REG BaseAddr = Channel->Dmac->BaseAddr;
+
+    if (Channel->Config.Intr.IntrUnMask & AL_DMACAHB_CH_INTR_TFR) {
+        AlDmacAhb_ll_SetMaskTfr(BaseAddr, ChMask, AL_DMACAHB_INTR_MASK);
+    }
+    if (Channel->Config.Intr.IntrUnMask & AL_DMACAHB_CH_INTR_BLOCK) {
+        AlDmacAhb_ll_SetMaskBlock(BaseAddr, ChMask, AL_DMACAHB_INTR_MASK);
+    }
+    if (Channel->Config.Intr.IntrUnMask & AL_DMACAHB_CH_INTR_SRCT) {
+        AlDmacAhb_ll_SetMaskSrcTran(BaseAddr, ChMask, AL_DMACAHB_INTR_MASK);
+    }
+    if (Channel->Config.Intr.IntrUnMask & AL_DMACAHB_CH_INTR_DSTT) {
+        AlDmacAhb_ll_SetMaskDstTran(BaseAddr, ChMask, AL_DMACAHB_INTR_MASK);
+    }
+    if (Channel->Config.Intr.IntrUnMask & AL_DMACAHB_CH_INTR_ERR) {
+        AlDmacAhb_ll_SetMaskErr(BaseAddr, ChMask, AL_DMACAHB_INTR_MASK);
     }
 }
 
@@ -492,7 +520,8 @@ AL_S32 AlDmacAhb_Dev_Init(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_HwConfigStruc
 */
 AL_S32 AlDmacAhb_Dev_DeInit(AL_DMACAHB_ChStruct *Channel)
 {
-    /* TODO: modify for sync baremetal and kernel */
+    /* Mask all unmasked intr */
+    AlDmacAhb_Dev_MaskChIntr(Channel);
     AlDmacAhb_Dev_ReleaseCh(Channel);
     /* Firstly, clear channel status in dmac struct */
     Channel->Dmac->State.ChEn &= ~(Channel->Param.ChMask);
@@ -500,7 +529,6 @@ AL_S32 AlDmacAhb_Dev_DeInit(AL_DMACAHB_ChStruct *Channel)
         /* Only one channel enabled, reset dmac */
         AlDmacAhb_ll_SetDmaCfgEn(Channel->Dmac->BaseAddr, AL_FALSE);
         memset(Channel->Dmac, 0, sizeof(AL_DMACAHB_DmacStruct));
-        /* TODO: unregister intr handler */
     }
 
     /* Reset channel struct and unlink channel with handle */
@@ -638,8 +666,7 @@ static AL_VOID AlDmacAhb_Dev_BlockTransCompHandler(AL_DMACAHB_ChStruct *Channel)
                 Event.EventId = AL_DMACAHB_EVENT_BLOCK_TRANS_COMP;
                 Event.EventData = 0;
                 Channel->EventCallBack.Func(&Event, Channel->EventCallBack.Ref);
-            } else if ((Channel->Trans.ReloadCount == (Channel->Trans.ReloadCountNum - 1)) &&
-                    (State == AL_DMACAHB_STATE_RELOAD_MODE_BUSY)) {
+            } else if ((Channel->Trans.ReloadCount == (Channel->Trans.ReloadCountNum - 1))) {
                 AL_BOOL IsLastTransSet = AL_TRUE;
                 AlDmacAhb_Dev_IoCtl(Channel, AL_DMACAHB_IOCTL_SET_RELOAD_LAST_TRANS, &IsLastTransSet);
             }
