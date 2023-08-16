@@ -6,9 +6,14 @@ extern "C" {
 #endif  /* __cplusplus */
 
 #include "al_core.h"
+#include "platform_init.h"
 
 #ifdef HAVE_CANPS_DRIVER
 #include "al_can_hal.h"
+#endif
+
+#ifdef HAVE_CIPHERPS_DRIVER
+#include "al_cipher_hal.h"
 #endif
 
 #ifdef HAVE_DMACAHBPS_DRIVER

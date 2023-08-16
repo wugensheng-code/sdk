@@ -3,8 +3,8 @@
 		"CHIP_DR1M90": {
 			"name": "CHIP_DR1M90",
 			"depends": [
-				"fpsoc/chip/common",
-				"fpsoc/chip/dr1m90",
+				"fpsoc/chip/dr1x90/common",
+				"fpsoc/chip/dr1x90/dr1m90",
 				"fpsoc/arch/arm",
 				"fpsoc/inc"
 			]
@@ -12,8 +12,8 @@
 		"CHIP_DR1V90": {
 			"name": "CHIP_DR1V90",
 			"depends": [
-				"fpsoc/chip/common",
-				"fpsoc/chip/dr1v90",
+				"fpsoc/chip/dr1x90/common",
+				"fpsoc/chip/dr1x90/dr1v90",
 				"fpsoc/arch/riscv",
 				"fpsoc/inc"
 			]
