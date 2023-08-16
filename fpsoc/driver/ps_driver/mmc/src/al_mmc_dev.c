@@ -591,7 +591,7 @@ static AL_S32 AlMmc_Dev_SetUpHostController(AL_MMC_DevStruct *Dev)
     }
 
     /* Set max timeout cnt, or some card touch tout error */
-    AlMmc_Dev_SetToutCnt(Dev, AL_MMC_TOUT_CNT_20);
+    AlMmc_Dev_SetToutCnt(Dev, AL_MMC_TOUT_CNT_27);
 
     /* Set clk freq to 400Khz for init */
     AlMmc_Dev_SetClkFreq(Dev, AL_MMC_FREQ_KHZ_DEF);
@@ -1569,9 +1569,11 @@ static AL_S32 AlMmc_Dev_EmmcModeInit(AL_MMC_DevStruct *Dev)
     }
 
     /* Do a transfer to check the configuration */
-    Ret = AlMmc_Dev_GetExtCsd(Dev, (AL_U8 *)&ExtCsd);
-    if (Ret != AL_OK) {
-        return Ret;
+    if ((Dev->Config.BusWidth != AL_MMC_BUS_WIDTH_1BIT) && (Dev->CardInfo.SpdMode != AL_MMC_SPD_DS_SDR12)) {
+        Ret = AlMmc_Dev_GetExtCsd(Dev, (AL_U8 *)&ExtCsd);
+        if (Ret != AL_OK) {
+            return Ret;
+        }
     }
 
     Ret = AlMmc_Dev_SetBlkSize(Dev, Dev->CardInfo.BlkLen);
