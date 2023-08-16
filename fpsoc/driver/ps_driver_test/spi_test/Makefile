@@ -24,7 +24,7 @@ endif
 #    ASM_SRCS: asm sources for application
 #########################################################################
 SRC_DIR  = ./
-INC_DIR  += ../../ps_driver/uart/inc ../../../arch/arm/common/gic_v3/inc  ../../../arch/arm/armv8/aarch64/cortex-a/inc
+INC_DIR  += ./
 
 LD_LIBS  :=
 LIB_DIR  :=
@@ -37,12 +37,13 @@ ASM_SRCS :=
 # 3. CFLAGS
 #########################################################################
 CFLAGS := -O2
+CFLAGS += -DAL9000_OSC_33 -DAL9000_BRINGUP -DBOARD_DR1X90_AD101_V10
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
+PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile

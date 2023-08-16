@@ -1,4 +1,5 @@
 #include "al_core.h"
+#include "dr1x90_pinctrl.h"
 
 void Enablepinmux1(void)
 {
@@ -89,7 +90,7 @@ void Enablepinmux1(void)
     *(AL_U32 *)(0xf8801074u) |=0x4000;  //reset release ddr
 #endif
     //DEBUG UART1
-    *(AL_U32 *)(0xf88030c0u) = 0x3; //PS_UART_TX    PS_IO48 uart1_tx__emio_o_5 (out)    Function_3 
+    *(AL_U32 *)(0xf88030c0u) = 0x3; //PS_UART_TX    PS_IO48 uart1_tx__emio_o_5 (out)    Function_3
     *(AL_U32 *)(0xf88030c4u) = 0x3; //PS_UART_RX    PS_IO49 uart1_rx__emio_i_5 (in)     Function_3
     *(AL_U32 *)(0xf8803414u) = 0x1; //EMIOSEL_5     1:MIO 0:EMIO
 
@@ -120,7 +121,7 @@ void Enablepinmux1(void)
     *(AL_U32 *)(0xf8803064u) = 0xe; //PS_ETH_RXD2    PS_IO25 rgmii0_rxd[2] (in)           Function_14
     *(AL_U32 *)(0xf8803068u) = 0xe; //PS_ETH_RXD3    PS_IO26 rgmii0_rxd[3] (in)           Function_14
     *(AL_U32 *)(0xf880306cu) = 0xe; //PS_ETH_RXCTL   PS_IO27 rgmii_rmii_0_rx_ctl (in)     Function_14
-	                                  
+
     *(AL_U32 *)(0xf88030d0u) = 0xe; //PS_ETH_MDC     PS_IO52 mdc0__emio_o_13 (out)        Function_14
     *(AL_U32 *)(0xf88030d4u) = 0xe; //PS_ETH_MDIO    PS_IO53 mdio0__emio_io_13 (inout)    Function_14
     *(AL_U32 *)(0xf8803434u) = 0x1; //EMIOSEL_13     1:MIO 0:EMIO
@@ -157,6 +158,15 @@ void Enablepinmux1(void)
     *(AL_U32 *)(0xf8803010u) = 0x0; //PS_FLASH_DQ2     PS_IO4    qspi0_io[2] (inout)    Function_0
     *(AL_U32 *)(0xf8803014u) = 0x0; //PS_FLASH_DQ3     PS_IO5    qspi0_io[3] (inout)    Function_0
     *(AL_U32 *)(0xf8803018u) = 0x0; //PS_FLASH_CLK     PS_IO6    qspi0_sclk  (out)      Function_0
+
+    /* Set Mio 10K up pull to enable qspi */
+    mio_pad_ctrl0(0, MIO_SPEED_FAST, MIO_PULL_10K_EN, MIO_PULL_DIS);
+    mio_pad_ctrl0(1, MIO_SPEED_FAST, MIO_PULL_10K_EN, MIO_PULL_DIS);
+    mio_pad_ctrl0(2, MIO_SPEED_FAST, MIO_PULL_10K_EN, MIO_PULL_DIS);
+    mio_pad_ctrl0(3, MIO_SPEED_FAST, MIO_PULL_10K_EN, MIO_PULL_DIS);
+    mio_pad_ctrl0(4, MIO_SPEED_FAST, MIO_PULL_10K_EN, MIO_PULL_DIS);
+    mio_pad_ctrl0(5, MIO_SPEED_FAST, MIO_PULL_10K_EN, MIO_PULL_DIS);
+    mio_pad_ctrl0(6, MIO_SPEED_FAST, MIO_PULL_10K_EN, MIO_PULL_DIS);
 }
 
 void Enablepinmux1_mode2(void)

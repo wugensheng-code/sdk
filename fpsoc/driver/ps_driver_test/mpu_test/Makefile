@@ -3,7 +3,7 @@
 #########################################################################
 SDK_ROOT   ?= ../../../..
 
-CHIP       ?= dr1v90
+CHIP       ?= dr1m90
 
 ifeq ($(CHIP),dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/7.5.0/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-elf/bin/aarch64-elf-
@@ -34,13 +34,14 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O2 -g -DCONFIG_AlUart_Recv_Send_Block_Loop_Back_TEST=1
+CFLAGS := -O2
+CFLAGS += -DAL9000_OSC_33 -DAL9000_BRINGUP -DBOARD_DR1X90_AD101_V10
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
+PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile
