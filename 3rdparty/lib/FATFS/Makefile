@@ -3,14 +3,12 @@
 # (1.1) add submodule resource file
 SRC_DIR = ./ \
            lagecy/drivers \
-           lagecy/qspi \
-           lagecy/sd_emmc
+           lagecy/qspi
 
 # (1.2) add submodule include
 INC_DIR += ./ \
            lagecy/include \
-           lagecy/qspi \
-           lagecy/sd_emmc
+           lagecy/qspi
 
 
 # (3) set specificity FLAGS

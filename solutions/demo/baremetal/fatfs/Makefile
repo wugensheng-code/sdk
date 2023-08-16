@@ -4,7 +4,7 @@
 #########################################################################
 SDK_ROOT   ?= ../../../..
 
-CHIP       ?= dr1v90
+CHIP       ?= dr1m90
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/7.5.0/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-elf/bin/aarch64-elf-
@@ -24,8 +24,7 @@ endif
 #########################################################################
 SRC_DIR  = ./
 INC_DIR +=  $(SDK_ROOT)/3rdparty/lib/FATFS/lagecy/include \
-            $(SDK_ROOT)/3rdparty/lib/FATFS/lagecy/qspi \
-            $(SDK_ROOT)/3rdparty/lib/FATFS/lagecy/sd_emmc
+            $(SDK_ROOT)/3rdparty/lib/FATFS/lagecy/qspi
 
 LD_LIBS  =
 LIB_DIR  =
@@ -37,7 +36,11 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O2 -Wno-int-to-pointer-cast -DMMC_COMPILE_FOR_EMU
+CFLAGS := -O2 -g
+CFLAGS += -DAL9000_OSC_33
+CFLAGS += -DAL9000_BRINGUP
+CFLAGS += -DBOARD_DR1X90_AD101_V10
+# CFLAGS += -DUSE_DDR
 
 # ARM jump from secure to non-secure
 # CFLAGS += -DSUPPORT_NONSECURE
@@ -47,7 +50,8 @@ CFLAGS := -O2 -Wno-int-to-pointer-cast -DMMC_COMPILE_FOR_EMU
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
+# PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
+PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile
@@ -61,7 +65,12 @@ PINMUX_MODE ?= PINMUX_MODE1
 # 5. define build target, using ddr address
 #########################################################################
 TARGET := fpsoc_fatfs_demo_read_write
-DOWNLOAD = ddr
+DOWNLOAD = ocm
+
+ifneq ($(PINMUX_MODE),)
+CFLAGS += -DENABLE_$(PINMUX_MODE)=1
+TARGET:=$(TARGET)_$(CHIP)_$(PINMUX_MODE)
+endif
 
 all: $(TARGET)
 	@$(ECHO) COMPILE_PREFIX = $(COMPILE_PREFIX)
