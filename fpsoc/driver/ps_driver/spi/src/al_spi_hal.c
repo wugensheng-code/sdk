@@ -258,17 +258,17 @@ AL_S32 AlSpi_Hal_Init(AL_SPI_HalStruct *Handle, AL_SPI_ConfigsStruct *InitConfig
         return ret;
     }
 
-    if (AL_SPI_USE_DMA != InitConfig->IsUseDma) {
-        if(AL_NULL == Callback) {
-            ret = AlSpi_Dev_RegisterIntrCallBack(Handle->Dev, AlSpi_DefEventCallBack, AL_NULL);
-        } else {
-            ret = AlSpi_Dev_RegisterIntrCallBack(Handle->Dev, Callback, CallbackRef);
-        }
-
-        AlIntr_RegHandler(CfgPtr->InterrupId + 13, AL_NULL, AlSpi_Dev_IntrHandler, Handle->Dev);
+    // if (AL_SPI_USE_DMA != InitConfig->IsUseDma) {
+    if(AL_NULL == Callback) {
+        ret = AlSpi_Dev_RegisterIntrCallBack(Handle->Dev, AlSpi_DefEventCallBack, AL_NULL);
     } else {
-        AlIntr_SetInterrupt(CfgPtr->InterrupId + 13, AL_FUNC_DISABLE);
+        ret = AlSpi_Dev_RegisterIntrCallBack(Handle->Dev, Callback, CallbackRef);
     }
+
+    AlIntr_RegHandler(CfgPtr->InterrupId, AL_NULL, AlSpi_Dev_IntrHandler, Handle->Dev);
+    // } else {
+    //     AlIntr_SetInterrupt(CfgPtr->InterrupId, AL_FUNC_DISABLE);
+    // }
 
     AL_SPI_HAL_UNLOCK(Handle);
 
