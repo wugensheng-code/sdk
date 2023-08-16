@@ -36,7 +36,7 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O2 -g -DCONFIG_AlUart_Recv_Send_Block_Loop_Back_TEST=1
+CFLAGS := -O2 -g -DCONFIG_AlUart_Send_Polling_ONLY_TEST=1
 CFLAGS += -DAL9000_OSC_33 -DAL9000_BRINGUP -DBOARD_DR1X90_AD101_V10
 
 #########################################################################

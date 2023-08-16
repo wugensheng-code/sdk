@@ -54,10 +54,10 @@ static AL_S32 AlUart_Test_SendDataPollingOnly(AL_VOID)
     AL_U8 *Data = (AL_U8 *)malloc(BUF_SIZE);
     memset(Data, 0, (sizeof(AL_U8) * BUF_SIZE));
     for (int i = 0; i < BUF_SIZE; i++) {
-        Data[i] = i;
+        Data[i] = i + 'A';
     }
 
-    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 0, &UART_InitStruct);
+    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 1, &UART_InitStruct);
     if (ret != AL_OK) {
         printf("AlUart_Hal_Init error\r\n");
         return ret;
@@ -70,7 +70,7 @@ static AL_S32 AlUart_Test_SendDataPollingOnly(AL_VOID)
             printf("AlUart_Hal_SendDataPolling Error\r\n");
             return ret;
         }
-        printf("\r\n\r\n");
+        printf("\r\n");
     }
 
 }
@@ -83,10 +83,10 @@ static AL_S32 AlUart_Test_SendDataBlockOnly(AL_VOID)
     AL_U8 *Data = (AL_U8 *)malloc(BUF_SIZE);
     memset(Data, 0, (sizeof(AL_U8) * BUF_SIZE));
     for (int i = 0; i < BUF_SIZE; i++) {
-        Data[i] = i;
+        Data[i] = i + 'A';
     }
 
-    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 0, &UART_InitStruct);
+    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 1, &UART_InitStruct);
     if (ret != AL_OK){
         printf("AlUart_Hal_Init error\r\n");
         return ret;
@@ -99,7 +99,7 @@ static AL_S32 AlUart_Test_SendDataBlockOnly(AL_VOID)
             printf("AlUart_Hal_SendDataBlock Error! ret: 0x%x\r\n", ret);
             return ret;
         }
-        printf("\r\n\r\n");
+        printf("\r\n");
     }
 
 }
@@ -112,7 +112,7 @@ static AL_S32 AlUart_Test_RecvSendBlockLoopBack(AL_VOID)
     AL_U8 *Data = (AL_U8 *)malloc(BUF_SIZE);
     memset(Data, 0, (sizeof(AL_U8) * BUF_SIZE));
 
-    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 0, &UART_InitStruct);
+    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 1, &UART_InitStruct);
     if (ret != AL_OK){
         printf("AlUart_Hal_Init error\r\n");
         return ret;
@@ -167,7 +167,7 @@ static AL_S32 AlUart_Test_RecvSendNoBlockLoopBack(AL_VOID)
     AL_U8 *Data = (AL_U8 *)malloc(BUF_SIZE);
     memset(Data, 0, (sizeof(AL_U8) * BUF_SIZE));
 
-    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 0, &UART_InitStruct);
+    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 1, &UART_InitStruct);
     if (ret != AL_OK){
         printf("AlUart_Hal_Init error\r\n");
         return ret;
