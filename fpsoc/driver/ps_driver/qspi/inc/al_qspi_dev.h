@@ -55,13 +55,13 @@ typedef struct
     AL_REG                        BaseAddr;
     AL_U8                         Fifolen;
     AL_S32                        BitsPerWord;
-    AL_QSPI_ConfigsStruct          Configs;
-    AL_QSPI_BufferStruct           SendBuffer;
-    AL_QSPI_BufferStruct           RecvBuffer;
-    QSPI_EventCallBack             EventCallBack;
+    AL_QSPI_ConfigsStruct         Configs;
+    AL_QSPI_BufferStruct          SendBuffer;
+    AL_QSPI_BufferStruct          RecvBuffer;
+    QSPI_EventCallBack            EventCallBack;
     AL_VOID                       *EventCallBackRef;
     AL_U32                        ErrorCode;
-    AL_QSPI_StateEnum              State;
+    AL_QSPI_StateEnum             State;
 } AL_QSPI_DevStruct;
 
 /**

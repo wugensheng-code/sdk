@@ -323,6 +323,7 @@ typedef struct
     AL_QSPI_InstLengthEnum      InstLength;
     AL_QSPI_TransType           TransType;
     AL_U16                      WaitCycles;
+    AL_QSPI_ClockStretchEnum    ClockStretch;
 } AL_QSPI_EnSpiCfgStruct;
 typedef struct
 {
@@ -345,7 +346,7 @@ typedef struct
     AL_QSPI_EnSpiCfgStruct      EnSpiCfg;
     AL_QSPI_DataFrameSize       DataFrameSize;
     AL_U16                      ClkDiv;
-    AL_QSPI_ClockStretchEnum    ClockStretch;
+    AL_U16                      SamplDelay;
     AL_QSPI_SlvSelToggleEnum    SlvToggleEnum;
     AL_QSPI_SlvSelEnum          SlvSelEnum;
     AL_QSPI_XipCfgStruct        XipCfg;

@@ -39,8 +39,9 @@ static AL_QSPI_ConfigsStruct QSPIDefInitConfigs =
     .EnSpiCfg.InstLength    = QSPI_INST_L8,
     .EnSpiCfg.TransType     = QSPI_TT0,
     .EnSpiCfg.WaitCycles    = 8,
+    .EnSpiCfg.ClockStretch  = QSPI_EnableClockStretch,
     .ClkDiv             = 70,
-    .ClockStretch       = QSPI_EnableClockStretch,
+    .SamplDelay         = 0,
     .SlvToggleEnum      = QSPI_SLV_TOGGLE_DISABLE,
     .SlvSelEnum         = QSPI_SER_SS0_EN,
     .IsUseDma           = AL_QSPI_USE_INTR
@@ -196,7 +197,7 @@ AL_S32 AlQspi_Dev_Init(AL_QSPI_DevStruct *Qspi, AL_QSPI_ConfigsStruct *InitConfi
     Qspi->Configs = (InitConfig == AL_NULL) ? QSPIDefInitConfigs : (*InitConfig);
 
     AlQspi_ll_Disable(Qspi->BaseAddr);
-    AlQspi_ll_SetClockStretch(Qspi->BaseAddr, Qspi->Configs.ClockStretch);
+    AlQspi_ll_SetClockStretch(Qspi->BaseAddr, Qspi->Configs.EnSpiCfg.ClockStretch);
     // AlQspi_ll_SetDataFrameSize(Qspi->BaseAddr, Qspi->Configs.DataFrameSize);
     AlQspi_ll_SetClkDiv(Qspi->BaseAddr, Qspi->Configs.ClkDiv);
     AlQspi_ll_SetSlvSelToggle(Qspi->BaseAddr, Qspi->Configs.SlvToggleEnum);
@@ -209,6 +210,10 @@ AL_S32 AlQspi_Dev_Init(AL_QSPI_DevStruct *Qspi, AL_QSPI_ConfigsStruct *InitConfi
     AlQspi_ll_SetXipInstPhase(Qspi->BaseAddr, QSPI_XipInstPhaseDisable);
     AlQspi_ll_SetXipPrefetch(Qspi->BaseAddr, QSPI_DisableXipPrefetch);
     AlQspi_ll_SetXipContTrans(Qspi->BaseAddr, QSPI_DisableXipContTrans);
+    // AlQspi_ll_SetRecvDataSamplDelay(Qspi->BaseAddr, 2); /* 66M */
+    // AlQspi_ll_SetRecvDataSamplDelay(Qspi->BaseAddr, 4);     /* 88M */
+    AlQspi_ll_SetRecvDataSamplDelay(Qspi->BaseAddr, Qspi->Configs.SamplDelay);     /* 88M */
+    // AlQspi_ll_SetRecvDataSamplEdge(Qspi->BaseAddr, QSPI_NegativeEdgeSampling);
     AlQspi_ll_Enable(Qspi->BaseAddr);
 
     Qspi->State |= AL_QSPI_STATE_READY;
@@ -247,6 +252,7 @@ AL_S32 AlQspi_Dev_SendData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 SendS
     AlQspi_Dev_SetTxBusy(Qspi);
 
     TempSendSize = SendSize - (Qspi->Configs.EnSpiCfg.AddrLength + Qspi->Configs.EnSpiCfg.InstLength) / 2;
+
     /* Different fifo widths are set depending on the amount of data */
     if(QSPI_ADDR_L0 != Qspi->Configs.EnSpiCfg.AddrLength) {
         if ((0 == (TempSendSize % 4)) && (0 != TempSendSize)) {
@@ -282,6 +288,13 @@ AL_S32 AlQspi_Dev_SendData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 SendS
         SendLevel += 2;
     }
     AlQspi_ll_SetTxStartFifoLevel(Qspi->BaseAddr, SendLevel ? SendLevel - 1 : 0);
+
+    if(Qspi->Configs.EnSpiCfg.ClockStretch == QSPI_EnableClockStretch &&
+       Qspi->Configs.SpiFrameFormat != SPI_STANDARD_FORMAT)
+    {
+        AlQspi_ll_SetRecvNumOfDataFrames(Qspi->BaseAddr, (TempSendSize / (Qspi->BitsPerWord >> 3))
+                                         ? (TempSendSize / (Qspi->BitsPerWord >> 3)- 1) : 0);
+    }
     AlQspi_ll_Enable(Qspi->BaseAddr);
 
     if(Qspi->Configs.SpiFrameFormat == SPI_STANDARD_FORMAT) {
@@ -448,7 +461,6 @@ AL_S32 AlQspi_Dev_RecvData(AL_QSPI_DevStruct *Qspi, AL_U8 *ReceiveBuf, AL_U16 Re
     AlQspi_ll_SetRecvNumOfDataFrames(Qspi->BaseAddr, Temp ? Temp - 1 : 0);
     AlQspi_ll_SetSlvSel(Qspi->BaseAddr, Qspi->Configs.SlvSelEnum);
     AlQspi_ll_SetDataFrameSize(Qspi->BaseAddr, Qspi->Configs.DataFrameSize);
-
     AlQspi_ll_Enable(Qspi->BaseAddr);
     Temp = MIN(ReceiveSize / (Qspi->BitsPerWord >> 3), Qspi->Fifolen / 2);
     AlQspi_ll_SetRxFifoThrLevel(Qspi->BaseAddr, Temp ? Temp - 1 : 0);
@@ -689,6 +701,11 @@ AL_S32 AlQspi_Dev_DmaSendData(AL_QSPI_DevStruct *Qspi, AL_U32 SendSize)
     }
     AlQspi_ll_SetTxStartFifoLevel(Qspi->BaseAddr, SendLevel ? SendLevel - 1 : 0);
     // AlQspi_ll_SetTxStartFifoLevel(Qspi->BaseAddr, 0);
+    if(Qspi->Configs.EnSpiCfg.ClockStretch == QSPI_EnableClockStretch &&
+       Qspi->Configs.SpiFrameFormat != SPI_STANDARD_FORMAT)
+    {
+        AlQspi_ll_SetRecvNumOfDataFrames(Qspi->BaseAddr, TempSendSize ? TempSendSize - 1 : 0);
+    }
     AlQspi_ll_SetTxFifoThrLevel(Qspi->BaseAddr, 0);
     AlQspi_ll_TxDmaEnable(Qspi->BaseAddr);
     AlQspi_ll_SetDmaTransLevel(Qspi->BaseAddr, Qspi->Fifolen / 2 + 2);
