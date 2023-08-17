@@ -811,6 +811,43 @@ AL_VOID AL_NOR_DMA_READID(AL_VOID)
     printf("DMA Read Flash ID:0x%x, 0x%x, 0x%x\r\n", FlashId[0], FlashId[1], FlashId[2]);
 }
 
+
+AL_S32 AL_NOR_SetQuad(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd, AL_U8 QuadPos)
+{
+    AL_S32 Data = 0, ret = AL_OK;
+
+    SendData[0] = ReadQuadCmd;
+    QspiHal.Dev->Configs.EnSpiCfg.WaitCycles = 0;
+    QspiHal.Dev->Configs.TransMode  = QSPI_EEPROM;
+    QspiHal.Dev->Configs.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
+    QspiHal.Dev->Configs.SpiFrameFormat = SPI_STANDARD_FORMAT;
+    QspiHal.Dev->Configs.EnSpiCfg.TransType = QSPI_TT0;
+
+    ret = AlQspi_Hal_TranferDataBlock(&QspiHal, SendData, 1, &Data, 1, 10000);
+    if (ret != AL_OK) {
+        printf("AL_NOR_SetQuad ReadQuadCmd error!!!!!\r\n");
+    }
+
+    Data = Data | (1 << QuadPos);
+
+    AL_NOR_WREN();
+
+    SendData[0] = SetQuadCmd;
+    SendData[1] = Data;
+
+    QspiHal.Dev->Configs.TransMode = QSPI_TX_ONLY;
+
+    ret = AlQspi_Hal_SendDataBlock(&QspiHal, SendData, 2, 0);
+    if (ret != AL_OK) {
+        printf("AL_NOR_SetQuad SetQuadCmd error!!!!!\r\n");
+    }
+
+    AL_NOR_WAITWIP();
+
+    return ret;
+}
+
+
 void main(void)
 {
     AL_U32 i;
@@ -872,6 +909,19 @@ printf("AL_NOR_RESET Running!!!!!\r\n");
       printf("AL_NOR_READID2\r\n");
     AL_NOR_READSTATUS();
      AL_NOR_READID();
+
+    if((FlashId[0] != 0x01) && (FlashId[0] != 0x20) && (FlashId[0] != 0x0) && (FlashId[0] != 0xff))
+    {
+        if( (FlashId[0] != 0x9d) && (FlashId[0] != 0xc2) ){
+            ret = AL_NOR_SetQuad(0x31, 0x35, 1);
+        }else{
+            ret = AL_NOR_SetQuad(0x01, 0x05, 6);
+        }
+
+        if(ret != AL_OK) {
+            return ret;
+        }
+    }
 
 printf("AL_NOR_READID3\r\n");
     AL_NOR_READSTATUS();
