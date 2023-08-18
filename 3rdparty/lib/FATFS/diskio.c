@@ -57,7 +57,7 @@ DSTATUS disk_initialize (BYTE pdrv)
     switch (pdrv) {
     case SD:
     case EMMC:
-        status = AlMmc_Hal_Init(&Handle, &InitConfig, AL_NULL, DevId);
+        status = AlMmc_Hal_Init(&Handle, DevId, &InitConfig, AL_NULL);
         if (status == RES_OK) {
             status = RES_OK;
         } else {

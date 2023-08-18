@@ -180,7 +180,7 @@ static AL_VOID AlMmc_Test_Sd(AL_VOID)
 
         AL_LOG(AL_LOG_LEVEL_INFO, "----------MMC test %s mode start----------\r\n", CaseName[i]);
 
-        Ret = AlMmc_Hal_Init(&Handle, InitConfig[i], AL_NULL, DevId);
+        Ret = AlMmc_Hal_Init(&Handle, DevId, InitConfig[i], AL_NULL);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Hal init error 0x%x\r\n", Ret);
             return ;
@@ -229,7 +229,7 @@ static AL_VOID AlMmc_Test_Emmc(AL_VOID)
 
         AL_LOG(AL_LOG_LEVEL_INFO, "----------MMC test %s mode start----------\r\n", CaseName[i]);
 
-        Ret = AlMmc_Hal_Init(&Handle, InitConfig[i], AL_NULL, DevId);
+        Ret = AlMmc_Hal_Init(&Handle, DevId, InitConfig[i], AL_NULL);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Hal init error 0x%x\r\n", Ret);
             return ;

@@ -386,10 +386,6 @@ static AL_S32 AlMmc_Dev_CheckCmdDone(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum Cm
     AL_U32 Timeout  = 1000000;
     volatile AL_MMC_IntrUnion IntrStat   = {0};
 
-#ifdef USE_RTOS
-    /*TODO: Use intr signal */
-    // while ();
-#else
     do {
         IntrStat.Reg = AlMmc_ll_ReadIntrStat(Dev->HwConfig.BaseAddress);
         /* TODO: Bus test or tuning block */
@@ -425,7 +421,6 @@ static AL_S32 AlMmc_Dev_CheckCmdDone(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum Cm
     IntrStat.Reg = 0;
     IntrStat.Bit.CmdComp = AL_TRUE;
     AlMmc_ll_WriteIntrStat(Dev->HwConfig.BaseAddress, IntrStat.Reg);
-#endif
 
     return Ret;
 }
@@ -1626,9 +1621,7 @@ AL_S32 AlMmc_Dev_Init(AL_MMC_DevStruct *Dev, AL_MMC_HwConfigStruct *HwConfig, AL
 
     /* Set intr state en and intr signal en(if USE_RTOS) */
     AlMmc_ll_WriteIntrStatEn(Dev->HwConfig.BaseAddress, 0xFFFFFEFF);
-#ifdef USE_RTOS
-    AlMmc_ll_WriteIntrSigEn(Dev->HwConfig.BaseAddress, 0xFFFFFFFF);
-#endif
+    // AlMmc_ll_WriteIntrSigEn(Dev->HwConfig.BaseAddress, 0xFFFFFFFF);
 
     if (Dev->Config.CardType >= AL_MMC_CARD_TYPE_MAX) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Invalid card type config\r\n");
@@ -1839,9 +1832,6 @@ static AL_S32 AlMmc_Dev_CheckTransferDone(AL_MMC_DevStruct *Dev, AL_U32 BlkCnt)
     /* Set Max for large blk cnt transfer */
     AL_U32 Timeout = AL_MMC_CHK_TOUT_XFER_DONE * BlkCnt;
 
-#ifdef USE_RTOS
-
-#else
     do {
         IntrStat.Reg = AlMmc_ll_ReadIntrStat(Dev->HwConfig.BaseAddress);
 
@@ -1862,8 +1852,6 @@ static AL_S32 AlMmc_Dev_CheckTransferDone(AL_MMC_DevStruct *Dev, AL_U32 BlkCnt)
 
         if ((AlMmc_Dev_GetState(Dev, AL_MMC_STATE_READY)) && (Dev->Config.DmaMode == AL_MMC_DMA_MODE_SDMA) &&
             IntrStat.Bit.DmaIntr && (!IntrStat.Bit.XferComp)) {
-            // AlMmc_Dev_DisplayAllReg(Dev);
-
             volatile AL_U32 SdmaAddr = AlMmc_ll_ReadAdmaSysAddrLow(Dev->HwConfig.BaseAddress);
             IntrStat.Reg = 0;
             IntrStat.Bit.DmaIntr = AL_TRUE;
@@ -1889,7 +1877,6 @@ static AL_S32 AlMmc_Dev_CheckTransferDone(AL_MMC_DevStruct *Dev, AL_U32 BlkCnt)
     IntrStat.Bit.XferComp   = AL_TRUE;
     IntrStat.Bit.DmaIntr    = AL_TRUE;
     AlMmc_ll_WriteIntrStat(Dev->HwConfig.BaseAddress, IntrStat.Reg);
-#endif
 
     return Ret;
 }
@@ -1924,9 +1911,6 @@ static AL_S32 AlMmc_Dev_TransferNoDma(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 
     AL_U8 DatDir;
     AL_U32 Cnt = 0;
 
-#ifdef USE_RTOS
-    /* TODO: */
-#else
     TmpReg.Reg = AlMmc_ll_ReadCmd_XferMode(Dev->HwConfig.BaseAddress);
     do {
         IntrStat.Reg = AlMmc_ll_ReadIntrStat(Dev->HwConfig.BaseAddress);
@@ -1969,7 +1953,6 @@ static AL_S32 AlMmc_Dev_TransferNoDma(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 
         AL_LOG(AL_LOG_LEVEL_ERROR, "Transfer no dma timeout\r\n");
         return AL_MMC_ERR_XFER_COMP_TIMEOUT;
     }
-#endif
 
     return Ret;
 }
@@ -1977,10 +1960,6 @@ static AL_S32 AlMmc_Dev_TransferNoDma(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 
 static AL_S32 AlMmc_Dev_TransferData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkCnt)
 {
     AL_S32 Ret = AL_OK;
-
-#ifdef USE_RTOS
-    /* TODO: */
-#else
 
     if ((Dev->Config.DmaMode == AL_MMC_DMA_MODE_NONE) || (!AlMmc_Dev_GetState(Dev, AL_MMC_STATE_READY))) {
         Ret = AlMmc_Dev_TransferNoDma(Dev, Buf, BlkCnt);
@@ -1995,7 +1974,6 @@ static AL_S32 AlMmc_Dev_TransferData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 B
         AL_LOG(AL_LOG_LEVEL_ERROR, "Check transfer done error\r\n");
         return Ret;
     }
-#endif
 
     return Ret;
 }

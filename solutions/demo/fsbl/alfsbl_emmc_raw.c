@@ -36,7 +36,7 @@ static AL_U8 SharedBuffer[BLOCK_SIZE];
 uint32_t AlFsbl_EmmcRawInit(void)
 {
 	uint32_t status = AL_OK;
-	status = AlMmc_Hal_Init(&Handle, &InitConfig, AL_NULL, DevId);
+	status = AlMmc_Hal_Init(&Handle, DevId, &InitConfig, AL_NULL);
 
 	if(status != AL_OK) {
 		status = status | (ALFSBL_BOOTMODE_EMMC << 16);
