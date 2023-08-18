@@ -15,7 +15,7 @@ MEMORY
 
 SECTIONS
 {
-	__stack_size = DEFINED(__stack_size) ? __stack_size : 4K;
+	__stack_size = DEFINED(__stack_size) ? __stack_size : 8K;
 
 	.text :
 	{
@@ -91,9 +91,11 @@ SECTIONS
 	{
 		PROVIDE(_heap_end = .);
 		PROVIDE(stack_start = .);
+		. = ALIGN(16);
 		. = __stack_size;
 		PROVIDE(stack_top = .);
 		PROVIDE(_sp = .);
+		. = ALIGN(16);
 
 	} > ram AT>ram
 }

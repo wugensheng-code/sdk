@@ -57,6 +57,8 @@ void rt_hw_console_output(const char* str)
 }
 
 
+
+
 void cli_thread_entry(void *parameter)
 {
     AL_S32 Ret = AL_OK;

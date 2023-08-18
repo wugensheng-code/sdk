@@ -216,8 +216,9 @@
 // 	/* Processor specific initialization */
 // 	bl	lowlevel_init
 
-// 	/* jump to main */
-// 	bl	main
+	/* jump to main */
+	// bl	main
+    b rtthread_startup
 
 // 	/* hang */
 // 	b .

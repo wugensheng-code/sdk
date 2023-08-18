@@ -50,11 +50,13 @@ void rt_hw_interrupt_init(void)
     IRQ_DISABLE1      = 0xffffffff;
     IRQ_DISABLE2      = 0xffffffff;
 #else
+
+    gicv3_init();
     /* initialize ARM GIC */
-    arm_gic_dist_init(0, platform_get_gic_dist_base(), GIC_IRQ_START);
-    arm_gic_cpu_init(0, platform_get_gic_cpu_base());
+    // arm_gic_dist_init(0, platform_get_gic_dist_base(), GIC_IRQ_START);
+    // arm_gic_cpu_init(0, platform_get_gic_cpu_base());
 #ifdef BSP_USING_GICV3
-    arm_gic_redist_init(0, platform_get_gic_redist_base());
+    // arm_gic_redist_init(0, platform_get_gic_redist_base());
 #endif
 #endif
 }

@@ -42,7 +42,6 @@
 
 /* Kernel Device Object */
 
-#define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
