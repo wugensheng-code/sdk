@@ -14,16 +14,27 @@ config PKGS_DIR
     string
     option env="PKGS_ROOT"
     default "packages"
- 
+
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
-source "board/Kconfig"
-source "$BSP_DIR/utest/testcases/Kconfig"
 
-config SOC_DEMOSOC
+
+config RISCV_CORE
     bool
     select ARCH_RISCV
     select PKG_USING_NUCLEI_SDK
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
-    default y
+    # default y
+
+config AARCH64_CORE
+    bool
+    select ARCH_ARMV8
+    select ARCH_CPU_64BIT
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    # default y
+
+
+source "$BSP_DIR/board/Kconfig"
+source "$BSP_DIR/utest/testcases/Kconfig"

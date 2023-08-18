@@ -47,14 +47,15 @@
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x40101
-#define ARCH_RISCV
+#define ARCH_CPU_64BIT
+#define ARCH_ARMV8
 
 /* RT-Thread Components */
 
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
-#define RT_MAIN_THREAD_STACK_SIZE 4096
-#define RT_MAIN_THREAD_PRIORITY 30
+#define RT_MAIN_THREAD_STACK_SIZE 6144
+#define RT_MAIN_THREAD_PRIORITY 10
 #define RT_USING_MSH
 #define RT_USING_FINSH
 #define FINSH_USING_MSH
@@ -159,11 +160,6 @@
 
 /* Kendryte SDK */
 
-#define PKG_USING_NUCLEI_SDK
-
-/* !!!Nuclei SDK only works with Nuclei RISC-V Processor IP!!! */
-
-#define PKG_USING_NUCLEI_SDK_LATEST_VERSION
 
 /* AI packages */
 
@@ -215,6 +211,8 @@
 
 /* Uncategorized */
 
+#define AARCH64_CORE
+
 /* Hardware Drivers Config */
 
 #define SOC_HUMMINGBIRD
@@ -226,6 +224,12 @@
 
 
 /* Board extended module Drivers */
+
+/* Soc Config */
+
+#define USE_ARM_CORE
+#define BSP_USING_GIC
+#define BSP_USING_GICV3
 
 /* RT-Thread Utestcases */
 
@@ -246,6 +250,5 @@
 
 /* RTT Posix Testcase */
 
-#define SOC_DEMOSOC
 
 #endif

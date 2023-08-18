@@ -1,14 +1,9 @@
-import rtconfiga as rtconfig_soc
 import os
 
 # toolchains options
-ARCH        = rtconfig_soc.ARCH
-CPU         = rtconfig_soc.CPU
-CROSS_TOOL  = rtconfig_soc.CROSS_TOOL
-
-CHIP_ROOT = os.getcwd() + '/../../../fpsoc/chip/dr1v90'
-SDK_ROOT = os.getcwd() + '/../../../'
-ARCH_ROOT = os.getcwd() + '/../../../fpsoc/arch/riscv'
+ARCH        ='aarch64'
+CPU         ='cortex-a'
+CROSS_TOOL  ='gcc'
 
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
@@ -23,7 +18,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = rtconfig_soc.EXEC_PATH
+    EXEC_PATH   = r'/opt/toolchain/gcc-arm-11.2-2022.02-x86_64-aarch64-none-elf/bin/'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -32,25 +27,24 @@ BUILD = 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX = rtconfig_soc.PREFIX
+    PREFIX  = 'aarch64-none-elf-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
     AS      = PREFIX + 'gcc'
     AR      = PREFIX + 'ar'
     LINK    = PREFIX + 'gcc'
-    GDB     = PREFIX + 'gdb'
     TARGET_EXT = 'elf'
     SIZE    = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY  = PREFIX + 'objcopy'
 
-    DEVICE  = rtconfig_soc.DEVICE
-    CFLAGS  = rtconfig_soc.CFLAGS
-    AFLAGS  = rtconfig_soc.AFLAGS
-    LFLAGS  = rtconfig_soc.LFLAGS
-    CPATH   = rtconfig_soc.CPATH
-    LPATH   = rtconfig_soc.LPATH
-    LIBS    = rtconfig_soc.LIBS
+    DEVICE  = ' -g -march=armv8-a -mtune=cortex-a35'
+    CFLAGS  = DEVICE + ' -Wall '
+    AFLAGS  = ' -c' + ' -x assembler-with-cpp -D__ASSEMBLY__'
+    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'
+    CPATH   = ''
+    LPATH   = ''
+    LIBS    = None
 
     if BUILD == 'debug':
         CFLAGS += ' -O0 -gdwarf-2'
@@ -60,5 +54,5 @@ if PLATFORM == 'gcc':
 
     CXXFLAGS = CFLAGS
 
-DUMP_ACTION = ''
-POST_ACTION = ''
+DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
+POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'

@@ -35,4 +35,42 @@ menu "Board extended module Drivers"
 
 endmenu
 
+menu "Soc Config"
+
+    choice 
+        prompt "Select the core to use"
+        default USE_RISCV_CORE
+
+        config USE_RISCV_CORE
+        bool "use riscv core"
+            select RISCV_CORE
+
+        config USE_ARM_CORE
+        bool "use arm core"
+            select AARCH64_CORE
+
+    endchoice
+
+    if USE_ARM_CORE
+
+        config BSP_USING_GIC
+        bool
+        default y
+        depends on USE_ARM_CORE
+
+        choice
+            prompt "GIC Version"
+            default BSP_USING_GICV3
+
+            config BSP_USING_GICV2
+                bool "GICv2"
+
+            config BSP_USING_GICV3
+                bool "GICv3"
+        endchoice
+    
+    endif 
+
+endmenu
+
 endmenu

@@ -12,21 +12,14 @@
 #ifndef __BOARD__
 #define __BOARD__
 
-#include "al_core.h"
+#include <rtthread.h>
 #include "al_hal.h"
-#include "al_cli.h"
 
-#define BSP_UART0_RX_BUFSIZE   256
-#define BSP_UART0_TX_BUFSIZE   256
+#ifdef USE_RISCV_CORE
+#include "al_rv_core.h"
+#include "ext_eclic.h"
+#elifdef USE_ARM_CORE
 
-#ifndef CLI_THREAD_NAME
-    #define CLI_THREAD_NAME   "tcli"
-#endif
-#ifndef CLI_THREAD_PRIORITY
-    #define CLI_THREAD_PRIORITY 15
-#endif
-#ifndef CLI_THREAD_STACK_SIZE
-    #define CLI_THREAD_STACK_SIZE 2048
 #endif
 
 void rt_hw_board_init(void);

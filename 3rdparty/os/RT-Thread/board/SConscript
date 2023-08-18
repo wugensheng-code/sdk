@@ -22,6 +22,15 @@ CPPPATH += [SDK_ROOT + r'fpsoc/driver/ps_driver/smc/inc']
 CPPPATH += [SDK_ROOT + r'fpsoc/driver/ps_driver/spi/inc']
 CPPPATH += [SDK_ROOT + r'fpsoc/lib/cli/inc']
 
+if GetDepend('USE_ARM_CORE') == True:
+    src += Glob('arm/board.c')
+    CPPPATH += [cwd + f'/arm/']
+    CPPPATH += [SDK_ROOT + r'/fpsoc/arch/arm/common/gic_v3/inc']
+
+if GetDepend('USE_RISCV_CORE') == True:
+    src += Glob('riscv/board.c')
+    CPPPATH += [cwd + f'/riscv/']
+
 
 group = DefineGroup('Board', src, depend = [''], CPPPATH = CPPPATH)
 
