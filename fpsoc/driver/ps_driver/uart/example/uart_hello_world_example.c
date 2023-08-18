@@ -48,7 +48,7 @@ AL_S32 UartHelloWorldExample(AL_VOID)
     AL_U32 RecvSize;
     AL_U8 HelloWorld[] = "Hello World";
 
-    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 0, &UART_InitStruct);
+    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 0, &UART_InitStruct, AL_NULL);
     if (ret != AL_OK) {
         printf("AlUart_Hal_Init error\r\n");
         return ret;

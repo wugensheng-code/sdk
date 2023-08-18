@@ -27,7 +27,7 @@ AL_S32 AlLog_Init()
         .StopBits     = UART_STOP_1BIT,
     };
 
-    return AlUart_Hal_Init(&Log, AL_LOG_UART0, &UART_InitStruct);
+    return AlUart_Hal_Init(&Log, AL_LOG_UART0, &UART_InitStruct, AL_NULL);
 #elif (LOG_DEV == AL_LOG_UART1)
     AL_UART_InitStruct UART_InitStruct = {
         .BaudRate     = 115200,
@@ -36,7 +36,7 @@ AL_S32 AlLog_Init()
         .StopBits     = UART_STOP_1BIT,
     };
 
-    return AlUart_Hal_Init(&Log, AL_LOG_UART1, &UART_InitStruct);
+    return AlUart_Hal_Init(&Log, AL_LOG_UART1, &UART_InitStruct, AL_NULL);
 #else
     return AL_OK;
 #endif

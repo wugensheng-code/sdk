@@ -57,7 +57,7 @@ static AL_S32 AlUart_Test_SendDataPollingOnly(AL_VOID)
         Data[i] = i + 'A';
     }
 
-    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 1, &UART_InitStruct);
+    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 1, &UART_InitStruct, AL_NULL);
     if (ret != AL_OK) {
         printf("AlUart_Hal_Init error\r\n");
         return ret;
@@ -86,7 +86,7 @@ static AL_S32 AlUart_Test_SendDataBlockOnly(AL_VOID)
         Data[i] = i + 'A';
     }
 
-    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 1, &UART_InitStruct);
+    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 1, &UART_InitStruct, AL_NULL);
     if (ret != AL_OK){
         printf("AlUart_Hal_Init error\r\n");
         return ret;
@@ -112,7 +112,7 @@ static AL_S32 AlUart_Test_RecvSendBlockLoopBack(AL_VOID)
     AL_U8 *Data = (AL_U8 *)malloc(BUF_SIZE);
     memset(Data, 0, (sizeof(AL_U8) * BUF_SIZE));
 
-    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 1, &UART_InitStruct);
+    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 1, &UART_InitStruct, AL_NULL);
     if (ret != AL_OK){
         printf("AlUart_Hal_Init error\r\n");
         return ret;
@@ -140,11 +140,11 @@ static AL_S32 AlUart_Test_RecvSendBlockLoopBack(AL_VOID)
             case AL_ERR_ILLEGAL_PARAM:
             case AL_ERR_NOT_SUPPORT:
                 printf("AlUart_Hal_RecvDataBlock Error! ret: 0x%x\r\n", ret);
-                return;
+                return ret;
 
             default:
                 printf("Unknown error type for AlUart_Hal_RecvDataBlock!!! ret: 0x%x\r\n", ret);
-                return;
+                return ret;
             }
         }
 
@@ -167,7 +167,7 @@ static AL_S32 AlUart_Test_RecvSendNoBlockLoopBack(AL_VOID)
     AL_U8 *Data = (AL_U8 *)malloc(BUF_SIZE);
     memset(Data, 0, (sizeof(AL_U8) * BUF_SIZE));
 
-    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 1, &UART_InitStruct);
+    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 1, &UART_InitStruct, AL_NULL);
     if (ret != AL_OK){
         printf("AlUart_Hal_Init error\r\n");
         return ret;

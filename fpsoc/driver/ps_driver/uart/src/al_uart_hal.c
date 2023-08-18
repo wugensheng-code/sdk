@@ -47,7 +47,7 @@ static inline AL_S32 AlUart_Hal_WaitRxDoneOrTimeout(AL_UART_HalStruct *Handle, A
  * @return
  * @note
 */
-static AL_VOID AlUart_Hal_EventHandler(AL_UART_EventStruct UartEvent, AL_VOID *CallbackRef)
+static AL_VOID AlUart_Hal_DefEventHandler(AL_UART_EventStruct UartEvent, AL_VOID *CallbackRef)
 {
     AL_UART_HalStruct *Handle = (AL_UART_HalStruct *)CallbackRef;
     AL_S32 Ret = AL_OK;
@@ -113,15 +113,13 @@ static AL_VOID AlUart_Hal_EventHandler(AL_UART_EventStruct UartEvent, AL_VOID *C
  *          - Other for function failuregit
  * @note
 */
-AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStruct *InitConfig)
+AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStruct *InitConfig, AL_Uart_EventCallBack Callback)
 {
-    AL_S32 Ret;
+    AL_S32 Ret = AL_OK;
     AL_UART_DevStruct *Dev;
     AL_UART_HwConfigStruct *HwConfig;
 
-    if (Handle == AL_NULL) {
-        return AL_UART_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle == AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
     HwConfig = AlUart_Dev_LookupConfig(DevId);
     if (HwConfig != AL_NULL) {
@@ -135,7 +133,11 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStru
         return Ret;
     }
 
-    Ret = AlUart_Dev_RegisterEventCallBack(Dev, AlUart_Hal_EventHandler, (void *)Handle);
+    if(Callback == AL_NULL) {
+        Ret = AlUart_Dev_RegisterEventCallBack(Handle->Dev, AlUart_Hal_DefEventHandler, (void *)Handle);
+    } else {
+        Ret = AlUart_Dev_RegisterEventCallBack(Handle->Dev, Callback, (void *)Handle);
+    }
     if (Ret != AL_OK) {
         return Ret;
     }

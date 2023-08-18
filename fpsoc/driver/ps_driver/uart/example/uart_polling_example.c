@@ -53,7 +53,7 @@ AL_S32 UartPollingExample(AL_VOID)
     AL_U16 Index;
     AL_UART_IoctlParamUnion UartIoctlParam = {0};
 
-    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 0, &UART_InitStruct);
+    AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 0, &UART_InitStruct, AL_NULL);
     if (ret != AL_OK) {
         printf("AlUart_Hal_Init Error\r\n");
         return ret;

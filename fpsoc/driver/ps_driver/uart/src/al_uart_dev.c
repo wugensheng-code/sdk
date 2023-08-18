@@ -160,13 +160,7 @@ AL_VOID AlUart_Dev_ClrRxBusy(AL_UART_DevStruct *Uart)
 */
 AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_UART_InitStruct *InitConfig, AL_U32 DevId)
 {
-    if (Uart == AL_NULL) {
-        return AL_UART_ERR_ILLEGAL_PARAM;
-    }
-
-    if (DevId >= AL_UART_NUM_INSTANCE) {
-        return AL_UART_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Uart == AL_NULL || DevId >= AL_UART_NUM_INSTANCE), AL_UART_ERR_ILLEGAL_PARAM);
 
     /* soft reset uart bus */
     if(Uart->State != AL_UART_STATE_NOT_INIT) {
@@ -232,21 +226,9 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_UART_InitStruct *InitConfig, 
 */
 AL_S32 AlUart_Dev_SendData(AL_UART_DevStruct *Uart, AL_U8 *SendData, AL_U32 SendSize)
 {
-#ifdef UART_DEBUG
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "uart=%p SendDataAddr=%p SendSize=%d\n", Uart, SendData, SendSize);
-#endif
-
-    if (Uart == AL_NULL || SendData == AL_NULL || SendSize == 0) {
-        return AL_UART_ERR_ILLEGAL_PARAM;
-    }
-
-    if ((Uart->State & AL_UART_STATE_READY) == 0) {
-        return AL_UART_ERR_NOT_READY;
-    }
-
-    if (AlUart_Dev_IsTxBusy(Uart)) {
-        return AL_UART_ERR_BUSY;
-    }
+    AL_ASSERT((Uart == AL_NULL || SendData == AL_NULL || SendSize == 0), AL_UART_ERR_ILLEGAL_PARAM);
+    AL_ASSERT(((Uart->State & AL_UART_STATE_READY) != AL_UART_STATE_READY), AL_UART_ERR_NOT_READY);
+    AL_ASSERT((AlUart_Dev_IsTxBusy(Uart)), AL_UART_ERR_BUSY);
 
     AlUart_Dev_SetTxBusy(Uart);
 
@@ -273,19 +255,10 @@ AL_S32 AlUart_Dev_RecvData(AL_UART_DevStruct *Uart, AL_U8 *ReceiveBuf, AL_U32 Re
 {
     AL_U32 ReceivedCount = 0;
 
-    if (Uart == AL_NULL || ReceiveBuf == AL_NULL || ReceiveSize == 0 ) {
-        return AL_UART_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Uart == AL_NULL || ReceiveBuf == AL_NULL || ReceiveSize == 0), AL_UART_ERR_ILLEGAL_PARAM);
+    AL_ASSERT(((Uart->State & AL_UART_STATE_READY) == 0), AL_UART_ERR_NOT_READY);
+    AL_ASSERT((AlUart_Dev_IsRxBusy(Uart)), AL_UART_ERR_BUSY);
 
-    if ((Uart->State & AL_UART_STATE_READY) != AL_UART_STATE_READY) {
-        return AL_UART_ERR_NOT_READY;
-    }
-
-    if (AlUart_Dev_IsRxBusy(Uart)) {
-        return AL_UART_ERR_BUSY;
-    }
-
-    /* Change Status */
     AlUart_Dev_SetRxBusy(Uart);
 
     /*
@@ -329,17 +302,8 @@ AL_S32 AlUart_Dev_RecvData(AL_UART_DevStruct *Uart, AL_U8 *ReceiveBuf, AL_U32 Re
 */
 AL_S32 AlUart_Dev_RegisterEventCallBack(AL_UART_DevStruct *Uart, AL_Uart_EventCallBack Callback, void *CallbackRef)
 {
-    if (Uart == AL_NULL || Callback == AL_NULL) {
-        return AL_UART_ERR_ILLEGAL_PARAM;
-    }
-
-    if (Uart->EventCallBack != AL_NULL) {
-
-#ifdef UART_DEBUG
-        AL_LOG(AL_LOG_LEVEL_WARNING, "uart=%p duplicate register callback: replace old:%p with New: %p\n", \
-                Uart, Uart->EventCallBack, Callback);
-#endif
-    }
+    AL_ASSERT((Uart == AL_NULL || Callback == AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Uart->EventCallBack != AL_NULL), AL_UART_ERR_NOT_SUPPORT);
 
     Uart->EventCallBack        = Callback;
     Uart->EventCallBackRef     = CallbackRef;
@@ -357,13 +321,7 @@ AL_S32 AlUart_Dev_RegisterEventCallBack(AL_UART_DevStruct *Uart, AL_Uart_EventCa
 */
 AL_S32 AlUart_Dev_UnRegisterEventCallBack(AL_UART_DevStruct *Uart)
 {
-    if (Uart == AL_NULL) {
-#ifdef UART_DEBUG
-        AL_LOG(AL_LOG_LEVEL_ERROR, "uart=%p duplicate register callback: replace old:%p with New: %p\n", \
-            Uart, Uart->EventCallBack, Callback);
-#endif
-        return AL_UART_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Uart == AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
     Uart->EventCallBack = (AL_Uart_EventCallBack)AL_NULL;
 
@@ -506,6 +464,7 @@ static AL_VOID AlUart_Dev_ErrorHandler(AL_UART_DevStruct *Uart, AL_UART_Interrup
 {
     AL_UART_EventStruct UartEvent = {
         .Events     = 0,
+        .EventData  = 0,
     };
 
     AL_U32 ErrorStatus = AlUart_ll_GetLineRegStatus(Uart->BaseAddr);
@@ -554,9 +513,6 @@ static AL_VOID AlUart_Dev_BusBusyHandler(AL_UART_DevStruct *Uart)
         .EventData  = 0,
     };
 
-#ifdef UART_DEBUG
-    AL_LOG(AL_LOG_LEVEL_DEBUG,"uart bus busy, bus reset then reinitialize\r\n");
-#endif
     /* soft reset uart bus */
     if (Uart->BaseAddr == UART0__BASE_ADDR) {
         AL_REG32_SET_BIT(CRP__BASE_ADDR + CRP__SRST_CTRL3__OFFSET, CRP__SRST_CTRL3__UART0__SRST__N__SHIFT, AL_FUNC_DISABLE);
@@ -682,9 +638,7 @@ AL_S32 AlUart_Dev_IoCtl(AL_UART_DevStruct *Uart, AL_UART_IoCtlCmdEnum Cmd, AL_UA
 {
     AL_S32 Ret = AL_OK;
 
-    if (Uart == AL_NULL) {
-        return AL_UART_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Uart == AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
     if(AlUart_ll_IsUartBusy(Uart->BaseAddr)){
         AL_LOG(AL_LOG_LEVEL_ERROR, "access during a transaction\r\n");
