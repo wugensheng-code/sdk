@@ -95,6 +95,10 @@ static AL_VOID AlUart_Hal_EventHandler(AL_UART_EventStruct UartEvent, AL_VOID *C
         AL_LOG(AL_LOG_LEVEL_ERROR, AL_UART_EVENTS_TO_ERRS(AL_UART_EVENT_BREAK_INTR));
     }
 
+    if (UartEvent.Events & (AL_UART_EVENT_PARITY_ERR | AL_UART_EVENT_FRAMING_ERR | AL_UART_EVENT_BREAK_INTR)) {
+        Al_OSAL_Mb_Send(&Handle->RxEventQueue[Handle->CurRxMode], &UartEvent);
+    }
+
 }
 
 /**
