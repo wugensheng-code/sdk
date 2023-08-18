@@ -27,7 +27,7 @@ extern AL_BOOL AlCan_Dev_GetState(AL_CAN_DevStruct *Dev, AL_CAN_StateEnum State)
 */
 static AL_S32 AlCan_Hal_WaitSendDoneOrTimeout(AL_CAN_HalStruct *Handle, AL_U32 Timeout, AL_CAN_EventStruct *Event)
 {
-    return Al_OSAL_Mb_Recive(&Handle->TxEventQueue[Handle->CurTxMode], Event, Timeout);
+    return Al_OSAL_Mb_Receive(&Handle->TxEventQueue[Handle->CurTxMode], Event, Timeout);
 }
 
 /**
@@ -40,7 +40,7 @@ static AL_S32 AlCan_Hal_WaitSendDoneOrTimeout(AL_CAN_HalStruct *Handle, AL_U32 T
 */
 static AL_S32 AlCan_Hal_WaitRecvNotEmptyOrTimeout(AL_CAN_HalStruct *Handle, AL_U32 Timeout, AL_CAN_EventStruct *Event)
 {
-    return Al_OSAL_Mb_Recive(&Handle->RxEventQueue, Event, Timeout);
+    return Al_OSAL_Mb_Receive(&Handle->RxEventQueue, Event, Timeout);
 }
 
 /**

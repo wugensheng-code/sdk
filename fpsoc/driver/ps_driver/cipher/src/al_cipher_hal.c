@@ -27,7 +27,7 @@ extern AL_BOOL AlCipher_Dev_GetState(AL_CIPHER_DevStruct *Dev, AL_CIPHER_StateEn
 */
 static AL_S32 AlCipher_Hal_WaitAckOrTimeout(AL_CIPHER_HalStruct *Handle, AL_U32 Timeout, AL_CIPHER_EventStruct *Event)
 {
-    return Al_OSAL_Mb_Recive(&Handle->StartEventQueue[Handle->CurStartMode], Event, Timeout);
+    return Al_OSAL_Mb_Receive(&Handle->StartEventQueue[Handle->CurStartMode], Event, Timeout);
 }
 
 /**

@@ -60,7 +60,7 @@ static AL_VOID AlIic_DefEventCallBack(AL_IIC_EventStruct *IicEvent, void *Callba
 static AL_S32 AlIic_Hal_WaitMasterTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_IIC_EventStruct *Event, AL_U32 Timeout)
 {
     AL_S32 Ret;
-    Ret = Al_OSAL_Mb_Recive(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], Event, Timeout);
+    Ret = Al_OSAL_Mb_Receive(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], Event, Timeout);
 
     if (Handle->Dev->CmdOption == AL_IIC_CMD_OPTION_STOP) {
         while(AlIic_ll_IsMasterActivity(Handle->Dev->HwConfig.BaseAddress));
@@ -72,7 +72,7 @@ static AL_S32 AlIic_Hal_WaitMasterTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_I
 static AL_S32 AlIic_Hal_WaitMasterRxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_IIC_EventStruct *Event, AL_U32 Timeout)
 {
     AL_S32 Ret;
-    Ret = Al_OSAL_Mb_Recive(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], Event, Timeout);
+    Ret = Al_OSAL_Mb_Receive(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], Event, Timeout);
 
     if (Handle->Dev->CmdOption == AL_IIC_CMD_OPTION_STOP) {
         while(AlIic_ll_IsMasterActivity(Handle->Dev->HwConfig.BaseAddress));
@@ -84,7 +84,7 @@ static AL_S32 AlIic_Hal_WaitMasterRxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_I
 static AL_S32 AlIic_Hal_WaitSlaveTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_IIC_EventStruct *Event, AL_U32 Timeout)
 {
     AL_S32 Ret;
-    Ret = Al_OSAL_Mb_Recive(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], Event, Timeout);
+    Ret = Al_OSAL_Mb_Receive(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], Event, Timeout);
 
     while(AlIic_ll_IsSlaveActivity(Handle->Dev->HwConfig.BaseAddress));
 
@@ -94,7 +94,7 @@ static AL_S32 AlIic_Hal_WaitSlaveTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_II
 static AL_S32 AlIic_Hal_WaitSlaveRxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_IIC_EventStruct *Event, AL_U32 Timeout)
 {
     AL_S32 Ret;
-    Ret = Al_OSAL_Mb_Recive(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], Event, Timeout);
+    Ret = Al_OSAL_Mb_Receive(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], Event, Timeout);
 
     while(AlIic_ll_IsSlaveActivity(Handle->Dev->HwConfig.BaseAddress));
 
@@ -172,7 +172,7 @@ AL_S32 AlIic_Hal_MasterSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
     Ret = AlIic_Hal_WaitMasterTxDoneOrTimeout(Handle, &IicEvent, Timeout);
     if (Ret != AL_OK) {
         AlIic_Dev_StopMasterSend(Handle->Dev);
-        (AL_VOID)Al_OSAL_Mb_Recive(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], &IicEvent, AL_WAITING_NO);
+        (AL_VOID)Al_OSAL_Mb_Receive(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], &IicEvent, AL_WAITING_NO);
     }
 
     (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
@@ -232,7 +232,7 @@ AL_S32 AlIic_Hal_MasterRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
     Ret = AlIic_Hal_WaitMasterRxDoneOrTimeout(Handle, &IicEvent, Timeout);
     if (Ret != AL_OK) {
         AlIic_Dev_StopMasterRecv(Handle->Dev);
-        (AL_VOID)Al_OSAL_Mb_Recive(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], &IicEvent, AL_WAITING_NO);
+        (AL_VOID)Al_OSAL_Mb_Receive(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], &IicEvent, AL_WAITING_NO);
     }
 
     (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
@@ -297,7 +297,7 @@ AL_S32 AlIic_Hal_SlaveSendDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
     Ret = AlIic_Hal_WaitSlaveTxDoneOrTimeout(Handle, &IicEvent, Timeout);
     if (Ret != AL_OK) {
         AlIic_Dev_StopSlaveSend(Handle->Dev);
-        (AL_VOID)Al_OSAL_Mb_Recive(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], &IicEvent, AL_WAITING_NO);
+        (AL_VOID)Al_OSAL_Mb_Receive(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], &IicEvent, AL_WAITING_NO);
     }
     if (Ret == AL_OK && (IicEvent.Events == AL_IIC_EVENT_TX_DONE))
         return AL_OK;
@@ -332,7 +332,7 @@ AL_S32 AlIic_Hal_SlaveRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
     Ret = AlIic_Hal_WaitSlaveRxDoneOrTimeout(Handle, &IicEvent, Timeout);
     if (Ret != AL_OK) {
         AlIic_Dev_StopSlaveSend(Handle->Dev);
-        (AL_VOID)Al_OSAL_Mb_Recive(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], &IicEvent, AL_WAITING_NO);
+        (AL_VOID)Al_OSAL_Mb_Receive(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], &IicEvent, AL_WAITING_NO);
     }
 
     (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);

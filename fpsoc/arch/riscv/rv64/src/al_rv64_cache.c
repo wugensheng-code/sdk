@@ -1,7 +1,5 @@
 #include "al_type.h"
-#include "al_core.h"
 #include "al_rv_core.h"
-
 
 
 AL_VOID AlCache_EnableICache(AL_VOID)

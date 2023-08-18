@@ -122,7 +122,7 @@ static inline AL_S32 Al_OSAL_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
     rt_sem_release(&MailBox->Semaphore);
 }
 
-static inline AL_S32 Al_OSAL_Mb_Recive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)
+static inline AL_S32 Al_OSAL_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)
 {
     AL_S32 flag = (AL_S32)rt_sem_take(&MailBox->Semaphore, AL_WAITFOREVER);
 
@@ -284,7 +284,7 @@ static inline AL_S32 Al_OSAL_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
     return AL_OK;
 }
 
-static inline AL_S32 Al_OSAL_Mb_Recive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)
+static inline AL_S32 Al_OSAL_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)
 {
     AL_BOOL flag = AL_WAIT_COND_UNTIL_TIMEOUT((MailBox->entry == 1), Timeout);
 

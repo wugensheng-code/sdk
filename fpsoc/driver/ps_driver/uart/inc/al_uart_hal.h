@@ -7,7 +7,6 @@ extern "C" {
 
 #include "al_uart_dev.h"
 
-
 typedef enum {
     UART_TX_BLOCK    = 0,
     UART_TX_NONBLOCK = 1,

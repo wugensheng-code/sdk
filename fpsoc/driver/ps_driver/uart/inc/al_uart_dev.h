@@ -16,6 +16,7 @@ extern "C" {
 /******************************* Exported Includes ************************************/
 #include "al_errno.h"
 #include "al_uart_ll.h"
+#include "al_core.h"
 
 #define AL_UART_ERR_NULL_PTR                 (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_NULL_PTR))
 #define AL_UART_ERR_ILLEGAL_PARAM            (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))

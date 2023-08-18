@@ -27,7 +27,7 @@ static AL_DMACAHB_ChStruct AL_DMACAHB_ChInstance[AL_DMACAHB_NUM_INSTANCE][AL_DMA
 static AL_S32 AlDmacAhb_Hal_WaitTransDoneOrTimeout(AL_DMACAHB_HalStruct *Handle, AL_U32 Timeout,
                                                    AL_DMACAHB_EventStruct *Event)
 {
-    return Al_OSAL_Mb_Recive(&Handle->EventQueue, Event, Timeout);
+    return Al_OSAL_Mb_Receive(&Handle->EventQueue, Event, Timeout);
 }
 
 /**
