@@ -6,9 +6,9 @@ ARCH        = rtconfig_soc.ARCH
 CPU         = rtconfig_soc.CPU
 CROSS_TOOL  = rtconfig_soc.CROSS_TOOL
 
-CHIP_ROOT = os.getcwd() + '/../../../fpsoc/chip/dr1v90'
-SDK_ROOT = os.getcwd() + '/../../../'
-ARCH_ROOT = os.getcwd() + '/../../../fpsoc/arch/riscv'
+CHIP_ROOT = rtconfig_soc.CHIP_ROOT
+SDK_ROOT = rtconfig_soc.SDK_ROOT
+ARCH_ROOT = rtconfig_soc.ARCH_ROOT
 
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
@@ -44,7 +44,7 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY  = PREFIX + 'objcopy'
 
-    DEVICE  = rtconfig_soc.DEVICE
+    # DEVICE  = rtconfig_soc.DEVICE
     CFLAGS  = rtconfig_soc.CFLAGS
     AFLAGS  = rtconfig_soc.AFLAGS
     LFLAGS  = rtconfig_soc.LFLAGS

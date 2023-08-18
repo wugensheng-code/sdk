@@ -44,21 +44,14 @@ void rt_hw_interrupt_init(void)
     /* initialize exceptions table */
     rt_memset(isr_table, 0x00, sizeof(isr_table));
 
-#ifdef SOC_BCM283x
-    /* mask all of interrupts */
-    IRQ_DISABLE_BASIC = 0x000000ff;
-    IRQ_DISABLE1      = 0xffffffff;
-    IRQ_DISABLE2      = 0xffffffff;
-#else
-
-    gicv3_init();
     /* initialize ARM GIC */
-    // arm_gic_dist_init(0, platform_get_gic_dist_base(), GIC_IRQ_START);
-    // arm_gic_cpu_init(0, platform_get_gic_cpu_base());
+    arm_gic_dist_init(0, platform_get_gic_dist_base(), GIC_IRQ_START);
+    arm_gic_cpu_init(0, platform_get_gic_cpu_base());
 #ifdef BSP_USING_GICV3
-    // arm_gic_redist_init(0, platform_get_gic_redist_base());
+    arm_gic_redist_init(0, platform_get_gic_redist_base());
 #endif
-#endif
+
+    AlGic_Init();
 }
 
 /**
@@ -326,7 +319,7 @@ unsigned int rt_hw_interrupt_get_prior_group_bits(void)
  * @param new_handler the interrupt service routine to be installed
  * @param old_handler the old interrupt service routine
  */
-rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
+RT_WEAK rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
         void *param, const char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;

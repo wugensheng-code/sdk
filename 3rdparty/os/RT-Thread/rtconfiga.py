@@ -5,6 +5,10 @@ ARCH        ='aarch64'
 CPU         ='cortex-a'
 CROSS_TOOL  ='gcc'
 
+CHIP_ROOT = os.getcwd() + '/../../../fpsoc/chip/dr1x90/dr1m90/inc'
+SDK_ROOT = os.getcwd() + '/../../../'
+ARCH_ROOT = os.getcwd() + '/../../../fpsoc/arch/arm'
+
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
 else:

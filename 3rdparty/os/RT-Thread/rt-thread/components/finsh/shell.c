@@ -768,7 +768,7 @@ int finsh_system_init(void)
     finsh_system_function_init(ptr_begin, ptr_end);
 #endif
 #endif
-
+#if 1
 #ifdef RT_USING_HEAP
     /* create or set shell structure */
     shell = (struct finsh_shell *)rt_calloc(1, sizeof(struct finsh_shell));
@@ -795,9 +795,9 @@ int finsh_system_init(void)
 
     if (tid != NULL && result == RT_EOK)
         rt_thread_startup(tid);
+#endif
     return 0;
 }
 INIT_APP_EXPORT(finsh_system_init);
-
 #endif /* RT_USING_FINSH */
 

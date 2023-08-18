@@ -9,25 +9,16 @@
  *
  */
 
-#include <rtthread.h>
+#include "rtthread.h"
 #include "board.h"
 #include "cpuport.h"
 #include <unistd.h>
 #include <stdio.h>
-#include <al_log.h>
-#include <rthw.h>
+#include "al_log.h"
+#include "rthw.h"
 #include "board.h"
 #include "al_chip.h"
-
-#ifdef USE_ARM_CORE
-#include <mmu.h>
-#include <gic.h>
-#include <gicv3.h>
-#include <psci.h>
-#include <gtimer.h>
-#include <cpuport.h>
-#include <interrupt.h>
-#endif
+#include "al_cli.h"
 
 #ifndef RT_USING_HEAP
     static struct rt_thread cli_thread;

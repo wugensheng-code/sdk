@@ -16,5 +16,10 @@ AL_U64 SystemCoreClock = SYSTEM_CLOCK;  /* System Clock Frequency (Core Clock) *
 void _premain_init(void)
 {
     AlChip_Init();
+   
+}
+
+void components_init(void)
+{
     AlLog_Init();
 }

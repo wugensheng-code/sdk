@@ -8,11 +8,13 @@
 #########################################################################
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
 #########################################################################
-SDK_ROOT   ?= ../../../..
+SDK_ROOT   		?= ../../../..
 
-CHIP       = dr1m90
-RTOS       := rtthread
-PFLOAT     := 1
+CHIP       		= dr1v90
+RTOS       		:= rtthread
+PFLOAT     		:= 1
+ARMv8_SECURE 	= SECURE
+ARMv8_EL     	= EL3
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
@@ -44,7 +46,7 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O2 -g
+CFLAGS := -O0 -g3
 
 
 #########################################################################

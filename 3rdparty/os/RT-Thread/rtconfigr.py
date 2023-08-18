@@ -6,7 +6,7 @@ ARCH='risc-v'
 CPU='nuclei'
 CROSS_TOOL='gcc'
 
-CHIP_ROOT = os.getcwd() + '/../../../fpsoc/chip/dr1v90'
+CHIP_ROOT = os.getcwd() + '/../../../fpsoc/chip/dr1x90/dr1v90/inc'
 SDK_ROOT = os.getcwd() + '/../../../'
 ARCH_ROOT = os.getcwd() + '/../../../fpsoc/arch/riscv'
 

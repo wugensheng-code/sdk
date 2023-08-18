@@ -152,6 +152,12 @@ main_entry:
     bl _premain_init
 
     /* jump to main */
+
+    /* Call entry function when using RT-Thread */
+    bl  entry
+
+    bl components_init
+
     bl main
 
     /* hang */
@@ -160,5 +166,10 @@ main_entry:
 .global board_init
 .weak board_init
 board_init:
+    nop
+    ret
+
+.weak entry
+entry:
     nop
     ret

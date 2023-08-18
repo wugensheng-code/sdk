@@ -636,6 +636,8 @@ int arm_gic_dist_init(rt_uint64_t index, rt_uint64_t dist_base, int irq_start)
     unsigned int gic_type;
     rt_uint64_t main_cpu_affinity_val;
 
+    RT_UNUSED(i);
+    RT_UNUSED(main_cpu_affinity_val);
     RT_ASSERT(index < ARM_GIC_MAX_NR);
 
     _gic_table[index].dist_hw_base = dist_base;
@@ -659,6 +661,8 @@ int arm_gic_dist_init(rt_uint64_t index, rt_uint64_t dist_base, int irq_start)
     {
         _gic_max_irq = ARM_GIC_NR_IRQS;
     }
+
+#ifndef RT_AMP_SLAVE
 
     GIC_DIST_CTRL(dist_base) = 0;
     /* Wait for register write pending */
@@ -724,6 +728,7 @@ int arm_gic_dist_init(rt_uint64_t index, rt_uint64_t dist_base, int irq_start)
      */
     GIC_DIST_CTRL(dist_base) = GICD_CTLR_ARE_NS | GICD_CTLR_ENGRP1NS;
 
+#endif /* RT_AMP_SLAVE */
     return 0;
 }
 

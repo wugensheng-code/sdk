@@ -16,10 +16,8 @@
 #include "al_hal.h"
 
 #ifdef USE_RISCV_CORE
-#include "al_rv_core.h"
-#include "ext_eclic.h"
-#elifdef USE_ARM_CORE
-
+#include "al_rv64_core.h"
+#include "nuclei_eclic.h"
 #endif
 
 void rt_hw_board_init(void);

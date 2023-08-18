@@ -117,6 +117,8 @@ static inline AL_S32 AlOsal_Mb_Init(AL_MailBox_t MailBox, const char* Name)
     MailBox->size  = 1;
     MailBox->entry = 0;
 
+    return Ret;
+
 }
 
 static inline AL_S32 AlOsal_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
@@ -125,7 +127,7 @@ static inline AL_S32 AlOsal_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
     __COMPILER_BARRIER();
     MailBox->entry = 1;
 
-    rt_sem_release(&MailBox->Semaphore);
+    return rt_sem_release(&MailBox->Semaphore);
 }
 
 static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)

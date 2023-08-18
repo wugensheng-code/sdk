@@ -22,7 +22,7 @@ CFLAGS += $(DEFINES)
 
 
 include ../../../tools/make/rules.mk
-# include $(RTT_ROOT)/tools/rtthread.mk
+# include $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/tools/rtthread.mk
 '''
 
 def TargetMakefile(env):
@@ -77,14 +77,14 @@ def TargetMakefile(env):
         fn = os.path.normpath(path)
         if match_bsp:
             if fn.startswith(BSP_ROOT):
-                fn = '$(BSP_ROOT)' + fn.replace(BSP_ROOT, '')
+                fn = '$(AL_SDK_ROOT)/3rdparty/os/RT-Thread' + fn.replace(BSP_ROOT, '')
             elif fn.startswith(RTT_ROOT):
-                fn = '$(RTT_ROOT)' + fn.replace(RTT_ROOT, '')
+                fn = '$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread' + fn.replace(RTT_ROOT, '')
         else:
             if fn.startswith(RTT_ROOT):
-                fn = '$(RTT_ROOT)' + fn.replace(RTT_ROOT, '')
+                fn = '$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread' + fn.replace(RTT_ROOT, '')
             elif fn.startswith(BSP_ROOT):
-                fn = '$(BSP_ROOT)' + fn.replace(BSP_ROOT, '')
+                fn = '$(AL_SDK_ROOT)/3rdparty/os/RT-Thread' + fn.replace(BSP_ROOT, '')
 
         CPPPATH.append(fn)
 
@@ -117,12 +117,12 @@ def TargetMakefile(env):
         fn = os.path.normpath(file)
         if match_bsp:
             if fn.startswith(BSP_ROOT):
-                fn = '$(BSP_ROOT)' + fn.replace(BSP_ROOT, '')
+                fn = '$(AL_SDK_ROOT)/3rdparty/os/RT-Thread' + fn.replace(BSP_ROOT, '')
             elif fn.startswith(RTT_ROOT):
-                fn = '$(RTT_ROOT)' + fn.replace(RTT_ROOT, '')
+                fn = '$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread' + fn.replace(RTT_ROOT, '')
         else:
             if fn.startswith(RTT_ROOT):
-                fn = '$(RTT_ROOT)' + fn.replace(RTT_ROOT, '')
+                fn = '$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread' + fn.replace(RTT_ROOT, '')
             elif fn.startswith(BSP_ROOT):
                 fn = '$(BSP_ROOT)' + fn.replace(BSP_ROOT, '')
 

@@ -23,25 +23,6 @@
 #include <cpuport.h>
 #include <interrupt.h>
 
-
-struct mem_desc platform_mem_desc[] =
-{
-    {0x40000000, 0x80000000, 0x40000000, NORMAL_MEM},
-    {PL031_RTC_BASE, PL031_RTC_BASE + 0x1000, PL031_RTC_BASE, DEVICE_MEM},
-    {PL061_GPIO_BASE, PL061_GPIO_BASE + 0x1000, PL061_GPIO_BASE, DEVICE_MEM},
-    {PL011_UART0_BASE, PL011_UART0_BASE + 0x1000, PL011_UART0_BASE, DEVICE_MEM},
-    {VIRTIO_MMIO_BASE, VIRTIO_MMIO_BASE + VIRTIO_MAX_NR * VIRTIO_MMIO_SIZE, VIRTIO_MMIO_BASE, DEVICE_MEM},
-#ifdef BSP_USING_GICV2
-    {GIC_PL390_DISTRIBUTOR_PPTR, GIC_PL390_DISTRIBUTOR_PPTR + 0x1000, GIC_PL390_DISTRIBUTOR_PPTR, DEVICE_MEM},
-#endif
-#ifdef BSP_USING_GICV3
-    {GIC_PL500_DISTRIBUTOR_PPTR, GIC_PL500_DISTRIBUTOR_PPTR + 0x1000, GIC_PL500_DISTRIBUTOR_PPTR, DEVICE_MEM},
-    {GIC_PL500_REDISTRIBUTOR_PPTR, GIC_PL500_REDISTRIBUTOR_PPTR + 0xf60000, GIC_PL500_REDISTRIBUTOR_PPTR, DEVICE_MEM},
-#endif
-};
-
-const rt_uint32_t platform_mem_desc_size = sizeof(platform_mem_desc)/sizeof(platform_mem_desc[0]);
-
 void idle_wfi(void)
 {
     asm volatile ("wfi");
@@ -72,7 +53,6 @@ void rt_hw_board_init(void)
 
 #ifdef RT_USING_HEAP
     /* initialize memory system */
-    rt_kprintf("heap: [0x%08x - 0x%08x]\n", RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
     rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 #endif
 
@@ -86,6 +66,30 @@ void rt_hw_board_init(void)
     arm_gic_umask(0, IRQ_ARM_IPI_KICK);
 #endif
 }
+
+rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
+        void *param, const char *name)
+{
+    (AL_VOID)AlIntr_RegHandler(vector, AL_NULL, handler, AL_NULL);
+}
+
+void rt_hw_trap_fiq(void)
+{
+    if (rt_hw_get_current_el() < 2)
+    {
+	    do_irq_handle();
+    }
+    else
+    {
+        do_fiq_handle();
+    }
+}
+
+void Al_gic_init(void)
+{
+    // AlGic_Init();
+}
+INIT_DEVICE_EXPORT(Al_gic_init);
 
 void poweroff(void)
 {

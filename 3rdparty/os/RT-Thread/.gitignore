@@ -7,6 +7,3 @@ packages/SConscript
 rtthread.map
 compile_commands.json
 __pycache__
-Makefile
-config.mk
-src.mk

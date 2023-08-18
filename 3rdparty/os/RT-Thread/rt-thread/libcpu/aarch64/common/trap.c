@@ -181,7 +181,7 @@ void rt_hw_trap_irq(void)
 #endif
 }
 
-void rt_hw_trap_fiq(void)
+RT_WEAK void rt_hw_trap_fiq(void)
 {
     void *param;
     int ir;

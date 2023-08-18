@@ -35,9 +35,9 @@ int rt_hw_cpu_id(void)
 {
     rt_base_t value;
 
-    __asm__ volatile ("mrs %0, tpidr_el1":"=r"(value));
+    __asm__ volatile ("mrs %0, mpidr_el1":"=r"(value));
 
-    return value;
+    return (value & 0x0f);
 }
 
 #ifdef RT_USING_SMP

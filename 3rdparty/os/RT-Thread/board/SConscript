@@ -2,6 +2,7 @@
 
 from building import *
 from rtconfig import SDK_ROOT
+from rtconfig import ARCH_ROOT
 
 cwd = GetCurrentDir()
 src = Glob('*.c')
@@ -12,24 +13,29 @@ CPPPATH += [SDK_ROOT + r'/fpsoc/arch/common/inc']
 CPPPATH += [SDK_ROOT + r'/fpsoc/arch']
 CPPPATH += [SDK_ROOT + r'/fpsoc/driver/ps_driver/uart/inc']
 CPPPATH += [SDK_ROOT + r'/fpsoc/driver/ps_driver/can/inc']
-CPPPATH += [SDK_ROOT + r'fpsoc/driver/ps_driver/dmacahb/inc']
-CPPPATH += [SDK_ROOT + r'fpsoc/driver/ps_driver/gpio/inc']
-CPPPATH += [SDK_ROOT + r'fpsoc/driver/ps_driver/iic/inc']
-CPPPATH += [SDK_ROOT + r'fpsoc/driver/ps_driver/mmc/inc']
-CPPPATH += [SDK_ROOT + r'fpsoc/driver/ps_driver/mpu/inc']
-CPPPATH += [SDK_ROOT + r'fpsoc/driver/ps_driver/qspi/inc']
-CPPPATH += [SDK_ROOT + r'fpsoc/driver/ps_driver/smc/inc']
-CPPPATH += [SDK_ROOT + r'fpsoc/driver/ps_driver/spi/inc']
-CPPPATH += [SDK_ROOT + r'fpsoc/lib/cli/inc']
+CPPPATH += [SDK_ROOT + r'/fpsoc/driver/ps_driver/dmacahb/inc']
+CPPPATH += [SDK_ROOT + r'/fpsoc/driver/ps_driver/gpio/inc']
+CPPPATH += [SDK_ROOT + r'/fpsoc/driver/ps_driver/iic/inc']
+CPPPATH += [SDK_ROOT + r'/fpsoc/driver/ps_driver/mmc/inc']
+CPPPATH += [SDK_ROOT + r'/fpsoc/driver/ps_driver/mpu/inc']
+CPPPATH += [SDK_ROOT + r'/fpsoc/driver/ps_driver/qspi/inc']
+CPPPATH += [SDK_ROOT + r'/fpsoc/driver/ps_driver/smc/inc']
+CPPPATH += [SDK_ROOT + r'/fpsoc/driver/ps_driver/spi/inc']
+CPPPATH += [SDK_ROOT + r'/fpsoc/lib/cli/inc']
 
 if GetDepend('USE_ARM_CORE') == True:
     src += Glob('arm/board.c')
-    CPPPATH += [cwd + f'/arm/']
-    CPPPATH += [SDK_ROOT + r'/fpsoc/arch/arm/common/gic_v3/inc']
+    CPPPATH += [cwd + r'/arm/']
+    CPPPATH += [ARCH_ROOT + r'/common/gic_v3/inc']
+    CPPPATH += [ARCH_ROOT + r'/fpsoc/arch/arm/common/gic_v3/inc']
+    CPPPATH += [SDK_ROOT + r'fpsoc/arch/arm/armv8/aarch64/cortex-a/inc']
 
 if GetDepend('USE_RISCV_CORE') == True:
     src += Glob('riscv/board.c')
-    CPPPATH += [cwd + f'/riscv/']
+    CPPPATH += [ARCH_ROOT + r'/rv64/inc']
+    CPPPATH += [ARCH_ROOT + r'/ext-nuclei/inc']
+    CPPPATH += [cwd + r'/riscv/']
+    CPPPATH += [SDK_ROOT + r'/fpsoc/chip/dr1x90/dr1v90/inc']
 
 
 group = DefineGroup('Board', src, depend = [''], CPPPATH = CPPPATH)

@@ -99,5 +99,16 @@ int cli_system_init(void)
 }
 INIT_APP_EXPORT(cli_system_init);
 
+void log_init(void)
+{
+    AlLog_Init();
+}
+INIT_COMPONENT_EXPORT(log_init);
+
+char rt_hw_console_getchar(void)
+{
+    return (char)-1;
+}
+
 /******************** end of file *******************/
 

@@ -293,16 +293,6 @@ ifeq ($(RTOS), freertos)
     LIBS_DIR += $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/Makefile))
 else ifeq ($(RTOS), rtthread)
 	LIBS_DIR += $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/Makefile))
-	GENMAKE:=$(shell scons -C $(AL_SDK_ROOT)/3rdparty/os/RT-Thread --target=makefile)
-
-.PHONY: menuconfig
-menuconfig:
-	@scons -C $(AL_SDK_ROOT)/3rdparty/os/RT-Thread --menuconfig
-
-.PHONY: sconsclean
-sconsclean:
-	@scons -C $(AL_SDK_ROOT)/3rdparty/os/RT-Thread -c
-
 endif
 
 
