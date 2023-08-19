@@ -13,11 +13,18 @@ extern "C" {
 #include "al_systimer.h"
 
 
+#define IS_ALIGNED(x, a)		(((x) & ((typeof(x))(a) - 1)) == 0)
+
 #define ARRAY_SIZE(a)         (sizeof(a) / sizeof((a)[0]))
 
 #define BITS_32(start, size)  ((0xFFFFFFFFU << (start)) & (0xFFFFFFFFU >> (32U - (start) - (size))))
 #define BITS_64(start, size)  (((~0x0UL) << (start)) & ((~0x0UL) >> (64U - (start) - (size))))
 
+/*
+ * This variant of div_round_up can be used in macro definition but should not
+ * be used in C code as the `div` parameter is evaluated twice.
+ */
+#define DIV_ROUND_UP_2EVAL(n, d)	(((n) + (d) - 1) / (d))
 
 #define DIV_ROUND_UP(val, div) __extension__ ({    \
     __typeof__(div) _div = (div);        \

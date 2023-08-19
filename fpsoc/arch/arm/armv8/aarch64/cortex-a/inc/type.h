@@ -16,14 +16,28 @@
 #define _AT(T,X)	((T)(X))
 #endif
 
+#define U(x)		(_U(x))
 #define UL(x)		(_UL(x))
 #define ULL(x)		(_ULL(x))
+#define L(_x)		(_L(x))
+#define LL(_x)		(_LL(x))
 
+#define _U(x)		(_AC(x, U))
 #define _UL(x)		(_AC(x, UL))
 #define _ULL(x)		(_AC(x, ULL))
+#define _L(x)		(_AC(x, L))
+#define _LL(x)		(_AC(x, LL))
 
 #ifndef BIT
 #define BIT(nr)		(1UL << (nr))
+#endif
+
+#ifndef BIT_32
+#define BIT_32(nr)	(U(1) << (nr))
+#endif
+
+#ifndef BIT_64
+#define BIT_64(nr)	(ULL(1) << (nr))
 #endif
 
 #define _BITUL(x)	(_UL(1) << (x))
@@ -62,6 +76,7 @@ typedef unsigned long long AL_U64;
 typedef signed long long  s64;
 typedef unsigned long long u64_t;
 
+typedef unsigned long u_register_t;
 
 #ifndef min
 #define min(a, b) (((a) < (b))?(a):(b))

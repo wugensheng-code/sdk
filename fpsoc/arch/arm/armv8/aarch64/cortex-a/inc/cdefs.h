@@ -7,11 +7,11 @@
 #ifndef CDEFS_H
 #define CDEFS_H
 
-#define __dead2		__attribute__((__noreturn__))
+#define __dead2			__attribute__((__noreturn__))
 #define __deprecated	__attribute__((__deprecated__))
-#define __packed	__attribute__((__packed__))
-#define __used		__attribute__((__used__))
-#define __unused	__attribute__((__unused__))
+#define __packed		__attribute__((__packed__))
+#define __used			__attribute__((__used__))
+#define __unused		__attribute__((__unused__))
 #define __aligned(x)	__attribute__((__aligned__(x)))
 #define __section(x)	__attribute__((__section__(x)))
 #if RECLAIM_INIT_CODE
@@ -26,10 +26,11 @@
 
 #define __printflike(fmtarg, firstvararg) \
 		__attribute__((__format__ (__printf__, fmtarg, firstvararg)))
-
+#ifndef __weak_reference
 #define __weak_reference(sym, alias)	\
 	__asm__(".weak alias");		\
 	__asm__(".equ alias, sym")
+#endif
 
 #define __STRING(x)	#x
 #define __XSTRING(x)	__STRING(x)

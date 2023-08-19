@@ -46,20 +46,6 @@ setup_vector:
 	switch_el x1, el3_entry, el2_entry, el1_entry
 	/* execute el3 */
 el3_entry:
-	mrs x0, mpidr_el1
-	ldr	x1, =0x00ff
-	and	x0, x0, x1
-#ifdef ARM_CORE_1
-	cmp x0, #1
-#else
-	cmp x0, #0
-#endif
-
-	/*if primary cpu, continue boot */
-	b.eq 0f
-
-	/*if secondary cpu, loop here*/
-	b .
 
 0:
 	/*to access icc_igrpen1_el3, need to set icc_sre_el3 */
@@ -150,7 +136,8 @@ el3_entry:
 
 #ifdef SUPPORT_NONSECURE
 	bl clear_bss
-	bl gicv3_init
+	bl AlGic_Init
+	bl AlSys_StartTimer
 #endif
 
 /* switch to el1 */
@@ -187,7 +174,7 @@ el1_entry:
 	mov	x0, #3 << 20
 	msr	cpacr_el1, x0			/* Enable FP/SIMD */
 
-	//enable icache & MMU
+	//enable icache
 	mrs x0, sctlr_el1
 	orr x0, x0, #(1 << 12)
 	msr sctlr_el1, x0
