@@ -158,7 +158,7 @@ AL_VOID AlUart_Dev_ClrRxBusy(AL_UART_DevStruct *Uart)
  *          - Other for function failure
  * @note    access baudrate(LCR, DLL, DLH) related register during a transaction will cause busy detect interrupt
 */
-AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_UART_InitStruct *InitConfig, AL_U32 DevId)
+AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct *InitConfig)
 {
     AL_ASSERT((Uart == AL_NULL || DevId >= AL_UART_NUM_INSTANCE), AL_UART_ERR_ILLEGAL_PARAM);
 
@@ -525,7 +525,7 @@ static AL_VOID AlUart_Dev_BusBusyHandler(AL_UART_DevStruct *Uart)
     /* Reinitialize with the original configuration of the uart port in question
     * Fixme, not change uart status here
     */
-    AlUart_Dev_Init(Uart, &(Uart->Configs), Uart->DevId);
+    AlUart_Dev_Init(Uart, Uart->DevId, &(Uart->Configs));
 
     if (AlUart_Dev_IsRxBusy(Uart)) {
         UartEvent.Events    = AL_UART_EVENT_BUSY_DETECT_RX;

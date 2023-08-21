@@ -116,19 +116,18 @@ static AL_VOID AlUart_Hal_DefEventHandler(AL_UART_EventStruct UartEvent, AL_VOID
 AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStruct *InitConfig, AL_Uart_EventCallBack Callback)
 {
     AL_S32 Ret = AL_OK;
-    AL_UART_DevStruct *Dev;
     AL_UART_HwConfigStruct *HwConfig;
 
     AL_ASSERT((Handle == AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
     HwConfig = AlUart_Dev_LookupConfig(DevId);
     if (HwConfig != AL_NULL) {
-        Dev = &AL_UART_DevInstance[DevId];
+        Handle->Dev = &AL_UART_DevInstance[DevId];
     } else {
         return AL_UART_ERR_ILLEGAL_PARAM;
     }
 
-    Ret = AlUart_Dev_Init(Dev, InitConfig, DevId);
+    Ret = AlUart_Dev_Init(Handle->Dev, DevId, InitConfig);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -142,7 +141,7 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStru
         return Ret;
     }
 
-    (AL_VOID)AlIntr_RegHandler(Dev->IntrNum, AL_NULL, AlUart_Dev_IntrHandler, Dev);
+    (AL_VOID)AlIntr_RegHandler(Handle->Dev->IntrNum, AL_NULL, AlUart_Dev_IntrHandler, Handle->Dev);
 
     Ret = Al_OSAL_Lock_Init(&Handle->TxLock, "Uart-TxLock");
     if (Ret != AL_OK) {
@@ -173,11 +172,6 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStru
     if (Ret != AL_OK) {
         return Ret;
     }
-
-    Handle->Dev   = Dev;
-
-ERROR:
-
     return Ret;
 }
 
