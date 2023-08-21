@@ -55,10 +55,10 @@ extern "C" {
 #define SYSTEM_CLOCK            (50000000UL)
 #endif
 
-
-
 #define HAVE_UARTPS_DRIVER
-
+#ifdef AL9000_CLK_CONFIG
+#define UART_CLOCK              (50000000UL)
+#else
 #ifdef AL9000_OSC_25
 #define UART_CLOCK              (25000000UL)
 #elif AL9000_OSC_33
@@ -68,13 +68,23 @@ extern "C" {
 #else
 #define UART_CLOCK              (40000000UL)
 #endif
-
+#endif
 
 #define HAVE_IICPS_DRIVER
 #define I2C_CLOCK               (40*MHZ)
 
 #define HAVE_MMCPS_DRIVER
+#ifdef AL9000_CLK_CONFIG
 #define MMC_CLOCK               (100*MHZ)
+#else
+#ifdef AL9000_OSC_25
+#define MMC_CLOCK               (50*MHZ)
+#elif AL9000_OSC_33
+#define MMC_CLOCK               (66*MHZ)
+#else AL9000_OSC_50
+#define MMC_CLOCK               (100*MHZ)
+#endif
+#endif
 
 #define HAVE_CANPS_DRIVER
 #define CAN_CLOCK               (80*MHZ)

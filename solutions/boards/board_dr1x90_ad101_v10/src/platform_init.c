@@ -5,6 +5,10 @@ extern void Enablepinmux1_mode2(void);
 
 __attribute__((__used__)) void board_init()
 {
+#ifdef AL9000_CLK_CONFIG
+    clk_simple_config();
+#endif
+
 #if ENABLE_PINMUX_MODE1 == 1
     Enablepinmux1();
 #endif
