@@ -79,9 +79,6 @@ static AL_VOID AlUart_Hal_DefEventHandler(AL_UART_EventStruct UartEvent, AL_VOID
     break;
 
     default:
-        /*
-        * fixme: assert here
-        */
         break;
     }
 
@@ -118,7 +115,7 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStru
     AL_S32 Ret = AL_OK;
     AL_UART_HwConfigStruct *HwConfig;
 
-    AL_ASSERT((Handle == AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
     HwConfig = AlUart_Dev_LookupConfig(DevId);
     if (HwConfig != AL_NULL) {
@@ -190,7 +187,7 @@ AL_S32 AlUart_Hal_SendDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32
     AL_S32 Ret = AL_OK;
     AL_S32 Timeout = AL_WAITFOREVER;
 
-    AL_ASSERT((Handle == AL_NULL || Handle->Dev == AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
     Ret = Al_OSAL_Lock_Take(&Handle->TxLock, Timeout);
     if (Ret != AL_OK) {
@@ -225,7 +222,7 @@ AL_S32 AlUart_Hal_RecvDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32
 {
     AL_S32 Ret = AL_OK;
 
-    AL_ASSERT((Handle == AL_NULL || Handle->Dev == AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
     Ret = Al_OSAL_Lock_Take(&Handle->RxLock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
@@ -263,7 +260,7 @@ AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
     AL_S32 Ret = AL_OK;
     AL_UART_EventStruct UartEvent = {0};
 
-    AL_ASSERT((Handle == AL_NULL || Handle->Dev == AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
     Ret = Al_OSAL_Lock_Take(&Handle->TxLock, Timeout);
     if (Ret != AL_OK) {
@@ -322,7 +319,7 @@ AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
     AL_S32 Ret = AL_OK;
     AL_UART_EventStruct UartEvent = {0};
 
-    AL_ASSERT((Handle == AL_NULL || Handle->Dev == AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
     Ret = Al_OSAL_Lock_Take(&Handle->RxLock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
@@ -376,7 +373,7 @@ AL_S32 AlUart_Hal_SendData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
 {
     AL_S32 Ret = AL_OK;
 
-    AL_ASSERT((Handle == AL_NULL || Handle->Dev == AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
     /*
     * take TxLock in Nonblock mode
@@ -415,7 +412,7 @@ AL_S32 AlUart_Hal_RecvData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
 {
     AL_S32 Ret = AL_OK;
 
-    AL_ASSERT((Handle == AL_NULL || Handle->Dev == AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
     Ret = Al_OSAL_Lock_Take(&Handle->RxLock, 0);
     if (Ret != AL_OK) {
@@ -462,7 +459,7 @@ AL_S32 AlUart_Hal_IoCtl(AL_UART_HalStruct *Handle, AL_UART_IoCtlCmdEnum Cmd, AL_
 {
     AL_S32 Ret = AL_OK;
 
-    AL_ASSERT((Handle == AL_NULL || Handle->Dev == AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
     Ret = Al_OSAL_Lock_Take(&Handle->RxLock, AL_WAITFOREVER);
     if (Ret != AL_OK) {

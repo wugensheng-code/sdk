@@ -273,6 +273,8 @@ static inline AL_S32 Al_OSAL_Mb_Init(AL_MailBox_t MailBox, const char* Name)
     MailBox->Msg   = 0;
     MailBox->size  = 1;
     MailBox->entry = 0;
+
+    return AL_OK;
 }
 
 static inline AL_S32 Al_OSAL_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
