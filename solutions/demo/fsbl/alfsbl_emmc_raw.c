@@ -58,9 +58,9 @@ uint32_t AlFsbl_EmmcRawCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t L
     uint32_t firstblockbytes    = (firstblockstore > Length)? Length : firstblockstore;
     uint32_t lastblockbytes     = endpoint % blocksize + 1;
 
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "offset = %d, Length = %d\r\n", Offset, Length);
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "startblock: %d\tfirstblockoffset: %d\tfirstblockbytes: %d\r\n", startblock, firstblockoffset, firstblockbytes);
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "endblock: %d\tlastblockbytes: %d\t\r\n", endblock, lastblockbytes);
+    printf("offset = %d, Length = %d\r\n", Offset, Length);
+    printf("startblock: %d\tfirstblockoffset: %d\tfirstblockbytes: %d\r\n", startblock, firstblockoffset, firstblockbytes);
+    printf("endblock: %d\tlastblockbytes: %d\t\r\n", endblock, lastblockbytes);
 
     for (uint32_t i = startblock; i <= endblock; i++) {
         if (i == startblock) {
@@ -78,11 +78,12 @@ uint32_t AlFsbl_EmmcRawCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t L
             memcpy(pdestaddr, SharedBuffer, lastblockbytes);
             pdestaddr += lastblockbytes;
         } else {
-            status = AlMmc_Hal_ReadBlocked(&Handle, SharedBuffer, i, (endblock - i), MMC_RD_WR_TIMEOUT_MS);
+            status = AlMmc_Hal_ReadBlocked(&Handle, pdestaddr, i, (endblock - i), MMC_RD_WR_TIMEOUT_MS);
             if (status != AL_OK) {
                 goto END;
             }
-            pdestaddr += blocksize;
+            pdestaddr += blocksize * (endblock - i);
+            i = (endblock - 1);
         }
     }
 

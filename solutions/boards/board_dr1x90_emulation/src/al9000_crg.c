@@ -1,6 +1,7 @@
 #include "al9000_crg.h"
 
 #define TOP_CRG_BASE 0xF8801000UL
+#define TOP_S_BASE   0xF8806000UL
 static volatile uint32_t* TOP_CRG_CLK_SEL = (void*)(TOP_CRG_BASE + 0x40UL);
 
 typedef volatile uint32_t* pll_t;
@@ -273,6 +274,22 @@ void crg_srst_release(enum crg_srst_para_t parm)
     uint32_t bit = 0x1U << (parm >> 16);
     volatile uint32_t* ptr = (void*)(TOP_CRG_BASE + (uint64_t)(parm & 0xFFFFU));
 
+    uint32_t val = *ptr;
+    *ptr = val | bit;
+}
+
+void top_srst_assert(enum top_srst_para_t parm)
+{
+    uint32_t bit = 0x1U << (parm >> 16);
+    volatile uint32_t* ptr = (void*)(TOP_S_BASE + (uint64_t)(parm & 0xFFFFU));
+    uint32_t val = *ptr;
+    *ptr = val & ~bit;
+}
+
+void top_srst_release(enum top_srst_para_t parm)
+{
+    uint32_t bit = 0x1U << (parm >> 16);
+    volatile uint32_t* ptr = (void*)(TOP_S_BASE + (uint64_t)(parm & 0xFFFFU));
     uint32_t val = *ptr;
     *ptr = val | bit;
 }

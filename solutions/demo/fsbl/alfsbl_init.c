@@ -13,6 +13,7 @@
 #include "alfsbl_hw.h"
 #include "alfsbl_init.h"
 #include "al_core.h"
+#include "demo_ddr_init.h"
 
 static uint32_t AlFsbl_GetResetReason(void);
 static uint32_t AlFsbl_SystemInit(AlFsblInfo *FsblInstancePtr);
@@ -159,13 +160,14 @@ static uint32_t AlFsbl_PmuInit(AlFsblInfo *FsblInstancePtr)
 	}
 	else {
 		/// pll enabled
-		REG32(SYSCTRL_S_ERR_HW_EN1_SET) = REG32(SYSCTRL_S_ERR_HW_EN1_SET)     |
-				                          SYSCTRL_S_ERR_HW1_MSK_CSU_PLL1_LOCK |
-				                          SYSCTRL_S_ERR_HW1_MSK_CSU_PLL0_LOCK;
+		// temp comment, because baremetal will config pll in board init interface
+		// REG32(SYSCTRL_S_ERR_HW_EN1_SET) = REG32(SYSCTRL_S_ERR_HW_EN1_SET)     |
+		// 		                          SYSCTRL_S_ERR_HW1_MSK_CSU_PLL1_LOCK |
+		// 		                          SYSCTRL_S_ERR_HW1_MSK_CSU_PLL0_LOCK;
 
-		REG32(SYSCTRL_S_INT_EN1_SET) = REG32(SYSCTRL_S_INT_EN1_SET)        |
-				                       SYSCTRL_S_ERR_HW1_MSK_CSU_PLL1_LOCK |
-				                       SYSCTRL_S_ERR_HW1_MSK_CSU_PLL0_LOCK;
+		// REG32(SYSCTRL_S_INT_EN1_SET) = REG32(SYSCTRL_S_INT_EN1_SET)        |
+		// 		                       SYSCTRL_S_ERR_HW1_MSK_CSU_PLL1_LOCK |
+		// 		                       SYSCTRL_S_ERR_HW1_MSK_CSU_PLL0_LOCK;
 	}
 
 
@@ -187,8 +189,8 @@ static uint32_t AlFsbl_TcmInit(AlFsblInfo *FsblInstancePtr)
 static uint32_t AlFsbl_DdrInit(void)
 {
 	uint32_t Status = ALFSBL_SUCCESS;
-	/// todo
-
+	/// todo, temp ddr init here, replace later
+	demo_ddr_init();
 	return Status;
 }
 

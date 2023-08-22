@@ -1,4 +1,5 @@
 #include "al_core.h"
+#include "al9000_crg.h"
 
 extern void Enablepinmux1(void);
 extern void Enablepinmux1_mode2(void);

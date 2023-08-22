@@ -1,6 +1,7 @@
 #include "al9000_crg.h"
 
 #define TOP_CRG_BASE 0xF8801000UL
+#define TOP_S_BASE   0xF8806000UL
 static volatile uint32_t* TOP_CRG_CLK_SEL = (void*)(TOP_CRG_BASE + 0x40UL);
 
 typedef volatile uint32_t* pll_t;
@@ -22,7 +23,7 @@ void pll_enable()
 }
 
 static void pll_div_set(
-    pll_t PLL_CTRL, uint32_t ref_div, uint32_t fbk_div, 
+    pll_t PLL_CTRL, uint32_t ref_div, uint32_t fbk_div,
     uint32_t out_div_0, uint32_t out_div_1, uint32_t out_div_2, uint32_t out_div_3
 )
 {
@@ -134,7 +135,7 @@ void pll_cpu_waitLock()
 }
 
 void pll_io_div_set(
-    uint32_t fbk_div, uint32_t ref_div, 
+    uint32_t fbk_div, uint32_t ref_div,
     uint32_t out_div_1000, uint32_t out_div_400, uint32_t out_div_80, uint32_t out_div_25
 )
 {
@@ -176,7 +177,7 @@ void icg_div_set(enum icg_para_t inst, uint32_t div)
     // uint32_t val = 0U;
     // for (uint32_t bit = 1U; bit != 0U; bit <<= div)
     //     val |= bit;
-    
+
     volatile uint32_t* ptr = (void*)(TOP_CRG_BASE + (uint64_t)inst);
     *ptr = val;
 }
@@ -273,6 +274,22 @@ void crg_srst_release(enum crg_srst_para_t parm)
     uint32_t bit = 0x1U << (parm >> 16);
     volatile uint32_t* ptr = (void*)(TOP_CRG_BASE + (uint64_t)(parm & 0xFFFFU));
 
+    uint32_t val = *ptr;
+    *ptr = val | bit;
+}
+
+void top_srst_assert(enum top_srst_para_t parm)
+{
+    uint32_t bit = 0x1U << (parm >> 16);
+    volatile uint32_t* ptr = (void*)(TOP_S_BASE + (uint64_t)(parm & 0xFFFFU));
+    uint32_t val = *ptr;
+    *ptr = val & ~bit;
+}
+
+void top_srst_release(enum top_srst_para_t parm)
+{
+    uint32_t bit = 0x1U << (parm >> 16);
+    volatile uint32_t* ptr = (void*)(TOP_S_BASE + (uint64_t)(parm & 0xFFFFU));
     uint32_t val = *ptr;
     *ptr = val | bit;
 }

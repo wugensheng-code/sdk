@@ -25,13 +25,13 @@ AL_VOID AlGicv3_Rdist_MarkCoreAwake(AL_UINTPTR GicrBase)
      * The WAKER_PS_BIT should be changed to 0
      * only when WAKER_CA_BIT is 1.
      */
-    assert((Gicr_ReadWaker(GicrBase) & WAKER_CA_BIT) != 0U);
+    if ((Gicr_ReadWaker(GicrBase) & WAKER_CA_BIT) != 0U) {
+        /* Mark the connected core as awake */
+        Gicr_WriteWaker(GicrBase, Gicr_ReadWaker(GicrBase) & ~WAKER_PS_BIT);
 
-    /* Mark the connected core as awake */
-    Gicr_WriteWaker(GicrBase, Gicr_ReadWaker(GicrBase) & ~WAKER_PS_BIT);
-
-    /* Wait till the WAKER_CA_BIT changes to 0 */
-    while ((Gicr_ReadWaker(GicrBase) & WAKER_CA_BIT) != 0U) {
+        /* Wait till the WAKER_CA_BIT changes to 0 */
+        while ((Gicr_ReadWaker(GicrBase) & WAKER_CA_BIT) != 0U) {
+        }
     }
 }
 

@@ -104,7 +104,7 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 		else {
 			if(RunningCpu == ALIH_PH_ATTRIB_DEST_CPU_RPU) {
 				REG32(SYSCTRL_S_RPU_RESET_VECTOR_H) = HandoffAddress >> 32;
-				REG32(SYSCTRL_S_RPU_RESET_VECTOR_H) = HandoffAddress & 0xffffffff;
+				REG32(SYSCTRL_S_RPU_RESET_VECTOR_L) = HandoffAddress & 0xffffffff;
 			}
 			else if(RunningCpu == ALIH_PH_ATTRIB_DEST_CPU_APU0) {
 				REG32(SYSCTRL_S_APU0_RESET_VECTOR_H) = HandoffAddress >> 32;

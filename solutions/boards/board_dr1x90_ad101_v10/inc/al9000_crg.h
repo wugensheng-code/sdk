@@ -72,6 +72,9 @@ void clk_cpu_ratio_6221();
 //  IO PLL = 1000 MHz & 400 MHz & 80 MHz & 25 MHz
 void clk_simple_config();
 
+#define HZ2KHZ(hz) (((hz) + 500) / 1000)
+#define HZ2MHZ(hz) (((hz) + 500000) / 1000000)
+
 enum cnt_div_para_t {
     IO1000_DIV_SDIO = 0x30 | (24 << 8) | (6 << 16),
     IO1000_DIV_SMC  = 0x30 | (16 << 8) | (6 << 16),
@@ -93,9 +96,17 @@ void cnt_div_set(enum cnt_div_para_t parm, uint32_t div);
 enum crg_srst_para_t {
     SRST_GIC  = 0x70 | ( 9 << 16),
     SRST_ACP  = 0x70 | ( 8 << 16),
+    SRST_PRESETDBG = 0x70 | ( 7 << 16),
+    SRST_L2C       = 0x70 | ( 6 << 16),
     SRST_CORESIGHT = 0x70 | ( 5 << 16),
+    SRST_DDRBUS    = 0x74 | (14 << 16),
     SRST_JPU  = 0x74 | (13 << 16),
     SRST_NPU  = 0x74 | (12 << 16),
+    SRST_DMAC_AHB  = 0x74 | ( 9 << 16),
+    SRST_DMAC_AXI  = 0x74 | ( 8 << 16),
+    SRST_WDT  = 0x74 | ( 7 << 16),
+    SRST_SMC  = 0x74 | ( 6 << 16),
+    SRST_QSPI = 0x74 | ( 5 << 16),
     SRST_OCM  = 0x74 | ( 4 << 16),
     SRST_IPC  = 0x78 | (12 << 16),
     SRST_GPIO = 0x78 | ( 8 << 16),
@@ -103,10 +114,42 @@ enum crg_srst_para_t {
     SRST_GPM0 = 0x78 | ( 4 << 16),
     SRST_HP1  = 0x78 | ( 1 << 16),
     SRST_HP0  = 0x78 | ( 0 << 16),
-    SRST_UART0 = 0x7C | (13 << 16),
-    SRST_UART1 = 0x7C | (12 << 16)
+    SRST_I2C1  = 0x7C | (29 << 16),
+    SRST_I2C0  = 0x7C | (28 << 16),
+    SRST_TTC1  = 0x7C | (25 << 16),
+    SRST_TTC0  = 0x7C | (24 << 16),
+    SRST_CAN1  = 0x7C | (21 << 16),
+    SRST_CAN0  = 0x7C | (20 << 16),
+    SRST_SPI1  = 0x7C | (17 << 16),
+    SRST_SPI0  = 0x7C | (16 << 16),
+    SRST_UART1 = 0x7C | (13 << 16),
+    SRST_UART0 = 0x7C | (12 << 16),
+    SRST_SDIO1 = 0x7C | ( 9 << 16),
+    SRST_SDIO0 = 0x7C | ( 8 << 16),
+    SRST_GBE1  = 0x7C | ( 5 << 16),
+    SRST_GBE0  = 0x7C | ( 4 << 16),
+    SRST_USB1  = 0x7C | ( 1 << 16),
+    SRST_USB0  = 0x7C | ( 0 << 16)
 };
 void crg_srst_assert(enum crg_srst_para_t parm);
 void crg_srst_release(enum crg_srst_para_t parm);
+
+enum top_srst_para_t {
+    SRST_PSONLY = 0x330 | ( 9 << 16),
+    SRST_FABRIC = 0x330 | ( 8 << 16),
+    SRST_FCLK3  = 0x330 | ( 7 << 16),
+    SRST_FCLK2  = 0x330 | ( 6 << 16),
+    SRST_FCLK1  = 0x330 | ( 5 << 16),
+    SRST_FCLK0  = 0x330 | ( 4 << 16),
+    SRST_GLOBAL = 0x330 | ( 0 << 16),
+    SRST_RPU        = 0x334 | (10 << 16),
+    SRST_RPU_PULSE  = 0x334 | ( 8 << 16),
+    SRST_APU1       = 0x334 | ( 5 << 16),
+    SRST_APU0       = 0x334 | ( 4 << 16),
+    SRST_APU1_PULSE = 0x334 | ( 1 << 16),
+    SRST_APU0_PULSE = 0x334 | ( 0 << 16)
+};
+void top_srst_assert(enum top_srst_para_t parm);
+void top_srst_release(enum top_srst_para_t parm);
 
 #endif
