@@ -127,7 +127,7 @@ extern "C" {
 #else
 
 #define AL_ASSERT(Condition, Errno)  do {                           \
-    if (!UNLIKELY(Condition))                                         \
+    if (UNLIKELY(!(Condition)))                                         \
         return Errno;                                               \
     } while(0)
 
