@@ -176,7 +176,15 @@ static inline AL_VOID AL_OSAL_ExitCritical(AL_VOID)
 
 static inline AL_VOID Al_OSAL_Sleep(AL_U32 Time)
 {
-    rt_thread_mdelay(Time);
+    /* If the scheduler is started and in thread context */
+    if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
+    {
+        return rt_thread_mdelay(Time);
+    }
+    else
+    {
+        return;
+    }
 }
 
 #elif RTOS_FREERTOS
