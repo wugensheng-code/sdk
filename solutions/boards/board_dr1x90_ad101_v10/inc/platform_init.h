@@ -123,6 +123,7 @@ extern "C" {
 
 
 #define HAVE_GPIOPS_DRIVER
+#define GPIO_PS_CLOCK           (25*MHZ)
 
 #define HAVE_MPUPS_DRIVER
 
@@ -130,7 +131,6 @@ extern "C" {
 
 #define HAVE_DMACAHBPS_DRIVER
 
-#define HAVE_GPIOPS_DRIVER
 
 
 /**

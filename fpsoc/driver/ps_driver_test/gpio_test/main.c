@@ -24,7 +24,7 @@ static void IntrHandler(AL_VOID *CallBackRef, AL_U32 Bank, AL_U32 Status)
 AlGpio_Hal_Test()
 {
     // 1、Test AlGpio_Hal_Init
-    AL_S32 ret = AlGpio_Hal_Init(&GPIO, 0);
+    AL_S32 ret = AlGpio_Hal_Init(&GPIO, 0, AL_NULL);
 
     if (ret == AL_OK)
         printf("[TEST] APU AlGpio_Hal_Init success\r\n");
@@ -50,8 +50,8 @@ AlGpio_Hal_Test()
     }
 
     // 4、Test intr
-    AlGpio_Dev_IntrCallbackHandler((&GPIO)->Dev, (void *)(&GPIO), (Gpio_Handler)IntrHandler);
-    AlGpio_Hal_IntrCfg(&GPIO, 21, GPIO_INTR_TYPE_LEVEL_HIGH);
+    // AlGpio_Dev_IntrCallbackHandler((&GPIO)->Dev, (void *)(&GPIO), (Gpio_Handler)IntrHandler);
+    AlGpio_Hal_IntrCfg(&GPIO, 21, GPIO_INTR_TYPE_LEVEL_LOW);
     while(1);
 
     return 0;
@@ -60,7 +60,7 @@ AlGpio_Hal_Test()
 
 AlGpio_Dev_Test()
 {
-    AL_S32 ret = AlGpio_Hal_Init(&GPIO, 0);
+    AL_S32 ret = AlGpio_Hal_Init(&GPIO, 0, AL_NULL);
     AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
     // 1.1、Test Write and Read DR register (Pin)
     AlGpio_Dev_WritePin((&GPIO)->Dev, 13, 0x1);
@@ -83,7 +83,7 @@ AlGpio_Dev_Test()
 
 
     // 3、Test intr
-    AlGpio_Dev_IntrCallbackHandler((&GPIO)->Dev, (void *)(&GPIO), (Gpio_Handler)IntrHandler);
+    // AlGpio_Dev_IntrCallbackHandler((&GPIO)->Dev, (void *)(&GPIO), (Gpio_Handler)IntrHandler);
     AlGpio_Dev_SetDirectionPin((&GPIO)->Dev, 0, GPIO_INPUT);
     AlGpio_Dev_IntrSetTypePin((&GPIO)->Dev, 0, GPIO_INTR_TYPE_LEVEL_LOW);
     AlGpio_Dev_IntrEnablePin((&GPIO)->Dev, 0);

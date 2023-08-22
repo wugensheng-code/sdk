@@ -16,99 +16,73 @@
 /************************** Variable Definitions *****************************/
 static AL_GPIO_DevStruct AL_GPIO_DevInstance[AL_GPIO_NUM_INSTANCE];
 
-#if 0
 /**
- * @brief  This function sets the status callback function. The callback function is called by the
- *         AL_GPIO_IntrHandler when an interrupt occurs.
- * @param  Gpio is a pointer to the AL_GPIO instance.
- * @param  CallBackRef
- * @param  FunPointer is the pointer to the callback function.
- * @return AL_S32
+ * @brief  This function actions when interrupt done.
+ * @param  GpioEvent
+ * @param  CallbackRef
+ * @return AL_VOID
  */
-AL_S32 AlGpio_Hal_IntrCallbackHandler(AL_GPIO_HalStruct *Handle, AL_VOID *CallBackRef, Gpio_Handler FunPointer)
+static AL_VOID AlGpio_Hal_DefEventCallBack(AL_GPIO_EventStruct GpioEvent, AL_VOID *CallbackRef)
 {
-    if (Handle == AL_NULL) {
-        return AL_GPIO_ERR_ILLEGAL_PARAM;
-    }
-    if (FunPointer == AL_NULL) {
-        return AL_GPIO_ERR_ILLEGAL_PARAM;
-    }
-    Handle->Dev->Handler = FunPointer;
-    Handle->Dev->EventCallBackRef = CallBackRef;
+    AL_GPIO_HalStruct *Handle = (AL_GPIO_HalStruct *)CallbackRef;
+    AL_S32 Ret = AL_OK;
 
-    return AL_OK;
+    if(GpioEvent.Events == AL_GPIO_Event)
+    {
+        AL_LOG(AL_LOG_LEVEL_INFO, "Get AL_GPIO_INTR \r\n");
+    }
 }
 
-/**
- * @brief  This function is the interrupt handler for GPIO interrupts.It checks the interrupt status registers
- * of all the banks to determine the actual bank in which interrupt have been triggered. It then calls the
- * upper layer callback handler set by the function AlGpio_Hal_IntrCallbackHandler.
- * @param  Gpio is a pointer to the AL_GPIO instance.
- * @param  Pin is the pin number to which the Data is to be written.
- * @param  IntrType is the IRQ type for GPIO Pin.
- * @return AL_S32
- */
-AL_S32 AlGpio_Hal_IntrHandler(AL_GPIO_HalStruct *Handle)
-{
-    AL_U8 Bank;
-    AL_U32 IntrStatus;
-    AL_U32 IntrEnable;
-    AL_U32 IntrReg;
-    AL_U8 PinNumber;
-
-    if (Handle == AL_NULL) {
-        return AL_GPIO_ERR_ILLEGAL_PARAM;
-    }
-
-    for(Bank = 0U; Bank < Handle->Dev->HwConfig.MaxBanks; Bank++) {
-        IntrStatus = AlGpio_Dev_IntrGetStatus(Handle, Bank);
-        IntrEnable = AlGpio_Dev_IntrGetEnable(Handle, Bank);
-        printf("IntrStatus %d is %x\r\n", Bank, IntrStatus);
-        printf("IntrEnable %d is %x\r\n", Bank, IntrEnable);
-        if((IntrStatus & IntrEnable) != (AL_U32)0) {
-            AlGpio_Dev_IntrClr(Handle, Bank, IntrStatus & IntrEnable);
-            Handle->Dev->Handler(Handle->Dev->EventCallBackRef, Bank, (IntrStatus & IntrEnable));
-        }
-    }
-
-    return AL_OK;
-}
-#endif
 
 /**************************** Function Prototypes ******************************/
 /**
  * @brief  This function initializes a AL_GPIO driver.
  * @param  Handle is a pointer to the AL_GPIO instance.
  * @param  DevId
- * @return AL_S32
+ * @return
+ *         - AL_OK for function success
+ *         - Other for function failuregit
  */
-AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct *Handle, AL_U32 DevId)
+AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct *Handle, AL_U32 DevId, AL_GPIO_EventCallBack CallBack)
 {
-    AL_S32 ret = AL_OK;
-    AL_GPIO_HwConfigStruct *HwConfig;
-    AL_GPIO_DevStruct *Dev;
+    AL_S32 Ret = AL_OK;
+    AL_GPIO_HwConfigStruct *HwConfig = AL_NULL;
 
-    if (Handle == AL_NULL) {
+    if (Handle == AL_NULL)
+    {
         return AL_GPIO_ERR_ILLEGAL_PARAM;
     }
 
     /* 1. look up hardware config */
     HwConfig = AlGpio_Dev_LookupConfig(DevId);
-    if(HwConfig != AL_NULL) {
+    if(HwConfig != AL_NULL){
         Handle->Dev = &AL_GPIO_DevInstance[DevId];
+    } else {
+        return AL_GPIO_ERR_ILLEGAL_PARAM;
     }
 
     /* 2. Init */
-    ret = AlGpio_Dev_Init(Handle->Dev, HwConfig);
-    if(ret != AL_OK) {
-        //
+    Ret = AlGpio_Dev_Init(Handle->Dev, HwConfig);
+    if(Ret != AL_OK) {
+        return Ret;
     }
 
     /* 3. register intr */
-    (AL_VOID)AlIntr_RegHandler(GPIO0_IRQn, AL_NULL, AlGpio_Dev_IntrHandler, (AL_VOID *)(Handle->Dev));
+    if(CallBack) {
+        Ret = AlGpio_Dev_RegisterEventCallBack(Handle->Dev, CallBack, (void *)Handle);
+    } else {
+        Ret = AlGpio_Dev_RegisterEventCallBack(Handle->Dev, AlGpio_Hal_DefEventCallBack, (void *)Handle);
+    }
+    if(Ret != AL_OK) {
+        return Ret;
+    }
 
+    (AL_VOID)AlIntr_RegHandler(Handle->Dev->HwConfig.IntrId, AL_NULL, AlGpio_Dev_IntrHandler, Handle->Dev);
     printf("config BaseAddress is %x\r\n", Handle->Dev->HwConfig.BaseAddress);
-    return ret;
+    printf("Interrupt id is %d\r\n", Handle->Dev->HwConfig.IntrId);
+    printf("GPIO0_IRQn is %d\r\n", GPIO0_IRQn);
+
+    return Ret;
 }
 
 /**
@@ -120,7 +94,6 @@ AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct *Handle, AL_U32 DevId)
  */
 AL_S32 AlGpio_Hal_WritePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U32 Data)
 {
-    AL_U8 i;
     AL_S32 Ret = AL_OK;
     if (Handle == AL_NULL) {
         return AL_GPIO_ERR_ILLEGAL_PARAM;
@@ -162,18 +135,6 @@ AL_S32 AlGpio_Hal_InputReadPin(AL_GPIO_HalStruct *Handle, AL_U8 Pin)
     AlGpio_Dev_InputReadPin(Handle->Dev, Pin);
 }
 
-#if 0
-// ReadEXTRegisterOut
-AL_S32 AlGpio_Hal_ReadEXTRegisterOut(AL_GPIO_HalStruct *Handle, AL_U8 Pin)
-{
-    if (Handle == AL_NULL) {
-        return AL_GPIO_ERR_ILLEGAL_PARAM;
-    }
-    AlGpio_Dev_SetDirectionPin(Handle->Dev, Pin, GPIO_OUTPUT);
-    AlGpio_Dev_InputReadPin(Handle->Dev, Pin);
-}
-#endif
-
 /**
  * @brief  This function configure the interrupt, including direction, type and enable register.
  * @param  Handle
@@ -181,7 +142,7 @@ AL_S32 AlGpio_Hal_ReadEXTRegisterOut(AL_GPIO_HalStruct *Handle, AL_U8 Pin)
  * @param  IntrType
  * @return AL_S32
  */
-AL_S32 AlGpio_Hal_IntrCfg(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U8 IntrType)
+AL_S32 AlGpio_Hal_IntrCfg(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_GPIO_IntrEnum IntrType)
 {
     if (Handle == AL_NULL) {
         return AL_GPIO_ERR_ILLEGAL_PARAM;
@@ -190,10 +151,6 @@ AL_S32 AlGpio_Hal_IntrCfg(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U8 IntrType)
     AlGpio_Dev_SetDirectionPin(Handle->Dev, Pin, GPIO_INPUT);
     AlGpio_Dev_IntrSetTypePin(Handle->Dev, Pin, IntrType);
     AlGpio_Dev_IntrEnablePin(Handle->Dev, Pin);
-
-    //AlGpio_Dev_IntrGetStatus(Handle->Dev, 0);
-    printf("IntrStatus %d is %x\r\n", 0, AlGpio_Dev_IntrGetStatus(Handle->Dev, 0));
-    printf("IntrEnable %d is %x\r\n", 0, AlGpio_Dev_IntrGetEnable(Handle->Dev, 0));
 
     return AL_OK;
 }

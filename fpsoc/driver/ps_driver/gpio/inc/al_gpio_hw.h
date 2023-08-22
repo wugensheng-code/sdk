@@ -62,6 +62,7 @@ typedef struct {
     AL_U32                  BaseAddress;
     AL_U32                  BankMaxPins;
     AL_U32                  MaxBanks;
+    AL_U32                  IntrId;
 } AL_GPIO_HwConfigStruct;
 
 #ifdef __cplusplus
