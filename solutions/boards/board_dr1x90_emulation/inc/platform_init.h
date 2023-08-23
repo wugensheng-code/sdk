@@ -51,6 +51,7 @@ extern "C" {
   Define System clocks
  *----------------------------------------------------------------------------*/
 
+#if (CHIP == dr1m90)
 #ifdef AL9000_OSC_25
 #define SYSTEM_CLOCK            (25*MHZ)
 #elif AL9000_OSC_33
@@ -59,6 +60,21 @@ extern "C" {
 #define SYSTEM_CLOCK            (50*MHZ)
 #else
 #define SYSTEM_CLOCK            (50*MHZ)
+#endif
+#else
+#ifdef AL9000_CLK_CONFIG
+#define SYSTEM_CLOCK            (400*MHZ)
+#else
+#ifdef AL9000_OSC_25
+#define SYSTEM_CLOCK            (200*MHZ)
+#elif AL9000_OSC_33
+#define SYSTEM_CLOCK            (266666666UL)
+#elif AL9000_OSC_50
+#define SYSTEM_CLOCK            (400*MHZ)
+#else
+#define SYSTEM_CLOCK            (50*MHZ)
+#endif
+#endif
 #endif
 
 #define HAVE_UARTPS_DRIVER
