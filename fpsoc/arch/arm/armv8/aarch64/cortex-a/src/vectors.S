@@ -1,6 +1,5 @@
 
 #include <macro.h>
-#include <linkage.h>
 
 /* why not use macro? because can not debug in gdb */
 

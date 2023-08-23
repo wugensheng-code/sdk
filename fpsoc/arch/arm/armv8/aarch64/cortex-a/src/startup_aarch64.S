@@ -1,7 +1,5 @@
-#include "linkage.h"
 #include "macro.h"
 #include "sysreg.h"
-#include "sysregs.h"
 
 .align 3
 
@@ -49,6 +47,7 @@ el3_entry:
     msr actlr_el3, x0    //Enable L2ACTLR write access from EL2
     msr actlr_el2, x0    //Enable L2ACTLR write access from Non-secure EL1
 
+    /* set icc_sre_el3 */
     mov x0, #(0x1 << 0)         //SRE, Enable system register
     orr x0, x0, #(0x1 << 1)     //DFB, Disable FIQ bypass
     orr x0, x0, #(0x1 << 2)     //DIB, Disable IRQ bypass
@@ -56,10 +55,12 @@ el3_entry:
     msr S3_6_c12_c12_5, x0
     isb
 
+    /* set icc_igrpen1_el3 */
     mov x0, #(0x1 << 0)         //Enable group 1 interrupts for Non-secure state
     orr x0, x0, #(0x1 << 1)     //Enable group 1 interrupts for Secure state
     msr S3_6_c12_c12_7, x0
 
+    /* set icc_igrpen0_el1 */
     mov x0, #(0x1 << 0)         //Enable group 0 interrupts
     msr S3_0_c12_c12_6, x0
 
@@ -135,13 +136,13 @@ main_entry:
     bl clear_bss
 #endif
 
-    bl    board_init
+    bl board_init
 
     /* Processor specific initialization */
-    bl    lowlevel_init
+    bl _premain_init
 
     /* jump to main */
-    bl    main
+    bl main
 
     /* hang */
     b .

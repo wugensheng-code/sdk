@@ -1,4 +1,5 @@
-#include "sysregs.h"
+#include "arch.h"
+#include "sysreg.h"
 #include "al_type.h"
 #include "al_top.h"
 
@@ -7,11 +8,7 @@ AL_VOID AlSys_StartTimer(AL_VOID)
 {
     AL_U32 V = 1;
 
-    asm volatile(
-    "msr cntp_ctl_el0, %x[V]"
-    :
-    : [V]"r"(V)
-    : "memory");
+    write_cntp_ctl_el0(V);
 
     Altop_Syscnts_CounterCtrl(AL_FUNC_ENABLE);
 }
@@ -25,7 +22,7 @@ AL_VOID AlSys_StopTimer(AL_VOID)
 
 AL_U64 AlSys_GetTimerTick(AL_VOID)
 {
-    return (AL_U64)read_sysreg(CNTPCT_EL0);
+    return (AL_U64)read_cntpct_el0();
 }
 
 AL_U64 AlSys_GetTimerFreq(AL_VOID)
@@ -48,13 +45,13 @@ AL_VOID AlSys_DelayTicks(AL_U64 TickCount)
 }
 
 
-AL_VOID AlSys_UDelay(AL_U32 Usec)
+AL_VOID AlSys_UDelay(AL_U64 Usec)
 {
     AlSys_DelayTicks((AL_U64)Usec * AlSys_GetTimerFreq() / 1000000);
 }
 
 
-AL_VOID AlSys_MDelay(AL_U32 Msec)
+AL_VOID AlSys_MDelay(AL_U64 Msec)
 {
     AlSys_DelayTicks((AL_U64)Msec * AlSys_GetTimerFreq() / 1000);
 }

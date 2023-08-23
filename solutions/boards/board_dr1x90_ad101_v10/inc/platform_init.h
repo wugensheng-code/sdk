@@ -97,7 +97,7 @@ extern "C" {
 #define MMC_CLOCK               (50*MHZ)
 #elif AL9000_OSC_33
 #define MMC_CLOCK               (66*MHZ)
-#else AL9000_OSC_50
+#else
 #define MMC_CLOCK               (100*MHZ)
 #endif
 #endif

@@ -1,7 +1,4 @@
 #include "al_core.h"
-#include "al_errno.h"
-#include "al_intr.h"
-#include "al_reg_io.h"
 #include "gicv3_private.h"
 #include "gicv3_dist.h"
 #include "gicv3_rdist.h"
@@ -28,16 +25,9 @@ static AL_INTR_HandlerStruct fiq_handler_list[SOC_INT_MAX + GICV3_SPECIAL_NUM];
  */
 AL_VOID do_irq_handle(AL_VOID)
 {
-	u32	int_id;
+	AL_U32	int_id;
 	AL_INTR_HandlerStruct Handler;
 
-#if 0
-	/* enable sre */
-	if (!gic_enable_sre()) {
-		/* interrupr acknowledge by read gicc_iar*/
-		int_id = readl_relaxed(GICC_IAR) & 0xffffff;
-	} else
-#endif
 	{
 		/* interrupr acknowledge by read iar*/
         int_id = read_icc_iar1_el1();
@@ -75,7 +65,7 @@ AL_VOID do_irq_handle(AL_VOID)
  */
 AL_VOID do_fiq_handle(AL_VOID)
 {
-	u32	int_id;
+	AL_U32	int_id;
 	AL_INTR_HandlerStruct Handler;
 
 	int_id = read_icc_iar1_el1();

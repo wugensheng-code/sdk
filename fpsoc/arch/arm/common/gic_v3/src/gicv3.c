@@ -7,8 +7,7 @@
 #include <assert.h>
 
 #include "arch.h"
-#include "spinlock.h"
-#include "barriers.h"
+#include "al_barrier.h"
 
 #include "gicv3_private.h"
 #include "gicv3_dist.h"
@@ -19,13 +18,6 @@
 
 const AL_GICV3_DrvDataStruct *Gicv3DrvData;
 
-/*
- * Spinlock to guard registers needing read-modify-write. APIs protected by this
- * spinlock are used either at boot time (when only a single CPU is active), or
- * when the system is fully coherent.
- */
-static spinlock_t GicLock;
-
 /* Check interrupt ID for SGI/(E)PPI and (E)SPIs */
 static AL_BOOL AlGicv3_IsSgi(AL_U32 Id);
 static AL_BOOL AlGicv3_IsSgiPpi(AL_U32 Id);
@@ -34,7 +26,7 @@ static AL_BOOL AlGicv3_IsSgiPpi(AL_U32 Id);
  * This function initialises the ARM GICv3 driver in EL3 with provided platform
  * inputs.
  ******************************************************************************/
-AL_VOID __init AlGicv3_DriverInit(const AL_GICV3_DrvDataStruct *DrvData)
+AL_VOID AlGicv3_DriverInit(const AL_GICV3_DrvDataStruct *DrvData)
 {
     AL_U32 GicVer;
 
@@ -44,19 +36,9 @@ AL_VOID __init AlGicv3_DriverInit(const AL_GICV3_DrvDataStruct *DrvData)
     assert(DrvData->RdistNum != 0U);
     assert(DrvData->RdistBaseAddrs != NULL);
 
-    /* Check for system register support */
-#ifndef __aarch64__
-    assert((read_id_pfr1() &
-            (ID_PFR1_GIC_MASK << ID_PFR1_GIC_SHIFT)) != 0U);
-#else
-    assert((read_id_aa64pfr0_el1() &
-            (ID_AA64PFR0_GIC_MASK << ID_AA64PFR0_GIC_SHIFT)) != 0U);
-#endif /* !__aarch64__ */
-
     GicVer = Gicd_ReadPidr2(DrvData->GicdBase);
     GicVer >>= PIDR2_ARCH_REV_SHIFT;
     GicVer &= PIDR2_ARCH_REV_MASK;
-
 
     if (DrvData->GicrBase != 0U) {
         /*
@@ -76,7 +58,7 @@ AL_VOID __init AlGicv3_DriverInit(const AL_GICV3_DrvDataStruct *DrvData)
  * This function initialises the GIC distributor interface based upon the data
  * provided by the platform while initialising the driver.
  ******************************************************************************/
-AL_VOID __init AlGicv3_DistInit(AL_VOID)
+AL_VOID AlGicv3_DistInit(AL_VOID)
 {
     AL_U32 BitMap;
 
@@ -538,16 +520,10 @@ AL_VOID AlGicv3_SetInterruptType(AL_U32 Id, AL_U32 ProcNum, AL_U32 Type)
              Gicr_ClrIgrpmodr(GicrBase, Id);
     } else {
         /* For SPIs: 32-1019 and ESPIs: 4096-5119 */
-
-        /* Serialize read-modify-write to Distributor registers */
-        spin_lock(&GicLock);
-
         Igroup ? Gicd_SetIgroupr(Gicv3DrvData->GicdBase, Id) :
              Gicd_ClrIgroupr(Gicv3DrvData->GicdBase, Id);
         Grpmod ? Gicd_SetIgrpmodr(Gicv3DrvData->GicdBase, Id) :
              Gicd_ClrIgrpmodr(Gicv3DrvData->GicdBase, Id);
-
-        spin_unlock(&GicLock);
     }
 }
 

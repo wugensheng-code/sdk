@@ -12,8 +12,7 @@ extern "C" {
 #include "al_type.h"
 #include "al_systimer.h"
 
-
-#define IS_ALIGNED(x, a)		(((x) & ((typeof(x))(a) - 1)) == 0)
+#define IS_ALIGN(x, a)          (((x) & ((typeof(x))(a) - 1)) == 0)
 
 #define ARRAY_SIZE(a)         (sizeof(a) / sizeof((a)[0]))
 

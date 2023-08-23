@@ -1,4 +1,3 @@
-#include <linkage.h>
 #include <macro.h>
 #include <al_mmu.h>
 

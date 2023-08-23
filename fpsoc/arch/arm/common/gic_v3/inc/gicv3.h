@@ -12,6 +12,7 @@
 
 #include <arch.h>
 #include <al_utils_def.h>
+#include "al_type.h"
 #include "gicv3_common.h"
 
 /*******************************************************************************

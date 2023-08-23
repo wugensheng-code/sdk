@@ -29,9 +29,31 @@ extern "C" {
 #define rmb()          dsb(ld)
 #define wmb()          dsb(st)
 
+#define dsbsy()     dsb(sy)
+#define dsbish()    dsb(ish)
+#define dsbosh()    dsb(osh)
+#define dsbnsh()    dsb(nsh)
+#define dsbishst()  dsb(ishst)
+#define dsboshst()  dsb(oshst)
+
 #define dma_mb()      dmb(osh)
 #define dma_rmb()     dmb(oshld)
 #define dma_wmb()     dmb(oshst)
+
+#define dmbsy()     dmb(sy)
+#define dmbst()     dmb(st)
+#define dmbld()     dmb(ld)
+#define dmboshld()  dmb(oshld)
+#define dmboshst()  dmb(oshst)
+#define dmboshld()  dmb(oshld)
+#define dmboshst()  dmb(oshst)
+#define dmbosh()    dmb(osh)
+#define dmbnshld()  dmb(nshld)
+#define dmbnshst()  dmb(nshst)
+#define dmbnsh()    dmb(nsh)
+#define dmbishld()  dmb(ishld)
+#define dmbishst()  dmb(ishst)
+#define dmbish()    dmb(ish)
 
 #else
 
