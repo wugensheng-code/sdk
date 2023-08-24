@@ -1181,9 +1181,6 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
     return AL_OK;
 }
 
-
-// extern void HAL_ETH_TxFreeCallback(AL_U32 * buff);
-
 AL_S32 AlGbe_Dev_ReleaseTxPacket(AL_GBE_DevStruct *Gbe)
 {
     AL_GBE_TxDescListStruct *DmaTxDescList = &Gbe->TxDescList;
@@ -1208,7 +1205,7 @@ AL_S32 AlGbe_Dev_ReleaseTxPacket(AL_GBE_DevStruct *Gbe)
             if (!AlGbe_ll_IsTxDescOwnByDma(&(Gbe->InitConfig.TxDescList[Index].DESC3))) {
 
                 /* Release the packet.  */
-                // HAL_ETH_TxFreeCallback(DmaTxDescList->PacketAddress[Index]);
+                Gbe->TxFreeCallback(DmaTxDescList->PacketAddress[Index]);
 
                 /* Clear the entry in the in-use array.  */
                 DmaTxDescList->PacketAddress[Index] = AL_NULL;
@@ -1311,30 +1308,25 @@ AL_S32 AlGbe_Dev_TransmitPolling(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruc
     return AL_OK;
 }
 
-static AL_VOID AlGbe_Dev_ErrorHandler(AL_GBE_DevStruct *Gbe)
+static AL_VOID AlGbe_Dev_TxDoneHandler(AL_GBE_DevStruct *Gbe)
 {
-    /*
-       1. if support OS, need tell the rx task, use SemaphoreRelease here
-       2. if not support OS, How to do?
-     */
+    if (Gbe->EventCallBack) {
+        AL_GBE_EventStruct GbeEvent = {
+            .Event        = AL_GBE_EVENT_TX_DONE,
+        };
+        (*Gbe->EventCallBack)(&GbeEvent, Gbe->EventCallBackRef);
+    }
 
 }
 
-static AL_VOID AlGbe_Dev_TxHandler(AL_GBE_DevStruct *Gbe)
+static AL_VOID AlGbe_Dev_RxDoneHandler(AL_GBE_DevStruct *Gbe)
 {
-    /*
-       1. if support OS, need tell the rx task, use SemaphoreRelease here
-       2. if not support OS, How to do?
-     */
-
-}
-
-static AL_VOID AlGbe_Dev_RxHandler(AL_GBE_DevStruct *Gbe)
-{
-    /*
-       1. if support OS, need tell the rx task, use SemaphoreRelease here
-       2. if not support OS, How to do?
-     */
+    if (Gbe->EventCallBack) {
+        AL_GBE_EventStruct GbeEvent = {
+            .Event        = AL_GBE_EVENT_RX_DONE,
+        };
+        (*Gbe->EventCallBack)(&GbeEvent, Gbe->EventCallBackRef);
+    }
 
 }
 
@@ -1352,8 +1344,49 @@ static AL_VOID AlGbe_Dev_RxHandler(AL_GBE_DevStruct *Gbe)
 #define GBE_IN_ABNORMAL_SUMMARY_INTR(Status)        (Status & AL_GBE_INTR_ABNORMAL_SUMMARY)
 #define GBE_IN_NORMAL_SUMMARY_INTR(Status)          (Status & AL_GBE_INTR_NORMAL_SUMMARY)
 
-// extern void HAL_ETH_TxDoneCallback();
-// extern void HAL_ETH_RxDoneCallback();
+static AL_VOID AlGbe_Dev_ErrorHandler(AL_GBE_DevStruct *Gbe)
+{
+    AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
+    AL_GBE_IntrStatusEnum IntrStatus = AlGbe_ll_GetDmaChannelStatus(GbeBaseAddr);
+    AL_GBE_EventIdEnum Event;
+
+    if (GBE_IN_FATAL_BUS_ERROR_INTR(IntrStatus)) {
+        Event = AL_GBE_EVENT_FATAL_BUS_ERROR;
+        AlGbe_ll_ClrFatalBusErrorIntr(GbeBaseAddr);
+
+        /* Fatal error, disable all interrupt */
+        AlGbe_ll_SetDmaAbnormalSummaryIntrEnable(GbeBaseAddr, AL_GBE_FUNC_ENABLE);
+        AlGbe_ll_SetDmaNormalSummaryIntrEnable(GbeBaseAddr, AL_GBE_FUNC_ENABLE);
+
+    } else if (GBE_IN_RX_BUFFER_UNAVAILABLE_INTR(IntrStatus)) {
+        Event = AL_GBE_EVENT_RX_BUFFER_UNAVAILABLE;
+        AlGbe_ll_ClrRxBufferUnavailableIntr(GbeBaseAddr);
+
+    } else if (GBE_IN_EARLY_TX_INTR(IntrStatus)) {
+        Event = AL_GBE_EVENT_EARLY_TX;
+        AlGbe_ll_ClrEarlyTxIntr(GbeBaseAddr);
+
+    } else if (GBE_IN_CONTEXT_DESC_ERROR_INTR(IntrStatus)) {
+        Event = AL_GBE_EVENT_CTX_DESC_ERROR;
+        AlGbe_ll_ClrCtxDescErrorIntr(GbeBaseAddr);
+
+    } else if (GBE_IN_RX_PROCESS_STOP_INTR(IntrStatus)) {
+        Event = AL_GBE_EVENT_RX_STOP;
+        AlGbe_ll_ClrRxProcessStopIntr(GbeBaseAddr);
+
+    } else if (GBE_IN_RX_WATCHDOG_TIMEOUT_INTR(IntrStatus)) {
+        Event = AL_GBE_EVENT_RX_WATCHDOG_TIMEOUT;
+        AlGbe_ll_ClrRxWatchDogTimeoutIntr(GbeBaseAddr);
+    }
+
+    if (Gbe->EventCallBack) {
+        AL_GBE_EventStruct GbeEvent = {
+            .Event        = Event,
+        };
+        (*Gbe->EventCallBack)(&GbeEvent, Gbe->EventCallBackRef);
+    }
+
+}
 
 AL_VOID AlGbe_Dev_IntrHandler(AL_VOID *Instance)
 {
@@ -1362,22 +1395,17 @@ AL_VOID AlGbe_Dev_IntrHandler(AL_VOID *Instance)
     AL_GBE_IntrStatusEnum IntrStatus = AlGbe_ll_GetDmaChannelStatus(GbeBaseAddr);
 
     if (GBE_IN_RX_COMPLETE_INTR(IntrStatus)) {
-        AlGbe_Dev_RxHandler(Gbe);
+        AlGbe_Dev_RxDoneHandler(Gbe);
 
         AlGbe_ll_ClrRxCompletrIntr(GbeBaseAddr);
         AlGbe_ll_ClrNormalSummaryIntr(GbeBaseAddr);
-
-        // HAL_ETH_RxDoneCallback();
-
     }
 
     if (GBE_IN_TX_COMPLETE_INTR(IntrStatus)) {
-        AlGbe_Dev_TxHandler(Gbe);
+        AlGbe_Dev_TxDoneHandler(Gbe);
 
         AlGbe_ll_ClrTxCompletrIntr(GbeBaseAddr);
         AlGbe_ll_ClrNormalSummaryIntr(GbeBaseAddr);
-
-        // HAL_ETH_TxDoneCallback();
     }
 
     if (GBE_IN_ABNORMAL_SUMMARY_INTR(IntrStatus)) {
@@ -1386,24 +1414,6 @@ AL_VOID AlGbe_Dev_IntrHandler(AL_VOID *Instance)
 
     }
 
-#if 0
-    if (GBE_IN_NORMAL_SUMMARY_INTR(IntrStatus)) {
-        AlGbe_ll_ClrNormalSummaryIntr(GbeBaseAddr);
-
-    }
-
-    if (GBE_IN_TX_BUFFER_UNAVAILABLE_INTR(IntrStatus)) {
-        AlGbe_ll_ClrTxBufferUnvailableIntr(GbeBaseAddr);
-
-    }
-
-    if (GBE_IN_EARLY_TX_INTR(IntrStatus)) {
-
-        AlGbe_ll_ClrEarlyTxIntr(GbeBaseAddr);
-        AlGbe_ll_ClrAbnormalSummaryIntr(GbeBaseAddr);
-
-    }
-#endif
 }
 
 AL_S32 AlGbe_Dev_RegisterEventCallBack(AL_GBE_DevStruct *Gbe, AL_GBE_EventCallBack Callback, void *CallbackRef)

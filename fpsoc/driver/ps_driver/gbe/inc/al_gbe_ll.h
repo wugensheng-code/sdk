@@ -675,34 +675,59 @@ static inline AL_U32 AlGbe_ll_IsDmaChannelFatalBusError(AL_REG BaseAddr)
     return AL_REG32_GET_BIT(BaseAddr + GBE__DMA_CH0_STATUS__OFFSET, GBE__DMA_CH0_STATUS__FBE__SHIFT);
 }
 
-static inline AL_U32 AlGbe_ll_ClrTxCompletrIntr(AL_REG BaseAddr)
+static inline AL_VOID AlGbe_ll_ClrTxCompletrIntr(AL_REG BaseAddr)
 {
     AL_REG32_SET_BIT(BaseAddr + GBE__DMA_CH0_STATUS__OFFSET, GBE__DMA_CH0_STATUS__TI__SHIFT, AL_GBE_FUNC_ENABLE);
 }
 
-static inline AL_U32 AlGbe_ll_ClrRxCompletrIntr(AL_REG BaseAddr)
+static inline AL_VOID AlGbe_ll_ClrRxCompletrIntr(AL_REG BaseAddr)
 {
     AL_REG32_SET_BIT(BaseAddr + GBE__DMA_CH0_STATUS__OFFSET, GBE__DMA_CH0_STATUS__RI__SHIFT, AL_GBE_FUNC_ENABLE);
 }
 
-static inline AL_U32 AlGbe_ll_ClrNormalSummaryIntr(AL_REG BaseAddr)
+static inline AL_VOID AlGbe_ll_ClrNormalSummaryIntr(AL_REG BaseAddr)
 {
     AL_REG32_SET_BIT(BaseAddr + GBE__DMA_CH0_STATUS__OFFSET, GBE__DMA_CH0_STATUS__NIS__SHIFT, AL_GBE_FUNC_ENABLE);
 }
 
-static inline AL_U32 AlGbe_ll_ClrAbnormalSummaryIntr(AL_REG BaseAddr)
+static inline AL_VOID AlGbe_ll_ClrAbnormalSummaryIntr(AL_REG BaseAddr)
 {
     AL_REG32_SET_BIT(BaseAddr + GBE__DMA_CH0_STATUS__OFFSET, GBE__DMA_CH0_STATUS__AIS__SHIFT, AL_GBE_FUNC_ENABLE);
 }
 
-static inline AL_U32 AlGbe_ll_ClrTxBufferUnvailableIntr(AL_REG BaseAddr)
+static inline AL_VOID AlGbe_ll_ClrTxBufferUnavailableIntr(AL_REG BaseAddr)
 {
     AL_REG32_SET_BIT(BaseAddr + GBE__DMA_CH0_STATUS__OFFSET, GBE__DMA_CH0_STATUS__TBU__SHIFT, AL_GBE_FUNC_ENABLE);
 }
 
-static inline AL_U32 AlGbe_ll_ClrEarlyTxIntr(AL_REG BaseAddr)
+static inline AL_VOID AlGbe_ll_ClrEarlyTxIntr(AL_REG BaseAddr)
 {
     AL_REG32_SET_BIT(BaseAddr + GBE__DMA_CH0_STATUS__OFFSET, GBE__DMA_CH0_STATUS__ETI__SHIFT, AL_GBE_FUNC_ENABLE);
+}
+
+static inline AL_VOID AlGbe_ll_ClrRxBufferUnavailableIntr(AL_REG BaseAddr)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__DMA_CH0_STATUS__OFFSET, GBE__DMA_CH0_STATUS__RBU__SHIFT, AL_GBE_FUNC_ENABLE);
+}
+
+static inline AL_VOID AlGbe_ll_ClrRxProcessStopIntr(AL_REG BaseAddr)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__DMA_CH0_STATUS__OFFSET, GBE__DMA_CH0_STATUS__RPS__SHIFT, AL_GBE_FUNC_ENABLE);
+}
+
+static inline AL_VOID AlGbe_ll_ClrRxWatchDogTimeoutIntr(AL_REG BaseAddr)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__DMA_CH0_STATUS__OFFSET, GBE__DMA_CH0_STATUS__RWT__SHIFT, AL_GBE_FUNC_ENABLE);
+}
+
+static inline AL_VOID AlGbe_ll_ClrFatalBusErrorIntr(AL_REG BaseAddr)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__DMA_CH0_STATUS__OFFSET, GBE__DMA_CH0_STATUS__FBE__SHIFT, AL_GBE_FUNC_ENABLE);
+}
+
+static inline AL_VOID AlGbe_ll_ClrCtxDescErrorIntr(AL_REG BaseAddr)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__DMA_CH0_STATUS__OFFSET, GBE__DMA_CH0_STATUS__CDE__SHIFT, AL_GBE_FUNC_ENABLE);
 }
 
 static inline AL_VOID AlGbe_ll_SetDescTdes0(AL_REG BaseAddr, AL_U16 RingLen)

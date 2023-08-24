@@ -7,9 +7,16 @@ extern "C" {
 
 #include "al_gbe_dev.h"
 
+typedef AL_VOID (*AL_GBE_TxDoneCallBack)(AL_VOID *CallbackRef);
+typedef AL_VOID (*AL_GBE_RxDoneCallBack)(AL_VOID *CallbackRef);
+
+
 typedef struct
 {
-    AL_GBE_DevStruct    *Dev;
+    AL_GBE_DevStruct            *Dev;
+
+    AL_GBE_TxDoneCallBack       TxDoneCallBack;
+    AL_GBE_RxDoneCallBack       RxDoneCallBack;
 
 #if 0
     AL_Mutex                     TxLock;
@@ -21,6 +28,9 @@ typedef struct
 
 AL_S32 AlGbe_Hal_Init(AL_GBE_HalStruct *Handle, AL_U32 DevId, AL_GBE_InitStruct *InitConfig,
                       AL_GBE_MacDmaConfigStruct *MacDmaConfig, AL_GBE_EventCallBack Callback);
+
+AL_S32 AlGbe_Hal_RegisterIntrHandlerCallBack(AL_GBE_HalStruct *Handle, AL_GBE_IntrStatusEnum IntrId,
+                                             void *CallBackHandler);
 
 AL_S32 AlGbe_Hal_ConfigRxDescBuffer(AL_GBE_HalStruct *Handle, AL_U32 DescIndex, AL_U8 *Buffer1Addr, AL_U8 *Buffer2Addr);
 

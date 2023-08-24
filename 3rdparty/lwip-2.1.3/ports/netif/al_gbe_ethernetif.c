@@ -76,7 +76,6 @@ static struct pbuf *low_level_input(struct netif *netif)
 
         custom_pbuf  = (struct pbuf_custom*)LWIP_MEMPOOL_ALLOC(RX_POOL);
         if (custom_pbuf == NULL) {
-            while(1);
             return NULL;
         }
 
@@ -89,7 +88,7 @@ static struct pbuf *low_level_input(struct netif *netif)
     return p;
 }
 
-void HAL_ETH_TxDoneCallback()
+void AlGbe_TxDoneCallback(void *CallbackRef)
 {
 #if !NO_SYS
     rt_interrupt_enter();
@@ -98,7 +97,7 @@ void HAL_ETH_TxDoneCallback()
 #endif
 }
 
-void HAL_ETH_RxDoneCallback()
+void AlGbe_RxDoneCallback(void *CallbackRef)
 {
 #if !NO_SYS
     rt_interrupt_enter();
@@ -107,7 +106,7 @@ void HAL_ETH_RxDoneCallback()
 #endif
 }
 
-void HAL_ETH_TxFreeCallback(uint32_t * buff)
+void AlGbe_TxFreeCallback(void *buff)
 {
     pbuf_free((struct pbuf *)buff);
 }
@@ -301,6 +300,10 @@ err_t low_level_init(struct netif *netif)
     {
         AlGbe_Hal_ConfigRxDescBuffer(&GbeHandle, idx, RxBuffTab[idx], NULL);
     }
+
+    AlGbe_Hal_RegisterIntrHandlerCallBack(&GbeHandle, AL_GBE_INTR_TX_COMPLETE, AlGbe_TxDoneCallback);
+    AlGbe_Hal_RegisterTxFreeCallBack(&GbeHandle, AlGbe_TxFreeCallback);
+    AlGbe_Hal_RegisterIntrHandlerCallBack(&GbeHandle, AL_GBE_INTR_RX_COMPLETE, AlGbe_RxDoneCallback);
 
     /* Initialize the RX POOL */
     LWIP_MEMPOOL_INIT(RX_POOL);

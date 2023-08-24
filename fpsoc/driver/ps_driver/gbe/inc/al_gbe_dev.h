@@ -164,10 +164,21 @@ typedef struct
     AL_U32                          RxBuffLen;
 } AL_GBE_InitStruct;
 
+typedef void (*AL_GBE_TxFreeCallback)(AL_VOID *Buffer);
+
 typedef enum
 {
-  AL_GBE_EVENT_FATAL_BUS_ERROR    = 0x0,
-
+    AL_GBE_EVENT_FATAL_BUS_ERROR        = 0x0,
+    AL_GBE_EVENT_TX_DONE                = (0x01 << 0),
+    AL_GBE_EVENT_RX_DONE                = (0x01 << 1),
+    AL_GBE_EVENT_TX_STOP                = (0x01 << 2),
+    AL_GBE_EVENT_TX_BUFFER_UNAVAILABLE  = (0x01 << 3),
+    AL_GBE_EVENT_RX_BUFFER_UNAVAILABLE  = (0x01 << 4),
+    AL_GBE_EVENT_RX_STOP                = (0x01 << 5),
+    AL_GBE_EVENT_RX_WATCHDOG_TIMEOUT    = (0x01 << 6),
+    AL_GBE_EVENT_EARLY_TX               = (0x01 << 7),
+    AL_GBE_EVENT_EARLY_RX               = (0x01 << 8),
+    AL_GBE_EVENT_CTX_DESC_ERROR         = (0x01 << 9),
 } AL_GBE_EventIdEnum;
 
 typedef struct
@@ -176,7 +187,7 @@ typedef struct
     AL_U32                  EventData;
 } AL_GBE_EventStruct;
 
-typedef AL_VOID (*AL_GBE_EventCallBack)(AL_GBE_EventStruct *GbetEvent, AL_VOID *CallbackRef);
+typedef AL_VOID (*AL_GBE_EventCallBack)(AL_GBE_EventStruct *GbeEvent, AL_VOID *CallbackRef);
 
 typedef enum
 {
@@ -194,6 +205,7 @@ typedef struct
 
     AL_GBE_TxDescListStruct     TxDescList;
     AL_GBE_RxDescListStruct     RxDescList;
+    AL_GBE_TxFreeCallback       TxFreeCallback;
 
     AL_GBE_EventCallBack        EventCallBack;
     AL_VOID                     *EventCallBackRef;

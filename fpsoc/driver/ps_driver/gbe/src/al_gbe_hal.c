@@ -7,7 +7,22 @@ AL_GBE_DevStruct AL_GBE_DevInstance[AL_GBE_NUM_INSTANCE];
 
 static AL_VOID AlGbe_DefEventCallBack(AL_GBE_EventStruct *GbeEvent, void *CallbackRef)
 {
+    AL_GBE_HalStruct *Handle = (AL_GBE_HalStruct *)CallbackRef;
 
+    switch (GbeEvent->Event) {
+        case AL_GBE_EVENT_TX_DONE:
+        case AL_GBE_EVENT_TX_BUFFER_UNAVAILABLE:
+        Handle->TxDoneCallBack(CallbackRef);
+        break;
+
+        case AL_GBE_EVENT_RX_DONE:
+        case AL_GBE_EVENT_RX_BUFFER_UNAVAILABLE:
+        Handle->RxDoneCallBack(CallbackRef);
+        break;
+
+        default:
+        break;
+    }
 }
 
 static AL_S32 AlGbe_Hal_WaitTxDoneOrTimeout(AL_GBE_HalStruct *Handle, AL_U32 Timeout)
@@ -58,6 +73,46 @@ AL_S32 AlGbe_Hal_Init(AL_GBE_HalStruct *Handle, AL_U32 DevId, AL_GBE_InitStruct 
     }
 
     AlIntr_RegHandler(Handle->Dev->HwConfig.IntrNum, AL_NULL, AlGbe_Dev_IntrHandler, Handle->Dev);
+
+    AL_GBE_HAL_UNLOCK(Handle);
+
+    return AL_OK;
+}
+
+AL_S32 AlGbe_Hal_RegisterIntrHandlerCallBack(AL_GBE_HalStruct *Handle, AL_GBE_IntrStatusEnum IntrId,
+                                             void *CallBackHandler)
+{
+    AL_S32 Ret = AL_OK;
+    if (Handle == AL_NULL || CallBackHandler == AL_NULL) {
+        return AL_GBE_ERR_ILLEGAL_PARAM;
+    }
+
+    switch (IntrId) {
+    case AL_GBE_INTR_TX_COMPLETE:
+        Handle->TxDoneCallBack = ((AL_GBE_TxDoneCallBack)(void *)CallBackHandler);
+        break;
+
+    case AL_GBE_INTR_RX_COMPLETE:
+        Handle->RxDoneCallBack = ((AL_GBE_RxDoneCallBack)(void *)CallBackHandler);
+        break;
+
+    default:
+        Ret = AL_GBE_ERR_ILLEGAL_PARAM;
+        break;
+    }
+
+    return Ret;
+}
+
+AL_S32 AlGbe_Hal_RegisterTxFreeCallBack(AL_GBE_HalStruct *Handle, void *CallBackHandler)
+{
+    if (Handle == AL_NULL || CallBackHandler == AL_NULL) {
+        return AL_GBE_ERR_ILLEGAL_PARAM;
+    }
+
+    AL_GBE_HAL_LOCK(Handle);
+
+    Handle->Dev->TxFreeCallback = CallBackHandler;
 
     AL_GBE_HAL_UNLOCK(Handle);
 
