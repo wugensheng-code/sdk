@@ -5,7 +5,7 @@
  *      Author: qsxu
  */
 
-#include <ps_init.h>
+//#include <ps_init.h>
 #include <stdio.h>
 
 #include "demosoc.h"
@@ -52,10 +52,10 @@ uint32_t AlFsbl_Initialize(AlFsblInfo *FsblInstancePtr)
 	}
 
 	/// ps init
-	Status = ps_init();
-	if(Status != ALFSBL_SUCCESS) {
-		goto END;
-	}
+//	Status = ps_init();
+//	if(Status != ALFSBL_SUCCESS) {
+//		goto END;
+//	}
 
 	/// tcm ecc init if required
 	Status = AlFsbl_TcmInit(FsblInstancePtr);

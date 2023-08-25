@@ -29,7 +29,8 @@ uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE]__attribute__((aligned(4))) = {0};
 AlFsblInfo FsblInstance = {0x00U, 0, 0, 0};
 SecureInfo FsblSecInfo = {0};
 
-extern int soc_platform_init();
+//extern int soc_platform_init();
+extern int Soc_PlatInit();
 
 #define SIMU_PASS (0x600d600d)
 #define SIMU_FAIL (0x0bad0bad)
@@ -65,7 +66,8 @@ int main(void)
     REG32(0xf88030c4) = 3;
     REG32(0xf8803414) = 1;
 
-    (void)soc_platform_init();
+//    (void)soc_platform_init();
+	Soc_PlatInit();
 
 	while (FsblStage <= ALFSBL_STAGE_DFT) {
 		switch (FsblStage) {

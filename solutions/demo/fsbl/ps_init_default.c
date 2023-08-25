@@ -5,10 +5,9 @@
  *      Author: xuqingsong
  */
 
-#include <ps_init.h>
 #include <stdio.h>
 
-uint32_t __attribute__((weak)) ps_init(void)
+int __attribute__((weak)) Soc_PlatInit(void)
 {
 	printf("Default ps init\r\n");
 	return 0;
