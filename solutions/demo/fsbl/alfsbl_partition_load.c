@@ -29,11 +29,12 @@ static uint32_t AlFsbl_BitstreamDataTransfer(AlFsblInfo *FsblInstancePtr, Secure
 		                                     uint32_t PartitionIdx, uint32_t BufferAddr, uint32_t BlockSizeMax);
 
 
-static uint32_t AlFsbl_CheckPlInitDone(void);
+static __attribute__((noinline)) uint32_t AlFsbl_CheckPlInitDone(void);
 static uint32_t ALFsbl_BitStreamProgDone(void);
 
 static void     AlFsbl_PrintPartitionHeaderInfo(AlFsbl_PartitionHeader *PtHdr);
 
+extern uint8_t  ReadBuffer[READ_BUFFER_SIZE];
 extern SecureInfo FsblSecInfo;
 extern uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE];
 
@@ -271,19 +272,22 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 	FsblSecInfo.DataLength = PtHdr->PartitionLen;
 
 	/// check load and exec address
-	if(AL9000_DDR1_BASE_ADDR <= PtHdr->DestLoadAddr && PtHdr->DestLoadAddr < AL9000_DDR1_BASE_ADDR + AL9000_DDR1_BYTE_LENGTH) {
+	if((AL9000_DDR1_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL9000_DDR1_BASE_ADDR + AL9000_DDR1_BYTE_LENGTH)) {
 		// correct, do nothing
 	}
-	else if(AL9000_DDR2_BASE_ADDR <= PtHdr->DestLoadAddr && PtHdr->DestLoadAddr < AL9000_DDR2_BASE_ADDR + AL9000_DDR2_BYTE_LENGTH) {
+	else if((AL9000_DDR2_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL9000_DDR2_BASE_ADDR + AL9000_DDR2_BYTE_LENGTH)) {
 		// correct, do nothing
 	}
-	else if(AL9000_RPU_ITCM_BASE_ADDR <= PtHdr->DestLoadAddr && PtHdr->DestLoadAddr < AL9000_RPU_ITCM_BASE_ADDR + AL9000_RPU_ITCM_BYTE_LENGTH) {
+	else if((AL9000_RPU_ITCM_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL9000_RPU_ITCM_BASE_ADDR + AL9000_RPU_ITCM_BYTE_LENGTH)) {
 		// correct, do nothing
 	}
-	else if(AL9000_RPU_DTCM_BASE_ADDR <= PtHdr->DestLoadAddr && PtHdr->DestLoadAddr < AL9000_RPU_DTCM_BASE_ADDR + AL9000_RPU_ITCM_BYTE_LENGTH) {
+	else if((AL9000_RPU_DTCM_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL9000_RPU_DTCM_BASE_ADDR + AL9000_RPU_ITCM_BYTE_LENGTH)) {
 		// correct, do nothing
 	}
-	else if(AL9000_OCM_BASE_ADDR <= PtHdr->DestLoadAddr && PtHdr->DestLoadAddr < AL9000_OCM_BASE_ADDR + AL9000_OCM_BYTE_LENGTH) {
+	else if((AL9000_OCM_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL9000_OCM_BASE_ADDR + AL9000_OCM_BYTE_LENGTH)) {
+		// correct, do nothing
+	}
+	else if ((PtHdr->DestLoadAddr == CSU_PCAP_WR_STREAM) || (PtHdr->DestLoadAddr == CSU_PCAP_CSULOCAL_WR_STREAM)) {
 		// correct, do nothing
 	}
 	else {
@@ -293,16 +297,16 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 	if(PtHdr->DestExecAddr == 0xFFFFFFFF) {
 		// correct, do nothing, it is a none handoff ps partition
 	}
-	else if(AL9000_DDR1_BASE_ADDR <= PtHdr->DestExecAddr && PtHdr->DestExecAddr < AL9000_DDR1_BASE_ADDR + AL9000_DDR1_BYTE_LENGTH) {
+	else if((AL9000_DDR1_BASE_ADDR <= PtHdr->DestExecAddr) && (PtHdr->DestExecAddr < AL9000_DDR1_BASE_ADDR + AL9000_DDR1_BYTE_LENGTH)) {
 		// correct, do nothing
 	}
-	else if(AL9000_DDR2_BASE_ADDR <= PtHdr->DestExecAddr && PtHdr->DestExecAddr < AL9000_DDR2_BASE_ADDR + AL9000_DDR2_BYTE_LENGTH) {
+	else if((AL9000_DDR2_BASE_ADDR <= PtHdr->DestExecAddr) && (PtHdr->DestExecAddr < AL9000_DDR2_BASE_ADDR + AL9000_DDR2_BYTE_LENGTH)) {
 		// correct, do nothing
 	}
-	else if(AL9000_RPU_ITCM_BASE_ADDR <= PtHdr->DestExecAddr && PtHdr->DestExecAddr < AL9000_RPU_ITCM_BASE_ADDR + AL9000_RPU_ITCM_BYTE_LENGTH) {
+	else if((AL9000_RPU_ITCM_BASE_ADDR <= PtHdr->DestExecAddr) && (PtHdr->DestExecAddr < AL9000_RPU_ITCM_BASE_ADDR + AL9000_RPU_ITCM_BYTE_LENGTH)) {
 		// correct, do nothing
 	}
-	else if(AL9000_OCM_BASE_ADDR <= PtHdr->DestExecAddr && PtHdr->DestExecAddr < AL9000_OCM_BASE_ADDR + AL9000_OCM_BYTE_LENGTH) {
+	else if((AL9000_OCM_BASE_ADDR <= PtHdr->DestExecAddr) && (PtHdr->DestExecAddr < AL9000_OCM_BASE_ADDR + AL9000_OCM_BYTE_LENGTH)) {
 		// correct, do nothing
 	}
 	else {
@@ -494,11 +498,10 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		ocmptr++;
 	}
 
-	printf("Update handoff values\r\n");
-
 
 	/// update handoff values
 	if((PtHdr->DestExecAddr) != 0xFFFFFFFFU) {
+		printf("Update handoff values\r\n");
 		HandoffNum = FsblInstancePtr->HandoffCpuNum;
 		FsblInstancePtr->HandoffValues[HandoffNum].CpuSettings = DestCpu;
 		FsblInstancePtr->HandoffValues[HandoffNum].HandoffAddress = PtHdr->DestExecAddr;
@@ -529,6 +532,10 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	PtHdr = &(FsblInstancePtr->ImageHeader.PartitionHeader[PartitionIdx]);
 	ImageOffsetAddress = FsblInstancePtr->ImageOffsetAddress;
 
+	/// pcap reset
+	printf("PCAP RESET\r\n");
+	REG32(CSU_PCAP_RESET) = 0;
+	REG32(CSU_PCAP_RESET) = 1;
 
 	printf("Set PCAP not enable\r\n");
 	REG32(CSU_PCAP_ENABLE) = 0;
@@ -658,7 +665,9 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	}
 
 	/// temp test: pl init and done:
-	printf("cfg state: %08x\r\n", REG32(CRP_CFG_STATE));
+	printf("cfg state before progdone: %08x\r\n", REG32(CRP_CFG_STATE));
+
+
 
 	/// program_done
 	Status = ALFsbl_BitStreamProgDone();
@@ -667,7 +676,7 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	}
 
 	/// temp test: pl init and done:
-	printf("cfg state: %08x\r\n", REG32(CRP_CFG_STATE));
+	printf("cfg state after progdone: %08x\r\n", REG32(CRP_CFG_STATE));
 
 	/// check cfg state after bitstream loaded
 	if((REG32(CRP_CFG_STATE)) != 7) {
@@ -730,7 +739,9 @@ static uint32_t AlFsbl_BitstreamDataTransfer(AlFsblInfo *FsblInstancePtr, Secure
 
 	while(Length != 0) {
 		/// data transfer
-		printf("transfer data, Block num: %d\r\n", BlockCnt);
+		if(((BlockCnt + 1) % 100) == 0) {
+			printf("Blk num: %d\r\n", BlockCnt);
+		}
 
 		if(DestAddr == CSU_PCAP_WR_STREAM) {
 			/// transfer to pcap, only when boot device is xip-qspi and not hash only
@@ -766,7 +777,7 @@ static uint32_t AlFsbl_BitstreamDataTransfer(AlFsblInfo *FsblInstancePtr, Secure
 			/// step 3: if hash enabled without enc, calculate hash
 			if((pSecureInfo->EncType == OP_ENCRYPT_NONE) &&
 			   (pSecureInfo->HashType != OP_HASH_NONE)) {
-				printf("calculate hash\r\n");
+				//printf("calculate hash\r\n");
 				pSecureInfo->HashDataAddr = BlockDestAddr;
 				Status = AlFsbl_Hash(pSecureInfo);
 				if(Status != ALFSBL_SUCCESS) {
@@ -793,25 +804,40 @@ END:
 
 
 
-#define  RPU_MTIMER_COUNTER64     (0x68020000)
-#define  RPU_MTIMER_COUNTER64_LOW (0x68020000)
-#define  RPU_MTIMER_COUNTER64_HI  (0x68020004)
+#define  RPU_MTIMER_COUNTER64     (0x68030000)
+#define  RPU_MTIMER_COUNTER64_LOW (0x68030000)
+#define  RPU_MTIMER_COUNTER64_HI  (0x68030004)
 
 uint32_t AlFsbl_CheckPlInitDone(void)
 {
 	uint32_t Status = ALFSBL_SUCCESS;
-	volatile uint32_t StartTime;
+	volatile uint64_t StartTime;
+	volatile uint64_t CurrTime;
 	uint32_t InitDone;
 	uint32_t cnt;
 
-	StartTime = REG32(RPU_MTIMER_COUNTER64_LOW);
+#if __riscv
+	StartTime = REG32(RPU_MTIMER_COUNTER64);
+#else
+	StartTime = get_SystickTimer();
+	printf("start time: %x\n", StartTime);
+#endif
 
 	do {
 		/// if pl init done not asserted in 90 seconds, report an error
-		if((REG32(RPU_MTIMER_COUNTER64_LOW) - StartTime ) > (90 * 10 * 1000 * 1000)) {
+#if __riscv
+		if((REG32(RPU_MTIMER_COUNTER64) - StartTime ) > (90 * 10 * 1000 * 1000)) {
 			Status = ALFSBL_ERROR_PL_INIT_TIMEOUT;
 			goto END;
 		}
+#else
+		CurrTime = get_SystickTimer();
+		printf("current time: %x\n", CurrTime);
+		if((CurrTime - StartTime) > (90 * 2 * 1000 * 1000)) {
+			Status = ALFSBL_ERROR_PL_INIT_TIMEOUT;
+			goto END;
+		}
+#endif
 
 		InitDone = REG32(CRP_CFG_STATE) & CRP_CFG_STATE_MSK_PL2PS_INITN;
 
@@ -837,7 +863,7 @@ uint32_t ALFsbl_BitStreamProgDone(void)
 
 	Status = AlFsbl_CsuDmaCopy(
 			     (uint32_t)(&BitStreamNoop),
-				 CSU_PCAP_CSULOCAL_WR_STREAM,
+				 CSU_PCAP_WR_STREAM,
 				 8192,   /// 2048 words of noop
 				 (CSUDMA_DST_NOINCR | CSUDMA_SRC_NOINCR));
 

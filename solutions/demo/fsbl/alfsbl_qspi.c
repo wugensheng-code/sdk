@@ -132,8 +132,10 @@ uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
 uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
 {
 	QspiParams qspi_params;
+	printf("qspi 24 init\r\n");	
 	Csu_QspiInit(&qspi_params);
 
+#if 0
 	//QSPI_FLASH_SR_BIT_SET(9, 1);
     Csu_QspiSetMode(QSPI_WIDTH_X1, QSPI_ADDR_24);
 
@@ -143,8 +145,8 @@ uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
 	g_pdev->regs->SPI_CTRLR0 = (g_pdev->regs->SPI_CTRLR0) | (1 << 30);
 
     Qspi_Enable(g_pdev);
-
-    *pBlockSizeMax = 512;   // this is only for simulation test
+#endif
+    *pBlockSizeMax = 1024 * 8;   // this is only for simulation test
 
     printf("flashID:%x\r\n", qspi_params.flashID);
     printf("flashSize:0x%x\r\n", qspi_params.flashSize);
@@ -158,7 +160,7 @@ uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Le
 {
 	uint32_t ret;
 #ifdef QSPI_XIP_THROUTH_CSU_DMA
-	printf("xip mode\r\n");
+//	printf("xip mode\r\n");
 	if(pSecureInfo != NULL) {
 		pSecureInfo->InputAddr  = SrcAddress + QSPI_XIP_BASEADDR;
 		pSecureInfo->OutputAddr = DestAddress;
@@ -174,17 +176,9 @@ uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Le
 				CSUDMA_DST_INCR | CSUDMA_SRC_INCR);
 	}
 #else
-	printf("none xip mode\r\n");
+//	printf("qspi 24 none xip mode\r\n");
+    ret = Csu_QspiRead(SrcAddress, (uint8_t *)(DestAddress), Length);
 
-#ifndef SIMU_AL9000_DV
-	ret = Csu_QspiRead(SrcAddress, (uint8_t *)(DestAddress), Length);
-#else
-	ret = AlFsbl_CsuDmaCopy(
-			SrcAddress + QSPI_XIP_BASEADDR,
-			DestAddress,
-			Length,
-			CSUDMA_DST_INCR | CSUDMA_SRC_INCR);
-#endif
 
 #endif
 

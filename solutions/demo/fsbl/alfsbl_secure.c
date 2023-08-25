@@ -84,7 +84,7 @@ void TriggerSecInterrupt(void)
 void MsgReceive(void)
 {
 	MsgFlag = 1;
-	printf("ack\n");
+//	printf("ack\n");
 	return;
 }
 
@@ -117,7 +117,7 @@ uint32_t SecureIrqInit(void)
 uint32_t CheckAckValid(AckDef *pAck)
 {
 	uint32_t Status = 0;
-	printf("Check CSU ACK\n");
+//	printf("Check CSU ACK\n");
 	while(MsgFlag == 0) {
 		/// wait for ack interrupt
 	}
@@ -131,7 +131,6 @@ uint32_t CheckAckValid(AckDef *pAck)
 	else {
 		pAck->Cmd = 0;   /// clear ack
 	}
-	printf("ack: %02x\r\n", pAck->Option0.Low);
 
 	if(pAck->Option0.Low == OP_DMA_DONE) {
 		goto END;
@@ -155,7 +154,7 @@ uint32_t CheckAckValid(AckDef *pAck)
 		goto END;
 	}
 	else {
-		printf("Invalid ACK Command!\r\n");
+		printf("Invalid ACK Command : %02x\r\n", pAck->Option0.Low);
 		Status = SEC_ERROR_INVALID_CSU_ACK;
 		goto END;
 	}
