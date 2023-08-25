@@ -22,7 +22,7 @@ void __attribute__((noinline)) AlFsbl_HandoffExit(uint64_t HandoffAddress)
 	:[src]"r"(HandoffAddress)
 	);
 
-#elif defined AARCH_64
+#elif (defined AARCH_64 || defined aarch64)
 	__asm__ __volatile__("mov x30, %0"::"r"(HandoffAddress):"x30");/* move the destination address into x30 register */
 	// __asm__ __volatile__("tlbi ALLE3":::);/* invalidate All E3 translation tables */
 	// __asm__ __volatile__("ic IALLU":::);/* invalidate I Cache All to PoU, Inner Shareable */

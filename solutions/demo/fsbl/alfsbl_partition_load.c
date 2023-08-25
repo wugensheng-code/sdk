@@ -14,6 +14,7 @@
 #include "alfsbl_data.h"
 #include "alfsbl_boot.h"
 #include "alfsbl_partition_load.h"
+#include "al_systimer.h"
 
 extern uint8_t  ReadBuffer[READ_BUFFER_SIZE];
 
@@ -803,45 +804,27 @@ END:
 
 
 
-
-#define  RPU_MTIMER_COUNTER64     (0x68030000)
-#define  RPU_MTIMER_COUNTER64_LOW (0x68030000)
-#define  RPU_MTIMER_COUNTER64_HI  (0x68030004)
-
 uint32_t AlFsbl_CheckPlInitDone(void)
 {
 	uint32_t Status = ALFSBL_SUCCESS;
 	volatile uint64_t StartTime;
 	volatile uint64_t CurrTime;
+	uint64_t TimerFreq;
 	uint32_t InitDone;
 	uint32_t cnt;
 
-#if __riscv
-	StartTime = REG32(RPU_MTIMER_COUNTER64);
-#else
-	StartTime = get_SystickTimer();
-	printf("start time: %x\n", StartTime);
-#endif
+	TimerFreq = AlSys_GetTimerFreq();
+	StartTime = AlSys_GetTimerTick();
 
 	do {
-		/// if pl init done not asserted in 90 seconds, report an error
-#if __riscv
-		if((REG32(RPU_MTIMER_COUNTER64) - StartTime ) > (90 * 10 * 1000 * 1000)) {
+		CurrTime =  AlSys_GetTimerTick();
+		if((CurrTime - StartTime) > TimerFreq * INIT_DONE_WAIT_SECS) {
 			Status = ALFSBL_ERROR_PL_INIT_TIMEOUT;
 			goto END;
 		}
-#else
-		CurrTime = get_SystickTimer();
-		printf("current time: %x\n", CurrTime);
-		if((CurrTime - StartTime) > (90 * 2 * 1000 * 1000)) {
-			Status = ALFSBL_ERROR_PL_INIT_TIMEOUT;
-			goto END;
-		}
-#endif
-
 		InitDone = REG32(CRP_CFG_STATE) & CRP_CFG_STATE_MSK_PL2PS_INITN;
 
-	} while(InitDone != CRP_CFG_STATE_MSK_PL2PS_INITN);
+	}while(InitDone != CRP_CFG_STATE_MSK_PL2PS_INITN);
 
 END:
 	return Status;

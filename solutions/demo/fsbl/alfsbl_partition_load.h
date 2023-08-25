@@ -18,7 +18,7 @@ extern "C" {
 #include "alfsbl_err_code.h"
 #include <alfsbl_secure.h>
 
-
+#define INIT_DONE_WAIT_SECS (90)
 
 
 uint32_t AlFsbl_PartitionLoad(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx);

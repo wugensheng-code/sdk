@@ -27,7 +27,7 @@ ENTRY( _start )
 
 MEMORY
 {
-  ilm (rxa!w) : ORIGIN = 0x61000000, LENGTH = 128K    /*for 9000 dv simulation*/
+  ilm (rxa!w) : ORIGIN = 0x61000000, LENGTH = 256K    /*for 9000 dv simulation*/
 
 }
 
