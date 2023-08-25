@@ -34,8 +34,8 @@ typedef struct
 /************************** Variable Definitions *****************************/
 
 /************************** Function Prototypes ******************************/
-AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct *Handle, AL_CAN_InitStruct *InitConfig, AL_CAN_CallBackStruct *CallBack,
-                      AL_U32 DevId);
+AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct *Handle, AL_U32 DevId, AL_CAN_InitStruct *InitConfig,
+                      AL_CAN_CallBackStruct *CallBack);
 
 AL_S32 AlCan_Hal_SendFrame(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame);
 

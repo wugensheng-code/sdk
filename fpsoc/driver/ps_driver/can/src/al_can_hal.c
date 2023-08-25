@@ -54,6 +54,8 @@ static AL_VOID AlCan_Hal_DefEventCallBack(AL_CAN_EventStruct *Event, AL_VOID *Ca
 {
     AL_CAN_HalStruct *Handle = (AL_CAN_HalStruct *)CallBackRef;
 
+    AL_ASSERT((Event != AL_NULL) & (CallBackRef != AL_NULL), AL_CAN_ERR_NULL_PTR);
+
     switch (Event->EventId)
     {
     case AL_CAN_EVENT_SEND_READY:
@@ -92,16 +94,14 @@ static AL_VOID AlCan_Hal_DefEventCallBack(AL_CAN_EventStruct *Event, AL_VOID *Ca
  *          - AL_OK
  * @note
 */
-AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct *Handle, AL_CAN_InitStruct *InitConfig, AL_CAN_CallBackStruct *CallBack,
-                      AL_U32 DevId)
+AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct *Handle, AL_U32 DevId, AL_CAN_InitStruct *InitConfig,
+                      AL_CAN_CallBackStruct *CallBack)
 {
     AL_S32 Ret = AL_OK;
     AL_CAN_HwConfigStruct *HwConfig;
     AL_CAN_CallBackStruct EventCallBack;
 
-    if (Handle == AL_NULL) {
-        return AL_CAN_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Handle != AL_NULL, AL_CAN_ERR_NULL_PTR);
 
     /* 1. look up hardware config */
     HwConfig = AlCan_Dev_LookupConfig(DevId);
@@ -134,8 +134,6 @@ AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct *Handle, AL_CAN_InitStruct *InitConfig, A
     /* replace intr handler reference function with al_intr.h api */
     if (Handle->Dev->Config.RunMode & (AL_CAN_RUN_INTR_DMA | AL_CAN_RUN_INTR)) {
         AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlCan_Dev_IntrHandler, Handle->Dev);
-        /* Already call in AlIntr_RegHandler */
-        // AlIntr_SetInterrupt(HwConfig->IntrId, AL_FUNC_ENABLE);
     }
 
     Ret = Al_OSAL_Lock_Init(&Handle->TxLock, "Can-TxLock");
@@ -149,8 +147,19 @@ AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct *Handle, AL_CAN_InitStruct *InitConfig, A
     }
 
     Al_OSAL_Mb_Init(&Handle->TxEventQueue[CAN_BLOCK], "Can-TxDone");
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
     Al_OSAL_Mb_Init(&Handle->RxEventQueue, "Can-RxNoEmpty");
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
     Al_OSAL_Mb_Init(&Handle->TxEventQueue[CAN_NONBLOCK], "Can-TxDone");
+    if (Ret != AL_OK) {
+        return Ret;
+    }
 
     return Ret;
 }
@@ -167,9 +176,7 @@ AL_S32 AlCan_Hal_SendFrame(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
 {
     AL_S32 Ret = AL_OK;
 
-    if (Handle == AL_NULL) {
-        return AL_CAN_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Handle != AL_NULL) & (Frame != AL_NULL), AL_CAN_ERR_NULL_PTR);
 
     Ret = Al_OSAL_Lock_Take(&Handle->TxLock, 0);
     if (Ret != AL_OK) {
@@ -198,9 +205,7 @@ AL_S32 AlCan_Hal_RecvFrame(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
     AL_S32 Ret = AL_OK;
     AL_CAN_EventStruct Event = {0};
 
-    if (Handle == AL_NULL) {
-        return AL_CAN_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Handle != AL_NULL) & (Frame != AL_NULL), AL_CAN_ERR_NULL_PTR);
 
     Ret = Al_OSAL_Lock_Take(&Handle->RxLock, 0);
     if (Ret != AL_OK) {
@@ -240,9 +245,7 @@ AL_S32 AlCan_Hal_SendFrameBlock(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Fr
     AL_S32 Ret = AL_OK;
     AL_CAN_EventStruct Event = {0};
 
-    if (Handle == AL_NULL) {
-        return AL_CAN_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Handle != AL_NULL) & (Frame != AL_NULL), AL_CAN_ERR_NULL_PTR);
 
     Ret = Al_OSAL_Lock_Take(&Handle->TxLock, Timeout);
     if (Ret != AL_OK) {
@@ -282,9 +285,7 @@ AL_S32 AlCan_Hal_RecvFrameBlock(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Fr
     AL_S32 Ret = AL_OK;
     AL_CAN_EventStruct Event = {0};
 
-    if (Handle == AL_NULL) {
-        return AL_CAN_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Handle != AL_NULL) & (Frame != AL_NULL), AL_CAN_ERR_NULL_PTR);
 
     Ret = Al_OSAL_Lock_Take(&Handle->RxLock, Timeout);
     if (Ret != AL_OK) {
@@ -324,9 +325,7 @@ AL_S32 AlCan_Hal_RecvFrameDma(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Fram
 {
     AL_S32 Ret = AL_OK;
 
-    if (Handle == AL_NULL) {
-        return AL_CAN_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Handle != AL_NULL) & (Frame != AL_NULL), AL_CAN_ERR_NULL_PTR);
 
     Ret = Al_OSAL_Lock_Take(&Handle->RxLock, 0);
     if (Ret != AL_OK) {
@@ -353,9 +352,7 @@ AL_S32 AlCan_Hal_IoCtl(AL_CAN_HalStruct *Handle, AL_CAN_IoCtlCmdEnum Cmd, AL_VOI
 {
     AL_S32 Ret = AL_OK;
 
-    if (Handle == AL_NULL || Data == AL_NULL) {
-        return AL_CAN_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Handle != AL_NULL) & (Data != AL_NULL), AL_CAN_ERR_NULL_PTR);
 
     Ret = Al_OSAL_Lock_Take(&Handle->TxLock, 0);
     if (Ret != AL_OK) {
@@ -364,6 +361,7 @@ AL_S32 AlCan_Hal_IoCtl(AL_CAN_HalStruct *Handle, AL_CAN_IoCtlCmdEnum Cmd, AL_VOI
 
     Ret = Al_OSAL_Lock_Take(&Handle->RxLock, 0);
     if (Ret != AL_OK) {
+        (AL_VOID)Al_OSAL_Lock_Release(&Handle->TxLock);
         return Ret;
     }
 

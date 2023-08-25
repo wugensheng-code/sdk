@@ -19,12 +19,6 @@ AL_U32 main(AL_VOID)
 #endif
 
 #if CONFIG_CAN_IN_LOOPBACK_TEST
-// while (1)
-// {
-//     // get_SystickTimer();
-//     // asm volatile("mrs x0, CNTPCT_EL0");
-// }
-
     AlCan_Test_InLoopBack();
 #endif
 
@@ -73,7 +67,7 @@ static AL_VOID AlCan_Test_ListenOnly(AL_VOID)
     Config.TransMode    = AL_CAN_TRANS_PTB;
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
-    Ret = AlCan_Hal_Init(&Handle, &Config, AL_NULL, DeviceId);
+    Ret = AlCan_Hal_Init(&Handle, DeviceId, &Config, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init Error:0x%x\r\n", Ret);
     }
@@ -180,7 +174,7 @@ static AL_VOID AlCan_Test_InLoopBack(AL_VOID)
     Config.TransMode    = AL_CAN_TRANS_PTB;
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
-    Ret = AlCan_Hal_Init(&Handle, &Config, AL_NULL, DeviceId);
+    Ret = AlCan_Hal_Init(&Handle, DeviceId, &Config, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init Error:0x%x\r\n", Ret);
     }
@@ -343,7 +337,7 @@ static AL_VOID AlCan_Test_ExLoopBack(AL_VOID)
     Config.TransMode    = AL_CAN_TRANS_PTB;
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
-    Ret = AlCan_Hal_Init(&Handle, &Config, AL_NULL, DeviceId);
+    Ret = AlCan_Hal_Init(&Handle, DeviceId, &Config, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init Error:0x%x\r\n", Ret);
     }
@@ -539,7 +533,7 @@ static AL_VOID AlCan_Test_StdIntr(AL_VOID)
     CallBack.Func = AlCan_Test_EventCallBack;
     CallBack.Ref = &Handle;
 
-    Ret = AlCan_Hal_Init(&Handle, &Config, AL_NULL, DeviceId);
+    Ret = AlCan_Hal_Init(&Handle, DeviceId, &Config, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init Error:0x%x\r\n", Ret);
     }
@@ -644,7 +638,7 @@ static AL_VOID AlCan_Test_FdIntr(AL_VOID)
     CallBack.Func = AlCan_Test_EventCallBack;
     CallBack.Ref = &Handle;
 
-    Ret = AlCan_Hal_Init(&Handle, AL_NULL, AL_NULL, DeviceId);
+    Ret = AlCan_Hal_Init(&Handle, DeviceId, AL_NULL, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init Error:0x%x\r\n", Ret);
     }
@@ -755,7 +749,7 @@ static AL_VOID AlCan_Test_FdStbFifo(AL_VOID)
     Config.TransMode    = AL_CAN_TRANS_STB_FIFO;
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
-    Ret = AlCan_Hal_Init(&Handle, AL_NULL, AL_NULL, DeviceId);
+    Ret = AlCan_Hal_Init(&Handle, DeviceId, AL_NULL, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init Error:0x%x\r\n", Ret);
     }
@@ -891,7 +885,7 @@ static AL_VOID AlCan_Test_FdDmaRecv(AL_VOID)
     Config.TransMode    = AL_CAN_TRANS_PTB;
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
-    Ret = AlCan_Hal_Init(&Handle, &Config, AL_NULL, DeviceId);
+    Ret = AlCan_Hal_Init(&Handle, DeviceId, &Config, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Can hal Init error:0x%x\r\n", Ret);
     }

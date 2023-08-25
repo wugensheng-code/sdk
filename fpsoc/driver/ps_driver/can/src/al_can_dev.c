@@ -98,6 +98,8 @@ static AL_U32 AlCan_Dev_Dlc2LenInByte(AL_CAN_DataLenEnum Dlc)
 */
 static AL_S32 AlCan_Dev_SetCanType(AL_CAN_DevStruct *Dev)
 {
+    AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
+
     switch (Dev->Config.Type) {
     case AL_CAN_TYPE_2_0B:
         AlCan_ll_SetFdEnabled(Dev->BaseAddr, AL_FALSE);
@@ -121,6 +123,8 @@ static AL_S32 AlCan_Dev_SetCanType(AL_CAN_DevStruct *Dev)
 */
 static AL_S32 AlCan_Dev_WaitForOpsMode(AL_CAN_DevStruct *Dev)
 {
+    AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
+
     AL_S32 Ret = AL_OK;
     AL_U32 Timeout = AL_CAN_CHK_TOUT_SET_MODE;
     AL_BOOL State;
@@ -156,6 +160,8 @@ static AL_S32 AlCan_Dev_WaitForOpsMode(AL_CAN_DevStruct *Dev)
 */
 static AL_S32 AlCan_Dev_SetOpsMode(AL_CAN_DevStruct *Dev)
 {
+    AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
+
     AL_S32 Ret = AL_OK;
 
     switch (Dev->Config.OpsMode) {
@@ -191,8 +197,10 @@ static AL_S32 AlCan_Dev_SetOpsMode(AL_CAN_DevStruct *Dev)
  * @return
  * @note
 */
-AL_VOID AlCan_Dev_SetBitRate(AL_CAN_DevStruct *Dev, AL_CAN_BitRateStruct *BitRate)
+AL_S32 AlCan_Dev_SetBitRate(AL_CAN_DevStruct *Dev, AL_CAN_BitRateStruct *BitRate)
 {
+    AL_ASSERT((Dev != AL_NULL) & (BitRate != AL_NULL), AL_CAN_ERR_NULL_PTR);
+
     switch (BitRate->Type)
     {
     case AL_CAN_BIT_S:
@@ -210,6 +218,8 @@ AL_VOID AlCan_Dev_SetBitRate(AL_CAN_DevStruct *Dev, AL_CAN_BitRateStruct *BitRat
     default:
         break;
     }
+
+    return AL_OK;
 }
 
 /**
@@ -219,8 +229,10 @@ AL_VOID AlCan_Dev_SetBitRate(AL_CAN_DevStruct *Dev, AL_CAN_BitRateStruct *BitRat
  * @return
  * @note
 */
-AL_VOID AlCan_Dev_GetBitRate(AL_CAN_DevStruct *Dev, AL_CAN_BitRateStruct *BitRate)
+AL_S32 AlCan_Dev_GetBitRate(AL_CAN_DevStruct *Dev, AL_CAN_BitRateStruct *BitRate)
 {
+    AL_ASSERT((Dev != AL_NULL) & (BitRate != AL_NULL), AL_CAN_ERR_NULL_PTR);
+
     switch (BitRate->Type)
     {
     case AL_CAN_BIT_S:
@@ -238,6 +250,8 @@ AL_VOID AlCan_Dev_GetBitRate(AL_CAN_DevStruct *Dev, AL_CAN_BitRateStruct *BitRat
     default:
         break;
     }
+
+    return AL_OK;
 }
 
 /**
@@ -247,9 +261,12 @@ AL_VOID AlCan_Dev_GetBitRate(AL_CAN_DevStruct *Dev, AL_CAN_BitRateStruct *BitRat
  * @return
  * @note
 */
-AL_VOID AlCan_Dev_SetDefBitRate(AL_CAN_DevStruct *Dev, AL_CAN_DefBitRateStruct *DefBitRate)
+AL_S32 AlCan_Dev_SetDefBitRate(AL_CAN_DevStruct *Dev, AL_CAN_DefBitRateStruct *DefBitRate)
 {
+    AL_ASSERT((Dev != AL_NULL) & (DefBitRate != AL_NULL), AL_CAN_ERR_NULL_PTR);
+
     AL_CAN_BitRateStruct BitRate = AL_CAN_DefBitRateArray[DefBitRate->Index];
+
     BitRate.Type = DefBitRate->Type;
     AlCan_Dev_SetBitRate(Dev, &BitRate);
 
@@ -257,6 +274,8 @@ AL_VOID AlCan_Dev_SetDefBitRate(AL_CAN_DevStruct *Dev, AL_CAN_DefBitRateStruct *
         AlCan_ll_SetSspoff(Dev->BaseAddr, BitRate.TimeSeg1);
         AlCan_ll_SetTdcen(Dev->BaseAddr, AL_TRUE);
     }
+
+    return AL_OK;
 }
 
 /**
@@ -265,8 +284,10 @@ AL_VOID AlCan_Dev_SetDefBitRate(AL_CAN_DevStruct *Dev, AL_CAN_DefBitRateStruct *
  * @return
  * @note
 */
-static AL_VOID AlCan_Dev_SetTransMode(AL_CAN_DevStruct *Dev)
+static AL_S32 AlCan_Dev_SetTransMode(AL_CAN_DevStruct *Dev)
 {
+    AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
+
     switch (Dev->Config.TransMode)
     {
     case AL_CAN_TRANS_PTB:
@@ -285,6 +306,8 @@ static AL_VOID AlCan_Dev_SetTransMode(AL_CAN_DevStruct *Dev)
     default:
         break;
     }
+
+    return AL_OK;
 }
 
 /**
@@ -340,7 +363,6 @@ static AL_VOID AlCan_Dev_RecvFrameHandler(AL_CAN_DevStruct *Dev, AL_U32 IntrStat
         .EventData  = 0
     };
     Dev->EventCallBack.Func(&Event, Dev->EventCallBack.Ref);
-
 }
 
 /**
@@ -487,9 +509,7 @@ AL_VOID AlCan_Dev_IntrHandler(void *Instance)
 */
 AL_S32 AlCan_Dev_RegisterEventCallBack(AL_CAN_DevStruct *Dev, AL_CAN_CallBackStruct *CallBack)
 {
-    if (Dev == AL_NULL || CallBack == AL_NULL) {
-        return AL_CAN_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
 
     if (Dev->EventCallBack.Func != AL_NULL) {
 
@@ -514,9 +534,7 @@ AL_S32 AlCan_Dev_RegisterEventCallBack(AL_CAN_DevStruct *Dev, AL_CAN_CallBackStr
 */
 AL_S32 AlCan_Dev_UnRegisterEventCallBack(AL_CAN_DevStruct *Dev)
 {
-    if (Dev == AL_NULL) {
-        return AL_CAN_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
 
     Dev->EventCallBack.Func = (AL_CAN_EventCallBack)AL_NULL;
 
@@ -531,10 +549,9 @@ AL_S32 AlCan_Dev_UnRegisterEventCallBack(AL_CAN_DevStruct *Dev)
 */
 AL_CAN_HwConfigStruct *AlCan_Dev_LookupConfig(AL_U32 DeviceId)
 {
-    AL_U32 Index;
     AL_CAN_HwConfigStruct *CfgPtr = AL_NULL;
 
-    for (Index = 0; Index < AL_CAN_NUM_INSTANCE; Index++) {
+    for (AL_U32 Index = 0; Index < AL_CAN_NUM_INSTANCE; Index++) {
         if (AlCan_HwConfig[Index].DeviceId == DeviceId) {
             CfgPtr = &AlCan_HwConfig[Index];
             break;
@@ -551,8 +568,10 @@ AL_CAN_HwConfigStruct *AlCan_Dev_LookupConfig(AL_U32 DeviceId)
  * @return
  * @note
 */
-AL_VOID AlCan_Dev_SetReset(AL_CAN_DevStruct *Dev, AL_BOOL IsReset)
+AL_S32 AlCan_Dev_SetReset(AL_CAN_DevStruct *Dev, AL_BOOL IsReset)
 {
+    AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
+
     AlCan_ll_SetCanCtrlReset(Dev->BaseAddr, IsReset);
     AL_CAN_RESET_RELEASE_DELAY;
 
@@ -561,6 +580,8 @@ AL_VOID AlCan_Dev_SetReset(AL_CAN_DevStruct *Dev, AL_BOOL IsReset)
     } else {
         AlCan_Dev_ClrState(Dev, AL_CAN_STATE_RESET);
     }
+
+    return AL_OK;
 }
 
 /**
@@ -576,6 +597,8 @@ AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, AL
 {
     AL_S32 Ret = AL_OK;
     AL_CAN_DefBitRateStruct DefBitRate;
+
+    AL_ASSERT((Dev != AL_NULL) & (HwConfig != AL_NULL), AL_CAN_ERR_NULL_PTR);
 
     Dev->Config     = (InitConfig == AL_NULL) ? AlCan_DefInitConfig : (*InitConfig);
     Dev->BaseAddr   = HwConfig->BaseAddress;
@@ -623,8 +646,10 @@ AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, AL
     return Ret;
 }
 
-static AL_VOID AlCan_Dev_SetSendBusy(AL_CAN_DevStruct *Dev)
+static AL_S32 AlCan_Dev_SetSendBusy(AL_CAN_DevStruct *Dev)
 {
+    AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
+
     AL_CAN_EventStruct Event = {
         .EventId    = AL_CAN_EVENT_SEND_READY,
         .EventData  = 0
@@ -632,6 +657,8 @@ static AL_VOID AlCan_Dev_SetSendBusy(AL_CAN_DevStruct *Dev)
     Dev->EventCallBack.Func(&Event, Dev->EventCallBack.Ref);
 
     AlCan_Dev_SetState(Dev, AL_CAN_STATE_SEND_BUSY);
+
+    return AL_OK;
 }
 
 /**
@@ -648,25 +675,11 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
     AL_U32 DataWordSize;
     AL_U32 i;
 
-    if (Dev == AL_NULL || Frame == AL_NULL) {
-        return AL_CAN_ERR_NULL_PTR;
-    }
-
-    if (Frame->DataLen >= AL_CAN_LEN_MAX) {
-        return AL_CAN_ERR_ILLEGAL_PARAM;
-    }
-
-    if (AlCan_Dev_GetState(Dev, AL_CAN_STATE_RESET)) {
-        return AL_CAN_ERR_STATE_RESET;
-    }
-
-    if (!AlCan_Dev_GetState(Dev, AL_CAN_STATE_READY)) {
-        return AL_CAN_ERR_STATE_NOT_READY;
-    }
-
-    if (AlCan_Dev_GetState(Dev, AL_CAN_STATE_SEND_BUSY)) {
-        return AL_CAN_ERR_BUSY;
-    }
+    AL_ASSERT((Dev != AL_NULL) & (Frame != AL_NULL), AL_CAN_ERR_NULL_PTR);
+    AL_ASSERT(Frame->DataLen < AL_CAN_LEN_MAX, AL_CAN_ERR_ILLEGAL_PARAM);
+    AL_ASSERT(!AlCan_Dev_GetState(Dev, AL_CAN_STATE_RESET), AL_CAN_ERR_STATE_RESET);
+    AL_ASSERT(AlCan_Dev_GetState(Dev, AL_CAN_STATE_READY), AL_CAN_ERR_STATE_NOT_READY);
+    AL_ASSERT(!AlCan_Dev_GetState(Dev, AL_CAN_STATE_SEND_BUSY), AL_CAN_ERR_BUSY);
 
     AlCan_Dev_SetSendBusy(Dev);
 
@@ -723,9 +736,7 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
 */
 AL_S32 AlCan_Dev_DecodeFrame(AL_U32 *BuffAddr, AL_CAN_FrameStruct *Frame)
 {
-    if (BuffAddr == AL_NULL) {
-        return AL_CAN_ERR_NULL_PTR;
-    }
+    AL_ASSERT((BuffAddr != AL_NULL) & (Frame != AL_NULL), AL_CAN_ERR_NULL_PTR);
 
     AL_CAN_FrameCtrlUnion Ctrl;
     AL_U32 IdSize;
@@ -763,21 +774,10 @@ AL_S32 AlCan_Dev_RecvFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
     AL_CAN_FrameCtrlUnion Ctrl;
     AL_U32 DataWordLen;
 
-    if (Dev == AL_NULL || Frame == AL_NULL) {
-        return AL_CAN_ERR_NULL_PTR;
-    }
-
-    if (AlCan_Dev_GetState(Dev, AL_CAN_STATE_RESET)) {
-        return AL_CAN_ERR_STATE_RESET;
-    }
-
-    if (!AlCan_Dev_GetState(Dev, AL_CAN_STATE_READY)) {
-        return AL_CAN_ERR_STATE_NOT_READY;
-    }
-
-    if (AlCan_Dev_GetState(Dev, AL_CAN_STATE_RECV_EMPTY)) {
-        return AL_CAN_ERR_RECV_EMPTY;
-    }
+    AL_ASSERT((Dev != AL_NULL) & (Frame != AL_NULL), AL_CAN_ERR_NULL_PTR);
+    AL_ASSERT(!AlCan_Dev_GetState(Dev, AL_CAN_STATE_RESET), AL_CAN_ERR_STATE_RESET);
+    AL_ASSERT(AlCan_Dev_GetState(Dev, AL_CAN_STATE_READY), AL_CAN_ERR_STATE_NOT_READY);
+    AL_ASSERT(!AlCan_Dev_GetState(Dev, AL_CAN_STATE_RECV_EMPTY), AL_CAN_ERR_RECV_EMPTY);
 
     Ctrl.Reg = AlCan_ll_ReadWordRecvBuffer(Dev->BaseAddr, 1);
 
@@ -815,6 +815,8 @@ AL_S32 AlCan_Dev_RecvFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
 */
 AL_S32 AlCan_Dev_SetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *FilterCfg)
 {
+    AL_ASSERT((Dev != AL_NULL) & (FilterCfg != AL_NULL), AL_CAN_ERR_NULL_PTR);
+
     if (!AlCan_ll_IsAcfenx(Dev->BaseAddr, FilterCfg->FilterIndex)) {
         AlCan_ll_SetAcfenx(Dev->BaseAddr, FilterCfg->FilterIndex, AL_TRUE);
     } else {
@@ -841,7 +843,7 @@ AL_S32 AlCan_Dev_SetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *Filter
 */
 AL_S32 AlCan_Dev_GetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *FilterCfg)
 {
-    AL_U32 Value;
+    AL_ASSERT((Dev != AL_NULL) & (FilterCfg != AL_NULL), AL_CAN_ERR_NULL_PTR);
 
     if (!AlCan_ll_IsAcfenx(Dev->BaseAddr, FilterCfg->FilterIndex)) {
         return AL_CAN_ERR_NULL_PTR;
@@ -849,7 +851,7 @@ AL_S32 AlCan_Dev_GetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *Filter
 
     AlCan_ll_SetAcfadr(Dev->BaseAddr, FilterCfg->FilterIndex);
     AlCan_ll_SetSelmask(Dev->BaseAddr, AL_CAN_SELMASK_ACCEPT_MASK);
-    Value = AlCan_ll_ReadAcodexAmaskx(Dev->BaseAddr);
+    AL_U32 Value = AlCan_ll_ReadAcodexAmaskx(Dev->BaseAddr);
     FilterCfg->MaskValue = Value & CAN_ACF_3_ACF_2_ACF_1_ACF_0_ACODE_AMASK_VALUE_MASK;
     FilterCfg->MaskType = (Value & CAN_ACF_3_ACF_2_ACF_1_ACF_0_ACODE_AMASK_TYPE_MASK) >>
                                     CAN_ACF_3_ACF_2_ACF_1_ACF_0_AIDE_SHIFT;
@@ -868,12 +870,9 @@ AL_S32 AlCan_Dev_GetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *Filter
 */
 AL_S32 AlCan_Dev_GetDecodeError(AL_CAN_DevStruct *Dev)
 {
-    AL_CAN_KoerEnum State;
-    if (Dev == AL_NULL) {
-        return AL_CAN_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
 
-    State = AlCan_ll_GetKoer(Dev->BaseAddr);
+    AL_CAN_KoerEnum State = AlCan_ll_GetKoer(Dev->BaseAddr);
 
     switch (State)
     {
@@ -944,9 +943,7 @@ AL_S32 AlCan_Dev_IoCtl(AL_CAN_DevStruct *Dev, AL_CAN_IoCtlCmdEnum Cmd, AL_VOID *
 {
     AL_S32 Ret = AL_OK;
 
-    if (Dev == AL_NULL) {
-        return AL_CAN_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
 
     switch (Cmd)
     {
@@ -1013,7 +1010,8 @@ AL_S32 AlCan_Dev_IoCtl(AL_CAN_DevStruct *Dev, AL_CAN_IoCtlCmdEnum Cmd, AL_VOID *
 */
 AL_S32 AlCan_Dev_DisplayFrame(AL_CAN_FrameStruct *Frame)
 {
-    AL_U32 DataWordLen;
+    AL_ASSERT(Frame != AL_NULL, AL_CAN_ERR_NULL_PTR);
+
     AL_LOG(AL_LOG_LEVEL_INFO, "-------Recv Frame--------\r\n");
     AL_LOG(AL_LOG_LEVEL_INFO, "| Id: 0x%08x\r\n", Frame->Id);
     AL_LOG(AL_LOG_LEVEL_INFO, "| Dlc: 0x%08x\r\n", Frame->DataLen);
@@ -1033,7 +1031,7 @@ AL_S32 AlCan_Dev_DisplayFrame(AL_CAN_FrameStruct *Frame)
     } else {
         AL_LOG(AL_LOG_LEVEL_INFO, "| Nominal bit rate\r\n");
     }
-    DataWordLen = AlCan_Dev_Dlc2Len(Frame->DataLen);
+    AL_U32 DataWordLen = AlCan_Dev_Dlc2Len(Frame->DataLen);
     AL_LOG(AL_LOG_LEVEL_INFO, "| Data length in word is %d\r\n", DataWordLen);
     for (AL_U32 i = 0; i < DataWordLen; i++) {
         AL_LOG(AL_LOG_LEVEL_INFO, "| Data %02d: 0x%08x\r\n", i, Frame->Data[i]);
