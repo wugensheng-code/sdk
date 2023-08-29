@@ -58,52 +58,10 @@ AlGpio_Hal_Test()
 }
 
 
-AlGpio_Dev_Test()
-{
-    AL_S32 ret = AlGpio_Hal_Init(&GPIO, 0, AL_NULL);
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
-    // 1.1、Test Write and Read DR register (Pin)
-    AlGpio_Dev_WritePin((&GPIO)->Dev, 13, 0x1);
-    printf("GPIO Pin 13 output data value is %x\r\n", AlGpio_Dev_OutputReadPin((&GPIO)->Dev, 13));
-    AlGpio_Dev_WritePin((&GPIO)->Dev, 13, 0x0);
-    printf("GPIO Pin 13 output data value is %x\r\n", AlGpio_Dev_OutputReadPin((&GPIO)->Dev, 13));
-
-    // 1.2、Test Write and Read DR register (Bank)
-    AlGpio_Dev_WriteBank((&GPIO)->Dev, 1, 0xfed0);
-    printf("GPIO Bank 1 output data value is %x\r\n", AlGpio_Dev_OutputRead((&GPIO)->Dev, 1));
-    AlGpio_Dev_WriteBank((&GPIO)->Dev, 1, 0x10);
-    printf("GPIO Bank 1 output data value is %x\r\n", AlGpio_Dev_OutputRead((&GPIO)->Dev, 1));
-
-
-    // 2.1、Test InputRead EOI register (Pin)
-    printf("GPIO Pin 15 input data value is %x\r\n", AlGpio_Hal_InputReadPin(&GPIO,15));
-
-    // 2.2、Test InputRead EOI register (Bank)
-    printf("GPIO Bank 0 input data value is %x\r\n", AlGpio_Dev_InputRead((&GPIO)->Dev, 0));
-
-
-    // 3、Test intr
-    // AlGpio_Dev_IntrCallbackHandler((&GPIO)->Dev, (void *)(&GPIO), (Gpio_Handler)IntrHandler);
-    AlGpio_Dev_SetDirectionPin((&GPIO)->Dev, 0, GPIO_INPUT);
-    AlGpio_Dev_IntrSetTypePin((&GPIO)->Dev, 0, GPIO_INTR_TYPE_LEVEL_LOW);
-    AlGpio_Dev_IntrEnablePin((&GPIO)->Dev, 0);
-
-    while(1);
-
-    return 0;
-}
-
 int main(void)
 {
-#if 1
     printf("[TEST]AlGpio_Hal_Test start\r\n");
     AlGpio_Hal_Test();
-#endif
-
-#if 0
-    printf("[TEST]AlGpio_Dev_Test start\r\n");
-    AlGpio_Dev_Test();
-#endif
 
     return 0;
 }

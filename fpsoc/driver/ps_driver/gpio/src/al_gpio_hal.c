@@ -78,9 +78,6 @@ AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct *Handle, AL_U32 DevId, AL_GPIO_EventCal
     }
 
     (AL_VOID)AlIntr_RegHandler(Handle->Dev->HwConfig.IntrId, AL_NULL, AlGpio_Dev_IntrHandler, Handle->Dev);
-    printf("config BaseAddress is %x\r\n", Handle->Dev->HwConfig.BaseAddress);
-    printf("Interrupt id is %d\r\n", Handle->Dev->HwConfig.IntrId);
-    printf("GPIO0_IRQn is %d\r\n", GPIO0_IRQn);
 
     return Ret;
 }
