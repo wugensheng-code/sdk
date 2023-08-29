@@ -40,7 +40,10 @@ lr	.req	x30
 	msr hcr_el2, x21
 
 	/* (2) set sctlr_el1, disable mmu, LITTLE_ENDIAN */
-	ldr x21, =(SCTLR_ELx_M | SCTLR_EL1_E0E | SCTLR_ELx_EE)
+	mrs x21, sctlr_el1
+	bic x21, x21, SCTLR_ELx_M
+	bic x21, x21, SCTLR_EL1_E0E
+	bic x21, x21, SCTLR_ELx_EE
 	msr sctlr_el1, x21
 
 	/* (3) set spsr_el3, return to el1 or el0*/
