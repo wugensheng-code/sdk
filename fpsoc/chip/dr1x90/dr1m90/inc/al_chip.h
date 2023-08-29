@@ -7,7 +7,7 @@ extern "C" {
 
 #include "al_type.h"
 #include "al_hwcfg.h"
-#include "platform_init.h"
+#include "soc_plat.h"
 
 AL_VOID AlChip_Dr1m90Init(AL_VOID);
 

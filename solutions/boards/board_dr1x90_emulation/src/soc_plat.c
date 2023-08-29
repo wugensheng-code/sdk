@@ -22,13 +22,13 @@ __attribute__((__used__)) void board_init()
 /*
  * generate by FD
 */
-int get_device_version ()
+int Soc_PlatGetDeviceVersion ()
 {
     return AL_OK;
 }
 
 
-int soc_platform_init()
+int Soc_PlatInit()
 {
     return AL_OK;
 }

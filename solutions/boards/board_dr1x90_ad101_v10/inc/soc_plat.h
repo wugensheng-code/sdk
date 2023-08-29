@@ -40,16 +40,10 @@ extern "C" {
 #define ALSOC_POST_CONFIG
 
 /* Freq of all peripherals */
-#define MHZ                     (1000000U)
+#define MHZ                     1000000U
 
-#define ALSOC_APU_CLOCK         (100*MHZ)
 
-/**
- * clocks defined in FD
- */
-/*----------------------------------------------------------------------------
-  Define System clocks
- *----------------------------------------------------------------------------*/
+#define ALSOC_APU_FREQ          (100*MHZ)
 
 #if (CHIP == dr1m90)
 #ifdef AL9000_OSC_25
@@ -103,10 +97,8 @@ extern "C" {
 #define MMC_CLOCK               (50*MHZ)
 #elif AL9000_OSC_33
 #define MMC_CLOCK               (66*MHZ)
-#elif AL9000_OSC_50
-#define MMC_CLOCK               (100*MHZ)
 #else
-#define MMC_CLOCK               (10*MHZ)
+#define MMC_CLOCK               (100*MHZ)
 #endif
 #endif
 
@@ -139,12 +131,13 @@ extern "C" {
 #define HAVE_DMACAHBPS_DRIVER
 
 
+
 /**
  * @desc  : init soc platform according to user configuration
  * @return {int} status code of platform init
  */
-int soc_platform_init();
-int get_device_version();
+int Soc_PlatInit();
+int Soc_PlatGetDeviceVersion();
 
 #ifdef __cplusplus
 }

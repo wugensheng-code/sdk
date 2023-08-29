@@ -12,7 +12,7 @@ AL_VOID AlChip_Dr1V90Init(AL_VOID);
 #define AlChip_Init AlChip_Dr1V90Init
 
 #include "al_hwcfg.h"
-#include "platform_init.h"
+#include "soc_plat.h"
 
 /*----------------------------------------------------------------------------
 * Define Interrupt Number

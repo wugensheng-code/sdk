@@ -55,7 +55,7 @@ LIB_OUTPUT_DIR  ?= $(AL_SDK_ROOT)/output
 AL_SDK_ROOT := $(abspath $(AL_SDK_ROOT))
 
 ifeq ($(PLAT_DIR),)
-PLAT_DIR := $(patsubst %/platform_init.h, %, $(wildcard $(AL_SDK_ROOT)/*/platform_init.h))
+PLAT_DIR := $(patsubst %/soc_plat.h, %, $(wildcard $(AL_SDK_ROOT)/*/soc_plat.h))
 endif
 
 PLAT_DIR := $(abspath $(PLAT_DIR))

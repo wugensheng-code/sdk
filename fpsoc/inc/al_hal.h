@@ -6,7 +6,7 @@ extern "C" {
 #endif  /* __cplusplus */
 
 #include "al_core.h"
-#include "platform_init.h"
+#include "soc_plat.h"
 
 #ifdef HAVE_CANPS_DRIVER
 #include "al_can_hal.h"
