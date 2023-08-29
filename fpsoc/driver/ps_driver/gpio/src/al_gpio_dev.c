@@ -7,12 +7,6 @@
 
 
 /***************************** Include Files *********************************/
-
-#include <stdio.h>
-#include "stdlib.h"
-#include "al_errno.h"
-#include "al_gpio_hw.h"
-#include "al_gpio_ll.h"
 #include "al_gpio_dev.h"
 
 

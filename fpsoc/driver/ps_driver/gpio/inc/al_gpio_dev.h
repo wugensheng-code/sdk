@@ -13,9 +13,7 @@ extern "C" {
 #endif
 
 /********************************** Include  Files *******************************/
-#include "al_core.h"
-#include "al_errno.h"
-#include "al_gpio_hw.h"
+#include "al_gpio_ll.h"
 
 /********************************* Exported Constant *****************************/
 #define GPIO_REG_OFFSET              0x100
@@ -104,7 +102,7 @@ typedef struct
 /************************** Exported Function *****************************/
 AL_GPIO_HwConfigStruct *AlGpio_Dev_LookupConfig(AL_U32 DeviceId);
 AL_S32 AlGpio_Dev_Init(AL_GPIO_DevStruct *Gpio, AL_GPIO_HwConfigStruct *HwConfig);
-AL_VOID AlGpio_dev_GetBankPin(AL_U8 PinNumber, AL_U8 *BankNumber, AL_U8 *PinNumberInBank);
+AL_VOID AlGpio_dev_GetBankPin(AL_U32 PinNumber, AL_U32 *BankNumber, AL_U32 *PinNumberInBank);
 
 /*
  * Bank APIs

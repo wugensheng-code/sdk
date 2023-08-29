@@ -7,11 +7,7 @@
 
 
 /***************************** Include Files *********************************/
-#include "al_gpio_hw.h"
 #include "al_gpio_hal.h"
-#include "al_errno.h"
-#include "al_chip.h"
-#include "al_intr.h"
 
 /************************** Variable Definitions *****************************/
 static AL_GPIO_DevStruct AL_GPIO_DevInstance[AL_GPIO_NUM_INSTANCE];

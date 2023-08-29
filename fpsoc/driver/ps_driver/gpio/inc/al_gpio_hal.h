@@ -14,8 +14,6 @@ extern "C" {
 #endif
 
 /***************************** Include  Files ********************************/
-// #include "al_errno.h"
-// #include "al_core.h"
 #include "al_gpio_dev.h"
 
 /**************************** Exported Typedef ******************************/
