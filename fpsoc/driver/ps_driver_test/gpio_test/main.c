@@ -1,8 +1,7 @@
 /*
- * main.c
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
  *
- *  Created on: Dec.16.2021
- *      Author: haitao.liu
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
 

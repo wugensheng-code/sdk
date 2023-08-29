@@ -1,4 +1,10 @@
 #########################################################################
+# Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+
+# SPDX-License-Identifier: BSD-3-Clause
+#########################################################################
+
+#########################################################################
 # 3. CFLAGS
 # AL9000_OSC_33: for chip pll enable and call clk_simple_config func
 # AL9000_BRINGUP: for chip bypass mpu disable flow

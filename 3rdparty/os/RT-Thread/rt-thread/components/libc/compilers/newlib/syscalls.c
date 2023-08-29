@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2021 RT-Thread Development Team.
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,6 +11,7 @@
  * 2021-02-21     Meco Man     improve and beautify syscalls
  * 2021-02-24     Meco Man     fix bug of _isatty_r()
  */
+
 
 #include <reent.h>
 #include <rtthread.h>
