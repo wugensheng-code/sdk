@@ -164,19 +164,19 @@ AL_VOID AlGicv3_CpuIfEnable(AL_U32 ProcNum)
     //  * ICC_SRE_EL2 registers.
     //  */
     // write_scr_el3(ScrEl3 | SCR_NS_BIT);
-    // isb();
+    // ISB();
 
     // write_icc_sre_el2(read_icc_sre_el2() | IccSreEl1);
     // write_icc_sre_el1(ICC_SRE_SRE_BIT);
-    // isb();
+    // ISB();
 
     // /* Switch to secure state. */
     // write_scr_el3(ScrEl3 & (~SCR_NS_BIT));
-    // isb();
+    // ISB();
 
     // /* Write the secure ICC_SRE_EL1 register */
     // write_icc_sre_el1(ICC_SRE_SRE_BIT);
-    isb();
+    ISB();
 
     /* Program the idle Priority in the PMR */
     write_icc_pmr_el1(GIC_PRI_MASK);
@@ -191,13 +191,13 @@ AL_VOID AlGicv3_CpuIfEnable(AL_U32 ProcNum)
     write_icc_bpr1_el1(0);
     write_icc_ctlr_el1(0);
 
-    isb();
+    ISB();
 
     /* Enable Group1 Secure interrupts */
     write_icc_igrpen1_el1(1);
 
     /* Add DSB to ensure visibility of System register writes */
-    dsbsy();
+    DSB();
 }
 
 /*******************************************************************************
@@ -226,9 +226,9 @@ AL_VOID AlGicv3_CpuIfDisable(AL_U32 ProcNum)
                   IGRPEN1_EL3_ENABLE_G1S_BIT));
 
     /* Synchronise accesses to group enable registers */
-    isb();
+    ISB();
     /* Add DSB to ensure visibility of System register writes */
-    dsbsy();
+    DSB();
 
     GicrBase = Gicv3DrvData->RdistBaseAddrs[ProcNum];
     assert(GicrBase != 0UL);
@@ -378,7 +378,7 @@ AL_VOID AlGicv3_EnableInterrupt(AL_U32 Id, AL_U32 ProcNum)
      * Ensure that any shared variable updates depending on out of band
      * interrupt trigger are observed before enabling interrupt.
      */
-    dsbishst();
+    DSB();
 
     /* Check interrupt ID */
     if (AlGicv3_IsSgiPpi(Id)) {
@@ -425,7 +425,7 @@ AL_VOID AlGicv3_DisableInterrupt(AL_U32 Id, AL_U32 ProcNum)
         Gicd_WaitForPendingWrite(Gicv3DrvData->GicdBase);
     }
 
-    dsbishst();
+    DSB();
 }
 
 /*******************************************************************************
@@ -561,7 +561,7 @@ AL_VOID AlGicv3_RaiseSgi(AL_U32 SgiNum, AL_GICV3_IrqGroupEnum Group, AL_REG Targ
      * Ensure that any shared variable updates depending on out of band
      * interrupt trigger are observed before raising SGI.
      */
-    dsbishst();
+    DSB();
 
     switch (Group) {
     case AL_GICV3_G0:
@@ -578,7 +578,7 @@ AL_VOID AlGicv3_RaiseSgi(AL_U32 SgiNum, AL_GICV3_IrqGroupEnum Group, AL_REG Targ
         break;
     }
 
-    isb();
+    ISB();
 }
 
 /*******************************************************************************
@@ -634,7 +634,7 @@ AL_VOID AlGicv3_ClearInterruptPending(AL_U32 Id, AL_U32 ProcNum)
         Gicd_SetIcpendr(Gicv3DrvData->GicdBase, Id);
     }
 
-    dsbishst();
+    DSB();
 }
 
 /*******************************************************************************
@@ -653,7 +653,7 @@ AL_VOID AlGicv3_SetInterruptPending(AL_U32 Id, AL_U32 ProcNum)
      * Ensure that any shared variable updates depending on out of band
      * interrupt trigger are observed before setting interrupt pending.
      */
-    dsbishst();
+    DSB();
 
     /* Check interrupt ID */
     if (AlGicv3_IsSgiPpi(Id)) {
@@ -682,7 +682,7 @@ AL_U32 AlGicv3_SetPmr(AL_U32 Mask)
      * PMR system register writes are self-synchronizing, so no ISB required
      * thereafter.
      */
-    dsbishst();
+    DSB();
     write_icc_pmr_el1(Mask);
 
     return OldMask;

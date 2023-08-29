@@ -195,70 +195,70 @@ static inline void enable_irq(void)
 	 */
 	__COMPILER_BARRIER();
 	write_daifclr(DAIF_IRQ_BIT);
-	isb();
+	ISB();
 }
 
 static inline void enable_fiq(void)
 {
 	__COMPILER_BARRIER();
 	write_daifclr(DAIF_FIQ_BIT);
-	isb();
+	ISB();
 }
 
 static inline void enable_all_intr(void)
 {
 	__COMPILER_BARRIER();
 	write_daifclr(DAIF_IRQ_BIT | DAIF_FIQ_BIT);
-	isb();
+	ISB();
 }
 
 static inline void enable_serror(void)
 {
 	__COMPILER_BARRIER();
 	write_daifclr(DAIF_ABT_BIT);
-	isb();
+	ISB();
 }
 
 static inline void enable_debug_exceptions(void)
 {
 	__COMPILER_BARRIER();
 	write_daifclr(DAIF_DBG_BIT);
-	isb();
+	ISB();
 }
 
 static inline void disable_irq(void)
 {
 	__COMPILER_BARRIER();
 	write_daifset(DAIF_IRQ_BIT);
-	isb();
+	ISB();
 }
 
 static inline void disable_fiq(void)
 {
 	__COMPILER_BARRIER();
 	write_daifset(DAIF_FIQ_BIT);
-	isb();
+	ISB();
 }
 
 static inline void disable_all_intr(void)
 {
 	__COMPILER_BARRIER();
 	write_daifset(DAIF_IRQ_BIT | DAIF_FIQ_BIT);
-	isb();
+	ISB();
 }
 
 static inline void disable_serror(void)
 {
 	__COMPILER_BARRIER();
 	write_daifset(DAIF_ABT_BIT);
-	isb();
+	ISB();
 }
 
 static inline void disable_debug_exceptions(void)
 {
 	__COMPILER_BARRIER();
 	write_daifset(DAIF_DBG_BIT);
-	isb();
+	ISB();
 }
 
 /*******************************************************************************

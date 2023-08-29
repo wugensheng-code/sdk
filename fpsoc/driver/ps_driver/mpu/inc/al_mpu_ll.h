@@ -13,12 +13,8 @@ extern "C" {
 
 #include "al_mpu_hw.h"
 #include "al_reg_io.h"
+#include "al_core.h"
 
-#if (defined _AARCH_64 || defined __aarch64__)
-#define dsb() asm volatile("dsb sy" :::"memory");
-#define isb() asm volatile("isb sy" :::"memory");
-#define dmb() asm volatile("dmb sy" :::"memory");
-#endif /* defined _AARCH_64 || defined __aarch64__ */
 
 typedef enum
 {
@@ -69,14 +65,7 @@ typedef enum
 static inline AL_VOID AlMpu_ll_MpuEnable(AL_REG MpuBaseAddr)
 {
     AL_REG32_SET_BIT((MpuBaseAddr + MPU_CTRL_OFFSET), MPU_CTRL_ENABLE_SHIFT, MPU_ENABLE);
-
-    /* Ensure MPU setting take effects */
-#if (defined _AARCH_64 || defined __aarch64__)
-    dsb();
-    isb();
-#else
-    // Todo
-#endif /* defined _AARCH_64 || defined  __aarch64__ */
+    DSB();
 }
 
 /**
@@ -89,13 +78,7 @@ static inline AL_VOID AlMpu_ll_MpuEnable(AL_REG MpuBaseAddr)
  */
 static inline AL_VOID AlMpu_ll_MpuDisable(AL_REG MpuBaseAddr)
 {
-    /* Make sure outstanding transfers are done */
-#if (defined _AARCH_64 || defined __aarch64__)
-    dmb();
-#else
-    // Todo
-#endif /* defined _AARCH_64 || defined __aarch64__ */
-
+    DSB();
     AL_REG32_SET_BIT((MpuBaseAddr + MPU_CTRL_OFFSET), MPU_CTRL_ENABLE_SHIFT, MPU_DISABLE);
 }
 
@@ -183,22 +166,10 @@ static inline AL_VOID AlMpu_ll_SetRegionAttrIntrEn(AL_REG RegionBaseAddr, AL_MPU
  */
 static inline AL_VOID AlMpu_ll_SetRegionAttrEnable(AL_REG RegionBaseAddr, AL_MPU_RegionEnEnum RegionEn)
 {
-    /* Make sure outstanding transfers are done */
-#if (defined _AARCH_64 || defined __aarch64__)
-    dsb();
-#else
-    // Todo
-#endif /* defined _AARCH_64 || defined __aarch64__ */
+    DSB();
 
     AL_REG32_SET_BIT((RegionBaseAddr + MPU_RASR_REGION_OFFSET), MPU_RASR_REGION_REGIONEN_SHIFT, RegionEn);
-
-    /* Ensure MPU setting take effects */
-#if (defined _AARCH_64 || defined __aarch64__)
-    dsb();
-    isb();
-#else
-    // Todo
-#endif /* defined _AARCH_64 || defined __aarch64__ */
+    DSB();
 }
 
 /**
