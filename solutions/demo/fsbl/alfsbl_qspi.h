@@ -1,10 +1,3 @@
-/*
- * alfsbl_qspi.h
- *
- *  Created on: May 18, 2022
- *      Author: qsxu
- */
-
 #ifndef ALFSBL_QSPI_H_
 #define ALFSBL_QSPI_H_
 

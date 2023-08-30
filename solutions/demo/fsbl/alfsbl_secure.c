@@ -1,30 +1,8 @@
-/*
- * alfsbl_sec.c
- *
- *  Created on: May 25, 2022
- *      Author: qsxu
- */
-
-
 #include <stdio.h>
 
 #include "demosoc.h"
 #include "alfsbl_secure.h"
 #include "al_intr.h"
-
-
-//#include "alfsbl_err_code.h"
-//#include "alfsbl_data.h"
-
-//#include "alfsbl_hw.h"
-//#include "alfsbl_misc.h"
-
-//extern uint8_t  ReadBuffer[READ_BUFFER_SIZE];
-//extern uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE];
-
-
-
-
 
 volatile uint32_t MsgFlag = 0;
 

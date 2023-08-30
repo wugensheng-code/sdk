@@ -1,10 +1,3 @@
-/*
- * alfsbl_err_lockdown.c
- *
- *  Created on: May 18, 2022
- *      Author: qsxu
- */
-
 #include "demosoc.h"
 #include "alfsbl_hw.h"
 #include "alfsbl_err_lockdown.h"

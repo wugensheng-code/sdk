@@ -1,10 +1,3 @@
-/*
- * alfsbl_misc.c
- *
- *  Created on: May 18, 2022
- *      Author: qsxu
- */
-
 #include "al_core.h"
 #include "alfsbl_misc.h"
 

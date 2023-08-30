@@ -1,10 +1,3 @@
-/*
- * alfsbl_init.h
- *
- *  Created on: May 18, 2022
- *      Author: qsxu
- */
-
 #ifndef ALFSBL_INIT_H_
 #define ALFSBL_INIT_H_
 

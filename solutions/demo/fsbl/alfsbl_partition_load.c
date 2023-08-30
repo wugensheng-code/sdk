@@ -1,9 +1,3 @@
-/*
- * alfsbl_partition_load.c
- *
- *  Created on: May 18, 2022
- *      Author: qsxu
- */
 #include <alfsbl_secure.h>
 #include <stdio.h>
 #include <stdint.h>

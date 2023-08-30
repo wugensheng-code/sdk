@@ -1,10 +1,3 @@
-/*
- * alfsbl_qspi.c
- *
- *  Created on: May 18, 2022
- *      Author: qsxu
- */
-
 #include <alfsbl_secure.h>
 #include <stdio.h>
 
@@ -132,7 +125,7 @@ uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
 uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
 {
 	QspiParams qspi_params;
-	printf("qspi 24 init\r\n");	
+	printf("qspi 24 init\r\n");
 	Csu_QspiInit(&qspi_params);
 
 #if 0

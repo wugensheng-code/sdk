@@ -1,10 +1,3 @@
-/*
- * alfsbl_data.h
- *
- *  Created on: May 18, 2022
- *      Author: qsxu
- */
-
 #ifndef ALFSBL_DATA_H_
 #define ALFSBL_DATA_H_
 

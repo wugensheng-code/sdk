@@ -1,12 +1,3 @@
-/*
- * alfsbl_main.c
- *
- *  Created on: May 18, 2022
- *      Author: qsxu
- */
-
-
-//#include "nuclei_sdk_soc.h"
 #include <alfsbl_secure.h>
 #include "alfsbl_main.h"
 #include "alfsbl_image_header.h"
@@ -60,7 +51,7 @@ int main(void)
 #if defined SIMU_AL9000_DV
 	REG32(SYSCTRL_NS_PLS_PROT) = REG32(SYSCTRL_NS_PLS_PROT) & (~0x2);
 #endif
-    
+
     /// demo board uart pinmux
     REG32(0xf88030c0) = 3;
     REG32(0xf88030c4) = 3;

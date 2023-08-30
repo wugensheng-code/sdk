@@ -1,10 +1,3 @@
-/*
- * alfsbl_image_header.h
- *
- *  Created on: May 18, 2022
- *      Author: qsxu
- */
-
 #ifndef ALFSBL_IMAGE_HEADER_H_
 #define ALFSBL_IMAGE_HEADER_H_
 

@@ -1,10 +1,3 @@
-/*
- * alfsbl_partition_load.h
- *
- *  Created on: May 18, 2022
- *      Author: qsxu
- */
-
 #ifndef ALFSBL_PARTITION_LOAD_H_
 #define ALFSBL_PARTITION_LOAD_H_
 

@@ -1,9 +1,3 @@
-/*
- * alfsbl_boot.c
- *
- *  Created on: May 18, 2022
- *      Author: qsxu
- */
 #include <stdint.h>
 #include <stdio.h>
 #include "alfsbl_emmc_raw.h"

@@ -1,10 +1,3 @@
-/*
- * alfsbl_boot.h
- *
- *  Created on: May 18, 2022
- *      Author: qsxu
- */
-
 #ifndef ALFSBL_BOOT_H_
 #define ALFSBL_BOOT_H_
 

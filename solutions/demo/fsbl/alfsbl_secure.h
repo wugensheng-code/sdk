@@ -1,11 +1,3 @@
-/*
- * alfsbl_sec.h
- *
- *  Created on: May 25, 2022
- *      Author: qsxu
- */
-
-
 #ifndef ALFSBL_SEC_H_
 #define ALFSBL_SEC_H_
 
@@ -14,9 +6,6 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-//#include "alfsbl_hw.h"
-
-//#define CSUDMA_BLOCK_LENGTH_MAX   (0xFFC0UL)
 #define CSUDMA_BLOCK_LENGTH_MAX   (512UL)
 
 

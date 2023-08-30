@@ -1,10 +1,3 @@
-/*
- * alfsbl_handoff.h
- *
- *  Created on: May 18, 2022
- *      Author: qsxu
- */
-
 #ifndef ALFSBL_HANDOFF_H_
 #define ALFSBL_HANDOFF_H_
 

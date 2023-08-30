@@ -1,10 +1,3 @@
-/*
- * alfsbl_handoff.c
- *
- *  Created on: May 18, 2022
- *      Author: qsxu
- */
-
 #include <stdio.h>
 #include "demosoc.h"
 #include "alfsbl_hw.h"

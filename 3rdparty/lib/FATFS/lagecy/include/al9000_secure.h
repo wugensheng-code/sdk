@@ -1,11 +1,3 @@
-/*
- * alfsbl_sec.h
- *
- *  Created on: May 25, 2022
- *      Author: qsxu
- */
-
-
 #ifndef ALFSBL_SEC_H_
 #define ALFSBL_SEC_H_
 

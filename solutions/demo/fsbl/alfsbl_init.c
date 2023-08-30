@@ -1,11 +1,3 @@
-/*
- * alfsbl_init.c
- *
- *  Created on: May 18, 2022
- *      Author: qsxu
- */
-
-//#include <ps_init.h>
 #include <stdio.h>
 
 #include "demosoc.h"
