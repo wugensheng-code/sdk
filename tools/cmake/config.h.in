@@ -1,5 +1,0 @@
-#cmakedefine FSBL_SIMU_SKIP_HEADERCHECK
-
-#cmakedefine FSBL_QSPI_XIP
-
-#cmakedefine SIMU_AL9000_DV
