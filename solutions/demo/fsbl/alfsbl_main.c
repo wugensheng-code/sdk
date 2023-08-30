@@ -56,7 +56,6 @@ int main(void)
     REG32(0xf88030c4) = 3;
     REG32(0xf8803414) = 1;
 
-//    (void)Soc_PlatInit();
 	Soc_PlatInit();
 
 	while (FsblStage <= ALFSBL_STAGE_DFT) {
