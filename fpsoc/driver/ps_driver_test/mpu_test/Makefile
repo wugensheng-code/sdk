@@ -41,7 +41,7 @@ ASM_SRCS :=
 # 3. CFLAGS
 #########################################################################
 CFLAGS := -O2
-CFLAGS += -DAL9000_OSC_33 -DAL9000_BRINGUP -DBOARD_DR1X90_AD101_V10
+
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;

@@ -9,9 +9,7 @@
 #########################################################################
 
 CFLAGS := -O2 -DCAN_DEBUG -DCONFIG_CAN_2_0B_INTR_TEST=1
-CFLAGS += -DAL9000_OSC_33
-CFLAGS += -DAL9000_BRINGUP
-CFLAGS += -DBOARD_DR1X90_AD101_V10
+
 
 #########################################################################
 # 5. define build target

@@ -2,6 +2,7 @@
 AL_SDK_ROOT ?= $(SDK_ROOT)
 
 include $(AL_SDK_ROOT)/tools/make/config.mk
+sinclude $(PLAT_DIR)/board_cfg.mk
 
 CC      = ${Q}$(COMPILE_PREFIX)gcc
 CXX     = ${Q}$(COMPILE_PREFIX)g++
@@ -115,7 +116,7 @@ MODULE_INC  :=  $(foreach subdir,$(sort $(INC_DIR)), -I$(subdir)) -I$(PLAT_DIR)/
 #########################################################################
 
 ifeq ($(CORE),arm)
-CFLAGS += -mstrict-align -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35 
+CFLAGS += -mstrict-align -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35
 endif
 
 AL_CFLAGS  += $(CFLAGS) $(PUBLIC_INC) $(MODULE_INC) $(MKDEP_OPT)

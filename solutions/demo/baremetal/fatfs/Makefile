@@ -37,9 +37,7 @@ ASM_SRCS :=
 # 3. CFLAGS
 #########################################################################
 CFLAGS := -O2 -g
-CFLAGS += -DAL9000_OSC_33
-CFLAGS += -DAL9000_BRINGUP
-CFLAGS += -DBOARD_DR1X90_AD101_V10
+
 # CFLAGS += -DUSE_DDR
 
 # ARM jump from secure to non-secure

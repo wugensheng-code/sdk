@@ -9,7 +9,6 @@
 #########################################################################
 
 CFLAGS := -O2 -g
-# CFLAGS += -DAL9000_BRINGUP
 # CFLAGS += -DUSE_RTOS
 # CFLAGS += -DRTOS_RTTHREAD
 
