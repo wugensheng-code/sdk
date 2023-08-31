@@ -479,11 +479,6 @@ AL_VOID AlCan_Dev_IntrHandler(void *Instance)
     AL_U32 IntrStatus = AlCan_ll_GetUmaskIntrStatus(Dev->BaseAddr);
 
     if (AL_CAN_ERR_INTR(IntrStatus)) {
-#ifdef CAN_DEBUG
-        /**
-         * TODO: handle error status
-        */
-#endif
         AlCan_Dev_ErrHandler(Dev, IntrStatus);
     }
 
@@ -492,9 +487,6 @@ AL_VOID AlCan_Dev_IntrHandler(void *Instance)
     }
 
     if (AL_CAN_RB_INTR(IntrStatus)) {
-        /**
-         * TODO: handle recv buffer intr status
-        */
        AlCan_Dev_EventHandler(Dev, IntrStatus);
     }
 
