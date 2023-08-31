@@ -1,16 +1,17 @@
 /*
  * Copyright (c) 2013-2022, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef ARCH_H
-#define ARCH_H
+#ifndef AL_AARCH64_ARCH_H
+#define AL_AARCH64_ARCH_H
 
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
-#include "sysreg.h"
+#include "al_aarch64_sysreg.h"
 #include "al_core.h"
 
 /**********************************************************************
@@ -383,4 +384,4 @@ DEFINE_RENAME_SYSREG_RW_FUNCS(icc_asgi1r, S3_0_C12_C11_6)
 DEFINE_RENAME_SYSREG_RW_FUNCS(icc_bpr1_el1, S3_0_c12_c12_3)
 DEFINE_RENAME_SYSREG_RW_FUNCS(icc_ctlr_el1, S3_0_C12_C12_4)
 
-#endif /* ARCH_H */
+#endif /* AL_AARCH64_ARCH_H */

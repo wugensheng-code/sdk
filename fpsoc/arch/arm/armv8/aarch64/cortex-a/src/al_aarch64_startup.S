@@ -1,5 +1,11 @@
-#include "macro.h"
-#include "sysreg.h"
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#include "al_aarch64_macro.h"
+#include "al_aarch64_sysreg.h"
 
 .align 3
 

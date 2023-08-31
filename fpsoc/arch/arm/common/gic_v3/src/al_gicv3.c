@@ -1,20 +1,18 @@
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #include "al_core.h"
-#include "gicv3_private.h"
-#include "gicv3_dist.h"
-#include "gicv3_rdist.h"
-#include "arch.h"
+#include "al_gicv3_private.h"
+#include "al_gicv3_dist.h"
+#include "al_gicv3_rdist.h"
+#include "al_aarch64.h"
 
-
-#ifdef CONFIG_PRINTK
-#define gic_print(...) printf(__VA_ARGS__)
-#else
-#define gic_print(...)
-#endif
-
-#define GICV3_SPECIAL_START                (1020)
-#define GICV3_SPECIAL_END                  (1023)
-
-#define GICV3_SPECIAL_NUM                  (GICV3_SPECIAL_END - GICV3_SPECIAL_START +1)
+#define GICV3_SPECIAL_START     (1020)
+#define GICV3_SPECIAL_END       (1023)
+#define GICV3_SPECIAL_NUM       (GICV3_SPECIAL_END - GICV3_SPECIAL_START +1)
 
 static AL_INTR_HandlerStruct irq_handler_list[SOC_INT_MAX + GICV3_SPECIAL_NUM];
 static AL_INTR_HandlerStruct fiq_handler_list[SOC_INT_MAX + GICV3_SPECIAL_NUM];
@@ -25,38 +23,28 @@ static AL_INTR_HandlerStruct fiq_handler_list[SOC_INT_MAX + GICV3_SPECIAL_NUM];
  */
 AL_VOID do_irq_handle(AL_VOID)
 {
-    AL_U32    int_id;
+    AL_U32 IntrId;
     AL_INTR_HandlerStruct Handler;
 
-    {
-        /* interrupr acknowledge by read iar*/
-        int_id = read_icc_iar1_el1();
-        DSB();
-        int_id = int_id & 0xffffff;
-    }
+    /* interrupr acknowledge by read iar*/
+    IntrId = read_icc_iar1_el1();
+    DSB();
+    IntrId = IntrId & 0xffffff;
 
-    if (int_id < SOC_INT_MAX) {
-        Handler = irq_handler_list[int_id];
+    if (IntrId < SOC_INT_MAX) {
+        Handler = irq_handler_list[IntrId];
     } else {
-        Handler = irq_handler_list[int_id -GICV3_SPECIAL_START + SOC_INT_MAX];
+        Handler = irq_handler_list[IntrId - GICV3_SPECIAL_START + SOC_INT_MAX];
     }
 
     if (Handler.Func == NULL) {
-        gic_print("can not found your irq handle at number: %d\n", int_id);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "can not found your irq handle at number: %d\n", IntrId);
     } else {
         Handler.Func(Handler.Param);
     }
 
-#if 0
-    /* write end of interrupt to deactivate the interrupt */
-    if (!gic_enable_sre()) {
-        writel_relaxed(int_id, GICC_EOIR);
-    } else
-#endif
-    {
-        write_icc_eoir1_el1(int_id);
-        ISB();
-    }
+    write_icc_eoir1_el1(IntrId);
+    ISB();
 }
 
 /**
@@ -65,41 +53,33 @@ AL_VOID do_irq_handle(AL_VOID)
  */
 AL_VOID do_fiq_handle(AL_VOID)
 {
-    AL_U32    int_id;
+    AL_U32 IntrId;
     AL_INTR_HandlerStruct Handler;
 
-    int_id = read_icc_iar1_el1();
+    IntrId = read_icc_iar1_el1();
     DSB();
-    int_id = int_id & 0xffffff;
+    IntrId = IntrId & 0xffffff;
 
-    if (int_id < SOC_INT_MAX) {
-        Handler = fiq_handler_list[int_id];
+    if (IntrId < SOC_INT_MAX) {
+        Handler = fiq_handler_list[IntrId];
     } else {
-        Handler = fiq_handler_list[int_id -GICV3_SPECIAL_START + SOC_INT_MAX];
+        Handler = fiq_handler_list[IntrId - GICV3_SPECIAL_START + SOC_INT_MAX];
     }
 
     if (Handler.Func == NULL) {
-        gic_print("can not found your fiq handle at number: %d\n", int_id);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "can not found your fiq handle at number: %d\n", IntrId);
     } else {
         Handler.Func(Handler.Param);
     }
 
-    /* write end of interrupt to deactivate the interrupt */
-    if (read_icc_sre_el1() & ICC_SRE_SRE_BIT) {
-        write_icc_eoir1_el1(int_id);
-        ISB();
-    } else {
-        write_icc_eoir1_el1(int_id);
-        ISB();
-    }
+    write_icc_eoir1_el1(IntrId);
+    ISB();
 }
 
 static AL_VOID AlIntr_RequestIntr(AL_U32 IntrId, AL_VOID *Handler, AL_VOID *Param)
 {
     AL_INTR_HandlerStruct *HandleArray;
-    /*
-     * > SOC_INT_MAX && (not in the range of special range)
-    */
+    /* > SOC_INT_MAX && (not in the range of special range) */
     if (IntrId >= SOC_INT_MAX && (IntrId < GICV3_SPECIAL_START || IntrId > GICV3_SPECIAL_END)) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "init id error IntrId = %d\n", IntrId);
         return;
@@ -144,7 +124,7 @@ AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Fun
 
     AlIntr_RequestIntr(IntrId, Func, Param);
 
-    return 0;
+    return AL_OK;
 }
 
 
@@ -206,6 +186,4 @@ AL_VOID AlIntr_ClearAllPending(AL_VOID)
     }
 
     Gicr_WriteIcpendr0(Gicv3DrvData->RdistBaseAddrs[*(Gicv3DrvData->CpuId)], ClearVal);
-
-    return;
 }

@@ -1,9 +1,15 @@
 
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #include "al_type.h"
-#include "al_gic.h"
-#include "sysreg.h"
-#include "gicv3.h"
-#include "gicv3_private.h"
+#include "al_chip.h"
+#include "al_aarch64_sysreg.h"
+#include "al_gicv3.h"
+#include "al_gicv3_private.h"
 
 static AL_U32 CpuId;
 

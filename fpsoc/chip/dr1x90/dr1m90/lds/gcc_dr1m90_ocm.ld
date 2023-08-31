@@ -14,7 +14,7 @@ SECTIONS
 	.text :
 	{
 		_text_start  = .;
-		*startup_aarch64.S.o(.text)
+		*al_aarch64_startup.S.o(.text)
 		*(.text)
 	}  > ram AT>ram
 	PROVIDE(_text_end  = .);

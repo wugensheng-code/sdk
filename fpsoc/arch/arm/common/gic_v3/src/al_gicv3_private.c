@@ -1,19 +1,17 @@
 /*
  * Copyright (c) 2015-2022, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <assert.h>
-#include "sysreg.h"
-#include <arch.h>
-
-#include "al_gic.h"
-
-#include "gicv3_private.h"
-#include "gicv3_dist.h"
-#include "gicv3_rdist.h"
-#include "gicv3.h"
+#include "al_aarch64_sysreg.h"
+#include <al_aarch64.h>
+#include "al_gicv3_private.h"
+#include "al_gicv3_dist.h"
+#include "al_gicv3_rdist.h"
+#include "al_gicv3.h"
 
 /******************************************************************************
  * This function marks the core as awake in the re-distributor and
@@ -189,38 +187,6 @@ AL_VOID AlGicv3_PpiSgiConfigDefaults(AL_UINTPTR GicrBase)
         /* Configure all (E)PPIs as level triggered by default */
         Gicr_WriteIcfgr(GicrBase, i, 0U);
     }
-}
-
-/**
- * AlGicv3_Rdist_GetNumFrames() - determine size of GICv3 GICR region
- * @GicrFrame: base address of the GICR region to check
- *
- * This iterates over the GICR_TYPER registers of multiple GICR frames in
- * a GICR region, to find the instance which has the LAST bit set. For most
- * systems this corresponds to the number of cores handled by a redistributor,
- * but there could be disabled cores among them.
- * It assumes that each GICR region is fully accessible (till the LAST bit
- * marks the end of the region).
- * If a platform has multiple GICR regions, this function would need to be
- * called multiple times, providing the respective GICR base address each time.
- *
- * Return: number of valid GICR frames (at least 1, up to AL_ARM_CORE_COUNT)
- ******************************************************************************/
-AL_U32 AlGicv3_Rdist_GetNumFrames(const AL_UINTPTR GicrFrame)
-{
-    AL_UINTPTR RdistifBase = GicrFrame;
-    AL_U32 Count;
-
-    for (Count = 1U; Count < AL_ARM_CORE_COUNT; Count++) {
-        AL_U64 TyperVal = Gicr_ReadTyper(RdistifBase);
-
-        if ((TyperVal & TYPER_LAST_BIT) != 0U) {
-            break;
-        }
-        RdistifBase += AlGicv3_RedistSize();
-    }
-
-    return Count;
 }
 
 AL_U32 AlGicv3_GetComponentPartnum(const AL_UINTPTR GicFrame)

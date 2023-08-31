@@ -1,8 +1,14 @@
 
-#ifndef __MACRO_H__
-#define __MACRO_H__
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 
-#include <sysreg.h>
+#ifndef __AL_AARCH64_MACRO_H__
+#define __AL_AARCH64_MACRO_H__
+
+#include <al_aarch64_sysreg.h>
 
 /*
  * Register aliases.
@@ -66,4 +72,4 @@ lr	.req	x30
 	eret
 .endm
 
-#endif /* __MACRO_H__ */
+#endif /* __AL_AARCH64_MACRO_H__ */

@@ -24,7 +24,7 @@ static AL_U8 CpuInSecureMode = 1;
 AL_MPU_HalStruct ApuHandle;
 AL_MPU_HalStruct NpuHandle;
 
-void do_sync_handle(struct pt_regs *pt_regs, unsigned int esr)
+void do_sync_handle(AL_UINTPTR *Regs)
 {
 #if (defined _AARCH_64 || defined __aarch64__)
     asm volatile("mrs x25, elr_el1; add x25, x25, #0x04; msr elr_el1, x25" ::: "x25");

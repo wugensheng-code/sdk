@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016-2018, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -9,9 +10,9 @@
 
 #include <stdint.h>
 #include "al_reg_io.h"
-#include "gicv3_common.h"
-#include "gicv3_private.h"
-#include "gicv3.h"
+#include "al_gicv3_common.h"
+#include "al_gicv3_private.h"
+#include "al_gicv3.h"
 
 static inline AL_U32 Gicd_ReadCtlr(AL_UINTPTR Base)
 {

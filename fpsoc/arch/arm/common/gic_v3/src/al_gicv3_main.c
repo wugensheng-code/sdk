@@ -1,18 +1,19 @@
 /*
  * Copyright (c) 2015-2022, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <assert.h>
 
-#include "arch.h"
+#include "al_aarch64.h"
 #include "al_barrier.h"
 
-#include "gicv3_private.h"
-#include "gicv3_dist.h"
-#include "gicv3_rdist.h"
-#include "gicv3.h"
+#include "al_gicv3_private.h"
+#include "al_gicv3_dist.h"
+#include "al_gicv3_rdist.h"
+#include "al_gicv3.h"
 
 #include "al_type.h"
 
@@ -144,7 +145,7 @@ AL_VOID AlGicv3_CpuIfEnable(AL_U32 ProcNum)
     GicrBase = Gicv3DrvData->RdistBaseAddrs[ProcNum];
     AlGicv3_Rdist_MarkCoreAwake(GicrBase);
 
-    /* Has been init in startup_aarch64.S */
+    /* Has been init in al_aarch64_startup.S */
     /* Disable the legacy interrupt bypass */
     IccSreEl1 = ICC_SRE_DIB_BIT | ICC_SRE_DFB_BIT;
 
@@ -156,7 +157,7 @@ AL_VOID AlGicv3_CpuIfEnable(AL_U32 ProcNum)
     IccSreEl1 |= (ICC_SRE_SRE_BIT);
     write_icc_sre_el1(read_icc_sre_el1() | IccSreEl1);
 
-    /* NS support in startup_aarch64.S */
+    /* NS support in al_aarch64_startup.S */
     // ScrEl3 = read_scr_el3();
 
     // /*

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2015-2021, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -11,7 +12,7 @@
 #include <stdint.h>
 #include "al_reg_io.h"
 #include "al_type.h"
-#include "gicv3.h"
+#include "al_gicv3.h"
 
 /*******************************************************************************
  * GICv3 private macro definitions

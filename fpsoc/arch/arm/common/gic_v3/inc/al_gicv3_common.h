@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2017, ARM Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */

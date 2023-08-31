@@ -1,5 +1,11 @@
-#ifndef __SYSREG_H
-#define __SYSREG_H
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#ifndef __AL_AARCH64_SYSREG_H
+#define __AL_AARCH64_SYSREG_H
 
 #ifdef __ASSEMBLY__
 #define _AC(X,Y)	X
@@ -367,4 +373,4 @@
 #define EC_SERROR			U(0x2f)
 #define EC_BRK				U(0x3c)
 
-#endif /* __SYSREG_H */
+#endif /* __AL_AARCH64_SYSREG_H */

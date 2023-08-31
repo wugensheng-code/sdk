@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2015-2022, Arm Limited and Contributors. All rights reserved.
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -10,10 +11,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include <arch.h>
+#include <al_aarch64.h>
 #include <al_utils_def.h>
 #include "al_type.h"
-#include "gicv3_common.h"
+#include "al_gicv3_common.h"
 
 /*******************************************************************************
  * GICv3 and 3.1 miscellaneous definitions
@@ -425,7 +426,6 @@ typedef struct Gicv3DrvData {
 AL_VOID AlGicv3_DriverInit(const AL_GICV3_DrvDataStruct *DrvData);
 AL_VOID AlGicv3_DistInit(AL_VOID);
 AL_VOID AlGicv3_RdistInit(AL_U32 ProcNum);
-AL_U32 AlGicv3_Rdist_GetNumFrames(const AL_UINTPTR GicrFrame);
 AL_VOID AlGicv3_CpuIfEnable(AL_U32 ProcNum);
 AL_VOID AlGicv3_CpuIfDisable(AL_U32 ProcNum);
 AL_U32 AlGicv3_GetPendingInterruptType(AL_VOID);

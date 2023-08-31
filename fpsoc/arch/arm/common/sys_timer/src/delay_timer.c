@@ -1,5 +1,11 @@
-#include "arch.h"
-#include "sysreg.h"
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+#include "al_aarch64.h"
+#include "al_aarch64_sysreg.h"
 #include "al_type.h"
 #include "al_top.h"
 
