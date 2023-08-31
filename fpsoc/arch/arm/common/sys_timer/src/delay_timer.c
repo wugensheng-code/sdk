@@ -26,7 +26,7 @@ AL_VOID AlSys_StopTimer(AL_VOID)
 }
 
 
-AL_U64 AlSys_GetTimerTick(AL_VOID)
+AL_U64 AlSys_GetTimerTickCount(AL_VOID)
 {
     return (AL_U64)read_cntpct_el0();
 }
@@ -42,11 +42,11 @@ AL_VOID AlSys_DelayTicks(AL_U64 TickCount)
 {
     AL_U64 TickEnd, TickCur;
 
-    TickCur = AlSys_GetTimerTick();
+    TickCur = AlSys_GetTimerTickCount();
     TickEnd = TickCur + TickCount;
 
     do {
-        TickCur = AlSys_GetTimerTick();
+        TickCur = AlSys_GetTimerTickCount();
     } while (TickCur < TickEnd);
 }
 

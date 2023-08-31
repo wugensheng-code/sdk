@@ -13,7 +13,7 @@ AL_VOID AlSys_StopTimer(AL_VOID);
 
 AL_U64 AlSys_GetTimerFreq(AL_VOID);
 
-AL_U64 AlSys_GetTimerTick(AL_VOID);
+AL_U64 AlSys_GetTimerTickCount(AL_VOID);
 
 AL_VOID AlSys_UDelay(AL_U64 Usec);
 

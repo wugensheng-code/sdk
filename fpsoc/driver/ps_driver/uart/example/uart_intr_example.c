@@ -74,7 +74,7 @@ AL_S32 UartIntrExample(AL_VOID)
         return ret;
     }
 
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     UartIoctlParam.LoopBack = AL_FUNC_ENABLE;
     AlUart_Hal_IoCtl(&uart0_hal, AL_UART_IOCTL_SET_LOOPBACK , &UartIoctlParam);

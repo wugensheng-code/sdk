@@ -33,23 +33,23 @@ static AL_VOID AlIic_DefEventCallBack(AL_IIC_EventStruct *IicEvent, void *Callba
         case AL_IIC_EVENT_RX_UNDER:
         case AL_IIC_EVENT_RX_OVER:
         case AL_IIC_EVENT_TX_OVER:
-        Al_OSAL_Mb_Send(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], IicEvent);
+        AlOsal_Mb_Send(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], IicEvent);
         break;
 
         case AL_IIC_EVENT_RD_REQ:
         break;
 
         case AL_IIC_EVENT_TX_ABRT:
-        Al_OSAL_Mb_Send(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], IicEvent);
+        AlOsal_Mb_Send(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], IicEvent);
         AL_LOG(AL_LOG_LEVEL_ERROR, "AL_IIC_EVENT_TX_ABRT source:0x%x\r\n", IicEvent->EventData);
         break;
 
         case AL_IIC_EVENT_RX_DONE:
-        Al_OSAL_Mb_Send(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], IicEvent);
+        AlOsal_Mb_Send(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], IicEvent);
         break;
 
         case AL_IIC_EVENT_TX_DONE:
-        Al_OSAL_Mb_Send(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], IicEvent);
+        AlOsal_Mb_Send(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], IicEvent);
         break;
 
         case AL_IIC_EVENT_ACTIVITY:
@@ -66,7 +66,7 @@ static AL_VOID AlIic_DefEventCallBack(AL_IIC_EventStruct *IicEvent, void *Callba
 static AL_S32 AlIic_Hal_WaitMasterTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_IIC_EventStruct *Event, AL_U32 Timeout)
 {
     AL_S32 Ret;
-    Ret = Al_OSAL_Mb_Receive(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], Event, Timeout);
+    Ret = AlOsal_Mb_Receive(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], Event, Timeout);
 
     if (Handle->Dev->CmdOption == AL_IIC_CMD_OPTION_STOP) {
         while(AlIic_ll_IsMasterActivity(Handle->Dev->HwConfig.BaseAddress));
@@ -78,7 +78,7 @@ static AL_S32 AlIic_Hal_WaitMasterTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_I
 static AL_S32 AlIic_Hal_WaitMasterRxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_IIC_EventStruct *Event, AL_U32 Timeout)
 {
     AL_S32 Ret;
-    Ret = Al_OSAL_Mb_Receive(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], Event, Timeout);
+    Ret = AlOsal_Mb_Receive(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], Event, Timeout);
 
     if (Handle->Dev->CmdOption == AL_IIC_CMD_OPTION_STOP) {
         while(AlIic_ll_IsMasterActivity(Handle->Dev->HwConfig.BaseAddress));
@@ -90,7 +90,7 @@ static AL_S32 AlIic_Hal_WaitMasterRxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_I
 static AL_S32 AlIic_Hal_WaitSlaveTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_IIC_EventStruct *Event, AL_U32 Timeout)
 {
     AL_S32 Ret;
-    Ret = Al_OSAL_Mb_Receive(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], Event, Timeout);
+    Ret = AlOsal_Mb_Receive(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], Event, Timeout);
 
     while(AlIic_ll_IsSlaveActivity(Handle->Dev->HwConfig.BaseAddress));
 
@@ -100,7 +100,7 @@ static AL_S32 AlIic_Hal_WaitSlaveTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_II
 static AL_S32 AlIic_Hal_WaitSlaveRxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_IIC_EventStruct *Event, AL_U32 Timeout)
 {
     AL_S32 Ret;
-    Ret = Al_OSAL_Mb_Receive(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], Event, Timeout);
+    Ret = AlOsal_Mb_Receive(&Handle->TxRxEventQueue[Handle->CurTxOrRxMode], Event, Timeout);
 
     while(AlIic_ll_IsSlaveActivity(Handle->Dev->HwConfig.BaseAddress));
 
@@ -140,13 +140,13 @@ AL_S32 AlIic_Hal_Init(AL_IIC_HalStruct *Handle, AL_U32 DevId,
 
     (AL_VOID)AlIntr_RegHandler(Handle->Dev->HwConfig.IntrId, AL_NULL, AlIic_Dev_IntrHandler, Handle->Dev);
 
-    Ret = Al_OSAL_Lock_Init(&Handle->Lock, "Iic-Lock");
+    Ret = AlOsal_Lock_Init(&Handle->Lock, "Iic-Lock");
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Al_OSAL_Mb_Init(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], "IIC_TXRXDONE");
-    Al_OSAL_Mb_Init(&Handle->TxRxEventQueue[AL_IIC_MODE_NONBLOCK], "IIC_TXRXDONE");
+    AlOsal_Mb_Init(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], "IIC_TXRXDONE");
+    AlOsal_Mb_Init(&Handle->TxRxEventQueue[AL_IIC_MODE_NONBLOCK], "IIC_TXRXDONE");
     return AL_OK;
 }
 
@@ -159,7 +159,7 @@ AL_S32 AlIic_Hal_MasterSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    Ret = Al_OSAL_Lock_Take(&Handle->Lock, Timeout);
+    Ret = AlOsal_Lock_Take(&Handle->Lock, Timeout);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -168,7 +168,7 @@ AL_S32 AlIic_Hal_MasterSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
 
     Ret = AlIic_Dev_MasterSendData(Handle->Dev, SlaveAddr, Data, Size);
     if (Ret != AL_OK) {
-        (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+        (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
         return Ret;
     }
 
@@ -178,10 +178,10 @@ AL_S32 AlIic_Hal_MasterSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
     Ret = AlIic_Hal_WaitMasterTxDoneOrTimeout(Handle, &IicEvent, Timeout);
     if (Ret != AL_OK) {
         AlIic_Dev_StopMasterSend(Handle->Dev);
-        (AL_VOID)Al_OSAL_Mb_Receive(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], &IicEvent, AL_WAITING_NO);
+        (AL_VOID)AlOsal_Mb_Receive(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], &IicEvent, AL_WAITING_NO);
     }
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     if (Ret == AL_OK && (IicEvent.Events == AL_IIC_EVENT_TX_DONE))
         return AL_OK;
@@ -197,7 +197,7 @@ AL_S32 AlIic_Hal_MasterSendDataPolling(AL_IIC_HalStruct *Handle, AL_U16 SlaveAdd
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    Ret = Al_OSAL_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
+    Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -206,7 +206,7 @@ AL_S32 AlIic_Hal_MasterSendDataPolling(AL_IIC_HalStruct *Handle, AL_U16 SlaveAdd
 
     Ret = AlIic_Dev_MasterSendDataPolling(Handle->Dev, SlaveAddr, Data, Size);
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return Ret;
 }
@@ -221,7 +221,7 @@ AL_S32 AlIic_Hal_MasterRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    Ret = Al_OSAL_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
+    Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -230,7 +230,7 @@ AL_S32 AlIic_Hal_MasterRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
 
     Ret = AlIic_Dev_MasterRecvData(Handle->Dev, SlaveAddr, Data, Size);
     if (Ret != AL_OK) {
-        (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+        (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
         return Ret;
     }
 
@@ -238,10 +238,10 @@ AL_S32 AlIic_Hal_MasterRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
     Ret = AlIic_Hal_WaitMasterRxDoneOrTimeout(Handle, &IicEvent, Timeout);
     if (Ret != AL_OK) {
         AlIic_Dev_StopMasterRecv(Handle->Dev);
-        (AL_VOID)Al_OSAL_Mb_Receive(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], &IicEvent, AL_WAITING_NO);
+        (AL_VOID)AlOsal_Mb_Receive(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], &IicEvent, AL_WAITING_NO);
     }
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     if (Ret == AL_OK && (IicEvent.Events == AL_IIC_EVENT_RX_DONE))
         return AL_OK;
@@ -258,7 +258,7 @@ AL_S32 AlIic_Hal_MasterRecvDataPolling(AL_IIC_HalStruct *Handle, AL_U16 SlaveAdd
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    Ret = Al_OSAL_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
+    Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -267,7 +267,7 @@ AL_S32 AlIic_Hal_MasterRecvDataPolling(AL_IIC_HalStruct *Handle, AL_U16 SlaveAdd
 
     Ret = AlIic_Dev_MasterRecvDataPolling(Handle->Dev, SlaveAddr, Data, Size);
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return Ret;
 }
@@ -284,7 +284,7 @@ AL_S32 AlIic_Hal_SlaveSendDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    Ret = Al_OSAL_Lock_Take(&Handle->Lock, Timeout);
+    Ret = AlOsal_Lock_Take(&Handle->Lock, Timeout);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -293,7 +293,7 @@ AL_S32 AlIic_Hal_SlaveSendDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
 
     Ret = AlIic_Dev_SlaveSendData(Handle->Dev, Data, Size);
     if (Ret != AL_OK) {
-        (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+        (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
         return Ret;
     }
 
@@ -303,7 +303,7 @@ AL_S32 AlIic_Hal_SlaveSendDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
     Ret = AlIic_Hal_WaitSlaveTxDoneOrTimeout(Handle, &IicEvent, Timeout);
     if (Ret != AL_OK) {
         AlIic_Dev_StopSlaveSend(Handle->Dev);
-        (AL_VOID)Al_OSAL_Mb_Receive(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], &IicEvent, AL_WAITING_NO);
+        (AL_VOID)AlOsal_Mb_Receive(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], &IicEvent, AL_WAITING_NO);
     }
     if (Ret == AL_OK && (IicEvent.Events == AL_IIC_EVENT_TX_DONE))
         return AL_OK;
@@ -321,7 +321,7 @@ AL_S32 AlIic_Hal_SlaveRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    Ret = Al_OSAL_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
+    Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -330,7 +330,7 @@ AL_S32 AlIic_Hal_SlaveRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
 
     Ret = AlIic_Dev_SlaveRecvData(Handle->Dev, Data, Size);
     if (Ret != AL_OK) {
-        (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+        (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
         return Ret;
     }
 
@@ -338,10 +338,10 @@ AL_S32 AlIic_Hal_SlaveRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
     Ret = AlIic_Hal_WaitSlaveRxDoneOrTimeout(Handle, &IicEvent, Timeout);
     if (Ret != AL_OK) {
         AlIic_Dev_StopSlaveSend(Handle->Dev);
-        (AL_VOID)Al_OSAL_Mb_Receive(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], &IicEvent, AL_WAITING_NO);
+        (AL_VOID)AlOsal_Mb_Receive(&Handle->TxRxEventQueue[AL_IIC_MODE_BLOCK], &IicEvent, AL_WAITING_NO);
     }
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     if (Ret == AL_OK && (IicEvent.Events == AL_IIC_EVENT_RX_DONE))
         return AL_OK;
@@ -359,7 +359,7 @@ AL_S32 AlIic_Hal_MasterSetCmdOption(AL_IIC_HalStruct *Handle, AL_IIC_CmdOptionEn
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    Ret = Al_OSAL_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
+    Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -369,7 +369,7 @@ AL_S32 AlIic_Hal_MasterSetCmdOption(AL_IIC_HalStruct *Handle, AL_IIC_CmdOptionEn
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_Dev_MasetSetCmdOption error:%d\r\n", Ret);
     }
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return Ret;
 }
@@ -383,14 +383,14 @@ AL_IIC_CmdOptionEnum AlIic_Hal_MastertGetCmdOption(AL_IIC_HalStruct *Handle)
         return AL_IIC_CMD_OPTION_NONE;
     }
 
-    Ret = Al_OSAL_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
+    Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         return AL_IIC_CMD_OPTION_NONE;
     }
 
     CmdOption = AlIic_Dev_MasterGetCmdOption(Handle->Dev);
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return CmdOption;
 }
@@ -403,7 +403,7 @@ AL_S32 AlIic_Hal_IoCtl(AL_IIC_HalStruct *Handle, AL_IIC_IoCtlCmdEnum Cmd, AL_VOI
         return AL_IIC_ERR_ILLEGAL_PARAM;
     }
 
-    Ret = Al_OSAL_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
+    Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -413,7 +413,7 @@ AL_S32 AlIic_Hal_IoCtl(AL_IIC_HalStruct *Handle, AL_IIC_IoCtlCmdEnum Cmd, AL_VOI
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_Dev_IoCtl error:%d\r\n", Ret);
     }
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return Ret;
 }

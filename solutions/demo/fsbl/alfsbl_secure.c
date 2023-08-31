@@ -86,7 +86,7 @@ uint32_t SecureIrqInit(void)
 	};
 
 	ret = AlIntr_RegHandler(RPU2CSU_ACK_IRQN, &Attr, RpuCsuAckHandler, NULL);
-	AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+	AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
 	return ret;
 }

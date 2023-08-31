@@ -1,25 +1,14 @@
+#include "al_uart_hal.h"
 #include "al_log.h"
 
-#ifdef BOARD_DR1X90_AD101_V10
-#define LOG_DEV AL_LOG_UART1
+
+#if ((LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1))
+AL_UART_HalStruct AlLog;
 #endif
-
-#ifndef LOG_DEV
-#define LOG_DEV AL_LOG_UART0
-#endif
-
-#if (LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1)
-
-#include "al_uart_hal.h"
-AL_UART_HalStruct Log;
-
-#else
-#endif
-
 
 AL_S32 AlLog_Init()
 {
-#if (LOG_DEV == AL_LOG_UART0)
+#if ((LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1))
     AL_UART_InitStruct UART_InitStruct = {
         .BaudRate     = 115200,
         .Parity       = UART_NO_PARITY,
@@ -27,16 +16,7 @@ AL_S32 AlLog_Init()
         .StopBits     = UART_STOP_1BIT,
     };
 
-    return AlUart_Hal_Init(&Log, AL_LOG_UART0, &UART_InitStruct, AL_NULL);
-#elif (LOG_DEV == AL_LOG_UART1)
-    AL_UART_InitStruct UART_InitStruct = {
-        .BaudRate     = 115200,
-        .Parity       = UART_NO_PARITY,
-        .WordLength   = UART_CHAR_8BITS,
-        .StopBits     = UART_STOP_1BIT,
-    };
-
-    return AlUart_Hal_Init(&Log, AL_LOG_UART1, &UART_InitStruct, AL_NULL);
+    return AlUart_Hal_Init(&AlLog, LOG_DEV, &UART_InitStruct, AL_NULL);
 #else
     return AL_OK;
 #endif
@@ -45,12 +25,10 @@ AL_S32 AlLog_Init()
 AL_U32 AlLog_Write(const void* Data, AL_U32 Len)
 {
 #if (LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1)
-    AL_S32 ret = AlUart_Hal_SendDataPolling(&Log, (AL_U8 *)Data, Len);
+    return AlUart_Hal_SendDataPolling(&AlLog, (AL_U8 *)Data, Len);
 #else
     (AL_VOID)Data;
     (AL_VOID)Len;
-
-#endif
-
     return Len;
+#endif
 }

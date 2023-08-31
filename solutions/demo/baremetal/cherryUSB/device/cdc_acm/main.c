@@ -94,15 +94,15 @@ AL_S32 AlUsb_Hal_Init(AL_USB_HalStruct *Handle, AL_U32 DevId, AL_USB_InitStruct 
 {
     AL_USB_DevStruct *Dev;
     Dev = &AL_USB_DevInstance[DevId];
-	
+
 	Dev->DevId        = DevId;
     Dev->BaseAddr     = AlUsb_Dev_LookupConfig(DevId)->BaseAddress;
     Dev->IntrNum      = AlUsb_Dev_LookupConfig(DevId)->IntrNum;
     Dev->InputClockHz = AlUsb_Dev_LookupConfig(DevId)->ClockHz;
-	
+
 	printf("Dev->IntrNum : %d \r\n", Dev->IntrNum);
 	(AL_VOID)AlIntr_RegHandler(Dev->IntrNum, AL_NULL, AlUsb_Dev_IntrHandler, Dev);
-	AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+	AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 }
 
 extern volatile uint8_t dtr_enable;

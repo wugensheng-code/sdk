@@ -33,7 +33,7 @@ static AL_DMACAHB_ChStruct AL_DMACAHB_ChInstance[AL_DMACAHB_NUM_INSTANCE][AL_DMA
 static AL_S32 AlDmacAhb_Hal_WaitTransDoneOrTimeout(AL_DMACAHB_HalStruct *Handle, AL_U32 Timeout,
                                                    AL_DMACAHB_EventStruct *Event)
 {
-    return Al_OSAL_Mb_Receive(&Handle->EventQueue, Event, Timeout);
+    return AlOsal_Mb_Receive(&Handle->EventQueue, Event, Timeout);
 }
 
 /**
@@ -56,7 +56,7 @@ static AL_VOID AlDmacAhb_Hal_DefChEventCallBack(AL_DMACAHB_EventStruct *Event, A
         break;
     case AL_DMACAHB_EVENT_TRANS_COMP:
     case AL_DMACAHB_EVENT_BLOCK_TRANS_COMP:
-        Al_OSAL_Mb_Send(&Handle->EventQueue, Event);
+        AlOsal_Mb_Send(&Handle->EventQueue, Event);
         break;
     case AL_DMACAHB_EVENT_SRC_TRANS_COMP:
     case AL_DMACAHB_EVENT_DST_TRANS_COMP:
@@ -131,15 +131,12 @@ AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_U32 DevId, AL_DMACAHB
         AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlDmacAhb_Dev_IntrHandler, Handle->Channel->Dmac);
     }
 
-    Ret = Al_OSAL_Lock_Init(&Handle->Lock, "Dmacahb-Lock");
+    Ret = AlOsal_Lock_Init(&Handle->Lock, "Dmacahb-Lock");
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Ret = Al_OSAL_Mb_Init(&Handle->EventQueue, "Dmacahb-Queue");
-    if (Ret != AL_OK) {
-        return Ret;
-    }
+    AlOsal_Mb_Init(&Handle->EventQueue, "Dmacahb-Queue");
 
     return Ret;
 }
@@ -158,7 +155,7 @@ AL_S32 AlDmacAhb_Hal_DeInit(AL_DMACAHB_HalStruct *Handle)
     AL_ASSERT(Handle != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
     AL_ASSERT(Handle->Channel != AL_NULL, AL_DMACAHB_ERR_HANDLE_WITHOUT_CH);
 
-    Ret = Al_OSAL_Lock_Take(&Handle->Lock, 0);
+    Ret = AlOsal_Lock_Take(&Handle->Lock, 0);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -172,13 +169,13 @@ AL_S32 AlDmacAhb_Hal_DeInit(AL_DMACAHB_HalStruct *Handle)
 
     Ret = AlDmacAhb_Dev_DeInit(Handle->Channel);
     if (Ret != AL_OK) {
-        (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+        (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
         return Ret;
     }
 
     Handle->Channel = AL_NULL;
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return Ret;
 }
@@ -196,7 +193,7 @@ AL_S32 AlDmacAhb_Hal_Start(AL_DMACAHB_HalStruct *Handle)
 
     AL_ASSERT(Handle != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
-    Ret = Al_OSAL_Lock_Take(&Handle->Lock, 0);
+    Ret = AlOsal_Lock_Take(&Handle->Lock, 0);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -208,7 +205,7 @@ AL_S32 AlDmacAhb_Hal_Start(AL_DMACAHB_HalStruct *Handle)
         AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb start error:%x\r\n", Ret);
     }
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return Ret;
 }
@@ -228,7 +225,7 @@ AL_S32 AlDmacAhb_Hal_StartBlock(AL_DMACAHB_HalStruct *Handle, AL_U32 Timeout)
 
     AL_ASSERT(Handle != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
-    Ret = Al_OSAL_Lock_Take(&Handle->Lock, Timeout);
+    Ret = AlOsal_Lock_Take(&Handle->Lock, Timeout);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -238,7 +235,7 @@ AL_S32 AlDmacAhb_Hal_StartBlock(AL_DMACAHB_HalStruct *Handle, AL_U32 Timeout)
     Ret = AlDmacAhb_Dev_Start(Handle->Channel);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb start block error:0x%x\r\n", Ret);
-        (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+        (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
         return Ret;
     }
 
@@ -247,7 +244,7 @@ AL_S32 AlDmacAhb_Hal_StartBlock(AL_DMACAHB_HalStruct *Handle, AL_U32 Timeout)
         AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb wait trans done error:%x\r\n", Ret);
     }
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     if (Ret == AL_OK && ((Event.EventId == AL_DMACAHB_EVENT_TRANS_COMP) ||
         (Event.EventId == AL_DMACAHB_EVENT_BLOCK_TRANS_COMP))) {
@@ -274,14 +271,14 @@ AL_S32 AlDmacAhb_Hal_IoCtl(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_IoCtlCmdEnum
 
     AL_ASSERT((Handle != AL_NULL) && (Data != AL_NULL), AL_DMACAHB_ERR_NULL_PTR);
 
-    Ret = Al_OSAL_Lock_Take(&Handle->Lock, 0);
+    Ret = AlOsal_Lock_Take(&Handle->Lock, 0);
     if (Ret != AL_OK) {
         return Ret;
     }
 
     AlDmacAhb_Dev_IoCtl(Handle->Channel, Cmd, Data);
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return Ret;
 }

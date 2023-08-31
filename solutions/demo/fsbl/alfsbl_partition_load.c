@@ -808,10 +808,10 @@ uint32_t AlFsbl_CheckPlInitDone(void)
 	uint32_t cnt;
 
 	TimerFreq = AlSys_GetTimerFreq();
-	StartTime = AlSys_GetTimerTick();
+	StartTime = AlSys_GetTimerTickCount();
 
 	do {
-		CurrTime =  AlSys_GetTimerTick();
+		CurrTime =  AlSys_GetTimerTickCount();
 		if((CurrTime - StartTime) > TimerFreq * INIT_DONE_WAIT_SECS) {
 			Status = ALFSBL_ERROR_PL_INIT_TIMEOUT;
 			goto END;

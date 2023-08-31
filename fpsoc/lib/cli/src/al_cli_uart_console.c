@@ -1,15 +1,11 @@
 #include "al_cli_uart_console.h"
 #include "al_cli_console.h"
 #include "al_cli_common.h"
-
-#include "al_uart_hal.h"
 #include "al_log.h"
 
 AL_CLI_CircularQueueStruct UartQueue;
 
 AL_U8 UartRecvBuffer[AL_CLI_UART_BUFFER_MAX_SIZE];
-
-extern AL_UART_HalStruct Log;
 
 AL_S32 AlCli_CircularQueueInit(AL_CLI_CircularQueueStruct *Queue)
 {
@@ -91,7 +87,7 @@ AL_S32 AlCli_UartRead(AL_VOID *Buf, AL_U32 Len, AL_U32 *RecvSize)
         return AL_CLI_ERROR_ILLEGAL_PARAM;
     }
 
-    RetValue = AlUart_Hal_RecvDataBlock(&Log, Buf, Len, RecvSize, AL_WAITFOREVER);
+    RetValue = AlUart_Hal_RecvDataBlock(&AlLog, Buf, Len, RecvSize, AL_WAITFOREVER);
     if (RetValue != AL_OK)
         return RetValue;
 

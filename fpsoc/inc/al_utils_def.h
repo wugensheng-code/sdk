@@ -70,7 +70,7 @@ extern "C" {
 #define AL_LOG(level, format, ...) \
     do {  \
         if(level >= AL_LOG_LEVEL_DEBUG) \
-        printf(format, ##__VA_ARGS__); \
+            printf(format"\r\n", ##__VA_ARGS__); \
     } while (0);
 
 
@@ -81,9 +81,9 @@ extern "C" {
  * else   : timeout
 */
 #define AL_WAIT_COND_UNTIL_TIMEOUT(Condition, DelayMs)   ({                                                         \
-    AL_U64  Start = AlSys_GetTimerTick();                                                                           \
+    AL_U64  Start = AlSys_GetTimerTickCount();                                                                           \
     AL_U64  Freq  = AlSys_GetTimerFreq();                                                                           \
-    while (((Condition) != AL_TRUE) && (Start + Freq * DelayMs / 1000 >= AlSys_GetTimerTick()));                    \
+    while (((Condition) != AL_TRUE) && (Start + Freq * DelayMs / 1000 >= AlSys_GetTimerTickCount()));                    \
     (Condition);                                                                                                    \
 })
 

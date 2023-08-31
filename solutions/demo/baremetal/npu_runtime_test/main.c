@@ -41,7 +41,7 @@ int main () {
 
     /* ---------------2. init interrupt ---------------------------------------------- */
 #ifdef RUN_PLATFORM_BM
-   AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+   AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 #endif
 
     /* ---------------3. run npu runtime graph for once ------------------------------ */

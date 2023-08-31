@@ -32,12 +32,12 @@ typedef struct
 } AL_Lock;
 typedef AL_Lock* AL_Lock_t;
 
-static inline AL_S32 Al_OSAL_Lock_Init(AL_Lock_t Lock, const char* Name)
+static inline AL_S32 AlOsal_Lock_Init(AL_Lock_t Lock, const char* Name)
 {
     return rt_mutex_init(&Lock->Thread_Lock, Name, RT_IPC_FLAG_PRIO);
 }
 
-static inline AL_S32 Al_OSAL_Lock_Take(AL_Lock_t Lock, AL_S32 Timeout)
+static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_S32 Timeout)
 {
     /* If the scheduler is started and in thread context */
     if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
@@ -50,7 +50,7 @@ static inline AL_S32 Al_OSAL_Lock_Take(AL_Lock_t Lock, AL_S32 Timeout)
     }
 }
 
-static inline AL_S32 Al_OSAL_Lock_Release(AL_Lock_t Lock)
+static inline AL_S32 AlOsal_Lock_Release(AL_Lock_t Lock)
 {
     /* If the scheduler is started and in thread context */
     if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
@@ -70,17 +70,17 @@ static inline AL_S32 Al_OSAL_Lock_Release(AL_Lock_t Lock)
 typedef struct rt_semaphore  AL_Semaphore;
 typedef struct rt_semaphore* AL_Semaphore_t;
 
-static inline AL_S32 Al_OSAL_Sem_Init(AL_Semaphore_t Semaphore, const char* Name, AL_S32 Value)
+static inline AL_S32 AlOsal_Sem_Init(AL_Semaphore_t Semaphore, const char* Name, AL_S32 Value)
 {
     return rt_sem_init(Semaphore, Name, Value, RT_IPC_FLAG_PRIO);
 }
 
-static inline AL_S32 Al_OSAL_Sem_Take(AL_Semaphore_t Semaphore, AL_S32 Timeout)
+static inline AL_S32 AlOsal_Sem_Take(AL_Semaphore_t Semaphore, AL_S32 Timeout)
 {
     return rt_sem_take(Semaphore, Timeout);
 }
 
-static inline AL_S32 Al_OSAL_Sem_Release(AL_Semaphore_t Semaphore)
+static inline AL_S32 AlOsal_Sem_Release(AL_Semaphore_t Semaphore)
 {
     return rt_sem_release(Semaphore);
 }
@@ -98,7 +98,7 @@ typedef struct
 } AL_MailBox;
 typedef AL_MailBox*  AL_MailBox_t;
 
-static inline AL_S32 Al_OSAL_Mb_Init(AL_MailBox_t MailBox, const char* Name)
+static inline AL_S32 AlOsal_Mb_Init(AL_MailBox_t MailBox, const char* Name)
 {
     AL_S64 ret = AL_OK;
 
@@ -113,7 +113,7 @@ static inline AL_S32 Al_OSAL_Mb_Init(AL_MailBox_t MailBox, const char* Name)
 
 }
 
-static inline AL_S32 Al_OSAL_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
+static inline AL_S32 AlOsal_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
 {
     MailBox->Msg = *(AL_U64 *)Msg;
     __COMPILER_BARRIER();
@@ -122,7 +122,7 @@ static inline AL_S32 Al_OSAL_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
     rt_sem_release(&MailBox->Semaphore);
 }
 
-static inline AL_S32 Al_OSAL_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)
+static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)
 {
     AL_S32 flag = (AL_S32)rt_sem_take(&MailBox->Semaphore, AL_WAITFOREVER);
 
@@ -140,7 +140,7 @@ static inline AL_S32 Al_OSAL_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S
  * Critical API for specific devices*
  *----------------------------------------------*/
 
-static inline AL_VOID Al_OSAL_EnterDevCtritical(AL_U32 DevIntrId, AL_BOOL Condition)
+static inline AL_VOID AlOsal_EnterDevCtritical(AL_U32 DevIntrId, AL_BOOL Condition)
 {
     (AL_VOID)DevIntrId;
     (AL_VOID)Condition;
@@ -148,7 +148,7 @@ static inline AL_VOID Al_OSAL_EnterDevCtritical(AL_U32 DevIntrId, AL_BOOL Condit
 }
 
 
-static inline AL_VOID Al_OSAL_ExitDevCtritical(AL_U32 DevIntrId, AL_BOOL Condition)
+static inline AL_VOID AlOsal_ExitDevCtritical(AL_U32 DevIntrId, AL_BOOL Condition)
 {
     (AL_VOID)DevIntrId;
     (AL_VOID)Condition;
@@ -160,12 +160,12 @@ static inline AL_VOID Al_OSAL_ExitDevCtritical(AL_U32 DevIntrId, AL_BOOL Conditi
  * Critical API.*
  *----------------------------------------------*/
 
-static inline AL_VOID AL_OSAL_EnterCritical(AL_VOID)
+static inline AL_VOID ALOsal_EnterCritical(AL_VOID)
 {
     rt_enter_critical();
 }
 
-static inline AL_VOID AL_OSAL_ExitCritical(AL_VOID)
+static inline AL_VOID ALOsal_ExitCritical(AL_VOID)
 {
     rt_exit_critical();
 }
@@ -174,7 +174,7 @@ static inline AL_VOID AL_OSAL_ExitCritical(AL_VOID)
  * Critical API.*
  *----------------------------------------------*/
 
-static inline AL_VOID Al_OSAL_Sleep(AL_U32 Time)
+static inline AL_VOID AlOsal_Sleep(AL_U32 Time)
 {
     /* If the scheduler is started and in thread context */
     if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
@@ -205,7 +205,7 @@ typedef volatile struct
 }AL_Semaphore;
 typedef volatile AL_Semaphore* AL_Semaphore_t;
 
-static inline AL_S32 Al_OSAL_Sem_Init(AL_Semaphore_t Semaphore, const char* Name, AL_S32 Value)
+static inline AL_S32 AlOsal_Sem_Init(AL_Semaphore_t Semaphore, const char* Name, AL_S32 Value)
 {
     AL_UNUSED(Name);
 
@@ -214,7 +214,7 @@ static inline AL_S32 Al_OSAL_Sem_Init(AL_Semaphore_t Semaphore, const char* Name
     return AL_OK;
 }
 
-static inline AL_S32 Al_OSAL_Sem_Take(AL_Semaphore_t Semaphore, AL_S32 Timeout)
+static inline AL_S32 AlOsal_Sem_Take(AL_Semaphore_t Semaphore, AL_S32 Timeout)
 {
     AL_WAIT_COND_UNTIL_TIMEOUT((Semaphore->count > 0), Timeout);
 
@@ -223,7 +223,7 @@ static inline AL_S32 Al_OSAL_Sem_Take(AL_Semaphore_t Semaphore, AL_S32 Timeout)
     return AL_OK;
 }
 
-static inline AL_S32 Al_OSAL_Sem_Release(AL_Semaphore_t Semaphore)
+static inline AL_S32 AlOsal_Sem_Release(AL_Semaphore_t Semaphore)
 {
     Semaphore->count++;
 
@@ -237,7 +237,7 @@ static inline AL_S32 Al_OSAL_Sem_Release(AL_Semaphore_t Semaphore)
 typedef AL_Semaphore AL_Lock;
 typedef AL_Semaphore_t AL_Lock_t;
 
-static inline AL_S32 Al_OSAL_Lock_Init(AL_Lock_t Lock, const char* Name)
+static inline AL_S32 AlOsal_Lock_Init(AL_Lock_t Lock, const char* Name)
 {
     AL_UNUSED(Name);
 
@@ -246,7 +246,7 @@ static inline AL_S32 Al_OSAL_Lock_Init(AL_Lock_t Lock, const char* Name)
     return AL_OK;
 }
 
-static inline AL_S32 Al_OSAL_Lock_Take(AL_Lock_t Lock, AL_S32 Timeout)
+static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_S32 Timeout)
 {
     AL_UNUSED(Timeout);
 
@@ -255,7 +255,7 @@ static inline AL_S32 Al_OSAL_Lock_Take(AL_Lock_t Lock, AL_S32 Timeout)
     return AL_OK;
 }
 
-static inline AL_S32 Al_OSAL_Lock_Release(AL_Lock_t Lock)
+static inline AL_S32 AlOsal_Lock_Release(AL_Lock_t Lock)
 {
     AL_UNUSED(Lock);
 
@@ -274,7 +274,7 @@ typedef volatile struct
 } AL_MailBox;
 typedef volatile AL_MailBox*  AL_MailBox_t;
 
-static inline AL_S32 Al_OSAL_Mb_Init(AL_MailBox_t MailBox, const char* Name)
+static inline AL_S32 AlOsal_Mb_Init(AL_MailBox_t MailBox, const char* Name)
 {
     AL_UNUSED(Name);
 
@@ -285,7 +285,7 @@ static inline AL_S32 Al_OSAL_Mb_Init(AL_MailBox_t MailBox, const char* Name)
     return AL_OK;
 }
 
-static inline AL_S32 Al_OSAL_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
+static inline AL_S32 AlOsal_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
 {
     MailBox->Msg = *(AL_U64 *)Msg;
     __COMPILER_BARRIER();
@@ -294,7 +294,7 @@ static inline AL_S32 Al_OSAL_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
     return AL_OK;
 }
 
-static inline AL_S32 Al_OSAL_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)
+static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)
 {
     AL_BOOL flag = AL_WAIT_COND_UNTIL_TIMEOUT((MailBox->entry == 1), Timeout);
 
@@ -311,21 +311,21 @@ static inline AL_S32 Al_OSAL_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S
  * Critical API.
  *----------------------------------------------------------*/
 
-static inline AL_VOID AL_OSAL_EnterCritical(AL_VOID)
+static inline AL_VOID ALOsal_EnterCritical(AL_VOID)
 {
-    (AL_VOID)AlIntr_SetGlobalInterrupt(AL_FUNC_DISABLE);
+    (AL_VOID)AlIntr_SetLocalInterrupt(AL_FUNC_DISABLE);
 }
 
-static inline AL_VOID AL_OSAL_ExitCritical(AL_VOID)
+static inline AL_VOID ALOsal_ExitCritical(AL_VOID)
 {
-    (AL_VOID)AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+    (AL_VOID)AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 }
 
 /*----------------------------------------------*
  * Critical API for specific devices*
  *----------------------------------------------*/
 
-static inline AL_VOID Al_OSAL_EnterDevCtritical(AL_U32 DevIntrId, AL_BOOL Condition)
+static inline AL_VOID AlOsal_EnterDevCtritical(AL_U32 DevIntrId, AL_BOOL Condition)
 {
     if (Condition) {
         AlIntr_SetInterrupt(DevIntrId, AL_FUNC_DISABLE);
@@ -333,16 +333,16 @@ static inline AL_VOID Al_OSAL_EnterDevCtritical(AL_U32 DevIntrId, AL_BOOL Condit
 }
 
 
-static inline AL_VOID Al_OSAL_ExitDevCtritical(AL_U32 DevIntrId, AL_BOOL Condition)
+static inline AL_VOID AlOsal_ExitDevCtritical(AL_U32 DevIntrId, AL_BOOL Condition)
 {
     if (Condition) {
         AlIntr_SetInterrupt(DevIntrId, AL_FUNC_ENABLE);
     }
 }
 
-static inline AL_VOID Al_OSAL_Sleep(AL_U32 Time)
+static inline AL_VOID AlOsal_Sleep(AL_U32 Msec)
 {
-
+    AlSys_MDelay(Msec);
 }
 
 #endif

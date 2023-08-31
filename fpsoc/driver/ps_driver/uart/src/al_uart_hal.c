@@ -27,7 +27,7 @@ static AL_UART_DevStruct AL_UART_DevInstance[AL_UART_NUM_INSTANCE];
 */
 static inline AL_S32 AlUart_Hal_WaitTxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 Timeout, AL_UART_EventStruct *Event)
 {
-    return Al_OSAL_Mb_Receive(&Handle->TxEventQueue[Handle->CurTxMode], Event, Timeout);
+    return AlOsal_Mb_Receive(&Handle->TxEventQueue[Handle->CurTxMode], Event, Timeout);
 }
 
 /**
@@ -41,7 +41,7 @@ static inline AL_S32 AlUart_Hal_WaitTxDoneOrTimeout(AL_UART_HalStruct *Handle, A
 */
 static inline AL_S32 AlUart_Hal_WaitRxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 Timeout, AL_UART_EventStruct * Event)
 {
-    return Al_OSAL_Mb_Receive(&Handle->RxEventQueue[Handle->CurRxMode], Event, Timeout);
+    return AlOsal_Mb_Receive(&Handle->RxEventQueue[Handle->CurRxMode], Event, Timeout);
 }
 
 
@@ -62,14 +62,14 @@ static AL_VOID AlUart_Hal_DefEventHandler(AL_UART_EventStruct UartEvent, AL_VOID
     {
     case AL_UART_EVENT_SEND_DONE:
     case AL_UART_EVENT_BUSY_DETECT_TX:
-         Al_OSAL_Mb_Send(&Handle->TxEventQueue[Handle->CurTxMode], &UartEvent);
+         AlOsal_Mb_Send(&Handle->TxEventQueue[Handle->CurTxMode], &UartEvent);
         break;
 
     case AL_UART_EVENT_RECEIVE_DONE:
     case AL_UART_EVENT_CHAR_TIMEOUT:
     case AL_UART_EVENT_OVER_RUN_ERR:
     case AL_UART_EVENT_BUSY_DETECT_RX:
-        Al_OSAL_Mb_Send(&Handle->RxEventQueue[Handle->CurRxMode], &UartEvent);
+        AlOsal_Mb_Send(&Handle->RxEventQueue[Handle->CurRxMode], &UartEvent);
         break;
 
     case AL_UART_EVENT_MODEM_STATUS_INTR:
@@ -88,18 +88,9 @@ static AL_VOID AlUart_Hal_DefEventHandler(AL_UART_EventStruct UartEvent, AL_VOID
         break;
     }
 
-    if (UartEvent.Events & AL_UART_EVENT_PARITY_ERR) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, AL_UART_EVENTS_TO_ERRS(AL_UART_EVENT_PARITY_ERR));
-    }
-    if (UartEvent.Events & AL_UART_EVENT_FRAMING_ERR) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, AL_UART_EVENTS_TO_ERRS(AL_UART_EVENT_FRAMING_ERR));
-    }
-    if (UartEvent.Events & AL_UART_EVENT_BREAK_INTR) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, AL_UART_EVENTS_TO_ERRS(AL_UART_EVENT_BREAK_INTR));
-    }
-
     if (UartEvent.Events & (AL_UART_EVENT_PARITY_ERR | AL_UART_EVENT_FRAMING_ERR | AL_UART_EVENT_BREAK_INTR)) {
-        Al_OSAL_Mb_Send(&Handle->RxEventQueue[Handle->CurRxMode], &UartEvent);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Get uart event: 0x%x", AL_UART_EVENTS_TO_ERRS(AL_UART_EVENT_PARITY_ERR));
+        AlOsal_Mb_Send(&Handle->RxEventQueue[Handle->CurRxMode], &UartEvent);
     }
 
 }
@@ -146,32 +137,32 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStru
 
     (AL_VOID)AlIntr_RegHandler(Handle->Dev->IntrNum, AL_NULL, AlUart_Dev_IntrHandler, Handle->Dev);
 
-    Ret = Al_OSAL_Lock_Init(&Handle->TxLock, "Uart-TxLock");
+    Ret = AlOsal_Lock_Init(&Handle->TxLock, "Uart-TxLock");
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Ret = Al_OSAL_Lock_Init(&Handle->RxLock, "Uart-RxLock");
+    Ret = AlOsal_Lock_Init(&Handle->RxLock, "Uart-RxLock");
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Ret = Al_OSAL_Mb_Init(&Handle->TxEventQueue[0], "UART_TXDONE");
+    Ret = AlOsal_Mb_Init(&Handle->TxEventQueue[0], "UART_TXDONE");
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Ret = Al_OSAL_Mb_Init(&Handle->TxEventQueue[1], "UART_TXDONE");
+    Ret = AlOsal_Mb_Init(&Handle->TxEventQueue[1], "UART_TXDONE");
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Ret = Al_OSAL_Mb_Init(&Handle->RxEventQueue[0], "UART_RXDONE");
+    Ret = AlOsal_Mb_Init(&Handle->RxEventQueue[0], "UART_RXDONE");
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Ret = Al_OSAL_Mb_Init(&Handle->RxEventQueue[1], "UART_RXDONE");
+    Ret = AlOsal_Mb_Init(&Handle->RxEventQueue[1], "UART_RXDONE");
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -195,7 +186,7 @@ AL_S32 AlUart_Hal_SendDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32
 
     AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
-    Ret = Al_OSAL_Lock_Take(&Handle->TxLock, Timeout);
+    Ret = AlOsal_Lock_Take(&Handle->TxLock, Timeout);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -206,10 +197,10 @@ AL_S32 AlUart_Hal_SendDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32
      */
     Handle->RequestTxMode = UART_TX_BLOCK;
     while ((Ret = (AlUart_Dev_SendDataPolling(Handle->Dev, Data, Size))) == AL_UART_ERR_BUSY) {
-        Al_OSAL_Sleep(1);
+        AlOsal_Sleep(1);
     }
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->TxLock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->TxLock);
 
     return Ret;
 }
@@ -230,7 +221,7 @@ AL_S32 AlUart_Hal_RecvDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32
 
     AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
-    Ret = Al_OSAL_Lock_Take(&Handle->RxLock, AL_WAITFOREVER);
+    Ret = AlOsal_Lock_Take(&Handle->RxLock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -242,10 +233,10 @@ AL_S32 AlUart_Hal_RecvDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32
      * if previous in nonblocking mode receive, dev probably is still in RxBusy;
      */
     while ((Ret = AlUart_Dev_RecvDataPolling(Handle->Dev, Data, Size)) == AL_UART_ERR_BUSY) {
-        Al_OSAL_Sleep(1);
+        AlOsal_Sleep(1);
     }
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->RxLock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->RxLock);
 
     return Ret;
 }
@@ -268,7 +259,7 @@ AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
 
     AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
-    Ret = Al_OSAL_Lock_Take(&Handle->TxLock, Timeout);
+    Ret = AlOsal_Lock_Take(&Handle->TxLock, Timeout);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -280,11 +271,11 @@ AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
      * if previous in nonblocking mode receive, dev probably is still in RxBusy;
      */
     while ((Ret = AlUart_Dev_SendData(Handle->Dev, Data, Size)) == AL_UART_ERR_BUSY) {
-        Al_OSAL_Sleep(1);
+        AlOsal_Sleep(1);
     }
 
     if (Ret != AL_OK) {
-        (AL_VOID)Al_OSAL_Lock_Release(&Handle->TxLock);
+        (AL_VOID)AlOsal_Lock_Release(&Handle->TxLock);
         return Ret;
     }
 
@@ -294,10 +285,10 @@ AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
         * if timeout, force stop sending
         */
         AlUart_Dev_StopSend(Handle->Dev);
-        (AL_VOID)Al_OSAL_Mb_Receive(&Handle->TxEventQueue[UART_TX_BLOCK], &UartEvent, AL_WAITING_NO);
+        (AL_VOID)AlOsal_Mb_Receive(&Handle->TxEventQueue[UART_TX_BLOCK], &UartEvent, AL_WAITING_NO);
     }
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->TxLock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->TxLock);
     /*
      * taking the semphore successfully does not mean the sending is ok,
      * then return error status in Handle->TxError;
@@ -327,7 +318,7 @@ AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
 
     AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
-    Ret = Al_OSAL_Lock_Take(&Handle->RxLock, AL_WAITFOREVER);
+    Ret = AlOsal_Lock_Take(&Handle->RxLock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -338,11 +329,11 @@ AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
      * if previous in nonblocking mode receive, dev probably is still in RxBusy;
      */
     while ((Ret = AlUart_Dev_RecvData(Handle->Dev, Data, Size)) == AL_UART_ERR_BUSY) {
-        Al_OSAL_Sleep(1);
+        AlOsal_Sleep(1);
     }
 
     if (Ret != AL_OK) {
-        (AL_VOID)Al_OSAL_Lock_Release(&Handle->RxLock);
+        (AL_VOID)AlOsal_Lock_Release(&Handle->RxLock);
         return Ret;
     }
 
@@ -352,12 +343,12 @@ AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
         * if timeout, force stop receiving
         */
         AlUart_Dev_StopReceive(Handle->Dev);
-        (AL_VOID)Al_OSAL_Mb_Receive(&Handle->TxEventQueue[UART_TX_BLOCK], &UartEvent, AL_WAITING_NO);
+        (AL_VOID)AlOsal_Mb_Receive(&Handle->TxEventQueue[UART_TX_BLOCK], &UartEvent, AL_WAITING_NO);
     }
 
     *RecvSize =  UartEvent.EventData;
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->RxLock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->RxLock);
 
     if (Ret == AL_OK && (UartEvent.Events == AL_UART_EVENT_RECEIVE_DONE))
         return AL_OK;
@@ -384,7 +375,7 @@ AL_S32 AlUart_Hal_SendData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
     /*
     * take TxLock in Nonblock mode
     */
-    Ret = Al_OSAL_Lock_Take(&Handle->TxLock, 0);
+    Ret = AlOsal_Lock_Take(&Handle->TxLock, 0);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -399,7 +390,7 @@ AL_S32 AlUart_Hal_SendData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
     /*
     * release TxLock
     */
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->TxLock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->TxLock);
 
     return Ret;
 }
@@ -420,13 +411,13 @@ AL_S32 AlUart_Hal_RecvData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
 
     AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
-    Ret = Al_OSAL_Lock_Take(&Handle->RxLock, 0);
+    Ret = AlOsal_Lock_Take(&Handle->RxLock, 0);
     if (Ret != AL_OK) {
         return Ret;
     }
 
     Ret = AlUart_Dev_RecvData(Handle->Dev, Data, Size);
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->RxLock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->RxLock);
 
     return Ret;
 }
@@ -438,7 +429,7 @@ AL_S32 AlUart_Hal_RecvData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
 */
 AL_S32 AlUart_Hal_TryGetRecvLastEvent(AL_UART_HalStruct *Handle, AL_UART_EventStruct *Events)
 {
-    return Al_OSAL_Mb_Receive(&Handle->TxEventQueue[Handle->CurTxMode], Events, 0);
+    return AlOsal_Mb_Receive(&Handle->TxEventQueue[Handle->CurTxMode], Events, 0);
 }
 
 /**
@@ -447,7 +438,7 @@ AL_S32 AlUart_Hal_TryGetRecvLastEvent(AL_UART_HalStruct *Handle, AL_UART_EventSt
 */
 AL_S32 AlUart_Hal_TryGetSendLastEvent(AL_UART_HalStruct *Handle, AL_UART_EventStruct *Events)
 {
-    return Al_OSAL_Mb_Receive(&Handle->TxEventQueue[Handle->CurTxMode], Events, 0);
+    return AlOsal_Mb_Receive(&Handle->TxEventQueue[Handle->CurTxMode], Events, 0);
 }
 
 
@@ -467,12 +458,12 @@ AL_S32 AlUart_Hal_IoCtl(AL_UART_HalStruct *Handle, AL_UART_IoCtlCmdEnum Cmd, AL_
 
     AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
-    Ret = Al_OSAL_Lock_Take(&Handle->RxLock, AL_WAITFOREVER);
+    Ret = AlOsal_Lock_Take(&Handle->RxLock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         goto ERR_1;
     }
 
-    Ret = Al_OSAL_Lock_Take(&Handle->TxLock, AL_WAITFOREVER);
+    Ret = AlOsal_Lock_Take(&Handle->TxLock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         goto ERR_0;
     }
@@ -483,10 +474,10 @@ AL_S32 AlUart_Hal_IoCtl(AL_UART_HalStruct *Handle, AL_UART_IoCtlCmdEnum Cmd, AL_
     }
 
 ERR_0:
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->TxLock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->TxLock);
 
 ERR_1:
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->RxLock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->RxLock);
 
     return Ret;
 }

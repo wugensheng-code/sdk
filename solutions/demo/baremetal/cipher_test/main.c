@@ -20,7 +20,7 @@ uint64_t PerformanceTime[PERFORMANCE_IMAGE_NUM][PERFORMANCE_CASE_NUM] = {0};
 
 AL_U64 AlCipher_Test_GetCurTime(void)
 {
-    return AlSys_GetTimerTick();
+    return AlSys_GetTimerTickCount();
 }
 
 AL_U64 AlCipher_Test_SwitchTimeToUs(AL_U64 Time)
@@ -1292,7 +1292,7 @@ AL_U32 main(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_ERROR, "Cipher init error: 0x%x\r\n", Ret);
     }
 
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     while (TestCount++ < TEST_COUNT_MAX) {
         AL_LOG(AL_LOG_LEVEL_DEBUG,"[[[[[[[[[[[Test count is %d]]]]]]]]]]]\r\n", TestCount);

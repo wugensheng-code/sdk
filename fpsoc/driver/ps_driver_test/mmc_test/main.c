@@ -191,7 +191,7 @@ static AL_VOID AlMmc_Test_Sd(AL_VOID)
             AL_LOG(AL_LOG_LEVEL_ERROR, "Hal init error 0x%x\r\n", Ret);
             return ;
         }
-        AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+        AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
         Ret = AlMmc_Test_BlockTest(&Handle, 'a', WriteBuff, ReadBuff, 0, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
@@ -240,7 +240,7 @@ static AL_VOID AlMmc_Test_Emmc(AL_VOID)
             AL_LOG(AL_LOG_LEVEL_ERROR, "Hal init error 0x%x\r\n", Ret);
             return ;
         }
-        AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+        AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
         Ret = AlMmc_Test_BlockTest(&Handle, 'a', WriteBuff, ReadBuff, 0, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
@@ -270,12 +270,12 @@ static AL_VOID AlMmc_Test_Emmc(AL_VOID)
 
 static AL_VOID AlMmc_Test_CalcStart(AL_MMC_PerCalcStruct *PerCalc)
 {
-    PerCalc->Start = AlSys_GetTimerTick();
+    PerCalc->Start = AlSys_GetTimerTickCount();
 }
 
 static AL_VOID AlMmc_Test_CalcEnd(AL_MMC_HalStruct *Handle, AL_MMC_PerCalcStruct *PerCalc, AL_UINTPTR BlkCnt)
 {
-    PerCalc->End = AlSys_GetTimerTick();
+    PerCalc->End = AlSys_GetTimerTickCount();
     PerCalc->TimeInUs = (PerCalc->End - PerCalc->Start)/(AlSys_GetTimerFreq()/1000000);
     PerCalc->DatInByte = BlkCnt * Handle->Dev->CardInfo.BlkLen;
     PerCalc->BytePerSec = ((AL_DOUBLE)PerCalc->DatInByte / PerCalc->TimeInUs);

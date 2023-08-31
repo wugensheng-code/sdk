@@ -151,7 +151,7 @@ AL_S32 AlIntr_SetInterrupt(AL_U32 IntrId, AL_FUNCTION state)
     return Ret;
 }
 
-AL_S32 AlIntr_SetGlobalInterrupt(AL_FUNCTION state)
+AL_S32 AlIntr_SetLocalInterrupt(AL_FUNCTION state)
 {
     AL_S32 Ret = AL_OK;
 

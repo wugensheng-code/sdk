@@ -70,7 +70,7 @@ AL_S32 AlIic_DemoBoardE2promTest()
     if (Ret != AL_OK) {
         printf("AlIic_Hal_Init Failed\r\n");
     }
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     /* IIC MUX, switch EEPROM */
     AlIic_MuxInit(&Handle);

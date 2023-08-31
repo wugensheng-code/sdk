@@ -6,11 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
-
-#if (LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1)
-extern AL_UART_HalStruct Log;
-#endif
-
+#include "al_log.h"
 
 AL_S32 AlUart_UnitTest(AL_U32 Argc, AL_S8 * Argv[])
 {
@@ -20,12 +16,12 @@ AL_S32 AlUart_UnitTest(AL_U32 Argc, AL_S8 * Argv[])
     switch (Id) {
     case UTEST_UART_IOCTL: {
         AL_U32 SubId = atoi(Argv[1]);
-        Ret = AlUart_Hal_IoCtl(&Log, SubId, Argv[2]);
+        Ret = AlUart_Hal_IoCtl(&AlLog, SubId, Argv[2]);
     }
     break;
 
     case UTEST_UART_SENDBLOCK: {
-        Ret = AlUart_Hal_SendDataBlock(&Log, (AL_U8 *)atoi(Argv[1]), (AL_U32)atoi(Argv[2]), (AL_U32)atoi(Argv[3]));
+        Ret = AlUart_Hal_SendDataBlock(&AlLog, (AL_U8 *)atoi(Argv[1]), (AL_U32)atoi(Argv[2]), (AL_U32)atoi(Argv[3]));
     }
     break;
 

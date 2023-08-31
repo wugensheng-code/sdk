@@ -75,7 +75,7 @@ AL_VOID _delay_ms(AL_U64 count)
     } while (delta_mtime < delay_ticks);
 }
 
-AL_U64 AlSys_GetTimerTick(AL_VOID)
+AL_U64 AlSys_GetTimerTickCount(AL_VOID)
 {
     return SysTimer->MTIMER;
 }

@@ -877,7 +877,7 @@ void main(void)
     }
 
     /**/
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     // AL_NOR_RESET();
 
@@ -998,7 +998,7 @@ printf("Start FPSoc Quad Qspi Test\r\n");
     }
 
     /**/
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
 //     AL_NOR_RESET();
 
@@ -1186,7 +1186,7 @@ AL_NOR_WREN();
         printf("AlQspi_Hal_Init error!!!!!\r\n");
     }
 
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     // printf("AL_NOR_DMA_RESET!!!!!\r\n");
     // // AL_NOR_DMA_RESET();

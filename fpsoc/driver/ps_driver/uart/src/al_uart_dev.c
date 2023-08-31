@@ -12,7 +12,6 @@
 
 
 /***************** Macros (Inline Functions) Definitions *********************/
-#undef  UART_DEBUG
 
 /************************** Variable Definitions *****************************/
 static AL_UART_InitStruct UartDefInitConfigs = {
@@ -609,12 +608,12 @@ static AL_VOID AlUart_Dev_SetIntr(AL_UART_DevStruct *Uart, AL_Uart_TransferEnum 
     AL_BOOL IsRxBusy = AlUart_Dev_IsRxBusy(Uart);
     AL_BOOL IsTxBusy = AlUart_Dev_IsTxBusy(Uart);
 
-    Al_OSAL_EnterDevCtritical(Uart->IntrNum, (IsRxBusy && IsTxBusy));
+    AlOsal_EnterDevCtritical(Uart->IntrNum, (IsRxBusy && IsTxBusy));
 
     (Transfer == UART_TX) ? AlUart_ll_SetTxIntr(Uart->BaseAddr, State) :
                             AlUart_ll_SetRxIntr(Uart->BaseAddr, State);
 
-    Al_OSAL_ExitDevCtritical(Uart->IntrNum, IsRxBusy && IsTxBusy);
+    AlOsal_ExitDevCtritical(Uart->IntrNum, IsRxBusy && IsTxBusy);
 }
 
 AL_VOID AlUart_Dev_StopSend(AL_UART_DevStruct *Uart)

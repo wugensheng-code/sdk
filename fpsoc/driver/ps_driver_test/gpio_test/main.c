@@ -19,7 +19,7 @@ AlGpio_Hal_Test()
     else
         printf("[TEST] APU AlGpio_Hal_Init failed\r\n");
 
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
 
     /* 2、Test Write and Read DR register */

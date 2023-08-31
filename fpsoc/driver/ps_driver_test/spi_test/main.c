@@ -390,7 +390,7 @@ void main(void)
     }
 
     /**/
-    AlIntr_SetGlobalInterrupt(AL_FUNC_ENABLE);
+    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     /**/
     AL_NOR_READID();

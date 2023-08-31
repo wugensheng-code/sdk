@@ -1,7 +1,7 @@
 #include "mtimer.h"
 
 extern AL_U64 get_MTimerOutValue(AL_U64 count);
-extern AL_U64 AlSys_GetTimerTick(void);
+extern AL_U64 AlSys_GetTimerTickCount(void);
 extern AL_U64 AlSys_GetTimerFreq();
 
 uint32_t Mtimer_Delay(AL_U64 Usec)
@@ -12,10 +12,10 @@ uint32_t Mtimer_Delay(AL_U64 Usec)
     AL_U64 Tconsumed;
 
     DelayCnt = Usec * AlSys_GetTimerFreq() / 1000000;
-    Start = AlSys_GetTimerTick();
+    Start = AlSys_GetTimerTickCount();
 
     do{
-        End = AlSys_GetTimerTick();
+        End = AlSys_GetTimerTickCount();
         Tconsumed = End - Start;
     } while(Tconsumed < DelayCnt);
 
@@ -33,7 +33,7 @@ uint32_t Mtimer_Init(MtimerParams* Mtimer)
 
 uint32_t Mtimer_Start(MtimerParams* Mtimer, AL_U64 Usec)
 {
-    Mtimer->StartPoint = AlSys_GetTimerTick();
+    Mtimer->StartPoint = AlSys_GetTimerTickCount();
     Mtimer->CurPoint = Mtimer->StartPoint;
     Mtimer->TimerOut = (AL_U64)Usec * AlSys_GetTimerFreq() / 1000000;
     Mtimer->IsTimerOut = 0;
@@ -44,7 +44,7 @@ uint32_t Mtimer_TimerOut(MtimerParams* Mtimer)
 {
     AL_U64 Tconsumed;
     uint32_t Ret = 0;
-    Mtimer->CurPoint = AlSys_GetTimerTick();
+    Mtimer->CurPoint = AlSys_GetTimerTickCount();
     Tconsumed = Mtimer->CurPoint - Mtimer->StartPoint;
     if(Tconsumed >= Mtimer->TimerOut){
         Mtimer->IsTimerOut = 1;

@@ -33,7 +33,7 @@ extern AL_BOOL AlCan_Dev_GetState(AL_CAN_DevStruct *Dev, AL_CAN_StateEnum State)
 */
 static AL_S32 AlCan_Hal_WaitSendDoneOrTimeout(AL_CAN_HalStruct *Handle, AL_U32 Timeout, AL_CAN_EventStruct *Event)
 {
-    return Al_OSAL_Mb_Receive(&Handle->TxEventQueue[Handle->CurTxMode], Event, Timeout);
+    return AlOsal_Mb_Receive(&Handle->TxEventQueue[Handle->CurTxMode], Event, Timeout);
 }
 
 /**
@@ -46,7 +46,7 @@ static AL_S32 AlCan_Hal_WaitSendDoneOrTimeout(AL_CAN_HalStruct *Handle, AL_U32 T
 */
 static AL_S32 AlCan_Hal_WaitRecvNotEmptyOrTimeout(AL_CAN_HalStruct *Handle, AL_U32 Timeout, AL_CAN_EventStruct *Event)
 {
-    return Al_OSAL_Mb_Receive(&Handle->RxEventQueue, Event, Timeout);
+    return AlOsal_Mb_Receive(&Handle->RxEventQueue, Event, Timeout);
 }
 
 /**
@@ -68,10 +68,10 @@ static AL_VOID AlCan_Hal_DefEventCallBack(AL_CAN_EventStruct *Event, AL_VOID *Ca
         Handle->CurTxMode = Handle->ReqTxMode;
         break;
     case AL_CAN_EVENT_SEND_DONE:
-        Al_OSAL_Mb_Send(&Handle->TxEventQueue[Handle->CurTxMode], Event);
+        AlOsal_Mb_Send(&Handle->TxEventQueue[Handle->CurTxMode], Event);
         break;
     case AL_CAN_EVENT_RECV_DONE:
-        Al_OSAL_Mb_Send(&Handle->RxEventQueue, Event);
+        AlOsal_Mb_Send(&Handle->RxEventQueue, Event);
         break;
     case AL_CAN_EVENT_RBUFF_ALMOST_FULL:
     case AL_CAN_EVENT_RBUFF_FULL:
@@ -141,27 +141,27 @@ AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct *Handle, AL_U32 DevId, AL_CAN_InitStruct 
         AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlCan_Dev_IntrHandler, Handle->Dev);
     }
 
-    Ret = Al_OSAL_Lock_Init(&Handle->TxLock, "Can-TxLock");
+    Ret = AlOsal_Lock_Init(&Handle->TxLock, "Can-TxLock");
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Ret = Al_OSAL_Lock_Init(&Handle->RxLock, "Can-RxLock");
+    Ret = AlOsal_Lock_Init(&Handle->RxLock, "Can-RxLock");
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Al_OSAL_Mb_Init(&Handle->TxEventQueue[CAN_BLOCK], "Can-TxDone");
+    AlOsal_Mb_Init(&Handle->TxEventQueue[CAN_BLOCK], "Can-TxDone");
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Al_OSAL_Mb_Init(&Handle->RxEventQueue, "Can-RxNoEmpty");
+    AlOsal_Mb_Init(&Handle->RxEventQueue, "Can-RxNoEmpty");
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Al_OSAL_Mb_Init(&Handle->TxEventQueue[CAN_NONBLOCK], "Can-TxDone");
+    AlOsal_Mb_Init(&Handle->TxEventQueue[CAN_NONBLOCK], "Can-TxDone");
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -183,7 +183,7 @@ AL_S32 AlCan_Hal_SendFrame(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
 
     AL_ASSERT((Handle != AL_NULL) && (Frame != AL_NULL), AL_CAN_ERR_NULL_PTR);
 
-    Ret = Al_OSAL_Lock_Take(&Handle->TxLock, 0);
+    Ret = AlOsal_Lock_Take(&Handle->TxLock, 0);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -192,7 +192,7 @@ AL_S32 AlCan_Hal_SendFrame(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
 
     Ret = AlCan_Dev_SendFrame(Handle->Dev, Frame);
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->TxLock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->TxLock);
 
     return Ret;
 }
@@ -212,14 +212,14 @@ AL_S32 AlCan_Hal_RecvFrame(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
 
     AL_ASSERT((Handle != AL_NULL) && (Frame != AL_NULL), AL_CAN_ERR_NULL_PTR);
 
-    Ret = Al_OSAL_Lock_Take(&Handle->RxLock, 0);
+    Ret = AlOsal_Lock_Take(&Handle->RxLock, 0);
     if (Ret != AL_OK) {
         return Ret;
     }
 
     Ret = AlCan_Hal_WaitRecvNotEmptyOrTimeout(Handle, 0, &Event);
     if (Ret != AL_OK) {
-        (AL_VOID)Al_OSAL_Lock_Release(&Handle->TxLock);
+        (AL_VOID)AlOsal_Lock_Release(&Handle->TxLock);
         return Ret;
     }
 
@@ -228,10 +228,10 @@ AL_S32 AlCan_Hal_RecvFrame(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
     /* Check recv buffer slots not empty, release RxQueue Sem */
     if (!AlCan_Dev_GetState(Handle->Dev, AL_CAN_STATE_RECV_EMPTY)) {
         /* Pre frame event covered by latest frame's */
-        Al_OSAL_Mb_Send(&Handle->RxEventQueue, &Event);
+        AlOsal_Mb_Send(&Handle->RxEventQueue, &Event);
     }
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->RxLock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->RxLock);
 
     return Ret;
 }
@@ -252,7 +252,7 @@ AL_S32 AlCan_Hal_SendFrameBlock(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Fr
 
     AL_ASSERT((Handle != AL_NULL) && (Frame != AL_NULL), AL_CAN_ERR_NULL_PTR);
 
-    Ret = Al_OSAL_Lock_Take(&Handle->TxLock, Timeout);
+    Ret = AlOsal_Lock_Take(&Handle->TxLock, Timeout);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -261,13 +261,13 @@ AL_S32 AlCan_Hal_SendFrameBlock(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Fr
 
     Ret = AlCan_Dev_SendFrame(Handle->Dev, Frame);
     if (Ret != AL_OK) {
-        (AL_VOID)Al_OSAL_Lock_Release(&Handle->TxLock);
+        (AL_VOID)AlOsal_Lock_Release(&Handle->TxLock);
         return Ret;
     }
 
     Ret = AlCan_Hal_WaitSendDoneOrTimeout(Handle, Timeout, &Event);
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->TxLock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->TxLock);
 
     if (Ret == AL_OK && (Event.EventId == AL_CAN_EVENT_SEND_DONE)) {
         return Ret;
@@ -292,24 +292,24 @@ AL_S32 AlCan_Hal_RecvFrameBlock(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Fr
 
     AL_ASSERT((Handle != AL_NULL) && (Frame != AL_NULL), AL_CAN_ERR_NULL_PTR);
 
-    Ret = Al_OSAL_Lock_Take(&Handle->RxLock, Timeout);
+    Ret = AlOsal_Lock_Take(&Handle->RxLock, Timeout);
     if (Ret != AL_OK) {
         return Ret;
     }
 
     Ret = AlCan_Hal_WaitRecvNotEmptyOrTimeout(Handle, Timeout, &Event);
     if (Ret != AL_OK) {
-        (AL_VOID)Al_OSAL_Lock_Release(&Handle->TxLock);
+        (AL_VOID)AlOsal_Lock_Release(&Handle->TxLock);
         Ret = AL_CAN_ERR_TIMEOUT;
     }
 
     Ret = AlCan_Dev_RecvFrame(Handle->Dev, Frame);
 
     if (!AlCan_Dev_GetState(Handle->Dev, AL_CAN_STATE_RECV_EMPTY)) {
-        Al_OSAL_Mb_Send(&Handle->RxEventQueue, &Event);
+        AlOsal_Mb_Send(&Handle->RxEventQueue, &Event);
     }
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->RxLock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->RxLock);
 
     if (Ret == AL_OK && (Event.EventId == AL_CAN_EVENT_RECV_DONE)) {
         return Ret;
@@ -332,14 +332,14 @@ AL_S32 AlCan_Hal_RecvFrameDma(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Fram
 
     AL_ASSERT((Handle != AL_NULL) && (Frame != AL_NULL), AL_CAN_ERR_NULL_PTR);
 
-    Ret = Al_OSAL_Lock_Take(&Handle->RxLock, 0);
+    Ret = AlOsal_Lock_Take(&Handle->RxLock, 0);
     if (Ret != AL_OK) {
         return Ret;
     }
 
     /*TODO: dma recv operation*/
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->RxLock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->RxLock);
 
     return Ret;
 }
@@ -359,14 +359,14 @@ AL_S32 AlCan_Hal_IoCtl(AL_CAN_HalStruct *Handle, AL_CAN_IoCtlCmdEnum Cmd, AL_VOI
 
     AL_ASSERT((Handle != AL_NULL) && (Data != AL_NULL), AL_CAN_ERR_NULL_PTR);
 
-    Ret = Al_OSAL_Lock_Take(&Handle->TxLock, 0);
+    Ret = AlOsal_Lock_Take(&Handle->TxLock, 0);
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Ret = Al_OSAL_Lock_Take(&Handle->RxLock, 0);
+    Ret = AlOsal_Lock_Take(&Handle->RxLock, 0);
     if (Ret != AL_OK) {
-        (AL_VOID)Al_OSAL_Lock_Release(&Handle->TxLock);
+        (AL_VOID)AlOsal_Lock_Release(&Handle->TxLock);
         return Ret;
     }
 
@@ -375,8 +375,8 @@ AL_S32 AlCan_Hal_IoCtl(AL_CAN_HalStruct *Handle, AL_CAN_IoCtlCmdEnum Cmd, AL_VOI
         AL_LOG(AL_LOG_LEVEL_ERROR, "Can io ctl cmd error:%d\r\n", Ret);
     }
 
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->TxLock);
-    (AL_VOID)Al_OSAL_Lock_Release(&Handle->RxLock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->TxLock);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->RxLock);
 
     return Ret;
 }
