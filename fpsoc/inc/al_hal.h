@@ -12,10 +12,6 @@ extern "C" {
 #include "al_can_hal.h"
 #endif
 
-#ifdef HAVE_CIPHERPS_DRIVER
-#include "al_cipher_hal.h"
-#endif
-
 #ifdef HAVE_DMACAHBPS_DRIVER
 #include "al_dmacahb_hal.h"
 #endif

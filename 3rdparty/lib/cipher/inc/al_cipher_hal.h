@@ -38,7 +38,7 @@ typedef struct
 /************************** Variable Definitions *****************************/
 
 /************************** Function Prototypes ******************************/
-AL_S32 AlCipher_Hal_Init(AL_CIPHER_HalStruct *Handle, AL_CIPHER_CallBackStruct *CallBack, AL_U32 DevId);
+AL_S32 AlCipher_Hal_Init(AL_CIPHER_HalStruct *Handle, AL_U32 DevId, AL_CIPHER_CallBackStruct *CallBack);
 
 AL_S32 AlCipher_Hal_Start(AL_CIPHER_HalStruct *Handle, AL_CIPHER_CmdEnum Cmd, AL_CIPHER_ConfigUnion *Config);
 

@@ -144,6 +144,8 @@ AL_S32 AlCipher_Dev_Init(AL_CIPHER_DevStruct *Dev, AL_CIPHER_HwConfigStruct *HwC
 {
     AL_S32 Ret = AL_OK;
 
+    AL_ASSERT(Dev != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
+
     AL_CIPHER_MEMSET(Dev, 0, sizeof(AL_CIPHER_DevStruct));
 
     Dev->HwConfig = *HwConfig;
@@ -163,9 +165,7 @@ AL_S32 AlCipher_Dev_Init(AL_CIPHER_DevStruct *Dev, AL_CIPHER_HwConfigStruct *HwC
 */
 AL_S32 AlCipher_Dev_RegisterEventCallBack(AL_CIPHER_DevStruct *Dev, AL_CIPHER_CallBackStruct *CallBack)
 {
-    if (Dev == AL_NULL || CallBack == AL_NULL) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Dev != AL_NULL) && (CallBack != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
 
     if (Dev->EventCallBack.Func != AL_NULL) {
 
@@ -190,9 +190,7 @@ AL_S32 AlCipher_Dev_RegisterEventCallBack(AL_CIPHER_DevStruct *Dev, AL_CIPHER_Ca
 */
 AL_S32 AlCipher_Dev_UnRegisterEventCallBack(AL_CIPHER_DevStruct *Dev)
 {
-    if (Dev == AL_NULL) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Dev != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
 
     Dev->EventCallBack.Func = (AL_CIPHER_EventCallBack)AL_NULL;
 
@@ -201,27 +199,14 @@ AL_S32 AlCipher_Dev_UnRegisterEventCallBack(AL_CIPHER_DevStruct *Dev)
 
 static AL_VOID AlCipher_Dev_GetAck(AL_CIPHER_DevStruct *Dev)
 {
+    AL_ASSERT(Dev != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
+
     AL_U32 *Ack = (AL_U32 *)&Dev->Ack;
 
     for (AL_U32 i = 0; i < AL_CIPHER_ACK_WORD_SIZE; i++) {
         *(Ack + i) = AlCipher_ll_GetAck(Dev->HwConfig.BaseAddress, i);
     }
 }
-
-// AL_S32 AlCipher_Dev_CheckAck(AL_CIPHER_DevStruct *Dev, AL_CIPHER_MsgAckEnum *AckVal)
-// {
-//     AL_S32 Ret = AL_OK;
-
-//     AlCipher_Dev_GetAck(Dev);
-
-//     if (Dev->Ack.Cmd != AL_CIPHER_CMD_ACK) {
-//         return AL_CIPHER_ERR_CMD;
-//     }
-
-//     *AckVal = Dev->Ack.Option0.Low;
-
-//     return Ret;
-// }
 
 static AL_VOID AlCipher_Dev_AckHandler(AL_CIPHER_DevStruct *Dev)
 {
@@ -266,73 +251,37 @@ static AL_VOID AlCipher_Dev_SendMsg(AL_CIPHER_DevStruct *Dev)
 
 static AL_S32 AlCipher_Dev_CryptCheckParams(AL_CIPHER_ConfigUnion *Config)
 {
-    if (Config->Crypt.InputData == AL_NULL || Config->Crypt.OutputData == AL_NULL) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
-
-    if (!IS_CRYPT_ALGM(Config->Crypt.CryptAlgm)) {
-        return AL_CIPHER_ERR_CRYPT_ALGM;
-    }
-
-    if (!IS_CRYPT_MODE(Config->Crypt.EcbCbc)) {
-        return AL_CIPHER_ERR_CRYPT_MODE;
-    }
-
-    if (IS_VALID_CRYPT_ALGM(Config->Crypt.CryptAlgm) &&
-        (!IS_CRYPT_OP(Config->Crypt.EncDec))) {
-        return AL_CIPHER_ERR_ENCDEC_VALUE;
-    }
-
-    //Is hash mode not suit with encrypt method or error
-    if ((!IS_CRYPT_AES256(Config->Crypt.CryptAlgm) &&
-        IS_HASH_SHA256(Config->Crypt.HashMode)) ||
-        (!IS_CRYPT_SM4(Config->Crypt.CryptAlgm) &&
-        IS_HASH_SM3(Config->Crypt.HashMode)) ||
-        (!IS_HASH_MODE(Config->Crypt.HashMode))) {
-        return AL_CIPHER_ERR_HASH_MODE;
-    }
-
+    AL_ASSERT((Config->Crypt.InputData != AL_NULL) && (Config->Crypt.OutputData != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
+    AL_ASSERT(IS_CRYPT_ALGM(Config->Crypt.CryptAlgm), AL_CIPHER_ERR_CRYPT_ALGM);
+    AL_ASSERT(IS_CRYPT_MODE(Config->Crypt.EcbCbc), AL_CIPHER_ERR_CRYPT_MODE);
+    AL_ASSERT(!(IS_VALID_CRYPT_ALGM(Config->Crypt.CryptAlgm) && (!IS_CRYPT_OP(Config->Crypt.EncDec))),
+              AL_CIPHER_ERR_ENCDEC_VALUE);
+    /* Is hash mode not suit with encrypt method or error */
+    AL_ASSERT(!(!IS_CRYPT_AES256(Config->Crypt.CryptAlgm) && IS_HASH_SHA256(Config->Crypt.HashMode)), AL_CIPHER_ERR_HASH_MODE);
+    AL_ASSERT(!(!IS_CRYPT_SM4(Config->Crypt.CryptAlgm) && IS_HASH_SM3(Config->Crypt.HashMode)), AL_CIPHER_ERR_HASH_MODE);
+    AL_ASSERT(IS_HASH_MODE(Config->Crypt.HashMode), AL_CIPHER_ERR_HASH_MODE);
     /* Is hash enable with hash out ptr null */
-    if ((IS_VALID_HASH_MODE(Config->Crypt.HashMode)) && (Config->Crypt.HashOut == AL_NULL)) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
-
-    //Is key sel error
-    if (IS_VALID_CRYPT_ALGM(Config->Crypt.CryptAlgm) &&
-        !IS_KEY_SEL(Config->Crypt.KeySel)) {
-        return AL_CIPHER_ERR_KEY_MODE;
-    }
-
-    //Is IV valid
-    if ((Config->Crypt.EcbCbc == AL_CIPHER_CRYPT_MODE_CBC) && (Config->Crypt.Iv == AL_NULL)) {
-        return AL_CIPHER_ERR_IV_VALUE;
-    }
-
-    //Is key valid
-    if ((Config->Crypt.KeySel == AL_CIPHER_KEY_USER) && (Config->Crypt.Key == AL_NULL)) {
-        return AL_CIPHER_ERR_KEY_VALUE;
-    }
-
-    //Is hash block mode valid
-    if (!IS_HASH_BLK_MODE(Config->Crypt.HashBlkMode)) {
-        return AL_CIPHER_ERR_BLOCK_MODE;
-    }
-
-    //Is dma increase mode valid
-    if (!IS_HASH_BLK_MODE(Config->Crypt.DmaIncMode)) {
-        return AL_CIPHER_ERR_DMA_INC_MODE;
-    }
-
-    //Is data length align
-    if (!IS_DATA_ALIGN(Config->Crypt.DataLength)) {
-        return AL_CIPHER_ERR_DATA_ALIGN;
-    }
+    AL_ASSERT(!((IS_VALID_HASH_MODE(Config->Crypt.HashMode)) && (Config->Crypt.HashOut == AL_NULL)), AL_CIPHER_ERR_NULL_PTR);
+    /* Is key sel error */
+    AL_ASSERT(!(IS_VALID_CRYPT_ALGM(Config->Crypt.CryptAlgm) && !IS_KEY_SEL(Config->Crypt.KeySel)), AL_CIPHER_ERR_KEY_MODE);
+    /* Is IV valid */
+    AL_ASSERT(!(Config->Crypt.EcbCbc == AL_CIPHER_CRYPT_MODE_CBC) && (Config->Crypt.Iv == AL_NULL), AL_CIPHER_ERR_IV_VALUE);
+    /* Is key valid */
+    AL_ASSERT(!(Config->Crypt.KeySel == AL_CIPHER_KEY_USER) && (Config->Crypt.Key == AL_NULL), AL_CIPHER_ERR_KEY_VALUE);
+    /* Is hash block mode valid */
+    AL_ASSERT(IS_HASH_BLK_MODE(Config->Crypt.HashBlkMode), AL_CIPHER_ERR_BLOCK_MODE);
+    /* Is dma increase mode valid */
+    AL_ASSERT(IS_HASH_BLK_MODE(Config->Crypt.DmaIncMode), AL_CIPHER_ERR_DMA_INC_MODE);
+    /* Is data length align */
+    AL_ASSERT(IS_DATA_ALIGN(Config->Crypt.DataLength), AL_CIPHER_ERR_DATA_ALIGN);
 
     return AL_OK;
 }
 
-static AL_VOID AlCipher_Dev_CryptSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
+static AL_S32 AlCipher_Dev_CryptSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
 {
+    AL_ASSERT((Dev != AL_NULL) && (Config != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
+
     AL_CIPHER_MEMSET(&Dev->Msg, 0, sizeof(AL_CIPHER_MsgStruct));
 
     Dev->Msg.Cmd                                        = AL_CIPHER_CMD_DMA;
@@ -349,24 +298,27 @@ static AL_VOID AlCipher_Dev_CryptSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_C
     Dev->Msg.MsgData.DmaParam.CipherParam.PbIv          = Config->Crypt.Iv;
     Dev->Msg.MsgData.DmaParam.CipherParam.PbKey         = Config->Crypt.Key;
     Dev->Msg.MsgData.DmaParam.HashOut                   = Config->Crypt.HashOut;
+
+    return AL_OK;
 }
 
 static AL_S32 AlCipher_Dev_Crypt(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
 {
     AL_S32 Ret = AL_OK;
 
-    if (Dev == AL_NULL || Config == AL_NULL) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Dev != AL_NULL) && (Config != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
 
-#if 1   //def CIPHER_PARAM_CHECK
+#ifdef CIPHER_PARAM_CHECK
     Ret = AlCipher_Dev_CryptCheckParams(Config);
     if (Ret != AL_OK) {
         return Ret;
     }
 #endif
 
-    AlCipher_Dev_CryptSetParams(Dev, Config);
+    Ret = AlCipher_Dev_CryptSetParams(Dev, Config);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
 
     AlCipher_Dev_SendMsg(Dev);
 
@@ -375,24 +327,19 @@ static AL_S32 AlCipher_Dev_Crypt(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion
 
 static AL_S32 AlCipher_Dev_HashCheckParams(AL_CIPHER_ConfigUnion *Config)
 {
-    if (!IS_VALID_HASH_MODE(Config->Hash.HashMode)) {
-        return AL_CIPHER_ERR_HASH_MODE;
-    }
-
-    if (!IS_HASH_BLK_MODE(Config->Hash.HashBlkMode)) {
-        return AL_CIPHER_ERR_BLOCK_MODE;
-    }
-
-    //Is data length align
-    if (!IS_DATA_ALIGN(Config->Hash.DataLength)) {
-        return AL_CIPHER_ERR_DATA_ALIGN;
-    }
+    AL_ASSERT(Config != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
+    AL_ASSERT(IS_VALID_HASH_MODE(Config->Hash.HashMode), AL_CIPHER_ERR_HASH_MODE);
+    AL_ASSERT(IS_HASH_BLK_MODE(Config->Hash.HashBlkMode), AL_CIPHER_ERR_BLOCK_MODE);
+    /* Is data length align */
+    AL_ASSERT(IS_DATA_ALIGN(Config->Hash.DataLength), AL_CIPHER_ERR_DATA_ALIGN);
 
     return AL_OK;
 }
 
-static AL_VOID AlCipher_Dev_HashSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
+static AL_S32 AlCipher_Dev_HashSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
 {
+    AL_ASSERT((Dev != AL_NULL) && (Config != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
+
     AL_CIPHER_MEMSET(&Dev->Msg, 0, sizeof(AL_CIPHER_MsgStruct));
 
     Dev->Msg.Cmd                            = AL_CIPHER_CMD_HASH;
@@ -401,21 +348,27 @@ static AL_VOID AlCipher_Dev_HashSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_Co
     Dev->Msg.MsgData.HashParam.DataIn       = Config->Hash.InputData;
     Dev->Msg.MsgData.HashParam.DataLength   = Config->Hash.DataLength;
     Dev->Msg.MsgData.HashParam.HashOut      = Config->Hash.HashOut;
+
+    return AL_OK;
 }
 
 static AL_S32 AlCipher_Dev_Hash(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
 {
     AL_S32 Ret = AL_OK;
 
-    if (Dev == AL_NULL || Config == AL_NULL) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Dev != AL_NULL) && (Config != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
 
-#if 1   //def CIPHER_PARAM_CHECK
-    AlCipher_Dev_HashCheckParams(Config);
+#ifdef CIPHER_PARAM_CHECK
+    Ret = AlCipher_Dev_HashCheckParams(Config);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
 #endif
 
-    AlCipher_Dev_HashSetParams(Dev, Config);
+    Ret = AlCipher_Dev_HashSetParams(Dev, Config);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
 
     AlCipher_Dev_SendMsg(Dev);
 
@@ -424,21 +377,19 @@ static AL_S32 AlCipher_Dev_Hash(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion 
 
 static AL_S32 AlCipher_Dev_AuthCheckParams(AL_CIPHER_ConfigUnion *Config)
 {
-    if (!IS_AUTH_MODE(Config->Auth.AuthMode)) {
-        return AL_CIPHER_ERR_AUTH_MODE;
-    }
-
-    if (Config->Auth.Digest == AL_NULL ||
-        Config->Auth.PubKey == AL_NULL ||
-        Config->Auth.Signature == AL_NULL) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Config != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
+    AL_ASSERT(IS_AUTH_MODE(Config->Auth.AuthMode), AL_CIPHER_ERR_AUTH_MODE);
+    AL_ASSERT(Config->Auth.Digest != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
+    AL_ASSERT(Config->Auth.PubKey != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
+    AL_ASSERT(Config->Auth.Signature != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
 
     return AL_OK;
 }
 
-static AL_VOID AlCipher_Dev_AuthSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
+static AL_S32 AlCipher_Dev_AuthSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
 {
+    AL_ASSERT((Dev != AL_NULL) && (Config != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
+
     AL_CIPHER_MEMSET(&Dev->Msg, 0, sizeof(AL_CIPHER_MsgStruct));
 
     Dev->Msg.Cmd                            = AL_CIPHER_CMD_AUTH;
@@ -446,21 +397,27 @@ static AL_VOID AlCipher_Dev_AuthSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_Co
     Dev->Msg.MsgData.AuthParam.Pubkey       = Config->Auth.PubKey;
     Dev->Msg.MsgData.AuthParam.Digest       = Config->Auth.Digest;
     Dev->Msg.MsgData.AuthParam.Signature    = Config->Auth.Signature;
+
+    return AL_OK;
 }
 
 static AL_S32 AlCipher_Dev_Auth(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
 {
     AL_S32 Ret = AL_OK;
 
-    if (Dev == AL_NULL || Config == AL_NULL) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Dev != AL_NULL) && (Config != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
 
-#if 1   //def CIPHER_PARAM_CHECK
-    AlCipher_Dev_AuthCheckParams(Config);
+#ifdef CIPHER_PARAM_CHECK
+    Ret = AlCipher_Dev_AuthCheckParams(Config);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
 #endif
 
-    AlCipher_Dev_AuthSetParams(Dev, Config);
+    Ret = AlCipher_Dev_AuthSetParams(Dev, Config);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
 
     AlCipher_Dev_SendMsg(Dev);
 
@@ -469,21 +426,19 @@ static AL_S32 AlCipher_Dev_Auth(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion 
 
 static AL_S32 AlCipher_Dev_SignCheckParams(AL_CIPHER_ConfigUnion *Config)
 {
-    if (!IS_SIGN_MODE(Config->Sign.SignMode)) {
-        return AL_CIPHER_ERR_SIGN_MODE;
-    }
-
-    if (Config->Sign.PriKey == AL_NULL ||
-        Config->Sign.Digest == AL_NULL ||
-        Config->Sign.Signature == AL_NULL) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Config != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
+    AL_ASSERT(IS_SIGN_MODE(Config->Sign.SignMode), AL_CIPHER_ERR_SIGN_MODE);
+    AL_ASSERT(Config->Sign.PriKey == AL_NULL, AL_CIPHER_ERR_NULL_PTR);
+    AL_ASSERT(Config->Sign.Digest == AL_NULL, AL_CIPHER_ERR_NULL_PTR);
+    AL_ASSERT(Config->Sign.Signature == AL_NULL, AL_CIPHER_ERR_NULL_PTR);
 
     return AL_OK;
 }
 
-static AL_VOID AlCipher_Dev_SignSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
+static AL_S32 AlCipher_Dev_SignSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
 {
+    AL_ASSERT((Dev != AL_NULL) && (Config != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
+
     AL_CIPHER_MEMSET(&Dev->Msg, 0, sizeof(AL_CIPHER_MsgStruct));
 
     Dev->Msg.Cmd                            = AL_CIPHER_CMD_SIGN;
@@ -491,21 +446,27 @@ static AL_VOID AlCipher_Dev_SignSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_Co
     Dev->Msg.MsgData.SignParam.PriKey       = Config->Sign.PriKey;
     Dev->Msg.MsgData.SignParam.Digest       = Config->Sign.Digest;
     Dev->Msg.MsgData.SignParam.Signature    = Config->Sign.Signature;
+
+    return AL_OK;
 }
 
 static AL_S32 AlCipher_Dev_Sign(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
 {
     AL_S32 Ret = AL_OK;
 
-    if (Dev == AL_NULL || Config == AL_NULL) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Dev != AL_NULL) && (Config != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
 
-#if 1   //def CIPHER_PARAM_CHECK
-    AlCipher_Dev_SignCheckParams(Config);
+#ifdef CIPHER_PARAM_CHECK
+    Ret = AlCipher_Dev_SignCheckParams(Config);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
 #endif
 
-    AlCipher_Dev_SignSetParams(Dev, Config);
+    Ret = AlCipher_Dev_SignSetParams(Dev, Config);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
 
     AlCipher_Dev_SendMsg(Dev);
 
@@ -514,41 +475,45 @@ static AL_S32 AlCipher_Dev_Sign(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion 
 
 static AL_S32 AlCipher_Dev_GenKeyCheckParams(AL_CIPHER_ConfigUnion *Config)
 {
-    if (!IS_GENKEY_MODE(Config->GenKey.KeyMode)) {
-        return AL_CIPHER_ERR_KEY_MODE;
-    }
-
-    if (Config->GenKey.PriKey == AL_NULL ||
-        Config->GenKey.PubKey == AL_NULL) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Config != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
+    AL_ASSERT(IS_GENKEY_MODE(Config->GenKey.KeyMode), AL_CIPHER_ERR_KEY_MODE);
+    AL_ASSERT(Config->GenKey.PriKey != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
+    AL_ASSERT(Config->GenKey.PubKey != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
 
     return AL_OK;
 }
 
-static AL_VOID AlCipher_Dev_GenKeySetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
+static AL_S32 AlCipher_Dev_GenKeySetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
 {
+    AL_ASSERT((Dev != AL_NULL) && (Config != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
+
     AL_CIPHER_MEMSET(&Dev->Msg, 0, sizeof(AL_CIPHER_MsgStruct));
 
     Dev->Msg.Cmd = AL_CIPHER_CMD_GENKEY;
     Dev->Msg.Option0.Low = Config->GenKey.KeyMode;
     Dev->Msg.MsgData.GenKeyParam.PubKey = Config->GenKey.PubKey;
     Dev->Msg.MsgData.GenKeyParam.PriKey = Config->GenKey.PriKey;
+
+    return AL_OK;
 }
 
 static AL_S32 AlCipher_Dev_GenKey(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
 {
     AL_S32 Ret = AL_OK;
 
-    if (Dev == AL_NULL || Config == AL_NULL) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Dev != AL_NULL) && (Config != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
 
-#if 1   //def CIPHER_PARAM_CHECK
-    AlCipher_Dev_GenKeyCheckParams(Config);
+#ifdef CIPHER_PARAM_CHECK
+    Ret = AlCipher_Dev_GenKeyCheckParams(Config);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
 #endif
 
-    AlCipher_Dev_GenKeySetParams(Dev, Config);
+    Ret = AlCipher_Dev_GenKeySetParams(Dev, Config);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
 
     AlCipher_Dev_SendMsg(Dev);
 
@@ -557,11 +522,10 @@ static AL_S32 AlCipher_Dev_GenKey(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnio
 
 static AL_S32 AlCipher_Dev_GetZCheckParams(AL_CIPHER_ConfigUnion *Config)
 {
-    if (Config->GetZ.PubKey == AL_NULL ||
-        Config->GetZ.Ida == AL_NULL ||
-        Config->GetZ.ZaOut == AL_NULL) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Config != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
+    AL_ASSERT(Config->GetZ.PubKey != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
+    AL_ASSERT(Config->GetZ.Ida != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
+    AL_ASSERT(Config->GetZ.ZaOut != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
 
     return AL_OK;
 }
@@ -593,11 +557,9 @@ static AL_S32 AlCipher_Dev_GetZ(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion 
     AL_U32 AlignBufSize = 0;
     AL_CIPHER_ConfigUnion HashConfig;
 
-    if (Dev == AL_NULL || Config == AL_NULL) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Dev != AL_NULL) && (Config != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
 
-#if 1   //def CIPHER_PARAM_CHECK
+#ifdef CIPHER_PARAM_CHECK
     AlCipher_Dev_GetZCheckParams(Config);
 #endif
 
@@ -657,9 +619,7 @@ AL_S32 AlCipher_Dev_Start(AL_CIPHER_DevStruct *Dev, AL_CIPHER_CmdEnum Cmd, AL_CI
 {
     AL_S32 Ret = AL_OK;
 
-    if (Dev == AL_NULL || Config == AL_NULL) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Dev != AL_NULL) && (Config != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
 
     if (!AlCipher_Dev_GetState(Dev, AL_CIPHER_STATE_READY)) {
         return AL_CIPHER_ERR_STATE_NOT_READY;

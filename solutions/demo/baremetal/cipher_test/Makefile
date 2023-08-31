@@ -31,8 +31,10 @@ BOARD_NAME ?= board_dr1x90_emulation
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
-SRC_DIR  = ./
-INC_DIR  += ./
+SRC_DIR  = ./ \
+            $(SDK_ROOT)/3rdparty/lib/cipher/src
+INC_DIR  += ./ \
+            $(SDK_ROOT)/3rdparty/lib/cipher/inc
 
 LD_LIBS  :=
 LIB_DIR  :=

@@ -6,7 +6,6 @@
 
 /***************************** Include Files *********************************/
 #include "al_cipher_hal.h"
-#include "al_dmacahb_hal.h"
 
 /************************** Constant Definitions *****************************/
 
@@ -33,6 +32,8 @@ extern AL_BOOL AlCipher_Dev_GetState(AL_CIPHER_DevStruct *Dev, AL_CIPHER_StateEn
 */
 static AL_S32 AlCipher_Hal_WaitAckOrTimeout(AL_CIPHER_HalStruct *Handle, AL_U32 Timeout, AL_CIPHER_EventStruct *Event)
 {
+    AL_ASSERT(Handle != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
+
     return Al_OSAL_Mb_Receive(&Handle->StartEventQueue[Handle->CurStartMode], Event, Timeout);
 }
 
@@ -45,6 +46,8 @@ static AL_S32 AlCipher_Hal_WaitAckOrTimeout(AL_CIPHER_HalStruct *Handle, AL_U32 
 */
 static AL_VOID AlCipher_Hal_DefEventCallBack(AL_CIPHER_EventStruct *Event, AL_VOID *CallBackRef)
 {
+    AL_ASSERT(Event != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
+
     AL_CIPHER_HalStruct *Handle = (AL_CIPHER_HalStruct *)CallBackRef;
 
     switch (Event->EventId)
@@ -70,15 +73,13 @@ static AL_VOID AlCipher_Hal_DefEventCallBack(AL_CIPHER_EventStruct *Event, AL_VO
  *          - AL_OK
  * @note
 */
-AL_S32 AlCipher_Hal_Init(AL_CIPHER_HalStruct *Handle, AL_CIPHER_CallBackStruct *CallBack, AL_U32 DevId)
+AL_S32 AlCipher_Hal_Init(AL_CIPHER_HalStruct *Handle, AL_U32 DevId, AL_CIPHER_CallBackStruct *CallBack)
 {
     AL_S32 Ret = AL_OK;
     AL_CIPHER_HwConfigStruct *HwConfig;
     AL_CIPHER_CallBackStruct EventCallBack;
 
-    if (Handle == AL_NULL) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Handle != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
 
     /* 1. look up hardware config */
     HwConfig = AlCipher_Dev_LookupConfig(DevId);
@@ -119,8 +120,15 @@ AL_S32 AlCipher_Hal_Init(AL_CIPHER_HalStruct *Handle, AL_CIPHER_CallBackStruct *
         return Ret;
     }
 
-    Al_OSAL_Mb_Init(&Handle->StartEventQueue[CIPHER_BLOCK], "Cipher-Done");
-    Al_OSAL_Mb_Init(&Handle->StartEventQueue[CIPHER_NONBLOCK], "Cipher-Done");
+    Ret = Al_OSAL_Mb_Init(&Handle->StartEventQueue[CIPHER_BLOCK], "Cipher-Done");
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
+    Ret = Al_OSAL_Mb_Init(&Handle->StartEventQueue[CIPHER_NONBLOCK], "Cipher-Done");
+    if (Ret != AL_OK) {
+        return Ret;
+    }
 
     return Ret;
 }
@@ -138,9 +146,7 @@ AL_S32 AlCipher_Hal_Start(AL_CIPHER_HalStruct *Handle, AL_CIPHER_CmdEnum Cmd, AL
 {
     AL_S32 Ret = AL_OK;
 
-    if (Handle == AL_NULL) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Handle != AL_NULL) && (Config != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
 
     Ret = Al_OSAL_Lock_Take(&Handle->StartLock, 0);
     if (Ret != AL_OK) {
@@ -173,9 +179,7 @@ AL_S32 AlCipher_Hal_StartBlock(AL_CIPHER_HalStruct *Handle, AL_CIPHER_CmdEnum Cm
     AL_S32 Ret = AL_OK;
     AL_CIPHER_EventStruct Event = {0};
 
-    if (Handle == AL_NULL) {
-        return AL_CIPHER_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Handle != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
 
     Ret = Al_OSAL_Lock_Take(&Handle->StartLock, Timeout);
     if (Ret != AL_OK) {
