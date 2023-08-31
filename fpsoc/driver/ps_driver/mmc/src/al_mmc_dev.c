@@ -575,7 +575,7 @@ static AL_S32 AlMmc_Dev_SetUpHostController(AL_MMC_DevStruct *Dev)
 {
     AL_U32 Ret = AL_OK;
 
-    Ret = AlMmc_Dev_RstHostController(Dev, AL_MMC_RST_HOST_ALL);
+    Ret = AlMmc_Dev_RstHostController(Dev, AL_MMC_RST_HOST_CMD | AL_MMC_RST_HOST_DAT);
     if (Ret != AL_OK) {
         return Ret;
     }
