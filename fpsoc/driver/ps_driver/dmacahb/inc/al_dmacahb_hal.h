@@ -38,8 +38,8 @@ typedef struct
 /************************** Variable Definitions *****************************/
 
 /************************** Function Prototypes ******************************/
-AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_ChInitStruct *InitConfig,
-                          AL_DMACAHB_ChCallBackStruct *CallBack, AL_U32 DevId);
+AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_U32 DevId, AL_DMACAHB_ChInitStruct *InitConfig,
+                          AL_DMACAHB_ChCallBackStruct *CallBack);
 
 AL_S32 AlDmacAhb_Hal_DeInit(AL_DMACAHB_HalStruct *Handle);
 

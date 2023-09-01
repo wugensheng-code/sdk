@@ -117,7 +117,7 @@ static AL_VOID AlDmacAhb_Test_SingleMode(AL_VOID)
 
     ChConfig = ChSingleModeEg1;
 
-    Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
+    Ret = AlDmacAhb_Hal_Init(&Handle, DeviceId, &ChConfig, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
@@ -166,7 +166,7 @@ static AL_VOID AlDmacAhb_Test_AutoReloadMode(AL_VOID)
     // CallBack.Func = AlDmacAhb_Test_AutoReloadEg1CallBack;
     // CallBack.Ref = &Handle;
 
-    Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
+    Ret = AlDmacAhb_Hal_Init(&Handle, DeviceId, &ChConfig, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
@@ -213,7 +213,7 @@ static AL_VOID AlDmacAhb_Test_LlpMode(AL_VOID)
 
     ChConfig = ChLlpModeEg1;
 
-    Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
+    Ret = AlDmacAhb_Hal_Init(&Handle, DeviceId, &ChConfig, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
@@ -278,7 +278,7 @@ static AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
 
     ChConfig = ChOtherTransTypeEg1;
 
-    Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
+    Ret = AlDmacAhb_Hal_Init(&Handle, DeviceId, &ChConfig, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
@@ -322,7 +322,7 @@ static AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
 
     ChConfig = ChOtherTransTypeEg2;
 
-    Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
+    Ret = AlDmacAhb_Hal_Init(&Handle, DeviceId, &ChConfig, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
@@ -365,7 +365,7 @@ static AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
 
     ChConfig = ChOtherTransTypeEg3;
 
-    Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
+    Ret = AlDmacAhb_Hal_Init(&Handle, DeviceId, &ChConfig, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
@@ -421,7 +421,7 @@ static AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
 
     ChConfig = ChOtherTransTypeEg4;
 
-    Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
+    Ret = AlDmacAhb_Hal_Init(&Handle, DeviceId, &ChConfig, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
@@ -479,7 +479,7 @@ static AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
 
     ChConfig = ChOtherTransTypeEg5;
 
-    Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
+    Ret = AlDmacAhb_Hal_Init(&Handle, DeviceId, &ChConfig, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }
@@ -536,7 +536,7 @@ static AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
 
     ChConfig = ChOtherTransTypeEg6;
 
-    Ret = AlDmacAhb_Hal_Init(&Handle, &ChConfig, AL_NULL, DeviceId);
+    Ret = AlDmacAhb_Hal_Init(&Handle, DeviceId, &ChConfig, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
     }

@@ -27,8 +27,7 @@ static AL_DMACAHB_ChInitStruct AlDmacAhb_ChDefInitConfig = {
     .Id                     = AL_DMACAHB_CHANNEL_0,
     .TransType              = AL_DMACAHB_TRANS_TYPE_1,
     .Intr.IsIntrEn          = AL_TRUE,
-    .Intr.IntrUnMask        = AL_DMACAHB_CH_INTR_TFR | AL_DMACAHB_CH_INTR_BLOCK | AL_DMACAHB_CH_INTR_SRCT | \
-                              AL_DMACAHB_CH_INTR_DSTT | AL_DMACAHB_CH_INTR_ERR,
+    .Intr.IntrUnMask        = AL_DMACAHB_CH_INTR_TFR | AL_DMACAHB_CH_INTR_ERR,
     .SrcTransWidth          = AL_DMACAHB_TRANS_WIDTH_32,
     .DstTransWidth          = AL_DMACAHB_TRANS_WIDTH_32,
     .SrcAddrIncMode         = AL_DMACAHB_ADDR_INC_INC,
@@ -102,8 +101,11 @@ AL_DMACAHB_HwConfigStruct *AlDmacAhb_Dev_LookupConfig(AL_U32 DeviceId)
 */
 AL_VOID AlDmacAhb_Dev_ClrChAllIntr(AL_DMACAHB_ChStruct *Channel)
 {
+    AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
+
     AL_U32 ChMask = Channel->Param.ChMask;
     AL_REG BaseAddr = Channel->Dmac->BaseAddr;
+
     AlDmacAhb_ll_WriteClearTfr(BaseAddr, ChMask);
     AlDmacAhb_ll_WriteClearBlock(BaseAddr, ChMask);
     AlDmacAhb_ll_WriteClearBlock(BaseAddr, ChMask);
@@ -119,6 +121,8 @@ AL_VOID AlDmacAhb_Dev_ClrChAllIntr(AL_DMACAHB_ChStruct *Channel)
 */
 AL_VOID AlDmacAhb_Dev_UnmaskChIntr(AL_DMACAHB_ChStruct *Channel)
 {
+    AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
+
     AL_U32 ChMask = Channel->Param.ChMask;
     AL_REG BaseAddr = Channel->Dmac->BaseAddr;
 
@@ -147,6 +151,8 @@ AL_VOID AlDmacAhb_Dev_UnmaskChIntr(AL_DMACAHB_ChStruct *Channel)
 */
 AL_VOID AlDmacAhb_Dev_MaskChIntr(AL_DMACAHB_ChStruct *Channel)
 {
+    AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
+
     AL_U32 ChMask = Channel->Param.ChMask;
     AL_REG BaseAddr = Channel->Dmac->BaseAddr;
 
@@ -176,6 +182,8 @@ AL_VOID AlDmacAhb_Dev_MaskChIntr(AL_DMACAHB_ChStruct *Channel)
 */
 AL_S32 AlDmacAhb_Dev_SetTransType(AL_DMACAHB_ChStruct *Channel)
 {
+    AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
+
     AL_BOOL LlpSrcEn, LlpDstEn;
     AL_BOOL SrcAutoEn, DstAutoEn;
     AL_U32 ChOffset = Channel->Param.ChBaseOffset;
@@ -268,6 +276,8 @@ AL_S32 AlDmacAhb_Dev_SetTransType(AL_DMACAHB_ChStruct *Channel)
 */
 AL_VOID AlDmacAhb_Dev_SetCtlLoReg(AL_DMACAHB_ChStruct *Channel)
 {
+    AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
+
     AL_U32 ChOffset = Channel->Param.ChBaseOffset;
     AL_REG BaseAddr = Channel->Dmac->BaseAddr;
     volatile AL_DMACAHB_CtlLoUnion CtlLo;
@@ -295,6 +305,8 @@ AL_VOID AlDmacAhb_Dev_SetCtlLoReg(AL_DMACAHB_ChStruct *Channel)
 */
 AL_VOID AlDmacAhb_Dev_SetCfgLoReg(AL_DMACAHB_ChStruct *Channel)
 {
+    AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
+
     AL_U32 ChOffset = Channel->Param.ChBaseOffset;
     AL_REG BaseAddr = Channel->Dmac->BaseAddr;
     volatile AL_DMACAHB_CfgLoUnion CfgLo;
@@ -315,6 +327,8 @@ AL_VOID AlDmacAhb_Dev_SetCfgLoReg(AL_DMACAHB_ChStruct *Channel)
 */
 AL_VOID AlDmacAhb_Dev_SetCfgHiReg(AL_DMACAHB_ChStruct *Channel)
 {
+    AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
+
     AL_U32 ChOffset = Channel->Param.ChBaseOffset;
     AL_REG BaseAddr = Channel->Dmac->BaseAddr;
     volatile AL_DMACAHB_CfgHiUnion CfgHi;
@@ -338,6 +352,8 @@ AL_VOID AlDmacAhb_Dev_SetCfgHiReg(AL_DMACAHB_ChStruct *Channel)
 */
 AL_VOID AlDmacAhb_Dev_SetSgrDsr(AL_DMACAHB_ChStruct *Channel)
 {
+    AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
+
     AL_U32 ChOffset = Channel->Param.ChBaseOffset;
     AL_REG BaseAddr = Channel->Dmac->BaseAddr;
 
@@ -359,6 +375,8 @@ AL_VOID AlDmacAhb_Dev_SetSgrDsr(AL_DMACAHB_ChStruct *Channel)
 */
 AL_VOID AlDmacAhb_Dev_FillLliWithCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_LliStruct *Lli)
 {
+    AL_ASSERT((Channel != AL_NULL) && (Lli != AL_NULL), AL_DMACAHB_ERR_NULL_PTR);
+
     AL_U32 ChOffset = Channel->Param.ChBaseOffset;
     AL_REG BaseAddr = Channel->Dmac->BaseAddr;
 
@@ -390,9 +408,7 @@ static AL_VOID AlCan_Dev_SetTransBusy(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_C
 */
 AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
 {
-    if (Channel == AL_NULL) {
-        return AL_DMACAHB_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
     AL_S32 Ret = AL_OK;
     AL_U32 ChOffset = Channel->Param.ChBaseOffset;
@@ -459,6 +475,8 @@ AL_S32 AlDmacAhb_Dev_Start(AL_DMACAHB_ChStruct *Channel)
 {
     AL_S32 Ret;
 
+    AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
+
     Ret = AlDmacAhb_Dev_SetTransParams(Channel);
     if (Ret != AL_OK) {
         return Ret;
@@ -482,6 +500,9 @@ AL_S32 AlDmacAhb_Dev_Init(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_HwConfigStruc
                           AL_DMACAHB_ChInitStruct *InitConfig)
 {
     AL_S32 Ret = AL_OK;
+
+    AL_ASSERT((Channel != AL_NULL) && (HwConfig != AL_NULL), AL_DMACAHB_ERR_NULL_PTR);
+
     Channel->Config = (InitConfig == AL_NULL) ? AlDmacAhb_ChDefInitConfig : (*InitConfig);
     Channel->Dmac   = &AlDmacAhb_DmacInstance[HwConfig->DeviceId];
 
@@ -526,6 +547,8 @@ AL_S32 AlDmacAhb_Dev_Init(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_HwConfigStruc
 */
 AL_S32 AlDmacAhb_Dev_DeInit(AL_DMACAHB_ChStruct *Channel)
 {
+    AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
+
     /* Mask all unmasked intr */
     AlDmacAhb_Dev_MaskChIntr(Channel);
     AlDmacAhb_Dev_ReleaseCh(Channel);
@@ -553,9 +576,7 @@ AL_S32 AlDmacAhb_Dev_DeInit(AL_DMACAHB_ChStruct *Channel)
 */
 AL_S32 AlDmacAhb_Dev_RegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChCallBackStruct *CallBack)
 {
-    if (Channel == AL_NULL || CallBack == AL_NULL) {
-        return AL_DMACAHB_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Channel != AL_NULL) && (CallBack != AL_NULL), AL_DMACAHB_ERR_NULL_PTR);
 
     if (Channel->EventCallBack.Func != AL_NULL) {
 
@@ -580,9 +601,7 @@ AL_S32 AlDmacAhb_Dev_RegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel, AL_DM
 */
 AL_S32 AlDmacAhb_Dev_UnRegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel)
 {
-    if (Channel == AL_NULL) {
-        return AL_DMACAHB_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
     Channel->EventCallBack.Func = (AL_DMACAHB_ChEventCallBack)AL_NULL;
 
@@ -659,9 +678,6 @@ static AL_VOID AlDmacAhb_Dev_BlockTransCompHandler(AL_DMACAHB_ChStruct *Channel)
     AL_DMACAHB_EventStruct Event;
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb Channel %d block trans complete!\r\n", Channel->Config.Id);
 
-    /* Abandon BLOCK_TRANS_BUSY state, to be remove */
-    // AlDmacAhb_Dev_ClrState(Channel, AL_DMACAHB_STATE_BLOCK_TRANS_BUSY);
-
     AlDmacAhb_Dev_TransTypeToState(Channel->Config.TransType, &State);
     /* In reload mode, before the last trans, set reload_src and reload_dst to AL_FALSE */
     if (State == AL_DMACAHB_STATE_RELOAD_MODE_BUSY || State == AL_DMACAHB_STATE_LLP_RELOAD_MODE_BUSY) {
@@ -692,7 +708,6 @@ static AL_VOID AlDmacAhb_Dev_BlockTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 */
 static AL_VOID AlDmacAhb_Dev_SrcTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
-    // AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb Channel %d src trans complete!\r\n", Channel->Config.Id);
     AL_DMACAHB_EventStruct Event = {
         .EventId    = AL_DMACAHB_EVENT_SRC_TRANS_COMP,
         .EventData  = 0
@@ -708,7 +723,6 @@ static AL_VOID AlDmacAhb_Dev_SrcTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 */
 static AL_VOID AlDmacAhb_Dev_DstTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
-    // AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb Channel %d dst trans complete!\r\n", Channel->Config.Id);
     AL_DMACAHB_EventStruct Event = {
         .EventId    = AL_DMACAHB_EVENT_DST_TRANS_COMP,
         .EventData  = 0
@@ -805,9 +819,7 @@ AL_VOID AlDmacAhb_Dev_IntrHandler(AL_VOID *Instance)
 */
 AL_S32 AlDmacAhb_Dev_IoCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_IoCtlCmdEnum Cmd, AL_VOID *Data)
 {
-    if (Channel == AL_NULL) {
-        return AL_DMACAHB_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Channel != AL_NULL) && (Data != AL_NULL), AL_DMACAHB_ERR_NULL_PTR);
 
     switch (Cmd)
     {
@@ -914,9 +926,7 @@ AL_S32 AlDmacAhb_Dev_IoCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_IoCtlCmdEnum
 */
 AL_S32 AlDmacAhb_Dev_TransTypeToState(AL_DMACAHB_TransTypeEnum Type, AL_DMACAHB_ChStateEnum *State)
 {
-    if (State == AL_NULL) {
-        return AL_DMACAHB_ERR_NULL_PTR;
-    }
+    AL_ASSERT(State != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
     switch (Type)
     {
@@ -949,6 +959,8 @@ AL_S32 AlDmacAhb_Dev_TransTypeToState(AL_DMACAHB_TransTypeEnum Type, AL_DMACAHB_
 AL_S32 AlDmacAhb_Dev_RequestCh(AL_DMACAHB_HwConfigStruct *HwConfig, AL_DMACAHB_ChIdEnum RequestId,
                                AL_DMACAHB_ChIdEnum *AvailableId)
 {
+    AL_ASSERT((HwConfig != AL_NULL) && (AvailableId != AL_NULL), AL_DMACAHB_ERR_NULL_PTR);
+
     AL_U32 Timeout = 1000;
     if (RequestId > HwConfig->ChannelNum) {
         AL_LOG(AL_LOG_LEVEL_INFO, "Request channel Id is not support!\r\n");
@@ -996,9 +1008,7 @@ AL_S32 AlDmacAhb_Dev_ReleaseCh(AL_DMACAHB_ChStruct *Channel)
 {
     AL_U32 Timeout = 1000;
 
-    if (Channel == AL_NULL) {
-        return AL_DMACAHB_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
     while ((!AlDmacAhb_ll_FetchLock(Channel->Dmac->LockAddress)) && Timeout--) {
         AL_DMACAHB_LOOP_REG_DELAY;

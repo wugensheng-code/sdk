@@ -47,6 +47,8 @@ static AL_VOID AlDmacAhb_Hal_DefChEventCallBack(AL_DMACAHB_EventStruct *Event, A
 {
     AL_DMACAHB_HalStruct *Handle = (AL_DMACAHB_HalStruct *)CallBackRef;
 
+    AL_ASSERT((Event != AL_NULL) && (CallBackRef != AL_NULL), AL_DMACAHB_ERR_NULL_PTR);
+
     switch (Event->EventId)
     {
     case AL_DMACAHB_EVENT_TRANS_READY:
@@ -82,17 +84,15 @@ static AL_VOID AlDmacAhb_Hal_DefChEventCallBack(AL_DMACAHB_EventStruct *Event, A
  *          - AL_OK
  * @note
 */
-AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_ChInitStruct *InitConfig,
-                          AL_DMACAHB_ChCallBackStruct *CallBack, AL_U32 DevId)
+AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_U32 DevId, AL_DMACAHB_ChInitStruct *InitConfig,
+                          AL_DMACAHB_ChCallBackStruct *CallBack)
 {
     AL_S32 Ret = AL_OK;
     AL_DMACAHB_HwConfigStruct   *HwConfig;
     AL_DMACAHB_ChCallBackStruct EventCallBack;
-    AL_DMACAHB_ChIdEnum AvailableId;
+    AL_DMACAHB_ChIdEnum         AvailableId;
 
-    if (Handle == AL_NULL) {
-        return AL_DMACAHB_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Handle != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
     /* 1. look up hardware config */
     HwConfig = AlDmacAhb_Dev_LookupConfig(DevId);
@@ -126,7 +126,6 @@ AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_ChInitStruct 
     AlDmacAhb_Dev_RegisterChEventCallBack(Handle->Channel, &EventCallBack);
 
     /* 4. register intr */
-    /* TODO: replace intr handler reference function with al_intr.h api */
     if (Handle->Channel->Dmac->State.IntrEn == AL_FALSE) {
         Handle->Channel->Dmac->State.IntrEn = AL_TRUE;
         AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlDmacAhb_Dev_IntrHandler, Handle->Channel->Dmac);
@@ -137,7 +136,10 @@ AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_ChInitStruct 
         return Ret;
     }
 
-    Al_OSAL_Mb_Init(&Handle->EventQueue, "Dmacahb-Queue");
+    Ret = Al_OSAL_Mb_Init(&Handle->EventQueue, "Dmacahb-Queue");
+    if (Ret != AL_OK) {
+        return Ret;
+    }
 
     return Ret;
 }
@@ -153,17 +155,20 @@ AL_S32 AlDmacAhb_Hal_DeInit(AL_DMACAHB_HalStruct *Handle)
 {
     AL_S32 Ret = AL_OK;
 
-    if (Handle == AL_NULL) {
-        return AL_DMACAHB_ERR_NULL_PTR;
+    AL_ASSERT(Handle != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
+    AL_ASSERT(Handle->Channel != AL_NULL, AL_DMACAHB_ERR_HANDLE_WITHOUT_CH);
+
+    Ret = Al_OSAL_Lock_Take(&Handle->Lock, 0);
+    if (Ret != AL_OK) {
+        return Ret;
     }
 
-    if (Handle->Channel == AL_NULL) {
-        return AL_DMACAHB_ERR_HANDLE_WITHOUT_CH;
-    }
-
-    if (Handle->Channel->Dmac->State.IntrEn == AL_TRUE) {
-        /* TODO: unregister intr */
-    }
+    /* TODO: Need consider on share with linux, do not shut down intr */
+    // if ((Handle->Channel->Dmac->State.IntrEn == AL_TRUE) &&
+    //     ((Handle->Channel->Dmac->State.ChEn & (Handle->Channel->Dmac->State.ChEn - 1)) == 0)) {
+    //     /* Only disable intr but not unregister intr handler */
+    //     AlIntr_SetInterrupt(Handle->Channel->Dmac->IntrId, AL_FUNC_DISABLE);
+    // }
 
     Ret = AlDmacAhb_Dev_DeInit(Handle->Channel);
     if (Ret != AL_OK) {
@@ -172,6 +177,8 @@ AL_S32 AlDmacAhb_Hal_DeInit(AL_DMACAHB_HalStruct *Handle)
     }
 
     Handle->Channel = AL_NULL;
+
+    (AL_VOID)Al_OSAL_Lock_Release(&Handle->Lock);
 
     return Ret;
 }
@@ -187,9 +194,7 @@ AL_S32 AlDmacAhb_Hal_Start(AL_DMACAHB_HalStruct *Handle)
 {
     AL_S32 Ret = AL_OK;
 
-    if (Handle == AL_NULL) {
-        return AL_DMACAHB_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Handle != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
     Ret = Al_OSAL_Lock_Take(&Handle->Lock, 0);
     if (Ret != AL_OK) {
@@ -221,9 +226,7 @@ AL_S32 AlDmacAhb_Hal_StartBlock(AL_DMACAHB_HalStruct *Handle, AL_U32 Timeout)
     AL_S32 Ret = AL_OK;
     AL_DMACAHB_EventStruct Event = {0};
 
-    if (Handle == AL_NULL) {
-        return AL_DMACAHB_ERR_NULL_PTR;
-    }
+    AL_ASSERT(Handle != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
     Ret = Al_OSAL_Lock_Take(&Handle->Lock, Timeout);
     if (Ret != AL_OK) {
@@ -269,9 +272,7 @@ AL_S32 AlDmacAhb_Hal_IoCtl(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_IoCtlCmdEnum
 {
     AL_S32 Ret = AL_OK;
 
-    if (Handle == AL_NULL) {
-        return AL_DMACAHB_ERR_NULL_PTR;
-    }
+    AL_ASSERT((Handle != AL_NULL) && (Data != AL_NULL), AL_DMACAHB_ERR_NULL_PTR);
 
     Ret = Al_OSAL_Lock_Take(&Handle->Lock, 0);
     if (Ret != AL_OK) {
