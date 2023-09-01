@@ -4,18 +4,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-/**
- * @file    uart polling_example file
- * @author  Anlogic esw team
- * @version V0.0.1
- * @date    2023-05-17
- * @brief   uart polling_example file
- */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /***************************** Include Files *********************************/
 #include "al_uart_hal.h"
 #include <stdio.h>
@@ -108,8 +96,3 @@ AL_S32 UartPollingExample(AL_VOID)
 
     return AL_OK;
 }
-
-
-#ifdef __cplusplus
-}
-#endif

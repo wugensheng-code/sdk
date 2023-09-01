@@ -30,12 +30,8 @@ typedef struct
     AL_UART_DevStruct            *Dev;
     AL_Lock                      TxLock;
     AL_Lock                      RxLock;
-    AL_UART_TxModeEnum           RequestTxMode;
-    AL_UART_RxModeEnum           RequestRxMode;
-    AL_UART_TxModeEnum           CurTxMode;
-    AL_UART_RxModeEnum           CurRxMode;
-    AL_MailBox                   TxEventQueue[2];
-    AL_MailBox                   RxEventQueue[2];
+    AL_MailBox                   TxEventQueue;
+    AL_MailBox                   RxEventQueue;
 } AL_UART_HalStruct;
 
 

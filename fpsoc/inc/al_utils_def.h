@@ -96,7 +96,7 @@ extern "C" {
     } while (0)
 
 #ifndef BUG_ON
-#define BUG_ON(Condition)   do { if (UNLIKELY(Condition)) BUG(); } while (0)
+#define BUG_ON(Condition)   do {if (UNLIKELY(Condition)) BUG(); } while (0)
 #endif
 
 #ifndef WARN
@@ -106,27 +106,27 @@ extern "C" {
 #endif
 
 #ifndef WARN_ON
-#define WARN_ON(Condition)  do { if (UNLIKELY(Condition)) WARN(); } while (0)
+#define WARN_ON(Condition)  do {if (UNLIKELY(Condition)) WARN(); } while (0)
 #endif
 
 
 #if defined WARN_ON_ASSERT
 
 #define AL_ASSERT(Condition, Errno)   do {                          \
-       WARN_ON(Condition);                                            \
+       WARN_ON(!(Condition));                                          \
        return Errno;                                                \
     } while (0)
 
 #elif defined BUG_ON_ASSERT
 
 #define AL_ASSERT(Condition, Errno)   do {                          \
-       BUG_ON(Condition);                                             \
+       BUG_ON(!(Condition));                                           \
     } while (0)
 
 #else
 
 #define AL_ASSERT(Condition, Errno)  do {                           \
-    if (UNLIKELY(!(Condition)))                                         \
+    if (UNLIKELY(!(Condition)))                                     \
         return Errno;                                               \
     } while(0)
 

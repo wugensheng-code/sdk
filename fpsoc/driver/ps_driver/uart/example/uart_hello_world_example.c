@@ -4,17 +4,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-/**
- * @file    uart hello_world_example file
- * @author  Anlogic esw team
- * @version V0.0.1
- * @date    2023-05-17
- * @brief   uart hello_world_example file
- */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /***************************** Include Files *********************************/
 #include "al_uart_hal.h"
@@ -51,7 +40,6 @@ AL_S32 UartHelloWorldExample(AL_VOID)
 {
     AL_UART_HalStruct uart0_hal;
     int SentCount = 0;
-    AL_U32 RecvSize;
     AL_U8 HelloWorld[] = "Hello World";
 
     AL_S32 ret = AlUart_Hal_Init(&uart0_hal, 0, &UART_InitStruct, AL_NULL);
@@ -60,7 +48,7 @@ AL_S32 UartHelloWorldExample(AL_VOID)
         return ret;
     }
 
-    AL_S32 ret = AlUart_Hal_SendDataPolling(&uart0_hal, &HelloWorld[SentCount], sizeof(HelloWorld));
+    AL_S32 ret = AlUart_Hal_SendDataPolling(&uart0_hal, HelloWorld, sizeof(HelloWorld));
     if (ret != AL_OK) {
         printf("AlUart_Hal_SendDataPolling error\r\n");
         return ret;
@@ -70,8 +58,3 @@ AL_S32 UartHelloWorldExample(AL_VOID)
 
     return AL_OK;
 }
-
-
-#ifdef __cplusplus
-}
-#endif

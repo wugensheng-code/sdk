@@ -16,35 +16,6 @@
 /************************** Variable Definitions *****************************/
 static AL_UART_DevStruct AL_UART_DevInstance[AL_UART_NUM_INSTANCE];
 /********************************************************/
-/**
- * This function waiting for uart send done or timeout.
- * @param   Handle Pointer to a AL_UART_HalStruct structure that contains uart dev instance
- * @param   Timeout is max wait time for send done
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
-static inline AL_S32 AlUart_Hal_WaitTxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 Timeout, AL_UART_EventStruct *Event)
-{
-    return AlOsal_Mb_Receive(&Handle->TxEventQueue[Handle->CurTxMode], Event, Timeout);
-}
-
-/**
- * This function waiting for uart receive done or timeout.
- * @param   Handle Pointer to a AL_UART_HalStruct structure that contains uart dev instance
- * @param   Timeout is max wait time for receive done
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
-static inline AL_S32 AlUart_Hal_WaitRxDoneOrTimeout(AL_UART_HalStruct *Handle, AL_U32 Timeout, AL_UART_EventStruct * Event)
-{
-    return AlOsal_Mb_Receive(&Handle->RxEventQueue[Handle->CurRxMode], Event, Timeout);
-}
-
-
 
 /**
  * This function action when receive or send data down.
@@ -62,14 +33,14 @@ static AL_VOID AlUart_Hal_DefEventHandler(AL_UART_EventStruct UartEvent, AL_VOID
     {
     case AL_UART_EVENT_SEND_DONE:
     case AL_UART_EVENT_BUSY_DETECT_TX:
-         AlOsal_Mb_Send(&Handle->TxEventQueue[Handle->CurTxMode], &UartEvent);
+         Ret = AlOsal_Mb_Send(&Handle->TxEventQueue, &UartEvent);
         break;
 
     case AL_UART_EVENT_RECEIVE_DONE:
     case AL_UART_EVENT_CHAR_TIMEOUT:
     case AL_UART_EVENT_OVER_RUN_ERR:
     case AL_UART_EVENT_BUSY_DETECT_RX:
-        AlOsal_Mb_Send(&Handle->RxEventQueue[Handle->CurRxMode], &UartEvent);
+        Ret = AlOsal_Mb_Send(&Handle->RxEventQueue, &UartEvent);
         break;
 
     case AL_UART_EVENT_MODEM_STATUS_INTR:
@@ -77,12 +48,10 @@ static AL_VOID AlUart_Hal_DefEventHandler(AL_UART_EventStruct UartEvent, AL_VOID
         break;
 
     case AL_UART_EVENT_READY_TO_RECEIVE:
-        Handle->CurRxMode = Handle->RequestRxMode;
         break;
 
     case AL_UART_EVENT_READY_TO_SEND:
-        Handle->CurTxMode = Handle->RequestTxMode;
-    break;
+       break;
 
     default:
         break;
@@ -90,9 +59,10 @@ static AL_VOID AlUart_Hal_DefEventHandler(AL_UART_EventStruct UartEvent, AL_VOID
 
     if (UartEvent.Events & (AL_UART_EVENT_PARITY_ERR | AL_UART_EVENT_FRAMING_ERR | AL_UART_EVENT_BREAK_INTR)) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Get uart event: 0x%x", AL_UART_EVENTS_TO_ERRS(AL_UART_EVENT_PARITY_ERR));
-        AlOsal_Mb_Send(&Handle->RxEventQueue[Handle->CurRxMode], &UartEvent);
+        Ret = AlOsal_Mb_Send(&Handle->RxEventQueue, &UartEvent);
     }
 
+    BUG_ON(Ret != AL_OK);
 }
 
 /**
@@ -147,25 +117,16 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct *Handle, AL_U32 DevId, AL_UART_InitStru
         return Ret;
     }
 
-    Ret = AlOsal_Mb_Init(&Handle->TxEventQueue[0], "UART_TXDONE");
+    Ret = AlOsal_Mb_Init(&Handle->TxEventQueue, "UART_TXDONE");
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Ret = AlOsal_Mb_Init(&Handle->TxEventQueue[1], "UART_TXDONE");
+    Ret = AlOsal_Mb_Init(&Handle->RxEventQueue, "UART_RXDONE");
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Ret = AlOsal_Mb_Init(&Handle->RxEventQueue[0], "UART_RXDONE");
-    if (Ret != AL_OK) {
-        return Ret;
-    }
-
-    Ret = AlOsal_Mb_Init(&Handle->RxEventQueue[1], "UART_RXDONE");
-    if (Ret != AL_OK) {
-        return Ret;
-    }
     return Ret;
 }
 
@@ -191,14 +152,7 @@ AL_S32 AlUart_Hal_SendDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32
         return Ret;
     }
 
-    /*
-     * wait until dev not busy;
-     * if previous in nonblocking interrupt sending mode, dev probably is still in Tx Busy;
-     */
-    Handle->RequestTxMode = UART_TX_BLOCK;
-    while ((Ret = (AlUart_Dev_SendDataPolling(Handle->Dev, Data, Size))) == AL_UART_ERR_BUSY) {
-        AlOsal_Sleep(1);
-    }
+    Ret = AlUart_Dev_SendDataPolling(Handle->Dev, Data, Size);
 
     (AL_VOID)AlOsal_Lock_Release(&Handle->TxLock);
 
@@ -226,16 +180,7 @@ AL_S32 AlUart_Hal_RecvDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32
         return Ret;
     }
 
-    Handle->RequestRxMode = UART_RECV_BLOCK;
-
-    /*
-     * wait until dev not busy;
-     * if previous in nonblocking mode receive, dev probably is still in RxBusy;
-     */
-    while ((Ret = AlUart_Dev_RecvDataPolling(Handle->Dev, Data, Size)) == AL_UART_ERR_BUSY) {
-        AlOsal_Sleep(1);
-    }
-
+    Ret = AlUart_Dev_RecvDataPolling(Handle->Dev, Data, Size);
     (AL_VOID)AlOsal_Lock_Release(&Handle->RxLock);
 
     return Ret;
@@ -264,28 +209,20 @@ AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
         return Ret;
     }
 
-    Handle->RequestTxMode = UART_TX_BLOCK;
-
-    /*
-     * wait until dev not busy;
-     * if previous in nonblocking mode receive, dev probably is still in RxBusy;
-     */
-    while ((Ret = AlUart_Dev_SendData(Handle->Dev, Data, Size)) == AL_UART_ERR_BUSY) {
-        AlOsal_Sleep(1);
-    }
+    Ret = AlUart_Dev_SendData(Handle->Dev, Data, Size);
 
     if (Ret != AL_OK) {
         (AL_VOID)AlOsal_Lock_Release(&Handle->TxLock);
         return Ret;
     }
 
-    Ret = AlUart_Hal_WaitTxDoneOrTimeout(Handle, Timeout, &UartEvent);
+    Ret = AlOsal_Mb_Receive(&Handle->TxEventQueue, &UartEvent, Timeout);
     if (Ret != AL_OK) {
         /*
         * if timeout, force stop sending
         */
         AlUart_Dev_StopSend(Handle->Dev);
-        (AL_VOID)AlOsal_Mb_Receive(&Handle->TxEventQueue[UART_TX_BLOCK], &UartEvent, AL_WAITING_NO);
+        (AL_VOID)AlOsal_Mb_Receive(&Handle->TxEventQueue, &UartEvent, AL_WAITING_NO);
     }
 
     (AL_VOID)AlOsal_Lock_Release(&Handle->TxLock);
@@ -323,27 +260,19 @@ AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
         return Ret;
     }
 
-    Handle->RequestRxMode = UART_RECV_BLOCK;
-    /*
-     * wait until dev not busy;
-     * if previous in nonblocking mode receive, dev probably is still in RxBusy;
-     */
-    while ((Ret = AlUart_Dev_RecvData(Handle->Dev, Data, Size)) == AL_UART_ERR_BUSY) {
-        AlOsal_Sleep(1);
-    }
-
+    Ret = AlUart_Dev_RecvData(Handle->Dev, Data, Size);
     if (Ret != AL_OK) {
         (AL_VOID)AlOsal_Lock_Release(&Handle->RxLock);
         return Ret;
     }
 
-    Ret = AlUart_Hal_WaitRxDoneOrTimeout(Handle, Timeout, &UartEvent);
+    Ret = AlOsal_Mb_Receive(&Handle->RxEventQueue, &UartEvent, Timeout);
     if (Ret != AL_OK) {
         /*
         * if timeout, force stop receiving
         */
         AlUart_Dev_StopReceive(Handle->Dev);
-        (AL_VOID)AlOsal_Mb_Receive(&Handle->TxEventQueue[UART_TX_BLOCK], &UartEvent, AL_WAITING_NO);
+        (AL_VOID)AlOsal_Mb_Receive(&Handle->TxEventQueue, &UartEvent, AL_WAITING_NO);
     }
 
     *RecvSize =  UartEvent.EventData;
@@ -379,8 +308,6 @@ AL_S32 AlUart_Hal_SendData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
     if (Ret != AL_OK) {
         return Ret;
     }
-
-    Handle->RequestTxMode = UART_TX_NONBLOCK;
 
     /*
     * call SendData function, SendData checks busy status;
@@ -429,7 +356,7 @@ AL_S32 AlUart_Hal_RecvData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
 */
 AL_S32 AlUart_Hal_TryGetRecvLastEvent(AL_UART_HalStruct *Handle, AL_UART_EventStruct *Events)
 {
-    return AlOsal_Mb_Receive(&Handle->TxEventQueue[Handle->CurTxMode], Events, 0);
+    return AlOsal_Mb_Receive(&Handle->TxEventQueue, Events, 0);
 }
 
 /**
@@ -438,7 +365,7 @@ AL_S32 AlUart_Hal_TryGetRecvLastEvent(AL_UART_HalStruct *Handle, AL_UART_EventSt
 */
 AL_S32 AlUart_Hal_TryGetSendLastEvent(AL_UART_HalStruct *Handle, AL_UART_EventStruct *Events)
 {
-    return AlOsal_Mb_Receive(&Handle->TxEventQueue[Handle->CurTxMode], Events, 0);
+    return AlOsal_Mb_Receive(&Handle->TxEventQueue, Events, 0);
 }
 
 
