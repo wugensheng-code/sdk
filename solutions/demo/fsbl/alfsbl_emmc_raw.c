@@ -1,13 +1,4 @@
-/*
- * alfsbl_emmc_raw.c
- *
- *  Created on: Sept 28, 2022
- *      Author: tfcao
- */
-
 #include <stdio.h>
-
-#include "demosoc.h"
 
 #include "alfsbl_sd.h"
 #include "alfsbl_misc.h"

@@ -1,8 +1,16 @@
 #include <stdio.h>
 
-#include "demosoc.h"
 #include "alfsbl_secure.h"
 #include "al_intr.h"
+
+
+//#include "alfsbl_err_code.h"
+//#include "alfsbl_data.h"
+
+//#include "alfsbl_hw.h"
+//#include "alfsbl_misc.h"
+
+
 
 volatile uint32_t MsgFlag = 0;
 
@@ -35,13 +43,13 @@ uint32_t AlFsbl_ChecksumCheck(uint8_t *pBuffer, uint32_t Length, uint32_t Checks
 
 	/// CRC32
 	Cal_Checksum = AlFsbl_CalcCrc32(pBuffer, Length);
-	printf("Calculated Checksum: 0x%08x\n", Cal_Checksum);
+	printf("Calculated Checksum: 0x%08x\r\n", Cal_Checksum);
 
 	if(Cal_Checksum != Checksum) {
 		Status = SEC_ERROR_CHECKSUM_ERROR;
 	}
 	else {
-		printf("checksum check pass...\n");
+		printf("checksum check pass...\r\n");
 		Status = 0;
 	}
 
@@ -62,7 +70,6 @@ void TriggerSecInterrupt(void)
 void MsgReceive(void)
 {
 	MsgFlag = 1;
-//	printf("ack\n");
 	return;
 }
 
@@ -85,7 +92,11 @@ uint32_t SecureIrqInit(void)
 #endif
 	};
 
+#if (defined __riscv || defined __riscv__)
 	ret = AlIntr_RegHandler(RPU2CSU_ACK_IRQN, &Attr, RpuCsuAckHandler, NULL);
+#else
+	ret = AlIntr_RegHandler(APU2CSU_ACK_IRQN, &Attr, RpuCsuAckHandler, NULL);
+#endif
 	AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
 	return ret;
@@ -136,7 +147,6 @@ uint32_t CheckAckValid(AckDef *pAck)
 		Status = SEC_ERROR_INVALID_CSU_ACK;
 		goto END;
 	}
-
 
 END:
 	return Status;

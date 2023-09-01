@@ -29,18 +29,18 @@ void pinmux_config_dbgm_ddr()
         // MIO_FUNCSEL[dbgm_pin[i]] = 15U;
         // MIO_F15SEL[dbgm_pin[i]] = 1U;
         uint32_t offset = dbgm_pin[i];
-        // printf("\noffset = 0x%x\n", offset);
+        // printf("\noffset = 0x%x\r\n", offset);
 
         al9000_ddr_reg_write(&ftcHandle, MIO_FUNCSEL + offset, 15U);
         //al9000_ddr_reg_read(&ftcHandle, MIO_FUNCSEL + offset,&reg_data1);
 
-        //printf("\n******  addr = 0x%x,data = 0x%x *********\n", MIO_FUNCSEL + offset, reg_data1);
+        //printf("\n******  addr = 0x%x,data = 0x%x *********\r\n", MIO_FUNCSEL + offset, reg_data1);
 
 
         al9000_ddr_reg_write(&ftcHandle, MIO_F15SEL + offset, 0x1);
 
         //al9000_ddr_reg_read(&ftcHandle, MIO_F15SEL + offset, &reg_data2);
-        //printf("\n******  addr = 0x%x,data2 = 0x%x  *********\n", MIO_F15SEL + offset, reg_data2);
+        //printf("\n******  addr = 0x%x,data2 = 0x%x  *********\r\n", MIO_F15SEL + offset, reg_data2);
     }
 
 
@@ -51,7 +51,7 @@ void pinmux_config_dbgm_ddr()
     al9000_ddr_reg_write(&ftcHandle, CFG_DBGM_SEL, cfg);
 
     //al9000_ddr_reg_read(&ftcHandle, CFG_DBGM_SEL, &reg_data);
-    //printf("\n****** CFG_DBGM_SEL  addr = 0x%x,data = 0x%x  *********\n", CFG_DBGM_SEL, reg_data);
+    //printf("\n****** CFG_DBGM_SEL  addr = 0x%x,data = 0x%x  *********\r\n", CFG_DBGM_SEL, reg_data);
 
 }
 
@@ -142,7 +142,7 @@ int al9000_ddrppc_mtest_my(u8 bank, u16 row, u16 col, u8 byteNum)
         bistDxErr = al9000_field_read(DDRC_ADDR_PPC + BISTGSR, BDXERR_offset, BDXERR_mask);
         rcvCnt = al9000_field_read(DDRC_ADDR_PPC + BISTWCSR, DXWCNT_offset, DXWCNT_mask); // Equal to iterateCnt
 
-        printf("\nbistDone = 0x%x bistDxErr = 0x%x rcvCnt = 0x%x \n", bistDone, bistDxErr, rcvCnt);
+        printf("\nbistDone = 0x%x bistDxErr = 0x%x rcvCnt = 0x%x \r\n", bistDone, bistDxErr, rcvCnt);
 
         al9000_field_write(DDRC_ADDR_PPC + BISTRR, BINST_offset, BINST_mask, 3);
         al9000_field_write(DDRC_ADDR_PPC + BISTRR, BINST_offset, BINST_mask, 2);
@@ -442,14 +442,14 @@ void do_training(u8 wl_en,u8 wl2_en,u8 gt_en)
     u32 regData, regDataNew;
     u32 wlerr, wl2err,gterr;
 
-    printf(" \n");
-    printf( " +---------------------------------------+\n");
-    printf( " |    do_training begin                  |\n");
-    printf( " +---------------------------------------+\n");
+    printf(" \r\n");
+    printf( " +---------------------------------------+\r\n");
+    printf( " |    do_training begin                  |\r\n");
+    printf( " +---------------------------------------+\r\n");
 
     regData = al9000_reg_read(DDRC_ADDR_PPC + PIR);
 
-    printf( "\nGet PIR reg_data wlen = 0x%x wl2_en = 0x%x gt_en = 0x%x; before training regData = 0x%x\n", wl_en, wl2_en, gt_en, regData);
+    printf( "\nGet PIR reg_data wlen = 0x%x wl2_en = 0x%x gt_en = 0x%x; before training regData = 0x%x\r\n", wl_en, wl2_en, gt_en, regData);
 
     if ( wl_en == 0x1)  {
         regDataNew = al9000_field_set(DDRC_ADDR_PPC + PIR, WL_offset, WL_mask, 1, regData);
@@ -495,10 +495,10 @@ void do_training(u8 wl_en,u8 wl2_en,u8 gt_en)
         regData = al9000_reg_read(DDRC_ADDR_PPC + PGSR0);
         wlerr = (regData >> 21) & 0x1;
          if (wlerr == 1) {
-             printf(" \n------- WL Failed ; PGSR0 is 0x%x\n",regData);
+             printf(" \n------- WL Failed ; PGSR0 is 0x%x\r\n",regData);
         }
          if (wlerr == 0) {
-             printf(" \n------- WL PASSED ; PGSR0 is 0x%x\n", regData);
+             printf(" \n------- WL PASSED ; PGSR0 is 0x%x\r\n", regData);
         }
     }
 
@@ -506,10 +506,10 @@ void do_training(u8 wl_en,u8 wl2_en,u8 gt_en)
         regData = al9000_reg_read(DDRC_ADDR_PPC + PGSR0);
         wl2err = ( regData >> 23 ) & 0x1;
         if (wl2err == 1) {
-            printf(" \n------- WL2 Failed ; PGSR0 is 0x%x\n", regData);
+            printf(" \n------- WL2 Failed ; PGSR0 is 0x%x\r\n", regData);
         }
         if (wl2err == 0) {
-            printf(" \n------- WL2 PASSED ; PGSR0 is 0x%x\n", regData);
+            printf(" \n------- WL2 PASSED ; PGSR0 is 0x%x\r\n", regData);
         }
     }
 
@@ -517,39 +517,39 @@ void do_training(u8 wl_en,u8 wl2_en,u8 gt_en)
         regData = al9000_reg_read(DDRC_ADDR_PPC + PGSR0);
         gterr = (regData >> 22) & 0x1;
         if (gterr == 1) {
-            printf(" \n------- GateTraining Failed ; PGSR0 is 0x%x\n", regData);
+            printf(" \n------- GateTraining Failed ; PGSR0 is 0x%x\r\n", regData);
         }
         if (gterr == 0) {
-            printf(" \n------- GateTraining PASSED ; PGSR0 is 0x%x\n", regData);
+            printf(" \n------- GateTraining PASSED ; PGSR0 is 0x%x\r\n", regData);
         }
     }
 
     int n;
     for (n = 0; n <= 3; n++) {
         regData = al9000_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 :DGSL is 0x%x\n",n, regData);
+        printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 :DGSL is 0x%x\r\n",n, regData);
         regData = al9000_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, WLSL_offset, WLSL_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 : WLSLis 0x%x\n", n, regData);
+        printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 : WLSLis 0x%x\r\n", n, regData);
         regData = al9000_field_read(DDRC_ADDR_PPC + DX0LCDLR0 + 0x100 * n, WLD_offset, WLD_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR0 : WLD is 0x%x\n", n, regData);
+        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR0 : WLD is 0x%x\r\n", n, regData);
         regData = al9000_field_read(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * n, WDQD_offset, WDQD_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR1 : WDQD is 0x%x\n", n, regData);
+        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR1 : WDQD is 0x%x\r\n", n, regData);
         regData = al9000_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR2 : DQSGD is 0x%x\n", n, regData);
+        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR2 : DQSGD is 0x%x\r\n", n, regData);
         regData = al9000_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR3 :RDQSD is 0x%x\n", n, regData);
+        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR3 :RDQSD is 0x%x\r\n", n, regData);
         regData = al9000_field_read(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR4 : RDQSND is 0x%x\n",n, regData);
+        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR4 : RDQSND is 0x%x\r\n",n, regData);
 
     }
 
 
 
-        printf(" \n");
-        printf(" +---------------------------------------+\n");
-        printf(" |    do_training end                  |\n");
-        printf(" +---------------------------------------+\n");
-        printf(" \n");
+        printf(" \r\n");
+        printf(" +---------------------------------------+\r\n");
+        printf(" |    do_training end                  |\r\n");
+        printf(" +---------------------------------------+\r\n");
+        printf(" \r\n");
 
 
 
@@ -560,11 +560,11 @@ void eye_training()
     u32 regData, regDataNew;
     u32 rdErr, wrErr;
 
-    printf(" \n");
-    printf(" +---------------------------------------+\n");
-    printf(" |    Eye Centering Training             |\n");
-    printf(" +---------------------------------------+\n");
-    printf(" \n");
+    printf(" \r\n");
+    printf(" +---------------------------------------+\r\n");
+    printf(" |    Eye Centering Training             |\r\n");
+    printf(" +---------------------------------------+\r\n");
+    printf(" \r\n");
 
     regData = al9000_reg_read(DDRC_ADDR_PPC + PIR);
     regDataNew = al9000_field_set(DDRC_ADDR_PPC + PIR, WREYE_offset, WREYE_mask, 1, regData);
@@ -579,8 +579,8 @@ void eye_training()
     rdErr = al9000_field_read(DDRC_ADDR_PPC + PGSR0, PGSR0_REERR_offset, PGSR0_REERR_mask);
     wrErr = al9000_field_read(DDRC_ADDR_PPC + PGSR0, PGSR0_WEERR_offset, PGSR0_WEERR_mask);
     if ((rdErr || wrErr ) == 1) {
-        printf(" ****   Error Occurs During Eye Centering Training     ****\n");
-        printf("\nrdErr = %x , wrErr = %x\n", rdErr, wrErr);
+        printf(" ****   Error Occurs During Eye Centering Training     ****\r\n");
+        printf("\nrdErr = %x , wrErr = %x\r\n", rdErr, wrErr);
     }
 
     if ( ((!(env_cfg_en_bit_deskew_train) && env_cfg_en_eye_center_train) || env_cfg_is_micron)  && ((env_cfg_ddr_mode == DDR4) && env_cfg_RDBI))
@@ -591,27 +591,27 @@ void eye_training()
     int n;
     for (n = 0; n <= 3; n++) {
         regData = al9000_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 :DGSL is 0x%x\n", n, regData);
+        printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 :DGSL is 0x%x\r\n", n, regData);
         regData = al9000_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, WLSL_offset, WLSL_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 : WLSLis 0x%x\n", n, regData);
+        printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 : WLSLis 0x%x\r\n", n, regData);
         regData = al9000_field_read(DDRC_ADDR_PPC + DX0LCDLR0 + 0x100 * n, WLD_offset, WLD_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR0 : WLD is 0x%x\n", n, regData);
+        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR0 : WLD is 0x%x\r\n", n, regData);
         regData = al9000_field_read(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * n, WDQD_offset, WDQD_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR1 : WDQD is 0x%x\n", n, regData);
+        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR1 : WDQD is 0x%x\r\n", n, regData);
         regData = al9000_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR2 : DQSGD is 0x%x\n", n, regData);
+        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR2 : DQSGD is 0x%x\r\n", n, regData);
         regData = al9000_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR3 :RDQSD is 0x%x\n", n, regData);
+        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR3 :RDQSD is 0x%x\r\n", n, regData);
         regData = al9000_field_read(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR4 : RDQSND is 0x%x\n", n, regData);
+        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR4 : RDQSND is 0x%x\r\n", n, regData);
 
     }
 
-    printf(" \n");
-    printf(" +---------------------------------------+\n");
-    printf(" |    Eye Centering Training Finished    |\n");
-    printf(" +---------------------------------------+\n");
-    printf(" \n");
+    printf(" \r\n");
+    printf(" +---------------------------------------+\r\n");
+    printf(" |    Eye Centering Training Finished    |\r\n");
+    printf(" +---------------------------------------+\r\n");
+    printf(" \r\n");
 
 
 
@@ -623,11 +623,11 @@ void adjust_rddbi_level_result(u8 pub_index)
     ddr_vif_manual_ddl_update = 1;
 
 
-    printf(" \n");
-    printf(" +---------------------------------------+\n");
-    printf(" |    adjust_rddbi_level_result          |\n");
-    printf(" +---------------------------------------+\n");
-    printf(" \n");
+    printf(" \r\n");
+    printf(" +---------------------------------------+\r\n");
+    printf(" |    adjust_rddbi_level_result          |\r\n");
+    printf(" +---------------------------------------+\r\n");
+    printf(" \r\n");
 
     //#define     DX0BDLR5            0x758
     //#define     DX0BDLR3            0x750
@@ -647,9 +647,9 @@ void adjust_rddbi_level_result(u8 pub_index)
 
     ddr_vif_manual_ddl_update = 0;
 
-    printf(" \n");
-    printf(" +---------------------------------------+\n");
-    printf(" |    adjust_rddbi_level_result Finished |\n");
-    printf(" +---------------------------------------+\n");
-    printf(" \n");
+    printf(" \r\n");
+    printf(" +---------------------------------------+\r\n");
+    printf(" |    adjust_rddbi_level_result Finished |\r\n");
+    printf(" +---------------------------------------+\r\n");
+    printf(" \r\n");
 }

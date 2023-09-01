@@ -1,10 +1,3 @@
-/*
- * alfsbl_emmc_raw.h
- *
- *  Created on: Sept 28, 2022
- *      Author: tfcao
- */
-
 #ifndef ALFSBL_EMMC_RAW_H_
 #define ALFSBL_EMMC_RAW_H_
 

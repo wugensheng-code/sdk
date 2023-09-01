@@ -1,10 +1,3 @@
-/*
- * alfsbl_nand.h
- *
- *  Created on: 10 10, 2022
- *      Author: hj
- */
-
 #ifndef ALFSBL_NAND_H_
 #define ALFSBL_NAND_H_
 

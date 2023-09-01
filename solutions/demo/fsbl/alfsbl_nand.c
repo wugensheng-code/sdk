@@ -1,13 +1,4 @@
-/*
- * alfsbl_emmc.c
- *
- *  Created on: Sept 10, 2022
- *      Author: hj
- */
-
 #include <stdio.h>
-
-#include "demosoc.h"
 
 #include "alfsbl_nand.h"
 #include "alfsbl_misc.h"

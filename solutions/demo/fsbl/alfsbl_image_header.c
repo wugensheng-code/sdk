@@ -1,7 +1,7 @@
 #include <alfsbl_secure.h>
 #include <stdio.h>
 #include "alfsbl_image_header.h"
-#include "demosoc.h"
+#include "al_reg_io.h"
 
 extern uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE];
 
@@ -45,7 +45,7 @@ uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 //	uint32_t *ReadBuffer32 = (uint32_t *)(ReadBuffer);
 
 	/// get multi boot value
-	MultiBoot = REG32(SYSCTRL_S_MULTI_BOOT);
+	MultiBoot = AL_REG32_READ(SYSCTRL_S_MULTI_BOOT);
 
 	/// get image offset address based on multi boot reg value
 	if ((FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_EMMC) || \
@@ -69,9 +69,8 @@ uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 		printf("boot header copy failed...\r\n");
 		goto END;
 	}
-	printf("boot header copy finished...\n");
+	printf("boot header copy finished...\r\n");
 
-#if (!defined FSBL_SIMU_SKIP_HEADERCHECK)
 	Status = AlFsbl_ChecksumCheck(
 			(uint8_t *)(&(FsblInstancePtr->ImageHeader.BootHeader.QspiWidthSel)),
 			60,
@@ -79,7 +78,6 @@ uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 	if(Status != ALFSBL_SUCCESS) {
 		goto END;
 	}
-#endif
 
 	/// read partition headers
 	PartitionNum = FsblInstancePtr->ImageHeader.BootHeader.PartitionNum;
@@ -97,9 +95,8 @@ uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 
 	/// authenticate image header
 	BootHdrAttrb = FsblInstancePtr->ImageHeader.BootHeader.BhAttr;
-	EfuseCtrl = REG32(EFUSE_SEC_CTRL);
+	EfuseCtrl = AL_REG32_READ(EFUSE_SEC_CTRL);
 
-#if (!defined FSBL_SIMU_SKIP_HEADERCHECK)
 	/// if authentication enabled
 	if(((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) != 0) || ((BootHdrAttrb & ALIH_BH_ATTRB_HD_AC_SEL_MASK) != 0)) {
 		printf("image header authentication enabled...\r\n");
@@ -113,7 +110,6 @@ uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 	else {
 		printf("image header authentication not enabled....\r\n");
 	}
-#endif
 
 	printf("qspi width sel        : 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.QspiWidthSel);
 	printf("image id              : 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.ImageId);

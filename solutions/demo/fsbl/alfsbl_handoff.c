@@ -1,21 +1,29 @@
 #include <stdio.h>
-#include "demosoc.h"
 #include "alfsbl_hw.h"
 #include "alfsbl_handoff.h"
+#include "al_reg_io.h"
+
 
 #define AARCH_64
 
 void __attribute__((noinline)) AlFsbl_HandoffExit(uint64_t HandoffAddress)
 {
 	//printf("Exit from FSBL\r\n");
+
+
 #if __riscv
+	__asm__ __volatile__(
+	"fence"
+	);
+	
+
 	__asm__ __volatile__(
 	"jr %[src]"
 	:
 	:[src]"r"(HandoffAddress)
 	);
 
-#elif (defined AARCH_64 || defined aarch64)
+#elif (defined AARCH_64 || defined __aarch64__)
 	__asm__ __volatile__("mov x30, %0"::"r"(HandoffAddress):"x30");/* move the destination address into x30 register */
 	// __asm__ __volatile__("tlbi ALLE3":::);/* invalidate All E3 translation tables */
 	// __asm__ __volatile__("ic IALLU":::);/* invalidate I Cache All to PoU, Inner Shareable */
@@ -56,24 +64,22 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 	RunningCpu = FsblInstancePtr->ProcessorID;
 
 	printf("Mark FSBL is completed...\r\n");
-	REG32(SYSCTRL_S_FSBL_ERR_CODE) = ALFSBL_COMPLETED;
-
-	/// remove isolation of ps-pl cross interface
-	REG32(CRP_ISO_CTRL) = REG32(CRP_ISO_CTRL) & (~CRP_ISO_CTRL_MSK_PL_OTHER_IN);
+	AL_REG32_WRITE(SYSCTRL_S_FSBL_ERR_CODE, ALFSBL_COMPLETED);
 
 	/// disable pcap to restore pcap-pl isolation
-	REG32(CSU_PCAP_ENABLE) = 0;
+	AL_REG32_WRITE(CSU_PCAP_ENABLE, 0);
 
 	/// release reset of gp0m, gp1m, hp0, hp1
-	REG32(CRP_SRST_CTRL2) = REG32(CRP_SRST_CTRL2) | 0x33;
+	AL_REG32_SET_BITS(CRP_SRST_CTRL2, 0, 2, 3);
+	AL_REG32_SET_BITS(CRP_SRST_CTRL2, 4, 2, 3);
 
 	/// gp normal access to pl, gp port and fahb port
-	REG32(SYSCTRL_NS_PLS_PROT) = REG32(SYSCTRL_NS_PLS_PROT) & (~0x3);
+	AL_REG32_SET_BITS(SYSCTRL_NS_PLS_PROT, 0, 2, 0);
 
 	if(FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_JTAG) {
-		printf("jump to a infinite loop\r\n");
-		REG32(0x60000000) = 0xa001a001;
-		AlFsbl_HandoffExit(0x60000000);
+		//printf("jump to a infinite loop\r\n");
+		//REG32(0x60000000) = 0xa001a001;
+		//AlFsbl_HandoffExit(0x60000000);
 	}
 
 	for(HandoffIdx = 0; HandoffIdx < FsblInstancePtr->HandoffCpuNum; HandoffIdx++) {
@@ -88,36 +94,37 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 			/// update reset vector
 			/// soft reset the handoff target cpu, pulse reset
 			if(CpuSettings == ALIH_PH_ATTRIB_DEST_CPU_RPU) {
-				REG32(SYSCTRL_S_RPU_RESET_VECTOR_H) = HandoffAddress >> 32;
-				REG32(SYSCTRL_S_RPU_RESET_VECTOR_L) = HandoffAddress & 0xffffffff;
-				REG32(SYSCTRL_S_XPU_SRST) = REG32(SYSCTRL_S_XPU_SRST) | (1UL << 10);  /// release level reset
-				REG32(SYSCTRL_S_XPU_SRST) = REG32(SYSCTRL_S_XPU_SRST) & (~(1 << 8));  /// trigger pulse reset
+				AL_REG32_WRITE(SYSCTRL_S_RPU_RESET_VECTOR_H, HandoffAddress >> 32);				
+				AL_REG32_WRITE(SYSCTRL_S_RPU_RESET_VECTOR_L, HandoffAddress & 0xffffffff);
+				AL_REG32_SET_BIT(SYSCTRL_S_XPU_SRST, 10, 1);  /// release level reset
+				AL_REG32_SET_BIT(SYSCTRL_S_XPU_SRST, 8, 0);   /// trigger pulse reset
 			}
 			else if(CpuSettings == ALIH_PH_ATTRIB_DEST_CPU_APU0) {
-				REG32(SYSCTRL_S_APU0_RESET_VECTOR_H) = HandoffAddress >> 34;
-				REG32(SYSCTRL_S_APU0_RESET_VECTOR_L) = (HandoffAddress >> 2) & 0xffffffff;
-				REG32(SYSCTRL_S_XPU_SRST) = REG32(SYSCTRL_S_XPU_SRST) | (1UL << 4);   /// release level reset
-				REG32(SYSCTRL_S_XPU_SRST) = REG32(SYSCTRL_S_XPU_SRST) & (~(1 << 0));  /// trigger pulse reset
+				AL_REG32_WRITE(SYSCTRL_S_APU0_RESET_VECTOR_H, HandoffAddress >> 34);
+				AL_REG32_WRITE(SYSCTRL_S_APU0_RESET_VECTOR_L, (HandoffAddress >> 2) & 0xffffffff);
+				AL_REG32_SET_BIT(SYSCTRL_S_XPU_SRST, 4, 1);   /// release level reset
+				AL_REG32_SET_BIT(SYSCTRL_S_XPU_SRST, 0, 0);   /// trigger pulse reset
 			}
 			else if(CpuSettings == ALIH_PH_ATTRIB_DEST_CPU_APU1) {
-				REG32(SYSCTRL_S_APU1_RESET_VECTOR_H) = HandoffAddress >> 34;
-				REG32(SYSCTRL_S_APU1_RESET_VECTOR_L) = (HandoffAddress >> 2) & 0xffffffff;
-				REG32(SYSCTRL_S_XPU_SRST) = REG32(SYSCTRL_S_XPU_SRST) | (1UL << 5);   /// release level reset
-				REG32(SYSCTRL_S_XPU_SRST) = REG32(SYSCTRL_S_XPU_SRST) & (~(1 << 1));  /// trigger pulse reset
+				AL_REG32_WRITE(SYSCTRL_S_APU1_RESET_VECTOR_H, HandoffAddress >> 34);
+				AL_REG32_WRITE(SYSCTRL_S_APU1_RESET_VECTOR_L, (HandoffAddress >> 2) & 0xffffffff);
+				AL_REG32_SET_BIT(SYSCTRL_S_XPU_SRST, 5, 1);   /// release level reset
+				AL_REG32_SET_BIT(SYSCTRL_S_XPU_SRST, 1, 0);	  /// tringger pulse reset
 			}
 		}
 		else {
 			if(RunningCpu == ALIH_PH_ATTRIB_DEST_CPU_RPU) {
-				REG32(SYSCTRL_S_RPU_RESET_VECTOR_H) = HandoffAddress >> 32;
-				REG32(SYSCTRL_S_RPU_RESET_VECTOR_L) = HandoffAddress & 0xffffffff;
+				AL_REG32_WRITE(SYSCTRL_S_RPU_RESET_VECTOR_H, HandoffAddress >> 32);				
+				AL_REG32_WRITE(SYSCTRL_S_RPU_RESET_VECTOR_L, HandoffAddress & 0xffffffff);
 			}
 			else if(RunningCpu == ALIH_PH_ATTRIB_DEST_CPU_APU0) {
-				REG32(SYSCTRL_S_APU0_RESET_VECTOR_H) = HandoffAddress >> 34;
-				REG32(SYSCTRL_S_APU0_RESET_VECTOR_L) = (HandoffAddress >> 2) & 0xffffffff;
+				AL_REG32_WRITE(SYSCTRL_S_APU0_RESET_VECTOR_H, HandoffAddress >> 34);
+				AL_REG32_WRITE(SYSCTRL_S_APU0_RESET_VECTOR_L, (HandoffAddress >> 2) & 0xffffffff);
 			}
 			else if(RunningCpu == ALIH_PH_ATTRIB_DEST_CPU_APU1) {
-				REG32(SYSCTRL_S_APU1_RESET_VECTOR_H) = HandoffAddress >> 34;
-				REG32(SYSCTRL_S_APU1_RESET_VECTOR_L) = (HandoffAddress >> 2) & 0xffffffff;
+				AL_REG32_WRITE(SYSCTRL_S_APU1_RESET_VECTOR_H, HandoffAddress >> 34);
+				AL_REG32_WRITE(SYSCTRL_S_APU1_RESET_VECTOR_L, (HandoffAddress >> 2) & 0xffffffff);
+
 			}
 			AlFsbl_HandoffExit(HandoffAddress);
 		}

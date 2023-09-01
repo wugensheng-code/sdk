@@ -6,8 +6,7 @@
 #include "alfsbl_err_code.h"
 #include "alfsbl_qspi.h"
 #include "alfsbl_sd.h"
-#include "demosoc.h"
-
+#include "al_reg_io.h"
 
 
 uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
@@ -16,7 +15,7 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 	uint32_t BootMode;
 	uint32_t BlockSizeMax;
 
-	BootMode = REG32(SYSCTRL_NS_BOOT_MODE);
+	BootMode = AL_REG32_READ(SYSCTRL_NS_BOOT_MODE);
 
 	printf("Boot Mode: 0x%08x\r\n", BootMode);
 

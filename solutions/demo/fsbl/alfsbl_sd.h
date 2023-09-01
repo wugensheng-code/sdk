@@ -1,10 +1,3 @@
-/*
- * alfsbl_sd.h
- *
- *  Created on: Sept 28, 2022
- *      Author: tfcao
- */
-
 #ifndef ALFSBL_SD_H_
 #define ALFSBL_SD_H_
 

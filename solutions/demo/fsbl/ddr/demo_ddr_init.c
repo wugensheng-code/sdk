@@ -11,10 +11,10 @@ int demo_ddr_init()
     u32 regData = 0;
     u32 mtest_err = 0;
 
-    printf("DDR Init Proc\n");
+    printf("DDR Init Proc\r\n");
 
     regData = al9000_reg_read(0x27a0);
-    printf(" 0x27a0.initial  data =  0x%x\n", regData);
+    printf(" 0x27a0.initial  data =  0x%x\r\n", regData);
 
     al9000_reg_write(0x11b0 ,0x00000050); // DFIMISC
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -157,7 +157,7 @@ int demo_ddr_init()
     //al9000_iomc_internal_loopback_cfg();
     //Alc_GpioMaskWrite(GPIO_CH0, 0x111, 0xffff); 
     mtest_err = al9000_ddrppc_mtest(0, 0, 0, 9);
-    printf("mtest errcnt: %d\n", mtest_err);
+    printf("mtest errcnt: %d\r\n", mtest_err);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 08 : HandOff to DFI
@@ -184,8 +184,8 @@ int demo_ddr_init()
 
     *(volatile uint64_t*)(0x400000) = gold;
     uint64_t val = *(volatile uint64_t*)(0x400000);
-    printf("DDR Read Back: 0x%lx\n", val);
-    printf("DDR Init: %s\n", val == gold ? "PASS" : "FAIL");
+    printf("DDR Read Back: 0x%lx\r\n", val);
+    printf("DDR Init: %s\r\n", val == gold ? "PASS" : "FAIL");
 
     return mtest_err == 0 && val == gold;
 }

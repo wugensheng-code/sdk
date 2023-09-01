@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "demosoc.h"
+#include "al_reg_io.h"
 
 #include "alfsbl_hw.h"
 #include "alfsbl_init.h"
@@ -80,7 +80,7 @@ static uint32_t AlFsbl_GetResetReason(void)
 {
 	uint32_t Ret;
 
-	if((REG32(SYSCTRL_S_GLOBAL_SRSTN)) & SYSCTRL_S_GLOBAL_SRSTN_MSK_PSONLY) {
+	if((AL_REG32_READ(SYSCTRL_S_GLOBAL_SRSTN)) & SYSCTRL_S_GLOBAL_SRSTN_MSK_PSONLY) {
 		printf("PS only reset\r\n");
 		Ret = FSBL_PS_ONLY_RESET;
 	}
@@ -101,7 +101,7 @@ static uint32_t AlFsbl_SystemInit(AlFsblInfo *FsblInstancePtr)
 
 	// isolate PL-PS cross interface
 	// make sure FSBL exits with isolation removed
-	REG32(CRP_ISO_CTRL) = REG32(CRP_ISO_CTRL) | CRP_ISO_CTRL_MSK_PL_OTHER_IN;
+//	REG32(CRP_ISO_CTRL) = REG32(CRP_ISO_CTRL) | CRP_ISO_CTRL_MSK_PL_OTHER_IN;
 
 //	// set PCAP not enable, to make the signal to config model not change
 //	REG32(CSU_PCAP_ENABLE) = 0;
@@ -135,19 +135,22 @@ static uint32_t AlFsbl_PmuInit(AlFsblInfo *FsblInstancePtr)
 {
 	uint32_t Status = ALFSBL_SUCCESS;
 	printf("PMU Error Config Init\r\n");
+	uint32_t val = 0;
+
+	val = AL_REG32_READ(SYSCTRL_S_ERR_HW_EN0_SET)   |
+			      SYSCTRL_S_ERR_HW0_MSK_BUS_TIMEOUT |
+				  SYSCTRL_S_ERR_HW0_MSK_WDT0        |
+				  SYSCTRL_S_ERR_HW0_MSK_OCM_ECC;
+	AL_REG32_WRITE(SYSCTRL_S_ERR_HW_EN0_SET, val);
+
+	val = AL_REG32_READ(SYSCTRL_S_INT_EN0_SET)      |
+			      SYSCTRL_S_ERR_HW0_MSK_BUS_TIMEOUT |
+				  SYSCTRL_S_ERR_HW0_MSK_WDT0        |
+				  SYSCTRL_S_ERR_HW0_MSK_OCM_ECC;
+	AL_REG32_WRITE(SYSCTRL_S_INT_EN0_SET, val);
 
 
-	REG32(SYSCTRL_S_ERR_HW_EN0_SET) = REG32(SYSCTRL_S_ERR_HW_EN0_SET)   |
-			                          SYSCTRL_S_ERR_HW0_MSK_BUS_TIMEOUT |
-									  SYSCTRL_S_ERR_HW0_MSK_WDT0        |
-									  SYSCTRL_S_ERR_HW0_MSK_OCM_ECC;
-
-	REG32(SYSCTRL_S_INT_EN0_SET) = REG32(SYSCTRL_S_INT_EN0_SET)      |
-			                       SYSCTRL_S_ERR_HW0_MSK_BUS_TIMEOUT |
-								   SYSCTRL_S_ERR_HW0_MSK_WDT0        |
-								   SYSCTRL_S_ERR_HW0_MSK_OCM_ECC;
-
-	if((REG32(CRP_CLK_SEL) & CRP_CLK_SEL_MSK_SLOW_SEL) == CRP_CLK_SEL_MSK_SLOW_SEL) {
+	if((AL_REG32_READ(CRP_CLK_SEL) & CRP_CLK_SEL_MSK_SLOW_SEL) == CRP_CLK_SEL_MSK_SLOW_SEL) {
 		/// pll bypassed
 	}
 	else {
@@ -202,10 +205,10 @@ static uint32_t AlFsbl_ValidateResetReason(void)
 	uint32_t ResetReasonValue;
 
 	/// get fsbl status
-	FsblStatus = REG32(SYSCTRL_S_FSBL_ERR_CODE);
+	FsblStatus = AL_REG32_READ(SYSCTRL_S_FSBL_ERR_CODE);
 
 	/// get reset reason
-	ResetReasonValue = REG32(CRP_RST_REASON);
+	ResetReasonValue = AL_REG32_READ(CRP_RST_REASON);
 
 	if((ResetReasonValue & CRP_RST_REASON_MSK_SWDT0)   |
 	   (ResetReasonValue & CRP_RST_REASON_MSK_SWDT1)   |
@@ -217,7 +220,7 @@ static uint32_t AlFsbl_ValidateResetReason(void)
 	}
 	if(FsblStatus != ALFSBL_RUNNING) {
 		printf("mark fsbl is running...\r\n");
-		REG32(SYSCTRL_S_FSBL_ERR_CODE) = ALFSBL_RUNNING;
+		AL_REG32_WRITE(SYSCTRL_S_FSBL_ERR_CODE, ALFSBL_RUNNING);
 	}
 
 	Status = ALFSBL_SUCCESS;

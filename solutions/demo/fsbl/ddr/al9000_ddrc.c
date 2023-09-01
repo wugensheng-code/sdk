@@ -6,14 +6,14 @@ u32 ftcHandle = 0;
 u32 al9000_ddr_reg_write(u32* useless, u32 addr, u32 data)
 {
     *(volatile u32*)(addr) = data;
-    // printf("[WR] *0x%08x <= 0x%08x\n", addr, data);
+    // printf("[WR] *0x%08x <= 0x%08x\r\n", addr, data);
     return 0;
 }
 
 u32 al9000_ddr_reg_read(u32* useless, u32 addr, u32* data)
 {
     *data = *(volatile u32*)(addr);
-    // printf("[RD] *0x%08x == 0x%08x\n", addr, data);
+    // printf("[RD] *0x%08x == 0x%08x\r\n", addr, data);
     return 0;
 }
 
@@ -24,7 +24,7 @@ void al9000_reg_write(u16 addr, u32 data)
     ftcStatus = al9000_ddr_reg_write(&ftcHandle, addr_phy, data);
 
     #ifdef DEBUG_REG_self
-        printf("write : 0x%08x = 0x%08x\n", addr, data);
+        printf("write : 0x%08x = 0x%08x\r\n", addr, data);
     #endif
 
 }

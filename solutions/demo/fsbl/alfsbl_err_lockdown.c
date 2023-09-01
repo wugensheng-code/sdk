@@ -1,7 +1,7 @@
-#include "demosoc.h"
 #include "alfsbl_hw.h"
 #include "alfsbl_err_lockdown.h"
 #include "alfsbl_boot.h"
+#include "al_reg_io.h"
 
 /**
  * 1, update the error status register and fsbl instance structure with fsbl error code
@@ -20,13 +20,13 @@ void AlFsbl_ErrorLockDown(AlFsblInfo *FsblInstancePtr, uint32_t ErrorStatus)
 	uint32_t LoopAddr = 0;
 
 	/// update error status register
-	REG32(SYSCTRL_S_FSBL_ERR_CODE) = ErrorStatus;
+	AL_REG32_WRITE(SYSCTRL_S_FSBL_ERR_CODE, ErrorStatus);
 
 	if(BootMode == ALFSBL_BOOTMODE_JTAG) {
 		/// JTAG BOOT MODE not support multi-boot, jump to a infinite loop
 #if __riscv
 		LoopAddr = RPU_LOOP_ADDR;
-		REG32(LoopAddr) = RPU_LOOP_INSTRUCTION;
+		AL_REG32_WRITE(LoopAddr, RPU_LOOP_INSTRUCTION);
 		__asm__ __volatile__(
 		"jr %[src]"
 		:
@@ -34,16 +34,19 @@ void AlFsbl_ErrorLockDown(AlFsblInfo *FsblInstancePtr, uint32_t ErrorStatus)
 		);
 #else
 		LoopAddr = APU_LOOP_ADDR;
-		REG32(LoopAddr) = APU_LOOP_INSTRUCTION;
+		AL_REG32_WRITE(LoopAddr, APU_LOOP_INSTRUCTION);
 		__asm__ __volatile__("mov x30, %0"::"r"(LoopAddr):"x30");
 #endif
 	}
 	else {
 		/// Multi-boot: update MULTBOOT register
-		REG32(SYSCTRL_S_MULTI_BOOT) = REG32(SYSCTRL_S_MULTI_BOOT) + 1;
+
+		AL_REG32_WRITE(SYSCTRL_S_MULTI_BOOT, AL_REG32_READ(SYSCTRL_S_MULTI_BOOT) + 1);
+		
 		/// trigger a system reset
-		REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) & (~(1 << 9));
-		REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) & (~1);
+		//AL_REG32_SET_BIT(reg_addr, shift, value)
+		AL_REG32_SET_BIT(SYSCTRL_S_GLOBAL_SRSTN, 9, 0);
+		AL_REG32_SET_BIT(SYSCTRL_S_GLOBAL_SRSTN, 0, 0);
 	}
 
 

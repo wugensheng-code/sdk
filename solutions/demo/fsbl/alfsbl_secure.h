@@ -1,3 +1,11 @@
+/*
+ * alfsbl_sec.h
+ *
+ *  Created on: May 25, 2022
+ *      Author: qsxu
+ */
+
+
 #ifndef ALFSBL_SEC_H_
 #define ALFSBL_SEC_H_
 
@@ -6,6 +14,9 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+//#include "alfsbl_hw.h"
+
+//#define CSUDMA_BLOCK_LENGTH_MAX   (0xFFC0UL)
 #define CSUDMA_BLOCK_LENGTH_MAX   (512UL)
 
 
@@ -131,10 +142,11 @@ extern "C" {
 /**
  * System Interrupt ID
  */
-#define APU2CSU_REQ_IRQN (30)
-#define APU2CSU_ACK_IRQN (31)
-#define CSU2APU_REQ_IRQN (32)
-#define CSU2APU_ACK_IRQN (33)
+#define APU2CSU_REQ_IRQN (47)
+#define APU2CSU_ACK_IRQN (48)
+#define CSU2APU_REQ_IRQN (49)
+#define CSU2APU_ACK_IRQN (50)
+
 #define RPU2CSU_REQ_IRQN (34)
 #define RPU2CSU_ACK_IRQN (35)
 #define CSU2RPU_REQ_IRQN (36)

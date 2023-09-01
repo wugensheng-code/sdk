@@ -1,13 +1,6 @@
-/*
- * alfsbl_sd.c
- *
- *  Created on: Sept 28, 2022
- *      Author: tfcao
- */
-
 #include <stdio.h>
 
-#include "demosoc.h"
+#include "al_reg_io.h"
 
 #include "alfsbl_sd.h"
 #include "alfsbl_misc.h"
@@ -27,8 +20,8 @@ uint32_t AlFsbl_SdInit(void)
 	uint32_t multibootoffset = 0;
 	uint32_t drvnum;
 
-	drvnum = REG32(SYSCTRL_NS_BOOT_MODE);
-	multibootoffset = REG32(SYSCTRL_S_MULTI_BOOT);
+	drvnum = AL_REG32_READ(SYSCTRL_NS_BOOT_MODE);
+	multibootoffset = AL_REG32_READ(SYSCTRL_S_MULTI_BOOT);
 	printf("multi boot offset is %d\r\n", multibootoffset);
 
 	if(drvnum == ALFSBL_SD_DRV_NUM_0){

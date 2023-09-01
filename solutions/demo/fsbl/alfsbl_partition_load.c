@@ -1,7 +1,7 @@
 #include <alfsbl_secure.h>
 #include <stdio.h>
 #include <stdint.h>
-#include "demosoc.h"
+#include "al_reg_io.h"
 #include "alfsbl_misc.h"
 #include "alfsbl_err_code.h"
 #include "alfsbl_hw.h"
@@ -40,10 +40,6 @@ uint32_t AlFsbl_PartitionLoad(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx
 
 	/// todo: restart wdt
 
-//	/// release pl reset
-//	if(FsblInstancePtr->ResetReason == FSBL_SYSTEM_RESET) {
-//		REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) | (SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
-//	}
 
 	/// partition header validation
 	Status = AlFsbl_PartitionHeaderValidation(FsblInstancePtr, PartitionIdx, &FsblSecInfo);
@@ -93,7 +89,7 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 	uint32_t EfuseCtrl;
 	uint32_t PartitionAttr;
 
-	EfuseCtrl = REG32(EFUSE_SEC_CTRL);
+	EfuseCtrl = AL_REG32_READ(EFUSE_SEC_CTRL);
 	PtHdr = &(FsblInstancePtr->ImageHeader.PartitionHeader[PartitionIdx]);
 	PartitionAttr = PtHdr->PartitionAttribute;
 
@@ -486,13 +482,16 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		printf("Authenticat pass\r\n");
 	}
 
+	printf("ps partition copy finished\r\n");
+
+#if 0
 	/// check decrypt result:
 	ocmptr = (uint32_t *)(LoadAddress);
 	for(i = 0; i < 4; i++) {
 		printf("%08x\r\n", *ocmptr);
 		ocmptr++;
 	}
-
+#endif
 
 	/// update handoff values
 	if((PtHdr->DestExecAddr) != 0xFFFFFFFFU) {
@@ -521,7 +520,7 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	uint8_t  PartitionAc[ALFSBL_AUTH_BUFFER_SIZE];
 	uint32_t ImageOffsetAddress;
 	uint32_t BootDevice;
-	uint8_t  DdrAvailable = FALSE;
+	uint8_t  DdrAvailable = 0;
 	uint32_t BlockSizeMax;
 	AlFsbl_PartitionHeader *PtHdr;
 	PtHdr = &(FsblInstancePtr->ImageHeader.PartitionHeader[PartitionIdx]);
@@ -529,14 +528,12 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 
 	/// pcap reset
 	printf("PCAP RESET\r\n");
-	REG32(CSU_PCAP_RESET) = 0;
-	REG32(CSU_PCAP_RESET) = 1;
+	AL_REG32_WRITE(CSU_PCAP_RESET, 0);
+	AL_REG32_WRITE(CSU_PCAP_RESET, 1);
 
-	printf("Set PCAP not enable\r\n");
-	REG32(CSU_PCAP_ENABLE) = 0;
-
-	printf("Set PCAP enable\r\n");
-	REG32(CSU_PCAP_ENABLE) = 1;
+	printf("Re-enable PCAP\r\n");
+	AL_REG32_WRITE(CSU_PCAP_ENABLE, 0);
+	AL_REG32_WRITE(CSU_PCAP_ENABLE, 1);
 
 	// check pl init done;
 	Status = AlFsbl_CheckPlInitDone();
@@ -549,7 +546,7 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 
 	/// temp test: pl init and done:
 	printf("PL init done\r\n");
-	printf("cfg state: %08x\r\n", REG32(CRP_CFG_STATE));
+	printf("cfg state: %08x\r\n", AL_REG32_READ(CRP_CFG_STATE));
 
 	pSecureInfo->HashOutAddr    = (uint32_t)HashBuffer;
 	pSecureInfo->KeyMode        = OP_BHDR_KEY;
@@ -660,7 +657,7 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	}
 
 	/// temp test: pl init and done:
-	printf("cfg state before progdone: %08x\r\n", REG32(CRP_CFG_STATE));
+	printf("cfg state before progdone: %08x\r\n", AL_REG32_READ(CRP_CFG_STATE));
 
 
 
@@ -671,16 +668,16 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	}
 
 	/// temp test: pl init and done:
-	printf("cfg state after progdone: %08x\r\n", REG32(CRP_CFG_STATE));
+	printf("cfg state after progdone: %08x\r\n", AL_REG32_READ(CRP_CFG_STATE));
 
 	/// check cfg state after bitstream loaded
-	if((REG32(CRP_CFG_STATE)) != 7) {
-		Status = ALFSBL_ERROR_PL_CFG_STATE_ERROR & (REG32(CRP_CFG_STATE) | 0xFFFFFFF8UL);
+	if((AL_REG32_READ(CRP_CFG_STATE)) != 7) {
+		Status = ALFSBL_ERROR_PL_CFG_STATE_ERROR & (AL_REG32_READ(CRP_CFG_STATE) | 0xFFFFFFF8UL);
 		goto END;
 	}
 
 	/// set PCAP not enable, to make the signal to config model not change
-	REG32(CSU_PCAP_ENABLE) = 0;
+	AL_REG32_WRITE(CSU_PCAP_ENABLE, 0);
 
 
 END:
@@ -816,7 +813,7 @@ uint32_t AlFsbl_CheckPlInitDone(void)
 			Status = ALFSBL_ERROR_PL_INIT_TIMEOUT;
 			goto END;
 		}
-		InitDone = REG32(CRP_CFG_STATE) & CRP_CFG_STATE_MSK_PL2PS_INITN;
+		InitDone = AL_REG32_READ(CRP_CFG_STATE) & CRP_CFG_STATE_MSK_PL2PS_INITN;
 
 	}while(InitDone != CRP_CFG_STATE_MSK_PL2PS_INITN);
 
@@ -832,9 +829,9 @@ uint32_t ALFsbl_BitStreamProgDone(void)
 	uint32_t ProgDone[3] = {0x90300002, 0x00000005, 0x1655e833};
 	uint32_t BitStreamNoop = 0x80000000;
 
-	REG32(CSU_PCAP_WR_STREAM) = ProgDone[0];
-	REG32(CSU_PCAP_WR_STREAM) = ProgDone[1];
-	REG32(CSU_PCAP_WR_STREAM) = ProgDone[2];
+	AL_REG32_WRITE(CSU_PCAP_WR_STREAM, ProgDone[0]);
+	AL_REG32_WRITE(CSU_PCAP_WR_STREAM, ProgDone[1]);
+	AL_REG32_WRITE(CSU_PCAP_WR_STREAM, ProgDone[2]);
 
 	printf("\n");
 
@@ -851,7 +848,7 @@ uint32_t ALFsbl_BitStreamProgDone(void)
 
 void AlFsbl_PrintPartitionHeaderInfo(AlFsbl_PartitionHeader *PtHdr)
 {
-	printf("\nPartition Header Infomation:\n");
+	printf("\nPartition Header Infomation:\r\n");
 	printf("Partition Length            : 0x%08x\r\n", PtHdr->PartitionLen);
 	printf("Extracted Partition Length  : 0x%08x\r\n", PtHdr->ExtractedPartitionLen);
 	printf("Total Partition Length      : 0x%08x\r\n", PtHdr->TotalPartitionLen);

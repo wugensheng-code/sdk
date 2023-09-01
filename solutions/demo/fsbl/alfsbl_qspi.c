@@ -1,8 +1,6 @@
 #include <alfsbl_secure.h>
 #include <stdio.h>
 
-#include "demosoc.h"
-
 #include "alfsbl_qspi.h"
 #include "alfsbl_misc.h"
 #include "alfsbl_boot.h"
@@ -100,40 +98,18 @@ void QSPI_FLASH_SR_BIT_SET (unsigned bit_num, unsigned bit_val)
 }  //QSPI_FLASH_SR_BIT_SE
 
 
-#ifdef SIMU_AL9000_DV
 uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
 {
 	QspiParams qspi_params;
+	printf("qspi 24 init\r\n");	
 	Csu_QspiInit(&qspi_params);
 
-//	QSPI_FLASH_SR_BIT_SET(9, 1);
-    Csu_QspiSetMode(QSPI_WIDTH_X2, QSPI_ADDR_24);
+#if 1
+	QSPI_FLASH_SR_BIT_SET(9, 1);
+    Csu_QspiSetMode(QSPI_WIDTH_X4, QSPI_ADDR_24);
 
     Qspi_Disable(g_pdev);
-	Qspi_SckdivCfg(g_pdev,0x2); // ahb: 200M, spi: 200 / 4 = 50M
-
-	g_pdev->regs->SPI_CTRLR0 = (g_pdev->regs->SPI_CTRLR0) | (1 << 30);
-
-    Qspi_Enable(g_pdev);
-
-    *pBlockSizeMax = 512;   // this is only for simulation test
-
-	return 0;
-}
-
-#else
-uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
-{
-	QspiParams qspi_params;
-	printf("qspi 24 init\r\n");
-	Csu_QspiInit(&qspi_params);
-
-#if 0
-	//QSPI_FLASH_SR_BIT_SET(9, 1);
-    Csu_QspiSetMode(QSPI_WIDTH_X1, QSPI_ADDR_24);
-
-    Qspi_Disable(g_pdev);
-	Qspi_SckdivCfg(g_pdev,0x2); // ahb: 200M, spi: 200 / 4 = 50M
+	Qspi_SckdivCfg(g_pdev,0x4); // ahb: 200M, spi: 200 / 4 = 50M
 
 	g_pdev->regs->SPI_CTRLR0 = (g_pdev->regs->SPI_CTRLR0) | (1 << 30);
 
@@ -147,7 +123,7 @@ uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
 
 	return 0;
 }
-#endif
+
 
 uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo)
 {

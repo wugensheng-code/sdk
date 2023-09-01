@@ -288,7 +288,7 @@ int al9000_ddrppc_mtest(u8 bank, u16 row, u16 col, u8 byteNum) {
         bistDxErr = al9000_field_read(DDRC_ADDR_PPC + BISTGSR,  BDXERR_offset, BDXERR_mask);
         rcvCnt    = al9000_field_read(DDRC_ADDR_PPC + BISTWCSR, DXWCNT_offset, DXWCNT_mask); // Equal to iterateCnt
 
-        printf("mtest : bistDone = 0x%x bistDxErr = 0x%x rcvCnt = 0x%x \n", bistDone, bistDxErr, rcvCnt);
+        printf("mtest : bistDone = 0x%x bistDxErr = 0x%x rcvCnt = 0x%x \r\n", bistDone, bistDxErr, rcvCnt);
 
         al9000_field_write(DDRC_ADDR_PPC + BISTRR, BINST_offset, BINST_mask, 3);
         al9000_field_write(DDRC_ADDR_PPC + BISTRR, BINST_offset, BINST_mask, 2);

@@ -1,4 +1,4 @@
-#include <alfsbl_secure.h>
+#include "alfsbl_secure.h"
 #include "alfsbl_main.h"
 #include "alfsbl_image_header.h"
 #include "alfsbl_partition_load.h"
@@ -7,7 +7,6 @@
 #include "alfsbl_misc.h"
 #include "alfsbl_hw.h"
 
-#include "demosoc.h"
 #include "qspi_drv.h"
 #include "qspi_flash_drv.h"
 
@@ -22,39 +21,11 @@ SecureInfo FsblSecInfo = {0};
 
 extern int Soc_PlatInit();
 
-#define SIMU_PASS (0x600d600d)
-#define SIMU_FAIL (0x0bad0bad)
-void simu_report(uint32_t status)
-{
-#if defined SIMU_AL9000_DV
-	__asm__ __volatile__(
-	"csrw mscratch, %[src]"
-	:
-	:[src]"r"(status)
-	);
-#endif
-	return;
-}
-
-
-
 int main(void)
 {
 	uint32_t FsblStage    = ALFSBL_STAGE1;
 	uint32_t FsblStatus   = ALFSBL_SUCCESS;
 	uint32_t PartitionIdx = 0;
-
-	/// gp normal access to pl,
-	/// required in al9000 dv simulation,
-	/// to print infomation in simulation env
-#if defined SIMU_AL9000_DV
-	REG32(SYSCTRL_NS_PLS_PROT) = REG32(SYSCTRL_NS_PLS_PROT) & (~0x2);
-#endif
-
-    /// demo board uart pinmux
-    REG32(0xf88030c0) = 3;
-    REG32(0xf88030c4) = 3;
-    REG32(0xf8803414) = 1;
 
 	Soc_PlatInit();
 
@@ -95,7 +66,6 @@ int main(void)
 				else if(PartitionIdx == FsblInstance.ImageHeader.BootHeader.PartitionNum) {
 					printf("Only one partition exists in boot image, which is fsbl itself\r\n");
 					printf("for test only, if this message reported, test pass and finished\r\n");
-					simu_report(SIMU_PASS);
 				}
 				else if(PartitionIdx > FsblInstance.ImageHeader.BootHeader.PartitionNum) {
 					printf("Boot image format invalid or Image Header data incorrect, need to check\r\n");
@@ -164,7 +134,6 @@ int main(void)
 		default:
 			printf("================= In Stage Default =================\r\n");
 			printf("In default stage: we should never be here\r\n");
-			simu_report(SIMU_PASS);
 			break;
 		}
 
