@@ -8,8 +8,6 @@ extern void ECLIC_Init(void);
 
 AL_VOID AlChip_Dr1V90Init(AL_VOID)
 {
-    __RV_CSR_CLEAR(CSR_MMISC_CTL, MMISC_CTL_BPU);
-
     Exception_Init();
     ECLIC_Init();
 
