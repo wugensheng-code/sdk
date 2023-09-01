@@ -106,6 +106,16 @@
 			"version": "1.0",
 			"depends": ["3rdparty/lib/FATFS"]
 		},
+		"LIB_CHERRYUSB_V1_0": {
+			"name": "LIB_CHERRYUSB_V1_0",
+			"version": "1.0",
+			"depends": ["3rdparty/lib/CherryUSB"]
+		},
+		"LIB_CIPHER_V1_0": {
+			"name": "LIB_CIPHER_V1_0",
+			"version": "1.0",
+			"depends": ["3rdparty/lib/cipher"]
+		},
 		"LIB_JPU_V1_0": {
 			"name": "LIB_JPU_V1_0",
 			"version": "1.0",
