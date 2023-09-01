@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef AL9000_MPU_H_
-#define AL9000_MPU_H_
+#ifndef DR1X90_MPU_H_
+#define DR1X90_MPU_H_
 
 #include <stdint.h>
 

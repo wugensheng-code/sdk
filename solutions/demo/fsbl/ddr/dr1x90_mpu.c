@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "al9000_mpu.h"
+
+#include "dr1x90_mpu.h"
 
 static volatile uint32_t* TOP_CFG_S_PROTEN_SET = (void*)0xF88060B0;
 static volatile uint32_t* TOP_CFG_S_PROTEN_CLR = (void*)0xF88060B4;

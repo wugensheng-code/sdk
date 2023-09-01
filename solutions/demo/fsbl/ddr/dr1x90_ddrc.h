@@ -10,16 +10,16 @@
 
 #include "alc_types.h"
 
-u32 al9000_ddr_reg_write(u32* useless, u32 addr, u32 data);
-u32 al9000_ddr_reg_read(u32* useless, u32 addr, u32* data);
+u32 dr1x90_ddr_reg_write(u32* useless, u32 addr, u32 data);
+u32 dr1x90_ddr_reg_read(u32* useless, u32 addr, u32* data);
 
-void al9000_reg_write  (u16 addr, u32 data);
-u32  al9000_reg_read   (u16 addr);
-void al9000_reg_update (u16 addr, u32 oldData, u32 newData);
-void al9000_field_write(u16 addr, u8 offset, u32 mask, u32 data);
-u32  al9000_field_read (u16 addr, u8 offset, u32 mask);
-u32  al9000_field_set  (u16 addr, u8 offset, u32 mask, u32 data, u32 oldData);
-int  al9000_field_wait (u16 addr, u8 offset, u32 mask, u32 expect, u32 timeout);
+void dr1x90_reg_write  (u16 addr, u32 data);
+u32  dr1x90_reg_read   (u16 addr);
+void dr1x90_reg_update (u16 addr, u32 oldData, u32 newData);
+void dr1x90_field_write(u16 addr, u8 offset, u32 mask, u32 data);
+u32  dr1x90_field_read (u16 addr, u8 offset, u32 mask);
+u32  dr1x90_field_set  (u16 addr, u8 offset, u32 mask, u32 data, u32 oldData);
+int  dr1x90_field_wait (u16 addr, u8 offset, u32 mask, u32 expect, u32 timeout);
 
 #define DDRC_ADDR_GPLL       0x0000
 #define DDRC_ADDR_DPLL       0x0800

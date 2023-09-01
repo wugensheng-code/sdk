@@ -14,7 +14,6 @@ CHIP       ?= dr1v90
 
 ifeq ($(CHIP), dr1m90)
 ARMv8_EL   := EL3
-#COMPILE_PREFIX ?= /opt/toolchain/7.5.0/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-elf/bin/aarch64-elf-
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
 else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
@@ -46,10 +45,6 @@ ASM_SRCS :=
 # 3. CFLAGS
 #########################################################################
 CFLAGS := -O2 -g
-CFLAGS += -DAL9000_CLK_CONFIG
-CFLAGS += -DAL9000_OSC_33
-CFLAGS += -DAL9000_BRINGUP
-CFLAGS += -DBOARD_DR1X90_AD101_V10
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;

@@ -111,28 +111,7 @@ AL_S32 AlNor_SetQuad(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd, AL_U8 QuadPos)
     return Ret;
 }
 
-#ifdef SIMU_AL9000_DV
-uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
-{
-	QspiParams qspi_params;
-	Csu_QspiInit(&qspi_params);
 
-//	QSPI_FLASH_SR_BIT_SET(9, 1);
-    Csu_QspiSetMode(QSPI_WIDTH_X2, QSPI_ADDR_24);
-
-    Qspi_Disable(g_pdev);
-	Qspi_SckdivCfg(g_pdev,0x2); // ahb: 200M, spi: 200 / 4 = 50M
-
-	g_pdev->regs->SPI_CTRLR0 = (g_pdev->regs->SPI_CTRLR0) | (1 << 30);
-
-    Qspi_Enable(g_pdev);
-
-    *pBlockSizeMax = 512;   // this is only for simulation test
-
-	return 0;
-}
-
-#else
 uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
 {
     AL_U32 Ret;
@@ -164,7 +143,6 @@ uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
 
 	return Ret;
 }
-#endif
 
 uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo)
 {
