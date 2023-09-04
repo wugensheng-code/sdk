@@ -27,7 +27,7 @@ AL_VOID do_irq_handle(AL_VOID)
     AL_INTR_HandlerStruct Handler;
 
     /* interrupr acknowledge by read iar*/
-    IntrId = read_icc_iar1_el1();
+    IntrId = ARCH_SYSREG_READ(icc_iar1_el1);
     DSB();
     IntrId = IntrId & 0xffffff;
 
@@ -43,7 +43,7 @@ AL_VOID do_irq_handle(AL_VOID)
         Handler.Func(Handler.Param);
     }
 
-    write_icc_eoir1_el1(IntrId);
+    ARCH_SYSREG_WRITE(icc_eoir1_el1, IntrId);
     ISB();
 }
 
@@ -56,7 +56,7 @@ AL_VOID do_fiq_handle(AL_VOID)
     AL_U32 IntrId;
     AL_INTR_HandlerStruct Handler;
 
-    IntrId = read_icc_iar1_el1();
+    IntrId = ARCH_SYSREG_READ(icc_iar1_el1);
     DSB();
     IntrId = IntrId & 0xffffff;
 
@@ -72,7 +72,7 @@ AL_VOID do_fiq_handle(AL_VOID)
         Handler.Func(Handler.Param);
     }
 
-    write_icc_eoir1_el1(IntrId);
+    ARCH_SYSREG_WRITE(icc_eoir1_el1, IntrId);
     ISB();
 }
 

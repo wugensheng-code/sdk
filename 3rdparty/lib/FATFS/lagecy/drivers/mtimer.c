@@ -1,4 +1,5 @@
 #include "mtimer.h"
+#include "al_systimer.h"
 
 extern AL_U64 get_MTimerOutValue(AL_U64 count);
 extern AL_U64 AlSys_GetTimerTickCount(void);

@@ -18,58 +18,54 @@ lr	.req	x30
 /*
  * Branch according to exception level
  */
-.macro	switch_el, xreg, el3_label, el2_label, el1_label
-	mrs	\xreg, CurrentEL
-	cmp	\xreg, 0xc
-	b.eq	\el3_label
-	cmp	\xreg, 0x8
-	b.eq	\el2_label
-	cmp	\xreg, 0x4
-	b.eq	\el1_label
+.macro    switch_el, xreg, el3_label, el2_label, el1_label
+    mrs \xreg, CurrentEL
+    cmp \xreg, 0xc
+    b.eq \el3_label
+    cmp \xreg, 0x8
+    b.eq \el2_label
+    cmp \xreg, 0x4
+    b.eq \el1_label
 .endm
 
 /* switch to el1 from el3 */
-.macro	switch_el3_to_el1_el0
-#ifdef DEBUG
-	mov x0, #1
-	bl print_switch_el
-#endif
-	/* (1) The Execution state for EL1 is AArch64, No-Secure */
+.macro    switch_el3_to_el1_el0
+    /* (1) The Execution state for EL1 is AArch64, No-Secure */
 #ifdef SUPPORT_NONSECURE
-	ldr x21, =(SCR_RW_BIT | SCR_NS_BIT)
+    ldr x21, =(SCR_RW_BIT | SCR_NS_BIT)
 #else
-	ldr x21, =(SCR_RW_BIT)
+    ldr x21, =(SCR_RW_BIT)
 #endif
-	msr scr_el3, x21
+    msr scr_el3, x21
 
-	ldr x21, =(0x1<<31)
-	msr hcr_el2, x21
+    ldr x21, =(0x1<<31)
+    msr hcr_el2, x21
 
-	/* (2) set sctlr_el1, disable mmu, LITTLE_ENDIAN */
-	mrs x21, sctlr_el1
-	bic x21, x21, SCTLR_ELx_M
-	bic x21, x21, SCTLR_EL1_E0E
-	bic x21, x21, SCTLR_ELx_EE
-	msr sctlr_el1, x21
+    /* (2) set sctlr_el1, disable mmu, LITTLE_ENDIAN */
+    mrs x21, sctlr_el1
+    bic x21, x21, SCTLR_ELx_M
+    bic x21, x21, SCTLR_EL1_E0E
+    bic x21, x21, SCTLR_ELx_EE
+    msr sctlr_el1, x21
 
-	/* (3) set spsr_el3, return to el1 or el0*/
+    /* (3) set spsr_el3, return to el1 or el0*/
 #ifdef SWITCH_TO_EL0_FROM_EL3
-	ldr x21, =(SPSR_AIF | SPSR_M_EL0T)
+    ldr x21, =(SPSR_AIF | SPSR_M_EL0T)
 #else
-	ldr x21, =(SPSR_AIF | SPSR_M_EL1H)
+    ldr x21, =(SPSR_AIF | SPSR_M_EL1H)
 #endif
 
 #ifdef ENABLE_APU_ABORT_AT_ERET
-	bic x21, x21, #(0x01 << 8)
+    bic x21, x21, #(0x01 << 8)
 #endif
 
-	msr spsr_el3, x21
+    msr spsr_el3, x21
 
-	/* (4) set el1_entry adress to elr_el3 */
-	adr x21, el1_entry
-	msr elr_el3, x21
-	/* (5) return, jump tp el1_entry adress */
-	eret
+    /* (4) set el1_entry adress to elr_el3 */
+    adr x21, el1_entry
+    msr elr_el3, x21
+    /* (5) return, jump tp el1_entry adress */
+    eret
 .endm
 
 #endif /* __AL_AARCH64_MACRO_H__ */

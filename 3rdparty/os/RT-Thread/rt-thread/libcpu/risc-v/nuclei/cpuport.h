@@ -15,7 +15,7 @@
 #include <rtconfig.h>
 #include "al_rv_core.h"
 #include <al_core.h>
-#include <ext_timer.h>
+#include <al_rv64_timer.h>
 #include <ext_eclic.h>
 
 

@@ -1,7 +1,7 @@
 #include "al_core.h"
 #include "al_rv_core.h"
 #include "al_chip.h"
-#include "ext_timer.h"
+#include "al_rv64_timer.h"
 
 extern void Exception_Init(void);
 extern void ECLIC_Init(void);

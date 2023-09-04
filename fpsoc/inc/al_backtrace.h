@@ -5,7 +5,6 @@
 extern "C"{
 #endif /* __cplusplus */
 
-#include "al_core.h"
 
 #ifdef __cplusplus
 }

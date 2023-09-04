@@ -659,19 +659,19 @@ __STATIC_FORCEINLINE uint8_t __ECLIC_GetPriorityIRQ(IRQn_Type IRQn)
  * \sa
  * - \ref ECLIC_GetVector
  */
-__STATIC_FORCEINLINE void __ECLIC_SetVector(IRQn_Type IRQn, rv_csr_t vector)
+__STATIC_FORCEINLINE void __ECLIC_SetVector(IRQn_Type IRQn, AL_REGISTER vector)
 {
 #if __RISCV_XLEN == 32
     volatile uint32_t vec_base;
-    vec_base = ((uint32_t)__RV_CSR_READ(CSR_MTVT));
+    vec_base = ((uint32_t)ARCH_SYSREG_READ(CSR_MTVT));
     (* (unsigned long *) (vec_base + ((int32_t)IRQn) * 4)) = vector;
 #elif __RISCV_XLEN == 64
     volatile uint64_t vec_base;
-    vec_base = ((uint64_t)__RV_CSR_READ(CSR_MTVT));
+    vec_base = ((uint64_t)ARCH_SYSREG_READ(CSR_MTVT));
     (* (unsigned long *) (vec_base + ((int32_t)IRQn) * 8)) = vector;
 #else // TODO Need cover for XLEN=128 case in future
     volatile uint64_t vec_base;
-    vec_base = ((uint64_t)__RV_CSR_READ(CSR_MTVT));
+    vec_base = ((uint64_t)ARCH_SYSREG_READ(CSR_MTVT));
     (* (unsigned long *) (vec_base + ((int32_t)IRQn) * 8)) = vector;
 #endif
 }
@@ -688,14 +688,14 @@ __STATIC_FORCEINLINE void __ECLIC_SetVector(IRQn_Type IRQn, rv_csr_t vector)
  * \sa
  *     - \ref ECLIC_SetVector
  */
-__STATIC_FORCEINLINE rv_csr_t __ECLIC_GetVector(IRQn_Type IRQn)
+__STATIC_FORCEINLINE AL_REGISTER __ECLIC_GetVector(IRQn_Type IRQn)
 {
 #if __RISCV_XLEN == 32
-    return (*(uint32_t *)(__RV_CSR_READ(CSR_MTVT)+IRQn*4));
+    return (*(uint32_t *)(ARCH_SYSREG_READ(CSR_MTVT)+IRQn*4));
 #elif __RISCV_XLEN == 64
-    return (*(uint64_t *)(__RV_CSR_READ(CSR_MTVT)+IRQn*8));
+    return (*(uint64_t *)(ARCH_SYSREG_READ(CSR_MTVT)+IRQn*8));
 #else // TODO Need cover for XLEN=128 case in future
-    return (*(uint64_t *)(__RV_CSR_READ(CSR_MTVT)+IRQn*8));
+    return (*(uint64_t *)(ARCH_SYSREG_READ(CSR_MTVT)+IRQn*8));
 #endif
 }
 
@@ -709,11 +709,11 @@ __STATIC_FORCEINLINE rv_csr_t __ECLIC_GetVector(IRQn_Type IRQn)
  * \sa
  * - \ref __get_exc_entry
  */
-__STATIC_FORCEINLINE void __set_exc_entry(rv_csr_t addr)
+__STATIC_FORCEINLINE void __set_exc_entry(AL_REGISTER addr)
 {
-    addr &= (rv_csr_t)(~0x3F);
+    addr &= (AL_REGISTER)(~0x3F);
     addr |= ECLIC_MODE_MTVEC_Msk;
-    __RV_CSR_WRITE(CSR_MTVEC, addr);
+    ARCH_SYSREG_WRITE(CSR_MTVEC, addr);
 }
 
 /**
@@ -726,9 +726,9 @@ __STATIC_FORCEINLINE void __set_exc_entry(rv_csr_t addr)
  * \sa
  * - \ref __set_exc_entry
  */
-__STATIC_FORCEINLINE rv_csr_t __get_exc_entry(void)
+__STATIC_FORCEINLINE AL_REGISTER __get_exc_entry(void)
 {
-    unsigned long addr = __RV_CSR_READ(CSR_MTVEC);
+    unsigned long addr = ARCH_SYSREG_READ(CSR_MTVEC);
     return (addr & ~ECLIC_MODE_MTVEC_Msk);
 }
 
@@ -743,14 +743,14 @@ __STATIC_FORCEINLINE rv_csr_t __get_exc_entry(void)
  * \sa
  * - \ref __get_nonvec_entry
  */
-__STATIC_FORCEINLINE void __set_nonvec_entry(rv_csr_t addr)
+__STATIC_FORCEINLINE void __set_nonvec_entry(AL_REGISTER addr)
 {
-    if (__RV_CSR_READ(CSR_MTVT2) & 0x1){
-        __RV_CSR_WRITE(CSR_MTVT2, addr | 0x01);
+    if (ARCH_SYSREG_READ(CSR_MTVT2) & 0x1){
+        ARCH_SYSREG_WRITE(CSR_MTVT2, addr | 0x01);
     } else {
-        addr &= (rv_csr_t)(~0x3F);
+        addr &= (AL_REGISTER)(~0x3F);
         addr |= ECLIC_MODE_MTVEC_Msk;
-        __RV_CSR_WRITE(CSR_MTVEC, addr);
+        ARCH_SYSREG_WRITE(CSR_MTVEC, addr);
     }
 }
 
@@ -765,12 +765,12 @@ __STATIC_FORCEINLINE void __set_nonvec_entry(rv_csr_t addr)
  * \sa
  * - \ref __set_nonvec_entry
  */
-__STATIC_FORCEINLINE rv_csr_t __get_nonvec_entry(void)
+__STATIC_FORCEINLINE AL_REGISTER __get_nonvec_entry(void)
 {
-    if (__RV_CSR_READ(CSR_MTVT2) & 0x1) {
-        return __RV_CSR_READ(CSR_MTVT2) & (~(rv_csr_t)(0x1));
+    if (ARCH_SYSREG_READ(CSR_MTVT2) & 0x1) {
+        return ARCH_SYSREG_READ(CSR_MTVT2) & (~(AL_REGISTER)(0x1));
     } else {
-        rv_csr_t addr = __RV_CSR_READ(CSR_MTVEC);
+        AL_REGISTER addr = ARCH_SYSREG_READ(CSR_MTVEC);
         return (addr & ~ECLIC_MODE_MTVEC_Msk);
     }
 }
@@ -785,9 +785,9 @@ __STATIC_FORCEINLINE rv_csr_t __get_nonvec_entry(void)
  * - will be equal as mtvec. If CSR_MMISC_CTL[9] = 0 'CSR_MNVEC' will be equal as reset vector.
  * - NMI entry is defined via \ref CSR_MMISC_CTL, writing to \ref CSR_MNVEC will be ignored.
  */
-__STATIC_FORCEINLINE rv_csr_t __get_nmi_entry(void)
+__STATIC_FORCEINLINE AL_REGISTER __get_nmi_entry(void)
 {
-    return __RV_CSR_READ(CSR_MNVEC);
+    return ARCH_SYSREG_READ(CSR_MNVEC);
 }
 
 /**
@@ -821,10 +821,10 @@ __STATIC_FORCEINLINE rv_csr_t __get_nmi_entry(void)
  * \endcode
  */
 #define SAVE_IRQ_CSR_CONTEXT()                                              \
-        rv_csr_t __mcause = __RV_CSR_READ(CSR_MCAUSE);                      \
-        rv_csr_t __mepc = __RV_CSR_READ(CSR_MEPC);                          \
-        rv_csr_t __msubm = __RV_CSR_READ(CSR_MSUBM);                        \
-        __enable_irq();
+        AL_REGISTER __mcause = ARCH_SYSREG_READ(CSR_MCAUSE);                      \
+        AL_REGISTER __mepc = ARCH_SYSREG_READ(CSR_MEPC);                          \
+        AL_REGISTER __msubm = ARCH_SYSREG_READ(CSR_MSUBM);                        \
+        enable_irq();
 
 /**
  * \brief   Restore necessary CSRs from variables for vector interrupt nesting
@@ -836,10 +836,10 @@ __STATIC_FORCEINLINE rv_csr_t __get_nmi_entry(void)
  * - It need to be used together with \ref SAVE_IRQ_CSR_CONTEXT
  */
 #define RESTORE_IRQ_CSR_CONTEXT()                                           \
-        __disable_irq();                                                    \
-        __RV_CSR_WRITE(CSR_MSUBM, __msubm);                                 \
-        __RV_CSR_WRITE(CSR_MEPC, __mepc);                                   \
-        __RV_CSR_WRITE(CSR_MCAUSE, __mcause);
+        disable_irq();                                                    \
+        ARCH_SYSREG_WRITE(CSR_MSUBM, __msubm);                                 \
+        ARCH_SYSREG_WRITE(CSR_MEPC, __mepc);                                   \
+        ARCH_SYSREG_WRITE(CSR_MCAUSE, __mcause);
 
 /** @} */ /* End of Doxygen Group NMSIS_Core_IntExc */
 

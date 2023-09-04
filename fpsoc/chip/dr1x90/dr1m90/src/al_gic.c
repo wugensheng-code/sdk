@@ -32,7 +32,7 @@ static AL_U32 AlGic_MpidrToCorePos(AL_UINTPTR Mpidr)
 
 static AL_U32 AlGic_CorePos(void)
 {
-    AL_UINTPTR Mpidr = read_mpidr_el1();
+    AL_UINTPTR Mpidr = ARCH_SYSREG_READ(mpidr_el1);
     return AlGic_MpidrToCorePos(Mpidr);
 }
 

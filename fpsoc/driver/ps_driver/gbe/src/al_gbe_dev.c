@@ -466,7 +466,7 @@ AL_S32 AlGbe_Dev_WritePhyRegister(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddr, AL_U32 
      - Set the PHY device address
      - Set the PHY register address
      - Set the write mode
-     - Set the MII Busy bit 
+     - Set the MII Busy bit
     */
     AL_REG32_SET_BITS(&TmpReg, GBE__MAC_MDIO_ADDRESS__PA__SHIFT, GBE__MAC_MDIO_ADDRESS__PA__SIZE, PHYAddr);
     AL_REG32_SET_BITS(&TmpReg, GBE__MAC_MDIO_ADDRESS__RDA__SHIFT, GBE__MAC_MDIO_ADDRESS__RDA__SIZE, PHYReg);
@@ -1178,7 +1178,7 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
 
     /* disable the interrupt */
 #ifdef CHIP == dr1m90
-    __disable_irq();
+    disable_irq();
 #else
 
 #endif
@@ -1187,7 +1187,7 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
 
     /* Enable interrupts back */
 #ifdef CHIP == dr1m90
-    __enable_irq();
+    enable_irq();
 #else
 
 #endif

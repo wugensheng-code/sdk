@@ -1,31 +1,26 @@
-#include "al_chip.h"
 #include "al_type.h"
+#include "al_chip.h"
 #include "al_rv_core.h"
-#include "ext_timer.h"
+#include "al_rv64_timer.h"
+#include "al_systimer.h"
 
-extern AL_U64 SystemCoreClock;
-
-static AL_U64 get_timer_freq()
-{
-    return SystemCoreClock;
-}
 
 AL_U32 measure_cpu_freq(AL_U32 n)
 {
     AL_U32 start_mcycle, delta_mcycle;
     AL_U32 start_mtime, delta_mtime;
-    AL_U32 mtime_freq = get_timer_freq();
+    AL_U32 mtime_freq = AlSys_GetTimerFreq();
 
     // Don't start measuruing until we see an mtime tick
     AL_U32 tmp = (AL_U32)SysTimer_GetLoadValue();
     do {
         start_mtime = (AL_U32)SysTimer_GetLoadValue();
-        start_mcycle = __RV_CSR_READ(CSR_MCYCLE);
+        start_mcycle = ARCH_SYSREG_READ(CSR_MCYCLE);
     } while (start_mtime == tmp);
 
     do {
         delta_mtime = (AL_U32)SysTimer_GetLoadValue() - start_mtime;
-        delta_mcycle = __RV_CSR_READ(CSR_MCYCLE) - start_mcycle;
+        delta_mcycle = ARCH_SYSREG_READ(CSR_MCYCLE) - start_mcycle;
     } while (delta_mtime < n);
 
     return (delta_mcycle / delta_mtime) * mtime_freq
@@ -47,7 +42,7 @@ AL_U32 get_cpu_freq()
 AL_VOID _delay_us(AL_U64 count)
 {
     AL_U64 start_mtime, delta_mtime;
-    AL_U64 delay_ticks = (get_timer_freq() * (AL_U64)count) / 1000000;
+    AL_U64 delay_ticks = (AlSys_GetTimerFreq() * (AL_U64)count) / 1000000;
 
     start_mtime = SysTimer_GetLoadValue();
 
@@ -66,7 +61,7 @@ AL_VOID _delay_us(AL_U64 count)
 AL_VOID _delay_ms(AL_U64 count)
 {
     AL_U64 start_mtime, delta_mtime;
-    AL_U64 delay_ticks = (get_timer_freq() * (AL_U64)count) / 1000;
+    AL_U64 delay_ticks = (AlSys_GetTimerFreq() * (AL_U64)count) / 1000;
 
     start_mtime = SysTimer_GetLoadValue();
 
@@ -89,10 +84,4 @@ AL_VOID AlSys_UDelay(AL_U64 Usec)
 AL_VOID AlSys_MDelay(AL_U64 Msec)
 {
     _delay_ms(Msec);
-}
-
-
-AL_U64 AlSys_GetTimerFreq(AL_VOID)
-{
-    return get_timer_freq();
 }

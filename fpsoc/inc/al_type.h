@@ -1,3 +1,4 @@
+
 /*****************************************************************************
 *****************************************************************************/
 
@@ -33,6 +34,8 @@ typedef volatile AL_UINTPTR     AL_REG;
 
 typedef void                    AL_VOID;
 typedef long                    AL_INTPTR;
+typedef unsigned long           AL_REGISTER;
+
 
 
 

@@ -14,7 +14,7 @@ AL_VOID AlSys_StartTimer(AL_VOID)
 {
     AL_U32 V = 1;
 
-    write_cntp_ctl_el0(V);
+    ARCH_SYSREG_WRITE(cntp_ctl_el0, V);
 
     Altop_Syscnts_CounterCtrl(AL_FUNC_ENABLE);
 }
@@ -28,13 +28,7 @@ AL_VOID AlSys_StopTimer(AL_VOID)
 
 AL_U64 AlSys_GetTimerTickCount(AL_VOID)
 {
-    return (AL_U64)read_cntpct_el0();
-}
-
-AL_U64 AlSys_GetTimerFreq(AL_VOID)
-{
-    extern AL_U64 SystemCoreClock;
-    return SystemCoreClock;
+    return (AL_U64)ARCH_SYSREG_READ(cntpct_el0);
 }
 
 
