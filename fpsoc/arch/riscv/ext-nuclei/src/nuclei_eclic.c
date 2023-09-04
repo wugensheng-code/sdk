@@ -67,9 +67,9 @@ static void system_default_exception_handler(unsigned long mcause, unsigned long
 {
     /* TODO: Uncomment this if you have implement printf function */
     printf("MCAUSE : 0x%lx\r\n", mcause);
-    printf("MDCAUSE: 0x%lx\r\n", __RV_CSR_READ(CSR_MDCAUSE));
-    printf("MEPC   : 0x%lx\r\n", __RV_CSR_READ(CSR_MEPC));
-    printf("MTVAL  : 0x%lx\r\n", __RV_CSR_READ(CSR_MTVAL));
+    printf("MDCAUSE: 0x%lx\r\n", ARCH_SYSREG_READ(CSR_MDCAUSE));
+    printf("MEPC   : 0x%lx\r\n", ARCH_SYSREG_READ(CSR_MEPC));
+    printf("MTVAL  : 0x%lx\r\n", ARCH_SYSREG_READ(CSR_MTVAL));
     while (1);
 }
 
@@ -190,7 +190,7 @@ void ECLIC_Init(void)
  */
 void ECLIC_Isr_Nonvect(void)
 {
-	rv_csr_t IRQn = (__RV_CSR_READ(CSR_MCAUSE) & 0xFFF);
+	AL_REGISTER IRQn = (ARCH_SYSREG_READ(CSR_MCAUSE) & 0xFFF);
 
 	if (IRQn < SOC_INT_MAX && AL_IrqHandlerList[IRQn].Func) {
 		AL_IrqHandlerList[IRQn].Func(AL_IrqHandlerList[IRQn].Param);
@@ -235,9 +235,9 @@ int32_t ECLIC_Register_IRQ(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_Type trig_
     if (handler != NULL) {
         /* set interrupt handler entry to vector table */
 	if (shv == ECLIC_NON_VECTOR_INTERRUPT)
-		ECLIC_SetVector(IRQn, (rv_csr_t)ECLIC_Isr_Nonvect);
+		ECLIC_SetVector(IRQn, (AL_REGISTER)ECLIC_Isr_Nonvect);
 	else
-		ECLIC_SetVector(IRQn, (rv_csr_t)ECLIC_Isr_Vect);
+		ECLIC_SetVector(IRQn, (AL_REGISTER)ECLIC_Isr_Vect);
 
         AL_IrqHandlerList[IRQn] = *handler;
     }
@@ -317,12 +317,12 @@ AL_S32 AlIntr_SetLocalInterrupt(AL_FUNCTION State)
 
     switch (State) {
     case AL_FUNC_DISABLE:
-        __disable_irq();
+        disable_irq();
         Ret = AL_OK;
         break;
 
     case AL_FUNC_ENABLE:
-        __enable_irq();
+        enable_irq();
         break;
 
     default:

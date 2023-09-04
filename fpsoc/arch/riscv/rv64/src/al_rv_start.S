@@ -79,8 +79,6 @@ _start:
 
     call riscv_vendor_init
 
-    call load_code
-    call load_data
     call clear_bss
 
     /* Call global constructors */

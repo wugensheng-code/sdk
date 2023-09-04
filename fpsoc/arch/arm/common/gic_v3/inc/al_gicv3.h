@@ -309,12 +309,12 @@ static inline bool AlGicv3_IsIntrIdSpecialIdentifier(AL_U32 Id)
  ******************************************************************************/
 static inline AL_U32 AlGicv3_AckIntrSel1(AL_VOID)
 {
-    return (AL_U32)read_icc_iar1_el1() & IAR1_EL1_INTID_MASK;
+    return (AL_U32)ARCH_SYSREG_READ(icc_iar1_el1) & IAR1_EL1_INTID_MASK;
 }
 
 static inline AL_U32 AlGicv3_GetPendingIntrIdSel1(AL_VOID)
 {
-    return (AL_U32)read_icc_hppir1_el1() & HPPIR1_EL1_INTID_MASK;
+    return (AL_U32)ARCH_SYSREG_READ(icc_hppir1_el1) & HPPIR1_EL1_INTID_MASK;
 }
 
 static inline AL_VOID AlGicv3_EndOfIntrSel1(AL_U32 Id)
@@ -330,8 +330,8 @@ static inline AL_VOID AlGicv3_EndOfIntrSel1(AL_U32 Id)
      * The dsb will also ensure *completion* of previous writes with
      * DEVICE nGnRnE attribute.
      */
-    dsbishst();
-    write_icc_eoir1_el1(Id);
+    ISB();
+    ARCH_SYSREG_WRITE(icc_eoir1_el1, Id);
 }
 
 /*******************************************************************************
@@ -339,7 +339,7 @@ static inline AL_VOID AlGicv3_EndOfIntrSel1(AL_U32 Id)
  ******************************************************************************/
 static inline AL_U32 AlGicv3_AckIntr(AL_VOID)
 {
-    return (AL_U32)read_icc_iar0_el1() & IAR0_EL1_INTID_MASK;
+    return (AL_U32)ARCH_SYSREG_READ(icc_iar0_el1) & IAR0_EL1_INTID_MASK;
 }
 
 static inline AL_VOID AlGicv3_EndOfIntr(AL_U32 Id)
@@ -355,8 +355,8 @@ static inline AL_VOID AlGicv3_EndOfIntr(AL_U32 Id)
      * The dsb will also ensure *completion* of previous writes with
      * DEVICE nGnRnE attribute.
      */
-    dsbishst();
-    return write_icc_eoir0_el1(Id);
+    ISB();
+    return ARCH_SYSREG_WRITE(icc_eoir0_el1, Id);
 }
 
 /*
