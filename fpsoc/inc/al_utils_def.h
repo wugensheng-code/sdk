@@ -16,6 +16,7 @@ extern "C" {
 
 #define ARRAY_SIZE(a)         (sizeof(a) / sizeof((a)[0]))
 
+#define BITS_16(start, size)  ((0xFFFFU << (start)) & (0xFFFFU >> (16U - (start) - (size))))
 #define BITS_32(start, size)  ((0xFFFFFFFFU << (start)) & (0xFFFFFFFFU >> (32U - (start) - (size))))
 #define BITS_64(start, size)  (((~0x0UL) << (start)) & ((~0x0UL) >> (64U - (start) - (size))))
 
