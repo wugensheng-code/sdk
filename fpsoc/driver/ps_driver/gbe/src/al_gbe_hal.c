@@ -340,3 +340,4 @@ AL_S32 AlGbe_Hal_ReleaseTxPacket(AL_GBE_HalStruct *Handle)
 
     return Ret;
 }
+

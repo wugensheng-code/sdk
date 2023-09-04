@@ -543,30 +543,13 @@ AL_S32 AlGbe_Dev_PhyInit(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress)
     }
 
     /* Delay at least 10 ms */
-    AlSys_MDelay(50000);
+    AlSys_MDelay(500);
 
     /* Check reset status complete */
     Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BCR_REG, &RegValue);
     if ((Ret != AL_OK) || (RegValue & PHY_BCTL_RESET_MASK)) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
         return AL_GBE_ERR_PHY_RESET_FAILED;
-    }
-
-    /* Read PHY_BSR_ADDR twice to check link status */
-    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BSR_REG, &RegValue);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
-        return Ret;
-    }
-    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BSR_REG, &RegValue);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
-        return Ret;
-    }
-    if ((RegValue & PHY_BSTATUS_LINKSTATUS_MASK) == 0) {
-         /* Return Link Down status */
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister link error\r\n");
-        return AL_GBE_ERR_PHY_LINK_DOWN;
     }
 
     /* The RGMII specifies output TXC/RXC and TXD/RXD without any clock skew. Need to add skew on clock line
@@ -641,8 +624,6 @@ AL_S32 AlGbe_Dev_PhyInit(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress)
         return Ret;
     }
 
-    AlSys_MDelay(40000);
-
     return AL_OK;
 }
 
@@ -651,15 +632,15 @@ AL_S32 AlGbe_Dev_GetPhyLinkStatus(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress, AL_U
     AL_S32 Ret;
     AL_U16 RegValue;
 
-    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_SSR_REG, &RegValue);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
-        return Ret;
-    }
-    if ((PHY_SSTATUS_LINKSTATUS_MASK & RegValue) == 0) {
-        /* Link up. */
-        return AL_GBE_ERR_PHY_LINK_DOWN;
-    }
+    do {
+        Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_SSR_REG, &RegValue);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
+            return Ret;
+        }
+
+        //Todo: Timeout
+    } while(((PHY_SSTATUS_LINKSTATUS_MASK & RegValue) == 0));
 
     switch ((RegValue & PHY_SSTATUS_LINKSPEED_MASK) >> PHY_SSTATUS_LINKSPEED_SHIFT)
     {

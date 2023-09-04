@@ -273,14 +273,14 @@ err_t low_level_phy_init(AL_GBE_HalStruct *GbeHandle, struct netif *netif, AL_GB
     AL_U8 linkchange = 0;
 
     /* Initialize the ETH PHY */
-    ret = AlGbe_Hal_PhyInit(GbeHandle, PHYADDR);
+    ret = AlGbe_Hal_PhyInit(GbeHandle, GBE_PHY_ADDR);
     if (ret != 0)
     {
         printf("AlGbe_Hal_PhyInit Init failed\r\n");
         return ERR_IF;
     }
 
-    ret = AlGbe_Hal_GetPhyLinkStatus(GbeHandle, PHYADDR, &speed, &duplex);
+    ret = AlGbe_Hal_GetPhyLinkStatus(GbeHandle, GBE_PHY_ADDR, &speed, &duplex);
     if (ret != 0)
     {
         netif_set_link_down(netif);
@@ -369,7 +369,7 @@ err_t low_level_init(struct netif *netif)
     MacDmaConfig.DuplexMode = AL_GBE_FULL_DUPLEX_MODE;
     MacDmaConfig.Speed = AL_GBE_SPEED_100M;
 
-    ret = AlGbe_Hal_Init(&GbeHandle, 0, &InitConfig, &MacDmaConfig, AL_NULL);
+    ret = AlGbe_Hal_Init(&GbeHandle, GBE_DEVICE_ID, &InitConfig, &MacDmaConfig, AL_NULL);
     if (ret != AL_OK)
     {
         printf("AlGbe_Hal_Init failed\r\n");

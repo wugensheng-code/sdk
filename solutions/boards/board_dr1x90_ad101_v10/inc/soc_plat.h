@@ -121,6 +121,8 @@ extern "C" {
 #define HAVE_GBEPS_DRIVER
 #define GBE_CLOCK               (25*MHZ)
 
+#define GBE_DEVICE_ID           (0)
+#define GBE_PHY_ADDR            (0)
 
 #define HAVE_GPIOPS_DRIVER
 

@@ -13,9 +13,6 @@ endif
 
 DOWNLOAD = ddr
 
-BOARD_DIR  ?= $(SDK_ROOT)/solutions/boards/
-BOARD_NAME ?= board_dr1x90_emulation
-
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
 #    LD_LIBS: External library files that the app depends on
@@ -37,8 +34,6 @@ ASM_SRCS :=
 # 3. CFLAGS
 #########################################################################
 CFLAGS += -O2 -g3
-
-CFLAGS += -DAL9000_BRINGUP -DBOARD_DR1X90_AD101_V10 -DAL9000_OSC_33 -DAL9000_CLK_CONFIG
 
 USE_LWIP = 1
 
