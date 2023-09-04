@@ -20,7 +20,7 @@ extern "C" {
 /* Maximum Ethernet payload size */
 #define ETH_MAX_PAYLOAD             (1500UL)
 
-#define PHYADDR          (0x3)
+#define PHYADDR          (0x00)
 
 #define GBE_MAC_ADDR0    (0x64)
 #define GBE_MAC_ADDR1    (0x00)

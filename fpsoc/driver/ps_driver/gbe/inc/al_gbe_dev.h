@@ -156,7 +156,6 @@ typedef struct
 /* Just for user, Some feature options that may be used */
 typedef struct
 {
-    AL_GBE_FunctionEnum   GbePhyAutoNegotiation;
     AL_GBE_DuplexModeEnum DuplexMode;
     AL_GBE_SpeedEnum      Speed;
 } AL_GBE_MacDmaConfigStruct;
@@ -284,41 +283,93 @@ typedef enum
 /* Define phy register */
 
 /* Basic mode control register */
-#define PHY_BCR_ADDR                        0x0
+#define PHY_BCR_REG                         0x0
+
 /* Basic Mode Status Register */
-#define PHY_BSR_ADDR                        0x1
+#define PHY_BSR_REG                         0x1
+
+/* PHY ID one register. */
+#define PHY_ID1_REG                         0x02
+
+/* PHY ID two register. */
+#define PHY_ID2_REG                         0x03
+
+/* PHY auto-negotiate advertise register */
+#define PHY_AUTONEG_ADVERTISE_REG           0x04
+
+/* PHY auto negotiation link partner ability register */
+#define PHY_AUTONEG_LINKPARTNER_REG         0x05
+
+/* PHY auto negotiation expansion register */
+#define PHY_AUTONEG_EXPANSION_REG           0x06
+
+/* PHY 1000BASE-T control register */
+#define PHY_1000BASET_CONTROL_REG           0x09
+
+/* PHY MMD access control register */
+#define PHY_MMD_ACCESS_CONTROL_REG          0x0D
+
+/* PHY MMD access data register */
+#define PHY_MMD_ACCESS_DATA_REG             0x0E
+
+/* RGMII TXC delay register */
+#define PHY_RGMII_TX_DELAY_REG              0x11
+
+/* RGMII RXC delay register */
+#define PHY_RGMII_RX_DELAY_REG              0x15
+
 /* Specific Mode Status Register */
-#define PHY_SSR_ADDR                        0x1A
+#define PHY_SSR_REG                         0x1A
+
+/* PHY page select register. */
+#define PHY_PAGE_SELECT_REG                 0x1F
 
 /* PHY_BCR register descriptions define */
-#define PHY_BCR_SPEED1_SHIFT                6
-#define PHY_BCR_DUPLEX_SHIFT                8
-#define PHY_BCR_AUTO_NEGO_SHIFT             12
-#define PHY_BCR_SPEED0_SHIFT                13
+#define PHY_BCTL_SPEED1_MASK                0x0040
+#define PHY_BCTL_ISOLATE_MASK               0x0400
+#define PHY_BCTL_DUPLEX_MASK                0x0100
+#define PHY_BCTL_RESTART_AUTONEG_MASK       0x0200
+#define PHY_BCTL_AUTONEG_MASK               0x1000
+#define PHY_BCTL_SPEED0_MASK                0x2000
+#define PHY_BCTL_LOOP_MASK                  0x4000
+#define PHY_BCTL_RESET_MASK                 0x8000
 
-#define PHY_BCR_RESET                       ((AL_U16)0x8000)
-#define PHY_BCR_LOOPBACK                    ((AL_U16)0x4000)
-#define PHY_BCR_SPEED_1G                    ((AL_U16)0x0040)
-#define PHY_BCR_SPEED_100M                  ((AL_U16)0x2000)
-#define PHY_BCR_SPEED_10M                   ((AL_U16)0x0000)
-#define PHY_BCR_AUTONEGOTIATION             ((AL_U16)0x1000)
-#define PHY_BCR_PPWER_DOWN                  ((AL_U16)0x0800)
-#define PHY_BCR_ISOLATE                     ((AL_U16)0x0400)
-#define PHY_BCR_RESTART_AUTONEGOTIATION     ((AL_U16)0x0200)
-#define PHY_BCR_FULL_DUPLEX_MODE            ((AL_U16)0x0100)
+/* PHY_BSR_REG register descriptions define */
+#define PHY_BSTATUS_LINKSTATUS_MASK         0x0004
+#define PHY_BSTATUS_AUTONEGABLE_MASK        0x0008
+#define PHY_BSTATUS_SPEEDUPLX_MASK          0x001C
+#define PHY_BSTATUS_AUTONEGCOMP_MASK        0x0020
 
-/* PHY_BSR register descriptions define */
-#define PHY_BSR_AUTO_NEGOTIATION_COMPLETE   ((AL_U16)0x0020)
-#define PHY_BSR_LINK_STATUS                 ((AL_U16)0x0004)
-#define PHY_BSR_JABBER_DETECT               ((AL_U16)0x0002)
+/* PHY_BSR_REG register descriptions define */
+#define PHY_100BaseT4_ABILITY_MASK          0x0200
+#define PHY_100BASETX_FULLDUPLEX_MASK       0x0100
+#define PHY_100BASETX_HALFDUPLEX_MASK       0x0080
+#define PHY_10BASETX_FULLDUPLEX_MASK        0x0040
+#define PHY_10BASETX_HALFDUPLEX_MASK        0x0020
+#define PHY_IEEE802_3_SELECTOR_MASK         0x0001
 
-/* PHY_SSR register descriptions define */
-#define PHY_SSR_LINK_STATUS                 ((AL_U16)0x0004)
-#define PHY_SSR_FULL_DUPLEX                 ((AL_U16)0x0008)
-#define PHY_SSR_SPEED_1G                    ((AL_U16)0x0020)
-#define PHY_SSR_SPEED_100M                  ((AL_U16)0x0010)
-#define PHY_SSR_SPEED_10M                   ((AL_U16)0x0000)
+/* PHY_1000BASET_CONTROL_REG register descriptions define */
+#define PHY_1000BASET_FULLDUPLEX_MASK       0x0200
+#define PHY_1000BASET_HALFDUPLEX_MASK       0x0100
 
+/* PHY_SSR_REG register descriptions define */
+#define PHY_SSTATUS_LINKSTATUS_MASK         0x0004
+#define PHY_SSTATUS_LINKSPEED_MASK          0x0030
+#define PHY_SSTATUS_LINKDUPLEX_MASK         0x0008
+#define PHY_SSTATUS_LINKSPEED_SHIFT         0x4
+
+#define PHY_PAGE_RGMII_TXRX_DELAY_ADDR      0x0D08
+#define PHY_RGMII_TX_DELAY_MASK             0x0100
+#define PHY_RGMII_RX_DELAY_MASK             0x0008
+
+/* Defines the PHY link speed. This is not align with the speed for MAC */
+#define PHY_SPEED_10M                       0
+#define PHY_SPEED_100M                      1
+#define PHY_SPEED_1000M                     2
+
+/* Defines the PHY link duplex. */
+#define PHY_HALF_DUPLEX                     0
+#define PHY_FULL_DUPLEX                     1
 
 AL_GBE_HwConfigStruct *AlGbe_Dev_LookupConfig(AL_U32 DevId);
 
@@ -326,6 +377,8 @@ AL_S32 AlGbe_Dev_Init(AL_GBE_DevStruct *Gbe, AL_GBE_HwConfigStruct *HwConfig,
                       AL_GBE_InitStruct *InitConfig, AL_GBE_MacDmaConfigStruct *MacDmaConfig);
 
 AL_S32 AlGbe_Dev_PhyInit(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress);
+
+AL_S32 AlGbe_Dev_GetPhyLinkStatus(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress, AL_U8 *Speed, AL_U8 *Duplex);
 
 AL_S32 AlGbe_Dev_ConfigDuplexAndSpeed(AL_GBE_DevStruct *Gbe);
 

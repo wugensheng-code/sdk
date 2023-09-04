@@ -9,7 +9,7 @@ extern void netio_init(void);
 
 int main()
 {
-    printf("main start>>>\r\n");
+    printf("lwip netio start>>>\r\n");
 
     /* Initialize the LwIP stack */
     lwip_init();

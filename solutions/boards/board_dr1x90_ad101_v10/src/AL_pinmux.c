@@ -167,6 +167,32 @@ void Enablepinmux1(void)
     mio_pad_ctrl0(4, MIO_SPEED_FAST, MIO_PULL_10K_EN, MIO_PULL_DIS);
     mio_pad_ctrl0(5, MIO_SPEED_FAST, MIO_PULL_10K_EN, MIO_PULL_DIS);
     mio_pad_ctrl0(6, MIO_SPEED_FAST, MIO_PULL_10K_EN, MIO_PULL_DIS);
+
+    /* GBE Configuration drive capability */
+    *((volatile AL_U32 *)(0xf8803880))=0xc8000007;
+    *((volatile AL_U32 *)(0xf8803888))=0xc8000007;
+    *((volatile AL_U32 *)(0xf8803890))=0xc8000007;
+    *((volatile AL_U32 *)(0xf8803898))=0xc8000007;
+    *((volatile AL_U32 *)(0xf88038a0))=0xc8000007;
+    *((volatile AL_U32 *)(0xf88038a8))=0xc8000007;
+    *((volatile AL_U32 *)(0xf88038b0))=0x88000000;
+    *((volatile AL_U32 *)(0xf88038b8))=0x88000000;
+    *((volatile AL_U32 *)(0xf88038c0))=0x88000000;
+    *((volatile AL_U32 *)(0xf88038c8))=0x88000000;
+    *((volatile AL_U32 *)(0xf88038d0))=0x88000000;
+    *((volatile AL_U32 *)(0xf88038d8))=0x88000000;
+    *((volatile AL_U32 *)(0xf8803884))=0x121702;
+    *((volatile AL_U32 *)(0xf880388c))=0x121702;
+    *((volatile AL_U32 *)(0xf8803894))=0x121702;
+    *((volatile AL_U32 *)(0xf880389c))=0x121702;
+    *((volatile AL_U32 *)(0xf88038a4))=0x121702;
+    *((volatile AL_U32 *)(0xf88038ac))=0x121702;
+    *((volatile AL_U32 *)(0xf88038b4))=0x1E0602;
+    *((volatile AL_U32 *)(0xf88038bc))=0x1E0602;
+    *((volatile AL_U32 *)(0xf88038c4))=0x1E0602;
+    *((volatile AL_U32 *)(0xf88038cc))=0x1E0602;
+    *((volatile AL_U32 *)(0xf88038d4))=0x1E0602;
+    *((volatile AL_U32 *)(0xf88038dc))=0x1E0602;
 }
 
 void Enablepinmux1_mode2(void)

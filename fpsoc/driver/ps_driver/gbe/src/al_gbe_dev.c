@@ -109,7 +109,7 @@ AL_VOID AlGbe_Dev_SetMacConfig(AL_GBE_DevStruct *Gbe)
     MacDefaultCfg.CrcCheckingRxPackets = AL_GBE_FUNC_ENABLE;
     MacDefaultCfg.CrcStripTypePacket = AL_GBE_FUNC_ENABLE;
     MacDefaultCfg.DisableDropTCPIPChecksumErrorPacket = AL_GBE_FUNC_DISABLE;
-    MacDefaultCfg.DuplexMode = AL_GBE_FULL_DUPLEX_MODE;
+    MacDefaultCfg.DuplexMode = Gbe->MacDmaConfig.DuplexMode;
     MacDefaultCfg.ExtendedInterPacketGap = AL_GBE_FUNC_DISABLE;
     MacDefaultCfg.ExtendedInterPacketGapVal = 0x0;
     MacDefaultCfg.ForwardRxErrorPacket = AL_GBE_FUNC_DISABLE;
@@ -127,7 +127,7 @@ AL_VOID AlGbe_Dev_SetMacConfig(AL_GBE_DevStruct *Gbe)
     MacDefaultCfg.ReceiveFlowControl = AL_GBE_FUNC_DISABLE;
     MacDefaultCfg.RxQueueStoreForward = AL_GBE_FUNC_ENABLE;
     MacDefaultCfg.SlowProtocolDetect = AL_GBE_FUNC_DISABLE;
-    MacDefaultCfg.Speed = AL_GBE_SPEED_100M;
+    MacDefaultCfg.Speed = Gbe->MacDmaConfig.Speed;
     MacDefaultCfg.Support2KPacket = AL_GBE_FUNC_DISABLE;
     MacDefaultCfg.TxQueueStoreForward = AL_GBE_FUNC_ENABLE;
     MacDefaultCfg.TransmitFlowControl = AL_GBE_FUNC_DISABLE;
@@ -142,10 +142,8 @@ AL_VOID AlGbe_Dev_SetMacConfig(AL_GBE_DevStruct *Gbe)
     AlGbe_ll_SetCarrierSenseBeforeTransmitEnable(GbeBaseAddr, MacDefaultCfg.CarrierSenseBeforeTransmit);
     AlGbe_ll_SetLoopbackModeEnable(GbeBaseAddr, MacDefaultCfg.LoopbackMode);
 
-    if (Gbe->MacDmaConfig.GbePhyAutoNegotiation != AL_GBE_FUNC_ENABLE) {
-        AlGbe_ll_SetDuplexMode(GbeBaseAddr, MacDefaultCfg.DuplexMode);
-        AlGbe_ll_SetSpeed(GbeBaseAddr, MacDefaultCfg.Speed);
-    }
+    AlGbe_ll_SetDuplexMode(GbeBaseAddr, MacDefaultCfg.DuplexMode);
+    AlGbe_ll_SetSpeed(GbeBaseAddr, MacDefaultCfg.Speed);
 
     AlGbe_ll_SetJumboPacketEnable(GbeBaseAddr, MacDefaultCfg.JumboPacket);
     AlGbe_ll_SetJabberDisable(GbeBaseAddr, MacDefaultCfg.JabberDisable);
@@ -416,7 +414,7 @@ AL_S32 AlGbe_Dev_Init(AL_GBE_DevStruct *Gbe, AL_GBE_HwConfigStruct *HwConfig,
 
     /* Config gbe control register */
     if (Gbe->InitConfig.MediaInterface == AL_GBE_RGMII_MODE) {
-        AlGbe_ll_SetGbeCtlRegister((GbeBaseAddr == GBE0__BASE_ADDR ? CFG_CTRL_GBE0_ADDR : CFG_CTRL_GBE1_ADDR), 0x321);
+        AlGbe_ll_SetGbeCtlRegister((GbeBaseAddr == GBE0__BASE_ADDR ? CFG_CTRL_GBE0_ADDR : CFG_CTRL_GBE1_ADDR), 0x3a1);
     } else {
         //Todo:
     }
@@ -538,122 +536,151 @@ AL_S32 AlGbe_Dev_PhyInit(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress)
     }
 
     /* Reset the Phy */
-    Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_BCR_ADDR, PHY_BCR_RESET);
+    Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_BCR_REG, PHY_BCTL_RESET_MASK);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%d\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
         return Ret;
     }
 
     /* Delay at least 10 ms */
-    AlSys_MDelay(5000);
+    AlSys_MDelay(50000);
 
     /* Check reset status complete */
-    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BCR_ADDR, &RegValue);
-    if ((Ret != AL_OK) || (RegValue & PHY_BCR_RESET)) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%d\r\n", Ret);
+    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BCR_REG, &RegValue);
+    if ((Ret != AL_OK) || (RegValue & PHY_BCTL_RESET_MASK)) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
         return AL_GBE_ERR_PHY_RESET_FAILED;
     }
 
     /* Read PHY_BSR_ADDR twice to check link status */
-    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BSR_ADDR, &RegValue);
+    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BSR_REG, &RegValue);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%d\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
         return Ret;
     }
-    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BSR_ADDR, &RegValue);
+    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BSR_REG, &RegValue);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%d\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
         return Ret;
     }
-    if ((RegValue & PHY_BSR_LINK_STATUS) == 0) {
+    if ((RegValue & PHY_BSTATUS_LINKSTATUS_MASK) == 0) {
          /* Return Link Down status */
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister link error 563\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister link error\r\n");
         return AL_GBE_ERR_PHY_LINK_DOWN;
     }
 
-    /* AutoNegotiation is disabled */
-    if (Gbe->MacDmaConfig.GbePhyAutoNegotiation == AL_GBE_FUNC_DISABLE) {
-        AL_U16 TmpReg = 0;
-        Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BCR_ADDR, &TmpReg);
-        if (Ret != 0) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%d\r\n", Ret);
-            return Ret;
-        }
-
-        if (Gbe->MacDmaConfig.DuplexMode == AL_GBE_FULL_DUPLEX_MODE) {
-            AL_REG32_SET_BIT(&TmpReg, PHY_BCR_DUPLEX_SHIFT, AL_GBE_FUNC_ENABLE);
-        } else {
-            AL_REG32_SET_BIT(&TmpReg, PHY_BCR_DUPLEX_SHIFT, AL_GBE_FUNC_DISABLE);
-        }
-
-        if (Gbe->MacDmaConfig.Speed == AL_GBE_SPEED_1G) {
-            AL_REG32_SET_BIT(&TmpReg, PHY_BCR_SPEED1_SHIFT, AL_GBE_FUNC_ENABLE);
-            AL_REG32_SET_BIT(&TmpReg, PHY_BCR_SPEED0_SHIFT, AL_GBE_FUNC_DISABLE);
-        } else if (Gbe->MacDmaConfig.Speed == AL_GBE_SPEED_100M) {
-            AL_REG32_SET_BIT(&TmpReg, PHY_BCR_SPEED1_SHIFT, AL_GBE_FUNC_DISABLE);
-            AL_REG32_SET_BIT(&TmpReg, PHY_BCR_SPEED0_SHIFT, AL_GBE_FUNC_ENABLE);
-        } else {
-            AL_REG32_SET_BIT(&TmpReg, PHY_BCR_SPEED1_SHIFT, AL_GBE_FUNC_DISABLE);
-            AL_REG32_SET_BIT(&TmpReg, PHY_BCR_SPEED0_SHIFT, AL_GBE_FUNC_DISABLE);
-        }
-
-        AL_REG32_SET_BIT(&TmpReg, PHY_BCR_AUTO_NEGO_SHIFT, AL_GBE_FUNC_DISABLE);
-
-        Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_BCR_ADDR, TmpReg);
-        if (Ret != 0) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%d\r\n", Ret);
-            return Ret;
-        }
-
-        AlSys_MDelay(4000);
-
-        Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_SSR_ADDR, &TmpReg);
-        if ((Ret != AL_OK) || (TmpReg & PHY_SSR_LINK_STATUS) == 0) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister link error 604\r\n");
-            return Ret;
-        }
-
-        return AL_OK;
-    }
-
-    /* If Auto-negotiation is enabled, configure the Auto-negotiation function */
-    Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_BCR_ADDR, PHY_BCR_AUTONEGOTIATION);
+    /* The RGMII specifies output TXC/RXC and TXD/RXD without any clock skew. Need to add skew on clock line
+       to make sure the other side sample right data. This can also be done in PCB traces. */
+    Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_PAGE_SELECT_REG, PHY_PAGE_RGMII_TXRX_DELAY_ADDR);
     if (Ret != AL_OK) {
-        /* Return ERROR in case of write timeout */
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
         return Ret;
     }
 
-    AlSys_MDelay(3000);
-
-    /* Wait until the auto-negotiation will be completed */
-    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BSR_ADDR, &RegValue);
-    if (Ret != AL_OK) {
+    /* Set Tx Delay */
+    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_RGMII_TX_DELAY_REG, &RegValue);
+    if (Ret == AL_OK) {
+        RegValue = 0x9; //Todo: There needs to be a reasonable explanation
+        Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_RGMII_TX_DELAY_REG, RegValue);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
+            return Ret;
+        }
+    } else {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
         return Ret;
     }
-    if ((RegValue & PHY_BSR_AUTO_NEGOTIATION_COMPLETE) == 0) {
-        /* PHY_BSR_AUTO_NEGOTIATION_COMPLETE failed */
-        return AL_GBE_ERR_PHY_RESET_FAILED;
+
+    /* Set Rx Delay */
+    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_RGMII_RX_DELAY_REG, &RegValue);
+    if (Ret == AL_OK) {
+        RegValue |= PHY_RGMII_RX_DELAY_MASK;
+        Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_RGMII_RX_DELAY_REG, RegValue);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
+            return Ret;
+        }
+    } else {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
+        return Ret;
     }
 
-    /* Read phy status */
-    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_SSR_ADDR, &RegValue);
-    /* Configure the MAC with the Duplex Mode fixed by the auto-negotiation process */
-    if (RegValue & PHY_SSR_FULL_DUPLEX) {
-         /* Set Ethernet duplex mode to Full-duplex following the auto-negotiation */
-        Gbe->MacDmaConfig.DuplexMode = AL_GBE_FULL_DUPLEX_MODE;
-    } else {
-        /* Set Ethernet duplex mode to Half-duplex following the auto-negotiation */
-        Gbe->MacDmaConfig.DuplexMode = AL_GBE_HALF_DUPLEX_MODE;
+    /* Restore to default page 0 */
+    Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_PAGE_SELECT_REG, 0x0);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
+        return Ret;
     }
-    /* Configure the MAC with the speed fixed by the auto-negotiation process */
-    if (RegValue & PHY_SSR_SPEED_1G) {
-        /* Set Ethernet speed to 10M following the auto-negotiation */
-        Gbe->MacDmaConfig.Speed = AL_GBE_SPEED_1G;
-    } else if (RegValue & AL_GBE_SPEED_100M) {
-        /* Set Ethernet speed to 100M following the auto-negotiation */
-        Gbe->MacDmaConfig.Speed = AL_GBE_SPEED_100M;
+
+    /* Set the auto-negotiation. */
+    Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_AUTONEG_ADVERTISE_REG,
+                                     PHY_100BASETX_FULLDUPLEX_MASK | PHY_100BASETX_HALFDUPLEX_MASK |
+                                     PHY_10BASETX_FULLDUPLEX_MASK | PHY_10BASETX_HALFDUPLEX_MASK |
+                                     PHY_IEEE802_3_SELECTOR_MASK);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
+        return Ret;
+    }
+
+    AL_U16 Phy1000BaseTFullDuplex = PHY_1000BASET_FULLDUPLEX_MASK;
+    if (Gbe->MacDmaConfig.Speed != AL_GBE_SPEED_1G) {
+        Phy1000BaseTFullDuplex = 0;
+    }
+
+    Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_1000BASET_CONTROL_REG, Phy1000BaseTFullDuplex);
+    if (Ret == AL_OK) {
+        Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BCR_REG, &RegValue);
+        if (Ret == AL_OK) {
+            Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_BCR_REG,
+                                             (RegValue | PHY_BCTL_AUTONEG_MASK | PHY_BCTL_RESTART_AUTONEG_MASK));
+        } else {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
+        }
     } else {
-        Gbe->MacDmaConfig.Speed = AL_GBE_SPEED_10M;
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
+        return Ret;
+    }
+
+    AlSys_MDelay(40000);
+
+    return AL_OK;
+}
+
+AL_S32 AlGbe_Dev_GetPhyLinkStatus(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress, AL_U8 *Speed, AL_U8 *Duplex)
+{
+    AL_S32 Ret;
+    AL_U16 RegValue;
+
+    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_SSR_REG, &RegValue);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
+        return Ret;
+    }
+    if ((PHY_SSTATUS_LINKSTATUS_MASK & RegValue) == 0) {
+        /* Link up. */
+        return AL_GBE_ERR_PHY_LINK_DOWN;
+    }
+
+    switch ((RegValue & PHY_SSTATUS_LINKSPEED_MASK) >> PHY_SSTATUS_LINKSPEED_SHIFT)
+    {
+    case (AL_U32)PHY_SPEED_10M:
+        *Speed = PHY_SPEED_10M;
+        break;
+    case (AL_U32)PHY_SPEED_100M:
+       *Speed = PHY_SPEED_100M;
+        break;
+    case (AL_U32)PHY_SPEED_1000M:
+        *Speed = PHY_SPEED_1000M;
+        break;
+    default:
+        *Speed = PHY_SPEED_10M;
+        break;
+    }
+
+    if ((RegValue & PHY_SSTATUS_LINKDUPLEX_MASK) != 0U) {
+        *Duplex = PHY_FULL_DUPLEX;
+    } else {
+        *Duplex = PHY_HALF_DUPLEX;
     }
 
     return AL_OK;
@@ -1412,6 +1439,7 @@ AL_VOID AlGbe_Dev_IntrHandler(AL_VOID *Instance)
 
         AlGbe_ll_ClrTxCompletrIntr(GbeBaseAddr);
         AlGbe_ll_ClrNormalSummaryIntr(GbeBaseAddr);
+
     }
 
     if (GBE_IN_ABNORMAL_SUMMARY_INTR(IntrStatus)) {

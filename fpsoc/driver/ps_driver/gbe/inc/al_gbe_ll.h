@@ -822,6 +822,11 @@ static inline AL_BOOL AlGbe_ll_IsWbRxDescOwnByDma(AL_REG BaseAddr)
     return AL_REG32_GET_BIT(BaseAddr, GBE__DESC_WRITE_BACK_RX_DESC3__OWN__SHIFT);
 }
 
+static inline AL_BOOL AlGbe_ll_IsWbRxDescCrcError(AL_REG BaseAddr)
+{
+    return AL_REG32_GET_BIT(BaseAddr, GBE__DESC_WRITE_BACK_RX_DESC3__CE__SHIFT);
+}
+
 static inline AL_BOOL AlGbe_ll_IsWbRxDescFirstDesc(AL_REG BaseAddr)
 {
     return AL_REG32_GET_BIT(BaseAddr, GBE__DESC_WRITE_BACK_RX_DESC3__FD__SHIFT);

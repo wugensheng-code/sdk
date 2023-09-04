@@ -265,6 +265,88 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
 sys_thread_t eth_handle = NULL;
 #endif /* !NO_SYS */
 
+err_t low_level_phy_init(AL_GBE_HalStruct *GbeHandle, struct netif *netif, AL_GBE_MacDmaConfigStruct *MacDmaConfig)
+{
+    AL_S32 ret;
+    AL_U8 speed;
+    AL_U8 duplex;
+    AL_U8 linkchange = 0;
+
+    /* Initialize the ETH PHY */
+    ret = AlGbe_Hal_PhyInit(GbeHandle, PHYADDR);
+    if (ret != 0)
+    {
+        printf("AlGbe_Hal_PhyInit Init failed\r\n");
+        return ERR_IF;
+    }
+
+    ret = AlGbe_Hal_GetPhyLinkStatus(GbeHandle, PHYADDR, &speed, &duplex);
+    if (ret != 0)
+    {
+        netif_set_link_down(netif);
+        netif_set_down(netif);
+        printf("AlGbe_Hal_GetPhyLinkStatus link down\r\n");
+        return ERR_IF;
+    }
+
+    if (PHY_SPEED_10M == speed)
+    {
+        if (MacDmaConfig->Speed != AL_GBE_SPEED_10M)
+        {
+            GbeHandle->Dev->MacDmaConfig.Speed = AL_GBE_SPEED_10M;
+            linkchange = 1;
+        }
+    }
+    else if (PHY_SPEED_100M == speed)
+    {
+        if (MacDmaConfig->Speed != AL_GBE_SPEED_100M)
+        {
+            GbeHandle->Dev->MacDmaConfig.Speed = AL_GBE_SPEED_100M;
+            linkchange = 1;
+        }
+    }
+    else
+    {
+        if (MacDmaConfig->Speed != AL_GBE_SPEED_1G)
+        {
+            GbeHandle->Dev->MacDmaConfig.Speed = AL_GBE_SPEED_1G;
+            linkchange = 1;
+        }
+    }
+
+    if (PHY_FULL_DUPLEX == duplex)
+    {
+        if (MacDmaConfig->DuplexMode != AL_GBE_FULL_DUPLEX_MODE)
+        {
+            GbeHandle->Dev->MacDmaConfig.DuplexMode = AL_GBE_FULL_DUPLEX_MODE;
+            linkchange = 1;
+        }
+    }
+    else
+    {
+        if (MacDmaConfig->DuplexMode != AL_GBE_HALF_DUPLEX_MODE)
+        {
+            GbeHandle->Dev->MacDmaConfig.DuplexMode = AL_GBE_HALF_DUPLEX_MODE;
+            linkchange = 1;
+        }
+    }
+
+    if (linkchange)
+    {
+        AlGbe_Hal_ConfigDuplexAndSpeed(GbeHandle);
+    }
+
+#if NO_SYS
+    AlGbe_Hal_StartMacDma(GbeHandle);
+#else
+    AlGbe_Hal_StartMacDmaIntr(GbeHandle);
+#endif
+    netif_set_up(netif);
+    netif_set_link_up(netif);
+
+    return ERR_OK;
+}
+
 err_t low_level_init(struct netif *netif)
 {
     AL_S32 ret;
@@ -284,11 +366,10 @@ err_t low_level_init(struct netif *netif)
     InitConfig.TxDescList = DMATxDescList;
     InitConfig.RxBuffLen = ETH_RX_BUFFER_SIZE;
 
-    MacDmaConfig.GbePhyAutoNegotiation = AL_GBE_FUNC_DISABLE;
     MacDmaConfig.DuplexMode = AL_GBE_FULL_DUPLEX_MODE;
     MacDmaConfig.Speed = AL_GBE_SPEED_100M;
 
-    ret = AlGbe_Hal_Init(&GbeHandle, 1, &InitConfig, &MacDmaConfig, AL_NULL);
+    ret = AlGbe_Hal_Init(&GbeHandle, 0, &InitConfig, &MacDmaConfig, AL_NULL);
     if (ret != AL_OK)
     {
         printf("AlGbe_Hal_Init failed\r\n");
@@ -350,31 +431,14 @@ err_t low_level_init(struct netif *netif)
     eth_handle = sys_thread_new("eth_iput", ethernetif_input, &gnetif, 2048, 8);
 #endif /* !NO_SYS */
 
-    /* Initialize the ETH PHY */
-    ret = AlGbe_Hal_PhyInit(&GbeHandle, PHYADDR);
-    if (ret != 0)
+    ret = low_level_phy_init(&GbeHandle, netif, &MacDmaConfig);
+    if (ret != ERR_OK)
     {
-        netif_set_link_down(netif);
-        netif_set_down(netif);
-        printf("AlGbe_Hal_PhyInit Init failed\r\n");
-        return ERR_IF;
+        printf("low_level_phy_init failed\r\n");
+        return ret;
     }
-    else
-    {
-        /* Phy AutoNegotiation complete, need config MAC Speed and duplex */
-        if (MacDmaConfig.GbePhyAutoNegotiation == AL_GBE_FUNC_ENABLE) {
-            AlGbe_Hal_ConfigDuplexAndSpeed(&GbeHandle);
-        }
 
-#if NO_SYS
-        AlGbe_Hal_StartMacDma(&GbeHandle);
-#else
-        AlGbe_Hal_StartMacDmaIntr(&GbeHandle);
-#endif
-        netif_set_up(netif);
-        netif_set_link_up(netif);
-        printf("AlGbe Init success\r\n");
-    }
+    printf("AlGbe Init success\r\n");
 
     return ERR_OK;
 }

@@ -157,6 +157,23 @@ AL_S32 AlGbe_Hal_PhyInit(AL_GBE_HalStruct *Handle, AL_U8 PhyAddr)
     return Ret;
 }
 
+AL_S32 AlGbe_Hal_GetPhyLinkStatus(AL_GBE_HalStruct *Handle, AL_U32 PhyAddr, AL_U8 *Speed, AL_U8 *Duplex)
+{
+    AL_S32 Ret;
+
+    if (Handle == AL_NULL) {
+        return AL_GBE_ERR_ILLEGAL_PARAM;
+    }
+
+    AL_GBE_HAL_LOCK(Handle);
+
+    Ret = AlGbe_Dev_GetPhyLinkStatus(Handle->Dev, PhyAddr, Speed, Duplex);
+
+    AL_GBE_HAL_UNLOCK(Handle);
+
+    return Ret;
+}
+
 AL_S32 AlGbe_Hal_ConfigDuplexAndSpeed(AL_GBE_HalStruct *Handle)
 {
     if (Handle == AL_NULL) {
