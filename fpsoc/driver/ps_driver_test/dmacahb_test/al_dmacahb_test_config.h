@@ -29,6 +29,7 @@ extern "C" {
 #define AL_DMACAHB_TEST_ARRAY_SIZE          256
 #define AL_DMACAHB_RELOAD_COUNT_MAX         3
 #define AL_DMACAHB_LLI_STRUCT_NUM           5
+#define AL_DMACAHB_TEST_TIMEOUT_IN_MS       10000
 
 /**************************** Type Definitions *******************************/
 

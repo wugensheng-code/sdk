@@ -48,12 +48,8 @@ lr	.req	x30
     bic x21, x21, SCTLR_ELx_EE
     msr sctlr_el1, x21
 
-    /* (3) set spsr_el3, return to el1 or el0*/
-#ifdef SWITCH_TO_EL0_FROM_EL3
-    ldr x21, =(SPSR_AIF | SPSR_M_EL0T)
-#else
+    /* (3) set spsr_el3, return to el1 */
     ldr x21, =(SPSR_AIF | SPSR_M_EL1H)
-#endif
 
 #ifdef ENABLE_APU_ABORT_AT_ERET
     bic x21, x21, #(0x01 << 8)

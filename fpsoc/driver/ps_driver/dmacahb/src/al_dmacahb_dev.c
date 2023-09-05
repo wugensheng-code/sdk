@@ -412,9 +412,131 @@ static AL_VOID AlCan_Dev_SetTransBusy(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_C
 }
 
 /**
+ * This function flush src addr data and invlidate dst addr data for sync
+ * @param   Channel is pointer to AL_DMACAHB_ChStruct
+ * @return
+ *          - AL_DMACAHB_ERR_NULL_PTR Channel is NULL
+ *          - AL_DMACAHB_ERR_ADDR_NOT_ALIGN src or dst address not align with their trans width
+ *          - AL_DMACAHB_ERR_STATE_NOT_READY channel not ready
+ *          - AL_OK start success
+ * @note
+*/
+AL_S32 AlCan_Dev_FlushAndInvalidateData(AL_DMACAHB_ChStruct *Channel)
+{
+    AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
+
+    AL_S32 Ret = AL_OK;
+    AL_U32 TransSize = 0;
+    AL_U32 SrcAddr = 0;
+    AL_U32 DstAddr = 0;
+    AL_DMACAHB_ChTransStruct *Trans = &Channel->Trans;
+    AL_DMACAHB_LliStruct *CurLli = (AL_DMACAHB_LliStruct *)Channel->Trans.Lli;
+
+    switch (Channel->Config.TransType)
+    {
+    case AL_DMACAHB_TRANS_TYPE_1:
+    case AL_DMACAHB_TRANS_TYPE_5:
+        SrcAddr = Trans->SrcAddr;
+        DstAddr = Trans->DstAddr;
+        TransSize = Trans->TransSize * (1 << Channel->Config.SrcTransWidth);
+        AlCache_FlushDcacheRange(SrcAddr, SrcAddr + TransSize);
+        AlCache_InvalidateDcacheRange(DstAddr, DstAddr + TransSize);
+        break;
+    case AL_DMACAHB_TRANS_TYPE_2:
+        SrcAddr = Trans->SrcAddr;
+        DstAddr = Trans->DstAddr;
+        TransSize = Trans->TransSize * (1 << Channel->Config.SrcTransWidth);
+        AlCache_FlushDcacheRange(SrcAddr, SrcAddr + TransSize * Trans->ReloadCountNum);
+        /* Also need user invalidate after every block trans done */
+        AlCache_InvalidateDcacheRange(DstAddr, DstAddr + TransSize);
+        break;
+    case AL_DMACAHB_TRANS_TYPE_3:
+        SrcAddr = Trans->SrcAddr;
+        DstAddr = Trans->DstAddr;
+        TransSize = Trans->TransSize * (1 << Channel->Config.SrcTransWidth);
+        /* Also need user flush after every block trans done */
+        AlCache_FlushDcacheRange(SrcAddr, SrcAddr + TransSize);
+        AlCache_InvalidateDcacheRange(DstAddr, DstAddr + TransSize * Trans->ReloadCountNum);
+        break;
+    case AL_DMACAHB_TRANS_TYPE_4:
+        SrcAddr = Trans->SrcAddr;
+        DstAddr = Trans->DstAddr;
+        TransSize = Trans->TransSize * (1 << Channel->Config.SrcTransWidth);
+        /* Also need user flush after every block trans done */
+        AlCache_FlushDcacheRange(SrcAddr, SrcAddr + TransSize);
+        /* Also need user invalidate after every block trans done */
+        AlCache_InvalidateDcacheRange(DstAddr, DstAddr + TransSize);
+        break;
+    case AL_DMACAHB_TRANS_TYPE_6:
+        SrcAddr = Trans->SrcAddr;
+        TransSize = CurLli->CtlHigh.Bit.BlockTransSize * (1 << CurLli->CtlLow.Bit.SrcTransWidth);
+        while (CurLli != AL_NULL) {
+            AlCache_FlushDcacheRange(CurLli, CurLli + 1);
+            AlCache_FlushDcacheRange(SrcAddr, SrcAddr + TransSize);
+            DstAddr = CurLli->DstAddr;
+            AlCache_InvalidateDcacheRange(DstAddr, DstAddr + TransSize);
+            SrcAddr += TransSize;
+            CurLli = (AL_DMACAHB_LliStruct *)CurLli->LlpNext;
+        }
+        break;
+    case AL_DMACAHB_TRANS_TYPE_8:
+        DstAddr = Trans->DstAddr;
+        TransSize = CurLli->CtlHigh.Bit.BlockTransSize * (1 << CurLli->CtlLow.Bit.SrcTransWidth);
+        while (CurLli != AL_NULL) {
+            AlCache_FlushDcacheRange(CurLli, CurLli + 1);
+            SrcAddr = CurLli->SrcAddr;
+            AlCache_FlushDcacheRange(SrcAddr, SrcAddr + TransSize);
+            AlCache_InvalidateDcacheRange(DstAddr, DstAddr + TransSize);
+            DstAddr += TransSize;
+            CurLli = (AL_DMACAHB_LliStruct *)CurLli->LlpNext;
+        }
+        break;
+    case AL_DMACAHB_TRANS_TYPE_10:
+        while (CurLli != AL_NULL) {
+            AlCache_FlushDcacheRange(CurLli, CurLli + 1);
+            SrcAddr = CurLli->SrcAddr;
+            DstAddr = CurLli->DstAddr;
+            TransSize = CurLli->CtlHigh.Bit.BlockTransSize * (1 << CurLli->CtlLow.Bit.SrcTransWidth);
+            AlCache_FlushDcacheRange(SrcAddr, SrcAddr + TransSize);
+            AlCache_InvalidateDcacheRange(DstAddr, DstAddr + TransSize);
+            CurLli = (AL_DMACAHB_LliStruct *)CurLli->LlpNext;
+        }
+        break;
+    case AL_DMACAHB_TRANS_TYPE_7:
+        SrcAddr = Trans->SrcAddr;
+        TransSize = CurLli->CtlHigh.Bit.BlockTransSize * (1 << CurLli->CtlLow.Bit.SrcTransWidth);
+        /* Also need user flush after every block trans done */
+        AlCache_FlushDcacheRange(SrcAddr, SrcAddr + TransSize);
+        while (CurLli != AL_NULL) {
+            AlCache_FlushDcacheRange(CurLli, CurLli + 1);
+            DstAddr = CurLli->DstAddr;
+            AlCache_InvalidateDcacheRange(DstAddr, DstAddr + TransSize);
+            CurLli = (AL_DMACAHB_LliStruct *)CurLli->LlpNext;
+        }
+        break;
+    case AL_DMACAHB_TRANS_TYPE_9:
+        DstAddr = Trans->DstAddr;
+        TransSize = CurLli->CtlHigh.Bit.BlockTransSize * (1 << CurLli->CtlLow.Bit.SrcTransWidth);
+        /* Also need user invalidate after every block trans done */
+        AlCache_InvalidateDcacheRange(DstAddr, DstAddr + TransSize);
+        while (CurLli != AL_NULL) {
+            AlCache_FlushDcacheRange(CurLli, CurLli + 1);
+            SrcAddr = CurLli->SrcAddr;
+            AlCache_FlushDcacheRange(SrcAddr, SrcAddr + TransSize);
+            CurLli = (AL_DMACAHB_LliStruct *)CurLli->LlpNext;
+        }
+        break;
+    default:
+        return AL_DMACAHB_ERR_ILLEGAL_PARAM;
+        break;
+    }
+
+    return Ret;
+}
+
+/**
  * This function set channel trans params
  * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @param   TransParams is pointer to AL_DMACAHB_ChTransUnion
  * @return
  *          - AL_DMACAHB_ERR_NULL_PTR Channel is NULL
  *          - AL_DMACAHB_ERR_ADDR_NOT_ALIGN src or dst address not align with their trans width
@@ -450,6 +572,18 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
         }
     }
 
+#ifdef ENABLE_MMU
+    if (Trans->Lli != AL_NULL) {
+        if (((AL_U32)(AL_UINTPTR)Trans->Lli) & 0x3F) {
+            return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
+        }
+    } else {
+        if ((Trans->SrcAddr & 0x3F) || (Trans->DstAddr & 0x3F)) {
+            return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
+        }
+    }
+#endif
+
     if (!AlDmacAhb_Dev_GetState(Channel, AL_DMACAHB_STATE_READY)) {
         return AL_DMACAHB_ERR_STATE_NOT_READY;
     }
@@ -460,6 +594,10 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
     }
 
     AlCan_Dev_SetTransBusy(Channel, State);
+
+#ifdef ENABLE_MMU
+    AlCan_Dev_FlushAndInvalidateData(Channel);
+#endif
 
     if ((State == AL_DMACAHB_STATE_LLP_MODE_BUSY) || (State == AL_DMACAHB_STATE_LLP_RELOAD_MODE_BUSY)) {
         AlDmacAhb_ll_SetLinkStartAddr(BaseAddr, ChOffset, (AL_REG)Trans->Lli);

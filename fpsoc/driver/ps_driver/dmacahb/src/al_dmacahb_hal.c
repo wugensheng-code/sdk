@@ -30,10 +30,9 @@ static AL_DMACAHB_ChStruct AL_DMACAHB_ChInstance[AL_DMACAHB_NUM_INSTANCE][AL_DMA
  *          - AL_OK
  * @note
 */
-static AL_S32 AlDmacAhb_Hal_WaitTransDoneOrTimeout(AL_DMACAHB_HalStruct *Handle, AL_U32 Timeout,
-                                                   AL_DMACAHB_EventStruct *Event)
+AL_S32 AlDmacAhb_Hal_WaitTransDoneOrTimeout(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_EventStruct *Event, AL_U32 TimeoutMs)
 {
-    return AlOsal_Mb_Receive(&Handle->EventQueue, Event, Timeout);
+    return AlOsal_Mb_Receive(&Handle->EventQueue, Event, TimeoutMs);
 }
 
 /**
@@ -137,7 +136,10 @@ AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_U32 DevId, AL_DMACAHB
         return Ret;
     }
 
-    AlOsal_Mb_Init(&Handle->EventQueue, "Dmacahb-Queue");
+    Ret = AlOsal_Mb_Init(&Handle->EventQueue, "Dmacahb-Queue");
+    if (Ret != AL_OK) {
+        return Ret;
+    }
 
     return Ret;
 }
@@ -240,7 +242,7 @@ AL_S32 AlDmacAhb_Hal_StartBlock(AL_DMACAHB_HalStruct *Handle, AL_U32 Timeout)
         return Ret;
     }
 
-    Ret = AlDmacAhb_Hal_WaitTransDoneOrTimeout(Handle, Timeout, &Event);
+    Ret = AlDmacAhb_Hal_WaitTransDoneOrTimeout(Handle, &Event, Timeout);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb wait trans done error:%x\r\n", Ret);
     }

@@ -80,9 +80,12 @@ CPU_FEATURE += -D__Vendor_SysTickConfig=0 -DARCH_DMA_MINALIGN=64
 else
 ifeq ($(ARMv8_EL), EL1)
 CFLAGS += -DSWITCH_TO_EL1_EL0_FROM_EL3
+ifeq ($(ARMv8_SECURE), NONSECURE)
+CFLAGS += -DSUPPORT_NONSECURE
 endif
-ifeq ($(ARMv8_CORE), 1)
-CFLAGS += -DARM_CORE_1
+endif
+ifeq ($(ARMv8_CORE), SLAVE)
+CFLAGS += -DARM_CORE_SLAVE
 endif
 endif
 

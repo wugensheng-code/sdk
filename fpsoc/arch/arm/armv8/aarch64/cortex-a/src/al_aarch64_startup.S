@@ -9,6 +9,10 @@
 
 .align 3
 
+.extern clear_bss
+.extern AlGic_Init
+.extern AlSys_StartTimer
+
 .globl _start
 .globl vectors
 .globl _sp
@@ -82,6 +86,7 @@ el3_entry:
 #ifdef SUPPORT_NONSECURE
     bl clear_bss
     bl AlGic_Init
+    bl AlSys_StartTimer
 #endif
 
 /* switch to el1 */
@@ -116,7 +121,6 @@ el1_entry:
     ldr x28, =_sp
     mov sp, x28
 
-#ifndef SWITCH_TO_EL0_FROM_EL3
     adr x0, vector_base
     msr vbar_el1, x0
 
@@ -127,7 +131,6 @@ el1_entry:
     mrs x0, sctlr_el1
     orr x0, x0, #(1 << 12)  //enable icache
     msr sctlr_el1, x0
-#endif
 
     b main_entry
 

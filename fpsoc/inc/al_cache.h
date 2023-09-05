@@ -11,6 +11,12 @@
 extern "C" {
 #endif  /* __cplusplus */
 
+#ifdef ENABLE_MMU
+#define CACHE_LINE_ALIGN cacheline_aligned
+#else
+#define CACHE_LINE_ALIGN
+#endif
+
 AL_VOID AlCache_EnableICache(AL_VOID);
 
 AL_VOID AlCache_DisableICache(AL_VOID);
