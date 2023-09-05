@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #include "al9000_crg.h"
 
 #define TOP_CRG_BASE 0xF8801000UL

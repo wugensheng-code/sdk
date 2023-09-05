@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #define     MSTR                             0x000
 #define         device_config_offset                             30
 #define         device_config_mask                               0xc0000000

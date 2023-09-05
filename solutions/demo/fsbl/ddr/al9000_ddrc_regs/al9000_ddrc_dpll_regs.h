@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #define     BANK_RIDR                             0x0
 #define         BANK_ID_offset                                   0
 #define         BANK_ID_mask                                     0xffffffff

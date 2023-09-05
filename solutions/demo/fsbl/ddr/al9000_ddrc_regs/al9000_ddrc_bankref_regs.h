@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #define     ZQ0CR                            0x000
 #define         Cfg_zqncr_pu_drv_code_modify_offset              28
 #define         Cfg_zqncr_pu_drv_code_modify_mask                0x70000000

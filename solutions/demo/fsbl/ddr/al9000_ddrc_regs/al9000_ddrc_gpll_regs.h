@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #define     CLK_SEL                          0x000
 #define         ddrslow_sel_offset                               0
 #define         ddrslow_sel_mask                                 0x00000001

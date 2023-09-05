@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #include "alfsbl_hw.h"
 #include "alfsbl_err_lockdown.h"
 #include "alfsbl_boot.h"

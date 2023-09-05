@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #define     DQSGRP_OFFCAL_CR                 0x000
 #define     DQSGRP_OFFCAL_CR1                0x004
 #define     DQSGRP_OFFCAL_DR                 0x008

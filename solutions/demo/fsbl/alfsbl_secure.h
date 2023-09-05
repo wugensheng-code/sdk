@@ -1,4 +1,10 @@
 /*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/*
  * alfsbl_sec.h
  *
  *  Created on: May 25, 2022

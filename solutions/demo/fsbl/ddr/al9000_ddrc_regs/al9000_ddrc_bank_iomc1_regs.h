@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #define     brefhp_cfg0                      0x0
 #define         U_bankref_hp_mc1_bref_lvds_sel_offset            31
 #define         U_bankref_hp_mc1_bref_lvds_sel_mask              0x80000000

@@ -1,3 +1,9 @@
+#########################################################################
+# Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+
+# SPDX-License-Identifier: BSD-3-Clause
+#########################################################################
+
 
 #########################################################################
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX

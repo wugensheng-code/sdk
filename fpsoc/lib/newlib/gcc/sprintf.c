@@ -1,4 +1,10 @@
 /*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/*
     Copyright 2001, 2002 Georges Menie (www.menie.org)
     stdarg version contributed by Christian Ettinger
 
