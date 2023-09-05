@@ -800,6 +800,24 @@ static AL_VOID AlIic_Dev_TxAbrtHandler(AL_IIC_DevStruct *Iic)
 
 static AL_VOID AlIic_Dev_EventHandler(AL_IIC_DevStruct *Iic, AL_IIC_EventIdEnum EventId)
 {
+    /* Error occurred, Stop RX */
+    if (EventId == AL_IIC_EVENT_RX_UNDER || EventId == AL_IIC_EVENT_RX_OVER ) {
+        if (Iic->OpState == AL_IIC_OP_STATE_MASTER_RX) {
+            AlIic_Dev_StopMasterRecv(Iic);
+        } else {
+            AlIic_Dev_StopSlaveRecv(Iic);
+        }
+    }
+
+    /* Error occurred, Stop TX */
+    if (EventId == AL_IIC_EVENT_TX_OVER ) {
+        if (Iic->OpState == AL_IIC_OP_STATE_MASTER_TX) {
+            AlIic_Dev_StopMasterSend(Iic);
+        } else {
+            AlIic_Dev_StopSlaveSend(Iic);
+        }
+    }
+
     if (Iic->EventCallBack) {
         AL_IIC_EventStruct IicEvent = {
             .Events         = EventId,

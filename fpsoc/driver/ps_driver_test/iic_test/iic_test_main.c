@@ -6,10 +6,11 @@
 
 #include "al_iic_hal.h"
 
-
 #define TEST_SLAVE_ADDR                 0x77
 #define IIC_MASTER_TEST_TIMEOUT_MS      1000
 #define IIC_SLAVE_TEST_TIMEOUT_MS       100000
+
+extern AL_S32 AlIic_DemoBoardE2promTest();
 
 AL_S32 AlIic_SclRecoveryTest()
 {
