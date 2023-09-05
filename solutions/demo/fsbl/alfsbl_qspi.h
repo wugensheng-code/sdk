@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-#include <alfsbl_secure.h>
+#include "alfsbl_secure.h"
 #include "alfsbl_data.h"
 #include "alfsbl_hw.h"
 

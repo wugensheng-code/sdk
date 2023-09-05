@@ -14,7 +14,7 @@ extern "C" {
 #include <stdint.h>
 #include "alfsbl_data.h"
 #include "alfsbl_hw.h"
-#include <alfsbl_secure.h>
+#include "alfsbl_secure.h"
 
 
 typedef enum{

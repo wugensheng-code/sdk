@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <alfsbl_secure.h>
+#include "alfsbl_secure.h"
 #include <stdio.h>
 #include "alfsbl_image_header.h"
 #include "al_reg_io.h"

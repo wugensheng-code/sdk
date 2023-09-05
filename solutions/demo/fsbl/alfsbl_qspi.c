@@ -7,7 +7,7 @@
 #include "al_qspi_hal.h"
 #include "al_spinor.h"
 
-#include <alfsbl_secure.h>
+#include "alfsbl_secure.h"
 #include "alfsbl_boot.h"
 
 AL_QSPI_HalStruct QspiHal;

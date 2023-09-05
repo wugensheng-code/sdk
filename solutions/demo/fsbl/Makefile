@@ -28,10 +28,11 @@ endif
 #    ASM_SRCS: asm sources for application
 #########################################################################
 SRC_DIR  = ./ \
-           ./ddr/
+           $(PLAT_DIR)/src/ddr_demo 
+
 INC_DIR  = ./ \
-           ./ddr/ \
-           ./ddr/al9000_ddrc_regs
+           $(PLAT_DIR)/inc/ddr_demo \
+           $(PLAT_DIR)/inc/ddr_demo/ddr_regs \
 
 
 LD_LIBS  =

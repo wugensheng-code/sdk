@@ -4,10 +4,11 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <alfsbl_secure.h>
 #include <stdio.h>
 #include <stdint.h>
 #include "al_reg_io.h"
+#include "soc_plat.h"
+#include "alfsbl_secure.h"
 #include "alfsbl_misc.h"
 #include "alfsbl_err_code.h"
 #include "alfsbl_hw.h"
@@ -17,8 +18,6 @@
 #include "al_systimer.h"
 
 extern uint8_t  ReadBuffer[READ_BUFFER_SIZE];
-
-
 
 static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx, SecureInfo *pSecureInfo);
 
@@ -526,7 +525,6 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	uint8_t  PartitionAc[ALFSBL_AUTH_BUFFER_SIZE];
 	uint32_t ImageOffsetAddress;
 	uint32_t BootDevice;
-	uint8_t  DdrAvailable = 0;
 	uint32_t BlockSizeMax;
 	AlFsbl_PartitionHeader *PtHdr;
 	PtHdr = &(FsblInstancePtr->ImageHeader.PartitionHeader[PartitionIdx]);
@@ -575,27 +573,33 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 
 	if(((pSecureInfo->HashType != OP_HASH_NONE) && (pSecureInfo->EncType == OP_ENCRYPT_NONE)) ||
 	   ((BootDevice != ALFSBL_BOOTMODE_QSPI24) && (BootDevice != ALFSBL_BOOTMODE_QSPI32))) {
-		if(DdrAvailable) {
-			printf("to ddr in a whole block, then to pcap\r\n");
-			/// todo, to ddr, whole block, then to pcap
+#ifdef DDR_AVAILABLE
+		printf("to ddr in a whole block, then to pcap\r\n");
+		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)(0x100000), 0);
+		if(Status != ALFSBL_SUCCESS) {
+			goto END;
 		}
-		else {
-			//pSecureInfo->CsuAddrIncMode = CSUDMA_DST_INCR | CSUDMA_SRC_INCR;
-			printf("to ocm in blocks, Block size: %d\r\n", BlockSizeMax);
-			Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)ReadBuffer, BlockSizeMax);
-			if(Status != ALFSBL_SUCCESS) {
-				goto END;
-			}
+#else
+		printf("to ocm in blocks, Block size: %d\r\n", BlockSizeMax);
+		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)ReadBuffer, BlockSizeMax);
+		if(Status != ALFSBL_SUCCESS) {
+			goto END;
 		}
+#endif
 	}
 	else {
 #ifdef QSPI_XIP_THROUTH_CSU_DMA
 		printf("to pcap, whole block\r\n");
-		//pSecureInfo->CsuAddrIncMode = CSUDMA_DST_NOINCR | CSUDMA_SRC_INCR;
 		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, CSU_PCAP_WR_STREAM, 0);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
+#elif (defined DDR_AVAILABLE)
+		printf("to ddr in a whole block, then to pcap\r\n");
+		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)(0x100000), 0);
+		if(Status != ALFSBL_SUCCESS) {
+			goto END;
+		}		
 #else
 		printf("to ocm in blocks, Block size: %d\r\n", BlockSizeMax);
 		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)ReadBuffer, BlockSizeMax);

@@ -1,20 +1,12 @@
-<<<<<<< HEAD
 /*
  * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-/*
- * alfsbl_sec.h
- *
- *  Created on: May 25, 2022
- *      Author: qsxu
- */
 
 
-=======
->>>>>>> 1eaa58bd ([ES-382][style][fsbl]delete some comments, change al9000 to dr1x90 in fsbl/ddr code files)
+
 #ifndef ALFSBL_SEC_H_
 #define ALFSBL_SEC_H_
 

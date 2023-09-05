@@ -11,13 +11,15 @@
 #include "alfsbl_hw.h"
 #include "alfsbl_init.h"
 #include "al_core.h"
-#include "demo_ddr_init.h"
+//#include "demo_ddr_init.h"
+
+extern uint8_t  DdrAvailable;
 
 static uint32_t AlFsbl_GetResetReason(void);
 static uint32_t AlFsbl_SystemInit(AlFsblInfo *FsblInstancePtr);
 static uint32_t AlFsbl_ProcessorInit(AlFsblInfo *FsblInstancePtr);
 static uint32_t AlFsbl_TcmInit(AlFsblInfo *FsblInstancePtr);
-static uint32_t AlFsbl_DdrInit(void);
+//static uint32_t AlFsbl_DdrInit(void);
 static uint32_t AlFsbl_PmuInit(AlFsblInfo *FsblInstancePtr);
 static uint32_t AlFsbl_WdtInit(AlFsblInfo *FsblInstancePtr);
 static uint32_t AlFsbl_ValidateResetReason(void);
@@ -62,10 +64,10 @@ uint32_t AlFsbl_Initialize(AlFsblInfo *FsblInstancePtr)
 	}
 
 	/// ddr ecc init if required
-	Status = AlFsbl_DdrInit();
-	if(Status != ALFSBL_SUCCESS) {
-		goto END;
-	}
+//	Status = AlFsbl_DdrInit();
+//	if(Status != ALFSBL_SUCCESS) {
+//		goto END;
+//	}
 
 	/// reset reason validation
 	Status = AlFsbl_ValidateResetReason();
@@ -187,13 +189,17 @@ static uint32_t AlFsbl_TcmInit(AlFsblInfo *FsblInstancePtr)
 }
 
 
+/*
 static uint32_t AlFsbl_DdrInit(void)
 {
 	uint32_t Status = ALFSBL_SUCCESS;
 	/// todo, temp ddr init here, replace later
 	demo_ddr_init();
+	DdrAvailable = 1;
+	printf("ddr init complete\r\n");
 	return Status;
 }
+*/
 
 static uint32_t AlFsbl_WdtInit(AlFsblInfo *FsblInstancePtr)
 {

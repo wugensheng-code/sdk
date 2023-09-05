@@ -140,6 +140,7 @@ extern "C" {
 
 #define LOG_DEV AL_LOG_UART1
 
+#define DDR_AVAILABLE
 
 /**
  * @desc  : init soc platform according to user configuration

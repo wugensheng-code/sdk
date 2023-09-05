@@ -12,7 +12,8 @@
 #include "alfsbl_err_lockdown.h"
 #include "alfsbl_misc.h"
 #include "alfsbl_hw.h"
-#include "alfsbl_qspi.h"
+
+#include "soc_plat.h"
 
 
 /********************* global variables *********************/
@@ -21,7 +22,6 @@ uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE]__attribute__((aligned(4))) = {0};
 AlFsblInfo FsblInstance = {0x00U, 0, 0, 0};
 SecureInfo FsblSecInfo = {0};
 
-extern int Soc_PlatInit();
 
 int main(void)
 {

@@ -13,7 +13,7 @@ extern "C" {
 
 #include <stdint.h>
 #include "alfsbl_defines.h"
-#include <alfsbl_secure.h>
+#include "alfsbl_secure.h"
 
 #if defined (CPU_RPU_64)
 #define PTRSIZE uint64_t

@@ -17,7 +17,7 @@ extern "C" {
 #include "alfsbl_boot.h"
 #include "alfsbl_misc.h"
 #include "alfsbl_hw.h"
-#include <alfsbl_secure.h>
+#include "alfsbl_secure.h"
 
 
 uint32_t AlFsbl_BootDevInitAndHdrValidate(AlFsblInfo *FsblInstancePtr);

@@ -6,9 +6,14 @@
 
 #include "al_core.h"
 #include "al9000_crg.h"
+#include "soc_plat.h"
+#include "./ddr_demo/demo_ddr_init.h"
+
 
 extern void Enablepinmux1(void);
 extern void Enablepinmux1_mode2(void);
+extern int  demo_ddr_init();
+
 
 __attribute__((__used__)) void board_init()
 {
@@ -36,5 +41,6 @@ int Soc_PlatGetDeviceVersion()
 
 int Soc_PlatInit()
 {
+	demo_ddr_init();
     return AL_OK;
 }

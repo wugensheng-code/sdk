@@ -15,7 +15,7 @@ extern "C" {
 #include "alfsbl_data.h"
 #include "alfsbl_hw.h"
 #include "alfsbl_err_code.h"
-#include <alfsbl_secure.h>
+#include "alfsbl_secure.h"
 
 #define INIT_DONE_WAIT_SECS (90)
 
