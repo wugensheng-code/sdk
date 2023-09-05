@@ -12,10 +12,6 @@
 #include "alfsbl_err_lockdown.h"
 #include "alfsbl_misc.h"
 #include "alfsbl_hw.h"
-
-#include "qspi_drv.h"
-#include "qspi_flash_drv.h"
-
 #include "alfsbl_qspi.h"
 
 

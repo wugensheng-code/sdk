@@ -4,138 +4,173 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <alfsbl_secure.h>
-#include <stdio.h>
+#include "al_qspi_hal.h"
+#include "al_spinor.h"
 
-#include "alfsbl_qspi.h"
-#include "alfsbl_misc.h"
+#include <alfsbl_secure.h>
 #include "alfsbl_boot.h"
 
-#include "qspi_drv.h"
-#include "qspi_flash_drv.h"
+AL_QSPI_HalStruct QspiHal;
 
-extern QSPI_CORE_HANDLE    *g_pdev;
-
-
-//-----------------------------------------------------------
-//QSPI_FLASH_SR_BIT_SET: set flash status-register certain bit
-//-----------------------------------------------------------
-void QSPI_FLASH_SR_BIT_SET (unsigned bit_num, unsigned bit_val)
+AL_QSPI_ConfigsStruct QspiInitConfigs =
 {
-    unsigned data_r_7to0;   //read data
-    unsigned data_r_15to8;  //read data
+    .TransMode          = QSPI_EEPROM,
+    .SpiFrameFormat     = SPI_STANDARD_FORMAT,
+    .DataFrameSize      = QSPI_DFS_8BITS,
+    .EnSpiCfg.AddrLength    = QSPI_ADDR_L0,
+    .EnSpiCfg.InstLength    = QSPI_INST_L8,
+    .EnSpiCfg.TransType     = QSPI_TT0,
+    .EnSpiCfg.WaitCycles    = 0,
+    .EnSpiCfg.ClockStretch  = QSPI_EnableClockStretch,
+    .ClkDiv             = 10,
+    .SamplDelay         = 0,
+    .SlvToggleEnum      = QSPI_SLV_TOGGLE_DISABLE,
+    .SlvSelEnum         = QSPI_SER_SS0_EN,
+    .IsUseDma           = AL_QSPI_USE_INTR
+};
+AL_U8 __attribute__((aligned(4))) FlashId[4] = { 0x0 };
 
-    //-----------------------------------------------------------
-    //read flash status-register
-    //-----------------------------------------------------------
-    //config qspi
-    Qspi_Disable(g_pdev);  //disable
-	Qspi_Width(g_pdev,QSPI_WIDTH_X1);//QSPI_WIDTH_X4
-	Qspi_Mode(g_pdev,TMOD_EEPROM);//TMOD_TX_ONLY
-    Qspi_Dfs(g_pdev,DFS_BYTE);
+AL_VOID AlNor_Wren(AL_VOID)
+{
+    AL_S32 ret = AL_OK;
+    AL_U8 SendData[4] = {0x0};
 
-	Qspi_TxfifoStartLevelSet(g_pdev,0); //transfer will start on serial line
+    QspiHal.Dev->Configs.EnSpiCfg.WaitCycles = 0;
+    QspiHal.Dev->Configs.TransMode = QSPI_TX_ONLY;
+    QspiHal.Dev->Configs.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
+    QspiHal.Dev->Configs.SpiFrameFormat = SPI_STANDARD_FORMAT;
+    QspiHal.Dev->Configs.EnSpiCfg.TransType = QSPI_TT0;
 
-    //REG_WRITE(QSPI__CTRLR1__ADDR,0x0);  //rx need receive 1 data-frame
-    //QSPI_TXFIFO_START_LEVEL_SET(0x0);  //tx need transmit 1 data-frame
-	Qspi_Ctrl1Ndf(g_pdev,0);
+    SendData[0] = NOR_OP_WREN;
 
-	Qspi_Enable(g_pdev);
+    ret = AlQspi_Hal_SendDataBlock(&QspiHal, SendData, 1, 10000);
+    if (ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "AL_NOR_WREN error\r\n");
+    }
+}
 
-    //sent read flash status-register[7:0] instruction 0x05
-    //QSPI_DATA_WRITE(0x05);  //send inst
-	Qspi_DataTransmit(g_pdev,0x5);
-    //wait qspi is not busy
-    //QSPI_WAIT_ACT_COMPLETE();  //until tx-fifo is empty, and qspi is not busy
-    //read flash status-register[7:0] from rx-fifo
-	//
-    while( !Qspi_TxfifoEmpty(g_pdev) );
-	while(Qspi_Busy(g_pdev));
-    data_r_7to0 = Qspi_DataRead(g_pdev);  //read data from rx-fifo
 
-    //sent read flash status-register[15:8] instruction 0x35
-    //QSPI_DATA_WRITE(0x35);  //send inst
-	Qspi_DataTransmit(g_pdev,0x35);
-    //wait qspi is not busy
-	while( !Qspi_TxfifoEmpty(g_pdev) );
-	while(Qspi_Busy(g_pdev));  //until tx-fifo is empty, and qspi is not busy
-    //read flash status-register[15:8] from rx-fifo
-    data_r_15to8 = Qspi_DataRead(g_pdev);  //read data from rx-fifo
+AL_VOID AlNor_WaitWip(AL_VOID)
+{
+    AL_S32 ret = AL_OK;
+    AL_U8 SendData[4] = {0x0};
+    AL_U8 RecvData[4] = {0x0};
 
-    //-----------------------------------------------------------
-    //modified the bit needed to be set
-    //-----------------------------------------------------------
-    //set if bit[7:0]
-    if (bit_num < 8) {
-        data_r_7to0 = (~(0x1 << bit_num) & data_r_7to0) | (bit_val << bit_num);  //only set the needed bit
-    //set if bit[15:8]
-    } else {
-        data_r_15to8 = (~(0x1 << (bit_num-8)) & data_r_15to8) | (bit_val << (bit_num-8));  //only set the needed bit
+    QspiHal.Dev->Configs.EnSpiCfg.WaitCycles = 0;
+    QspiHal.Dev->Configs.TransMode  = QSPI_EEPROM;
+    QspiHal.Dev->Configs.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
+    QspiHal.Dev->Configs.SpiFrameFormat = SPI_STANDARD_FORMAT;
+    QspiHal.Dev->Configs.EnSpiCfg.TransType = QSPI_TT0;
+
+    SendData[0] = NOR_OP_RDSR;
+
+    do {
+        ret = AlQspi_Hal_TranferDataBlock(&QspiHal, SendData, 1, RecvData, 1, 100000);
+        if (ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "AL_NOR_WAITWIP error\r\n");
+        }
+#ifdef QSPI_DEBUG
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "WAITWIP Nor Status1 Reg:%x\r\n", RecvData[0]);
+#endif
+    } while (RecvData[0] & SR_WIP);
+}
+
+AL_S32 AlNor_SetQuad(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd, AL_U8 QuadPos)
+{
+    AL_S32  ret = AL_OK;
+    AL_U8 SendData[4] = {0x0}, Data = 0;
+
+    SendData[0] = ReadQuadCmd;
+    QspiHal.Dev->Configs.EnSpiCfg.WaitCycles = 0;
+    QspiHal.Dev->Configs.TransMode  = QSPI_EEPROM;
+    QspiHal.Dev->Configs.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
+    QspiHal.Dev->Configs.SpiFrameFormat = SPI_STANDARD_FORMAT;
+    QspiHal.Dev->Configs.EnSpiCfg.TransType = QSPI_TT0;
+
+    ret = AlQspi_Hal_TranferDataBlock(&QspiHal, SendData, 1, &Data, 1, 10000);
+    if (ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "AlNor_SetQuad ReadQuadCmd error\r\n");
     }
 
-    //-----------------------------------------------------------
-    //set flash status-register certain bit
-    //-----------------------------------------------------------
-    //QSPI_FLASH_SEND_WREN();  //send flash WREN
-	Qspi_Disable(g_pdev);  //disable
-	Qspi_Width(g_pdev,QSPI_WIDTH_X1);
-	Qspi_Mode(g_pdev,TMOD_TX_ONLY);
-	Qspi_TxfifoStartLevelSet(g_pdev,0); //transfer will start on serial line
-	Qspi_Enable(g_pdev);
+    Data = Data | (1 << QuadPos);
 
-	Qspi_DataTransmit(g_pdev,0x6);
-    while( !Qspi_TxfifoEmpty(g_pdev) );
-	while(Qspi_Busy(g_pdev));  //until tx-fifo is empty, and qspi is not busy
+    AlNor_Wren();
 
-    //config qspi
-    Qspi_Disable(g_pdev);  //disable
-    Qspi_TxfifoStartLevelSet(g_pdev,2); //transfer will start on serial line
-    Qspi_Enable(g_pdev);  //enable
-    //sent write flash status-register instruction 0x01, and set value[15:0]
-    Qspi_DataTransmit(g_pdev,0x01);  //send inst
-    Qspi_DataTransmit(g_pdev,data_r_7to0);  //send data
-    Qspi_DataTransmit(g_pdev,data_r_15to8);  //send data
-    //wait qspi is not busy
-    while( !Qspi_TxfifoEmpty(g_pdev) );
-	while(Qspi_Busy(g_pdev));  //until tx-fifo is empty, and qspi is not busy
-    //wait flash WIP returns to 0
-    //QSPI_FLASH_WAIT_WIP_COMPLETE();  //until WIP returns to 0
-    Qspi_Disable(g_pdev);  //disable
-}  //QSPI_FLASH_SR_BIT_SE
+    SendData[0] = SetQuadCmd;
+    SendData[1] = Data;
 
+    QspiHal.Dev->Configs.TransMode = QSPI_TX_ONLY;
 
+    ret = AlQspi_Hal_SendDataBlock(&QspiHal, SendData, 2, 10000);
+    if (ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "AlNor_SetQuad SetQuadCmd error\r\n");
+    }
+
+    AlNor_WaitWip();
+
+    return ret;
+}
+
+#ifdef SIMU_AL9000_DV
 uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
 {
 	QspiParams qspi_params;
-	printf("qspi 24 init\r\n");	
 	Csu_QspiInit(&qspi_params);
 
-#if 1
-	QSPI_FLASH_SR_BIT_SET(9, 1);
-    Csu_QspiSetMode(QSPI_WIDTH_X4, QSPI_ADDR_24);
+//	QSPI_FLASH_SR_BIT_SET(9, 1);
+    Csu_QspiSetMode(QSPI_WIDTH_X2, QSPI_ADDR_24);
 
     Qspi_Disable(g_pdev);
-	Qspi_SckdivCfg(g_pdev,0x4); // ahb: 200M, spi: 200 / 4 = 50M
+	Qspi_SckdivCfg(g_pdev,0x2); // ahb: 200M, spi: 200 / 4 = 50M
 
 	g_pdev->regs->SPI_CTRLR0 = (g_pdev->regs->SPI_CTRLR0) | (1 << 30);
 
     Qspi_Enable(g_pdev);
-#endif
-    *pBlockSizeMax = 1024 * 8;   // this is only for simulation test
 
-    printf("flashID:%x\r\n", qspi_params.flashID);
-    printf("flashSize:0x%x\r\n", qspi_params.flashSize);
-    printf("flashSize:%dMB\r\n", qspi_params.flashSize/1024/1024);
+    *pBlockSizeMax = 512;   // this is only for simulation test
 
 	return 0;
 }
 
+#else
+uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
+{
+    AL_U32 ret;
+    AL_U8 SendData[4] = {0x0};
+
+    ret = AlQspi_Hal_Init(&QspiHal, &QspiInitConfigs, AL_NULL, AL_NULL, 10000);
+    if (ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Fsbl AlQspi_Hal_Init error\r\n");
+    }
+
+    QspiHal.Dev->Configs.EnSpiCfg.WaitCycles = 0;
+    QspiHal.Dev->Configs.TransMode  = QSPI_EEPROM;
+    QspiHal.Dev->Configs.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
+
+    SendData[0] = NOR_OP_RDID;
+    ret = AlQspi_Hal_TranferDataBlock(&QspiHal, SendData, 1, FlashId, 3, 1);
+    if (ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "AlNor read id error\r\n");
+    }
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Flash ID:0x%x, 0x%x, 0x%x\r\n", FlashId[0], FlashId[1], FlashId[2]);
+
+    if((FlashId[0] != 0x01) && (FlashId[0] != 0x20) && (FlashId[0] != 0x0) && (FlashId[0] != 0xff)) {
+        if((FlashId[0] != 0x9d) && (FlashId[0] != 0xc2)) {
+            ret = AlNor_SetQuad(0x31, 0x35, 1);
+        }else {
+            ret = AlNor_SetQuad(0x01, 0x05, 6);
+        }
+    }
+
+	return ret;
+}
+#endif
 
 uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo)
 {
 	uint32_t ret;
 #ifdef QSPI_XIP_THROUTH_CSU_DMA
-//	printf("xip mode\r\n");
+//	AL_LOG(AL_LOG_LEVEL_DEBUG, "xip mode\r\n");
 	if(pSecureInfo != NULL) {
 		pSecureInfo->InputAddr  = SrcAddress + QSPI_XIP_BASEADDR;
 		pSecureInfo->OutputAddr = DestAddress;
@@ -151,21 +186,29 @@ uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Le
 				CSUDMA_DST_INCR | CSUDMA_SRC_INCR);
 	}
 #else
-//	printf("qspi 24 none xip mode\r\n");
-    ret = Csu_QspiRead(SrcAddress, (uint8_t *)(DestAddress), Length);
+    AL_U8 SendData[4] = {0x0};
 
+    QspiHal.Dev->Configs.TransMode  = QSPI_RX_ONLY;
+    QspiHal.Dev->Configs.EnSpiCfg.TransType = QSPI_TT0;
+    QspiHal.Dev->Configs.EnSpiCfg.AddrLength = QSPI_ADDR_L24;
+    QspiHal.Dev->Configs.SpiFrameFormat = SPI_QUAD_FORMAT;
+    QspiHal.Dev->Configs.EnSpiCfg.WaitCycles = 8;
 
+    SendData[0] = NOR_OP_READ_1_1_4;
+    SendData[1] = (SrcAddress >> 16)&0xff;
+    SendData[2] = (SrcAddress >> 8)&0xff;
+    SendData[3] = SrcAddress&0xff;
+
+    ret = AlQspi_Hal_TranferDataBlock(&QspiHal, SendData, 4, (AL_U8 *)DestAddress, Length, 10000000);
 #endif
 
-	if(ret != 0) {
+	if(ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "AlNor read byte error\r\n");
 		ret = ret | (ALFSBL_BOOTMODE_QSPI24 << 16);
 	}
 
 	return ret;
 }
-
-
-
 
 uint32_t AlFsbl_Qspi24Release(void)
 {

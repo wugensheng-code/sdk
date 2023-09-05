@@ -12,9 +12,6 @@
 #include "alfsbl_misc.h"
 #include "alfsbl_boot.h"
 
-#include "al_mmc.h"
-#include "al_sd.h"
-
 FIL fil;
 FATFS fs;
 
