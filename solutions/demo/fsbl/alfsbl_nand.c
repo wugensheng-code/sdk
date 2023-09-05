@@ -20,27 +20,27 @@ AL_SMC_ConfigsStruct SmcInitConfigs =
 
 AL_U32 AlFsbl_NandInit(AL_VOID)
 {
-    AL_U32 ret;
+    AL_U32 Ret;
 
-    ret = AlSmc_Hal_Init(&SmcHal, &SmcInitConfigs, 0);
-    if (AL_OK != ret) {
+    Ret = AlSmc_Hal_Init(&SmcHal, &SmcInitConfigs, 0);
+    if (AL_OK != Ret) {
          AL_LOG(AL_LOG_LEVEL_DEBUG, "Fsbl AlSmc_Hal_Init error\r\n");
     }
-    return ret;
+    return Ret;
 }
 
 AL_U32 AlFsbl_NandCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo)
 {
-    AL_U32 ret;
+    AL_U32 Ret;
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "AlFsbl_NandCopy...\r\n");
-    ret = AlSmc_Hal_ReadPage(&SmcHal, SrcAddress, (AL_U8 *)DestAddress, Length, 10000000);
-    if (AL_OK != ret) {
+    Ret = AlSmc_Hal_ReadPage(&SmcHal, SrcAddress, (AL_U8 *)DestAddress, Length, 10000000);
+    if (AL_OK != Ret) {
         AL_LOG(AL_LOG_LEVEL_DEBUG, "Fsbl AlSmc_Hal_ReadPage error\r\n");
-        ret = ret | (ALFSBL_BOOTMODE_NAND << 16);
+        Ret = Ret | (ALFSBL_BOOTMODE_NAND << 16);
     }
 
-    return ret;
+    return Ret;
 }
 
 

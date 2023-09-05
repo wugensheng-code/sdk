@@ -260,7 +260,7 @@ AL_S32 AlQspi_Dev_SendData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 SendS
     TempSendSize = SendSize - (Qspi->Configs.EnSpiCfg.AddrLength + Qspi->Configs.EnSpiCfg.InstLength) / 2;
 
     /* Different fifo widths are set depending on the amount of data */
-    if(QSPI_ADDR_L0 != Qspi->Configs.EnSpiCfg.AddrLength) {
+    if (QSPI_ADDR_L0 != Qspi->Configs.EnSpiCfg.AddrLength) {
         if ((0 == (TempSendSize % 4)) && (0 != TempSendSize)) {
             Qspi->Configs.DataFrameSize = QSPI_DFS_32BITS;
             Qspi->BitsPerWord = 32;
@@ -290,12 +290,12 @@ AL_S32 AlQspi_Dev_SendData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 SendS
     AlQspi_ll_SetTransfMode(Qspi->BaseAddr, Qspi->Configs.TransMode);
 
     SendLevel = MIN((AL_U32)(Qspi->Fifolen / 2), TempSendSize / (Qspi->BitsPerWord >> 3));
-    if(SPI_STANDARD_FORMAT != Qspi->Configs.SpiFrameFormat) {
+    if (SPI_STANDARD_FORMAT != Qspi->Configs.SpiFrameFormat) {
         SendLevel += 2;
     }
     AlQspi_ll_SetTxStartFifoLevel(Qspi->BaseAddr, SendLevel ? SendLevel - 1 : 0);
 
-    if(Qspi->Configs.EnSpiCfg.ClockStretch == QSPI_EnableClockStretch &&
+    if (Qspi->Configs.EnSpiCfg.ClockStretch == QSPI_EnableClockStretch &&
        Qspi->Configs.SpiFrameFormat != SPI_STANDARD_FORMAT)
     {
         AlQspi_ll_SetRecvNumOfDataFrames(Qspi->BaseAddr, (TempSendSize / (Qspi->BitsPerWord >> 3))
@@ -303,18 +303,18 @@ AL_S32 AlQspi_Dev_SendData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 SendS
     }
     AlQspi_ll_Enable(Qspi->BaseAddr);
 
-    if(Qspi->Configs.SpiFrameFormat == SPI_STANDARD_FORMAT) {
+    if (Qspi->Configs.SpiFrameFormat == SPI_STANDARD_FORMAT) {
         switch (Qspi->Configs.DataFrameSize)
         {
         case QSPI_DFS_32BITS:
-            if(Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
                 AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U32 *)(Qspi->SendBuffer.BufferPtr));
             } else {
                 AL_LOG(AL_LOG_LEVEL_INFO, "Qspi not support this mode combination\r\n");
             }
             break;
         case QSPI_DFS_16BITS:
-            if(Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
                 AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U16 *)(Qspi->SendBuffer.BufferPtr));
                 AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U16 *)(Qspi->SendBuffer.BufferPtr + 2));
             } else {
@@ -323,16 +323,16 @@ AL_S32 AlQspi_Dev_SendData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 SendS
             break;
         case QSPI_DFS_8BITS:
             AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr));
-            if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
                 AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr + 1));
             }
-            if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L8) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L8) {
                 AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr + 2));
             }
-            if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L16) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L16) {
                 AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr + 3));
             }
-            if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L24) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L24) {
                 AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr + 4));
             }
             break;
@@ -345,8 +345,8 @@ AL_S32 AlQspi_Dev_SendData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 SendS
         {
         case QSPI_DFS_32BITS:
             AlQspi_ll_DataTransmit(Qspi->BaseAddr, Qspi->SendBuffer.BufferPtr[0] << 24);
-            if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
-                if(Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
+                if (Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
                     AlQspi_ll_DataTransmit(Qspi->BaseAddr, Qspi->SendBuffer.BufferPtr[1] << 8 | Qspi->SendBuffer.BufferPtr[2] << 16 |
                     Qspi->SendBuffer.BufferPtr[3] << 24);
                 } else {
@@ -357,8 +357,8 @@ AL_S32 AlQspi_Dev_SendData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 SendS
             break;
         case QSPI_DFS_16BITS:
             AlQspi_ll_DataTransmit(Qspi->BaseAddr, Qspi->SendBuffer.BufferPtr[0] << 8);
-            if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
-                if(Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
+                if (Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
                     AlQspi_ll_DataTransmit(Qspi->BaseAddr, Qspi->SendBuffer.BufferPtr[1] << 24 | Qspi->SendBuffer.BufferPtr[2] |
                     Qspi->SendBuffer.BufferPtr[3] << 8);
                 } else {
@@ -369,8 +369,8 @@ AL_S32 AlQspi_Dev_SendData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 SendS
             break;
         case QSPI_DFS_8BITS:
             AlQspi_ll_DataTransmit(Qspi->BaseAddr, Qspi->SendBuffer.BufferPtr[0]);
-            if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
-                if(Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
+                if (Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
                     AlQspi_ll_DataTransmit(Qspi->BaseAddr, Qspi->SendBuffer.BufferPtr[1] << 16 | Qspi->SendBuffer.BufferPtr[2] << 8 |
                     Qspi->SendBuffer.BufferPtr[3]);
                 } else {
@@ -507,7 +507,7 @@ AL_S32 AlQspi_Dev_TranferData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 Se
 
     TempSendSize = SendSize - (Qspi->Configs.EnSpiCfg.AddrLength + Qspi->Configs.EnSpiCfg.InstLength) / 2;
 
-    if(QSPI_ADDR_L0 != Qspi->Configs.EnSpiCfg.AddrLength) {
+    if (QSPI_ADDR_L0 != Qspi->Configs.EnSpiCfg.AddrLength) {
         if ((0 == (TempSendSize % 4)) && (0 != TempSendSize)) {
             Qspi->Configs.DataFrameSize = QSPI_DFS_32BITS;
             Qspi->BitsPerWord = 32;
@@ -541,25 +541,25 @@ AL_S32 AlQspi_Dev_TranferData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 Se
     AlQspi_ll_SetRecvNumOfDataFrames(Qspi->BaseAddr, Temp ? Temp - 1 : 0);
     AlQspi_ll_SetDataFrameSize(Qspi->BaseAddr, Qspi->Configs.DataFrameSize);
     SendLevel = MIN((AL_U32)(Qspi->Fifolen / 2), TempSendSize / (Qspi->BitsPerWord >> 3));
-    if(SPI_STANDARD_FORMAT != Qspi->Configs.SpiFrameFormat) {
+    if (SPI_STANDARD_FORMAT != Qspi->Configs.SpiFrameFormat) {
         SendLevel += 2;
     }
     AlQspi_ll_SetTxStartFifoLevel(Qspi->BaseAddr, SendLevel ? SendLevel - 1 : 0);
 
     AlQspi_ll_Enable(Qspi->BaseAddr);
 
-    if(Qspi->Configs.SpiFrameFormat == SPI_STANDARD_FORMAT) {
+    if (Qspi->Configs.SpiFrameFormat == SPI_STANDARD_FORMAT) {
         switch (Qspi->Configs.DataFrameSize)
         {
         case QSPI_DFS_32BITS:
-            if(Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
                 AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U32 *)(Qspi->SendBuffer.BufferPtr));
             } else {
                 AL_LOG(AL_LOG_LEVEL_INFO, "Qspi not support this mode combination\r\n");
             }
             break;
         case QSPI_DFS_16BITS:
-            if(Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
                 AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U16 *)(Qspi->SendBuffer.BufferPtr));
                 AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U16 *)(Qspi->SendBuffer.BufferPtr + 2));
             } else {
@@ -568,16 +568,16 @@ AL_S32 AlQspi_Dev_TranferData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 Se
             break;
         case QSPI_DFS_8BITS:
             AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr));
-            if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
                 AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr + 1));
             }
-            if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L8) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L8) {
                 AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr + 2));
             }
-            if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L16) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L16) {
                 AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr + 3));
             }
-            if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L24) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L24) {
                 AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr + 4));
             }
             break;
@@ -590,8 +590,8 @@ AL_S32 AlQspi_Dev_TranferData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 Se
         {
         case QSPI_DFS_32BITS:
             AlQspi_ll_DataTransmit(Qspi->BaseAddr, Qspi->SendBuffer.BufferPtr[0] << 24);
-            if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
-                if(Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
+                if (Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
                     AlQspi_ll_DataTransmit(Qspi->BaseAddr, Qspi->SendBuffer.BufferPtr[1] << 8 | Qspi->SendBuffer.BufferPtr[2] << 16 |
                     Qspi->SendBuffer.BufferPtr[3] << 24);
                 } else {
@@ -602,8 +602,8 @@ AL_S32 AlQspi_Dev_TranferData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 Se
             break;
         case QSPI_DFS_16BITS:
             AlQspi_ll_DataTransmit(Qspi->BaseAddr, Qspi->SendBuffer.BufferPtr[0] << 8);
-            if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
-                if(Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
+                if (Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
                     AlQspi_ll_DataTransmit(Qspi->BaseAddr, Qspi->SendBuffer.BufferPtr[1] << 24 | Qspi->SendBuffer.BufferPtr[2] |
                     Qspi->SendBuffer.BufferPtr[3] << 8);
                 } else {
@@ -614,8 +614,8 @@ AL_S32 AlQspi_Dev_TranferData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 Se
             break;
         case QSPI_DFS_8BITS:
             AlQspi_ll_DataTransmit(Qspi->BaseAddr, Qspi->SendBuffer.BufferPtr[0]);
-            if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
-                if(Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
+                if (Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
                     AlQspi_ll_DataTransmit(Qspi->BaseAddr, Qspi->SendBuffer.BufferPtr[1] << 16 | Qspi->SendBuffer.BufferPtr[2] << 8 |
                     Qspi->SendBuffer.BufferPtr[3]);
                 } else {
@@ -702,12 +702,12 @@ AL_S32 AlQspi_Dev_DmaSendData(AL_QSPI_DevStruct *Qspi, AL_U32 SendSize)
     AlQspi_ll_SetQspiFrameFormat(Qspi->BaseAddr, Qspi->Configs.SpiFrameFormat);
     AlQspi_ll_SetTransfMode(Qspi->BaseAddr, Qspi->Configs.TransMode);
     SendLevel = MIN((AL_U32)(Qspi->Fifolen / 2), TempSendSize);
-    if(SPI_STANDARD_FORMAT != Qspi->Configs.SpiFrameFormat) {
+    if (SPI_STANDARD_FORMAT != Qspi->Configs.SpiFrameFormat) {
         SendLevel += 2;
     }
     AlQspi_ll_SetTxStartFifoLevel(Qspi->BaseAddr, SendLevel ? SendLevel - 1 : 0);
     // AlQspi_ll_SetTxStartFifoLevel(Qspi->BaseAddr, 0);
-    if(Qspi->Configs.EnSpiCfg.ClockStretch == QSPI_EnableClockStretch &&
+    if (Qspi->Configs.EnSpiCfg.ClockStretch == QSPI_EnableClockStretch &&
        Qspi->Configs.SpiFrameFormat != SPI_STANDARD_FORMAT)
     {
         AlQspi_ll_SetRecvNumOfDataFrames(Qspi->BaseAddr, TempSendSize ? TempSendSize - 1 : 0);
@@ -717,24 +717,24 @@ AL_S32 AlQspi_Dev_DmaSendData(AL_QSPI_DevStruct *Qspi, AL_U32 SendSize)
     AlQspi_ll_SetDmaTransLevel(Qspi->BaseAddr, Qspi->Fifolen / 2 + 2);
     AlQspi_ll_Enable(Qspi->BaseAddr);
 
-    if(Qspi->Configs.SpiFrameFormat == SPI_STANDARD_FORMAT) {
+    if (Qspi->Configs.SpiFrameFormat == SPI_STANDARD_FORMAT) {
         AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr));
-        if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
+        if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
             AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr + 1));
         }
-        if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L8) {
+        if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L8) {
             AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr + 2));
         }
-        if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L16) {
+        if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L16) {
             AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr + 3));
         }
-        if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L24) {
+        if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L24) {
             AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr + 4));
         }
     } else {
         AlQspi_ll_DataTransmit(Qspi->BaseAddr, Qspi->SendBuffer.BufferPtr[0]);
-        if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
-            if(Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
+        if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
                 AlQspi_ll_DataTransmit(Qspi->BaseAddr, Qspi->SendBuffer.BufferPtr[1] << 16 | Qspi->SendBuffer.BufferPtr[2] << 8 |
                 Qspi->SendBuffer.BufferPtr[3]);
             } else {
@@ -831,7 +831,7 @@ AL_S32 AlQspi_Dev_DmaTranferData(AL_QSPI_DevStruct *Qspi, AL_U32 SendSize, AL_U1
     AlQspi_ll_SetRecvNumOfDataFrames(Qspi->BaseAddr, RecvSize ? RecvSize - 1 : 0);
 
     SendLevel = MIN((AL_U32)(Qspi->Fifolen / 2), TempSendSize);
-    if(SPI_STANDARD_FORMAT != Qspi->Configs.SpiFrameFormat) {
+    if (SPI_STANDARD_FORMAT != Qspi->Configs.SpiFrameFormat) {
         SendLevel += 2;
     }
     AlQspi_ll_SetDmaTransLevel(Qspi->BaseAddr, Qspi->Fifolen / 2 + 2);
@@ -839,24 +839,24 @@ AL_S32 AlQspi_Dev_DmaTranferData(AL_QSPI_DevStruct *Qspi, AL_U32 SendSize, AL_U1
     AlQspi_ll_SetTxStartFifoLevel(Qspi->BaseAddr, SendLevel ? SendLevel - 1 : 0);
     AlQspi_ll_Enable(Qspi->BaseAddr);
 
-    if(Qspi->Configs.SpiFrameFormat == SPI_STANDARD_FORMAT) {
+    if (Qspi->Configs.SpiFrameFormat == SPI_STANDARD_FORMAT) {
         AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr));
-        if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
+        if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
             AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr + 1));
         }
-        if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L8) {
+        if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L8) {
             AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr + 2));
         }
-        if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L16) {
+        if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L16) {
             AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr + 3));
         }
-        if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L24) {
+        if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L24) {
             AlQspi_ll_DataTransmit(Qspi->BaseAddr, *(AL_U8 *)(Qspi->SendBuffer.BufferPtr + 4));
         }
     } else {
         AlQspi_ll_DataTransmit(Qspi->BaseAddr, Qspi->SendBuffer.BufferPtr[0]);
-        if(Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
-            if(Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
+        if (Qspi->Configs.EnSpiCfg.AddrLength > QSPI_ADDR_L0) {
+            if (Qspi->Configs.EnSpiCfg.AddrLength < QSPI_ADDR_L32) {
                 AlQspi_ll_DataTransmit(Qspi->BaseAddr, Qspi->SendBuffer.BufferPtr[1] << 16 | Qspi->SendBuffer.BufferPtr[2] << 8 |
                 Qspi->SendBuffer.BufferPtr[3]);
             } else {
@@ -960,9 +960,9 @@ static AL_VOID AlQspi_Dev_RecvDataHandler(AL_QSPI_DevStruct *Qspi)
 
     Length = Qspi->RecvBuffer.RequestedCnt - Qspi->RecvBuffer.HandledCnt;
 
-    if(Length) {
+    if (Length) {
         RxFifoLevel = AlQspi_ll_ReadRxFifoLevel(Qspi->BaseAddr);
-        if(!RxFifoLevel) {
+        if (!RxFifoLevel) {
             Status = AlQspi_ll_ReadRawIntrStatus(Qspi->BaseAddr);
             if (Status & QSPI_RXOIS) {
                 /* FIFO overflow on Rx */

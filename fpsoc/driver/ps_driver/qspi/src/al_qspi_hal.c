@@ -256,7 +256,7 @@ AL_S32 AlQspi_Hal_Init(AL_QSPI_HalStruct *Handle, AL_QSPI_ConfigsStruct *InitCon
     }
 
     // if (AL_QSPI_USE_DMA != InitConfig->IsUseDma) {
-        if(AL_NULL == Callback) {
+        if (AL_NULL == Callback) {
             ret = AlQspi_Dev_RegisterIntrCallBack(Handle->Dev, AlQspi_DefEventCallBack, AL_NULL);
         } else {
             ret = AlQspi_Dev_RegisterIntrCallBack(Handle->Dev, Callback, CallbackRef);
@@ -428,9 +428,9 @@ AL_S32 AlQspi_Hal_DmaStartBlockSend(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, 
         AL_QSPI_HAL_UNLOCK(Handle);
         return Ret;
     }
-// printf("n if(SendSize > TempSendSize)");
-    if(SendSize > TempSendSize) {
-        if(QspiTxDmacHandlePtr->Channel == NULL) {
+// printf("n if (SendSize > TempSendSize)");
+    if (SendSize > TempSendSize) {
+        if (QspiTxDmacHandlePtr->Channel == NULL) {
             QspiTxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_6;
             QspiTxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
             QspiTxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
@@ -532,7 +532,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockReceive(AL_QSPI_HalStruct *Handle, AL_U8 *RecvDat
         return Ret;
     }
 
-    if(QspiRxDmacHandlePtr->Channel == NULL) {
+    if (QspiRxDmacHandlePtr->Channel == NULL) {
         QspiRxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_7;
         QspiRxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
         QspiRxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
@@ -630,7 +630,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockTranfer(AL_QSPI_HalStruct *Handle, AL_U8 *SendDat
         return Ret;
     }
 
-    if((QspiTxDmacHandlePtr->Channel == NULL) && (SendSize > TempSendSize)) {
+    if ((QspiTxDmacHandlePtr->Channel == NULL) && (SendSize > TempSendSize)) {
         QspiTxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_6;
         QspiTxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
         QspiTxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
@@ -669,7 +669,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockTranfer(AL_QSPI_HalStruct *Handle, AL_U8 *SendDat
         QspiTxDmacChTrans->TransSize      = SendSize - TempSendSize;
     }
 
-    if(QspiRxDmacHandlePtr->Channel == NULL) {
+    if (QspiRxDmacHandlePtr->Channel == NULL) {
         QspiRxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_7;
         QspiRxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
         QspiRxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
@@ -714,7 +714,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockTranfer(AL_QSPI_HalStruct *Handle, AL_U8 *SendDat
         return Ret;
     }
 
-    if(SendSize > TempSendSize) {
+    if (SendSize > TempSendSize) {
         /* Set cs to start transfer */
         AlQspi_ll_SetSlvSel(Handle->Dev->BaseAddr, Handle->Dev->Configs.SlvSelEnum);
 

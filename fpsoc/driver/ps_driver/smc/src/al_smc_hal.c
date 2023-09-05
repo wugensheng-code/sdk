@@ -105,7 +105,7 @@ AL_U32 AlSmc_Hal_Init(AL_SMC_HalStruct *Handle, AL_SMC_ConfigsStruct *InitConfig
 	// AlSmc_Dev_InitCyclesAndMemWidth(Handle->Dev);
 
 	ret = ALSmc_Dev_Reset(Handle->NandInfo);
-	if(AL_OK != ret) {
+	if (AL_OK != ret) {
 		goto HAL_INIT_END;
 	}
 
@@ -119,7 +119,7 @@ AL_U32 AlSmc_Hal_Init(AL_SMC_HalStruct *Handle, AL_SMC_ConfigsStruct *InitConfig
 
 
 	ret = ALSmc_Dev_ReadParam(Handle->NandInfo);
-	if(AL_OK != ret) {
+	if (AL_OK != ret) {
 		goto HAL_INIT_END;
 	}
 
@@ -132,17 +132,17 @@ AL_U32 AlSmc_Hal_Init(AL_SMC_HalStruct *Handle, AL_SMC_ConfigsStruct *InitConfig
 
 	if (Handle->NandInfo->Size.EccNum == 1) {
 		ret = AlSmc_Dev_EccHwInit(Handle->Dev, Handle->NandInfo);
-		if(AL_OK != ret) {
+		if (AL_OK != ret) {
 			goto HAL_INIT_END;
 		}
 	} else {
 		ret = AlSmc_Dev_EccHwDisable(Handle->Dev);
-		if(AL_OK != ret) {
+		if (AL_OK != ret) {
 			goto HAL_INIT_END;
 		}
 
 		ret = AlSmc_Dev_EnableOnDieEcc(Handle->NandInfo);
-		if(AL_OK != ret) {
+		if (AL_OK != ret) {
 			goto HAL_INIT_END;
 		}
 	}
@@ -184,7 +184,7 @@ AL_U32 AlSmc_Hal_ReadPage(AL_SMC_HalStruct *Handle, AL_U64 Offset, AL_U8 *Data, 
 		// if ((Page%Handle->NandInfo->Size.PagesPerBlock)==0) {
 
 		// 	// Status = Nand_ReadSpareBytes(Page, 0, nand);
-		// 	if(Status != AL_OK)
+		// 	if (Status != AL_OK)
 		// 	{
 		// 		return Status;
 		// 	}
@@ -206,11 +206,11 @@ AL_U32 AlSmc_Hal_ReadPage(AL_SMC_HalStruct *Handle, AL_U64 Offset, AL_U8 *Data, 
 			Status = ALSmc_Dev_ReadPage(Handle->Dev, Handle->NandInfo, Page, BufPtr);
 		}
 
-		if(Status != AL_OK) {
+		if (Status != AL_OK) {
 			return Status;
 		}
 
-		if(PartialPageRead) {
+		if (PartialPageRead) {
 			memcpy(Ptr, (BufPtr + CopyOffset), NumOfBytes);
 		}
 
@@ -257,7 +257,7 @@ AL_U32 AlSmc_Hal_WritePage(AL_SMC_HalStruct *Handle, AL_U64 Offset, AL_U8 *Data,
     while(Size) {
 		// if ((Page%Handle->NandInfo->Size.PagesPerBlock)==0) {
 		// 	// Status = Nand_ReadSpareBytes(Page, 0, nand);
-		// 	if(Status != AL_OK) {
+		// 	if (Status != AL_OK) {
 		// 		return Status;
 		// 	}
 		// }
@@ -278,7 +278,7 @@ AL_U32 AlSmc_Hal_WritePage(AL_SMC_HalStruct *Handle, AL_U64 Offset, AL_U8 *Data,
 			Status = ALSmc_Dev_WritePage(Handle->Dev, Handle->NandInfo, Page, BufPtr);
 		}
 
-		if(Status != AL_OK) {
+		if (Status != AL_OK) {
 			return Status;
 		}
 

@@ -643,13 +643,11 @@ static AL_VOID AlSpi_Dev_RecvDataHandler(AL_SPI_DevStruct *Spi)
 {
     AL_U32 Length, RxFifoLevel, Status, Temp;
 
-
-
     Length = Spi->RecvBuffer.RequestedCnt - Spi->RecvBuffer.HandledCnt;
 
-    if(Length) {
+    if (Length) {
         RxFifoLevel = AlSpi_ll_ReadRxFifoLevel(Spi->BaseAddr);
-        if(!RxFifoLevel) {
+        if (!RxFifoLevel) {
             Status = AlSpi_ll_ReadRawIntrStatus(Spi->BaseAddr);
             if (Status & RXOIS) {
                 /* FIFO overflow on Rx */

@@ -129,10 +129,10 @@ static AL_VOID ALSmc_Dev_WriteData(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_
 
     /* Write Data */
     if (NAND_16BITS == NandInfo->FlashWidth) {
-        for (Index = 0;Index < Length;Index++)
+        for (Index = 0; Index < Length; Index++)
             AL_REG16_WRITE(DataPhaseAddr, Buf[Index]);
     } else {
-        for (Index = 0;Index < Length;Index++)
+        for (Index = 0; Index < Length; Index++)
             AL_REG8_WRITE(DataPhaseAddr, Buf[Index]);
     }
 }
@@ -164,10 +164,10 @@ static AL_VOID ALSmc_Dev_ReadData(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_U
 
     /* Read Data */
     if (NAND_16BITS == NandInfo->FlashWidth) {
-        for (Index = 0;Index < Length;Index++)
+        for (Index = 0; Index < Length; Index++)
             Buf[Index] = (AL_U8)AL_REG16_READ(DataPhaseAddr);
     } else {
-        for (Index = 0;Index < Length;Index++)
+        for (Index = 0; Index < Length; Index++)
             Buf[Index] = AL_REG8_READ(DataPhaseAddr);
     }
 }
@@ -200,7 +200,7 @@ static AL_VOID ALSmc_Dev_WriteBuf(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_U
             (NandInfo->Cmd.EndCmd  << NAND_END_CMD_SHIFT)       |
             (NandInfo->Cmd.EccLast << NAND_ECC_LAST_SHIFT);
     /* Write Data */
-    for (Index = 0;Index < tempLength;Index++) {
+    for (Index = 0; Index < tempLength; Index++) {
         AL_REG32_WRITE(DataPhaseAddr, tempBuff[Index]);
     }
 }
@@ -375,7 +375,7 @@ AL_U32 ALSmc_Dev_ReadParam(AL_NAND_InfoStruct *NandInfo)
     ALSmc_Dev_ReadData(NandInfo, Temp, ONFI_PARAM_LEN);
 
     Crc = ALSmc_Dev_CrcCheck(Temp);
-    if(((Crc & 0xff) != Temp[CRC16_LEN]) || (((Crc >> 8) & 0xff) != Temp[CRC16_LEN+1])){
+    if (((Crc & 0xff) != Temp[CRC16_LEN]) || (((Crc >> 8) & 0xff) != Temp[CRC16_LEN+1])){
         /* Return Error */
         while (1);
     }
@@ -524,10 +524,6 @@ AL_U8 ALSmc_Dev_EraseBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, 
     return AL_OK;
 }
 
-
-// for (Index = 0; Index < NandInfo->Size.SpareBytesPerPage; Index++) {
-//     *TempBuf = 0xff;
-// }
 /**
  * This function is write page use smc hardware ecc
  * @param   Smc is structure pointer to smc device
@@ -963,7 +959,7 @@ AL_U8 AlSmc_Dev_HwCalculateEcc(AL_SMC_DevStruct *Smc, AL_U8 *Data, AL_U8 EccData
     for(EccReg=0; EccReg < EccDataNums/3; EccReg++) {
         EccValue = AlSmc_ll_ReadEccValue(Smc->SmcBaseAddr, EccReg);
 
-        if(EccValue & (1 << SMC_ECC1_BLOCK0_ECC1_0_VALID_SHIFT)) {
+        if (EccValue & (1 << SMC_ECC1_BLOCK0_ECC1_0_VALID_SHIFT)) {
             for (Count = 0; Count < 3; Count++) {
                 *Data = EccValue & 0xFF;
                 EccValue = EccValue >> 8;
@@ -1119,7 +1115,7 @@ AL_U8 AlSmc_Dev_EnableOnDieEcc(AL_NAND_InfoStruct *NandInfo)
     AL_U8 EccGetFeature[4];
     AL_U8 EccSetFeature[4] = {0x08, 0, 0, 0};
 
-    if(NandInfo->Size.DeviceId[0] == NAND_MFR_AMD) {
+    if (NandInfo->Size.DeviceId[0] == NAND_MFR_AMD) {
         EccSetFeature[0] = 0x10;
     }
 
