@@ -128,14 +128,13 @@ static AL_VOID ALSmc_Dev_WriteData(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_
             (0            << NAND_ECC_LAST_SHIFT);
 
     /* Write Data */
-    for (Index = 0;Index < Length;Index++) {
-        if (NAND_16BITS == NandInfo->FlashWidth) {
+    if (NAND_16BITS == NandInfo->FlashWidth) {
+        for (Index = 0;Index < Length;Index++)
             AL_REG16_WRITE(DataPhaseAddr, Buf[Index]);
-        } else {
+    } else {
+        for (Index = 0;Index < Length;Index++)
             AL_REG8_WRITE(DataPhaseAddr, Buf[Index]);
-        }
     }
-
 }
 
 /**
@@ -164,14 +163,13 @@ static AL_VOID ALSmc_Dev_ReadData(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_U
             (0             << NAND_ECC_LAST_SHIFT);
 
     /* Read Data */
-    for (Index = 0;Index < Length;Index++) {
-        if (NAND_16BITS == NandInfo->FlashWidth) {
+    if (NAND_16BITS == NandInfo->FlashWidth) {
+        for (Index = 0;Index < Length;Index++)
             Buf[Index] = (AL_U8)AL_REG16_READ(DataPhaseAddr);
-        } else {
+    } else {
+        for (Index = 0;Index < Length;Index++)
             Buf[Index] = AL_REG8_READ(DataPhaseAddr);
-        }
     }
-
 }
 
 /**

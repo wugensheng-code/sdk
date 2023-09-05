@@ -161,15 +161,15 @@ HAL_INIT_END:
  * @return
  * @note    None
 */
-AL_U32 AlSmc_Hal_ReadPage(AL_SMC_HalStruct *Handle, AL_U32 Offset, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
+AL_U32 AlSmc_Hal_ReadPage(AL_SMC_HalStruct *Handle, AL_U64 Offset, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_U8 Status;
 	AL_U32 NumOfBytes, PartialBytes, CopyOffset, PartialPageRead, Page, Col;
     AL_U8 *Ptr = Data;
     AL_U8 *BufPtr = AL_NULL;
 
-    Page = (Offset / Handle->NandInfo->Size.DataBytesPerPage);
-    Col = Offset & (Handle->NandInfo->Size.DataBytesPerPage - 1);
+    Page = (AL_U32) (Offset / Handle->NandInfo->Size.DataBytesPerPage);
+    Col = (AL_U32) (Offset & (Handle->NandInfo->Size.DataBytesPerPage - 1));
 	PartialBytes = Handle->NandInfo->Size.DataBytesPerPage - Col;
 	NumOfBytes = (PartialBytes < Size) ? PartialBytes:Size;
 	CopyOffset = Handle->NandInfo->Size.DataBytesPerPage - PartialBytes;
@@ -232,7 +232,7 @@ AL_U32 AlSmc_Hal_ReadPage(AL_SMC_HalStruct *Handle, AL_U32 Offset, AL_U8 *Data, 
  * @return
  * @note    None
 */
-AL_U32 AlSmc_Hal_WritePage(AL_SMC_HalStruct *Handle, AL_U32 Offset, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
+AL_U32 AlSmc_Hal_WritePage(AL_SMC_HalStruct *Handle, AL_U64 Offset, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_U8 Status;
 	AL_U32 NumOfBytes, PartialBytes, CopyOffset, Page, Col;
@@ -248,8 +248,8 @@ AL_U32 AlSmc_Hal_WritePage(AL_SMC_HalStruct *Handle, AL_U32 Offset, AL_U8 *Data,
 
 	memset(Handle->NandInfo->SpareBuf, 0xff, Handle->NandInfo->Size.SpareBytesPerPage);
 
-    Page = (Offset / Handle->NandInfo->Size.DataBytesPerPage);
-    Col = Offset & (Handle->NandInfo->Size.DataBytesPerPage - 1);
+    Page = (AL_U32) (Offset / Handle->NandInfo->Size.DataBytesPerPage);
+    Col = (AL_U32) (Offset & (Handle->NandInfo->Size.DataBytesPerPage - 1));
 	PartialBytes = Handle->NandInfo->Size.DataBytesPerPage - Col;
 	NumOfBytes = (PartialBytes < Size) ? PartialBytes:Size;
 	CopyOffset = Handle->NandInfo->Size.DataBytesPerPage - PartialBytes;
