@@ -5,7 +5,7 @@
  */
 
 #include "al_type.h"
-#include "al_rv_core.h"
+#include "al_rv64_core.h"
 #include "al_barrier.h"
 
 
@@ -36,6 +36,3 @@ AL_VOID AlCache_DisableDCache(AL_VOID)
     ISB();
 }
 
-#define __enable_FPU()          ARCH_SYSREG_SET(CSR_MSTATUS, MSTATUS_FS)
-
-#define __disable_FPU()         ARCH_SYSREG_CLEAR(CSR_MSTATUS, MSTATUS_FS)

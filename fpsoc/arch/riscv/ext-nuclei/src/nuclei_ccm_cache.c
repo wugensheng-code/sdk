@@ -19,7 +19,7 @@
  */
 
 #include "al_type.h"
-#include "al_rv_core.h"
+#include "al_rv64_core.h"
 
 /* === Nuclei CCM Registers === */
 #define CSR_CCM_MBEGINADDR      0x7CB

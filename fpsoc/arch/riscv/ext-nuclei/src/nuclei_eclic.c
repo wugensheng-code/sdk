@@ -21,7 +21,7 @@
 #include "al_core.h"
 #include "stdio.h"
 #include "al_chip.h"
-#include "al_rv_core.h"
+#include "al_rv64_core.h"
 #include "ext_eclic.h"
 
 /* =========================================================================================================================== */

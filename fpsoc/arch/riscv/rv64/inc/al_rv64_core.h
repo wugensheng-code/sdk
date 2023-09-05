@@ -7,43 +7,43 @@
 #ifndef __AL_RV_CORE__
 #define __AL_RV_CORE__
 
-#include "al_type.h"
-#include "al_compiler.h"
-#include "al_rv_sysregs.h"
-
 #ifdef __cplusplus
  extern "C" {
 #endif
 
+#include "al_type.h"
+#include "al_compiler.h"
+#include "al_rv64_sysregs.h"
 
 #define ISA_SYSREG_READ     "csrr"
-
 #define ISA_SYSREG_WRITE    "csrw"
-
 #define ISA_SWAP            "csrrw"
-
 #define ISA_READ_SET        "csrrs"
-
 #define ISA_SET             "csrs"
-
 #define ISA_READ_CLEAR      "csrrc"
-
 #define ISA_CLEAR           "csrc"
 
-#include "al_sysops.h"
-
+#include "al_arch_sysops.h"
 
 __STATIC_FORCEINLINE void enable_irq(void)
 {
     ARCH_SYSREG_SET(CSR_MSTATUS, MSTATUS_MIE);
 }
 
-
 __STATIC_FORCEINLINE void disable_irq(void)
 {
     ARCH_SYSREG_CLEAR(CSR_MSTATUS, MSTATUS_MIE);
 }
 
+__STATIC_FORCEINLINE void enable_fpu(void)
+{
+    ARCH_SYSREG_SET(CSR_MSTATUS, MSTATUS_FS);
+}
+
+__STATIC_FORCEINLINE void disable_fpu(void)
+{
+    ARCH_SYSREG_CLEAR(CSR_MSTATUS, MSTATUS_FS);
+}
 
 __STATIC_FORCEINLINE void __WFI(void)
 {
@@ -70,7 +70,7 @@ __STATIC_FORCEINLINE void __FENCE_I(void)
         :                                                        \
         : "memory")                                              \
 
-#define __RWMB()        __FENCE(iorw,iorw)
+#define __RWMB()   __FENCE(iorw,iorw)
 
 #ifdef __cplusplus
 }

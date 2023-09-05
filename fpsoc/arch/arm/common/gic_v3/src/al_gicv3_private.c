@@ -7,7 +7,7 @@
 
 #include <assert.h>
 #include "al_aarch64_sysreg.h"
-#include <al_aarch64.h>
+#include <al_aarch64_core.h>
 #include "al_gicv3_private.h"
 #include "al_gicv3_dist.h"
 #include "al_gicv3_rdist.h"

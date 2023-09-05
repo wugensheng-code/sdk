@@ -5,9 +5,9 @@
  */
 
 #include "al_core.h"
-#include "al_rv_core.h"
+#include "al_rv64_core.h"
 #include "al_chip.h"
-#include "al_rv64_timer.h"
+#include "al_rv64_systimer.h"
 
 extern void Exception_Init(void);
 extern void ECLIC_Init(void);

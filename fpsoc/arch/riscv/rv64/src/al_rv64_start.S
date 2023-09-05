@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-#include "al_rv_sysregs.h"
+#include "al_rv64_sysregs.h"
 
 #define MAX_INTR    (130)
 /* Select instructions of different lengths depending

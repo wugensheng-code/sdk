@@ -8,7 +8,7 @@
 #include "al_gicv3_private.h"
 #include "al_gicv3_dist.h"
 #include "al_gicv3_rdist.h"
-#include "al_aarch64.h"
+#include "al_aarch64_core.h"
 
 #define GICV3_SPECIAL_START     (1020)
 #define GICV3_SPECIAL_END       (1023)

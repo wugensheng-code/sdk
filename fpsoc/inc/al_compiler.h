@@ -22,9 +22,8 @@
  * limitations under the License.
  */
 
-#ifndef __NMSIS_GCC_H__
-#define __NMSIS_GCC_H__
-
+#ifndef __AL_GCC_H__
+#define __AL_GCC_H__
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -97,57 +96,6 @@
   #define __PACKED_UNION                         union __attribute__((packed, aligned(1)))
 #endif
 
-#ifndef   __UNALIGNED_UINT16_WRITE
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wpacked"
-  #pragma GCC diagnostic ignored "-Wattributes"
-  /** \brief Packed struct for unaligned uint16_t write access */
-  __PACKED_STRUCT T_UINT16_WRITE {
-      uint16_t v;
-  };
-  #pragma GCC diagnostic pop
-  /** \brief Pointer for unaligned write of a uint16_t variable. */
-  #define __UNALIGNED_UINT16_WRITE(addr, val)    (void)((((struct T_UINT16_WRITE *)(void *)(addr))->v) = (val))
-#endif
-
-#ifndef   __UNALIGNED_UINT16_READ
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wpacked"
-  #pragma GCC diagnostic ignored "-Wattributes"
-  /** \brief Packed struct for unaligned uint16_t read access */
-  __PACKED_STRUCT T_UINT16_READ {
-      uint16_t v;
-  };
-  #pragma GCC diagnostic pop
-  /** \brief Pointer for unaligned read of a uint16_t variable. */
-  #define __UNALIGNED_UINT16_READ(addr)          (((const struct T_UINT16_READ *)(const void *)(addr))->v)
-#endif
-
-#ifndef   __UNALIGNED_UINT32_WRITE
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wpacked"
-  #pragma GCC diagnostic ignored "-Wattributes"
-  /** \brief Packed struct for unaligned uint32_t write access */
-  __PACKED_STRUCT T_UINT32_WRITE {
-      uint32_t v;
-  };
-  #pragma GCC diagnostic pop
-  /** \brief Pointer for unaligned write of a uint32_t variable. */
-  #define __UNALIGNED_UINT32_WRITE(addr, val)    (void)((((struct T_UINT32_WRITE *)(void *)(addr))->v) = (val))
-#endif
-
-#ifndef   __UNALIGNED_UINT32_READ
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wpacked"
-  #pragma GCC diagnostic ignored "-Wattributes"
-  /** \brief Packed struct for unaligned uint32_t read access */
-  __PACKED_STRUCT T_UINT32_READ {
-      uint32_t v;
-  };
-  #pragma GCC diagnostic pop
-  /** \brief Pointer for unaligned read of a uint32_t variable. */
-  #define __UNALIGNED_UINT32_READ(addr)          (((const struct T_UINT32_READ *)(const void *)(addr))->v)
-#endif
 
 /** \brief Minimum `x` bytes alignment for a variable. */
 #ifndef   __ALIGNED

@@ -26,7 +26,7 @@
  *
  ******************************************************************************/
 
-#include "al_rv_sysregs.h"
+#include "al_rv64_sysregs.h"
 
 .global riscv_vendor_init
 .type riscv_vendor_init, @function

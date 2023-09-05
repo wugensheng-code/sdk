@@ -4,11 +4,16 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef AL_AARCH64_ARCH_H
-#define AL_AARCH64_ARCH_H
+#ifndef AL_AARCH64_CORE_H
+#define AL_AARCH64_CORE_H
+
+#ifdef __cplusplus
+ extern "C" {
+#endif
 
 #include "al_aarch64_sysreg.h"
-#include "al_core.h"
+#include "al_compiler.h"
+#include "al_barrier.h"
 
 #define icc_asgi1r      S3_0_C12_C11_6
 #define icc_sgi1r       S3_0_C12_C11_5
@@ -35,7 +40,7 @@
 #define ISA_SYSREG_WRITE_CONST    ISA_SYSREG_WRITE
 
 
-#include "al_sysops.h"
+#include "al_arch_sysops.h"
 
 __STATIC_FORCEINLINE void enable_irq(void)
 {
@@ -119,5 +124,8 @@ __STATIC_FORCEINLINE void disable_debug_exceptions(void)
     ISB();
 }
 
+#ifdef __cplusplus
+}
+#endif
+#endif
 
-#endif /* AL_AARCH64_ARCH_H */

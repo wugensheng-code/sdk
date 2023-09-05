@@ -8,7 +8,7 @@
  * 2020/03/26     Huaqi        First Nuclei RISC-V porting implementation
  */
 
-#include "al_rv_sysregs.h"
+#include "al_rv64_sysregs.h"
 
 #ifndef __riscv_32e
 #define RT_SAVED_REGNUM         30

@@ -12,7 +12,7 @@
 #ifndef __BOARD__
 #define __BOARD__
 
-#include "al_rv_core.h"
+#include "al_rv64_core.h"
 #include "al_hal.h"
 #include "ext_eclic.h"
 #include "al_cli.h"

@@ -3,7 +3,6 @@
 
 extern AL_U64 get_MTimerOutValue(AL_U64 count);
 extern AL_U64 AlSys_GetTimerTickCount(void);
-extern AL_U64 AlSys_GetTimerFreq();
 
 uint32_t Mtimer_Delay(AL_U64 Usec)
 {

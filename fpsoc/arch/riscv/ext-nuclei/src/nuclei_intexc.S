@@ -26,7 +26,7 @@
  *
  ******************************************************************************/
 
-#include "al_rv_sysregs.h"
+#include "al_rv64_sysregs.h"
 
 /**
  * \brief  Global interrupt disabled
