@@ -1,8 +1,6 @@
 /*
  * Copyright (c) 2019 Nuclei Limited. All rights reserved.
  *
- * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
- *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the License); you may
@@ -17,6 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #ifndef __CORE_FEATURE_ECLIC__
 #define __CORE_FEATURE_ECLIC__
 /*!
