@@ -488,7 +488,7 @@ AL_S32 AlQspi_Dev_RecvData(AL_QSPI_DevStruct *Qspi, AL_U8 *ReceiveBuf, AL_U16 Re
 */
 AL_S32 AlQspi_Dev_TranferData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 SendSize, AL_U8 *ReceiveBuf, AL_U16 ReceiveSize)
 {
-    AL_U32 ReceiveLevel, SendLevel, SendValue = 0xffffffff, Temp, TempSendSize;
+    AL_U32 SendLevel, SendValue = 0xffffffff, Temp, TempSendSize;
 
     if (Qspi == AL_NULL || SendBuf == AL_NULL || ReceiveBuf == AL_NULL || SendSize == 0 || ReceiveSize == 0) {
         return AL_QSPI_ERR_ILLEGAL_PARAM;

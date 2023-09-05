@@ -57,7 +57,7 @@ AL_S8 read_file(const char* file_path, AL_VOID* dst_addr, AL_S64 rd_len) {
 		return -1;
 	}
 	if (rd_len != br) {
-		printf("ERROR: Fail to read expected length from file %s, expected length: %lu, actual length: %lu\n", file_path, rd_len, (AL_U64)br);
+		printf("ERROR: Fail to read expected length from file %s, expected length: %lu, actual length: %lu\n", file_path, (AL_UINTPTR)rd_len, (AL_UINTPTR)br);
 		return -1;
 	}
 

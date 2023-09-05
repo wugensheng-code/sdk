@@ -457,7 +457,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockSend(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, 
             QspiTxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
             QspiTxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
 // printf("n AlDmacAhb_Hal_Init");
-            Ret = AlDmacAhb_Hal_Init(QspiTxDmacHandlePtr, QspiTxDmacChConfigPtr, AL_NULL, DmacDevId);
+            Ret = AlDmacAhb_Hal_Init(QspiTxDmacHandlePtr, DmacDevId, QspiTxDmacChConfigPtr, AL_NULL);
             if (Ret != AL_OK) {
                 AL_LOG(AL_LOG_LEVEL_ERROR, "QspiTx Dmacahb hal Init error:0x%x\r\n", Ret);
                 AL_QSPI_HAL_UNLOCK(Handle);
@@ -557,7 +557,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockReceive(AL_QSPI_HalStruct *Handle, AL_U8 *RecvDat
         QspiRxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
         QspiRxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
 
-        Ret = AlDmacAhb_Hal_Init(QspiRxDmacHandlePtr, QspiRxDmacChConfigPtr, AL_NULL, DmacDevId);
+        Ret = AlDmacAhb_Hal_Init(QspiRxDmacHandlePtr, DmacDevId, QspiRxDmacChConfigPtr, AL_NULL);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "QspiRx Dmacahb hal Init error:0x%x\r\n", Ret);
             AL_QSPI_HAL_UNLOCK(Handle);
@@ -656,7 +656,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockTranfer(AL_QSPI_HalStruct *Handle, AL_U8 *SendDat
         QspiTxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
         QspiTxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
 
-        Ret = AlDmacAhb_Hal_Init(QspiTxDmacHandlePtr, QspiTxDmacChConfigPtr, AL_NULL, DmacDevId);
+        Ret = AlDmacAhb_Hal_Init(QspiTxDmacHandlePtr, DmacDevId, QspiTxDmacChConfigPtr, AL_NULL);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "QspiTx Dmacahb hal Init error:0x%x\r\n", Ret);
             AL_QSPI_HAL_UNLOCK(Handle);
@@ -694,7 +694,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockTranfer(AL_QSPI_HalStruct *Handle, AL_U8 *SendDat
         QspiRxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
         QspiRxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
 
-        Ret = AlDmacAhb_Hal_Init(QspiRxDmacHandlePtr, QspiRxDmacChConfigPtr, AL_NULL, DmacDevId);
+        Ret = AlDmacAhb_Hal_Init(QspiRxDmacHandlePtr, DmacDevId, QspiRxDmacChConfigPtr, AL_NULL);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "QspiRx Dmacahb hal Init error:0x%x\r\n", Ret);
             AL_QSPI_HAL_UNLOCK(Handle);

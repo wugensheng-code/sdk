@@ -26,13 +26,13 @@ extern "C" {
 /******************************* Exported Typedef ************************************/
 #define MIN3(x, y, z) MIN((typeof(x))MIN(x, y), z)
 
-// #define QSPI_ENDIAN_SWAP16(A) ((((AL_U32)(A) & 0x0000ff00) >> 8) | \
-//                               (((AL_U32)(A) & 0x000000ff) << 8))
+/* #define QSPI_ENDIAN_SWAP16(A) ((((AL_U32)(A) & 0x0000ff00) >> 8) | \
+                               (((AL_U32)(A) & 0x000000ff) << 8))
 
-// #define QSPI_ENDIAN_SWAP32(A) ((((AL_U32)(A) & 0xff000000) >> 24) | \
-//                               (((AL_U32)(A) & 0x00ff0000) >> 8 ) | \
-//                               (((AL_U32)(A) & 0x0000ff00) << 8 ) | \
-//                               (((AL_U32)(A) & 0x000000ff) << 24))
+ #define QSPI_ENDIAN_SWAP32(A) ((((AL_U32)(A) & 0xff000000) >> 24) | \
+                               (((AL_U32)(A) & 0x00ff0000) >> 8 ) | \
+                               (((AL_U32)(A) & 0x0000ff00) << 8 ) | \
+                               (((AL_U32)(A) & 0x000000ff) << 24)) */
 
 typedef struct {
     AL_U8                     *BufferPtr;

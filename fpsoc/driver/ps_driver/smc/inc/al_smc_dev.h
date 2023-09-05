@@ -227,7 +227,28 @@ extern "C" {
         (0xE0 << SMC_ECC1_MEMCMD1_NAND1_RD_END_COL_CHANGE_SHIFT) | \
         (0x1 << SMC_ECC1_MEMCMD1_NAND1_RD_END_COL_CHANGE_V_SHIFT))
 
+enum SMC_ERROR_CODE{
+	SmcSuccess = 0,				/* 返回成功 */
+	SmcResetErr,				/* 复位失败错误 */ 
+	SmcParaBusyStatusErr,		/* Read parameter data happen status reg error */
+	SmcCrcErr,					/* Parameter page三次crc都失败出现的错误 */
+	SmcParameterOver,			/* 读Parameter Page发现读取出来的数据，表示的page datasize大小远远超出了正常大小 */
+	SmcSamsungParamOver,
+	SmcHwInitSizeErr,			/* Smc ecc最多能支持的page size的大小为2048.当使用Smc的ecc功能并且nandflash大小超过时出现此错误。*/
+	SmcHwInitEccBusyErr,
+	SmcHwDisEccBusyErr,
+	SmcFeatBusyErr,
+	SmcWriteEccFeatErr,			/* 使能On Die Ecc但是使能失败产生的错误 */
+	SmcSpareStatusErr,			/* Read spare data happen status reg error */
+	SmcBadBlock,				/* 检测到了坏块 */
+	SmcReadCmdTimeOutErr,
+	SmcHwReadSizeOver,
+	SmcCalEccBusyErr,
+	SmcEccDataInvalidErr,			/* 读取Smc ecc数据，但是ecc数据被标记为无效 */
+	SmcTwoBitsErr,
+	SmcMultipleBitsErr,
 
+};
 
 typedef struct {
     AL_U8                     *BufferPtr;

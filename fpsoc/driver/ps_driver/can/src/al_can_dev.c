@@ -92,7 +92,7 @@ static AL_U32 AlCan_Dev_Dlc2Len(AL_CAN_DataLenEnum Dlc)
 */
 static AL_U32 AlCan_Dev_Dlc2LenInByte(AL_CAN_DataLenEnum Dlc)
 {
-    return AL_CAN_DataLenInByteArray[Dlc];
+    return (AL_U32) AL_CAN_DataLenInByteArray[Dlc];
 }
 
 /**
@@ -671,7 +671,6 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
 {
     AL_U32 Id, Ctrl;
     AL_U32 DataWordSize;
-    AL_U32 i;
 
     AL_ASSERT((Dev != AL_NULL) & (Frame != AL_NULL), AL_CAN_ERR_NULL_PTR);
     AL_ASSERT(Frame->DataLen < AL_CAN_LEN_MAX, AL_CAN_ERR_ILLEGAL_PARAM);
@@ -768,7 +767,6 @@ AL_S32 AlCan_Dev_DecodeFrame(AL_U32 *BuffAddr, AL_CAN_FrameStruct *Frame)
 */
 AL_S32 AlCan_Dev_RecvFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
 {
-    AL_U32 RxBuf;
     AL_CAN_FrameCtrlUnion Ctrl;
     AL_U32 DataWordLen;
 

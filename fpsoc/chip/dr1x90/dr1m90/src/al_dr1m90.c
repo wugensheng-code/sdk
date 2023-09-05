@@ -9,6 +9,8 @@
 #include "al_intr.h"
 #include "al_systimer.h"
 
+extern void AlGic_Init(void);
+
 AL_VOID AlChip_Dr1m90Init(AL_VOID)
 {
 	#if (defined SUPPORT_NONSECURE || defined SWITCH_TO_EL0_FROM_EL3)
@@ -21,4 +23,5 @@ AL_VOID AlChip_Dr1m90Init(AL_VOID)
     #ifndef SWITCH_TO_EL0_FROM_EL3
         AlSys_StartTimer();
     #endif
+
 }

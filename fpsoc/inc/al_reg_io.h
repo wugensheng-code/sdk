@@ -32,7 +32,6 @@ extern "C" {
 #define AL_REG32_GET_BIT(reg_addr, shift)          (AL_BOOL)(((AL_REG32_READ(reg_addr)) & BIT(shift)) >> (shift))
 #define AL_REG64_GET_BIT(reg_addr, shift)          (AL_BOOL)(((AL_REG64_READ(reg_addr)) & BIT(shift)) >> (shift))
 
-
 #define AL_REG16_SET_BITS(reg_addr, shift, size, value)  do {                                             \
     AL_REG16_WRITE(reg_addr, (AL_REG16_READ(reg_addr)) & (~BITS_16(shift, size)) | ((value) << (shift))); \
 } while (0)

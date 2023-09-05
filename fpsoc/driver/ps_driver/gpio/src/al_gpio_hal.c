@@ -20,9 +20,6 @@ static AL_GPIO_DevStruct AL_GPIO_DevInstance[AL_GPIO_NUM_INSTANCE];
  */
 static AL_VOID AlGpio_Hal_DefEventCallBack(AL_GPIO_EventStruct GpioEvent, AL_VOID *CallbackRef)
 {
-    AL_GPIO_HalStruct *Handle = (AL_GPIO_HalStruct *)CallbackRef;
-    AL_S32 Ret = AL_OK;
-
     if(GpioEvent.Events == AL_GPIO_Event)
     {
         AL_LOG(AL_LOG_LEVEL_INFO, "Get AL_GPIO_INTR \r\n");
@@ -87,7 +84,6 @@ AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct *Handle, AL_U32 DevId, AL_GPIO_EventCal
  */
 AL_S32 AlGpio_Hal_WritePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U32 Data)
 {
-    AL_S32 Ret = AL_OK;
     if (Handle == AL_NULL) {
         return AL_GPIO_ERR_ILLEGAL_PARAM;
     }
@@ -110,7 +106,7 @@ AL_S32 AlGpio_Hal_OutputReadPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
         return AL_GPIO_ERR_ILLEGAL_PARAM;
     }
 
-    AlGpio_Dev_OutputReadPin(Handle->Dev, Pin);
+    return AlGpio_Dev_OutputReadPin(Handle->Dev, Pin);
 }
 
 /**
@@ -125,7 +121,7 @@ AL_S32 AlGpio_Hal_InputReadPin(AL_GPIO_HalStruct *Handle, AL_U8 Pin)
         return AL_GPIO_ERR_ILLEGAL_PARAM;
     }
     AlGpio_Dev_SetDirectionPin(Handle->Dev, Pin, GPIO_INPUT);
-    AlGpio_Dev_InputReadPin(Handle->Dev, Pin);
+    return AlGpio_Dev_InputReadPin(Handle->Dev, Pin);
 }
 
 /**

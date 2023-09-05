@@ -287,8 +287,9 @@ AL_U32 AlSmc_Hal_WritePage(AL_SMC_HalStruct *Handle, AL_U32 Offset, AL_U8 *Data,
 		Page++;
 		NumOfBytes = (Size > Handle->NandInfo->Size.DataBytesPerPage) ? Handle->NandInfo->Size.DataBytesPerPage : Size;
 		CopyOffset = 0;
-	}
 
+	}
+	return AL_OK;
 }
 
 /**

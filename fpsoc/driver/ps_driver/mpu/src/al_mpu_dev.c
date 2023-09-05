@@ -259,7 +259,6 @@ AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
 {
     AL_S32 RetValue;
     AL_U8 RegionNumber;
-    AL_REG MpuBaseAddr;
     AL_U8 RegionCount;
     AL_U8 ConfigCount = 0;
 
@@ -268,7 +267,6 @@ AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
     }
 
     Mpu->HwConfig = *HwConfig;
-    MpuBaseAddr   = Mpu->HwConfig.BaseAddress;
 
     AlMpu_Dev_MpuDisable(Mpu);
 
@@ -312,16 +310,11 @@ AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
 AL_S32 AlMpu_Dev_ConfigRegion(AL_MPU_DevStruct *Mpu, AL_MPU_RegionConfigStruct *RegionConfig)
 {
     AL_S32 RetValue;
-    AL_U32 DevId;
-    AL_REG MpuBaseAddr;
     AL_U8 RegionNumber;
 
     if (Mpu == AL_NULL) {
         return AL_MPU_ERR_ILLEGAL_PARAM;
     }
-
-    DevId = Mpu->HwConfig.DeviceId;
-    MpuBaseAddr = (AL_REG)(Mpu->HwConfig.BaseAddress);
 
     /* Get a available region */
     if ((RegionNumber = AlMpu_Dev_GetAvailableRegionByDevId(Mpu->HwConfig.DeviceId)) == AL_MPU_INVALID_REGION_NUMBER) {

@@ -346,7 +346,7 @@ static AL_U32 ALSmc_Dev_CrcCheck(AL_U8 *Buf)
 */
 AL_U32 ALSmc_Dev_ReadParam(AL_NAND_InfoStruct *NandInfo)
 {
-    AL_U8 Temp[ONFI_PARAM_LEN], Index, Status;
+    AL_U8 Temp[ONFI_PARAM_LEN], Status;
     AL_U32 Crc;
     AL_REG CmdPhaseAddr;
 
@@ -543,7 +543,6 @@ AL_U8 ALSmc_Dev_HwEccWritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandIn
 {
     AL_U8 Status, EccDataNums, Index;
     AL_U32 *DataOffsetPtr;
-    AL_U8 *TempBuf = Buf;
 
     NandInfo->Cmd.StartCmd = ONFI_CMD_PROGRAM_PAGE1;
     NandInfo->Cmd.EndCmd = ONFI_CMD_PROGRAM_PAGE2;
@@ -715,7 +714,7 @@ AL_U8 ALSmc_Dev_HwEccReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInf
 */
 AL_U8 ALSmc_Dev_WritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf)
 {
-    AL_U8 Status, Index;
+    AL_U8 Status;
 
     NandInfo->Cmd.StartCmd = ONFI_CMD_PROGRAM_PAGE1;
     NandInfo->Cmd.EndCmd = ONFI_CMD_PROGRAM_PAGE2;
@@ -762,7 +761,7 @@ AL_U8 ALSmc_Dev_WritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, A
 */
 AL_U8 ALSmc_Dev_ReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf)
 {
-    AL_U8 Status, Index;
+    AL_U8 Status;
     AL_REG CmdPhaseAddr;
 
     NandInfo->Cmd.StartCmd = ONFI_CMD_READ_PAGE1;
@@ -819,7 +818,7 @@ AL_U8 ALSmc_Dev_ReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL
 */
 AL_U8 ALSmc_Dev_WriteSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page)
 {
-    AL_U8 Status, Index;
+    AL_U8 Status;
 
     if (1 == NandInfo->Size.EccNum) {
         AlSmc_Dev_EccHwDisable(Smc);
@@ -1030,8 +1029,7 @@ AL_U8 AlSmc_Dev_HwCorrectEcc(AL_U8 *eccCode, AL_U8 *eccCalc, AL_U8 *buf)
     }
 
     /* Multiple bits error */
-    // return SmcMultipleBitsErr;
-
+    return SmcMultipleBitsErr;
 }
 
 /**

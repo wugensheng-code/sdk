@@ -346,7 +346,7 @@ AL_S32 AlSpi_Dev_RecvData(AL_SPI_DevStruct *Spi, AL_U8 *ReceiveBuf, AL_U16 Recei
 */
 AL_S32 AlSpi_Dev_TranferData(AL_SPI_DevStruct *Spi, AL_U8 *SendBuf, AL_U32 SendSize, AL_U8 *ReceiveBuf, AL_U16 ReceiveSize)
 {
-    AL_U32 ReceiveLevel, SendLevel, SendValue = 0xffffffff, Temp;
+    AL_U32 SendLevel, SendValue = 0xffffffff, Temp;
 
     if (Spi == AL_NULL || SendBuf == AL_NULL || ReceiveBuf == AL_NULL || SendSize == 0 || ReceiveSize == 0) {
         return AL_SPI_ERR_ILLEGAL_PARAM;

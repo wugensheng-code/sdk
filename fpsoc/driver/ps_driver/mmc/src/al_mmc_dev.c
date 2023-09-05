@@ -1914,7 +1914,6 @@ static AL_S32 AlMmc_Dev_TransferNoDma(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 
     AL_U32 Timeout = AL_MMC_CHK_TOUT_XFER_NO_DMA;
     AL_U8 *MemAddr = Buf;
     AL_BOOL Done = AL_FALSE;
-    AL_U8 DatDir;
     AL_U32 Cnt = 0;
 
     TmpReg.Reg = AlMmc_ll_ReadCmd_XferMode(Dev->HwConfig.BaseAddress);

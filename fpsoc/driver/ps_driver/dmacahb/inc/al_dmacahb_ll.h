@@ -140,7 +140,7 @@ typedef enum
 
 static inline AL_BOOL AlDmacAhb_ll_FetchLock(AL_REG LockAddr)
 {
-    return AL_REG32_GET_BIT(LockAddr, DMAC_AHB_LOCK_ADDR_SHIFT);
+    return (AL_BOOL)AL_REG32_GET_BIT(LockAddr, DMAC_AHB_LOCK_ADDR_SHIFT);
 }
 
 static inline AL_VOID AlDmacAhb_ll_ReleaseLock(AL_REG LockAddr)
@@ -153,7 +153,7 @@ static inline AL_U32 AlDmacAhb_ll_GetChannelState(AL_REG ChStateAddr)
     return AL_REG32_READ(ChStateAddr);
 }
 
-static inline AL_U32 AlDmacAhb_ll_SetChannelState(AL_REG ChStateAddr, AL_U32 Value)
+static inline AL_VOID AlDmacAhb_ll_SetChannelState(AL_REG ChStateAddr, AL_U32 Value)
 {
     AL_REG32_WRITE(ChStateAddr, Value);
 }

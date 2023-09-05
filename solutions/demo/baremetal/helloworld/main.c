@@ -11,9 +11,9 @@
 #include <stdlib.h>
 
 
-AL_VOID main()
+AL_S32 main()
 {
-    AL_U8 *str = "Hello World From Anlogic!";
+    const AL_CHAR *str = "Hello World From Anlogic!";
     AL_U32 Size = 0x1;
 
     printf("str = %s \r\n", str);

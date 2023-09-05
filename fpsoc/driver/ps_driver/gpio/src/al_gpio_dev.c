@@ -63,12 +63,6 @@ AL_S32 AlGpio_Dev_Init(AL_GPIO_DevStruct *Gpio, AL_GPIO_HwConfigStruct *HwConfig
  */
 AL_VOID AlGpio_Dev_GetBankPin(AL_U32 PinNumber, AL_U32 *BankNumber, AL_U32 *PinNumberInBank)
 {
-    AL_U32 AlGpioPinTable[GPIO_MAX_BANKS] = {0};
-    AlGpioPinTable[AL_GPIO_BANK0] = MAX_PIN_NUMBER_IN_BANK_0;
-    AlGpioPinTable[AL_GPIO_BANK1] = MAX_PIN_NUMBER_IN_BANK_1;
-    AlGpioPinTable[AL_GPIO_BANK2] = MAX_PIN_NUMBER_IN_BANK_2;
-    AlGpioPinTable[AL_GPIO_BANK3] = MAX_PIN_NUMBER_IN_BANK_3;
-
     if(PinNumber >= 0 && PinNumber <= MAX_PIN_NUMBER_IN_BANK_0) {
         *BankNumber = AL_GPIO_BANK0;
         *PinNumberInBank = PinNumber;
@@ -754,8 +748,6 @@ AL_VOID AlGpio_Dev_IntrHandler(void *Instance)
     AL_U32 Bank = 0;
     AL_U32 IntrStatus = 0;
     AL_U32 IntrEnable = 0;
-    AL_U32 IntrReg = 0;
-    AL_U32 PinNumber = 0;
     AL_GPIO_DevStruct *Gpio = (AL_GPIO_DevStruct *)Instance;
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Enter handler!\r\n");

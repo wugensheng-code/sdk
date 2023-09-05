@@ -275,7 +275,7 @@ static inline AL_VOID AlIic_ll_SetTxFifoThr(AL_REG BaseAddr, AL_U8 FifoThrLevel)
 
 static inline AL_VOID AlIic_ll_GetTxFifoThr(AL_REG BaseAddr, AL_U8 FifoThrLevel)
 {
-    AL_REG32_GET_BITS(BaseAddr + I2C__IC_TX_TL__OFFSET, I2C__IC_TX_TL__TX_TL__SHIFT,
+    (AL_VOID)AL_REG32_GET_BITS(BaseAddr + I2C__IC_TX_TL__OFFSET, I2C__IC_TX_TL__TX_TL__SHIFT,
                       I2C__IC_TX_TL__TX_TL__SIZE);
 }
 
@@ -321,7 +321,7 @@ static inline AL_BOOL AlIic_ll_IsTxFifoNotFull(AL_REG BaseAddr)
 
 static inline AL_BOOL AlIic_ll_IsRxFifoNotEmpty(AL_REG BaseAddr)
 {
-    return AL_REG32_GET_BIT(BaseAddr + I2C__IC_STATUS__OFFSET, I2C__IC_STATUS__RFNE__SHIFT);
+    return (AL_BOOL)AL_REG32_GET_BIT(BaseAddr + I2C__IC_STATUS__OFFSET, I2C__IC_STATUS__RFNE__SHIFT);
 }
 
 static inline AL_BOOL AlIic_ll_IsSdaStuckNotRecovery(AL_REG BaseAddr)
@@ -329,59 +329,59 @@ static inline AL_BOOL AlIic_ll_IsSdaStuckNotRecovery(AL_REG BaseAddr)
     return AL_REG32_GET_BIT(BaseAddr + I2C__IC_STATUS__OFFSET, I2C__IC_STATUS__SDA_STUCK_NOT_RECOVERED__SHIFT);
 }
 
-static inline AL_VOID AlIic_ll_ClrRxUnder(AL_REG BaseAddr)
+static inline AL_BOOL AlIic_ll_ClrRxUnder(AL_REG BaseAddr)
 {
-    AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_RX_UNDER__OFFSET, I2C__IC_CLR_RX_UNDER__CLR_RX_UNDER__SHIFT);
+    return (AL_BOOL)AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_RX_UNDER__OFFSET, I2C__IC_CLR_RX_UNDER__CLR_RX_UNDER__SHIFT);
 }
 
-static inline AL_VOID AlIic_ll_ClrRxOver(AL_REG BaseAddr)
+static inline AL_U32 AlIic_ll_ClrRxOver(AL_REG BaseAddr)
 {
-    AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_RX_OVER__OFFSET, I2C__IC_CLR_RX_OVER__CLR_RX_OVER__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_RX_OVER__OFFSET, I2C__IC_CLR_RX_OVER__CLR_RX_OVER__SHIFT);
 }
 
-static inline AL_VOID AlIic_ll_ClrTxOver(AL_REG BaseAddr)
+static inline AL_U32 AlIic_ll_ClrTxOver(AL_REG BaseAddr)
 {
-    AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_TX_OVER__OFFSET, I2C__IC_CLR_TX_OVER__CLR_TX_OVER__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_TX_OVER__OFFSET, I2C__IC_CLR_TX_OVER__CLR_TX_OVER__SHIFT);
 }
 
-static inline AL_VOID AlIic_ll_ClrRdReq(AL_REG BaseAddr)
+static inline AL_U32 AlIic_ll_ClrRdReq(AL_REG BaseAddr)
 {
-    AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_RD_REQ__OFFSET, I2C__IC_CLR_RD_REQ__CLR_RD_REQ__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_RD_REQ__OFFSET, I2C__IC_CLR_RD_REQ__CLR_RD_REQ__SHIFT);
 }
 
-static inline AL_VOID AlIic_ll_ClrTxAbrt(AL_REG BaseAddr)
+static inline AL_U32 AlIic_ll_ClrTxAbrt(AL_REG BaseAddr)
 {
-    AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_TX_ABRT__OFFSET, I2C__IC_CLR_TX_ABRT__CLR_TX_ABRT__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_TX_ABRT__OFFSET, I2C__IC_CLR_TX_ABRT__CLR_TX_ABRT__SHIFT);
 }
 
-static inline AL_VOID AlIic_ll_ClrRxDone(AL_REG BaseAddr)
+static inline AL_U32 AlIic_ll_ClrRxDone(AL_REG BaseAddr)
 {
-    AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_RX_DONE__OFFSET, I2C__IC_CLR_RX_DONE__CLR_RX_DONE__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_RX_DONE__OFFSET, I2C__IC_CLR_RX_DONE__CLR_RX_DONE__SHIFT);
 }
 
-static inline AL_VOID AlIic_ll_ClrActivity(AL_REG BaseAddr)
+static inline AL_U32 AlIic_ll_ClrActivity(AL_REG BaseAddr)
 {
-    AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_ACTIVITY__OFFSET, I2C__IC_CLR_ACTIVITY__CLR_ACTIVITY__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_ACTIVITY__OFFSET, I2C__IC_CLR_ACTIVITY__CLR_ACTIVITY__SHIFT);
 }
 
-static inline AL_VOID AlIic_ll_ClrStopDet(AL_REG BaseAddr)
+static inline AL_U32 AlIic_ll_ClrStopDet(AL_REG BaseAddr)
 {
-    AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_STOP_DET__OFFSET, I2C__IC_CLR_STOP_DET__CLR_STOP_DET__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_STOP_DET__OFFSET, I2C__IC_CLR_STOP_DET__CLR_STOP_DET__SHIFT);
 }
 
-static inline AL_VOID AlIic_ll_ClrStartDet(AL_REG BaseAddr)
+static inline AL_U32 AlIic_ll_ClrStartDet(AL_REG BaseAddr)
 {
-    AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_START_DET__OFFSET, I2C__IC_CLR_START_DET__CLR_START_DET__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_START_DET__OFFSET, I2C__IC_CLR_START_DET__CLR_START_DET__SHIFT);
 }
 
-static inline AL_VOID AlIic_ll_ClrGenCall(AL_REG BaseAddr)
+static inline AL_U32 AlIic_ll_ClrGenCall(AL_REG BaseAddr)
 {
-    AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_GEN_CALL__OFFSET, I2C__IC_CLR_GEN_CALL__CLR_GEN_CALL__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_GEN_CALL__OFFSET, I2C__IC_CLR_GEN_CALL__CLR_GEN_CALL__SHIFT);
 }
 
-static inline AL_VOID AlIic_ll_ClrSclStuckDet(AL_REG BaseAddr)
+static inline AL_U32 AlIic_ll_ClrSclStuckDet(AL_REG BaseAddr)
 {
-    AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_SCL_STUCK_DET__OFFSET, I2C__IC_CLR_SCL_STUCK_DET__CLR_SCL_STUCK_DET__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + I2C__IC_CLR_SCL_STUCK_DET__OFFSET, I2C__IC_CLR_SCL_STUCK_DET__CLR_SCL_STUCK_DET__SHIFT);
 }
 
 static inline AL_IIC_AbrtSrcEnum AlIic_ll_GetAbrtSrc(AL_REG BaseAddr)

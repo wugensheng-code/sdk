@@ -207,8 +207,6 @@ static inline AL_VOID AlIic_Dev_MasterSetTar(AL_IIC_DevStruct *Iic, AL_U16 Slave
 
 AL_S32 AlIic_Dev_MasterSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *SendBuf, AL_U32 SendSize)
 {
-    AL_U32 DataCmd;
-    AL_U8 Data;
     AL_REG IicBaseAddr;
 
     if (Iic == AL_NULL || (Iic->Configs.Mode != AL_IIC_MODE_MASTER) ||
@@ -457,8 +455,6 @@ AL_S32 AlIic_Dev_MasterRecvDataPolling(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, 
 
 AL_S32 AlIic_Dev_SlaveSendData(AL_IIC_DevStruct *Iic, AL_U8 *SendBuf, AL_U32 SendSize)
 {
-    AL_U32 DataCmd;
-    AL_U8 Data;
     AL_REG IicBaseAddr;
 
     if (Iic == AL_NULL || (Iic->Configs.Mode != AL_IIC_MODE_SLAVE) ||
@@ -516,8 +512,6 @@ AL_VOID AlIic_Dev_StopSlaveSend(AL_IIC_DevStruct *Iic)
 
 AL_S32 AlIic_Dev_SlaveRecvData(AL_IIC_DevStruct *Iic, AL_U8 *RecvBuf, AL_U32 RecvSize)
 {
-    AL_U32 DataCmd;
-    AL_U8 Data;
     AL_REG IicBaseAddr;
     AL_U8 RxFifoThrLevel;
 
@@ -652,9 +646,6 @@ static AL_VOID AlIic_Dev_MasterRecvDataHandler(AL_IIC_DevStruct *Iic)
 static AL_VOID AlIic_Dev_MasterRecvDataIssueReadCmd(AL_IIC_DevStruct *Iic)
 {
     AL_U16 Cmd = 0;
-    AL_U8 Data;
-    AL_U32 RxRemainCnt;
-    AL_U8 RxFifoThrLevel;
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
 
     while ((AlIic_ll_IsTxFifoNotFull(IicBaseAddr) == AL_TRUE) &&

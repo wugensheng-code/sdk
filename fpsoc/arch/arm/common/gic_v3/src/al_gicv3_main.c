@@ -61,7 +61,7 @@ AL_VOID AlGicv3_DriverInit(const AL_GICV3_DrvDataStruct *DrvData)
  ******************************************************************************/
 AL_VOID AlGicv3_DistInit(AL_VOID)
 {
-    AL_U32 BitMap;
+    AL_U32 BitMap = 0;
 
     assert(Gicv3DrvData != NULL);
     assert(Gicv3DrvData->GicdBase != 0U);
@@ -98,7 +98,7 @@ AL_VOID AlGicv3_DistInit(AL_VOID)
 AL_VOID AlGicv3_RdistInit(AL_U32 ProcNum)
 {
     AL_UINTPTR GicrBase;
-    AL_U32 BitMap;
+    AL_U32 BitMap = 0;
     AL_U32 Ctlr;
 
     assert(Gicv3DrvData != NULL);
@@ -134,7 +134,6 @@ AL_VOID AlGicv3_RdistInit(AL_U32 ProcNum)
 AL_VOID AlGicv3_CpuIfEnable(AL_U32 ProcNum)
 {
     AL_UINTPTR GicrBase;
-    AL_REG ScrEl3;
     AL_U32 IccSreEl1;
 
     assert(Gicv3DrvData != NULL);
@@ -695,18 +694,13 @@ AL_U32 AlGicv3_SetPmr(AL_U32 Mask)
  *****************************************************************************/
 static AL_BOOL AlGicv3_IsSgi(AL_U32 Id)
 {
-    /* SGIs: 0-15 */
-    if (IS_SGI(Id)) {
+    if (IS_SGI(Id)) {               /* SGIs: 0-15 */
         return true;
-    }
-
-    /* PPIs: 16-31, EPPIs: 1056-1119 */
-    if (IS_PPI(Id)) {
+    } else if (IS_PPI(Id)) {        /* PPIs: 16-31, EPPIs: 1056-1119 */
         return false;
-    }
-
-    /* SPIs: 32-1019, ESPIs: 4096-5119 */
-    if (IS_SPI(Id)) {
+    } else if (IS_SPI(Id)) {        /* SPIs: 32-1019, ESPIs: 4096-5119 */
+        return false;
+    } else {
         return false;
     }
 }
@@ -717,13 +711,11 @@ static AL_BOOL AlGicv3_IsSgi(AL_U32 Id)
  *****************************************************************************/
 static AL_BOOL AlGicv3_IsSgiPpi(AL_U32 Id)
 {
-    /* SGIs: 0-15, PPIs: 16-31, EPPIs: 1056-1119 */
-    if (IS_SGI_PPI(Id)) {
+    if (IS_SGI_PPI(Id)) {       /* SGIs: 0-15, PPIs: 16-31, EPPIs: 1056-1119 */
         return true;
-    }
-
-    /* SPIs: 32-1019, ESPIs: 4096-5119 */
-    if (IS_SPI(Id)) {
+    } else if (IS_SPI(Id)) {    /* SPIs: 32-1019, ESPIs: 4096-5119 */
+        return false;
+    } else {
         return false;
     }
 }

@@ -99,7 +99,7 @@ AL_DMACAHB_HwConfigStruct *AlDmacAhb_Dev_LookupConfig(AL_U32 DeviceId)
  * @return
  * @note
 */
-AL_VOID AlDmacAhb_Dev_ClrChAllIntr(AL_DMACAHB_ChStruct *Channel)
+AL_S32 AlDmacAhb_Dev_ClrChAllIntr(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
@@ -111,6 +111,8 @@ AL_VOID AlDmacAhb_Dev_ClrChAllIntr(AL_DMACAHB_ChStruct *Channel)
     AlDmacAhb_ll_WriteClearBlock(BaseAddr, ChMask);
     AlDmacAhb_ll_WriteClearDstTran(BaseAddr, ChMask);
     AlDmacAhb_ll_WriteClearErr(BaseAddr, ChMask);
+
+    return AL_OK;
 }
 
 /**
@@ -119,7 +121,7 @@ AL_VOID AlDmacAhb_Dev_ClrChAllIntr(AL_DMACAHB_ChStruct *Channel)
  * @return
  * @note
 */
-AL_VOID AlDmacAhb_Dev_UnmaskChIntr(AL_DMACAHB_ChStruct *Channel)
+AL_S32 AlDmacAhb_Dev_UnmaskChIntr(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
@@ -141,6 +143,8 @@ AL_VOID AlDmacAhb_Dev_UnmaskChIntr(AL_DMACAHB_ChStruct *Channel)
     if (Channel->Config.Intr.IntrUnMask & AL_DMACAHB_CH_INTR_ERR) {
         AlDmacAhb_ll_SetMaskErr(BaseAddr, ChMask, AL_DMACAHB_INTR_UNMASK);
     }
+
+    return AL_OK;
 }
 
 /**
@@ -149,7 +153,7 @@ AL_VOID AlDmacAhb_Dev_UnmaskChIntr(AL_DMACAHB_ChStruct *Channel)
  * @return
  * @note
 */
-AL_VOID AlDmacAhb_Dev_MaskChIntr(AL_DMACAHB_ChStruct *Channel)
+AL_S32 AlDmacAhb_Dev_MaskChIntr(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
@@ -171,6 +175,8 @@ AL_VOID AlDmacAhb_Dev_MaskChIntr(AL_DMACAHB_ChStruct *Channel)
     if (Channel->Config.Intr.IntrUnMask & AL_DMACAHB_CH_INTR_ERR) {
         AlDmacAhb_ll_SetMaskErr(BaseAddr, ChMask, AL_DMACAHB_INTR_MASK);
     }
+
+    return AL_OK;
 }
 
 /**
@@ -274,7 +280,7 @@ AL_S32 AlDmacAhb_Dev_SetTransType(AL_DMACAHB_ChStruct *Channel)
  * @param   Channel is pointer to AL_DMACAHB_ChStruct
  * @note
 */
-AL_VOID AlDmacAhb_Dev_SetCtlLoReg(AL_DMACAHB_ChStruct *Channel)
+AL_S32 AlDmacAhb_Dev_SetCtlLoReg(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
@@ -296,6 +302,8 @@ AL_VOID AlDmacAhb_Dev_SetCtlLoReg(AL_DMACAHB_ChStruct *Channel)
     CtlLo.Bit.DstMasterSel  = Channel->Config.DstMasterSel;
     CtlLo.Bit.SrcMasterSel  = Channel->Config.SrcMasterSel;
     AlDmacAhb_ll_WriteCtlLo(BaseAddr, ChOffset, CtlLo.Reg);
+
+    return AL_OK;
 }
 
 /**
@@ -303,7 +311,7 @@ AL_VOID AlDmacAhb_Dev_SetCtlLoReg(AL_DMACAHB_ChStruct *Channel)
  * @param   Channel is pointer to AL_DMACAHB_ChStruct
  * @note
 */
-AL_VOID AlDmacAhb_Dev_SetCfgLoReg(AL_DMACAHB_ChStruct *Channel)
+AL_S32 AlDmacAhb_Dev_SetCfgLoReg(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
@@ -318,6 +326,8 @@ AL_VOID AlDmacAhb_Dev_SetCfgLoReg(AL_DMACAHB_ChStruct *Channel)
     CfgLo.Bit.DstHsPol  = Channel->Config.HandShaking.DstHsPol;
     CfgLo.Bit.SrcHsPol  = Channel->Config.HandShaking.SrcHsPol;
     AlDmacAhb_ll_WriteCfgLo(BaseAddr, ChOffset, CfgLo.Reg);
+
+    return AL_OK;
 }
 
 /**
@@ -325,7 +335,7 @@ AL_VOID AlDmacAhb_Dev_SetCfgLoReg(AL_DMACAHB_ChStruct *Channel)
  * @param   Channel is pointer to AL_DMACAHB_ChStruct
  * @note
 */
-AL_VOID AlDmacAhb_Dev_SetCfgHiReg(AL_DMACAHB_ChStruct *Channel)
+AL_S32 AlDmacAhb_Dev_SetCfgHiReg(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
@@ -343,6 +353,8 @@ AL_VOID AlDmacAhb_Dev_SetCfgHiReg(AL_DMACAHB_ChStruct *Channel)
         CfgHi.Bit.DstPer = Channel->Config.HandShaking.DstPer;
     }
     AlDmacAhb_ll_WriteCfgHi(BaseAddr, ChOffset, CfgHi.Reg);
+
+    return AL_OK;
 }
 
 /**
@@ -350,7 +362,7 @@ AL_VOID AlDmacAhb_Dev_SetCfgHiReg(AL_DMACAHB_ChStruct *Channel)
  * @param   Channel is pointer to AL_DMACAHB_ChStruct
  * @note
 */
-AL_VOID AlDmacAhb_Dev_SetSgrDsr(AL_DMACAHB_ChStruct *Channel)
+AL_S32 AlDmacAhb_Dev_SetSgrDsr(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
@@ -365,6 +377,8 @@ AL_VOID AlDmacAhb_Dev_SetSgrDsr(AL_DMACAHB_ChStruct *Channel)
         AlDmacAhb_ll_SetDsi(BaseAddr, ChOffset, Channel->Config.SgrDsr.DstScatterInterval);
         AlDmacAhb_ll_SetDsc(BaseAddr, ChOffset, Channel->Config.SgrDsr.DstScatterCount);
     }
+
+    return AL_OK;
 }
 
 /**
@@ -373,7 +387,7 @@ AL_VOID AlDmacAhb_Dev_SetSgrDsr(AL_DMACAHB_ChStruct *Channel)
  * @param   c
  * @note
 */
-AL_VOID AlDmacAhb_Dev_FillLliWithCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_LliStruct *Lli)
+AL_S32 AlDmacAhb_Dev_FillLliWithCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_LliStruct *Lli)
 {
     AL_ASSERT((Channel != AL_NULL) && (Lli != AL_NULL), AL_DMACAHB_ERR_NULL_PTR);
 
@@ -382,6 +396,8 @@ AL_VOID AlDmacAhb_Dev_FillLliWithCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_Ll
 
     Lli->CtlLow.Reg = AlDmacAhb_ll_ReadCtlLo(BaseAddr, ChOffset);
     Lli->CtlHigh.Reg = AlDmacAhb_ll_ReadCtlHi(BaseAddr, ChOffset);
+
+    return AL_OK;
 }
 
 static AL_VOID AlCan_Dev_SetTransBusy(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChStateEnum State)
@@ -412,7 +428,6 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
 
     AL_S32 Ret = AL_OK;
     AL_U32 ChOffset = Channel->Param.ChBaseOffset;
-    AL_U32 ChMask   = Channel->Param.ChMask;
     AL_REG BaseAddr = Channel->Dmac->BaseAddr;
     AL_DMACAHB_ChTransStruct *Trans = &Channel->Trans;
     AL_DMACAHB_ChStateEnum State;

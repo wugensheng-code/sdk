@@ -1013,7 +1013,7 @@ static void dwc2_outchan_irq_handler(uint8_t ch_num)
     struct dwc2_pipe *chan;
     struct usbh_urb *urb;
     uint16_t buflen;
-
+    
     chan_intstatus = (USB_OTG_HC(ch_num)->HCINT) & (USB_OTG_HC((uint32_t)ch_num)->HCINTMSK);
 
     chan = &g_dwc2_hcd.pipe_pool[ch_num];
