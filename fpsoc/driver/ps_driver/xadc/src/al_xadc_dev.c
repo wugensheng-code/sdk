@@ -50,6 +50,7 @@ static AL_XADC_InitStruct XadcDefInitConfigs = {
 AL_S32 AlXadc_Dev_Init(AL_XADC_DevStruct *Xadc, AL_U32 DevId, AL_XADC_InitStruct *InitConfig)
 {
     AL_XADC_HwConfigStruct *XadcHwConfig;
+
     AL_ASSERT((Xadc != AL_NULL && DevId < AL_XADC_NUM_INSTANCE), AL_XADC_ERR_ILLEGAL_PARAM);
 
     XadcHwConfig          = AlXadc_Dev_LookupConfig(DevId);
@@ -130,6 +131,12 @@ AL_S32 AlXadc_Dev_SetChannelThresHold(AL_XADC_DevStruct *Xadc, AL_XADC_ChannelCf
 
 AL_S32 AlXadc_Dev_ClrIntr(AL_XADC_DevStruct *Xadc, AL_XADC_IntrtypeEnum IntrType)
 {
+    AL_ASSERT((Xadc != AL_NULL), AL_XADC_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((IntrType == AL_XADC_INTR_DONE ||
+               IntrType == AL_XADC_INTR_GTH ||
+               IntrType == AL_XADC_INTR_LTH ||
+               IntrType == AL_XADC_INTR_ERROR), AL_XADC_ERR_ILLEGAL_PARAM);
+
     AlXadc_ll_GpClrIntr(Xadc->GpBaseAddr, IntrType);
 
     return AL_OK;
@@ -137,36 +144,34 @@ AL_S32 AlXadc_Dev_ClrIntr(AL_XADC_DevStruct *Xadc, AL_XADC_IntrtypeEnum IntrType
 
 AL_S32 AlXadc_Dev_EnableIntr(AL_XADC_DevStruct *Xadc, AL_XADC_IntrtypeEnum IntrType, AL_BOOL State)
 {
+    AL_ASSERT((Xadc != AL_NULL), AL_XADC_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((IntrType == AL_XADC_INTR_DONE ||
+               IntrType == AL_XADC_INTR_GTH ||
+               IntrType == AL_XADC_INTR_LTH ||
+               IntrType == AL_XADC_INTR_ERROR), AL_XADC_ERR_ILLEGAL_PARAM);
+
     AlXadc_ll_GpMaskIntr(Xadc->GpBaseAddr, IntrType, ~State);
 
     return AL_OK;
 }
 
-AL_S32 AlXadc_Dev_EnableXadc(AL_XADC_DevStruct *Xadc)
+AL_VOID AlXadc_Dev_EnableXadc(AL_XADC_DevStruct *Xadc)
 {
-    AL_ASSERT((Xadc != AL_NULL), AL_XADC_ERR_ILLEGAL_PARAM);
-
     AlXadc_ll_GpEnableAdc(Xadc->GpBaseAddr);
 }
 
-AL_S32 AlXadc_Dev_DisableXadc(AL_XADC_DevStruct *Xadc)
+AL_VOID AlXadc_Dev_DisableXadc(AL_XADC_DevStruct *Xadc)
 {
-    AL_ASSERT((Xadc != AL_NULL), AL_XADC_ERR_ILLEGAL_PARAM);
-
     AlXadc_ll_GpDisableAdc(Xadc->GpBaseAddr);
 }
 
 AL_VOID AlXadc_Dev_StartConv(AL_XADC_DevStruct *Xadc)
 {
-    AL_ASSERT((Xadc != AL_NULL), AL_XADC_ERR_ILLEGAL_PARAM);
-
     AlXadc_ll_GpTriggerConv(Xadc->GpBaseAddr, AL_XADC_START_CONV);
 }
 
 AL_VOID AlXadc_Dev_StopConv(AL_XADC_DevStruct *Xadc)
 {
-    AL_ASSERT((Xadc != AL_NULL), AL_XADC_ERR_ILLEGAL_PARAM);
-
     AlXadc_ll_GpTriggerConv(Xadc->GpBaseAddr, AL_XADC_END_CONV);
 }
 
@@ -183,7 +188,7 @@ AL_U16 AlXadc_Dev_GetAdcData(AL_XADC_DevStruct *Xadc, AL_XADC_ChannelEnum Channe
 }
 
 
-AL_VOID AlXadc_Dev_IntrDoneHandler(AL_XADC_DevStruct *Xadc)
+static AL_VOID AlXadc_Dev_IntrDoneHandler(AL_XADC_DevStruct *Xadc)
 {
     AL_U32 Index;
     AL_XADC_EventStruct XadcEvent = {0};
@@ -205,7 +210,7 @@ AL_VOID AlXadc_Dev_IntrDoneHandler(AL_XADC_DevStruct *Xadc)
     AlXadc_ll_GpClrIntr(Xadc->GpBaseAddr, AL_XADC_INTR_DONE);
 }
 
-AL_VOID AlXadc_Dev_IntrGthHandler(AL_XADC_DevStruct *Xadc)
+static AL_VOID AlXadc_Dev_IntrGthHandler(AL_XADC_DevStruct *Xadc)
 {
     AL_U32 Index;
     AL_XADC_EventStruct XadcEvent = {0};
@@ -227,7 +232,7 @@ AL_VOID AlXadc_Dev_IntrGthHandler(AL_XADC_DevStruct *Xadc)
     AlXadc_ll_GpClrIntr(Xadc->GpBaseAddr, AL_XADC_INTR_GTH);
 }
 
-AL_VOID AlXadc_Dev_IntrLthHandler(AL_XADC_DevStruct *Xadc)
+static AL_VOID AlXadc_Dev_IntrLthHandler(AL_XADC_DevStruct *Xadc)
 {
     AL_U32 Index;
     AL_XADC_EventStruct XadcEvent = {0};
@@ -248,7 +253,7 @@ AL_VOID AlXadc_Dev_IntrLthHandler(AL_XADC_DevStruct *Xadc)
     AlXadc_ll_GpClrIntr(Xadc->GpBaseAddr, AL_XADC_INTR_LTH);
 }
 
-AL_VOID AlXadc_Dev_IntrErrorHandler(AL_XADC_DevStruct *Xadc)
+static AL_VOID AlXadc_Dev_IntrErrorHandler(AL_XADC_DevStruct *Xadc)
 {
     AL_U32 Index;
     AL_XADC_EventStruct XadcEvent = {0};
@@ -268,10 +273,10 @@ AL_VOID AlXadc_Dev_IntrErrorHandler(AL_XADC_DevStruct *Xadc)
 }
 
 
-#define AL_XADC_IS_INTR_DONE(Status)            (Status & (1 << (AL_XADC_INTR_DONE)))
-#define AL_XADC_IS_INTR_GTH(Status)             (Status & (1 << (AL_XADC_INTR_GTH)))
-#define AL_XADC_IS_INTR_LTH(Status)             (Status & (1 << (AL_XADC_INTR_LTH)))
-#define AL_XADC_IS_INTR_ERROR(Status)           (Status & (1 << (AL_XADC_INTR_ERROR)))
+#define AL_XADC_IS_INTR_DONE(Status)            (Status & (AL_XADC_INTR_DONE_BIT))
+#define AL_XADC_IS_INTR_GTH(Status)             (Status & (AL_XADC_INTR_GTH_BIT))
+#define AL_XADC_IS_INTR_LTH(Status)             (Status & (AL_XADC_INTR_LTH_BIT))
+#define AL_XADC_IS_INTR_ERROR(Status)           (Status & (AL_XADC_INTR_ERROR_BIT))
 
 AL_VOID AlXadc_Dev_IntrHandler(AL_VOID *Instance)
 {

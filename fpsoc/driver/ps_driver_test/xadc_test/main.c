@@ -95,9 +95,10 @@ AL_VOID AlXadc_PollingReadXadcData()
 
 AL_VOID AlXadc_IntrReadXadcData()
 {
-    AL_U8 IntrData;
-    IntrData = (1 << AL_XADC_INTR_GTH);
     AL_XADC_HalStruct Handle;
+    AL_U8 IntrData;
+    IntrData = AL_XADC_INTR_GTH_BIT;
+
     AlXadc_Hal_Init(&Handle, 0, &XadcInitConfigs, XadcInitChannelCfg, AlXadc_Handler);
     AlXadc_Hal_XadcStartIntr(&Handle, IntrData);
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);

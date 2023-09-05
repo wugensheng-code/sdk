@@ -129,10 +129,10 @@ typedef enum
 
 typedef enum
 {
-    AL_XADC_INTR_DONE     = 0,
-    AL_XADC_INTR_GTH      = 1,
-    AL_XADC_INTR_LTH      = 2,
-    AL_XADC_INTR_ERROR    = 3
+    AL_XADC_INTR_DONE    = 0,
+    AL_XADC_INTR_GTH     = 1,
+    AL_XADC_INTR_LTH     = 2,
+    AL_XADC_INTR_ERROR   = 3
 }AL_XADC_IntrtypeEnum;
 
 #define XADC_READ_CMD   0x78

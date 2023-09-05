@@ -31,7 +31,6 @@ typedef struct
     AL_XADC_IoMuxEnum         ChannelIomux;
     AL_U16                    LthValue;
     AL_U16                    GthValue;
-    AL_U16                    XadcData;
 } AL_XADC_ChannelCfg;
 
 typedef struct
@@ -73,6 +72,14 @@ typedef enum
     AL_XADC_STATE_GET_LTHDATA  = (0x01 << 2),
     AL_XADC_STATE_GET_GTHDATA  = (0x01 << 3)
 } AL_XADC_StateEnum;
+
+typedef enum
+{
+    AL_XADC_INTR_DONE_BIT     = BIT(AL_XADC_INTR_DONE),
+    AL_XADC_INTR_GTH_BIT      = BIT(AL_XADC_INTR_GTH),
+    AL_XADC_INTR_LTH_BIT      = BIT(AL_XADC_INTR_LTH),
+    AL_XADC_INTR_ERROR_BIT    = BIT(AL_XADC_INTR_ERROR)
+}AL_XADC_IntrtypeBitEnum;
 
 typedef AL_VOID (*AL_XADC_EventCallBack)(AL_XADC_EventStruct XadcEvent, AL_VOID *CallbackRef);
 
@@ -120,15 +127,11 @@ AL_S32 AlXadc_Dev_SetIomuxForChannel(AL_XADC_DevStruct *Xadc, AL_XADC_ChannelCfg
 AL_S32 AlXadc_Dev_SetChannelThresHold(AL_XADC_DevStruct *Xadc, AL_XADC_ChannelCfg *ChannelCfg);
 AL_S32 AlXadc_Dev_ClrIntr(AL_XADC_DevStruct *Xadc, AL_XADC_IntrtypeEnum IntrType);
 AL_S32 AlXadc_Dev_EnableIntr(AL_XADC_DevStruct *Xadc, AL_XADC_IntrtypeEnum IntrType, AL_BOOL State);
-AL_S32 AlXadc_Dev_EnableXadc(AL_XADC_DevStruct *Xadc);
-AL_S32 AlXadc_Dev_DisableXadc(AL_XADC_DevStruct *Xadc);
+AL_VOID AlXadc_Dev_EnableXadc(AL_XADC_DevStruct *Xadc);
+AL_VOID AlXadc_Dev_DisableXadc(AL_XADC_DevStruct *Xadc);
 AL_VOID AlXadc_Dev_StartConv(AL_XADC_DevStruct *Xadc);
 AL_VOID AlXadc_Dev_StopConv(AL_XADC_DevStruct *Xadc);
 AL_U16 AlXadc_Dev_GetAdcData(AL_XADC_DevStruct *Xadc, AL_XADC_ChannelEnum ChannelNum);
-AL_VOID AlXadc_Dev_IntrDoneHandler(AL_XADC_DevStruct *Xadc);
-AL_VOID AlXadc_Dev_IntrGthHandler(AL_XADC_DevStruct *Xadc);
-AL_VOID AlXadc_Dev_IntrLthHandler(AL_XADC_DevStruct *Xadc);
-AL_VOID AlXadc_Dev_IntrErrorHandler(AL_XADC_DevStruct *Xadc);
 AL_VOID AlXadc_Dev_IntrHandler(AL_VOID *Instance);
 AL_S32 AlXadc_Dev_RegisterEventCallBack(AL_XADC_DevStruct *Xadc, AL_XADC_EventCallBack Callback, AL_VOID *CallbackRef);
 AL_S32 AlXadc_Dev_UnRegisterEventCallBack(AL_XADC_DevStruct *Xadc);

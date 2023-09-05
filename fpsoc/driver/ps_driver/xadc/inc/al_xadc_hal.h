@@ -18,7 +18,8 @@ extern "C" {
 /**************************** Type Definitions *******************************/
 typedef struct
 {
-    AL_XADC_DevStruct            *Dev;
+    AL_XADC_DevStruct    *Dev;
+    AL_Lock              Lock;
 } AL_XADC_HalStruct;
 
 

@@ -74,10 +74,15 @@ AL_S32 AlXadc_Hal_Init(AL_XADC_HalStruct *Handle, AL_U32 DevId, AL_XADC_InitStru
 
     AlIntr_RegHandler(Handle->Dev->IntrNum, AL_NULL, AlXadc_Dev_IntrHandler, Handle->Dev);
 
-    if(Callback == AL_NULL) {
+    if (Callback == AL_NULL) {
         Ret = AlXadc_Dev_RegisterEventCallBack(Handle->Dev, AlXadc_Hal_DefEventHandler, (void *)Handle);
     } else {
         Ret = AlXadc_Dev_RegisterEventCallBack(Handle->Dev, Callback, (void *)Handle);
+    }
+
+    Ret = AlOsal_Lock_Init(&Handle->Lock, "Xadc-Lock");
+    if (Ret != AL_OK) {
+        return Ret;
     }
 
     return Ret;
@@ -85,66 +90,102 @@ AL_S32 AlXadc_Hal_Init(AL_XADC_HalStruct *Handle, AL_U32 DevId, AL_XADC_InitStru
 
 AL_S32 AlXadc_Hal_XadcStart(AL_XADC_HalStruct *Handle)
 {
+    AL_S32 Ret;
+
     AL_ASSERT((Handle != AL_NULL), AL_XADC_ERR_ILLEGAL_PARAM);
+
+    Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
 
     AlXadc_Dev_EnableXadc(Handle->Dev);
     AlXadc_Dev_StartConv(Handle->Dev);
+
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return AL_OK;
 }
 
 AL_S32 AlXadc_Hal_XadcStop(AL_XADC_HalStruct *Handle)
 {
+    AL_S32 Ret;
+
     AL_ASSERT((Handle != AL_NULL), AL_XADC_ERR_ILLEGAL_PARAM);
+
+    Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
 
     AlXadc_Dev_DisableXadc(Handle->Dev);
     AlXadc_Dev_StopConv(Handle->Dev);
+
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return AL_OK;
 }
 
 AL_S32 AlXadc_Hal_XadcStartIntr(AL_XADC_HalStruct *Handle, AL_U8 IntrData)
 {
+    AL_S32 Ret;
+
     AL_ASSERT((Handle != AL_NULL), AL_XADC_ERR_ILLEGAL_PARAM);
 
-    if (IntrData & (1 << AL_XADC_INTR_DONE)) {
-        AlXadc_Dev_EnableIntr(Handle->Dev, AL_XADC_INTR_DONE , AL_TRUE);
+    Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
+    if (Ret != AL_OK) {
+        return Ret;
     }
-    if (IntrData & (1 << AL_XADC_INTR_GTH)) {
-        AlXadc_Dev_EnableIntr(Handle->Dev, AL_XADC_INTR_GTH , AL_TRUE);
+
+    if (IntrData & AL_XADC_INTR_DONE_BIT) {
+        AlXadc_Dev_EnableIntr(Handle->Dev, AL_XADC_INTR_DONE, AL_TRUE);
     }
-    if (IntrData & (1 << AL_XADC_INTR_LTH)) {
-        AlXadc_Dev_EnableIntr(Handle->Dev, AL_XADC_INTR_LTH , AL_TRUE);
+    if (IntrData & AL_XADC_INTR_GTH_BIT) {
+        AlXadc_Dev_EnableIntr(Handle->Dev, AL_XADC_INTR_GTH, AL_TRUE);
     }
-    if (IntrData & (1 << AL_XADC_INTR_ERROR)) {
-        AlXadc_Dev_EnableIntr(Handle->Dev, AL_XADC_INTR_ERROR , AL_TRUE);
+    if (IntrData & AL_XADC_INTR_LTH_BIT) {
+        AlXadc_Dev_EnableIntr(Handle->Dev, AL_XADC_INTR_LTH, AL_TRUE);
+    }
+    if (IntrData & AL_XADC_INTR_ERROR_BIT) {
+        AlXadc_Dev_EnableIntr(Handle->Dev, AL_XADC_INTR_ERROR, AL_TRUE);
     }
 
     AlXadc_Dev_EnableXadc(Handle->Dev);
     AlXadc_Dev_StartConv(Handle->Dev);
+
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return AL_OK;
 }
 
 AL_S32 AlXadc_Hal_XadcStopIntr(AL_XADC_HalStruct *Handle, AL_U8 IntrData)
 {
+    AL_S32 Ret;
+
     AL_ASSERT((Handle != AL_NULL), AL_XADC_ERR_ILLEGAL_PARAM);
 
-    if (IntrData & (1 << AL_XADC_INTR_DONE)) {
-        AlXadc_Dev_EnableIntr(Handle->Dev, AL_XADC_INTR_DONE , AL_FALSE);
+    Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
+    if (Ret != AL_OK) {
+        return Ret;
     }
-    if (IntrData & (1 << AL_XADC_INTR_GTH)) {
-        AlXadc_Dev_EnableIntr(Handle->Dev, AL_XADC_INTR_GTH , AL_FALSE);
+
+    if (IntrData & AL_XADC_INTR_DONE_BIT) {
+        AlXadc_Dev_EnableIntr(Handle->Dev, AL_XADC_INTR_DONE, AL_FALSE);
     }
-    if (IntrData & (1 << AL_XADC_INTR_LTH)) {
-        AlXadc_Dev_EnableIntr(Handle->Dev, AL_XADC_INTR_LTH , AL_FALSE);
+    if (IntrData & AL_XADC_INTR_GTH_BIT) {
+        AlXadc_Dev_EnableIntr(Handle->Dev, AL_XADC_INTR_GTH, AL_FALSE);
     }
-    if (IntrData & (1 << AL_XADC_INTR_ERROR)) {
-        AlXadc_Dev_EnableIntr(Handle->Dev, AL_XADC_INTR_ERROR , AL_FALSE);
+    if (IntrData & AL_XADC_INTR_LTH_BIT) {
+        AlXadc_Dev_EnableIntr(Handle->Dev, AL_XADC_INTR_LTH, AL_FALSE);
+    }
+    if (IntrData & AL_XADC_INTR_ERROR_BIT) {
+        AlXadc_Dev_EnableIntr(Handle->Dev, AL_XADC_INTR_ERROR, AL_FALSE);
     }
 
     AlXadc_Dev_DisableXadc(Handle->Dev);
     AlXadc_Dev_StopConv(Handle->Dev);
+
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return AL_OK;
 }
@@ -161,10 +202,17 @@ AL_S32 AlXadc_Hal_IoCtl(AL_XADC_HalStruct *Handle, AL_XADC_IoCtlCmdEnum Cmd, AL_
 
     AL_ASSERT((Handle != AL_NULL), AL_XADC_ERR_ILLEGAL_PARAM);
 
+    Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
     Ret = AlXadc_Dev_IoCtl(Handle->Dev, Cmd, IoctlParam);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Xadc io ctl cmd error:%d\r\n", Ret);
     }
+
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return Ret;
 }
