@@ -14,7 +14,7 @@
 
 #include "al_rv64_core.h"
 #include "al_hal.h"
-#include "ext_eclic.h"
+#include "nuclei_eclic.h"
 #include "al_cli.h"
 
 #define BSP_UART0_RX_BUFSIZE   256

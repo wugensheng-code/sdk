@@ -32,7 +32,7 @@
  extern "C" {
 #endif
 
-#include "ext_eclic.h"
+#include "nuclei_eclic.h"
 
 #if defined(__SYSTIMER_PRESENT) && (__SYSTIMER_PRESENT == 1)
 

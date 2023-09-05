@@ -12,11 +12,11 @@
 #ifndef __CPUPORT_H__
 #define __CPUPORT_H__
 
-#include <rtconfig.h>
+#include "rtconfig.h"
 #include "al_rv64_core.h"
-#include <al_core.h>
-#include <al_rv64_systimer.h>
-#include <ext_eclic.h>
+#include "al_core.h"
+#include "al_rv64_systimer.h"
+#include "nuclei_eclic.h"
 
 
 #ifdef __cplusplus
