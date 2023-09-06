@@ -810,7 +810,7 @@ static AL_VOID AlIic_Dev_TxAbrtHandler(AL_IIC_DevStruct *Iic)
 
 }
 
-static AL_VOID AlIic_Dev_EventHandler(AL_IIC_DevStruct *Iic, AL_IIC_EventIdEnum EventId)
+static AL_VOID AlIic_Dev_ErrorIntrHandler(AL_IIC_DevStruct *Iic, AL_IIC_EventIdEnum EventId)
 {
     /* Error occurred, Stop RX */
     if (EventId == AL_IIC_EVENT_RX_UNDER || EventId == AL_IIC_EVENT_RX_OVER ) {
@@ -830,6 +830,17 @@ static AL_VOID AlIic_Dev_EventHandler(AL_IIC_DevStruct *Iic, AL_IIC_EventIdEnum 
         }
     }
 
+    if (Iic->EventCallBack) {
+        AL_IIC_EventStruct IicEvent = {
+            .Events         = EventId,
+            .EventData      = 0,
+        };
+        (*Iic->EventCallBack)(&IicEvent, Iic->EventCallBackRef);
+    }
+}
+
+static AL_VOID AlIic_Dev_NormalIntrHandler(AL_IIC_DevStruct *Iic, AL_IIC_EventIdEnum EventId)
+{
     if (Iic->EventCallBack) {
         AL_IIC_EventStruct IicEvent = {
             .Events         = EventId,
@@ -862,15 +873,15 @@ AL_VOID AlIic_Dev_IntrHandler(AL_VOID *instance)
     AL_IIC_IntrStatusEnum IntrStatus = AlIic_ll_GetIntrStatus(IicBaseAddr);
 
     if (IIC_IN_RX_UNDER_INTR(IntrStatus)) {
-        AlIic_Dev_EventHandler(Iic, AL_IIC_EVENT_RX_UNDER);
+        AlIic_Dev_ErrorIntrHandler(Iic, AL_IIC_EVENT_RX_UNDER);
         AlIic_ll_ClrRxUnder(IicBaseAddr);
 
     } else if (IIC_IN_RX_OVER_INTR(IntrStatus)) {
-        AlIic_Dev_EventHandler(Iic, AL_IIC_EVENT_RX_OVER);
+        AlIic_Dev_ErrorIntrHandler(Iic, AL_IIC_EVENT_RX_OVER);
         AlIic_ll_ClrRxOver(IicBaseAddr);
 
     } else if (IIC_IN_TX_OVER_INTR(IntrStatus)) {
-        AlIic_Dev_EventHandler(Iic, AL_IIC_EVENT_TX_OVER);
+        AlIic_Dev_ErrorIntrHandler(Iic, AL_IIC_EVENT_TX_OVER);
         AlIic_ll_ClrTxOver(IicBaseAddr);
 
     } else if (IIC_IN_RX_FULL_INTR(IntrStatus)) {
@@ -908,7 +919,7 @@ AL_VOID AlIic_Dev_IntrHandler(AL_VOID *instance)
           This is a normal interrupt , Indicate that there was
           activity on the bus. do nothing, just clear it
          */
-        AlIic_Dev_EventHandler(Iic, AL_IIC_EVENT_ACTIVITY);
+        AlIic_Dev_NormalIntrHandler(Iic, AL_IIC_EVENT_ACTIVITY);
         AlIic_ll_ClrActivity(IicBaseAddr);
 
     } else if (IIC_IN_STOP_DET_INTR(IntrStatus)) {
@@ -917,7 +928,7 @@ AL_VOID AlIic_Dev_IntrHandler(AL_VOID *instance)
           interface regardless of whether DW_apb_i2c is operating in
           slave or master mode. do nothing, jusr clear it
          */
-        AlIic_Dev_EventHandler(Iic, AL_IIC_EVENT_STOP_DET);
+        AlIic_Dev_NormalIntrHandler(Iic, AL_IIC_EVENT_STOP_DET);
         AlIic_ll_ClrStopDet(IicBaseAddr);
 
     } else if (IIC_IN_START_DET_INTR(IntrStatus)) {
@@ -926,11 +937,11 @@ AL_VOID AlIic_Dev_IntrHandler(AL_VOID *instance)
           occurred on the I2C interface regardless of whether
           DW_apb_i2c is operating in slave or master mode. do nothing, jusr clear it
          */
-        AlIic_Dev_EventHandler(Iic, AL_IIC_EVENT_START_DET);
+        AlIic_Dev_NormalIntrHandler(Iic, AL_IIC_EVENT_START_DET);
         AlIic_ll_ClrStartDet(IicBaseAddr);
 
     } else if (IIC_IN_GEN_CALL_INTR(IntrStatus)) {
-        AlIic_Dev_EventHandler(Iic, AL_IIC_EVENT_GEN_CALL);
+        AlIic_Dev_NormalIntrHandler(Iic, AL_IIC_EVENT_GEN_CALL);
         AlIic_ll_ClrGenCall(IicBaseAddr);
 
     } else if (IIC_INTR_SCL_STUCK_ATLOW_INTR(IntrStatus)) {
