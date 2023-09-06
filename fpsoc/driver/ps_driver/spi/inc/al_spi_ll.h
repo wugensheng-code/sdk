@@ -86,19 +86,11 @@ typedef enum
 
 typedef enum
 {
+    SPI_SER_SS_DIS      = 0,
     SPI_SER_SS0_EN      = (1 << 0),
     SPI_SER_SS1_EN      = (1 << 1),
     SPI_SER_SS2_EN      = (1 << 2)
 } AL_SPI_SlvSelEnum;
-
-/**
- * @brief  USE dma enum
- */
-typedef enum
-{
-    AL_SPI_USE_INTR,
-    AL_SPI_USE_DMA
-} AL_SPI_IsUseDma;
 
 typedef enum
 {
@@ -132,17 +124,29 @@ typedef enum
 
 typedef enum
 {
-    AL_SPI_SEND_DONE                = (0x01),
-    AL_SPI_RECEIVE_DONE             = (0x01 << 1),
-    AL_SPI_SEND_TIMEOUT             = (0x01 << 2),
-    AL_SPI_RECEIVE_TIMEOUT          = (0x01 << 3)
+    AL_SPI_SEND_DONE                = BIT(0),
+    AL_SPI_RECEIVE_DONE             = BIT(1),
+    AL_SPI_SEND_TIMEOUT             = BIT(2),
+    AL_SPI_RECEIVE_TIMEOUT          = BIT(3),
+    AL_SPI_TX_FO                    = BIT(4),
+    AL_SPI_RX_FO                    = BIT(5),
+    AL_SPI_RX_FU                    = BIT(6),
+    AL_SPI_TX_FIFO_EMPTY            = BIT(7),
+    AL_SPI_RX_FIFO_FULL             = BIT(8),
 } AL_SPI_EventIdEnum;
 
 typedef struct
 {
-    AL_SPI_EventIdEnum      Event;
+    AL_SPI_EventIdEnum      Events;
     AL_U32                  EventData;
 } AL_SPI_EventStruct;
+
+typedef struct
+{
+    AL_SPI_TransferMode     TransMode;
+    AL_SPI_DataFrameSize    DataFrameSize;
+    AL_SPI_SlvSelEnum       SlvSelEnum;
+} AL_SPI_TransStruct;
 
 /**
  * @brief  Configs Struct
@@ -150,16 +154,12 @@ typedef struct
 typedef struct
 {
     AL_SPI_Mode             Mode;
-    AL_SPI_TransferMode     TransMode;
     AL_SPI_ProtFormat       ProtFormat;
     AL_SPI_ClockEnum        ClockEnum;
-    AL_SPI_DataFrameSize    DataFrameSize;
     AL_U16                  ClkDiv;
     AL_SPI_SlvSelToggleEnum SlvToggleEnum;
-    AL_SPI_SlvSelEnum       SlvSelEnum;
-    AL_SPI_IsUseDma         IsUseDma;
+    AL_SPI_TransStruct      Trans;
 } AL_SPI_ConfigsStruct;
-
 typedef enum
 {
     TXEIS           = 0x1,      /* Transmit FIFO Empty Interrupt Status */

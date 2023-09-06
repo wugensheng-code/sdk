@@ -9,7 +9,7 @@
 #########################################################################
 SDK_ROOT   ?= ../../../..
 
-CHIP       ?= dr1v90
+CHIP       ?= dr190
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
@@ -49,8 +49,8 @@ CFLAGS := -O2
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
-
+#PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
+PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile
 ## Available choices:

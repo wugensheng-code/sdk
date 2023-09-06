@@ -17,11 +17,9 @@ struct AL_SPI_DevStruct;
 typedef struct
 {
     AL_SPI_DevStruct            *Dev;
-
-// #ifdef USE_RTOS
-//     AL_Lock                      Lock;
-// #endif
-
+    AL_Lock                      SpiLock;
+    AL_MailBox                   TxEventQueue;
+    AL_MailBox                   RxEventQueue;
 } AL_SPI_HalStruct;
 
 AL_S32 AlSpi_Hal_Init(AL_SPI_HalStruct *Handle, AL_SPI_ConfigsStruct *InitConfig, SPI_EventCallBack Callback,

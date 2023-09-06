@@ -106,6 +106,9 @@ extern "C" {
 #define SPI1_BASE_ADDR         (0xF8405000UL)
 #define SPI_FIFO_LENGTH        (32)
 
+#define  SPI_CS0_EN        (1 << 0)
+#define  SPI_CS1_EN        (1 << 1)
+#define  SPI_CS2_EN        (1 << 2)
 
 /*----------------------------------------------------------------------------
   Define GBE params
