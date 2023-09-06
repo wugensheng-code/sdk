@@ -240,6 +240,7 @@ AL_S32 AlIic_Dev_MasterSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *
      */
     AlIic_ll_SetTxEmptyIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
     AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
+    AlIic_ll_SetTxOverIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
 
     return AL_OK;
 }
@@ -250,6 +251,7 @@ AL_VOID AlIic_Dev_StopMasterSend(AL_IIC_DevStruct *Iic)
 
     AlIic_ll_SetTxEmptyIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
     AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+    AlIic_ll_SetTxOverIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
 
     AlIic_Dev_ClrTxBusy(Iic);
 }
@@ -366,6 +368,8 @@ AL_S32 AlIic_Dev_MasterRecvData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *
     AlIic_ll_SetTxEmptyIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
     AlIic_ll_SetRxFullIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
     AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
+    AlIic_ll_SetRxUnderIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
+    AlIic_ll_SetRxOverIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
 
     return AL_OK;
 }
@@ -377,6 +381,8 @@ AL_VOID AlIic_Dev_StopMasterRecv(AL_IIC_DevStruct *Iic)
     AlIic_ll_SetTxEmptyIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
     AlIic_ll_SetRxFullIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
     AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+    AlIic_ll_SetRxUnderIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+    AlIic_ll_SetRxOverIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
 
     AlIic_Dev_ClrRxBusy(Iic);
 }
@@ -487,6 +493,7 @@ AL_S32 AlIic_Dev_SlaveSendData(AL_IIC_DevStruct *Iic, AL_U8 *SendBuf, AL_U32 Sen
      */
     AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
     AlIic_ll_SetRdReqIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
+    AlIic_ll_SetTxOverIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
 
     /*
       When the DW_apb_i2c is acting as a slave-transmitter, this
@@ -504,6 +511,7 @@ AL_VOID AlIic_Dev_StopSlaveSend(AL_IIC_DevStruct *Iic)
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
 
     AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+    AlIic_ll_SetTxOverIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
     AlIic_ll_SetRdReqIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
     AlIic_ll_SetRxDoneIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
 
@@ -546,6 +554,8 @@ AL_S32 AlIic_Dev_SlaveRecvData(AL_IIC_DevStruct *Iic, AL_U8 *RecvBuf, AL_U32 Rec
     }
 
     AlIic_ll_SetRxFullIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
+    AlIic_ll_SetRxUnderIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
+    AlIic_ll_SetRxOverIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
 
     return AL_OK;
 }
@@ -555,6 +565,8 @@ AL_VOID AlIic_Dev_StopSlaveRecv(AL_IIC_DevStruct *Iic)
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
 
     AlIic_ll_SetRxFullIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+    AlIic_ll_SetRxUnderIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+    AlIic_ll_SetRxOverIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
 
     AlIic_Dev_ClrRxBusy(Iic);
 }
