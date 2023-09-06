@@ -343,7 +343,7 @@ __asm_invalidate_dcache_all:
 /*
  * void __asm_flush_dcache_range(start, end)
  *
- * clean & invalidate data cache in the range
+ * clean & invalidate data cache in the same range
  *
  * x0: start address
  * x1: end address
@@ -394,6 +394,41 @@ __asm_invalidate_dcache_range:
 	add	x0, x0, x2
 	cmp	x0, x1
 	b.lo	1b
+	dsb	sy
+	msr	DAIF, x14
+	ret
+
+/*
+ * void __asm_flush_and_invalidate_dcache_range(f_start, f_end, i_start, i_end)
+ *
+ * clean & invalidate data cache in the different range
+ *
+ * x0: start address
+ * x1: end address
+ */
+	.globl __asm_flush_and_invalidate_dcache_range
+__asm_flush_and_invalidate_dcache_range:
+	mrs	x5, ctr_el0
+	lsr	x5, x5, #16
+	and	x5, x5, #0xf
+	mov	x4, #4
+	lsl	x4, x4, x5		/* cache line size */
+	mrs	x14, DAIF
+	orr	x13, x14, #0xc0
+	msr	DAIF, x13
+
+	/* x4 <- minimal cache line size in cache system */
+	sub	x5, x4, #1
+	bic	x0, x0, x5
+1:	dc	cvac, x0	/* clean data or unified cache */
+	add	x0, x0, x4
+	cmp	x0, x1
+	b.lo	1b
+	bic x2, x2, x5
+2:	dc ivac, x2
+	add x2, x2, x4
+	cmp x2, x3
+	b.lo	2b
 	dsb	sy
 	msr	DAIF, x14
 	ret

@@ -167,7 +167,9 @@
 
 #endif
 
-#define cacheline_aligned __attribute__((__aligned__(64)))
+#define CACHE_LINE_SIZE   64
+
+#define cacheline_aligned __attribute__((__aligned__(CACHE_LINE_SIZE)))
 
 #if __has_attribute(__fallthrough__)
 # define fallthrough                    __attribute__((__fallthrough__))

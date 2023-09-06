@@ -31,6 +31,8 @@ AL_VOID AlCache_FlushDcacheRange(AL_UINTPTR Start, AL_UINTPTR End);
 
 AL_VOID AlCache_InvalidateDcacheRange(AL_UINTPTR Start, AL_UINTPTR End);
 
+AL_VOID AlCache_FlushAndInvalidateDcacheRange(AL_UINTPTR FStart, AL_UINTPTR FEnd, AL_UINTPTR IStart, AL_UINTPTR IEnd);
+
 AL_VOID AlCache_InvalidateDcacheAll(AL_VOID);
 
 AL_VOID AlCache_FlushDcacheAll(AL_VOID);

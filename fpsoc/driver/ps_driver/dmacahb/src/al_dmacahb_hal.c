@@ -88,9 +88,9 @@ AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_U32 DevId, AL_DMACAHB
                           AL_DMACAHB_ChCallBackStruct *CallBack)
 {
     AL_S32 Ret = AL_OK;
-    AL_DMACAHB_HwConfigStruct   *HwConfig;
-    AL_DMACAHB_ChCallBackStruct EventCallBack;
-    AL_DMACAHB_ChIdEnum         AvailableId;
+    AL_DMACAHB_ChIdEnum AvailableId = AL_DMACAHB_CHANNEL_UNAVAILABLE;
+    AL_DMACAHB_HwConfigStruct *HwConfig = AL_NULL;
+    AL_DMACAHB_ChCallBackStruct EventCallBack = {0};
 
     AL_ASSERT(Handle != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 

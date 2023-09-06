@@ -42,14 +42,19 @@ AL_VOID AlCache_InvalidateIcacheAll(AL_VOID)
     __asm_invalidate_icache_all();
 }
 
-AL_VOID AlCache_FlushDcacheRange(AL_UINTPTR Start, AL_UINTPTR Stop)
+AL_VOID AlCache_FlushDcacheRange(AL_UINTPTR Start, AL_UINTPTR End)
 {
-    __asm_flush_dcache_range(Start, Stop);
+    __asm_flush_dcache_range(Start, End);
 }
 
-AL_VOID AlCache_InvalidateDcacheRange(AL_UINTPTR Start, AL_UINTPTR Stop)
+AL_VOID AlCache_InvalidateDcacheRange(AL_UINTPTR Start, AL_UINTPTR End)
 {
-    __asm_invalidate_dcache_range(Start, Stop);
+    __asm_invalidate_dcache_range(Start, End);
+}
+
+AL_VOID AlCache_FlushAndInvalidateDcacheRange(AL_UINTPTR FStart, AL_UINTPTR FEnd, AL_UINTPTR IStart, AL_UINTPTR IEnd)
+{
+    __asm_flush_and_invalidate_dcache_range(FStart, FEnd, IStart, IEnd);
 }
 
 AL_VOID AlCache_InvalidateDcacheAll(AL_VOID)

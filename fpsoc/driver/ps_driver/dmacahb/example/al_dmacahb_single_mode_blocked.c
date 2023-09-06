@@ -14,6 +14,7 @@
 
 /***************************** Include Files *********************************/
 #include <string.h>
+#include <stdlib.h>
 #include "al_dmacahb_hal.h"
 
 /************************** Constant Definitions *****************************/
@@ -27,9 +28,6 @@
 #define AL_DMACAHB_EX_ARRAY_SIZE            (256)
 
 /************************** Variable Definitions *****************************/
-static AL_U8 MemSrc[AL_DMACAHB_EX_MEM_SIZE][AL_DMACAHB_EX_ARRAY_SIZE] CACHE_LINE_ALIGN;
-static AL_U8 MemDst[AL_DMACAHB_EX_MEM_SIZE][AL_DMACAHB_EX_ARRAY_SIZE] CACHE_LINE_ALIGN;
-
 static AL_DMACAHB_ChInitStruct ChInitCfg = {
     .Id                     = AL_DMACAHB_CHANNEL_0,
     .TransType              = AL_DMACAHB_TRANS_TYPE_1,
@@ -76,9 +74,14 @@ AL_S32 main(AL_VOID)
 static AL_S32 AlDmacAhb_Test_SingleModeBlocked(AL_VOID)
 {
     AL_U32 Ret = AL_OK;
+    AL_U8 InitData = 0;
     AL_DMACAHB_HalStruct Handle = {0};
     AL_DMACAHB_ChTransStruct ChTransCfg = {0};
     AL_U32 TransSize = AL_DMACAHB_EX_ARRAY_SIZE;
+    AL_U8 *MemSrc = (AL_U8 *)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
+    AL_U8 *MemDst = (AL_U8 *)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
+
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Aligned Src:%p, Dst:%p\r\n", MemSrc, MemDst);
 
     Ret = AlDmacAhb_Hal_Init(&Handle, AL_DMACAHB_EX_DEVICE_ID, &ChInitCfg, AL_NULL);
     if (Ret != AL_OK) {
@@ -87,21 +90,31 @@ static AL_S32 AlDmacAhb_Test_SingleModeBlocked(AL_VOID)
     }
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
-    ChTransCfg.SrcAddr = (AL_REG)MemSrc[0];
-    ChTransCfg.DstAddr = (AL_REG)MemDst[0];
+    ChTransCfg.SrcAddr = (AL_REG)MemSrc;
+    ChTransCfg.DstAddr = (AL_REG)MemDst;
     ChTransCfg.TransSize = TransSize / (1 << ChInitCfg.SrcTransWidth);
     Handle.Channel->Trans = ChTransCfg;
 
-    Ret = AlDmacAhb_Hal_StartBlock(&Handle, AL_DMACAHB_EX_BLOCKED_TIMEOUT_IN_MS);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
-        return Ret;
-    }
+    while (1) {
+        memset(ChTransCfg.SrcAddr, InitData++, AL_DMACAHB_EX_ARRAY_SIZE);
 
-    Ret = memcmp(Handle.Channel->Trans.SrcAddr, Handle.Channel->Trans.DstAddr, AL_DMACAHB_EX_ARRAY_SIZE);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
-        return Ret;
+        Ret = AlDmacAhb_Hal_StartBlock(&Handle, AL_DMACAHB_EX_BLOCKED_TIMEOUT_IN_MS);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
+            return Ret;
+        }
+
+        Ret = memcmp(Handle.Channel->Trans.SrcAddr, Handle.Channel->Trans.DstAddr, AL_DMACAHB_EX_ARRAY_SIZE);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
+            return Ret;
+        }
+
+        memset(Handle.Channel->Trans.DstAddr, 0, AL_DMACAHB_EX_ARRAY_SIZE);
+
+        #ifdef ENABLE_MMU
+        AlCache_FlushDcacheRange(Handle.Channel->Trans.DstAddr, Handle.Channel->Trans.DstAddr + AL_DMACAHB_EX_ARRAY_SIZE);
+        #endif
     }
 
     Ret = AlDmacAhb_Hal_DeInit(&Handle);
@@ -109,6 +122,9 @@ static AL_S32 AlDmacAhb_Test_SingleModeBlocked(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
         return Ret;
     }
+
+    free(MemSrc);
+    free(MemDst);
 
     return Ret;
 }
