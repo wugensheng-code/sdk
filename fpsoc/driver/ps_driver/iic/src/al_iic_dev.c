@@ -108,19 +108,15 @@ static AL_VOID AlIic_Dev_InitSclHighLowCout(AL_IIC_DevStruct *Iic, AL_IIC_SpeedM
 
 static AL_S32 AlIic_Dev_CheckConfigParam(AL_IIC_InitStruct *InitConfig)
 {
-    if (!(InitConfig->Mode == AL_IIC_MODE_MASTER || InitConfig->Mode == AL_IIC_MODE_SLAVE)) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT(((InitConfig->Mode == AL_IIC_MODE_MASTER) || (InitConfig->Mode == AL_IIC_MODE_SLAVE)),
+              AL_IIC_ERR_ILLEGAL_PARAM);
 
-    if (!(InitConfig->AddrMode == AL_IIC_ADDR_7BIT || InitConfig->AddrMode == AL_IIC_ADDR_10BIT)) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT(((InitConfig->AddrMode == AL_IIC_ADDR_7BIT) || (InitConfig->AddrMode == AL_IIC_ADDR_10BIT)),
+              AL_IIC_ERR_ILLEGAL_PARAM);
 
-    if ((InitConfig->Mode == AL_IIC_MODE_MASTER) &&
-        (!(InitConfig->SpeedMode == AL_IIC_STANDARD_MODE || InitConfig->SpeedMode == AL_IIC_FAST_MODE ||
-          InitConfig->SpeedMode == AL_IIC_HIGH_SPEED_MODE))) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT ((InitConfig->Mode == AL_IIC_MODE_MASTER) &&
+              ((InitConfig->SpeedMode == AL_IIC_STANDARD_MODE || InitConfig->SpeedMode == AL_IIC_FAST_MODE ||
+              InitConfig->SpeedMode == AL_IIC_HIGH_SPEED_MODE)), AL_IIC_ERR_ILLEGAL_PARAM);
 
     return AL_OK;
 }
@@ -132,9 +128,7 @@ AL_S32 AlIic_Dev_Init(AL_IIC_DevStruct *Iic, AL_IIC_HwConfigStruct *HwConfig, AL
     AL_U32 RxFifoDepth;
     AL_U32 TxFifoDepth;
 
-    if (Iic == AL_NULL) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Iic != AL_NULL), AL_IIC_ERR_ILLEGAL_PARAM);
 
     /* check the InitConfig */
     if (InitConfig != AL_NULL) {
@@ -209,18 +203,11 @@ AL_S32 AlIic_Dev_MasterSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *
 {
     AL_REG IicBaseAddr;
 
-    if (Iic == AL_NULL || (Iic->Configs.Mode != AL_IIC_MODE_MASTER) ||
-        SendBuf == AL_NULL || SendSize == 0 || SlaveAddr > AL_IIC_MAX_SLAVE_ADDR) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Iic != AL_NULL) && (Iic->Configs.Mode == AL_IIC_MODE_MASTER) &&
+              (SendBuf != AL_NULL) && (SendSize > 0) && (SlaveAddr < AL_IIC_MAX_SLAVE_ADDR), AL_IIC_ERR_ILLEGAL_PARAM);
 
-    if ((Iic->State & AL_IIC_STATE_READY) == 0) {
-        return AL_IIC_ERR_NOT_READY;
-    }
-
-    if (AlIic_Dev_IsTxBusy(Iic)) {
-        return AL_IIC_ERR_BUSY;
-    }
+    AL_ASSERT(((Iic->State & AL_IIC_STATE_READY) == AL_IIC_STATE_READY), AL_IIC_ERR_NOT_READY);
+    AL_ASSERT((!AlIic_Dev_IsTxBusy(Iic)), AL_IIC_ERR_BUSY);
 
     /* Change Status */
     AlIic_Dev_SetTxBusy(Iic);
@@ -263,18 +250,11 @@ AL_S32 AlIic_Dev_MasterSendDataPolling(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, 
     AL_REG IicBaseAddr;
     AL_U16 DataCmd;
 
-    if (Iic == AL_NULL || (Iic->Configs.Mode != AL_IIC_MODE_MASTER) ||
-        SendBuf == AL_NULL || SendSize == 0 || SlaveAddr > AL_IIC_MAX_SLAVE_ADDR) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Iic != AL_NULL) && (Iic->Configs.Mode == AL_IIC_MODE_MASTER) &&
+              (SendBuf != AL_NULL) && (SendSize > 0) && (SlaveAddr < AL_IIC_MAX_SLAVE_ADDR), AL_IIC_ERR_ILLEGAL_PARAM);
 
-    if ((Iic->State & AL_IIC_STATE_READY) == 0) {
-        return AL_IIC_ERR_NOT_READY;
-    }
-
-    if (AlIic_Dev_IsTxBusy(Iic)) {
-        return AL_IIC_ERR_BUSY;
-    }
+    AL_ASSERT(((Iic->State & AL_IIC_STATE_READY) == AL_IIC_STATE_READY), AL_IIC_ERR_NOT_READY);
+    AL_ASSERT((!AlIic_Dev_IsTxBusy(Iic)), AL_IIC_ERR_BUSY);
 
     /* Change Status */
     AlIic_Dev_SetTxBusy(Iic);
@@ -326,18 +306,11 @@ AL_S32 AlIic_Dev_MasterRecvData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *
     AL_REG IicBaseAddr;
     AL_U8 RxFifoThrLevel;
 
-    if (Iic == AL_NULL || (Iic->Configs.Mode != AL_IIC_MODE_MASTER) ||
-        RecvBuf == AL_NULL || RecvSize == 0 || SlaveAddr > AL_IIC_MAX_SLAVE_ADDR) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Iic != AL_NULL) && (Iic->Configs.Mode == AL_IIC_MODE_MASTER) &&
+              (RecvBuf != AL_NULL) && (RecvSize > 0) && (SlaveAddr < AL_IIC_MAX_SLAVE_ADDR), AL_IIC_ERR_ILLEGAL_PARAM);
 
-    if ((Iic->State & AL_IIC_STATE_READY) == 0) {
-        return AL_IIC_ERR_NOT_READY;
-    }
-
-    if (AlIic_Dev_IsRxBusy(Iic)) {
-        return AL_IIC_ERR_BUSY;
-    }
+    AL_ASSERT(((Iic->State & AL_IIC_STATE_READY) == AL_IIC_STATE_READY), AL_IIC_ERR_NOT_READY);
+    AL_ASSERT((!AlIic_Dev_IsRxBusy(Iic)), AL_IIC_ERR_BUSY);
 
     /* Change Status */
     AlIic_Dev_SetRxBusy(Iic);
@@ -395,18 +368,11 @@ AL_S32 AlIic_Dev_MasterRecvDataPolling(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, 
     AL_U32 IssuereadCnt = 0;
     AL_REG IicBaseAddr;
 
-    if (Iic == AL_NULL || (Iic->Configs.Mode != AL_IIC_MODE_MASTER) ||
-        RecvBuf == AL_NULL || RecvSize == 0 || SlaveAddr > AL_IIC_MAX_SLAVE_ADDR) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Iic != AL_NULL) && (Iic->Configs.Mode == AL_IIC_MODE_MASTER) &&
+              (RecvBuf != AL_NULL) && (RecvSize > 0) && (SlaveAddr < AL_IIC_MAX_SLAVE_ADDR), AL_IIC_ERR_ILLEGAL_PARAM);
 
-    if ((Iic->State & AL_IIC_STATE_READY) == 0) {
-        return AL_IIC_ERR_NOT_READY;
-    }
-
-    if (AlIic_Dev_IsRxBusy(Iic)) {
-        return AL_IIC_ERR_BUSY;
-    }
+    AL_ASSERT(((Iic->State & AL_IIC_STATE_READY) == AL_IIC_STATE_READY), AL_IIC_ERR_NOT_READY);
+    AL_ASSERT((!AlIic_Dev_IsRxBusy(Iic)), AL_IIC_ERR_BUSY);
 
     /* Change Status */
     AlIic_Dev_SetRxBusy(Iic);
@@ -463,18 +429,11 @@ AL_S32 AlIic_Dev_SlaveSendData(AL_IIC_DevStruct *Iic, AL_U8 *SendBuf, AL_U32 Sen
 {
     AL_REG IicBaseAddr;
 
-    if (Iic == AL_NULL || (Iic->Configs.Mode != AL_IIC_MODE_SLAVE) ||
-        SendBuf == AL_NULL || SendSize == 0) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Iic != AL_NULL) && (Iic->Configs.Mode == AL_IIC_MODE_SLAVE) &&
+              (SendBuf != AL_NULL) && (SendSize > 0), AL_IIC_ERR_ILLEGAL_PARAM);
 
-    if ((Iic->State & AL_IIC_STATE_READY) == 0) {
-        return AL_IIC_ERR_NOT_READY;
-    }
-
-    if (AlIic_Dev_IsTxBusy(Iic)) {
-        return AL_IIC_ERR_BUSY;
-    }
+    AL_ASSERT(((Iic->State & AL_IIC_STATE_READY) == AL_IIC_STATE_READY), AL_IIC_ERR_NOT_READY);
+    AL_ASSERT((!AlIic_Dev_IsRxBusy(Iic)), AL_IIC_ERR_BUSY);
 
     /* Change Status */
     AlIic_Dev_SetTxBusy(Iic);
@@ -523,18 +482,11 @@ AL_S32 AlIic_Dev_SlaveRecvData(AL_IIC_DevStruct *Iic, AL_U8 *RecvBuf, AL_U32 Rec
     AL_REG IicBaseAddr;
     AL_U8 RxFifoThrLevel;
 
-    if (Iic == AL_NULL || (Iic->Configs.Mode != AL_IIC_MODE_SLAVE) ||
-        RecvBuf == AL_NULL || RecvSize == 0) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Iic != AL_NULL) && (Iic->Configs.Mode == AL_IIC_MODE_SLAVE) &&
+              (RecvBuf != AL_NULL) && (RecvSize > 0), AL_IIC_ERR_ILLEGAL_PARAM);
 
-    if ((Iic->State & AL_IIC_STATE_READY) == 0) {
-        return AL_IIC_ERR_NOT_READY;
-    }
-
-    if (AlIic_Dev_IsRxBusy(Iic)) {
-        return AL_IIC_ERR_BUSY;
-    }
+    AL_ASSERT(((Iic->State & AL_IIC_STATE_READY) == AL_IIC_STATE_READY), AL_IIC_ERR_NOT_READY);
+    AL_ASSERT((!AlIic_Dev_IsRxBusy(Iic)), AL_IIC_ERR_BUSY);
 
     /* Change Status */
     AlIic_Dev_SetRxBusy(Iic);
@@ -953,9 +905,7 @@ AL_VOID AlIic_Dev_IntrHandler(AL_VOID *instance)
 
 AL_S32 AlIic_Dev_RegisterEventCallBack(AL_IIC_DevStruct *Iic, AL_IIC_EventCallBack Callback, void *CallbackRef)
 {
-    if (Iic == AL_NULL || Callback == AL_NULL) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Iic != AL_NULL) && (Callback != AL_NULL), AL_IIC_ERR_ILLEGAL_PARAM);
 
     Iic->EventCallBack        = Callback;
     Iic->EventCallBackRef     = CallbackRef;
@@ -965,9 +915,7 @@ AL_S32 AlIic_Dev_RegisterEventCallBack(AL_IIC_DevStruct *Iic, AL_IIC_EventCallBa
 
 AL_S32 AlIic_Dev_MasterSetCmdOption(AL_IIC_DevStruct *Iic, AL_IIC_CmdOptionEnum CmdOption)
 {
-    if (Iic == AL_NULL) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT(Iic != AL_NULL, AL_IIC_ERR_ILLEGAL_PARAM);
 
     switch (CmdOption)
     {
@@ -986,9 +934,7 @@ AL_S32 AlIic_Dev_MasterSetCmdOption(AL_IIC_DevStruct *Iic, AL_IIC_CmdOptionEnum 
 
 AL_IIC_CmdOptionEnum AlIic_Dev_MasterGetCmdOption(AL_IIC_DevStruct *Iic)
 {
-    if (Iic == AL_NULL) {
-        return AL_IIC_CMD_OPTION_NONE;
-    }
+    AL_ASSERT(Iic != AL_NULL, AL_IIC_CMD_OPTION_NONE);
 
     return Iic->CmdOption;
 }
@@ -997,9 +943,7 @@ AL_S32 AlIic_Dev_IoCtl(AL_IIC_DevStruct *Iic, AL_IIC_IoCtlCmdEnum Cmd, AL_VOID *
 {
     AL_S32 Ret = AL_OK;
 
-    if (Iic == AL_NULL) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT(Iic != AL_NULL, AL_IIC_ERR_ILLEGAL_PARAM);
 
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
 

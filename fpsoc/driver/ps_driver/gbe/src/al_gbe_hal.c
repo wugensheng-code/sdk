@@ -49,9 +49,7 @@ AL_S32 AlGbe_Hal_Init(AL_GBE_HalStruct *Handle, AL_U32 DevId, AL_GBE_InitStruct 
     AL_S32 Ret = AL_OK;
     AL_GBE_HwConfigStruct *HwConfig = AL_NULL;
 
-    if (Handle == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     AL_GBE_HAL_LOCK(Handle);
 
@@ -89,9 +87,8 @@ AL_S32 AlGbe_Hal_RegisterIntrHandlerCallBack(AL_GBE_HalStruct *Handle, AL_GBE_In
                                              void *CallBackHandler)
 {
     AL_S32 Ret = AL_OK;
-    if (Handle == AL_NULL || CallBackHandler == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+
+    AL_ASSERT((Handle != AL_NULL) && (CallBackHandler != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     switch (IntrId) {
     case AL_GBE_INTR_TX_COMPLETE:
@@ -112,9 +109,7 @@ AL_S32 AlGbe_Hal_RegisterIntrHandlerCallBack(AL_GBE_HalStruct *Handle, AL_GBE_In
 
 AL_S32 AlGbe_Hal_RegisterTxFreeCallBack(AL_GBE_HalStruct *Handle, void *CallBackHandler)
 {
-    if (Handle == AL_NULL || CallBackHandler == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL) && (CallBackHandler != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     AL_GBE_HAL_LOCK(Handle);
 
@@ -127,9 +122,7 @@ AL_S32 AlGbe_Hal_RegisterTxFreeCallBack(AL_GBE_HalStruct *Handle, void *CallBack
 
 AL_S32 AlGbe_Hal_ConfigRxDescBuffer(AL_GBE_HalStruct *Handle, AL_U32 DescIndex, AL_U8 *Buffer1Addr, AL_U8 *Buffer2Addr)
 {
-    if (Handle == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     AL_GBE_HAL_LOCK(Handle);
 
@@ -144,9 +137,7 @@ AL_S32 AlGbe_Hal_PhyInit(AL_GBE_HalStruct *Handle, AL_U8 PhyAddr)
 {
     AL_S32 Ret;
 
-    if (Handle == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     AL_GBE_HAL_LOCK(Handle);
 
@@ -161,9 +152,7 @@ AL_S32 AlGbe_Hal_GetPhyLinkStatus(AL_GBE_HalStruct *Handle, AL_U32 PhyAddr, AL_U
 {
     AL_S32 Ret;
 
-    if (Handle == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     AL_GBE_HAL_LOCK(Handle);
 
@@ -176,9 +165,7 @@ AL_S32 AlGbe_Hal_GetPhyLinkStatus(AL_GBE_HalStruct *Handle, AL_U32 PhyAddr, AL_U
 
 AL_S32 AlGbe_Hal_ConfigDuplexAndSpeed(AL_GBE_HalStruct *Handle)
 {
-    if (Handle == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     AL_GBE_HAL_LOCK(Handle);
 
@@ -191,9 +178,7 @@ AL_S32 AlGbe_Hal_ConfigDuplexAndSpeed(AL_GBE_HalStruct *Handle)
 
 AL_S32 AlGbe_Hal_StartMacDma(AL_GBE_HalStruct *Handle)
 {
-    if (Handle == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     AL_GBE_HAL_LOCK(Handle);
 
@@ -206,9 +191,7 @@ AL_S32 AlGbe_Hal_StartMacDma(AL_GBE_HalStruct *Handle)
 
 AL_S32 AlGbe_Hal_StartMacDmaIntr(AL_GBE_HalStruct *Handle)
 {
-    if (Handle == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     AL_GBE_HAL_LOCK(Handle);
 
@@ -223,9 +206,7 @@ AL_S32 AlGbe_Hal_TransmitBlock(AL_GBE_HalStruct *Handle, AL_GBE_TxDescConfigStru
 {
     AL_S32 Ret = AL_OK;
 
-    if (Handle == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     AL_GBE_HAL_LOCK(Handle);
 
@@ -252,9 +233,7 @@ AL_S32 AlGbe_Hal_Transmit(AL_GBE_HalStruct *Handle, AL_GBE_TxDescConfigStruct *T
 {
     AL_S32 Ret = AL_OK;
 
-    if (Handle == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     AL_GBE_HAL_LOCK(Handle);
 
@@ -273,9 +252,7 @@ AL_S32 AlGbe_Hal_GetRxDataBuffer(AL_GBE_HalStruct *Handle, AL_GBE_BufferStruct *
 {
     AL_S32 Ret = AL_OK;
 
-    if (Handle == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     AL_GBE_HAL_LOCK(Handle);
 
@@ -290,9 +267,7 @@ AL_S32 AlGbe_Hal_GetRxDataLength(AL_GBE_HalStruct *Handle, AL_U32 *Length)
 {
     AL_S32 Ret = AL_OK;
 
-    if (Handle == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     AL_GBE_HAL_LOCK(Handle);
 
@@ -307,9 +282,7 @@ AL_S32 AlGbe_Hal_BuildRxDescriptors(AL_GBE_HalStruct *Handle)
 {
     AL_S32 Ret = AL_OK;
 
-    if (Handle == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     AL_GBE_HAL_LOCK(Handle);
 
@@ -324,9 +297,7 @@ AL_S32 AlGbe_Hal_ReleaseTxPacket(AL_GBE_HalStruct *Handle)
 {
     AL_S32 Ret = AL_OK;
 
-    if (Handle == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     AL_GBE_HAL_LOCK(Handle);
 

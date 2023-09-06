@@ -197,9 +197,7 @@ AL_S32 AlMpu_Dev_ConfigRegionByRegionNum(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumb
     AL_REG RegionBaseAddr;
     AL_U8 RegionEnableStatus;
 
-    if (Mpu == AL_NULL || RegionConfig == AL_NULL) {
-        return AL_MPU_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Mpu != AL_NULL) && (RegionConfig != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
     DevId = Mpu->HwConfig.DeviceId;
     MpuBaseAddr = (AL_REG)(Mpu->HwConfig.BaseAddress);
@@ -262,9 +260,7 @@ AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
     AL_U8 RegionCount;
     AL_U8 ConfigCount = 0;
 
-    if (Mpu == AL_NULL || InitRegionConfig == NULL || ConfigNumber == 0) {
-        return ConfigCount;
-    }
+    AL_ASSERT((Mpu != AL_NULL) && (HwConfig != AL_NULL) && (InitRegionConfig != AL_NULL), ConfigCount);
 
     Mpu->HwConfig = *HwConfig;
 
@@ -312,9 +308,7 @@ AL_S32 AlMpu_Dev_ConfigRegion(AL_MPU_DevStruct *Mpu, AL_MPU_RegionConfigStruct *
     AL_S32 RetValue;
     AL_U8 RegionNumber;
 
-    if (Mpu == AL_NULL) {
-        return AL_MPU_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Mpu != AL_NULL) && (RegionConfig != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
     /* Get a available region */
     if ((RegionNumber = AlMpu_Dev_GetAvailableRegionByDevId(Mpu->HwConfig.DeviceId)) == AL_MPU_INVALID_REGION_NUMBER) {
@@ -348,9 +342,7 @@ AL_S32 AlMpu_Dev_SetRegionEnableStatus(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber
     AL_REG MpuBaseAddr;
     AL_REG RegionBaseAddr;
 
-    if (Mpu == AL_NULL) {
-        return AL_MPU_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Mpu != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
     DevId = Mpu->HwConfig.DeviceId;
     MpuBaseAddr = (AL_REG)(Mpu->HwConfig.BaseAddress);
@@ -389,9 +381,7 @@ AL_S32 AlMpu_Dev_MpuEnable(AL_MPU_DevStruct *Mpu)
 {
     AL_REG MpuBaseAddr;
 
-    if (Mpu == AL_NULL) {
-        return AL_MPU_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT(Mpu != AL_NULL, AL_MPU_ERR_ILLEGAL_PARAM);
 
     MpuBaseAddr = (AL_REG)Mpu->HwConfig.BaseAddress;
 
@@ -414,9 +404,7 @@ AL_S32 AlMpu_Dev_MpuDisable(AL_MPU_DevStruct *Mpu)
 {
     AL_REG MpuBaseAddr;
 
-    if (Mpu == AL_NULL) {
-        return AL_MPU_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT(Mpu != AL_NULL, AL_MPU_ERR_ILLEGAL_PARAM);
 
     MpuBaseAddr = (AL_REG)Mpu->HwConfig.BaseAddress;
 
@@ -511,9 +499,7 @@ AL_VOID AlMpu_Dev_MpuIntrHandler(void *Instance)
  */
 AL_S32 AlMpu_Dev_RegisterEventCallBack(AL_MPU_DevStruct *Mpu, AL_Mpu_EventCallBack Callback, void *CallbackRef)
 {
-    if (Mpu == AL_NULL || Callback == AL_NULL) {
-        return AL_MPU_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Mpu != AL_NULL) && (Callback != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
     if (Mpu->EventCallBack != AL_NULL) {
 

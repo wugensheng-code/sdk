@@ -49,10 +49,7 @@ AL_S32 AlMpu_Hal_MpuEnable(AL_MPU_HalStruct *Handle)
 {
     AL_S32 RetValue;
 
-    if (Handle == AL_NULL) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlMpu_Hal_MpuEnable illegal parameter\r\n");
-        return AL_MPU_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
     AL_MPU_HAL_LOCK(Handle);
 
@@ -77,10 +74,7 @@ AL_S32 AlMpu_Hal_MpuDisable(AL_MPU_HalStruct *Handle)
 {
     AL_S32 RetValue;
 
-    if (Handle == AL_NULL) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlMpu_Hal_MpuDisable illegal parameter\r\n");
-        return AL_MPU_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
     AL_MPU_HAL_LOCK(Handle);
 
@@ -106,10 +100,7 @@ AL_S32 AlMpu_Hal_EnableRegion(AL_MPU_HalStruct *Handle, AL_U8 RegionNumber)
 {
     AL_S32 RetValue;
 
-    if (Handle == AL_NULL) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlMpu_Hal_EnableRegion illegal parameter\r\n");
-        return AL_MPU_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
     AL_MPU_HAL_LOCK(Handle);
 
@@ -135,10 +126,7 @@ AL_S32 AlMpu_Hal_DisableRegion(AL_MPU_HalStruct *Handle, AL_U8 RegionNumber)
 {
     AL_S32 RetValue;
 
-    if (Handle == AL_NULL) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlMpu_Hal_DisableRegion illegal parameter\r\n");
-        return AL_MPU_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
     AL_MPU_HAL_LOCK(Handle);
 
@@ -166,10 +154,7 @@ AL_S32 AlMpu_Hal_ConfigRegionByRegionNum(AL_MPU_HalStruct *Handle, AL_U8 RegionN
 {
     AL_S32 RetValue;
 
-    if (Handle == AL_NULL) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlMpu_Hal_ConfigRegionByRegionNum illegal parameter\r\n");
-        return AL_MPU_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
     AL_MPU_HAL_LOCK(Handle);
 
@@ -195,10 +180,7 @@ AL_S32 AlMpu_Hal_ConfigRegion(AL_MPU_HalStruct *Handle, AL_MPU_RegionConfigStruc
 {
     AL_S32 RetValue;
 
-    if (Handle == AL_NULL) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlMpu_Hal_ConfigRegion illegal parameter\r\n");
-        return AL_MPU_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
     AL_MPU_HAL_LOCK(Handle);
 
@@ -231,10 +213,7 @@ AL_S32 AlMpu_Hal_ConfigInit(AL_U8 MpuDevId, AL_MPU_HalStruct *Handle, AL_Mpu_Eve
     AL_Mpu_EventCallBack CallBack;
     AL_S32 ConfigCount;
 
-    if (Handle == AL_NULL || InitRegionConfig == AL_NULL || ConfigNumber == 0) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlMpu_Hal_ConfigInit illegal parameter\r\n");
-        return AL_MPU_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
     AL_MPU_HAL_LOCK(Handle);
 

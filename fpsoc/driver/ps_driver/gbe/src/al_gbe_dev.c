@@ -263,9 +263,8 @@ AL_VOID AlGbe_Dev_SetDmaConfig(AL_GBE_DevStruct *Gbe)
 
 AL_U32 AlGbe_Dev_ConfigRxDescBuffer(AL_GBE_DevStruct *Gbe, AL_U32 DescIndex, AL_U8 *Buffer1, AL_U8 *Buffer2)
 {
-    if ((Gbe == AL_NULL) || (Buffer1 == AL_NULL) || (DescIndex >= (AL_U32)AL_GBE_RX_DESC_CNT)) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Gbe != AL_NULL) && (Buffer1 != AL_NULL) && (DescIndex < (AL_U32)AL_GBE_RX_DESC_CNT),
+              AL_GBE_ERR_ILLEGAL_PARAM);
 
     AL_GBE_DMADescStruct *DmaRxDesc = (AL_GBE_DMADescStruct *)Gbe->RxDescList.RxDesc[DescIndex];
 
@@ -360,9 +359,7 @@ AL_VOID AlGbe_Dev_DMATxDescListInit(AL_GBE_DevStruct *Gbe)
 
 AL_S32 AlGbe_Dev_ConfigDuplexAndSpeed(AL_GBE_DevStruct *Gbe)
 {
-    if (Gbe == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Gbe != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
 
@@ -374,18 +371,14 @@ AL_S32 AlGbe_Dev_ConfigDuplexAndSpeed(AL_GBE_DevStruct *Gbe)
 
 AL_S32 AlGbe_Dev_CheckConfig(AL_GBE_InitStruct *InitConfig, AL_GBE_MacDmaConfigStruct *MacDmaConfig)
 {
-    if (InitConfig->TxDescList == AL_NULL || InitConfig->RxDescList == AL_NULL) {
-        return AL_GBE_ERR_CONFIG_ERROR;
-    }
+    AL_ASSERT((InitConfig->TxDescList != AL_NULL) && (InitConfig->RxDescList != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     /*
       The buffer size must be a multiple of 4, 8, or 16
       depending on the data bus widths (32-bit, 64-bit, or 128-bit
       respectively). data bus widths is 32-bit.
      */
-    if (InitConfig->RxBuffLen % 4) {
-        return AL_GBE_ERR_CONFIG_ERROR;
-    }
+    AL_ASSERT(!(InitConfig->RxBuffLen % 4), AL_GBE_ERR_CONFIG_ERROR);
 
     return AL_OK;
 }
@@ -398,9 +391,7 @@ AL_S32 AlGbe_Dev_Init(AL_GBE_DevStruct *Gbe, AL_GBE_HwConfigStruct *HwConfig,
     AL_U32 MacAddrLow;
     AL_U16 MacAddrHigh;
 
-    if (Gbe == AL_NULL || HwConfig == AL_NULL || InitConfig == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Gbe != AL_NULL) && (HwConfig != AL_NULL) && (InitConfig != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     Ret = AlGbe_Dev_CheckConfig(InitConfig, MacDmaConfig);
     if (Ret != AL_OK) {
@@ -531,9 +522,7 @@ AL_S32 AlGbe_Dev_PhyInit(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress)
     AL_S32 Ret = 0;
     AL_U16 RegValue;
 
-    if (Gbe == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Gbe != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     /* Reset the Phy */
     Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_BCR_REG, PHY_BCTL_RESET_MASK);
@@ -632,6 +621,8 @@ AL_S32 AlGbe_Dev_GetPhyLinkStatus(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress, AL_U
     AL_S32 Ret;
     AL_U16 RegValue;
 
+    AL_ASSERT((Gbe != AL_NULL) && (Speed != AL_NULL) && (Duplex != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+
     do {
         Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_SSR_REG, &RegValue);
         if (Ret != AL_OK) {
@@ -669,13 +660,8 @@ AL_S32 AlGbe_Dev_GetPhyLinkStatus(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress, AL_U
 
 AL_S32 AlGbe_Dev_StartMacDmaIntr(AL_GBE_DevStruct *Gbe)
 {
-    if (Gbe == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
-
-    if ((Gbe->State & AL_GBE_STATE_READY) == 0) {
-        return AL_GBE_ERR_NOT_READY;
-    }
+    AL_ASSERT((Gbe != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+    AL_ASSERT(((Gbe->State & AL_GBE_STATE_READY) == AL_GBE_STATE_READY), AL_GBE_ERR_NOT_READY);
 
     AL_GBE_DMADescStruct *DmaRxDesc;
 
@@ -724,13 +710,8 @@ AL_S32 AlGbe_Dev_StartMacDmaIntr(AL_GBE_DevStruct *Gbe)
 
 AL_S32 AlGbe_Dev_StartMacDma(AL_GBE_DevStruct *Gbe)
 {
-    if (Gbe == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
-
-    if ((Gbe->State & AL_GBE_STATE_READY) == 0) {
-        return AL_GBE_ERR_NOT_READY;
-    }
+    AL_ASSERT((Gbe != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+    AL_ASSERT(((Gbe->State & AL_GBE_STATE_READY) == AL_GBE_STATE_READY), AL_GBE_ERR_NOT_READY);
 
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
 
@@ -872,9 +853,7 @@ AL_S32 AlGbe_Dev_GetRxDataBuffer(AL_GBE_DevStruct *Gbe, AL_GBE_BufferStruct *RxB
     __IO const AL_GBE_DMADescStruct *DmaRxDesc = (AL_GBE_DMADescStruct *)DmaRxDescList->RxDesc[DescIndex];
     AL_GBE_BufferStruct *RxBuff = RxBuffer;
 
-    if (RxBuff == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Gbe != AL_NULL) && (RxBuff != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     if (DmaRxDescList->AppDescNbr == 0U) {
         if (AlGbe_Dev_IsRxDataAvailable(Gbe) == 0U) {
@@ -953,6 +932,8 @@ AL_S32 AlGbe_Dev_GetRxDataLength(AL_GBE_DevStruct *Gbe, AL_U32 *Length)
     AL_U32 DescIndex = DmaRxDescList->FirstAppDesc;
     __IO const AL_GBE_DMADescStruct *DmaRxDesc;
 
+    AL_ASSERT((Gbe != AL_NULL) && (Length != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+
     if (DmaRxDescList->AppDescNbr == 0U) {
         if (AlGbe_Dev_IsRxDataAvailable(Gbe) == 0U) {
             /* No data to be transferred to the application */
@@ -977,6 +958,8 @@ AL_S32 AlGbe_Dev_BuildRxDescriptors(AL_GBE_DevStruct *Gbe)
     __IO AL_GBE_DMADescStruct *DmaRxDesc = (AL_GBE_DMADescStruct *)DmaRxDescList->RxDesc[DescIndex];
     AL_U32 TotalAppdescNbr = DmaRxDescList->AppDescNbr;
     AL_U32 Descscan;
+
+    AL_ASSERT((Gbe != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
 
@@ -1203,6 +1186,8 @@ AL_S32 AlGbe_Dev_ReleaseTxPacket(AL_GBE_DevStruct *Gbe)
     AL_U8 PktTxStatus = 1U;
     AL_U8 PktInUse;
 
+    AL_ASSERT((Gbe != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+
     /* Loop through Buffers in use.  */
     while ((NumOfBuff != 0U) && (PktTxStatus != 0U)) {
         PktInUse = 1U;
@@ -1242,20 +1227,12 @@ AL_S32 AlGbe_Dev_Transmit(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruct *TxCo
 {
     AL_S32 Ret;
 
-    if (Gbe == AL_NULL || TxConfig == 0) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
-
-    if ((Gbe->State & AL_GBE_STATE_READY) == 0) {
-        return AL_GBE_ERR_NOT_READY;
-    }
-
-    if (AlGbe_Dev_IsTxBusy(Gbe)) {
-        return AL_GBE_ERR_BUSY;
-    }
+    AL_ASSERT((Gbe != AL_NULL) && (TxConfig != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+    AL_ASSERT(((Gbe->State & AL_GBE_STATE_READY) == AL_GBE_STATE_READY), AL_GBE_ERR_NOT_READY);
+    AL_ASSERT((!AlGbe_Dev_IsTxBusy(Gbe)), AL_GBE_ERR_BUSY);
 
     /* Change Status */
-//    AlGbe_Dev_SetTxBusy(Gbe);
+    AlGbe_Dev_SetTxBusy(Gbe);
 
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
 
@@ -1280,17 +1257,9 @@ AL_S32 AlGbe_Dev_TransmitPolling(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruc
     AL_S32 Ret;
     const AL_GBE_DMADescStruct *DmaTxDesc;
 
-    if (Gbe == AL_NULL || TxConfig == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
-
-    if ((Gbe->State & AL_GBE_STATE_READY) == 0) {
-        return AL_GBE_ERR_NOT_READY;
-    }
-
-    if (AlGbe_Dev_IsTxBusy(Gbe)) {
-        return AL_GBE_ERR_BUSY;
-    }
+    AL_ASSERT((Gbe != AL_NULL) && (TxConfig != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+    AL_ASSERT(((Gbe->State & AL_GBE_STATE_READY) == AL_GBE_STATE_READY), AL_GBE_ERR_NOT_READY);
+    AL_ASSERT((!AlGbe_Dev_IsTxBusy(Gbe)), AL_GBE_ERR_BUSY);
 
     /* Change Status */
     AlGbe_Dev_SetTxBusy(Gbe);
@@ -1330,7 +1299,7 @@ static AL_VOID AlGbe_Dev_TxDoneHandler(AL_GBE_DevStruct *Gbe)
         };
         (*Gbe->EventCallBack)(&GbeEvent, Gbe->EventCallBackRef);
     }
-
+    AlGbe_Dev_ClrTxBusy(Gbe);
 }
 
 static AL_VOID AlGbe_Dev_RxDoneHandler(AL_GBE_DevStruct *Gbe)
@@ -1433,9 +1402,7 @@ AL_VOID AlGbe_Dev_IntrHandler(AL_VOID *Instance)
 
 AL_S32 AlGbe_Dev_RegisterEventCallBack(AL_GBE_DevStruct *Gbe, AL_GBE_EventCallBack Callback, void *CallbackRef)
 {
-    if (Gbe == AL_NULL || Callback == AL_NULL) {
-        return AL_GBE_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Gbe != AL_NULL) && (Callback != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
     Gbe->EventCallBack        = Callback;
     Gbe->EventCallBackRef     = CallbackRef;

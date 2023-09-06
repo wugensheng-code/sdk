@@ -113,9 +113,7 @@ AL_S32 AlIic_Hal_Init(AL_IIC_HalStruct *Handle, AL_U32 DevId,
     AL_S32 Ret = AL_OK;
     AL_IIC_HwConfigStruct *HwConfig = AL_NULL;
 
-    if (Handle == AL_NULL) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_IIC_ERR_ILLEGAL_PARAM);
 
     HwConfig = AlIic_Dev_LookupConfig(DevId);
     if (HwConfig != AL_NULL) {
@@ -155,9 +153,7 @@ AL_S32 AlIic_Hal_MasterSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
     AL_S32 Ret = AL_OK;
     AL_IIC_EventStruct IicEvent = {0};
 
-    if (Handle == AL_NULL) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_IIC_ERR_ILLEGAL_PARAM);
 
     Ret = AlOsal_Lock_Take(&Handle->Lock, Timeout);
     if (Ret != AL_OK) {
@@ -193,9 +189,7 @@ AL_S32 AlIic_Hal_MasterSendDataPolling(AL_IIC_HalStruct *Handle, AL_U16 SlaveAdd
 {
     AL_S32 Ret = AL_OK;
 
-    if (Handle == AL_NULL) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_IIC_ERR_ILLEGAL_PARAM);
 
     Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
@@ -217,9 +211,7 @@ AL_S32 AlIic_Hal_MasterRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
     AL_IIC_EventStruct IicEvent = {0};
 
     /* check only Handle, more checks in AlIic_Dev_Init function */
-    if (Handle == AL_NULL) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_IIC_ERR_ILLEGAL_PARAM);
 
     Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
@@ -254,9 +246,7 @@ AL_S32 AlIic_Hal_MasterRecvDataPolling(AL_IIC_HalStruct *Handle, AL_U16 SlaveAdd
     AL_S32 Ret = AL_OK;
 
     /* check only Handle, more checks in AlIic_Dev_Init function */
-    if (Handle == AL_NULL) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_IIC_ERR_ILLEGAL_PARAM);
 
     Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
@@ -280,9 +270,7 @@ AL_S32 AlIic_Hal_SlaveSendDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
     /*
      * check only Handle, more checks in AlIic_Dev_Init function;
     */
-    if (Handle == AL_NULL) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_IIC_ERR_ILLEGAL_PARAM);
 
     Ret = AlOsal_Lock_Take(&Handle->Lock, Timeout);
     if (Ret != AL_OK) {
@@ -317,9 +305,7 @@ AL_S32 AlIic_Hal_SlaveRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
     AL_IIC_EventStruct IicEvent = {0};
 
     /* check only Handle, more checks in AlIic_Dev_Init function */
-    if (Handle == AL_NULL) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_IIC_ERR_ILLEGAL_PARAM);
 
     Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
@@ -355,9 +341,7 @@ AL_S32 AlIic_Hal_MasterSetCmdOption(AL_IIC_HalStruct *Handle, AL_IIC_CmdOptionEn
 {
     AL_S32 Ret = AL_OK;
 
-    if (Handle == AL_NULL) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_IIC_ERR_ILLEGAL_PARAM);
 
     Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
@@ -379,9 +363,7 @@ AL_IIC_CmdOptionEnum AlIic_Hal_MastertGetCmdOption(AL_IIC_HalStruct *Handle)
     AL_S32 Ret = AL_OK;
     AL_IIC_CmdOptionEnum CmdOption = AL_IIC_CMD_OPTION_NONE;
 
-    if (Handle == AL_NULL) {
-        return AL_IIC_CMD_OPTION_NONE;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_IIC_CMD_OPTION_NONE);
 
     Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
@@ -399,9 +381,7 @@ AL_S32 AlIic_Hal_IoCtl(AL_IIC_HalStruct *Handle, AL_IIC_IoCtlCmdEnum Cmd, AL_VOI
 {
     AL_S32 Ret = AL_OK;
 
-    if (Handle == AL_NULL) {
-        return AL_IIC_ERR_ILLEGAL_PARAM;
-    }
+    AL_ASSERT((Handle != AL_NULL), AL_IIC_ERR_ILLEGAL_PARAM);
 
     Ret = AlOsal_Lock_Take(&Handle->Lock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
