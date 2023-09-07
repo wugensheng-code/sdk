@@ -11,8 +11,8 @@
 static AL_U8 *WriteBuff = (AL_U8 *)AL_MMC_TEST_WR_BUFF_ADDR;
 static AL_U8 *ReadBuff = (AL_U8 *)AL_MMC_TEST_RD_BUFF_ADDR;
 #else
-static AL_U8 *WriteBuff[AL_MMC_TEST_BLK_NUM_1][AL_MMC_TEST_BLK_SIZE];
-static AL_U8 *ReadBuff[AL_MMC_TEST_BLK_NUM][AL_MMC_TEST_BLK_SIZE];
+static AL_U8 *WriteBuff[AL_MMC_TEST_BLK_NUM][AL_MMC_TEST_BLK_SIZE] CACHE_LINE_ALIGN;
+static AL_U8 *ReadBuff[AL_MMC_TEST_BLK_NUM][AL_MMC_TEST_BLK_SIZE] CACHE_LINE_ALIGN;
 #endif
 
 static AL_VOID AlMmc_Test_InitSrc(AL_U8 *Addr, AL_U32 ByteSize, AL_U32 DataOffset);
@@ -52,14 +52,14 @@ static AL_S32 AlMmc_Test_DataCheck(AL_MMC_HalStruct *Handle, AL_U8 *SrcAddr, AL_
 {
     AL_U32 *SrcData = (AL_U32 *)SrcAddr;
     AL_U32 *DstData = (AL_U32 *)DstAddr;
-    AL_U32 WordSize = BlockCnt * (Handle->Dev->CardInfo.BlkLen >> 2);
+    AL_U32 WordSize = BlockCnt * (Handle->Dev.CardInfo.BlkLen >> 2);
     while (WordSize--) {
         if (*SrcData == *DstData) {
             SrcData++;
             DstData++;
             continue;
         } else {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Error word size is 0x%x\r\n", BlockCnt * (Handle->Dev->CardInfo.BlkLen >> 2) - WordSize);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Error word size is 0x%x\r\n", BlockCnt * (Handle->Dev.CardInfo.BlkLen >> 2) - WordSize);
             return -1;
         }
     }
@@ -76,8 +76,8 @@ static AL_S32 AlMmc_Test_BlockTest(AL_MMC_HalStruct *Handle, AL_U32 DataOffset, 
     AL_U32 ReadBlkCnt = BlkCnt;
 
     #ifndef USE_DDR
-    if (WriteBlkCnt > AL_MMC_TEST_BLK_NUM_1) {
-        WriteBlkCnt = AL_MMC_TEST_BLK_NUM_1;
+    if (WriteBlkCnt > AL_MMC_TEST_BLK_NUM) {
+        WriteBlkCnt = AL_MMC_TEST_BLK_NUM;
     }
     if (ReadBlkCnt > AL_MMC_TEST_BLK_NUM) {
         ReadBlkCnt = AL_MMC_TEST_BLK_NUM;
@@ -91,53 +91,22 @@ static AL_S32 AlMmc_Test_BlockTest(AL_MMC_HalStruct *Handle, AL_U32 DataOffset, 
     }
 
 #ifdef CONFIG_PERFORMANCE_CALC
-    if (WriteBlkCnt > 1)
-        AlMmc_Test_CalcStart(&PerCalc);
+    AlMmc_Test_CalcStart(&PerCalc);
 #endif
-#ifdef USE_DDR
+
     Ret = AlMmc_Hal_WriteBlocked(Handle, WriteBuff, BlkOffset, WriteBlkCnt, Timeout);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal write %d block error 0x%x\r\n", WriteBlkCnt, Ret);
         return Ret;
     }
-#else
-    if (WriteBlkCnt <= AL_MMC_TEST_BLK_NUM_1) {
-        Ret = AlMmc_Hal_WriteBlocked(Handle, WriteBuff, BlkOffset, WriteBlkCnt, Timeout);
-        if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal write %d block error 0x%x\r\n", WriteBlkCnt, Ret);
-            return Ret;
-        }
-    }
-#endif
+
 #ifdef CONFIG_PERFORMANCE_CALC
-    if (WriteBlkCnt > 1)
-        AlMmc_Test_CalcEnd(Handle, &PerCalc, WriteBlkCnt);
+    AlMmc_Test_CalcEnd(Handle, &PerCalc, WriteBlkCnt);
 #endif
 
 #ifdef CONFIG_PERFORMANCE_CALC
-    if (ReadBlkCnt > 1)
-        AlMmc_Test_CalcStart(&PerCalc);
+    AlMmc_Test_CalcStart(&PerCalc);
 #endif
-
-    // AL_U32 _BlkCnt = BlkCnt;
-    // AL_U8 *_ReadBuff = ReadBuff;
-    // AL_U32 _BlkOffset = BlkOffset;
-    // while (_BlkCnt > 8) {
-    //     Ret = AlMmc_Hal_ReadBlocked(Handle, _ReadBuff, _BlkOffset, 8, Timeout);
-    //     if (Ret != AL_OK) {
-    //         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal read %d block error 0x%x\r\n", _BlkCnt, Ret);
-    //         return Ret;
-    //     }
-    //     _BlkCnt -= 8;
-    //     _ReadBuff += 8 * AL_MMC_TEST_BLK_SIZE;
-    //     _BlkOffset += 8;
-    // }
-
-    // Ret = AlMmc_Hal_ReadBlocked(Handle, _ReadBuff, _BlkOffset, _BlkCnt, Timeout);
-    // if (Ret != AL_OK) {
-    //     AL_LOG(AL_LOG_LEVEL_ERROR, "Hal read %d block error 0x%x\r\n", _BlkCnt, Ret);
-    //     return Ret;
-    // }
 
     Ret = AlMmc_Hal_ReadBlocked(Handle, ReadBuff, BlkOffset, ReadBlkCnt, Timeout);
     if (Ret != AL_OK) {
@@ -146,25 +115,14 @@ static AL_S32 AlMmc_Test_BlockTest(AL_MMC_HalStruct *Handle, AL_U32 DataOffset, 
     }
 
 #ifdef CONFIG_PERFORMANCE_CALC
-    if (ReadBlkCnt > 1)
-        AlMmc_Test_CalcEnd(Handle, &PerCalc, ReadBlkCnt);
+    AlMmc_Test_CalcEnd(Handle, &PerCalc, ReadBlkCnt);
 #endif
 
-#ifdef USE_DDR
     Ret = AlMmc_Test_DataCheck(Handle, WriteBuff, ReadBuff, ReadBlkCnt);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal block check error!\r\n");
         return Ret;
     }
-#else
-    if (ReadBlkCnt <= AL_MMC_TEST_BLK_NUM_1) {
-        Ret = AlMmc_Test_DataCheck(Handle, WriteBuff, ReadBuff, ReadBlkCnt);
-        if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal block check error!\r\n");
-            return Ret;
-        }
-    }
-#endif
 
     return Ret;
 }
@@ -174,7 +132,7 @@ static AL_VOID AlMmc_Test_Sd(AL_VOID)
     AL_S32 Ret = AL_OK;
     AL_U32 Timeout  = 1000;
     AL_U32 DevId    = 0;
-    AL_MMC_HalStruct Handle;
+    AL_MMC_HalStruct *Handle;
     AL_MMC_InitStruct *InitConfig[AL_MMC_TEST_SD_CASE_NUM];
     AL_S8 *CaseName[AL_MMC_TEST_SD_CASE_NUM] = {"Non-DMA", "SDMA", "ADMA2"};
 
@@ -193,22 +151,22 @@ static AL_VOID AlMmc_Test_Sd(AL_VOID)
         }
         AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
-        Ret = AlMmc_Test_BlockTest(&Handle, 'a', WriteBuff, ReadBuff, 0, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
+        Ret = AlMmc_Test_BlockTest(Handle, 'a', WriteBuff, ReadBuff, 0, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Block test error\r\n");
         }
 
-        Ret = AlMmc_Test_BlockTest(&Handle, 'b', WriteBuff, ReadBuff, 0, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
+        Ret = AlMmc_Test_BlockTest(Handle, 'b', WriteBuff, ReadBuff, 0, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Block test error\r\n");
         }
 
-        Ret = AlMmc_Test_BlockTest(&Handle, 'A', WriteBuff, ReadBuff, 0, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
+        Ret = AlMmc_Test_BlockTest(Handle, 'A', WriteBuff, ReadBuff, 0, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Block test error\r\n");
         }
 
-        Ret = AlMmc_Test_BlockTest(&Handle, 'B', WriteBuff, ReadBuff, 0, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
+        Ret = AlMmc_Test_BlockTest(Handle, 'B', WriteBuff, ReadBuff, 0, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Block test error\r\n");
         }
@@ -222,7 +180,7 @@ static AL_VOID AlMmc_Test_Emmc(AL_VOID)
     AL_S32 Ret = AL_OK;
     AL_U32 Timeout  = 1000;
     AL_U32 DevId    = 0;
-    AL_MMC_HalStruct Handle;
+    AL_MMC_HalStruct *Handle;
     AL_MMC_InitStruct *InitConfig[AL_MMC_TEST_EMMC_CASE_NUM];
     AL_S8 *CaseName[AL_MMC_TEST_EMMC_CASE_NUM] = {"Non-DMA", "SDMA", "ADMA2"};
     AL_MMC_PerCalcStruct PerCalc;
@@ -242,24 +200,24 @@ static AL_VOID AlMmc_Test_Emmc(AL_VOID)
         }
         AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
-        Ret = AlMmc_Test_BlockTest(&Handle, 'a', WriteBuff, ReadBuff, 0, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
+        Ret = AlMmc_Test_BlockTest(Handle, 'a', WriteBuff, ReadBuff, 0, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Hal write single block error 0x%x\r\n", Ret);
             return ;
         }
 
-        Ret = AlMmc_Test_BlockTest(&Handle, 'b', WriteBuff, ReadBuff, 1, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
+        Ret = AlMmc_Test_BlockTest(Handle, 'b', WriteBuff, ReadBuff, 1, AL_MMC_TEST_SINGLE_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Hal read single block error 0x%x\r\n", Ret);
             return ;
         }
 
-        Ret = AlMmc_Test_BlockTest(&Handle, 'c', WriteBuff, ReadBuff, 2, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
+        Ret = AlMmc_Test_BlockTest(Handle, 'c', WriteBuff, ReadBuff, 2, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Block test error\r\n");
         }
 
-        Ret = AlMmc_Test_BlockTest(&Handle, 'd', WriteBuff, ReadBuff, 3, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
+        Ret = AlMmc_Test_BlockTest(Handle, 'd', WriteBuff, ReadBuff, 3, AL_MMC_TEST_MULTI_BLK_CNT, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Block test error\r\n");
         }
@@ -277,7 +235,7 @@ static AL_VOID AlMmc_Test_CalcEnd(AL_MMC_HalStruct *Handle, AL_MMC_PerCalcStruct
 {
     PerCalc->End = AlSys_GetTimerTickCount();
     PerCalc->TimeInUs = (PerCalc->End - PerCalc->Start)/(AlSys_GetTimerFreq()/1000000);
-    PerCalc->DatInByte = BlkCnt * Handle->Dev->CardInfo.BlkLen;
+    PerCalc->DatInByte = BlkCnt * Handle->Dev.CardInfo.BlkLen;
     PerCalc->BytePerSec = ((AL_DOUBLE)PerCalc->DatInByte / PerCalc->TimeInUs);
 
     AlMmc_Test_CalcDisplay(PerCalc);
@@ -290,5 +248,6 @@ static AL_VOID AlMmc_Test_CalcDisplay(AL_MMC_PerCalcStruct *PerCalc)
     AL_LOG(AL_LOG_LEVEL_DEBUG, "|-End: %llu, 0x%llx\r\n", PerCalc->End,  PerCalc->End);
     AL_LOG(AL_LOG_LEVEL_DEBUG, "|-DatInByte: %llu, 0x%llx\r\n", PerCalc->DatInByte,  PerCalc->DatInByte);
     AL_LOG(AL_LOG_LEVEL_DEBUG, "|-TimeInUs: %llu, 0x%llx\r\n", PerCalc->TimeInUs,  PerCalc->TimeInUs);
-    // AL_LOG(AL_LOG_LEVEL_DEBUG, "|-BytePerSec: %f MB/s\r\n", PerCalc->BytePerSec);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "|-BytePerSec: %f MB/s\r\n", PerCalc->BytePerSec);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "-------------------------------\r\n");
 }

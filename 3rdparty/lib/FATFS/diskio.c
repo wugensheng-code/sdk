@@ -27,8 +27,7 @@ static AL_MMC_InitStruct InitConfig = {
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_DISABLE,
-    .DmaBdary           = AL_MMC_BDARY_32K,
-    .ForceVer3          = AL_TRUE
+    .DmaBdary           = AL_MMC_BDARY_32K
 };
 
 DSTATUS disk_status(BYTE pdrv)
@@ -128,7 +127,7 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void *buff)
         {
         case GET_SECTOR_SIZE :
             // Get R/W sector size (WORD)
-            *(WORD *)buff = Handle.Dev->CardInfo.BlkLen;
+            *(WORD *)buff = Handle.Dev.CardInfo.BlkLen;
             break;
         case GET_BLOCK_SIZE :
             // Get erase block size in unit of sector (DWORD)
@@ -136,7 +135,7 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void *buff)
             break;
         case GET_SECTOR_COUNT:
             //*(DWORD * )buff = 1000;
-            *(DWORD *)buff = Handle.Dev->CardInfo.CardCap * 1024 / Handle.Dev->CardInfo.BlkLen;
+            *(DWORD *)buff = Handle.Dev.CardInfo.CardCap * 1024 / Handle.Dev.CardInfo.BlkLen;
             break;
         case CTRL_SYNC :
             break;

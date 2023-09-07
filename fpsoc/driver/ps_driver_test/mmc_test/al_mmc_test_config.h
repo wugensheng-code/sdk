@@ -9,7 +9,7 @@
  * @author  Anlogic esw team
  * @version V0.0.1
  * @date    2023-05-06
- * @brief   dmac ahb test channel config file
+ * @brief   mmc test channel config file
  */
 
 #ifndef __AL_MMC_TEST_CONFIG_H_
@@ -63,12 +63,11 @@ static AL_MMC_InitStruct SdNoDmaInit = {
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_DISABLE,
-    .DmaBdary           = AL_MMC_BDARY_32K,
-    .ForceVer3          = AL_TRUE
+    .DmaBdary           = AL_MMC_BDARY_32K
 };
 
 static AL_MMC_InitStruct SdSdmaInit = {
-    .CardType           = AL_MMC_CARD_TYPE_SD,
+    .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
     .DmaMode            = AL_MMC_DMA_MODE_SDMA,
 #ifdef AUTO_TEST
     .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
@@ -79,8 +78,7 @@ static AL_MMC_InitStruct SdSdmaInit = {
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_DISABLE,
-    .DmaBdary           = AL_MMC_BDARY_32K,
-    .ForceVer3          = AL_TRUE
+    .DmaBdary           = AL_MMC_BDARY_32K
 };
 
 static AL_MMC_InitStruct SdAdma2Init = {
@@ -95,8 +93,7 @@ static AL_MMC_InitStruct SdAdma2Init = {
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_ENABLE,
-    .DmaBdary           = AL_MMC_BDARY_32K,
-    .ForceVer3          = AL_TRUE
+    .DmaBdary           = AL_MMC_BDARY_32K
 };
 
 static AL_MMC_InitStruct EmmcNoDmaInit = {
@@ -111,8 +108,7 @@ static AL_MMC_InitStruct EmmcNoDmaInit = {
     .BusWidth           = AL_MMC_BUS_WIDTH_8BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_DISABLE,
-    .DmaBdary           = AL_MMC_BDARY_32K,
-    .ForceVer3          = AL_TRUE
+    .DmaBdary           = AL_MMC_BDARY_32K
 };
 
 static AL_MMC_InitStruct EmmcSdmaInit = {
@@ -127,8 +123,7 @@ static AL_MMC_InitStruct EmmcSdmaInit = {
     .BusWidth           = AL_MMC_BUS_WIDTH_8BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_DISABLE,
-    .DmaBdary           = AL_MMC_BDARY_4K,
-    .ForceVer3          = AL_TRUE
+    .DmaBdary           = AL_MMC_BDARY_4K
 };
 
 static AL_MMC_InitStruct EmmcAdma2Init = {
@@ -143,8 +138,7 @@ static AL_MMC_InitStruct EmmcAdma2Init = {
     .BusWidth           = AL_MMC_BUS_WIDTH_8BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_ENABLE,
-    .DmaBdary           = AL_MMC_BDARY_32K,
-    .ForceVer3          = AL_TRUE
+    .DmaBdary           = AL_MMC_BDARY_32K
 };
 
 /************************** Function Prototypes ******************************/

@@ -67,6 +67,7 @@ typedef enum
 #define AL_MMC_ERR_NOT_SUPPORT          AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_SUPPORT)
 #define AL_MMC_ERR_TIMEOUT              AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, AL_ERR_TIMEOUT)
 #define AL_MMC_ERR_BUSY                 AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, AL_ERR_BUSY)
+#define AL_MMC_ERR_NOMEM                AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, AL_ERR_NOMEM)
 #define AL_MMC_ERR_INVALID_DEVID        AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, MMC_ERR_INVALID_DEVID)
 #define AL_MMC_ERR_INVALID_CARD         AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, MMC_ERR_INVALID_CARD)
 #define AL_MMC_ERR_LINE_INHIBIT         AL_DEF_ERR(AL_MMC, AL_LOG_LEVEL_ERROR, MMC_ERR_LINE_INHIBIT)
@@ -261,15 +262,6 @@ typedef struct
 
 typedef AL_VOID (*AL_MMC_EventCallBack)(AL_MMC_EventStruct *Event, AL_VOID *CallBackRef);
 
-/**
- * @brief  Event callback struct
- */
-typedef struct
-{
-    AL_MMC_EventCallBack    Func;
-    AL_VOID                 *Ref;
-} AL_MMC_CallBackStruct;
-
 typedef union
 {
     AL_U32 Desc[2];
@@ -301,7 +293,6 @@ typedef struct
     AL_U32                  Switch1v8;
     AL_U32                  AutoGenAdmaTblEn;   /* When dma mode is ADMA2/ADMA3, is enable auto generate describe table or not */
     AL_MMC_BuffBdaryEnum    DmaBdary;
-    AL_BOOL                 ForceVer3;
 } AL_MMC_InitStruct;
 
 typedef struct
@@ -309,6 +300,7 @@ typedef struct
     AL_MMC_Cap1Union        Cap1;
     AL_MMC_Cap2Union        Cap2;
     AL_MMC_HostVerEnum      HostVer;
+    AL_MMC_TransDirEnum     Dir;
 } AL_MMC_HostInfoStruct;
 
 typedef struct
@@ -334,13 +326,11 @@ typedef struct
     AL_MMC_InitStruct       Config;
     AL_MMC_HostInfoStruct   HostInfo;
     AL_MMC_CardInfoStruct   CardInfo;
-    AL_MMC_CallBackStruct   EventCallBack;
+    AL_MMC_EventCallBack    EventCallBack;
+    AL_VOID                 *EventCallBackRef;
     AL_MMC_StateEnum        State;
     AL_MMC_CardStateUnion   CardState;
-    AL_MMC_AdmaDescUnion    AdmaDesc[AL_MMC_ADMA_TABLE_SIZE];
-#ifdef USE_ROTS
-    AL_MMC_IntrSigStruct    IntrSig;
-#endif
+    AL_MMC_AdmaDescUnion    AdmaDesc[AL_MMC_ADMA_TABLE_SIZE] CACHE_LINE_ALIGN;
 } AL_MMC_DevStruct;
 
 /************************** Variable Definitions *****************************/
@@ -348,7 +338,7 @@ typedef struct
 /************************** Function Prototypes ******************************/
 
 AL_MMC_HwConfigStruct *AlMmc_Dev_LookupConfig(AL_U32 DeviceId);
-AL_S32 AlMmc_Dev_RegisterEventCallBack(AL_MMC_DevStruct *Dev, AL_MMC_CallBackStruct *CallBack);
+AL_S32 AlMmc_Dev_RegisterEventCallBack(AL_MMC_DevStruct *Dev, AL_MMC_EventCallBack *CallBack, AL_VOID *CallBackRef);
 AL_S32 AlMmc_Dev_UnRegisterEventCallBack(AL_MMC_DevStruct *Dev);
 AL_S32 AlMmc_Dev_Init(AL_MMC_DevStruct *Dev, AL_MMC_HwConfigStruct *HwConfig, AL_MMC_InitStruct *InitConfig);
 AL_S32 AlMmc_Dev_Write(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkOffset, AL_U32 BlkCnt);

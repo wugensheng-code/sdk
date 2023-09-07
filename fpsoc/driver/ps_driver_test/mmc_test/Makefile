@@ -7,8 +7,9 @@
 #########################################################################
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
 #########################################################################
-CHIP ?= dr1m90
-SDK_ROOT   ?= ../../../..
+CHIP        ?= dr1m90
+SDK_ROOT    ?= ../../../..
+PFLOAT      := 1
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
@@ -72,8 +73,8 @@ export COMPILE_PREFIX
 
 all:
 	echo COMPILE_PREFIX = $(COMPILE_PREFIX)
-	# make cleanapp
-	# make -f Makefile_sd dasm
+	make cleanapp
+	make -f Makefile_sd dasm
 	make cleanapp
 	make -f Makefile_emmc dasm
 

@@ -25,8 +25,7 @@ static AL_MMC_InitStruct InitConfig = {
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_DISABLE,
-    .DmaBdary           = AL_MMC_BDARY_32K,
-    .ForceVer3          = AL_TRUE
+    .DmaBdary           = AL_MMC_BDARY_32K
 };
 static AL_U8 SharedBuffer[BLOCK_SIZE];
 
