@@ -149,7 +149,7 @@ typedef enum EXCn {
 /** @} */ /* End of group Configuration_of_NMSIS */
 
 
-#include <nmsis_core.h>
+#include "nmsis_core.h"
 #include "system_NUCLEI_NX.h"                    /*!< NUCLEI_NX System */
 
 /* ========================================  Start of section using anonymous unions  ======================================== */

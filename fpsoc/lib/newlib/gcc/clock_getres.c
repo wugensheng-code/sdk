@@ -7,7 +7,7 @@
 /* See LICENSE of license details. */
 #include <errno.h>
 #include <time.h>
-#include <al_core.h>
+#include "al_core.h"
 #include <stdint.h>
 
 /* Get resolution of clock. */

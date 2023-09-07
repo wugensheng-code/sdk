@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <al_type.h>
+#include "al_type.h"
 
 void __asm_invalidate_icache_all(void);
 void __asm_flush_dcache_range(AL_UINTPTR, AL_UINTPTR);

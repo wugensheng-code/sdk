@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <al_aarch64_macro.h>
-#include <al_mmu.h>
+#include "al_aarch64_macro.h"
+#include "al_mmu.h"
 
 #ifdef ENABLE_MMU
 	.extern MMUTableL0

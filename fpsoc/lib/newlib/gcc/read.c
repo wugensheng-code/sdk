@@ -9,7 +9,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include <al_core.h>
+#include "al_core.h"
 
 __WEAK ssize_t _read(int fd, void* ptr, size_t len)
 {

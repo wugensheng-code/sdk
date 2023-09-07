@@ -260,4 +260,4 @@ By using this header file, the source code can access the functions for :ref:`co
     :caption: core_generic.h
 
     #define __NMSIS_GENERIC   // Disable Eclic and Systick functions
-    #include <nmsis_core.h>
+    #include "nmsis_core.h"

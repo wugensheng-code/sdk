@@ -5,7 +5,7 @@
  */
 
 #ifdef ENABLE_MMU
-#include <al_mmu.h>
+#include "al_mmu.h"
     .globl MMUTableL0
     .globl MMUTableL1
     .globl MMUTableL2

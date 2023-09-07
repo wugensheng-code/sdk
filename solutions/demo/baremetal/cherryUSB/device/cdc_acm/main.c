@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
-#include <al_core.h>
+#include "al_core.h"
 #include <stdlib.h>
 
 typedef enum IRQn {

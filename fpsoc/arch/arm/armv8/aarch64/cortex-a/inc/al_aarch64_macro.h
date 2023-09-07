@@ -8,7 +8,7 @@
 #ifndef __AL_AARCH64_MACRO_H__
 #define __AL_AARCH64_MACRO_H__
 
-#include <al_aarch64_sysreg.h>
+#include "al_aarch64_sysreg.h"
 
 /*
  * Register aliases.

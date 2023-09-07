@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <al_core.h>
+#include "al_core.h"
 #include <stdint.h>
 #include <stddef.h>
 #include <unistd.h>

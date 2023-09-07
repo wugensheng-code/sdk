@@ -5,7 +5,7 @@
  */
 
 /* See LICENSE of license details. */
-#include <al_core.h>
+#include "al_core.h"
 #include <errno.h>
 #include <sys/stat.h>
 #include <unistd.h>

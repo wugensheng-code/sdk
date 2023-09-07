@@ -149,7 +149,7 @@ typedef enum EXCn {
 /** @} */ /* End of group Configuration_of_NMSIS */
 
 
-#include <nmsis_core.h>
+#include "nmsis_core.h"
 /* TODO: include your system_<Device>.h file
          replace '<Device>' with your device name */
 #include "system_<Device>.h"                    /*!< <Device> System */

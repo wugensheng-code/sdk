@@ -31,7 +31,7 @@
 */
 #include <stdarg.h>
 
-#include <al_core.h>
+#include "al_core.h"
 #include "al_log.h"
 
 int putchar(int c)

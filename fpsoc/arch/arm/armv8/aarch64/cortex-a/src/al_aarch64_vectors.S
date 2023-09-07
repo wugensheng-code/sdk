@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <al_aarch64_macro.h>
+#include "al_aarch64_macro.h"
 
 /* why not use macro? because can not debug in gdb */
 
