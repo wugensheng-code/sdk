@@ -56,6 +56,7 @@ typedef enum
 #define AL_CAN_ERR_NOT_SUPPORT          AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_SUPPORT)
 #define AL_CAN_ERR_TIMEOUT              AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, AL_ERR_TIMEOUT)
 #define AL_CAN_ERR_BUSY                 AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, AL_ERR_BUSY)
+#define AL_CAN_ERR_NOMEM                AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, AL_ERR_NOMEM)
 #define AL_CAN_ERR_RECV                 AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, CAN_ERR_RECV)
 #define AL_CAN_ERR_WRONG_KOER_PARAMETER AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, CAN_ERR_WRONG_KOER_PARAMETER)
 #define AL_CAN_ERR_KOER_RECV_BIT        AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, CAN_ERR_KOER_RECV_BIT)
@@ -371,15 +372,6 @@ typedef struct
 typedef AL_VOID (*AL_CAN_EventCallBack)(AL_CAN_EventStruct *Event, AL_VOID *CallBackRef);
 
 /**
- * @brief  Event callback struct
- */
-typedef struct
-{
-    AL_CAN_EventCallBack    Func;
-    AL_VOID                 *Ref;
-} AL_CAN_CallBackStruct;
-
-/**
  * @brief  Filter config struct
  */
 typedef struct
@@ -427,8 +419,10 @@ typedef struct
 {
     AL_REG                  BaseAddr;
     AL_CAN_InitStruct       Config;
-    AL_CAN_CallBackStruct   EventCallBack;
+    AL_CAN_EventCallBack    EventCallBack;
+    AL_VOID                 *EventCallBackRef;
     AL_CAN_StateEnum        State;
+    AL_VOID                 *Private;
 } AL_CAN_DevStruct;
 
 /************************** Variable Definitions *****************************/
@@ -440,7 +434,7 @@ AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, AL
 
 AL_VOID AlCan_Dev_IntrHandler(AL_VOID *Instance);
 
-AL_S32 AlCan_Dev_RegisterEventCallBack(AL_CAN_DevStruct *Dev, AL_CAN_CallBackStruct *CallBack);
+AL_S32 AlCan_Dev_RegisterEventCallBack(AL_CAN_DevStruct *Dev, AL_CAN_EventCallBack CallBack, AL_VOID *CallBackRef);
 
 AL_S32 AlCan_Dev_UnRegisterEventCallBack(AL_CAN_DevStruct *Dev);
 

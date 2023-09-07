@@ -1282,7 +1282,7 @@ static inline AL_BOOL AlCan_ll_IsAcfenx(AL_REG BaseAddr, AL_U32 Index)
                             CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_AE_0_SHIFT + Index);
 }
 
-static inline AL_BOOL AlCan_ll_SetAcfenx(AL_REG BaseAddr, AL_U32 Index, AL_BOOL IsEnabled)
+static inline AL_VOID AlCan_ll_SetAcfenx(AL_REG BaseAddr, AL_U32 Index, AL_BOOL IsEnabled)
 {
     AL_REG32_SET_BIT(BaseAddr + CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_OFFSET,
             CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_AE_0_SHIFT + Index, IsEnabled);

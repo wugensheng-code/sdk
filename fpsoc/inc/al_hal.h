@@ -58,6 +58,10 @@ extern "C" {
 #include "al_gbe_hal.h"
 #endif
 
+#ifdef HAVE_PMU_DRIVER
+#include "al_pmu_ll.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

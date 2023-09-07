@@ -5,6 +5,7 @@
  */
 
 /***************************** Include Files *********************************/
+#include <stdlib.h>
 #include "al_can_hal.h"
 #include "al_dmacahb_hal.h"
 #include "al_osal.h"
@@ -90,81 +91,84 @@ static AL_VOID AlCan_Hal_DefEventCallBack(AL_CAN_EventStruct *Event, AL_VOID *Ca
     }
 }
 
+static inline AL_S32 AlCan_Hal_HandleInit(AL_CAN_HalStruct *Handle)
+{
+    AL_S32 Ret = AL_OK;
+
+    Ret = AlOsal_Lock_Init(&Handle->TxLock, "Can-TxLock");
+    AL_ASSERT(Ret == AL_OK, Ret);
+
+    Ret = AlOsal_Lock_Init(&Handle->RxLock, "Can-RxLock");
+    AL_ASSERT(Ret == AL_OK, Ret);
+
+    AlOsal_Mb_Init(&Handle->TxEventQueue[CAN_BLOCK], "Can-TxDone");
+    AL_ASSERT(Ret == AL_OK, Ret);
+
+    AlOsal_Mb_Init(&Handle->RxEventQueue, "Can-RxNoEmpty");
+    AL_ASSERT(Ret == AL_OK, Ret);
+
+    AlOsal_Mb_Init(&Handle->TxEventQueue[CAN_NONBLOCK], "Can-TxDone");
+    AL_ASSERT(Ret == AL_OK, Ret);
+
+    return Ret;
+}
+
 /**
  * This function init CAN module
  * @param   Handle is pointer to AL_CAN_HalStruct
  * @param   InitConfig is module config structure with AL_CAN_InitStruct
- * @param   CallBack is call back struct with AL_CAN_CallBackStruct
+ * @param   CallBack is call back struct with AL_CAN_EventCallBack
  * @param   DevId is hardware module id
  * @return
  *          - AL_OK
  * @note
 */
-AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct *Handle, AL_U32 DevId, AL_CAN_InitStruct *InitConfig,
-                      AL_CAN_CallBackStruct *CallBack)
+AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct **Handle, AL_U32 DevId, AL_CAN_InitStruct *InitConfig,
+                      AL_CAN_EventCallBack CallBack)
 {
     AL_S32 Ret = AL_OK;
-    AL_CAN_HwConfigStruct *HwConfig;
-    AL_CAN_CallBackStruct EventCallBack;
+    AL_CAN_DevStruct *Dev = AL_NULL;
+    AL_CAN_HwConfigStruct *HwConfig = AL_NULL;
 
     AL_ASSERT(Handle != AL_NULL, AL_CAN_ERR_NULL_PTR);
 
     /* 1. look up hardware config */
     HwConfig = AlCan_Dev_LookupConfig(DevId);
-    if (HwConfig == AL_NULL) {
+    if (HwConfig != AL_NULL) {
+        Dev = &AL_CAN_DevInstance[DevId];
+    } else {
         return AL_CAN_ERR_NULL_PTR;
     }
-    Handle->Dev = &AL_CAN_DevInstance[DevId];
 
     /* 2. Init IP */
-    Ret = AlCan_Dev_Init(Handle->Dev, HwConfig, InitConfig);
+    Ret = AlCan_Dev_Init(Dev, HwConfig, InitConfig);
     if (Ret != AL_OK) {
         return Ret;
     }
+
+    if (Dev->Private == AL_NULL) {
+        Dev->Private = (AL_VOID *)malloc(sizeof(AL_CAN_HalStruct));
+        if (Dev->Private == AL_NULL) {
+            return AL_CAN_ERR_NOMEM;
+        }
+    }
+    *Handle = Dev->Private;
+    (*Handle)->Dev = Dev;
 
     /* 3. register callback */
     if (CallBack == AL_NULL) {
-        EventCallBack.Func  = AlCan_Hal_DefEventCallBack;
-        EventCallBack.Ref   = Handle;
+        Ret = AlCan_Dev_RegisterEventCallBack(Dev, AlCan_Hal_DefEventCallBack, *Handle);
     } else {
-        EventCallBack.Func  = CallBack->Func;
-        EventCallBack.Ref   = CallBack->Ref;
+        Ret = AlCan_Dev_RegisterEventCallBack(Dev, CallBack, *Handle);
     }
-
-    Ret = AlCan_Dev_RegisterEventCallBack(Handle->Dev, &EventCallBack);
-    if (Ret != AL_OK) {
-        return Ret;
-    }
+    AL_ASSERT(Ret == AL_OK, Ret);
 
     /* 4. register intr */
-    if (Handle->Dev->Config.RunMode & (AL_CAN_RUN_INTR_DMA | AL_CAN_RUN_INTR)) {
-        AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlCan_Dev_IntrHandler, Handle->Dev);
+    if (Dev->Config.RunMode & (AL_CAN_RUN_INTR_DMA | AL_CAN_RUN_INTR)) {
+        AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlCan_Dev_IntrHandler, Dev);
     }
 
-    Ret = AlOsal_Lock_Init(&Handle->TxLock, "Can-TxLock");
-    if (Ret != AL_OK) {
-        return Ret;
-    }
-
-    Ret = AlOsal_Lock_Init(&Handle->RxLock, "Can-RxLock");
-    if (Ret != AL_OK) {
-        return Ret;
-    }
-
-    AlOsal_Mb_Init(&Handle->TxEventQueue[CAN_BLOCK], "Can-TxDone");
-    if (Ret != AL_OK) {
-        return Ret;
-    }
-
-    AlOsal_Mb_Init(&Handle->RxEventQueue, "Can-RxNoEmpty");
-    if (Ret != AL_OK) {
-        return Ret;
-    }
-
-    AlOsal_Mb_Init(&Handle->TxEventQueue[CAN_NONBLOCK], "Can-TxDone");
-    if (Ret != AL_OK) {
-        return Ret;
-    }
+    Ret = AlCan_Hal_HandleInit(*Handle);
 
     return Ret;
 }

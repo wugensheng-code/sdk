@@ -9,7 +9,7 @@ AL_CHIP         ?= $(CHIP)
 ## ARMv8_CORE:      MASTER, SLAVE
 ARMv8_STATE     ?= 64
 ARMv8_EL        ?= EL1
-ARMv8_SECURE    ?= NONSECURE
+ARMv8_SECURE    ?= SECURE
 ARMv8_CORE      ?= MASTER
 
 #########################################################################
@@ -17,9 +17,9 @@ ARMv8_CORE      ?= MASTER
 #########################################################################
 # options for enable mmu, available choices: 0/1
 #########################################################################
-ENABLE_MMU  ?= 0
-DDR_2M_MAPPING ?= 1
-CODE_READONLY ?= 1
+ENABLE_MMU  ?= 1
+DDR_2M_MAPPING ?= 0
+CODE_READONLY ?= 0
 
 #########################################################################
 # options for compile command

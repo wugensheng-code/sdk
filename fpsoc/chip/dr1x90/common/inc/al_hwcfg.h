@@ -132,14 +132,13 @@ extern "C" {
 
 
 /*----------------------------------------------------------------------------
-  Define SYSCNT_S
+  Define TOP
  *----------------------------------------------------------------------------*/
 #define TOP_NS_BASE_ADDR        (0xF8800000UL)
+#define TOP_SYSCNT_S_BASE_ADDR  (0xF8804000UL)
+#define TOP_S_BASE_ADDR         (0xF8806000UL)
 
-#define SYSCNT_S_BASE           (0xF8804000UL)
-
-#define TSG_CTRL_CNTCR          SYSCNT_S_BASE
-
+#define TSG_CTRL_CNTCR          TOP_SYSCNT_S_BASE_ADDR
 
 
 

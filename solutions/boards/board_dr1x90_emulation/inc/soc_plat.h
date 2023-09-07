@@ -146,6 +146,8 @@ extern "C" {
 
 #define HAVE_DMACAHBPS_DRIVER
 
+#define HAVE_PMU_DRIVER
+
 #define LOG_DEV AL_LOG_UART0
 
 

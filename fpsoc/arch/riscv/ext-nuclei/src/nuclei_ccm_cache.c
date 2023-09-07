@@ -84,6 +84,17 @@ AL_VOID ccm_flush_dcache_range(AL_UINTPTR Start, AL_UINTPTR End)
     ARCH_SYSREG_WRITE(CSR_CCM_FPIPE, 0x1);
 }
 
+AL_VOID ccm_flush_invalidate_dcache_range(AL_UINTPTR Start, AL_UINTPTR End)
+{
+    AL_UINTPTR _start = Start;
+    ARCH_SYSREG_WRITE(CSR_CCM_SBEGINADDR, _start);
+    while (_start < End) {
+        ARCH_SYSREG_WRITE(CSR_CCM_SCOMMAND, CCM_DC_WBINVAL);
+        _start += ARCH_DMA_MINALIGN;
+    }
+    ARCH_SYSREG_WRITE(CSR_CCM_FPIPE, 0x1);
+}
+
 AL_VOID ccm_invalidate_icache_range(AL_UINTPTR Start, AL_UINTPTR End)
 {
     /*
@@ -136,12 +147,24 @@ AL_VOID AlCache_InvalidateIcacheAll(AL_VOID)
 
 AL_VOID AlCache_FlushDcacheRange(AL_UINTPTR Start, AL_UINTPTR End)
 {
-    ccm_invalidate_dcache_range(Start, End);
+    ccm_flush_dcache_range(Start, End);
 }
 
 AL_VOID AlCache_InvalidateDcacheRange(AL_UINTPTR Start, AL_UINTPTR End)
 {
     ccm_invalidate_dcache_range(Start, End);
+}
+
+
+AL_VOID AlCache_FlushAndInvalidateSameDcacheRange(AL_UINTPTR Start, AL_UINTPTR End)
+{
+    ccm_flush_invalidate_dcache_range(Start, End);
+}
+
+AL_VOID AlCache_FlushAndInvalidateDiffDcacheRange(AL_UINTPTR FStart, AL_UINTPTR FEnd, AL_UINTPTR IStart, AL_UINTPTR IEnd)
+{
+    ccm_flush_dcache_range(FStart, FEnd);
+    ccm_invalidate_dcache_range(IStart, IEnd);
 }
 
 AL_VOID AlCache_InvalidateDcacheAll(AL_VOID)

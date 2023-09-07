@@ -26,10 +26,7 @@ AL_VOID do_irq_handle(AL_VOID)
     AL_U32 IntrId;
     AL_INTR_HandlerStruct Handler;
 
-    /* interrupr acknowledge by read iar*/
-    IntrId = ARCH_SYSREG_READ(icc_iar1_el1);
-    DSB();
-    IntrId = IntrId & 0xffffff;
+    IntrId = AlGicv3_AckIntrSel1();
 
     if (IntrId < SOC_INT_MAX) {
         Handler = irq_handler_list[IntrId];
@@ -38,13 +35,12 @@ AL_VOID do_irq_handle(AL_VOID)
     }
 
     if (Handler.Func == NULL) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "can not found your irq handle at number: %d\n", IntrId);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "can not found your irq handle at number: %d\r\n", IntrId);
     } else {
         Handler.Func(Handler.Param);
     }
 
-    ARCH_SYSREG_WRITE(icc_eoir1_el1, IntrId);
-    ISB();
+    AlGicv3_EndOfIntrSel1(IntrId);
 }
 
 /**
