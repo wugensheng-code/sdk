@@ -116,7 +116,7 @@ AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_U32 DevId, AL_DMACAHB
 
     /* 3. register callback */
     if (CallBack == AL_NULL) {
-        EventCallBack.Func  = AlDmacAhb_Hal_DefChEventCallBack;
+        EventCallBack.Func  = (AL_VOID *)AlDmacAhb_Hal_DefChEventCallBack;
         EventCallBack.Ref   = Handle;
     } else {
         EventCallBack.Func  = CallBack->Func;

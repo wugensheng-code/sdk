@@ -57,7 +57,7 @@ static AL_S32 AlCan_Hal_WaitRecvNotEmptyOrTimeout(AL_CAN_HalStruct *Handle, AL_U
  * @return
  * @note
 */
-static AL_VOID AlCan_Hal_DefEventCallBack(AL_CAN_EventStruct *Event, AL_VOID *CallBackRef)
+static AL_S32 AlCan_Hal_DefEventCallBack(AL_CAN_EventStruct *Event, AL_VOID *CallBackRef)
 {
     AL_CAN_HalStruct *Handle = (AL_CAN_HalStruct *)CallBackRef;
 
@@ -89,6 +89,8 @@ static AL_VOID AlCan_Hal_DefEventCallBack(AL_CAN_EventStruct *Event, AL_VOID *Ca
     default:
         break;
     }
+
+    return AL_OK;
 }
 
 static inline AL_S32 AlCan_Hal_HandleInit(AL_CAN_HalStruct *Handle)

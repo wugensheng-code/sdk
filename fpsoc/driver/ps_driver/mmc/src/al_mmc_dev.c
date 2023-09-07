@@ -405,7 +405,7 @@ static AL_S32 AlMmc_Dev_CheckCmdDone(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum Cm
         if (IntrStat.Bit.ErrIntr) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Response: 0x%x\r\n", AlMmc_ll_ReadResp01(Dev->HwConfig.BaseAddress));
             AL_LOG(AL_LOG_LEVEL_ERROR, "%s %d send err, code: 0x%x\r\n", ((Cmd & 0x100) ? "ACMD" : "CMD"), (Cmd & 0xFF),
-                                                                           IntrStat);
+                                                                           IntrStat.Reg);
             return AlMmc_Dev_CheckErrStat(Dev, IntrStat);
         }
         AL_MMC_LOOP_REG_DELAY;
@@ -1050,7 +1050,7 @@ static AL_S32 AlMmc_Dev_GetExtCardCap(AL_MMC_DevStruct *Dev, AL_MMC_RegExtCsdUni
     AL_LOG(AL_LOG_LEVEL_DEBUG, "SecCount: 0x%x, Sec[0]: 0x%x, Sec[1]: 0x%x, Sec[2]: 0x%x, Sec[3]: 0x%x\r\n",
                                SecCount, ExtCsd->Emmc.SecCount[0], ExtCsd->Emmc.SecCount[1], ExtCsd->Emmc.SecCount[2],
                                ExtCsd->Emmc.SecCount[3]);
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "Card capacity is %llu KByte, blk len is %d\r\n", Dev->CardInfo.CardCap, Dev->CardInfo.BlkLen);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Card capacity is %u KByte, blk len is %d\r\n", Dev->CardInfo.CardCap, Dev->CardInfo.BlkLen);
 
     return Ret;
 }
@@ -1682,7 +1682,7 @@ AL_S32 AlMmc_Dev_RegisterEventCallBack(AL_MMC_DevStruct *Dev, AL_MMC_CallBackStr
 
     if (Dev->EventCallBack.Func != AL_NULL) {
         AL_LOG(AL_LOG_LEVEL_WARNING, "mmc=%p duplicate register callback: replace old:%p with New: %p\r\n",
-               Dev, Dev->EventCallBack, CallBack);
+               Dev, Dev->EventCallBack.Func, CallBack);
     }
 
     Dev->EventCallBack.Func = CallBack->Func;
@@ -1953,7 +1953,7 @@ static AL_S32 AlMmc_Dev_TransferNoDma(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 
         AL_MMC_LOOP_REG_DELAY;
     } while ((!IntrStat.Bit.XferComp) && (--Timeout));
 
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "No dma blk cnt %d, mem addr  0x%x\r\n", Cnt, MemAddr);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "No dma blk cnt %d, mem addr  %p\r\n", Cnt, MemAddr);
     if (!Timeout) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Transfer no dma timeout\r\n");
         return AL_MMC_ERR_XFER_COMP_TIMEOUT;
@@ -2052,7 +2052,7 @@ AL_S32 AlMmc_Dev_Write(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkOffset, AL_U
         return AL_MMC_ERR_BUF_NOT_ALIGN;
     }
 
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "Write addr: 0x%x, Offset: 0x%x, BlkCnt = %d\r\n", Buf, BlkOffset, BlkCnt);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Write addr: %p, Offset: %p, BlkCnt = %d\r\n", Buf, BlkOffset, BlkCnt);
 
     Ret = AlMmc_Dev_TransferConfig(Dev);
     if (Ret != AL_OK) {
@@ -2137,7 +2137,7 @@ AL_S32 AlMmc_Dev_Read(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkOffset, AL_U3
         return AL_MMC_ERR_BUF_NOT_ALIGN;
     }
 
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "Read addr: 0x%x, Offset: 0x%x, BlkCnt = %d\r\n", Buf, BlkOffset, BlkCnt);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Read addr: %p, Offset: 0x%x, BlkCnt = %d\r\n", Buf, BlkOffset, BlkCnt);
 
     Ret = AlMmc_Dev_TransferConfig(Dev);
     if (Ret != AL_OK) {

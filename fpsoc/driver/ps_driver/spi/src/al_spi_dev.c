@@ -395,7 +395,7 @@ AL_S32 AlSpi_Dev_TranferData(AL_SPI_DevStruct *Spi, AL_U8 *SendBuf, AL_U32 SendS
     }
 
     SendLevel = MIN((AL_U32)(Spi->Fifolen / 2), SendSize / (Spi->BitsPerWord >> 3));
-    Temp =  MIN(ReceiveSize / (Spi->BitsPerWord >> 3), (AL_U16)(Spi->Fifolen / 2));
+    Temp =  MIN(ReceiveSize / (Spi->BitsPerWord >> 3), (AL_U32)(Spi->Fifolen / 2));
     AlSpi_ll_SetRxFifoThrLevel(Spi->BaseAddr, Temp ? Temp - 1 : 0);
     AlSpi_ll_SetTxFifoThrLevel(Spi->BaseAddr, SendLevel);
 

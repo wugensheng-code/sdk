@@ -98,7 +98,7 @@ extern "C" {
 /********************************************************/
 
 #define BUG() do {                                                             \
-        AL_LOG("BUG: failure at %s:%d/%s()!\n", __FILE__, __LINE__, __func__); \
+        AL_LOG("BUG: failure at %s:%d:%s()!\n", __FILE__, __LINE__, __func__); \
         while(1);                                                              \
     } while (0)
 

@@ -684,7 +684,6 @@ static AL_S32 AlCan_Dev_SetSendBusy(AL_CAN_DevStruct *Dev)
 AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
 {
     AL_U32 Id, Ctrl;
-    AL_U32 DataWordSize;
 
     AL_ASSERT((Dev != AL_NULL) && (Frame != AL_NULL), AL_CAN_ERR_NULL_PTR);
     AL_ASSERT(Frame->DataLen < AL_CAN_LEN_MAX, AL_CAN_ERR_ILLEGAL_PARAM);
