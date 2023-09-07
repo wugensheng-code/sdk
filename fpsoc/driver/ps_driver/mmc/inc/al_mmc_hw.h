@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef AL_MMC_HW_H
-#define AL_MMC_HW_H
+#ifndef __AL_MMC_HW_H_
+#define __AL_MMC_HW_H_
 
 #ifdef _cplusplus
 extern "C" {

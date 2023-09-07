@@ -24,8 +24,8 @@
  * @date     30. Dec 2022
  ******************************************************************************/
 
-#ifndef __SYSTEM_<Device>_H__   /* TODO: replace '<Device>' with your device name */
-#define __SYSTEM_<Device>_H__
+#ifndef __AL_SYSTEM_<Device>_H_   /* TODO: replace '<Device>' with your device name */
+#define __AL_SYSTEM_<Device>_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -127,4 +127,4 @@ extern int32_t ECLIC_Register_IRQ_S(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_T
 }
 #endif
 
-#endif /* __SYSTEM_<Device>_H__ */
+#endif /* AL_SYSTEM_<Device>_H_ */

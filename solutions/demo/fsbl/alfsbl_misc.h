@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef ALFSBL_MISC_H_
-#define ALFSBL_MISC_H_
+#ifndef __AL_ALFSBL_MISC_H_
+#define __AL_ALFSBL_MISC_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,4 +30,4 @@ void AlFsbl_MakeSdFileName(char *FileName, uint32_t MultiBootReg, uint32_t DrvNu
 }
 #endif
 
-#endif /* ALFSBL_MISC_H_ */
+#endif /* AL_ALFSBL_MISC_H */

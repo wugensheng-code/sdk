@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef AL_CLI_H
-#define AL_CLI_H
+#ifndef __AL_CLI_H_
+#define __AL_CLI_H_
 
 #ifdef __cplusplus
 extern "C" {

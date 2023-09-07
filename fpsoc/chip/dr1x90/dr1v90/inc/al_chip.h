@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef __AL_CHIP_H__
-#define __AL_CHIP_H__
+#ifndef __AL_CHIP_H_
+#define __AL_CHIP_H_
 
 #ifdef __cplusplus
  extern "C" {
@@ -70,4 +70,4 @@ typedef enum {
 #ifdef __cplusplus
 }
 #endif
-#endif /* __AL_CHIP_H__ */
+#endif /* AL_CHIP_H */

@@ -12,8 +12,8 @@
  * @brief   can device driver
  */
 
-#ifndef AL_CAN_DEV_H
-#define AL_CAN_DEV_H
+#ifndef __AL_CAN_DEV_H_
+#define __AL_CAN_DEV_H_
 
 #ifdef __cplusplus
 extern "C" {

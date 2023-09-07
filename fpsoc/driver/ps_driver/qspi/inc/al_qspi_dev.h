@@ -12,8 +12,8 @@
  * @brief   QSPI device driver
  */
 
-#ifndef AL_QSPI_DRV_H
-#define AL_QSPI_DRV_H
+#ifndef __AL_QSPI_DRV_H_
+#define __AL_QSPI_DRV_H_
 
 #ifdef __cplusplus
 extern "C" {

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef ALFSBL_NAND_H_
-#define ALFSBL_NAND_H_
+#ifndef __AL_ALFSBL_NAND_H_
+#define __AL_ALFSBL_NAND_H_
 
 #ifdef __cplusplus
 extern "C" {

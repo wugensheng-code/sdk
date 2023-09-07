@@ -5,8 +5,8 @@
  */
 
 
-#ifndef AL_GPIO_DEV_H
-#define AL_GPIO_DEV_H
+#ifndef __AL_GPIO_DEV_H_
+#define __AL_GPIO_DEV_H_
 
 #ifdef __cplusplus
 extern "C" {

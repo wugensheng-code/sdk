@@ -12,8 +12,8 @@
  * @brief   SPI device driver
  */
 
-#ifndef AL_SPI_DRV_H
-#define AL_SPI_DRV_H
+#ifndef __AL_SPI_DRV_H_
+#define __AL_SPI_DRV_H_
 
 #ifdef __cplusplus
 extern "C" {

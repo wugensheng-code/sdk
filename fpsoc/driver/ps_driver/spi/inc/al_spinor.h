@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef AL_SPINOR_H
-#define AL_SPINOR_H
+#ifndef __AL_SPINOR_H_
+#define __AL_SPINOR_H_
 
 #ifdef __cplusplus
 extern "C" {

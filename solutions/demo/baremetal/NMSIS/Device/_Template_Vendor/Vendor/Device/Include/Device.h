@@ -24,8 +24,8 @@
  * @date     30. Dec 2022
  ******************************************************************************/
 
-#ifndef __<Device>_H__     /* TODO: replace '<Device>' with your device name */
-#define __<Device>_H__
+#ifndef __AL_<Device>_H_     /* TODO: replace '<Device>' with your device name */
+#define __AL_<Device>_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -303,4 +303,4 @@ typedef struct {                            /*!< (@ 0x40000000) UART Structure  
 }
 #endif
 
-#endif  /* __<Device>_H__ */
+#endif  /* AL_<Device>_H */

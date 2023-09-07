@@ -1,5 +1,5 @@
-#ifndef DR1X90_NEW_FUNC_H
-#define DR1X90_NEW_FUNC_H
+#ifndef __AL_DR1X90_NEW_FUNC_H_
+#define __AL_DR1X90_NEW_FUNC_H_
 
 #endif
 

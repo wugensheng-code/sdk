@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef __ALSOC_BOARD_INIT_H
-#define __ALSOC_BOARD_INIT_H
+#ifndef __AL_SOC_BOARD_INIT_H_
+#define __AL_SOC_BOARD_INIT_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -162,4 +162,4 @@ int Soc_PlatGetDeviceVersion();
 }
 #endif
 
-#endif /* __ALSOC_BOARD_INIT_H */
+#endif /* AL_SOC_BOARD_INIT_H */

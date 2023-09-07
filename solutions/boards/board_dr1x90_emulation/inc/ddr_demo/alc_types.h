@@ -1,6 +1,6 @@
 
-#ifndef ALC_TYPES_H
-#define ALC_TYPES_H
+#ifndef __AL_ALC_TYPES_H_
+#define __AL_ALC_TYPES_H_
 
 #include <stdint.h>
 #include <stddef.h>

@@ -12,8 +12,8 @@
  * @brief   cipher test config file
  */
 
-#ifndef AL_CIPHER_TEST_CONFIG_H
-#define AL_CIPHER_TEST_CONFIG_H
+#ifndef __AL_CIPHER_TEST_CONFIG_H_
+#define __AL_CIPHER_TEST_CONFIG_H_
 
 #ifdef __cplusplus
 extern "C" {

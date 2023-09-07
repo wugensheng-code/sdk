@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef ALFSBL_PARTITION_LOAD_H_
-#define ALFSBL_PARTITION_LOAD_H_
+#ifndef __AL_ALFSBL_PARTITION_LOAD_H_
+#define __AL_ALFSBL_PARTITION_LOAD_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,4 +28,4 @@ uint32_t AlFsbl_PartitionLoad(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx
 #endif
 
 
-#endif /* ALFSBL_PARTITION_LOAD_H_ */
+#endif /* AL_ALFSBL_PARTITION_LOAD_H */

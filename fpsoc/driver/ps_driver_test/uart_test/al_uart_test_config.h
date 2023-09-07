@@ -12,8 +12,8 @@
  * @brief   uart test config file
  */
 
-#ifndef AL_UART_TEST_CONFIG_H
-#define AL_UART_TEST_CONFIG_H
+#ifndef __AL_UART_TEST_CONFIG_H_
+#define __AL_UART_TEST_CONFIG_H_
 
 #ifdef __cplusplus
 extern "C" {

@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef ALFSBL_DEFINES_H_
-#define ALFSBL_DEFINES_H_
+#ifndef __AL_ALFSBL_DEFINES_H_
+#define __AL_ALFSBL_DEFINES_H_
 
 #define CPU_RPU_64
 
-#endif /* ALFSBL_DEFINES_H_ */
+#endif /* AL_ALFSBL_DEFINES_H */

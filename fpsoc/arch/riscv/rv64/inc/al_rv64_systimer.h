@@ -15,8 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef __CORE_FEATURE_TIMER_H__
-#define __CORE_FEATURE_TIMER_H__
+#ifndef __AL_CORE_FEATURE_TIMER_H_
+#define __AL_CORE_FEATURE_TIMER_H_
 /*!
  * @file     core_feature_timer.h
  * @brief    System Timer feature API header file for Nuclei N/NX Core
@@ -379,5 +379,5 @@ __STATIC_FORCEINLINE uint32_t SysTick_Reload(uint64_t ticks)
 #ifdef __cplusplus
 }
 #endif
-#endif /** __CORE_FEATURE_TIMER_H__  */
+#endif /** AL_CORE_FEATURE_TIMER_H  */
 

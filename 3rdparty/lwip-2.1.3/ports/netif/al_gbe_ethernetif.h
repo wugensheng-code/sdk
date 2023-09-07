@@ -1,5 +1,5 @@
-#ifndef AL_GBE_ETHERNETIF_H
-#define AL_GBE_ETHERNETIF_H
+#ifndef __AL_GBE_ETHERNETIF_H_
+#define __AL_GBE_ETHERNETIF_H_
 
 #ifdef __cplusplus
 extern "C" {

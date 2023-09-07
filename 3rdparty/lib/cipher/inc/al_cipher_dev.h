@@ -12,8 +12,8 @@
  * @brief   cipher device driver
  */
 
-#ifndef AL_CIPHER_DEV_H
-#define AL_CIPHER_DEV_H
+#ifndef __AL_CIPHER_DEV_H_
+#define __AL_CIPHER_DEV_H_
 
 #ifdef __cplusplus
 extern "C" {

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef ALFSBL_IMAGE_HEADER_H_
-#define ALFSBL_IMAGE_HEADER_H_
+#ifndef __AL_ALFSBL_IMAGE_HEADER_H_
+#define __AL_ALFSBL_IMAGE_HEADER_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,4 +34,4 @@ uint32_t AlFsbl_SpkVerification(AlFsblInfo *FsblInstancePtr, SecureInfo *pFsblIH
 #endif
 
 
-#endif /* ALFSBL_IMAGE_HEADER_H_ */
+#endif /* AL_ALFSBL_IMAGE_HEADER_H */

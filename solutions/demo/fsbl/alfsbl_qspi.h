@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef ALFSBL_QSPI_H_
-#define ALFSBL_QSPI_H_
+#ifndef __AL_ALFSBL_QSPI_H_
+#define __AL_ALFSBL_QSPI_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,4 +35,4 @@ uint32_t AlFsbl_Qspi32Release(void);
 }
 #endif
 
-#endif /* ALFSBL_QSPI_H_ */
+#endif /* AL_ALFSBL_QSPI_H */

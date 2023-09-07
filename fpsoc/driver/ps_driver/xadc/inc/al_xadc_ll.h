@@ -3,8 +3,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef AL_XADC_LL_H
-#define AL_XADC_LL_H
+#ifndef __AL_XADC_LL_H_
+#define __AL_XADC_LL_H_
 
 #ifdef __cplusplus
 extern "C" {

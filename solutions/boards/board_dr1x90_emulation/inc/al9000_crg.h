@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef AL9000_CRG_H_
-#define AL9000_CRG_H_
+#ifndef __AL9000_CRG_H_
+#define __AL9000_CRG_H_
 
 #include <stdint.h>
 

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef ALFSBL_DATA_H_
-#define ALFSBL_DATA_H_
+#ifndef __AL_ALFSBL_DATA_H_
+#define __AL_ALFSBL_DATA_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -205,4 +205,4 @@ typedef struct _AlFsblInfo_ {
 }
 #endif
 
-#endif /* ALFSBL_DATA_H_ */
+#endif /* AL_ALFSBL_DATA_H */

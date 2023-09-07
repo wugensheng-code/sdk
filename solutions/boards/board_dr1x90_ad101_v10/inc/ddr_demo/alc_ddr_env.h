@@ -1,5 +1,5 @@
-#ifndef ALC_DDR_ENV_H
-#define ALC_DDR_ENV_H
+#ifndef __AL_ALC_DDR_ENV_H_
+#define __AL_ALC_DDR_ENV_H_
 
 #include "alc_types.h"
 
@@ -64,4 +64,4 @@
 #define MR5 0x0000
 #define MR6 0x0000
 
-#endif // end of ALC_DDR_ENV_H
+#endif // end of AL_ALC_DDR_ENV_H

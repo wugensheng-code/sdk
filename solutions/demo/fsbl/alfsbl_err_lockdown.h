@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef ALFSBL_ERR_LOCKDOWN_H_
-#define ALFSBL_ERR_LOCKDOWN_H_
+#ifndef __AL_ALFSBL_ERR_LOCKDOWN_H_
+#define __AL_ALFSBL_ERR_LOCKDOWN_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,4 +26,4 @@ void AlFsbl_ErrorLockDown(AlFsblInfo *FsblInstancePtr, uint32_t ErrorStatus);
 }
 #endif
 
-#endif /* ALFSBL_ERR_LOCKDOWN_H_ */
+#endif /* AL_ALFSBL_ERR_LOCKDOWN_H */

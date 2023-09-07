@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef AL_BACKTRACE_H
-#define AL_BACKTRACE_H
+#ifndef __AL_BACKTRACE_H_
+#define __AL_BACKTRACE_H_
 
 #ifdef __cplusplus
 extern "C"{

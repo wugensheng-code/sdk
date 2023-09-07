@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef ALFSBL_EMMC_RAW_H_
-#define ALFSBL_EMMC_RAW_H_
+#ifndef __AL_ALFSBL_EMMC_RAW_H_
+#define __AL_ALFSBL_EMMC_RAW_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,4 +37,4 @@ uint32_t AlFsbl_EmmcRawRelease(void);
 }
 #endif
 
-#endif /* ALFSBL_EMMC_RAW_H_ */
+#endif /* AL_ALFSBL_EMMC_RAW_H */

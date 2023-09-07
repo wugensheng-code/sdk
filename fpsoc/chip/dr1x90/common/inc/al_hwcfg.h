@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef __AL_ADDR_MAP_H
-#define __AL_ADDR_MAP_H
+#ifndef __AL_ADDR_MAP_H_
+#define __AL_ADDR_MAP_H_
 
 #ifdef __cplusplus
 extern "C" {

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef AL_CACHE_H
-#define AL_CACHE_H
+#ifndef __AL_CACHE_H_
+#define __AL_CACHE_H_
 
 #ifdef __cplusplus
 extern "C" {

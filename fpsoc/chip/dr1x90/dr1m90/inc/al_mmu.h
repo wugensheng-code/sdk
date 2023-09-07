@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef __AL_MMU_H__
-#define __AL_MMU_H__
+#ifndef __AL_MMU_H_
+#define __AL_MMU_H_
 
 #ifndef __ASSEMBLER__
 #ifdef __cplusplus
@@ -32,4 +32,4 @@ AL_S64 mmu_settlb(AL_UINTPTR addr, AL_U64 attr);
 #define NORM_RO_CACHE	0x785UL
 #endif
 
-#endif /* __AL_MMU_H__ */
+#endif /* AL_MMU_H */

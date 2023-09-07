@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef ALFSBL_SD_H_
-#define ALFSBL_SD_H_
+#ifndef __AL_ALFSBL_SD_H_
+#define __AL_ALFSBL_SD_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,4 +31,4 @@ uint32_t AlFsbl_SdRelease(void);
 }
 #endif
 
-#endif /* ALFSBL_SD_H_ */
+#endif /* AL_ALFSBL_SD_H */

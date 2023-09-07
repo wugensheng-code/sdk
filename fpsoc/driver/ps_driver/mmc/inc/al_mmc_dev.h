@@ -12,8 +12,8 @@
  * @brief   mmc device driver
  */
 
-#ifndef AL_MMC_DEV_H
-#define AL_MMC_DEV_H
+#ifndef __AL_MMC_DEV_H_
+#define __AL_MMC_DEV_H_
 
 #ifdef __cplusplus
 extern "C" {

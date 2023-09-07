@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef ALFSBL_MAIN_H_
-#define ALFSBL_MAIN_H_
+#ifndef __AL_ALFSBL_MAIN_H_
+#define __AL_ALFSBL_MAIN_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,4 +35,4 @@ extern "C" {
 }
 #endif
 
-#endif  /* ALFSBL_MAIN_H_ */
+#endif  /* AL_ALFSBL_MAIN_H */

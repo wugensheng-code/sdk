@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef GICV3_PRIVATE_H
-#define GICV3_PRIVATE_H
+#ifndef __AL_GICV3_PRIVATE_H_
+#define __AL_GICV3_PRIVATE_H_
 
 #include <assert.h>
 #include <stdint.h>
@@ -138,4 +138,4 @@ AL_VOID AlGicv3_Rdist_MarkCoreAwake(AL_UINTPTR GicrBase);
 AL_VOID AlGicv3_Rdist_MarkCoreAsleep(AL_UINTPTR GicrBase);
 AL_U32 AlGicv3_GetComponentPartnum(const AL_UINTPTR GicFrame);
 
-#endif /* GICV3_PRIVATE_H */
+#endif /* AL_GICV3_PRIVATE_H */

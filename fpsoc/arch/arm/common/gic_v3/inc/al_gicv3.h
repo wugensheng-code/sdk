@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef GICV3_H
-#define GICV3_H
+#ifndef __AL_GICV3_H_
+#define __AL_GICV3_H_
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -445,4 +445,4 @@ AL_VOID AlGicv3_ClearInterruptPending(AL_U32 Id, AL_U32 ProcNum);
 AL_U32 AlGicv3_SetPmr(AL_U32 Mask);
 AL_VOID AlGicv3_GetComponentProdidRev(const AL_UINTPTR GicdBase, AL_U32 *GicProdId, AL_U8 *GicRev);
 
-#endif /* GICV3_H */
+#endif /* AL_GICV3_H */

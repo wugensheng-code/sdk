@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef __AL_AARCH64_SYSREG_H
-#define __AL_AARCH64_SYSREG_H
+#ifndef __AL_AARCH64_SYSREG_H_
+#define __AL_AARCH64_SYSREG_H_
 
 #ifdef __ASSEMBLY__
 #define _AC(X,Y)	X
@@ -373,4 +373,4 @@
 #define EC_SERROR			U(0x2f)
 #define EC_BRK				U(0x3c)
 
-#endif /* __AL_AARCH64_SYSREG_H */
+#endif /* AL_AARCH64_SYSREG_H */

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef AL_SPI_HAL_H
-#define AL_SPI_HAL_H
+#ifndef __AL_SPI_HAL_H_
+#define __AL_SPI_HAL_H_
 
 #ifdef __cplusplus
 extern "C" {

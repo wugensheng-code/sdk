@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef GICV3_RDIST_H
-#define GICV3_RDIST_H
+#ifndef __AL_GICV3_RDIST_H_
+#define __AL_GICV3_RDIST_H_
 
 #include <stdint.h>
 #include "al_reg_io.h"
@@ -345,4 +345,4 @@ static inline AL_VOID Gicr_WriteNsacr(AL_UINTPTR Base, AL_U32 Val)
     AL_REG32_WRITE(Base + GICR_NSACR, Val);
 }
 
-#endif /* GICV3_RDIST_H */
+#endif /* AL_GICV3_RDIST_H */

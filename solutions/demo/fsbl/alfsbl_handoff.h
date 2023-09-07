@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef ALFSBL_HANDOFF_H_
-#define ALFSBL_HANDOFF_H_
+#ifndef __ALFSBL_HANDOFF_H_
+#define __ALFSBL_HANDOFF_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,4 +25,4 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr);
 }
 #endif
 
-#endif /* ALFSBL_HANDOFF_H_ */
+#endif /* AL_ALFSBL_HANDOFF_H */

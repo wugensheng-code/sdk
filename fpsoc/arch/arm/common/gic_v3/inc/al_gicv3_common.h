@@ -4,8 +4,8 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#ifndef GICV3_COMMON_H
-#define GICV3_COMMON_H
+#ifndef __AL_GICV3_COMMON_H_
+#define __AL_GICV3_COMMON_H_
 
 /*******************************************************************************
  * GIC Distributor interface general definitions
@@ -113,4 +113,4 @@
 #define PIDR_COMPONENT_ARM_REDIST   U(0x493)
 #define PIDR_COMPONENT_ARM_ITS      U(0x494)
 
-#endif /* ARM_GICV3_COMMON_H */
+#endif /* AL_GICV3_COMMON_H */

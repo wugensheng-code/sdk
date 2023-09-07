@@ -15,8 +15,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef __RISCV_ENCODING_H__
-#define __RISCV_ENCODING_H__
+#ifndef __AL_RISCV_ENCODING_H_
+#define __AL_RISCV_ENCODING_H_
 
 #include "riscv_bits.h"
 #ifdef __cplusplus
@@ -614,4 +614,4 @@
 #ifdef __cplusplus
 }
 #endif
-#endif /* __RISCV_ENCODING_H__ */
+#endif /* AL_RISCV_ENCODING_H */

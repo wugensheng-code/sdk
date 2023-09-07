@@ -5,8 +5,8 @@
  */
 
 
-#ifndef AL_AL_GPIO_H
-#define AL_AL_GPIO_H
+#ifndef __AL_GPIO_H_
+#define __AL_GPIO_H_
 
 
 #ifdef __cplusplus

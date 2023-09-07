@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef __AL_UTEST_H__
-#define __AL_UTEST_H__
+#ifndef __AL_UTEST_H_
+#define __AL_UTEST_H_
 
 #ifdef __cplusplus
 #if __cplusplus
@@ -53,4 +53,4 @@ typedef enum {
 #endif
 #endif /* __cplusplus */
 
-#endif  /* __AL_UTEST_H__ */
+#endif  /* AL_UTEST_H */

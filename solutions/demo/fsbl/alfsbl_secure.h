@@ -7,8 +7,8 @@
 
 
 
-#ifndef ALFSBL_SEC_H_
-#define ALFSBL_SEC_H_
+#ifndef __AL_ALFSBL_SEC_H_
+#define __AL_ALFSBL_SEC_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -378,6 +378,6 @@ uint32_t AlFsbl_KeyPairGen(uint8_t AuthType, uint32_t PubKeyAddr, uint32_t PriKe
 }
 #endif
 
-#endif /* ALFSBL_SEC_H_ */
+#endif /* AL_ALFSBL_SEC_H */
 
 

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef ALFSBL_BOOT_H_
-#define ALFSBL_BOOT_H_
+#ifndef __AL_ALFSBL_BOOT_H_
+#define __AL_ALFSBL_BOOT_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,4 +30,4 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr);
 }
 #endif
 
-#endif /* ALFSBL_BOOT_H_ */
+#endif /* AL_ALFSBL_BOOT_H */

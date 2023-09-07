@@ -12,8 +12,8 @@
  * @brief   can test channel config file
  */
 
-#ifndef AL_CAN_TEST_CONFIG_H
-#define AL_CAN_TEST_CONFIG_H
+#ifndef __AL_CAN_TEST_CONFIG_H_
+#define __AL_CAN_TEST_CONFIG_H_
 
 #ifdef __cplusplus
 extern "C" {

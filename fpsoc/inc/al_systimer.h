@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef AL_SYS_TIMER_H
-#define AL_SYS_TIMER_H
+#ifndef __AL_SYS_TIMER_H_
+#define __AL_SYS_TIMER_H_
 
 #ifdef __cplusplus
 extern "C" {

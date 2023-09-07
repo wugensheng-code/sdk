@@ -5,8 +5,8 @@
  */
 
 
-#ifndef AL_ARCH_H
-#define AL_ARCH_H
+#ifndef __AL_ARCH_H_
+#define __AL_ARCH_H_
 
 #ifndef STRINGIFY
 #define STRINGIFY(s)            #s
@@ -112,4 +112,4 @@
 
 
 
-#endif /* AL_AARCH64_ARCH_H */
+#endif /* AL_AARCH64_ARCH */

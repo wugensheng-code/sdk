@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef AL_BARRIER_H
-#define AL_BARRIER_H
+#ifndef __AL_BARRIER_H_
+#define __AL_BARRIER_H_
 
 #ifdef __cplusplus
 extern "C" {

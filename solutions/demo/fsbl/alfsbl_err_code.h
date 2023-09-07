@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef ALFSBL_ERR_CODE_H_
-#define ALFSBL_ERR_CODE_H_
+#ifndef __AL_ALFSBL_ERR_CODE_H_
+#define __AL_ALFSBL_ERR_CODE_H_
 
 
 #ifdef __cplusplus
@@ -76,4 +76,4 @@ extern "C" {
 
 
 
-#endif /* ALFSBL_ERR_CODE_H_ */
+#endif /* AL_ALFSBL_ERR_CODE_H */

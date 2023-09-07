@@ -1,6 +1,6 @@
 
-#ifndef ALC_DDRC_H
-#define ALC_DDRC_H
+#ifndef __AL_ALC_DDRC_H_
+#define __AL_ALC_DDRC_H_
 
 #include "alc_types.h"
 
@@ -34,5 +34,5 @@ int  dr1x90_field_wait (u16 addr, u8 offset, u32 mask, u32 expect, u32 timeout);
 
 extern u32 ftcHandle;
 
-#endif // end of ALC_DDRC_H
+#endif // end of AL_ALC_DDRC_H
 

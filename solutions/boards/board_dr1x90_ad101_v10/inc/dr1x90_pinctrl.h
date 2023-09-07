@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _DR1X90_PINCTRL_H_
-#define _DR1X90_PINCTRL_H_
+#ifndef __AL_DR1X90_PINCTRL_H_
+#define __AL_DR1X90_PINCTRL_H_
 
 #include <stdint.h>
 

@@ -12,8 +12,8 @@
  * @brief   uart device driver
  */
 
-#ifndef AL_UART_DEV_H
-#define AL_UART_DEV_H
+#ifndef __AL_UART_DEV_H_
+#define __AL_UART_DEV_H_
 
 #ifdef __cplusplus
 extern "C" {

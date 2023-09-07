@@ -12,8 +12,8 @@
  * @brief   dmac ahb device driver
  */
 
-#ifndef AL_DMACAHB_DEV_H
-#define AL_DMACAHB_DEV_H
+#ifndef __AL_DMACAHB_DEV_H_
+#define __AL_DMACAHB_DEV_H_
 
 #ifdef __cplusplus
 extern "C" {

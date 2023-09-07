@@ -1,5 +1,5 @@
-#ifndef DR1X90_DDRC_INIT_H
-#define DR1X90_DDRC_INIT_H
+#ifndef __AL_DR1X90_DDRC_INIT_H_
+#define __AL_DR1X90_DDRC_INIT_H_
 
 #include "alc_ddr_env.h"
 #include "dr1x90_ddrc.h"
@@ -32,5 +32,5 @@ void dr1x90_ddrppc_dram_init();
 // MTEST
 int dr1x90_ddrppc_mtest(u8 bank, u16 row, u16 col, u8 byteNum);
 
-#endif // end of DR1X90_DDRC_INIT_H
+#endif // end of AL_DR1X90_DDRC_INIT_H
 

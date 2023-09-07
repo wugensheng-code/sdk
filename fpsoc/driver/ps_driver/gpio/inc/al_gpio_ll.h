@@ -6,8 +6,8 @@
 
 
 
-#ifndef AL_GPIO_LL_H
-#define AL_GPIO_LL_H
+#ifndef __AL_GPIO_LL_H_
+#define __AL_GPIO_LL_H_
 
 #ifdef __cplusplus
 extern "C" {

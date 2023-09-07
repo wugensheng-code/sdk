@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef ALFSBL_INIT_H_
-#define ALFSBL_INIT_H_
+#ifndef __AL_ALFSBL_INIT_H_
+#define __AL_ALFSBL_INIT_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,4 +24,4 @@ uint32_t AlFsbl_Initialize(AlFsblInfo *FsblInstancePtr);
 #endif
 
 
-#endif /* ALFSBL_INIT_H_ */
+#endif /* AL_ALFSBL_INIT_H */

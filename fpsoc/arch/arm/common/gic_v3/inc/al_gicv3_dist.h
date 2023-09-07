@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef GICV3_DIST_H
-#define GICV3_DIST_H
+#ifndef __AL_GICV3_DIST_H_
+#define __AL_GICV3_DIST_H_
 
 #include <stdint.h>
 #include "al_reg_io.h"
@@ -368,4 +368,4 @@ static inline AL_U32 Gicd_ReadPidr2(AL_UINTPTR Base)
     return AL_REG32_READ(Base + GICD_PIDR2_GICV3);
 }
 
-#endif /* GICV3_DIST_H */
+#endif /* AL_GICV3_DIST_H */

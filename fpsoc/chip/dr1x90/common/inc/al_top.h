@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef __AL_TOP_H__
-#define __AL_TOP_H__
+#ifndef __AL_TOP_H_
+#define __AL_TOP_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,5 +20,5 @@ AL_VOID Altop_Syscnts_CounterCtrl(AL_FUNCTION CntStatus);
 }
 #endif
 
-#endif /* __AL_TOP_H__ */
+#endif /* AL_TOP_H */
 

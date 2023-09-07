@@ -1,5 +1,5 @@
-#ifndef DEMO_DDR_INIT_H_
-#define DEMO_DDR_INIT_H_
+#ifndef __AL_DEMO_DDR_INIT_H_
+#define __AL_DEMO_DDR_INIT_H_
 
 // DDR Init For Demo Board
 // DDR3 @ 1066 MHz

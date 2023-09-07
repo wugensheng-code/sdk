@@ -7,8 +7,8 @@
 /*****************************************************************************
 *****************************************************************************/
 
-#ifndef AL_UTILS_DEF_H
-#define AL_UTILS_DEF_H
+#ifndef __AL_UTILS_DEF_H_
+#define __AL_UTILS_DEF_H_
 
 #ifdef __cplusplus
 extern "C" {
