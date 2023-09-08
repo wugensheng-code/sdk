@@ -12,7 +12,7 @@ extern "C" {
 #endif
 
 #include "al_smc_hw.h"
-#include "al_reg_io.h"
+#include "al_core.h"
 
 typedef enum
 {

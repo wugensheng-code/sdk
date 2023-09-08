@@ -70,24 +70,24 @@ void main(void)
     AL_REG32_WRITE(PS_MIO14, 0x02);
 
     printf("Start FPSoc Smc Test\r\n");
-    AL_U32 i, ret = AL_OK;
+    AL_U32 i, Ret = AL_OK;
 
     for (i = 0; i < sizeof(SendData); i++) {
         SendData[i] = i;
     }
 
-    ret = AlSmc_Hal_Init(&SmcHal, &SmcInitConfigs, 0);
-    if (AL_OK != ret) {
+    Ret = AlSmc_Hal_Init(&SmcHal, &SmcInitConfigs, 0);
+    if (AL_OK != Ret) {
          printf("AlSmc_Hal_Init error!!!!!\r\n");
     }
 
-    ret = AlSmc_Hal_EraseBlock(&SmcHal, 0, 0);
-    if (AL_OK != ret) {
+    Ret = AlSmc_Hal_EraseBlock(&SmcHal, 0, 0);
+    if (AL_OK != Ret) {
          printf("AlSmc_Hal_EraseBlock error!!!!!\r\n");
     }
 
-    ret = AlSmc_Hal_ReadPage(&SmcHal, 0, RecvData, 500, 0);
-    if (AL_OK != ret) {
+    Ret = AlSmc_Hal_ReadPage(&SmcHal, 0, RecvData, 500, 0);
+    if (AL_OK != Ret) {
          printf("AlSmc_Hal_ReadPage error!!!!!\r\n");
          while(1);
     }
@@ -100,14 +100,14 @@ void main(void)
         }
     }
 
-    ret = AlSmc_Hal_WritePage(&SmcHal, 0, SendData, 500, 0);
-    if (AL_OK != ret) {
+    Ret = AlSmc_Hal_WritePage(&SmcHal, 0, SendData, 500, 0);
+    if (AL_OK != Ret) {
          printf("AlSmc_Hal_WritePage error!!!!!\r\n");
          while(1);
     }
 
-    ret = AlSmc_Hal_ReadPage(&SmcHal, 0, RecvData, 500, 0);
-    if (AL_OK != ret) {
+    Ret = AlSmc_Hal_ReadPage(&SmcHal, 0, RecvData, 500, 0);
+    if (AL_OK != Ret) {
          printf("AlSmc_Hal_ReadPage error!!!!!\r\n");
          while(1);
     }
@@ -119,10 +119,4 @@ void main(void)
             while (1);
         }
     }
-
-    // ALSmc_Hal_ReadSpare(&SmcHal, 0, *RecvData, 500, 0);
-    // ALSmc_Hal_WriteSpare(&SmcHal, 0, *SendData, 500, 0);
-
-
-
 }

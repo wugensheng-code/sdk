@@ -237,7 +237,6 @@ static AL_VOID ALSmc_Dev_ReadBuf(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_U3
     for (Index = 0; Index < tempLength; Index++) {
         tempBuf[Index] = AL_REG32_READ(DataPhaseAddr);
     }
-
 }
 
 /**
@@ -328,14 +327,6 @@ static AL_U32 ALSmc_Dev_CrcCheck(AL_U8 *Buf)
     return Crc;
 }
 
-
-    // NandInfo->Cmd.StartCmd = ONFI_CMD_PROGRAM_PAGE1;
-    // NandInfo->Cmd.EndCmd = ONFI_CMD_PROGRAM_PAGE2;
-    // NandInfo->Cmd.AddrCycles = ONFI_CMD_PROGRAM_PAGE_CYCLES;
-    // NandInfo->Cmd.EndCmdPhase = ONFI_CMD_PROGRAM_PAGE_END_TIMING;
-
-    // NandInfo->Cmd.EccLast = 0;
-    // NandInfo->Cmd.ClearCs = 0;
 /**
  * This function
  * @param   NandInfo is structure pointer to nand info
@@ -517,8 +508,8 @@ AL_U8 ALSmc_Dev_EraseBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, 
     /* Check Nand Status */
     Status = ALSmc_Dev_ReadStatus(NandInfo);
     if (Status & ONFI_STATUS_FAIL) {
-        // return FAILED;
-        while (1);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Smc Nand EraseBlock ONFI_STATUS_FAIL error\r\n");
+        return AL_SMC_ERR_NOT_SUPPORT;
     }
 
     return AL_OK;
@@ -572,7 +563,7 @@ AL_U8 ALSmc_Dev_HwEccWritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandIn
         break;
     default:
         /* Page size 256 bytes & 4096 bytes not supported by ECC block*/
-        // return SmcHwReadSizeOver;
+        return SmcHwReadSizeOver;
         break;
     }
 
@@ -602,8 +593,8 @@ AL_U8 ALSmc_Dev_HwEccWritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandIn
     /* Check Nand Status */
     Status = ALSmc_Dev_ReadStatus(NandInfo);
     if (Status & ONFI_STATUS_FAIL) {
-        // return FAILED;
-        while (1);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Smc Nand HwEccWritePage ONFI_STATUS_FAIL error\r\n");
+        return AL_SMC_ERR_NOT_SUPPORT;
     }
 
     return AL_OK;
@@ -663,7 +654,7 @@ AL_U8 ALSmc_Dev_HwEccReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInf
         break;
     default:
         /* Page size 256 bytes & 4096 bytes not supported by ECC block*/
-        // return SmcHwReadSizeOver;
+        return SmcHwReadSizeOver;
         break;
     }
 
@@ -687,9 +678,8 @@ AL_U8 ALSmc_Dev_HwEccReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInf
     Index = NandInfo->Size.DataBytesPerPage / NAND_ECC_BLOCK_SIZE;
     for (; Index; Index--) {
         Status = AlSmc_Dev_HwCorrectEcc(&NandInfo->EccCode[EccOffset], &NandInfo->EccCalc[EccOffset], TempBuf);
-        if (Status != AL_OK) {
+        if (Status != AL_OK)
             return Status;
-        }
 
         EccOffset += NAND_ECC_BYTES;
         TempBuf += NAND_ECC_BLOCK_SIZE;
@@ -738,8 +728,8 @@ AL_U8 ALSmc_Dev_WritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, A
     /* Check Nand Status */
     Status = ALSmc_Dev_ReadStatus(NandInfo);
     if (Status & ONFI_STATUS_FAIL) {
-        // return FAILED;
-        while (1);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Smc Nand WritePage ONFI_STATUS_FAIL error\r\n");
+        return AL_SMC_ERR_NOT_SUPPORT;
     }
 
     return AL_OK;
@@ -776,8 +766,8 @@ AL_U8 ALSmc_Dev_ReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL
     /* Check Nand Status */
     Status = ALSmc_Dev_ReadStatus(NandInfo);
     if (Status & ONFI_STATUS_FAIL) {
-        // return FAILED;
-        while (1);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Smc Nand ReadPage ONFI_STATUS_FAIL error\r\n");
+        return AL_SMC_ERR_NOT_SUPPORT;
     }
 
     CmdPhaseAddr  = NAND_BASE_ADDR                 |
@@ -810,7 +800,7 @@ AL_U8 ALSmc_Dev_ReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL
  * @return
  * @note    None
 */
-AL_U8 ALSmc_Dev_WriteSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page)
+AL_U8 ALSmc_Dev_WritceSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page)
 {
     AL_U8 Status;
 
@@ -844,8 +834,8 @@ AL_U8 ALSmc_Dev_WriteSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, 
     /* Check Nand Status */
     Status = ALSmc_Dev_ReadStatus(NandInfo);
     if (Status & ONFI_STATUS_FAIL) {
-        // return FAILED;
-        while (1);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Smc Nand WritceSpare ONFI_STATUS_FAIL error\r\n");
+        return AL_SMC_ERR_NOT_SUPPORT;
     }
 
     if (1 == NandInfo->Size.EccNum) {
@@ -890,15 +880,15 @@ AL_U8 ALSmc_Dev_ReadSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, A
     /* Check Nand Status */
     Status = ALSmc_Dev_ReadStatus(NandInfo);
     if (Status & ONFI_STATUS_FAIL) {
-        // return FAILED;
-        while (1);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Smc Nand ReadSpare ONFI_STATUS_FAIL error\r\n");
+        return AL_SMC_ERR_NOT_SUPPORT;
     }
 
     CmdPhaseAddr  = NAND_BASE_ADDR                 |
-            (0     << NAND_ADDR_CYCLES_SHIFT)        |
+            (0     << NAND_ADDR_CYCLES_SHIFT)      |
             (0     << NAND_END_CMD_VALID_SHIFT)    |
             NAND_COMMAND_PHASE_FLAG                |
-            (0     << NAND_END_CMD_SHIFT)            |
+            (0     << NAND_END_CMD_SHIFT)          |
             (0     << NAND_ECC_LAST_SHIFT);
 
     AL_REG32_WRITE(CmdPhaseAddr, 0);
@@ -958,7 +948,6 @@ AL_U8 AlSmc_Dev_HwCalculateEcc(AL_SMC_DevStruct *Smc, AL_U8 *Data, AL_U8 EccData
 
     for(EccReg=0; EccReg < EccDataNums/3; EccReg++) {
         EccValue = AlSmc_ll_ReadEccValue(Smc->SmcBaseAddr, EccReg);
-
         if (EccValue & (1 << SMC_ECC1_BLOCK0_ECC1_0_VALID_SHIFT)) {
             for (Count = 0; Count < 3; Count++) {
                 *Data = EccValue & 0xFF;
@@ -967,7 +956,7 @@ AL_U8 AlSmc_Dev_HwCalculateEcc(AL_SMC_DevStruct *Smc, AL_U8 *Data, AL_U8 EccData
             }
         } else {
             /* error  */
-            // return SmcEccDataInvalidErr;
+            return SmcEccDataInvalidErr;
         }
     }
 
@@ -1055,7 +1044,7 @@ AL_U8 AlSmc_Dev_EccHwInit(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo)
         break;
     default:
         /* Page size 256 bytes & 4096 bytes not supported by ECC block */
-        // return SmcHwInitSizeErr;
+        return SmcHwInitSizeErr;
         break;
     }
 
@@ -1123,7 +1112,7 @@ AL_U8 AlSmc_Dev_EnableOnDieEcc(AL_NAND_InfoStruct *NandInfo)
     ALSmc_Dev_SetFeature(NandInfo, 0x90, &EccSetFeature[0]);
 
     if (EccGetFeature[0] != EccSetFeature[0]) {
-        //return SmcWriteEccFeatErr;
+        return SmcWriteEccFeatErr;
     }
 
     return AL_OK;

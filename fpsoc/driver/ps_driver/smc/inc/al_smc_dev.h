@@ -20,8 +20,6 @@ extern "C" {
 #endif
 
 /******************************* Exported Includes ************************************/
-#include "al_core.h"
-#include "al_errno.h"
 #include "al_smc_ll.h"
 
 
@@ -229,7 +227,7 @@ extern "C" {
 
 enum SMC_ERROR_CODE{
 	SmcSuccess = 0,				/* 返回成功 */
-	SmcResetErr,				/* 复位失败错误 */ 
+	SmcResetErr,				/* 复位失败错误 */
 	SmcParaBusyStatusErr,		/* Read parameter data happen status reg error */
 	SmcCrcErr,					/* Parameter page三次crc都失败出现的错误 */
 	SmcParameterOver,			/* 读Parameter Page发现读取出来的数据，表示的page datasize大小远远超出了正常大小 */
@@ -246,8 +244,7 @@ enum SMC_ERROR_CODE{
 	SmcCalEccBusyErr,
 	SmcEccDataInvalidErr,			/* 读取Smc ecc数据，但是ecc数据被标记为无效 */
 	SmcTwoBitsErr,
-	SmcMultipleBitsErr,
-
+	SmcMultipleBitsErr
 };
 
 typedef struct {
@@ -264,17 +261,18 @@ typedef enum {
     AL_SMC_STATE_ERROR        = (1 << 3)
 } AL_SMC_StateEnum;
 
-typedef AL_S32 (*SMC_EventCallBack)(AL_SMC_EventStruct SpiEvent, AL_VOID *CallbackRef);
+#define AL_SMC_ERR_ILLEGAL_PARAM    AL_DEF_ERR(AL_SMC, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM)
+#define AL_SMC_ERR_BUSY             AL_DEF_ERR(AL_SMC, AL_LOG_LEVEL_ERROR, AL_ERR_BUSY)
+#define AL_SMC_ERR_TIMEOUT          AL_DEF_ERR(AL_SMC, AL_LOG_LEVEL_ERROR, AL_ERR_TIMEOUT)
+#define AL_SMC_ERR_NOT_SUPPORT      AL_DEF_ERR(AL_SMC, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_SUPPORT)
+#define AL_SMC_ERR_NOT_READY        AL_DEF_ERR(AL_SMC, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_READY)
+#define AL_SMC_EVENTS_TO_ERRS(Event) (AL_DEF_ERR(AL_SMC, AL_LOG_LEVEL_ERROR, Event))
 
 typedef struct
 {
     AL_REG                        SmcBaseAddr;        /* SMC Base address */
     AL_REG                        NandBaseAddr;     /* NAND base address */
     AL_SMC_ConfigsStruct          Configs;
-    // AL_SMC_BufferStruct           SendBuffer;
-    // AL_SMC_BufferStruct           RecvBuffer;
-    // SMC_EventCallBack             EventCallBack;
-    // AL_VOID                       *EventCallBackRef;
     AL_U32                        ErrorCode;
     AL_SMC_StateEnum              State;
 } AL_SMC_DevStruct;
