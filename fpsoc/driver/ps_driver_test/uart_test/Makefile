@@ -42,8 +42,7 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O2 -g -DCONFIG_AlUart_Send_Polling_ONLY_TEST=1
-
+CFLAGS := -O2 -g -DCONFIG_AlUart_Test_SendDataPolling_TEST=1
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;

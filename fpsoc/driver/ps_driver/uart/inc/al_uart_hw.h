@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef __AL_UART_HW_H_
-#define __AL_UART_HW_H_
+#ifndef AL_UART_HW_H
+#define AL_UART_HW_H
 
 #ifdef __cplusplus
 extern "C" {

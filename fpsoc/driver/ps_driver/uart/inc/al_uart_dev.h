@@ -12,17 +12,16 @@
  * @brief   uart device driver
  */
 
-#ifndef __AL_UART_DEV_H_
-#define __AL_UART_DEV_H_
+#ifndef AL_UART_DEV_H
+#define AL_UART_DEV_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /******************************* Exported Includes ************************************/
-#include "al_errno.h"
 #include "al_uart_ll.h"
-#include "al_core.h"
+
 
 #define AL_UART_ERR_NULL_PTR                 (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_NULL_PTR))
 #define AL_UART_ERR_ILLEGAL_PARAM            (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
@@ -30,6 +29,7 @@ extern "C" {
 #define AL_UART_ERR_NOT_SUPPORT              (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_SUPPORT))
 #define AL_UART_ERR_TIMEOUT                  (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_TIMEOUT))
 #define AL_UART_ERR_BUSY                     (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_BUSY))
+#define AL_UART_ERR_NOMEM                    (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_NOMEM))
 #define AL_UART_EVENTS_TO_ERRS(Events)       (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, Events))
 
 
@@ -44,10 +44,8 @@ typedef struct
     AL_U32                  WordLength;
     AL_U32                  StopBits;
     AL_UART_ParityEnum      Parity;
-    AL_U32                  Mode;
-    AL_U32                  HwFlowCtl;
+    AL_BOOL                 HwFlowCtl;
     AL_BOOL                 CharTimeoutEnable;
-    AL_BOOL                 AutoFlowCtlEnable;
 } AL_UART_InitStruct;
 
 typedef struct
@@ -64,6 +62,14 @@ typedef enum
     AL_UART_STATE_TX_BUSY      = (0x01 << 1),
     AL_UART_STATE_RX_BUSY      = (0x01 << 2)
 } AL_UART_StateEnum;
+
+typedef enum
+{
+    AL_UART_OVERRUN_ERR    = BIT(1),
+    AL_UART_PARITY_ERR     = BIT(2),
+    AL_UART_FRAMING_ERR    = BIT(3),
+    AL_UART_BREAK_ERR      = BIT(4)
+} AL_UART_RecvErrorTypeEnum;
 
 typedef enum
 {
@@ -98,12 +104,12 @@ typedef enum
 } AL_UART_IoCtlCmdEnum;
 
 typedef union {
-    AL_U32 BaudRate;
-    AL_U32 DataWidth;
-    AL_U32 StopBits;
-    AL_U32 Parity;
-    AL_BOOL AutoFlowState;
-    AL_BOOL LoopBack;
+    AL_U32     BaudRate;
+    AL_U32     DataWidth;
+    AL_U32     StopBits;
+    AL_U32     Parity;
+    AL_BOOL    AutoFlowState;
+    AL_BOOL    LoopBack;
 }AL_UART_IoctlParamUnion;
 
 typedef struct
@@ -128,20 +134,18 @@ typedef struct
     AL_U32                        InputClockHz;
 } AL_UART_DevStruct;
 
-
+AL_UART_HwConfigStruct *AlUart_Dev_LookupConfig(AL_U32 DevId);
 AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct *InitConfig);
 AL_S32 AlUart_Dev_SendData(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 SendSize);
 AL_S32 AlUart_Dev_RecvData(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 ReceiveSize);
-AL_S32 AlUart_Dev_RegisterEventCallBack(AL_UART_DevStruct *Uart, AL_Uart_EventCallBack Callback, AL_VOID *CallbackRef);
-AL_S32 AlUart_Dev_UnRegisterEventCallBack(AL_UART_DevStruct *Uart);
-AL_UART_HwConfigStruct *AlUart_Dev_LookupConfig(AL_U32 DevId);
-AL_VOID AlUart_Dev_IntrHandler(void *Instance);
-AL_BOOL AlUart_Dev_IsRxBusy(AL_UART_DevStruct *Uart);
 AL_S32 AlUart_Dev_SendDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 Size);
 AL_S32 AlUart_Dev_RecvDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 Size);
-AL_S32 AlUart_Dev_IoCtl(AL_UART_DevStruct *Uart, AL_UART_IoCtlCmdEnum Cmd, AL_UART_IoctlParamUnion *IoctlParam);
 AL_VOID AlUart_Dev_StopSend(AL_UART_DevStruct *Uart);
 AL_VOID AlUart_Dev_StopReceive(AL_UART_DevStruct *Uart);
+AL_VOID AlUart_Dev_IntrHandler(void *Instance);
+AL_S32 AlUart_Dev_RegisterEventCallBack(AL_UART_DevStruct *Uart, AL_Uart_EventCallBack Callback, AL_VOID *CallbackRef);
+AL_S32 AlUart_Dev_UnRegisterEventCallBack(AL_UART_DevStruct *Uart);
+AL_S32 AlUart_Dev_IoCtl(AL_UART_DevStruct *Uart, AL_UART_IoCtlCmdEnum Cmd, AL_UART_IoctlParamUnion *IoctlParam);
 
 #ifdef __cplusplus
 }

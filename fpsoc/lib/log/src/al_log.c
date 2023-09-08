@@ -17,9 +17,9 @@ AL_S32 AlLog_Init()
 #if ((LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1))
     AL_UART_InitStruct UART_InitStruct = {
         .BaudRate     = 115200,
-        .Parity       = UART_NO_PARITY,
-        .WordLength   = UART_CHAR_8BITS,
-        .StopBits     = UART_STOP_1BIT,
+        .Parity       = AL_UART_NO_PARITY,
+        .WordLength   = AL_UART_CHAR_8BITS,
+        .StopBits     = AL_UART_STOP_1BIT,
     };
 
     return AlUart_Hal_Init(&AlLog, LOG_DEV, &UART_InitStruct, AL_NULL);

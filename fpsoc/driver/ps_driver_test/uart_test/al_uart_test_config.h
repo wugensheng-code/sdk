@@ -12,8 +12,8 @@
  * @brief   uart test config file
  */
 
-#ifndef __AL_UART_TEST_CONFIG_H_
-#define __AL_UART_TEST_CONFIG_H_
+#ifndef AL_UART_TEST_CONFIG_H
+#define AL_UART_TEST_CONFIG_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,7 +27,9 @@ extern "C" {
 
 /************************** Constant Definitions *****************************/
 #define BUF_SIZE    0x10
-#define UART_TIME_OUT_MS 10000
+#define AL_UART_TIME_OUT_MS 10000
+#define AL_UART_DEVID 1
+
 
 /***************** Macros (Inline Functions) Definitions *********************/
 
@@ -36,9 +38,10 @@ extern "C" {
 /************************** Variable Definitions *****************************/
 static AL_UART_InitStruct UART_InitStruct = {
         .BaudRate           = 115200,
-        .Parity             = UART_NO_PARITY,
-        .WordLength         = UART_CHAR_8BITS,
-        .StopBits           = UART_STOP_1BIT,
+        .Parity             = AL_UART_NO_PARITY,
+        .WordLength         = AL_UART_CHAR_8BITS,
+        .StopBits           = AL_UART_STOP_1BIT,
+        .HwFlowCtl          = AL_FALSE,
         .CharTimeoutEnable  = AL_TRUE
     };
 
