@@ -16,6 +16,8 @@ uint32_t AlFsbl_BootDevInitAndHdrValidate(AlFsblInfo *FsblInstancePtr)
 {
 	uint32_t Status = ALFSBL_SUCCESS;
 
+	AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
+
 	/// primary boot device init
 	Status = AlFsbl_PrimaryBootDeviceInit(FsblInstancePtr);
 	if(Status != ALFSBL_SUCCESS) {

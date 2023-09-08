@@ -117,7 +117,7 @@ uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
     AL_U32 Ret;
     AL_U8 SendData[4] = {0x0};
 
-    Ret = AlQspi_Hal_Init(&QspiHal, &QspiInitConfigs, AL_NULL, AL_NULL, 10000);
+    Ret = AlQspi_Hal_Init(&QspiHal, &QspiInitConfigs, AL_NULL, AL_NULL, 0);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_DEBUG, "Fsbl AlQspi_Hal_Init error\r\n");
     }
@@ -140,13 +140,17 @@ uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
             Ret = AlNor_SetQuad(0x01, 0x05, 6);
         }
     }
+	*pBlockSizeMax = 8*1024;
 
 	return Ret;
 }
 
 uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo)
 {
-	uint32_t Ret;
+	uint32_t Ret, TranHandledCnt = 0;
+    uint32_t i;
+    AL_U16 RecvSize;
+
 #ifdef QSPI_XIP_THROUTH_CSU_DMA
 	AL_LOG(AL_LOG_LEVEL_DEBUG, "xip mode\r\n");
 	if(pSecureInfo != NULL) {
@@ -173,11 +177,27 @@ uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Le
     QspiHal.Dev->Configs.EnSpiCfg.WaitCycles = 8;
 
     SendData[0] = NOR_OP_READ_1_1_4;
-    SendData[1] = (SrcAddress >> 16)&0xff;
-    SendData[2] = (SrcAddress >> 8)&0xff;
-    SendData[3] = SrcAddress&0xff;
+    i = Length / 65532 + (Length % 65532 ? 1 : 0);
 
-    Ret = AlQspi_Hal_TranferDataBlock(&QspiHal, SendData, 4, (AL_U8 *)DestAddress, Length, 10000000);
+    for (; i > 0; i--) {
+        SendData[1] = (SrcAddress >> 16) & 0xff;
+        SendData[2] = (SrcAddress >> 8)&0xff;
+        SendData[3] = SrcAddress&0xff;
+
+        RecvSize = (Length > 65532) ? 65532 : Length;
+        Ret = AlQspi_Hal_TranferDataBlock(&QspiHal, SendData, 4, (AL_U8 *)DestAddress, RecvSize, 10000000);
+		if(Ret != AL_OK) {
+			break;
+		}
+        SrcAddress += RecvSize;
+        DestAddress += RecvSize;
+        Length -= RecvSize;
+    }
+#ifdef ENABLE_MMU
+    AlCache_FlushDcacheAll();
+    //AlCache_FlushDcacheRange(DestAddress, RecvSize);
+#endif
+
 #endif
 
 	if(Ret != AL_OK) {
