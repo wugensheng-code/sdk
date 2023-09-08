@@ -93,6 +93,11 @@ static AL_S32 AlSpi_Hal_WaitTxRxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_SPI_E
     }
 
     Ret = AlOsal_Mb_Receive(&Handle->RxEventQueue, Event, Timeout);
+    if (AL_OK != Ret) {
+        AlSpi_ll_SetSlvSel(Handle->Dev->BaseAddr, SPI_SER_SS_DIS);
+        return Ret;
+    }
+
     while(SPI_SR_BUSY == AlSpi_ll_IsBusy(Handle->Dev->BaseAddr));
 
     AlSpi_ll_SetSlvSel(Handle->Dev->BaseAddr, SPI_SER_SS_DIS);
