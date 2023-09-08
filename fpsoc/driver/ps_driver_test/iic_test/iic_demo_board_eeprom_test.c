@@ -71,7 +71,7 @@ AL_S32 AlIic_DemoBoardE2promTest()
     AL_S32 Ret;
     AL_U16 Index;
     AL_U8 TestFail = 0;
-    AL_IIC_HalStruct Handle;
+    AL_IIC_HalStruct *Handle;
     AL_U16 SlaveAddr = EEPROM_ADDRESS;
     AL_U16 WriteLen;
 
@@ -98,7 +98,7 @@ AL_S32 AlIic_DemoBoardE2promTest()
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     /* IIC MUX, switch EEPROM */
-    AlIic_MuxInit(&Handle);
+    AlIic_MuxInit(Handle);
 
     if (sizeof(AddrType) == 1) {
         WriteBuffer[0] = (AL_U8) (EEPROM_TEST_START_ADDR);
@@ -109,14 +109,14 @@ AL_S32 AlIic_DemoBoardE2promTest()
     WriteLen = sizeof(WriteBuffer);
 
     /* Page write, Include address, WriteLen should not should not exceed the page size + 1 */
-    Ret = AlIic_EepromWriteData(&Handle, SlaveAddr, WriteBuffer, WriteLen);
+    Ret = AlIic_EepromWriteData(Handle, SlaveAddr, WriteBuffer, WriteLen);
     if (Ret != AL_OK) {
         printf("AlIic_EepromWriteData Failed\r\n");
         return Ret;
     }
 
     /* Read data from e2prom */
-    Ret = AlIic_EepromReadData(&Handle, SlaveAddr, EEPROM_TEST_START_ADDR, ReadBuffer, EEPROM_PAGE_SIZE);
+    Ret = AlIic_EepromReadData(Handle, SlaveAddr, EEPROM_TEST_START_ADDR, ReadBuffer, EEPROM_PAGE_SIZE);
     if (Ret != AL_OK) {
         printf("AlIic_EepromReadData Failed\r\n");
     }

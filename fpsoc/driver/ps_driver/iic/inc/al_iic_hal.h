@@ -20,7 +20,7 @@ typedef enum {
 
 typedef struct
 {
-    AL_IIC_DevStruct             *Dev;
+    AL_IIC_DevStruct             Dev;
 
     AL_Lock                      Lock;
     AL_IIC_TxRxModeEnum          RequestTxOrRxMode;
@@ -28,7 +28,7 @@ typedef struct
     AL_MailBox                   TxRxEventQueue[2];
 } AL_IIC_HalStruct;
 
-AL_S32 AlIic_Hal_Init(AL_IIC_HalStruct *Handle, AL_U32 DevId,
+AL_S32 AlIic_Hal_Init(AL_IIC_HalStruct **Handle, AL_U32 DevId,
                       AL_IIC_InitStruct *InitConfig, AL_IIC_EventCallBack Callback);
 
 AL_S32 AlIic_Hal_MasterSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout);

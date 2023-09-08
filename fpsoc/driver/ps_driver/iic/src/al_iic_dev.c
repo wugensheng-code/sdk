@@ -6,6 +6,12 @@
 
 #include "al_iic_dev.h"
 
+#define IS_SAME_INITCONFIGS(Dest, Src)                                          \
+(                                                                               \
+    (Dest).Mode == (Src).Mode && (Dest).AddrMode == (Src).AddrMode &&           \
+    (Dest).SpeedMode == (Src).SpeedMode && (Dest).SlaveAddr == (Src).SlaveAddr  \
+)
+
 static AL_IIC_InitStruct IicDefInitConfigs =
 {
     .Mode           = AL_IIC_MODE_MASTER,
@@ -108,15 +114,12 @@ static AL_VOID AlIic_Dev_InitSclHighLowCout(AL_IIC_DevStruct *Iic, AL_IIC_SpeedM
 
 static AL_S32 AlIic_Dev_CheckConfigParam(AL_IIC_InitStruct *InitConfig)
 {
-    AL_ASSERT(((InitConfig->Mode == AL_IIC_MODE_MASTER) || (InitConfig->Mode == AL_IIC_MODE_SLAVE)),
-              AL_IIC_ERR_ILLEGAL_PARAM);
+    AL_ASSERT ((InitConfig->Mode == AL_IIC_MODE_SLAVE) || ((InitConfig->Mode == AL_IIC_MODE_MASTER) &&
+              ((InitConfig->SpeedMode == AL_IIC_STANDARD_MODE || InitConfig->SpeedMode == AL_IIC_FAST_MODE ||
+                InitConfig->SpeedMode == AL_IIC_HIGH_SPEED_MODE))), AL_IIC_ERR_ILLEGAL_PARAM);
 
     AL_ASSERT(((InitConfig->AddrMode == AL_IIC_ADDR_7BIT) || (InitConfig->AddrMode == AL_IIC_ADDR_10BIT)),
               AL_IIC_ERR_ILLEGAL_PARAM);
-
-    AL_ASSERT ((InitConfig->Mode == AL_IIC_MODE_MASTER) &&
-              ((InitConfig->SpeedMode == AL_IIC_STANDARD_MODE || InitConfig->SpeedMode == AL_IIC_FAST_MODE ||
-              InitConfig->SpeedMode == AL_IIC_HIGH_SPEED_MODE)), AL_IIC_ERR_ILLEGAL_PARAM);
 
     return AL_OK;
 }
@@ -129,6 +132,12 @@ AL_S32 AlIic_Dev_Init(AL_IIC_DevStruct *Iic, AL_IIC_HwConfigStruct *HwConfig, AL
     AL_U32 TxFifoDepth;
 
     AL_ASSERT((Iic != AL_NULL), AL_IIC_ERR_ILLEGAL_PARAM);
+
+    if (Iic->State & AL_IIC_STATE_READY) {
+        if ((InitConfig != AL_NULL) && IS_SAME_INITCONFIGS(Iic->Configs, *InitConfig)) {
+            return AL_OK;
+        }
+    }
 
     /* check the InitConfig */
     if (InitConfig != AL_NULL) {
