@@ -23,10 +23,7 @@ extern AL_GPIO_HwConfigStruct AlGpio_HwCfg[AL_GPIO_NUM_INSTANCE];
  */
 static AL_VOID AlGpio_Hal_DefEventCallBack(AL_GPIO_EventStruct GpioEvent, AL_VOID *CallbackRef)
 {
-    if(GpioEvent.Events == AL_GPIO_Event)
-    {
-        AL_LOG(AL_LOG_LEVEL_INFO, "Get AL_GPIO_INTR!");
-    }
+
 }
 
 /**
@@ -879,26 +876,21 @@ AL_VOID AlGpio_Hal_IntrHandler(void *Instance)
 {
     AL_U32 Bank = 0;
     AL_U32 IntrStatus = 0;
-    AL_U32 IntrEnable = 0;
     AL_GPIO_HalStruct *Handle = (AL_GPIO_HalStruct *)Instance;
-
-    AL_LOG(AL_LOG_LEVEL_INFO, "Enter handler!");
 
     for(Bank = 0; Bank < Handle->HwConfig.MaxBanks; Bank++) {
         IntrStatus = AlGpio_Hal_IntrGetStatus(Handle, Bank);
-        IntrEnable = AlGpio_Hal_IntrGetEnable(Handle, Bank);
         AL_LOG(AL_LOG_LEVEL_INFO, "Bank %x: IntrStatus is %x", Bank, IntrStatus);
-        AL_LOG(AL_LOG_LEVEL_INFO, "Bank %x: IntrEnable is %x", Bank, IntrEnable);
 
-        if(((IntrStatus & IntrEnable) != (AL_U32)0) && (Handle->EventCallBack)) {
+        if((IntrStatus != (AL_U32)0) && (Handle->EventCallBack)) {
             if(Handle->EventCallBack) {
                 AL_GPIO_EventStruct GpioEvent = {
                     .Events  = AL_GPIO_Event,
                 };
                 Handle->EventCallBack(GpioEvent, Handle->EventCallBackRef);
             }
-            AlGpio_Hal_IntrClr(Handle, Bank, IntrStatus & IntrEnable);
-            AlGpio_Hal_IntrEnableMask(Handle, Bank, IntrEnable & IntrEnable);
+            AlGpio_Hal_IntrClr(Handle, Bank, IntrStatus);
+            AlGpio_Hal_IntrEnableMask(Handle, Bank, IntrStatus);
         }
     }
 }
