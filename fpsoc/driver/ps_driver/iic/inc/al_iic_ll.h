@@ -243,6 +243,22 @@ static inline AL_VOID AlIic_ll_MaskAllIntr(AL_REG BaseAddr)
                       I2C__IC_INTR_MASK__SIZE, AL_IIC_FUNC_DISABLE);
 }
 
+static inline AL_U32 AlIic_ll_GetIntrMask(AL_REG BaseAddr)
+{
+    return AL_REG32_READ(BaseAddr + I2C__IC_INTR_MASK__OFFSET);
+}
+
+static inline AL_VOID AlIic_ll_SetIntrMask(AL_REG BaseAddr, AL_U32 IntrMask)
+{
+    AL_REG32_WRITE(BaseAddr + I2C__IC_INTR_MASK__OFFSET, IntrMask);
+}
+
+static inline AL_VOID AlIic_ll_DisableIntr(AL_REG BaseAddr, AL_U32 IntrMask)
+{
+    AL_REG32_WRITE(BaseAddr + I2C__IC_INTR_MASK__OFFSET, (AlIic_ll_GetIntrMask(BaseAddr)) & (~(IntrMask)));
+}
+
+
 static inline AL_VOID AlIic_ll_SetRxFifoThr(AL_REG BaseAddr, AL_U8 FifoThrLevel)
 {
     AL_REG32_SET_BITS(BaseAddr + I2C__IC_RX_TL__OFFSET, I2C__IC_RX_TL__RX_TL__SHIFT,

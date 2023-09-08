@@ -67,6 +67,25 @@ typedef enum
 
 typedef enum
 {
+    AL_IIC_INTR_RX_UNDER_MASK           = (0x1 << 0),
+    AL_IIC_INTR_RX_OVER_MASK            = (0x1 << 1),
+    AL_IIC_INTR_RX_FULL_MASK            = (0x1 << 2),
+    AL_IIC_INTR_TX_OVER_MASK            = (0x1 << 3),
+    AL_IIC_INTR_TX_EMPTY_MASK           = (0x1 << 4),
+    AL_IIC_INTR_RD_REQ_MASK             = (0x1 << 5),
+    AL_IIC_INTR_TX_ABRT_MASK            = (0x1 << 6),
+    AL_IIC_INTR_RX_DONE_MASK            = (0x1 << 7),
+    AL_IIC_INTR_ACTIVITY_MASK           = (0x1 << 8),
+    AL_IIC_INTR_STOP_DET_MASK           = (0x1 << 9),
+    AL_IIC_INTR_START_DET_MASK          = (0x1 << 10),
+    AL_IIC_INTR_GEN_CALL_MASK           = (0x1 << 11),
+    AL_IIC_INTR_RESTART_DET_MASK        = (0x1 << 12),
+    AL_IIC_INTR_MASTER_ON_HOLD_MASK     = (0x1 << 13),
+    AL_IIC_INTR_SCL_STUCK_ATLOW_MASK    = (0x1 << 14),
+} AL_IIC_IntrMaskEnum;
+
+typedef enum
+{
     AL_IIC_INTR_RX_UNDER        = (0x1 << 0),
     AL_IIC_INTR_RX_OVER         = (0x1 << 1),
     AL_IIC_INTR_RX_FULL         = (0x1 << 2),

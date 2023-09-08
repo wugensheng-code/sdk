@@ -208,6 +208,20 @@ static inline AL_VOID AlIic_Dev_MasterSetTar(AL_IIC_DevStruct *Iic, AL_U16 Slave
     AlIic_ll_SetEnable((AL_REG)(Iic->HwConfig.BaseAddress), AL_IIC_FUNC_ENABLE);
 }
 
+static AL_VOID AlIic_Dev_EnableMasterSendIntr(AL_IIC_DevStruct *Iic, AL_IIC_FunctionEnum State)
+{
+    AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
+
+    AL_U32 IntrMask = AlIic_ll_GetIntrMask(IicBaseAddr);
+
+    if (State == AL_IIC_FUNC_ENABLE)
+        IntrMask |= (AL_IIC_INTR_TX_EMPTY_MASK | AL_IIC_INTR_TX_ABRT_MASK | AL_IIC_INTR_TX_OVER_MASK);
+    else
+        IntrMask &= ~(AL_IIC_INTR_TX_EMPTY_MASK | AL_IIC_INTR_TX_ABRT_MASK | AL_IIC_INTR_TX_OVER_MASK);
+
+    AlIic_ll_SetIntrMask(IicBaseAddr, IntrMask);
+}
+
 AL_S32 AlIic_Dev_MasterSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *SendBuf, AL_U32 SendSize)
 {
     AL_REG IicBaseAddr;
@@ -231,23 +245,14 @@ AL_S32 AlIic_Dev_MasterSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *
     Iic->SendBuffer.RequestedCnt   = SendSize;
     Iic->SendBuffer.HandledCnt     = 0;
 
-    /*
-       Need to trigger tx empty interrupt, send data in the interrupt handler
-     */
-    AlIic_ll_SetTxEmptyIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
-    AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
-    AlIic_ll_SetTxOverIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
+    AlIic_Dev_EnableMasterSendIntr(Iic, AL_IIC_FUNC_ENABLE);
 
     return AL_OK;
 }
 
 AL_VOID AlIic_Dev_StopMasterSend(AL_IIC_DevStruct *Iic)
 {
-    AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
-
-    AlIic_ll_SetTxEmptyIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
-    AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
-    AlIic_ll_SetTxOverIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+    AlIic_Dev_EnableMasterSendIntr(Iic, AL_IIC_FUNC_DISABLE);
 
     AlIic_Dev_ClrTxBusy(Iic);
 }
@@ -310,6 +315,22 @@ AL_S32 AlIic_Dev_MasterSendDataPolling(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, 
     return AL_OK;
 }
 
+static AL_VOID AlIic_Dev_EnableMasterRecvIntr(AL_IIC_DevStruct *Iic, AL_IIC_FunctionEnum State)
+{
+    AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
+
+    AL_U32 IntrMask = AlIic_ll_GetIntrMask(IicBaseAddr);
+
+    if (State == AL_IIC_FUNC_ENABLE)
+        IntrMask |= (AL_IIC_INTR_TX_EMPTY_MASK | AL_IIC_INTR_RX_FULL_MASK | AL_IIC_INTR_TX_ABRT_MASK |
+                     AL_IIC_INTR_RX_UNDER_MASK | AL_IIC_INTR_RX_OVER_MASK);
+    else
+        IntrMask &= ~(AL_IIC_INTR_TX_EMPTY_MASK | AL_IIC_INTR_RX_FULL_MASK | AL_IIC_INTR_TX_ABRT_MASK |
+                      AL_IIC_INTR_RX_UNDER_MASK | AL_IIC_INTR_RX_OVER_MASK);
+
+    AlIic_ll_SetIntrMask(IicBaseAddr, IntrMask);
+}
+
 AL_S32 AlIic_Dev_MasterRecvData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *RecvBuf, AL_U32 RecvSize)
 {
     AL_REG IicBaseAddr;
@@ -347,24 +368,14 @@ AL_S32 AlIic_Dev_MasterRecvData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *
         AlIic_ll_SetRxFifoThr(IicBaseAddr, RecvSize - 1);
     }
 
-    AlIic_ll_SetTxEmptyIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
-    AlIic_ll_SetRxFullIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
-    AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
-    AlIic_ll_SetRxUnderIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
-    AlIic_ll_SetRxOverIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
+    AlIic_Dev_EnableMasterRecvIntr(Iic, AL_IIC_FUNC_ENABLE);
 
     return AL_OK;
 }
 
 AL_VOID AlIic_Dev_StopMasterRecv(AL_IIC_DevStruct *Iic)
 {
-    AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
-
-    AlIic_ll_SetTxEmptyIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
-    AlIic_ll_SetRxFullIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
-    AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
-    AlIic_ll_SetRxUnderIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
-    AlIic_ll_SetRxOverIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+    AlIic_Dev_EnableMasterRecvIntr(Iic, AL_IIC_FUNC_DISABLE);
 
     AlIic_Dev_ClrRxBusy(Iic);
 }
@@ -434,6 +445,22 @@ AL_S32 AlIic_Dev_MasterRecvDataPolling(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, 
     return AL_OK;
 }
 
+static AL_VOID AlIic_Dev_EnableSlaveSendIntr(AL_IIC_DevStruct *Iic, AL_IIC_FunctionEnum State)
+{
+    AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
+
+    AL_U32 IntrMask = AlIic_ll_GetIntrMask(IicBaseAddr);
+
+    if (State == AL_IIC_FUNC_ENABLE)
+        IntrMask |= (AL_IIC_INTR_TX_ABRT_MASK | AL_IIC_INTR_RD_REQ_MASK |
+                     AL_IIC_INTR_TX_OVER_MASK | AL_IIC_INTR_RX_DONE_MASK);
+    else
+        IntrMask &= ~(AL_IIC_INTR_TX_ABRT_MASK | AL_IIC_INTR_RD_REQ_MASK |
+                     AL_IIC_INTR_TX_OVER_MASK | AL_IIC_INTR_RX_DONE_MASK);
+
+    AlIic_ll_SetIntrMask(IicBaseAddr, IntrMask);
+}
+
 AL_S32 AlIic_Dev_SlaveSendData(AL_IIC_DevStruct *Iic, AL_U8 *SendBuf, AL_U32 SendSize)
 {
     AL_REG IicBaseAddr;
@@ -455,35 +482,30 @@ AL_S32 AlIic_Dev_SlaveSendData(AL_IIC_DevStruct *Iic, AL_U8 *SendBuf, AL_U32 Sen
     Iic->SendBuffer.RequestedCnt   = SendSize;
     Iic->SendBuffer.HandledCnt     = 0;
 
-    /*
-      For slave transmitter, tx_empty interrupt is not enabled,
-      Because it sends one byte at a time in the rd_req interrupt.
-     */
-    AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
-    AlIic_ll_SetRdReqIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
-    AlIic_ll_SetTxOverIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
-
-    /*
-      When the DW_apb_i2c is acting as a slave-transmitter, this
-      bit is set to 1 if the master does not acknowledge a
-      transmitted byte. This occurs on the last byte of the
-      transmission, indicating that the transmission is done.
-     */
-    AlIic_ll_SetRxDoneIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
+    AlIic_Dev_EnableSlaveSendIntr(Iic, AL_IIC_FUNC_ENABLE);
 
     return AL_OK;
 }
 
 AL_VOID AlIic_Dev_StopSlaveSend(AL_IIC_DevStruct *Iic)
 {
-    AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
-
-    AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
-    AlIic_ll_SetTxOverIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
-    AlIic_ll_SetRdReqIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
-    AlIic_ll_SetRxDoneIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+    AlIic_Dev_EnableSlaveSendIntr(Iic, AL_IIC_FUNC_DISABLE);
 
     AlIic_Dev_ClrTxBusy(Iic);
+}
+
+static AL_VOID AlIic_Dev_EnableSlaveRecvIntr(AL_IIC_DevStruct *Iic, AL_IIC_FunctionEnum State)
+{
+    AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
+
+    AL_U32 IntrMask = AlIic_ll_GetIntrMask(IicBaseAddr);
+
+    if (State == AL_IIC_FUNC_ENABLE)
+        IntrMask |= (AL_IIC_INTR_RX_FULL_MASK | AL_IIC_INTR_RX_UNDER_MASK | AL_IIC_INTR_RX_OVER_MASK);
+    else
+        IntrMask &= ~(AL_IIC_INTR_RX_FULL_MASK | AL_IIC_INTR_RX_UNDER_MASK | AL_IIC_INTR_RX_OVER_MASK);
+
+    AlIic_ll_SetIntrMask(IicBaseAddr, IntrMask);
 }
 
 AL_S32 AlIic_Dev_SlaveRecvData(AL_IIC_DevStruct *Iic, AL_U8 *RecvBuf, AL_U32 RecvSize)
@@ -514,20 +536,14 @@ AL_S32 AlIic_Dev_SlaveRecvData(AL_IIC_DevStruct *Iic, AL_U8 *RecvBuf, AL_U32 Rec
         AlIic_ll_SetRxFifoThr(IicBaseAddr, RecvSize - 1);
     }
 
-    AlIic_ll_SetRxFullIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
-    AlIic_ll_SetRxUnderIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
-    AlIic_ll_SetRxOverIntr(IicBaseAddr, AL_IIC_FUNC_ENABLE);
+    AlIic_Dev_EnableSlaveRecvIntr(Iic, AL_IIC_FUNC_ENABLE);
 
     return AL_OK;
 }
 
 AL_VOID AlIic_Dev_StopSlaveRecv(AL_IIC_DevStruct *Iic)
 {
-    AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
-
-    AlIic_ll_SetRxFullIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
-    AlIic_ll_SetRxUnderIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
-    AlIic_ll_SetRxOverIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+    AlIic_Dev_EnableSlaveRecvIntr(Iic, AL_IIC_FUNC_DISABLE);
 
     AlIic_Dev_ClrRxBusy(Iic);
 }
@@ -569,11 +585,7 @@ static AL_VOID AlIic_Dev_MasterSendDataHandler(AL_IIC_DevStruct *Iic)
             (*Iic->EventCallBack)(&IicEvent, Iic->EventCallBackRef);
         }
 
-        AlIic_ll_SetTxEmptyIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
-        AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
-
-        /* Clear Status */
-        AlIic_Dev_ClrTxBusy(Iic);
+        AlIic_Dev_StopMasterSend(Iic);
     }
 }
 
@@ -610,7 +622,10 @@ static AL_VOID AlIic_Dev_MasterRecvDataHandler(AL_IIC_DevStruct *Iic)
             (*Iic->EventCallBack)(&IicEvent, Iic->EventCallBackRef);
         }
 
-        AlIic_ll_SetRxFullIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+
+        AlIic_ll_DisableIntr(IicBaseAddr, AL_IIC_INTR_RX_FULL_MASK | AL_IIC_INTR_RX_UNDER_MASK |
+                                          AL_IIC_INTR_RX_OVER_MASK);
+
         AlIic_Dev_ClrRxBusy(Iic);
     }
 
@@ -642,8 +657,7 @@ static AL_VOID AlIic_Dev_MasterRecvDataIssueReadCmd(AL_IIC_DevStruct *Iic)
     }
 
     if (Iic->SendBuffer.HandledCnt == Iic->SendBuffer.RequestedCnt) {
-        AlIic_ll_SetTxEmptyIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
-        AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+        AlIic_ll_DisableIntr(IicBaseAddr, AL_IIC_INTR_TX_EMPTY_MASK | AL_IIC_INTR_TX_ABRT_MASK);
     }
 
     /* After issue read, need to read data immediately. If no, the fifo may be full and data may be lost */
@@ -682,9 +696,7 @@ static AL_VOID AlIic_Dev_SlaveRecvDataHandler(AL_IIC_DevStruct *Iic)
             (*Iic->EventCallBack)(&IicEvent, Iic->EventCallBackRef);
         }
 
-        AlIic_ll_SetRxFullIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
-        /* Clear Status */
-        AlIic_Dev_ClrRxBusy(Iic);
+        AlIic_Dev_StopSlaveRecv(Iic);
     }
 }
 
@@ -714,8 +726,8 @@ static AL_VOID AlIic_Dev_SlaveSendDataHandler(AL_IIC_DevStruct *Iic)
             (*Iic->EventCallBack)(&IicEvent, Iic->EventCallBackRef);
         }
 
-        AlIic_ll_SetTxAbrtIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
-        AlIic_ll_SetRdReqIntr(IicBaseAddr, AL_IIC_FUNC_DISABLE);
+        AlIic_ll_DisableIntr(IicBaseAddr, AL_IIC_INTR_TX_OVER_MASK | AL_IIC_INTR_TX_ABRT_MASK |
+                                          AL_IIC_INTR_RD_REQ_MASK);
 
         /* Clear Status */
         AlIic_Dev_ClrTxBusy(Iic);

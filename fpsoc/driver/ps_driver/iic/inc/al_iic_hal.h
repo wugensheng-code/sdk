@@ -23,9 +23,7 @@ typedef struct
     AL_IIC_DevStruct             Dev;
 
     AL_Lock                      Lock;
-    AL_IIC_TxRxModeEnum          RequestTxOrRxMode;
-    AL_IIC_TxRxModeEnum          CurTxOrRxMode;
-    AL_MailBox                   TxRxEventQueue[2];
+    AL_MailBox                   TxRxEventQueue;
 } AL_IIC_HalStruct;
 
 AL_S32 AlIic_Hal_Init(AL_IIC_HalStruct **Handle, AL_U32 DevId,
