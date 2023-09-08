@@ -28,18 +28,16 @@ typedef enum {
 
 typedef struct
 {
-    AL_DMACAHB_ChStruct     *Channel;
+    AL_DMACAHB_ChStruct     Channel;
     AL_Lock                 Lock;
-    AL_DMACAHB_ModeEnum     ReqMode;
-    AL_DMACAHB_ModeEnum     CurMode;
     AL_MailBox              EventQueue;
 } AL_DMACAHB_HalStruct;
 
 /************************** Variable Definitions *****************************/
 
 /************************** Function Prototypes ******************************/
-AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_U32 DevId, AL_DMACAHB_ChInitStruct *InitConfig,
-                          AL_DMACAHB_ChCallBackStruct *CallBack);
+AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct **Handle, AL_U32 DevId, AL_DMACAHB_ChInitStruct *InitConfig,
+                          AL_DMACAHB_ChEventCallBack *CallBack);
 
 AL_S32 AlDmacAhb_Hal_DeInit(AL_DMACAHB_HalStruct *Handle);
 

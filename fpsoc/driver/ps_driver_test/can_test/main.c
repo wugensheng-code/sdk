@@ -834,9 +834,6 @@ static AL_VOID AlCan_Test_DmaCallBack(AL_DMACAHB_EventStruct *Event, AL_VOID *Ca
 
     switch (Event->EventId)
     {
-    case AL_DMACAHB_EVENT_TRANS_READY:
-        Handle->CurMode = Handle->ReqMode;
-        break;
     case AL_DMACAHB_EVENT_TRANS_COMP:
     case AL_DMACAHB_EVENT_BLOCK_TRANS_COMP:
         AlOsal_Mb_Send(&Handle->EventQueue, Event);
@@ -850,8 +847,8 @@ static AL_VOID AlCan_Test_DmaCallBack(AL_DMACAHB_EventStruct *Event, AL_VOID *Ca
         break;
     case AL_DMACAHB_EVENT_RELOAD:{
         AL_CAN_FrameStruct Frame;
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb trans can frame count:%d!\r\n", Handle->Channel->Trans.ReloadCount);
-        AlCan_Dev_DecodeFrame((AL_U32 *)(AL_UINTPTR)Handle->Channel->Trans.DstAddr, &Frame);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb trans can frame count:%d!\r\n", Handle->Channel.Trans.ReloadCount);
+        AlCan_Dev_DecodeFrame((AL_U32 *)(AL_UINTPTR)Handle->Channel.Trans.DstAddr, &Frame);
         AlCan_Dev_DisplayFrame(&Frame);
         break;
     }
@@ -862,9 +859,9 @@ static AL_VOID AlCan_Test_DmaCallBack(AL_DMACAHB_EventStruct *Event, AL_VOID *Ca
 
 static AL_VOID AlCan_Test_FdDmaRecv(AL_VOID)
 {
-    AL_CAN_HalStruct *Handle;
-    AL_CAN_InitStruct Config;
-    AL_CAN_FrameStruct Frame;
+    AL_CAN_HalStruct *Handle = AL_NULL;
+    AL_CAN_InitStruct Config = {0};
+    AL_CAN_FrameStruct Frame = {0};
 #ifdef BOARD_DR1X90_AD101_V10
     AL_U32 DeviceId = 0;
 #else
@@ -888,29 +885,25 @@ static AL_VOID AlCan_Test_FdDmaRecv(AL_VOID)
     }
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
-    AL_DMACAHB_HalStruct        DmacHandle;
-    AL_DMACAHB_ChInitStruct     DmacChConfig;
-    AL_DMACAHB_ChTransStruct    *DmacChTrans;
-    AL_DMACAHB_ChCallBackStruct DmacCallBack;
+    AL_DMACAHB_HalStruct        *DmacHandle = AL_NULL;
+    AL_DMACAHB_ChInitStruct     DmacChConfig = {0};
+    AL_DMACAHB_ChTransStruct    *DmacChTrans = AL_NULL;
     AL_U32                      DmacDevId = 0;
 
     DmacChConfig = CanDmaChExample1;
 
-    DmacCallBack.Func = AlCan_Test_DmaCallBack;
-    DmacCallBack.Ref = &DmacHandle;
-
-    Ret = AlDmacAhb_Hal_Init(&DmacHandle, &DmacChConfig, &DmacCallBack, DmacDevId);
+    Ret = AlDmacAhb_Hal_Init(&DmacHandle, &DmacChConfig, AlCan_Test_DmaCallBack, DmacDevId);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Dmacahb hal Init error:0x%x\r\n", Ret);
     }
 
-    DmacChTrans = &(DmacHandle.Channel->Trans);
+    DmacChTrans = &(DmacHandle->Channel.Trans);
     DmacChTrans->SrcAddr        = Handle->Dev->BaseAddr;
     DmacChTrans->DstAddr        = (AL_REG)AL_CAN_TEST_DST_MEM;
     DmacChTrans->TransSize      = AL_CAN_DMAC_RECV_DATA_IN_WORD;
     DmacChTrans->ReloadCountNum = AL_CAN_DMAC_RELOAD_COUNT_MAX;   /* max AL_U32 for trans forever */
 
-    AlDmacAhb_Hal_Start(&DmacHandle);
+    AlDmacAhb_Hal_Start(DmacHandle);
 
     while (1) {
     }

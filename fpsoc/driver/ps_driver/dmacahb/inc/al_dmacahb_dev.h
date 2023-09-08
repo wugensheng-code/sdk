@@ -355,15 +355,6 @@ typedef struct
 
 typedef AL_VOID (*AL_DMACAHB_ChEventCallBack)(AL_DMACAHB_EventStruct *Event, AL_VOID *CallBackRef);
 
-/**
- * @brief  Channel call back struct
- */
-typedef struct
-{
-    AL_DMACAHB_ChEventCallBack  Func;
-    AL_VOID                     *Ref;
-} AL_DMACAHB_ChCallBackStruct;
-
 struct DMACAHB_ChStruct;
 
 /**
@@ -446,12 +437,13 @@ typedef struct
  */
 typedef struct DMACAHB_ChStruct
 {
-    AL_DMACAHB_ChParamStruct    Param;          /* Channel register offset and mask */
-    AL_DMACAHB_DmacStruct       *Dmac;          /* Pointer to which dmac belogs to */
-    AL_DMACAHB_ChInitStruct     Config;         /* Function config */
-    AL_DMACAHB_ChTransStruct    Trans;          /* Trans addr, size, count and Link list item */
-    AL_DMACAHB_ChStateEnum      State;          /* Current Channel state */
-    AL_DMACAHB_ChCallBackStruct EventCallBack;  /* Callback for user to handle */
+    AL_DMACAHB_ChParamStruct    Param;              /* Channel register offset and mask */
+    AL_DMACAHB_DmacStruct       *Dmac;              /* Pointer to which dmac belogs to */
+    AL_DMACAHB_ChInitStruct     Config;             /* Function config */
+    AL_DMACAHB_ChTransStruct    Trans;              /* Trans addr, size, count and Link list item */
+    AL_DMACAHB_ChStateEnum      State;              /* Current Channel state */
+    AL_DMACAHB_ChEventCallBack  EventCallBack;      /* Callback for user to handle */
+    AL_VOID                     *EventCallBackRef;
 } AL_DMACAHB_ChStruct;
 
 /************************** Variable Definitions *****************************/
@@ -470,7 +462,8 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel);
 
 AL_S32 AlDmacAhb_Dev_Start(AL_DMACAHB_ChStruct *Channel);
 
-AL_S32 AlDmacAhb_Dev_RegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChCallBackStruct *CallBack);
+AL_S32 AlDmacAhb_Dev_RegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChEventCallBack *CallBack,
+                                             AL_VOID *CallBackRef);
 
 AL_S32 AlDmacAhb_Dev_UnRegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel);
 

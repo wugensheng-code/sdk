@@ -367,7 +367,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockSend(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL
         return Ret;
     }
 
-    if (SpiTxDmacHandlePtr->Channel == NULL) {
+    if (SpiTxDmacHandlePtr == NULL) {
         SpiTxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_6;
         SpiTxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
         SpiTxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
@@ -397,7 +397,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockSend(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL
         SpiTxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
         SpiTxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
 
-        Ret = AlDmacAhb_Hal_Init(SpiTxDmacHandlePtr, DmacDevId, SpiTxDmacChConfigPtr, AL_NULL);
+        Ret = AlDmacAhb_Hal_Init(&SpiTxDmacHandlePtr, DmacDevId, SpiTxDmacChConfigPtr, AL_NULL);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "SpiTx Dmacahb hal Init error:0x%x\r\n", Ret);
             (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
@@ -405,7 +405,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockSend(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL
         }
     }
 
-    SpiTxDmacChTrans = &(SpiTxDmacHandlePtr->Channel->Trans);
+    SpiTxDmacChTrans = &(SpiTxDmacHandlePtr->Channel.Trans);
     SpiTxDmacChTrans->SrcAddr        = (AL_REG)SendData;
     SpiTxDmacChTrans->DstAddr        = Handle->Dev->BaseAddr + SPI_DR0_MST_OFFSET;
     SpiTxDmacChTrans->TransSize      = SendSize;
@@ -462,7 +462,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockReceive(AL_SPI_HalStruct *Handle, AL_U8 *RecvData,
         return Ret;
     }
 
-    if (SpiRxDmacHandlePtr->Channel == NULL) {
+    if (SpiRxDmacHandlePtr == NULL) {
         SpiRxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_7;
         SpiRxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
         SpiRxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
@@ -498,7 +498,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockReceive(AL_SPI_HalStruct *Handle, AL_U8 *RecvData,
         }
     }
 
-    SpiRxDmacChTrans = &(SpiRxDmacHandlePtr->Channel->Trans);
+    SpiRxDmacChTrans = &(SpiRxDmacHandlePtr->Channel.Trans);
     SpiRxDmacChTrans->SrcAddr        = Handle->Dev->BaseAddr + SPI_DR0_MST_OFFSET;
     SpiRxDmacChTrans->DstAddr        = (AL_REG)RecvData;
     SpiRxDmacChTrans->TransSize      = RecvSize;
@@ -566,7 +566,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
         return Ret;
     }
 
-    if (SpiTxDmacHandlePtr->Channel == NULL) {
+    if (SpiTxDmacHandlePtr == NULL) {
         SpiTxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_6;
         SpiTxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
         SpiTxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
@@ -605,7 +605,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
         }
     }
 
-    if (SpiRxDmacHandlePtr->Channel == NULL) {
+    if (SpiRxDmacHandlePtr == NULL) {
         SpiRxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_7;
         SpiRxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
         SpiRxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
@@ -643,12 +643,12 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
         }
     }
 
-    SpiTxDmacChTrans = &(SpiTxDmacHandlePtr->Channel->Trans);
+    SpiTxDmacChTrans = &(SpiTxDmacHandlePtr->Channel.Trans);
     SpiTxDmacChTrans->SrcAddr        = (AL_REG)SendData;
     SpiTxDmacChTrans->DstAddr        = Handle->Dev->BaseAddr + SPI_DR0_MST_OFFSET;
     SpiTxDmacChTrans->TransSize      = SendSize;
 
-    SpiRxDmacChTrans = &(SpiRxDmacHandlePtr->Channel->Trans);
+    SpiRxDmacChTrans = &(SpiRxDmacHandlePtr->Channel.Trans);
     SpiRxDmacChTrans->SrcAddr        = Handle->Dev->BaseAddr + SPI_DR0_MST_OFFSET;
     SpiRxDmacChTrans->DstAddr        = (AL_REG)RecvData;
     SpiRxDmacChTrans->TransSize      = RecvSize;

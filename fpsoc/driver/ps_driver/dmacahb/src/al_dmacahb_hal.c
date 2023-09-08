@@ -17,7 +17,7 @@
 /***************** Macros (Inline Functions) Definitions *********************/
 
 /************************** Variable Definitions *****************************/
-static AL_DMACAHB_ChStruct AL_DMACAHB_ChInstance[AL_DMACAHB_NUM_INSTANCE][AL_DMACAHB_CHANNEL_NUM];
+static AL_DMACAHB_HalStruct AL_DMACAHB_HalInstance[AL_DMACAHB_NUM_INSTANCE][AL_DMACAHB_CHANNEL_NUM];
 
 /************************** Function Prototypes ******************************/
 
@@ -50,9 +50,6 @@ static AL_S32 AlDmacAhb_Hal_DefChEventCallBack(AL_DMACAHB_EventStruct *Event, AL
 
     switch (Event->EventId)
     {
-    case AL_DMACAHB_EVENT_TRANS_READY:
-        Handle->CurMode = Handle->ReqMode;
-        break;
     case AL_DMACAHB_EVENT_TRANS_COMP:
     case AL_DMACAHB_EVENT_BLOCK_TRANS_COMP:
         AlOsal_Mb_Send(&Handle->EventQueue, Event);
@@ -74,62 +71,9 @@ static AL_S32 AlDmacAhb_Hal_DefChEventCallBack(AL_DMACAHB_EventStruct *Event, AL
     return AL_OK;
 }
 
-/**
- * This function init DMACAHB module
- * @param   Handle is pointer to AL_DMACAHB_HalStruct
- * @param   InitConfig is module config structure with AL_DMACAHB_ChInitStruct
- * @param   CallBack is call back struct with AL_DMACAHB_ChCallBackStruct
- * @param   DevId is hardware module id
- * @return
- *          - AL_OK
- * @note
-*/
-AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_U32 DevId, AL_DMACAHB_ChInitStruct *InitConfig,
-                          AL_DMACAHB_ChCallBackStruct *CallBack)
+static inline AL_S32 AlDmacahb_Hal_HandleInit(AL_DMACAHB_HalStruct *Handle)
 {
     AL_S32 Ret = AL_OK;
-    AL_DMACAHB_ChIdEnum AvailableId = AL_DMACAHB_CHANNEL_UNAVAILABLE;
-    AL_DMACAHB_HwConfigStruct *HwConfig = AL_NULL;
-    AL_DMACAHB_ChCallBackStruct EventCallBack = {0};
-
-    AL_ASSERT(Handle != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
-
-    /* 1. look up hardware config */
-    HwConfig = AlDmacAhb_Dev_LookupConfig(DevId);
-    if (HwConfig == AL_NULL) {
-        return AL_DMACAHB_ERR_NULL_PTR;
-    }
-
-    Ret = AlDmacAhb_Dev_RequestCh(HwConfig, InitConfig->Id, &AvailableId);
-    if (Ret != AL_OK) {
-        return Ret;
-    }
-
-    InitConfig->Id = AvailableId;
-    Handle->Channel = &AL_DMACAHB_ChInstance[DevId][InitConfig->Id];
-
-    /* 2. Init IP */
-    Ret = AlDmacAhb_Dev_Init(Handle->Channel, HwConfig, InitConfig);
-    if (Ret != AL_OK) {
-        return Ret;
-    }
-
-    /* 3. register callback */
-    if (CallBack == AL_NULL) {
-        EventCallBack.Func  = (AL_VOID *)AlDmacAhb_Hal_DefChEventCallBack;
-        EventCallBack.Ref   = Handle;
-    } else {
-        EventCallBack.Func  = CallBack->Func;
-        EventCallBack.Ref   = CallBack->Ref;
-    }
-
-    AlDmacAhb_Dev_RegisterChEventCallBack(Handle->Channel, &EventCallBack);
-
-    /* 4. register intr */
-    if (Handle->Channel->Dmac->State.IntrEn == AL_FALSE) {
-        Handle->Channel->Dmac->State.IntrEn = AL_TRUE;
-        AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlDmacAhb_Dev_IntrHandler, Handle->Channel->Dmac);
-    }
 
     Ret = AlOsal_Lock_Init(&Handle->Lock, "Dmacahb-Lock");
     if (Ret != AL_OK) {
@@ -147,6 +91,65 @@ AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct *Handle, AL_U32 DevId, AL_DMACAHB
 /**
  * This function init DMACAHB module
  * @param   Handle is pointer to AL_DMACAHB_HalStruct
+ * @param   InitConfig is module config structure with AL_DMACAHB_ChInitStruct
+ * @param   CallBack is call back struct with AL_DMACAHB_ChCallBackStruct
+ * @param   DevId is hardware module id
+ * @return
+ *          - AL_OK
+ * @note
+*/
+AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct **Handle, AL_U32 DevId, AL_DMACAHB_ChInitStruct *InitConfig,
+                          AL_DMACAHB_ChEventCallBack *CallBack)
+{
+    AL_S32 Ret = AL_OK;
+    AL_DMACAHB_ChStruct *Channel;
+    AL_DMACAHB_ChIdEnum AvailableId = AL_DMACAHB_CHANNEL_UNAVAILABLE;
+    AL_DMACAHB_HwConfigStruct *HwConfig = AL_NULL;
+
+    AL_ASSERT(Handle != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
+
+    /* 1. look up hardware config */
+    HwConfig = AlDmacAhb_Dev_LookupConfig(DevId);
+    if (HwConfig == AL_NULL) {
+        return AL_DMACAHB_ERR_NULL_PTR;
+    }
+
+    Ret = AlDmacAhb_Dev_RequestCh(HwConfig, InitConfig->Id, &AvailableId);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
+    InitConfig->Id = AvailableId;
+    *Handle = &AL_DMACAHB_HalInstance[DevId][InitConfig->Id];
+    Channel = &((*Handle)->Channel);
+
+    /* 2. Init IP */
+    Ret = AlDmacAhb_Dev_Init(Channel, HwConfig, InitConfig);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
+    /* 3. register callback */
+    if (CallBack == AL_NULL) {
+        AlDmacAhb_Dev_RegisterChEventCallBack(Channel, AlDmacAhb_Hal_DefChEventCallBack, *Handle);
+    } else {
+        AlDmacAhb_Dev_RegisterChEventCallBack(Channel, CallBack, *Handle);
+    }
+
+    /* 4. register intr */
+    if (Channel->Dmac->State.IntrEn == AL_FALSE) {
+        Channel->Dmac->State.IntrEn = AL_TRUE;
+        AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlDmacAhb_Dev_IntrHandler, Channel->Dmac);
+    }
+
+    Ret = AlDmacahb_Hal_HandleInit(*Handle);
+
+    return Ret;
+}
+
+/**
+ * This function init DMACAHB module
+ * @param   Handle is pointer to AL_DMACAHB_HalStruct
  * @return
  *          - AL_OK
  * @note
@@ -156,9 +159,8 @@ AL_S32 AlDmacAhb_Hal_DeInit(AL_DMACAHB_HalStruct *Handle)
     AL_S32 Ret = AL_OK;
 
     AL_ASSERT(Handle != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
-    AL_ASSERT(Handle->Channel != AL_NULL, AL_DMACAHB_ERR_HANDLE_WITHOUT_CH);
 
-    Ret = AlOsal_Lock_Take(&Handle->Lock, 0);
+    Ret = AlOsal_Lock_Take(&(Handle->Lock), 0);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -170,15 +172,13 @@ AL_S32 AlDmacAhb_Hal_DeInit(AL_DMACAHB_HalStruct *Handle)
     //     AlIntr_SetInterrupt(Handle->Channel->Dmac->IntrId, AL_FUNC_DISABLE);
     // }
 
-    Ret = AlDmacAhb_Dev_DeInit(Handle->Channel);
+    Ret = AlDmacAhb_Dev_DeInit(&(Handle->Channel));
     if (Ret != AL_OK) {
-        (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
+        (AL_VOID)AlOsal_Lock_Release(&(Handle->Lock));
         return Ret;
     }
 
-    Handle->Channel = AL_NULL;
-
-    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
+    (AL_VOID)AlOsal_Lock_Release(&(Handle->Lock));
 
     return Ret;
 }
@@ -196,19 +196,17 @@ AL_S32 AlDmacAhb_Hal_Start(AL_DMACAHB_HalStruct *Handle)
 
     AL_ASSERT(Handle != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
-    Ret = AlOsal_Lock_Take(&Handle->Lock, 0);
+    Ret = AlOsal_Lock_Take(&(Handle->Lock), 0);
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Handle->ReqMode = DMACAHB_NONBLOCK;
-
-    Ret = AlDmacAhb_Dev_Start(Handle->Channel);
+    Ret = AlDmacAhb_Dev_Start(&(Handle->Channel));
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb start error:%x\r\n", Ret);
     }
 
-    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
+    (AL_VOID)AlOsal_Lock_Release(&(Handle->Lock));
 
     return Ret;
 }
@@ -228,17 +226,15 @@ AL_S32 AlDmacAhb_Hal_StartBlock(AL_DMACAHB_HalStruct *Handle, AL_U32 Timeout)
 
     AL_ASSERT(Handle != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
-    Ret = AlOsal_Lock_Take(&Handle->Lock, Timeout);
+    Ret = AlOsal_Lock_Take(&(Handle->Lock), Timeout);
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Handle->ReqMode = DMACAHB_BLOCK;
-
-    Ret = AlDmacAhb_Dev_Start(Handle->Channel);
+    Ret = AlDmacAhb_Dev_Start(&(Handle->Channel));
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb start block error:0x%x\r\n", Ret);
-        (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
+        (AL_VOID)AlOsal_Lock_Release(&(Handle->Lock));
         return Ret;
     }
 
@@ -247,7 +243,7 @@ AL_S32 AlDmacAhb_Hal_StartBlock(AL_DMACAHB_HalStruct *Handle, AL_U32 Timeout)
         AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb wait trans done error:%x\r\n", Ret);
     }
 
-    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
+    (AL_VOID)AlOsal_Lock_Release(&(Handle->Lock));
 
     if (Ret == AL_OK && ((Event.EventId == AL_DMACAHB_EVENT_TRANS_COMP) ||
         (Event.EventId == AL_DMACAHB_EVENT_BLOCK_TRANS_COMP))) {
@@ -279,7 +275,7 @@ AL_S32 AlDmacAhb_Hal_IoCtl(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_IoCtlCmdEnum
         return Ret;
     }
 
-    AlDmacAhb_Dev_IoCtl(Handle->Channel, Cmd, Data);
+    AlDmacAhb_Dev_IoCtl(&(Handle->Channel), Cmd, Data);
 
     (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 

@@ -18,9 +18,9 @@
 static AL_QSPI_DevStruct AL_QSPI_DevInstance[AL_QSPI_NUM_INSTANCE];
 
 AL_DMACAHB_ChInitStruct     QspiTxDmacChConfig;
-AL_DMACAHB_HalStruct        QspiTxDmacHandle;
+// AL_DMACAHB_HalStruct        QspiTxDmacHandle;
 AL_DMACAHB_ChInitStruct     QspiRxDmacChConfig;
-AL_DMACAHB_HalStruct        QspiRxDmacHandle;
+// AL_DMACAHB_HalStruct        QspiRxDmacHandle;
 
 /********************************************************/
 #ifdef USE_RTOS
@@ -417,7 +417,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockSend(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, 
     }
 
     QspiTxDmacChConfigPtr = &QspiTxDmacChConfig;
-    QspiTxDmacHandlePtr = &QspiTxDmacHandle;
+    QspiTxDmacHandlePtr = AL_NULL;
 
     AL_QSPI_HAL_LOCK(Handle);
 
@@ -430,7 +430,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockSend(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, 
     }
 // printf("n if (SendSize > TempSendSize)");
     if (SendSize > TempSendSize) {
-        if (QspiTxDmacHandlePtr->Channel == NULL) {
+        if (QspiTxDmacHandlePtr == NULL) {
             QspiTxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_6;
             QspiTxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
             QspiTxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
@@ -457,7 +457,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockSend(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, 
             QspiTxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
             QspiTxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
 // printf("n AlDmacAhb_Hal_Init");
-            Ret = AlDmacAhb_Hal_Init(QspiTxDmacHandlePtr, DmacDevId, QspiTxDmacChConfigPtr, AL_NULL);
+            Ret = AlDmacAhb_Hal_Init(&QspiTxDmacHandlePtr, DmacDevId, QspiTxDmacChConfigPtr, AL_NULL);
             if (Ret != AL_OK) {
                 AL_LOG(AL_LOG_LEVEL_ERROR, "QspiTx Dmacahb hal Init error:0x%x\r\n", Ret);
                 AL_QSPI_HAL_UNLOCK(Handle);
@@ -465,7 +465,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockSend(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, 
             }
         }
         // printf("\n QspiTxDmacChTrans");
-        QspiTxDmacChTrans = &(QspiTxDmacHandlePtr->Channel->Trans);
+        QspiTxDmacChTrans = &(QspiTxDmacHandlePtr->Channel.Trans);
         QspiTxDmacChTrans->SrcAddr        = (AL_REG)(SendData + TempSendSize);
         QspiTxDmacChTrans->DstAddr        = Handle->Dev->BaseAddr + QSPI_DR0_OFFSET;
         QspiTxDmacChTrans->TransSize      = SendSize - TempSendSize;
@@ -522,7 +522,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockReceive(AL_QSPI_HalStruct *Handle, AL_U8 *RecvDat
     }
 
     QspiRxDmacChConfigPtr = &QspiRxDmacChConfig;
-    QspiRxDmacHandlePtr = &QspiRxDmacHandle;
+    QspiRxDmacHandlePtr = AL_NULL;
 
     AL_QSPI_HAL_LOCK(Handle);
 
@@ -532,7 +532,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockReceive(AL_QSPI_HalStruct *Handle, AL_U8 *RecvDat
         return Ret;
     }
 
-    if (QspiRxDmacHandlePtr->Channel == NULL) {
+    if (QspiRxDmacHandlePtr == NULL) {
         QspiRxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_7;
         QspiRxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
         QspiRxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
@@ -557,7 +557,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockReceive(AL_QSPI_HalStruct *Handle, AL_U8 *RecvDat
         QspiRxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
         QspiRxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
 
-        Ret = AlDmacAhb_Hal_Init(QspiRxDmacHandlePtr, DmacDevId, QspiRxDmacChConfigPtr, AL_NULL);
+        Ret = AlDmacAhb_Hal_Init(&QspiRxDmacHandlePtr, DmacDevId, QspiRxDmacChConfigPtr, AL_NULL);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "QspiRx Dmacahb hal Init error:0x%x\r\n", Ret);
             AL_QSPI_HAL_UNLOCK(Handle);
@@ -565,7 +565,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockReceive(AL_QSPI_HalStruct *Handle, AL_U8 *RecvDat
         }
     }
 
-    QspiRxDmacChTrans = &(QspiRxDmacHandlePtr->Channel->Trans);
+    QspiRxDmacChTrans = &(QspiRxDmacHandlePtr->Channel.Trans);
     QspiRxDmacChTrans->SrcAddr        = Handle->Dev->BaseAddr + QSPI_DR0_OFFSET;
     QspiRxDmacChTrans->DstAddr        = (AL_REG)RecvData;
     QspiRxDmacChTrans->TransSize      = RecvSize;
@@ -617,9 +617,9 @@ AL_S32 AlQspi_Hal_DmaStartBlockTranfer(AL_QSPI_HalStruct *Handle, AL_U8 *SendDat
     }
 
     QspiTxDmacChConfigPtr = &QspiTxDmacChConfig;
-    QspiTxDmacHandlePtr = &QspiTxDmacHandle;
+    QspiTxDmacHandlePtr = AL_NULL;
     QspiRxDmacChConfigPtr = &QspiRxDmacChConfig;
-    QspiRxDmacHandlePtr = &QspiRxDmacHandle;
+    QspiRxDmacHandlePtr = AL_NULL;
 
     AL_QSPI_HAL_LOCK(Handle);
 
@@ -630,7 +630,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockTranfer(AL_QSPI_HalStruct *Handle, AL_U8 *SendDat
         return Ret;
     }
 
-    if ((QspiTxDmacHandlePtr->Channel == NULL) && (SendSize > TempSendSize)) {
+    if ((QspiTxDmacHandlePtr == NULL) && (SendSize > TempSendSize)) {
         QspiTxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_6;
         QspiTxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
         QspiTxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
@@ -656,20 +656,20 @@ AL_S32 AlQspi_Hal_DmaStartBlockTranfer(AL_QSPI_HalStruct *Handle, AL_U8 *SendDat
         QspiTxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
         QspiTxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
 
-        Ret = AlDmacAhb_Hal_Init(QspiTxDmacHandlePtr, DmacDevId, QspiTxDmacChConfigPtr, AL_NULL);
+        Ret = AlDmacAhb_Hal_Init(&QspiTxDmacHandlePtr, DmacDevId, QspiTxDmacChConfigPtr, AL_NULL);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "QspiTx Dmacahb hal Init error:0x%x\r\n", Ret);
             AL_QSPI_HAL_UNLOCK(Handle);
             return Ret;
         }
 
-        QspiTxDmacChTrans = &(QspiTxDmacHandlePtr->Channel->Trans);
+        QspiTxDmacChTrans = &(QspiTxDmacHandlePtr->Channel.Trans);
         QspiTxDmacChTrans->SrcAddr        = (AL_REG)(SendData + TempSendSize);
         QspiTxDmacChTrans->DstAddr        = Handle->Dev->BaseAddr + QSPI_DR0_OFFSET;
         QspiTxDmacChTrans->TransSize      = SendSize - TempSendSize;
     }
 
-    if (QspiRxDmacHandlePtr->Channel == NULL) {
+    if (QspiRxDmacHandlePtr == NULL) {
         QspiRxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_7;
         QspiRxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
         QspiRxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
@@ -694,7 +694,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockTranfer(AL_QSPI_HalStruct *Handle, AL_U8 *SendDat
         QspiRxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
         QspiRxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
 
-        Ret = AlDmacAhb_Hal_Init(QspiRxDmacHandlePtr, DmacDevId, QspiRxDmacChConfigPtr, AL_NULL);
+        Ret = AlDmacAhb_Hal_Init(&QspiRxDmacHandlePtr, DmacDevId, QspiRxDmacChConfigPtr, AL_NULL);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "QspiRx Dmacahb hal Init error:0x%x\r\n", Ret);
             AL_QSPI_HAL_UNLOCK(Handle);
@@ -702,7 +702,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockTranfer(AL_QSPI_HalStruct *Handle, AL_U8 *SendDat
         }
     }
 
-    QspiRxDmacChTrans = &(QspiRxDmacHandlePtr->Channel->Trans);
+    QspiRxDmacChTrans = &(QspiRxDmacHandlePtr->Channel.Trans);
     QspiRxDmacChTrans->SrcAddr        = Handle->Dev->BaseAddr + QSPI_DR0_OFFSET;
     QspiRxDmacChTrans->DstAddr        = (AL_REG)RecvData;
     QspiRxDmacChTrans->TransSize      = RecvSize;

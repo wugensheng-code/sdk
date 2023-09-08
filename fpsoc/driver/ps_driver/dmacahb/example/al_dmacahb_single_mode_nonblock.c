@@ -73,7 +73,7 @@ AL_S32 main(AL_VOID)
 static AL_S32 AlDmacAhb_Test_SingleModeNonBlock(AL_VOID)
 {
     AL_U32 Ret = AL_OK;
-    AL_DMACAHB_HalStruct Handle = {0};
+    AL_DMACAHB_HalStruct *Handle = AL_NULL;
     AL_DMACAHB_ChTransStruct ChTransCfg = {0};
     AL_U32 TransSize = AL_DMACAHB_EX_ARRAY_SIZE;
     AL_DMACAHB_EventStruct Event;
@@ -90,11 +90,11 @@ static AL_S32 AlDmacAhb_Test_SingleModeNonBlock(AL_VOID)
     ChTransCfg.SrcAddr = (AL_REG)MemSrc;
     ChTransCfg.DstAddr = (AL_REG)MemDst;
     ChTransCfg.TransSize = TransSize / (1 << ChInitCfg.SrcTransWidth);
-    Handle.Channel->Trans = ChTransCfg;
+    Handle->Channel.Trans = ChTransCfg;
 
     memset(ChTransCfg.SrcAddr, 'A', AL_DMACAHB_EX_ARRAY_SIZE);
 
-    Ret = AlDmacAhb_Hal_Start(&Handle);
+    Ret = AlDmacAhb_Hal_Start(Handle);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Start error:0x%x\r\n", Ret);
         return Ret;
@@ -106,7 +106,7 @@ static AL_S32 AlDmacAhb_Test_SingleModeNonBlock(AL_VOID)
             AL_LOG(AL_LOG_LEVEL_INFO, "Example for something else\r\n");
         }
 
-        Ret = AlDmacAhb_Hal_WaitTransDoneOrTimeout(&Handle, &Event, 0);
+        Ret = AlDmacAhb_Hal_WaitTransDoneOrTimeout(Handle, &Event, 0);
         if (Ret != AL_OK) {
             if (Ret == AL_ERR_UNAVAILABLE) {
                 /* do something else */
@@ -125,13 +125,13 @@ static AL_S32 AlDmacAhb_Test_SingleModeNonBlock(AL_VOID)
         }
     }
 
-    Ret = memcmp(Handle.Channel->Trans.SrcAddr, Handle.Channel->Trans.DstAddr, AL_DMACAHB_EX_ARRAY_SIZE);
+    Ret = memcmp(Handle->Channel.Trans.SrcAddr, Handle->Channel.Trans.DstAddr, AL_DMACAHB_EX_ARRAY_SIZE);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
         return Ret;
     }
 
-    Ret = AlDmacAhb_Hal_DeInit(&Handle);
+    Ret = AlDmacAhb_Hal_DeInit(Handle);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
         return Ret;

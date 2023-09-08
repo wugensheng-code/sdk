@@ -75,7 +75,7 @@ static AL_S32 AlDmacAhb_Test_SingleModeBlocked(AL_VOID)
 {
     AL_U32 Ret = AL_OK;
     AL_U8 InitData = 0;
-    AL_DMACAHB_HalStruct Handle = {0};
+    AL_DMACAHB_HalStruct *Handle = AL_NULL;
     AL_DMACAHB_ChTransStruct ChTransCfg = {0};
     AL_U32 TransSize = AL_DMACAHB_EX_ARRAY_SIZE;
     AL_U8 *MemSrc = (AL_U8 *)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
@@ -93,31 +93,31 @@ static AL_S32 AlDmacAhb_Test_SingleModeBlocked(AL_VOID)
     ChTransCfg.SrcAddr = (AL_REG)MemSrc;
     ChTransCfg.DstAddr = (AL_REG)MemDst;
     ChTransCfg.TransSize = TransSize / (1 << ChInitCfg.SrcTransWidth);
-    Handle.Channel->Trans = ChTransCfg;
+    Handle->Channel.Trans = ChTransCfg;
 
     while (1) {
         memset(ChTransCfg.SrcAddr, InitData++, AL_DMACAHB_EX_ARRAY_SIZE);
 
-        Ret = AlDmacAhb_Hal_StartBlock(&Handle, AL_DMACAHB_EX_BLOCKED_TIMEOUT_IN_MS);
+        Ret = AlDmacAhb_Hal_StartBlock(Handle, AL_DMACAHB_EX_BLOCKED_TIMEOUT_IN_MS);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
             return Ret;
         }
 
-        Ret = memcmp(Handle.Channel->Trans.SrcAddr, Handle.Channel->Trans.DstAddr, AL_DMACAHB_EX_ARRAY_SIZE);
+        Ret = memcmp(Handle->Channel.Trans.SrcAddr, Handle->Channel.Trans.DstAddr, AL_DMACAHB_EX_ARRAY_SIZE);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
             return Ret;
         }
 
-        memset(Handle.Channel->Trans.DstAddr, 0, AL_DMACAHB_EX_ARRAY_SIZE);
+        memset(Handle->Channel.Trans.DstAddr, 0, AL_DMACAHB_EX_ARRAY_SIZE);
 
         #ifdef ENABLE_MMU
-        AlCache_FlushDcacheRange(Handle.Channel->Trans.DstAddr, Handle.Channel->Trans.DstAddr + AL_DMACAHB_EX_ARRAY_SIZE);
+        AlCache_FlushDcacheRange(Handle->Channel.Trans.DstAddr, Handle->Channel.Trans.DstAddr + AL_DMACAHB_EX_ARRAY_SIZE);
         #endif
     }
 
-    Ret = AlDmacAhb_Hal_DeInit(&Handle);
+    Ret = AlDmacAhb_Hal_DeInit(Handle);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
         return Ret;

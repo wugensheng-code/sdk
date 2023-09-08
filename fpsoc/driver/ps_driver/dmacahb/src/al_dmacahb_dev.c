@@ -400,17 +400,6 @@ AL_S32 AlDmacAhb_Dev_FillLliWithCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_Lli
     return AL_OK;
 }
 
-static AL_VOID AlCan_Dev_SetTransBusy(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChStateEnum State)
-{
-    AL_DMACAHB_EventStruct Event = {
-        .EventId    = AL_DMACAHB_EVENT_TRANS_READY,
-        .EventData  = 0
-    };
-    Channel->EventCallBack.Func(&Event, Channel->EventCallBack.Ref);
-
-    AlDmacAhb_Dev_SetState(Channel, State);
-}
-
 /**
  * This function flush src addr data and invlidate dst addr data for sync
  * @param   Channel is pointer to AL_DMACAHB_ChStruct
@@ -587,7 +576,7 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
         return AL_DMACAHB_ERR_TRANS_BUSY;
     }
 
-    AlCan_Dev_SetTransBusy(Channel, State);
+    AlDmacAhb_Dev_SetState(Channel, State);
 
 #ifdef ENABLE_MMU
     AlCan_Dev_FlushAndInvalidateData(Channel);
@@ -634,6 +623,66 @@ AL_S32 AlDmacAhb_Dev_Start(AL_DMACAHB_ChStruct *Channel)
     return AL_OK;
 }
 
+static inline AL_BOOL AlDmacahb_Dev_IsSameInitConfig(AL_DMACAHB_ChInitStruct Dst, AL_DMACAHB_ChInitStruct Src)
+{
+    if (Dst.TransType != Src.TransType || Dst.SrcTransWidth != Src.SrcTransWidth || Dst.DstTransWidth != Src.DstTransWidth ||
+        Dst.SrcAddrIncMode != Src.SrcAddrIncMode || Dst.DstAddrIncMode != Src.DstAddrIncMode ||
+        Dst.SrcBurstLength != Src.SrcBurstLength || Dst.DstBurstLength != Src.DstBurstLength ||
+        Dst.Direction != Src.Direction || Dst.ListMasterSel != Src.ListMasterSel ||
+        Dst.SrcMasterSel != Src.SrcMasterSel || Dst.DstMasterSel != Src.DstMasterSel ||
+        Dst.ChPrior != Src.ChPrior || Dst.FifoMode != Src.FifoMode || Dst.ProtCtl != Src.ProtCtl) {
+        return AL_FALSE;
+    }
+
+    if (Dst.Intr.IsIntrEn == Src.Intr.IsIntrEn) {
+        if (Dst.Intr.IsIntrEn == AL_TRUE && Dst.Intr.IntrUnMask != Src.Intr.IntrUnMask) {
+            return AL_FALSE;
+        }
+    } else {
+        return AL_FALSE;
+    }
+
+    if (Dst.HandShaking.SrcHsSel == Src.HandShaking.SrcHsSel) {
+        if (Dst.HandShaking.SrcHsSel == AL_DMACAHB_HAND_SHAKING_HARDWARE &&
+            (Dst.HandShaking.SrcHsPol != Src.HandShaking.SrcHsPol ||
+             Dst.HandShaking.SrcPer != Src.HandShaking.SrcPer)) {
+            return AL_FALSE;
+        }
+    } else {
+        return AL_FALSE;
+    }
+
+    if (Dst.HandShaking.DstHsSel == Src.HandShaking.DstHsSel) {
+        if (Dst.HandShaking.DstHsSel == AL_DMACAHB_HAND_SHAKING_HARDWARE &&
+            (Dst.HandShaking.DstHsPol != Src.HandShaking.DstHsPol ||
+             Dst.HandShaking.DstPer != Src.HandShaking.DstPer)) {
+            return AL_FALSE;
+        }
+    } else {
+        return AL_FALSE;
+    }
+
+    if (Dst.SgrDsr.IsSrcGatherEn == Src.SgrDsr.IsSrcGatherEn) {
+        if (Dst.SgrDsr.IsSrcGatherEn == AL_TRUE && (Dst.SgrDsr.SrcGatherCount != Src.SgrDsr.SrcGatherCount ||
+                                                    Dst.SgrDsr.SrcGatherInterval != Src.SgrDsr.SrcGatherInterval)) {
+            return AL_FALSE;
+        }
+    } else {
+        return AL_FALSE;
+    }
+
+    if (Dst.SgrDsr.IsDstScatterEn == Src.SgrDsr.IsDstScatterEn) {
+        if (Dst.SgrDsr.IsDstScatterEn == AL_TRUE && (Dst.SgrDsr.DstScatterCount != Src.SgrDsr.DstScatterCount ||
+                                                    Dst.SgrDsr.DstScatterInterval != Src.SgrDsr.DstScatterInterval)) {
+            return AL_FALSE;
+        }
+    } else {
+        return AL_FALSE;
+    }
+
+    return AL_TRUE;
+}
+
 /**
  * This function init DMACAHB module
  * @param   Channel is pointer to AL_DMACAHB_ChStruct
@@ -649,6 +698,12 @@ AL_S32 AlDmacAhb_Dev_Init(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_HwConfigStruc
     AL_S32 Ret = AL_OK;
 
     AL_ASSERT((Channel != AL_NULL) && (HwConfig != AL_NULL), AL_DMACAHB_ERR_NULL_PTR);
+
+    if (AlDmacAhb_Dev_GetState(Channel, AL_DMACAHB_STATE_READY)) {
+        if (InitConfig == AL_NULL || AlDmacahb_Dev_IsSameInitConfig(Channel->Config, *InitConfig)) {
+            return AL_OK;
+        }
+    }
 
     Channel->Config = (InitConfig == AL_NULL) ? AlDmacAhb_ChDefInitConfig : (*InitConfig);
     Channel->Dmac   = &AlDmacAhb_DmacInstance[HwConfig->DeviceId];
@@ -717,15 +772,17 @@ AL_S32 AlDmacAhb_Dev_DeInit(AL_DMACAHB_ChStruct *Channel)
  * This function register interrupt call back function
  * @param   Channel is pointer to AL_DMACAHB_ChStruct
  * @param   CallBack is call back struct with AL_DMACAHB_CallBackStruct
+ * @param   CallBackRef is call back reference param
  * @return
  *          - AL_OK is register correct
  * @note
 */
-AL_S32 AlDmacAhb_Dev_RegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChCallBackStruct *CallBack)
+AL_S32 AlDmacAhb_Dev_RegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChEventCallBack *CallBack,
+                                             AL_VOID *CallBackRef)
 {
     AL_ASSERT((Channel != AL_NULL) && (CallBack != AL_NULL), AL_DMACAHB_ERR_NULL_PTR);
 
-    if (Channel->EventCallBack.Func != AL_NULL) {
+    if (Channel->EventCallBack != AL_NULL) {
 
 #ifdef DMACAHB_DEBUG
         AL_LOG(AL_LOG_LEVEL_WARNING, "dmacahb=%p duplicate register callback: replace old:%p with New: %p\r\n",
@@ -733,8 +790,8 @@ AL_S32 AlDmacAhb_Dev_RegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel, AL_DM
 #endif
     }
 
-    Channel->EventCallBack.Func = CallBack->Func;
-    Channel->EventCallBack.Ref  = CallBack->Ref;
+    Channel->EventCallBack      = CallBack;
+    Channel->EventCallBackRef   = CallBackRef;
 
     return AL_OK;
 }
@@ -750,7 +807,7 @@ AL_S32 AlDmacAhb_Dev_UnRegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
-    Channel->EventCallBack.Func = (AL_DMACAHB_ChEventCallBack)AL_NULL;
+    Channel->EventCallBack = (AL_DMACAHB_ChEventCallBack)AL_NULL;
 
     return AL_OK;
 }
@@ -810,7 +867,7 @@ static AL_VOID AlDmacAhb_Dev_TransCompHandler(AL_DMACAHB_ChStruct *Channel)
         .EventId    = AL_DMACAHB_EVENT_TRANS_COMP,
         .EventData  = 0
     };
-    Channel->EventCallBack.Func(&Event, Channel->EventCallBack.Ref);
+    Channel->EventCallBack(&Event, Channel->EventCallBackRef);
 }
 
 /**
@@ -834,7 +891,7 @@ static AL_VOID AlDmacAhb_Dev_BlockTransCompHandler(AL_DMACAHB_ChStruct *Channel)
                 AlDmacAhb_Dev_ClrState(Channel, State);
                 Event.EventId = AL_DMACAHB_EVENT_BLOCK_TRANS_COMP;
                 Event.EventData = 0;
-                Channel->EventCallBack.Func(&Event, Channel->EventCallBack.Ref);
+                Channel->EventCallBack(&Event, Channel->EventCallBackRef);
             } else if ((Channel->Trans.ReloadCount == (Channel->Trans.ReloadCountNum - 1))) {
                 AL_BOOL IsLastTransSet = AL_TRUE;
                 AlDmacAhb_Dev_IoCtl(Channel, AL_DMACAHB_IOCTL_SET_RELOAD_LAST_TRANS, &IsLastTransSet);
@@ -842,7 +899,7 @@ static AL_VOID AlDmacAhb_Dev_BlockTransCompHandler(AL_DMACAHB_ChStruct *Channel)
         } else {
             Event.EventId = AL_DMACAHB_EVENT_RELOAD;
             Event.EventData = Channel->Trans.ReloadCount;
-            Channel->EventCallBack.Func(&Event, Channel->EventCallBack.Ref);
+            Channel->EventCallBack(&Event, Channel->EventCallBackRef);
         }
     }
 }
@@ -859,7 +916,7 @@ static AL_VOID AlDmacAhb_Dev_SrcTransCompHandler(AL_DMACAHB_ChStruct *Channel)
         .EventId    = AL_DMACAHB_EVENT_SRC_TRANS_COMP,
         .EventData  = 0
     };
-    Channel->EventCallBack.Func(&Event, Channel->EventCallBack.Ref);
+    Channel->EventCallBack(&Event, Channel->EventCallBackRef);
 }
 
 /**
@@ -874,7 +931,7 @@ static AL_VOID AlDmacAhb_Dev_DstTransCompHandler(AL_DMACAHB_ChStruct *Channel)
         .EventId    = AL_DMACAHB_EVENT_DST_TRANS_COMP,
         .EventData  = 0
     };
-    Channel->EventCallBack.Func(&Event, Channel->EventCallBack.Ref);
+    Channel->EventCallBack(&Event, Channel->EventCallBackRef);
 }
 
 /**
@@ -890,7 +947,7 @@ static AL_VOID AlDmacAhb_Dev_ErrHandler(AL_DMACAHB_ChStruct *Channel)
         .EventId    = AL_DMACAHB_EVENT_ERR,
         .EventData  = 0
     };
-    Channel->EventCallBack.Func(&Event, Channel->EventCallBack.Ref);
+    Channel->EventCallBack(&Event, Channel->EventCallBackRef);
 }
 
 /**

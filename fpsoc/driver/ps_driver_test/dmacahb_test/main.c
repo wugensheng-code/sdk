@@ -71,7 +71,7 @@ AL_S32 AlDmacAhb_Test_DataCheck(AL_REG SrcAddr, AL_REG DstAddr, AL_U32 ByteSize)
 AL_VOID AlDmacAhb_Test_OtherTransTypeEgCallBack(AL_DMACAHB_EventStruct *Event, AL_VOID *CallBackRef)
 {
     AL_DMACAHB_HalStruct *Handle = (AL_DMACAHB_HalStruct *)CallBackRef;
-    AL_DMACAHB_TransTypeEnum Type = Handle->Channel->Config.TransType;
+    AL_DMACAHB_TransTypeEnum Type = Handle->Channel.Config.TransType;
     AL_U32 Type2Count = 0;
     AL_U32 Type3Count = 0;
     AL_BOOL IsLastTransSet;
@@ -82,14 +82,14 @@ AL_VOID AlDmacAhb_Test_OtherTransTypeEgCallBack(AL_DMACAHB_EventStruct *Event, A
         if (Type == AL_DMACAHB_TRANS_TYPE_2) {
             if (Type2Count == AL_DMACAHB_RELOAD_COUNT_MAX) {
                 IsLastTransSet = AL_TRUE;
-                AlDmacAhb_Dev_IoCtl(Handle->Channel, AL_DMACAHB_IOCTL_SET_RELOAD_LAST_TRANS, &IsLastTransSet);
+                AlDmacAhb_Dev_IoCtl(&(Handle->Channel), AL_DMACAHB_IOCTL_SET_RELOAD_LAST_TRANS, &IsLastTransSet);
             } else {
                 Type2Count++;
             }
         } else if (Type == AL_DMACAHB_TRANS_TYPE_3) {
             if (Type3Count == AL_DMACAHB_RELOAD_COUNT_MAX) {
                 IsLastTransSet = AL_TRUE;
-                AlDmacAhb_Dev_IoCtl(Handle->Channel, AL_DMACAHB_IOCTL_SET_RELOAD_LAST_TRANS, &IsLastTransSet);
+                AlDmacAhb_Dev_IoCtl(&(Handle->Channel), AL_DMACAHB_IOCTL_SET_RELOAD_LAST_TRANS, &IsLastTransSet);
             } else {
                 Type3Count++;
             }
@@ -106,7 +106,7 @@ AL_VOID AlDmacAhb_Test_OtherTransTypeEgCallBack(AL_DMACAHB_EventStruct *Event, A
 
 AL_VOID AlDmacAhb_Test_SingleMode(AL_VOID)
 {
-    AL_DMACAHB_HalStruct        Handle;
+    AL_DMACAHB_HalStruct        *Handle;
     AL_DMACAHB_ChInitStruct     ChConfig;
     AL_DMACAHB_ChTransStruct    *Trans;
     AL_U32 DeviceId = 0;
@@ -123,7 +123,7 @@ AL_VOID AlDmacAhb_Test_SingleMode(AL_VOID)
     }
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
-    Trans = &(Handle.Channel->Trans);
+    Trans = &(Handle->Channel.Trans);
     Trans->SrcAddr = (AL_REG)SRC_MEM[0];
     Trans->DstAddr = (AL_REG)DST_MEM[0];
     Trans->TransSize = AL_DMACAHB_TEST_ARRAY_SIZE / (1 << ChConfig.SrcTransWidth);
@@ -131,7 +131,7 @@ AL_VOID AlDmacAhb_Test_SingleMode(AL_VOID)
     //init SRC_MEM
     AlDmacAhb_Test_InitSrc(Trans->SrcAddr, Trans->TransSize * (1 << ChConfig.SrcTransWidth), 'A');
 
-    Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
+    Ret = AlDmacAhb_Hal_StartBlock(Handle, Timeout);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
@@ -141,7 +141,7 @@ AL_VOID AlDmacAhb_Test_SingleMode(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
     }
 
-    Ret = AlDmacAhb_Hal_DeInit(&Handle);
+    Ret = AlDmacAhb_Hal_DeInit(Handle);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
@@ -151,7 +151,7 @@ AL_VOID AlDmacAhb_Test_SingleMode(AL_VOID)
 
 AL_VOID AlDmacAhb_Test_AutoReloadMode(AL_VOID)
 {
-    AL_DMACAHB_HalStruct        Handle;
+    AL_DMACAHB_HalStruct        *Handle;
     AL_DMACAHB_ChInitStruct     ChConfig;
     // AL_DMACAHB_ChCallBackStruct CallBack;
     AL_DMACAHB_ChTransStruct    *Trans;
@@ -172,7 +172,7 @@ AL_VOID AlDmacAhb_Test_AutoReloadMode(AL_VOID)
     }
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
-    Trans = &(Handle.Channel->Trans);
+    Trans = &(Handle->Channel.Trans);
     Trans->SrcAddr    = (AL_REG)SRC_MEM[1];
     Trans->DstAddr    = (AL_REG)DST_MEM[1];
     Trans->TransSize  = AL_DMACAHB_TEST_ARRAY_SIZE / (1 << ChConfig.SrcTransWidth);
@@ -182,7 +182,7 @@ AL_VOID AlDmacAhb_Test_AutoReloadMode(AL_VOID)
     //init SRC_MEM
     AlDmacAhb_Test_InitSrc(Trans->SrcAddr, Trans->TransSize * (1 << ChConfig.SrcTransWidth), 'a');
 
-    Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
+    Ret = AlDmacAhb_Hal_StartBlock(Handle, Timeout);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
@@ -192,7 +192,7 @@ AL_VOID AlDmacAhb_Test_AutoReloadMode(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
     }
 
-    Ret = AlDmacAhb_Hal_DeInit(&Handle);
+    Ret = AlDmacAhb_Hal_DeInit(Handle);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
@@ -202,7 +202,7 @@ AL_VOID AlDmacAhb_Test_AutoReloadMode(AL_VOID)
 
 AL_VOID AlDmacAhb_Test_LlpMode(AL_VOID)
 {
-    AL_DMACAHB_HalStruct        Handle;
+    AL_DMACAHB_HalStruct        *Handle;
     AL_DMACAHB_ChInitStruct     ChConfig;
     AL_DMACAHB_ChTransStruct     *Trans;
     AL_U32 DeviceId = 0;
@@ -226,7 +226,7 @@ AL_VOID AlDmacAhb_Test_LlpMode(AL_VOID)
         Lli[i].SrcAddr = (AL_REG)SRC_MEM[i];
         Lli[i].DstAddr = (AL_REG)DST_MEM[i];
 
-        AlDmacAhb_Dev_FillLliWithCtl(Handle.Channel, &Lli[i]);
+        AlDmacAhb_Dev_FillLliWithCtl(&(Handle->Channel), &Lli[i]);
         Lli[i].CtlHigh.Bit.BlockTransSize = TransSize;
 
         if ((i + 1) == AL_DMACAHB_LLI_STRUCT_NUM) {
@@ -240,10 +240,10 @@ AL_VOID AlDmacAhb_Test_LlpMode(AL_VOID)
         AlDmacAhb_Test_InitSrc(Lli[i].SrcAddr, AL_DMACAHB_TEST_ARRAY_SIZE, 'a' + i);
     }
 
-    Trans = &(Handle.Channel->Trans);
+    Trans = &(Handle->Channel.Trans);
     Trans->Lli = Lli;
 
-    Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
+    Ret = AlDmacAhb_Hal_StartBlock(Handle, Timeout);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
@@ -256,7 +256,7 @@ AL_VOID AlDmacAhb_Test_LlpMode(AL_VOID)
         }
     }
 
-    Ret = AlDmacAhb_Hal_DeInit(&Handle);
+    Ret = AlDmacAhb_Hal_DeInit(Handle);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
@@ -266,7 +266,7 @@ AL_VOID AlDmacAhb_Test_LlpMode(AL_VOID)
 
 AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
 {
-    AL_DMACAHB_HalStruct        Handle;
+    AL_DMACAHB_HalStruct        *Handle;
     AL_DMACAHB_ChInitStruct     ChConfig;
     AL_DMACAHB_ChTransStruct    *Trans;
     AL_U32 DeviceId = 0;
@@ -291,14 +291,14 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
         AlDmacAhb_Test_InitSrc((AL_REG)SRC_MEM[i], AL_DMACAHB_TEST_ARRAY_SIZE, ('a' + i));
     }
 
-    Trans = &(Handle.Channel->Trans);
+    Trans = &(Handle->Channel.Trans);
     Trans->SrcAddr = (AL_REG)SRC_MEM[0];
     Trans->DstAddr = (AL_REG)DST_MEM[0];
     Trans->TransSize = AL_DMACAHB_TEST_ARRAY_SIZE / (1 << ChConfig.SrcTransWidth);
     Trans->ReloadCountNum = AL_DMACAHB_RELOAD_COUNT_MAX;
     Trans->ReloadCount = 0;
 
-    Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
+    Ret = AlDmacAhb_Hal_StartBlock(Handle, Timeout);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
@@ -309,7 +309,7 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
     }
 
-    Ret = AlDmacAhb_Hal_DeInit(&Handle);
+    Ret = AlDmacAhb_Hal_DeInit(Handle);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
@@ -332,14 +332,14 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
     memset(DST_MEM[0], 0, (AL_DMACAHB_TEST_MEM_SIZE * AL_DMACAHB_TEST_ARRAY_SIZE));
     AlDmacAhb_Test_InitSrc((AL_REG)SRC_MEM[0], AL_DMACAHB_TEST_ARRAY_SIZE, 'a');
 
-    Trans = &(Handle.Channel->Trans);
+    Trans = &(Handle->Channel.Trans);
     Trans->SrcAddr = (AL_REG)SRC_MEM[0];
     Trans->DstAddr = (AL_REG)DST_MEM[0];
     Trans->TransSize = AL_DMACAHB_TEST_ARRAY_SIZE / (1 << ChConfig.SrcTransWidth);
     Trans->ReloadCountNum = AL_DMACAHB_RELOAD_COUNT_MAX;
     Trans->ReloadCount = 0;
 
-    Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
+    Ret = AlDmacAhb_Hal_StartBlock(Handle, Timeout);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
@@ -350,7 +350,7 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
     }
 
-    Ret = AlDmacAhb_Hal_DeInit(&Handle);
+    Ret = AlDmacAhb_Hal_DeInit(Handle);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
@@ -379,7 +379,7 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
         memset (&Lli[i], 0, sizeof(AL_DMACAHB_LliStruct));
         Lli[i].DstAddr = (AL_REG)DST_MEM[i];
 
-        AlDmacAhb_Dev_FillLliWithCtl(Handle.Channel, &Lli[i]);
+        AlDmacAhb_Dev_FillLliWithCtl(&(Handle->Channel), &Lli[i]);
         Lli[i].CtlHigh.Bit.BlockTransSize = TransSize;
 
         if ((i + 1) == AL_DMACAHB_LLI_STRUCT_NUM) {
@@ -392,11 +392,11 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
         AlDmacAhb_Test_InitSrc((AL_REG)SRC_MEM[i], AL_DMACAHB_TEST_ARRAY_SIZE, 'a' + i);
     }
 
-    Trans = &(Handle.Channel->Trans);
+    Trans = &(Handle->Channel.Trans);
     Trans->Lli      = Lli;
     Trans->SrcAddr  = (AL_REG)SRC_MEM[0];
 
-    Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
+    Ret = AlDmacAhb_Hal_StartBlock(Handle, Timeout);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
@@ -409,7 +409,7 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
         }
     }
 
-    Ret = AlDmacAhb_Hal_DeInit(&Handle);
+    Ret = AlDmacAhb_Hal_DeInit(Handle);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
@@ -435,7 +435,7 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
         memset (&Lli[i], 0, sizeof(AL_DMACAHB_LliStruct));
         Lli[i].DstAddr = (AL_REG)DST_MEM[i];
 
-        AlDmacAhb_Dev_FillLliWithCtl(Handle.Channel, &Lli[i]);
+        AlDmacAhb_Dev_FillLliWithCtl(&(Handle->Channel), &Lli[i]);
         Lli[i].CtlHigh.Bit.BlockTransSize = TransSize;
 
         if ((i + 1) == AL_DMACAHB_LLI_STRUCT_NUM) {
@@ -448,13 +448,13 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
         AlDmacAhb_Test_InitSrc((AL_REG)SRC_MEM[i], AL_DMACAHB_TEST_ARRAY_SIZE, 'a' + i);
     }
 
-    Trans = &(Handle.Channel->Trans);
+    Trans = &(Handle->Channel.Trans);
     Trans->Lli              = Lli;
     Trans->SrcAddr          = (AL_REG)SRC_MEM[0];
     Trans->ReloadCountNum   = AL_DMACAHB_LLI_STRUCT_NUM;
     Trans->ReloadCount      = 0;
 
-    Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
+    Ret = AlDmacAhb_Hal_StartBlock(Handle, Timeout);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
@@ -467,7 +467,7 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
         }
     }
 
-    Ret = AlDmacAhb_Hal_DeInit(&Handle);
+    Ret = AlDmacAhb_Hal_DeInit(Handle);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
@@ -493,7 +493,7 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
         memset (&Lli[i], 0, sizeof(AL_DMACAHB_LliStruct));
         Lli[i].SrcAddr = (AL_REG)SRC_MEM[i];
 
-        AlDmacAhb_Dev_FillLliWithCtl(Handle.Channel, &Lli[i]);
+        AlDmacAhb_Dev_FillLliWithCtl(&(Handle->Channel), &Lli[i]);
         Lli[i].CtlHigh.Bit.BlockTransSize = TransSize;
 
         if ((i + 1) == AL_DMACAHB_LLI_STRUCT_NUM) {
@@ -507,11 +507,11 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
         AlDmacAhb_Test_InitSrc(Lli[i].SrcAddr, AL_DMACAHB_TEST_ARRAY_SIZE, 'a' + i);
     }
 
-    Trans = &(Handle.Channel->Trans);
+    Trans = &(Handle->Channel.Trans);
     Trans->Lli      = Lli;
     Trans->DstAddr  = (AL_REG)DST_MEM[0];
 
-    Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
+    Ret = AlDmacAhb_Hal_StartBlock(Handle, Timeout);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
@@ -524,7 +524,7 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
         }
     }
 
-    Ret = AlDmacAhb_Hal_DeInit(&Handle);
+    Ret = AlDmacAhb_Hal_DeInit(Handle);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
@@ -550,7 +550,7 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
         memset (&Lli[i], 0, sizeof(AL_DMACAHB_LliStruct));
         Lli[i].SrcAddr = (AL_REG)SRC_MEM[i];
 
-        AlDmacAhb_Dev_FillLliWithCtl(Handle.Channel, &Lli[i]);
+        AlDmacAhb_Dev_FillLliWithCtl(&(Handle->Channel), &Lli[i]);
         Lli[i].CtlHigh.Bit.BlockTransSize = TransSize;
 
         if ((i + 1) == AL_DMACAHB_LLI_STRUCT_NUM) {
@@ -564,13 +564,13 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
         AlDmacAhb_Test_InitSrc(Lli[i].SrcAddr, AL_DMACAHB_TEST_ARRAY_SIZE, 'a' + i);
     }
 
-    Trans = &(Handle.Channel->Trans);
+    Trans = &(Handle->Channel.Trans);
     Trans->Lli              = Lli;
     Trans->DstAddr          = (AL_REG)DST_MEM[0];
     Trans->ReloadCountNum   = AL_DMACAHB_LLI_STRUCT_NUM;
     Trans->ReloadCount      = 0;
 
-    Ret = AlDmacAhb_Hal_StartBlock(&Handle, Timeout);
+    Ret = AlDmacAhb_Hal_StartBlock(Handle, Timeout);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
     }
@@ -581,7 +581,7 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
     }
 
-    Ret = AlDmacAhb_Hal_DeInit(&Handle);
+    Ret = AlDmacAhb_Hal_DeInit(Handle);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
     }
