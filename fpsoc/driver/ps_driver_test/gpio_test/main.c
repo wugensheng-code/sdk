@@ -35,7 +35,7 @@ int AlGpio_Hal_Test()
 
     /* 3、Test InputRead EOI register */
     for(int i = 0;i < 15;i++) {
-        printf("GPIO IntrPin input data value is %x\r\n", AlGpio_Hal_ReadPin(GPIO,IntrPin));
+        AL_LOG(AL_LOG_LEVEL_INFO, "GPIO IntrPin input data value is %x", AlGpio_Hal_ReadPin(GPIO,IntrPin));
     }
 
     /* 4、Test intr */
