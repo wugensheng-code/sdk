@@ -18,7 +18,7 @@ extern "C" {
 /********************************* Exported Constant ****************************/
 #define AL_GPIO_NUM_INSTANCE    (1)
 #define GPIO_BASE_ADDR          0xF8411000UL
-#define GPIO_MAX_BANKS          (AL_U8)4
+#define GPIO_MAX_BANKS          (AL_U32)4
 #define GPIO_BANK_MAX_PINS      (AL_U32)32
 #define GPIO_MAX_PIN_NUM        (AL_U32)118
 
