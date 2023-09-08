@@ -14,7 +14,7 @@ extern "C" {
 #include "al_uart_hal.h"
 
 #if ((LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1))
-extern AL_UART_HalStruct AlLog;
+extern AL_UART_HalStruct *AlLog;
 #endif
 
 #define AL_LOG_UART0 0
