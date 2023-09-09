@@ -19,7 +19,7 @@ typedef AL_VOID (*AL_GBE_RxDoneCallBack)(AL_VOID *CallbackRef);
 
 typedef struct
 {
-    AL_GBE_DevStruct            *Dev;
+    AL_GBE_DevStruct            Dev;
 
     AL_GBE_TxDoneCallBack       TxDoneCallBack;
     AL_GBE_RxDoneCallBack       RxDoneCallBack;
@@ -32,7 +32,7 @@ typedef struct
 #endif
 } AL_GBE_HalStruct;
 
-AL_S32 AlGbe_Hal_Init(AL_GBE_HalStruct *Handle, AL_U32 DevId, AL_GBE_InitStruct *InitConfig,
+AL_S32 AlGbe_Hal_Init(AL_GBE_HalStruct **Handle, AL_U32 DevId, AL_GBE_InitStruct *InitConfig,
                       AL_GBE_MacDmaConfigStruct *MacDmaConfig, AL_GBE_EventCallBack Callback);
 
 AL_S32 AlGbe_Hal_RegisterIntrHandlerCallBack(AL_GBE_HalStruct *Handle, AL_GBE_IntrStatusEnum IntrId,

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #include "al_gbe_ethernetif.h"
 #include "al_gbe_hal.h"
 
@@ -33,7 +39,7 @@ uint8_t RxBuffTab[AL_GBE_RX_DESC_CNT][ETH_RX_BUFFER_SIZE] __attribute__ ((aligne
 struct netif gnetif;
 
 /* Gbe driver handle */
-AL_GBE_HalStruct GbeHandle;
+AL_GBE_HalStruct *GbeHandle;
 
 /* Tx config, Configure the Tx descriptor function according to this */
 AL_GBE_TxDescConfigStruct TxConfig;
@@ -64,12 +70,12 @@ static struct pbuf *low_level_input(struct netif *netif)
     uint32_t framelength = 0;
     struct pbuf_custom* custom_pbuf;
 
-    if(AlGbe_Hal_GetRxDataBuffer(&GbeHandle, &RxBuff) == AL_OK)
+    if(AlGbe_Hal_GetRxDataBuffer(GbeHandle, &RxBuff) == AL_OK)
     {
-        AlGbe_Hal_GetRxDataLength(&GbeHandle, &framelength);
+        AlGbe_Hal_GetRxDataLength(GbeHandle, &framelength);
 
         /* Build Rx descriptor to be ready for next data reception */
-        AlGbe_Hal_BuildRxDescriptors(&GbeHandle);
+        AlGbe_Hal_BuildRxDescriptors(GbeHandle);
 
         /* Invalidate data cache for ETH Rx Buffers */
         //ToDo: invalidate data cache here
@@ -160,11 +166,11 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
 
     pbuf_ref(p);
 
-    AlGbe_Hal_TransmitBlock(&GbeHandle, &TxConfig, 10);
+    AlGbe_Hal_TransmitBlock(GbeHandle, &TxConfig, 10);
 
     sys_arch_sem_wait(&GbeTxSem, 0);
 
-    AlGbe_Hal_ReleaseTxPacket(&GbeHandle);
+    AlGbe_Hal_ReleaseTxPacket(GbeHandle);
 
     return errval;
 }
@@ -254,7 +260,7 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
     TxConfig.TxBuffer = Txbuffer;
     TxConfig.pData = p;
 
-    AlGbe_Hal_Transmit(&GbeHandle, &TxConfig);
+    AlGbe_Hal_Transmit(GbeHandle, &TxConfig);
 
     return errval;
 }
@@ -293,7 +299,7 @@ err_t low_level_phy_init(AL_GBE_HalStruct *GbeHandle, struct netif *netif, AL_GB
     {
         if (MacDmaConfig->Speed != AL_GBE_SPEED_10M)
         {
-            GbeHandle->Dev->MacDmaConfig.Speed = AL_GBE_SPEED_10M;
+            GbeHandle->Dev.MacDmaConfig.Speed = AL_GBE_SPEED_10M;
             linkchange = 1;
         }
     }
@@ -301,7 +307,7 @@ err_t low_level_phy_init(AL_GBE_HalStruct *GbeHandle, struct netif *netif, AL_GB
     {
         if (MacDmaConfig->Speed != AL_GBE_SPEED_100M)
         {
-            GbeHandle->Dev->MacDmaConfig.Speed = AL_GBE_SPEED_100M;
+            GbeHandle->Dev.MacDmaConfig.Speed = AL_GBE_SPEED_100M;
             linkchange = 1;
         }
     }
@@ -309,7 +315,7 @@ err_t low_level_phy_init(AL_GBE_HalStruct *GbeHandle, struct netif *netif, AL_GB
     {
         if (MacDmaConfig->Speed != AL_GBE_SPEED_1G)
         {
-            GbeHandle->Dev->MacDmaConfig.Speed = AL_GBE_SPEED_1G;
+            GbeHandle->Dev.MacDmaConfig.Speed = AL_GBE_SPEED_1G;
             linkchange = 1;
         }
     }
@@ -318,7 +324,7 @@ err_t low_level_phy_init(AL_GBE_HalStruct *GbeHandle, struct netif *netif, AL_GB
     {
         if (MacDmaConfig->DuplexMode != AL_GBE_FULL_DUPLEX_MODE)
         {
-            GbeHandle->Dev->MacDmaConfig.DuplexMode = AL_GBE_FULL_DUPLEX_MODE;
+            GbeHandle->Dev.MacDmaConfig.DuplexMode = AL_GBE_FULL_DUPLEX_MODE;
             linkchange = 1;
         }
     }
@@ -326,7 +332,7 @@ err_t low_level_phy_init(AL_GBE_HalStruct *GbeHandle, struct netif *netif, AL_GB
     {
         if (MacDmaConfig->DuplexMode != AL_GBE_HALF_DUPLEX_MODE)
         {
-            GbeHandle->Dev->MacDmaConfig.DuplexMode = AL_GBE_HALF_DUPLEX_MODE;
+            GbeHandle->Dev.MacDmaConfig.DuplexMode = AL_GBE_HALF_DUPLEX_MODE;
             linkchange = 1;
         }
     }
@@ -379,12 +385,12 @@ err_t low_level_init(struct netif *netif)
     /* Use static buffer to config rx descriptor buffer */
     for (int idx = 0; idx < AL_GBE_RX_DESC_CNT; idx ++)
     {
-        AlGbe_Hal_ConfigRxDescBuffer(&GbeHandle, idx, RxBuffTab[idx], NULL);
+        AlGbe_Hal_ConfigRxDescBuffer(GbeHandle, idx, RxBuffTab[idx], NULL);
     }
 
-    AlGbe_Hal_RegisterIntrHandlerCallBack(&GbeHandle, AL_GBE_INTR_TX_COMPLETE, AlGbe_TxDoneCallback);
-    AlGbe_Hal_RegisterTxFreeCallBack(&GbeHandle, AlGbe_TxFreeCallback);
-    AlGbe_Hal_RegisterIntrHandlerCallBack(&GbeHandle, AL_GBE_INTR_RX_COMPLETE, AlGbe_RxDoneCallback);
+    AlGbe_Hal_RegisterIntrHandlerCallBack(GbeHandle, AL_GBE_INTR_TX_COMPLETE, AlGbe_TxDoneCallback);
+    AlGbe_Hal_RegisterTxFreeCallBack(GbeHandle, AlGbe_TxFreeCallback);
+    AlGbe_Hal_RegisterIntrHandlerCallBack(GbeHandle, AL_GBE_INTR_RX_COMPLETE, AlGbe_RxDoneCallback);
 
     /* Initialize the RX POOL */
     LWIP_MEMPOOL_INIT(RX_POOL);
@@ -431,7 +437,7 @@ err_t low_level_init(struct netif *netif)
     eth_handle = sys_thread_new("eth_iput", ethernetif_input, &gnetif, 2048, 8);
 #endif /* !NO_SYS */
 
-    ret = low_level_phy_init(&GbeHandle, netif, &MacDmaConfig);
+    ret = low_level_phy_init(GbeHandle, netif, &MacDmaConfig);
     if (ret != ERR_OK)
     {
         printf("low_level_phy_init failed\r\n");

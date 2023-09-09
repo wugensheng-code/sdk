@@ -1,9 +1,15 @@
 #########################################################################
+# Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+
+# SPDX-License-Identifier: BSD-3-Clause
+#########################################################################
+
+#########################################################################
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
 #########################################################################
 SDK_ROOT   ?= ../../../..
 
-CHIP       = dr1v90
+CHIP       = dr1m90
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-

@@ -1,3 +1,27 @@
+/**
+  ******************************************************************************
+  * @file    LwIP/LwIP_UDP_Echo_Server/Src/udp_echoserver.c
+  * @author  MCD Application Team
+  * @brief   UDP echo server
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #include "lwip/pbuf.h"
 #include "lwip/udp.h"
 #include "lwip/tcp.h"

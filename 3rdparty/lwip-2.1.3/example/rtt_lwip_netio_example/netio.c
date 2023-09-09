@@ -4,6 +4,13 @@
  * Created: Wed Sep 25 1996
  */
 
+
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #ifdef WIN32
 #define _INTEGRAL_MAX_BITS 64
 #endif

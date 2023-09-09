@@ -51,6 +51,12 @@
 
 /* See http://www.nwlab.net/art/netio/netio.html to get the netio tool */
 
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 /* implementation options */
 #define NETIO_BUF_SIZE              (32 * 1024)
 #define NETIO_USE_STATIC_BUF        1
