@@ -235,6 +235,8 @@ AL_VOID AlDmacAhb_Test_LlpMode(AL_VOID)
             Lli[i].CtlLow.Bit.LlpDstEn = AL_FALSE;
         } else {
             Lli[i].LlpNext = (AL_REG)&Lli[i + 1];
+            Lli[i].CtlLow.Bit.LlpSrcEn = AL_TRUE;
+            Lli[i].CtlLow.Bit.LlpDstEn = AL_TRUE;
         }
 
         AlDmacAhb_Test_InitSrc(Lli[i].SrcAddr, AL_DMACAHB_TEST_ARRAY_SIZE, 'a' + i);

@@ -19,21 +19,12 @@ extern "C" {
 /***************** Macros (Inline Functions) Definitions *********************/
 
 /**************************** Type Definitions *******************************/
-#define AL_CAN_API_MODE_NUM     2
-
-typedef enum {
-    CAN_BLOCK    = 0,
-    CAN_NONBLOCK = 1,
-} AL_CAN_ModeEnum;
-
 typedef struct
 {
-    AL_CAN_DevStruct    *Dev;
+    AL_CAN_DevStruct    Dev;
     AL_Lock             TxLock;
     AL_Lock             RxLock;
-    AL_CAN_ModeEnum     ReqTxMode;
-    AL_CAN_ModeEnum     CurTxMode;
-    AL_MailBox          TxEventQueue[AL_CAN_API_MODE_NUM];
+    AL_MailBox          TxEventQueue;
     AL_MailBox          RxEventQueue;
 } AL_CAN_HalStruct;
 

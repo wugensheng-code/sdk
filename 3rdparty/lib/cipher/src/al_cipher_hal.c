@@ -15,7 +15,7 @@
 
 /************************** Variable Definitions *****************************/
 /* Static CIPHER controller instance */
-static AL_CIPHER_DevStruct AL_CIPHER_DevInstance[AL_CIPHER_NUM_INSTANCE];
+static AL_CIPHER_HalStruct AL_CIPHER_HalInstance[AL_CIPHER_NUM_INSTANCE];
 
 /************************** Function Prototypes ******************************/
 extern AL_BOOL AlCipher_Dev_GetState(AL_CIPHER_DevStruct *Dev, AL_CIPHER_StateEnum State);
@@ -25,16 +25,16 @@ extern AL_BOOL AlCipher_Dev_GetState(AL_CIPHER_DevStruct *Dev, AL_CIPHER_StateEn
 /**
  * This function wait for ack or timeout
  * @param   Handle is pointer to AL_CIPHER_HalStruct
- * @param   Timeout is max wait time for send done
+ * @param   TimeoutMs is max wait time for send done
  * @return
  *          - AL_OK
  * @note
 */
-static AL_S32 AlCipher_Hal_WaitAckOrTimeout(AL_CIPHER_HalStruct *Handle, AL_U32 Timeout, AL_CIPHER_EventStruct *Event)
+static AL_S32 AlCipher_Hal_WaitAckOrTimeout(AL_CIPHER_HalStruct *Handle, AL_CIPHER_EventStruct *Event, AL_U32 TimeoutMs)
 {
     AL_ASSERT(Handle != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
 
-    return AlOsal_Mb_Receive(&Handle->StartEventQueue[Handle->CurStartMode], Event, Timeout);
+    return AlOsal_Mb_Receive(&Handle->StartEventQueue, Event, TimeoutMs);
 }
 
 /**
@@ -52,32 +52,46 @@ static AL_VOID AlCipher_Hal_DefEventCallBack(AL_CIPHER_EventStruct *Event, AL_VO
 
     switch (Event->EventId)
     {
-    case AL_CIPHER_EVENT_READY:
-        Handle->CurStartMode = Handle->ReqStartMode;
-        break;
     case AL_CIPHER_EVENT_DONE:
-        AlOsal_Mb_Send(&Handle->StartEventQueue[Handle->CurStartMode], Event);
+        AlOsal_Mb_Send(&Handle->StartEventQueue, Event);
         break;
     default:
         break;
     }
 }
 
+static inline AL_S32 AlCipher_Hal_HandleInit(AL_CIPHER_HalStruct *Handle)
+{
+    AL_S32 Ret = AL_OK;
+
+    Ret = AlOsal_Lock_Init(&Handle->StartLock, "Cipher-StartLock");
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
+    Ret = AlOsal_Mb_Init(&Handle->StartEventQueue, "Cipher-Done");
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
+    return Ret;
+}
+
 /**
  * This function init CIPHER module
  * @param   Handle is pointer to AL_CIPHER_HalStruct
  * @param   InitConfig is module config structure with AL_CIPHER_InitStruct
- * @param   CallBack is call back struct with AL_CIPHER_CallBackStruct
+ * @param   CallBack is call back struct with AL_CIPHER_EventCallBack
  * @param   DevId is hardware module id
  * @return
  *          - AL_OK
  * @note
 */
-AL_S32 AlCipher_Hal_Init(AL_CIPHER_HalStruct *Handle, AL_U32 DevId, AL_CIPHER_CallBackStruct *CallBack)
+AL_S32 AlCipher_Hal_Init(AL_CIPHER_HalStruct **Handle, AL_U32 DevId, AL_CIPHER_EventCallBack CallBack)
 {
     AL_S32 Ret = AL_OK;
-    AL_CIPHER_HwConfigStruct *HwConfig;
-    AL_CIPHER_CallBackStruct EventCallBack;
+    AL_CIPHER_DevStruct *Dev = AL_NULL;
+    AL_CIPHER_HwConfigStruct *HwConfig = AL_NULL;
 
     AL_ASSERT(Handle != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
 
@@ -86,49 +100,32 @@ AL_S32 AlCipher_Hal_Init(AL_CIPHER_HalStruct *Handle, AL_U32 DevId, AL_CIPHER_Ca
     if (HwConfig == AL_NULL) {
         return AL_CIPHER_ERR_NULL_PTR;
     }
-    Handle->Dev = &AL_CIPHER_DevInstance[DevId];
+
+    *Handle = &AL_CIPHER_HalInstance[DevId];
+    Dev = &(*Handle)->Dev;
 
     /* 2. Init IP */
-    Ret = AlCipher_Dev_Init(Handle->Dev, HwConfig);
+    Ret = AlCipher_Dev_Init(Dev, HwConfig);
     if (Ret != AL_OK) {
         return Ret;
     }
 
     /* 3. register callback */
     if (CallBack == AL_NULL) {
-        EventCallBack.Func  = AlCipher_Hal_DefEventCallBack;
-        EventCallBack.Ref   = Handle;
+        Ret = AlCipher_Dev_RegisterEventCallBack(Dev, AlCipher_Hal_DefEventCallBack, *Handle);
     } else {
-        EventCallBack.Func  = CallBack->Func;
-        EventCallBack.Ref   = CallBack->Ref;
+        Ret = AlCipher_Dev_RegisterEventCallBack(Dev, CallBack, *Handle);
     }
-
-    Ret = AlCipher_Dev_RegisterEventCallBack(Handle->Dev, &EventCallBack);
-    if (Ret != AL_OK) {
-        return Ret;
-    }
+    AL_ASSERT(Ret == AL_OK, Ret);
 
     /* 4. register intr */
     AL_INTR_AttrStrct IntrAttr = {
         .Priority = 1,
         .TrigMode = POSTIVE_EDGE_TRIGGER,
     };
-    AlIntr_RegHandler(HwConfig->AckIntrId, &IntrAttr, AlCipher_Dev_IntrHandler, Handle->Dev);
+    AlIntr_RegHandler(HwConfig->AckIntrId, &IntrAttr, AlCipher_Dev_IntrHandler, Dev);
 
-    Ret = AlOsal_Lock_Init(&Handle->StartLock, "Cipher-StartLock");
-    if (Ret != AL_OK) {
-        return Ret;
-    }
-
-    Ret = AlOsal_Mb_Init(&Handle->StartEventQueue[CIPHER_BLOCK], "Cipher-Done");
-    if (Ret != AL_OK) {
-        return Ret;
-    }
-
-    Ret = AlOsal_Mb_Init(&Handle->StartEventQueue[CIPHER_NONBLOCK], "Cipher-Done");
-    if (Ret != AL_OK) {
-        return Ret;
-    }
+    Ret = AlCipher_Hal_HandleInit(*Handle);
 
     return Ret;
 }
@@ -148,17 +145,15 @@ AL_S32 AlCipher_Hal_Start(AL_CIPHER_HalStruct *Handle, AL_CIPHER_CmdEnum Cmd, AL
 
     AL_ASSERT((Handle != AL_NULL) && (Config != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
 
-    Ret = AlOsal_Lock_Take(&Handle->StartLock, 0);
+    Ret = AlOsal_Lock_Take(&(Handle->StartLock), 0);
     if (Ret != AL_OK) {
-        (AL_VOID)AlOsal_Lock_Release(&Handle->StartLock);
+        (AL_VOID)AlOsal_Lock_Release(&(Handle->StartLock));
         return Ret;
     }
 
-    Handle->ReqStartMode = CIPHER_NONBLOCK;
+    Ret = AlCipher_Dev_Start(&(Handle->Dev), Cmd, Config);
 
-    Ret = AlCipher_Dev_Start(Handle->Dev, Cmd, Config);
-
-    (AL_VOID)AlOsal_Lock_Release(&Handle->StartLock);
+    (AL_VOID)AlOsal_Lock_Release(&(Handle->StartLock));
 
     return Ret;
 }
@@ -181,22 +176,20 @@ AL_S32 AlCipher_Hal_StartBlock(AL_CIPHER_HalStruct *Handle, AL_CIPHER_CmdEnum Cm
 
     AL_ASSERT(Handle != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
 
-    Ret = AlOsal_Lock_Take(&Handle->StartLock, Timeout);
+    Ret = AlOsal_Lock_Take(&(Handle->StartLock), Timeout);
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Handle->ReqStartMode = CIPHER_BLOCK;
-
-    Ret = AlCipher_Dev_Start(Handle->Dev, Cmd, Config);
+    Ret = AlCipher_Dev_Start(&(Handle->Dev), Cmd, Config);
     if (Ret != AL_OK) {
-        (AL_VOID)AlOsal_Lock_Release(&Handle->StartLock);
+        (AL_VOID)AlOsal_Lock_Release(&(Handle->StartLock));
         return Ret;
     }
 
-    Ret = AlCipher_Hal_WaitAckOrTimeout(Handle, Timeout, &Event);
+    Ret = AlCipher_Hal_WaitAckOrTimeout(Handle, &Event, Timeout);
 
-    (AL_VOID)AlOsal_Lock_Release(&Handle->StartLock);
+    (AL_VOID)AlOsal_Lock_Release(&(Handle->StartLock));
 
     return (Ret != AL_OK) ? Ret : Event.EventData;
 }

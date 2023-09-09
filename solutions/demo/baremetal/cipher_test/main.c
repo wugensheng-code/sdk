@@ -16,6 +16,14 @@
 
 #define TEST_COUNT_MAX          (1)
 
+#ifdef ENABLE_MMU
+#define AL_CIPHER_FLUSH_MEM(Start, End)         AlCache_FlushDcacheRange(Start, End)
+#define AL_CIPHER_INVALIDATE_MEM(Start, End)    AlCache_InvalidateDcacheRange(Start, End)
+#else
+#define AL_CIPHER_FLUSH_MEM(Start, End)
+#define AL_CIPHER_INVALIDATE_MEM(Start, End)
+#endif
+
 uint64_t PerformanceTime[PERFORMANCE_IMAGE_NUM][PERFORMANCE_CASE_NUM] = {0};
 
 AL_U64 AlCipher_Test_GetCurTime(void)
@@ -42,8 +50,8 @@ AL_U32 AlCipher_Test_CheckPlInitDone(void)
 // 	AL_U32 Ret = AL_OK;
 // 	AL_U32 InitDone = 0;
 
-//     MTIMER_OUT_CONDITION(PL_INIT_DONE_TIMEOUT, &Mtimer, InitDone != CRP_CFG_STATE_MSK_PL2PS_INITN) {
-//         InitDone = REG32(CRP_CFG_STATE) & CRP_CFG_STATE_MSK_PL2PS_INITN;
+//     MTIMER_OUT_CONDITION(PL_INIT_DONE_TIMEOUT, &Mtimer, InitDone != AL_CIPHER_CRP_CFG_STATE_MSK_PL2PS_INITN) {
+//         InitDone = REG32(AL_CIPHER_CRP_CFG_STATE) & AL_CIPHER_CRP_CFG_STATE_MSK_PL2PS_INITN;
 //     }
 
 //     if (Mtimer_IsTimerOut(&Mtimer)) {
@@ -61,16 +69,16 @@ static AL_U32 AlCipher_Test_PlInit(void)
     AL_U32 Ret = AL_OK;
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Trigger pl reset\r\n");
-	REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) & (~SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
+	REG32(AL_CIPHER_SYSCTRL_S_GLOBAL_SRSTN) = REG32(AL_CIPHER_SYSCTRL_S_GLOBAL_SRSTN) & (~AL_CIPHER_SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
 
 	AL_LOG(AL_LOG_LEVEL_DEBUG, "Release pl reset\r\n");
-	REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) | (SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
+	REG32(AL_CIPHER_SYSCTRL_S_GLOBAL_SRSTN) = REG32(AL_CIPHER_SYSCTRL_S_GLOBAL_SRSTN) | (AL_CIPHER_SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
 
 	AL_LOG(AL_LOG_LEVEL_DEBUG, "Set PCAP not enable\r\n");
-	REG32(CSU_PCAP_ENABLE) = 0;
+	REG32(AL_CIPHER_CSU_PCAP_ENABLE) = 0;
 
 	AL_LOG(AL_LOG_LEVEL_DEBUG, "Set PCAP enable\r\n");
-	REG32(CSU_PCAP_ENABLE) = 1;
+	REG32(AL_CIPHER_CSU_PCAP_ENABLE) = 1;
 
 	// check pl init done;
 	Ret = AlCipher_Test_CheckPlInitDone();
@@ -143,42 +151,42 @@ static AL_U32 AlCipher_Test_DataCheck(AL_CIPHER_ConfigUnion *Config)
     //hash data check
     if (Config->Crypt.CryptAlgm == AL_CIPHER_OPS_CRYPT_AES256 && Config->Crypt.EncDec == AL_CIPHER_CRYPT_ENC \
         && Config->Crypt.HashMode == AL_CIPHER_OPS_HASH_SHA256 && Config->Crypt.EcbCbc == AL_CIPHER_CRYPT_MODE_ECB) {
-        Ret = strncmp((const char *)Config->Crypt.HashOut, (const char *)EncAesDataBuff, HashDataSize);
+        Ret = strncmp((const char *)Config->Crypt.HashOut, (const char *)EncAesDataBuff, AL_CIPHER_HASH_SIZE);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR,"AES256 encrypt ecb hash data check error\r\n");
             goto END;
         }
     } else if (Config->Crypt.CryptAlgm == AL_CIPHER_OPS_CRYPT_SM4 && Config->Crypt.EncDec == AL_CIPHER_CRYPT_ENC \
         && Config->Crypt.HashMode == AL_CIPHER_OPS_HASH_SM3 && Config->Crypt.EcbCbc == AL_CIPHER_CRYPT_MODE_ECB) {
-        Ret = strncmp((const char *)Config->Crypt.HashOut, (const char *)EncSm4DataBuff, HashDataSize);
+        Ret = strncmp((const char *)Config->Crypt.HashOut, (const char *)EncSm4DataBuff, AL_CIPHER_HASH_SIZE);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR,"SM4 encrypt hash ecb data check error\r\n");
             goto END;
         }
     } else if (Config->Crypt.CryptAlgm == AL_CIPHER_OPS_CRYPT_AES256 && Config->Crypt.EncDec == AL_CIPHER_CRYPT_ENC \
         && Config->Crypt.HashMode == AL_CIPHER_OPS_HASH_SHA256 && Config->Crypt.EcbCbc == AL_CIPHER_CRYPT_MODE_CBC) {
-        Ret = strncmp((const char *)Config->Crypt.HashOut, (const char *)EncCbcAesDataBuff, HashDataSize);
+        Ret = strncmp((const char *)Config->Crypt.HashOut, (const char *)EncCbcAesDataBuff, AL_CIPHER_HASH_SIZE);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR,"AES256 encrypt cbc hash data check error\r\n");
             goto END;
         }
     } else if (Config->Crypt.CryptAlgm == AL_CIPHER_OPS_CRYPT_SM4 && Config->Crypt.EncDec == AL_CIPHER_CRYPT_ENC \
         && Config->Crypt.HashMode == AL_CIPHER_OPS_HASH_SM3 && Config->Crypt.EcbCbc == AL_CIPHER_CRYPT_MODE_CBC) {
-        Ret = strncmp((const char *)Config->Crypt.HashOut, (const char *)EncCbcSm4DataBuff, HashDataSize);
+        Ret = strncmp((const char *)Config->Crypt.HashOut, (const char *)EncCbcSm4DataBuff, AL_CIPHER_HASH_SIZE);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR,"SM4 encrypt cbc hash data check error\r\n");
             goto END;
         }
     }else if (Config->Crypt.CryptAlgm == AL_CIPHER_OPS_CRYPT_AES256 && Config->Crypt.EncDec == AL_CIPHER_CRYPT_DEC \
         && Config->Crypt.HashMode == AL_CIPHER_OPS_HASH_SHA256) {
-        Ret = strncmp((const char *)Config->Crypt.HashOut, (const char *)SrcAesHashBuff, HashDataSize);
+        Ret = strncmp((const char *)Config->Crypt.HashOut, (const char *)SrcAesHashBuff, AL_CIPHER_HASH_SIZE);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR,"AES256 hash data check error\r\n");
             goto END;
         }
     } else if (Config->Crypt.CryptAlgm == AL_CIPHER_OPS_CRYPT_SM4 && Config->Crypt.EncDec == AL_CIPHER_CRYPT_DEC \
         && Config->Crypt.HashMode == AL_CIPHER_OPS_HASH_SM3) {
-        Ret = strncmp((const char *)Config->Crypt.HashOut, (const char *)SrcSm3HashBuff, HashDataSize);
+        Ret = strncmp((const char *)Config->Crypt.HashOut, (const char *)SrcSm3HashBuff, AL_CIPHER_HASH_SIZE);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR,"SM3 hash data check error\r\n");
             goto END;
@@ -208,37 +216,50 @@ AL_VOID AlCipher_Test_Dma_WholeBlockDdrBothInc(AL_CIPHER_HalStruct *Handle)
         Cfg = (TestCfgBothInc_t *)&TestCfgBothIncData[i];
 
         //modify bhdr key to user key for temp test
-        // if (Cfg->KeyMode == OP_BHDR_KEY) {
-        //     Cfg->KeyMode = OP_USER_KEY;
-        // }
+        if (Cfg->KeyMode == AL_CIPHER_KEY_BHDR) {
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "BHDR KEY\r\n");
+            // Cfg->KeyMode = OP_USER_KEY;
+        } else {
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "USER_KEY\r\n");
+        }
 
         //cpy enc key and iv
         if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_AES256) {
+            AL_CIPHER_INVALIDATE_MEM(KeyDataBuff, KeyDataBuff + 32);
+            AL_CIPHER_INVALIDATE_MEM(IvDataBuff, IvDataBuff + 16);
             memcpy(KeyDataBuff, UserAesKey, 32);
             memcpy(IvDataBuff, UserAesIV, 16);
         } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_SM4) {
+            AL_CIPHER_INVALIDATE_MEM(KeyDataBuff, KeyDataBuff + 16);
+            AL_CIPHER_INVALIDATE_MEM(IvDataBuff, IvDataBuff + 16);
             memcpy(KeyDataBuff, UserSm4Key, 16);
             memcpy(IvDataBuff, UserSm4IV, 16);
         }
 
         //cpy input data
+        AL_CIPHER_INVALIDATE_MEM(InputDataBuff, InputDataBuff + DataLength);
         if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_AES256 &&
             Cfg->EncDec == AL_CIPHER_CRYPT_DEC &&
             Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_ECB) {
+            AL_CIPHER_INVALIDATE_MEM(EncAesBuff, EncAesBuff + DataLength);
             memcpy(InputDataBuff, EncAesBuff, DataLength);
         } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_SM4 &&
                    Cfg->EncDec == AL_CIPHER_CRYPT_DEC &&
                    Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_ECB) {
+            AL_CIPHER_INVALIDATE_MEM(EncSm4Buff, EncSm4Buff + DataLength);
             memcpy(InputDataBuff, EncSm4Buff, DataLength);
         } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_AES256 &&
                    Cfg->EncDec == AL_CIPHER_CRYPT_DEC &&
                    Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_CBC) {
+            AL_CIPHER_INVALIDATE_MEM(EncAesCbcBuff, EncAesCbcBuff + DataLength);
             memcpy(InputDataBuff, EncAesCbcBuff, DataLength);
         } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_SM4 &&
                    Cfg->EncDec == AL_CIPHER_CRYPT_DEC &&
                    Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_CBC) {
+            AL_CIPHER_INVALIDATE_MEM(EncSm4CbcBuff, EncSm4CbcBuff + DataLength);
             memcpy(InputDataBuff, EncSm4CbcBuff, DataLength);
         } else {
+            AL_CIPHER_INVALIDATE_MEM(SrcDataBuff, SrcDataBuff + DataLength);
             memcpy(InputDataBuff, SrcDataBuff, DataLength);
         }
 
@@ -294,37 +315,50 @@ AL_VOID AlCipher_Test_Dma_BlockDdrBothInc(AL_CIPHER_HalStruct *Handle)
         Cfg = (TestCfgBothInc_t *)&TestCfgBothIncData[i];
 
         //modify bhdr key to user key for temp test
-        // if (Cfg->KeyMode == OP_BHDR_KEY) {
-        //     Cfg->KeyMode = OP_USER_KEY;
-        // }
+        if (Cfg->KeyMode == AL_CIPHER_KEY_BHDR) {
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "BHDR KEY\r\n");
+            // Cfg->KeyMode = OP_USER_KEY;
+        } else {
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "USER_KEY\r\n");
+        }
 
         //cpy enc key and iv
         if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_AES256) {
+            AL_CIPHER_INVALIDATE_MEM(KeyDataBuff, KeyDataBuff + 32);
+            AL_CIPHER_INVALIDATE_MEM(IvDataBuff, IvDataBuff + 16);
             memcpy(KeyDataBuff, UserAesKey, 32);
             memcpy(IvDataBuff, UserAesIV, 16);
         } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_SM4) {
+            AL_CIPHER_INVALIDATE_MEM(KeyDataBuff, KeyDataBuff + 16);
+            AL_CIPHER_INVALIDATE_MEM(IvDataBuff, IvDataBuff + 16);
             memcpy(KeyDataBuff, UserSm4Key, 16);
             memcpy(IvDataBuff, UserSm4IV, 16);
         }
 
         //cpy input data
+        AL_CIPHER_INVALIDATE_MEM(InputDataBuff, InputDataBuff + DataLength);
         if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_AES256 &&
             Cfg->EncDec == AL_CIPHER_CRYPT_DEC &&
             Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_ECB) {
+            AL_CIPHER_INVALIDATE_MEM(EncAesBuff, EncAesBuff + DataLength);
             memcpy(InputDataBuff, EncAesBuff, DataLength);
         } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_SM4 &&
                    Cfg->EncDec == AL_CIPHER_CRYPT_DEC &&
                    Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_ECB) {
+            AL_CIPHER_INVALIDATE_MEM(EncSm4Buff, EncSm4Buff + DataLength);
             memcpy(InputDataBuff, EncSm4Buff, DataLength);
         } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_AES256 &&
                    Cfg->EncDec == AL_CIPHER_CRYPT_DEC &&
                    Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_CBC) {
+            AL_CIPHER_INVALIDATE_MEM(EncAesCbcBuff, EncAesCbcBuff + DataLength);
             memcpy(InputDataBuff, EncAesCbcBuff, DataLength);
         } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_SM4 &&
                    Cfg->EncDec == AL_CIPHER_CRYPT_DEC &&
                    Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_CBC) {
+            AL_CIPHER_INVALIDATE_MEM(EncSm4CbcBuff, EncSm4CbcBuff + DataLength);
             memcpy(InputDataBuff, EncSm4CbcBuff, DataLength);
         } else {
+            AL_CIPHER_INVALIDATE_MEM(SrcDataBuff, SrcDataBuff + DataLength);
             memcpy(InputDataBuff, SrcDataBuff, DataLength);
         }
 
@@ -419,31 +453,41 @@ AL_VOID AlCipher_Test_Dma_WholeBlockPcap(AL_CIPHER_HalStruct *Handle)
 
         //cpy enc key and iv
         if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_AES256) {
+            AL_CIPHER_INVALIDATE_MEM(KeyDataBuff, KeyDataBuff + 32);
+            AL_CIPHER_INVALIDATE_MEM(IvDataBuff, IvDataBuff + 16);
             memcpy(KeyDataBuff, UserAesKey, 32);
             memcpy(IvDataBuff, UserAesIV, 16);
         } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_SM4) {
+            AL_CIPHER_INVALIDATE_MEM(KeyDataBuff, KeyDataBuff + 16);
+            AL_CIPHER_INVALIDATE_MEM(IvDataBuff, IvDataBuff + 16);
             memcpy(KeyDataBuff, UserSm4Key, 16);
             memcpy(IvDataBuff, UserSm4IV, 16);
         }
 
         //cpy input data
+        AL_CIPHER_INVALIDATE_MEM(InputDataBuff, InputDataBuff + DataLength);
         if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_AES256 &&
             Cfg->EncDec == AL_CIPHER_CRYPT_DEC &&
             Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_ECB) {
+            AL_CIPHER_INVALIDATE_MEM(EncAesBuff, EncAesBuff + DataLength);
             memcpy(InputDataBuff, EncAesBuff, DataLength);
         } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_SM4 &&
                    Cfg->EncDec == AL_CIPHER_CRYPT_DEC &&
                    Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_ECB) {
+            AL_CIPHER_INVALIDATE_MEM(EncSm4Buff, EncSm4Buff + DataLength);
             memcpy(InputDataBuff, EncSm4Buff, DataLength);
         } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_AES256 &&
                    Cfg->EncDec == AL_CIPHER_CRYPT_DEC &&
                    Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_CBC) {
+            AL_CIPHER_INVALIDATE_MEM(EncAesCbcBuff, EncAesCbcBuff + DataLength);
             memcpy(InputDataBuff, EncAesCbcBuff, DataLength);
         } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_SM4 &&
                    Cfg->EncDec == AL_CIPHER_CRYPT_DEC &&
                    Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_CBC) {
+            AL_CIPHER_INVALIDATE_MEM(EncSm4CbcBuff, EncSm4CbcBuff + DataLength);
             memcpy(InputDataBuff, EncSm4CbcBuff, DataLength);
         } else {
+            AL_CIPHER_INVALIDATE_MEM(SrcDataBuff, SrcDataBuff + DataLength);
             memcpy(InputDataBuff, SrcDataBuff, DataLength);
         }
 
@@ -498,29 +542,50 @@ AL_VOID AlCipher_Test_Dma_BlockPcap(AL_CIPHER_HalStruct *Handle)
         }
 
         //modify bhdr key to user key for temp test
-        // if (Cfg->KeyMode == OP_BHDR_KEY) {
-        //     Cfg->KeyMode = OP_USER_KEY;
-        // }
+        if (Cfg->KeyMode == AL_CIPHER_KEY_BHDR) {
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "BHDR KEY\r\n");
+            // Cfg->KeyMode = OP_USER_KEY;
+        } else {
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "USER_KEY\r\n");
+        }
 
         //cpy enc key and iv
         if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_AES256) {
+            AL_CIPHER_INVALIDATE_MEM(KeyDataBuff, KeyDataBuff + 32);
+            AL_CIPHER_INVALIDATE_MEM(IvDataBuff, IvDataBuff + 16);
             memcpy(KeyDataBuff, UserAesKey, 32);
             memcpy(IvDataBuff, UserAesIV, 16);
         } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_SM4) {
+            AL_CIPHER_INVALIDATE_MEM(KeyDataBuff, KeyDataBuff + 16);
+            AL_CIPHER_INVALIDATE_MEM(IvDataBuff, IvDataBuff + 16);
             memcpy(KeyDataBuff, UserSm4Key, 16);
             memcpy(IvDataBuff, UserSm4IV, 16);
         }
 
         //cpy input data
-        if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_AES256 && Cfg->EncDec == AL_CIPHER_CRYPT_DEC && Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_ECB) {
+        AL_CIPHER_INVALIDATE_MEM(InputDataBuff, InputDataBuff + DataLength);
+        if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_AES256 &&
+            Cfg->EncDec == AL_CIPHER_CRYPT_DEC &&
+            Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_ECB) {
+            AL_CIPHER_INVALIDATE_MEM(EncAesBuff, EncAesBuff + DataLength);
             memcpy(InputDataBuff, EncAesBuff, DataLength);
-        } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_SM4 && Cfg->EncDec == AL_CIPHER_CRYPT_DEC && Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_ECB) {
+        } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_SM4 &&
+                   Cfg->EncDec == AL_CIPHER_CRYPT_DEC &&
+                   Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_ECB) {
+            AL_CIPHER_INVALIDATE_MEM(EncSm4Buff, EncSm4Buff + DataLength);
             memcpy(InputDataBuff, EncSm4Buff, DataLength);
-        } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_AES256 && Cfg->EncDec == AL_CIPHER_CRYPT_DEC && Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_CBC) {
+        } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_AES256 &&
+                   Cfg->EncDec == AL_CIPHER_CRYPT_DEC &&
+                   Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_CBC) {
+            AL_CIPHER_INVALIDATE_MEM(EncAesCbcBuff, EncAesCbcBuff + DataLength);
             memcpy(InputDataBuff, EncAesCbcBuff, DataLength);
-        } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_SM4 && Cfg->EncDec == AL_CIPHER_CRYPT_DEC && Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_CBC) {
+        } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_SM4 &&
+                   Cfg->EncDec == AL_CIPHER_CRYPT_DEC &&
+                   Cfg->EcbCbc == AL_CIPHER_CRYPT_MODE_CBC) {
+            AL_CIPHER_INVALIDATE_MEM(EncSm4CbcBuff, EncSm4CbcBuff + DataLength);
             memcpy(InputDataBuff, EncSm4CbcBuff, DataLength);
         } else {
+            AL_CIPHER_INVALIDATE_MEM(SrcDataBuff, SrcDataBuff + DataLength);
             memcpy(InputDataBuff, SrcDataBuff, DataLength);
         }
 
@@ -551,7 +616,6 @@ AL_VOID AlCipher_Test_Dma_BlockPcap(AL_CIPHER_HalStruct *Handle)
         }
 
         Config.Crypt.InputData      += (FirstBlockLength >> 2);
-        Config.Crypt.OutputData     += (FirstBlockLength >> 2);
         Config.Crypt.DataLength     =  MidBlockLength;
         Config.Crypt.HashBlkMode    =  AL_CIPHER_BLK_MID;
 
@@ -568,7 +632,6 @@ AL_VOID AlCipher_Test_Dma_BlockPcap(AL_CIPHER_HalStruct *Handle)
         }
 
         Config.Crypt.InputData      += (MidBlockLength >> 2);
-        Config.Crypt.OutputData     += (MidBlockLength >> 2);
         Config.Crypt.DataLength     =  LastBlockLength;
         Config.Crypt.HashBlkMode    =  AL_CIPHER_BLK_LAST;
 
@@ -611,9 +674,13 @@ AL_VOID AlCipher_Test_Dma_Profermance(AL_CIPHER_HalStruct *Handle)
 
             //cpy enc key and iv
             if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_AES256) {
+                AL_CIPHER_INVALIDATE_MEM(KeyDataBuff, KeyDataBuff + 32);
+                AL_CIPHER_INVALIDATE_MEM(IvDataBuff, IvDataBuff + 16);
                 memcpy(KeyDataBuff, UserAesKey, 32);
                 memcpy(IvDataBuff, UserAesIV, 16);
             } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_SM4) {
+                AL_CIPHER_INVALIDATE_MEM(KeyDataBuff, KeyDataBuff + 16);
+                AL_CIPHER_INVALIDATE_MEM(IvDataBuff, IvDataBuff + 16);
                 memcpy(KeyDataBuff, UserSm4Key, 16);
                 memcpy(IvDataBuff, UserSm4IV, 16);
             }
@@ -679,15 +746,22 @@ AL_VOID AlCipher_Test_Dma_Error(AL_CIPHER_HalStruct *Handle)
         Cfg = (TestCfgBothInc_t *)&TestCfgDmaErrorBranch[i];
 
         //modify bhdr key to user key for temp test
-        // if (Cfg->KeyMode == OP_BHDR_KEY) {
-        //     Cfg->KeyMode = OP_USER_KEY;
-        // }
+        if (Cfg->KeyMode == AL_CIPHER_KEY_BHDR) {
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "BHDR KEY\r\n");
+            // Cfg->KeyMode = OP_USER_KEY;
+        } else {
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "USER_KEY\r\n");
+        }
 
         //cpy enc key and iv
         if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_AES256) {
+            AL_CIPHER_INVALIDATE_MEM(KeyDataBuff, KeyDataBuff + 32);
+            AL_CIPHER_INVALIDATE_MEM(IvDataBuff, IvDataBuff + 16);
             memcpy(KeyDataBuff, UserAesKey, 32);
             memcpy(IvDataBuff, UserAesIV, 16);
         } else if (Cfg->CryptMethod == AL_CIPHER_OPS_CRYPT_SM4) {
+            AL_CIPHER_INVALIDATE_MEM(KeyDataBuff, KeyDataBuff + 16);
+            AL_CIPHER_INVALIDATE_MEM(IvDataBuff, IvDataBuff + 16);
             memcpy(KeyDataBuff, UserSm4Key, 16);
             memcpy(IvDataBuff, UserSm4IV, 16);
         }
@@ -835,8 +909,9 @@ AL_VOID AlCipher_Test_Hash(AL_CIPHER_HalStruct *Handle)
     AL_U32 Timeout = 1000;
     AL_CIPHER_MsgAckEnum AckVal = 0;
 
+    AL_CIPHER_INVALIDATE_MEM(InputDataBuff, InputDataBuff + DataLength);
+    AL_CIPHER_INVALIDATE_MEM(SrcDataBuff, SrcDataBuff + DataLength);
     memcpy(InputDataBuff, SrcDataBuff, DataLength);
-
     /**************************************************************************sha256 whole block*/
     AL_LOG(AL_LOG_LEVEL_DEBUG, "-----Hash Sha256 Whole block!-----\r\n");
 
@@ -855,7 +930,7 @@ AL_VOID AlCipher_Test_Hash(AL_CIPHER_HalStruct *Handle)
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hash start block err: 0x%x\r\n", Ret);
     }
 
-    Ret = strncmp((const char *)HashDataBuff, (const char *)SrcAesHashBuff, HashDataSize);
+    Ret = strncmp((const char *)HashDataBuff, (const char *)SrcAesHashBuff, AL_CIPHER_HASH_SIZE);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hash Data Check error 0x%x\r\n", Ret);
     }
@@ -905,7 +980,7 @@ AL_VOID AlCipher_Test_Hash(AL_CIPHER_HalStruct *Handle)
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hash start last block err: 0x%x\r\n", Ret);
     }
 
-    Ret = strncmp((const char *)HashDataBuff, (const char *)SrcAesHashBuff, HashDataSize);
+    Ret = strncmp((const char *)HashDataBuff, (const char *)SrcAesHashBuff, AL_CIPHER_HASH_SIZE);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hash Data Check error 0x%x\r\n", Ret);
     }
@@ -929,7 +1004,7 @@ AL_VOID AlCipher_Test_Hash(AL_CIPHER_HalStruct *Handle)
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hash start block err: 0x%x\r\n", Ret);
     }
 
-    Ret = strncmp((const char *)HashDataBuff, (const char *)SrcSm3HashBuff, HashDataSize);
+    Ret = strncmp((const char *)HashDataBuff, (const char *)SrcSm3HashBuff, AL_CIPHER_HASH_SIZE);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hash Data Check error 0x%x\r\n", Ret);
     }
@@ -978,7 +1053,7 @@ AL_VOID AlCipher_Test_Hash(AL_CIPHER_HalStruct *Handle)
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hash start last block err: 0x%x\r\n", Ret);
     }
 
-    Ret = strncmp((const char *)HashDataBuff, (const char *)SrcSm3HashBuff, HashDataSize);
+    Ret = strncmp((const char *)HashDataBuff, (const char *)SrcSm3HashBuff, AL_CIPHER_HASH_SIZE);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hash Data Check error 0x%x\r\n", Ret);
     }
@@ -1285,7 +1360,7 @@ AL_U32 main(AL_VOID)
     AL_S32 Ret = AL_OK;
     AL_U32 TestCount = 0;
     AL_U32 DevId = 0;
-    AL_CIPHER_HalStruct Handle;
+    AL_CIPHER_HalStruct *Handle = AL_NULL;
 
     Ret = AlCipher_Hal_Init(&Handle, AL_NULL, DevId);
     if (Ret != AL_OK) {
@@ -1297,29 +1372,29 @@ AL_U32 main(AL_VOID)
     while (TestCount++ < TEST_COUNT_MAX) {
         AL_LOG(AL_LOG_LEVEL_DEBUG,"[[[[[[[[[[[Test count is %d]]]]]]]]]]]\r\n", TestCount);
         //csu dma -> whole block ddr -> correct
-        AlCipher_Test_Dma_WholeBlockDdrBothInc(&Handle);
+        AlCipher_Test_Dma_WholeBlockDdrBothInc(Handle);
         //csu dma -> block ddr -> correct
-        AlCipher_Test_Dma_BlockDdrBothInc(&Handle);
+        AlCipher_Test_Dma_BlockDdrBothInc(Handle);
         //csu dma -> whole block pcap -> correct
-        AlCipher_Test_Dma_WholeBlockPcap(&Handle);
+        AlCipher_Test_Dma_WholeBlockPcap(Handle);
         //csu dma -> block pcap -> correct
-        AlCipher_Test_Dma_BlockPcap(&Handle);
+        AlCipher_Test_Dma_BlockPcap(Handle);
         //csu dma -> performance -> correct
-        AlCipher_Test_Dma_Profermance(&Handle);
+        AlCipher_Test_Dma_Profermance(Handle);
         //csu dma -> Error branch -> correct
-        AlCipher_Test_Dma_Error(&Handle);
+        AlCipher_Test_Dma_Error(Handle);
         //csu auth -> correct
-        AlCipher_Test_Auth(&Handle);
+        AlCipher_Test_Auth(Handle);
         //csu hash -> correct
-        AlCipher_Test_Hash(&Handle);
-        //csu sign -> check in TestSignatureFlow correct
-        AlCipher_Test_Sign(&Handle);
-        //csu gen key -> check in TestSignatureFlow correct
-        AlCipher_Test_GenKey(&Handle);
+        AlCipher_Test_Hash(Handle);
+        // //csu sign -> check in TestSignatureFlow correct
+        // AlCipher_Test_Sign(Handle);
+        // //csu gen key -> check in TestSignatureFlow correct
+        // AlCipher_Test_GenKey(Handle);
         // csu get z -> correct
-        AlCipher_Test_GetZ(&Handle);
+        AlCipher_Test_GetZ(Handle);
         //csu sign flow -> correct
-        AlCipher_Test_SignatureFlow(&Handle);
+        AlCipher_Test_SignatureFlow(Handle);
     }
 
     while (1);

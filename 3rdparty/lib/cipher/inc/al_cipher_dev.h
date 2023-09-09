@@ -42,7 +42,8 @@ typedef enum
     CIPHER_ERR_KEY_VALUE,
     CIPHER_ERR_ENCDEC_VALUE,
     CIPHER_ERR_DMA_INC_MODE,
-    CIPHER_ERR_DATA_ALIGN,
+    CIPHER_ERR_DATA_LENGTH_ALIGN,
+    CIPHER_ERR_DATA_START_ALIGN,
     CIPHER_ERR_BLOCK_MODE,
     CIPHER_ERR_AUTH_MODE,
     CIPHER_ERR_SIGN_MODE,
@@ -57,8 +58,8 @@ typedef enum
     CIPHER_ERR_CSU_SEL_KEY_ERR = 0x1E4,
 } AL_CIPHER_ErrCodeEnum;
 
-#define AL_CIPHER_ERR_ILLEGAL_PARAM         AL_DEF_ERR(AL_CIPHER, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM)
 #define AL_CIPHER_ERR_NULL_PTR              AL_DEF_ERR(AL_CIPHER, AL_LOG_LEVEL_ERROR, AL_ERR_NULL_PTR)
+#define AL_CIPHER_ERR_ILLEGAL_PARAM         AL_DEF_ERR(AL_CIPHER, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM)
 #define AL_CIPHER_ERR_NOT_SUPPORT           AL_DEF_ERR(AL_CIPHER, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_SUPPORT)
 #define AL_CIPHER_ERR_TIMEOUT               AL_DEF_ERR(AL_CIPHER, AL_LOG_LEVEL_ERROR, AL_ERR_TIMEOUT)
 #define AL_CIPHER_ERR_BUSY                  AL_DEF_ERR(AL_CIPHER, AL_LOG_LEVEL_ERROR, AL_ERR_BUSY)
@@ -71,7 +72,8 @@ typedef enum
 #define AL_CIPHER_ERR_KEY_VALUE             AL_DEF_ERR(AL_CIPHER, AL_LOG_LEVEL_ERROR, CIPHER_ERR_KEY_VALUE)
 #define AL_CIPHER_ERR_ENCDEC_VALUE          AL_DEF_ERR(AL_CIPHER, AL_LOG_LEVEL_ERROR, CIPHER_ERR_ENCDEC_VALUE)
 #define AL_CIPHER_ERR_DMA_INC_MODE          AL_DEF_ERR(AL_CIPHER, AL_LOG_LEVEL_ERROR, CIPHER_ERR_DMA_INC_MODE)
-#define AL_CIPHER_ERR_DATA_ALIGN            AL_DEF_ERR(AL_CIPHER, AL_LOG_LEVEL_ERROR, CIPHER_ERR_DATA_ALIGN)
+#define AL_CIPHER_ERR_DATA_LENGTH_ALIGN     AL_DEF_ERR(AL_CIPHER, AL_LOG_LEVEL_ERROR, CIPHER_ERR_DATA_LENGTH_ALIGN)
+#define AL_CIPHER_ERR_DATA_START_ALIGN      AL_DEF_ERR(AL_CIPHER, AL_LOG_LEVEL_ERROR, CIPHER_ERR_DATA_START_ALIGN)
 #define AL_CIPHER_ERR_BLOCK_MODE            AL_DEF_ERR(AL_CIPHER, AL_LOG_LEVEL_ERROR, CIPHER_ERR_BLOCK_MODE)
 #define AL_CIPHER_ERR_AUTH_MODE             AL_DEF_ERR(AL_CIPHER, AL_LOG_LEVEL_INFO, CIPHER_ERR_AUTH_MODE)
 #define AL_CIPHER_ERR_SIGN_MODE             AL_DEF_ERR(AL_CIPHER, AL_LOG_LEVEL_ERROR, CIPHER_ERR_SIGN_MODE)
@@ -88,6 +90,31 @@ typedef enum
                                                         (Events << CIPHER_EVENT_START_BIT)))
 
 #define AL_CIPHER_DATA_ALIGN_SIZE       64
+
+#define AL_CIPHER_HASH_SIZE             32
+#define AL_CIPHER_AUTH_PUBKEY_SIZE      64
+#define AL_CIPHER_AUTH_PRIKEY_SIZE      64
+#define AL_CIPHER_AUTH_DIGEST_SIZE      32
+#define AL_CIPHER_AUTH_SIGN_SIZE        64
+
+#define AL_CIPHER_SYSCTRL_S_BASEADDR                            0xF8806000UL
+#define AL_CIPHER_SYSCTRL_S_GLOBAL_SRSTN                        ((AL_CIPHER_SYSCTRL_S_BASEADDR) + 0x00000330U)
+#define AL_CIPHER_SYSCTRL_S_GLOBAL_SRSTN_MSK_PSONLY             (0x1 << 9)
+#define AL_CIPHER_SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST        (0x1 << 8)
+#define AL_CIPHER_SYSCTRL_S_GLOBAL_SRSTN_MSK_FCLK_DOMAIN_SRST   (0xf << 4)
+#define AL_CIPHER_SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_SRST           (0x1 << 0)
+
+#define AL_CIPHER_CSU_PCAP_BASEADDR           0xF8082000UL
+#define AL_CIPHER_CSU_PCAP_RESET              ((AL_CIPHER_CSU_PCAP_BASEADDR) + 0x00000000U)
+#define AL_CIPHER_CSU_PCAP_ENABLE             ((AL_CIPHER_CSU_PCAP_BASEADDR) + 0x00000004U)
+#define AL_CIPHER_CSU_PCAP_WR_STREAM          ((AL_CIPHER_CSU_PCAP_BASEADDR) + 0x00000008U)
+#define AL_CIPHER_CSU_PCAP_RD_STREAM          ((AL_CIPHER_CSU_PCAP_BASEADDR) + 0x0000000CU)
+
+#define AL_CIPHER_CRP_BASEADDR                          0xF8801000UL
+#define AL_CIPHER_CRP_CFG_STATE                         ((CRP_BASEADDR) + 0x00000454U)
+#define AL_CIPHER_CRP_CFG_STATE_MSK_PL2PS_INITN         (1 << 0)
+#define AL_CIPHER_CRP_CFG_STATE_MSK_PL2PS_CFG_DONE      (1 << 1)
+#define AL_CIPHER_CRP_CFG_STATE_MSK_PL2PS_CFG_WAKEUP    (1 << 2)
 
 /**************************** Type Definitions *******************************/
 /**
@@ -250,15 +277,6 @@ typedef struct
 
 typedef AL_VOID (*AL_CIPHER_EventCallBack)(AL_CIPHER_EventStruct *Event, AL_VOID *CallBackRef);
 
-/**
- * @brief  Event callback struct
- */
-typedef struct
-{
-    AL_CIPHER_EventCallBack Func;
-    AL_VOID                 *Ref;
-} AL_CIPHER_CallBackStruct;
-
 typedef struct
 {
     AL_U32 A[8];
@@ -415,7 +433,8 @@ typedef struct
     AL_CIPHER_HwConfigStruct    HwConfig;
     AL_CIPHER_MsgStruct         Msg;
     AL_CIPHER_AckStruct         Ack;
-    AL_CIPHER_CallBackStruct    EventCallBack;
+    AL_CIPHER_EventCallBack     EventCallBack;
+    AL_VOID                     *EventCallBackRef;
     AL_CIPHER_StateEnum         State;
 } AL_CIPHER_DevStruct;
 
@@ -426,7 +445,8 @@ AL_CIPHER_HwConfigStruct *AlCipher_Dev_LookupConfig(AL_U32 DeviceId);
 
 AL_S32 AlCipher_Dev_Init(AL_CIPHER_DevStruct *Dev, AL_CIPHER_HwConfigStruct *HwConfig);
 
-AL_S32 AlCipher_Dev_RegisterEventCallBack(AL_CIPHER_DevStruct *Dev, AL_CIPHER_CallBackStruct *CallBack);
+AL_S32 AlCipher_Dev_RegisterEventCallBack(AL_CIPHER_DevStruct *Dev, AL_CIPHER_EventCallBack *CallBack,
+                                          AL_VOID *CallBackRef);
 
 AL_S32 AlCipher_Dev_UnRegisterEventCallBack(AL_CIPHER_DevStruct *Dev);
 

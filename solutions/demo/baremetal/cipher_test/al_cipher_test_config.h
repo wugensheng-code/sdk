@@ -112,31 +112,13 @@ extern "C" {
 #define IMAGE_64K_ADDR      (IMAGE_32K_ADDR + INPUT_DATA_SIZE_32K)
 #define IMAGE_128K_ADDR     (IMAGE_64K_ADDR + INPUT_DATA_SIZE_64K)
 
-#define HASH_LENGTH (0x20)
 #define PPK_SPK_SIGN_LENGTH (0x40)
 #define IDA_LENGTH (0x20)
 
 
 #define REG32(addr)                  (*(volatile uint32_t *)(uint32_t)(addr))
 
-#define SYSCTRL_S_BASEADDR            0XF8806000UL
-#define SYSCTRL_S_GLOBAL_SRSTN        ((SYSCTRL_S_BASEADDR) + 0x00000330U)
-#define SYSCTRL_S_GLOBAL_SRSTN_MSK_PSONLY              (0x1 << 9)
-#define SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST         (0x1 << 8)
-#define SYSCTRL_S_GLOBAL_SRSTN_MSK_FCLK_DOMAIN_SRST    (0xf << 4)
-#define SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_SRST            (0x1 << 0)
 
-#define CSU_PCAP_BASEADDR           0xF8082000UL
-#define CSU_PCAP_RESET              ((CSU_PCAP_BASEADDR) + 0x00000000U)
-#define CSU_PCAP_ENABLE             ((CSU_PCAP_BASEADDR) + 0x00000004U)
-#define CSU_PCAP_WR_STREAM          ((CSU_PCAP_BASEADDR) + 0x00000008U)
-#define CSU_PCAP_RD_STREAM          ((CSU_PCAP_BASEADDR) + 0x0000000CU)
-
-#define CRP_BASEADDR               0xF8801000UL
-#define CRP_CFG_STATE              ((CRP_BASEADDR) + 0x00000454U)
-#define CRP_CFG_STATE_MSK_PL2PS_INITN      (1 << 0)
-#define CRP_CFG_STATE_MSK_PL2PS_CFG_DONE   (1 << 1)
-#define CRP_CFG_STATE_MSK_PL2PS_CFG_WAKEUP (1 << 2)
 
 /**************************** Type Definitions *******************************/
 typedef struct {

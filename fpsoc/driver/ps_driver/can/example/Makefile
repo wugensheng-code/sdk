@@ -10,7 +10,7 @@
 
 SDK_ROOT    ?= ../../../../..
 CHIP        ?= dr1m90
-ELF         ?= SINGLE_BLOCK
+ELF         ?= IN_LOOPBACK
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
@@ -31,12 +31,10 @@ BOARD_NAME ?= board_dr1x90_ad101_v10
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
-ifeq ($(ELF), SINGLE_NONBLOCK)
-C_SRCS += al_dmacahb_single_mode_nonblock.c
-else ifeq ($(ELF), LLP_BLOCK)
-C_SRCS += al_dmacahb_llp_mode_blocked.c
+ifeq ($(ELF), EX_LOOPBACK)
+C_SRCS += al_can_ex_loopback_blocked.c
 else
-C_SRCS += al_dmacahb_single_mode_blocked.c
+C_SRCS += al_can_in_loopback_blocked.c
 endif
 
 INC_DIR     += ./
@@ -51,6 +49,7 @@ ASM_SRCS    :=
 # 3. CFLAGS
 #########################################################################
 CFLAGS := -O2 -g
+CFLAGS += -DCAN_DEBUG
 # CFLAGS += -DUSE_RTOS
 # CFLAGS += -DRTOS_RTTHREAD
 
@@ -70,12 +69,10 @@ PINMUX_MODE ?= PINMUX_MODE1
 #########################################################################
 # 5. define build target
 #########################################################################
-ifeq ($(ELF), SINGLE_BLOCK)
-TARGET := fpsoc_dmacahb_example_single_mode_block
-else ifeq ($(ELF), LLP_BLOCK)
-TARGET := fpsoc_dmacahb_example_llp_mode_block
+ifeq ($(ELF), EX_LOOPBACK)
+TARGET := fpsoc_can_example_ex_loopback_block
 else
-TARGET := fpsoc_dmacahb_example_single_mode_nonblock
+TARGET := fpsoc_can_example_in_loopback_block
 endif
 
 ifneq ($(PINMUX_MODE),)

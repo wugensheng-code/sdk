@@ -19,26 +19,17 @@ extern "C" {
 /***************** Macros (Inline Functions) Definitions *********************/
 
 /**************************** Type Definitions *******************************/
-#define AL_CIPHER_API_MODE_NUM     2
-
-typedef enum {
-    CIPHER_BLOCK    = 0,
-    CIPHER_NONBLOCK = 1,
-} AL_CIPHER_ModeEnum;
-
 typedef struct
 {
-    AL_CIPHER_DevStruct *Dev;
+    AL_CIPHER_DevStruct Dev;
     AL_Lock             StartLock;
-    AL_CIPHER_ModeEnum  ReqStartMode;
-    AL_CIPHER_ModeEnum  CurStartMode;
-    AL_MailBox          StartEventQueue[AL_CIPHER_API_MODE_NUM];
+    AL_MailBox          StartEventQueue;
 } AL_CIPHER_HalStruct;
 
 /************************** Variable Definitions *****************************/
 
 /************************** Function Prototypes ******************************/
-AL_S32 AlCipher_Hal_Init(AL_CIPHER_HalStruct *Handle, AL_U32 DevId, AL_CIPHER_CallBackStruct *CallBack);
+AL_S32 AlCipher_Hal_Init(AL_CIPHER_HalStruct **Handle, AL_U32 DevId, AL_CIPHER_EventCallBack CallBack);
 
 AL_S32 AlCipher_Hal_Start(AL_CIPHER_HalStruct *Handle, AL_CIPHER_CmdEnum Cmd, AL_CIPHER_ConfigUnion *Config);
 

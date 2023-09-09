@@ -338,7 +338,7 @@ typedef struct
 /************************** Function Prototypes ******************************/
 
 AL_MMC_HwConfigStruct *AlMmc_Dev_LookupConfig(AL_U32 DeviceId);
-AL_S32 AlMmc_Dev_RegisterEventCallBack(AL_MMC_DevStruct *Dev, AL_MMC_EventCallBack *CallBack, AL_VOID *CallBackRef);
+AL_S32 AlMmc_Dev_RegisterEventCallBack(AL_MMC_DevStruct *Dev, AL_MMC_EventCallBack CallBack, AL_VOID *CallBackRef);
 AL_S32 AlMmc_Dev_UnRegisterEventCallBack(AL_MMC_DevStruct *Dev);
 AL_S32 AlMmc_Dev_Init(AL_MMC_DevStruct *Dev, AL_MMC_HwConfigStruct *HwConfig, AL_MMC_InitStruct *InitConfig);
 AL_S32 AlMmc_Dev_Write(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkOffset, AL_U32 BlkCnt);

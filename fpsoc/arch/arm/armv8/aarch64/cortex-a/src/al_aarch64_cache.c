@@ -9,6 +9,8 @@
 void __asm_invalidate_icache_all(void);
 void __asm_flush_dcache_range(AL_UINTPTR, AL_UINTPTR);
 void __asm_invalidate_dcache_range(AL_UINTPTR, AL_UINTPTR);
+void __asm_flush_and_invalidate_same_dcache_range(AL_UINTPTR, AL_UINTPTR);
+void __asm_flush_and_invalidate_diff_dcache_range(AL_UINTPTR, AL_UINTPTR, AL_UINTPTR, AL_UINTPTR);
 void __asm_invalidate_dcache_all(void);
 void __asm_flush_dcache_all(void);
 

@@ -495,7 +495,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockReceive(AL_SPI_HalStruct *Handle, AL_U8 *RecvData,
         SpiRxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
         SpiRxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
 
-        Ret = AlDmacAhb_Hal_Init(SpiRxDmacHandlePtr, DmacDevId, SpiRxDmacChConfigPtr, AL_NULL);
+        Ret = AlDmacAhb_Hal_Init(&SpiRxDmacHandlePtr, DmacDevId, SpiRxDmacChConfigPtr, AL_NULL);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "SpiRx Dmacahb hal Init error:0x%x\r\n", Ret);
             (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
@@ -602,7 +602,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
         SpiTxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
         SpiTxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
 
-        Ret = AlDmacAhb_Hal_Init(SpiTxDmacHandlePtr, DmacDevId, SpiTxDmacChConfigPtr, AL_NULL);
+        Ret = AlDmacAhb_Hal_Init(&SpiTxDmacHandlePtr, DmacDevId, SpiTxDmacChConfigPtr, AL_NULL);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "SpiTx Dmacahb hal Init error:0x%x\r\n", Ret);
             (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
@@ -640,7 +640,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
         SpiRxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
         SpiRxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
 
-        Ret = AlDmacAhb_Hal_Init(SpiRxDmacHandlePtr, DmacDevId, SpiRxDmacChConfigPtr, AL_NULL);
+        Ret = AlDmacAhb_Hal_Init(&SpiRxDmacHandlePtr, DmacDevId, SpiRxDmacChConfigPtr, AL_NULL);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "SpiRx Dmacahb hal Init error:0x%x\r\n", Ret);
             (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);

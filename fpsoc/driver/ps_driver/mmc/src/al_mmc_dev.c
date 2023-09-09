@@ -1347,7 +1347,7 @@ static AL_S32 AlMmc_Dev_SetBusWidth(AL_MMC_DevStruct *Dev)
             Dev->Config.BusWidth = AL_MMC_BUS_WIDTH_4BIT;
         }
 
-        AL_MMC_Cmd6ArgUnion Arg;
+        AL_MMC_Cmd6ArgUnion Arg = {.Reg = 0};
         AlMmc_Dev_GenCmd6Param(Dev, AL_MMC_CMD6_EMMC_FUNC_BUS_WIDTH, &Arg);
 
         Ret = AlMmc_Dev_SetExtCsd(Dev, Arg.Reg);
@@ -1768,7 +1768,7 @@ AL_S32 AlMmc_Dev_Init(AL_MMC_DevStruct *Dev, AL_MMC_HwConfigStruct *HwConfig, AL
  *          - AL_OK is register correct
  * @note
 */
-AL_S32 AlMmc_Dev_RegisterEventCallBack(AL_MMC_DevStruct *Dev, AL_MMC_EventCallBack *CallBack, AL_VOID *CallBackRef)
+AL_S32 AlMmc_Dev_RegisterEventCallBack(AL_MMC_DevStruct *Dev, AL_MMC_EventCallBack CallBack, AL_VOID *CallBackRef)
 {
     AL_ASSERT((Dev != AL_NULL) && (CallBack != AL_NULL), AL_MMC_ERR_NULL_PTR);
 
@@ -1887,7 +1887,7 @@ static AL_S32 AlMmc_Dev_SetUpAdma2DescTable(AL_MMC_DevStruct *Dev, AL_U8 *Buf, A
     }
 
 #ifdef ENABLE_MMU
-    AlCache_FlushDcacheRange(Desc, Desc + sizeof(AL_MMC_AdmaDescUnion) * AL_MMC_ADMA_TABLE_SIZE);
+    AlCache_FlushDcacheRange((AL_UINTPTR)Desc, (AL_UINTPTR)(Desc + sizeof(AL_MMC_AdmaDescUnion) * AL_MMC_ADMA_TABLE_SIZE));
 #endif
 
     AlMmc_Dev_DisplayAdmaDesc(Desc, TotalDescSize);
@@ -2117,8 +2117,9 @@ static AL_S32 AlMmc_Dev_WriteData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 Arg,
 
 #ifdef ENABLE_MMU
     if (Dev->Config.AutoGenAdmaTblEn || Dev->Config.DmaMode != AL_MMC_DMA_MODE_ADMA2) {
-        AlCache_FlushDcacheRange(Buf, Buf + BlkCnt * Dev->CardInfo.BlkLen);
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "Flush start: 0x%x, end: 0x%x\r\n", Buf, Buf + BlkCnt * Dev->CardInfo.BlkLen);
+        AlCache_FlushDcacheRange((AL_UINTPTR)Buf, (AL_UINTPTR)(Buf + BlkCnt * Dev->CardInfo.BlkLen));
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Flush start: 0x%lx, end: 0x%lx\r\n",
+               (AL_UINTPTR)Buf, (AL_UINTPTR)(Buf + BlkCnt * Dev->CardInfo.BlkLen));
     }
 #endif
 
@@ -2170,7 +2171,7 @@ AL_S32 AlMmc_Dev_Write(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkOffset, AL_U
         return AL_MMC_ERR_BUF_NOT_ALIGN;
     }
 
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "Write addr: %p, Offset: %p, BlkCnt = %d\r\n", Buf, BlkOffset, BlkCnt);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Write addr: %p, Offset: %d, BlkCnt = %d\r\n", Buf, BlkOffset, BlkCnt);
 
     Ret = AlMmc_Dev_TransferConfig(Dev);
     if (Ret != AL_OK) {
@@ -2213,8 +2214,9 @@ AL_S32 AlMmc_Dev_ReadData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 Arg, AL_U32 
 
 #ifdef ENABLE_MMU
     if (Dev->Config.AutoGenAdmaTblEn || Dev->Config.DmaMode != AL_MMC_DMA_MODE_ADMA2) {
-        AlCache_InvalidateDcacheRange(Buf, Buf + BlkCnt * Dev->CardInfo.BlkLen);
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "Invalidate start: 0x%x, end: 0x%x\r\n", Buf, Buf + BlkCnt * Dev->CardInfo.BlkLen);
+        AlCache_InvalidateDcacheRange((AL_UINTPTR)Buf, (AL_UINTPTR)(Buf + BlkCnt * Dev->CardInfo.BlkLen));
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Invalidate start: 0x%lx, end: 0x%lx\r\n",
+               (AL_UINTPTR)Buf, (AL_UINTPTR)(Buf + BlkCnt * Dev->CardInfo.BlkLen));
     }
 #endif
 

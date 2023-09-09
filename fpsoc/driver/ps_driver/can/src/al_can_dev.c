@@ -517,7 +517,6 @@ AL_S32 AlCan_Dev_RegisterEventCallBack(AL_CAN_DevStruct *Dev, AL_CAN_EventCallBa
     AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
 
     if (Dev->EventCallBack != AL_NULL) {
-
 #ifdef CAN_DEBUG
         AL_LOG(AL_LOG_LEVEL_WARNING, "can=%p duplicate register callback: replace old:%p with New: %p\r\n",
                Dev, Dev->EventCallBack, CallBack);
@@ -658,21 +657,6 @@ AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, AL
     return Ret;
 }
 
-static AL_S32 AlCan_Dev_SetSendBusy(AL_CAN_DevStruct *Dev)
-{
-    AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
-
-    AL_CAN_EventStruct Event = {
-        .EventId    = AL_CAN_EVENT_SEND_READY,
-        .EventData  = 0
-    };
-    Dev->EventCallBack(&Event, Dev->EventCallBackRef);
-
-    AlCan_Dev_SetState(Dev, AL_CAN_STATE_SEND_BUSY);
-
-    return AL_OK;
-}
-
 /**
  * This function send frame
  * @param   Dev is pointer to AL_CAN_DevStruct
@@ -691,7 +675,7 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
     AL_ASSERT(AlCan_Dev_GetState(Dev, AL_CAN_STATE_READY), AL_CAN_ERR_STATE_NOT_READY);
     AL_ASSERT(!AlCan_Dev_GetState(Dev, AL_CAN_STATE_SEND_BUSY), AL_CAN_ERR_BUSY);
 
-    AlCan_Dev_SetSendBusy(Dev);
+    AlCan_Dev_SetState(Dev, AL_CAN_STATE_SEND_BUSY);
 
     Id = Frame->Id;
     // Id |= (Frame->IsEnTts << CAN_TBUF_0_3_TTSEN_SHIFT);  /* Not support TTCAN */

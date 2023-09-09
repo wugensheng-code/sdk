@@ -99,7 +99,7 @@ static inline AL_S32 AlDmacahb_Hal_HandleInit(AL_DMACAHB_HalStruct *Handle)
  * @note
 */
 AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct **Handle, AL_U32 DevId, AL_DMACAHB_ChInitStruct *InitConfig,
-                          AL_DMACAHB_ChEventCallBack *CallBack)
+                          AL_DMACAHB_ChEventCallBack CallBack)
 {
     AL_S32 Ret = AL_OK;
     AL_DMACAHB_ChStruct *Channel;

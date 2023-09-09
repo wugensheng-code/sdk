@@ -9,52 +9,33 @@
 #include "alfsbl_handoff.h"
 #include "al_reg_io.h"
 
-
-#define AARCH_64
-
 void __attribute__((noinline)) AlFsbl_HandoffExit(uint64_t HandoffAddress)
 {
-	//printf("Exit from FSBL\r\n");
-
-
-#if __riscv
-	__asm__ __volatile__(
-	"fence"
-	);
-	
-
-	__asm__ __volatile__(
-	"jr %[src]"
-	:
-	:[src]"r"(HandoffAddress)
-	);
-
-#elif (defined AARCH_64 || defined __aarch64__)
+#ifdef __riscv
+	__asm__ __volatile__("fence");
+	__asm__ __volatile__("jr %[src]"::[src]"r"(HandoffAddress));
+#elif (defined _AARCH_64 || defined __aarch64__)
 	__asm__ __volatile__("mov x30, %0"::"r"(HandoffAddress):"x30");/* move the destination address into x30 register */
-	// __asm__ __volatile__("tlbi ALLE3":::);/* invalidate All E3 translation tables */
-	// __asm__ __volatile__("ic IALLU":::);/* invalidate I Cache All to PoU, Inner Shareable */
-	// __asm__ __volatile__("dsb sy":::);
-	// __asm__ __volatile__("isb" : : : "memory");/* make sure it completes */
-	// __asm__ __volatile__("mrs x5, SCTLR_EL3"::: "memory", "x5");/* Read control register */
-	// __asm__ __volatile__("mov x6, #0x1005":::"x6");/* D, I , M bits disable */
-	// __asm__ __volatile__("bic x5, x5, x6":::"x5", "x6");/* Disable MMU, L1 and L2 I/D cache */
-	// __asm__ __volatile__("msr SCTLR_EL3, x5"::: "memory", "x5");
-	// __asm__ __volatile__("isb" : : : "memory");
-	//__asm__ __volatile__("msr CurrentEL, #0xc":::);
+	__asm__ __volatile__("tlbi ALLE3":::);/* invalidate All E3 translation tables */
+	__asm__ __volatile__("ic IALLU":::);/* invalidate I Cache All to PoU, Inner Shareable */
+	__asm__ __volatile__("dsb sy":::);
+	__asm__ __volatile__("isb" : : : "memory");/* make sure it completes */
+	__asm__ __volatile__("mrs x5, SCTLR_EL3"::: "memory", "x5");/* Read control register */
+	__asm__ __volatile__("mov x6, #0x1005":::"x6");/* D, I , M bits disable */
+	__asm__ __volatile__("bic x5, x5, x6":::"x5", "x6");/* Disable MMU, L1 and L2 I/D cache */
+	__asm__ __volatile__("msr SCTLR_EL3, x5"::: "memory", "x5");
+	__asm__ __volatile__("isb" : : : "memory");
 	__asm__ __volatile__("br x30":::"x30");
-
 #else
 	__asm__ __volatile__("mov x30, %0"::"r"(HandoffAddress):"x30");/* move the destination address into x30 register */
 	__asm__ __volatile__("MSR      SCTLR_EL2, XZR":::"memory");
 	__asm__ __volatile__("MSR      SCTLR_EL1, XZR":::"memory");
 	__asm__ __volatile__("MSR      SCR_EL3, XZR":::"memory");	/* AArch32 */
-	//__asm__ __volatile__("LDR      x1, x30":::"x1","x30");
 	__asm__ __volatile__("MSR      ELR_EL3, x30":::"x30", "memory");
 	__asm__ __volatile__("MOV      x1, 0x13":::"x1");
 	__asm__ __volatile__("msr spsr_el3, x1":::"x1", "memory");
 	__asm__ __volatile__("eret":::);
 	__asm__ __volatile__("br x30":::"x30");
-
 #endif
 }
 
@@ -100,7 +81,7 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 			/// update reset vector
 			/// soft reset the handoff target cpu, pulse reset
 			if(CpuSettings == ALIH_PH_ATTRIB_DEST_CPU_RPU) {
-				AL_REG32_WRITE(SYSCTRL_S_RPU_RESET_VECTOR_H, HandoffAddress >> 32);				
+				AL_REG32_WRITE(SYSCTRL_S_RPU_RESET_VECTOR_H, HandoffAddress >> 32);
 				AL_REG32_WRITE(SYSCTRL_S_RPU_RESET_VECTOR_L, HandoffAddress & 0xffffffff);
 				AL_REG32_SET_BIT(SYSCTRL_S_XPU_SRST, 10, 1);  /// release level reset
 				AL_REG32_SET_BIT(SYSCTRL_S_XPU_SRST, 8, 0);   /// trigger pulse reset
@@ -120,7 +101,7 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 		}
 		else {
 			if(RunningCpu == ALIH_PH_ATTRIB_DEST_CPU_RPU) {
-				AL_REG32_WRITE(SYSCTRL_S_RPU_RESET_VECTOR_H, HandoffAddress >> 32);				
+				AL_REG32_WRITE(SYSCTRL_S_RPU_RESET_VECTOR_H, HandoffAddress >> 32);
 				AL_REG32_WRITE(SYSCTRL_S_RPU_RESET_VECTOR_L, HandoffAddress & 0xffffffff);
 			}
 			else if(RunningCpu == ALIH_PH_ATTRIB_DEST_CPU_APU0) {

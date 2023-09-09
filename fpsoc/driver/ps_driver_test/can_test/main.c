@@ -55,7 +55,7 @@ static AL_VOID AlCan_Test_ListenOnly(AL_VOID)
 {
     AL_CAN_HalStruct *Handle;
     AL_CAN_InitStruct Config;
-    AL_CAN_FrameStruct Frame;
+    // AL_CAN_FrameStruct Frame;
 #ifdef BOARD_DR1X90_AD101_V10
     AL_U32 DeviceId = 0;
 #else
@@ -493,7 +493,7 @@ AL_VOID AlCan_Test_EventCallBack(AL_CAN_EventStruct *Event, AL_VOID *CallBackRef
     {
     case AL_CAN_EVENT_RECV_DONE: {
         AL_CAN_FrameStruct Frame;
-        Ret = AlCan_Dev_RecvFrame(Handle->Dev, &Frame);
+        Ret = AlCan_Dev_RecvFrame(&(Handle->Dev), &Frame);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Recv Frame Error:0x%x\r\n", Ret);
             return;
@@ -502,9 +502,9 @@ AL_VOID AlCan_Test_EventCallBack(AL_CAN_EventStruct *Event, AL_VOID *CallBackRef
         break;
     }
     case AL_CAN_EVENT_ERR: {
-        if (AlCan_ll_IsBusOff(Handle->Dev->BaseAddr)) {
+        if (AlCan_ll_IsBusOff(Handle->Dev.BaseAddr)) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Bus off bit has been set\r\n");
-            AlCan_ll_SetBusOff(Handle->Dev->BaseAddr, AL_TRUE);
+            AlCan_ll_SetBusOff(Handle->Dev.BaseAddr, AL_TRUE);
         }
         break;
     }
@@ -746,7 +746,7 @@ static AL_VOID AlCan_Test_FdStbFifo(AL_VOID)
     Config.TransMode    = AL_CAN_TRANS_STB_FIFO;
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
-    Ret = AlCan_Hal_Init(&Handle, DeviceId, AL_NULL, AL_NULL);
+    Ret = AlCan_Hal_Init(&Handle, DeviceId, &Config, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init Error:0x%x\r\n", Ret);
     }
@@ -861,14 +861,12 @@ static AL_VOID AlCan_Test_FdDmaRecv(AL_VOID)
 {
     AL_CAN_HalStruct *Handle = AL_NULL;
     AL_CAN_InitStruct Config = {0};
-    AL_CAN_FrameStruct Frame = {0};
 #ifdef BOARD_DR1X90_AD101_V10
     AL_U32 DeviceId = 0;
 #else
     AL_U32 DeviceId = 1;
 #endif
     AL_U32 Ret = AL_OK;
-    AL_U32 Timeout = 1000;
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Can fd dma example\r\n");
     Config.OpsMode      = AL_CAN_MODE_NORMAL;
@@ -892,13 +890,13 @@ static AL_VOID AlCan_Test_FdDmaRecv(AL_VOID)
 
     DmacChConfig = CanDmaChExample1;
 
-    Ret = AlDmacAhb_Hal_Init(&DmacHandle, &DmacChConfig, AlCan_Test_DmaCallBack, DmacDevId);
+    Ret = AlDmacAhb_Hal_Init(&DmacHandle, DmacDevId, &DmacChConfig, AlCan_Test_DmaCallBack);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Dmacahb hal Init error:0x%x\r\n", Ret);
     }
 
     DmacChTrans = &(DmacHandle->Channel.Trans);
-    DmacChTrans->SrcAddr        = Handle->Dev->BaseAddr;
+    DmacChTrans->SrcAddr        = Handle->Dev.BaseAddr;
     DmacChTrans->DstAddr        = (AL_REG)AL_CAN_TEST_DST_MEM;
     DmacChTrans->TransSize      = AL_CAN_DMAC_RECV_DATA_IN_WORD;
     DmacChTrans->ReloadCountNum = AL_CAN_DMAC_RELOAD_COUNT_MAX;   /* max AL_U32 for trans forever */

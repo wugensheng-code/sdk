@@ -62,6 +62,8 @@ typedef enum
 #define AL_DMACAHB_EVENTS_TO_ERRS(Events)   (AL_DEF_ERR(AL_DMACAHB, AL_LOG_LEVEL_ERROR, \
                                                         (Events << DMACAHB_EVENT_START_BIT)))
 
+#define AL_DMACAHB_RELOAD_CNT_MAX           (0xFFFFFFFF)
+
 /**************************** Type Definitions *******************************/
 /**
  * @brief  Channel id enum
@@ -462,7 +464,7 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel);
 
 AL_S32 AlDmacAhb_Dev_Start(AL_DMACAHB_ChStruct *Channel);
 
-AL_S32 AlDmacAhb_Dev_RegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChEventCallBack *CallBack,
+AL_S32 AlDmacAhb_Dev_RegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChEventCallBack CallBack,
                                              AL_VOID *CallBackRef);
 
 AL_S32 AlDmacAhb_Dev_UnRegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel);

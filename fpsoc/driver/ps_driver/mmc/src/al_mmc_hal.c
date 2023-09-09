@@ -32,7 +32,7 @@ static AL_VOID AlMmc_Hal_DefEventCallBack(AL_MMC_EventStruct *Event, AL_VOID *Ca
  * @note
 */
 AL_S32 AlMmc_Hal_Init(AL_MMC_HalStruct **Handle, AL_U32 DevId, AL_MMC_InitStruct *InitConfig,
-                      AL_MMC_EventCallBack *CallBack)
+                      AL_MMC_EventCallBack CallBack)
 {
     AL_S32 Ret = AL_OK;
     AL_MMC_DevStruct *Dev = AL_NULL;

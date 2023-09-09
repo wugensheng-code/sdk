@@ -457,32 +457,32 @@ AL_S32 AlCan_Dev_FlushAndInvalidateData(AL_DMACAHB_ChStruct *Channel)
         SrcAddr = Trans->SrcAddr;
         TransSize = CurLli->CtlHigh.Bit.BlockTransSize * (1 << CurLli->CtlLow.Bit.SrcTransWidth);
         while (CurLli != AL_NULL) {
-            AlCache_FlushDcacheRange(CurLli, CurLli + 1);
+            AlCache_FlushDcacheRange((AL_UINTPTR)CurLli, (AL_UINTPTR)(CurLli + sizeof(AL_DMACAHB_LliStruct)));
             DstAddr = CurLli->DstAddr;
             AlCache_FlushAndInvalidateDiffDcacheRange(SrcAddr, SrcAddr + TransSize, DstAddr, DstAddr + TransSize);
             SrcAddr += TransSize;
-            CurLli = (AL_DMACAHB_LliStruct *)CurLli->LlpNext;
+            CurLli = (AL_DMACAHB_LliStruct *)(AL_UINTPTR)CurLli->LlpNext;
         }
         break;
     case AL_DMACAHB_TRANS_TYPE_8:
         DstAddr = Trans->DstAddr;
         TransSize = CurLli->CtlHigh.Bit.BlockTransSize * (1 << CurLli->CtlLow.Bit.SrcTransWidth);
         while (CurLli != AL_NULL) {
-            AlCache_FlushDcacheRange(CurLli, CurLli + 1);
+            AlCache_FlushDcacheRange((AL_UINTPTR)CurLli, (AL_UINTPTR)(CurLli + sizeof(AL_DMACAHB_LliStruct)));
             SrcAddr = CurLli->SrcAddr;
             AlCache_FlushAndInvalidateDiffDcacheRange(SrcAddr, SrcAddr + TransSize, DstAddr, DstAddr + TransSize);
             DstAddr += TransSize;
-            CurLli = (AL_DMACAHB_LliStruct *)CurLli->LlpNext;
+            CurLli = (AL_DMACAHB_LliStruct *)(AL_UINTPTR)CurLli->LlpNext;
         }
         break;
     case AL_DMACAHB_TRANS_TYPE_10:
         while (CurLli != AL_NULL) {
-            AlCache_FlushDcacheRange(CurLli, CurLli + 1);
+            AlCache_FlushDcacheRange((AL_UINTPTR)CurLli, (AL_UINTPTR)(CurLli + sizeof(AL_DMACAHB_LliStruct)));
             SrcAddr = CurLli->SrcAddr;
             DstAddr = CurLli->DstAddr;
             TransSize = CurLli->CtlHigh.Bit.BlockTransSize * (1 << CurLli->CtlLow.Bit.SrcTransWidth);
             AlCache_FlushAndInvalidateDiffDcacheRange(SrcAddr, SrcAddr + TransSize, DstAddr, DstAddr + TransSize);
-            CurLli = (AL_DMACAHB_LliStruct *)CurLli->LlpNext;
+            CurLli = (AL_DMACAHB_LliStruct *)(AL_UINTPTR)CurLli->LlpNext;
         }
         break;
     case AL_DMACAHB_TRANS_TYPE_7:
@@ -491,10 +491,10 @@ AL_S32 AlCan_Dev_FlushAndInvalidateData(AL_DMACAHB_ChStruct *Channel)
         /* Also need user flush after every block trans done */
         AlCache_FlushDcacheRange(SrcAddr, SrcAddr + TransSize);
         while (CurLli != AL_NULL) {
-            AlCache_FlushDcacheRange(CurLli, CurLli + 1);
+            AlCache_FlushDcacheRange((AL_UINTPTR)CurLli, (AL_UINTPTR)(CurLli + sizeof(AL_DMACAHB_LliStruct)));
             DstAddr = CurLli->DstAddr;
             AlCache_InvalidateDcacheRange(DstAddr, DstAddr + TransSize);
-            CurLli = (AL_DMACAHB_LliStruct *)CurLli->LlpNext;
+            CurLli = (AL_DMACAHB_LliStruct *)(AL_UINTPTR)CurLli->LlpNext;
         }
         break;
     case AL_DMACAHB_TRANS_TYPE_9:
@@ -503,10 +503,10 @@ AL_S32 AlCan_Dev_FlushAndInvalidateData(AL_DMACAHB_ChStruct *Channel)
         /* Also need user invalidate after every block trans done */
         AlCache_InvalidateDcacheRange(DstAddr, DstAddr + TransSize);
         while (CurLli != AL_NULL) {
-            AlCache_FlushDcacheRange(CurLli, CurLli + 1);
+            AlCache_FlushDcacheRange((AL_UINTPTR)CurLli, (AL_UINTPTR)(CurLli + sizeof(AL_DMACAHB_LliStruct)));
             SrcAddr = CurLli->SrcAddr;
             AlCache_FlushDcacheRange(SrcAddr, SrcAddr + TransSize);
-            CurLli = (AL_DMACAHB_LliStruct *)CurLli->LlpNext;
+            CurLli = (AL_DMACAHB_LliStruct *)(AL_UINTPTR)CurLli->LlpNext;
         }
         break;
     default:
@@ -593,6 +593,8 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
         AlDmacAhb_ll_WriteDstAddr(BaseAddr, ChOffset, Trans->DstAddr);
         AlDmacAhb_ll_SetBlkTransSize(BaseAddr, ChOffset, Trans->TransSize);
     }
+
+    Ret = AlDmacAhb_Dev_SetTransType(Channel);
 
     return Ret;
 }
@@ -726,10 +728,6 @@ AL_S32 AlDmacAhb_Dev_Init(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_HwConfigStruc
 
     AlDmacAhb_Dev_ClrChAllIntr(Channel);
     AlDmacAhb_Dev_UnmaskChIntr(Channel);
-    Ret = AlDmacAhb_Dev_SetTransType(Channel);
-    if (Ret != AL_OK) {
-        return Ret;
-    }
     AlDmacAhb_Dev_SetCtlLoReg(Channel);
     AlDmacAhb_Dev_SetCfgLoReg(Channel);
     AlDmacAhb_Dev_SetCfgHiReg(Channel);
@@ -777,7 +775,7 @@ AL_S32 AlDmacAhb_Dev_DeInit(AL_DMACAHB_ChStruct *Channel)
  *          - AL_OK is register correct
  * @note
 */
-AL_S32 AlDmacAhb_Dev_RegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChEventCallBack *CallBack,
+AL_S32 AlDmacAhb_Dev_RegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChEventCallBack CallBack,
                                              AL_VOID *CallBackRef)
 {
     AL_ASSERT((Channel != AL_NULL) && (CallBack != AL_NULL), AL_DMACAHB_ERR_NULL_PTR);
@@ -886,7 +884,7 @@ static AL_VOID AlDmacAhb_Dev_BlockTransCompHandler(AL_DMACAHB_ChStruct *Channel)
     /* In reload mode, before the last trans, set reload_src and reload_dst to AL_FALSE */
     if (State == AL_DMACAHB_STATE_RELOAD_MODE_BUSY || State == AL_DMACAHB_STATE_LLP_RELOAD_MODE_BUSY) {
         Channel->Trans.ReloadCount++;
-        if (Channel->Trans.ReloadCountNum != 0xFFFFFFFF) {
+        if (Channel->Trans.ReloadCountNum != AL_DMACAHB_RELOAD_CNT_MAX) {
             if (Channel->Trans.ReloadCount == Channel->Trans.ReloadCountNum) {
                 AlDmacAhb_Dev_ClrState(Channel, State);
                 Event.EventId = AL_DMACAHB_EVENT_BLOCK_TRANS_COMP;
