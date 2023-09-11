@@ -247,11 +247,6 @@ static inline AL_VOID AlXadc_ll_GpSwReset(AL_REG BaseAddr)
     AL_REG16_SET_BIT(BaseAddr + XADC_CONFIG0_OFFSET, XADC_CONFIG0_SW_RESET_SHIFT, AL_XADC_SW_RELEASE);
 }
 
-static inline AL_BOOL AlXadc_ll_GpReadSwReset(AL_REG BaseAddr)
-{
-    AL_REG16_GET_BIT(BaseAddr + XADC_CONFIG0_OFFSET, XADC_CONFIG0_SW_RESET_SHIFT);
-}
-
 static inline AL_VOID AlXadc_ll_GpSetXadcChxLth(AL_REG BaseAddr, AL_XADC_ChannelEnum ChannelNum, AL_U16 Data)
 {
     AL_REG16_WRITE(BaseAddr + XADC_CH0_LTH_OFFSET + ChannelNum * 2, Data << 4);

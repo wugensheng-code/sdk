@@ -7,42 +7,50 @@
 #########################################################################
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
 #########################################################################
-SDK_ROOT   ?= ../../../..
 
-CHIP       ?= dr1m90
-# CHIP       ?= dr1v90
+SDK_ROOT    ?= ../../../../..
+CHIP        ?= dr1m90
+ELF         ?= XADC_INTR
 
 ifeq ($(CHIP), dr1m90)
-COMPILE_PREFIX ?= /opt/toolchain/7.5.0/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-elf/bin/aarch64-elf-
+COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
 else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
-
+BOARD_DIR  ?= $(SDK_ROOT)/solutions/boards/
+BOARD_NAME ?= board_dr1x90_emulation
 
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
+#    SRC_DIR: application source path
+#    INC_DIR  application header path
 #    LD_LIBS: External library files that the app depends on
 #    LIB_DIR: The path where the external library file resides
 #    C_SRCS:   c sources for application
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
-SRC_DIR  = ./
+ifeq ($(ELF), XADC_POLLED)
+C_SRCS += al_xadc_polled.c
+else
+C_SRCS += al_xadc_intr.c
+endif
 
-INC_DIR += ./
+INC_DIR     += ./
 
-LD_LIBS  =
-LIB_DIR  =
+LD_LIBS     :=
+LIB_DIR     :=
 
-C_SRCS   :=
-CXX_SRCS :=
-ASM_SRCS :=
+CXX_SRCS    :=
+ASM_SRCS    :=
 
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O2 -g -DCONFIG_AlXadc_ReadDataWithPolled_TEST=1
+CFLAGS := -O2 -g
+# CFLAGS += -DUSE_RTOS
+# CFLAGS += -DRTOS_RTTHREAD
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
@@ -57,16 +65,14 @@ PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 #########################################################################
 PINMUX_MODE ?= PINMUX_MODE1
 
-
 #########################################################################
 # 5. define build target
 #########################################################################
-TARGET := xadc_test
-
-#ENABLE_MMU:=1
-#DDR_2M_MAPPING:=1
-#CODE_READONLY:=1
-
+ifeq ($(ELF), XADC_POLLED)
+TARGET := fpsoc_xadc_example_polled
+else
+TARGET := fpsoc_xadc_example_intr
+endif
 
 ifneq ($(PINMUX_MODE),)
 CFLAGS += -DENABLE_$(PINMUX_MODE)=1
@@ -76,8 +82,14 @@ endif
 all: $(TARGET)
 	@$(ECHO) COMPILE_PREFIX = $(COMPILE_PREFIX)
 
-# include rules.mk
+cleanapp:
+	$(RM) $(foreach subdir, $(SRC_DIR), $(wildcard $(subdir)/*.d $(subdir)/*.o))
+
+clean:
+	make clean CHIP=dr1m90
+	make clean CHIP=dr1v90
+
+cleanelf:
+	rm -rf *.bin *.dasm *.dump *.elf *.hex *.map *.verilog
+
 include $(SDK_ROOT)/tools/make/rules.mk
-
-# vim: syntax=make
-

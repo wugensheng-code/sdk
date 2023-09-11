@@ -18,14 +18,14 @@ extern "C" {
 /**************************** Type Definitions *******************************/
 typedef struct
 {
-    AL_XADC_DevStruct    *Dev;
+    AL_XADC_DevStruct    Dev;
     AL_Lock              Lock;
 } AL_XADC_HalStruct;
 
 
 /************************** Function Prototypes ******************************/
 
-AL_S32 AlXadc_Hal_Init(AL_XADC_HalStruct *Handle, AL_U32 DevId, AL_XADC_InitStruct *InitConfig,
+AL_S32 AlXadc_Hal_Init(AL_XADC_HalStruct **Handle, AL_U32 DevId, AL_XADC_InitStruct *InitConfig,
                        AL_XADC_ChannelCfg *ChannelCfg, AL_XADC_EventCallBack Callback);
 AL_VOID AlXadc_Hal_DefEventHandler(AL_XADC_EventStruct XadcEvent, AL_VOID *CallbackRef);
 AL_S32 AlXadc_Hal_XadcStart(AL_XADC_HalStruct *Handle);
