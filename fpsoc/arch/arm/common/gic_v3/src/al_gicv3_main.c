@@ -568,10 +568,18 @@ AL_VOID AlGicv3_RaiseSgi(AL_U32 SgiNum, AL_GICV3_IrqGroupEnum Group, AL_REG Targ
         ARCH_SYSREG_WRITE(icc_sgi0r_el1, SgiVal);
         break;
     case AL_GICV3_G1NS:
+        #ifdef SUPPORT_NONSECURE
+        ARCH_SYSREG_WRITE(icc_sgi1r, SgiVal);
+        #else
         ARCH_SYSREG_WRITE(icc_asgi1r, SgiVal);
+        #endif
         break;
     case AL_GICV3_G1S:
+        #ifdef SUPPORT_NONSECURE
+        ARCH_SYSREG_WRITE(icc_asgi1r, SgiVal);
+        #else
         ARCH_SYSREG_WRITE(icc_sgi1r, SgiVal);
+        #endif
         break;
     default:
         assert(false);

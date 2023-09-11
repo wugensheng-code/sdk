@@ -172,6 +172,8 @@ AL_VOID AlGicv3_PpiSgiConfigDefaults(AL_UINTPTR GicrBase)
     #else
     Gicr_WriteIgroupr0(GicrBase, 0U);
     Gicr_WriteIgrpmodr0(GicrBase, ~0U);
+    /* Non-secure writes to are permitted to generate a Secure Group1 SGI */
+    Gicr_WriteNsacr(GicrBase, 0xAAAAAAAA);
     #endif
 
     /* 4 interrupt IDs per GICR_IPRIORITYR register */
