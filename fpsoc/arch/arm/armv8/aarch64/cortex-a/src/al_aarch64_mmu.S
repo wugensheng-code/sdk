@@ -490,4 +490,43 @@ __asm_invalidate_tlb_all:
 	isb
 0:
 	ret
+
+/*
+ * void disable_mmu(void)
+ *
+ * disable dcache and mmu.
+ */
+	.globl disable_mmu
+disable_mmu:
+	ldr x2, =0x5
+	mvn	x2, x2
+
+	switch_el x3, 0f, 1f, 2f
+0:
+	mrs	x3, sctlr_el3
+	and	x3, x3, x2
+	msr	sctlr_el3, x3
+	isb
+	tlbi	ALLE3
+	b	3f
+1:
+	mrs	x3, sctlr_el2
+	and	x3, x3, x2
+	msr	sctlr_el2, x3
+	isb
+	tlbi	ALLE2
+	b	3f
+2:
+	mrs	x3, sctlr_el1
+	and	x3, x3, x2
+	msr	sctlr_el1, x3
+	isb
+	tlbi	VMALLE1
+3:
+	ic	IALLU
+	mov	x0, #0
+	b	__asm_dcache_all
+	dsb	sy
+	isb
+	ret
 .end

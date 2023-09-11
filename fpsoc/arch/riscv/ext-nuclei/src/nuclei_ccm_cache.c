@@ -176,3 +176,8 @@ AL_VOID AlCache_FlushDcacheAll(AL_VOID)
 {
     ccm_flush_dcache_all();
 }
+
+AL_VOID AlCache_DisableMmu(AL_VOID)
+{
+
+}

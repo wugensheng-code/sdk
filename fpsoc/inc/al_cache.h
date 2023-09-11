@@ -39,6 +39,8 @@ AL_VOID AlCache_InvalidateDcacheAll(AL_VOID);
 
 AL_VOID AlCache_FlushDcacheAll(AL_VOID);
 
+AL_VOID AlCache_DisableMmu(AL_VOID);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
