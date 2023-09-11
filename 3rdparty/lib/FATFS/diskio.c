@@ -17,7 +17,7 @@
 
 #define MMC_RD_WR_TIMEOUT_MS    10000
 
-static AL_MMC_HalStruct Handle = {0};
+static AL_MMC_HalStruct *Handle;
 static DevId = 0;
 static AL_MMC_InitStruct InitConfig = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
@@ -78,7 +78,7 @@ DRESULT disk_read (BYTE pdrv, BYTE *buff, DWORD sector, UINT count)
     switch (pdrv) {
     case SD:
     case EMMC:
-        status = AlMmc_Hal_ReadBlocked(&Handle, buff, sector, count, MMC_RD_WR_TIMEOUT_MS);
+        status = AlMmc_Hal_ReadBlocked(Handle, buff, sector, count, MMC_RD_WR_TIMEOUT_MS);
         if (status != RES_OK) {
             status = RES_ERROR;
         }
@@ -103,7 +103,7 @@ DRESULT disk_write (BYTE pdrv, const BYTE *buff, DWORD sector, UINT count)
     switch (pdrv) {
     case SD:
     case EMMC:
-        status = AlMmc_Hal_WriteBlocked(&Handle, buff, sector, count, MMC_RD_WR_TIMEOUT_MS);
+        status = AlMmc_Hal_WriteBlocked(Handle, buff, sector, count, MMC_RD_WR_TIMEOUT_MS);
         if (status != RES_OK) {
             status = RES_ERROR;
         }
@@ -127,7 +127,7 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void *buff)
         {
         case GET_SECTOR_SIZE :
             // Get R/W sector size (WORD)
-            *(WORD *)buff = Handle.Dev.CardInfo.BlkLen;
+            *(DWORD *)buff = Handle->Dev.CardInfo.BlkLen;
             break;
         case GET_BLOCK_SIZE :
             // Get erase block size in unit of sector (DWORD)
@@ -135,7 +135,7 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void *buff)
             break;
         case GET_SECTOR_COUNT:
             //*(DWORD * )buff = 1000;
-            *(DWORD *)buff = Handle.Dev.CardInfo.CardCap * 1024 / Handle.Dev.CardInfo.BlkLen;
+            *(DWORD *)buff = Handle->Dev.CardInfo.CardCap * 1024 / Handle->Dev.CardInfo.BlkLen;
             break;
         case CTRL_SYNC :
             break;
