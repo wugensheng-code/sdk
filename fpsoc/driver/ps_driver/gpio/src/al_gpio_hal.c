@@ -883,12 +883,11 @@ AL_VOID AlGpio_Hal_IntrHandler(void *Instance)
         AL_LOG(AL_LOG_LEVEL_INFO, "Bank %x: IntrStatus is %x", Bank, IntrStatus);
 
         if((IntrStatus != (AL_U32)0) && (Handle->EventCallBack)) {
-            if(Handle->EventCallBack) {
-                AL_GPIO_EventStruct GpioEvent = {
-                    .Events  = AL_GPIO_Event,
-                };
-                Handle->EventCallBack(GpioEvent, Handle->EventCallBackRef);
-            }
+            AL_GPIO_EventStruct GpioEvent = {
+                .Events  = AL_GPIO_Event,
+            };
+            Handle->EventCallBack(GpioEvent, Handle->EventCallBackRef);
+
             AlGpio_Hal_IntrClr(Handle, Bank, IntrStatus);
             AlGpio_Hal_IntrEnableMask(Handle, Bank, IntrStatus);
         }
