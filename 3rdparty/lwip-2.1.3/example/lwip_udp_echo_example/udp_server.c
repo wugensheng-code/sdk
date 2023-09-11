@@ -35,6 +35,9 @@
 char test_buffer[BUFFER_SIZE];
 #endif
 
+#define UDP_LOCAL_PORT  8888
+#define UDP_CLIENT_PORT 8080
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -55,10 +58,12 @@ void udp_echoserver_init(void)
    struct udp_pcb *upcb;
    err_t err;
 
+#ifdef UDP_SEND_TEST
     for (int i = 0; i < BUFFER_SIZE; i++)
     {
         test_buffer[i] = 0x1;
     }
+#endif
 
    /* Create a new UDP control block  */
    upcb = udp_new();
@@ -67,7 +72,7 @@ void udp_echoserver_init(void)
    {
      /* Bind the upcb to the UDP_PORT port */
      /* Using IP_ADDR_ANY allow the upcb to be used by any local interface */
-      err = udp_bind(upcb, IP_ADDR_ANY, 8888);
+      err = udp_bind(upcb, IP_ADDR_ANY, UDP_LOCAL_PORT);
       
       if(err == ERR_OK)
       {

@@ -13,8 +13,12 @@ extern struct netif gnetif;
 
 extern void udp_echoserver_init(void);
 
+extern AlCache_DisableMmu();
+
 int main()
 {
+    AlCache_DisableMmu();
+
     printf("main start>>>\r\n");
 
     /* Initialize the LwIP stack */

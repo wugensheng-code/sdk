@@ -50,7 +50,7 @@ USE_LWIP = 1
 PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 
 #########################################################################
-# put these option to board_dr1x90_emulation Makefile
+# put these option to board_dr1x90_ad101_v10 Makefile
 ## Available choices:
 ## PINMUX_MODE1, PINMUX_MODE2, PINMUX_MODE3, PINMUX_MODE_SD1
 #########################################################################
