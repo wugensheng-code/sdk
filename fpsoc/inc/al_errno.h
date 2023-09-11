@@ -76,6 +76,7 @@ typedef enum
     AL_CIPHER               = 0x0D,
     AL_GBE                  = 0x0F,
     AL_XADC                 = 0x10,
+    AL_TTC                  = 0x11,
 } AL_MODULE_TYPE;
 
 #ifdef __cplusplus

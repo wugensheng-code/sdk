@@ -132,6 +132,9 @@ extern "C" {
 
 #define HAVE_XADC_DRIVER
 
+#define HAVE_TTCPS_DRIVER
+#define TTC_CLOCK              (200*MHZ)
+
 #define HAVE_GBEPS_DRIVER
 #define GBE_CLOCK               (25*MHZ)
 

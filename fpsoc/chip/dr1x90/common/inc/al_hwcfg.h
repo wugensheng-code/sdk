@@ -130,6 +130,19 @@ extern "C" {
 
 #define XADC__BASE_ADDR        (0xF840B000UL)
 
+/*----------------------------------------------------------------------------
+  Define TTC params
+ *----------------------------------------------------------------------------*/
+
+#define AL_TTC_NUM_INSTANCE    (6)
+
+#define TTC0__TC0_BASE_ADDR    0xF840C000ULL
+#define TTC0__TC1_BASE_ADDR    0xF840C004ULL
+#define TTC0__TC2_BASE_ADDR    0xF840C008ULL
+#define TTC1__TC0_BASE_ADDR    0xF840D000ULL
+#define TTC1__TC1_BASE_ADDR    0xF840D004ULL
+#define TTC1__TC2_BASE_ADDR    0xF840D008ULL
+
 
 /*----------------------------------------------------------------------------
   Define TOP

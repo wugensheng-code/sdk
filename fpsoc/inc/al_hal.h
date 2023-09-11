@@ -62,6 +62,10 @@ extern "C" {
 #include "al_pmu_ll.h"
 #endif
 
+#ifdef HAVE_TTCPS_DRIVER
+#include "al_ttc_hal.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
