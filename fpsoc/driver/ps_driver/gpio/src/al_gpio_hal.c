@@ -63,7 +63,7 @@ AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct **Handle, AL_U32 DevId, AL_GPIO_EventCa
     if(HwConfig != AL_NULL){
         (*Handle) = &AL_GPIO_HalInstance[DevId];
     } else {
-        AL_ASSERT(HwConfig != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
+        return AL_GPIO_ERR_ILLEGAL_PARAM;
     }
 
     (*Handle)->HwConfig.BaseAddress = HwConfig->BaseAddress;
@@ -880,7 +880,7 @@ AL_VOID AlGpio_Hal_IntrHandler(void *Instance)
 
     for(Bank = 0; Bank < Handle->HwConfig.MaxBanks; Bank++) {
         IntrStatus = AlGpio_Hal_IntrGetStatus(Handle, Bank);
-        AL_LOG(AL_LOG_LEVEL_INFO, "Bank %x: IntrStatus is %x", Bank, IntrStatus);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Bank %x: IntrStatus is %x", Bank, IntrStatus);
 
         if((IntrStatus != (AL_U32)0) && (Handle->EventCallBack)) {
             AL_GPIO_EventStruct GpioEvent = {
