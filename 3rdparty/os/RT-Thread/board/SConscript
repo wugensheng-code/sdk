@@ -8,6 +8,7 @@ src = Glob('*.c')
 
 CPPPATH  = [cwd]
 CPPPATH += [SDK_ROOT + r'/fpsoc/inc']
+CPPPATH += [SDK_ROOT + r'/fpsoc/arch/common/inc']
 CPPPATH += [SDK_ROOT + r'/fpsoc/arch']
 CPPPATH += [SDK_ROOT + r'/fpsoc/driver/ps_driver/uart/inc']
 CPPPATH += [SDK_ROOT + r'/fpsoc/driver/ps_driver/can/inc']

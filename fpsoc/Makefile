@@ -16,7 +16,7 @@ LIBNAME = albsp
 
 INC_DIR += inc \
            $(CHIP_DIR)/../common/inc \
-           arch
+           arch/common/inc
 
 
 ifeq ($(CHIP_ARCH),armv8-a)
