@@ -21,6 +21,13 @@ static AL_IIC_InitStruct IicDefInitConfigs =
 
 extern AL_IIC_HwConfigStruct AlIic_HwConfig[AL_IIC_NUM_INSTANCE];
 
+/**
+ * This function look up hardware config structure.
+ * @param   DeviceId is hardware module id
+ * @return
+ *          - AL_IIC_HwConfigStruct for hardware config
+ * @note
+*/
 AL_IIC_HwConfigStruct *AlIic_Dev_LookupConfig(AL_U32 DevId)
 {
     AL_U32 Index;
@@ -36,16 +43,36 @@ AL_IIC_HwConfigStruct *AlIic_Dev_LookupConfig(AL_U32 DevId)
     return ConfigPtr;
 }
 
+/**
+ * This function check whether the iic tx is busy.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ *          - AL_BOOL for iic tx status
+ * @note
+*/
 AL_BOOL AlIic_Dev_IsTxBusy(AL_IIC_DevStruct *Iic)
 {
     return (AL_BOOL)(Iic->State & AL_IIC_STATE_TX_BUSY);
 }
 
+/**
+ * This function check whether the iic rx is busy.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ *          - AL_BOOL for iic rx status
+ * @note
+*/
 AL_BOOL AlIic_Dev_IsRxBusy(AL_IIC_DevStruct *Iic)
 {
     return (AL_BOOL)(Iic->State & AL_IIC_STATE_RX_BUSY);
 }
 
+/**
+ * This function set iic tx status to busy.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 AL_VOID AlIic_Dev_SetTxBusy(AL_IIC_DevStruct *Iic)
 {
     Iic->State |= AL_IIC_STATE_TX_BUSY;
@@ -58,6 +85,12 @@ AL_VOID AlIic_Dev_SetTxBusy(AL_IIC_DevStruct *Iic)
     }
 }
 
+/**
+ * This function set iic rx status to busy.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 AL_VOID AlIic_Dev_SetRxBusy(AL_IIC_DevStruct *Iic)
 {
     Iic->State |= AL_IIC_STATE_RX_BUSY;
@@ -70,16 +103,35 @@ AL_VOID AlIic_Dev_SetRxBusy(AL_IIC_DevStruct *Iic)
     }
 }
 
+/**
+ * This function clear iic tx busy status.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 AL_VOID AlIic_Dev_ClrTxBusy(AL_IIC_DevStruct *Iic)
 {
     Iic->State &= (~AL_IIC_STATE_TX_BUSY);
 }
 
+/**
+ * This function clear iic rx busy status.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 AL_VOID AlIic_Dev_ClrRxBusy(AL_IIC_DevStruct *Iic)
 {
     Iic->State &= (~AL_IIC_STATE_RX_BUSY);
 }
 
+/**
+ * This function config the clock.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @param   SpeedMode Speed Mode
+ * @return
+ * @note
+*/
 static AL_VOID AlIic_Dev_InitSclHighLowCout(AL_IIC_DevStruct *Iic, AL_IIC_SpeedModeEnum SpeedMode)
 {
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
@@ -112,6 +164,12 @@ static AL_VOID AlIic_Dev_InitSclHighLowCout(AL_IIC_DevStruct *Iic, AL_IIC_SpeedM
     }
 }
 
+/**
+ * This function check the configure to be config.
+ * @param   InitConfig The Initial configuration
+ * @return
+ * @note
+*/
 static AL_S32 AlIic_Dev_CheckConfigParam(AL_IIC_InitStruct *InitConfig)
 {
     AL_ASSERT ((InitConfig->Mode == AL_IIC_MODE_SLAVE) || ((InitConfig->Mode == AL_IIC_MODE_MASTER) &&
@@ -124,6 +182,17 @@ static AL_S32 AlIic_Dev_CheckConfigParam(AL_IIC_InitStruct *InitConfig)
     return AL_OK;
 }
 
+/**
+ * This function initialize IIC registers according to the specified parameters in AL_IIC_InitStruct.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @param   HwConfig IIC hardware configure
+ * @param   InitConfig pointer to a AL_IIC_InitStruct structure
+ *          that contains the configuration information for the specified IIC peripheral
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Dev_Init(AL_IIC_DevStruct *Iic, AL_IIC_HwConfigStruct *HwConfig, AL_IIC_InitStruct *InitConfig)
 {
     AL_S32 Ret;
@@ -198,6 +267,14 @@ AL_S32 AlIic_Dev_Init(AL_IIC_DevStruct *Iic, AL_IIC_HwConfigStruct *HwConfig, AL
     return AL_OK;
 }
 
+/**
+ * This function used when master send or receive data,
+ * to config slave address.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @param   SlaveAddr Slave address
+ * @return
+ * @note
+*/
 static inline AL_VOID AlIic_Dev_MasterSetTar(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr)
 {
     /* I2C_DYNAMIC_TAR_UPDATE not enabled, need disable IIC first */
@@ -208,6 +285,13 @@ static inline AL_VOID AlIic_Dev_MasterSetTar(AL_IIC_DevStruct *Iic, AL_U16 Slave
     AlIic_ll_SetEnable((AL_REG)(Iic->HwConfig.BaseAddress), AL_IIC_FUNC_ENABLE);
 }
 
+/**
+ * This function used when master send data in block mode, enable/disable interrupt.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @param   State AL_IIC_FUNC_DISABLE or AL_IIC_FUNC_DISABLE
+ * @return
+ * @note
+*/
 static AL_VOID AlIic_Dev_EnableMasterSendIntr(AL_IIC_DevStruct *Iic, AL_IIC_FunctionEnum State)
 {
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
@@ -222,6 +306,17 @@ static AL_VOID AlIic_Dev_EnableMasterSendIntr(AL_IIC_DevStruct *Iic, AL_IIC_Func
     AlIic_ll_SetIntrMask(IicBaseAddr, IntrMask);
 }
 
+/**
+ * This function master send an amount of data in blocking & interrupt mode
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @param   SlaveAddr Slave address
+ * @param   SendBuf Pointer to data buffer
+ * @param   SendSize Amount of data to be sent
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Dev_MasterSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *SendBuf, AL_U32 SendSize)
 {
     AL_REG IicBaseAddr;
@@ -250,6 +345,12 @@ AL_S32 AlIic_Dev_MasterSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *
     return AL_OK;
 }
 
+/**
+ * This function used when master send data in block mode, stop send process.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 AL_VOID AlIic_Dev_StopMasterSend(AL_IIC_DevStruct *Iic)
 {
     AlIic_Dev_EnableMasterSendIntr(Iic, AL_IIC_FUNC_DISABLE);
@@ -257,6 +358,17 @@ AL_VOID AlIic_Dev_StopMasterSend(AL_IIC_DevStruct *Iic)
     AlIic_Dev_ClrTxBusy(Iic);
 }
 
+/**
+ * This function master send an amount of data in polling(non interrupt) & blocking mode.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @param   SlaveAddr Slave address
+ * @param   SendBuf Pointer to data buffer
+ * @param   SendSize Amount of data to be sent
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Dev_MasterSendDataPolling(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *SendBuf, AL_U32 SendSize)
 {
     AL_U32 HandledCnt = 0;
@@ -315,6 +427,13 @@ AL_S32 AlIic_Dev_MasterSendDataPolling(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, 
     return AL_OK;
 }
 
+/**
+ * This function used when master receive data in block mode, enable/disable interrupt.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @param   State AL_IIC_FUNC_DISABLE or AL_IIC_FUNC_DISABLE
+ * @return
+ * @note
+*/
 static AL_VOID AlIic_Dev_EnableMasterRecvIntr(AL_IIC_DevStruct *Iic, AL_IIC_FunctionEnum State)
 {
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
@@ -331,6 +450,17 @@ static AL_VOID AlIic_Dev_EnableMasterRecvIntr(AL_IIC_DevStruct *Iic, AL_IIC_Func
     AlIic_ll_SetIntrMask(IicBaseAddr, IntrMask);
 }
 
+/**
+ * This function master receive an amount of data in blocking & interrupt mode
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @param   SlaveAddr Slave address
+ * @param   RecvBuf Pointer to data buffer
+ * @param   RecvSize Amount of data to be receive
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Dev_MasterRecvData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *RecvBuf, AL_U32 RecvSize)
 {
     AL_REG IicBaseAddr;
@@ -373,6 +503,12 @@ AL_S32 AlIic_Dev_MasterRecvData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *
     return AL_OK;
 }
 
+/**
+ * This function used when master receive data in block mode, stop recvive process.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 AL_VOID AlIic_Dev_StopMasterRecv(AL_IIC_DevStruct *Iic)
 {
     AlIic_Dev_EnableMasterRecvIntr(Iic, AL_IIC_FUNC_DISABLE);
@@ -380,6 +516,17 @@ AL_VOID AlIic_Dev_StopMasterRecv(AL_IIC_DevStruct *Iic)
     AlIic_Dev_ClrRxBusy(Iic);
 }
 
+/**
+ * This function master receive an amount of data in polling(non interrupt) & blocking mode.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @param   SlaveAddr Slave address
+ * @param   RecvBuf Pointer to data buffer
+ * @param   RecvSize Amount of data to be receive
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Dev_MasterRecvDataPolling(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *RecvBuf, AL_U32 RecvSize)
 {
     AL_U8 Data = 0;
@@ -445,6 +592,13 @@ AL_S32 AlIic_Dev_MasterRecvDataPolling(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, 
     return AL_OK;
 }
 
+/**
+ * This function used when master send data in block mode, enable/disable interrupt.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @param   State AL_IIC_FUNC_DISABLE or AL_IIC_FUNC_DISABLE
+ * @return
+ * @note
+*/
 static AL_VOID AlIic_Dev_EnableSlaveSendIntr(AL_IIC_DevStruct *Iic, AL_IIC_FunctionEnum State)
 {
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
@@ -461,6 +615,16 @@ static AL_VOID AlIic_Dev_EnableSlaveSendIntr(AL_IIC_DevStruct *Iic, AL_IIC_Funct
     AlIic_ll_SetIntrMask(IicBaseAddr, IntrMask);
 }
 
+/**
+ * This function slave send an amount of data in blocking & interrupt mode
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @param   SendBuf Pointer to data buffer
+ * @param   SendSize Amount of data to be sent
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Dev_SlaveSendData(AL_IIC_DevStruct *Iic, AL_U8 *SendBuf, AL_U32 SendSize)
 {
     AL_REG IicBaseAddr;
@@ -487,6 +651,12 @@ AL_S32 AlIic_Dev_SlaveSendData(AL_IIC_DevStruct *Iic, AL_U8 *SendBuf, AL_U32 Sen
     return AL_OK;
 }
 
+/**
+ * This function used when slave send data in block mode, stop recvive process.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 AL_VOID AlIic_Dev_StopSlaveSend(AL_IIC_DevStruct *Iic)
 {
     AlIic_Dev_EnableSlaveSendIntr(Iic, AL_IIC_FUNC_DISABLE);
@@ -494,6 +664,13 @@ AL_VOID AlIic_Dev_StopSlaveSend(AL_IIC_DevStruct *Iic)
     AlIic_Dev_ClrTxBusy(Iic);
 }
 
+/**
+ * This function used when slave receive data in block mode, enable/disable interrupt.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @param   State AL_IIC_FUNC_DISABLE or AL_IIC_FUNC_DISABLE
+ * @return
+ * @note
+*/
 static AL_VOID AlIic_Dev_EnableSlaveRecvIntr(AL_IIC_DevStruct *Iic, AL_IIC_FunctionEnum State)
 {
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
@@ -508,6 +685,16 @@ static AL_VOID AlIic_Dev_EnableSlaveRecvIntr(AL_IIC_DevStruct *Iic, AL_IIC_Funct
     AlIic_ll_SetIntrMask(IicBaseAddr, IntrMask);
 }
 
+/**
+ * This function slave receive an amount of data in blocking & interrupt mode
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @param   RecvBuf Pointer to data buffer
+ * @param   RecvSize Amount of data to be sent
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Dev_SlaveRecvData(AL_IIC_DevStruct *Iic, AL_U8 *RecvBuf, AL_U32 RecvSize)
 {
     AL_REG IicBaseAddr;
@@ -541,6 +728,12 @@ AL_S32 AlIic_Dev_SlaveRecvData(AL_IIC_DevStruct *Iic, AL_U8 *RecvBuf, AL_U32 Rec
     return AL_OK;
 }
 
+/**
+ * This function used when slave receive data in block mode, stop recvive process.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 AL_VOID AlIic_Dev_StopSlaveRecv(AL_IIC_DevStruct *Iic)
 {
     AlIic_Dev_EnableSlaveRecvIntr(Iic, AL_IIC_FUNC_DISABLE);
@@ -548,6 +741,13 @@ AL_VOID AlIic_Dev_StopSlaveRecv(AL_IIC_DevStruct *Iic)
     AlIic_Dev_ClrRxBusy(Iic);
 }
 
+/**
+ * This function used when master send data in block&interrupt mode,
+ * send data in the interrupt.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 static AL_VOID AlIic_Dev_MasterSendDataHandler(AL_IIC_DevStruct *Iic)
 {
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
@@ -589,6 +789,13 @@ static AL_VOID AlIic_Dev_MasterSendDataHandler(AL_IIC_DevStruct *Iic)
     }
 }
 
+/**
+ * This function used when master receive data in block&interrupt mode,
+ * receive data in the interrupt.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 static AL_VOID AlIic_Dev_MasterRecvDataHandler(AL_IIC_DevStruct *Iic)
 {
     AL_U8 Data;
@@ -631,6 +838,13 @@ static AL_VOID AlIic_Dev_MasterRecvDataHandler(AL_IIC_DevStruct *Iic)
 
 }
 
+/**
+ * This function used when master receive data in block&interrupt mode,
+ * master issue read commands before receive data.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 static AL_VOID AlIic_Dev_MasterRecvDataIssueReadCmd(AL_IIC_DevStruct *Iic)
 {
     AL_U16 Cmd = 0;
@@ -664,6 +878,13 @@ static AL_VOID AlIic_Dev_MasterRecvDataIssueReadCmd(AL_IIC_DevStruct *Iic)
     AlIic_Dev_MasterRecvDataHandler(Iic);
 }
 
+/**
+ * This function used when slave receive data in block&interrupt mode,
+ * receive data in the interrupt.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 static AL_VOID AlIic_Dev_SlaveRecvDataHandler(AL_IIC_DevStruct *Iic)
 {
     AL_U8 Data;
@@ -700,6 +921,13 @@ static AL_VOID AlIic_Dev_SlaveRecvDataHandler(AL_IIC_DevStruct *Iic)
     }
 }
 
+/**
+ * This function used when slave send data in block&interrupt mode,
+ * send data in the interrupt.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 static AL_VOID AlIic_Dev_SlaveSendDataHandler(AL_IIC_DevStruct *Iic)
 {
     AL_U8 Data;
@@ -734,6 +962,13 @@ static AL_VOID AlIic_Dev_SlaveSendDataHandler(AL_IIC_DevStruct *Iic)
     }
 }
 
+/**
+ * This function used when slave send data in block&interrupt mode,
+ * This occurs on the last byte of the transmission, indicating that the transmission is done.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 static AL_VOID AlIic_Dev_SlaveSendDataDoneHandler(AL_IIC_DevStruct *Iic)
 {
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
@@ -756,6 +991,12 @@ static AL_VOID AlIic_Dev_SlaveSendDataDoneHandler(AL_IIC_DevStruct *Iic)
     AlIic_Dev_ClrRxBusy(Iic);
 }
 
+/**
+ * This function used in block&interrupt mode, This occurs when error tx process.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 static AL_VOID AlIic_Dev_TxAbrtHandler(AL_IIC_DevStruct *Iic)
 {
     AL_IIC_AbrtSrcEnum AbrtSrc = AlIic_ll_GetAbrtSrc(Iic->HwConfig.BaseAddress);
@@ -783,6 +1024,12 @@ static AL_VOID AlIic_Dev_TxAbrtHandler(AL_IIC_DevStruct *Iic)
 
 }
 
+/**
+ * This function used in block&interrupt mode, error interrupt handler.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 static AL_VOID AlIic_Dev_ErrorIntrHandler(AL_IIC_DevStruct *Iic, AL_IIC_EventIdEnum EventId)
 {
     /* Error occurred, Stop RX */
@@ -812,6 +1059,12 @@ static AL_VOID AlIic_Dev_ErrorIntrHandler(AL_IIC_DevStruct *Iic, AL_IIC_EventIdE
     }
 }
 
+/**
+ * This function used in block&interrupt mode, normal interrupt handler.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 static AL_VOID AlIic_Dev_NormalIntrHandler(AL_IIC_DevStruct *Iic, AL_IIC_EventIdEnum EventId)
 {
     if (Iic->EventCallBack) {
@@ -839,6 +1092,12 @@ static AL_VOID AlIic_Dev_NormalIntrHandler(AL_IIC_DevStruct *Iic, AL_IIC_EventId
 #define IIC_INTR_MASTER_ON_HOLD_INTR(Status)    (Status & AL_IIC_INTR_MASTER_ON_HOLD)
 #define IIC_INTR_SCL_STUCK_ATLOW_INTR(Status)   (Status & AL_IIC_INTR_SCL_STUCK_ATLOW)
 
+/**
+ * IIC interrupt handler
+ * @param   instance Pointer to a AL_IIC_DevStruct structure
+ * @return
+ * @note
+*/
 AL_VOID AlIic_Dev_IntrHandler(AL_VOID *instance)
 {
     AL_IIC_DevStruct *Iic = (AL_IIC_DevStruct *)instance;
@@ -924,6 +1183,16 @@ AL_VOID AlIic_Dev_IntrHandler(AL_VOID *instance)
 
 }
 
+/**
+ * This function register a User IIC Callback.
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @param   CallBack pointer to the Callback function
+ * @param   CallbackRef pointer to the Callback function params
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Dev_RegisterEventCallBack(AL_IIC_DevStruct *Iic, AL_IIC_EventCallBack Callback, void *CallbackRef)
 {
     AL_ASSERT((Iic != AL_NULL) && (Callback != AL_NULL), AL_IIC_ERR_ILLEGAL_PARAM);
@@ -934,6 +1203,15 @@ AL_S32 AlIic_Dev_RegisterEventCallBack(AL_IIC_DevStruct *Iic, AL_IIC_EventCallBa
     return AL_OK;
 }
 
+/**
+ * This function master set command option, like stop、restart etc
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @param   CmdOption Command to be set
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Dev_MasterSetCmdOption(AL_IIC_DevStruct *Iic, AL_IIC_CmdOptionEnum CmdOption)
 {
     AL_ASSERT(Iic != AL_NULL, AL_IIC_ERR_ILLEGAL_PARAM);
@@ -953,6 +1231,14 @@ AL_S32 AlIic_Dev_MasterSetCmdOption(AL_IIC_DevStruct *Iic, AL_IIC_CmdOptionEnum 
     return AL_OK;
 }
 
+/**
+ * This function master get current command option, like stop、restart etc
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @return
+ *          - Command for function success
+ *          - AL_IIC_CMD_OPTION_NONE for function failure
+ * @note
+*/
 AL_IIC_CmdOptionEnum AlIic_Dev_MasterGetCmdOption(AL_IIC_DevStruct *Iic)
 {
     AL_ASSERT(Iic != AL_NULL, AL_IIC_CMD_OPTION_NONE);
@@ -960,6 +1246,16 @@ AL_IIC_CmdOptionEnum AlIic_Dev_MasterGetCmdOption(AL_IIC_DevStruct *Iic)
     return Iic->CmdOption;
 }
 
+/**
+ * This function excute operations to set
+ * @param   Iic Pointer to a AL_IIC_DevStruct structure
+ * @param   Cmd is io ctl cmd to AL_IIC_IoCtlCmdEnum
+ * @param   Data Pointer to cmd args
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Dev_IoCtl(AL_IIC_DevStruct *Iic, AL_IIC_IoCtlCmdEnum Cmd, AL_VOID *Data)
 {
     AL_S32 Ret = AL_OK;

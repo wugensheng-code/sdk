@@ -17,6 +17,13 @@
 
 AL_IIC_HalStruct AlIicHandle[AL_IIC_NUM_INSTANCE];
 
+/**
+ * This function action when receive or send data.
+ * @param   IicEvent Pointer to AL_IIC_EventStruct contains event datas
+ * @param   CallbackRef Pointer to a AL_IIC_HalStruct structure that contains iic dev instance
+ * @return
+ * @note
+*/
 static AL_VOID AlIic_DefEventCallBack(AL_IIC_EventStruct *IicEvent, void *CallbackRef)
 {
     AL_IIC_HalStruct *Handle = (AL_IIC_HalStruct *)CallbackRef;
@@ -55,6 +62,16 @@ static AL_VOID AlIic_DefEventCallBack(AL_IIC_EventStruct *IicEvent, void *Callba
     }
 }
 
+/**
+ * This function action when master send data.
+ * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic dev instance
+ * @param   Event Pointer to AL_IIC_EventStruct contains event datas
+ * @param   Timeout in block mode
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 static AL_S32 AlIic_Hal_WaitMasterTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_IIC_EventStruct *Event, AL_U32 Timeout)
 {
     AL_S32 Ret;
@@ -67,6 +84,16 @@ static AL_S32 AlIic_Hal_WaitMasterTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_I
     return Ret;
 }
 
+/**
+ * This function action when master receive data.
+ * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic dev instance
+ * @param   Event Pointer to AL_IIC_EventStruct contains event datas
+ * @param   Timeout in block mode
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 static AL_S32 AlIic_Hal_WaitMasterRxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_IIC_EventStruct *Event, AL_U32 Timeout)
 {
     AL_S32 Ret;
@@ -79,6 +106,16 @@ static AL_S32 AlIic_Hal_WaitMasterRxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_I
     return Ret;
 }
 
+/**
+ * This function action when slave send data.
+ * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic dev instance
+ * @param   Event Pointer to AL_IIC_EventStruct contains event datas
+ * @param   Timeout in block mode
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 static AL_S32 AlIic_Hal_WaitSlaveTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_IIC_EventStruct *Event, AL_U32 Timeout)
 {
     AL_S32 Ret;
@@ -89,6 +126,16 @@ static AL_S32 AlIic_Hal_WaitSlaveTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_II
     return Ret;
 }
 
+/**
+ * This function action when slave receive data.
+ * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic dev instance
+ * @param   Event Pointer to AL_IIC_EventStruct contains event datas
+ * @param   Timeout in block mode
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 static AL_S32 AlIic_Hal_WaitSlaveRxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_IIC_EventStruct *Event, AL_U32 Timeout)
 {
     AL_S32 Ret;
@@ -99,6 +146,18 @@ static AL_S32 AlIic_Hal_WaitSlaveRxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_II
     return Ret;
 }
 
+/**
+ * This function initialize the IIC mode according to the specified
+ *          parameters in the AL_IIC_InitStruct and initialize the associated handle.
+ * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic dev instance
+ * @param   DevId is hardware module id
+ * @param   InitConfig pointer to a AL_IIC_InitStruct structure
+ *          that contains the configuration information for the specified IIC peripheral
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
+ * @note
+*/
 AL_S32 AlIic_Hal_Init(AL_IIC_HalStruct **Handle, AL_U32 DevId,
                       AL_IIC_InitStruct *InitConfig, AL_IIC_EventCallBack Callback)
 {
@@ -140,6 +199,18 @@ AL_S32 AlIic_Hal_Init(AL_IIC_HalStruct **Handle, AL_U32 DevId,
     return AL_OK;
 }
 
+/**
+ * This function master send an amount of data in blocking & interrupt mode
+ * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
+ * @param   SlaveAddr Slave address
+ * @param   Data Pointer to data buffer
+ * @param   Size Amount of data to be sent
+ * @param   Timeout Timeout duration
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Hal_MasterSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -175,6 +246,17 @@ AL_S32 AlIic_Hal_MasterSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
         return (Ret != AL_OK) ? Ret : AL_IIC_EVENTS_TO_ERRS(IicEvent.Events);
 }
 
+/**
+ * This function master send an amount of data in polling(non interrupt) & blocking mode.
+ * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
+ * @param   SlaveAddr Slave address
+ * @param   Data Pointer to data buffer
+ * @param   Size Amount of data to be sent
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Hal_MasterSendDataPolling(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U8 *Data, AL_U32 Size)
 {
     AL_S32 Ret = AL_OK;
@@ -193,6 +275,18 @@ AL_S32 AlIic_Hal_MasterSendDataPolling(AL_IIC_HalStruct *Handle, AL_U16 SlaveAdd
     return Ret;
 }
 
+/**
+ * This function master receive an amount of data in blocking & interrupt mode
+ * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
+ * @param   SlaveAddr Slave address
+ * @param   Data Pointer to data buffer
+ * @param   Size Amount of data to be sent
+ * @param   Timeout Timeout duration
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Hal_MasterRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -227,6 +321,17 @@ AL_S32 AlIic_Hal_MasterRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
         return (Ret != AL_OK) ? Ret : AL_IIC_EVENTS_TO_ERRS(IicEvent.Events);
 }
 
+/**
+ * This function master receive an amount of data in polling(non interrupt) & blocking mode.
+ * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
+ * @param   SlaveAddr Slave address
+ * @param   Data Pointer to data buffer
+ * @param   Size Amount of data to be sent
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Hal_MasterRecvDataPolling(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U8 *Data, AL_U32 Size)
 {
     AL_S32 Ret = AL_OK;
@@ -246,6 +351,17 @@ AL_S32 AlIic_Hal_MasterRecvDataPolling(AL_IIC_HalStruct *Handle, AL_U16 SlaveAdd
     return Ret;
 }
 
+/**
+ * This function slave send an amount of data in blocking & interrupt mode
+ * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
+ * @param   Data Pointer to data buffer
+ * @param   Size Amount of data to be sent
+ * @param   Timeout Timeout duration
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Hal_SlaveSendDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -281,6 +397,17 @@ AL_S32 AlIic_Hal_SlaveSendDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
         return (Ret != AL_OK) ? Ret : AL_IIC_EVENTS_TO_ERRS(IicEvent.Events);
 }
 
+/**
+ * This function slave receive an amount of data in blocking & interrupt mode
+ * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
+ * @param   Data Pointer to data buffer
+ * @param   Size Amount of data to be sent
+ * @param   Timeout Timeout duration
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Hal_SlaveRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -317,6 +444,15 @@ AL_S32 AlIic_Hal_SlaveRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
     return Ret;
 }
 
+/**
+ * This function master set command option, like stop、restart etc
+ * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
+ * @param   CmdOption Command to be set
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Hal_MasterSetCmdOption(AL_IIC_HalStruct *Handle, AL_IIC_CmdOptionEnum CmdOption)
 {
     AL_S32 Ret = AL_OK;
@@ -338,6 +474,14 @@ AL_S32 AlIic_Hal_MasterSetCmdOption(AL_IIC_HalStruct *Handle, AL_IIC_CmdOptionEn
     return Ret;
 }
 
+/**
+ * This function master get current command option, like stop、restart etc
+ * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
+ * @return
+ *          - Command for function success
+ *          - AL_IIC_CMD_OPTION_NONE for function failure
+ * @note
+*/
 AL_IIC_CmdOptionEnum AlIic_Hal_MastertGetCmdOption(AL_IIC_HalStruct *Handle)
 {
     AL_S32 Ret = AL_OK;
@@ -357,6 +501,16 @@ AL_IIC_CmdOptionEnum AlIic_Hal_MastertGetCmdOption(AL_IIC_HalStruct *Handle)
     return CmdOption;
 }
 
+/**
+ * This function excute operations to set
+ * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
+ * @param   Cmd is io ctl cmd to AL_IIC_IoCtlCmdEnum
+ * @param   Data Pointer to cmd args
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlIic_Hal_IoCtl(AL_IIC_HalStruct *Handle, AL_IIC_IoCtlCmdEnum Cmd, AL_VOID *Data)
 {
     AL_S32 Ret = AL_OK;
