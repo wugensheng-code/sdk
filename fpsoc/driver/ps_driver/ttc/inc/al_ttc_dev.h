@@ -88,6 +88,7 @@ AL_U16 AlTtc_Dev_GetCounterVal(AL_TTC_DevStruct *Ttc);
 AL_S32 AlTtc_Dev_EnableMatchMode(AL_TTC_DevStruct *Ttc, AL_BOOL State);
 AL_S32 AlTtc_Dev_SetMatchVal(AL_TTC_DevStruct *Ttc, AL_TTC_MatchNumEnum MatchNum, AL_U16 Value);
 AL_S32 AlTtc_Dev_EnableEventTimerMode(AL_TTC_DevStruct *Ttc, AL_BOOL State);
+AL_S32 AlTtc_Dev_SelExtClkEdge(AL_TTC_DevStruct *Ttc, AL_TTC_ClkEdgeEnum ClkEdge);
 AL_S32 AlTtc_Dev_SetEventTimerLevel(AL_TTC_DevStruct *Ttc, AL_TTC_LevelEnum Level);
 AL_S32 AlTtc_Dev_EventTimerOv(AL_TTC_DevStruct *Ttc, AL_BOOL State);
 AL_U16 AltTtc_Dev_GetEventTimerVal(AL_TTC_DevStruct *Ttc);

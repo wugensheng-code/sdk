@@ -133,6 +133,19 @@ AL_S32 AlTtc_Hal_EnableEventTimerMode(AL_TTC_HalStruct *Handle, AL_BOOL State)
     return AL_OK;
 }
 
+AL_S32 AlTtc_Hal_SelExtClkEdge(AL_TTC_HalStruct *Handle, AL_TTC_ClkEdgeEnum ClkEdge)
+{
+    AL_S32 Ret;
+    AL_ASSERT((Handle != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
+
+    Ret = AlTtc_Dev_SelExtClkEdge(&Handle->Dev, ClkEdge);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
+    return AL_OK;
+}
+
 /*Set the event timer to count the pulse width of high or low levels */
 AL_S32 AlTtc_Hal_SetEventTimerLevel(AL_TTC_HalStruct *Handle, AL_TTC_LevelEnum Level)
 {

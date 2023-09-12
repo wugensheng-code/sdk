@@ -34,6 +34,7 @@ AL_U16 AlTtc_Hal_GetCounterVal(AL_TTC_HalStruct *Handle);
 AL_S32 AlTtc_Hal_EnableMatchMode(AL_TTC_HalStruct *Handle, AL_BOOL State);
 AL_S32 AlTtc_Hal_SetMatchVal(AL_TTC_HalStruct *Handle, AL_TTC_MatchNumEnum MatchNum, AL_U16 Value);
 AL_S32 AlTtc_Hal_EnableEventTimerMode(AL_TTC_HalStruct *Handle, AL_BOOL State);
+AL_S32 AlTtc_Hal_SelExtClkEdge(AL_TTC_HalStruct *Handle, AL_TTC_ClkEdgeEnum ClkEdge);
 AL_S32 AlTtc_Hal_SetEventTimerLevel(AL_TTC_HalStruct *Handle, AL_TTC_LevelEnum Level);
 AL_S32 AlTtc_Hal_EventTimerOv(AL_TTC_HalStruct *Handle, AL_BOOL State);
 AL_U16 AltTtc_Hal_GetEventTimerVal(AL_TTC_HalStruct *Handle);

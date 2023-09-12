@@ -125,6 +125,21 @@ AL_S32 AlTtc_Dev_EnableEventTimerMode(AL_TTC_DevStruct *Ttc, AL_BOOL State)
 
     return AL_OK;
 }
+AL_S32 AlTtc_Dev_SelExtClkEdge(AL_TTC_DevStruct *Ttc, AL_TTC_ClkEdgeEnum ClkEdge)
+{
+    AL_S32 Ret = AL_OK;
+    AL_ASSERT((Ttc != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
+
+    if (Ttc->TimerInitConfigs.ClkSrc == AL_TTC_EXTCLK) {
+        AlTtc_ll_SelExtClkEdge(Ttc->BaseAddr, ClkEdge);
+    } else {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Set external clk edge need enable external clk");
+        return AL_TTC_ERR_NOT_SUPPORT;
+    }
+
+    return AL_OK;
+}
+
 
 /*Set the event timer to count the pulse width of high or low levels */
 AL_S32 AlTtc_Dev_SetEventTimerLevel(AL_TTC_DevStruct *Ttc, AL_TTC_LevelEnum Level)

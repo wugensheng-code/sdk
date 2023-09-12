@@ -61,6 +61,7 @@ static AL_S32 AlTtc_Test_PwmOutput(AL_VOID)
 {
     AL_U32 Ret = AL_OK;
     AL_TTC_HalStruct *TtcHandle;
+
     Ret = AlTtc_Hal_Init(&TtcHandle, AL_TTC_DEVICE_ID, &PwmInitConfigs, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);

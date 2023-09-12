@@ -26,7 +26,11 @@ extern "C" {
 #include <string.h>
 
 /************************** Constant Definitions *****************************/
-#define AL_TTC_DEVICE_ID 0
+#define AL_TTC_DEVICE_ID             (0)
+ /* pwm frequency = clock frequency / (pow(2, PrescaleVal+1) / (AL_TTC_INTERVAL_MAX_VAL + 1) */
+#define AL_TTC_INTERVAL_MAX_VAL      (499)
+/* pwm duty cycle = (AL_TTC_MATCH1_VAL + 1) / (AL_TTC_INTERVAL_MAX_VAL + 1) */
+#define AL_TTC_MATCH1_VAL            (249)
 
 
 /***************** Macros (Inline Functions) Definitions *********************/
@@ -36,7 +40,7 @@ extern "C" {
 /************************** Variable Definitions *****************************/
 static AL_TTC_TimerInitStruct EventInitConfigs = {
     .ClkSrc              = AL_TTC_EXTCLK,
-    .PrescaleVal         = 2,
+    .PrescaleVal         = 0,
     .CountDec            = AL_TTC_CountUp
 };
 

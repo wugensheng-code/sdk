@@ -31,7 +31,11 @@ BOARD_NAME ?= board_dr1x90_emulation
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
+ifeq ($(ELF), TTC_PWM)
 C_SRCS += al_ttc_pwm.c
+else
+C_SRCS += al_ttc_measure.c
+endif
 
 INC_DIR     += ./
 
@@ -65,7 +69,11 @@ PINMUX_MODE ?= PINMUX_MODE1
 #########################################################################
 # 5. define build target
 #########################################################################
+ifeq ($(ELF), TTC_PWM)
 TARGET := fpsoc_ttc_example_pwm
+else
+TARGET := fpsoc_ttc_example_measure
+endif
 
 
 ifneq ($(PINMUX_MODE),)

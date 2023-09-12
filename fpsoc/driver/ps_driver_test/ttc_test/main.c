@@ -29,15 +29,20 @@ AL_VOID main()
 AL_S32 AlTtc_MeasurePulseWidth(AL_VOID)
 {
     AL_TTC_HalStruct *TtcHandle;
+
     AlTtc_Hal_Init(&TtcHandle, AL_TTC_DEVICE_ID, &EventInitConfigs, AL_NULL);
+    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
+    AlTtc_Hal_SelExtClkEdge(TtcHandle, AL_TTC_Negedge);
     AlTtc_Hal_EventTimerOv(TtcHandle, AL_FALSE);
     AlTtc_Hal_SetEventTimerLevel(TtcHandle, AL_TTC_HighLevel);
     AlTtc_Hal_EnableEventTimerMode(TtcHandle, AL_TRUE);
-
     AlTtc_Hal_EnableIntr(TtcHandle, AL_TTC_IntrEventTimer);
-
     AlTtc_Hal_EnableCounter(TtcHandle, AL_TRUE);
-    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
+
+    while (1) {
+        AL_U16 VAL = AltTtc_Hal_GetEventTimerVal(TtcHandle->Dev.BaseAddr);
+        AL_LOG(AL_LOG_LEVEL_INFO, "Event val is %x\r\n", VAL);
+    }
 
     return AL_OK;
 }
@@ -48,10 +53,10 @@ AL_S32 AlTtc_PwmOutput(AL_VOID)
     AlTtc_Hal_Init(&TtcHandle, AL_TTC_DEVICE_ID, &PwmInitConfigs, AL_NULL);
 
     AlTtc_Hal_EnableIntervalMode(TtcHandle);
-    AlTtc_Hal_SetIntervalMaxVal(TtcHandle, 499);
+    AlTtc_Hal_SetIntervalMaxVal(TtcHandle, AL_TTC_INTERVAL_MAX_VAL);
 
     AlTtc_Hal_EnableMatchMode(TtcHandle, AL_TRUE);
-    AlTtc_Hal_SetMatchVal(TtcHandle, AL_TTC_Match1, 249);
+    AlTtc_Hal_SetMatchVal(TtcHandle, AL_TTC_Match1, AL_TTC_MATCH1_VAL);
 
     AlTtc_Hal_SetWaveformPolarity(TtcHandle, AL_TTC_Posedge);
 
