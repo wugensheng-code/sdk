@@ -1,14 +1,20 @@
+/*
+ * NETIO - Network Benchmark, Version 1.33
+ * (C) 1997-2018 Kai Uwe Rommel
+ *
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ * 
+ * This is a network benchmark for Windows, Linux and Unix that
+ * measures net througput of a network with TCP and UDP protocols.
+ * 
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+
 /* netio.c
  *
  * Author:  Kai-Uwe Rommel <rommel@ars.de>
  * Created: Wed Sep 25 1996
- */
-
-
-/*
- * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
- *
- * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #ifdef WIN32
