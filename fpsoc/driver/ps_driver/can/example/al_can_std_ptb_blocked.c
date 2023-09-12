@@ -9,7 +9,7 @@
  * @author  Anlogic esw team
  * @version V0.0.1
  * @date    2023-09-01
- * @brief   can extern loopback blocked example
+ * @brief   can std ptb blocked example
  */
 
 /***************************** Include Files *********************************/
@@ -25,10 +25,12 @@
 #define AL_CAN_EX_BLOCKED_TIMEOUT_IN_MS (100)
 #define AL_CAN_EX_MEM_SIZE              (1)
 #define AL_CAN_EX_ARRAY_SIZE            (256)
+#define AL_CAN_EX_DELAY_COUNT           (200)
+#define AL_CAN_EX_DELAY_MS              (5)
 
 /************************** Variable Definitions *****************************/
-static AL_CAN_InitStruct ExLoopbackConfig = {
-    .OpsMode        = AL_CAN_MODE_EX_LOOPBACK,
+static AL_CAN_InitStruct StdPtbConfig = {
+    .OpsMode        = AL_CAN_MODE_NORMAL,
     .RunMode        = AL_CAN_RUN_INTR,
     .Type           = AL_CAN_TYPE_2_0B,
     .SlowBitRate    = AL_CAN_ARBITRATION_0_25M,
@@ -47,7 +49,7 @@ static AL_CAN_FrameStruct ExFrame = {
 };
 
 /************************** Function Prototypes ******************************/
-static AL_S32 AlCan_Test_ExLoopbackBlocked(AL_VOID);
+static AL_S32 AlCan_Test_StdPtbBlocked(AL_VOID);
 
 /************************** Function Definitions ******************************/
 
@@ -55,26 +57,27 @@ AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
 
-    AL_LOG(AL_LOG_LEVEL_INFO, "Can extern loopback blocked test\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Can std ptb blocked test\r\n");
 
-    Ret = AlCan_Test_ExLoopbackBlocked();
+    Ret = AlCan_Test_StdPtbBlocked();
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Can extern loopback blocked test failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Can std ptb blocked test failed\r\n");
         return Ret;
     }
 
-    AL_LOG(AL_LOG_LEVEL_INFO, "Can extern loopback blocked test success\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Can std ptb blocked test success\r\n");
 
     return Ret;
 }
 
-static AL_S32 AlCan_Test_ExLoopbackBlocked(AL_VOID)
+static AL_S32 AlCan_Test_StdPtbBlocked(AL_VOID)
 {
     AL_U32 Ret = AL_OK;
+    AL_U32 DelayCount = 0;
     AL_CAN_FrameStruct Frame;
     AL_CAN_HalStruct *Handle = AL_NULL;
 
-    Ret = AlCan_Hal_Init(&Handle, AL_CAN_EX_DEVICE_ID, &ExLoopbackConfig, AL_NULL);
+    Ret = AlCan_Hal_Init(&Handle, AL_CAN_EX_DEVICE_ID, &StdPtbConfig, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
         return Ret;
@@ -82,25 +85,27 @@ static AL_S32 AlCan_Test_ExLoopbackBlocked(AL_VOID)
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     while (1) {
-        Ret = AlCan_Hal_SendFrameBlock(Handle, &ExFrame, AL_CAN_EX_BLOCKED_TIMEOUT_IN_MS);
-        if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame Error:0x%x\r\n", Ret);
+        AlSys_MDelay(AL_CAN_EX_DELAY_MS);
+
+        if (((DelayCount++) % AL_CAN_EX_DELAY_COUNT) == 0) {
+            Ret = AlCan_Hal_SendFrameBlock(Handle, &ExFrame, AL_CAN_EX_BLOCKED_TIMEOUT_IN_MS);
+            if (Ret != AL_OK) {
+                AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame Error:0x%x\r\n", Ret);
+            } else {
+                AL_LOG(AL_LOG_LEVEL_INFO, "Send Frame: %d\r\n", (DelayCount / AL_CAN_EX_DELAY_COUNT));
+            }
         }
 
-        Ret = AlCan_Hal_RecvFrameBlock(Handle, &Frame, AL_CAN_EX_BLOCKED_TIMEOUT_IN_MS);
+        Ret = AlCan_Hal_RecvFrame(Handle, &Frame);
         if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Recv Frame Error:0x%x\r\n", Ret);
+            if (Ret == AL_ERR_UNAVAILABLE) {
+                continue;
+            } else {
+                AL_LOG(AL_LOG_LEVEL_ERROR, "Recv Frame Error:0x%x\r\n", Ret);
+            }
+        } else {
+            AlCan_Dev_DisplayFrame(&Frame);
         }
-
-        AlCan_Dev_DisplayFrame(&Frame);
-
-        Ret = memcmp(ExFrame.Data, Frame.Data, AL_CAN_LEN_8);
-        if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
-            return Ret;
-        }
-
-        AlSys_MDelay(500);
     }
 
     return Ret;

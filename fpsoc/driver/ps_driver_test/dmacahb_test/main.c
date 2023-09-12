@@ -390,6 +390,7 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
             Lli[i].CtlLow.Bit.LlpDstEn = AL_FALSE;
         } else {
             Lli[i].LlpNext = (AL_REG)&Lli[i + 1];
+            Lli[i].CtlLow.Bit.LlpDstEn = AL_TRUE;
         }
         AlDmacAhb_Test_InitSrc((AL_REG)SRC_MEM[i], AL_DMACAHB_TEST_ARRAY_SIZE, 'a' + i);
     }
@@ -446,6 +447,7 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
             Lli[i].CtlLow.Bit.LlpDstEn = AL_FALSE;
         } else {
             Lli[i].LlpNext = (AL_REG)&Lli[i + 1];
+            Lli[i].CtlLow.Bit.LlpDstEn = AL_TRUE;
         }
         AlDmacAhb_Test_InitSrc((AL_REG)SRC_MEM[i], AL_DMACAHB_TEST_ARRAY_SIZE, 'a' + i);
     }
@@ -504,6 +506,7 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
             Lli[i].CtlLow.Bit.LlpDstEn = AL_FALSE;
         } else {
             Lli[i].LlpNext = (AL_REG)&Lli[i + 1];
+            Lli[i].CtlLow.Bit.LlpSrcEn = AL_TRUE;
         }
 
         AlDmacAhb_Test_InitSrc(Lli[i].SrcAddr, AL_DMACAHB_TEST_ARRAY_SIZE, 'a' + i);
@@ -561,6 +564,7 @@ AL_VOID AlDmacAhb_Test_OtherTransType(AL_VOID)
             Lli[i].CtlLow.Bit.LlpDstEn = AL_FALSE;
         } else {
             Lli[i].LlpNext = (AL_REG)&Lli[i + 1];
+            Lli[i].CtlLow.Bit.LlpSrcEn = AL_TRUE;
         }
 
         AlDmacAhb_Test_InitSrc(Lli[i].SrcAddr, AL_DMACAHB_TEST_ARRAY_SIZE, 'a' + i);

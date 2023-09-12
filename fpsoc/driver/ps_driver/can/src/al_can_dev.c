@@ -642,10 +642,10 @@ AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, AL
         AlCan_Dev_SetDefBitRate(Dev, &DefBitRate);
     }
 
-    AlCan_Dev_SetTransMode(Dev);
     AlCan_ll_SetAfwl(Dev->BaseAddr, Dev->Config.RbAfwl);
     AlCan_ll_SetAcfen(Dev->BaseAddr, AL_FALSE);
     AlCan_Dev_SetReset(Dev, AL_FALSE);
+    AlCan_Dev_SetTransMode(Dev);
     Ret = AlCan_Dev_SetOpsMode(Dev);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_DEBUG, "Can set ops mode error: 0x%x", Ret);

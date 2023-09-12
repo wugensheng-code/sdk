@@ -105,7 +105,7 @@ static AL_MMC_InitStruct EmmcNoDmaInit = {
     .FreqKhz            = AL_MMC_FREQ_KHZ_50000,
 #endif
     .SpdMode            = AL_MMC_SPD_HS_SDR25,
-    .BusWidth           = AL_MMC_BUS_WIDTH_8BIT,
+    .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_DISABLE,
     .DmaBdary           = AL_MMC_BDARY_32K
@@ -120,7 +120,7 @@ static AL_MMC_InitStruct EmmcSdmaInit = {
     .FreqKhz            = AL_MMC_FREQ_KHZ_50000,
 #endif
     .SpdMode            = AL_MMC_SPD_HS_SDR25,
-    .BusWidth           = AL_MMC_BUS_WIDTH_8BIT,
+    .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_DISABLE,
     .DmaBdary           = AL_MMC_BDARY_4K
@@ -135,7 +135,7 @@ static AL_MMC_InitStruct EmmcAdma2Init = {
     .FreqKhz            = AL_MMC_FREQ_KHZ_50000,
 #endif
     .SpdMode            = AL_MMC_SPD_HS_SDR25,
-    .BusWidth           = AL_MMC_BUS_WIDTH_8BIT,
+    .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_ENABLE,
     .DmaBdary           = AL_MMC_BDARY_32K

@@ -7,7 +7,7 @@
 #include "al_can_test_config.h"
 #include "al_errno.h"
 
-AL_U32 __attribute__((aligned(4))) AL_CAN_TEST_DST_MEM[AL_CAN_DMAC_RECV_DATA_IN_WORD];
+AL_U32 CACHE_LINE_ALIGN AL_CAN_TEST_DST_MEM[AL_CAN_DMAC_RECV_DATA_IN_WORD];
 
 static AL_VOID AlCan_Test_ListenOnly(AL_VOID);
 static AL_VOID AlCan_Test_InLoopBack(AL_VOID);
@@ -531,7 +531,7 @@ static AL_VOID AlCan_Test_StdIntr(AL_VOID)
     Config.OpsMode      = AL_CAN_MODE_NORMAL;
     Config.RunMode      = AL_CAN_RUN_INTR;
     Config.Type         = AL_CAN_TYPE_2_0B;
-    Config.SlowBitRate   = AL_CAN_ARBITRATION_0_25M;
+    Config.SlowBitRate  = AL_CAN_ARBITRATION_0_25M;
     Config.TransMode    = AL_CAN_TRANS_PTB;
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
@@ -643,12 +643,12 @@ static AL_VOID AlCan_Test_FdIntr(AL_VOID)
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     while (1) {
-        Ret = AlCan_Hal_RecvFrame(Handle, &Frame);
-        if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Recv Frame Error:0x%x\r\n", Ret);
-        } else {
-            AlCan_Dev_DisplayFrame(&Frame);
-        }
+        // Ret = AlCan_Hal_RecvFrame(Handle, &Frame);
+        // if (Ret != AL_OK) {
+        //     AL_LOG(AL_LOG_LEVEL_ERROR, "Recv Frame Error:0x%x\r\n", Ret);
+        // } else {
+        //     AlCan_Dev_DisplayFrame(&Frame);
+        // }
         Ret = AlCan_Hal_SendFrameBlock(Handle, &FdFrame1, Timeout);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
@@ -734,15 +734,15 @@ static AL_VOID AlCan_Test_FdStbFifo(AL_VOID)
     AL_U32 DeviceId = 1;
 #endif
     AL_U32 Ret = AL_OK;
-    AL_U32 Timeout = 1000;
+    AL_U32 Timeout = 10000;
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd STB fifo example\r\n");
 
     Config.OpsMode      = AL_CAN_MODE_NORMAL;
     Config.RunMode      = AL_CAN_RUN_INTR;
     Config.Type         = AL_CAN_TYPE_FD;
-    Config.SlowBitRate  = AL_CAN_ARBITRATION_0_5M,
-    Config.FastBitRate  = AL_CAN_1_M,
+    Config.SlowBitRate  = AL_CAN_ARBITRATION_0_5M;
+    Config.FastBitRate  = AL_CAN_1_M;
     Config.TransMode    = AL_CAN_TRANS_STB_FIFO;
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
