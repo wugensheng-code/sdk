@@ -95,7 +95,9 @@ extern "C" {
 #define QSPI_BASE_ADDR         (0xF804E000UL)
 #define QSPI_FIFO_LENGTH       (128)
 
-
+#define QSPI_CS0_EN      (1 << 0)
+#define QSPI_CS1_EN      (1 << 1)
+#define QSPI_CS2_EN      (1 << 2)
 
 /*----------------------------------------------------------------------------
   Define SPI params

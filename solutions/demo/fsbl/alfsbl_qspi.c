@@ -6,28 +6,22 @@
 
 #include "al_qspi_hal.h"
 #include "al_spinor.h"
+#include "al_dmacahb_hal.h"
 
 #include "alfsbl_secure.h"
 #include "alfsbl_boot.h"
 
-AL_QSPI_HalStruct QspiHal;
+AL_QSPI_HalStruct *Handle;
 
-AL_QSPI_ConfigsStruct QspiInitConfigs =
+AL_QSPI_ConfigsStruct QspiX4InitConfigs =
 {
-    .TransMode          = QSPI_EEPROM,
-    .SpiFrameFormat     = SPI_STANDARD_FORMAT,
-    .DataFrameSize      = QSPI_DFS_8BITS,
-    .EnSpiCfg.AddrLength    = QSPI_ADDR_L0,
-    .EnSpiCfg.InstLength    = QSPI_INST_L8,
-    .EnSpiCfg.TransType     = QSPI_TT0,
-    .EnSpiCfg.WaitCycles    = 0,
-    .EnSpiCfg.ClockStretch  = QSPI_EnableClockStretch,
-    .ClkDiv             = 10,
-    .SamplDelay         = 0,
+    .ClkDiv             = 20,
+    .SamplDelay         = 2,
     .SlvToggleEnum      = QSPI_SLV_TOGGLE_DISABLE,
-    .SlvSelEnum         = QSPI_SER_SS0_EN,
-    .IsUseDma           = AL_QSPI_USE_INTR
+    .SpiFrameFormat     = SPI_QUAD_FORMAT,
+    .ClockStretch       = QSPI_EnableClockStretch
 };
+
 AL_U8 __attribute__((aligned(4))) FlashId[4] = { 0x0 };
 
 AL_VOID AlNor_Wren(AL_VOID)
@@ -35,17 +29,18 @@ AL_VOID AlNor_Wren(AL_VOID)
     AL_S32 Ret = AL_OK;
     AL_U8 SendData[4] = {0x0};
 
-    QspiHal.Dev->Configs.EnSpiCfg.WaitCycles = 0;
-    QspiHal.Dev->Configs.TransMode = QSPI_TX_ONLY;
-    QspiHal.Dev->Configs.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
-    QspiHal.Dev->Configs.SpiFrameFormat = SPI_STANDARD_FORMAT;
-    QspiHal.Dev->Configs.EnSpiCfg.TransType = QSPI_TT0;
+    Handle->Dev.Configs.Trans.TransMode = QSPI_TX_ONLY;
+    Handle->Dev.Configs.SpiFrameFormat = SPI_STANDARD_FORMAT;
+    Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
+    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
 
     SendData[0] = NOR_OP_WREN;
 
-    Ret = AlQspi_Hal_SendDataBlock(&QspiHal, SendData, 1, 10000);
+    Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 1, 100000);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "AL_NOR_WREN error\r\n");
+        printf("AL_NOR_WREN error:0x%x\r\n", Ret);
     }
 }
 
@@ -56,21 +51,22 @@ AL_VOID AlNor_WaitWip(AL_VOID)
     AL_U8 SendData[4] = {0x0};
     AL_U8 RecvData[4] = {0x0};
 
-    QspiHal.Dev->Configs.EnSpiCfg.WaitCycles = 0;
-    QspiHal.Dev->Configs.TransMode  = QSPI_EEPROM;
-    QspiHal.Dev->Configs.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
-    QspiHal.Dev->Configs.SpiFrameFormat = SPI_STANDARD_FORMAT;
-    QspiHal.Dev->Configs.EnSpiCfg.TransType = QSPI_TT0;
+    Handle->Dev.Configs.Trans.TransMode  = QSPI_EEPROM;
+    Handle->Dev.Configs.SpiFrameFormat = SPI_STANDARD_FORMAT;
+    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
+    Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
 
     SendData[0] = NOR_OP_RDSR;
 
     do {
-        Ret = AlQspi_Hal_TranferDataBlock(&QspiHal, SendData, 1, RecvData, 1, 100000);
+        Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 1, RecvData, 1, 100000);
         if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_DEBUG, "AL_NOR_WAITWIP error\r\n");
+            printf("AL_NOR_WAITWIP error:0x%x\r\n", Ret);
         }
 #ifdef QSPI_DEBUG
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "WAITWIP Nor Status1 Reg:%x\r\n", RecvData[0]);
+        printf("WAITWIP Nor Status1 Reg:%x\r\n", RecvData[0]);
 #endif
     } while (RecvData[0] & SR_WIP);
 }
@@ -81,13 +77,14 @@ AL_S32 AlNor_SetQuad(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd, AL_U8 QuadPos)
     AL_U8 SendData[4] = {0x0}, Data = 0;
 
     SendData[0] = ReadQuadCmd;
-    QspiHal.Dev->Configs.EnSpiCfg.WaitCycles = 0;
-    QspiHal.Dev->Configs.TransMode  = QSPI_EEPROM;
-    QspiHal.Dev->Configs.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
-    QspiHal.Dev->Configs.SpiFrameFormat = SPI_STANDARD_FORMAT;
-    QspiHal.Dev->Configs.EnSpiCfg.TransType = QSPI_TT0;
 
-    Ret = AlQspi_Hal_TranferDataBlock(&QspiHal, SendData, 1, &Data, 1, 10000);
+    Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
+    Handle->Dev.Configs.Trans.TransMode  = QSPI_EEPROM;
+    Handle->Dev.Configs.SpiFrameFormat = SPI_STANDARD_FORMAT;
+
+    Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 1, &Data, 1, 100000);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_DEBUG, "AlNor_SetQuad ReadQuadCmd error\r\n");
     }
@@ -99,9 +96,9 @@ AL_S32 AlNor_SetQuad(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd, AL_U8 QuadPos)
     SendData[0] = SetQuadCmd;
     SendData[1] = Data;
 
-    QspiHal.Dev->Configs.TransMode = QSPI_TX_ONLY;
+    Handle->Dev.Configs.Trans.TransMode = QSPI_TX_ONLY;
 
-    Ret = AlQspi_Hal_SendDataBlock(&QspiHal, SendData, 2, 10000);
+    Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 2, 100000);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_DEBUG, "AlNor_SetQuad SetQuadCmd error\r\n");
     }
@@ -117,19 +114,23 @@ uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
     AL_U32 Ret;
     AL_U8 SendData[4] = {0x0};
 
-    Ret = AlQspi_Hal_Init(&QspiHal, &QspiInitConfigs, AL_NULL, AL_NULL, 0);
+    Ret = AlQspi_Hal_Init(&Handle, &QspiX4InitConfigs, AL_NULL, 0);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "Fsbl AlQspi_Hal_Init error\r\n");
+        printf("AlQspi_Hal_Init error:0x%x\r\n", Ret);
     }
 
-    QspiHal.Dev->Configs.EnSpiCfg.WaitCycles = 0;
-    QspiHal.Dev->Configs.TransMode  = QSPI_EEPROM;
-    QspiHal.Dev->Configs.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
-
     SendData[0] = NOR_OP_RDID;
-    Ret = AlQspi_Hal_TranferDataBlock(&QspiHal, SendData, 1, FlashId, 3, 1);
+
+    Handle->Dev.Configs.Trans.TransMode  = QSPI_EEPROM;
+    Handle->Dev.Configs.SpiFrameFormat  = SPI_STANDARD_FORMAT;
+    Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
+
+    Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 1, FlashId, 3, 100000);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "AlNor read id error\r\n");
+        printf("AL_NOR_READID error:0x%x\r\n", Ret);
     }
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Flash ID:0x%x, 0x%x, 0x%x\r\n", FlashId[0], FlashId[1], FlashId[2]);
 
@@ -170,11 +171,11 @@ uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Le
 #else
     AL_U8 SendData[4] = {0x0};
 
-    QspiHal.Dev->Configs.TransMode  = QSPI_RX_ONLY;
-    QspiHal.Dev->Configs.EnSpiCfg.TransType = QSPI_TT0;
-    QspiHal.Dev->Configs.EnSpiCfg.AddrLength = QSPI_ADDR_L24;
-    QspiHal.Dev->Configs.SpiFrameFormat = SPI_QUAD_FORMAT;
-    QspiHal.Dev->Configs.EnSpiCfg.WaitCycles = 8;
+    Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L24;
+    Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 8;
+    Handle->Dev.Configs.SpiFrameFormat = SPI_QUAD_FORMAT;
+    Handle->Dev.Configs.Trans.TransMode  = QSPI_RX_ONLY;
 
     SendData[0] = NOR_OP_READ_1_1_4;
     i = Length / 65532 + (Length % 65532 ? 1 : 0);
@@ -185,10 +186,10 @@ uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Le
         SendData[3] = SrcAddress&0xff;
 
         RecvSize = (Length > 65532) ? 65532 : Length;
-        Ret = AlQspi_Hal_TranferDataBlock(&QspiHal, SendData, 4, (AL_U8 *)DestAddress, RecvSize, 10000000);
-		if(Ret != AL_OK) {
-			break;
-		}
+        Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 4, (AL_U8 *)DestAddress, RecvSize, 10000000);
+        if (Ret != AL_OK) {
+            printf("AL_NOR_READPAGE error:0x%x\r\n", Ret);
+        }
         SrcAddress += RecvSize;
         DestAddress += RecvSize;
         Length -= RecvSize;

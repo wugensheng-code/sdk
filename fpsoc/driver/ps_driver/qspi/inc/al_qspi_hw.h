@@ -581,11 +581,11 @@ extern "C" {
 
 /**************************** Type Definitions ******************************/
 typedef struct {
-	AL_U16 					DeviceId;		/**< Unique ID  of device */
-	AL_UINTPTR 				BaseAddress;	/**< Base address of the device */
-	AL_U16 					InterrupId;		/**< Unique ID  of interrupt */
-	AL_U16 					FifoLen;		/**< Fifo length */
-	AL_U16 					NumSlvSel;		/**< Num slave select */
+    AL_U16                  DeviceId;       /**< Unique ID  of device */
+    AL_UINTPTR              BaseAddress;    /**< Base address of the device */
+    AL_U16                  InterrupId;     /**< Unique ID  of interrupt */
+    AL_U16                  FifoLen;        /**< Fifo length */
+	AL_U16                  CsSel;          /**< Cs select */
 } AL_QSPI_HwConfigStruct;
 
 #ifdef __cplusplus

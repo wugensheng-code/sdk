@@ -53,13 +53,13 @@ typedef enum {
 #define AL_QSPI_ERR_TIMEOUT          AL_DEF_ERR(AL_QSPI, AL_LOG_LEVEL_ERROR, AL_ERR_TIMEOUT)
 #define AL_QSPI_ERR_NOT_SUPPORT      AL_DEF_ERR(AL_QSPI, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_SUPPORT)
 #define AL_QSPI_ERR_NOT_READY        AL_DEF_ERR(AL_QSPI, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_READY)
+#define AL_QSPI_EVENTS_TO_ERRS(Event) (AL_DEF_ERR(AL_QSPI, AL_LOG_LEVEL_ERROR, Event))
 
 typedef AL_S32 (*QSPI_EventCallBack)(AL_QSPI_EventStruct QspiEvent, AL_VOID *CallbackRef);
 
 typedef struct
 {
-    AL_REG                        BaseAddr;
-    AL_U8                         Fifolen;
+    AL_QSPI_HwConfigStruct        HwConfig;
     AL_S32                        BitsPerWord;
     AL_QSPI_ConfigsStruct         Configs;
     AL_QSPI_BufferStruct          SendBuffer;
@@ -76,10 +76,16 @@ typedef struct
 typedef enum
 {
     AL_QSPI_IOCTL_SET_SLAVE_SELECT,
-    AL_QSPI_IOCTL_GET_SLAVE_SELECT
+    AL_QSPI_IOCTL_GET_SLAVE_SELECT,
+    AL_QSPI_IOCTL_SET_CLOCK_DIV,
+    AL_QSPI_IOCTL_GET_CLOCK_DIV,
+    AL_QSPI_IOCTL_SET_SLV_TOGGLE,
+    AL_QSPI_IOCTL_GET_SLV_TOGGLE,
+    AL_QSPI_IOCTL_SET_SAMPLE_DELAY,
+    AL_QSPI_IOCTL_GET_SAMPLE_DELAY,
 } AL_Qspi_IoCtlCmdEnum;
 
-AL_S32 AlQspi_Dev_Init(AL_QSPI_DevStruct *Qspi, AL_QSPI_ConfigsStruct *Init);
+AL_S32 AlQspi_Dev_Init(AL_QSPI_DevStruct *Qspi, AL_QSPI_HwConfigStruct *HwConfig, AL_QSPI_ConfigsStruct *Init);
 AL_S32 AlQspi_Dev_SendData(AL_QSPI_DevStruct *Qspi, AL_U8 *Data, AL_U32 SendSize);
 AL_S32 AlQspi_Dev_RecvData(AL_QSPI_DevStruct *Qspi, AL_U8 *Data, AL_U16 ReceiveSize);
 AL_S32 AlQspi_Dev_TranferData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 SendSize, AL_U8 *ReceiveBuf, AL_U16 ReceiveSize);

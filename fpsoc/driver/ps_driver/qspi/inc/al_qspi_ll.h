@@ -96,6 +96,7 @@ typedef enum
 
 typedef enum
 {
+    QSPI_SER_SS_DIS      = 0,
     QSPI_SER_SS0_EN      = (1 << 0),
     QSPI_SER_SS1_EN      = (1 << 1),
     QSPI_SER_SS2_EN      = (1 << 2)
@@ -292,15 +293,20 @@ typedef enum
 
 typedef enum
 {
-    AL_QSPI_SEND_DONE                = (0x01),
-    AL_QSPI_RECEIVE_DONE             = (0x01 << 1),
-    AL_QSPI_SEND_TIMEOUT             = (0x01 << 2),
-    AL_QSPI_RECEIVE_TIMEOUT          = (0x01 << 3)
+    AL_QSPI_SEND_DONE                = BIT(0),
+    AL_QSPI_RECEIVE_DONE             = BIT(1),
+    AL_QSPI_SEND_TIMEOUT             = BIT(2),
+    AL_QSPI_RECEIVE_TIMEOUT          = BIT(3),
+    AL_QSPI_TX_FO                    = BIT(4),
+    AL_QSPI_RX_FO                    = BIT(5),
+    AL_QSPI_RX_FU                    = BIT(6),
+    AL_QSPI_TX_FIFO_EMPTY            = BIT(7),
+    AL_QSPI_RX_FIFO_FULL             = BIT(8),
 } AL_QSPI_EventIdEnum;
 
 typedef struct
 {
-    AL_QSPI_EventIdEnum      Event;
+    AL_QSPI_EventIdEnum     Events;
     AL_U32                  EventData;
 } AL_QSPI_EventStruct;
 
@@ -329,7 +335,6 @@ typedef struct
     AL_QSPI_InstLengthEnum      InstLength;
     AL_QSPI_TransType           TransType;
     AL_U16                      WaitCycles;
-    AL_QSPI_ClockStretchEnum    ClockStretch;
 } AL_QSPI_EnSpiCfgStruct;
 typedef struct
 {
@@ -342,26 +347,27 @@ typedef struct
     AL_QSPI_XipPort1NorFlashSize    Nor1FlashSize;
 } AL_QSPI_XipCfgStruct;
 
+typedef struct
+{
+    AL_QSPI_TransferMode        TransMode;
+    AL_QSPI_DataFrameSize       DataFrameSize;
+    AL_QSPI_SlvSelEnum          SlvSelEnum;
+    AL_QSPI_EnSpiCfgStruct      EnSpiCfg;
+} AL_QSPI_TransStruct;
+
 /**
  * @brief  Configs Struct
  */
 typedef struct
 {
-    AL_QSPI_TransferMode        TransMode;
     AL_QSPI_FrfEnum             SpiFrameFormat;
-    AL_QSPI_EnSpiCfgStruct      EnSpiCfg;
-    AL_QSPI_DataFrameSize       DataFrameSize;
     AL_U16                      ClkDiv;
     AL_U16                      SamplDelay;
     AL_QSPI_SlvSelToggleEnum    SlvToggleEnum;
-    AL_QSPI_SlvSelEnum          SlvSelEnum;
+    AL_QSPI_ClockStretchEnum    ClockStretch;  /* clock stretch is useful in SPI_QUAD_FORMAT and SPI_QUAD_FORMAT */
     AL_QSPI_XipCfgStruct        XipCfg;
-    AL_QSPI_IsDmaEnum           IsUseDma;
+    AL_QSPI_TransStruct         Trans;
 } AL_QSPI_ConfigsStruct;
-
-
-
-
 
 /**
  * This function disbale qspi.
