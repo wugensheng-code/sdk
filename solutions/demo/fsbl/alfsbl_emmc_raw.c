@@ -54,9 +54,9 @@ uint32_t AlFsbl_EmmcRawCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t L
     uint32_t firstblockbytes    = (firstblockstore > Length)? Length : firstblockstore;
     uint32_t lastblockbytes     = endpoint % blocksize + 1;
 
-    printf("offset = %d, Length = %d\r\n", Offset, Length);
-    printf("startblock: %d\tfirstblockoffset: %d\tfirstblockbytes: %d\r\n", startblock, firstblockoffset, firstblockbytes);
-    printf("endblock: %d\tlastblockbytes: %d\t\r\n", endblock, lastblockbytes);
+    printf("offset = %u, Length = %u\r\n", Offset, Length);
+    printf("startblock: %u\tfirstblockoffset: %u\tfirstblockbytes: %u\r\n", startblock, firstblockoffset, firstblockbytes);
+    printf("endblock: %u\tlastblockbytes: %u\t\r\n", endblock, lastblockbytes);
 
     for (uint32_t i = startblock; i <= endblock; i++) {
         if (i == startblock) {

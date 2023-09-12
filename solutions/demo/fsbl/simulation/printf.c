@@ -201,28 +201,37 @@ static int  __attribute__((optimize("Os"))) print( char **out, const char *forma
 
 int  __attribute__((optimize("Os"))) printf(const char *format, ...)
 {
+		register int pc = 0;
         va_list args;
 
         va_start( args, format );
-        return print( 0, format, args );
+        pc = print( 0, format, args );
+		va_end(args);
+		return pc;
 }
 
 int  __attribute__((optimize("Os"))) sprintf(char *out, const char *format, ...)
 {
+		register int pc = 0;
         va_list args;
 
         va_start( args, format );
-        return print( &out, format, args );
+        pc = print( &out, format, args );
+		va_end(args);
+		return pc;
 }
 
 int  __attribute__((optimize("Os"))) snprintf( char *buf, unsigned long count, const char *format, ... )
 {
+		register int pc = 0;
         va_list args;
 
         ( void ) count;
 
         va_start( args, format );
-        return print( &buf, format, args );
+        pc = print( &buf, format, args );
+		va_end(args);
+		return pc;
 }
 
 /* To keep linker happy. */

@@ -17,8 +17,6 @@ extern "C" {
 #include <stdint.h>
 //#include "alfsbl_hw.h"
 
-//#define CSUDMA_BLOCK_LENGTH_MAX   (0xFFC0UL)
-#define CSUDMA_BLOCK_LENGTH_MAX   (512UL)
 
 
 #define PPK_BYTE_LENGTH  (64U)

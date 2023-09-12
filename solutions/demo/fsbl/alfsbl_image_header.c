@@ -64,7 +64,7 @@ uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 	}
 
 	ImageOffsetAddress = FsblInstancePtr->ImageOffsetAddress;
-	printf("FsblInstancePtr->ImageOffsetAddress: 0x%08x\r\n", ImageOffsetAddress);
+	printf("FsblInstancePtr->ImageOffsetAddress: 0x%lx\r\n", ImageOffsetAddress);
 
 	/// copy boot header to internal memory
 	Status = FsblInstancePtr->DeviceOps.DeviceCopy(
@@ -181,7 +181,6 @@ uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl)
 	uint32_t AcOffset;
 	uint32_t BootHdrAttrb;
 	uint32_t Status = ALFSBL_SUCCESS;
-	uint8_t  AuthType;
 	uint8_t HashBuffer[32];
 	SecureInfo FsblIHSecInfo = {0};
 
@@ -223,7 +222,7 @@ uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl)
 		Status = ALFSBL_ERROR_SEC_PARAM_INVALID;
 		goto END;
 	}
-	printf("auth type: %x\r\n", AuthType);
+	printf("auth type: %x\r\n", FsblIHSecInfo.AuthType);
 
 	AcOffset = FsblInstancePtr->ImageHeader.BootHeader.BhAcOffset;
 	if(AcOffset == 0) {
@@ -292,7 +291,7 @@ uint32_t AlFsbl_PpkVerification(AlFsblInfo *FsblInstancePtr, uint32_t BootHdrAtt
 	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM);
 	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM + 64);
 	uint8_t HashBuffer[32];
-	uint8_t *pPpkHashAddr;
+	uint8_t *pPpkHashAddr = AL_NULL;
 	SecureInfo FsblPpkSecInfo = {0};
 
 	if((EfuseCtrl & EFUSE_PPK_HASH_TYPE_MASK) == EFUSE_PPK_HASH_TYPE_SM3) {

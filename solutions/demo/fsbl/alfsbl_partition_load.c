@@ -111,7 +111,7 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 	/// check partition owner
 	if((PartitionAttr & ALIH_PH_ATTRIB_PART_OWNER_MASK) != ALIH_PH_ATTRIB_PART_OWNER_FSBL) {
 		printf("Partition owner: %08x\r\n", PtHdr->PartitionAttribute & ALIH_PH_ATTRIB_PART_OWNER_MASK);
-		printf("Partition owner not fsbl, skip it, partition num: %d\r\n", PartitionIdx);
+		printf("Partition owner not fsbl, skip it, partition num: %u\r\n", PartitionIdx);
 		Status = ALFSBL_SUCCESS_NOT_PARTITION_OWNER;
 		goto END;
 	}
@@ -344,8 +344,8 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	LoadAddress = PtHdr->DestLoadAddr;
 	Length = PtHdr->PartitionLen;
 
-	printf("partition src address      : 0x%08x\r\n", SrcAddress);
-	printf("partition load dest address: 0x%08x\r\n", LoadAddress);
+	printf("partition src address      : 0x%lx\r\n", SrcAddress);
+	printf("partition load dest address: 0x%lx\r\n", LoadAddress);
 	printf("partition length           : 0x%08x\r\n", Length);
 
 	pSecureInfo->HashOutAddr    = (uint32_t)HashBuffer;
@@ -580,7 +580,7 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 			goto END;
 		}
 #else
-		printf("to ocm in blocks, Block size: %d\r\n", BlockSizeMax);
+		printf("to ocm in blocks, Block size: %u\r\n", BlockSizeMax);
 		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)ReadBuffer, BlockSizeMax);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
@@ -601,7 +601,7 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 			goto END;
 		}		
 #else
-		printf("to ocm in blocks, Block size: %d\r\n", BlockSizeMax);
+		printf("to ocm in blocks, Block size: %u\r\n", BlockSizeMax);
 		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)ReadBuffer, BlockSizeMax);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
@@ -742,7 +742,7 @@ static uint32_t AlFsbl_BitstreamDataTransfer(AlFsblInfo *FsblInstancePtr, Secure
 	while(Length != 0) {
 		/// data transfer
 		if(((BlockCnt + 1) % 100) == 0) {
-			printf("Blk num: %d\r\n", BlockCnt);
+			printf("Blk num: %u\r\n", BlockCnt);
 		}
 
 		if(DestAddr == CSU_PCAP_WR_STREAM) {
@@ -863,8 +863,8 @@ void AlFsbl_PrintPartitionHeaderInfo(AlFsbl_PartitionHeader *PtHdr)
 	printf("Extracted Partition Length  : 0x%08x\r\n", PtHdr->ExtractedPartitionLen);
 	printf("Total Partition Length      : 0x%08x\r\n", PtHdr->TotalPartitionLen);
 	printf("Next Partition Header Offset: 0x%08x\r\n", PtHdr->NextPartHdrOffset);
-	printf("Dest Execution Address      : 0x%08x\r\n", PtHdr->DestExecAddr);
-	printf("Dest Load Address           : 0x%08x\r\n", PtHdr->DestLoadAddr);
+	printf("Dest Execution Address      : 0x%lx\r\n", PtHdr->DestExecAddr);
+	printf("Dest Load Address           : 0x%lx\r\n", PtHdr->DestLoadAddr);
 	printf("Partition Offset            : 0x%08x\r\n", PtHdr->PartitionOffset);
 	printf("Partition Attribute         : 0x%08x\r\n", PtHdr->PartitionAttribute);
 	printf("Hash Data offset            : 0x%08x\r\n", PtHdr->HashDataOffset);

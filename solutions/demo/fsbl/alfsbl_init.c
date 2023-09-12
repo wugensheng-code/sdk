@@ -93,9 +93,7 @@ static uint32_t AlFsbl_SystemInit(AlFsblInfo *FsblInstancePtr)
 {
 	uint32_t Status = 0;
 
-	// isolate PL-PS cross interface
-	// make sure FSBL exits with isolation removed
-//	REG32(CRP_ISO_CTRL) = REG32(CRP_ISO_CTRL) | CRP_ISO_CTRL_MSK_PL_OTHER_IN;
+
 
 //	// set PCAP not enable, to make the signal to config model not change
 //	REG32(CSU_PCAP_ENABLE) = 0;
