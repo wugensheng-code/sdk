@@ -15,7 +15,7 @@
 /***************** Macros (Inline Functions) Definitions *********************/
 
 /************************** Variable Definitions *****************************/
-static AL_SPI_DevStruct AL_SPI_DevInstance[AL_SPI_NUM_INSTANCE];
+AL_SPI_HalStruct AlSpiHandle[AL_SPI_NUM_INSTANCE];
 
 AL_DMACAHB_ChInitStruct     Spi0TxDmacChConfig;
 AL_DMACAHB_HalStruct        Spi0TxDmacHandle;
@@ -39,15 +39,15 @@ static AL_S32 AlSpi_Hal_WaitTxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_SPI_Eve
 {
 
 #ifdef SPI_DEBUG
-    AlSpi_Dev_DumpReg(Handle->Dev->BaseAddr);
+    AlSpi_Dev_DumpReg(Handle->Dev.HwConfig.BaseAddress);
 #endif
 
     AL_S32 Ret;
     Ret = AlOsal_Mb_Receive(&Handle->TxEventQueue, Event, Timeout);
 
-    while(SPI_SR_BUSY == AlSpi_ll_IsBusy(Handle->Dev->BaseAddr));
+    while(SPI_SR_BUSY == AlSpi_ll_IsBusy(Handle->Dev.HwConfig.BaseAddress));
 
-    AlSpi_ll_SetSlvSel(Handle->Dev->BaseAddr, SPI_SER_SS_DIS);
+    AlSpi_ll_SetSlvSel(Handle->Dev.HwConfig.BaseAddress, SPI_SER_SS_DIS);
     return Ret;
 }
 
@@ -61,13 +61,13 @@ static AL_S32 AlSpi_Hal_WaitTxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_SPI_Eve
 static AL_S32 AlSpi_Hal_WaitRxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_SPI_EventStruct *Event, AL_U32 Timeout)
 {
 #ifdef SPI_DEBUG
-    AlSpi_Dev_DumpReg(Handle->Dev->BaseAddr);
+    AlSpi_Dev_DumpReg(Handle->Dev.HwConfig.BaseAddress);
 #endif
     AL_S32 Ret;
     Ret = AlOsal_Mb_Receive(&Handle->RxEventQueue, Event, Timeout);
-    while(SPI_SR_BUSY == AlSpi_ll_IsBusy(Handle->Dev->BaseAddr));
+    while(SPI_SR_BUSY == AlSpi_ll_IsBusy(Handle->Dev.HwConfig.BaseAddress));
 
-    AlSpi_ll_SetSlvSel(Handle->Dev->BaseAddr, SPI_SER_SS_DIS);
+    AlSpi_ll_SetSlvSel(Handle->Dev.HwConfig.BaseAddress, SPI_SER_SS_DIS);
 
     return Ret;
 }
@@ -82,25 +82,25 @@ static AL_S32 AlSpi_Hal_WaitRxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_SPI_Eve
 static AL_S32 AlSpi_Hal_WaitTxRxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_SPI_EventStruct *Event, AL_U32 Timeout)
 {
 #ifdef SPI_DEBUG
-    AlSpi_Dev_DumpReg(Handle->Dev->BaseAddr);
+    AlSpi_Dev_DumpReg(Handle->Dev.HwConfig.BaseAddress);
 #endif
 
     AL_S32 Ret;
     Ret = AlOsal_Mb_Receive(&Handle->TxEventQueue, Event, Timeout);
     if (AL_OK != Ret) {
-        AlSpi_ll_SetSlvSel(Handle->Dev->BaseAddr, SPI_SER_SS_DIS);
+        AlSpi_ll_SetSlvSel(Handle->Dev.HwConfig.BaseAddress, SPI_SER_SS_DIS);
         return Ret;
     }
 
     Ret = AlOsal_Mb_Receive(&Handle->RxEventQueue, Event, Timeout);
     if (AL_OK != Ret) {
-        AlSpi_ll_SetSlvSel(Handle->Dev->BaseAddr, SPI_SER_SS_DIS);
+        AlSpi_ll_SetSlvSel(Handle->Dev.HwConfig.BaseAddress, SPI_SER_SS_DIS);
         return Ret;
     }
 
-    while(SPI_SR_BUSY == AlSpi_ll_IsBusy(Handle->Dev->BaseAddr));
+    while(SPI_SR_BUSY == AlSpi_ll_IsBusy(Handle->Dev.HwConfig.BaseAddress));
 
-    AlSpi_ll_SetSlvSel(Handle->Dev->BaseAddr, SPI_SER_SS_DIS);
+    AlSpi_ll_SetSlvSel(Handle->Dev.HwConfig.BaseAddress, SPI_SER_SS_DIS);
 
     return Ret;
 }
@@ -112,7 +112,7 @@ static AL_S32 AlSpi_Hal_WaitTxRxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_SPI_E
  * @return  AL_OK
  * @note    None
 */
-static AL_S32 AlSpi_DefEventCallBack(AL_SPI_EventStruct SpiEvent, void *CallbackRef)
+static AL_VOID AlSpi_DefEventCallBack(AL_SPI_EventStruct SpiEvent, void *CallbackRef)
 {
     AL_SPI_HalStruct *Handle = (AL_SPI_HalStruct *)CallbackRef;
     AL_S32 Ret = AL_OK;
@@ -150,8 +150,7 @@ static AL_S32 AlSpi_DefEventCallBack(AL_SPI_EventStruct SpiEvent, void *Callback
  * @return  The state of function execution
  * @note    None
 */
-AL_S32 AlSpi_Hal_Init(AL_SPI_HalStruct *Handle, AL_SPI_ConfigsStruct *InitConfig, SPI_EventCallBack Callback,
-                      AL_VOID *CallbackRef, AL_U32 DevId)
+AL_S32 AlSpi_Hal_Init(AL_SPI_HalStruct **Handle, AL_SPI_ConfigsStruct *InitConfig, SPI_EventCallBack Callback, AL_U32 DevId)
 {
     AL_S32 Ret = AL_OK;
     AL_SPI_HwConfigStruct *HwConfig = AL_NULL;
@@ -160,41 +159,37 @@ AL_S32 AlSpi_Hal_Init(AL_SPI_HalStruct *Handle, AL_SPI_ConfigsStruct *InitConfig
 
     HwConfig = AlSpi_Dev_LookupConfig(DevId);
     if (HwConfig != AL_NULL) {
-        Handle->Dev = &AL_SPI_DevInstance[HwConfig->DeviceId];
-        Handle->Dev->BaseAddr = HwConfig->BaseAddress;
-        Handle->Dev->Fifolen  = HwConfig->FifoLen;
+        *Handle = &AlSpiHandle[DevId];
     } else {
         return AL_SPI_ERR_ILLEGAL_PARAM;
     }
 
-    Ret = AlSpi_Dev_Init(Handle->Dev, InitConfig);
+    Ret = AlSpi_Dev_Init(&(*Handle)->Dev, HwConfig, InitConfig);
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Handle->Dev->Configs.Trans.SlvSelEnum = HwConfig->CsSel;
+    (*Handle)->Dev.Configs.Trans.SlvSelEnum = HwConfig->CsSel;
 
     if(AL_NULL == Callback) {
-        Ret = AlSpi_Dev_RegisterIntrCallBack(Handle->Dev, AlSpi_DefEventCallBack, (void *)Handle);
+        Ret = AlSpi_Dev_RegisterIntrCallBack(&(*Handle)->Dev, AlSpi_DefEventCallBack, (void *)*Handle);
     } else {
-        Ret = AlSpi_Dev_RegisterIntrCallBack(Handle->Dev, Callback, (void *)Handle);
+        Ret = AlSpi_Dev_RegisterIntrCallBack(&(*Handle)->Dev, Callback, (void *)*Handle);
     }
 
-    (AL_VOID)AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlSpi_Dev_IntrHandler, Handle->Dev);
+    (AL_VOID)AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlSpi_Dev_IntrHandler, &(*Handle)->Dev);
 
-    Ret = AlOsal_Lock_Init(&Handle->SpiLock, "SpiLock");
+    Ret = AlOsal_Lock_Init(&(*Handle)->SpiLock, "SpiLock");
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Ret = AlOsal_Mb_Init(&Handle->TxEventQueue, "SPI_TXDONE");
+    Ret = AlOsal_Mb_Init(&(*Handle)->TxEventQueue, "SPI_TXDONE");
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Ret = AlOsal_Mb_Init(&Handle->RxEventQueue, "SPI_RXDONE");
-
-    Ret = AlOsal_Mb_Init(&Handle->RxEventQueue, "SPI_RXDONE");
+    Ret = AlOsal_Mb_Init(&(*Handle)->RxEventQueue, "SPI_RXDONE");
 
     return Ret;
 }
@@ -214,14 +209,14 @@ AL_S32 AlSpi_Hal_SendDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *Data, AL_U32 Siz
     AL_SPI_EventStruct SpiEvent = {0};
 
     /* check only Handle,Handle->Dev more checks in AlSpi_Dev_Init function */
-    AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_SPI_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL), AL_SPI_ERR_ILLEGAL_PARAM);
 
     Ret = AlOsal_Lock_Take(&Handle->SpiLock, Timeout);
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Ret = AlSpi_Dev_SendData(Handle->Dev, Data, Size);
+    Ret = AlSpi_Dev_SendData(&Handle->Dev, Data, Size);
     if (Ret != AL_OK) {
         (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
         return Ret;
@@ -232,7 +227,7 @@ AL_S32 AlSpi_Hal_SendDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *Data, AL_U32 Siz
         /*
         * if timeout, mask SPI_TXEIM interrupt
         */
-        AlSpi_ll_MaskIntr(Handle->Dev->BaseAddr, SPI_TXEIM);
+        AlSpi_ll_MaskIntr(Handle->Dev.HwConfig.BaseAddress, SPI_TXEIM);
     }
 
     (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
@@ -258,14 +253,14 @@ AL_S32 AlSpi_Hal_RecvDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *Data, AL_U32 Siz
     AL_SPI_EventStruct SpiEvent = {0};
 
     /* check only Handle,Handle->Dev more checks in AlSpi_Dev_Init function */
-    AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_SPI_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL), AL_SPI_ERR_ILLEGAL_PARAM);
 
     Ret = AlOsal_Lock_Take(&Handle->SpiLock, Timeout);
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Ret = AlSpi_Dev_RecvData(Handle->Dev, Data, Size);
+    Ret = AlSpi_Dev_RecvData(&Handle->Dev, Data, Size);
     if (Ret != AL_OK) {
         (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
         return Ret;
@@ -274,7 +269,7 @@ AL_S32 AlSpi_Hal_RecvDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *Data, AL_U32 Siz
     /* wait until data receive done */
     Ret = AlSpi_Hal_WaitRxDoneOrTimeout(Handle, &SpiEvent, Timeout);
     if (Ret != AL_OK) {
-        AlSpi_ll_MaskIntr(Handle->Dev->BaseAddr, SPI_RXFIM);
+        AlSpi_ll_MaskIntr(Handle->Dev.HwConfig.BaseAddress, SPI_RXFIM);
     }
 
     (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
@@ -303,14 +298,14 @@ AL_S32 AlSpi_Hal_TranferDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL_
     AL_SPI_EventStruct SpiEvent = {0};
 
     /* check only Handle,Handle->Dev more checks in AlSpi_Dev_Init function */
-    AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_SPI_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL), AL_SPI_ERR_ILLEGAL_PARAM);
 
     Ret = AlOsal_Lock_Take(&Handle->SpiLock, Timeout);
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Ret = AlSpi_Dev_TranferData(Handle->Dev, SendData, SendSize, RecvData, RecvSize);
+    Ret = AlSpi_Dev_TranferData(&Handle->Dev, SendData, SendSize, RecvData, RecvSize);
     if (Ret != AL_OK) {
         (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
         return Ret;
@@ -319,7 +314,7 @@ AL_S32 AlSpi_Hal_TranferDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL_
     /* wait until data done */
     Ret = AlSpi_Hal_WaitTxRxDoneOrTimeout(Handle, &SpiEvent, Timeout);
     if (Ret != AL_OK) {
-        AlSpi_ll_MaskIntr(Handle->Dev->BaseAddr, SPI_TXEIM | SPI_RXFIM);
+        AlSpi_ll_MaskIntr(Handle->Dev.HwConfig.BaseAddress, SPI_TXEIM | SPI_RXFIM);
     }
 
     (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
@@ -351,9 +346,9 @@ AL_S32 AlSpi_Hal_DmaStartBlockSend(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL
     AL_DMACAHB_HalStruct        *SpiTxDmacHandlePtr;
 
     /* check only Handle,Handle->Dev more checks in AlSpi_Dev_Init function */
-    AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_SPI_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL), AL_SPI_ERR_ILLEGAL_PARAM);
 
-    if (Handle->Dev->BaseAddr < SPI1_BASE_ADDR) {
+    if (Handle->Dev.HwConfig.BaseAddress < SPI1_BASE_ADDR) {
         SpiTxDmacChConfigPtr = &Spi0TxDmacChConfig;
         SpiTxDmacHandlePtr = &Spi0TxDmacHandle;
     } else {
@@ -366,7 +361,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockSend(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL
         return Ret;
     }
 
-    Ret = AlSpi_Dev_DmaSendData(Handle->Dev);
+    Ret = AlSpi_Dev_DmaSendData(&Handle->Dev);
     if (Ret != AL_OK) {
         (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
         return Ret;
@@ -386,7 +381,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockSend(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL
         SpiTxDmacChConfigPtr->DstBurstLength = AL_DMACAHB_MSIZE_1;
 
         SpiTxDmacChConfigPtr->Direction = AL_DMACAHB_TT_FC_MEM2PER;
-        if (Handle->Dev->BaseAddr < SPI1_BASE_ADDR) {
+        if (Handle->Dev.HwConfig.BaseAddress < SPI1_BASE_ADDR) {
             SpiTxDmacChConfigPtr->HandShaking.DstPer = AL_DMACAHB_PER_SPI0_TX;
         } else {
             SpiTxDmacChConfigPtr->HandShaking.DstPer = AL_DMACAHB_PER_SPI1_TX;
@@ -412,7 +407,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockSend(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL
 
     SpiTxDmacChTrans = &(SpiTxDmacHandlePtr->Channel.Trans);
     SpiTxDmacChTrans->SrcAddr        = (AL_REG)SendData;
-    SpiTxDmacChTrans->DstAddr        = Handle->Dev->BaseAddr + SPI_DR0_MST_OFFSET;
+    SpiTxDmacChTrans->DstAddr        = Handle->Dev.HwConfig.BaseAddress + SPI_DR0_MST_OFFSET;
     SpiTxDmacChTrans->TransSize      = SendSize;
 
     Ret = AlDmacAhb_Hal_StartBlock(SpiTxDmacHandlePtr, Timeout);
@@ -446,9 +441,9 @@ AL_S32 AlSpi_Hal_DmaStartBlockReceive(AL_SPI_HalStruct *Handle, AL_U8 *RecvData,
     AL_DMACAHB_HalStruct        *SpiRxDmacHandlePtr;
 
     /* check only Handle,Handle->Dev more checks in AlSpi_Dev_Init function */
-    AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_SPI_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL), AL_SPI_ERR_ILLEGAL_PARAM);
 
-    if (Handle->Dev->BaseAddr < SPI1_BASE_ADDR) {
+    if (Handle->Dev.HwConfig.BaseAddress < SPI1_BASE_ADDR) {
         SpiRxDmacChConfigPtr = &Spi0RxDmacChConfig;
         SpiRxDmacHandlePtr = &Spi0RxDmacHandle;
     } else {
@@ -461,7 +456,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockReceive(AL_SPI_HalStruct *Handle, AL_U8 *RecvData,
         return Ret;
     }
 
-    Ret = AlSpi_Dev_DmaRecvData(Handle->Dev, RecvSize);
+    Ret = AlSpi_Dev_DmaRecvData(&Handle->Dev, RecvSize);
     if (Ret != AL_OK) {
         (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
         return Ret;
@@ -479,7 +474,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockReceive(AL_SPI_HalStruct *Handle, AL_U8 *RecvData,
         SpiRxDmacChConfigPtr->SrcBurstLength = AL_DMACAHB_MSIZE_1;
         SpiRxDmacChConfigPtr->DstBurstLength = AL_DMACAHB_MSIZE_1;
         SpiRxDmacChConfigPtr->Direction = AL_DMACAHB_TT_FC_PER2MEM;
-        if (Handle->Dev->BaseAddr < SPI1_BASE_ADDR) {
+        if (Handle->Dev.HwConfig.BaseAddress < SPI1_BASE_ADDR) {
             SpiRxDmacChConfigPtr->HandShaking.SrcPer = AL_DMACAHB_PER_SPI0_RX;
         } else {
             SpiRxDmacChConfigPtr->HandShaking.SrcPer = AL_DMACAHB_PER_SPI1_RX;
@@ -504,7 +499,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockReceive(AL_SPI_HalStruct *Handle, AL_U8 *RecvData,
     }
 
     SpiRxDmacChTrans = &(SpiRxDmacHandlePtr->Channel.Trans);
-    SpiRxDmacChTrans->SrcAddr        = Handle->Dev->BaseAddr + SPI_DR0_MST_OFFSET;
+    SpiRxDmacChTrans->SrcAddr        = Handle->Dev.HwConfig.BaseAddress + SPI_DR0_MST_OFFSET;
     SpiRxDmacChTrans->DstAddr        = (AL_REG)RecvData;
     SpiRxDmacChTrans->TransSize      = RecvSize;
 
@@ -546,9 +541,9 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
     AL_S32                      Ret = AL_OK;
 
     /* check only Handle,Handle->Dev more checks in AlSpi_Dev_Init function */
-    AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_SPI_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL), AL_SPI_ERR_ILLEGAL_PARAM);
 
-    if (Handle->Dev->BaseAddr < SPI1_BASE_ADDR) {
+    if (Handle->Dev.HwConfig.BaseAddress < SPI1_BASE_ADDR) {
         SpiTxDmacChConfigPtr = &Spi0TxDmacChConfig;
         SpiTxDmacHandlePtr = &Spi0TxDmacHandle;
         SpiRxDmacChConfigPtr = &Spi0RxDmacChConfig;
@@ -565,7 +560,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
         return Ret;
     }
 
-    Ret = AlSpi_Dev_DmaTranferData(Handle->Dev, RecvSize);
+    Ret = AlSpi_Dev_DmaTranferData(&Handle->Dev, RecvSize);
     if (Ret != AL_OK) {
         (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
         return Ret;
@@ -585,7 +580,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
 
         SpiTxDmacChConfigPtr->Direction = AL_DMACAHB_TT_FC_MEM2PER;
 
-        if (Handle->Dev->BaseAddr < SPI1_BASE_ADDR) {
+        if (Handle->Dev.HwConfig.BaseAddress < SPI1_BASE_ADDR) {
             SpiTxDmacChConfigPtr->HandShaking.DstPer = AL_DMACAHB_PER_SPI0_TX;
         } else {
             SpiTxDmacChConfigPtr->HandShaking.DstPer = AL_DMACAHB_PER_SPI1_TX;
@@ -623,7 +618,7 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
         SpiRxDmacChConfigPtr->DstBurstLength = AL_DMACAHB_MSIZE_1;
         SpiRxDmacChConfigPtr->Direction = AL_DMACAHB_TT_FC_PER2MEM;
 
-        if (Handle->Dev->BaseAddr < SPI1_BASE_ADDR) {
+        if (Handle->Dev.HwConfig.BaseAddress < SPI1_BASE_ADDR) {
             SpiRxDmacChConfigPtr->HandShaking.SrcPer = AL_DMACAHB_PER_SPI0_RX;
         } else {
             SpiRxDmacChConfigPtr->HandShaking.SrcPer = AL_DMACAHB_PER_SPI1_RX;
@@ -650,11 +645,11 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
 
     SpiTxDmacChTrans = &(SpiTxDmacHandlePtr->Channel.Trans);
     SpiTxDmacChTrans->SrcAddr        = (AL_REG)SendData;
-    SpiTxDmacChTrans->DstAddr        = Handle->Dev->BaseAddr + SPI_DR0_MST_OFFSET;
+    SpiTxDmacChTrans->DstAddr        = Handle->Dev.HwConfig.BaseAddress + SPI_DR0_MST_OFFSET;
     SpiTxDmacChTrans->TransSize      = SendSize;
 
     SpiRxDmacChTrans = &(SpiRxDmacHandlePtr->Channel.Trans);
-    SpiRxDmacChTrans->SrcAddr        = Handle->Dev->BaseAddr + SPI_DR0_MST_OFFSET;
+    SpiRxDmacChTrans->SrcAddr        = Handle->Dev.HwConfig.BaseAddress + SPI_DR0_MST_OFFSET;
     SpiRxDmacChTrans->DstAddr        = (AL_REG)RecvData;
     SpiRxDmacChTrans->TransSize      = RecvSize;
 
@@ -688,14 +683,14 @@ AL_S32 AlSpi_Hal_IoCtl(AL_SPI_HalStruct *Handle, AL_Spi_IoCtlCmdEnum Cmd, AL_VOI
     AL_S32 Ret = AL_OK;
 
     /* check only Handle,Handle->Dev more checks in AlSpi_Dev_Init function */
-    AL_ASSERT((Handle != AL_NULL && Handle->Dev != AL_NULL), AL_SPI_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL), AL_SPI_ERR_ILLEGAL_PARAM);
 
     Ret = AlOsal_Lock_Take(&Handle->SpiLock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         return Ret;
     }
 
-    Ret = AlSpi_Dev_IoCtl(Handle->Dev, Cmd, Data);
+    Ret = AlSpi_Dev_IoCtl(&Handle->Dev, Cmd, Data);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Spi io ctl cmd error:%d\r\n", Ret);
     }

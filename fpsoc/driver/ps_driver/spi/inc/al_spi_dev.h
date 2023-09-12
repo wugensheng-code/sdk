@@ -59,8 +59,7 @@ typedef AL_S32 (*SPI_EventCallBack)(AL_SPI_EventStruct SpiEvent, AL_VOID *Callba
 
 typedef struct
 {
-    AL_REG                        BaseAddr;
-    AL_U8                         Fifolen;
+    AL_SPI_HwConfigStruct         HwConfig;
     AL_S32                        BitsPerWord;
     AL_SPI_ConfigsStruct          Configs;
     AL_SPI_BufferStruct           SendBuffer;
@@ -90,7 +89,7 @@ typedef enum
     AL_SPI_IOCTL_GET_SLV_TOGGLE,
 } AL_Spi_IoCtlCmdEnum;
 
-AL_S32 AlSpi_Dev_Init(AL_SPI_DevStruct *Spi, AL_SPI_ConfigsStruct *Init);
+AL_S32 AlSpi_Dev_Init(AL_SPI_DevStruct *Spi, AL_SPI_HwConfigStruct *HwConfig, AL_SPI_ConfigsStruct *Init);
 AL_S32 AlSpi_Dev_SendData(AL_SPI_DevStruct *Spi, AL_U8 *Data, AL_U32 SendSize);
 AL_S32 AlSpi_Dev_RecvData(AL_SPI_DevStruct *Spi, AL_U8 *Data, AL_U16 ReceiveSize);
 AL_S32 AlSpi_Dev_TranferData(AL_SPI_DevStruct *Spi, AL_U8 *SendBuf, AL_U32 SendSize, AL_U8 *ReceiveBuf, AL_U16 ReceiveSize);
