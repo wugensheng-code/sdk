@@ -3903,10 +3903,12 @@ FRESULT f_read (
 #if FF_FS_TINY
 				if (fs->wflag && fs->winsect - sect < cc) {
 					memcpy(rbuff + ((fs->winsect - sect) * SS(fs)), fs->win, SS(fs));
+					AlCache_FlushDcacheRange((AL_UINTPTR)(rbuff + ((fs->winsect - sect) * SS(fs))), (AL_UINTPTR)(rbuff + ((fs->winsect - sect) * SS(fs)) + SS(fs)));
 				}
 #else
 				if ((fp->flag & FA_DIRTY) && fp->sect - sect < cc) {
 					memcpy(rbuff + ((fp->sect - sect) * SS(fs)), fp->buf, SS(fs));
+					AlCache_FlushDcacheRange((AL_UINTPTR)(rbuff + ((fp->sect - sect) * SS(fs))), (AL_UINTPTR)(rbuff + ((fp->sect - sect) * SS(fs)) + SS(fs)));
 				}
 #endif
 #endif
@@ -3934,6 +3936,7 @@ FRESULT f_read (
 #else
 		memcpy(rbuff, fp->buf + fp->fptr % SS(fs), rcnt);	/* Extract partial sector */
 #endif
+		AlCache_FlushDcacheRange((AL_UINTPTR)rbuff, (AL_UINTPTR)(rbuff + rcnt));
 	}
 
 	LEAVE_FF(fs, FR_OK);

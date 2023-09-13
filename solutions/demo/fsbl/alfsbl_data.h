@@ -14,6 +14,7 @@ extern "C" {
 #include <stdint.h>
 #include "alfsbl_defines.h"
 #include "alfsbl_secure.h"
+#include "al_cache.h"
 
 #if defined (CPU_RPU_64)
 #define PTRSIZE uint64_t
@@ -161,7 +162,7 @@ typedef struct _AlFsbl_PartitionHeader_ {
 
 
 typedef struct _AlFsbl_ImageHeader_ {
-	AlFsbl_BootHeaderFull   BootHeader;
+	AlFsbl_BootHeaderFull   BootHeader CACHE_LINE_ALIGN;
 	AlFsbl_PartitionHeader  PartitionHeader[ALIH_MAX_PARTITIONS];
 } AlFsbl_ImageHeader;
 

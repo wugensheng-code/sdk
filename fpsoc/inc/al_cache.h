@@ -11,6 +11,9 @@
 extern "C" {
 #endif  /* __cplusplus */
 
+#include "al_type.h"
+#include "al_compiler.h"
+
 #ifdef ENABLE_MMU
 #define CACHE_LINE_ALIGN cacheline_aligned
 #else
