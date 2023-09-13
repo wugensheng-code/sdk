@@ -9,10 +9,7 @@
 #include "al_intr.h"
 
 AL_MPU_DevStruct AL_MPU_DevInstance[AL_MPU_NUM_INSTANCE];
-
-#define AL_MPU_HAL_LOCK(Handle)          do {} while (0)
-
-#define AL_MPU_HAL_UNLOCK(Handle)        do {} while (0)
+AL_MPU_HalStruct  AlMpuHandle[AL_IIC_NUM_INSTANCE];
 
 static AL_VOID AlMpu_Hal_MpuRegisterIntr()
 {
@@ -51,11 +48,14 @@ AL_S32 AlMpu_Hal_MpuEnable(AL_MPU_HalStruct *Handle)
 
     AL_ASSERT((Handle != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
-    AL_MPU_HAL_LOCK(Handle);
+    RetValue = AlOsal_Lock_Take(&Handle->Lock, 0);
+    if (RetValue != AL_OK) {
+        return RetValue;
+    }
 
     RetValue = AlMpu_Dev_MpuEnable(Handle->Dev);
 
-    AL_MPU_HAL_UNLOCK(Handle);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return RetValue;
 }
@@ -76,11 +76,14 @@ AL_S32 AlMpu_Hal_MpuDisable(AL_MPU_HalStruct *Handle)
 
     AL_ASSERT((Handle != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
-    AL_MPU_HAL_LOCK(Handle);
+    RetValue = AlOsal_Lock_Take(&Handle->Lock, 0);
+    if (RetValue != AL_OK) {
+        return RetValue;
+    }
 
     RetValue = AlMpu_Dev_MpuDisable(Handle->Dev);
 
-    AL_MPU_HAL_UNLOCK(Handle);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return RetValue;
 }
@@ -102,11 +105,14 @@ AL_S32 AlMpu_Hal_EnableRegion(AL_MPU_HalStruct *Handle, AL_U8 RegionNumber)
 
     AL_ASSERT((Handle != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
-    AL_MPU_HAL_LOCK(Handle);
+    RetValue = AlOsal_Lock_Take(&Handle->Lock, 0);
+    if (RetValue != AL_OK) {
+        return RetValue;
+    }
 
     RetValue = AlMpu_Dev_SetRegionEnableStatus(Handle->Dev, RegionNumber, MPU_REGION_ENABLE);
 
-    AL_MPU_HAL_UNLOCK(Handle);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return RetValue;
 }
@@ -128,11 +134,14 @@ AL_S32 AlMpu_Hal_DisableRegion(AL_MPU_HalStruct *Handle, AL_U8 RegionNumber)
 
     AL_ASSERT((Handle != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
-    AL_MPU_HAL_LOCK(Handle);
+    RetValue = AlOsal_Lock_Take(&Handle->Lock, 0);
+    if (RetValue != AL_OK) {
+        return RetValue;
+    }
 
     RetValue = AlMpu_Dev_SetRegionEnableStatus(Handle->Dev, RegionNumber, MPU_REGION_DISABLE);
 
-    AL_MPU_HAL_UNLOCK(Handle);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return RetValue;
 }
@@ -156,11 +165,14 @@ AL_S32 AlMpu_Hal_ConfigRegionByRegionNum(AL_MPU_HalStruct *Handle, AL_U8 RegionN
 
     AL_ASSERT((Handle != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
-    AL_MPU_HAL_LOCK(Handle);
+    RetValue = AlOsal_Lock_Take(&Handle->Lock, 0);
+    if (RetValue != AL_OK) {
+        return RetValue;
+    }
 
     RetValue = AlMpu_Dev_ConfigRegionByRegionNum(Handle->Dev, RegionNumber, InitRegionConfig);
 
-    AL_MPU_HAL_UNLOCK(Handle);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return RetValue;
 }
@@ -182,11 +194,14 @@ AL_S32 AlMpu_Hal_ConfigRegion(AL_MPU_HalStruct *Handle, AL_MPU_RegionConfigStruc
 
     AL_ASSERT((Handle != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
-    AL_MPU_HAL_LOCK(Handle);
+    RetValue = AlOsal_Lock_Take(&Handle->Lock, 0);
+    if (RetValue != AL_OK) {
+        return RetValue;
+    }
 
     RetValue = AlMpu_Dev_ConfigRegion(Handle->Dev, InitRegionConfig);
 
-    AL_MPU_HAL_UNLOCK(Handle);
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return RetValue;
 }
@@ -205,7 +220,7 @@ AL_S32 AlMpu_Hal_ConfigRegion(AL_MPU_HalStruct *Handle, AL_MPU_RegionConfigStruc
  *
  * @note
  */
-AL_S32 AlMpu_Hal_ConfigInit(AL_U8 MpuDevId, AL_MPU_HalStruct *Handle, AL_Mpu_EventCallBack EventCallBack,
+AL_S32 AlMpu_Hal_ConfigInit(AL_U8 MpuDevId, AL_MPU_HalStruct **Handle, AL_Mpu_EventCallBack EventCallBack,
                             AL_MPU_RegionConfigStruct *InitRegionConfig, AL_U8 ConfigNumber)
 {
     AL_S32 RetValue = AL_OK;
@@ -215,24 +230,22 @@ AL_S32 AlMpu_Hal_ConfigInit(AL_U8 MpuDevId, AL_MPU_HalStruct *Handle, AL_Mpu_Eve
 
     AL_ASSERT((Handle != AL_NULL), AL_MPU_ERR_ILLEGAL_PARAM);
 
-    AL_MPU_HAL_LOCK(Handle);
-
     HwConfig = AlMpu_Dev_LookupConfigByDevId(MpuDevId);
     if (HwConfig != AL_NULL) {
-        Handle->Dev = &AL_MPU_DevInstance[MpuDevId];
+        *Handle = &AlMpuHandle[MpuDevId];
+        (*Handle)->Dev = &AL_MPU_DevInstance[MpuDevId];
     } else {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlMpu_Dev_LookupConfigByDevId invalid device id\r\n");
         return AL_MPU_ERR_INVALID_DEVICE_ID;
     }
 
     CallBack = (EventCallBack == AL_NULL) ? AlMpu_Hal_EventCallBack : EventCallBack;
-    RetValue = AlMpu_Dev_RegisterEventCallBack(Handle->Dev, CallBack, (void *)Handle);
+    RetValue = AlMpu_Dev_RegisterEventCallBack((*Handle)->Dev, CallBack, (void *)Handle);
     if (RetValue != AL_OK) {
-        AL_MPU_HAL_UNLOCK(Handle);
         return RetValue;
     }
 
-    ConfigCount = AlMpu_Dev_Init(Handle->Dev, HwConfig, InitRegionConfig, ConfigNumber);
+    ConfigCount = AlMpu_Dev_Init((*Handle)->Dev, HwConfig, InitRegionConfig, ConfigNumber);
     if (ConfigCount == 0) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlMpu_Dev_Init initialize failed\r\n");
         RetValue = AL_MPU_ERROR_INITIALIZE_FAILED;
@@ -245,7 +258,10 @@ AL_S32 AlMpu_Hal_ConfigInit(AL_U8 MpuDevId, AL_MPU_HalStruct *Handle, AL_Mpu_Eve
         RetValue = AL_OK;
     }
 
-    AL_MPU_HAL_UNLOCK(Handle);
+    RetValue = AlOsal_Lock_Init(&(*Handle)->Lock, "Mpu-Lock");
+    if (RetValue != AL_OK) {
+        return RetValue;
+    }
 
     return RetValue;
 }

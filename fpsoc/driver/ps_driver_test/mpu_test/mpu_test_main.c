@@ -21,8 +21,8 @@ static AL_U8 CpuInSecureMode = 0;
 static AL_U8 CpuInSecureMode = 1;
 #endif /* SUPPORT_NONSECURE */
 
-AL_MPU_HalStruct ApuHandle;
-AL_MPU_HalStruct NpuHandle;
+AL_MPU_HalStruct *ApuHandle;
+AL_MPU_HalStruct *NpuHandle;
 
 void do_sync_handle(AL_UINTPTR *Regs)
 {
@@ -112,21 +112,21 @@ AL_S32 AlMpu_ApuTest()
         printf("[TEST] APU AlMpu_Hal_ConfigInit failed\r\n");
 
     /* 2. Test AlMpu_Hal_EnableRegion */
-    RetValue = AlMpu_Hal_EnableRegion(&ApuHandle, 31);
+    RetValue = AlMpu_Hal_EnableRegion(ApuHandle, 31);
     if (RetValue == AL_OK)
         printf("[TEST] APU AlMpu_Hal_EnableRegion success\r\n");
     else
         printf("[TEST] APU AlMpu_Hal_EnableRegion failed\r\n");
 
     /* 3. Test AlMpu_Hal_DisableRegion */
-    RetValue = AlMpu_Hal_DisableRegion(&ApuHandle, 31);
+    RetValue = AlMpu_Hal_DisableRegion(ApuHandle, 31);
     if (RetValue == AL_OK)
         printf("[TEST] APU AlMpu_Hal_DisableRegion success\r\n");
     else
         printf("[TEST] APU AlMpu_Hal_DisableRegion failed\r\n");
 
     /* 4. Test AlMpu_Hal_EnableRegion, RetValue == AL_OK Indicate test success, because step 3 disable the region */
-    RetValue = AlMpu_Hal_EnableRegion(&ApuHandle, 31);
+    RetValue = AlMpu_Hal_EnableRegion(ApuHandle, 31);
     if (RetValue == AL_OK)
         printf("[TEST] APU AlMpu_Hal_EnableRegion success\r\n");
     else
@@ -134,7 +134,7 @@ AL_S32 AlMpu_ApuTest()
 
     /* 4. Check whether the register configuration of each region is correct */
     for (Index = 0; Index < 32; Index++) {
-        RetValue = AlMpu_RegisterConfigCheck(ApuHandle.Dev->HwConfig.BaseAddress, Index, &ApuRegionConfig[Index]);
+        RetValue = AlMpu_RegisterConfigCheck(ApuHandle->Dev->HwConfig.BaseAddress, Index, &ApuRegionConfig[Index]);
         if (RetValue != AL_OK)
             printf("[TEST] APU AlMpu_RegisterConfigCheck region%d failed\r\n", Index);
         else
@@ -184,7 +184,7 @@ AL_S32 AlMpu_NpuTest()
     NpuRegionConfig[6].Size      = (AL_MPU_DEFAULT_REGION_GRANULARITY_SIZE * 2);
 
     /* 2. Test AlMpu_Hal_ConfigRegion */
-    RetValue = AlMpu_Hal_ConfigRegion(&NpuHandle, &NpuRegionConfig[6]);
+    RetValue = AlMpu_Hal_ConfigRegion(NpuHandle, &NpuRegionConfig[6]);
     if (RetValue == AL_OK)
         printf("[TEST] NPU AlMpu_Hal_ConfigRegion success\r\n");
     else
@@ -196,7 +196,7 @@ AL_S32 AlMpu_NpuTest()
     NpuRegionConfig[7].Size      = (AL_MPU_DEFAULT_REGION_GRANULARITY_SIZE * 2);
 
     /* 3. Test AlMpu_Hal_ConfigRegionByRegionNum */
-    RetValue = AlMpu_Hal_ConfigRegionByRegionNum(&NpuHandle, 7, &NpuRegionConfig[7]);
+    RetValue = AlMpu_Hal_ConfigRegionByRegionNum(NpuHandle, 7, &NpuRegionConfig[7]);
     if (RetValue == AL_OK)
         printf("[TEST] NPU AlMpu_Hal_ConfigRegionByRegionNum success\r\n");
     else
@@ -204,7 +204,7 @@ AL_S32 AlMpu_NpuTest()
 
     /* 4. Check whether the register configuration of each region is correct */
     for (Index = 0; Index < 8; Index++) {
-        RetValue = AlMpu_RegisterConfigCheck(NpuHandle.Dev->HwConfig.BaseAddress, Index, &NpuRegionConfig[Index]);
+        RetValue = AlMpu_RegisterConfigCheck(NpuHandle->Dev->HwConfig.BaseAddress, Index, &NpuRegionConfig[Index]);
         if (RetValue != AL_OK)
             printf("[TEST] APU AlMpu_RegisterConfigCheck region%d failed\r\n", Index);
         else
@@ -228,23 +228,33 @@ static AL_U32 AlMpu_ProtectCheck(AL_U8 RegionNumber, AL_MPU_RegionConfigStruct *
 
     do {
         /* First disable the region */
-        AlMpu_Hal_DisableRegion(&ApuHandle, RegionNumber);
+        AlMpu_Hal_DisableRegion(ApuHandle, RegionNumber);
 
         /* Second Initializes the value for this address */
         *((volatile AL_U32 *)(long)(Addr)) = InitialValue;
+
+#ifdef ENABLE_MMU
+        AlCache_FlushDcacheAll();
+#endif
     } while (*((volatile AL_U32 *)(long)(Addr)) != InitialValue);
 
-    AlMpu_Hal_EnableRegion(&ApuHandle, RegionNumber);
+    AlMpu_Hal_EnableRegion(ApuHandle, RegionNumber);
 
     /* write and read data bofore MPU disable*/
     *((volatile AL_U32 *)(Addr)) = ModifyValue;
+
+#ifdef ENABLE_MMU
+    AlCache_FlushDcacheAll();
+#endif
+
     ReadValueBeforeMpuDisable = *((volatile AL_U32 *)(Addr));
 
     /* read after MPU disable */
-    AlMpu_Hal_DisableRegion(&ApuHandle, RegionNumber);
+    AlMpu_Hal_DisableRegion(ApuHandle, RegionNumber);
+
     ReadValueAfterMpuDisable = *((volatile AL_U32 *)(Addr));
 
-    AlMpu_Hal_EnableRegion(&ApuHandle, RegionNumber);
+    AlMpu_Hal_EnableRegion(ApuHandle, RegionNumber);
 
     /* check result */
     if (((Config->Secure == 1) && (CpuInSecureMode == 0)) ||
@@ -306,7 +316,7 @@ AL_S32 AlMpu_ProtectTest()
 
     /* 1. Before test, disable all region */
     for (RegionNumber = 0; RegionNumber < 32; RegionNumber++) {
-        AlMpu_Hal_DisableRegion(&ApuHandle, RegionNumber);
+        AlMpu_Hal_DisableRegion(ApuHandle, RegionNumber);
     }
 
     for (RegionNumber = AL_MPU_COMMON_REGION_0; RegionNumber <= MaxRegionNumber; RegionNumber++) {
@@ -320,11 +330,11 @@ AL_S32 AlMpu_ProtectTest()
                         Config.ReadWrite = ReadWrite;
                         Config.GroupId = (1 << GroupId);
 
-                        AlMpu_Hal_ConfigRegionByRegionNum(&ApuHandle, RegionNumber, &Config);
+                        AlMpu_Hal_ConfigRegionByRegionNum(ApuHandle, RegionNumber, &Config);
                         AlMpu_ProtectCheck(RegionNumber, &Config);
 
                         /* region test done, disable the current region */
-                        AlMpu_Hal_DisableRegion(&ApuHandle, RegionNumber);
+                        AlMpu_Hal_DisableRegion(ApuHandle, RegionNumber);
                     }
                 }
             }

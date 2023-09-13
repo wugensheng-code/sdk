@@ -16,15 +16,12 @@ extern "C" {
 typedef struct
 {
     AL_MPU_DevStruct    *Dev;
-
-// #ifdef USE_RTOS
-//     AL_Lock             Lock;
-// #endif
+    AL_Lock             Lock;
 } AL_MPU_HalStruct;
 
 AL_VOID AlMpu_Hal_Init();
 
-AL_S32 AlMpu_Hal_ConfigInit(AL_U8 MpuDevId, AL_MPU_HalStruct *Handle, AL_Mpu_EventCallBack EventCallBack,
+AL_S32 AlMpu_Hal_ConfigInit(AL_U8 MpuDevId, AL_MPU_HalStruct **Handle, AL_Mpu_EventCallBack EventCallBack,
                             AL_MPU_RegionConfigStruct *InitRegionConfig, AL_U8 ConfigNumber);
 
 AL_S32 AlMpu_Hal_MpuEnable(AL_MPU_HalStruct *Handle);
