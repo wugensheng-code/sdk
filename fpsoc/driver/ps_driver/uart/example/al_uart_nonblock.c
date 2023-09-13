@@ -5,15 +5,16 @@
  */
 
 /**
- * @file    al_uart_blocked.c
+ * @file    al_uart_nonblocked.c
  * @author  Anlogic esw team
  * @version V0.0.1
  * @date    2023-09-01
- * @brief   uart blocked example
+ * @brief   uart nonblocked example
  */
 
 /***************************** Include Files *********************************/
 #include <string.h>
+#include <stdlib.h>
 #include "al_uart_hal.h"
 
 /************************** Constant Definitions *****************************/
@@ -68,7 +69,6 @@ static AL_S32 AlUart_Test_RecvAndSendNonBlock(AL_VOID)
 {
 
     AL_UART_HalStruct *UartHandle;
-    AL_U32 RecvSize;
 
     AL_U8 *Data = (AL_U8 *)malloc(BUF_SIZE);
     memset(Data, 0, (sizeof(AL_U8) * BUF_SIZE));

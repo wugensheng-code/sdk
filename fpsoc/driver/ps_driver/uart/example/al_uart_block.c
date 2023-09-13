@@ -14,6 +14,7 @@
 
 /***************************** Include Files *********************************/
 #include <string.h>
+#include <stdlib.h>
 #include "al_uart_hal.h"
 
 /************************** Constant Definitions *****************************/
@@ -23,8 +24,7 @@
 /***************** Macros (Inline Functions) Definitions *********************/
 #define BUF_SIZE 16
 #define AL_UART_TIME_OUT_MS 10000
-
-#define AL_UART_DEVID  1
+#define AL_UART_DEVID 1
 
 /************************** Variable Definitions *****************************/
 
@@ -85,15 +85,15 @@ static AL_S32 AlUart_Test_RecvAndSendBlock(AL_VOID)
     while (1) {
         Ret = AlUart_Hal_RecvDataBlock(UartHandle, Data, BUF_SIZE, &RecvSize, AL_UART_TIME_OUT_MS);
         if (Ret != AL_OK) {
-            continue;
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlUart Receive data timeout or less that %d Bytes data", BUF_SIZE);
+            return Ret;
         }
-
         if (Ret == AL_OK) {
             Ret = AlUart_Hal_SendDataBlock(UartHandle, Data, RecvSize, AL_UART_TIME_OUT_MS);
-            if (Ret != AL_OK) {
-                continue;
-            } else {
+            if (Ret == AL_OK) {
                 return AL_OK;
+            } else {
+                return Ret;
             }
         }
 
