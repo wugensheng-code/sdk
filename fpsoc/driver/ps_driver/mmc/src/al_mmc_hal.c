@@ -72,12 +72,9 @@ AL_S32 AlMmc_Hal_Init(AL_MMC_HalStruct **Handle, AL_U32 DevId, AL_MMC_InitStruct
 AL_S32 AlMmc_Hal_WriteBlocked(AL_MMC_HalStruct *Handle, AL_U8 *Buf, AL_U32 BlkOffset, AL_U32 BlkCnt, AL_U32 Timeout)
 {
     AL_UNUSED(Timeout);
+    AL_ASSERT(Handle != AL_NULL, AL_MMC_ERR_NULL_PTR);
 
     AL_S32 Ret = AL_OK;
-
-    if ((Handle == AL_NULL) || (Buf == AL_NULL)) {
-        return AL_MMC_ERR_NULL_PTR;
-    }
 
     Ret = AlMmc_Dev_Write(&(Handle->Dev), Buf, BlkOffset, BlkCnt);
     if (Ret != AL_OK) {
@@ -90,12 +87,9 @@ AL_S32 AlMmc_Hal_WriteBlocked(AL_MMC_HalStruct *Handle, AL_U8 *Buf, AL_U32 BlkOf
 AL_S32 AlMmc_Hal_ReadBlocked(AL_MMC_HalStruct *Handle, AL_U8 *Buf, AL_U32 BlkOffset, AL_U32 BlkCnt, AL_U32 Timeout)
 {
     AL_UNUSED(Timeout);
+    AL_ASSERT(Handle != AL_NULL, AL_MMC_ERR_NULL_PTR);
 
     AL_S32 Ret = AL_OK;
-
-    if ((Handle == AL_NULL) || (Buf == AL_NULL)) {
-        return AL_MMC_ERR_NULL_PTR;
-    }
 
     Ret = AlMmc_Dev_Read(&(Handle->Dev), Buf, BlkOffset, BlkCnt);
     if (Ret != AL_OK) {

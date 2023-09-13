@@ -2159,18 +2159,15 @@ static AL_S32 AlMmc_Dev_WriteData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 Arg,
 /* When ADMA2 mode and auto gen desc is false, buf is pointer of desc list */
 AL_S32 AlMmc_Dev_Write(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkOffset, AL_U32 BlkCnt)
 {
-    AL_ASSERT((Dev != AL_NULL) && (Buf != AL_NULL), AL_MMC_ERR_NULL_PTR);
+    AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
+    AL_ASSERT(!((AL_UINTPTR)Buf & AL_MMC_BUF_ALIGN_MASK), AL_MMC_ERR_BUF_NOT_ALIGN);
 
     AL_S32 Ret = AL_OK;
 
-    if (Dev == AL_NULL || Buf == AL_NULL) {
-        return AL_MMC_ERR_NULL_PTR;
+    /* Maybe real address in ddr */
+    if (Buf == AL_NULL) {
+        AL_LOG(AL_LOG_LEVEL_WARNING, "WARNING: Write addr %p\r\n", Buf);
     }
-
-    if ((AL_UINTPTR)Buf & AL_MMC_BUF_ALIGN_MASK) {
-        return AL_MMC_ERR_BUF_NOT_ALIGN;
-    }
-
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Write addr: %p, Offset: %d, BlkCnt = %d\r\n", Buf, BlkOffset, BlkCnt);
 
     Ret = AlMmc_Dev_TransferConfig(Dev);
@@ -2256,18 +2253,15 @@ AL_S32 AlMmc_Dev_ReadData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 Arg, AL_U32 
 /* When ADMA2 mode and auto gen desc is false, buf is pointer of desc list */
 AL_S32 AlMmc_Dev_Read(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkOffset, AL_U32 BlkCnt)
 {
-    AL_ASSERT((Dev != AL_NULL) && (Buf != AL_NULL), AL_MMC_ERR_NULL_PTR);
+    AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
+    AL_ASSERT(!((AL_UINTPTR)Buf & AL_MMC_BUF_ALIGN_MASK), AL_MMC_ERR_BUF_NOT_ALIGN);
 
     AL_S32 Ret = AL_OK;
 
-    if (Dev == AL_NULL || Buf == AL_NULL) {
-        return AL_MMC_ERR_NULL_PTR;
+    /* Maybe real address in ddr */
+    if (Buf == AL_NULL) {
+        AL_LOG(AL_LOG_LEVEL_WARNING, "WARNING: Read addr %p\r\n", Buf);
     }
-
-    if ((AL_UINTPTR)Buf & AL_MMC_BUF_ALIGN_MASK) {
-        return AL_MMC_ERR_BUF_NOT_ALIGN;
-    }
-
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Read addr: %p, Offset: 0x%x, BlkCnt = %d\r\n", Buf, BlkOffset, BlkCnt);
 
     Ret = AlMmc_Dev_TransferConfig(Dev);
