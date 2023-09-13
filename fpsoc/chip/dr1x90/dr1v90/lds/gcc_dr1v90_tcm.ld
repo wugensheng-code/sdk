@@ -10,33 +10,31 @@ ENTRY( _start )
 
 MEMORY
 {
-  /* Emulate ROM using DDR */
-  rom (rxai!w) : ORIGIN = 0x00100000, LENGTH = 2M
-  /* Emulate RAM using DDR */
-  ram (wxa!ri) : ORIGIN = 0x00300000, LENGTH = 0x0f000000
+  itcm (rxa!w) : ORIGIN = 0x60000000, LENGTH = 256K    /*for 9000 dv simulation*/
+  dtcm (rxa!w) : ORIGIN = 0x60040000, LENGTH = 256K    /*for 9000 dv simulation*/
 }
 
 
 SECTIONS
 {
-  __stack_size = DEFINED(__stack_size) ? __stack_size : 4K;
+  __stack_size = DEFINED(__stack_size) ? __stack_size : 2k;
 
   .init           :
   {
     *(.vtable)
     KEEP (*(SORT_NONE(.init)))
-  } >rom AT>rom
+  } >itcm AT>itcm
 
   .ilalign         :
   {
     . = ALIGN(4);
     PROVIDE( _ilm_lma = . );
-  } >rom AT>rom
+  } >itcm AT>itcm
 
   .ialign         :
   {
     PROVIDE( _ilm = . );
-  } >rom AT>rom
+  } >itcm AT>itcm
 
   .text           :
   {
@@ -44,7 +42,7 @@ SECTIONS
     *(.text.startup .text.startup.*)
     *(.text .text.*)
     *(.gnu.linkonce.t.*)
-  } >rom AT>rom
+  } >itcm AT>itcm
 
   .rodata : ALIGN(4)
   {
@@ -78,7 +76,7 @@ SECTIONS
     *(.usbh_class_info)
     __usbh_class_info_end__ = .;
 
-  } >rom AT>rom
+  } >itcm AT>itcm
 
   . = ALIGN(4096);
   .cli_section :
@@ -86,7 +84,7 @@ SECTIONS
     _cli_section_start = .;
     KEEP(*(cli_section))
     _cli_section_end   = .;
-  }  >rom AT>rom
+  }  >itcm AT>itcm
 
   . = ALIGN(4096);
   .unity_section :
@@ -94,12 +92,12 @@ SECTIONS
     _unity_test_start = .;
     KEEP(*(unity_section))
     _unity_test_end   = .;
-  }  >rom AT>rom
+  }  >itcm AT>itcm
 
   .fini           :
   {
     KEEP (*(SORT_NONE(.fini)))
-  } >rom AT>rom
+  } >itcm AT>itcm
 
   . = ALIGN(4);
 
@@ -114,7 +112,7 @@ SECTIONS
     PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array))
     PROVIDE_HIDDEN (__preinit_array_end = .);
-  } >rom AT>rom
+  } >itcm AT>itcm
 
   .init_array     :
   {
@@ -122,7 +120,7 @@ SECTIONS
     KEEP (*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
     KEEP (*(.init_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .ctors))
     PROVIDE_HIDDEN (__init_array_end = .);
-  } >rom AT>rom
+  } >itcm AT>itcm
 
   .fini_array     :
   {
@@ -130,7 +128,7 @@ SECTIONS
     KEEP (*(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*)))
     KEEP (*(.fini_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .dtors))
     PROVIDE_HIDDEN (__fini_array_end = .);
-  } >rom AT>rom
+  } >itcm AT>itcm
 
   .ctors          :
   {
@@ -152,7 +150,7 @@ SECTIONS
     KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .ctors))
     KEEP (*(SORT(.ctors.*)))
     KEEP (*(.ctors))
-  } >rom AT>rom
+  } >itcm AT>itcm
 
   .dtors          :
   {
@@ -161,20 +159,20 @@ SECTIONS
     KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .dtors))
     KEEP (*(SORT(.dtors.*)))
     KEEP (*(.dtors))
-  } >rom AT>rom
+  } >itcm AT>itcm
 
 
   .lalign         :
   {
     . = ALIGN(4);
     PROVIDE( _data_lma = . );
-  } >rom AT>rom
+  } >itcm AT>itcm
 
   .dalign         :
   {
     . = ALIGN(4);
     PROVIDE( _data = . );
-  } >ram AT>rom
+  } >dtcm AT>dtcm
 
   .data          :
   {
@@ -190,7 +188,7 @@ SECTIONS
     *(.srodata.cst4)
     *(.srodata.cst2)
     *(.srodata .srodata.*)
-  } >ram AT>rom
+  } >dtcm AT>dtcm
 
   . = ALIGN(4);
   PROVIDE( _edata = . );
@@ -206,17 +204,18 @@ SECTIONS
     *(.gnu.linkonce.b.*)
     *(COMMON)
     . = ALIGN(4);
-  } >ram AT>ram
+  } >dtcm AT>dtcm
 
   . = ALIGN(8);
   PROVIDE( _end = . );
   PROVIDE( end = . );
   PROVIDE(_heap_start = . );
 
-  .stack ORIGIN(ram) + LENGTH(ram) - __stack_size :
+  .stack ORIGIN(dtcm) + LENGTH(dtcm) - __stack_size :
   {
     PROVIDE( _heap_end = . );
     . = __stack_size;
     PROVIDE( _sp = . );
-  } >ram AT>ram
+  } >dtcm AT>dtcm
 }
+
