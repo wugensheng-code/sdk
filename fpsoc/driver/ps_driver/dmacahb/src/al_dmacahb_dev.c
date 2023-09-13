@@ -517,6 +517,63 @@ AL_S32 AlCan_Dev_FlushAndInvalidateData(AL_DMACAHB_ChStruct *Channel)
     return Ret;
 }
 
+static AL_S32 AlCan_Dev_CheckAddrAlign(AL_DMACAHB_ChStruct *Channel)
+{
+    AL_S32 Ret = AL_OK;
+    AL_DMACAHB_ChTransStruct *Trans = &Channel->Trans;
+    AL_DMACAHB_LliStruct *Lli = Trans->Lli;
+
+    if (Lli != AL_NULL) {
+        if (((AL_U32)(AL_UINTPTR)Trans->Lli) & 0x3F) {
+            return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
+        }
+        if (Channel->Config.Direction == AL_DMACAHB_TT_FC_MEM2MEM) {
+            while (Lli) {
+                if ((Lli->SrcAddr | Lli->DstAddr) & 0x3F) {
+                    return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
+                }
+                Lli = Lli->LlpNext;
+            }
+        } else if (Channel->Config.Direction == AL_DMACAHB_TT_FC_MEM2PER) {
+            while (Lli) {
+                if (Lli->SrcAddr & 0x3F) {
+                    return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
+                }
+                Lli = Lli->LlpNext;
+            }
+        } else if (Channel->Config.Direction == AL_DMACAHB_TT_FC_PER2MEM) {
+            while (Lli) {
+                if (Lli->DstAddr & 0x3F) {
+                    return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
+                }
+                Lli = Lli->LlpNext;
+            }
+        } else {
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "Unsupport mode\r\n");
+            return AL_DMACAHB_ERR_UNSUPPORT_MODE;
+        }
+    } else {
+        if (Channel->Config.Direction == AL_DMACAHB_TT_FC_MEM2MEM) {
+            if ((Lli->SrcAddr | Lli->DstAddr) & 0x3F) {
+                return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
+            }
+        } else if (Channel->Config.Direction == AL_DMACAHB_TT_FC_MEM2PER) {
+            if (Lli->SrcAddr & 0x3F) {
+                return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
+            }
+        } else if (Channel->Config.Direction == AL_DMACAHB_TT_FC_PER2MEM) {
+            if (Lli->DstAddr & 0x3F) {
+                return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
+            }
+        } else {
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "Unsupport mode\r\n");
+            return AL_DMACAHB_ERR_UNSUPPORT_MODE;
+        }
+    }
+
+    return AL_OK;
+}
+
 /**
  * This function set channel trans params
  * @param   Channel is pointer to AL_DMACAHB_ChStruct
@@ -556,15 +613,8 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
     }
 
 #ifdef ENABLE_MMU
-    if (Trans->Lli != AL_NULL) {
-        if (((AL_U32)(AL_UINTPTR)Trans->Lli) & 0x3F) {
-            return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
-        }
-    } else {
-        if ((Trans->SrcAddr & 0x3F) || (Trans->DstAddr & 0x3F)) {
-            return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
-        }
-    }
+    Ret = AlCan_Dev_CheckAddrAlign(Channel);
+    AL_ASSERT(Ret == AL_OK, Ret);
 #endif
 
     if (!AlDmacAhb_Dev_GetState(Channel, AL_DMACAHB_STATE_READY)) {
@@ -579,7 +629,8 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
     AlDmacAhb_Dev_SetState(Channel, State);
 
 #ifdef ENABLE_MMU
-    AlCan_Dev_FlushAndInvalidateData(Channel);
+    Ret = AlCan_Dev_FlushAndInvalidateData(Channel);
+    AL_ASSERT(Ret == AL_OK, Ret);
 #endif
 
     if ((State == AL_DMACAHB_STATE_LLP_MODE_BUSY) || (State == AL_DMACAHB_STATE_LLP_RELOAD_MODE_BUSY)) {
