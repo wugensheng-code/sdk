@@ -554,15 +554,15 @@ static AL_S32 AlCan_Dev_CheckAddrAlign(AL_DMACAHB_ChStruct *Channel)
         }
     } else {
         if (Channel->Config.Direction == AL_DMACAHB_TT_FC_MEM2MEM) {
-            if ((Lli->SrcAddr | Lli->DstAddr) & 0x3F) {
+            if ((Trans->SrcAddr | Trans->DstAddr) & 0x3F) {
                 return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
             }
         } else if (Channel->Config.Direction == AL_DMACAHB_TT_FC_MEM2PER) {
-            if (Lli->SrcAddr & 0x3F) {
+            if (Trans->SrcAddr & 0x3F) {
                 return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
             }
         } else if (Channel->Config.Direction == AL_DMACAHB_TT_FC_PER2MEM) {
-            if (Lli->DstAddr & 0x3F) {
+            if (Trans->DstAddr & 0x3F) {
                 return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
             }
         } else {
