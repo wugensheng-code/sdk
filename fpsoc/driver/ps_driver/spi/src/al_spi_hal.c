@@ -18,14 +18,14 @@
 AL_SPI_HalStruct AlSpiHandle[AL_SPI_NUM_INSTANCE];
 
 AL_DMACAHB_ChInitStruct     Spi0TxDmacChConfig;
-AL_DMACAHB_HalStruct        Spi0TxDmacHandle;
+AL_DMACAHB_HalStruct        *Spi0TxDmacHandle = AL_NULL;
 AL_DMACAHB_ChInitStruct     Spi0RxDmacChConfig;
-AL_DMACAHB_HalStruct        Spi0RxDmacHandle;
+AL_DMACAHB_HalStruct        *Spi0RxDmacHandle = AL_NULL;
 
 AL_DMACAHB_ChInitStruct     Spi1TxDmacChConfig;
-AL_DMACAHB_HalStruct        Spi1TxDmacHandle;
+AL_DMACAHB_HalStruct        *Spi1TxDmacHandle = AL_NULL;
 AL_DMACAHB_ChInitStruct     Spi1RxDmacChConfig;
-AL_DMACAHB_HalStruct        Spi1RxDmacHandle;
+AL_DMACAHB_HalStruct        *Spi1RxDmacHandle = AL_NULL;
 
 /********************************************************/
 /**
@@ -350,10 +350,10 @@ AL_S32 AlSpi_Hal_DmaStartBlockSend(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL
 
     if (Handle->Dev.HwConfig.BaseAddress < SPI1_BASE_ADDR) {
         SpiTxDmacChConfigPtr = &Spi0TxDmacChConfig;
-        SpiTxDmacHandlePtr = &Spi0TxDmacHandle;
+        SpiTxDmacHandlePtr = Spi0TxDmacHandle;
     } else {
         SpiTxDmacChConfigPtr = &Spi1TxDmacChConfig;
-        SpiTxDmacHandlePtr = &Spi1TxDmacHandle;
+        SpiTxDmacHandlePtr = Spi1TxDmacHandle;
     }
 
     Ret = AlOsal_Lock_Take(&Handle->SpiLock, Timeout);
@@ -403,6 +403,11 @@ AL_S32 AlSpi_Hal_DmaStartBlockSend(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL
             (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
             return Ret;
         }
+        if (Handle->Dev.HwConfig.BaseAddress < SPI1_BASE_ADDR) {
+            Spi0TxDmacHandle = SpiTxDmacHandlePtr;
+        } else {
+            Spi1TxDmacHandle = SpiTxDmacHandlePtr;
+        }
     }
 
     SpiTxDmacChTrans = &(SpiTxDmacHandlePtr->Channel.Trans);
@@ -445,10 +450,10 @@ AL_S32 AlSpi_Hal_DmaStartBlockReceive(AL_SPI_HalStruct *Handle, AL_U8 *RecvData,
 
     if (Handle->Dev.HwConfig.BaseAddress < SPI1_BASE_ADDR) {
         SpiRxDmacChConfigPtr = &Spi0RxDmacChConfig;
-        SpiRxDmacHandlePtr = &Spi0RxDmacHandle;
+        SpiRxDmacHandlePtr = Spi0RxDmacHandle;
     } else {
         SpiRxDmacChConfigPtr = &Spi1RxDmacChConfig;
-        SpiRxDmacHandlePtr = &Spi1RxDmacHandle;
+        SpiRxDmacHandlePtr = Spi1RxDmacHandle;
     }
 
     Ret = AlOsal_Lock_Take(&Handle->SpiLock, Timeout);
@@ -495,6 +500,12 @@ AL_S32 AlSpi_Hal_DmaStartBlockReceive(AL_SPI_HalStruct *Handle, AL_U8 *RecvData,
             AL_LOG(AL_LOG_LEVEL_ERROR, "SpiRx Dmacahb hal Init error:0x%x\r\n", Ret);
             (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
             return Ret;
+        }
+
+        if (Handle->Dev.HwConfig.BaseAddress < SPI1_BASE_ADDR) {
+            Spi0RxDmacHandle = SpiRxDmacHandlePtr;
+        } else {
+            Spi1RxDmacHandle = SpiRxDmacHandlePtr;
         }
     }
 
@@ -545,14 +556,14 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
 
     if (Handle->Dev.HwConfig.BaseAddress < SPI1_BASE_ADDR) {
         SpiTxDmacChConfigPtr = &Spi0TxDmacChConfig;
-        SpiTxDmacHandlePtr = &Spi0TxDmacHandle;
+        SpiTxDmacHandlePtr = Spi0TxDmacHandle;
         SpiRxDmacChConfigPtr = &Spi0RxDmacChConfig;
-        SpiRxDmacHandlePtr = &Spi0RxDmacHandle;
+        SpiRxDmacHandlePtr = Spi0RxDmacHandle;
     } else {
         SpiTxDmacChConfigPtr = &Spi1TxDmacChConfig;
-        SpiTxDmacHandlePtr = &Spi1TxDmacHandle;
+        SpiTxDmacHandlePtr = Spi1TxDmacHandle;
         SpiRxDmacChConfigPtr = &Spi1RxDmacChConfig;
-        SpiRxDmacHandlePtr = &Spi1RxDmacHandle;
+        SpiRxDmacHandlePtr = Spi1RxDmacHandle;
     }
 
     Ret = AlOsal_Lock_Take(&Handle->SpiLock, Timeout);
@@ -603,6 +614,12 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
             (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
             return Ret;
         }
+
+        if (Handle->Dev.HwConfig.BaseAddress < SPI1_BASE_ADDR) {
+            Spi0TxDmacHandle = SpiTxDmacHandlePtr;
+        } else {
+            Spi1TxDmacHandle = SpiTxDmacHandlePtr;
+        }
     }
 
     if (SpiRxDmacHandlePtr == NULL) {
@@ -640,6 +657,12 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
             AL_LOG(AL_LOG_LEVEL_ERROR, "SpiRx Dmacahb hal Init error:0x%x\r\n", Ret);
             (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
             return Ret;
+        }
+
+        if (Handle->Dev.HwConfig.BaseAddress < SPI1_BASE_ADDR) {
+            Spi0RxDmacHandle = SpiRxDmacHandlePtr;
+        } else {
+            Spi1RxDmacHandle = SpiRxDmacHandlePtr;
         }
     }
 

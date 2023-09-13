@@ -611,7 +611,7 @@ AL_U8 ALSmc_Dev_HwEccWritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandIn
 */
 AL_U8 ALSmc_Dev_HwEccReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf)
 {
-    AL_U8 Status, EccDataNums, EccOffset, Index;
+    AL_U8 Status, EccDataNums, EccOffset=0, Index;
     AL_U32 *DataOffsetPtr;
     AL_U8 *TempBuf = Buf;
 

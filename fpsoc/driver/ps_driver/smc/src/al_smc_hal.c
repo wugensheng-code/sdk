@@ -18,62 +18,8 @@ static AL_SMC_DevStruct AL_SMC_DevInstance[AL_SMC_NUM_INSTANCE];
 static AL_NAND_InfoStruct AL_NAND_InfoInstance[AL_SMC_NUM_INSTANCE];
 
 /********************************************************/
-#ifdef USE_RTOS
-/**
- * This function
- * @param
- * @return
- * @note    None
-*/
-static AL_S32 AlSmc_Hal_WaitTxDoneOrTimeout(AL_SMC_HalStruct *Handle, AL_U32 Timeout)
-{
-    /*
-     * TODO: wait for event timeout
-    */
-    (void) Handle;
-    (void) Timeout;
-}
-
-/**
- * This function
- * @param
- * @return
- * @note    None
-*/
-static AL_S32 AlSmc_Hal_WaitRxDoneOrTimeout(AL_SMC_HalStruct *Handle, AL_U32 Timeout)
-{
-    /*
-     * TODO:wait for event timeout
-    */
-    (void) Handle;
-    (void) Timeout;
-}
-
-/**
- * This function
- * @param
- * @return
- * @note    None
-*/
-static AlSmc_Hal_IntrHandler(AL_SMC_HalStruct *Handle, AL_U32 Event, AL_U32 EventData)
-{
-    /*
-     * TODO:send event
-    */
-    (void) Handle;
-    (void) Event;
-    (void) EventData;
-}
-
-#define AL_SMC_HAL_LOCK(Handle)        do {} while (0)
-#define AL_SMC_HAL_UNLOCK(Handle)      do {} while (0)
-
-#else
-
 #define AL_SMC_HAL_LOCK(Handle)          do {} while (0)
 #define AL_SMC_HAL_UNLOCK(Handle)        do {} while (0)
-
-#endif
 
 /**
  * This function
