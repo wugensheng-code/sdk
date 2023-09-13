@@ -14,6 +14,7 @@ AL_UART_HalStruct *AlLog;
 
 AL_S32 AlLog_Init()
 {
+#ifdef LOG_DEV
 #if ((LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1))
     AL_UART_InitStruct UART_InitStruct = {
         .BaudRate     = 115200,
@@ -26,6 +27,8 @@ AL_S32 AlLog_Init()
 #else
     return AL_OK;
 #endif
+#endif
+    return AL_OK;
 }
 
 AL_U32 AlLog_Write(const void* Data, AL_U32 Len)
