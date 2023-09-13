@@ -7,6 +7,7 @@
 #ifndef __AL_CHIP_H_
 #define __AL_CHIP_H_
 
+#include "al_type.h"
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -37,6 +38,8 @@ typedef enum {
     SOC_PMU0_IRQn        =  39,
     SOC_PMU1_IRQn        =  40,
     SOC_XADC_IRQn        =  43,
+    SOC_WDT0_IRQn        =  45,
+    SOC_WDT1_IRQn        =  46,
     SOC_TTC0_TC0_IRQn    =  48,
     SOC_TTC0_TC1_IRQn    =  49,
     SOC_TTC0_TC2_IRQn    =  50,

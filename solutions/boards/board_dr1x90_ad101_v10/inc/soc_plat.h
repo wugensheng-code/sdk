@@ -146,6 +146,11 @@ extern "C" {
 
 #define LOG_DEV AL_LOG_UART1
 
+#define HAVE_WDTPS_DRIVER
+#define WDT0_CLOCK              (200*MHZ)
+#define WDT1_CLOCK              (200*MHZ)
+
+
 #define DDR_AVAILABLE
 
 /**

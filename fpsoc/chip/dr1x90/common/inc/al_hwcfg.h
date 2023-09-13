@@ -124,6 +124,7 @@ extern "C" {
 #define GBE0__BASE_ADDR         (0xF8100000UL)
 #define GBE1__BASE_ADDR         (0xF8110000UL)
 
+
 /*----------------------------------------------------------------------------
   Define XAdc params
  *----------------------------------------------------------------------------*/
@@ -144,6 +145,26 @@ extern "C" {
 #define TTC1__TC0_BASE_ADDR    0xF840D000ULL
 #define TTC1__TC1_BASE_ADDR    0xF840D004ULL
 #define TTC1__TC2_BASE_ADDR    0xF840D008ULL
+
+
+/*----------------------------------------------------------------------------
+  Define WDT params
+ *----------------------------------------------------------------------------*/
+
+#define AL_WDT_NUM_INSTANCE     (2)
+
+#define WDT0__BASE_ADDR         (0xF8410000UL)
+#define WDT1__BASE_ADDR         (0xF8410200UL)
+
+#define WDT_TOP_CFG_CTRL_ADDR   (0XF8800168UL)
+/*----------------------------------------------------------------------------
+  Define WDT params
+ *----------------------------------------------------------------------------*/
+
+#define AL_WDT_NUM_INSTANCE     (2)
+
+#define WDT0__BASE_ADDR         (0xF8410000ULL)
+#define WDT1__BASE_ADDR         (0xF8410200UL)
 
 
 /*----------------------------------------------------------------------------

@@ -101,6 +101,7 @@ choices = [
     {value = "rtos", name = "rtos"},
     {value = "npu", name = "npu"},
     {value = "fsbl", name = "fsbl"},
+    {value = "wdt", name = "wdt"},
     {value = "osal", name = "osal"}
     ]
 message = "Select the type of change you are committing"
