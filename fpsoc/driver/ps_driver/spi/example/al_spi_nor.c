@@ -223,7 +223,7 @@ void main(void)
 
     printf("Start FPSoc Spi Test\r\n");
 
-    ret = AlSpi_Hal_Init(&Handle, &SpiInitConfigs, AL_NULL, 1);
+    ret = AlSpi_Hal_Init(&Handle, &SpiInitConfigs, AL_NULL, 0);
     if (AL_OK != ret) {
         printf("AlSpi_Hal_Init error, ret:0x%x\r\n", ret);
     }

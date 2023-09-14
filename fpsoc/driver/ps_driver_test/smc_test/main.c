@@ -20,6 +20,56 @@ AL_U8 RecvData[500] = { 0x0 };
 
 void main(void)
 {
+#define PIN_MUX_BASE    (0xF8803000UL)
+
+#define PS_MIO0         (0x00+PIN_MUX_BASE)
+#define PS_MIO1         (0x04+PIN_MUX_BASE)
+#define PS_MIO2         (0x08+PIN_MUX_BASE)
+#define PS_MIO3         (0x0c+PIN_MUX_BASE)
+#define PS_MIO4         (0x10+PIN_MUX_BASE)
+#define PS_MIO5         (0x14+PIN_MUX_BASE)
+#define PS_MIO6         (0x18+PIN_MUX_BASE)
+#define PS_MIO7         (0x1c+PIN_MUX_BASE)
+#define PS_MIO8         (0x20+PIN_MUX_BASE)
+#define PS_MIO9         (0x24+PIN_MUX_BASE)
+#define PS_MIO10        (0x28+PIN_MUX_BASE)
+#define PS_MIO11        (0x2c+PIN_MUX_BASE)
+#define PS_MIO12        (0x30+PIN_MUX_BASE)
+#define PS_MIO13        (0x34+PIN_MUX_BASE)
+#define PS_MIO14        (0x38+PIN_MUX_BASE)
+#define PS_MIO15        (0x3c+PIN_MUX_BASE)
+#define PS_MIO16        (0x40+PIN_MUX_BASE)
+#define PS_MIO17        (0x44+PIN_MUX_BASE)
+#define PS_MIO18        (0x48+PIN_MUX_BASE)
+#define PS_MIO19        (0x4c+PIN_MUX_BASE)
+#define PS_MIO20        (0x50+PIN_MUX_BASE)
+#define PS_MIO21        (0x54+PIN_MUX_BASE)
+#define PS_MIO22        (0x58+PIN_MUX_BASE)
+#define PS_MIO23        (0x5c+PIN_MUX_BASE)
+#define PS_MIO24        (0x60+PIN_MUX_BASE)
+#define PS_MIO25        (0x64+PIN_MUX_BASE)
+#define PS_MIO26        (0x68+PIN_MUX_BASE)
+#define PS_MIO27        (0x6c+PIN_MUX_BASE)
+#define PS_MIO28        (0x70+PIN_MUX_BASE)
+
+    AL_REG32_WRITE(PS_MIO0, 0x02);
+    //AL_REG32_WRITE(PS_MIO1, 0x02);
+    AL_REG32_WRITE(PS_MIO2, 0x02);
+    AL_REG32_WRITE(PS_MIO3, 0x02);
+    AL_REG32_WRITE(PS_MIO4, 0x02);
+    AL_REG32_WRITE(PS_MIO5, 0x02);
+    AL_REG32_WRITE(PS_MIO6, 0x02);
+    AL_REG32_WRITE(PS_MIO7, 0x02);
+    AL_REG32_WRITE(PS_MIO8, 0x02);
+    AL_REG32_WRITE(PS_MIO9, 0x02);
+
+    AL_REG32_WRITE(PS_MIO10, 0x02);
+    AL_REG32_WRITE(PS_MIO11, 0x02);
+    AL_REG32_WRITE(PS_MIO12, 0x02);
+    AL_REG32_WRITE(PS_MIO13, 0x02);
+    AL_REG32_WRITE(PS_MIO14, 0x02);
+
+
     printf("Start FPSoc Smc Test\r\n");
     AL_U32 i, Ret = AL_OK;
 

@@ -49,6 +49,7 @@ ASM_SRCS    :=
 # 3. CFLAGS
 #########################################################################
 CFLAGS := -O2 -g
+CFLAGS += -DAL9000_BRINGUP -DAL9000_OSC_33 -DAL9000_CLK_CONFIG
 # CFLAGS += -DUSE_RTOS
 # CFLAGS += -DRTOS_RTTHREAD
 
@@ -56,7 +57,8 @@ CFLAGS := -O2 -g
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
+#PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
+PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile

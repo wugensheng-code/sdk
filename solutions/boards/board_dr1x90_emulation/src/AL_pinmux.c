@@ -38,8 +38,8 @@ void Enablepinmux1(void)
      *(AL_U32 *)(0xf8803048u) =0x9;    //spi0  MIO18
      *(AL_U32 *)(0xf880304cu) =0x4;    //GPIO MIO19
      *(AL_U32 *)(0xf8803050u) =0x4;    //GPIO MIO20
-     *(AL_U32 *)(0xf8803054u) =0x4;
-     //*(AL_U32 *)(0xf8803054u) =0x9;    //spi0  MIO21
+    //  *(AL_U32 *)(0xf8803054u) =0x4;
+     *(AL_U32 *)(0xf8803054u) =0x9;    //spi0  MIO21
      *(AL_U32 *)(0xf8803424u) =0x1;    //emio_sel9
 
 
@@ -158,6 +158,55 @@ void Enablepinmux1_mode2(void)
     *(AL_U32 *)(0xf88030d0u) =0x1;
     *(AL_U32 *)(0xf88030d4u) =0x1;
     *(AL_U32 *)(0xf880340cu) =0x1; //CAN1 SET
+
+#define PIN_MUX_BASE    (0xF8803000UL)
+
+#define PS_MIO0         (0x00+PIN_MUX_BASE)
+#define PS_MIO1         (0x04+PIN_MUX_BASE)
+#define PS_MIO2         (0x08+PIN_MUX_BASE)
+#define PS_MIO3         (0x0c+PIN_MUX_BASE)
+#define PS_MIO4         (0x10+PIN_MUX_BASE)
+#define PS_MIO5         (0x14+PIN_MUX_BASE)
+#define PS_MIO6         (0x18+PIN_MUX_BASE)
+#define PS_MIO7         (0x1c+PIN_MUX_BASE)
+#define PS_MIO8         (0x20+PIN_MUX_BASE)
+#define PS_MIO9         (0x24+PIN_MUX_BASE)
+#define PS_MIO10        (0x28+PIN_MUX_BASE)
+#define PS_MIO11        (0x2c+PIN_MUX_BASE)
+#define PS_MIO12        (0x30+PIN_MUX_BASE)
+#define PS_MIO13        (0x34+PIN_MUX_BASE)
+#define PS_MIO14        (0x38+PIN_MUX_BASE)
+#define PS_MIO15        (0x3c+PIN_MUX_BASE)
+#define PS_MIO16        (0x40+PIN_MUX_BASE)
+#define PS_MIO17        (0x44+PIN_MUX_BASE)
+#define PS_MIO18        (0x48+PIN_MUX_BASE)
+#define PS_MIO19        (0x4c+PIN_MUX_BASE)
+#define PS_MIO20        (0x50+PIN_MUX_BASE)
+#define PS_MIO21        (0x54+PIN_MUX_BASE)
+#define PS_MIO22        (0x58+PIN_MUX_BASE)
+#define PS_MIO23        (0x5c+PIN_MUX_BASE)
+#define PS_MIO24        (0x60+PIN_MUX_BASE)
+#define PS_MIO25        (0x64+PIN_MUX_BASE)
+#define PS_MIO26        (0x68+PIN_MUX_BASE)
+#define PS_MIO27        (0x6c+PIN_MUX_BASE)
+#define PS_MIO28        (0x70+PIN_MUX_BASE)
+
+    AL_REG32_WRITE(PS_MIO0, 0x02);
+    //AL_REG32_WRITE(PS_MIO1, 0x02);
+    AL_REG32_WRITE(PS_MIO2, 0x02);
+    AL_REG32_WRITE(PS_MIO3, 0x02);
+    AL_REG32_WRITE(PS_MIO4, 0x02);
+    AL_REG32_WRITE(PS_MIO5, 0x02);
+    AL_REG32_WRITE(PS_MIO6, 0x02);
+    AL_REG32_WRITE(PS_MIO7, 0x02);
+    AL_REG32_WRITE(PS_MIO8, 0x02);
+    AL_REG32_WRITE(PS_MIO9, 0x02);
+
+    AL_REG32_WRITE(PS_MIO10, 0x02);
+    AL_REG32_WRITE(PS_MIO11, 0x02);
+    AL_REG32_WRITE(PS_MIO12, 0x02);
+    AL_REG32_WRITE(PS_MIO13, 0x02);
+    AL_REG32_WRITE(PS_MIO14, 0x02);
 
 #ifndef AL9000_BRINGUP
     *(AL_U32 *)(0xf840e004u) =0x0;      //close mpu ddr0
