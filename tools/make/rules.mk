@@ -1,8 +1,9 @@
 #########################################################################
 AL_SDK_ROOT ?= $(SDK_ROOT)
+AL_PLAT_DIR ?= $(PLAT_DIR)
 
 include $(AL_SDK_ROOT)/tools/make/config.mk
-sinclude $(PLAT_DIR)/board_cfg.mk
+sinclude $(AL_PLAT_DIR)/board_cfg.mk
 
 CC      = ${Q}$(COMPILE_PREFIX)gcc
 CXX     = ${Q}$(COMPILE_PREFIX)g++
@@ -111,7 +112,7 @@ endif
 PUBLIC_INC  :=  $(foreach subdir,$(sort $(PUBLIC_INC_DIR)), -I$(subdir))
 
 ## module inc
-MODULE_INC  :=  $(foreach subdir,$(sort $(INC_DIR)), -I$(subdir)) -I$(PLAT_DIR)/inc -I$(PLAT_DIR)
+MODULE_INC  :=  $(foreach subdir,$(sort $(INC_DIR)), -I$(subdir)) -I$(AL_PLAT_DIR)/inc -I$(AL_PLAT_DIR)
 
 #########################################################################
 

@@ -56,11 +56,12 @@ LIB_OUTPUT_DIR  ?= $(AL_SDK_ROOT)/output
 
 AL_SDK_ROOT := $(abspath $(AL_SDK_ROOT))
 
-ifeq ($(PLAT_DIR),)
-PLAT_DIR := $(patsubst %/soc_plat.h, %, $(wildcard $(AL_SDK_ROOT)/*/soc_plat.h))
+
+ifeq ($(AL_PLAT_DIR),)
+AL_PLAT_DIR := $(patsubst %/soc_plat.h, %, $(wildcard $(AL_SDK_ROOT)/*/soc_plat.h))
 endif
 
-PLAT_DIR := $(abspath $(PLAT_DIR))
+AL_PLAT_DIR := $(abspath $(AL_PLAT_DIR))
 
 BSP_DIR  ?= $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/*/Makefile))
 
@@ -79,11 +80,11 @@ export V
 export SILENT
 export RTOS
 export AL_SDK_ROOT
+export AL_PLAT_DIR
 export SDK_ROOT
 export CFLAGS
 export BSP_DIR
 export CHIP_DIR
-export PLAT_DIR
 export ENABLE_MMU
 export DDR_2M_MAPPING
 export CODE_READONLY

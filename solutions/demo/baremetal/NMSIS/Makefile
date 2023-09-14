@@ -61,7 +61,7 @@ CFLAGS := -O0 -g -DNUCLEI_DSP_N1 -DNUCLEI_DSP_N2 -DNUCLEI_DSP_N3 -DRISCV_MATH_LO
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
+PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile
