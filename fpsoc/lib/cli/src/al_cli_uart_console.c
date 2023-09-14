@@ -93,7 +93,7 @@ AL_S32 AlCli_UartRead(AL_VOID *Buf, AL_U32 Len, AL_U32 *RecvSize)
         return AL_CLI_ERROR_ILLEGAL_PARAM;
     }
 
-    RetValue = AlUart_Hal_RecvDataBlock(&AlLog, Buf, Len, RecvSize, AL_WAITFOREVER);
+    RetValue = AlUart_Hal_RecvDataBlock(AlLog, Buf, Len, RecvSize, AL_WAITFOREVER);
     if (RetValue != AL_OK)
         return RetValue;
 
