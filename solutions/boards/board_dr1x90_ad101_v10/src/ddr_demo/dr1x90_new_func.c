@@ -29,7 +29,7 @@ void pinmux_config_dbgm_ddr()
         // MIO_FUNCSEL[dbgm_pin[i]] = 15U;
         // MIO_F15SEL[dbgm_pin[i]] = 1U;
         uint32_t offset = dbgm_pin[i];
-        // printf("\noffset = 0x%x\r\n", offset);
+        ////  printf("\noffset = 0x%x\r\n", offset);
 
         dr1x90_ddr_reg_write(&ftcHandle, MIO_FUNCSEL + offset, 15U);
         //dr1x90_ddr_reg_read(&ftcHandle, MIO_FUNCSEL + offset,&reg_data1);
@@ -142,7 +142,7 @@ int dr1x90_ddrppc_mtest_my(u8 bank, u16 row, u16 col, u8 byteNum)
         bistDxErr = dr1x90_field_read(DDRC_ADDR_PPC + BISTGSR, BDXERR_offset, BDXERR_mask);
         rcvCnt = dr1x90_field_read(DDRC_ADDR_PPC + BISTWCSR, DXWCNT_offset, DXWCNT_mask); // Equal to iterateCnt
 
-        printf("\nbistDone = 0x%x bistDxErr = 0x%x rcvCnt = 0x%x \r\n", bistDone, bistDxErr, rcvCnt);
+       //  printf("\nbistDone = 0x%x bistDxErr = 0x%x rcvCnt = 0x%x \r\n", bistDone, bistDxErr, rcvCnt);
 
         dr1x90_field_write(DDRC_ADDR_PPC + BISTRR, BINST_offset, BINST_mask, 3);
         dr1x90_field_write(DDRC_ADDR_PPC + BISTRR, BINST_offset, BINST_mask, 2);
@@ -442,14 +442,14 @@ void do_training(u8 wl_en,u8 wl2_en,u8 gt_en)
     u32 regData, regDataNew;
     u32 wlerr, wl2err,gterr;
 
-    printf(" \r\n");
-    printf( " +---------------------------------------+\r\n");
-    printf( " |    do_training begin                  |\r\n");
-    printf( " +---------------------------------------+\r\n");
+   //  printf(" \r\n");
+   //  printf( " +---------------------------------------+\r\n");
+   //  printf( " |    do_training begin                  |\r\n");
+   //  printf( " +---------------------------------------+\r\n");
 
     regData = dr1x90_reg_read(DDRC_ADDR_PPC + PIR);
 
-    printf( "\nGet PIR reg_data wlen = 0x%x wl2_en = 0x%x gt_en = 0x%x; before training regData = 0x%x\r\n", wl_en, wl2_en, gt_en, regData);
+   //  printf( "\nGet PIR reg_data wlen = 0x%x wl2_en = 0x%x gt_en = 0x%x; before training regData = 0x%x\r\n", wl_en, wl2_en, gt_en, regData);
 
     if ( wl_en == 0x1)  {
         regDataNew = dr1x90_field_set(DDRC_ADDR_PPC + PIR, WL_offset, WL_mask, 1, regData);
@@ -475,15 +475,16 @@ void do_training(u8 wl_en,u8 wl2_en,u8 gt_en)
     }
 
     if (wl_en == 0x1 ) {
-        dr1x90_field_wait(DDRC_ADDR_PPC + PGSR0, WLDONE_offset, WLDONE_mask, 1, 200);
+        dr1x90_field_wait(DDRC_ADDR_PPC + PGSR0, WLDONE_offset, WLDONE_mask, 1, 20000000);
+       //  printf("\nWLDONE training regData = 0x%x\r\n", wl_en, wl2_en, gt_en, regData);
     }
 
     if (wl2_en == 0x1 ) {
-        dr1x90_field_wait(DDRC_ADDR_PPC + PGSR0, WLADONE_offset, WLADONE_mask, 1, 20);
+        dr1x90_field_wait(DDRC_ADDR_PPC + PGSR0, WLADONE_offset, WLADONE_mask, 1, 2000000);
     }
 
     if (gt_en == 0x1 ) {
-        dr1x90_field_wait(DDRC_ADDR_PPC + PGSR0, QSGDONE_offset, QSGDONE_mask, 1, 200);
+        dr1x90_field_wait(DDRC_ADDR_PPC + PGSR0, QSGDONE_offset, QSGDONE_mask, 1, 2000000);
     }
 
     if ((wl_en || wl2_en || gt_en ) == 1 ){
@@ -495,10 +496,10 @@ void do_training(u8 wl_en,u8 wl2_en,u8 gt_en)
         regData = dr1x90_reg_read(DDRC_ADDR_PPC + PGSR0);
         wlerr = (regData >> 21) & 0x1;
          if (wlerr == 1) {
-             printf(" \n------- WL Failed ; PGSR0 is 0x%x\r\n",regData);
+            //  printf(" \n------- WL Failed ; PGSR0 is 0x%x\r\n",regData);
         }
          if (wlerr == 0) {
-             printf(" \n------- WL PASSED ; PGSR0 is 0x%x\r\n", regData);
+            //  printf(" \n------- WL PASSED ; PGSR0 is 0x%x\r\n", regData);
         }
     }
 
@@ -506,50 +507,52 @@ void do_training(u8 wl_en,u8 wl2_en,u8 gt_en)
         regData = dr1x90_reg_read(DDRC_ADDR_PPC + PGSR0);
         wl2err = ( regData >> 23 ) & 0x1;
         if (wl2err == 1) {
-            printf(" \n------- WL2 Failed ; PGSR0 is 0x%x\r\n", regData);
+           //  printf(" \n------- WL2 Failed ; PGSR0 is 0x%x\r\n", regData);
         }
         if (wl2err == 0) {
-            printf(" \n------- WL2 PASSED ; PGSR0 is 0x%x\r\n", regData);
+           //  printf(" \n------- WL2 PASSED ; PGSR0 is 0x%x\r\n", regData);
         }
     }
 
     if (gt_en == 1) {
+        regData = dr1x90_field_read(DDRC_ADDR_PPC + PGSR0, QSGDONE_offset, QSGDONE_mask);
+       //  printf(" \n------- GateTraining done = 0x%x\r\n", regData);
         regData = dr1x90_reg_read(DDRC_ADDR_PPC + PGSR0);
         gterr = (regData >> 22) & 0x1;
         if (gterr == 1) {
-            printf(" \n------- GateTraining Failed ; PGSR0 is 0x%x\r\n", regData);
+           //  printf(" \n------- GateTraining Failed ; PGSR0 is 0x%x\r\n", regData);
         }
         if (gterr == 0) {
-            printf(" \n------- GateTraining PASSED ; PGSR0 is 0x%x\r\n", regData);
+           //  printf(" \n------- GateTraining PASSED ; PGSR0 is 0x%x\r\n", regData);
         }
     }
 
     int n;
     for (n = 0; n <= 3; n++) {
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 :DGSL is 0x%x\r\n",n, regData);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 :DGSL is 0x%x\r\n",n, regData);
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, WLSL_offset, WLSL_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 : WLSLis 0x%x\r\n", n, regData);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 : WLSLis 0x%x\r\n", n, regData);
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR0 + 0x100 * n, WLD_offset, WLD_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR0 : WLD is 0x%x\r\n", n, regData);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR0 : WLD is 0x%x\r\n", n, regData);
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * n, WDQD_offset, WDQD_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR1 : WDQD is 0x%x\r\n", n, regData);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR1 : WDQD is 0x%x\r\n", n, regData);
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR2 : DQSGD is 0x%x\r\n", n, regData);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR2 : DQSGD is 0x%x\r\n", n, regData);
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR3 :RDQSD is 0x%x\r\n", n, regData);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR3 :RDQSD is 0x%x\r\n", n, regData);
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR4 : RDQSND is 0x%x\r\n",n, regData);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR4 : RDQSND is 0x%x\r\n",n, regData);
 
     }
 
 
 
-        printf(" \r\n");
-        printf(" +---------------------------------------+\r\n");
-        printf(" |    do_training end                  |\r\n");
-        printf(" +---------------------------------------+\r\n");
-        printf(" \r\n");
+       //  printf(" \r\n");
+       //  printf(" +---------------------------------------+\r\n");
+       //  printf(" |    do_training end                  |\r\n");
+       //  printf(" +---------------------------------------+\r\n");
+       //  printf(" \r\n");
 
 
 
@@ -560,11 +563,11 @@ void eye_training()
     u32 regData, regDataNew;
     u32 rdErr, wrErr;
 
-    printf(" \r\n");
-    printf(" +---------------------------------------+\r\n");
-    printf(" |    Eye Centering Training             |\r\n");
-    printf(" +---------------------------------------+\r\n");
-    printf(" \r\n");
+   //  printf(" \r\n");
+   //  printf(" +---------------------------------------+\r\n");
+   //  printf(" |    Eye Centering Training             |\r\n");
+   //  printf(" +---------------------------------------+\r\n");
+   //  printf(" \r\n");
 
     regData = dr1x90_reg_read(DDRC_ADDR_PPC + PIR);
     regDataNew = dr1x90_field_set(DDRC_ADDR_PPC + PIR, WREYE_offset, WREYE_mask, 1, regData);
@@ -579,8 +582,8 @@ void eye_training()
     rdErr = dr1x90_field_read(DDRC_ADDR_PPC + PGSR0, PGSR0_REERR_offset, PGSR0_REERR_mask);
     wrErr = dr1x90_field_read(DDRC_ADDR_PPC + PGSR0, PGSR0_WEERR_offset, PGSR0_WEERR_mask);
     if ((rdErr || wrErr ) == 1) {
-        printf(" ****   Error Occurs During Eye Centering Training     ****\r\n");
-        printf("\nrdErr = %x , wrErr = %x\r\n", rdErr, wrErr);
+       //  printf(" ****   Error Occurs During Eye Centering Training     ****\r\n");
+       //  printf("\nrdErr = %x , wrErr = %x\r\n", rdErr, wrErr);
     }
 
     if ( ((!(env_cfg_en_bit_deskew_train) && env_cfg_en_eye_center_train) || env_cfg_is_micron)  && ((env_cfg_ddr_mode == DDR4) && env_cfg_RDBI))
@@ -591,27 +594,27 @@ void eye_training()
     int n;
     for (n = 0; n <= 3; n++) {
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 :DGSL is 0x%x\r\n", n, regData);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 :DGSL is 0x%x\r\n", n, regData);
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, WLSL_offset, WLSL_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 : WLSLis 0x%x\r\n", n, regData);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 : WLSLis 0x%x\r\n", n, regData);
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR0 + 0x100 * n, WLD_offset, WLD_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR0 : WLD is 0x%x\r\n", n, regData);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR0 : WLD is 0x%x\r\n", n, regData);
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * n, WDQD_offset, WDQD_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR1 : WDQD is 0x%x\r\n", n, regData);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR1 : WDQD is 0x%x\r\n", n, regData);
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR2 : DQSGD is 0x%x\r\n", n, regData);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR2 : DQSGD is 0x%x\r\n", n, regData);
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR3 :RDQSD is 0x%x\r\n", n, regData);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR3 :RDQSD is 0x%x\r\n", n, regData);
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask);
-        printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR4 : RDQSND is 0x%x\r\n", n, regData);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR4 : RDQSND is 0x%x\r\n", n, regData);
 
     }
 
-    printf(" \r\n");
-    printf(" +---------------------------------------+\r\n");
-    printf(" |    Eye Centering Training Finished    |\r\n");
-    printf(" +---------------------------------------+\r\n");
-    printf(" \r\n");
+   //  printf(" \r\n");
+   //  printf(" +---------------------------------------+\r\n");
+   //  printf(" |    Eye Centering Training Finished    |\r\n");
+   //  printf(" +---------------------------------------+\r\n");
+   //  printf(" \r\n");
 
 
 
@@ -623,11 +626,11 @@ void adjust_rddbi_level_result(u8 pub_index)
     ddr_vif_manual_ddl_update = 1;
 
 
-    printf(" \r\n");
-    printf(" +---------------------------------------+\r\n");
-    printf(" |    adjust_rddbi_level_result          |\r\n");
-    printf(" +---------------------------------------+\r\n");
-    printf(" \r\n");
+   //  printf(" \r\n");
+   //  printf(" +---------------------------------------+\r\n");
+   //  printf(" |    adjust_rddbi_level_result          |\r\n");
+   //  printf(" +---------------------------------------+\r\n");
+   //  printf(" \r\n");
 
     //#define     DX0BDLR5            0x758
     //#define     DX0BDLR3            0x750
@@ -647,9 +650,420 @@ void adjust_rddbi_level_result(u8 pub_index)
 
     ddr_vif_manual_ddl_update = 0;
 
-    printf(" \r\n");
-    printf(" +---------------------------------------+\r\n");
-    printf(" |    adjust_rddbi_level_result Finished |\r\n");
-    printf(" +---------------------------------------+\r\n");
-    printf(" \r\n");
+   //  printf(" \r\n");
+   //  printf(" +---------------------------------------+\r\n");
+   //  printf(" |    adjust_rddbi_level_result Finished |\r\n");
+   //  printf(" +---------------------------------------+\r\n");
+   //  printf(" \r\n");
 }
+
+void set_mpu () {
+
+    u32 regData;
+    regData = dr1x90_dram_read(0xf840e004);
+   //  printf(" \n*** initial MPU0 is 0x%x\r\n", regData);
+    dr1x90_dram_field_write(0xf840e004, 0, 1, 0);
+    regData = dr1x90_dram_read(0xf840e004);
+   //  printf(" \n***  MPU0 is 0x%x\r\n", regData);
+
+    regData = dr1x90_dram_read(0xf840f004);
+   //  printf(" \n*** initial MPU1 is 0x%x\r\n", regData);
+    dr1x90_dram_field_write(0xf840f004, 0, 1, 0);
+    regData = dr1x90_dram_read(0xf840f004);
+   //  printf(" \n***  MPU1 is 0x%x\r\n", regData);
+
+    regData = dr1x90_dram_read(0xF8801074);
+   //  printf(" DDRBUS reset initial data =  0x%x\r\n", regData);
+    //dr1x90_dram_field_write(0xF8801074, 14, 1, 1);
+    dr1x90_dram_write(0xF8801074, 0xffffffff);
+    regData = dr1x90_dram_read(0xF8801074);
+   //  printf(" DDRBUS reset data =  0x%x\r\n", regData);
+
+    regData = dr1x90_dram_read(0xF8800000);
+   //  printf(" chipID initial data =  0x%x\r\n", regData);
+}
+
+void soft_gate_training( ) {
+
+    //global logfile
+    u32 loop_cnt;
+    u32 regData;
+    u8 n;
+
+       //  printf(" \r\n");
+       //  printf( "+---------------------------------------+\r\n");
+       //  printf( "|    soft_gate_training begin           |\r\n");
+       //  printf( "+---------------------------------------+\r\n");
+
+
+        //#set regData[scan[regRead "PGCR3"] % x]
+        //#set regNewData[fieldSet "PGCR3.PRFBYP" 1 $regData]
+        //#regUpdate "PGCR3" $regData $regNewData
+
+        dr1x90_field_write(DDRC_ADDR_PPC + DTCR0, DTDEN_offset, DTDEN_mask, 1);
+        dr1x90_field_write(DDRC_ADDR_PPC + DTCR1, BSTEN_offset, BSTEN_mask, 1);
+        dr1x90_field_write(DDRC_ADDR_PPC + DTCR1, RDLVLEN_offset, RDLVLEN_mask, 1);
+
+        dr1x90_field_write(DDRC_ADDR_PPC + PIR, QSGATE_offset, QSGATE_mask, 1);
+        dr1x90_field_write(DDRC_ADDR_PPC + PIR, INIT_offset, INIT_mask, 1);
+
+        dr1x90_field_write(DDRC_ADDR_PPC + PHY_EYE_CR3, grp0_sel_offset, grp0_sel_mask, 22);
+
+        loop_cnt = 0;
+        regData = dr1x90_field_read(DDRC_ADDR_PPC + PGSR0, QSGDONE_offset, QSGDONE_mask);
+        while (regData != 1 ) {
+            for (n = 0; n <= 3; n++) {
+
+                regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask);
+               //  printf("Soft Gate Training, DX 0x%x GTR0.DGSL is 0x%x  \r\n", n, regData);
+                regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR5 + 0x100 * n, DQSGSD_offset, DQSGSD_mask);
+               //  printf("Soft Gate Training, DX 0x%x LCDLR5.DQSGSD is  0x%x \r\n", n, regData);
+                regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
+               //  printf("Soft Gate Training, DX 0x%x LCDLR2.DQSGD is  0x%x \r\n", n, regData);
+                regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0RSR0 + 0x100 * n, DXnRSR0_QSGERR_offset, DXnRSR0_QSGERR_mask);
+               //  printf("Soft Gate Training, DX 0x%x RSR0.QSGERR is  0x%x \r\n", n, regData);
+                regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0RSR1 + 0x100 * n, RDLVLERR_offset, RDLVLERR_mask);
+               //  printf("Soft Gate Training, DX 0x%x RSR1.RDLVLERR is  0x%x \r\n", n, regData);
+
+            }
+
+            dr1x90_reg_write(DDRC_ADDR_PPC + GPR0, 0);
+            regData = dr1x90_field_read(DDRC_ADDR_PPC + GPR0, GPR0_offset, GPR0_mask);
+
+           //  printf("Soft Gate Training, qs_status is 0x%x \r\n", regData);
+
+            regData = dr1x90_field_read(DDRC_ADDR_PPC + GPR0, GPR0_offset, GPR0_mask);
+
+            for (n = 0; n <= 3; n++) {
+                regData = dr1x90_field_read(DDRC_ADDR_BK1_T0 + 0x1000 * n + DQSGRP_QS_GATE_SR, QS_GATE_SR_STATUS_offset, QS_GATE_SR_STATUS_mask);
+               //  printf("Soft Gate Training, DX 0x%x DQSGRP_QS_GATE_SR is  0x%x \r\n", n, regData);
+            }
+
+            dr1x90_field_write(DDRC_ADDR_PPC + DTCR0, DTDSTP_offset, DTDSTP_mask, 1);
+
+            loop_cnt = loop_cnt + 1;
+
+            regData = dr1x90_field_read(DDRC_ADDR_PPC + PGSR0, QSGDONE_offset, QSGDONE_mask);
+
+           //  printf("Polling 0x%x,  GateTraining done = 0x%x \r\n", loop_cnt, regData);
+
+        }
+
+        regData = dr1x90_field_read(DDRC_ADDR_PPC + PGSR0, PGSR0_QSGERR_offset, PGSR0_QSGERR_mask);
+
+        if (regData == 1) {
+       //  printf("GateTraining Failed ; PGSR0 is 0x%x , loop_cnt = 0x%x \r\n", regData, loop_cnt);
+        } else {
+       //  printf("GateTraining PASSED ; PGSR0 is 0x%x , loop_cnt = 0x%x \r\n", regData, loop_cnt);
+        }
+
+        for (n = 0; n <= 3; n++) {
+
+            regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask);
+           //  printf("Soft Gate Training done, DX 0x%x GTR0.DGSL is 0x%x  \r\n", n, regData);
+            regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR5 + 0x100 * n, DQSGSD_offset, DQSGSD_mask);
+           //  printf("Soft Gate Training done, DX 0x%x LCDLR5.DQSGSD is  0x%x \r\n", n, regData);
+            regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
+           //  printf("Soft Gate Training done, DX 0x%x LCDLR2.DQSGD is  0x%x \r\n", n, regData);
+            regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0RSR0 + 0x100 * n, DXnRSR0_QSGERR_offset, DXnRSR0_QSGERR_mask);
+           //  printf("Soft Gate Training done, DX 0x%x RSR0.QSGERR is  0x%x \r\n", n, regData);
+            regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0RSR1 + 0x100 * n, RDLVLERR_offset, RDLVLERR_mask);
+           //  printf("Soft Gate Training done, DX 0x%x RSR1.RDLVLERR is  0x%x \r\n", n, regData);
+
+        }
+
+
+       //  printf("\r\n");
+       //  printf("+---------------------------------------+\r\n");
+       //  printf("|    soft_gate_training end             |\r\n");
+       //  printf("+---------------------------------------+\r\n");
+       //  printf("\r\n");
+
+}
+
+static uint64_t rand_val;
+
+void set_rand_seed(uint64_t v)
+{
+    rand_val = v;
+}
+
+uint64_t get_rand()
+{
+    rand_val = rand_val * 25214903917ULL + 11ULL;
+    return rand_val;
+}
+
+
+void soft_reye_scanning() {
+
+    //global logfile
+    u32 loop_cnt;
+    u32 regData;
+    u8 n;
+    u32 left_step;
+    u32 right_step;
+    u32 mid_step;
+
+    u32 dx_MDL;
+    u32 dx_DGSL;
+    u32 dx_DQSGD;
+    u32 dx_RDQSD;
+    u32 dx_RDQSND;
+    u32 dx_DQSGSD;
+    u32 err_cnt = 0;
+
+
+   //  printf(" \r\n");
+   //  printf("+---------------------------------------+\r\n");
+   //  printf("|    soft_reye_scanning begin           |\r\n");
+   //  printf("+---------------------------------------+\r\n");
+
+    //dr1x90_dram_write(0x100000 , 0x12345678);
+   //  printf(" Start reye scan \r\n");
+    left_step = 0;
+    right_step = 0;
+    mid_step = 0;
+    err_cnt = 0;
+    for (n = 0; n <= 3; n++) {
+        dx_MDL = dr1x90_field_read(DDRC_ADDR_PPC + DX0MDLR0, IPRD_offset, IPRD_mask);
+       //  printf("\neye scan : DX 0x%x  mdl =  0x%x\r\n", dx_MDL);
+        dx_DGSL = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask);
+       //  printf("\neye scan : DX 0x%x,  DGSL is 0x%x  \r\n", n, dx_DGSL);
+        dx_DQSGD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
+       //  printf("\neye scan : DX 0x%x,  DQSGD =  0x%x \r\n", n, dx_DQSGD);
+        dx_RDQSD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
+       //  printf("\neye scan : DX 0x%x,  RDQSD =  0x%x \r\n", n, dx_RDQSD);
+        dx_RDQSND = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask);
+       //  printf("\neye scan : DX 0x%x,  RDQSND =  0x%x \r\n", n, dx_RDQSND);
+        dx_DQSGSD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR5 + 0x100 * n, DQSGSD_offset, DQSGSD_mask);
+       //  printf("\neye scan : DX 0x%x,  DQSGSD =  0x%x \r\n", n, dx_DQSGSD);
+
+        //dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask,  );
+        left_step = 0;
+        err_cnt = 0;
+        while (left_step <= dx_MDL) {
+            //for (left_step = 0; left_step <= dx_MDL; left_step++)
+            if (left_step > dx_DQSGD) {
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask, dx_DQSGD + dx_MDL / 2 - left_step);
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask, dx_DGSL - 1);
+            }
+            else {
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask, dx_DQSGD - left_step);
+            }
+            dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask, dx_RDQSD - left_step);
+            dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask, dx_RDQSND - left_step);
+           //  printf(" left_step = 0x%x, write DRAM address \r\n", left_step);
+
+            for (u8 i = 0; i < 10; i++) {
+                u32 zq_val = get_rand();
+                dr1x90_dram_write(0x100000 + i * 8, zq_val);
+                regData = dr1x90_dram_read(0x100000 + i * 8);
+                if ((regData & 0xffffffff) == (zq_val & 0xffffffff)) {
+                    //printf(" pass No. 0x%08x\r\n", i);
+                }
+                else {
+                   //  printf(" No. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\r\n", i, (0x100000 + i * 8), regData, zq_val);
+                    err_cnt = err_cnt + 1;
+                    break;
+                }
+            }
+            if (err_cnt > 0) {
+                break;
+            }
+            else {
+                left_step++;
+            }
+        }
+
+        //dx_DQSGD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
+       //  printf("\neye scan : DX 0x%x, old dx_DQSGD =  0x%x, left DQSGD =  0x%x \r\n", n, dx_DQSGD, dx_DQSGD - left_step);
+        //dx_RDQSD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
+       //  printf("\neye scan : DX 0x%x, old dx_RDQSD =  0x%x, left RDQSD =  0x%x \r\n", n, dx_RDQSD, dx_RDQSD - left_step);
+        //dx_RDQSND = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask);
+       //  printf("\neye scan : DX 0x%x, old dx_RDQSND =  0x%x, left RDQSND =  0x%x \r\n", n, dx_RDQSND, dx_RDQSND - left_step);
+        err_cnt = 0;
+        right_step = 0;
+        while (right_step <= dx_MDL) {
+            //for (right_step = 0; right_step <= dx_MDL; right_step++)
+            dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask, dx_DQSGD + right_step);
+            dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask, dx_RDQSD + right_step);
+            dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask, dx_RDQSND + right_step);
+           //  printf(" right_step = 0x%x, write DRAM address \r\n", right_step);
+
+
+            for (u8 i = 0; i < 10; i++) {
+                u32 zq_val = get_rand();
+                dr1x90_dram_write(0x100000 + i * 8, zq_val);
+                regData = dr1x90_dram_read(0x100000 + i * 8);
+                if ((regData & 0xffffffff) == (zq_val & 0xffffffff)) {
+                    //printf(" pass No. 0x%08x\r\n", i);
+                }
+                else {
+                   //  printf(" No. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\r\n", i, (0x100000 + i * 8), regData, zq_val);
+                    err_cnt = err_cnt + 1;
+                    break;
+                }
+            }
+            if (err_cnt > 0) {
+                break;
+            }
+            else {
+                right_step++;
+            }
+        }
+
+       //  printf("\neye scan : DX 0x%x, old dx_DQSGD =  0x%x, right DQSGD =  0x%x \r\n", n, dx_DQSGD, dx_DQSGD + right_step);
+        //dx_RDQSD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
+       //  printf("\neye scan : DX 0x%x, old dx_RDQSD =  0x%x, right RDQSD =  0x%x \r\n", n, dx_RDQSD, dx_RDQSD + right_step);
+        //dx_RDQSND = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask);
+       //  printf("\neye scan : DX 0x%x, old dx_RDQSND =  0x%x, right RDQSND =  0x%x \r\n", n, dx_RDQSND, dx_RDQSND + right_step);
+
+        if (right_step >= left_step) {
+           mid_step = (right_step - left_step) / 2;
+           dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask, dx_DQSGD + mid_step);
+           dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask, dx_RDQSD + mid_step);
+           dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask, dx_RDQSND + mid_step);
+        } else {
+           mid_step = (left_step - right_step) / 2;
+           dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask, dx_DQSGD - mid_step);
+           dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask, dx_RDQSD - mid_step);
+           dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask, dx_RDQSND - mid_step);
+        }
+
+    }
+
+   //  printf( "Reye scan Done\r\n");
+
+}
+
+void soft_weye_scanning() {
+
+    //global logfile
+    u32 loop_cnt;
+    u32 regData;
+    u8 n;
+    u32 left_step;
+    u32 right_step;
+    u32 mid_step;
+
+    u32 dx_MDL;
+    u32 dx_WLSL;
+    u32 dx_WLD;
+    u32 dx_WDQD;
+    u32 err_cnt = 0;
+
+
+   //  printf(" \r\n");
+   //  printf("+---------------------------------------+\r\n");
+   //  printf("|    soft_weye_scanning begin           |\r\n");
+   //  printf("+---------------------------------------+\r\n");
+
+    //dr1x90_dram_write(0x100000 , 0x12345678);
+   //  printf(" Start weye scan \r\n");
+    left_step = 0;
+    right_step = 0;
+    mid_step = 0;
+    err_cnt = 0;
+    for (n = 0; n <= 3; n++) {
+        dx_MDL = dr1x90_field_read(DDRC_ADDR_PPC + DX0MDLR0, IPRD_offset, IPRD_mask);
+       //  printf("\neye scan : DX 0x%x  mdl =  0x%x\r\n", dx_MDL);
+
+        dx_WLSL = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, WLSL_offset, WLSL_mask);
+       //  printf("\nweye scan : DX 0x%x,  WLSL is 0x%x  \r\n", n, dx_WLSL);
+
+        dx_WLD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR0 + 0x100 * n, WLD_offset, WLD_mask);
+       //  printf("\nweye scan : DX 0x%x,  WLD is 0x%x  \r\n", n, dx_WLD);
+
+        dx_WDQD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * n, WDQD_offset, WDQD_mask);
+       //  printf("\nweye scan : DX 0x%x,  WDQD is 0x%x  \r\n", n, dx_WDQD);
+
+        //dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask,  );
+        left_step = 0;
+        err_cnt = 0;
+        while (left_step <= dx_MDL) {
+            //for (left_step = 0; left_step <= dx_MDL; left_step++)
+
+            dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * n, WDQD_offset, WDQD_mask, dx_WDQD - left_step);
+
+           //  printf(" weye scan : left_step = 0x%x, write DRAM address \r\n", left_step);
+
+            for (u8 i = 0; i < 10; i++) {
+
+                //dr1x90_dram_write(0x100000 + i * 4, 0x12345678);
+                u32 zq_val = get_rand();
+                dr1x90_dram_write(0x100000 + i * 8, zq_val);
+                regData = dr1x90_dram_read(0x100000 + i * 8);
+                if ((regData & 0xffffffff) == (zq_val & 0xffffffff)) {
+                    //printf(" pass No. 0x%08x\r\n", i);
+                }
+                else {
+                   //  printf(" weye scan : No. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\r\n", i, (0x100000 + i * 8), regData, zq_val);
+                    err_cnt = err_cnt + 1;
+                    break;
+                }
+            }
+            if (err_cnt > 0) {
+                break;
+            }
+            else {
+                left_step++;
+            }
+        }
+
+        //dx_DQSGD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
+       //  printf("\nweye scan : DX 0x%x, old dx_WDQD =  0x%x, left DQSGD =  0x%x \r\n", n, dx_WDQD, dx_WDQD - left_step);
+
+        err_cnt = 0;
+        right_step = 0;
+        while (right_step <= dx_MDL) {
+            //for (right_step = 0; right_step <= dx_MDL; right_step++)
+
+            dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * n, WDQD_offset, WDQD_mask, dx_WDQD + right_step);
+
+           //  printf(" weye scan : left_step = 0x%x, write DRAM address \r\n", left_step);
+           //  printf(" right_step = 0x%x, write DRAM address \r\n", right_step);
+
+
+            for (u8 i = 0; i < 10; i++) {
+
+                //dr1x90_dram_write(0x100000 + i * 4, 0x12345678);
+                u32 zq_val = get_rand();
+                dr1x90_dram_write(0x100000 + i * 8, zq_val);
+                regData = dr1x90_dram_read(0x100000 + i * 8);
+                if ((regData & 0xffffffff) == (zq_val & 0xffffffff)) {
+                    //printf(" pass No. 0x%08x\r\n", i);
+                }
+                else {
+                   //  printf(" No. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\r\n", i, (0x100000 + i * 8), regData, zq_val);
+                    err_cnt = err_cnt + 1;
+                    break;
+                }
+            }
+            if (err_cnt > 0) {
+                break;
+            }
+            else {
+                right_step++;
+            }
+        }
+
+
+       //  printf("\nweye scan : DX 0x%x, old dx_WDQD =  0x%x, right WDQD =  0x%x \r\n", n, dx_WDQD, dx_WDQD + right_step);
+
+        if (right_step >= left_step) {
+            mid_step = (right_step - left_step) / 2;
+            dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * n, WDQD_offset, WDQD_mask, dx_WDQD + mid_step);
+        }
+        else {
+            mid_step = (left_step - right_step) / 2;
+            dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * n, WDQD_offset, WDQD_mask, dx_WDQD - mid_step);
+        }
+
+    }
+
+   //  printf( "Reye scan Done\r\n");
+
+}
+
+

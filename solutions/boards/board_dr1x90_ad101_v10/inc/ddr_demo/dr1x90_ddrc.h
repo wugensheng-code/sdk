@@ -14,6 +14,9 @@ void dr1x90_field_write(u16 addr, u8 offset, u32 mask, u32 data);
 u32  dr1x90_field_read (u16 addr, u8 offset, u32 mask);
 u32  dr1x90_field_set  (u16 addr, u8 offset, u32 mask, u32 data, u32 oldData);
 int  dr1x90_field_wait (u16 addr, u8 offset, u32 mask, u32 expect, u32 timeout);
+u32  dr1x90_dram_read  (u32 addr);
+void dr1x90_dram_write (u32 addr, u32 data);
+void dr1x90_dram_field_write(u32 addr, u8 offset, u32 mask, u32 data);
 
 #define DDRC_ADDR_GPLL       0x0000
 #define DDRC_ADDR_DPLL       0x0800

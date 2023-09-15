@@ -112,6 +112,7 @@ void dr1x90_ddrppc_base_cfg()
     dr1x90_reg_write(DDRC_ADDR_PPC + PGCR3, regData);
 
     dr1x90_field_write(DDRC_ADDR_PPC + PGCR0, ACWLPON_offset, ACWLPON_mask, 1);
+    dr1x90_field_write(DDRC_ADDR_PPC + DSGCR, LPIOPD_offset, LPIOPD_mask, 0);
 }
 
 void dr1x90_ddrppc_set_timing()
@@ -262,7 +263,7 @@ int dr1x90_ddrppc_mtest(u8 bank, u16 row, u16 col, u8 byteNum) {
     dr1x90_reg_write(DDRC_ADDR_PPC + BISTMSKR1 , 0xFFFFFFFF);
     dr1x90_reg_write(DDRC_ADDR_PPC + BISTMSKR2 , 0x00000000);
 
-    for (patternType = 15; patternType <= 15; patternType++){
+    for (patternType = 0; patternType <= 27; patternType++){
         dr1x90_field_write(DDRC_ADDR_PPC + PGCR0, PHYFRST_offset, PHYFRST_mask, 0);
         dr1x90_field_write(DDRC_ADDR_PPC + PGCR0, PHYFRST_offset, PHYFRST_mask, 1);
 
@@ -270,7 +271,7 @@ int dr1x90_ddrppc_mtest(u8 bank, u16 row, u16 col, u8 byteNum) {
 
         regData = dr1x90_reg_read(DDRC_ADDR_PPC + BISTRR);
         regData = dr1x90_field_set(DDRC_ADDR_PPC + BISTRR, BINST_offset,  BINST_mask, 1, regData);
-        
+
         //bist mode =1
         //regData = dr1x90_field_set(DDRC_ADDR_PPC + BISTRR, BMODE_offset,  BMODE_mask, 1, regData);
         //loopback mode = 0
@@ -282,13 +283,13 @@ int dr1x90_ddrppc_mtest(u8 bank, u16 row, u16 col, u8 byteNum) {
         regData = dr1x90_field_set(DDRC_ADDR_PPC + BISTRR, BDXSEL_offset, BDXSEL_mask, byteNum, regData);
         dr1x90_reg_write(DDRC_ADDR_PPC + BISTRR, regData);
 
-        dr1x90_field_wait(DDRC_ADDR_PPC + BISTGSR, BDONE_offset, BDONE_mask, 1, 0x1000); // wait for bistDone
+        dr1x90_field_wait(DDRC_ADDR_PPC + BISTGSR, BDONE_offset, BDONE_mask, 1, 0x1500); // wait for bistDone
 
         bistDone  = dr1x90_field_read(DDRC_ADDR_PPC + BISTGSR,  BDONE_offset,  BDONE_mask);
         bistDxErr = dr1x90_field_read(DDRC_ADDR_PPC + BISTGSR,  BDXERR_offset, BDXERR_mask);
         rcvCnt    = dr1x90_field_read(DDRC_ADDR_PPC + BISTWCSR, DXWCNT_offset, DXWCNT_mask); // Equal to iterateCnt
 
-        printf("mtest : bistDone = 0x%x bistDxErr = 0x%x rcvCnt = 0x%x \r\n", bistDone, bistDxErr, rcvCnt);
+       //  printf("\ndram_test : patternType =  0x%x, bistDone = 0x%x, bistDxErr = 0x%x, rcvCnt = 0x%x \r\n", patternType, bistDone, bistDxErr, rcvCnt);
 
         dr1x90_field_write(DDRC_ADDR_PPC + BISTRR, BINST_offset, BINST_mask, 3);
         dr1x90_field_write(DDRC_ADDR_PPC + BISTRR, BINST_offset, BINST_mask, 2);
@@ -311,11 +312,15 @@ void dr1x90_ddrppc_fast_init()
     int n;
 
     regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0MDLR0, IPRD_offset, IPRD_mask);
+   //  printf("\n DX0 mdl.   data =  0x%x\r\n", regData);
 
-    u16 mdl_ui = regData / 2;
+    u16 mdl_ui = regData/2;
 
-    u16 dl_wld[4]  = {120/5, 170/5, 255/5, 270/5};
-    u16 dl_gate[4] = {120/5 + mdl_ui/2, 170/5 + mdl_ui/2, 255/5 + mdl_ui/2, 270/5 + mdl_ui/2};
+    u16 dl_wld[4] = {120/5, 170/5, 255/5, 270/5};
+//    u16 dl_gate[4] = {120/5 + mdl_ui + mdl_ui/2, 170/5 + mdl_ui + mdl_ui/2, 255/5 + mdl_ui + mdl_ui/2, 270/5 + mdl_ui + mdl_ui/2 }; // fail
+//    u16 dl_gate[4] = {120/5 + mdl_ui  , 170/5 + mdl_ui,   255/5 + mdl_ui,   270/5 + mdl_ui   }; // pass
+    u16 dl_gate[4] = {120/5 + mdl_ui/2, 170/5 + mdl_ui/2, 255/5 + mdl_ui/2, 270/5 + mdl_ui/2 }; // pass
+//    u16 dl_gate[4] = {120/5  , 170/5,   255/5,   270/5   }; // pass
 
     dr1x90_field_write(DDRC_ADDR_PPC + RANKIDR, RANKWID_offset, RANKWID_mask, 0);
     dr1x90_field_write(DDRC_ADDR_PPC + RANKIDR, RANKRID_offset, RANKRID_mask, 0);
@@ -323,11 +328,14 @@ void dr1x90_ddrppc_fast_init()
     for (n = 0; n <= 3; n++) {
        dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0   + 0x100*n, DGSL_offset,   DGSL_mask,   3 );
        dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0   + 0x100*n, WLSL_offset,   WLSL_mask,   2 );
-       dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR0 + 0x100*n, WLD_offset,    WLD_mask,    dl_wld[n] );
+       dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR0 + 0x100*n, WLD_offset,    WLD_mask,    dl_wld[n]);
        dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100*n, WDQD_offset,   WDQD_mask,   mdl_ui >> 1 );
-       dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100*n, DQSGD_offset,  DQSGD_mask,  dl_gate[n] );
-       dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100*n, RDQSD_offset,  RDQSD_mask,  mdl_ui >> 2 );
-       dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100*n, RDQSND_offset, RDQSND_mask, mdl_ui >> 2 );
+       dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100*n, DQSGD_offset,  DQSGD_mask,  dl_gate[n]);
+       //dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100*n, RDQSD_offset,  RDQSD_mask,  mdl_ui >> 2 );
+       //dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100*n, RDQSND_offset, RDQSND_mask, mdl_ui >> 2 );
+
+       dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask, mdl_ui >> 1);
+       dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask, mdl_ui >> 1);
        dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR5 + 0x100*n, DQSGSD_offset, DQSGSD_mask, 0 );
     }
 
@@ -363,8 +371,7 @@ void dr1x90_ddrmc_init(u8 sd_ecc_en)
     dr1x90_reg_write(0x101c ,0xcb918919); // MRCTRL2
 
 
-    // dr1x90_reg_write(0x1030 ,0x0000008a); // PWRCTL
-    dr1x90_reg_write(0x1030 ,0x00000088); // PWRCTL
+    dr1x90_reg_write(0x1030 ,0x0000008a); // PWRCTL
     dr1x90_reg_write(0x1034 ,0x00080001); // PWRTMG
     dr1x90_reg_write(0x1038 ,0x00410002); // HWLPCTL
     dr1x90_reg_write(0x1050 ,0x00c17020); // RFSHCTL0
@@ -413,7 +420,7 @@ void dr1x90_ddrmc_init(u8 sd_ecc_en)
     dr1x90_field_write(DDRC_ADDR_UMCTL2 + DRAMTMG2 ,read_latency_offset , read_latency_mask ,0x9); // DRAMTMG2
     dr1x90_field_write(DDRC_ADDR_UMCTL2 + DRAMTMG2 ,rd2wr_offset , rd2wr_mask ,0x10); // DRAMTMG2
     dr1x90_field_write(DDRC_ADDR_UMCTL2 + DRAMTMG2 ,wr2rd_offset , wr2rd_mask ,0x10); // DRAMTMG2
- 
+
     dr1x90_reg_write(0x110c ,0x0000400c); // DRAMTMG3
     dr1x90_reg_write(0x1110 ,0x06030307); // DRAMTMG4
     dr1x90_reg_write(0x1114 ,0x05e20302); // DRAMTMG5
@@ -430,7 +437,7 @@ void dr1x90_ddrmc_init(u8 sd_ecc_en)
     dr1x90_reg_write(0x1190 ,0x02858203); // DFITMG0
     dr1x90_field_write(DDRC_ADDR_UMCTL2 + DFITMG0 ,dfi_tphy_wrlat_offset , dfi_tphy_wrlat_mask ,0x5); // DRAMTMG2
     dr1x90_field_write(DDRC_ADDR_UMCTL2 + DFITMG0 ,dfi_t_rddata_en_offset , dfi_t_rddata_en_mask ,0x5); // DRAMTMG2
-     
+
 
     dr1x90_reg_write(0x1194 ,0x03070101); // DFITMG1
     dr1x90_reg_write(0x1198 ,0x07007031); // DFILPCFG0
@@ -444,33 +451,26 @@ void dr1x90_ddrmc_init(u8 sd_ecc_en)
     dr1x90_reg_write(0x11b8 ,0x0000001e); // DFITMG3
     dr1x90_reg_write(0x11c0 ,0x00000005); // DBICTL
     dr1x90_reg_write(0x11c4 ,0x2a000000); // DFIPHYMSTR
-/*
-    dr1x90_reg_write(0x1204 ,0x003f0a0a); // ADDRMAP1
-    dr1x90_reg_write(0x1208 ,0x00000000); // ADDRMAP2
-    dr1x90_reg_write(0x120c ,0x00000000); // ADDRMAP3
-    dr1x90_reg_write(0x1210 ,0x00001f1f); // ADDRMAP4
-    dr1x90_reg_write(0x1214 ,0x08080808); // ADDRMAP5
-    dr1x90_reg_write(0x1218 ,0x0f080808); // ADDRMAP6
-    dr1x90_reg_write(0x121c ,0x00000f0f); // ADDRMAP7
-    dr1x90_reg_write(0x1220 ,0x00000808); // ADDRMAP8
+
+    dr1x90_reg_write(0x1204, 0x00020202); // ADDRMAP1
+    dr1x90_reg_write(0x1208 ,0x03030000); // ADDRMAP2
+    dr1x90_reg_write(0x120c, 0x03030303); // ADDRMAP3
+    dr1x90_reg_write(0x1210, 0x00001f1f); // ADDRMAP4
+    dr1x90_reg_write(0x1214, 0x07070707); // ADDRMAP5
+    dr1x90_reg_write(0x1218, 0x0f070707); // ADDRMAP6
+    dr1x90_reg_write(0x121c, 0x00000f0f); // ADDRMAP7
+    dr1x90_reg_write(0x1220, 0x00003f3f); // ADDRMAP8
+
+    //dr1x90_reg_write(0x1204 ,0x003f0a0a); // ADDRMAP1
+    //dr1x90_reg_write(0x120c ,0x00000000); // ADDRMAP3
+    //dr1x90_reg_write(0x1210 ,0x00001f1f); // ADDRMAP4
+    //dr1x90_reg_write(0x1214 ,0x08080808); // ADDRMAP5
+    //dr1x90_reg_write(0x1218 ,0x0f080808); // ADDRMAP6
+    //dr1x90_reg_write(0x121c ,0x00000f0f); // ADDRMAP7
+    //dr1x90_reg_write(0x1220 ,0x00000808); // ADDRMAP8
 //  dr1x90_reg_write(0x1224 ,0x01010503); // ADDRMAP9
 //  dr1x90_reg_write(0x1228 ,0x0802020a); // ADDRMAP10
 //  dr1x90_reg_write(0x122c ,0x0000000b); // ADDRMAP11
-*/
-
-    dr1x90_reg_write(0x1204 ,0x00020202); // ADDRMAP1
-    dr1x90_reg_write(0x1208 ,0x03030000); // ADDRMAP2
-    dr1x90_reg_write(0x120c ,0x03030303); // ADDRMAP3
-    dr1x90_reg_write(0x1210 ,0x00001f1f); // ADDRMAP4
-    dr1x90_reg_write(0x1214 ,0x07070707); // ADDRMAP5
-    dr1x90_reg_write(0x1218 ,0x0f070707); // ADDRMAP6
-    dr1x90_reg_write(0x121c ,0x00000f0f); // ADDRMAP7
-    dr1x90_reg_write(0x1220 ,0x00003f3f); // ADDRMAP8
-
-    // dr1x90_reg_write(0x1224 ,0x01010503); // ADDRMAP9
-    // dr1x90_reg_write(0x1228 ,0x0802020a); // ADDRMAP10
-    // dr1x90_reg_write(0x122c ,0x0000000b); // ADDRMAP11
-
     dr1x90_reg_write(0x1240 ,0x061a0f48); // ODTCFG
     dr1x90_reg_write(0x1244 ,0x00000011); // ODTMAP
     dr1x90_field_write(DDRC_ADDR_UMCTL2 + ODTMAP ,rank0_rd_odt_offset , rank0_rd_odt_mask ,0x0); // DRAMTMG2
@@ -532,25 +532,36 @@ void dr1x90_ddrmc_post_cfg()
     // cfg SWCTL.sw_done = 1'b0
     dr1x90_reg_write(0x1320, 0x00000000);  // SWCTL
 
+    for (u8 i = 0; i < 100; i++) {
+       //  printf(" wait long time \r\n");
+        regData = dr1x90_reg_read(0x1320);
+    }
+
     // step 7
-    // cfg DFIMISC.dfi_init_complete_en bit0 = 1'b1 
+    // cfg DFIMISC.dfi_init_complete_en bit0 = 1'b1
     dr1x90_reg_write(0x11b0 , 0x00000051); // DFIMISC
 
     // wait phy_dfi_init_complete
     // poll DFISTAT.dfi_init_complete=1
-    dr1x90_field_wait(DDRC_ADDR_UMCTL2 + DFISTAT, dfi_init_complete_offset, dfi_init_complete_mask, 1, 1000);
+    dr1x90_field_wait(DDRC_ADDR_UMCTL2 + DFISTAT, dfi_init_complete_offset, dfi_init_complete_mask, 0x1, 1000);
 
-    // step 8 
-    // cfg SWCTL.sw_done = 1'b1 
+    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DFISTAT, dfi_init_complete_offset, dfi_init_complete_mask);
+   //  printf("\n dfi_init_complete.   data =  0x%x\r\n", regData);
+
+    // step 8
+    // cfg SWCTL.sw_done = 1'b1
     dr1x90_reg_write(0x1320, 0x00000001);  // SWCTL
 
     // step 9
     // wait SWSTAT.sw_done_ack
-    dr1x90_reg_read(0x1324); 
+    dr1x90_reg_read(0x1324);
 
     // step 10
     // wait STAT.operating_mode = "normal" 2'b01
-    dr1x90_field_wait(DDRC_ADDR_UMCTL2 + STAT, operating_mode_offset, operating_mode_mask, 1, 1000);
+    dr1x90_field_wait(DDRC_ADDR_UMCTL2 + STAT, operating_mode_offset, operating_mode_mask, 0x1, 1000);
+
+    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + STAT, operating_mode_offset, operating_mode_mask);
+   //  printf("\n operating_mode.   data =  0x%x\r\n", regData);
 
     //step 11
     // cfg SWCTL.sw_done = 1'b0
@@ -566,9 +577,9 @@ void dr1x90_ddrmc_post_cfg()
     // cfg DFIMISC.dfi_init_complete_en bit0 = 1'b0
     dr1x90_reg_write(0x11b0 , 0x00000053); // DFIMISC
 
-    // step 13 
-    // cfg SWCTL.sw_done = 1'b1 
-    dr1x90_reg_write(0x1320, 0x00000001);// ( 
+    // step 13
+    // cfg SWCTL.sw_done = 1'b1
+    dr1x90_reg_write(0x1320, 0x00000001);// (
 
     // step 17
     // RFSHCTL3.dis_auto_refresh bit0 = 1'b1 disables auto_refresh
@@ -576,7 +587,7 @@ void dr1x90_ddrmc_post_cfg()
 
     // final
     dr1x90_reg_write(0x1030, 0x00000088);  // PWRCTL
-    // dr1x90_reg_write(0x1030, 0x0000008a);  // PWRCTL
+    dr1x90_reg_write(0x1030, 0x0000008a);  // PWRCTL
     dr1x90_reg_write(0x1490, 0x00000001);  // PCTRL_0
     dr1x90_reg_write(0x1540, 0x00000001);  // PCTRL_1
     dr1x90_reg_write(0x15f0, 0x00000001);  // PCTRL_2
@@ -653,7 +664,7 @@ void dr1x90_zq_overwrite_cfg() {
                 } else{
                     regData =  ((env_cfg_ddr_mode == DDR4) ? (bank_zq_dx_code[n] & 0xff00ffff) : bank_zq_dx_code[n] ) ;
                 }
-				
+
                 dr1x90_reg_write(DDRC_ADDR_BK0_VREF + ZQ0DR + 0x2000 * n + 0x04 * i, regData);
 
                 regData = dr1x90_reg_read(DDRC_ADDR_BK0_VREF+ZQ0CR + 0x2000 * n + 0x04 * i);
@@ -698,7 +709,7 @@ void dr1x90_zq_overwrite_cfg() {
 }
 
 void dr1x90_ac_swap_cfg() {
-   dr1x90_field_write( DDRC_ADDR_GPLL+DTCR0, BK0_IS_AC_offset, BK0_IS_AC_mask, 0x0 );	
+   dr1x90_field_write( DDRC_ADDR_GPLL+DTCR0, BK0_IS_AC_offset, BK0_IS_AC_mask, 0x0 );
 }
 
 
@@ -712,7 +723,7 @@ void dr1x90_pub_training_cfg() {
    dr1x90_field_write( DDRC_ADDR_PPC + DXCCR, QSCNTEN_offset,  QSCNTEN_mask,  1);
    if ( env_cfg_ddr_mode == DDR3 ) {
       dr1x90_field_write( DDRC_ADDR_PPC + OFFCAL_PR, dqs_pupd_en_offset,  dqs_pupd_en_mask,  1);
-   } 
+   }
 
    dr1x90_field_write( DDRC_ADDR_PPC + OFFCAL_PR, eye_rdbi_rpt_en_offset,  eye_rdbi_rpt_en_mask,  1);
    dr1x90_field_write( DDRC_ADDR_PPC + PHY_EYE_CR3, eye_rdbi_train_type1_offset,  eye_rdbi_train_type1_mask,  1);
@@ -721,6 +732,9 @@ void dr1x90_pub_training_cfg() {
 
 
 void dr1x90_do_training (u8 wl_en, u8 wl2_en, u8 gt_en ) {
+
+    u32 regData;
+    u8 gterr;
 
   if ( wl_en == 0x1 ) {
      dr1x90_field_write( DDRC_ADDR_PPC + PIR, WL_offset, WL_mask, 0x1 );	 // WL
@@ -748,11 +762,43 @@ void dr1x90_do_training (u8 wl_en, u8 wl2_en, u8 gt_en ) {
 
 	if ( wl2_en == 0x1 ) {
 		dr1x90_field_wait (DDRC_ADDR_PPC+ PGSR0, WLADONE_offset,  WLADONE_mask,  1,  200 );
-	}	
-	
+	}
+
 	if ( gt_en == 0x1 ) {
-		dr1x90_field_wait (DDRC_ADDR_PPC+ PGSR0, QSGDONE_offset,  QSGDONE_mask,  1,  200 );
-	}	
+		dr1x90_field_wait (DDRC_ADDR_PPC+ PGSR0, QSGDONE_offset,  QSGDONE_mask,  1,  20000000 );
+	}
+
+    if (gt_en == 1) {
+        regData = dr1x90_field_read(DDRC_ADDR_PPC + PGSR0, QSGDONE_offset, QSGDONE_mask);
+       //  printf(" \n------- GateTraining done = 0x%x\r\n", regData);
+        regData = dr1x90_reg_read(DDRC_ADDR_PPC + PGSR0);
+        gterr = (regData >> 22) & 0x1;
+        if (gterr == 1) {
+           //  printf(" \n------- GateTraining Failed ; PGSR0 is 0x%x\r\n", regData);
+        }
+        if (gterr == 0) {
+           //  printf(" \n------- GateTraining PASSED ; PGSR0 is 0x%x\r\n", regData);
+        }
+    }
+
+    int n;
+    for (n = 0; n <= 3; n++) {
+        regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 :DGSL is 0x%x\r\n", n, regData);
+        regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, WLSL_offset, WLSL_mask);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x GTR0 : WLSL is 0x%x\r\n", n, regData);
+        regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR0 + 0x100 * n, WLD_offset, WLD_mask);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR0 : WLD is 0x%x\r\n", n, regData);
+        regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * n, WDQD_offset, WDQD_mask);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR1 : WDQD is 0x%x\r\n", n, regData);
+        regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR2 : DQSGD is 0x%x\r\n", n, regData);
+        regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR3 :RDQSD is 0x%x\r\n", n, regData);
+        regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask);
+       //  printf(" \n***  DDRC_ADDR_PPC + DX %x LCDLR4 : RDQSND is 0x%x\r\n", n, regData);
+
+    }
 
 }
 

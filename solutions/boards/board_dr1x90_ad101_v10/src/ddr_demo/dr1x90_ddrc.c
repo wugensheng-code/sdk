@@ -6,14 +6,14 @@ u32 ftcHandle = 0;
 u32 dr1x90_ddr_reg_write(u32* useless, u32 addr, u32 data)
 {
     *(volatile u32*)(addr) = data;
-    // printf("[WR] *0x%08x <= 0x%08x\r\n", addr, data);
+    ////  printf("[WR] *0x%08x <= 0x%08x\r\n", addr, data);
     return 0;
 }
 
 u32 dr1x90_ddr_reg_read(u32* useless, u32 addr, u32* data)
 {
     *data = *(volatile u32*)(addr);
-    // printf("[RD] *0x%08x == 0x%08x\r\n", addr, data);
+    ////  printf("[RD] *0x%08x == 0x%08x\r\n", addr, data);
     return 0;
 }
 
@@ -24,7 +24,7 @@ void dr1x90_reg_write(u16 addr, u32 data)
     ftcStatus = dr1x90_ddr_reg_write(&ftcHandle, addr_phy, data);
 
     #ifdef DEBUG_REG_self
-        printf("write : 0x%08x = 0x%08x\r\n", addr, data);
+       //  printf("write : 0x%08x = 0x%08x\r\n", addr, data);
     #endif
 
 }
@@ -110,3 +110,35 @@ int dr1x90_field_wait(u16 addr, u8 offset, u32 mask, u32 expect, u32 timeout)
     else return 0 ; // if success
 }
 
+
+void dr1x90_dram_write(u32 addr, u32 data)
+{
+    u32 ftcStatus;
+    unsigned int addr_phy = addr;
+    ftcStatus = dr1x90_ddr_reg_write(&ftcHandle, addr_phy, data);
+}
+
+u32  dr1x90_dram_read(u32 addr)
+{
+    u32 ftcStatus;
+    unsigned int reg_data = 0;
+    unsigned int addr_phy = addr;
+    ftcStatus = dr1x90_ddr_reg_read(&ftcHandle, addr_phy, &reg_data);
+    return reg_data;
+}
+
+
+void dr1x90_dram_field_write(u32 addr, u8 offset, u32 mask, u32 data)
+{
+    u32 RegData;
+    u32 RegDataNew;
+    u32 dataMask;
+
+    dataMask = (data << offset) & mask;
+
+    RegData = dr1x90_dram_read(addr);
+
+    RegDataNew = (RegData & (~mask)) | dataMask;
+
+    dr1x90_dram_write(addr, RegDataNew);
+}
