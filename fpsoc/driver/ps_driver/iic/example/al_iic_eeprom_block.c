@@ -136,3 +136,10 @@ AL_S32 AlIic_E2promExample()
 
     return AL_OK;
 }
+
+int main()
+{
+    AlIic_E2promExample();
+
+    return 0;
+}

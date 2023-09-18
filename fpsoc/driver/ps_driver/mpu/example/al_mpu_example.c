@@ -83,3 +83,10 @@ AL_S32 AlMpu_ApuExample()
 
     return AL_OK;
 }
+
+int main()
+{
+    AlMpu_ApuExample();
+
+    return 0;
+}
