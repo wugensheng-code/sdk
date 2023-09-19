@@ -40,7 +40,11 @@
 #define __LWIPOPTS_H__
 
 
+#ifdef USE_RTOS
+#define NO_SYS                  0
+#else
 #define NO_SYS                  1
+#endif
 
 #if NO_SYS
 

@@ -20,9 +20,6 @@ endif
 
 DOWNLOAD = ddr
 
-BOARD_DIR  ?= $(SDK_ROOT)/solutions/boards/
-BOARD_NAME ?= board_dr1x90_emulation
-
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
 #    LD_LIBS: External library files that the app depends on
@@ -43,9 +40,8 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS += -O0 -g3
+CFLAGS += -O2 -g3
 
-USE_LWIP = 1
 CFLAGS += -DUSE_RTOS
 CFLAGS += -DRTOS_RTTHREAD
 
@@ -53,10 +49,10 @@ CFLAGS += -DRTOS_RTTHREAD
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
+PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 
 #########################################################################
-# put these option to board_dr1x90_emulation Makefile
+# put these option to board_dr1x90_ad101_v10 Makefile
 ## Available choices:
 ## PINMUX_MODE1, PINMUX_MODE2, PINMUX_MODE3, PINMUX_MODE_SD1
 #########################################################################
