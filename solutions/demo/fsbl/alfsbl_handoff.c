@@ -74,11 +74,11 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 	for(HandoffIdx = 0; HandoffIdx < FsblInstancePtr->HandoffCpuNum; HandoffIdx++) {
 		CpuSettings = FsblInstancePtr->HandoffValues[HandoffIdx].CpuSettings;
 		HandoffAddress = FsblInstancePtr->HandoffValues[HandoffIdx].HandoffAddress;
-		printf("handoff cpu : %08x\r\n", FsblInstancePtr->HandoffValues[HandoffIdx].CpuSettings);
-		printf("handoff addr: %08x\r\n", FsblInstancePtr->HandoffValues[HandoffIdx].HandoffAddress);
+		//printf("handoff cpu : %08x\r\n", FsblInstancePtr->HandoffValues[HandoffIdx].CpuSettings);
+		//printf("handoff addr: %08x\r\n", FsblInstancePtr->HandoffValues[HandoffIdx].HandoffAddress);
 
 		if(RunningCpu != CpuSettings) {
-			printf("hand off different cpu\r\n");
+			//printf("hand off different cpu\r\n");
 			/// handoff to a different cpu
 			/// update reset vector
 			/// soft reset the handoff target cpu, pulse reset

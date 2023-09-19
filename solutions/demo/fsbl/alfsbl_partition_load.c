@@ -38,6 +38,9 @@ extern uint8_t  ReadBuffer[READ_BUFFER_SIZE];
 extern SecureInfo FsblSecInfo;
 extern uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE];
 
+static uint32_t __attribute__((aligned(4))) RpuWait = 0xa001a001;
+static uint8_t  RpuWakeUpFlag = 0;
+
 uint32_t AlFsbl_PartitionLoad(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx)
 {
 	uint32_t Status;
@@ -93,6 +96,10 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 	uint32_t DestDev;
 	uint32_t EfuseCtrl;
 	uint32_t PartitionAttr;
+	uint32_t RunningCpu;
+	uint64_t RpuWaitAddr = 0;
+
+	RunningCpu = FsblInstancePtr->ProcessorID;
 
 	EfuseCtrl = AL_REG32_READ(EFUSE_SEC_CTRL);
 	PtHdr = &(FsblInstancePtr->ImageHeader.PartitionHeader[PartitionIdx]);
@@ -275,10 +282,24 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 		// correct, do nothing
 	}
 	else if((AL9000_RPU_ITCM_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL9000_RPU_ITCM_BASE_ADDR + AL9000_RPU_ITCM_BYTE_LENGTH)) {
-		// correct, do nothing
+		if((RunningCpu != ALIH_PH_ATTRIB_DEST_CPU_RPU)  && (!RpuWakeUpFlag)) {
+			RpuWaitAddr = (uint64_t)(&RpuWait);
+			RpuWakeUpFlag = 1;
+			AL_REG32_WRITE(SYSCTRL_S_RPU_RESET_VECTOR_H, RpuWaitAddr >> 32);
+			AL_REG32_WRITE(SYSCTRL_S_RPU_RESET_VECTOR_L, RpuWaitAddr & 0xffffffff);
+			AL_REG32_SET_BIT(SYSCTRL_S_XPU_SRST, 10, 1);  /// release level reset
+			AL_REG32_SET_BIT(SYSCTRL_S_XPU_SRST, 8, 0);   /// trigger pulse reset
+		}
 	}
 	else if((AL9000_RPU_DTCM_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL9000_RPU_DTCM_BASE_ADDR + AL9000_RPU_ITCM_BYTE_LENGTH)) {
-		// correct, do nothing
+		if((RunningCpu != ALIH_PH_ATTRIB_DEST_CPU_RPU)  && (!RpuWakeUpFlag)) {
+			RpuWaitAddr = (uint64_t)(&RpuWait);
+			RpuWakeUpFlag = 1;
+			AL_REG32_WRITE(SYSCTRL_S_RPU_RESET_VECTOR_H, RpuWaitAddr >> 32);
+			AL_REG32_WRITE(SYSCTRL_S_RPU_RESET_VECTOR_L, RpuWaitAddr & 0xffffffff);
+			AL_REG32_SET_BIT(SYSCTRL_S_XPU_SRST, 10, 1);  /// release level reset
+			AL_REG32_SET_BIT(SYSCTRL_S_XPU_SRST, 8, 0);   /// trigger pulse reset
+		}
 	}
 	else if((AL9000_OCM_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL9000_OCM_BASE_ADDR + AL9000_OCM_BYTE_LENGTH)) {
 		// correct, do nothing
