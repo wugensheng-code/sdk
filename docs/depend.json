@@ -451,6 +451,19 @@
 			"supportedProc": ["apu-0", "apu-1", "rpu"]
 			}
 		},
+		"PS_DRIVER_SMC_V1_0": {
+			"SMC_V1_0": {
+				"name": "SMC_V1_0",
+				"version": "1.0",
+				"depends": [
+					"fpsoc/driver/ps_driver/smc/example/al_smc_nand.c",
+					"PS_DRIVER_SMC_V1_0"
+			],
+			"description": "smc test",
+			"supportedOS": ["standalone"],
+			"supportedProc": ["apu-0", "apu-1", "rpu"]
+			}
+		},
 		"PS_DRIVER_SPI_V1_0": {
 			"SPI_NOR_V1_0": {
 				"name": "SPI_NOR_V1_0",
