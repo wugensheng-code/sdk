@@ -14,8 +14,8 @@
 #define GICV3_SPECIAL_END       (1023)
 #define GICV3_SPECIAL_NUM       (GICV3_SPECIAL_END - GICV3_SPECIAL_START +1)
 
-static AL_INTR_HandlerStruct irq_handler_list[SOC_INT_MAX + GICV3_SPECIAL_NUM];
-static AL_INTR_HandlerStruct fiq_handler_list[SOC_INT_MAX + GICV3_SPECIAL_NUM];
+AL_INTR_HandlerStruct irq_handler_list[SOC_INT_MAX + GICV3_SPECIAL_NUM];
+AL_INTR_HandlerStruct fiq_handler_list[SOC_INT_MAX + GICV3_SPECIAL_NUM];
 
 /**
  * @desc  : irq handle implement
@@ -52,9 +52,7 @@ AL_VOID do_fiq_handle(AL_VOID)
     AL_U32 IntrId;
     AL_INTR_HandlerStruct Handler;
 
-    IntrId = ARCH_SYSREG_READ(icc_iar1_el1);
-    DSB();
-    IntrId = IntrId & 0xffffff;
+    IntrId = AlGicv3_AckIntrSel1();
 
     if (IntrId < SOC_INT_MAX) {
         Handler = fiq_handler_list[IntrId];
@@ -68,8 +66,7 @@ AL_VOID do_fiq_handle(AL_VOID)
         Handler.Func(Handler.Param);
     }
 
-    ARCH_SYSREG_WRITE(icc_eoir1_el1, IntrId);
-    ISB();
+    AlGicv3_EndOfIntrSel1(IntrId);
 }
 
 static AL_VOID AlIntr_RequestIntr(AL_U32 IntrId, AL_VOID *Handler, AL_VOID *Param)

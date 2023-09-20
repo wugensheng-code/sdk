@@ -76,6 +76,7 @@ el3_entry:
 
     /* Set counter frequency */
     ldr    x0, =SystemCoreClock
+    ldr    x0, [x0]
     msr    cntfrq_el0, x0
 
     mrs    x0, scr_el3

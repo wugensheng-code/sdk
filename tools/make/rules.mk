@@ -69,8 +69,10 @@ endif
 MKDEP_OPT   = -MMD -MT $@ -MF $@.d
 
 ifeq ($(RTOS), freertos)
-# AL_CFLAGS += -DRTOS_RTTHREAD
-# CFLAGS += -DRTOS_RTTHREAD
+AL_CFLAGS += -DUSE_RTOS
+AL_CFLAGS += -DRTOS_FREERTOS
+CFLAGS += -DUSE_RTOS
+CFLAGS += -DRTOS_FREERTOS
 else ifeq ($(RTOS), rtthread)
 AL_CFLAGS += -DUSE_RTOS
 AL_CFLAGS += -DRTOS_RTTHREAD
@@ -100,6 +102,13 @@ PUBLIC_INC_DIR +=   $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/include \
                     $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/finsh \
                     $(AL_SDK_ROOT)/3rdparty/os/RT-Thread \
                     ${AL_SDK_ROOT}/3rdparty/os/RT-Thread/rt-thread/components/finsh
+endif
+
+ifeq ($(RTOS), freertos)
+PUBLIC_INC_DIR +=   $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel/include \
+                    $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel/portable/GCC/ARM_CA53_64_BIT_SRE \
+					$(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel
+
 endif
 
 PUBLIC_INC_DIR +=  $(AL_SDK_ROOT)/3rdparty/lwip-2.1.3/src/include \
