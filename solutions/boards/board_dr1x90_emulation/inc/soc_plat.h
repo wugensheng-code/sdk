@@ -57,7 +57,7 @@ extern "C" {
   Define System clocks
  *----------------------------------------------------------------------------*/
 
-#if (CHIP == dr1m90)
+#if (defined _AARCH_64 || defined __aarch64__)
 #ifdef AL9000_OSC_25
 #define SYSTEM_CLOCK            (25*MHZ)
 #elif AL9000_OSC_33
@@ -65,11 +65,26 @@ extern "C" {
 #elif AL9000_OSC_50
 #define SYSTEM_CLOCK            (50*MHZ)
 #else
+/* for emulation platform */
 #define SYSTEM_CLOCK            (50*MHZ)
 #endif
 #else
 #ifdef AL9000_CLK_CONFIG
+#ifdef AL9000_OSC_25
+#define SYSTEM_CLOCK            (200*MHZ)
+#elif AL9000_OSC_33
+#if (defined AL9000_CLK_800M || defined AL9000_CLK_400M || defined AL9000_CLK_1200M)
 #define SYSTEM_CLOCK            (400*MHZ)
+#elif AL9000_CLK_1000M
+#define SYSTEM_CLOCK            (333333333UL)
+#else
+#error "undefined RPU CLK"
+#endif
+#elif AL9000_OSC_50
+#define SYSTEM_CLOCK            (400*MHZ)
+#else
+#error "undefined OSC"
+#endif
 #else
 #ifdef AL9000_OSC_25
 #define SYSTEM_CLOCK            (200*MHZ)
@@ -78,6 +93,7 @@ extern "C" {
 #elif AL9000_OSC_50
 #define SYSTEM_CLOCK            (400*MHZ)
 #else
+/* for emulation platform */
 #define SYSTEM_CLOCK            (50*MHZ)
 #endif
 #endif

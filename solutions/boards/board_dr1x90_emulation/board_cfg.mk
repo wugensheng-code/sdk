@@ -2,10 +2,9 @@
 # AL9000_CLK_800M: for apu freq sel, 400(2221), 800(4221), 1000(6221, AHB-BUS333M), 1200(6221); (APU, RPU, AHB, APB)
 # AL9000_OSC_33: for chip select OSC frequency, 25, 33, 50
 # AL9000_BRINGUP: for chip bypass mpu disable flow
-# BOARD_DR1X90_AD101_V10: for demo board select uart 1 as log output
+# board_dr1x90_emulation: for emulation select uart 0 as log output
 
 CFLAGS += -DAL9000_CLK_CONFIG
 CFLAGS += -DAL9000_CLK_800M
 CFLAGS += -DAL9000_OSC_33
 CFLAGS += -DAL9000_BRINGUP
-CFLAGS += -DBOARD_DR1X90_AD101_V10
