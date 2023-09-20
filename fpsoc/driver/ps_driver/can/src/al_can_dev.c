@@ -993,7 +993,6 @@ AL_S32 AlCan_Dev_IoCtl(AL_CAN_DevStruct *Dev, AL_CAN_IoCtlCmdEnum Cmd, AL_VOID *
     return Ret;
 }
 
-#ifdef CAN_DEBUG
 /**
  * This function display received frame
  * @param   Frame is pointer to received buffer with AL_CAN_FrameStruct
@@ -1005,31 +1004,30 @@ AL_S32 AlCan_Dev_DisplayFrame(AL_CAN_FrameStruct *Frame)
 {
     AL_ASSERT(Frame != AL_NULL, AL_CAN_ERR_NULL_PTR);
 
-    AL_LOG(AL_LOG_LEVEL_INFO, "-------Recv Frame--------\r\n");
-    AL_LOG(AL_LOG_LEVEL_INFO, "| Id: 0x%08x\r\n", Frame->Id);
-    AL_LOG(AL_LOG_LEVEL_INFO, "| Dlc: 0x%08x\r\n", Frame->DataLen);
-    AL_LOG(AL_LOG_LEVEL_INFO, "| Data len: 0x%d\r\n", AlCan_Dev_Dlc2LenInByte(Frame->DataLen));
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "-------Recv Frame--------\r\n");
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "| Id: 0x%08x\r\n", Frame->Id);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "| Dlc: 0x%08x\r\n", Frame->DataLen);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "| Data len: 0x%d\r\n", AlCan_Dev_Dlc2LenInByte(Frame->DataLen));
     if (Frame->IsIdExt == AL_TRUE) {
-        AL_LOG(AL_LOG_LEVEL_INFO, "| Extern Id\r\n");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "| Extern Id\r\n");
     } else {
-        AL_LOG(AL_LOG_LEVEL_INFO, "| Standard Id\r\n");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "| Standard Id\r\n");
     }
     if (Frame->IsRemote == AL_TRUE) {
-        AL_LOG(AL_LOG_LEVEL_INFO, "| Remote frame\r\n");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "| Remote frame\r\n");
     } else {
-        AL_LOG(AL_LOG_LEVEL_INFO, "| Not remote frame\r\n");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "| Not remote frame\r\n");
     }
     if (Frame->IsBitSwitch == AL_TRUE) {
-        AL_LOG(AL_LOG_LEVEL_INFO, "| Switch fast bit rate\r\n");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "| Switch fast bit rate\r\n");
     } else {
-        AL_LOG(AL_LOG_LEVEL_INFO, "| Nominal bit rate\r\n");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "| Nominal bit rate\r\n");
     }
     AL_U32 DataWordLen = AlCan_Dev_Dlc2Len(Frame->DataLen);
-    AL_LOG(AL_LOG_LEVEL_INFO, "| Data length in word is %d\r\n", DataWordLen);
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "| Data length in word is %d\r\n", DataWordLen);
     for (AL_U32 i = 0; i < DataWordLen; i++) {
-        AL_LOG(AL_LOG_LEVEL_INFO, "| Data %02d: 0x%08x\r\n", i, Frame->Data[i]);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "| Data %02d: 0x%08x\r\n", i, Frame->Data[i]);
     }
 
-    AL_LOG(AL_LOG_LEVEL_INFO, "-----Recv Frame Done-----\r\n");
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "-----Recv Frame Done-----\r\n");
 }
-#endif
