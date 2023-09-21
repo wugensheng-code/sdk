@@ -45,10 +45,24 @@ endif
 
 
 ## If V=1, it will display compiling message in verbose including compiling options
-V ?= 1
+#Handling of V=1/VERBOSE=1 flag
+# if V=1, $(DETAILS) will echo extra details
+VERBOSE ?= 0
+V ?= $(VERBOSE)
+ifeq ($(V),1)
+DETAILS := @echo
+else
+DETAILS := @true
+endif
 
 ## If SILENT=1, it will not display any compiling messsage
-SILENT ?= 1
+SILENT ?= 0
+
+ifeq ($(SILENT),1)
+	MAKEFLAGS += -s 
+else
+	MAKEFLAGS +=
+endif
 
 # Variables should be defined in Application Makefile
 ## Available choices:
@@ -71,7 +85,7 @@ AL_SDK_ROOT := $(abspath $(AL_SDK_ROOT))
 
 
 ifeq ($(AL_PLAT_DIR),)
-AL_PLAT_DIR := $(patsubst %/soc_plat.h, %, $(wildcard $(AL_SDK_ROOT)/*/soc_plat.h))
+	AL_PLAT_DIR := $(patsubst %/soc_plat.h, %, $(wildcard $(AL_SDK_ROOT)/*/soc_plat.h))
 endif
 
 AL_PLAT_DIR := $(abspath $(AL_PLAT_DIR))
@@ -101,5 +115,6 @@ export CHIP_DIR
 export ENABLE_MMU
 export DDR_2M_MAPPING
 export CODE_READONLY
+export DETAILS
 
 # vim: syntax=make

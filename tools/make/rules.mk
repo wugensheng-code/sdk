@@ -15,7 +15,8 @@ NM      = ${Q}$(COMPILE_PREFIX)nm
 AS      = ${Q}$(COMPILE_PREFIX)as
 GDB     = ${Q}$(COMPILE_PREFIX)gdb
 SIZE    = ${Q}$(COMPILE_PREFIX)size
-ECHO    = echo
+ECHO    = ${DETAILS}
+ECHO_D  = echo 
 MAKE    = make
 
 ARFLAGS = -cr
@@ -47,6 +48,7 @@ AL_CFLAGS   += -DCODE_READONLY=1
 endif
 endif
 endif
+
 
 #########################################################################
 # gcc arm option:   https://gcc.gnu.org/onlinedocs/gcc/ARM-Options.html
@@ -200,12 +202,14 @@ TARGET_ELF = $(TARGET).elf
 $(TARGET): $(TARGET_ELF)
 
 endif
-
-# Default goal, placed before dependency includes
-all: info $(TARGET_ELF)
 #########################################################################
+# Default goal, placed before dependency includes
+#
+all: info $(TARGET_ELF)
 
+#########################################################################
 # include dependency files of application
+#
 ifneq ($(MAKECMDGOALS),clean)
 -include $(ALL_DEPS)
 endif
@@ -213,17 +217,17 @@ endif
 .PHONY: all info help clean
 
 info:
-	@$(ECHO) AL_CHIP=$(AL_CHIP) CORE=$(CORE) BOARD=$(BOARD) V=$(V) RTOS=$(RTOS) PFLOAT=$(PFLOAT) NOGC:$(NOGC) DOWNLOAD: $(DOWNLOAD)
+	@$(ECHO_D) AL_CHIP=$(AL_CHIP) CORE=$(CORE) BOARD=$(BOARD) V=$(V) RTOS=$(RTOS) PFLOAT=$(PFLOAT) NOGC:$(NOGC) DOWNLOAD: $(DOWNLOAD)
 
 help:
-	@$(ECHO) "Anlogic FPSoc Software Development Kit "
-	@$(ECHO) "== Make variables used in FPSoc SDK =="
-	@$(ECHO) "SOC:         Select SoC built in FPSoc SDK, will select board_dr1x90_emulation by default"
-	@$(ECHO) "BOARD:       Select SoC's Board built in FPSoc SDK, will select nuclei_fpga_eval by default"
-	@$(ECHO) "DOWNLOAD:    Select SoC's download mode, use ocm by default, optional ocm/ddr"
-	@$(ECHO) "V:           V=1 verbose make, will print more information, by default V=0"
-	@$(ECHO) "== Example Usage =="
-	@$(ECHO) "1. cd $AL_SDK_ROOT/solutions/demo/baremetal/helloworld make DOWNLOAD=ocm"
+	@$(ECHO_D) "Anlogic FPSoc Software Development Kit "
+	@$(ECHO_D) "== Make variables used in FPSoc SDK =="
+	@$(ECHO_D) "SOC:         Select SoC built in FPSoc SDK, will select board_dr1x90_emulation by default"
+	@$(ECHO_D) "BOARD:       Select SoC's Board built in FPSoc SDK, will select nuclei_fpga_eval by default"
+	@$(ECHO_D) "DOWNLOAD:    Select SoC's download mode, use ocm by default, optional ocm/ddr"
+	@$(ECHO_D) "V:           V=1 verbose make, will print more information, by default V=0"
+	@$(ECHO_D) "== Example Usage =="
+	@$(ECHO_D) "cd $(AL_SDK_ROOT)/solutions/demo/baremetal/helloworld make DOWNLOAD=ocm"
 
 #########################################################################
 $(ASM_OBJS): %.o: % $(COMMON_PREREQS)
