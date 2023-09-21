@@ -106,11 +106,11 @@ typedef AL_MailBox*  AL_MailBox_t;
 
 static inline AL_S32 AlOsal_Mb_Init(AL_MailBox_t MailBox, const char* Name)
 {
-    AL_S64 ret = AL_OK;
+    AL_S64 Ret = AL_OK;
 
-    ret = rt_sem_init(&MailBox->Semaphore, Name, 0, RT_IPC_FLAG_PRIO);
-    if (ret != AL_OK) {
-        return ret;
+    Ret = rt_sem_init(&MailBox->Semaphore, Name, 0, RT_IPC_FLAG_PRIO);
+    if (Ret != AL_OK) {
+        return Ret;
     }
 
     MailBox->Msg   = 0;
@@ -227,7 +227,7 @@ static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_S32 Timeout)
     /* If the scheduler is started and in thread context */
     if (ullCriticalNesting == 0)
     {
-        return xSemaphoreTake(Lock->Thread_Lock, (TickType_t) Timeout);
+        return !xSemaphoreTake(Lock->Thread_Lock, (TickType_t) Timeout);
     }
     else
     {
@@ -240,7 +240,7 @@ static inline AL_S32 AlOsal_Lock_Release(AL_Lock_t Lock)
     /* If the scheduler is started and in thread context */
     if (ullCriticalNesting == 0)
     {
-        return xSemaphoreGive(Lock->Thread_Lock);
+        return !xSemaphoreGive(Lock->Thread_Lock);
     }
     else
     {
@@ -272,12 +272,12 @@ static inline AL_S32 AlOsal_Sem_Init(AL_Semaphore_t Semaphore, const char* Name,
 
 static inline AL_S32 AlOsal_Sem_Take(AL_Semaphore_t Semaphore, AL_S32 Timeout)
 {
-    return xSemaphoreTake(Semaphore->Semaphore_Handle, (TickType_t) Timeout);
+    return !xSemaphoreTake(Semaphore->Semaphore_Handle, (TickType_t) Timeout);
 }
 
 static inline AL_S32 AlOsal_Sem_Release(AL_Semaphore_t Semaphore)
 {
-    return xSemaphoreGive(Semaphore->Semaphore_Handle);
+    return !xSemaphoreGive(Semaphore->Semaphore_Handle);
 }
 
 /*----------------------------------------------*
@@ -295,7 +295,7 @@ typedef AL_MailBox*  AL_MailBox_t;
 
 static inline AL_S32 AlOsal_Mb_Init(AL_MailBox_t MailBox, const char* Name)
 {
-    AL_S64 ret = AL_OK;
+    AL_S64 Ret = AL_OK;
 
     MailBox->Semaphore.Semaphore_Handle = xSemaphoreCreateCountingStatic(1, 0, &MailBox->Semaphore.Semaphore_Buffer);
     
@@ -315,12 +315,12 @@ static inline AL_S32 AlOsal_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
     __COMPILER_BARRIER();
     MailBox->entry = 1;
 
-    return xSemaphoreGive(MailBox->Semaphore.Semaphore_Handle);
+    return !xSemaphoreGive(MailBox->Semaphore.Semaphore_Handle);
 }
 
 static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)
 {
-    AL_S32 flag = (AL_S32)xSemaphoreTake(MailBox->Semaphore.Semaphore_Handle, (TickType_t) Timeout);
+    AL_S32 flag = (AL_S32)!xSemaphoreTake(MailBox->Semaphore.Semaphore_Handle, (TickType_t) Timeout);
 
     if (flag == AL_OK) {
         MailBox->entry = 0;

@@ -132,7 +132,7 @@ int main(void)
                      pdTRUE, (void*)0, vExampleTimerCallback);
 
     xTimerStart(xExampleSoftwareTimer, 0);
-    printf("Before StartScheduler\r\n");
+    // printf("Before StartScheduler\r\n");
 
     vTaskStartScheduler();
 
