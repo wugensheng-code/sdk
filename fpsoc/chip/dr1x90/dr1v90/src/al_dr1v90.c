@@ -8,6 +8,7 @@
 #include "al_rv64_core.h"
 #include "al_chip.h"
 #include "al_rv64_systimer.h"
+#include "al_ipc_ll.h"
 
 extern void Exception_Init(void);
 extern void ECLIC_Init(void);
@@ -20,4 +21,6 @@ AL_VOID AlChip_Dr1V90Init(AL_VOID)
 #ifndef RTOS_RTTHREAD
     SysTimer_clk_sel();
 #endif
+
+    AlIpc_ll_SpinLockInit();
 }

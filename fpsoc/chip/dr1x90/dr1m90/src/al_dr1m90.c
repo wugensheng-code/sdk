@@ -8,6 +8,7 @@
 #include "al_chip.h"
 #include "al_intr.h"
 #include "al_systimer.h"
+#include "al_ipc_ll.h"
 
 extern void AlGic_Init(void);
 
@@ -16,5 +17,9 @@ AL_VOID AlChip_Dr1m90Init(AL_VOID)
 #ifndef SUPPORT_NONSECURE
 	AlGic_Init();
 	AlSys_StartTimer();
+#endif
+
+#ifndef ARM_CORE_SLAVE
+	AlIpc_ll_SpinLockInit();
 #endif
 }

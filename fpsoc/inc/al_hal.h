@@ -70,6 +70,14 @@ extern "C" {
 #include "al_ttc_hal.h"
 #endif
 
+#ifdef HAVE_IPC_DRIVER
+#include "al_ipc_ll.h"
+#endif
+
+#ifdef HAVE_DMAPS_DRIVER
+#include "al_dma_hal.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

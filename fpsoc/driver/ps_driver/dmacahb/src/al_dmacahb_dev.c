@@ -1219,8 +1219,9 @@ AL_S32 AlDmacAhb_Dev_RequestCh(AL_DMACAHB_HwConfigStruct *HwConfig, AL_DMACAHB_C
         AL_LOG(AL_LOG_LEVEL_INFO, "Request channel Id is not support!\r\n");
     }
 
-    while ((!AlDmacAhb_ll_FetchLock(HwConfig->LockAddress)) && Timeout--) {
+    while ((!AlDmacAhb_ll_FetchLock(HwConfig->LockAddress)) && Timeout) {
         AL_DMACAHB_LOOP_REG_DELAY;
+        Timeout--;
     }
 
     if (!Timeout) {

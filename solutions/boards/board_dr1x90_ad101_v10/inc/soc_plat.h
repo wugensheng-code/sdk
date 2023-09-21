@@ -164,6 +164,9 @@ extern "C" {
 #define WDT_CLOCK              (200*MHZ)
 #define WDT_CLOCK              (200*MHZ)
 
+#define HAVE_IPCPS_DRIVER
+
+#define HAVE_DMAPS_DRIVER
 
 #define DDR_AVAILABLE
 

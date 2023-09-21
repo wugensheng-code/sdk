@@ -158,16 +158,32 @@ extern "C" {
 
 #define WDT_TOP_CFG_CTRL_ADDR   (0XF8800168UL)
 
+/*----------------------------------------------------------------------------
+  Define DMA params
+ *----------------------------------------------------------------------------*/
+#define AL_DMA_NUM_INSTANCE     (1)
+#define AL_DMA_S_BASE_ADDR      (0xF8418000)
+#define AL_DMA_NS_BASE_ADDR     (0xF8419000)
+#define AL_DMA_CHAN_COUNT       (8)
+
+/* 0xF841F800 - 0xF841F80C */
+#define AL_DMA_LOCK_ADDR        (0xF841F808UL)
+
+/*----------------------------------------------------------------------------
+  Define IPC params
+ *----------------------------------------------------------------------------*/
+#define AL_IPC_NUM_INSTANCE     (1)
+#define AL_IPC_BASE_ADDR        (0xF841F000)
 
 /*----------------------------------------------------------------------------
   Define TOP
  *----------------------------------------------------------------------------*/
 #define TOP_NS_BASE_ADDR        (0xF8800000UL)
+#define TOP_CRP_BASE_ADDR       (0xF8801000UL)
 #define TOP_SYSCNT_S_BASE_ADDR  (0xF8804000UL)
 #define TOP_S_BASE_ADDR         (0xF8806000UL)
 
 #define TSG_CTRL_CNTCR          TOP_SYSCNT_S_BASE_ADDR
-
 
 
 #ifdef __cplusplus

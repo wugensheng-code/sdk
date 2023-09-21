@@ -78,6 +78,7 @@ typedef enum
     AL_XADC                 = 0x10,
     AL_TTC                  = 0x11,
     AL_WDT                  = 0x13,
+    AL_DMA                  = 0x14,
 } AL_MODULE_TYPE;
 
 #ifdef __cplusplus
