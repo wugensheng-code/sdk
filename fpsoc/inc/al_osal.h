@@ -193,10 +193,197 @@ static inline AL_VOID AlOsal_Sleep(AL_U32 Time)
     }
 }
 
-#elif RTOS_FREERTOS
+#endif
+#ifdef RTOS_FREERTOS
+
+#include <FreeRTOS.h>
+#include "semphr.h"
+extern volatile uint64_t ullCriticalNesting;
+/*----------------------------------------------*
+ * MUTEX API.*
+ *----------------------------------------------*/
+
+#define AL_WAITFOREVER           -1
+#define AL_WAITING_NO            0
+typedef struct
+{
+    StaticSemaphore_t        Thread_Lock_buffer;
+    SemaphoreHandle_t        Thread_Lock;
+    AL_S64                   Isr_Lock;
+} AL_Lock;
+typedef AL_Lock* AL_Lock_t;
+
+static inline AL_S32 AlOsal_Lock_Init(AL_Lock_t Lock, const char* Name)
+{
+    Lock->Thread_Lock = xSemaphoreCreateMutexStatic(&Lock->Thread_Lock_buffer);
+
+    configASSERT(Lock->Thread_Lock);
+
+    return AL_OK;
+}
+
+static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_S32 Timeout)
+{
+    /* If the scheduler is started and in thread context */
+    if (ullCriticalNesting == 0)
+    {
+        return xSemaphoreTake(Lock->Thread_Lock, (TickType_t) Timeout);
+    }
+    else
+    {
+        Lock->Isr_Lock = taskENTER_CRITICAL_FROM_ISR();
+    }
+}
+
+static inline AL_S32 AlOsal_Lock_Release(AL_Lock_t Lock)
+{
+    /* If the scheduler is started and in thread context */
+    if (ullCriticalNesting == 0)
+    {
+        return xSemaphoreGive(Lock->Thread_Lock);
+    }
+    else
+    {
+        taskEXIT_CRITICAL_FROM_ISR(Lock->Isr_Lock);
+    }
+}
+
+/*----------------------------------------------*
+ * Semaphore API.*
+ *----------------------------------------------*/
+typedef struct 
+{
+    StaticSemaphore_t Semaphore_Buffer;
+    SemaphoreHandle_t Semaphore_Handle;
+} AL_Semaphore;
+
+typedef AL_Semaphore* AL_Semaphore_t;
+
+static inline AL_S32 AlOsal_Sem_Init(AL_Semaphore_t Semaphore, const char* Name, AL_S32 Value, AL_S64 MaxCount)
+{
+    AL_UNUSED(Name);
+
+    Semaphore->Semaphore_Handle = xSemaphoreCreateCountingStatic(MaxCount, Value, &Semaphore->Semaphore_Buffer);
+    
+    configASSERT(Semaphore->Semaphore_Handle);
+
+    return AL_OK;
+}
+
+static inline AL_S32 AlOsal_Sem_Take(AL_Semaphore_t Semaphore, AL_S32 Timeout)
+{
+    return xSemaphoreTake(Semaphore->Semaphore_Handle, (TickType_t) Timeout);
+}
+
+static inline AL_S32 AlOsal_Sem_Release(AL_Semaphore_t Semaphore)
+{
+    return xSemaphoreGive(Semaphore->Semaphore_Handle);
+}
+
+/*----------------------------------------------*
+ * Mailbox API.*
+ *----------------------------------------------*/
+
+typedef struct
+{
+    AL_Semaphore    Semaphore;
+    AL_U64          Msg;
+    AL_S32          size;
+    volatile AL_S16 entry;                         /**< index of messages in msg_pool */
+} AL_MailBox;
+typedef AL_MailBox*  AL_MailBox_t;
+
+static inline AL_S32 AlOsal_Mb_Init(AL_MailBox_t MailBox, const char* Name)
+{
+    AL_S64 ret = AL_OK;
+
+    MailBox->Semaphore.Semaphore_Handle = xSemaphoreCreateCountingStatic(1, 0, &MailBox->Semaphore.Semaphore_Buffer);
+    
+    configASSERT(MailBox->Semaphore.Semaphore_Handle);
+
+    MailBox->Msg   = 0;
+    MailBox->size  = 1;
+    MailBox->entry = 0;
+
+    return AL_OK;
+
+}
+
+static inline AL_S32 AlOsal_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
+{
+    MailBox->Msg = *(AL_U64 *)Msg;
+    __COMPILER_BARRIER();
+    MailBox->entry = 1;
+
+    return xSemaphoreGive(MailBox->Semaphore.Semaphore_Handle);
+}
+
+static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)
+{
+    AL_S32 flag = (AL_S32)xSemaphoreTake(MailBox->Semaphore.Semaphore_Handle, (TickType_t) Timeout);
+
+    if (flag == AL_OK) {
+        MailBox->entry = 0;
+        __COMPILER_BARRIER();
+        *(AL_U64 *)Msg = MailBox->Msg;
+        return AL_OK;
+    }
+
+    return AL_ERR_UNAVAILABLE;
+}
+
+/*----------------------------------------------*
+ * Critical API for specific devices*
+ *----------------------------------------------*/
+
+static inline AL_VOID AlOsal_EnterDevCtritical(AL_U32 DevIntrId, AL_BOOL Condition)
+{
+    (AL_VOID)DevIntrId;
+    (AL_VOID)Condition;
+    taskENTER_CRITICAL();
+}
+
+
+static inline AL_VOID AlOsal_ExitDevCtritical(AL_U32 DevIntrId, AL_BOOL Condition)
+{
+    (AL_VOID)DevIntrId;
+    (AL_VOID)Condition;
+    taskEXIT_CRITICAL();
+}
+
+
+/*----------------------------------------------*
+ * Critical API.*
+ *----------------------------------------------*/
+
+static inline AL_VOID ALOsal_EnterCritical(AL_VOID)
+{
+    taskENTER_CRITICAL();
+}
+
+static inline AL_VOID ALOsal_ExitCritical(AL_VOID)
+{
+    taskEXIT_CRITICAL();
+}
+
+/*----------------------------------------------*
+ * Critical API.*
+ *----------------------------------------------*/
+
+static inline AL_VOID AlOsal_Sleep(AL_U32 Time)
+{
+    /* If the scheduler is started and in thread context */
+    if (ullCriticalNesting == 0)
+    {
+        return vTaskDelay(Time);
+    }
+    else
+    {
+        return;
+    }
+}
 
 #endif
-
 #else
 
 /*----------------------------------------------*

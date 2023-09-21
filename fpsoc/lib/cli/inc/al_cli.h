@@ -19,7 +19,7 @@ extern "C" {
 #ifdef USE_RTOS
 #ifdef RTOS_RTTHREAD
 #include <msh.h>
-#elif RTOS_FREERTOS
+#else
 
 #endif
 #endif

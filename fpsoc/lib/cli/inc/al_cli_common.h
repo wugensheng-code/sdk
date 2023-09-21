@@ -39,7 +39,14 @@ extern "C" {
 #define AL_CLI_MEMMOVE      rt_memmove
 
 #define AL_CLI_PRINTF       rt_kprintf
-#elif RTOS_FREERTOS
+#else
+
+#define AL_CLI_MALLOC       malloc
+#define AL_CLI_CALLOC       calloc
+#define AL_CLI_FREE         free
+
+#define AL_CLI_PRINTF       printf
+#define AL_CLI_MEMMOVE      memmove
 
 #endif
 #else

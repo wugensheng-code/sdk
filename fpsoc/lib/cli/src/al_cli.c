@@ -33,7 +33,7 @@ static AL_S32 AlCli_ProcessCmd(AL_S32 Argc, AL_S8 *Argv[])
         AL_CLI_PRINTF("\n");
         return AL_CLI_OK;
     }
-#elif RTOS_FREERTOS
+#else
 
 #endif
 #endif
