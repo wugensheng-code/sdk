@@ -11,7 +11,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include "al_type.h"
+
 AL_S64 mmu_settlb(AL_UINTPTR addr, AL_U64 attr);
+
 #ifdef __cplusplus
 }
 #endif

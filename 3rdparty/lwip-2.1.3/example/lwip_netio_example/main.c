@@ -13,12 +13,8 @@ extern struct netif gnetif;
 
 extern void netio_init(void);
 
-extern AlCache_DisableMmu();
-
 int main()
 {
-    AlCache_DisableMmu();
-
     printf("lwip netio start>>>\r\n");
 
     /* Initialize the LwIP stack */

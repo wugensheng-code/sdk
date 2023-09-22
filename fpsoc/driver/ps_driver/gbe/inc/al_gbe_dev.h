@@ -24,6 +24,11 @@ extern "C" {
 
 #define AL_GBE_SEGMENT_DEFAULT_SIZE              1460
 
+#ifdef ENABLE_MMU
+#define GBE_CACHE_ALIGN_MEMORY(ADDR) ((AL_UINTPTR)(ADDR) & ~(CACHE_LINE_SIZE - 1U))
+#define GBE_CACHE_ALIGN_SIZE(SIZE) (((SIZE) + CACHE_LINE_SIZE - 1U) & ~(CACHE_LINE_SIZE-1U))
+#endif
+
 typedef enum
 {
     AL_GBE_GMII_MII_MODE      = 0x00,

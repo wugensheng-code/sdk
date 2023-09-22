@@ -18,7 +18,7 @@ ARMv8_CORE      ?= MASTER
 # options for enable mmu, available choices: 0/1
 #########################################################################
 ENABLE_MMU  ?= 1
-DDR_2M_MAPPING ?= 0
+DDR_2M_MAPPING ?= 1
 CODE_READONLY ?= 0
 
 #########################################################################

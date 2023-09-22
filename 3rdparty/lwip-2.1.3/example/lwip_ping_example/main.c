@@ -11,12 +11,8 @@
 
 extern struct netif gnetif;
 
-extern AlCache_DisableMmu();
-
 int main()
 {
-    AlCache_DisableMmu();
-
     printf("lwip ping start>>>\r\n");
 
     /* Initialize the LwIP stack */

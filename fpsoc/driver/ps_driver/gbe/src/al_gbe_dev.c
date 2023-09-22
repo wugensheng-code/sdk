@@ -1017,6 +1017,11 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
     AL_U32 DescNbr = 0;
     AL_GBE_DMADescStruct *DmaTxDesc = (AL_GBE_DMADescStruct *)DmaTxDescList->TxDesc[DescIndex];
 
+#ifdef ENABLE_MMU
+    AL_UINTPTR BufferAlign;
+    AL_U32 BufferLenAlign;
+#endif
+
     AL_GBE_BufferStruct  *TxBuffer = TxConfig->TxBuffer;
     AL_U32               BdCount = 0;
 
@@ -1034,6 +1039,12 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
 
     /* Set descriptors here */
     DescNbr += 1U;
+
+#ifdef ENABLE_MMU
+    BufferAlign = (AL_UINTPTR)GBE_CACHE_ALIGN_MEMORY(TxBuffer->Buffer);
+    BufferLenAlign = GBE_CACHE_ALIGN_SIZE((TxBuffer->Len)) + CACHE_LINE_SIZE;
+    AlCache_FlushDcacheRange((AL_UINTPTR)BufferAlign, (AL_UINTPTR)(BufferAlign + BufferLenAlign));
+#endif
 
     /* Set header or buffer 1 address */
     DmaTxDesc->DESC0 = (AL_U32)TxBuffer->Buffer;
@@ -1064,8 +1075,7 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
 
 
     /* Ensure rest of descriptor is written to RAM before the OWN bit */
-    //__DMB();
-
+    DSB();
     /* set OWN bit of FIRST descriptor */
     AlGbe_ll_SetTdesc3OwnByDma(&DmaTxDesc->DESC3, AL_GBE_FUNC_ENABLE);
 
@@ -1088,8 +1098,7 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
             /* clear previous desc own bit */
             for (AL_S32 Idx = 0; Idx < DescNbr; Idx ++) {
                 /* Ensure rest of descriptor is written to RAM before the OWN bit */
-                //__DMB();
-
+                DSB();
                 AlGbe_ll_SetTdesc3OwnByDma(&DmaTxDesc->DESC3, AL_GBE_FUNC_DISABLE);
 
                 /* Increment current tx descriptor index */
@@ -1108,6 +1117,12 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
 
         /* Get the next Tx buffer in the list */
         TxBuffer = TxBuffer->next;
+
+#ifdef ENABLE_MMU
+        BufferAlign = (AL_UINTPTR)GBE_CACHE_ALIGN_MEMORY(TxBuffer->Buffer);
+        BufferLenAlign = GBE_CACHE_ALIGN_SIZE((TxBuffer->Len)) + CACHE_LINE_SIZE;
+        AlCache_FlushDcacheRange((AL_UINTPTR)BufferAlign, (AL_UINTPTR)(BufferAlign + BufferLenAlign));
+#endif
 
         /* Set header or buffer 1 address */
         DmaTxDesc->DESC0 = (AL_U32)TxBuffer->Buffer;
@@ -1137,7 +1152,7 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
         BdCount += 1U;
 
         /* Ensure rest of descriptor is written to RAM before the OWN bit */
-    //    __DMB();
+        DSB();
         /* Set Own bit */
         AlGbe_ll_SetTdesc3OwnByDma(&DmaTxDesc->DESC3, AL_GBE_FUNC_ENABLE);
         /* Mark it as NORMAL descriptor */
@@ -1272,6 +1287,8 @@ AL_S32 AlGbe_Dev_TransmitPolling(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruc
     if (Ret != AL_OK) {
         return Ret;
     }
+
+    DSB();
 
     INCR_TX_DESC_INDEX(Gbe->TxDescList.CurTxDesc, 1U);
 

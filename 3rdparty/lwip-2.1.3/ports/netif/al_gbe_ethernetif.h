@@ -52,7 +52,7 @@ extern "C" {
    here it is defined as 1560, which can work normally.
    need check.
 */
-#define ETH_RX_BUFFER_SIZE          (1560UL)
+#define ETH_RX_BUFFER_SIZE          (1600UL)
 
 /* Maximum Ethernet payload size */
 #define ETH_MAX_PAYLOAD             (1500UL)

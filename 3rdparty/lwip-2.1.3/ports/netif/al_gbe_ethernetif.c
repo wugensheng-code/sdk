@@ -45,6 +45,10 @@
 
 #include <string.h>
 
+#ifdef ENABLE_MMU
+#include "al_mmu.h"
+#endif
+
 /* Define those to better describe your network interface. */
 #define IFNAME0 'A'
 #define IFNAME1 'L'
@@ -59,12 +63,23 @@ sys_sem_t GbeRxSem;
 sys_sem_t GbeTxSem;
 #endif /* !NO_SYS */
 
+#ifdef ENABLE_MMU
+/* defined in the link script */
+extern AL_U32 _no_cache_section_start;
+AL_UINTPTR gbe_buffer_addr = (AL_UINTPTR) &(_no_cache_section_start);
+
 /* Tx and Rx descriptors define, AL_GBE_RX_DESC_CNT and AL_GBE_TX_DESC_CNT at least four */
-AL_GBE_DMADescStruct DMARxDescList[AL_GBE_RX_DESC_CNT] __attribute__ ((aligned (4)));
-AL_GBE_DMADescStruct DMATxDescList[AL_GBE_TX_DESC_CNT] __attribute__ ((aligned (4)));
+AL_GBE_DMADescStruct DMARxDescList[AL_GBE_RX_DESC_CNT] __attribute__((section("no_cache_section")));
+AL_GBE_DMADescStruct DMATxDescList[AL_GBE_TX_DESC_CNT] __attribute__((section("no_cache_section")));
+#else
+
+/* Tx and Rx descriptors define, AL_GBE_RX_DESC_CNT and AL_GBE_TX_DESC_CNT at least four */
+AL_GBE_DMADescStruct DMARxDescList[AL_GBE_RX_DESC_CNT] __attribute__ ((aligned (64)));
+AL_GBE_DMADescStruct DMATxDescList[AL_GBE_TX_DESC_CNT] __attribute__ ((aligned (64)));
+#endif
 
 /* Rx descriptors buffer, use static buffer, just user Rx descriptors buffer1 */
-uint8_t RxBuffTab[AL_GBE_RX_DESC_CNT][ETH_RX_BUFFER_SIZE] __attribute__ ((aligned (4)));
+uint8_t RxBuffTab[AL_GBE_RX_DESC_CNT][ETH_RX_BUFFER_SIZE] __attribute__ ((aligned (64)));
 
 /* Netif for lwip */
 struct netif gnetif;
@@ -81,8 +96,14 @@ LWIP_MEMPOOL_DECLARE(RX_POOL, 48, sizeof(struct pbuf_custom), "Zero-copy RX PBUF
 void pbuf_free_custom(struct pbuf *p)
 {
     struct pbuf_custom* custom_pbuf = (struct pbuf_custom*)p;
+
     /* invalidate data cache: lwIP and/or application may have written into buffer */
-    //ToDo: invalidate data cache here
+#ifdef ENABLE_MMU
+    uint32_t buffer_align_len = GBE_CACHE_ALIGN_SIZE(p->tot_len) + CACHE_LINE_SIZE;
+    AL_UINTPTR buffer_Align = (AL_UINTPTR)GBE_CACHE_ALIGN_MEMORY(p->payload);
+    AlCache_InvalidateDcacheRange((AL_UINTPTR)buffer_Align, (AL_UINTPTR)((char *)buffer_Align + buffer_align_len));
+#endif
+
     LWIP_MEMPOOL_FREE(RX_POOL, custom_pbuf);
 }
 
@@ -109,7 +130,10 @@ static struct pbuf *low_level_input(struct netif *netif)
         AlGbe_Hal_BuildRxDescriptors(GbeHandle);
 
         /* Invalidate data cache for ETH Rx Buffers */
-        //ToDo: invalidate data cache here
+#ifdef ENABLE_MMU
+        uint32_t buffer_align_len = GBE_CACHE_ALIGN_SIZE(framelength) + CACHE_LINE_SIZE;
+        AlCache_InvalidateDcacheRange((AL_UINTPTR)RxBuff.Buffer, (AL_UINTPTR)(RxBuff.Buffer + buffer_align_len));
+#endif
 
         custom_pbuf  = (struct pbuf_custom*)LWIP_MEMPOOL_ALLOC(RX_POOL);
         if (custom_pbuf == NULL) {
@@ -161,6 +185,7 @@ void AlGbe_TxFreeCallback(void *buff)
  * @note ERR_OK means the packet was sent (but not necessarily transmit complete),
  * and ERR_IF means the packet has more chained buffers than what the interface supports.
  */
+
 static err_t low_level_output(struct netif *netif, struct pbuf *p)
 {
     uint32_t i = 0U;
@@ -412,6 +437,10 @@ err_t low_level_init(struct netif *netif)
         printf("AlGbe_Hal_Init failed\r\n");
         return ERR_IF;
     }
+
+#ifdef ENABLE_MMU
+    mmu_settlb(gbe_buffer_addr, NORM_NONCACHE);
+#endif
 
     /* Use static buffer to config rx descriptor buffer */
     for (int idx = 0; idx < AL_GBE_RX_DESC_CNT; idx ++)

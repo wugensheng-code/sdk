@@ -134,6 +134,15 @@ SECTIONS
 		PROVIDE(_data_end = .);
 	}  > ram AT>ram
 
+	.no_cache_section :
+	{
+		. = ALIGN(2M);
+		_no_cache_section_start = .;
+		KEEP(*(no_cache_section))
+		_no_cache_section_end   = .;
+		. = ALIGN(2M);
+	}  > ram AT>ram
+
 	/* all bss segment */
 	.bss (NOLOAD):
 	{

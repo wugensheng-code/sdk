@@ -44,8 +44,16 @@ ASM_SRCS :=
 #########################################################################
 CFLAGS += -O2 -g3
 
+USE_LWIP = 1
 CFLAGS += -DUSE_RTOS
 CFLAGS += -DRTOS_RTTHREAD
+
+ifeq ($(CHIP),dr1m90)
+CFLAGS += -DDDR_2M_MAPPING
+else
+#ToDo: RPU don't support MMU
+ENABLE_MMU = 0
+endif
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
