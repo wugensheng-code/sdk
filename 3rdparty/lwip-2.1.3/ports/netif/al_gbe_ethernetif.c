@@ -64,6 +64,11 @@ sys_sem_t GbeTxSem;
 #endif /* !NO_SYS */
 
 #ifdef ENABLE_MMU
+
+#ifndef DDR_2M_MAPPING
+#error "MMU ERROR, need to enable DDR_2M_MAPPING macro"
+#endif
+
 /* defined in the link script */
 extern AL_U32 _no_cache_section_start;
 AL_UINTPTR gbe_buffer_addr = (AL_UINTPTR) &(_no_cache_section_start);
@@ -74,12 +79,12 @@ AL_GBE_DMADescStruct DMATxDescList[AL_GBE_TX_DESC_CNT] __attribute__((section("n
 #else
 
 /* Tx and Rx descriptors define, AL_GBE_RX_DESC_CNT and AL_GBE_TX_DESC_CNT at least four */
-AL_GBE_DMADescStruct DMARxDescList[AL_GBE_RX_DESC_CNT] __attribute__ ((aligned (64)));
-AL_GBE_DMADescStruct DMATxDescList[AL_GBE_TX_DESC_CNT] __attribute__ ((aligned (64)));
+AL_GBE_DMADescStruct DMARxDescList[AL_GBE_RX_DESC_CNT] CACHE_LINE_ALIGN;
+AL_GBE_DMADescStruct DMATxDescList[AL_GBE_TX_DESC_CNT] CACHE_LINE_ALIGN;
 #endif
 
 /* Rx descriptors buffer, use static buffer, just user Rx descriptors buffer1 */
-uint8_t RxBuffTab[AL_GBE_RX_DESC_CNT][ETH_RX_BUFFER_SIZE] __attribute__ ((aligned (64)));
+uint8_t RxBuffTab[AL_GBE_RX_DESC_CNT][ETH_RX_BUFFER_SIZE] CACHE_LINE_ALIGN;
 
 /* Netif for lwip */
 struct netif gnetif;
