@@ -9,13 +9,13 @@
  *
  */
 
-#include <rtthread.h>
-#include "board.h"
-#include "cpuport.h"
+
 #include <unistd.h>
 #include <stdio.h>
-#include <al_log.h>
-
+#include "rtthread.h"
+#include "board.h"
+#include "cpuport.h"
+#include "al_log.h"
 
 #ifndef RT_USING_HEAP
     static struct rt_thread cli_thread;
@@ -75,14 +75,14 @@ void rt_hw_console_output(const char* str)
     while (*str != '\0')
     {
 		// 换行
-		if ( *str == '\n')	
+		if ( *str == '\n')
 		{
 			ret = AlLog_Write(&cr, 1);
 		}
 
         ret = AlLog_Write(str++, 1);
     }
-    
+
 }
 
 

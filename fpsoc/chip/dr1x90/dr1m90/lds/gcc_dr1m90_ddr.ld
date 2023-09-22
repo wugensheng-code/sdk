@@ -134,11 +134,11 @@ SECTIONS
 		PROVIDE(_data_end = .);
 	}  > ram AT>ram
 
-	.no_cache_section :
+	.noncacheable :
 	{
 		. = ALIGN(2M);
 		_no_cache_section_start = .;
-		KEEP(*(no_cache_section))
+		KEEP(*(.noncacheable))
 		_no_cache_section_end   = .;
 		. = ALIGN(2M);
 	}  > ram AT>ram

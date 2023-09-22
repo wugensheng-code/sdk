@@ -167,6 +167,8 @@ extern "C" {
 
 #define HAVE_DMAPS_DRIVER
 
+#define HAVE_USBPS_DRIVER
+
 #define DDR_AVAILABLE
 
 /**

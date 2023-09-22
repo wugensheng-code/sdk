@@ -7,11 +7,11 @@
 #ifndef __AL_CHIP_H_
 #define __AL_CHIP_H_
 
-#include "al_type.h"
 #ifdef __cplusplus
  extern "C" {
 #endif
 
+#include "al_type.h"
 #include "al_core.h"
 
 AL_VOID AlChip_Dr1V90Init(AL_VOID);
@@ -80,6 +80,7 @@ typedef enum {
     NPU_HARD_IRQn        =  131,
     NPU_SOFT_IRQn        =  116,
 } AL_IrqNumEnum;
+
 
 #define ECLIC__BASE_ADDR        (0x68020000UL)
 

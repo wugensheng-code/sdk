@@ -12,6 +12,7 @@
 
 #define CONFIG_USB_PRINTF(...) printf(__VA_ARGS__)
 
+
 #define usb_malloc(size) malloc(size)
 #define usb_free(ptr)    free(ptr)
 
@@ -138,8 +139,15 @@
 #endif
 
 /* ================ USB Device Port Configuration ================*/
-//hcx_add
-#define USBD_IRQHandler USBD_IRQHandler 
+
+#ifdef USB_DEVICE
+#define USBD_IRQHandler USBD_IRQHandler
+#elif USB_HOST
+#define USBH_IRQHandler USBH_IRQHandler
+#else
+#define USBD_IRQHandler USBD_IRQHandler
+#endif
+
 #define USB_BASE (0xF8180000UL)
 #define USB_NUM_BIDIR_ENDPOINTS 4
 #define CONFIG_USB_DWC2_PORT  HS_PORT

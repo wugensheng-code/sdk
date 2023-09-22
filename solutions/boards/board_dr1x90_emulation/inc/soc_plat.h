@@ -175,6 +175,8 @@ extern "C" {
 
 #define HAVE_DMAPS_DRIVER
 
+#define HAVE_USBPS_DRIVER
+
 #define LOG_DEV AL_LOG_UART0
 
 

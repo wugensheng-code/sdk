@@ -1,23 +1,19 @@
-#########################################################################
-# Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
-
-# SPDX-License-Identifier: BSD-3-Clause
-#########################################################################
 
 #########################################################################
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
 #########################################################################
-SDK_ROOT   ?= ../../../..
+SDK_ROOT   ?= ../../../../../../
 
-CHIP       = dr1m90
+CHIP       = dr1v90
+RTOS       := rtthread
 
 ifeq ($(CHIP), dr1m90)
-COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+COMPILE_PREFIX ?= /opt/toolchain/7.5.0/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-elf/bin/aarch64-elf-
 else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
-DOWNLOAD = ddr
+
 
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
@@ -27,7 +23,19 @@ DOWNLOAD = ddr
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
-SRC_DIR  += ./
+SRC_DIR  = ./
+INC_DIR += ./ \
+			$(SDK_ROOT)/3rdparty/lib/CherryUSB/common \
+			$(SDK_ROOT)/3rdparty/lib/CherryUSB/port/dwc2 \
+			$(SDK_ROOT)/3rdparty/lib/CherryUSB/core \
+			$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/cdc \
+			$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/hub \
+			$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/hid \
+			$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/msc \
+			$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/video \
+			$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/audio \
+			$(SDK_ROOT)/3rdparty/lib/CherryUSB/config \
+			$(SDK_ROOT)/3rdparty/lib/CherryUSB/osal
 
 LD_LIBS  =
 LIB_DIR  =
@@ -39,18 +47,16 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS += -O2 -g3
-
-USE_LWIP = 1
+CFLAGS := -O2 -g
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
+PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 
 #########################################################################
-# put these option to board_dr1x90_ad101_v10 Makefile
+# put these option to board_dr1x90_emulation Makefile
 ## Available choices:
 ## PINMUX_MODE1, PINMUX_MODE2, PINMUX_MODE3, PINMUX_MODE_SD1
 #########################################################################
@@ -60,7 +66,8 @@ PINMUX_MODE ?= PINMUX_MODE1
 #########################################################################
 # 5. define build target
 #########################################################################
-TARGET := lwip_udp_echo_example
+TARGET := msc_host_rtthread
+DOWNLOAD = ocm
 
 ifneq ($(PINMUX_MODE),)
 CFLAGS += -DENABLE_$(PINMUX_MODE)=1

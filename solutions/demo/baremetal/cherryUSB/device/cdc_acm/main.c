@@ -1,29 +1,19 @@
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
-#include "al_core.h"
 #include <stdlib.h>
+#include "al_core.h"
 
-typedef enum IRQn {
-	SOC_INT75_IRQn           = 88, //APU:88  RPU:75
-	SOC_INT76_IRQn           = 89, //APU:89  RPU:76
-    SOC_INT_MAX_IRQn,
-} IRQn_Type;
-
-typedef unsigned int            AL_U32;
 
 #define AL_USB_NUM_INSTANCE    (2)
 
 #define USB0__BASE_ADDR        (0xF8180000UL)
 #define USB1__BASE_ADDR        (0xF8180000UL)
 
-#define USB_CLOCK              (40000000UL)
-
 typedef struct
 {
     AL_U32                  DeviceId;
     AL_U32                  BaseAddress;
-    AL_U32                  ClockHz;
     AL_U32                  IntrNum;
 } AL_USB_HwConfigStruct;
 
@@ -32,13 +22,11 @@ AL_USB_HwConfigStruct AlUsb_HwConfig[AL_USB_NUM_INSTANCE] =
     {
         .DeviceId       = 0,
         .BaseAddress    = USB0__BASE_ADDR,
-        .ClockHz        = USB_CLOCK,
         .IntrNum        = SOC_USB0_IRQn,
     },
     {
         .DeviceId       = 1,
         .BaseAddress    = USB1__BASE_ADDR,
-        .ClockHz        = USB_CLOCK,
         .IntrNum        = SOC_USB1_IRQn
     },
 };
@@ -98,11 +86,9 @@ AL_S32 AlUsb_Hal_Init(AL_USB_HalStruct *Handle, AL_U32 DevId, AL_USB_InitStruct 
 	Dev->DevId        = DevId;
     Dev->BaseAddr     = AlUsb_Dev_LookupConfig(DevId)->BaseAddress;
     Dev->IntrNum      = AlUsb_Dev_LookupConfig(DevId)->IntrNum;
-    Dev->InputClockHz = AlUsb_Dev_LookupConfig(DevId)->ClockHz;
 
 	printf("Dev->IntrNum : %d \r\n", Dev->IntrNum);
 	(AL_VOID)AlIntr_RegHandler(Dev->IntrNum, AL_NULL, AlUsb_Dev_IntrHandler, Dev);
-	AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 }
 
 extern volatile uint8_t dtr_enable;
@@ -115,6 +101,13 @@ AL_VOID main()
     AL_U32 Size = 0x1;
 
     printf("str = %s \r\n", str);
+
+    //AlCache_DisableMmu();
+
+    #ifdef ENABLE_MMU
+    extern AL_U32 _no_cache_section_start;
+    mmu_settlb((AL_UINTPTR) &(_no_cache_section_start), NORM_NONCACHE);
+    #endif
 
     for (int i = 0; i < 20; i ++)
     {
@@ -136,6 +129,8 @@ AL_VOID main()
         printf("AlUsb_Hal_Init error\r\n");
         return ret;
     }
+    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
+
 
     AL_U32 u = 0;
     cdc_acm_init();
@@ -144,7 +139,6 @@ AL_VOID main()
         AlSys_MDelay(2000);
         usbd_cdc_acm_set_dtr(0, 1);
         cdc_acm_data_send_with_dtr_test();
-        ;
     }
 
     while (u < 2) {

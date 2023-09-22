@@ -52,7 +52,7 @@ SECTIONS
     *(.rdata)
     *(.rodata .rodata.*)
     /* section information for initial. */
-    
+
     . = ALIGN(4);
     __rt_init_start = .;
     KEEP(*(SORT(.rti_fn*)))
@@ -75,7 +75,7 @@ SECTIONS
     /* section information for usbh class */
     . = ALIGN(4);
     __usbh_class_info_start__ = .;
-    *(.usbh_class_info)
+    KEEP(*(.usbh_class_info))
     __usbh_class_info_end__ = .;
 
   } >rom AT>rom

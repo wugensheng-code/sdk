@@ -10,10 +10,8 @@ ENTRY( _start )
 
 MEMORY
 {
-  ilm (rxa!w) : ORIGIN = 0x61000000, LENGTH = 256K    /*for 9000 dv simulation*/
-
+  ilm (rxa!w) : ORIGIN = 0x61000000, LENGTH = 256K
 }
-
 
 SECTIONS
 {
@@ -72,7 +70,7 @@ SECTIONS
     /* section information for usbh class */
     . = ALIGN(4);
     __usbh_class_info_start__ = .;
-    *(.usbh_class_info)
+    KEEP(*(.usbh_class_info))
     __usbh_class_info_end__ = .;
 
   } >ilm AT>ilm

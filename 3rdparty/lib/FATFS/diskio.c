@@ -11,9 +11,22 @@
 #include "ff.h"
 #include "string.h"
 #include "al_mmc_hal.h"
+#include "al_hal.h"
 
 #define SD      0
 #define EMMC    1
+#define USB     2
+
+
+#ifdef HAVE_USBPS_DRIVER
+
+extern int USB_disk_status(void);
+extern int USB_disk_initialize(void);
+extern int USB_disk_read(BYTE *buff, LBA_t sector, UINT count);
+extern int USB_disk_write(const BYTE *buff, LBA_t sector, UINT count);
+extern int USB_disk_ioctl(BYTE cmd, void *buff);
+
+#endif
 
 #define MMC_RD_WR_TIMEOUT_MS    10000
 
@@ -41,6 +54,9 @@ DSTATUS disk_status(BYTE pdrv)
     case EMMC:
         status &= ~STA_NOINIT;
         break;
+    case USB:
+        status &= ~STA_NOINIT;
+        break;
     default:
         status = STA_NOINIT;
         break;
@@ -52,7 +68,6 @@ DSTATUS disk_status(BYTE pdrv)
 DSTATUS disk_initialize (BYTE pdrv)
 {
     DSTATUS status = STA_NOINIT;
-
     switch (pdrv) {
     case SD:
     case EMMC:
@@ -62,6 +77,11 @@ DSTATUS disk_initialize (BYTE pdrv)
         } else {
             status = STA_NOINIT;
         }
+        break;
+    case USB:
+#ifdef HAVE_USBPS_DRIVER
+        status = USB_disk_initialize();
+#endif
         break;
     default:
         status = STA_NOINIT;
@@ -73,8 +93,7 @@ DSTATUS disk_initialize (BYTE pdrv)
 
 DRESULT disk_read (BYTE pdrv, BYTE *buff, DWORD sector, UINT count)
 {
-    DRESULT status = RES_OK;
-
+    DRESULT status = RES_PARERR;
     switch (pdrv) {
     case SD:
     case EMMC:
@@ -82,6 +101,11 @@ DRESULT disk_read (BYTE pdrv, BYTE *buff, DWORD sector, UINT count)
         if (status != RES_OK) {
             status = RES_ERROR;
         }
+        break;
+    case USB:
+#ifdef HAVE_USBPS_DRIVER
+        status = USB_disk_read(buff, sector, count);
+#endif
         break;
     default:
         status = RES_PARERR;
@@ -95,7 +119,6 @@ DRESULT disk_read (BYTE pdrv, BYTE *buff, DWORD sector, UINT count)
 DRESULT disk_write (BYTE pdrv, const BYTE *buff, DWORD sector, UINT count)
 {
     DRESULT status = RES_OK;
-
     if (!count) {
         return RES_PARERR;
     }
@@ -107,6 +130,11 @@ DRESULT disk_write (BYTE pdrv, const BYTE *buff, DWORD sector, UINT count)
         if (status != RES_OK) {
             status = RES_ERROR;
         }
+        break;
+    case USB:
+#ifdef HAVE_USBPS_DRIVER
+        status = USB_disk_write(buff, sector, count);
+#endif
         break;
     default:
         status = RES_PARERR;
@@ -144,6 +172,11 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void *buff)
         }
         status = RES_OK;
         break;
+    case USB:
+#ifdef HAVE_USBPS_DRIVER
+        status = USB_disk_ioctl(cmd,buff);
+#endif
+        break;
     default:
         status = RES_PARERR;
         break;
@@ -152,7 +185,6 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void *buff)
 }
 #endif
 
-#if 1
 DWORD get_fattime(void) {
     return ((DWORD)(2015 - 1980) << 25)    /* Year 2015 */
          | ((DWORD)1 << 21)                /* Month 1 */
@@ -161,4 +193,3 @@ DWORD get_fattime(void) {
          | ((DWORD)0 << 5)                  /* Min 0 */
          | ((DWORD)0 >> 1);                /* Sec 0 */
 }
-#endif
