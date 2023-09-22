@@ -231,105 +231,35 @@ help:
 
 #########################################################################
 # check all parameter in makefile 
-#
+
+# Convenience function for verifying option has a boolean value
+# $(eval $(call assert_boolean,FOO)) will assert FOO is 0 or 1
+define assert_boolean
+    $(if $(filter-out 0 1,$($1)),$(error $1 must be boolean))
+endef
+
+# Convenience function for verifying options have boolean values
+# $(eval $(call assert_booleans,FOO BOO)) will assert FOO and BOO for 0 or 1 values
+define assert_booleans
+    $(foreach bool,$1,$(eval $(call assert_boolean,$(bool))))
+endef
+
+# Convenience function for verifying option has a right string
+# $(eval $(call assert_option,option1 option2, FOO)) will assert FOO is string1 or string2
+define assert_option
+	$(if $(filter-out $1 $2, $3),$(error $4 must be $1 or $2))
+endef
+
 .PHONY: check all parameter
 
 check:
-ifeq ($(ARMv8_STATE),32)
-	@$(ECHO_D) "ARMv8_STATE is 32, continue check parameter"
-else ifeq ($(ARMv8_STATE),64)
-	@$(ECHO_D) "ARMv8_STATE is 64, continue check parameter"
-else
-    $(error Invalid ARMv8_STATE parameter. Only 32 or 64 are allowed.)
-endif
 
-ifeq ($(ARMv8_EL),EL1)
-	@$(ECHO_D) "ARMv8_EL is EL1, continue check parameter"
-else ifeq ($(ARMv8_EL),EL3)
-	@$(ECHO_D) "ARMv8_EL is EL3, continue check parameter"
-else
-    $(error Invalid ARMv8_EL parameter. Only EL1 or EL3 are allowed.)
-endif
-
-ifeq ($(ARMv8_SECURE),SECURE)
-	@$(ECHO_D) "ARMv8_SECURE is SECURE, continue check parameter"
-else ifeq ($(ARMv8_SECURE),NONSECURE)
-	@$(ECHO_D) "ARMv8_SECURE is NONSECURE, continue check parameter"
-else
-    $(error Invalid ARMv8_SECURE parameter. Only SECURE or NONSECURE are allowed.)
-endif
-
-ifeq ($(ARMv8_CORE),MASTER)
-	@$(ECHO_D) "ARMv8_CORE is MASTER, continue check parameter"
-else ifeq ($(ARMv8_CORE),SLAVE)
-	@$(ECHO_D) "ARMv8_CORE is SLAVE, continue check parameter"
-else
-    $(error Invalid ARMv8_CORE parameter. Only MASTER or SLAVE are allowed.)
-endif
-
-ifeq ($(ENABLE_MMU),1)
-	@$(ECHO_D) "ENABLE_MMU is 1, continue check parameter"
-else ifeq ($(ENABLE_MMU),0)
-	@$(ECHO_D) "ENABLE_MMU is 0, continue check parameter"
-else
-    $(error Invalid ENABLE_MMU parameter. Only 1 or 0 are allowed.)
-endif
-
-ifeq ($(DDR_2M_MAPPING),1)
-	@$(ECHO_D) "DDR_2M_MAPPING is 1, continue check parameter"
-else ifeq ($(DDR_2M_MAPPING),0)
-	@$(ECHO_D) "DDR_2M_MAPPING is 0, continue check parameter"
-else
-    $(error Invalid DDR_2M_MAPPING parameter. Only 1 or 0 are allowed.)
-endif
-
-ifeq ($(CODE_READONLY),1)
-	@$(ECHO_D) "CODE_READONLY is 1, continue check parameter"
-else ifeq ($(CODE_READONLY),0)
-	@$(ECHO_D) "CODE_READONLY is 0, continue check parameter"
-else
-    $(error Invalid CODE_READONLY parameter. Only 1 or 0 are allowed.)
-endif
-
-ifeq ($(DOWNLOAD),ocm)
-	@$(ECHO_D) "DOWNLOAD is ocm, continue check parameter"
-else ifeq ($(DOWNLOAD),ddr)
-	@$(ECHO_D) "DOWNLOAD is ddr, continue check parameter"
-else
-    $(error Invalid DOWNLOAD parameter. Only ocm or ddr are allowed.)
-endif
-
-ifeq ($(VERBOSE),1)
-	@$(ECHO_D) "VERBOSE is 1, continue check parameter"
-else ifeq ($(VERBOSE),0)
-	@$(ECHO_D) "VERBOSE is 0, continue check parameter"
-else
-    $(error Invalid VERBOSE parameter. Only 1 or 0 are allowed.)
-endif
-
-ifeq ($(SILENT),1)
-	@$(ECHO_D) "SILENT is 1, continue check parameter"
-else ifeq ($(SILENT),0)
-	@$(ECHO_D) "SILENT is 0, continue check parameter"
-else
-    $(error Invalid SILENT parameter. Only 1 or 0 are allowed.)
-endif
-
-ifeq ($(NOGC),1)
-	@$(ECHO_D) "NOGC is 1, continue check parameter"
-else ifeq ($(NOGC),0)
-	@$(ECHO_D) "NOGC is 0, continue check parameter"
-else
-    $(error Invalid NOGC parameter. Only 1 or 0 are allowed.)
-endif
-
-ifeq ($(PFLOAT),1)
-	@$(ECHO_D) "PFLOAT is 1, continue check parameter"
-else ifeq ($(PFLOAT),0)
-	@$(ECHO_D) "PFLOAT is 0, continue check parameter"
-else
-    $(error Invalid PFLOAT parameter. Only 1 or 0 are allowed.)
-endif
+$(eval $(call assert_booleans, DDR_2M_MAPPING ENABLE_MMU CODE_READONLY VERBOSE SILENT PFLOAT NOGC))
+$(eval $(call assert_option, 32, 64, $(ARMv8_STATE), ARMv8_STATE))
+$(eval $(call assert_option,EL1, EL3, $(ARMv8_EL), ARMv8_EL))
+$(eval $(call assert_option,SECURE, NONSECURE, $(ARMv8_SECURE), ARMv8_SECURE))
+$(eval $(call assert_option,MASTER, SLAVE, $(ARMv8_CORE), ARMv8_CORE))
+$(eval $(call assert_option,ocm, ddr, $(DOWNLOAD), DOWNLOAD))
 
 #########################################################################
 $(ASM_OBJS): %.o: % $(COMMON_PREREQS)

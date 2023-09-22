@@ -47,7 +47,7 @@ endif
 ## If V=1, it will display compiling message in verbose including compiling options
 #Handling of V=1/VERBOSE=1 flag
 # if V=1, $(DETAILS) will echo extra details
-VERBOSE ?= 0
+VERBOSE ?= 1
 V ?= $(VERBOSE)
 ifeq ($(V),1)
 DETAILS := @echo
