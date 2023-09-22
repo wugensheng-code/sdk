@@ -162,7 +162,6 @@ extern "C" {
 
 #define HAVE_WDTPS_DRIVER
 #define WDT_CLOCK              (200*MHZ)
-#define WDT_CLOCK              (200*MHZ)
 
 #define HAVE_IPCPS_DRIVER
 

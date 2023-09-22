@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "al_hal.h"
 #include "al_core.h"
 #include "al_utest.h"
 #include "al_cli.h"

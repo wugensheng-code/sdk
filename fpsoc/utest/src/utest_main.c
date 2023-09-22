@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "al_hal.h"
+
 #include "al_cli.h"
 #include "gcov_public.h"
 #include "gcov_gcc.h"
