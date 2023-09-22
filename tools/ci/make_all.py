@@ -34,6 +34,9 @@ def make_all(path, chip, download, sdk_root, debug):
         if makefile_p.is_file():
             if 'rt-thread' in str(makefile_p) and chip == 'dr1m90':
                 continue
+                
+            if 'freertos' in str(makefile_p) and chip == 'dr1v90':
+                continue    
 
             if 'NMSIS' in str(makefile_p) and chip == 'dr1m90':
                 continue
