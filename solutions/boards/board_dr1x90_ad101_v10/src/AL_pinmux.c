@@ -199,6 +199,34 @@ void Enablepinmux1(void)
     *((volatile AL_U32 *)(0xf88038cc))=0x1E0602;
     *((volatile AL_U32 *)(0xf88038d4))=0x1E0602;
     *((volatile AL_U32 *)(0xf88038dc))=0x1E0602;
+
+    /*USB0 Electrical Characteristics*/
+    /*DATA[7_0]:pull-dn  STP:pull-up other:HiZ */
+    /*1V8_1V5 20MA*/
+    *((volatile AL_U32 *)(0xf88038e0)) = 0x48000007;
+    *((volatile AL_U32 *)(0xf8803900)) = 0x48000007;
+    *((volatile AL_U32 *)(0xf8803908)) = 0x48000007;
+    *((volatile AL_U32 *)(0xf8803910)) = 0x48000007;
+    *((volatile AL_U32 *)(0xf8803918)) = 0x48000007;
+    *((volatile AL_U32 *)(0xf8803928)) = 0x48000007;
+    *((volatile AL_U32 *)(0xf8803930)) = 0x48000007;
+    *((volatile AL_U32 *)(0xf8803938)) = 0x48000007;
+    *((volatile AL_U32 *)(0xf88038f0)) = 0x88000007;
+    *((volatile AL_U32 *)(0xf88038e8)) = 0xc8000007;
+    *((volatile AL_U32 *)(0xf88038f8)) = 0xc8000007;
+    *((volatile AL_U32 *)(0xf8803920)) = 0xc8000007;
+    *((volatile AL_U32 *)(0xf88038e4)) = 0x121702;
+    *((volatile AL_U32 *)(0xf88038ec)) = 0x121702;
+    *((volatile AL_U32 *)(0xf88038f4)) = 0x121702;
+    *((volatile AL_U32 *)(0xf88038fc)) = 0x121702;
+    *((volatile AL_U32 *)(0xf8803904)) = 0x121702;
+    *((volatile AL_U32 *)(0xf880390c)) = 0x121702;
+    *((volatile AL_U32 *)(0xf8803914)) = 0x121702;
+    *((volatile AL_U32 *)(0xf880391c)) = 0x121702;
+    *((volatile AL_U32 *)(0xf8803924)) = 0x121702;
+    *((volatile AL_U32 *)(0xf880392c)) = 0x121702;
+    *((volatile AL_U32 *)(0xf8803934)) = 0x121702;
+    *((volatile AL_U32 *)(0xf880393c)) = 0x121702;
 }
 
 void Enablepinmux1_mode2(void)
