@@ -34,16 +34,19 @@ def make_all(path, chip, download, sdk_root, debug):
         if makefile_p.is_file():
             if 'rt-thread' in str(makefile_p) and chip == 'dr1m90':
                 continue
-                
+
             if 'freertos' in str(makefile_p) and chip == 'dr1v90':
-                continue    
+                continue
+
+            if 'msc_rtthread' in str(makefile_p) and chip == 'dr1m90':
+                continue
 
             if 'NMSIS' in str(makefile_p) and chip == 'dr1m90':
                 continue
 
             if not str(makefile_p.parent).endswith('baremetal') and 'NMSIS' in str(makefile_p):
                 continue
-            
+
             if 'dr1v90_mmu' in str(makefile_p):
                 chip = 'dr1v90'
                 COMPILE_PREFIX = RPU_TOOLCHAIN_PATH + '/riscv-nuclei-elf-'
@@ -57,11 +60,11 @@ def make_all(path, chip, download, sdk_root, debug):
 
                 logger.info(f'======> make successful\n', colorize=True, format="<green>{time}</green> <level>{message}</level>")
             except subprocess.CalledProcessError as e:
-                build_pass = False               
+                build_pass = False
                 logger.error(f'======> make filed {str(makefile_p)}\r', colorize=True, format="<red>{time}</red> <level>{message}</level>")
                 logger.error(f'\n\n{bytes.decode(e.stderr)}')
                 bytearray
-    
+
     if build_pass is not True:
         exit(1)
 

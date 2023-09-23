@@ -4,6 +4,12 @@
 #include <stdlib.h>
 #include "al_core.h"
 
+#ifdef ENABLE_MMU
+#include "al_mmu.h"
+#endif
+
+
+
 
 #define AL_USB_NUM_INSTANCE    (2)
 
@@ -102,9 +108,9 @@ AL_VOID main()
 
     printf("str = %s \r\n", str);
 
-    //AlCache_DisableMmu();
+    AlCache_DisableMmu();
 
-    #ifdef ENABLE_MMU
+    #if 0
     extern AL_U32 _no_cache_section_start;
     mmu_settlb((AL_UINTPTR) &(_no_cache_section_start), NORM_NONCACHE);
     #endif

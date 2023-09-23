@@ -11,9 +11,9 @@ ENTRY( _start )
 MEMORY
 {
   /* Emulate ROM using DDR */
-  rom (rxai!w) : ORIGIN = 0x00100000, LENGTH = 2M
+  rom : ORIGIN = 0x00100000, LENGTH = 2M
   /* Emulate RAM using DDR */
-  ram (wxa!ri) : ORIGIN = 0x00300000, LENGTH = 0x0f000000
+  ram : ORIGIN = 0x00300000, LENGTH = 0x0f000000
 }
 
 
@@ -191,6 +191,15 @@ SECTIONS
     *(.srodata.cst2)
     *(.srodata .srodata.*)
   } >ram AT>rom
+
+   .noncacheable :
+   {
+      . = ALIGN(2M);
+      _no_cache_section_start = .;
+      KEEP(*(.noncacheable))
+      _no_cache_section_end   = .;
+      . = ALIGN(2M);
+}  > ram AT>ram
 
   . = ALIGN(4);
   PROVIDE( _edata = . );
