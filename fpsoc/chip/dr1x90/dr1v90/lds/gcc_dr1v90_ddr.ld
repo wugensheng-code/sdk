@@ -25,18 +25,18 @@ SECTIONS
   {
     *(.vtable)
     KEEP (*(SORT_NONE(.init)))
-  } >rom AT>rom
+  } >ram AT>ram
 
   .ilalign         :
   {
     . = ALIGN(4);
     PROVIDE( _ilm_lma = . );
-  } >rom AT>rom
+  } >ram AT>ram
 
   .ialign         :
   {
     PROVIDE( _ilm = . );
-  } >rom AT>rom
+  } >ram AT>ram
 
   .text           :
   {
@@ -44,7 +44,7 @@ SECTIONS
     *(.text.startup .text.startup.*)
     *(.text .text.*)
     *(.gnu.linkonce.t.*)
-  } >rom AT>rom
+  } >ram AT>ram
 
   .rodata : ALIGN(4)
   {
@@ -78,7 +78,7 @@ SECTIONS
     KEEP(*(.usbh_class_info))
     __usbh_class_info_end__ = .;
 
-  } >rom AT>rom
+  } >ram AT>ram
 
   . = ALIGN(4096);
   .cli_section :
@@ -86,7 +86,7 @@ SECTIONS
     _cli_section_start = .;
     KEEP(*(cli_section))
     _cli_section_end   = .;
-  }  >rom AT>rom
+  }  >ram AT>ram
 
   . = ALIGN(4096);
   .unity_section :
@@ -94,12 +94,12 @@ SECTIONS
     _unity_test_start = .;
     KEEP(*(unity_section))
     _unity_test_end   = .;
-  }  >rom AT>rom
+  }  >ram AT>ram
 
   .fini           :
   {
     KEEP (*(SORT_NONE(.fini)))
-  } >rom AT>rom
+  } >ram AT>ram
 
   . = ALIGN(4);
 
@@ -114,7 +114,7 @@ SECTIONS
     PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array))
     PROVIDE_HIDDEN (__preinit_array_end = .);
-  } >rom AT>rom
+  } >ram AT>ram
 
   .init_array     :
   {
@@ -122,7 +122,7 @@ SECTIONS
     KEEP (*(SORT_BY_INIT_PRIORITY(.init_array.*) SORT_BY_INIT_PRIORITY(.ctors.*)))
     KEEP (*(.init_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .ctors))
     PROVIDE_HIDDEN (__init_array_end = .);
-  } >rom AT>rom
+  } >ram AT>ram
 
   .fini_array     :
   {
@@ -130,7 +130,7 @@ SECTIONS
     KEEP (*(SORT_BY_INIT_PRIORITY(.fini_array.*) SORT_BY_INIT_PRIORITY(.dtors.*)))
     KEEP (*(.fini_array EXCLUDE_FILE (*crtbegin.o *crtbegin?.o *crtend.o *crtend?.o ) .dtors))
     PROVIDE_HIDDEN (__fini_array_end = .);
-  } >rom AT>rom
+  } >ram AT>ram
 
   .ctors          :
   {
@@ -152,7 +152,7 @@ SECTIONS
     KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .ctors))
     KEEP (*(SORT(.ctors.*)))
     KEEP (*(.ctors))
-  } >rom AT>rom
+  } >ram AT>ram
 
   .dtors          :
   {
@@ -161,20 +161,20 @@ SECTIONS
     KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .dtors))
     KEEP (*(SORT(.dtors.*)))
     KEEP (*(.dtors))
-  } >rom AT>rom
+  } >ram AT>ram
 
 
   .lalign         :
   {
     . = ALIGN(4);
     PROVIDE( _data_lma = . );
-  } >rom AT>rom
+  } >ram AT>ram
 
   .dalign         :
   {
     . = ALIGN(4);
     PROVIDE( _data = . );
-  } >ram AT>rom
+  } >ram AT>ram
 
   .data          :
   {
@@ -190,7 +190,7 @@ SECTIONS
     *(.srodata.cst4)
     *(.srodata.cst2)
     *(.srodata .srodata.*)
-  } >ram AT>rom
+  } >ram AT>ram
 
    .noncacheable :
    {
