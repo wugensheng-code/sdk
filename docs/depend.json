@@ -7,7 +7,8 @@
 				"fpsoc/chip/dr1x90/dr1m90",
 				"fpsoc/arch/arm",
 				"fpsoc/arch/common/inc",
-				"fpsoc/inc"
+				"fpsoc/inc",
+				"fpsoc/driver/ps_driver/ipc/inc"
 			]
 		},
 		"CHIP_DR1V90": {
@@ -17,7 +18,8 @@
 				"fpsoc/chip/dr1x90/dr1v90",
 				"fpsoc/arch/riscv",
 				"fpsoc/arch/common/inc",
-				"fpsoc/inc"
+				"fpsoc/inc",
+				"fpsoc/driver/ps_driver/ipc/inc"
 			]
 		}
 	},
