@@ -464,15 +464,11 @@ extern AL_VOID do_fiq_handle(AL_VOID);
 
 void vApplicationIRQHandler(AL_VOID)
 {
-	uint32_t ulAPSR;
-	__asm volatile ( "mrs %0, CurrentEL" : "=r" ( ulAPSR ) );
-	ulAPSR &= portAPSR_MODE_BITS_MASK;
-
-	if( ulAPSR == portEL1 ) {
-		do_irq_handle();
-	} else {
-		do_fiq_handle();
-	}
+#ifdef GUEST
+	do_irq_handle();
+#else
+	do_fiq_handle();
+#endif
 }
 /*-----------------------------------------------------------*/
 
