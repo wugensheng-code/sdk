@@ -10,8 +10,11 @@
 
 /* ================ USB common Configuration ================ */
 
+#ifdef OS_RTTHREAD
+#define CONFIG_USB_PRINTF(...) rt_kprintf(__VA_ARGS__)
+#else
 #define CONFIG_USB_PRINTF(...) printf(__VA_ARGS__)
-
+#endif
 
 #define usb_malloc(size) malloc(size)
 #define usb_free(ptr)    free(ptr)

@@ -48,6 +48,7 @@ ASM_SRCS :=
 # 3. CFLAGS
 #########################################################################
 CFLAGS := -O2 -g
+CFLAGS += -DOS_RTTHREAD -DUSB_HOST
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;

@@ -108,7 +108,6 @@ AL_S32 AlUsb_Hal_Init(AL_USB_HalStruct *Handle, AL_U32 DevId, AL_USB_InitStruct 
 
 	rt_kprintf("Dev->IntrNum : %d \r\n", Dev->IntrNum);
 	(AL_VOID)AlIntr_RegHandler(Dev->IntrNum, AL_NULL, AlUsb_Dev_IntrHandler, Dev);
-	AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 }
 
 
@@ -120,32 +119,6 @@ static rt_thread_t tid1 = RT_NULL;
 /* 线程 1 的入口函数 */
 static void thread1_entry(void *parameter)
 {
-    AL_S8 *str = "Hello World From Anlogic!";
-
-    rt_kprintf("str = %s \r\n", str);
-
-#if 0
-    AL_USB_HalStruct usb0_hal;
-    AL_S32 ret = AlUsb_Hal_Init(&usb0_hal, 0, NULL);
-    if (ret != AL_OK) {
-        rt_kprintf("AlUsb_Hal_Init error\r\n");
-        return ;
-    }
-
-    rt_kprintf("str = %s \r\n", str);
-
-    AL_U32 u = 0;
-    usbh_initialize();
-    usbh_class_test();
-#endif
-    while (1) {
-        //AlSys_MDelay(2000);
-        rt_thread_mdelay(500);
-        //usbd_cdc_acm_set_dtr(0, 1);
-        //cdc_acm_data_send_with_dtr_test();
-        ;
-    }
-
     rt_uint32_t count = 0;
 
     while (1)
@@ -232,8 +205,6 @@ int main()
     while (1) {
         //AlSys_MDelay(2000);
         rt_thread_mdelay(500);
-        //usbd_cdc_acm_set_dtr(0, 1);
-        //cdc_acm_data_send_with_dtr_test();
         ;
     }
     return 0;
