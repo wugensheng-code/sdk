@@ -201,15 +201,28 @@
 			"supportedProc": ["apu-0", "apu-1", "rpu"]
 		},
 		"CHERRYUSB_V1_0": {
-			"name": "CHERRYUSB_V1_0",
-			"version": "1.0",
-			"depends": [
-				"solutions/demo/baremetal/cherryUSB/device/cdc_acm",
-				"LIB_CHERRYUSB_V1_0"
+			"CDC_ACM_V1_0": {
+				"name": "CDC_ACM_V1_0",
+				"version": "1.0",
+				"depends": [
+					"solutions/demo/baremetal/cherryUSB/device/cdc_acm",
+					"LIB_CHERRYUSB_V1_0"
 			],
-			"description": "Baremetal cherryUSB demo",
+			"description": "Baremetal cherryUSB CDC_ACM demo",
 			"supportedOS": ["standalone"],
 			"supportedProc": ["apu-0", "apu-1", "rpu"]
+			},
+			"MSC_RTTHREAD_V1_0": {
+				"name": "MSC_RTTHREAD_V1_0",
+				"version": "1.0",
+				"depends": [
+					"/solutions/demo/baremetal/cherryUSB/host/msc_rtthread",
+					"LIB_CHERRYUSB_V1_0"
+			],
+			"description": "Baremetal cherryUSB MSC_RTTHREAD demo",
+			"supportedOS": ["standalone"],
+			"supportedProc": ["apu-0", "apu-1", "rpu"]
+			}
 		},
 		"FSBL_V1_0": {
 			"name": "FSBL_V1_0",
