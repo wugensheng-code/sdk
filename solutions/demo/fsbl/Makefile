@@ -27,13 +27,9 @@ endif
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
-SRC_DIR  = ./ \
-           $(PLAT_DIR)/src/ddr_demo 
+SRC_DIR  = .
 
-INC_DIR  = ./ \
-           $(PLAT_DIR)/inc/ddr_demo \
-           $(PLAT_DIR)/inc/ddr_demo/ddr_regs \
-
+SRC_DIR  = .
 
 LD_LIBS  =
 LIB_DIR  =

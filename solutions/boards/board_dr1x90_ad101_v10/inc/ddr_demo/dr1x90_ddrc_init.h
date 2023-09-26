@@ -3,13 +3,13 @@
 
 #include "alc_ddr_env.h"
 #include "dr1x90_ddrc.h"
-#include "./ddr_regs/dr1x90_ddrc_gpll_regs.h"
-#include "./ddr_regs/dr1x90_ddrc_dpll_regs.h"
-#include "./ddr_regs/dr1x90_ddrc_ppc_regs.h"
-#include "./ddr_regs/dr1x90_ddrc_bank_iomc1_regs.h"
-#include "./ddr_regs/dr1x90_ddrc_bank_glue_regs.h"
-#include "./ddr_regs/dr1x90_ddrc_umctl2_regs.h"
-#include "./ddr_regs/dr1x90_ddrc_bankref_regs.h"
+#include "dr1x90_ddrc_gpll_regs.h"
+#include "dr1x90_ddrc_dpll_regs.h"
+#include "dr1x90_ddrc_ppc_regs.h"
+#include "dr1x90_ddrc_bank_iomc1_regs.h"
+#include "dr1x90_ddrc_bank_glue_regs.h"
+#include "dr1x90_ddrc_umctl2_regs.h"
+#include "dr1x90_ddrc_bankref_regs.h"
 
 // Configuration
 void dr1x90_ddrppc_base_cfg();

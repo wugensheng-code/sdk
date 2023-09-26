@@ -266,6 +266,10 @@ ifeq ($(USE_LWIP),1)
 LIBS_DIR += $(AL_SDK_ROOT)/3rdparty/lwip-2.1.3
 endif
 
+ifneq ($(PLAT_DIR),)
+LIBS_DIR += $(PLAT_DIR)
+endif
+
 ifeq ($(RTOS), freertos)
     LIBS_DIR += $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/Makefile))
 else ifeq ($(RTOS), rtthread)

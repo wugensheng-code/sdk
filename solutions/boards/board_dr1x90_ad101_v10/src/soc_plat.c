@@ -7,13 +7,16 @@
 #include "al_core.h"
 #include "al9000_crg.h"
 #include "soc_plat.h"
-#include "./ddr_demo/demo_ddr_init.h"
 
+
+#if (defined ENABLE_PINMUX_MODE1 || defined ENABLE_PINMUX_MODE2)
+#else
+#define ENABLE_PINMUX_MODE1
+#endif
 
 extern void Enablepinmux1(void);
 extern void Enablepinmux1_mode2(void);
 extern int  demo_ddr_init();
-
 
 __attribute__((__used__)) void board_init()
 {
