@@ -25,6 +25,9 @@ else
 
 endif
 
+ifeq ($(ARMv8_EL),EL1)
+CFLAGS += -DGUEST
+endif
 
 # (3) set specificity FLAGS
 LIBNAME := freertos
