@@ -43,7 +43,6 @@ C_SRCS +=$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/libc/compiler
 C_SRCS +=$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/libc/compilers/common/cwchar.c
 C_SRCS +=$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/libc/compilers/newlib/syscalls.c
 C_SRCS +=$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/utilities/utest/utest.c
-C_SRCS +=$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/libcpu/aarch64/common/cache.S
 C_SRCS +=$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/libcpu/aarch64/common/cache_ops.c
 C_SRCS +=$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/libcpu/aarch64/common/context_gcc.S
 C_SRCS +=$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/libcpu/aarch64/common/cpu.c
