@@ -45,6 +45,7 @@ extern "C" {
 #ifndef __ARCH_SYS_ARCH_H__
 #define __ARCH_SYS_ARCH_H__
 
+#if defined(RTOS_RTTHREAD)
 #include "arch/cc.h"
 #include <rtthread.h>
 
@@ -63,6 +64,30 @@ typedef rt_sem_t sys_sem_t;
 typedef rt_mutex_t sys_mutex_t;
 typedef rt_mailbox_t  sys_mbox_t;
 typedef rt_thread_t sys_thread_t;
+
+#elif defined(RTOS_FREERTOS)
+
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
+
+typedef unsigned long sys_prot_t;
+
+#define SYS_MBOX_NULL           ( ( QueueHandle_t ) NULL )
+#define SYS_SEM_NULL            ( ( SemaphoreHandle_t ) NULL )
+
+typedef SemaphoreHandle_t sys_sem_t;
+typedef SemaphoreHandle_t sys_mutex_t;
+typedef QueueHandle_t sys_mbox_t;
+typedef TaskHandle_t sys_thread_t;
+
+#define sys_mbox_valid( x ) ( ( ( *x ) == NULL) ? pdFALSE : pdTRUE )
+#define sys_mbox_set_invalid( x ) ( ( *x ) = NULL )
+#define sys_sem_valid( x ) ( ( ( *x ) == NULL) ? pdFALSE : pdTRUE )
+#define sys_sem_set_invalid( x ) ( ( *x ) = NULL )
+
+#endif
 
 #endif /* __ARCH_SYS_ARCH_H__ */
 

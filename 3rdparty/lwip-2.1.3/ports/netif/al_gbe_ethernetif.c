@@ -61,6 +61,11 @@
 
 sys_sem_t GbeRxSem;
 sys_sem_t GbeTxSem;
+
+#ifdef RTOS_FREERTOS
+extern volatile portBASE_TYPE xInsideISR;
+#endif
+
 #endif /* !NO_SYS */
 
 #ifdef ENABLE_MMU
@@ -157,18 +162,40 @@ static struct pbuf *low_level_input(struct netif *netif)
 void AlGbe_TxDoneCallback(void *CallbackRef)
 {
 #if !NO_SYS
+#if defined(RTOS_RTTHREAD)
     rt_interrupt_enter();
+#elif defined(RTOS_FREERTOS)
+    xInsideISR++;
+#endif
+
     sys_sem_signal(&GbeTxSem);
+
+#if defined(RTOS_RTTHREAD)
     rt_interrupt_leave();
+#elif defined(RTOS_FREERTOS)
+    xInsideISR--;
+#endif
+
 #endif
 }
 
 void AlGbe_RxDoneCallback(void *CallbackRef)
 {
 #if !NO_SYS
+#if defined(RTOS_RTTHREAD)
     rt_interrupt_enter();
+#elif defined(RTOS_FREERTOS)
+    xInsideISR++;
+#endif
+
     sys_sem_signal(&GbeRxSem);
+
+#if defined(RTOS_RTTHREAD)
     rt_interrupt_leave();
+#elif defined(RTOS_FREERTOS)
+    xInsideISR--;
+#endif
+
 #endif
 }
 
@@ -499,7 +526,8 @@ err_t low_level_init(struct netif *netif)
         return ret;
     }
 
-    eth_handle = sys_thread_new("eth_iput", ethernetif_input, &gnetif, 2048, 8);
+    eth_handle = sys_thread_new(ETH_INPUT_THREAD_NAME, ethernetif_input, &gnetif,
+                                ETH_INPUT_THREAD_STACKSIZE, ETH_INPUT_THREAD_PRIO);
 #endif /* !NO_SYS */
 
     ret = low_level_phy_init(GbeHandle, netif, &MacDmaConfig);

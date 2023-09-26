@@ -323,14 +323,45 @@ The STM32H7xx allows computing and verifying the IP, UDP, TCP and ICMP checksums
    ---------------------------------
 */
 
+/* TCPIP thread options */
 #define TCPIP_THREAD_NAME              "TCP/IP"
-#define TCPIP_THREAD_STACKSIZE          3096
 #define TCPIP_MBOX_SIZE                 24
 #define DEFAULT_UDP_RECVMBOX_SIZE       6
 #define DEFAULT_TCP_RECVMBOX_SIZE       24
 #define DEFAULT_ACCEPTMBOX_SIZE         6
-#define DEFAULT_THREAD_STACKSIZE        1024
+
+#if defined(RTOS_RTTHREAD)
+
 #define TCPIP_THREAD_PRIO               7
+#define TCPIP_THREAD_STACKSIZE          3096
+#define DEFAULT_THREAD_STACKSIZE        2048
+
+#elif defined(RTOS_FREERTOS)
+
+#define TCPIP_THREAD_PRIO               8
+
+/* The length of this StackType_t is 8 */
+#define TCPIP_THREAD_STACKSIZE          (3096/8)
+#define DEFAULT_THREAD_STACKSIZE        (2048/8)
+
+#endif
+
+/* Ethernetif input thread options */
+#define ETH_INPUT_THREAD_NAME           "ETH_INPUT"
+
+#if defined(RTOS_RTTHREAD)
+
+#define ETH_INPUT_THREAD_STACKSIZE      2048
+#define ETH_INPUT_THREAD_PRIO           8
+
+#elif defined(RTOS_FREERTOS)
+
+#define ETH_INPUT_THREAD_PRIO           7
+
+/* The length of this StackType_t is 8 */
+#define ETH_INPUT_THREAD_STACKSIZE      (2048/8)
+
+#endif
 
 /*
    ---------------------------------
