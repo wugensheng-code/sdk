@@ -257,6 +257,8 @@ check:
 	$(call assert_option,SECURE, NONSECURE, $(ARMv8_SECURE), ARMv8_SECURE)
 	$(call assert_option,MASTER, SLAVE, $(ARMv8_CORE), ARMv8_CORE)
 	$(call assert_option,ocm, ddr, $(DOWNLOAD), DOWNLOAD)
+	$(call assert_option,dr1v90, dr1m90, $(AL_CHIP), AL_CHIP)
+	$(call assert_option,freertos, rtthread, $(RTOS), RTOS)
 	@$(ECHO_D) "all parameters have been checked"
 
 #########################################################################
@@ -310,7 +312,6 @@ bsp_clean:
 ifneq ($(BSP_DIR),)
 	@$(MAKE) -C $(BSP_DIR) lib.do.clean
 endif
-
 
 #########################################################################
 # 3rdparty, libnpuruntime may not include in sdk workspace
