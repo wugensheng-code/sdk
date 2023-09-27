@@ -11,7 +11,7 @@
 
 #if (defined ENABLE_PINMUX_MODE1 || defined ENABLE_PINMUX_MODE2)
 #else
-#define ENABLE_PINMUX_MODE1
+#define ENABLE_PINMUX_MODE1 1
 #endif
 
 extern void Enablepinmux1(void);

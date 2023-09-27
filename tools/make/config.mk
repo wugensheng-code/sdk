@@ -38,7 +38,7 @@ COMPILE_PREFIX  ?=
 ## tcm: Program will be download into tcm and run directly in tcm
 
 ifeq ($(AL_CHIP),dr1v90)
-DOWNLOAD        ?= ocm
+DOWNLOAD        ?= tcm
 else
 DOWNLOAD        ?= ddr
 endif

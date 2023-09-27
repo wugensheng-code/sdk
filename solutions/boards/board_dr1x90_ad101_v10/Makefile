@@ -13,4 +13,4 @@ INC_DIR += ./inc \
 LIBNAME := plat
 
 
-include ../../../tools/make/rules.mk
+include $(AL_SDK_ROOT)/tools/make/rules.mk
