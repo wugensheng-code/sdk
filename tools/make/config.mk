@@ -76,7 +76,7 @@ endif
 
 AL_PLAT_DIR := $(abspath $(AL_PLAT_DIR))
 
-BSP_DIR  ?= $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/*/Makefile))
+BSP_DIR  ?= $(patsubst %/chip, %, $(wildcard $(AL_SDK_ROOT)/*/chip))
 
 CHIP_DIR ?= $(wildcard $(BSP_DIR)/*/$(AL_CHIP)) $(wildcard $(BSP_DIR)/chip/*/$(AL_CHIP))
 
