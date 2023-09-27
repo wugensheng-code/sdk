@@ -35,7 +35,14 @@ COMPILE_PREFIX  ?=
 ## Available choices:
 ## ocm: Program will be download into ocm and run directly in ocm
 ## ddr: Program will be download into ddr and run directly in ddr
+## tcm: Program will be download into tcm and run directly in tcm
+
+ifeq ($(AL_CHIP),dr1v90)
 DOWNLOAD        ?= ocm
+else
+DOWNLOAD        ?= ddr
+endif
+
 
 ## If V=1, it will display compiling message in verbose including compiling options
 V ?= 1
