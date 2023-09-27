@@ -24,18 +24,7 @@ endif
 #    ASM_SRCS: asm sources for application
 #########################################################################
 SRC_DIR  = ./
-INC_DIR += ./ \
-			$(SDK_ROOT)/3rdparty/lib/CherryUSB/common \
-			$(SDK_ROOT)/3rdparty/lib/CherryUSB/port/dwc2 \
-			$(SDK_ROOT)/3rdparty/lib/CherryUSB/core \
-			$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/cdc \
-			$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/hub \
-			$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/hid \
-			$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/msc \
-			$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/video \
-			$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/audio \
-			$(SDK_ROOT)/3rdparty/lib/CherryUSB/config \
-			$(SDK_ROOT)/3rdparty/lib/CherryUSB/osal
+INC_DIR += ./
 
 LD_LIBS  =
 LIB_DIR  =

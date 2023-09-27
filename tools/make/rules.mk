@@ -116,6 +116,18 @@ PUBLIC_INC_DIR +=  $(AL_SDK_ROOT)/3rdparty/lwip-2.1.3/src/include \
                    $(AL_SDK_ROOT)/3rdparty/lwip-2.1.3/ports   \
                    $(AL_SDK_ROOT)/3rdparty/lwip-2.1.3/ports/netif
 
+PUBLIC_INC_DIR +=  $(SDK_ROOT)/3rdparty/lib/CherryUSB/common \
+                   $(SDK_ROOT)/3rdparty/lib/CherryUSB/port/dwc2 \
+                   $(SDK_ROOT)/3rdparty/lib/CherryUSB/core \
+                   $(SDK_ROOT)/3rdparty/lib/CherryUSB/class/cdc \
+                   $(SDK_ROOT)/3rdparty/lib/CherryUSB/class/hub \
+                   $(SDK_ROOT)/3rdparty/lib/CherryUSB/class/hid \
+                   $(SDK_ROOT)/3rdparty/lib/CherryUSB/class/msc \
+                   $(SDK_ROOT)/3rdparty/lib/CherryUSB/class/video \
+                   $(SDK_ROOT)/3rdparty/lib/CherryUSB/class/audio \
+                   $(SDK_ROOT)/3rdparty/lib/CherryUSB/config \
+                   $(SDK_ROOT)/3rdparty/lib/CherryUSB/osal
+
 PUBLIC_INC  :=  $(foreach subdir,$(sort $(PUBLIC_INC_DIR)), -I$(subdir))
 
 ## module inc
