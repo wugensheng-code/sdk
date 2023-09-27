@@ -316,11 +316,6 @@ FreeRTOS_IRQ_Handler:
 	/* Call the C handler. */
 	BL vApplicationIRQHandler
 
-	/* Disable interrupts. */
-	MSR 	DAIFSET, #3
-	DSB		SY
-	ISB		SY
-
 	/* Restore the critical nesting count. */
 	LDP		X1, X5, [SP], #0x10
 	STR		X1, [X5]

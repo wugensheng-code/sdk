@@ -71,7 +71,7 @@ typedef struct
 #else
 #define AL_DEFAULT_ATTR(Name)  AL_INTR_AttrStrct Name = {   \
             .TrigMode   =  LEVEL_HIGH_TRIGGER,              \
-            .Priority   =  1,                               \
+            .Priority   =  137,                               \
 };
 #endif
 

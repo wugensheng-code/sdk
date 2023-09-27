@@ -21,7 +21,7 @@
 #define TOTAL_PCPU_INTR_NUM     (MIN_SPI_ID - MIN_SGI_ID)
 
 /* Mask for the priority field common to all GIC interfaces */
-#define GIC_PRI_MASK    (0xf0U)
+#define GIC_PRI_MASK    (0xf8U)
 
 /* Mask for the configuration field common to all GIC interfaces */
 #define GIC_CFG_MASK        (0x3U)

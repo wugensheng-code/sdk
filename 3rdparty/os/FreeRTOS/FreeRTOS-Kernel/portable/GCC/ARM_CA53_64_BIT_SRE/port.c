@@ -149,7 +149,7 @@ uint64_t ullPortYieldRequired = pdFALSE;
 
 /* Counts the interrupt nesting depth.  A context switch is only performed if
 if the nesting depth is 0. */
-uint64_t ullPortInterruptNesting = 0;
+volatile uint64_t ullPortInterruptNesting = 0;
 
 /* Used in the ASM code. */
 __attribute__(( used )) const uint64_t ullMaxAPIPriorityMask = ( configMAX_API_CALL_INTERRUPT_PRIORITY << portPRIORITY_SHIFT );
@@ -492,17 +492,17 @@ extern void FreeRTOS_Tick_Handler( void );
 
 	// set timer value
     __asm volatile ("msr cntp_tval_el0, %0" :
-                                            : "r" (cntfrq) 
+                                            : "r" (cntfrq)
                                             :"memory");
 
 	// enable timer
     __asm volatile ("msr cntp_ctl_el0, %0"  :
-                                            : "r" (AL_FUNC_ENABLE) 
+                                            : "r" (AL_FUNC_ENABLE)
                                             :"memory");
-									
+
 	AL_INTR_AttrStrct IntrAttr = {
             .TrigMode   =  LEVEL_HIGH_TRIGGER,
-            .Priority   =  ( uint32_t ) ( portLOWEST_USABLE_INTERRUPT_PRIORITY << portPRIORITY_SHIFT ),                 
+            .Priority   =  ( uint32_t ) ( portLOWEST_USABLE_INTERRUPT_PRIORITY << portPRIORITY_SHIFT ),
 	};
 
 	(AL_VOID)AlIntr_RegHandler(SOC_NONE_SECURE_PHYSICAL_TIMER, &IntrAttr, FreeRTOS_Tick_Handler, AL_NULL);
@@ -527,12 +527,12 @@ void clear_tick()
 
 	// set timer value
     __asm volatile ("msr cntp_tval_el0, %0" :
-                                            : "r" (cntfrq) 
+                                            : "r" (cntfrq)
                                             :"memory");
 
 	// enable timer
     __asm volatile ("msr cntp_ctl_el0, %0"  :
-                                            : "r" (AL_FUNC_ENABLE) 
+                                            : "r" (AL_FUNC_ENABLE)
                                             :"memory");
 }
 /*-----------------------------------------------------------*/

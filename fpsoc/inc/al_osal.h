@@ -199,6 +199,7 @@ static inline AL_VOID AlOsal_Sleep(AL_U32 Time)
 #include <FreeRTOS.h>
 #include "semphr.h"
 extern volatile uint64_t ullCriticalNesting;
+extern volatile uint64_t ullPortInterruptNesting;
 /*----------------------------------------------*
  * MUTEX API.*
  *----------------------------------------------*/
@@ -225,33 +226,43 @@ static inline AL_S32 AlOsal_Lock_Init(AL_Lock_t Lock, const char* Name)
 static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_S32 Timeout)
 {
     /* If the scheduler is started and in thread context */
-    if (ullCriticalNesting == 0)
-    {
+    if (ullPortInterruptNesting == 0) {
         return !xSemaphoreTake(Lock->Thread_Lock, (TickType_t) Timeout);
-    }
-    else
-    {
-        Lock->Isr_Lock = taskENTER_CRITICAL_FROM_ISR();
+    } else {
+        AL_S32 Ret;
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        Ret = xSemaphoreTakeFromISR(Lock->Thread_Lock, &xHigherPriorityTaskWoken);
+        if (Ret == pdPASS) {
+            portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+            return AL_OK;
+        } else {
+            return AL_ERR_UNAVAILABLE;
+        }
     }
 }
 
 static inline AL_S32 AlOsal_Lock_Release(AL_Lock_t Lock)
 {
     /* If the scheduler is started and in thread context */
-    if (ullCriticalNesting == 0)
-    {
+    if (ullPortInterruptNesting == 0) {
         return !xSemaphoreGive(Lock->Thread_Lock);
-    }
-    else
-    {
-        taskEXIT_CRITICAL_FROM_ISR(Lock->Isr_Lock);
+    } else {
+        AL_S32 Ret;
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        Ret = xSemaphoreGiveFromISR(Lock->Thread_Lock, &xHigherPriorityTaskWoken);
+        if (Ret == pdPASS) {
+            portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+            return AL_OK;
+        } else {
+            return AL_ERR_UNAVAILABLE;
+        }
     }
 }
 
 /*----------------------------------------------*
  * Semaphore API.*
  *----------------------------------------------*/
-typedef struct 
+typedef struct
 {
     StaticSemaphore_t Semaphore_Buffer;
     SemaphoreHandle_t Semaphore_Handle;
@@ -264,7 +275,7 @@ static inline AL_S32 AlOsal_Sem_Init(AL_Semaphore_t Semaphore, const char* Name,
     AL_UNUSED(Name);
 
     Semaphore->Semaphore_Handle = xSemaphoreCreateCountingStatic(MaxCount, Value, &Semaphore->Semaphore_Buffer);
-    
+
     configASSERT(Semaphore->Semaphore_Handle);
 
     return AL_OK;
@@ -298,7 +309,7 @@ static inline AL_S32 AlOsal_Mb_Init(AL_MailBox_t MailBox, const char* Name)
     AL_S64 Ret = AL_OK;
 
     MailBox->Semaphore.Semaphore_Handle = xSemaphoreCreateCountingStatic(1, 0, &MailBox->Semaphore.Semaphore_Buffer);
-    
+
     configASSERT(MailBox->Semaphore.Semaphore_Handle);
 
     MailBox->Msg   = 0;
@@ -315,14 +326,38 @@ static inline AL_S32 AlOsal_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
     __COMPILER_BARRIER();
     MailBox->entry = 1;
 
-    return !xSemaphoreGive(MailBox->Semaphore.Semaphore_Handle);
+    /* If the scheduler is started and in thread context */
+    if (ullPortInterruptNesting == 0) {
+        return !xSemaphoreGive(MailBox->Semaphore.Semaphore_Handle);
+    } else {
+        AL_S32 Ret;
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        Ret = xSemaphoreGiveFromISR(MailBox->Semaphore.Semaphore_Handle, &xHigherPriorityTaskWoken);
+        if (Ret == pdPASS) {
+            portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+        }
+        return AL_OK;
+    }
 }
 
 static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)
 {
-    AL_S32 flag = (AL_S32)!xSemaphoreTake(MailBox->Semaphore.Semaphore_Handle, (TickType_t) Timeout);
+    AL_S32 Ret;
+    /* If the scheduler is started and in thread context */
+    if (ullPortInterruptNesting == 0) {
+        Ret = !xSemaphoreTake(MailBox->Semaphore.Semaphore_Handle, (TickType_t) Timeout);
+    } else {
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        Ret = xSemaphoreTakeFromISR(MailBox->Semaphore.Semaphore_Handle, &xHigherPriorityTaskWoken);
+        if (Ret == pdPASS) {
+            portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+            Ret = AL_OK;
+        } else {
+            Ret = AL_ERR_UNAVAILABLE;
+        }
+    }
 
-    if (flag == AL_OK) {
+    if (Ret == AL_OK) {
         MailBox->entry = 0;
         __COMPILER_BARRIER();
         *(AL_U64 *)Msg = MailBox->Msg;
