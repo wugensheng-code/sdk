@@ -44,10 +44,6 @@ ASM_SRCS :=
 #########################################################################
 CFLAGS += -O2 -g3
 
-USE_LWIP = 1
-CFLAGS += -DUSE_RTOS
-CFLAGS += -DRTOS_RTTHREAD
-
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files

@@ -111,12 +111,10 @@ PUBLIC_INC_DIR +=   $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel/include 
 
 endif
 
-ifeq ($(USE_LWIP),1)
 PUBLIC_INC_DIR +=  $(AL_SDK_ROOT)/3rdparty/lwip-2.1.3/src/include \
                    $(AL_SDK_ROOT)/3rdparty/lwip-2.1.3/src/include/compat/posix \
                    $(AL_SDK_ROOT)/3rdparty/lwip-2.1.3/ports   \
                    $(AL_SDK_ROOT)/3rdparty/lwip-2.1.3/ports/netif
-endif
 
 PUBLIC_INC  :=  $(foreach subdir,$(sort $(PUBLIC_INC_DIR)), -I$(subdir))
 
@@ -262,9 +260,7 @@ endif
 #########################################################################
 LIBS_DIR = $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/lib/*/Makefile $(BSP_DIR)/lib/*/Makefile))
 
-ifeq ($(USE_LWIP),1)
 LIBS_DIR += $(AL_SDK_ROOT)/3rdparty/lwip-2.1.3
-endif
 
 ifneq ($(PLAT_DIR),)
 LIBS_DIR += $(PLAT_DIR)
