@@ -7,8 +7,7 @@
 				"fpsoc/chip/dr1x90/dr1m90",
 				"fpsoc/arch/arm",
 				"fpsoc/arch/common/inc",
-				"fpsoc/inc",
-				"fpsoc/driver/ps_driver/ipc/inc"
+				"fpsoc/inc"
 			]
 		},
 		"CHIP_DR1V90": {
@@ -18,8 +17,7 @@
 				"fpsoc/chip/dr1x90/dr1v90",
 				"fpsoc/arch/riscv",
 				"fpsoc/arch/common/inc",
-				"fpsoc/inc",
-				"fpsoc/driver/ps_driver/ipc/inc"
+				"fpsoc/inc"
 			]
 		}
 	},
@@ -156,6 +154,23 @@
 			"name": "LIB_CIPHER_V1_0",
 			"version": "1.0",
 			"depends": ["3rdparty/lib/cipher"]
+		},
+		"LIB_LWIP_V1_0":{
+			"name": "LIB_LWIP_V1_0",
+			"version": "1.0",
+			"depends": [
+				"3rdparty/lwip-2.1.3/example/lwip_netio_example",
+				"3rdparty/lwip-2.1.3/ports/netif",
+				"3rdparty/lwip-2.1.3/src/include/compat/posix",
+				"3rdparty/lwip-2.1.3/ports",
+				"3rdparty/lwip-2.1.3/src/include",
+				"3rdparty/lwip-2.1.3/src/core",
+				"3rdparty/lwip-2.1.3/src/core/ipv4",
+				"3rdparty/lwip-2.1.3/src/core/ipv6",
+				"3rdparty/lwip-2.1.3/src/api",
+				"3rdparty/lwip-2.1.3/ports/OS",
+				"3rdparty/lwip-2.1.3/src/netif/ethernet.c"
+			]
 		}
 	},
 	"os":{
@@ -221,17 +236,7 @@
 			"name": "LWIP_NETIO_V1_0",
 			"version": "1.0",
 			"depends": [
-				"3rdparty/lwip-2.1.3/example/lwip_netio_example",
-				"3rdparty/lwip-2.1.3/ports/netif",
-				"3rdparty/lwip-2.1.3/src/include/compat/posix",
-				"3rdparty/lwip-2.1.3/ports",
-				"3rdparty/lwip-2.1.3/src/include",
-				"3rdparty/lwip-2.1.3/src/core",
-				"3rdparty/lwip-2.1.3/src/core/ipv4",
-				"3rdparty/lwip-2.1.3/src/core/ipv6",
-				"3rdparty/lwip-2.1.3/src/api",
-				"3rdparty/lwip-2.1.3/ports/OS",
-				"3rdparty/lwip-2.1.3/src/netif/ethernet.c",
+				"LIB_LWIP_V1_0",
 				"PS_DRIVER_GBE_V1_0"
 			],
 			"description": "gbe test",
@@ -242,17 +247,7 @@
 			"name": "LWIP_PING_V1_0",
 			"version": "1.0",
 			"depends": [
-				"3rdparty/lwip-2.1.3/example/lwip_netio_example",
-				"3rdparty/lwip-2.1.3/ports/netif",
-				"3rdparty/lwip-2.1.3/src/include/compat/posix",
-				"3rdparty/lwip-2.1.3/ports",
-				"3rdparty/lwip-2.1.3/src/include",
-				"3rdparty/lwip-2.1.3/src/core",
-				"3rdparty/lwip-2.1.3/src/core/ipv4",
-				"3rdparty/lwip-2.1.3/src/core/ipv6",
-				"3rdparty/lwip-2.1.3/src/api",
-				"3rdparty/lwip-2.1.3/ports/OS",
-				"3rdparty/lwip-2.1.3/src/netif/ethernet.c",
+				"LIB_LWIP_V1_0",
 				"PS_DRIVER_GBE_V1_0"
 			],
 			"description": "gbe test",
@@ -263,17 +258,7 @@
 			"name": "LWIP_UDP_ECHO_V1_0",
 			"version": "1.0",
 			"depends": [
-				"3rdparty/lwip-2.1.3/example/lwip_netio_example",
-				"3rdparty/lwip-2.1.3/ports/netif",
-				"3rdparty/lwip-2.1.3/src/include/compat/posix",
-				"3rdparty/lwip-2.1.3/ports",
-				"3rdparty/lwip-2.1.3/src/include",
-				"3rdparty/lwip-2.1.3/src/core",
-				"3rdparty/lwip-2.1.3/src/core/ipv4",
-				"3rdparty/lwip-2.1.3/src/core/ipv6",
-				"3rdparty/lwip-2.1.3/src/api",
-				"3rdparty/lwip-2.1.3/ports/OS",
-				"3rdparty/lwip-2.1.3/src/netif/ethernet.c",
+				"LIB_LWIP_V1_0",
 				"PS_DRIVER_GBE_V1_0"
 			],
 			"description": "gbe test",
@@ -285,17 +270,7 @@
 			"name": "RTT_LWIP_NETIO_V1_0",
 			"version": "1.0",
 			"depends": [
-				"3rdparty/lwip-2.1.3/example/lwip_netio_example",
-				"3rdparty/lwip-2.1.3/ports/netif",
-				"3rdparty/lwip-2.1.3/src/include/compat/posix",
-				"3rdparty/lwip-2.1.3/ports",
-				"3rdparty/lwip-2.1.3/src/include",
-				"3rdparty/lwip-2.1.3/src/core",
-				"3rdparty/lwip-2.1.3/src/core/ipv4",
-				"3rdparty/lwip-2.1.3/src/core/ipv6",
-				"3rdparty/lwip-2.1.3/src/api",
-				"3rdparty/lwip-2.1.3/ports/OS",
-				"3rdparty/lwip-2.1.3/src/netif/ethernet.c",
+				"LIB_LWIP_V1_0",
 				"PS_DRIVER_GBE_V1_0"
 			],
 			"description": "gbe test",
@@ -306,17 +281,7 @@
 			"name": "RTT_LWIP_PING_V1_0",
 			"version": "1.0",
 			"depends": [
-				"3rdparty/lwip-2.1.3/example/lwip_netio_example",
-				"3rdparty/lwip-2.1.3/ports/netif",
-				"3rdparty/lwip-2.1.3/src/include/compat/posix",
-				"3rdparty/lwip-2.1.3/ports",
-				"3rdparty/lwip-2.1.3/src/include",
-				"3rdparty/lwip-2.1.3/src/core",
-				"3rdparty/lwip-2.1.3/src/core/ipv4",
-				"3rdparty/lwip-2.1.3/src/core/ipv6",
-				"3rdparty/lwip-2.1.3/src/api",
-				"3rdparty/lwip-2.1.3/ports/OS",
-				"3rdparty/lwip-2.1.3/src/netif/ethernet.c",
+				"LIB_LWIP_V1_0",
 				"PS_DRIVER_GBE_V1_0"
 			],
 			"description": "gbe test",
