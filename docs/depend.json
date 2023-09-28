@@ -162,7 +162,6 @@
 			"name": "LIB_LWIP_V1_0",
 			"version": "1.0",
 			"depends": [
-				"3rdparty/lwip-2.1.3/example/lwip_netio_example",
 				"3rdparty/lwip-2.1.3/ports/netif",
 				"3rdparty/lwip-2.1.3/src/include/compat/posix",
 				"3rdparty/lwip-2.1.3/ports",
@@ -241,6 +240,7 @@
 			"version": "1.0",
 			"depends": [
 				"LIB_LWIP_V1_0",
+				"3rdparty/lwip-2.1.3/example/lwip_netio_example",
 				"PS_DRIVER_GBE_V1_0"
 			],
 			"description": "gbe test",
@@ -252,6 +252,7 @@
 			"version": "1.0",
 			"depends": [
 				"LIB_LWIP_V1_0",
+				"3rdparty/lwip-2.1.3/example/lwip_ping_example",
 				"PS_DRIVER_GBE_V1_0"
 			],
 			"description": "gbe test",
@@ -263,6 +264,7 @@
 			"version": "1.0",
 			"depends": [
 				"LIB_LWIP_V1_0",
+				"3rdparty/lwip-2.1.3/example/lwip_udp_echo_example",
 				"PS_DRIVER_GBE_V1_0"
 			],
 			"description": "gbe test",
@@ -275,6 +277,7 @@
 			"version": "1.0",
 			"depends": [
 				"LIB_LWIP_V1_0",
+				"3rdparty/lwip-2.1.3/example/rtt_lwip_netio_example",
 				"PS_DRIVER_GBE_V1_0"
 			],
 			"description": "gbe test",
@@ -286,6 +289,7 @@
 			"version": "1.0",
 			"depends": [
 				"LIB_LWIP_V1_0",
+				"3rdparty/lwip-2.1.3/example/rtt_lwip_ping_example",
 				"PS_DRIVER_GBE_V1_0"
 			],
 			"description": "gbe test",
