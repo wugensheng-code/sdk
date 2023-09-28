@@ -33,7 +33,10 @@
 		"PS_DRIVER_DMA_V1_0": {
 			"name": "PS_DRIVER_DMA_V1_0",
 			"version": "1.0",
-			"depends": ["fpsoc/driver/ps_driver/dma"]
+			"depends": [
+				"fpsoc/driver/ps_driver/dma",
+				"PS_DRIVER_IPC_V1_0"
+			]
 		},
 		"PS_DRIVER_DMACAHB_V1_0": {
 			"name": "PS_DRIVER_DMACAHB_V1_0",
