@@ -173,7 +173,8 @@
 		"OS_FREERTOS_V1_0":{
 			"name":"OS_FREERTOS_V1_0",
 			"version":"1.0",
-			"description":"freertos"
+			"description":"freertos",
+			"depends": ["3rdparty/os/FreeRTOS"]
 		},
 		"OS_LINUX_V1_0":{
 			"name":"OS_LINUX_V1_0",
@@ -183,8 +184,8 @@
 		"OS_RT_THREAD_V1_0":{
 			"name":"OS_RT_THREAD_V1_0",
 			"version":"1.0",
-			"description":"OS_RT_THREAD",
-			"depends":["3rdparty/os/RT-Thread"]
+			"description":"rt-thread",
+			"depends": ["3rdparty/os/RT-Thread"]
 		}
 	},
 	"app": {
@@ -306,6 +307,28 @@
 			"description": "Baremetal cherryUSB MSC_RTTHREAD demo",
 			"supportedOS": ["standalone"],
 			"supportedProc": ["apu-0", "apu-1", "rpu"]
+		},
+		"RT-Thread_V1_0": {
+			"name": "RT-Thread_V1_0",
+			"version": "1.0",
+			"depends": [
+			"/solutions/demo/baremetal/rt-thread",
+			"OS_RT_THREAD_V1_0"
+			],
+			"description": "RT-THREAD demo",
+			"supportedOS": ["rt-thread"],
+			"supportedProc": ["apu-0", "apu-1", "rpu"]		
+		},
+		"FREERTOS_V1_0": {
+			"name": "FREERTOS_V1_0",
+			"version": "1.0",
+			"depends": [
+			"/solutions/demo/baremetal/freertos",
+			"OS_FREERTOS_V1_0"
+			],
+			"description": "FREERTOS demo",
+			"supportedOS": ["freertos"],
+			"supportedProc": ["apu-0", "apu-1", "rpu"]		
 		}
 	},
 	"ps_driver_app": {
