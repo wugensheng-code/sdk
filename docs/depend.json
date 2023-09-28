@@ -623,8 +623,7 @@
 				"version": "1.0",
 				"depends": [
 					"fpsoc/driver/ps_driver/uart/example/al_uart_block.c",
-					"PS_DRIVER_UART_V1_0",
-					"solutions/demo/fsbl/simulation/printf.c"
+					"PS_DRIVER_UART_V1_0"
 				],
 				"description": "uart test",
 				"supportedOS": ["standalone"],
@@ -635,8 +634,7 @@
 				"version": "1.0",
 				"depends": [
 					"fpsoc/driver/ps_driver/uart/example/al_uart_nonblock.c",
-					"PS_DRIVER_UART_V1_0",
-					"solutions/demo/fsbl/simulation/printf.c"
+					"PS_DRIVER_UART_V1_0"
 				],
 				"description": "uart test",
 				"supportedOS": ["standalone"],
