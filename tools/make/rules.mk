@@ -272,7 +272,7 @@ endif
 #########################################################################
 LIBS_DIR = $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/lib/*/Makefile $(BSP_DIR)/lib/*/Makefile))
 
-LIBS_DIR += $(AL_SDK_ROOT)/3rdparty/lwip-2.1.3
+LIBS_DIR += $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/lwip-2.1.3/Makefile))
 
 ifneq ($(PLAT_DIR),)
 LIBS_DIR += $(PLAT_DIR)

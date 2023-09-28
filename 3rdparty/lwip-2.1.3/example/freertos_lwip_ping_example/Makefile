@@ -18,8 +18,6 @@ else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
-DOWNLOAD = ddr
-
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
 #    LD_LIBS: External library files that the app depends on
