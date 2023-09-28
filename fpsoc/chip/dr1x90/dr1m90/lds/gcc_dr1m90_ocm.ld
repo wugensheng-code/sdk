@@ -29,6 +29,7 @@ SECTIONS
 	PROVIDE(_rodata_start = .);
 	.rodata :
 	{
+		. = ALIGN(4096);
 		*(.rodata)
         /* section information for usbh class */
         . = ALIGN(4);
@@ -38,6 +39,7 @@ SECTIONS
 	}  > ram AT>ram
 	PROVIDE(_rodata_end   = .);
 
+	. = ALIGN(4096);
 	.pagetable :
 	{
 		. = ALIGN(4096);
@@ -49,6 +51,7 @@ SECTIONS
 	. = ALIGN(4096);
 	.cli_section :
 	{
+	. = ALIGN(4096);
 	_cli_section_start = .;
 		KEEP(*(cli_section))
 		_cli_section_end   = .;
@@ -57,6 +60,7 @@ SECTIONS
 	. = ALIGN(4096);
 	.unity_section :
 	{
+		. = ALIGN(4096);
 		_unity_test_start = .;
 		KEEP(*(unity_section))
 		_unity_test_end   = .;
@@ -66,6 +70,7 @@ SECTIONS
 	PROVIDE(_data_start = .);
 	.data :
 	{
+		. = ALIGN(4096);
 		*(.data*)
 	}  > ram AT>ram
 
@@ -74,6 +79,7 @@ SECTIONS
 	_bss_start = .;
 	.bss :
 	{
+		. = ALIGN(4096);
 		*(.bss*)
 	}  > ram AT>ram
 	. = ALIGN(4096);
