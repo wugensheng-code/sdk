@@ -226,7 +226,8 @@
 				"PS_DRIVER_DMACAHB_V1_0",
 				"PS_DRIVER_MMC_V1_0",
 				"PS_DRIVER_SMC_V1_0",
-				"PS_DRIVER_QSPI_V1_0"
+				"PS_DRIVER_QSPI_V1_0",
+				"PS_DRIVER_IPC_V1_0"
 			],
 			"description": "fsbl demo",
 			"supportedOS": ["standalone"],
