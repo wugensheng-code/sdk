@@ -670,9 +670,9 @@ AL_S32 AlQspi_Dev_TranferData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 Se
  * @return
  * @note    None
 */
-AL_S32 AlQspi_Dev_DmaSendData(AL_QSPI_DevStruct *Qspi, AL_U32 SendSize)
+AL_S32 AlQspi_Dev_DmaSendData(AL_QSPI_DevStruct *Qspi, AL_U32 SendDataSize)
 {
-    AL_U32 SendLevel, TempSendSize;
+    AL_U32 SendLevel;
 
     if (Qspi == AL_NULL) {
         return AL_QSPI_ERR_ILLEGAL_PARAM;
@@ -690,8 +690,6 @@ AL_S32 AlQspi_Dev_DmaSendData(AL_QSPI_DevStruct *Qspi, AL_U32 SendSize)
         return AL_QSPI_ERR_BUSY;
     }
 
-    TempSendSize = SendSize - (Qspi->Configs.Trans.EnSpiCfg.AddrLength + Qspi->Configs.Trans.EnSpiCfg.InstLength) / 2;
-
     AlQspi_ll_Disable(Qspi->HwConfig.BaseAddress);
     AlQspi_ll_SetDataFrameSize(Qspi->HwConfig.BaseAddress, QSPI_DFS_8BITS);
     AlQspi_ll_SetAddrLength(Qspi->HwConfig.BaseAddress, Qspi->Configs.Trans.EnSpiCfg.AddrLength);
@@ -700,7 +698,7 @@ AL_S32 AlQspi_Dev_DmaSendData(AL_QSPI_DevStruct *Qspi, AL_U32 SendSize)
     AlQspi_ll_SetWaitCycles(Qspi->HwConfig.BaseAddress, Qspi->Configs.Trans.EnSpiCfg.WaitCycles);
     AlQspi_ll_SetQspiFrameFormat(Qspi->HwConfig.BaseAddress, Qspi->Configs.SpiFrameFormat);
     AlQspi_ll_SetTransfMode(Qspi->HwConfig.BaseAddress, Qspi->Configs.Trans.TransMode);
-    SendLevel = MIN((AL_U32)(Qspi->HwConfig.FifoLen / 2), TempSendSize);
+    SendLevel = MIN((AL_U32)(Qspi->HwConfig.FifoLen / 2), SendDataSize);
     if (SPI_STANDARD_FORMAT != Qspi->Configs.SpiFrameFormat) {
         SendLevel += 2;
     }
@@ -709,7 +707,7 @@ AL_S32 AlQspi_Dev_DmaSendData(AL_QSPI_DevStruct *Qspi, AL_U32 SendSize)
     if (Qspi->Configs.ClockStretch == QSPI_EnableClockStretch &&
        Qspi->Configs.SpiFrameFormat != SPI_STANDARD_FORMAT)
     {
-        AlQspi_ll_SetRecvNumOfDataFrames(Qspi->HwConfig.BaseAddress, TempSendSize ? TempSendSize - 1 : 0);
+        AlQspi_ll_SetRecvNumOfDataFrames(Qspi->HwConfig.BaseAddress, SendDataSize ? SendDataSize - 1 : 0);
     }
     AlQspi_ll_SetTxFifoThrLevel(Qspi->HwConfig.BaseAddress, 0);
     AlQspi_ll_TxDmaEnable(Qspi->HwConfig.BaseAddress);
