@@ -1,24 +1,24 @@
 ifeq ($(AL_CHIP),dr1v90)
 INC_DIR +=$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/applications \
 	$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/board \
-	$(AL_SDK_ROOT)/fpsoc/inc \
-	$(AL_SDK_ROOT)/fpsoc/arch/common/inc \
-	$(AL_SDK_ROOT)/fpsoc/arch \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/uart/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/can/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/dmacahb/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/gpio/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/iic/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/mmc/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/mpu/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/qspi/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/smc/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/spi/inc \
-	$(AL_SDK_ROOT)/fpsoc/lib/cli/inc \
-	$(AL_SDK_ROOT)/fpsoc/arch/riscv/rv64/inc \
-	$(AL_SDK_ROOT)/fpsoc/arch/riscv/ext-nuclei/inc \
+	$(BSP_DIR)/inc \
+	$(BSP_DIR)/arch/common/inc \
+	$(BSP_DIR)/arch \
+	$(BSP_DIR)/driver/ps_driver/uart/inc \
+	$(BSP_DIR)/driver/ps_driver/can/inc \
+	$(BSP_DIR)/driver/ps_driver/dmacahb/inc \
+	$(BSP_DIR)/driver/ps_driver/gpio/inc \
+	$(BSP_DIR)/driver/ps_driver/iic/inc \
+	$(BSP_DIR)/driver/ps_driver/mmc/inc \
+	$(BSP_DIR)/driver/ps_driver/mpu/inc \
+	$(BSP_DIR)/driver/ps_driver/qspi/inc \
+	$(BSP_DIR)/driver/ps_driver/smc/inc \
+	$(BSP_DIR)/driver/ps_driver/spi/inc \
+	$(BSP_DIR)/lib/cli/inc \
+	$(BSP_DIR)/arch/riscv/rv64/inc \
+	$(BSP_DIR)/arch/riscv/ext-nuclei/inc \
 	$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/board/riscv \
-	$(AL_SDK_ROOT)/fpsoc/chip/dr1x90/dr1v90/inc \
+	$(BSP_DIR)/chip/dr1x90/dr1v90/inc \
 	$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/libc/compilers/newlib \
 	$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/libcpu/risc-v/nuclei \
 	$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/finsh \
@@ -39,24 +39,24 @@ else ifeq ($(AL_CHIP),dr1m90)
 
 INC_DIR +=$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/applications \
 	$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/board \
-	$(AL_SDK_ROOT)/fpsoc/inc \
-	$(AL_SDK_ROOT)/fpsoc/arch/common/inc \
-	$(AL_SDK_ROOT)/fpsoc/arch \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/uart/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/can/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/dmacahb/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/gpio/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/iic/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/mmc/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/mpu/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/qspi/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/smc/inc \
-	$(AL_SDK_ROOT)/fpsoc/driver/ps_driver/spi/inc \
-	$(AL_SDK_ROOT)/fpsoc/lib/cli/inc \
+	$(BSP_DIR)/inc \
+	$(BSP_DIR)/arch/common/inc \
+	$(BSP_DIR)/arch \
+	$(BSP_DIR)/driver/ps_driver/uart/inc \
+	$(BSP_DIR)/driver/ps_driver/can/inc \
+	$(BSP_DIR)/driver/ps_driver/dmacahb/inc \
+	$(BSP_DIR)/driver/ps_driver/gpio/inc \
+	$(BSP_DIR)/driver/ps_driver/iic/inc \
+	$(BSP_DIR)/driver/ps_driver/mmc/inc \
+	$(BSP_DIR)/driver/ps_driver/mpu/inc \
+	$(BSP_DIR)/driver/ps_driver/qspi/inc \
+	$(BSP_DIR)/driver/ps_driver/smc/inc \
+	$(BSP_DIR)/driver/ps_driver/spi/inc \
+	$(BSP_DIR)/lib/cli/inc \
 	$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/board/arm \
-	$(AL_SDK_ROOT)/fpsoc/arch/arm/common/gic_v3/inc \
-	$(AL_SDK_ROOT)/fpsoc/arch/arm/fpsoc/arch/arm/common/gic_v3/inc \
-	$(AL_SDK_ROOT)/fpsoc/arch/arm/armv8/aarch64/cortex-a/inc \
+	$(BSP_DIR)/arch/arm/common/gic_v3/inc \
+	$(BSP_DIR)/arch/arm/fpsoc/arch/arm/common/gic_v3/inc \
+	$(BSP_DIR)/arch/arm/armv8/aarch64/cortex-a/inc \
 	$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/libcpu/aarch64/common \
 	$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/libcpu/aarch64/cortex-a \
 	$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/libc/compilers/common/include \
