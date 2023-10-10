@@ -70,10 +70,6 @@ extern volatile portBASE_TYPE xInsideISR;
 
 #ifdef ENABLE_MMU
 
-#ifndef DDR_2M_MAPPING
-#error "MMU ERROR, need to enable DDR_2M_MAPPING macro"
-#endif
-
 /* defined in the link script */
 extern AL_U32 _no_cache_section_start;
 AL_UINTPTR gbe_buffer_addr = (AL_UINTPTR) &(_no_cache_section_start);
@@ -471,6 +467,8 @@ err_t low_level_init(struct netif *netif)
     }
 
 #ifdef ENABLE_MMU
+    AL_ASSERT((DDR_2M_MAPPING == 1), ERR_IF);
+
     mmu_settlb(gbe_buffer_addr, NORM_NONCACHE);
 #endif
 
