@@ -15,57 +15,57 @@ AL_SMC_ConfigsStruct SmcInitConfigs =
     .SmcWidth = MW_8BITS
 };
 
-AL_U8 SendData[500] = { 0x0 };
-AL_U8 RecvData[500] = { 0x0 };
+#define TRANS_SIZE 5000
+AL_U8 SendData[TRANS_SIZE] = { 0x0 };
+AL_U8 RecvData[TRANS_SIZE] = { 0x0 };
 
 void main(void)
 {
     printf("Start FPSoc Smc Test\r\n");
     AL_U32 i, Ret = AL_OK;
 
-    for (i = 0; i < sizeof(SendData); i++) {
-        SendData[i] = i;
-    }
-
     Ret = AlSmc_Hal_Init(&SmcHal, &SmcInitConfigs, 0);
     if (AL_OK != Ret) {
-         printf("AlSmc_Hal_Init error!!!!!\r\n");
+         printf("AlSmc_Hal_Init error:%d\r\n", Ret);
     }
 
     Ret = AlSmc_Hal_EraseBlock(&SmcHal, 0, 0);
     if (AL_OK != Ret) {
-         printf("AlSmc_Hal_EraseBlock error!!!!!\r\n");
+         printf("AlSmc_Hal_EraseBlock error:%d\r\n", Ret);
     }
 
-    Ret = AlSmc_Hal_ReadPage(&SmcHal, 0, RecvData, 500, 0);
+    for (i = 0; i < sizeof(SendData); i++) {
+        SendData[i] = i%256;
+    }
+
+    Ret = AlSmc_Hal_ReadPage(&SmcHal, 0, RecvData, 2048, 0);
     if (AL_OK != Ret) {
-         printf("AlSmc_Hal_ReadPage error!!!!!\r\n");
+         printf("AlSmc_Hal_ReadPage error:%d\r\n", Ret);
          while(1);
     }
 
-    for (i = 0; i < sizeof(RecvData); i++) {
+    for (i = 0; i < 2048; i++) {
         if(0xff != RecvData[i]) {
-            printf("AlSmc test erase nandflash error!!!!!\r\n");
+            printf("AlSmc test erase nandflash error\r\n");
             printf("Error RecvData[%d]:%d\r\n", i, RecvData[i]);
-            while (1);
         }
     }
 
-    Ret = AlSmc_Hal_WritePage(&SmcHal, 0, SendData, 500, 0);
+    Ret = AlSmc_Hal_WritePage(&SmcHal, 0, SendData, sizeof(SendData), 0);
     if (AL_OK != Ret) {
-         printf("AlSmc_Hal_WritePage error!!!!!\r\n");
+         printf("AlSmc_Hal_WritePage error:%d\r\n", Ret);
          while(1);
     }
 
-    Ret = AlSmc_Hal_ReadPage(&SmcHal, 0, RecvData, 500, 0);
+    Ret = AlSmc_Hal_ReadPage(&SmcHal, 0, RecvData, sizeof(RecvData), 0);
     if (AL_OK != Ret) {
-         printf("AlSmc_Hal_ReadPage error!!!!!\r\n");
+         printf("AlSmc_Hal_ReadPage error:%d\r\n", Ret);
          while(1);
     }
 
     for (i = 0; i < sizeof(RecvData); i++) {
         if((i%256) != RecvData[i]) {
-            printf("AlSmc data write nandflash test error!!!!!\r\n");
+            printf("AlSmc data write nandflash test error\r\n");
             printf("Error RecvData[%d]:%d\r\n", i, RecvData[i]);
             while (1);
         }

@@ -9,7 +9,7 @@
 #########################################################################
 
 SDK_ROOT    ?= ../../../../..
-CHIP        ?= dr1m90
+CHIP        ?= dr1v90
 ELF         ?= SMC_NAND
 
 ifeq ($(CHIP), dr1m90)
@@ -19,9 +19,7 @@ COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
 BOARD_DIR  ?= $(SDK_ROOT)/solutions/boards/
-#BOARD_NAME ?= board_dr1x90_ad101_v10
-BOARD_NAME ?= board_dr1x90_emulation
-
+BOARD_NAME ?= board_dr1x90_ad101_v10
 
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
@@ -49,7 +47,6 @@ ASM_SRCS    :=
 # 3. CFLAGS
 #########################################################################
 CFLAGS := -O2 -g
-CFLAGS += -DAL9000_BRINGUP -DAL9000_OSC_33 -DAL9000_CLK_CONFIG
 # CFLAGS += -DUSE_RTOS
 # CFLAGS += -DRTOS_RTTHREAD
 
@@ -57,8 +54,8 @@ CFLAGS += -DAL9000_BRINGUP -DAL9000_OSC_33 -DAL9000_CLK_CONFIG
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-#PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
-PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
+PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
+#PLAT_DIR  = $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile

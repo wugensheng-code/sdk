@@ -42,6 +42,8 @@ AL_U32 AlSmc_Hal_Init(AL_SMC_HalStruct *Handle, AL_SMC_ConfigsStruct *InitConfig
     Handle->Dev->NandBaseAddr = CfgPtr->NandBaseAddr;
     Handle->NandInfo = &AL_NAND_InfoInstance[CfgPtr->DeviceId];
 
+    AlSmc_Dev_EccHwDisable(Handle->Dev);
+
     Ret = ALSmc_Dev_Reset(Handle->NandInfo);
     if (AL_OK != Ret) {
         goto HAL_INIT_END;
@@ -83,7 +85,7 @@ AL_U32 AlSmc_Hal_Init(AL_SMC_HalStruct *Handle, AL_SMC_ConfigsStruct *InitConfig
             goto HAL_INIT_END;
         }
     }
-
+ AL_LOG(AL_LOG_LEVEL_INFO, "EccNum: %d\r\n", Handle->NandInfo->Size.EccNum);
     HAL_INIT_END:
     AL_SMC_HAL_UNLOCK(Handle);
 
@@ -121,7 +123,7 @@ AL_U32 AlSmc_Hal_ReadPage(AL_SMC_HalStruct *Handle, AL_U64 Offset, AL_U8 *Data, 
     while(Size) {
         /* Check if partial read */
         if (NumOfBytes < Handle->NandInfo->Size.DataBytesPerPage) {
-            BufPtr = Handle->NandInfo->DataBuf;
+            BufPtr = &Handle->NandInfo->DataBuf[0];
             PartialPageRead = 1;
         } else {
             BufPtr = Ptr;

@@ -98,6 +98,7 @@ _start:
     /* Call entry function when using RT-Thread */
     call entry
 #else
+    call components_init
     call main
 #endif
     /* When main returns, the program is stuck in an infinite loop */

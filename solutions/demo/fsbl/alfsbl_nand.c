@@ -18,6 +18,8 @@ AL_SMC_ConfigsStruct SmcInitConfigs =
     .SmcWidth = MW_8BITS
 };
 
+AL_U8 RecvData[500] = { 0x0 };
+
 AL_U32 AlFsbl_NandInit(AL_VOID)
 {
     AL_U32 Ret;
@@ -26,6 +28,7 @@ AL_U32 AlFsbl_NandInit(AL_VOID)
     if (AL_OK != Ret) {
          AL_LOG(AL_LOG_LEVEL_DEBUG, "Fsbl AlSmc_Hal_Init error\r\n");
     }
+
     return Ret;
 }
 

@@ -231,9 +231,6 @@ void Enablepinmux1(void)
 
 void Enablepinmux1_mode2(void)
 {
-    *(AL_U32 *)(0xf8803068u) =0x3;    //uart0  MIO26/27
-    *(AL_U32 *)(0xf880306cu) =0x3;
-    *(AL_U32 *)(0xf8803410u) =0x1;
 #if ENABLE_PINMUX_MODE_SD1 == 1
     *(AL_U32 *)(0xf88030b8u) =0xa;
     *(AL_U32 *)(0xf88030bcu) =0xa;
@@ -332,6 +329,11 @@ void Enablepinmux1_mode2(void)
     AL_REG32_WRITE(PS_MIO12, 0x02);
     AL_REG32_WRITE(PS_MIO13, 0x02);
     AL_REG32_WRITE(PS_MIO14, 0x02);
+
+    //DEBUG UART1
+    *(AL_U32 *)(0xf88030c0u) = 0x3; //PS_UART_TX    PS_IO48 uart1_tx__emio_o_5 (out)    Function_3
+    *(AL_U32 *)(0xf88030c4u) = 0x3; //PS_UART_RX    PS_IO49 uart1_rx__emio_i_5 (in)     Function_3
+    *(AL_U32 *)(0xf8803414u) = 0x1; //EMIOSEL_5     1:MIO 0:EMIO
 
 #ifndef AL9000_BRINGUP
     *(AL_U32 *)(0xf840e004u) =0x0;      //close mpu ddr0

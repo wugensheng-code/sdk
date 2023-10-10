@@ -236,6 +236,7 @@ static AL_VOID ALSmc_Dev_ReadBuf(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_U3
     /* Read Data */
     for (Index = 0; Index < tempLength; Index++) {
         tempBuf[Index] = AL_REG32_READ(DataPhaseAddr);
+        EndCmdReq++;
     }
 }
 
@@ -541,12 +542,12 @@ AL_U8 ALSmc_Dev_HwEccWritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandIn
 
     NandInfo->Cmd.EccLast = 0;
     NandInfo->Cmd.ClearCs = 0;
-    ALSmc_Dev_WriteBuf(NandInfo, Buf, NandInfo->Size.DataBytesPerPage -ONFI_AXI_DATA_WIDTH);
+    ALSmc_Dev_WriteBuf(NandInfo, Buf, NandInfo->Size.DataBytesPerPage - ONFI_AXI_DATA_WIDTH);
     Buf += (NandInfo->Size.DataBytesPerPage - ONFI_AXI_DATA_WIDTH);
 
     NandInfo->Cmd.EccLast = ECC_LAST;
     NandInfo->Cmd.ClearCs = 0;
-    ALSmc_Dev_WriteBuf(NandInfo, Buf, NandInfo->Size.DataBytesPerPage -ONFI_AXI_DATA_WIDTH);
+    ALSmc_Dev_WriteBuf(NandInfo, Buf, ONFI_AXI_DATA_WIDTH);
 
     switch (NandInfo->Size.SpareBytesPerPage) {
     case 64:
@@ -583,7 +584,7 @@ AL_U8 ALSmc_Dev_HwEccWritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandIn
 
     NandInfo->Cmd.EccLast = 0;
     NandInfo->Cmd.ClearCs = CLEAR_CS;
-    ALSmc_Dev_WriteBuf(NandInfo, NandInfo->SpareBuf + NandInfo->Size.SpareBytesPerPage, ONFI_AXI_DATA_WIDTH);
+    ALSmc_Dev_WriteBuf(NandInfo, NandInfo->SpareBuf + NandInfo->Size.SpareBytesPerPage - ONFI_AXI_DATA_WIDTH, ONFI_AXI_DATA_WIDTH);
 
     /* Wait smc ready */
     while(SMC_BUSY == AlSmc_ll_IsBusy(Smc->SmcBaseAddr));
@@ -624,7 +625,7 @@ AL_U8 ALSmc_Dev_HwEccReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInf
     NandInfo->Cmd.Column = 0;
 
     ALSmc_Dev_SendCmd(NandInfo);
-
+    // AlSys_UDelay(2);
     /* Wait smc ready */
     while(SMC_BUSY == AlSmc_ll_IsBusy(Smc->SmcBaseAddr));
     /* Clear intrrupt */
@@ -637,7 +638,7 @@ AL_U8 ALSmc_Dev_HwEccReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInf
 
     NandInfo->Cmd.EccLast = ECC_LAST;
     NandInfo->Cmd.ClearCs = 0;
-    ALSmc_Dev_ReadBuf(NandInfo, Buf, NandInfo->Size.DataBytesPerPage -ONFI_AXI_DATA_WIDTH);
+    ALSmc_Dev_ReadBuf(NandInfo, Buf, ONFI_AXI_DATA_WIDTH);
 
     switch (NandInfo->Size.SpareBytesPerPage) {
     case 64:
@@ -669,7 +670,7 @@ AL_U8 ALSmc_Dev_HwEccReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInf
 
     NandInfo->Cmd.EccLast = 0;
     NandInfo->Cmd.ClearCs = CLEAR_CS;
-    ALSmc_Dev_ReadBuf(NandInfo, NandInfo->SpareBuf + NandInfo->Size.SpareBytesPerPage, ONFI_AXI_DATA_WIDTH);
+    ALSmc_Dev_ReadBuf(NandInfo, NandInfo->SpareBuf + NandInfo->Size.SpareBytesPerPage - ONFI_AXI_DATA_WIDTH, ONFI_AXI_DATA_WIDTH);
 
     for (Index = 0; Index < EccDataNums; Index++) {
         NandInfo->EccCode[Index] = ~NandInfo->SpareBuf[DataOffsetPtr[Index]];
@@ -680,7 +681,6 @@ AL_U8 ALSmc_Dev_HwEccReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInf
         Status = AlSmc_Dev_HwCorrectEcc(&NandInfo->EccCode[EccOffset], &NandInfo->EccCalc[EccOffset], TempBuf);
         if (Status != AL_OK)
             return Status;
-
         EccOffset += NAND_ECC_BYTES;
         TempBuf += NAND_ECC_BLOCK_SIZE;
     }
@@ -718,7 +718,7 @@ AL_U8 ALSmc_Dev_WritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, A
 
     NandInfo->Cmd.EccLast = 0;
     NandInfo->Cmd.ClearCs = CLEAR_CS;
-    ALSmc_Dev_WriteBuf(NandInfo, NandInfo->SpareBuf + NandInfo->Size.SpareBytesPerPage, ONFI_AXI_DATA_WIDTH);
+    ALSmc_Dev_WriteBuf(NandInfo, NandInfo->SpareBuf + NandInfo->Size.SpareBytesPerPage - ONFI_AXI_DATA_WIDTH, ONFI_AXI_DATA_WIDTH);
 
     /* Wait smc ready */
     while(SMC_BUSY == AlSmc_ll_IsBusy(Smc->SmcBaseAddr));
@@ -758,11 +758,6 @@ AL_U8 ALSmc_Dev_ReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL
 
     ALSmc_Dev_SendCmd(NandInfo);
 
-    /* Wait smc ready */
-    while(SMC_BUSY == AlSmc_ll_IsBusy(Smc->SmcBaseAddr));
-    /* Clear intrrupt */
-    AlSmc_ll_ClrIntr1(Smc->SmcBaseAddr);
-
     /* Check Nand Status */
     Status = ALSmc_Dev_ReadStatus(NandInfo);
     if (Status & ONFI_STATUS_FAIL) {
@@ -779,6 +774,11 @@ AL_U8 ALSmc_Dev_ReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL
 
     AL_REG32_WRITE(CmdPhaseAddr, 0);
 
+    /* Wait smc ready */
+    while(SMC_BUSY == AlSmc_ll_IsBusy(Smc->SmcBaseAddr));
+    /* Clear intrrupt */
+    AlSmc_ll_ClrIntr1(Smc->SmcBaseAddr);
+
     NandInfo->Cmd.EccLast = 0;
     NandInfo->Cmd.ClearCs = 0;
     ALSmc_Dev_ReadBuf(NandInfo, Buf, NandInfo->Size.DataBytesPerPage);
@@ -787,7 +787,7 @@ AL_U8 ALSmc_Dev_ReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL
 
     NandInfo->Cmd.EccLast = 0;
     NandInfo->Cmd.ClearCs = CLEAR_CS;
-    ALSmc_Dev_ReadBuf(NandInfo, NandInfo->SpareBuf + NandInfo->Size.SpareBytesPerPage, ONFI_AXI_DATA_WIDTH);
+    ALSmc_Dev_ReadBuf(NandInfo, NandInfo->SpareBuf + NandInfo->Size.SpareBytesPerPage - ONFI_AXI_DATA_WIDTH, ONFI_AXI_DATA_WIDTH);
 
     return AL_OK;
 }
@@ -824,7 +824,7 @@ AL_U8 ALSmc_Dev_WritceSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo,
 
     NandInfo->Cmd.EccLast = 0;
     NandInfo->Cmd.ClearCs = CLEAR_CS;
-    ALSmc_Dev_WriteBuf(NandInfo, NandInfo->SpareBuf + NandInfo->Size.SpareBytesPerPage, ONFI_AXI_DATA_WIDTH);
+    ALSmc_Dev_WriteBuf(NandInfo, NandInfo->SpareBuf + NandInfo->Size.SpareBytesPerPage- ONFI_AXI_DATA_WIDTH, ONFI_AXI_DATA_WIDTH);
 
     /* Wait smc ready */
     while(SMC_BUSY == AlSmc_ll_IsBusy(Smc->SmcBaseAddr));
@@ -899,7 +899,7 @@ AL_U8 ALSmc_Dev_ReadSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, A
 
     NandInfo->Cmd.EccLast = 0;
     NandInfo->Cmd.ClearCs = CLEAR_CS;
-    ALSmc_Dev_ReadBuf(NandInfo, NandInfo->SpareBuf + NandInfo->Size.SpareBytesPerPage, ONFI_AXI_DATA_WIDTH);
+    ALSmc_Dev_ReadBuf(NandInfo, NandInfo->SpareBuf + NandInfo->Size.SpareBytesPerPage - ONFI_AXI_DATA_WIDTH, ONFI_AXI_DATA_WIDTH);
 
     if (1 == NandInfo->Size.EccNum) {
         AlSmc_Dev_EccHwEnable(Smc);
@@ -1003,12 +1003,14 @@ AL_U8 AlSmc_Dev_HwCorrectEcc(AL_U8 *eccCode, AL_U8 *eccCalc, AL_U8 *buf)
         bitPos = eccOdd & 0x07;
         /* Toggling error bit */
         buf[bytePos] ^= (1 << bitPos);
+        AL_LOG(AL_LOG_LEVEL_WARNING, "Smc Nand Read Page happen One bit Error:bitPos:%d, buf[%d]:%d\r\n",bitPos, bytePos, buf[bytePos]);
         return AL_OK;
     }
 
     /* Two bits Error */
     if (OneHot((eccOdd | eccEven)) == AL_OK) {
-        return AL_OK;
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Smc Nand Read Page Find Two bits Error\r\n");
+        return SmcTwoBitsErr;
     }
 
     /* Multiple bits error */

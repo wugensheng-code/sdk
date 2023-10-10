@@ -28,7 +28,6 @@ int main(void)
 	uint32_t FsblStage    = ALFSBL_STAGE1;
 	uint32_t FsblStatus   = ALFSBL_SUCCESS;
 	uint32_t PartitionIdx = 0;
-
 	Soc_PlatInit();
 
 	while (FsblStage <= ALFSBL_STAGE_DFT) {
