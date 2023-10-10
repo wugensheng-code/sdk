@@ -681,6 +681,11 @@ static inline AL_U32 AlGbe_ll_IsDmaChannelFatalBusError(AL_REG BaseAddr)
     return AL_REG32_GET_BIT(BaseAddr + GBE__DMA_CH0_STATUS__OFFSET, GBE__DMA_CH0_STATUS__FBE__SHIFT);
 }
 
+static inline AL_VOID AlGbe_ll_ClrDmaIntr(AL_REG BaseAddr, AL_U32 IntrStatus)
+{
+    AL_REG32_WRITE(BaseAddr + GBE__DMA_CH0_STATUS__OFFSET, IntrStatus);
+}
+
 static inline AL_VOID AlGbe_ll_ClrTxCompletrIntr(AL_REG BaseAddr)
 {
     AL_REG32_SET_BIT(BaseAddr + GBE__DMA_CH0_STATUS__OFFSET, GBE__DMA_CH0_STATUS__TI__SHIFT, AL_GBE_FUNC_ENABLE);

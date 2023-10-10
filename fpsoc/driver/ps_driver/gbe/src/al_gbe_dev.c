@@ -1075,7 +1075,7 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
 
 
     /* Ensure rest of descriptor is written to RAM before the OWN bit */
-    DSB();
+    DMB();
     /* set OWN bit of FIRST descriptor */
     AlGbe_ll_SetTdesc3OwnByDma(&DmaTxDesc->DESC3, AL_GBE_FUNC_ENABLE);
 
@@ -1098,7 +1098,7 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
             /* clear previous desc own bit */
             for (AL_S32 Idx = 0; Idx < DescNbr; Idx ++) {
                 /* Ensure rest of descriptor is written to RAM before the OWN bit */
-                DSB();
+                DMB();
                 AlGbe_ll_SetTdesc3OwnByDma(&DmaTxDesc->DESC3, AL_GBE_FUNC_DISABLE);
 
                 /* Increment current tx descriptor index */
@@ -1152,7 +1152,7 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
         BdCount += 1U;
 
         /* Ensure rest of descriptor is written to RAM before the OWN bit */
-        DSB();
+        DMB();
         /* Set Own bit */
         AlGbe_ll_SetTdesc3OwnByDma(&DmaTxDesc->DESC3, AL_GBE_FUNC_ENABLE);
         /* Mark it as NORMAL descriptor */
@@ -1288,7 +1288,7 @@ AL_S32 AlGbe_Dev_TransmitPolling(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruc
         return Ret;
     }
 
-    DSB();
+    DMB();
 
     INCR_TX_DESC_INDEX(Gbe->TxDescList.CurTxDesc, 1U);
 
@@ -1352,7 +1352,6 @@ static AL_VOID AlGbe_Dev_ErrorHandler(AL_GBE_DevStruct *Gbe)
 
     if (GBE_IN_FATAL_BUS_ERROR_INTR(IntrStatus)) {
         Event = AL_GBE_EVENT_FATAL_BUS_ERROR;
-        AlGbe_ll_ClrFatalBusErrorIntr(GbeBaseAddr);
 
         /* Fatal error, disable all interrupt */
         AlGbe_ll_SetDmaAbnormalSummaryIntrEnable(GbeBaseAddr, AL_GBE_FUNC_ENABLE);
@@ -1360,23 +1359,19 @@ static AL_VOID AlGbe_Dev_ErrorHandler(AL_GBE_DevStruct *Gbe)
 
     } else if (GBE_IN_RX_BUFFER_UNAVAILABLE_INTR(IntrStatus)) {
         Event = AL_GBE_EVENT_RX_BUFFER_UNAVAILABLE;
-        AlGbe_ll_ClrRxBufferUnavailableIntr(GbeBaseAddr);
 
     } else if (GBE_IN_EARLY_TX_INTR(IntrStatus)) {
         Event = AL_GBE_EVENT_EARLY_TX;
-        AlGbe_ll_ClrEarlyTxIntr(GbeBaseAddr);
 
     } else if (GBE_IN_CONTEXT_DESC_ERROR_INTR(IntrStatus)) {
         Event = AL_GBE_EVENT_CTX_DESC_ERROR;
-        AlGbe_ll_ClrCtxDescErrorIntr(GbeBaseAddr);
 
     } else if (GBE_IN_RX_PROCESS_STOP_INTR(IntrStatus)) {
         Event = AL_GBE_EVENT_RX_STOP;
-        AlGbe_ll_ClrRxProcessStopIntr(GbeBaseAddr);
 
     } else if (GBE_IN_RX_WATCHDOG_TIMEOUT_INTR(IntrStatus)) {
         Event = AL_GBE_EVENT_RX_WATCHDOG_TIMEOUT;
-        AlGbe_ll_ClrRxWatchDogTimeoutIntr(GbeBaseAddr);
+
     }
 
     if (Gbe->EventCallBack) {
@@ -1396,24 +1391,17 @@ AL_VOID AlGbe_Dev_IntrHandler(AL_VOID *Instance)
 
     if (GBE_IN_RX_COMPLETE_INTR(IntrStatus)) {
         AlGbe_Dev_RxDoneHandler(Gbe);
-
-        AlGbe_ll_ClrRxCompletrIntr(GbeBaseAddr);
-        AlGbe_ll_ClrNormalSummaryIntr(GbeBaseAddr);
     }
 
     if (GBE_IN_TX_COMPLETE_INTR(IntrStatus)) {
         AlGbe_Dev_TxDoneHandler(Gbe);
-
-        AlGbe_ll_ClrTxCompletrIntr(GbeBaseAddr);
-        AlGbe_ll_ClrNormalSummaryIntr(GbeBaseAddr);
-
     }
 
     if (GBE_IN_ABNORMAL_SUMMARY_INTR(IntrStatus)) {
         AlGbe_Dev_ErrorHandler(Gbe);
-        AlGbe_ll_ClrAbnormalSummaryIntr(GbeBaseAddr);
-
     }
+
+    AlGbe_ll_ClrDmaIntr(GbeBaseAddr, IntrStatus);
 
 }
 
