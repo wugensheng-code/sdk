@@ -154,18 +154,19 @@ int usb_osal_sem_take(usb_osal_sem_t sem, uint32_t timeout)
     return (xSemaphoreTake((SemaphoreHandle_t)sem, pdMS_TO_TICKS(timeout)) == pdPASS) ? 0 : -ETIMEDOUT;
 }
 
+extern volatile uint64_t ullPortInterruptNesting;
 int usb_osal_sem_give(usb_osal_sem_t sem)
 {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     int ret;
 
-    if (xPortIsInsideInterrupt()) {
+    if (ullPortInterruptNesting == 0) {
+        ret = xSemaphoreGive((SemaphoreHandle_t)sem);
+    } else {
         ret = xSemaphoreGiveFromISR((SemaphoreHandle_t)sem, &xHigherPriorityTaskWoken);
         if (ret == pdPASS) {
             portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
         }
-    } else {
-        ret = xSemaphoreGive((SemaphoreHandle_t)sem);
     }
 
     return (ret == pdPASS) ? 0 : -ETIMEDOUT;
