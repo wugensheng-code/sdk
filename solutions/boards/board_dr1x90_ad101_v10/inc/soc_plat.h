@@ -171,6 +171,9 @@ extern "C" {
 
 #define DDR_AVAILABLE
 
+#define UART0_BAUDRATE 115200
+#define UART1_BAUDRATE 115200
+
 /**
  * @desc  : init soc platform according to user configuration
  * @return {int} status code of platform init

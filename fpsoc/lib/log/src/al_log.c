@@ -23,6 +23,17 @@ AL_S32 AlLog_Init()
         .StopBits     = AL_UART_STOP_1BIT,
     };
 
+#if (LOG_DEV == AL_LOG_UART0)
+    #ifdef UART0_BAUDRATE
+        UART_InitStruct.BaudRate = UART0_BAUDRATE;
+    #endif
+#endif
+#if (LOG_DEV == AL_LOG_UART1)
+    #ifdef UART1_BAUDRATE
+        UART_InitStruct.BaudRate = UART1_BAUDRATE;
+    #endif
+#endif
+
     return AlUart_Hal_Init(&AlLog, LOG_DEV, &UART_InitStruct, AL_NULL);
 #else
     return AL_OK;
