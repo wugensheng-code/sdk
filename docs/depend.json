@@ -197,10 +197,10 @@
 			"version":"1.0",
 			"description":"linux"
 		},
-		"OS_RT_THREAD_V1_0":{
-			"name":"OS_RT_THREAD_V1_0",
+		"OS_RTTHREAD_V1_0":{
+			"name":"OS_RTTHREAD_V1_0",
 			"version":"1.0",
-			"description":"rt-thread",
+			"description":"OS_RT_THREAD",
 			"depends": ["3rdparty/os/RT-Thread"]
 		}
 	},
