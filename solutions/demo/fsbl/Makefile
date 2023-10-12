@@ -13,8 +13,9 @@ SDK_ROOT   ?= ../../..
 CHIP       ?= dr1v90
 
 ifeq ($(CHIP), dr1m90)
-ARMv8_EL   := EL3
+ARMv8_EL         := EL3
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+DDR_2M_MAPPING   := 0
 else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
@@ -64,7 +65,7 @@ PINMUX_MODE ?= PINMUX_MODE1
 ## QSPI XIP
 FSBL_QSPI_XIP              ?= no
 
-
+DOWNLOAD                   = ocm
 
 #########################################################################
 # 6. define build target
