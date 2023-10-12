@@ -153,22 +153,6 @@
 			"version": "1.0",
 			"depends": ["3rdparty/lib/CherryUSB"]
 		},
-		"LIB_CHERRYUSB_FOR_RT_THREAD_V1_0": {
-			"name": "LIB_CHERRYUSB_FOR_RT_THREAD_V1_0",
-			"version": "1.0",
-			"depends": [
-				"3rdparty/lib/CherryUSB",
-				"OS_RT_THREAD_V1_0"
-			]
-		},
-		"LIB_CHERRYUSB_FOR_FREERTOS_V1_0": {
-			"name": "LIB_CHERRYUSB_FOR_FREERTOS_V1_0",
-			"version": "1.0",
-			"depends": [
-				"3rdparty/lib/CherryUSB",
-				"OS_FREERTOS_V1_0"
-			]
-		},
 		"LIB_CIPHER_V1_0": {
 			"name": "LIB_CIPHER_V1_0",
 			"version": "1.0",
@@ -318,7 +302,8 @@
 			"version": "1.0",
 			"depends": [
 				"/solutions/demo/baremetal/cherryUSB/host/msc_rtthread",
-				"LIB_CHERRYUSB_FOR_RT_THREAD_V1_0"
+				"LIB_CHERRYUSB_V1_0",
+				"OS_RTTHREAD_V1_0"
 			],
 			"description": "Baremetal cherryUSB MSC_RTTHREAD demo",
 			"supportedOS": ["standalone"],
@@ -329,7 +314,7 @@
 			"version": "1.0",
 			"depends": [
 			"/solutions/demo/baremetal/rt-thread",
-			"OS_RT_THREAD_V1_0"
+			"OS_RTTHREAD_V1_0"
 			],
 			"description": "RT-THREAD demo",
 			"supportedOS": ["rt-thread"],
