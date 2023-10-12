@@ -75,15 +75,15 @@ AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
 
-    AL_LOG(AL_LOG_LEVEL_INFO, "Can extern loopback blocked test\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Can fd dma non block test\r\n");
 
     Ret = AlCan_Test_FdDmaNonBlock();
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Can extern loopback blocked test failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Can fd dma non block test failed\r\n");
         return Ret;
     }
 
-    AL_LOG(AL_LOG_LEVEL_INFO, "Can extern loopback blocked test success\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Can fd dma non block test success\r\n");
 
     return Ret;
 }
