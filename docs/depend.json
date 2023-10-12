@@ -317,7 +317,7 @@
 			"OS_RTTHREAD_V1_0"
 			],
 			"description": "RT-THREAD demo",
-			"supportedOS": ["rt-thread"],
+			"supportedOS": ["rtthread"],
 			"supportedProc": ["apu-0", "apu-1", "rpu"]		
 		},
 		"FREERTOS_V1_0": {
