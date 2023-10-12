@@ -467,9 +467,14 @@ err_t low_level_init(struct netif *netif)
     }
 
 #ifdef ENABLE_MMU
-    AL_ASSERT((DDR_2M_MAPPING == 1), ERR_IF);
 
+    /* 2M alignment required, If it is not set, an error is returned */
+#ifndef DDR_2M_MAPPING
+    return ERR_IF;
+#else
+    AL_ASSERT((DDR_2M_MAPPING == 1), ERR_IF);
     mmu_settlb(gbe_buffer_addr, NORM_NONCACHE);
+#endif
 #endif
 
     /* Use static buffer to config rx descriptor buffer */
