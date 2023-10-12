@@ -82,6 +82,7 @@ el3_entry:
     mrs    x0, scr_el3
     orr    x0, x0, #(0x1 << 1)      /* Enable IRQ */
     orr    x0, x0, #(0x1 << 2)      /* Enable FIQ */
+    bic    x0, x0, #0x1     /* clear scr_el3.NS */
     msr    scr_el3, x0
 
 #ifdef SUPPORT_NONSECURE

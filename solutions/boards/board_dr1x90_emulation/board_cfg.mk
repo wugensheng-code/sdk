@@ -4,7 +4,5 @@
 # AL9000_BRINGUP: for chip bypass mpu disable flow
 # board_dr1x90_emulation: for emulation select uart 0 as log output
 
-CFLAGS += -DAL9000_CLK_CONFIG
 CFLAGS += -DAL9000_CLK_800M
-CFLAGS += -DAL9000_OSC_33
 CFLAGS += -DAL9000_BRINGUP

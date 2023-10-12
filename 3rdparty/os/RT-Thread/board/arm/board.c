@@ -85,6 +85,18 @@ void rt_hw_trap_fiq(void)
     }
 }
 
+void rt_hw_trap_irq(void)
+{
+    if (rt_hw_get_current_el() < 2)
+    {
+	    do_irq_handle();
+    }
+    else
+    {
+        do_fiq_handle();
+    }
+}
+
 void Al_gic_init(void)
 {
     // AlGic_Init();

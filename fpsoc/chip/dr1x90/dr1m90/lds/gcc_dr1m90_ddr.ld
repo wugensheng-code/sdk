@@ -33,10 +33,29 @@ SECTIONS
 		PROVIDE(_rodata_start = .);
 		*(.rodata)
 		PROVIDE(_rodata_end   = .);
+		/* section information for initial. */
+		. = ALIGN(4);
+		__rt_init_start = .;
+		KEEP(*(SORT(.rti_fn*)))
+		__rt_init_end = .;
+		/* section information for finsh shell */
+		. = ALIGN(4);
+		__fsymtab_start = .;
+		KEEP(*(FSymTab))
+		__fsymtab_end = .;
+		. = ALIGN(4);
+		__vsymtab_start = .;
+		KEEP(*(VSymTab))
+		__vsymtab_end = .;
+		. = ALIGN(4);
+		__rt_utest_tc_tab_start = .;
+		KEEP(*(UtestTcTab))
+		__rt_utest_tc_tab_end = .;
+		*(.gnu.linkonce.r.*)
         /* section information for usbh class */
         . = ALIGN(4);
         __usbh_class_info_start__ = .;
-        KEEP(*(.usbh_class_info))
+        *(.usbh_class_info)
         __usbh_class_info_end__ = .;
 	}  > ram AT>ram
 
@@ -134,7 +153,7 @@ SECTIONS
 		PROVIDE(_data_end = .);
 	}  > ram AT>ram
 
-	.noncacheable :
+	.noncacheable (NOLOAD):
 	{
 		. = ALIGN(2M);
 		_no_cache_section_start = .;

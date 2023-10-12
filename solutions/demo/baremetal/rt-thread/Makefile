@@ -10,7 +10,7 @@
 #########################################################################
 SDK_ROOT   		?= ../../../..
 
-CHIP       		= dr1v90
+CHIP       		= dr1m90
 RTOS       		:= rtthread
 PFLOAT     		:= 1
 ARMv8_SECURE 	= SECURE
@@ -53,6 +53,7 @@ CFLAGS := -O0 -g3
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
+# PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 
 #########################################################################
@@ -67,7 +68,7 @@ PINMUX_MODE ?= PINMUX_MODE1
 # 5. define build target
 #########################################################################
 TARGET := rtthread
-DOWNLOAD = ocm
+
 
 ifneq ($(PINMUX_MODE),)
 CFLAGS += -DENABLE_$(PINMUX_MODE)=1

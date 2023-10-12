@@ -57,7 +57,7 @@ void rt_hw_trap_error(struct rt_hw_exp_stack *regs)
     rt_hw_cpu_shutdown();
 }
 
-void rt_hw_trap_irq(void)
+RT_WEAK void rt_hw_trap_irq(void)
 {
 #ifdef SOC_BCM283x
     void *param;

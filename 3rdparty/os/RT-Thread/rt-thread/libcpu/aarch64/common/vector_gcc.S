@@ -42,3 +42,5 @@ system_vectors:
     ventry  vector_error    /* IRQ/vIRQ */
     ventry  vector_error    /* FIQ/vFIQ */
     ventry  vector_error    /* SError/vSError */
+.type system_vectors 2
+.size system_vectors, .-system_vectors
