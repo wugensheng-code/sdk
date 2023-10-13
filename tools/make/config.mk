@@ -8,7 +8,7 @@ AL_CHIP         ?= $(CHIP)
 ## ARMv8_SECURE:    SECURE, NONSECURE
 ## ARMv8_CORE:      MASTER, SLAVE
 ARMv8_STATE     ?= 64
-ARMv8_EL        ?= EL1
+ARMv8_EL        ?= EL3
 ARMv8_SECURE    ?= SECURE
 ARMv8_CORE      ?= MASTER
 
