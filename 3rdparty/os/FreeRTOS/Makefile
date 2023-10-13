@@ -7,8 +7,6 @@ SRC_DIR = FreeRTOS-Kernel \
 C_SRCS	= FreeRTOS-Kernel/portable/MemMang/heap_4.c
 
 
-CFLAGS += -DGUEST
-
 # (1.2) add submodule include
 INC_DIR += FreeRTOS-Kernel \
            FreeRTOS-Kernel/include \
