@@ -75,7 +75,7 @@ typedef enum
     AL_IIC                  = 0x0C,
     AL_CIPHER               = 0x0D,
     AL_GBE                  = 0x0F,
-    AL_XADC                 = 0x10,
+    AL_ADC                 = 0x10,
     AL_TTC                  = 0x11,
     AL_WDT                  = 0x13,
     AL_DMA                  = 0x14,

@@ -37,7 +37,7 @@ typedef enum {
     SOC_ACK3_IRQn        =  37,
     SOC_PMU0_IRQn        =  39,
     SOC_PMU1_IRQn        =  40,
-    SOC_XADC_IRQn        =  43,
+    SOC_ADC_IRQn        =  43,
     SOC_WDT0_IRQn        =  45,
     SOC_WDT1_IRQn        =  46,
     SOC_TTC0_TC0_IRQn    =  48,

@@ -4,16 +4,16 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 /********************************* including Files *********************************/
-#include "al_xadc_hw.h"
+#include "al_adc_hw.h"
 
 /********************************* Constant Definitions *****************************/
 
-AL_XADC_HwConfigStruct AlXadc_HwConfig[AL_XADC_NUM_INSTANCE] =
+AL_ADC_HwConfigStruct AlAdc_HwConfig[AL_ADC_NUM_INSTANCE] =
 {
     {
         .DeviceId           = 0,
-        .XadcBaseAddress    = XADC_BASE_ADDR,
+        .AdcBaseAddress     = ADC__BASE_ADDR,
         .GpBaseAddress      = GP0_BASE_ADDR,
-        .IntrNum            = SOC_XADC_IRQn
+        .IntrNum            = SOC_ADC_IRQn
     }
 };

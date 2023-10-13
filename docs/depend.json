@@ -113,10 +113,10 @@
 			"version": "1.0",
 			"depends":["fpsoc/driver/ps_driver/wdt"]
 		},
-		"PS_DRIVER_XADC_V1_0": {
-			"name": "PS_DRIVER_XADC_V1_0",
+		"PS_DRIVER_ADC_V1_0": {
+			"name": "PS_DRIVER_ADC_V1_0",
 			"version": "1.0",
-			"depends": ["fpsoc/driver/ps_driver/xadc"]
+			"depends": ["fpsoc/driver/ps_driver/adc"]
 		},
 		"PS_DRIVER_IPC_V1_0": {
 			"name": "PS_DRIVER_IPC_V1_0",
@@ -261,7 +261,7 @@
 			"supportedOS": ["standalone"],
 			"supportedProc": ["apu-0", "apu-1", "rpu"]
 		},
-		"RTT_LWIP_NETIO_V1_0": 
+		"RTT_LWIP_NETIO_V1_0":
 		{
 			"name": "RTT_LWIP_NETIO_V1_0",
 			"version": "1.0",
@@ -318,7 +318,7 @@
 			],
 			"description": "RT-THREAD demo",
 			"supportedOS": ["rtthread"],
-			"supportedProc": ["apu-0", "apu-1", "rpu"]		
+			"supportedProc": ["apu-0", "apu-1", "rpu"]
 		},
 		"FREERTOS_V1_0": {
 			"name": "FREERTOS_V1_0",
@@ -329,7 +329,7 @@
 			],
 			"description": "FREERTOS demo",
 			"supportedOS": ["freertos"],
-			"supportedProc": ["apu-0", "apu-1", "rpu"]		
+			"supportedProc": ["apu-0", "apu-1", "rpu"]
 		}
 	},
 	"ps_driver_app": {
@@ -654,26 +654,26 @@
 				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			}
 		},
-		"PS_DRIVER_XADC_V1_0": {
-			"XADC_INTR_V1_0": {
-				"name": "XADC_INTR_V1_0",
+		"PS_DRIVER_ADC_V1_0": {
+			"ADC_INTR_V1_0": {
+				"name": "ADC_INTR_V1_0",
 				"version": "1.0",
 				"depends": [
-					"fpsoc/driver/ps_driver/xadc/example/al_xadc_intr.c",
-					"PS_DRIVER_XADC_V1_0"
+					"fpsoc/driver/ps_driver/adc/example/al_adc_intr.c",
+					"PS_DRIVER_ADC_V1_0"
 				],
-				"description": "xadc test",
+				"description": "adc test",
 				"supportedOS": ["standalone"],
 				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			},
-			"XADC_POLLED_V1_0": {
-				"name": "XADC_POLLED_V1_0",
+			"ADC_POLLED_V1_0": {
+				"name": "ADC_POLLED_V1_0",
 				"version": "1.0",
 				"depends": [
-					"fpsoc/driver/ps_driver/xadc/example/al_xadc_polled.c",
-					"PS_DRIVER_XADC_V1_0"
+					"fpsoc/driver/ps_driver/adc/example/al_adc_polled.c",
+					"PS_DRIVER_ADC_V1_0"
 				],
-				"description": "xadc test",
+				"description": "adc test",
 				"supportedOS": ["standalone"],
 				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			}

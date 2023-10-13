@@ -146,7 +146,8 @@ extern "C" {
 #define SMC_CLOCK               (50*MHZ)
 
 
-#define HAVE_XADC_DRIVER
+#define HAVE_ADC_DRIVER
+#define ADC_CLOCK               (50*MHZ)
 
 #define HAVE_TTCPS_DRIVER
 #define TTC_CLOCK              (200*MHZ)

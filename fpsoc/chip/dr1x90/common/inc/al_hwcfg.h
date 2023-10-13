@@ -126,12 +126,12 @@ extern "C" {
 
 
 /*----------------------------------------------------------------------------
-  Define XAdc params
+  Define Adc params
  *----------------------------------------------------------------------------*/
 
-#define AL_XADC_NUM_INSTANCE    (1)
+#define AL_ADC_NUM_INSTANCE    (1)
 
-#define XADC__BASE_ADDR        (0xF840B000UL)
+#define ADC__BASE_ADDR        (0xF840B000UL)
 
 /*----------------------------------------------------------------------------
   Define TTC params
