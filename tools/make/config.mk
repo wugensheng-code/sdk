@@ -52,7 +52,7 @@ V ?= $(VERBOSE)
 ifeq ($(V),1)
 DETAILS := @echo
 else
-DETAILS := @true
+DETAILS := @:
 endif
 
 ## If SILENT=1, it will not display any compiling messsage

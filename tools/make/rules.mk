@@ -244,21 +244,25 @@ endef
 
 # Convenience function for verifying option has a right string
 # $(eval $(call assert_option,option1 option2, FOO)) will assert FOO is string1 or string2
-define assert_option
+define assert_two_option
     $(if $(filter-out $1 $2, $3),$(error $4 must be $1 or $2))
 endef
 
-.PHONY: check
+define assert_three_option
+    $(if $(filter-out $1$2$3,$4),$(error$5must be $1 or $2 or $3))
+endef
 
-check:
+.PHONY: check 
+
+check: 
 	$(call assert_booleans, DDR_2M_MAPPING ENABLE_MMU CODE_READONLY VERBOSE SILENT PFLOAT NOGC)
-	$(call assert_option, 32, 64, $(ARMv8_STATE), ARMv8_STATE)
-	$(call assert_option,EL1, EL3, $(ARMv8_EL), ARMv8_EL)
-	$(call assert_option,SECURE, NONSECURE, $(ARMv8_SECURE), ARMv8_SECURE)
-	$(call assert_option,MASTER, SLAVE, $(ARMv8_CORE), ARMv8_CORE)
-	$(call assert_option,ocm, ddr, $(DOWNLOAD), DOWNLOAD)
-	$(call assert_option,dr1v90, dr1m90, $(AL_CHIP), AL_CHIP)
-	$(call assert_option,freertos, rtthread, $(RTOS), RTOS)
+	$(call assert_option_two_option, 32, 64, $(ARMv8_STATE), ARMv8_STATE)
+	$(call assert_two_option,EL1, EL3, $(ARMv8_EL), ARMv8_EL)
+	$(call assert_two_option,SECURE, NONSECURE, $(ARMv8_SECURE), ARMv8_SECURE)
+	$(call assert_two_option,MASTER, SLAVE, $(ARMv8_CORE), ARMv8_CORE)
+	$(call assert_two_option,dr1v90, dr1m90, $(AL_CHIP), AL_CHIP)
+	$(call assert_two_option,freertos, rtthread, $(RTOS), RTOS)
+	$(call assert_three_option,ocm,ddr,tcm $(DOWNLOAD), DOWNLOAD)
 	@$(ECHO_D) "all parameters have been checked"
 
 #########################################################################
