@@ -15,8 +15,7 @@ NM      = ${Q}$(COMPILE_PREFIX)nm
 AS      = ${Q}$(COMPILE_PREFIX)as
 GDB     = ${Q}$(COMPILE_PREFIX)gdb
 SIZE    = ${Q}$(COMPILE_PREFIX)size
-ECHO    = ${DETAILS}
-ECHO_D  = echo 
+ECHO  	= echo 
 MAKE    = make
 
 ARFLAGS = -cr
@@ -217,17 +216,17 @@ endif
 .PHONY: all info help clean
 
 info:
-	@$(ECHO_D) AL_CHIP=$(AL_CHIP) CORE=$(CORE) BOARD=$(BOARD) V=$(V) RTOS=$(RTOS) PFLOAT=$(PFLOAT) NOGC:$(NOGC) DOWNLOAD: $(DOWNLOAD)
+	@$(ECHO) AL_CHIP=$(AL_CHIP) CORE=$(CORE) BOARD=$(BOARD) V=$(V) RTOS=$(RTOS) PFLOAT=$(PFLOAT) NOGC:$(NOGC) DOWNLOAD: $(DOWNLOAD)
 
 help:
-	@$(ECHO_D) "Anlogic FPSoc Software Development Kit "
-	@$(ECHO_D) "== Make variables used in FPSoc SDK =="
-	@$(ECHO_D) "SOC:         Select SoC built in FPSoc SDK, will select board_dr1x90_emulation by default"
-	@$(ECHO_D) "BOARD:       Select SoC's Board built in FPSoc SDK, will select nuclei_fpga_eval by default"
-	@$(ECHO_D) "DOWNLOAD:    Select SoC's download mode, use ocm by default, optional ocm/ddr"
-	@$(ECHO_D) "V:           V=1 verbose make, will print more information, by default V=0"
-	@$(ECHO_D) "== Example Usage =="
-	@$(ECHO_D) "cd $(AL_SDK_ROOT)/solutions/demo/baremetal/helloworld make DOWNLOAD=ocm"
+	@$(ECHO) "Anlogic FPSoc Software Development Kit "
+	@$(ECHO) "== Make variables used in FPSoc SDK =="
+	@$(ECHO) "SOC:         Select SoC built in FPSoc SDK, will select board_dr1x90_emulation by default"
+	@$(ECHO) "BOARD:       Select SoC's Board built in FPSoc SDK, will select nuclei_fpga_eval by default"
+	@$(ECHO) "DOWNLOAD:    Select SoC's download mode, use ocm by default, optional ocm/ddr"
+	@$(ECHO) "V:           V=1 verbose make, will print more information, by default V=0"
+	@$(ECHO) "== Example Usage =="
+	@$(ECHO) "cd $(AL_SDK_ROOT)/solutions/demo/baremetal/helloworld make DOWNLOAD=ocm"
 
 #########################################################################
 # Convenience function for verifying option has a boolean value
@@ -263,7 +262,7 @@ check:
 	$(call assert_two_option,dr1v90, dr1m90, $(AL_CHIP), AL_CHIP)
 	$(call assert_two_option,freertos, rtthread, $(RTOS), RTOS)
 	$(call assert_three_option,ocm,ddr,tcm $(DOWNLOAD), DOWNLOAD)
-	@$(ECHO_D) "all parameters have been checked"
+	@$(ECHO) "all parameters have been checked"
 
 #########################################################################
 $(ASM_OBJS): %.o: % $(COMMON_PREREQS)

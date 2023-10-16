@@ -47,13 +47,15 @@ endif
 ## If V=1, it will display compiling message in verbose including compiling options
 #Handling of V=1/VERBOSE=1 flag
 # if V=1, $(DETAILS) will echo extra details
-VERBOSE ?= 1
+VERBOSE ?= 0
 V ?= $(VERBOSE)
+
 ifeq ($(V),1)
-DETAILS := @echo
+	Q = 
 else
-DETAILS := @:
+	Q = @
 endif
+
 
 ## If SILENT=1, it will not display any compiling messsage
 SILENT ?= 0
@@ -115,6 +117,6 @@ export CHIP_DIR
 export ENABLE_MMU
 export DDR_2M_MAPPING
 export CODE_READONLY
-export DETAILS
+export Q
 
 # vim: syntax=make
