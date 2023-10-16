@@ -11,6 +11,8 @@
 SDK_ROOT    ?= ../../../../..
 CHIP        ?= dr1m90
 
+ELF ?= IIC_EEPROM
+
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
 else
@@ -30,7 +32,13 @@ BOARD_NAME ?= board_dr1x90_ad101_v10
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
-C_SRCS += ./al_iic_eeprom_block.c
+ifeq ($(ELF), IIC_EEPROM)
+C_SRCS += al_iic_eeprom_block.c
+else ifeq ($(ELF), IIC_MASTER)
+C_SRCS += al_iic_master_block.c
+else
+C_SRCS += al_iic_master_10bit_block.c
+endif
 
 INC_DIR     += ./
 
@@ -61,7 +69,13 @@ PINMUX_MODE ?= PINMUX_MODE1
 #########################################################################
 # 5. define build target
 #########################################################################
-TARGET := al_iic_example
+ifeq ($(ELF), IIC_EEPROM)
+TARGET := al_iic_eeprom_example
+else ifeq ($(ELF), IIC_MASTER)
+TARGET := al_iic_master_example
+else
+TARGET := al_iic_master_10bit_example
+endif
 
 ifneq ($(PINMUX_MODE),)
 CFLAGS += -DENABLE_$(PINMUX_MODE)=1
