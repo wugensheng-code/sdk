@@ -190,9 +190,9 @@ typedef union {
     struct {
         AL_U16 ModeSel : 3;
         AL_U16 Reserved3 : 1;
-        AL_U16 ChannelSel : 3;
+        AL_U16 ChanSel : 3;
         AL_U16 Reserved7 : 1;
-        AL_U16 ExternalChannelSel : 3;
+        AL_U16 ExternalChanSel : 3;
         AL_U16 Reserved11 : 1;
         AL_U16 RegAdcSoc : 1;
         AL_U16 Reserved13 : 3;
@@ -342,6 +342,11 @@ static inline AL_BOOL AlAdc_ll_IsCmdFifoFull(AL_REG AdcBaseAddr)
 static inline AL_VOID AlAdc_ll_WritePlAdcReg(AL_REG AdcBaseAddr, AL_U8 PLRegAddr, AL_U16 Data)
 {
     AL_REG32_WRITE(AdcBaseAddr + ADC_CMD_FIFO_OFFSET, ADC_WRITE_CMD << 24 | PLRegAddr << 16 | Data);
+	/**
+	 * Read the Read FIFO after any write since for each write
+	 * one location of Read FIFO gets updated
+	 */
+    (AL_VOID)(AL_REG32_READ(AdcBaseAddr + ADC_DATA_FIFO_OFFSET));
 }
 
 /*

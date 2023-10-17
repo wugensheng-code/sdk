@@ -33,14 +33,13 @@ AL_ADC_HwConfigStruct *AlAdc_Dev_LookupConfig(AL_U32 DevId)
 /************************** Constant Definitions *****************************/
 
 static AL_ADC_InitStruct AdcDefInitConfigs = {
-
     .InputSingal             = AL_ADC_UNIPOLAR,
-    .Resolution              = AL_ADC_12BIT_MODE,
+    .Resolution              = AL_ADC_10BIT_MODE,
     .RefVoltag               = AL_ADC_REF_INTER_REF,
-    .ClkSource               = AL_ADC_CLK_PL_70MHz,
+    .ClkSource               = AL_ADC_CLK_OSC_44MHz,
     .ConvMode                = AL_ADC_CONTINUE_MODE,
     .ExternalMux             = AL_ADC_NORMAL_MODE,
-    .MaxConvChanNum          = 7
+    .MaxConvChanNum          = 7,
 };
 
 /************************** Function Prototypes ******************************/
@@ -61,9 +60,9 @@ AL_S32 AlAdc_Dev_Init(AL_ADC_DevStruct *Adc, AL_U32 DevId, AL_ADC_InitStruct *In
     Adc->Configs         = (InitConfig == AL_NULL) ? AdcDefInitConfigs : (*InitConfig);
 
     /* Init PS-ADC Channel*/
+    AlAdc_ll_ResetPsAdc(Adc->AdcBaseAddr);
     AlAdc_ll_FlushCmdFifo(Adc->AdcBaseAddr);
     AlAdc_ll_FlushDataFifo(Adc->AdcBaseAddr);
-    AlAdc_ll_ResetPsAdc(Adc->AdcBaseAddr);
 
     AlAdc_ll_ClrPsAdcIntr(Adc->AdcBaseAddr);
     AlAdc_ll_ClrDataFifoLth(Adc->AdcBaseAddr);
@@ -78,11 +77,14 @@ AL_S32 AlAdc_Dev_Init(AL_ADC_DevStruct *Adc, AL_U32 DevId, AL_ADC_InitStruct *In
     /* Init adc module through the PS-ADC Channel*/
     AL_ADC_PlReg_Cfg0 Cfg0;
     Cfg0.AdcSwReset = AL_ADC_SW_RELEASE;
+    Cfg0.Enctr = 0;
     Cfg0.RefSel = Adc->Configs.RefVoltag;
     Cfg0.ResSel = Adc->Configs.Resolution;
     Cfg0.DiffEnable = Adc->Configs.InputSingal;
     Cfg0.PhyExternalMux = Adc->Configs.ExternalMux;
     Cfg0.AnalogMuxEn = AL_TRUE;
+    Cfg0.RegAdcSocSel = 0;
+    Cfg0.PhyExternalMuxGap = 0;
     AlAdc_ll_SetAdcCfg0Reg(Adc->AdcBaseAddr, Cfg0.RegData);
     AL_LOG(AL_LOG_LEVEL_DEBUG, "AdcCfg0 is %x\r\n", AlAdc_ll_ReadPlAdcReg(Adc->AdcBaseAddr, ADC_CONFIG0_OFFSET));
 
@@ -101,16 +103,20 @@ AL_S32 AlAdc_Dev_Init(AL_ADC_DevStruct *Adc, AL_U32 DevId, AL_ADC_InitStruct *In
 
     /* Set ADC Clock */
     AL_ADC_PlReg_Cfg2 Cfg2;
-    Cfg2.RegAdcEnable = 1;
+    Cfg2.RegAdcEnable = 0;
+    Cfg2.RegAdcDislvl = 0;
     Cfg2.AdcClkSel = Adc->Configs.ClkSource;
     Cfg2.AdcClkGate = 0;
+    Cfg2.AdcClkDiv = 0;
     AlAdc_ll_SetAdcCfg2Reg(Adc->AdcBaseAddr, Cfg2.RegData);
     AL_LOG(AL_LOG_LEVEL_DEBUG, "AdcCfg2 is %x\r\n", AlAdc_ll_ReadPlAdcReg(Adc->AdcBaseAddr, ADC_CONFIG2_OFFSET));
 
     /* Set ADC Conv Mode */
     AL_ADC_PlReg_Cfg3 Cfg3;
     Cfg3.ModeSel = Adc->Configs.ConvMode;
-    Cfg3.ChannelSel =Adc->Configs.MaxConvChanNum;
+    Cfg3.ChanSel = Adc->Configs.MaxConvChanNum;
+    Cfg3.ExternalChanSel = 0;
+    Cfg3.RegAdcSoc = 0;
     AlAdc_ll_SetAdcCfg3Reg(Adc->AdcBaseAddr, Cfg3.RegData);
     AL_LOG(AL_LOG_LEVEL_DEBUG, "AdcCfg3 is %x\r\n", AlAdc_ll_ReadPlAdcReg(Adc->AdcBaseAddr, ADC_CONFIG3_OFFSET));
 
@@ -218,8 +224,7 @@ AL_VOID AlAdc_Dev_StopConv(AL_ADC_DevStruct *Adc)
 AL_U16 AlAdc_Dev_GetAdcData(AL_ADC_DevStruct *Adc, AL_ADC_ChanEnum ChanNum)
 {
     while (1) {
-        AL_U16 tmp = AlAdc_ll_GetAdcFlag(Adc->AdcBaseAddr);
-        if(tmp & (1 << AL_ADC_FLAG_DONE)) {
+        if(AlAdc_ll_GetAdcFlag(Adc->AdcBaseAddr) & (1 << AL_ADC_FLAG_DONE)) {
             Adc->AdcData->ChanNum = ChanNum;
             Adc->AdcData->ChanData = AlAdc_ll_GetAdcData(Adc->AdcBaseAddr, ChanNum);
             break;
