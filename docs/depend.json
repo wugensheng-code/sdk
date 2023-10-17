@@ -507,6 +507,17 @@
 				"supportedOS": ["standalone"],
 				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			},
+			"IIC_MASTER_10BIT_BLOCK_V1_0": {
+				"name": "IIC_MASTER_10BIT_BLOCK_V1_0",
+				"version": "1.0",
+				"depends": [
+					"fpsoc/driver/ps_driver/iic/example/al_iic_master_10bit_block.c",
+					"PS_DRIVER_IIC_V1_0"
+				],
+				"description": "iic test",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"]
+			},
 			"IIC_MASTER_BLOCK_V1_0": {
 				"name": "IIC_MASTER_BLOCK_V1_0",
 				"version": "1.0",
