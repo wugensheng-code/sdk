@@ -277,13 +277,13 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 	FsblSecInfo.DataLength = PtHdr->PartitionLen;
 
 	/// check load and exec address
-	if((AL9000_DDR1_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL9000_DDR1_BASE_ADDR + AL9000_DDR1_BYTE_LENGTH)) {
+	if((AL_DDR1_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL_DDR1_BASE_ADDR + AL_DDR1_BYTE_LENGTH)) {
 		// correct, do nothing
 	}
-	else if((AL9000_DDR2_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL9000_DDR2_BASE_ADDR + AL9000_DDR2_BYTE_LENGTH)) {
+	else if((AL_DDR2_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL_DDR2_BASE_ADDR + AL_DDR2_BYTE_LENGTH)) {
 		// correct, do nothing
 	}
-	else if((AL9000_RPU_ITCM_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL9000_RPU_ITCM_BASE_ADDR + AL9000_RPU_ITCM_BYTE_LENGTH)) {
+	else if((AL_RPU_ITCM_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL_RPU_ITCM_BASE_ADDR + AL_RPU_ITCM_BYTE_LENGTH)) {
 		if((RunningCpu != ALIH_PH_ATTRIB_DEST_CPU_RPU)  && (!RpuWakeUpFlag)) {
 			RpuWaitAddr = (uint64_t)(&RpuWait);
 			RpuWakeUpFlag = 1;
@@ -293,7 +293,7 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 			AL_REG32_SET_BIT(SYSCTRL_S_XPU_SRST, 8, 0);   /// trigger pulse reset
 		}
 	}
-	else if((AL9000_RPU_DTCM_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL9000_RPU_DTCM_BASE_ADDR + AL9000_RPU_ITCM_BYTE_LENGTH)) {
+	else if((AL_RPU_DTCM_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL_RPU_DTCM_BASE_ADDR + AL_RPU_ITCM_BYTE_LENGTH)) {
 		if((RunningCpu != ALIH_PH_ATTRIB_DEST_CPU_RPU)  && (!RpuWakeUpFlag)) {
 			RpuWaitAddr = (uint64_t)(&RpuWait);
 			RpuWakeUpFlag = 1;
@@ -303,7 +303,7 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 			AL_REG32_SET_BIT(SYSCTRL_S_XPU_SRST, 8, 0);   /// trigger pulse reset
 		}
 	}
-	else if((AL9000_OCM_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL9000_OCM_BASE_ADDR + AL9000_OCM_BYTE_LENGTH)) {
+	else if((AL_OCM_BASE_ADDR <= PtHdr->DestLoadAddr) && (PtHdr->DestLoadAddr < AL_OCM_BASE_ADDR + AL_OCM_BYTE_LENGTH)) {
 		// correct, do nothing
 	}
 	else if ((PtHdr->DestLoadAddr == CSU_PCAP_WR_STREAM) || (PtHdr->DestLoadAddr == CSU_PCAP_CSULOCAL_WR_STREAM)) {
@@ -316,16 +316,16 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 	if(PtHdr->DestExecAddr == 0xFFFFFFFF) {
 		// correct, do nothing, it is a none handoff ps partition
 	}
-	else if((AL9000_DDR1_BASE_ADDR <= PtHdr->DestExecAddr) && (PtHdr->DestExecAddr < AL9000_DDR1_BASE_ADDR + AL9000_DDR1_BYTE_LENGTH)) {
+	else if((AL_DDR1_BASE_ADDR <= PtHdr->DestExecAddr) && (PtHdr->DestExecAddr < AL_DDR1_BASE_ADDR + AL_DDR1_BYTE_LENGTH)) {
 		// correct, do nothing
 	}
-	else if((AL9000_DDR2_BASE_ADDR <= PtHdr->DestExecAddr) && (PtHdr->DestExecAddr < AL9000_DDR2_BASE_ADDR + AL9000_DDR2_BYTE_LENGTH)) {
+	else if((AL_DDR2_BASE_ADDR <= PtHdr->DestExecAddr) && (PtHdr->DestExecAddr < AL_DDR2_BASE_ADDR + AL_DDR2_BYTE_LENGTH)) {
 		// correct, do nothing
 	}
-	else if((AL9000_RPU_ITCM_BASE_ADDR <= PtHdr->DestExecAddr) && (PtHdr->DestExecAddr < AL9000_RPU_ITCM_BASE_ADDR + AL9000_RPU_ITCM_BYTE_LENGTH)) {
+	else if((AL_RPU_ITCM_BASE_ADDR <= PtHdr->DestExecAddr) && (PtHdr->DestExecAddr < AL_RPU_ITCM_BASE_ADDR + AL_RPU_ITCM_BYTE_LENGTH)) {
 		// correct, do nothing
 	}
-	else if((AL9000_OCM_BASE_ADDR <= PtHdr->DestExecAddr) && (PtHdr->DestExecAddr < AL9000_OCM_BASE_ADDR + AL9000_OCM_BYTE_LENGTH)) {
+	else if((AL_OCM_BASE_ADDR <= PtHdr->DestExecAddr) && (PtHdr->DestExecAddr < AL_OCM_BASE_ADDR + AL_OCM_BYTE_LENGTH)) {
 		// correct, do nothing
 	}
 	else {
@@ -622,7 +622,7 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)(0x100000), 0);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
-		}		
+		}
 #else
 		AL_LOG(AL_LOG_LEVEL_INFO, "to ocm in blocks, Block size: %u\r\n", BlockSizeMax);
 		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)ReadBuffer, BlockSizeMax);
