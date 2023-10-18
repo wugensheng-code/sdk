@@ -197,6 +197,14 @@
 			"supportedOS": ["standalone"],
 			"supportedProc": ["apu-0", "apu-1", "rpu"]
 		},
+		"DHRY_V1_0": {
+			"name": "DHRY_V1_0",
+			"version": "1.0",
+			"depends": ["solutions/demo/baremetal/dhry"],
+			"description": "Baremetal dhrystone demo",
+			"supportedOS": ["standalone"],
+			"supportedProc": ["apu-0", "apu-1", "rpu"]
+		},
 		"FATFS_V1_0": {
 			"name": "FATFS_V1_0",
 			"version": "1.0",

@@ -11,5 +11,14 @@
 
 __WEAK int _gettimeofday(struct timeval* tp, void* tzp)
 {
-    return -1;
+    unsigned long long Count = AlSys_GetTimerTickCount();
+
+    unsigned long long  Freq  = AlSys_GetTimerFreq();  
+
+    unsigned long long microseconds = Count / (Freq / 1000000);
+
+    tp->tv_sec = microseconds / 1000000;
+    tp->tv_usec = microseconds % 1000000;
+
+    return 0;
 }

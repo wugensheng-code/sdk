@@ -26,7 +26,7 @@ __WEAK clock_t _times(struct tms* buf)
     _gettimeofday(&t, 0);
 
     utime = (t.tv_sec - t0.tv_sec) * 1000000 + (t.tv_usec - t0.tv_usec);
-    buf->tms_utime = utime * CLOCKS_PER_SEC / 1000000;
+    buf->tms_utime = utime / 1000000;
     buf->tms_stime = buf->tms_cstime = buf->tms_cutime = 0;
 
     return buf->tms_utime;
