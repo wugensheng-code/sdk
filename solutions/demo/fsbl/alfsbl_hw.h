@@ -30,16 +30,16 @@ extern "C" {
 #endif
 
 /// Address Mapping Definition
-#define AL9000_DDR1_BASE_ADDR           (0x00000000)
-#define AL9000_DDR1_BYTE_LENGTH         (0x00100000)
-#define AL9000_DDR2_BASE_ADDR           (0x00100000)
-#define AL9000_DDR2_BYTE_LENGTH         (0x5ff00000)
-#define AL9000_RPU_ITCM_BASE_ADDR       (0x60000000)
-#define AL9000_RPU_ITCM_BYTE_LENGTH     (0x00040000)
-#define AL9000_RPU_DTCM_BASE_ADDR       (0x60040000)
-#define AL9000_RPU_DTCM_BYTE_LENGTH     (0x00040000)
-#define AL9000_OCM_BASE_ADDR            (0x61000000)
-#define AL9000_OCM_BYTE_LENGTH          (0x00040000)
+#define AL_DDR1_BASE_ADDR           (0x00000000)
+#define AL_DDR1_BYTE_LENGTH         (0x00100000)
+#define AL_DDR2_BASE_ADDR           (0x00100000)
+#define AL_DDR2_BYTE_LENGTH         (0x5ff00000)
+#define AL_RPU_ITCM_BASE_ADDR       (0x60000000)
+#define AL_RPU_ITCM_BYTE_LENGTH     (0x00040000)
+#define AL_RPU_DTCM_BASE_ADDR       (0x60040000)
+#define AL_RPU_DTCM_BYTE_LENGTH     (0x00040000)
+#define AL_OCM_BASE_ADDR            (0x61000000)
+#define AL_OCM_BYTE_LENGTH          (0x00040000)
 
 /// system registers (non-secure region)
 #define SYSCTRL_NS_BASEADDR          0XF8800000UL

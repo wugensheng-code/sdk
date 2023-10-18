@@ -11,7 +11,7 @@
 
 typedef enum nand_width_t
 {
-    NAND_8BIT  = 0x0, 
+    NAND_8BIT  = 0x0,
     NAND_16BIT = 0x1
 } nand_width_t;
 
@@ -112,7 +112,7 @@ void pinmux_config_pjtag(const pin_jtag_t* pin);
 
 typedef enum mio_speed_t
 {
-    MIO_SPEED_SLOW = 0x0, 
+    MIO_SPEED_SLOW = 0x0,
     MIO_SPEED_MEDI = 0x2,
     MIO_SPEED_FAST = 0x7
 } mio_speed_t;
@@ -184,6 +184,6 @@ uint32_t mio_pad_ctrl1(int pin, mio_recv_t mode, mio_vccio_t vcc, mio_driven_t u
 // mio_pad_ctrl0(0, MIO_SPEED_SLOW, MIO_PULL_25K_EN, MIO_PULL_DIS);     // == 0x88000000
 // mio_pad_ctrl1(0, MIO_RECV_3V3_2V5, MIO_VCCIO_3V3, MIO_DRIVEN_8MA, MIO_DRIVEN_8MA);   // == 0x1E0103
 
-// #include "al9000_pinmux_auto.h"
+// #include "dr1x90_pinmux_auto.h"
 
 #endif

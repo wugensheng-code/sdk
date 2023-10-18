@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef __AL9000_CRG_H_
-#define __AL9000_CRG_H_
+#ifndef __AL_CRG_H_
+#define __AL_CRG_H_
 
 #include <stdint.h>
 
@@ -14,9 +14,9 @@
 // #define CRYSTAL_OSC_HZ 25000000
 
 // Demo Board: 33.33 MHz
-#ifdef AL9000_OSC_25
+#ifdef AL_OSC_25
 #define CRYSTAL_OSC_HZ 25000000
-#elif defined AL9000_OSC_33
+#elif defined AL_OSC_33
 #define CRYSTAL_OSC_HZ 33333333
 #else
 #define CRYSTAL_OSC_HZ 50000000

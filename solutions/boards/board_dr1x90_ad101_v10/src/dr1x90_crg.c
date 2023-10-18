@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "al9000_crg.h"
+#include "dr1x90_crg.h"
 
 #define TOP_CRG_BASE 0xF8801000UL
 #define TOP_S_BASE   0xF8806000UL
@@ -29,7 +29,7 @@ void pll_enable()
 }
 
 static void pll_div_set(
-    pll_t PLL_CTRL, uint32_t ref_div, uint32_t fbk_div, 
+    pll_t PLL_CTRL, uint32_t ref_div, uint32_t fbk_div,
     uint32_t out_div_0, uint32_t out_div_1, uint32_t out_div_2, uint32_t out_div_3
 )
 {
@@ -141,7 +141,7 @@ void pll_cpu_waitLock()
 }
 
 void pll_io_div_set(
-    uint32_t fbk_div, uint32_t ref_div, 
+    uint32_t fbk_div, uint32_t ref_div,
     uint32_t out_div_1000, uint32_t out_div_400, uint32_t out_div_80, uint32_t out_div_25
 )
 {
@@ -183,7 +183,7 @@ void icg_div_set(enum icg_para_t inst, uint32_t div)
     // uint32_t val = 0U;
     // for (uint32_t bit = 1U; bit != 0U; bit <<= div)
     //     val |= bit;
-    
+
     volatile uint32_t* ptr = (void*)(TOP_CRG_BASE + (uint64_t)inst);
     *ptr = val;
 }
@@ -231,20 +231,36 @@ void clk_cpu_ratio_6221()
 void clk_simple_config()
 {
     pll_bypass();
+#ifdef AL_CLK_800M
+    clk_cpu_ratio_4221();
+#elif AL_CLK_1000M
+    clk_cpu_ratio_6221();
+#elif AL_CLK_1200M
+    clk_cpu_ratio_6221();
+#else   //default 400M
     clk_cpu_ratio_2221();
+#endif
 
-    #if   CRYSTAL_OSC_HZ == 50000000
+#if   CRYSTAL_OSC_HZ == 50000000
     pll_cpu_div_set(64, 2, 2, 2);
     pll_io_div_set( 80, 2, 2, 5, 25, 80);
-    #elif CRYSTAL_OSC_HZ == 33333333
+#elif CRYSTAL_OSC_HZ == 33333333
+    #ifdef AL_CLK_800M
+    pll_cpu_div_set(48, 2, 1, 1);
+    #elif AL_CLK_1000M
+    pll_cpu_div_set(60, 2, 1, 1);
+    #elif AL_CLK_1200M
+    pll_cpu_div_set(72, 2, 1, 2);
+    #else
     pll_cpu_div_set(96, 2, 2, 2);
+    #endif
     pll_io_div_set(120, 2, 2, 5, 25, 80);
-    #elif CRYSTAL_OSC_HZ == 25000000
+#elif CRYSTAL_OSC_HZ == 25000000
     pll_cpu_div_set(64, 1, 2, 2);
     pll_io_div_set( 80, 1, 2, 5, 25, 80);
-    #else
-    #error "Unknow CRYSTAL_OSC_HZ Value"
-    #endif
+#else
+#error "Unknow CRYSTAL_OSC_HZ Value"
+#endif
 
     pll_cpu_waitLock();
     pll_io_waitLock();

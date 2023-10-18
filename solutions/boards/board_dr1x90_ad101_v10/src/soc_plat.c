@@ -5,7 +5,7 @@
  */
 
 #include "al_core.h"
-#include "al9000_crg.h"
+#include "dr1x90_crg.h"
 #include "soc_plat.h"
 
 
@@ -20,7 +20,7 @@ extern int  demo_ddr_init();
 
 __attribute__((__used__)) void board_init()
 {
-#ifdef AL9000_CLK_CONFIG
+#ifdef AL_CLK_CONFIG
     clk_simple_config();
 #endif
 

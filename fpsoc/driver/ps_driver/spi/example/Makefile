@@ -51,7 +51,7 @@ ASM_SRCS    :=
 # 3. CFLAGS
 #########################################################################
 CFLAGS := -O2 -g
-CFLAGS += -DAL9000_BRINGUP -DAL9000_OSC_33 -DAL9000_CLK_CONFIG
+CFLAGS += -DAL_BRINGUP -DAL_OSC_33 -DAL_CLK_CONFIG
 # CFLAGS += -DUSE_RTOS
 # CFLAGS += -DRTOS_RTTHREAD
 

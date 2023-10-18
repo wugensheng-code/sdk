@@ -89,14 +89,14 @@ void Enablepinmux1(void)
     *(AL_U32 *)(0xf88030d4u) =0xf;      //mdio1
     *(AL_U32 *)(0xf8803438u) =0x1;      //emio_sel
 
-#ifndef AL9000_DCBOARD_TTC
+#ifndef AL_DCBOARD_TTC
     *(AL_U32 *)(0xF8803078u) =0x7;    //ttc0
     *(AL_U32 *)(0xF880307cu) =0x7;
     *(AL_U32 *)(0xf8803070u) =0x7;    //ttc1
     *(AL_U32 *)(0xf8803074u) =0x7;
 #endif
 
-#ifndef AL9000_BRINGUP
+#ifndef AL_BRINGUP
     *(AL_U32 *)(0xf840e004u) =0x0;      //close mpu ddr0
     *(AL_U32 *)(0xf840f004u) =0x0;      //close mpu ddr1
     *(AL_U32 *)(0xf8801074u) |=0x4000;  //reset release ddr
@@ -208,7 +208,7 @@ void Enablepinmux1_mode2(void)
     AL_REG32_WRITE(PS_MIO13, 0x02);
     AL_REG32_WRITE(PS_MIO14, 0x02);
 
-#ifndef AL9000_BRINGUP
+#ifndef AL_BRINGUP
     *(AL_U32 *)(0xf840e004u) =0x0;      //close mpu ddr0
     *(AL_U32 *)(0xf840f004u) =0x0;      //close mpu ddr1
     *(AL_U32 *)(0xf8801074u) |=0x4000;  //reset release ddr

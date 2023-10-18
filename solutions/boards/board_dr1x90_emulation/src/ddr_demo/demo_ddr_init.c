@@ -2,7 +2,7 @@
 #include "dr1x90_ddrc_init.h"
 #include "dr1x90_new_func.h"
 
-#include "al9000_crg.h"
+#include "dr1x90_crg.h"
 #include "dr1x90_mpu.h"
 
 /*************************************************************/
@@ -102,14 +102,14 @@ int demo_ddr_init()
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte2_glue_cfg0, U_byte2_glue_mc1_qs_gate_sel_offset, U_byte2_glue_mc1_qs_gate_sel_mask, 1);
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte3_glue_cfg0, U_byte3_glue_mc1_qs_gate_sel_offset, U_byte3_glue_mc1_qs_gate_sel_mask, 1);
 
-    //Alc_GpioMaskWrite(GPIO_CH0, 0x04, 0xffff); 
+    //Alc_GpioMaskWrite(GPIO_CH0, 0x04, 0xffff);
     dr1x90_reg_write(DDRC_ADDR_DPLL + RW_TEST, 0x1); // used as reset
     dr1x90_reg_write(0x11b0 ,0x00000050); // DFIMISC
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 05 : Bus Matrix Configuration
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //Alc_GpioMaskWrite(GPIO_CH0, 0x05, 0xffff); 
+    //Alc_GpioMaskWrite(GPIO_CH0, 0x05, 0xffff);
     dr1x90_field_write(DDRC_ADDR_GPLL + AC_BANK_MTX_CR4, AC_BANK_MTX_IO20_SEL_offset, AC_BANK_MTX_IO20_SEL_mask, 21); // ddr3_a14
     dr1x90_field_write(DDRC_ADDR_GPLL + AC_BANK_MTX_CR4, AC_BANK_MTX_IO21_SEL_offset, AC_BANK_MTX_IO21_SEL_mask, 25); // ddr3_we_n
     dr1x90_field_write(DDRC_ADDR_GPLL + AC_BANK_MTX_CR4, AC_BANK_MTX_IO22_SEL_offset, AC_BANK_MTX_IO22_SEL_mask, 36); // ddr3_rst_n
@@ -119,56 +119,56 @@ int demo_ddr_init()
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 06 : PPC Base Configuration
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //Alc_GpioMaskWrite(GPIO_CH0, 0x06, 0xffff); 
+    //Alc_GpioMaskWrite(GPIO_CH0, 0x06, 0xffff);
     dr1x90_ddrppc_base_cfg();
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 07 : MDL Calibration
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //Alc_GpioMaskWrite(GPIO_CH0, 0x07, 0xffff); 
+    //Alc_GpioMaskWrite(GPIO_CH0, 0x07, 0xffff);
     dr1x90_ddrppc_mdl_cal();
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 08 : Fast Init
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //Alc_GpioMaskWrite(GPIO_CH0, 0x08, 0xffff); 
+    //Alc_GpioMaskWrite(GPIO_CH0, 0x08, 0xffff);
     dr1x90_ddrppc_fast_init();
-    //Alc_GpioMaskWrite(GPIO_CH0, 0x0222, 0xffff); 
+    //Alc_GpioMaskWrite(GPIO_CH0, 0x0222, 0xffff);
     dr1x90_zq_overwrite_cfg();
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 08 : DRAM INIT
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //Alc_GpioMaskWrite(GPIO_CH0, 0x09, 0xffff); 
+    //Alc_GpioMaskWrite(GPIO_CH0, 0x09, 0xffff);
     dr1x90_ddrppc_set_timing();
 
-    //Alc_GpioMaskWrite(GPIO_CH0, 0x0A, 0xffff); 
+    //Alc_GpioMaskWrite(GPIO_CH0, 0x0A, 0xffff);
     dr1x90_ddrppc_set_ddrmr();
     dr1x90_ddrppc_dram_init();
 
-    //Alc_GpioMaskWrite(GPIO_CH0, 0x16, 0xffff); 
+    //Alc_GpioMaskWrite(GPIO_CH0, 0x16, 0xffff);
     dr1x90_ddrmc_init(0);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 08 : PPC MTEST
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //Alc_GpioMaskWrite(GPIO_CH0, 0x0B, 0xffff); 
+    //Alc_GpioMaskWrite(GPIO_CH0, 0x0B, 0xffff);
     dr1x90_pub_training_cfg();
     dr1x90_do_training(1,1,1);
     //dr1x90_iomc_internal_loopback_cfg();
-    //Alc_GpioMaskWrite(GPIO_CH0, 0x111, 0xffff); 
+    //Alc_GpioMaskWrite(GPIO_CH0, 0x111, 0xffff);
     mtest_err = dr1x90_ddrppc_mtest(0, 0, 0, 9);
     printf("mtest errcnt: %d\r\n", mtest_err);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 08 : HandOff to DFI
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //Alc_GpioMaskWrite(GPIO_CH0, 0x0A, 0xffff); 
+    //Alc_GpioMaskWrite(GPIO_CH0, 0x0A, 0xffff);
     dr1x90_field_write(DDRC_ADDR_PPC + PGCR1, PUBMODE_offset, PUBMODE_mask, 0);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 100 : MC Post Configuration
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //Alc_GpioMaskWrite(GPIO_CH0, 0x333, 0xffff); 
+    //Alc_GpioMaskWrite(GPIO_CH0, 0x333, 0xffff);
     dr1x90_ddrmc_post_cfg();
 
 

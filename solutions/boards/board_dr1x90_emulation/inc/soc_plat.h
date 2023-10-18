@@ -58,39 +58,39 @@ extern "C" {
  *----------------------------------------------------------------------------*/
 
 #if (defined _AARCH_64 || defined __aarch64__)
-#ifdef AL9000_OSC_25
+#ifdef AL_OSC_25
 #define SYSTEM_CLOCK            (25*MHZ)
-#elif defined AL9000_OSC_33
+#elif defined AL_OSC_33
 #define SYSTEM_CLOCK            (33333333UL)
-#elif defined AL9000_OSC_50
+#elif defined AL_OSC_50
 #define SYSTEM_CLOCK            (50*MHZ)
 #else
 /* for emulation platform */
 #define SYSTEM_CLOCK            (50*MHZ)
 #endif
 #else
-#ifdef AL9000_CLK_CONFIG
-#ifdef AL9000_OSC_25
+#ifdef AL_CLK_CONFIG
+#ifdef AL_OSC_25
 #define SYSTEM_CLOCK            (200*MHZ)
-#elif defined AL9000_OSC_33
-#if (defined AL9000_CLK_800M || defined AL9000_CLK_400M || defined AL9000_CLK_1200M)
+#elif defined AL_OSC_33
+#if (defined AL_CLK_800M || defined AL_CLK_400M || defined AL_CLK_1200M)
 #define SYSTEM_CLOCK            (400*MHZ)
-#elif defined AL9000_CLK_1000M
+#elif defined AL_CLK_1000M
 #define SYSTEM_CLOCK            (333333333UL)
 #else
 #error "undefined RPU CLK"
 #endif
-#elif defined AL9000_OSC_50
+#elif defined AL_OSC_50
 #define SYSTEM_CLOCK            (400*MHZ)
 #else
 #error "undefined OSC"
 #endif
 #else
-#ifdef AL9000_OSC_25
+#ifdef AL_OSC_25
 #define SYSTEM_CLOCK            (200*MHZ)
-#elif defined AL9000_OSC_33
+#elif defined AL_OSC_33
 #define SYSTEM_CLOCK            (266666666UL)
-#elif defined AL9000_OSC_50
+#elif defined AL_OSC_50
 #define SYSTEM_CLOCK            (400*MHZ)
 #else
 /* for emulation platform */
@@ -100,14 +100,14 @@ extern "C" {
 #endif
 
 #define HAVE_UARTPS_DRIVER
-#ifdef AL9000_CLK_CONFIG
+#ifdef AL_CLK_CONFIG
 #define UART_CLOCK              (50*MHZ)
 #else
-#ifdef AL9000_OSC_25
+#ifdef AL_OSC_25
 #define UART_CLOCK              (25*MHZ)
-#elif defined AL9000_OSC_33
+#elif defined AL_OSC_33
 #define UART_CLOCK              (33333333UL)
-#elif defined AL9000_OSC_50
+#elif defined AL_OSC_50
 #define UART_CLOCK              (50*MHZ)
 #else
 #define UART_CLOCK              (40*MHZ)
@@ -118,14 +118,14 @@ extern "C" {
 #define I2C_CLOCK               (40*MHZ)
 
 #define HAVE_MMCPS_DRIVER
-#ifdef AL9000_CLK_CONFIG
+#ifdef AL_CLK_CONFIG
 #define MMC_CLOCK               (100*MHZ)
 #else
-#ifdef AL9000_OSC_25
+#ifdef AL_OSC_25
 #define MMC_CLOCK               (50*MHZ)
-#elif defined AL9000_OSC_33
+#elif defined AL_OSC_33
 #define MMC_CLOCK               (66*MHZ)
-#elif defined AL9000_OSC_50
+#elif defined AL_OSC_50
 #define MMC_CLOCK               (100*MHZ)
 #else
 #define MMC_CLOCK               (10*MHZ)

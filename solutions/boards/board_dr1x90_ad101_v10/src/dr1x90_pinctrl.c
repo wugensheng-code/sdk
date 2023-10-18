@@ -241,7 +241,7 @@ uint32_t mio_pad_ctrl0(int pin, mio_speed_t speed, mio_pull_t pull_up, mio_pull_
 
 uint32_t mio_pad_ctrl1(int pin, mio_recv_t mode, mio_vccio_t vcc, mio_driven_t up, mio_driven_t dw)
 {
-    // Doc @ AL9000 IO MUX QRG.xlsx: PS OUTPUT PAD CTRL
+    // Doc @ AL IO MUX QRG.xlsx: PS OUTPUT PAD CTRL
     static const uint8_t ensnk[4][5] = {
     //   4mA   8mA  12mA  16mA  20mA
         {0x0A, 0x1E, 0x15, 0x17, 0x12},   // 3.3V

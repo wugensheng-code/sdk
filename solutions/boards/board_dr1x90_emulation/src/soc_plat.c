@@ -5,7 +5,7 @@
  */
 
 #include "al_core.h"
-#include "al9000_crg.h"
+#include "dr1x90_crg.h"
 
 extern void Enablepinmux1(void);
 extern void Enablepinmux1_mode2(void);
@@ -18,7 +18,7 @@ extern void Enablepinmux1_mode2(void);
 
 __attribute__((__used__)) void board_init()
 {
-#ifdef AL9000_CLK_CONFIG
+#ifdef AL_CLK_CONFIG
     clk_simple_config();
 #endif
 

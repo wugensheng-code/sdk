@@ -26,7 +26,7 @@ check:              # This job runs in the .pre stage, which runs first.
   tags:
     - test
   image:
-    name: anlogic/al9000-ci:v2
+    name: anlogic/dr1x90-ci:v1
   script:
     - |
       echo commit message: ${CI_COMMIT_MESSAGE}
@@ -38,7 +38,7 @@ build-apu-job:       # This job runs in the build stage.
   tags:
     - build
   image:
-    name: anlogic/al9000-ci:v2
+    name: anlogic/dr1x90-ci:v1
   script:
     - python --version ; pip --version  # For debugging
     - pip install -i https://pypi.tuna.tsinghua.edu.cn/simple scons
@@ -53,7 +53,7 @@ build-rpu-job:       # This job runs in the build stage.
   tags:
     - build
   image:
-    name: anlogic/al9000-ci:v2
+    name: anlogic/dr1x90-ci:v1
   script:
     - python --version ; pip --version  # For debugging
     - pip install -i https://pypi.tuna.tsinghua.edu.cn/simple scons
@@ -68,7 +68,7 @@ build-fsbl-job:       # This job runs in the build stage.
   tags:
     - build
   image:
-    name: anlogic/al9000-ci:v2
+    name: anlogic/dr1x90-ci:v1
   script:
     - cd $CI_PROJECT_DIR/solutions/demo/fsbl
     - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/fsbl dr1v90 ocm $CI_PROJECT_DIR $CI_DEBUG
