@@ -18,9 +18,9 @@ variables:
 
 stages:          # List of stages for jobs, and their order of execution
   - build
+  - release
   - test
   - deploy
-  - release
 
 check:              # This job runs in the .pre stage, which runs first.
   stage: .pre
@@ -75,7 +75,20 @@ build-fsbl-job:       # This job runs in the build stage.
     - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/fsbl dr1v90 ocm $CI_PROJECT_DIR $CI_DEBUG
     - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/fsbl dr1m90 ocm $CI_PROJECT_DIR $CI_DEBUG
 
-release:
+build-apu-and-fsbl-job-with-FD:       # This job runs in the build stage.
+  stage: build
+  tags:
+    - build
+  image:
+    name: anlogic/dr1x90-ci:v1
+  script:
+    - python --version ; pip --version
+    - pip install -i https://pypi.tuna.tsinghua.edu.cn/simple scons
+    - python -c "import os; os.chdir(\"./3rdparty/os/RT-Thread/rt-thread\"); import tools.menuconfig; tools.menuconfig.touch_env()"
+    - python $CI_PROJECT_DIR/tools/ci/build_with_bsp_tool.py -A -t $CI_PROJECT_DIR/tools/ci/ -b $CI_PROJECT_DIR -p $CI_PROJECT_DIR/tools/ci/DR1M90_DEMO.hpf
+
+
+release-job:
   stage: release
   tags:
     - release
