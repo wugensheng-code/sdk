@@ -270,7 +270,8 @@ AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
 
     (AL_VOID)AlOsal_Lock_Release(&Handle->RxLock);
 
-    if (Ret == AL_OK && (UartEvent.Events == AL_UART_EVENT_RECEIVE_DONE))
+    if (Ret == AL_OK && (UartEvent.Events == AL_UART_EVENT_RECEIVE_DONE ||
+                         UartEvent.Events == AL_UART_EVENT_CHAR_TIMEOUT))
         return AL_OK;
     else
         return (Ret != AL_OK) ? Ret : AL_UART_EVENTS_TO_ERRS(UartEvent.Events);

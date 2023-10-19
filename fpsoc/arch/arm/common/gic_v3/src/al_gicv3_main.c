@@ -188,7 +188,7 @@ AL_VOID AlGicv3_CpuIfEnable(AL_U32 ProcNum)
     // write_icc_igrpen1_el3(read_icc_igrpen1_el3() |
     //             IGRPEN1_EL3_ENABLE_G1S_BIT);
 
-    ARCH_SYSREG_WRITE(icc_bpr1_el1, 0);
+    ARCH_SYSREG_WRITE(icc_bpr1_el1, 7);
     ARCH_SYSREG_WRITE(icc_ctlr_el1, 0);
 
     ISB();

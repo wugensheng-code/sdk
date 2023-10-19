@@ -40,6 +40,11 @@ AL_VOID do_irq_handle(AL_VOID)
         Handler.Func(Handler.Param);
     }
 
+    /* Temp coding here, should move to portASM.S */
+#ifdef RTOS_FREERTOS
+    disable_all_intr();
+#endif
+
     AlGicv3_EndOfIntrSel1(IntrId);
 }
 
@@ -65,6 +70,11 @@ AL_VOID do_fiq_handle(AL_VOID)
     } else {
         Handler.Func(Handler.Param);
     }
+
+    /* Temp coding here, should move to portASM.S */
+    #ifdef RTOS_FREERTOS
+        disable_all_intr();
+    #endif
 
     AlGicv3_EndOfIntrSel1(IntrId);
 }

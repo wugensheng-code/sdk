@@ -138,6 +138,7 @@ AL_UART_HwConfigStruct *AlUart_Dev_LookupConfig(AL_U32 DevId);
 AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct *InitConfig);
 AL_S32 AlUart_Dev_SendData(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 SendSize);
 AL_S32 AlUart_Dev_RecvData(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 ReceiveSize);
+AL_VOID AlUart_Dev_SendByte(AL_UART_DevStruct *Uart, AL_S8 Char);
 AL_S32 AlUart_Dev_SendDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 Size);
 AL_S32 AlUart_Dev_RecvDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 Size);
 AL_VOID AlUart_Dev_StopSend(AL_UART_DevStruct *Uart);

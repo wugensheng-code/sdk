@@ -92,7 +92,7 @@ your application. */
 #define configMINIMAL_STACK_SIZE                256
 #define configMAX_TASK_NAME_LEN                 16
 #define configUSE_16_BIT_TICKS                  0
-#define configIDLE_SHOULD_YIELD                 0
+#define configIDLE_SHOULD_YIELD                 1
 #define configUSE_TASK_NOTIFICATIONS            1
 #define configUSE_MUTEXES                       1
 #define configUSE_RECURSIVE_MUTEXES             0
@@ -107,7 +107,7 @@ your application. */
 /* Memory allocation related definitions. */
 #define configSUPPORT_STATIC_ALLOCATION         1
 #define configSUPPORT_DYNAMIC_ALLOCATION        1
-#define configTOTAL_HEAP_SIZE                   32*1024
+#define configTOTAL_HEAP_SIZE                   200*1024
 #define configAPPLICATION_ALLOCATED_HEAP        0
 
 /* Hook function related definitions. */
@@ -118,9 +118,9 @@ your application. */
 #define configUSE_DAEMON_TASK_STARTUP_HOOK      0
 
 /* Run time and task stats gathering related definitions. */
-#define configGENERATE_RUN_TIME_STATS           0
-#define configUSE_TRACE_FACILITY                0
-#define configUSE_STATS_FORMATTING_FUNCTIONS    0
+#define configGENERATE_RUN_TIME_STATS           1
+#define configUSE_TRACE_FACILITY                1
+#define configUSE_STATS_FORMATTING_FUNCTIONS    1
 
 /* Co-routine related definitions. */
 #define configUSE_CO_ROUTINES                   0
@@ -161,5 +161,11 @@ your application. */
 #define INCLUDE_xTaskResumeFromISR              1
 
 /* A header file that defines trace macro can be included here. */
+#if (configGENERATE_RUN_TIME_STATS == 1)
+extern unsigned int FreeRTOSRunTimeTicks;
+extern void ConfigureTimerForRunTimeStates(void);
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()   ConfigureTimerForRunTimeStates()
+#define portGET_RUN_TIME_COUNTER_VALUE()           FreeRTOSRunTimeTicks
+#endif
 
 #endif /* FREERTOS_CONFIG_H */

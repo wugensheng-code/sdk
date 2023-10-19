@@ -17,6 +17,7 @@ extern "C" {
 #include <stdio.h>
 #include "al_type.h"
 #include "al_systimer.h"
+#include "al_printf.h"
 
 #define IS_ALIGN(x, a)          (((x) & ((typeof(x))(a) - 1)) == 0)
 
@@ -74,12 +75,19 @@ extern "C" {
 #define ROUND_DOWN(value, boundary)        \
     ((value) & ~ROUND_BOUNDARY(value, boundary))
 
+#ifdef RTOS_FREERTOS
+#define AL_LOG(level, format, ...) \
+    do {  \
+        if((ENUM_AL_LOG_LEVEL)level >= AL_LOG_LEVEL_DEBUG) \
+            al_printf(format, ##__VA_ARGS__); \
+    } while (0);
+#else
 #define AL_LOG(level, format, ...) \
     do {  \
         if((ENUM_AL_LOG_LEVEL)level >= AL_LOG_LEVEL_DEBUG) \
             printf(format"\r\n", ##__VA_ARGS__); \
     } while (0);
-
+#endif
 
 /********************************************************/
 /*

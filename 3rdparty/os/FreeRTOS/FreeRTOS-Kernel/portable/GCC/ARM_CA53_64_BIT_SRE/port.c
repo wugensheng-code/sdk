@@ -111,13 +111,13 @@ context. */
 /* s3_0_c4_c6_0 is ICC_PMR_EL1. */
 #define portCLEAR_INTERRUPT_MASK()						\
 {														\
-	__asm volatile (	"MSR DAIFSET, #2 		\n"		\
+	__asm volatile (	"MSR DAIFSET, #3 		\n"		\
 						"DSB SY					\n"		\
 						"ISB SY					\n"		\
 						"MSR s3_0_c4_c6_0, %0 	\n"		\
 						"DSB SY					\n"		\
 						"ISB SY					\n"		\
-						"MSR DAIFCLR, #2 		\n"		\
+						"MSR DAIFCLR, #3 		\n"		\
 						"DSB SY					\n"		\
 						"ISB SY					\n"		\
 						::"r"( portUNMASK_VALUE ) );	\
@@ -153,6 +153,11 @@ volatile uint64_t ullPortInterruptNesting = 0;
 
 /* Used in the ASM code. */
 __attribute__(( used )) const uint64_t ullMaxAPIPriorityMask = ( configMAX_API_CALL_INTERRUPT_PRIORITY << portPRIORITY_SHIFT );
+
+#if (configGENERATE_RUN_TIME_STATS == 1)
+#include "al_ttc_hal.h"
+AL_U32 FreeRTOSRunTimeTicks;
+#endif
 
 /*-----------------------------------------------------------*/
 
@@ -583,5 +588,65 @@ static StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
     Note that, as the array is necessarily of type StackType_t,
     configTIMER_TASK_STACK_DEPTH is specified in words, not bytes. */
     *pulTimerTaskStackSize = configTIMER_TASK_STACK_DEPTH;
+}
+#endif
+
+#if (configGENERATE_RUN_TIME_STATS == 1)
+
+/* TIMER MACRO CONFIG */
+ /* pwm frequency = clock frequency / (pow(2, TTC_CLK_PRESACLE+1)) / (AL_TTC_INTERVAL_MAX_VAL + 1) */
+#define TTC_DEVICE_ID               (0)
+#define TTC_CLK_PRESACLE            (7)
+#define TTC_MATCH_VALUE             (999)
+#define TTC_INTERVAL_MAX_VALUE      (TTC_MATCH_VALUE)
+
+static AL_TTC_TimerInitStruct Ttc_Config = {
+    .ClkSrc              = AL_TTC_PCLK,
+    .PrescaleVal         = TTC_CLK_PRESACLE,
+    .CountDec            = AL_TTC_CountUp
+};
+
+static AL_VOID Ttc_DefEventHandler(AL_TTC_EventStruct TtcEvent, AL_VOID *CallbackRef)
+{
+    switch (TtcEvent.Events)
+    {
+    case AL_TTC_EVENT_Interval:
+        break;
+    case AL_TTC_EVENT_Match1:
+        FreeRTOSRunTimeTicks++;
+        break;
+    case AL_TTC_EVENT_Match2:
+        break;
+    case AL_TTC_EVENT_Match3:
+        break;
+    case AL_TTC_EVENT_Overflow:
+        break;
+    case AL_TTC_EVENT_EventTimer:
+        break;
+    default:
+        break;
+    }
+
+}
+
+AL_VOID ConfigureTimerForRunTimeStates(AL_VOID)
+{
+    AL_U32 Ret = AL_OK;
+    AL_TTC_HalStruct *TtcHandle = AL_NULL;
+
+    AlTtc_Hal_Init(&TtcHandle, TTC_DEVICE_ID, &Ttc_Config, Ttc_DefEventHandler);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
+        return Ret;
+    }
+
+    AlTtc_Hal_EnableIntervalMode(TtcHandle);
+    AlTtc_Hal_SetIntervalMaxVal(TtcHandle, TTC_INTERVAL_MAX_VALUE);
+    AlTtc_Hal_EnableMatchMode(TtcHandle, AL_TRUE);
+    AlTtc_Hal_SetMatchVal(TtcHandle, AL_TTC_Match1, TTC_MATCH_VALUE);
+    AlTtc_Hal_EnableIntr(TtcHandle, AL_TTC_IntrMatch1);
+    AlTtc_Hal_EnableCounter(TtcHandle, AL_TRUE);
+
+    FreeRTOSRunTimeTicks = 0;
 }
 #endif

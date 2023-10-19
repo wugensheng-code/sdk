@@ -24,6 +24,8 @@ AL_S32 AlLog_Init();
 
 AL_U32 AlLog_Write(const void* Data, AL_U32 Len);
 
+AL_VOID AlLog_WriteByte(AL_S8 Data);
+
 #ifdef __cplusplus
 }
 #endif

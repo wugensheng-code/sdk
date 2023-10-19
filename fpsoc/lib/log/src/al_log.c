@@ -17,10 +17,12 @@ AL_S32 AlLog_Init()
 #ifdef LOG_DEV
 #if ((LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1))
     AL_UART_InitStruct UART_InitStruct = {
-        .BaudRate     = 115200,
-        .Parity       = AL_UART_NO_PARITY,
-        .WordLength   = AL_UART_CHAR_8BITS,
-        .StopBits     = AL_UART_STOP_1BIT,
+        .BaudRate           = 115200,
+        .Parity             = AL_UART_NO_PARITY,
+        .WordLength         = AL_UART_CHAR_8BITS,
+        .StopBits           = AL_UART_STOP_1BIT,
+        .HwFlowCtl          = AL_FALSE,
+        .CharTimeoutEnable  = AL_TRUE
     };
 
 #if (LOG_DEV == AL_LOG_UART0)
@@ -50,5 +52,12 @@ AL_U32 AlLog_Write(const void* Data, AL_U32 Len)
     (AL_VOID)Data;
     (AL_VOID)Len;
     return Len;
+#endif
+}
+
+AL_VOID AlLog_WriteByte(AL_S8 Data)
+{
+#if (LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1)
+    AlUart_Dev_SendByte(&(AlLog->Dev), Data);
 #endif
 }

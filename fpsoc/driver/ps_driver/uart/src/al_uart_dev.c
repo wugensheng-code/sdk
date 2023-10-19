@@ -245,6 +245,13 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct
     return AL_OK;
 }
 
+AL_VOID AlUart_Dev_SendByte(AL_UART_DevStruct *Uart, AL_S8 Char)
+{
+    while (AlUart_ll_IsTransmitFifoFull(Uart->BaseAddr));
+
+    AlUart_ll_SendByte(Uart->BaseAddr, Char);
+}
+
 /**
  * This function send an amount of data in polling mode.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance

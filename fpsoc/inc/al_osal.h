@@ -375,17 +375,17 @@ static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S3
 
 static inline AL_VOID AlOsal_EnterDevCtritical(AL_U32 DevIntrId, AL_BOOL Condition)
 {
-    (AL_VOID)DevIntrId;
-    (AL_VOID)Condition;
-    taskENTER_CRITICAL();
+    if (Condition) {
+        AlIntr_SetInterrupt(DevIntrId, AL_FUNC_DISABLE);
+    }
 }
 
 
 static inline AL_VOID AlOsal_ExitDevCtritical(AL_U32 DevIntrId, AL_BOOL Condition)
 {
-    (AL_VOID)DevIntrId;
-    (AL_VOID)Condition;
-    taskEXIT_CRITICAL();
+    if (Condition) {
+        AlIntr_SetInterrupt(DevIntrId, AL_FUNC_ENABLE);
+    }
 }
 
 
@@ -395,12 +395,28 @@ static inline AL_VOID AlOsal_ExitDevCtritical(AL_U32 DevIntrId, AL_BOOL Conditio
 
 static inline AL_VOID ALOsal_EnterCritical(AL_VOID)
 {
-    taskENTER_CRITICAL();
+    if (ullPortInterruptNesting == 0) {
+        taskENTER_CRITICAL();
+    } else {
+        AL_U64 MaskBits;
+        __asm volatile( "MRS %0, DAIF" : "=r"( MaskBits ) :: "memory" );
+        if ((MaskBits & 0xC0) == 0) {
+            taskENTER_CRITICAL_FROM_ISR();
+        }
+    }
 }
 
 static inline AL_VOID ALOsal_ExitCritical(AL_VOID)
 {
-    taskEXIT_CRITICAL();
+    if (ullPortInterruptNesting == 0) {
+        taskEXIT_CRITICAL();
+    } else {
+        AL_U64 MaskBits;
+        __asm volatile( "MRS %0, DAIF" : "=r"( MaskBits ) :: "memory" );
+        if ((MaskBits & 0xC0) == 0) {
+            taskEXIT_CRITICAL_FROM_ISR(pdFALSE);
+        }
+    }
 }
 
 /*----------------------------------------------*
