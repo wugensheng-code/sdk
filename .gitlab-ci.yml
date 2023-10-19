@@ -95,7 +95,7 @@ release-job:
     paths:
       - BM-fpsoc-sdk.tar.bz2
   script:
-    - tar -cvjf BM-fpsoc-sdk.tar.bz2 --exclude $CI_PROJECT_DIR/tools/ci $CI_PROJECT_DIR
+    - tar --warning=no-file-changed -cvjf BM-fpsoc-sdk.tar.bz2 --exclude $CI_PROJECT_DIR/tools/ci $CI_PROJECT_DIR
   release:
     tag_name: "$CI_COMMIT_TAG"
     description: "$CI_COMMIT_TAG"
