@@ -91,8 +91,6 @@ release-job:
     - release
   only:
     - tags
-  rules:
-    - if: $CI_COMMIT_TAG
   artifacts:
     paths:
       - BM-fpsoc-sdk.tar.bz2
