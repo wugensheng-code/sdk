@@ -32,7 +32,7 @@ def make_all(path, chip, download, sdk_root, debug):
 
     for makefile_p in makefiles_p:
         if makefile_p.is_file():
-            
+
             if 'freertos' in str(makefile_p) and chip == 'dr1v90':
                 continue
 
