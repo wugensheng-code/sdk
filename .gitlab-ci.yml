@@ -100,7 +100,7 @@ release-job:
     paths:
       - BM-fpsoc-sdk.tar.bz2
   script:
-    - tar -cjf BM-fpsoc-sdk.tar.bz2 --exclude=$CI_PROJECT_DIR/tools/ci/bsp_tool --exclude=$CI_PROJECT_DIR/tools/ci/DR1M90_DEMO.hpf --exclude=$CI_PROJECT_DIR/tools/ci/build_with_bsp_tool.py
+    - tar -cjf BM-fpsoc-sdk.tar.bz2 --exclude=$CI_PROJECT_DIR/tools/ci/bsp_tool --exclude=$CI_PROJECT_DIR/tools/ci/DR1M90_DEMO.hpf --exclude=$CI_PROJECT_DIR/tools/ci/build_with_bsp_tool.py ./*
   release:
     tag_name: "$CI_COMMIT_TAG"
     description: "$CI_COMMIT_TAG"
