@@ -1,120 +1,50 @@
 /*
-    FreeRTOS V9.0.0 - Copyright (C) 2016 Real Time Engineers Ltd.
-    All rights reserved
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 
-    VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
-
-    This file is part of the FreeRTOS distribution.
-
-    FreeRTOS is free software; you can redistribute it and/or modify it under
-    the terms of the GNU General Public License (version 2) as published by the
-    Free Software Foundation >>>> AND MODIFIED BY <<<< the FreeRTOS exception.
-
-    ***************************************************************************
-    >>!   NOTE: The modification to the GPL is included to allow you to     !<<
-    >>!   distribute a combined work that includes FreeRTOS without being   !<<
-    >>!   obliged to provide the source code for proprietary components     !<<
-    >>!   outside of the FreeRTOS kernel.                                   !<<
-    ***************************************************************************
-
-    FreeRTOS is distributed in the hope that it will be useful, but WITHOUT ANY
-    WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-    FOR A PARTICULAR PURPOSE.  Full license text is available on the following
-    link: http://www.freertos.org/a00114.html
-
-    ***************************************************************************
-     *                                                                       *
-     *    FreeRTOS provides completely free yet professionally developed,    *
-     *    robust, strictly quality controlled, supported, and cross          *
-     *    platform software that is more than just the market leader, it     *
-     *    is the industry's de facto standard.                               *
-     *                                                                       *
-     *    Help yourself get started quickly while simultaneously helping     *
-     *    to support the FreeRTOS project by purchasing a FreeRTOS           *
-     *    tutorial book, reference manual, or both:                          *
-     *    http://www.FreeRTOS.org/Documentation                              *
-     *                                                                       *
-    ***************************************************************************
-
-    http://www.FreeRTOS.org/FAQHelp.html - Having a problem?  Start by reading
-    the FAQ page "My application does not run, what could be wrong?".  Have you
-    defined configASSERT()?
-
-    http://www.FreeRTOS.org/support - In return for receiving this top quality
-    embedded software for free we request you assist our global community by
-    participating in the support forum.
-
-    http://www.FreeRTOS.org/training - Investing in training allows your team to
-    be as productive as possible as early as possible.  Now you can receive
-    FreeRTOS training directly from Richard Barry, CEO of Real Time Engineers
-    Ltd, and the world's leading authority on the world's leading RTOS.
-
-    http://www.FreeRTOS.org/plus - A selection of FreeRTOS ecosystem products,
-    including FreeRTOS+Trace - an indispensable productivity tool, a DOS
-    compatible FAT file system, and our tiny thread aware UDP/IP stack.
-
-    http://www.FreeRTOS.org/labs - Where new FreeRTOS products go to incubate.
-    Come and try FreeRTOS+TCP, our new open source TCP/IP stack for FreeRTOS.
-
-    http://www.OpenRTOS.com - Real Time Engineers ltd. license FreeRTOS to High
-    Integrity Systems ltd. to sell under the OpenRTOS brand.  Low cost OpenRTOS
-    licenses offer ticketed support, indemnification and commercial middleware.
-
-    http://www.SafeRTOS.com - High Integrity Systems also provide a safety
-    engineered and independently SIL3 certified version for use in safety and
-    mission critical applications that require provable dependability.
-
-    1 tab == 4 spaces!
-*/
-
-/* Kernel includes. */
-#include "FreeRTOS.h" /* Must come first. */
-#include "queue.h"    /* RTOS queue related API prototypes. */
-#include "semphr.h"   /* Semaphore related API prototypes. */
-#include "task.h"     /* RTOS task related API prototypes. */
-#include "timers.h"   /* Software timer related API prototypes. */
+#include <rtthread.h>
+#include "rtthread_demo_config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "freertos_demo_config.h"
-
 /* The period of the example software timer, specified in milliseconds, and
-converted to ticks using the pdMS_TO_TICKS() macro. */
-#define mainSOFTWARE_TIMER_PERIOD_MS    pdMS_TO_TICKS(1000)
-#define TASKDLYMS                       pdMS_TO_TICKS(100)
+converted to ticks using the rt_tick_from_millisecond() macro. */
+#define mainSOFTWARE_TIMER_PERIOD_MS    rt_tick_from_millisecond(1000)
+#define TASKDLYMS                       rt_tick_from_millisecond(100)
 #define mainQUEUE_LENGTH                (1)
 
 static void prvSetupHardware(void);
+extern void idle_task(void);
 
-/* The queue used by the queue send and queue receive tasks. */
-static QueueHandle_t xQueue = NULL;
-
-static TaskHandle_t Task1Led_Handler;
-static TaskHandle_t Task2Can_Send_Handler;
-static TaskHandle_t Task3Can_DmaRecv_Handler;
-static TaskHandle_t Task4Wdt_Handler;
-static TaskHandle_t Task5Dmacahb_Handler;
-static TaskHandle_t Task6Iic_Handler;
-static TaskHandle_t Task7Uart_Handler;
-static TaskHandle_t Task8Usb_Handler;
-static TaskHandle_t Task9Gbe_Handler;
-static TaskHandle_t Task10Mmc_Handler;
-static TaskHandle_t Task11Qspi_Handler;
-static TaskHandle_t Task12Iis_Handler;
-static TaskHandle_t Task13Dma_Handler;
-static TaskHandle_t Task14Dmacahb2_Handler;
-static TaskHandle_t Task15UartProc_Handler;
-static TaskHandle_t Task16AsyncPrint_Handler;
+static rt_thread_t Task1Led_Handler;
+static rt_thread_t Task2Can_Send_Handler;
+static rt_thread_t Task3Can_DmaRecv_Handler;
+static rt_thread_t Task4Wdt_Handler;
+static rt_thread_t Task5Dmacahb_Handler;
+static rt_thread_t Task6Iic_Handler;
+static rt_thread_t Task7Uart_Handler;
+static rt_thread_t Task8Usb_Handler;
+static rt_thread_t Task9Gbe_Handler;
+static rt_thread_t Task10Mmc_Handler;
+static rt_thread_t Task11Qspi_Handler;
+static rt_thread_t Task12Iis_Handler;
+static rt_thread_t Task13Dma_Handler;
+static rt_thread_t Task14Dmacahb2_Handler;
+static rt_thread_t Task15UartProc_Handler;
 
 static AL_Lock Lock_CanInit;
 static AL_Lock Lock_DmaInit;
 static AL_Lock Lock_DmacahbInit;
 AL_Lock Lock_Log;
 static AL_MailBox MailBox_CanRecv;
-static QueueHandle_t Queue_UartRecv;
+static rt_mq_t Queue_UartRecv;
 
-AL_CAN_HalStruct *CanHandle = AL_NULL;
+extern struct rt_thread *rt_current_thread;
+
+AL_U32 rtthreadRunTimeTicks;
 
 void prvSetupHardware(void)
 {
@@ -135,13 +65,11 @@ void task12_Iis(void* pvParameters);
 void task13_Dma(void* pvParameters);
 void task14_dmacahb2(void* pvParameters);
 void task15_UartProc(void* pvParameters);
-void task16_AsyncPrint(void* pvParameters);
 
 typedef AL_VOID (*Task15Func)(AL_VOID);
 static AL_S32 task3_DmacahbChEventCallBack(AL_DMACAHB_EventStruct *Event, AL_VOID *CallBackRef);
 static AL_S32 task15_UartRecvProcess(AL_U8 *RecvMem);
 static AL_VOID task15_CmdHelp(AL_VOID);
-static AL_VOID task15_CmdTaskState(AL_VOID);
 AL_VOID ConfigureTimerForRunTimeStates(AL_VOID);
 static AL_VOID Ttc_DefEventHandler(AL_TTC_EventStruct TtcEvent, AL_VOID *CallbackRef);
 
@@ -152,33 +80,24 @@ static AL_U8 task15_ProcName[][UART_CMD_LEN_MAX] = {
 
 static Task15Func task15_ProcList[] = {
     task15_CmdHelp,
-    task15_CmdTaskState,
 };
 
-int main(void)
+int demo(void)
 {
     AL_S32 Ret = AL_OK;
-    TimerHandle_t xExampleSoftwareTimer = NULL;
 
     /* Configure the system ready to run the demo.  The clock configuration
     can be done here if it was not done before main() was called. */
     prvSetupHardware();
 
-    // ConfigureTimerForRunTimeStates();
+    ConfigureTimerForRunTimeStates();
 
-    xQueue = xQueueCreate(/* The number of items the queue can hold. */
-                 mainQUEUE_LENGTH,
-                 /* The size of each item the queue holds. */
-                 sizeof(uint32_t));
-
-    if (xQueue == NULL) {
-        // AL_LOG(AL_LOG_LEVEL_ERROR, "Unable to create xQueue due to low memory.\n");
-        while (1);
-    }
-    xTaskCreate((TaskFunction_t)task1_led, (const char*)"task1_led",
-                (uint16_t)GPIO_LED_TASK_STACK_SIZE, (void*)NULL,
-                (UBaseType_t)GPIO_LED_TASK_PRIORITY,
-                (TaskHandle_t*)&Task1Led_Handler);
+    Task1Led_Handler = rt_thread_create((const char*)"led", task1_led, (void*)NULL,
+                (uint16_t)GPIO_LED_TASK_STACK_SIZE, 
+                (rt_ubase_t)GPIO_LED_TASK_PRIORITY,
+                THREAD_TICK);
+    if (Task1Led_Handler != RT_NULL)
+        rt_thread_startup(Task1Led_Handler);
 
     Ret = AlOsal_Lock_Init(&Lock_Log, "Log");
     if (Ret != AL_OK) {
@@ -205,87 +124,96 @@ int main(void)
         while (1);
     }
 
-    Queue_UartRecv = xQueueCreate(UART_RECV_MEM_SIZE, UART_RECV_MEM_LENGTH);
+    Queue_UartRecv = rt_mq_create("uart_recv", UART_RECV_MEM_LENGTH, UART_RECV_MEM_SIZE, RT_IPC_FLAG_PRIO);
     if (Queue_UartRecv == AL_NULL) {
         while(1);
     }
 
-    xTaskCreate((TaskFunction_t)task2_can_send, (const char*)"task2_can_send",
-                (uint16_t)CAN_SEND_TASK_STACK_SIZE, (void*)NULL,
-                (UBaseType_t)CAN_SEND_TASK_PRIORITY,
-                (TaskHandle_t*)&Task2Can_Send_Handler);
+    Task2Can_Send_Handler = rt_thread_create((const char*)"can_send", task2_can_send, (void*)NULL,
+                (uint16_t)CAN_SEND_TASK_STACK_SIZE, 
+                (rt_ubase_t)CAN_SEND_TASK_PRIORITY,
+                THREAD_TICK);
+    if (Task2Can_Send_Handler != RT_NULL)
+        rt_thread_startup(Task2Can_Send_Handler);
 
-    xTaskCreate((TaskFunction_t)task3_can_dmarecv, (const char*)"task3_can_dmarecv",
+    Task3Can_DmaRecv_Handler = rt_thread_create((const char*)"can_dmarecv", task3_can_dmarecv, (void*)NULL, 
                 (uint16_t)CAN_DMARECV_TASK_STACK_SIZE,
-                (void*)NULL, (UBaseType_t)CAN_DMARECV_TASK_PRIORITY,
-                (TaskHandle_t*)&Task3Can_DmaRecv_Handler);
+                (rt_ubase_t)CAN_DMARECV_TASK_PRIORITY,
+                THREAD_TICK);
+    if (Task3Can_DmaRecv_Handler != RT_NULL)
+        rt_thread_startup(Task3Can_DmaRecv_Handler);
 
-    // xTaskCreate((TaskFunction_t)task4_wdt, (const char*)"task4_wdt",
-    //             (uint16_t)WDT_TASK_STACK_SIZE, (void*)NULL,
-    //             (UBaseType_t)WDT_TASK_PRIORITY,
-    //             (TaskHandle_t*)&Task4Wdt_Handler);
+    Task4Wdt_Handler = rt_thread_create((const char*)"wdt", task4_wdt, (void*)NULL, 
+                (uint16_t)WDT_TASK_STACK_SIZE,
+                (rt_ubase_t)WDT_TASK_PRIORITY,
+                THREAD_TICK);
+    if (Task4Wdt_Handler != RT_NULL)
+        rt_thread_startup(Task4Wdt_Handler);
 
-    xTaskCreate((TaskFunction_t)task5_dmacahb, (const char*)"task5_dmacahb",
-                (uint16_t)DMACAHB_TASK_STACK_SIZE, (void*)NULL,
-                (UBaseType_t)DMACAHB_TASK_PRIORITY,
-                (TaskHandle_t*)&Task5Dmacahb_Handler);
+    Task5Dmacahb_Handler = rt_thread_create((const char*)"dmacahb", task5_dmacahb, (void*)NULL,
+                (uint16_t)DMACAHB_TASK_STACK_SIZE,
+                (rt_ubase_t)DMACAHB_TASK_PRIORITY,
+                THREAD_TICK);
+    if (Task5Dmacahb_Handler != RT_NULL)
+        rt_thread_startup(Task5Dmacahb_Handler);
 
-    xTaskCreate((TaskFunction_t)task6_Iic, (const char*)"task6_Iic",
-                (uint16_t)IIC_TASK_STACK_SIZE, (void*)NULL,
-                (UBaseType_t)IIC_TASK_PRIORITY,
-                (TaskHandle_t*)&Task6Iic_Handler);
+    Task6Iic_Handler = rt_thread_create((const char*)"Iic", task6_Iic, (void*)NULL,
+                (uint16_t)IIC_TASK_STACK_SIZE,
+                (rt_ubase_t)IIC_TASK_PRIORITY,
+                THREAD_TICK);
+    if (Task6Iic_Handler != RT_NULL)
+        rt_thread_startup(Task6Iic_Handler);
 
-    xTaskCreate((TaskFunction_t)task7_Uart, (const char*)"task7_Uart",
-                (uint16_t)UART_TASK_STACK_SIZE, (void*)NULL,
-                (UBaseType_t)UART_TASK_PRIORITY,
-                (TaskHandle_t*)&Task7Uart_Handler);
+    Task7Uart_Handler = rt_thread_create((const char*)"Uart", task7_Uart, (void*)NULL,
+                (uint16_t)UART_TASK_STACK_SIZE,
+                (rt_ubase_t)UART_TASK_PRIORITY,
+                THREAD_TICK);
+    if (Task7Uart_Handler != RT_NULL)
+        rt_thread_startup(Task7Uart_Handler);
 
-    xTaskCreate((TaskFunction_t)task9_Gbe, (const char*)"task9_Gbe",
-                (uint16_t)GBE_TASK_STACK_SIZE, (void*)NULL,
-                (UBaseType_t)GBE_TASK_PRIORITY,
-                (TaskHandle_t*)&Task9Gbe_Handler);
+    Task10Mmc_Handler = rt_thread_create((const char*)"Mmc", task10_Mmc, (void*)NULL,
+                (uint16_t)MMC_TASK_STACK_SIZE,
+                (rt_ubase_t)MMC_TASK_PRIORITY,
+                THREAD_TICK);
+    if (Task10Mmc_Handler != RT_NULL)
+        rt_thread_startup(Task10Mmc_Handler);
 
-    xTaskCreate((TaskFunction_t)task10_Mmc, (const char*)"task10_Mmc",
-                (uint16_t)MMC_TASK_STACK_SIZE, (void*)NULL,
-                (UBaseType_t)MMC_TASK_PRIORITY,
-                (TaskHandle_t*)&Task10Mmc_Handler);
+    Task11Qspi_Handler = rt_thread_create((const char*)"Qspi", task11_Qspi, (void*)NULL,
+                (uint16_t)QSPI_TASK_STACK_SIZE,
+                (rt_ubase_t)QSPI_TASK_PRIORITY,
+                THREAD_TICK);
+    if (Task11Qspi_Handler != RT_NULL)
+        rt_thread_startup(Task11Qspi_Handler);
 
-    xTaskCreate((TaskFunction_t)task11_Qspi, (const char*)"task11_Qspi",
-                (uint16_t)QSPI_TASK_STACK_SIZE, (void*)NULL,
-                (UBaseType_t)QSPI_TASK_PRIORITY,
-                (TaskHandle_t*)&Task11Qspi_Handler);
+    Task12Iis_Handler = rt_thread_create((const char*)"Iis", task12_Iis, (void*)NULL,
+                (uint16_t)IIS_TASK_STACK_SIZE,
+                (rt_ubase_t)IIS_TASK_PRIORITY,
+                THREAD_TICK);
+    if (Task12Iis_Handler != RT_NULL)
+        rt_thread_startup(Task12Iis_Handler);
 
-    xTaskCreate((TaskFunction_t)task12_Iis, (const char*)"task12_Iis",
-                (uint16_t)IIS_TASK_STACK_SIZE, (void*)NULL,
-                (UBaseType_t)IIS_TASK_PRIORITY,
-                (TaskHandle_t*)&Task12Iis_Handler);
+    Task13Dma_Handler = rt_thread_create((const char*)"Dma", task13_Dma, (void*)NULL,
+                (uint16_t)DMA_TASK_STACK_SIZE,
+                (rt_ubase_t)DMA_TASK_PRIORITY,
+                THREAD_TICK);
+    if (Task13Dma_Handler != RT_NULL)
+        rt_thread_startup(Task13Dma_Handler);
 
-    xTaskCreate((TaskFunction_t)task13_Dma, (const char*)"task13_Dma",
-                (uint16_t)DMA_TASK_STACK_SIZE, (void*)NULL,
-                (UBaseType_t)DMA_TASK_PRIORITY,
-                (TaskHandle_t*)&Task13Dma_Handler);
+    Task14Dmacahb2_Handler = rt_thread_create((const char*)"dmacahb2", task14_dmacahb2, (void*)NULL,
+                (uint16_t)DMACAHB_TASK_STACK_SIZE,
+                (rt_ubase_t)DMACAHB_TASK_PRIORITY,
+                THREAD_TICK);
+    if (Task14Dmacahb2_Handler != RT_NULL)
+        rt_thread_startup(Task14Dmacahb2_Handler);
 
-    xTaskCreate((TaskFunction_t)task14_dmacahb2, (const char*)"task14_dmacahb2",
-                (uint16_t)DMACAHB_TASK_STACK_SIZE, (void*)NULL,
-                (UBaseType_t)DMACAHB_TASK_PRIORITY,
-                (TaskHandle_t*)&Task14Dmacahb2_Handler);
-
-    xTaskCreate((TaskFunction_t)task15_UartProc, (const char*)"task15_UartProc",
-                (uint16_t)UART_PROC_TASK_STACK_SIZE, (void*)NULL,
-                (UBaseType_t)UART_PROC_TASK_PRIORITY,
-                (TaskHandle_t*)&Task15UartProc_Handler);
-
-    xTaskCreate((TaskFunction_t)task16_AsyncPrint, (const char*)"task16_AsyncPrint",
-                (uint16_t)PRINT_TASK_STACK_SIZE, (void*)NULL,
-                (UBaseType_t)PRINT_TASK_PRIORITY,
-                (TaskHandle_t*)&Task16AsyncPrint_Handler);
-
-    vTaskStartScheduler();
-
-    AL_LOG(AL_LOG_LEVEL_ERROR, "OS should never run to here\r\n");
-
-    while (1);
+    Task15UartProc_Handler = rt_thread_create((const char*)"UartProc", task15_UartProc, (void*)NULL,
+                (uint16_t)UART_PROC_TASK_STACK_SIZE,
+                (rt_ubase_t)UART_PROC_TASK_PRIORITY,
+                THREAD_TICK);
+    if (Task15UartProc_Handler != RT_NULL)
+        rt_thread_startup(Task15UartProc_Handler);
 }
+MSH_CMD_EXPORT(demo, demo);
 
 void task1_led(void* pvParameters)
 {
@@ -302,19 +230,20 @@ void task1_led(void* pvParameters)
 
     while (1) {
         AlGpio_Hal_WritePin(GPIO, GPIO_LED_PIN_NUM, 0x0);
-        vTaskDelay(GPIO_LED_TOGGLE_TIME);
+        rt_thread_delay(GPIO_LED_TOGGLE_TIME);
         AlGpio_Hal_WritePin(GPIO, GPIO_LED_PIN_NUM, 0x1);
-        vTaskDelay(GPIO_LED_TOGGLE_TIME);
+        rt_thread_delay(GPIO_LED_TOGGLE_TIME);
     }
 }
 
 void task2_can_send(void* pvParameters)
 {
     AL_U32 Ret = AL_OK;
+    AL_CAN_HalStruct *CanHandle = AL_NULL;
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Task2 Can send hal init\r\n");
 
-    Ret = AlOsal_Lock_Take(&Lock_CanInit, portMAX_DELAY);
+    Ret = AlOsal_Lock_Take(&Lock_CanInit, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Task2 Can send hal init lock take error\r\n");
         while (1);
@@ -338,7 +267,7 @@ void task2_can_send(void* pvParameters)
                 AL_LOG(AL_LOG_LEVEL_DEBUG, "Task2 Send Frame: %d\r\n", i);
             }
 
-            vTaskDelay(CAN_SEND_INTERVAL_TIME);
+            rt_thread_delay(CAN_SEND_INTERVAL_TIME);
         }
 
     }
@@ -350,20 +279,20 @@ void task3_can_dmarecv(void* pvParameters)
     AL_CAN_FrameStruct Frame = {0};
     AL_DMACAHB_HalStruct *DmaHandle = AL_NULL;
     AL_DMACAHB_EventStruct DmaEvent = {0};
-    AL_DMACAHB_ChTransStruct *DmacChTrans = AL_NULL;
-    AL_U8 *RecvMem = (AL_U8 *)pvPortMalloc(CAN_DMA_RECV_DATA);
+    AL_U8 *RecvMem = (AL_U8 *)rt_malloc(CAN_DMA_RECV_DATA);
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Task3 Can recv dmacahb hal init\r\n");
     /* Wait for can send init done forever */
-    Ret = AlOsal_Lock_Take(&Lock_CanInit, portMAX_DELAY);
+    Ret = AlOsal_Lock_Take(&Lock_CanInit, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Task3 Can send hal init lock take error\r\n");
         while (1);
     }
 
-    Ret = AlOsal_Lock_Take(&Lock_DmacahbInit, portMAX_DELAY);
+
+    Ret = AlOsal_Lock_Take(&Lock_DmacahbInit, AL_WAITFOREVER);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Task3 Can dma hal init lock take error\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Task2 Can send hal init lock take error\r\n");
         while (1);
     }
 
@@ -373,19 +302,11 @@ void task3_can_dmarecv(void* pvParameters)
         while (1);
     }
 
-    DmacChTrans = &(DmaHandle->Channel.Trans);
-    DmacChTrans->SrcAddr        = CanHandle->Dev.BaseAddr;
-    DmacChTrans->DstAddr        = (AL_REG)RecvMem;
-    DmacChTrans->TransSize      = CAN_DMA_RECV_DATA >> 2;
-    DmacChTrans->ReloadCountNum = AL_DMACAHB_RELOAD_CNT_MAX;   /* max AL_U32 for trans forever */
-
-    AlDmacAhb_Hal_Start(DmaHandle);
-
     AlOsal_Lock_Release(&Lock_DmacahbInit);
 
-    AlOsal_Lock_Release(&Lock_CanInit);
-
     AL_LOG(AL_LOG_LEVEL_INFO, "Task3 Can recv dmacahb hal init success\r\n");
+
+    AlOsal_Lock_Release(&Lock_CanInit);
 
     while (1) {
         Ret = AlOsal_Mb_Receive(&MailBox_CanRecv, &DmaEvent, CAN_RECV_DATA_TIMEOUT_MS);
@@ -449,7 +370,7 @@ void task4_wdt(void* pvParameters)
     while (1) {
         AlWdt_Hal_Feed(WdtHandle);
         AL_LOG(AL_LOG_LEVEL_INFO, "Task4 Wdt feed dog\r\n");
-        vTaskDelay(WDT_FEED_TIME);
+        rt_thread_delay(WDT_FEED_TIME);
     }
 }
 
@@ -459,12 +380,12 @@ void task5_dmacahb(void* pvParameters)
     AL_U8 InitData = 0;
     AL_DMACAHB_HalStruct *DmaHandle = AL_NULL;
     AL_DMACAHB_ChTransStruct *ChTransCfg = AL_NULL;
-    AL_U8 *MemSrc = (AL_U8 *)pvPortMalloc(DMACAHB_ARRAY_SIZE);
-    AL_U8 *MemDst = (AL_U8 *)pvPortMalloc(DMACAHB_ARRAY_SIZE);
+    AL_U8 *MemSrc = (AL_U8 *)rt_malloc(DMACAHB_ARRAY_SIZE);
+    AL_U8 *MemDst = (AL_U8 *)rt_malloc(DMACAHB_ARRAY_SIZE);
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Task5 Dmacahb hal init\r\n");
 
-    Ret = AlOsal_Lock_Take(&Lock_DmacahbInit, portMAX_DELAY);
+    Ret = AlOsal_Lock_Take(&Lock_DmacahbInit, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Task5 dmacahb hal init lock take error\r\n");
         while (1);
@@ -503,7 +424,7 @@ void task5_dmacahb(void* pvParameters)
         #ifdef ENABLE_MMU
         AlCache_FlushDcacheRange(ChTransCfg->DstAddr, ChTransCfg->DstAddr + DMACAHB_ARRAY_SIZE);
         #endif
-        vTaskDelay(DMACAHB_INTERVAL_TIME);
+        rt_thread_delay(DMACAHB_INTERVAL_TIME);
     }
 }
 
@@ -514,8 +435,8 @@ void task6_Iic(void* pvParameters)
     AL_U8 Channel = IIC_EEPROM_CHANNEL;
     AL_U16 SlaveAddr = IIC_EEPROM_START_ADDR;
     AL_IIC_HalStruct *IicHandle = AL_NULL;
-    AL_U8 *MemWrite = (AL_U8 *)pvPortMalloc(IIC_ADDR_SIZE + IIC_EEPROM_PAGE_SIZE);
-    AL_U8 *MemRead = (AL_U8 *)pvPortMalloc(IIC_EEPROM_PAGE_SIZE);
+    AL_U8 *MemWrite = (AL_U8 *)rt_malloc(IIC_ADDR_SIZE + IIC_EEPROM_PAGE_SIZE);
+    AL_U8 *MemRead = (AL_U8 *)rt_malloc(IIC_EEPROM_PAGE_SIZE);
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Task6 Iic hal init\r\n");
 
@@ -544,7 +465,7 @@ void task6_Iic(void* pvParameters)
         }
 
         /* Wait write complete */
-        vTaskDelay(IIC_WAIT_WRITE_COMPLETE);
+        rt_thread_delay(IIC_WAIT_WRITE_COMPLETE);
 
         /* Send read address */
         Ret = AlIic_Hal_MasterSendDataBlock(IicHandle, IIC_EEPROM_ADDRESS, (AL_U8 *)&SlaveAddr,
@@ -571,7 +492,7 @@ void task6_Iic(void* pvParameters)
         AlCache_FlushDcacheRange(MemRead, MemRead + IIC_EEPROM_PAGE_SIZE);
         #endif
 
-        vTaskDelay(IIC_INTERVAL_TIME);
+        rt_thread_delay(IIC_INTERVAL_TIME);
     }
 }
 
@@ -581,19 +502,12 @@ void task7_Uart(void* pvParameters)
     AL_U32 Ret = AL_OK;
     AL_UART_HalStruct *UartHandle = AlLog;
     AL_UART_EventStruct UartEvent = {0};
-    AL_U8 *RecvMem = (AL_U8 *)pvPortMalloc(UART_RECV_MEM_LENGTH);
+    AL_U8 *RecvMem = (AL_U8 *)rt_malloc(UART_RECV_MEM_LENGTH);
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Task7 uart hal init\r\n");
 
-    // Ret = AlUart_Hal_Init(&UartHandle, UART_DEVICE_ID, &task7_UartConfig, AL_NULL);
-    // if (Ret != AL_OK) {
-    //     AL_LOG(AL_LOG_LEVEL_ERROR, "Task7 uart hal Init error:0x%x\r\n", Ret);
-    //     while (1);
-    // }
-    // AL_LOG(AL_LOG_LEVEL_INFO, "Task7 uart hal init success\r\n");
-
     while (1) {
-        Ret = AlUart_Hal_RecvDataBlock(UartHandle, &RecvMem[UART_RECV_SIZE_LENGTH], UART_RECV_MEM_LENGTH, (AL_U8 *)&RecvMem[0], portMAX_DELAY);
+        Ret = AlUart_Hal_RecvDataBlock(UartHandle, &RecvMem[UART_RECV_SIZE_LENGTH], UART_RECV_MEM_LENGTH, (AL_U8 *)&RecvMem[0], AL_WAITFOREVER);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Task7 uart recv data Error: 0x%x\r\n", Ret);
         }
@@ -603,12 +517,12 @@ void task7_Uart(void* pvParameters)
         //     AL_LOG(AL_LOG_LEVEL_ERROR, "Task7 Uart proc error:0x%x\r\n", Ret);
         // }
 
-        Ret = xQueueSend(Queue_UartRecv, RecvMem, UART_QUEUE_BLOCK_TIME);
-        if (Ret != pdTRUE) {
+        Ret = rt_mq_send(Queue_UartRecv, RecvMem, UART_RECV_MEM_LENGTH);
+        if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Task7 uart recv data send queue Error: 0x%x\r\n", Ret);
         }
 
-        vTaskDelay(UART_INTERVAL_TIME);
+        rt_thread_delay(UART_INTERVAL_TIME);
     }
 }
 
@@ -621,7 +535,7 @@ void task9_Gbe(void* pvParameters)
 
     netif_config();
 
-    vTaskSuspend(NULL);
+    rt_thread_suspend(rt_current_thread);
 
     while(1);
 }
@@ -632,8 +546,8 @@ void task10_Mmc(void* pvParameters)
     AL_U32 InitData = 0;
     AL_U32 BlockCnt = MMC_BLOCK_COUNT;
     AL_MMC_HalStruct *MmcHandle = AL_NULL;
-    AL_U8 *MemWrite = (AL_U8 *)pvPortMalloc(MMC_BLOCK_LEN);
-    AL_U8 *MemRead = (AL_U8 *)pvPortMalloc(MMC_BLOCK_LEN);
+    AL_U8 *MemWrite = (AL_U8 *)rt_malloc(MMC_BLOCK_LEN);
+    AL_U8 *MemRead = (AL_U8 *)rt_malloc(MMC_BLOCK_LEN);
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Task10 Mmc hal init\r\n");
 
@@ -669,7 +583,7 @@ void task10_Mmc(void* pvParameters)
         AlCache_FlushDcacheRange(MemRead, MemRead + MMC_BLOCK_LEN);
         #endif
 
-        vTaskDelay(MMC_INTERVAL_TIME);
+        rt_thread_delay(MMC_INTERVAL_TIME);
     }
 }
 
@@ -678,9 +592,9 @@ void task11_Qspi(void* pvParameters)
     AL_S32 Ret = AL_OK;
     AL_U32 InitData = 0;
     AL_QSPI_HalStruct *QspiHandle = AL_NULL;
-    AL_U8 *FlashId = (AL_U8 *)pvPortMalloc(10);
-    AL_U8 *SendData = (AL_U8 *)pvPortMalloc(500);
-    AL_U8 *RecvData = (AL_U8 *)pvPortMalloc(500);
+    AL_U8 *FlashId = (AL_U8 *)rt_malloc(10);
+    AL_U8 *SendData = (AL_U8 *)rt_malloc(500);
+    AL_U8 *RecvData = (AL_U8 *)rt_malloc(500);
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Task11 Qspi hal init\r\n");
 
@@ -693,44 +607,44 @@ void task11_Qspi(void* pvParameters)
 
     while (1) {
         AL_LOG(AL_LOG_LEVEL_INFO, "Task11 qspi Data read&write %d\r\n", InitData++);
-        AlQspi_freertos_ReadId(QspiHandle, SendData, FlashId);
-        AlQspi_freertos_ReadStatus(QspiHandle, SendData, RecvData);
+        AlQspi_rtthread_ReadId(QspiHandle, SendData, FlashId);
+        AlQspi_rtthread_ReadStatus(QspiHandle, SendData, RecvData);
         if((FlashId[0] != 0x01) && (FlashId[0] != 0x20) && (FlashId[0] != 0x0) && (FlashId[0] != 0xff)) {
             if( (FlashId[0] != 0x9d) && (FlashId[0] != 0xc2) ){
-                Ret = AlQspi_freertos_SetQuad(QspiHandle, SendData, RecvData, 0x31, 0x35, 1);
+                Ret = AlQspi_rtthread_SetQuad(QspiHandle, SendData, RecvData, 0x31, 0x35, 1);
             }else{
-                Ret = AlQspi_freertos_SetQuad(QspiHandle, SendData, RecvData, 0x01, 0x05, 6);
+                Ret = AlQspi_rtthread_SetQuad(QspiHandle, SendData, RecvData, 0x01, 0x05, 6);
             }
             if(Ret != AL_OK) {
                 AL_LOG(AL_LOG_LEVEL_ERROR, "Task11 AlQspi set quad error\r\n");
             }
         }
 
-        // AlQspi_freertos_WrEn(QspiHandle, SendData);
-        // AlQspi_freertos_EraseChip(QspiHandle, SendData);
-        // AlQspi_freertos_WaitWip(QspiHandle, SendData, RecvData);
+        AlQspi_rtthread_WrEn(QspiHandle, SendData);
+        AlQspi_rtthread_EraseChip(QspiHandle, SendData);
+        AlQspi_rtthread_WaitWip(QspiHandle, SendData, RecvData);
 
-        // AlQspi_freertos_X4_1_1_4_Read(QspiHandle, SendData, 0, RecvData);
-        // for (AL_U32 i = 0; i < 240; i++) {
-        //     if(0xff != RecvData[i]) {
-        //         AL_LOG(AL_LOG_LEVEL_ERROR, "Task11 AlQspi test erase norflash error\r\n");
-        //         AL_LOG(AL_LOG_LEVEL_ERROR, "Task11 Error RecvData[%d]:%d\r\n", i, RecvData[i]);
-        //     }
-        // }
-        // AL_LOG(AL_LOG_LEVEL_INFO, "Task11 AlQspi test erase norflash success\r\n");
+        AlQspi_rtthread_X4_1_1_4_Read(QspiHandle, SendData, 0, RecvData);
+        for (AL_U32 i = 0; i < 240; i++) {
+            if(0xff != RecvData[i]) {
+                AL_LOG(AL_LOG_LEVEL_ERROR, "Task11 AlQspi test erase norflash error\r\n");
+                AL_LOG(AL_LOG_LEVEL_ERROR, "Task11 Error RecvData[%d]:%d\r\n", i, RecvData[i]);
+            }
+        }
+        AL_LOG(AL_LOG_LEVEL_INFO, "Task11 AlQspi test erase norflash success\r\n");
 
-        AlQspi_freertos_WrEn(QspiHandle, SendData);
-        AlQspi_freertos_Write_X4_1_1_4_Page(QspiHandle, SendData, QSPI_ADDR_OFFSET);
-        AlQspi_freertos_WaitWip(QspiHandle, SendData, RecvData);
+        AlQspi_rtthread_WrEn(QspiHandle, SendData);
+        AlQspi_rtthread_Write_X4_1_1_4_Page(QspiHandle, SendData, 0);
+        AlQspi_rtthread_WaitWip(QspiHandle, SendData, RecvData);
 
-        AlQspi_freertos_X4_1_1_4_Read(QspiHandle, SendData, QSPI_ADDR_OFFSET, RecvData);
+        AlQspi_rtthread_X4_1_1_4_Read(QspiHandle, SendData, 0, RecvData);
         for (AL_U32 i = 0; i < 230; i++) {
             if (i != RecvData[i]) {
                 AL_LOG(AL_LOG_LEVEL_ERROR, "Task11 Error RecvData[%d]:%d\r\n", i, RecvData[i]);
             }
         }
 
-        vTaskDelay(QSPI_INTERVAL_TIME);
+        rt_thread_delay(QSPI_INTERVAL_TIME);
     }
 }
 
@@ -741,13 +655,13 @@ void task12_Iis(void* pvParameters)
     AL_DMA_HalStruct *M2PHandle = AL_NULL;
     AL_DMA_HalStruct *P2MHandle = AL_NULL;
     AL_MailBox M2PEvent, P2MEvent;
-    AL_U32 *Src = pvPortMalloc(IIS_DMA_DATA_SIZE);
-    AL_U32 *Dst = pvPortMalloc(IIS_DMA_DATA_SIZE);
+    AL_U32 *Src = rt_malloc(IIS_DMA_DATA_SIZE);
+    AL_U32 *Dst = rt_malloc(IIS_DMA_DATA_SIZE);
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Task12 Iis dma m2p hal init\r\n");
 
     /* Take here and release after iis dma hal init success */
-    Ret = AlOsal_Lock_Take(&Lock_DmaInit, portMAX_DELAY);
+    Ret = AlOsal_Lock_Take(&Lock_DmaInit, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Task12 Iis dma hal init lock take error\r\n");
         while (1);
@@ -823,7 +737,7 @@ void task12_Iis(void* pvParameters)
         AlCache_FlushDcacheRange(Dst, Dst + IIS_DMA_DATA_SIZE);
         #endif
 
-        vTaskDelay(IIS_INTERVAL_TIME);
+        rt_thread_delay(IIS_INTERVAL_TIME);
     }
 }
 
@@ -832,13 +746,13 @@ void task13_Dma(void* pvParameters)
     AL_U32 Ret = AL_OK;
     AL_U32 InitData = 0;
     AL_DMA_HalStruct *DmaHandle = AL_NULL;
-    AL_U32 *Src = pvPortMalloc(DMA_TRANS_DATA_SIZE);
-    AL_U32 *Dst = pvPortMalloc(DMA_TRANS_DATA_SIZE);
+    AL_U32 *Src = rt_malloc(DMA_TRANS_DATA_SIZE);
+    AL_U32 *Dst = rt_malloc(DMA_TRANS_DATA_SIZE);
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Task13 Dma hal init\r\n");
 
     /* Take here and release after iis dma hal init success */
-    Ret = AlOsal_Lock_Take(&Lock_DmaInit, portMAX_DELAY);
+    Ret = AlOsal_Lock_Take(&Lock_DmaInit, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Task13 dma hal init lock take error\r\n");
         while (1);
@@ -876,7 +790,7 @@ void task13_Dma(void* pvParameters)
         AlCache_FlushDcacheRange(Dst, Dst + DMA_TRANS_DATA_SIZE);
         #endif
 
-        vTaskDelay(DMA_INTERVAL_TIME);
+        rt_thread_delay(DMA_INTERVAL_TIME);
     }
 }
 
@@ -886,12 +800,12 @@ void task14_dmacahb2(void* pvParameters)
     AL_U8 InitData = 0;
     AL_DMACAHB_HalStruct *DmaHandle = AL_NULL;
     AL_DMACAHB_ChTransStruct *ChTransCfg = AL_NULL;
-    AL_U8 *MemSrc = (AL_U8 *)pvPortMalloc(DMACAHB2_ARRAY_SIZE);
-    AL_U8 *MemDst = (AL_U8 *)pvPortMalloc(DMACAHB2_ARRAY_SIZE);
+    AL_U8 *MemSrc = (AL_U8 *)rt_malloc(DMACAHB2_ARRAY_SIZE);
+    AL_U8 *MemDst = (AL_U8 *)rt_malloc(DMACAHB2_ARRAY_SIZE);
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Task14 Dmacahb2 hal init\r\n");
 
-    Ret = AlOsal_Lock_Take(&Lock_DmacahbInit, portMAX_DELAY);
+    Ret = AlOsal_Lock_Take(&Lock_DmacahbInit, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Task14 dmacahb2 hal init lock take error\r\n");
         while (1);
@@ -931,20 +845,20 @@ void task14_dmacahb2(void* pvParameters)
         AlCache_FlushDcacheRange(ChTransCfg->DstAddr, ChTransCfg->DstAddr + DMACAHB2_ARRAY_SIZE);
         #endif
 
-        vTaskDelay(DMACAHB2_INTERVAL_TIME);
+        rt_thread_delay(DMACAHB2_INTERVAL_TIME);
     }
 }
 
 void task15_UartProc(void* pvParameters)
 {
     AL_S32 Ret = AL_OK;
-    AL_U8 *RecvMem = (AL_U8 *)pvPortMalloc(UART_RECV_MEM_LENGTH);
+    AL_U8 *RecvMem = (AL_U8 *)rt_malloc(UART_RECV_MEM_LENGTH);
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Task15 Init success\r\n");
 
     while (1) {
-        Ret = xQueueReceive(Queue_UartRecv, RecvMem, portMAX_DELAY);
-        if (Ret != pdTRUE) {
+        Ret = rt_mq_recv(Queue_UartRecv, RecvMem, UART_RECV_MEM_LENGTH, AL_WAITFOREVER);
+        if (Ret != AL_TRUE) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Task15 Uart proc recv error:0x%x\r\n", Ret);
         } else {
             Ret = task15_UartRecvProcess(RecvMem);
@@ -953,7 +867,7 @@ void task15_UartProc(void* pvParameters)
             }
         }
 
-        vTaskDelay(UART_INTERVAL_TIME);
+        rt_thread_delay(UART_INTERVAL_TIME);
     }
 }
 
@@ -985,95 +899,51 @@ static AL_VOID task15_CmdHelp(AL_VOID)
     AL_LOG(AL_LOG_LEVEL_INFO, "Task15 cmd help\r\n");
 }
 
-
-AL_U8 BufTaskList[TASK_STATE_BUF] = {0};
-AL_U8 BufTaskState[TASK_STATE_BUF] = {0};
-static AL_VOID task15_CmdTaskState(AL_VOID)
+AL_VOID ConfigureTimerForRunTimeStates(AL_VOID)
 {
-    // AL_LOG(AL_LOG_LEVEL_INFO, "Task15 cmd task state\r\n");
-    memset(BufTaskList, 0, TASK_STATE_BUF);
-    memset(BufTaskState, 0, TASK_STATE_BUF);
-    vTaskList(BufTaskList);
-    AL_LOG(AL_LOG_LEVEL_INFO, " taskName\tstatus\tpri\tStack\ttaskNum\r\n");
-    AL_LOG(AL_LOG_LEVEL_INFO, "%s", BufTaskList);
-    // AlLog_Write(BufTaskList, strlen(BufTaskList));
-    vTaskGetRunTimeStats(BufTaskState);
-    AL_LOG(AL_LOG_LEVEL_INFO, "Task Runtime State\r\n");
-    AL_LOG(AL_LOG_LEVEL_INFO, "%s", BufTaskState);
-    // AlLog_Write(BufTaskState, strlen(BufTaskState));
-}
+    AL_U32 Ret = AL_OK;
+    AL_TTC_HalStruct *TtcHandle = AL_NULL;
 
-void task16_AsyncPrint(void* pvParameters)
-{
-    AL_LOG(AL_LOG_LEVEL_INFO, "Task16 Async print init success\r\n");
-
-    while (1) {
-        AlPrint_AsyncPrintf();
-        vTaskDelay(PRINT_INTERVAL_TIME);
+    AlTtc_Hal_Init(&TtcHandle, TTC_DEVICE_ID, &Ttc_Config, Ttc_DefEventHandler);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
+        return Ret;
     }
+
+    AlTtc_Hal_EnableIntervalMode(TtcHandle);
+    AlTtc_Hal_SetIntervalMaxVal(TtcHandle, TTC_INTERVAL_MAX_VALUE);
+    AlTtc_Hal_EnableMatchMode(TtcHandle, AL_TRUE);
+    AlTtc_Hal_SetMatchVal(TtcHandle, AL_TTC_Match1, TTC_MATCH_VALUE);
+    AlTtc_Hal_EnableIntr(TtcHandle, AL_TTC_IntrMatch1);
+    AlTtc_Hal_EnableCounter(TtcHandle, AL_TRUE);
+
+    rtthreadRunTimeTicks = 0;
 }
 
-void vApplicationTickHook(void)
+static AL_VOID Ttc_DefEventHandler(AL_TTC_EventStruct TtcEvent, AL_VOID *CallbackRef)
 {
-    // BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+    switch (TtcEvent.Events)
+    {
+    case AL_TTC_EVENT_Interval:
+        break;
+    case AL_TTC_EVENT_Match1:
+        rtthreadRunTimeTicks++;
+        break;
+    case AL_TTC_EVENT_Match2:
+        break;
+    case AL_TTC_EVENT_Match3:
+        break;
+    case AL_TTC_EVENT_Overflow:
+        break;
+    case AL_TTC_EVENT_EventTimer:
+        break;
+    default:
+        break;
+    }
 
-    /* The RTOS tick hook function is enabled by setting configUSE_TICK_HOOK to
-    1 in FreeRTOSConfig.h.
-
-    "Give" the semaphore on every 500th tick interrupt. */
-
-    /* If xHigherPriorityTaskWoken is pdTRUE then a context switch should
-    normally be performed before leaving the interrupt (because during the
-    execution of the interrupt a task of equal or higher priority than the
-    running task was unblocked).  The syntax required to context switch from
-    an interrupt is port dependent, so check the documentation of the port you
-    are using.
-
-    In this case, the function is running in the context of the tick interrupt,
-    which will automatically check for the higher priority task to run anyway,
-    so no further action is required. */
 }
-/*-----------------------------------------------------------*/
 
-void vApplicationMallocFailedHook(void)
+int main()
 {
-    /* The malloc failed hook is enabled by setting
-    configUSE_MALLOC_FAILED_HOOK to 1 in FreeRTOSConfig.h.
-
-    Called if a call to pvPortMalloc() fails because there is insufficient
-    free memory available in the FreeRTOS heap.  pvPortMalloc() is called
-    internally by FreeRTOS API functions that create tasks, queues, software
-    timers, and semaphores.  The size of the FreeRTOS heap is set by the
-    configTOTAL_HEAP_SIZE configuration constant in FreeRTOSConfig.h. */
-    AL_LOG(AL_LOG_LEVEL_ERROR, "malloc failed\n");
-    while (1);
-}
-/*-----------------------------------------------------------*/
-
-void vApplicationStackOverflowHook(TaskHandle_t xTask, char* pcTaskName)
-{
-    /* Run time stack overflow checking is performed if
-    configconfigCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook
-    function is called if a stack overflow is detected.  pxCurrentTCB can be
-    inspected in the debugger if the task name passed into this function is
-    corrupt. */
-    AL_LOG(AL_LOG_LEVEL_ERROR, "Stack Overflow\n");
-    while (1);
-}
-/*-----------------------------------------------------------*/
-
-extern UBaseType_t uxCriticalNesting;
-void vApplicationIdleHook(void)
-{
-    // volatile size_t xFreeStackSpace;
-    /* The idle task hook is enabled by setting configUSE_IDLE_HOOK to 1 in
-    FreeRTOSConfig.h.
-
-    This function is called on each cycle of the idle task.  In this case it
-    does nothing useful, other than report the amount of FreeRTOS heap that
-    remains unallocated. */
-    /* By now, the kernel has allocated everything it is going to, so
-    if there is a lot of heap remaining unallocated then
-    the value of configTOTAL_HEAP_SIZE in FreeRTOSConfig.h can be
-    reduced accordingly. */
+    return 0;
 }

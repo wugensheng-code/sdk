@@ -289,7 +289,7 @@ int _unlink_r(struct _reent *ptr, const char *file)
     return -1;
 #endif /* DFS_USING_POSIX */
 }
-#if 1
+#if 0
 _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 {
 #ifdef DFS_USING_POSIX

@@ -46,12 +46,10 @@ static inline AL_S32 AlOsal_Lock_Init(AL_Lock_t Lock, const char* Name)
 static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_S32 Timeout)
 {
     /* If the scheduler is started and in thread context */
-    if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
-    {
+    if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL) {
         return rt_mutex_take(&Lock->Thread_Lock, Timeout);
     }
-    else
-    {
+    else {
         Lock->Isr_Lock = rt_hw_interrupt_disable();
     }
 }
@@ -59,12 +57,10 @@ static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_S32 Timeout)
 static inline AL_S32 AlOsal_Lock_Release(AL_Lock_t Lock)
 {
     /* If the scheduler is started and in thread context */
-    if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
-    {
+    if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL) {
         return rt_mutex_release(&Lock->Thread_Lock);
     }
-    else
-    {
+    else {
         rt_hw_interrupt_enable(Lock->Isr_Lock);
     }
 }
@@ -185,12 +181,10 @@ static inline AL_VOID ALOsal_ExitCritical(AL_VOID)
 static inline AL_VOID AlOsal_Sleep(AL_U32 Time)
 {
     /* If the scheduler is started and in thread context */
-    if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
-    {
+    if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL) {
         return rt_thread_mdelay(Time);
     }
-    else
-    {
+    else {
         return;
     }
 }
@@ -206,7 +200,7 @@ extern volatile uint64_t ullPortInterruptNesting;
  * MUTEX API.*
  *----------------------------------------------*/
 
-#define AL_WAITFOREVER           -1
+#define AL_WAITFOREVER           portMAX_DELAY
 #define AL_WAITING_NO            0
 typedef struct
 {

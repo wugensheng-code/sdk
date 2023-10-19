@@ -17,7 +17,7 @@
 
 /* Turn on some of these (set to non-zero) to debug kernel */
 #ifndef RT_DEBUG_MEM
-#define RT_DEBUG_MEM                   0
+#define RT_DEBUG_MEM                   1
 #endif
 
 #ifndef RT_DEBUG_MEMHEAP
