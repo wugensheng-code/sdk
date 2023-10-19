@@ -12,6 +12,8 @@ SDK_ROOT   ?= ../../..
 
 CHIP       ?= dr1v90
 
+DOWNLOAD = ocm
+
 ifeq ($(CHIP), dr1m90)
 ARMv8_EL         := EL3
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-

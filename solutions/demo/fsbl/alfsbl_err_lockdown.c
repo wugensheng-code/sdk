@@ -8,6 +8,7 @@
 #include "alfsbl_err_lockdown.h"
 #include "alfsbl_boot.h"
 #include "al_reg_io.h"
+#include "al_utils_def.h"
 
 /**
  * 1, update the error status register and fsbl instance structure with fsbl error code

@@ -7,10 +7,10 @@
 #include <stdio.h>
 
 #include "al_reg_io.h"
-
 #include "alfsbl_hw.h"
 #include "alfsbl_init.h"
 #include "al_core.h"
+#include "al_utils_def.h"
 
 extern uint8_t  DdrAvailable;
 
@@ -75,11 +75,11 @@ static uint32_t AlFsbl_GetResetReason(void)
 	uint32_t Ret;
 
 	if((AL_REG32_READ(SYSCTRL_S_GLOBAL_SRSTN)) & SYSCTRL_S_GLOBAL_SRSTN_MSK_PSONLY) {
-		printf("PS only reset\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "PS only reset\r\n");
 		Ret = FSBL_PS_ONLY_RESET;
 	}
 	else {
-		printf("System reset\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "System reset\r\n");
 		Ret = FSBL_SYSTEM_RESET;
 	}
 
@@ -126,7 +126,7 @@ static uint32_t AlFsbl_ProcessorInit(AlFsblInfo *FsblInstancePtr)
 static uint32_t AlFsbl_PmuInit(AlFsblInfo *FsblInstancePtr)
 {
 	uint32_t Status = ALFSBL_SUCCESS;
-	printf("PMU Error Config Init\r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "PMU Error Config Init\r\n");
 	uint32_t val = 0;
 
 	val = AL_REG32_READ(SYSCTRL_S_ERR_HW_EN0_SET)   |
@@ -203,7 +203,7 @@ static uint32_t AlFsbl_ValidateResetReason(void)
 		}
 	}
 	if(FsblStatus != ALFSBL_RUNNING) {
-		printf("mark fsbl is running...\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "mark fsbl is running...\r\n");
 		AL_REG32_WRITE(SYSCTRL_S_FSBL_ERR_CODE, ALFSBL_RUNNING);
 	}
 

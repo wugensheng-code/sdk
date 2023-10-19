@@ -16,6 +16,8 @@
 #include "alfsbl_boot.h"
 #include "alfsbl_partition_load.h"
 #include "al_systimer.h"
+#include "al_utils_def.h"
+
 
 extern uint8_t  ReadBuffer[READ_BUFFER_SIZE];
 
@@ -62,7 +64,7 @@ uint32_t AlFsbl_PartitionLoad(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx
 	DestDev = FsblInstancePtr->ImageHeader.PartitionHeader[PartitionIdx].PartitionAttribute & ALIH_PH_ATTRIB_DEST_DEV_MASK;
 
 	if(DestDev == ALIH_PH_ATTRIB_DEST_DEV_PS) {
-		printf("loading ps partition...\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "loading ps partition...\r\n");
 		Status = AlFsbl_LoadPsPartition(FsblInstancePtr, &FsblSecInfo, PartitionIdx);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
@@ -70,11 +72,11 @@ uint32_t AlFsbl_PartitionLoad(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx
 	}
 	else if(DestDev == ALIH_PH_ATTRIB_DEST_DEV_PL) {
 		if(FsblInstancePtr->ResetReason == FSBL_PS_ONLY_RESET) {
-			printf("ps only reset, no need to load pl partition\r\n");
+			AL_LOG(AL_LOG_LEVEL_INFO, "ps only reset, no need to load pl partition\r\n");
 			Status = ALFSBL_SUCCESS;
 			goto END;
 		}
-		printf("loading pl partition...\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "loading pl partition...\r\n");
 		Status = AlFsbl_LoadPlPartition(FsblInstancePtr, &FsblSecInfo, PartitionIdx);
 	}
 	else {
@@ -106,7 +108,7 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 	PartitionAttr = PtHdr->PartitionAttribute;
 
 	/// check checksum of partition header
-	printf("Partition Header Checksum: 0x%08x\r\n", PtHdr->PartiHdrChecksum);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Partition Header Checksum: 0x%08x\r\n", PtHdr->PartiHdrChecksum);
 	Status = AlFsbl_ChecksumCheck(
 				(uint8_t *)(PtHdr),
 				sizeof(AlFsbl_PartitionHeader) - 4,   /// the last word in PartitionHeader is checksum
@@ -117,8 +119,8 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 
 	/// check partition owner
 	if((PartitionAttr & ALIH_PH_ATTRIB_PART_OWNER_MASK) != ALIH_PH_ATTRIB_PART_OWNER_FSBL) {
-		printf("Partition owner: %08x\r\n", PtHdr->PartitionAttribute & ALIH_PH_ATTRIB_PART_OWNER_MASK);
-		printf("Partition owner not fsbl, skip it, partition num: %u\r\n", PartitionIdx);
+		AL_LOG(AL_LOG_LEVEL_INFO, "Partition owner: %08x\r\n", PtHdr->PartitionAttribute & ALIH_PH_ATTRIB_PART_OWNER_MASK);
+		AL_LOG(AL_LOG_LEVEL_INFO, "Partition owner not fsbl, skip it, partition num: %u\r\n", PartitionIdx);
 		Status = ALFSBL_SUCCESS_NOT_PARTITION_OWNER;
 		goto END;
 	}
@@ -126,93 +128,93 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 
 	/// check hash type
 	PtAttrHashType = PartitionAttr & ALIH_PH_ATTRIB_HASH_TYPE_MASK;
-	printf("Hash Type: 0x%08x\r\n", PtAttrHashType);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Hash Type: 0x%08x\r\n", PtAttrHashType);
 	if(PtAttrHashType == ALIH_PH_ATTRIB_HASH_TYPE_NONE) {
 		pSecureInfo->HashType = OP_HASH_NONE;
-		printf("Hash NOT enabled.\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "Hash NOT enabled.\r\n");
 	}
 	else if(PtAttrHashType == ALIH_PH_ATTRIB_HASH_TYPE_SHA256) {
 		pSecureInfo->HashType = OP_HASH_SHA256;
-		printf("Hash SHA256.\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "Hash SHA256.\r\n");
 	}
 	else if(PtAttrHashType == ALIH_PH_ATTRIB_HASH_TYPE_SM3) {
 		pSecureInfo->HashType = OP_HASH_SM3;
-		printf("Hash SM3.\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "Hash SM3.\r\n");
 	}
 	else {
-		printf("Invalid Hash Type\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "Invalid Hash Type\r\n");
 		Status = ALFSBL_INVALID_HASH_TYPE;
 		goto END;
 	}
 
 	/// check authentication type
 	PtAttrAuthType = PartitionAttr & ALIH_PH_ATTRIB_AUTH_TYPE_MASK;
-	printf("Auth Type       : %x\r\n", PtAttrAuthType);
-	printf("Efuse Auth Type : %x\r\n", EfuseCtrl & EFUSE_AUTH_TYPE_MASK);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Auth Type       : %x\r\n", PtAttrAuthType);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Efuse Auth Type : %x\r\n", EfuseCtrl & EFUSE_AUTH_TYPE_MASK);
 	if((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_HEADER_SET) {
 		if(PtAttrAuthType == ALIH_PH_ATTRIB_AUTH_TYPE_NONE) {
 			pSecureInfo->AuthType = OP_AUTH_NONE;
-			printf("Authentication NOT enabled...\r\n");
+			AL_LOG(AL_LOG_LEVEL_INFO, "Authentication NOT enabled...\r\n");
 		}
 		else if(PtAttrAuthType == ALIH_PH_ATTRIB_AUTH_TYPE_ECC256) {
 			pSecureInfo->AuthType = OP_AUTH_ECC256;
 			pSecureInfo->HashType = OP_HASH_SHA256;
-			printf("Authentication ECC256\r\n");
+			AL_LOG(AL_LOG_LEVEL_INFO, "Authentication ECC256\r\n");
 		}
 		else if(PtAttrAuthType == ALIH_PH_ATTRIB_AUTH_TYPE_SM2) {
 			pSecureInfo->AuthType = OP_AUTH_SM2;
 			pSecureInfo->HashType = OP_HASH_SM3;
-			printf("Authentication SM2\r\n");
+			AL_LOG(AL_LOG_LEVEL_INFO, "Authentication SM2\r\n");
 		}
 	}
 	else if(((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_ECC256) &&
 			(PtAttrAuthType == ALIH_PH_ATTRIB_AUTH_TYPE_ECC256)) {
 		pSecureInfo->AuthType = OP_AUTH_ECC256;
 		pSecureInfo->HashType = OP_HASH_SHA256;
-		printf("Authentication ECC256\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "Authentication ECC256\r\n");
 	}
 	else if(((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_SM2) &&
 			(PtAttrAuthType == ALIH_PH_ATTRIB_AUTH_TYPE_SM2)) {
 		pSecureInfo->AuthType = OP_AUTH_SM2;
 		pSecureInfo->HashType = OP_HASH_SM3;
-		printf("Authentication SM2\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "Authentication SM2\r\n");
 	}
 	else {
-		printf("Auth type not match efuse set...\r\n");
+		AL_LOG(AL_LOG_LEVEL_ERROR, "Auth type not match efuse set...\r\n");
 		Status = ALFSBL_AUTHTYPE_NOT_MATCH_EFUSE;
 		goto END;
 	}
 
 	/// check encryption type
 	PtAttrEncType  = PartitionAttr & ALIH_PH_ATTRIB_ENC_TYPE_MASK;
-	printf("Enc Type       : %x\r\n", PtAttrEncType);
-	printf("Efuse Enc Type : %x\r\n", EfuseCtrl & EFUSE_ENC_TYPE_MASK);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Enc Type       : %x\r\n", PtAttrEncType);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Efuse Enc Type : %x\r\n", EfuseCtrl & EFUSE_ENC_TYPE_MASK);
 	if((EfuseCtrl & EFUSE_ENC_TYPE_MASK) == EFUSE_ENC_TYPE_HEADER_SET) {
 		if(PtAttrEncType == ALIH_PH_ATTRIB_ENC_TYPE_NONE) {
 			pSecureInfo->EncType = OP_ENCRYPT_NONE;
-			printf("Encrypt NOT enabled.\r\n");
+			AL_LOG(AL_LOG_LEVEL_INFO, "Encrypt NOT enabled.\r\n");
 		}
 		else if(PtAttrEncType == ALIH_PH_ATTRIB_ENC_TYPE_AES256) {
 			pSecureInfo->EncType = OP_ENCRYPT_AES256;
-			printf("Encrypt AES256.\r\n");
+			AL_LOG(AL_LOG_LEVEL_INFO, "Encrypt AES256.\r\n");
 		}
 		else if(PtAttrEncType == ALIH_PH_ATTRIB_ENC_TYPE_SM4) {
 			pSecureInfo->EncType = OP_ENCRYPT_SM4;
-			printf("Encrypt SM4.\r\n");
+			AL_LOG(AL_LOG_LEVEL_INFO, "Encrypt SM4.\r\n");
 		}
 	}
 	else if(((EfuseCtrl & EFUSE_ENC_TYPE_MASK) == EFUSE_ENC_TYPE_AES256) &&
 			(PtAttrEncType == ALIH_PH_ATTRIB_ENC_TYPE_AES256)) {
 		pSecureInfo->EncType = OP_ENCRYPT_AES256;
-		printf("Encrypt AES256.\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "Encrypt AES256.\r\n");
 	}
 	else if(((EfuseCtrl & EFUSE_ENC_TYPE_MASK) == EFUSE_ENC_TYPE_SM4) &&
 			(PtAttrEncType == ALIH_PH_ATTRIB_ENC_TYPE_SM4)) {
 		pSecureInfo->EncType = OP_ENCRYPT_SM4;
-		printf("Encrypt SM4.\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "Encrypt SM4.\r\n");
 	}
 	else {
-		printf("Encrypt type not match efuse set...\r\n");
+		AL_LOG(AL_LOG_LEVEL_ERROR, "Encrypt type not match efuse set...\r\n");
 		Status = ALFSBL_ENCTYPE_NOT_MATCH_EFUSE;
 		goto END;
 	}
@@ -236,7 +238,7 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 
 	/// check destination cpu
 	DestCpu = PartitionAttr & ALIH_PH_ATTRIB_DEST_CPU_MASK;
-	printf("destination cpu: 0x%08x\r\n", DestCpu);
+	AL_LOG(AL_LOG_LEVEL_INFO, "destination cpu: 0x%08x\r\n", DestCpu);
 	if(DestCpu != ALIH_PH_ATTRIB_DEST_CPU_RPU &&
 	   DestCpu != ALIH_PH_ATTRIB_DEST_CPU_APU0 &&
 	   DestCpu != ALIH_PH_ATTRIB_DEST_CPU_APU1) {
@@ -246,7 +248,7 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 
 	/// check destination device
 	DestDev = PartitionAttr & ALIH_PH_ATTRIB_DEST_DEV_MASK;
-	printf("destination dev: 0x%08x\r\n", DestDev);
+	AL_LOG(AL_LOG_LEVEL_INFO, "destination dev: 0x%08x\r\n", DestDev);
 	if(DestDev != ALIH_PH_ATTRIB_DEST_DEV_PS &&
 	   DestDev != ALIH_PH_ATTRIB_DEST_DEV_PL) {
 		Status = ALFSBL_INVALID_DEST_DEV;
@@ -254,7 +256,7 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 	}
 
 	/// check partion length
-	printf("check partition length: \r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "check partition length: \r\n");
 	if((PtHdr->PartitionLen < PtHdr->ExtractedPartitionLen) ||
 	   (PtHdr->TotalPartitionLen < PtHdr->ExtractedPartitionLen)) {
 		Status = ALFSBL_INVALID_PARTITION_LENGTH;
@@ -365,9 +367,9 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	LoadAddress = PtHdr->DestLoadAddr;
 	Length = PtHdr->PartitionLen;
 
-	printf("partition src address      : 0x%lx\r\n", SrcAddress);
-	printf("partition load dest address: 0x%lx\r\n", LoadAddress);
-	printf("partition length           : 0x%08x\r\n", Length);
+	AL_LOG(AL_LOG_LEVEL_INFO, "partition src address      : 0x%lx\r\n", SrcAddress);
+	AL_LOG(AL_LOG_LEVEL_INFO, "partition load dest address: 0x%lx\r\n", LoadAddress);
+	AL_LOG(AL_LOG_LEVEL_INFO, "partition length           : 0x%08x\r\n", Length);
 
 	pSecureInfo->HashOutAddr    = (uint32_t)HashBuffer;
 	pSecureInfo->KeyMode        = OP_BHDR_KEY;
@@ -377,11 +379,11 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	pSecureInfo->BlockMode      = WHOLE_BLOCK;
 
 	/// check secure info
-	printf("Auth type :  %02x\r\n", pSecureInfo->AuthType);
-	printf("Hash type :  %02x\r\n", pSecureInfo->HashType);
-	printf("Enc type  :  %02x\r\n", pSecureInfo->EncType);
-	printf("Enc mode  :  %02x\r\n", pSecureInfo->EncMode);
-	printf("Key mode  :  %02x\r\n", pSecureInfo->KeyMode);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Auth type :  %02x\r\n", pSecureInfo->AuthType);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Hash type :  %02x\r\n", pSecureInfo->HashType);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Enc type  :  %02x\r\n", pSecureInfo->EncType);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Enc mode  :  %02x\r\n", pSecureInfo->EncMode);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Key mode  :  %02x\r\n", pSecureInfo->KeyMode);
 
 	/// partition data copy
 	if((FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_QSPI24) ||
@@ -445,7 +447,7 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 
 	/// calculate data hash without csu dma
 	if((pSecureInfo->EncType == OP_ENCRYPT_NONE) && (pSecureInfo->HashType != OP_HASH_NONE)) {
-		printf("calculate hash\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "calculate hash\r\n");
 		pSecureInfo->HashDataAddr = LoadAddress;
 		Status = AlFsbl_Hash(pSecureInfo);
 		if(Status != ALFSBL_SUCCESS) {
@@ -474,21 +476,21 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
-		printf("Hash check passed...\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "Hash check passed...\r\n");
 	}
 
 	if(pSecureInfo->AuthType != OP_AUTH_NONE) {
-		printf("Auth\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "Auth\r\n");
 		/// copy partition ac to local variate;
 		PartitionAcOffset = PtHdr->AcOffset;
-		printf("Partition AC offset: %08x\r\n", PartitionAcOffset);
+		AL_LOG(AL_LOG_LEVEL_INFO, "Partition AC offset: %08x\r\n", PartitionAcOffset);
 		if(PartitionAcOffset == 0) {
-			printf("ALFSBL_ERROR_PARTITION_HEADER_ACOFFSET\r\n");
+			AL_LOG(AL_LOG_LEVEL_ERROR, "ALFSBL_ERROR_PARTITION_HEADER_ACOFFSET\r\n");
 			Status = ALFSBL_ERROR_PH_ACOFFSET;
 			goto END;
 		}
 		else {
-			printf("Copy Partition Header AC\r\n");
+			AL_LOG(AL_LOG_LEVEL_INFO, "Copy Partition Header AC\r\n");
 			Status = FsblInstancePtr->DeviceOps.DeviceCopy(
 					     ImageOffsetAddress + PartitionAcOffset,
 					     (PTRSIZE)PartitionAc,
@@ -505,23 +507,23 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
-		printf("Authenticat pass\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "Authenticat pass\r\n");
 	}
 
-	printf("ps partition copy finished\r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "ps partition copy finished\r\n");
 
 #if 0
 	/// check decrypt result:
 	ocmptr = (uint32_t *)(LoadAddress);
 	for(i = 0; i < 4; i++) {
-		printf("%08x\r\n", *ocmptr);
+		AL_LOG(AL_LOG_LEVEL_INFO, "%08x\r\n", *ocmptr);
 		ocmptr++;
 	}
 #endif
 
 	/// update handoff values
 	if((PtHdr->DestExecAddr) != 0xFFFFFFFFU) {
-		printf("Update handoff values\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "Update handoff values\r\n");
 		HandoffNum = FsblInstancePtr->HandoffCpuNum;
 		FsblInstancePtr->HandoffValues[HandoffNum].CpuSettings = DestCpu;
 		FsblInstancePtr->HandoffValues[HandoffNum].HandoffAddress = PtHdr->DestExecAddr;
@@ -552,11 +554,11 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	ImageOffsetAddress = FsblInstancePtr->ImageOffsetAddress;
 
 	/// pcap reset
-	printf("PCAP RESET\r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "PCAP RESET\r\n");
 	AL_REG32_WRITE(CSU_PCAP_RESET, 0);
 	AL_REG32_WRITE(CSU_PCAP_RESET, 1);
 
-	printf("Re-enable PCAP\r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "Re-enable PCAP\r\n");
 	AL_REG32_WRITE(CSU_PCAP_ENABLE, 0);
 	AL_REG32_WRITE(CSU_PCAP_ENABLE, 1);
 
@@ -567,11 +569,11 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	}
 
 	BlockSizeMax = FsblInstancePtr->DeviceOps.BlockSizeMax;
-	printf("Boot device block size max: %x\r\n", BlockSizeMax);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Boot device block size max: %x\r\n", BlockSizeMax);
 
 	/// temp test: pl init and done:
-	printf("PL init done\r\n");
-	printf("cfg state: %08x\r\n", AL_REG32_READ(CRP_CFG_STATE));
+	AL_LOG(AL_LOG_LEVEL_INFO, "PL init done\r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "cfg state: %08x\r\n", AL_REG32_READ(CRP_CFG_STATE));
 
 	pSecureInfo->HashOutAddr    = (uint32_t)HashBuffer;
 	pSecureInfo->KeyMode        = OP_BHDR_KEY;
@@ -581,11 +583,11 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	pSecureInfo->CsuAddrIncMode = CSUDMA_DST_NOINCR | CSUDMA_SRC_INCR;
 
 	/// check secure info
-	printf("Auth type :  %02x\r\n", pSecureInfo->AuthType);
-	printf("Hash type :  %02x\r\n", pSecureInfo->HashType);
-	printf("Enc type  :  %02x\r\n", pSecureInfo->EncType);
-	printf("Enc mode  :  %02x\r\n", pSecureInfo->EncMode);
-	printf("Key mode  :  %02x\r\n", pSecureInfo->KeyMode);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Auth type :  %02x\r\n", pSecureInfo->AuthType);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Hash type :  %02x\r\n", pSecureInfo->HashType);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Enc type  :  %02x\r\n", pSecureInfo->EncType);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Enc mode  :  %02x\r\n", pSecureInfo->EncMode);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Key mode  :  %02x\r\n", pSecureInfo->KeyMode);
 
 	BootDevice = FsblInstancePtr->PrimaryBootDevice;
 
@@ -595,13 +597,13 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	if(((pSecureInfo->HashType != OP_HASH_NONE) && (pSecureInfo->EncType == OP_ENCRYPT_NONE)) ||
 	   ((BootDevice != ALFSBL_BOOTMODE_QSPI24) && (BootDevice != ALFSBL_BOOTMODE_QSPI32))) {
 #ifdef DDR_AVAILABLE
-		printf("to ddr in a whole block, then to pcap\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "to ddr in a whole block, then to pcap\r\n");
 		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)(0x100000), 0);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
 #else
-		printf("to ocm in blocks, Block size: %u\r\n", BlockSizeMax);
+		AL_LOG(AL_LOG_LEVEL_INFO, "to ocm in blocks, Block size: %u\r\n", BlockSizeMax);
 		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)ReadBuffer, BlockSizeMax);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
@@ -610,19 +612,19 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	}
 	else {
 #ifdef QSPI_XIP_THROUTH_CSU_DMA
-		printf("to pcap, whole block\r\n");
-		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, CSU_PCAP_WR_STREAM, 0);
+		AL_LOG(AL_LOG_LEVEL_INFO, "to pcap, whole block\r\n");
+		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, CSU_PCAP_CSULOCAL_WR_STREAM, 0);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
 #elif (defined DDR_AVAILABLE)
-		printf("to ddr in a whole block, then to pcap\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "to ddr in a whole block, then to pcap\r\n");
 		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)(0x100000), 0);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}		
 #else
-		printf("to ocm in blocks, Block size: %u\r\n", BlockSizeMax);
+		AL_LOG(AL_LOG_LEVEL_INFO, "to ocm in blocks, Block size: %u\r\n", BlockSizeMax);
 		Status = AlFsbl_BitstreamDataTransfer(FsblInstancePtr, pSecureInfo, PartitionIdx, (uint32_t)ReadBuffer, BlockSizeMax);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
@@ -633,7 +635,7 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	/// read hash from boot image and check
 	if((pSecureInfo->HashType != OP_HASH_NONE) && (PtHdr->HashDataOffset != 0)) {
 		/// read hash from boot image
-		printf("read hash\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "read hash\r\n");
 		//HashByteLen = (pSecureInfo->HashType == OP_HASH_SHA256) ? 32 : 16;
 		Status = FsblInstancePtr->DeviceOps.DeviceCopy(
 				     ImageOffsetAddress + PtHdr->HashDataOffset,
@@ -652,22 +654,22 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
-		printf("Hash check passed...\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "Hash check passed...\r\n");
 	}
 
 	/// auth check if necessary
 	if(pSecureInfo->AuthType != OP_AUTH_NONE) {
-		printf("auth\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "auth\r\n");
 		/// copy partition ac to local variate;
 		PartitionAcOffset = PtHdr->AcOffset;
-		printf("Partition AC offset: %08x\r\n", PartitionAcOffset);
+		AL_LOG(AL_LOG_LEVEL_INFO, "Partition AC offset: %08x\r\n", PartitionAcOffset);
 		if(PartitionAcOffset == 0) {
-			printf("ALFSBL_ERROR_PARTITION_HEADER_ACOFFSET\r\n");
+			AL_LOG(AL_LOG_LEVEL_ERROR, "ALFSBL_ERROR_PARTITION_HEADER_ACOFFSET\r\n");
 			Status = ALFSBL_ERROR_PH_ACOFFSET;
 			goto END;
 		}
 		else {
-			printf("Copy Partition Header AC\r\n");
+			AL_LOG(AL_LOG_LEVEL_INFO, "Copy Partition Header AC\r\n");
 			Status = FsblInstancePtr->DeviceOps.DeviceCopy(
 					     ImageOffsetAddress + PartitionAcOffset,
 					     (PTRSIZE)PartitionAc,
@@ -684,13 +686,11 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
-		printf("Authenticate pass\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "Authenticate pass\r\n");
 	}
 
 	/// temp test: pl init and done:
-	printf("cfg state before progdone: %08x\r\n", AL_REG32_READ(CRP_CFG_STATE));
-
-
+	AL_LOG(AL_LOG_LEVEL_INFO, "cfg state before progdone: %08x\r\n", AL_REG32_READ(CRP_CFG_STATE));
 
 	/// program_done
 	Status = ALFsbl_BitStreamProgDone();
@@ -699,7 +699,7 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	}
 
 	/// temp test: pl init and done:
-	printf("cfg state after progdone: %08x\r\n", AL_REG32_READ(CRP_CFG_STATE));
+	AL_LOG(AL_LOG_LEVEL_INFO, "cfg state after progdone: %08x\r\n", AL_REG32_READ(CRP_CFG_STATE));
 
 	/// check cfg state after bitstream loaded
 	if((AL_REG32_READ(CRP_CFG_STATE)) != 7) {
@@ -710,8 +710,12 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	/// set PCAP not enable, to make the signal to config model not change
 	AL_REG32_WRITE(CSU_PCAP_ENABLE, 0);
 
-
 END:
+	if(Status != ALFSBL_SUCCESS) {
+		/// if bitstream load fail, clean the loaded pl logic to protect chips
+		AL_REG32_SET_BIT(SYSCTRL_S_GLOBAL_SRSTN, 8, 0);
+		AL_REG32_SET_BIT(SYSCTRL_S_GLOBAL_SRSTN, 8, 1);
+	}
 	return Status;
 }
 
@@ -737,36 +741,36 @@ static uint32_t AlFsbl_BitstreamDataTransfer(AlFsblInfo *FsblInstancePtr, Secure
 	SrcAddress = FsblInstancePtr->ImageOffsetAddress + PtHdr->PartitionOffset;
 	Length = PtHdr->PartitionLen;
 
-	printf("partition src address      : 0x%08x\r\n", SrcAddress);
-	printf("partition load dest address: 0x%08x\r\n", DestAddr);
-	printf("partition length           : 0x%08x\r\n", Length);
+	AL_LOG(AL_LOG_LEVEL_INFO, "partition src address      : 0x%08x\r\n", SrcAddress);
+	AL_LOG(AL_LOG_LEVEL_INFO, "partition load dest address: 0x%08x\r\n", DestAddr);
+	AL_LOG(AL_LOG_LEVEL_INFO, "partition length           : 0x%08x\r\n", Length);
 
 
 	BlockSrcAddr  = SrcAddress;
 	BlockDestAddr = DestAddr;
 	if(BlockSizeMax == 0) {
 		pSecureInfo->BlockMode = WHOLE_BLOCK;
-		printf("whole block\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "whole block\r\n");
 		BlockLength = Length;
 	}
 	else if(Length > BlockSizeMax) {
 		pSecureInfo->BlockMode = FIRST_BLOCK;
-		printf("first block\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "first block\r\n");
 		BlockLength = BlockSizeMax;
 	}
 	else {
 		pSecureInfo->BlockMode = WHOLE_BLOCK;
-		printf("whole block\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "whole block\r\n");
 		BlockLength = Length;
 	}
 
 	while(Length != 0) {
 		/// data transfer
 		if(((BlockCnt + 1) % 100) == 0) {
-			printf("Blk num: %u\r\n", BlockCnt);
+			AL_LOG(AL_LOG_LEVEL_DEBUG, "Blk num: %u\r\n", BlockCnt);
 		}
 
-		if(DestAddr == CSU_PCAP_WR_STREAM) {
+		if(DestAddr == CSU_PCAP_CSULOCAL_WR_STREAM) {
 			/// transfer to pcap, only when boot device is xip-qspi and not hash only
 			Status = FsblInstancePtr->DeviceOps.DeviceCopy(
 					     BlockSrcAddr,
@@ -793,14 +797,14 @@ static uint32_t AlFsbl_BitstreamDataTransfer(AlFsblInfo *FsblInstancePtr, Secure
 			/// if enc enabled, do decrypt
 			pSecureInfo->HashDataAddr = BlockDestAddr;
 			pSecureInfo->InputAddr    = BlockDestAddr;
-			pSecureInfo->OutputAddr   = CSU_PCAP_WR_STREAM;
+			pSecureInfo->OutputAddr   = CSU_PCAP_CSULOCAL_WR_STREAM;
 			pSecureInfo->DataLength   = BlockLength;
 			Status = AlFsbl_DecHash(pSecureInfo);
 
 			/// step 3: if hash enabled without enc, calculate hash
 			if((pSecureInfo->EncType == OP_ENCRYPT_NONE) &&
 			   (pSecureInfo->HashType != OP_HASH_NONE)) {
-				//printf("calculate hash\r\n");
+				AL_LOG(AL_LOG_LEVEL_INFO, "calculate hash\r\n");
 				pSecureInfo->HashDataAddr = BlockDestAddr;
 				Status = AlFsbl_Hash(pSecureInfo);
 				if(Status != ALFSBL_SUCCESS) {
@@ -864,11 +868,9 @@ uint32_t ALFsbl_BitStreamProgDone(void)
 	AL_REG32_WRITE(CSU_PCAP_WR_STREAM, ProgDone[1]);
 	AL_REG32_WRITE(CSU_PCAP_WR_STREAM, ProgDone[2]);
 
-	printf("\n");
-
 	Status = AlFsbl_CsuDmaCopy(
 			     (uint32_t)(&BitStreamNoop),
-				 CSU_PCAP_WR_STREAM,
+				 CSU_PCAP_CSULOCAL_WR_STREAM,
 				 8192,   /// 2048 words of noop
 				 (CSUDMA_DST_NOINCR | CSUDMA_SRC_NOINCR));
 
@@ -879,19 +881,19 @@ uint32_t ALFsbl_BitStreamProgDone(void)
 
 void AlFsbl_PrintPartitionHeaderInfo(AlFsbl_PartitionHeader *PtHdr)
 {
-	printf("\nPartition Header Infomation:\r\n");
-	printf("Partition Length            : 0x%08x\r\n", PtHdr->PartitionLen);
-	printf("Extracted Partition Length  : 0x%08x\r\n", PtHdr->ExtractedPartitionLen);
-	printf("Total Partition Length      : 0x%08x\r\n", PtHdr->TotalPartitionLen);
-	printf("Next Partition Header Offset: 0x%08x\r\n", PtHdr->NextPartHdrOffset);
-	printf("Dest Execution Address      : 0x%lx\r\n", PtHdr->DestExecAddr);
-	printf("Dest Load Address           : 0x%lx\r\n", PtHdr->DestLoadAddr);
-	printf("Partition Offset            : 0x%08x\r\n", PtHdr->PartitionOffset);
-	printf("Partition Attribute         : 0x%08x\r\n", PtHdr->PartitionAttribute);
-	printf("Hash Data offset            : 0x%08x\r\n", PtHdr->HashDataOffset);
-	printf("AC Offset                   : 0x%08x\r\n", PtHdr->AcOffset);
-	printf("Partition Header Checksum   : 0x%08x\r\n", PtHdr->PartiHdrChecksum);
-	printf("\r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "\nPartition Header Infomation:\r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "Partition Length            : 0x%08x\r\n", PtHdr->PartitionLen);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Extracted Partition Length  : 0x%08x\r\n", PtHdr->ExtractedPartitionLen);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Total Partition Length      : 0x%08x\r\n", PtHdr->TotalPartitionLen);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Next Partition Header Offset: 0x%08x\r\n", PtHdr->NextPartHdrOffset);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Dest Execution Address      : 0x%lx\r\n", PtHdr->DestExecAddr);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Dest Load Address           : 0x%lx\r\n", PtHdr->DestLoadAddr);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Partition Offset            : 0x%08x\r\n", PtHdr->PartitionOffset);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Partition Attribute         : 0x%08x\r\n", PtHdr->PartitionAttribute);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Hash Data offset            : 0x%08x\r\n", PtHdr->HashDataOffset);
+	AL_LOG(AL_LOG_LEVEL_INFO, "AC Offset                   : 0x%08x\r\n", PtHdr->AcOffset);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Partition Header Checksum   : 0x%08x\r\n", PtHdr->PartiHdrChecksum);
+	AL_LOG(AL_LOG_LEVEL_INFO, "\r\n");
 
 	return;
 }

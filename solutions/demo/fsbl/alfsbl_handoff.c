@@ -8,6 +8,8 @@
 #include "alfsbl_hw.h"
 #include "alfsbl_handoff.h"
 #include "al_reg_io.h"
+#include "al_utils_def.h"
+
 
 void __attribute__((noinline)) AlFsbl_HandoffExit(uint64_t HandoffAddress)
 {
@@ -52,7 +54,7 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 
 	RunningCpu = FsblInstancePtr->ProcessorID;
 
-	printf("Mark FSBL is completed...\r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "Mark FSBL is completed...\r\n");
 	AL_REG32_WRITE(SYSCTRL_S_FSBL_ERR_CODE, ALFSBL_COMPLETED);
 
 	/// disable pcap to restore pcap-pl isolation
@@ -66,7 +68,7 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 	AL_REG32_SET_BITS(SYSCTRL_NS_PLS_PROT, 0, 2, 0);
 
 	if(FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_JTAG) {
-		//printf("jump to a infinite loop\r\n");
+		//AL_LOG(AL_LOG_LEVEL_INFO, "jump to a infinite loop\r\n");
 		//REG32(0x60000000) = 0xa001a001;
 		//AlFsbl_HandoffExit(0x60000000);
 	}
@@ -74,11 +76,10 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 	for(HandoffIdx = 0; HandoffIdx < FsblInstancePtr->HandoffCpuNum; HandoffIdx++) {
 		CpuSettings = FsblInstancePtr->HandoffValues[HandoffIdx].CpuSettings;
 		HandoffAddress = FsblInstancePtr->HandoffValues[HandoffIdx].HandoffAddress;
-		//printf("handoff cpu : %08x\r\n", FsblInstancePtr->HandoffValues[HandoffIdx].CpuSettings);
-		//printf("handoff addr: %08x\r\n", FsblInstancePtr->HandoffValues[HandoffIdx].HandoffAddress);
+		//AL_LOG(AL_LOG_LEVEL_INFO, "handoff cpu : %08x\r\n", FsblInstancePtr->HandoffValues[HandoffIdx].CpuSettings);
+		//AL_LOG(AL_LOG_LEVEL_INFO, "handoff addr: %08x\r\n", FsblInstancePtr->HandoffValues[HandoffIdx].HandoffAddress);
 
 		if(RunningCpu != CpuSettings) {
-			//printf("hand off different cpu\r\n");
 			/// handoff to a different cpu
 			/// update reset vector
 			/// soft reset the handoff target cpu, pulse reset

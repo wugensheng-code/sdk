@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include "alfsbl_image_header.h"
 #include "al_reg_io.h"
+#include "al_utils_def.h"
 
 extern uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE];
 
@@ -64,7 +65,7 @@ uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 	}
 
 	ImageOffsetAddress = FsblInstancePtr->ImageOffsetAddress;
-	printf("FsblInstancePtr->ImageOffsetAddress: 0x%lx\r\n", ImageOffsetAddress);
+	AL_LOG(AL_LOG_LEVEL_INFO, "FsblInstancePtr->ImageOffsetAddress: 0x%lx\r\n", ImageOffsetAddress);
 
 	/// copy boot header to internal memory
 	Status = FsblInstancePtr->DeviceOps.DeviceCopy(
@@ -74,10 +75,10 @@ uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 				 NULL);
 
 	if (ALFSBL_SUCCESS != Status) {
-		printf("boot header copy failed...\r\n");
+		AL_LOG(AL_LOG_LEVEL_ERROR, "boot header copy failed...\r\n");
 		goto END;
 	}
-	printf("boot header copy finished...\r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "boot header copy finished...\r\n");
 
 	Status = AlFsbl_ChecksumCheck(
 			(uint8_t *)(&(FsblInstancePtr->ImageHeader.BootHeader.QspiWidthSel)),
@@ -96,10 +97,10 @@ uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 				 ALIH_PH_SIZE * PartitionNum,
 				 NULL);
 	if (ALFSBL_SUCCESS != Status) {
-		printf("partition headers copy failed...\r\n");
+		AL_LOG(AL_LOG_LEVEL_ERROR, "partition headers copy failed...\r\n");
 		goto END;
 	}
-	printf("partition headers copy finished...\r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "partition headers copy finished...\r\n");
 
 	/// authenticate image header
 	BootHdrAttrb = FsblInstancePtr->ImageHeader.BootHeader.BhAttr;
@@ -107,72 +108,30 @@ uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 
 	/// if authentication enabled
 	if(((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) != 0) || ((BootHdrAttrb & ALIH_BH_ATTRB_HD_AC_SEL_MASK) != 0)) {
-		printf("image header authentication enabled...\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "image header authentication enabled...\r\n");
 		Status = AlFsbl_ImgHdrAuth(FsblInstancePtr, EfuseCtrl);
 		if(Status != ALFSBL_SUCCESS) {
-			printf("image header authentication failed...\r\n");
+			AL_LOG(AL_LOG_LEVEL_ERROR, "image header authentication failed...\r\n");
 			goto END;
 		}
-		printf("image header authentication passed...\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "image header authentication passed...\r\n");
 	}
 	else {
-		printf("image header authentication not enabled....\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "image header authentication not enabled....\r\n");
 	}
 
-	printf("qspi width sel        : 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.QspiWidthSel);
-	printf("image id              : 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.ImageId);
-	printf("enc status            : 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.EncStatus);
-	printf("bh attribute          : 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.BhAttr);
-	printf("bh ac offset          : 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.BhAcOffset);
-	printf("first parti hdr offset: 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.FirstPartiHdrOffset);
-	printf("partition num         : 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.PartitionNum);
-	printf("bh checksum           : 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.BhChecksum);
+	AL_LOG(AL_LOG_LEVEL_INFO, "qspi width sel        : 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.QspiWidthSel);
+	AL_LOG(AL_LOG_LEVEL_INFO, "image id              : 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.ImageId);
+	AL_LOG(AL_LOG_LEVEL_INFO, "enc status            : 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.EncStatus);
+	AL_LOG(AL_LOG_LEVEL_INFO, "bh attribute          : 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.BhAttr);
+	AL_LOG(AL_LOG_LEVEL_INFO, "bh ac offset          : 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.BhAcOffset);
+	AL_LOG(AL_LOG_LEVEL_INFO, "first parti hdr offset: 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.FirstPartiHdrOffset);
+	AL_LOG(AL_LOG_LEVEL_INFO, "partition num         : 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.PartitionNum);
+	AL_LOG(AL_LOG_LEVEL_INFO, "bh checksum           : 0x%08x\r\n", FsblInstancePtr->ImageHeader.BootHeader.BhChecksum);
 
 END:
 	return Status;
 }
-
-
-
-
-
-
-/*
-uint32_t AlFsbl_ReadPartitionHeader(AlFsblInfo *AlFsblInstancePtr, uint32_t ImageAddr)
-{
-	uint32_t Status;
-	uint32_t PartitionHeaderAddress;
-	uint32_t PartitionIndex;
-	AlFsbl_PartitionHeader *CurrPartitionHdr;
-	uint32_t PartitionNum;
-
-//	PartitionHeaderAddress = (AlFsblInstancePtr->ImageHeader.BootHeader.FirstPartiHdrOffset) * AL_WORD_LENGTH;
-	PartitionHeaderAddress = (AlFsblInstancePtr->ImageHeader.BootHeader.FirstPartiHdrOffset);
-	PartitionNum = AlFsblInstancePtr->ImageHeader.BootHeader.PartitionNum;
-
-	for(PartitionIndex = 0; PartitionIndex < PartitionNum; PartitionIndex++) {
-		printf("read partition header Num %d\r\n", PartitionIndex);
-
-		Status = AlFsblInstancePtr->DeviceOps.DeviceCopy(
-					ImageAddr + PartitionHeaderAddress,
-					(PTRSIZE)(&(AlFsblInstancePtr->ImageHeader.PartitionHeader[PartitionIndex])),
-					ALIH_PH_SIZE);
-		if(ALFSBL_SUCCESS != Status) {
-			printf("partition header copy failed...\r\n");
-			goto END;
-		}
-		CurrPartitionHdr = &(AlFsblInstancePtr->ImageHeader.PartitionHeader[PartitionIndex]);
-		PartitionHeaderAddress = CurrPartitionHdr->NextPartHdrOffset;
-//		PartitionHeaderAddress = CurrPartitionHdr->NextPartHdrOffset;
-
-		/// check partition header infomation
-		AlFsbl_PrintPartitionHeaderInfo(CurrPartitionHdr);
-	}
-
-END:
-	return 0;
-}
-*/
 
 
 uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl)
@@ -187,8 +146,8 @@ uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl)
 	ImageOffsetAddress = FsblInstancePtr->ImageOffsetAddress;
 	BootHdrAttrb = FsblInstancePtr->ImageHeader.BootHeader.BhAttr;
 
-	printf("Efuse Ctrl:   %08x\r\n", EfuseCtrl);
-	printf("BootHdrAttrb: %08x\r\n", BootHdrAttrb);
+	AL_LOG(AL_LOG_LEVEL_INFO, "Efuse Ctrl:   %08x\r\n", EfuseCtrl);
+	AL_LOG(AL_LOG_LEVEL_INFO, "BootHdrAttrb: %08x\r\n", BootHdrAttrb);
 
 	/// get image header authentication type
 	if((EfuseCtrl & EFUSE_AUTH_TYPE_MASK) == EFUSE_AUTH_TYPE_SM2) {
@@ -222,18 +181,18 @@ uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl)
 		Status = ALFSBL_ERROR_SEC_PARAM_INVALID;
 		goto END;
 	}
-	printf("auth type: %x\r\n", FsblIHSecInfo.AuthType);
+	AL_LOG(AL_LOG_LEVEL_INFO, "auth type: %x\r\n", FsblIHSecInfo.AuthType);
 
 	AcOffset = FsblInstancePtr->ImageHeader.BootHeader.BhAcOffset;
 	if(AcOffset == 0) {
 		/// AC not exists, error
-		printf("ALFSBL_ERROR_IMAGE_HEADER_ACOFFSET\r\n");
+		AL_LOG(AL_LOG_LEVEL_ERROR, "ALFSBL_ERROR_IMAGE_HEADER_ACOFFSET\r\n");
 		Status = ALFSBL_ERROR_IMAGE_HEADER_ACOFFSET;
 		goto END;
 	}
 	else {
 		/// AC exists, copy to memory
-		printf("Copy Image Header AC\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "Copy Image Header AC\r\n");
 		Status = FsblInstancePtr->DeviceOps.DeviceCopy(
 				     ImageOffsetAddress + AcOffset,
 					 (PTRSIZE)AuthBuffer,
@@ -242,42 +201,46 @@ uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl)
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
 		}
-		printf("Copy Image Header AC Finished\r\n");
+		AL_LOG(AL_LOG_LEVEL_INFO, "Copy Image Header AC Finished\r\n");
 	}
 
 	/// ppk hash verify, if necessary
-	printf("ppk verify...\r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "ppk verify...\r\n");
 	Status = AlFsbl_PpkVerification(FsblInstancePtr, BootHdrAttrb, EfuseCtrl);
 	if(Status != ALFSBL_SUCCESS) {
+		AL_LOG(AL_LOG_LEVEL_ERROR, "ppk verify failed\r\n");
 		goto END;
 	}
-	printf("ppk verify passed...\r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "ppk verify passed...\r\n");
 
 	/// spk authenticate
-	printf("spk verfy...\r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "spk verfy...\r\n");
 	Status = AlFsbl_SpkVerification(FsblInstancePtr, &FsblIHSecInfo);
 	if(Status != ALFSBL_SUCCESS) {
+		AL_LOG(AL_LOG_LEVEL_ERROR, "spk verify failed\r\n");
 		goto END;
 	}
-	printf("spk verify passed...\r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "spk verify passed...\r\n");
 
-	printf("image header authentication...\r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "image header authentication...\r\n");
 	FsblIHSecInfo.HashDataAddr   = (uint32_t)(&(FsblInstancePtr->ImageHeader));
 	FsblIHSecInfo.DataLength  = ALIH_BH_SIZE + ALIH_PH_SIZE * (FsblInstancePtr->ImageHeader.BootHeader.PartitionNum);
 	FsblIHSecInfo.HashOutAddr = (uint32_t)(HashBuffer);
 	Status = AlFsbl_Hash(&FsblIHSecInfo);
 	if(Status != ALFSBL_SUCCESS) {
+		AL_LOG(AL_LOG_LEVEL_ERROR, "image header hash failed\r\n");
 		goto END;
 	}
-	printf("Image Header Hash finished...\r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "Image Header Hash finished...\r\n");
 
 	FsblIHSecInfo.PubKeyAddr    = (uint32_t)(AuthBuffer + ALAC_SPK_OFFSET);
 	FsblIHSecInfo.SignatureAddr = (uint32_t)(AuthBuffer + ALAC_BTHDR_SIGNATURE_OFFSET);
 	Status = AlFsbl_Auth(&FsblIHSecInfo);
 	if(Status != ALFSBL_SUCCESS) {
+		AL_LOG(AL_LOG_LEVEL_ERROR, "image header authentication failed\r\n");
 		goto END;
 	}
-	printf("Image Header Authentication passed...\r\n");
+	AL_LOG(AL_LOG_LEVEL_INFO, "Image Header Authentication passed...\r\n");
 
 END:
 	return Status;
@@ -314,7 +277,7 @@ uint32_t AlFsbl_PpkVerification(AlFsblInfo *FsblInstancePtr, uint32_t BootHdrAtt
 		}
 	}
 	else {
-		printf("ALFSBL_ERROR_EFUSE_VALUE_INVALID\r\n");
+		AL_LOG(AL_LOG_LEVEL_ERROR, "ALFSBL_ERROR_EFUSE_VALUE_INVALID\r\n");
 		Status = ALFSBL_ERROR_SEC_PARAM_INVALID;
 		goto END;
 	}
@@ -363,7 +326,6 @@ uint32_t AlFsbl_SpkVerification(AlFsblInfo *FsblInstancePtr, SecureInfo *pFsblIH
 	if(Status != ALFSBL_SUCCESS) {
 		goto END;
 	}
-	printf("spk verification passed\r\n");
 END:
 	return Status;
 }

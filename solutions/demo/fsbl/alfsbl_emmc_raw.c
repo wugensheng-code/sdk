@@ -9,13 +9,14 @@
 #include "alfsbl_sd.h"
 #include "alfsbl_misc.h"
 #include "alfsbl_boot.h"
-
 #include "al_mmc_hal.h"
+#include "al_utils_def.h"
+
 
 #define MMC_RD_WR_TIMEOUT_MS    (10000)
 #define BLOCK_SIZE              (0x200)
 
-static AL_MMC_HalStruct Handle = {0};
+static AL_MMC_HalStruct *Handle;
 static DevId = 0;
 static AL_MMC_InitStruct InitConfig = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
@@ -54,27 +55,27 @@ uint32_t AlFsbl_EmmcRawCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t L
     uint32_t firstblockbytes    = (firstblockstore > Length)? Length : firstblockstore;
     uint32_t lastblockbytes     = endpoint % blocksize + 1;
 
-    printf("offset = %u, Length = %u\r\n", Offset, Length);
-    printf("startblock: %u\tfirstblockoffset: %u\tfirstblockbytes: %u\r\n", startblock, firstblockoffset, firstblockbytes);
-    printf("endblock: %u\tlastblockbytes: %u\t\r\n", endblock, lastblockbytes);
+    AL_LOG(AL_LOG_LEVEL_INFO, "offset = %u, Length = %u\r\n", Offset, Length);
+    AL_LOG(AL_LOG_LEVEL_INFO, "startblock: %u\tfirstblockoffset: %u\tfirstblockbytes: %u\r\n", startblock, firstblockoffset, firstblockbytes);
+    AL_LOG(AL_LOG_LEVEL_INFO, "endblock: %u\tlastblockbytes: %u\t\r\n", endblock, lastblockbytes);
 
     for (uint32_t i = startblock; i <= endblock; i++) {
         if (i == startblock) {
-            status = AlMmc_Hal_ReadBlocked(&Handle, SharedBuffer, i, 1, MMC_RD_WR_TIMEOUT_MS);
+            status = AlMmc_Hal_ReadBlocked(Handle, SharedBuffer, i, 1, MMC_RD_WR_TIMEOUT_MS);
             if (status != AL_OK) {
                 goto END;
             }
             memcpy(pdestaddr, &SharedBuffer[firstblockoffset], firstblockbytes);
             pdestaddr += firstblockbytes;
         } else if (i == endblock) {
-            status = AlMmc_Hal_ReadBlocked(&Handle, SharedBuffer, i, 1, MMC_RD_WR_TIMEOUT_MS);
+            status = AlMmc_Hal_ReadBlocked(Handle, SharedBuffer, i, 1, MMC_RD_WR_TIMEOUT_MS);
             if (status != AL_OK) {
                 goto END;
             }
             memcpy(pdestaddr, SharedBuffer, lastblockbytes);
             pdestaddr += lastblockbytes;
         } else {
-            status = AlMmc_Hal_ReadBlocked(&Handle, pdestaddr, i, (endblock - i), MMC_RD_WR_TIMEOUT_MS);
+            status = AlMmc_Hal_ReadBlocked(Handle, pdestaddr, i, (endblock - i), MMC_RD_WR_TIMEOUT_MS);
             if (status != AL_OK) {
                 goto END;
             }

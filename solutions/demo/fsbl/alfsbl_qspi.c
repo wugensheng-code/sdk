@@ -40,7 +40,7 @@ AL_VOID AlNor_Wren(AL_VOID)
 
     Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 1, 100000);
     if (Ret != AL_OK) {
-        printf("AL_NOR_WREN error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_WREN error:0x%x\r\n", Ret);
     }
 }
 
@@ -63,10 +63,10 @@ AL_VOID AlNor_WaitWip(AL_VOID)
     do {
         Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 1, RecvData, 1, 100000);
         if (Ret != AL_OK) {
-            printf("AL_NOR_WAITWIP error:0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_WAITWIP error:0x%x\r\n", Ret);
         }
 #ifdef QSPI_DEBUG
-        printf("WAITWIP Nor Status1 Reg:%x\r\n", RecvData[0]);
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "WAITWIP Nor Status1 Reg:%x\r\n", RecvData[0]);
 #endif
     } while (RecvData[0] & SR_WIP);
 }
@@ -86,7 +86,7 @@ AL_S32 AlNor_SetQuad(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd, AL_U8 QuadPos)
 
     Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 1, &Data, 1, 100000);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "AlNor_SetQuad ReadQuadCmd error\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_SetQuad ReadQuadCmd error\r\n");
     }
 
     Data = Data | (1 << QuadPos);
@@ -100,7 +100,7 @@ AL_S32 AlNor_SetQuad(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd, AL_U8 QuadPos)
 
     Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 2, 100000);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "AlNor_SetQuad SetQuadCmd error\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_SetQuad SetQuadCmd error\r\n");
     }
 
     AlNor_WaitWip();
@@ -116,7 +116,7 @@ uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
 
     Ret = AlQspi_Hal_Init(&Handle, &QspiX4InitConfigs, AL_NULL, 0);
     if (Ret != AL_OK) {
-        printf("AlQspi_Hal_Init error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlQspi_Hal_Init error:0x%x\r\n", Ret);
     }
 
     SendData[0] = NOR_OP_RDID;
@@ -130,9 +130,9 @@ uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
 
     Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 1, FlashId, 3, 100000);
     if (Ret != AL_OK) {
-        printf("AL_NOR_READID error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_READID error:0x%x\r\n", Ret);
     }
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "Flash ID:0x%x, 0x%x, 0x%x\r\n", FlashId[0], FlashId[1], FlashId[2]);
+    AL_LOG(AL_LOG_LEVEL_INFO, "Flash ID:0x%x, 0x%x, 0x%x\r\n", FlashId[0], FlashId[1], FlashId[2]);
 
     if((FlashId[0] != 0x01) && (FlashId[0] != 0x20) && (FlashId[0] != 0x0) && (FlashId[0] != 0xff)) {
         if((FlashId[0] != 0x9d) && (FlashId[0] != 0xc2)) {
@@ -188,7 +188,7 @@ uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Le
         RecvSize = (Length > 65532) ? 65532 : Length;
         Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 4, (AL_U8 *)DestAddress, RecvSize, 10000000);
         if (Ret != AL_OK) {
-            printf("AL_NOR_READPAGE error:0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_READPAGE error:0x%x\r\n", Ret);
         }
         SrcAddress += RecvSize;
         DestAddress += RecvSize;
@@ -202,7 +202,7 @@ uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Le
 #endif
 
 	if(Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "AlNor read byte error\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor read byte error\r\n");
 		Ret = Ret | (ALFSBL_BOOTMODE_QSPI24 << 16);
 	}
 

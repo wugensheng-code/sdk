@@ -6,6 +6,7 @@
 
 #include "al_core.h"
 #include "alfsbl_misc.h"
+#include "al_utils_def.h"
 
 
 void *AlFsbl_MemCpy(void *DestPtr, const void *SrcPtr, uint32_t Len)
@@ -124,5 +125,5 @@ void AlFsbl_MakeSdFileName(char *FileName, uint32_t MultiBootReg, uint32_t DrvNu
 		// filenamelen += sizeof(filesuffix)-1;
 	}
 
-	printf("file name is %s\r\n", FileName);
+	AL_LOG(AL_LOG_LEVEL_INFO, "file name is %s\r\n", FileName);
 }

@@ -12,7 +12,7 @@
 #include "alfsbl_err_lockdown.h"
 #include "alfsbl_misc.h"
 #include "alfsbl_hw.h"
-
+#include "al_utils_def.h"
 #include "soc_plat.h"
 
 
@@ -33,7 +33,7 @@ int main(void)
 	while (FsblStage <= ALFSBL_STAGE_DFT) {
 		switch (FsblStage) {
 		case ALFSBL_STAGE1:
-			printf("==================== In Stage 1 ====================\r\n");
+			AL_LOG(AL_LOG_LEVEL_INFO, "==================== In Stage 1 ====================\r\n");
 
 			/// system initialize
 			FsblStatus = AlFsbl_Initialize(&FsblInstance);
@@ -47,7 +47,7 @@ int main(void)
 			break;
 
 		case ALFSBL_STAGE2:
-			printf("==================== In Stage 2 ====================\r\n");
+			AL_LOG(AL_LOG_LEVEL_INFO, "==================== In Stage 2 ====================\r\n");
 
 			/// primary boot device initialize
 			/// DeviceOps function pointer initialize
@@ -65,11 +65,11 @@ int main(void)
 					FsblStage = ALFSBL_STAGE3;
 				}
 				else if(PartitionIdx == FsblInstance.ImageHeader.BootHeader.PartitionNum) {
-					printf("Only one partition exists in boot image, which is fsbl itself\r\n");
-					printf("for test only, if this message reported, test pass and finished\r\n");
+					AL_LOG(AL_LOG_LEVEL_INFO, "Only one partition exists in boot image, which is fsbl itself\r\n");
+					AL_LOG(AL_LOG_LEVEL_INFO, "for test only, if this message reported, test pass and finished\r\n");
 				}
 				else if(PartitionIdx > FsblInstance.ImageHeader.BootHeader.PartitionNum) {
-					printf("Boot image format invalid or Image Header data incorrect, need to check\r\n");
+					AL_LOG(AL_LOG_LEVEL_ERROR, "Boot image format invalid or Image Header data incorrect, need to check\r\n");
 					FsblStatus = ALFSBL_ERROR_INVALID_PARTITION_NUM;
 					FsblStatus += ALFSBL_ERROR_STAGE_2;
 					FsblStage = ALFSBL_STAGE_ERR;
@@ -83,10 +83,10 @@ int main(void)
 			break;
 
 		case ALFSBL_STAGE3:
-			printf("==================== In Stage 3 ====================\r\n");
+			AL_LOG(AL_LOG_LEVEL_INFO, "==================== In Stage 3 ====================\r\n");
 
 			if(FsblInstance.ImageHeader.BootHeader.PartitionNum <= 1) {
-				printf("Info: no partition to load...\r\n");
+				AL_LOG(AL_LOG_LEVEL_INFO, "Info: no partition to load...\r\n");
 				FsblStage = ALFSBL_STAGE4;
 				break;
 			}
@@ -107,7 +107,7 @@ int main(void)
 			break;
 
 		case ALFSBL_STAGE4:
-			printf("==================== In Stage 4 ====================\r\n");
+			AL_LOG(AL_LOG_LEVEL_INFO, "==================== In Stage 4 ====================\r\n");
 
 			/// handoff to the applications, let the dest cpu run the ps partition.
 			FsblStatus = AlFsbl_Handoff(&FsblInstance);
@@ -123,8 +123,8 @@ int main(void)
 			break;
 
 		case ALFSBL_STAGE_ERR:
-			printf("=================== In Stage Err ===================\r\n");
-			printf("fsbl error: %x\r\n", FsblStatus);
+			AL_LOG(AL_LOG_LEVEL_ERROR, "=================== In Stage Err ===================\r\n");
+			AL_LOG(AL_LOG_LEVEL_ERROR, "fsbl error: %x\r\n", FsblStatus);
 			AlFsbl_ErrorLockDown(&FsblInstance, FsblStatus);
 
 			/// we should never be here
@@ -133,8 +133,8 @@ int main(void)
 
 		case ALFSBL_STAGE_DFT:
 		default:
-			printf("================= In Stage Default =================\r\n");
-			printf("In default stage: we should never be here\r\n");
+			AL_LOG(AL_LOG_LEVEL_INFO, "================= In Stage Default =================\r\n");
+			AL_LOG(AL_LOG_LEVEL_INFO, "In default stage: we should never be here\r\n");
 			break;
 		}
 
