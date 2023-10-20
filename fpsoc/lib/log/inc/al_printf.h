@@ -26,9 +26,8 @@ extern "C" {
 #error "AL_PRINTF_ASYNC use for FREERTOS print task"
 #endif
 
-#define RING_BUF_SIZE 0x10000000
-
 typedef struct {
+    AL_U32 TotalSize;
     AL_U32 ValidSize;
     AL_U32 PrintPos;
     AL_U32 FillPos;
@@ -36,6 +35,8 @@ typedef struct {
 } RingBufStruct;
 
 extern RingBufStruct RingBuf;
+
+AL_VOID AlPrint_Init(AL_VOID);
 
 AL_VOID AlPrint_AsyncPrintf(AL_VOID);
 #endif

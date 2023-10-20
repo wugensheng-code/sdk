@@ -16,6 +16,7 @@ MEMORY
 SECTIONS
 {
 	__stack_size = DEFINED(__stack_size) ? __stack_size : 64M;
+	__async_print_ring_buf_size = DEFINED(async_print_ring_buf_size) ? async_print_ring_buf_size : 1M;
 	/* all text segment = startup64.o data segment + others text segment */
 	.text :
 	{
@@ -160,6 +161,15 @@ SECTIONS
 		KEEP(*(.noncacheable))
 		_no_cache_section_end   = .;
 		. = ALIGN(2M);
+	}  > ram AT>ram
+
+	.async_print_ring_buf (NOLOAD):
+	{
+		. = ALIGN(64);
+		PROVIDE(_async_print_ring_buf_start = .);
+		. = __async_print_ring_buf_size;
+		PROVIDE(_async_print_ring_buf_end = .);
+		. = ALIGN(64);
 	}  > ram AT>ram
 
 	/* all bss segment */

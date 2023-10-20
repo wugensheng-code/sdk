@@ -164,17 +164,6 @@ int main(void)
     can be done here if it was not done before main() was called. */
     prvSetupHardware();
 
-    // ConfigureTimerForRunTimeStates();
-
-    xQueue = xQueueCreate(/* The number of items the queue can hold. */
-                 mainQUEUE_LENGTH,
-                 /* The size of each item the queue holds. */
-                 sizeof(uint32_t));
-
-    if (xQueue == NULL) {
-        // AL_LOG(AL_LOG_LEVEL_ERROR, "Unable to create xQueue due to low memory.\n");
-        while (1);
-    }
     xTaskCreate((TaskFunction_t)task1_led, (const char*)"task1_led",
                 (uint16_t)GPIO_LED_TASK_STACK_SIZE, (void*)NULL,
                 (UBaseType_t)GPIO_LED_TASK_PRIORITY,
@@ -220,10 +209,10 @@ int main(void)
                 (void*)NULL, (UBaseType_t)CAN_DMARECV_TASK_PRIORITY,
                 (TaskHandle_t*)&Task3Can_DmaRecv_Handler);
 
-    // xTaskCreate((TaskFunction_t)task4_wdt, (const char*)"task4_wdt",
-    //             (uint16_t)WDT_TASK_STACK_SIZE, (void*)NULL,
-    //             (UBaseType_t)WDT_TASK_PRIORITY,
-    //             (TaskHandle_t*)&Task4Wdt_Handler);
+    xTaskCreate((TaskFunction_t)task4_wdt, (const char*)"task4_wdt",
+                (uint16_t)WDT_TASK_STACK_SIZE, (void*)NULL,
+                (UBaseType_t)WDT_TASK_PRIORITY,
+                (TaskHandle_t*)&Task4Wdt_Handler);
 
     xTaskCreate((TaskFunction_t)task5_dmacahb, (const char*)"task5_dmacahb",
                 (uint16_t)DMACAHB_TASK_STACK_SIZE, (void*)NULL,
@@ -727,6 +716,7 @@ void task11_Qspi(void* pvParameters)
         for (AL_U32 i = 0; i < 230; i++) {
             if (i != RecvData[i]) {
                 AL_LOG(AL_LOG_LEVEL_ERROR, "Task11 Error RecvData[%d]:%d\r\n", i, RecvData[i]);
+                break;
             }
         }
 

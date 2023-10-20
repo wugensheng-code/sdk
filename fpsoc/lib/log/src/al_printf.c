@@ -25,24 +25,31 @@ typedef struct {
 
 #ifdef AL_PRINT_ASYNC
 
-RingBufStruct RingBuf = {
-    .ValidSize = 0,
-    .FillPos = 0,
-    .PrintPos = 0,
-    .Buf = 0x20000000
-};
+extern AL_U64 _async_print_ring_buf_start;
+extern AL_U64 _async_print_ring_buf_end;
+
+RingBufStruct RingBuf;
+
+AL_VOID AlPrint_Init(AL_VOID)
+{
+    RingBuf.TotalSize = (AL_U32)(((AL_UINTPTR)&(_async_print_ring_buf_end)) - ((AL_UINTPTR)&(_async_print_ring_buf_start)));
+    RingBuf.ValidSize = 0;
+    RingBuf.FillPos = 0;
+    RingBuf.PrintPos = 0;
+    RingBuf.Buf = (AL_S8 *)((AL_UINTPTR)&(_async_print_ring_buf_start));
+}
 
 AL_VOID AlPrint_AsyncPrintf(AL_VOID)
 {
     ALOsal_EnterCritical();
     if (RingBuf.ValidSize != 0) {
-        AL_U32 FirstPrint = (RingBuf.PrintPos + RingBuf.ValidSize >= RING_BUF_SIZE) ?
-                            (RING_BUF_SIZE - RingBuf.PrintPos) : RingBuf.ValidSize;
-        AL_U32 SecondPrint = (RingBuf.PrintPos + RingBuf.ValidSize >= RING_BUF_SIZE) ?
-                            (RingBuf.PrintPos + RingBuf.ValidSize - RING_BUF_SIZE) : 0;
+        AL_U32 FirstPrint = (RingBuf.PrintPos + RingBuf.ValidSize >= RingBuf.TotalSize) ?
+                            (RingBuf.TotalSize - RingBuf.PrintPos) : RingBuf.ValidSize;
+        AL_U32 SecondPrint = (RingBuf.PrintPos + RingBuf.ValidSize >= RingBuf.TotalSize) ?
+                            (RingBuf.PrintPos + RingBuf.ValidSize - RingBuf.TotalSize) : 0;
         AlLog_Write(&RingBuf.Buf[RingBuf.PrintPos], FirstPrint);
         RingBuf.PrintPos += FirstPrint;
-        RingBuf.PrintPos %= RING_BUF_SIZE;
+        RingBuf.PrintPos %= RingBuf.TotalSize;
         RingBuf.ValidSize -= FirstPrint;
 
         if (SecondPrint) {
@@ -56,19 +63,17 @@ AL_VOID AlPrint_AsyncPrintf(AL_VOID)
 
 #endif
 
-
 AL_VOID OutByte(const AL_CHAR Char)
 {
 #ifdef AL_PRINT_ASYNC
-    if (RingBuf.ValidSize >= RING_BUF_SIZE) {
-        /* Ring buffer over flow */
-        while (1);
+    if (RingBuf.FillPos == RingBuf.TotalSize) {
+        RingBuf.FillPos = 0;
+    }
+    RingBuf.Buf[RingBuf.FillPos] = Char;
+    RingBuf.FillPos++;
+    if (RingBuf.ValidSize >= RingBuf.TotalSize) {
+        RingBuf.PrintPos++;
     } else {
-        if (RingBuf.FillPos == RING_BUF_SIZE) {
-            RingBuf.FillPos = 0;
-        }
-        RingBuf.Buf[RingBuf.FillPos] = Char;
-        RingBuf.FillPos++;
         RingBuf.ValidSize++;
     }
 #else

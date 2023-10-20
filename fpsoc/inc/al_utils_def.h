@@ -81,8 +81,7 @@ extern "C" {
         if((ENUM_AL_LOG_LEVEL)level >= AL_LOG_LEVEL_DEBUG) \
             al_printf(format, ##__VA_ARGS__); \
     } while (0);
-#endif
-#ifdef RTOS_RTTHREAD
+#elif (defined RTOS_RTTHREAD)
 #define AL_LOG(level, format, ...) \
     do {  \
         if((ENUM_AL_LOG_LEVEL)level >= AL_LOG_LEVEL_DEBUG) \
@@ -91,7 +90,7 @@ extern "C" {
 #else
 #define AL_LOG(level, format, ...) \
     do {  \
-        if((ENUM_AL_LOG_LEVEL)level >= AL_LOG_LEVEL_DEBUG) \
+        if((ENUM_AL_LOG_LEVEL)level >= AL_LOG_LEVEL_INFO) \
             printf(format"\r\n", ##__VA_ARGS__); \
     } while (0);
 #endif

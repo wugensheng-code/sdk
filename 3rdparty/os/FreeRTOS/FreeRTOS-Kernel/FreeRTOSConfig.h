@@ -162,10 +162,8 @@ your application. */
 
 /* A header file that defines trace macro can be included here. */
 #if (configGENERATE_RUN_TIME_STATS == 1)
-extern unsigned int FreeRTOSRunTimeTicks;
-extern void ConfigureTimerForRunTimeStates(void);
-#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()   ConfigureTimerForRunTimeStates()
-#define portGET_RUN_TIME_COUNTER_VALUE()           FreeRTOSRunTimeTicks
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()
+#define portGET_RUN_TIME_COUNTER_VALUE()           (AlSys_GetTimerTickCount() >> 17)
 #endif
 
 #endif /* FREERTOS_CONFIG_H */
