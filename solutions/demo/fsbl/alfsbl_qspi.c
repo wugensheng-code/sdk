@@ -148,7 +148,8 @@ uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax)
 
 uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo)
 {
-	uint32_t Ret, TranHandledCnt = 0;
+	uint32_t Ret = 0;
+	uint32_t TranHandledCnt = 0;
     uint32_t i;
     AL_U16 RecvSize;
 

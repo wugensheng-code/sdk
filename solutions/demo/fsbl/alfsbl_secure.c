@@ -67,6 +67,10 @@ uint32_t AlFsbl_ChecksumCheck(uint8_t *pBuffer, uint32_t Length, uint32_t Checks
 
 void TriggerSecInterrupt(void)
 {
+#ifdef ENABLE_MMU
+    AlCache_FlushDcacheAll();
+#endif
+
 	/// trigger rpu2csu interrupt
 	*(volatile uint32_t *)(RPU2CSU_REQ_ADDR) = 1;
 	*(volatile uint32_t *)(RPU2CSU_REQ_ADDR) = 0;
