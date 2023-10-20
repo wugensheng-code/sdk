@@ -132,17 +132,17 @@ def main():
                 statistics.append({k:ret})
 
 
-    logger.info('\r\n======> Statistics <======')
+    logger.info(f'\r\n==============================> Statistics <===============================')
 
     ret = None
     for i in statistics:
         for k, v in i.items():
             if v is None:
                 ret = 'Scucess'
-                print(f"\033[32m| {k:<40} | {ret:^30} |\033[0m")
+                print(f"| {k:<40} |\033[32m{ret:^30}\033[0m |")
             else:
                 ret = 'Fail: '+ str(v)
-                print(f"\033[31m| {k:<40} | {ret:^30} |\033[0m")
+                print(f"| {k:<40} |\033[31m{ret:^30}\033[0m |")
                 exit(1)
 
 
