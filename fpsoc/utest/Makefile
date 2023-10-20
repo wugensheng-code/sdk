@@ -46,7 +46,7 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O0 -g -Wall -fprofile-arcs -ftest-coverage
+CFLAGS := -O0 -g -fprofile-arcs -ftest-coverage
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
