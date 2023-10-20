@@ -1,6 +1,6 @@
 #include "alc_types.h"
 #include "dr1x90_ddrc_init.h"
-#include "dr1x90_new_func.h"
+#include "dr1x90_misc.h"
 
 #include "dr1x90_crg.h"
 #include "dr1x90_mpu.h"
