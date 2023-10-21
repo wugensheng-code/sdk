@@ -13,14 +13,15 @@
 
 #include <string.h>
 
+#define TCP_SERVER_NETIO_THREAD_STACK_SIZE  (3072)
+#define TCP_SERVER_NETIO_THREAD_PRIO        6
 sys_thread_t netio_handle = NULL;
 
-extern void TCP_Server(void *arg);
-extern void TCP_Bench(void *arg);
+extern void TCP_Server_Netio_Thread(void *arg);
 
 int main()
 {
-    rt_kprintf("main start>>>\r\n");
+    rt_kprintf("rtt_lwip_netio start>>>\r\n");
     struct rt_thread *thread;
 
     /* Initialize the LwIP stack */
@@ -28,9 +29,7 @@ int main()
 
     netif_config();
 
-    netio_handle = sys_thread_new("netio_test", TCP_Server, NULL, 3096, 6);
-
-//    netio_handle = sys_thread_new("netio_test", TCP_Bench, NULL, 3096, 6);
+    netio_handle = sys_thread_new("netio_test", TCP_Server_Netio_Thread, NULL, TCP_SERVER_NETIO_THREAD_STACK_SIZE, 6);
 
     /* suspend thread */
     thread = rt_thread_self();
