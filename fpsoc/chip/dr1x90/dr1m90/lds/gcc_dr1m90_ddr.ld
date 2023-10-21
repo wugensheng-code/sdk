@@ -10,12 +10,12 @@ ENTRY(_start)
 
 MEMORY
 {
-	ram	: ORIGIN = 0x00400000, LENGTH = 0x0f000000
+	ram	: ORIGIN = 0x8000000, LENGTH = 0x1000000
 }
 
 SECTIONS
 {
-	__stack_size = DEFINED(__stack_size) ? __stack_size : 64M;
+	__stack_size = DEFINED(__stack_size) ? __stack_size : 10M;
 	__async_print_ring_buf_size = DEFINED(async_print_ring_buf_size) ? async_print_ring_buf_size : 1M;
 	/* all text segment = startup64.o data segment + others text segment */
 	.text :

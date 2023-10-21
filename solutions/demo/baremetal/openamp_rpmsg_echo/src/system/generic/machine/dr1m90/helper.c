@@ -12,7 +12,6 @@
 #include <metal/sys.h>
 #include <metal/irq.h>
 #include "platform_info.h"
-#include "al_gicv3.h"
 #include "al_intr.h"
 #include "al_errno.h"
 #include "al_chip.h"

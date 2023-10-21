@@ -75,7 +75,7 @@ CFLAGS := -O0 -g -Wall -DLOG_DEV=AL_LOG_UART0 -DRPMSG_DEBUG=1 -DBOARD_SEL=1 -DOP
 #PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 
-LINKER_SCRIPT := ./src/system/generic/machine/dr1m90/gcc_dr1m90_ddr_board_dr1x90_ad101_v10.ld
+#LINKER_SCRIPT := ./src/system/generic/machine/dr1m90/gcc_dr1m90_ddr_board_dr1x90_ad101_v10.ld
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile
