@@ -140,6 +140,19 @@ PUBLIC_INC_DIR +=  $(SDK_ROOT)/3rdparty/lib/CherryUSB/common \
                    $(SDK_ROOT)/3rdparty/lib/CherryUSB/config \
                    $(SDK_ROOT)/3rdparty/lib/CherryUSB/osal
 
+
+#libmetal
+PUBLIC_INC_DIR +=   $(SDK_ROOT)/3rdparty/lib/libmetal/include/lib/include
+
+#open-amp
+PUBLIC_INC_DIR +=   $(SDK_ROOT)/3rdparty/lib/open-amp/lib/include \
+				   	$(SDK_ROOT)/3rdparty/lib/open-amp/lib/rpmsg \
+					$(SDK_ROOT)/3rdparty/lib/open-amp/include/include/generated
+
+
+
+
+
 PUBLIC_INC  :=  $(foreach subdir,$(sort $(PUBLIC_INC_DIR)), -I$(subdir))
 
 ## module inc
