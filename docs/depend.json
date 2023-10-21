@@ -330,6 +330,18 @@
 			"supportedOS": ["rtthread"],
 			"supportedProc": ["apu-0", "apu-1", "rpu"]
 		},
+		"CHERRYUSB_MSC_FREERTOS_V1_0": {
+			"name": "CHERRYUSB_MSC_FREERTOS_V1_0",
+			"version": "1.0",
+			"depends": [
+				"/solutions/demo/baremetal/cherryUSB/host/msc_freertos",
+				"LIB_CHERRYUSB_V1_0",
+				"OS_FREERTOS_V1_0"
+			],
+			"description": "Baremetal cherryUSB MSC_RTTHREAD demo",
+			"supportedOS": ["freertos"],
+			"supportedProc": ["apu-0", "apu-1", "rpu"]
+		},
 		"RT-Thread_V1_0": {
 			"name": "RT-Thread_V1_0",
 			"version": "1.0",
