@@ -1,0 +1,65 @@
+\hypertarget{structmetal__condition}{}\section{metal\+\_\+condition Struct Reference}
+\label{structmetal__condition}\index{metal\+\_\+condition@{metal\+\_\+condition}}
+
+
+{\ttfamily \#include $<$condition.\+h$>$}
+
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$ \hyperlink{structmetal__condition_a424d948a9bebdc54fd34b3b89d667140}{m}
+\item 
+\hyperlink{compiler_2gcc_2atomic_8h_a3584358b6d722cb0cca04ac3cfd8a674}{atomic\+\_\+int} \hyperlink{structmetal__condition_a18f14ef5fa6b870c55112dc661f08887}{v}
+\item 
+\hyperlink{compiler_2gcc_2atomic_8h_aaa955a590bd7e8ef3f098f914978c8f6}{atomic\+\_\+uintptr\+\_\+t} \hyperlink{structmetal__condition_af8373265030f4b57ea2670797ff0adad}{mptr}
+\item 
+\hyperlink{compiler_2gcc_2atomic_8h_a3584358b6d722cb0cca04ac3cfd8a674}{atomic\+\_\+int} \hyperlink{structmetal__condition_a518ab57574502db086f2c5e344d20770}{waiters}
+\item 
+\hyperlink{compiler_2gcc_2atomic_8h_a3584358b6d722cb0cca04ac3cfd8a674}{atomic\+\_\+int} \hyperlink{structmetal__condition_a0d86a2776c2ed87e610c15fe9395b0a9}{wakeups}
+\item 
+pthread\+\_\+cond\+\_\+t \hyperlink{structmetal__condition_aeb36c11bc675cf940b9d027ccc7a214b}{cond}
+\end{DoxyCompactItemize}
+
+
+\subsection{Field Documentation}
+\mbox{\Hypertarget{structmetal__condition_aeb36c11bc675cf940b9d027ccc7a214b}\label{structmetal__condition_aeb36c11bc675cf940b9d027ccc7a214b}} 
+\index{metal\+\_\+condition@{metal\+\_\+condition}!cond@{cond}}
+\index{cond@{cond}!metal\+\_\+condition@{metal\+\_\+condition}}
+\subsubsection{\texorpdfstring{cond}{cond}}
+{\footnotesize\ttfamily pthread\+\_\+cond\+\_\+t metal\+\_\+condition\+::cond}
+
+\mbox{\Hypertarget{structmetal__condition_a424d948a9bebdc54fd34b3b89d667140}\label{structmetal__condition_a424d948a9bebdc54fd34b3b89d667140}} 
+\index{metal\+\_\+condition@{metal\+\_\+condition}!m@{m}}
+\index{m@{m}!metal\+\_\+condition@{metal\+\_\+condition}}
+\subsubsection{\texorpdfstring{m}{m}}
+{\footnotesize\ttfamily \hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t}$\ast$ metal\+\_\+condition\+::m}
+
+mutex. The condition variable is attached to this mutex when it is waiting. It is also used to check correctness in case there are multiple waiters. \mbox{\Hypertarget{structmetal__condition_af8373265030f4b57ea2670797ff0adad}\label{structmetal__condition_af8373265030f4b57ea2670797ff0adad}} 
+\index{metal\+\_\+condition@{metal\+\_\+condition}!mptr@{mptr}}
+\index{mptr@{mptr}!metal\+\_\+condition@{metal\+\_\+condition}}
+\subsubsection{\texorpdfstring{mptr}{mptr}}
+{\footnotesize\ttfamily \hyperlink{compiler_2gcc_2atomic_8h_aaa955a590bd7e8ef3f098f914978c8f6}{atomic\+\_\+uintptr\+\_\+t} metal\+\_\+condition\+::mptr}
+
+mutex pointer. The condition variable is attached to this mutex when it is waiting. It is also used to check correctness in case there are multiple waiters. \mbox{\Hypertarget{structmetal__condition_a18f14ef5fa6b870c55112dc661f08887}\label{structmetal__condition_a18f14ef5fa6b870c55112dc661f08887}} 
+\index{metal\+\_\+condition@{metal\+\_\+condition}!v@{v}}
+\index{v@{v}!metal\+\_\+condition@{metal\+\_\+condition}}
+\subsubsection{\texorpdfstring{v}{v}}
+{\footnotesize\ttfamily \hyperlink{compiler_2gcc_2atomic_8h_a3584358b6d722cb0cca04ac3cfd8a674}{atomic\+\_\+int} metal\+\_\+condition\+::v}
+
+condition variable value. \mbox{\Hypertarget{structmetal__condition_a518ab57574502db086f2c5e344d20770}\label{structmetal__condition_a518ab57574502db086f2c5e344d20770}} 
+\index{metal\+\_\+condition@{metal\+\_\+condition}!waiters@{waiters}}
+\index{waiters@{waiters}!metal\+\_\+condition@{metal\+\_\+condition}}
+\subsubsection{\texorpdfstring{waiters}{waiters}}
+{\footnotesize\ttfamily \hyperlink{compiler_2gcc_2atomic_8h_a3584358b6d722cb0cca04ac3cfd8a674}{atomic\+\_\+int} metal\+\_\+condition\+::waiters}
+
+number of waiters. \mbox{\Hypertarget{structmetal__condition_a0d86a2776c2ed87e610c15fe9395b0a9}\label{structmetal__condition_a0d86a2776c2ed87e610c15fe9395b0a9}} 
+\index{metal\+\_\+condition@{metal\+\_\+condition}!wakeups@{wakeups}}
+\index{wakeups@{wakeups}!metal\+\_\+condition@{metal\+\_\+condition}}
+\subsubsection{\texorpdfstring{wakeups}{wakeups}}
+{\footnotesize\ttfamily \hyperlink{compiler_2gcc_2atomic_8h_a3584358b6d722cb0cca04ac3cfd8a674}{atomic\+\_\+int} metal\+\_\+condition\+::wakeups}
+
+number of wakeups. 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+lib/system/freertos/\hyperlink{system_2freertos_2condition_8h}{condition.\+h}\end{DoxyCompactItemize}

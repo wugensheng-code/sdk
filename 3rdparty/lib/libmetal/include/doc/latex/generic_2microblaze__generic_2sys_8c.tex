@@ -1,0 +1,104 @@
+\hypertarget{generic_2microblaze__generic_2sys_8c}{}\section{lib/system/generic/microblaze\+\_\+generic/sys.c File Reference}
+\label{generic_2microblaze__generic_2sys_8c}\index{lib/system/generic/microblaze\+\_\+generic/sys.\+c@{lib/system/generic/microblaze\+\_\+generic/sys.\+c}}
+{\ttfamily \#include $<$metal/assert.\+h$>$}\newline
+{\ttfamily \#include $<$metal/io.\+h$>$}\newline
+{\ttfamily \#include $<$metal/sys.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$xil\+\_\+cache.\+h$>$}\newline
+{\ttfamily \#include $<$xil\+\_\+exception.\+h$>$}\newline
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{generic_2microblaze__generic_2sys_8c_a4404151292d3ecb612e0a9d6f6a290ef}{M\+S\+R\+\_\+\+IE}~0x2\+U\+L /$\ast$ Micro\+Blaze status register interrupt enable mask $\ast$/
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+unsigned int \hyperlink{generic_2microblaze__generic_2sys_8c_a2f1552fdaadb51ff7638e1a808d8711f}{sys\+\_\+irq\+\_\+save\+\_\+disable} (void)
+\item 
+void \hyperlink{generic_2microblaze__generic_2sys_8c_acaeabb9a02dc3267c76be2a9e9e5325a}{sys\+\_\+irq\+\_\+restore\+\_\+enable} (unsigned int flags)
+\item 
+static void \hyperlink{generic_2microblaze__generic_2sys_8c_a36ddc9e582421e650f40e0efdf1fe015}{sys\+\_\+irq\+\_\+change} (unsigned int vector, int is\+\_\+enable)
+\item 
+void \hyperlink{compiler_2iar_2compiler_8h_a78c99cb160382d13452ea045ffbac61a}{metal\+\_\+weak} \hyperlink{generic_2microblaze__generic_2sys_8c_a19a10bdd6c78321f52abd1a0839001ff}{sys\+\_\+irq\+\_\+enable} (unsigned int vector)
+\item 
+void \hyperlink{compiler_2iar_2compiler_8h_a78c99cb160382d13452ea045ffbac61a}{metal\+\_\+weak} \hyperlink{generic_2microblaze__generic_2sys_8c_a43c514657ddc13d635dd2d72196b0738}{sys\+\_\+irq\+\_\+disable} (unsigned int vector)
+\item 
+void \hyperlink{generic_2microblaze__generic_2sys_8c_a25e36f40f9ae4eec97980375d83696af}{metal\+\_\+machine\+\_\+cache\+\_\+flush} (void $\ast$addr, unsigned int len)
+\item 
+void \hyperlink{generic_2microblaze__generic_2sys_8c_a2212ede2193977ecd6e7beb7588147e9}{metal\+\_\+machine\+\_\+cache\+\_\+invalidate} (void $\ast$addr, unsigned int len)
+\item 
+void \hyperlink{compiler_2iar_2compiler_8h_a78c99cb160382d13452ea045ffbac61a}{metal\+\_\+weak} \hyperlink{generic_2microblaze__generic_2sys_8c_af6da83d46d07f5b2138c241ffcd3bb29}{metal\+\_\+generic\+\_\+default\+\_\+poll} (void)
+\begin{DoxyCompactList}\small\item\em make microblaze wait \end{DoxyCompactList}\item 
+void $\ast$ \hyperlink{generic_2microblaze__generic_2sys_8c_a8185d4e5dadf4d952ee70cf32cc09d72}{metal\+\_\+machine\+\_\+io\+\_\+mem\+\_\+map} (void $\ast$va, \hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t} pa, size\+\_\+t size, unsigned int flags)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{generic_2microblaze__generic_2sys_8c_a4404151292d3ecb612e0a9d6f6a290ef}\label{generic_2microblaze__generic_2sys_8c_a4404151292d3ecb612e0a9d6f6a290ef}} 
+\index{generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}!M\+S\+R\+\_\+\+IE@{M\+S\+R\+\_\+\+IE}}
+\index{M\+S\+R\+\_\+\+IE@{M\+S\+R\+\_\+\+IE}!generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}}
+\subsubsection{\texorpdfstring{M\+S\+R\+\_\+\+IE}{MSR\_IE}}
+{\footnotesize\ttfamily \#define M\+S\+R\+\_\+\+IE~0x2\+U\+L /$\ast$ Micro\+Blaze status register interrupt enable mask $\ast$/}
+
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{generic_2microblaze__generic_2sys_8c_af6da83d46d07f5b2138c241ffcd3bb29}\label{generic_2microblaze__generic_2sys_8c_af6da83d46d07f5b2138c241ffcd3bb29}} 
+\index{generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}!metal\+\_\+generic\+\_\+default\+\_\+poll@{metal\+\_\+generic\+\_\+default\+\_\+poll}}
+\index{metal\+\_\+generic\+\_\+default\+\_\+poll@{metal\+\_\+generic\+\_\+default\+\_\+poll}!generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+generic\+\_\+default\+\_\+poll()}{metal\_generic\_default\_poll()}}
+{\footnotesize\ttfamily void \hyperlink{compiler_2iar_2compiler_8h_a78c99cb160382d13452ea045ffbac61a}{metal\+\_\+weak} metal\+\_\+generic\+\_\+default\+\_\+poll (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+make microblaze wait 
+
+poll function until some event happens \mbox{\Hypertarget{generic_2microblaze__generic_2sys_8c_a25e36f40f9ae4eec97980375d83696af}\label{generic_2microblaze__generic_2sys_8c_a25e36f40f9ae4eec97980375d83696af}} 
+\index{generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}!metal\+\_\+machine\+\_\+cache\+\_\+flush@{metal\+\_\+machine\+\_\+cache\+\_\+flush}}
+\index{metal\+\_\+machine\+\_\+cache\+\_\+flush@{metal\+\_\+machine\+\_\+cache\+\_\+flush}!generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+machine\+\_\+cache\+\_\+flush()}{metal\_machine\_cache\_flush()}}
+{\footnotesize\ttfamily void metal\+\_\+machine\+\_\+cache\+\_\+flush (\begin{DoxyParamCaption}\item[{void $\ast$}]{addr,  }\item[{unsigned int}]{len }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{generic_2microblaze__generic_2sys_8c_a2212ede2193977ecd6e7beb7588147e9}\label{generic_2microblaze__generic_2sys_8c_a2212ede2193977ecd6e7beb7588147e9}} 
+\index{generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}!metal\+\_\+machine\+\_\+cache\+\_\+invalidate@{metal\+\_\+machine\+\_\+cache\+\_\+invalidate}}
+\index{metal\+\_\+machine\+\_\+cache\+\_\+invalidate@{metal\+\_\+machine\+\_\+cache\+\_\+invalidate}!generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+machine\+\_\+cache\+\_\+invalidate()}{metal\_machine\_cache\_invalidate()}}
+{\footnotesize\ttfamily void metal\+\_\+machine\+\_\+cache\+\_\+invalidate (\begin{DoxyParamCaption}\item[{void $\ast$}]{addr,  }\item[{unsigned int}]{len }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{generic_2microblaze__generic_2sys_8c_a8185d4e5dadf4d952ee70cf32cc09d72}\label{generic_2microblaze__generic_2sys_8c_a8185d4e5dadf4d952ee70cf32cc09d72}} 
+\index{generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}!metal\+\_\+machine\+\_\+io\+\_\+mem\+\_\+map@{metal\+\_\+machine\+\_\+io\+\_\+mem\+\_\+map}}
+\index{metal\+\_\+machine\+\_\+io\+\_\+mem\+\_\+map@{metal\+\_\+machine\+\_\+io\+\_\+mem\+\_\+map}!generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+machine\+\_\+io\+\_\+mem\+\_\+map()}{metal\_machine\_io\_mem\_map()}}
+{\footnotesize\ttfamily void$\ast$ metal\+\_\+machine\+\_\+io\+\_\+mem\+\_\+map (\begin{DoxyParamCaption}\item[{void $\ast$}]{va,  }\item[{\hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t}}]{pa,  }\item[{size\+\_\+t}]{size,  }\item[{unsigned int}]{flags }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{generic_2microblaze__generic_2sys_8c_a36ddc9e582421e650f40e0efdf1fe015}\label{generic_2microblaze__generic_2sys_8c_a36ddc9e582421e650f40e0efdf1fe015}} 
+\index{generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}!sys\+\_\+irq\+\_\+change@{sys\+\_\+irq\+\_\+change}}
+\index{sys\+\_\+irq\+\_\+change@{sys\+\_\+irq\+\_\+change}!generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}}
+\subsubsection{\texorpdfstring{sys\+\_\+irq\+\_\+change()}{sys\_irq\_change()}}
+{\footnotesize\ttfamily static void sys\+\_\+irq\+\_\+change (\begin{DoxyParamCaption}\item[{unsigned int}]{vector,  }\item[{int}]{is\+\_\+enable }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{generic_2microblaze__generic_2sys_8c_a43c514657ddc13d635dd2d72196b0738}\label{generic_2microblaze__generic_2sys_8c_a43c514657ddc13d635dd2d72196b0738}} 
+\index{generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}!sys\+\_\+irq\+\_\+disable@{sys\+\_\+irq\+\_\+disable}}
+\index{sys\+\_\+irq\+\_\+disable@{sys\+\_\+irq\+\_\+disable}!generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}}
+\subsubsection{\texorpdfstring{sys\+\_\+irq\+\_\+disable()}{sys\_irq\_disable()}}
+{\footnotesize\ttfamily void \hyperlink{compiler_2iar_2compiler_8h_a78c99cb160382d13452ea045ffbac61a}{metal\+\_\+weak} sys\+\_\+irq\+\_\+disable (\begin{DoxyParamCaption}\item[{unsigned int}]{vector }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{generic_2microblaze__generic_2sys_8c_a19a10bdd6c78321f52abd1a0839001ff}\label{generic_2microblaze__generic_2sys_8c_a19a10bdd6c78321f52abd1a0839001ff}} 
+\index{generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}!sys\+\_\+irq\+\_\+enable@{sys\+\_\+irq\+\_\+enable}}
+\index{sys\+\_\+irq\+\_\+enable@{sys\+\_\+irq\+\_\+enable}!generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}}
+\subsubsection{\texorpdfstring{sys\+\_\+irq\+\_\+enable()}{sys\_irq\_enable()}}
+{\footnotesize\ttfamily void \hyperlink{compiler_2iar_2compiler_8h_a78c99cb160382d13452ea045ffbac61a}{metal\+\_\+weak} sys\+\_\+irq\+\_\+enable (\begin{DoxyParamCaption}\item[{unsigned int}]{vector }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{generic_2microblaze__generic_2sys_8c_acaeabb9a02dc3267c76be2a9e9e5325a}\label{generic_2microblaze__generic_2sys_8c_acaeabb9a02dc3267c76be2a9e9e5325a}} 
+\index{generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}!sys\+\_\+irq\+\_\+restore\+\_\+enable@{sys\+\_\+irq\+\_\+restore\+\_\+enable}}
+\index{sys\+\_\+irq\+\_\+restore\+\_\+enable@{sys\+\_\+irq\+\_\+restore\+\_\+enable}!generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}}
+\subsubsection{\texorpdfstring{sys\+\_\+irq\+\_\+restore\+\_\+enable()}{sys\_irq\_restore\_enable()}}
+{\footnotesize\ttfamily void sys\+\_\+irq\+\_\+restore\+\_\+enable (\begin{DoxyParamCaption}\item[{unsigned int}]{flags }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{generic_2microblaze__generic_2sys_8c_a2f1552fdaadb51ff7638e1a808d8711f}\label{generic_2microblaze__generic_2sys_8c_a2f1552fdaadb51ff7638e1a808d8711f}} 
+\index{generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}!sys\+\_\+irq\+\_\+save\+\_\+disable@{sys\+\_\+irq\+\_\+save\+\_\+disable}}
+\index{sys\+\_\+irq\+\_\+save\+\_\+disable@{sys\+\_\+irq\+\_\+save\+\_\+disable}!generic/microblaze\+\_\+generic/sys.\+c@{generic/microblaze\+\_\+generic/sys.\+c}}
+\subsubsection{\texorpdfstring{sys\+\_\+irq\+\_\+save\+\_\+disable()}{sys\_irq\_save\_disable()}}
+{\footnotesize\ttfamily unsigned int sys\+\_\+irq\+\_\+save\+\_\+disable (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+

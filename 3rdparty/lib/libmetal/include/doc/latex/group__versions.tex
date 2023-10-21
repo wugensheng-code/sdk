@@ -1,0 +1,91 @@
+\hypertarget{group__versions}{}\section{Library Version Interfaces}
+\label{group__versions}\index{Library Version Interfaces@{Library Version Interfaces}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{group__versions_ga269febc3c3d38804d790339b3c9266c4}{metal\+\_\+ver\+\_\+major} (void)
+\begin{DoxyCompactList}\small\item\em Library major version number. \end{DoxyCompactList}\item 
+int \hyperlink{group__versions_ga373901f20ed1c78d65be47a1ca0d45e9}{metal\+\_\+ver\+\_\+minor} (void)
+\begin{DoxyCompactList}\small\item\em Library minor version number. \end{DoxyCompactList}\item 
+int \hyperlink{group__versions_ga2cc6ecf158e53a9b985b8d0933ebdaa8}{metal\+\_\+ver\+\_\+patch} (void)
+\begin{DoxyCompactList}\small\item\em Library patch level. \end{DoxyCompactList}\item 
+const char $\ast$ \hyperlink{group__versions_ga5161f07055c7dcfe30ae0bf749e8b189}{metal\+\_\+ver} (void)
+\begin{DoxyCompactList}\small\item\em Library version string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{group__versions_ga5161f07055c7dcfe30ae0bf749e8b189}\label{group__versions_ga5161f07055c7dcfe30ae0bf749e8b189}} 
+\index{Library Version Interfaces@{Library Version Interfaces}!metal\+\_\+ver@{metal\+\_\+ver}}
+\index{metal\+\_\+ver@{metal\+\_\+ver}!Library Version Interfaces@{Library Version Interfaces}}
+\subsubsection{\texorpdfstring{metal\+\_\+ver()}{metal\_ver()}}
+{\footnotesize\ttfamily const char$\ast$ metal\+\_\+ver (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Library version string. 
+
+Return the version string of the library linked into the application. This could differ from the value of M\+E\+T\+A\+L\+\_\+\+V\+ER, which is the version string of the library that the application was compiled against.
+
+\begin{DoxyReturn}{Returns}
+Library version string. 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\hyperlink{config_8h_a18b62ae89064d33b905076a400f8076d}{M\+E\+T\+A\+L\+\_\+\+V\+ER} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{group__versions_ga269febc3c3d38804d790339b3c9266c4}\label{group__versions_ga269febc3c3d38804d790339b3c9266c4}} 
+\index{Library Version Interfaces@{Library Version Interfaces}!metal\+\_\+ver\+\_\+major@{metal\+\_\+ver\+\_\+major}}
+\index{metal\+\_\+ver\+\_\+major@{metal\+\_\+ver\+\_\+major}!Library Version Interfaces@{Library Version Interfaces}}
+\subsubsection{\texorpdfstring{metal\+\_\+ver\+\_\+major()}{metal\_ver\_major()}}
+{\footnotesize\ttfamily int metal\+\_\+ver\+\_\+major (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Library major version number. 
+
+Return the major version number of the library linked into the application. This is required to match the value of M\+E\+T\+A\+L\+\_\+\+V\+E\+R\+\_\+\+M\+A\+J\+OR, which is the major version of the library that the application was compiled against.
+
+\begin{DoxyReturn}{Returns}
+Library major version number. 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\hyperlink{config_8h_a55f8a5b0c1369f2828e0ac64216eb0df}{M\+E\+T\+A\+L\+\_\+\+V\+E\+R\+\_\+\+M\+A\+J\+OR} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{group__versions_ga373901f20ed1c78d65be47a1ca0d45e9}\label{group__versions_ga373901f20ed1c78d65be47a1ca0d45e9}} 
+\index{Library Version Interfaces@{Library Version Interfaces}!metal\+\_\+ver\+\_\+minor@{metal\+\_\+ver\+\_\+minor}}
+\index{metal\+\_\+ver\+\_\+minor@{metal\+\_\+ver\+\_\+minor}!Library Version Interfaces@{Library Version Interfaces}}
+\subsubsection{\texorpdfstring{metal\+\_\+ver\+\_\+minor()}{metal\_ver\_minor()}}
+{\footnotesize\ttfamily int metal\+\_\+ver\+\_\+minor (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Library minor version number. 
+
+Return the minor version number of the library linked into the application. This could differ from the value of M\+E\+T\+A\+L\+\_\+\+V\+E\+R\+\_\+\+M\+I\+N\+OR, which is the minor version of the library that the application was compiled against.
+
+\begin{DoxyReturn}{Returns}
+Library minor version number. 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\hyperlink{config_8h_a85f235a417f708104d7640cf51343b4b}{M\+E\+T\+A\+L\+\_\+\+V\+E\+R\+\_\+\+M\+I\+N\+OR} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{group__versions_ga2cc6ecf158e53a9b985b8d0933ebdaa8}\label{group__versions_ga2cc6ecf158e53a9b985b8d0933ebdaa8}} 
+\index{Library Version Interfaces@{Library Version Interfaces}!metal\+\_\+ver\+\_\+patch@{metal\+\_\+ver\+\_\+patch}}
+\index{metal\+\_\+ver\+\_\+patch@{metal\+\_\+ver\+\_\+patch}!Library Version Interfaces@{Library Version Interfaces}}
+\subsubsection{\texorpdfstring{metal\+\_\+ver\+\_\+patch()}{metal\_ver\_patch()}}
+{\footnotesize\ttfamily int metal\+\_\+ver\+\_\+patch (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Library patch level. 
+
+Return the patch level of the library linked into the application. This could differ from the value of M\+E\+T\+A\+L\+\_\+\+V\+E\+R\+\_\+\+P\+A\+T\+CH, which is the patch level of the library that the application was compiled against.
+
+\begin{DoxyReturn}{Returns}
+Library patch level. 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\hyperlink{config_8h_a85fa822155cfd8193cfe84737a06abc4}{M\+E\+T\+A\+L\+\_\+\+V\+E\+R\+\_\+\+P\+A\+T\+CH} 
+\end{DoxySeeAlso}

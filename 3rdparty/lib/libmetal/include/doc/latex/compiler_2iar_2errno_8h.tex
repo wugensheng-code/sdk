@@ -1,0 +1,281 @@
+\hypertarget{compiler_2iar_2errno_8h}{}\section{lib/compiler/iar/errno.h File Reference}
+\label{compiler_2iar_2errno_8h}\index{lib/compiler/iar/errno.\+h@{lib/compiler/iar/errno.\+h}}
+{\ttfamily \#include $<$errno.\+h$>$}\newline
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE}~100
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_add669d31505a077f769cff8e66c780b3}{E\+P\+E\+RM}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 1)  /$\ast$ Operation not permitted $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a03e689f378f643d16ea7537918528a48}{E\+N\+O\+E\+NT}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 2)  /$\ast$ No such file or directory $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a462e47a8af6288232a5df548221ada4c}{E\+S\+R\+CH}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 3)  /$\ast$ No such process $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a46b83d9f6c23b1b65a8cecfd775ddaed}{E\+I\+N\+TR}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 4)  /$\ast$ Interrupted system call $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a70979f50f9c83e5aebab3d6a1bd4cf35}{E\+IO}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 5)  /$\ast$ Input/output error $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a2b3884b11e4932bd372bb6d899d6fbfe}{E\+N\+X\+IO}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 6)  /$\ast$ Device not configured $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_aba8481985c201ff726f349d7f2d09895}{E2\+B\+IG}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 7)  /$\ast$ Argument list too long $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a4d0b1b435ec441e7d50a430b83df5832}{E\+N\+O\+E\+X\+EC}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 8)  /$\ast$ Exec format error $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_ac54507d66b43ad12f9356257323c0018}{E\+B\+A\+DF}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 9)  /$\ast$ Bad file descriptor $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a47b42c351e0e011a048058d224205c0f}{E\+C\+H\+I\+LD}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 10) /$\ast$ No child processes $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a55cc70ce0ba661298f3c412095dfeeb6}{E\+D\+E\+A\+D\+LK}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 11) /$\ast$ Resource deadlock avoided $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a6a05c923dad0c1208043e9c20a58c8e5}{E\+N\+O\+M\+EM}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 12) /$\ast$ Cannot allocate memory $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_ac2a2e9fa555401f94478f74e01868032}{E\+A\+C\+C\+ES}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 13) /$\ast$ Permission denied $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a3f317946e043623f9d6b93dbf60e6316}{E\+F\+A\+U\+LT}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 14) /$\ast$ Bad address $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_aa0a4b0e307e83f52be51099f01156936}{E\+N\+O\+T\+B\+LK}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 15) /$\ast$ Block device required $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a8368025077a0385849d6817b2007c095}{E\+B\+U\+SY}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 16) /$\ast$ Device busy $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a0a3bef9e5c47e42917692b5dae3b5498}{E\+E\+X\+I\+ST}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 17) /$\ast$ File exists $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a3396cf9fb0ff5af3a18dd2a2bbdb21e1}{E\+X\+D\+EV}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 18) /$\ast$ Cross-\/device link $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_ab9b8cc17d1947160d13faaba7a18d6d1}{E\+N\+O\+D\+EV}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 19) /$\ast$ Operation not supported by device $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a9262fb92f7ef662d0bdd577912a5b101}{E\+N\+O\+T\+D\+IR}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 20) /$\ast$ Not a directory $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_ae22c3a1e0a38f3896de238cc30d0e19b}{E\+I\+S\+D\+IR}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 21) /$\ast$ Is a directory $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a2d1678d5a7cc8ce499643f3b8957def4}{E\+I\+N\+V\+AL}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 22) /$\ast$ Invalid argument $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a5554094b3fb4bb6ebeb0157cb3f82a55}{E\+N\+F\+I\+LE}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 23) /$\ast$ Too many open files in system $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a64a75c174882ddbfa726c7fd040f87a1}{E\+M\+F\+I\+LE}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 24) /$\ast$ Too many open files $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_ac3daf409082bb528032f4452a81e1034}{E\+N\+O\+T\+TY}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 25) /$\ast$ Inappropriate ioctl for device $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_aaed12e82224923d599b6f1939c8e0971}{E\+T\+X\+T\+B\+SY}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 26) /$\ast$ Text file busy $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_af5401a500939ed1812c04ca200b95eef}{E\+F\+B\+IG}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 27) /$\ast$ File too large $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a088abe8bad2df798edad3053d719b937}{E\+N\+O\+S\+PC}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 28) /$\ast$ No space left on device $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a0e42d4f9fecdcf5fcca2b333252173c3}{E\+S\+P\+I\+PE}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 29) /$\ast$ Illegal seek $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_acb02bb67dddd7ca8cf82634a0781d58d}{E\+R\+O\+FS}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 30) /$\ast$ Read-\/only filesystem $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a97f59fa1a5a2f61b792c1b9dfc218072}{E\+M\+L\+I\+NK}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 31) /$\ast$ Too many links $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_a5f8d33deb08fa27c04897b278ac7f965}{E\+P\+I\+PE}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 32) /$\ast$ Broken pipe $\ast$/
+\item 
+\#define \hyperlink{compiler_2iar_2errno_8h_af0fac1cea1165b4debec7f686edf3313}{E\+A\+G\+A\+IN}~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 35) /$\ast$ Resource temporarily unavailable $\ast$/
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_aba8481985c201ff726f349d7f2d09895}\label{compiler_2iar_2errno_8h_aba8481985c201ff726f349d7f2d09895}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E2\+B\+IG@{E2\+B\+IG}}
+\index{E2\+B\+IG@{E2\+B\+IG}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E2\+B\+IG}{E2BIG}}
+{\footnotesize\ttfamily \#define E2\+B\+IG~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 7)  /$\ast$ Argument list too long $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_ac2a2e9fa555401f94478f74e01868032}\label{compiler_2iar_2errno_8h_ac2a2e9fa555401f94478f74e01868032}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+A\+C\+C\+ES@{E\+A\+C\+C\+ES}}
+\index{E\+A\+C\+C\+ES@{E\+A\+C\+C\+ES}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+A\+C\+C\+ES}{EACCES}}
+{\footnotesize\ttfamily \#define E\+A\+C\+C\+ES~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 13) /$\ast$ Permission denied $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_af0fac1cea1165b4debec7f686edf3313}\label{compiler_2iar_2errno_8h_af0fac1cea1165b4debec7f686edf3313}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+A\+G\+A\+IN@{E\+A\+G\+A\+IN}}
+\index{E\+A\+G\+A\+IN@{E\+A\+G\+A\+IN}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+A\+G\+A\+IN}{EAGAIN}}
+{\footnotesize\ttfamily \#define E\+A\+G\+A\+IN~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 35) /$\ast$ Resource temporarily unavailable $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_ac54507d66b43ad12f9356257323c0018}\label{compiler_2iar_2errno_8h_ac54507d66b43ad12f9356257323c0018}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+B\+A\+DF@{E\+B\+A\+DF}}
+\index{E\+B\+A\+DF@{E\+B\+A\+DF}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+B\+A\+DF}{EBADF}}
+{\footnotesize\ttfamily \#define E\+B\+A\+DF~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 9)  /$\ast$ Bad file descriptor $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a8368025077a0385849d6817b2007c095}\label{compiler_2iar_2errno_8h_a8368025077a0385849d6817b2007c095}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+B\+U\+SY@{E\+B\+U\+SY}}
+\index{E\+B\+U\+SY@{E\+B\+U\+SY}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+B\+U\+SY}{EBUSY}}
+{\footnotesize\ttfamily \#define E\+B\+U\+SY~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 16) /$\ast$ Device busy $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a47b42c351e0e011a048058d224205c0f}\label{compiler_2iar_2errno_8h_a47b42c351e0e011a048058d224205c0f}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+C\+H\+I\+LD@{E\+C\+H\+I\+LD}}
+\index{E\+C\+H\+I\+LD@{E\+C\+H\+I\+LD}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+C\+H\+I\+LD}{ECHILD}}
+{\footnotesize\ttfamily \#define E\+C\+H\+I\+LD~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 10) /$\ast$ No child processes $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a55cc70ce0ba661298f3c412095dfeeb6}\label{compiler_2iar_2errno_8h_a55cc70ce0ba661298f3c412095dfeeb6}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+D\+E\+A\+D\+LK@{E\+D\+E\+A\+D\+LK}}
+\index{E\+D\+E\+A\+D\+LK@{E\+D\+E\+A\+D\+LK}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+D\+E\+A\+D\+LK}{EDEADLK}}
+{\footnotesize\ttfamily \#define E\+D\+E\+A\+D\+LK~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 11) /$\ast$ Resource deadlock avoided $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a0a3bef9e5c47e42917692b5dae3b5498}\label{compiler_2iar_2errno_8h_a0a3bef9e5c47e42917692b5dae3b5498}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+E\+X\+I\+ST@{E\+E\+X\+I\+ST}}
+\index{E\+E\+X\+I\+ST@{E\+E\+X\+I\+ST}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+E\+X\+I\+ST}{EEXIST}}
+{\footnotesize\ttfamily \#define E\+E\+X\+I\+ST~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 17) /$\ast$ File exists $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a3f317946e043623f9d6b93dbf60e6316}\label{compiler_2iar_2errno_8h_a3f317946e043623f9d6b93dbf60e6316}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+F\+A\+U\+LT@{E\+F\+A\+U\+LT}}
+\index{E\+F\+A\+U\+LT@{E\+F\+A\+U\+LT}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+F\+A\+U\+LT}{EFAULT}}
+{\footnotesize\ttfamily \#define E\+F\+A\+U\+LT~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 14) /$\ast$ Bad address $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_af5401a500939ed1812c04ca200b95eef}\label{compiler_2iar_2errno_8h_af5401a500939ed1812c04ca200b95eef}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+F\+B\+IG@{E\+F\+B\+IG}}
+\index{E\+F\+B\+IG@{E\+F\+B\+IG}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+F\+B\+IG}{EFBIG}}
+{\footnotesize\ttfamily \#define E\+F\+B\+IG~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 27) /$\ast$ File too large $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a46b83d9f6c23b1b65a8cecfd775ddaed}\label{compiler_2iar_2errno_8h_a46b83d9f6c23b1b65a8cecfd775ddaed}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+I\+N\+TR@{E\+I\+N\+TR}}
+\index{E\+I\+N\+TR@{E\+I\+N\+TR}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+I\+N\+TR}{EINTR}}
+{\footnotesize\ttfamily \#define E\+I\+N\+TR~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 4)  /$\ast$ Interrupted system call $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a2d1678d5a7cc8ce499643f3b8957def4}\label{compiler_2iar_2errno_8h_a2d1678d5a7cc8ce499643f3b8957def4}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+I\+N\+V\+AL@{E\+I\+N\+V\+AL}}
+\index{E\+I\+N\+V\+AL@{E\+I\+N\+V\+AL}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+I\+N\+V\+AL}{EINVAL}}
+{\footnotesize\ttfamily \#define E\+I\+N\+V\+AL~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 22) /$\ast$ Invalid argument $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a70979f50f9c83e5aebab3d6a1bd4cf35}\label{compiler_2iar_2errno_8h_a70979f50f9c83e5aebab3d6a1bd4cf35}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+IO@{E\+IO}}
+\index{E\+IO@{E\+IO}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+IO}{EIO}}
+{\footnotesize\ttfamily \#define E\+IO~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 5)  /$\ast$ Input/output error $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_ae22c3a1e0a38f3896de238cc30d0e19b}\label{compiler_2iar_2errno_8h_ae22c3a1e0a38f3896de238cc30d0e19b}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+I\+S\+D\+IR@{E\+I\+S\+D\+IR}}
+\index{E\+I\+S\+D\+IR@{E\+I\+S\+D\+IR}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+I\+S\+D\+IR}{EISDIR}}
+{\footnotesize\ttfamily \#define E\+I\+S\+D\+IR~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 21) /$\ast$ Is a directory $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a64a75c174882ddbfa726c7fd040f87a1}\label{compiler_2iar_2errno_8h_a64a75c174882ddbfa726c7fd040f87a1}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+M\+F\+I\+LE@{E\+M\+F\+I\+LE}}
+\index{E\+M\+F\+I\+LE@{E\+M\+F\+I\+LE}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+M\+F\+I\+LE}{EMFILE}}
+{\footnotesize\ttfamily \#define E\+M\+F\+I\+LE~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 24) /$\ast$ Too many open files $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a97f59fa1a5a2f61b792c1b9dfc218072}\label{compiler_2iar_2errno_8h_a97f59fa1a5a2f61b792c1b9dfc218072}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+M\+L\+I\+NK@{E\+M\+L\+I\+NK}}
+\index{E\+M\+L\+I\+NK@{E\+M\+L\+I\+NK}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+M\+L\+I\+NK}{EMLINK}}
+{\footnotesize\ttfamily \#define E\+M\+L\+I\+NK~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 31) /$\ast$ Too many links $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a5554094b3fb4bb6ebeb0157cb3f82a55}\label{compiler_2iar_2errno_8h_a5554094b3fb4bb6ebeb0157cb3f82a55}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+N\+F\+I\+LE@{E\+N\+F\+I\+LE}}
+\index{E\+N\+F\+I\+LE@{E\+N\+F\+I\+LE}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+N\+F\+I\+LE}{ENFILE}}
+{\footnotesize\ttfamily \#define E\+N\+F\+I\+LE~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 23) /$\ast$ Too many open files in system $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_ab9b8cc17d1947160d13faaba7a18d6d1}\label{compiler_2iar_2errno_8h_ab9b8cc17d1947160d13faaba7a18d6d1}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+N\+O\+D\+EV@{E\+N\+O\+D\+EV}}
+\index{E\+N\+O\+D\+EV@{E\+N\+O\+D\+EV}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+N\+O\+D\+EV}{ENODEV}}
+{\footnotesize\ttfamily \#define E\+N\+O\+D\+EV~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 19) /$\ast$ Operation not supported by device $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a03e689f378f643d16ea7537918528a48}\label{compiler_2iar_2errno_8h_a03e689f378f643d16ea7537918528a48}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+N\+O\+E\+NT@{E\+N\+O\+E\+NT}}
+\index{E\+N\+O\+E\+NT@{E\+N\+O\+E\+NT}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+N\+O\+E\+NT}{ENOENT}}
+{\footnotesize\ttfamily \#define E\+N\+O\+E\+NT~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 2)  /$\ast$ No such file or directory $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a4d0b1b435ec441e7d50a430b83df5832}\label{compiler_2iar_2errno_8h_a4d0b1b435ec441e7d50a430b83df5832}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+N\+O\+E\+X\+EC@{E\+N\+O\+E\+X\+EC}}
+\index{E\+N\+O\+E\+X\+EC@{E\+N\+O\+E\+X\+EC}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+N\+O\+E\+X\+EC}{ENOEXEC}}
+{\footnotesize\ttfamily \#define E\+N\+O\+E\+X\+EC~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 8)  /$\ast$ Exec format error $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a6a05c923dad0c1208043e9c20a58c8e5}\label{compiler_2iar_2errno_8h_a6a05c923dad0c1208043e9c20a58c8e5}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+N\+O\+M\+EM@{E\+N\+O\+M\+EM}}
+\index{E\+N\+O\+M\+EM@{E\+N\+O\+M\+EM}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+N\+O\+M\+EM}{ENOMEM}}
+{\footnotesize\ttfamily \#define E\+N\+O\+M\+EM~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 12) /$\ast$ Cannot allocate memory $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a088abe8bad2df798edad3053d719b937}\label{compiler_2iar_2errno_8h_a088abe8bad2df798edad3053d719b937}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+N\+O\+S\+PC@{E\+N\+O\+S\+PC}}
+\index{E\+N\+O\+S\+PC@{E\+N\+O\+S\+PC}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+N\+O\+S\+PC}{ENOSPC}}
+{\footnotesize\ttfamily \#define E\+N\+O\+S\+PC~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 28) /$\ast$ No space left on device $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_aa0a4b0e307e83f52be51099f01156936}\label{compiler_2iar_2errno_8h_aa0a4b0e307e83f52be51099f01156936}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+N\+O\+T\+B\+LK@{E\+N\+O\+T\+B\+LK}}
+\index{E\+N\+O\+T\+B\+LK@{E\+N\+O\+T\+B\+LK}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+N\+O\+T\+B\+LK}{ENOTBLK}}
+{\footnotesize\ttfamily \#define E\+N\+O\+T\+B\+LK~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 15) /$\ast$ Block device required $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a9262fb92f7ef662d0bdd577912a5b101}\label{compiler_2iar_2errno_8h_a9262fb92f7ef662d0bdd577912a5b101}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+N\+O\+T\+D\+IR@{E\+N\+O\+T\+D\+IR}}
+\index{E\+N\+O\+T\+D\+IR@{E\+N\+O\+T\+D\+IR}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+N\+O\+T\+D\+IR}{ENOTDIR}}
+{\footnotesize\ttfamily \#define E\+N\+O\+T\+D\+IR~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 20) /$\ast$ Not a directory $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_ac3daf409082bb528032f4452a81e1034}\label{compiler_2iar_2errno_8h_ac3daf409082bb528032f4452a81e1034}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+N\+O\+T\+TY@{E\+N\+O\+T\+TY}}
+\index{E\+N\+O\+T\+TY@{E\+N\+O\+T\+TY}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+N\+O\+T\+TY}{ENOTTY}}
+{\footnotesize\ttfamily \#define E\+N\+O\+T\+TY~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 25) /$\ast$ Inappropriate ioctl for device $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a2b3884b11e4932bd372bb6d899d6fbfe}\label{compiler_2iar_2errno_8h_a2b3884b11e4932bd372bb6d899d6fbfe}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+N\+X\+IO@{E\+N\+X\+IO}}
+\index{E\+N\+X\+IO@{E\+N\+X\+IO}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+N\+X\+IO}{ENXIO}}
+{\footnotesize\ttfamily \#define E\+N\+X\+IO~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 6)  /$\ast$ Device not configured $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_add669d31505a077f769cff8e66c780b3}\label{compiler_2iar_2errno_8h_add669d31505a077f769cff8e66c780b3}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+P\+E\+RM@{E\+P\+E\+RM}}
+\index{E\+P\+E\+RM@{E\+P\+E\+RM}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+P\+E\+RM}{EPERM}}
+{\footnotesize\ttfamily \#define E\+P\+E\+RM~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 1)  /$\ast$ Operation not permitted $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a5f8d33deb08fa27c04897b278ac7f965}\label{compiler_2iar_2errno_8h_a5f8d33deb08fa27c04897b278ac7f965}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+P\+I\+PE@{E\+P\+I\+PE}}
+\index{E\+P\+I\+PE@{E\+P\+I\+PE}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+P\+I\+PE}{EPIPE}}
+{\footnotesize\ttfamily \#define E\+P\+I\+PE~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 32) /$\ast$ Broken pipe $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_acb02bb67dddd7ca8cf82634a0781d58d}\label{compiler_2iar_2errno_8h_acb02bb67dddd7ca8cf82634a0781d58d}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+R\+O\+FS@{E\+R\+O\+FS}}
+\index{E\+R\+O\+FS@{E\+R\+O\+FS}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+R\+O\+FS}{EROFS}}
+{\footnotesize\ttfamily \#define E\+R\+O\+FS~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 30) /$\ast$ Read-\/only filesystem $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a0e42d4f9fecdcf5fcca2b333252173c3}\label{compiler_2iar_2errno_8h_a0e42d4f9fecdcf5fcca2b333252173c3}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+S\+P\+I\+PE@{E\+S\+P\+I\+PE}}
+\index{E\+S\+P\+I\+PE@{E\+S\+P\+I\+PE}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+S\+P\+I\+PE}{ESPIPE}}
+{\footnotesize\ttfamily \#define E\+S\+P\+I\+PE~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 29) /$\ast$ Illegal seek $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a462e47a8af6288232a5df548221ada4c}\label{compiler_2iar_2errno_8h_a462e47a8af6288232a5df548221ada4c}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+S\+R\+CH@{E\+S\+R\+CH}}
+\index{E\+S\+R\+CH@{E\+S\+R\+CH}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+S\+R\+CH}{ESRCH}}
+{\footnotesize\ttfamily \#define E\+S\+R\+CH~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 3)  /$\ast$ No such process $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_aaed12e82224923d599b6f1939c8e0971}\label{compiler_2iar_2errno_8h_aaed12e82224923d599b6f1939c8e0971}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+T\+X\+T\+B\+SY@{E\+T\+X\+T\+B\+SY}}
+\index{E\+T\+X\+T\+B\+SY@{E\+T\+X\+T\+B\+SY}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+T\+X\+T\+B\+SY}{ETXTBSY}}
+{\footnotesize\ttfamily \#define E\+T\+X\+T\+B\+SY~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 26) /$\ast$ Text file busy $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a3396cf9fb0ff5af3a18dd2a2bbdb21e1}\label{compiler_2iar_2errno_8h_a3396cf9fb0ff5af3a18dd2a2bbdb21e1}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!E\+X\+D\+EV@{E\+X\+D\+EV}}
+\index{E\+X\+D\+EV@{E\+X\+D\+EV}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{E\+X\+D\+EV}{EXDEV}}
+{\footnotesize\ttfamily \#define E\+X\+D\+EV~(\hyperlink{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE} + 18) /$\ast$ Cross-\/device link $\ast$/}
+
+\mbox{\Hypertarget{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}\label{compiler_2iar_2errno_8h_a136a34750a252db66dba9dca1aa975c5}} 
+\index{compiler/iar/errno.\+h@{compiler/iar/errno.\+h}!L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE@{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE}}
+\index{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE@{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE}!compiler/iar/errno.\+h@{compiler/iar/errno.\+h}}
+\subsubsection{\texorpdfstring{L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE}{LIBMETAL\_ERR\_BASE}}
+{\footnotesize\ttfamily \#define L\+I\+B\+M\+E\+T\+A\+L\+\_\+\+E\+R\+R\+\_\+\+B\+A\+SE~100}
+

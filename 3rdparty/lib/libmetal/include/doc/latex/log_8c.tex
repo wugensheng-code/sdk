@@ -1,0 +1,19 @@
+\hypertarget{log_8c}{}\section{lib/log.c File Reference}
+\label{log_8c}\index{lib/log.\+c@{lib/log.\+c}}
+{\ttfamily \#include $<$stdarg.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$metal/log.\+h$>$}\newline
+{\ttfamily \#include $<$metal/sys.\+h$>$}\newline
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{group__logging_ga02b6dcb78052b93f9f78df2afb0cf464}{metal\+\_\+default\+\_\+log\+\_\+handler} (enum \hyperlink{group__logging_ga4ffa0f4a1339af510aca7f817ee36d82}{metal\+\_\+log\+\_\+level} level, const char $\ast$format,...)
+\begin{DoxyCompactList}\small\item\em Default libmetal log handler. This handler prints libmetal log messages to stderr. \end{DoxyCompactList}\item 
+void \hyperlink{group__logging_ga68f2f88eeba019ecad0ad0f0cf42d724}{metal\+\_\+set\+\_\+log\+\_\+handler} (\hyperlink{group__logging_gaa79b2a8962227bb67c242b98afda292a}{metal\+\_\+log\+\_\+handler} handler)
+\begin{DoxyCompactList}\small\item\em Set libmetal log handler. \end{DoxyCompactList}\item 
+\hyperlink{group__logging_gaa79b2a8962227bb67c242b98afda292a}{metal\+\_\+log\+\_\+handler} \hyperlink{group__logging_ga526a951e1d184816fe86d474e71cec42}{metal\+\_\+get\+\_\+log\+\_\+handler} (void)
+\begin{DoxyCompactList}\small\item\em Get the current libmetal log handler. \end{DoxyCompactList}\item 
+void \hyperlink{group__logging_ga97d10ee76c920dd83b099f4cd1c26c0d}{metal\+\_\+set\+\_\+log\+\_\+level} (enum \hyperlink{group__logging_ga4ffa0f4a1339af510aca7f817ee36d82}{metal\+\_\+log\+\_\+level} level)
+\begin{DoxyCompactList}\small\item\em Set the level for libmetal logging. \end{DoxyCompactList}\item 
+enum \hyperlink{group__logging_ga4ffa0f4a1339af510aca7f817ee36d82}{metal\+\_\+log\+\_\+level} \hyperlink{group__logging_gaba9eb8e1922ace9eb3ac2a7fa9ff9700}{metal\+\_\+get\+\_\+log\+\_\+level} (void)
+\begin{DoxyCompactList}\small\item\em Get the current level for libmetal logging. \end{DoxyCompactList}\end{DoxyCompactItemize}

@@ -1,0 +1,61 @@
+\hypertarget{utilities_8h}{}\section{lib/utilities.h File Reference}
+\label{utilities_8h}\index{lib/utilities.\+h@{lib/utilities.\+h}}
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$limits.\+h$>$}\newline
+{\ttfamily \#include $<$metal/assert.\+h$>$}\newline
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{group__utilities_ga731379b7002ae0ebd74eefe656064f2a}{metal\+\_\+unused}(x)~do \{ (x) = (x); \} while (0)
+\item 
+\#define \hyperlink{group__utilities_ga28bf3f83d2efd1c6fb6b5bf63162ad32}{metal\+\_\+dim}(x)~(sizeof(x) / sizeof(x\mbox{[}0\mbox{]}))
+\item 
+\#define \hyperlink{group__utilities_ga9ea8974801fa4d6b7769097f5da5a68b}{metal\+\_\+min}(x,  y)~((x) $<$ (y) ? (x) \+: (y))
+\item 
+\#define \hyperlink{group__utilities_ga4e7658a6bfc47722c6dbf37b2b15278c}{metal\+\_\+max}(x,  y)~((x) $>$ (y) ? (x) \+: (y))
+\item 
+\#define \hyperlink{group__utilities_ga7648611485a94eb9594ab64645052cda}{metal\+\_\+sign}(x)~((x) $<$ 0 ? -\/1 \+: ((x) $>$ 0 ? 1 \+: 0))
+\item 
+\#define \hyperlink{group__utilities_ga156203f45b1730445ff94ea22f619917}{metal\+\_\+align\+\_\+down}(size,  align)~((size) \& $\sim$((align) -\/ 1))
+\item 
+\#define \hyperlink{group__utilities_ga416a17445a84ce264d90616960082f51}{metal\+\_\+align\+\_\+up}(size,  align)~\hyperlink{group__utilities_ga156203f45b1730445ff94ea22f619917}{metal\+\_\+align\+\_\+down}((size) + (align) -\/ 1, align)
+\item 
+\#define \hyperlink{group__utilities_ga86077c41e1fb0d755b406d07213aecae}{metal\+\_\+div\+\_\+round\+\_\+down}(num,  den)~((num) / (den))
+\item 
+\#define \hyperlink{group__utilities_gace231318276c47f6e2fbc12e61fd5b7c}{metal\+\_\+div\+\_\+round\+\_\+up}(num,  den)~\hyperlink{group__utilities_ga86077c41e1fb0d755b406d07213aecae}{metal\+\_\+div\+\_\+round\+\_\+down}((num) + (den) -\/ 1, (den))
+\item 
+\#define \hyperlink{group__utilities_gaf31231a9208f8a5474f3c72dff89fab9}{metal\+\_\+ptr\+\_\+align\+\_\+down}(ptr,  align)~(void $\ast$)(\hyperlink{group__utilities_ga156203f45b1730445ff94ea22f619917}{metal\+\_\+align\+\_\+down}((uintptr\+\_\+t)(ptr), (uintptr\+\_\+t)(align)))
+\item 
+\#define \hyperlink{group__utilities_ga4fe28bcda40d18f0ede123b6fb81abee}{metal\+\_\+ptr\+\_\+align\+\_\+up}(ptr,  align)~(void $\ast$)(\hyperlink{group__utilities_ga416a17445a84ce264d90616960082f51}{metal\+\_\+align\+\_\+up}((uintptr\+\_\+t)(ptr), (uintptr\+\_\+t)(align)))
+\item 
+\#define \hyperlink{group__utilities_gae60f3b54d150788936f856605ae97771}{metal\+\_\+offset\+\_\+of}(structure,  member)~((uintptr\+\_\+t)\&(((structure $\ast$)0)-\/$>$member))
+\item 
+\#define \hyperlink{group__utilities_ga641140abcd34001218982af331e559e1}{metal\+\_\+container\+\_\+of}(ptr,  structure,  member)~(void $\ast$)((uintptr\+\_\+t)(ptr) -\/ \hyperlink{group__utilities_gae60f3b54d150788936f856605ae97771}{metal\+\_\+offset\+\_\+of}(structure, member))
+\item 
+\#define \hyperlink{group__utilities_ga346994d9555206ff5b417774f1b1a81c}{M\+E\+T\+A\+L\+\_\+\+B\+I\+T\+S\+\_\+\+P\+E\+R\+\_\+\+U\+L\+O\+NG}~(C\+H\+A\+R\+\_\+\+B\+IT $\ast$ sizeof(unsigned long))
+\item 
+\#define \hyperlink{group__utilities_ga89b6d4d2f25b7cb7a1c96f3acb8f0bcb}{metal\+\_\+bit}(bit)~(1\+U\+L $<$$<$ (bit))
+\item 
+\#define \hyperlink{group__utilities_ga4cdd72506a6f9e69a772670fd159b5a4}{metal\+\_\+bitmap\+\_\+longs}(x)~\hyperlink{group__utilities_gace231318276c47f6e2fbc12e61fd5b7c}{metal\+\_\+div\+\_\+round\+\_\+up}((x), \hyperlink{group__utilities_ga346994d9555206ff5b417774f1b1a81c}{M\+E\+T\+A\+L\+\_\+\+B\+I\+T\+S\+\_\+\+P\+E\+R\+\_\+\+U\+L\+O\+NG})
+\item 
+\#define \hyperlink{group__utilities_gae9b3f29572249c108220c4b4aecf55a3}{metal\+\_\+bitmap\+\_\+for\+\_\+each\+\_\+set\+\_\+bit}(bitmap,  bit,  max)
+\item 
+\#define \hyperlink{group__utilities_gac301167f066509c8713f452bd05d70d3}{metal\+\_\+bitmap\+\_\+for\+\_\+each\+\_\+clear\+\_\+bit}(bitmap,  bit,  max)
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{group__utilities_ga622ee22edc3b4788268dc828f9b5420a}{metal\+\_\+bitmap\+\_\+set\+\_\+bit} (unsigned long $\ast$bitmap, int bit)
+\item 
+static int \hyperlink{group__utilities_ga94c36e928910f02111963daa47cad587}{metal\+\_\+bitmap\+\_\+is\+\_\+bit\+\_\+set} (unsigned long $\ast$bitmap, int bit)
+\item 
+static void \hyperlink{group__utilities_gabee027a937a66b1d8b9f05305edb9f30}{metal\+\_\+bitmap\+\_\+clear\+\_\+bit} (unsigned long $\ast$bitmap, int bit)
+\item 
+static int \hyperlink{group__utilities_gaf87fdcddbe6c2daa61f24da064215312}{metal\+\_\+bitmap\+\_\+is\+\_\+bit\+\_\+clear} (unsigned long $\ast$bitmap, int bit)
+\item 
+static unsigned int \hyperlink{group__utilities_gad10cd8f0c0300e70f9bba357dbee6c77}{metal\+\_\+bitmap\+\_\+next\+\_\+set\+\_\+bit} (unsigned long $\ast$bitmap, unsigned int start, unsigned int max)
+\item 
+static unsigned int \hyperlink{group__utilities_gadc1fed2eca21c2c0435feca5a734f816}{metal\+\_\+bitmap\+\_\+next\+\_\+clear\+\_\+bit} (unsigned long $\ast$bitmap, unsigned int start, unsigned int max)
+\item 
+static unsigned long \hyperlink{group__utilities_ga386baee8a2518eab0d2fc644f6634891}{metal\+\_\+log2} (unsigned long in)
+\end{DoxyCompactItemize}

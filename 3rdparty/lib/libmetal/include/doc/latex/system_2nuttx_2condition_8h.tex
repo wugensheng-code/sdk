@@ -1,0 +1,52 @@
+\hypertarget{system_2nuttx_2condition_8h}{}\section{lib/system/nuttx/condition.h File Reference}
+\label{system_2nuttx_2condition_8h}\index{lib/system/nuttx/condition.\+h@{lib/system/nuttx/condition.\+h}}
+{\ttfamily \#include $<$pthread.\+h$>$}\newline
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structmetal__condition}{metal\+\_\+condition}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{system_2nuttx_2condition_8h_a5c8e6d4c885e2edd7a478e5c0ee6abae}{M\+E\+T\+A\+L\+\_\+\+C\+O\+N\+D\+I\+T\+I\+O\+N\+\_\+\+I\+N\+IT}~\{P\+T\+H\+R\+E\+A\+D\+\_\+\+C\+O\+N\+D\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+ER\}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{system_2nuttx_2condition_8h_a879378a795dc41afc4025c083f203e4e}{metal\+\_\+condition\+\_\+init} (struct \hyperlink{structmetal__condition}{metal\+\_\+condition} $\ast$cv)
+\item 
+static int \hyperlink{system_2nuttx_2condition_8h_a042f4c19e3ddb3136365f4426e8bc439}{metal\+\_\+condition\+\_\+signal} (struct \hyperlink{structmetal__condition}{metal\+\_\+condition} $\ast$cv)
+\item 
+static int \hyperlink{system_2nuttx_2condition_8h_a80d63ed8a725e3a4a3291e58147fc4ae}{metal\+\_\+condition\+\_\+broadcast} (struct \hyperlink{structmetal__condition}{metal\+\_\+condition} $\ast$cv)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{system_2nuttx_2condition_8h_a5c8e6d4c885e2edd7a478e5c0ee6abae}\label{system_2nuttx_2condition_8h_a5c8e6d4c885e2edd7a478e5c0ee6abae}} 
+\index{system/nuttx/condition.\+h@{system/nuttx/condition.\+h}!M\+E\+T\+A\+L\+\_\+\+C\+O\+N\+D\+I\+T\+I\+O\+N\+\_\+\+I\+N\+IT@{M\+E\+T\+A\+L\+\_\+\+C\+O\+N\+D\+I\+T\+I\+O\+N\+\_\+\+I\+N\+IT}}
+\index{M\+E\+T\+A\+L\+\_\+\+C\+O\+N\+D\+I\+T\+I\+O\+N\+\_\+\+I\+N\+IT@{M\+E\+T\+A\+L\+\_\+\+C\+O\+N\+D\+I\+T\+I\+O\+N\+\_\+\+I\+N\+IT}!system/nuttx/condition.\+h@{system/nuttx/condition.\+h}}
+\subsubsection{\texorpdfstring{M\+E\+T\+A\+L\+\_\+\+C\+O\+N\+D\+I\+T\+I\+O\+N\+\_\+\+I\+N\+IT}{METAL\_CONDITION\_INIT}}
+{\footnotesize\ttfamily \#define M\+E\+T\+A\+L\+\_\+\+C\+O\+N\+D\+I\+T\+I\+O\+N\+\_\+\+I\+N\+IT~\{P\+T\+H\+R\+E\+A\+D\+\_\+\+C\+O\+N\+D\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+ER\}}
+
+Static metal condition variable initialization. 
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{system_2nuttx_2condition_8h_a80d63ed8a725e3a4a3291e58147fc4ae}\label{system_2nuttx_2condition_8h_a80d63ed8a725e3a4a3291e58147fc4ae}} 
+\index{system/nuttx/condition.\+h@{system/nuttx/condition.\+h}!metal\+\_\+condition\+\_\+broadcast@{metal\+\_\+condition\+\_\+broadcast}}
+\index{metal\+\_\+condition\+\_\+broadcast@{metal\+\_\+condition\+\_\+broadcast}!system/nuttx/condition.\+h@{system/nuttx/condition.\+h}}
+\subsubsection{\texorpdfstring{metal\+\_\+condition\+\_\+broadcast()}{metal\_condition\_broadcast()}}
+{\footnotesize\ttfamily static int metal\+\_\+condition\+\_\+broadcast (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__condition}{metal\+\_\+condition} $\ast$}]{cv }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2nuttx_2condition_8h_a879378a795dc41afc4025c083f203e4e}\label{system_2nuttx_2condition_8h_a879378a795dc41afc4025c083f203e4e}} 
+\index{system/nuttx/condition.\+h@{system/nuttx/condition.\+h}!metal\+\_\+condition\+\_\+init@{metal\+\_\+condition\+\_\+init}}
+\index{metal\+\_\+condition\+\_\+init@{metal\+\_\+condition\+\_\+init}!system/nuttx/condition.\+h@{system/nuttx/condition.\+h}}
+\subsubsection{\texorpdfstring{metal\+\_\+condition\+\_\+init()}{metal\_condition\_init()}}
+{\footnotesize\ttfamily static void metal\+\_\+condition\+\_\+init (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__condition}{metal\+\_\+condition} $\ast$}]{cv }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2nuttx_2condition_8h_a042f4c19e3ddb3136365f4426e8bc439}\label{system_2nuttx_2condition_8h_a042f4c19e3ddb3136365f4426e8bc439}} 
+\index{system/nuttx/condition.\+h@{system/nuttx/condition.\+h}!metal\+\_\+condition\+\_\+signal@{metal\+\_\+condition\+\_\+signal}}
+\index{metal\+\_\+condition\+\_\+signal@{metal\+\_\+condition\+\_\+signal}!system/nuttx/condition.\+h@{system/nuttx/condition.\+h}}
+\subsubsection{\texorpdfstring{metal\+\_\+condition\+\_\+signal()}{metal\_condition\_signal()}}
+{\footnotesize\ttfamily static int metal\+\_\+condition\+\_\+signal (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__condition}{metal\+\_\+condition} $\ast$}]{cv }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+

@@ -1,0 +1,42 @@
+\hypertarget{system_2zephyr_2alloc_8h}{}\section{lib/system/zephyr/alloc.h File Reference}
+\label{system_2zephyr_2alloc_8h}\index{lib/system/zephyr/alloc.\+h@{lib/system/zephyr/alloc.\+h}}
+{\ttfamily \#include $<$zephyr/kernel.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void $\ast$ \hyperlink{system_2zephyr_2alloc_8h_a75232d9c5470eb036e877b06c7fdcec4}{metal\+\_\+zephyr\+\_\+allocate\+\_\+memory} (unsigned int size)
+\item 
+void \hyperlink{system_2zephyr_2alloc_8h_a5dcb2e80d25e94743b591c8275459f47}{metal\+\_\+zephyr\+\_\+free\+\_\+memory} (void $\ast$ptr)
+\item 
+static void $\ast$ \hyperlink{system_2zephyr_2alloc_8h_ae303083af8eaf1aa05f5455e0f1ccae8}{metal\+\_\+allocate\+\_\+memory} (unsigned int size)
+\item 
+static void \hyperlink{system_2zephyr_2alloc_8h_acfe3e374cb2e273fa55c0b07022bc9db}{metal\+\_\+free\+\_\+memory} (void $\ast$ptr)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{system_2zephyr_2alloc_8h_ae303083af8eaf1aa05f5455e0f1ccae8}\label{system_2zephyr_2alloc_8h_ae303083af8eaf1aa05f5455e0f1ccae8}} 
+\index{system/zephyr/alloc.\+h@{system/zephyr/alloc.\+h}!metal\+\_\+allocate\+\_\+memory@{metal\+\_\+allocate\+\_\+memory}}
+\index{metal\+\_\+allocate\+\_\+memory@{metal\+\_\+allocate\+\_\+memory}!system/zephyr/alloc.\+h@{system/zephyr/alloc.\+h}}
+\subsubsection{\texorpdfstring{metal\+\_\+allocate\+\_\+memory()}{metal\_allocate\_memory()}}
+{\footnotesize\ttfamily static void$\ast$ metal\+\_\+allocate\+\_\+memory (\begin{DoxyParamCaption}\item[{unsigned int}]{size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2zephyr_2alloc_8h_acfe3e374cb2e273fa55c0b07022bc9db}\label{system_2zephyr_2alloc_8h_acfe3e374cb2e273fa55c0b07022bc9db}} 
+\index{system/zephyr/alloc.\+h@{system/zephyr/alloc.\+h}!metal\+\_\+free\+\_\+memory@{metal\+\_\+free\+\_\+memory}}
+\index{metal\+\_\+free\+\_\+memory@{metal\+\_\+free\+\_\+memory}!system/zephyr/alloc.\+h@{system/zephyr/alloc.\+h}}
+\subsubsection{\texorpdfstring{metal\+\_\+free\+\_\+memory()}{metal\_free\_memory()}}
+{\footnotesize\ttfamily static void metal\+\_\+free\+\_\+memory (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2zephyr_2alloc_8h_a75232d9c5470eb036e877b06c7fdcec4}\label{system_2zephyr_2alloc_8h_a75232d9c5470eb036e877b06c7fdcec4}} 
+\index{system/zephyr/alloc.\+h@{system/zephyr/alloc.\+h}!metal\+\_\+zephyr\+\_\+allocate\+\_\+memory@{metal\+\_\+zephyr\+\_\+allocate\+\_\+memory}}
+\index{metal\+\_\+zephyr\+\_\+allocate\+\_\+memory@{metal\+\_\+zephyr\+\_\+allocate\+\_\+memory}!system/zephyr/alloc.\+h@{system/zephyr/alloc.\+h}}
+\subsubsection{\texorpdfstring{metal\+\_\+zephyr\+\_\+allocate\+\_\+memory()}{metal\_zephyr\_allocate\_memory()}}
+{\footnotesize\ttfamily void$\ast$ metal\+\_\+zephyr\+\_\+allocate\+\_\+memory (\begin{DoxyParamCaption}\item[{unsigned int}]{size }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{system_2zephyr_2alloc_8h_a5dcb2e80d25e94743b591c8275459f47}\label{system_2zephyr_2alloc_8h_a5dcb2e80d25e94743b591c8275459f47}} 
+\index{system/zephyr/alloc.\+h@{system/zephyr/alloc.\+h}!metal\+\_\+zephyr\+\_\+free\+\_\+memory@{metal\+\_\+zephyr\+\_\+free\+\_\+memory}}
+\index{metal\+\_\+zephyr\+\_\+free\+\_\+memory@{metal\+\_\+zephyr\+\_\+free\+\_\+memory}!system/zephyr/alloc.\+h@{system/zephyr/alloc.\+h}}
+\subsubsection{\texorpdfstring{metal\+\_\+zephyr\+\_\+free\+\_\+memory()}{metal\_zephyr\_free\_memory()}}
+{\footnotesize\ttfamily void metal\+\_\+zephyr\+\_\+free\+\_\+memory (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr }\end{DoxyParamCaption})}
+

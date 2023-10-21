@@ -1,0 +1,59 @@
+\hypertarget{device_8c}{}\section{lib/device.c File Reference}
+\label{device_8c}\index{lib/device.\+c@{lib/device.\+c}}
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$metal/assert.\+h$>$}\newline
+{\ttfamily \#include $<$metal/device.\+h$>$}\newline
+{\ttfamily \#include $<$metal/errno.\+h$>$}\newline
+{\ttfamily \#include $<$metal/list.\+h$>$}\newline
+{\ttfamily \#include $<$metal/log.\+h$>$}\newline
+{\ttfamily \#include $<$metal/sys.\+h$>$}\newline
+{\ttfamily \#include $<$metal/utilities.\+h$>$}\newline
+{\ttfamily \#include $<$metal/dma.\+h$>$}\newline
+{\ttfamily \#include $<$metal/cache.\+h$>$}\newline
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{group__device_ga03f91ef6ff4aa5d6b6826806cccaabc3}{metal\+\_\+bus\+\_\+register} (struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$bus)
+\begin{DoxyCompactList}\small\item\em Register a libmetal bus. \end{DoxyCompactList}\item 
+int \hyperlink{group__device_gafcc93056fa5993c770561e0e4865e623}{metal\+\_\+bus\+\_\+unregister} (struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$bus)
+\begin{DoxyCompactList}\small\item\em Unregister a libmetal bus. \end{DoxyCompactList}\item 
+int \hyperlink{group__device_ga2f923b8e34d918ed5b994c0f4c03f130}{metal\+\_\+bus\+\_\+find} (const char $\ast$name, struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$$\ast$result)
+\begin{DoxyCompactList}\small\item\em Find a libmetal bus by name. \end{DoxyCompactList}\item 
+int \hyperlink{group__device_ga9956a31f8b3ad95ce02c917a4c6d2258}{metal\+\_\+device\+\_\+open} (const char $\ast$bus\+\_\+name, const char $\ast$dev\+\_\+name, struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$$\ast$device)
+\begin{DoxyCompactList}\small\item\em Open a libmetal device by name. \end{DoxyCompactList}\item 
+void \hyperlink{group__device_ga5baa99ff09fd6bd2b49c4739b28d4ed2}{metal\+\_\+device\+\_\+close} (struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$device)
+\begin{DoxyCompactList}\small\item\em Close a libmetal device. \end{DoxyCompactList}\item 
+int \hyperlink{group__device_ga06f83c87ed96dae8bd87ffdcc66455c4}{metal\+\_\+register\+\_\+generic\+\_\+device} (struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$device)
+\begin{DoxyCompactList}\small\item\em Statically register a generic libmetal device. \end{DoxyCompactList}\item 
+int \hyperlink{device_8c_a1d39954f7c7588d2b89d547a2b094183}{metal\+\_\+generic\+\_\+dev\+\_\+open} (struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$bus, const char $\ast$dev\+\_\+name, struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$$\ast$device)
+\item 
+int \hyperlink{device_8c_a80debbfd98c7ec6ac4bc7d50fd3d95f3}{metal\+\_\+generic\+\_\+dev\+\_\+dma\+\_\+map} (struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$bus, struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$device, uint32\+\_\+t dir, struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$sg\+\_\+in, int nents\+\_\+in, struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$sg\+\_\+out)
+\item 
+void \hyperlink{device_8c_aebf281ef21f3c5049ba431566c9cf2cd}{metal\+\_\+generic\+\_\+dev\+\_\+dma\+\_\+unmap} (struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$bus, struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$device, uint32\+\_\+t dir, struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$sg, int nents)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structmetal__bus}{metal\+\_\+bus} \hyperlink{compiler_2iar_2compiler_8h_a78c99cb160382d13452ea045ffbac61a}{metal\+\_\+weak} \hyperlink{group__device_gab25f549ea3a9151e82c033dd219bbfe5}{metal\+\_\+generic\+\_\+bus}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{device_8c_a80debbfd98c7ec6ac4bc7d50fd3d95f3}\label{device_8c_a80debbfd98c7ec6ac4bc7d50fd3d95f3}} 
+\index{device.\+c@{device.\+c}!metal\+\_\+generic\+\_\+dev\+\_\+dma\+\_\+map@{metal\+\_\+generic\+\_\+dev\+\_\+dma\+\_\+map}}
+\index{metal\+\_\+generic\+\_\+dev\+\_\+dma\+\_\+map@{metal\+\_\+generic\+\_\+dev\+\_\+dma\+\_\+map}!device.\+c@{device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+generic\+\_\+dev\+\_\+dma\+\_\+map()}{metal\_generic\_dev\_dma\_map()}}
+{\footnotesize\ttfamily int metal\+\_\+generic\+\_\+dev\+\_\+dma\+\_\+map (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$}]{bus,  }\item[{struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$}]{device,  }\item[{uint32\+\_\+t}]{dir,  }\item[{struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$}]{sg\+\_\+in,  }\item[{int}]{nents\+\_\+in,  }\item[{struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$}]{sg\+\_\+out }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{device_8c_aebf281ef21f3c5049ba431566c9cf2cd}\label{device_8c_aebf281ef21f3c5049ba431566c9cf2cd}} 
+\index{device.\+c@{device.\+c}!metal\+\_\+generic\+\_\+dev\+\_\+dma\+\_\+unmap@{metal\+\_\+generic\+\_\+dev\+\_\+dma\+\_\+unmap}}
+\index{metal\+\_\+generic\+\_\+dev\+\_\+dma\+\_\+unmap@{metal\+\_\+generic\+\_\+dev\+\_\+dma\+\_\+unmap}!device.\+c@{device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+generic\+\_\+dev\+\_\+dma\+\_\+unmap()}{metal\_generic\_dev\_dma\_unmap()}}
+{\footnotesize\ttfamily void metal\+\_\+generic\+\_\+dev\+\_\+dma\+\_\+unmap (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$}]{bus,  }\item[{struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$}]{device,  }\item[{uint32\+\_\+t}]{dir,  }\item[{struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$}]{sg,  }\item[{int}]{nents }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{device_8c_a1d39954f7c7588d2b89d547a2b094183}\label{device_8c_a1d39954f7c7588d2b89d547a2b094183}} 
+\index{device.\+c@{device.\+c}!metal\+\_\+generic\+\_\+dev\+\_\+open@{metal\+\_\+generic\+\_\+dev\+\_\+open}}
+\index{metal\+\_\+generic\+\_\+dev\+\_\+open@{metal\+\_\+generic\+\_\+dev\+\_\+open}!device.\+c@{device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+generic\+\_\+dev\+\_\+open()}{metal\_generic\_dev\_open()}}
+{\footnotesize\ttfamily int metal\+\_\+generic\+\_\+dev\+\_\+open (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$}]{bus,  }\item[{const char $\ast$}]{dev\+\_\+name,  }\item[{struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$$\ast$}]{device }\end{DoxyParamCaption})}
+

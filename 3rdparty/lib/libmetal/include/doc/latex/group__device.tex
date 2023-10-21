@@ -1,0 +1,196 @@
+\hypertarget{group__device}{}\section{Bus Abstraction}
+\label{group__device}\index{Bus Abstraction@{Bus Abstraction}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structmetal__bus__ops}{metal\+\_\+bus\+\_\+ops}
+\item 
+struct \hyperlink{structmetal__bus}{metal\+\_\+bus}
+\item 
+struct \hyperlink{structmetal__device}{metal\+\_\+device}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{group__device_gade1e205242a3d9e8ec25535d263aa664}{M\+E\+T\+A\+L\+\_\+\+M\+A\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+R\+E\+G\+I\+O\+NS}~32
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{group__device_ga03f91ef6ff4aa5d6b6826806cccaabc3}{metal\+\_\+bus\+\_\+register} (struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$bus)
+\begin{DoxyCompactList}\small\item\em Register a libmetal bus. \end{DoxyCompactList}\item 
+int \hyperlink{group__device_gafcc93056fa5993c770561e0e4865e623}{metal\+\_\+bus\+\_\+unregister} (struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$bus)
+\begin{DoxyCompactList}\small\item\em Unregister a libmetal bus. \end{DoxyCompactList}\item 
+int \hyperlink{group__device_ga2f923b8e34d918ed5b994c0f4c03f130}{metal\+\_\+bus\+\_\+find} (const char $\ast$name, struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$$\ast$bus)
+\begin{DoxyCompactList}\small\item\em Find a libmetal bus by name. \end{DoxyCompactList}\item 
+int \hyperlink{group__device_ga06f83c87ed96dae8bd87ffdcc66455c4}{metal\+\_\+register\+\_\+generic\+\_\+device} (struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$device)
+\begin{DoxyCompactList}\small\item\em Statically register a generic libmetal device. \end{DoxyCompactList}\item 
+int \hyperlink{group__device_ga9956a31f8b3ad95ce02c917a4c6d2258}{metal\+\_\+device\+\_\+open} (const char $\ast$bus\+\_\+name, const char $\ast$dev\+\_\+name, struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$$\ast$device)
+\begin{DoxyCompactList}\small\item\em Open a libmetal device by name. \end{DoxyCompactList}\item 
+void \hyperlink{group__device_ga5baa99ff09fd6bd2b49c4739b28d4ed2}{metal\+\_\+device\+\_\+close} (struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$device)
+\begin{DoxyCompactList}\small\item\em Close a libmetal device. \end{DoxyCompactList}\item 
+static struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$ \hyperlink{group__device_ga56d60dddbc504796daa708e182b83255}{metal\+\_\+device\+\_\+io\+\_\+region} (struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$device, unsigned int index)
+\begin{DoxyCompactList}\small\item\em Get an I/O region accessor for a device region. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structmetal__bus}{metal\+\_\+bus} \hyperlink{group__device_gab25f549ea3a9151e82c033dd219bbfe5}{metal\+\_\+generic\+\_\+bus}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{group__device_gade1e205242a3d9e8ec25535d263aa664}\label{group__device_gade1e205242a3d9e8ec25535d263aa664}} 
+\index{Bus Abstraction@{Bus Abstraction}!M\+E\+T\+A\+L\+\_\+\+M\+A\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+R\+E\+G\+I\+O\+NS@{M\+E\+T\+A\+L\+\_\+\+M\+A\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+R\+E\+G\+I\+O\+NS}}
+\index{M\+E\+T\+A\+L\+\_\+\+M\+A\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+R\+E\+G\+I\+O\+NS@{M\+E\+T\+A\+L\+\_\+\+M\+A\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+R\+E\+G\+I\+O\+NS}!Bus Abstraction@{Bus Abstraction}}
+\subsubsection{\texorpdfstring{M\+E\+T\+A\+L\+\_\+\+M\+A\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+R\+E\+G\+I\+O\+NS}{METAL\_MAX\_DEVICE\_REGIONS}}
+{\footnotesize\ttfamily \#define M\+E\+T\+A\+L\+\_\+\+M\+A\+X\+\_\+\+D\+E\+V\+I\+C\+E\+\_\+\+R\+E\+G\+I\+O\+NS~32}
+
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{group__device_ga2f923b8e34d918ed5b994c0f4c03f130}\label{group__device_ga2f923b8e34d918ed5b994c0f4c03f130}} 
+\index{Bus Abstraction@{Bus Abstraction}!metal\+\_\+bus\+\_\+find@{metal\+\_\+bus\+\_\+find}}
+\index{metal\+\_\+bus\+\_\+find@{metal\+\_\+bus\+\_\+find}!Bus Abstraction@{Bus Abstraction}}
+\subsubsection{\texorpdfstring{metal\+\_\+bus\+\_\+find()}{metal\_bus\_find()}}
+{\footnotesize\ttfamily int metal\+\_\+bus\+\_\+find (\begin{DoxyParamCaption}\item[{const char $\ast$}]{name,  }\item[{struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$$\ast$}]{bus }\end{DoxyParamCaption})}
+
+
+
+Find a libmetal bus by name. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Bus name. \\
+\hline
+\mbox{\tt out}  & {\em bus} & Returned bus handle. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, or -\/errno on failure. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group__device_ga03f91ef6ff4aa5d6b6826806cccaabc3}\label{group__device_ga03f91ef6ff4aa5d6b6826806cccaabc3}} 
+\index{Bus Abstraction@{Bus Abstraction}!metal\+\_\+bus\+\_\+register@{metal\+\_\+bus\+\_\+register}}
+\index{metal\+\_\+bus\+\_\+register@{metal\+\_\+bus\+\_\+register}!Bus Abstraction@{Bus Abstraction}}
+\subsubsection{\texorpdfstring{metal\+\_\+bus\+\_\+register()}{metal\_bus\_register()}}
+{\footnotesize\ttfamily int metal\+\_\+bus\+\_\+register (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$}]{bus }\end{DoxyParamCaption})}
+
+
+
+Register a libmetal bus. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em bus} & Pre-\/initialized bus structure. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, or -\/errno on failure. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group__device_gafcc93056fa5993c770561e0e4865e623}\label{group__device_gafcc93056fa5993c770561e0e4865e623}} 
+\index{Bus Abstraction@{Bus Abstraction}!metal\+\_\+bus\+\_\+unregister@{metal\+\_\+bus\+\_\+unregister}}
+\index{metal\+\_\+bus\+\_\+unregister@{metal\+\_\+bus\+\_\+unregister}!Bus Abstraction@{Bus Abstraction}}
+\subsubsection{\texorpdfstring{metal\+\_\+bus\+\_\+unregister()}{metal\_bus\_unregister()}}
+{\footnotesize\ttfamily int metal\+\_\+bus\+\_\+unregister (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$}]{bus }\end{DoxyParamCaption})}
+
+
+
+Unregister a libmetal bus. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em bus} & Pre-\/registered bus structure. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, or -\/errno on failure. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group__device_ga5baa99ff09fd6bd2b49c4739b28d4ed2}\label{group__device_ga5baa99ff09fd6bd2b49c4739b28d4ed2}} 
+\index{Bus Abstraction@{Bus Abstraction}!metal\+\_\+device\+\_\+close@{metal\+\_\+device\+\_\+close}}
+\index{metal\+\_\+device\+\_\+close@{metal\+\_\+device\+\_\+close}!Bus Abstraction@{Bus Abstraction}}
+\subsubsection{\texorpdfstring{metal\+\_\+device\+\_\+close()}{metal\_device\_close()}}
+{\footnotesize\ttfamily void metal\+\_\+device\+\_\+close (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$}]{device }\end{DoxyParamCaption})}
+
+
+
+Close a libmetal device. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em device} & Device handle. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{group__device_ga56d60dddbc504796daa708e182b83255}\label{group__device_ga56d60dddbc504796daa708e182b83255}} 
+\index{Bus Abstraction@{Bus Abstraction}!metal\+\_\+device\+\_\+io\+\_\+region@{metal\+\_\+device\+\_\+io\+\_\+region}}
+\index{metal\+\_\+device\+\_\+io\+\_\+region@{metal\+\_\+device\+\_\+io\+\_\+region}!Bus Abstraction@{Bus Abstraction}}
+\subsubsection{\texorpdfstring{metal\+\_\+device\+\_\+io\+\_\+region()}{metal\_device\_io\_region()}}
+{\footnotesize\ttfamily static struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region}$\ast$ metal\+\_\+device\+\_\+io\+\_\+region (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$}]{device,  }\item[{unsigned int}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Get an I/O region accessor for a device region. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em device} & Device handle. \\
+\hline
+\mbox{\tt in}  & {\em index} & Region index. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+I/O accessor handle, or N\+U\+LL on failure. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group__device_ga9956a31f8b3ad95ce02c917a4c6d2258}\label{group__device_ga9956a31f8b3ad95ce02c917a4c6d2258}} 
+\index{Bus Abstraction@{Bus Abstraction}!metal\+\_\+device\+\_\+open@{metal\+\_\+device\+\_\+open}}
+\index{metal\+\_\+device\+\_\+open@{metal\+\_\+device\+\_\+open}!Bus Abstraction@{Bus Abstraction}}
+\subsubsection{\texorpdfstring{metal\+\_\+device\+\_\+open()}{metal\_device\_open()}}
+{\footnotesize\ttfamily int metal\+\_\+device\+\_\+open (\begin{DoxyParamCaption}\item[{const char $\ast$}]{bus\+\_\+name,  }\item[{const char $\ast$}]{dev\+\_\+name,  }\item[{struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$$\ast$}]{device }\end{DoxyParamCaption})}
+
+
+
+Open a libmetal device by name. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em bus\+\_\+name} & Bus name. \\
+\hline
+\mbox{\tt in}  & {\em dev\+\_\+name} & Device name. \\
+\hline
+\mbox{\tt out}  & {\em device} & Returned device handle. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, or -\/errno on failure. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group__device_ga06f83c87ed96dae8bd87ffdcc66455c4}\label{group__device_ga06f83c87ed96dae8bd87ffdcc66455c4}} 
+\index{Bus Abstraction@{Bus Abstraction}!metal\+\_\+register\+\_\+generic\+\_\+device@{metal\+\_\+register\+\_\+generic\+\_\+device}}
+\index{metal\+\_\+register\+\_\+generic\+\_\+device@{metal\+\_\+register\+\_\+generic\+\_\+device}!Bus Abstraction@{Bus Abstraction}}
+\subsubsection{\texorpdfstring{metal\+\_\+register\+\_\+generic\+\_\+device()}{metal\_register\_generic\_device()}}
+{\footnotesize\ttfamily int metal\+\_\+register\+\_\+generic\+\_\+device (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$}]{device }\end{DoxyParamCaption})}
+
+
+
+Statically register a generic libmetal device. 
+
+In non-\/\+Linux systems, devices are always required to be statically registered at application initialization. In Linux system, devices can be dynamically opened via sysfs or libfdt based enumeration at runtime. This interface is used for static registration of devices. Subsequent calls to \hyperlink{group__device_ga9956a31f8b3ad95ce02c917a4c6d2258}{metal\+\_\+device\+\_\+open()} look up in this list of pre-\/registered devices on the \char`\"{}generic\char`\"{} bus. \char`\"{}generic\char`\"{} bus is used on non-\/\+Linux system to group the memory mapped devices.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em device} & Generic device. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on success, or -\/errno on failure. 
+\end{DoxyReturn}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{group__device_gab25f549ea3a9151e82c033dd219bbfe5}\label{group__device_gab25f549ea3a9151e82c033dd219bbfe5}} 
+\index{Bus Abstraction@{Bus Abstraction}!metal\+\_\+generic\+\_\+bus@{metal\+\_\+generic\+\_\+bus}}
+\index{metal\+\_\+generic\+\_\+bus@{metal\+\_\+generic\+\_\+bus}!Bus Abstraction@{Bus Abstraction}}
+\subsubsection{\texorpdfstring{metal\+\_\+generic\+\_\+bus}{metal\_generic\_bus}}
+{\footnotesize\ttfamily struct \hyperlink{structmetal__bus}{metal\+\_\+bus} metal\+\_\+generic\+\_\+bus}
+
+Libmetal generic bus. 

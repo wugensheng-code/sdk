@@ -1,0 +1,90 @@
+\hypertarget{system_2generic_2xlnx__common_2irq_8c}{}\section{lib/system/generic/xlnx\+\_\+common/irq.c File Reference}
+\label{system_2generic_2xlnx__common_2irq_8c}\index{lib/system/generic/xlnx\+\_\+common/irq.\+c@{lib/system/generic/xlnx\+\_\+common/irq.\+c}}
+{\ttfamily \#include $<$metal/errno.\+h$>$}\newline
+{\ttfamily \#include $<$metal/irq\+\_\+controller.\+h$>$}\newline
+{\ttfamily \#include $<$metal/sys.\+h$>$}\newline
+{\ttfamily \#include $<$metal/log.\+h$>$}\newline
+{\ttfamily \#include $<$metal/mutex.\+h$>$}\newline
+{\ttfamily \#include $<$metal/list.\+h$>$}\newline
+{\ttfamily \#include $<$metal/utilities.\+h$>$}\newline
+{\ttfamily \#include $<$metal/alloc.\+h$>$}\newline
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{system_2generic_2xlnx__common_2irq_8c_a10eb780a1787dc53def561b43152cea4}{M\+A\+X\+\_\+\+I\+R\+QS}~X\+L\+N\+X\+\_\+\+M\+A\+X\+I\+R\+QS
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{system_2generic_2xlnx__common_2irq_8c_ae42ec9371e8df5d703b75bfbb2029db3}{metal\+\_\+xlnx\+\_\+irq\+\_\+set\+\_\+enable} (struct \hyperlink{structmetal__irq__controller}{metal\+\_\+irq\+\_\+controller} $\ast$irq\+\_\+cntr, int irq, unsigned int state)
+\item 
+static \hyperlink{system_2generic_2xlnx__common_2irq_8c_ac2fcaefbce0e6157e4d6da4cd1592fd1}{M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+D\+E\+C\+L\+A\+RE} (xlnx\+\_\+irq\+\_\+cntr, 0, \hyperlink{system_2linux_2irq_8c_a10eb780a1787dc53def561b43152cea4}{M\+A\+X\+\_\+\+I\+R\+QS}, N\+U\+LL, \hyperlink{system_2generic_2xlnx__common_2irq_8c_ae42ec9371e8df5d703b75bfbb2029db3}{metal\+\_\+xlnx\+\_\+irq\+\_\+set\+\_\+enable}, N\+U\+LL, \hyperlink{system_2linux_2irq_8c_a593c726328bb9676820ce17af79d095b}{irqs})
+\item 
+void \hyperlink{system_2generic_2xlnx__common_2irq_8c_ac20f4badb889bd31a4e2513fcf8ab9be}{metal\+\_\+xlnx\+\_\+irq\+\_\+isr} (void $\ast$arg)
+\begin{DoxyCompactList}\small\item\em default handler \end{DoxyCompactList}\item 
+int \hyperlink{system_2generic_2xlnx__common_2irq_8c_aa697a7b43c5c169f17f810b62319806d}{metal\+\_\+xlnx\+\_\+irq\+\_\+init} (void)
+\begin{DoxyCompactList}\small\item\em metal\+\_\+xlnx\+\_\+irq\+\_\+int \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+static struct \hyperlink{structmetal__irq}{metal\+\_\+irq} \hyperlink{system_2generic_2xlnx__common_2irq_8c_a593c726328bb9676820ce17af79d095b}{irqs} \mbox{[}\hyperlink{system_2linux_2irq_8c_a10eb780a1787dc53def561b43152cea4}{M\+A\+X\+\_\+\+I\+R\+QS}\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{system_2generic_2xlnx__common_2irq_8c_a10eb780a1787dc53def561b43152cea4}\label{system_2generic_2xlnx__common_2irq_8c_a10eb780a1787dc53def561b43152cea4}} 
+\index{system/generic/xlnx\+\_\+common/irq.\+c@{system/generic/xlnx\+\_\+common/irq.\+c}!M\+A\+X\+\_\+\+I\+R\+QS@{M\+A\+X\+\_\+\+I\+R\+QS}}
+\index{M\+A\+X\+\_\+\+I\+R\+QS@{M\+A\+X\+\_\+\+I\+R\+QS}!system/generic/xlnx\+\_\+common/irq.\+c@{system/generic/xlnx\+\_\+common/irq.\+c}}
+\subsubsection{\texorpdfstring{M\+A\+X\+\_\+\+I\+R\+QS}{MAX\_IRQS}}
+{\footnotesize\ttfamily \#define M\+A\+X\+\_\+\+I\+R\+QS~X\+L\+N\+X\+\_\+\+M\+A\+X\+I\+R\+QS}
+
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{system_2generic_2xlnx__common_2irq_8c_ac2fcaefbce0e6157e4d6da4cd1592fd1}\label{system_2generic_2xlnx__common_2irq_8c_ac2fcaefbce0e6157e4d6da4cd1592fd1}} 
+\index{system/generic/xlnx\+\_\+common/irq.\+c@{system/generic/xlnx\+\_\+common/irq.\+c}!M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+D\+E\+C\+L\+A\+RE@{M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+D\+E\+C\+L\+A\+RE}}
+\index{M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+D\+E\+C\+L\+A\+RE@{M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+D\+E\+C\+L\+A\+RE}!system/generic/xlnx\+\_\+common/irq.\+c@{system/generic/xlnx\+\_\+common/irq.\+c}}
+\subsubsection{\texorpdfstring{M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+D\+E\+C\+L\+A\+R\+E()}{METAL\_IRQ\_CONTROLLER\_DECLARE()}}
+{\footnotesize\ttfamily static M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+D\+E\+C\+L\+A\+RE (\begin{DoxyParamCaption}\item[{xlnx\+\_\+irq\+\_\+cntr}]{,  }\item[{0}]{,  }\item[{\hyperlink{system_2linux_2irq_8c_a10eb780a1787dc53def561b43152cea4}{M\+A\+X\+\_\+\+I\+R\+QS}}]{,  }\item[{N\+U\+LL}]{,  }\item[{\hyperlink{system_2generic_2xlnx__common_2irq_8c_ae42ec9371e8df5d703b75bfbb2029db3}{metal\+\_\+xlnx\+\_\+irq\+\_\+set\+\_\+enable}}]{,  }\item[{N\+U\+LL}]{,  }\item[{\hyperlink{system_2linux_2irq_8c_a593c726328bb9676820ce17af79d095b}{irqs}}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2generic_2xlnx__common_2irq_8c_aa697a7b43c5c169f17f810b62319806d}\label{system_2generic_2xlnx__common_2irq_8c_aa697a7b43c5c169f17f810b62319806d}} 
+\index{system/generic/xlnx\+\_\+common/irq.\+c@{system/generic/xlnx\+\_\+common/irq.\+c}!metal\+\_\+xlnx\+\_\+irq\+\_\+init@{metal\+\_\+xlnx\+\_\+irq\+\_\+init}}
+\index{metal\+\_\+xlnx\+\_\+irq\+\_\+init@{metal\+\_\+xlnx\+\_\+irq\+\_\+init}!system/generic/xlnx\+\_\+common/irq.\+c@{system/generic/xlnx\+\_\+common/irq.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+xlnx\+\_\+irq\+\_\+init()}{metal\_xlnx\_irq\_init()}}
+{\footnotesize\ttfamily int metal\+\_\+xlnx\+\_\+irq\+\_\+init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+metal\+\_\+xlnx\+\_\+irq\+\_\+int 
+
+Xilinx interrupt controller initialization. It will initialize the metal Xilinx I\+RQ controller data structure.
+
+\begin{DoxyReturn}{Returns}
+0 for success, or negative value for failure 
+\end{DoxyReturn}
+\mbox{\Hypertarget{system_2generic_2xlnx__common_2irq_8c_ac20f4badb889bd31a4e2513fcf8ab9be}\label{system_2generic_2xlnx__common_2irq_8c_ac20f4badb889bd31a4e2513fcf8ab9be}} 
+\index{system/generic/xlnx\+\_\+common/irq.\+c@{system/generic/xlnx\+\_\+common/irq.\+c}!metal\+\_\+xlnx\+\_\+irq\+\_\+isr@{metal\+\_\+xlnx\+\_\+irq\+\_\+isr}}
+\index{metal\+\_\+xlnx\+\_\+irq\+\_\+isr@{metal\+\_\+xlnx\+\_\+irq\+\_\+isr}!system/generic/xlnx\+\_\+common/irq.\+c@{system/generic/xlnx\+\_\+common/irq.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+xlnx\+\_\+irq\+\_\+isr()}{metal\_xlnx\_irq\_isr()}}
+{\footnotesize\ttfamily void metal\+\_\+xlnx\+\_\+irq\+\_\+isr (\begin{DoxyParamCaption}\item[{void $\ast$}]{arg }\end{DoxyParamCaption})}
+
+
+
+default handler 
+
+metal\+\_\+xlnx\+\_\+irq\+\_\+isr \mbox{\Hypertarget{system_2generic_2xlnx__common_2irq_8c_ae42ec9371e8df5d703b75bfbb2029db3}\label{system_2generic_2xlnx__common_2irq_8c_ae42ec9371e8df5d703b75bfbb2029db3}} 
+\index{system/generic/xlnx\+\_\+common/irq.\+c@{system/generic/xlnx\+\_\+common/irq.\+c}!metal\+\_\+xlnx\+\_\+irq\+\_\+set\+\_\+enable@{metal\+\_\+xlnx\+\_\+irq\+\_\+set\+\_\+enable}}
+\index{metal\+\_\+xlnx\+\_\+irq\+\_\+set\+\_\+enable@{metal\+\_\+xlnx\+\_\+irq\+\_\+set\+\_\+enable}!system/generic/xlnx\+\_\+common/irq.\+c@{system/generic/xlnx\+\_\+common/irq.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+xlnx\+\_\+irq\+\_\+set\+\_\+enable()}{metal\_xlnx\_irq\_set\_enable()}}
+{\footnotesize\ttfamily static void metal\+\_\+xlnx\+\_\+irq\+\_\+set\+\_\+enable (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__irq__controller}{metal\+\_\+irq\+\_\+controller} $\ast$}]{irq\+\_\+cntr,  }\item[{int}]{irq,  }\item[{unsigned int}]{state }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+Xilinx common platform I\+RQ controller 
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{system_2generic_2xlnx__common_2irq_8c_a593c726328bb9676820ce17af79d095b}\label{system_2generic_2xlnx__common_2irq_8c_a593c726328bb9676820ce17af79d095b}} 
+\index{system/generic/xlnx\+\_\+common/irq.\+c@{system/generic/xlnx\+\_\+common/irq.\+c}!irqs@{irqs}}
+\index{irqs@{irqs}!system/generic/xlnx\+\_\+common/irq.\+c@{system/generic/xlnx\+\_\+common/irq.\+c}}
+\subsubsection{\texorpdfstring{irqs}{irqs}}
+{\footnotesize\ttfamily struct \hyperlink{structmetal__irq}{metal\+\_\+irq} irqs\mbox{[}\hyperlink{system_2linux_2irq_8c_a10eb780a1787dc53def561b43152cea4}{M\+A\+X\+\_\+\+I\+R\+QS}\mbox{]}\hspace{0.3cm}{\ttfamily [static]}}
+
+Linux I\+R\+Qs array 

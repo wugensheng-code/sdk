@@ -1,0 +1,85 @@
+\hypertarget{io_8h}{}\section{lib/io.h File Reference}
+\label{io_8h}\index{lib/io.\+h@{lib/io.\+h}}
+{\ttfamily \#include $<$limits.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$metal/assert.\+h$>$}\newline
+{\ttfamily \#include $<$metal/compiler.\+h$>$}\newline
+{\ttfamily \#include $<$metal/atomic.\+h$>$}\newline
+{\ttfamily \#include $<$metal/sys.\+h$>$}\newline
+{\ttfamily \#include $<$metal/cpu.\+h$>$}\newline
+{\ttfamily \#include $<$metal/system/@\+P\+R\+O\+J\+E\+C\+T\+\_\+\+S\+Y\+S\+T\+E\+M@/io.\+h$>$}\newline
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structmetal__io__ops}{metal\+\_\+io\+\_\+ops}
+\item 
+struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{group__io_ga09f3504dfba6cc039152de19a7a4b5fd}{metal\+\_\+io\+\_\+read8\+\_\+explicit}(\+\_\+io,  \+\_\+ofs,  \+\_\+order)~\hyperlink{group__io_ga0cd8707fcac0d892726f1e946186c531}{metal\+\_\+io\+\_\+read}((\+\_\+io), (\+\_\+ofs), (\+\_\+order), 1)
+\item 
+\#define \hyperlink{group__io_gad36635d9a8e5bb64cd4ecf2b8027f38f}{metal\+\_\+io\+\_\+read8}(\+\_\+io,  \+\_\+ofs)~\hyperlink{group__io_ga0cd8707fcac0d892726f1e946186c531}{metal\+\_\+io\+\_\+read}((\+\_\+io), (\+\_\+ofs), \hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1ba2d21914d1edd227a890107e7878a3752}{memory\+\_\+order\+\_\+seq\+\_\+cst}, 1)
+\item 
+\#define \hyperlink{group__io_gaa30723c231c8cbfa52b784a34e449646}{metal\+\_\+io\+\_\+write8\+\_\+explicit}(\+\_\+io,  \+\_\+ofs,  \+\_\+val,  \+\_\+order)~\hyperlink{group__io_ga74ef56cd9b16bced8c2b8553956220b4}{metal\+\_\+io\+\_\+write}((\+\_\+io), (\+\_\+ofs), (\+\_\+val), (\+\_\+order), 1)
+\item 
+\#define \hyperlink{group__io_ga6f3f1fad31b9a01994df68237ccf4a9c}{metal\+\_\+io\+\_\+write8}(\+\_\+io,  \+\_\+ofs,  \+\_\+val)~\hyperlink{group__io_ga74ef56cd9b16bced8c2b8553956220b4}{metal\+\_\+io\+\_\+write}((\+\_\+io), (\+\_\+ofs), (\+\_\+val), \hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1ba2d21914d1edd227a890107e7878a3752}{memory\+\_\+order\+\_\+seq\+\_\+cst}, 1)
+\item 
+\#define \hyperlink{group__io_ga8a63cac7c3fd2277985d23e3f07783a4}{metal\+\_\+io\+\_\+read16\+\_\+explicit}(\+\_\+io,  \+\_\+ofs,  \+\_\+order)~\hyperlink{group__io_ga0cd8707fcac0d892726f1e946186c531}{metal\+\_\+io\+\_\+read}((\+\_\+io), (\+\_\+ofs), (\+\_\+order), 2)
+\item 
+\#define \hyperlink{group__io_ga3699112c48162e0f30624f4952ef8b7a}{metal\+\_\+io\+\_\+read16}(\+\_\+io,  \+\_\+ofs)~\hyperlink{group__io_ga0cd8707fcac0d892726f1e946186c531}{metal\+\_\+io\+\_\+read}((\+\_\+io), (\+\_\+ofs), \hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1ba2d21914d1edd227a890107e7878a3752}{memory\+\_\+order\+\_\+seq\+\_\+cst}, 2)
+\item 
+\#define \hyperlink{group__io_ga57b9502dd632058ede3394c9910a144f}{metal\+\_\+io\+\_\+write16\+\_\+explicit}(\+\_\+io,  \+\_\+ofs,  \+\_\+val,  \+\_\+order)~\hyperlink{group__io_ga74ef56cd9b16bced8c2b8553956220b4}{metal\+\_\+io\+\_\+write}((\+\_\+io), (\+\_\+ofs), (\+\_\+val), (\+\_\+order), 2)
+\item 
+\#define \hyperlink{group__io_gab8016df69fa1998ac33c21a80e59c877}{metal\+\_\+io\+\_\+write16}(\+\_\+io,  \+\_\+ofs,  \+\_\+val)~\hyperlink{group__io_ga74ef56cd9b16bced8c2b8553956220b4}{metal\+\_\+io\+\_\+write}((\+\_\+io), (\+\_\+ofs), (\+\_\+val), \hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1ba2d21914d1edd227a890107e7878a3752}{memory\+\_\+order\+\_\+seq\+\_\+cst}, 2)
+\item 
+\#define \hyperlink{group__io_ga66042ac971a891260b34a06dde2bfa58}{metal\+\_\+io\+\_\+read32\+\_\+explicit}(\+\_\+io,  \+\_\+ofs,  \+\_\+order)~\hyperlink{group__io_ga0cd8707fcac0d892726f1e946186c531}{metal\+\_\+io\+\_\+read}((\+\_\+io), (\+\_\+ofs), (\+\_\+order), 4)
+\item 
+\#define \hyperlink{group__io_ga53d4cb9c68694eb6421be22148030b2d}{metal\+\_\+io\+\_\+read32}(\+\_\+io,  \+\_\+ofs)~\hyperlink{group__io_ga0cd8707fcac0d892726f1e946186c531}{metal\+\_\+io\+\_\+read}((\+\_\+io), (\+\_\+ofs), \hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1ba2d21914d1edd227a890107e7878a3752}{memory\+\_\+order\+\_\+seq\+\_\+cst}, 4)
+\item 
+\#define \hyperlink{group__io_ga9cf4ee0d917bcd208cac7e1e32034606}{metal\+\_\+io\+\_\+write32\+\_\+explicit}(\+\_\+io,  \+\_\+ofs,  \+\_\+val,  \+\_\+order)~\hyperlink{group__io_ga74ef56cd9b16bced8c2b8553956220b4}{metal\+\_\+io\+\_\+write}((\+\_\+io), (\+\_\+ofs), (\+\_\+val), (\+\_\+order), 4)
+\item 
+\#define \hyperlink{group__io_ga3adf9530fe9db77471ebf0547ce616f9}{metal\+\_\+io\+\_\+write32}(\+\_\+io,  \+\_\+ofs,  \+\_\+val)~\hyperlink{group__io_ga74ef56cd9b16bced8c2b8553956220b4}{metal\+\_\+io\+\_\+write}((\+\_\+io), (\+\_\+ofs), (\+\_\+val), \hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1ba2d21914d1edd227a890107e7878a3752}{memory\+\_\+order\+\_\+seq\+\_\+cst}, 4)
+\item 
+\#define \hyperlink{group__io_ga295f7fd1050e811994df142561fad51f}{metal\+\_\+io\+\_\+read64\+\_\+explicit}(\+\_\+io,  \+\_\+ofs,  \+\_\+order)~\hyperlink{group__io_ga0cd8707fcac0d892726f1e946186c531}{metal\+\_\+io\+\_\+read}((\+\_\+io), (\+\_\+ofs), (\+\_\+order), 8)
+\item 
+\#define \hyperlink{group__io_gace90c4af8066a7a31111bbaaefbc631e}{metal\+\_\+io\+\_\+read64}(\+\_\+io,  \+\_\+ofs)~\hyperlink{group__io_ga0cd8707fcac0d892726f1e946186c531}{metal\+\_\+io\+\_\+read}((\+\_\+io), (\+\_\+ofs), \hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1ba2d21914d1edd227a890107e7878a3752}{memory\+\_\+order\+\_\+seq\+\_\+cst}, 8)
+\item 
+\#define \hyperlink{group__io_ga84eb7098e98bde8c21f31839e86116f2}{metal\+\_\+io\+\_\+write64\+\_\+explicit}(\+\_\+io,  \+\_\+ofs,  \+\_\+val,  \+\_\+order)~\hyperlink{group__io_ga74ef56cd9b16bced8c2b8553956220b4}{metal\+\_\+io\+\_\+write}((\+\_\+io), (\+\_\+ofs), (\+\_\+val), (\+\_\+order), 8)
+\item 
+\#define \hyperlink{group__io_ga1adb221edbb652ebf3ca5ea3c9635a13}{metal\+\_\+io\+\_\+write64}(\+\_\+io,  \+\_\+ofs,  \+\_\+val)~\hyperlink{group__io_ga74ef56cd9b16bced8c2b8553956220b4}{metal\+\_\+io\+\_\+write}((\+\_\+io), (\+\_\+ofs), (\+\_\+val), \hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1ba2d21914d1edd227a890107e7878a3752}{memory\+\_\+order\+\_\+seq\+\_\+cst}, 8)
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{group__io_ga38e0b74d5b2b1f01873a2479494bb89e}{metal\+\_\+io\+\_\+init} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, void $\ast$virt, const \hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t} $\ast$physmap, size\+\_\+t size, unsigned int page\+\_\+shift, unsigned int mem\+\_\+flags, const struct \hyperlink{structmetal__io__ops}{metal\+\_\+io\+\_\+ops} $\ast$ops)
+\begin{DoxyCompactList}\small\item\em Open a libmetal I/O region. \end{DoxyCompactList}\item 
+static void \hyperlink{group__io_gab0457348d0b2b4a4b211e255ac565d24}{metal\+\_\+io\+\_\+finish} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io)
+\begin{DoxyCompactList}\small\item\em Close a libmetal shared memory segment. \end{DoxyCompactList}\item 
+static size\+\_\+t \hyperlink{group__io_ga2c5a380308c94d119a3ca200f7d4399f}{metal\+\_\+io\+\_\+region\+\_\+size} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io)
+\begin{DoxyCompactList}\small\item\em Get size of I/O region. \end{DoxyCompactList}\item 
+static void $\ast$ \hyperlink{group__io_ga3e78643879397a91e796d06e05d0072a}{metal\+\_\+io\+\_\+virt} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, unsigned long offset)
+\begin{DoxyCompactList}\small\item\em Get virtual address for a given offset into the I/O region. \end{DoxyCompactList}\item 
+static unsigned long \hyperlink{group__io_gac251d178b2cf9ea9903838a547ca018d}{metal\+\_\+io\+\_\+virt\+\_\+to\+\_\+offset} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, void $\ast$virt)
+\begin{DoxyCompactList}\small\item\em Convert a virtual address to offset within I/O region. \end{DoxyCompactList}\item 
+static \hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t} \hyperlink{group__io_gaa5bd9046501972a98ddf3523a9a6496c}{metal\+\_\+io\+\_\+phys} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, unsigned long offset)
+\begin{DoxyCompactList}\small\item\em Get physical address for a given offset into the I/O region. \end{DoxyCompactList}\item 
+static unsigned long \hyperlink{group__io_gab05b89cd7c46c0011f81a491cdf218aa}{metal\+\_\+io\+\_\+phys\+\_\+to\+\_\+offset} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, \hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t} phys)
+\begin{DoxyCompactList}\small\item\em Convert a physical address to offset within I/O region. \end{DoxyCompactList}\item 
+static void $\ast$ \hyperlink{group__io_ga45cdfe51e59923abefb2c26a0e1daff0}{metal\+\_\+io\+\_\+phys\+\_\+to\+\_\+virt} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, \hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t} phys)
+\begin{DoxyCompactList}\small\item\em Convert a physical address to virtual address. \end{DoxyCompactList}\item 
+static \hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t} \hyperlink{group__io_ga64cde67e877ed73aac9cb2eed11b67b0}{metal\+\_\+io\+\_\+virt\+\_\+to\+\_\+phys} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, void $\ast$virt)
+\begin{DoxyCompactList}\small\item\em Convert a virtual address to physical address. \end{DoxyCompactList}\item 
+static uint64\+\_\+t \hyperlink{group__io_ga0cd8707fcac0d892726f1e946186c531}{metal\+\_\+io\+\_\+read} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, unsigned long offset, \hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1b}{memory\+\_\+order} order, int width)
+\begin{DoxyCompactList}\small\item\em Read a value from an I/O region. \end{DoxyCompactList}\item 
+static void \hyperlink{group__io_ga74ef56cd9b16bced8c2b8553956220b4}{metal\+\_\+io\+\_\+write} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, unsigned long offset, uint64\+\_\+t value, \hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1b}{memory\+\_\+order} order, int width)
+\begin{DoxyCompactList}\small\item\em Write a value into an I/O region. \end{DoxyCompactList}\item 
+int \hyperlink{group__io_ga40c41a84ff9617bf1390328e42c82d8c}{metal\+\_\+io\+\_\+block\+\_\+read} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, unsigned long offset, void $\ast$\hyperlink{compiler_2iar_2compiler_8h_a080abdcb9c02438f1cd2bb707af25af8}{restrict} dst, int len)
+\begin{DoxyCompactList}\small\item\em Read a block from an I/O region. \end{DoxyCompactList}\item 
+int \hyperlink{group__io_ga2ab2be47ece49314a2b4417919dcc071}{metal\+\_\+io\+\_\+block\+\_\+write} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, unsigned long offset, const void $\ast$\hyperlink{compiler_2iar_2compiler_8h_a080abdcb9c02438f1cd2bb707af25af8}{restrict} src, int len)
+\begin{DoxyCompactList}\small\item\em Write a block into an I/O region. \end{DoxyCompactList}\item 
+int \hyperlink{group__io_gacdf04d26507dc0dae337b665496cd571}{metal\+\_\+io\+\_\+block\+\_\+set} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, unsigned long offset, unsigned char value, int len)
+\begin{DoxyCompactList}\small\item\em fill a block of an I/O region. \end{DoxyCompactList}\end{DoxyCompactItemize}

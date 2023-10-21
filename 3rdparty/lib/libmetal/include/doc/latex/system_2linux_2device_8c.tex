@@ -1,0 +1,260 @@
+\hypertarget{system_2linux_2device_8c}{}\section{lib/system/linux/device.c File Reference}
+\label{system_2linux_2device_8c}\index{lib/system/linux/device.\+c@{lib/system/linux/device.\+c}}
+{\ttfamily \#include $<$metal/device.\+h$>$}\newline
+{\ttfamily \#include $<$metal/sys.\+h$>$}\newline
+{\ttfamily \#include $<$metal/utilities.\+h$>$}\newline
+{\ttfamily \#include $<$metal/irq.\+h$>$}\newline
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structlinux__driver}{linux\+\_\+driver}
+\item 
+struct \hyperlink{structlinux__bus}{linux\+\_\+bus}
+\item 
+struct \hyperlink{structlinux__device}{linux\+\_\+device}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{system_2linux_2device_8c_ac2ee6026a11a2d8472c29fed769c7e9f}{M\+A\+X\+\_\+\+D\+R\+I\+V\+E\+RS}~64
+\item 
+\#define \hyperlink{system_2linux_2device_8c_af53b46ec74b78701f3fd2ee84bcd4112}{for\+\_\+each\+\_\+linux\+\_\+bus}(lbus)~for ((lbus) = \hyperlink{structlinux__bus}{linux\+\_\+bus}; (lbus)-\/$>$bus\+\_\+name; (lbus)++)
+\item 
+\#define \hyperlink{system_2linux_2device_8c_a0520dac7e67a71c702e828b272d9084d}{for\+\_\+each\+\_\+linux\+\_\+driver}(lbus,  ldrv)~for ((ldrv) = lbus-\/$>$drivers; (ldrv)-\/$>$drv\+\_\+name; (ldrv)++)
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static struct \hyperlink{structlinux__bus}{linux\+\_\+bus} $\ast$ \hyperlink{system_2linux_2device_8c_a72649c5e83579505792604b04a026889}{to\+\_\+linux\+\_\+bus} (struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$bus)
+\item 
+static struct \hyperlink{structlinux__device}{linux\+\_\+device} $\ast$ \hyperlink{system_2linux_2device_8c_a73470472e00475f0444db227e82ad458}{to\+\_\+linux\+\_\+device} (struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$device)
+\item 
+static int \hyperlink{system_2linux_2device_8c_ae207edc6193065cedf8596bb168ec387}{metal\+\_\+uio\+\_\+read\+\_\+map\+\_\+attr} (struct \hyperlink{structlinux__device}{linux\+\_\+device} $\ast$ldev, unsigned int index, const char $\ast$name, unsigned long $\ast$value)
+\item 
+static int \hyperlink{system_2linux_2device_8c_a93ee88df87e65a1362e7b9770538e706}{metal\+\_\+uio\+\_\+dev\+\_\+bind} (struct \hyperlink{structlinux__device}{linux\+\_\+device} $\ast$ldev, struct \hyperlink{structlinux__driver}{linux\+\_\+driver} $\ast$ldrv)
+\item 
+static int \hyperlink{system_2linux_2device_8c_a37b0ebc8837a8f47d1e61f8592a0b214}{metal\+\_\+uio\+\_\+dev\+\_\+open} (struct \hyperlink{structlinux__bus}{linux\+\_\+bus} $\ast$lbus, struct \hyperlink{structlinux__device}{linux\+\_\+device} $\ast$ldev)
+\item 
+static void \hyperlink{system_2linux_2device_8c_a4a74e2db04d24838dee8df00c4aeabc7}{metal\+\_\+uio\+\_\+dev\+\_\+close} (struct \hyperlink{structlinux__bus}{linux\+\_\+bus} $\ast$lbus, struct \hyperlink{structlinux__device}{linux\+\_\+device} $\ast$ldev)
+\item 
+static void \hyperlink{system_2linux_2device_8c_af036baba0c0ed3ec5a68d5b06bcd97a0}{metal\+\_\+uio\+\_\+dev\+\_\+irq\+\_\+ack} (struct \hyperlink{structlinux__bus}{linux\+\_\+bus} $\ast$lbus, struct \hyperlink{structlinux__device}{linux\+\_\+device} $\ast$ldev, int irq)
+\item 
+static int \hyperlink{system_2linux_2device_8c_a4f3247397c5ed836945e68f1977677d3}{metal\+\_\+uio\+\_\+dev\+\_\+dma\+\_\+map} (struct \hyperlink{structlinux__bus}{linux\+\_\+bus} $\ast$lbus, struct \hyperlink{structlinux__device}{linux\+\_\+device} $\ast$ldev, uint32\+\_\+t dir, struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$sg\+\_\+in, int nents\+\_\+in, struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$sg\+\_\+out)
+\item 
+static void \hyperlink{system_2linux_2device_8c_a3ed6afa9d901907b4a3a4d0dbd561245}{metal\+\_\+uio\+\_\+dev\+\_\+dma\+\_\+unmap} (struct \hyperlink{structlinux__bus}{linux\+\_\+bus} $\ast$lbus, struct \hyperlink{structlinux__device}{linux\+\_\+device} $\ast$ldev, uint32\+\_\+t dir, struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$sg, int nents)
+\item 
+static int \hyperlink{system_2linux_2device_8c_a7ac5f84a053e89a650eda776048383ea}{metal\+\_\+linux\+\_\+dev\+\_\+open} (struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$bus, const char $\ast$dev\+\_\+name, struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$$\ast$device)
+\item 
+static void \hyperlink{system_2linux_2device_8c_afca17e971f5664bf13b495a2f1903a8e}{metal\+\_\+linux\+\_\+dev\+\_\+close} (struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$bus, struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$device)
+\item 
+static void \hyperlink{system_2linux_2device_8c_ab41a044b919e2f661adad7edeb578537}{metal\+\_\+linux\+\_\+bus\+\_\+close} (struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$bus)
+\item 
+static void \hyperlink{system_2linux_2device_8c_a7a4f545fc3e5037b58f98661017835b2}{metal\+\_\+linux\+\_\+dev\+\_\+irq\+\_\+ack} (struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$bus, struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$device, int irq)
+\item 
+static int \hyperlink{system_2linux_2device_8c_a50bfd2c04fe9490dce571c8cb1028428}{metal\+\_\+linux\+\_\+dev\+\_\+dma\+\_\+map} (struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$bus, struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$device, uint32\+\_\+t dir, struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$sg\+\_\+in, int nents\+\_\+in, struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$sg\+\_\+out)
+\item 
+static void \hyperlink{system_2linux_2device_8c_a767a32173f7bee021ecda9b23a5aee59}{metal\+\_\+linux\+\_\+dev\+\_\+dma\+\_\+unmap} (struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$bus, struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$device, uint32\+\_\+t dir, struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$sg, int nents)
+\item 
+static int \hyperlink{system_2linux_2device_8c_a8fd8264e72b60a829e33adc728de6459}{metal\+\_\+linux\+\_\+register\+\_\+bus} (struct \hyperlink{structlinux__bus}{linux\+\_\+bus} $\ast$lbus)
+\item 
+static int \hyperlink{system_2linux_2device_8c_a4753c3ec5d41e9b23a6005ea994c5cb1}{metal\+\_\+linux\+\_\+probe\+\_\+driver} (struct \hyperlink{structlinux__bus}{linux\+\_\+bus} $\ast$lbus, struct \hyperlink{structlinux__driver}{linux\+\_\+driver} $\ast$ldrv)
+\item 
+static int \hyperlink{system_2linux_2device_8c_a4f305dec8dea7d3d48179ebd05a682b6}{metal\+\_\+linux\+\_\+probe\+\_\+bus} (struct \hyperlink{structlinux__bus}{linux\+\_\+bus} $\ast$lbus)
+\item 
+int \hyperlink{system_2linux_2device_8c_a798d21e3fbb5ea3b4095a2196f8dd29e}{metal\+\_\+linux\+\_\+bus\+\_\+init} (void)
+\item 
+void \hyperlink{system_2linux_2device_8c_aff384b37a76a6a89ec1e3c84a23436d0}{metal\+\_\+linux\+\_\+bus\+\_\+finish} (void)
+\item 
+int \hyperlink{system_2linux_2device_8c_a49ba2d866d8b8f53297c689fd8a49227}{metal\+\_\+generic\+\_\+dev\+\_\+sys\+\_\+open} (struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$dev)
+\item 
+int \hyperlink{system_2linux_2device_8c_aabe8f7827c52e2f013b408c82a0d3ced}{metal\+\_\+linux\+\_\+get\+\_\+device\+\_\+property} (struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$device, const char $\ast$property\+\_\+name, void $\ast$output, int len)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+static struct \hyperlink{structlinux__bus}{linux\+\_\+bus} \hyperlink{system_2linux_2device_8c_aee50f0231ab78c8aaa2d2c6826a85fab}{linux\+\_\+bus} \mbox{[}$\,$\mbox{]}
+\item 
+static const struct \hyperlink{structmetal__bus__ops}{metal\+\_\+bus\+\_\+ops} \hyperlink{system_2linux_2device_8c_a8fa541afe7299c15be47e4959f36c782}{metal\+\_\+linux\+\_\+bus\+\_\+ops}
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{system_2linux_2device_8c_af53b46ec74b78701f3fd2ee84bcd4112}\label{system_2linux_2device_8c_af53b46ec74b78701f3fd2ee84bcd4112}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!for\+\_\+each\+\_\+linux\+\_\+bus@{for\+\_\+each\+\_\+linux\+\_\+bus}}
+\index{for\+\_\+each\+\_\+linux\+\_\+bus@{for\+\_\+each\+\_\+linux\+\_\+bus}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{for\+\_\+each\+\_\+linux\+\_\+bus}{for\_each\_linux\_bus}}
+{\footnotesize\ttfamily \#define for\+\_\+each\+\_\+linux\+\_\+bus(\begin{DoxyParamCaption}\item[{}]{lbus }\end{DoxyParamCaption})~for ((lbus) = \hyperlink{structlinux__bus}{linux\+\_\+bus}; (lbus)-\/$>$bus\+\_\+name; (lbus)++)}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_a0520dac7e67a71c702e828b272d9084d}\label{system_2linux_2device_8c_a0520dac7e67a71c702e828b272d9084d}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!for\+\_\+each\+\_\+linux\+\_\+driver@{for\+\_\+each\+\_\+linux\+\_\+driver}}
+\index{for\+\_\+each\+\_\+linux\+\_\+driver@{for\+\_\+each\+\_\+linux\+\_\+driver}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{for\+\_\+each\+\_\+linux\+\_\+driver}{for\_each\_linux\_driver}}
+{\footnotesize\ttfamily \#define for\+\_\+each\+\_\+linux\+\_\+driver(\begin{DoxyParamCaption}\item[{}]{lbus,  }\item[{}]{ldrv }\end{DoxyParamCaption})~for ((ldrv) = lbus-\/$>$drivers; (ldrv)-\/$>$drv\+\_\+name; (ldrv)++)}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_ac2ee6026a11a2d8472c29fed769c7e9f}\label{system_2linux_2device_8c_ac2ee6026a11a2d8472c29fed769c7e9f}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!M\+A\+X\+\_\+\+D\+R\+I\+V\+E\+RS@{M\+A\+X\+\_\+\+D\+R\+I\+V\+E\+RS}}
+\index{M\+A\+X\+\_\+\+D\+R\+I\+V\+E\+RS@{M\+A\+X\+\_\+\+D\+R\+I\+V\+E\+RS}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{M\+A\+X\+\_\+\+D\+R\+I\+V\+E\+RS}{MAX\_DRIVERS}}
+{\footnotesize\ttfamily \#define M\+A\+X\+\_\+\+D\+R\+I\+V\+E\+RS~64}
+
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{system_2linux_2device_8c_a49ba2d866d8b8f53297c689fd8a49227}\label{system_2linux_2device_8c_a49ba2d866d8b8f53297c689fd8a49227}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+generic\+\_\+dev\+\_\+sys\+\_\+open@{metal\+\_\+generic\+\_\+dev\+\_\+sys\+\_\+open}}
+\index{metal\+\_\+generic\+\_\+dev\+\_\+sys\+\_\+open@{metal\+\_\+generic\+\_\+dev\+\_\+sys\+\_\+open}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+generic\+\_\+dev\+\_\+sys\+\_\+open()}{metal\_generic\_dev\_sys\_open()}}
+{\footnotesize\ttfamily int metal\+\_\+generic\+\_\+dev\+\_\+sys\+\_\+open (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$}]{dev }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_ab41a044b919e2f661adad7edeb578537}\label{system_2linux_2device_8c_ab41a044b919e2f661adad7edeb578537}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+linux\+\_\+bus\+\_\+close@{metal\+\_\+linux\+\_\+bus\+\_\+close}}
+\index{metal\+\_\+linux\+\_\+bus\+\_\+close@{metal\+\_\+linux\+\_\+bus\+\_\+close}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+linux\+\_\+bus\+\_\+close()}{metal\_linux\_bus\_close()}}
+{\footnotesize\ttfamily static void metal\+\_\+linux\+\_\+bus\+\_\+close (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$}]{bus }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_aff384b37a76a6a89ec1e3c84a23436d0}\label{system_2linux_2device_8c_aff384b37a76a6a89ec1e3c84a23436d0}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+linux\+\_\+bus\+\_\+finish@{metal\+\_\+linux\+\_\+bus\+\_\+finish}}
+\index{metal\+\_\+linux\+\_\+bus\+\_\+finish@{metal\+\_\+linux\+\_\+bus\+\_\+finish}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+linux\+\_\+bus\+\_\+finish()}{metal\_linux\_bus\_finish()}}
+{\footnotesize\ttfamily void metal\+\_\+linux\+\_\+bus\+\_\+finish (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_a798d21e3fbb5ea3b4095a2196f8dd29e}\label{system_2linux_2device_8c_a798d21e3fbb5ea3b4095a2196f8dd29e}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+linux\+\_\+bus\+\_\+init@{metal\+\_\+linux\+\_\+bus\+\_\+init}}
+\index{metal\+\_\+linux\+\_\+bus\+\_\+init@{metal\+\_\+linux\+\_\+bus\+\_\+init}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+linux\+\_\+bus\+\_\+init()}{metal\_linux\_bus\_init()}}
+{\footnotesize\ttfamily int metal\+\_\+linux\+\_\+bus\+\_\+init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_afca17e971f5664bf13b495a2f1903a8e}\label{system_2linux_2device_8c_afca17e971f5664bf13b495a2f1903a8e}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+linux\+\_\+dev\+\_\+close@{metal\+\_\+linux\+\_\+dev\+\_\+close}}
+\index{metal\+\_\+linux\+\_\+dev\+\_\+close@{metal\+\_\+linux\+\_\+dev\+\_\+close}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+linux\+\_\+dev\+\_\+close()}{metal\_linux\_dev\_close()}}
+{\footnotesize\ttfamily static void metal\+\_\+linux\+\_\+dev\+\_\+close (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$}]{bus,  }\item[{struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$}]{device }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_a50bfd2c04fe9490dce571c8cb1028428}\label{system_2linux_2device_8c_a50bfd2c04fe9490dce571c8cb1028428}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+linux\+\_\+dev\+\_\+dma\+\_\+map@{metal\+\_\+linux\+\_\+dev\+\_\+dma\+\_\+map}}
+\index{metal\+\_\+linux\+\_\+dev\+\_\+dma\+\_\+map@{metal\+\_\+linux\+\_\+dev\+\_\+dma\+\_\+map}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+linux\+\_\+dev\+\_\+dma\+\_\+map()}{metal\_linux\_dev\_dma\_map()}}
+{\footnotesize\ttfamily static int metal\+\_\+linux\+\_\+dev\+\_\+dma\+\_\+map (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$}]{bus,  }\item[{struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$}]{device,  }\item[{uint32\+\_\+t}]{dir,  }\item[{struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$}]{sg\+\_\+in,  }\item[{int}]{nents\+\_\+in,  }\item[{struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$}]{sg\+\_\+out }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_a767a32173f7bee021ecda9b23a5aee59}\label{system_2linux_2device_8c_a767a32173f7bee021ecda9b23a5aee59}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+linux\+\_\+dev\+\_\+dma\+\_\+unmap@{metal\+\_\+linux\+\_\+dev\+\_\+dma\+\_\+unmap}}
+\index{metal\+\_\+linux\+\_\+dev\+\_\+dma\+\_\+unmap@{metal\+\_\+linux\+\_\+dev\+\_\+dma\+\_\+unmap}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+linux\+\_\+dev\+\_\+dma\+\_\+unmap()}{metal\_linux\_dev\_dma\_unmap()}}
+{\footnotesize\ttfamily static void metal\+\_\+linux\+\_\+dev\+\_\+dma\+\_\+unmap (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$}]{bus,  }\item[{struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$}]{device,  }\item[{uint32\+\_\+t}]{dir,  }\item[{struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$}]{sg,  }\item[{int}]{nents }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_a7a4f545fc3e5037b58f98661017835b2}\label{system_2linux_2device_8c_a7a4f545fc3e5037b58f98661017835b2}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+linux\+\_\+dev\+\_\+irq\+\_\+ack@{metal\+\_\+linux\+\_\+dev\+\_\+irq\+\_\+ack}}
+\index{metal\+\_\+linux\+\_\+dev\+\_\+irq\+\_\+ack@{metal\+\_\+linux\+\_\+dev\+\_\+irq\+\_\+ack}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+linux\+\_\+dev\+\_\+irq\+\_\+ack()}{metal\_linux\_dev\_irq\_ack()}}
+{\footnotesize\ttfamily static void metal\+\_\+linux\+\_\+dev\+\_\+irq\+\_\+ack (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$}]{bus,  }\item[{struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$}]{device,  }\item[{int}]{irq }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_a7ac5f84a053e89a650eda776048383ea}\label{system_2linux_2device_8c_a7ac5f84a053e89a650eda776048383ea}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+linux\+\_\+dev\+\_\+open@{metal\+\_\+linux\+\_\+dev\+\_\+open}}
+\index{metal\+\_\+linux\+\_\+dev\+\_\+open@{metal\+\_\+linux\+\_\+dev\+\_\+open}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+linux\+\_\+dev\+\_\+open()}{metal\_linux\_dev\_open()}}
+{\footnotesize\ttfamily static int metal\+\_\+linux\+\_\+dev\+\_\+open (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$}]{bus,  }\item[{const char $\ast$}]{dev\+\_\+name,  }\item[{struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$$\ast$}]{device }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_aabe8f7827c52e2f013b408c82a0d3ced}\label{system_2linux_2device_8c_aabe8f7827c52e2f013b408c82a0d3ced}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+linux\+\_\+get\+\_\+device\+\_\+property@{metal\+\_\+linux\+\_\+get\+\_\+device\+\_\+property}}
+\index{metal\+\_\+linux\+\_\+get\+\_\+device\+\_\+property@{metal\+\_\+linux\+\_\+get\+\_\+device\+\_\+property}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+linux\+\_\+get\+\_\+device\+\_\+property()}{metal\_linux\_get\_device\_property()}}
+{\footnotesize\ttfamily int metal\+\_\+linux\+\_\+get\+\_\+device\+\_\+property (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$}]{device,  }\item[{const char $\ast$}]{property\+\_\+name,  }\item[{void $\ast$}]{output,  }\item[{int}]{len }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_a4f305dec8dea7d3d48179ebd05a682b6}\label{system_2linux_2device_8c_a4f305dec8dea7d3d48179ebd05a682b6}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+linux\+\_\+probe\+\_\+bus@{metal\+\_\+linux\+\_\+probe\+\_\+bus}}
+\index{metal\+\_\+linux\+\_\+probe\+\_\+bus@{metal\+\_\+linux\+\_\+probe\+\_\+bus}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+linux\+\_\+probe\+\_\+bus()}{metal\_linux\_probe\_bus()}}
+{\footnotesize\ttfamily static int metal\+\_\+linux\+\_\+probe\+\_\+bus (\begin{DoxyParamCaption}\item[{struct \hyperlink{structlinux__bus}{linux\+\_\+bus} $\ast$}]{lbus }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_a4753c3ec5d41e9b23a6005ea994c5cb1}\label{system_2linux_2device_8c_a4753c3ec5d41e9b23a6005ea994c5cb1}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+linux\+\_\+probe\+\_\+driver@{metal\+\_\+linux\+\_\+probe\+\_\+driver}}
+\index{metal\+\_\+linux\+\_\+probe\+\_\+driver@{metal\+\_\+linux\+\_\+probe\+\_\+driver}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+linux\+\_\+probe\+\_\+driver()}{metal\_linux\_probe\_driver()}}
+{\footnotesize\ttfamily static int metal\+\_\+linux\+\_\+probe\+\_\+driver (\begin{DoxyParamCaption}\item[{struct \hyperlink{structlinux__bus}{linux\+\_\+bus} $\ast$}]{lbus,  }\item[{struct \hyperlink{structlinux__driver}{linux\+\_\+driver} $\ast$}]{ldrv }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_a8fd8264e72b60a829e33adc728de6459}\label{system_2linux_2device_8c_a8fd8264e72b60a829e33adc728de6459}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+linux\+\_\+register\+\_\+bus@{metal\+\_\+linux\+\_\+register\+\_\+bus}}
+\index{metal\+\_\+linux\+\_\+register\+\_\+bus@{metal\+\_\+linux\+\_\+register\+\_\+bus}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+linux\+\_\+register\+\_\+bus()}{metal\_linux\_register\_bus()}}
+{\footnotesize\ttfamily static int metal\+\_\+linux\+\_\+register\+\_\+bus (\begin{DoxyParamCaption}\item[{struct \hyperlink{structlinux__bus}{linux\+\_\+bus} $\ast$}]{lbus }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_a93ee88df87e65a1362e7b9770538e706}\label{system_2linux_2device_8c_a93ee88df87e65a1362e7b9770538e706}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+uio\+\_\+dev\+\_\+bind@{metal\+\_\+uio\+\_\+dev\+\_\+bind}}
+\index{metal\+\_\+uio\+\_\+dev\+\_\+bind@{metal\+\_\+uio\+\_\+dev\+\_\+bind}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+uio\+\_\+dev\+\_\+bind()}{metal\_uio\_dev\_bind()}}
+{\footnotesize\ttfamily static int metal\+\_\+uio\+\_\+dev\+\_\+bind (\begin{DoxyParamCaption}\item[{struct \hyperlink{structlinux__device}{linux\+\_\+device} $\ast$}]{ldev,  }\item[{struct \hyperlink{structlinux__driver}{linux\+\_\+driver} $\ast$}]{ldrv }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_a4a74e2db04d24838dee8df00c4aeabc7}\label{system_2linux_2device_8c_a4a74e2db04d24838dee8df00c4aeabc7}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+uio\+\_\+dev\+\_\+close@{metal\+\_\+uio\+\_\+dev\+\_\+close}}
+\index{metal\+\_\+uio\+\_\+dev\+\_\+close@{metal\+\_\+uio\+\_\+dev\+\_\+close}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+uio\+\_\+dev\+\_\+close()}{metal\_uio\_dev\_close()}}
+{\footnotesize\ttfamily static void metal\+\_\+uio\+\_\+dev\+\_\+close (\begin{DoxyParamCaption}\item[{struct \hyperlink{structlinux__bus}{linux\+\_\+bus} $\ast$}]{lbus,  }\item[{struct \hyperlink{structlinux__device}{linux\+\_\+device} $\ast$}]{ldev }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_a4f3247397c5ed836945e68f1977677d3}\label{system_2linux_2device_8c_a4f3247397c5ed836945e68f1977677d3}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+uio\+\_\+dev\+\_\+dma\+\_\+map@{metal\+\_\+uio\+\_\+dev\+\_\+dma\+\_\+map}}
+\index{metal\+\_\+uio\+\_\+dev\+\_\+dma\+\_\+map@{metal\+\_\+uio\+\_\+dev\+\_\+dma\+\_\+map}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+uio\+\_\+dev\+\_\+dma\+\_\+map()}{metal\_uio\_dev\_dma\_map()}}
+{\footnotesize\ttfamily static int metal\+\_\+uio\+\_\+dev\+\_\+dma\+\_\+map (\begin{DoxyParamCaption}\item[{struct \hyperlink{structlinux__bus}{linux\+\_\+bus} $\ast$}]{lbus,  }\item[{struct \hyperlink{structlinux__device}{linux\+\_\+device} $\ast$}]{ldev,  }\item[{uint32\+\_\+t}]{dir,  }\item[{struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$}]{sg\+\_\+in,  }\item[{int}]{nents\+\_\+in,  }\item[{struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$}]{sg\+\_\+out }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_a3ed6afa9d901907b4a3a4d0dbd561245}\label{system_2linux_2device_8c_a3ed6afa9d901907b4a3a4d0dbd561245}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+uio\+\_\+dev\+\_\+dma\+\_\+unmap@{metal\+\_\+uio\+\_\+dev\+\_\+dma\+\_\+unmap}}
+\index{metal\+\_\+uio\+\_\+dev\+\_\+dma\+\_\+unmap@{metal\+\_\+uio\+\_\+dev\+\_\+dma\+\_\+unmap}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+uio\+\_\+dev\+\_\+dma\+\_\+unmap()}{metal\_uio\_dev\_dma\_unmap()}}
+{\footnotesize\ttfamily static void metal\+\_\+uio\+\_\+dev\+\_\+dma\+\_\+unmap (\begin{DoxyParamCaption}\item[{struct \hyperlink{structlinux__bus}{linux\+\_\+bus} $\ast$}]{lbus,  }\item[{struct \hyperlink{structlinux__device}{linux\+\_\+device} $\ast$}]{ldev,  }\item[{uint32\+\_\+t}]{dir,  }\item[{struct \hyperlink{structmetal__sg}{metal\+\_\+sg} $\ast$}]{sg,  }\item[{int}]{nents }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_af036baba0c0ed3ec5a68d5b06bcd97a0}\label{system_2linux_2device_8c_af036baba0c0ed3ec5a68d5b06bcd97a0}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+uio\+\_\+dev\+\_\+irq\+\_\+ack@{metal\+\_\+uio\+\_\+dev\+\_\+irq\+\_\+ack}}
+\index{metal\+\_\+uio\+\_\+dev\+\_\+irq\+\_\+ack@{metal\+\_\+uio\+\_\+dev\+\_\+irq\+\_\+ack}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+uio\+\_\+dev\+\_\+irq\+\_\+ack()}{metal\_uio\_dev\_irq\_ack()}}
+{\footnotesize\ttfamily static void metal\+\_\+uio\+\_\+dev\+\_\+irq\+\_\+ack (\begin{DoxyParamCaption}\item[{struct \hyperlink{structlinux__bus}{linux\+\_\+bus} $\ast$}]{lbus,  }\item[{struct \hyperlink{structlinux__device}{linux\+\_\+device} $\ast$}]{ldev,  }\item[{int}]{irq }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_a37b0ebc8837a8f47d1e61f8592a0b214}\label{system_2linux_2device_8c_a37b0ebc8837a8f47d1e61f8592a0b214}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+uio\+\_\+dev\+\_\+open@{metal\+\_\+uio\+\_\+dev\+\_\+open}}
+\index{metal\+\_\+uio\+\_\+dev\+\_\+open@{metal\+\_\+uio\+\_\+dev\+\_\+open}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+uio\+\_\+dev\+\_\+open()}{metal\_uio\_dev\_open()}}
+{\footnotesize\ttfamily static int metal\+\_\+uio\+\_\+dev\+\_\+open (\begin{DoxyParamCaption}\item[{struct \hyperlink{structlinux__bus}{linux\+\_\+bus} $\ast$}]{lbus,  }\item[{struct \hyperlink{structlinux__device}{linux\+\_\+device} $\ast$}]{ldev }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_ae207edc6193065cedf8596bb168ec387}\label{system_2linux_2device_8c_ae207edc6193065cedf8596bb168ec387}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+uio\+\_\+read\+\_\+map\+\_\+attr@{metal\+\_\+uio\+\_\+read\+\_\+map\+\_\+attr}}
+\index{metal\+\_\+uio\+\_\+read\+\_\+map\+\_\+attr@{metal\+\_\+uio\+\_\+read\+\_\+map\+\_\+attr}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+uio\+\_\+read\+\_\+map\+\_\+attr()}{metal\_uio\_read\_map\_attr()}}
+{\footnotesize\ttfamily static int metal\+\_\+uio\+\_\+read\+\_\+map\+\_\+attr (\begin{DoxyParamCaption}\item[{struct \hyperlink{structlinux__device}{linux\+\_\+device} $\ast$}]{ldev,  }\item[{unsigned int}]{index,  }\item[{const char $\ast$}]{name,  }\item[{unsigned long $\ast$}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_a72649c5e83579505792604b04a026889}\label{system_2linux_2device_8c_a72649c5e83579505792604b04a026889}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!to\+\_\+linux\+\_\+bus@{to\+\_\+linux\+\_\+bus}}
+\index{to\+\_\+linux\+\_\+bus@{to\+\_\+linux\+\_\+bus}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{to\+\_\+linux\+\_\+bus()}{to\_linux\_bus()}}
+{\footnotesize\ttfamily static struct \hyperlink{structlinux__bus}{linux\+\_\+bus}$\ast$ to\+\_\+linux\+\_\+bus (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__bus}{metal\+\_\+bus} $\ast$}]{bus }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_a73470472e00475f0444db227e82ad458}\label{system_2linux_2device_8c_a73470472e00475f0444db227e82ad458}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!to\+\_\+linux\+\_\+device@{to\+\_\+linux\+\_\+device}}
+\index{to\+\_\+linux\+\_\+device@{to\+\_\+linux\+\_\+device}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{to\+\_\+linux\+\_\+device()}{to\_linux\_device()}}
+{\footnotesize\ttfamily static struct \hyperlink{structlinux__device}{linux\+\_\+device}$\ast$ to\+\_\+linux\+\_\+device (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__device}{metal\+\_\+device} $\ast$}]{device }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{system_2linux_2device_8c_aee50f0231ab78c8aaa2d2c6826a85fab}\label{system_2linux_2device_8c_aee50f0231ab78c8aaa2d2c6826a85fab}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!linux\+\_\+bus@{linux\+\_\+bus}}
+\index{linux\+\_\+bus@{linux\+\_\+bus}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{linux\+\_\+bus}{linux\_bus}}
+{\footnotesize\ttfamily struct \hyperlink{structlinux__bus}{linux\+\_\+bus} \hyperlink{structlinux__bus}{linux\+\_\+bus}\mbox{[}$\,$\mbox{]}\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2linux_2device_8c_a8fa541afe7299c15be47e4959f36c782}\label{system_2linux_2device_8c_a8fa541afe7299c15be47e4959f36c782}} 
+\index{system/linux/device.\+c@{system/linux/device.\+c}!metal\+\_\+linux\+\_\+bus\+\_\+ops@{metal\+\_\+linux\+\_\+bus\+\_\+ops}}
+\index{metal\+\_\+linux\+\_\+bus\+\_\+ops@{metal\+\_\+linux\+\_\+bus\+\_\+ops}!system/linux/device.\+c@{system/linux/device.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+linux\+\_\+bus\+\_\+ops}{metal\_linux\_bus\_ops}}
+{\footnotesize\ttfamily const struct \hyperlink{structmetal__bus__ops}{metal\+\_\+bus\+\_\+ops} metal\+\_\+linux\+\_\+bus\+\_\+ops\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= \{
+        .bus\_close      = \hyperlink{system_2linux_2device_8c_ab41a044b919e2f661adad7edeb578537}{metal\_linux\_bus\_close},
+        .dev\_open       = \hyperlink{system_2linux_2device_8c_a7ac5f84a053e89a650eda776048383ea}{metal\_linux\_dev\_open},
+        .dev\_close      = \hyperlink{system_2linux_2device_8c_afca17e971f5664bf13b495a2f1903a8e}{metal\_linux\_dev\_close},
+        .dev\_irq\_ack    = \hyperlink{system_2linux_2device_8c_a7a4f545fc3e5037b58f98661017835b2}{metal\_linux\_dev\_irq\_ack},
+        .dev\_dma\_map    = \hyperlink{system_2linux_2device_8c_a50bfd2c04fe9490dce571c8cb1028428}{metal\_linux\_dev\_dma\_map},
+        .dev\_dma\_unmap  = \hyperlink{system_2linux_2device_8c_a767a32173f7bee021ecda9b23a5aee59}{metal\_linux\_dev\_dma\_unmap},
+\}
+\end{DoxyCode}

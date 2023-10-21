@@ -1,0 +1,45 @@
+\hypertarget{system_2freertos_2xlnx__common_2sys_8h}{}\section{lib/system/freertos/xlnx\+\_\+common/sys.h File Reference}
+\label{system_2freertos_2xlnx__common_2sys_8h}\index{lib/system/freertos/xlnx\+\_\+common/sys.\+h@{lib/system/freertos/xlnx\+\_\+common/sys.\+h}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{system_2freertos_2xlnx__common_2sys_8h_ac20f4badb889bd31a4e2513fcf8ab9be}{metal\+\_\+xlnx\+\_\+irq\+\_\+isr} (void $\ast$arg)
+\begin{DoxyCompactList}\small\item\em metal\+\_\+xlnx\+\_\+irq\+\_\+isr \end{DoxyCompactList}\item 
+int \hyperlink{system_2freertos_2xlnx__common_2sys_8h_aa697a7b43c5c169f17f810b62319806d}{metal\+\_\+xlnx\+\_\+irq\+\_\+init} (void)
+\begin{DoxyCompactList}\small\item\em metal\+\_\+xlnx\+\_\+irq\+\_\+int \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{system_2freertos_2xlnx__common_2sys_8h_aa697a7b43c5c169f17f810b62319806d}\label{system_2freertos_2xlnx__common_2sys_8h_aa697a7b43c5c169f17f810b62319806d}} 
+\index{system/freertos/xlnx\+\_\+common/sys.\+h@{system/freertos/xlnx\+\_\+common/sys.\+h}!metal\+\_\+xlnx\+\_\+irq\+\_\+init@{metal\+\_\+xlnx\+\_\+irq\+\_\+init}}
+\index{metal\+\_\+xlnx\+\_\+irq\+\_\+init@{metal\+\_\+xlnx\+\_\+irq\+\_\+init}!system/freertos/xlnx\+\_\+common/sys.\+h@{system/freertos/xlnx\+\_\+common/sys.\+h}}
+\subsubsection{\texorpdfstring{metal\+\_\+xlnx\+\_\+irq\+\_\+init()}{metal\_xlnx\_irq\_init()}}
+{\footnotesize\ttfamily int metal\+\_\+xlnx\+\_\+irq\+\_\+init (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+metal\+\_\+xlnx\+\_\+irq\+\_\+int 
+
+Xilinx interrupt controller initialization. It will initialize the metal Xilinx I\+RQ controller data structure.
+
+\begin{DoxyReturn}{Returns}
+0 for success, or negative value for failure 
+\end{DoxyReturn}
+\mbox{\Hypertarget{system_2freertos_2xlnx__common_2sys_8h_ac20f4badb889bd31a4e2513fcf8ab9be}\label{system_2freertos_2xlnx__common_2sys_8h_ac20f4badb889bd31a4e2513fcf8ab9be}} 
+\index{system/freertos/xlnx\+\_\+common/sys.\+h@{system/freertos/xlnx\+\_\+common/sys.\+h}!metal\+\_\+xlnx\+\_\+irq\+\_\+isr@{metal\+\_\+xlnx\+\_\+irq\+\_\+isr}}
+\index{metal\+\_\+xlnx\+\_\+irq\+\_\+isr@{metal\+\_\+xlnx\+\_\+irq\+\_\+isr}!system/freertos/xlnx\+\_\+common/sys.\+h@{system/freertos/xlnx\+\_\+common/sys.\+h}}
+\subsubsection{\texorpdfstring{metal\+\_\+xlnx\+\_\+irq\+\_\+isr()}{metal\_xlnx\_irq\_isr()}}
+{\footnotesize\ttfamily void metal\+\_\+xlnx\+\_\+irq\+\_\+isr (\begin{DoxyParamCaption}\item[{void $\ast$}]{arg }\end{DoxyParamCaption})}
+
+
+
+metal\+\_\+xlnx\+\_\+irq\+\_\+isr 
+
+Xilinx interrupt I\+SR can be registered to the Xilinx embeddedsw I\+RQ controller driver.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em arg} & input argument, interrupt vector id.\\
+\hline
+\end{DoxyParams}
+metal\+\_\+xlnx\+\_\+irq\+\_\+isr 

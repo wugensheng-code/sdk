@@ -1,0 +1,425 @@
+\hypertarget{compiler_2gcc_2atomic_8h}{}\section{lib/compiler/gcc/atomic.h File Reference}
+\label{compiler_2gcc_2atomic_8h}\index{lib/compiler/gcc/atomic.\+h@{lib/compiler/gcc/atomic.\+h}}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_a3cf6ded3b463faf0cedce1718caaa695}{A\+T\+O\+M\+I\+C\+\_\+\+F\+L\+A\+G\+\_\+\+I\+N\+IT}~0
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_af5bdfda3335d596fdaf30d4aafc75e43}{A\+T\+O\+M\+I\+C\+\_\+\+V\+A\+R\+\_\+\+I\+N\+IT}(V\+AL)~(V\+AL)
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_a46f3201516842908b3f0323dbe8a5970}{atomic\+\_\+flag\+\_\+test\+\_\+and\+\_\+set}(F\+L\+AG)~\+\_\+\+\_\+sync\+\_\+lock\+\_\+test\+\_\+and\+\_\+set((F\+L\+AG), 1)
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_ad6aac81d5b1bc174404801056019cc70}{atomic\+\_\+flag\+\_\+test\+\_\+and\+\_\+set\+\_\+explicit}(F\+L\+AG,  MO)~\hyperlink{compiler_2gcc_2atomic_8h_a46f3201516842908b3f0323dbe8a5970}{atomic\+\_\+flag\+\_\+test\+\_\+and\+\_\+set}(F\+L\+AG)
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_a55387090f6a1299f3873e3e93963a88d}{atomic\+\_\+flag\+\_\+clear}(F\+L\+AG)~\+\_\+\+\_\+sync\+\_\+lock\+\_\+release((F\+L\+AG))
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_a36d5c8d63e7142b9fd59f331861d8c92}{atomic\+\_\+flag\+\_\+clear\+\_\+explicit}(F\+L\+AG,  MO)~\hyperlink{compiler_2gcc_2atomic_8h_a55387090f6a1299f3873e3e93963a88d}{atomic\+\_\+flag\+\_\+clear}(F\+L\+AG)
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_a9d85c2bfcdd6848a598792fe5debbcae}{atomic\+\_\+init}(O\+BJ,  V\+AL)~do \{ $\ast$(O\+BJ) = (V\+AL); \} while (0)
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_ad0881213f2fecf690a0f303cd53162bf}{atomic\+\_\+is\+\_\+lock\+\_\+free}(O\+BJ)~(sizeof($\ast$(O\+BJ)) $<$= sizeof(long))
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_ac8c7027f360396a149b1d20f594c1f9f}{atomic\+\_\+store}(O\+BJ,  V\+AL)~do \{ $\ast$(O\+BJ) = (V\+AL); \hyperlink{processor_2xtensa_2cpu_8h_a3de7c4e7434d2028f0b1bdbe835ce3cb}{\+\_\+\+\_\+sync\+\_\+synchronize}(); \} while (0)
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_af4f74f04cd8ed4d972e18cf6226162f4}{atomic\+\_\+store\+\_\+explicit}(O\+BJ,  V\+AL,  MO)~\hyperlink{compiler_2gcc_2atomic_8h_ac8c7027f360396a149b1d20f594c1f9f}{atomic\+\_\+store}((O\+BJ), (V\+AL))
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_a140cf308ac9f97ff62d8aad6a20a4843}{atomic\+\_\+load}(O\+BJ)~(\{ \hyperlink{processor_2xtensa_2cpu_8h_a3de7c4e7434d2028f0b1bdbe835ce3cb}{\+\_\+\+\_\+sync\+\_\+synchronize}(); $\ast$(O\+BJ); \})
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_ab93867b317e776f51c00b3d56af7fc31}{atomic\+\_\+load\+\_\+explicit}(O\+BJ,  MO)~\hyperlink{compiler_2gcc_2atomic_8h_a140cf308ac9f97ff62d8aad6a20a4843}{atomic\+\_\+load}(O\+BJ)
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_acc9bbe0fa5a8c953774c1a390fc10625}{atomic\+\_\+exchange}(O\+BJ,  D\+ES)
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_aaf501864c094dfed393f514aa24c3292}{atomic\+\_\+exchange\+\_\+explicit}(O\+BJ,  D\+ES,  MO)~\hyperlink{compiler_2gcc_2atomic_8h_acc9bbe0fa5a8c953774c1a390fc10625}{atomic\+\_\+exchange}((O\+BJ), (D\+ES))
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_a7d32f0350afa23649f87804c76044186}{atomic\+\_\+compare\+\_\+exchange\+\_\+strong}(O\+BJ,  E\+XP,  D\+ES)
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_a5091af79abe888b8bede6dcfb0e9ef96}{atomic\+\_\+compare\+\_\+exchange\+\_\+strong\+\_\+explicit}(O\+BJ,  E\+XP,  D\+ES,  MO)~\hyperlink{compiler_2gcc_2atomic_8h_a7d32f0350afa23649f87804c76044186}{atomic\+\_\+compare\+\_\+exchange\+\_\+strong}((O\+BJ), (E\+XP), (D\+ES))
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_adf7b301287b4534b591182c1e352bb7a}{atomic\+\_\+compare\+\_\+exchange\+\_\+weak}(O\+BJ,  E\+XP,  D\+ES)~\hyperlink{compiler_2gcc_2atomic_8h_a7d32f0350afa23649f87804c76044186}{atomic\+\_\+compare\+\_\+exchange\+\_\+strong}((O\+BJ), (E\+XP), (D\+ES))
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_a3cec33fb1296fcb13ca85e892f718873}{atomic\+\_\+compare\+\_\+exchange\+\_\+weak\+\_\+explicit}(O\+BJ,  E\+XP,  D\+ES,  MO)~\hyperlink{compiler_2gcc_2atomic_8h_adf7b301287b4534b591182c1e352bb7a}{atomic\+\_\+compare\+\_\+exchange\+\_\+weak}((O\+BJ), (E\+XP), (D\+ES))
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_a077c3bcb2335b6fb9cc0a13f56e2713c}{atomic\+\_\+fetch\+\_\+add}(O\+BJ,  V\+AL)~\+\_\+\+\_\+sync\+\_\+fetch\+\_\+and\+\_\+add((O\+BJ), (V\+AL))
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_ac72f4d1495599bd193981ceec7dfa846}{atomic\+\_\+fetch\+\_\+add\+\_\+explicit}(O\+BJ,  V\+AL,  MO)~\hyperlink{compiler_2gcc_2atomic_8h_a077c3bcb2335b6fb9cc0a13f56e2713c}{atomic\+\_\+fetch\+\_\+add}((O\+BJ), (V\+AL))
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_accee9ac43a7ca88446514c1b727f53be}{atomic\+\_\+fetch\+\_\+sub}(O\+BJ,  V\+AL)~\+\_\+\+\_\+sync\+\_\+fetch\+\_\+and\+\_\+sub((O\+BJ), (V\+AL))
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_a007e704eba70cd22d4512f384135fd72}{atomic\+\_\+fetch\+\_\+sub\+\_\+explicit}(O\+BJ,  V\+AL,  MO)~\hyperlink{compiler_2gcc_2atomic_8h_accee9ac43a7ca88446514c1b727f53be}{atomic\+\_\+fetch\+\_\+sub}((O\+BJ), (V\+AL))
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_ae5697a0c95bde3f2a4954e59b2e2761b}{atomic\+\_\+fetch\+\_\+or}(O\+BJ,  V\+AL)~\+\_\+\+\_\+sync\+\_\+fetch\+\_\+and\+\_\+or((O\+BJ), (V\+AL))
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_a70c2e3da3033b185134af867b857b8ee}{atomic\+\_\+fetch\+\_\+or\+\_\+explicit}(O\+BJ,  V\+AL,  MO)~\hyperlink{compiler_2gcc_2atomic_8h_ae5697a0c95bde3f2a4954e59b2e2761b}{atomic\+\_\+fetch\+\_\+or}((O\+BJ), (V\+AL))
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_aeefb4a2c75ab9202738c874aa3c25606}{atomic\+\_\+fetch\+\_\+xor}(O\+BJ,  V\+AL)~\+\_\+\+\_\+sync\+\_\+fetch\+\_\+and\+\_\+xor((O\+BJ), (V\+AL))
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_aa41813834cf18e8e21f480ffb08be18f}{atomic\+\_\+fetch\+\_\+xor\+\_\+explicit}(O\+BJ,  V\+AL,  MO)~\hyperlink{compiler_2gcc_2atomic_8h_aeefb4a2c75ab9202738c874aa3c25606}{atomic\+\_\+fetch\+\_\+xor}((O\+BJ), (V\+AL))
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_a822006e6b2b8984ca99c693e2eab0102}{atomic\+\_\+fetch\+\_\+and}(O\+BJ,  V\+AL)~\+\_\+\+\_\+sync\+\_\+fetch\+\_\+and\+\_\+and((O\+BJ), (V\+AL))
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_a47d24c8cff6698e8fb42b18cc4b80904}{atomic\+\_\+fetch\+\_\+and\+\_\+explicit}(O\+BJ,  V\+AL,  MO)~\hyperlink{compiler_2gcc_2atomic_8h_a822006e6b2b8984ca99c693e2eab0102}{atomic\+\_\+fetch\+\_\+and}((O\+BJ), (V\+AL))
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_a7c82e718a2fa06be84951fb72d275f9e}{atomic\+\_\+thread\+\_\+fence}(MO)~\hyperlink{processor_2xtensa_2cpu_8h_a3de7c4e7434d2028f0b1bdbe835ce3cb}{\+\_\+\+\_\+sync\+\_\+synchronize}()
+\item 
+\#define \hyperlink{compiler_2gcc_2atomic_8h_a116e0cd17b559defe9c9a738674db03b}{atomic\+\_\+signal\+\_\+fence}(MO)~\hyperlink{processor_2xtensa_2cpu_8h_a3de7c4e7434d2028f0b1bdbe835ce3cb}{\+\_\+\+\_\+sync\+\_\+synchronize}()
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef int \hyperlink{compiler_2gcc_2atomic_8h_a9530e5944c0b8576ad6b94fc24467230}{atomic\+\_\+flag}
+\item 
+typedef char \hyperlink{compiler_2gcc_2atomic_8h_a50f9e0fa083c391eeb6d2d360b22a3b4}{atomic\+\_\+char}
+\item 
+typedef unsigned char \hyperlink{compiler_2gcc_2atomic_8h_a2ed4af3ede15aaa034fad468b866eca3}{atomic\+\_\+uchar}
+\item 
+typedef short \hyperlink{compiler_2gcc_2atomic_8h_a8b03b239a748eb5fd0fb23709fdc2c27}{atomic\+\_\+short}
+\item 
+typedef unsigned short \hyperlink{compiler_2gcc_2atomic_8h_a8c21d4e98ab8044ff0640bc59b885237}{atomic\+\_\+ushort}
+\item 
+typedef int \hyperlink{compiler_2gcc_2atomic_8h_a3584358b6d722cb0cca04ac3cfd8a674}{atomic\+\_\+int}
+\item 
+typedef unsigned int \hyperlink{compiler_2gcc_2atomic_8h_a67daf268d675d51b14c625c6162fe979}{atomic\+\_\+uint}
+\item 
+typedef \hyperlink{compiler_2gcc_2atomic_8h_a67daf268d675d51b14c625c6162fe979}{atomic\+\_\+uint} \hyperlink{compiler_2gcc_2atomic_8h_aaa955a590bd7e8ef3f098f914978c8f6}{atomic\+\_\+uintptr\+\_\+t}
+\item 
+typedef long \hyperlink{compiler_2gcc_2atomic_8h_a8d9216bf9fbe02565302acf6df88496e}{atomic\+\_\+long}
+\item 
+typedef unsigned long \hyperlink{compiler_2gcc_2atomic_8h_a92dac19b6b8422b8443abf9a456e171c}{atomic\+\_\+ulong}
+\item 
+typedef long long \hyperlink{compiler_2gcc_2atomic_8h_ac95a09b54cf561b691a031c010821ab7}{atomic\+\_\+llong}
+\item 
+typedef unsigned long long \hyperlink{compiler_2gcc_2atomic_8h_a2d5a8518f50b3df59e85cf234119ffd9}{atomic\+\_\+ullong}
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1b}{memory\+\_\+order} \{ \newline
+\hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1bac6489d0374e297a776f6a3db7ea5654a}{memory\+\_\+order\+\_\+relaxed}, 
+\hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1ba0745f54882bc00251a719e42969db110}{memory\+\_\+order\+\_\+consume}, 
+\hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1bafb313754331704b978e9a80a933b3da7}{memory\+\_\+order\+\_\+acquire}, 
+\hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1ba685a90c8fc516895354973c3918a5f7b}{memory\+\_\+order\+\_\+release}, 
+\newline
+\hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1bae17e60cbfd766a7f165872c36e2f7bc5}{memory\+\_\+order\+\_\+acq\+\_\+rel}, 
+\hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1ba2d21914d1edd227a890107e7878a3752}{memory\+\_\+order\+\_\+seq\+\_\+cst}
+ \}
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a7d32f0350afa23649f87804c76044186}\label{compiler_2gcc_2atomic_8h_a7d32f0350afa23649f87804c76044186}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+compare\+\_\+exchange\+\_\+strong@{atomic\+\_\+compare\+\_\+exchange\+\_\+strong}}
+\index{atomic\+\_\+compare\+\_\+exchange\+\_\+strong@{atomic\+\_\+compare\+\_\+exchange\+\_\+strong}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+compare\+\_\+exchange\+\_\+strong}{atomic\_compare\_exchange\_strong}}
+{\footnotesize\ttfamily \#define atomic\+\_\+compare\+\_\+exchange\+\_\+strong(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{E\+XP,  }\item[{}]{D\+ES }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+(\{                                                              \(\backslash\)
+                \_\_typeof\_\_(OBJ) obj = (OBJ);                            \(\backslash\)
+                \_\_typeof\_\_(EXP) exp = (EXP);                            \(\backslash\)
+                \_\_typeof\_\_(*obj) expval = *exp;                         \(\backslash\)
+                \_\_typeof\_\_(*obj) oldval = \_\_sync\_val\_compare\_and\_swap(  \(\backslash\)
+                        obj, expval, (DES));                            \(\backslash\)
+                *exp = oldval;                                          \(\backslash\)
+                oldval == expval;                                       \(\backslash\)
+        \})
+\end{DoxyCode}
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a5091af79abe888b8bede6dcfb0e9ef96}\label{compiler_2gcc_2atomic_8h_a5091af79abe888b8bede6dcfb0e9ef96}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+compare\+\_\+exchange\+\_\+strong\+\_\+explicit@{atomic\+\_\+compare\+\_\+exchange\+\_\+strong\+\_\+explicit}}
+\index{atomic\+\_\+compare\+\_\+exchange\+\_\+strong\+\_\+explicit@{atomic\+\_\+compare\+\_\+exchange\+\_\+strong\+\_\+explicit}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+compare\+\_\+exchange\+\_\+strong\+\_\+explicit}{atomic\_compare\_exchange\_strong\_explicit}}
+{\footnotesize\ttfamily \#define atomic\+\_\+compare\+\_\+exchange\+\_\+strong\+\_\+explicit(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{E\+XP,  }\item[{}]{D\+ES,  }\item[{}]{MO }\end{DoxyParamCaption})~\hyperlink{compiler_2gcc_2atomic_8h_a7d32f0350afa23649f87804c76044186}{atomic\+\_\+compare\+\_\+exchange\+\_\+strong}((O\+BJ), (E\+XP), (D\+ES))}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_adf7b301287b4534b591182c1e352bb7a}\label{compiler_2gcc_2atomic_8h_adf7b301287b4534b591182c1e352bb7a}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+compare\+\_\+exchange\+\_\+weak@{atomic\+\_\+compare\+\_\+exchange\+\_\+weak}}
+\index{atomic\+\_\+compare\+\_\+exchange\+\_\+weak@{atomic\+\_\+compare\+\_\+exchange\+\_\+weak}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+compare\+\_\+exchange\+\_\+weak}{atomic\_compare\_exchange\_weak}}
+{\footnotesize\ttfamily \#define atomic\+\_\+compare\+\_\+exchange\+\_\+weak(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{E\+XP,  }\item[{}]{D\+ES }\end{DoxyParamCaption})~\hyperlink{compiler_2gcc_2atomic_8h_a7d32f0350afa23649f87804c76044186}{atomic\+\_\+compare\+\_\+exchange\+\_\+strong}((O\+BJ), (E\+XP), (D\+ES))}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a3cec33fb1296fcb13ca85e892f718873}\label{compiler_2gcc_2atomic_8h_a3cec33fb1296fcb13ca85e892f718873}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+compare\+\_\+exchange\+\_\+weak\+\_\+explicit@{atomic\+\_\+compare\+\_\+exchange\+\_\+weak\+\_\+explicit}}
+\index{atomic\+\_\+compare\+\_\+exchange\+\_\+weak\+\_\+explicit@{atomic\+\_\+compare\+\_\+exchange\+\_\+weak\+\_\+explicit}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+compare\+\_\+exchange\+\_\+weak\+\_\+explicit}{atomic\_compare\_exchange\_weak\_explicit}}
+{\footnotesize\ttfamily \#define atomic\+\_\+compare\+\_\+exchange\+\_\+weak\+\_\+explicit(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{E\+XP,  }\item[{}]{D\+ES,  }\item[{}]{MO }\end{DoxyParamCaption})~\hyperlink{compiler_2gcc_2atomic_8h_adf7b301287b4534b591182c1e352bb7a}{atomic\+\_\+compare\+\_\+exchange\+\_\+weak}((O\+BJ), (E\+XP), (D\+ES))}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_acc9bbe0fa5a8c953774c1a390fc10625}\label{compiler_2gcc_2atomic_8h_acc9bbe0fa5a8c953774c1a390fc10625}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+exchange@{atomic\+\_\+exchange}}
+\index{atomic\+\_\+exchange@{atomic\+\_\+exchange}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+exchange}{atomic\_exchange}}
+{\footnotesize\ttfamily \#define atomic\+\_\+exchange(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{D\+ES }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+(\{                                                              \(\backslash\)
+                \_\_typeof\_\_(OBJ) obj = (OBJ);                            \(\backslash\)
+                \_\_typeof\_\_(*obj) des = (DES);                           \(\backslash\)
+                \_\_typeof\_\_(*obj) expval;                                        \(\backslash\)
+                \_\_typeof\_\_(*obj) oldval = \hyperlink{compiler_2gcc_2atomic_8h_a140cf308ac9f97ff62d8aad6a20a4843}{atomic\_load}(obj);                  \(\backslash\)
+                do \{                                                    \(\backslash\)
+                        expval = oldval;                                \(\backslash\)
+                        oldval = \_\_sync\_val\_compare\_and\_swap(           \(\backslash\)
+                                obj, expval, des);                      \(\backslash\)
+                \} \textcolor{keywordflow}{while} (oldval != expval);                             \(\backslash\)
+                oldval;                                                 \(\backslash\)
+        \})
+\end{DoxyCode}
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_aaf501864c094dfed393f514aa24c3292}\label{compiler_2gcc_2atomic_8h_aaf501864c094dfed393f514aa24c3292}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+exchange\+\_\+explicit@{atomic\+\_\+exchange\+\_\+explicit}}
+\index{atomic\+\_\+exchange\+\_\+explicit@{atomic\+\_\+exchange\+\_\+explicit}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+exchange\+\_\+explicit}{atomic\_exchange\_explicit}}
+{\footnotesize\ttfamily \#define atomic\+\_\+exchange\+\_\+explicit(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{D\+ES,  }\item[{}]{MO }\end{DoxyParamCaption})~\hyperlink{compiler_2gcc_2atomic_8h_acc9bbe0fa5a8c953774c1a390fc10625}{atomic\+\_\+exchange}((O\+BJ), (D\+ES))}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a077c3bcb2335b6fb9cc0a13f56e2713c}\label{compiler_2gcc_2atomic_8h_a077c3bcb2335b6fb9cc0a13f56e2713c}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+fetch\+\_\+add@{atomic\+\_\+fetch\+\_\+add}}
+\index{atomic\+\_\+fetch\+\_\+add@{atomic\+\_\+fetch\+\_\+add}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+fetch\+\_\+add}{atomic\_fetch\_add}}
+{\footnotesize\ttfamily \#define atomic\+\_\+fetch\+\_\+add(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{V\+AL }\end{DoxyParamCaption})~\+\_\+\+\_\+sync\+\_\+fetch\+\_\+and\+\_\+add((O\+BJ), (V\+AL))}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_ac72f4d1495599bd193981ceec7dfa846}\label{compiler_2gcc_2atomic_8h_ac72f4d1495599bd193981ceec7dfa846}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+fetch\+\_\+add\+\_\+explicit@{atomic\+\_\+fetch\+\_\+add\+\_\+explicit}}
+\index{atomic\+\_\+fetch\+\_\+add\+\_\+explicit@{atomic\+\_\+fetch\+\_\+add\+\_\+explicit}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+fetch\+\_\+add\+\_\+explicit}{atomic\_fetch\_add\_explicit}}
+{\footnotesize\ttfamily \#define atomic\+\_\+fetch\+\_\+add\+\_\+explicit(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{V\+AL,  }\item[{}]{MO }\end{DoxyParamCaption})~\hyperlink{compiler_2gcc_2atomic_8h_a077c3bcb2335b6fb9cc0a13f56e2713c}{atomic\+\_\+fetch\+\_\+add}((O\+BJ), (V\+AL))}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a822006e6b2b8984ca99c693e2eab0102}\label{compiler_2gcc_2atomic_8h_a822006e6b2b8984ca99c693e2eab0102}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+fetch\+\_\+and@{atomic\+\_\+fetch\+\_\+and}}
+\index{atomic\+\_\+fetch\+\_\+and@{atomic\+\_\+fetch\+\_\+and}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+fetch\+\_\+and}{atomic\_fetch\_and}}
+{\footnotesize\ttfamily \#define atomic\+\_\+fetch\+\_\+and(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{V\+AL }\end{DoxyParamCaption})~\+\_\+\+\_\+sync\+\_\+fetch\+\_\+and\+\_\+and((O\+BJ), (V\+AL))}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a47d24c8cff6698e8fb42b18cc4b80904}\label{compiler_2gcc_2atomic_8h_a47d24c8cff6698e8fb42b18cc4b80904}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+fetch\+\_\+and\+\_\+explicit@{atomic\+\_\+fetch\+\_\+and\+\_\+explicit}}
+\index{atomic\+\_\+fetch\+\_\+and\+\_\+explicit@{atomic\+\_\+fetch\+\_\+and\+\_\+explicit}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+fetch\+\_\+and\+\_\+explicit}{atomic\_fetch\_and\_explicit}}
+{\footnotesize\ttfamily \#define atomic\+\_\+fetch\+\_\+and\+\_\+explicit(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{V\+AL,  }\item[{}]{MO }\end{DoxyParamCaption})~\hyperlink{compiler_2gcc_2atomic_8h_a822006e6b2b8984ca99c693e2eab0102}{atomic\+\_\+fetch\+\_\+and}((O\+BJ), (V\+AL))}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_ae5697a0c95bde3f2a4954e59b2e2761b}\label{compiler_2gcc_2atomic_8h_ae5697a0c95bde3f2a4954e59b2e2761b}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+fetch\+\_\+or@{atomic\+\_\+fetch\+\_\+or}}
+\index{atomic\+\_\+fetch\+\_\+or@{atomic\+\_\+fetch\+\_\+or}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+fetch\+\_\+or}{atomic\_fetch\_or}}
+{\footnotesize\ttfamily \#define atomic\+\_\+fetch\+\_\+or(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{V\+AL }\end{DoxyParamCaption})~\+\_\+\+\_\+sync\+\_\+fetch\+\_\+and\+\_\+or((O\+BJ), (V\+AL))}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a70c2e3da3033b185134af867b857b8ee}\label{compiler_2gcc_2atomic_8h_a70c2e3da3033b185134af867b857b8ee}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+fetch\+\_\+or\+\_\+explicit@{atomic\+\_\+fetch\+\_\+or\+\_\+explicit}}
+\index{atomic\+\_\+fetch\+\_\+or\+\_\+explicit@{atomic\+\_\+fetch\+\_\+or\+\_\+explicit}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+fetch\+\_\+or\+\_\+explicit}{atomic\_fetch\_or\_explicit}}
+{\footnotesize\ttfamily \#define atomic\+\_\+fetch\+\_\+or\+\_\+explicit(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{V\+AL,  }\item[{}]{MO }\end{DoxyParamCaption})~\hyperlink{compiler_2gcc_2atomic_8h_ae5697a0c95bde3f2a4954e59b2e2761b}{atomic\+\_\+fetch\+\_\+or}((O\+BJ), (V\+AL))}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_accee9ac43a7ca88446514c1b727f53be}\label{compiler_2gcc_2atomic_8h_accee9ac43a7ca88446514c1b727f53be}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+fetch\+\_\+sub@{atomic\+\_\+fetch\+\_\+sub}}
+\index{atomic\+\_\+fetch\+\_\+sub@{atomic\+\_\+fetch\+\_\+sub}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+fetch\+\_\+sub}{atomic\_fetch\_sub}}
+{\footnotesize\ttfamily \#define atomic\+\_\+fetch\+\_\+sub(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{V\+AL }\end{DoxyParamCaption})~\+\_\+\+\_\+sync\+\_\+fetch\+\_\+and\+\_\+sub((O\+BJ), (V\+AL))}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a007e704eba70cd22d4512f384135fd72}\label{compiler_2gcc_2atomic_8h_a007e704eba70cd22d4512f384135fd72}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+fetch\+\_\+sub\+\_\+explicit@{atomic\+\_\+fetch\+\_\+sub\+\_\+explicit}}
+\index{atomic\+\_\+fetch\+\_\+sub\+\_\+explicit@{atomic\+\_\+fetch\+\_\+sub\+\_\+explicit}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+fetch\+\_\+sub\+\_\+explicit}{atomic\_fetch\_sub\_explicit}}
+{\footnotesize\ttfamily \#define atomic\+\_\+fetch\+\_\+sub\+\_\+explicit(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{V\+AL,  }\item[{}]{MO }\end{DoxyParamCaption})~\hyperlink{compiler_2gcc_2atomic_8h_accee9ac43a7ca88446514c1b727f53be}{atomic\+\_\+fetch\+\_\+sub}((O\+BJ), (V\+AL))}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_aeefb4a2c75ab9202738c874aa3c25606}\label{compiler_2gcc_2atomic_8h_aeefb4a2c75ab9202738c874aa3c25606}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+fetch\+\_\+xor@{atomic\+\_\+fetch\+\_\+xor}}
+\index{atomic\+\_\+fetch\+\_\+xor@{atomic\+\_\+fetch\+\_\+xor}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+fetch\+\_\+xor}{atomic\_fetch\_xor}}
+{\footnotesize\ttfamily \#define atomic\+\_\+fetch\+\_\+xor(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{V\+AL }\end{DoxyParamCaption})~\+\_\+\+\_\+sync\+\_\+fetch\+\_\+and\+\_\+xor((O\+BJ), (V\+AL))}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_aa41813834cf18e8e21f480ffb08be18f}\label{compiler_2gcc_2atomic_8h_aa41813834cf18e8e21f480ffb08be18f}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+fetch\+\_\+xor\+\_\+explicit@{atomic\+\_\+fetch\+\_\+xor\+\_\+explicit}}
+\index{atomic\+\_\+fetch\+\_\+xor\+\_\+explicit@{atomic\+\_\+fetch\+\_\+xor\+\_\+explicit}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+fetch\+\_\+xor\+\_\+explicit}{atomic\_fetch\_xor\_explicit}}
+{\footnotesize\ttfamily \#define atomic\+\_\+fetch\+\_\+xor\+\_\+explicit(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{V\+AL,  }\item[{}]{MO }\end{DoxyParamCaption})~\hyperlink{compiler_2gcc_2atomic_8h_aeefb4a2c75ab9202738c874aa3c25606}{atomic\+\_\+fetch\+\_\+xor}((O\+BJ), (V\+AL))}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a55387090f6a1299f3873e3e93963a88d}\label{compiler_2gcc_2atomic_8h_a55387090f6a1299f3873e3e93963a88d}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+flag\+\_\+clear@{atomic\+\_\+flag\+\_\+clear}}
+\index{atomic\+\_\+flag\+\_\+clear@{atomic\+\_\+flag\+\_\+clear}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+flag\+\_\+clear}{atomic\_flag\_clear}}
+{\footnotesize\ttfamily \#define atomic\+\_\+flag\+\_\+clear(\begin{DoxyParamCaption}\item[{}]{F\+L\+AG }\end{DoxyParamCaption})~\+\_\+\+\_\+sync\+\_\+lock\+\_\+release((F\+L\+AG))}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a36d5c8d63e7142b9fd59f331861d8c92}\label{compiler_2gcc_2atomic_8h_a36d5c8d63e7142b9fd59f331861d8c92}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+flag\+\_\+clear\+\_\+explicit@{atomic\+\_\+flag\+\_\+clear\+\_\+explicit}}
+\index{atomic\+\_\+flag\+\_\+clear\+\_\+explicit@{atomic\+\_\+flag\+\_\+clear\+\_\+explicit}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+flag\+\_\+clear\+\_\+explicit}{atomic\_flag\_clear\_explicit}}
+{\footnotesize\ttfamily \#define atomic\+\_\+flag\+\_\+clear\+\_\+explicit(\begin{DoxyParamCaption}\item[{}]{F\+L\+AG,  }\item[{}]{MO }\end{DoxyParamCaption})~\hyperlink{compiler_2gcc_2atomic_8h_a55387090f6a1299f3873e3e93963a88d}{atomic\+\_\+flag\+\_\+clear}(F\+L\+AG)}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a3cf6ded3b463faf0cedce1718caaa695}\label{compiler_2gcc_2atomic_8h_a3cf6ded3b463faf0cedce1718caaa695}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!A\+T\+O\+M\+I\+C\+\_\+\+F\+L\+A\+G\+\_\+\+I\+N\+IT@{A\+T\+O\+M\+I\+C\+\_\+\+F\+L\+A\+G\+\_\+\+I\+N\+IT}}
+\index{A\+T\+O\+M\+I\+C\+\_\+\+F\+L\+A\+G\+\_\+\+I\+N\+IT@{A\+T\+O\+M\+I\+C\+\_\+\+F\+L\+A\+G\+\_\+\+I\+N\+IT}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{A\+T\+O\+M\+I\+C\+\_\+\+F\+L\+A\+G\+\_\+\+I\+N\+IT}{ATOMIC\_FLAG\_INIT}}
+{\footnotesize\ttfamily \#define A\+T\+O\+M\+I\+C\+\_\+\+F\+L\+A\+G\+\_\+\+I\+N\+IT~0}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a46f3201516842908b3f0323dbe8a5970}\label{compiler_2gcc_2atomic_8h_a46f3201516842908b3f0323dbe8a5970}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+flag\+\_\+test\+\_\+and\+\_\+set@{atomic\+\_\+flag\+\_\+test\+\_\+and\+\_\+set}}
+\index{atomic\+\_\+flag\+\_\+test\+\_\+and\+\_\+set@{atomic\+\_\+flag\+\_\+test\+\_\+and\+\_\+set}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+flag\+\_\+test\+\_\+and\+\_\+set}{atomic\_flag\_test\_and\_set}}
+{\footnotesize\ttfamily \#define atomic\+\_\+flag\+\_\+test\+\_\+and\+\_\+set(\begin{DoxyParamCaption}\item[{}]{F\+L\+AG }\end{DoxyParamCaption})~\+\_\+\+\_\+sync\+\_\+lock\+\_\+test\+\_\+and\+\_\+set((F\+L\+AG), 1)}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_ad6aac81d5b1bc174404801056019cc70}\label{compiler_2gcc_2atomic_8h_ad6aac81d5b1bc174404801056019cc70}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+flag\+\_\+test\+\_\+and\+\_\+set\+\_\+explicit@{atomic\+\_\+flag\+\_\+test\+\_\+and\+\_\+set\+\_\+explicit}}
+\index{atomic\+\_\+flag\+\_\+test\+\_\+and\+\_\+set\+\_\+explicit@{atomic\+\_\+flag\+\_\+test\+\_\+and\+\_\+set\+\_\+explicit}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+flag\+\_\+test\+\_\+and\+\_\+set\+\_\+explicit}{atomic\_flag\_test\_and\_set\_explicit}}
+{\footnotesize\ttfamily \#define atomic\+\_\+flag\+\_\+test\+\_\+and\+\_\+set\+\_\+explicit(\begin{DoxyParamCaption}\item[{}]{F\+L\+AG,  }\item[{}]{MO }\end{DoxyParamCaption})~\hyperlink{compiler_2gcc_2atomic_8h_a46f3201516842908b3f0323dbe8a5970}{atomic\+\_\+flag\+\_\+test\+\_\+and\+\_\+set}(F\+L\+AG)}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a9d85c2bfcdd6848a598792fe5debbcae}\label{compiler_2gcc_2atomic_8h_a9d85c2bfcdd6848a598792fe5debbcae}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+init@{atomic\+\_\+init}}
+\index{atomic\+\_\+init@{atomic\+\_\+init}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+init}{atomic\_init}}
+{\footnotesize\ttfamily \#define atomic\+\_\+init(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{V\+AL }\end{DoxyParamCaption})~do \{ $\ast$(O\+BJ) = (V\+AL); \} while (0)}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_ad0881213f2fecf690a0f303cd53162bf}\label{compiler_2gcc_2atomic_8h_ad0881213f2fecf690a0f303cd53162bf}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+is\+\_\+lock\+\_\+free@{atomic\+\_\+is\+\_\+lock\+\_\+free}}
+\index{atomic\+\_\+is\+\_\+lock\+\_\+free@{atomic\+\_\+is\+\_\+lock\+\_\+free}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+is\+\_\+lock\+\_\+free}{atomic\_is\_lock\_free}}
+{\footnotesize\ttfamily \#define atomic\+\_\+is\+\_\+lock\+\_\+free(\begin{DoxyParamCaption}\item[{}]{O\+BJ }\end{DoxyParamCaption})~(sizeof($\ast$(O\+BJ)) $<$= sizeof(long))}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a140cf308ac9f97ff62d8aad6a20a4843}\label{compiler_2gcc_2atomic_8h_a140cf308ac9f97ff62d8aad6a20a4843}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+load@{atomic\+\_\+load}}
+\index{atomic\+\_\+load@{atomic\+\_\+load}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+load}{atomic\_load}}
+{\footnotesize\ttfamily \#define atomic\+\_\+load(\begin{DoxyParamCaption}\item[{}]{O\+BJ }\end{DoxyParamCaption})~(\{ \hyperlink{processor_2xtensa_2cpu_8h_a3de7c4e7434d2028f0b1bdbe835ce3cb}{\+\_\+\+\_\+sync\+\_\+synchronize}(); $\ast$(O\+BJ); \})}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_ab93867b317e776f51c00b3d56af7fc31}\label{compiler_2gcc_2atomic_8h_ab93867b317e776f51c00b3d56af7fc31}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+load\+\_\+explicit@{atomic\+\_\+load\+\_\+explicit}}
+\index{atomic\+\_\+load\+\_\+explicit@{atomic\+\_\+load\+\_\+explicit}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+load\+\_\+explicit}{atomic\_load\_explicit}}
+{\footnotesize\ttfamily \#define atomic\+\_\+load\+\_\+explicit(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{MO }\end{DoxyParamCaption})~\hyperlink{compiler_2gcc_2atomic_8h_a140cf308ac9f97ff62d8aad6a20a4843}{atomic\+\_\+load}(O\+BJ)}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a116e0cd17b559defe9c9a738674db03b}\label{compiler_2gcc_2atomic_8h_a116e0cd17b559defe9c9a738674db03b}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+signal\+\_\+fence@{atomic\+\_\+signal\+\_\+fence}}
+\index{atomic\+\_\+signal\+\_\+fence@{atomic\+\_\+signal\+\_\+fence}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+signal\+\_\+fence}{atomic\_signal\_fence}}
+{\footnotesize\ttfamily \#define atomic\+\_\+signal\+\_\+fence(\begin{DoxyParamCaption}\item[{}]{MO }\end{DoxyParamCaption})~\hyperlink{processor_2xtensa_2cpu_8h_a3de7c4e7434d2028f0b1bdbe835ce3cb}{\+\_\+\+\_\+sync\+\_\+synchronize}()}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_ac8c7027f360396a149b1d20f594c1f9f}\label{compiler_2gcc_2atomic_8h_ac8c7027f360396a149b1d20f594c1f9f}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+store@{atomic\+\_\+store}}
+\index{atomic\+\_\+store@{atomic\+\_\+store}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+store}{atomic\_store}}
+{\footnotesize\ttfamily \#define atomic\+\_\+store(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{V\+AL }\end{DoxyParamCaption})~do \{ $\ast$(O\+BJ) = (V\+AL); \hyperlink{processor_2xtensa_2cpu_8h_a3de7c4e7434d2028f0b1bdbe835ce3cb}{\+\_\+\+\_\+sync\+\_\+synchronize}(); \} while (0)}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_af4f74f04cd8ed4d972e18cf6226162f4}\label{compiler_2gcc_2atomic_8h_af4f74f04cd8ed4d972e18cf6226162f4}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+store\+\_\+explicit@{atomic\+\_\+store\+\_\+explicit}}
+\index{atomic\+\_\+store\+\_\+explicit@{atomic\+\_\+store\+\_\+explicit}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+store\+\_\+explicit}{atomic\_store\_explicit}}
+{\footnotesize\ttfamily \#define atomic\+\_\+store\+\_\+explicit(\begin{DoxyParamCaption}\item[{}]{O\+BJ,  }\item[{}]{V\+AL,  }\item[{}]{MO }\end{DoxyParamCaption})~\hyperlink{compiler_2gcc_2atomic_8h_ac8c7027f360396a149b1d20f594c1f9f}{atomic\+\_\+store}((O\+BJ), (V\+AL))}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a7c82e718a2fa06be84951fb72d275f9e}\label{compiler_2gcc_2atomic_8h_a7c82e718a2fa06be84951fb72d275f9e}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+thread\+\_\+fence@{atomic\+\_\+thread\+\_\+fence}}
+\index{atomic\+\_\+thread\+\_\+fence@{atomic\+\_\+thread\+\_\+fence}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+thread\+\_\+fence}{atomic\_thread\_fence}}
+{\footnotesize\ttfamily \#define atomic\+\_\+thread\+\_\+fence(\begin{DoxyParamCaption}\item[{}]{MO }\end{DoxyParamCaption})~\hyperlink{processor_2xtensa_2cpu_8h_a3de7c4e7434d2028f0b1bdbe835ce3cb}{\+\_\+\+\_\+sync\+\_\+synchronize}()}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_af5bdfda3335d596fdaf30d4aafc75e43}\label{compiler_2gcc_2atomic_8h_af5bdfda3335d596fdaf30d4aafc75e43}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!A\+T\+O\+M\+I\+C\+\_\+\+V\+A\+R\+\_\+\+I\+N\+IT@{A\+T\+O\+M\+I\+C\+\_\+\+V\+A\+R\+\_\+\+I\+N\+IT}}
+\index{A\+T\+O\+M\+I\+C\+\_\+\+V\+A\+R\+\_\+\+I\+N\+IT@{A\+T\+O\+M\+I\+C\+\_\+\+V\+A\+R\+\_\+\+I\+N\+IT}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{A\+T\+O\+M\+I\+C\+\_\+\+V\+A\+R\+\_\+\+I\+N\+IT}{ATOMIC\_VAR\_INIT}}
+{\footnotesize\ttfamily \#define A\+T\+O\+M\+I\+C\+\_\+\+V\+A\+R\+\_\+\+I\+N\+IT(\begin{DoxyParamCaption}\item[{}]{V\+AL }\end{DoxyParamCaption})~(V\+AL)}
+
+
+
+\subsection{Typedef Documentation}
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a50f9e0fa083c391eeb6d2d360b22a3b4}\label{compiler_2gcc_2atomic_8h_a50f9e0fa083c391eeb6d2d360b22a3b4}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+char@{atomic\+\_\+char}}
+\index{atomic\+\_\+char@{atomic\+\_\+char}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+char}{atomic\_char}}
+{\footnotesize\ttfamily typedef char \hyperlink{compiler_2gcc_2atomic_8h_a50f9e0fa083c391eeb6d2d360b22a3b4}{atomic\+\_\+char}}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a9530e5944c0b8576ad6b94fc24467230}\label{compiler_2gcc_2atomic_8h_a9530e5944c0b8576ad6b94fc24467230}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+flag@{atomic\+\_\+flag}}
+\index{atomic\+\_\+flag@{atomic\+\_\+flag}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+flag}{atomic\_flag}}
+{\footnotesize\ttfamily typedef int \hyperlink{compiler_2gcc_2atomic_8h_a9530e5944c0b8576ad6b94fc24467230}{atomic\+\_\+flag}}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a3584358b6d722cb0cca04ac3cfd8a674}\label{compiler_2gcc_2atomic_8h_a3584358b6d722cb0cca04ac3cfd8a674}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+int@{atomic\+\_\+int}}
+\index{atomic\+\_\+int@{atomic\+\_\+int}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+int}{atomic\_int}}
+{\footnotesize\ttfamily typedef int \hyperlink{compiler_2gcc_2atomic_8h_a3584358b6d722cb0cca04ac3cfd8a674}{atomic\+\_\+int}}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_ac95a09b54cf561b691a031c010821ab7}\label{compiler_2gcc_2atomic_8h_ac95a09b54cf561b691a031c010821ab7}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+llong@{atomic\+\_\+llong}}
+\index{atomic\+\_\+llong@{atomic\+\_\+llong}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+llong}{atomic\_llong}}
+{\footnotesize\ttfamily typedef long long \hyperlink{compiler_2gcc_2atomic_8h_ac95a09b54cf561b691a031c010821ab7}{atomic\+\_\+llong}}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a8d9216bf9fbe02565302acf6df88496e}\label{compiler_2gcc_2atomic_8h_a8d9216bf9fbe02565302acf6df88496e}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+long@{atomic\+\_\+long}}
+\index{atomic\+\_\+long@{atomic\+\_\+long}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+long}{atomic\_long}}
+{\footnotesize\ttfamily typedef long \hyperlink{compiler_2gcc_2atomic_8h_a8d9216bf9fbe02565302acf6df88496e}{atomic\+\_\+long}}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a8b03b239a748eb5fd0fb23709fdc2c27}\label{compiler_2gcc_2atomic_8h_a8b03b239a748eb5fd0fb23709fdc2c27}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+short@{atomic\+\_\+short}}
+\index{atomic\+\_\+short@{atomic\+\_\+short}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+short}{atomic\_short}}
+{\footnotesize\ttfamily typedef short \hyperlink{compiler_2gcc_2atomic_8h_a8b03b239a748eb5fd0fb23709fdc2c27}{atomic\+\_\+short}}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a2ed4af3ede15aaa034fad468b866eca3}\label{compiler_2gcc_2atomic_8h_a2ed4af3ede15aaa034fad468b866eca3}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+uchar@{atomic\+\_\+uchar}}
+\index{atomic\+\_\+uchar@{atomic\+\_\+uchar}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+uchar}{atomic\_uchar}}
+{\footnotesize\ttfamily typedef unsigned char \hyperlink{compiler_2gcc_2atomic_8h_a2ed4af3ede15aaa034fad468b866eca3}{atomic\+\_\+uchar}}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a67daf268d675d51b14c625c6162fe979}\label{compiler_2gcc_2atomic_8h_a67daf268d675d51b14c625c6162fe979}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+uint@{atomic\+\_\+uint}}
+\index{atomic\+\_\+uint@{atomic\+\_\+uint}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+uint}{atomic\_uint}}
+{\footnotesize\ttfamily typedef unsigned int \hyperlink{compiler_2gcc_2atomic_8h_a67daf268d675d51b14c625c6162fe979}{atomic\+\_\+uint}}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_aaa955a590bd7e8ef3f098f914978c8f6}\label{compiler_2gcc_2atomic_8h_aaa955a590bd7e8ef3f098f914978c8f6}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+uintptr\+\_\+t@{atomic\+\_\+uintptr\+\_\+t}}
+\index{atomic\+\_\+uintptr\+\_\+t@{atomic\+\_\+uintptr\+\_\+t}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+uintptr\+\_\+t}{atomic\_uintptr\_t}}
+{\footnotesize\ttfamily typedef \hyperlink{compiler_2gcc_2atomic_8h_a67daf268d675d51b14c625c6162fe979}{atomic\+\_\+uint} \hyperlink{compiler_2gcc_2atomic_8h_aaa955a590bd7e8ef3f098f914978c8f6}{atomic\+\_\+uintptr\+\_\+t}}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a2d5a8518f50b3df59e85cf234119ffd9}\label{compiler_2gcc_2atomic_8h_a2d5a8518f50b3df59e85cf234119ffd9}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+ullong@{atomic\+\_\+ullong}}
+\index{atomic\+\_\+ullong@{atomic\+\_\+ullong}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+ullong}{atomic\_ullong}}
+{\footnotesize\ttfamily typedef unsigned long long \hyperlink{compiler_2gcc_2atomic_8h_a2d5a8518f50b3df59e85cf234119ffd9}{atomic\+\_\+ullong}}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a92dac19b6b8422b8443abf9a456e171c}\label{compiler_2gcc_2atomic_8h_a92dac19b6b8422b8443abf9a456e171c}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+ulong@{atomic\+\_\+ulong}}
+\index{atomic\+\_\+ulong@{atomic\+\_\+ulong}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+ulong}{atomic\_ulong}}
+{\footnotesize\ttfamily typedef unsigned long \hyperlink{compiler_2gcc_2atomic_8h_a92dac19b6b8422b8443abf9a456e171c}{atomic\+\_\+ulong}}
+
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a8c21d4e98ab8044ff0640bc59b885237}\label{compiler_2gcc_2atomic_8h_a8c21d4e98ab8044ff0640bc59b885237}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!atomic\+\_\+ushort@{atomic\+\_\+ushort}}
+\index{atomic\+\_\+ushort@{atomic\+\_\+ushort}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{atomic\+\_\+ushort}{atomic\_ushort}}
+{\footnotesize\ttfamily typedef unsigned short \hyperlink{compiler_2gcc_2atomic_8h_a8c21d4e98ab8044ff0640bc59b885237}{atomic\+\_\+ushort}}
+
+
+
+\subsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1b}\label{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1b}} 
+\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!memory\+\_\+order@{memory\+\_\+order}}
+\index{memory\+\_\+order@{memory\+\_\+order}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}
+\subsubsection{\texorpdfstring{memory\+\_\+order}{memory\_order}}
+{\footnotesize\ttfamily enum \hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1b}{memory\+\_\+order}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{memory\+\_\+order\+\_\+relaxed@{memory\+\_\+order\+\_\+relaxed}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!memory\+\_\+order\+\_\+relaxed@{memory\+\_\+order\+\_\+relaxed}}}\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1bac6489d0374e297a776f6a3db7ea5654a}\label{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1bac6489d0374e297a776f6a3db7ea5654a}} 
+memory\+\_\+order\+\_\+relaxed&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{memory\+\_\+order\+\_\+consume@{memory\+\_\+order\+\_\+consume}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!memory\+\_\+order\+\_\+consume@{memory\+\_\+order\+\_\+consume}}}\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1ba0745f54882bc00251a719e42969db110}\label{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1ba0745f54882bc00251a719e42969db110}} 
+memory\+\_\+order\+\_\+consume&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{memory\+\_\+order\+\_\+acquire@{memory\+\_\+order\+\_\+acquire}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!memory\+\_\+order\+\_\+acquire@{memory\+\_\+order\+\_\+acquire}}}\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1bafb313754331704b978e9a80a933b3da7}\label{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1bafb313754331704b978e9a80a933b3da7}} 
+memory\+\_\+order\+\_\+acquire&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{memory\+\_\+order\+\_\+release@{memory\+\_\+order\+\_\+release}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!memory\+\_\+order\+\_\+release@{memory\+\_\+order\+\_\+release}}}\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1ba685a90c8fc516895354973c3918a5f7b}\label{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1ba685a90c8fc516895354973c3918a5f7b}} 
+memory\+\_\+order\+\_\+release&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{memory\+\_\+order\+\_\+acq\+\_\+rel@{memory\+\_\+order\+\_\+acq\+\_\+rel}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!memory\+\_\+order\+\_\+acq\+\_\+rel@{memory\+\_\+order\+\_\+acq\+\_\+rel}}}\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1bae17e60cbfd766a7f165872c36e2f7bc5}\label{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1bae17e60cbfd766a7f165872c36e2f7bc5}} 
+memory\+\_\+order\+\_\+acq\+\_\+rel&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{memory\+\_\+order\+\_\+seq\+\_\+cst@{memory\+\_\+order\+\_\+seq\+\_\+cst}!compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}}\index{compiler/gcc/atomic.\+h@{compiler/gcc/atomic.\+h}!memory\+\_\+order\+\_\+seq\+\_\+cst@{memory\+\_\+order\+\_\+seq\+\_\+cst}}}\mbox{\Hypertarget{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1ba2d21914d1edd227a890107e7878a3752}\label{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1ba2d21914d1edd227a890107e7878a3752}} 
+memory\+\_\+order\+\_\+seq\+\_\+cst&\\
+\hline
+
+\end{DoxyEnumFields}

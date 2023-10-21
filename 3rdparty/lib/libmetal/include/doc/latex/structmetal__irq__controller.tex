@@ -1,0 +1,76 @@
+\hypertarget{structmetal__irq__controller}{}\section{metal\+\_\+irq\+\_\+controller Struct Reference}
+\label{structmetal__irq__controller}\index{metal\+\_\+irq\+\_\+controller@{metal\+\_\+irq\+\_\+controller}}
+
+
+{\ttfamily \#include $<$irq\+\_\+controller.\+h$>$}
+
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{structmetal__irq__controller_af0e813505179ca61b4c26d2017ebb05f}{irq\+\_\+base}
+\item 
+int \hyperlink{structmetal__irq__controller_ae5a7bded88c88efa511318a901e2c9ed}{irq\+\_\+num}
+\item 
+void $\ast$ \hyperlink{structmetal__irq__controller_aa682a2fa8c2ea5cc1a6a6655c78fea3c}{arg}
+\item 
+\hyperlink{group__irq_ga125a768ecd5924b3da91b6ebb6820e9a}{metal\+\_\+irq\+\_\+set\+\_\+enable} \hyperlink{structmetal__irq__controller_a4aead8f0a0116ec6dbdda3c4114d5545}{irq\+\_\+set\+\_\+enable}
+\item 
+\hyperlink{group__irq_ga22c994407d005793e478ac8267744f88}{metal\+\_\+cntr\+\_\+irq\+\_\+register} \hyperlink{structmetal__irq__controller_a0e3a8f05051213606184fa3efb30e1ff}{irq\+\_\+register}
+\item 
+struct \hyperlink{structmetal__list}{metal\+\_\+list} \hyperlink{structmetal__irq__controller_a26e87c0da6978319075db2289b901749}{node}
+\item 
+struct \hyperlink{structmetal__irq}{metal\+\_\+irq} $\ast$ \hyperlink{structmetal__irq__controller_ade636056520b3ad5d7d719d7276a5ead}{irqs}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Libmetal interrupt controller structure 
+
+\subsection{Field Documentation}
+\mbox{\Hypertarget{structmetal__irq__controller_aa682a2fa8c2ea5cc1a6a6655c78fea3c}\label{structmetal__irq__controller_aa682a2fa8c2ea5cc1a6a6655c78fea3c}} 
+\index{metal\+\_\+irq\+\_\+controller@{metal\+\_\+irq\+\_\+controller}!arg@{arg}}
+\index{arg@{arg}!metal\+\_\+irq\+\_\+controller@{metal\+\_\+irq\+\_\+controller}}
+\subsubsection{\texorpdfstring{arg}{arg}}
+{\footnotesize\ttfamily void$\ast$ metal\+\_\+irq\+\_\+controller\+::arg}
+
+Argument to pass to interrupt controller function \mbox{\Hypertarget{structmetal__irq__controller_af0e813505179ca61b4c26d2017ebb05f}\label{structmetal__irq__controller_af0e813505179ca61b4c26d2017ebb05f}} 
+\index{metal\+\_\+irq\+\_\+controller@{metal\+\_\+irq\+\_\+controller}!irq\+\_\+base@{irq\+\_\+base}}
+\index{irq\+\_\+base@{irq\+\_\+base}!metal\+\_\+irq\+\_\+controller@{metal\+\_\+irq\+\_\+controller}}
+\subsubsection{\texorpdfstring{irq\+\_\+base}{irq\_base}}
+{\footnotesize\ttfamily int metal\+\_\+irq\+\_\+controller\+::irq\+\_\+base}
+
+Start of I\+RQ number of the range managed by the I\+RQ controller \mbox{\Hypertarget{structmetal__irq__controller_ae5a7bded88c88efa511318a901e2c9ed}\label{structmetal__irq__controller_ae5a7bded88c88efa511318a901e2c9ed}} 
+\index{metal\+\_\+irq\+\_\+controller@{metal\+\_\+irq\+\_\+controller}!irq\+\_\+num@{irq\+\_\+num}}
+\index{irq\+\_\+num@{irq\+\_\+num}!metal\+\_\+irq\+\_\+controller@{metal\+\_\+irq\+\_\+controller}}
+\subsubsection{\texorpdfstring{irq\+\_\+num}{irq\_num}}
+{\footnotesize\ttfamily int metal\+\_\+irq\+\_\+controller\+::irq\+\_\+num}
+
+Number of I\+R\+Qs managed by the I\+RQ controller \mbox{\Hypertarget{structmetal__irq__controller_a0e3a8f05051213606184fa3efb30e1ff}\label{structmetal__irq__controller_a0e3a8f05051213606184fa3efb30e1ff}} 
+\index{metal\+\_\+irq\+\_\+controller@{metal\+\_\+irq\+\_\+controller}!irq\+\_\+register@{irq\+\_\+register}}
+\index{irq\+\_\+register@{irq\+\_\+register}!metal\+\_\+irq\+\_\+controller@{metal\+\_\+irq\+\_\+controller}}
+\subsubsection{\texorpdfstring{irq\+\_\+register}{irq\_register}}
+{\footnotesize\ttfamily \hyperlink{group__irq_ga22c994407d005793e478ac8267744f88}{metal\+\_\+cntr\+\_\+irq\+\_\+register} metal\+\_\+irq\+\_\+controller\+::irq\+\_\+register}
+
+function to register I\+RQ handler \mbox{\Hypertarget{structmetal__irq__controller_a4aead8f0a0116ec6dbdda3c4114d5545}\label{structmetal__irq__controller_a4aead8f0a0116ec6dbdda3c4114d5545}} 
+\index{metal\+\_\+irq\+\_\+controller@{metal\+\_\+irq\+\_\+controller}!irq\+\_\+set\+\_\+enable@{irq\+\_\+set\+\_\+enable}}
+\index{irq\+\_\+set\+\_\+enable@{irq\+\_\+set\+\_\+enable}!metal\+\_\+irq\+\_\+controller@{metal\+\_\+irq\+\_\+controller}}
+\subsubsection{\texorpdfstring{irq\+\_\+set\+\_\+enable}{irq\_set\_enable}}
+{\footnotesize\ttfamily \hyperlink{group__irq_ga125a768ecd5924b3da91b6ebb6820e9a}{metal\+\_\+irq\+\_\+set\+\_\+enable} metal\+\_\+irq\+\_\+controller\+::irq\+\_\+set\+\_\+enable}
+
+function to set I\+RQ enable \mbox{\Hypertarget{structmetal__irq__controller_ade636056520b3ad5d7d719d7276a5ead}\label{structmetal__irq__controller_ade636056520b3ad5d7d719d7276a5ead}} 
+\index{metal\+\_\+irq\+\_\+controller@{metal\+\_\+irq\+\_\+controller}!irqs@{irqs}}
+\index{irqs@{irqs}!metal\+\_\+irq\+\_\+controller@{metal\+\_\+irq\+\_\+controller}}
+\subsubsection{\texorpdfstring{irqs}{irqs}}
+{\footnotesize\ttfamily struct \hyperlink{structmetal__irq}{metal\+\_\+irq}$\ast$ metal\+\_\+irq\+\_\+controller\+::irqs}
+
+Array of I\+R\+Qs managed by the controller \mbox{\Hypertarget{structmetal__irq__controller_a26e87c0da6978319075db2289b901749}\label{structmetal__irq__controller_a26e87c0da6978319075db2289b901749}} 
+\index{metal\+\_\+irq\+\_\+controller@{metal\+\_\+irq\+\_\+controller}!node@{node}}
+\index{node@{node}!metal\+\_\+irq\+\_\+controller@{metal\+\_\+irq\+\_\+controller}}
+\subsubsection{\texorpdfstring{node}{node}}
+{\footnotesize\ttfamily struct \hyperlink{structmetal__list}{metal\+\_\+list} metal\+\_\+irq\+\_\+controller\+::node}
+
+list node 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+lib/\hyperlink{irq__controller_8h}{irq\+\_\+controller.\+h}\end{DoxyCompactItemize}

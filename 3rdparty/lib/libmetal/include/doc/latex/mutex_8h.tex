@@ -1,0 +1,18 @@
+\hypertarget{mutex_8h}{}\section{lib/mutex.h File Reference}
+\label{mutex_8h}\index{lib/mutex.\+h@{lib/mutex.\+h}}
+{\ttfamily \#include $<$metal/system/@\+P\+R\+O\+J\+E\+C\+T\+\_\+\+S\+Y\+S\+T\+E\+M@/mutex.\+h$>$}\newline
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{group__mutex_ga0be5610e9c7ee6902dd3d6240ca82271}{metal\+\_\+mutex\+\_\+init} (\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$mutex)
+\begin{DoxyCompactList}\small\item\em Initialize a libmetal mutex. \end{DoxyCompactList}\item 
+static void \hyperlink{group__mutex_ga641fc96da84389981f866bb14356b6f1}{metal\+\_\+mutex\+\_\+deinit} (\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$mutex)
+\begin{DoxyCompactList}\small\item\em Deinitialize a libmetal mutex. \end{DoxyCompactList}\item 
+static int \hyperlink{group__mutex_ga290699ccc31f77849ffc21e779795361}{metal\+\_\+mutex\+\_\+try\+\_\+acquire} (\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$mutex)
+\begin{DoxyCompactList}\small\item\em Try to acquire a mutex. \end{DoxyCompactList}\item 
+static void \hyperlink{group__mutex_ga2ac9a9458e5d2b2d666c0a2c02e68bba}{metal\+\_\+mutex\+\_\+acquire} (\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$mutex)
+\begin{DoxyCompactList}\small\item\em Acquire a mutex. \end{DoxyCompactList}\item 
+static void \hyperlink{group__mutex_ga48df0681ac127c8d268845b57e8016b8}{metal\+\_\+mutex\+\_\+release} (\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$mutex)
+\begin{DoxyCompactList}\small\item\em Release a previously acquired mutex. \end{DoxyCompactList}\item 
+static int \hyperlink{group__mutex_ga377c63b040af060bdbe26fdaa98231df}{metal\+\_\+mutex\+\_\+is\+\_\+acquired} (\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$mutex)
+\begin{DoxyCompactList}\small\item\em Checked if a mutex has been acquired. \end{DoxyCompactList}\end{DoxyCompactItemize}

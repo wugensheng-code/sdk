@@ -1,0 +1,84 @@
+\hypertarget{softirq_8c}{}\section{lib/softirq.c File Reference}
+\label{softirq_8c}\index{lib/softirq.\+c@{lib/softirq.\+c}}
+{\ttfamily \#include $<$metal/atomic.\+h$>$}\newline
+{\ttfamily \#include $<$metal/errno.\+h$>$}\newline
+{\ttfamily \#include $<$metal/irq.\+h$>$}\newline
+{\ttfamily \#include $<$metal/irq\+\_\+controller.\+h$>$}\newline
+{\ttfamily \#include $<$metal/log.\+h$>$}\newline
+{\ttfamily \#include $<$metal/sys.\+h$>$}\newline
+{\ttfamily \#include $<$metal/softirq.\+h$>$}\newline
+{\ttfamily \#include $<$metal/utilities.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{softirq_8c_a6980a1aefa4e7ee0ecd7a2887dbc7a3d}{M\+E\+T\+A\+L\+\_\+\+S\+O\+F\+T\+I\+R\+Q\+\_\+\+N\+UM}~64
+\item 
+\#define \hyperlink{softirq_8c_aa0f3b694c4353f5f0436896698e516e2}{M\+E\+T\+A\+L\+\_\+\+S\+O\+F\+T\+I\+R\+Q\+\_\+\+A\+R\+R\+A\+Y\+\_\+\+D\+E\+C\+L\+A\+RE}(num)
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{softirq_8c_af862a28540c3332e5a3bf3ce4f7b3716}{metal\+\_\+softirq\+\_\+set\+\_\+enable} (struct \hyperlink{structmetal__irq__controller}{metal\+\_\+irq\+\_\+controller} $\ast$cntr, int irq, unsigned int enable)
+\item 
+static \hyperlink{softirq_8c_ad5bf34bad9f35199505cec082df7e226}{M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+D\+E\+C\+L\+A\+RE} (metal\+\_\+softirq\+\_\+cntr, \hyperlink{group__irq_ga012dfdc4397683c22caa93075b01be52}{M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+A\+NY}, \hyperlink{softirq_8c_a6980a1aefa4e7ee0ecd7a2887dbc7a3d}{M\+E\+T\+A\+L\+\_\+\+S\+O\+F\+T\+I\+R\+Q\+\_\+\+N\+UM}, N\+U\+LL, \hyperlink{softirq_8c_af862a28540c3332e5a3bf3ce4f7b3716}{metal\+\_\+softirq\+\_\+set\+\_\+enable}, N\+U\+LL, metal\+\_\+softirqs)
+\item 
+void \hyperlink{group__soft_gad825e34f93638fe47be10da3f19dacf8}{metal\+\_\+softirq\+\_\+set} (int irq)
+\begin{DoxyCompactList}\small\item\em metal\+\_\+softirq\+\_\+set \end{DoxyCompactList}\item 
+int \hyperlink{group__soft_gaa63f0ba17ed4114bb70e9f3981e0cb33}{metal\+\_\+softirq\+\_\+init} (void)
+\begin{DoxyCompactList}\small\item\em metal\+\_\+softirq\+\_\+init \end{DoxyCompactList}\item 
+int \hyperlink{group__soft_ga7222ffe2120ad4591f50c80757fae85e}{metal\+\_\+softirq\+\_\+allocate} (int num)
+\begin{DoxyCompactList}\small\item\em metal\+\_\+softirq\+\_\+allocate \end{DoxyCompactList}\item 
+void \hyperlink{group__soft_gabe237beb3e113a94557bdea1603416a6}{metal\+\_\+softirq\+\_\+dispatch} (void)
+\begin{DoxyCompactList}\small\item\em metal\+\_\+softirq\+\_\+dispatch \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+static int \hyperlink{softirq_8c_a470e1baa97a9b3e6a31a112867694060}{metal\+\_\+softirq\+\_\+avail}
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{softirq_8c_aa0f3b694c4353f5f0436896698e516e2}\label{softirq_8c_aa0f3b694c4353f5f0436896698e516e2}} 
+\index{softirq.\+c@{softirq.\+c}!M\+E\+T\+A\+L\+\_\+\+S\+O\+F\+T\+I\+R\+Q\+\_\+\+A\+R\+R\+A\+Y\+\_\+\+D\+E\+C\+L\+A\+RE@{M\+E\+T\+A\+L\+\_\+\+S\+O\+F\+T\+I\+R\+Q\+\_\+\+A\+R\+R\+A\+Y\+\_\+\+D\+E\+C\+L\+A\+RE}}
+\index{M\+E\+T\+A\+L\+\_\+\+S\+O\+F\+T\+I\+R\+Q\+\_\+\+A\+R\+R\+A\+Y\+\_\+\+D\+E\+C\+L\+A\+RE@{M\+E\+T\+A\+L\+\_\+\+S\+O\+F\+T\+I\+R\+Q\+\_\+\+A\+R\+R\+A\+Y\+\_\+\+D\+E\+C\+L\+A\+RE}!softirq.\+c@{softirq.\+c}}
+\subsubsection{\texorpdfstring{M\+E\+T\+A\+L\+\_\+\+S\+O\+F\+T\+I\+R\+Q\+\_\+\+A\+R\+R\+A\+Y\+\_\+\+D\+E\+C\+L\+A\+RE}{METAL\_SOFTIRQ\_ARRAY\_DECLARE}}
+{\footnotesize\ttfamily \#define M\+E\+T\+A\+L\+\_\+\+S\+O\+F\+T\+I\+R\+Q\+\_\+\+A\+R\+R\+A\+Y\+\_\+\+D\+E\+C\+L\+A\+RE(\begin{DoxyParamCaption}\item[{}]{num }\end{DoxyParamCaption})}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\textcolor{keyword}{static} \textcolor{keyword}{const} \textcolor{keywordtype}{int} metal\_softirq\_num = num; \(\backslash\)
+        static \textcolor{keyword}{struct }\hyperlink{structmetal__irq}{metal\_irq} metal\_softirqs[num]; \(\backslash\)
+        static \hyperlink{compiler_2gcc_2atomic_8h_a50f9e0fa083c391eeb6d2d360b22a3b4}{atomic\_char} metal\_softirq\_pending[num]; \(\backslash\)
+        static \hyperlink{compiler_2gcc_2atomic_8h_a50f9e0fa083c391eeb6d2d360b22a3b4}{atomic\_char} metal\_softirq\_enabled[num];
+\end{DoxyCode}
+\mbox{\Hypertarget{softirq_8c_a6980a1aefa4e7ee0ecd7a2887dbc7a3d}\label{softirq_8c_a6980a1aefa4e7ee0ecd7a2887dbc7a3d}} 
+\index{softirq.\+c@{softirq.\+c}!M\+E\+T\+A\+L\+\_\+\+S\+O\+F\+T\+I\+R\+Q\+\_\+\+N\+UM@{M\+E\+T\+A\+L\+\_\+\+S\+O\+F\+T\+I\+R\+Q\+\_\+\+N\+UM}}
+\index{M\+E\+T\+A\+L\+\_\+\+S\+O\+F\+T\+I\+R\+Q\+\_\+\+N\+UM@{M\+E\+T\+A\+L\+\_\+\+S\+O\+F\+T\+I\+R\+Q\+\_\+\+N\+UM}!softirq.\+c@{softirq.\+c}}
+\subsubsection{\texorpdfstring{M\+E\+T\+A\+L\+\_\+\+S\+O\+F\+T\+I\+R\+Q\+\_\+\+N\+UM}{METAL\_SOFTIRQ\_NUM}}
+{\footnotesize\ttfamily \#define M\+E\+T\+A\+L\+\_\+\+S\+O\+F\+T\+I\+R\+Q\+\_\+\+N\+UM~64}
+
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{softirq_8c_ad5bf34bad9f35199505cec082df7e226}\label{softirq_8c_ad5bf34bad9f35199505cec082df7e226}} 
+\index{softirq.\+c@{softirq.\+c}!M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+D\+E\+C\+L\+A\+RE@{M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+D\+E\+C\+L\+A\+RE}}
+\index{M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+D\+E\+C\+L\+A\+RE@{M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+D\+E\+C\+L\+A\+RE}!softirq.\+c@{softirq.\+c}}
+\subsubsection{\texorpdfstring{M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+D\+E\+C\+L\+A\+R\+E()}{METAL\_IRQ\_CONTROLLER\_DECLARE()}}
+{\footnotesize\ttfamily static M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+D\+E\+C\+L\+A\+RE (\begin{DoxyParamCaption}\item[{metal\+\_\+softirq\+\_\+cntr}]{,  }\item[{\hyperlink{group__irq_ga012dfdc4397683c22caa93075b01be52}{M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+A\+NY}}]{,  }\item[{\hyperlink{softirq_8c_a6980a1aefa4e7ee0ecd7a2887dbc7a3d}{M\+E\+T\+A\+L\+\_\+\+S\+O\+F\+T\+I\+R\+Q\+\_\+\+N\+UM}}]{,  }\item[{N\+U\+LL}]{,  }\item[{\hyperlink{softirq_8c_af862a28540c3332e5a3bf3ce4f7b3716}{metal\+\_\+softirq\+\_\+set\+\_\+enable}}]{,  }\item[{N\+U\+LL}]{,  }\item[{metal\+\_\+softirqs}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{softirq_8c_af862a28540c3332e5a3bf3ce4f7b3716}\label{softirq_8c_af862a28540c3332e5a3bf3ce4f7b3716}} 
+\index{softirq.\+c@{softirq.\+c}!metal\+\_\+softirq\+\_\+set\+\_\+enable@{metal\+\_\+softirq\+\_\+set\+\_\+enable}}
+\index{metal\+\_\+softirq\+\_\+set\+\_\+enable@{metal\+\_\+softirq\+\_\+set\+\_\+enable}!softirq.\+c@{softirq.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+softirq\+\_\+set\+\_\+enable()}{metal\_softirq\_set\_enable()}}
+{\footnotesize\ttfamily static void metal\+\_\+softirq\+\_\+set\+\_\+enable (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__irq__controller}{metal\+\_\+irq\+\_\+controller} $\ast$}]{cntr,  }\item[{int}]{irq,  }\item[{unsigned int}]{enable }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{softirq_8c_a470e1baa97a9b3e6a31a112867694060}\label{softirq_8c_a470e1baa97a9b3e6a31a112867694060}} 
+\index{softirq.\+c@{softirq.\+c}!metal\+\_\+softirq\+\_\+avail@{metal\+\_\+softirq\+\_\+avail}}
+\index{metal\+\_\+softirq\+\_\+avail@{metal\+\_\+softirq\+\_\+avail}!softirq.\+c@{softirq.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+softirq\+\_\+avail}{metal\_softirq\_avail}}
+{\footnotesize\ttfamily int metal\+\_\+softirq\+\_\+avail\hspace{0.3cm}{\ttfamily [static]}}
+

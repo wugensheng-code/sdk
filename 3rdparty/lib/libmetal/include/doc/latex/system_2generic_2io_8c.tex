@@ -1,0 +1,33 @@
+\hypertarget{system_2generic_2io_8c}{}\section{lib/system/generic/io.c File Reference}
+\label{system_2generic_2io_8c}\index{lib/system/generic/io.\+c@{lib/system/generic/io.\+c}}
+{\ttfamily \#include $<$metal/io.\+h$>$}\newline
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static uint64\+\_\+t \hyperlink{system_2generic_2io_8c_a2440d6803a97d40e13a1d6958e0cc864}{page\+\_\+sz\+\_\+fix} (int page\+\_\+shift)
+\item 
+static int \hyperlink{system_2generic_2io_8c_ac90e950d8c360c145dd19d87854206c5}{page\+\_\+num\+\_\+fix} (uint64\+\_\+t sz, int page\+\_\+shift)
+\item 
+void \hyperlink{system_2generic_2io_8c_aba09879638743edc8709a6de1ce8cce7}{metal\+\_\+sys\+\_\+io\+\_\+mem\+\_\+map} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{system_2generic_2io_8c_aba09879638743edc8709a6de1ce8cce7}\label{system_2generic_2io_8c_aba09879638743edc8709a6de1ce8cce7}} 
+\index{system/generic/io.\+c@{system/generic/io.\+c}!metal\+\_\+sys\+\_\+io\+\_\+mem\+\_\+map@{metal\+\_\+sys\+\_\+io\+\_\+mem\+\_\+map}}
+\index{metal\+\_\+sys\+\_\+io\+\_\+mem\+\_\+map@{metal\+\_\+sys\+\_\+io\+\_\+mem\+\_\+map}!system/generic/io.\+c@{system/generic/io.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+sys\+\_\+io\+\_\+mem\+\_\+map()}{metal\_sys\_io\_mem\_map()}}
+{\footnotesize\ttfamily void metal\+\_\+sys\+\_\+io\+\_\+mem\+\_\+map (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$}]{io }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{system_2generic_2io_8c_ac90e950d8c360c145dd19d87854206c5}\label{system_2generic_2io_8c_ac90e950d8c360c145dd19d87854206c5}} 
+\index{system/generic/io.\+c@{system/generic/io.\+c}!page\+\_\+num\+\_\+fix@{page\+\_\+num\+\_\+fix}}
+\index{page\+\_\+num\+\_\+fix@{page\+\_\+num\+\_\+fix}!system/generic/io.\+c@{system/generic/io.\+c}}
+\subsubsection{\texorpdfstring{page\+\_\+num\+\_\+fix()}{page\_num\_fix()}}
+{\footnotesize\ttfamily static int page\+\_\+num\+\_\+fix (\begin{DoxyParamCaption}\item[{uint64\+\_\+t}]{sz,  }\item[{int}]{page\+\_\+shift }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2generic_2io_8c_a2440d6803a97d40e13a1d6958e0cc864}\label{system_2generic_2io_8c_a2440d6803a97d40e13a1d6958e0cc864}} 
+\index{system/generic/io.\+c@{system/generic/io.\+c}!page\+\_\+sz\+\_\+fix@{page\+\_\+sz\+\_\+fix}}
+\index{page\+\_\+sz\+\_\+fix@{page\+\_\+sz\+\_\+fix}!system/generic/io.\+c@{system/generic/io.\+c}}
+\subsubsection{\texorpdfstring{page\+\_\+sz\+\_\+fix()}{page\_sz\_fix()}}
+{\footnotesize\ttfamily static uint64\+\_\+t page\+\_\+sz\+\_\+fix (\begin{DoxyParamCaption}\item[{int}]{page\+\_\+shift }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+

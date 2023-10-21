@@ -1,0 +1,100 @@
+\hypertarget{structmetal__state}{}\section{metal\+\_\+state Struct Reference}
+\label{structmetal__state}\index{metal\+\_\+state@{metal\+\_\+state}}
+
+
+{\ttfamily \#include $<$sys.\+h$>$}
+
+\subsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structmetal__common__state}{metal\+\_\+common\+\_\+state} \hyperlink{structmetal__state_aa36ac30ed6ef6439baea425191af0968}{common}
+\item 
+int \hyperlink{structmetal__state_acb0f8a3441201130f4d59045d66d9b77}{data\+\_\+fd}
+\item 
+unsigned long \hyperlink{structmetal__state_a3ce0623d9131ad2f99e47e78ec3feba3}{page\+\_\+size}
+\item 
+unsigned long \hyperlink{structmetal__state_ac47375715b2e69ecb17b3a3714ae5c42}{page\+\_\+shift}
+\item 
+const char $\ast$ \hyperlink{structmetal__state_adb50fd0d288917778f721619dcaba32e}{sysfs\+\_\+path}
+\item 
+const char $\ast$ \hyperlink{structmetal__state_a290af954fe910c5caa1ded1e32e626b6}{tmp\+\_\+path}
+\item 
+struct \hyperlink{structmetal__page__size}{metal\+\_\+page\+\_\+size} \hyperlink{structmetal__state_a4488b4117a68b92e40c0c04f53f7310b}{page\+\_\+sizes} \mbox{[}\hyperlink{system_2linux_2sys_8h_a7b18d1d6935a27d9929f039a106515e5}{M\+A\+X\+\_\+\+P\+A\+G\+E\+\_\+\+S\+I\+Z\+ES}\mbox{]}
+\item 
+int \hyperlink{structmetal__state_a08ea681743f49b2410a685518b033ce3}{num\+\_\+page\+\_\+sizes}
+\item 
+int \hyperlink{structmetal__state_a197661bddfd13e2af962db5802989261}{pagemap\+\_\+fd}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Structure for Free\+R\+T\+OS libmetal runtime state.
+
+Structure of generic libmetal runtime state.
+
+Structure of linux specific libmetal runtime state.
+
+Structure of nuttx libmetal runtime state.
+
+Structure of zephyr libmetal runtime state. 
+
+\subsection{Field Documentation}
+\mbox{\Hypertarget{structmetal__state_aa36ac30ed6ef6439baea425191af0968}\label{structmetal__state_aa36ac30ed6ef6439baea425191af0968}} 
+\index{metal\+\_\+state@{metal\+\_\+state}!common@{common}}
+\index{common@{common}!metal\+\_\+state@{metal\+\_\+state}}
+\subsubsection{\texorpdfstring{common}{common}}
+{\footnotesize\ttfamily struct \hyperlink{structmetal__common__state}{metal\+\_\+common\+\_\+state} metal\+\_\+state\+::common}
+
+Common (system independent) data. \mbox{\Hypertarget{structmetal__state_acb0f8a3441201130f4d59045d66d9b77}\label{structmetal__state_acb0f8a3441201130f4d59045d66d9b77}} 
+\index{metal\+\_\+state@{metal\+\_\+state}!data\+\_\+fd@{data\+\_\+fd}}
+\index{data\+\_\+fd@{data\+\_\+fd}!metal\+\_\+state@{metal\+\_\+state}}
+\subsubsection{\texorpdfstring{data\+\_\+fd}{data\_fd}}
+{\footnotesize\ttfamily int metal\+\_\+state\+::data\+\_\+fd}
+
+file descriptor for shared data. \mbox{\Hypertarget{structmetal__state_a08ea681743f49b2410a685518b033ce3}\label{structmetal__state_a08ea681743f49b2410a685518b033ce3}} 
+\index{metal\+\_\+state@{metal\+\_\+state}!num\+\_\+page\+\_\+sizes@{num\+\_\+page\+\_\+sizes}}
+\index{num\+\_\+page\+\_\+sizes@{num\+\_\+page\+\_\+sizes}!metal\+\_\+state@{metal\+\_\+state}}
+\subsubsection{\texorpdfstring{num\+\_\+page\+\_\+sizes}{num\_page\_sizes}}
+{\footnotesize\ttfamily int metal\+\_\+state\+::num\+\_\+page\+\_\+sizes}
+
+number of available page sizes. \mbox{\Hypertarget{structmetal__state_ac47375715b2e69ecb17b3a3714ae5c42}\label{structmetal__state_ac47375715b2e69ecb17b3a3714ae5c42}} 
+\index{metal\+\_\+state@{metal\+\_\+state}!page\+\_\+shift@{page\+\_\+shift}}
+\index{page\+\_\+shift@{page\+\_\+shift}!metal\+\_\+state@{metal\+\_\+state}}
+\subsubsection{\texorpdfstring{page\+\_\+shift}{page\_shift}}
+{\footnotesize\ttfamily unsigned long metal\+\_\+state\+::page\+\_\+shift}
+
+system page shift. \mbox{\Hypertarget{structmetal__state_a3ce0623d9131ad2f99e47e78ec3feba3}\label{structmetal__state_a3ce0623d9131ad2f99e47e78ec3feba3}} 
+\index{metal\+\_\+state@{metal\+\_\+state}!page\+\_\+size@{page\+\_\+size}}
+\index{page\+\_\+size@{page\+\_\+size}!metal\+\_\+state@{metal\+\_\+state}}
+\subsubsection{\texorpdfstring{page\+\_\+size}{page\_size}}
+{\footnotesize\ttfamily unsigned long metal\+\_\+state\+::page\+\_\+size}
+
+system page size. \mbox{\Hypertarget{structmetal__state_a4488b4117a68b92e40c0c04f53f7310b}\label{structmetal__state_a4488b4117a68b92e40c0c04f53f7310b}} 
+\index{metal\+\_\+state@{metal\+\_\+state}!page\+\_\+sizes@{page\+\_\+sizes}}
+\index{page\+\_\+sizes@{page\+\_\+sizes}!metal\+\_\+state@{metal\+\_\+state}}
+\subsubsection{\texorpdfstring{page\+\_\+sizes}{page\_sizes}}
+{\footnotesize\ttfamily struct \hyperlink{structmetal__page__size}{metal\+\_\+page\+\_\+size} metal\+\_\+state\+::page\+\_\+sizes\mbox{[}\hyperlink{system_2linux_2sys_8h_a7b18d1d6935a27d9929f039a106515e5}{M\+A\+X\+\_\+\+P\+A\+G\+E\+\_\+\+S\+I\+Z\+ES}\mbox{]}}
+
+available page sizes. \mbox{\Hypertarget{structmetal__state_a197661bddfd13e2af962db5802989261}\label{structmetal__state_a197661bddfd13e2af962db5802989261}} 
+\index{metal\+\_\+state@{metal\+\_\+state}!pagemap\+\_\+fd@{pagemap\+\_\+fd}}
+\index{pagemap\+\_\+fd@{pagemap\+\_\+fd}!metal\+\_\+state@{metal\+\_\+state}}
+\subsubsection{\texorpdfstring{pagemap\+\_\+fd}{pagemap\_fd}}
+{\footnotesize\ttfamily int metal\+\_\+state\+::pagemap\+\_\+fd}
+
+File descriptor for /proc/self/pagemap (or -\/1). \mbox{\Hypertarget{structmetal__state_adb50fd0d288917778f721619dcaba32e}\label{structmetal__state_adb50fd0d288917778f721619dcaba32e}} 
+\index{metal\+\_\+state@{metal\+\_\+state}!sysfs\+\_\+path@{sysfs\+\_\+path}}
+\index{sysfs\+\_\+path@{sysfs\+\_\+path}!metal\+\_\+state@{metal\+\_\+state}}
+\subsubsection{\texorpdfstring{sysfs\+\_\+path}{sysfs\_path}}
+{\footnotesize\ttfamily const char$\ast$ metal\+\_\+state\+::sysfs\+\_\+path}
+
+sysfs mount point. \mbox{\Hypertarget{structmetal__state_a290af954fe910c5caa1ded1e32e626b6}\label{structmetal__state_a290af954fe910c5caa1ded1e32e626b6}} 
+\index{metal\+\_\+state@{metal\+\_\+state}!tmp\+\_\+path@{tmp\+\_\+path}}
+\index{tmp\+\_\+path@{tmp\+\_\+path}!metal\+\_\+state@{metal\+\_\+state}}
+\subsubsection{\texorpdfstring{tmp\+\_\+path}{tmp\_path}}
+{\footnotesize\ttfamily const char$\ast$ metal\+\_\+state\+::tmp\+\_\+path}
+
+sysfs mount point. 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+lib/system/freertos/\hyperlink{system_2freertos_2sys_8h}{sys.\+h}\end{DoxyCompactItemize}

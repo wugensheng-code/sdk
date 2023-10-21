@@ -1,0 +1,44 @@
+LIBNAME := openamp
+
+PROJECT_BASE:=$(abspath $(dir $(lastword $(MAKEFILE_LIST))))
+OUTPUT_PATH:=$(PROJECT_BASE)/build-$(LIBNAME)
+INSTALL_PATH:=$(LIB_OUTPUT_DIR)/$(LIBNAME)
+LIBMETAL_PATH:=$(LIB_OUTPUT_DIR)/libmetal/usr/local
+
+include ../../../tools/make/rules.mk
+
+INC_DIR += $(INSTALL_PATH)/usr/local/include/metal
+LIB_CFLAGS := $(foreach subdir,$(sort $(INC_DIR)), -I$(subdir))
+override LIB_CFLAGS += $(filter-out $(MKDEP_OPT),$(AL_CFLAGS))
+
+.PHONY: build
+CHIP       = dr1m90
+$(OUTPUT_PATH)/Makefile:
+	mkdir -p $(INSTALL_PATH) $(OUTPUT_PATH) \
+	&& cd $(OUTPUT_PATH) \
+	&& cmake $(PROJECT_BASE) -DCMAKE_C_FLAGS="$(LIB_CFLAGS)" \
+							 -DMACHINE="$(CHIP)" \
+							 -DCMAKE_SYSTEM_PROCESSOR="$(CORE)" \
+							 -DCMAKE_EXE_LINKER_FLAGS="$(LDFLAGS)" \
+							 -DCMAKE_SYSTEM_NAME="Generic" \
+							 -DCMAKE_C_COMPILER="$(CC)" \
+							 -DCMAKE_C_COMPILER_FORCED=ON \
+							 -DCMAKE_FIND_ROOT_PATH="$(LIBMETAL_PATH)/lib" \
+							 -DLIBMETAL_INCLUDE_DIR="$(LIBMETAL_PATH)/include" \
+							 -DWITH_PROXY=OFF \
+							 -DWITH_APPS=OFF \
+							 -DWITH_DCACHE_VRINGS=ON
+
+$(LIBNAME)_obj:$(OUTPUT_PATH)/Makefile
+	$(MAKE_COMMAND) -C $(OUTPUT_PATH) VERBOSE=1 DESTDIR=$(INSTALL_PATH) install
+
+.PHONY: build
+build: $(LIBNAME)_obj
+
+.PHONY: clean_lib
+clean_lib:
+	@rm -rvf $(OUTPUT_PATH)
+	@rm -rvf $(INSTALL_PATH)
+
+lib: build
+lib.do.clean:clean_lib

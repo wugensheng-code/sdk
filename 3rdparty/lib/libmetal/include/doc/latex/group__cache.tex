@@ -1,0 +1,49 @@
+\hypertarget{group__cache}{}\section{C\+A\+C\+HE Interfaces}
+\label{group__cache}\index{C\+A\+C\+H\+E Interfaces@{C\+A\+C\+H\+E Interfaces}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{group__cache_ga7a0771f070e924d322bd5a5c24cdc610}{metal\+\_\+cache\+\_\+flush} (void $\ast$addr, unsigned int len)
+\begin{DoxyCompactList}\small\item\em flush specified data cache \end{DoxyCompactList}\item 
+static void \hyperlink{group__cache_ga5021de21f0db9c35ed5638732a5d3e9a}{metal\+\_\+cache\+\_\+invalidate} (void $\ast$addr, unsigned int len)
+\begin{DoxyCompactList}\small\item\em invalidate specified data cache \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{group__cache_ga7a0771f070e924d322bd5a5c24cdc610}\label{group__cache_ga7a0771f070e924d322bd5a5c24cdc610}} 
+\index{C\+A\+C\+H\+E Interfaces@{C\+A\+C\+H\+E Interfaces}!metal\+\_\+cache\+\_\+flush@{metal\+\_\+cache\+\_\+flush}}
+\index{metal\+\_\+cache\+\_\+flush@{metal\+\_\+cache\+\_\+flush}!C\+A\+C\+H\+E Interfaces@{C\+A\+C\+H\+E Interfaces}}
+\subsubsection{\texorpdfstring{metal\+\_\+cache\+\_\+flush()}{metal\_cache\_flush()}}
+{\footnotesize\ttfamily static void metal\+\_\+cache\+\_\+flush (\begin{DoxyParamCaption}\item[{void $\ast$}]{addr,  }\item[{unsigned int}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+flush specified data cache 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em addr} & start memory logical address \\
+\hline
+\mbox{\tt in}  & {\em len} & length of memory If addr is N\+U\+LL, and len is 0, It will flush the whole data cache. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{group__cache_ga5021de21f0db9c35ed5638732a5d3e9a}\label{group__cache_ga5021de21f0db9c35ed5638732a5d3e9a}} 
+\index{C\+A\+C\+H\+E Interfaces@{C\+A\+C\+H\+E Interfaces}!metal\+\_\+cache\+\_\+invalidate@{metal\+\_\+cache\+\_\+invalidate}}
+\index{metal\+\_\+cache\+\_\+invalidate@{metal\+\_\+cache\+\_\+invalidate}!C\+A\+C\+H\+E Interfaces@{C\+A\+C\+H\+E Interfaces}}
+\subsubsection{\texorpdfstring{metal\+\_\+cache\+\_\+invalidate()}{metal\_cache\_invalidate()}}
+{\footnotesize\ttfamily static void metal\+\_\+cache\+\_\+invalidate (\begin{DoxyParamCaption}\item[{void $\ast$}]{addr,  }\item[{unsigned int}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+invalidate specified data cache 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em addr} & start memory logical address \\
+\hline
+\mbox{\tt in}  & {\em len} & length of memory If addr is N\+U\+LL, and len is 0, It will invalidate the whole data cache. \\
+\hline
+\end{DoxyParams}

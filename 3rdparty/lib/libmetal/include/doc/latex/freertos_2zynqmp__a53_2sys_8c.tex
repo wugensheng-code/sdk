@@ -1,0 +1,91 @@
+\hypertarget{freertos_2zynqmp__a53_2sys_8c}{}\section{lib/system/freertos/zynqmp\+\_\+a53/sys.c File Reference}
+\label{freertos_2zynqmp__a53_2sys_8c}\index{lib/system/freertos/zynqmp\+\_\+a53/sys.\+c@{lib/system/freertos/zynqmp\+\_\+a53/sys.\+c}}
+{\ttfamily \#include $<$metal/compiler.\+h$>$}\newline
+{\ttfamily \#include $<$metal/io.\+h$>$}\newline
+{\ttfamily \#include $<$metal/sys.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}xil\+\_\+cache.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}xil\+\_\+exception.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}xil\+\_\+mmu.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}xreg\+\_\+cortexa53.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}xscugic.\+h\char`\"{}}\newline
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{freertos_2zynqmp__a53_2sys_8c_aa6b38d492364d98453284934ed7caee9}{MB}~(1024 $\ast$ 1024\+U\+L)
+\item 
+\#define \hyperlink{freertos_2zynqmp__a53_2sys_8c_a44172ac633c517cb4c9e278cef36b000}{GB}~(1024 $\ast$ 1024 $\ast$ 1024\+U\+L)
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{freertos_2zynqmp__a53_2sys_8c_acaeabb9a02dc3267c76be2a9e9e5325a}{sys\+\_\+irq\+\_\+restore\+\_\+enable} (unsigned int flags)
+\item 
+unsigned int \hyperlink{freertos_2zynqmp__a53_2sys_8c_a2f1552fdaadb51ff7638e1a808d8711f}{sys\+\_\+irq\+\_\+save\+\_\+disable} (void)
+\item 
+void \hyperlink{freertos_2zynqmp__a53_2sys_8c_a25e36f40f9ae4eec97980375d83696af}{metal\+\_\+machine\+\_\+cache\+\_\+flush} (void $\ast$addr, unsigned int len)
+\item 
+void \hyperlink{freertos_2zynqmp__a53_2sys_8c_a2212ede2193977ecd6e7beb7588147e9}{metal\+\_\+machine\+\_\+cache\+\_\+invalidate} (void $\ast$addr, unsigned int len)
+\item 
+void \hyperlink{compiler_2iar_2compiler_8h_a78c99cb160382d13452ea045ffbac61a}{metal\+\_\+weak} \hyperlink{freertos_2zynqmp__a53_2sys_8c_af6da83d46d07f5b2138c241ffcd3bb29}{metal\+\_\+generic\+\_\+default\+\_\+poll} (void)
+\begin{DoxyCompactList}\small\item\em poll function until some event happens \end{DoxyCompactList}\item 
+void $\ast$ \hyperlink{freertos_2zynqmp__a53_2sys_8c_a8185d4e5dadf4d952ee70cf32cc09d72}{metal\+\_\+machine\+\_\+io\+\_\+mem\+\_\+map} (void $\ast$va, \hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t} pa, size\+\_\+t size, unsigned int flags)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{freertos_2zynqmp__a53_2sys_8c_a44172ac633c517cb4c9e278cef36b000}\label{freertos_2zynqmp__a53_2sys_8c_a44172ac633c517cb4c9e278cef36b000}} 
+\index{freertos/zynqmp\+\_\+a53/sys.\+c@{freertos/zynqmp\+\_\+a53/sys.\+c}!GB@{GB}}
+\index{GB@{GB}!freertos/zynqmp\+\_\+a53/sys.\+c@{freertos/zynqmp\+\_\+a53/sys.\+c}}
+\subsubsection{\texorpdfstring{GB}{GB}}
+{\footnotesize\ttfamily \#define GB~(1024 $\ast$ 1024 $\ast$ 1024\+U\+L)}
+
+\mbox{\Hypertarget{freertos_2zynqmp__a53_2sys_8c_aa6b38d492364d98453284934ed7caee9}\label{freertos_2zynqmp__a53_2sys_8c_aa6b38d492364d98453284934ed7caee9}} 
+\index{freertos/zynqmp\+\_\+a53/sys.\+c@{freertos/zynqmp\+\_\+a53/sys.\+c}!MB@{MB}}
+\index{MB@{MB}!freertos/zynqmp\+\_\+a53/sys.\+c@{freertos/zynqmp\+\_\+a53/sys.\+c}}
+\subsubsection{\texorpdfstring{MB}{MB}}
+{\footnotesize\ttfamily \#define MB~(1024 $\ast$ 1024\+U\+L)}
+
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{freertos_2zynqmp__a53_2sys_8c_af6da83d46d07f5b2138c241ffcd3bb29}\label{freertos_2zynqmp__a53_2sys_8c_af6da83d46d07f5b2138c241ffcd3bb29}} 
+\index{freertos/zynqmp\+\_\+a53/sys.\+c@{freertos/zynqmp\+\_\+a53/sys.\+c}!metal\+\_\+generic\+\_\+default\+\_\+poll@{metal\+\_\+generic\+\_\+default\+\_\+poll}}
+\index{metal\+\_\+generic\+\_\+default\+\_\+poll@{metal\+\_\+generic\+\_\+default\+\_\+poll}!freertos/zynqmp\+\_\+a53/sys.\+c@{freertos/zynqmp\+\_\+a53/sys.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+generic\+\_\+default\+\_\+poll()}{metal\_generic\_default\_poll()}}
+{\footnotesize\ttfamily void \hyperlink{compiler_2iar_2compiler_8h_a78c99cb160382d13452ea045ffbac61a}{metal\+\_\+weak} metal\+\_\+generic\+\_\+default\+\_\+poll (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+poll function until some event happens 
+
+\mbox{\Hypertarget{freertos_2zynqmp__a53_2sys_8c_a25e36f40f9ae4eec97980375d83696af}\label{freertos_2zynqmp__a53_2sys_8c_a25e36f40f9ae4eec97980375d83696af}} 
+\index{freertos/zynqmp\+\_\+a53/sys.\+c@{freertos/zynqmp\+\_\+a53/sys.\+c}!metal\+\_\+machine\+\_\+cache\+\_\+flush@{metal\+\_\+machine\+\_\+cache\+\_\+flush}}
+\index{metal\+\_\+machine\+\_\+cache\+\_\+flush@{metal\+\_\+machine\+\_\+cache\+\_\+flush}!freertos/zynqmp\+\_\+a53/sys.\+c@{freertos/zynqmp\+\_\+a53/sys.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+machine\+\_\+cache\+\_\+flush()}{metal\_machine\_cache\_flush()}}
+{\footnotesize\ttfamily void metal\+\_\+machine\+\_\+cache\+\_\+flush (\begin{DoxyParamCaption}\item[{void $\ast$}]{addr,  }\item[{unsigned int}]{len }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{freertos_2zynqmp__a53_2sys_8c_a2212ede2193977ecd6e7beb7588147e9}\label{freertos_2zynqmp__a53_2sys_8c_a2212ede2193977ecd6e7beb7588147e9}} 
+\index{freertos/zynqmp\+\_\+a53/sys.\+c@{freertos/zynqmp\+\_\+a53/sys.\+c}!metal\+\_\+machine\+\_\+cache\+\_\+invalidate@{metal\+\_\+machine\+\_\+cache\+\_\+invalidate}}
+\index{metal\+\_\+machine\+\_\+cache\+\_\+invalidate@{metal\+\_\+machine\+\_\+cache\+\_\+invalidate}!freertos/zynqmp\+\_\+a53/sys.\+c@{freertos/zynqmp\+\_\+a53/sys.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+machine\+\_\+cache\+\_\+invalidate()}{metal\_machine\_cache\_invalidate()}}
+{\footnotesize\ttfamily void metal\+\_\+machine\+\_\+cache\+\_\+invalidate (\begin{DoxyParamCaption}\item[{void $\ast$}]{addr,  }\item[{unsigned int}]{len }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{freertos_2zynqmp__a53_2sys_8c_a8185d4e5dadf4d952ee70cf32cc09d72}\label{freertos_2zynqmp__a53_2sys_8c_a8185d4e5dadf4d952ee70cf32cc09d72}} 
+\index{freertos/zynqmp\+\_\+a53/sys.\+c@{freertos/zynqmp\+\_\+a53/sys.\+c}!metal\+\_\+machine\+\_\+io\+\_\+mem\+\_\+map@{metal\+\_\+machine\+\_\+io\+\_\+mem\+\_\+map}}
+\index{metal\+\_\+machine\+\_\+io\+\_\+mem\+\_\+map@{metal\+\_\+machine\+\_\+io\+\_\+mem\+\_\+map}!freertos/zynqmp\+\_\+a53/sys.\+c@{freertos/zynqmp\+\_\+a53/sys.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+machine\+\_\+io\+\_\+mem\+\_\+map()}{metal\_machine\_io\_mem\_map()}}
+{\footnotesize\ttfamily void$\ast$ metal\+\_\+machine\+\_\+io\+\_\+mem\+\_\+map (\begin{DoxyParamCaption}\item[{void $\ast$}]{va,  }\item[{\hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t}}]{pa,  }\item[{size\+\_\+t}]{size,  }\item[{unsigned int}]{flags }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{freertos_2zynqmp__a53_2sys_8c_acaeabb9a02dc3267c76be2a9e9e5325a}\label{freertos_2zynqmp__a53_2sys_8c_acaeabb9a02dc3267c76be2a9e9e5325a}} 
+\index{freertos/zynqmp\+\_\+a53/sys.\+c@{freertos/zynqmp\+\_\+a53/sys.\+c}!sys\+\_\+irq\+\_\+restore\+\_\+enable@{sys\+\_\+irq\+\_\+restore\+\_\+enable}}
+\index{sys\+\_\+irq\+\_\+restore\+\_\+enable@{sys\+\_\+irq\+\_\+restore\+\_\+enable}!freertos/zynqmp\+\_\+a53/sys.\+c@{freertos/zynqmp\+\_\+a53/sys.\+c}}
+\subsubsection{\texorpdfstring{sys\+\_\+irq\+\_\+restore\+\_\+enable()}{sys\_irq\_restore\_enable()}}
+{\footnotesize\ttfamily void sys\+\_\+irq\+\_\+restore\+\_\+enable (\begin{DoxyParamCaption}\item[{unsigned int}]{flags }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{freertos_2zynqmp__a53_2sys_8c_a2f1552fdaadb51ff7638e1a808d8711f}\label{freertos_2zynqmp__a53_2sys_8c_a2f1552fdaadb51ff7638e1a808d8711f}} 
+\index{freertos/zynqmp\+\_\+a53/sys.\+c@{freertos/zynqmp\+\_\+a53/sys.\+c}!sys\+\_\+irq\+\_\+save\+\_\+disable@{sys\+\_\+irq\+\_\+save\+\_\+disable}}
+\index{sys\+\_\+irq\+\_\+save\+\_\+disable@{sys\+\_\+irq\+\_\+save\+\_\+disable}!freertos/zynqmp\+\_\+a53/sys.\+c@{freertos/zynqmp\+\_\+a53/sys.\+c}}
+\subsubsection{\texorpdfstring{sys\+\_\+irq\+\_\+save\+\_\+disable()}{sys\_irq\_save\_disable()}}
+{\footnotesize\ttfamily unsigned int sys\+\_\+irq\+\_\+save\+\_\+disable (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+

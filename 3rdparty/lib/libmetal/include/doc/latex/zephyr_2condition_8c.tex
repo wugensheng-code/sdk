@@ -1,0 +1,25 @@
+\hypertarget{zephyr_2condition_8c}{}\section{lib/system/zephyr/condition.c File Reference}
+\label{zephyr_2condition_8c}\index{lib/system/zephyr/condition.\+c@{lib/system/zephyr/condition.\+c}}
+{\ttfamily \#include $<$metal/condition.\+h$>$}\newline
+{\ttfamily \#include $<$metal/irq.\+h$>$}\newline
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{zephyr_2condition_8c_af6c39b91e3be9b4a5812d4105cdd0b2b}{metal\+\_\+generic\+\_\+default\+\_\+poll} (void)
+\begin{DoxyCompactList}\small\item\em poll function until some event happens \end{DoxyCompactList}\item 
+int \hyperlink{group__condition_ga82b937a6692589f5a6025d823ac243c2}{metal\+\_\+condition\+\_\+wait} (struct \hyperlink{structmetal__condition}{metal\+\_\+condition} $\ast$cv, \hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$m)
+\begin{DoxyCompactList}\small\item\em Block until the condition variable is notified. Before calling this function, the caller should have acquired the mutex. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{zephyr_2condition_8c_af6c39b91e3be9b4a5812d4105cdd0b2b}\label{zephyr_2condition_8c_af6c39b91e3be9b4a5812d4105cdd0b2b}} 
+\index{zephyr/condition.\+c@{zephyr/condition.\+c}!metal\+\_\+generic\+\_\+default\+\_\+poll@{metal\+\_\+generic\+\_\+default\+\_\+poll}}
+\index{metal\+\_\+generic\+\_\+default\+\_\+poll@{metal\+\_\+generic\+\_\+default\+\_\+poll}!zephyr/condition.\+c@{zephyr/condition.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+generic\+\_\+default\+\_\+poll()}{metal\_generic\_default\_poll()}}
+{\footnotesize\ttfamily void metal\+\_\+generic\+\_\+default\+\_\+poll (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+poll function until some event happens 
+
+poll function until some event happens 

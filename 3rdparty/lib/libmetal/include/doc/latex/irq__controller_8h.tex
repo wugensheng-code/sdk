@@ -1,0 +1,37 @@
+\hypertarget{irq__controller_8h}{}\section{lib/irq\+\_\+controller.h File Reference}
+\label{irq__controller_8h}\index{lib/irq\+\_\+controller.\+h@{lib/irq\+\_\+controller.\+h}}
+{\ttfamily \#include $<$metal/irq.\+h$>$}\newline
+{\ttfamily \#include $<$metal/list.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structmetal__irq}{metal\+\_\+irq}
+\item 
+struct \hyperlink{structmetal__irq__controller}{metal\+\_\+irq\+\_\+controller}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{group__irq_ga012dfdc4397683c22caa93075b01be52}{M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+A\+NY}~(-\/1)
+\item 
+\#define \hyperlink{group__irq_ga1cc45f7942dbbca274f2d7822b7d7df0}{M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+D\+I\+S\+A\+B\+LE}~0U
+\item 
+\#define \hyperlink{group__irq_ga007398d79afac4c5840f958013b9c823}{M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+E\+N\+A\+B\+LE}~1U
+\item 
+\#define \hyperlink{group__irq_ga459298e318433ee817bf50dbd02d4534}{M\+E\+T\+A\+L\+\_\+\+I\+R\+Q\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+D\+E\+C\+L\+A\+RE}(\+\_\+irq\+\_\+controller,  \+\_\+irq\+\_\+base,  \+\_\+irq\+\_\+num,  \+\_\+arg,  \+\_\+irq\+\_\+set\+\_\+enable,  \+\_\+irq\+\_\+register,  \+\_\+irqs)
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef void($\ast$ \hyperlink{group__irq_ga125a768ecd5924b3da91b6ebb6820e9a}{metal\+\_\+irq\+\_\+set\+\_\+enable}) (struct \hyperlink{structmetal__irq__controller}{metal\+\_\+irq\+\_\+controller} $\ast$irq\+\_\+cntr, int irq, unsigned int enable)
+\begin{DoxyCompactList}\small\item\em type of interrupt controller to set irq enable \end{DoxyCompactList}\item 
+typedef int($\ast$ \hyperlink{group__irq_ga22c994407d005793e478ac8267744f88}{metal\+\_\+cntr\+\_\+irq\+\_\+register}) (struct \hyperlink{structmetal__irq__controller}{metal\+\_\+irq\+\_\+controller} $\ast$irq\+\_\+cntr, int irq, \hyperlink{group__irq_ga4fd6caa764267fc62373ae22e17aea2a}{metal\+\_\+irq\+\_\+handler} hd, void $\ast$arg)
+\begin{DoxyCompactList}\small\item\em type of controller specific registering interrupt function \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{group__irq_gaa5f470556ea8d7758a94fffb689188cd}{metal\+\_\+irq\+\_\+register\+\_\+controller} (struct \hyperlink{structmetal__irq__controller}{metal\+\_\+irq\+\_\+controller} $\ast$cntr)
+\begin{DoxyCompactList}\small\item\em metal\+\_\+irq\+\_\+register\+\_\+controller \end{DoxyCompactList}\item 
+static int \hyperlink{group__irq_gaa4e87537ea598b26d00cd2af070ce41c}{metal\+\_\+irq\+\_\+handle} (struct \hyperlink{structmetal__irq}{metal\+\_\+irq} $\ast$irq\+\_\+data, int irq)
+\begin{DoxyCompactList}\small\item\em metal\+\_\+irq\+\_\+handle \end{DoxyCompactList}\end{DoxyCompactItemize}

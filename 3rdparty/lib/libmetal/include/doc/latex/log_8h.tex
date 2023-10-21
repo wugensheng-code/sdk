@@ -1,0 +1,41 @@
+\hypertarget{log_8h}{}\section{lib/log.h File Reference}
+\label{log_8h}\index{lib/log.\+h@{lib/log.\+h}}
+{\ttfamily \#include $<$metal/system/@\+P\+R\+O\+J\+E\+C\+T\+\_\+\+S\+Y\+S\+T\+E\+M@/log.\+h$>$}\newline
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{group__logging_ga2713c6e89935c7618532bf3e418e8dd9}{metal\+\_\+log}(level, ...)
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef void($\ast$ \hyperlink{group__logging_gaa79b2a8962227bb67c242b98afda292a}{metal\+\_\+log\+\_\+handler}) (enum \hyperlink{group__logging_ga4ffa0f4a1339af510aca7f817ee36d82}{metal\+\_\+log\+\_\+level} level, const char $\ast$format,...)
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{group__logging_ga4ffa0f4a1339af510aca7f817ee36d82}{metal\+\_\+log\+\_\+level} \{ \newline
+\hyperlink{group__logging_gga4ffa0f4a1339af510aca7f817ee36d82a5ed2cd57a6ae440a1a4b987b323697b1}{M\+E\+T\+A\+L\+\_\+\+L\+O\+G\+\_\+\+E\+M\+E\+R\+G\+E\+N\+CY}, 
+\hyperlink{group__logging_gga4ffa0f4a1339af510aca7f817ee36d82a99559074f6094a386ae8afb278705b0c}{M\+E\+T\+A\+L\+\_\+\+L\+O\+G\+\_\+\+A\+L\+E\+RT}, 
+\hyperlink{group__logging_gga4ffa0f4a1339af510aca7f817ee36d82aa11a257eff2a78fb1f5851b04bdb14f8}{M\+E\+T\+A\+L\+\_\+\+L\+O\+G\+\_\+\+C\+R\+I\+T\+I\+C\+AL}, 
+\hyperlink{group__logging_gga4ffa0f4a1339af510aca7f817ee36d82af784d6c458887a01b7478a9433454bac}{M\+E\+T\+A\+L\+\_\+\+L\+O\+G\+\_\+\+E\+R\+R\+OR}, 
+\newline
+\hyperlink{group__logging_gga4ffa0f4a1339af510aca7f817ee36d82a41106d05f236ca45cb2e04da44accfdc}{M\+E\+T\+A\+L\+\_\+\+L\+O\+G\+\_\+\+W\+A\+R\+N\+I\+NG}, 
+\hyperlink{group__logging_gga4ffa0f4a1339af510aca7f817ee36d82a20bed4defeb0923ab9ea4d3593808e5c}{M\+E\+T\+A\+L\+\_\+\+L\+O\+G\+\_\+\+N\+O\+T\+I\+CE}, 
+\hyperlink{group__logging_gga4ffa0f4a1339af510aca7f817ee36d82a3b33aa6fbeeb9f2df2f565a66c016534}{M\+E\+T\+A\+L\+\_\+\+L\+O\+G\+\_\+\+I\+N\+FO}, 
+\hyperlink{group__logging_gga4ffa0f4a1339af510aca7f817ee36d82aa299187acec4c8356e14b877539ab29f}{M\+E\+T\+A\+L\+\_\+\+L\+O\+G\+\_\+\+D\+E\+B\+UG}
+ \}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{group__logging_ga68f2f88eeba019ecad0ad0f0cf42d724}{metal\+\_\+set\+\_\+log\+\_\+handler} (\hyperlink{group__logging_gaa79b2a8962227bb67c242b98afda292a}{metal\+\_\+log\+\_\+handler} handler)
+\begin{DoxyCompactList}\small\item\em Set libmetal log handler. \end{DoxyCompactList}\item 
+\hyperlink{group__logging_gaa79b2a8962227bb67c242b98afda292a}{metal\+\_\+log\+\_\+handler} \hyperlink{group__logging_ga526a951e1d184816fe86d474e71cec42}{metal\+\_\+get\+\_\+log\+\_\+handler} (void)
+\begin{DoxyCompactList}\small\item\em Get the current libmetal log handler. \end{DoxyCompactList}\item 
+void \hyperlink{group__logging_ga97d10ee76c920dd83b099f4cd1c26c0d}{metal\+\_\+set\+\_\+log\+\_\+level} (enum \hyperlink{group__logging_ga4ffa0f4a1339af510aca7f817ee36d82}{metal\+\_\+log\+\_\+level} level)
+\begin{DoxyCompactList}\small\item\em Set the level for libmetal logging. \end{DoxyCompactList}\item 
+enum \hyperlink{group__logging_ga4ffa0f4a1339af510aca7f817ee36d82}{metal\+\_\+log\+\_\+level} \hyperlink{group__logging_gaba9eb8e1922ace9eb3ac2a7fa9ff9700}{metal\+\_\+get\+\_\+log\+\_\+level} (void)
+\begin{DoxyCompactList}\small\item\em Get the current level for libmetal logging. \end{DoxyCompactList}\item 
+void \hyperlink{group__logging_ga02b6dcb78052b93f9f78df2afb0cf464}{metal\+\_\+default\+\_\+log\+\_\+handler} (enum \hyperlink{group__logging_ga4ffa0f4a1339af510aca7f817ee36d82}{metal\+\_\+log\+\_\+level} level, const char $\ast$format,...)
+\begin{DoxyCompactList}\small\item\em Default libmetal log handler. This handler prints libmetal log messages to stderr. \end{DoxyCompactList}\end{DoxyCompactItemize}

@@ -1,0 +1,16 @@
+\hypertarget{condition_8h}{}\section{lib/condition.h File Reference}
+\label{condition_8h}\index{lib/condition.\+h@{lib/condition.\+h}}
+{\ttfamily \#include $<$metal/mutex.\+h$>$}\newline
+{\ttfamily \#include $<$metal/utilities.\+h$>$}\newline
+{\ttfamily \#include $<$metal/system/@\+P\+R\+O\+J\+E\+C\+T\+\_\+\+S\+Y\+S\+T\+E\+M@/condition.\+h$>$}\newline
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{group__condition_ga879378a795dc41afc4025c083f203e4e}{metal\+\_\+condition\+\_\+init} (struct \hyperlink{structmetal__condition}{metal\+\_\+condition} $\ast$cv)
+\begin{DoxyCompactList}\small\item\em Initialize a libmetal condition variable. \end{DoxyCompactList}\item 
+static int \hyperlink{group__condition_ga042f4c19e3ddb3136365f4426e8bc439}{metal\+\_\+condition\+\_\+signal} (struct \hyperlink{structmetal__condition}{metal\+\_\+condition} $\ast$cv)
+\begin{DoxyCompactList}\small\item\em Notify one waiter. Before calling this function, the caller should have acquired the mutex. \end{DoxyCompactList}\item 
+static int \hyperlink{group__condition_ga80d63ed8a725e3a4a3291e58147fc4ae}{metal\+\_\+condition\+\_\+broadcast} (struct \hyperlink{structmetal__condition}{metal\+\_\+condition} $\ast$cv)
+\begin{DoxyCompactList}\small\item\em Notify all waiters. Before calling this function, the caller should have acquired the mutex. \end{DoxyCompactList}\item 
+int \hyperlink{group__condition_ga82b937a6692589f5a6025d823ac243c2}{metal\+\_\+condition\+\_\+wait} (struct \hyperlink{structmetal__condition}{metal\+\_\+condition} $\ast$cv, \hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$m)
+\begin{DoxyCompactList}\small\item\em Block until the condition variable is notified. Before calling this function, the caller should have acquired the mutex. \end{DoxyCompactList}\end{DoxyCompactItemize}

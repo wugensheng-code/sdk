@@ -1,0 +1,122 @@
+\hypertarget{group__mutex}{}\section{Mutex Interfaces}
+\label{group__mutex}\index{Mutex Interfaces@{Mutex Interfaces}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \hyperlink{group__mutex_ga0be5610e9c7ee6902dd3d6240ca82271}{metal\+\_\+mutex\+\_\+init} (\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$mutex)
+\begin{DoxyCompactList}\small\item\em Initialize a libmetal mutex. \end{DoxyCompactList}\item 
+static void \hyperlink{group__mutex_ga641fc96da84389981f866bb14356b6f1}{metal\+\_\+mutex\+\_\+deinit} (\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$mutex)
+\begin{DoxyCompactList}\small\item\em Deinitialize a libmetal mutex. \end{DoxyCompactList}\item 
+static int \hyperlink{group__mutex_ga290699ccc31f77849ffc21e779795361}{metal\+\_\+mutex\+\_\+try\+\_\+acquire} (\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$mutex)
+\begin{DoxyCompactList}\small\item\em Try to acquire a mutex. \end{DoxyCompactList}\item 
+static void \hyperlink{group__mutex_ga2ac9a9458e5d2b2d666c0a2c02e68bba}{metal\+\_\+mutex\+\_\+acquire} (\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$mutex)
+\begin{DoxyCompactList}\small\item\em Acquire a mutex. \end{DoxyCompactList}\item 
+static void \hyperlink{group__mutex_ga48df0681ac127c8d268845b57e8016b8}{metal\+\_\+mutex\+\_\+release} (\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$mutex)
+\begin{DoxyCompactList}\small\item\em Release a previously acquired mutex. \end{DoxyCompactList}\item 
+static int \hyperlink{group__mutex_ga377c63b040af060bdbe26fdaa98231df}{metal\+\_\+mutex\+\_\+is\+\_\+acquired} (\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$mutex)
+\begin{DoxyCompactList}\small\item\em Checked if a mutex has been acquired. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{group__mutex_ga2ac9a9458e5d2b2d666c0a2c02e68bba}\label{group__mutex_ga2ac9a9458e5d2b2d666c0a2c02e68bba}} 
+\index{Mutex Interfaces@{Mutex Interfaces}!metal\+\_\+mutex\+\_\+acquire@{metal\+\_\+mutex\+\_\+acquire}}
+\index{metal\+\_\+mutex\+\_\+acquire@{metal\+\_\+mutex\+\_\+acquire}!Mutex Interfaces@{Mutex Interfaces}}
+\subsubsection{\texorpdfstring{metal\+\_\+mutex\+\_\+acquire()}{metal\_mutex\_acquire()}}
+{\footnotesize\ttfamily static void metal\+\_\+mutex\+\_\+acquire (\begin{DoxyParamCaption}\item[{\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$}]{mutex }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Acquire a mutex. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em mutex} & Mutex to mutex. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{group__mutex_ga641fc96da84389981f866bb14356b6f1}\label{group__mutex_ga641fc96da84389981f866bb14356b6f1}} 
+\index{Mutex Interfaces@{Mutex Interfaces}!metal\+\_\+mutex\+\_\+deinit@{metal\+\_\+mutex\+\_\+deinit}}
+\index{metal\+\_\+mutex\+\_\+deinit@{metal\+\_\+mutex\+\_\+deinit}!Mutex Interfaces@{Mutex Interfaces}}
+\subsubsection{\texorpdfstring{metal\+\_\+mutex\+\_\+deinit()}{metal\_mutex\_deinit()}}
+{\footnotesize\ttfamily static void metal\+\_\+mutex\+\_\+deinit (\begin{DoxyParamCaption}\item[{\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$}]{mutex }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Deinitialize a libmetal mutex. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em mutex} & Mutex to deinitialize. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{group__mutex_ga0be5610e9c7ee6902dd3d6240ca82271}\label{group__mutex_ga0be5610e9c7ee6902dd3d6240ca82271}} 
+\index{Mutex Interfaces@{Mutex Interfaces}!metal\+\_\+mutex\+\_\+init@{metal\+\_\+mutex\+\_\+init}}
+\index{metal\+\_\+mutex\+\_\+init@{metal\+\_\+mutex\+\_\+init}!Mutex Interfaces@{Mutex Interfaces}}
+\subsubsection{\texorpdfstring{metal\+\_\+mutex\+\_\+init()}{metal\_mutex\_init()}}
+{\footnotesize\ttfamily static void metal\+\_\+mutex\+\_\+init (\begin{DoxyParamCaption}\item[{\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$}]{mutex }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Initialize a libmetal mutex. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em mutex} & Mutex to initialize. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{group__mutex_ga377c63b040af060bdbe26fdaa98231df}\label{group__mutex_ga377c63b040af060bdbe26fdaa98231df}} 
+\index{Mutex Interfaces@{Mutex Interfaces}!metal\+\_\+mutex\+\_\+is\+\_\+acquired@{metal\+\_\+mutex\+\_\+is\+\_\+acquired}}
+\index{metal\+\_\+mutex\+\_\+is\+\_\+acquired@{metal\+\_\+mutex\+\_\+is\+\_\+acquired}!Mutex Interfaces@{Mutex Interfaces}}
+\subsubsection{\texorpdfstring{metal\+\_\+mutex\+\_\+is\+\_\+acquired()}{metal\_mutex\_is\_acquired()}}
+{\footnotesize\ttfamily static int metal\+\_\+mutex\+\_\+is\+\_\+acquired (\begin{DoxyParamCaption}\item[{\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$}]{mutex }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Checked if a mutex has been acquired. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em mutex} & mutex to check. \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\hyperlink{group__mutex_ga290699ccc31f77849ffc21e779795361}{metal\+\_\+mutex\+\_\+try\+\_\+acquire}, \hyperlink{group__mutex_ga2ac9a9458e5d2b2d666c0a2c02e68bba}{metal\+\_\+mutex\+\_\+acquire} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{group__mutex_ga48df0681ac127c8d268845b57e8016b8}\label{group__mutex_ga48df0681ac127c8d268845b57e8016b8}} 
+\index{Mutex Interfaces@{Mutex Interfaces}!metal\+\_\+mutex\+\_\+release@{metal\+\_\+mutex\+\_\+release}}
+\index{metal\+\_\+mutex\+\_\+release@{metal\+\_\+mutex\+\_\+release}!Mutex Interfaces@{Mutex Interfaces}}
+\subsubsection{\texorpdfstring{metal\+\_\+mutex\+\_\+release()}{metal\_mutex\_release()}}
+{\footnotesize\ttfamily static void metal\+\_\+mutex\+\_\+release (\begin{DoxyParamCaption}\item[{\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$}]{mutex }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Release a previously acquired mutex. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em mutex} & Mutex to mutex. \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\hyperlink{group__mutex_ga290699ccc31f77849ffc21e779795361}{metal\+\_\+mutex\+\_\+try\+\_\+acquire}, \hyperlink{group__mutex_ga2ac9a9458e5d2b2d666c0a2c02e68bba}{metal\+\_\+mutex\+\_\+acquire} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{group__mutex_ga290699ccc31f77849ffc21e779795361}\label{group__mutex_ga290699ccc31f77849ffc21e779795361}} 
+\index{Mutex Interfaces@{Mutex Interfaces}!metal\+\_\+mutex\+\_\+try\+\_\+acquire@{metal\+\_\+mutex\+\_\+try\+\_\+acquire}}
+\index{metal\+\_\+mutex\+\_\+try\+\_\+acquire@{metal\+\_\+mutex\+\_\+try\+\_\+acquire}!Mutex Interfaces@{Mutex Interfaces}}
+\subsubsection{\texorpdfstring{metal\+\_\+mutex\+\_\+try\+\_\+acquire()}{metal\_mutex\_try\_acquire()}}
+{\footnotesize\ttfamily static int metal\+\_\+mutex\+\_\+try\+\_\+acquire (\begin{DoxyParamCaption}\item[{\hyperlink{structmetal__mutex__t}{metal\+\_\+mutex\+\_\+t} $\ast$}]{mutex }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Try to acquire a mutex. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em mutex} & Mutex to mutex. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on failure to acquire, non-\/zero on success. 
+\end{DoxyReturn}

@@ -1,0 +1,153 @@
+\hypertarget{group__system}{}\section{Top Level Interfaces}
+\label{group__system}\index{Top Level Interfaces@{Top Level Interfaces}}
+\subsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structmetal__init__params}{metal\+\_\+init\+\_\+params}
+\item 
+struct \hyperlink{structmetal__common__state}{metal\+\_\+common\+\_\+state}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{group__system_ga260e9f1bcb0425ebb9d186597ae2c7de}{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+O\+F\+F\+S\+ET}~((unsigned long)-\/1)
+\item 
+\#define \hyperlink{group__system_ga70a38525cebabfe1d709804619a6aa93}{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+P\+H\+YS}~((\hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t})-\/1)
+\item 
+\#define \hyperlink{group__system_ga1fd6bb89456538030d008f976708224c}{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+VA}~((void $\ast$)-\/1)
+\item 
+\#define \hyperlink{group__system_ga7b9c79fbe0ae59c5c0c1092af01764d1}{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+I\+RQ}~((\hyperlink{group__system_ga5b3ecd7ba1914b26547392ceadec813c}{metal\+\_\+irq\+\_\+t})-\/1)
+\item 
+\#define \hyperlink{group__system_ga2c3fc3d52edbcb37a35e1344b38cf47a}{M\+E\+T\+A\+L\+\_\+\+I\+N\+I\+T\+\_\+\+D\+E\+F\+A\+U\+L\+TS}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef unsigned long \hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t}
+\item 
+typedef int \hyperlink{group__system_ga5b3ecd7ba1914b26547392ceadec813c}{metal\+\_\+irq\+\_\+t}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{group__system_ga9a5f477e8ab7ed4bcc57e6d01a4ad3c7}{metal\+\_\+init} (const struct \hyperlink{structmetal__init__params}{metal\+\_\+init\+\_\+params} $\ast$params)
+\begin{DoxyCompactList}\small\item\em Initialize libmetal. \end{DoxyCompactList}\item 
+void \hyperlink{group__system_ga5760e3af70ec9a782c53e8ad9193d66b}{metal\+\_\+finish} (void)
+\begin{DoxyCompactList}\small\item\em Shutdown libmetal. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structmetal__state}{metal\+\_\+state} \hyperlink{group__system_ga929f8594b076a54b9773b4ab8ca2327d}{\+\_\+metal}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{group__system_ga7b9c79fbe0ae59c5c0c1092af01764d1}\label{group__system_ga7b9c79fbe0ae59c5c0c1092af01764d1}} 
+\index{Top Level Interfaces@{Top Level Interfaces}!M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+I\+RQ@{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+I\+RQ}}
+\index{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+I\+RQ@{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+I\+RQ}!Top Level Interfaces@{Top Level Interfaces}}
+\subsubsection{\texorpdfstring{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+I\+RQ}{METAL\_BAD\_IRQ}}
+{\footnotesize\ttfamily \#define M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+I\+RQ~((\hyperlink{group__system_ga5b3ecd7ba1914b26547392ceadec813c}{metal\+\_\+irq\+\_\+t})-\/1)}
+
+Bad I\+RQ. \mbox{\Hypertarget{group__system_ga260e9f1bcb0425ebb9d186597ae2c7de}\label{group__system_ga260e9f1bcb0425ebb9d186597ae2c7de}} 
+\index{Top Level Interfaces@{Top Level Interfaces}!M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+O\+F\+F\+S\+ET@{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+O\+F\+F\+S\+ET}}
+\index{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+O\+F\+F\+S\+ET@{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+O\+F\+F\+S\+ET}!Top Level Interfaces@{Top Level Interfaces}}
+\subsubsection{\texorpdfstring{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+O\+F\+F\+S\+ET}{METAL\_BAD\_OFFSET}}
+{\footnotesize\ttfamily \#define M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+O\+F\+F\+S\+ET~((unsigned long)-\/1)}
+
+Bad offset into shared memory or I/O region. \mbox{\Hypertarget{group__system_ga70a38525cebabfe1d709804619a6aa93}\label{group__system_ga70a38525cebabfe1d709804619a6aa93}} 
+\index{Top Level Interfaces@{Top Level Interfaces}!M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+P\+H\+YS@{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+P\+H\+YS}}
+\index{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+P\+H\+YS@{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+P\+H\+YS}!Top Level Interfaces@{Top Level Interfaces}}
+\subsubsection{\texorpdfstring{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+P\+H\+YS}{METAL\_BAD\_PHYS}}
+{\footnotesize\ttfamily \#define M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+P\+H\+YS~((\hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t})-\/1)}
+
+Bad physical address value. \mbox{\Hypertarget{group__system_ga1fd6bb89456538030d008f976708224c}\label{group__system_ga1fd6bb89456538030d008f976708224c}} 
+\index{Top Level Interfaces@{Top Level Interfaces}!M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+VA@{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+VA}}
+\index{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+VA@{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+VA}!Top Level Interfaces@{Top Level Interfaces}}
+\subsubsection{\texorpdfstring{M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+VA}{METAL\_BAD\_VA}}
+{\footnotesize\ttfamily \#define M\+E\+T\+A\+L\+\_\+\+B\+A\+D\+\_\+\+VA~((void $\ast$)-\/1)}
+
+Bad virtual address value. \mbox{\Hypertarget{group__system_ga2c3fc3d52edbcb37a35e1344b38cf47a}\label{group__system_ga2c3fc3d52edbcb37a35e1344b38cf47a}} 
+\index{Top Level Interfaces@{Top Level Interfaces}!M\+E\+T\+A\+L\+\_\+\+I\+N\+I\+T\+\_\+\+D\+E\+F\+A\+U\+L\+TS@{M\+E\+T\+A\+L\+\_\+\+I\+N\+I\+T\+\_\+\+D\+E\+F\+A\+U\+L\+TS}}
+\index{M\+E\+T\+A\+L\+\_\+\+I\+N\+I\+T\+\_\+\+D\+E\+F\+A\+U\+L\+TS@{M\+E\+T\+A\+L\+\_\+\+I\+N\+I\+T\+\_\+\+D\+E\+F\+A\+U\+L\+TS}!Top Level Interfaces@{Top Level Interfaces}}
+\subsubsection{\texorpdfstring{M\+E\+T\+A\+L\+\_\+\+I\+N\+I\+T\+\_\+\+D\+E\+F\+A\+U\+L\+TS}{METAL\_INIT\_DEFAULTS}}
+{\footnotesize\ttfamily \#define M\+E\+T\+A\+L\+\_\+\+I\+N\+I\+T\+\_\+\+D\+E\+F\+A\+U\+L\+TS}
+
+{\bfseries Value\+:}
+\begin{DoxyCode}
+\{                                                       \(\backslash\)
+        .log\_handler    = \hyperlink{group__logging_ga02b6dcb78052b93f9f78df2afb0cf464}{metal\_default\_log\_handler},   \(\backslash\)
+        .log\_level      = \hyperlink{group__logging_gga4ffa0f4a1339af510aca7f817ee36d82a3b33aa6fbeeb9f2df2f565a66c016534}{METAL\_LOG\_INFO},         \(\backslash\)
+\}
+\end{DoxyCode}
+
+
+\subsection{Typedef Documentation}
+\mbox{\Hypertarget{group__system_ga5b3ecd7ba1914b26547392ceadec813c}\label{group__system_ga5b3ecd7ba1914b26547392ceadec813c}} 
+\index{Top Level Interfaces@{Top Level Interfaces}!metal\+\_\+irq\+\_\+t@{metal\+\_\+irq\+\_\+t}}
+\index{metal\+\_\+irq\+\_\+t@{metal\+\_\+irq\+\_\+t}!Top Level Interfaces@{Top Level Interfaces}}
+\subsubsection{\texorpdfstring{metal\+\_\+irq\+\_\+t}{metal\_irq\_t}}
+{\footnotesize\ttfamily typedef int \hyperlink{group__system_ga5b3ecd7ba1914b26547392ceadec813c}{metal\+\_\+irq\+\_\+t}}
+
+Interrupt request number. \mbox{\Hypertarget{group__system_gae024fa10b72199a3e26c29b6eb97df5d}\label{group__system_gae024fa10b72199a3e26c29b6eb97df5d}} 
+\index{Top Level Interfaces@{Top Level Interfaces}!metal\+\_\+phys\+\_\+addr\+\_\+t@{metal\+\_\+phys\+\_\+addr\+\_\+t}}
+\index{metal\+\_\+phys\+\_\+addr\+\_\+t@{metal\+\_\+phys\+\_\+addr\+\_\+t}!Top Level Interfaces@{Top Level Interfaces}}
+\subsubsection{\texorpdfstring{metal\+\_\+phys\+\_\+addr\+\_\+t}{metal\_phys\_addr\_t}}
+{\footnotesize\ttfamily typedef unsigned long \hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t}}
+
+Physical address type. 
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{group__system_ga5760e3af70ec9a782c53e8ad9193d66b}\label{group__system_ga5760e3af70ec9a782c53e8ad9193d66b}} 
+\index{Top Level Interfaces@{Top Level Interfaces}!metal\+\_\+finish@{metal\+\_\+finish}}
+\index{metal\+\_\+finish@{metal\+\_\+finish}!Top Level Interfaces@{Top Level Interfaces}}
+\subsubsection{\texorpdfstring{metal\+\_\+finish()}{metal\_finish()}}
+{\footnotesize\ttfamily void metal\+\_\+finish (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Shutdown libmetal. 
+
+Shutdown the libmetal library, and release all reserved resources.
+
+\begin{DoxySeeAlso}{See also}
+\hyperlink{group__system_ga9a5f477e8ab7ed4bcc57e6d01a4ad3c7}{metal\+\_\+init} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{group__system_ga9a5f477e8ab7ed4bcc57e6d01a4ad3c7}\label{group__system_ga9a5f477e8ab7ed4bcc57e6d01a4ad3c7}} 
+\index{Top Level Interfaces@{Top Level Interfaces}!metal\+\_\+init@{metal\+\_\+init}}
+\index{metal\+\_\+init@{metal\+\_\+init}!Top Level Interfaces@{Top Level Interfaces}}
+\subsubsection{\texorpdfstring{metal\+\_\+init()}{metal\_init()}}
+{\footnotesize\ttfamily int metal\+\_\+init (\begin{DoxyParamCaption}\item[{const struct \hyperlink{structmetal__init__params}{metal\+\_\+init\+\_\+params} $\ast$}]{params }\end{DoxyParamCaption})}
+
+
+
+Initialize libmetal. 
+
+Initialize the libmetal library.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em params} & Initialization params (\\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\hyperlink{structmetal__init__params}{metal\+\_\+init\+\_\+params}).
+\end{DoxySeeAlso}
+\begin{DoxyReturn}{Returns}
+0 on success, or -\/errno on failure.
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\hyperlink{group__system_ga5760e3af70ec9a782c53e8ad9193d66b}{metal\+\_\+finish} 
+\end{DoxySeeAlso}
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{group__system_ga929f8594b076a54b9773b4ab8ca2327d}\label{group__system_ga929f8594b076a54b9773b4ab8ca2327d}} 
+\index{Top Level Interfaces@{Top Level Interfaces}!\+\_\+metal@{\+\_\+metal}}
+\index{\+\_\+metal@{\+\_\+metal}!Top Level Interfaces@{Top Level Interfaces}}
+\subsubsection{\texorpdfstring{\+\_\+metal}{\_metal}}
+{\footnotesize\ttfamily struct \hyperlink{structmetal__state}{metal\+\_\+state} \+\_\+metal}
+
+System specific runtime data. 

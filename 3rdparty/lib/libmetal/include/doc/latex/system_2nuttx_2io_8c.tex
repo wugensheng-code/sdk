@@ -1,0 +1,148 @@
+\hypertarget{system_2nuttx_2io_8c}{}\section{lib/system/nuttx/io.c File Reference}
+\label{system_2nuttx_2io_8c}\index{lib/system/nuttx/io.\+c@{lib/system/nuttx/io.\+c}}
+{\ttfamily \#include $<$metal/cache.\+h$>$}\newline
+{\ttfamily \#include $<$metal/io.\+h$>$}\newline
+{\ttfamily \#include $<$nuttx/arch.\+h$>$}\newline
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+static uint64\+\_\+t \hyperlink{system_2nuttx_2io_8c_a7e9b9f945aa893c324ce810fd1754b81}{metal\+\_\+io\+\_\+read\+\_\+} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, unsigned long offset, \hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1b}{memory\+\_\+order} order, int width)
+\item 
+static void \hyperlink{system_2nuttx_2io_8c_a3d1d8adbcd6811514a343b75afd88ecb}{metal\+\_\+io\+\_\+write\+\_\+} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, unsigned long offset, uint64\+\_\+t value, \hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1b}{memory\+\_\+order} order, int width)
+\item 
+static int \hyperlink{system_2nuttx_2io_8c_a0593e41f9aa9bab74b745dbe482e3d43}{metal\+\_\+io\+\_\+block\+\_\+read\+\_\+} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, unsigned long offset, void $\ast$\hyperlink{compiler_2iar_2compiler_8h_a080abdcb9c02438f1cd2bb707af25af8}{restrict} dst, \hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1b}{memory\+\_\+order} order, int len)
+\item 
+static int \hyperlink{system_2nuttx_2io_8c_a8e74f392d0c0aba1bfdc4f75014278b1}{metal\+\_\+io\+\_\+block\+\_\+write\+\_\+} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, unsigned long offset, const void $\ast$\hyperlink{compiler_2iar_2compiler_8h_a080abdcb9c02438f1cd2bb707af25af8}{restrict} src, \hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1b}{memory\+\_\+order} order, int len)
+\item 
+static void \hyperlink{system_2nuttx_2io_8c_aee811abbcb929b06a49340d68ff88a7f}{metal\+\_\+io\+\_\+block\+\_\+set\+\_\+} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, unsigned long offset, unsigned char value, \hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1b}{memory\+\_\+order} order, int len)
+\item 
+static void \hyperlink{system_2nuttx_2io_8c_aeabdd9cdd9d55d1a33e00c77a863635f}{metal\+\_\+io\+\_\+close\+\_\+} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io)
+\item 
+static \hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t} \hyperlink{system_2nuttx_2io_8c_ad2e7d1cb4feb911c454c3c7359073d9d}{metal\+\_\+io\+\_\+offset\+\_\+to\+\_\+phys\+\_\+} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, unsigned long offset)
+\item 
+static unsigned long \hyperlink{system_2nuttx_2io_8c_a3388568bc47bd8300f39bbb5f70621d6}{metal\+\_\+io\+\_\+phys\+\_\+to\+\_\+offset\+\_\+} (struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$io, \hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t} phys)
+\item 
+struct \hyperlink{structmetal__io__ops}{metal\+\_\+io\+\_\+ops} $\ast$ \hyperlink{system_2nuttx_2io_8c_a315701f308f7df3a6f87574b36be354f}{metal\+\_\+io\+\_\+get\+\_\+ops} (void)
+\begin{DoxyCompactList}\small\item\em Get the default global io ops. \end{DoxyCompactList}\item 
+struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$ \hyperlink{system_2nuttx_2io_8c_a17cf88d171a0d4b1bead512cd8b8e255}{metal\+\_\+io\+\_\+get\+\_\+region} (void)
+\begin{DoxyCompactList}\small\item\em Get the default global io region. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t} \hyperlink{system_2nuttx_2io_8c_a5ffdedfa11ebef9305f511b90ae5d9bb}{metal\+\_\+io\+\_\+phys\+\_\+start\+\_\+}
+\item 
+static struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} \hyperlink{system_2nuttx_2io_8c_a7606f5b17ae71385edb0c0845a01f61c}{metal\+\_\+io\+\_\+region\+\_\+}
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{system_2nuttx_2io_8c_a0593e41f9aa9bab74b745dbe482e3d43}\label{system_2nuttx_2io_8c_a0593e41f9aa9bab74b745dbe482e3d43}} 
+\index{system/nuttx/io.\+c@{system/nuttx/io.\+c}!metal\+\_\+io\+\_\+block\+\_\+read\+\_\+@{metal\+\_\+io\+\_\+block\+\_\+read\+\_\+}}
+\index{metal\+\_\+io\+\_\+block\+\_\+read\+\_\+@{metal\+\_\+io\+\_\+block\+\_\+read\+\_\+}!system/nuttx/io.\+c@{system/nuttx/io.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+io\+\_\+block\+\_\+read\+\_\+()}{metal\_io\_block\_read\_()}}
+{\footnotesize\ttfamily static int metal\+\_\+io\+\_\+block\+\_\+read\+\_\+ (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$}]{io,  }\item[{unsigned long}]{offset,  }\item[{void $\ast$\hyperlink{compiler_2iar_2compiler_8h_a080abdcb9c02438f1cd2bb707af25af8}{restrict}}]{dst,  }\item[{\hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1b}{memory\+\_\+order}}]{order,  }\item[{int}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2nuttx_2io_8c_aee811abbcb929b06a49340d68ff88a7f}\label{system_2nuttx_2io_8c_aee811abbcb929b06a49340d68ff88a7f}} 
+\index{system/nuttx/io.\+c@{system/nuttx/io.\+c}!metal\+\_\+io\+\_\+block\+\_\+set\+\_\+@{metal\+\_\+io\+\_\+block\+\_\+set\+\_\+}}
+\index{metal\+\_\+io\+\_\+block\+\_\+set\+\_\+@{metal\+\_\+io\+\_\+block\+\_\+set\+\_\+}!system/nuttx/io.\+c@{system/nuttx/io.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+io\+\_\+block\+\_\+set\+\_\+()}{metal\_io\_block\_set\_()}}
+{\footnotesize\ttfamily static void metal\+\_\+io\+\_\+block\+\_\+set\+\_\+ (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$}]{io,  }\item[{unsigned long}]{offset,  }\item[{unsigned char}]{value,  }\item[{\hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1b}{memory\+\_\+order}}]{order,  }\item[{int}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2nuttx_2io_8c_a8e74f392d0c0aba1bfdc4f75014278b1}\label{system_2nuttx_2io_8c_a8e74f392d0c0aba1bfdc4f75014278b1}} 
+\index{system/nuttx/io.\+c@{system/nuttx/io.\+c}!metal\+\_\+io\+\_\+block\+\_\+write\+\_\+@{metal\+\_\+io\+\_\+block\+\_\+write\+\_\+}}
+\index{metal\+\_\+io\+\_\+block\+\_\+write\+\_\+@{metal\+\_\+io\+\_\+block\+\_\+write\+\_\+}!system/nuttx/io.\+c@{system/nuttx/io.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+io\+\_\+block\+\_\+write\+\_\+()}{metal\_io\_block\_write\_()}}
+{\footnotesize\ttfamily static int metal\+\_\+io\+\_\+block\+\_\+write\+\_\+ (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$}]{io,  }\item[{unsigned long}]{offset,  }\item[{const void $\ast$\hyperlink{compiler_2iar_2compiler_8h_a080abdcb9c02438f1cd2bb707af25af8}{restrict}}]{src,  }\item[{\hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1b}{memory\+\_\+order}}]{order,  }\item[{int}]{len }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2nuttx_2io_8c_aeabdd9cdd9d55d1a33e00c77a863635f}\label{system_2nuttx_2io_8c_aeabdd9cdd9d55d1a33e00c77a863635f}} 
+\index{system/nuttx/io.\+c@{system/nuttx/io.\+c}!metal\+\_\+io\+\_\+close\+\_\+@{metal\+\_\+io\+\_\+close\+\_\+}}
+\index{metal\+\_\+io\+\_\+close\+\_\+@{metal\+\_\+io\+\_\+close\+\_\+}!system/nuttx/io.\+c@{system/nuttx/io.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+io\+\_\+close\+\_\+()}{metal\_io\_close\_()}}
+{\footnotesize\ttfamily static void metal\+\_\+io\+\_\+close\+\_\+ (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$}]{io }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2nuttx_2io_8c_a315701f308f7df3a6f87574b36be354f}\label{system_2nuttx_2io_8c_a315701f308f7df3a6f87574b36be354f}} 
+\index{system/nuttx/io.\+c@{system/nuttx/io.\+c}!metal\+\_\+io\+\_\+get\+\_\+ops@{metal\+\_\+io\+\_\+get\+\_\+ops}}
+\index{metal\+\_\+io\+\_\+get\+\_\+ops@{metal\+\_\+io\+\_\+get\+\_\+ops}!system/nuttx/io.\+c@{system/nuttx/io.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+io\+\_\+get\+\_\+ops()}{metal\_io\_get\_ops()}}
+{\footnotesize\ttfamily struct \hyperlink{structmetal__io__ops}{metal\+\_\+io\+\_\+ops}$\ast$ metal\+\_\+io\+\_\+get\+\_\+ops (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Get the default global io ops. 
+
+\begin{DoxyReturn}{Returns}
+an io ops. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{system_2nuttx_2io_8c_a17cf88d171a0d4b1bead512cd8b8e255}\label{system_2nuttx_2io_8c_a17cf88d171a0d4b1bead512cd8b8e255}} 
+\index{system/nuttx/io.\+c@{system/nuttx/io.\+c}!metal\+\_\+io\+\_\+get\+\_\+region@{metal\+\_\+io\+\_\+get\+\_\+region}}
+\index{metal\+\_\+io\+\_\+get\+\_\+region@{metal\+\_\+io\+\_\+get\+\_\+region}!system/nuttx/io.\+c@{system/nuttx/io.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+io\+\_\+get\+\_\+region()}{metal\_io\_get\_region()}}
+{\footnotesize\ttfamily struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region}$\ast$ metal\+\_\+io\+\_\+get\+\_\+region (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Get the default global io region. 
+
+\begin{DoxyReturn}{Returns}
+an io region. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{system_2nuttx_2io_8c_ad2e7d1cb4feb911c454c3c7359073d9d}\label{system_2nuttx_2io_8c_ad2e7d1cb4feb911c454c3c7359073d9d}} 
+\index{system/nuttx/io.\+c@{system/nuttx/io.\+c}!metal\+\_\+io\+\_\+offset\+\_\+to\+\_\+phys\+\_\+@{metal\+\_\+io\+\_\+offset\+\_\+to\+\_\+phys\+\_\+}}
+\index{metal\+\_\+io\+\_\+offset\+\_\+to\+\_\+phys\+\_\+@{metal\+\_\+io\+\_\+offset\+\_\+to\+\_\+phys\+\_\+}!system/nuttx/io.\+c@{system/nuttx/io.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+io\+\_\+offset\+\_\+to\+\_\+phys\+\_\+()}{metal\_io\_offset\_to\_phys\_()}}
+{\footnotesize\ttfamily static \hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t} metal\+\_\+io\+\_\+offset\+\_\+to\+\_\+phys\+\_\+ (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$}]{io,  }\item[{unsigned long}]{offset }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2nuttx_2io_8c_a3388568bc47bd8300f39bbb5f70621d6}\label{system_2nuttx_2io_8c_a3388568bc47bd8300f39bbb5f70621d6}} 
+\index{system/nuttx/io.\+c@{system/nuttx/io.\+c}!metal\+\_\+io\+\_\+phys\+\_\+to\+\_\+offset\+\_\+@{metal\+\_\+io\+\_\+phys\+\_\+to\+\_\+offset\+\_\+}}
+\index{metal\+\_\+io\+\_\+phys\+\_\+to\+\_\+offset\+\_\+@{metal\+\_\+io\+\_\+phys\+\_\+to\+\_\+offset\+\_\+}!system/nuttx/io.\+c@{system/nuttx/io.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+io\+\_\+phys\+\_\+to\+\_\+offset\+\_\+()}{metal\_io\_phys\_to\_offset\_()}}
+{\footnotesize\ttfamily static unsigned long metal\+\_\+io\+\_\+phys\+\_\+to\+\_\+offset\+\_\+ (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$}]{io,  }\item[{\hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t}}]{phys }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2nuttx_2io_8c_a7e9b9f945aa893c324ce810fd1754b81}\label{system_2nuttx_2io_8c_a7e9b9f945aa893c324ce810fd1754b81}} 
+\index{system/nuttx/io.\+c@{system/nuttx/io.\+c}!metal\+\_\+io\+\_\+read\+\_\+@{metal\+\_\+io\+\_\+read\+\_\+}}
+\index{metal\+\_\+io\+\_\+read\+\_\+@{metal\+\_\+io\+\_\+read\+\_\+}!system/nuttx/io.\+c@{system/nuttx/io.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+io\+\_\+read\+\_\+()}{metal\_io\_read\_()}}
+{\footnotesize\ttfamily static uint64\+\_\+t metal\+\_\+io\+\_\+read\+\_\+ (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$}]{io,  }\item[{unsigned long}]{offset,  }\item[{\hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1b}{memory\+\_\+order}}]{order,  }\item[{int}]{width }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2nuttx_2io_8c_a3d1d8adbcd6811514a343b75afd88ecb}\label{system_2nuttx_2io_8c_a3d1d8adbcd6811514a343b75afd88ecb}} 
+\index{system/nuttx/io.\+c@{system/nuttx/io.\+c}!metal\+\_\+io\+\_\+write\+\_\+@{metal\+\_\+io\+\_\+write\+\_\+}}
+\index{metal\+\_\+io\+\_\+write\+\_\+@{metal\+\_\+io\+\_\+write\+\_\+}!system/nuttx/io.\+c@{system/nuttx/io.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+io\+\_\+write\+\_\+()}{metal\_io\_write\_()}}
+{\footnotesize\ttfamily static void metal\+\_\+io\+\_\+write\+\_\+ (\begin{DoxyParamCaption}\item[{struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} $\ast$}]{io,  }\item[{unsigned long}]{offset,  }\item[{uint64\+\_\+t}]{value,  }\item[{\hyperlink{compiler_2gcc_2atomic_8h_a17c2de5ae768960284c047a320f17d1b}{memory\+\_\+order}}]{order,  }\item[{int}]{width }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{system_2nuttx_2io_8c_a5ffdedfa11ebef9305f511b90ae5d9bb}\label{system_2nuttx_2io_8c_a5ffdedfa11ebef9305f511b90ae5d9bb}} 
+\index{system/nuttx/io.\+c@{system/nuttx/io.\+c}!metal\+\_\+io\+\_\+phys\+\_\+start\+\_\+@{metal\+\_\+io\+\_\+phys\+\_\+start\+\_\+}}
+\index{metal\+\_\+io\+\_\+phys\+\_\+start\+\_\+@{metal\+\_\+io\+\_\+phys\+\_\+start\+\_\+}!system/nuttx/io.\+c@{system/nuttx/io.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+io\+\_\+phys\+\_\+start\+\_\+}{metal\_io\_phys\_start\_}}
+{\footnotesize\ttfamily \hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\+\_\+phys\+\_\+addr\+\_\+t} metal\+\_\+io\+\_\+phys\+\_\+start\+\_\+\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{system_2nuttx_2io_8c_a7606f5b17ae71385edb0c0845a01f61c}\label{system_2nuttx_2io_8c_a7606f5b17ae71385edb0c0845a01f61c}} 
+\index{system/nuttx/io.\+c@{system/nuttx/io.\+c}!metal\+\_\+io\+\_\+region\+\_\+@{metal\+\_\+io\+\_\+region\+\_\+}}
+\index{metal\+\_\+io\+\_\+region\+\_\+@{metal\+\_\+io\+\_\+region\+\_\+}!system/nuttx/io.\+c@{system/nuttx/io.\+c}}
+\subsubsection{\texorpdfstring{metal\+\_\+io\+\_\+region\+\_\+}{metal\_io\_region\_}}
+{\footnotesize\ttfamily struct \hyperlink{structmetal__io__region}{metal\+\_\+io\+\_\+region} metal\+\_\+io\+\_\+region\+\_\+\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}
+= \{
+        .virt = NULL,
+        .physmap = &\hyperlink{system_2nuttx_2io_8c_a5ffdedfa11ebef9305f511b90ae5d9bb}{metal\_io\_phys\_start\_},
+        .size = (size\_t)-1,
+        .page\_shift = \textcolor{keyword}{sizeof}(\hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\_phys\_addr\_t}) * CHAR\_BIT,
+        .page\_mask = (\hyperlink{group__system_gae024fa10b72199a3e26c29b6eb97df5d}{metal\_phys\_addr\_t})-1,
+        .mem\_flags = 0,
+        .ops = \{
+                .read = \hyperlink{system_2nuttx_2io_8c_a7e9b9f945aa893c324ce810fd1754b81}{metal\_io\_read\_},
+                .write = \hyperlink{system_2nuttx_2io_8c_a3d1d8adbcd6811514a343b75afd88ecb}{metal\_io\_write\_},
+                .block\_read = \hyperlink{system_2nuttx_2io_8c_a0593e41f9aa9bab74b745dbe482e3d43}{metal\_io\_block\_read\_},
+                .block\_write = \hyperlink{system_2nuttx_2io_8c_a8e74f392d0c0aba1bfdc4f75014278b1}{metal\_io\_block\_write\_},
+                .block\_set = \hyperlink{system_2nuttx_2io_8c_aee811abbcb929b06a49340d68ff88a7f}{metal\_io\_block\_set\_},
+                .close = \hyperlink{system_2nuttx_2io_8c_aeabdd9cdd9d55d1a33e00c77a863635f}{metal\_io\_close\_},
+                .offset\_to\_phys = \hyperlink{system_2nuttx_2io_8c_ad2e7d1cb4feb911c454c3c7359073d9d}{metal\_io\_offset\_to\_phys\_},
+                .phys\_to\_offset = \hyperlink{system_2nuttx_2io_8c_a3388568bc47bd8300f39bbb5f70621d6}{metal\_io\_phys\_to\_offset\_},
+        \},
+\}
+\end{DoxyCode}
