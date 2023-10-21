@@ -9,8 +9,8 @@
 #########################################################################
 
 SDK_ROOT    ?= ../../../../..
-CHIP        ?= dr1v90
-ELF         ?= UART_NONBLOCK
+CHIP        ?= dr1m90
+ELF         ?= UART_BLOCK
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
@@ -51,6 +51,9 @@ ASM_SRCS    :=
 CFLAGS := -O2 -g
 # CFLAGS += -DUSE_RTOS
 # CFLAGS += -DRTOS_RTTHREAD
+
+DOWNLOAD        ?= ocm
+
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;

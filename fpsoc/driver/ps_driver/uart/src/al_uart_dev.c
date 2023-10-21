@@ -177,19 +177,18 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct
 
     AL_ASSERT((Uart != AL_NULL && DevId < AL_UART_NUM_INSTANCE), AL_UART_ERR_ILLEGAL_PARAM);
 
-    /* soft reset uart bus */
-    if(Uart->State != AL_UART_STATE_NOT_INIT) {
-        if (Uart->BaseAddr == UART0__BASE_ADDR) {
-            AlUart_ll_ResetUart0Bus();
-        } else {
-            AlUart_ll_ResetUart1Bus();
-        }
-    }
-
     if (Uart->State & AL_UART_STATE_READY) {
         if (InitConfig == AL_NULL || IS_SAME_INITCONFIGS(Uart->Configs, *InitConfig)) {
             return AL_OK;
         } else {
+            /* soft reset uart bus */
+            if(Uart->State != AL_UART_STATE_NOT_INIT) {
+                if (Uart->BaseAddr == UART0__BASE_ADDR) {
+                    AlUart_ll_ResetUart0Bus();
+                } else {
+                    AlUart_ll_ResetUart1Bus();
+                }
+            }
             Uart->Configs = *InitConfig;
         }
     } else {
