@@ -15,7 +15,7 @@ NM      = ${Q}$(COMPILE_PREFIX)nm
 AS      = ${Q}$(COMPILE_PREFIX)as
 GDB     = ${Q}$(COMPILE_PREFIX)gdb
 SIZE    = ${Q}$(COMPILE_PREFIX)size
-ECHO  	= echo 
+ECHO  	= echo
 MAKE    = make
 
 ARFLAGS = -cr
@@ -108,16 +108,16 @@ endif
 ifeq ($(RTOS), freertos)
 PUBLIC_INC_DIR +=   $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel/include \
                     $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel/portable/GCC/ARM_CA53_64_BIT_SRE \
-					$(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel 
+                    $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel
 
-ifeq ($(AL_CHIP),dr1m90)					
+ifeq ($(AL_CHIP),dr1m90)
 PUBLIC_INC_DIR +=   $(CHIP_DIR)/../../../arch/arm/armv8/aarch64/cortex-a/inc \
-					$(CHIP_DIR)/../../../arch/common/inc \
-					$(CHIP_DIR)/../../../arch/arm/common/gic_v3/inc
-					
+                    $(CHIP_DIR)/../../../arch/common/inc \
+                    $(CHIP_DIR)/../../../arch/arm/common/gic_v3/inc
+
 else ifeq ($(AL_CHIP), dr1v90)
-PUBLIC_INC_DIR += 	
-					
+PUBLIC_INC_DIR +=
+
 
 endif
 
@@ -251,9 +251,9 @@ define assert_three_option
     $(if $(filter-out $1$2$3,$4),$(error$5must be $1 or $2 or $3))
 endef
 
-.PHONY: check 
+.PHONY: check
 
-check: 
+check:
 	$(call assert_booleans, DDR_2M_MAPPING ENABLE_MMU CODE_READONLY VERBOSE SILENT PFLOAT NOGC)
 	$(call assert_option_two_option, 32, 64, $(ARMv8_STATE), ARMv8_STATE)
 	$(call assert_two_option,EL1, EL3, $(ARMv8_EL), ARMv8_EL)
@@ -262,21 +262,21 @@ check:
 	$(call assert_two_option,dr1v90, dr1m90, $(AL_CHIP), AL_CHIP)
 	$(call assert_two_option,freertos, rtthread, $(RTOS), RTOS)
 	$(call assert_three_option,ocm,ddr,tcm $(DOWNLOAD), DOWNLOAD)
-	@$(ECHO) "all parameters have been checked"
+	$(ECHO) "all parameters have been checked"
 
 #########################################################################
 $(ASM_OBJS): %.o: % $(COMMON_PREREQS)
-	$(ECHO) "Compling: " $(notdir $@)
+	@$(ECHO) "Compling: " $(notdir $@)
 	$(CC) $(AL_CFLAGS) -c -o $@ $<
 
 #########################################################################
 $(C_OBJS): %.o: % $(COMMON_PREREQS)
-	$(ECHO) "Compling: " $(notdir $@)
+	@$(ECHO) "Compling: " $(notdir $@)
 	$(CC) $(AL_CFLAGS) -c -o $@ $<
 
 #########################################################################
 $(CXX_OBJS): %.o: % $(COMMON_PREREQS)
-	$(ECHO) "Compling: " $(notdir $@)
+	@$(ECHO) "Compling: " $(notdir $@)
 	$(CC) $(AL_CFLAGS) -c -o $@ $<
 
 
