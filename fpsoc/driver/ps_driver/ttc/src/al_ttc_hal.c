@@ -182,7 +182,6 @@ AL_S32 AlTtc_Hal_SetWaveformPolarity(AL_TTC_HalStruct *Handle, AL_TTC_ClkEdgeEnu
         return Ret;
     }
 
-
     return AL_OK;
 }
 

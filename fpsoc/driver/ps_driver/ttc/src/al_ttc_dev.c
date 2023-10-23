@@ -283,12 +283,12 @@ static AL_VOID AlTtc_Dev_EventTimerHandler(AL_TTC_DevStruct *Ttc)
 }
 
 
-#define AL_TTC_INTR_INTERVAL(Status)           (Status & (AL_TTC_IntrInterval << 1))
-#define AL_TTC_INTR_MATCH1(Status)             (Status & (AL_TTC_IntrMatch1 << 1))
-#define AL_TTC_INTR_MATCH2(Status)             (Status & (AL_TTC_IntrMatch2 << 1))
-#define AL_TTC_INTR_MATCH3(Status)             (Status & (AL_TTC_IntrMatch3 << 1))
-#define AL_TTC_INTR_OVERFLOW(Status)           (Status & (AL_TTC_IntrOverflow << 1))
-#define AL_TTC_INTR_EVENTTIMER(Status)         (Status & (AL_TTC_IntrEventTimer << 1))
+#define AL_TTC_INTR_INTERVAL(Status)           (Status & (BIT(AL_TTC_IntrInterval)))
+#define AL_TTC_INTR_MATCH1(Status)             (Status & (BIT(AL_TTC_IntrMatch1)))
+#define AL_TTC_INTR_MATCH2(Status)             (Status & (BIT(AL_TTC_IntrMatch2)))
+#define AL_TTC_INTR_MATCH3(Status)             (Status & (BIT(AL_TTC_IntrMatch3)))
+#define AL_TTC_INTR_OVERFLOW(Status)           (Status & (BIT(AL_TTC_IntrOverflow)))
+#define AL_TTC_INTR_EVENTTIMER(Status)         (Status & (BIT(AL_TTC_IntrEventTimer)))
 
 
 AL_VOID AlTtc_Dev_IntrHandler(AL_VOID *Instance)

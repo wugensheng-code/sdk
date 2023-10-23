@@ -19,7 +19,7 @@ COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
 BOARD_DIR  ?= $(SDK_ROOT)/solutions/boards/
-BOARD_NAME ?= board_dr1x90_emulation
+BOARD_NAME ?= board_dr1x90_ad101_v10
 
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
@@ -49,7 +49,7 @@ ASM_SRCS    :=
 # 3. CFLAGS
 #########################################################################
 CFLAGS := -O2 -g
-CFLAGS += -DAL_BRINGUP -DAL_OSC_33 -DAL_CLK_CONFIG -DAL_DCBOARD_TTC
+#CFLAGS += -DAL_BRINGUP -DAL_OSC_33 -DAL_CLK_CONFIG -DAL_DCBOARD_TTC
 # CFLAGS += -DUSE_RTOS
 # CFLAGS += -DRTOS_RTTHREAD
 
@@ -57,7 +57,7 @@ CFLAGS += -DAL_BRINGUP -DAL_OSC_33 -DAL_CLK_CONFIG -DAL_DCBOARD_TTC
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
+PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile

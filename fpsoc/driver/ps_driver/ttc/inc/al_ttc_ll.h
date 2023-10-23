@@ -195,12 +195,12 @@ static inline AL_VOID AlTtc_ll_SetMatchVal(AL_REG BaseAddr, AL_U32 DevId, AL_TTC
 
 static inline AL_VOID AlTtc_ll_EnableIntr(AL_REG BaseAddr, AL_TTC_IntrTypeEnum IntrType)
 {
-    AL_REG32_SET_BIT(BaseAddr + TTC__IRQ_EN_REG_1__OFFSET, TTC__IRQ_EN_REG_1__IEN__SHIFT, IntrType << 1);
+    AL_REG32_SET_BIT(BaseAddr + TTC__IRQ_EN_REG_1__OFFSET, IntrType, AL_TRUE);
 }
 
 static inline AL_VOID AlTtc_ll_DisableIntr(AL_REG BaseAddr, AL_TTC_IntrTypeEnum IntrType)
 {
-    AL_REG32_SET_BIT(BaseAddr + TTC__IRQ_EN_REG_1__OFFSET, TTC__IRQ_EN_REG_1__IEN__SHIFT, IntrType << 0);
+    AL_REG32_SET_BIT(BaseAddr + TTC__IRQ_EN_REG_1__OFFSET, IntrType, AL_FALSE);
 }
 
 static inline AL_VOID AlTtc_ll_DisableAllIntr(AL_REG BaseAddr)
