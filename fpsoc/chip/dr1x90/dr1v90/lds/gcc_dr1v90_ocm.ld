@@ -10,7 +10,7 @@ ENTRY( _start )
 
 MEMORY
 {
-  ilm (rxa!w) : ORIGIN = 0x61000000, LENGTH = 256K
+  ilm (rxa!w) : ORIGIN = 0x61000000, LENGTH = 252K
 }
 
 SECTIONS
