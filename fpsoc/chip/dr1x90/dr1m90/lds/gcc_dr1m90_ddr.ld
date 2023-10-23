@@ -15,7 +15,7 @@ MEMORY
 
 SECTIONS
 {
-	__stack_size = DEFINED(__stack_size) ? __stack_size : 10M;
+	__stack_size = DEFINED(__stack_size) ? __stack_size : 6M;
 	__async_print_ring_buf_size = DEFINED(async_print_ring_buf_size) ? async_print_ring_buf_size : 1M;
 	/* all text segment = startup64.o data segment + others text segment */
 	.text :
@@ -132,6 +132,7 @@ SECTIONS
 	  . = ALIGN(4096);
 	.cli_section :
 	{
+		. = ALIGN(4096);
 		_cli_section_start = .;
 		KEEP(*(cli_section))
 		_cli_section_end   = .;
@@ -140,12 +141,14 @@ SECTIONS
 	. = ALIGN(4096);
 	.unity_section :
 	{
+		. = ALIGN(4096);
 		_unity_test_start = .;
 		KEEP(*(unity_section))
 		_unity_test_end   = .;
 	}  > ram AT>ram
 
 	/* all data segment */
+	. = ALIGN(16);
 	.data :
 	{
 		. = ALIGN(16);
@@ -154,6 +157,7 @@ SECTIONS
 		PROVIDE(_data_end = .);
 	}  > ram AT>ram
 
+	. = ALIGN(2M);
 	.noncacheable (NOLOAD):
 	{
 		. = ALIGN(2M);
@@ -163,6 +167,7 @@ SECTIONS
 		. = ALIGN(2M);
 	}  > ram AT>ram
 
+	. = ALIGN(64);
 	.async_print_ring_buf (NOLOAD):
 	{
 		. = ALIGN(64);
@@ -172,6 +177,7 @@ SECTIONS
 		. = ALIGN(64);
 	}  > ram AT>ram
 
+	. = ALIGN(16);
 	/* all bss segment */
 	.bss (NOLOAD):
 	{
@@ -180,6 +186,7 @@ SECTIONS
 		*(*bss .bss*)
 		*(COMMON)
 		PROVIDE(_bss_end = .);
+		. = ALIGN(16);
 	}  > ram AT>ram
 
 	/* end */
@@ -187,13 +194,15 @@ SECTIONS
 	_end = .;
 	_heap_start = .;
 
-	.stack ORIGIN(ram) + LENGTH(ram) - __stack_size (NOLOAD) :
+	.stack ORIGIN(ram) + LENGTH(ram) - __stack_size:
 	{
+		. = ALIGN(16);
 		PROVIDE(_heap_end = .);
 		PROVIDE(stack_start = .);
 		. = __stack_size;
 		PROVIDE(stack_top = .);
 		PROVIDE(_sp = .);
+		. = ALIGN(16);
 
 	} > ram AT>ram
 }
