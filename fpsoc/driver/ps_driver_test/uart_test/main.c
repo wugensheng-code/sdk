@@ -10,6 +10,7 @@ static AL_S32 AlUart_Test_SendDataPolling(AL_VOID);
 static AL_S32 AlUart_Test_SendDataBlock(AL_VOID);
 static AL_S32 AlUart_Test_RecvAndSendBlock(AL_VOID);
 static AL_S32 AlUart_Test_RecvAndSendNonBlock(AL_VOID);
+static AL_S32 AlUart_Test_UartAutoFlowControl(AL_VOID);
 
 AL_S32 main(AL_VOID)
 {
@@ -49,6 +50,14 @@ AL_S32 main(AL_VOID)
     }
 #endif
 
+#if CONFIG_AlUart_Test_UartAutoFlowControl_TEST
+    AL_LOG(AL_LOG_LEVEL_INFO, "Use uart0 and uart1 for auto flow central testing...\r\n");
+    AL_S32 Ret = AlUart_Test_UartAutoFlowControl();
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Uart AutoFlowControl test error\r\n");
+        return Ret;
+    }
+#endif
     while (1);
 }
 
@@ -181,6 +190,51 @@ static AL_S32 AlUart_Test_RecvAndSendNonBlock(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_INFO, "\r\n");
     }
 
+}
+
+static AL_S32 AlUart_Test_UartAutoFlowControl(AL_VOID)
+{
+    AL_UART_HalStruct *UartHandle0;
+    AL_UART_HalStruct *UartHandle1;
+    AL_U32 RecvSize;
+    AL_U32 Index;
+
+    AL_UART_InitStruct UART_InitStruct_Auto = {
+        .BaudRate           = 115200,
+        .Parity             = AL_UART_NO_PARITY,
+        .WordLength         = AL_UART_CHAR_8BITS,
+        .StopBits           = AL_UART_STOP_1BIT,
+        .CharTimeoutEnable  = AL_TRUE,
+        .HwFlowCtl          = AL_TRUE,
+    };
+
+    AL_GPIO_HalStruct *GPIO;
+
+    AlGpio_Hal_Init(&GPIO, 0, AL_NULL);
+
+    for (Index = 0; Index < BUF_SIZE; Index++) {
+        SendBuffer[Index] = '0' + Index;
+        RecvBuffer[Index] = 0;
+    }
+
+    AlUart_Hal_Init(&UartHandle0, 0, &UART_InitStruct_Auto, AL_NULL);
+    AlUart_Hal_Init(&UartHandle1, 1, &UART_InitStruct_Auto, AL_NULL);
 
 
+    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
+
+    AlUart_Hal_SendDataPolling(UartHandle0, SendBuffer, BUF_SIZE);
+    AlUart_Hal_RecvDataPolling(UartHandle1, RecvBuffer, BUF_SIZE);
+
+
+    /* If PS-LED is lighting, uart0 and uart1 AutoFlowControl test is success */
+    for (Index = 0; Index < BUF_SIZE; Index++) {
+        if (SendBuffer[Index] != RecvBuffer[Index]) {
+            return -1;
+        } else {
+            AlGpio_Hal_WritePin(GPIO, 14, 0x1);
+        }
+    }
+
+    return 0;
 }

@@ -20,15 +20,19 @@ extern "C" {
 #endif
 
 /***************************** Include Files *********************************/
-#include "al_uart_hal.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "al_uart_hal.h"
+#include "al_gpio_hal.h"
 
 /************************** Constant Definitions *****************************/
 #define BUF_SIZE    0x10
 #define AL_UART_TIME_OUT_MS 10000
 #define AL_UART_DEVID 1
+
+AL_U8 SendBuffer[BUF_SIZE];	/* Buffer for Transmitting Data */
+AL_U8 RecvBuffer[BUF_SIZE];	/* Buffer for Receiving Data */
 
 
 /***************** Macros (Inline Functions) Definitions *********************/

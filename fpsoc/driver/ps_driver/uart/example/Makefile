@@ -53,8 +53,6 @@ CFLAGS := -O2 -g
 # CFLAGS += -DUSE_RTOS
 # CFLAGS += -DRTOS_RTTHREAD
 
-DOWNLOAD        ?= ocm
-
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;

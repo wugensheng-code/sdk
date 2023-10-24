@@ -103,6 +103,16 @@ static inline AL_VOID AlUart_ll_SetFifo(AL_REG BaseAddr, AL_FUNCTION State)
     AL_REG32_SET_BIT(BaseAddr + UART__FCR__IIR__OFFSET, UART__FCR__IIR__FIFOE__IID__SHIFT, State);
 }
 
+static inline AL_VOID AlUart_ll_ResetRecvFifo(AL_REG BaseAddr)
+{
+    AL_REG32_SET_BIT(BaseAddr + UART__FCR__IIR__OFFSET, UART__FCR__IIR__RFIFOR__IID__SHIFT, AL_TRUE);
+}
+
+static inline AL_VOID AlUart_ll_ResetTransFifo(AL_REG BaseAddr)
+{
+    AL_REG32_SET_BIT(BaseAddr + UART__FCR__IIR__OFFSET, UART__FCR__IIR__XFIFOR__IID__SHIFT, AL_TRUE);
+}
+
 static inline AL_VOID AlUart_ll_SetTxFifoThr(AL_REG BaseAddr,AL_UART_TxFifoThrEnum FifoThr)
 {
     AL_REG32_SET_BITS(BaseAddr + UART__FCR__IIR__OFFSET, UART__FCR__IIR__TET__RSVD_IIR__SHIFT,
@@ -222,8 +232,8 @@ static inline AL_U32 AlUart_ll_GetBaudRate(AL_REG BaseAddr, AL_U32 InputClockHz)
 
 static inline AL_VOID AlUart_ll_SetAutoFlowCtl(AL_REG BaseAddr, AL_FUNCTION State)
 {
-    AL_REG32_SET_BIT(BaseAddr + UART__MCR__ADDR_OFFSET, UART__MCR__RTS__SHIFT, State);
     AL_REG32_SET_BIT(BaseAddr + UART__MCR__ADDR_OFFSET, UART__MCR__AFCE__SHIFT, State);
+    AL_REG32_SET_BIT(BaseAddr + UART__MCR__ADDR_OFFSET, UART__MCR__RTS__SHIFT, State);
 }
 
 static inline AL_VOID AlUart_ll_ResetUart0Bus()

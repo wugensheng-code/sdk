@@ -222,7 +222,9 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct
 
     /* step 4. set the FCR register to enable FIFOs */
     AlUart_ll_SetFifo(Uart->BaseAddr, AL_FUNC_ENABLE);
-    AlUart_ll_SetTxFifoThr(Uart->BaseAddr, AL_UART_TxFIFO_EMPTY);
+    AlUart_ll_ResetTransFifo(Uart->BaseAddr);
+    AlUart_ll_ResetRecvFifo(Uart->BaseAddr);
+    AlUart_ll_SetTxFifoThr(Uart->BaseAddr, AL_UART_TxFIFO_HALF_FULL);
     AlUart_ll_SetRxFifoThr(Uart->BaseAddr, AL_UART_RxFIFO_HALF_FULL);
 
     /* step 5. set IER register to enable interrupts */

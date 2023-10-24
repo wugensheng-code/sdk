@@ -75,7 +75,7 @@ static AL_S32 AlUart_Test_RecvAndSendNonBlock(AL_VOID)
 
     AL_S32 Ret = AlUart_Hal_Init(&UartHandle, AL_UART_DEVID, &UART_InitStruct, AL_NULL);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Uart Hal Init error:0x%x\r\n", Ret);
         return Ret;
     }
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);

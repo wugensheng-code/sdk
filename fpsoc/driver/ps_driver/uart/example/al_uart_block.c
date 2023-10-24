@@ -73,18 +73,9 @@ static AL_S32 AlUart_Test_RecvAndSendBlock(AL_VOID)
     AL_U8 *Data = (AL_U8 *)malloc(BUF_SIZE);
     memset(Data, 0, (sizeof(AL_U8) * BUF_SIZE));
 
-    AL_UART_InitStruct UART_InitStruct = {
-        .BaudRate           = 115200,
-        .Parity             = AL_UART_NO_PARITY,
-        .WordLength         = AL_UART_CHAR_8BITS,
-        .StopBits           = AL_UART_STOP_1BIT,
-        .HwFlowCtl          = AL_FALSE,
-        .CharTimeoutEnable  = AL_FALSE
-    };
-
     AL_S32 Ret = AlUart_Hal_Init(&UartHandle, AL_UART_DEVID, &UART_InitStruct, AL_NULL);
     if (Ret != AL_OK){
-        printf("AlUart_Hal_Init error\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Uart Hal Init error:0x%x\r\n", Ret);
         return Ret;
     }
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
@@ -92,7 +83,7 @@ static AL_S32 AlUart_Test_RecvAndSendBlock(AL_VOID)
     while (1) {
         Ret = AlUart_Hal_RecvDataBlock(UartHandle, Data, BUF_SIZE, &RecvSize, AL_UART_TIME_OUT_MS);
         if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "AlUart Receive data timeout or less that %d Bytes data", BUF_SIZE);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlUart Receive data timeout or less that %d Bytes data\r\n", BUF_SIZE);
             return Ret;
         }
         if (Ret == AL_OK) {
