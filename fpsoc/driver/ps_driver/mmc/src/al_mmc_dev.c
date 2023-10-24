@@ -1833,7 +1833,7 @@ static AL_S32 AlMmc_Dev_TransferConfig(AL_MMC_DevStruct *Dev)
 
 static AL_S32 AlMmc_Dev_SetUpAdma2DescTable(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkCnt)
 {
-    AL_ASSERT((Dev != AL_NULL) && (Buf != AL_NULL), AL_MMC_ERR_NULL_PTR);
+    AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
 
     AL_S32 Ret = AL_OK;
     AL_MMC_AdmaDescUnion *Desc = &Dev->AdmaDesc[0];
@@ -1897,7 +1897,7 @@ static AL_S32 AlMmc_Dev_SetUpAdma2DescTable(AL_MMC_DevStruct *Dev, AL_U8 *Buf, A
 
 static AL_S32 AlMmc_Dev_DmaSetUp(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkCnt)
 {
-    AL_ASSERT((Dev != AL_NULL) && (Buf != AL_NULL), AL_MMC_ERR_NULL_PTR);
+    AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
 
     AL_S32 Ret = AL_OK;
 
@@ -2013,7 +2013,7 @@ static AL_VOID AlMmc_Dev_CarryBlkData(AL_MMC_DevStruct *Dev, AL_U8 *Mem)
 
 static AL_S32 AlMmc_Dev_TransferNoDma(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkCnt)
 {
-    AL_ASSERT((Dev != AL_NULL) && (Buf != AL_NULL), AL_MMC_ERR_NULL_PTR);
+    AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
 
     AL_S32 Ret = AL_OK;
     volatile AL_MMC_IntrUnion IntrStat   = {0};
@@ -2068,7 +2068,7 @@ static AL_S32 AlMmc_Dev_TransferNoDma(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 
 
 static AL_S32 AlMmc_Dev_TransferData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkCnt)
 {
-    AL_ASSERT((Dev != AL_NULL) && (Buf != AL_NULL), AL_MMC_ERR_NULL_PTR);
+    AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
 
     AL_S32 Ret = AL_OK;
 
@@ -2091,7 +2091,7 @@ static AL_S32 AlMmc_Dev_TransferData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 B
 
 static AL_S32 AlMmc_Dev_WriteData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 Arg, AL_U32 BlkCnt)
 {
-    AL_ASSERT((Dev != AL_NULL) && (Buf != AL_NULL), AL_MMC_ERR_NULL_PTR);
+    AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
 
     AL_S32 Ret = AL_OK;
 
@@ -2185,7 +2185,7 @@ AL_S32 AlMmc_Dev_Write(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkOffset, AL_U
 
 AL_S32 AlMmc_Dev_ReadData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 Arg, AL_U32 BlkCnt)
 {
-    AL_ASSERT((Dev != AL_NULL) && (Buf != AL_NULL), AL_MMC_ERR_NULL_PTR);
+    AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
 
     AL_S32 Ret = AL_OK;
 
