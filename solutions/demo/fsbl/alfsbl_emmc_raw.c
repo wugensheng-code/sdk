@@ -28,7 +28,7 @@ static AL_MMC_InitStruct InitConfig = {
     .AutoGenAdmaTblEn   = AL_FUNC_DISABLE,
     .DmaBdary           = AL_MMC_BDARY_32K
 };
-static AL_U8 SharedBuffer[BLOCK_SIZE];
+static AL_U8 CACHE_LINE_ALIGN SharedBuffer[BLOCK_SIZE];
 
 uint32_t AlFsbl_EmmcRawInit(void)
 {
@@ -66,6 +66,7 @@ uint32_t AlFsbl_EmmcRawCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t L
                 goto END;
             }
             memcpy(pdestaddr, &SharedBuffer[firstblockoffset], firstblockbytes);
+            AlCache_FlushDcacheRange(pdestaddr, pdestaddr + firstblockbytes);
             pdestaddr += firstblockbytes;
         } else if (i == endblock) {
             status = AlMmc_Hal_ReadBlocked(Handle, SharedBuffer, i, 1, MMC_RD_WR_TIMEOUT_MS);
@@ -73,6 +74,7 @@ uint32_t AlFsbl_EmmcRawCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t L
                 goto END;
             }
             memcpy(pdestaddr, SharedBuffer, lastblockbytes);
+            AlCache_FlushDcacheRange(pdestaddr, pdestaddr + lastblockbytes);
             pdestaddr += lastblockbytes;
         } else {
             status = AlMmc_Hal_ReadBlocked(Handle, pdestaddr, i, (endblock - i), MMC_RD_WR_TIMEOUT_MS);
