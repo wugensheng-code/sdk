@@ -155,15 +155,15 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void *buff)
         {
         case GET_SECTOR_SIZE :
             // Get R/W sector size (WORD)
-            *(DWORD *)buff = Handle->Dev.CardInfo.BlkLen;
+            *(WORD *)buff = (WORD)(Handle->Dev.CardInfo.BlkLen);
             break;
         case GET_BLOCK_SIZE :
             // Get erase block size in unit of sector (DWORD)
-            *(DWORD *)buff = 1;
+            *(WORD *)buff = 1;
             break;
         case GET_SECTOR_COUNT:
             //*(DWORD * )buff = 1000;
-            *(DWORD *)buff = Handle->Dev.CardInfo.CardCap * 1024 / Handle->Dev.CardInfo.BlkLen;
+            *(DWORD *)buff = (DWORD)(Handle->Dev.CardInfo.CardCap * 1024 / Handle->Dev.CardInfo.BlkLen);
             break;
         case CTRL_SYNC :
             break;
