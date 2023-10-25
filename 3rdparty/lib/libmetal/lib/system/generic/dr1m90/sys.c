@@ -48,10 +48,12 @@ static uint32_t dr1m90_cache_line_size(void)
 void sys_irq_restore_enable(unsigned int flags)
 {
     UNUSED(flags); /* XXX FIXME */
+    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 }
 
 unsigned int sys_irq_save_disable(void)
 {
+    AlIntr_SetLocalInterrupt(AL_FUNC_DISABLE);
     return 0; /* XXX FIXME */
 }
 

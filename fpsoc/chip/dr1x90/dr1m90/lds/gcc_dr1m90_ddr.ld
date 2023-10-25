@@ -189,6 +189,15 @@ SECTIONS
 		. = ALIGN(16);
 	}  > ram AT>ram
 
+	/* section information for openamp rsc table */
+	.resource_table :
+	{
+		. = ALIGN(4);
+		PROVIDE(_resource_table_start = .);
+		*(.resource_table)
+		PROVIDE(_resource_table_end = .);
+	}  > ram AT>ram
+	
 	/* end */
 	. = ALIGN(16);
 	_end = .;

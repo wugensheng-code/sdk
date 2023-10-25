@@ -237,6 +237,8 @@ metal_io_read(struct metal_io_region *io, unsigned long offset,
 {
 	void *ptr = metal_io_virt(io, offset);
 
+	AlCache_InvalidateDcacheAll();
+	
 	if (io->ops.read)
 		return (*io->ops.read)(io, offset, order, width);
 	else if (ptr && sizeof(atomic_uchar) == width)
