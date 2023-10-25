@@ -209,13 +209,3 @@ __attribute__((weak)) int snprintf( char *buf, unsigned long count, const char *
         va_start( args, format );
         return print( &buf, format, args );
 }
-
-/* To keep linker happy. */
-__attribute__((weak)) int    write( int i, char* c, int n)
-{
-    (void)i;
-    (void)n;
-    (void)c;
-    return 0;
-}
-
