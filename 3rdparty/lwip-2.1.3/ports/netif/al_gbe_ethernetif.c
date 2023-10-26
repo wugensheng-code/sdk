@@ -68,6 +68,12 @@ extern volatile portBASE_TYPE xInsideISR;
 
 #endif /* !NO_SYS */
 
+/*
+  Only for BOARD_DR1X90_AD101_V10 board,
+  if it is other board, need to modify here.
+ */
+#define GBE_PHY_ADDR            (0)
+
 #ifdef ENABLE_MMU
 
 /* defined in the link script */
