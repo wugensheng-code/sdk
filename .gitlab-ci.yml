@@ -95,7 +95,7 @@ release-job:
     paths:
       - BM-fpsoc-sdk.tar.bz2
   script:
-    - tar -cvjf BM-fpsoc-sdk.tar.bz2 --exclude=./tools/ci --exclude=./fpsoc/driver/ps_driver_test --exclude=./fpsoc/utest  ./*
+    - tar -cvjf BM-fpsoc-sdk.tar.bz2 --exclude=./tools/ci --exclude=./fpsoc/driver/ps_driver_test --exclude=./fpsoc/utest --exclude=./solutions/demo/fsbl/simulation ./*
   release:
     tag_name: "$CI_COMMIT_TAG"
     description: "$CI_COMMIT_TAG"
