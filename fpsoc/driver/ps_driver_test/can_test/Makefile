@@ -9,6 +9,9 @@
 #########################################################################
 
 SDK_ROOT   ?= ../../../..
+CUR_DIR ?= ./
+
+
 CHIP       ?= dr1m90
 # RTOS       := rtthread
 
@@ -95,3 +98,8 @@ clean:
 
 cleanelf:
 	rm -rf *.bin *.dasm *.dump *.elf *.hex *.map *.verilog
+
+include $(SDK_ROOT)/tools/make/rules.mk
+
+
+

@@ -9,6 +9,8 @@
 #########################################################################
 
 SDK_ROOT   ?= ../../../..
+CUR_DIR		?= ./
+
 CHIP       ?= dr1m90
 
 ifeq ($(CHIP), dr1m90)
@@ -89,3 +91,8 @@ clean:
 
 cleanelf:
 	rm -rf *.bin *.dasm *.dump *.elf *.hex *.map *.verilog
+
+# include rules.mk
+include $(SDK_ROOT)/tools/make/rules.mk
+
+# vim: syntax=make

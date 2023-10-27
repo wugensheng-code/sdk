@@ -206,6 +206,16 @@ CLEAN_OBJS += $(TARGET).elf $(TARGET).map $(TARGET).bin $(TARGET).dump $(TARGET)
 REAL_CLEAN_OBJS = $(subst /,$(PS), $(CLEAN_OBJS))
 
 #########################################################################
+# Prerequesties
+COMMON_PREREQS +=	$(AL_SDK_ROOT)/tools/make/rules.mk 
+COMMON_PREREQS +=	$(AL_SDK_ROOT)/tools/make/config.mk 
+COMMON_PREREQS +=	$(AL_CUR_DIR)/Makefile
+COMMON_PREREQS +=   Makefile
+
+
+
+
+#########################################################################
 # target: build elf, or build libs
 #
 ifneq ($(TARGET),)
@@ -292,7 +302,6 @@ $(CXX_OBJS): %.o: % $(COMMON_PREREQS)
 	@$(ECHO) "Compling: " $(notdir $@)
 	$(CC) $(AL_CFLAGS) -c -o $@ $<
 
-
 #########################################################################
 #### if target is elf
 ####
@@ -371,6 +380,7 @@ lib.do.clean:
 
 lib: $(LIB_OUTPUT_DIR)/lib$(LIBNAME).a
 $(LIB_OUTPUT_DIR)/lib$(LIBNAME).a: $(ALL_OBJS)
+	@rm -f $@
 	@mkdir -p $(LIB_OUTPUT_DIR)
 	$(AR) $(ARFLAGS) $@ $(C_OBJS) $(ASM_OBJS)
 

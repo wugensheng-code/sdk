@@ -8,6 +8,7 @@
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
 #########################################################################
 CHIP        ?= dr1m90
+CUR_DIR		?= ./
 SDK_ROOT    ?= ../../../..
 PFLOAT      := 1
 
@@ -87,4 +88,6 @@ clean:
 
 cleanelf:
 	rm -rf *.bin *.dasm *.dump *.elf *.hex *.map *.verilog *.map
+
+include $(SDK_ROOT)/tools/make/rules.mk
 

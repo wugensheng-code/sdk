@@ -83,12 +83,11 @@ CFLAGS += -DARM_CORE_SLAVE
 endif
 endif
 
+
 CFLAGS += $(CPU_FEATURE)
 
 #########################################################################
 #
-$(shell find ./arch -name *.c | xargs touch)
-$(shell find ./chip -name *.c | xargs touch)
 
 #########################################################################
 # include rules

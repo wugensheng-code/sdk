@@ -8,6 +8,7 @@
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
 #########################################################################
 SDK_ROOT   ?= ../../../..
+CUR_DIR		?= ./
 
 CHIP       = dr1v90
 RTOS       := rtthread

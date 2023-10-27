@@ -26,6 +26,8 @@ endif
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
+CUR_DIR ?= ./
+
 SRC_DIR += $(sort $(dir $(foreach dir, $(shell find "./" -type d), $(wildcard $(dir)/*.c))))
 
 INC_DIR += $(sort $(dir $(foreach dir, $(shell find "./" -type d), $(wildcard $(dir)/*.h))))
