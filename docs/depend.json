@@ -711,22 +711,44 @@
 			}
 		},
 		"PS_DRIVER_ADC_V1_0": {
-			"ADC_INTR_V1_0": {
-				"name": "ADC_INTR_V1_0",
+			"ADC_ALARM_V1_0": {
+				"name": "ADC_ALARM_V1_0",
 				"version": "1.0",
 				"depends": [
-					"fpsoc/driver/ps_driver/adc/example/al_adc_intr.c",
+					"fpsoc/driver/ps_driver/adc/example/al_adc_alarm.c",
 					"PS_DRIVER_ADC_V1_0"
 				],
 				"description": "adc test",
 				"supportedOS": ["standalone"],
 				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			},
-			"ADC_POLLED_V1_0": {
-				"name": "ADC_POLLED_V1_0",
+			"ADC_CONTINUOUS_V1_0": {
+				"name": "ADC_CONTINUOUS_V1_0",
 				"version": "1.0",
 				"depends": [
-					"fpsoc/driver/ps_driver/adc/example/al_adc_polled.c",
+					"fpsoc/driver/ps_driver/adc/example/al_adc_continuous.c",
+					"PS_DRIVER_ADC_V1_0"
+				],
+				"description": "adc test",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"]
+			},
+			"ADC_SINGLE_CHANNEL_V1_0": {
+				"name": "ADC_SINGLE_CHANNEL_V1_0",
+				"version": "1.0",
+				"depends": [
+					"fpsoc/driver/ps_driver/adc/example/al_adc_single_channel.c",
+					"PS_DRIVER_ADC_V1_0"
+				],
+				"description": "adc test",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"]
+			},
+			"ADC_SINGLE_PASS_V1_0": {
+				"name": "ADC_SINGLE_PASS_V1_0",
+				"version": "1.0",
+				"depends": [
+					"fpsoc/driver/ps_driver/adc/example/al_adc_single_pass.c",
 					"PS_DRIVER_ADC_V1_0"
 				],
 				"description": "adc test",

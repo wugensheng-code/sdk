@@ -12,7 +12,7 @@ SDK_ROOT    ?= ../../../../..
 
 
 CHIP        ?= dr1m90
-ELF         ?= ADC_POLLED
+ELF         ?= ADC_SINGLE_PASS
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
@@ -21,7 +21,7 @@ COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
 BOARD_DIR  ?= $(SDK_ROOT)/solutions/boards/
-BOARD_NAME ?= board_dr1x90_emulation
+BOARD_NAME ?= board_dr1x90_ad101_v10
 
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
@@ -33,10 +33,14 @@ BOARD_NAME ?= board_dr1x90_emulation
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
-ifeq ($(ELF), ADC_POLLED)
-C_SRCS += al_adc_polled.c
+ifeq ($(ELF), ADC_SINGLE_CHANNEL)
+C_SRCS += al_adc_single_channel.c
+else ifeq ($(ELF), ADC_SINGLE_PASS)
+C_SRCS += al_adc_single_pass.c
+else ifeq ($(ELF), ADC_CONTINUOUS)
+C_SRCS += al_adc_continuous.c
 else
-C_SRCS += al_adc_intr.c
+C_SRCS += al_adc_alarm.c
 endif
 
 INC_DIR     += ./
@@ -70,10 +74,14 @@ PINMUX_MODE ?= PINMUX_MODE1
 #########################################################################
 # 5. define build target
 #########################################################################
-ifeq ($(ELF), ADC_POLLED)
-TARGET := fpsoc_adc_example_polled
+ifeq ($(ELF), ADC_SINGLE_CHANNEL)
+TARGET := fpsoc_adc_single_channel
+else ifeq ($(ELF), ADC_SINGLE_PASS)
+TARGET := fpsoc_adc_single_pass
+else  ifeq ($(ELF), ADC_CONTINUOUS)
+TARGET := fpsoc_adc_continuous
 else
-TARGET := fpsoc_adc_example_intr
+TARGET := fpsoc_adc_alarm
 endif
 
 ifneq ($(PINMUX_MODE),)

@@ -37,9 +37,8 @@ static AL_ADC_InitStruct AdcDefInitConfigs = {
     .Resolution              = AL_ADC_10BIT_MODE,
     .RefVoltag               = AL_ADC_REF_INTER_REF,
     .ClkSource               = AL_ADC_CLK_OSC_44MHz,
-    .ConvMode                = AL_ADC_CONTINUE_MODE,
-    .ExternalMux             = AL_ADC_NORMAL_MODE,
-    .MaxConvChanNum          = 7,
+    .ConvMode                = AL_ADC_CONTINUOUS_MODE,
+    .ConvChanNum             = 7,
 };
 
 /************************** Function Prototypes ******************************/
@@ -55,38 +54,30 @@ AL_S32 AlAdc_Dev_Init(AL_ADC_DevStruct *Adc, AL_U32 DevId, AL_ADC_InitStruct *In
     AdcHwConfig          = AlAdc_Dev_LookupConfig(DevId);
     Adc->DevId           = DevId;
     Adc->AdcBaseAddr     = AdcHwConfig->AdcBaseAddress;
-    Adc->GpBaseAddr      = AdcHwConfig->GpBaseAddress;
     Adc->IntrNum         = AdcHwConfig->IntrNum;
     Adc->Configs         = (InitConfig == AL_NULL) ? AdcDefInitConfigs : (*InitConfig);
 
-    /* Init PS-ADC Channel*/
+    /*********** Init PS-ADC ***********/
     AlAdc_ll_ResetPsAdc(Adc->AdcBaseAddr);
     AlAdc_ll_FlushCmdFifo(Adc->AdcBaseAddr);
     AlAdc_ll_FlushDataFifo(Adc->AdcBaseAddr);
 
-    AlAdc_ll_ClrPsAdcIntr(Adc->AdcBaseAddr);
-    AlAdc_ll_ClrDataFifoLth(Adc->AdcBaseAddr);
-    AlAdc_ll_ClrCmdFifoLth(Adc->AdcBaseAddr);
-    AlAdc_ll_ClrDataFifoGth(Adc->AdcBaseAddr);
-    AlAdc_ll_ClrCmdFifoGth(Adc->AdcBaseAddr);
-
-    AlAdc_ll_MaskAdcIntr(Adc->AdcBaseAddr, AL_FALSE);
-    AlAdc_ll_SetTckRate(Adc->AdcBaseAddr, 0);
+    AlAdc_ll_ClrAllPsAdcIntr(Adc->AdcBaseAddr);
     AlAdc_ll_EnablePsAdc(Adc->AdcBaseAddr, AL_TRUE);
 
-    /* Init adc module through the PS-ADC Channel*/
+    /*********** Init PL-ADC ***********/
     AL_ADC_PlReg_Cfg0 Cfg0;
     Cfg0.AdcSwReset = AL_ADC_SW_RELEASE;
     Cfg0.Enctr = 0;
     Cfg0.RefSel = Adc->Configs.RefVoltag;
     Cfg0.ResSel = Adc->Configs.Resolution;
     Cfg0.DiffEnable = Adc->Configs.InputSingal;
-    Cfg0.PhyExternalMux = Adc->Configs.ExternalMux;
+    Cfg0.PhyExternalMux = 0;
     Cfg0.AnalogMuxEn = AL_TRUE;
     Cfg0.RegAdcSocSel = 0;
     Cfg0.PhyExternalMuxGap = 0;
     AlAdc_ll_SetAdcCfg0Reg(Adc->AdcBaseAddr, Cfg0.RegData);
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "AdcCfg0 is %x\r\n", AlAdc_ll_ReadPlAdcReg(Adc->AdcBaseAddr, ADC_CONFIG0_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_INFO, "AdcCfg0 is %x\r\n", AlAdc_ll_ReadPlAdcReg(Adc->AdcBaseAddr, ADC_CONFIG0_OFFSET));
 
     /* Clear and Mask intr for for ADC channel */
     AL_ADC_PlReg_Cfg1 Cfg1;
@@ -99,7 +90,7 @@ AL_S32 AlAdc_Dev_Init(AL_ADC_DevStruct *Adc, AL_U32 DevId, AL_ADC_InitStruct *In
     Cfg1.IntrLth = AL_TRUE;
     Cfg1.IntrError = AL_TRUE;
     AlAdc_ll_SetAdcCfg1Reg(Adc->AdcBaseAddr, Cfg1.RegData);
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "AdcCfg1 is %x\r\n", AlAdc_ll_ReadPlAdcReg(Adc->AdcBaseAddr, ADC_CONFIG1_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_INFO, "AdcCfg1 is %x\r\n", AlAdc_ll_ReadPlAdcReg(Adc->AdcBaseAddr, ADC_CONFIG1_OFFSET));
 
     /* Set ADC Clock */
     AL_ADC_PlReg_Cfg2 Cfg2;
@@ -109,106 +100,36 @@ AL_S32 AlAdc_Dev_Init(AL_ADC_DevStruct *Adc, AL_U32 DevId, AL_ADC_InitStruct *In
     Cfg2.AdcClkGate = 0;
     Cfg2.AdcClkDiv = 0;
     AlAdc_ll_SetAdcCfg2Reg(Adc->AdcBaseAddr, Cfg2.RegData);
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "AdcCfg2 is %x\r\n", AlAdc_ll_ReadPlAdcReg(Adc->AdcBaseAddr, ADC_CONFIG2_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_INFO, "AdcCfg2 is %x\r\n", AlAdc_ll_ReadPlAdcReg(Adc->AdcBaseAddr, ADC_CONFIG2_OFFSET));
 
     /* Set ADC Conv Mode */
     AL_ADC_PlReg_Cfg3 Cfg3;
     Cfg3.ModeSel = Adc->Configs.ConvMode;
-    Cfg3.ChanSel = Adc->Configs.MaxConvChanNum;
+    Cfg3.ChanSel = Adc->Configs.ConvChanNum;
     Cfg3.ExternalChanSel = 0;
     Cfg3.RegAdcSoc = 0;
     AlAdc_ll_SetAdcCfg3Reg(Adc->AdcBaseAddr, Cfg3.RegData);
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "AdcCfg3 is %x\r\n", AlAdc_ll_ReadPlAdcReg(Adc->AdcBaseAddr, ADC_CONFIG3_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_INFO, "AdcCfg3 is %x\r\n", AlAdc_ll_ReadPlAdcReg(Adc->AdcBaseAddr, ADC_CONFIG3_OFFSET));
 
     return AL_OK;
 }
 
-AL_S32 AlAdc_Dev_SetIomuxForChan(AL_ADC_DevStruct *Adc, AL_ADC_ChannelCfg *ChannelCfg)
-{
-    AL_ASSERT(((Adc != AL_NULL) && (ChannelCfg != AL_NULL)), AL_ADC_ERR_ILLEGAL_PARAM);
-
-    switch (ChannelCfg->ChanNum)
-    {
-    case AL_ADC_CHAN0:
-        AlAdc_ll_SetIomuxForChan0(Adc->AdcBaseAddr, ChannelCfg->ChanIomux);
-        break;
-    case AL_ADC_CHAN1:
-        AlAdc_ll_SetIomuxForChan1(Adc->AdcBaseAddr, ChannelCfg->ChanIomux);
-        break;
-    case AL_ADC_CHAN2:
-        AlAdc_ll_SetIomuxForChan2(Adc->AdcBaseAddr, ChannelCfg->ChanIomux);
-        break;
-    case AL_ADC_CHAN3:
-        AlAdc_ll_SetIomuxForChan3(Adc->AdcBaseAddr, ChannelCfg->ChanIomux);
-        break;
-    case AL_ADC_CHAN4:
-        AlAdc_ll_SetIomuxForChan4(Adc->AdcBaseAddr, ChannelCfg->ChanIomux);
-        break;
-    case AL_ADC_CHAN5:
-        AlAdc_ll_SetIomuxForChan5(Adc->AdcBaseAddr, ChannelCfg->ChanIomux);
-        break;
-    case AL_ADC_CHAN6:
-        AlAdc_ll_SetIomuxForChan6(Adc->AdcBaseAddr, ChannelCfg->ChanIomux);
-        break;
-    case AL_ADC_CHAN7:
-        AlAdc_ll_SetIomuxForChan7(Adc->AdcBaseAddr, ChannelCfg->ChanIomux);
-        break;
-    default:
-        return AL_ADC_ERR_NOT_SUPPORT;
-        break;
-    }
-    return AL_OK;
-}
-
-AL_S32 AlAdc_Dev_SetChanThre(AL_ADC_DevStruct *Adc, AL_ADC_ChannelCfg *ChannelCfg)
-{
-    AL_ASSERT(((Adc != AL_NULL) && (ChannelCfg != AL_NULL)), AL_ADC_ERR_ILLEGAL_PARAM);
-
-    AlAdc_ll_SetAdcChanXLth(Adc->AdcBaseAddr, ChannelCfg->ChanNum, ChannelCfg->LthVal);
-    AlAdc_ll_SetAdcChanXGth(Adc->AdcBaseAddr, ChannelCfg->ChanNum, ChannelCfg->GthVal);
-
-    return AL_OK;
-}
-
-AL_S32 AlAdc_Dev_ClrAdcChanIntr(AL_ADC_DevStruct *Adc, AL_ADC_IntrtypeEnum IntrType)
+AL_S32 AlAdc_Dev_EnablePsAdcIntr(AL_ADC_DevStruct *Adc, AL_ADC_PsIntrTypeEnum IntrType, AL_BOOL State)
 {
     AL_ASSERT((Adc != AL_NULL), AL_ADC_ERR_ILLEGAL_PARAM);
-    AL_ASSERT((IntrType == AL_ADC_INTR_DONE ||
-               IntrType == AL_ADC_INTR_GTH ||
-               IntrType == AL_ADC_INTR_LTH ||
-               IntrType == AL_ADC_INTR_ERROR), AL_ADC_ERR_ILLEGAL_PARAM);
-
-    AlAdc_ll_ClrChanIntr(Adc->AdcBaseAddr, IntrType);
-
-    return AL_OK;
-}
-
-AL_S32 AlAdc_Dev_EnableChanIntr(AL_ADC_DevStruct *Adc, AL_ADC_IntrtypeEnum IntrType, AL_BOOL State)
-{
-    AL_ASSERT((Adc != AL_NULL), AL_ADC_ERR_ILLEGAL_PARAM);
-    AL_ASSERT((IntrType == AL_ADC_INTR_DONE ||
-               IntrType == AL_ADC_INTR_GTH ||
-               IntrType == AL_ADC_INTR_LTH ||
-               IntrType == AL_ADC_INTR_ERROR), AL_ADC_ERR_ILLEGAL_PARAM);
 
     if (State == AL_TRUE) {
-        AlAdc_ll_EnableChanIntr(Adc->AdcBaseAddr, IntrType);
+        AlAdc_ll_MaskPsAdcIntr(Adc->AdcBaseAddr, IntrType, AL_FALSE);
     } else {
-        AlAdc_ll_DisableChanIntr(Adc->AdcBaseAddr, IntrType);
+        AlAdc_ll_MaskPsAdcIntr(Adc->AdcBaseAddr, IntrType, AL_TRUE);
     }
-
 
     return AL_OK;
 }
 
-AL_VOID AlAdc_Dev_EnableAdc(AL_ADC_DevStruct *Adc)
+AL_VOID AlAdc_Dev_EnablePlAdc(AL_ADC_DevStruct *Adc, AL_BOOL State)
 {
-    AlAdc_ll_EnableAdc(Adc->AdcBaseAddr);
-}
-
-AL_VOID AlAdc_Dev_DisableAdc(AL_ADC_DevStruct *Adc)
-{
-    AlAdc_ll_DisableAdc(Adc->AdcBaseAddr);
+    AlAdc_ll_EnablePlAdc(Adc->AdcBaseAddr, State);
 }
 
 AL_VOID AlAdc_Dev_StartConv(AL_ADC_DevStruct *Adc)
@@ -221,10 +142,126 @@ AL_VOID AlAdc_Dev_StopConv(AL_ADC_DevStruct *Adc)
     AlAdc_ll_StopConv(Adc->AdcBaseAddr);
 }
 
+
+AL_S32 AlAdc_Dev_EnablePlAdcIntr(AL_ADC_DevStruct *Adc, AL_ADC_PlIntrTypeEnum IntrType, AL_BOOL State)
+{
+    AL_ASSERT((Adc != AL_NULL), AL_ADC_ERR_ILLEGAL_PARAM);
+    if (State == AL_TRUE) {
+        switch (IntrType)
+        {
+        case AL_ADC_INTR_DONE_PL:
+            AlAdc_ll_MaskPlAdcIntrDone(Adc->AdcBaseAddr, AL_FALSE);
+            break;
+        case AL_ADC_INTR_GTH_PL:
+            AlAdc_ll_MaskPlAdcIntrGth(Adc->AdcBaseAddr, AL_FALSE);
+            break;
+        case AL_ADC_INTR_LTH_PL:
+            AlAdc_ll_MaskPlAdcIntrLth(Adc->AdcBaseAddr, AL_FALSE);
+            break;
+        case AL_ADC_INTR_ERROR_PL:
+            AlAdc_ll_MaskPlAdcIntrError(Adc->AdcBaseAddr, AL_FALSE);
+            break;
+        default:
+            break;
+        }
+    } else {
+        switch (IntrType)
+        {
+        case AL_ADC_INTR_DONE_PL:
+            AlAdc_ll_MaskPlAdcIntrDone(Adc->AdcBaseAddr, AL_TRUE);
+            break;
+        case AL_ADC_INTR_GTH_PL:
+            AlAdc_ll_MaskPlAdcIntrGth(Adc->AdcBaseAddr, AL_TRUE);
+            break;
+        case AL_ADC_INTR_LTH_PL:
+            AlAdc_ll_MaskPlAdcIntrLth(Adc->AdcBaseAddr, AL_TRUE);
+            break;
+        case AL_ADC_INTR_ERROR_PL:
+            AlAdc_ll_MaskPlAdcIntrError(Adc->AdcBaseAddr, AL_TRUE);
+            break;
+        default:
+            break;
+        }
+    }
+    return AL_OK;
+}
+
+AL_S32 AlAdc_Dev_SetMuxForChan(AL_ADC_DevStruct *Adc, AL_ADC_ChanCfg *ChanCfg)
+{
+    AL_ASSERT(((Adc != AL_NULL) && (ChanCfg != AL_NULL)), AL_ADC_ERR_ILLEGAL_PARAM);
+
+    switch (ChanCfg->ChanNum)
+    {
+    case AL_ADC_CHAN0:
+        AlAdc_ll_SetMuxForChan0(Adc->AdcBaseAddr, ChanCfg->MuxForChan);
+        break;
+    case AL_ADC_CHAN1:
+        AlAdc_ll_SetMuxForChan1(Adc->AdcBaseAddr, ChanCfg->MuxForChan);
+        break;
+    case AL_ADC_CHAN2:
+        AlAdc_ll_SetMuxForChan2(Adc->AdcBaseAddr, ChanCfg->MuxForChan);
+        break;
+    case AL_ADC_CHAN3:
+        AlAdc_ll_SetMuxForChan3(Adc->AdcBaseAddr, ChanCfg->MuxForChan);
+        break;
+    case AL_ADC_CHAN4:
+        AlAdc_ll_SetMuxForChan4(Adc->AdcBaseAddr, ChanCfg->MuxForChan);
+        break;
+    case AL_ADC_CHAN5:
+        AlAdc_ll_SetMuxForChan5(Adc->AdcBaseAddr, ChanCfg->MuxForChan);
+        break;
+    case AL_ADC_CHAN6:
+        AlAdc_ll_SetMuxForChan6(Adc->AdcBaseAddr, ChanCfg->MuxForChan);
+        break;
+    case AL_ADC_CHAN7:
+        AlAdc_ll_SetMuxForChan7(Adc->AdcBaseAddr, ChanCfg->MuxForChan);
+        break;
+    default:
+        break;
+    }
+    return AL_OK;
+}
+
+AL_S32 AlAdc_Dev_SetThreForChan(AL_ADC_DevStruct *Adc, AL_ADC_ChanCfg *ChanCfg)
+{
+    AL_ASSERT(((Adc != AL_NULL) && (ChanCfg != AL_NULL)), AL_ADC_ERR_ILLEGAL_PARAM);
+
+    AlAdc_ll_SetAdcChanXLth(Adc->AdcBaseAddr, ChanCfg->ChanNum, ChanCfg->LthVal);
+    AlAdc_ll_SetAdcChanXGth(Adc->AdcBaseAddr, ChanCfg->ChanNum, ChanCfg->GthVal);
+
+    return AL_OK;
+}
+
+AL_S32 AlAdc_Dev_ClrPlAdcIntr(AL_ADC_DevStruct *Adc, AL_ADC_PlIntrTypeEnum IntrType)
+{
+    AL_ASSERT((Adc != AL_NULL), AL_ADC_ERR_ILLEGAL_PARAM);
+
+    switch (IntrType)
+    {
+    case AL_ADC_INTR_DONE_PL:
+        AlAdc_ll_ClrPlAdcIntrDone(Adc->AdcBaseAddr);
+        break;
+    case AL_ADC_INTR_GTH_PL:
+        AlAdc_ll_ClrPlAdcIntrGth(Adc->AdcBaseAddr);
+        break;
+    case AL_ADC_INTR_LTH_PL:
+        AlAdc_ll_ClrPlAdcIntrDone(Adc->AdcBaseAddr);
+        break;
+    case AL_ADC_INTR_ERROR_PL:
+        AlAdc_ll_ClrPlAdcIntrGth(Adc->AdcBaseAddr);
+        break;
+    default:
+        break;
+    }
+
+    return AL_OK;
+}
+
 AL_U16 AlAdc_Dev_GetAdcData(AL_ADC_DevStruct *Adc, AL_ADC_ChanEnum ChanNum)
 {
     while (1) {
-        if(AlAdc_ll_GetAdcFlag(Adc->AdcBaseAddr) & (1 << AL_ADC_FLAG_DONE)) {
+        AL_U16 TMP = AlAdc_ll_GetPlAdcIntrType(Adc->AdcBaseAddr);
+        if(TMP & BIT(AL_ADC_INTR_DONE_PL)) {
             Adc->AdcData->ChanNum = ChanNum;
             Adc->AdcData->ChanData = AlAdc_ll_GetAdcData(Adc->AdcBaseAddr, ChanNum);
             break;
@@ -239,21 +276,18 @@ static AL_VOID AlAdc_Dev_IntrDoneHandler(AL_ADC_DevStruct *Adc)
     AL_U32 Index;
     AL_ADC_EventStruct AdcEvent = {0};
 
-    AL_U16 AdcFlag = AlAdc_ll_GetAdcFlag(Adc->AdcBaseAddr);
-    for (Index = 0; Index <= Adc->Configs.MaxConvChanNum; Index++) {
-        if (AdcFlag & (1 << (Index + AL_ADC_FLAG_COMP_VC0))) {
-            Adc->AdcData[Index].ChanNum = Index;
-            Adc->AdcData[Index].ChanData = AlAdc_ll_GetAdcData(Adc->AdcBaseAddr, Index);
-            AdcEvent.EventData |= BIT(Index);
-        }
+    for (Index = 0; Index <= Adc->Configs.ConvChanNum; Index++) {
+        Adc->AdcData[Index].ChanNum = Index;
+        Adc->AdcData[Index].ChanData = AlAdc_ll_GetAdcData(Adc->AdcBaseAddr, Index);
+        AdcEvent.EventData |= BIT(Index);
     }
 
-    AdcEvent.Events = AL_ADC_EVENT_GETDATA_DONE;
+    AlAdc_ll_ClrPlAdcIntrDone(Adc->AdcBaseAddr);
+
+    AdcEvent.Events = AL_ADC_EVENT_DATA_DONE;
     if (Adc->EventCallBack) {
         (*Adc->EventCallBack)(AdcEvent, Adc->EventCallBackRef);
     }
-
-    AlAdc_ll_ClrChanIntr(Adc->AdcBaseAddr, AL_ADC_INTR_DONE);
 }
 
 static AL_VOID AlAdc_Dev_IntrGthHandler(AL_ADC_DevStruct *Adc)
@@ -262,7 +296,7 @@ static AL_VOID AlAdc_Dev_IntrGthHandler(AL_ADC_DevStruct *Adc)
     AL_ADC_EventStruct AdcEvent = {0};
 
     AL_U16 AdcFlag = AlAdc_ll_GetAdcFlag(Adc->AdcBaseAddr);
-    for (Index = 0; Index <= Adc->Configs.MaxConvChanNum; Index++) {
+    for (Index = 0; Index <= Adc->Configs.ConvChanNum; Index++) {
         if (AdcFlag & (1 << (Index + AL_ADC_FLAG_COMP_VC0))) {
             Adc->AdcData[Index].ChanNum = Index;
             Adc->AdcData[Index].ChanData = AlAdc_ll_GetAdcData(Adc->AdcBaseAddr, Index);
@@ -270,12 +304,12 @@ static AL_VOID AlAdc_Dev_IntrGthHandler(AL_ADC_DevStruct *Adc)
         }
     }
 
-    AdcEvent.Events = AL_ADC_EVENT_GETDATA_GTH;
+    AlAdc_ll_ClrPlAdcIntrGth(Adc->AdcBaseAddr);
+
+    AdcEvent.Events = AL_ADC_EVENT_DATA_GTH;
     if (Adc->EventCallBack) {
         (*Adc->EventCallBack)(AdcEvent, Adc->EventCallBackRef);
     }
-
-    AlAdc_ll_ClrChanIntr(Adc->AdcBaseAddr, AL_ADC_INTR_GTH);
 }
 
 static AL_VOID AlAdc_Dev_IntrLthHandler(AL_ADC_DevStruct *Adc)
@@ -284,7 +318,7 @@ static AL_VOID AlAdc_Dev_IntrLthHandler(AL_ADC_DevStruct *Adc)
     AL_ADC_EventStruct AdcEvent = {0};
 
     AL_U16 AdcFlag = AlAdc_ll_GetAdcFlag(Adc->AdcBaseAddr);
-    for (Index = 0; Index <= Adc->Configs.MaxConvChanNum; Index++) {
+    for (Index = 0; Index <= Adc->Configs.ConvChanNum; Index++) {
         if (AdcFlag & (1 << (Index + AL_ADC_FLAG_COMP_VC0))) {
             Adc->AdcData[Index].ChanNum = Index;
             Adc->AdcData[Index].ChanData = AlAdc_ll_GetAdcData(Adc->AdcBaseAddr, Index);
@@ -292,11 +326,12 @@ static AL_VOID AlAdc_Dev_IntrLthHandler(AL_ADC_DevStruct *Adc)
         }
     }
 
-    AdcEvent.Events = AL_ADC_EVENT_GETDATA_LTH;
+    AlAdc_ll_ClrPlAdcIntrLth(Adc->AdcBaseAddr);
+
+    AdcEvent.Events = AL_ADC_EVENT_DATA_LTH;
     if (Adc->EventCallBack) {
         (*Adc->EventCallBack)(AdcEvent, Adc->EventCallBackRef);
     }
-    AlAdc_ll_ClrChanIntr(Adc->AdcBaseAddr, AL_ADC_INTR_LTH);
 }
 
 static AL_VOID AlAdc_Dev_IntrErrorHandler(AL_ADC_DevStruct *Adc)
@@ -304,41 +339,43 @@ static AL_VOID AlAdc_Dev_IntrErrorHandler(AL_ADC_DevStruct *Adc)
     AL_U32 Index;
     AL_ADC_EventStruct AdcEvent = {0};
 
-    AL_U16 AdcFlag = AlAdc_ll_GetAdcFlag(Adc->AdcBaseAddr);
-    for (Index = 0; Index <= Adc->Configs.MaxConvChanNum; Index++) {
-        if (AdcFlag & (1 << (Index + AL_ADC_FLAG_COMP_VC0))) {
-            AdcEvent.EventData |= BIT(Index);
-        }
-    }
+    AlAdc_ll_ClrPlAdcIntrError(Adc->AdcBaseAddr);
 
-    AdcEvent.Events = AL_ADC_EVENT_ERROR;
+    AdcEvent.Events = AL_ADC_EVENT_DATA_ERROR;
     if (Adc->EventCallBack) {
         (*Adc->EventCallBack)(AdcEvent, Adc->EventCallBackRef);
     }
-    AlAdc_ll_ClrChanIntr(Adc->AdcBaseAddr, AL_ADC_INTR_ERROR);
 }
-
-
-#define AL_ADC_IS_INTR_DONE(Status)            (Status & (AL_ADC_INTR_DONE_BIT))
-#define AL_ADC_IS_INTR_GTH(Status)             (Status & (AL_ADC_INTR_GTH_BIT))
-#define AL_ADC_IS_INTR_LTH(Status)             (Status & (AL_ADC_INTR_LTH_BIT))
-#define AL_ADC_IS_INTR_ERROR(Status)           (Status & (AL_ADC_INTR_ERROR_BIT))
 
 AL_VOID AlAdc_Dev_IntrHandler(AL_VOID *Instance)
 {
     AL_ADC_DevStruct *Adc = (AL_ADC_DevStruct *)Instance;
-    AL_U16 IntrStatus = AlAdc_ll_GetAdcChanIntrType(Adc->AdcBaseAddr);
-    if (AL_ADC_IS_INTR_DONE(IntrStatus)) {
-        AlAdc_Dev_IntrDoneHandler(Adc);
-    }
-    if (AL_ADC_IS_INTR_GTH(IntrStatus)) {
-        AlAdc_Dev_IntrGthHandler(Adc);
-    }
-    if (AL_ADC_IS_INTR_LTH(IntrStatus)) {
-        AlAdc_Dev_IntrLthHandler(Adc);
-    }
-    if (AL_ADC_IS_INTR_ERROR(IntrStatus)) {
-        AlAdc_Dev_IntrErrorHandler(Adc);
+    AL_U32 PsAdcIntrStatus;
+    AL_U16 PlAdcIntrStatus;
+
+    /* Get PsAdc interrupts status */
+    PsAdcIntrStatus = AlAdc_ll_GetPsAdcIntrType(Adc->AdcBaseAddr);
+
+    if (PsAdcIntrStatus & BIT(AL_ADC_PLADC_INTR)) {
+
+        /* The interrupt about PlAdc */
+        PlAdcIntrStatus = AlAdc_ll_GetPlAdcIntrType(Adc->AdcBaseAddr);
+
+        /* Determine the interrupt type of PlAdc */
+        if (PlAdcIntrStatus & BIT(AL_ADC_INTR_DONE_PL)) {
+            AlAdc_Dev_IntrDoneHandler(Adc);
+        }
+        if (PlAdcIntrStatus & BIT(AL_ADC_INTR_GTH_PL)) {
+            AlAdc_Dev_IntrGthHandler(Adc);
+        }
+        if (PlAdcIntrStatus & BIT(AL_ADC_INTR_LTH_PL)) {
+            AlAdc_Dev_IntrLthHandler(Adc);
+        }
+        if (PlAdcIntrStatus & BIT(AL_ADC_INTR_ERROR_PL)) {
+            AlAdc_Dev_IntrErrorHandler(Adc);
+        }
+
+        AlAdc_ll_ClrPsAdcIntr(Adc->AdcBaseAddr, AL_ADC_PLADC_INTR);
     }
 }
 

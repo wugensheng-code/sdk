@@ -25,16 +25,13 @@ AL_VOID AlAdc_Hal_DefEventHandler(AL_ADC_EventStruct AdcEvent, AL_VOID *Callback
 {
     switch (AdcEvent.Events)
     {
-    case AL_ADC_EVENT_GETDATA_DONE:
-
+    case AL_ADC_EVENT_DATA_DONE:
         break;
-    case AL_ADC_EVENT_GETDATA_GTH:
-
+    case AL_ADC_EVENT_DATA_GTH:
         break;
-    case AL_ADC_EVENT_GETDATA_LTH:
-
+    case AL_ADC_EVENT_DATA_LTH:
         break;
-    case AL_ADC_EVENT_ERROR:
+    case AL_ADC_EVENT_DATA_ERROR:
         break;
     default:
         break;
@@ -43,7 +40,7 @@ AL_VOID AlAdc_Hal_DefEventHandler(AL_ADC_EventStruct AdcEvent, AL_VOID *Callback
 }
 
 AL_S32 AlAdc_Hal_Init(AL_ADC_HalStruct **Handle, AL_U32 DevId, AL_ADC_InitStruct *InitConfig,
-                       AL_ADC_ChannelCfg *ChannelCfg, AL_ADC_EventCallBack Callback)
+                       AL_ADC_ChanCfg *ChannelCfg, AL_ADC_EventCallBack Callback)
 {
     AL_S32 Ret;
     AL_U8 Index;
@@ -63,10 +60,17 @@ AL_S32 AlAdc_Hal_Init(AL_ADC_HalStruct **Handle, AL_U32 DevId, AL_ADC_InitStruct
         return Ret;
     }
 
-    for (Index = 0; Index <= (*Handle)->Dev.Configs.MaxConvChanNum; Index++) {
-        (*Handle)->Dev.ChannelCfg[Index] = ChannelCfg[Index];
-        (AL_VOID)AlAdc_Dev_SetIomuxForChan(&(*Handle)->Dev, &ChannelCfg[Index]);
-        (AL_VOID)AlAdc_Dev_SetChanThre(&(*Handle)->Dev, &ChannelCfg[Index]);
+    /* Set adc mux for channels and set the threshold for channels */
+    if (InitConfig->ConvMode == AL_ADC_SINGLE_CHANNEL_MODE) {
+        (*Handle)->Dev.ChanCfg[InitConfig->ConvChanNum] = ChannelCfg[0];
+        (AL_VOID)AlAdc_Dev_SetMuxForChan(&(*Handle)->Dev, &ChannelCfg[0]);
+        (AL_VOID)AlAdc_Dev_SetThreForChan(&(*Handle)->Dev, &ChannelCfg[0]);
+    } else {
+        for (Index = 0; Index <= (*Handle)->Dev.Configs.ConvChanNum; Index++) {
+            (*Handle)->Dev.ChanCfg[Index] = ChannelCfg[Index];
+            (AL_VOID)AlAdc_Dev_SetMuxForChan(&(*Handle)->Dev, &ChannelCfg[Index]);
+            (AL_VOID)AlAdc_Dev_SetThreForChan(&(*Handle)->Dev, &ChannelCfg[Index]);
+        }
     }
 
     (AL_VOID)AlIntr_RegHandler((*Handle)->Dev.IntrNum, AL_NULL, AlAdc_Dev_IntrHandler, &(*Handle)->Dev);
@@ -85,7 +89,7 @@ AL_S32 AlAdc_Hal_Init(AL_ADC_HalStruct **Handle, AL_U32 DevId, AL_ADC_InitStruct
     return Ret;
 }
 
-AL_S32 AlAdc_Hal_AdcStart(AL_ADC_HalStruct *Handle)
+AL_S32 AlAdc_Hal_AdcStart(AL_ADC_HalStruct *Handle, AL_U32 PlAdcFunc)
 {
     AL_S32 Ret;
 
@@ -96,7 +100,20 @@ AL_S32 AlAdc_Hal_AdcStart(AL_ADC_HalStruct *Handle)
         return Ret;
     }
 
-    AlAdc_Dev_EnableAdc(&Handle->Dev);
+    if (PlAdcFunc & AL_ADC_DATA_DONE) {
+        AlAdc_Dev_EnablePlAdcIntr(&Handle->Dev, AL_ADC_INTR_DONE_PL, AL_TRUE);
+    }
+    if (PlAdcFunc & AL_ADC_DATA_GTH) {
+        AlAdc_Dev_EnablePlAdcIntr(&Handle->Dev, AL_ADC_INTR_GTH_PL, AL_TRUE);
+    }
+    if (PlAdcFunc & AL_ADC_DATA_LTH) {
+        AlAdc_Dev_EnablePlAdcIntr(&Handle->Dev, AL_ADC_INTR_LTH_PL, AL_TRUE);
+    }
+    if (PlAdcFunc & AL_ADC_DATA_ERROR) {
+        AlAdc_Dev_EnablePlAdcIntr(&Handle->Dev, AL_ADC_INTR_ERROR_PL, AL_TRUE);
+    }
+
+    AlAdc_Dev_EnablePlAdc(&Handle->Dev, AL_TRUE);
     AlAdc_Dev_StartConv(&Handle->Dev);
 
     (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
@@ -115,15 +132,22 @@ AL_S32 AlAdc_Hal_AdcStop(AL_ADC_HalStruct *Handle)
         return Ret;
     }
 
-    AlAdc_Dev_DisableAdc(&Handle->Dev);
     AlAdc_Dev_StopConv(&Handle->Dev);
+
+    AlAdc_Dev_EnablePlAdcIntr(&Handle->Dev, AL_ADC_INTR_DONE_PL, AL_FALSE);
+    AlAdc_Dev_EnablePlAdcIntr(&Handle->Dev, AL_ADC_INTR_GTH_PL, AL_FALSE);
+    AlAdc_Dev_EnablePlAdcIntr(&Handle->Dev, AL_ADC_INTR_LTH_PL, AL_FALSE);
+    AlAdc_Dev_EnablePlAdcIntr(&Handle->Dev, AL_ADC_INTR_ERROR_PL, AL_FALSE);
+
+    AlAdc_Dev_EnablePlAdc(&Handle->Dev, AL_FALSE);
+
 
     (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return AL_OK;
 }
 
-AL_S32 AlAdc_Hal_AdcStartIntr(AL_ADC_HalStruct *Handle, AL_U8 IntrData)
+AL_S32 AlAdc_Hal_AdcStartIntr(AL_ADC_HalStruct *Handle, AL_U32 PlAdcFunc)
 {
     AL_S32 Ret;
 
@@ -134,20 +158,22 @@ AL_S32 AlAdc_Hal_AdcStartIntr(AL_ADC_HalStruct *Handle, AL_U8 IntrData)
         return Ret;
     }
 
-    if (IntrData & AL_ADC_INTR_DONE_BIT) {
-        AlAdc_Dev_EnableChanIntr(&Handle->Dev, AL_ADC_INTR_DONE, AL_TRUE);
+    AlAdc_Dev_EnablePsAdcIntr(&Handle->Dev, AL_ADC_PLADC_INTR, AL_TRUE);
+
+    if (PlAdcFunc & AL_ADC_DATA_DONE) {
+        AlAdc_Dev_EnablePlAdcIntr(&Handle->Dev, AL_ADC_INTR_DONE_PL, AL_TRUE);
     }
-    if (IntrData & AL_ADC_INTR_GTH_BIT) {
-        AlAdc_Dev_EnableChanIntr(&Handle->Dev, AL_ADC_INTR_GTH, AL_TRUE);
+    if (PlAdcFunc & AL_ADC_DATA_GTH) {
+        AlAdc_Dev_EnablePlAdcIntr(&Handle->Dev, AL_ADC_INTR_GTH_PL, AL_TRUE);
     }
-    if (IntrData & AL_ADC_INTR_LTH_BIT) {
-        AlAdc_Dev_EnableChanIntr(&Handle->Dev, AL_ADC_INTR_LTH, AL_TRUE);
+    if (PlAdcFunc & AL_ADC_DATA_LTH) {
+        AlAdc_Dev_EnablePlAdcIntr(&Handle->Dev, AL_ADC_INTR_LTH_PL, AL_TRUE);
     }
-    if (IntrData & AL_ADC_INTR_ERROR_BIT) {
-        AlAdc_Dev_EnableChanIntr(&Handle->Dev, AL_ADC_INTR_ERROR, AL_TRUE);
+    if (PlAdcFunc & AL_ADC_DATA_ERROR) {
+        AlAdc_Dev_EnablePlAdcIntr(&Handle->Dev, AL_ADC_INTR_ERROR_PL, AL_TRUE);
     }
 
-    AlAdc_Dev_EnableAdc(&Handle->Dev);
+    AlAdc_Dev_EnablePlAdc(&Handle->Dev, AL_TRUE);
     AlAdc_Dev_StartConv(&Handle->Dev);
 
     (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
@@ -155,7 +181,7 @@ AL_S32 AlAdc_Hal_AdcStartIntr(AL_ADC_HalStruct *Handle, AL_U8 IntrData)
     return AL_OK;
 }
 
-AL_S32 AlAdc_Hal_AdcStopIntr(AL_ADC_HalStruct *Handle, AL_U8 IntrData)
+AL_S32 AlAdc_Hal_AdcStopIntr(AL_ADC_HalStruct *Handle)
 {
     AL_S32 Ret;
 
@@ -166,32 +192,33 @@ AL_S32 AlAdc_Hal_AdcStopIntr(AL_ADC_HalStruct *Handle, AL_U8 IntrData)
         return Ret;
     }
 
-    if (IntrData & AL_ADC_INTR_DONE_BIT) {
-        AlAdc_Dev_EnableChanIntr(&Handle->Dev, AL_ADC_INTR_DONE, AL_FALSE);
-    }
-    if (IntrData & AL_ADC_INTR_GTH_BIT) {
-        AlAdc_Dev_EnableChanIntr(&Handle->Dev, AL_ADC_INTR_GTH, AL_FALSE);
-    }
-    if (IntrData & AL_ADC_INTR_LTH_BIT) {
-        AlAdc_Dev_EnableChanIntr(&Handle->Dev, AL_ADC_INTR_LTH, AL_FALSE);
-    }
-    if (IntrData & AL_ADC_INTR_ERROR_BIT) {
-        AlAdc_Dev_EnableChanIntr(&Handle->Dev, AL_ADC_INTR_ERROR, AL_FALSE);
-    }
+    AlAdc_Dev_EnablePsAdcIntr(&Handle->Dev, AL_ADC_PLADC_INTR, AL_FALSE);
 
-    AlAdc_Dev_DisableAdc(&Handle->Dev);
     AlAdc_Dev_StopConv(&Handle->Dev);
+
+    AlAdc_Dev_EnablePlAdcIntr(&Handle->Dev, AL_ADC_INTR_DONE_PL, AL_FALSE);
+    AlAdc_Dev_EnablePlAdcIntr(&Handle->Dev, AL_ADC_INTR_GTH_PL, AL_FALSE);
+    AlAdc_Dev_EnablePlAdcIntr(&Handle->Dev, AL_ADC_INTR_LTH_PL, AL_FALSE);
+    AlAdc_Dev_EnablePlAdcIntr(&Handle->Dev, AL_ADC_INTR_ERROR_PL, AL_FALSE);
+
+    AlAdc_Dev_EnablePlAdc(&Handle->Dev, AL_FALSE);
 
     (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
 
     return AL_OK;
 }
 
+AL_VOID AlAdc_Hal_ClrPlAdcIntr(AL_ADC_HalStruct *Handle, AL_ADC_PlIntrTypeEnum IntrType)
+{
+    AL_ASSERT((Handle != AL_NULL), AL_ADC_ERR_ILLEGAL_PARAM);
+
+    AlAdc_Dev_ClrPlAdcIntr(&Handle->Dev, IntrType);
+}
+
 AL_U16 AlAdc_Hal_GetAdcData(AL_ADC_HalStruct *Handle, AL_ADC_ChanEnum ChanNum)
 {
     return AlAdc_Dev_GetAdcData(&Handle->Dev, ChanNum);
 }
-
 
 AL_S32 AlAdc_Hal_IoCtl(AL_ADC_HalStruct *Handle, AL_ADC_IoCtlCmdEnum Cmd, AL_ADC_IoctlParamUnion *IoctlParam)
 {
