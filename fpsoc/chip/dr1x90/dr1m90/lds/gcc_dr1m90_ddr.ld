@@ -197,13 +197,13 @@ SECTIONS
 		*(.resource_table)
 		PROVIDE(_resource_table_end = .);
 	}  > ram AT>ram
-	
+
 	/* end */
 	. = ALIGN(16);
 	_end = .;
 	_heap_start = .;
 
-	.stack ORIGIN(ram) + LENGTH(ram) - __stack_size:
+	.stack (ORIGIN(ram) + LENGTH(ram) - __stack_size):
 	{
 		. = ALIGN(16);
 		PROVIDE(_heap_end = .);
