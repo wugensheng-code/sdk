@@ -1,7 +1,6 @@
 #########################################################################
 AL_CHIP         ?= $(CHIP)
 
-AL_CUR_DIR      ?= $(CUR_DIR)
 #########################################################################
 ## Available choices:
 ## ARMv8_STATE:     32,  64
@@ -86,7 +85,7 @@ LIB_OUTPUT_DIR  ?= $(AL_SDK_ROOT)/output
 
 AL_SDK_ROOT := $(abspath $(AL_SDK_ROOT))
 
-AL_CUR_DIR := $(abspath $(AL_CUR_DIR))
+AL_CUR_DIR ?= $(abspath ./)
 
 ifeq ($(AL_PLAT_DIR),)
 	AL_PLAT_DIR := $(patsubst %/soc_plat.h, %, $(wildcard $(AL_SDK_ROOT)/*/soc_plat.h))

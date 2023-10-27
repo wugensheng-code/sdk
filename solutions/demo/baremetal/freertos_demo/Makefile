@@ -9,7 +9,7 @@
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
 #########################################################################
 SDK_ROOT   ?= ../../../..
-CUR_DIR		?= ./
+
 
 CHIP       = dr1m90
 RTOS       := freertos

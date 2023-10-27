@@ -9,7 +9,6 @@
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
 #########################################################################
 SDK_ROOT   ?= ../..
-CUR_DIR 	?= ./
 AL_SDK_ROOT ?= $(SDK_ROOT)
 CHIP       ?= dr1m90
 

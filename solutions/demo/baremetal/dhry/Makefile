@@ -1,7 +1,7 @@
 
 # Set compilation tool chain
 SDK_ROOT   ?= ../../../..
-CUR_DIR		?= ./
+
 
 CHIP       ?= dr1m90
 

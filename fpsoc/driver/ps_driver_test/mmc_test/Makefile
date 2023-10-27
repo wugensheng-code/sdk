@@ -8,7 +8,7 @@
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
 #########################################################################
 CHIP        ?= dr1m90
-CUR_DIR		?= ./
+
 SDK_ROOT    ?= ../../../..
 PFLOAT      := 1
 
