@@ -53,13 +53,29 @@ static AL_U8 AL_CAN_DataLenInByteArray[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 2
 #define AL_CAN_MAX_FF_SEG_2     7
 #define AL_CAN_MAX_FF_SJW       7
 
-/*Intr state check*/
-#define AL_CAN_RECV_INTR(Status)    (Status & AL_CAN_INTR_RIF)
-#define AL_CAN_RB_INTR(Status)      (Status & (AL_CAN_INTR_RAFIF | AL_CAN_INTR_RFIF | \
-                                    AL_CAN_INTR_ROIF))
-#define AL_CAN_TRANS_INTR(Status)   (Status & (AL_CAN_INTR_TSIF | AL_CAN_INTR_TPIF))
-#define AL_CAN_ERR_INTR(Status)     (Status & (AL_CAN_INTR_AIF | AL_CAN_INTR_EIF | \
-                                    AL_CAN_INTR_BEIF | AL_CAN_INTR_ALIF | AL_CAN_INTR_EPIF))
+
+#define AL_CAN_INTR_AIF     BIT(8)
+#define AL_CAN_INTR_EIF     BIT(9)
+#define AL_CAN_INTR_TSIF    BIT(10)
+#define AL_CAN_INTR_TPIF    BIT(11)
+#define AL_CAN_INTR_RAFIF   BIT(12)
+#define AL_CAN_INTR_RFIF    BIT(13)
+#define AL_CAN_INTR_ROIF    BIT(14)
+#define AL_CAN_INTR_RIF     BIT(15)
+#define AL_CAN_INTR_BEIF    BIT(16)
+#define AL_CAN_INTR_ALIF    BIT(18)
+#define AL_CAN_INTR_EPIF    BIT(20)
+
+#define AL_CAN_RECV_INTR_MASK       (AL_CAN_INTR_RIF)
+#define AL_CAN_RB_INTR_MASK         (AL_CAN_INTR_RAFIF | AL_CAN_INTR_RFIF | AL_CAN_INTR_ROIF)
+#define AL_CAN_TRANS_INTR_MASK      (AL_CAN_INTR_TSIF | AL_CAN_INTR_TPIF)
+#define AL_CAN_ERR_INTR_MASK        (AL_CAN_INTR_AIF | AL_CAN_INTR_EIF | \
+                                    AL_CAN_INTR_BEIF | AL_CAN_INTR_ALIF | AL_CAN_INTR_EPIF)
+
+#define AL_CAN_RECV_INTR(Status)    (Status & AL_CAN_RECV_INTR_MASK)
+#define AL_CAN_RB_INTR(Status)      (Status & AL_CAN_RB_INTR_MASK)
+#define AL_CAN_TRANS_INTR(Status)   (Status & AL_CAN_TRANS_INTR_MASK)
+#define AL_CAN_ERR_INTR(Status)     (Status & AL_CAN_ERR_INTR_MASK)
 
 #define AL_CAN_LOOP_MODE_DELAY      do {AlSys_UDelay(10);} while (0)
 #define AL_CAN_RESET_RELEASE_DELAY  do {AlSys_UDelay(100);} while (0)
@@ -86,7 +102,7 @@ extern AL_CAN_HwConfigStruct AlCan_HwConfig[];
  * @return  data size in word
  * @note
 */
-static AL_U32 AlCan_Dev_Dlc2Len(AL_CAN_DataLenEnum Dlc)
+AL_U32 AlCan_Dev_Dlc2Len(AL_CAN_DataLenEnum Dlc)
 {
     return AL_CAN_DataLenArray[Dlc];
 }
@@ -97,7 +113,7 @@ static AL_U32 AlCan_Dev_Dlc2Len(AL_CAN_DataLenEnum Dlc)
  * @return  data size in word
  * @note    CAN domian only support word read/write
 */
-static AL_U32 AlCan_Dev_Dlc2LenInByte(AL_CAN_DataLenEnum Dlc)
+AL_U32 AlCan_Dev_Dlc2LenInByte(AL_CAN_DataLenEnum Dlc)
 {
     return (AL_U32) AL_CAN_DataLenInByteArray[Dlc];
 }
@@ -152,8 +168,13 @@ static AL_S32 AlCan_Dev_WaitForOpsMode(AL_CAN_DevStruct *Dev)
             State = AlCan_ll_IsLbmiEnabled(Dev->BaseAddr);
         } else if (Dev->Config.OpsMode == AL_CAN_MODE_EX_LOOPBACK) {
             State = AlCan_ll_IsLbmeEnabled(Dev->BaseAddr);
-        } else {
+        } else if (Dev->Config.OpsMode == AL_CAN_MODE_LISTENONLY){
             State = AlCan_ll_IsLom(Dev->BaseAddr);
+        } else if (Dev->Config.OpsMode == AL_CAN_MODE_STANDBY){
+            State = AlCan_ll_IsStby(Dev->BaseAddr);
+        } else {
+            Ret = AL_CAN_ERR_ILLEGAL_PARAM;
+            break;
         }
     } while ((!State) && (Timeout--));
 
@@ -193,6 +214,9 @@ static AL_S32 AlCan_Dev_SetOpsMode(AL_CAN_DevStruct *Dev)
         AlCan_ll_SetLom(Dev->BaseAddr, AL_TRUE);
         AlCan_ll_SetLbme(Dev->BaseAddr, AL_TRUE);
         AlCan_ll_SetSack(Dev->BaseAddr, AL_CAN_SACK_SELF_ACK);
+        break;
+    case AL_CAN_MODE_STANDBY:
+        AlCan_ll_SetStby(Dev->BaseAddr, AL_TRUE);
         break;
     default:
         break;
@@ -487,21 +511,23 @@ AL_VOID AlCan_Dev_IntrHandler(void *Instance)
 
     if (AL_CAN_ERR_INTR(IntrStatus)) {
         AlCan_Dev_ErrHandler(Dev, IntrStatus);
+        AlCan_ll_ClrIntrStatus(Dev->BaseAddr, AL_CAN_ERR_INTR_MASK);
     }
 
     if (AL_CAN_RECV_INTR(IntrStatus)) {
         AlCan_Dev_RecvFrameHandler(Dev, IntrStatus);
+        AlCan_ll_ClrIntrStatus(Dev->BaseAddr, AL_CAN_RECV_INTR_MASK);
     }
 
     if (AL_CAN_RB_INTR(IntrStatus)) {
        AlCan_Dev_EventHandler(Dev, IntrStatus);
+        AlCan_ll_ClrIntrStatus(Dev->BaseAddr, AL_CAN_RB_INTR_MASK);
     }
 
     if (AL_CAN_TRANS_INTR(IntrStatus)) {
         AlCan_Dev_SendFrameHandler(Dev, IntrStatus);
+        AlCan_ll_ClrIntrStatus(Dev->BaseAddr, AL_CAN_TRANS_INTR_MASK);
     }
-
-    AlCan_ll_ClrIntrStatus(Dev->BaseAddr);
 }
 
 /**
@@ -668,6 +694,7 @@ AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, AL
 AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
 {
     AL_U32 Id, Ctrl;
+    AL_S32 Ret = AL_OK;
 
     AL_ASSERT((Dev != AL_NULL) && (Frame != AL_NULL), AL_CAN_ERR_NULL_PTR);
     AL_ASSERT(Frame->DataLen < AL_CAN_LEN_MAX, AL_CAN_ERR_ILLEGAL_PARAM);
@@ -699,8 +726,9 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
     }
 
     if (AlCan_ll_IsStby(Dev->BaseAddr)) {
-        AlCan_ll_SetStby(Dev->BaseAddr, AL_FALSE);
-        /* TODO: need delay a while for transceiver to start up */
+        AlCan_Dev_ClrState(Dev, AL_CAN_STATE_SEND_BUSY);
+        AL_LOG(AL_LOG_LEVEL_WARNING, "Can in standby mode\r\n");
+        Ret = AL_CAN_ERR_IN_STANDBY_MODE;
     }
 
     switch (Dev->Config.TransMode)
@@ -717,7 +745,7 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
         break;
     }
 
-    return AL_OK;
+    return Ret;
 }
 
 /**
@@ -771,6 +799,10 @@ AL_S32 AlCan_Dev_RecvFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
     AL_ASSERT(!AlCan_Dev_GetState(Dev, AL_CAN_STATE_RESET), AL_CAN_ERR_STATE_RESET);
     AL_ASSERT(AlCan_Dev_GetState(Dev, AL_CAN_STATE_READY), AL_CAN_ERR_STATE_NOT_READY);
     AL_ASSERT(!AlCan_Dev_GetState(Dev, AL_CAN_STATE_RECV_EMPTY), AL_CAN_ERR_RECV_EMPTY);
+
+    if (AlCan_ll_GetRstat(Dev->BaseAddr) == AL_CAN_RSTAT_EMPTY) {
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Can recv state not empty but register state empty\r\n");
+    }
 
     Ctrl.Reg = AlCan_ll_ReadWordRecvBuffer(Dev->BaseAddr, 1);
 
@@ -1004,30 +1036,30 @@ AL_S32 AlCan_Dev_DisplayFrame(AL_CAN_FrameStruct *Frame)
 {
     AL_ASSERT(Frame != AL_NULL, AL_CAN_ERR_NULL_PTR);
 
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "-------Recv Frame--------\r\n");
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "| Id: 0x%08x\r\n", Frame->Id);
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "| Dlc: 0x%08x\r\n", Frame->DataLen);
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "| Data len: 0x%d\r\n", AlCan_Dev_Dlc2LenInByte(Frame->DataLen));
+    AL_LOG(AL_LOG_LEVEL_INFO, "-------Recv Frame--------\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "| Id: 0x%08x\r\n", Frame->Id);
+    AL_LOG(AL_LOG_LEVEL_INFO, "| Dlc: 0x%08x\r\n", Frame->DataLen);
+    AL_LOG(AL_LOG_LEVEL_INFO, "| Data len: 0x%d\r\n", AlCan_Dev_Dlc2LenInByte(Frame->DataLen));
     if (Frame->IsIdExt == AL_TRUE) {
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "| Extern Id\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "| Extern Id\r\n");
     } else {
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "| Standard Id\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "| Standard Id\r\n");
     }
     if (Frame->IsRemote == AL_TRUE) {
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "| Remote frame\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "| Remote frame\r\n");
     } else {
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "| Not remote frame\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "| Not remote frame\r\n");
     }
     if (Frame->IsBitSwitch == AL_TRUE) {
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "| Switch fast bit rate\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "| Switch fast bit rate\r\n");
     } else {
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "| Nominal bit rate\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "| Nominal bit rate\r\n");
     }
     AL_U32 DataWordLen = AlCan_Dev_Dlc2Len(Frame->DataLen);
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "| Data length in word is %d\r\n", DataWordLen);
+    AL_LOG(AL_LOG_LEVEL_INFO, "| Data length in word is %d\r\n", DataWordLen);
     for (AL_U32 i = 0; i < DataWordLen; i++) {
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "| Data %02d: 0x%08x\r\n", i, Frame->Data[i]);
+        AL_LOG(AL_LOG_LEVEL_INFO, "| Data %02d: 0x%08x\r\n", i, Frame->Data[i]);
     }
 
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "-----Recv Frame Done-----\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "-----Recv Frame Done-----\r\n");
 }

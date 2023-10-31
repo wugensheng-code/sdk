@@ -49,6 +49,7 @@ typedef enum
     CAN_ERR_STATE_RESET,
     CAN_ERR_IOCTL_CMD,
     CAN_ERR_DMA_CONFIG,
+    CAN_ERR_IN_STANDBY_MODE,
 } AL_CAN_ErrCodeEnum;
 
 #define AL_CAN_ERR_ILLEGAL_PARAM        AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM)
@@ -73,6 +74,7 @@ typedef enum
 #define AL_CAN_ERR_STATE_RESET          AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, CAN_ERR_STATE_RESET)
 #define AL_CAN_ERR_IOCTL_CMD            AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, CAN_ERR_IOCTL_CMD)
 #define AL_CAN_ERR_DMA_CONFIG           AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, CAN_ERR_DMA_CONFIG)
+#define AL_CAN_ERR_IN_STANDBY_MODE      AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, CAN_ERR_IN_STANDBY_MODE)
 #define AL_CAN_EVENTS_TO_ERRS(Events)   (AL_DEF_ERR(AL_CAN, AL_LOG_LEVEL_ERROR, (Events << CAN_EVENT_START_BIT)))
 
 /**************************** Type Definitions *******************************/
@@ -214,24 +216,6 @@ typedef enum
     AL_CAN_RB_LIMIT_15,
     AL_CAN_RB_LIMIT_MAX
 } AL_CAN_RbAwflEnum;
-
-/**
- * @brief  Interrupt type enum
- */
-typedef enum
-{
-    AL_CAN_INTR_AIF     = BIT(8),
-    AL_CAN_INTR_EIF     = BIT(9),
-    AL_CAN_INTR_TSIF    = BIT(10),
-    AL_CAN_INTR_TPIF    = BIT(11),
-    AL_CAN_INTR_RAFIF   = BIT(12),
-    AL_CAN_INTR_RFIF    = BIT(13),
-    AL_CAN_INTR_ROIF    = BIT(14),
-    AL_CAN_INTR_RIF     = BIT(15),
-    AL_CAN_INTR_BEIF    = BIT(16),
-    AL_CAN_INTR_ALIF    = BIT(18),
-    AL_CAN_INTR_EPIF    = BIT(20)
-} AL_CAN_IntrTypeEnum;
 
 /**
  * @brief  Event id enum
@@ -431,6 +415,10 @@ typedef struct
 AL_CAN_HwConfigStruct *AlCan_Dev_LookupConfig(AL_U32 DeviceId);
 
 AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, AL_CAN_InitStruct *InitConfig);
+
+AL_U32 AlCan_Dev_Dlc2Len(AL_CAN_DataLenEnum Dlc);
+
+AL_U32 AlCan_Dev_Dlc2LenInByte(AL_CAN_DataLenEnum Dlc);
 
 AL_VOID AlCan_Dev_IntrHandler(AL_VOID *Instance);
 

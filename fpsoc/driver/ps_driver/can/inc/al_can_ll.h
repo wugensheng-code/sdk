@@ -1326,10 +1326,10 @@ static inline AL_U32 AlCan_ll_GetUmaskIntrStatus(AL_REG BaseAddr)
     return (Status & ((Status & 0xFE) << 8)) | (Status & 0x100) | (Status & ((Status & 0x2A0000) >> 1));
 }
 
-static inline AL_VOID AlCan_ll_ClrIntrStatus(AL_REG BaseAddr)
+static inline AL_VOID AlCan_ll_ClrIntrStatus(AL_REG BaseAddr, AL_U32 Status)
 {
-    AL_U32 Status = AL_REG32_READ(BaseAddr + CAN_LIMIT_ERRINT_RTIF_RTIE_OFFSET);
-    AL_REG32_WRITE(BaseAddr + CAN_LIMIT_ERRINT_RTIF_RTIE_OFFSET, (Status | CAN_LIMIT_ERRINT_RTIF_RTIE_ALLINTR_MASK));
+    AL_U32 Value = AL_REG32_READ(BaseAddr + CAN_LIMIT_ERRINT_RTIF_RTIE_OFFSET);
+    AL_REG32_WRITE(BaseAddr + CAN_LIMIT_ERRINT_RTIF_RTIE_OFFSET, ((Value & (~CAN_LIMIT_ERRINT_RTIF_RTIE_ALLINTR_MASK)) | Status));
 }
 
 // /**

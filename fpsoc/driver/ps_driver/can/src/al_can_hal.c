@@ -79,7 +79,7 @@ static AL_VOID AlCan_Hal_DefEventCallBack(AL_CAN_EventStruct *Event, AL_VOID *Ca
     case AL_CAN_EVENT_BUS_ERR:
     case AL_CAN_EVENT_ARBITRATION_LOST:
     case AL_CAN_EVENT_ERR_PASSIVE:
-        /* ???????? */
+        AlOsal_Mb_Send(&(Handle->TxEventQueue), Event);
         break;
     default:
         break;
@@ -245,8 +245,13 @@ AL_S32 AlCan_Hal_SendFrameBlock(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Fr
 
     Ret = AlCan_Dev_SendFrame(&(Handle->Dev), Frame);
     if (Ret != AL_OK) {
-        (AL_VOID)AlOsal_Lock_Release(&(Handle->TxLock));
-        return Ret;
+        if (Ret == AL_CAN_ERR_IN_STANDBY_MODE) {
+            Event.EventId = AL_CAN_EVENT_SEND_DONE;
+            AlOsal_Mb_Send(&(Handle->TxEventQueue), &Event);
+        } else {
+            (AL_VOID)AlOsal_Lock_Release(&(Handle->TxLock));
+            return Ret;
+        }
     }
 
     Ret = AlCan_Hal_WaitSendDoneOrTimeout(Handle, &Event, Timeout);
