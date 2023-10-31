@@ -23,7 +23,6 @@ extern "C"{
 
 #include <rtthread.h>
 #include <rthw.h>
-#include <rthw.h>
 
 /*----------------------------------------------*
  * MUTEX API.*
