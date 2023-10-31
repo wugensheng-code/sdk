@@ -51,11 +51,9 @@ AL_U32 AlSmc_Hal_Init(AL_SMC_HalStruct *Handle, AL_SMC_ConfigsStruct *InitConfig
 
     ALSmc_Dev_ReadId(Handle->NandInfo);
 
-    AL_LOG(AL_LOG_LEVEL_INFO, "NandFlash ID:0x%x", Handle->NandInfo->Size.DeviceId[0]);
-    AL_LOG(AL_LOG_LEVEL_INFO, " 0x%x", Handle->NandInfo->Size.DeviceId[1]);
-    AL_LOG(AL_LOG_LEVEL_INFO, " 0x%x", Handle->NandInfo->Size.DeviceId[2]);
-    AL_LOG(AL_LOG_LEVEL_INFO, " 0x%x", Handle->NandInfo->Size.DeviceId[3]);
-    AL_LOG(AL_LOG_LEVEL_INFO, " 0x%x\r\n", Handle->NandInfo->Size.DeviceId[4]);
+    AL_LOG(AL_LOG_LEVEL_INFO, "NandFlash ID:0x%x, 0x%x, 0x%x, 0x%x, 0x%x", Handle->NandInfo->Size.DeviceId[0],
+    Handle->NandInfo->Size.DeviceId[1], Handle->NandInfo->Size.DeviceId[2],
+    Handle->NandInfo->Size.DeviceId[3], Handle->NandInfo->Size.DeviceId[4]);
 
     Ret = ALSmc_Dev_ReadParam(Handle->NandInfo);
     if (AL_OK != Ret) {
@@ -85,7 +83,7 @@ AL_U32 AlSmc_Hal_Init(AL_SMC_HalStruct *Handle, AL_SMC_ConfigsStruct *InitConfig
             goto HAL_INIT_END;
         }
     }
- AL_LOG(AL_LOG_LEVEL_INFO, "EccNum: %d\r\n", Handle->NandInfo->Size.EccNum);
+
     HAL_INIT_END:
     AL_SMC_HAL_UNLOCK(Handle);
 
