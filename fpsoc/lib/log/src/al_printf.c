@@ -44,7 +44,8 @@ AL_VOID AlPrint_Init(AL_VOID)
 
 AL_VOID AlPrint_AsyncPrintf(AL_VOID)
 {
-    ALOsal_EnterCritical();
+    AL_U64 Flag;
+    Flag = ALOsal_EnterCritical();
     if (RingBuf->ValidSize != 0) {
         AL_U32 FirstPrint = (RingBuf->PrintPos + RingBuf->ValidSize >= RingBuf->TotalSize) ?
                             (RingBuf->TotalSize - RingBuf->PrintPos) : RingBuf->ValidSize;
@@ -61,7 +62,7 @@ AL_VOID AlPrint_AsyncPrintf(AL_VOID)
             RingBuf->ValidSize -= SecondPrint;
         }
     }
-    ALOsal_ExitCritical();
+    ALOsal_ExitCritical(Flag);
 }
 
 #endif
@@ -356,7 +357,7 @@ AL_VOID al_printf(AL_CHAR *Format, ...)
     #ifdef ARM_CORE_SLAVE
     AlCache_InvalidateDcacheRange((AL_UINTPTR)RingBuf, (AL_UINTPTR)(RingBuf + sizeof(RingBufStruct)));
     #endif
-    ALOsal_EnterCritical();
+    AL_U64 Flag = ALOsal_EnterCritical();
 #endif
 
     va_list Args;
@@ -377,6 +378,6 @@ AL_VOID al_printf(AL_CHAR *Format, ...)
         AlCache_FlushDcacheRange((AL_UINTPTR)(RingBuf->Buf), (AL_UINTPTR)(RingBuf->Buf + RingBuf->FillPos));
     }
     #endif
-    ALOsal_ExitCritical();
+    ALOsal_ExitCritical(Flag);
 #endif
 }

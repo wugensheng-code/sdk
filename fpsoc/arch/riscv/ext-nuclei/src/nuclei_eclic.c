@@ -362,3 +362,13 @@ AL_VOID AlIntr_ClearAllPending(AL_VOID)
 
 	return;
 }
+
+AL_VOID AlIntr_RestoreLocalInterruptMask(AL_S32 Mask)
+{
+    set_irq_mask(Mask);
+}
+
+AL_S32 AlIntr_SaveLocalInterruptMask(AL_VOID)
+{
+    return get_irq_mask();
+}

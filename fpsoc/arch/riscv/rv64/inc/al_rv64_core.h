@@ -30,6 +30,16 @@ __STATIC_FORCEINLINE void enable_irq(void)
     ARCH_SYSREG_SET(CSR_MSTATUS, MSTATUS_MIE);
 }
 
+__STATIC_FORCEINLINE void set_irq_mask(AL_U32 Mask)
+{
+    ARCH_SYSREG_SET(CSR_MSTATUS, Mask);
+}
+
+__STATIC_FORCEINLINE AL_U32 get_irq_mask(void)
+{
+    return (AL_U32)ARCH_SYSREG_READ(CSR_MSTATUS);
+}
+
 __STATIC_FORCEINLINE void disable_irq(void)
 {
     ARCH_SYSREG_CLEAR(CSR_MSTATUS, MSTATUS_MIE);

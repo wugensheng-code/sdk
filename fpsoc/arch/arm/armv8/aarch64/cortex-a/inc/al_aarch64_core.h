@@ -14,6 +14,7 @@
 #include "al_aarch64_sysreg.h"
 #include "al_compiler.h"
 #include "al_barrier.h"
+#include "al_type.h"
 
 #define icc_asgi1r      S3_0_C12_C11_6
 #define icc_sgi1r       S3_0_C12_C11_5
@@ -121,6 +122,18 @@ __STATIC_FORCEINLINE void disable_debug_exceptions(void)
 {
     __COMPILER_BARRIER();
     ARCH_SYSREG_WRITE_CONST(daifset, DAIF_DBG_BIT);
+    ISB();
+}
+
+__STATIC_FORCEINLINE int get_intr_mask(void)
+{
+    return (int)ARCH_SYSREG_READ(daif);
+}
+
+__STATIC_FORCEINLINE void set_intr_mask(int Mask)
+{
+    __COMPILER_BARRIER();
+    ARCH_SYSREG_WRITE(daif, Mask);
     ISB();
 }
 

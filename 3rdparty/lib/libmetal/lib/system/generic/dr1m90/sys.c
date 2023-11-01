@@ -47,14 +47,12 @@ static uint32_t dr1m90_cache_line_size(void)
 
 void sys_irq_restore_enable(unsigned int flags)
 {
-    UNUSED(flags); /* XXX FIXME */
-    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
+    AlIntr_RestoreLocalInterruptMask(flags);
 }
 
 unsigned int sys_irq_save_disable(void)
 {
-    AlIntr_SetLocalInterrupt(AL_FUNC_DISABLE);
-    return 0; /* XXX FIXME */
+    return AlIntr_SaveLocalInterruptMask();
 }
 
 void metal_machine_cache_flush(void *addr, unsigned int len)

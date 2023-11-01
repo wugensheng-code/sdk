@@ -187,6 +187,23 @@ AL_S32 AlIntr_SetLocalInterrupt(AL_FUNCTION state)
     return Ret;
 }
 
+AL_VOID AlIntr_RestoreLocalInterruptMask(AL_S32 Mask)
+{
+    set_intr_mask(Mask);
+}
+
+AL_S32 AlIntr_SaveLocalInterruptMask(AL_VOID)
+{
+    AL_U32 ExceptionState ;
+    AL_U32 EXCEPTION_ALL = (DAIF_IRQ_BIT | DAIF_FIQ_BIT) << 6;
+    ExceptionState = get_intr_mask();
+    ExceptionState = ExceptionState & EXCEPTION_ALL;
+    if (ExceptionState != EXCEPTION_ALL) { 
+        (AL_U32)AlIntr_SetLocalInterrupt(AL_FUNC_DISABLE);
+        return ExceptionState;
+    }
+    return ExceptionState;
+}
 
 AL_VOID AlIntr_ClearAllPending(AL_VOID)
 {

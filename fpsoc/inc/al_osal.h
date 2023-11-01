@@ -163,12 +163,13 @@ static inline AL_VOID AlOsal_ExitDevCtritical(AL_U32 DevIntrId, AL_BOOL Conditio
  * Critical API.*
  *----------------------------------------------*/
 
-static inline AL_VOID ALOsal_EnterCritical(AL_VOID)
+static inline AL_U64 ALOsal_EnterCritical(AL_VOID)
 {
     rt_enter_critical();
+    return AL_OK;
 }
 
-static inline AL_VOID ALOsal_ExitCritical(AL_VOID)
+static inline AL_VOID ALOsal_ExitCritical(AL_U64 flag)
 {
     rt_exit_critical();
 }
@@ -193,6 +194,7 @@ static inline AL_VOID AlOsal_Sleep(AL_U32 Time)
 
 #include <FreeRTOS.h>
 #include "semphr.h"
+
 extern volatile uint64_t ullCriticalNesting;
 extern volatile uint64_t ullPortInterruptNesting;
 /*----------------------------------------------*
@@ -381,35 +383,19 @@ static inline AL_VOID AlOsal_ExitDevCtritical(AL_U32 DevIntrId, AL_BOOL Conditio
     }
 }
 
-
 /*----------------------------------------------*
  * Critical API.*
  *----------------------------------------------*/
 
-static inline AL_VOID ALOsal_EnterCritical(AL_VOID)
+static inline AL_U64 ALOsal_EnterCritical(AL_VOID)
 {
-    if (ullPortInterruptNesting == 0) {
-        taskENTER_CRITICAL();
-    } else {
-        AL_U64 MaskBits;
-        __asm volatile( "MRS %0, DAIF" : "=r"( MaskBits ) :: "memory" );
-        if ((MaskBits & 0xC0) == 0) {
-            taskENTER_CRITICAL_FROM_ISR();
-        }
-    }
+    return AlIntr_SaveLocalInterruptMask();
 }
 
-static inline AL_VOID ALOsal_ExitCritical(AL_VOID)
+static inline AL_VOID ALOsal_ExitCritical(AL_U64 Flag)
 {
-    if (ullPortInterruptNesting == 0) {
-        taskEXIT_CRITICAL();
-    } else {
-        AL_U64 MaskBits;
-        __asm volatile( "MRS %0, DAIF" : "=r"( MaskBits ) :: "memory" );
-        if ((MaskBits & 0xC0) == 0) {
-            taskEXIT_CRITICAL_FROM_ISR(pdFALSE);
-        }
-    }
+    AL_UNUSED(Flag);
+    (AL_VOID)AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 }
 
 /*----------------------------------------------*
@@ -550,13 +536,14 @@ static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S3
  * Critical API.
  *----------------------------------------------------------*/
 
-static inline AL_VOID ALOsal_EnterCritical(AL_VOID)
+static inline AL_U64 ALOsal_EnterCritical(AL_VOID)
 {
-    (AL_VOID)AlIntr_SetLocalInterrupt(AL_FUNC_DISABLE);
+    return AlIntr_SetLocalInterrupt(AL_FUNC_DISABLE);
 }
 
-static inline AL_VOID ALOsal_ExitCritical(AL_VOID)
+static inline AL_VOID ALOsal_ExitCritical(AL_U64 flag)
 {
+    AL_UNUSED(flag);
     (AL_VOID)AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 }
 
