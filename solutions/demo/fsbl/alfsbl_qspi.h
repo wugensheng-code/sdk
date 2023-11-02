@@ -16,18 +16,15 @@ extern "C" {
 #include "alfsbl_data.h"
 #include "alfsbl_hw.h"
 
+AL_U32 AlFsbl_QspiInit(AL_U32 *pBlockSizeMax);
 
+AL_U32 AlFsbl_Qspi24Init(AL_U32 *pBlockSizeMax);
+AL_U32 AlFsbl_Qspi24Copy(AL_U64 SrcAddress, PTRSIZE DestAddress, AL_U32 Length, SecureInfo *pSecureInfo);
+AL_U32 AlFsbl_Qspi24Release(void);
 
-uint32_t AlFsbl_Qspi24Init(uint32_t *pBlockSizeMax);
-uint32_t AlFsbl_Qspi24Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo);
-
-
-
-uint32_t AlFsbl_Qspi24Release(void);
-
-uint32_t AlFsbl_Qspi32Init(uint32_t *pBlockSizeMax);
-uint32_t AlFsbl_Qspi32Copy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo);
-uint32_t AlFsbl_Qspi32Release(void);
+AL_U32 AlFsbl_Qspi32Init(AL_U32 *pBlockSizeMax);
+AL_U32 AlFsbl_Qspi32Copy(AL_U64 SrcAddress, PTRSIZE DestAddress, AL_U32 Length, SecureInfo *pSecureInfo);
+AL_U32 AlFsbl_Qspi32Release(void);
 
 
 

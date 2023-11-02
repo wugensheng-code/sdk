@@ -316,14 +316,11 @@ typedef enum
     QSPI_XipPort1NorFlash_1MB = 7,
     QSPI_XipPort1NorFlash_2MB = 6,
     QSPI_XipPort1NorFlash_4MB = 5,
-    QSPI_XipPort1NorFlash_8MB = 1,
-    QSPI_XipPort1NorFlash_16MB = 0,
-    QSPI_XipPort1NorFlash_32MB = 1,
-    QSPI_XipPort1NorFlash_64MB = 0,
-    QSPI_XipPort1NorFlash_128MB = 1,
-    QSPI_XipPort1NorFlash_256MB = 0,
-    QSPI_XipPort1NorFlash_512MB = 1,
-    QSPI_XipPort1NorFlash_1024MB = 1,
+    QSPI_XipPort1NorFlash_8MB = 4,
+    QSPI_XipPort1NorFlash_16MB = 3,
+    QSPI_XipPort1NorFlash_32MB = 2,
+    QSPI_XipPort1NorFlash_64MB = 1,
+    QSPI_XipPort1NorFlash_128MB = 0
 } AL_QSPI_XipPort1NorFlashSize;
 
 /**
@@ -749,7 +746,7 @@ static inline AL_VOID AlQspi_ll_SetInstLength(AL_REG BaseAddr, AL_QSPI_InstLengt
                         QSPI_SPI_CTRLR0_INST_L_SIZE, InstLength);
 }
 
-static inline AL_VOID AlQspi_ll_SetXipModeBit(AL_REG BaseAddr, AL_QSPI_XipModeBitEnableEnum XipModeBit)
+static inline AL_VOID AlQspi_ll_SetXipModeBitEn(AL_REG BaseAddr, AL_QSPI_XipModeBitEnableEnum XipModeBit)
 {
     AL_REG32_SET_BIT(BaseAddr + QSPI_SPI_CTRLR0_OFFSET, QSPI_SPI_CTRLR0_XIP_MD_BIT_EN_SHIFT, XipModeBit);
 }
@@ -790,10 +787,10 @@ static inline AL_VOID AlQspi_ll_SetXipCntTimeOut(AL_REG BaseAddr, AL_U8 XipCntTi
                         QSPI_XIP_CNT_TIME_OUT_XTOC_SIZE, XipCntTimeOut);
 }
 
-static inline AL_VOID AlQspi_ll_SetXipPort1NorFlashSize(AL_REG BaseAddr, AL_U8 XipPort1NorFlashSize)
+static inline AL_VOID AlQspi_ll_SetXipPort1NorFlashSize(AL_REG BaseAddr, AL_QSPI_XipPort1NorFlashSize Nor1FlashSize)
 {
-    AL_REG32_SET_BITS(BaseAddr + TOP_NS_CFG_CTRL_QSPI_ADDR, TOP_NS_CFG_CTRL_QSPI_CTRL_QSPI_SHIFT,
-                        TOP_NS_CFG_CTRL_QSPI_CTRL_QSPI_SIZE, XipPort1NorFlashSize);
+    AL_REG32_SET_BITS(TOP_NS_CFG_CTRL_QSPI_ADDR, TOP_NS_CFG_CTRL_QSPI_CTRL_QSPI_SHIFT,
+                        TOP_NS_CFG_CTRL_QSPI_CTRL_QSPI_SIZE, Nor1FlashSize);
 }
 
 #ifdef __cplusplus

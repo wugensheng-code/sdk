@@ -6,7 +6,7 @@
 
 /***************************** Include Files *********************************/
 #include "al_qspi_dev.h"
-
+#include "al_nor.h"
 /************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/
@@ -210,7 +210,7 @@ AL_S32 AlQspi_Dev_Init(AL_QSPI_DevStruct *Qspi, AL_QSPI_HwConfigStruct *HwConfig
     AlQspi_ll_SetRecvDataSamplDelay(Qspi->HwConfig.BaseAddress, Qspi->Configs.SamplDelay);     /* 88M */
     AlQspi_ll_SetQspiFrameFormat(Qspi->HwConfig.BaseAddress, Qspi->Configs.SpiFrameFormat);
 
-    AlQspi_ll_SetXipModeBit(Qspi->HwConfig.BaseAddress, QSPI_XipModeBitDisable);
+    AlQspi_ll_SetXipModeBitEn(Qspi->HwConfig.BaseAddress, QSPI_XipModeBitDisable);
     AlQspi_ll_SetXipDfsFix(Qspi->HwConfig.BaseAddress, QSPI_XipDfsChange);
     AlQspi_ll_SetXipMbl(Qspi->HwConfig.BaseAddress, QSPI_MBL_4);
     AlQspi_ll_SetXipInstPhase(Qspi->HwConfig.BaseAddress, QSPI_XipInstPhaseDisable);
@@ -227,7 +227,84 @@ AL_S32 AlQspi_Dev_Init(AL_QSPI_DevStruct *Qspi, AL_QSPI_HwConfigStruct *HwConfig
 
     return AL_OK;
 }
-//  Qspi->Configs.XipCfg
+
+
+/**
+ * This function initializes qspi XIP mode
+ * @param   Qspi is structure pointer to qspi device
+ * @return  Whether the qspi XIP is initialized successfully
+ * @note    Enable the qspi xip mode to be non-continuous transfer
+ *          and set the instruction to nor flash 1_4_4(0x6b)
+*/
+AL_S32 AlQspi_Dev_XipAddr32Init(AL_QSPI_DevStruct *Qspi)
+{
+    if (Qspi == AL_NULL) {
+        return AL_QSPI_ERR_ILLEGAL_PARAM;
+    }
+
+    AlQspi_ll_Disable(Qspi->HwConfig.BaseAddress);
+    AlQspi_ll_SetWaitCycles(Qspi->HwConfig.BaseAddress, 0x8);
+    AlQspi_ll_SetClockStretch(Qspi->HwConfig.BaseAddress, QSPI_DisableClockStretch);
+    AlQspi_ll_SetTransfMode(Qspi->HwConfig.BaseAddress, QSPI_RX_ONLY);
+    AlQspi_ll_SetAddrLength(Qspi->HwConfig.BaseAddress, QSPI_ADDR_L32);
+    AlQspi_ll_SetInstLength(Qspi->HwConfig.BaseAddress, QSPI_INST_L8);
+    AlQspi_ll_SetTransType(Qspi->HwConfig.BaseAddress, QSPI_TT0);
+    AlQspi_ll_SetQspiFrameFormat(Qspi->HwConfig.BaseAddress, SPI_QUAD_FORMAT);
+    AlQspi_ll_SetXipModeBitEn(Qspi->HwConfig.BaseAddress, QSPI_XipModeBitDisable);
+
+    AlQspi_ll_SetXipDfsFix(Qspi->HwConfig.BaseAddress, QSPI_XipDfsChange);
+    AlQspi_ll_SetXipContTrans(Qspi->HwConfig.BaseAddress, QSPI_EnableXipContTrans);
+    AlQspi_ll_SetXipPrefetch(Qspi->HwConfig.BaseAddress, QSPI_EnableXipPrefetch);
+    AlQspi_ll_SetXipInstPhase(Qspi->HwConfig.BaseAddress, QSPI_XipInstPhaseEnable);
+    AlQspi_ll_SetXipIncrInst(Qspi->HwConfig.BaseAddress, NOR_OP_READ_1_1_4_4B);
+    /* WRAP transfer types is only supported in continuous XIP mode */
+    AlQspi_ll_SetXipWrapInst(Qspi->HwConfig.BaseAddress, NOR_OP_READ_1_1_4_4B);
+    AlQspi_ll_SetXipCntTimeOut(Qspi->HwConfig.BaseAddress, 0XFF);
+    AlQspi_ll_SetXipPort1NorFlashSize(Qspi->HwConfig.BaseAddress, QSPI_XipPort1NorFlash_128MB);
+
+    AlQspi_ll_Enable(Qspi->HwConfig.BaseAddress);
+
+    return AL_OK;
+}
+
+/**
+ * This function initializes qspi XIP mode
+ * @param   Qspi is structure pointer to qspi device
+ * @return  Whether the qspi XIP is initialized successfully
+ * @note    Enable the qspi xip mode to be non-continuous transfer
+ *          and set the instruction to nor flash 1_4_4(0x6b)
+*/
+AL_S32 AlQspi_Dev_XipAddr24Init(AL_QSPI_DevStruct *Qspi)
+{
+    if (Qspi == AL_NULL) {
+        return AL_QSPI_ERR_ILLEGAL_PARAM;
+    }
+
+    AlQspi_ll_Disable(Qspi->HwConfig.BaseAddress);
+    AlQspi_ll_SetWaitCycles(Qspi->HwConfig.BaseAddress, 0x8);
+    AlQspi_ll_SetClockStretch(Qspi->HwConfig.BaseAddress, QSPI_DisableClockStretch);
+    AlQspi_ll_SetTransfMode(Qspi->HwConfig.BaseAddress, QSPI_RX_ONLY);
+    AlQspi_ll_SetAddrLength(Qspi->HwConfig.BaseAddress, QSPI_ADDR_L24);
+    AlQspi_ll_SetInstLength(Qspi->HwConfig.BaseAddress, QSPI_INST_L8);
+    AlQspi_ll_SetTransType(Qspi->HwConfig.BaseAddress, QSPI_TT0);
+    AlQspi_ll_SetQspiFrameFormat(Qspi->HwConfig.BaseAddress, SPI_QUAD_FORMAT);
+    AlQspi_ll_SetXipModeBitEn(Qspi->HwConfig.BaseAddress, QSPI_XipModeBitDisable);
+
+    AlQspi_ll_SetXipDfsFix(Qspi->HwConfig.BaseAddress, QSPI_XipDfsChange);
+    AlQspi_ll_SetXipContTrans(Qspi->HwConfig.BaseAddress, QSPI_EnableXipContTrans);
+    AlQspi_ll_SetXipPrefetch(Qspi->HwConfig.BaseAddress, QSPI_EnableXipPrefetch);
+    AlQspi_ll_SetXipInstPhase(Qspi->HwConfig.BaseAddress, QSPI_XipInstPhaseEnable);
+    AlQspi_ll_SetXipIncrInst(Qspi->HwConfig.BaseAddress, NOR_OP_READ_1_1_4);
+    /* WRAP transfer types is only supported in continuous XIP mode */
+    AlQspi_ll_SetXipWrapInst(Qspi->HwConfig.BaseAddress, NOR_OP_READ_1_1_4);
+    AlQspi_ll_SetXipCntTimeOut(Qspi->HwConfig.BaseAddress, 0XFF);
+    AlQspi_ll_SetXipPort1NorFlashSize(Qspi->HwConfig.BaseAddress, QSPI_XipPort1NorFlash_16MB);
+
+    AlQspi_ll_Enable(Qspi->HwConfig.BaseAddress);
+
+    return AL_OK;
+}
+
 /**
  * This function is qspi send data
  * @param   Qspi is structure pointer to qspi device

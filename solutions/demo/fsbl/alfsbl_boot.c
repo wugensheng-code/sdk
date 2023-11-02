@@ -47,6 +47,10 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 		break;
 
 	case ALFSBL_BOOTMODE_QSPI32:
+		AL_LOG(AL_LOG_LEVEL_INFO, "QSPI 32 bit Boot Mode\r\n");
+		FsblInstancePtr->DeviceOps.DeviceInit    = AlFsbl_Qspi32Init;
+		FsblInstancePtr->DeviceOps.DeviceCopy    = AlFsbl_Qspi32Copy;
+		FsblInstancePtr->DeviceOps.DeviceRelease = AlFsbl_Qspi24Release;
 		break;
 
 	case ALFSBL_BOOTMODE_NAND:
