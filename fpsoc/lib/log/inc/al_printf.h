@@ -22,19 +22,15 @@ extern "C" {
 
 #ifdef AL_PRINT_ASYNC
 
-#ifndef RTOS_FREERTOS
-#error "AL_PRINTF_ASYNC use for FREERTOS print task"
-#endif
-
 typedef struct {
-    AL_U32 TotalSize;
-    AL_U32 ValidSize;
-    AL_U32 PrintPos;
-    AL_U32 FillPos;
+    AL_U64 TotalSize;
+    AL_U64 ValidSize;
+    AL_U64 PrintPos;
+    AL_U64 FillPos;
     AL_S8 *Buf;
 } RingBufStruct;
 
-extern RingBufStruct RingBuf;
+extern RingBufStruct *RingBuf;
 
 AL_VOID AlPrint_Init(AL_VOID);
 

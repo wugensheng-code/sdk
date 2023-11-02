@@ -75,16 +75,10 @@ extern "C" {
 #define ROUND_DOWN(value, boundary)        \
     ((value) & ~ROUND_BOUNDARY(value, boundary))
 
-#ifdef RTOS_FREERTOS
+#if (defined RTOS_FREERTOS) || (defined RTOS_RTTHREAD) || (defined AL_PRINT_ASYNC)
 #define AL_LOG(level, format, ...) \
     do {  \
-        if((ENUM_AL_LOG_LEVEL)level >= AL_LOG_LEVEL_DEBUG) \
-            al_printf(format, ##__VA_ARGS__); \
-    } while (0);
-#elif (defined RTOS_RTTHREAD)
-#define AL_LOG(level, format, ...) \
-    do {  \
-        if((ENUM_AL_LOG_LEVEL)level >= AL_LOG_LEVEL_DEBUG) \
+        if((ENUM_AL_LOG_LEVEL)level >= AL_LOG_LEVEL_INFO) \
             al_printf(format, ##__VA_ARGS__); \
     } while (0);
 #else

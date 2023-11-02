@@ -125,6 +125,17 @@ AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Fun
 
     AlGicv3_SetInterruptPriority(IntrId, CpuId, Attr->Priority);
 
+#ifdef ARM_CORE_SLAVE
+    if (IS_SPI(IntrId)) {
+#ifdef SUPPORT_NONSECURE
+        AlGicv3_SetInterruptType(IntrId, CpuId, INTR_GROUP1NS);
+#else
+        AlGicv3_SetInterruptType(IntrId, CpuId, INTR_GROUP1S);
+#endif
+        AlGicv3_SetSpiRouting(IntrId, GICV3_IRM_PE, CpuId);
+    }
+#endif
+
     AlIntr_RequestIntr(IntrId, Func, Param);
 
     return AL_OK;

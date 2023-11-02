@@ -28,34 +28,37 @@ typedef struct {
 extern AL_U64 _async_print_ring_buf_start;
 extern AL_U64 _async_print_ring_buf_end;
 
-RingBufStruct RingBuf;
+RingBufStruct *RingBuf = (RingBufStruct *)((AL_UINTPTR)&(_async_print_ring_buf_start));
 
 AL_VOID AlPrint_Init(AL_VOID)
 {
-    RingBuf.TotalSize = (AL_U32)(((AL_UINTPTR)&(_async_print_ring_buf_end)) - ((AL_UINTPTR)&(_async_print_ring_buf_start)));
-    RingBuf.ValidSize = 0;
-    RingBuf.FillPos = 0;
-    RingBuf.PrintPos = 0;
-    RingBuf.Buf = (AL_S8 *)((AL_UINTPTR)&(_async_print_ring_buf_start));
+    RingBuf->TotalSize = (AL_U32)(((AL_UINTPTR)&(_async_print_ring_buf_end)) - ((AL_UINTPTR)&(_async_print_ring_buf_start)) - sizeof(RingBufStruct));
+    RingBuf->ValidSize = 0;
+    RingBuf->FillPos = 0;
+    RingBuf->PrintPos = 0;
+    RingBuf->Buf = (AL_S8 *)((AL_UINTPTR)&(_async_print_ring_buf_start) + sizeof(RingBufStruct));
+    #ifdef ARM_CORE_SLAVE
+    AlCache_FlushDcacheRange((AL_UINTPTR)RingBuf, (AL_UINTPTR)(RingBuf + sizeof(RingBufStruct)));
+    #endif
 }
 
 AL_VOID AlPrint_AsyncPrintf(AL_VOID)
 {
     ALOsal_EnterCritical();
-    if (RingBuf.ValidSize != 0) {
-        AL_U32 FirstPrint = (RingBuf.PrintPos + RingBuf.ValidSize >= RingBuf.TotalSize) ?
-                            (RingBuf.TotalSize - RingBuf.PrintPos) : RingBuf.ValidSize;
-        AL_U32 SecondPrint = (RingBuf.PrintPos + RingBuf.ValidSize >= RingBuf.TotalSize) ?
-                            (RingBuf.PrintPos + RingBuf.ValidSize - RingBuf.TotalSize) : 0;
-        AlLog_Write(&RingBuf.Buf[RingBuf.PrintPos], FirstPrint);
-        RingBuf.PrintPos += FirstPrint;
-        RingBuf.PrintPos %= RingBuf.TotalSize;
-        RingBuf.ValidSize -= FirstPrint;
+    if (RingBuf->ValidSize != 0) {
+        AL_U32 FirstPrint = (RingBuf->PrintPos + RingBuf->ValidSize >= RingBuf->TotalSize) ?
+                            (RingBuf->TotalSize - RingBuf->PrintPos) : RingBuf->ValidSize;
+        AL_U32 SecondPrint = (RingBuf->PrintPos + RingBuf->ValidSize >= RingBuf->TotalSize) ?
+                            (RingBuf->PrintPos + RingBuf->ValidSize - RingBuf->TotalSize) : 0;
+        AlLog_Write(&RingBuf->Buf[RingBuf->PrintPos], FirstPrint);
+        RingBuf->PrintPos += FirstPrint;
+        RingBuf->PrintPos %= RingBuf->TotalSize;
+        RingBuf->ValidSize -= FirstPrint;
 
         if (SecondPrint) {
-            AlLog_Write(&RingBuf.Buf[RingBuf.PrintPos], SecondPrint);
-            RingBuf.PrintPos += SecondPrint;
-            RingBuf.ValidSize -= SecondPrint;
+            AlLog_Write(&RingBuf->Buf[RingBuf->PrintPos], SecondPrint);
+            RingBuf->PrintPos += SecondPrint;
+            RingBuf->ValidSize -= SecondPrint;
         }
     }
     ALOsal_ExitCritical();
@@ -66,15 +69,12 @@ AL_VOID AlPrint_AsyncPrintf(AL_VOID)
 AL_VOID OutByte(const AL_CHAR Char)
 {
 #ifdef AL_PRINT_ASYNC
-    if (RingBuf.FillPos == RingBuf.TotalSize) {
-        RingBuf.FillPos = 0;
-    }
-    RingBuf.Buf[RingBuf.FillPos] = Char;
-    RingBuf.FillPos++;
-    if (RingBuf.ValidSize >= RingBuf.TotalSize) {
-        RingBuf.PrintPos++;
+    RingBuf->Buf[RingBuf->FillPos] = Char;
+    RingBuf->FillPos = (RingBuf->FillPos + 1) % RingBuf->TotalSize;
+    if ((RingBuf->PrintPos % RingBuf->TotalSize) == (RingBuf->FillPos % RingBuf->TotalSize)) {
+        RingBuf->PrintPos = (RingBuf->PrintPos + 1) % RingBuf->TotalSize;
     } else {
-        RingBuf.ValidSize++;
+        RingBuf->ValidSize++;
     }
 #else
     AlLog_WriteByte(Char);
@@ -352,6 +352,10 @@ TryNext:
 AL_VOID al_printf(AL_CHAR *Format, ...)
 {
 #ifdef AL_PRINT_ASYNC
+    AL_U64 PrePos = RingBuf->FillPos;
+    #ifdef ARM_CORE_SLAVE
+    AlCache_InvalidateDcacheRange((AL_UINTPTR)RingBuf, (AL_UINTPTR)(RingBuf + sizeof(RingBufStruct)));
+    #endif
     ALOsal_EnterCritical();
 #endif
 
@@ -364,6 +368,15 @@ AL_VOID al_printf(AL_CHAR *Format, ...)
     va_end(Args);
 
 #ifdef AL_PRINT_ASYNC
+    #ifdef ARM_CORE_SLAVE
+    AlCache_FlushDcacheRange((AL_UINTPTR)RingBuf, (AL_UINTPTR)(RingBuf + sizeof(RingBufStruct)));
+    if (PrePos < RingBuf->FillPos) {
+        AlCache_FlushDcacheRange((AL_UINTPTR)(RingBuf->Buf + PrePos), (AL_UINTPTR)(RingBuf->Buf + RingBuf->FillPos));
+    } else {
+        AlCache_FlushDcacheRange((AL_UINTPTR)(RingBuf->Buf + PrePos), (AL_UINTPTR)(RingBuf->Buf + RingBuf->TotalSize));
+        AlCache_FlushDcacheRange((AL_UINTPTR)(RingBuf->Buf), (AL_UINTPTR)(RingBuf->Buf + RingBuf->FillPos));
+    }
+    #endif
     ALOsal_ExitCritical();
 #endif
 }

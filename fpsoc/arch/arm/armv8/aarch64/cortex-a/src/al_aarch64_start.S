@@ -52,6 +52,12 @@ el3_entry:
     /* Enable FP/SIMD */
     msr cptr_el3, xzr
 
+    /* SMP EN */
+    mrs x0, S3_1_c15_c2_1
+	orr x0, x0, #0x40
+	msr S3_1_c15_c2_1, x0
+	isb
+
     /* enable hardware coherency between cores */
     mov x0, #(0x01 << 6)
     msr actlr_el3, x0    //Enable L2ACTLR write access from EL2
