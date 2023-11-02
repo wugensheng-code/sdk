@@ -2,7 +2,6 @@
 #include "dr1x90_ddrc_init.h"
 #include "dr1x90_misc.h"
 
-#include "dr1x90_crg.h"
 #include "dr1x90_mpu.h"
 #include "al_barrier.h"
 #include "al_systimer.h"
