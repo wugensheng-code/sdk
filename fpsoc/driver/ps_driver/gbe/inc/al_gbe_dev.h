@@ -15,11 +15,11 @@ extern "C" {
 
 /* Default descriptor count, at least 4 */
 #ifndef AL_GBE_TX_DESC_CNT
-#define AL_GBE_TX_DESC_CNT    16
+#define AL_GBE_TX_DESC_CNT    32
 #endif
 
 #ifndef AL_GBE_RX_DESC_CNT
-#define AL_GBE_RX_DESC_CNT    16
+#define AL_GBE_RX_DESC_CNT    32
 #endif
 
 #define AL_GBE_SEGMENT_DEFAULT_SIZE              1460

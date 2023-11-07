@@ -1258,6 +1258,8 @@ AL_S32 AlGbe_Dev_Transmit(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruct *TxCo
         return Ret;
     }
 
+    DMB();
+
     INCR_TX_DESC_INDEX(Gbe->TxDescList.CurTxDesc, 1U);
 
     /* Start transmission */

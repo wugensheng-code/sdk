@@ -109,14 +109,20 @@ void pbuf_free_custom(struct pbuf *p)
 {
     struct pbuf_custom* custom_pbuf = (struct pbuf_custom*)p;
 
-    /* invalidate data cache: lwIP and/or application may have written into buffer */
-#ifdef ENABLE_MMU
-    uint32_t buffer_align_len = GBE_CACHE_ALIGN_SIZE(p->tot_len) + CACHE_LINE_SIZE;
-    AL_UINTPTR buffer_Align = (AL_UINTPTR)GBE_CACHE_ALIGN_MEMORY(p->payload);
-    AlCache_InvalidateDcacheRange((AL_UINTPTR)buffer_Align, (AL_UINTPTR)((char *)buffer_Align + buffer_align_len));
-#endif
-
     LWIP_MEMPOOL_FREE(RX_POOL, custom_pbuf);
+
+#ifdef ENABLE_MMU
+    /*
+      Notice:
+      AlCache_InvalidateDcacheRange((AL_UINTPTR)buffer_align, (AL_UINTPTR)buffer_align + ETH_RX_BUFFER_SIZE);
+
+      The data cahe should be invalid based on the corresponding rx buffer（p->payload）
+      and the length of the rx buffer（p->len）, but this operation will not work in
+      the nosys、 freertos and rttthread scenarios at the same time.
+      Use AlCache_InvalidateDcacheAll to work properly in all scenarios.
+     */
+    AlCache_InvalidateDcacheAll();
+#endif
 }
 
 /**
@@ -140,12 +146,6 @@ static struct pbuf *low_level_input(struct netif *netif)
 
         /* Build Rx descriptor to be ready for next data reception */
         AlGbe_Hal_BuildRxDescriptors(GbeHandle);
-
-        /* Invalidate data cache for ETH Rx Buffers */
-#ifdef ENABLE_MMU
-        uint32_t buffer_align_len = GBE_CACHE_ALIGN_SIZE(framelength) + CACHE_LINE_SIZE;
-        AlCache_InvalidateDcacheRange((AL_UINTPTR)RxBuff.Buffer, (AL_UINTPTR)(RxBuff.Buffer + buffer_align_len));
-#endif
 
         custom_pbuf  = (struct pbuf_custom*)LWIP_MEMPOOL_ALLOC(RX_POOL);
         if (custom_pbuf == NULL) {
@@ -471,6 +471,8 @@ err_t low_level_init(struct netif *netif)
         printf("AlGbe_Hal_Init failed\r\n");
         return ERR_IF;
     }
+
+    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
 #ifdef ENABLE_MMU
 

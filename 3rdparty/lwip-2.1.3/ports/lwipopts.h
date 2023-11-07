@@ -250,6 +250,8 @@ a lot of data that needs to be copied, this should be set high. */
 #define TCP_WND                 (24*TCP_MSS)
 
 
+#define MEMP_NUM_TCPIP_MSG_INPKT        64
+
 /* ---------- Statistics options ---------- */
 #define LWIP_STATS 0
 
@@ -325,7 +327,7 @@ The STM32H7xx allows computing and verifying the IP, UDP, TCP and ICMP checksums
 
 /* TCPIP thread options */
 #define TCPIP_THREAD_NAME              "TCP/IP"
-#define TCPIP_MBOX_SIZE                 24
+#define TCPIP_MBOX_SIZE                 48
 #define DEFAULT_UDP_RECVMBOX_SIZE       6
 #define DEFAULT_TCP_RECVMBOX_SIZE       24
 #define DEFAULT_ACCEPTMBOX_SIZE         6
