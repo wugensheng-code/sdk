@@ -15,7 +15,7 @@
 void dr1x90_ddrppc_base_cfg();
 void dr1x90_ddrppc_set_ddrmr();
 void dr1x90_ddrppc_set_timing();
-
+void dr1x90_mtest_set_addr(u8 bank, u16 row, u16 col);
 void dr1x90_ddrppc_fast_init();
 void dr1x90_ddrmc_init(u8 sd_ecc_en);
 void dr1x90_ddrmc_post_cfg();

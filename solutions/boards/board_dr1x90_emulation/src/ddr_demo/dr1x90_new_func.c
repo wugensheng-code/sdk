@@ -16,12 +16,12 @@ u8 ddr_vif_manual_ddl_update ;
 
 void pinmux_config_dbgm_ddr()
 {
-    static volatile uint32_t* const MIO_FUNCSEL = 0xF8803000;
-    static volatile uint32_t* const MIO_F15SEL = 0xF8803100;
-    static volatile uint32_t* const CFG_DBGM_SEL = 0xF8800100;
+    static volatile uint32_t* const MIO_FUNCSEL = (volatile uint32_t*)0xF8803000;
+    static volatile uint32_t* const MIO_F15SEL = (volatile uint32_t*)0xF8803100;
+    static volatile uint32_t* const CFG_DBGM_SEL = (volatile uint32_t*)0xF8800100;
 
-    u32 reg_data1 = 0;
-    u32 reg_data2 = 5;
+    // u32 reg_data1 = 0;
+    // u32 reg_data2 = 5;
     // DBGM[15 : 0]
     const int dbgm_pin[16] = { 17, 18, 19, 29, 30, 31, 32, 33, 40, 41, 42, 43, 44, 45, 52, 53 };
     // PINMUX
@@ -31,13 +31,13 @@ void pinmux_config_dbgm_ddr()
         uint32_t offset = dbgm_pin[i];
         // printf("\noffset = 0x%x\r\n", offset);
 
-        dr1x90_ddr_reg_write(&ftcHandle, MIO_FUNCSEL + offset, 15U);
+        dr1x90_ddr_reg_write(&ftcHandle, (u32)(UINTPTR)(MIO_FUNCSEL + offset), 15U);
         //dr1x90_ddr_reg_read(&ftcHandle, MIO_FUNCSEL + offset,&reg_data1);
 
         //printf("\n******  addr = 0x%x,data = 0x%x *********\r\n", MIO_FUNCSEL + offset, reg_data1);
 
 
-        dr1x90_ddr_reg_write(&ftcHandle, MIO_F15SEL + offset, 0x1);
+        dr1x90_ddr_reg_write(&ftcHandle, (u32)(UINTPTR)(MIO_F15SEL + offset), 0x1);
 
         //dr1x90_ddr_reg_read(&ftcHandle, MIO_F15SEL + offset, &reg_data2);
         //printf("\n******  addr = 0x%x,data2 = 0x%x  *********\r\n", MIO_F15SEL + offset, reg_data2);
@@ -48,7 +48,7 @@ void pinmux_config_dbgm_ddr()
     uint32_t cfg = 0U | (1U << 7);
     // *CFG_DBGM_SEL = cfg;
     //dr1x90_ddr_reg_write(&ftcHandle, CFG_DBGM_SEL, cfg);
-    dr1x90_ddr_reg_write(&ftcHandle, CFG_DBGM_SEL, cfg);
+    dr1x90_ddr_reg_write(&ftcHandle, (u32)(UINTPTR)CFG_DBGM_SEL, cfg);
 
     //dr1x90_ddr_reg_read(&ftcHandle, CFG_DBGM_SEL, &reg_data);
     //printf("\n****** CFG_DBGM_SEL  addr = 0x%x,data = 0x%x  *********\r\n", CFG_DBGM_SEL, reg_data);
@@ -257,9 +257,8 @@ void dr1x90_zq_overwrite_cfg_new()
     u8 n;
     u8 i;
     //u8 BankInfo;
-    u8 override_en = 1
-        ;
-    u8 pzq_cal_done;
+    u8 override_en = 1;
+    // u8 pzq_cal_done;
 
     u32 bank_zq_ac_code;
     u32 bank_zq_dx_code;
@@ -282,10 +281,10 @@ void dr1x90_zq_overwrite_cfg_new()
 
     u32 regData, regDataNew;
 
-    u32 env_cfg_dci_cascade = 0;
+    // u32 env_cfg_dci_cascade = 0;
     // ddr4 = l ddr3 = 0
    // u32 env_cfg_ddr_mode = 3;
-    u32 env_cfg_pzq_slave = 1;
+   // u32 env_cfg_pzq_slave = 1;
 
     u8 env_cfg_host_vrefr;
     u8 env_cfg_host_vref;
@@ -300,7 +299,7 @@ void dr1x90_zq_overwrite_cfg_new()
     }
 
 
-    pzq_cal_done = 0;
+    // pzq_cal_done = 0;
 
     if (override_en == 1)
     {
@@ -619,7 +618,8 @@ void eye_training()
 
 void adjust_rddbi_level_result(u8 pub_index)
 {
-    u32 regData_1, regData_2;
+   // u32 regData_1;
+    u32 regData_2;
     ddr_vif_manual_ddl_update = 1;
 
 
@@ -632,12 +632,12 @@ void adjust_rddbi_level_result(u8 pub_index)
     //#define     DX0BDLR5            0x758
     //#define     DX0BDLR3            0x750
     //#define     DX1BDLR5            0x858
-    u32 BDLR5[9] = { 0x758,0x858,0x958,0xa58,0xb58,0xc58,0xd58,0xe58,0xf58 };
+    // u32 BDLR5[9] = { 0x758,0x858,0x958,0xa58,0xb58,0xc58,0xd58,0xe58,0xf58 };
     u32 BDLR3[9] = { 0x750,0x850,0x950,0xa50,0xb50,0xc50,0xd50,0xe50,0xf50 };
     int n;
     for (int j = 0; j <= 3; j++) {
         //if (env_cfg_dx_en[j] == 1) {
-            regData_1  = dr1x90_field_read(DDRC_ADDR_PPC + BDLR5[j], DMRBD_offset, DMRBD_mask);
+           // regData_1  = dr1x90_field_read(DDRC_ADDR_PPC + BDLR5[j], DMRBD_offset, DMRBD_mask);
             regData_2 = dr1x90_field_read(DDRC_ADDR_PPC + BDLR3[j], DQ0RBD_offset, DQ0RBD_mask);
             for(n = 0;n<=1000;n++){}
             dr1x90_field_write(DDRC_ADDR_PPC + BDLR3[j], DMRBD_offset, DMRBD_mask, regData_2);

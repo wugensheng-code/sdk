@@ -7,7 +7,7 @@
 u32 dr1x90_ddr_reg_write(u32* useless, u32 addr, u32 data);
 u32 dr1x90_ddr_reg_read(u32* useless, u32 addr, u32* data);
 
-void dr1x90_reg_write  (u16 addr, u32 data);
+u32 dr1x90_reg_write  (u16 addr, u32 data);
 u32  dr1x90_reg_read   (u16 addr);
 void dr1x90_reg_update (u16 addr, u32 oldData, u32 newData);
 void dr1x90_field_write(u16 addr, u8 offset, u32 mask, u32 data);

@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "alc_types.h"
 #include "dr1x90_ddrc_init.h"
 #include "dr1x90_misc.h"

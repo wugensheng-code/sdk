@@ -7,12 +7,9 @@
 #include <stdint.h>
 #include "dr1x90_pinctrl.h"
 
-static volatile uint32_t* const MIO_FUNCSEL = 0xF8803000;
-static volatile uint32_t* const MIO_F15SEL  = 0xF8803144;
-static volatile uint32_t* const MIO_EMIOSEL = 0xF8803400;
-static volatile uint32_t* const MIO_PARA    = 0xF8803800;
-static volatile uint32_t* const MIO_200REF  = 0xF8803c00;
-static volatile uint32_t* const MIO_201REF  = 0xF8803c04;
+static volatile uint32_t* const MIO_FUNCSEL = (volatile uint32_t*) 0xF8803000;
+static volatile uint32_t* const MIO_EMIOSEL = (volatile uint32_t*) 0xF8803400;
+static volatile uint32_t* const MIO_PARA    = (volatile uint32_t*) 0xF8803800;
 
 static void set_funcsel(int start, int end, uint32_t func)
 {

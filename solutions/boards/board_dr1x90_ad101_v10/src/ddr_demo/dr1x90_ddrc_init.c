@@ -1,4 +1,4 @@
-
+#include <stdio.h>
 #include "dr1x90_ddrc_init.h"
 
 // task #
@@ -119,11 +119,11 @@ void dr1x90_ddrppc_set_timing()
 {
     u32 regData;
 
-    u32 tdinit_cke_high, tdinit_cke_low, tdinit_zq, tdinit_rst;
-    tdinit_cke_high = 0;
-    tdinit_cke_low  = 400000;
-    tdinit_zq       = 0;
-    tdinit_rst      = 160000;
+    // u32 tdinit_cke_high, tdinit_cke_low, tdinit_zq, tdinit_rst;
+    // tdinit_cke_high = 0;
+    // tdinit_cke_low  = 400000;
+    // tdinit_zq       = 0;
+    // tdinit_rst      = 160000;
 
     //  PTR0                             0x040
     regData = dr1x90_reg_read (DDRC_ADDR_PPC + PTR0);
@@ -289,7 +289,7 @@ int dr1x90_ddrppc_mtest(u8 bank, u16 row, u16 col, u8 byteNum) {
         bistDxErr = dr1x90_field_read(DDRC_ADDR_PPC + BISTGSR,  BDXERR_offset, BDXERR_mask);
         rcvCnt    = dr1x90_field_read(DDRC_ADDR_PPC + BISTWCSR, DXWCNT_offset, DXWCNT_mask); // Equal to iterateCnt
 
-       //  printf("\ndram_test : patternType =  0x%x, bistDone = 0x%x, bistDxErr = 0x%x, rcvCnt = 0x%x \r\n", patternType, bistDone, bistDxErr, rcvCnt);
+       printf("\ndram_test : patternType =  0x%x, bistDone = 0x%x, bistDxErr = 0x%x, rcvCnt = 0x%x \r\n", patternType, bistDone, bistDxErr, rcvCnt);
 
         dr1x90_field_write(DDRC_ADDR_PPC + BISTRR, BINST_offset, BINST_mask, 3);
         dr1x90_field_write(DDRC_ADDR_PPC + BISTRR, BINST_offset, BINST_mask, 2);
@@ -351,7 +351,7 @@ void dr1x90_ddrppc_fast_init()
 // task #
 void dr1x90_ddrmc_init(u8 sd_ecc_en)
 {
-    u32 regData;
+    // u32 regData;
 
     dr1x90_reg_write(0x1320, 0x00000000);  // SWCTL
     dr1x90_reg_write(0x1328 ,0x00000001); // SWCTLSTATIC
@@ -561,7 +561,7 @@ void dr1x90_ddrmc_post_cfg()
     dr1x90_field_wait(DDRC_ADDR_UMCTL2 + STAT, operating_mode_offset, operating_mode_mask, 0x1, 1000);
 
     regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + STAT, operating_mode_offset, operating_mode_mask);
-   //  printf("\n operating_mode.   data =  0x%x\r\n", regData);
+    printf("\n operating_mode.   data =  0x%x\r\n", regData);
 
     //step 11
     // cfg SWCTL.sw_done = 1'b0
@@ -597,7 +597,6 @@ void dr1x90_ddrmc_post_cfg()
 
 void dr1x90_iomc_internal_loopback_cfg()
 {
-    u32 regData;
 
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr0_cfg3       , U_byte0_se_mc1_lb_en_offset,      U_byte0_se_mc1_lb_en_mask,   0x1 );
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr1to4_cfg11   , U_byte0_quad1_mc1_lb_en_offset,   U_byte0_quad1_mc1_lb_en_mask,   0xf );
@@ -622,29 +621,29 @@ void dr1x90_zq_overwrite_cfg() {
 
     u8 n ;
     u8 i ;
-    u8 BankInfo ;
+    // u8 BankInfo ;
     u8 override_en = 1;
 
-    u8 pzq_cal_done ;
+    // u8 pzq_cal_done ;
 
     //u32  bank_zq_ac_code[3] = {0x19193235,0x19193235,0x19193235} ;
     //u32  bank_zq_dx_code[3] = {0x19193235,0x19193235,0x19193235} ;
     u32  bank_zq_ac_code[3] = {0x11112323,0x11112323,0x11112323} ;
     u32  bank_zq_dx_code[3] = {0x11112323,0x11112323,0x11112323} ;
 
-    u32  zqcal_done;
-    u32  zqcal_err ;
+    // u32  zqcal_done;
+    // u32  zqcal_err ;
 
     u32 regData, regDataNew ;
 
-    u32 env_cfg_dci_cascade = 0;
+    // u32 env_cfg_dci_cascade = 0;
     // ddr4=1 ddr3=0
-    //u32 env_cfg_ddr_mode = 3;
-    u32 env_cfg_pzq_slave = 1;
+    // u32 env_cfg_ddr_mode = 3;
+    // u32 env_cfg_pzq_slave = 1;
     u8 env_cfg_host_vrefr = 0xf;
     u8 env_cfg_host_vref = 0x1f;
 
-    pzq_cal_done = 0 ;
+    // pzq_cal_done = 0 ;
 
      if ( override_en == 1 ) {
         dr1x90_field_write(DDRC_ADDR_PPC + PIR, ZCALBYP_offset, ZCALBYP_mask, 1);

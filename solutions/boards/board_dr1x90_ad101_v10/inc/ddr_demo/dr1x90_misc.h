@@ -21,6 +21,8 @@ void dr1x90_zq_overwrite_cfg_new();
 void gate_train();
 void do_training(u8 wl_en, u8 wl2_en, u8 gt_en);
 void eye_training();
+void soft_weye_scanning();
+void soft_reye_scanning();
 void adjust_rddbi_level_result(u8 pub_index);
 int dr1x90_ddrppc_mtest_my(u8 bank, u16 row, u16 col, u8 byteNum);
 void set_mpu();
