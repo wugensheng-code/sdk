@@ -472,8 +472,6 @@ err_t low_level_init(struct netif *netif)
         return ERR_IF;
     }
 
-    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
-
 #ifdef ENABLE_MMU
 
     /* 2M alignment required, If it is not set, an error is returned */
