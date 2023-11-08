@@ -25,9 +25,7 @@ extern "C" {
 #define FSBL_SYSTEM_RESET   0
 #define FSBL_PS_ONLY_RESET  1
 
-#ifdef FSBL_QSPI_XIP
-#define QSPI_XIP_THROUTH_CSU_DMA
-#endif
+
 
 /// Address Mapping Definition
 #define AL_DDR1_BASE_ADDR           (0x00000000)
@@ -222,9 +220,10 @@ extern "C" {
 #define CRP_RST_REASON_MSK_SWDT1       (0x1 << 7)
 #define CRP_RST_REASON_MSK_SWDT2       (0x1 << 8)
 
-
-
 #define CRP_WDT_OUT_CTRL           ((CRP_BASEADDR) + 0x000004B4U)
+
+#define APU_CTRL_BASEADDR             0xF8802000UL
+#define APU_CTRL_AINACTS          ((APU_CTRL_BASEADDR) + 0x00000004U)
 
 
 #define SYSCTRL_S_BASEADDR            0XF8806000UL

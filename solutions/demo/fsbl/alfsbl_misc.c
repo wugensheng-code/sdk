@@ -7,7 +7,7 @@
 #include "al_core.h"
 #include "alfsbl_misc.h"
 #include "al_utils_def.h"
-
+#include "al_systimer.h"
 
 void *AlFsbl_MemCpy(void *DestPtr, const void *SrcPtr, uint32_t Len)
 {
@@ -126,4 +126,16 @@ void AlFsbl_MakeSdFileName(char *FileName, uint32_t MultiBootReg, uint32_t DrvNu
 	}
 
 	AL_LOG(AL_LOG_LEVEL_INFO, "file name is %s\r\n", FileName);
+}
+
+
+void print_time_stamp(void)
+{
+	uint64_t TimerFreq = 0;
+	volatile uint64_t CurrTimer;
+	uint64_t CurrTimeMs;
+	TimerFreq = AlSys_GetTimerFreq();
+	CurrTimer = AlSys_GetTimerTickCount();
+	CurrTimeMs = CurrTimer * 1000 / TimerFreq;
+	printf("Current Time: %llu ms\r\n", CurrTimeMs);
 }

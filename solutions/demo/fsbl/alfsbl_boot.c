@@ -19,9 +19,10 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 {
 	uint32_t Status = ALFSBL_SUCCESS;
 	uint32_t BootMode;
-	uint32_t BlockSizeMax;
 
 	BootMode = AL_REG32_READ(SYSCTRL_NS_BOOT_MODE);
+
+	BootMode = 1;
 
 	AL_LOG(AL_LOG_LEVEL_INFO, "Boot Mode: 0x%08x\r\n", BootMode);
 
@@ -87,14 +88,13 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
 		goto END;
 	}
 
-	Status = FsblInstancePtr->DeviceOps.DeviceInit(&BlockSizeMax);
+	Status = FsblInstancePtr->DeviceOps.DeviceInit();
 	if(ALFSBL_SUCCESS != Status) {
 		AL_LOG(AL_LOG_LEVEL_ERROR, "Device init failed: %x\r\n", Status);
 		Status = ALFSBL_ERROR_DEVICE_INIT_FAILED;
 		goto END;
 	}
 
-	FsblInstancePtr->DeviceOps.BlockSizeMax = BlockSizeMax;
 
 END:
 	return Status;

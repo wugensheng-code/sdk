@@ -26,6 +26,8 @@ uint32_t endian_convert(uint32_t data);
 
 void AlFsbl_MakeSdFileName(char *FileName, uint32_t MultiBootReg, uint32_t DrvNum);
 
+void print_time_stamp(void);
+
 #ifdef __cplusplus
 }
 #endif

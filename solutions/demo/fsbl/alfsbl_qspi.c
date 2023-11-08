@@ -15,8 +15,8 @@ AL_QSPI_HalStruct *Handle;
 
 AL_QSPI_ConfigsStruct QspiX4InitConfigs =
 {
-    .ClkDiv             = 20,
-    .SamplDelay         = 2,
+    .ClkDiv             = 2,
+    .SamplDelay         = 4,
     .SlvToggleEnum      = QSPI_SLV_TOGGLE_DISABLE,
     .SpiFrameFormat     = SPI_QUAD_FORMAT,
     .ClockStretch       = QSPI_EnableClockStretch
@@ -79,6 +79,8 @@ AL_VOID AlNor_WaitWip(AL_VOID)
  * @return  Different manufacturers of flash require different parameters to be passed
  * @note
 */
+
+
 AL_S32 AlNor_SetQuad(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd, AL_U8 QuadPos)
 {
     AL_S32  Ret = AL_OK;
@@ -117,10 +119,12 @@ AL_S32 AlNor_SetQuad(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd, AL_U8 QuadPos)
 }
 
 
-AL_U32 AlFsbl_QspiInit(AL_U32 *pBlockSizeMax)
+AL_U32 AlFsbl_QspiInit(void)
 {
     AL_U32 Ret;
     AL_U8 SendData[4] = {0x0};
+
+    AL_REG32_SET_BITS(0xF8801030UL, 0, 6, 2); /// set div_qspi 3 bansed on IO 1000，then div 4, generate 83.33M SCLK
 
     Ret = AlQspi_Hal_Init(&Handle, &QspiX4InitConfigs, AL_NULL, 0);
     if (Ret != AL_OK) {
@@ -149,15 +153,14 @@ AL_U32 AlFsbl_QspiInit(AL_U32 *pBlockSizeMax)
             Ret = AlNor_SetQuad(0x01, 0x05, 6);
         }
     }
-    *pBlockSizeMax = 8*1024;
 
     return Ret;
 }
 
-AL_U32 AlFsbl_Qspi24Init(AL_U32 *pBlockSizeMax)
+AL_U32 AlFsbl_Qspi24Init(void)
 {
     AL_U32 Ret;
-    Ret = AlFsbl_QspiInit(pBlockSizeMax);
+    Ret = AlFsbl_QspiInit();
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -169,10 +172,10 @@ AL_U32 AlFsbl_Qspi24Init(AL_U32 *pBlockSizeMax)
     return Ret;
 }
 
-AL_U32 AlFsbl_Qspi32Init(AL_U32 *pBlockSizeMax)
+AL_U32 AlFsbl_Qspi32Init(void)
 {
     AL_U32 Ret;
-    Ret = AlFsbl_QspiInit(pBlockSizeMax);
+    Ret = AlFsbl_QspiInit();
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -207,41 +210,10 @@ AL_U32 AlFsbl_Qspi24Copy(AL_U64 SrcAddress, PTRSIZE DestAddress, AL_U32 Length, 
                 Length,
                 CSUDMA_DST_INCR | CSUDMA_SRC_INCR);
     }
-#else
 
-    AL_U8 SendData[4] = {0x0};
-#ifndef QSPI_USE_AHB_DMA
-
-    Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
-    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L24;
-    Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 8;
-    Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
-    Handle->Dev.Configs.SpiFrameFormat = SPI_QUAD_FORMAT;
-    Handle->Dev.Configs.Trans.TransMode  = QSPI_RX_ONLY;
-
-    SendData[0] = NOR_OP_READ_1_1_4;
-    i = Length / 65532 + (Length % 65532 ? 1 : 0);
-
-    for (; i > 0; i--) {
-        SendData[1] = (SrcAddress >> 16) & 0xff;
-        SendData[2] = (SrcAddress >> 8)&0xff;
-        SendData[3] = SrcAddress&0xff;
-
-        RecvSize = (Length > 65532) ? 65532 : Length;
-        Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 4, (AL_U8 *)DestAddress, RecvSize, 10000000);
-        if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_READPAGE error:0x%x\r\n", Ret);
-        }
-        SrcAddress += RecvSize;
-        DestAddress += RecvSize;
-        Length -= RecvSize;
-    }
-#ifdef ENABLE_MMU
-    AlCache_FlushDcacheAll();
-    //AlCache_FlushDcacheRange(DestAddress, RecvSize);
-#endif
-
-#else
+#elif (defined QSPI_USE_AHB_DMA)
+	AL_U8 SendData[4] = {0x0};
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "ahb dma mode\r\n");
     Handle->Dev.Configs.Trans.TransMode  = QSPI_RX_ONLY;
     Handle->Dev.Configs.SpiFrameFormat = SPI_QUAD_FORMAT;
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 8;
@@ -268,8 +240,40 @@ AL_U32 AlFsbl_Qspi24Copy(AL_U64 SrcAddress, PTRSIZE DestAddress, AL_U32 Length, 
         Length -= RecvSize;
     }
 
+#else
+    AL_U8 SendData[4] = {0x0};
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "regular mode\r\n");
+    Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L24;
+    Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 8;
+    Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
+    Handle->Dev.Configs.SpiFrameFormat = SPI_QUAD_FORMAT;
+    Handle->Dev.Configs.Trans.TransMode  = QSPI_RX_ONLY;
+
+    SendData[0] = NOR_OP_READ_1_1_4;
+    i = Length / 65532 + (Length % 65532 ? 1 : 0);
+
+    for (; i > 0; i--) {
+        SendData[1] = (SrcAddress >> 16) & 0xff;
+        SendData[2] = (SrcAddress >> 8)&0xff;
+        SendData[3] = SrcAddress&0xff;
+
+        RecvSize = (Length > 65532) ? 65532 : Length;
+        Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 4, (AL_U8 *)DestAddress, RecvSize, 10000000);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_READPAGE error:0x%x\r\n", Ret);
+        }
+        SrcAddress += RecvSize;
+        DestAddress += RecvSize;
+        Length -= RecvSize;
+    }
+
 #endif
+
+#ifdef ENABLE_MMU
+    AlCache_FlushDcacheAll();
 #endif
+
     if(Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor read byte error\r\n");
         Ret = Ret | (ALFSBL_BOOTMODE_QSPI24 << 16);
@@ -302,42 +306,9 @@ AL_U32 AlFsbl_Qspi32Copy(AL_U64 SrcAddress, PTRSIZE DestAddress, AL_U32 Length, 
                 Length,
                 CSUDMA_DST_INCR | CSUDMA_SRC_INCR);
     }
-#else
 
+#elif (defined QSPI_USE_AHB_DMA)
     AL_U8 SendData[4] = {0x0};
-#ifndef QSPI_USE_AHB_DMA
-
-    Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
-    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L32;
-    Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 8;
-    Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
-    Handle->Dev.Configs.SpiFrameFormat = SPI_QUAD_FORMAT;
-    Handle->Dev.Configs.Trans.TransMode  = QSPI_RX_ONLY;
-
-    SendData[0] = NOR_OP_READ_1_1_4_4B;
-    i = Length / 65532 + (Length % 65532 ? 1 : 0);
-
-    for (; i > 0; i--) {
-        SendData[1] = (SrcAddress >> 24) & 0xff;
-        SendData[2] = (SrcAddress >> 16) & 0xff;
-        SendData[3] = (SrcAddress >> 8)&0xff;
-        SendData[4] = SrcAddress&0xff;
-
-        RecvSize = (Length > 65532) ? 65532 : Length;
-        Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 5, (AL_U8 *)DestAddress, RecvSize, 10000000);
-        if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_READPAGE error:0x%x\r\n", Ret);
-        }
-        SrcAddress += RecvSize;
-        DestAddress += RecvSize;
-        Length -= RecvSize;
-    }
-#ifdef ENABLE_MMU
-    AlCache_FlushDcacheAll();
-    //AlCache_FlushDcacheRange(DestAddress, RecvSize);
-#endif
-
-#else
     Handle->Dev.Configs.Trans.TransMode  = QSPI_RX_ONLY;
     Handle->Dev.Configs.SpiFrameFormat = SPI_QUAD_FORMAT;
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 8;
@@ -364,7 +335,39 @@ AL_U32 AlFsbl_Qspi32Copy(AL_U64 SrcAddress, PTRSIZE DestAddress, AL_U32 Length, 
         DestAddress += RecvSize;
         Length -= RecvSize;
     }
+
+#else
+    AL_U8 SendData[4] = {0x0};
+    Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L32;
+    Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 8;
+    Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
+    Handle->Dev.Configs.SpiFrameFormat = SPI_QUAD_FORMAT;
+    Handle->Dev.Configs.Trans.TransMode  = QSPI_RX_ONLY;
+
+    SendData[0] = NOR_OP_READ_1_1_4_4B;
+    i = Length / 65532 + (Length % 65532 ? 1 : 0);
+
+    for (; i > 0; i--) {
+        SendData[1] = (SrcAddress >> 24) & 0xff;
+        SendData[2] = (SrcAddress >> 16) & 0xff;
+        SendData[3] = (SrcAddress >> 8)&0xff;
+        SendData[4] = SrcAddress&0xff;
+
+        RecvSize = (Length > 65532) ? 65532 : Length;
+        Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 5, (AL_U8 *)DestAddress, RecvSize, 10000000);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_READPAGE error:0x%x\r\n", Ret);
+        }
+        SrcAddress += RecvSize;
+        DestAddress += RecvSize;
+        Length -= RecvSize;
+    }
+
 #endif
+
+#ifdef ENABLE_MMU
+    AlCache_FlushDcacheAll();
 #endif
 
     if(Ret != AL_OK) {
@@ -379,5 +382,6 @@ AL_U32 AlFsbl_Qspi24Release(void)
 {
     return 0;
 }
+
 
 

@@ -64,9 +64,9 @@ PINMUX_MODE ?= PINMUX_MODE1
 #########################################################################
 # 5. fsbl internal Macro
 #########################################################################
+#CFLAGS += -DQSPI_USE_AHB_DMA
+#CFLAGS += -DQSPI_XIP_THROUTH_CSU_DMA
 
-## QSPI XIP
-FSBL_QSPI_XIP              ?= no
 
 DOWNLOAD                   = ocm
 

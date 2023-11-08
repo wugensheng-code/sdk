@@ -44,6 +44,8 @@ int Soc_PlatGetDeviceVersion()
 
 int Soc_PlatInit()
 {
+#ifdef DDR_AVAILABLE
 	demo_ddr_init();
+#endif
     return AL_OK;
 }

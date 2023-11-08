@@ -10,6 +10,13 @@
 #include "al_reg_io.h"
 #include "al_utils_def.h"
 
+extern uint32_t RegVal_srst_ctrl2;
+extern uint32_t RegVal_srst_ctrl0;
+extern uint32_t RegVal_pls_prot;
+extern uint32_t RegVal_ainacts;
+
+volatile uint32_t RegVal_RAW_HIS0;
+
 
 void __attribute__((noinline)) AlFsbl_HandoffExit(uint64_t HandoffAddress)
 {
@@ -51,6 +58,7 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 	uint32_t RunningCpu;
 	uint32_t CpuSettings;
 	uint64_t HandoffAddress;
+	uint32_t ResetReasonValue = 0;
 
 	RunningCpu = FsblInstancePtr->ProcessorID;
 
@@ -60,12 +68,23 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 	/// disable pcap to restore pcap-pl isolation
 	AL_REG32_WRITE(CSU_PCAP_ENABLE, 0);
 
-	/// release reset of gp0m, gp1m, hp0, hp1
-	AL_REG32_SET_BITS(CRP_SRST_CTRL2, 0, 2, 3);
-	AL_REG32_SET_BITS(CRP_SRST_CTRL2, 4, 2, 3);
+	/// recover reset status of gp0m, gp1m, hp0, hp1
+	AL_REG32_SET_BITS(CRP_SRST_CTRL2, 0, 2, RegVal_srst_ctrl2);
+	AL_REG32_SET_BITS(CRP_SRST_CTRL2, 4, 2, RegVal_srst_ctrl2 >> 4);
 
-	/// gp normal access to pl, gp port and fahb port
-	AL_REG32_SET_BITS(SYSCTRL_NS_PLS_PROT, 0, 2, 0);
+	/// recover reset status of gp normal access to pl, gp port and fahb port
+	AL_REG32_SET_BITS(SYSCTRL_NS_PLS_PROT, 0, 2, RegVal_pls_prot);
+
+	/// recover reset status of apu acp bus
+	AL_REG32_SET_BITS(CRP_SRST_CTRL0, 8, 1, RegVal_srst_ctrl0 >> 8);
+	AL_REG32_SET_BITS(APU_CTRL_AINACTS, 0, 1, RegVal_ainacts >> 0);
+
+	/// clear reset reason
+	ResetReasonValue = AL_REG32_READ(CRP_RST_REASON);
+	AL_REG32_WRITE(CRP_RST_REASON, ResetReasonValue);  /// write 1 clear
+
+	RegVal_RAW_HIS0 = AL_REG32_READ(SYSCTRL_S_RAW_HIS0);
+	AL_REG32_WRITE(SYSCTRL_S_RAW_HIS0, RegVal_RAW_HIS0);
 
 	if(FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_JTAG) {
 		while(1) {
@@ -77,8 +96,6 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 	for(HandoffIdx = 0; HandoffIdx < FsblInstancePtr->HandoffCpuNum; HandoffIdx++) {
 		CpuSettings = FsblInstancePtr->HandoffValues[HandoffIdx].CpuSettings;
 		HandoffAddress = FsblInstancePtr->HandoffValues[HandoffIdx].HandoffAddress;
-		//AL_LOG(AL_LOG_LEVEL_INFO, "handoff cpu : %08x\r\n", FsblInstancePtr->HandoffValues[HandoffIdx].CpuSettings);
-		//AL_LOG(AL_LOG_LEVEL_INFO, "handoff addr: %08x\r\n", FsblInstancePtr->HandoffValues[HandoffIdx].HandoffAddress);
 
 		if(RunningCpu != CpuSettings) {
 			/// handoff to a different cpu

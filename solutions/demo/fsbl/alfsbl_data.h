@@ -175,8 +175,7 @@ typedef struct _AlFsbl_HandoffValues_ {
 
 typedef struct _AlFsbl_DeviceOps_ {
 	uint32_t DeviceBaseAddress;
-	uint32_t BlockSizeMax;
-	uint32_t (*DeviceInit)(uint32_t *pBlockSizeMax);
+	uint32_t (*DeviceInit)(void);
 	uint32_t (*DeviceCopy)(PTRSIZE SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo);
 	uint32_t (*DeviceRelease)(void);
 } AlFsbl_DeviceOps;

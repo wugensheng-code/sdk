@@ -10,8 +10,8 @@
 #include "al_reg_io.h"
 #include "al_utils_def.h"
 
-extern uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE];
-
+extern uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE]__attribute__((aligned(64)));
+extern uint8_t  HashBuffer[32]__attribute__((aligned(64)));
 
 uint32_t AlFsbl_BootDevInitAndHdrValidate(AlFsblInfo *FsblInstancePtr)
 {
@@ -140,7 +140,6 @@ uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl)
 	uint32_t AcOffset;
 	uint32_t BootHdrAttrb;
 	uint32_t Status = ALFSBL_SUCCESS;
-	uint8_t HashBuffer[32];
 	SecureInfo FsblIHSecInfo = {0};
 
 	ImageOffsetAddress = FsblInstancePtr->ImageOffsetAddress;
@@ -253,7 +252,6 @@ uint32_t AlFsbl_PpkVerification(AlFsblInfo *FsblInstancePtr, uint32_t BootHdrAtt
 	uint32_t Status;
 	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM);
 	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM + 64);
-	uint8_t HashBuffer[32];
 	uint8_t *pPpkHashAddr = AL_NULL;
 	SecureInfo FsblPpkSecInfo = {0};
 
@@ -310,7 +308,6 @@ uint32_t AlFsbl_SpkVerification(AlFsblInfo *FsblInstancePtr, SecureInfo *pFsblIH
 {
 	uint32_t Status;
 	uint8_t AuthType;
-	uint8_t HashBuffer[32];
 
 	pFsblIHSecInfo->HashDataAddr = (uint32_t)(AuthBuffer + ALAC_SPK_OFFSET);
 	pFsblIHSecInfo->DataLength = SPK_BYTE_LENGTH;

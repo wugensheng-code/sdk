@@ -19,7 +19,10 @@
 #include "al_utils_def.h"
 
 
-extern uint8_t  ReadBuffer[READ_BUFFER_SIZE];
+extern uint8_t     ReadBuffer[READ_BUFFER_SIZE];
+extern uint8_t     HashBuffer[32]__attribute__((aligned(64)));
+extern uint8_t     AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE]__attribute__((aligned(64)));
+extern SecureInfo  FsblSecInfo;
 
 static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx, SecureInfo *pSecureInfo);
 
@@ -36,12 +39,14 @@ static uint32_t ALFsbl_BitStreamProgDone(void);
 
 static void     AlFsbl_PrintPartitionHeaderInfo(AlFsbl_PartitionHeader *PtHdr);
 
-extern uint8_t  ReadBuffer[READ_BUFFER_SIZE];
-extern SecureInfo FsblSecInfo;
-extern uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE];
 
 static uint32_t __attribute__((aligned(4))) RpuWait = 0xa001a001;
 static uint8_t  RpuWakeUpFlag = 0;
+
+uint32_t RegVal_srst_ctrl2 = 0;
+uint32_t RegVal_srst_ctrl0 = 0;
+uint32_t RegVal_pls_prot = 0;
+uint32_t RegVal_ainacts = 0;
 
 uint32_t AlFsbl_PartitionLoad(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx)
 {
@@ -49,6 +54,22 @@ uint32_t AlFsbl_PartitionLoad(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx
 	uint32_t DestDev;
 
 	/// todo: restart wdt
+
+
+	/// close pl-ps bus connections, hp and gpm bus
+	RegVal_srst_ctrl2 = AL_REG32_READ(CRP_SRST_CTRL2);
+	AL_REG32_SET_BITS(CRP_SRST_CTRL2, 0, 2, 0);
+	AL_REG32_SET_BITS(CRP_SRST_CTRL2, 4, 2, 0);
+
+	/// close pl-ps bus connections, fahb and gps bus
+	RegVal_pls_prot = AL_REG32_READ(SYSCTRL_NS_PLS_PROT);
+	AL_REG32_SET_BITS(SYSCTRL_NS_PLS_PROT, 0, 2, 3);
+
+	/// close apu acp bus connections
+	RegVal_srst_ctrl0 = AL_REG32_READ(CRP_SRST_CTRL0);
+	AL_REG32_SET_BITS(CRP_SRST_CTRL0, 8, 1, 0);
+	RegVal_ainacts = AL_REG32_READ(APU_CTRL_AINACTS);
+	AL_REG32_SET_BITS(APU_CTRL_AINACTS, 0, 1, 1);
 
 
 	/// partition header validation
@@ -77,6 +98,7 @@ uint32_t AlFsbl_PartitionLoad(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx
 			goto END;
 		}
 		AL_LOG(AL_LOG_LEVEL_INFO, "loading pl partition...\r\n");
+
 		Status = AlFsbl_LoadPlPartition(FsblInstancePtr, &FsblSecInfo, PartitionIdx);
 	}
 	else {
@@ -345,7 +367,6 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	AlFsbl_PartitionHeader *PtHdr;
 
 	uint32_t Status = 0;
-	uint8_t  HashBuffer[32];
 	uint32_t HashByteLen;
 	uint32_t DestCpu;
 	uint32_t HandoffNum;
@@ -354,7 +375,7 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	uint32_t Length;
 	uint32_t PartitionAcOffset;
 	PTRSIZE  ImageOffsetAddress;
-	uint8_t  PartitionAc[ALFSBL_AUTH_BUFFER_SIZE];
+	uint8_t  HashData[32];
 
 	int i;
 	uint32_t *ocmptr = NULL;
@@ -371,7 +392,7 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	AL_LOG(AL_LOG_LEVEL_INFO, "partition load dest address: 0x%lx\r\n", LoadAddress);
 	AL_LOG(AL_LOG_LEVEL_INFO, "partition length           : 0x%08x\r\n", Length);
 
-	pSecureInfo->HashOutAddr    = (uint32_t)HashBuffer;
+	pSecureInfo->HashOutAddr    = (uint32_t)HashData;
 	pSecureInfo->KeyMode        = OP_BHDR_KEY;
 	pSecureInfo->EncMode        = SYM_ECB;
 	pSecureInfo->EncDir         = SYM_DECRYPT;
@@ -461,7 +482,7 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		//HashByteLen = (pSecureInfo->HashType == OP_HASH_SHA256) ? 32 : 16;
 		Status = FsblInstancePtr->DeviceOps.DeviceCopy(
 				     ImageOffsetAddress + PtHdr->HashDataOffset,
-				     LoadAddress + PtHdr->PartitionLen,
+				     HashBuffer,
 				     32,
 				     NULL);
 		if(ALFSBL_SUCCESS != Status) {
@@ -471,7 +492,7 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		/// compare hash
 		Status = AlFsbl_CompareHash(
 				     HashBuffer,
-				     (uint8_t *)(LoadAddress + PtHdr->PartitionLen),
+				     HashData,
 				     32);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
@@ -493,7 +514,7 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 			AL_LOG(AL_LOG_LEVEL_INFO, "Copy Partition Header AC\r\n");
 			Status = FsblInstancePtr->DeviceOps.DeviceCopy(
 					     ImageOffsetAddress + PartitionAcOffset,
-					     (PTRSIZE)PartitionAc,
+					     (PTRSIZE)AuthBuffer,
 					     ALFSBL_AUTH_BUFFER_SIZE,
 					     NULL);
 			if(Status != ALFSBL_SUCCESS) {
@@ -501,8 +522,8 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 			}
 		}
 		/// initial auth parameters;
-		pSecureInfo->PubKeyAddr = (uint32_t)(PartitionAc + ALAC_SPK_OFFSET);
-		pSecureInfo->SignatureAddr = (uint32_t)(PartitionAc + ALAC_PART_SIGNATURE_OFFSET);
+		pSecureInfo->PubKeyAddr = (uint32_t)(AuthBuffer + ALAC_SPK_OFFSET);
+		pSecureInfo->SignatureAddr = (uint32_t)(AuthBuffer + ALAC_PART_SIGNATURE_OFFSET);
 		Status = AlFsbl_Auth(pSecureInfo);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
@@ -541,11 +562,9 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 
 	uint32_t i;
 	uint32_t Status = 0;
-	uint8_t  HashBuffer[32];
 	uint8_t  HashData[32];
 	uint32_t HashByteLen;
 	uint32_t PartitionAcOffset;
-	uint8_t  PartitionAc[ALFSBL_AUTH_BUFFER_SIZE];
 	uint32_t ImageOffsetAddress;
 	uint32_t BootDevice;
 	uint32_t BlockSizeMax;
@@ -568,14 +587,14 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		goto END;
 	}
 
-	BlockSizeMax = FsblInstancePtr->DeviceOps.BlockSizeMax;
+	BlockSizeMax = READ_BUFFER_SIZE;
 	AL_LOG(AL_LOG_LEVEL_INFO, "Boot device block size max: %x\r\n", BlockSizeMax);
 
 	/// temp test: pl init and done:
 	AL_LOG(AL_LOG_LEVEL_INFO, "PL init done\r\n");
 	AL_LOG(AL_LOG_LEVEL_INFO, "cfg state: %08x\r\n", AL_REG32_READ(CRP_CFG_STATE));
 
-	pSecureInfo->HashOutAddr    = (uint32_t)HashBuffer;
+	pSecureInfo->HashOutAddr    = (uint32_t)HashData;
 	pSecureInfo->KeyMode        = OP_BHDR_KEY;
 	pSecureInfo->EncMode        = SYM_ECB;
 	pSecureInfo->EncDir         = SYM_DECRYPT;
@@ -639,7 +658,7 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		//HashByteLen = (pSecureInfo->HashType == OP_HASH_SHA256) ? 32 : 16;
 		Status = FsblInstancePtr->DeviceOps.DeviceCopy(
 				     ImageOffsetAddress + PtHdr->HashDataOffset,
-					 (uint32_t)HashData,
+					 (uint32_t)HashBuffer,
 				     32,
 				     NULL);
 		if(ALFSBL_SUCCESS != Status) {
@@ -672,7 +691,7 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 			AL_LOG(AL_LOG_LEVEL_INFO, "Copy Partition Header AC\r\n");
 			Status = FsblInstancePtr->DeviceOps.DeviceCopy(
 					     ImageOffsetAddress + PartitionAcOffset,
-					     (PTRSIZE)PartitionAc,
+					     (PTRSIZE)AuthBuffer,
 					     ALFSBL_AUTH_BUFFER_SIZE,
 					     NULL);
 			if(Status != ALFSBL_SUCCESS) {
@@ -680,8 +699,8 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 			}
 		}
 		/// initial auth parameters;
-		pSecureInfo->PubKeyAddr = (uint32_t)(PartitionAc + ALAC_SPK_OFFSET);
-		pSecureInfo->SignatureAddr = (uint32_t)(PartitionAc + ALAC_PART_SIGNATURE_OFFSET);
+		pSecureInfo->PubKeyAddr = (uint32_t)(AuthBuffer + ALAC_SPK_OFFSET);
+		pSecureInfo->SignatureAddr = (uint32_t)(AuthBuffer + ALAC_PART_SIGNATURE_OFFSET);
 		Status = AlFsbl_Auth(pSecureInfo);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
@@ -693,13 +712,14 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	AL_LOG(AL_LOG_LEVEL_INFO, "cfg state before progdone: %08x\r\n", AL_REG32_READ(CRP_CFG_STATE));
 
 	/// program_done
-	Status = ALFsbl_BitStreamProgDone();
-	if(ALFSBL_SUCCESS != Status) {
-		goto END;
+	if((AL_REG32_READ(CRP_CFG_STATE)) != 7) {
+		Status = ALFsbl_BitStreamProgDone();
+		if(ALFSBL_SUCCESS != Status) {
+			goto END;
+		}
+		/// temp test: pl init and done:
+		AL_LOG(AL_LOG_LEVEL_INFO, "cfg state after progdone: %08x\r\n", AL_REG32_READ(CRP_CFG_STATE));
 	}
-
-	/// temp test: pl init and done:
-	AL_LOG(AL_LOG_LEVEL_INFO, "cfg state after progdone: %08x\r\n", AL_REG32_READ(CRP_CFG_STATE));
 
 	/// check cfg state after bitstream loaded
 	if((AL_REG32_READ(CRP_CFG_STATE)) != 7) {

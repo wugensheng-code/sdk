@@ -37,8 +37,8 @@
 int putchar(int c)
 {
 //	unsigned char cc = c;
-//	*(volatile unsigned char *)(0x80000000ULL) = c;
-//	*(volatile unsigned int  *)(0xF8800000ULL) = c;
+//	*(volatile unsigned char *)(0x80000000ULL) = c;  //for soc simulation
+//	*(volatile unsigned int  *)(0xF8800000ULL) = c;  //for fc simulation
 
 //	AlLog_Write((void *)(&cc), 1);
 	return c;

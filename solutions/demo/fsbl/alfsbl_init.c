@@ -93,15 +93,11 @@ static uint32_t AlFsbl_SystemInit(AlFsblInfo *FsblInstancePtr)
 {
 	uint32_t Status = 0;
 
-
-
-//	// set PCAP not enable, to make the signal to config model not change
-//	REG32(CSU_PCAP_ENABLE) = 0;
-//
-//	// reset pl, release reset before pl bitstream config
-//	if(FsblInstancePtr->ResetReason == FSBL_SYSTEM_RESET) {
-//		REG32(SYSCTRL_S_GLOBAL_SRSTN) = REG32(SYSCTRL_S_GLOBAL_SRSTN) & (~SYSCTRL_S_GLOBAL_SRSTN_MSK_GLB_PL_SRST);
-//	}
+	// reset pl
+	if(FsblInstancePtr->ResetReason == FSBL_SYSTEM_RESET) {
+		AL_REG32_SET_BIT(SYSCTRL_S_GLOBAL_SRSTN, 8, 0);
+		AL_REG32_SET_BIT(SYSCTRL_S_GLOBAL_SRSTN, 8, 1);
+	}
 
 	Status = ALFSBL_SUCCESS;
 
@@ -202,11 +198,19 @@ static uint32_t AlFsbl_ValidateResetReason(void)
 			goto END;
 		}
 	}
+	else if(ResetReasonValue & CRP_RST_REASON_MSK_PMU_ERR) {
+		if(FsblStatus == ALFSBL_RUNNING) {
+			Status = ALFSBL_ERR_PMU_ERR_RESET;
+			goto END;
+		}
+	}
 	if(FsblStatus != ALFSBL_RUNNING) {
 		AL_LOG(AL_LOG_LEVEL_INFO, "mark fsbl is running...\r\n");
 		AL_REG32_WRITE(SYSCTRL_S_FSBL_ERR_CODE, ALFSBL_RUNNING);
 	}
 
+	/// clear reset reason
+	AL_REG32_WRITE(CRP_RST_REASON, ResetReasonValue);
 	Status = ALFSBL_SUCCESS;
 
 END:

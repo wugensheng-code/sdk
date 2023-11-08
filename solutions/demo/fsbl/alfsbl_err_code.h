@@ -31,8 +31,12 @@ extern "C" {
 #define ALFSBL_SUCCESS_NOT_PARTITION_OWNER     (0x2)
 #define ALFSBL_ERROR_INVALID_PARTITION_NUM     (0x3)
 
+#define ALFSBL_ERR_SYS_WDT_RESET             (0x04U)
+#define ALFSBL_ERR_PMU_ERR_RESET             (0x05U)
+
 #define ALFSBL_ERROR_UNSUPPORTED_BOOT_MODE   (0x06U)
 #define ALFSBL_ERROR_DEVICE_INIT_FAILED      (0x07U)
+
 
 /// error code 0x10~0x16 is each kind of cfg state error status
 #define ALFSBL_ERROR_PL_CFG_STATE_ERROR      (0x17U)
@@ -68,7 +72,6 @@ extern "C" {
 #define ALFSBL_ERROR_STAGE_3          (uint32_t)(0x03000000UL)
 #define ALFSBL_ERROR_STAGE_4          (uint32_t)(0x04000000UL)
 
-#define ALFSBL_ERR_SYS_WDT_RESET      (0x9U)
 
 #ifdef __cplusplus
 }

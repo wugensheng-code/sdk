@@ -14,13 +14,18 @@
 #include "alfsbl_hw.h"
 #include "al_utils_def.h"
 #include "soc_plat.h"
-
+#include "al_reg_io.h"
 
 /********************* global variables *********************/
-uint8_t  ReadBuffer[READ_BUFFER_SIZE]__attribute__((section(".read_buffer")));
-uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE]__attribute__((aligned(4))) = {0};
-AlFsblInfo FsblInstance = {0x00U, 0, 0, 0};
+uint8_t  ReadBuffer[READ_BUFFER_SIZE] __attribute__((aligned(64)));
+uint8_t  AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE] __attribute__((aligned(64))) = {0};
+uint8_t  HashBuffer[32]__attribute__((aligned(64)));
+
+AlFsblInfo FsblInstance __attribute__((aligned(64))) = {0x00U, 0, 0, 0};
 SecureInfo FsblSecInfo = {0};
+
+uint32_t ResetReason_Check = 0;
+
 
 
 int main(void)
@@ -29,6 +34,10 @@ int main(void)
 	uint32_t FsblStatus   = ALFSBL_SUCCESS;
 	uint32_t PartitionIdx = 0;
 	Soc_PlatInit();
+
+	ResetReason_Check = AL_REG32_READ(CRP_RST_REASON);
+	printf("Reset reason: %08x\r\n", ResetReason_Check);
+	printf("FsblInstance addr: %08x\r\n", &FsblInstance);
 
 	while (FsblStage <= ALFSBL_STAGE_DFT) {
 		switch (FsblStage) {
