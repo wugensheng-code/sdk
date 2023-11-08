@@ -658,28 +658,28 @@ void adjust_rddbi_level_result(u8 pub_index)
 
 void set_mpu () {
 
-    u32 regData;
-    regData = dr1x90_dram_read(0xf840e004);
+    // u32 regData;
+    // regData = dr1x90_dram_read(0xf840e004);
    //  printf(" \n*** initial MPU0 is 0x%x\r\n", regData);
     dr1x90_dram_field_write(0xf840e004, 0, 1, 0);
-    regData = dr1x90_dram_read(0xf840e004);
+    // regData = dr1x90_dram_read(0xf840e004);
    //  printf(" \n***  MPU0 is 0x%x\r\n", regData);
 
-    regData = dr1x90_dram_read(0xf840f004);
+    // regData = dr1x90_dram_read(0xf840f004);
    //  printf(" \n*** initial MPU1 is 0x%x\r\n", regData);
     dr1x90_dram_field_write(0xf840f004, 0, 1, 0);
-    regData = dr1x90_dram_read(0xf840f004);
+    // regData = dr1x90_dram_read(0xf840f004);
    //  printf(" \n***  MPU1 is 0x%x\r\n", regData);
 
-    regData = dr1x90_dram_read(0xF8801074);
+    // regData = dr1x90_dram_read(0xF8801074);
    //  printf(" DDRBUS reset initial data =  0x%x\r\n", regData);
     //dr1x90_dram_field_write(0xF8801074, 14, 1, 1);
     dr1x90_dram_write(0xF8801074, 0xffffffff);
-    regData = dr1x90_dram_read(0xF8801074);
+    // regData = dr1x90_dram_read(0xF8801074);
    //  printf(" DDRBUS reset data =  0x%x\r\n", regData);
 
-    regData = dr1x90_dram_read(0xF8800000);
-    printf(" chipID initial data =  0x%x\r\n", regData);
+    // regData = dr1x90_dram_read(0xF8800000);
+    // printf(" chipID initial data =  0x%x\r\n", regData);
 }
 
 void soft_gate_training( ) {

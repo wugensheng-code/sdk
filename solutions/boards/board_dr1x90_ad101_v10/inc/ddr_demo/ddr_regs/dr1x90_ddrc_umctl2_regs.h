@@ -704,6 +704,13 @@
 #define         rd_port_busy_0_offset                            0
 #define         rd_port_busy_0_mask                              0x00000001
 #define     PCCFG                            0x400
+#define         bl_exp_mode_offset                               8
+#define         bl_exp_mode_mask                                 0x00000100
+#define         pagematch_limit_offset                           4
+#define         pagematch_limit_mask                             0x00000010
+#define         go2critical_en_offset                            0
+#define         go2critical_en_mask                              0x00000001
+#define     PCFGR_0                          0x404
 #define         rd_port_pagematch_en_offset                      14
 #define         rd_port_pagematch_en_mask                        0x00004000
 #define         rd_port_urgent_en_offset                         13

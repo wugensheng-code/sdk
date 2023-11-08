@@ -41,6 +41,14 @@ void pll_io_reset();
 void pll_io_release();
 void pll_io_waitLock();
 
+// F_ddr_c0 = CRYSTAL_OSC_HZ * fbk_div / ref_div / out_div_c0
+// F_ddr_c1 = CRYSTAL_OSC_HZ * fbk_div / ref_div / out_div_c1
+// F_ddr_c2 = CRYSTAL_OSC_HZ * fbk_div / ref_div / out_div_c2
+void pll_ddr_div_set(uint32_t fbk_div, uint32_t ref_div, uint32_t out_div_c0, uint32_t out_div_c1, uint32_t out_div_c2);
+void pll_ddr_reset();
+void pll_ddr_release();
+void pll_ddr_waitLock();
+
 enum icg_para_t {
     CPU6X_DIV1_PARA = 0x0,
     CPU6X_DIV3_PARA = 0x4,

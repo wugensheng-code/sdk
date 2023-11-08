@@ -13,6 +13,7 @@ static volatile uint32_t* TOP_CRG_CLK_SEL = (void*)(TOP_CRG_BASE + 0x40UL);
 typedef volatile uint32_t* pll_t;
 static pll_t CPU_PLL_CTRL = (void*)(TOP_CRG_BASE + 0x100UL);
 static pll_t  IO_PLL_CTRL = (void*)(TOP_CRG_BASE + 0x200UL);
+static pll_t DDR_PLL_CTRL = (void*)(0xF8420100UL);
 
 void pll_bypass()
 {
@@ -163,6 +164,28 @@ void pll_io_release()
 void pll_io_waitLock()
 {
     pll_waitLock(IO_PLL_CTRL);
+}
+
+void pll_ddr_div_set(uint32_t fbk_div, uint32_t ref_div, uint32_t out_div_c0, uint32_t out_div_c1, uint32_t out_div_c2)
+{
+    pll_reset(DDR_PLL_CTRL);
+    pll_div_set(DDR_PLL_CTRL, ref_div, fbk_div, out_div_c0, out_div_c1, out_div_c2, 0U);
+    pll_release(DDR_PLL_CTRL);
+}
+
+void pll_ddr_reset()
+{
+    pll_reset(DDR_PLL_CTRL);
+}
+
+void pll_ddr_release()
+{
+    pll_release(DDR_PLL_CTRL);
+}
+
+void pll_ddr_waitLock()
+{
+    pll_waitLock(DDR_PLL_CTRL);
 }
 
 void icg_div_set(enum icg_para_t inst, uint32_t div)

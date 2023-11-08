@@ -4,11 +4,20 @@
 #include "dr1x90_ddrc_init.h"
 #include "dr1x90_misc.h"
 
+#include "dr1x90_crg.h"
 #include "dr1x90_mpu.h"
 #include "al_barrier.h"
 #include "al_systimer.h"
 
 /*************************************************************/
+
+int ddrc_is_init()
+{
+    u32 dfi_done = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DFISTAT, dfi_init_complete_offset, dfi_init_complete_mask);
+    u32 opr_mode = dr1x90_field_read(DDRC_ADDR_UMCTL2 + STAT, operating_mode_offset, operating_mode_mask);
+    // printf("DFI_Done == 0x%x, OP_Mode == 0x%x\r\n", dfi_done, opr_mode);
+    return dfi_done == 0x1 && opr_mode != 0x0; // Normal or Power Down or Power Saving Mode
+}
 
 int demo_ddr_init()
 {
@@ -18,14 +27,14 @@ int demo_ddr_init()
     regData = dr1x90_reg_read(0x27a0);
 
     ////printf("DDRGPLL_CTRL18\n");
-   //  printf(" 0x27a0.initial  data =  0x%x\n", regData);
-   printf("DDR Init V2 \r\n");
+    //  printf(" 0x27a0.initial  data =  0x%x\n", regData);
+    printf("DDR Init V2 \r\n");
 
     dr1x90_reg_write(0x11b0 ,0x00000050); // DFIMISC
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 01 : GPLL Configuration
     ///////////////////////////////////////////////////////////////////////////////////////////////
-
+    /*
     dr1x90_field_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL9, ctrl9_fbk_div_offset,  ctrl9_fbk_div_mask,  63);     // 1066
     // dr1x90_field_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL9, ctrl9_fbk_div_offset,  ctrl9_fbk_div_mask,  71);     // 1200
     // dr1x90_field_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL9, ctrl9_fbk_div_offset,  ctrl9_fbk_div_mask,  70);     // 1183
@@ -44,7 +53,7 @@ int demo_ddr_init()
     dr1x90_field_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL1, ctrl1_pllreset_offset, ctrl1_pllreset_mask, 1);
     dr1x90_field_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL1, ctrl1_pllreset_offset, ctrl1_pllreset_mask, 0);
     dr1x90_field_wait(DDRC_ADDR_GPLL + DDRGPLL_STATE0, gpll_lock_offset, gpll_lock_mask, 1, 1000);
-    /*
+    */
     #if CRYSTAL_OSC_HZ == 33333333
     // OSC 33 MHz -> DDR 1066 MHz
     pll_ddr_div_set(64, 1, 2, 4, 2);    // 1066 MHz
@@ -55,7 +64,7 @@ int demo_ddr_init()
     // pll_ddr_div_set(48, 1, 3, 6, 3);    // 800 MHz
     #endif
     pll_ddr_waitLock();
-    */
+    
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 02 : DPLL Configuration
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -195,7 +204,7 @@ int demo_ddr_init()
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //Alc_GpioMaskWrite(GPIO_CH0, 0x0B, 0xffff);
     dr1x90_pub_training_cfg();
-    //dr1x90_do_training(1,1,1);
+    dr1x90_do_training(1,1,1);
 
     regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0MDLR0, IPRD_offset, IPRD_mask);
    //  printf("\n DX0 mdl.   data =  0x%x\n", regData);
@@ -223,7 +232,7 @@ int demo_ddr_init()
    /* dr1x90_do_training(1, 0, 0);
     dr1x90_do_training(0, 1, 0);*/
     //soft_gate_training();
-    dr1x90_do_training(0, 0, 1);
+    // dr1x90_do_training(0, 0, 1);
 
     for (u8 n = 0; n <= 3; n++) {
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask);
@@ -319,7 +328,7 @@ int demo_ddr_init()
 
     soft_weye_scanning();
 
-    printf(" write DRAM address start test \r\n");
+    // printf(" write DRAM address start test \r\n");
     for (u8 i = 0; i < 10; i++) {
 
         //dr1x90_dram_write(0x100000 + i * 4, 0x12345678);
@@ -334,7 +343,7 @@ int demo_ddr_init()
             printf(" No. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\r\n", i, (0x100000 + i * 8), regData, zq_val);
         }
     }
-    printf(" write DRAM address test done \r\n");
+    // printf(" write DRAM address test done \r\n");
  /*   regData = dr1x90_dram_read(0x100000);
    //  printf(" read address 0x100000.   data =  0x%x\n", regData);
 

@@ -475,12 +475,33 @@ void dr1x90_ddrmc_init(u8 sd_ecc_en)
     dr1x90_reg_write(0x1240 ,0x061a0f48); // ODTCFG
     dr1x90_reg_write(0x1244 ,0x00000011); // ODTMAP
     dr1x90_field_write(DDRC_ADDR_UMCTL2 + ODTMAP ,rank0_rd_odt_offset , rank0_rd_odt_mask ,0x0); // DRAMTMG2
-
+/*
     dr1x90_reg_write(0x1250 ,0x5c5b1780); // SCHED
     dr1x90_reg_write(0x1254 ,0x00000002); // SCHED1
     dr1x90_reg_write(0x125c ,0x2a00c05a); // PERFHPR1
     dr1x90_reg_write(0x1264 ,0x6100e7dc); // PERFLPR1
     dr1x90_reg_write(0x126c ,0x0000bbf3); // PERFWR1
+*/
+    // regData = dr1x90_reg_read(DDRC_ADDR_UMCTL2 + SCHED);
+    // printf("[SCHED] Reset = 0x%x\n", regData);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + SCHED, rdwr_idle_gap_offset, rdwr_idle_gap_mask, 0x0);   // 0x5c -> 0x0
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + SCHED, lpr_num_entries_offset, lpr_num_entries_mask, 0x17);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + SCHED, autopre_rmw_offset, autopre_rmw_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + SCHED, pageclose_offset, pageclose_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + SCHED, prefer_write_offset, prefer_write_mask, 0x0);
+    // regData = dr1x90_reg_read(DDRC_ADDR_UMCTL2 + SCHED);
+    // printf("[SCHED] INIT = 0x%x\n", regData);
+    // regData = dr1x90_reg_read(DDRC_ADDR_UMCTL2 + SCHED1);
+    // printf("[SCHED1] Reset = 0x%x\n", regData);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + SCHED1, pageclose_timer_offset, pageclose_timer_mask, 0x0);
+
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PERFHPR1, hpr_xact_run_length_offset, hpr_xact_run_length_mask, 0x2a);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PERFHPR1, hpr_max_starve_offset, hpr_max_starve_mask, 0xc05a);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PERFLPR1, lpr_xact_run_length_offset, lpr_xact_run_length_mask, 0x61);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PERFLPR1, lpr_max_starve_offset, lpr_max_starve_mask, 0xe7dc);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PERFWR1, w_xact_run_length_offset, w_xact_run_length_mask, 0x30);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PERFWR1, w_max_starve_offset, w_max_starve_mask, 0xbbf3);
+
     dr1x90_reg_write(0x1300 ,0x00000010); // DBG0
     dr1x90_reg_write(0x1304 ,0x00000000); // DBG1
     dr1x90_reg_write(0x130c ,0x00000000); // DBGCMD
@@ -490,6 +511,7 @@ void dr1x90_ddrmc_init(u8 sd_ecc_en)
     dr1x90_reg_write(0x1374 ,0x0000010d); // ADVECCINDEX
     dr1x90_reg_write(0x137c ,0x00000000); // ECCPOISONPAT0
     dr1x90_reg_write(0x1384 ,0x00000000); // ECCPOISONPAT2
+    /*
     dr1x90_reg_write(0x1400 ,0x00000100); // PCCFG
     dr1x90_reg_write(0x1404 ,0x0000333c); // PCFGR_0
     dr1x90_reg_write(0x1408 ,0x000042d0); // PCFGW_0
@@ -521,7 +543,98 @@ void dr1x90_ddrmc_init(u8 sd_ecc_en)
 //  dr1x90_reg_write(0x16a8 ,0x006a0331); // PCFGQOS1_3
 //  dr1x90_reg_write(0x16ac ,0x01100d02); // PCFGWQOS0_3
 //  dr1x90_reg_write(0x16b0 ,0x05d2012f); // PCFGWQOS1_3
+    */
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCCFG, bl_exp_mode_offset, bl_exp_mode_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCCFG, pagematch_limit_offset, pagematch_limit_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCCFG, go2critical_en_offset, go2critical_en_mask, 0x0);
 
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_0, rd_port_pagematch_en_offset, rd_port_pagematch_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_0, rd_port_urgent_en_offset, rd_port_urgent_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_0, rd_port_aging_en_offset, rd_port_aging_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_0, rd_port_priority_offset, rd_port_priority_mask, 0x33c);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_0, wr_port_pagematch_en_offset, wr_port_pagematch_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_0, wr_port_urgent_en_offset, wr_port_urgent_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_0, wr_port_aging_en_offset, wr_port_aging_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_0, wr_port_priority_offset, wr_port_priority_mask, 0x2d0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCTRL_0, port_en_offset, port_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_0, rqos_map_region1_offset, rqos_map_region1_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_0, rqos_map_region0_offset, rqos_map_region0_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_0, rqos_map_level1_offset, rqos_map_level1_mask, 0x7);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS1_0, rqos_map_timeoutr_offset, rqos_map_timeoutr_mask, 1600);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS1_0, rqos_map_timeoutb_offset, rqos_map_timeoutb_mask, 800);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_0, wqos_map_region2_offset, wqos_map_region2_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_0, wqos_map_region1_offset, wqos_map_region1_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_0, wqos_map_region0_offset, wqos_map_region0_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_0, wqos_map_level2_offset, wqos_map_level2_mask, 0x7);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_0, wqos_map_level1_offset, wqos_map_level1_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_0, wqos_map_timeout2_offset, wqos_map_timeout2_mask, 800);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_0, wqos_map_timeout1_offset, wqos_map_timeout1_mask, 800);
+
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_1, rd_port_pagematch_en_offset, rd_port_pagematch_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_1, rd_port_urgent_en_offset, rd_port_urgent_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_1, rd_port_aging_en_offset, rd_port_aging_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_1, rd_port_priority_offset, rd_port_priority_mask, 0x33c);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_1, wr_port_pagematch_en_offset, wr_port_pagematch_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_1, wr_port_urgent_en_offset, wr_port_urgent_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_1, wr_port_aging_en_offset, wr_port_aging_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_1, wr_port_priority_offset, wr_port_priority_mask, 0x2d0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCTRL_1, port_en_offset, port_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_1, rqos_map_region1_offset, rqos_map_region1_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_1, rqos_map_region0_offset, rqos_map_region0_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_1, rqos_map_level1_offset, rqos_map_level1_mask, 0x7);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS1_1, rqos_map_timeoutr_offset, rqos_map_timeoutr_mask, 1600);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS1_1, rqos_map_timeoutb_offset, rqos_map_timeoutb_mask, 800);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_1, wqos_map_region2_offset, wqos_map_region2_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_1, wqos_map_region1_offset, wqos_map_region1_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_1, wqos_map_region0_offset, wqos_map_region0_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_1, wqos_map_level2_offset, wqos_map_level2_mask, 0x7);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_1, wqos_map_level1_offset, wqos_map_level1_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_1, wqos_map_timeout2_offset, wqos_map_timeout2_mask, 800);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_1, wqos_map_timeout1_offset, wqos_map_timeout1_mask, 800);
+
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_2, rd_port_pagematch_en_offset, rd_port_pagematch_en_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_2, rd_port_urgent_en_offset, rd_port_urgent_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_2, rd_port_aging_en_offset, rd_port_aging_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_2, rd_port_priority_offset, rd_port_priority_mask, 0x33c);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_2, wr_port_pagematch_en_offset, wr_port_pagematch_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_2, wr_port_urgent_en_offset, wr_port_urgent_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_2, wr_port_aging_en_offset, wr_port_aging_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_2, wr_port_priority_offset, wr_port_priority_mask, 0x2d0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCTRL_2, port_en_offset, port_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_2, rqos_map_region1_offset, rqos_map_region1_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_2, rqos_map_region0_offset, rqos_map_region0_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_2, rqos_map_level1_offset, rqos_map_level1_mask, 0x7);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS1_2, rqos_map_timeoutr_offset, rqos_map_timeoutr_mask, 1600);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS1_2, rqos_map_timeoutb_offset, rqos_map_timeoutb_mask, 800);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_2, wqos_map_region2_offset, wqos_map_region2_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_2, wqos_map_region1_offset, wqos_map_region1_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_2, wqos_map_region0_offset, wqos_map_region0_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_2, wqos_map_level2_offset, wqos_map_level2_mask, 0x7);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_2, wqos_map_level1_offset, wqos_map_level1_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_2, wqos_map_timeout2_offset, wqos_map_timeout2_mask, 800);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_2, wqos_map_timeout1_offset, wqos_map_timeout1_mask, 800);
+
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_3, rd_port_pagematch_en_offset, rd_port_pagematch_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_3, rd_port_urgent_en_offset, rd_port_urgent_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_3, rd_port_aging_en_offset, rd_port_aging_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_3, rd_port_priority_offset, rd_port_priority_mask, 0x33c);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_3, wr_port_pagematch_en_offset, wr_port_pagematch_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_3, wr_port_urgent_en_offset, wr_port_urgent_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_3, wr_port_aging_en_offset, wr_port_aging_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_3, wr_port_priority_offset, wr_port_priority_mask, 0x2d0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCTRL_3, port_en_offset, port_en_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_3, rqos_map_region1_offset, rqos_map_region1_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_3, rqos_map_region0_offset, rqos_map_region0_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_3, rqos_map_level1_offset, rqos_map_level1_mask, 0x7);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS1_3, rqos_map_timeoutr_offset, rqos_map_timeoutr_mask, 1600);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS1_3, rqos_map_timeoutb_offset, rqos_map_timeoutb_mask, 800);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_3, wqos_map_region2_offset, wqos_map_region2_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_3, wqos_map_region1_offset, wqos_map_region1_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_3, wqos_map_region0_offset, wqos_map_region0_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_3, wqos_map_level2_offset, wqos_map_level2_mask, 0x7);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_3, wqos_map_level1_offset, wqos_map_level1_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_3, wqos_map_timeout2_offset, wqos_map_timeout2_mask, 800);
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_3, wqos_map_timeout1_offset, wqos_map_timeout1_mask, 800);
 }
 
 // task #
