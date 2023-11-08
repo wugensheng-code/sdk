@@ -35,13 +35,9 @@ void dr1x90_reg_write(u16 addr, u32 data)
 }
 u32  dr1x90_reg_read(u16 addr)
 {
-    u32 ftcStatus;
     unsigned int reg_data = 0;
     unsigned int addr_phy = 0xf8420000 | addr;
-    ftcStatus = dr1x90_ddr_reg_read(&ftcHandle, addr_phy, &reg_data);
-    if(!ftcStatus){
-        printf("dr1x90_reg_read suscced: ftcStatus: %d\r\n", ftcStatus);
-    }
+    (void) dr1x90_ddr_reg_read(&ftcHandle, addr_phy, &reg_data);
     return reg_data;
 }
 
