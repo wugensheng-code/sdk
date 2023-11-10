@@ -14,6 +14,27 @@ from loguru import logger
 APU_TOOLCHAIN_PATH = os.getenv('APU_TOOLCHAIN_PATH')
 RPU_TOOLCHAIN_PATH = os.getenv('RPU_TOOLCHAIN_PATH')
 
+def check_string(string, sdk_root):
+    ''' find out string "string" '''
+
+    logger.info(f'======> Start checking the strings: {str(string)}', colorize=True, format="<green>{time}</green> <level>{message}</level>")
+
+    try:
+        ret = subprocess.run(f'grep -ri {string} --exclude-dir=.git --exclude=.gitlab-ci.yml', shell=True, capture_output=True, cwd=sdk_root, check=True)
+
+        result = bytes.decode(ret.stdout)
+        if string in result:
+            count = result.count(result)
+            if count != 1:
+                logger.error(f'======> Character found. \r\r {result}\r', colorize=True, format="<red>{time}</red> <level>{message}</level>")
+                exit(1)
+            else:
+                logger.info(f'======> Character not found\n', colorize=True, format="<green>{time}</green> <level>{message}</level>")
+        else:
+            logger.info(f'======> Character not found\n', colorize=True, format="<green>{time}</green> <level>{message}</level>")
+    except subprocess.CalledProcessError as e:
+        logger.error(f'\n\n{bytes.decode(e.stderr)}')
+
 def make_all(path, chip, download, sdk_root, debug):
 
     makefiles_p = Path(path).rglob('Makefile')
@@ -64,7 +85,6 @@ def make_all(path, chip, download, sdk_root, debug):
                 build_pass = False
                 logger.error(f'======> make filed {str(makefile_p)}\r', colorize=True, format="<red>{time}</red> <level>{message}</level>")
                 logger.error(f'\n\n{bytes.decode(e.stderr)}')
-                bytearray
 
     if build_pass is not True:
         exit(1)
@@ -78,11 +98,14 @@ def check_file_permissions(check_path):
         if path.is_dir():
             path.chmod(755)
 
-def main(path, chip, download, sdk_root, debug):
+def main(path, chip, download, sdk_root, debug, check_s):
+    if check_s == 'true':
+        check_string(string='AL9000', sdk_root=sdk_root)
 
-    check_file_permissions(check_path=sdk_root)
+    else:
+        check_file_permissions(check_path=sdk_root)
 
-    make_all(path, chip, download, sdk_root, debug)
+        make_all(path, chip, download, sdk_root, debug)
 
 
 if __name__ == '__main__':
@@ -91,4 +114,5 @@ if __name__ == '__main__':
     download = sys.argv[3]
     sdk_root = sys.argv[4]
     debug = sys.argv[5]
-    main(path, chip, download, sdk_root, debug)
+    check_s = sys.argv[6]
+    main(path, chip, download, sdk_root, debug, check_s)

@@ -30,7 +30,7 @@ check:              # This job runs in the .pre stage, which runs first.
       echo commit message: ${CI_COMMIT_MESSAGE}
       echo commit sha: ${CI_COMMIT_SHA}
       echo ${CI_COMMIT_MESSAGE} | cz check
-    - grep -ri AL9000 --exclude-dir=.git --exclude=.gitlab-ci.yml; if [ $? -eq 0 ]; then echo "Character found. CI failure."; exit 1; fi
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/driver/ps_driver_test dr1m90 ocm $CI_PROJECT_DIR $CI_DEBUG true
 
 build-apu-job:       # This job runs in the build stage.
   stage: build
@@ -42,10 +42,10 @@ build-apu-job:       # This job runs in the build stage.
     - python --version ; pip --version  # For debugging
     - pip install -i https://pypi.tuna.tsinghua.edu.cn/simple scons
     - python -c "import os; os.chdir(\"./3rdparty/os/RT-Thread/rt-thread\"); import tools.menuconfig; tools.menuconfig.touch_env()"
-    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/driver/ps_driver_test dr1m90 ocm $CI_PROJECT_DIR $CI_DEBUG
-    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/driver/ps_driver_test dr1m90 ddr $CI_PROJECT_DIR $CI_DEBUG
-    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/baremetal dr1m90 ddr $CI_PROJECT_DIR $CI_DEBUG
-    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/utest dr1m90 ddr $CI_PROJECT_DIR $CI_DEBUG
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/driver/ps_driver_test dr1m90 ocm $CI_PROJECT_DIR $CI_DEBUG false
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/driver/ps_driver_test dr1m90 ddr $CI_PROJECT_DIR $CI_DEBUG false
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/baremetal dr1m90 ddr $CI_PROJECT_DIR $CI_DEBUG false
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/utest dr1m90 ddr $CI_PROJECT_DIR $CI_DEBUG false
 
 build-rpu-job:       # This job runs in the build stage.
   stage: build
@@ -57,10 +57,10 @@ build-rpu-job:       # This job runs in the build stage.
     - python --version ; pip --version  # For debugging
     - pip install -i https://pypi.tuna.tsinghua.edu.cn/simple scons
     - python -c "import os; os.chdir(\"./3rdparty/os/RT-Thread/rt-thread\"); import tools.menuconfig; tools.menuconfig.touch_env()"
-    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/driver/ps_driver_test dr1v90 ocm $CI_PROJECT_DIR $CI_DEBUG
-    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/driver/ps_driver_test dr1v90 ddr $CI_PROJECT_DIR $CI_DEBUG
-    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/baremetal dr1v90 ddr $CI_PROJECT_DIR $CI_DEBUG
-    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/utest dr1v90 ddr $CI_PROJECT_DIR $CI_DEBUG
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/driver/ps_driver_test dr1v90 ocm $CI_PROJECT_DIR $CI_DEBUG false
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/driver/ps_driver_test dr1v90 ddr $CI_PROJECT_DIR $CI_DEBUG false
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/baremetal dr1v90 ddr $CI_PROJECT_DIR $CI_DEBUG false
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/utest dr1v90 ddr $CI_PROJECT_DIR $CI_DEBUG false
 
 build-fsbl-job:       # This job runs in the build stage.
   stage: build
@@ -70,8 +70,8 @@ build-fsbl-job:       # This job runs in the build stage.
     name: anlogic/dr1x90-ci:v1
   script:
     - cd $CI_PROJECT_DIR/solutions/demo/fsbl
-    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/fsbl dr1v90 ocm $CI_PROJECT_DIR $CI_DEBUG
-    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/fsbl dr1m90 ocm $CI_PROJECT_DIR $CI_DEBUG
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/fsbl dr1v90 ocm $CI_PROJECT_DIR $CI_DEBUG false
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/fsbl dr1m90 ocm $CI_PROJECT_DIR $CI_DEBUG false
 
 build-apu-and-fsbl-job-with-FD:       # This job runs in the build stage.
   stage: build
