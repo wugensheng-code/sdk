@@ -34,12 +34,6 @@ void idle_wfi(void)
  */
 void rt_hw_board_init(void)
 {
-    // rt_hw_init_mmu_table(platform_mem_desc, platform_mem_desc_size);
-    // rt_hw_mmu_init();
-
-    /* initialize hardware interrupt */
-    rt_hw_interrupt_init();
-
     /* initialize timer for os tick */
     rt_hw_gtimer_init();
     rt_thread_idle_sethook(idle_wfi);
@@ -96,12 +90,6 @@ void rt_hw_trap_irq(void)
         do_fiq_handle();
     }
 }
-
-void Al_gic_init(void)
-{
-    // AlGic_Init();
-}
-INIT_DEVICE_EXPORT(Al_gic_init);
 
 void poweroff(void)
 {
