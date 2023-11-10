@@ -1,10 +1,16 @@
 # (0) include config file
 
-# (1.1) add submodule resource file
+ifeq ($(RTOS), freertos)
+C_SRCS += $(wildcard ./lib/*.c) \
+		    $(wildcard ./lib/system/freertos/*.c) \
+			$(wildcard ./lib/system/freertos/anlogic_common/*.c) \
+			$(wildcard ./lib/system/freertos/dr1m90/*.c)
+else
 C_SRCS += $(wildcard ./lib/*.c) \
 		    $(wildcard ./lib/system/generic/*.c) \
 			$(wildcard ./lib/system/generic/anlogic_common/*.c) \
 			$(wildcard ./lib/system/generic/dr1m90/*.c)
+endif
 
 # (1.2) add submodule include file to /bsp/inc for calling
 INC_DIR += include/lib/include

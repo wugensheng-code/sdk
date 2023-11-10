@@ -10,20 +10,14 @@
 #########################################################################
 SDK_ROOT   ?= ../../../..
 
-
+RTOS       := freertos
 CHIP       ?= dr1m90
 ifeq ($(CHIP), dr1m90)
+ARMv8_CORE=SLAVE
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
 else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
-
-ENABLE_MMU := 1
-
-#ARMv8_STATE=64 
-#ARMv8_SECURE=SECURE 
-ARMv8_CORE=SLAVE
-ARMv8_EL=EL1
 
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
@@ -36,21 +30,6 @@ ARMv8_EL=EL1
 SRC_DIR  = ./
 INC_DIR += ./src/system/generic \
 		   ./src/machine/dr1m90
-#libmetal
-INC_DIR += ../../../../3rdparty/lib/libmetal/include/lib/include
-
-#open-amp
-INC_DIR += ../../../../3rdparty/lib/open-amp/lib/include \
-			../../../../3rdparty/lib/open-amp/lib/rpmsg \
-			../../../../3rdparty/lib/open-amp/include/include/generated
-
-#raw
-INC_DIR += ./ ${SDK_ROOT}/fpsoc/arch/arm/armv8/aarch64/cortex-a/inc \
-		    ${SDK_ROOT}/fpsoc/arch/common/inc \
-			${SDK_ROOT}/fpsoc/arch/arm/common/gic_v3/inc \
-			${SDK_ROOT}/fpsoc/arch/arm/common/sys_timer/inc \
-			${SDK_ROOT}/fpsoc/inc/
-
 
 LD_LIBS  =
 LIB_DIR  =
@@ -76,15 +55,12 @@ CFLAGS := -O0 -g -Wall -DLOG_DEV=AL_LOG_UART0 -DRPMSG_DEBUG=1 -DBOARD_SEL=1 -DOP
 #PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 
-#LINKER_SCRIPT := ./src/system/generic/machine/dr1m90/gcc_dr1m90_ddr_board_dr1x90_ad101_v10.ld
-
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile
 ## Available choices:
 ## PINMUX_MODE1, PINMUX_MODE2, PINMUX_MODE3, PINMUX_MODE_SD1
 #########################################################################
 PINMUX_MODE ?= PINMUX_MODE1
-
 
 #########################################################################
 # 5. define build target
