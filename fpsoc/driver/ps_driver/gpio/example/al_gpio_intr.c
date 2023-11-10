@@ -13,14 +13,17 @@
  */
 #include "al_gpio_hal.h"
 
-#define IntrPin 21
+#define IntrPin 10
+#define AL_GPIO_DEVICE_ID 0
+
 
 AL_S32 AlGpio_Hal_Intr_Example()
 {
     AL_GPIO_HalStruct *GPIO;
+    AL_S32 i = 0;
 
     /* 1、Test AlGpio_Hal_Init */
-    AL_S32 ret = AlGpio_Hal_Init(&GPIO, 0, AL_NULL);
+    AL_S32 ret = AlGpio_Hal_Init(&GPIO, AL_GPIO_DEVICE_ID, AL_NULL);
 
     if (ret == AL_OK) {
         AL_LOG(AL_LOG_LEVEL_INFO, "[TEST] APU AlGpio_Hal_Init success");
@@ -30,11 +33,14 @@ AL_S32 AlGpio_Hal_Intr_Example()
     }
 
     /* 2、Test InputRead EOI register */
-    AlGpio_Hal_ReadPin(GPIO,IntrPin);
+    for(i = 0; i < 15; i++) {
+        AL_LOG(AL_LOG_LEVEL_INFO, "GPIO Pin %d input data value is %x", IntrPin, AlGpio_Hal_ReadPin(GPIO,IntrPin));
+    }
 
     /* 3、Test intr */
+    AlGpio_Hal_IntrCfg(GPIO, IntrPin, GPIO_INTR_TYPE_EDGE_RISING);
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
-    AlGpio_Hal_IntrCfg(GPIO, IntrPin, GPIO_INTR_TYPE_LEVEL_LOW);
+
     while(1);
 
     return AL_OK;

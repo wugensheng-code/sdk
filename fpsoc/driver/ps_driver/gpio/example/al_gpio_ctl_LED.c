@@ -15,13 +15,18 @@
 #include "al_gpio_hal.h"
 
 #define LED 14
+#define KEY 10
+#define AL_GPIO_DEVICE_ID 0
+#define AL_GPIO_DELAY_MS  20
 
 AL_S32 AlGpio_Hal_Ctl_LED_Example()
 {
     AL_GPIO_HalStruct *GPIO;
+    AL_S32 LedValue = 0;
+    AL_S32 KeyValue = 0;
 
     /* 1、Test AlGpio_Hal_Init */
-    AL_S32 ret = AlGpio_Hal_Init(&GPIO, 0, AL_NULL);
+    AL_S32 ret = AlGpio_Hal_Init(&GPIO, AL_GPIO_DEVICE_ID, AL_NULL);
 
     if (ret == AL_OK) {
         AL_LOG(AL_LOG_LEVEL_INFO, "[TEST] APU AlGpio_Hal_Init success");
@@ -31,13 +36,25 @@ AL_S32 AlGpio_Hal_Ctl_LED_Example()
     }
 
 
-    /* 2、Test LED function */
-    while(1) {
-        AlGpio_Hal_WritePin(GPIO, LED, 0x0);
-        AlSys_MDelay(2000);
-        AlGpio_Hal_WritePin(GPIO, LED, 0x1);
-        AlSys_MDelay(2000);
-    }
+    /* 2、Test Gpio polling */
+    AlGpio_Hal_WritePin(GPIO, LED, 0x0);
+    LedValue = AlGpio_Hal_ReadDRPin(GPIO, LED);
+
+   	while(1)
+    {
+        KeyValue = AlGpio_Hal_ReadPin(GPIO, KEY);
+		if(KeyValue == 0){
+			AlSys_MDelay(AL_GPIO_DELAY_MS);
+    		if (KeyValue == 0) {
+                LedValue = ~LedValue;
+                AL_LOG(AL_LOG_LEVEL_INFO, "GPIO led value is %x", LedValue);
+                AlGpio_Hal_WritePin(GPIO, LED, LedValue);
+                AlSys_MDelay(AL_GPIO_DELAY_MS);
+                AlGpio_Hal_WritePin(GPIO, LED, ~LedValue);
+                AlSys_MDelay(AL_GPIO_DELAY_MS);
+            }
+		}
+	}
 
     return AL_OK;
 }

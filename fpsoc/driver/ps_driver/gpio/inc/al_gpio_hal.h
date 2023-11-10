@@ -35,12 +35,13 @@ typedef enum
 
 typedef enum
 {
-    AL_GPIO_Event = 0x1,
-} AL_GPIO_EventId;
+    AL_GPIO_Level_Event = (0x1 << 0),
+    AL_GPIO_Edge_Event  = (0x1 << 1),
+} AL_GPIO_EventIdEnum;
 
 typedef struct
 {
-    AL_GPIO_EventId     Events;
+    AL_GPIO_EventIdEnum     Events;
 } AL_GPIO_EventStruct;
 
 typedef AL_VOID (*AL_GPIO_EventCallBack)(AL_GPIO_EventStruct GpioEvent, AL_VOID *CallbackRef);
@@ -99,6 +100,8 @@ typedef struct
     AL_GPIO_HwConfigStruct   HwConfig;
     AL_VOID                  *EventCallBackRef;
     AL_GPIO_EventCallBack    EventCallBack;
+    AL_GPIO_IntrEnum         IntrType;
+    AL_U32                   IntrPin;
 } AL_GPIO_HalStruct;
 
 /************************** Exported Function *****************************/
@@ -145,6 +148,7 @@ AL_S32 AlGpio_Hal_GetSyncEnable(AL_GPIO_HalStruct *Handle, AL_U32 Bank);
 */
 AL_S32 AlGpio_Hal_IntrEnablePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
 AL_S32 AlGpio_Hal_IntrClrPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
+AL_S32 AlGpio_Hal_IntrDisableClrPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
 AL_S32 AlGpio_Hal_IntrEnableMaskPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
 AL_BOOL AlGpio_Hal_IntrGetEnablePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
 AL_BOOL AlGpio_Hal_IntrGetEnableMaskPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);

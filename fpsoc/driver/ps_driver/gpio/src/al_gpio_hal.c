@@ -81,7 +81,7 @@ AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct **Handle, AL_U32 DevId, AL_GPIO_EventCa
         return Ret;
     }
 
-    (AL_VOID)AlIntr_RegHandler((*Handle)->HwConfig.IntrId, AL_NULL, AlGpio_Hal_IntrHandler, *Handle);
+    // (AL_VOID)AlIntr_RegHandler((*Handle)->HwConfig.IntrId, AL_NULL, AlGpio_Hal_IntrHandler, *Handle);
 
     return AL_OK;
 }
@@ -557,6 +557,25 @@ AL_S32 AlGpio_Hal_IntrClrPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
 }
 
 /**
+ * @brief  This function disable clear the interrupt for the specified pin.
+ * @param  Gpio
+ * @param  Pin
+ * @return AL_VOID
+ */
+AL_S32 AlGpio_Hal_IntrDisableClrPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
+{
+    AL_U32 Bank = 0;
+    AL_U32 PinNumber = 0;
+
+    AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
+
+    AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
+    AlGpio_ll_IntrEoi(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_DISABLE);
+
+    return AL_OK;
+}
+
+/**
  * @brief  This function enables the interrpt mask for the specified pin.
  * @param  Gpio
  * @param  Pin
@@ -863,6 +882,65 @@ AL_S32 AlGpio_Hal_RegisterEventCallBack(AL_GPIO_HalStruct *Handle, AL_GPIO_Event
     return AL_OK;
 }
 
+
+/**
+ * @brief  This function is the interrupt handler for GPIO Edge interrupts.
+ * @param  Gpio is a pointer to the AL_GPIO instance.
+ * @param  Pin is the pin number to which the Data is to be written.
+ * @param  IntrType is the IRQ type for GPIO Pin.
+ * @return AL_S32
+ */
+AL_VOID AlGpio_Hal_EdgeIntrHandler(AL_VOID *Instance)
+{
+    AL_U32 IntrStatus = 0;
+    AL_GPIO_HalStruct *Handle = (AL_GPIO_HalStruct *)Instance;
+    AL_U32 Pin = Handle->IntrPin;
+
+    IntrStatus = AlGpio_Hal_IntrGetStatusPin(Handle, Pin);
+    AL_LOG(AL_LOG_LEVEL_INFO, "Pin %d IntrStatus is %x", Pin, IntrStatus);
+    if(Handle->EventCallBack) {
+        AL_GPIO_EventStruct GpioEvent = {
+            .Events  = AL_GPIO_Level_Event,
+        };
+        Handle->EventCallBack(GpioEvent, Handle->EventCallBackRef);
+
+        AlGpio_Hal_IntrClrPin(Handle, Pin);
+        /* In edge interrupt mode, GPIO__EOI Register need to be set 0 for the next interrupt.*/
+        AlGpio_Hal_IntrDisableClrPin(Handle, Pin);
+    }
+}
+
+/**
+ * @brief  This function is the interrupt handler for GPIO Level interrupts.
+ * @param  Gpio is a pointer to the AL_GPIO instance.
+ * @param  Pin is the pin number to which the Data is to be written.
+ * @param  IntrType is the IRQ type for GPIO Pin.
+ * @return AL_S32
+ */
+AL_VOID AlGpio_Hal_LevelIntrHandler(AL_VOID *Instance)
+{
+    AL_U32 IntrStatus = 0;
+    AL_GPIO_HalStruct *Handle = (AL_GPIO_HalStruct *)Instance;
+    AL_U32 Pin = Handle->IntrPin;
+    AL_U32 MaskPinVal = 0;
+
+    IntrStatus = AlGpio_Hal_IntrGetStatusPin(Handle, Pin);
+    AL_LOG(AL_LOG_LEVEL_INFO, "IntrStatus is %x", IntrStatus);
+    if(Handle->EventCallBack) {
+        AL_GPIO_EventStruct GpioEvent = {
+            .Events  = AL_GPIO_Level_Event,
+        };
+        Handle->EventCallBack(GpioEvent, Handle->EventCallBackRef);
+
+        AlGpio_Hal_IntrClrPin(Handle, Pin);
+        /* In level interrupt mode, GPIO__INTMASK__CLR Register need to be set 1 to mask interrupt.*/
+        AlGpio_Hal_IntrEnableMaskPin(Handle, Pin);
+        MaskPinVal = AlGpio_Hal_IntrGetEnableMaskPin(Handle, Pin);
+        AL_LOG(AL_LOG_LEVEL_INFO, "Mask Pin Value is %x", MaskPinVal);
+    }
+}
+
+
 /**
  * @brief  This function is the interrupt handler for GPIO interrupts.It checks the interrupt status registers
  * of all the banks to determine the actual bank in which interrupt have been triggered. It then calls the
@@ -872,28 +950,18 @@ AL_S32 AlGpio_Hal_RegisterEventCallBack(AL_GPIO_HalStruct *Handle, AL_GPIO_Event
  * @param  IntrType is the IRQ type for GPIO Pin.
  * @return AL_S32
  */
-AL_VOID AlGpio_Hal_IntrHandler(void *Instance)
+AL_VOID AlGpio_Hal_IntrHandler(AL_VOID *Instance)
 {
-    AL_U32 Bank = 0;
-    AL_U32 IntrStatus = 0;
     AL_GPIO_HalStruct *Handle = (AL_GPIO_HalStruct *)Instance;
 
-    for(Bank = 0; Bank < Handle->HwConfig.MaxBanks; Bank++) {
-        IntrStatus = AlGpio_Hal_IntrGetStatus(Handle, Bank);
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "Bank %x: IntrStatus is %x", Bank, IntrStatus);
-
-        if((IntrStatus != (AL_U32)0) && (Handle->EventCallBack)) {
-            AL_GPIO_EventStruct GpioEvent = {
-                .Events  = AL_GPIO_Event,
-            };
-            Handle->EventCallBack(GpioEvent, Handle->EventCallBackRef);
-
-            AlGpio_Hal_IntrClr(Handle, Bank, IntrStatus);
-            AlGpio_Hal_IntrEnableMask(Handle, Bank, IntrStatus);
-        }
+    if (Handle->IntrType == GPIO_INTR_TYPE_LEVEL_HIGH || Handle->IntrType == GPIO_INTR_TYPE_LEVEL_LOW) {
+        AlGpio_Hal_LevelIntrHandler(Instance);
+    } else if (Handle->IntrType == GPIO_INTR_TYPE_EDGE_RISING || Handle->IntrType == GPIO_INTR_TYPE_EDGE_FALLING || Handle->IntrType == GPIO_INTR_TYPE_EDGE_BOTH) {
+        AlGpio_Hal_EdgeIntrHandler(Instance);
+    } else {
+        AL_LOG(AL_LOG_LEVEL_INFO, "Gpio Interrupt Type not exist.");
     }
 }
-
 
 /**
  * @brief  This function configure the interrupt, including direction, type and enable register.
@@ -906,6 +974,22 @@ AL_S32 AlGpio_Hal_IntrCfg(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_GPIO_IntrEnu
 {
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
+    if (IntrType == GPIO_INTR_TYPE_EDGE_FALLING || IntrType == GPIO_INTR_TYPE_EDGE_RISING || IntrType == GPIO_INTR_TYPE_EDGE_BOTH) {
+        AlGpio_Hal_DebounceEnablePin(Handle, Pin);
+    }
+
+    if (Pin >= 0 && Pin <= MAX_PIN_NUMBER_IN_BANK_0) {
+        (AL_VOID)AlIntr_RegHandler(Handle->HwConfig.IntrId, AL_NULL, AlGpio_Hal_IntrHandler, Handle);
+    } else if(Pin > MAX_PIN_NUMBER_IN_BANK_0 && Pin <= MAX_PIN_NUMBER_IN_BANK_1) {
+        (AL_VOID)AlIntr_RegHandler(Handle->HwConfig.IntrId + 1, AL_NULL, AlGpio_Hal_IntrHandler, Handle);
+    } else if(Pin > MAX_PIN_NUMBER_IN_BANK_1 && Pin <= MAX_PIN_NUMBER_IN_BANK_2) {
+        (AL_VOID)AlIntr_RegHandler(Handle->HwConfig.IntrId + 2, AL_NULL, AlGpio_Hal_IntrHandler, Handle);
+    } else if (Pin > MAX_PIN_NUMBER_IN_BANK_2 && Pin <= MAX_PIN_NUMBER_IN_BANK_3) {
+        (AL_VOID)AlIntr_RegHandler(Handle->HwConfig.IntrId + 3, AL_NULL, AlGpio_Hal_IntrHandler, Handle);
+    }
+
+    Handle->IntrType = IntrType;
+    Handle->IntrPin = Pin;
     AlGpio_Hal_SetDirectionPin(Handle, Pin, GPIO_PIN_INPUT);
     AlGpio_Hal_IntrSetTypePin(Handle, Pin, IntrType);
     AlGpio_Hal_IntrEnablePin(Handle, Pin);
