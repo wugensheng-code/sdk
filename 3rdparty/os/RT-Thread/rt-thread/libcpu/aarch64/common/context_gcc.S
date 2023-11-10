@@ -355,8 +355,37 @@ _reswitch:
 vector_fiq:
     SAVE_CONTEXT
     STP     X0, X1, [SP, #-0x10]!
+
+    BL      rt_interrupt_enter
     BL      rt_hw_trap_fiq
+    BL      rt_interrupt_leave
+
     LDP     X0, X1, [SP], #0x10
+#ifdef RT_USING_SMP
+    /* Never reture If can switch */
+    BL      rt_scheduler_do_irq_switch
+    MOV     X0, SP
+#endif
+
+    // if rt_thread_switch_interrupt_flag set, jump to
+    // rt_hw_context_switch_interrupt_do and don't return
+    LDR     X1, =rt_thread_switch_interrupt_flag
+    LDR     X2, [X1]
+    CMP     X2, #1
+    B.NE     vector_fiq_exit
+
+    MOV     X2,  #0         // clear flag
+    STR     X2,  [X1]
+
+    LDR     X3, =rt_interrupt_from_thread
+    LDR     X4,  [X3]
+    STR     x0,  [X4]       // store sp in preempted tasks's TCB
+
+    LDR     x3, =rt_interrupt_to_thread
+    LDR     X4,  [X3]
+    LDR     x0,  [X4]       // get new task's stack pointer
+
+vector_fiq_exit:
     RESTORE_CONTEXT
 
 .globl      rt_interrupt_enter
