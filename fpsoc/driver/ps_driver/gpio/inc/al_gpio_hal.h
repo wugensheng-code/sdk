@@ -35,8 +35,7 @@ typedef enum
 
 typedef enum
 {
-    AL_GPIO_Level_Event = (0x1 << 0),
-    AL_GPIO_Edge_Event  = (0x1 << 1),
+    AL_GPIO_Event      =  0x1,
 } AL_GPIO_EventIdEnum;
 
 typedef struct
@@ -66,8 +65,8 @@ typedef enum
 
 typedef enum
 {
-    GPIO_PIN_OUTPUT  =  0x1,
-    GPIO_PIN_INPUT   =  0x0,
+    GPIO_PIN_OUTPUT   =  0x1,
+    GPIO_PIN_INPUT    =  0x0,
     GPIO_BANK_OUTPUT  =  0xffffffff,
     GPIO_BANK_INPUT   =  0x0,
 } AL_GPIO_DirEnum;
@@ -79,6 +78,14 @@ typedef enum
     AL_GPIO_BANK2   =  (AL_U32)2,
     AL_GPIO_BANK3   =  (AL_U32)3,
 } AL_GPIO_BankEnum;
+
+typedef enum
+{
+    AL_GPIO_INTR_BANK0   =  BIT(0),
+    AL_GPIO_INTR_BANK1   =  BIT(1),
+    AL_GPIO_INTR_BANK2   =  BIT(2),
+    AL_GPIO_INTR_BANK3   =  BIT(3),
+} AL_GPIO_Intr_BankEnum;
 
 typedef enum
 {
@@ -95,74 +102,40 @@ typedef enum
     MAX_PIN_NUMBER_IN_BANK_3   =   (AL_U32)117,
 } AL_GPIO_PinNumEnum;
 /**************************** Exported Typedef ******************************/
+
 typedef struct
 {
     AL_GPIO_HwConfigStruct   HwConfig;
     AL_VOID                  *EventCallBackRef;
     AL_GPIO_EventCallBack    EventCallBack;
-    AL_GPIO_IntrEnum         IntrType;
-    AL_U32                   IntrPin;
+    AL_U32                   IntrBank;
 } AL_GPIO_HalStruct;
 
 /************************** Exported Function *****************************/
-AL_GPIO_HwConfigStruct *AlGpio_Hal_LookupConfig(AL_U32 DeviceId);
 AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct **Handle, AL_U32 DevId, AL_GPIO_EventCallBack CallBack);
-AL_VOID AlGpio_Hal_GetBankPin(AL_U32 PinNumber, AL_U32 *BankNumber, AL_U32 *PinNumberInBank);
 
 /*
  * Bank APIs
 */
-AL_S32 AlGpio_Hal_SetDirection(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Direction);
-AL_S32 AlGpio_Hal_ReadBank(AL_GPIO_HalStruct *Handle, AL_U32 Bank);
+AL_S32 AlGpio_Hal_ReadBankFromDR(AL_GPIO_HalStruct *Handle, AL_U32 Bank);
+AL_S32 AlGpio_Hal_ReadBankFromEXT(AL_GPIO_HalStruct *Handle, AL_U32 Bank);
 AL_S32 AlGpio_Hal_WriteBank(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Data);
-AL_S32 AlGpio_Hal_GetDirection(AL_GPIO_HalStruct *Handle, AL_U32 Bank);
 
 /*
  * Pin APIs
 */
-AL_S32 AlGpio_Hal_SetDirectionPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U32 Direction);
-AL_S32 AlGpio_Hal_ReadDRPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
-AL_S32 AlGpio_Hal_ReadPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
+AL_S32 AlGpio_Hal_ReadPinFromDR(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
+AL_S32 AlGpio_Hal_ReadPinFromEXT(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
 AL_S32 AlGpio_Hal_WritePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U32 Data);
-AL_S32 AlGpio_Hal_GetDirectionPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
 
 /*
  * Bank intr APIs
 */
-AL_S32 AlGpio_Hal_IntrEnable(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Raw);
-AL_S32 AlGpio_Hal_IntrClr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Mask);
-AL_S32 AlGpio_Hal_IntrGetEnable(AL_GPIO_HalStruct *Handle, AL_U32 Bank);
-AL_S32 AlGpio_Hal_IntrEnableMask(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Mask);
-AL_S32 AlGpio_Hal_IntrGetEnableMask(AL_GPIO_HalStruct *Handle, AL_U32 Bank);
-AL_S32 AlGpio_Hal_IntrGetStatus(AL_GPIO_HalStruct *Handle, AL_U32 Bank);
-AL_S32 AlGpio_Hal_RawIntrGetStatus(AL_GPIO_HalStruct *Handle, AL_U32 Bank);
-AL_S32 AlGpio_Hal_IntrSetType(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 IntrType, AL_U32 IntrPolarity, AL_U32 IntrEdge);
-AL_S32 AlGpio_Hal_IntrGetType(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 *IntrType, AL_U32 *IntrPolarity, AL_U32 *IntrEdge);
-AL_S32 AlGpio_Hal_DebounceEnable(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Debounce);
-AL_S32 AlGpio_Hal_GetDebounceEnable(AL_GPIO_HalStruct *Handle, AL_U32 Bank);
-AL_S32 AlGpio_Hal_SyncEnable(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Debounce);
-AL_S32 AlGpio_Hal_GetSyncEnable(AL_GPIO_HalStruct *Handle, AL_U32 Bank);
+
 
 /*
  * Pin intr APIs
 */
-AL_S32 AlGpio_Hal_IntrEnablePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
-AL_S32 AlGpio_Hal_IntrClrPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
-AL_S32 AlGpio_Hal_IntrDisableClrPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
-AL_S32 AlGpio_Hal_IntrEnableMaskPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
-AL_BOOL AlGpio_Hal_IntrGetEnablePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
-AL_BOOL AlGpio_Hal_IntrGetEnableMaskPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
-AL_BOOL AlGpio_Hal_IntrGetStatusPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
-AL_BOOL AlGpio_Hal_RawIntrGetStatusPin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
-AL_S32 AlGpio_Hal_IntrSetTypePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U32 IntrType);
-AL_S32 AlGpio_Hal_IntrGetTypePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
-AL_S32 AlGpio_Hal_DebounceEnablePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
-AL_BOOL AlGpio_Hal_GetDebounceEnablePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
-AL_S32 AlGpio_Hal_SyncEnablePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
-AL_BOOL AlGpio_Hal_GetSyncEnablePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin);
-
-AL_S32 AlGpio_Hal_RegisterEventCallBack(AL_GPIO_HalStruct *Handle, AL_GPIO_EventCallBack CallBack, AL_VOID *CallBackRef);
-AL_VOID AlGpio_Hal_IntrHandler(void *Instance);
 AL_S32 AlGpio_Hal_IntrCfg(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_GPIO_IntrEnum IntrType);
 
 #ifdef __cplusplus
