@@ -40,18 +40,6 @@ void rt_hw_interrupt_init(void)
 {
     /* initialize vector table */
     rt_hw_vector_init();
-
-    /* initialize exceptions table */
-    rt_memset(isr_table, 0x00, sizeof(isr_table));
-
-    /* initialize ARM GIC */
-    arm_gic_dist_init(0, platform_get_gic_dist_base(), GIC_IRQ_START);
-    arm_gic_cpu_init(0, platform_get_gic_cpu_base());
-#ifdef BSP_USING_GICV3
-    arm_gic_redist_init(0, platform_get_gic_redist_base());
-#endif
-
-    AlGic_Init();
 }
 
 /**

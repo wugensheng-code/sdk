@@ -34,6 +34,9 @@ void idle_wfi(void)
  */
 void rt_hw_board_init(void)
 {
+    /* initialize hardware interrupt */
+    rt_hw_interrupt_init();
+
     /* initialize timer for os tick */
     rt_hw_gtimer_init();
     rt_thread_idle_sethook(idle_wfi);
