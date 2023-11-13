@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "dr1x90_ddrc_init.h"
+#include "al_type.h"
 
 // task #
 void dr1x90_ddrppc_dx_enable() {
@@ -239,9 +240,9 @@ int dr1x90_ddrppc_mtest(u8 bank, u16 row, u16 col, u8 byteNum) {
     u8  patternType;
     u8  iterateCnt = 128;   // 240
     u32 regData;
-    u8  bistDone;
+    //u8  bistDone;
     u16 bistDxErr;
-    u8  rcvCnt;
+    //u8  rcvCnt;
     int mbist_fail_cnt = 0;
     int loopback_mode_int_en = 0;
     int loopback_mode_ext_en = 0;
@@ -285,11 +286,11 @@ int dr1x90_ddrppc_mtest(u8 bank, u16 row, u16 col, u8 byteNum) {
 
         dr1x90_field_wait(DDRC_ADDR_PPC + BISTGSR, BDONE_offset, BDONE_mask, 1, 0x1500); // wait for bistDone
 
-        bistDone  = dr1x90_field_read(DDRC_ADDR_PPC + BISTGSR,  BDONE_offset,  BDONE_mask);
+        //bistDone  = dr1x90_field_read(DDRC_ADDR_PPC + BISTGSR,  BDONE_offset,  BDONE_mask);
         bistDxErr = dr1x90_field_read(DDRC_ADDR_PPC + BISTGSR,  BDXERR_offset, BDXERR_mask);
-        rcvCnt    = dr1x90_field_read(DDRC_ADDR_PPC + BISTWCSR, DXWCNT_offset, DXWCNT_mask); // Equal to iterateCnt
+        //rcvCnt    = dr1x90_field_read(DDRC_ADDR_PPC + BISTWCSR, DXWCNT_offset, DXWCNT_mask); // Equal to iterateCnt
 
-       printf("\ndram_test : patternType =  0x%x, bistDone = 0x%x, bistDxErr = 0x%x, rcvCnt = 0x%x \r\n", patternType, bistDone, bistDxErr, rcvCnt);
+       //printf("\ndram_test : patternType =  0x%x, bistDone = 0x%x, bistDxErr = 0x%x, rcvCnt = 0x%x \r\n", patternType, bistDone, bistDxErr, rcvCnt);
 
         dr1x90_field_write(DDRC_ADDR_PPC + BISTRR, BINST_offset, BINST_mask, 3);
         dr1x90_field_write(DDRC_ADDR_PPC + BISTRR, BINST_offset, BINST_mask, 2);
@@ -545,7 +546,7 @@ void dr1x90_ddrmc_post_cfg()
     // poll DFISTAT.dfi_init_complete=1
     dr1x90_field_wait(DDRC_ADDR_UMCTL2 + DFISTAT, dfi_init_complete_offset, dfi_init_complete_mask, 0x1, 1000);
 
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DFISTAT, dfi_init_complete_offset, dfi_init_complete_mask);
+    //regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DFISTAT, dfi_init_complete_offset, dfi_init_complete_mask);
    //  printf("\n dfi_init_complete.   data =  0x%x\r\n", regData);
 
     // step 8
@@ -561,7 +562,9 @@ void dr1x90_ddrmc_post_cfg()
     dr1x90_field_wait(DDRC_ADDR_UMCTL2 + STAT, operating_mode_offset, operating_mode_mask, 0x1, 1000);
 
     regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + STAT, operating_mode_offset, operating_mode_mask);
-    printf("\n operating_mode.   data =  0x%x\r\n", regData);
+
+    AL_UNUSED(regData);
+    //printf("\n operating_mode.   data =  0x%x\r\n", regData);
 
     //step 11
     // cfg SWCTL.sw_done = 1'b0
