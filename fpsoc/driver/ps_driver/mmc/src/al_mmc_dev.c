@@ -1661,6 +1661,7 @@ static AL_S32 AlMmc_Dev_EmmcModeInit(AL_MMC_DevStruct *Dev)
     if ((Dev->Config.BusWidth != AL_MMC_BUS_WIDTH_1BIT) && (Dev->CardInfo.SpdMode != AL_MMC_SPD_DS_SDR12)) {
         Ret = AlMmc_Dev_GetExtCsd(Dev, (AL_U8 *)&ExtCsd);
         if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "eMMC error after set high speed mode, need set mio speed mode to fast mode\r\n");
             return Ret;
         }
     }

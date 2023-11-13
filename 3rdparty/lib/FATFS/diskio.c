@@ -75,6 +75,7 @@ DSTATUS disk_initialize (BYTE pdrv)
         if (status == RES_OK) {
             status = RES_OK;
         } else {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Mmc Init Err: 0x%x\r\n", status);
             status = STA_NOINIT;
         }
         break;
@@ -99,6 +100,7 @@ DRESULT disk_read (BYTE pdrv, BYTE *buff, DWORD sector, UINT count)
     case EMMC:
         status = AlMmc_Hal_ReadBlocked(Handle, buff, sector, count, MMC_RD_WR_TIMEOUT_MS);
         if (status != RES_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Mmc Read Err: 0x%x\r\n", status);
             status = RES_ERROR;
         }
         break;
@@ -128,6 +130,7 @@ DRESULT disk_write (BYTE pdrv, const BYTE *buff, DWORD sector, UINT count)
     case EMMC:
         status = AlMmc_Hal_WriteBlocked(Handle, buff, sector, count, MMC_RD_WR_TIMEOUT_MS);
         if (status != RES_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Mmc Write Err: 0x%x\r\n", status);
             status = RES_ERROR;
         }
         break;
