@@ -20,13 +20,8 @@ u32 dr1x90_ddr_reg_read(u32* useless, u32 addr, u32* data)
 
 void dr1x90_reg_write(u16 addr, u32 data)
 {
-    u32 ftcStatus;
     unsigned int addr_phy = 0xf8420000 | addr;
-    ftcStatus = dr1x90_ddr_reg_write(&ftcHandle, addr_phy, data);
-    if (!ftcStatus)
-    {
-        printf("dr1x90_reg_write suscced: ftcStatus: %d\r\n", ftcStatus);
-    }
+    (void) dr1x90_ddr_reg_write(&ftcHandle, addr_phy, data);
     
     #ifdef DEBUG_REG_self
         printf("write : 0x%08x = 0x%08x\r\n", addr, data);
