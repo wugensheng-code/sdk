@@ -30,6 +30,7 @@ check:              # This job runs in the .pre stage, which runs first.
       echo commit message: ${CI_COMMIT_MESSAGE}
       echo commit sha: ${CI_COMMIT_SHA}
       echo ${CI_COMMIT_MESSAGE} | cz check
+    - grep -ri AL9000 --exclude-dir=.git --exclude=.gitlab-ci.yml; if [ $? -eq 0 ]; then echo "Character found. CI failure."; exit 1; fi
 
 build-apu-job:       # This job runs in the build stage.
   stage: build
