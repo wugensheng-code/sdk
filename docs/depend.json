@@ -156,7 +156,7 @@
 		"LIB_CIPHER_V1_0": {
 			"name": "LIB_CIPHER_V1_0",
 			"version": "1.0",
-			"depends": ["3rdparty/lib/cipher"]
+			"depends": ["fpsoc/lib/cipher"]
 		},
 		"LIB_LWIP_V1_0":{
 			"name": "LIB_LWIP_V1_0",
