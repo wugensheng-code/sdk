@@ -10,6 +10,7 @@
 AL_U32 CACHE_LINE_ALIGN AL_CAN_TEST_DST_MEM[AL_CAN_DMAC_RECV_DATA_IN_WORD];
 
 static AL_VOID AlCan_Test_ListenOnly(AL_VOID);
+static AL_VOID AlCan_Test_Standby(AL_VOID);
 static AL_VOID AlCan_Test_InLoopBack(AL_VOID);
 static AL_VOID AlCan_Test_ExLoopBack(AL_VOID);
 static AL_VOID AlCan_Test_StdIntr(AL_VOID);
@@ -22,6 +23,10 @@ AL_U32 main(AL_VOID)
 {
 #if CONFIG_CAN_LISTEN_ONLY_TEST
     AlCan_Test_ListenOnly();
+#endif
+
+#if CONFIG_CAN_STANDBY_TEST
+    AlCan_Test_Standby();
 #endif
 
 #if CONFIG_CAN_IN_LOOPBACK_TEST
@@ -155,6 +160,50 @@ static AL_VOID AlCan_Test_ListenOnly(AL_VOID)
             AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame19 Error:0x%x\r\n", Ret);
         }
         AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd Frame19 example\r\n");
+        AlSys_MDelay(500);
+    };
+}
+
+static AL_VOID AlCan_Test_Standby(AL_VOID)
+{
+    AL_CAN_HalStruct *Handle;
+    AL_CAN_InitStruct Config;
+    // AL_CAN_FrameStruct Frame;
+#ifdef BOARD_DR1X90_AD101_V10
+    AL_U32 DeviceId = 0;
+#else
+    AL_U32 DeviceId = 1;
+#endif
+    AL_U32 Ret = AL_OK;
+    AL_U32 Timeout = 1000;
+
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Can FD standby example\r\n");
+    Config.OpsMode      = AL_CAN_MODE_STANDBY;
+    Config.RunMode      = AL_CAN_RUN_INTR;
+    Config.Type         = AL_CAN_TYPE_FD;
+    Config.SlowBitRate  = AL_CAN_ARBITRATION_0_5M;
+    Config.FastBitRate  = AL_CAN_1_M;
+    Config.TransMode    = AL_CAN_TRANS_PTB;
+    Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
+
+    Ret = AlCan_Hal_Init(&Handle, DeviceId, &Config, AL_NULL);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init Error:0x%x\r\n", Ret);
+    }
+    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
+
+    while (1) {
+        Ret = AlCan_Hal_SendFrameBlock(Handle, &FdFrame1, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame1 Error:0x%x\r\n", Ret);
+        }
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd Frame1 example\r\n");
+        AlSys_MDelay(500);
+        Ret = AlCan_Hal_SendFrameBlock(Handle, &FdFrame3, Timeout);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Send Frame3 Error:0x%x\r\n", Ret);
+        }
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Can Fd Frame3 example\r\n");
         AlSys_MDelay(500);
     };
 }

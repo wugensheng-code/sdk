@@ -37,8 +37,12 @@ ifeq ($(ELF), EX_LOOPBACK)
 C_SRCS += al_can_ex_loopback_blocked.c
 else ifeq ($(ELF), FD_DMA)
 C_SRCS += al_can_fd_dma_nonblock.c
+else ifeq ($(ELF), FD_DMA_LLP)
+C_SRCS += al_can_fd_dma_llp_nonblock.c
 else ifeq ($(ELF), FD_STB_FIFO)
 C_SRCS += al_can_fd_stb_fifo_blocked.c
+else ifeq ($(ELF), FD_STB_PRIO)
+C_SRCS += al_can_fd_stb_priority_blocked.c
 else ifeq ($(ELF), STD_PTB)
 C_SRCS += al_can_std_ptb_blocked.c
 else
@@ -81,8 +85,12 @@ ifeq ($(ELF), EX_LOOPBACK)
 TARGET := fpsoc_can_example_ex_loopback_block
 else ifeq ($(ELF), FD_DMA)
 TARGET := fpsoc_can_example_fd_dma_nonblock
+else ifeq ($(ELF), FD_DMA_LLP)
+TARGET := fpsoc_can_example_fd_dma_llp_nonblock
 else ifeq ($(ELF), FD_STB_FIFO)
 TARGET := fpsoc_can_example_fd_stb_fifo_block
+else ifeq ($(ELF), FD_STB_PRIO)
+TARGET := fpsoc_can_example_fd_stb_priority_block
 else ifeq ($(ELF), STD_PTB)
 TARGET := fpsoc_can_example_std_ptb_block
 else

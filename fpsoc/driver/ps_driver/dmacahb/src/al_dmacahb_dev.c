@@ -640,12 +640,53 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
         AlDmacAhb_ll_WriteSrcAddr(BaseAddr, ChOffset, Trans->SrcAddr);
         AlDmacAhb_ll_WriteDstAddr(BaseAddr, ChOffset, Trans->DstAddr);
     } else {
+        if (Channel->Config.HandShaking.SrcHsSel == AL_DMACAHB_HAND_SHAKING_SOFTWARE) {
+            if (Channel->Config.SrcBurstLength == AL_DMACAHB_MSIZE_1) {
+                Trans->SrcBurstCnt = Trans->TransSize;
+            } else {
+                Trans->SrcBurstCnt = Trans->TransSize >> (Channel->Config.SrcBurstLength + 1);
+                Trans->SrcSingleCnt = Trans->TransSize & ((1 << (Channel->Config.SrcBurstLength + 1)) - 1);
+            }
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "Burst Cnt: %d, Single Cnt: %d\r\n", Trans->SrcBurstCnt, Trans->SrcSingleCnt);
+        }
         AlDmacAhb_ll_WriteSrcAddr(BaseAddr, ChOffset, Trans->SrcAddr);
         AlDmacAhb_ll_WriteDstAddr(BaseAddr, ChOffset, Trans->DstAddr);
         AlDmacAhb_ll_SetBlkTransSize(BaseAddr, ChOffset, Trans->TransSize);
     }
 
     Ret = AlDmacAhb_Dev_SetTransType(Channel);
+
+    return Ret;
+}
+
+/**
+ * This function set channel trans soft handshaking request
+ * @param   Channel is pointer to AL_DMACAHB_ChStruct
+ * @return
+ *          - AL_DMACAHB_ERR_NULL_PTR Channel is NULL
+ *          - AL_DMACAHB_ERR_ADDR_NOT_ALIGN src or dst address not align with their trans width
+ *          - AL_DMACAHB_ERR_STATE_NOT_READY channel not ready
+ *          - AL_OK start success
+ * @note
+*/
+AL_S32 AlDmacAhb_Dev_SoftRequest(AL_DMACAHB_ChStruct *Channel)
+{
+    AL_S32 Ret = AL_OK;
+
+    AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
+
+    if (Channel->Trans.SrcBurstCnt) {
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Req a burst trans\r\n");
+        Channel->Trans.SrcBurstCnt--;
+        AlDmacAhb_ll_SetSrcReqAct(Channel->Dmac->BaseAddr, Channel->Param.ChMask, AL_TRUE);
+        AlDmacAhb_ll_SetSrcSglReqAct(Channel->Dmac->BaseAddr, Channel->Param.ChMask, AL_TRUE);
+    } else {
+        if (Channel->Trans.SrcSingleCnt) {
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "Req a single trans\r\n");
+            Channel->Trans.SrcSingleCnt--;
+            AlDmacAhb_ll_SetSrcSglReqAct(Channel->Dmac->BaseAddr, Channel->Param.ChMask, AL_TRUE);
+        }
+    }
 
     return Ret;
 }
@@ -961,6 +1002,7 @@ static AL_VOID AlDmacAhb_Dev_BlockTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 */
 static AL_VOID AlDmacAhb_Dev_SrcTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb Channel %d block src trans complete!\r\n", Channel->Config.Id);
     AL_DMACAHB_EventStruct Event = {
         .EventId    = AL_DMACAHB_EVENT_SRC_TRANS_COMP,
         .EventData  = 0
@@ -976,6 +1018,7 @@ static AL_VOID AlDmacAhb_Dev_SrcTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 */
 static AL_VOID AlDmacAhb_Dev_DstTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb Channel %d block dst trans complete!\r\n", Channel->Config.Id);
     AL_DMACAHB_EventStruct Event = {
         .EventId    = AL_DMACAHB_EVENT_DST_TRANS_COMP,
         .EventData  = 0

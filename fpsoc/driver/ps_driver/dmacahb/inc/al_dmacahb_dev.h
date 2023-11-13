@@ -123,6 +123,15 @@ typedef enum
 } AL_DMACAHB_MasterSelEnum;
 
 /**
+ * @brief  Channel soft request enum
+ */
+typedef enum
+{
+    AL_DMACAHB_SOFT_REQ_BURST,
+    AL_DMACAHB_SOFT_REQ_SINGLE
+} AL_DMACAHB_SoftReqEnum;
+
+/**
  * @brief  Channel link list pointer sel enum
  */
 typedef enum
@@ -336,6 +345,8 @@ typedef struct
     AL_U32                  ReloadCountNum; /* use in reload mode, save reload times */
     AL_U32                  ReloadCount;    /* save current reload times */
     AL_DMACAHB_LliStruct    *Lli;           /* Pointer to link list item */
+    AL_U32                  SrcBurstCnt;    /* soft request remain burst cnt */
+    AL_U32                  SrcSingleCnt;   /* soft request remain single cnt */
 } AL_DMACAHB_ChTransStruct;
 
 /**
@@ -463,6 +474,8 @@ AL_S32 AlDmacAhb_Dev_DeInit(AL_DMACAHB_ChStruct *Channel);
 AL_S32 AlDmacAhb_Dev_FillLliWithCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_LliStruct *Lli);
 
 AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel);
+
+AL_S32 AlDmacAhb_Dev_SoftRequest(AL_DMACAHB_ChStruct *Channel);
 
 AL_S32 AlDmacAhb_Dev_Start(AL_DMACAHB_ChStruct *Channel);
 

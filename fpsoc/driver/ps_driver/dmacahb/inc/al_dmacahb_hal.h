@@ -24,6 +24,7 @@ typedef struct
     AL_DMACAHB_ChStruct     Channel;
     AL_Lock                 Lock;
     AL_MailBox              EventQueue;
+    AL_MailBox              SrcEventQueue;
 } AL_DMACAHB_HalStruct;
 
 /************************** Variable Definitions *****************************/
@@ -41,6 +42,8 @@ AL_S32 AlDmacAhb_Hal_StartBlock(AL_DMACAHB_HalStruct *Handle, AL_U32 Timeout);
 AL_S32 AlDmacAhb_Hal_IoCtl(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_IoCtlCmdEnum Cmd, AL_VOID *Data);
 
 AL_S32 AlDmacAhb_Hal_WaitTransDoneOrTimeout(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_EventStruct *Event, AL_U32 TimeoutMs);
+
+AL_S32 AlDmacAhb_Hal_WaitSrcTransDoneOrTimeout(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_EventStruct *Event, AL_U32 TimeoutMs);
 
 #ifdef __cplusplus
 }

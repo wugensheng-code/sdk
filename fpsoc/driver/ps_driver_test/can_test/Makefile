@@ -84,6 +84,8 @@ all:
 	make cleanapp
 	make -f Makefile_can_fd_listen_only dasm
 	make cleanapp
+	make -f Makefile_can_fd_standby dasm
+	make cleanapp
 	make -f Makefile_can_fd_stb_fifo dasm
 	make cleanapp
 	make -f Makefile_can_fd_dma dasm

@@ -925,8 +925,10 @@ static inline AL_U32 AlDmacAhb_ll_GetSrcReq(AL_REG BaseAddr)
 
 static inline AL_VOID AlDmacAhb_ll_SetSrcReqAct(AL_REG BaseAddr, AL_U32 ChannelMask, AL_BOOL IsEnable)
 {
-    AL_REG32_WRITE(BaseAddr + DMAC_AHB_REQSRCREG_OFFSET,
-                   ((IsEnable ? ChannelMask : 0) | (ChannelMask << DMAC_AHB_REQSRCREG_SRC_REQ_WE_SHIFT)));
+    AL_U32 Reg = AL_REG32_READ(BaseAddr + DMAC_AHB_REQSRCREG_OFFSET);
+    Reg |= ((IsEnable ? ChannelMask : 0) | (ChannelMask << DMAC_AHB_REQSRCREG_SRC_REQ_WE_SHIFT));
+    /* TODO: SYNC */
+    AL_REG32_WRITE(BaseAddr + DMAC_AHB_REQSRCREG_OFFSET, Reg);
 }
 
 /* Destination Software Transaction Request(DST_REQ) */
@@ -938,8 +940,10 @@ static inline AL_U32 AlDmacAhb_ll_GetDstReq(AL_REG BaseAddr)
 
 static inline AL_VOID AlDmacAhb_ll_SetDstReqAct(AL_REG BaseAddr, AL_U32 ChannelMask, AL_BOOL IsEnable)
 {
-    AL_REG32_WRITE(BaseAddr + DMAC_AHB_REQDSTREG_OFFSET,
-                   ((IsEnable ? ChannelMask : 0) | (ChannelMask << DMAC_AHB_REQDSTREG_DST_REQ_WE_SHIFT)));
+    AL_U32 Reg = AL_REG32_READ(BaseAddr + DMAC_AHB_REQDSTREG_OFFSET);
+    Reg |= ((IsEnable ? ChannelMask : 0) | (ChannelMask << DMAC_AHB_REQDSTREG_DST_REQ_WE_SHIFT));
+    /* TODO: SYNC */
+    AL_REG32_WRITE(BaseAddr + DMAC_AHB_REQDSTREG_OFFSET, Reg);
 }
 
 /* Source Single Transaction Request(SRC_SGLREQ) */
@@ -951,8 +955,10 @@ static inline AL_U32 AlDmacAhb_ll_GetSrcSglReq(AL_REG BaseAddr)
 
 static inline AL_VOID AlDmacAhb_ll_SetSrcSglReqAct(AL_REG BaseAddr, AL_U32 ChannelMask, AL_BOOL IsEnable)
 {
-    AL_REG32_WRITE(BaseAddr + DMAC_AHB_SGLRQSRCREG_OFFSET,
-                   ((IsEnable ? ChannelMask : 0) | (ChannelMask << DMAC_AHB_SGLRQSRCREG_SRC_SGLREQ_WE_SHIFT)));
+    AL_U32 Reg = AL_REG32_READ(BaseAddr + DMAC_AHB_SGLRQSRCREG_OFFSET);
+    Reg |= ((IsEnable ? ChannelMask : 0) | (ChannelMask << DMAC_AHB_SGLRQSRCREG_SRC_SGLREQ_WE_SHIFT));
+    /* TODO: SYNC */
+    AL_REG32_WRITE(BaseAddr + DMAC_AHB_SGLRQSRCREG_OFFSET, Reg);
 }
 
 /* Destination Single Transaction Request(DST_SGLREQ) */
@@ -964,8 +970,10 @@ static inline AL_U32 AlDmacAhb_ll_GetDstSglReq(AL_REG BaseAddr)
 
 static inline AL_VOID AlDmacAhb_ll_SetDstSglReqAct(AL_REG BaseAddr, AL_U32 ChannelMask, AL_BOOL IsEnable)
 {
-    AL_REG32_WRITE(BaseAddr + DMAC_AHB_SGLRQDSTREG_OFFSET,
-                ((IsEnable ? ChannelMask : 0) | (ChannelMask << DMAC_AHB_SGLRQDSTREG_DST_SGLREQ_WE_SHIFT)));
+    AL_U32 Reg = AL_REG32_READ(BaseAddr + DMAC_AHB_SGLRQDSTREG_OFFSET);
+    Reg |= ((IsEnable ? ChannelMask : 0) | (ChannelMask << DMAC_AHB_SGLRQDSTREG_DST_SGLREQ_WE_SHIFT));
+    /* TODO: SYNC */
+    AL_REG32_WRITE(BaseAddr + DMAC_AHB_SGLRQDSTREG_OFFSET, Reg);
 }
 
 /* Source Last Transaction Request register(LSTSRC) */

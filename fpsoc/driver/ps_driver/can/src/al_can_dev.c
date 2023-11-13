@@ -653,7 +653,8 @@ AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, AL
         AlCan_ll_SetAllIntrEnabled(Dev->BaseAddr, AL_TRUE);
     } else if (Dev->Config.RunMode == AL_CAN_RUN_INTR_DMA) {
         AlCan_ll_SetAllIntrEnabled(Dev->BaseAddr, AL_TRUE);
-        AlCan_ll_SetDmaEnabled(Dev->BaseAddr, AL_TRUE);
+        /* Use dma soft request mode */
+        // AlCan_ll_SetDmaEnabled(Dev->BaseAddr, AL_TRUE);
     } else {
         AlCan_ll_SetAllIntrEnabled(Dev->BaseAddr, AL_FALSE);
     }

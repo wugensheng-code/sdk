@@ -36,6 +36,19 @@ AL_S32 AlDmacAhb_Hal_WaitTransDoneOrTimeout(AL_DMACAHB_HalStruct *Handle, AL_DMA
 }
 
 /**
+ * This function wait for src burst trans done or timeout
+ * @param   Handle is pointer to AL_DMACAHB_HalStruct
+ * @param   Timeout is max wait time for send done
+ * @return
+ *          - AL_OK
+ * @note
+*/
+AL_S32 AlDmacAhb_Hal_WaitSrcTransDoneOrTimeout(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_EventStruct *Event, AL_U32 TimeoutMs)
+{
+    return AlOsal_Mb_Receive(&Handle->SrcEventQueue, Event, TimeoutMs);
+}
+
+/**
  * This function is intr handler call back function
  * @param   Event is pointer to AL_DMACAHB_EventStruct
  * @param   CallBackRef
@@ -55,6 +68,8 @@ static AL_S32 AlDmacAhb_Hal_DefChEventCallBack(AL_DMACAHB_EventStruct *Event, AL
         AlOsal_Mb_Send(&Handle->EventQueue, Event);
         break;
     case AL_DMACAHB_EVENT_SRC_TRANS_COMP:
+        AlOsal_Mb_Send(&Handle->SrcEventQueue, Event);
+        break;
     case AL_DMACAHB_EVENT_DST_TRANS_COMP:
         /* Not use, do nothing here */
         break;
@@ -81,6 +96,11 @@ static inline AL_S32 AlDmacahb_Hal_HandleInit(AL_DMACAHB_HalStruct *Handle)
     }
 
     Ret = AlOsal_Mb_Init(&Handle->EventQueue, "Dmacahb-Queue");
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
+    Ret = AlOsal_Mb_Init(&Handle->SrcEventQueue, "Dmacahb-SrcQueue");
     if (Ret != AL_OK) {
         return Ret;
     }
