@@ -75,6 +75,7 @@
 #include "timers.h"   /* Software timer related API prototypes. */
 
 #include "al_gbe_ethernetif.h"
+#include "lwip/tcpip.h"
 
 #include <stdio.h>
 #include <stdlib.h>

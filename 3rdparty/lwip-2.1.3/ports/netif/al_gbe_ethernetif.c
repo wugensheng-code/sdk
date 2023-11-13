@@ -535,7 +535,7 @@ err_t low_level_init(struct netif *netif)
         return ret;
     }
 
-    eth_handle = sys_thread_new(ETH_INPUT_THREAD_NAME, ethernetif_input, &gnetif,
+    eth_handle = sys_thread_new(ETH_INPUT_THREAD_NAME, (lwip_thread_fn)ethernetif_input, &gnetif,
                                 ETH_INPUT_THREAD_STACKSIZE, ETH_INPUT_THREAD_PRIO);
 #endif /* !NO_SYS */
 

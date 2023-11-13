@@ -257,6 +257,15 @@ AL_S32 AlGbe_Hal_GetRxDataBuffer(AL_GBE_HalStruct *Handle, AL_GBE_BufferStruct *
     AL_GBE_HAL_LOCK(Handle);
 
     Ret = AlGbe_Dev_GetRxDataBuffer(&Handle->Dev, RxBuffer);
+    if (Ret != AL_OK) {
+        AL_GBE_HAL_UNLOCK(Handle);
+        return Ret;
+    }
+
+    Ret = AlGbe_Hal_WaitRxDoneOrTimeout(Handle, 0);
+    if (Ret != AL_OK) {
+        Ret = AL_GBE_ERR_TIMEOUT;
+    }
 
     AL_GBE_HAL_UNLOCK(Handle);
 
@@ -311,4 +320,3 @@ AL_S32 AlGbe_Hal_ReleaseTxPacket(AL_GBE_HalStruct *Handle)
 
     return Ret;
 }
-

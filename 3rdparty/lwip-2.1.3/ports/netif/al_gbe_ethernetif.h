@@ -103,8 +103,6 @@ void netif_config(void);
 
 #if NO_SYS
 void ethernetif_input(struct netif *netif);
-#else
-static void ethernetif_input( void const * argument );
 #endif
 
 

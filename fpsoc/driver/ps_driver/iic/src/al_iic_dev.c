@@ -319,8 +319,6 @@ static AL_VOID AlIic_Dev_EnableMasterSendIntr(AL_IIC_DevStruct *Iic, AL_IIC_Func
 */
 AL_S32 AlIic_Dev_MasterSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *SendBuf, AL_U32 SendSize)
 {
-    AL_REG IicBaseAddr;
-
     AL_ASSERT((Iic != AL_NULL) && (Iic->Configs.Mode == AL_IIC_MODE_MASTER) &&
               (SendBuf != AL_NULL) && (SendSize > 0) && (SlaveAddr < AL_IIC_MAX_SLAVE_ADDR), AL_IIC_ERR_ILLEGAL_PARAM);
 
@@ -331,8 +329,6 @@ AL_S32 AlIic_Dev_MasterSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *
     AlIic_Dev_SetTxBusy(Iic);
 
     AlIic_Dev_MasterSetTar(Iic, SlaveAddr);
-
-    IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
 
     Iic->OpState = AL_IIC_OP_STATE_MASTER_TX;
 
@@ -627,8 +623,6 @@ static AL_VOID AlIic_Dev_EnableSlaveSendIntr(AL_IIC_DevStruct *Iic, AL_IIC_Funct
 */
 AL_S32 AlIic_Dev_SlaveSendData(AL_IIC_DevStruct *Iic, AL_U8 *SendBuf, AL_U32 SendSize)
 {
-    AL_REG IicBaseAddr;
-
     AL_ASSERT((Iic != AL_NULL) && (Iic->Configs.Mode == AL_IIC_MODE_SLAVE) &&
               (SendBuf != AL_NULL) && (SendSize > 0), AL_IIC_ERR_ILLEGAL_PARAM);
 
@@ -637,8 +631,6 @@ AL_S32 AlIic_Dev_SlaveSendData(AL_IIC_DevStruct *Iic, AL_U8 *SendBuf, AL_U32 Sen
 
     /* Change Status */
     AlIic_Dev_SetTxBusy(Iic);
-
-    IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
 
     Iic->OpState = AL_IIC_OP_STATE_SLAVE_TX;
 

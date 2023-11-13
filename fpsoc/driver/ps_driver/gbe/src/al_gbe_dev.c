@@ -266,25 +266,25 @@ AL_U32 AlGbe_Dev_ConfigRxDescBuffer(AL_GBE_DevStruct *Gbe, AL_U32 DescIndex, AL_
     AL_ASSERT((Gbe != AL_NULL) && (Buffer1 != AL_NULL) && (DescIndex < (AL_U32)AL_GBE_RX_DESC_CNT),
               AL_GBE_ERR_ILLEGAL_PARAM);
 
-    AL_GBE_DMADescStruct *DmaRxDesc = (AL_GBE_DMADescStruct *)Gbe->RxDescList.RxDesc[DescIndex];
+    AL_GBE_DMADescStruct *DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)(Gbe->RxDescList.RxDesc[DescIndex]));
 
     /* write buffer address to RDES0 */
-    DmaRxDesc->DESC0 = (__IO AL_U32)Buffer1;
+    DmaRxDesc->DESC0 = (__IO AL_U32)((AL_UINTPTR)Buffer1);
     /* store buffer address */
-    DmaRxDesc->BackupAddr0 = (AL_U32)Buffer1;
+    DmaRxDesc->BackupAddr0 = (AL_U32)((AL_UINTPTR)Buffer1);
     /* set buffer address valid bit to RDES3 */
-    AlGbe_ll_SetRdesc3Buff1Valid(&(DmaRxDesc->DESC3), AL_GBE_FUNC_ENABLE);
+    AlGbe_ll_SetRdesc3Buff1Valid((AL_REG)&(DmaRxDesc->DESC3), AL_GBE_FUNC_ENABLE);
 
     if (Buffer2 != AL_NULL) {
         /* write buffer 2 address to RDES1 */
-        DmaRxDesc->DESC2 = (AL_U32)Buffer2;
+        DmaRxDesc->DESC2 = (__IO AL_U32)((AL_UINTPTR)Buffer2);
         /* store buffer 2 address */
-        DmaRxDesc->BackupAddr1 = (AL_U32)Buffer2;
+        DmaRxDesc->BackupAddr1 = (AL_U32)((AL_UINTPTR)Buffer2);
         /* set buffer 2 address valid bit to RDES3 */
-        AlGbe_ll_SetRdesc3Buff2Valid(&(DmaRxDesc->DESC3), AL_GBE_FUNC_ENABLE);
+        AlGbe_ll_SetRdesc3Buff2Valid((AL_REG)&(DmaRxDesc->DESC3), AL_GBE_FUNC_ENABLE);
     }
     /* set OWN bit to RDES3 */
-    AlGbe_ll_SetRdesc3OwnByDma(&(DmaRxDesc->DESC3), AL_GBE_FUNC_ENABLE);
+    AlGbe_ll_SetRdesc3OwnByDma((AL_REG)&(DmaRxDesc->DESC3), AL_GBE_FUNC_ENABLE);
 
     return AL_OK;
 }
@@ -307,7 +307,7 @@ static void AlGbe_Dev_DMARxDescListInit(AL_GBE_DevStruct *Gbe)
         DmaRxDesc->BackupAddr1 = 0x0;
 
         /* Set Rx descritors addresses */
-        Gbe->RxDescList.RxDesc[Index]= (AL_U32)DmaRxDesc;
+        Gbe->RxDescList.RxDesc[Index]= (AL_U32)((AL_UINTPTR)DmaRxDesc);
     }
 
     Gbe->RxDescList.CurRxDesc = 0;
@@ -320,10 +320,10 @@ static void AlGbe_Dev_DMARxDescListInit(AL_GBE_DevStruct *Gbe)
     AlGbe_ll_SetDmaChannelRxDescRingLen(GbeBaseAddr, AL_GBE_RX_DESC_CNT - 1);
 
     /* Set Receive Descriptor List Address */
-    AlGbe_ll_SetDmaChannelRxDescListAddr(GbeBaseAddr, (AL_U32)DmaRxDescList);
+    AlGbe_ll_SetDmaChannelRxDescListAddr(GbeBaseAddr, (AL_U32)((AL_UINTPTR)DmaRxDescList));
 
     /* Set Receive Descriptor Tail pointer Address */
-    AlGbe_ll_SetDmaRxDescTailPointer(GbeBaseAddr, ((AL_U32)(DmaRxDescList + (AL_U32)(AL_GBE_RX_DESC_CNT - 1U))));
+    AlGbe_ll_SetDmaRxDescTailPointer(GbeBaseAddr, (AL_U32)((AL_UINTPTR)(DmaRxDescList + (AL_U32)(AL_GBE_RX_DESC_CNT - 1U))));
 }
 
 AL_VOID AlGbe_Dev_DMATxDescListInit(AL_GBE_DevStruct *Gbe)
@@ -342,7 +342,7 @@ AL_VOID AlGbe_Dev_DMATxDescListInit(AL_GBE_DevStruct *Gbe)
         DmaTxDesc->DESC2 = 0x0;
         DmaTxDesc->DESC3 = 0x0;
 
-        Gbe->TxDescList.TxDesc[Index] = (AL_U32)DmaTxDesc;
+        Gbe->TxDescList.TxDesc[Index] = (AL_U32)((AL_UINTPTR)DmaTxDesc);
     }
 
     Gbe->TxDescList.CurTxDesc = 0;
@@ -351,10 +351,10 @@ AL_VOID AlGbe_Dev_DMATxDescListInit(AL_GBE_DevStruct *Gbe)
     AlGbe_ll_SetDmaChannelTxDescRingLen(GbeBaseAddr, AL_GBE_TX_DESC_CNT - 1);
 
     /* Set Transmit Descriptor List Address */
-    AlGbe_ll_SetDmaChannelTxDescListAddr(GbeBaseAddr, (AL_U32)DmaTxDescList);
+    AlGbe_ll_SetDmaChannelTxDescListAddr(GbeBaseAddr, (AL_U32)((AL_UINTPTR)DmaTxDescList));
 
     /* Set Transmit Descriptor Tail pointer */
-    AlGbe_ll_SetDmaTxDescTailPointer(GbeBaseAddr, ((AL_U32)DmaTxDescList));
+    AlGbe_ll_SetDmaTxDescTailPointer(GbeBaseAddr,  (AL_U32)((AL_UINTPTR)DmaTxDescList));
 }
 
 AL_S32 AlGbe_Dev_ConfigDuplexAndSpeed(AL_GBE_DevStruct *Gbe)
@@ -481,7 +481,7 @@ AL_S32 AlGbe_Dev_WritePhyRegister(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddr, AL_U32 
 AL_S32 AlGbe_Dev_ReadPhyRegister(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddr, AL_U32 PHYReg, AL_U16 *RegValue)
 {
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
-    AL_REG TmpReg;
+    AL_U32 TmpReg;
 
     /* Check for the Busy flag */
     if (AlGbe_ll_IsGmiiBusy(GbeBaseAddr)) {
@@ -672,8 +672,8 @@ AL_S32 AlGbe_Dev_StartMacDmaIntr(AL_GBE_DevStruct *Gbe)
 
     /* Set IOC bit to all Rx descriptors */
     for (AL_S32 DescIndex = 0; DescIndex < AL_GBE_RX_DESC_CNT; DescIndex++) {
-        DmaRxDesc = (AL_GBE_DMADescStruct *)Gbe->RxDescList.RxDesc[DescIndex];
-        AlGbe_ll_SetRdesc3CompleteIntr(&(DmaRxDesc->DESC3), AL_GBE_FUNC_ENABLE);
+        DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)(Gbe->RxDescList.RxDesc[DescIndex]));
+        AlGbe_ll_SetRdesc3CompleteIntr((AL_REG)&(DmaRxDesc->DESC3), AL_GBE_FUNC_ENABLE);
     }
 
     /* Enable the MAC transmission */
@@ -737,7 +737,7 @@ AL_S32 AlGbe_Dev_IsRxDataAvailable(AL_GBE_DevStruct *Gbe)
 {
     AL_GBE_RxDescListStruct *DmaRxDescList = &Gbe->RxDescList;
     AL_U32 DescIndex = DmaRxDescList->CurRxDesc;
-    AL_GBE_DMADescStruct *DmaRxDesc = (AL_GBE_DMADescStruct *)DmaRxDescList->RxDesc[DescIndex];
+    AL_GBE_DMADescStruct *DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaRxDescList->RxDesc[DescIndex]);
     AL_U32 Descscancnt = 0;
     AL_U32 Appdesccnt = 0, FirstAppDescidx = 0;
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
@@ -748,11 +748,11 @@ AL_S32 AlGbe_Dev_IsRxDataAvailable(AL_GBE_DevStruct *Gbe)
     }
 
     /* Check if descriptor is not owned by DMA */
-    while ((!AlGbe_ll_IsWbRxDescOwnByDma(&DmaRxDesc->DESC3)) && (Descscancnt < (AL_U32)AL_GBE_RX_DESC_CNT)) {
+    while ((!AlGbe_ll_IsWbRxDescOwnByDma((AL_REG)&DmaRxDesc->DESC3)) && (Descscancnt < (AL_U32)AL_GBE_RX_DESC_CNT)) {
         Descscancnt++;
 
         /* Check if last descriptor */
-        if (AlGbe_ll_IsWbRxDescLastDesc(&DmaRxDesc->DESC3)) {
+        if (AlGbe_ll_IsWbRxDescLastDesc((AL_REG)&DmaRxDesc->DESC3)) {
             /* Increment the number of descriptors to be passed to the application */
             Appdesccnt += 1U;
 
@@ -765,10 +765,10 @@ AL_S32 AlGbe_Dev_IsRxDataAvailable(AL_GBE_DevStruct *Gbe)
 
             /* Check for Context descriptor */
             /* Get current descriptor address */
-            DmaRxDesc = (AL_GBE_DMADescStruct *)DmaRxDescList->RxDesc[DescIndex];
+            DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaRxDescList->RxDesc[DescIndex]);
 
-            if (!AlGbe_ll_IsWbRxDescOwnByDma(&DmaRxDesc->DESC3)) {
-                if (AlGbe_ll_GetWbRecvContextDesc(&DmaRxDesc->DESC3)) {
+            if (!AlGbe_ll_IsWbRxDescOwnByDma((AL_REG)&DmaRxDesc->DESC3)) {
+                if (AlGbe_ll_GetWbRecvContextDesc((AL_REG)&DmaRxDesc->DESC3)) {
                     /* Increment the number of descriptors to be passed to the application */
                     DmaRxDescList->AppContextDesc = 1;
                     /* Increment current rx descriptor index */
@@ -783,7 +783,7 @@ AL_S32 AlGbe_Dev_IsRxDataAvailable(AL_GBE_DevStruct *Gbe)
             /* Return function status */
             return 1;
 
-        } else if (AlGbe_ll_IsWbRxDescFirstDesc(&DmaRxDesc->DESC3)) {
+        } else if (AlGbe_ll_IsWbRxDescFirstDesc((AL_REG)&DmaRxDesc->DESC3)) {
             /* Check if first descriptor */
             FirstAppDescidx = DescIndex;
             /* Increment the number of descriptors to be passed to the application */
@@ -792,7 +792,7 @@ AL_S32 AlGbe_Dev_IsRxDataAvailable(AL_GBE_DevStruct *Gbe)
             /* Increment current rx descriptor index */
             INCR_RX_DESC_INDEX(DescIndex, 1U);
             /* Get current descriptor address */
-            DmaRxDesc = (AL_GBE_DMADescStruct *)DmaRxDescList->RxDesc[DescIndex];
+            DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaRxDescList->RxDesc[DescIndex]);
 
         } else {
             /* It should be an intermediate descriptor */
@@ -802,7 +802,7 @@ AL_S32 AlGbe_Dev_IsRxDataAvailable(AL_GBE_DevStruct *Gbe)
             /* Increment current rx descriptor index */
             INCR_RX_DESC_INDEX(DescIndex, 1U);
             /* Get current descriptor address */
-            DmaRxDesc = (AL_GBE_DMADescStruct *)DmaRxDescList->RxDesc[DescIndex];
+            DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaRxDescList->RxDesc[DescIndex]);
         }
     }
 
@@ -811,32 +811,32 @@ AL_S32 AlGbe_Dev_IsRxDataAvailable(AL_GBE_DevStruct *Gbe)
         DmaRxDescList->CurRxDesc = DescIndex;
         DmaRxDescList->FirstAppDesc = FirstAppDescidx;
         DescIndex = FirstAppDescidx;
-        DmaRxDesc = (AL_GBE_DMADescStruct *)DmaRxDescList->RxDesc[DescIndex];
+        DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaRxDescList->RxDesc[DescIndex]);
 
         for (Descscancnt = 0; Descscancnt < Appdesccnt; Descscancnt++) {
             DmaRxDesc->DESC0 = DmaRxDesc->BackupAddr0;
-            AlGbe_ll_SetRdesc3Buff1Valid(&DmaRxDesc->DESC3, AL_GBE_FUNC_ENABLE);
+            AlGbe_ll_SetRdesc3Buff1Valid((AL_REG)&DmaRxDesc->DESC3, AL_GBE_FUNC_ENABLE);
 
             if (DmaRxDesc->BackupAddr1 != 0) {
                 DmaRxDesc->DESC2 = DmaRxDesc->BackupAddr1;
-                AlGbe_ll_SetRdesc3Buff2Valid(&DmaRxDesc->DESC3, AL_GBE_FUNC_ENABLE);
+                AlGbe_ll_SetRdesc3Buff2Valid((AL_REG)&DmaRxDesc->DESC3, AL_GBE_FUNC_ENABLE);
             }
 
-            AlGbe_ll_SetRdesc3OwnByDma(&DmaRxDesc->DESC3, AL_GBE_FUNC_ENABLE);
+            AlGbe_ll_SetRdesc3OwnByDma((AL_REG)&DmaRxDesc->DESC3, AL_GBE_FUNC_ENABLE);
 
             if (DmaRxDescList->ItMode != 0) {
-                AlGbe_ll_SetRdesc3CompleteIntr(&DmaRxDesc->DESC3, AL_GBE_FUNC_ENABLE);
+                AlGbe_ll_SetRdesc3CompleteIntr((AL_REG)&DmaRxDesc->DESC3, AL_GBE_FUNC_ENABLE);
             }
             if (Descscancnt < (Appdesccnt - 1U)) {
                 /* Increment rx descriptor index */
                 INCR_RX_DESC_INDEX(DescIndex, 1U);
                 /* Get descriptor address */
-                DmaRxDesc = (AL_GBE_DMADescStruct *)DmaRxDescList->RxDesc[DescIndex];
+                DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaRxDescList->RxDesc[DescIndex]);
             }
         }
 
         /* Set the Tail pointer address to the last rx descriptor hold by the app */
-        AlGbe_ll_SetDmaRxDescTailPointer(GbeBaseAddr, DmaRxDesc);
+        AlGbe_ll_SetDmaRxDescTailPointer(GbeBaseAddr, (AL_U32)((AL_UINTPTR)DmaRxDesc));
     }
 
     /* Fill information to Rx descriptors list: No received Packet */
@@ -850,7 +850,7 @@ AL_S32 AlGbe_Dev_GetRxDataBuffer(AL_GBE_DevStruct *Gbe, AL_GBE_BufferStruct *RxB
     AL_GBE_RxDescListStruct *DmaRxDescList = &Gbe->RxDescList;
     AL_U32 DescIndex = DmaRxDescList->FirstAppDesc;
     AL_U32 Index, AccumulatedLen = 0, LastDescLen;
-    __IO const AL_GBE_DMADescStruct *DmaRxDesc = (AL_GBE_DMADescStruct *)DmaRxDescList->RxDesc[DescIndex];
+    __IO const AL_GBE_DMADescStruct *DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaRxDescList->RxDesc[DescIndex]);
     AL_GBE_BufferStruct *RxBuff = RxBuffer;
 
     AL_ASSERT((Gbe != AL_NULL) && (RxBuff != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
@@ -861,14 +861,14 @@ AL_S32 AlGbe_Dev_GetRxDataBuffer(AL_GBE_DevStruct *Gbe, AL_GBE_BufferStruct *RxB
             return AL_GBE_ERR_FATLA_BUS_ERROR;
         } else {
             DescIndex = DmaRxDescList->FirstAppDesc;
-            DmaRxDesc = (AL_GBE_DMADescStruct *)DmaRxDescList->RxDesc[DescIndex];
+            DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaRxDescList->RxDesc[DescIndex]);
         }
     }
 
     /* Get intermediate descriptors buffers: in case of the Packet is split into multi descriptors */
     for (Index = 0; Index < (DmaRxDescList->AppDescNbr - 1U); Index++) {
         /* Get Address and length of the first buffer address */
-        RxBuff->Buffer = (AL_U8 *) DmaRxDesc->BackupAddr0;
+        RxBuff->Buffer = (AL_U8 *)((AL_UINTPTR)DmaRxDesc->BackupAddr0);
         RxBuff->Len =  Gbe->InitConfig.RxBuffLen;
 
         /* Check if the second buffer address of this descriptor is valid */
@@ -876,28 +876,28 @@ AL_S32 AlGbe_Dev_GetRxDataBuffer(AL_GBE_DevStruct *Gbe, AL_GBE_BufferStruct *RxB
             /* Point to next buffer */
             RxBuff = RxBuff->next;
             /* Get Address and length of the second buffer address */
-            RxBuff->Buffer = (AL_U8 *) DmaRxDesc->BackupAddr1;
+            RxBuff->Buffer = (AL_U8 *)((AL_UINTPTR)DmaRxDesc->BackupAddr1);
             RxBuff->Len =  Gbe->InitConfig.RxBuffLen;
         } else {
             /* Nothing to do here */
         }
 
         /* get total length until this descriptor */
-        AccumulatedLen = AlGbe_ll_GetWbRdesc3Packetlen(&DmaRxDesc->DESC3);
+        AccumulatedLen = AlGbe_ll_GetWbRdesc3Packetlen((AL_REG)&DmaRxDesc->DESC3);
 
         /* Increment to next descriptor */
         INCR_RX_DESC_INDEX(DescIndex, 1U);
-        DmaRxDesc = (AL_GBE_DMADescStruct *)DmaRxDescList->RxDesc[DescIndex];
+        DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaRxDescList->RxDesc[DescIndex]);
 
         /* Point to next buffer */
         RxBuff = RxBuff->next;
     }
 
     /* last descriptor data length */
-    LastDescLen = AlGbe_ll_GetWbRdesc3Packetlen(&DmaRxDesc->DESC3) - AccumulatedLen;
+    LastDescLen = AlGbe_ll_GetWbRdesc3Packetlen((AL_REG)&DmaRxDesc->DESC3) - AccumulatedLen;
 
     /* Get Address of the first Buffer address */
-    RxBuff->Buffer = (AL_U8 *) DmaRxDesc->BackupAddr0;
+    RxBuff->Buffer = (AL_U8 *)((AL_UINTPTR)DmaRxDesc->BackupAddr0);
 
     /* data is in only one Buffer */
     if (LastDescLen <= Gbe->InitConfig.RxBuffLen) {
@@ -909,7 +909,7 @@ AL_S32 AlGbe_Dev_GetRxDataBuffer(AL_GBE_DevStruct *Gbe, AL_GBE_BufferStruct *RxB
         /* Point to next Buffer */
         RxBuff = RxBuff->next;
         /* Get the Address the Length of the second Buffer address */
-        RxBuff->Buffer = (AL_U8 *) DmaRxDesc->BackupAddr1;
+        RxBuff->Buffer = (AL_U8 *)((AL_UINTPTR)DmaRxDesc->BackupAddr1);
         RxBuff->Len =  LastDescLen - (Gbe->InitConfig.RxBuffLen);
     } else {
         /* Buffer 2 not valid*/
@@ -944,9 +944,9 @@ AL_S32 AlGbe_Dev_GetRxDataLength(AL_GBE_DevStruct *Gbe, AL_U32 *Length)
     /* Get index of last descriptor */
     INCR_RX_DESC_INDEX(DescIndex, (DmaRxDescList->AppDescNbr - 1U));
     /* Point to last descriptor */
-    DmaRxDesc = (AL_GBE_DMADescStruct *)DmaRxDescList->RxDesc[DescIndex];
+    DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaRxDescList->RxDesc[DescIndex]);
 
-    *Length = AlGbe_ll_GetWbRdesc3Packetlen(&DmaRxDesc->DESC3);
+    *Length = AlGbe_ll_GetWbRdesc3Packetlen((AL_REG)&DmaRxDesc->DESC3);
 
     return AL_OK;
 }
@@ -955,7 +955,7 @@ AL_S32 AlGbe_Dev_BuildRxDescriptors(AL_GBE_DevStruct *Gbe)
 {
     AL_GBE_RxDescListStruct *DmaRxDescList = &Gbe->RxDescList;
     AL_U32 DescIndex = DmaRxDescList->FirstAppDesc;
-    __IO AL_GBE_DMADescStruct *DmaRxDesc = (AL_GBE_DMADescStruct *)DmaRxDescList->RxDesc[DescIndex];
+    __IO AL_GBE_DMADescStruct *DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaRxDescList->RxDesc[DescIndex]);
     AL_U32 TotalAppdescNbr = DmaRxDescList->AppDescNbr;
     AL_U32 Descscan;
 
@@ -975,29 +975,29 @@ AL_S32 AlGbe_Dev_BuildRxDescriptors(AL_GBE_DevStruct *Gbe)
 
     for (Descscan =0; Descscan < TotalAppdescNbr; Descscan++) {
         DmaRxDesc->DESC0 = DmaRxDesc->BackupAddr0;
-        AlGbe_ll_SetRdesc3Buff1Valid(&DmaRxDesc->DESC3, AL_GBE_FUNC_ENABLE);
+        AlGbe_ll_SetRdesc3Buff1Valid((AL_REG)&DmaRxDesc->DESC3, AL_GBE_FUNC_ENABLE);
 
         if (DmaRxDesc->BackupAddr1 != 0U) {
             DmaRxDesc->DESC2 = DmaRxDesc->BackupAddr1;
-            AlGbe_ll_SetRdesc3Buff2Valid(&DmaRxDesc->DESC3, AL_GBE_FUNC_ENABLE);
+            AlGbe_ll_SetRdesc3Buff2Valid((AL_REG)&DmaRxDesc->DESC3, AL_GBE_FUNC_ENABLE);
         }
 
-        AlGbe_ll_SetRdesc3OwnByDma(&DmaRxDesc->DESC3, AL_GBE_FUNC_ENABLE);
+        AlGbe_ll_SetRdesc3OwnByDma((AL_REG)&DmaRxDesc->DESC3, AL_GBE_FUNC_ENABLE);
 
         if (DmaRxDescList->ItMode != 0U) {
-            AlGbe_ll_SetRdesc3CompleteIntr(&DmaRxDesc->DESC3, AL_GBE_FUNC_ENABLE);
+            AlGbe_ll_SetRdesc3CompleteIntr((AL_REG)&DmaRxDesc->DESC3, AL_GBE_FUNC_ENABLE);
         }
 
         if (Descscan < (TotalAppdescNbr - 1U)) {
             /* Increment rx descriptor index */
             INCR_RX_DESC_INDEX(DescIndex, 1U);
             /* Get descriptor address */
-            DmaRxDesc = (AL_GBE_DMADescStruct *)DmaRxDescList->RxDesc[DescIndex];
+            DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaRxDescList->RxDesc[DescIndex]);
         }
     }
 
     /* Set the Tail pointer address to the last rx descriptor hold by the app */
-    AlGbe_ll_SetDmaRxDescTailPointer(GbeBaseAddr, (AL_U32)DmaRxDesc);
+    AlGbe_ll_SetDmaRxDescTailPointer(GbeBaseAddr, (AL_U32)((AL_UINTPTR)DmaRxDesc));
 
     /* reset the Application desc number */
     DmaRxDescList->AppDescNbr = 0;
@@ -1013,9 +1013,8 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
     AL_GBE_TxDescListStruct *DmaTxDescList = &Gbe->TxDescList;
     AL_U32 DescIndex = DmaTxDescList->CurTxDesc;
     AL_U32 FirstDescIdx = DmaTxDescList->CurTxDesc;
-    AL_U32 Index;
     AL_U32 DescNbr = 0;
-    AL_GBE_DMADescStruct *DmaTxDesc = (AL_GBE_DMADescStruct *)DmaTxDescList->TxDesc[DescIndex];
+    AL_GBE_DMADescStruct *DmaTxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaTxDescList->TxDesc[DescIndex]);
 
 #ifdef ENABLE_MMU
     AL_UINTPTR BufferAlign;
@@ -1026,7 +1025,7 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
     AL_U32               BdCount = 0;
 
     /* Current Tx Descriptor Owned by DMA: cannot be used by the application  */
-    if ((AlGbe_ll_IsTxDescOwnByDma(&DmaTxDesc->DESC3) == AL_TRUE) ||
+    if ((AlGbe_ll_IsTxDescOwnByDma((AL_REG)&DmaTxDesc->DESC3) == AL_TRUE) ||
         (DmaTxDescList->PacketAddress[DescIndex] != AL_NULL)) {
         return AL_GBE_ERR_DESC_STATE;
     }
@@ -1047,71 +1046,71 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
 #endif
 
     /* Set header or buffer 1 address */
-    DmaTxDesc->DESC0 = (AL_U32)TxBuffer->Buffer;
+    DmaTxDesc->DESC0 = (AL_U32)((AL_UINTPTR)TxBuffer->Buffer);
     /* Set header or buffer 1 Length */
-    AlGbe_ll_SetTdesc2Buffer1Len(&DmaTxDesc->DESC2, TxBuffer->Len);
+    AlGbe_ll_SetTdesc2Buffer1Len((AL_REG)&DmaTxDesc->DESC2, TxBuffer->Len);
 
     if (TxBuffer->next != AL_NULL) {
         TxBuffer = TxBuffer->next;
         /* Set buffer 2 address */
-        DmaTxDesc->DESC1 = (AL_U32)TxBuffer->Buffer;
+        DmaTxDesc->DESC1 = (AL_U32)((AL_UINTPTR)TxBuffer->Buffer);
         /* Set buffer 2 Length */
-        AlGbe_ll_SetTdesc2Buffer2Len(&DmaTxDesc->DESC2, TxBuffer->Len);
+        AlGbe_ll_SetTdesc2Buffer2Len((AL_REG)&DmaTxDesc->DESC2, TxBuffer->Len);
     } else {
         DmaTxDesc->DESC1 = 0x0;
         /* Set buffer 2 Length */
-        AlGbe_ll_SetTdesc2Buffer2Len(&DmaTxDesc->DESC2, 0x0U);
+        AlGbe_ll_SetTdesc2Buffer2Len((AL_REG)&DmaTxDesc->DESC2, 0x0U);
     }
 
-    AlGbe_ll_SetTdesc3FrameLen(&DmaTxDesc->DESC3, TxConfig->Length);
+    AlGbe_ll_SetTdesc3FrameLen((AL_REG)&DmaTxDesc->DESC3, TxConfig->Length);
 
     /* Set Checksum Insertion Control */
     //AlGbe_ll_SetChksumInsertCtrl(&DmaTxDesc->DESC3, TxConfig->ChecksumCtrl);
 
     /* Mark it as First Descriptor */
-    AlGbe_ll_SetTdesc3FirstDesc(&DmaTxDesc->DESC3, AL_GBE_FUNC_ENABLE);
+    AlGbe_ll_SetTdesc3FirstDesc((AL_REG)&DmaTxDesc->DESC3, AL_GBE_FUNC_ENABLE);
     /* Mark it as NORMAL descriptor */
-    AlGbe_ll_SetTdesc3ContextType(&DmaTxDesc->DESC3, AL_GBE_DESC_NORMAL_DESC);
+    AlGbe_ll_SetTdesc3ContextType((AL_REG)&DmaTxDesc->DESC3, AL_GBE_DESC_NORMAL_DESC);
 
 
     /* Ensure rest of descriptor is written to RAM before the OWN bit */
     DMB();
     /* set OWN bit of FIRST descriptor */
-    AlGbe_ll_SetTdesc3OwnByDma(&DmaTxDesc->DESC3, AL_GBE_FUNC_ENABLE);
+    AlGbe_ll_SetTdesc3OwnByDma((AL_REG)&DmaTxDesc->DESC3, AL_GBE_FUNC_ENABLE);
 
   /* only if the packet is split into more than one descriptors > 1 */
     while (TxBuffer->next != AL_NULL) {
         /* Clear the LD bit of previous descriptor */
-        AlGbe_ll_SetTdesc3LastDesc(&DmaTxDesc->DESC3, AL_GBE_FUNC_DISABLE);
+        AlGbe_ll_SetTdesc3LastDesc((AL_REG)&DmaTxDesc->DESC3, AL_GBE_FUNC_DISABLE);
         /* Increment current tx descriptor index */
         INCR_TX_DESC_INDEX(DescIndex, 1U);
         /* Get current descriptor address */
-        DmaTxDesc = (AL_GBE_DMADescStruct *)DmaTxDescList->TxDesc[DescIndex];
+        DmaTxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaTxDescList->TxDesc[DescIndex]);
 
 
       /* Current Tx Descriptor Owned by DMA: cannot be used by the application  */
-        if ((AlGbe_ll_IsTxDescOwnByDma(&DmaTxDesc->DESC3) == AL_TRUE) ||
+        if ((AlGbe_ll_IsTxDescOwnByDma((AL_REG)&DmaTxDesc->DESC3) == AL_TRUE) ||
           (DmaTxDescList->PacketAddress[DescIndex] != AL_NULL)) {
           DescIndex = FirstDescIdx;
-          DmaTxDesc = (AL_GBE_DMADescStruct *)DmaTxDescList->TxDesc[DescIndex];
+          DmaTxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaTxDescList->TxDesc[DescIndex]);
 
             /* clear previous desc own bit */
             for (AL_S32 Idx = 0; Idx < DescNbr; Idx ++) {
                 /* Ensure rest of descriptor is written to RAM before the OWN bit */
                 DMB();
-                AlGbe_ll_SetTdesc3OwnByDma(&DmaTxDesc->DESC3, AL_GBE_FUNC_DISABLE);
+                AlGbe_ll_SetTdesc3OwnByDma((AL_REG)&DmaTxDesc->DESC3, AL_GBE_FUNC_DISABLE);
 
                 /* Increment current tx descriptor index */
                 INCR_TX_DESC_INDEX(DescIndex, 1U);
                 /* Get current descriptor address */
-                DmaTxDesc = (AL_GBE_DMADescStruct *)DmaTxDescList->TxDesc[DescIndex];
+                DmaTxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaTxDescList->TxDesc[DescIndex]);
             }
 
             return AL_GBE_ERR_DESC_STATE;
         }
 
         /* Clear the FD bit of new Descriptor */
-        AlGbe_ll_SetTdesc3FirstDesc(&DmaTxDesc->DESC3, AL_GBE_FUNC_DISABLE);
+        AlGbe_ll_SetTdesc3FirstDesc((AL_REG)&DmaTxDesc->DESC3, AL_GBE_FUNC_DISABLE);
 
         DescNbr += 1U;
 
@@ -1125,25 +1124,25 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
 #endif
 
         /* Set header or buffer 1 address */
-        DmaTxDesc->DESC0 = (AL_U32)TxBuffer->Buffer;
+        DmaTxDesc->DESC0 = (AL_U32)((AL_UINTPTR)TxBuffer->Buffer);
         /* Set header or buffer 1 Length */
-        AlGbe_ll_SetTdesc2Buffer1Len(&DmaTxDesc->DESC2, TxBuffer->Len);
+        AlGbe_ll_SetTdesc2Buffer1Len((AL_REG)&DmaTxDesc->DESC2, TxBuffer->Len);
 
         if (TxBuffer->next != AL_NULL) {
             /* Get the next Tx buffer in the list */
             TxBuffer = TxBuffer->next;
             /* Set buffer 2 address */
-            DmaTxDesc->DESC1 = (AL_U32)TxBuffer->Buffer;
+            DmaTxDesc->DESC1 = (AL_U32)((AL_UINTPTR)TxBuffer->Buffer);
             /* Set buffer 2 Length */
-            AlGbe_ll_SetTdesc2Buffer2Len(&DmaTxDesc->DESC2, TxBuffer->Len);
+            AlGbe_ll_SetTdesc2Buffer2Len((AL_REG)&DmaTxDesc->DESC2, TxBuffer->Len);
         } else {
             DmaTxDesc->DESC1 = 0x0;
             /* Set buffer 2 Length */
-            AlGbe_ll_SetTdesc2Buffer2Len(&DmaTxDesc->DESC2, 0x0U);
+            AlGbe_ll_SetTdesc2Buffer2Len((AL_REG)&DmaTxDesc->DESC2, 0x0U);
         }
 
         /* Set the packet length */
-        AlGbe_ll_SetTdesc3FrameLen(&DmaTxDesc->DESC3, TxConfig->Length);
+        AlGbe_ll_SetTdesc3FrameLen((AL_REG)&DmaTxDesc->DESC3, TxConfig->Length);
 
 
         /* Set Checksum Insertion Control */
@@ -1154,41 +1153,27 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
         /* Ensure rest of descriptor is written to RAM before the OWN bit */
         DMB();
         /* Set Own bit */
-        AlGbe_ll_SetTdesc3OwnByDma(&DmaTxDesc->DESC3, AL_GBE_FUNC_ENABLE);
+        AlGbe_ll_SetTdesc3OwnByDma((AL_REG)&DmaTxDesc->DESC3, AL_GBE_FUNC_ENABLE);
         /* Mark it as NORMAL descriptor */
-        AlGbe_ll_SetTdesc3ContextType(&DmaTxDesc->DESC3, AL_GBE_DESC_NORMAL_DESC);
+        AlGbe_ll_SetTdesc3ContextType((AL_REG)&DmaTxDesc->DESC3, AL_GBE_DESC_NORMAL_DESC);
     }
 
     if (IntrEnable == AL_GBE_FUNC_ENABLE) {
         /* Set Interrupt on completion bit */
-        AlGbe_ll_SetTdesc2CompleteIntr(&DmaTxDesc->DESC2, AL_GBE_FUNC_ENABLE);
+        AlGbe_ll_SetTdesc2CompleteIntr((AL_REG)&DmaTxDesc->DESC2, AL_GBE_FUNC_ENABLE);
     } else {
         /* Clear Interrupt on completion bit */
-        AlGbe_ll_SetTdesc2CompleteIntr(&DmaTxDesc->DESC2, AL_GBE_FUNC_DISABLE);
+        AlGbe_ll_SetTdesc2CompleteIntr((AL_REG)&DmaTxDesc->DESC2, AL_GBE_FUNC_DISABLE);
     }
 
     /* Mark it as LAST descriptor */
-    AlGbe_ll_SetTdesc3LastDesc(&DmaTxDesc->DESC3, AL_GBE_FUNC_ENABLE);
+    AlGbe_ll_SetTdesc3LastDesc((AL_REG)&DmaTxDesc->DESC3, AL_GBE_FUNC_ENABLE);
     /* Save the current packet address to expose it to the application */
     DmaTxDescList->PacketAddress[DescIndex] = DmaTxDescList->CurrentPacketAddress;
 
     DmaTxDescList->CurTxDesc = DescIndex;
 
-    /* disable the interrupt */
-#ifdef CHIP == dr1m90
-    disable_irq();
-#else
-
-#endif
-
     DmaTxDescList->BuffersInUse += BdCount + 1U;
-
-    /* Enable interrupts back */
-#ifdef CHIP == dr1m90
-    enable_irq();
-#else
-
-#endif
 
     return AL_OK;
 }
@@ -1216,7 +1201,7 @@ AL_S32 AlGbe_Dev_ReleaseTxPacket(AL_GBE_DevStruct *Gbe)
 
         if (PktInUse != 0U) {
             /* Determine if the packet has been transmitted.  */
-            if (!AlGbe_ll_IsTxDescOwnByDma(&(Gbe->InitConfig.TxDescList[Index].DESC3))) {
+            if (!AlGbe_ll_IsTxDescOwnByDma((AL_REG)(&(Gbe->InitConfig.TxDescList[Index].DESC3)))) {
 
                 /* Release the packet.  */
                 Gbe->TxFreeCallback(DmaTxDescList->PacketAddress[Index]);
@@ -1283,7 +1268,7 @@ AL_S32 AlGbe_Dev_TransmitPolling(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruc
 
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
 
-    DmaTxDesc = (AL_GBE_DMADescStruct *)(&Gbe->TxDescList)->TxDesc[Gbe->TxDescList.CurTxDesc];
+    DmaTxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)((&Gbe->TxDescList)->TxDesc[Gbe->TxDescList.CurTxDesc]));
 
     Ret = AlGbe_Dev_PrepareTxDescriptors(Gbe, TxConfig, AL_GBE_FUNC_DISABLE);
     if (Ret != AL_OK) {
@@ -1299,7 +1284,7 @@ AL_S32 AlGbe_Dev_TransmitPolling(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruc
     AlGbe_ll_SetDmaTxDescTailPointer(GbeBaseAddr, (AL_U32)(Gbe->TxDescList.TxDesc[Gbe->TxDescList.CurTxDesc]));
 
     /* Wait for data to be transmitted or timeout occurred */
-    while (AlGbe_ll_IsWbTxDescOwnByDma(&DmaTxDesc->DESC3)) {
+    while (AlGbe_ll_IsWbTxDescOwnByDma((AL_REG)&DmaTxDesc->DESC3)) {
         if (AlGbe_ll_IsDmaChannelFatalBusError(GbeBaseAddr)) {
             return AL_GBE_ERR_FATLA_BUS_ERROR;
         }
@@ -1350,7 +1335,7 @@ static AL_VOID AlGbe_Dev_ErrorHandler(AL_GBE_DevStruct *Gbe)
 {
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
     AL_GBE_IntrStatusEnum IntrStatus = AlGbe_ll_GetDmaChannelStatus(GbeBaseAddr);
-    AL_GBE_EventIdEnum Event;
+    AL_GBE_EventIdEnum Event = AL_GBE_EVENT_CTX_DESC_ERROR;
 
     if (GBE_IN_FATAL_BUS_ERROR_INTR(IntrStatus)) {
         Event = AL_GBE_EVENT_FATAL_BUS_ERROR;
