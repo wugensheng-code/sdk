@@ -320,26 +320,26 @@ typedef struct
 
 AL_SMC_HwConfigStruct *AlSmc_Dev_LookupConfig(AL_U32 DeviceId);
 
-AL_U8 ALSmc_Dev_Reset(AL_NAND_InfoStruct *NandInfo);
+AL_U32 ALSmc_Dev_Reset(AL_NAND_InfoStruct *NandInfo);
 AL_VOID ALSmc_Dev_ReadId(AL_NAND_InfoStruct *NandInfo);
 AL_U32 ALSmc_Dev_ReadParam(AL_NAND_InfoStruct *NandInfo);
-AL_U8 ALSmc_Dev_ReadStatus(AL_NAND_InfoStruct *NandInfo);
-AL_U8 ALSmc_SetFeature(AL_NAND_InfoStruct *NandInfo, AL_U8 Address, AL_U8 *Data);
-AL_U8 ALSmc_GetFeature(AL_NAND_InfoStruct *NandInfo, AL_U8 Address, AL_U8 *Data);
-AL_U8 ALSmc_Dev_EraseBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U8 Page);
-AL_U8 ALSmc_Dev_HwEccWritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf);
-AL_U8 ALSmc_Dev_HwEccReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf);
-AL_U8 ALSmc_Dev_WritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf);
-AL_U8 ALSmc_Dev_ReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf);
-AL_U8 ALSmc_Dev_WriteSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page);
-AL_U8 ALSmc_Dev_ReadSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page);
-AL_U8 ALSmc_Dev_CheckIsBadBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page);
-AL_U8 AlSmc_Dev_HwCalculateEcc(AL_SMC_DevStruct *Smc, AL_U8 *Data, AL_U8 EccDataNums);
-AL_U8 AlSmc_Dev_HwCorrectEcc(AL_U8 *eccCode, AL_U8 *eccCalc, AL_U8 *buf);
-AL_U8 AlSmc_Dev_EccHwInit(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo);
-AL_U8 AlSmc_Dev_EccHwDisable(AL_SMC_DevStruct *Smc);
-AL_U8 AlSmc_Dev_EccHwEnable(AL_SMC_DevStruct *Smc);
-AL_U8 AlSmc_Dev_EnableOnDieEcc(AL_NAND_InfoStruct *NandInfo);
+AL_U32 ALSmc_Dev_ReadStatus(AL_NAND_InfoStruct *NandInfo);
+AL_U32 ALSmc_SetFeature(AL_NAND_InfoStruct *NandInfo, AL_U8 Address, AL_U8 *Data);
+AL_U32 ALSmc_GetFeature(AL_NAND_InfoStruct *NandInfo, AL_U8 Address, AL_U8 *Data);
+AL_U32 ALSmc_Dev_EraseBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U8 Page);
+AL_U32 ALSmc_Dev_HwEccWritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf);
+AL_U32 ALSmc_Dev_HwEccReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf);
+AL_U32 ALSmc_Dev_WritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf);
+AL_U32 ALSmc_Dev_ReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf);
+AL_U32 ALSmc_Dev_WriteSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page);
+AL_U32 ALSmc_Dev_ReadSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page);
+AL_U32 ALSmc_Dev_CheckIsBadBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page);
+AL_U32 AlSmc_Dev_HwCalculateEcc(AL_SMC_DevStruct *Smc, AL_U8 *Data, AL_U8 EccDataNums);
+AL_U32 AlSmc_Dev_HwCorrectEcc(AL_U8 *eccCode, AL_U8 *eccCalc, AL_U8 *buf);
+AL_U32 AlSmc_Dev_EccHwInit(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo);
+AL_U32 AlSmc_Dev_EccHwDisable(AL_SMC_DevStruct *Smc);
+AL_U32 AlSmc_Dev_EccHwEnable(AL_SMC_DevStruct *Smc);
+AL_U32 AlSmc_Dev_EnableOnDieEcc(AL_NAND_InfoStruct *NandInfo);
 AL_VOID AlSmc_Dev_InitCyclesAndMemWidth(AL_SMC_DevStruct *Smc);
 
 #ifdef __cplusplus

@@ -246,7 +246,7 @@ static AL_VOID ALSmc_Dev_ReadBuf(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_U3
  * @return
  * @note    None
 */
-AL_U8 ALSmc_Dev_Reset(AL_NAND_InfoStruct *NandInfo)
+AL_U32 ALSmc_Dev_Reset(AL_NAND_InfoStruct *NandInfo)
 {
     AL_U8 Status;
 
@@ -388,7 +388,7 @@ AL_U32 ALSmc_Dev_ReadParam(AL_NAND_InfoStruct *NandInfo)
  * @return  Return nand status value
  * @note    None
 */
-AL_U8 ALSmc_Dev_ReadStatus(AL_NAND_InfoStruct *NandInfo)
+AL_U32 ALSmc_Dev_ReadStatus(AL_NAND_InfoStruct *NandInfo)
 {
     AL_U8 Status;
 
@@ -483,9 +483,9 @@ AL_U8 ALSmc_Dev_GetFeature(AL_NAND_InfoStruct *NandInfo, AL_U8 Address, AL_U8 *D
  * @return
  * @note    None
 */
-AL_U8 ALSmc_Dev_EraseBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U8 Page)
+AL_U32 ALSmc_Dev_EraseBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U8 Page)
 {
-    AL_U8 Status;
+    AL_U32 Status;
 
     Status = ALSmc_Dev_ReadStatus(NandInfo);
     if (!(Status & ONFI_STATUS_WP)) {
@@ -525,10 +525,10 @@ AL_U8 ALSmc_Dev_EraseBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, 
  * @return  Whether the smc write page use hardware ecc is successful
  * @note    None
 */
-AL_U8 ALSmc_Dev_HwEccWritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf)
+AL_U32 ALSmc_Dev_HwEccWritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf)
 {
-    AL_U8 Status, EccDataNums, Index;
-    AL_U32 *DataOffsetPtr;
+    AL_U8 EccDataNums, Index;
+    AL_U32 *DataOffsetPtr, Status;
 
     NandInfo->Cmd.StartCmd = ONFI_CMD_PROGRAM_PAGE1;
     NandInfo->Cmd.EndCmd = ONFI_CMD_PROGRAM_PAGE2;
@@ -610,10 +610,10 @@ AL_U8 ALSmc_Dev_HwEccWritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandIn
  * @return  Whether the smc read page use hardware ecc is successful
  * @note    None
 */
-AL_U8 ALSmc_Dev_HwEccReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf)
+AL_U32 ALSmc_Dev_HwEccReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf)
 {
-    AL_U8 Status, EccDataNums, EccOffset=0, Index;
-    AL_U32 *DataOffsetPtr;
+    AL_U8 EccDataNums, EccOffset=0, Index;
+    AL_U32 *DataOffsetPtr, Status;
     AL_U8 *TempBuf = Buf;
 
     NandInfo->Cmd.StartCmd = ONFI_CMD_READ_PAGE1;
@@ -696,9 +696,9 @@ AL_U8 ALSmc_Dev_HwEccReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInf
  * @return
  * @note    None
 */
-AL_U8 ALSmc_Dev_WritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf)
+AL_U32 ALSmc_Dev_WritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf)
 {
-    AL_U8 Status;
+    AL_U32 Status;
 
     NandInfo->Cmd.StartCmd = ONFI_CMD_PROGRAM_PAGE1;
     NandInfo->Cmd.EndCmd = ONFI_CMD_PROGRAM_PAGE2;
@@ -743,9 +743,9 @@ AL_U8 ALSmc_Dev_WritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, A
  * @return
  * @note    None
 */
-AL_U8 ALSmc_Dev_ReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf)
+AL_U32 ALSmc_Dev_ReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf)
 {
-    AL_U8 Status;
+    AL_U32 Status;
     AL_REG CmdPhaseAddr;
 
     NandInfo->Cmd.StartCmd = ONFI_CMD_READ_PAGE1;
@@ -800,9 +800,9 @@ AL_U8 ALSmc_Dev_ReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL
  * @return
  * @note    None
 */
-AL_U8 ALSmc_Dev_WritceSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page)
+AL_U32 ALSmc_Dev_WritceSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page)
 {
-    AL_U8 Status;
+    AL_U32 Status;
 
     if (1 == NandInfo->Size.EccNum) {
         AlSmc_Dev_EccHwDisable(Smc);
@@ -853,9 +853,9 @@ AL_U8 ALSmc_Dev_WritceSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo,
  * @return
  * @note    None
 */
-AL_U8 ALSmc_Dev_ReadSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page)
+AL_U32 ALSmc_Dev_ReadSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page)
 {
-    AL_U8 Status;
+    AL_U32 Status;
     AL_REG CmdPhaseAddr;
 
     if (1 == NandInfo->Size.EccNum) {
@@ -919,7 +919,7 @@ AL_U8 ALSmc_Dev_ReadSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, A
  * @return
  * @note    None
 */
-AL_U8 ALSmc_Dev_CheckIsBadBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page)
+AL_U32 ALSmc_Dev_CheckIsBadBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page)
 {
     ALSmc_Dev_ReadSpare(Smc, NandInfo, Page);
 
@@ -938,7 +938,7 @@ AL_U8 ALSmc_Dev_CheckIsBadBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandI
  * @return
  * @note    None
 */
-AL_U8 AlSmc_Dev_HwCalculateEcc(AL_SMC_DevStruct *Smc, AL_U8 *Data, AL_U8 EccDataNums)
+AL_U32 AlSmc_Dev_HwCalculateEcc(AL_SMC_DevStruct *Smc, AL_U8 *Data, AL_U8 EccDataNums)
 {
     AL_U8 Count, EccReg;
     AL_U32 EccValue;
@@ -971,7 +971,7 @@ AL_U8 AlSmc_Dev_HwCalculateEcc(AL_SMC_DevStruct *Smc, AL_U8 *Data, AL_U8 EccData
  * @return
  * @note    None
 */
-AL_U8 AlSmc_Dev_HwCorrectEcc(AL_U8 *eccCode, AL_U8 *eccCalc, AL_U8 *buf)
+AL_U32 AlSmc_Dev_HwCorrectEcc(AL_U8 *eccCode, AL_U8 *eccCalc, AL_U8 *buf)
 {
     AL_U8 bitPos = 0;
     AL_U32 bytePos = 0;
@@ -1024,7 +1024,7 @@ AL_U8 AlSmc_Dev_HwCorrectEcc(AL_U8 *eccCode, AL_U8 *eccCalc, AL_U8 *buf)
  * @return
  * @note    None
 */
-AL_U8 AlSmc_Dev_EccHwInit(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo)
+AL_U32 AlSmc_Dev_EccHwInit(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo)
 {
     AL_U32 Ecc1Config;
 
@@ -1067,7 +1067,7 @@ AL_U8 AlSmc_Dev_EccHwInit(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo)
  * @return
  * @note    None
 */
-AL_U8 AlSmc_Dev_EccHwDisable(AL_SMC_DevStruct *Smc)
+AL_U32 AlSmc_Dev_EccHwDisable(AL_SMC_DevStruct *Smc)
 {
     /* Check Ecc Busy */
     while(ECC_BUSY == AlSmc_ll_IsEccBusy(Smc->SmcBaseAddr));
@@ -1084,7 +1084,7 @@ AL_U8 AlSmc_Dev_EccHwDisable(AL_SMC_DevStruct *Smc)
  * @return
  * @note    None
 */
-AL_U8 AlSmc_Dev_EccHwEnable(AL_SMC_DevStruct *Smc)
+AL_U32 AlSmc_Dev_EccHwEnable(AL_SMC_DevStruct *Smc)
 {
     /* Check Ecc Busy */
     while(ECC_BUSY == AlSmc_ll_IsEccBusy(Smc->SmcBaseAddr));
@@ -1101,7 +1101,7 @@ AL_U8 AlSmc_Dev_EccHwEnable(AL_SMC_DevStruct *Smc)
  * @return
  * @note    Only Micron
 */
-AL_U8 AlSmc_Dev_EnableOnDieEcc(AL_NAND_InfoStruct *NandInfo)
+AL_U32 AlSmc_Dev_EnableOnDieEcc(AL_NAND_InfoStruct *NandInfo)
 {
     AL_U8 EccGetFeature[4];
     AL_U8 EccSetFeature[4] = {0x08, 0, 0, 0};

@@ -976,7 +976,7 @@ AL_S32 AlQspi_Dev_IoCtl(AL_QSPI_DevStruct *Qspi, AL_Qspi_IoCtlCmdEnum Cmd, AL_VO
     case AL_QSPI_IOCTL_SET_CLOCK_DIV: {
         AL_U16 *ClockDiv = (AL_U16 *)Data;
         Qspi->Configs.ClkDiv = *ClockDiv;
-        AlSpi_ll_SetClkDiv(Qspi->HwConfig.BaseAddress, Qspi->Configs.ClkDiv);
+        AlQspi_ll_SetClkDiv(Qspi->HwConfig.BaseAddress, Qspi->Configs.ClkDiv);
     }
 
     case AL_QSPI_IOCTL_GET_CLOCK_DIV: {
@@ -987,7 +987,7 @@ AL_S32 AlQspi_Dev_IoCtl(AL_QSPI_DevStruct *Qspi, AL_Qspi_IoCtlCmdEnum Cmd, AL_VO
     case AL_QSPI_IOCTL_SET_SLV_TOGGLE: {
         AL_QSPI_SlvSelToggleEnum *SlvToggle = (AL_QSPI_SlvSelToggleEnum *)Data;
         Qspi->Configs.SlvToggleEnum = *SlvToggle;
-        AlSpi_ll_SetSlvSelToggle(Qspi->HwConfig.BaseAddress, Qspi->Configs.SlvToggleEnum);
+        AlQspi_ll_SetSlvSelToggle(Qspi->HwConfig.BaseAddress, Qspi->Configs.SlvToggleEnum);
     }
 
     case AL_QSPI_IOCTL_GET_SLV_TOGGLE: {

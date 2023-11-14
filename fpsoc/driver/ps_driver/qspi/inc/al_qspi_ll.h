@@ -533,9 +533,8 @@ static inline AL_U32 AlQspi_ll_ReadRawIntrStatus(AL_REG QspiBaseAddr)
  * @return  AL_VOID
  * @note    none.
  */
-static AL_VOID AlQspi_ll_DataTransmit(AL_REG QspiBaseAddr, AL_U32 Data)
+static inline AL_VOID AlQspi_ll_DataTransmit(AL_REG QspiBaseAddr, AL_U32 Data)
 {
-    // printf("Data:0x%x\r\n", Data);
     AL_REG32_WRITE(QspiBaseAddr + QSPI_DR0_OFFSET, Data);
 }
 

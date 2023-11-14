@@ -17,8 +17,6 @@
 /************************** Variable Definitions *****************************/
 AL_QSPI_HalStruct AlQspiHandle[AL_QSPI_NUM_INSTANCE];
 
-static AL_QSPI_DevStruct AL_QSPI_DevInstance[AL_QSPI_NUM_INSTANCE];
-
 AL_DMACAHB_ChInitStruct     QspiTxDmacChConfig;
 AL_DMACAHB_HalStruct        *QspiTxDmacHandle = AL_NULL;
 AL_DMACAHB_ChInitStruct     QspiRxDmacChConfig;
@@ -109,7 +107,7 @@ static AL_S32 AlQspi_Hal_WaitTxRxDoneOrTimeout(AL_QSPI_HalStruct *Handle, AL_QSP
  * @return  AL_OK
  * @note    None
 */
-static AL_S32 AlQspi_DefEventCallBack(AL_QSPI_EventStruct QspiEvent, void *CallbackRef)
+static AL_VOID AlQspi_DefEventCallBack(AL_QSPI_EventStruct QspiEvent, void *CallbackRef)
 {
     AL_QSPI_HalStruct *Handle = (AL_QSPI_HalStruct *)CallbackRef;
     AL_S32 Ret = AL_OK;
@@ -131,8 +129,6 @@ static AL_S32 AlQspi_DefEventCallBack(AL_QSPI_EventStruct QspiEvent, void *Callb
     default:
         break;
     }
-
-    return AL_OK;
 }
 
 /**

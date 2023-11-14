@@ -55,7 +55,7 @@ typedef enum {
 #define AL_QSPI_ERR_NOT_READY        AL_DEF_ERR(AL_QSPI, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_READY)
 #define AL_QSPI_EVENTS_TO_ERRS(Event) (AL_DEF_ERR(AL_QSPI, AL_LOG_LEVEL_ERROR, Event))
 
-typedef AL_S32 (*QSPI_EventCallBack)(AL_QSPI_EventStruct QspiEvent, AL_VOID *CallbackRef);
+typedef AL_VOID (*QSPI_EventCallBack)(AL_QSPI_EventStruct QspiEvent, AL_VOID *CallbackRef);
 
 typedef struct
 {

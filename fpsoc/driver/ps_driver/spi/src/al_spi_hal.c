@@ -135,7 +135,7 @@ static AL_VOID AlSpi_DefEventCallBack(AL_SPI_EventStruct SpiEvent, void *Callbac
         break;
     }
 
-    BUG_ON(Ret != AL_OK);
+    // BUG_ON(Ret != AL_OK);
 }
 
 /**
