@@ -19,9 +19,10 @@ SECTIONS
 
 	.text :
 	{
-		_text_start  = .;
-		*al_aarch64_startup.S.o(.text)
+		PROVIDE(_text_start  = .);
+		*al_aarch64_start.S.o(.text)
 		*(.text)
+		PROVIDE(_text_end  = .);
 	}  > ram AT>ram
 	PROVIDE(_text_end  = .);
 

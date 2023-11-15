@@ -21,8 +21,7 @@ SECTIONS
 	.text :
 	{
 		PROVIDE(_text_start  = .);
-		*/startup64.o(.text)
-		*boot/arm/*(.text)
+		*al_aarch64_start.S.o(.text)
 		*(.text)
 		PROVIDE(_text_end  = .);
 	}  > ram AT>ram
