@@ -10,8 +10,11 @@
 #########################################################################
 SDK_ROOT   ?= ../../../..
 
-RTOS       := freertos
-CHIP       ?= dr1m90
+CHIP       := dr1m90
+#RTOS       := freertos
+RTOS       := rtthread
+PFLOAT     := 1
+
 ifeq ($(CHIP), dr1m90)
 ARMv8_CORE=SLAVE
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
@@ -19,6 +22,7 @@ else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
+#ENABLE_MMU := 1
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
 #    LD_LIBS: External library files that the app depends on
@@ -47,7 +51,7 @@ ASM_SRCS :=
 # 3. CFLAGS
 #########################################################################
 CFLAGS := -O0 -g -Wall -DLOG_DEV=AL_LOG_UART0 -DRPMSG_DEBUG=1 -DBOARD_SEL=1 -DOPENAMP_EXAMPLE_APP
-
+#CFLAGS += -DAL_PRINT_ASYNC
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files

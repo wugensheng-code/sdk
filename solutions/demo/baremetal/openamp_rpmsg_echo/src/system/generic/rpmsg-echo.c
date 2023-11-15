@@ -7,10 +7,14 @@
  * This application is meant to run on the remote CPU running baremetal code.
  * This application echoes back data that was sent to it by the host core.
  */
-#if defined(RTOS_FREERTOS) 
+#if defined(RTOS_FREERTOS)
 /* Kernel includes. */
 #include "FreeRTOS.h" /* Must come first. */
 #include "task.h"     /* RTOS task related API prototypes. */
+#endif
+
+#if defined(RTOS_RTTHREAD)
+#include <rtthread.h>
 #endif
 
 #include "al_core.h"
@@ -33,6 +37,9 @@
 static struct rpmsg_endpoint lept;
 static int shutdown_req = 0;
 
+extern void psci_cpu_pwrdown(void);
+extern AL_VOID AlGicv3_CpuIfDisable(AL_U32 ProcNum);
+
 /*-----------------------------------------------------------------------------*
  *  RPMSG endpoint callbacks
  *-----------------------------------------------------------------------------*/
@@ -53,6 +60,8 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 	if (rpmsg_send(ept, data, len) < 0) {
 		LPERROR("rpmsg_send failed\r\n");
 	}
+	LPRINTF("SHANGHAI ANLOGIC INFOTECH CO.,LTD. \r\n");
+
 	return RPMSG_SUCCESS;
 }
 
@@ -90,6 +99,7 @@ int app(struct rpmsg_device *rdev, void *priv)
 			break;
 		}
 	}
+
 	rpmsg_destroy_ept(&lept);
 
 	return 0;
@@ -104,6 +114,8 @@ void openamp_sample(void* Parameters)
 	struct rpmsg_device *rpdev;
 	int ret;
 
+    AlSys_UDelay(200000);
+
 	LPRINTF("openamp lib version: %s (", openamp_version());
 	LPRINTF("Major: %d, ", openamp_version_major());
 	LPRINTF("Minor: %d, ", openamp_version_minor());
@@ -116,7 +128,7 @@ void openamp_sample(void* Parameters)
 
 	LPRINTF("Starting application...\r\n");
 
-	int argc = 0; 
+	int argc = 0;
 	char *argv[] = {NULL};
 
 	/* Initialize platform */
@@ -141,9 +153,11 @@ void openamp_sample(void* Parameters)
 	LPRINTF("Stopping application...\r\n");
 	platform_cleanup(platform);
 
+	AlGicv3_CpuIfDisable(1);
+	psci_cpu_pwrdown();
+
 	return ret;
 }
-
 
 #if defined(RTOS_FREERTOS) 
 
@@ -229,7 +243,7 @@ int start_freertos(void)
 {
 
     xTaskCreate((TaskFunction_t)openamp_sample, (const char*)"start_task1",
-                (uint16_t)1024, (void*)NULL, (UBaseType_t)1,
+                (uint16_t)4096, (void*)NULL, (UBaseType_t)1,
                 (TaskHandle_t*)&openamp_sample_Handler);
 
     xTaskCreate((TaskFunction_t)freertos_sample, (const char*)"start_task2",
@@ -242,22 +256,87 @@ int start_freertos(void)
 
     while (1);
 }
+#endif
 
+#if defined(RTOS_RTTHREAD)
+#define THREAD_PRIORITY         20
+#define THREAD_STACK_SIZE       4096
+#define THREAD_TIMESLICE        5
+
+static rt_thread_t tid1 = RT_NULL;
+
+/* 线程 1 的入口函数 */
+static void thread1_entry(void *parameter)
+{
+    rt_uint32_t count = 0;
+
+    while (1)
+    {
+        /* 线程 1 采用低优先级运行，一直打印计数值 */
+        rt_kprintf("thread1 count: %d\n", count ++);
+        rt_thread_mdelay(1000);
+    }
+}
+
+ALIGN(RT_ALIGN_SIZE)
+static char thread2_stack[4096];
+static struct rt_thread thread2;
+/* 线程 2 入口 */
+static void thread2_entry(void *param)
+{
+#if 0
+    rt_uint32_t count = 0;
+
+    /* 线程 2 拥有较高的优先级，以抢占线程 1 而获得执行 */
+    for (count = 0; count < 10 ; count++)
+    {
+        /* 线程 2 打印计数值 */
+        rt_kprintf("thread2 count: %d\n", count);
+        rt_thread_mdelay(500);
+    }
+    rt_kprintf("thread2 exit\n");
+    /* 线程 2 运行结束后也将自动被系统脱离 */
+#endif
+	openamp_sample((void*)AL_NULL);
+}
+
+/* 线程示例 */
+int thread_sample(void)
+{
+    /* 创建线程 1，名称是 thread1，入口是 thread1_entry*/
+    tid1 = rt_thread_create("thread1",
+                            thread1_entry, RT_NULL,
+                            THREAD_STACK_SIZE,
+                            THREAD_PRIORITY, THREAD_TIMESLICE);
+
+    /* 如果获得线程控制块，启动这个线程 */
+    if (tid1 != RT_NULL)
+        rt_thread_startup(tid1);
+
+    /* 初始化线程 2，名称是 thread2，入口是 thread2_entry */
+    rt_thread_init(&thread2,
+                   "thread2",
+                   thread2_entry,
+                   RT_NULL,
+                   &thread2_stack[0],
+                   sizeof(thread2_stack),
+                   THREAD_PRIORITY, THREAD_TIMESLICE);
+    rt_thread_startup(&thread2);
+
+    return 0;
+}
 #endif
 
 int main()
 {
-
 #if defined(RTOS_FREERTOS) 
-
 	start_freertos();
-
+#elif defined(RTOS_RTTHREAD) 
+	thread_sample();
 #else
-
 	openamp_sample((void*)AL_NULL);
-
 #endif
 
 	return 0;
-}	
+}
 
