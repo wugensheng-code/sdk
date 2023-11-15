@@ -41,8 +41,6 @@ void rt_hw_board_init(void)
     rt_hw_gtimer_init();
     rt_thread_idle_sethook(idle_wfi);
 
-    arm_psci_init(PSCI_METHOD_HVC, RT_NULL, RT_NULL);
-
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     /* set console device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
