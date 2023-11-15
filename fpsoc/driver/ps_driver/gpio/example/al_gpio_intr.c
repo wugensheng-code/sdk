@@ -35,7 +35,7 @@ AL_S32 AlGpio_Hal_Intr_Example()
 
     /* 2、Test InputRead EXT register */
     for(i = 0; i < 6; i++) {
-        AL_LOG(AL_LOG_LEVEL_INFO, "GPIO Pin %d input data value is 0x%x", PL_KEY, AlGpio_Hal_ReadPinFromEXT(GPIO,PL_KEY));
+        AL_LOG(AL_LOG_LEVEL_INFO, "GPIO Pin %d input data value is 0x%x", PL_KEY, AlGpio_Hal_ReadPinInput(GPIO,PL_KEY));
     }
 
     /* 3、Test intr */

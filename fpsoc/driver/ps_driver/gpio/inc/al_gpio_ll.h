@@ -18,14 +18,15 @@ extern "C" {
 #include "al_gpio_hw.h"
 
 /****************************** Exported Function ******************************/
-static inline AL_U32 AlGpio_ll_ReadFromDR(AL_REG BaseAddr)
-{
-    return AL_REG32_READ(BaseAddr + GPIO__SWPORTA__DR__BLK0__OFFSET);
-}
 
-static inline AL_U32 AlGpio_ll_ReadFromEXT(AL_REG BaseAddr)
+static inline AL_U32 AlGpio_ll_ReadInput(AL_REG BaseAddr)
 {
     return AL_REG32_READ(BaseAddr + GPIO__EXT__PORTA__BLK0__OFFSET);
+}
+
+static inline AL_U32 AlGpio_ll_ReadOutput(AL_REG BaseAddr)
+{
+    return AL_REG32_READ(BaseAddr + GPIO__SWPORTA__DR__BLK0__OFFSET);
 }
 
 static inline AL_VOID AlGpio_ll_Write(AL_REG BaseAddr, AL_U32 Data)
@@ -58,19 +59,14 @@ static inline AL_VOID AlGpio_ll_EnableDebounce(AL_REG BaseAddr, AL_U32 Debounce)
     AL_REG32_WRITE(BaseAddr + GPIO__DEBOUNCE__BLK0__OFFSET, Debounce);
 }
 
-static inline AL_VOID AlGpio_ll_ClrDebounceEnable(AL_REG BaseAddr, AL_U32 Debounce)
+static inline AL_VOID AlGpio_ll_DisableDebounce(AL_REG BaseAddr, AL_U32 Debounce)
 {
     AL_REG32_WRITE(BaseAddr + GPIO__DEBOUNCE__CLR__BLK0__OFFSET, Debounce);
 }
 
-static inline AL_U32 AlGpio_ll_GetDebounceEnable(AL_REG BaseAddr)
+static inline AL_U32 AlGpio_ll_GetDebounce(AL_REG BaseAddr)
 {
     return AL_REG32_READ(BaseAddr + GPIO__DEBOUNCE__BLK0__OFFSET);
-}
-
-static inline AL_U32 AlGpio_ll_GetDebounceClrEnable(AL_REG BaseAddr)
-{
-    return AL_REG32_READ(BaseAddr + GPIO__DEBOUNCE__CLR__BLK0__OFFSET);
 }
 
 static inline AL_VOID AlGpio_ll_EnableSync(AL_REG BaseAddr, AL_U32 Debounce)
@@ -78,7 +74,7 @@ static inline AL_VOID AlGpio_ll_EnableSync(AL_REG BaseAddr, AL_U32 Debounce)
     AL_REG32_WRITE(BaseAddr + GPIO__LS__SYNC__BLK0__OFFSET, Debounce);
 }
 
-static inline AL_U32 AlGpio_ll_GetSyncEnable(AL_REG BaseAddr)
+static inline AL_U32 AlGpio_ll_GetSync(AL_REG BaseAddr)
 {
     return AL_REG32_READ(BaseAddr + GPIO__LS__SYNC__BLK0__OFFSET);
 }
@@ -88,12 +84,12 @@ static inline AL_VOID AlGpio_ll_EnableIntr(AL_REG BaseAddr, AL_U32 Enable)
     AL_REG32_WRITE(BaseAddr + GPIO__INTEN__BLK0__OFFSET, Enable);
 }
 
-static inline AL_VOID AlGpio_ll_EnableClrIntr(AL_REG BaseAddr, AL_U32 Disable)
+static inline AL_VOID AlGpio_ll_DisableIntr(AL_REG BaseAddr, AL_U32 Disable)
 {
     AL_REG32_WRITE(BaseAddr + GPIO__INTEN__CLR__BLK0__OFFSET, Disable);
 }
 
-static inline AL_VOID AlGpio_ll_IntrEoi(AL_REG BaseAddr, AL_U32 Disable)
+static inline AL_VOID AlGpio_ll_ClrIntr(AL_REG BaseAddr, AL_U32 Disable)
 {
     AL_REG32_WRITE(BaseAddr + GPIO__PORTA__EOI__BLK0__OFFSET, Disable);
 }
@@ -108,12 +104,12 @@ static inline AL_VOID AlGpio_ll_EnableIntrMask(AL_REG BaseAddr, AL_U32 Enable)
     AL_REG32_WRITE(BaseAddr + GPIO__INTMASK__BLK0__OFFSET, Enable);
 }
 
-static inline AL_U32 AlGpio_ll_GetIntrMaskEnable(AL_REG BaseAddr)
+static inline AL_U32 AlGpio_ll_GetIntrMask(AL_REG BaseAddr)
 {
     return AL_REG32_READ(BaseAddr + GPIO__INTMASK__BLK0__OFFSET);
 }
 
-static inline AL_VOID AlGpio_ll_ClrIntrMaskEnable(AL_REG BaseAddr, AL_U32 Disable)
+static inline AL_VOID AlGpio_ll_DisableIntrMask(AL_REG BaseAddr, AL_U32 Disable)
 {
     AL_REG32_WRITE(BaseAddr + GPIO__INTMASK__CLR__BLK0__OFFSET, Disable);
 }

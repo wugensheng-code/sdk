@@ -127,31 +127,33 @@ static AL_S32 AlGpio_Hal_SetBankDirection(AL_GPIO_HalStruct *Handle, AL_U32 Bank
 
 
 /**
- * @brief  This function reads Data register from the specified Bank in EXT register.
- * @param  Gpio
- * @param  Bank
- * @return AL_S32
- */
-AL_S32 AlGpio_Hal_ReadBankFromEXT(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
-{
-    AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
-
-    AlGpio_Hal_SetDirection(Handle, Bank, GPIO_BANK_INPUT);
-    return AlGpio_ll_ReadFromEXT(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
-}
-
-/**
  * @brief  This function reads Data register from the specified Bank.
  * @param  Gpio
  * @param  Bank
  * @return AL_S32
  */
-AL_S32 AlGpio_Hal_ReadBankFromDR(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
+AL_S32 AlGpio_Hal_ReadBankOutput(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
 {
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
     return AlGpio_ll_ReadFromDR(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
 }
+
+
+/**
+ * @brief  This function reads Data register from the specified Bank in EXT register.
+ * @param  Gpio
+ * @param  Bank
+ * @return AL_S32
+ */
+AL_S32 AlGpio_Hal_ReadBankInput(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
+{
+    AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
+
+    AlGpio_Hal_SetDirection(Handle, Bank, GPIO_BANK_INPUT);
+    return AlGpio_ll_ReadInput(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
+}
+
 
 /**
  * @brief  Write to the Data register of the specified GPIO bank.
@@ -164,7 +166,7 @@ AL_S32 AlGpio_Hal_WriteBank(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Data)
 {
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
-    AlGpio_Hal_SetDirection(Handle, Bank, GPIO_BANK_OUTPUT);
+    AlGpio_Hal_SetBankDirection(Handle, Bank, GPIO_BANK_OUTPUT);
 
     AlGpio_ll_ClrWrite(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_ALL_ENABLE);
     AlGpio_ll_Write(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Data);
@@ -235,9 +237,7 @@ static AL_S32 AlGpio_Hal_GetPinDirection(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
     return (AlGpio_ll_GetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET) >> PinNumber) & (AL_U32)1;
 }
 
-
-
-AL_S32 AlGpio_Hal_ReadPinFromDR(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
+AL_S32 AlGpio_Hal_ReadPinOutput(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
 {
     AL_U32 Bank = 0;
     AL_U32 PinNumber = 0;
@@ -246,7 +246,7 @@ AL_S32 AlGpio_Hal_ReadPinFromDR(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
 
-    return (AlGpio_ll_ReadFromDR(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET) >> PinNumber) & (AL_U32)1;
+    return (AlGpio_ll_GetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET) >> PinNumber) & (AL_U32)1;
 }
 
 
@@ -256,7 +256,7 @@ AL_S32 AlGpio_Hal_ReadPinFromDR(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
  * @param  Pin
  * @return AL_S32
  */
-AL_S32 AlGpio_Hal_ReadPinFromEXT(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
+AL_S32 AlGpio_Hal_ReadPinInput(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
 {
     AL_U32 Bank = 0;
     AL_U32 PinNumber = 0;
@@ -271,7 +271,7 @@ AL_S32 AlGpio_Hal_ReadPinFromEXT(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
     AlGpio_ll_ClrDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
     AlGpio_ll_SetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, DirReg); /* Input Direction */
 
-    return (AlGpio_ll_ReadFromEXT(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET) >> PinNumber) & (AL_U32)1;
+    return (AlGpio_ll_ReadInput(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET) >> PinNumber) & (AL_U32)1;
 }
 
 
@@ -296,7 +296,7 @@ AL_S32 AlGpio_Hal_WritePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U32 Data)
     DirReg = AlGpio_ll_GetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
     DirReg |= BIT(PinNumber); /* Output Direction */
     DataVar &= (AL_U32)0x01;
-    Value = AlGpio_ll_ReadFromDR(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
+    Value = AlGpio_ll_ReadOutput(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
     if (DataVar != 0)
     {
         Value |= (DataVar << PinNumber);
@@ -324,11 +324,11 @@ AL_S32 AlGpio_Hal_WritePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U32 Data)
  * @param  Raw
  * @return AL_VOID
  */
-static AL_S32 AlGpio_Hal_EnableIntrBank(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Raw)
+static AL_S32 AlGpio_Hal_EnableBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Raw)
 {
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
-    AlGpio_ll_EnableClrIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_ALL_ENABLE);
+    AlGpio_ll_DisableIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_ALL_ENABLE);
     AlGpio_ll_EnableIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Raw);
 
     return AL_OK;
@@ -345,7 +345,7 @@ static AL_S32 AlGpio_Hal_ClrBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_
 {
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
-    AlGpio_ll_IntrEoi(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Mask);
+    AlGpio_ll_ClrIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Mask);
 
     return AL_OK;
 }
@@ -370,11 +370,11 @@ static AL_S32 AlGpio_Hal_GetBankIntrEnable(AL_GPIO_HalStruct *Handle, AL_U32 Ban
  * @param  Mask
  * @return AL_VOID
  */
-static AL_S32 AlGpio_Hal_EnableIntrMaskBank(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Mask)
+static AL_S32 AlGpio_Hal_EnableBankIntrMask(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Mask)
 {
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
-    AlGpio_ll_ClrIntrMaskEnable(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_ALL_ENABLE);
+    AlGpio_ll_DisableIntrMask(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_ALL_ENABLE);
     AlGpio_ll_EnableIntrMask(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Mask);
 
     return AL_OK;
@@ -386,11 +386,11 @@ static AL_S32 AlGpio_Hal_EnableIntrMaskBank(AL_GPIO_HalStruct *Handle, AL_U32 Ba
  * @param  Bank
  * @return AL_S32
  */
-static AL_S32 AlGpio_Hal_GetBankIntrMaskEnable(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
+static AL_S32 AlGpio_Hal_GetBankIntrMask(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
 {
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
-    return AlGpio_ll_GetIntrMaskEnable(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
+    return AlGpio_ll_GetIntrMask(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
 }
 
 /**
@@ -477,7 +477,7 @@ static AL_S32 AlGpio_Hal_EnableBankDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Ba
 {
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
-    AlGpio_ll_ClrDebounceEnable(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_ALL_ENABLE);
+    AlGpio_ll_DisableDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_ALL_ENABLE);
     AlGpio_ll_EnableDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Debounce);
 
     return AL_OK;
@@ -490,11 +490,11 @@ static AL_S32 AlGpio_Hal_EnableBankDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Ba
  * @param  Bank
  * @return AL_S32
  */
-static AL_S32 AlGpio_Hal_GetBankDebounceEnable(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
+static AL_S32 AlGpio_Hal_GetBankDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
 {
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
-    return AlGpio_ll_GetDebounceEnable(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
+    return AlGpio_ll_GetDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
 }
 
 /**
@@ -519,11 +519,11 @@ static AL_S32 AlGpio_Hal_EnableBankSync(AL_GPIO_HalStruct *Handle, AL_U32 Bank, 
  * @param  Bank
  * @return AL_S32
  */
-static AL_S32 AlGpio_Hal_GetBankSyncEnable(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
+static AL_S32 AlGpio_Hal_GetBankSync(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
 {
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
-    return AlGpio_ll_GetSyncEnable(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
+    return AlGpio_ll_GetSync(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
 }
 
 
@@ -542,7 +542,7 @@ static AL_S32 AlGpio_Hal_EnablePinIntr(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin((AL_U8)Pin, &Bank, &PinNumber);
-    AlGpio_ll_EnableClrIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
+    AlGpio_ll_DisableIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
     AlGpio_ll_EnableIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
 
     return AL_OK;
@@ -562,7 +562,7 @@ static AL_S32 AlGpio_Hal_ClrPinIntr(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
-    AlGpio_ll_IntrEoi(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
+    AlGpio_ll_ClrIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
 
     return AL_OK;
 }
@@ -581,7 +581,7 @@ static AL_S32 AlGpio_Hal_DisableClrPinIntr(AL_GPIO_HalStruct *Handle, AL_U32 Pin
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
-    AlGpio_ll_IntrEoi(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_DISABLE);
+    AlGpio_ll_ClrIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_DISABLE);
 
     return AL_OK;
 }
@@ -630,7 +630,7 @@ static AL_BOOL AlGpio_Hal_GetPinIntrEnable(AL_GPIO_HalStruct *Handle, AL_U32 Pin
  * @param  Pin
  * @return AL_BOOL
  */
-static AL_BOOL AlGpio_Hal_GetPinIntrMaskEnable(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
+static AL_BOOL AlGpio_Hal_GetPinIntrMask(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
 {
     AL_U32 Bank = 0;
     AL_U32 PinNumber = 0;
@@ -639,7 +639,7 @@ static AL_BOOL AlGpio_Hal_GetPinIntrMaskEnable(AL_GPIO_HalStruct *Handle, AL_U32
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
-    IntrReg = AlGpio_ll_GetIntrMaskEnable(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
+    IntrReg = AlGpio_ll_GetIntrMask(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
     return ((IntrReg & (BIT(PinNumber))) == (AL_U32)0 ? (AL_U32)AL_FALSE : (AL_U32)AL_TRUE);
 }
 
@@ -797,13 +797,13 @@ static AL_S32 AlGpio_Hal_EnablePinDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Pin
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin((AL_U8)Pin, &Bank, &PinNumber);
-    DebounceReg = AlGpio_ll_GetDebounceEnable(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
+    DebounceReg = AlGpio_ll_GetDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
     if(DebounceReg != (AL_U32)0) {
         DebounceReg |= (BIT(PinNumber));
     } else {
         DebounceReg &= ~(BIT(PinNumber));
     }
-    AlGpio_ll_ClrDebounceEnable(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
+    AlGpio_ll_DisableDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
     AlGpio_ll_EnableDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, DebounceReg);
 
     return AL_OK;
@@ -816,7 +816,7 @@ static AL_S32 AlGpio_Hal_EnablePinDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Pin
  * @param  Pin
  * @return AL_BOOL
  */
-static AL_BOOL AlGpio_Hal_GetPinDebounceEnable(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
+static AL_BOOL AlGpio_Hal_GetPinDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
 {
     AL_U32 Bank = 0;
     AL_U32 PinNumber = 0;
@@ -825,7 +825,7 @@ static AL_BOOL AlGpio_Hal_GetPinDebounceEnable(AL_GPIO_HalStruct *Handle, AL_U32
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
-    DebounceReg = AlGpio_ll_GetDebounceEnable(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
+    DebounceReg = AlGpio_ll_GetDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
     return ((DebounceReg & (BIT(PinNumber))) == (AL_U32)0 ? (AL_U32)AL_FALSE : (AL_U32)AL_TRUE);
 }
 
@@ -844,7 +844,7 @@ static AL_S32 AlGpio_Hal_EnablePinSync(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
-    SyncReg = AlGpio_ll_GetSyncEnable(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
+    SyncReg = AlGpio_ll_GetSync(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
     if(SyncReg != (AL_U32)0) {
         SyncReg |= (BIT(PinNumber));
     } else {
@@ -862,7 +862,7 @@ static AL_S32 AlGpio_Hal_EnablePinSync(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
  * @param  Pin
  * @return AL_BOOL
  */
-static AL_BOOL AlGpio_Hal_GetPinSyncEnable(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
+static AL_BOOL AlGpio_Hal_GetPinSync(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
 {
     AL_U32 Bank = 0;
     AL_U32 PinNumber = 0;
@@ -871,7 +871,7 @@ static AL_BOOL AlGpio_Hal_GetPinSyncEnable(AL_GPIO_HalStruct *Handle, AL_U32 Pin
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
-    SyncReg = AlGpio_ll_GetSyncEnable(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
+    SyncReg = AlGpio_ll_GetSync(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
     return ((SyncReg & (BIT(PinNumber))) == (AL_U32)0 ? (AL_U32)AL_FALSE : (AL_U32)AL_TRUE);
 }
 

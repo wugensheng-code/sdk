@@ -47,12 +47,12 @@ AL_S32 AlGpio_Hal_Ctl_LED_Example()
 
     /* 3、Test Gpio polling */
     AlGpio_Hal_WritePin(GPIO, LED, 0x0);
-    LedValue = AlGpio_Hal_ReadPinFromDR(GPIO, LED);
+    LedValue = AlGpio_Hal_ReadPinOutput(GPIO, LED);
     AL_LOG(AL_LOG_LEVEL_INFO, "GPIO led value is 0x%x", LedValue);
 
     while(1)
     {
-        KeyValue = AlGpio_Hal_ReadPinFromEXT(GPIO, KEY);
+        KeyValue = AlGpio_Hal_ReadPinInput(GPIO, KEY);
         if(KeyValue == 0){
             AlSys_MDelay(AL_GPIO_DELAY_20MS);
             if (KeyValue == 0) {
