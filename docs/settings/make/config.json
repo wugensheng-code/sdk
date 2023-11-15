@@ -1,0 +1,19 @@
+{
+    "ARMv8_STATE": {"Name": "ARMv8_STATE", "Value": "64", "Default": "64","Type": "integer","Description": "The ARMv8_STATE(64 or 32)","permit":true},
+    "ARMv8_EL": {"Name": "ARMv8_EL", "Value": "EL3", "Default": "EL3","Type": "char","Description": "The ARMv8_EL(EL1 or EL3)","permit":true},
+    "ARMv8_SECURE": {"Name": "ARMv8_SECURE", "Value": "SECURE", "Default": "SECURE","Type": "char","Description": "ARMv8_SECURE(SECURE or NONSECURE)","permit":true},
+    "ARMv8_CORE": {"Name": "ARMv8_CORE", "Value": "MASTER", "Default": "MASTER","Type": "char","Description": "ARMv8_CORE(MASTER or SLAVE)","permit":true},
+	
+    "VERBOSE": {"Name": "VERBOSE", "Value": "0", "Default": "0","Type": "integer","Description": "V=1, display compiling message in verbose including compiling options V=0, less info ","permit":true},
+
+    "SILENT": {"Name": "SILENT", "Value": "0", "Default": "0","Type": "integer","Description": "If SILENT=1, it will not display any compiling messsage","permit":true},
+
+    "PFLOAT": {"Name": "PFLOAT", "Value": "0", "Default": "0","Type": "integer","Description": "If FLOAT=1, it will enable float point print when using nano newlib","permit":true},
+
+    "NEWLIB": {"Name": "NEWLIB", "Value": "nano", "Default": "nano","Type": "char","Description": "If NEWLIB=nano, it will use nano newlib, otherwise it will use normal newlib","permit":true},
+
+    "NOGC": {"Name": "NOGC", "Value": "0", "Default": "0","Type": "integer","Description": "If NOGC=1, it will not gc any sections during compiling to save code size","permit":true},
+
+    "CODE_READONLY": {"Name": "CODE_READONLY", "Value": "0", "Default": "0","Type": "integer","Description": "code readonly option","permit":true}
+
+}

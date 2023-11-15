@@ -1,0 +1,46 @@
+{
+    "RT-Thread Kernel": {
+        "Name": "RT-Thread Kernel", "Value": "", "Default": "","Type": "","Description": "RT-Thread Kernel config","permit":true,
+        "sub_options": {
+            "RT_NAME_MAX":{"Name": "RT_NAME_MAX", "Value": "12", "Default": "12","Type": "integer","Description": "Set the maximal size of this object name","permit":false},
+            "RT_ALIGN_SIZE": {"Name": "RT_ALIGN_SIZE", "Value": "64", "Default": "64","Type": "integer","Description": "Alignment size for CPU architecture data access","permit":false},
+            "RT_THREAD_PRIORITY_MAX": {"Name": "RT_THREAD_PRIORITY_MAX", "Value": "32", "Default": "32","Type": "integer","Description": "Set the thread priority","permit":false},
+            "RT_TICK_PER_SECOND": {"Name": "RT_TICK_PER_SECOND", "Value": "1000", "Default": "1000","Type": "integer","Description": "Tick frequency, Hz","permit":true},
+            "RT_IDLE_HOOK_LIST_SIZE": {"Name": "RT_IDLE_HOOK_LIST_SIZE", "Value": "4", "Default": "4","Type": "integer","Description": "The max size of idle hook list","permit":true},
+            "IDLE_THREAD_STACK_SIZE": {"Name": "IDLE_THREAD_STACK_SIZE", "Value": "2048", "Default": "2048","Type": "integer","Description": "The stack size of idle thread","permit":true},
+            "RT_TIMER_THREAD_PRIO": {"Name": "RT_TIMER_THREAD_PRIO", "Value": "4", "Default": "4","Max": "32","Type": "integer","Description": "The priority level value of timer thread","permit":true},
+            "RT_TIMER_THREAD_STACK_SIZE": {"Name": "RT_TIMER_THREAD_STACK_SIZE", "Value": "1024", "Default": "1024","Type": "integer","Description": "The stack size of timer thread","permit":true}
+        }
+    },
+
+    "RT-Thread Components": {
+        "Name": "RT-Thread Components", "Value": "", "Default": "","Type": "","Description": "RT-Thread Components Config","permit":true,
+        "sub_options": {
+            "RT_MAIN_THREAD_STACK_SIZE": {"Name": "RT_MAIN_THREAD_STACK_SIZE", "Value": "2048", "Default": "2048","Type": "integer","Description": "Set main thread stack size","permit":true},
+            "RT_MAIN_THREAD_PRIORITY": {"Name": "RT_MAIN_THREAD_PRIORITY", "Value": "10", "Default": "10","Type": "integer","Description": "Set main thread priority","permit":true}, 
+            "FINSH_THREAD_NAME": {"Name": "FINSH_THREAD_NAME", "Value": "tshell", "Default": "tshell","Type": "char","Description": "The msh thread name","permit":true},
+            "FINSH_THREAD_PRIORITY": {"Name": "FINSH_THREAD_PRIORITY", "Value": "20", "Default": "20","Max": "32","Type": "integer","Description": "The priority level value of thread","permit":true},
+            "FINSH_THREAD_STACK_SIZE": {"Name": "FINSH_THREAD_STACK_SIZE", "Value": "4096", "Default": "4096","Type": "integer","Description": "The stack size for thread","permit":true},
+            "FINSH_HISTORY_LINES": {"Name": "FINSH_HISTORY_LINES", "Value": "5", "Default": "5","Type": "integer","Description": "The command history line number","permit":true},
+            "FINSH_CMD_SIZE": {"Name": "FINSH_CMD_SIZE", "Value": "80", "Default": "80","Type": "integer","Description": "The command line size for shell","permit":true},
+            "FINSH_ARG_MAX": {"Name": "FINSH_ARG_MAX", "Value": "10", "Default": "10","Type": "integer","Description": "The number of arguments for a shell command","permit":true}
+        }
+    },
+
+    "C/C++ and POSIX layer":{
+        "Name": "C/C++ and POSIX layer", "Value":"", "Default": "","Type": "","Description": "C/C++ and POSIX layer Config","permit":true,
+        "sub_options":{
+            "RT_LIBC_DEFAULT_TIMEZONE": {"Name": "RT_LIBC_DEFAULT_TIMEZONE", "Value": "8", "Default": "8","Type": "integer","Description": "Set the default time zone (UTC+)","permit":false}
+        }
+    },
+
+    "Utilities":{
+        "Name": "Utilities", "Value": "", "Default": "","Type": "","Description": "Utilities Config","permit":true,
+        "sub_options":{
+            "UTEST_THR_STACK_SIZE": {"Name": "UTEST_THR_STACK_SIZE", "Value": "4096", "Default": "4096","Type": "integer","Description": "The utest thread stack size","permit":true},
+            "UTEST_THR_PRIORITY": {"Name": "UTEST_THR_PRIORITY", "Value": "20", "Default": "20","Type": "integer","Description": "The utest thread priority","permit":true}
+        }
+    }
+
+
+}
