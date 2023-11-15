@@ -72,7 +72,7 @@ __STATIC_FORCEINLINE void enable_fiq(void)
 __STATIC_FORCEINLINE void enable_all_intr(void)
 {
     __COMPILER_BARRIER();
-    ARCH_SYSREG_WRITE_CONST(daifclr, DAIF_IRQ_BIT | DAIF_FIQ_BIT);
+    ARCH_SYSREG_WRITE_CONST(daifclr, DAIF_IRQ_BIT | DAIF_FIQ_BIT | DAIF_ABT_BIT);
     ISB();
 }
 
