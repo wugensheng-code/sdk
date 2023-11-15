@@ -58,11 +58,10 @@ AL_S32 main(AL_VOID)
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Uart blocked test failed\r\n");
         return Ret;
+    } else {
+        AL_LOG(AL_LOG_LEVEL_INFO, "Uart blocked test success\r\n");
+        return Ret;
     }
-
-    AL_LOG(AL_LOG_LEVEL_INFO, "Uart blocked test success\r\n");
-
-    return Ret;
 }
 
 static AL_S32 AlUart_Test_RecvAndSendBlock(AL_VOID)
@@ -89,6 +88,7 @@ static AL_S32 AlUart_Test_RecvAndSendBlock(AL_VOID)
         if (Ret == AL_OK) {
             Ret = AlUart_Hal_SendDataBlock(UartHandle, Data, RecvSize, AL_UART_TIME_OUT_MS);
             if (Ret == AL_OK) {
+                AL_LOG(AL_LOG_LEVEL_INFO, "\r\n");
                 return AL_OK;
             } else {
                 return Ret;

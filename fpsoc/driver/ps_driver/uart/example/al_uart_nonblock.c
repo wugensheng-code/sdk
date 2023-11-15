@@ -58,11 +58,10 @@ AL_S32 main(AL_VOID)
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Uart Nonblocked test failed\r\n");
         return Ret;
+    } else {
+        AL_LOG(AL_LOG_LEVEL_INFO, "Uart Nonblocked test success\r\n");
+        return Ret;
     }
-
-    AL_LOG(AL_LOG_LEVEL_INFO, "Uart Nonblocked test success\r\n");
-
-    return Ret;
 }
 
 static AL_S32 AlUart_Test_RecvAndSendNonBlock(AL_VOID)
@@ -92,12 +91,12 @@ static AL_S32 AlUart_Test_RecvAndSendNonBlock(AL_VOID)
         while (AlUart_Dev_IsRxBusy(UartHandle->Dev));
 
         Ret = AlUart_Hal_SendData(UartHandle, Data, UartHandle->Dev.RecvBuffer.HandledCnt);
-        if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "AlUart_Hal_SendData Error\r\n");
+        if (Ret == AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_INFO, "\r\n");
+            return AL_OK;
+        } else {
             return Ret;
         }
-        AL_LOG(AL_LOG_LEVEL_INFO, "\r\n");
     }
-
 
 }

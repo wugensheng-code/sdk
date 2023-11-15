@@ -174,6 +174,8 @@ AL_VOID AlUart_Dev_ClrRxBusy(AL_UART_DevStruct *Uart)
 AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct *InitConfig)
 {
     AL_UART_HwConfigStruct *UartHwConfig = AL_NULL;
+    AL_U32 UartDivisor;
+    AL_U32 i;
 
     AL_ASSERT((Uart != AL_NULL && DevId < AL_UART_NUM_INSTANCE), AL_UART_ERR_ILLEGAL_PARAM);
 
@@ -211,32 +213,50 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct
     Uart->IntrNum      = UartHwConfig->IntrNum;
     Uart->InputClockHz = UartHwConfig->InputClockHz;
 
-    /* In the initialization stage ensure that no characters during this time period are received/transmitted */
-    /* step 1. Set DLL and DLH to 0 */
+    /* Initialize UART */
+    AlUart_ll_DisableAllIntr(Uart->BaseAddr);
+    AlUart_ll_ResetTxFifo(Uart->BaseAddr);
+    AlUart_ll_ResetRxFifo(Uart->BaseAddr);
+
     AlUart_ll_ResetDllDlhReg(Uart->BaseAddr);
 
-    /* step 2 & step 3 */
-    AlUart_ll_SetDataWidth(Uart->BaseAddr, Uart->Configs.WordLength);
-    AlUart_ll_SetParity(Uart->BaseAddr, Uart->Configs.Parity);
-    AlUart_ll_SetStopBitsLength(Uart->BaseAddr, Uart->Configs.StopBits);
+    if (AlUart_ll_IsUartBusy(Uart->BaseAddr)) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Al uart cannot set baudrate written while the UART is busy");
+    } else {
+        AlUart_ll_SetBaudRate(Uart->BaseAddr, Uart->Configs.BaudRate, Uart->InputClockHz);
+    }
 
-    /* step 4. set the FCR register to enable FIFOs */
-    AlUart_ll_SetFifo(Uart->BaseAddr, AL_FUNC_ENABLE);
-    AlUart_ll_ResetTransFifo(Uart->BaseAddr);
-    AlUart_ll_ResetRecvFifo(Uart->BaseAddr);
-    AlUart_ll_SetTxFifoThr(Uart->BaseAddr, AL_UART_TxFIFO_HALF_FULL);
-    AlUart_ll_SetRxFifoThr(Uart->BaseAddr, AL_UART_RxFIFO_HALF_FULL);
+    /*
+     * Need to wait at least x cycles after the baud rate is set where
+     * x = 32 * uart_divisor.  Assuming here that the uart clock is ~10
+     * times slower than the processor clock.
+     */
+    UartDivisor = ((Uart->InputClockHz >> 4) / Uart->Configs.BaudRate);
+    for(i = 0; i < (32 * UartDivisor * 10); i++);
 
-    /* step 5. set IER register to enable interrupts */
-    AlUart_ll_SetLineIntr(Uart->BaseAddr, AL_FUNC_ENABLE);
-    AlUart_ll_SetThreIntr(Uart->BaseAddr, AL_FUNC_ENABLE);
+    if (AlUart_ll_IsUartBusy(Uart->BaseAddr)) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Al uart cannot set line control written while the UART is busy");
+    } else {
+        AlUart_ll_SetDataWidth(Uart->BaseAddr, Uart->Configs.WordLength);
+        AlUart_ll_SetParity(Uart->BaseAddr, Uart->Configs.Parity);
+        AlUart_ll_SetStopBitsLength(Uart->BaseAddr, Uart->Configs.StopBits);
+    }
+
+    AlUart_ll_EnableFifo(Uart->BaseAddr, AL_TRUE);
+    AlUart_ll_SetTxFifoThre(Uart->BaseAddr, AL_UART_TxFIFO_HALF_FULL);
+    AlUart_ll_SetRxFifoThre(Uart->BaseAddr, AL_UART_RxFIFO_HALF_FULL);
+
+    /* Enable programmable THRE mode*/
+    AlUart_ll_EnableThreIntr(Uart->BaseAddr, AL_TRUE);
+
+    /* Enable Rx Line Interrupt*/
+    AlUart_ll_EnableLineIntr(Uart->BaseAddr, AL_TRUE);
+
+    /* Disable Tx and Rx interrupt*/
     AlUart_ll_SetTxIntr(Uart->BaseAddr, AL_FUNC_DISABLE);
     AlUart_ll_SetRxIntr(Uart->BaseAddr, AL_FUNC_DISABLE);
 
-    /* step 6. Write to the divisor registers DLL and DLH to set the bit rate*/
-    AlUart_ll_SetBaudRate(Uart->BaseAddr, Uart->Configs.BaudRate, Uart->InputClockHz);
-
-    /* step 7. Set AutoFlowControl */
+    /* Set AutoFlowControl */
     if (Uart->Configs.HwFlowCtl) {
         AlUart_ll_SetAutoFlowCtl(Uart->BaseAddr , AL_FUNC_ENABLE);
     }
@@ -248,7 +268,7 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct
 
 AL_VOID AlUart_Dev_SendByte(AL_UART_DevStruct *Uart, AL_S8 Char)
 {
-    while (AlUart_ll_IsTransmitFifoFull(Uart->BaseAddr));
+    while (AlUart_ll_IsTxFifoFull(Uart->BaseAddr));
 
     AlUart_ll_SendByte(Uart->BaseAddr, Char);
 }
@@ -273,7 +293,7 @@ AL_S32 AlUart_Dev_SendDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 S
     AlUart_Dev_SetTxBusy(Uart);
 
     while (HandledCnt < Size) {
-        if (!(AlUart_ll_IsTransmitFifoFull(Uart->BaseAddr))) {
+        if (!(AlUart_ll_IsTxFifoFull(Uart->BaseAddr))) {
             AlUart_ll_SendByte(Uart->BaseAddr, Data[HandledCnt]);
             HandledCnt ++;
         }
@@ -312,6 +332,7 @@ AL_S32 AlUart_Dev_RecvDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 S
             HandledCnt ++;
         }
     }
+
     AlUart_Dev_ClrRxBusy(Uart);
 
     return AL_OK;
@@ -485,7 +506,7 @@ static AL_VOID AlUart_Dev_SendDataHandler(AL_UART_DevStruct *Uart)
         }
 
     } else {
-        while (!(AlUart_ll_IsTransmitFifoFull(Uart->BaseAddr)) &&
+        while (!(AlUart_ll_IsTxFifoFull(Uart->BaseAddr)) &&
             (Uart->SendBuffer.HandledCnt < Uart->SendBuffer.RequestedCnt)) {
             AlUart_ll_SendByte(Uart->BaseAddr, Uart->SendBuffer.BufferPtr[Uart->SendBuffer.HandledCnt]);
             Uart->SendBuffer.HandledCnt ++;

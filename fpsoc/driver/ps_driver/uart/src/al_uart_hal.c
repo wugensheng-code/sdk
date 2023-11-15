@@ -44,7 +44,7 @@ static AL_VOID AlUart_Hal_DefEventHandler(AL_UART_EventStruct UartEvent, AL_VOID
         break;
 
     case AL_UART_EVENT_MODEM_STATUS_INTR:
-        AL_LOG(AL_LOG_LEVEL_INFO, "Get AL_UART_MODEM_STATUS_INTR \r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "Uart experienced a modem status interrupt. \r\n");
         break;
 
     case AL_UART_EVENT_READY_TO_RECEIVE:
@@ -58,7 +58,7 @@ static AL_VOID AlUart_Hal_DefEventHandler(AL_UART_EventStruct UartEvent, AL_VOID
     }
 
     if (UartEvent.Events & (AL_UART_EVENT_PARITY_ERR | AL_UART_EVENT_FRAMING_ERR | AL_UART_EVENT_BREAK_INTR)) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Get uart event: 0x%x", AL_UART_EVENTS_TO_ERRS(AL_UART_EVENT_PARITY_ERR));
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Uart receive error 0x%x .\r\n", AL_UART_EVENTS_TO_ERRS(UartEvent.Events));
         Ret = AlOsal_Mb_Send(&Handle->RxEventQueue, &UartEvent);
     }
 
