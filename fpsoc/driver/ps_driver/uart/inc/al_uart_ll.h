@@ -77,7 +77,8 @@ static inline AL_VOID AlUart_ll_ResetUart1Bus()
 
 static inline AL_VOID AlUart_ll_DisableAllIntr(AL_REG BaseAddr)
 {
-    AL_REG32_SET_BITS(BaseAddr + UART__IER_DLH__OFFSET, UART__IER_DLH__ERBFI__DLH__SHIFT, 4, 0xF);
+    AL_U32 IntrStatus = AL_REG32_READ(BaseAddr + UART__IER_DLH__OFFSET) & (~0x0f);
+    AL_REG32_WRITE(BaseAddr + UART__IER_DLH__OFFSET, IntrStatus);
 }
 
 static inline AL_VOID AlUart_ll_ResetDllDlhReg(AL_REG BaseAddr)

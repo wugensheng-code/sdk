@@ -226,14 +226,6 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct
         AlUart_ll_SetBaudRate(Uart->BaseAddr, Uart->Configs.BaudRate, Uart->InputClockHz);
     }
 
-    /*
-     * Need to wait at least x cycles after the baud rate is set where
-     * x = 32 * uart_divisor.  Assuming here that the uart clock is ~10
-     * times slower than the processor clock.
-     */
-    UartDivisor = ((Uart->InputClockHz >> 4) / Uart->Configs.BaudRate);
-    for(i = 0; i < (32 * UartDivisor * 10); i++);
-
     if (AlUart_ll_IsUartBusy(Uart->BaseAddr)) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Al uart cannot set line control written while the UART is busy");
     } else {
