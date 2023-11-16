@@ -239,7 +239,7 @@
                 "description": "LIB_OPENAMP",
 				"depends": [
 					"3rdparty/lib/open-amp",
-					"LIB_METAL_V1_0"
+					"LIB_METAL"
 				]
 			}
 		}
