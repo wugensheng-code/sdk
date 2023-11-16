@@ -54,7 +54,7 @@ class Bsp_tool(object):
 
         try:
             logger.info(f'======> Start creating bsp: project name: {proj_name} os type: {os_type}')
-            subprocess.run(f'./bsp_tool "create_platform_project -projName {proj_name} -location {self.location} -proc {proc_type} -os {os_type}"',
+            subprocess.run(f'./bsp_tool "create_platform_project -projName {proj_name} -location {self.location} -proc {proc_type} -os {os_type} -hpf {hpf_path}"',
                 shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True)
             subprocess.run(f'./bsp_tool "create_default_mss -mssfile {self.location}/{proj_name}/system.mss -proc {proc_type} -os {os_type}"',
                 shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True)
@@ -118,7 +118,7 @@ def main():
     with open(f'{args.bsp_resource_path}/docs/depend.json') as f:
         depend = json.load(f)
         for i in depend['app'].values():
-            os_type = i['supportedOS'][0]
+            os_type = i['1.0']['supportedOS'][0]
             k = i['1.0']['name']
             ret = bsp_tool.create_app_and_make(proj_name=f'test_app_{k}', app_name=f'{k}', bspLoc=f'test_platform_{os_type}')
             statistics.append({k:ret})
