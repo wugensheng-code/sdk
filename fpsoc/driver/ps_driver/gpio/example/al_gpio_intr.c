@@ -13,8 +13,9 @@
  */
 #include "al_gpio_hal.h"
 
-#define PS_KEY 10
-#define PL_KEY 54
+#define PS_KEY_1 10
+#define PS_KEY_2 11
+#define PL_KEY   54
 #define AL_GPIO_DEVICE_ID 0
 
 
@@ -39,8 +40,10 @@ AL_S32 AlGpio_Hal_Intr_Example()
     }
 
     /* 3、Test intr */
-    AlGpio_Hal_IntrCfg(GPIO, PS_KEY, GPIO_INTR_TYPE_LEVEL_HIGH);
-    AlGpio_Hal_IntrCfg(GPIO, PL_KEY, GPIO_INTR_TYPE_EDGE_FALLING);
+    AlGpio_Hal_IntrCfg(GPIO, PS_KEY_1, GPIO_INTR_TYPE_EDGE_FALLING);
+    AlGpio_Hal_IntrCfg(GPIO, PS_KEY_2, GPIO_INTR_TYPE_EDGE_RISING);
+    // AlGpio_Hal_IntrCfg(GPIO, PL_KEY, GPIO_INTR_TYPE_EDGE_FALLING);
+    AlSys_MDelay(5000);
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     while(1);

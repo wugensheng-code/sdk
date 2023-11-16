@@ -33,17 +33,6 @@ typedef enum
     GPIO_INTR_TYPE_LEVEL_LOW      =  0x04,
 } AL_GPIO_IntrEnum;
 
-typedef enum
-{
-    AL_GPIO_Event      =  0x1,
-} AL_GPIO_EventIdEnum;
-
-typedef struct
-{
-    AL_GPIO_EventIdEnum     Events;
-} AL_GPIO_EventStruct;
-
-typedef AL_VOID (*AL_GPIO_EventCallBack)(AL_GPIO_EventStruct GpioEvent, AL_VOID *CallbackRef);
 
 typedef enum
 {
@@ -101,6 +90,16 @@ typedef enum
     MAX_PIN_NUMBER_IN_BANK_2   =   (AL_U32)85,
     MAX_PIN_NUMBER_IN_BANK_3   =   (AL_U32)117,
 } AL_GPIO_PinNumEnum;
+
+
+typedef struct
+{
+    AL_GPIO_BankEnum        Bank;
+    AL_U32                  EventData;
+} AL_GPIO_EventStruct;
+
+typedef AL_VOID (*AL_GPIO_EventCallBack)(AL_GPIO_EventStruct GpioEvent, AL_VOID *CallbackRef);
+
 /**************************** Exported Typedef ******************************/
 
 typedef struct

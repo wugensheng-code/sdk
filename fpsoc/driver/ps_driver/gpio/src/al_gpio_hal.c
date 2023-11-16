@@ -23,7 +23,7 @@ extern AL_GPIO_HwConfigStruct AlGpio_HwCfg[AL_GPIO_NUM_INSTANCE];
  */
 static AL_VOID AlGpio_Hal_DefEventCallBack(AL_GPIO_EventStruct GpioEvent, AL_VOID *CallbackRef)
 {
-
+    AL_LOG(AL_LOG_LEVEL_INFO, "Bank 0x%x: IntrStatus is 0x%x", GpioEvent.Bank, GpioEvent.EventData);
 }
 
 /**
@@ -910,15 +910,15 @@ static AL_VOID AlGpio_Hal_IntrHandler(AL_VOID *Instance)
 
     for(Bank = 0; Bank < GPIO_MAX_BANKS; Bank ++) {
         IntrStatus = AlGpio_Hal_GetBankIntrStatus(Handle, Bank);
-        AL_LOG(AL_LOG_LEVEL_INFO, "Bank 0x%x: IntrStatus is 0x%x", Bank, IntrStatus);
         if (Handle->IntrBank & BIT(Bank)) {
             if(Handle->EventCallBack) {
                 AL_GPIO_EventStruct GpioEvent = {
-                    .Events  = AL_GPIO_Event,
+                    .Bank      = Bank,
+                    .EventData = IntrStatus
                 };
                 Handle->EventCallBack(GpioEvent, Handle->EventCallBackRef);
 
-                AlGpio_Hal_ClrBankIntr(Handle, Bank, AL_GPIO_ALL_ENABLE);
+                AlGpio_Hal_ClrBankIntr(Handle, Bank, IntrStatus);
                 /* In edge interrupt mode, GPIO__EOI Register need to be set 0 for the next interrupt. */
                 AlGpio_Hal_ClrBankIntr(Handle, Bank, AL_GPIO_DISABLE);
             }
