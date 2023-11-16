@@ -29,13 +29,13 @@ int AlGpio_Hal_Test()
 
     /* 2、Test LED function */
     AlGpio_Hal_WritePin(GPIO, LED, 0x0);
-    AlGpio_Hal_ReadDRPin(GPIO, LED);
+    AlGpio_Hal_ReadPinOutput(GPIO, LED);
     AlGpio_Hal_WritePin(GPIO, LED, 0x1);
-    AlGpio_Hal_ReadDRPin(GPIO, LED);
+    AlGpio_Hal_ReadPinOutput(GPIO, LED);
 
     /* 3、Test InputRead EOI register */
     for(int i = 0;i < 15;i++) {
-        AL_LOG(AL_LOG_LEVEL_INFO, "GPIO IntrPin input data value is %x", AlGpio_Hal_ReadPin(GPIO,IntrPin));
+        AL_LOG(AL_LOG_LEVEL_INFO, "GPIO IntrPin input data value is %x", AlGpio_Hal_ReadPinInput(GPIO,IntrPin));
     }
 
     /* 4、Test intr */
