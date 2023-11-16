@@ -119,15 +119,15 @@ def main():
         depend = json.load(f)
         for i in depend['app'].values():
             os_type = i['supportedOS'][0]
-            k = i['name']
+            k = i['1.0']['name']
             ret = bsp_tool.create_app_and_make(proj_name=f'test_app_{k}', app_name=f'{k}', bspLoc=f'test_platform_{os_type}')
             statistics.append({k:ret})
 
 
         for i in depend['ps_driver_app'].values():
-            for j in i.values():
-                os_type = j['supportedOS'][0]
-                k = j['name']
+            for c in i['1.0'].values():
+                os_type = c['supportedOS'][0]
+                k = c['name']
                 ret = bsp_tool.create_app_and_make(proj_name=f'test_app_{k}', app_name=f'{k}', bspLoc=f'test_platform_{os_type}')
                 statistics.append({k:ret})
 
