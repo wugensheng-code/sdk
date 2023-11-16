@@ -189,8 +189,8 @@ int demo(void)
                 (uint16_t)IIS_TASK_STACK_SIZE,
                 (rt_ubase_t)IIS_TASK_PRIORITY,
                 THREAD_TICK);
-    if (Task12Iis_Handler != RT_NULL)
-        rt_thread_startup(Task12Iis_Handler);
+    // if (Task12Iis_Handler != RT_NULL)
+    //     rt_thread_startup(Task12Iis_Handler);
 
     Task13Dma_Handler = rt_thread_create((const char*)"Dma", task13_Dma, (void*)NULL,
                 (uint16_t)DMA_TASK_STACK_SIZE,

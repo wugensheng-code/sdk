@@ -27,7 +27,7 @@
     #define CLI_THREAD_PRIORITY 15
 #endif
 #ifndef CLI_THREAD_STACK_SIZE
-    #define CLI_THREAD_STACK_SIZE 2048
+    #define CLI_THREAD_STACK_SIZE 4096
 #endif
 
 void rt_hw_board_init(void);
