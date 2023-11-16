@@ -1,0 +1,28 @@
+# CHANGE LOG
+
+## FD_2023.11_Alpha1.2 (2023-11-16)
+
+### Fix
+
+- 在 aarch64 启动的过程中使能同步异常。
+
+- 移除 uart 初始化过程中的延时操作，以避免 openamp uart 没有打印。
+
+- 移除 rt-thread 中原生的 gic 代码，统一为 baremetal 的 gic 初始化操作，以避免 gic 初始化后的状态混乱。
+
+- 增大 rt-thread 中 cli thread 的栈空间，以避免栈溢出。
+
+- 修复 CAN 驱动中存在的 DMA 传输问题：
+
+- 将 Arm 核的启动符号固定到起始地址。
+
+- 修复 gpio 驱动的中断服务函数中的部分逻辑混乱的问题。
+
+### Feature
+
+- 添加 openamp 在 freertos 上运行的 demo。
+
+- 添加 openamp 在 rt-thread 上运行的 demo。
+
+- 添加 readme
+
