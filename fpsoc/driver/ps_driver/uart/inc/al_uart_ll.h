@@ -183,7 +183,7 @@ static inline AL_BOOL AlUart_ll_IsRxDataReady(AL_REG BaseAddr)
 
 static inline AL_BOOL AlUart_ll_GetThreState(AL_REG BaseAddr)
 {
-    AL_REG32_GET_BIT(BaseAddr + UART__IER_DLH__OFFSET, UART__IER_DLH__PTIME__DLH__SHIFT);
+    return AL_REG32_GET_BIT(BaseAddr + UART__IER_DLH__OFFSET, UART__IER_DLH__PTIME__DLH__SHIFT);
 }
 
 /* If the 'THRE' mode is turned on, this function indicates
