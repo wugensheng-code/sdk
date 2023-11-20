@@ -430,7 +430,8 @@ static AL_DMACAHB_ChInitStruct Task14_DmaChConfig = {
 static AL_TTC_TimerInitStruct Ttc_Config = {
     .ClkSrc              = AL_TTC_PCLK,
     .PrescaleVal         = TTC_CLK_PRESACLE,
-    .CountDec            = AL_TTC_CountUp
+    .CountDec            = AL_TTC_CountUp,
+    .EnablePrescale      = AL_TRUE,
 };
 
 static inline AL_VOID AlQspi_rtthread_Reset(AL_QSPI_HalStruct *Handle, AL_U8 *SendData)

@@ -93,7 +93,7 @@ int demo(void)
     ConfigureTimerForRunTimeStates();
 
     Task1Led_Handler = rt_thread_create((const char*)"led", task1_led, (void*)NULL,
-                (uint16_t)GPIO_LED_TASK_STACK_SIZE, 
+                (uint16_t)GPIO_LED_TASK_STACK_SIZE,
                 (rt_ubase_t)GPIO_LED_TASK_PRIORITY,
                 THREAD_TICK);
     if (Task1Led_Handler != RT_NULL)
@@ -130,20 +130,20 @@ int demo(void)
     }
 
     Task2Can_Send_Handler = rt_thread_create((const char*)"can_send", task2_can_send, (void*)NULL,
-                (uint16_t)CAN_SEND_TASK_STACK_SIZE, 
+                (uint16_t)CAN_SEND_TASK_STACK_SIZE,
                 (rt_ubase_t)CAN_SEND_TASK_PRIORITY,
                 THREAD_TICK);
     if (Task2Can_Send_Handler != RT_NULL)
         rt_thread_startup(Task2Can_Send_Handler);
 
-    Task3Can_DmaRecv_Handler = rt_thread_create((const char*)"can_dmarecv", task3_can_dmarecv, (void*)NULL, 
+    Task3Can_DmaRecv_Handler = rt_thread_create((const char*)"can_dmarecv", task3_can_dmarecv, (void*)NULL,
                 (uint16_t)CAN_DMARECV_TASK_STACK_SIZE,
                 (rt_ubase_t)CAN_DMARECV_TASK_PRIORITY,
                 THREAD_TICK);
     if (Task3Can_DmaRecv_Handler != RT_NULL)
         rt_thread_startup(Task3Can_DmaRecv_Handler);
 
-    Task4Wdt_Handler = rt_thread_create((const char*)"wdt", task4_wdt, (void*)NULL, 
+    Task4Wdt_Handler = rt_thread_create((const char*)"wdt", task4_wdt, (void*)NULL,
                 (uint16_t)WDT_TASK_STACK_SIZE,
                 (rt_ubase_t)WDT_TASK_PRIORITY,
                 THREAD_TICK);
@@ -914,7 +914,7 @@ AL_VOID ConfigureTimerForRunTimeStates(AL_VOID)
     AlTtc_Hal_SetIntervalMaxVal(TtcHandle, TTC_INTERVAL_MAX_VALUE);
     AlTtc_Hal_EnableMatchMode(TtcHandle, AL_TRUE);
     AlTtc_Hal_SetMatchVal(TtcHandle, AL_TTC_Match1, TTC_MATCH_VALUE);
-    AlTtc_Hal_EnableIntr(TtcHandle, AL_TTC_IntrMatch1);
+    AlTtc_Hal_EnableIntr(TtcHandle, AL_TTC_IntrMatch1, AL_TRUE);
     AlTtc_Hal_EnableCounter(TtcHandle, AL_TRUE);
 
     rtthreadRunTimeTicks = 0;

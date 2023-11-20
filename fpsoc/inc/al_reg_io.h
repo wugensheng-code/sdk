@@ -45,15 +45,15 @@ extern "C" {
 } while (0)
 
 #define AL_REG16_SET_BIT(reg_addr, shift, value)         do {                                      \
-    AL_REG16_WRITE(reg_addr, ((AL_REG16_READ(reg_addr)) & (~BIT(shift))) | ((value) << (shift))); \
+    AL_REG16_WRITE(reg_addr, ((AL_REG16_READ(reg_addr)) & (~BIT(shift))) | (((value) << (shift)) & BIT(shift))); \
 } while (0)
 
 #define AL_REG32_SET_BIT(reg_addr, shift, value)         do {                                      \
-    AL_REG32_WRITE(reg_addr, ((AL_REG32_READ(reg_addr)) & (~BIT(shift))) | ((value) << (shift))); \
+    AL_REG32_WRITE(reg_addr, ((AL_REG32_READ(reg_addr)) & (~BIT(shift))) | (((value) << (shift)) & BIT(shift))); \
 } while (0)
 
 #define AL_REG64_SET_BIT(reg_addr, shift, value)         do {                                      \
-    AL_REG64_WRITE(reg_addr, ((AL_REG64_READ(reg_addr)) & (~BIT(shift))) | ((value) << (shift))); \
+    AL_REG64_WRITE(reg_addr, ((AL_REG64_READ(reg_addr)) & (~BIT(shift))) | (((value) << (shift)) & BIT(shift))); \
 } while (0)
 
 #ifdef __cplusplus

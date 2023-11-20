@@ -227,6 +227,11 @@ void Enablepinmux1(void)
     *((volatile AL_U32 *)(0xf880392c)) = 0x121702;
     *((volatile AL_U32 *)(0xf8803934)) = 0x121702;
     *((volatile AL_U32 *)(0xf880393c)) = 0x121702;
+
+    /* ttc1-timer0 on demo board */
+    // *(AL_U32 *)(0xf88030a0u) =0x7;
+    // *(AL_U32 *)(0xf88030a4u) =0x7;
+    // *(AL_U32 *)(0xf880341cu) =0x1;
 }
 
 void Enablepinmux1_mode2(void)

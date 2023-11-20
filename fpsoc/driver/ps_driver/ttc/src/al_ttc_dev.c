@@ -29,9 +29,10 @@ AL_TTC_HwConfigStruct *AlTtc_Dev_LookupConfig(AL_U32 DevId)
 /************************** Constant Definitions *****************************/
 
 static AL_TTC_TimerInitStruct TtcDefInitConfigs = {
+    .CountDec            = AL_TTC_CountUp,
     .ClkSrc              = AL_TTC_PCLK,
+    .EnablePrescale      = AL_TRUE,
     .PrescaleVal         = 2,
-    .CountDec            = AL_TTC_CountUp
 };
 
 /************************** Function Prototypes ******************************/
@@ -52,170 +53,18 @@ AL_S32 AlTtc_Dev_Init(AL_TTC_DevStruct *Ttc, AL_U32 DevId, AL_TTC_TimerInitStruc
     Ttc->InputClockHz        = TtcHwConfig->InputClockHz;
     Ttc->TimerInitConfigs    = (InitConfig == AL_NULL) ? TtcDefInitConfigs : *InitConfig;
 
-    AlTtc_ll_DisbaleCounter(Ttc->BaseAddr);
-    AlTtc_ll_EnbalePresacle(Ttc->BaseAddr);
-    AlTtc_ll_SetClkSrc(Ttc->BaseAddr, Ttc->TimerInitConfigs.ClkSrc);
-    AlTtc_ll_SetPresacleVal(Ttc->BaseAddr, Ttc->TimerInitConfigs.PrescaleVal);
-    AlTtc_ll_EnbaleOverflowMode(Ttc->BaseAddr);
-    AlTtc_ll_DisableWaveOutput(Ttc->BaseAddr);
-    AlTtc_ll_DisableAllIntr(Ttc->BaseAddr);
-    AlTtc_ll_DisableEventTimerMode(Ttc->BaseAddr);
     AlTtc_ll_ResetCounter(Ttc->BaseAddr);
-
-    return AL_OK;
-}
-
-AL_VOID AlTtc_Dev_EnableOverflowMode(AL_TTC_DevStruct *Ttc)
-{
     AlTtc_ll_EnbaleOverflowMode(Ttc->BaseAddr);
-}
-
-AL_VOID AlTtc_Dev_EnableIntervalMode(AL_TTC_DevStruct *Ttc)
-{
-    AlTtc_ll_EnbaleIntervalMode(Ttc->BaseAddr);
-}
-
-AL_S32 AlTtc_Dev_SetIntervalMaxVal(AL_TTC_DevStruct *Ttc, AL_U16 Value)
-{
-    AL_ASSERT((Ttc != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    AlTtc_ll_SetIntervalMaxVal(Ttc->BaseAddr, Value);
+    AlTtc_ll_SetClkSrc(Ttc->BaseAddr, Ttc->TimerInitConfigs.ClkSrc);
+    AlTtc_ll_EnbaleCounter(Ttc->BaseAddr, AL_FALSE);
+    AlTtc_ll_DisableAllIntr(Ttc->BaseAddr);
+    AlTtc_ll_EnableWaveOutput(Ttc->BaseAddr, AL_FALSE);
+    AlTtc_ll_EnableEventTimerMode(Ttc->BaseAddr, AL_FALSE);
+    AlTtc_ll_EnbalePresacle(Ttc->BaseAddr, Ttc->TimerInitConfigs.EnablePrescale);
+    AlTtc_ll_SetPresacleVal(Ttc->BaseAddr, Ttc->TimerInitConfigs.PrescaleVal);
+    AlTtc_ll_SetCountDec(Ttc->BaseAddr, Ttc->TimerInitConfigs.CountDec);
 
     return AL_OK;
-}
-
-AL_U16 AlTtc_Dev_GetCounterVal(AL_TTC_DevStruct *Ttc)
-{
-    return AltTtc_ll_GetCounterVal(Ttc->BaseAddr);
-}
-
-AL_S32 AlTtc_Dev_EnableMatchMode(AL_TTC_DevStruct *Ttc, AL_BOOL State)
-{
-    AL_ASSERT((Ttc != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    if (State == AL_TRUE) {
-        AlTtc_ll_EnableMatchMode(Ttc->BaseAddr);
-    } else {
-        AlTtc_ll_DisableMatchMode(Ttc->BaseAddr);
-    }
-
-    return AL_OK;
-}
-
-AL_S32 AlTtc_Dev_SetMatchVal(AL_TTC_DevStruct *Ttc, AL_TTC_MatchNumEnum MatchNum, AL_U16 Value)
-{
-    AL_ASSERT((Ttc != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-    AL_ASSERT(MatchNum != AL_TTC_Match1 || MatchNum != AL_TTC_Match2 ||
-              MatchNum != AL_TTC_Match3, AL_TTC_ERR_ILLEGAL_PARAM);
-
-    AlTtc_ll_SetMatchVal(Ttc->BaseAddr, Ttc->DevId, MatchNum, Value);
-
-    return AL_OK;
-}
-
-AL_S32 AlTtc_Dev_EnableEventTimerMode(AL_TTC_DevStruct *Ttc, AL_BOOL State)
-{
-    AL_ASSERT((Ttc != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    if (State == AL_TRUE) {
-        AlTtc_ll_EnableEventTimerMode(Ttc->BaseAddr);
-    } else {
-        AlTtc_ll_DisableEventTimerMode(Ttc->BaseAddr);
-    }
-
-    return AL_OK;
-}
-AL_S32 AlTtc_Dev_SelExtClkEdge(AL_TTC_DevStruct *Ttc, AL_TTC_ClkEdgeEnum ClkEdge)
-{
-    AL_S32 Ret = AL_OK;
-    AL_ASSERT((Ttc != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    if (Ttc->TimerInitConfigs.ClkSrc == AL_TTC_EXTCLK) {
-        AlTtc_ll_SelExtClkEdge(Ttc->BaseAddr, ClkEdge);
-    } else {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Set external clk edge need enable external clk");
-        return AL_TTC_ERR_NOT_SUPPORT;
-    }
-
-    return AL_OK;
-}
-
-
-/*Set the event timer to count the pulse width of high or low levels */
-AL_S32 AlTtc_Dev_SetEventTimerLevel(AL_TTC_DevStruct *Ttc, AL_TTC_LevelEnum Level)
-{
-    AL_ASSERT((Ttc != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    AlTtc_ll_SetEventTimerLevel(Ttc->BaseAddr, Level);
-
-    return AL_OK;
-}
-
-/*wheh event timer is overflow,whether continue counting*/
-AL_S32 AlTtc_Dev_EventTimerOv(AL_TTC_DevStruct *Ttc, AL_BOOL State)
-{
-    AL_ASSERT((Ttc != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    AlTtc_ll_EventTimerOv(Ttc->BaseAddr, State);
-
-    return AL_OK;
-}
-
-AL_U16 AltTtc_Dev_GetEventTimerVal(AL_TTC_DevStruct *Ttc)
-{
-    return AltTtc_ll_GetEventTimerVal(Ttc->BaseAddr);
-}
-
-AL_S32 AlTtc_Dev_SetWaveformPolarity(AL_TTC_DevStruct *Ttc, AL_TTC_ClkEdgeEnum ClkEdge)
-{
-    AL_ASSERT((Ttc != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-    AL_ASSERT((ClkEdge != AL_TTC_Posedge || ClkEdge != AL_TTC_Negedge), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    AlTtc_ll_SetWaveformPolarity(Ttc->BaseAddr, ClkEdge);
-
-    return AL_OK;
-}
-
-AL_S32 AlTtc_Dev_EnableWaveOutput(AL_TTC_DevStruct *Ttc, AL_BOOL State)
-{
-    AL_ASSERT((Ttc != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    if (State == AL_TRUE) {
-        AlTtc_ll_EnableWaveOutput(Ttc->BaseAddr);
-    } else {
-        AlTtc_ll_DisableWaveOutput(Ttc->BaseAddr);
-    }
-
-    return AL_OK;
-}
-
-AL_S32 AlTtc_Dev_EnableCounter(AL_TTC_DevStruct *Ttc, AL_BOOL State)
-{
-    AL_ASSERT((Ttc != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    if (State == AL_TRUE) {
-        AlTtc_ll_EnbaleCounter(Ttc->BaseAddr);
-    } else {
-        AlTtc_ll_DisbaleCounter(Ttc->BaseAddr);
-    }
-
-    return AL_OK;
-}
-
-AL_U32 AlTtc_Dev_EnableIntr(AL_TTC_DevStruct *Ttc, AL_TTC_IntrTypeEnum IntrType)
-{
-    AL_ASSERT((Ttc != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    AlTtc_ll_EnableIntr(Ttc->BaseAddr, IntrType);
-
-    return AL_OK;
-}
-
-AL_U32 AltTtc_Dev_GetIntrType(AL_TTC_DevStruct *Ttc)
-{
-    AL_ASSERT((Ttc != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    return AltTtc_ll_GetIntrtype(Ttc->BaseAddr);
 }
 
 static AL_VOID AlTtc_Dev_IntervalHandler(AL_TTC_DevStruct *Ttc)
@@ -329,14 +178,13 @@ AL_S32 AlTtc_Dev_IoCtl(AL_TTC_DevStruct *Ttc, AL_TTC_IoCtlCmdEnum Cmd, AL_TTC_Io
         break;
     case AL_TTC_IOCTL_GetCounterVal:
         IoctlParam->GetCounterVal = AltTtc_ll_GetCounterVal(Ttc->BaseAddr);
+        break;
     case AL_TTC_IOCTL_GetEventTimerVal:
         IoctlParam->GetEventTimerVal = AltTtc_ll_GetEventTimerVal(Ttc->BaseAddr);
+        break;
     case AL_TTC_IOCTL_EnableWaveOutput:
-        if (IoctlParam->WaveOutputState == AL_TRUE) {
-            AlTtc_ll_EnableWaveOutput(Ttc->BaseAddr);
-        } else {
-            AlTtc_ll_DisableWaveOutput(Ttc->BaseAddr);
-        }
+        AlTtc_ll_EnableWaveOutput(Ttc->BaseAddr, IoctlParam->WaveOutputState);
+        break;
     default:
         AL_LOG(AL_LOG_LEVEL_ERROR, "AL_TTC_ERR_IOCTL_CMD");
         break;

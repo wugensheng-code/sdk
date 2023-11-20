@@ -76,14 +76,9 @@ static inline AL_U16 AltTtc_ll_GetEventTimerVal(AL_REG BaseAddr)
     return AL_REG32_GET_BITS(BaseAddr + TTC__EVENT_REG_1__OFFSET, TTC__EVENT_REG_1__EVENT__SHIFT, TTC__EVENT_REG_1__EVENT__SIZE);
 }
 
-static inline AL_VOID AlTtc_ll_EnableEventTimerMode(AL_REG BaseAddr)
+static inline AL_VOID AlTtc_ll_EnableEventTimerMode(AL_REG BaseAddr, AL_BOOL State)
 {
-    AL_REG32_SET_BIT(BaseAddr + TTC__EVENT_CTRL_1__OFFSET, TTC__EVENT_CTRL_1__E_EN__SHIFT, AL_TRUE);
-}
-
-static inline AL_VOID AlTtc_ll_DisableEventTimerMode(AL_REG BaseAddr)
-{
-    AL_REG32_SET_BIT(BaseAddr + TTC__EVENT_CTRL_1__OFFSET, TTC__EVENT_CTRL_1__E_EN__SHIFT, AL_FALSE);
+    AL_REG32_SET_BIT(BaseAddr + TTC__EVENT_CTRL_1__OFFSET, TTC__EVENT_CTRL_1__E_EN__SHIFT, State);
 }
 
 static inline AL_VOID AlTtc_ll_SetEventTimerLevel(AL_REG BaseAddr, AL_TTC_LevelEnum Level)
@@ -91,19 +86,14 @@ static inline AL_VOID AlTtc_ll_SetEventTimerLevel(AL_REG BaseAddr, AL_TTC_LevelE
     AL_REG32_SET_BIT(BaseAddr + TTC__EVENT_CTRL_1__OFFSET, TTC__EVENT_CTRL_1__E_LO__SHIFT, Level);
 }
 
-static inline AL_VOID AlTtc_ll_EventTimerOv(AL_REG BaseAddr, AL_BOOL State)
+static inline AL_VOID AlTtc_ll_SetEventTimerOvState(AL_REG BaseAddr, AL_BOOL State)
 {
     AL_REG32_SET_BIT(BaseAddr + TTC__EVENT_CTRL_1__OFFSET, TTC__EVENT_CTRL_1__E_OV__SHIFT, State);
 }
 
-static inline AL_VOID AlTtc_ll_EnbaleCounter(AL_REG BaseAddr)
+static inline AL_VOID AlTtc_ll_EnbaleCounter(AL_REG BaseAddr, AL_BOOL State)
 {
-    AL_REG32_SET_BIT(BaseAddr + TTC__CNTR_CTRL_REG_1__ADDR, TTC__CNTR_CTRL_REG_1__DIS__SHIFT, AL_FALSE);
-}
-
-static inline AL_VOID AlTtc_ll_DisbaleCounter(AL_REG BaseAddr)
-{
-    AL_REG32_SET_BIT(BaseAddr + TTC__CNTR_CTRL_REG_1__ADDR, TTC__CNTR_CTRL_REG_1__DIS__SHIFT, AL_TRUE);
+    AL_REG32_SET_BIT(BaseAddr + TTC__CNTR_CTRL_REG_1__ADDR, TTC__CNTR_CTRL_REG_1__DIS__SHIFT, ~State);
 }
 
 static inline AL_VOID AlTtc_ll_EnbaleOverflowMode(AL_REG BaseAddr)
@@ -116,19 +106,14 @@ static inline AL_VOID AlTtc_ll_EnbaleIntervalMode(AL_REG BaseAddr)
     AL_REG32_SET_BIT(BaseAddr + TTC__CNTR_CTRL_REG_1__ADDR, TTC__CNTR_CTRL_REG_1__INT__SHIFT, AL_TRUE);
 }
 
-static inline AL_VOID AlTtc_ll_CountDec(AL_REG BaseAddr, AL_BOOL State)
+static inline AL_VOID AlTtc_ll_SetCountDec(AL_REG BaseAddr, AL_BOOL State)
 {
     AL_REG32_SET_BIT(BaseAddr + TTC__CNTR_CTRL_REG_1__ADDR, TTC__CNTR_CTRL_REG_1__DEC__SHIFT, State);
 }
 
-static inline AL_VOID AlTtc_ll_EnableMatchMode(AL_REG BaseAddr)
+static inline AL_VOID AlTtc_ll_EnableMatchMode(AL_REG BaseAddr, AL_BOOL State)
 {
-    AL_REG32_SET_BIT(BaseAddr + TTC__CNTR_CTRL_REG_1__ADDR, TTC__CNTR_CTRL_REG_1__MATCH__SHIFT, AL_TRUE);
-}
-
-static inline AL_VOID AlTtc_ll_DisableMatchMode(AL_REG BaseAddr)
-{
-    AL_REG32_SET_BIT(BaseAddr + TTC__CNTR_CTRL_REG_1__ADDR, TTC__CNTR_CTRL_REG_1__MATCH__SHIFT, AL_FALSE);
+    AL_REG32_SET_BIT(BaseAddr + TTC__CNTR_CTRL_REG_1__ADDR, TTC__CNTR_CTRL_REG_1__MATCH__SHIFT, State);
 }
 
 static inline AL_VOID AlTtc_ll_ResetCounter(AL_REG BaseAddr)
@@ -136,14 +121,9 @@ static inline AL_VOID AlTtc_ll_ResetCounter(AL_REG BaseAddr)
     AL_REG32_SET_BIT(BaseAddr + TTC__CNTR_CTRL_REG_1__ADDR, TTC__CNTR_CTRL_REG_1__RST__SHIFT, AL_TRUE);
 }
 
-static inline AL_VOID AlTtc_ll_EnableWaveOutput(AL_REG BaseAddr)
+static inline AL_VOID AlTtc_ll_EnableWaveOutput(AL_REG BaseAddr, AL_BOOL State)
 {
-    AL_REG32_SET_BIT(BaseAddr + TTC__CNTR_CTRL_REG_1__ADDR, TTC__CNTR_CTRL_REG_1__WAVE_EN__SHIFT, AL_FALSE);
-}
-
-static inline AL_VOID AlTtc_ll_DisableWaveOutput(AL_REG BaseAddr)
-{
-    AL_REG32_SET_BIT(BaseAddr + TTC__CNTR_CTRL_REG_1__ADDR, TTC__CNTR_CTRL_REG_1__WAVE_EN__SHIFT, AL_TRUE);
+    AL_REG32_SET_BIT(BaseAddr + TTC__CNTR_CTRL_REG_1__ADDR, TTC__CNTR_CTRL_REG_1__WAVE_EN__SHIFT, ~State);
 }
 
 static inline AL_VOID AlTtc_ll_SetWaveformPolarity(AL_REG BaseAddr, AL_TTC_ClkEdgeEnum ClkEdge)
@@ -151,14 +131,9 @@ static inline AL_VOID AlTtc_ll_SetWaveformPolarity(AL_REG BaseAddr, AL_TTC_ClkEd
     AL_REG32_SET_BIT(BaseAddr + TTC__CNTR_CTRL_REG_1__ADDR, TTC__CNTR_CTRL_REG_1__WAVE_POL__SHIFT, ClkEdge);
 }
 
-static inline AL_VOID AlTtc_ll_EnbalePresacle(AL_REG BaseAddr)
+static inline AL_VOID AlTtc_ll_EnbalePresacle(AL_REG BaseAddr, AL_BOOL State)
 {
-    AL_REG32_SET_BIT(BaseAddr + TTC__CLK_CTRL_REG_1__OFFSET, TTC__CLK_CTRL_REG_1__PS_EN__SHIFT, AL_TRUE);
-}
-
-static inline AL_VOID AlTtc_ll_DisbalePresacle(AL_REG BaseAddr)
-{
-    AL_REG32_SET_BIT(BaseAddr + TTC__CLK_CTRL_REG_1__OFFSET, TTC__CLK_CTRL_REG_1__PS_EN__SHIFT, AL_FALSE);
+    AL_REG32_SET_BIT(BaseAddr + TTC__CLK_CTRL_REG_1__OFFSET, TTC__CLK_CTRL_REG_1__PS_EN__SHIFT, State);
 }
 
 static inline AL_VOID AlTtc_ll_SetPresacleVal(AL_REG BaseAddr, AL_U8 Div)
@@ -171,7 +146,7 @@ static inline AL_VOID AlTtc_ll_SetClkSrc(AL_REG BaseAddr, AL_TTC_ClkSrcEnum ClkS
     AL_REG32_SET_BIT(BaseAddr + TTC__CLK_CTRL_REG_1__OFFSET, TTC__CLK_CTRL_REG_1__C_SRC__SHIFT, ClkSrc);
 }
 
-static inline AL_VOID AlTtc_ll_SelExtClkEdge(AL_REG BaseAddr, AL_TTC_ClkEdgeEnum ClkEdge)
+static inline AL_VOID AlTtc_ll_SetExtClkEdge(AL_REG BaseAddr, AL_TTC_ClkEdgeEnum ClkEdge)
 {
     AL_REG32_SET_BIT(BaseAddr + TTC__CLK_CTRL_REG_1__OFFSET, TTC__CLK_CTRL_REG_1__EX_E__SHIFT, ClkEdge);
 }
@@ -193,14 +168,9 @@ static inline AL_VOID AlTtc_ll_SetMatchVal(AL_REG BaseAddr, AL_U32 DevId, AL_TTC
     AL_REG32_SET_BITS(BaseAddr + TTC__MATCH_1_REG_1__OFFSET + (DevId * 0x8) +  (MatchNum * 0x4), TTC__MATCH_1_REG_1__MATCH__SHIFT, TTC__MATCH_1_REG_1__MATCH__SIZE, Value);
 }
 
-static inline AL_VOID AlTtc_ll_EnableIntr(AL_REG BaseAddr, AL_TTC_IntrTypeEnum IntrType)
+static inline AL_VOID AlTtc_ll_EnableIntr(AL_REG BaseAddr, AL_TTC_IntrTypeEnum IntrType, AL_BOOL State)
 {
-    AL_REG32_SET_BIT(BaseAddr + TTC__IRQ_EN_REG_1__OFFSET, IntrType, AL_TRUE);
-}
-
-static inline AL_VOID AlTtc_ll_DisableIntr(AL_REG BaseAddr, AL_TTC_IntrTypeEnum IntrType)
-{
-    AL_REG32_SET_BIT(BaseAddr + TTC__IRQ_EN_REG_1__OFFSET, IntrType, AL_FALSE);
+    AL_REG32_SET_BIT(BaseAddr + TTC__IRQ_EN_REG_1__OFFSET, IntrType, State);
 }
 
 static inline AL_VOID AlTtc_ll_DisableAllIntr(AL_REG BaseAddr)

@@ -82,138 +82,88 @@ AL_S32 AlTtc_Hal_Init(AL_TTC_HalStruct **Handle, AL_U32 DevId,
 
 AL_VOID AlTtc_Hal_EnableOverflowMode(AL_TTC_HalStruct *Handle)
 {
-    AlTtc_Dev_EnableOverflowMode(&Handle->Dev);
+    AlTtc_ll_EnbaleOverflowMode(Handle->Dev.BaseAddr);
 }
 
 AL_VOID AlTtc_Hal_EnableIntervalMode(AL_TTC_HalStruct *Handle)
 {
-    AlTtc_Dev_EnableIntervalMode(&Handle->Dev);
+    AlTtc_ll_EnbaleIntervalMode(Handle->Dev.BaseAddr);
 }
 
-AL_S32 AlTtc_Hal_SetIntervalMaxVal(AL_TTC_HalStruct *Handle, AL_U16 Value)
+AL_VOID AlTtc_Hal_SetIntervalMaxVal(AL_TTC_HalStruct *Handle, AL_U16 Value)
 {
-    AL_ASSERT((Handle != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    (AL_VOID)AlTtc_Dev_SetIntervalMaxVal(&Handle->Dev, Value);
-
-    return AL_OK;
+    AlTtc_ll_SetIntervalMaxVal(Handle->Dev.BaseAddr, Value);
 }
 
 AL_U16 AlTtc_Hal_GetCounterVal(AL_TTC_HalStruct *Handle)
 {
-    return AlTtc_Dev_GetCounterVal(&Handle->Dev);
+    return AltTtc_ll_GetCounterVal(Handle->Dev.BaseAddr);
 }
 
-AL_S32 AlTtc_Hal_EnableMatchMode(AL_TTC_HalStruct *Handle, AL_BOOL State)
+AL_VOID AlTtc_Hal_EnableMatchMode(AL_TTC_HalStruct *Handle, AL_BOOL State)
+{
+    AlTtc_ll_EnableMatchMode(Handle->Dev.BaseAddr, State);
+}
+
+AL_VOID AlTtc_Hal_SetMatchVal(AL_TTC_HalStruct *Handle, AL_TTC_MatchNumEnum MatchNum, AL_U16 Value)
+{
+    AlTtc_ll_SetMatchVal(Handle->Dev.BaseAddr, Handle->Dev.DevId, MatchNum, Value);
+}
+
+AL_VOID AlTtc_Hal_EnableEventTimerMode(AL_TTC_HalStruct *Handle, AL_BOOL State)
+{
+    AlTtc_ll_EnableEventTimerMode(Handle->Dev.BaseAddr, State);
+}
+
+AL_S32 AlTtc_Hal_SetExtClkEdge(AL_TTC_HalStruct *Handle, AL_TTC_ClkEdgeEnum ClkEdge)
 {
     AL_ASSERT((Handle != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
 
-    (AL_VOID)AlTtc_Dev_EnableMatchMode(&Handle->Dev, State);
-
-    return AL_OK;
-}
-
-AL_S32 AlTtc_Hal_SetMatchVal(AL_TTC_HalStruct *Handle, AL_TTC_MatchNumEnum MatchNum, AL_U16 Value)
-{
-    AL_ASSERT((Handle != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-    AL_ASSERT(MatchNum != AL_TTC_Match1 || MatchNum != AL_TTC_Match2 ||
-              MatchNum != AL_TTC_Match3, AL_TTC_ERR_ILLEGAL_PARAM);
-
-    (AL_VOID)AlTtc_Dev_SetMatchVal(&Handle->Dev, MatchNum, Value);
-
-    return AL_OK;
-}
-
-AL_S32 AlTtc_Hal_EnableEventTimerMode(AL_TTC_HalStruct *Handle, AL_BOOL State)
-{
-    AL_ASSERT((Handle != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    (AL_VOID)AlTtc_Dev_EnableEventTimerMode(&Handle->Dev, State);
-
-    return AL_OK;
-}
-
-AL_S32 AlTtc_Hal_SelExtClkEdge(AL_TTC_HalStruct *Handle, AL_TTC_ClkEdgeEnum ClkEdge)
-{
-    AL_S32 Ret;
-    AL_ASSERT((Handle != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    Ret = AlTtc_Dev_SelExtClkEdge(&Handle->Dev, ClkEdge);
-    if (Ret != AL_OK) {
-        return Ret;
+    if (Handle->Dev.TimerInitConfigs.ClkSrc == AL_TTC_EXTCLK) {
+        AlTtc_ll_SetExtClkEdge(Handle->Dev.BaseAddr, ClkEdge);
+    } else {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Set external clk edge need enable external clk");
+        return AL_TTC_ERR_NOT_SUPPORT;
     }
 
     return AL_OK;
 }
 
 /*Set the event timer to count the pulse width of high or low levels */
-AL_S32 AlTtc_Hal_SetEventTimerLevel(AL_TTC_HalStruct *Handle, AL_TTC_LevelEnum Level)
+AL_VOID AlTtc_Hal_SetEventTimerLevel(AL_TTC_HalStruct *Handle, AL_TTC_LevelEnum Level)
 {
-    AL_ASSERT((Handle != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-    AL_ASSERT((Level != AL_TTC_HighLevel || Level != AL_TTC_HighLevel), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    (AL_VOID)AlTtc_Dev_SetEventTimerLevel(&Handle->Dev, Level);
-
-    return AL_OK;
+    AlTtc_ll_SetEventTimerLevel(Handle->Dev.BaseAddr, Level);
 }
 
 /*wheh event timer is overflow,whether continue counting*/
-AL_S32 AlTtc_Hal_EventTimerOv(AL_TTC_HalStruct *Handle, AL_BOOL State)
+AL_VOID AlTtc_Hal_SetEventTimerOvState(AL_TTC_HalStruct *Handle, AL_BOOL State)
 {
-    AL_ASSERT((Handle != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    (AL_VOID)AlTtc_Dev_EventTimerOv(&Handle->Dev, State);
-
-    return AL_OK;
+    AlTtc_ll_SetEventTimerOvState(Handle->Dev.BaseAddr, State);
 }
 
 AL_U16 AltTtc_Hal_GetEventTimerVal(AL_TTC_HalStruct *Handle)
 {
-    return AltTtc_Dev_GetEventTimerVal(&Handle->Dev);
+    return AltTtc_ll_GetEventTimerVal(Handle->Dev.BaseAddr);
 }
 
-AL_S32 AlTtc_Hal_SetWaveformPolarity(AL_TTC_HalStruct *Handle, AL_TTC_ClkEdgeEnum ClkEdge)
+AL_VOID AlTtc_Hal_SetWaveformPolarity(AL_TTC_HalStruct *Handle, AL_TTC_ClkEdgeEnum ClkEdge)
 {
-    AL_S32 Ret = AL_OK;
-    AL_ASSERT((Handle != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    Ret = AlTtc_Dev_SetWaveformPolarity(&Handle->Dev, ClkEdge);
-    if (Ret != AL_OK) {
-        return Ret;
-    }
-
-    return AL_OK;
+    AlTtc_ll_SetWaveformPolarity(Handle->Dev.BaseAddr, ClkEdge);
 }
 
-AL_S32 AlTtc_Hal_EnableWaveOutput(AL_TTC_HalStruct *Handle, AL_BOOL State)
+AL_VOID AlTtc_Hal_EnableWaveOutput(AL_TTC_HalStruct *Handle, AL_BOOL State)
 {
-    AL_ASSERT((Handle != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    (AL_VOID)AlTtc_Dev_EnableWaveOutput(&Handle->Dev, State);
-
-    return AL_OK;
+    AlTtc_ll_EnableWaveOutput(Handle->Dev.BaseAddr, State);
 }
 
-AL_S32 AlTtc_Hal_EnableCounter(AL_TTC_HalStruct *Handle, AL_BOOL State)
+AL_VOID AlTtc_Hal_EnableCounter(AL_TTC_HalStruct *Handle, AL_BOOL State)
 {
-    AL_ASSERT((Handle != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    (AL_VOID)AlTtc_Dev_EnableCounter(&Handle->Dev, State);
-
-    return AL_OK;
+    AlTtc_ll_EnbaleCounter(Handle->Dev.BaseAddr, State);
 }
 
-AL_S32 AlTtc_Hal_EnableIntr(AL_TTC_HalStruct *Handle, AL_TTC_IntrTypeEnum IntrType)
+AL_VOID AlTtc_Hal_EnableIntr(AL_TTC_HalStruct *Handle, AL_TTC_IntrTypeEnum IntrType, AL_BOOL State)
 {
-    AL_S32 Ret = AL_OK;
-    AL_ASSERT((Handle != AL_NULL), AL_TTC_ERR_ILLEGAL_PARAM);
-
-    Ret = AlTtc_Dev_EnableIntr(&Handle->Dev, IntrType);
-    if (Ret != AL_OK) {
-        return Ret;
-    }
-
-    return AL_OK;
+    AlTtc_ll_EnableIntr(Handle->Dev.BaseAddr, IntrType, State);
 }
 
 AL_S32 AlTtc_Hal_IoCtl(AL_TTC_HalStruct *Handle, AL_TTC_IoCtlCmdEnum Cmd, AL_TTC_IoctlParamUnion *IoctlParam)

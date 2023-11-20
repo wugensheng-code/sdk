@@ -22,17 +22,18 @@
 /**************************** Type Definitions *******************************/
 
 /***************** Macros (Inline Functions) Definitions *********************/
-#define AL_TTC_DEVICE_ID             (0)
- /* pwm frequency = clock frequency / (pow(2, PrescaleVal+1) / (AL_TTC_INTERVAL_MAX_VAL + 1) */
-#define AL_TTC_INTERVAL_MAX_VAL      (499)
+#define AL_TTC_DEVICE_ID             (3)
+ /* pwm frequency = clock frequency / pow(2, PrescaleVal + 1) / (AL_TTC_INTERVAL_MAX_VAL + 1) */
+#define AL_TTC_INTERVAL_MAX_VAL      (999)
 /* pwm duty cycle = (AL_TTC_MATCH1_VAL + 1) / (AL_TTC_INTERVAL_MAX_VAL + 1) */
 #define AL_TTC_MATCH1_VAL            (249)
 
 /************************** Variable Definitions *****************************/
 static AL_TTC_TimerInitStruct PwmInitConfigs = {
+    .CountDec            = AL_TTC_CountUp,
     .ClkSrc              = AL_TTC_PCLK,
+    .EnablePrescale      = AL_TRUE,
     .PrescaleVal         = 2,
-    .CountDec            = AL_TTC_CountUp
 };
 
 /************************** Function Prototypes ******************************/
@@ -74,10 +75,10 @@ static AL_S32 AlTtc_Test_PwmOutput(AL_VOID)
     AlTtc_Hal_EnableMatchMode(TtcHandle, AL_TRUE);
     AlTtc_Hal_SetMatchVal(TtcHandle, AL_TTC_Match1, AL_TTC_MATCH1_VAL);
 
-    AlTtc_Hal_SetWaveformPolarity(TtcHandle, AL_TTC_Posedge);
+    AlTtc_Hal_SetWaveformPolarity(TtcHandle, AL_TTC_Negedge);
 
-    AlTtc_Hal_EnableIntr(TtcHandle, AL_TTC_IntrInterval);
-    AlTtc_Hal_EnableIntr(TtcHandle, AL_TTC_IntrMatch1);
+    AlTtc_Hal_EnableIntr(TtcHandle, AL_TTC_IntrInterval, AL_TRUE);
+    AlTtc_Hal_EnableIntr(TtcHandle, AL_TTC_IntrMatch1, AL_TRUE);
 
     AlTtc_Hal_EnableWaveOutput(TtcHandle, AL_TRUE);
     AlTtc_Hal_EnableCounter(TtcHandle, AL_TRUE);

@@ -39,15 +39,17 @@ extern "C" {
 
 /************************** Variable Definitions *****************************/
 static AL_TTC_TimerInitStruct EventInitConfigs = {
-    .ClkSrc              = AL_TTC_EXTCLK,
-    .PrescaleVal         = 0,
-    .CountDec            = AL_TTC_CountUp
+    .CountDec            = AL_TTC_CountUp,
+    .ClkSrc              = AL_TTC_PCLK,
+    .EnablePrescale      = AL_TRUE,
+    .PrescaleVal         = 2,
 };
 
 static AL_TTC_TimerInitStruct PwmInitConfigs = {
-    .ClkSrc              = AL_TTC_PCLK,
+    .CountDec            = AL_TTC_CountUp,
+    .ClkSrc              = AL_TTC_EXTCLK,
+    .EnablePrescale      = AL_TRUE,
     .PrescaleVal         = 2,
-    .CountDec            = AL_TTC_CountUp
 };
 
 
