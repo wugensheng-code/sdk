@@ -27,20 +27,19 @@ static AL_UART_HalStruct AlUartHandle[AL_UART_NUM_INSTANCE];
 static AL_VOID AlUart_Hal_DefEventHandler(AL_UART_EventStruct UartEvent, AL_VOID *CallbackRef)
 {
     AL_UART_HalStruct *Handle = (AL_UART_HalStruct *)CallbackRef;
-    AL_S32 Ret = AL_OK;
 
     switch (UartEvent.Events)
     {
     case AL_UART_EVENT_SEND_DONE:
     case AL_UART_EVENT_BUSY_DETECT_TX:
-         Ret = AlOsal_Mb_Send(&Handle->TxEventQueue, &UartEvent);
+        AlOsal_Mb_Send(&Handle->TxEventQueue, &UartEvent);
         break;
 
     case AL_UART_EVENT_RECEIVE_DONE:
     case AL_UART_EVENT_CHAR_TIMEOUT:
     case AL_UART_EVENT_OVER_RUN_ERR:
     case AL_UART_EVENT_BUSY_DETECT_RX:
-        Ret = AlOsal_Mb_Send(&Handle->RxEventQueue, &UartEvent);
+        AlOsal_Mb_Send(&Handle->RxEventQueue, &UartEvent);
         break;
 
     case AL_UART_EVENT_MODEM_STATUS_INTR:
@@ -59,10 +58,8 @@ static AL_VOID AlUart_Hal_DefEventHandler(AL_UART_EventStruct UartEvent, AL_VOID
 
     if (UartEvent.Events & (AL_UART_EVENT_PARITY_ERR | AL_UART_EVENT_FRAMING_ERR | AL_UART_EVENT_BREAK_INTR)) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Uart receive error 0x%x .\r\n", AL_UART_EVENTS_TO_ERRS(UartEvent.Events));
-        Ret = AlOsal_Mb_Send(&Handle->RxEventQueue, &UartEvent);
+        AlOsal_Mb_Send(&Handle->RxEventQueue, &UartEvent);
     }
-
-    BUG_ON(Ret != AL_OK);
 }
 
 /**

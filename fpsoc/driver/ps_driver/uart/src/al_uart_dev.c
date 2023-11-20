@@ -174,8 +174,6 @@ AL_VOID AlUart_Dev_ClrRxBusy(AL_UART_DevStruct *Uart)
 AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct *InitConfig)
 {
     AL_UART_HwConfigStruct *UartHwConfig = AL_NULL;
-    AL_U32 UartDivisor;
-    AL_U32 i;
 
     AL_ASSERT((Uart != AL_NULL && DevId < AL_UART_NUM_INSTANCE), AL_UART_ERR_ILLEGAL_PARAM);
 
@@ -250,7 +248,7 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct
 
     /* Set AutoFlowControl */
     if (Uart->Configs.HwFlowCtl) {
-        AlUart_ll_SetAutoFlowCtl(Uart->BaseAddr , AL_FUNC_ENABLE);
+        AlUart_ll_SetAutoFlowCtl(Uart->BaseAddr, AL_TRUE);
     }
 
     Uart->State |= AL_UART_STATE_READY;
