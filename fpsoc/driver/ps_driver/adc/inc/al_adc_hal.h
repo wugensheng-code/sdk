@@ -26,14 +26,13 @@ typedef struct
 /************************** Function Prototypes ******************************/
 
 AL_S32 AlAdc_Hal_Init(AL_ADC_HalStruct **Handle, AL_U32 DevId, AL_ADC_InitStruct *InitConfig,
-                       AL_ADC_ChanCfg *ChanCfg, AL_ADC_EventCallBack Callback);
+                       AL_ADC_ChanCfg *ChanConfig, AL_ADC_EventCallBack Callback);
 AL_VOID AlAdc_Hal_DefEventHandler(AL_ADC_EventStruct AdcEvent, AL_VOID *CallbackRef);
-AL_S32 AlAdc_Hal_AdcStart(AL_ADC_HalStruct *Handle, AL_U32 PlAdcFunc);
+AL_S32 AlAdc_Hal_AdcStart(AL_ADC_HalStruct *Handle);
 AL_S32 AlAdc_Hal_AdcStop(AL_ADC_HalStruct *Handle);
-AL_S32 AlAdc_Hal_AdcStartIntr(AL_ADC_HalStruct *Handle, AL_U32 PlAdcFunc);
+AL_S32 AlAdc_Hal_AdcStartIntr(AL_ADC_HalStruct *Handle);
 AL_S32 AlAdc_Hal_AdcStopIntr(AL_ADC_HalStruct *Handle);
-AL_VOID AlAdc_Hal_ClrPlAdcIntr(AL_ADC_HalStruct *Handle, AL_ADC_PlIntrTypeEnum IntrType);
-AL_U16 AlAdc_Hal_GetAdcData(AL_ADC_HalStruct *Handle, AL_ADC_ChanEnum ChanNum);
+AL_S16 AlAdc_Hal_GetAdcData(AL_ADC_HalStruct *Handle, AL_ADC_ChanEnum ChanNum);
 AL_S32 AlAdc_Hal_IoCtl(AL_ADC_HalStruct *Handle, AL_ADC_IoCtlCmdEnum Cmd, AL_ADC_IoctlParamUnion *IoctlParam);
 
 

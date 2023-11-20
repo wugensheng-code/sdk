@@ -35,22 +35,25 @@ extern "C" {
 
 /************************** Variable Definitions *****************************/
 
-static AL_U32 EVENT_FLAG;
-
 static AL_ADC_InitStruct AdcInitCfg = {
-    .InputSingal             = AL_ADC_UNIPOLAR,
-    .Resolution              = AL_ADC_10BIT_MODE,
-    .RefVoltag               = AL_ADC_REF_INTER_REF,
-    .ClkSource               = AL_ADC_CLK_PS_50MHz,
-    .ConvMode                = AL_ADC_CONTINUOUS_MODE,
-    .ConvChanNum             = 7,
+    .InputSingal                = AL_ADC_UNIPOLAR,
+    .Resolution                 = AL_ADC_12BIT_MODE,
+    .RefVoltag                  = AL_ADC_REF_VREF,
+    .ConvMode                   = AL_ADC_CONTINUOUS_MODE,
+    .ConvChanNum                = AL_ADC_CHAN0,
+    .ClkSource                  = AL_ADC_CLK_PS_50MHz,
+    .AdcClkDiv                  = 50,
+    .PlIntrCfg.IntrDoneMask     = AL_FALSE,
+    .PlIntrCfg.IntrGthMask      = AL_FALSE,
+    .PlIntrCfg.IntrLthMask      = AL_FALSE,
+    .PlIntrCfg.IntrErrorMask    = AL_TRUE,
 };
 
 static AL_ADC_ChanCfg ChanInitCfg[8] = {
     {   .ChanNum            = AL_ADC_CHAN0,
         .MuxForChan         = AL_ADC_MUX_VPVN,
-        .LthVal             = 0x0,
-        .GthVal             = 0xFFF,
+        .LthVal             = 0x7b6, /*12bit mode, 0x7b6 = 0.3V*/
+        .GthVal             = 0xa3c, /*12bit mode, 0xa3c = 0.8V*/
     },
     {   .ChanNum            = AL_ADC_CHAN1,
         .MuxForChan         = AL_ADC_MUX_0,

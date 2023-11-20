@@ -8,9 +8,9 @@
 
 static AL_S32 AlAdc_AlarmFunc_Test(AL_VOID);
 static AL_S32 AlAdc_ContinuousMode_Test(AL_VOID);
-static AL_VOID AlAdc_Handler(AL_ADC_EventStruct AdcEvent, AL_VOID *CallbackRef);
+static AL_VOID AlAdc_EventHandler(AL_ADC_EventStruct AdcEvent, AL_VOID *CallbackRef);
 
-AL_VOID main()
+AL_S32 main()
 {
 #if CONFIG_AlAdc_AlarmFunc_Test
     AL_S32 Ret = AL_OK;
@@ -50,16 +50,14 @@ static AL_S32 AlAdc_AlarmFunc_Test(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
     AL_ADC_HalStruct *Handle;
-    AL_S32 Index = 0;
-    AL_U32 PlAdcFunc = AL_ADC_DATA_GTH;
 
-    Ret = AlAdc_Hal_Init(&Handle, AL_ADC_DEVICE_ID, &AdcInitCfg, ChanInitCfg, AlAdc_Handler);
+    Ret = AlAdc_Hal_Init(&Handle, AL_ADC_DEVICE_ID, &AdcInitCfg, ChanInitCfg, AlAdc_EventHandler);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
         return Ret;
     }
 
-    Ret = AlAdc_Hal_AdcStartIntr(Handle, PlAdcFunc);
+    Ret = AlAdc_Hal_AdcStartIntr(Handle);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Adc Start error:0x%x\r\n", Ret);
         return Ret;
@@ -67,28 +65,37 @@ static AL_S32 AlAdc_AlarmFunc_Test(AL_VOID)
 
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
-    while (EVENT_FLAG != AL_TRUE);
+    while(1);
 
     AlAdc_Hal_AdcStopIntr(Handle);
+
     return AL_OK;
 }
 
-static AL_VOID AlAdc_Handler(AL_ADC_EventStruct AdcEvent, AL_VOID *CallbackRef)
+static AL_VOID AlAdc_EventHandler(AL_ADC_EventStruct AdcEvent, AL_VOID *CallbackRef)
 {
     AL_S32 Index;
     AL_ADC_HalStruct *Handle = (AL_ADC_HalStruct *)CallbackRef;
 
     if (AdcEvent.Events == AL_ADC_EVENT_DATA_GTH) {
-        for (Index = 0; Index < 8; Index++) {
-            if(AdcEvent.EventData & (1 << Index)) {
+        for (Index = 0; Index <= Handle->Dev.Configs.ConvChanNum; Index++) {
+            if (AdcEvent.EventData & BIT(Index)) {
                 AL_LOG(AL_LOG_LEVEL_INFO, "Adc Data Gth channel %d vc is %x \r\n",
                        Index, Handle->Dev.AdcData[Index].ChanData);
             }
         }
     }
 
-    EVENT_FLAG = AL_TRUE;
+    if (AdcEvent.Events == AL_ADC_EVENT_DATA_LTH) {
+        for (Index = 0; Index <= Handle->Dev.Configs.ConvChanNum; Index++) {
+            if (AdcEvent.EventData & BIT(Index)) {
+                AL_LOG(AL_LOG_LEVEL_INFO, "Adc Data Lth channel %d vc is %x \r\n",
+                       Index, Handle->Dev.AdcData[Index].ChanData);
+            }
+        }
+    }
 }
+
 
 static AL_S32 AlAdc_ContinuousMode_Test(AL_VOID)
 {
@@ -96,8 +103,7 @@ static AL_S32 AlAdc_ContinuousMode_Test(AL_VOID)
     AL_S32 Ret = AL_OK;
     AL_U32 Index;
     AL_U32 Counts = 0;
-    AL_U32 Iterations = 1000;
-    AL_U32 PlAdcFunc = AL_ADC_DATA_DONE;
+    AL_U32 Iterations = 10000;
 
     Ret = AlAdc_Hal_Init(&Handle, AL_ADC_DEVICE_ID, &AdcInitCfg, ChanInitCfg, AL_NULL);
     if (Ret != AL_OK) {
@@ -105,7 +111,7 @@ static AL_S32 AlAdc_ContinuousMode_Test(AL_VOID)
         return Ret;
     }
 
-    Ret = AlAdc_Hal_AdcStart(Handle, PlAdcFunc);
+    Ret = AlAdc_Hal_AdcStart(Handle);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Adc Start error:0x%x\r\n", Ret);
         return Ret;
@@ -116,7 +122,6 @@ static AL_S32 AlAdc_ContinuousMode_Test(AL_VOID)
             AL_LOG(AL_LOG_LEVEL_INFO, "Adc channel %d vc is %x \r\n", Index,
                     AlAdc_Hal_GetAdcData(Handle, ChanInitCfg[Index].ChanNum));
         }
-        AlAdc_Hal_ClrPlAdcIntr(Handle, AL_ADC_INTR_DONE_PL);
         Counts++;
     }
 

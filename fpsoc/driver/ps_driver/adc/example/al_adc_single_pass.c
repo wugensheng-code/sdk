@@ -26,15 +26,20 @@
 
 /************************** Variable Definitions *****************************/
 static AL_ADC_InitStruct AdcInitCfg = {
-    .InputSingal             = AL_ADC_UNIPOLAR,
-    .Resolution              = AL_ADC_10BIT_MODE,
-    .RefVoltag               = AL_ADC_REF_INTER_REF,
-    .ClkSource               = AL_ADC_CLK_PS_50MHz,
-    .ConvMode                = AL_ADC_SINGLE_PASS_MODE,
-    .ConvChanNum             = 7,
+    .InputSingal                = AL_ADC_UNIPOLAR,
+    .Resolution                 = AL_ADC_10BIT_MODE,
+    .RefVoltag                  = AL_ADC_REF_VREF,
+    .ConvMode                   = AL_ADC_SINGLE_PASS_MODE,
+    .ConvChanNum                = AL_ADC_CHAN2,
+    .ClkSource                  = AL_ADC_CLK_PS_50MHz,
+    .AdcClkDiv                  = 50,
+    .PlIntrCfg.IntrDoneMask     = AL_FALSE,
+    .PlIntrCfg.IntrGthMask      = AL_TRUE,
+    .PlIntrCfg.IntrLthMask      = AL_TRUE,
+    .PlIntrCfg.IntrErrorMask    = AL_TRUE,
 };
 
-static AL_ADC_ChanCfg ChanInitCfg[8] = {
+static AL_ADC_ChanCfg ChanInitCfg[3] = {
     {   .ChanNum            = AL_ADC_CHAN0,
         .MuxForChan         = AL_ADC_MUX_VPVN,
         .LthVal             = 0x0,
@@ -50,31 +55,6 @@ static AL_ADC_ChanCfg ChanInitCfg[8] = {
         .LthVal             = 0x0,
         .GthVal             = 0xFFF,
     },
-    {   .ChanNum            = AL_ADC_CHAN3,
-        .MuxForChan         = AL_ADC_MUX_11,
-        .LthVal             = 0x0,
-        .GthVal             = 0xFFF,
-    },
-    {   .ChanNum            = AL_ADC_CHAN4,
-        .MuxForChan         = AL_ADC_MUX_12,
-        .LthVal             = 0x0,
-        .GthVal             = 0xFFF,
-    },
-    {   .ChanNum            = AL_ADC_CHAN5,
-        .MuxForChan         = AL_ADC_MUX_13,
-        .LthVal             = 0x0,
-        .GthVal             = 0xFFF,
-    },
-    {   .ChanNum            = AL_ADC_CHAN6,
-        .MuxForChan         = AL_ADC_MUX_14,
-        .LthVal             = 0x0,
-        .GthVal             = 0xFFF,
-    },
-    {   .ChanNum            = AL_ADC_CHAN7,
-        .MuxForChan         = AL_ADC_MUX_15,
-        .LthVal             = 0x0,
-        .GthVal             = 0xFFF,
-    }
 };
 
 static AL_U32 EVENT_FLAG;
@@ -116,7 +96,7 @@ static AL_S32 AlAdc_SinglePassMode_Test(AL_VOID)
         return Ret;
     }
 
-    Ret = AlAdc_Hal_AdcStart(Handle, PlAdcFunc);
+    Ret = AlAdc_Hal_AdcStart(Handle);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Adc Start error:0x%x\r\n", Ret);
         return Ret;
@@ -126,7 +106,6 @@ static AL_S32 AlAdc_SinglePassMode_Test(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_INFO, "Adc channel %d vc is %x \r\n", Index,
                 AlAdc_Hal_GetAdcData(Handle, ChanInitCfg[Index].ChanNum));
     }
-    AlAdc_Hal_ClrPlAdcIntr(Handle, AL_ADC_INTR_DONE_PL);
 
     AlAdc_Hal_AdcStopIntr(Handle);
     return AL_OK;

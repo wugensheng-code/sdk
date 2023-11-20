@@ -27,13 +27,25 @@ extern "C" {
 
 typedef struct
 {
+    AL_BOOL   IntrDoneMask;
+    AL_BOOL   IntrGthMask;
+    AL_BOOL   IntrLthMask;
+    AL_BOOL   IntrErrorMask;
+} AL_ADC_PlIntrCfg;
+
+typedef struct
+{
     AL_ADC_InputSingalEnum          InputSingal;
     AL_ADC_ResolutionSelEnum        Resolution;
     AL_ADC_RefVoltagEnum            RefVoltag;
     AL_ADC_ConvModeSelectEnum       ConvMode;
     AL_U8                           ConvChanNum;
     AL_ADC_ClkSourceEnum            ClkSource;
+    AL_U8                           AdcClkDiv;
+    AL_ADC_PlIntrCfg                PlIntrCfg;
 } AL_ADC_InitStruct;
+/* when AdcClkDiv = 0, AdcClk = AdcClk. otherwise AdcClk = AdcClk / AdcClkDiv / 2 */
+
 typedef struct
 {
     AL_ADC_ChanEnum       ChanNum;
@@ -50,17 +62,17 @@ typedef struct
 
 typedef enum
 {
-    AL_ADC_DATA_DONE         = BIT(AL_ADC_INTR_DONE_PL),
-    AL_ADC_DATA_GTH          = BIT(AL_ADC_INTR_GTH_PL),
-    AL_ADC_DATA_LTH          = BIT(AL_ADC_INTR_LTH_PL),
-    AL_ADC_DATA_ERROR        = BIT(AL_ADC_INTR_ERROR_PL),
+    AL_ADC_DATA_DONE         = BIT(AL_ADC_PL_INTR_DONE),
+    AL_ADC_DATA_GTH          = BIT(AL_ADC_PL_INTR_GTH),
+    AL_ADC_DATA_LTH          = BIT(AL_ADC_PL_INTR_LTH),
+    AL_ADC_DATA_ERROR        = BIT(AL_ADC_PL_INTR_ERROR),
 } AL_ADC_PlAdcFuncEnum;
 typedef enum
 {
     AL_ADC_EVENT_DATA_DONE         = (0x00),
     AL_ADC_EVENT_DATA_GTH          = (0x01),
     AL_ADC_EVENT_DATA_LTH          = (0x02),
-    AL_ADC_EVENT_DATA_ERROR                = (0x03),
+    AL_ADC_EVENT_DATA_ERROR        = (0x03),
 } AL_ADC_EventIdEnum;
 
 typedef struct
@@ -89,6 +101,7 @@ typedef struct
     AL_ADC_InitStruct            Configs;
     AL_ADC_ChanCfg               ChanCfg[AL_ADC_CHAN_NUM];
     AL_ADC_Data                  AdcData[AL_ADC_CHAN_NUM];
+    AL_ADC_PlIntrCfg             PlIntrCfg;
     AL_ADC_EventCallBack         EventCallBack;
     AL_VOID                      *EventCallBackRef;
     AL_ADC_StateEnum             State;
@@ -100,32 +113,37 @@ typedef enum
     AL_ADC_IOCTL_SET_REFVOLTAG,
     AL_ADC_IOCTL_SET_RESOLUTION,
     AL_ADC_IOCTL_SET_INPUTSINGAL,
+    AL_ADC_IOCTL_SET_CLK_GATE,
+    AL_ADC_IOCTL_POWER_DOWN,
+    AL_ADC_IOCTL_ENABLE_PLADC_INTR,
+    AL_ADC_IOCTL_DISABLE_PLADC_INTR,
+    AL_ADC_IOCTL_CLR_PLADC_INTR,
 } AL_ADC_IoCtlCmdEnum;
 
 typedef union {
     AL_U8    InputSingal;
     AL_U8    Resolution;
     AL_U8    RefVoltag;
-    AL_U8    ClkSource;
-    AL_U8    ConvMode;
-    AL_U8    ConvChanNum;
-}AL_ADC_IoctlParamUnion;
+    AL_U8    ClkGateState;
+    AL_U8    PowerDownState;
+    AL_U8    EnablePlAdcIntrType;
+    AL_U8    DisablePlAdcIntrType;
+    AL_U8    ClrPlAdcIntrType;
+} AL_ADC_IoctlParamUnion;
 
 
 /************************** Function Prototypes ******************************/
 
 AL_ADC_HwConfigStruct *AlAdc_Dev_LookupConfig(AL_U32 DevId);
-AL_S32 AlAdc_Dev_Init(AL_ADC_DevStruct *Adc, AL_U32 DevId, AL_ADC_InitStruct *InitConfig);
+AL_S32 AlAdc_Dev_Init(AL_ADC_DevStruct *Adc, AL_U32 DevId, AL_ADC_InitStruct *InitConfig, AL_ADC_ChanCfg *ChanCfg);
 AL_S32 AlAdc_Dev_EnablePsAdcIntr(AL_ADC_DevStruct *Adc, AL_ADC_PsIntrTypeEnum IntrType, AL_BOOL State);
-AL_VOID AlAdc_Dev_EnablePlAdc(AL_ADC_DevStruct *Adc, AL_BOOL State);
-AL_VOID AlAdc_Dev_StartConv(AL_ADC_DevStruct *Adc);
-AL_VOID AlAdc_Dev_StopConv(AL_ADC_DevStruct *Adc);
-AL_S32 AlAdc_Dev_EnablePlAdcIntr(AL_ADC_DevStruct *Adc, AL_ADC_PlIntrTypeEnum IntrType, AL_BOOL State);
 AL_S32 AlAdc_Dev_SetMuxForChan(AL_ADC_DevStruct *Adc, AL_ADC_ChanCfg *ChanCfg);
 AL_S32 AlAdc_Dev_SetThreForChan(AL_ADC_DevStruct *Adc, AL_ADC_ChanCfg *ChanCfg);
+AL_S32 AlAdc_Dev_MaskPlAdcIntr(AL_ADC_DevStruct *Adc, AL_ADC_PlIntrTypeEnum IntrType, AL_BOOL State);
 AL_S32 AlAdc_Dev_ClrPlAdcIntr(AL_ADC_DevStruct *Adc, AL_ADC_PlIntrTypeEnum IntrType);
-AL_U16 AlAdc_Dev_GetAdcData(AL_ADC_DevStruct *Adc, AL_ADC_ChanEnum ChanNum);
+AL_S16 AlAdc_Dev_GetAdcData(AL_ADC_DevStruct *Adc, AL_ADC_ChanEnum ChanNum);
 AL_VOID AlAdc_Dev_IntrHandler(AL_VOID *Instance);
+AL_S32 AlAdc_Dev_IoCtl(AL_ADC_DevStruct *Adc, AL_ADC_IoCtlCmdEnum Cmd, AL_ADC_IoctlParamUnion *IoctlParam);
 AL_S32 AlAdc_Dev_RegisterEventCallBack(AL_ADC_DevStruct *Adc, AL_ADC_EventCallBack Callback, AL_VOID *CallbackRef);
 AL_S32 AlAdc_Dev_UnRegisterEventCallBack(AL_ADC_DevStruct *Adc);
 

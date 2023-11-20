@@ -26,12 +26,17 @@
 
 /************************** Variable Definitions *****************************/
 static AL_ADC_InitStruct AdcInitCfg = {
-    .InputSingal             = AL_ADC_UNIPOLAR,
-    .Resolution              = AL_ADC_10BIT_MODE,
-    .RefVoltag               = AL_ADC_REF_INTER_REF,
-    .ClkSource               = AL_ADC_CLK_PS_50MHz,
-    .ConvMode                = AL_ADC_SINGLE_CHANNEL_MODE,
-    .ConvChanNum             = 5,
+    .InputSingal                = AL_ADC_UNIPOLAR,
+    .Resolution                 = AL_ADC_12BIT_MODE,
+    .RefVoltag                  = AL_ADC_REF_VREF,
+    .ConvMode                   = AL_ADC_SINGLE_CHANNEL_MODE,
+    .ConvChanNum                = 5,
+    .ClkSource                  = AL_ADC_CLK_PS_50MHz,
+    .AdcClkDiv                  = 50,
+    .PlIntrCfg.IntrDoneMask     = AL_FALSE,
+    .PlIntrCfg.IntrGthMask      = AL_TRUE,
+    .PlIntrCfg.IntrLthMask      = AL_TRUE,
+    .PlIntrCfg.IntrErrorMask    = AL_TRUE,
 };
 
 static AL_ADC_ChanCfg ChanInitCfg = {
@@ -44,7 +49,6 @@ static AL_ADC_ChanCfg ChanInitCfg = {
 
 /************************** Function Prototypes ******************************/
 static AL_S32 AlAdc_SingleChannelMode_Test(AL_VOID);
-static AL_VOID AlAdc_Handler(AL_ADC_EventStruct AdcEvent, AL_VOID *CallbackRef);
 
 /************************** Function Definitions ******************************/
 
@@ -53,6 +57,10 @@ AL_S32 main(AL_VOID)
     AL_S32 Ret = AL_OK;
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Adc single channel mode read data test \r\n");
+
+    while (1) {
+        AlAdc_SingleChannelMode_Test();
+    }
 
     Ret = AlAdc_SingleChannelMode_Test();
     if (Ret != AL_OK) {
@@ -76,7 +84,7 @@ static AL_S32 AlAdc_SingleChannelMode_Test(AL_VOID)
         return Ret;
     }
 
-    Ret = AlAdc_Hal_AdcStart(Handle, AL_ADC_DATA_DONE);
+    Ret = AlAdc_Hal_AdcStart(Handle);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Adc start error:0x%x\r\n", Ret);
         return Ret;

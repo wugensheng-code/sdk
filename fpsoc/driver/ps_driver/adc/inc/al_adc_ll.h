@@ -17,10 +17,10 @@ extern "C" {
 
 typedef enum
 {
-    AL_ADC_PSTCK_DIV2     = 0x0,
-    AL_ADC_PSTCK_DIV4     = 0x1,
-    AL_ADC_PSTCK_DIV8     = 0x2,
-    AL_ADC_PSTCK_DIV16    = 0x3
+    AL_ADC_PS_TCK_DIV2     = 0x0,
+    AL_ADC_PS_TCK_DIV4     = 0x1,
+    AL_ADC_PS_TCK_DIV8     = 0x2,
+    AL_ADC_PS_TCK_DIV16    = 0x3
 }AL_ADC_PsTckRate;
 
 typedef enum
@@ -62,7 +62,7 @@ typedef enum
     AL_ADC_MUX_13      = 13,
     AL_ADC_MUX_14      = 14,
     AL_ADC_MUX_15      = 15,
-    AL_ADC_MUX_VPVN    = 16    /*dedicated*/
+    AL_ADC_MUX_VPVN    = 16    /*Dedicated mux*/
 } AL_ADC_MuxEnum;
 
 typedef enum
@@ -139,10 +139,10 @@ typedef enum
 
 typedef enum
 {
-    AL_ADC_INTR_DONE_PL    = 0,
-    AL_ADC_INTR_GTH_PL     = 1,
-    AL_ADC_INTR_LTH_PL     = 2,
-    AL_ADC_INTR_ERROR_PL   = 3
+    AL_ADC_PL_INTR_DONE    = 0,
+    AL_ADC_PL_INTR_GTH     = 1,
+    AL_ADC_PL_INTR_LTH     = 2,
+    AL_ADC_PL_INTR_ERROR   = 3
 }AL_ADC_PlIntrTypeEnum;
 
 typedef enum
@@ -218,8 +218,8 @@ typedef union {
 
 
 /*
-* Adc low-level driver through the PS-ADC Channel
-*/
+ * Adc low-level driver through the PS-ADC Channel
+ */
 
 static inline AL_VOID AlAdc_ll_SetIgap(AL_REG AdcBaseAddr, AL_U8 Data)
 {
@@ -293,27 +293,27 @@ static inline AL_VOID AlAdc_ll_MaskPsAdcIntr(AL_REG AdcBaseAddr, AL_ADC_PsIntrTy
 
 static inline AL_BOOL AlAdc_ll_IsAdcIntr(AL_REG AdcBaseAddr)
 {
-    AL_REG32_GET_BIT(AdcBaseAddr + ADC_MSTS_OFFSET, ADC_MSTS_INTR_SHIFT);
+    return AL_REG32_GET_BIT(AdcBaseAddr + ADC_MSTS_OFFSET, ADC_MSTS_INTR_SHIFT);
 }
 
 static inline AL_BOOL AlAdc_ll_IsDataFifoEmpty(AL_REG AdcBaseAddr)
 {
-    AL_REG32_GET_BIT(AdcBaseAddr + ADC_MSTS_OFFSET, ADC_MSTS_DATA_FIFO_E_SHIFT);
+    return AL_REG32_GET_BIT(AdcBaseAddr + ADC_MSTS_OFFSET, ADC_MSTS_DATA_FIFO_E_SHIFT);
 }
 
 static inline AL_BOOL AlAdc_ll_IsDataFifoFull(AL_REG AdcBaseAddr)
 {
-    AL_REG32_GET_BIT(AdcBaseAddr + ADC_MSTS_OFFSET, ADC_MSTS_DATA_FIFO_F_SHIFT);
+    return AL_REG32_GET_BIT(AdcBaseAddr + ADC_MSTS_OFFSET, ADC_MSTS_DATA_FIFO_F_SHIFT);
 }
 
 static inline AL_BOOL AlAdc_ll_IsCmdFifoEmpty(AL_REG AdcBaseAddr)
 {
-    AL_REG32_GET_BIT(AdcBaseAddr + ADC_MSTS_OFFSET, ADC_MSTS_CMD_FIFO_E_SHIFT);
+    return AL_REG32_GET_BIT(AdcBaseAddr + ADC_MSTS_OFFSET, ADC_MSTS_CMD_FIFO_E_SHIFT);
 }
 
 static inline AL_BOOL AlAdc_ll_IsCmdFifoFull(AL_REG AdcBaseAddr)
 {
-    AL_REG32_GET_BIT(AdcBaseAddr + ADC_MSTS_OFFSET, ADC_MSTS_CMD_FIFO_F_SHIFT);
+    return AL_REG32_GET_BIT(AdcBaseAddr + ADC_MSTS_OFFSET, ADC_MSTS_CMD_FIFO_F_SHIFT);
 }
 
 static inline AL_VOID AlAdc_ll_FlushCmdFifo(AL_REG AdcBaseAddr)
@@ -336,7 +336,7 @@ static inline AL_VOID AlAdc_ll_ResetPsAdc(AL_REG AdcBaseAddr)
 
 /*
  * This function is used for writing to PL-ADC Registers using the Command FIFO.
-*/
+ */
 static inline AL_VOID AlAdc_ll_WritePlAdcReg(AL_REG AdcBaseAddr, AL_U8 PlRegAddr, AL_U16 Data)
 {
     while (AL_REG32_READ(AdcBaseAddr + ADC_MSTS_OFFSET) & ADC_MSTS_R_CMD_FIFO_F_MASK);
@@ -347,7 +347,7 @@ static inline AL_VOID AlAdc_ll_WritePlAdcReg(AL_REG AdcBaseAddr, AL_U8 PlRegAddr
 
 /*
  * This function is drain Data FIFO.
-*/
+ */
 static inline AL_VOID AlAdc_ll_DrainDataFifo(AL_REG AdcBaseAddr)
 {
     AL_U32 Status = AL_REG32_READ(AdcBaseAddr + ADC_MSTS_OFFSET);
@@ -360,7 +360,7 @@ static inline AL_VOID AlAdc_ll_DrainDataFifo(AL_REG AdcBaseAddr)
 
 /*
  * This function is used for reading to PL-ADC Registers using the Data FIFO.
-*/
+ */
 static inline AL_U16 AlAdc_ll_ReadPlAdcReg(AL_REG AdcBaseAddr, AL_U8 PlRegAddr)
 {
     AlAdc_ll_DrainDataFifo(AdcBaseAddr);
@@ -372,13 +372,21 @@ static inline AL_U16 AlAdc_ll_ReadPlAdcReg(AL_REG AdcBaseAddr, AL_U8 PlRegAddr)
 
 /*
  * This function is used to update some bits in the PL-ADC Registers
-*/
+ */
 static inline AL_VOID AlAdc_ll_UpdatePlAdcReg(AL_REG AdcBaseAddr,
         AL_U16 PlAdcAddr, AL_U16 Mask, AL_U16 Val)
 {
     AL_U16 TmpVal = AlAdc_ll_ReadPlAdcReg(AdcBaseAddr, PlAdcAddr);
 
     AlAdc_ll_WritePlAdcReg(AdcBaseAddr, PlAdcAddr, (TmpVal & ~Mask) | Val);
+}
+
+static inline AL_VOID AlAdc_ll_ResetPlAdc(AL_REG AdcBaseAddr)
+{
+    AlAdc_ll_UpdatePlAdcReg(AdcBaseAddr, ADC_CONFIG0_OFFSET,
+            ADC_CONFIG0_ADC_SW_RESET_MASK, AL_ADC_SW_RESET);
+    AlAdc_ll_UpdatePlAdcReg(AdcBaseAddr, ADC_CONFIG0_OFFSET,
+            ADC_CONFIG0_ADC_SW_RESET_MASK, AL_ADC_SW_RELEASE);
 }
 
 static inline AL_U16 AlAdc_ll_GetAdcData(AL_REG AdcBaseAddr, AL_ADC_ChanEnum ChanNum)
@@ -447,6 +455,12 @@ static inline AL_VOID AlAdc_ll_SetAdcChanXLth(AL_REG AdcBaseAddr, AL_ADC_ChanEnu
 static inline AL_VOID AlAdc_ll_SetAdcChanXGth(AL_REG AdcBaseAddr, AL_ADC_ChanEnum ChanNum, AL_U16 Data)
 {
     AlAdc_ll_WritePlAdcReg(AdcBaseAddr, (ADC_CH0_GTH_OFFSET + ChanNum * 2), Data << 4);
+}
+
+static inline AL_VOID AlAdc_ll_MaskAllPlIntr(AL_REG AdcBaseAddr)
+{
+    AlAdc_ll_UpdatePlAdcReg(AdcBaseAddr, ADC_CONFIG1_OFFSET,
+        0xf, 0xf << ADC_CONFIG1_INTR_DONE_MASK_SHIFT);
 }
 
 static inline AL_VOID AlAdc_ll_MaskPlAdcIntrDone(AL_REG AdcBaseAddr, AL_BOOL State)
@@ -556,6 +570,18 @@ static inline AL_VOID AlAdc_ll_SetInputSingal(AL_REG AdcBaseAddr, AL_ADC_InputSi
 {
     AlAdc_ll_UpdatePlAdcReg(AdcBaseAddr, ADC_CONFIG0_OFFSET,
         ADC_CONFIG0_DIFF_ENABLE_MASK, InputSingal << ADC_CONFIG0_DIFF_ENABLE_SHIFT);
+}
+
+static inline AL_VOID AlAdc_ll_SetClkGate(AL_REG AdcBaseAddr, AL_U8 State)
+{
+    AlAdc_ll_UpdatePlAdcReg(AdcBaseAddr, ADC_CONFIG2_OFFSET,
+        ADC_CONFIG2_ADC_CLK_GATE_MASK, State << ADC_CONFIG2_CLK_GATE_SHIFT);
+}
+
+static inline AL_VOID AlAdc_ll_SetPowerDown(AL_REG AdcBaseAddr, AL_U8 State)
+{
+    AlAdc_ll_UpdatePlAdcReg(AdcBaseAddr, ADC_CONFIG2_OFFSET,
+        ADC_CONFIG2_REG_ADC_DISLVL_MASK, State << ADC_CONFIG2_REG_DISLVL_SHIFT);
 }
 
 
