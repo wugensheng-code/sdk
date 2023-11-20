@@ -1,0 +1,10 @@
+{
+	"OPENAMP OUTPUT DEVICE": {
+        "Name": "OPENAMP OUTPUT", "Value": "", "Default": "","Type": "","Description": "openamp-output setting config","permit":false,
+        "sub_options": {
+            "OUTPUT_BY_UART0": {"Name": "OUTPUT_BY_UART0", "Value": "TRUE", "Default": "TRUE","Type": "Boolean","output setting": " ","Description": "output by uart0","permit":true},
+            "REDIRECT_BY_PROXY": {"Name": "REDIRECT_BY_PROXY", "Value": "FALSE", "Default": "FALSE","Type": "Boolean","output setting": ["C_SRC += $(wildcard ./lib/proxy/*.c)","CFLAGS += -DWITH_PROXY=ON "],"Description": "output by proxy","permit":true}
+          
+        }
+    }
+}

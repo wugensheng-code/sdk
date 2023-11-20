@@ -240,7 +240,12 @@
 				"depends": [
 					"3rdparty/lib/open-amp",
 					"LIB_METAL_V1_0"
-				]
+				],
+				"settings": {
+                    "property":"docs/settings/openamp/openamp.json",
+                    "config":"docs/settings/openamp/Makefile",
+                    "destination":"3rdparty/lib/open-amp/Makefile"
+                }
 			}
 		}
 	},
