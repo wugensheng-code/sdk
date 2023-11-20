@@ -33,6 +33,9 @@ extern "C" {
 
 #ifdef USE_RTOS
 #ifdef RTOS_RTTHREAD
+
+#include "rtthread.h"
+
 #define AL_CLI_MALLOC       rt_malloc
 #define AL_CLI_CALLOC       rt_calloc
 #define AL_CLI_FREE         rt_free

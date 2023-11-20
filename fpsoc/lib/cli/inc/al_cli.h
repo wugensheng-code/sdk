@@ -37,7 +37,7 @@ typedef struct
 
     AL_U8 EchoEnable;
 
-    AL_S32 *prompt;
+    AL_CHAR *prompt;
 } AL_CLI_CmdInfoStruct;
 
 AL_S32 AlCli_Init(AL_CLI_ConsoleTypeEnum ConsoleType);

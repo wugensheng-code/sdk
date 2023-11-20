@@ -27,7 +27,7 @@ static AL_S32 AlCli_ProcessCmd(AL_S32 Argc, AL_S8 *Argv[])
 
 #ifdef USE_RTOS
 #ifdef RTOS_RTTHREAD
-    Ret = msh_exec(Argv[0], strlen(Argv[0]));
+    Ret = msh_exec((char *)Argv[0], strlen((const char *)Argv[0]));
     if (Ret == AL_OK)
     {
         AL_CLI_PRINTF("\n");
@@ -38,7 +38,7 @@ static AL_S32 AlCli_ProcessCmd(AL_S32 Argc, AL_S8 *Argv[])
 #endif
 #endif
 
-    Cmd = AlCli_LookUpCmdByName(CliCmdInfo->CmdList, Argv[0], strlen(Argv[0]));
+    Cmd = AlCli_LookUpCmdByName(CliCmdInfo->CmdList, Argv[0], strlen((const char *)Argv[0]));
     if (Cmd == AL_NULL) {
         return AL_CLI_ERROR_CMD_NOT_EXIST;
     }
@@ -49,6 +49,8 @@ static AL_S32 AlCli_ProcessCmd(AL_S32 Argc, AL_S8 *Argv[])
         AL_CLI_PRINTF("\n");
         return AL_CLI_OK;
     }
+
+    return Ret;
 }
 
 static AL_S32 AlCli_SplitCmdBuf2Argv(AL_S8 *CmdBuf, AL_U32 CmdLen, AL_S8 *Argv[AL_CLI_MAX_ARGC_NUM])
@@ -254,7 +256,7 @@ static AL_S32 AlCli_GetCmd(AL_U8 *Buf, AL_U32 BufSize)
 void AlCli_Main(void *data)
 {
     AL_S32 RetValue;
-    AL_S8  *Buf = CliConsole->CliConsoleBuf;
+    AL_S8  *Buf = (AL_S8 *)(CliConsole->CliConsoleBuf);
     AL_U32 BufSize = AL_CLI_BUF_SIZE;
 
     AL_CLI_PRINTF("\r\n");
@@ -270,9 +272,9 @@ void AlCli_Main(void *data)
     while (1) {
 
         /* get a whole command and handle it */
-        if (AlCli_GetCmd(Buf, BufSize) == AL_CLI_OK) {
+        if (AlCli_GetCmd((AL_U8 *)Buf, BufSize) == AL_CLI_OK) {
 
-            RetValue = AlCli_HandleCmd(Buf, strlen(Buf));
+            RetValue = AlCli_HandleCmd(Buf, strlen((const char *)Buf));
             switch (RetValue) {
                 case AL_CLI_ERROR_INVALID_CMD:
                     AL_CLI_PRINTF("syntax error\r\n");
@@ -306,7 +308,7 @@ static AL_S32 AlCli_InitCliCmd()
         return AL_CLI_ERROR_MALLOC_FAILED;
     }
 
-    CliCmdInfo->prompt = AL_CLI_PROMT;
+    CliCmdInfo->prompt = (AL_CHAR *)AL_CLI_PROMT;
 
 #ifdef AL_CLI_ECHO_DISABLE
     CliCmdInfo->EchoEnable = 0;

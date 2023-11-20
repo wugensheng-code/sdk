@@ -12,7 +12,7 @@
 static void AlCli_HelpCmd(AL_S32 Argc, AL_S8 **Argv);
 
 static const AL_CLI_CmdStruct DefaultCmd[] = {
-    {"help", "print this", (AlCli_CmdFunction)AlCli_HelpCmd},
+    {(const AL_S8 *)"help", (const AL_S8 *)"print this", (AlCli_CmdFunction)AlCli_HelpCmd},
 };
 
 static AL_CLI_CmdListStruct *CliCmdList;
@@ -47,7 +47,8 @@ const AL_CLI_CmdStruct *AlCli_LookUpCmdByName(AL_CLI_CmdListStruct *List, AL_S8 
     while (ListPtr != AL_NULL) {
 
         /* Only support full match */
-        if ((strlen(ListPtr->CliCmd->Name) == CmdLen) && !(strncmp(CmdName, ListPtr->CliCmd->Name, CmdLen))) {
+        if ((strlen((const char *)(ListPtr->CliCmd->Name)) == CmdLen) &&
+            !(strncmp((const char *)CmdName, (const char *)(ListPtr->CliCmd->Name), CmdLen))) {
             Cmd = ListPtr->CliCmd;
             break;
         }
@@ -68,7 +69,7 @@ AL_S32 AlCli_UnRegisterCmd(AL_CLI_CmdListStruct *List, const AL_CLI_CmdStruct *C
 
     while (ListPtr->Next != AL_NULL) {
 
-        if (!(strcmp(Cmd->Name, ListPtr->Next->CliCmd->Name))) {
+        if (!(strcmp((const char *)(Cmd->Name), (const char *)(ListPtr->Next->CliCmd->Name)))) {
             ListNode = ListPtr->Next->Next;
             AL_CLI_FREE(ListPtr->Next);
             ListPtr->Next = ListNode;
@@ -158,8 +159,8 @@ AL_S32 AlCli_RegisterUsrCmds(AL_CLI_CmdListStruct *List)
             return AL_CLI_ERROR_MALLOC_FAILED;
         }
 
-        Cmd->Name = UsrCmd->Name;
-        Cmd->Help = UsrCmd->Desc;
+        Cmd->Name = (const AL_S8 *)(UsrCmd->Name);
+        Cmd->Help = (const AL_S8 *)(UsrCmd->Desc);
         Cmd->AlCli_CmdFun = (AlCli_CmdFunction)(UsrCmd->Func);
 
         RetValue = AlCli_RegisterCmd(List, Cmd);

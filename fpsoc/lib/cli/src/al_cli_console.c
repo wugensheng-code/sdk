@@ -11,7 +11,7 @@
 #define AL_CLICONSOLE_NUM_INSTANCES     1
 
 AL_CLI_DevConsoleStruct UartConsole = {
-    .Name          = "uart-console",
+    .Name          = (AL_S8 *)"uart-console",
     .ConsoleRead   = AlCli_UartConsoleRead,
     .ConsoleWrite  = AlCli_UartConsoleWrite,
     .ConsoleInit   = AlCli_UartConsoleInit,
