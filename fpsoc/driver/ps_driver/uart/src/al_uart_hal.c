@@ -144,7 +144,7 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct **Handle, AL_U32 DevId,
 AL_S32 AlUart_Hal_SendDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
 {
     AL_S32 Ret = AL_OK;
-    AL_S32 Timeout = AL_WAITFOREVER;
+    AL_U64 Timeout = AL_WAITFOREVER;
 
     AL_ASSERT((Handle != AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 

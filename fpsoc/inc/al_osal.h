@@ -28,7 +28,7 @@ extern "C"{
  * MUTEX API.*
  *----------------------------------------------*/
 
-#define AL_WAITFOREVER           RT_WAITING_FOREVER
+#define AL_WAITFOREVER           (AL_U64)RT_WAITING_FOREVER
 #define AL_WAITING_NO            RT_WAITING_NO
 typedef struct
 {
@@ -303,8 +303,6 @@ typedef AL_MailBox*  AL_MailBox_t;
 
 static inline AL_S32 AlOsal_Mb_Init(AL_MailBox_t MailBox, const char* Name)
 {
-    AL_S64 Ret = AL_OK;
-
     MailBox->Semaphore.Semaphore_Handle = xSemaphoreCreateCountingStatic(1, 0, &MailBox->Semaphore.Semaphore_Buffer);
 
     configASSERT(MailBox->Semaphore.Semaphore_Handle);
@@ -422,9 +420,9 @@ static inline AL_VOID AlOsal_Sleep(AL_U32 Time)
  * Semaphore API.*
  *----------------------------------------------*/
 
-#define AL_WAITFOREVER          (-1)
+#define AL_WAITFOREVER          (AL_U64)(-1)
 #define AL_WAITING_NO           (0)
-typedef volatile struct
+typedef struct
 {
   volatile AL_S32 count;
 }AL_Semaphore;
@@ -491,7 +489,7 @@ static inline AL_S32 AlOsal_Lock_Release(AL_Lock_t Lock)
  * MailBox API.*
  *----------------------------------------------*/
 
-typedef volatile struct
+typedef struct
 {
     AL_U64          Msg;
     AL_S32          size;

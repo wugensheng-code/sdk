@@ -68,7 +68,6 @@ PINMUX_MODE ?= PINMUX_MODE1
 # 5. define build target
 #########################################################################
 TARGET := freertos
-DOWNLOAD = ocm
 
 
 ifneq ($(PINMUX_MODE),)
