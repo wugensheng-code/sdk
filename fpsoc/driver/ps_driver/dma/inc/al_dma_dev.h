@@ -192,6 +192,8 @@ typedef struct
     AL_U32  PeriNs;
     AL_U32  NumEvents;
     AL_U32  IrqNs;
+    AL_U32  RdCap;
+    AL_U32  WrCap;
 } AL_DMA_IpCfgInfoStruct;
 
 /** Dev request config */
@@ -360,7 +362,7 @@ AL_S32 AlDma_Dev_RegisterEventCallBack(AL_DMA_ChStruct *Channel, AL_DMA_EventCal
 
 AL_S32 AlDma_Dev_UnRegisterEventCallBack(AL_DMA_ChStruct *Channel);
 
-AL_U32 AlDma_Dev_IrqHandler(AL_VOID *Channel);
+AL_VOID AlDma_Dev_IrqHandler(AL_VOID *Channel);
 
 AL_U32 AlDma_Dev_GetRawIrqStatus(AL_DMA_DevStruct *Dev);
 

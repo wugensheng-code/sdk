@@ -63,7 +63,7 @@ AL_S32 AlDma_Hal_Setup(AL_U32 DevId)
     if (!Dev->Init) {
         Dev->Init = AL_TRUE;
         Dev->HwCfg = HwConfig;
-        Dev->CtrlReg = (AL_DMA_DmaCtrlRegStruct *)Dev->HwCfg->BaseAddress;
+        Dev->CtrlReg = (AL_DMA_DmaCtrlRegStruct *)(AL_UINTPTR)Dev->HwCfg->BaseAddress;
         AlDma_Dev_Reset();
         Ret = AlDma_Dev_Init(Dev);
         AL_ASSERT(Ret == AL_OK, Ret);
@@ -255,7 +255,6 @@ AL_S32 AlDma_Hal_MemCpy(AL_UINTPTR Dst, AL_UINTPTR Src, AL_U32 Len)
 AL_S32 AlDma_Hal_PeriCpySingle(AL_DMA_HalStruct *Handle, AL_UINTPTR MemAddr, AL_U32 Len, AL_U32 PerId)
 {
     AL_S32 Ret;
-    AL_MailBox Event;
 
     AlOsal_Lock_Take(&(Handle->Lock), AL_WAITFOREVER);
 
@@ -276,7 +275,6 @@ AL_S32 AlDma_Hal_PeriCpySingle(AL_DMA_HalStruct *Handle, AL_UINTPTR MemAddr, AL_
 AL_S32 AlDma_Hal_PeriCpyCycle(AL_DMA_HalStruct *Handle, AL_UINTPTR MemAddr, AL_U32 Len, AL_U32 PerId)
 {
     AL_S32 Ret;
-    AL_MailBox Event;
 
     AlOsal_Lock_Take(&(Handle->Lock), AL_WAITFOREVER);
 

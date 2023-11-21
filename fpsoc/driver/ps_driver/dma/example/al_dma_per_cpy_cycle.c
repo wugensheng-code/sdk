@@ -92,8 +92,8 @@ static AL_S32 AlDma_Test_PerCpyCycle(AL_VOID)
     AL_DMA_HalStruct *M2PHandle = AL_NULL;
     AL_DMA_HalStruct *P2MHandle = AL_NULL;
     AL_MailBox M2PEvent, P2MEvent;
-    AL_U32 *Src = memalign(CACHE_LINE_SIZE, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32));
-    AL_U32 *Dst = memalign(CACHE_LINE_SIZE, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32));
+    AL_U32 *Src = (AL_U32 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32));
+    AL_U32 *Dst = (AL_U32 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32));
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Copy from %p to %p \r\n", Src, Dst);
 
@@ -116,13 +116,13 @@ static AL_S32 AlDma_Test_PerCpyCycle(AL_VOID)
         Dst[i] = 0;
     }
 
-    Ret = AlDma_Hal_PeriCpyCycle(M2PHandle, Src, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32), I2S_TX_ID);
+    Ret = AlDma_Hal_PeriCpyCycle(M2PHandle, (AL_UINTPTR)Src, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32), I2S_TX_ID);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "M2P mem copy error:0x%x\r\n", Ret);
         return Ret;
     }
 
-    Ret = AlDma_Hal_PeriCpyCycle(P2MHandle, Dst, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32), I2S_RX_ID);
+    Ret = AlDma_Hal_PeriCpyCycle(P2MHandle, (AL_UINTPTR)Dst, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32), I2S_RX_ID);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "M2P mem copy error:0x%x\r\n", Ret);
         return Ret;

@@ -11,6 +11,8 @@ typedef struct {
 
 AL_S32 AlDma_Hal_Init(AL_DMA_HalStruct **Handle, AL_U32 DevId, AL_DMA_ChCfgStruct *Initconfig);
 
+AL_S32 AlDma_Hal_DeInit(AL_DMA_HalStruct *Handle);
+
 AL_S32 AlDma_Hal_MemCpyBlock(AL_DMA_HalStruct *Handle, AL_UINTPTR Dst, AL_UINTPTR Src, AL_U32 Len);
 
 AL_S32 AlDma_Hal_PeriCpySingleBlock(AL_DMA_HalStruct *Handle, AL_UINTPTR MemAddr, AL_U32 Len, AL_U32 PerId);

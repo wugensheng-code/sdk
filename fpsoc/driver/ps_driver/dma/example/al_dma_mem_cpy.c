@@ -53,8 +53,8 @@ static AL_S32 AlDma_Test_MemCpy(AL_VOID)
     AL_U32 Ret = AL_OK;
     AL_U32 InitData = 0;
     AL_DMA_HalStruct *Handle = AL_NULL;
-    AL_U32 *Src = memalign(CACHE_LINE_SIZE, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32));
-    AL_U32 *Dst = memalign(CACHE_LINE_SIZE, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32));
+    AL_U32 *Src = (AL_U32 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32));
+    AL_U32 *Dst = (AL_U32 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32));
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Copy from %p to %p \r\n", Src, Dst);
 
@@ -67,7 +67,7 @@ static AL_S32 AlDma_Test_MemCpy(AL_VOID)
             Src[i] = i + InitData;
         }
 
-        Ret = AlDma_Hal_MemCpy(Dst, Src, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32));
+        Ret = AlDma_Hal_MemCpy((AL_UINTPTR)Dst, (AL_UINTPTR)Src, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32));
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Mem copy error:0x%x\r\n", Ret);
             return Ret;

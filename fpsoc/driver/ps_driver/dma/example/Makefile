@@ -40,6 +40,8 @@ else ifeq ($(ELF), PERCPY_SINGLE)
 C_SRCS += al_dma_per_cpy_single.c
 else ifeq ($(ELF), PERCPY_CYCLE)
 C_SRCS += al_dma_per_cpy_cycle.c
+else ifeq ($(ELF), MEMCPY_PERFORMANCE)
+C_SRCS += al_dma_mem_cpy_performance.c
 else
 C_SRCS += al_dma_mem_cpy_blocked.c
 endif
@@ -82,6 +84,8 @@ else ifeq ($(ELF), PERCPY_SINGLE)
 TARGET := fpsoc_dma_per_cpy_single
 else ifeq ($(ELF), PERCPY_CYCLE)
 TARGET := fpsoc_dma_per_cpy_cycle
+else ifeq ($(ELF), MEMCPY_PERFORMANCE)
+TARGET := fpsoc_dma_mem_cpy_performance
 else
 TARGET := fpsoc_dma_mem_cpy_block
 endif

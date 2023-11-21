@@ -6,6 +6,7 @@
 
 /***************************** Include Files *********************************/
 #include <stdint.h>
+#include <string.h>
 #include "al_dma_dev.h"
 
 /************************** Constant Definitions *****************************/
@@ -51,7 +52,7 @@ extern AL_DMA_HwConfigStruct AlDma_HwConfig[AL_DMA_NUM_INSTANCE];
 #ifdef DMA_DEBUG_MCGEN
 static AL_U32 DebugCmdLine;
 #define DMA_DBGCMD_DUMP(Off, Format, ...)   do {                             \
-                                                AL_LOG(AL_LOG_LEVEL_DEBUG, "%lx:"Format, DebugCmdLine, ##__VA_ARGS__); \
+                                                AL_LOG(AL_LOG_LEVEL_DEBUG, "%x:"Format, DebugCmdLine, ##__VA_ARGS__); \
                                                 DebugCmdLine += Off;            \
                                             } while (0)
 #define DMA_DBGMC_START(Addr)               (DebugCmdLine = Addr)
@@ -318,7 +319,7 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMAMOV(AL_U8 DryRun, AL_CHAR *Buf, DMA_MovEnum 
     *(Buf + 1) = RegDest & 0x7;
     AlDma_Dev_Cpy4(Buf + 2, (AL_CHAR *)&Imm);
 
-    DMA_DBGCMD_DUMP(SZ_DMAMOV, "\tDMAMOV %s 0x%lx\r\n",
+    DMA_DBGCMD_DUMP(SZ_DMAMOV, "\tDMAMOV %s 0x%x\r\n",
                       RegDest == SAR ? "SAR" : (RegDest == DAR ? "DAR" : "CCR"), Imm);
 
     return SZ_DMAMOV;
@@ -1094,7 +1095,7 @@ static AL_S32 AlDma_Dev_GetBurstLen(AL_DMA_DescStruct *Desc, AL_DMA_DevStruct *D
     AL_S32 burstLen;
 
     burstLen = Dev->IpCfgInfo.DataBusWidth / 8;
-    burstLen *= Dev->IpCfgInfo.DataBufDep / Dev->IpCfgInfo.NumChan;
+    burstLen *= Dev->IpCfgInfo.DataBufDep / Dev->IpCfgInfo.NumChan * 2;
     burstLen >>= Desc->ReqCfg.BurstSize;
 
     /* Src/dst_burst_len can't be more than 16 */
@@ -1171,6 +1172,9 @@ static void AlDma_Dev_ReadConfig(AL_DMA_DevStruct *Dev)
     Val = (Crdn >> CRD_DATA_WIDTH_SHIFT) & CRD_DATA_WIDTH_MASK;
     IpCfgInfo->DataBusWidth = 8 * (1 << Val);
 
+    IpCfgInfo->RdCap = ((Crdn >> CRD_RD_CAP_SHIFT) & CRD_RD_CAP_MASK) + 1;
+    IpCfgInfo->WrCap = ((Crdn >> CRD_WR_CAP_SHIFT) & CRD_WR_CAP_MASK) + 1;
+
     IpCfgInfo->DataBufDep = ((Crdn >> CRD_DATA_BUFF_SHIFT) & CRD_DATA_BUFF_MASK) + 1;
     IpCfgInfo->NumChan = ((Cr >> CR0_NUM_CHANS_SHIFT) & CR0_NUM_CHANS_MASK) + 1;
 
@@ -1207,7 +1211,7 @@ static AL_S32 AlDma_Dev_BuildDmaProg(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_DMA
     AL_DMA_XferStruct *Xfer = &XferSpec->Desc->Xfer;
     AL_S32 Off = 0;
 
-    DMA_DBGMC_START((AL_U32)Buf);
+    DMA_DBGMC_START((AL_UINTPTR)Buf);
 
     /* DMAMOV CCR, Ccr */
     Off += DMA_Instr_DMAMOV(DryRun, &Buf[Off], CCR, XferSpec->Ccr);
@@ -1231,8 +1235,8 @@ static AL_S32 AlDma_Dev_BuildDmaProg(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_DMA
 
     /* make sure the Buf and bufsize is cache line aligned. */
     if (!DryRun) {
-        AL_ASSERT(IS_CACHELINE_ALIGNED((AL_U32)Buf), AL_DMA_ERR_BUFF_NOT_ALIGN);
-        AlCache_FlushDcacheRange((AL_U32)Buf, (AL_U32)(Buf + DMA_CHAN_BUF_LEN));
+        AL_ASSERT(IS_CACHELINE_ALIGNED((AL_UINTPTR)Buf), AL_DMA_ERR_BUFF_NOT_ALIGN);
+        AlCache_FlushDcacheRange((AL_UINTPTR)Buf, (AL_UINTPTR)(Buf + DMA_CHAN_BUF_LEN));
     }
 
     return Off;
@@ -1329,7 +1333,7 @@ static AL_S32 DMA_Exec_DMAGO(AL_DMA_DmaCtrlRegStruct *Reg, AL_U32 Channel, AL_U3
 }
 
 
-static void AlDma_Dev_CleanInvalidateDataBuf(AL_DMA_DescStruct *Desc)
+static AL_S32 AlDma_Dev_CleanInvalidateDataBuf(AL_DMA_DescStruct *Desc)
 {
     /* make sure the Buf and bufsize cache line aligned. */
     if (Desc->ReqCfg.SrcInc) {
@@ -1343,6 +1347,8 @@ static void AlDma_Dev_CleanInvalidateDataBuf(AL_DMA_DescStruct *Desc)
         AL_ASSERT(IS_CACHELINE_ALIGNED(Desc->Xfer.length), AL_DMA_ERR_BUFF_NOT_ALIGN);
         AlCache_InvalidateDcacheRange(Desc->Xfer.DstAddr, Desc->Xfer.DstAddr + Desc->Xfer.length);
     }
+
+    return AL_OK;
 }
 
 /** @} */
@@ -1554,7 +1560,7 @@ AL_S32 AlDma_Dev_Start(AL_DMA_ChStruct *Chan)
     /* enable the interrupt */
     AL_REG32_SET_BIT(&Reg->INTEN, Channel, AL_TRUE);
 
-    ret = DMA_Exec_DMAGO(Dev->CtrlReg, Channel, (AL_U32)Desc->McBuf);
+    ret = DMA_Exec_DMAGO(Dev->CtrlReg, Channel, (AL_UINTPTR)Desc->McBuf);
 
     AlDma_Dev_ReleaseLock(Chan->Dev->HwCfg->LockAddr);
 
@@ -1620,7 +1626,7 @@ AL_S32 AlDma_Dev_UnRegisterEventCallBack(AL_DMA_ChStruct *Channel)
  *
  * @return: raw irq status
  */
-AL_U32 AlDma_Dev_IrqHandler(AL_VOID *Channel)
+AL_VOID AlDma_Dev_IrqHandler(AL_VOID *Channel)
 {
     AL_DMA_DevStruct *Dev = ((AL_DMA_ChStruct *)Channel)->Dev;
     AL_DMA_DmaCtrlRegStruct *Reg = Dev->CtrlReg;
@@ -1632,8 +1638,8 @@ AL_U32 AlDma_Dev_IrqHandler(AL_VOID *Channel)
         /*
          * if Dev manager is fault
          */
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "Fault Type: 0x%lx\n", AL_REG32_READ(&Reg->FTRD));
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "Fault PC 0x%lx\n", AL_REG32_READ(&Reg->DPC));
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Fault Type: 0x%x\n", AL_REG32_READ(&Reg->FTRD));
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Fault PC 0x%x\n", AL_REG32_READ(&Reg->DPC));
         /* kill the Dev manager Thread */
         /* Should we disable interrupt?*/
         DMA_Exec_DMAKILL(Reg, 0, 0);
@@ -1643,9 +1649,9 @@ AL_U32 AlDma_Dev_IrqHandler(AL_VOID *Channel)
     if (Val) {
         while (i < Dev->IpCfgInfo.NumChan) {
             if (Val & (1 << i)) {
-                AL_LOG(AL_LOG_LEVEL_DEBUG, "Reset Channel-%d\t CS-%lx\n",
+                AL_LOG(AL_LOG_LEVEL_DEBUG, "Reset Channel-%d\t CS-%x\n",
                         i, AL_REG32_READ(&Reg->CHAN_STS[i].CSR));
-                AL_LOG(AL_LOG_LEVEL_DEBUG, "Reset Channel-%d\t FTC-%lx\n",
+                AL_LOG(AL_LOG_LEVEL_DEBUG, "Reset Channel-%d\t FTC-%x\n",
                         i, AL_REG32_READ(&Reg->FTR[i]));
                 /* kill the Channel Thread */
                 /* Should we disable interrupt? */
@@ -1672,9 +1678,6 @@ AL_U32 AlDma_Dev_IrqHandler(AL_VOID *Channel)
             }
         }
     }
-
-    /* return raw irq status */
-    return Val;
 }
 
 #if 0
@@ -1709,8 +1712,6 @@ AL_S32 AlDma_Dev_SetMcBuf(AL_DMA_ChStruct *Chan, void *Buf)
  */
 void *AlDma_Dev_GetMcBuf(AL_DMA_ChStruct *Chan)
 {
-    AL_ASSERT(Chan != AL_NULL, AL_DMA_ERR_NULL_PTR);
-
     return Chan->McBuf;
 }
 
@@ -1723,8 +1724,6 @@ void *AlDma_Dev_GetMcBuf(AL_DMA_ChStruct *Chan)
  */
 const AL_DMA_DescStruct *AlDma_Dev_GetDesc(AL_DMA_ChStruct *Chan)
 {
-    AL_ASSERT(Chan != AL_NULL, AL_DMA_ERR_NULL_PTR);
-
     return &Chan->Desc;
 }
 
@@ -1890,9 +1889,7 @@ AL_S32 AlDma_Dev_PrepDmaCyclic(AL_DMA_ChStruct *Chan, AL_U32 MemAddr, AL_U32 Len
     AL_LOG(AL_LOG_LEVEL_DEBUG, "%s: SrcInterlaceSize: %d, DstInterlaceSize: %d\r\n", __func__,
                                 Desc->SrcInterlaceSize, Desc->DstInterlaceSize);
 
-    AlDma_Dev_CleanInvalidateDataBuf(Desc);
-
-    return AL_OK;
+    return AlDma_Dev_CleanInvalidateDataBuf(Desc);
 }
 
 /**
@@ -1955,9 +1952,7 @@ AL_S32 AlDma_Dev_PrepDmaSingle(AL_DMA_ChStruct *Chan, AL_U32 MemAddr, AL_U32 Len
     Desc->Cyclic = AL_FALSE;
     Desc->NumPeriods = 0;
 
-    AlDma_Dev_CleanInvalidateDataBuf(Desc);
-
-    return AL_OK;
+    return AlDma_Dev_CleanInvalidateDataBuf(Desc);
 }
 
 /**
@@ -2020,9 +2015,7 @@ AL_S32 AlDma_Dev_PrepDmaMemcpy(AL_DMA_ChStruct *Chan, AL_U32 Dst, AL_U32 Src, AL
     Desc->ReqCfg.BurstLen = AlDma_Dev_GetBurstLen(Desc, Dev, Len);
     Desc->BytesReq = Len;
 
-    AlDma_Dev_CleanInvalidateDataBuf(Desc);
-
-    return AL_OK;
+    return AlDma_Dev_CleanInvalidateDataBuf(Desc);
 }
 
 AL_BOOL AlDma_Dev_FetchLock(AL_REG LockAddr)
