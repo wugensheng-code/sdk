@@ -14,7 +14,7 @@
 
 /***************************** Include Files *********************************/
 #include <string.h>
-#include <stdlib.h>
+#include <malloc.h>
 #include "al_mmc_hal.h"
 
 /************************** Constant Definitions *****************************/
@@ -68,8 +68,8 @@ static AL_S32 AlMmc_Test_SdmaBlocked(AL_VOID)
     AL_U32 InitData = 0;
     AL_U32 BlockCnt = AL_MMC_EX_BLOCK_COUNT;
     AL_MMC_HalStruct *Handle = AL_NULL;
-    AL_U8 *MemWrite = (AL_U8 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_MMC_EX_BLOCK_LEN);
-    AL_U8 *MemRead = (AL_U8 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_MMC_EX_BLOCK_LEN);
+    AL_U8 *MemWrite = memalign(CACHE_LINE_SIZE, AL_MMC_EX_BLOCK_LEN);
+    AL_U8 *MemRead = memalign(CACHE_LINE_SIZE, AL_MMC_EX_BLOCK_LEN);
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Aligned Src:%p, Dst:%p\r\n", MemWrite, MemRead);
 

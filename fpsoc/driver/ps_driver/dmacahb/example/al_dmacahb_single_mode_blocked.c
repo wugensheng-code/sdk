@@ -14,7 +14,7 @@
 
 /***************************** Include Files *********************************/
 #include <string.h>
-#include <stdlib.h>
+#include <malloc.h>
 #include "al_dmacahb_hal.h"
 
 /************************** Constant Definitions *****************************/
@@ -78,8 +78,8 @@ static AL_S32 AlDmacAhb_Test_SingleModeBlocked(AL_VOID)
     AL_DMACAHB_HalStruct *Handle = AL_NULL;
     AL_DMACAHB_ChTransStruct ChTransCfg = {0};
     AL_U32 TransSize = AL_DMACAHB_EX_ARRAY_SIZE;
-    AL_U8 *MemSrc = (AL_U8 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
-    AL_U8 *MemDst = (AL_U8 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
+    AL_U8 *MemSrc = memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
+    AL_U8 *MemDst = memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Aligned Src:%p, Dst:%p\r\n", MemSrc, MemDst);
 

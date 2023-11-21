@@ -14,7 +14,7 @@
 
 /***************************** Include Files *********************************/
 #include <string.h>
-#include <stdlib.h>
+#include <malloc.h>
 #include "al_dma_hal.h"
 
 /************************** Constant Definitions *****************************/

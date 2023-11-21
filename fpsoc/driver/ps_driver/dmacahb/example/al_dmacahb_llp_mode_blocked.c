@@ -14,7 +14,7 @@
 
 /***************************** Include Files *********************************/
 #include <string.h>
-#include <stdlib.h>
+#include <malloc.h>
 #include "al_dmacahb_hal.h"
 
 /************************** Constant Definitions *****************************/
@@ -83,8 +83,8 @@ static AL_S32 AlDmacAhb_Test_LlpModeBlocked(AL_VOID)
     AL_DMACAHB_LliStruct Lli[AL_DMACAHB_EX_LINK_LIST_NUM] CACHE_LINE_ALIGN;
 
     for (AL_U32 i = 0; i < AL_DMACAHB_EX_LINK_LIST_NUM; i++) {
-        MemSrc[i] = (AL_U8 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
-        MemDst[i] = (AL_U8 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
+        MemSrc[i] = memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
+        MemDst[i] = memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
         AL_LOG(AL_LOG_LEVEL_DEBUG, "Aligned %d, Src:%p, Dst:%p\r\n", i, MemSrc[i], MemDst[i]);
     }
 

@@ -14,7 +14,7 @@
 
 /***************************** Include Files *********************************/
 #include <string.h>
-#include <stdlib.h>
+#include <malloc.h>
 #include "al_dma_hal.h"
 
 /************************** Constant Definitions *****************************/
@@ -92,8 +92,8 @@ static AL_S32 AlDma_Test_PerCpyCycle(AL_VOID)
     AL_DMA_HalStruct *M2PHandle = AL_NULL;
     AL_DMA_HalStruct *P2MHandle = AL_NULL;
     AL_MailBox M2PEvent, P2MEvent;
-    AL_U32 *Src = (AL_U32 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32));
-    AL_U32 *Dst = (AL_U32 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32));
+    AL_U32 *Src = memalign(CACHE_LINE_SIZE, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32));
+    AL_U32 *Dst = memalign(CACHE_LINE_SIZE, AL_DMA_EX_DATA_SIZE * sizeof(AL_U32));
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Copy from %p to %p \r\n", Src, Dst);
 

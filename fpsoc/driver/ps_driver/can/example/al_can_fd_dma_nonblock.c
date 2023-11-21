@@ -14,7 +14,7 @@
 
 /***************************** Include Files *********************************/
 #include <string.h>
-#include <stdlib.h>
+#include <malloc.h>
 #include "al_can_hal.h"
 #include "al_dmacahb_hal.h"
 
@@ -95,7 +95,7 @@ static AL_S32 AlCan_Test_FdDmaNonBlock(AL_VOID)
     AL_CAN_HalStruct *CanHandle = AL_NULL;
     AL_DMACAHB_HalStruct *DmaHandle = AL_NULL;
     AL_DMACAHB_ChTransStruct *DmacChTrans = AL_NULL;
-    AL_U8 *RecvMem = (AL_U8 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_CAN_EX_DMA_RECV_DATA);
+    AL_U8 *RecvMem = memalign(CACHE_LINE_SIZE, AL_CAN_EX_DMA_RECV_DATA);
 
     /* Avoid evict, refer to dma_map_single in kernel */
     #ifdef ENABLE_MMU
