@@ -77,15 +77,14 @@ static AL_S32 AlDmacAhb_Test_LlpModeBlocked(AL_VOID)
     AL_U8 InitData = 0;
     AL_DMACAHB_HalStruct *Handle = AL_NULL;
     AL_DMACAHB_ChTransStruct *Trans;
-    AL_DMACAHB_ChTransStruct ChTransCfg = {0};
     AL_U32 TransSize = AL_DMACAHB_EX_ARRAY_SIZE;
     AL_U8 *MemSrc[AL_DMACAHB_EX_LINK_LIST_NUM];
     AL_U8 *MemDst[AL_DMACAHB_EX_LINK_LIST_NUM];
     AL_DMACAHB_LliStruct Lli[AL_DMACAHB_EX_LINK_LIST_NUM] CACHE_LINE_ALIGN;
 
     for (AL_U32 i = 0; i < AL_DMACAHB_EX_LINK_LIST_NUM; i++) {
-        MemSrc[i] = (AL_U8 *)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
-        MemDst[i] = (AL_U8 *)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
+        MemSrc[i] = (AL_U8 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
+        MemDst[i] = (AL_U8 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
         AL_LOG(AL_LOG_LEVEL_DEBUG, "Aligned %d, Src:%p, Dst:%p\r\n", i, MemSrc[i], MemDst[i]);
     }
 
@@ -121,7 +120,7 @@ static AL_S32 AlDmacAhb_Test_LlpModeBlocked(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_INFO, "Loop: 0x%d\r\n", InitData/AL_DMACAHB_EX_LINK_LIST_NUM);
 
         for (AL_U32 i = 0; i < AL_DMACAHB_EX_LINK_LIST_NUM; i++) {
-            memset(Lli[i].SrcAddr, InitData++, AL_DMACAHB_EX_ARRAY_SIZE);
+            memset((AL_VOID *)(AL_UINTPTR)Lli[i].SrcAddr, InitData++, AL_DMACAHB_EX_ARRAY_SIZE);
         }
 
         Ret = AlDmacAhb_Hal_StartBlock(Handle, AL_DMACAHB_EX_BLOCKED_TIMEOUT_IN_MS);
@@ -131,15 +130,17 @@ static AL_S32 AlDmacAhb_Test_LlpModeBlocked(AL_VOID)
         }
 
         for (AL_U32 i = 0; i < AL_DMACAHB_EX_LINK_LIST_NUM; i++) {
-            Ret = memcmp(Lli[i].SrcAddr, Lli[i].DstAddr, AL_DMACAHB_EX_ARRAY_SIZE);
+            Ret = memcmp((AL_VOID *)(AL_UINTPTR)Lli[i].SrcAddr,
+                         (AL_VOID *)(AL_UINTPTR)Lli[i].DstAddr, AL_DMACAHB_EX_ARRAY_SIZE);
             if (Ret != AL_OK) {
                 AL_LOG(AL_LOG_LEVEL_ERROR, "List %d data check error:0x%x\r\n", i, Ret);
                 return Ret;
             }
 
-            memset(Lli[i].DstAddr, 0, AL_DMACAHB_EX_ARRAY_SIZE);
+            memset((AL_VOID *)(AL_UINTPTR)Lli[i].DstAddr, 0, AL_DMACAHB_EX_ARRAY_SIZE);
             #ifdef ENABLE_MMU
-            AlCache_FlushDcacheRange(Lli[i].DstAddr, Lli[i].DstAddr + AL_DMACAHB_EX_ARRAY_SIZE);
+            AlCache_FlushDcacheRange((AL_UINTPTR)Lli[i].DstAddr,
+                                     (AL_UINTPTR)(Lli[i].DstAddr + AL_DMACAHB_EX_ARRAY_SIZE));
             #endif
         }
     }

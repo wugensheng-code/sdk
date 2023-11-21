@@ -78,8 +78,8 @@ static AL_S32 AlDmacAhb_Test_SingleModeBlocked(AL_VOID)
     AL_DMACAHB_HalStruct *Handle = AL_NULL;
     AL_DMACAHB_ChTransStruct ChTransCfg = {0};
     AL_U32 TransSize = AL_DMACAHB_EX_ARRAY_SIZE;
-    AL_U8 *MemSrc = (AL_U8 *)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
-    AL_U8 *MemDst = (AL_U8 *)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
+    AL_U8 *MemSrc = (AL_U8 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
+    AL_U8 *MemDst = (AL_U8 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Aligned Src:%p, Dst:%p\r\n", MemSrc, MemDst);
 
@@ -96,7 +96,7 @@ static AL_S32 AlDmacAhb_Test_SingleModeBlocked(AL_VOID)
     Handle->Channel.Trans = ChTransCfg;
 
     while (1) {
-        memset(ChTransCfg.SrcAddr, InitData++, AL_DMACAHB_EX_ARRAY_SIZE);
+        memset((AL_VOID *)(AL_UINTPTR)ChTransCfg.SrcAddr, InitData++, AL_DMACAHB_EX_ARRAY_SIZE);
 
         Ret = AlDmacAhb_Hal_StartBlock(Handle, AL_DMACAHB_EX_BLOCKED_TIMEOUT_IN_MS);
         if (Ret != AL_OK) {
@@ -104,13 +104,14 @@ static AL_S32 AlDmacAhb_Test_SingleModeBlocked(AL_VOID)
             return Ret;
         }
 
-        Ret = memcmp(Handle->Channel.Trans.SrcAddr, Handle->Channel.Trans.DstAddr, AL_DMACAHB_EX_ARRAY_SIZE);
+        Ret = memcmp((AL_VOID *)(AL_UINTPTR)Handle->Channel.Trans.SrcAddr,
+                     (AL_VOID *)(AL_UINTPTR)Handle->Channel.Trans.DstAddr, AL_DMACAHB_EX_ARRAY_SIZE);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
             return Ret;
         }
 
-        memset(Handle->Channel.Trans.DstAddr, 0, AL_DMACAHB_EX_ARRAY_SIZE);
+        memset((AL_VOID *)(AL_UINTPTR)Handle->Channel.Trans.DstAddr, 0, AL_DMACAHB_EX_ARRAY_SIZE);
 
         #ifdef ENABLE_MMU
         AlCache_FlushDcacheRange(Handle->Channel.Trans.DstAddr, Handle->Channel.Trans.DstAddr + AL_DMACAHB_EX_ARRAY_SIZE);

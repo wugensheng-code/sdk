@@ -11,7 +11,7 @@
 SDK_ROOT    ?= ../../../../..
 
 
-CHIP        ?= dr1v90
+CHIP        ?= dr1m90
 ELF         ?= SINGLE_BLOCK
 
 ifeq ($(CHIP), dr1m90)

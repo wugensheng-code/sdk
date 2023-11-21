@@ -368,7 +368,7 @@ typedef struct
     AL_U32                  EventData;
 } AL_DMACAHB_EventStruct;
 
-typedef AL_VOID (*AL_DMACAHB_ChEventCallBack)(AL_DMACAHB_EventStruct *Event, AL_VOID *CallBackRef);
+typedef AL_S32 (*AL_DMACAHB_ChEventCallBack)(AL_DMACAHB_EventStruct *Event, AL_VOID *CallBackRef);
 
 struct DMACAHB_ChStruct;
 

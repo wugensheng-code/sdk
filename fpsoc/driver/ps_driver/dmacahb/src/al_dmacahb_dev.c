@@ -519,7 +519,6 @@ AL_S32 AlCan_Dev_FlushAndInvalidateData(AL_DMACAHB_ChStruct *Channel)
 
 static AL_S32 AlCan_Dev_CheckAddrAlign(AL_DMACAHB_ChStruct *Channel)
 {
-    AL_S32 Ret = AL_OK;
     AL_DMACAHB_ChTransStruct *Trans = &Channel->Trans;
     AL_DMACAHB_LliStruct *Lli = Trans->Lli;
 
@@ -527,26 +526,32 @@ static AL_S32 AlCan_Dev_CheckAddrAlign(AL_DMACAHB_ChStruct *Channel)
         if (((AL_U32)(AL_UINTPTR)Trans->Lli) & 0x3F) {
             return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
         }
+
+        if (Channel->Config.HandShaking.SrcHsSel == AL_DMACAHB_HAND_SHAKING_SOFTWARE ||
+            Channel->Config.HandShaking.SrcHsSel == AL_DMACAHB_HAND_SHAKING_HARDWARE) {
+            return AL_OK;
+        }
+
         if (Channel->Config.Direction == AL_DMACAHB_TT_FC_MEM2MEM) {
             while (Lli) {
                 if ((Lli->SrcAddr | Lli->DstAddr) & 0x3F) {
                     return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
                 }
-                Lli = Lli->LlpNext;
+                Lli = (AL_DMACAHB_LliStruct *)(AL_UINTPTR)Lli->LlpNext;
             }
         } else if (Channel->Config.Direction == AL_DMACAHB_TT_FC_MEM2PER) {
             while (Lli) {
                 if (Lli->SrcAddr & 0x3F) {
                     return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
                 }
-                Lli = Lli->LlpNext;
+                Lli = (AL_DMACAHB_LliStruct *)(AL_UINTPTR)Lli->LlpNext;
             }
         } else if (Channel->Config.Direction == AL_DMACAHB_TT_FC_PER2MEM) {
             while (Lli) {
                 if (Lli->DstAddr & 0x3F) {
                     return AL_DMACAHB_ERR_ADDR_NOT_ALIGN;
                 }
-                Lli = Lli->LlpNext;
+                Lli = (AL_DMACAHB_LliStruct *)(AL_UINTPTR)Lli->LlpNext;
             }
         } else {
             AL_LOG(AL_LOG_LEVEL_DEBUG, "Unsupport mode\r\n");
@@ -675,16 +680,22 @@ AL_S32 AlDmacAhb_Dev_SoftRequest(AL_DMACAHB_ChStruct *Channel)
 
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
-    if (Channel->Trans.SrcBurstCnt) {
-        AL_LOG(AL_LOG_LEVEL_DEBUG, "Req a burst trans\r\n");
-        Channel->Trans.SrcBurstCnt--;
+    if (AlDmacAhb_Dev_GetState(Channel, (AL_DMACAHB_STATE_LLP_MODE_BUSY | AL_DMACAHB_STATE_LLP_RELOAD_MODE_BUSY))) {
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Req a burst trans in llp mode\r\n");
         AlDmacAhb_ll_SetSrcReqAct(Channel->Dmac->BaseAddr, Channel->Param.ChMask, AL_TRUE);
         AlDmacAhb_ll_SetSrcSglReqAct(Channel->Dmac->BaseAddr, Channel->Param.ChMask, AL_TRUE);
     } else {
-        if (Channel->Trans.SrcSingleCnt) {
-            AL_LOG(AL_LOG_LEVEL_DEBUG, "Req a single trans\r\n");
-            Channel->Trans.SrcSingleCnt--;
+        if (Channel->Trans.SrcBurstCnt) {
+            AL_LOG(AL_LOG_LEVEL_DEBUG, "Req a burst trans in single mode\r\n");
+            Channel->Trans.SrcBurstCnt--;
+            AlDmacAhb_ll_SetSrcReqAct(Channel->Dmac->BaseAddr, Channel->Param.ChMask, AL_TRUE);
             AlDmacAhb_ll_SetSrcSglReqAct(Channel->Dmac->BaseAddr, Channel->Param.ChMask, AL_TRUE);
+        } else {
+            if (Channel->Trans.SrcSingleCnt) {
+                AL_LOG(AL_LOG_LEVEL_DEBUG, "Req a single trans in single mode\r\n");
+                Channel->Trans.SrcSingleCnt--;
+                AlDmacAhb_ll_SetSrcSglReqAct(Channel->Dmac->BaseAddr, Channel->Param.ChMask, AL_TRUE);
+            }
         }
     }
 

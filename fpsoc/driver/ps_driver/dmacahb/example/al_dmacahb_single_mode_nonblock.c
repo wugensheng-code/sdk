@@ -13,7 +13,8 @@
  */
 
 /***************************** Include Files *********************************/
-#include <string.h>
+#include "string.h"
+#include <stdlib.h>
 #include "al_dmacahb_hal.h"
 
 /************************** Constant Definitions *****************************/
@@ -77,8 +78,8 @@ static AL_S32 AlDmacAhb_Test_SingleModeNonBlock(AL_VOID)
     AL_DMACAHB_ChTransStruct ChTransCfg = {0};
     AL_U32 TransSize = AL_DMACAHB_EX_ARRAY_SIZE;
     AL_DMACAHB_EventStruct Event;
-    AL_U8 *MemSrc = (AL_U8 *)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
-    AL_U8 *MemDst = (AL_U8 *)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
+    AL_U8 *MemSrc = (AL_U8 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
+    AL_U8 *MemDst = (AL_U8 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
 
     Ret = AlDmacAhb_Hal_Init(&Handle, AL_DMACAHB_EX_DEVICE_ID, &ChInitCfg, AL_NULL);
     if (Ret != AL_OK) {
@@ -92,7 +93,7 @@ static AL_S32 AlDmacAhb_Test_SingleModeNonBlock(AL_VOID)
     ChTransCfg.TransSize = TransSize / (1 << ChInitCfg.SrcTransWidth);
     Handle->Channel.Trans = ChTransCfg;
 
-    memset(ChTransCfg.SrcAddr, 'A', AL_DMACAHB_EX_ARRAY_SIZE);
+    memset((AL_VOID *)(AL_UINTPTR)ChTransCfg.SrcAddr, 'A', AL_DMACAHB_EX_ARRAY_SIZE);
 
     Ret = AlDmacAhb_Hal_Start(Handle);
     if (Ret != AL_OK) {
@@ -125,7 +126,8 @@ static AL_S32 AlDmacAhb_Test_SingleModeNonBlock(AL_VOID)
         }
     }
 
-    Ret = memcmp(Handle->Channel.Trans.SrcAddr, Handle->Channel.Trans.DstAddr, AL_DMACAHB_EX_ARRAY_SIZE);
+    Ret = memcmp((AL_VOID *)(AL_UINTPTR)Handle->Channel.Trans.SrcAddr,
+                 (AL_VOID *)(AL_UINTPTR)Handle->Channel.Trans.DstAddr, AL_DMACAHB_EX_ARRAY_SIZE);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
         return Ret;
