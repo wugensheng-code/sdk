@@ -181,6 +181,7 @@ extern "C" {
  * @return {int} status code of platform init
  */
 int Soc_PlatInit();
+int Soc_PsPlInit();
 int Soc_PlatGetDeviceVersion();
 
 #ifdef __cplusplus

@@ -39,14 +39,8 @@ static uint32_t ALFsbl_BitStreamProgDone(void);
 
 static void     AlFsbl_PrintPartitionHeaderInfo(AlFsbl_PartitionHeader *PtHdr);
 
-
 static uint32_t __attribute__((aligned(4))) RpuWait = 0xa001a001;
 static uint8_t  RpuWakeUpFlag = 0;
-
-uint32_t RegVal_srst_ctrl2 = 0;
-uint32_t RegVal_srst_ctrl0 = 0;
-uint32_t RegVal_pls_prot = 0;
-uint32_t RegVal_ainacts = 0;
 
 uint32_t AlFsbl_PartitionLoad(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx)
 {
@@ -54,23 +48,6 @@ uint32_t AlFsbl_PartitionLoad(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx
 	uint32_t DestDev;
 
 	/// todo: restart wdt
-
-
-	/// close pl-ps bus connections, hp and gpm bus
-	RegVal_srst_ctrl2 = AL_REG32_READ(CRP_SRST_CTRL2);
-	AL_REG32_SET_BITS(CRP_SRST_CTRL2, 0, 2, 0);
-	AL_REG32_SET_BITS(CRP_SRST_CTRL2, 4, 2, 0);
-
-	/// close pl-ps bus connections, fahb and gps bus
-	RegVal_pls_prot = AL_REG32_READ(SYSCTRL_NS_PLS_PROT);
-	AL_REG32_SET_BITS(SYSCTRL_NS_PLS_PROT, 0, 2, 3);
-
-	/// close apu acp bus connections
-	RegVal_srst_ctrl0 = AL_REG32_READ(CRP_SRST_CTRL0);
-	AL_REG32_SET_BITS(CRP_SRST_CTRL0, 8, 1, 0);
-	RegVal_ainacts = AL_REG32_READ(APU_CTRL_AINACTS);
-	AL_REG32_SET_BITS(APU_CTRL_AINACTS, 0, 1, 1);
-
 
 	/// partition header validation
 	Status = AlFsbl_PartitionHeaderValidation(FsblInstancePtr, PartitionIdx, &FsblSecInfo);

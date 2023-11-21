@@ -99,6 +99,17 @@ static uint32_t AlFsbl_SystemInit(AlFsblInfo *FsblInstancePtr)
 		AL_REG32_SET_BIT(SYSCTRL_S_GLOBAL_SRSTN, 8, 1);
 	}
 
+	/// close pl-ps bus connections, hp and gpm bus
+	AL_REG32_SET_BITS(CRP_SRST_CTRL2, 0, 2, 0);
+	AL_REG32_SET_BITS(CRP_SRST_CTRL2, 4, 2, 0);
+
+	/// close pl-ps bus connections, fahb and gps bus
+	AL_REG32_SET_BITS(SYSCTRL_NS_PLS_PROT, 0, 2, 3);
+
+	/// close apu acp bus connections
+	AL_REG32_SET_BITS(CRP_SRST_CTRL0, 8, 1, 0);
+	AL_REG32_SET_BITS(APU_CTRL_AINACTS, 0, 1, 1);
+
 	Status = ALFSBL_SUCCESS;
 
 	return Status;
