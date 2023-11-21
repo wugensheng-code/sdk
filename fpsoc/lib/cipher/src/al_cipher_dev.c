@@ -6,7 +6,9 @@
 
 /***************************** Include Files *********************************/
 #include <stdio.h>
+#include <string.h>
 #include "al_cipher_dev.h"
+
 /************************** Constant Definitions *****************************/
 /* big endian */
 const AL_CIPHER_EcCurveStruct Sm2Curve = {.A = {0xFFFFFFFC, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, \
@@ -57,6 +59,11 @@ const AL_CIPHER_EcCurveStruct Sm2Curve = {.A = {0xFFFFFFFC, 0xFFFFFFFF, 0x000000
                                  (Mode == AL_CIPHER_BLK_FIRST) || \
                                  (Mode == AL_CIPHER_BLK_LAST) || \
                                  (Mode == AL_CIPHER_BLK_MID))
+
+#define IS_DMA_INC_MODE(Mode)   ((Mode == AL_CIPHER_DMA_INCR_BOTH) || \
+                                 (Mode == AL_CIPHER_DMA_INCR_DST) || \
+                                 (Mode == AL_CIPHER_DMA_INCR_SRC) || \
+                                 (Mode == AL_CIPHER_DMA_INCR_NONE))
 
 #define IS_KEY_SEL(Key)         ((Key == AL_CIPHER_KEY_BHDR) || \
                                  (Key == AL_CIPHER_KEY_USER))
@@ -170,7 +177,7 @@ AL_S32 AlCipher_Dev_Init(AL_CIPHER_DevStruct *Dev, AL_CIPHER_HwConfigStruct *HwC
  *          - AL_OK is register correct
  * @note
 */
-AL_S32 AlCipher_Dev_RegisterEventCallBack(AL_CIPHER_DevStruct *Dev, AL_CIPHER_EventCallBack *CallBack,
+AL_S32 AlCipher_Dev_RegisterEventCallBack(AL_CIPHER_DevStruct *Dev, AL_CIPHER_EventCallBack CallBack,
                                           AL_VOID *CallBackRef)
 {
     AL_ASSERT((Dev != AL_NULL) && (CallBack != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
@@ -207,8 +214,6 @@ AL_S32 AlCipher_Dev_UnRegisterEventCallBack(AL_CIPHER_DevStruct *Dev)
 
 static AL_VOID AlCipher_Dev_GetAck(AL_CIPHER_DevStruct *Dev)
 {
-    AL_ASSERT(Dev != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
-
     AL_U32 *Ack = (AL_U32 *)&Dev->Ack;
 
     for (AL_U32 i = 0; i < AL_CIPHER_ACK_WORD_SIZE; i++) {
@@ -279,14 +284,14 @@ static AL_S32 AlCipher_Dev_CryptCheckParams(AL_CIPHER_ConfigUnion *Config)
     /* Is hash block mode valid */
     AL_ASSERT(IS_HASH_BLK_MODE(Config->Crypt.HashBlkMode), AL_CIPHER_ERR_BLOCK_MODE);
     /* Is dma increase mode valid */
-    AL_ASSERT(IS_HASH_BLK_MODE(Config->Crypt.DmaIncMode), AL_CIPHER_ERR_DMA_INC_MODE);
+    AL_ASSERT(IS_DMA_INC_MODE(Config->Crypt.DmaIncMode), AL_CIPHER_ERR_DMA_INC_MODE);
     /* Is data length align */
     AL_ASSERT(IS_DATA_ALIGN(Config->Crypt.DataLength), AL_CIPHER_ERR_DATA_LENGTH_ALIGN);
     /* Is cache align */
-    if (Config->Crypt.InputData != AL_CIPHER_CSU_PCAP_RD_STREAM) {
+    if (Config->Crypt.InputData != (AL_U32 *)AL_CIPHER_CSU_PCAP_RD_STREAM) {
         AL_ASSERT(IS_CACHE_ALIGN((AL_UINTPTR)Config->Crypt.InputData), AL_CIPHER_ERR_DATA_START_ALIGN);
     }
-    if (Config->Crypt.OutputData != AL_CIPHER_CSU_PCAP_WR_STREAM) {
+    if (Config->Crypt.OutputData != (AL_U32 *)AL_CIPHER_CSU_PCAP_WR_STREAM) {
         AL_ASSERT(IS_CACHE_ALIGN((AL_UINTPTR)Config->Crypt.OutputData), AL_CIPHER_ERR_DATA_START_ALIGN);
     }
     AL_ASSERT(IS_CACHE_ALIGN((AL_UINTPTR)Config->Crypt.HashOut), AL_CIPHER_ERR_DATA_START_ALIGN);
@@ -308,19 +313,20 @@ static AL_S32 AlCipher_Dev_CryptSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_Co
     Dev->Msg.Option1.Extend                             = Config->Crypt.HashBlkMode;
     Dev->Msg.MsgData.DmaParam.CipherParam.OpMode.Reg    = AL_CIPHER_AES_256 | Config->Crypt.EncDec |
                                                           Config->Crypt.EcbCbc;
-    Dev->Msg.MsgData.DmaParam.CipherParam.PbInput       = Config->Crypt.InputData;
-    Dev->Msg.MsgData.DmaParam.CipherParam.PbOutput      = Config->Crypt.OutputData;
+    Dev->Msg.MsgData.DmaParam.CipherParam.PbInput       = (AL_UINTPTR)Config->Crypt.InputData;
+    Dev->Msg.MsgData.DmaParam.CipherParam.PbOutput      = (AL_UINTPTR)Config->Crypt.OutputData;
     Dev->Msg.MsgData.DmaParam.CipherParam.TotalLength   = Config->Crypt.DataLength;
-    Dev->Msg.MsgData.DmaParam.CipherParam.PbIv          = Config->Crypt.Iv;
-    Dev->Msg.MsgData.DmaParam.CipherParam.PbKey         = Config->Crypt.Key;
-    Dev->Msg.MsgData.DmaParam.HashOut                   = Config->Crypt.HashOut;
+    Dev->Msg.MsgData.DmaParam.CipherParam.PbIv          = (AL_UINTPTR)Config->Crypt.Iv;
+    Dev->Msg.MsgData.DmaParam.CipherParam.PbKey         = (AL_UINTPTR)Config->Crypt.Key;
+    Dev->Msg.MsgData.DmaParam.HashOut                   = (AL_UINTPTR)Config->Crypt.HashOut;
 
 #ifdef ENABLE_MMU
-    AlCache_FlushAndInvalidateDiffDcacheRange(Config->Crypt.InputData,
-                                              Config->Crypt.InputData + Config->Crypt.DataLength,
-                                              Config->Crypt.OutputData,
-                                              Config->Crypt.OutputData + Config->Crypt.DataLength);
-    AlCache_InvalidateDcacheRange(Config->Crypt.HashOut, Config->Crypt.HashOut + AL_CIPHER_HASH_SIZE);
+    AlCache_FlushAndInvalidateDiffDcacheRange((AL_UINTPTR)Config->Crypt.InputData,
+                                              (AL_UINTPTR)(Config->Crypt.InputData + Config->Crypt.DataLength),
+                                              (AL_UINTPTR)Config->Crypt.OutputData,
+                                              (AL_UINTPTR)(Config->Crypt.OutputData + Config->Crypt.DataLength));
+    AlCache_InvalidateDcacheRange((AL_UINTPTR)Config->Crypt.HashOut,
+                                  (AL_UINTPTR)(Config->Crypt.HashOut + AL_CIPHER_HASH_SIZE));
 #endif
 
     return AL_OK;
@@ -372,13 +378,13 @@ static AL_S32 AlCipher_Dev_HashSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_Con
     Dev->Msg.Cmd                            = AL_CIPHER_CMD_HASH;
     Dev->Msg.Option0.Low                    = Config->Hash.HashMode;
     Dev->Msg.Option1.Extend                 = Config->Hash.HashBlkMode;
-    Dev->Msg.MsgData.HashParam.DataIn       = Config->Hash.InputData;
+    Dev->Msg.MsgData.HashParam.DataIn       = (AL_UINTPTR)Config->Hash.InputData;
     Dev->Msg.MsgData.HashParam.DataLength   = Config->Hash.DataLength;
-    Dev->Msg.MsgData.HashParam.HashOut      = Config->Hash.HashOut;
+    Dev->Msg.MsgData.HashParam.HashOut      = (AL_UINTPTR)Config->Hash.HashOut;
 
 #ifdef ENABLE_MMU
-    AlCache_FlushDcacheRange(Config->Hash.InputData, Config->Hash.InputData + Config->Hash.DataLength);
-    AlCache_InvalidateDcacheRange(Config->Hash.HashOut, Config->Hash.HashOut + AL_CIPHER_HASH_SIZE);
+    AlCache_FlushDcacheRange((AL_UINTPTR)Config->Hash.InputData, (AL_UINTPTR)(Config->Hash.InputData + Config->Hash.DataLength));
+    AlCache_InvalidateDcacheRange((AL_UINTPTR)Config->Hash.HashOut, (AL_UINTPTR)(Config->Hash.HashOut + AL_CIPHER_HASH_SIZE));
 #endif
 
     return AL_OK;
@@ -430,14 +436,14 @@ static AL_S32 AlCipher_Dev_AuthSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_Con
 
     Dev->Msg.Cmd                            = AL_CIPHER_CMD_AUTH;
     Dev->Msg.Option0.Low                    = Config->Auth.AuthMode;
-    Dev->Msg.MsgData.AuthParam.Pubkey       = Config->Auth.PubKey;
-    Dev->Msg.MsgData.AuthParam.Digest       = Config->Auth.Digest;
-    Dev->Msg.MsgData.AuthParam.Signature    = Config->Auth.Signature;
+    Dev->Msg.MsgData.AuthParam.Pubkey       = (AL_UINTPTR)Config->Auth.PubKey;
+    Dev->Msg.MsgData.AuthParam.Digest       = (AL_UINTPTR)Config->Auth.Digest;
+    Dev->Msg.MsgData.AuthParam.Signature    = (AL_UINTPTR)Config->Auth.Signature;
 
 #ifdef ENABLE_MMU
-    AlCache_FlushDcacheRange(Config->Auth.PubKey, Config->Auth.PubKey + AL_CIPHER_AUTH_PUBKEY_SIZE);
-    AlCache_FlushDcacheRange(Config->Auth.Digest, Config->Auth.Digest + AL_CIPHER_AUTH_DIGEST_SIZE);
-    AlCache_FlushDcacheRange(Config->Auth.Signature, Config->Auth.Signature + AL_CIPHER_AUTH_SIGN_SIZE);
+    AlCache_FlushDcacheRange((AL_UINTPTR)Config->Auth.PubKey, (AL_UINTPTR)(Config->Auth.PubKey + AL_CIPHER_AUTH_PUBKEY_SIZE));
+    AlCache_FlushDcacheRange((AL_UINTPTR)Config->Auth.Digest, (AL_UINTPTR)(Config->Auth.Digest + AL_CIPHER_AUTH_DIGEST_SIZE));
+    AlCache_FlushDcacheRange((AL_UINTPTR)Config->Auth.Signature, (AL_UINTPTR)(Config->Auth.Signature + AL_CIPHER_AUTH_SIGN_SIZE));
 #endif
 
     return AL_OK;
@@ -488,14 +494,14 @@ static AL_S32 AlCipher_Dev_SignSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_Con
 
     Dev->Msg.Cmd                            = AL_CIPHER_CMD_SIGN;
     Dev->Msg.Option0.Low                    = Config->Sign.SignMode;
-    Dev->Msg.MsgData.SignParam.PriKey       = Config->Sign.PriKey;
-    Dev->Msg.MsgData.SignParam.Digest       = Config->Sign.Digest;
-    Dev->Msg.MsgData.SignParam.Signature    = Config->Sign.Signature;
+    Dev->Msg.MsgData.SignParam.PriKey       = (AL_UINTPTR)Config->Sign.PriKey;
+    Dev->Msg.MsgData.SignParam.Digest       = (AL_UINTPTR)Config->Sign.Digest;
+    Dev->Msg.MsgData.SignParam.Signature    = (AL_UINTPTR)Config->Sign.Signature;
 
 #ifdef ENABLE_MMU
-    AlCache_FlushDcacheRange(Config->Sign.PriKey, Config->Sign.PriKey + AL_CIPHER_AUTH_PRIKEY_SIZE);
-    AlCache_FlushDcacheRange(Config->Sign.Digest, Config->Sign.Digest + AL_CIPHER_AUTH_DIGEST_SIZE);
-    AlCache_InvalidateDcacheRange(Config->Sign.Signature, Config->Sign.Signature + AL_CIPHER_AUTH_SIGN_SIZE);
+    AlCache_FlushDcacheRange((AL_UINTPTR)Config->Sign.PriKey, (AL_UINTPTR)(Config->Sign.PriKey + AL_CIPHER_AUTH_PRIKEY_SIZE));
+    AlCache_FlushDcacheRange((AL_UINTPTR)Config->Sign.Digest, (AL_UINTPTR)(Config->Sign.Digest + AL_CIPHER_AUTH_DIGEST_SIZE));
+    AlCache_InvalidateDcacheRange((AL_UINTPTR)Config->Sign.Signature, (AL_UINTPTR)(Config->Sign.Signature + AL_CIPHER_AUTH_SIGN_SIZE));
 #endif
 
     return AL_OK;
@@ -544,12 +550,12 @@ static AL_S32 AlCipher_Dev_GenKeySetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_C
 
     Dev->Msg.Cmd = AL_CIPHER_CMD_GENKEY;
     Dev->Msg.Option0.Low = Config->GenKey.KeyMode;
-    Dev->Msg.MsgData.GenKeyParam.PubKey = Config->GenKey.PubKey;
-    Dev->Msg.MsgData.GenKeyParam.PriKey = Config->GenKey.PriKey;
+    Dev->Msg.MsgData.GenKeyParam.PubKey = (AL_UINTPTR)Config->GenKey.PubKey;
+    Dev->Msg.MsgData.GenKeyParam.PriKey = (AL_UINTPTR)Config->GenKey.PriKey;
 
 #ifdef ENABLE_MMU
-    AlCache_InvalidateDcacheRange(Config->GenKey.PubKey, Config->GenKey.PubKey + AL_CIPHER_AUTH_PUBKEY_SIZE);
-    AlCache_InvalidateDcacheRange(Config->GenKey.PriKey, Config->GenKey.PriKey + AL_CIPHER_AUTH_PRIKEY_SIZE);
+    AlCache_InvalidateDcacheRange((AL_UINTPTR)Config->GenKey.PubKey, (AL_UINTPTR)(Config->GenKey.PubKey + AL_CIPHER_AUTH_PUBKEY_SIZE));
+    AlCache_InvalidateDcacheRange((AL_UINTPTR)Config->GenKey.PriKey, (AL_UINTPTR)(Config->GenKey.PriKey + AL_CIPHER_AUTH_PRIKEY_SIZE));
 #endif
 
     return AL_OK;
@@ -652,13 +658,13 @@ static AL_S32 AlCipher_Dev_GetZ(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion 
 
     HashConfig.Hash.HashMode    = AL_CIPHER_OPS_HASH_SM3;
     HashConfig.Hash.HashBlkMode = AL_CIPHER_BLK_WHOLE;
-    HashConfig.Hash.InputData   = AlignBuf;
+    HashConfig.Hash.InputData   = (AL_U32 *)AlignBuf;
     HashConfig.Hash.DataLength  = AlignBufSize;
     HashConfig.Hash.HashOut     = Config->GetZ.ZaOut;
 
 #ifdef ENABLE_MMU
-    AlCache_FlushDcacheRange(AlignBuf, AlignBuf + AlignBufSize);
-    AlCache_InvalidateDcacheRange(Config->GetZ.ZaOut, Config->GetZ.ZaOut + AL_CIPHER_HASH_SIZE);
+    AlCache_FlushDcacheRange((AL_UINTPTR)AlignBuf, (AL_UINTPTR)(AlignBuf + AlignBufSize));
+    AlCache_InvalidateDcacheRange((AL_UINTPTR)Config->GetZ.ZaOut, (AL_UINTPTR)(Config->GetZ.ZaOut + AL_CIPHER_HASH_SIZE));
 #endif
 
     Ret = AlCipher_Dev_Hash(Dev, &HashConfig);

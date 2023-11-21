@@ -275,7 +275,7 @@ typedef struct
     AL_U32                  EventData;
 } AL_CIPHER_EventStruct;
 
-typedef AL_VOID (*AL_CIPHER_EventCallBack)(AL_CIPHER_EventStruct *Event, AL_VOID *CallBackRef);
+typedef AL_S32 (*AL_CIPHER_EventCallBack)(AL_CIPHER_EventStruct *Event, AL_VOID *CallBackRef);
 
 typedef struct
 {
@@ -445,7 +445,7 @@ AL_CIPHER_HwConfigStruct *AlCipher_Dev_LookupConfig(AL_U32 DeviceId);
 
 AL_S32 AlCipher_Dev_Init(AL_CIPHER_DevStruct *Dev, AL_CIPHER_HwConfigStruct *HwConfig);
 
-AL_S32 AlCipher_Dev_RegisterEventCallBack(AL_CIPHER_DevStruct *Dev, AL_CIPHER_EventCallBack *CallBack,
+AL_S32 AlCipher_Dev_RegisterEventCallBack(AL_CIPHER_DevStruct *Dev, AL_CIPHER_EventCallBack CallBack,
                                           AL_VOID *CallBackRef);
 
 AL_S32 AlCipher_Dev_UnRegisterEventCallBack(AL_CIPHER_DevStruct *Dev);

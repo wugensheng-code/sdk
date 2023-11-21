@@ -44,7 +44,7 @@ static AL_S32 AlCipher_Hal_WaitAckOrTimeout(AL_CIPHER_HalStruct *Handle, AL_CIPH
  * @return
  * @note
 */
-static AL_VOID AlCipher_Hal_DefEventCallBack(AL_CIPHER_EventStruct *Event, AL_VOID *CallBackRef)
+static AL_S32 AlCipher_Hal_DefEventCallBack(AL_CIPHER_EventStruct *Event, AL_VOID *CallBackRef)
 {
     AL_ASSERT(Event != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
 
@@ -58,6 +58,8 @@ static AL_VOID AlCipher_Hal_DefEventCallBack(AL_CIPHER_EventStruct *Event, AL_VO
     default:
         break;
     }
+
+    return AL_OK;
 }
 
 static inline AL_S32 AlCipher_Hal_HandleInit(AL_CIPHER_HalStruct *Handle)
