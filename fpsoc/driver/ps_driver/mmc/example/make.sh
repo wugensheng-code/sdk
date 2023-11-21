@@ -8,3 +8,4 @@ clear
 make ELF=SDMA -j8 dasm
 clear
 make ELF=ADMA2 -j8 dasm
+clear

@@ -68,15 +68,15 @@ static AL_S32 AlMmc_Test_Adma2Blocked(AL_VOID)
     AL_U32 InitData = 0;
     AL_U32 BlockCnt = AL_MMC_EX_BLOCK_COUNT;
     AL_MMC_HalStruct *Handle = AL_NULL;
-    AL_U8 *MemWrite = (AL_U8 *)memalign(CACHE_LINE_SIZE, AL_MMC_EX_BLOCK_LEN);
-    AL_U8 *MemRead = (AL_U8 *)memalign(CACHE_LINE_SIZE, AL_MMC_EX_BLOCK_LEN);
+    AL_U8 *MemWrite = (AL_U8 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_MMC_EX_BLOCK_LEN);
+    AL_U8 *MemRead = (AL_U8 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_MMC_EX_BLOCK_LEN);
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Aligned Src:%p, Dst:%p\r\n", MemWrite, MemRead);
 
     Ret = AlMmc_Hal_Init(&Handle, AL_MMC_EX_DEVICE_ID, &MmcAdma2Init, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal init error 0x%x\r\n", Ret);
-        return ;
+        return Ret;
     }
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
@@ -106,7 +106,7 @@ static AL_S32 AlMmc_Test_Adma2Blocked(AL_VOID)
         memset(MemRead, 0, AL_MMC_EX_BLOCK_LEN);
 
         #ifdef ENABLE_MMU
-        AlCache_FlushDcacheRange(MemRead, MemRead + AL_MMC_EX_BLOCK_LEN);
+        AlCache_FlushDcacheRange((AL_UINTPTR)MemRead, (AL_UINTPTR)(MemRead + AL_MMC_EX_BLOCK_LEN));
         #endif
     }
 
