@@ -264,13 +264,13 @@ static inline AL_VOID AlSpi_ll_SetCpolAndCpha(AL_REG SpiBaseAddr, AL_SPI_ClockEn
              SPI_CTRLR0_MST_SCPH_SIZE, SpiClockEnum);
 }
 
-static inline AL_VOID AlSpi_ll_SetLookBack(AL_REG SpiBaseAddr)
+static inline AL_VOID AlSpi_ll_SetLoopBack(AL_REG SpiBaseAddr)
 {
     AL_REG32_SET_BITS(SpiBaseAddr + SPI_CTRLR0_MST_OFFSET, SPI_CTRLR0_MST_SRL_SHIFT,
              SPI_CTRLR0_MST_SRL_SIZE, 1);
 }
 
-static inline AL_VOID AlSpi_ll_DisableLookBack(AL_REG SpiBaseAddr)
+static inline AL_VOID AlSpi_ll_DisableLoopBack(AL_REG SpiBaseAddr)
 {
     AL_REG32_SET_BITS(SpiBaseAddr + SPI_CTRLR0_MST_OFFSET, SPI_CTRLR0_MST_SRL_SHIFT,
              SPI_CTRLR0_MST_SRL_SIZE, 0);
