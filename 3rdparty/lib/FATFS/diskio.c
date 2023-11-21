@@ -31,7 +31,7 @@ extern int USB_disk_ioctl(BYTE cmd, void *buff);
 #define MMC_RD_WR_TIMEOUT_MS    10000
 
 static AL_MMC_HalStruct *Handle;
-static DevId = 0;
+static AL_U32 DevId = 0;
 static AL_MMC_InitStruct InitConfig = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
     .DmaMode            = AL_MMC_DMA_MODE_SDMA,
@@ -98,7 +98,7 @@ DRESULT disk_read (BYTE pdrv, BYTE *buff, DWORD sector, UINT count)
     switch (pdrv) {
     case SD:
     case EMMC:
-        status = AlMmc_Hal_ReadBlocked(Handle, buff, sector, count, MMC_RD_WR_TIMEOUT_MS);
+        status = AlMmc_Hal_ReadBlocked(Handle, (AL_U8 *)buff, sector, count, MMC_RD_WR_TIMEOUT_MS);
         if (status != RES_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Mmc Read Err: 0x%x\r\n", status);
             status = RES_ERROR;
@@ -128,7 +128,7 @@ DRESULT disk_write (BYTE pdrv, const BYTE *buff, DWORD sector, UINT count)
     switch (pdrv) {
     case SD:
     case EMMC:
-        status = AlMmc_Hal_WriteBlocked(Handle, buff, sector, count, MMC_RD_WR_TIMEOUT_MS);
+        status = AlMmc_Hal_WriteBlocked(Handle, (AL_U8 *)buff, sector, count, MMC_RD_WR_TIMEOUT_MS);
         if (status != RES_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Mmc Write Err: 0x%x\r\n", status);
             status = RES_ERROR;
