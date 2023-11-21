@@ -1063,4 +1063,6 @@ AL_S32 AlCan_Dev_DisplayFrame(AL_CAN_FrameStruct *Frame)
     }
 
     AL_LOG(AL_LOG_LEVEL_INFO, "-----Recv Frame Done-----\r\n");
+
+    return AL_OK;
 }

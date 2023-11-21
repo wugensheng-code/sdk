@@ -14,6 +14,7 @@
 
 /***************************** Include Files *********************************/
 #include <string.h>
+#include <stdlib.h>
 #include "al_can_hal.h"
 #include "al_dmacahb_hal.h"
 
@@ -90,12 +91,10 @@ static AL_S32 AlCan_Test_FdDmaLlpNonBlock(AL_VOID)
     AL_CAN_FrameStruct Frame = {0};
     AL_CAN_EventStruct CanRecvEvent = {0};
     AL_DMACAHB_EventStruct DmaEvent = {0};
-    AL_CAN_EventStruct CanSendEvent = {0};
     AL_CAN_HalStruct *CanHandle = AL_NULL;
     AL_DMACAHB_HalStruct *DmaHandle = AL_NULL;
-    AL_DMACAHB_ChTransStruct *DmacChTrans = AL_NULL;
     AL_DMACAHB_LliStruct CACHE_LINE_ALIGN Lli[AL_CAN_EX_DMA_LLI_STRUCT_NUM] ;
-    AL_U8 *RecvMem = (AL_U8 *)memalign(CACHE_LINE_SIZE, AL_CAN_EX_DMA_RECV_DATA);
+    AL_U8 *RecvMem = (AL_U8 *)(AL_UINTPTR)memalign(CACHE_LINE_SIZE, AL_CAN_EX_DMA_RECV_DATA);
 
     /* Avoid evict, refer to dma_map_single in kernel */
     #ifdef ENABLE_MMU
@@ -165,7 +164,7 @@ static AL_S32 AlCan_Test_FdDmaLlpNonBlock(AL_VOID)
             #ifdef ENABLE_MMU
             AlCache_InvalidateDcacheRange((AL_UINTPTR)RecvMem, (AL_UINTPTR)(RecvMem + AL_CAN_EX_DMA_RECV_DATA));
             #endif
-            AlCan_Dev_DecodeFrame(RecvMem, &Frame);
+            AlCan_Dev_DecodeFrame((AL_U32 *)RecvMem, &Frame);
             AlCan_Dev_DisplayFrame(&Frame);
             memset(RecvMem, 0, AL_CAN_EX_DMA_RECV_DATA);
             #ifdef ENABLE_MMU
