@@ -460,7 +460,7 @@
 				"name": "RT-Thread",
 				"version": "1.0",
 				"depends": [
-				"/solutions/demo/baremetal/rt-thread",
+				"/solutions/demo/rt-thread/rt-thread",
 				"OS_RTTHREAD_V1_0"
 				],
 				"description": "RT-THREAD demo",
@@ -473,7 +473,7 @@
 				"name": "FREERTOS",
 				"version": "1.0",
 				"depends": [
-				"/solutions/demo/baremetal/freertos",
+				"/solutions/demo/freertos/freertos",
 				"OS_FREERTOS_V1_0"
 				],
 				"description": "FREERTOS demo",
