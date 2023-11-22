@@ -32,13 +32,8 @@ extern "C" {
 #define RESERVED 0x0		/* reserved memory */
 
 /* Shared memory From dts vdev0buffer with linux host */
-#if BOARD_SEL == 0
-/* board_dr1x90_emulation */
-#define SHARED_MEM_PA  		0x48000000UL
-#else
 /* board_dr1x90_ad101_v10 */
 #define SHARED_MEM_PA		0x9000000UL
-#endif
 
 #define SHARED_MEM_SIZE 	0x2000000UL
 #define SHARED_BUF_OFFSET 	0x0UL

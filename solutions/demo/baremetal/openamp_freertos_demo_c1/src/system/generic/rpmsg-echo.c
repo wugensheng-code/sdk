@@ -51,6 +51,13 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 	/* On reception of a shutdown we signal the application to terminate */
 	if ((*(unsigned int *)data) == SHUTDOWN_MSG) {
 		LPRINTF("shutdown message is received.\r\n");
+		
+		/* Send ACK back to host */
+		if (rpmsg_send(ept, data, len) < 0) {
+			LPERROR("rpmsg_send failed\r\n");
+		}
+		LPRINTF("Send ACK back to host \r\n");
+		
 		shutdown_req = 1;
 		return RPMSG_SUCCESS;
 	}
