@@ -39,7 +39,7 @@ int AlGpio_Hal_Test()
     }
 
     /* 4、Test intr */
-    AlGpio_Hal_IntrCfg(GPIO, IntrPin, GPIO_INTR_TYPE_LEVEL_LOW);
+    AlGpio_Hal_IntrPinCfg(GPIO, IntrPin, GPIO_INTR_TYPE_LEVEL_LOW);
     while(1);
 
     return 0;

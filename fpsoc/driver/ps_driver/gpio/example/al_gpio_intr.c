@@ -17,6 +17,11 @@
 #define PS_KEY_2 11
 #define PL_KEY   54
 #define AL_GPIO_DEVICE_ID 0
+#define BANK_INTR_VALUE    0xc00
+#define BANK_TYPE_REG_REG  0xc00
+#define BANK_POLARUTY_REG  0x0
+#define BANK_BOTHEDGE_REG  0x0
+#define BANK_INTR
 
 
 AL_S32 AlGpio_Hal_Intr_Example()
@@ -36,14 +41,19 @@ AL_S32 AlGpio_Hal_Intr_Example()
 
     /* 2、Test InputRead EXT register */
     for(i = 0; i < 6; i++) {
-        AL_LOG(AL_LOG_LEVEL_INFO, "GPIO Pin %d input data value is 0x%x", PL_KEY, AlGpio_Hal_ReadPinInput(GPIO,PL_KEY));
+        AL_LOG(AL_LOG_LEVEL_INFO, "GPIO Pin %d input data value is 0x%x", PS_KEY_1, AlGpio_Hal_ReadPinInput(GPIO,PS_KEY_1));
     }
 
     /* 3、Test intr */
-    AlGpio_Hal_IntrCfg(GPIO, PS_KEY_1, GPIO_INTR_TYPE_EDGE_FALLING);
-    AlGpio_Hal_IntrCfg(GPIO, PS_KEY_2, GPIO_INTR_TYPE_EDGE_RISING);
-    // AlGpio_Hal_IntrCfg(GPIO, PL_KEY, GPIO_INTR_TYPE_EDGE_FALLING);
+#ifdef PIN_INTR
+    AlGpio_Hal_IntrPinCfg(GPIO, PS_KEY_1, GPIO_INTR_TYPE_LEVEL_HIGH);
+    AlGpio_Hal_IntrPinCfg(GPIO, PS_KEY_2, GPIO_INTR_TYPE_EDGE_RISING);
+    // AlGpio_Hal_IntrPinCfg(GPIO, PL_KEY, GPIO_INTR_TYPE_EDGE_FALLING);
     AlSys_MDelay(5000);
+#else
+    AlGpio_Hal_IntrBankCfg(GPIO, AL_GPIO_BANK0, BANK_INTR_VALUE, BANK_TYPE_REG_REG, BANK_POLARUTY_REG, BANK_BOTHEDGE_REG);
+#endif
+
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     while(1);
