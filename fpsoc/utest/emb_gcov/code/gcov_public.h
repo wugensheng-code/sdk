@@ -87,6 +87,9 @@
  */
 extern void *__init_array_start;
 extern void *__init_array_end;
+// extern void *__ctors_start__;
+// extern void *__ctors_end__;
+
 #endif // GCOV_OPT_PROVIDE_CALL_CONSTRUCTORS
 
 /* Provide function to clear the counter data.
@@ -156,7 +159,7 @@ typedef FILE * GCOV_FILE_TYPE;
  * to set the starting address of the block.
  * Can be combined with other GCOV_OPT_OUTPUT_* options.
  */
-#define GCOV_OPT_OUTPUT_BINARY_MEMORY
+// #define GCOV_OPT_OUTPUT_BINARY_MEMORY
 
 /* Output gcda data as hexdump format ASCII on serial port.
  * Might require your custom code in gcov_public.c
@@ -175,8 +178,8 @@ typedef FILE * GCOV_FILE_TYPE;
  * You might need to add header files to gcc_public.c
  */
 //#define GCOV_PRINT_STR(str) fputs((str), stdout)
-//#define GCOV_PRINT_STR(str) printf("%s", str)
-#define GCOV_PRINT_STR(str) gcov_printf("%s", str)
+#define GCOV_PRINT_STR(str) printf("%s", str)
+// #define GCOV_PRINT_STR(str) gcov_printf("%s\n\r", str)
 //#define GCOV_PRINT_STR(str) puts((str))
 
 /* Function to print a number without newline.
@@ -185,8 +188,8 @@ typedef FILE * GCOV_FILE_TYPE;
  * If you do, you need to set this as appropriate for your system.
  * You might need to add header files to gcc_public.c
  */
-//#define GCOV_PRINT_NUM(num) printf("%d", (num))
-#define GCOV_PRINT_NUM(num) gcov_printf("%d", (num))
+#define GCOV_PRINT_NUM(num) printf("%d", (num))
+// #define GCOV_PRINT_NUM(num) gcov_printf("%d\n\r", (num))
 //#define GCOV_PRINT_NUM(num) print_num((num))
 
 /* Function to print hexdump address.
@@ -194,16 +197,16 @@ typedef FILE * GCOV_FILE_TYPE;
  * If you do, you need to set this as appropriate for your system.
  * You might need to add header files to gcc_public.c
  */
-//#define GCOV_PRINT_HEXDUMP_ADDR(num) printf("%08x: ", (num))
-#define GCOV_PRINT_HEXDUMP_ADDR(num) gcov_printf("%08x: ", (num))
+#define GCOV_PRINT_HEXDUMP_ADDR(num) printf("%08x: ", (num))
+// #define GCOV_PRINT_HEXDUMP_ADDR(num) gcov_printf("%08x\n\r: ", (num))
 
 /* Function to print hexdump data value.
  * Not used if you don't define GCOV_OPT_OUTPUT_SERIAL_HEXDUMP.
  * If you do, you need to set this as appropriate for your system.
  * You might need to add header files to gcc_public.c
  */
-//#define GCOV_PRINT_HEXDUMP_DATA(num) printf("%02x ", (num))
-#define GCOV_PRINT_HEXDUMP_DATA(num) gcov_printf("%02x ", (num))
+#define GCOV_PRINT_HEXDUMP_DATA(num) printf("%02x ", (num))
+// #define GCOV_PRINT_HEXDUMP_DATA(num) gcov_printf("%02x\n\r ", (num))
 
 /* End of user settings ---------------------------------- */
 

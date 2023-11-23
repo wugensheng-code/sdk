@@ -76,7 +76,7 @@ typedef unsigned int UINT32;
 /* You need to set the output buffer pointer to your memory block */
 /* Size used will depend on size and complexity of source code
  * that you have compiled for coverage. */
-static unsigned char *gcov_output_buffer = (unsigned char *)(0x61000000);
+static unsigned char *gcov_output_buffer = (unsigned char *)(0x9000000);
 static gcov_unsigned_t gcov_output_index;
 #endif // GCOV_OPT_OUTPUT_BINARY_MEMORY
 
@@ -88,14 +88,14 @@ static GcovInfo *gcov_headGcov = NULL;
 
 #ifndef GCOV_OPT_USE_MALLOC
 /* Declare space. Need one entry per file compiled for coverage. */
-static GcovInfo gcov_GcovInfo[100];
+static GcovInfo gcov_GcovInfo[3000];
 static gcov_unsigned_t gcov_GcovIndex = 0;
 
 /* Declare space. Needs to be enough for the largest single file coverage data. */
 /* Size used will depend on size and complexity of source code
  * that you have compiled for coverage. */
 /* Need buffer to be 32-bit-aligned for type-safe internal usage */
-gcov_unsigned_t gcov_buf[8192];
+gcov_unsigned_t gcov_buf[81920];
 #endif // not GCOV_OPT_USE_MALLOC
 
 /* ----------------------------------------------------------- */
@@ -116,7 +116,7 @@ void __gcov_init(struct gcov_info *info)
 #ifdef GCOV_OPT_PRINT_STATUS
     GCOV_PRINT_STR("__gcov_init called for ");
     GCOV_PRINT_STR(gcov_info_filename(info));
-    GCOV_PRINT_STR("\n");
+    GCOV_PRINT_STR("\n\r");
 #ifdef GCOV_OPT_USE_STDLIB
     fflush(stdout);
 #endif // GCOV_OPT_USE_STDLIB
@@ -134,7 +134,7 @@ void __gcov_init(struct gcov_info *info)
 
     if (!newHead) {
 #ifdef GCOV_OPT_PRINT_STATUS
-        GCOV_PRINT_STR("Out of memory!"); GCOV_PRINT_STR("\n");
+        GCOV_PRINT_STR("Out of memory!"); GCOV_PRINT_STR("\n\r");
 #endif // GCOV_OPT_PRINT_STATUS
 #ifdef GCOV_OPT_USE_STDLIB
         exit(1);
@@ -237,14 +237,14 @@ void __gcov_exit(void)
 #endif // GCOV_OPT_OUTPUT_BINARY_MEMORY
 
 #ifdef GCOV_OPT_PRINT_STATUS
-    GCOV_PRINT_STR("gcov_exit"); GCOV_PRINT_STR("\n");
+    GCOV_PRINT_STR("gcov_exit"); GCOV_PRINT_STR("\n\r");
 #endif // GCOV_OPT_PRINT_STATUS
 
 #ifdef GCOV_OPT_OUTPUT_BINARY_FILE
     file = GCOV_OPEN_FILE(GCOV_OUTPUT_BINARY_FILENAME);
     if (GCOV_OPEN_ERROR(file)) {
 #ifdef GCOV_OPT_PRINT_STATUS
-        GCOV_PRINT_STR("Unable to open gcov output file!"); GCOV_PRINT_STR("\n");
+        GCOV_PRINT_STR("Unable to open gcov output file!"); GCOV_PRINT_STR("\n\r");
 #endif // GCOV_OPT_PRINT_STATUS
 #ifdef GCOV_OPT_USE_STDLIB
         exit(1);
@@ -273,7 +273,7 @@ void __gcov_exit(void)
 
         if (!buffer) {
 #ifdef GCOV_OPT_PRINT_STATUS
-            GCOV_PRINT_STR("Out of memory!"); GCOV_PRINT_STR("\n");
+            GCOV_PRINT_STR("Out of memory!"); GCOV_PRINT_STR("\n\r");
 #endif // GCOV_OPT_PRINT_STATUS
 #ifdef GCOV_OPT_USE_STDLIB
             exit(1);
@@ -290,7 +290,7 @@ void __gcov_exit(void)
         GCOV_PRINT_NUM(bytesNeeded);
         GCOV_PRINT_STR(" bytes for ");
         GCOV_PRINT_STR(gcov_info_filename(listptr->info));
-        GCOV_PRINT_STR("\n");
+        GCOV_PRINT_STR("\n\r");
 #endif
 
 #ifdef GCOV_OPT_OUTPUT_BINARY_FILE
@@ -351,11 +351,11 @@ void __gcov_exit(void)
         for (u32 i=0; i<bytesNeeded; i++) {
             if (i%16 == 0) GCOV_PRINT_HEXDUMP_ADDR(i);
             GCOV_PRINT_HEXDUMP_DATA((unsigned char)(((unsigned char *)buffer)[i]));
-            if (i%16 == 15) GCOV_PRINT_STR("\n");
+            if (i%16 == 15) GCOV_PRINT_STR("\n\r");
         }
-        GCOV_PRINT_STR("\n");
+        GCOV_PRINT_STR("\n\r");
         GCOV_PRINT_STR(gcov_info_filename(listptr->info));
-        GCOV_PRINT_STR("\n");
+        GCOV_PRINT_STR("\n\r");
 #endif // GCOV_OPT_OUTPUT_SERIAL_HEXDUMP
 
 /* Other output methods might be imagined,
@@ -408,7 +408,7 @@ void __gcov_exit(void)
 
 #if defined(GCOV_OPT_PRINT_STATUS) || defined(GCOV_OPT_OUTPUT_SERIAL_HEXDUMP)
     GCOV_PRINT_STR("Gcov End");
-    GCOV_PRINT_STR("\n");
+    GCOV_PRINT_STR("\n\r");
 #endif
 }
 
@@ -425,7 +425,7 @@ void __gcov_clear(void)
     GcovInfo *listptr = gcov_headGcov;
 
 #ifdef GCOV_OPT_PRINT_STATUS
-    GCOV_PRINT_STR("gcov_clear"); GCOV_PRINT_STR("\n");
+    GCOV_PRINT_STR("gcov_clear"); GCOV_PRINT_STR("\n\r");
 #endif // GCOV_OPT_PRINT_STATUS
 
     while (listptr) {

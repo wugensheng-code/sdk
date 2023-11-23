@@ -32,8 +32,8 @@ DOWNLOAD = ddr
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
-SRC_DIR  = ./src ./emb_gcov
-INC_DIR += ./inc ./emb_gcov
+SRC_DIR  = ./src ./emb_gcov/code
+INC_DIR += ./inc ./emb_gcov/code
 
 LD_LIBS  =
 LIB_DIR  =

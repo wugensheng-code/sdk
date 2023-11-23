@@ -37,7 +37,7 @@
  * @return -1 if error, otherwise returns byte count written to UART
  */
 #include <stdio.h>
-#define write_bytes(fd, buf, n) putchar((int)(*(buf)))
+#define write_bytes(fd, buf, n) AlLog_Write(buf, 8)
 
 /***********************************************************************
  * The following functions support gcov_printf and are not meant to be
