@@ -8,7 +8,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#if (defined _AARCH_64 || defined __aarch64__)
+#if defined __aarch64__
 
 void __attribute__((used)) *memset(void *dst, int val, size_t count)
 {

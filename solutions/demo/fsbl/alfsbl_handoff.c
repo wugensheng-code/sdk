@@ -19,7 +19,7 @@ void __attribute__((noinline)) AlFsbl_HandoffExit(uint64_t HandoffAddress)
 #ifdef __riscv
 	__asm__ __volatile__("fence");
 	__asm__ __volatile__("jr %[src]"::[src]"r"(HandoffAddress));
-#elif (defined _AARCH_64 || defined __aarch64__)
+#elif defined __aarch64__
 	__asm__ __volatile__("mov x30, %0"::"r"(HandoffAddress):"x30");/* move the destination address into x30 register */
 	__asm__ __volatile__("msr daifset, 0xF"::: "memory");
 	__asm__ __volatile__("isb" : : : "memory");/* make sure it completes */

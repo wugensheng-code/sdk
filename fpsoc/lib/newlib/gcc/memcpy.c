@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 
-#if (defined _AARCH_64 || defined __aarch64__)
+#if defined __aarch64__
 
 void *fast_memcpy(void *dst, const void *src, size_t length)
 {

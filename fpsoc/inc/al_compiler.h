@@ -40,6 +40,10 @@
   #define __has_builtin(x) (0)
 #endif
 
+#ifdef  _AARCH_64 
+#define __aarch64__
+#endif
+
 /* NMSIS compiler specific defines */
 /** \brief Pass information from the compiler to the assembler. */
 #ifndef   __ASM

@@ -51,7 +51,7 @@ extern "C" {
 
 #define ALSOC_APU_FREQ          (100*MHZ)
 
-#if (defined _AARCH_64 || defined __aarch64__)
+#if defined __aarch64__
 #ifdef AL_OSC_25
 #define SYSTEM_CLOCK            (25*MHZ)
 #elif defined AL_OSC_33

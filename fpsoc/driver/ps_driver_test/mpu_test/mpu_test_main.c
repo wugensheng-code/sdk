@@ -26,11 +26,11 @@ AL_MPU_HalStruct *NpuHandle;
 
 void do_sync_handle(AL_UINTPTR *Regs)
 {
-#if (defined _AARCH_64 || defined __aarch64__)
+#if defined __aarch64__
     asm volatile("mrs x25, elr_el1; add x25, x25, #0x04; msr elr_el1, x25" ::: "x25");
 #else
     // Todo
-#endif /* defined _AARCH_64 || defined __aarch64__ */
+#endif /* defined __aarch64__*/
 }
 
 static AL_U32 AlMpu_RegisterConfigCheck(AL_REG MpuBaseAddr,  AL_U8 RegionNumber, AL_MPU_RegionConfigStruct *Config)
@@ -259,7 +259,7 @@ static AL_U32 AlMpu_ProtectCheck(AL_U8 RegionNumber, AL_MPU_RegionConfigStruct *
     /* check result */
     if (((Config->Secure == 1) && (CpuInSecureMode == 0)) ||
         ((Config->Privilege == 1) && (CpuInPrivilegeMode == 0)) ||
-#if (defined _AARCH_64 || defined __aarch64__)
+#if defined __aarch64__
         (Config->GroupId == MPU_GROUP_ID_APU) ||
 #else
         (Config->GroupId == MPU_GROUP_ID_RPU) ||

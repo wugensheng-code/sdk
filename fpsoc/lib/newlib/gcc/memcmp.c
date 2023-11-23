@@ -7,7 +7,7 @@
 #include <stddef.h>
 #include <string.h>
 
-#if (defined _AARCH_64 || defined __aarch64__)
+#if defined __aarch64__
 
 int memcmp(const void *s1, const void *s2, size_t len)
 {

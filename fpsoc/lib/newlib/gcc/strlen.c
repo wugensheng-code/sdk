@@ -6,7 +6,7 @@
 
 #include <string.h>
 
-#if (defined _AARCH_64 || defined __aarch64__)
+#if defined __aarch64__
 
 size_t strlen(const char *s)
 {

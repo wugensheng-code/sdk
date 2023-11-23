@@ -11,7 +11,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#if (defined _AARCH_64 || defined __aarch64__)
+#if defined __aarch64__
 
 #define ISB()   asm volatile ("isb sy" : : : "memory")
 #define DSB()   asm volatile ("dsb sy" : : : "memory")
