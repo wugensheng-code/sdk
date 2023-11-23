@@ -110,21 +110,20 @@ static AL_S32 AlQspi_Hal_WaitTxRxDoneOrTimeout(AL_QSPI_HalStruct *Handle, AL_QSP
 static AL_VOID AlQspi_DefEventCallBack(AL_QSPI_EventStruct QspiEvent, void *CallbackRef)
 {
     AL_QSPI_HalStruct *Handle = (AL_QSPI_HalStruct *)CallbackRef;
-    AL_S32 Ret = AL_OK;
 
     switch (QspiEvent.Events) {
     case AL_QSPI_SEND_DONE:
     case AL_QSPI_SEND_TIMEOUT:
     case AL_QSPI_TX_FO:
     case AL_QSPI_TX_FIFO_EMPTY:
-        Ret = AlOsal_Mb_Send(&Handle->TxEventQueue, &QspiEvent);
+        AlOsal_Mb_Send(&Handle->TxEventQueue, &QspiEvent);
         break;
     case AL_QSPI_RECEIVE_DONE:
     case AL_QSPI_RECEIVE_TIMEOUT:
     case AL_QSPI_RX_FO:
     case AL_QSPI_RX_FU:
     case AL_QSPI_RX_FIFO_FULL:
-        Ret = AlOsal_Mb_Send(&Handle->RxEventQueue, &QspiEvent);
+        AlOsal_Mb_Send(&Handle->RxEventQueue, &QspiEvent);
         break;
     default:
         break;
@@ -685,10 +684,7 @@ AL_S32 AlQspi_Hal_IoCtl(AL_QSPI_HalStruct *Handle, AL_Qspi_IoCtlCmdEnum Cmd, AL_
         AL_LOG(AL_LOG_LEVEL_ERROR, "Qspi io ctl cmd error:%d\r\n", Ret);
     }
 
-    Ret = AlOsal_Lock_Take(&Handle->QspiLock, Timeout);
-    if (AL_OK != Ret) {
-        return Ret;
-    }
+    (AL_VOID)AlOsal_Lock_Release(&Handle->QspiLock);
 
     return Ret;
 }

@@ -115,27 +115,24 @@ static AL_S32 AlSpi_Hal_WaitTxRxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_SPI_E
 static AL_VOID AlSpi_DefEventCallBack(AL_SPI_EventStruct SpiEvent, void *CallbackRef)
 {
     AL_SPI_HalStruct *Handle = (AL_SPI_HalStruct *)CallbackRef;
-    AL_S32 Ret = AL_OK;
 
     switch (SpiEvent.Events) {
     case AL_SPI_SEND_DONE:
     case AL_SPI_SEND_TIMEOUT:
     case AL_SPI_TX_FO:
     case AL_SPI_TX_FIFO_EMPTY:
-        Ret = AlOsal_Mb_Send(&Handle->TxEventQueue, &SpiEvent);
+        AlOsal_Mb_Send(&Handle->TxEventQueue, &SpiEvent);
         break;
     case AL_SPI_RECEIVE_DONE:
     case AL_SPI_RECEIVE_TIMEOUT:
     case AL_SPI_RX_FO:
     case AL_SPI_RX_FU:
     case AL_SPI_RX_FIFO_FULL:
-        Ret = AlOsal_Mb_Send(&Handle->RxEventQueue, &SpiEvent);
+        AlOsal_Mb_Send(&Handle->RxEventQueue, &SpiEvent);
         break;
     default:
         break;
     }
-
-    // BUG_ON(Ret != AL_OK);
 }
 
 /**
@@ -701,14 +698,14 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
  * @return  The state of function execution
  * @note    None
 */
-AL_S32 AlSpi_Hal_IoCtl(AL_SPI_HalStruct *Handle, AL_Spi_IoCtlCmdEnum Cmd, AL_VOID *Data)
+AL_S32 AlSpi_Hal_IoCtl(AL_SPI_HalStruct *Handle, AL_Spi_IoCtlCmdEnum Cmd, AL_VOID *Data, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
 
     /* check only Handle,Handle->Dev more checks in AlSpi_Dev_Init function */
     AL_ASSERT((Handle != AL_NULL), AL_SPI_ERR_ILLEGAL_PARAM);
 
-    Ret = AlOsal_Lock_Take(&Handle->SpiLock, AL_WAITFOREVER);
+    Ret = AlOsal_Lock_Take(&Handle->SpiLock, Timeout);
     if (Ret != AL_OK) {
         return Ret;
     }
