@@ -20,7 +20,6 @@
 const AL_GICV3_DrvDataStruct *Gicv3DrvData;
 
 /* Check interrupt ID for SGI/(E)PPI and (E)SPIs */
-static AL_BOOL AlGicv3_IsSgi(AL_U32 Id);
 static AL_BOOL AlGicv3_IsSgiPpi(AL_U32 Id);
 
 /*******************************************************************************
@@ -694,23 +693,6 @@ AL_U32 AlGicv3_SetPmr(AL_U32 Mask)
     ARCH_SYSREG_WRITE(icc_pmr_el1, Mask);
 
     return OldMask;
-}
-
-/******************************************************************************
- * This function checks the interrupt ID and returns true for SGIs and (E)PPIs
- * and false for (E)SPIs IDs.
- *****************************************************************************/
-static AL_BOOL AlGicv3_IsSgi(AL_U32 Id)
-{
-    if (IS_SGI(Id)) {               /* SGIs: 0-15 */
-        return true;
-    } else if (IS_PPI(Id)) {        /* PPIs: 16-31, EPPIs: 1056-1119 */
-        return false;
-    } else if (IS_SPI(Id)) {        /* SPIs: 32-1019, ESPIs: 4096-5119 */
-        return false;
-    } else {
-        return false;
-    }
 }
 
 /******************************************************************************
