@@ -262,6 +262,7 @@ static AL_VOID AlCipher_Dev_SendMsg(AL_CIPHER_DevStruct *Dev)
     AlCipher_ll_Req(Dev->HwConfig.ReqIntrAddr);
 }
 
+#ifdef CIPHER_PARAM_CHECK
 static AL_S32 AlCipher_Dev_CryptCheckParams(AL_CIPHER_ConfigUnion *Config)
 {
     AL_ASSERT((Config->Crypt.InputData != AL_NULL) && (Config->Crypt.OutputData != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
@@ -298,6 +299,7 @@ static AL_S32 AlCipher_Dev_CryptCheckParams(AL_CIPHER_ConfigUnion *Config)
 
     return AL_OK;
 }
+#endif
 
 static AL_S32 AlCipher_Dev_CryptSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
 {
@@ -355,6 +357,7 @@ static AL_S32 AlCipher_Dev_Crypt(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion
     return Ret;
 }
 
+#ifdef CIPHER_PARAM_CHECK
 static AL_S32 AlCipher_Dev_HashCheckParams(AL_CIPHER_ConfigUnion *Config)
 {
     AL_ASSERT(Config != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
@@ -368,6 +371,7 @@ static AL_S32 AlCipher_Dev_HashCheckParams(AL_CIPHER_ConfigUnion *Config)
 
     return AL_OK;
 }
+#endif
 
 static AL_S32 AlCipher_Dev_HashSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
 {
@@ -413,6 +417,7 @@ static AL_S32 AlCipher_Dev_Hash(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion 
     return Ret;
 }
 
+#ifdef CIPHER_PARAM_CHECK
 static AL_S32 AlCipher_Dev_AuthCheckParams(AL_CIPHER_ConfigUnion *Config)
 {
     AL_ASSERT(Config != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
@@ -424,9 +429,9 @@ static AL_S32 AlCipher_Dev_AuthCheckParams(AL_CIPHER_ConfigUnion *Config)
     AL_ASSERT(IS_CACHE_ALIGN((AL_UINTPTR)Config->Auth.Digest), AL_CIPHER_ERR_DATA_START_ALIGN);
     AL_ASSERT(IS_CACHE_ALIGN((AL_UINTPTR)Config->Auth.Signature), AL_CIPHER_ERR_DATA_START_ALIGN);
 
-
     return AL_OK;
 }
+#endif
 
 static AL_S32 AlCipher_Dev_AuthSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
 {
@@ -472,6 +477,7 @@ static AL_S32 AlCipher_Dev_Auth(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion 
     return Ret;
 }
 
+#ifdef CIPHER_PARAM_CHECK
 static AL_S32 AlCipher_Dev_SignCheckParams(AL_CIPHER_ConfigUnion *Config)
 {
     AL_ASSERT(Config != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
@@ -485,6 +491,7 @@ static AL_S32 AlCipher_Dev_SignCheckParams(AL_CIPHER_ConfigUnion *Config)
 
     return AL_OK;
 }
+#endif
 
 static AL_S32 AlCipher_Dev_SignSetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
 {
@@ -530,6 +537,7 @@ static AL_S32 AlCipher_Dev_Sign(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion 
     return Ret;
 }
 
+#ifdef CIPHER_PARAM_CHECK
 static AL_S32 AlCipher_Dev_GenKeyCheckParams(AL_CIPHER_ConfigUnion *Config)
 {
     AL_ASSERT(Config != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
@@ -541,6 +549,7 @@ static AL_S32 AlCipher_Dev_GenKeyCheckParams(AL_CIPHER_ConfigUnion *Config)
 
     return AL_OK;
 }
+#endif
 
 static AL_S32 AlCipher_Dev_GenKeySetParams(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
 {
@@ -584,6 +593,7 @@ static AL_S32 AlCipher_Dev_GenKey(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnio
     return Ret;
 }
 
+#ifdef CIPHER_PARAM_CHECK
 static AL_S32 AlCipher_Dev_GetZCheckParams(AL_CIPHER_ConfigUnion *Config)
 {
     AL_ASSERT(Config != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
@@ -596,6 +606,7 @@ static AL_S32 AlCipher_Dev_GetZCheckParams(AL_CIPHER_ConfigUnion *Config)
 
     return AL_OK;
 }
+#endif
 
 static AL_S32 AlCipher_Dev_SwitchEndian(AL_U8 *Data, AL_U32 DataSize)
 {
