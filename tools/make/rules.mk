@@ -164,7 +164,7 @@ ifeq ($(CORE),arm)
 CFLAGS += -mstrict-align -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35
 endif
 
-AL_CFLAGS  += $(CFLAGS) $(PUBLIC_INC) $(MODULE_INC) $(MKDEP_OPT) -w
+AL_CFLAGS  += $(CFLAGS) $(PUBLIC_INC) $(MODULE_INC) $(MKDEP_OPT) -Wall
 
 #########################################################################
 # ldflags

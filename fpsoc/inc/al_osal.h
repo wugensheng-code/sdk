@@ -42,7 +42,7 @@ static inline AL_S32 AlOsal_Lock_Init(AL_Lock_t Lock, const char* Name)
     return rt_mutex_init(&Lock->Thread_Lock, Name, RT_IPC_FLAG_PRIO);
 }
 
-static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_S32 Timeout)
+static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_U64 Timeout)
 {
     /* If the scheduler is started and in thread context */
     if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL) {
@@ -76,7 +76,7 @@ static inline AL_S32 AlOsal_Sem_Init(AL_Semaphore_t Semaphore, const char* Name,
     return rt_sem_init(Semaphore, Name, Value, RT_IPC_FLAG_PRIO);
 }
 
-static inline AL_S32 AlOsal_Sem_Take(AL_Semaphore_t Semaphore, AL_S32 Timeout)
+static inline AL_S32 AlOsal_Sem_Take(AL_Semaphore_t Semaphore, AL_U64 Timeout)
 {
     return rt_sem_take(Semaphore, Timeout);
 }
@@ -125,7 +125,7 @@ static inline AL_S32 AlOsal_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
     return rt_sem_release(&MailBox->Semaphore);
 }
 
-static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)
+static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_U64 Timeout)
 {
     AL_S32 flag = (AL_S32)rt_sem_take(&MailBox->Semaphore, AL_WAITFOREVER);
 
@@ -220,7 +220,7 @@ static inline AL_S32 AlOsal_Lock_Init(AL_Lock_t Lock, const char* Name)
     return AL_OK;
 }
 
-static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_S32 Timeout)
+static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_U64 Timeout)
 {
     /* If the scheduler is started and in thread context */
     if (ullPortInterruptNesting == 0) {
@@ -278,7 +278,7 @@ static inline AL_S32 AlOsal_Sem_Init(AL_Semaphore_t Semaphore, const char* Name,
     return AL_OK;
 }
 
-static inline AL_S32 AlOsal_Sem_Take(AL_Semaphore_t Semaphore, AL_S32 Timeout)
+static inline AL_S32 AlOsal_Sem_Take(AL_Semaphore_t Semaphore, AL_U64 Timeout)
 {
     return !xSemaphoreTake(Semaphore->Semaphore_Handle, (TickType_t) Timeout);
 }
@@ -335,7 +335,7 @@ static inline AL_S32 AlOsal_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
     }
 }
 
-static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)
+static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_U64 Timeout)
 {
     AL_S32 Ret;
     /* If the scheduler is started and in thread context */
@@ -420,7 +420,7 @@ static inline AL_VOID AlOsal_Sleep(AL_U32 Time)
  * Semaphore API.*
  *----------------------------------------------*/
 
-#define AL_WAITFOREVER          (AL_U64)(-1)
+#define AL_WAITFOREVER          (AL_U64)(-1UL)
 #define AL_WAITING_NO           (0)
 typedef struct
 {
@@ -437,7 +437,7 @@ static inline AL_S32 AlOsal_Sem_Init(AL_Semaphore_t Semaphore, const char* Name,
     return AL_OK;
 }
 
-static inline AL_S32 AlOsal_Sem_Take(AL_Semaphore_t Semaphore, AL_S32 Timeout)
+static inline AL_S32 AlOsal_Sem_Take(AL_Semaphore_t Semaphore, AL_U64 Timeout)
 {
     AL_WAIT_COND_UNTIL_TIMEOUT((Semaphore->count > 0), Timeout);
 
@@ -469,7 +469,7 @@ static inline AL_S32 AlOsal_Lock_Init(AL_Lock_t Lock, const char* Name)
     return AL_OK;
 }
 
-static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_S32 Timeout)
+static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_U64 Timeout)
 {
     AL_UNUSED(Timeout);
 
@@ -517,7 +517,7 @@ static inline AL_S32 AlOsal_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
     return AL_OK;
 }
 
-static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S32 Timeout)
+static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_U64 Timeout)
 {
     AL_BOOL flag = AL_WAIT_COND_UNTIL_TIMEOUT((MailBox->entry == 1), Timeout);
 
@@ -533,7 +533,8 @@ static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_S3
 /*----------------------------------------------------------------------
  * Critical API.
  *----------------------------------------------------------*/
-
+// extern AL_S32 AlIntr_SetLocalInterrupt(AL_FUNCTION state);
+// extern AL_S32 AlIntr_SetInterrupt(AL_U32 IntrId, AL_FUNCTION state);
 static inline AL_U64 ALOsal_EnterCritical(AL_VOID)
 {
     return AlIntr_SetLocalInterrupt(AL_FUNC_DISABLE);

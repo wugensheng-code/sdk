@@ -168,16 +168,16 @@ AL_VOID AlWdt_Hal_Start(AL_WDT_HalStruct *Wdt)
     return;
 }
 
-AL_VOID AlWdt_Hal_Feed(AL_WDT_HalStruct *Wdt)
+AL_S32 AlWdt_Hal_Feed(AL_WDT_HalStruct *Wdt)
 {
     AL_S32 IntrClearValue = 0x0;
 
-    IntrClearValue = AlWdt_ll_ClearIntr(&Wdt->BaseAddr);
+    IntrClearValue = AlWdt_ll_ClearIntr(Wdt->BaseAddr);
     if (!IntrClearValue) {
         return AL_WDT_ERR_BUSY;
     }
 
-    return;
+    return AL_OK;
 }
 
 AL_VOID AlWdt_Hal_SetupTimeout(AL_WDT_HalStruct *Wdt, AL_WDT_TIMEOUT_PERIOD TimeOutPeriod)

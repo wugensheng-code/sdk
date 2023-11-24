@@ -368,7 +368,7 @@ void task4_wdt(void* pvParameters)
     AL_LOG(AL_LOG_LEVEL_INFO, "Task4 Wdt hal init success\r\n");
 
     while (1) {
-        AlWdt_Hal_Feed(WdtHandle);
+        (AL_VOID)AlWdt_Hal_Feed(WdtHandle);
         AL_LOG(AL_LOG_LEVEL_INFO, "Task4 Wdt feed dog\r\n");
         rt_thread_delay(WDT_FEED_TIME);
     }

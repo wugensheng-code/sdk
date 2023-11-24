@@ -66,7 +66,7 @@ typedef struct
 AL_S32 AlWdt_Hal_Init(AL_WDT_HalStruct **Handle, AL_U32 DevId, AL_WDT_InitStruct *InitConfig, AL_Wdt_EventCallBack Callback);
 AL_VOID AlWdt_Hal_Stop(AL_WDT_HalStruct *Handle);
 AL_VOID AlWdt_Hal_Start(AL_WDT_HalStruct *Handle);
-AL_VOID AlWdt_Hal_Feed(AL_WDT_HalStruct *Handle);
+AL_S32 AlWdt_Hal_Feed(AL_WDT_HalStruct *Handle);
 AL_VOID AlWdt_Hal_SetupTimeout(AL_WDT_HalStruct *Handle, AL_WDT_TIMEOUT_PERIOD TimeOutPeriod);
 AL_VOID AlWdt_Hal_DefEventHandler(AL_VOID *CallbackRef);
 AL_VOID AlWdt_Hal_IntrHandler(AL_VOID *Instance);
