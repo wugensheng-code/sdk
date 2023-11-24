@@ -397,6 +397,7 @@ Exit_IRQ_No_Context_Switch:
 .set	FREERTOS_VECTORS, (vectors+0x1000)
 
 .org(FREERTOS_VECTORS)
+.align	11
 _freertos_vector_table:
 	/* Current EL Synchronous exception with sp0 */
 	.align	7
