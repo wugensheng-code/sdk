@@ -410,7 +410,7 @@ AL_S32 AlDmacAhb_Dev_FillLliWithCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_Lli
  *          - AL_OK start success
  * @note
 */
-AL_S32 AlCan_Dev_FlushAndInvalidateData(AL_DMACAHB_ChStruct *Channel)
+static AL_S32 AlDmacahb_Dev_FlushAndInvalidateData(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
 
@@ -517,7 +517,8 @@ AL_S32 AlCan_Dev_FlushAndInvalidateData(AL_DMACAHB_ChStruct *Channel)
     return Ret;
 }
 
-static AL_S32 AlCan_Dev_CheckAddrAlign(AL_DMACAHB_ChStruct *Channel)
+#ifdef ENABLE_MMU
+static AL_S32 AlDmacahb_Dev_CheckAddrAlign(AL_DMACAHB_ChStruct *Channel)
 {
     AL_DMACAHB_ChTransStruct *Trans = &Channel->Trans;
     AL_DMACAHB_LliStruct *Lli = Trans->Lli;
@@ -578,6 +579,7 @@ static AL_S32 AlCan_Dev_CheckAddrAlign(AL_DMACAHB_ChStruct *Channel)
 
     return AL_OK;
 }
+#endif
 
 /**
  * This function set channel trans params
@@ -618,7 +620,7 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
     }
 
 #ifdef ENABLE_MMU
-    Ret = AlCan_Dev_CheckAddrAlign(Channel);
+    Ret = AlDmacahb_Dev_CheckAddrAlign(Channel);
     AL_ASSERT(Ret == AL_OK, Ret);
 #endif
 
@@ -634,7 +636,7 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
     AlDmacAhb_Dev_SetState(Channel, State);
 
 #ifdef ENABLE_MMU
-    Ret = AlCan_Dev_FlushAndInvalidateData(Channel);
+    Ret = AlDmacahb_Dev_FlushAndInvalidateData(Channel);
     AL_ASSERT(Ret == AL_OK, Ret);
 #endif
 
