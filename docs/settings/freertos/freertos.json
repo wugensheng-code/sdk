@@ -1,6 +1,6 @@
 {
     "Configuration for Cortex A": {
-        "Name": "Configuration for Cortex A", "Value": "", "Default": "","Type": "","Description": "Configuration for Cortex A","permit":true,
+        "Name": "Configuration for Cortex A", "Value": true, "Default": true,"Type": "boolean","Description": "Configuration for Cortex A","permit":true,
         "sub_options": {
             "configUNIQUE_INTERRUPT_PRIORITIES":{"Name": "configUNIQUE_INTERRUPT_PRIORITIES", "Value": "32", "Default": "32","Type": "integer","Description": "Set the number of interrupt priority","permit":true},
             "configMAX_API_CALL_INTERRUPT_PRIORITY": {"Name": "configMAX_API_CALL_INTERRUPT_PRIORITY", "Value": "17", "Default": "17","Type": "integer","Description": "Set the number of configMAX_API_CALL_INTERRUPT_PRIORITY","permit":true},
@@ -8,7 +8,7 @@
             "configUSE_PREEMPTION": {"Name": "configUSE_PREEMPTION", "Value": "1", "Default": "1","Type": "integer","Description": "0 for Preemptive scheduler;1 for Collaborative scheduler","permit":true},
             "configUSE_PORT_OPTIMISED_TASK_SELECTION": {"Name": "configUSE_PORT_OPTIMISED_TASK_SELECTION", "Value": "0", "Default": "0","Type": "integer","Description": "General methods for RTOS porting","permit":true},
             "configUSE_TICKLESS_IDLE": {"Name": "configUSE_TICKLESS_IDLE", "Value": "0", "Default": "0","Type": "integer","Description": "0 for keeping tick interrupt;1 for no tick mode","permit":true},
-            "configCPU_CLOCK_HZ": {"Name": "configCPU_CLOCK_HZ", "Value": "SYSTEM_CLOCK", "Default": "SYSTEM_CLOCK","Type": "","Description": "Clock freq for peripheral","permit":true},
+            "configCPU_CLOCK_HZ": {"Name": "configCPU_CLOCK_HZ", "Value": "SYSTEM_CLOCK", "Default": "SYSTEM_CLOCK","Type": "string","Description": "Clock freq for peripheral","permit":true},
             "configRTC_CLOCK_HZ": {"Name": "configRTC_CLOCK_HZ", "Value": "32768", "Default": "32768","Type": "integer","Description": "Clock freq for RTC","permit":true},
             "configTICK_RATE_HZ": {"Name": "configTICK_RATE_HZ", "Value": "100", "Default": "100","Type": "integer","Description": "Clock freq for tick","permit":true},
             "configMAX_PRIORITIES": {"Name": "configMAX_PRIORITIES", "Value": "32", "Default": "32","Type": "integer","Description": "Number of priority levels available for application tasks","permit":true},
@@ -31,7 +31,7 @@
     },
 
     "Memory allocation related definitions": {
-        "Name": "Memory allocation related definitions", "Value": "", "Default": "","Type": "","Description": "Memory allocation related definitions config","permit":true,
+        "Name": "Memory allocation related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "Memory allocation related definitions config","permit":true,
         "sub_options":{
             "configSUPPORT_STATIC_ALLOCATION": {"Name": "configSUPPORT_STATIC_ALLOCATION", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support static allocation; 0 for not support static alloction","permit":true},
             "configSUPPORT_DYNAMIC_ALLOCATION": {"Name": "configSUPPORT_DYNAMIC_ALLOCATION", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support dynamic allocation; 0 for not support dynamic alloction","permit":true},
@@ -41,7 +41,7 @@
     },
 
     "Hook function related definitions": {
-        "Name": "Hook function related definitions", "Value": "", "Default": "","Type": "","Description": "Hook function related definitions config","permit":true,
+        "Name": "Hook function related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "Hook function related definitions config","permit":true,
         "sub_options":{
             "configUSE_IDLE_HOOK": {"Name": "configUSE_IDLE_HOOK", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support idle hook; 0 for not support idle hook","permit":true},
             "configUSE_TICK_HOOK": {"Name": "configUSE_TICK_HOOK", "Value": "0", "Default": "0","Type": "integer","Description": "1 for support tick hook; 0 for not support tick hook","permit":true},
@@ -52,7 +52,7 @@
     },
 
     "Run time and task stats gathering related definitions": {
-        "Name": "Run time and task stats gathering related definitions", "Value": "", "Default": "","Type": "","Description": "Run time and task stats gathering related definitions config","permit":true,
+        "Name": "Run time and task stats gathering related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "Run time and task stats gathering related definitions config","permit":true,
         "sub_options":{
             "configGENERATE_RUN_TIME_STATS": {"Name": "configGENERATE_RUN_TIME_STATS", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support run time stats 0 for not support run time stats","permit":true},
             "configUSE_TRACE_FACILITY": {"Name": "configUSE_TRACE_FACILITY", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support trace facility 0 for not support trace facility","permit":true},
@@ -61,7 +61,7 @@
     },
 
     "Co-routine related definitions": {
-        "Name": "Co-routine related definitions", "Value": "", "Default": "","Type": "","Description": "Co-routine related definitions config","permit":true,
+        "Name": "Co-routine related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "Co-routine related definitions config","permit":true,
         "sub_options":{
             "configUSE_CO_ROUTINES": {"Name": "configUSE_CO_ROUTINES", "Value": "0", "Default": "0","Type": "integer","Description": "1 for support co_routines function 0 for not support co_routines","permit":true},
             "configMAX_CO_ROUTINE_PRIORITIES": {"Name": "configMAX_CO_ROUTINE_PRIORITIES", "Value": "1", "Default": "1","Type": "integer","Description": "Number of priority levels available for application collaboration","permit":true}
@@ -69,7 +69,7 @@
     },
 
     "Software timer related definitions": {
-        "Name": "Software timer related definitions", "Value": "", "Default": "","Type": "","Description": "Software timer related definitions config","permit":true,
+        "Name": "Software timer related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "Software timer related definitions config","permit":true,
         "sub_options":{
             "configUSE_TIMERS": {"Name": "configUSE_TIMERS", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support timers 0 for not support timers","permit":true},
             "configTIMER_TASK_PRIORITY": {"Name": "configTIMER_TASK_PRIORITY", "Value": "3", "Default": "3","Type": "integer","Description": "Setting the Priority of Software Timer Service/Guardian Tasks","permit":true},
@@ -80,7 +80,7 @@
     },
 
     "Optional functions": {
-        "Name": "Software timer related definitions", "Value": "", "Default": "","Type": "","Description": "most linkers will remove unused functions anyway","permit":true,
+        "Name": "Software timer related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "most linkers will remove unused functions anyway","permit":true,
         "sub_options":{
             "INCLUDE_vTaskPrioritySet": {"Name": "INCLUDE_vTaskPrioritySet", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the function vTaskPrioritySet to set task priority or not","permit":true},
             "INCLUDE_uxTaskPriorityGet": {"Name": "INCLUDE_uxTaskPriorityGet", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the function vTaskPrioritySet for obtaining task priority or not","permit":true},

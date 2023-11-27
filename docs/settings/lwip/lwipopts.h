@@ -1,4 +1,3 @@
-#define ARP_QUEUEING                        #{{arp_options}}
 #define ARP_TABLE_SIZE                      #{{arp_table_size}}
 #define DEBUG_OPTION                        #{{debug_option}}
 #define ICMP_DEBUG                          #{{icmp_debug}}

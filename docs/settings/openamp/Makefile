@@ -22,7 +22,14 @@ CFLAGS += -DMACHINE="dr1m90" \
 			-DWITH_DCACHE_VRINGS=ON \
 			-DVIRTIO_CACHED_VRINGS
 
-#{{output setting}}
+#{{OPENAMP_OUTPUT}}
+
+ifeq ($(OPENAMP_OUTPUT),REDIRECT_BY_PROXY)
+	C_SRC += $(wildcard ./lib/proxy/*.c)
+	CFLAGS += -DWITH_PROXY=ON
+else
+	
+endif
 
 # (3) set specificity FLAGS
 LIBNAME := openamp
