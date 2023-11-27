@@ -81,14 +81,6 @@ static inline AL_VOID AlUart_ll_DisableAllIntr(AL_REG BaseAddr)
     AL_REG32_WRITE(BaseAddr + UART__IER_DLH__OFFSET, IntrStatus);
 }
 
-static inline AL_VOID AlUart_ll_ResetDllDlhReg(AL_REG BaseAddr)
-{
-    AL_REG32_SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_ENABLE);
-    AL_REG32_WRITE(BaseAddr + UART__IER_DLH__OFFSET, 0);
-    AL_REG32_WRITE(BaseAddr + UART__RBR__THR__DLL__OFFSET, 0);
-    AL_REG32_SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_DISABLE);
-}
-
 static inline AL_VOID AlUart_ll_Set_LoopBack(AL_REG BaseAddr, AL_BOOL State)
 {
     AL_REG32_SET_BIT(BaseAddr + UART__MCR__ADDR_OFFSET, UART__MCR__LOOPBACK__SHIFT, State);
@@ -181,16 +173,7 @@ static inline AL_BOOL AlUart_ll_GetThreState(AL_REG BaseAddr)
     return AL_REG32_GET_BIT(BaseAddr + UART__IER_DLH__OFFSET, UART__IER_DLH__PTIME__DLH__SHIFT);
 }
 
-/* If the 'THRE' mode is turned on, this function indicates
- * that fifo is full, otherwise it indicates that fifo is empty.
- */
-static inline AL_BOOL AlUart_ll_IsTxFifoFull(AL_REG BaseAddr)
-{
-    while (!AlUart_ll_GetThreState(BaseAddr));
-    return AL_REG32_GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__THRE__SHIFT);
-}
-
-static inline AL_BOOL AlUart_ll_IsThrEmpty(AL_REG BaseAddr)
+static inline AL_BOOL AlUart_ll_GetLsrThreState(AL_REG BaseAddr)
 {
     return AL_REG32_GET_BIT(BaseAddr + UART__LSR__OFFSET, UART__LSR__THRE__SHIFT);
 }
@@ -221,6 +204,13 @@ static inline AL_UART_IntrEnum AlUart_ll_GetIntrStatus(AL_REG BaseAddr)
                              UART__FCR__IIR__FIFOE__IID__SIZE);
 }
 
+static inline AL_BOOL AlUart_ll_IsFifosEnable(AL_REG BaseAddr)
+{
+    AL_U8 FifosState = AL_REG32_GET_BITS(BaseAddr + UART__FCR__IIR__OFFSET,
+            UART__FCR__IIR__RT__FIFOSE__SHIFT, UART__FCR__IIR__RT__FIFOSE__SSIZE);
+    return (FifosState == 0x3) ? AL_TRUE : AL_FALSE;
+}
+
 static inline AL_U32 AlUart_ll_GetLineRegStatus(AL_REG BaseAddr)
 {
     return AL_REG32_READ(BaseAddr + UART__LSR__OFFSET);
@@ -249,8 +239,8 @@ static inline AL_BOOL AlUart_ll_IsBiIntr(AL_REG BaseAddr)
 static inline AL_VOID AlUart_ll_SetBaudRate(AL_REG BaseAddr, AL_U32 BaudRate, AL_U32 InputClockHz)
 {
     AL_REG32_SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_ENABLE);
-    AL_REG32_WRITE(BaseAddr + UART__IER_DLH__OFFSET, (((InputClockHz >> 4) + (BaudRate >> 1)) / BaudRate) >> 8);
-    AL_REG32_WRITE(BaseAddr + UART__RBR__THR__DLL__OFFSET, (((InputClockHz >> 4) + (BaudRate >> 1)) / BaudRate));
+    AL_REG32_WRITE(BaseAddr + UART__IER_DLH__OFFSET, (((InputClockHz >> 4) / BaudRate) >> 8));
+    AL_REG32_WRITE(BaseAddr + UART__RBR__THR__DLL__OFFSET, ((InputClockHz >> 4) / BaudRate));
     AL_REG32_SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_DISABLE);
 }
 
@@ -260,8 +250,8 @@ static inline AL_U32 AlUart_ll_GetBaudRate(AL_REG BaseAddr, AL_U32 InputClockHz)
     AL_U32 BaudRate;
     AL_REG32_SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_ENABLE);
     Divisor = (AL_REG32_READ(BaseAddr + UART__IER_DLH__OFFSET) << 8) | (AL_REG32_READ(BaseAddr + UART__RBR__THR__DLL__OFFSET));
-    BaudRate = (AL_U32)(InputClockHz / (16 * Divisor));
     AL_REG32_SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_DISABLE);
+    BaudRate = (AL_U32)((InputClockHz >> 4) / Divisor);
     return BaudRate;
 }
 

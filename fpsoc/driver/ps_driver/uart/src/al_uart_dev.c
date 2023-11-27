@@ -216,8 +216,6 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct
     AlUart_ll_ResetTxFifo(Uart->BaseAddr);
     AlUart_ll_ResetRxFifo(Uart->BaseAddr);
 
-    AlUart_ll_ResetDllDlhReg(Uart->BaseAddr);
-
     if (AlUart_ll_IsUartBusy(Uart->BaseAddr)) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Al uart cannot set baudrate written while the UART is busy");
     } else {
@@ -236,15 +234,8 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct
     AlUart_ll_SetTxFifoThre(Uart->BaseAddr, AL_UART_TxFIFO_HALF_FULL);
     AlUart_ll_SetRxFifoThre(Uart->BaseAddr, AL_UART_RxFIFO_HALF_FULL);
 
-    /* Enable programmable THRE mode*/
-    AlUart_ll_EnableThreIntr(Uart->BaseAddr, AL_TRUE);
-
     /* Enable Rx Line Interrupt*/
     AlUart_ll_EnableLineIntr(Uart->BaseAddr, AL_TRUE);
-
-    /* Disable Tx and Rx interrupt*/
-    AlUart_ll_SetTxIntr(Uart->BaseAddr, AL_FUNC_DISABLE);
-    AlUart_ll_SetRxIntr(Uart->BaseAddr, AL_FUNC_DISABLE);
 
     /* Set AutoFlowControl */
     if (Uart->Configs.HwFlowCtl) {
@@ -256,10 +247,21 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct
     return AL_OK;
 }
 
+AL_BOOL AlUart_Dev_IsTxFifoFull(AL_UART_DevStruct *Uart)
+{
+    /* If the FIFOs is enabled and 'THRE' mode is turned on,
+     * this register indicates that TX FIFO is full,
+     * otherwise it indicates that THR or TX FIFO is empty.
+     */
+
+    while (!(AlUart_ll_GetThreState(Uart->BaseAddr)) && (AlUart_ll_IsFifosEnable(Uart->BaseAddr)));
+    return (AlUart_ll_GetLsrThreState(Uart->BaseAddr));
+}
+
 AL_VOID AlUart_Dev_SendByte(AL_UART_DevStruct *Uart, AL_S8 Char)
 {
-    while (AlUart_ll_IsTxFifoFull(Uart->BaseAddr));
-
+    AlUart_ll_EnableThreIntr(Uart->BaseAddr, AL_FALSE);
+    while (!AlUart_ll_GetLsrThreState(Uart->BaseAddr));
     AlUart_ll_SendByte(Uart->BaseAddr, Char);
 }
 
@@ -282,8 +284,10 @@ AL_S32 AlUart_Dev_SendDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 S
 
     AlUart_Dev_SetTxBusy(Uart);
 
+    AlUart_ll_EnableThreIntr(Uart->BaseAddr, AL_FALSE);
+
     while (HandledCnt < Size) {
-        if (!(AlUart_ll_IsTxFifoFull(Uart->BaseAddr))) {
+        if (AlUart_ll_GetLsrThreState(Uart->BaseAddr)) {
             AlUart_ll_SendByte(Uart->BaseAddr, Data[HandledCnt]);
             HandledCnt ++;
         }
@@ -349,6 +353,9 @@ AL_S32 AlUart_Dev_SendData(AL_UART_DevStruct *Uart, AL_U8 *SendData, AL_U32 Send
     Uart->SendBuffer.BufferPtr      = SendData;
     Uart->SendBuffer.RequestedCnt   = SendSize;
     Uart->SendBuffer.HandledCnt     = 0;
+
+    /* Enable programmable THRE mode*/
+    AlUart_ll_EnableThreIntr(Uart->BaseAddr, AL_TRUE);
 
     AlUart_Dev_SetIntr(Uart, UART_TX, AL_FUNC_ENABLE);
 
@@ -496,7 +503,7 @@ static AL_VOID AlUart_Dev_SendDataHandler(AL_UART_DevStruct *Uart)
         }
 
     } else {
-        while (!(AlUart_ll_IsTxFifoFull(Uart->BaseAddr)) &&
+        while (!(AlUart_Dev_IsTxFifoFull(Uart)) &&
             (Uart->SendBuffer.HandledCnt < Uart->SendBuffer.RequestedCnt)) {
             AlUart_ll_SendByte(Uart->BaseAddr, Uart->SendBuffer.BufferPtr[Uart->SendBuffer.HandledCnt]);
             Uart->SendBuffer.HandledCnt ++;
