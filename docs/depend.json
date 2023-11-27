@@ -432,7 +432,7 @@
 				"name": "CHERRYUSB_MSC_RTTHREAD",
 				"version": "1.0",
 				"depends": [
-					"/solutions/demo/baremetal/cherryUSB/host/msc_rtthread",
+					"/solutions/demo/rt-thread/msc_rtthread",
 					"LIB_CHERRYUSB_V1_0",
 					"OS_RTTHREAD_V1_0"
 				],
@@ -446,7 +446,7 @@
 				"name": "CHERRYUSB_MSC_FREERTOS",
 				"version": "1.0",
 				"depends": [
-					"/solutions/demo/baremetal/cherryUSB/host/msc_freertos",
+					"/solutions/demo/freertos/msc_freertos",
 					"LIB_CHERRYUSB_V1_0",
 					"OS_FREERTOS_V1_0"
 				],
