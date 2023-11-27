@@ -14,7 +14,7 @@
 #endif
 
 #include <metal/system/@PROJECT_SYSTEM@/anlogic_common/sys.h>
-#include "al_intr.h"
+#include "al_core.h"
 
 #ifndef __METAL_GENERIC_DR1M90_SYS__H__
 #define __METAL_GENERIC_DR1M90_SYS__H__

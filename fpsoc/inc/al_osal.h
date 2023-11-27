@@ -182,7 +182,7 @@ static inline AL_VOID AlOsal_Sleep(AL_U32 Time)
 {
     /* If the scheduler is started and in thread context */
     if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL) {
-        return rt_thread_mdelay(Time);
+        return (AL_VOID)rt_thread_mdelay(Time);
     }
     else {
         return;
