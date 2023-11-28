@@ -154,7 +154,7 @@ your application. */
 #define INCLUDE_uxTaskGetStackHighWaterMark     #{{INCLUDE_uxTaskGetStackHighWaterMark}}
 #define INCLUDE_xTaskGetIdleTaskHandle          #{{INCLUDE_xTaskGetIdleTaskHandle}}
 #define INCLUDE_eTaskGetState                   #{{INCLUDE_eTaskGetState}}
-#define INCLUDE_xEventGroupSetBitFromISR        #{{INCLUDE_xEventGroupSetBitFromISR}}
+#define INCLUDE_xEventGroupSetBitFromISR        1
 #define INCLUDE_xTimerPendFunctionCall          #{{INCLUDE_xTimerPendFunctionCall}}
 #define INCLUDE_xTaskAbortDelay                 #{{INCLUDE_xTaskAbortDelay}}
 #define INCLUDE_xTaskGetHandle                  #{{INCLUDE_xTaskGetHandle}}

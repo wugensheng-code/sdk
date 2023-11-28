@@ -12,6 +12,7 @@
 
     "NOGC": {"Name": "NOGC", "Value": true, "Default": true,"Type": "boolean","Description": "If NOGC=1, it will not gc any sections during compiling to save code size","Permit":true},
 
-    "CODE_READONLY": {"Name": "CODE_READONLY", "Value": true, "Default": true,"Type": "boolean","Description": "code readonly option","Permit":true}
+    "CODE_READONLY": {"Name": "CODE_READONLY", "Value": true, "Default": true,"Type": "boolean","Description": "code readonly option","Permit":true},
 
+    "VERBOSE": {"Name": "VERBOSE", "Value": true, "Default": true,"Type": "boolean","Description": "If VERBOSE=1, it will display compiling message in verbose including compiling options","Permit":true}
 }
