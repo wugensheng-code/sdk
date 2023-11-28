@@ -68,6 +68,15 @@ else
 	MAKEFLAGS +=
 endif
 
+OUTPUT_DEV ?= #{{OUTPUT_DEV}}
+
+ifeq ($(OUTPUT_DEV),UART0)
+	CFLAGS += -DLOG_DEV=AL_LOG_UART0
+else ifeq ($(OUTPUT_DEV),UART1)
+	CFLAGS += -DLOG_DEV=AL_LOG_UART1
+endif
+
+
 # Variables should be defined in Application Makefile
 ## Available choices:
 ## The name of sub directories in $(AL_SDK_ROOT)/OS/
@@ -123,5 +132,6 @@ export DDR_2M_MAPPING
 export CODE_READONLY
 export Q
 export AL_CUR_DIR
+export CFLAGS
 
 # vim: syntax=make

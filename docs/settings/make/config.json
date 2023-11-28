@@ -1,18 +1,20 @@
 {
-    "ARMv8_STATE": {"Name": "ARMv8_STATE", "Value": "64", "Default": "64","Type": "integer","Description": "The ARMv8_STATE(64 or 32)","Permit":true},
-    "ARMv8_EL": {"Name": "ARMv8_EL", "Value": "EL3", "Default": "EL3","Type": "string","Description": "The ARMv8_EL(EL1 or EL3)","Permit":true},
-    "ARMv8_SECURE": {"Name": "ARMv8_SECURE", "Value": "SECURE", "Default": "SECURE","Type": "string","Description": "ARMv8_SECURE(SECURE or NONSECURE)","Permit":true},
+    "ARMv8_STATE": {"Name": "ARMv8_STATE", "Value": "64", "Default": "64","Type": "integer","Description": "The ARMv8_STATE(64 or 32)","Permit":false},
+    "ARMv8_EL": {"Name": "ARMv8_EL", "Value": "EL3", "Default": "EL3","Type": "string","Description": "The ARMv8_EL(EL1 or EL3)","Permit":false},
+    "ARMv8_SECURE": {"Name": "ARMv8_SECURE", "Value": "SECURE", "Default": "SECURE","Type": "string","Description": "ARMv8_SECURE(SECURE or NONSECURE)","Permit":false},
     "ARMv8_CORE": {"Name": "ARMv8_CORE", "Value": "MASTER", "Default": "MASTER","Type": "string","Description": "ARMv8_CORE(MASTER or SLAVE)","Permit":true},
 	
     "SILENT": {"Name": "SILENT", "Value": true, "Default": true,"Type": "boolean","Description": "If SILENT=1, it will not display any compiling messsage","Permit":true},
 
-    "PFLOAT": {"Name": "PFLOAT", "Value": true, "Default": true,"Type": "boolean","Description": "If FLOAT=1, it will enable float point print when using nano newlib","Permit":true},
+    "PFLOAT": {"Name": "PFLOAT", "Value": true, "Default": true,"Type": "boolean","Description": "If FLOAT=1, it will enable float point print when using nano newlib","Permit":false},
 
-    "NEWLIB": {"Name": "NEWLIB", "Value": "nano", "Default": "nano","Type": "string","Description": "If NEWLIB=nano, it will use nano newlib, otherwise it will use normal newlib","Permit":true},
+    "NEWLIB": {"Name": "NEWLIB", "Value": "nano", "Default": "nano","Type": "string","Description": "If NEWLIB=nano, it will use nano newlib, otherwise it will use normal newlib","Permit":false},
 
-    "NOGC": {"Name": "NOGC", "Value": true, "Default": true,"Type": "boolean","Description": "If NOGC=1, it will not gc any sections during compiling to save code size","Permit":true},
+    "NOGC": {"Name": "NOGC", "Value": true, "Default": true,"Type": "boolean","Description": "If NOGC=1, it will not gc any sections during compiling to save code size","Permit":false},
 
-    "CODE_READONLY": {"Name": "CODE_READONLY", "Value": true, "Default": true,"Type": "boolean","Description": "code readonly option","Permit":true},
+    "CODE_READONLY": {"Name": "CODE_READONLY", "Value": true, "Default": true,"Type": "boolean","Description": "code readonly option","Permit":false},
 
-    "VERBOSE": {"Name": "VERBOSE", "Value": true, "Default": true,"Type": "boolean","Description": "If VERBOSE=1, it will display compiling message in verbose including compiling options","Permit":true}
+    "VERBOSE": {"Name": "VERBOSE", "Value": true, "Default": true,"Type": "boolean","Description": "If VERBOSE=1, it will display compiling message in verbose including compiling options","Permit":true},
+
+    "OUTPUT_DEV": {"Name": "OUTPUT_DEV", "Value": "UART0", "UART0": "uart","Type": "string","Description": "If OUTPUT_DEV=uart, it will output to uart0, otherwise it will output to uart1","Permit":true}
 }

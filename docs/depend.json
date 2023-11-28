@@ -917,11 +917,6 @@
 			"property": "docs/settings/make/config.json",
 			"config": "docs/settings/make/config.mk",
 			"destination": "tools/make/config.mk"
-		},
-		"rules":{
-			"property": "docs/settings/make/rules.json",
-			"config": "docs/settings/make/rules.mk",
-			"destination": "tools/make/rules.mk"
 		}
 	}
 }
