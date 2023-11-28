@@ -267,9 +267,12 @@ AL_S32 AlIic_Hal_MasterSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
  * @return
  *          - AL_OK for function success
  *          - Other for function failure
- * @note
+ * @note The data to be sent must be 32-bit. During DMA transmission,
+ *       32-bit data is directly written to the IC_DATA_CMD register,
+ *       where the lower 8 bits are actual data and bit8 to bit10 are commands.
+ *       For details, refer to the IC_DATA_CMD register
 */
-AL_S32 AlIic_Hal_MasterDmaSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_VOID *Data, AL_U32 Size, AL_U32 Timeout)
+AL_S32 AlIic_Hal_MasterDmaSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U32 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
 

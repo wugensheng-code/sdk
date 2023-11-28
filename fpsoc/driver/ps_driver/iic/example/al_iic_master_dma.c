@@ -41,6 +41,12 @@ AL_S32 AlIic_MasterDmaExample()
 
     AL_U16 SlaveAddr = TEST_SLAVE_ADDR;
 
+    /*
+      The data to be sent must be 32-bit. During DMA transmission,
+      32-bit data is directly written to the IC_DATA_CMD register,
+      where the lower 8 bits are actual data and bit8 to bit10 are commands.
+      For details, refer to the IC_DATA_CMD register.
+    */
     AL_U32 SendData[BUFFER_SIZE] CACHE_LINE_ALIGN =
     {
         0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,
@@ -60,6 +66,11 @@ AL_S32 AlIic_MasterDmaExample()
         0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78,
         0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80,
     };
+
+    /*
+      AL_IIC_STOP_ENABLE must be enabled for the last data,
+      because no stop signal is sent after the dma transmission is complete.
+    */
     SendData[BUFFER_SIZE-1] |= AL_IIC_STOP_ENABLE;
 
     AL_U8 RecvData[BUFFER_SIZE] CACHE_LINE_ALIGN = {0};
