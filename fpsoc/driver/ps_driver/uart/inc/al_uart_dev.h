@@ -22,6 +22,7 @@ extern "C" {
 /******************************* Exported Includes ************************************/
 #include "al_uart_ll.h"
 
+#define AL_UART_EVENT_START_BIT    6
 
 #define AL_UART_ERR_NULL_PTR                 (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_NULL_PTR))
 #define AL_UART_ERR_ILLEGAL_PARAM            (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
@@ -30,7 +31,7 @@ extern "C" {
 #define AL_UART_ERR_TIMEOUT                  (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_TIMEOUT))
 #define AL_UART_ERR_BUSY                     (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_BUSY))
 #define AL_UART_ERR_NOMEM                    (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, AL_ERR_NOMEM))
-#define AL_UART_EVENTS_TO_ERRS(Events)       (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, Events))
+#define AL_UART_EVENTS_TO_ERRS(Events)       (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, Events << AL_UART_EVENT_START_BIT))
 
 
 /******************************* Exported Typedef ************************************/
