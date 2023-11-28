@@ -1,102 +1,102 @@
 {
     "Configuration for Cortex A": {
-        "Name": "Configuration for Cortex A", "Value": true, "Default": true,"Type": "boolean","Description": "Configuration for Cortex A","permit":true,
+        "Name": "Configuration for Cortex A", "Value": true, "Default": true,"Type": "boolean","Description": "Configuration for Cortex A","Permit":true,
         "sub_options": {
-            "configUNIQUE_INTERRUPT_PRIORITIES":{"Name": "configUNIQUE_INTERRUPT_PRIORITIES", "Value": "32", "Default": "32","Type": "integer","Description": "Set the number of interrupt priority","permit":true},
-            "configMAX_API_CALL_INTERRUPT_PRIORITY": {"Name": "configMAX_API_CALL_INTERRUPT_PRIORITY", "Value": "17", "Default": "17","Type": "integer","Description": "Set the number of configMAX_API_CALL_INTERRUPT_PRIORITY","permit":true},
-            "USER_MODE_TASKS": {"Name": "USER_MODE_TASKS", "Value": "0", "Default": "0","Type": "integer","Description": "","permit":true},
-            "configUSE_PREEMPTION": {"Name": "configUSE_PREEMPTION", "Value": "1", "Default": "1","Type": "integer","Description": "0 for Preemptive scheduler;1 for Collaborative scheduler","permit":true},
-            "configUSE_PORT_OPTIMISED_TASK_SELECTION": {"Name": "configUSE_PORT_OPTIMISED_TASK_SELECTION", "Value": "0", "Default": "0","Type": "integer","Description": "General methods for RTOS porting","permit":true},
-            "configUSE_TICKLESS_IDLE": {"Name": "configUSE_TICKLESS_IDLE", "Value": "0", "Default": "0","Type": "integer","Description": "0 for keeping tick interrupt;1 for no tick mode","permit":true},
-            "configCPU_CLOCK_HZ": {"Name": "configCPU_CLOCK_HZ", "Value": "SYSTEM_CLOCK", "Default": "SYSTEM_CLOCK","Type": "string","Description": "Clock freq for peripheral","permit":true},
-            "configRTC_CLOCK_HZ": {"Name": "configRTC_CLOCK_HZ", "Value": "32768", "Default": "32768","Type": "integer","Description": "Clock freq for RTC","permit":true},
-            "configTICK_RATE_HZ": {"Name": "configTICK_RATE_HZ", "Value": "100", "Default": "100","Type": "integer","Description": "Clock freq for tick","permit":true},
-            "configMAX_PRIORITIES": {"Name": "configMAX_PRIORITIES", "Value": "32", "Default": "32","Type": "integer","Description": "Number of priority levels available for application tasks","permit":true},
-            "configMINIMAL_STACK_SIZE": {"Name": "configMINIMAL_STACK_SIZE", "Value": "256", "Default": "256","Type": "integer","Description": "Stack size used by idle tasks","permit":true},
-            "configMAX_TASK_NAME_LEN": {"Name": "configMAX_TASK_NAME_LEN", "Value": "16", "Default": "16","Type": "integer","Description": "Max allowed length of task name","permit":true},
-            "configUSE_16_BIT_TICKS": {"Name": "configUSE_16_BIT_TICKS", "Value": "0", "Default": "0","Type": "integer","Description": "The number of times a tick has been executed","permit":true},
-            "configIDLE_SHOULD_YIELD": {"Name": "configIDLE_SHOULD_YIELD", "Value": "1", "Default": "1","Type": "integer","Description": "Control the behavior of idle priority tasks","permit":true},
-            "configUSE_TASK_NOTIFICATIONS": {"Name": "configUSE_TASK_NOTIFICATIONS", "Value": "1", "Default": "1","Type": "integer","Description": "1 for Direct task notification function;0 for no Direct task notification function","permit":true},
-            "configUSE_MUTEXES": {"Name": "configUSE_MUTEXES", "Value": "1", "Default": "1","Type": "integer","Description": "1 for mutexes; 0 for no mutexes","permit":true},
-            "configUSE_RECURSIVE_MUTEXES": {"Name": "configUSE_RECURSIVE_MUTEXES", "Value": "0", "Default": "0","Type": "integer","Description": "1 for recursive mutexes; 0 for no recursive mutexes","permit":true},
-            "configUSE_COUNTING_SEMAPHORES": {"Name": "configUSE_COUNTING_SEMAPHORES", "Value": "1", "Default": "1","Type": "integer","Description": "1 for Counting semaphore function ;0 for no Counting semaphore function","permit":true},
-            "configQUEUE_REGISTRY_SIZE": {"Name": "configQUEUE_REGISTRY_SIZE", "Value": "10", "Default": "10","Type": "integer","Description": "The max number of registered queues and semaphores","permit":true},
-            "configUSE_QUEUE_SETS": {"Name": "configUSE_QUEUE_SETS", "Value": "0", "Default": "0","Type": "integer","Description": "1 for queue collection function; 0 for Ignore queue collection function","permit":true},
-            "configUSE_TIME_SLICING": {"Name": "configUSE_TIME_SLICING", "Value": "1", "Default": "1","Type": "integer","Description": "1 for Preemptive priority scheduling for time slices, 0 for Preemptive priority scheduling","permit":true},
-            "configUSE_NEWLIB_REENTRANT": {"Name": "configUSE_NEWLIB_REENTRANT", "Value": "0", "Default": "0","Type": "integer","Description": "1 for Newlib reentry structure;0 for no Newlib reentry structure","permit":true},
-            "configENABLE_BACKWARD_COMPATIBILITY": {"Name": "configENABLE_BACKWARD_COMPATIBILITY", "Value": "0", "Default": "0","Type": "integer","Description": "0 for disable backword compatibility;1 for enable backword compatibility","permit":true},
-            "configNUM_THREAD_LOCAL_STORAGE_POINTERS": {"Name": "configNUM_THREAD_LOCAL_STORAGE_POINTERS", "Value": "5", "Default": "5","Type": "integer","Description": "Set the thread local storage array grab value for each task","permit":true}
+            "configUNIQUE_INTERRUPT_PRIORITIES":{"Name": "configUNIQUE_INTERRUPT_PRIORITIES", "Value": "32", "Default": "32","Type": "integer","Description": "Set the number of interrupt priority","Permit":true},
+            "configMAX_API_CALL_INTERRUPT_PRIORITY": {"Name": "configMAX_API_CALL_INTERRUPT_PRIORITY", "Value": "17", "Default": "17","Type": "integer","Description": "Set the number of configMAX_API_CALL_INTERRUPT_PRIORITY","Permit":true},
+            "USER_MODE_TASKS": {"Name": "USER_MODE_TASKS", "Value": "0", "Default": "0","Type": "integer","Description": "","Permit":true},
+            "configUSE_PREEMPTION": {"Name": "configUSE_PREEMPTION", "Value": "1", "Default": "1","Type": "integer","Description": "0 for Preemptive scheduler;1 for Collaborative scheduler","Permit":true},
+            "configUSE_PORT_OPTIMISED_TASK_SELECTION": {"Name": "configUSE_PORT_OPTIMISED_TASK_SELECTION", "Value": "0", "Default": "0","Type": "integer","Description": "General methods for RTOS porting","Permit":true},
+            "configUSE_TICKLESS_IDLE": {"Name": "configUSE_TICKLESS_IDLE", "Value": "0", "Default": "0","Type": "integer","Description": "0 for keeping tick interrupt;1 for no tick mode","Permit":true},
+            "configCPU_CLOCK_HZ": {"Name": "configCPU_CLOCK_HZ", "Value": "SYSTEM_CLOCK", "Default": "SYSTEM_CLOCK","Type": "string","Description": "Clock freq for peripheral","Permit":true},
+            "configRTC_CLOCK_HZ": {"Name": "configRTC_CLOCK_HZ", "Value": "32768", "Default": "32768","Type": "integer","Description": "Clock freq for RTC","Permit":true},
+            "configTICK_RATE_HZ": {"Name": "configTICK_RATE_HZ", "Value": "100", "Default": "100","Type": "integer","Description": "Clock freq for tick","Permit":true},
+            "configMAX_PRIORITIES": {"Name": "configMAX_PRIORITIES", "Value": "32", "Default": "32","Type": "integer","Description": "Number of priority levels available for application tasks","Permit":true},
+            "configMINIMAL_STACK_SIZE": {"Name": "configMINIMAL_STACK_SIZE", "Value": "256", "Default": "256","Type": "integer","Description": "Stack size used by idle tasks","Permit":true},
+            "configMAX_TASK_NAME_LEN": {"Name": "configMAX_TASK_NAME_LEN", "Value": "16", "Default": "16","Type": "integer","Description": "Max allowed length of task name","Permit":true},
+            "configUSE_16_BIT_TICKS": {"Name": "configUSE_16_BIT_TICKS", "Value": "0", "Default": "0","Type": "integer","Description": "The number of times a tick has been executed","Permit":true},
+            "configIDLE_SHOULD_YIELD": {"Name": "configIDLE_SHOULD_YIELD", "Value": "1", "Default": "1","Type": "integer","Description": "Control the behavior of idle priority tasks","Permit":true},
+            "configUSE_TASK_NOTIFICATIONS": {"Name": "configUSE_TASK_NOTIFICATIONS", "Value": "1", "Default": "1","Type": "integer","Description": "1 for Direct task notification function;0 for no Direct task notification function","Permit":true},
+            "configUSE_MUTEXES": {"Name": "configUSE_MUTEXES", "Value": "1", "Default": "1","Type": "integer","Description": "1 for mutexes; 0 for no mutexes","Permit":true},
+            "configUSE_RECURSIVE_MUTEXES": {"Name": "configUSE_RECURSIVE_MUTEXES", "Value": "0", "Default": "0","Type": "integer","Description": "1 for recursive mutexes; 0 for no recursive mutexes","Permit":true},
+            "configUSE_COUNTING_SEMAPHORES": {"Name": "configUSE_COUNTING_SEMAPHORES", "Value": "1", "Default": "1","Type": "integer","Description": "1 for Counting semaphore function ;0 for no Counting semaphore function","Permit":true},
+            "configQUEUE_REGISTRY_SIZE": {"Name": "configQUEUE_REGISTRY_SIZE", "Value": "10", "Default": "10","Type": "integer","Description": "The max number of registered queues and semaphores","Permit":true},
+            "configUSE_QUEUE_SETS": {"Name": "configUSE_QUEUE_SETS", "Value": "0", "Default": "0","Type": "integer","Description": "1 for queue collection function; 0 for Ignore queue collection function","Permit":true},
+            "configUSE_TIME_SLICING": {"Name": "configUSE_TIME_SLICING", "Value": "1", "Default": "1","Type": "integer","Description": "1 for Preemptive priority scheduling for time slices, 0 for Preemptive priority scheduling","Permit":true},
+            "configUSE_NEWLIB_REENTRANT": {"Name": "configUSE_NEWLIB_REENTRANT", "Value": "0", "Default": "0","Type": "integer","Description": "1 for Newlib reentry structure;0 for no Newlib reentry structure","Permit":true},
+            "configENABLE_BACKWARD_COMPATIBILITY": {"Name": "configENABLE_BACKWARD_COMPATIBILITY", "Value": "0", "Default": "0","Type": "integer","Description": "0 for disable backword compatibility;1 for enable backword compatibility","Permit":true},
+            "configNUM_THREAD_LOCAL_STORAGE_POINTERS": {"Name": "configNUM_THREAD_LOCAL_STORAGE_POINTERS", "Value": "5", "Default": "5","Type": "integer","Description": "Set the thread local storage array grab value for each task","Permit":true}
 
         }
     },
 
     "Memory allocation related definitions": {
-        "Name": "Memory allocation related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "Memory allocation related definitions config","permit":true,
+        "Name": "Memory allocation related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "Memory allocation related definitions config","Permit":true,
         "sub_options":{
-            "configSUPPORT_STATIC_ALLOCATION": {"Name": "configSUPPORT_STATIC_ALLOCATION", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support static allocation; 0 for not support static alloction","permit":true},
-            "configSUPPORT_DYNAMIC_ALLOCATION": {"Name": "configSUPPORT_DYNAMIC_ALLOCATION", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support dynamic allocation; 0 for not support dynamic alloction","permit":true},
-            "configTOTAL_HEAP_SIZE": {"Name": "configTOTAL_HEAP_SIZE", "Value": "200*1024", "Default": "200*1024","Type": "integer","Description": "Set the heap size","permit":true},
-            "configAPPLICATION_ALLOCATED_HEAP": {"Name": "configAPPLICATION_ALLOCATED_HEAP", "Value": "0", "Default": "0","Type": "integer","Description": "1 for support declare heap 0 for not support declare heap","permit":true}
+            "configSUPPORT_STATIC_ALLOCATION": {"Name": "configSUPPORT_STATIC_ALLOCATION", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support static allocation; 0 for not support static alloction","Permit":true},
+            "configSUPPORT_DYNAMIC_ALLOCATION": {"Name": "configSUPPORT_DYNAMIC_ALLOCATION", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support dynamic allocation; 0 for not support dynamic alloction","Permit":true},
+            "configTOTAL_HEAP_SIZE": {"Name": "configTOTAL_HEAP_SIZE", "Value": "200*1024", "Default": "200*1024","Type": "integer","Description": "Set the heap size","Permit":true},
+            "configAPPLICATION_ALLOCATED_HEAP": {"Name": "configAPPLICATION_ALLOCATED_HEAP", "Value": "0", "Default": "0","Type": "integer","Description": "1 for support declare heap 0 for not support declare heap","Permit":true}
         }
     },
 
     "Hook function related definitions": {
-        "Name": "Hook function related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "Hook function related definitions config","permit":true,
+        "Name": "Hook function related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "Hook function related definitions config","Permit":true,
         "sub_options":{
-            "configUSE_IDLE_HOOK": {"Name": "configUSE_IDLE_HOOK", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support idle hook; 0 for not support idle hook","permit":true},
-            "configUSE_TICK_HOOK": {"Name": "configUSE_TICK_HOOK", "Value": "0", "Default": "0","Type": "integer","Description": "1 for support tick hook; 0 for not support tick hook","permit":true},
-            "configCHECK_FOR_STACK_OVERFLOW": {"Name": "configCHECK_FOR_STACK_OVERFLOW", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support Stack overflow detection,0 for not support Stack overflow detection","permit":true},
-            "configUSE_MALLOC_FAILED_HOOK": {"Name": "configUSE_MALLOC_FAILED_HOOK", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support malloc failure 0 for not support malloc failure","permit":true},
-            "configUSE_DAEMON_TASK_STARTUP_HOOK": {"Name": "configUSE_DAEMON_TASK_STARTUP_HOOK", "Value": "0", "Default": "0","Type": "integer","Description": "Set startup hook","permit":true}
+            "configUSE_IDLE_HOOK": {"Name": "configUSE_IDLE_HOOK", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support idle hook; 0 for not support idle hook","Permit":true},
+            "configUSE_TICK_HOOK": {"Name": "configUSE_TICK_HOOK", "Value": "0", "Default": "0","Type": "integer","Description": "1 for support tick hook; 0 for not support tick hook","Permit":true},
+            "configCHECK_FOR_STACK_OVERFLOW": {"Name": "configCHECK_FOR_STACK_OVERFLOW", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support Stack overflow detection,0 for not support Stack overflow detection","Permit":true},
+            "configUSE_MALLOC_FAILED_HOOK": {"Name": "configUSE_MALLOC_FAILED_HOOK", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support malloc failure 0 for not support malloc failure","Permit":true},
+            "configUSE_DAEMON_TASK_STARTUP_HOOK": {"Name": "configUSE_DAEMON_TASK_STARTUP_HOOK", "Value": "0", "Default": "0","Type": "integer","Description": "Set startup hook","Permit":true}
         }
     },
 
     "Run time and task stats gathering related definitions": {
-        "Name": "Run time and task stats gathering related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "Run time and task stats gathering related definitions config","permit":true,
+        "Name": "Run time and task stats gathering related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "Run time and task stats gathering related definitions config","Permit":true,
         "sub_options":{
-            "configGENERATE_RUN_TIME_STATS": {"Name": "configGENERATE_RUN_TIME_STATS", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support run time stats 0 for not support run time stats","permit":true},
-            "configUSE_TRACE_FACILITY": {"Name": "configUSE_TRACE_FACILITY", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support trace facility 0 for not support trace facility","permit":true},
-            "configUSE_STATS_FORMATTING_FUNCTIONS": {"Name": "configUSE_STATS_FORMATTING_FUNCTIONS", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support stats formatting function","permit":true}
+            "configGENERATE_RUN_TIME_STATS": {"Name": "configGENERATE_RUN_TIME_STATS", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support run time stats 0 for not support run time stats","Permit":true},
+            "configUSE_TRACE_FACILITY": {"Name": "configUSE_TRACE_FACILITY", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support trace facility 0 for not support trace facility","Permit":true},
+            "configUSE_STATS_FORMATTING_FUNCTIONS": {"Name": "configUSE_STATS_FORMATTING_FUNCTIONS", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support stats formatting function","Permit":true}
         }
     },
 
     "Co-routine related definitions": {
-        "Name": "Co-routine related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "Co-routine related definitions config","permit":true,
+        "Name": "Co-routine related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "Co-routine related definitions config","Permit":true,
         "sub_options":{
-            "configUSE_CO_ROUTINES": {"Name": "configUSE_CO_ROUTINES", "Value": "0", "Default": "0","Type": "integer","Description": "1 for support co_routines function 0 for not support co_routines","permit":true},
-            "configMAX_CO_ROUTINE_PRIORITIES": {"Name": "configMAX_CO_ROUTINE_PRIORITIES", "Value": "1", "Default": "1","Type": "integer","Description": "Number of priority levels available for application collaboration","permit":true}
+            "configUSE_CO_ROUTINES": {"Name": "configUSE_CO_ROUTINES", "Value": "0", "Default": "0","Type": "integer","Description": "1 for support co_routines function 0 for not support co_routines","Permit":true},
+            "configMAX_CO_ROUTINE_PRIORITIES": {"Name": "configMAX_CO_ROUTINE_PRIORITIES", "Value": "1", "Default": "1","Type": "integer","Description": "Number of priority levels available for application collaboration","Permit":true}
         }
     },
 
     "Software timer related definitions": {
-        "Name": "Software timer related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "Software timer related definitions config","permit":true,
+        "Name": "Software timer related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "Software timer related definitions config","Permit":true,
         "sub_options":{
-            "configUSE_TIMERS": {"Name": "configUSE_TIMERS", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support timers 0 for not support timers","permit":true},
-            "configTIMER_TASK_PRIORITY": {"Name": "configTIMER_TASK_PRIORITY", "Value": "3", "Default": "3","Type": "integer","Description": "Setting the Priority of Software Timer Service/Guardian Tasks","permit":true},
-            "configTIMER_QUEUE_LENGTH": {"Name": "configTIMER_QUEUE_LENGTH", "Value": "5", "Default": "5","Type": "integer","Description": "Set the length of the software timer command queue","permit":true},
-            "configKERNEL_INTERRUPT_PRIORITY": {"Name": "configKERNEL_INTERRUPT_PRIORITY", "Value": "0", "Default": "0","Type": "integer","Description": "Set kernel interrupt priority","permit":true},
-            "configMAX_SYSCALL_INTERRUPT_PRIORITY": {"Name": "configMAX_SYSCALL_INTERRUPT_PRIORITY", "Value": "7", "Default": "7","Type": "integer","Description": "Set max syscall interrupt priority","permit":true}
+            "configUSE_TIMERS": {"Name": "configUSE_TIMERS", "Value": "1", "Default": "1","Type": "integer","Description": "1 for support timers 0 for not support timers","Permit":true},
+            "configTIMER_TASK_PRIORITY": {"Name": "configTIMER_TASK_PRIORITY", "Value": "3", "Default": "3","Type": "integer","Description": "Setting the Priority of Software Timer Service/Guardian Tasks","Permit":true},
+            "configTIMER_QUEUE_LENGTH": {"Name": "configTIMER_QUEUE_LENGTH", "Value": "5", "Default": "5","Type": "integer","Description": "Set the length of the software timer command queue","Permit":true},
+            "configKERNEL_INTERRUPT_PRIORITY": {"Name": "configKERNEL_INTERRUPT_PRIORITY", "Value": "0", "Default": "0","Type": "integer","Description": "Set kernel interrupt priority","Permit":true},
+            "configMAX_SYSCALL_INTERRUPT_PRIORITY": {"Name": "configMAX_SYSCALL_INTERRUPT_PRIORITY", "Value": "7", "Default": "7","Type": "integer","Description": "Set max syscall interrupt priority","Permit":true}
         }
     },
 
     "Optional functions": {
-        "Name": "Software timer related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "most linkers will remove unused functions anyway","permit":true,
+        "Name": "Software timer related definitions", "Value": true, "Default": true,"Type": "boolean","Description": "most linkers will remove unused functions anyway","Permit":true,
         "sub_options":{
-            "INCLUDE_vTaskPrioritySet": {"Name": "INCLUDE_vTaskPrioritySet", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the function vTaskPrioritySet to set task priority or not","permit":true},
-            "INCLUDE_uxTaskPriorityGet": {"Name": "INCLUDE_uxTaskPriorityGet", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the function vTaskPrioritySet for obtaining task priority or not","permit":true},
-            "INCLUDE_vTaskDelete": {"Name": "INCLUDE_vTaskDelete", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the delete function vTaskDelete for the created task example","permit":true},
-            "INCLUDE_vTaskSuspend": {"Name": "INCLUDE_vTaskSuspend", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the function vtaskSuspend to suspend tasks or not","permit":true},
-            "INCLUDE_vTaskDelayUntil": {"Name": "INCLUDE_vTaskDelayUntil", "Value": "1", "Default": "1","Type": "integer","Description": "Enable The function vTaskDelayUntil for absolute time delay or not","permit":true},
-            "INCLUDE_vTaskDelay": {"Name": "INCLUDE_vTaskDelay", "Value": "1", "Default": "1","Type": "integer","Description": "Enable The function vTaskDelay for relative time delay or not ","permit":true},
-            "INCLUDE_xTaskGetSchedulerState": {"Name": "INCLUDE_xTaskGetSchedulerState", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the function obtaining the current state of the scheduler or not","permit":true},
-            "INCLUDE_xTaskGetCurrentTaskHandle": {"Name": "INCLUDE_xTaskGetCurrentTaskHandle", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the Function obtaining the current task handle or not","permit":true},
-            "INCLUDE_uxTaskGetStackHighWaterMark": {"Name": "INCLUDE_uxTaskGetStackHighWaterMark", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the Function querying the minimum remaining value in task stack history or not","permit":true},
-            "INCLUDE_xTaskGetIdleTaskHandle": {"Name": "INCLUDE_xTaskGetIdleTaskHandle", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the Function obtaining idle task handles or not","permit":true},
-            "INCLUDE_eTaskGetState": {"Name": "INCLUDE_eTaskGetState", "Value": "0", "Default": "0","Type": "integer","Description": "Enable the Functions querying the running status of tasks or not","permit":true},
-            "INCLUDE_xTimerPendFunctionCall": {"Name": "INCLUDE_xTimerPendFunctionCall", "Value": "1", "Default": "1","Type": "integer","Description": "Enable Timer Service Callback Function or not","permit":true},
-            "INCLUDE_xTaskAbortDelay": {"Name": "INCLUDE_xTaskAbortDelay", "Value": "0", "Default": "0","Type": "integer","Description": "Enable the Function task delay blocking to be aborted or not","permit":true},
-            "INCLUDE_xTaskGetHandle": {"Name": "INCLUDE_xTaskGetHandle", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the Function obtaining task handles or not","permit":true},
-            "INCLUDE_xTaskResumeFromISR": {"Name": "INCLUDE_xTaskResumeFromISR", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the Functions for task execution during interrupts or not","permit":true}
+            "INCLUDE_vTaskPrioritySet": {"Name": "INCLUDE_vTaskPrioritySet", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the function vTaskPrioritySet to set task priority or not","Permit":true},
+            "INCLUDE_uxTaskPriorityGet": {"Name": "INCLUDE_uxTaskPriorityGet", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the function vTaskPrioritySet for obtaining task priority or not","Permit":true},
+            "INCLUDE_vTaskDelete": {"Name": "INCLUDE_vTaskDelete", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the delete function vTaskDelete for the created task example","Permit":true},
+            "INCLUDE_vTaskSuspend": {"Name": "INCLUDE_vTaskSuspend", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the function vtaskSuspend to suspend tasks or not","Permit":true},
+            "INCLUDE_vTaskDelayUntil": {"Name": "INCLUDE_vTaskDelayUntil", "Value": "1", "Default": "1","Type": "integer","Description": "Enable The function vTaskDelayUntil for absolute time delay or not","Permit":true},
+            "INCLUDE_vTaskDelay": {"Name": "INCLUDE_vTaskDelay", "Value": "1", "Default": "1","Type": "integer","Description": "Enable The function vTaskDelay for relative time delay or not ","Permit":true},
+            "INCLUDE_xTaskGetSchedulerState": {"Name": "INCLUDE_xTaskGetSchedulerState", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the function obtaining the current state of the scheduler or not","Permit":true},
+            "INCLUDE_xTaskGetCurrentTaskHandle": {"Name": "INCLUDE_xTaskGetCurrentTaskHandle", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the Function obtaining the current task handle or not","Permit":true},
+            "INCLUDE_uxTaskGetStackHighWaterMark": {"Name": "INCLUDE_uxTaskGetStackHighWaterMark", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the Function querying the minimum remaining value in task stack history or not","Permit":true},
+            "INCLUDE_xTaskGetIdleTaskHandle": {"Name": "INCLUDE_xTaskGetIdleTaskHandle", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the Function obtaining idle task handles or not","Permit":true},
+            "INCLUDE_eTaskGetState": {"Name": "INCLUDE_eTaskGetState", "Value": "0", "Default": "0","Type": "integer","Description": "Enable the Functions querying the running status of tasks or not","Permit":true},
+            "INCLUDE_xTimerPendFunctionCall": {"Name": "INCLUDE_xTimerPendFunctionCall", "Value": "1", "Default": "1","Type": "integer","Description": "Enable Timer Service Callback Function or not","Permit":true},
+            "INCLUDE_xTaskAbortDelay": {"Name": "INCLUDE_xTaskAbortDelay", "Value": "0", "Default": "0","Type": "integer","Description": "Enable the Function task delay blocking to be aborted or not","Permit":true},
+            "INCLUDE_xTaskGetHandle": {"Name": "INCLUDE_xTaskGetHandle", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the Function obtaining task handles or not","Permit":true},
+            "INCLUDE_xTaskResumeFromISR": {"Name": "INCLUDE_xTaskResumeFromISR", "Value": "1", "Default": "1","Type": "integer","Description": "Enable the Functions for task execution during interrupts or not","Permit":true}
         }
     }
 

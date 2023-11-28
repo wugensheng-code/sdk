@@ -1,4 +1,4 @@
 
 {
-    "OPENAMP_OUTPUT": {"Name":"OPENAMP_OUTPUT", "Value":"[OUTPUT_BY_UART0,REDIRECT_BY_PROXY]", "Default": "OUTPUT_BY_UART0","Type": "array","Description":"openamp-output setting config","permit":false}
+    "OPENAMP_OUTPUT": {"Name":"OPENAMP_OUTPUT", "Value":["OUTPUT_BY_UART0","REDIRECT_BY_PROXY"], "Default": "OUTPUT_BY_UART0","Type": "array","Description":"openamp-output setting config","Permit":false}
 }

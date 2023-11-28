@@ -82,6 +82,15 @@ CFLAGS += -DRTOS_RTTHREAD
 endif
 
 #########################################################################
+DR1M90 		= #{{DR1M90}}
+FATFS  		= #{{FATFS}}
+RTTHREAD 	= #{{RTTHREAD}}
+FREERTOS 	= #{{FREERTOS}}
+LWIP 		= #{{LWIP}}
+CHERRYUSB 	= #{{CHERRYUSB}}
+LIBMETAL 	= #{{LIBMETAL}}
+OPENAMP		=  #{{OPENAMP}}
+#########################################################################
 # all public inc
 PUBLIC_INC_DIR :=  $(BSP_DIR)/inc \
                    $(CHIP_DIR)/inc \
@@ -92,25 +101,63 @@ PUBLIC_INC_DIR :=  $(BSP_DIR)/inc \
                    $(wildcard $(AL_SDK_ROOT)/3rdparty/lib/*/inc) \
                    $(wildcard $(AL_SDK_ROOT)/3rdparty/lib/*/*/inc) \
                    $(wildcard $(BSP_DIR)/lib/*/inc) \
-                   $(wildcard $(BSP_DIR)/lib/*/api/inc) \
+                   $(wildcard $(BSP_DIR)/lib/*/api/inc) 
 
-PUBLIC_INC_DIR += #{{DR1M90_INC_DIR}}
+ifeq ($(DR1M90),1)
+PUBLIC_INC_DIR +=  $(CHIP_DIR)/../../../arch/arm/armv8/aarch64/cortex-a/inc \
+                   $(CHIP_DIR)/../../../arch/common/inc \
+                   $(CHIP_DIR)/../../../arch/arm/common/gic_v3/inc
+endif
 
-PUBLIC_INC_DIR += #{{FATFS_INC_DIR}}
+ifeq ($(FATFS),1)
+PUBLIC_INC_DIR += $(AL_SDK_ROOT)/3rdparty/lib/FATFS/lagecy/include \
+				  $(AL_SDK_ROOT)/3rdparty/lib/FATFS/lagecy/qspi, \
+            	  $(AL_SDK_ROOT)/3rdparty/lib/FATFS/lagecy/sd_emmc
+endif
 
-PUBLIC_INC_DIR +=  #{{RTTHREAD_INC_DIR}} 
+ifeq ($(RTTHREAD),1)
+PUBLIC_INC_DIR += $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/include \
+                   $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/finsh \
+                   $(AL_SDK_ROOT)/3rdparty/os/RT-Thread
+endif
 
-PUBLIC_INC_DIR += #{{FREERTOS_ON_ARM_INC_DIR}}
+ifeq ($(FREERTOS),1)
+PUBLIC_INC_DIR	+= $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel/include \
+                   $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel/portable/GCC/ARM_CA53_64_BIT_SRE \
+                   $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel
+endif
 
-PUBLIC_INC_DIR +=  #{{LWIP_INC_DIR}}
+ifeq ($(LWIP),1)
+PUBLIC_INC_DIR +=  $(AL_SDK_ROOT)/3rdparty/lwip-2.1.3/src/include \
+                   $(AL_SDK_ROOT)/3rdparty/lwip-2.1.3/src/include/compat/posix \
+                   $(AL_SDK_ROOT)/3rdparty/lwip-2.1.3/ports \
+				   $(AL_SDK_ROOT)/3rdparty/lwip-2.1.3/ports/netif
+endif
 
-PUBLIC_INC_DIR +=  #{{CHERRYUSB_INC_DIR}}
+ifeq ($(CHERRYUSB),1)
+PUBLIC_INC_DIR +=  $(SDK_ROOT)/3rdparty/lib/CherryUSB/common \
+                   $(SDK_ROOT)/3rdparty/lib/CherryUSB/port/dwc2 \
+                   $(SDK_ROOT)/3rdparty/lib/CherryUSB/core \
+                   $(SDK_ROOT)/3rdparty/lib/CherryUSB/class/cdc \
+				   $(SDK_ROOT)/3rdparty/lib/CherryUSB/class/hub" \
+            	   $(SDK_ROOT)/3rdparty/lib/CherryUSB/class/hid" \
+            	   $(SDK_ROOT)/3rdparty/lib/CherryUSB/class/msc" \
+            	   $(SDK_ROOT)/3rdparty/lib/CherryUSB/class/video" \
+            	   $(SDK_ROOT)/3rdparty/lib/CherryUSB/class/audio" \
+            	   $(SDK_ROOT)/3rdparty/lib/CherryUSB/config" \
+            	   $(SDK_ROOT)/3rdparty/lib/CherryUSB/osal"
+				   
+endif
 
-#libmetal
-PUBLIC_INC_DIR +=   #{{LIBMETAL_INC_DIR}}
+ifeq ($(LIBMETAL),1)
+PUBLIC_INC_DIR +=  $(SDK_ROOT)/3rdparty/lib/libmetal/include/lib/include
+endif
 
-#open-amp
-PUBLIC_INC_DIR +=   #{{OPENAMP_INC_DIR}}
+ifeq ($(OPENAMP),1)
+PUBLIC_INC_DIR +=  $(SDK_ROOT)/3rdparty/lib/open-amp/lib/include \
+                   $(SDK_ROOT)/3rdparty/lib/open-amp/lib/rpmsg \
+                   $(SDK_ROOT)/3rdparty/lib/open-amp/include/include/generated
+endif
 
 
 PUBLIC_INC  :=  $(foreach subdir,$(sort $(PUBLIC_INC_DIR)), -I$(subdir))

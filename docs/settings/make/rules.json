@@ -1,123 +1,18 @@
 {
 
-    "FATFS": {
-        "name": "FATFS",
-        "value": "0",
-        "default": "0",
-        "Type": "integer",
-        "FATFS_INC_DIR": [
-            "$(AL_SDK_ROOT)/3rdparty/lib/FATFS/lagecy/include",
-            "$(AL_SDK_ROOT)/3rdparty/lib/FATFS/lagecy/qspi",
-            "$(AL_SDK_ROOT)/3rdparty/lib/FATFS/lagecy/sd_emmc"
-        ],
-        "description": "If need FATFS_INC_DIR (0 for not need, 1 for need)",
-        "permit":true
-    },  
+    "FATFS": {"Name": "FATFS","Value": true,"Default": true,"Type": "boolean","Description": "If need FATFS_INC_DIR (0 for not need, 1 for need)","Permit":true},  
 
-    "RTTHREAD": {
-        "name": "RTTHREAD",
-        "value": "0",
-        "default": "0",
-        "Type": "integer",
-        "RTTHREAD_INC_DIR": [
-            "$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/include",
-            "$(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/finsh",
-            "$(AL_SDK_ROOT)/3rdparty/os/RT-Thread",
-            "${AL_SDK_ROOT}/3rdparty/os/RT-Thread/rt-thread/components/finsh"
-        ],
-        "description": "If need RTTHREAD_INC_DIR (0 for not need, 1 for need)",
-        "permit":true
-    },  
+    "RTTHREAD": {"Name": "RTTHREAD","Value": true,"Default": true,"Type": "boolean","Description": "If need RTTHREAD_INC_DIR (0 for not need, 1 for need)","Permit":true},  
 
-    "DR1M90": {
-        "name": "DR1M90",
-        "value": "0",
-        "default": "0",
-        "Type": "integer",
-        "DR1M90_INC_DIR": [
-            "$(CHIP_DIR)/../../../arch/arm/armv8/aarch64/cortex-a/inc",
-            "$(CHIP_DIR)/../../../arch/common/inc",
-            "$(CHIP_DIR)/../../../arch/arm/common/gic_v3/inc"
-        ],
-        "description": "If need DR1M90_INC_DIR (0 for not need, 1 for need)",
-        "permit":true
-    },
+    "DR1M90": {"Name": "DR1M90","Value": true,"Default": true,"Type": "boolean","Description": "If need DR1M90_INC_DIR (0 for not need, 1 for need)","Permit":true},
     
+    "FREERTOS": {"Name": "FREERTOS","Value": true,"Default": true,"Type": "boolean","Description": "If need FREERTOS_ON_ARM_INC_DIR (0 for not need, 1 for need)","Permit":true}, 
 
-    "FREERTOS": {
-        "name": "FREERTOS",
-        "value": "0",
-        "default": "0",
-        "Type": "integer",
-        "FREERTOS_INC_DIR": [
-            "$(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel/include",
-            "$(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel/portable/GCC/ARM_CA53_64_BIT_SRE",
-            "$(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel"
-        ],
-        "description": "If need FREERTOS_ON_ARM_INC_DIR (0 for not need, 1 for need)",
-        "permit":true
-    }, 
-
-    "LWIP": {
-        "name": "LWIP",
-        "value": "0",
-        "default": "0",
-        "Type": "integer",
-        "LWIP_INC_DIR": [
-            "$(AL_SDK_ROOT)/3rdparty/lwip-2.1.3/src/include",
-            "$(AL_SDK_ROOT)/3rdparty/lwip-2.1.3/src/include/compat/posix",
-            "$(AL_SDK_ROOT)/3rdparty/lwip-2.1.3/ports",
-            "$(AL_SDK_ROOT)/3rdparty/lwip-2.1.3/ports/netif"
-        ],
-        "description": "If need LWIP_INC_DIR (0 for not need, 1 for need)",
-        "permit":true
-    },
+    "LWIP": {"Name": "LWIP","Value": true,"Default": true,"Type": "boolean","Description": "If need LWIP_INC_DIR (0 for not need, 1 for need)","Permit":true},
     
-    "CHERRYUSB": {
-        "name": "CHERRYUSB",
-        "value": "0",
-        "default": "0",
-        "Type": "integer",
-        "CHERRYUSB_INC_DIR": [
-            "$(SDK_ROOT)/3rdparty/lib/CherryUSB/common",
-            "$(SDK_ROOT)/3rdparty/lib/CherryUSB/port/dwc2",
-            "$(SDK_ROOT)/3rdparty/lib/CherryUSB/core",
-            "$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/cdc",
-            "$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/hub",
-            "$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/hid",
-            "$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/msc",
-            "$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/video",
-            "$(SDK_ROOT)/3rdparty/lib/CherryUSB/class/audio",
-            "$(SDK_ROOT)/3rdparty/lib/CherryUSB/config",
-            "$(SDK_ROOT)/3rdparty/lib/CherryUSB/osal"
-        ],
-        "description": "If need CHERRYUSB_INC_DIR (0 for not need, 1 for need)",
-        "permit":true
-    },
+    "CHERRYUSB": {"Name": "CHERRYUSB","Value": true,"Default": true,"Type": "boolean","Description": "If need CHERRYUSB_INC_DIR (0 for not need, 1 for need)","Permit":true},
 
-    "LIBMETAL": {
-        "name": "LIBMETAL",
-        "value": "0",
-        "default": "0",
-        "Type": "integer",
-        "LIBMETAL_INC_DIR": [
-            "$(SDK_ROOT)/3rdparty/lib/libmetal/include/lib/include"
-        ],
-        "description": "If need LIBMETAL_INC_DIR (0 for not need, 1 for need)",
-        "permit":true
-    },
+    "LIBMETAL": {"Name": "LIBMETAL","Value":true,"Default": true,"Type": "boolean","Description": "If need LIBMETAL_INC_DIR (0 for not need, 1 for need)","Permit":true},
 
-    "OPENAMP": {
-        "name": "OPENAMP",
-        "value": "0",
-        "default": "0",
-        "Type": "integer",
-        "OPENAMP_INC_DIR": [
-            "$(SDK_ROOT)/3rdparty/lib/open-amp/lib/include",
-            "$(SDK_ROOT)/3rdparty/lib/open-amp/lib/rpmsg",
-            "$(SDK_ROOT)/3rdparty/lib/open-amp/include/include/generated"
-        ],
-        "description": "If need OPENAMP_INC_DIR (0 for not need, 1 for need)",
-        "permit":true
-    }
+    "OPENAMP": {"Name": "OPENAMP","Value": true,"Default": true,"Type": "boolean","Description": "If need OPENAMP_INC_DIR (0 for not need, 1 for need)","Permit":true}
 }

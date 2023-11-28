@@ -101,8 +101,7 @@ PUBLIC_INC_DIR :=  $(BSP_DIR)/inc \
 ifeq ($(RTOS), rtthread)
 PUBLIC_INC_DIR +=   $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/include \
                     $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/finsh \
-                    $(AL_SDK_ROOT)/3rdparty/os/RT-Thread \
-                    ${AL_SDK_ROOT}/3rdparty/os/RT-Thread/rt-thread/components/finsh
+                    $(AL_SDK_ROOT)/3rdparty/os/RT-Thread 
 endif
 
 ifeq ($(RTOS), freertos)
