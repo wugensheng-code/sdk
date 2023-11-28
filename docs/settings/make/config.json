@@ -4,17 +4,17 @@
     "ARMv8_SECURE": {"Name": "ARMv8_SECURE", "Value": "SECURE", "Default": "SECURE","Type": "string","Description": "ARMv8_SECURE(SECURE or NONSECURE)","Permit":false},
     "ARMv8_CORE": {"Name": "ARMv8_CORE", "Value": "MASTER", "Default": "MASTER","Type": "string","Description": "ARMv8_CORE(MASTER or SLAVE)","Permit":true},
 	
-    "SILENT": {"Name": "SILENT", "Value": true, "Default": true,"Type": "boolean","Description": "If SILENT=1, it will not display any compiling messsage","Permit":true},
+    "SILENT": {"Name": "SILENT", "Value": false, "Default": false,"Type": "boolean","Description": "If SILENT=1, it will not display any compiling messsage","Permit":true},
 
-    "PFLOAT": {"Name": "PFLOAT", "Value": true, "Default": true,"Type": "boolean","Description": "If FLOAT=1, it will enable float point print when using nano newlib","Permit":false},
+    "PFLOAT": {"Name": "PFLOAT", "Value": false, "Default": false,"Type": "boolean","Description": "If FLOAT=1, it will enable float point print when using nano newlib","Permit":false},
 
     "NEWLIB": {"Name": "NEWLIB", "Value": "nano", "Default": "nano","Type": "string","Description": "If NEWLIB=nano, it will use nano newlib, otherwise it will use normal newlib","Permit":false},
 
-    "NOGC": {"Name": "NOGC", "Value": true, "Default": true,"Type": "boolean","Description": "If NOGC=1, it will not gc any sections during compiling to save code size","Permit":false},
+    "NOGC": {"Name": "NOGC", "Value": false, "Default": false,"Type": "boolean","Description": "If NOGC=1, it will not gc any sections during compiling to save code size","Permit":false},
 
-    "CODE_READONLY": {"Name": "CODE_READONLY", "Value": true, "Default": true,"Type": "boolean","Description": "code readonly option","Permit":false},
+    "CODE_READONLY": {"Name": "CODE_READONLY", "Value": false, "Default": false,"Type": "boolean","Description": "code readonly option","Permit":false},
 
-    "VERBOSE": {"Name": "VERBOSE", "Value": true, "Default": true,"Type": "boolean","Description": "If VERBOSE=1, it will display compiling message in verbose including compiling options","Permit":true},
+    "VERBOSE": {"Name": "VERBOSE", "Value": false, "Default": false,"Type": "boolean","Description": "If VERBOSE=1, it will display compiling message in verbose including compiling options","Permit":true},
 
-    "OUTPUT_DEV": {"Name": "OUTPUT_DEV", "Value": "UART0", "UART0": "uart","Type": "string","Description": "If OUTPUT_DEV=uart, it will output to uart0, otherwise it will output to uart1","Permit":true}
+    "OUTPUT_DEV": {"Name": "OUTPUT_DEV", "Value": "UART0", "Default": "UART0","Type": "string","Description": "If OUTPUT_DEV=UART0, it will output to UART0, If OUTPUT_DEV=UART1, it will output to uart1, if OUTPUT_DEV=NONE, it will output nothing","Permit":true}
 }
