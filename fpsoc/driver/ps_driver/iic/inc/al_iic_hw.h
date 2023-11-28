@@ -537,7 +537,7 @@ extern "C" {
 // DMA Receive Data Level Register
 ///////////////////////////////////////////////////////
 
-#define I2C__IC_DMA_RDLR__ADDR 0x90ULL
+#define I2C__IC_DMA_RDLR__OFFSET 0x90ULL
 #define I2C__IC_DMA_RDLR__NUM  0x1
 
 #define I2C__IC_DMA_RDLR__DMARDL__SHIFT    0

@@ -134,6 +134,7 @@ typedef enum
     AL_IIC_OP_STATE_MASTER_RX       = (0x1 << 1),
     AL_IIC_OP_STATE_SLAVE_TX        = (0x1 << 2),
     AL_IIC_OP_STATE_SLAVE_RX        = (0x1 << 3),
+    AL_IIC_OP_STATE_MASTER_DMA_RX   = (0x1 << 4),
 } AL_IIC_OperationStateEnum;
 
 /* Only for master */
@@ -189,11 +190,15 @@ AL_S32 AlIic_Dev_Init(AL_IIC_DevStruct *Iic, AL_IIC_HwConfigStruct *HwConfig, AL
 
 AL_S32 AlIic_Dev_MasterSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *SendBuf, AL_U32 SendSize);
 
+AL_S32 AlIic_Dev_MasterDmaSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr);
+
 AL_VOID AlIic_Dev_StopMasterSend(AL_IIC_DevStruct *Iic);
 
 AL_S32 AlIic_Dev_MasterSendDataPolling(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *SendBuf, AL_U32 SendSize);
 
 AL_S32 AlIic_Dev_MasterRecvData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *RecvBuf, AL_U32 RecvSize);
+
+AL_S32 AlIic_Dev_MasterDmaRecvData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U32 RecvSize);
 
 AL_VOID AlIic_Dev_StopMasterRecv(AL_IIC_DevStruct *Iic);
 

@@ -6,6 +6,7 @@
 
 /***************************** Include Files *********************************/
 #include "al_iic_hal.h"
+#include "al_dmacahb_hal.h"
 
 /************************** Constant Definitions *****************************/
 
@@ -16,6 +17,16 @@
 /************************** Variable Definitions *****************************/
 
 AL_IIC_HalStruct AlIicHandle[AL_IIC_NUM_INSTANCE];
+
+AL_DMACAHB_ChInitStruct     Iic0TxDmacChConfig;
+AL_DMACAHB_HalStruct        *Iic0TxDmacHandle = AL_NULL;
+AL_DMACAHB_ChInitStruct     Iic0RxDmacChConfig;
+AL_DMACAHB_HalStruct        *Iic0RxDmacHandle = AL_NULL;
+
+AL_DMACAHB_ChInitStruct     Iic1TxDmacChConfig;
+AL_DMACAHB_HalStruct        *Iic1TxDmacHandle = AL_NULL;
+AL_DMACAHB_ChInitStruct     Iic1RxDmacChConfig;
+AL_DMACAHB_HalStruct        *Iic1RxDmacHandle = AL_NULL;
 
 /**
  * This function action when receive or send data.
@@ -247,6 +258,107 @@ AL_S32 AlIic_Hal_MasterSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
 }
 
 /**
+ * This function master send an amount of data in DMA & blocking & interrupt mode
+ * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
+ * @param   SlaveAddr Slave address
+ * @param   Data Pointer to data buffer
+ * @param   Size Amount of data to be sent
+ * @param   Timeout Timeout duration
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
+AL_S32 AlIic_Hal_MasterDmaSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_VOID *Data, AL_U32 Size, AL_U32 Timeout)
+{
+    AL_S32 Ret = AL_OK;
+
+    AL_U32                      DmacDevId = 0;
+    AL_DMACAHB_ChTransStruct    *IicTxDmacChTrans;
+    AL_DMACAHB_ChInitStruct     *IicTxDmacChConfigPtr;
+    AL_DMACAHB_HalStruct        *IicTxDmacHandlePtr;
+
+    AL_ASSERT((Handle != AL_NULL), AL_IIC_ERR_ILLEGAL_PARAM);
+
+    Ret = AlOsal_Lock_Take(&Handle->Lock, Timeout);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
+    if (Handle->Dev.HwConfig.BaseAddress < I2C1__BASE_ADDR) {
+        IicTxDmacChConfigPtr = &Iic0TxDmacChConfig;
+        IicTxDmacHandlePtr = Iic0TxDmacHandle;
+    } else {
+        IicTxDmacChConfigPtr = &Iic1TxDmacChConfig;
+        IicTxDmacHandlePtr = Iic1TxDmacHandle;
+    }
+
+    Ret = AlIic_Dev_MasterDmaSendData(&Handle->Dev, SlaveAddr);
+    if (Ret != AL_OK) {
+        (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
+        return Ret;
+    }
+
+    if (IicTxDmacHandlePtr == NULL) {
+        IicTxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_6;
+        IicTxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
+        IicTxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
+        IicTxDmacChConfigPtr->Intr.IntrUnMask = AL_DMACAHB_CH_INTR_TFR | AL_DMACAHB_CH_INTR_ERR;
+        IicTxDmacChConfigPtr->SrcTransWidth = AL_DMACAHB_TRANS_WIDTH_32;
+        IicTxDmacChConfigPtr->DstTransWidth = AL_DMACAHB_TRANS_WIDTH_32;
+        IicTxDmacChConfigPtr->SrcAddrIncMode = AL_DMACAHB_ADDR_INC_INC;
+        IicTxDmacChConfigPtr->DstAddrIncMode = AL_DMACAHB_ADDR_INC_NO0;
+        IicTxDmacChConfigPtr->SrcBurstLength = AL_DMACAHB_MSIZE_1;
+        IicTxDmacChConfigPtr->DstBurstLength = AL_DMACAHB_MSIZE_1;
+
+        IicTxDmacChConfigPtr->Direction = AL_DMACAHB_TT_FC_MEM2PER;
+        if (Handle->Dev.HwConfig.BaseAddress < I2C1__BASE_ADDR) {
+            IicTxDmacChConfigPtr->HandShaking.DstPer = AL_DMACAHB_PER_I2C0_TX;
+        } else {
+            IicTxDmacChConfigPtr->HandShaking.DstPer = AL_DMACAHB_PER_I2C1_TX;
+        }
+        IicTxDmacChConfigPtr->HandShaking.DstHsSel = AL_DMACAHB_HAND_SHAKING_HARDWARE;
+        IicTxDmacChConfigPtr->HandShaking.DstHsPol = AL_DMACAHB_HS_POL_ACTIVE_HI;
+
+        IicTxDmacChConfigPtr->SrcMasterSel = AL_DMACAHB_MASTER_SEL_1;
+        IicTxDmacChConfigPtr->DstMasterSel = AL_DMACAHB_MASTER_SEL_2;
+        IicTxDmacChConfigPtr->ChPrior = AL_DMACAHB_CH_PRIOR_6;
+        IicTxDmacChConfigPtr->FifoMode = AL_DMACAHB_FIFO_MODE_0;
+        IicTxDmacChConfigPtr->ProtCtl = AL_DMACAHB_PROT_0;
+        IicTxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
+        IicTxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
+
+        Ret = AlDmacAhb_Hal_Init(&IicTxDmacHandlePtr, DmacDevId, IicTxDmacChConfigPtr, AL_NULL);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "IicTx Dmacahb hal Init error:0x%x\r\n", Ret);
+            (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
+            return Ret;
+        }
+        if (Handle->Dev.HwConfig.BaseAddress < I2C1__BASE_ADDR) {
+            Iic0TxDmacHandle = IicTxDmacHandlePtr;
+        } else {
+            Iic1TxDmacHandle = IicTxDmacHandlePtr;
+        }
+    }
+
+    IicTxDmacChTrans = &(IicTxDmacHandlePtr->Channel.Trans);
+
+    IicTxDmacChTrans->SrcAddr        = (AL_REG)Data;
+    IicTxDmacChTrans->DstAddr        = Handle->Dev.HwConfig.BaseAddress + I2C__IC_DATA_CMD__OFFSET;
+    IicTxDmacChTrans->TransSize      = Size;
+
+    Ret = AlDmacAhb_Hal_StartBlock(IicTxDmacHandlePtr, Timeout);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "IicTx Dmacahb hal Start Block error:0x%x\r\n", Ret);
+    }
+
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
+
+    return Ret;
+}
+
+
+/**
  * This function master send an amount of data in polling(non interrupt) & blocking mode.
  * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
  * @param   SlaveAddr Slave address
@@ -319,6 +431,107 @@ AL_S32 AlIic_Hal_MasterRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
         return AL_OK;
     else
         return (Ret != AL_OK) ? Ret : AL_IIC_EVENTS_TO_ERRS(IicEvent.Events);
+}
+
+/**
+ * This function master receive an amount of data in DMA & blocking & interrupt mode
+ * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
+ * @param   SlaveAddr Slave address
+ * @param   Data Pointer to data buffer
+ * @param   Size Amount of data to be receive
+ * @param   Timeout Timeout duration
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
+AL_S32 AlIic_Hal_MasterDmaRecvDataBlock(AL_IIC_HalStruct *Handle,AL_U16 SlaveAddr, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
+{
+    AL_S32 Ret = AL_OK;
+
+    AL_DMACAHB_ChTransStruct    *IicRxDmacChTrans;
+    AL_U32                      DmacDevId = 0;
+
+    AL_DMACAHB_ChInitStruct     *IicRxDmacChConfigPtr;
+    AL_DMACAHB_HalStruct        *IicRxDmacHandlePtr;
+
+    /* check only Handle, more checks in AlIic_Dev_Init function */
+    AL_ASSERT((Handle != AL_NULL), AL_IIC_ERR_ILLEGAL_PARAM);
+
+    if (Handle->Dev.HwConfig.BaseAddress < I2C1__BASE_ADDR) {
+        IicRxDmacChConfigPtr = &Iic0RxDmacChConfig;
+        IicRxDmacHandlePtr = Iic0RxDmacHandle;
+    } else {
+        IicRxDmacChConfigPtr = &Iic1RxDmacChConfig;
+        IicRxDmacHandlePtr = Iic1RxDmacHandle;
+    }
+
+    Ret = AlOsal_Lock_Take(&Handle->Lock, Timeout);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
+    if (IicRxDmacHandlePtr == NULL) {
+        IicRxDmacChConfigPtr->Id = AL_DMACAHB_CHANNEL_7;
+        IicRxDmacChConfigPtr->TransType = AL_DMACAHB_TRANS_TYPE_1;
+        IicRxDmacChConfigPtr->Intr.IsIntrEn = AL_TRUE;
+        IicRxDmacChConfigPtr->Intr.IntrUnMask = AL_DMACAHB_CH_INTR_TFR | AL_DMACAHB_CH_INTR_ERR | AL_DMACAHB_CH_INTR_SRCT | AL_DMACAHB_CH_INTR_DSTT;
+        IicRxDmacChConfigPtr->SrcTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
+        IicRxDmacChConfigPtr->DstTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
+        IicRxDmacChConfigPtr->SrcAddrIncMode = AL_DMACAHB_ADDR_INC_NO0;
+        IicRxDmacChConfigPtr->DstAddrIncMode = AL_DMACAHB_ADDR_INC_INC;
+        IicRxDmacChConfigPtr->SrcBurstLength = AL_DMACAHB_MSIZE_1;
+        IicRxDmacChConfigPtr->DstBurstLength = AL_DMACAHB_MSIZE_1;
+        IicRxDmacChConfigPtr->Direction = AL_DMACAHB_TT_FC_PER2MEM;
+        if (Handle->Dev.HwConfig.BaseAddress < I2C1__BASE_ADDR) {
+            IicRxDmacChConfigPtr->HandShaking.SrcPer = AL_DMACAHB_PER_I2C0_RX;
+        } else {
+            IicRxDmacChConfigPtr->HandShaking.SrcPer = AL_DMACAHB_PER_I2C1_RX;
+        }
+        IicRxDmacChConfigPtr->HandShaking.SrcHsSel = AL_DMACAHB_HAND_SHAKING_HARDWARE;
+        IicRxDmacChConfigPtr->HandShaking.SrcHsPol = AL_DMACAHB_HS_POL_ACTIVE_HI;
+
+        IicRxDmacChConfigPtr->SrcMasterSel = AL_DMACAHB_MASTER_SEL_1;
+        IicRxDmacChConfigPtr->DstMasterSel = AL_DMACAHB_MASTER_SEL_2;
+        IicRxDmacChConfigPtr->ChPrior = AL_DMACAHB_CH_PRIOR_7;
+        IicRxDmacChConfigPtr->FifoMode = AL_DMACAHB_FIFO_MODE_0;
+        IicRxDmacChConfigPtr->ProtCtl = AL_DMACAHB_PROT_0;
+        IicRxDmacChConfigPtr->SgrDsr.IsSrcGatherEn = AL_FALSE;
+        IicRxDmacChConfigPtr->SgrDsr.IsDstScatterEn = AL_FALSE;
+
+        Ret = AlDmacAhb_Hal_Init(&IicRxDmacHandlePtr, DmacDevId, IicRxDmacChConfigPtr, AL_NULL);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "IicRx Dmacahb hal Init error:0x%x\r\n", Ret);
+            (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
+            return Ret;
+        }
+
+        if (Handle->Dev.HwConfig.BaseAddress < I2C1__BASE_ADDR) {
+            Iic0RxDmacHandle = IicRxDmacHandlePtr;
+        } else {
+            Iic1RxDmacHandle = IicRxDmacHandlePtr;
+        }
+    }
+
+    IicRxDmacChTrans = &(IicRxDmacHandlePtr->Channel.Trans);
+    IicRxDmacChTrans->SrcAddr        = Handle->Dev.HwConfig.BaseAddress + I2C__IC_DATA_CMD__OFFSET;
+    IicRxDmacChTrans->DstAddr        = (AL_REG)Data;
+    IicRxDmacChTrans->TransSize      = Size;
+
+    Ret = AlIic_Dev_MasterDmaRecvData(&Handle->Dev, SlaveAddr, Size);
+    if (Ret != AL_OK) {
+        (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
+        return Ret;
+    }
+
+    Ret = AlDmacAhb_Hal_StartBlock(IicRxDmacHandlePtr, Timeout);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "IICRx Dmacahb hal Start Block error:0x%x\r\n", Ret);
+    }
+
+    (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);
+
+    return Ret;
 }
 
 /**

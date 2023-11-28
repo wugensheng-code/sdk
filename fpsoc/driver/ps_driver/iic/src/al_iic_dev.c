@@ -341,6 +341,27 @@ AL_S32 AlIic_Dev_MasterSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *
     return AL_OK;
 }
 
+AL_S32 AlIic_Dev_MasterDmaSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr)
+{
+    AL_ASSERT((Iic != AL_NULL) && (Iic->Configs.Mode == AL_IIC_MODE_MASTER) &&
+              (SlaveAddr < AL_IIC_MAX_SLAVE_ADDR), AL_IIC_ERR_ILLEGAL_PARAM);
+
+    AL_ASSERT(((Iic->State & AL_IIC_STATE_READY) == AL_IIC_STATE_READY), AL_IIC_ERR_NOT_READY);
+    AL_ASSERT((!AlIic_Dev_IsTxBusy(Iic)), AL_IIC_ERR_BUSY);
+
+    AlIic_Dev_MasterSetTar(Iic, SlaveAddr);
+
+    /* I2C_DYNAMIC_TAR_UPDATE not enabled, need disable IIC first */
+    AlIic_ll_SetEnable((AL_REG)(Iic->HwConfig.BaseAddress), AL_IIC_FUNC_DISABLE);
+
+    AlIic_ll_EnableTxDma(Iic->HwConfig.BaseAddress, AL_IIC_FUNC_ENABLE);
+    AlIic_ll_SetTxFifoThr(Iic->HwConfig.BaseAddress, 0);
+    AlIic_ll_SetDmaTransLevel(Iic->HwConfig.BaseAddress, 0);
+    AlIic_ll_SetEnable((AL_REG)(Iic->HwConfig.BaseAddress), AL_IIC_FUNC_ENABLE);
+
+    return AL_OK;
+}
+
 /**
  * This function used when master send data in block mode, stop send process.
  * @param   Iic Pointer to a AL_IIC_DevStruct structure
@@ -495,6 +516,37 @@ AL_S32 AlIic_Dev_MasterRecvData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *
     }
 
     AlIic_Dev_EnableMasterRecvIntr(Iic, AL_IIC_FUNC_ENABLE);
+
+    return AL_OK;
+}
+
+AL_S32 AlIic_Dev_MasterDmaRecvData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U32 RecvSize)
+{
+    AL_ASSERT((Iic != AL_NULL) && (Iic->Configs.Mode == AL_IIC_MODE_MASTER) &&
+              (SlaveAddr < AL_IIC_MAX_SLAVE_ADDR) && (RecvSize > 0), AL_IIC_ERR_ILLEGAL_PARAM);
+
+    AL_ASSERT(((Iic->State & AL_IIC_STATE_READY) == AL_IIC_STATE_READY), AL_IIC_ERR_NOT_READY);
+    AL_ASSERT((!AlIic_Dev_IsRxBusy(Iic)), AL_IIC_ERR_BUSY);
+
+    Iic->OpState = AL_IIC_OP_STATE_MASTER_DMA_RX;
+
+    /*
+       Use this buffer to record the number of read requests sent,
+       equal to the length of the data received.
+     */
+    Iic->SendBuffer.RequestedCnt    = RecvSize;
+    Iic->SendBuffer.HandledCnt      = 0;
+
+    AlIic_Dev_MasterSetTar(Iic, SlaveAddr);
+
+    /* I2C_DYNAMIC_TAR_UPDATE not enabled, need disable IIC first */
+    AlIic_ll_SetEnable((AL_REG)(Iic->HwConfig.BaseAddress), AL_IIC_FUNC_DISABLE);
+
+    AlIic_ll_RxDmaEnable(Iic->HwConfig.BaseAddress);
+    AlIic_ll_SetRxFifoThr(Iic->HwConfig.BaseAddress, 0);
+    AlIic_ll_SetDmaRecevLevel(Iic->HwConfig.BaseAddress, 0);
+    AlIic_ll_SetTxEmptyIntr((AL_REG)(Iic->HwConfig.BaseAddress),AL_IIC_FUNC_ENABLE);
+    AlIic_ll_SetEnable((AL_REG)(Iic->HwConfig.BaseAddress), AL_IIC_FUNC_ENABLE);
 
     return AL_OK;
 }
@@ -870,6 +922,36 @@ static AL_VOID AlIic_Dev_MasterRecvDataIssueReadCmd(AL_IIC_DevStruct *Iic)
     AlIic_Dev_MasterRecvDataHandler(Iic);
 }
 
+static AL_VOID AlIic_Dev_MasterDmaRecvDataIssueReadCmd(AL_IIC_DevStruct *Iic)
+{
+    AL_U16 Cmd = 0;
+    AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
+
+    while ((AlIic_ll_IsTxFifoNotFull(IicBaseAddr) == AL_TRUE) &&
+           (Iic->SendBuffer.HandledCnt < Iic->SendBuffer.RequestedCnt)) {
+
+        if (Iic->SendBuffer.HandledCnt != (Iic->SendBuffer.RequestedCnt - 1))
+            Cmd = AL_IIC_CMD_READ;
+        else {
+            /* Last byte, need set cmd by option */
+            if (Iic->CmdOption == AL_IIC_CMD_OPTION_STOP)
+                Cmd = AL_IIC_CMD_READ | AL_IIC_STOP_ENABLE;
+            else if (Iic->CmdOption == AL_IIC_CMD_OPTION_RESTART)
+                Cmd = AL_IIC_CMD_READ | AL_IIC_RESTART_ENABLE;
+            else
+                Cmd = AL_IIC_CMD_WRITE;
+        }
+
+        AlIic_ll_SetDataCmd(IicBaseAddr, Cmd);
+
+        Iic->SendBuffer.HandledCnt++;
+    }
+
+    if (Iic->SendBuffer.HandledCnt == Iic->SendBuffer.RequestedCnt) {
+        AlIic_ll_DisableIntr(IicBaseAddr, AL_IIC_INTR_TX_EMPTY_MASK);
+    }
+}
+
 /**
  * This function used when slave receive data in block&interrupt mode,
  * receive data in the interrupt.
@@ -1121,6 +1203,8 @@ AL_VOID AlIic_Dev_IntrHandler(AL_VOID *instance)
             AlIic_Dev_MasterSendDataHandler(Iic);
         } else if (Iic->OpState == AL_IIC_OP_STATE_MASTER_RX) {
             AlIic_Dev_MasterRecvDataIssueReadCmd(Iic);
+        } else if (Iic->OpState == AL_IIC_OP_STATE_MASTER_DMA_RX) {
+            AlIic_Dev_MasterDmaRecvDataIssueReadCmd(Iic);
         }
 
     } else if (IIC_IN_RD_REQ_INTR(IntrStatus)) {

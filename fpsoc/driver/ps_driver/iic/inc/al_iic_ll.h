@@ -452,6 +452,31 @@ static inline AL_U32 AlIic_ll_GetTxBufferDepth(AL_REG BaseAddr)
                              I2C__IC_COMP_PARAM_1__TX_BUFFER_DEPTH__SIZE) + 1);
 }
 
+static inline AL_VOID AlIic_ll_EnableTxDma(AL_REG BaseAddr, AL_IIC_FunctionEnum State)
+{
+    AL_REG32_SET_BIT(BaseAddr + I2C__IC_DMA_CR__OFFSET, I2C__IC_DMA_CR__TDMAE__SHIFT, State);
+}
+
+static inline AL_VOID AlIic_ll_RxDmaEnable(AL_REG BaseAddr)
+{
+    AL_REG32_SET_BIT(BaseAddr + I2C__IC_DMA_CR__OFFSET, I2C__IC_DMA_CR__RDMAE__SHIFT, AL_FUNC_ENABLE);
+}
+
+static inline AL_VOID AlIic_ll_DmaDisable(AL_REG BaseAddr)
+{
+    AL_REG32_WRITE(BaseAddr + I2C__IC_DMA_CR__OFFSET, AL_FUNC_DISABLE);
+}
+
+static inline AL_VOID AlIic_ll_SetDmaTransLevel(AL_REG BaseAddr, AL_U8 Level)
+{
+    AL_REG32_WRITE(BaseAddr + I2C__IC_DMA_TDLR__OFFSET, Level);
+}
+
+static inline AL_VOID AlIic_ll_SetDmaRecevLevel(AL_REG BaseAddr, AL_U8 Level)
+{
+    AL_REG32_WRITE(BaseAddr + I2C__IC_DMA_RDLR__OFFSET, Level);
+}
+
 #ifdef __cplusplus
 }
 #endif

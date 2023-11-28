@@ -36,6 +36,8 @@ BOARD_NAME ?= board_dr1x90_ad101_v10
 #########################################################################
 ifeq ($(ELF), IIC_EEPROM)
 C_SRCS += al_iic_eeprom_block.c
+else ifeq ($(ELF), IIC_MASTER_DMA)
+C_SRCS += al_iic_master_dma.c
 else ifeq ($(ELF), IIC_MASTER)
 C_SRCS += al_iic_master_block.c
 else
@@ -73,6 +75,8 @@ PINMUX_MODE ?= PINMUX_MODE1
 #########################################################################
 ifeq ($(ELF), IIC_EEPROM)
 TARGET := al_iic_eeprom_example
+else ifeq ($(ELF), IIC_MASTER_DMA)
+TARGET := al_iic_master_dma_example
 else ifeq ($(ELF), IIC_MASTER)
 TARGET := al_iic_master_example
 else
