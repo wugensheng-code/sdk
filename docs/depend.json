@@ -917,7 +917,7 @@
 		},
 		"rules":{
 			"property": "docs/settings/make/rules.json",
-			"rules": "docs/settings/make/rules.mk",
+			"config": "docs/settings/make/rules.mk",
 			"destination": "tools/make/rules.mk"
 		}
 	}

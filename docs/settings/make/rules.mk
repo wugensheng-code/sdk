@@ -89,7 +89,7 @@ FREERTOS 	= #{{FREERTOS}}
 LWIP 		= #{{LWIP}}
 CHERRYUSB 	= #{{CHERRYUSB}}
 LIBMETAL 	= #{{LIBMETAL}}
-OPENAMP		=  #{{OPENAMP}}
+OPENAMP		= #{{OPENAMP}}
 #########################################################################
 # all public inc
 PUBLIC_INC_DIR :=  $(BSP_DIR)/inc \
