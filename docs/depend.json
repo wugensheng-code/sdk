@@ -254,7 +254,8 @@
 			"1.0":{
 			"name":"OS_STANDALONE",
 			"version":"1.0",
-			"description":"standalone"
+			"description":"standalone",
+			"depends": []
 		}
 		},
 		"OS_FREERTOS":{
@@ -274,7 +275,9 @@
 			"1.0":{
 			"name":"OS_LINUX",
 			"version":"1.0",
-			"description":"linux"
+			"description":"linux",
+			"depends": []
+			
 		}
 		},
 		"OS_RTTHREAD":{
