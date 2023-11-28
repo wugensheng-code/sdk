@@ -131,10 +131,9 @@ AL_S32 AlGpio_Hal_WritePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U32 Data);
  * Bank intr APIs
 */
 AL_S32 AlGpio_Hal_GetBankRawIntrStatus(AL_GPIO_HalStruct *Handle, AL_U32 Bank);
-AL_S32 AlGpio_Hal_EnableBankIntrMask(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Value);
+AL_S32 AlGpio_Hal_MaskBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Value);
 AL_S32 AlGpio_Hal_EnableBankSync(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Value);
 AL_S32 AlGpio_Hal_GetBankSync(AL_GPIO_HalStruct *Handle, AL_U32 Bank);
-
 /*
  * Pin intr APIs
 */

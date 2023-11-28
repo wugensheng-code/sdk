@@ -256,6 +256,12 @@ static AL_S32 AlGpio_Hal_GetPinDirection(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
     return (AlGpio_ll_GetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET) >> PinNumber) & (AL_U32)1;
 }
 
+/**
+ * @brief  This function reads Data register from the specified Pin.
+ * @param  Gpio
+ * @param  Pin
+ * @return AL_S32
+ */
 AL_S32 AlGpio_Hal_ReadPinOutput(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
 {
     AL_U32 Bank = 0;
@@ -267,7 +273,6 @@ AL_S32 AlGpio_Hal_ReadPinOutput(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
 
     return (AlGpio_ll_GetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET) >> PinNumber) & (AL_U32)1;
 }
-
 
 /**
  * @brief  This function reads Data register from the specified Pin in EXT register.
@@ -343,12 +348,12 @@ AL_S32 AlGpio_Hal_WritePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U32 Data)
  * @param  Raw
  * @return AL_VOID
  */
-static AL_S32 AlGpio_Hal_EnableBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Raw)
+static AL_S32 AlGpio_Hal_EnableBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Value)
 {
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_ll_DisableIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_ALL_ENABLE);
-    AlGpio_ll_EnableIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Raw);
+    AlGpio_ll_EnableIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Value);
 
     return AL_OK;
 }
@@ -360,11 +365,11 @@ static AL_S32 AlGpio_Hal_EnableBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, 
  * @param  Mask
  * @return AL_VOID
  */
-static AL_S32 AlGpio_Hal_ClrBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Mask)
+static AL_S32 AlGpio_Hal_ClrBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Value)
 {
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
-    AlGpio_ll_ClrIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Mask);
+    AlGpio_ll_ClrIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Value);
 
     return AL_OK;
 }
@@ -402,7 +407,7 @@ static AL_S32 AlGpio_Hal_GetBankIntrMask(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
  * @param  Mask
  * @return AL_VOID
  */
-AL_S32 AlGpio_Hal_EnableBankIntrMask(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Value)
+AL_S32 AlGpio_Hal_MaskBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Value)
 {
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
     AL_U32 IntrMaskVal = 0;
@@ -494,12 +499,12 @@ static AL_S32 AlGpio_Hal_GetIntrBankType(AL_GPIO_HalStruct *Handle, AL_U32 Bank,
  * @param  Debounce
  * @return AL_VOID
  */
-static AL_S32 AlGpio_Hal_EnableBankDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Debounce)
+static AL_S32 AlGpio_Hal_EnableBankDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Value)
 {
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_ll_DisableDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_ALL_ENABLE);
-    AlGpio_ll_EnableDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Debounce);
+    AlGpio_ll_EnableDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Value);
 
     return AL_OK;
 }
@@ -728,13 +733,6 @@ static AL_VOID AlGpio_Hal_IntrHandler(AL_VOID *Instance)
                 AlGpio_Hal_ClrBankIntr(Handle, Bank, IntrStatus);
                 /* In edge interrupt mode, GPIO__EOI Register need to be set 0 for the next interrupt. */
                 AlGpio_Hal_ClrBankIntr(Handle, Bank, AL_GPIO_DISABLE);
-            #if 0
-                AL_U32 RawVal = 0;
-                /* Mask Interrupt. */
-                AlGpio_Hal_EnableBankIntrMask(Handle, Bank, IntrStatus);
-                RawVal = AlGpio_Hal_GetBankRawIntrStatus(Handle, GpioEvent.Bank);
-                AL_LOG(AL_LOG_LEVEL_INFO, "GPIO Bank 0x%x IntrRaw value is 0x%x", Bank, RawVal);
-            #endif
             }
         }
     }
@@ -787,21 +785,17 @@ AL_S32 AlGpio_Hal_IntrPinCfg(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_GPIO_Intr
     GetPinDirection = AlGpio_Hal_GetPinDirection(Handle, Pin);
     GetPinIntrEnable = AlGpio_Hal_GetPinIntrEnable(Handle, Pin);
     GetIntrMode = AlGpio_Hal_GetPinIntrType(Handle, Pin);
-    if(GetIntrMode != IntrType) {
-        AL_LOG(AL_LOG_LEVEL_INFO, "Interrupt mode was set incorrectly, Pin IntrMode got is 0x%x.", GetIntrMode);
-        return AL_FALSE;
-    } else if (GetPinDirection != 0) {
-        AL_LOG(AL_LOG_LEVEL_INFO, "GPIO Pin direction was set incorrectly, Pin Direction got is 0x%x.", GetPinDirection);
-        return AL_FALSE;
-    } else if(GetPinIntrEnable == 0) {
-        AL_LOG(AL_LOG_LEVEL_INFO, "GPIO Pin interrupt was disabled, Pin Status got is 0x%x.", GetPinIntrEnable);
+    if(GetIntrMode != IntrType || GetPinDirection != 0 || GetPinIntrEnable == 0) {
+        AL_LOG(AL_LOG_LEVEL_INFO, "Interrupt configuration was set incorrectly, Pin IntrMode got is 0x%x, \
+            Pin Direction got is 0x%x, Pin Status got is 0x%x.", GetIntrMode, GetPinDirection, GetPinIntrEnable);
         return AL_FALSE;
     }
 
     return AL_OK;
 }
 
-AL_S32 AlGpio_Hal_IntrBankCfg(AL_GPIO_HalStruct *Handle, AL_U32 IntrBank, AL_U32 IntrVal, AL_GPIO_IntrTypeEnum IntrType, AL_GPIO_IntrPolarityEnum IntrPolarity, AL_GPIO_IntrBothEdgeEnum IntrEdge)
+AL_S32 AlGpio_Hal_IntrBankCfg(AL_GPIO_HalStruct *Handle, AL_U32 IntrBank, AL_U32 IntrVal, AL_GPIO_IntrTypeEnum IntrType,
+                            AL_GPIO_IntrPolarityEnum IntrPolarity, AL_GPIO_IntrBothEdgeEnum IntrEdge)
 {
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
     AL_GPIO_Intr_BankEnum Bank = 0;
@@ -837,14 +831,8 @@ AL_S32 AlGpio_Hal_IntrBankCfg(AL_GPIO_HalStruct *Handle, AL_U32 IntrBank, AL_U32
     GetBankDirection = AlGpio_Hal_GetBankDirection(Handle, IntrBank);
     GetBankIntrEnable = AlGpio_Hal_GetBankIntrEnable(Handle, IntrBank);
     AlGpio_Hal_GetIntrBankType(Handle, IntrBank, &Type, &Polarity, &BothEdge);
-    if(Type != IntrType || Polarity != IntrPolarity || BothEdge != IntrEdge) {
-        AL_LOG(AL_LOG_LEVEL_INFO, "Interrupt mode was set incorrectly.");
-        return AL_FALSE;
-    } else if (GetBankDirection) {
-        AL_LOG(AL_LOG_LEVEL_INFO, "GPIO Bank direction was set incorrectly.");
-        return AL_FALSE;
-    } else if(GetBankIntrEnable != IntrVal) {
-        AL_LOG(AL_LOG_LEVEL_INFO, "GPIO Bank was disabled.");
+    if(Type != IntrType || Polarity != IntrPolarity || BothEdge != IntrEdge || GetBankDirection || GetBankIntrEnable != IntrVal) {
+        AL_LOG(AL_LOG_LEVEL_INFO, "Interrupt configuration was set incorrectly.");
         return AL_FALSE;
     }
 
