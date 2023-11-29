@@ -15,6 +15,8 @@ extern "C" {
 
 #if ((LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1))
 extern AL_UART_HalStruct *AlLog;
+#elif (LOG_DEV == NONE)
+
 #endif
 
 #define AL_LOG_UART0 0

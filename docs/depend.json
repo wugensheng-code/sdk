@@ -216,12 +216,7 @@
 				"name": "LIB_LWIP",
 				"version": "1.0",
                 "description": "LIB_LWIP",
-				"depends": ["3rdparty/lwip-2.1.3"],
-                "settings": {
-                    "property":"docs/settings/lwip/lwip.json",
-                    "config":"docs/settings/lwip/lwipopts.h",
-                    "destination":"3rdparty/lwip-2.1.3/ports/lwipopts.h"
-                }
+				"depends": ["3rdparty/lwip-2.1.3"]
 			}
 		},
 		"LIB_METAL": {

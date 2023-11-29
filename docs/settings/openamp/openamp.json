@@ -1,4 +1,4 @@
 
 {
-    "OPENAMP_OUTPUT": {"Name":"OPENAMP_OUTPUT", "Value":"OUTPUT_BY_UART", "Values":["OUTPUT_BY_UART","REDIRECT_BY_PROXY"], "Default": "OUTPUT_BY_UART","Type": "array","Description":"openamp-output setting config","Permit":true}
+    "WITH_PROXY": {"Name":"WITH_PROXY", "Value":false,"Default": false,"Type": "boolean","Description":"Add support for proxy","Permit":false}
 }

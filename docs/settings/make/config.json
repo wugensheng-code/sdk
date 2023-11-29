@@ -16,5 +16,5 @@
 
     "VERBOSE": {"Name": "VERBOSE", "Value": false, "Default": false,"Type": "boolean","Description": "If VERBOSE=1, it will display compiling message in verbose including compiling options","Permit":true},
 
-    "OUTPUT_DEV": {"Name": "OUTPUT_DEV", "Value": "UART0", "Default": "UART0","Type": "string","Description": "If OUTPUT_DEV=UART0, it will output to UART0, If OUTPUT_DEV=UART1, it will output to uart1, if OUTPUT_DEV=NONE, it will output nothing","Permit":true}
+    "OUTPUT_DEV": {"Name": "OUTPUT_DEV", "Value": "UART0", "Values": ["UART0","UART1","NONE"], "Default": "UART0","Type": "string","Description": "If OUTPUT_DEV=UART0, it will output to UART0, If OUTPUT_DEV=UART1, it will output to uart1, if OUTPUT_DEV=NONE, it will output nothing","Permit":true}
 }

@@ -74,6 +74,8 @@ ifeq ($(OUTPUT_DEV),UART0)
 	CFLAGS += -DLOG_DEV=AL_LOG_UART0
 else ifeq ($(OUTPUT_DEV),UART1)
 	CFLAGS += -DLOG_DEV=AL_LOG_UART1
+else ifeq ($(OUTPUT_DEV),none)
+	CFLAGS += -DLOG_DEV=NONE
 endif
 
 

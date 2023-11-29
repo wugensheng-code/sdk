@@ -10,12 +10,20 @@
 
 #if ((LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1))
 AL_UART_HalStruct *AlLog;
+#elif (LOG_DEV == NONE)
+
 #endif
 
 AL_S32 AlLog_Init()
 {
 #ifdef LOG_DEV
-#if ((LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1))
+
+#if((LOG_DEV == NONE))
+    return AL_OK;
+#endif
+
+
+#elif ((LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1))
     AL_UART_InitStruct UART_InitStruct = {
         .BaudRate           = 115200,
         .Parity             = AL_UART_NO_PARITY,
@@ -37,9 +45,8 @@ AL_S32 AlLog_Init()
 #endif
 
     return AlUart_Hal_Init(&AlLog, LOG_DEV, &UART_InitStruct, AL_NULL);
-#else
+#elif((LOG_DEV == NONE))
     return AL_OK;
-#endif
 #endif
     return AL_OK;
 }
@@ -59,5 +66,7 @@ AL_VOID AlLog_WriteByte(AL_S8 Data)
 {
 #if (LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1)
     AlUart_Dev_SendByte(&(AlLog->Dev), Data);
+#else
+    (AL_VOID)Data;
 #endif
 }
