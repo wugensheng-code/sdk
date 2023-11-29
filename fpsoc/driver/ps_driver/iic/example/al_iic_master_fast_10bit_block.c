@@ -9,6 +9,8 @@
 #define AL_IIC_DEVICE_ID            0
 
 #define BUFFER_SIZE                 128
+#define TEST_COUNT                  16
+
 #define TEST_SLAVE_ADDR             0x77
 #define IIC_MASTER_TEST_TIMEOUT_MS  100
 
@@ -28,7 +30,7 @@ AL_S32 static AlIic_MuxInit(AL_IIC_HalStruct *Handle)
     return AL_OK;
 }
 
-AL_S32 AlIic_Master10BitBlockExample()
+AL_S32 AlIic_MasterFast10BitExample()
 {
     AL_S32 Ret;
     AL_IIC_HalStruct *Handle;
@@ -36,7 +38,7 @@ AL_S32 AlIic_Master10BitBlockExample()
     {
         .Mode           = AL_IIC_MODE_MASTER,
         .AddrMode       = AL_IIC_ADDR_7BIT,
-        .SpeedMode      = AL_IIC_STANDARD_MODE,
+        .SpeedMode      = AL_IIC_FAST_MODE,
     };
 
     AL_U8 SendData[BUFFER_SIZE] =
@@ -63,7 +65,7 @@ AL_S32 AlIic_Master10BitBlockExample()
 
     AL_U16 SlaveAddr = TEST_SLAVE_ADDR;
 
-   AL_LOG(AL_LOG_LEVEL_INFO, "AlIic_Master10BitBlockExample\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "AlIic_Master10BitBlockExample\r\n");
 
     Ret = AlIic_Hal_Init(&Handle, AL_IIC_DEVICE_ID, &MasterInitConfig, AL_NULL);
     if (Ret != AL_OK) {
@@ -113,7 +115,7 @@ AL_S32 AlIic_Master10BitBlockExample()
 
 int main()
 {
-    AlIic_Master10BitBlockExample();
+    AlIic_MasterFast10BitExample();
 
     return 0;
 }

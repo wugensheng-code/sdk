@@ -247,6 +247,8 @@ AL_S32 AlIic_Hal_MasterSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
     if (Ret != AL_OK) {
         AlIic_Dev_StopMasterSend(&Handle->Dev);
         (AL_VOID)AlOsal_Mb_Receive(&Handle->TxRxEventQueue, &IicEvent, AL_WAITING_NO);
+    } else {
+        AlIic_Dev_StopMasterSend(&Handle->Dev);
     }
 
     (AL_VOID)AlOsal_Lock_Release(&Handle->Lock);

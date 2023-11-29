@@ -6,6 +6,8 @@
 
 #include "al_iic_hal.h"
 
+#define AL_IIC_DEVICE_ID            0
+
 #define IIC_MUX_ADDRESS             0x74
 
 #define EEPROM_ADDRESS              0x54
@@ -90,11 +92,11 @@ AL_S32 AlIic_E2promExample()
     };
     AL_U8 ReadBuffer[EEPROM_PAGE_SIZE] = {0};
 
-    printf("AlIic_E2promExample\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "AlIic_E2promExample\r\n");
 
-    Ret = AlIic_Hal_Init(&Handle, 0, &InitConfig, AL_NULL);
+    Ret = AlIic_Hal_Init(&Handle, AL_IIC_DEVICE_ID, &InitConfig, AL_NULL);
     if (Ret != AL_OK) {
-        printf("AlIic_Hal_Init Failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_Hal_Init Failed\r\n");
     }
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
@@ -112,14 +114,14 @@ AL_S32 AlIic_E2promExample()
     /* Page write, Include address, WriteLen should not should not exceed the page size + 1 */
     Ret = AlIic_EepromWriteData(Handle, SlaveAddr, WriteBuffer, WriteLen);
     if (Ret != AL_OK) {
-        printf("AlIic_EepromWriteData Failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_EepromWriteData Failed\r\n");
         return Ret;
     }
 
     /* Read data from e2prom */
     Ret = AlIic_EepromReadData(Handle, SlaveAddr, EEPROM_TEST_START_ADDR, ReadBuffer, EEPROM_PAGE_SIZE);
     if (Ret != AL_OK) {
-        printf("AlIic_EepromReadData Failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_EepromReadData Failed\r\n");
     }
 
     for(Index = 0; Index < EEPROM_PAGE_SIZE; Index++) {
@@ -129,9 +131,9 @@ AL_S32 AlIic_E2promExample()
         }
     }
     if (TestFail) {
-        printf("E2prom write read fail\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "E2prom write read fail\r\n");
     } else {
-        printf("E2prom write read pass\r\n");
+        AL_LOG(AL_LOG_LEVEL_INFO, "E2prom write read pass\r\n");
     }
 
     return AL_OK;

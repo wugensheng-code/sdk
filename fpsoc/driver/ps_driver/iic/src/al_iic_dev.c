@@ -829,7 +829,11 @@ static AL_VOID AlIic_Dev_MasterSendDataHandler(AL_IIC_DevStruct *Iic)
             (*Iic->EventCallBack)(&IicEvent, Iic->EventCallBackRef);
         }
 
-        AlIic_Dev_StopMasterSend(Iic);
+        /*
+          It is possible for an abrt interrupt to occur, so only mask the empty interrupt
+          and call AlIic_Dev_StopMasterSend after tx is done.
+        */
+        AlIic_ll_DisableIntr(IicBaseAddr, AL_IIC_INTR_TX_EMPTY_MASK);
     }
 }
 
@@ -875,7 +879,7 @@ static AL_VOID AlIic_Dev_MasterRecvDataHandler(AL_IIC_DevStruct *Iic)
 
 
         AlIic_ll_DisableIntr(IicBaseAddr, AL_IIC_INTR_RX_FULL_MASK | AL_IIC_INTR_RX_UNDER_MASK |
-                                          AL_IIC_INTR_RX_OVER_MASK);
+                                          AL_IIC_INTR_RX_OVER_MASK | AL_IIC_INTR_TX_ABRT_MASK);
 
         AlIic_Dev_ClrRxBusy(Iic);
     }
@@ -915,7 +919,7 @@ static AL_VOID AlIic_Dev_MasterRecvDataIssueReadCmd(AL_IIC_DevStruct *Iic)
     }
 
     if (Iic->SendBuffer.HandledCnt == Iic->SendBuffer.RequestedCnt) {
-        AlIic_ll_DisableIntr(IicBaseAddr, AL_IIC_INTR_TX_EMPTY_MASK | AL_IIC_INTR_TX_ABRT_MASK);
+        AlIic_ll_DisableIntr(IicBaseAddr, AL_IIC_INTR_TX_EMPTY_MASK);
     }
 
     /* After issue read, need to read data immediately. If no, the fifo may be full and data may be lost */

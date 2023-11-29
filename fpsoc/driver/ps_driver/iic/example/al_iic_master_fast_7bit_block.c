@@ -9,6 +9,8 @@
 #define AL_IIC_DEVICE_ID            0
 
 #define BUFFER_SIZE                 128
+#define TEST_COUNT                  16
+
 #define TEST_SLAVE_ADDR             0x77
 #define IIC_MASTER_TEST_TIMEOUT_MS  100
 
@@ -28,7 +30,7 @@ AL_S32 static AlIic_MuxInit(AL_IIC_HalStruct *Handle)
     return AL_OK;
 }
 
-AL_S32 AlIic_Master10BitBlockExample()
+AL_S32 AlIic_MasterFastExample()
 {
     AL_S32 Ret;
     AL_IIC_HalStruct *Handle;
@@ -36,7 +38,7 @@ AL_S32 AlIic_Master10BitBlockExample()
     {
         .Mode           = AL_IIC_MODE_MASTER,
         .AddrMode       = AL_IIC_ADDR_7BIT,
-        .SpeedMode      = AL_IIC_STANDARD_MODE,
+        .SpeedMode      = AL_IIC_FAST_MODE,
     };
 
     AL_U8 SendData[BUFFER_SIZE] =
@@ -63,7 +65,7 @@ AL_S32 AlIic_Master10BitBlockExample()
 
     AL_U16 SlaveAddr = TEST_SLAVE_ADDR;
 
-   AL_LOG(AL_LOG_LEVEL_INFO, "AlIic_Master10BitBlockExample\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "AlIic_MasterFastExample\r\n");
 
     Ret = AlIic_Hal_Init(&Handle, AL_IIC_DEVICE_ID, &MasterInitConfig, AL_NULL);
     if (Ret != AL_OK) {
@@ -73,19 +75,6 @@ AL_S32 AlIic_Master10BitBlockExample()
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     AlIic_MuxInit(Handle);
-
-    /*
-      The IIC mux is in 7-bit address mode.
-      The slave address mode is 10bit,
-      need to switch to a 10bit address here,
-      Use AlIic_Hal_IoCtl to set 10bit address mode.
-     */
-    AL_IIC_AddrModeEnum AddrMode = AL_IIC_ADDR_10BIT;
-    Ret = AlIic_Hal_IoCtl(Handle, AL_IIC_IOCTL_SET_ADDR_MODE, &AddrMode);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_Hal_IoCtl Failed\r\n");
-        return Ret;
-    }
 
     Ret = AlIic_Hal_MasterSendDataBlock(Handle, SlaveAddr, SendData, BUFFER_SIZE, IIC_MASTER_TEST_TIMEOUT_MS);
     if (Ret != AL_OK) {
@@ -113,7 +102,7 @@ AL_S32 AlIic_Master10BitBlockExample()
 
 int main()
 {
-    AlIic_Master10BitBlockExample();
+    AlIic_MasterFastExample();
 
     return 0;
 }

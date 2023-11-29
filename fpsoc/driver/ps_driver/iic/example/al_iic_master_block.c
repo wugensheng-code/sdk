@@ -36,7 +36,7 @@ AL_S32 AlIic_MasterBlockExample()
     {
         .Mode           = AL_IIC_MODE_MASTER,
         .AddrMode       = AL_IIC_ADDR_7BIT,
-        .SpeedMode      = AL_IIC_FAST_MODE,
+        .SpeedMode      = AL_IIC_STANDARD_MODE,
     };
 
     AL_U8 SendData[BUFFER_SIZE] =
@@ -63,11 +63,11 @@ AL_S32 AlIic_MasterBlockExample()
 
     AL_U16 SlaveAddr = TEST_SLAVE_ADDR;
 
-    printf("AlIic_MasterBlockExample\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "AlIic_MasterBlockExample\r\n");
 
     Ret = AlIic_Hal_Init(&Handle, AL_IIC_DEVICE_ID, &MasterInitConfig, AL_NULL);
     if (Ret != AL_OK) {
-        printf("AlIic_Hal_Init Failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_Hal_Init Failed\r\n");
         return Ret;
     }
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
@@ -76,17 +76,17 @@ AL_S32 AlIic_MasterBlockExample()
 
     Ret = AlIic_Hal_MasterSendDataBlock(Handle, SlaveAddr, SendData, BUFFER_SIZE, IIC_MASTER_TEST_TIMEOUT_MS);
     if (Ret != AL_OK) {
-        printf("AlIic_Hal_MasterSendDataBlock Failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_Hal_MasterSendDataBlock Failed\r\n");
         return Ret;
     }
 
     Ret = AlIic_Hal_MasterRecvDataBlock(Handle, SlaveAddr, RecvData , BUFFER_SIZE, IIC_MASTER_TEST_TIMEOUT_MS);
     if (Ret != AL_OK) {
-        printf("AlIic_Hal_MasterRecvDataBlock Failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_Hal_MasterRecvDataBlock Failed\r\n");
         return Ret;
     }
 
-    printf("AlIic_Hal_MasterRecvDataBlock Data:\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "AlIic_Hal_MasterRecvDataBlock Data:\r\n");
     for (int i = 0; i < BUFFER_SIZE; i++)
     {
         printf("0x%x ", RecvData[i]);
