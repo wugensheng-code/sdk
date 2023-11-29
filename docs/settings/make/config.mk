@@ -132,6 +132,5 @@ export DDR_2M_MAPPING
 export CODE_READONLY
 export Q
 export AL_CUR_DIR
-export CFLAGS
 
 # vim: syntax=make
