@@ -171,18 +171,20 @@ typedef enum
 /* IIC error code define */
 typedef enum
 {
-    AL_IIC_INVALID_DEVICE_ID    = 0x100,
-    AL_IIC_NOT_READY            = 0x101,
-    AL_IIC_BUSY                 = 0x102,
-    AL_IIC_ERR_IOCTL_CMD        = 0x103,
+    AL_IIC_INVALID_DEVICE_ID    = AL_ERR_MAX,
+    AL_IIC_NOT_READY,
+    AL_IIC_BUSY,
+    AL_IIC_ERR_IOCTL_CMD,
 
 } AL_IIC_ErrorCodeEnum;
+
+#define IIC_EVENT_START_BIT 6
 
 #define AL_IIC_ERR_ILLEGAL_PARAM            (AL_DEF_ERR(AL_IIC, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
 #define AL_IIC_ERR_NOT_READY                (AL_DEF_ERR(AL_IIC, AL_LOG_LEVEL_ERROR, AL_IIC_NOT_READY))
 #define AL_IIC_ERR_BUSY                     (AL_DEF_ERR(AL_IIC, AL_LOG_LEVEL_ERROR, AL_IIC_BUSY))
 #define AL_IIC_ERR_IOCTL_CMD_NOT_SUPPORT    (AL_DEF_ERR(AL_IIC, AL_LOG_LEVEL_ERROR, AL_IIC_ERR_IOCTL_CMD))
-#define AL_IIC_EVENTS_TO_ERRS(Event)        (AL_DEF_ERR(AL_IIC, AL_LOG_LEVEL_ERROR, Event))
+#define AL_IIC_EVENTS_TO_ERRS(Event)        (AL_DEF_ERR(AL_IIC, AL_LOG_LEVEL_ERROR, (Event << IIC_EVENT_START_BIT)))
 
 AL_IIC_HwConfigStruct *AlIic_Dev_LookupConfig(AL_U32 DevId);
 
