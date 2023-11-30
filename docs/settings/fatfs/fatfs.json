@@ -1,14 +1,14 @@
 {
-    "FF_FS_EXFAT": {"Name": "FF_FS_EXFAT", "Value": "0", "Default": "0","Type": "integer","Description": "This option switches support for exFAT filesystem. (0:Disable or 1:Enable)(Also enable FF_USE_LFN)","Permit":true},
+    "FF_FS_EXFAT": {"Name": "FF_FS_EXFAT", "Value": false, "Default": false,"Type": "boolean","Description": "This option switches support for exFAT filesystem. (0:Disable or 1:Enable)(Also enable FF_USE_LFN)","Permit":true},
     "FF_MULTI_PARTITION": {"Name": "FF_MULTI_PARTITION", "Value": "0", "Default": "0","Type": "integer","Description": "This option switches support for multiple volumes on the physical drive.(0:Single partition,1:Enable multiple partion)","Permit":true},
     "FF_MAX_SS": {"Name": "FF_MAX_SS", "Value": "4096", "Default": "4096","Type": "integer","Description": "The sector size in unit of byte. (512, 1024, 2048, 4096)","Permit":true},
     "FF_FS_MINIMIZE": {"Name": "FF_FS_MINIMIZE", "Value": "0", "Default": "0","Type": "integer","Description": "This option defines minimization level to remove some basic API functions","Permit":true},
     "FF_VOLUMES": {"Name": "FF_VOLUMES", "Value": "3", "Default": "3","Type": "integer","Description": "Number of volumes (logical drives) to be used. (1-10)","Permit":true},
-    "FF_FS_READONLY": {"Name": "FF_FS_READONLY", "Value": "0", "Default": "0","Type": "integer","Description": "This option switches read-only configuration. (0:Read/Write or 1:Read-only)","Permit":true},
-    "FF_FS_RPATH": {"Name": "FF_FS_RPATH", "Value": "0", "Default": "0","Type": "integer","Description": " 0: Disable relative path and remove related functions. 1: Enable relative path. f_chdir() and f_chdrive() are available. 2: f_getcwd() function is available in addition to 1.","Permit":true},
-    "FF_USE_CHMOD": {"Name": "FF_USE_CHMOD", "Value": "0", "Default": "0","Type": "integer","Description": "This option switches attribute manipulation functions, f_chmod() and f_utime((0:Disable or 1:Enable)FF_FS_READONLY follows).","Permit":true},
-    "FF_USE_LFN": {"Name": "FF_USE_LFN", "Value": "1", "Default": "1","Type": "integer","Description": "support for LFN (long file name)","Permit":true},
-    "FF_USE_MKFS": {"Name": "FF_USE_MKFS", "Value": "1", "Default": "1","Type": "integer","Description": "This option switches f_mkfs() function. (0:Disable or 1:Enable)","Permit":true},
-    "FF_USE_STRFUNC": {"Name": "FF_USE_STRFUNC", "Value": "0", "Default": "0","Type": "integer","Description": "0: Disable. 1: Enable without LF-CRLF conversion.2: Enable with LF-CRLF conversion.","Permit":true}
+    "FF_FS_READONLY": {"Name": "FF_FS_READONLY", "Value": false, "Default": false,"Type": "boolean","Description": "This option switches read-only configuration. (0:Read/Write or 1:Read-only)","Permit":true},
+    "FF_FS_RPATH": {"Name": "FF_FS_RPATH", "Value": "0", "Values":["0","1","2"], "Default": "0","Type": "array","Description": " 0: Disable relative path and remove related functions. 1: Enable relative path. f_chdir() and f_chdrive() are available. 2: f_getcwd() function is available in addition to 1.","Permit":true},
+    "FF_USE_CHMOD": {"Name": "FF_USE_CHMOD", "Value": false, "Default": false,"Type": "boolean","Description": "This option switches attribute manipulation functions, f_chmod() and f_utime((0:Disable or 1:Enable)FF_FS_READONLY follows).","Permit":true},
+    "FF_USE_LFN": {"Name": "FF_USE_LFN", "Value": true, "Default": true,"Type": "boolean","Description": "support for LFN (long file name)","Permit":true},
+    "FF_USE_MKFS": {"Name": "FF_USE_MKFS", "Value": true, "Default": true,"Type": "boolean","Description": "This option switches f_mkfs() function. (0:Disable or 1:Enable)","Permit":true},
+    "FF_USE_STRFUNC": {"Name": "FF_USE_STRFUNC", "Value": false, "Default": false,"Type": "boolean","Description": "0: Disable. 1: Enable without LF-CRLF conversion.2: Enable with LF-CRLF conversion.","Permit":true}
 
 }
