@@ -40,7 +40,7 @@ typedef enum
     INTF1_CHIP4   = 7
 } AL_SMC_ChipNumEnum;
 
-typedef union SMC_CyclesStruct
+typedef union SMC_Cycles
 {  AL_U32 d32;
    struct
    {
@@ -52,9 +52,8 @@ typedef union SMC_CyclesStruct
         AL_U32 Tar          :3;     /* Returns the write cycle time. Minimum permitted value = 2 */
         AL_U32 Trr          :4;     /* Returns the read cycle time. Minimum permitted value = 2 */
         AL_U32 Reserved     :8;
-   }
-   b;
-}AL_SMC_CyclesStruct;
+   } b;
+}AL_SMC_Cycles;
 
 typedef enum
 {
@@ -114,7 +113,7 @@ typedef struct
 
 typedef struct
 {
-    AL_SMC_CyclesStruct     Cycles;
+    AL_SMC_Cycles           Cycles;
     AL_SMC_MemWidthEnum     SmcWidth;
 } AL_SMC_ConfigsStruct;
 
@@ -135,7 +134,7 @@ static inline AL_VOID AlSmc_ll_SetCmdTypeAndChipNum(AL_REG SmcBaseAddr, AL_SMC_C
               ChipNum << SMC_DIRECT_CMD_CHIP_NMBR_SHIFT);
 }
 
-static inline AL_VOID AlSmc_ll_SetCycles(AL_REG SmcBaseAddr, AL_SMC_CyclesStruct Cycles)
+static inline AL_VOID AlSmc_ll_SetCycles(AL_REG SmcBaseAddr, AL_SMC_Cycles Cycles)
 {
     AL_REG32_WRITE(SmcBaseAddr + SMC_SET_CYCLES_OFFSET, Cycles.d32);
 }

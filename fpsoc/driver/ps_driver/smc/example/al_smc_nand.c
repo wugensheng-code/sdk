@@ -11,7 +11,7 @@ AL_SMC_HalStruct SmcHal;
 
 AL_SMC_ConfigsStruct SmcInitConfigs =
 {
-    .Cycles = 0,        /* Cycles is set to 0 ignore this value and use the default */
+    .Cycles.d32 = 0,        /* Cycles is set to 0 ignore this value and use the default */
     .SmcWidth = MW_8BITS
 };
 
@@ -19,7 +19,7 @@ AL_SMC_ConfigsStruct SmcInitConfigs =
 AL_U8 SendData[TRANS_SIZE] = { 0x0 };
 AL_U8 RecvData[TRANS_SIZE] = { 0x0 };
 
-void main(void)
+int main(void)
 {
     printf("Start FPSoc Smc Test\r\n");
     AL_U32 i, Ret = AL_OK;

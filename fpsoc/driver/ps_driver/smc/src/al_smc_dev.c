@@ -369,7 +369,7 @@ AL_U32 ALSmc_Dev_ReadParam(AL_NAND_InfoStruct *NandInfo)
     Crc = ALSmc_Dev_CrcCheck(Temp);
     if (((Crc & 0xff) != Temp[CRC16_LEN]) || (((Crc >> 8) & 0xff) != Temp[CRC16_LEN+1])){
         /* Return Error */
-        while (1);
+        return AL_SMC_EVENTS_TO_ERRS(SmcCrcErr);
     }
 
     NandInfo->Size.DataBytesPerPage  =     *((AL_U32 *)(&Temp[DATA_PER_PAGE_POS]));
@@ -489,8 +489,7 @@ AL_U32 ALSmc_Dev_EraseBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo,
 
     Status = ALSmc_Dev_ReadStatus(NandInfo);
     if (!(Status & ONFI_STATUS_WP)) {
-        // return NAND_WRITE_PROTECTED;
-        while(1);
+        return AL_SMC_EVENTS_TO_ERRS(SmcNandWriteProtectErr);
     }
 
     NandInfo->Cmd.StartCmd = ONFI_CMD_ERASE_BLOCK1;
@@ -510,7 +509,7 @@ AL_U32 ALSmc_Dev_EraseBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo,
     Status = ALSmc_Dev_ReadStatus(NandInfo);
     if (Status & ONFI_STATUS_FAIL) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Smc Nand EraseBlock ONFI_STATUS_FAIL error\r\n");
-        return AL_SMC_ERR_NOT_SUPPORT;
+        return AL_SMC_EVENTS_TO_ERRS(SmcNandEraseBlockFailErr);
     }
 
     return AL_OK;
@@ -564,7 +563,7 @@ AL_U32 ALSmc_Dev_HwEccWritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandI
         break;
     default:
         /* Page size 256 bytes & 4096 bytes not supported by ECC block*/
-        return SmcHwReadSizeOver;
+        return AL_SMC_EVENTS_TO_ERRS(SmcHwReadSizeErr);
         break;
     }
 
@@ -595,7 +594,7 @@ AL_U32 ALSmc_Dev_HwEccWritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandI
     Status = ALSmc_Dev_ReadStatus(NandInfo);
     if (Status & ONFI_STATUS_FAIL) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Smc Nand HwEccWritePage ONFI_STATUS_FAIL error\r\n");
-        return AL_SMC_ERR_NOT_SUPPORT;
+        return AL_SMC_EVENTS_TO_ERRS(SmcOnfiStatusFailErr);
     }
 
     return AL_OK;
@@ -655,7 +654,7 @@ AL_U32 ALSmc_Dev_HwEccReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandIn
         break;
     default:
         /* Page size 256 bytes & 4096 bytes not supported by ECC block*/
-        return SmcHwReadSizeOver;
+        return AL_SMC_EVENTS_TO_ERRS(SmcHwReadSizeErr);
         break;
     }
 
@@ -729,7 +728,7 @@ AL_U32 ALSmc_Dev_WritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, 
     Status = ALSmc_Dev_ReadStatus(NandInfo);
     if (Status & ONFI_STATUS_FAIL) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Smc Nand WritePage ONFI_STATUS_FAIL error\r\n");
-        return AL_SMC_ERR_NOT_SUPPORT;
+        return AL_SMC_EVENTS_TO_ERRS(SmcOnfiStatusFailErr);
     }
 
     return AL_OK;
@@ -762,7 +761,7 @@ AL_U32 ALSmc_Dev_ReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, A
     Status = ALSmc_Dev_ReadStatus(NandInfo);
     if (Status & ONFI_STATUS_FAIL) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Smc Nand ReadPage ONFI_STATUS_FAIL error\r\n");
-        return AL_SMC_ERR_NOT_SUPPORT;
+        return AL_SMC_EVENTS_TO_ERRS(SmcOnfiStatusFailErr);
     }
 
     CmdPhaseAddr  = NAND_BASE_ADDR                 |
@@ -835,7 +834,7 @@ AL_U32 ALSmc_Dev_WritceSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo
     Status = ALSmc_Dev_ReadStatus(NandInfo);
     if (Status & ONFI_STATUS_FAIL) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Smc Nand WritceSpare ONFI_STATUS_FAIL error\r\n");
-        return AL_SMC_ERR_NOT_SUPPORT;
+        return AL_SMC_EVENTS_TO_ERRS(SmcOnfiStatusFailErr);
     }
 
     if (1 == NandInfo->Size.EccNum) {
@@ -881,7 +880,7 @@ AL_U32 ALSmc_Dev_ReadSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, 
     Status = ALSmc_Dev_ReadStatus(NandInfo);
     if (Status & ONFI_STATUS_FAIL) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Smc Nand ReadSpare ONFI_STATUS_FAIL error\r\n");
-        return AL_SMC_ERR_NOT_SUPPORT;
+        return AL_SMC_EVENTS_TO_ERRS(SmcOnfiStatusFailErr);
     }
 
     CmdPhaseAddr  = NAND_BASE_ADDR                 |
@@ -924,7 +923,7 @@ AL_U32 ALSmc_Dev_CheckIsBadBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *Nand
     ALSmc_Dev_ReadSpare(Smc, NandInfo, Page);
 
     if (NandInfo->SpareBuf[0] != 0xff) {
-        return BAD_BLOCK;
+        return AL_SMC_EVENTS_TO_ERRS(BAD_BLOCK);
     }
 
     return AL_OK;
@@ -956,7 +955,7 @@ AL_U32 AlSmc_Dev_HwCalculateEcc(AL_SMC_DevStruct *Smc, AL_U8 *Data, AL_U8 EccDat
             }
         } else {
             /* error  */
-            return SmcEccDataInvalidErr;
+            return AL_SMC_EVENTS_TO_ERRS(SmcEccDataInvalidErr);
         }
     }
 
@@ -1010,11 +1009,11 @@ AL_U32 AlSmc_Dev_HwCorrectEcc(AL_U8 *eccCode, AL_U8 *eccCalc, AL_U8 *buf)
     /* Two bits Error */
     if (OneHot((eccOdd | eccEven)) == AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Smc Nand Read Page Find Two bits Error\r\n");
-        return SmcTwoBitsErr;
+        return AL_SMC_EVENTS_TO_ERRS(SmcTwoBitsErr);
     }
 
     /* Multiple bits error */
-    return SmcMultipleBitsErr;
+    return AL_SMC_EVENTS_TO_ERRS(SmcMultipleBitsErr);
 }
 
 /**
@@ -1046,7 +1045,7 @@ AL_U32 AlSmc_Dev_EccHwInit(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo)
         break;
     default:
         /* Page size 256 bytes & 4096 bytes not supported by ECC block */
-        return SmcHwInitSizeErr;
+        return AL_SMC_EVENTS_TO_ERRS(SmcHwInitSizeErr);
         break;
     }
 
@@ -1114,7 +1113,7 @@ AL_U32 AlSmc_Dev_EnableOnDieEcc(AL_NAND_InfoStruct *NandInfo)
     ALSmc_Dev_SetFeature(NandInfo, 0x90, &EccSetFeature[0]);
 
     if (EccGetFeature[0] != EccSetFeature[0]) {
-        return SmcWriteEccFeatErr;
+        return AL_SMC_EVENTS_TO_ERRS(SmcWriteEccFeatErr);
     }
 
     return AL_OK;

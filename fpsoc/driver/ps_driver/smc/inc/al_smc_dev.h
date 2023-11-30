@@ -226,25 +226,17 @@ extern "C" {
         (0x1 << SMC_ECC1_MEMCMD1_NAND1_RD_END_COL_CHANGE_V_SHIFT))
 
 enum SMC_ERROR_CODE{
-	SmcSuccess = 0,				/* 返回成功 */
-	SmcResetErr,				/* 复位失败错误 */
-	SmcParaBusyStatusErr,		/* Read parameter data happen status reg error */
-	SmcCrcErr,					/* Parameter page三次crc都失败出现的错误 */
-	SmcParameterOver,			/* 读Parameter Page发现读取出来的数据，表示的page datasize大小远远超出了正常大小 */
-	SmcSamsungParamOver,
-	SmcHwInitSizeErr,			/* Smc ecc最多能支持的page size的大小为2048.当使用Smc的ecc功能并且nandflash大小超过时出现此错误。*/
-	SmcHwInitEccBusyErr,
-	SmcHwDisEccBusyErr,
-	SmcFeatBusyErr,
-	SmcWriteEccFeatErr,			/* 使能On Die Ecc但是使能失败产生的错误 */
-	SmcSpareStatusErr,			/* Read spare data happen status reg error */
-	SmcBadBlock,				/* 检测到了坏块 */
-	SmcReadCmdTimeOutErr,
-	SmcHwReadSizeOver,
-	SmcCalEccBusyErr,
-	SmcEccDataInvalidErr,			/* 读取Smc ecc数据，但是ecc数据被标记为无效 */
-	SmcTwoBitsErr,
-	SmcMultipleBitsErr
+    SmcCrcErr               = BIT(0), /* Parameter page crc error */
+    SmcHwInitSizeErr        = BIT(1), /* Smc ecc最多能支持的page size的大小为2048 */
+    SmcWriteEccFeatErr      = BIT(2), /* 使能On Die Ecc但是使能失败产生的错误 */
+    SmcBadBlock             = BIT(3), /* 检测到了坏块 */
+    SmcHwReadSizeErr        = BIT(4),
+    SmcEccDataInvalidErr    = BIT(5), /* 读取Smc ecc数据，但是ecc数据被标记为无效 */
+    SmcTwoBitsErr           = BIT(6),
+    SmcMultipleBitsErr      = BIT(7),
+    SmcNandWriteProtectErr  = BIT(8),
+    SmcNandEraseBlockFailErr= BIT(9),
+    SmcOnfiStatusFailErr    = BIT(10)
 };
 
 typedef struct {
@@ -266,7 +258,7 @@ typedef enum {
 #define AL_SMC_ERR_TIMEOUT          AL_DEF_ERR(AL_SMC, AL_LOG_LEVEL_ERROR, AL_ERR_TIMEOUT)
 #define AL_SMC_ERR_NOT_SUPPORT      AL_DEF_ERR(AL_SMC, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_SUPPORT)
 #define AL_SMC_ERR_NOT_READY        AL_DEF_ERR(AL_SMC, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_READY)
-#define AL_SMC_EVENTS_TO_ERRS(Event) (AL_DEF_ERR(AL_SMC, AL_LOG_LEVEL_ERROR, Event))
+#define AL_SMC_EVENTS_TO_ERRS(Event) (AL_DEF_ERR(AL_SMC, AL_LOG_LEVEL_ERROR, (Event << AL_ERR_MAX)))
 
 typedef struct
 {
