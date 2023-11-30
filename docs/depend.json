@@ -492,6 +492,21 @@
 				"supportedOS": ["standalone"],
 				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			}
+		},
+		"DEMO_OPENAMP_RPMSG_ECHO_FREERTOS": {
+			"1.0":{
+				"name": "DEMO_OPENAMP_RPMSG_ECHO_FREERTOS",
+				"version": "1.0",
+				"depends": [
+					"solutions/demo/baremetal/openamp_rpmsg_echo",
+					"LIB_METAL_V1_0",
+					"LIB_OPENAMP_V1_0",
+					"OS_FREERTOS_V1_0"
+				],
+				"description": "openamp_rpmsg_echo_freertos demo",
+				"supportedOS": ["freertos"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"]
+			}
 		}
 	},
 	"ps_driver_app": {

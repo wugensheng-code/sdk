@@ -11,8 +11,8 @@
 SDK_ROOT   ?= ../../../..
 
 CHIP       := dr1m90
-#RTOS       := freertos
-RTOS       := rtthread
+RTOS       := freertos
+# RTOS       := rtthread
 PFLOAT     := 1
 
 ifeq ($(CHIP), dr1m90)

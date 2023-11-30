@@ -8,7 +8,7 @@
 #include "al_log.h"
 
 
-#if ((LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1))
+#if ((LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1) || (LOG_DEV == AL_LOG_NONE))
 AL_UART_HalStruct *AlLog;
 #endif
 
@@ -19,7 +19,7 @@ AL_S32 AlLog_Init()
 #if((LOG_DEV == AL_LOG_NONE))
     return AL_OK;
 
-#else ((LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1))
+#elif ((LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1))
     AL_UART_InitStruct UART_InitStruct = {
         .BaudRate           = 115200,
         .Parity             = AL_UART_NO_PARITY,

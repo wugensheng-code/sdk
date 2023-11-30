@@ -8,10 +8,10 @@ AL_CHIP         ?= $(CHIP)
 ## ARMv8_SECURE:    SECURE, NONSECURE
 ## ARMv8_CORE:      MASTER, SLAVE
 
-ARMv8_STATE     = #{{ARMv8_STATE}}
-ARMv8_EL        = #{{ARMv8_EL}}
-ARMv8_SECURE    = #{{ARMv8_SECURE}}
-ARMv8_CORE      = #{{ARMv8_CORE}}
+ARMv8_STATE     ?= #{{ARMv8_STATE}}
+ARMv8_EL        ?= #{{ARMv8_EL}}
+ARMv8_SECURE    ?= #{{ARMv8_SECURE}}
+ARMv8_CORE      ?= #{{ARMv8_CORE}}
 
 #########################################################################
 

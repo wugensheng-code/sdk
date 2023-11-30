@@ -19,6 +19,7 @@ extern AL_UART_HalStruct *AlLog;
 
 #define AL_LOG_UART0 0
 #define AL_LOG_UART1 1
+#define AL_LOG_NONE -1
 
 AL_S32 AlLog_Init();
 
