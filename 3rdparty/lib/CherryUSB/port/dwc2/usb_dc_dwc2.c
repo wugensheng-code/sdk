@@ -386,7 +386,7 @@ static void dwc2_ep0_start_read_setup(uint8_t *psetup)
     USB_OTG_OUTEP(0U)->DOEPTSIZ |= USB_OTG_DOEPTSIZ_STUPCNT;
 
 #ifdef CONFIG_USB_DWC2_DMA_ENABLE
-    USB_OTG_OUTEP(0U)->DOEPDMA = (uint32_t)psetup;
+    USB_OTG_OUTEP(0U)->DOEPDMA = (uintptr_t)psetup;
     /* EP enable */
     USB_OTG_OUTEP(0U)->DOEPCTL |= USB_OTG_DOEPCTL_EPENA | USB_OTG_DOEPCTL_USBAEP;
 #endif
@@ -847,7 +847,7 @@ int usbd_ep_start_write(const uint8_t ep, const uint8_t *data, uint32_t data_len
         return -2;
     }
 #ifdef CONFIG_USB_DWC2_DMA_ENABLE
-    if ((uint32_t)data & 0x03) {
+    if ((uintptr_t)data & 0x03) {
         return -3;
     }
 #endif
@@ -890,7 +890,7 @@ int usbd_ep_start_write(const uint8_t ep, const uint8_t *data, uint32_t data_len
     }
 
 #ifdef CONFIG_USB_DWC2_DMA_ENABLE
-    USB_OTG_INEP(ep_idx)->DIEPDMA = (uint32_t)data;
+    USB_OTG_INEP(ep_idx)->DIEPDMA = (uintptr_t)data;
 
     USB_OTG_INEP(ep_idx)->DIEPCTL |= (USB_OTG_DIEPCTL_CNAK | USB_OTG_DIEPCTL_EPENA);
 #else
@@ -915,7 +915,7 @@ int usbd_ep_start_read(const uint8_t ep, uint8_t *data, uint32_t data_len)
         return -2;
     }
 #ifdef CONFIG_USB_DWC2_DMA_ENABLE
-    if (((uint32_t)data) & 0x03) {
+    if (((uintptr_t)data) & 0x03) {
         return -3;
     }
 #endif
@@ -948,7 +948,7 @@ int usbd_ep_start_read(const uint8_t ep, uint8_t *data, uint32_t data_len)
     }
 
 #ifdef CONFIG_USB_DWC2_DMA_ENABLE
-    USB_OTG_OUTEP(ep_idx)->DOEPDMA = (uint32_t)data;
+    USB_OTG_OUTEP(ep_idx)->DOEPDMA = (uintptr_t)data;
 #endif
     if (g_dwc2_udc.out_ep[ep_idx].ep_type == 0x01) {
         if ((USB_OTG_DEV->DSTS & (1U << 8)) == 0U) {
@@ -963,7 +963,7 @@ int usbd_ep_start_read(const uint8_t ep, uint8_t *data, uint32_t data_len)
 
 void USBD_IRQHandler(void)
 {
-    uint32_t gint_status, temp, ep_idx, ep_intr, epint, read_count;
+    uint32_t gint_status, temp, ep_idx, ep_intr, epint;
     gint_status = dwc2_get_glb_intstatus();
 
     if ((USB_OTG_GLB->GINTSTS & 0x1U) == USB_OTG_MODE_DEVICE) {
@@ -973,6 +973,7 @@ void USBD_IRQHandler(void)
         }
 
 #ifndef CONFIG_USB_DWC2_DMA_ENABLE
+        uint32_t read_count;
         /* Handle RxQLevel Interrupt */
         if (gint_status & USB_OTG_GINTSTS_RXFLVL) {
             USB_MASK_INTERRUPT(USB_OTG_GLB, USB_OTG_GINTSTS_RXFLVL);

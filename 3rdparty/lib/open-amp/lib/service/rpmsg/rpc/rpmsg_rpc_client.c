@@ -81,9 +81,8 @@ void rpmsg_rpc_client_release(struct rpmsg_rpc_clt *rpc)
 {
 	if (!rpc)
 		return;
-	if (&rpc->ept)
-		rpmsg_destroy_ept(&rpc->ept);
 
+	rpmsg_destroy_ept(&rpc->ept);
 }
 
 static int rpmsg_endpoint_client_cb(struct rpmsg_endpoint *ept,

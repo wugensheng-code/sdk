@@ -249,7 +249,7 @@ static inline void dwc2_pipe_transfer(uint8_t ch_num, uint8_t ep_addr, uint32_t 
                                  (((uint32_t)pid << 29) & USB_OTG_HCTSIZ_DPID);
 
     /* xfer_buff MUST be 32-bits aligned */
-    USB_OTG_HC(ch_num)->HCDMA = (uint32_t)buf;
+    USB_OTG_HC(ch_num)->HCDMA = (uintptr_t)buf;
 
     is_oddframe = (((uint32_t)USB_OTG_HOST->HFNUM & 0x01U) != 0U) ? 0U : 1U;
     USB_OTG_HC(ch_num)->HCCHAR &= ~USB_OTG_HCCHAR_ODDFRM;
@@ -407,21 +407,22 @@ static uint8_t dwc2_calculate_packet_num(uint32_t input_size, uint8_t ep_addr, u
 
 static void dwc2_control_pipe_init(struct dwc2_pipe *chan, struct usb_setup_packet *setup, uint8_t *buffer, uint32_t buflen)
 {
+    unsigned long setup_p = (unsigned long)setup;
     if (chan->ep0_state == DWC2_EP0_STATE_SETUP) /* fill setup */
     {
         chan->num_packets = dwc2_calculate_packet_num(8, 0x00, chan->ep_mps, &chan->xferlen);
         dwc2_pipe_init(chan->chidx, chan->dev_addr, 0x00, USB_ENDPOINT_TYPE_CONTROL, chan->ep_mps, chan->speed);
-        dwc2_pipe_transfer(chan->chidx, 0x00, (uint32_t *)setup, chan->xferlen, chan->num_packets, HC_PID_SETUP);
+        dwc2_pipe_transfer(chan->chidx, 0x00,  (uint32_t *)setup_p, chan->xferlen, chan->num_packets, HC_PID_SETUP);
     } else if (chan->ep0_state == DWC2_EP0_STATE_INDATA) /* fill in data */
     {
         chan->num_packets = dwc2_calculate_packet_num(setup->wLength, 0x80, chan->ep_mps, &chan->xferlen);
         dwc2_pipe_init(chan->chidx, chan->dev_addr, 0x80, USB_ENDPOINT_TYPE_CONTROL, chan->ep_mps, chan->speed);
-        dwc2_pipe_transfer(chan->chidx, 0x80, (uint32_t *)buffer, chan->xferlen, chan->num_packets, HC_PID_DATA1);
+        dwc2_pipe_transfer(chan->chidx, 0x80, (uint32_t *)setup_p, chan->xferlen, chan->num_packets, HC_PID_DATA1);
     } else if (chan->ep0_state == DWC2_EP0_STATE_OUTDATA) /* fill out data */
     {
         chan->num_packets = dwc2_calculate_packet_num(setup->wLength, 0x00, chan->ep_mps, &chan->xferlen);
         dwc2_pipe_init(chan->chidx, chan->dev_addr, 0x00, USB_ENDPOINT_TYPE_CONTROL, chan->ep_mps, chan->speed);
-        dwc2_pipe_transfer(chan->chidx, 0x00, (uint32_t *)buffer, chan->xferlen, chan->num_packets, HC_PID_DATA1);
+        dwc2_pipe_transfer(chan->chidx, 0x00, (uint32_t *)setup_p, chan->xferlen, chan->num_packets, HC_PID_DATA1);
     } else if (chan->ep0_state == DWC2_EP0_STATE_INSTATUS) /* fill in status */
     {
         chan->num_packets = dwc2_calculate_packet_num(0, 0x80, chan->ep_mps, &chan->xferlen);
@@ -453,8 +454,6 @@ __WEAK void usb_hc_low_level_init(void)
 
 int usb_hc_init(void)
 {
-    int ret;
-
     memset(&g_dwc2_hcd, 0, sizeof(struct dwc2_hcd));
 
     for (uint8_t chidx = 0; chidx < CONFIG_USBHOST_PIPE_NUM; chidx++) {
@@ -481,7 +480,7 @@ int usb_hc_init(void)
 
     USB_OTG_GLB->GAHBCFG &= ~USB_OTG_GAHBCFG_GINT;
 
-    ret = dwc2_core_init();
+    dwc2_core_init();
     /* Force Host Mode*/
     dwc2_set_mode(USB_OTG_MODE_HOST);
     usb_osal_msleep(50);
@@ -507,8 +506,8 @@ int usb_hc_init(void)
     /* Set default Max speed support */
     USB_OTG_HOST->HCFG &= ~(USB_OTG_HCFG_FSLSS);
 
-    ret = dwc2_flush_txfifo(0x10U);
-    ret = dwc2_flush_rxfifo();
+    dwc2_flush_txfifo(0x10U);
+    dwc2_flush_rxfifo();
 
     /* Clear all pending HC Interrupts */
     for (uint8_t i = 0U; i < CONFIG_USBHOST_PIPE_NUM; i++) {
@@ -776,7 +775,7 @@ int usbh_submit_urb(struct usbh_urb *urb)
     pipe = urb->pipe;
 
     /* dma addr must be aligned 4 bytes */
-    if ((((uint32_t)urb->setup) & 0x03) || (((uint32_t)urb->transfer_buffer) & 0x03)) {
+    if ((((uintptr_t)urb->setup) & 0x03) || (((uintptr_t)urb->transfer_buffer) & 0x03)) {
         return -EINVAL;
     }
 
@@ -1014,7 +1013,6 @@ static void dwc2_outchan_irq_handler(uint8_t ch_num)
     uint32_t chan_intstatus;
     struct dwc2_pipe *chan;
     struct usbh_urb *urb;
-    uint16_t buflen;
 
     chan_intstatus = (USB_OTG_HC(ch_num)->HCINT) & (USB_OTG_HC((uint32_t)ch_num)->HCINTMSK);
 
