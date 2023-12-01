@@ -28,7 +28,7 @@ extern "C"{
  * MUTEX API.*
  *----------------------------------------------*/
 
-#define AL_WAITFOREVER           (AL_U64)RT_WAITING_FOREVER
+#define AL_WAITFOREVER           (AL_U32)RT_WAITING_FOREVER
 #define AL_WAITING_NO            RT_WAITING_NO
 typedef struct
 {
@@ -42,7 +42,7 @@ static inline AL_S32 AlOsal_Lock_Init(AL_Lock_t Lock, const char* Name)
     return rt_mutex_init(&Lock->Thread_Lock, Name, RT_IPC_FLAG_PRIO);
 }
 
-static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_U64 Timeout)
+static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_U32 Timeout)
 {
     /* If the scheduler is started and in thread context */
     if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL) {
@@ -50,6 +50,7 @@ static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_U64 Timeout)
     }
     else {
         Lock->Isr_Lock = rt_hw_interrupt_disable();
+        return AL_OK;
     }
 }
 
@@ -61,6 +62,7 @@ static inline AL_S32 AlOsal_Lock_Release(AL_Lock_t Lock)
     }
     else {
         rt_hw_interrupt_enable(Lock->Isr_Lock);
+        return AL_OK;
     }
 }
 
@@ -76,7 +78,7 @@ static inline AL_S32 AlOsal_Sem_Init(AL_Semaphore_t Semaphore, const char* Name,
     return rt_sem_init(Semaphore, Name, Value, RT_IPC_FLAG_PRIO);
 }
 
-static inline AL_S32 AlOsal_Sem_Take(AL_Semaphore_t Semaphore, AL_U64 Timeout)
+static inline AL_S32 AlOsal_Sem_Take(AL_Semaphore_t Semaphore, AL_U32 Timeout)
 {
     return rt_sem_take(Semaphore, Timeout);
 }
@@ -125,9 +127,9 @@ static inline AL_S32 AlOsal_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
     return rt_sem_release(&MailBox->Semaphore);
 }
 
-static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_U64 Timeout)
+static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_U32 Timeout)
 {
-    AL_S32 flag = (AL_S32)rt_sem_take(&MailBox->Semaphore, AL_WAITFOREVER);
+    AL_S32 flag = (AL_S32)rt_sem_take(&MailBox->Semaphore, (rt_int32_t)Timeout);
 
     if (flag == AL_OK) {
         MailBox->entry = 0;
@@ -201,7 +203,7 @@ extern volatile uint64_t ullPortInterruptNesting;
  * MUTEX API.*
  *----------------------------------------------*/
 
-#define AL_WAITFOREVER           portMAX_DELAY
+#define AL_WAITFOREVER           (AL_U32)portMAX_DELAY
 #define AL_WAITING_NO            0
 typedef struct
 {
@@ -220,7 +222,7 @@ static inline AL_S32 AlOsal_Lock_Init(AL_Lock_t Lock, const char* Name)
     return AL_OK;
 }
 
-static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_U64 Timeout)
+static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_U32 Timeout)
 {
     /* If the scheduler is started and in thread context */
     if (ullPortInterruptNesting == 0) {
@@ -278,7 +280,7 @@ static inline AL_S32 AlOsal_Sem_Init(AL_Semaphore_t Semaphore, const char* Name,
     return AL_OK;
 }
 
-static inline AL_S32 AlOsal_Sem_Take(AL_Semaphore_t Semaphore, AL_U64 Timeout)
+static inline AL_S32 AlOsal_Sem_Take(AL_Semaphore_t Semaphore, AL_U32 Timeout)
 {
     return !xSemaphoreTake(Semaphore->Semaphore_Handle, (TickType_t) Timeout);
 }
@@ -335,7 +337,7 @@ static inline AL_S32 AlOsal_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
     }
 }
 
-static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_U64 Timeout)
+static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_U32 Timeout)
 {
     AL_S32 Ret;
     /* If the scheduler is started and in thread context */
@@ -420,7 +422,7 @@ static inline AL_VOID AlOsal_Sleep(AL_U32 Time)
  * Semaphore API.*
  *----------------------------------------------*/
 
-#define AL_WAITFOREVER          (AL_U64)(-1UL)
+#define AL_WAITFOREVER          (AL_U32)(-1UL)
 #define AL_WAITING_NO           (0)
 typedef struct
 {
@@ -437,7 +439,7 @@ static inline AL_S32 AlOsal_Sem_Init(AL_Semaphore_t Semaphore, const char* Name,
     return AL_OK;
 }
 
-static inline AL_S32 AlOsal_Sem_Take(AL_Semaphore_t Semaphore, AL_U64 Timeout)
+static inline AL_S32 AlOsal_Sem_Take(AL_Semaphore_t Semaphore, AL_U32 Timeout)
 {
     AL_WAIT_COND_UNTIL_TIMEOUT((Semaphore->count > 0), Timeout);
 
@@ -469,7 +471,7 @@ static inline AL_S32 AlOsal_Lock_Init(AL_Lock_t Lock, const char* Name)
     return AL_OK;
 }
 
-static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_U64 Timeout)
+static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_U32 Timeout)
 {
     AL_UNUSED(Timeout);
 
@@ -517,7 +519,7 @@ static inline AL_S32 AlOsal_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
     return AL_OK;
 }
 
-static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_U64 Timeout)
+static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_U32 Timeout)
 {
     AL_BOOL flag = AL_WAIT_COND_UNTIL_TIMEOUT((MailBox->entry == 1), Timeout);
 

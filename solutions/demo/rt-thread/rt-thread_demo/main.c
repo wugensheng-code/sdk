@@ -6,8 +6,9 @@
 
 #include <rtthread.h>
 #include "rtthread_demo_config.h"
-
+#include "lwip/tcpip.h"
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 
 /* The period of the example software timer, specified in milliseconds, and
@@ -26,8 +27,8 @@ static rt_thread_t Task4Wdt_Handler;
 static rt_thread_t Task5Dmacahb_Handler;
 static rt_thread_t Task6Iic_Handler;
 static rt_thread_t Task7Uart_Handler;
-static rt_thread_t Task8Usb_Handler;
-static rt_thread_t Task9Gbe_Handler;
+// static rt_thread_t Task8Usb_Handler;
+// static rt_thread_t Task9Gbe_Handler;
 static rt_thread_t Task10Mmc_Handler;
 static rt_thread_t Task11Qspi_Handler;
 static rt_thread_t Task12Iis_Handler;
@@ -212,6 +213,8 @@ int demo(void)
                 THREAD_TICK);
     if (Task15UartProc_Handler != RT_NULL)
         rt_thread_startup(Task15UartProc_Handler);
+    
+    return AL_OK;
 }
 MSH_CMD_EXPORT(demo, demo);
 
@@ -279,7 +282,7 @@ void task3_can_dmarecv(void* pvParameters)
     AL_CAN_FrameStruct Frame = {0};
     AL_DMACAHB_HalStruct *DmaHandle = AL_NULL;
     AL_DMACAHB_EventStruct DmaEvent = {0};
-    AL_U8 *RecvMem = (AL_U8 *)rt_malloc(CAN_DMA_RECV_DATA);
+    AL_U32 *RecvMem = (AL_U32 *)rt_malloc(CAN_DMA_RECV_DATA);
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Task3 Can recv dmacahb hal init\r\n");
     /* Wait for can send init done forever */
@@ -316,7 +319,7 @@ void task3_can_dmarecv(void* pvParameters)
                 continue;
             } else {
                 AL_LOG(AL_LOG_LEVEL_ERROR, "Task3 Can Dma data recv error: 0x%x\r\n", Ret);
-                return Ret;
+                return;
             }
         } else {
             #ifdef ENABLE_MMU
@@ -406,7 +409,7 @@ void task5_dmacahb(void* pvParameters)
     ChTransCfg->TransSize = DMACAHB_ARRAY_SIZE / (1 << Task5_DmaChConfig.SrcTransWidth);
 
     while (1) {
-        memset(ChTransCfg->SrcAddr, InitData++, DMACAHB_ARRAY_SIZE);
+        memset((void*)(uintptr_t)(ChTransCfg->SrcAddr), InitData++, DMACAHB_ARRAY_SIZE);
         AL_LOG(AL_LOG_LEVEL_INFO, "Task5 Data trans %d\r\n", InitData);
 
         Ret = AlDmacAhb_Hal_StartBlock(DmaHandle, DMACAHB_TRANS_TIMEOUT_MS);
@@ -414,12 +417,12 @@ void task5_dmacahb(void* pvParameters)
             AL_LOG(AL_LOG_LEVEL_ERROR, "Task5 Trans error:0x%x\r\n", Ret);
         }
 
-        Ret = memcmp(ChTransCfg->SrcAddr, ChTransCfg->DstAddr, DMACAHB_ARRAY_SIZE);
+        Ret = memcmp((void*)(uintptr_t)(ChTransCfg->SrcAddr), (void*)(uintptr_t)(ChTransCfg->DstAddr), DMACAHB_ARRAY_SIZE);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Task5 Data check error:0x%x\r\n", Ret);
         }
 
-        memset(ChTransCfg->DstAddr, 0, DMACAHB_ARRAY_SIZE);
+        memset((void*)(uintptr_t)(ChTransCfg->DstAddr), 0, DMACAHB_ARRAY_SIZE);
 
         #ifdef ENABLE_MMU
         AlCache_FlushDcacheRange(ChTransCfg->DstAddr, ChTransCfg->DstAddr + DMACAHB_ARRAY_SIZE);
@@ -489,7 +492,7 @@ void task6_Iic(void* pvParameters)
         memset(MemRead, 0, IIC_EEPROM_PAGE_SIZE);
 
         #ifdef ENABLE_MMU
-        AlCache_FlushDcacheRange(MemRead, MemRead + IIC_EEPROM_PAGE_SIZE);
+        AlCache_FlushDcacheRange((uintptr_t)MemRead, (uintptr_t)(MemRead + IIC_EEPROM_PAGE_SIZE));
         #endif
 
         rt_thread_delay(IIC_INTERVAL_TIME);
@@ -501,13 +504,12 @@ void task7_Uart(void* pvParameters)
 {
     AL_U32 Ret = AL_OK;
     AL_UART_HalStruct *UartHandle = AlLog;
-    AL_UART_EventStruct UartEvent = {0};
     AL_U8 *RecvMem = (AL_U8 *)rt_malloc(UART_RECV_MEM_LENGTH);
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Task7 uart hal init\r\n");
 
     while (1) {
-        Ret = AlUart_Hal_RecvDataBlock(UartHandle, &RecvMem[UART_RECV_SIZE_LENGTH], UART_RECV_MEM_LENGTH, (AL_U8 *)&RecvMem[0], AL_WAITFOREVER);
+        Ret = AlUart_Hal_RecvDataBlock(UartHandle, &RecvMem[UART_RECV_SIZE_LENGTH], UART_RECV_MEM_LENGTH, (AL_U32 *)&RecvMem[0], AL_WAITFOREVER);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Task7 uart recv data Error: 0x%x\r\n", Ret);
         }
@@ -580,7 +582,7 @@ void task10_Mmc(void* pvParameters)
         memset(MemRead, 0, MMC_BLOCK_LEN);
 
         #ifdef ENABLE_MMU
-        AlCache_FlushDcacheRange(MemRead, MemRead + MMC_BLOCK_LEN);
+        AlCache_FlushDcacheRange((uintptr_t)MemRead, (uintptr_t)(MemRead + MMC_BLOCK_LEN));
         #endif
 
         rt_thread_delay(MMC_INTERVAL_TIME);
@@ -697,12 +699,12 @@ void task12_Iis(void* pvParameters)
             Src[i] = (i + InitData) << 8;
         }
 
-        Ret = AlDma_Hal_PeriCpySingle(M2PHandle, Src, IIS_DMA_DATA_SIZE, IIS_TX_ID);
+        Ret = AlDma_Hal_PeriCpySingle(M2PHandle, (AL_UINTPTR)Src, IIS_DMA_DATA_SIZE, IIS_TX_ID);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Task12 Iis M2P mem copy error:0x%x\r\n", Ret);
         }
 
-        Ret = AlDma_Hal_PeriCpySingle(P2MHandle, Dst, IIS_DMA_DATA_SIZE, IIS_RX_ID);
+        Ret = AlDma_Hal_PeriCpySingle(P2MHandle, (AL_UINTPTR)Dst, IIS_DMA_DATA_SIZE, IIS_RX_ID);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Task12 Iis M2P mem copy error:0x%x\r\n", Ret);
         }
@@ -734,7 +736,7 @@ void task12_Iis(void* pvParameters)
         memset(Dst, 0, IIS_DMA_DATA_SIZE);
 
         #ifdef ENABLE_MMU
-        AlCache_FlushDcacheRange(Dst, Dst + IIS_DMA_DATA_SIZE);
+        AlCache_FlushDcacheRange((AL_UINTPTR)Dst, (AL_UINTPTR)(Dst + IIS_DMA_DATA_SIZE));
         #endif
 
         rt_thread_delay(IIS_INTERVAL_TIME);
@@ -774,7 +776,7 @@ void task13_Dma(void* pvParameters)
             Src[i] = i + InitData;
         }
 
-        Ret = AlDma_Hal_MemCpyBlock(DmaHandle, Dst, Src, DMA_TRANS_DATA_SIZE);
+        Ret = AlDma_Hal_MemCpyBlock(DmaHandle, (AL_UINTPTR)Dst, (AL_UINTPTR)Src, DMA_TRANS_DATA_SIZE);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Task13 Dma Mem copy error:0x%x\r\n", Ret);
         }
@@ -787,7 +789,7 @@ void task13_Dma(void* pvParameters)
         memset(Dst, 0, DMA_TRANS_DATA_SIZE);
 
         #ifdef ENABLE_MMU
-        AlCache_FlushDcacheRange(Dst, Dst + DMA_TRANS_DATA_SIZE);
+        AlCache_FlushDcacheRange((AL_UINTPTR)Dst, (AL_UINTPTR)(Dst + DMA_TRANS_DATA_SIZE));
         #endif
 
         rt_thread_delay(DMA_INTERVAL_TIME);
@@ -826,7 +828,7 @@ void task14_dmacahb2(void* pvParameters)
     ChTransCfg->TransSize = DMACAHB2_ARRAY_SIZE / (1 << Task14_DmaChConfig.SrcTransWidth);
 
     while (1) {
-        memset(ChTransCfg->SrcAddr, InitData++, DMACAHB2_ARRAY_SIZE);
+        memset((void*)(AL_UINTPTR)(ChTransCfg->SrcAddr), InitData++, DMACAHB2_ARRAY_SIZE);
         AL_LOG(AL_LOG_LEVEL_INFO, "Task14 Data trans %d\r\n", InitData);
 
         Ret = AlDmacAhb_Hal_StartBlock(DmaHandle, DMACAHB2_TRANS_TIMEOUT_MS);
@@ -834,12 +836,12 @@ void task14_dmacahb2(void* pvParameters)
             AL_LOG(AL_LOG_LEVEL_ERROR, "Task14 Trans error:0x%x\r\n", Ret);
         }
 
-        Ret = memcmp(ChTransCfg->SrcAddr, ChTransCfg->DstAddr, DMACAHB2_ARRAY_SIZE);
+        Ret = memcmp((void*)(AL_UINTPTR)(ChTransCfg->SrcAddr), (void*)(AL_UINTPTR)(ChTransCfg->DstAddr), DMACAHB2_ARRAY_SIZE);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Task14 Data check error:0x%x\r\n", Ret);
         }
 
-        memset(ChTransCfg->DstAddr, 0, DMACAHB2_ARRAY_SIZE);
+        memset((void*)(AL_UINTPTR)(ChTransCfg->DstAddr), 0, DMACAHB2_ARRAY_SIZE);
 
         #ifdef ENABLE_MMU
         AlCache_FlushDcacheRange(ChTransCfg->DstAddr, ChTransCfg->DstAddr + DMACAHB2_ARRAY_SIZE);
@@ -857,7 +859,7 @@ void task15_UartProc(void* pvParameters)
     AL_LOG(AL_LOG_LEVEL_INFO, "Task15 Init success\r\n");
 
     while (1) {
-        Ret = rt_mq_recv(Queue_UartRecv, RecvMem, UART_RECV_MEM_LENGTH, AL_WAITFOREVER);
+        Ret = rt_mq_recv(Queue_UartRecv, RecvMem, UART_RECV_MEM_LENGTH, RT_WAITING_FOREVER);
         if (Ret != AL_TRUE) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Task15 Uart proc recv error:0x%x\r\n", Ret);
         } else {
@@ -873,14 +875,13 @@ void task15_UartProc(void* pvParameters)
 
 static AL_S32 task15_UartRecvProcess(AL_U8 *RecvMem)
 {
-    AL_S32 Ret = AL_OK;
     AL_U32 i = 0;
     AL_U32 Size = *(AL_U32 *)RecvMem;
     AL_U8 *Cmd = &RecvMem[UART_RECV_SIZE_LENGTH];
     AL_LOG(AL_LOG_LEVEL_INFO, "Task15 len:%d, data: %s\r\n", Size, Cmd);
 
     for (i = 0; i < sizeof(task15_ProcList) / sizeof(typeof(task15_ProcList[0])); i++) {
-        if (!strncmp(Cmd, task15_ProcName[i], Size)) {
+        if (!strncmp((char*)Cmd, (char*)task15_ProcName[i], Size)) {
             break;
         }
     }
@@ -907,7 +908,7 @@ AL_VOID ConfigureTimerForRunTimeStates(AL_VOID)
     AlTtc_Hal_Init(&TtcHandle, TTC_DEVICE_ID, &Ttc_Config, Ttc_DefEventHandler);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
-        return Ret;
+        return;
     }
 
     AlTtc_Hal_EnableIntervalMode(TtcHandle);

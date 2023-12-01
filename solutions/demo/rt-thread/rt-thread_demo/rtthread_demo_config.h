@@ -352,14 +352,14 @@ static AL_IIC_InitStruct task6_IicConfig = {
     .SpeedMode  = AL_IIC_STANDARD_MODE,
 };
 
-static AL_UART_InitStruct task7_UartConfig = {
-    .BaudRate           = 115200,
-    .Parity             = AL_UART_NO_PARITY,
-    .WordLength         = AL_UART_CHAR_8BITS,
-    .StopBits           = AL_UART_STOP_1BIT,
-    .HwFlowCtl          = AL_FALSE,
-    .CharTimeoutEnable  = AL_TRUE
-};
+// static AL_UART_InitStruct task7_UartConfig = {
+//     .BaudRate           = 115200,
+//     .Parity             = AL_UART_NO_PARITY,
+//     .WordLength         = AL_UART_CHAR_8BITS,
+//     .StopBits           = AL_UART_STOP_1BIT,
+//     .HwFlowCtl          = AL_FALSE,
+//     .CharTimeoutEnable  = AL_TRUE
+// };
 
 static AL_MMC_InitStruct task10_MmcSdmaConfig = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
@@ -801,7 +801,7 @@ AL_S32 AlQspi_rtthread_SetQuad(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, AL_U8
     Handle->Dev.Configs.SpiFrameFormat = SPI_STANDARD_FORMAT;
     Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
 
-    Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 1, &Data, 1, 100000);
+    Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 1, (AL_U8*)&Data, 1, 100000);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlQspi_rtthread_SetQuad ReadQuadCmd error:0x%x\r\n", Ret);
     }
