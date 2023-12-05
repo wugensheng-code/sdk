@@ -14,7 +14,7 @@ AL_SMC_HalStruct SmcHal;
 
 AL_SMC_ConfigsStruct SmcInitConfigs =
 {
-    .Cycles = 0,        /* Cycles is set to 0 ignore this value and use the default */
+    .Cycles.d32 = 0,        /* Cycles is set to 0 ignore this value and use the default */
     .SmcWidth = MW_8BITS
 };
 

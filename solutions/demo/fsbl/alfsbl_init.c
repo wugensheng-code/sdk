@@ -9,18 +9,32 @@
 #include "al_reg_io.h"
 #include "alfsbl_hw.h"
 #include "alfsbl_init.h"
+#include "alfsbl_config.h"
 #include "al_core.h"
 #include "al_utils_def.h"
+#include "al_wdt_hal.h"
 
-extern uint8_t  DdrAvailable;
 
 static uint32_t AlFsbl_GetResetReason(void);
 static uint32_t AlFsbl_SystemInit(AlFsblInfo *FsblInstancePtr);
 static uint32_t AlFsbl_ProcessorInit(AlFsblInfo *FsblInstancePtr);
 static uint32_t AlFsbl_TcmInit(AlFsblInfo *FsblInstancePtr);
+static uint32_t AlFsbl_PmuReset(AlFsblInfo *FsblInstancePtr);
+#ifndef ALFSBL_PMU_EXCLUDE
 static uint32_t AlFsbl_PmuInit(AlFsblInfo *FsblInstancePtr);
-static uint32_t AlFsbl_WdtInit(AlFsblInfo *FsblInstancePtr);
+#endif
 static uint32_t AlFsbl_ValidateResetReason(void);
+
+#ifndef ALFSBL_WDT_EXCLUDE
+void AlWdt_Hal_FsblEventHandler();
+static uint32_t AlFsbl_WdtInit(void);
+static AL_WDT_InitStruct FSBL_WDT_Init = {
+	.ResetPuaseLength = WDT_RPL_PCLK_CYCLES_8,
+	.ResponseMode     = WDT_INTR_MODE,
+	.TimeOutValue     = WDT_TIMEOUT_PERIOD_2G_CLOCKS,
+};
+AL_WDT_HalStruct *alfsbl_wdt0;
+#endif
 
 
 uint32_t AlFsbl_Initialize(AlFsblInfo *FsblInstancePtr)
@@ -34,6 +48,8 @@ uint32_t AlFsbl_Initialize(AlFsblInfo *FsblInstancePtr)
 		goto END;
 	}
 
+	AlFsbl_PmuReset(FsblInstancePtr);
+
 	/// clear pending interrupt
 	AlIntr_ClearAllPending();
 
@@ -44,10 +60,12 @@ uint32_t AlFsbl_Initialize(AlFsblInfo *FsblInstancePtr)
 		goto END;
 	}
 
+#ifndef ALFSBL_PMU_EXCLUDE
 	Status = AlFsbl_PmuInit(FsblInstancePtr);
 	if(Status != ALFSBL_SUCCESS) {
 		goto END;
 	}
+#endif
 
 	/// tcm ecc init if required
 	Status = AlFsbl_TcmInit(FsblInstancePtr);
@@ -61,13 +79,17 @@ uint32_t AlFsbl_Initialize(AlFsblInfo *FsblInstancePtr)
 		goto END;
 	}
 
+#ifndef ALFSBL_WDT_EXCLUDE
+	/// init wdt
+	Status = AlFsbl_WdtInit();
+#endif
+
 	/// fsbl info data init
 	FsblInstancePtr->HandoffCpuNum = 0;
 
 END:
 	return Status;
 }
-
 
 
 static uint32_t AlFsbl_GetResetReason(void)
@@ -85,8 +107,6 @@ static uint32_t AlFsbl_GetResetReason(void)
 
 	return Ret;
 }
-
-
 
 
 static uint32_t AlFsbl_SystemInit(AlFsblInfo *FsblInstancePtr)
@@ -130,6 +150,31 @@ static uint32_t AlFsbl_ProcessorInit(AlFsblInfo *FsblInstancePtr)
 }
 
 
+static uint32_t AlFsbl_PmuReset(AlFsblInfo *FsblInstancePtr)
+{
+	uint32_t Status = ALFSBL_SUCCESS;
+	AL_LOG(AL_LOG_LEVEL_INFO, "PMU Error Config Init\r\n");
+	uint32_t val = 0;
+
+	val = AL_REG32_READ(SYSCTRL_S_ERR_HW_EN0_SET);
+	AL_REG32_WRITE(SYSCTRL_S_ERR_HW_EN0_CLR, val);
+
+	val = AL_REG32_READ(SYSCTRL_S_INT_EN0_SET);
+	AL_REG32_WRITE(SYSCTRL_S_INT_EN0_CLR, val);
+
+	val = AL_REG32_READ(SYSCTRL_S_ERR_HW_EN1_SET);
+	AL_REG32_WRITE(SYSCTRL_S_ERR_HW_EN1_CLR, val);
+
+	val = AL_REG32_READ(SYSCTRL_S_INT_EN1_SET);
+	AL_REG32_WRITE(SYSCTRL_S_INT_EN1_CLR, val);
+
+	val = AL_REG32_READ(SYSCTRL_S_RAW_HIS1);
+	AL_REG32_WRITE(SYSCTRL_S_RAW_HIS1, val);
+
+	return Status;
+}
+
+#ifndef ALFSBL_PMU_EXCLUDE
 static uint32_t AlFsbl_PmuInit(AlFsblInfo *FsblInstancePtr)
 {
 	uint32_t Status = ALFSBL_SUCCESS;
@@ -154,22 +199,24 @@ static uint32_t AlFsbl_PmuInit(AlFsblInfo *FsblInstancePtr)
 	}
 	else {
 		/// pll enabled
-		// temp comment, because baremetal will config pll in board init interface
-		// REG32(SYSCTRL_S_ERR_HW_EN1_SET) = REG32(SYSCTRL_S_ERR_HW_EN1_SET)     |
-		// 		                          SYSCTRL_S_ERR_HW1_MSK_CSU_PLL1_LOCK |
-		// 		                          SYSCTRL_S_ERR_HW1_MSK_CSU_PLL0_LOCK;
+#if 0
+		val = AL_REG32_READ(SYSCTRL_S_ERR_HW_EN1_SET) |
+				SYSCTRL_S_ERR_HW1_MSK_PLL2_LOCK |
+				SYSCTRL_S_ERR_HW1_MSK_PLL1_LOCK |
+				SYSCTRL_S_ERR_HW1_MSK_PLL0_LOCK;
+		AL_REG32_WRITE(SYSCTRL_S_ERR_HW_EN1_SET, val);
 
-		// REG32(SYSCTRL_S_INT_EN1_SET) = REG32(SYSCTRL_S_INT_EN1_SET)        |
-		// 		                       SYSCTRL_S_ERR_HW1_MSK_CSU_PLL1_LOCK |
-		// 		                       SYSCTRL_S_ERR_HW1_MSK_CSU_PLL0_LOCK;
+		val = AL_REG32_READ(SYSCTRL_S_INT_EN1_SET) |
+				SYSCTRL_S_ERR_HW1_MSK_PLL2_LOCK |
+				SYSCTRL_S_ERR_HW1_MSK_PLL1_LOCK |
+				SYSCTRL_S_ERR_HW1_MSK_PLL0_LOCK;
+		AL_REG32_WRITE(SYSCTRL_S_INT_EN1_SET, val);
+#endif
 	}
-
-
 
 	return Status;
 }
-
-
+#endif
 
 static uint32_t AlFsbl_TcmInit(AlFsblInfo *FsblInstancePtr)
 {
@@ -180,13 +227,26 @@ static uint32_t AlFsbl_TcmInit(AlFsblInfo *FsblInstancePtr)
 }
 
 
-static uint32_t AlFsbl_WdtInit(AlFsblInfo *FsblInstancePtr)
+#ifndef ALFSBL_WDT_EXCLUDE
+void AlWdt_Hal_FsblEventHandler()
+{
+	AL_LOG(AL_LOG_LEVEL_DEBUG, "wdt int\r\n");
+	AlWdt_ll_ClearIntr(alfsbl_wdt0->BaseAddr);
+	return;
+}
+
+static uint32_t AlFsbl_WdtInit(void)
 {
 	uint32_t Status = ALFSBL_SUCCESS;
-	/// todo
+	Status = AlWdt_Hal_Init(&alfsbl_wdt0, 0, &FSBL_WDT_Init, AlWdt_Hal_FsblEventHandler);
+	if(Status != ALFSBL_SUCCESS) {
+		AL_LOG(AL_LOG_LEVEL_ERROR, "WDT initialize error： 0x%08x\r\n", Status);
+		return ALFSBL_ERROR_WDT_INIT_ERR;
+	}	
 
-	return Status;
+	return ALFSBL_SUCCESS;
 }
+#endif
 
 
 static uint32_t AlFsbl_ValidateResetReason(void)
@@ -194,12 +254,23 @@ static uint32_t AlFsbl_ValidateResetReason(void)
 	uint32_t Status = ALFSBL_SUCCESS;
 	uint32_t FsblStatus;
 	uint32_t ResetReasonValue;
+	uint32_t RawHis0Value;
+	uint32_t RawHis1Value;
+
 
 	/// get fsbl status
 	FsblStatus = AL_REG32_READ(SYSCTRL_S_FSBL_ERR_CODE);
 
 	/// get reset reason
 	ResetReasonValue = AL_REG32_READ(CRP_RST_REASON);
+	RawHis0Value     = AL_REG32_READ(SYSCTRL_S_RAW_HIS0);
+	RawHis1Value     = AL_REG32_READ(SYSCTRL_S_RAW_HIS1);
+
+	/// print history record of reset reason and pmu status
+	AL_LOG(AL_LOG_LEVEL_INFO, "history reset reason: %08x\r\n", ResetReasonValue);
+	AL_LOG(AL_LOG_LEVEL_INFO, "history pmu status 0: %08x\r\n", RawHis0Value);
+	AL_LOG(AL_LOG_LEVEL_INFO, "history pmu status 1: %08x\r\n", RawHis1Value);
+
 
 	if((ResetReasonValue & CRP_RST_REASON_MSK_SWDT0)   |
 	   (ResetReasonValue & CRP_RST_REASON_MSK_SWDT1)   |

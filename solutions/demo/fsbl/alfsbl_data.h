@@ -12,20 +12,12 @@ extern "C" {
 #endif
 
 #include <stdint.h>
-#include "alfsbl_defines.h"
 #include "alfsbl_secure.h"
 #include "al_cache.h"
 
-#if defined (CPU_RPU_64)
 #define PTRSIZE uint64_t
-#elif CPU_RPU_32
-#define PTRSIZE uint32_t
-#elif CPU_APU_64
-#define PTRSIZE uint64_t
-#elif CPU_APU_32
-#define PTRSIZE uint32_t
-#endif
 
+#define PTR64_TO_UINT32(val)   ((uint32_t)((uint64_t)(val) & 0xFFFFFFFFUL))
 
 
 

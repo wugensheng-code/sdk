@@ -19,11 +19,11 @@ extern "C" {
 AL_U32 AlFsbl_QspiInit(void);
 
 AL_U32 AlFsbl_Qspi24Init(void);
-AL_U32 AlFsbl_Qspi24Copy(AL_U64 SrcAddress, PTRSIZE DestAddress, AL_U32 Length, SecureInfo *pSecureInfo);
+AL_U32 AlFsbl_Qspi24Copy(PTRSIZE SrcAddress, PTRSIZE DestAddress, AL_U32 Length, SecureInfo *pSecureInfo);
 AL_U32 AlFsbl_Qspi24Release(void);
 
 AL_U32 AlFsbl_Qspi32Init(void);
-AL_U32 AlFsbl_Qspi32Copy(AL_U64 SrcAddress, PTRSIZE DestAddress, AL_U32 Length, SecureInfo *pSecureInfo);
+AL_U32 AlFsbl_Qspi32Copy(PTRSIZE SrcAddress, PTRSIZE DestAddress, AL_U32 Length, SecureInfo *pSecureInfo);
 AL_U32 AlFsbl_Qspi32Release(void);
 
 

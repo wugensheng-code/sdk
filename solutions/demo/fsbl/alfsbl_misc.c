@@ -12,7 +12,7 @@
 void *AlFsbl_MemCpy(void *DestPtr, const void *SrcPtr, uint32_t Len)
 {
 	uint8_t *Dst = DestPtr;
-	uint8_t *Src = SrcPtr;
+	const uint8_t *Src = SrcPtr;
 
 	while(Len != 0U) {
 		*Dst = *Src;
@@ -137,5 +137,5 @@ void print_time_stamp(void)
 	TimerFreq = AlSys_GetTimerFreq();
 	CurrTimer = AlSys_GetTimerTickCount();
 	CurrTimeMs = CurrTimer * 1000 / TimerFreq;
-	printf("Current Time: %llu ms\r\n", CurrTimeMs);
+	printf("Current Time: %lu ms\r\n", CurrTimeMs);
 }

@@ -9,7 +9,7 @@
 #include "alfsbl_secure.h"
 #include "al_intr.h"
 #include "al_utils_def.h"
-
+#include "al_cache.h"
 
 //#include "alfsbl_err_code.h"
 //#include "alfsbl_data.h"
@@ -46,7 +46,6 @@ uint32_t AlFsbl_ChecksumCheck(uint8_t *pBuffer, uint32_t Length, uint32_t Checks
 {
 	uint32_t Status = 0;
 	uint32_t Cal_Checksum = 0;
-	uint32_t Count;
 
 	/// CRC32
 	Cal_Checksum = AlFsbl_CalcCrc32(pBuffer, Length);
@@ -168,7 +167,6 @@ uint32_t AlFsbl_Hash(SecureInfo *pSecureInfo)
 	uint32_t Status = 0;
 	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM_BASEADDR);
 	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM_BASEADDR + 64);
-	uint32_t HashByteLen = 0;
 
 	if((pSecureInfo->HashType != OP_HASH_SHA256) &&
 	   (pSecureInfo->HashType != OP_HASH_SM3) &&
@@ -242,7 +240,6 @@ END:
 uint32_t AlFsbl_DecHash(SecureInfo *pSecureInfo)
 {
 	uint32_t Status = 0;
-	uint32_t HashByteLen = 0;
 	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM_BASEADDR);
 	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM_BASEADDR + 64);
 
@@ -301,7 +298,6 @@ END:
 uint32_t AlFsbl_CsuDmaCopy(uint32_t SrcAddr, uint32_t DestAddr, uint32_t DataByteLen, uint8_t AddrMode)
 {
 	uint32_t Status = 0;
-	uint32_t HashByteLen = 0;
 	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM_BASEADDR);
 	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM_BASEADDR + 64);
 
@@ -325,7 +321,6 @@ uint32_t AlFsbl_CsuDmaCopy(uint32_t SrcAddr, uint32_t DestAddr, uint32_t DataByt
 	TriggerSecInterrupt();
 	Status = CheckAckValid(pAck);
 
-END:
 	return Status;
 
 }
@@ -347,7 +342,7 @@ uint32_t AlFsbl_Signature(uint8_t AuthType, uint32_t PriKeyAddr, uint32_t Digest
 
 	TriggerSecInterrupt();
 	Status = CheckAckValid(pAck);
-END:
+
 	return Status;
 
 }
@@ -367,7 +362,7 @@ uint32_t AlFsbl_KeyPairGen(uint8_t AuthType, uint32_t PubKeyAddr, uint32_t PriKe
 
 	TriggerSecInterrupt();
 	Status = CheckAckValid(pAck);
-END:
+
 	return Status;
 }
 

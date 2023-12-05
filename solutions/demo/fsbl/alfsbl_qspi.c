@@ -187,10 +187,9 @@ AL_U32 AlFsbl_Qspi32Init(void)
     return Ret;
 }
 
-AL_U32 AlFsbl_Qspi24Copy(AL_U64 SrcAddress, PTRSIZE DestAddress, AL_U32 Length, SecureInfo *pSecureInfo)
+AL_U32 AlFsbl_Qspi24Copy(PTRSIZE SrcAddress, PTRSIZE DestAddress, AL_U32 Length, SecureInfo *pSecureInfo)
 {
     AL_U32 Ret = 0;
-    AL_U32 TranHandledCnt = 0;
     AL_U32 i;
     AL_U16 RecvSize;
 
@@ -283,10 +282,9 @@ AL_U32 AlFsbl_Qspi24Copy(AL_U64 SrcAddress, PTRSIZE DestAddress, AL_U32 Length, 
 }
 
 
-AL_U32 AlFsbl_Qspi32Copy(AL_U64 SrcAddress, PTRSIZE DestAddress, AL_U32 Length, SecureInfo *pSecureInfo)
+AL_U32 AlFsbl_Qspi32Copy(PTRSIZE SrcAddress, PTRSIZE DestAddress, AL_U32 Length, SecureInfo *pSecureInfo)
 {
     AL_U32 Ret = 0;
-    AL_U32 TranHandledCnt = 0;
     AL_U32 i;
     AL_U16 RecvSize;
 
@@ -349,10 +347,10 @@ AL_U32 AlFsbl_Qspi32Copy(AL_U64 SrcAddress, PTRSIZE DestAddress, AL_U32 Length, 
     i = Length / 65532 + (Length % 65532 ? 1 : 0);
 
     for (; i > 0; i--) {
-        SendData[1] = (SrcAddress >> 24) & 0xff;
-        SendData[2] = (SrcAddress >> 16) & 0xff;
-        SendData[3] = (SrcAddress >> 8)&0xff;
-        SendData[4] = SrcAddress&0xff;
+        SendData[0] = (SrcAddress >> 24) & 0xff;
+        SendData[1] = (SrcAddress >> 16) & 0xff;
+        SendData[2] = (SrcAddress >> 8)&0xff;
+        SendData[3] = SrcAddress&0xff;
 
         RecvSize = (Length > 65532) ? 65532 : Length;
         Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 5, (AL_U8 *)DestAddress, RecvSize, 10000000);

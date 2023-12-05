@@ -42,11 +42,9 @@ END:
 
 uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 {
-	uint32_t i;
 	uint32_t Status = ALFSBL_SUCCESS;
 	PTRSIZE  ImageOffsetAddress;
 	uint32_t BootHdrAttrb;
-	uint32_t AcOffset;
 	uint32_t PartitionNum;
 	uint32_t PartitionHeaderOffset;
 	uint32_t EfuseCtrl;
@@ -222,9 +220,9 @@ uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl)
 	AL_LOG(AL_LOG_LEVEL_INFO, "spk verify passed...\r\n");
 
 	AL_LOG(AL_LOG_LEVEL_INFO, "image header authentication...\r\n");
-	FsblIHSecInfo.HashDataAddr   = (uint32_t)(&(FsblInstancePtr->ImageHeader));
+	FsblIHSecInfo.HashDataAddr   = PTR64_TO_UINT32(&(FsblInstancePtr->ImageHeader));
 	FsblIHSecInfo.DataLength  = ALIH_BH_SIZE + ALIH_PH_SIZE * (FsblInstancePtr->ImageHeader.BootHeader.PartitionNum);
-	FsblIHSecInfo.HashOutAddr = (uint32_t)(HashBuffer);
+	FsblIHSecInfo.HashOutAddr = PTR64_TO_UINT32(HashBuffer);
 	Status = AlFsbl_Hash(&FsblIHSecInfo);
 	if(Status != ALFSBL_SUCCESS) {
 		AL_LOG(AL_LOG_LEVEL_ERROR, "image header hash failed\r\n");
@@ -232,8 +230,8 @@ uint32_t AlFsbl_ImgHdrAuth(AlFsblInfo *FsblInstancePtr, uint32_t EfuseCtrl)
 	}
 	AL_LOG(AL_LOG_LEVEL_INFO, "Image Header Hash finished...\r\n");
 
-	FsblIHSecInfo.PubKeyAddr    = (uint32_t)(AuthBuffer + ALAC_SPK_OFFSET);
-	FsblIHSecInfo.SignatureAddr = (uint32_t)(AuthBuffer + ALAC_BTHDR_SIGNATURE_OFFSET);
+	FsblIHSecInfo.PubKeyAddr    = PTR64_TO_UINT32(AuthBuffer + ALAC_SPK_OFFSET);
+	FsblIHSecInfo.SignatureAddr = PTR64_TO_UINT32(AuthBuffer + ALAC_BTHDR_SIGNATURE_OFFSET);
 	Status = AlFsbl_Auth(&FsblIHSecInfo);
 	if(Status != ALFSBL_SUCCESS) {
 		AL_LOG(AL_LOG_LEVEL_ERROR, "image header authentication failed\r\n");
@@ -250,8 +248,6 @@ END:
 uint32_t AlFsbl_PpkVerification(AlFsblInfo *FsblInstancePtr, uint32_t BootHdrAttrb, uint32_t EfuseCtrl)
 {
 	uint32_t Status;
-	SecMsgDef *pMsg = (SecMsgDef *)(CSU_MSG_RAM);
-	AckDef    *pAck = (AckDef *)(CSU_MSG_RAM + 64);
 	uint8_t *pPpkHashAddr = AL_NULL;
 	SecureInfo FsblPpkSecInfo = {0};
 
@@ -279,9 +275,9 @@ uint32_t AlFsbl_PpkVerification(AlFsblInfo *FsblInstancePtr, uint32_t BootHdrAtt
 		Status = ALFSBL_ERROR_SEC_PARAM_INVALID;
 		goto END;
 	}
-	FsblPpkSecInfo.HashDataAddr = (uint32_t)(AuthBuffer + ALAC_PPK_OFFSET);
+	FsblPpkSecInfo.HashDataAddr = PTR64_TO_UINT32(AuthBuffer + ALAC_PPK_OFFSET);
 	FsblPpkSecInfo.DataLength = PPK_BYTE_LENGTH;
-	FsblPpkSecInfo.HashOutAddr = (uint32_t)(HashBuffer);
+	FsblPpkSecInfo.HashOutAddr = PTR64_TO_UINT32(HashBuffer);
 	Status = AlFsbl_Hash(&FsblPpkSecInfo);
 	if(Status != ALFSBL_SUCCESS) {
 		goto END;
@@ -307,18 +303,17 @@ END:
 uint32_t AlFsbl_SpkVerification(AlFsblInfo *FsblInstancePtr, SecureInfo *pFsblIHSecInfo)
 {
 	uint32_t Status;
-	uint8_t AuthType;
 
-	pFsblIHSecInfo->HashDataAddr = (uint32_t)(AuthBuffer + ALAC_SPK_OFFSET);
+	pFsblIHSecInfo->HashDataAddr = PTR64_TO_UINT32(AuthBuffer + ALAC_SPK_OFFSET);
 	pFsblIHSecInfo->DataLength = SPK_BYTE_LENGTH;
-	pFsblIHSecInfo->HashOutAddr = (uint32_t)(HashBuffer);
+	pFsblIHSecInfo->HashOutAddr = PTR64_TO_UINT32(HashBuffer);
 	Status = AlFsbl_Hash(pFsblIHSecInfo);
 	if(Status != ALFSBL_SUCCESS) {
 		goto END;
 	}
 
-	pFsblIHSecInfo->PubKeyAddr = (uint32_t)(AuthBuffer + ALAC_PPK_OFFSET);
-	pFsblIHSecInfo->SignatureAddr = (uint32_t)(AuthBuffer + ALAC_SPK_SIGNATURE_OFFSET);
+	pFsblIHSecInfo->PubKeyAddr = PTR64_TO_UINT32(AuthBuffer + ALAC_PPK_OFFSET);
+	pFsblIHSecInfo->SignatureAddr = PTR64_TO_UINT32(AuthBuffer + ALAC_SPK_SIGNATURE_OFFSET);
 	Status = AlFsbl_Auth(pFsblIHSecInfo);
 	if(Status != ALFSBL_SUCCESS) {
 		goto END;

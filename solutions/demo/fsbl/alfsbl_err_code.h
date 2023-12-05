@@ -37,6 +37,7 @@ extern "C" {
 #define ALFSBL_ERROR_UNSUPPORTED_BOOT_MODE   (0x06U)
 #define ALFSBL_ERROR_DEVICE_INIT_FAILED      (0x07U)
 
+#define ALFSBL_ERROR_WDT_INIT_ERR            (0x08U)
 
 /// error code 0x10~0x16 is each kind of cfg state error status
 #define ALFSBL_ERROR_PL_CFG_STATE_ERROR      (0x17U)

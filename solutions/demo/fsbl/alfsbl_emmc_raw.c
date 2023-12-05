@@ -5,6 +5,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 
 #include "alfsbl_sd.h"
 #include "alfsbl_misc.h"
@@ -13,11 +14,12 @@
 #include "al_utils_def.h"
 
 
+
 #define MMC_RD_WR_TIMEOUT_MS    (10000)
 #define BLOCK_SIZE              (0x200)
 
 static AL_MMC_HalStruct *Handle;
-static DevId = 0;
+static AL_U32 DevId = 0;
 static AL_MMC_InitStruct InitConfig = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
     .DmaMode            = AL_MMC_DMA_MODE_SDMA,
@@ -41,10 +43,10 @@ uint32_t AlFsbl_EmmcRawInit(void)
 	return status;
 }
 
-uint32_t AlFsbl_EmmcRawCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo)
+uint32_t AlFsbl_EmmcRawCopy(PTRSIZE SrcAddress, PTRSIZE DestAddress, uint32_t Length, SecureInfo *pSecureInfo)
 {
 	uint32_t status             = AL_OK;
-    uint8_t *pdestaddr          = DestAddress;
+    uint8_t *pdestaddr          = (uint8_t *)DestAddress;
 	uint32_t Offset             = SrcAddress - IMAGE_FLASH_OFFSET;
     uint32_t blocksize          = BLOCK_SIZE;       //block size
     uint32_t startblock         = Offset / blocksize;
@@ -66,7 +68,7 @@ uint32_t AlFsbl_EmmcRawCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t L
                 goto END;
             }
             memcpy(pdestaddr, &SharedBuffer[firstblockoffset], firstblockbytes);
-            AlCache_FlushDcacheRange(pdestaddr, pdestaddr + firstblockbytes);
+            AlCache_FlushDcacheRange((AL_UINTPTR)(pdestaddr), (AL_UINTPTR)(pdestaddr + firstblockbytes));
             pdestaddr += firstblockbytes;
         } else if (i == endblock) {
             status = AlMmc_Hal_ReadBlocked(Handle, SharedBuffer, i, 1, MMC_RD_WR_TIMEOUT_MS);
@@ -74,7 +76,7 @@ uint32_t AlFsbl_EmmcRawCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t L
                 goto END;
             }
             memcpy(pdestaddr, SharedBuffer, lastblockbytes);
-            AlCache_FlushDcacheRange(pdestaddr, pdestaddr + lastblockbytes);
+            AlCache_FlushDcacheRange((AL_UINTPTR)(pdestaddr), (AL_UINTPTR)(pdestaddr + lastblockbytes));
             pdestaddr += lastblockbytes;
         } else {
             status = AlMmc_Hal_ReadBlocked(Handle, pdestaddr, i, (endblock - i), MMC_RD_WR_TIMEOUT_MS);

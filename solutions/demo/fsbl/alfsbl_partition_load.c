@@ -15,14 +15,20 @@
 #include "alfsbl_data.h"
 #include "alfsbl_boot.h"
 #include "alfsbl_partition_load.h"
+#include "alfsbl_config.h"
 #include "al_systimer.h"
 #include "al_utils_def.h"
+#include "al_wdt_hal.h"
 
 
 extern uint8_t     ReadBuffer[READ_BUFFER_SIZE];
 extern uint8_t     HashBuffer[32]__attribute__((aligned(64)));
 extern uint8_t     AuthBuffer[ALFSBL_AUTH_BUFFER_SIZE]__attribute__((aligned(64)));
 extern SecureInfo  FsblSecInfo;
+
+#ifndef ALFSBL_WDT_EXCLUDE
+extern AL_WDT_HalStruct *alfsbl_wdt0;
+#endif
 
 static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx, SecureInfo *pSecureInfo);
 
@@ -47,7 +53,11 @@ uint32_t AlFsbl_PartitionLoad(AlFsblInfo *FsblInstancePtr, uint32_t PartitionIdx
 	uint32_t Status;
 	uint32_t DestDev;
 
-	/// todo: restart wdt
+#ifndef ALFSBL_WDT_EXCLUDE
+	/// restart wdt
+	AL_LOG(AL_LOG_LEVEL_INFO, "wdt restart\r\n");
+	AlWdt_ll_CounterRestart(alfsbl_wdt0->BaseAddr);
+#endif
 
 	/// partition header validation
 	Status = AlFsbl_PartitionHeaderValidation(FsblInstancePtr, PartitionIdx, &FsblSecInfo);
@@ -344,7 +354,6 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	AlFsbl_PartitionHeader *PtHdr;
 
 	uint32_t Status = 0;
-	uint32_t HashByteLen;
 	uint32_t DestCpu;
 	uint32_t HandoffNum;
 	uint64_t SrcAddress;
@@ -354,8 +363,6 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	PTRSIZE  ImageOffsetAddress;
 	uint8_t  HashData[32];
 
-	int i;
-	uint32_t *ocmptr = NULL;
 
 	PtHdr = &(FsblInstancePtr->ImageHeader.PartitionHeader[PartitionIdx]);
 	DestCpu = PtHdr->PartitionAttribute & ALIH_PH_ATTRIB_DEST_CPU_MASK;
@@ -369,7 +376,7 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	AL_LOG(AL_LOG_LEVEL_INFO, "partition load dest address: 0x%lx\r\n", LoadAddress);
 	AL_LOG(AL_LOG_LEVEL_INFO, "partition length           : 0x%08x\r\n", Length);
 
-	pSecureInfo->HashOutAddr    = (uint32_t)HashData;
+	pSecureInfo->HashOutAddr    = PTR64_TO_UINT32(HashData);
 	pSecureInfo->KeyMode        = OP_BHDR_KEY;
 	pSecureInfo->EncMode        = SYM_ECB;
 	pSecureInfo->EncDir         = SYM_DECRYPT;
@@ -459,7 +466,7 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		//HashByteLen = (pSecureInfo->HashType == OP_HASH_SHA256) ? 32 : 16;
 		Status = FsblInstancePtr->DeviceOps.DeviceCopy(
 				     ImageOffsetAddress + PtHdr->HashDataOffset,
-				     HashBuffer,
+				     (uint64_t)HashBuffer,
 				     32,
 				     NULL);
 		if(ALFSBL_SUCCESS != Status) {
@@ -499,8 +506,8 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 			}
 		}
 		/// initial auth parameters;
-		pSecureInfo->PubKeyAddr = (uint32_t)(AuthBuffer + ALAC_SPK_OFFSET);
-		pSecureInfo->SignatureAddr = (uint32_t)(AuthBuffer + ALAC_PART_SIGNATURE_OFFSET);
+		pSecureInfo->PubKeyAddr = PTR64_TO_UINT32(AuthBuffer + ALAC_SPK_OFFSET);
+		pSecureInfo->SignatureAddr = PTR64_TO_UINT32(AuthBuffer + ALAC_PART_SIGNATURE_OFFSET);
 		Status = AlFsbl_Auth(pSecureInfo);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
@@ -509,15 +516,6 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	}
 
 	AL_LOG(AL_LOG_LEVEL_INFO, "ps partition copy finished\r\n");
-
-#if 0
-	/// check decrypt result:
-	ocmptr = (uint32_t *)(LoadAddress);
-	for(i = 0; i < 4; i++) {
-		AL_LOG(AL_LOG_LEVEL_INFO, "%08x\r\n", *ocmptr);
-		ocmptr++;
-	}
-#endif
 
 	/// update handoff values
 	if((PtHdr->DestExecAddr) != 0xFFFFFFFFU) {
@@ -537,10 +535,8 @@ END:
 static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *pSecureInfo, uint32_t PartitionIdx)
 {
 
-	uint32_t i;
 	uint32_t Status = 0;
 	uint8_t  HashData[32];
-	uint32_t HashByteLen;
 	uint32_t PartitionAcOffset;
 	uint32_t ImageOffsetAddress;
 	uint32_t BootDevice;
@@ -571,7 +567,7 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	AL_LOG(AL_LOG_LEVEL_INFO, "PL init done\r\n");
 	AL_LOG(AL_LOG_LEVEL_INFO, "cfg state: %08x\r\n", AL_REG32_READ(CRP_CFG_STATE));
 
-	pSecureInfo->HashOutAddr    = (uint32_t)HashData;
+	pSecureInfo->HashOutAddr    = PTR64_TO_UINT32(HashData);
 	pSecureInfo->KeyMode        = OP_BHDR_KEY;
 	pSecureInfo->EncMode        = SYM_ECB;
 	pSecureInfo->EncDir         = SYM_DECRYPT;
@@ -635,7 +631,7 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 		//HashByteLen = (pSecureInfo->HashType == OP_HASH_SHA256) ? 32 : 16;
 		Status = FsblInstancePtr->DeviceOps.DeviceCopy(
 				     ImageOffsetAddress + PtHdr->HashDataOffset,
-					 (uint32_t)HashBuffer,
+					 PTR64_TO_UINT32(HashBuffer),
 				     32,
 				     NULL);
 		if(ALFSBL_SUCCESS != Status) {
@@ -676,8 +672,8 @@ static uint32_t AlFsbl_LoadPlPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 			}
 		}
 		/// initial auth parameters;
-		pSecureInfo->PubKeyAddr = (uint32_t)(AuthBuffer + ALAC_SPK_OFFSET);
-		pSecureInfo->SignatureAddr = (uint32_t)(AuthBuffer + ALAC_PART_SIGNATURE_OFFSET);
+		pSecureInfo->PubKeyAddr = PTR64_TO_UINT32(AuthBuffer + ALAC_SPK_OFFSET);
+		pSecureInfo->SignatureAddr = PTR64_TO_UINT32(AuthBuffer + ALAC_PART_SIGNATURE_OFFSET);
 		Status = AlFsbl_Auth(pSecureInfo);
 		if(Status != ALFSBL_SUCCESS) {
 			goto END;
@@ -725,7 +721,6 @@ static uint32_t AlFsbl_BitstreamDataTransfer(AlFsblInfo *FsblInstancePtr, Secure
 {
 	uint32_t Status = 0;
 	AlFsbl_PartitionHeader *PtHdr;
-	uint32_t ImageOffsetAddress;
 	uint32_t SrcAddress;
 	uint32_t Length;
 	uint32_t BlockLength;
@@ -734,7 +729,6 @@ static uint32_t AlFsbl_BitstreamDataTransfer(AlFsblInfo *FsblInstancePtr, Secure
 	uint32_t BlockCnt = 0;
 
 	PtHdr = &(FsblInstancePtr->ImageHeader.PartitionHeader[PartitionIdx]);
-	ImageOffsetAddress = FsblInstancePtr->ImageOffsetAddress;
 	SrcAddress = FsblInstancePtr->ImageOffsetAddress + PtHdr->PartitionOffset;
 	Length = PtHdr->PartitionLen;
 
@@ -834,7 +828,6 @@ uint32_t AlFsbl_CheckPlInitDone(void)
 	volatile uint64_t CurrTime;
 	uint64_t TimerFreq;
 	uint32_t InitDone;
-	uint32_t cnt;
 
 	TimerFreq = AlSys_GetTimerFreq();
 	StartTime = AlSys_GetTimerTickCount();
@@ -866,7 +859,7 @@ uint32_t ALFsbl_BitStreamProgDone(void)
 	AL_REG32_WRITE(CSU_PCAP_WR_STREAM, ProgDone[2]);
 
 	Status = AlFsbl_CsuDmaCopy(
-			     (uint32_t)(&BitStreamNoop),
+			     PTR64_TO_UINT32(&BitStreamNoop),
 				 CSU_PCAP_CSULOCAL_WR_STREAM,
 				 8192,   /// 2048 words of noop
 				 (CSUDMA_DST_NOINCR | CSUDMA_SRC_NOINCR));

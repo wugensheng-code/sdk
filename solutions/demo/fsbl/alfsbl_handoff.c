@@ -7,12 +7,19 @@
 #include <stdio.h>
 #include "alfsbl_hw.h"
 #include "alfsbl_handoff.h"
+#include "alfsbl_config.h"
 #include "al_reg_io.h"
 #include "al_utils_def.h"
 #include "soc_plat.h"
+#include "al_wdt_hal.h"
 
 volatile uint32_t RegVal_RAW_HIS0;
+volatile uint32_t RegVal_RAW_HIS1;
 
+
+#ifndef ALFSBL_WDT_EXCLUDE
+extern AL_WDT_HalStruct *alfsbl_wdt0;
+#endif
 
 void __attribute__((noinline)) AlFsbl_HandoffExit(uint64_t HandoffAddress)
 {
@@ -64,6 +71,12 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 	/// disable pcap to restore pcap-pl isolation
 	AL_REG32_WRITE(CSU_PCAP_ENABLE, 0);
 
+#ifndef ALFSBL_WDT_EXCLUDE
+	/// disable wdt
+	AL_LOG(AL_LOG_LEVEL_INFO, "wdt disable\r\n");
+	AlWdt_ll_Pause(alfsbl_wdt0->BaseAddr, AL_FUNC_ENABLE);
+	AlWdt_ll_Enable(alfsbl_wdt0->BaseAddr, AL_FUNC_DISABLE);
+#endif
 
 	/// init gp, hp, fahb, apu-acp ports between ps and pl
 	Soc_PsPlInit();
@@ -74,6 +87,8 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 
 	RegVal_RAW_HIS0 = AL_REG32_READ(SYSCTRL_S_RAW_HIS0);
 	AL_REG32_WRITE(SYSCTRL_S_RAW_HIS0, RegVal_RAW_HIS0);
+	RegVal_RAW_HIS1 = AL_REG32_READ(SYSCTRL_S_RAW_HIS1);
+	AL_REG32_WRITE(SYSCTRL_S_RAW_HIS1, RegVal_RAW_HIS1);
 
 	if(FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_JTAG) {
 		while(1) {
@@ -127,6 +142,5 @@ uint32_t AlFsbl_Handoff(const AlFsblInfo *FsblInstancePtr)
 		}
 	}
 
-END:
 	return Status;
 }
