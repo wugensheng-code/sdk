@@ -400,6 +400,7 @@ AL_S32 AlDmacAhb_Dev_FillLliWithCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_Lli
     return AL_OK;
 }
 
+#ifdef ENABLE_MMU
 /**
  * This function flush src addr data and invlidate dst addr data for sync
  * @param   Channel is pointer to AL_DMACAHB_ChStruct
@@ -517,7 +518,6 @@ static AL_S32 AlDmacahb_Dev_FlushAndInvalidateData(AL_DMACAHB_ChStruct *Channel)
     return Ret;
 }
 
-#ifdef ENABLE_MMU
 static AL_S32 AlDmacahb_Dev_CheckAddrAlign(AL_DMACAHB_ChStruct *Channel)
 {
     AL_DMACAHB_ChTransStruct *Trans = &Channel->Trans;
@@ -981,7 +981,7 @@ static AL_VOID AlDmacAhb_Dev_TransCompHandler(AL_DMACAHB_ChStruct *Channel)
 */
 static AL_VOID AlDmacAhb_Dev_BlockTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
-    AL_DMACAHB_ChStateEnum State;
+    AL_DMACAHB_ChStateEnum State = AL_DMACAHB_STATE_NOT_INIT;
     AL_DMACAHB_EventStruct Event;
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb Channel %d block trans complete!\r\n", Channel->Config.Id);
 
