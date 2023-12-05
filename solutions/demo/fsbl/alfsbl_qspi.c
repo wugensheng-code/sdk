@@ -308,7 +308,7 @@ AL_U32 AlFsbl_Qspi32Copy(AL_U64 SrcAddress, PTRSIZE DestAddress, AL_U32 Length, 
     }
 
 #elif (defined QSPI_USE_AHB_DMA)
-    AL_U8 SendData[4] = {0x0};
+    AL_U8 SendData[5] = {0x0};
     Handle->Dev.Configs.Trans.TransMode  = QSPI_RX_ONLY;
     Handle->Dev.Configs.SpiFrameFormat = SPI_QUAD_FORMAT;
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 8;
@@ -337,7 +337,7 @@ AL_U32 AlFsbl_Qspi32Copy(AL_U64 SrcAddress, PTRSIZE DestAddress, AL_U32 Length, 
     }
 
 #else
-    AL_U8 SendData[4] = {0x0};
+    AL_U8 SendData[5] = {0x0};
     Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
     Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L32;
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 8;
