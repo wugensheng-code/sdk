@@ -158,10 +158,6 @@ extern "C" {
 
 #define HAVE_PMU_DRIVER
 
-#ifndef LOG_DEV
-#define LOG_DEV AL_LOG_UART1
-#endif
-
 #define HAVE_WDTPS_DRIVER
 #define WDT_CLOCK              (200*MHZ)
 

@@ -65,6 +65,18 @@ ifeq ($(SILENT),1)
 else
 	MAKEFLAGS +=
 endif
+## If OUTPUT_DEV=UART1, it will output messsage by uart1
+## If plat = emulation ,choose UART0 
+## If plat = board ,choose UART1
+OUTPUT_DEV ?= UART1
+
+ifeq ($(OUTPUT_DEV),UART0)
+	CFLAGS += -DLOG_DEV=AL_LOG_UART0
+else ifeq ($(OUTPUT_DEV),UART1)
+	CFLAGS += -DLOG_DEV=AL_LOG_UART1
+else ifeq ($(OUTPUT_DEV),NONE)
+	CFLAGS += -DLOG_DEV=AL_LOG_NONE
+endif
 
 # Variables should be defined in Application Makefile
 ## Available choices:

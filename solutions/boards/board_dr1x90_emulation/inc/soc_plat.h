@@ -177,8 +177,6 @@ extern "C" {
 
 #define HAVE_USBPS_DRIVER
 
-#define LOG_DEV AL_LOG_UART0
-
 #define UART0_BAUDRATE 115200
 #define UART1_BAUDRATE 115200
 
