@@ -27,6 +27,7 @@ static AL_VOID AlGpio_Hal_DefEventCallBack(AL_GPIO_EventStruct GpioEvent, AL_VOI
     AL_LOG(AL_LOG_LEVEL_INFO, "Bank 0x%x: IntrStatus is 0x%x", GpioEvent.Bank, GpioEvent.EventData);
 }
 
+
 /**
  * @brief  This function looks for the device configuration based on the unique device ID.
  * @param  DeviceId is the unique device ID of the device being looked up.
@@ -47,10 +48,11 @@ static AL_GPIO_HwConfigStruct *AlGpio_Hal_LookupConfig(AL_U32 DeviceId)
     return CfgPtr;
 }
 
+
 /**
  * @brief  This function sets the status callback function. The callback function is called by the
  *         AL_GPIO_IntrHandler when an interrupt occurs.
- * @param  Gpio is a pointer to the AL_GPIO instance.
+ * @param  Handle is a pointer to the AL_GPIO instance.
  * @param  CallBackRef
  * @param  FunPointer is the pointer to the callback function.
  * @return AL_S32
@@ -65,9 +67,10 @@ static AL_S32 AlGpio_Hal_RegisterEventCallBack(AL_GPIO_HalStruct *Handle, AL_GPI
     return AL_OK;
 }
 
+
 /**
  * @brief  This function inits GPIO module.
- * @param  Gpio is pointer to AL_GPIO_HalStruct
+ * @param  Handle is pointer to AL_GPIO_HalStruct
  * @param  HwConfig
  * @return AL_S32
  */
@@ -103,6 +106,7 @@ AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct **Handle, AL_U32 DevId, AL_GPIO_EventCa
     return AL_OK;
 }
 
+
 /**
  * @brief  This function gets the Bank number and the Pin number in the Bank according to the given PinNumber in the GPIO device.
  * @param  PinNumber
@@ -127,12 +131,13 @@ static AL_VOID AlGpio_Hal_GetBankPin(AL_U32 PinNumber, AL_U32 *BankNumber, AL_U3
     }
 }
 
+
 /**
- * @brief  Set the Direction of the pins of the specified Bank.
- * @param  Gpio
+ * @brief  This function sets the Direction of the pins of the specified Bank.
+ * @param  Handle
  * @param  Bank
  * @param  Direction
- * @return AL_VOID
+ * @return AL_S32
  */
 static AL_S32 AlGpio_Hal_SetBankDirection(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Direction)
 {
@@ -147,7 +152,7 @@ static AL_S32 AlGpio_Hal_SetBankDirection(AL_GPIO_HalStruct *Handle, AL_U32 Bank
 
 /**
  * @brief  This function reads Data register from the specified Bank.
- * @param  Gpio
+ * @param  Handle
  * @param  Bank
  * @return AL_S32
  */
@@ -161,7 +166,7 @@ AL_S32 AlGpio_Hal_ReadBankOutput(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
 
 /**
  * @brief  This function reads Data register from the specified Bank in EXT register.
- * @param  Gpio
+ * @param  Handle
  * @param  Bank
  * @return AL_S32
  */
@@ -175,11 +180,11 @@ AL_S32 AlGpio_Hal_ReadBankInput(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
 
 
 /**
- * @brief  Write to the Data register of the specified GPIO bank.
- * @param  Gpio
+ * @brief  This function writes to the Data register of the specified GPIO bank.
+ * @param  Handle
  * @param  Bank
  * @param  Data
- * @return AL_VOID
+ * @return AL_S32
  */
 AL_S32 AlGpio_Hal_WriteBank(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Data)
 {
@@ -193,9 +198,10 @@ AL_S32 AlGpio_Hal_WriteBank(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Data)
     return AL_OK;
 }
 
+
 /**
- * @brief  Get the Direction of the pins of the specified Bank.
- * @param  Gpio
+ * @brief  This function gets the Direction of the pins of the specified Bank.
+ * @param  Handle
  * @param  Bank
  * @return AL_S32
  */
@@ -210,11 +216,11 @@ static AL_S32 AlGpio_Hal_GetBankDirection(AL_GPIO_HalStruct *Handle, AL_U32 Bank
 
 /* ② Pin APIs */
 /**
- * @brief  Set the Direction of the specified pin.
- * @param  Gpio
+ * @brief  This function sets the Direction of the specified pin.
+ * @param  Handle
  * @param  Pin
  * @param  Direction
- * @return AL_VOID
+ * @return AL_S32
  */
 static AL_S32 AlGpio_Hal_SetPinDirection(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U32 Direction)
 {
@@ -238,11 +244,11 @@ static AL_S32 AlGpio_Hal_SetPinDirection(AL_GPIO_HalStruct *Handle, AL_U32 Pin, 
     return AL_OK;
 }
 
+
 /**
- * @brief  Get the Direction of the specified pin.
- * @param  Gpio
+ * @brief  This function gets the Direction of the specified pin.
+ * @param  Handle
  * @param  Pin
- * @param  Direction
  * @return AL_S32
  */
 static AL_S32 AlGpio_Hal_GetPinDirection(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
@@ -256,9 +262,10 @@ static AL_S32 AlGpio_Hal_GetPinDirection(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
     return (AlGpio_ll_GetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET) >> PinNumber) & (AL_U32)1;
 }
 
+
 /**
  * @brief  This function reads Data register from the specified Pin.
- * @param  Gpio
+ * @param  Handle
  * @param  Pin
  * @return AL_S32
  */
@@ -271,12 +278,13 @@ AL_S32 AlGpio_Hal_ReadPinOutput(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
 
-    return (AlGpio_ll_GetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET) >> PinNumber) & (AL_U32)1;
+    return (AlGpio_ll_ReadOutput(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET) >> PinNumber) & (AL_U32)1;
 }
+
 
 /**
  * @brief  This function reads Data register from the specified Pin in EXT register.
- * @param  Gpio
+ * @param  Handle
  * @param  Pin
  * @return AL_S32
  */
@@ -300,11 +308,11 @@ AL_S32 AlGpio_Hal_ReadPinInput(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
 
 
 /**
- * @brief  Write to the Data register of the specified GPIO Pin.
- * @param  Gpio
+ * @brief  This function writes to the Data register of the specified GPIO Pin.
+ * @param  Handle
  * @param  Pin
  * @param  Data
- * @return AL_VOID
+ * @return AL_S32
  */
 AL_S32 AlGpio_Hal_WritePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U32 Data)
 {
@@ -343,10 +351,10 @@ AL_S32 AlGpio_Hal_WritePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U32 Data)
 /* ③ Bank APIs intr */
 /**
  * @brief  This function enables the interrupts for the specified pins in the specified bank.
- * @param  Gpio
+ * @param  Handle
  * @param  Bank
- * @param  Raw
- * @return AL_VOID
+ * @param  Value
+ * @return AL_S32
  */
 static AL_S32 AlGpio_Hal_EnableBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Value)
 {
@@ -358,12 +366,13 @@ static AL_S32 AlGpio_Hal_EnableBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, 
     return AL_OK;
 }
 
+
 /**
  * @brief  This function clears the interrupts for the specified pins in the specified bank.
- * @param  Gpio
+ * @param  Handle
  * @param  Bank
- * @param  Mask
- * @return AL_VOID
+ * @param  Value
+ * @return AL_S32
  */
 static AL_S32 AlGpio_Hal_ClrBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Value)
 {
@@ -374,9 +383,10 @@ static AL_S32 AlGpio_Hal_ClrBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_
     return AL_OK;
 }
 
+
 /**
  * @brief  This function returns the interrupt enable status for a bank.
- * @param  Gpio
+ * @param  Handle
  * @param  Bank
  * @return AL_S32
  */
@@ -387,9 +397,10 @@ static AL_S32 AlGpio_Hal_GetBankIntrEnable(AL_GPIO_HalStruct *Handle, AL_U32 Ban
     return AlGpio_ll_GetIntrEnable(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
 }
 
+
 /**
  * @brief  This function returns the interrupt mask enable status for a bank.
- * @param  Gpio
+ * @param  Handle
  * @param  Bank
  * @return AL_S32
  */
@@ -400,12 +411,13 @@ static AL_S32 AlGpio_Hal_GetBankIntrMask(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
     return AlGpio_ll_GetIntrMask(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
 }
 
+
 /**
  * @brief  This function clears interrupt(s) with the provided mask.
- * @param  Gpio
+ * @param  Handle
  * @param  Bank
- * @param  Mask
- * @return AL_VOID
+ * @param  Value
+ * @return AL_S32
  */
 AL_S32 AlGpio_Hal_MaskBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Value)
 {
@@ -419,9 +431,10 @@ AL_S32 AlGpio_Hal_MaskBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Va
     return AL_OK;
 }
 
+
 /**
  * @brief  This function returns interrupt status read from Interrupt Status Register.
- * @param  Gpio
+ * @param  Handle
  * @param  Bank
  * @return AL_S32
  */
@@ -432,9 +445,10 @@ static AL_S32 AlGpio_Hal_GetBankIntrStatus(AL_GPIO_HalStruct *Handle, AL_U32 Ban
     return AlGpio_ll_GetIntrStatus(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
 }
 
+
 /**
  * @brief  This function returns the raw interrupt enable status for a bank.
- * @param  Gpio
+ * @param  Handle
  * @param  Bank
  * @return AL_S32
  */
@@ -445,15 +459,16 @@ AL_S32 AlGpio_Hal_GetBankRawIntrStatus(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
     return AlGpio_ll_GetRawIntrStatus(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
 }
 
+
 /**
  * @brief  This function is used for setting the Interrupt Type, Interrupt Polarity and
  * Interrupt Edge for the specified Bank.
- * @param  Gpio
+ * @param  Handle
  * @param  Bank
  * @param  IntrType
  * @param  IntrPolarity
  * @param  IntrEdge
- * @return AL_VOID
+ * @return AL_S32
  */
 static AL_S32 AlGpio_Hal_SetIntrBankType(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_GPIO_IntrTypeEnum IntrType, AL_GPIO_IntrPolarityEnum IntrPolarity, AL_GPIO_IntrBothEdgeEnum IntrEdge)
 {
@@ -470,15 +485,16 @@ static AL_S32 AlGpio_Hal_SetIntrBankType(AL_GPIO_HalStruct *Handle, AL_U32 Bank,
     return AL_OK;
 }
 
+
 /**
  * @brief  This function is used for getting the Interrupt Type, Interrupt Polarity and
  * Interrupt Edge for the specified Bank.
- * @param  Gpio
+ * @param  Handle
  * @param  Bank
  * @param  IntrType
  * @param  IntrPolarity
  * @param  IntrEdge
- * @return AL_VOID
+ * @return AL_S32
  */
 static AL_S32 AlGpio_Hal_GetIntrBankType(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 *IntrType, AL_U32 *IntrPolarity, AL_U32 *IntrEdge)
 {
@@ -491,13 +507,14 @@ static AL_S32 AlGpio_Hal_GetIntrBankType(AL_GPIO_HalStruct *Handle, AL_U32 Bank,
     return AL_OK;
 }
 
+
 /**
  * @brief  This function controls whether an external signal that is the source of an interrupt needs to be debounced to remove
  * any spurious glitches.
- * @param  Gpio
+ * @param  Handle
  * @param  Bank
- * @param  Debounce
- * @return AL_VOID
+ * @param  Value
+ * @return AL_S32
  */
 static AL_S32 AlGpio_Hal_EnableBankDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Value)
 {
@@ -509,12 +526,13 @@ static AL_S32 AlGpio_Hal_EnableBankDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Ba
     return AL_OK;
 }
 
+
 /**
  * @brief  This function controls whether all level-sensitive interrupts being synchronized to pclk_intr.
- * @param  Gpio
+ * @param  Handle
  * @param  Bank
- * @param  Debounce
- * @return AL_VOID
+ * @param  Value
+ * @return AL_S32
  */
 AL_S32 AlGpio_Hal_EnableBankSync(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Value)
 {
@@ -525,9 +543,10 @@ AL_S32 AlGpio_Hal_EnableBankSync(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 
     return AL_OK;
 }
 
+
 /**
  * @brief  This function gets whether all level-sensitive interrupts being synchronized to pclk_intr.
- * @param  Gpio
+ * @param  Handle
  * @param  Bank
  * @return AL_S32
  */
@@ -538,12 +557,14 @@ AL_S32 AlGpio_Hal_GetBankSync(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
     return AlGpio_ll_GetSync(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
 }
 
+
+
 /* ④ Pin APIs intr */
 /**
  * @brief  This function enables the interrupt for the specified pin.
- * @param  Gpio
+ * @param  Handle
  * @param  Pin
- * @return AL_VOID
+ * @return AL_S32
  */
 static AL_S32 AlGpio_Hal_EnablePinIntr(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
 {
@@ -559,9 +580,10 @@ static AL_S32 AlGpio_Hal_EnablePinIntr(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
     return AL_OK;
 }
 
+
 /**
  * @brief  This function returns the interrpt mask for the specified pin.
- * @param  Gpio
+ * @param  Handle
  * @param  Pin
  * @return AL_BOOL
  */
@@ -578,12 +600,13 @@ static AL_BOOL AlGpio_Hal_GetPinIntrEnable(AL_GPIO_HalStruct *Handle, AL_U32 Pin
     return ((IntrReg & (BIT(PinNumber))) == (AL_U32)0 ? (AL_U32)AL_FALSE : (AL_U32)AL_TRUE);
 }
 
+
 /**
  * @brief  This function is used for setting the IRQ Type of a specific pin.
- * @param  Gpio
+ * @param  Handle
  * @param  Pin
  * @param  IntrType
- * @return AL_VOID
+ * @return AL_S32
  */
 static AL_S32 AlGpio_Hal_SetPinIntrType(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_GPIO_IntrEnum IntrType)
 {
@@ -638,11 +661,12 @@ static AL_S32 AlGpio_Hal_SetPinIntrType(AL_GPIO_HalStruct *Handle, AL_U32 Pin, A
     return AL_OK;
 }
 
+
 /**
  * @brief  This function is used for getting the IRQ Type of a specific pin.
- * @param  Gpio
+ * @param  Handle
  * @param  Pin
- * @return AL_U8
+ * @return AL_U32
  */
 static AL_S32 AlGpio_Hal_GetPinIntrType(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
 {
@@ -678,12 +702,13 @@ static AL_S32 AlGpio_Hal_GetPinIntrType(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
     return IntrMode;
 }
 
+
 /**
  * @brief  This function controls whether an external signal that is the source of an interrupt needs to be debounced to remove
  * any spurious glitches.
- * @param  Gpio
+ * @param  Handle
  * @param  Pin
- * @return AL_VOID
+ * @return AL_S32
  */
 static AL_S32 AlGpio_Hal_EnablePinDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
 {
@@ -706,14 +731,11 @@ static AL_S32 AlGpio_Hal_EnablePinDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Pin
     return AL_OK;
 }
 
+
 /**
- * @brief  This function is the interrupt handler for GPIO interrupts.It checks the interrupt status registers
- * of all the banks to determine the actual bank in which interrupt have been triggered. It then calls the
- * upper layer callback handler set by the function AlGpio_Hal_IntrCallbackHandler.
- * @param  Gpio is a pointer to the AL_GPIO instance.
- * @param  Pin is the pin number to which the Data is to be written.
- * @param  IntrType is the IRQ type for GPIO Pin.
- * @return AL_S32
+ * @brief  This function is the interrupt handler for GPIO interrupts.
+ * @param  Instance is a GPIO instance.
+ * @return AL_VOID
  */
 static AL_VOID AlGpio_Hal_IntrHandler(AL_VOID *Instance)
 {
@@ -738,8 +760,9 @@ static AL_VOID AlGpio_Hal_IntrHandler(AL_VOID *Instance)
     }
 }
 
+
 /**
- * @brief  This function configure the interrupt, including direction, type and enable register.
+ * @brief  This function configures the interrupt of pin, including direction, type and enable register.
  * @param  Handle
  * @param  Pin
  * @param  IntrType
@@ -794,6 +817,14 @@ AL_S32 AlGpio_Hal_IntrPinCfg(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_GPIO_Intr
     return AL_OK;
 }
 
+
+/**
+ * @brief  This function configures the interrupt of bank, including direction, type and enable register.
+ * @param  Handle
+ * @param  Pin
+ * @param  IntrType
+ * @return AL_S32
+ */
 AL_S32 AlGpio_Hal_IntrBankCfg(AL_GPIO_HalStruct *Handle, AL_U32 IntrBank, AL_U32 IntrVal, AL_GPIO_IntrTypeEnum IntrType,
                             AL_GPIO_IntrPolarityEnum IntrPolarity, AL_GPIO_IntrBothEdgeEnum IntrEdge)
 {
