@@ -37,5 +37,7 @@ void dr1x90_dram_field_write(u32 addr, u8 offset, u32 mask, u32 data);
 
 extern u32 ftcHandle;
 
+#define printf al_printf
+
 #endif // end of AL_ALC_DDRC_H
 

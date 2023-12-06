@@ -111,6 +111,12 @@ int demo_ddr_init()
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr41to44_cfg1, U_byte3_quad2_mc1_oclk_sclk_offset, U_byte3_quad2_mc1_oclk_sclk_mask, 9 | (9 << 4) | (8 << 8) | (8 << 12));
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr41to44_cfg1, U_byte3_quad2_mc1_oclk_pclk_offset, U_byte3_quad2_mc1_oclk_pclk_mask, 9 | (9 << 4) | (8 << 8) | (8 << 12));
 
+    // tri-state enable for DQS_t/c
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr5to8_cfg4,   U_byte0_quad2_mc1_ts_sel_offset, U_byte0_quad2_mc1_ts_sel_mask, (0x6 << 9) | (0x2 << 6) | (0x0 << 3) | 0x0);
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr17to20_cfg4, U_byte0_quad2_mc1_ts_sel_offset, U_byte0_quad2_mc1_ts_sel_mask, (0x6 << 9) | (0x2 << 6) | (0x0 << 3) | 0x0);
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr29to32_cfg4, U_byte0_quad2_mc1_ts_sel_offset, U_byte0_quad2_mc1_ts_sel_mask, (0x6 << 9) | (0x2 << 6) | (0x0 << 3) | 0x0);
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr41to44_cfg4, U_byte0_quad2_mc1_ts_sel_offset, U_byte0_quad2_mc1_ts_sel_mask, (0x6 << 9) | (0x2 << 6) | (0x0 << 3) | 0x0);
+
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr1to4_cfg10  , U_byte0_quad1_mc1_i_mode_offset, U_byte0_quad1_mc1_i_mode_mask, 0xff);
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr5to8_cfg10  , U_byte0_quad2_mc1_i_mode_offset, U_byte0_quad2_mc1_i_mode_mask, 0xff);
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr9to12_cfg10 , U_byte0_quad3_mc1_i_mode_offset, U_byte0_quad3_mc1_i_mode_mask, 0xff);
@@ -129,6 +135,12 @@ int demo_ddr_init()
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte1_glue_cfg0, U_byte1_glue_mc1_qs_gate_sel_offset, U_byte1_glue_mc1_qs_gate_sel_mask, 1);
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte2_glue_cfg0, U_byte2_glue_mc1_qs_gate_sel_offset, U_byte2_glue_mc1_qs_gate_sel_mask, 1);
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte3_glue_cfg0, U_byte3_glue_mc1_qs_gate_sel_offset, U_byte3_glue_mc1_qs_gate_sel_mask, 1);
+
+    // DQS Byte mode
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte0_glue_cfg0, U_byte0_glue_mc1_dqs_byte_md_offset, U_byte0_glue_mc1_dqs_byte_md_mask, 0);
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte1_glue_cfg0, U_byte1_glue_mc1_dqs_byte_md_offset, U_byte1_glue_mc1_dqs_byte_md_mask, 0);
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte2_glue_cfg0, U_byte2_glue_mc1_dqs_byte_md_offset, U_byte2_glue_mc1_dqs_byte_md_mask, 0);
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte3_glue_cfg0, U_byte3_glue_mc1_dqs_byte_md_offset, U_byte3_glue_mc1_dqs_byte_md_mask, 0);
 
     //Alc_GpioMaskWrite(GPIO_CH0, 0x04, 0xffff);
     dr1x90_reg_write(DDRC_ADDR_DPLL + RW_TEST, 0x1); // used as reset
@@ -165,16 +177,16 @@ int demo_ddr_init()
     dr1x90_ddrppc_mdl_cal();
 
     regData = dr1x90_reg_read(0x27a0);
-   //  printf("\n DX0 mdl.   data =  0x%x\n", regData);
+    printf("\n DX0 mdl.   data =  0x%x\n", regData);
 
     regData = dr1x90_reg_read(0x28a0);
-   //  printf("\n DX1 mdl.   data =  0x%x\n", regData);
+    printf("\n DX1 mdl.   data =  0x%x\n", regData);
 
     regData = dr1x90_reg_read(0x29a0);
-   //  printf("\n DX2 mdl.   data =  0x%x\n", regData);
+    printf("\n DX2 mdl.   data =  0x%x\n", regData);
 
     regData = dr1x90_reg_read(0x2aa0);
-   //  printf("\n DX3 mdl.   data =  0x%x\n", regData);
+    printf("\n DX3 mdl.   data =  0x%x\n", regData);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 08 : Fast Init
@@ -236,27 +248,27 @@ int demo_ddr_init()
 
     for (u8 n = 0; n <= 3; n++) {
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask);
-       //  printf("\nDX 0x%x,  DGSL =  0x%x \n", n, regData);
-        //regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, WLSL_offset, WLSL_mask);
-        //printf("\nDX 0x%x,  WLSL =  0x%x \n", n, regData);
-        //regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR0 + 0x100 * n, WLD_offset, WLD_mask);
-        //printf("\nDX 0x%x,  WLD =  0x%x \n", n, regData);
-        //regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * n, WDQD_offset, WDQD_mask);
-        //printf("\nDX 0x%x,  WDQD =  0x%x \n", n, regData);
+        // printf("\nDX 0x%x,  DGSL =  0x%x \n", n, regData);
+        regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, WLSL_offset, WLSL_mask);
+        // printf("\nDX 0x%x,  WLSL =  0x%x \n", n, regData);
+        regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR0 + 0x100 * n, WLD_offset, WLD_mask);
+        // printf("\nDX 0x%x,  WLD =  0x%x \n", n, regData);
+        regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * n, WDQD_offset, WDQD_mask);
+        // printf("\nDX 0x%x,  WDQD =  0x%x \n", n, regData);
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
-       //  printf("\nDX 0x%x,  DQSGD =  0x%x \n", n, regData);
+        // printf("\nDX 0x%x,  DQSGD =  0x%x \n", n, regData);
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
-       //  printf("\nDX 0x%x,  RDQSD =  0x%x \n", n, regData);
+        // printf("\nDX 0x%x,  RDQSD =  0x%x \n", n, regData);
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask);
-       //  printf("\nDX 0x%x,  RDQSND =  0x%x \n", n, regData);
+        // printf("\nDX 0x%x,  RDQSND =  0x%x \n", n, regData);
         regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR5 + 0x100 * n, DQSGSD_offset, DQSGSD_mask);
-       //  printf("\nDX 0x%x,  DQSGSD =  0x%x \n", n, regData);
+        // printf("\nDX 0x%x,  DQSGSD =  0x%x \n", n, regData);
     }
 
 
     //dr1x90_iomc_internal_loopback_cfg();
 
-    // mtest_err = dr1x90_ddrppc_mtest(0, 0, 0, 9);
+    mtest_err = dr1x90_ddrppc_mtest(0, 0, 0, 9);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 08 : HandOff to DFI
@@ -324,9 +336,9 @@ int demo_ddr_init()
 
     set_rand_seed(100);
 
-    soft_reye_scanning();
+    // soft_reye_scanning();
 
-    soft_weye_scanning();
+    // soft_weye_scanning();
 
     // printf(" write DRAM address start test \r\n");
     for (u8 i = 0; i < 10; i++) {

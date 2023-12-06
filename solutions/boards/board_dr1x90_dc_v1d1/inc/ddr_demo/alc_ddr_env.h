@@ -10,7 +10,7 @@
 
 #define env_cfg_dx_num    4
 #define env_cfg_ddr_speed 1600
-#define env_cfg_ddr_mode  DDR3
+#define env_cfg_ddr_mode  DDR4
 
 #define env_prfbyp_en          1
 #define env_cfg_static_mode    0
@@ -54,6 +54,7 @@
   
 #define MR2_CWL  (env_cfg_CWL-5)   // 7
 
+#if env_cfg_ddr_mode == DDR3
 // MR Register
 #define MR0 (0x0100 | (MR0_WR << 9) | (((MR0_CL >> 1) & 0b111) << 4) | ((MR0_CL & 0b0001) << 2))
 #define MR1 0x0044
@@ -63,5 +64,18 @@
 #define MR4 0x0000
 #define MR5 0x0000
 #define MR6 0x0000
+#elif env_cfg_ddr_mode == DDR4
+// MR Register
+#define MR0 0xe05
+#define MR1 0x3
+#define MR2 0x80
+#define MR3 0x80
+
+#define MR4 0x0000
+#define MR5 0x0400
+#define MR6 0x0419
+#else
+#error MUST Define env_cfg_ddr_mode
+#endif
 
 #endif // end of AL_ALC_DDR_ENV_H
