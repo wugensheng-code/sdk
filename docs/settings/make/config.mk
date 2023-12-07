@@ -58,7 +58,7 @@ else
 	Q = @
 endif
 
-
+MAKEFLAGS += -j32
 ## If SILENT=1, it will not display any compiling messsage
 SILENT ?= #{{SILENT}}
 

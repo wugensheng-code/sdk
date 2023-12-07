@@ -57,6 +57,7 @@ else
 endif
 
 
+MAKEFLAGS += -j32
 ## If SILENT=1, it will not display any compiling messsage
 SILENT ?= 0
 

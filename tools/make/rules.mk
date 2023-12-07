@@ -163,7 +163,7 @@ ifeq ($(CORE),arm)
 CFLAGS += -mstrict-align -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35 -gdwarf-2
 endif
 
-AL_CFLAGS  += $(CFLAGS) $(PUBLIC_INC) $(MODULE_INC) $(MKDEP_OPT) -Wall
+AL_CFLAGS  += $(CFLAGS) $(PUBLIC_INC) $(MODULE_INC) $(MKDEP_OPT) -w
 
 #########################################################################
 # ldflags
@@ -284,7 +284,7 @@ check:
 	$(call assert_two_option,dr1v90, dr1m90, $(AL_CHIP), AL_CHIP)
 	$(call assert_two_option,freertos, rtthread, $(RTOS), RTOS)
 	$(call assert_three_option,ocm,ddr,tcm $(DOWNLOAD), DOWNLOAD)
-	$(ECHO) "all parameters have been checked"
+	@$(ECHO) "all parameters have been checked"
 
 #########################################################################
 $(ASM_OBJS): %.o: % $(COMMON_PREREQS)
