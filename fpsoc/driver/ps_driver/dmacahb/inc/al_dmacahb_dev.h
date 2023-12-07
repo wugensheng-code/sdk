@@ -495,6 +495,8 @@ AL_S32 AlDmacAhb_Dev_RequestCh(AL_DMACAHB_HwConfigStruct   *HwConfig, AL_DMACAHB
 
 AL_S32 AlDmacAhb_Dev_ReleaseCh(AL_DMACAHB_ChStruct *Channel);
 
+AL_S32 AlDmacAhb_Dev_ClrChannelState(AL_DMACAHB_HwConfigStruct *HwConfig);
+
 #ifdef __cplusplus
 }
 #endif

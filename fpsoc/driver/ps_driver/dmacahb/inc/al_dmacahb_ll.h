@@ -158,6 +158,10 @@ static inline AL_VOID AlDmacAhb_ll_SetChannelState(AL_REG ChStateAddr, AL_U32 Va
     AL_REG32_WRITE(ChStateAddr, Value);
 }
 
+static inline AL_VOID AlDmacAhb_ll_ClrChannelState(AL_REG ChStateAddr)
+{
+    AL_REG32_WRITE(ChStateAddr, 0);
+}
 /* --------------------DMAC/Channel_x_Registers-------------------- */
 
 

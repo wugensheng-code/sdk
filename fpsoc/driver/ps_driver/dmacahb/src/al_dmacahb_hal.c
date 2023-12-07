@@ -134,6 +134,11 @@ AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct **Handle, AL_U32 DevId, AL_DMACAH
         return AL_DMACAHB_ERR_NULL_PTR;
     }
 
+    Ret = AlDmacAhb_Dev_ClrChannelState(HwConfig);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
     Ret = AlDmacAhb_Dev_RequestCh(HwConfig, InitConfig->Id, &AvailableId);
     if (Ret != AL_OK) {
         return Ret;
