@@ -300,11 +300,11 @@
 				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			}
 		},
-		"DHRY": {
+		"DHRYSTONE": {
 			"1.0":{
-				"name": "DHRY",
+				"name": "DHRYSTONE",
 				"version": "1.0",
-				"depends": ["solutions/demo/baremetal/dhry"],
+				"depends": ["solutions/demo/baremetal/dhrystone"],
 				"description": "Baremetal dhrystone demo",
 				"supportedOS": ["standalone"],
 				"supportedProc": ["apu-0", "apu-1", "rpu"]

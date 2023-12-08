@@ -1,4 +1,4 @@
-#include "dry.h"
+#include "dhry.h"
 #include <stdlib.h>	/* malloc */
 #include "al_uart_hal.h"
 
@@ -66,7 +66,7 @@ int main()
     Str_30          Str_2_Loc;
     int             Run_Index;
     long long       Number_Of_Runs = 1000000;
-  printf ("Trying %d runs through Dhrystone:\r\n", Number_Of_Runs);
+  printf ("Trying %lld runs through Dhrystone:\r\n", Number_Of_Runs);
 
   uint64_t hz = AlSys_GetTimerFreq();
   /* Initializations */
@@ -93,7 +93,7 @@ int main()
   printf ("Dhrystone Benchmark, Version %s\r\n", Version);
 
   printf ("Program compiled without 'register' attribute\r\n");
-  printf ("Using %s, HZ=%d\r\n", CLOCK_TYPE, HZ);
+  printf ("Using %s, HZ=%ld\r\n", CLOCK_TYPE, HZ);
   printf ("\r\n");
 
   Done = false;
@@ -107,7 +107,7 @@ int main()
 
     Start_Timer();
     //Begin_Time = AlSys_GetTimerTickCount();
-    printf ("the Begin_Time is %ld :\r\n", Begin_Time);
+    printf ("the Begin_Time is %lld :\r\n", Begin_Time);
 for (Run_Index = 1; Run_Index <= Number_Of_Runs; ++Run_Index){
 		Proc_5();
 		Proc_4();
@@ -168,8 +168,8 @@ for (Run_Index = 1; Run_Index <= Number_Of_Runs; ++Run_Index){
       printf ("Please increase number of runs\r\n");
       Number_Of_Runs = Number_Of_Runs * 10;
       printf ("\r\n");
-      printf ("%ld\r\n",User_Time);
-      printf ("%ld\r\n",Too_Small_Time);
+      printf ("%lld\r\n",User_Time);
+      printf ("%d\r\n",Too_Small_Time);
     } else Done = true;
   }
 
@@ -224,9 +224,9 @@ for (Run_Index = 1; Run_Index <= Number_Of_Runs; ++Run_Index){
   printf ("        should be:   DHRYSTONE PROGRAM, 2'ND STRING\r\n");
   printf ("\r\n");
 
-  printf ("the User_Time is %f\r\n", User_Time);
-  printf ("the HZ is %f\r\n", HZ);
-  printf ("the Number_Of_Runs is %f\r\n", Number_Of_Runs);
+  printf ("the User_Time is %lld\r\n", User_Time);
+  printf ("the HZ is %ld\r\n", HZ);
+  printf ("the Number_Of_Runs is %lld\r\n", Number_Of_Runs);
 
     Microseconds = (long) User_Time * Mic_secs_Per_Second 
                         / ((long) Number_Of_Runs);
@@ -239,10 +239,10 @@ for (Run_Index = 1; Run_Index <= Number_Of_Runs; ++Run_Index){
                         / (float) User_Time;
 
 
-    printf ("the End_Time is %ld\r\n", End_Time);
-    printf ("the User_Time is %ld\r\n", User_Time);
+    printf ("the End_Time is %lld\r\n", End_Time);
+    printf ("the User_Time is %lld\r\n", User_Time);
     printf ("the HZ is %ld\r\n", HZ);
-    printf ("the Number_Of_Runs is %ld\r\n", Number_Of_Runs);
+    printf ("the Number_Of_Runs is %lld\r\n", Number_Of_Runs);
     
     printf ("Microseconds for one run through Dhrystone: ");
     printf ("%ld \r\n", Microseconds);
@@ -255,7 +255,7 @@ for (Run_Index = 1; Run_Index <= Number_Of_Runs; ++Run_Index){
     printf ("%10.0f \r\n", Dhrystones_Per_Second_float);
     
     printf ("\r\n");
-  
+  return 0;
 }
 
 
