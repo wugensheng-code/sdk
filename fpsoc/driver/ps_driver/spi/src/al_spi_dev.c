@@ -434,7 +434,7 @@ AL_S32 AlSpi_Dev_DmaSendData(AL_SPI_DevStruct *Spi)
     AlSpi_ll_Disable(Spi->HwConfig.BaseAddress);
     AlSpi_ll_SetTransfMode(Spi->HwConfig.BaseAddress, Spi->Configs.Trans.TransMode);
     AlSpi_ll_SetDataFrameSize(Spi->HwConfig.BaseAddress, SPI_FRAME_8BITS);
-    AlSpi_ll_SetTxFifoThrLevel(Spi->HwConfig.BaseAddress, 0);
+    AlSpi_ll_SetTxFifoThrLevel(Spi->HwConfig.BaseAddress, Spi->HwConfig.FifoLen / 2);
     AlSpi_ll_TxDmaEnable(Spi->HwConfig.BaseAddress);
     AlSpi_ll_SetDmaTransLevel(Spi->HwConfig.BaseAddress, 0);
     AlSpi_ll_Enable(Spi->HwConfig.BaseAddress);
@@ -476,7 +476,7 @@ AL_S32 AlSpi_Dev_DmaRecvData(AL_SPI_DevStruct *Spi, AL_U16 RecvSize)
     AlSpi_ll_SetRxFifoThrLevel(Spi->HwConfig.BaseAddress, 0);
 
     AlSpi_ll_RxDmaEnable(Spi->HwConfig.BaseAddress);
-    AlSpi_ll_SetDmaRecevLevel(Spi->HwConfig.BaseAddress, 0);
+    AlSpi_ll_SetDmaRecevLevel(Spi->HwConfig.BaseAddress, Spi->HwConfig.FifoLen / 2);
     AlSpi_ll_Enable(Spi->HwConfig.BaseAddress);
 
     AlSpi_ll_SetSlvSel(Spi->HwConfig.BaseAddress, Spi->Configs.Trans.SlvSelEnum);
@@ -516,8 +516,8 @@ AL_S32 AlSpi_Dev_DmaTranferData(AL_SPI_DevStruct *Spi, AL_U16 RecvSize)
     AlSpi_ll_TxDmaEnable(Spi->HwConfig.BaseAddress);
     AlSpi_ll_RxDmaEnable(Spi->HwConfig.BaseAddress);
 
-    AlSpi_ll_SetDmaRecevLevel(Spi->HwConfig.BaseAddress, 0);
-    AlSpi_ll_SetDmaTransLevel(Spi->HwConfig.BaseAddress, 0);
+    AlSpi_ll_SetDmaRecevLevel(Spi->HwConfig.BaseAddress, Spi->HwConfig.FifoLen / 2);
+    AlSpi_ll_SetDmaTransLevel(Spi->HwConfig.BaseAddress, Spi->HwConfig.FifoLen / 2);
 
     AlSpi_ll_Enable(Spi->HwConfig.BaseAddress);
     /* Set cs to start transfer */

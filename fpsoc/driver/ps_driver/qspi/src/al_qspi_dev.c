@@ -786,7 +786,7 @@ AL_S32 AlQspi_Dev_DmaSendData(AL_QSPI_DevStruct *Qspi, AL_U32 SendDataSize)
     {
         AlQspi_ll_SetRecvNumOfDataFrames(Qspi->HwConfig.BaseAddress, SendDataSize ? SendDataSize - 1 : 0);
     }
-    AlQspi_ll_SetTxFifoThrLevel(Qspi->HwConfig.BaseAddress, 0);
+    AlQspi_ll_SetTxFifoThrLevel(Qspi->HwConfig.BaseAddress, Qspi->HwConfig.FifoLen / 2);
     AlQspi_ll_TxDmaEnable(Qspi->HwConfig.BaseAddress);
     AlQspi_ll_SetDmaTransLevel(Qspi->HwConfig.BaseAddress, Qspi->HwConfig.FifoLen / 2 + 2);
     AlQspi_ll_Enable(Qspi->HwConfig.BaseAddress);
@@ -848,7 +848,7 @@ AL_S32 AlQspi_Dev_DmaRecvData(AL_QSPI_DevStruct *Qspi, AL_U16 RecvSize)
 
     AlQspi_ll_Disable(Qspi->HwConfig.BaseAddress);
     AlQspi_ll_SetDataFrameSize(Qspi->HwConfig.BaseAddress, QSPI_DFS_8BITS);
-    AlQspi_ll_SetRxFifoThrLevel(Qspi->HwConfig.BaseAddress, 0);
+    AlQspi_ll_SetRxFifoThrLevel(Qspi->HwConfig.BaseAddress, Qspi->HwConfig.FifoLen / 2);
     AlQspi_ll_RxDmaEnable(Qspi->HwConfig.BaseAddress);
     AlQspi_ll_SetDmaRecevLevel(Qspi->HwConfig.BaseAddress, 0);
     AlQspi_ll_SetAddrLength(Qspi->HwConfig.BaseAddress, Qspi->Configs.Trans.EnSpiCfg.AddrLength);
@@ -889,8 +889,8 @@ AL_S32 AlQspi_Dev_DmaTranferData(AL_QSPI_DevStruct *Qspi, AL_U32 SendSize, AL_U1
 
     AlQspi_ll_Disable(Qspi->HwConfig.BaseAddress);
 
-    AlQspi_ll_SetRxFifoThrLevel(Qspi->HwConfig.BaseAddress, 0);
-    AlQspi_ll_SetTxFifoThrLevel(Qspi->HwConfig.BaseAddress, 0);
+    AlQspi_ll_SetRxFifoThrLevel(Qspi->HwConfig.BaseAddress, Qspi->HwConfig.FifoLen / 2);
+    AlQspi_ll_SetTxFifoThrLevel(Qspi->HwConfig.BaseAddress, Qspi->HwConfig.FifoLen / 2);
     AlQspi_ll_TxDmaEnable(Qspi->HwConfig.BaseAddress);
     AlQspi_ll_RxDmaEnable(Qspi->HwConfig.BaseAddress);
     AlQspi_ll_SetDmaRecevLevel(Qspi->HwConfig.BaseAddress, 0);
