@@ -101,7 +101,7 @@ PUBLIC_INC_DIR :=  $(BSP_DIR)/inc \
 ifeq ($(RTOS), rtthread)
 PUBLIC_INC_DIR +=   $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/include \
                     $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/components/finsh \
-                    $(AL_SDK_ROOT)/3rdparty/os/RT-Thread 
+                    $(AL_SDK_ROOT)/3rdparty/os/RT-Thread
 endif
 
 ifeq ($(RTOS), freertos)
@@ -160,7 +160,7 @@ MODULE_INC  :=  $(foreach subdir,$(sort $(INC_DIR)), -I$(subdir)) -I$(AL_PLAT_DI
 #########################################################################
 
 ifeq ($(CORE),arm)
-CFLAGS += -mstrict-align -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35
+CFLAGS += -mstrict-align -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35 -gdwarf-2
 endif
 
 AL_CFLAGS  += $(CFLAGS) $(PUBLIC_INC) $(MODULE_INC) $(MKDEP_OPT) -Wall
@@ -206,8 +206,8 @@ REAL_CLEAN_OBJS = $(subst /,$(PS), $(CLEAN_OBJS))
 
 #########################################################################
 # Prerequesties
-COMMON_PREREQS +=	$(AL_SDK_ROOT)/tools/make/rules.mk 
-COMMON_PREREQS +=	$(AL_SDK_ROOT)/tools/make/config.mk 
+COMMON_PREREQS +=	$(AL_SDK_ROOT)/tools/make/rules.mk
+COMMON_PREREQS +=	$(AL_SDK_ROOT)/tools/make/config.mk
 COMMON_PREREQS +=	$(AL_CUR_DIR)/Makefile
 COMMON_PREREQS +=   Makefile
 

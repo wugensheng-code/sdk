@@ -51,7 +51,7 @@ VERBOSE ?= 0
 V ?= $(VERBOSE)
 
 ifeq ($(V),1)
-	Q = 
+	Q =
 else
 	Q = @
 endif
@@ -61,12 +61,12 @@ endif
 SILENT ?= 0
 
 ifeq ($(SILENT),1)
-	MAKEFLAGS += -s 
+	MAKEFLAGS += -s
 else
 	MAKEFLAGS +=
 endif
 ## If OUTPUT_DEV=UART1, it will output messsage by uart1
-## If plat = emulation ,choose UART0 
+## If plat = emulation ,choose UART0
 ## If plat = board ,choose UART1
 OUTPUT_DEV ?= UART1
 
