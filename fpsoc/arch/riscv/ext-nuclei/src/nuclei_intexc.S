@@ -28,6 +28,124 @@
 
 #include "al_rv64_sysregs.h"
 
+#ifdef __riscv_flen
+/* offset 0 * FPREGBYTES - mepc
+ * offset 1 * FPREGBYTES - mstatus
+ * offset (2 - 32) * FPREGBYTES - float registers
+ */
+#define portFPU_CONTEXT_WORDS   34
+#define portFPU_CONTEXT_SIZE (portFPU_CONTEXT_WORDS * FPREGBYTES)
+
+.macro portasmSAVE_FPU_REGISTERS
+    addi    sp, sp, -portFPU_CONTEXT_SIZE
+    /* get FS field from mstatus */
+    li t0, MSTATUS_FS
+    csrr    t1, mstatus
+    STORE   t1, 33 * FPREGBYTES(sp)
+    and t0, t1, t0
+    li t2, MSTATUS_FS_DIRTY
+    bne t2, t0, 1f
+    /* FS == dirty */
+    /* Make room for the additional FPU registers. */
+    FPSTORE  f0, 1 * FPREGBYTES(sp)
+    FPSTORE  f1, 2 * FPREGBYTES(sp)
+    FPSTORE  f2, 3 * FPREGBYTES(sp)
+    FPSTORE  f3, 4 * FPREGBYTES(sp)
+    FPSTORE  f4, 5 * FPREGBYTES(sp)
+    FPSTORE  f5, 6 * FPREGBYTES(sp)
+    FPSTORE  f6, 7 * FPREGBYTES(sp)
+    FPSTORE  f7, 8 * FPREGBYTES(sp)
+    FPSTORE  f8, 9 * FPREGBYTES(sp)
+    FPSTORE  f9, 10 * FPREGBYTES(sp)
+    FPSTORE  f10, 11 * FPREGBYTES(sp)
+    FPSTORE  f11, 12 * FPREGBYTES(sp)
+    FPSTORE  f12, 13 * FPREGBYTES(sp)
+    FPSTORE  f13, 14 * FPREGBYTES(sp)
+    FPSTORE  f14, 15 * FPREGBYTES(sp)
+    FPSTORE  f15, 16 * FPREGBYTES(sp)
+    FPSTORE  f16, 17 * FPREGBYTES(sp)
+    FPSTORE  f17, 18 * FPREGBYTES(sp)
+    FPSTORE  f18, 19 * FPREGBYTES(sp)
+    FPSTORE  f19, 20 * FPREGBYTES(sp)
+    FPSTORE  f20, 21 * FPREGBYTES(sp)
+    FPSTORE  f21, 22 * FPREGBYTES(sp)
+    FPSTORE  f22, 23 * FPREGBYTES(sp)
+    FPSTORE  f23, 24 * FPREGBYTES(sp)
+    FPSTORE  f24, 25 * FPREGBYTES(sp)
+    FPSTORE  f25, 26 * FPREGBYTES(sp)
+    FPSTORE  f26, 27 * FPREGBYTES(sp)
+    FPSTORE  f27, 28 * FPREGBYTES(sp)
+    FPSTORE  f28, 29 * FPREGBYTES(sp)
+    FPSTORE  f29, 30 * FPREGBYTES(sp)
+    FPSTORE  f30, 31 * FPREGBYTES(sp)
+    FPSTORE  f31, 32 * FPREGBYTES(sp)
+
+    /* must set FS to clean */
+    csrc    mstatus, t0
+    li  t1, MSTATUS_FS_CLEAN
+    csrs    mstatus, t1
+1:
+    .endm
+
+.macro portasmRESTORE_FPU_REGISTERS
+    LOAD t1, 33 * FPREGBYTES(sp)
+    /* get FS field from mstatus */
+    li t0, MSTATUS_FS
+    and t0, t1, t0
+    li t2, MSTATUS_FS_DIRTY
+    bne t2, t0, 1f
+    /* FS == dirty */
+    csrs    mstatus, t0
+    FPLOAD   f0, 1 * FPREGBYTES(sp)
+    FPLOAD   f1, 2 * FPREGBYTES(sp)
+    FPLOAD   f2, 3 * FPREGBYTES(sp)
+    FPLOAD   f3, 4 * FPREGBYTES(sp)
+    FPLOAD   f4, 5 * FPREGBYTES(sp)
+    FPLOAD   f5, 6 * FPREGBYTES(sp)
+    FPLOAD   f6, 7 * FPREGBYTES(sp)
+    FPLOAD   f7, 8 * FPREGBYTES(sp)
+    FPLOAD   f8, 9 * FPREGBYTES(sp)
+    FPLOAD   f9, 10 * FPREGBYTES(sp)
+    FPLOAD   f10, 11 * FPREGBYTES(sp)
+    FPLOAD   f11, 12 * FPREGBYTES(sp)
+    FPLOAD   f12, 13 * FPREGBYTES(sp)
+    FPLOAD   f13, 14 * FPREGBYTES(sp)
+    FPLOAD   f14, 15 * FPREGBYTES(sp)
+    FPLOAD   f15, 16 * FPREGBYTES(sp)
+    FPLOAD   f16, 17 * FPREGBYTES(sp)
+    FPLOAD   f17, 18 * FPREGBYTES(sp)
+    FPLOAD   f18, 19 * FPREGBYTES(sp)
+    FPLOAD   f19, 20 * FPREGBYTES(sp)
+    FPLOAD   f20, 21 * FPREGBYTES(sp)
+    FPLOAD   f21, 22 * FPREGBYTES(sp)
+    FPLOAD   f22, 23 * FPREGBYTES(sp)
+    FPLOAD   f23, 24 * FPREGBYTES(sp)
+    FPLOAD   f24, 25 * FPREGBYTES(sp)
+    FPLOAD   f25, 26 * FPREGBYTES(sp)
+    FPLOAD   f26, 27 * FPREGBYTES(sp)
+    FPLOAD   f27, 28 * FPREGBYTES(sp)
+    FPLOAD   f28, 29 * FPREGBYTES(sp)
+    FPLOAD   f29, 30 * FPREGBYTES(sp)
+    FPLOAD   f30, 31 * FPREGBYTES(sp)
+    FPLOAD   f31, 32 * FPREGBYTES(sp)
+
+    /* must set FS to clean */
+    csrc    mstatus, t0
+    li  t1, MSTATUS_FS_CLEAN
+    csrs    mstatus, t1
+1:
+    addi    sp, sp, portFPU_CONTEXT_SIZE
+    .endm
+
+#else
+
+.macro portasmSAVE_FPU_REGISTERS
+.endm
+.macro portasmRESTORE_FPU_REGISTERS
+.endm
+
+#endif
+
 /**
  * \brief  Global interrupt disabled
  * \details
@@ -175,7 +293,8 @@ exc_entry:
     SAVE_CONTEXT
     /* Save the necessary CSR registers */
     SAVE_CSR_CONTEXT
-
+    /* Save Fpu registers when fpu is enabled */
+    portasmSAVE_FPU_REGISTERS
     /*
      * Set the exception handler function arguments
      * argument 1: mcause value
@@ -189,7 +308,8 @@ exc_entry:
      * system_Device.c, you can adjust it as you want
      */
     call core_exception_handler
-
+    /* Restore Fpu registers when fpu is enabled */
+    portasmRESTORE_FPU_REGISTERS
     /* Restore the necessary CSR registers */
     RESTORE_CSR_CONTEXT
     /* Restore the caller saving registers (context) */
@@ -219,6 +339,8 @@ irq_entry:
     SAVE_CONTEXT
     /* Save the necessary CSR registers */
     SAVE_CSR_CONTEXT
+    /* Save Fpu registers when fpu is enabled */
+    portasmSAVE_FPU_REGISTERS
 
     /* This special CSR read/write operation, which is actually
      * claim the CLIC to find its pending highest ID, if the ID
@@ -230,6 +352,8 @@ irq_entry:
     /* Critical section with interrupts disabled */
     DISABLE_MIE
 
+    /* Restore Fpu registers when fpu is enabled */
+    portasmRESTORE_FPU_REGISTERS
     /* Restore the necessary CSR registers */
     RESTORE_CSR_CONTEXT
     /* Restore the caller saving registers (context) */
@@ -245,9 +369,13 @@ ECLIC_Isr_Vect:
     SAVE_CONTEXT
     /* Save the necessary CSR registers */
     SAVE_CSR_CONTEXT
+    /* Save Fpu registers when fpu is enabled */
+    portasmSAVE_FPU_REGISTERS
 
     call ECLIC_Isr_Nonvect
 
+    /* Restore Fpu registers when fpu is enabled */
+    portasmRESTORE_FPU_REGISTERS
     /* Restore the necessary CSR registers */
     RESTORE_CSR_CONTEXT
     /* Restore the caller saving registers (context) */

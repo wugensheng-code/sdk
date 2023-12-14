@@ -15,3 +15,8 @@
 
 #define __STR(s)                #s
 #define STRINGIFY(s)            __STR(s)
+
+#define FPSTORE                fsw
+#define FPLOAD                 flw
+#define LOG_FPREGBYTES         2
+#define FPREGBYTES              (1 << LOG_FPREGBYTES)
