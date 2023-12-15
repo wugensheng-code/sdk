@@ -29,9 +29,9 @@ extern AL_SMC_HwConfigStruct AlSmc_HwCfg[AL_SMC_NUM_INSTANCE];
 
 /********************************************************/
 /**
- * This function
- * @param
- * @return
+ * This function is lookup smc configuration by device id
+ * @param   DeviceId is smc device id
+ * @return  A pointer to type AL SMC HwConfigStruct
  * @note    None
 */
 AL_SMC_HwConfigStruct *AlSmc_Dev_LookupConfig(AL_U32 DeviceId)
@@ -50,9 +50,9 @@ AL_SMC_HwConfigStruct *AlSmc_Dev_LookupConfig(AL_U32 DeviceId)
 }
 
 /**
- * This function
+ * This function is send cmd to nandflash
  * @param   NandInfo is structure pointer to nand info
- * @return
+ * @return  AL_VOID
  * @note    None
 */
 static AL_VOID ALSmc_Dev_SendCmd(AL_NAND_InfoStruct *NandInfo)
@@ -102,12 +102,13 @@ static AL_VOID ALSmc_Dev_SendCmd(AL_NAND_InfoStruct *NandInfo)
 }
 
 /**
- * This function
+ * This function is write data to nandflash
  * @param   NandInfo is structure pointer to nand info
- * @return
+ * @param   Buf is pointer of write data
+ * @param   Length is length of write data
+ * @return  AL_VOID
  * @note    None
 */
-/* AL_U8 NandInfo->EndCmd, AL_U8 NandInfo->EndCmdPhase, AL_U32 NandInfo->Cmd.ClearCs, AL_U32 NandInfo->Cmd.EccLast*/
 static AL_VOID ALSmc_Dev_WriteData(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_U32 Length)
 {
     AL_U32 Index, EndCmdReq;
@@ -138,9 +139,11 @@ static AL_VOID ALSmc_Dev_WriteData(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_
 }
 
 /**
- * This function
+ * This function is read data from nandflash
  * @param   NandInfo is structure pointer to nand info
- * @return
+ * @param   Buf is pointer of read data
+ * @param   Length is length of read data
+ * @return  AL_VOID
  * @note    None
 */
 static AL_VOID ALSmc_Dev_ReadData(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_U32 Length)
@@ -173,12 +176,13 @@ static AL_VOID ALSmc_Dev_ReadData(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_U
 }
 
 /**
- * This function
+ * This function is write data to nandflash
  * @param   NandInfo is structure pointer to nand info
- * @return
+ * @param   Buf is pointer of write data
+ * @param   Length is length of write data
+ * @return  AL_VOID
  * @note    None
 */
-/*, AL_U32 NandInfo->Cmd.ClearCs, AL_U32 NandInfo->Cmd.EccLast */
 static AL_VOID ALSmc_Dev_WriteBuf(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_U32 Length)
 {
     AL_U32 *tempBuff = (AL_U32 *)Buf;
@@ -206,12 +210,13 @@ static AL_VOID ALSmc_Dev_WriteBuf(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_U
 }
 
 /**
- * This function
+ * This function is read data from nandflash
  * @param   NandInfo is structure pointer to nand info
- * @return
+ * @param   Buf is pointer of read data
+ * @param   Length is length of read data
+ * @return  AL_VOID
  * @note    None
 */
-/* AL_U32 NandInfo->Cmd.ClearCs, AL_U32 NandInfo->Cmd.EccLast */
 static AL_VOID ALSmc_Dev_ReadBuf(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_U32 Length)
 {
     AL_U32 Index, EndCmdReq;
@@ -241,9 +246,11 @@ static AL_VOID ALSmc_Dev_ReadBuf(AL_NAND_InfoStruct *NandInfo, AL_U8 *Buf, AL_U3
 }
 
 /**
- * This function
+ * This function is reset nandflash
  * @param   NandInfo is structure pointer to nand info
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_U32 ALSmc_Dev_Reset(AL_NAND_InfoStruct *NandInfo)
@@ -269,9 +276,9 @@ AL_U32 ALSmc_Dev_Reset(AL_NAND_InfoStruct *NandInfo)
 }
 
 /**
- * This function
+ * This function is read nandflash id
  * @param   NandInfo is structure pointer to nand info
- * @return
+ * @return  AL_VOID
  * @note    None
 */
 AL_VOID ALSmc_Dev_ReadId(AL_NAND_InfoStruct *NandInfo)
@@ -289,9 +296,9 @@ AL_VOID ALSmc_Dev_ReadId(AL_NAND_InfoStruct *NandInfo)
 }
 
 /**
- * This function
+ * This function is check nandflash parameter page value
  * @param   Buf is pointer nand parameters page
- * @return
+ * @return  Crc value
  * @note    None
 */
 static AL_U32 ALSmc_Dev_CrcCheck(AL_U8 *Buf)
@@ -329,9 +336,11 @@ static AL_U32 ALSmc_Dev_CrcCheck(AL_U8 *Buf)
 }
 
 /**
- * This function
+ * This function is read nandflash parameter page
  * @param   NandInfo is structure pointer to nand info
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_U32 ALSmc_Dev_ReadParam(AL_NAND_InfoStruct *NandInfo)
@@ -383,7 +392,7 @@ AL_U32 ALSmc_Dev_ReadParam(AL_NAND_InfoStruct *NandInfo)
 }
 
 /**
- * This function
+ * This function is read nandflash status
  * @param   NandInfo is structure pointer to nand info
  * @return  Return nand status value
  * @note    None
@@ -407,10 +416,10 @@ AL_U32 ALSmc_Dev_ReadStatus(AL_NAND_InfoStruct *NandInfo)
 }
 
 /**
- * This function
+ * This function is set feature
  * @param   NandInfo is structure pointer to nand info
- * @param
- * @param
+ * @param   Address is the address that was sent
+ * @param   Data is pointer of receive data
  * @return
  * @note    None
 */
@@ -438,9 +447,13 @@ AL_U8 ALSmc_Dev_SetFeature(AL_NAND_InfoStruct *NandInfo, AL_U8 Address, AL_U8 *D
 }
 
 /**
- * This function
+ * This function is get feature
  * @param   NandInfo is structure pointer to nand info
+ * @param   Address is the address that was sent
+ * @param   Data is pointer of send data
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_U8 ALSmc_Dev_GetFeature(AL_NAND_InfoStruct *NandInfo, AL_U8 Address, AL_U8 *Data)
@@ -477,10 +490,13 @@ AL_U8 ALSmc_Dev_GetFeature(AL_NAND_InfoStruct *NandInfo, AL_U8 Address, AL_U8 *D
 }
 
 /**
- * This function
+ * This function is erase nandflash block
  * @param   Smc is structure pointer to smc device
  * @param   NandInfo is structure pointer to nand info
+ * @param   Page is page address in nandflash
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_U32 ALSmc_Dev_EraseBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U8 Page)
@@ -521,7 +537,9 @@ AL_U32 ALSmc_Dev_EraseBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo,
  * @param   NandInfo is structure pointer to nand info
  * @param   Page is nandflash page addr
  * @param   Buf is AL_U8 pointer to send data buffer
- * @return  Whether the smc write page use hardware ecc is successful
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_U32 ALSmc_Dev_HwEccWritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf)
@@ -574,7 +592,7 @@ AL_U32 ALSmc_Dev_HwEccWritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandI
 
     /* Full spare arrry */
     for (Index = 0; Index < EccDataNums; Index++) {
-        NandInfo->SpareBuf[DataOffsetPtr[Index]] = ~NandInfo->EccCode[Index];
+        NandInfo->SpareBuf[DataOffsetPtr[Index]] = ~NandInfo->EccCalc[Index];
     }
 
     NandInfo->Cmd.EccLast = 0;
@@ -606,7 +624,9 @@ AL_U32 ALSmc_Dev_HwEccWritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandI
  * @param   NandInfo is structure pointer to nand info
  * @param   Page is nandflash page addr
  * @param   Buf is AL_U8 pointer to receive data buffer
- * @return  Whether the smc read page use hardware ecc is successful
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_U32 ALSmc_Dev_HwEccReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf)
@@ -688,11 +708,14 @@ AL_U32 ALSmc_Dev_HwEccReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandIn
 }
 
 /**
- * This function
- * @param    Smc is structure pointer to smc device
- * @param
- * @param
+ * This function is write page to nandflash
+ * @param   Smc is structure pointer to smc device
+ * @param   NandInfo is structure pointer to nand info
+ * @param   Page is page address in nandflash
+ * @param   Buf is pointer of send data buf
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_U32 ALSmc_Dev_WritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf)
@@ -735,11 +758,14 @@ AL_U32 ALSmc_Dev_WritePage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, 
 }
 
 /**
- * This function
- * @param    Smc is structure pointer to smc device
- * @param
- * @param
+ * This function is read page from nandflash
+ * @param   Smc is structure pointer to smc device
+ * @param   NandInfo is structure pointer to nand info
+ * @param   Page is page address in nandflash
+ * @param   Buf is pointer of receive data buf
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_U32 ALSmc_Dev_ReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page, AL_U8 *Buf)
@@ -792,14 +818,16 @@ AL_U32 ALSmc_Dev_ReadPage(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, A
 }
 
 /**
- * This function
- * @param    Smc is structure pointer to smc device
- * @param
- * @param
+ * This function is write spare area to nandflash
+ * @param   Smc is structure pointer to smc device
+ * @param   NandInfo is structure pointer to nand info
+ * @param   Page is page address in nandflash
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
-AL_U32 ALSmc_Dev_WritceSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page)
+AL_U32 ALSmc_Dev_WriteSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page)
 {
     AL_U32 Status;
 
@@ -845,11 +873,13 @@ AL_U32 ALSmc_Dev_WritceSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo
 }
 
 /**
- * This function
+ * This function is read spare area in nandflash
  * @param   Smc is structure pointer to smc device
- * @param
- * @param
+ * @param   NandInfo is structure pointer to nand info
+ * @param   Page is page address in nandflash
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_U32 ALSmc_Dev_ReadSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page)
@@ -911,11 +941,13 @@ AL_U32 ALSmc_Dev_ReadSpare(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, 
 #define BAD_BLOCK 0xff
 
 /**
- * This function
+ * This function check whether is bad block
  * @param   Smc is structure pointer to smc device
  * @param   NandInfo is structure pointer to nand info
- * @param
+ * @param   Page is page address in nandflash
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_U32 ALSmc_Dev_CheckIsBadBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page)
@@ -930,11 +962,13 @@ AL_U32 ALSmc_Dev_CheckIsBadBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *Nand
 }
 
 /**
- * This function
+ * This function is calculate ecc value
  * @param   Smc is structure pointer to smc device
- * @param
- * @param
+ * @param   Data is pointer of calculate ecc value
+ * @param   EccDataNums is number of ecc data num
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_U32 AlSmc_Dev_HwCalculateEcc(AL_SMC_DevStruct *Smc, AL_U8 *Data, AL_U8 EccDataNums)
@@ -963,11 +997,13 @@ AL_U32 AlSmc_Dev_HwCalculateEcc(AL_SMC_DevStruct *Smc, AL_U8 *Data, AL_U8 EccDat
 }
 
 /**
- * This function
- * @param
- * @param
- * @param
+ * This function corrects the metadata read from nandflash
+ * @param   eccCode is ecc data read from nandflash
+ * @param   eccCalc is ecc data calculated from data read by nandflash
+ * @param   buf is pointer of metadata
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_U32 AlSmc_Dev_HwCorrectEcc(AL_U8 *eccCode, AL_U8 *eccCalc, AL_U8 *buf)
@@ -1017,10 +1053,12 @@ AL_U32 AlSmc_Dev_HwCorrectEcc(AL_U8 *eccCode, AL_U8 *eccCalc, AL_U8 *buf)
 }
 
 /**
- * This function
+ * This function is initialize smc hardware ecc
  * @param   Smc is structure pointer to smc device
  * @param   NandInfo is structure pointer to nand info
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_U32 AlSmc_Dev_EccHwInit(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo)
@@ -1061,9 +1099,11 @@ AL_U32 AlSmc_Dev_EccHwInit(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo)
 }
 
 /**
- * This function
+ * This function is disable hardware ecc
  * @param    Smc is structure pointer to smc device
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_U32 AlSmc_Dev_EccHwDisable(AL_SMC_DevStruct *Smc)
@@ -1078,9 +1118,11 @@ AL_U32 AlSmc_Dev_EccHwDisable(AL_SMC_DevStruct *Smc)
 }
 
 /**
- * This function
+ * This function is enable hardware ecc
  * @param    Smc is structure pointer to smc device
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_U32 AlSmc_Dev_EccHwEnable(AL_SMC_DevStruct *Smc)
@@ -1095,10 +1137,12 @@ AL_U32 AlSmc_Dev_EccHwEnable(AL_SMC_DevStruct *Smc)
 }
 
 /**
- * This function
+ * This function is enable nandflash internal ecc
  * @param   NandInfo is structure pointer to nand info
  * @return
- * @note    Only Micron
+ *          - AL_OK for function success
+ *          - Other for function failuregit
+ * @note    Only used to internal ecc nandflash(Micron)
 */
 AL_U32 AlSmc_Dev_EnableOnDieEcc(AL_NAND_InfoStruct *NandInfo)
 {
@@ -1120,10 +1164,10 @@ AL_U32 AlSmc_Dev_EnableOnDieEcc(AL_NAND_InfoStruct *NandInfo)
 }
 
 /**
- * This function init
- * @param    Smc is structure pointer to smc device
- * @return
- * @note    None None
+ * This function initialize smc cycles and memory width
+ * @param   Smc is structure pointer to smc device
+ * @return  AL_VOID
+ * @note    None
 */
 AL_VOID AlSmc_Dev_InitCyclesAndMemWidth(AL_SMC_DevStruct *Smc)
 {

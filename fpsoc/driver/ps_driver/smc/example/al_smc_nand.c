@@ -29,7 +29,7 @@ int main(void)
          printf("AlSmc_Hal_Init error:%d\r\n", Ret);
     }
 
-    Ret = AlSmc_Hal_EraseBlock(&SmcHal, 0, 0);
+    Ret = AlSmc_Hal_EraseBlock(&SmcHal, 0);
     if (AL_OK != Ret) {
          printf("AlSmc_Hal_EraseBlock error:%d\r\n", Ret);
     }
@@ -38,7 +38,7 @@ int main(void)
         SendData[i] = i%256;
     }
 
-    Ret = AlSmc_Hal_ReadPage(&SmcHal, 0, RecvData, 2048, 0);
+    Ret = AlSmc_Hal_ReadPage(&SmcHal, 0, RecvData, 2048);
     if (AL_OK != Ret) {
          printf("AlSmc_Hal_ReadPage error:%d\r\n", Ret);
          while(1);
@@ -51,13 +51,13 @@ int main(void)
         }
     }
 
-    Ret = AlSmc_Hal_WritePage(&SmcHal, 0, SendData, sizeof(SendData), 0);
+    Ret = AlSmc_Hal_WritePage(&SmcHal, 0, SendData, sizeof(SendData));
     if (AL_OK != Ret) {
          printf("AlSmc_Hal_WritePage error:%d\r\n", Ret);
          while(1);
     }
 
-    Ret = AlSmc_Hal_ReadPage(&SmcHal, 0, RecvData, sizeof(RecvData), 0);
+    Ret = AlSmc_Hal_ReadPage(&SmcHal, 0, RecvData, sizeof(RecvData));
     if (AL_OK != Ret) {
          printf("AlSmc_Hal_ReadPage error:%d\r\n", Ret);
          while(1);

@@ -22,9 +22,15 @@ static AL_NAND_InfoStruct AL_NAND_InfoInstance[AL_SMC_NUM_INSTANCE];
 #define AL_SMC_HAL_UNLOCK(Handle)        do {} while (0)
 
 /**
- * This function
- * @param   Handle is pointer to AL_SMC_HalStruct
+ * This function initialize the Smc according to the specified
+ *          parameters in the AL_SMC_ConfigsStruct and initialize the associated handle.
+ * @param   Handle is pointer to AL_SMC_HalStruct structure that contains smc dev instance
+ * @param   InitConfig pointer to a AL_SMC_ConfigsStruct structure
+ *          that contains the configuration information for the specified Smc peripheral
+ * @param   DevId is hardware module id
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_U32 AlSmc_Hal_Init(AL_SMC_HalStruct *Handle, AL_SMC_ConfigsStruct *InitConfig, AL_U32 DevId)
@@ -91,13 +97,17 @@ AL_U32 AlSmc_Hal_Init(AL_SMC_HalStruct *Handle, AL_SMC_ConfigsStruct *InitConfig
 }
 
 /**
- * This function
+ * This function is read data form nandflash
  * @param   Handle is pointer to AL_SMC_HalStruct
- * @param   Timeout is max wait time for send done
+ * @param   Offset is read data offset to nandflash
+ * @param   Data is pointer of receive data buf
+ * @param   Size is read data size
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
-AL_U32 AlSmc_Hal_ReadPage(AL_SMC_HalStruct *Handle, AL_U64 Offset, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
+AL_U32 AlSmc_Hal_ReadPage(AL_SMC_HalStruct *Handle, AL_U64 Offset, AL_U8 *Data, AL_U32 Size)
 {
     AL_U8 Status;
     AL_U32 NumOfBytes, PartialBytes, CopyOffset, PartialPageRead, Page, Col;
@@ -155,13 +165,17 @@ AL_U32 AlSmc_Hal_ReadPage(AL_SMC_HalStruct *Handle, AL_U64 Offset, AL_U8 *Data, 
 }
 
 /**
- * This function
+ * This function write data to nandflash
  * @param   Handle is pointer to AL_SMC_HalStruct
- * @param   Timeout is max wait time for send done
+ * @param   Offset is write data offset to nandflash
+ * @param   Data is pointer of send data buf
+ * @param   Size is write data size
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
-AL_U32 AlSmc_Hal_WritePage(AL_SMC_HalStruct *Handle, AL_U64 Offset, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
+AL_U32 AlSmc_Hal_WritePage(AL_SMC_HalStruct *Handle, AL_U64 Offset, AL_U8 *Data, AL_U32 Size)
 {
     AL_U8 Status;
     AL_U32 NumOfBytes, PartialBytes, CopyOffset, Page, Col;
@@ -216,13 +230,16 @@ AL_U32 AlSmc_Hal_WritePage(AL_SMC_HalStruct *Handle, AL_U64 Offset, AL_U8 *Data,
 }
 
 /**
- * This function
+ * This function is read nandflash space region(oob)
  * @param   Handle is pointer to AL_SMC_HalStruct
- * @param   Timeout is max wait time for send done
+ * @param   Page is page address in nandflash
+ * @param   Data is pointer of receive data buf
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
-AL_U32 AlSmc_Hal_ReadSpare(AL_SMC_HalStruct *Handle, AL_U32 Page, AL_U8 *Data, AL_U32 Timeout)
+AL_U32 AlSmc_Hal_ReadSpare(AL_SMC_HalStruct *Handle, AL_U32 Page, AL_U8 *Data)
 {
     AL_U8 Status;
     AL_ASSERT(Handle != AL_NULL, AL_SMC_ERR_ILLEGAL_PARAM);
@@ -232,13 +249,16 @@ AL_U32 AlSmc_Hal_ReadSpare(AL_SMC_HalStruct *Handle, AL_U32 Page, AL_U8 *Data, A
 }
 
 /**
- * This function
+ * This function is write space region(oob)
  * @param   Handle is pointer to AL_SMC_HalStruct
- * @param   Timeout is max wait time for send done
+ * @param   Page is page address in nandflash
+ * @param   Data is pointer to write data to nandflash space region
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
-AL_U32 AlSmc_Hal_WriteSpare(AL_SMC_HalStruct *Handle, AL_U32 Page, AL_U8 *Data, AL_U32 Timeout)
+AL_U32 AlSmc_Hal_WriteSpare(AL_SMC_HalStruct *Handle, AL_U32 Page, AL_U8 *Data)
 {
    	AL_U8 Status;
     AL_ASSERT(Handle != AL_NULL, AL_SMC_ERR_ILLEGAL_PARAM);
@@ -248,13 +268,15 @@ AL_U32 AlSmc_Hal_WriteSpare(AL_SMC_HalStruct *Handle, AL_U32 Page, AL_U8 *Data, 
 }
 
 /**
- * This function
+ * This function is erase nandflash block
  * @param   Handle is pointer to AL_SMC_HalStruct
- * @param   Timeout is max wait time for send done
+ * @param   Page is erases the address of the first page of the block
  * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
-AL_U32 AlSmc_Hal_EraseBlock(AL_SMC_HalStruct *Handle, AL_U32 Page, AL_U32 Timeout)
+AL_U32 AlSmc_Hal_EraseBlock(AL_SMC_HalStruct *Handle, AL_U32 Page)
 {
     AL_U8 Status;
     AL_ASSERT(Handle != AL_NULL, AL_SMC_ERR_ILLEGAL_PARAM);

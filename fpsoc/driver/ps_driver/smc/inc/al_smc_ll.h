@@ -40,17 +40,18 @@ typedef enum
     INTF1_CHIP4   = 7
 } AL_SMC_ChipNumEnum;
 
+/* The specific meaning of these timing parameters can be found in nandflash datesheet */
 typedef union SMC_Cycles
 {  AL_U32 d32;
    struct
    {
-        AL_U32 Trc          :4;     /* Returns the busy to re_n time. Minimum permitted value = 0 */
-        AL_U32 Twc          :4;     /* Returns the ID read time. Minimum permitted value = 0 */
-        AL_U32 Trea         :3;     /* Returns the status read time. Minimum permitted value = 0 */
-        AL_U32 Twp          :3;     /* Returns the we_n deassertion delay. Minimum permitted value = 1 */
-        AL_U32 Tclr         :3;     /* Returns the re_n assertion delay. Minimum permitted value = 1 */
-        AL_U32 Tar          :3;     /* Returns the write cycle time. Minimum permitted value = 2 */
-        AL_U32 Trr          :4;     /* Returns the read cycle time. Minimum permitted value = 2 */
+        AL_U32 Trc          :4;     /* the busy to re_n time. Minimum permitted value = 0 */
+        AL_U32 Twc          :4;     /* the ID read time. Minimum permitted value = 0 */
+        AL_U32 Trea         :3;     /* the status read time. Minimum permitted value = 0 */
+        AL_U32 Twp          :3;     /* the we_n deassertion delay. Minimum permitted value = 1 */
+        AL_U32 Tclr         :3;     /* the re_n assertion delay. Minimum permitted value = 1 */
+        AL_U32 Tar          :3;     /* the write cycle time. Minimum permitted value = 2 */
+        AL_U32 Trr          :4;     /* the read cycle time. Minimum permitted value = 2 */
         AL_U32 Reserved     :8;
    } b;
 }AL_SMC_Cycles;

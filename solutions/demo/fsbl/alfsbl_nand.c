@@ -37,7 +37,7 @@ AL_U32 AlFsbl_NandCopy(uint64_t SrcAddress, PTRSIZE DestAddress, uint32_t Length
     AL_U32 Ret;
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "AlFsbl_NandCopy...\r\n");
-    Ret = AlSmc_Hal_ReadPage(&SmcHal, SrcAddress, (AL_U8 *)DestAddress, Length, 10000000);
+    Ret = AlSmc_Hal_ReadPage(&SmcHal, SrcAddress, (AL_U8 *)DestAddress, Length);
     if (AL_OK != Ret) {
         AL_LOG(AL_LOG_LEVEL_DEBUG, "Fsbl AlSmc_Hal_ReadPage error\r\n");
         Ret = Ret | (ALFSBL_BOOTMODE_NAND << 16);
