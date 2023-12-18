@@ -44,7 +44,7 @@ typedef struct
     AL_U8                           AdcClkDiv;
     AL_ADC_PlIntrCfg                PlIntrCfg;
 } AL_ADC_InitStruct;
-/* when AdcClkDiv = 0, AdcClk = AdcClk. otherwise AdcClk = AdcClk / AdcClkDiv / 2 */
+/* when AdcClkDiv = 0, AdcClk = AdcClk, otherwise AdcClk = AdcClk / AdcClkDiv / 2 */
 
 typedef struct
 {

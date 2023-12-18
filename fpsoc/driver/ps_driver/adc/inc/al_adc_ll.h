@@ -17,10 +17,10 @@ extern "C" {
 
 typedef enum
 {
-    AL_ADC_PS_TCK_DIV2     = 0x0,
-    AL_ADC_PS_TCK_DIV4     = 0x1,
-    AL_ADC_PS_TCK_DIV8     = 0x2,
-    AL_ADC_PS_TCK_DIV16    = 0x3
+    AL_ADC_PS_TCK_DIV4     = 0x0,
+    AL_ADC_PS_TCK_DIV8     = 0x1,
+    AL_ADC_PS_TCK_DIV16    = 0x2,
+    AL_ADC_PS_TCK_DIV32    = 0x3
 }AL_ADC_PsTckRate;
 
 typedef enum

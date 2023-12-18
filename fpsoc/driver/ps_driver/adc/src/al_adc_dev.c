@@ -93,6 +93,19 @@ static AL_ADC_ChanCfg ChanDefConfig[8] = {
 
 /************************** Function Definitions ******************************/
 
+/**
+ * This function initialize ADC registers according to the specified parameters in AL_ADC_DevStruct.
+ * @param   Adc Pointer to a AL_ADC_DevStruct structure that contains adc device instance
+ * @param   DevId is hardware module id
+ * @param   InitConfig pointer to a AL_ADC_InitStruct structure
+ *          that contains the configuration information for the specified ADC peripheral
+ * @param   ChanConfig pointer to a AL_ADC_ChanCfg structure
+ *          that contains the channel configuration information for the specified ADC peripheral
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note    access baudrate(LCR, DLL, DLH) related register during a transaction will cause busy detect interrupt
+*/
 AL_S32 AlAdc_Dev_Init(AL_ADC_DevStruct *Adc, AL_U32 DevId, AL_ADC_InitStruct *InitConfig, AL_ADC_ChanCfg *ChanConfig)
 {
     AL_ADC_HwConfigStruct *AdcHwConfig;
@@ -204,6 +217,16 @@ AL_S32 AlAdc_Dev_Init(AL_ADC_DevStruct *Adc, AL_U32 DevId, AL_ADC_InitStruct *In
     return AL_OK;
 }
 
+/**
+ * This function is used to set the interrupt for ps-adc.
+ * @param   Adc Pointer to a AL_ADC_DevStruct structure that contains adc dev instance
+ * @param   IntrType is interrupt type
+ * @param   State is the working state
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlAdc_Dev_EnablePsAdcIntr(AL_ADC_DevStruct *Adc, AL_ADC_PsIntrTypeEnum IntrType, AL_BOOL State)
 {
     AL_ASSERT((Adc != AL_NULL), AL_ADC_ERR_ILLEGAL_PARAM);
@@ -217,6 +240,14 @@ AL_S32 AlAdc_Dev_EnablePsAdcIntr(AL_ADC_DevStruct *Adc, AL_ADC_PsIntrTypeEnum In
     return AL_OK;
 }
 
+/**
+ * This function is used to obtain valid data for pl-adc.
+ * @param   Adc Pointer to a AL_ADC_DevStruct structure that contains adc dev instance
+ * @param   ChanNum is the channel number for reading data
+ * @return
+ *          - AdcConvData is a valid data related to the resolution of pl-adc
+ * @note
+*/
 AL_S16 AlAdc_Dev_AdcConvData(AL_ADC_DevStruct *Adc, AL_ADC_ChanEnum ChanNum)
 {
     AL_S16 AdcConvData = 0;
@@ -241,12 +272,29 @@ AL_S16 AlAdc_Dev_AdcConvData(AL_ADC_DevStruct *Adc, AL_ADC_ChanEnum ChanNum)
     return AdcConvData;
 }
 
+/**
+ * This function is used to obtain raw data for pl-adc.
+ * @param   Adc Pointer to a AL_ADC_DevStruct structure that contains adc dev instance
+ * @param   ChanNum is the channel number for reading data
+ * @return
+ *          - AdcConvData is a raw data of pl-adc
+ * @note
+*/
 AL_S16 AlAdc_Dev_GetAdcData(AL_ADC_DevStruct *Adc, AL_ADC_ChanEnum ChanNum)
 {
     while (!(AlAdc_ll_GetPlAdcIntrType(Adc->AdcBaseAddr) & BIT(AL_ADC_PL_INTR_DONE)));
     return (AlAdc_Dev_AdcConvData(Adc, ChanNum));
 }
 
+/**
+ * This function is used to set mux for channel.
+ * @param   Adc Pointer to a AL_ADC_DevStruct structure that contains adc dev instance
+ * @param   ChanCfg is channel configs for pl-adc
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlAdc_Dev_SetMuxForChan(AL_ADC_DevStruct *Adc, AL_ADC_ChanCfg *ChanCfg)
 {
     AL_ASSERT(((Adc != AL_NULL) && (ChanCfg != AL_NULL)), AL_ADC_ERR_ILLEGAL_PARAM);
@@ -284,6 +332,15 @@ AL_S32 AlAdc_Dev_SetMuxForChan(AL_ADC_DevStruct *Adc, AL_ADC_ChanCfg *ChanCfg)
     return AL_OK;
 }
 
+/**
+ * This function is used to set high and low thresholds for channel.
+ * @param   Adc Pointer to a AL_ADC_DevStruct structure that contains adc dev instance
+ * @param   ChanCfg is channel configs for pl-adc
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlAdc_Dev_SetThreForChan(AL_ADC_DevStruct *Adc, AL_ADC_ChanCfg *ChanCfg)
 {
     AL_ASSERT(((Adc != AL_NULL) && (ChanCfg != AL_NULL)), AL_ADC_ERR_ILLEGAL_PARAM);
@@ -294,6 +351,16 @@ AL_S32 AlAdc_Dev_SetThreForChan(AL_ADC_DevStruct *Adc, AL_ADC_ChanCfg *ChanCfg)
     return AL_OK;
 }
 
+/**
+ * This function is used to mask the interrupt for pl-adc.
+ * @param   Adc Pointer to a AL_ADC_DevStruct structure that contains adc dev instance
+ * @param   IntrType is interrupt type
+ * @param   State is the working state
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlAdc_Dev_MaskPlAdcIntr(AL_ADC_DevStruct *Adc, AL_ADC_PlIntrTypeEnum IntrType, AL_BOOL State)
 {
     AL_ASSERT((Adc != AL_NULL), AL_ADC_ERR_ILLEGAL_PARAM);
@@ -319,6 +386,15 @@ AL_S32 AlAdc_Dev_MaskPlAdcIntr(AL_ADC_DevStruct *Adc, AL_ADC_PlIntrTypeEnum Intr
     return AL_OK;
 }
 
+/**
+ * This function is used to clear the interrupt for pl-adc.
+ * @param   Adc Pointer to a AL_ADC_DevStruct structure that contains adc dev instance
+ * @param   IntrType is interrupt type
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlAdc_Dev_ClrPlAdcIntr(AL_ADC_DevStruct *Adc, AL_ADC_PlIntrTypeEnum IntrType)
 {
     AL_ASSERT((Adc != AL_NULL), AL_ADC_ERR_ILLEGAL_PARAM);
@@ -344,6 +420,12 @@ AL_S32 AlAdc_Dev_ClrPlAdcIntr(AL_ADC_DevStruct *Adc, AL_ADC_PlIntrTypeEnum IntrT
     return AL_OK;
 }
 
+/**
+ * This function is pl-adc data conversion done interrupt handler.
+ * @param   Adc is pointer to AL_ADC_DevStruct
+ * @return
+ * @note
+*/
 static AL_VOID AlAdc_Dev_IntrDoneHandler(AL_ADC_DevStruct *Adc)
 {
     AL_U32 Index;
@@ -369,6 +451,12 @@ static AL_VOID AlAdc_Dev_IntrDoneHandler(AL_ADC_DevStruct *Adc)
     AlAdc_ll_ClrPlAdcIntrDone(Adc->AdcBaseAddr);
 }
 
+/**
+ * This function is pl-adc data greater than threshold done interrupt handler.
+ * @param   Adc is pointer to AL_ADC_DevStruct
+ * @return
+ * @note
+*/
 static AL_VOID AlAdc_Dev_IntrGthHandler(AL_ADC_DevStruct *Adc)
 {
     AL_U32 Index;
@@ -400,6 +488,12 @@ static AL_VOID AlAdc_Dev_IntrGthHandler(AL_ADC_DevStruct *Adc)
     AlAdc_ll_ClrPlAdcIntrGth(Adc->AdcBaseAddr);
 }
 
+/**
+ * This function is pl-adc data less than threshold done interrupt handler.
+ * @param   Adc is pointer to AL_ADC_DevStruct
+ * @return
+ * @note
+*/
 static AL_VOID AlAdc_Dev_IntrLthHandler(AL_ADC_DevStruct *Adc)
 {
     AL_U32 Index;
@@ -431,6 +525,13 @@ static AL_VOID AlAdc_Dev_IntrLthHandler(AL_ADC_DevStruct *Adc)
     AlAdc_ll_ClrPlAdcIntrLth(Adc->AdcBaseAddr);
 }
 
+/**
+ * This function is pl-adc error interrupt handler which will be triggered
+ *          when a valid signal is not received within some cycles.
+ * @param   Adc is pointer to AL_ADC_DevStruct
+ * @return
+ * @note
+*/
 static AL_VOID AlAdc_Dev_IntrErrorHandler(AL_ADC_DevStruct *Adc)
 {
     AL_ADC_EventStruct AdcEvent = {0};
@@ -443,6 +544,12 @@ static AL_VOID AlAdc_Dev_IntrErrorHandler(AL_ADC_DevStruct *Adc)
     AlAdc_ll_ClrPlAdcIntrError(Adc->AdcBaseAddr);
 }
 
+/**
+ * This function is adc's all interrupt entries handler.
+ * @param   Instance is pointer to interrupts call back reference
+ * @return
+ * @note
+*/
 AL_VOID AlAdc_Dev_IntrHandler(AL_VOID *Instance)
 {
     AL_ADC_DevStruct *Adc = (AL_ADC_DevStruct *)Instance;
@@ -475,6 +582,16 @@ AL_VOID AlAdc_Dev_IntrHandler(AL_VOID *Instance)
     }
 }
 
+/**
+ * This function excute operations to set or get adc status.
+ * @param   Adc Pointer to a AL_ADC_DevStruct structure that contains adc device instance
+ * @param   Cmd is io ctl operation to AL_ADC_IoCtlCmdEnum
+ * @param   IoctlParam is pointer reference to Cmd
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlAdc_Dev_IoCtl(AL_ADC_DevStruct *Adc, AL_ADC_IoCtlCmdEnum Cmd, AL_ADC_IoctlParamUnion *IoctlParam)
 {
     AL_S32 Ret = AL_OK;
@@ -530,6 +647,16 @@ AL_S32 AlAdc_Dev_IoCtl(AL_ADC_DevStruct *Adc, AL_ADC_IoCtlCmdEnum Cmd, AL_ADC_Io
     return Ret;
 }
 
+/**
+ * This function register a User Adc Callback To be used when send or receive done.
+ * @param   Adc Pointer to a AL_ADC_DevStruct structure that contains adc device instance
+ * @param   CallBack pointer to the Callback function
+ * @param   CallbackRef pointer to the Callback function params
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlAdc_Dev_RegisterEventCallBack(AL_ADC_DevStruct *Adc, AL_ADC_EventCallBack Callback, AL_VOID *CallbackRef)
 {
     AL_ASSERT(((Adc != AL_NULL) && (Callback != AL_NULL)), AL_ADC_ERR_ILLEGAL_PARAM);
@@ -540,6 +667,14 @@ AL_S32 AlAdc_Dev_RegisterEventCallBack(AL_ADC_DevStruct *Adc, AL_ADC_EventCallBa
     return AL_OK;
 }
 
+/**
+ * This function unregister a User Adc Callback To be used when send or receive done.
+ * @param   Adc Pointer to a AL_ADC_DevStruct structure that contains adc device instance
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlAdc_Dev_UnRegisterEventCallBack(AL_ADC_DevStruct *Adc)
 {
     AL_ASSERT((Adc != AL_NULL), AL_ADC_ERR_ILLEGAL_PARAM);
