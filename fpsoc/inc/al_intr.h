@@ -85,7 +85,7 @@ AL_VOID AlIntr_RestoreLocalInterruptMask(AL_S32 Mask);
 
 AL_S32 AlIntr_SaveLocalInterruptMask(AL_VOID);
 
-AL_S32 AlIntr_SetInterrupt(AL_U32 IntrId, AL_FUNCTION state);
+AL_S32 AlIntr_SetInterrupt(AL_U32 IntrId, AL_FUNCTION State);
 
 AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Func Func, AL_VOID *Param);
 

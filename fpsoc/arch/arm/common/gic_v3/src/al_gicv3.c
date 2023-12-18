@@ -142,11 +142,11 @@ AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Fun
 }
 
 
-AL_S32 AlIntr_SetInterrupt(AL_U32 IntrId, AL_FUNCTION state)
+AL_S32 AlIntr_SetInterrupt(AL_U32 IntrId, AL_FUNCTION State)
 {
     AL_S32 Ret = AL_OK;
 
-    switch (state) {
+    switch (State) {
     case AL_FUNC_DISABLE:
         AlGicv3_DisableInterrupt(IntrId, *(Gicv3DrvData->CpuId));
         Ret = AL_OK;
@@ -165,11 +165,11 @@ AL_S32 AlIntr_SetInterrupt(AL_U32 IntrId, AL_FUNCTION state)
     return Ret;
 }
 
-AL_S32 AlIntr_SetLocalInterrupt(AL_FUNCTION state)
+AL_S32 AlIntr_SetLocalInterrupt(AL_FUNCTION State)
 {
     AL_S32 Ret = AL_OK;
 
-    switch (state) {
+    switch (State) {
     case AL_FUNC_DISABLE:
         disable_all_intr();
         Ret = AL_OK;
