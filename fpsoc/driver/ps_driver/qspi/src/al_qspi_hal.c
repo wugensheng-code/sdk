@@ -406,6 +406,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockSend(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, 
         AlQspi_ll_SetSlvSel(Handle->Dev.HwConfig.BaseAddress, Handle->Dev.Configs.Trans.SlvSelEnum);
     }
 
+    while(QSPI_SR_TXFIFO_EMPTY == AlQspi_ll_IsTxFifoEmpty(Handle->Dev.HwConfig.BaseAddress));
     while(QSPI_SR_BUSY == AlQspi_ll_IsBusy(Handle->Dev.HwConfig.BaseAddress));
     AlQspi_ll_SetSlvSel(Handle->Dev.HwConfig.BaseAddress, QSPI_SER_SS_DIS);
     (AL_VOID)AlOsal_Lock_Release(&Handle->QspiLock);

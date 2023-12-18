@@ -1225,7 +1225,7 @@ AL_VOID AlQspi_Dev_IntrHandler(AL_VOID *instance)
     if (QSPI_IN_TX_FO_INTR(IntrStatus)) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "IntrStatus:0x%x\r\n", IntrStatus);
         AL_LOG(AL_LOG_LEVEL_ERROR, "Error qspi tx fifo over intr\r\n");
-        AL_LOG(AL_LOG_LEVEL_ERROR, "TXFLR:0x%x\r\n", AlQspi_ll_ReadTxFifoLevel(Qspi->HwConfig.BaseAddress));
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Tx Fifo Level:0x%x\r\n", AlQspi_ll_ReadTxFifoLevel(Qspi->HwConfig.BaseAddress));
         AlQspi_Dev_EventHandler(Qspi, AL_QSPI_TX_FO);
         Qspi->State |= AL_QSPI_STATE_ERROR;
         /* A read clears the txo_intr, rxu_intr, rxo_intr interrupts. */
@@ -1235,7 +1235,7 @@ AL_VOID AlQspi_Dev_IntrHandler(AL_VOID *instance)
     if (QSPI_IN_RX_FO_INTR(IntrStatus)) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "IntrStatus:0x%x\r\n", IntrStatus);
         AL_LOG(AL_LOG_LEVEL_ERROR, "Error qspi rx fifo over intr\r\n");
-        AL_LOG(AL_LOG_LEVEL_ERROR, "RXFLR:0x%x\r\n", AlQspi_ll_ReadRxFifoLevel(Qspi->HwConfig.BaseAddress));
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Rx Fifo Level:0x%x\r\n", AlQspi_ll_ReadRxFifoLevel(Qspi->HwConfig.BaseAddress));
         AlQspi_Dev_EventHandler(Qspi, AL_QSPI_RX_FO);
         Qspi->State |= AL_QSPI_STATE_ERROR;
         /* A read clears the txo_intr, rxu_intr, rxo_intr interrupts. */
@@ -1245,7 +1245,7 @@ AL_VOID AlQspi_Dev_IntrHandler(AL_VOID *instance)
     if (QSPI_IN_RX_FU_INTR(IntrStatus)) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "IntrStatus:0x%x\r\n", IntrStatus);
         AL_LOG(AL_LOG_LEVEL_ERROR, "Error qspi rx fifo underflow intr\r\n");
-        AL_LOG(AL_LOG_LEVEL_ERROR, "RXFLR:0x%x\r\n", AlQspi_ll_ReadRxFifoLevel(Qspi->HwConfig.BaseAddress));
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Rx Fifo Level:0x%x\r\n", AlQspi_ll_ReadRxFifoLevel(Qspi->HwConfig.BaseAddress));
         AlQspi_Dev_EventHandler(Qspi, AL_QSPI_RX_FU);
         Qspi->State |= AL_QSPI_STATE_ERROR;
         /* A read clears the txo_intr, rxu_intr, rxo_intr interrupts. */
@@ -1255,7 +1255,7 @@ AL_VOID AlQspi_Dev_IntrHandler(AL_VOID *instance)
     if (QSPI_IN_XIP_RX_FO_INTR(IntrStatus)){
         AL_LOG(AL_LOG_LEVEL_ERROR, "IntrStatus:0x%x\r\n", IntrStatus);
         AL_LOG(AL_LOG_LEVEL_ERROR, "Error qspi XIP rx fifo over intr\r\n");
-        AL_LOG(AL_LOG_LEVEL_ERROR, "RXFLR:0x%x\r\n", AlQspi_ll_ReadRxFifoLevel(Qspi->HwConfig.BaseAddress));
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Rx Fifo Level:0x%x\r\n", AlQspi_ll_ReadRxFifoLevel(Qspi->HwConfig.BaseAddress));
         AlQspi_Dev_EventHandler(Qspi, AL_QSPI_RX_FO);
         Qspi->State |= AL_QSPI_STATE_ERROR;
         /* A read clears the txo_intr, rxu_intr, rxo_intr interrupts. */

@@ -12,7 +12,7 @@ SDK_ROOT    ?= ../../../../..
 
 
 CHIP        ?= dr1m90
-ELF         ?= QSPI_NOR
+ELF         ?= QSPI_X4_NOR
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
@@ -21,8 +21,8 @@ COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
 BOARD_DIR  ?= $(SDK_ROOT)/solutions/boards/
-#BOARD_NAME ?= board_dr1x90_ad101_v10
-BOARD_NAME ?= board_dr1x90_emulation
+BOARD_NAME ?= board_dr1x90_ad101_v10
+#BOARD_NAME ?= board_dr1x90_emulation
 
 
 #########################################################################
@@ -35,10 +35,12 @@ BOARD_NAME ?= board_dr1x90_emulation
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
-ifeq ($(ELF), QSPI_NOR)
-C_SRCS += al_qspi_nor.c
-else
+ifeq ($(ELF), QSPI_X1_NOR)
+C_SRCS += al_qspi_x1_nor.c
+else ifeq ($(ELF), QSPI_DMA_NOR)
 C_SRCS += al_qspi_dma_nor.c
+else
+C_SRCS += al_qspi_x4_nor.c
 endif
 
 INC_DIR     += ./
@@ -60,8 +62,8 @@ CFLAGS := -O2 -g
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-# PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
-PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
+PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
+# PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile
@@ -73,10 +75,12 @@ PINMUX_MODE ?= PINMUX_MODE1
 #########################################################################
 # 5. define build target
 #########################################################################
-ifeq ($(ELF), QSPI_NOR)
-TARGET := fpsoc_qspi_nor_example
-else
+ifeq ($(ELF), QSPI_X1_NOR)
+TARGET := fpsoc_qspi_x1_nor_example
+else ifeq ($(ELF), QSPI_DMA_NOR)
 TARGET := fpsoc_qspi_dma_nor_example
+else
+TARGET := fpsoc_qspi_x4_nor_example
 endif
 
 ifneq ($(PINMUX_MODE),)
@@ -95,6 +99,6 @@ clean:
 	make clean CHIP=dr1v90
 
 cleanelf:
-	rm -rf *.bin *.dasm *.dump *.elf *.hex *.map *.verilog
+	rm -rf *.bin *.dasm *.dump *.elf *.hex *.map *.verilog *.d *.o
 
 include $(SDK_ROOT)/tools/make/rules.mk
