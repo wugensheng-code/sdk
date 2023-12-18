@@ -58,15 +58,15 @@ AL_S32 main(AL_VOID)
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Uart Nonblocked test failed\r\n");
         return Ret;
-    } else {
-        AL_LOG(AL_LOG_LEVEL_INFO, "Uart Nonblocked test success\r\n");
-        return Ret;
     }
+
+    AL_LOG(AL_LOG_LEVEL_INFO, "\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Uart Nonblocked test success\r\n");
+    return Ret;
 }
 
 static AL_S32 AlUart_Test_RecvAndSendNonBlock(AL_VOID)
 {
-
     AL_UART_HalStruct *UartHandle;
 
     AL_U8 *Data = (AL_U8 *)malloc(BUF_SIZE);
@@ -77,6 +77,7 @@ static AL_S32 AlUart_Test_RecvAndSendNonBlock(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_ERROR, "Uart Hal Init error:0x%x\r\n", Ret);
         return Ret;
     }
+
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Send less than %d Bytes data and will show back\r\n", BUF_SIZE);
@@ -84,19 +85,20 @@ static AL_S32 AlUart_Test_RecvAndSendNonBlock(AL_VOID)
     while (1) {
         Ret = AlUart_Hal_RecvData(UartHandle, Data, BUF_SIZE);
         if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "AlUart_Hal_RecvData Error\r\n");
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Uart receive data error\r\n");
             return Ret;
         }
 
-        while (AlUart_Dev_IsRxBusy(UartHandle->Dev));
+        while (AlUart_Dev_IsRxBusy(&UartHandle->Dev));
 
         Ret = AlUart_Hal_SendData(UartHandle, Data, UartHandle->Dev.RecvBuffer.HandledCnt);
-        if (Ret == AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_INFO, "\r\n");
-            return AL_OK;
-        } else {
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Uart send data error\r\n");
             return Ret;
         }
-    }
 
+        while (AlUart_Dev_IsTxBusy(&UartHandle->Dev));
+
+        return AL_OK;
+    }
 }

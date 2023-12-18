@@ -19,8 +19,12 @@
 extern "C" {
 #endif
 
-/******************************* Exported Includes ************************************/
+/***************************** Include Files *********************************/
 #include "al_uart_ll.h"
+
+/************************** Constant Definitions *****************************/
+
+/***************** Macros (Inline Functions) Definitions *********************/
 
 #define AL_UART_EVENT_START_BIT    6
 
@@ -34,11 +38,10 @@ extern "C" {
 #define AL_UART_EVENTS_TO_ERRS(Events)       (AL_DEF_ERR(AL_UART, AL_LOG_LEVEL_ERROR, Events << AL_UART_EVENT_START_BIT))
 
 
-/******************************* Exported Typedef ************************************/
+/**************************** Type Definitions *******************************/
 /**
  * @brief  Configs Struct
  */
-
 typedef struct
 {
     AL_U32                  BaudRate;
@@ -49,13 +52,19 @@ typedef struct
     AL_BOOL                 CharTimeoutEnable;
 } AL_UART_InitStruct;
 
+/**
+ * @brief  Data buffer
+ */
 typedef struct
 {
     AL_U8                     *BufferPtr;
-    AL_U32                    RequestedCnt;        /*total size requested*/
-    AL_U32                    HandledCnt;          /*the size has handled*/
+    AL_U32                    RequestedCnt;        /* total size requested */
+    AL_U32                    HandledCnt;          /* the size has handled */
 } AL_Uart_BufferStruct;
 
+/**
+ * @brief  Module running state enum
+ */
 typedef enum
 {
     AL_UART_STATE_NOT_INIT     = (0x0),
@@ -64,6 +73,9 @@ typedef enum
     AL_UART_STATE_RX_BUSY      = (0x01 << 2)
 } AL_UART_StateEnum;
 
+/**
+ * @brief  Recv error enum
+ */
 typedef enum
 {
     AL_UART_OVERRUN_ERR    = BIT(1),
@@ -72,6 +84,9 @@ typedef enum
     AL_UART_BREAK_ERR      = BIT(4)
 } AL_UART_RecvErrorTypeEnum;
 
+/**
+ * @brief  Event enum
+ */
 typedef enum
 {
     AL_UART_EVENT_SEND_DONE            = BIT(0),
@@ -90,6 +105,9 @@ typedef enum
     AL_UART_EVENT_MODEM_STATUS_INTR    = BIT(13),
 } AL_UART_EventIdEnum;
 
+/**
+ * @brief  Io ctl cmd enum
+ */
 typedef enum
 {
     AL_UART_IOCTL_SET_BAUD_RATE,
@@ -101,9 +119,13 @@ typedef enum
     AL_UART_IOCTL_SET_PARITY,
     AL_UART_IOCTL_GET_PARITY,
     AL_UART_IOCTL_SET_AUTO_FLOW_CTL,
-    AL_UART_IOCTL_SET_LOOPBACK
+    AL_UART_IOCTL_SET_LOOPBACK,
+    AL_UART_IOCTL_SET_DMA_MODE,
 } AL_UART_IoCtlCmdEnum;
 
+/**
+ * @brief  Io ctl param enum
+ */
 typedef union {
     AL_U32     BaudRate;
     AL_U32     DataWidth;
@@ -111,6 +133,7 @@ typedef union {
     AL_U32     Parity;
     AL_BOOL    AutoFlowState;
     AL_BOOL    LoopBack;
+    AL_BOOL    DmaMode;
 }AL_UART_IoctlParamUnion;
 
 typedef struct
@@ -142,6 +165,8 @@ AL_S32 AlUart_Dev_RecvData(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 ReceiveS
 AL_VOID AlUart_Dev_SendByte(AL_UART_DevStruct *Uart, AL_S8 Char);
 AL_S32 AlUart_Dev_SendDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 Size);
 AL_S32 AlUart_Dev_RecvDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 Size);
+AL_BOOL AlUart_Dev_IsRxBusy(AL_UART_DevStruct *Uart);
+AL_BOOL AlUart_Dev_IsTxBusy(AL_UART_DevStruct *Uart);
 AL_VOID AlUart_Dev_StopSend(AL_UART_DevStruct *Uart);
 AL_VOID AlUart_Dev_StopReceive(AL_UART_DevStruct *Uart);
 AL_VOID AlUart_Dev_IntrHandler(void *Instance);

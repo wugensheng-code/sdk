@@ -66,21 +66,6 @@ AL_UART_HwConfigStruct *AlUart_Dev_LookupConfig(AL_U32 DevId)
 }
 
 /**
- * This function get default hardware config structure.
- * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
- * @param   Init pointer to a AL_UART_InitStruct structure
- *          that contains the configuration information for the specified UART peripheral
- * @return
- *          - AL_OK for function success
- * @note
-*/
-AL_S32 AL_Uart_GetDefaultConf(AL_UART_DevStruct *Uart, AL_UART_InitStruct *Init)
-{
-    *Init = UartDefInitConfigs;
-    return AL_OK;
-}
-
-/**
  * This function check whether the uart tx is busy.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
  * @return
@@ -211,7 +196,6 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct
     Uart->IntrNum      = UartHwConfig->IntrNum;
     Uart->InputClockHz = UartHwConfig->InputClockHz;
 
-    /* Initialize UART */
     AlUart_ll_DisableAllIntr(Uart->BaseAddr);
     AlUart_ll_ResetTxFifo(Uart->BaseAddr);
     AlUart_ll_ResetRxFifo(Uart->BaseAddr);
@@ -234,10 +218,6 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct
     AlUart_ll_SetTxFifoThre(Uart->BaseAddr, AL_UART_TxFIFO_HALF_FULL);
     AlUart_ll_SetRxFifoThre(Uart->BaseAddr, AL_UART_RxFIFO_HALF_FULL);
 
-    /* Enable Rx Line Interrupt*/
-    AlUart_ll_EnableLineIntr(Uart->BaseAddr, AL_TRUE);
-
-    /* Set AutoFlowControl */
     if (Uart->Configs.HwFlowCtl) {
         AlUart_ll_SetAutoFlowCtl(Uart->BaseAddr, AL_TRUE);
     }
@@ -247,6 +227,14 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct
     return AL_OK;
 }
 
+/**
+ * This function determines whether the Tx FIFO is full.
+ * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
+ * @return
+ *          - AL_TRUE for TxFifo is full
+ *          - AL_FALSE for TxFifo is not full
+ * @note
+*/
 AL_BOOL AlUart_Dev_IsTxFifoFull(AL_UART_DevStruct *Uart)
 {
     /* If the FIFOs is enabled and 'THRE' mode is turned on,
@@ -294,7 +282,7 @@ AL_S32 AlUart_Dev_SendDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 S
     }
 
     /* Waiting for transmitter Shift Register and the FIFO both empty. */
-    while (!(AlUart_ll_IsTxDone(Uart->BaseAddr)));
+    while (!(AlUart_ll_IsEmptyTsrAndTxFifo(Uart->BaseAddr)));
 
     AlUart_Dev_ClrTxBusy(Uart);
 
@@ -381,6 +369,9 @@ AL_S32 AlUart_Dev_RecvData(AL_UART_DevStruct *Uart, AL_U8 *ReceiveBuf, AL_U32 Re
     AL_ASSERT((!AlUart_Dev_IsRxBusy(Uart)), AL_UART_ERR_BUSY);
 
     AlUart_Dev_SetRxBusy(Uart);
+
+    /* Enable Rx Line Interrupt */
+    AlUart_ll_EnableRecvLineIntr(Uart->BaseAddr, AL_TRUE);
 
     /*
      * Loop until there is no more data in RX Fifo or the specified
@@ -649,7 +640,14 @@ AL_VOID AlUart_Dev_IntrHandler(AL_VOID *Instance)
     }
 }
 
-
+/**
+ * This function is used to set the uart interrupt status.
+ * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
+ * @param   Transfer is transport type
+ * @param   State is interrupt status
+ * @return
+ * @note
+*/
 static AL_VOID AlUart_Dev_SetIntr(AL_UART_DevStruct *Uart, AL_Uart_TransferEnum Transfer,  AL_FUNCTION State)
 {
     AL_BOOL IsRxBusy = AlUart_Dev_IsRxBusy(Uart);
@@ -663,12 +661,24 @@ static AL_VOID AlUart_Dev_SetIntr(AL_UART_DevStruct *Uart, AL_Uart_TransferEnum 
     AlOsal_ExitDevCtritical(Uart->IntrNum, IsRxBusy && IsTxBusy);
 }
 
+/**
+ * This function is used to set the uart interrupt status.
+ * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
+ * @return
+ * @note
+*/
 AL_VOID AlUart_Dev_StopSend(AL_UART_DevStruct *Uart)
 {
     AlUart_Dev_SetIntr(Uart, UART_TX, AL_FUNC_DISABLE);
     AlUart_Dev_ClrTxBusy(Uart);
 }
 
+/**
+ * This function is used to set the uart interrupt status.
+ * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
+ * @return
+ * @note
+*/
 AL_VOID AlUart_Dev_StopReceive(AL_UART_DevStruct *Uart)
 {
     AlUart_Dev_SetIntr(Uart, UART_RX, AL_FUNC_DISABLE);
@@ -679,7 +689,7 @@ AL_VOID AlUart_Dev_StopReceive(AL_UART_DevStruct *Uart)
  * This function excute operations to set or get uart status
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
  * @param   Cmd is io ctl operation to AL_UART_IoCtlCmdEnum
- * @param   Data is pointer reference to Cmd
+ * @param   IoctlParam is pointer reference to Cmd
  * @return
  *          - AL_OK for function success
  *          - Other for function failure
@@ -746,6 +756,11 @@ AL_S32 AlUart_Dev_IoCtl(AL_UART_DevStruct *Uart, AL_UART_IoCtlCmdEnum Cmd, AL_UA
     case AL_UART_IOCTL_SET_LOOPBACK: {
         AL_BOOL LoopBack = IoctlParam->LoopBack;
         AlUart_ll_Set_LoopBack(Uart->BaseAddr, LoopBack);
+    break;
+    }
+    case AL_UART_IOCTL_SET_DMA_MODE: {
+        AL_BOOL DmaMode = IoctlParam->DmaMode;
+        AlUart_ll_SetDmaMode(Uart->BaseAddr, DmaMode);
     break;
     }
     default:

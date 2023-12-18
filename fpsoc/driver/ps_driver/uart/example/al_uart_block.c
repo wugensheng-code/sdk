@@ -58,16 +58,17 @@ AL_S32 main(AL_VOID)
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Uart blocked test failed\r\n");
         return Ret;
-    } else {
-        AL_LOG(AL_LOG_LEVEL_INFO, "Uart blocked test success\r\n");
-        return Ret;
     }
+
+    AL_LOG(AL_LOG_LEVEL_INFO, "\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Uart blocked test success\r\n");
+    return Ret;
 }
 
 static AL_S32 AlUart_Test_RecvAndSendBlock(AL_VOID)
 {
     AL_UART_HalStruct *UartHandle;
-    AL_U32 RecvSize;
+    AL_U32 RealSize;
 
     AL_U8 *Data = (AL_U8 *)malloc(BUF_SIZE);
     memset(Data, 0, (sizeof(AL_U8) * BUF_SIZE));
@@ -77,23 +78,25 @@ static AL_S32 AlUart_Test_RecvAndSendBlock(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_ERROR, "Uart Hal Init error:0x%x\r\n", Ret);
         return Ret;
     }
+
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
+
     AL_LOG(AL_LOG_LEVEL_INFO, "Send less than %d Bytes data and will show back\r\n", BUF_SIZE);
     while (1) {
-        Ret = AlUart_Hal_RecvDataBlock(UartHandle, Data, BUF_SIZE, &RecvSize, AL_UART_TIME_OUT_MS);
+        Ret = AlUart_Hal_RecvDataBlock(UartHandle, Data, BUF_SIZE, &RealSize, AL_UART_TIME_OUT_MS);
         if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "AlUart Receive data timeout or less that %d Bytes data\r\n", BUF_SIZE);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Uart receive data timeout or less that %d Bytes data\r\n", BUF_SIZE);
             return Ret;
         }
+
         if (Ret == AL_OK) {
-            Ret = AlUart_Hal_SendDataBlock(UartHandle, Data, RecvSize, AL_UART_TIME_OUT_MS);
-            if (Ret == AL_OK) {
-                AL_LOG(AL_LOG_LEVEL_INFO, "\r\n");
-                return AL_OK;
-            } else {
+            Ret = AlUart_Hal_SendDataBlock(UartHandle, Data, RealSize, AL_UART_TIME_OUT_MS);
+            if (Ret != AL_OK) {
+                AL_LOG(AL_LOG_LEVEL_ERROR, "Uart send data error\r\n");
                 return Ret;
+            } else {
+                return AL_OK;
             }
         }
     }
-
 }
