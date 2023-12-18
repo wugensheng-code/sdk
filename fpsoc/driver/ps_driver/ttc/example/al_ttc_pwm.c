@@ -69,6 +69,8 @@ static AL_S32 AlTtc_Test_PwmOutput(AL_VOID)
         return Ret;
     }
 
+    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
+
     AlTtc_Hal_EnableIntervalMode(TtcHandle);
     AlTtc_Hal_SetIntervalMaxVal(TtcHandle, AL_TTC_INTERVAL_MAX_VAL);
 
@@ -83,9 +85,8 @@ static AL_S32 AlTtc_Test_PwmOutput(AL_VOID)
     AlTtc_Hal_EnableWaveOutput(TtcHandle, AL_TRUE);
     AlTtc_Hal_EnableCounter(TtcHandle, AL_TRUE);
 
-    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
-
     AL_LOG(AL_LOG_LEVEL_INFO, "Ttc pwm output in progress\r\n");
+
 
     return Ret;
 }

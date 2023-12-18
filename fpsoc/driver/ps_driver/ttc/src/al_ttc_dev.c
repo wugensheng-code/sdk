@@ -39,7 +39,15 @@ static AL_TTC_TimerInitStruct TtcDefInitConfigs = {
 
 /************************** Function Definitions ******************************/
 
-
+/**
+ * This function init TTC module.
+ * @param   Ttc is pointer to AL_TTC_DevStruct
+ * @param   DevId is hardware module id
+ * @param   InitConfig is module config structure with AL_TTC_TimerInitStruct
+ * @return
+ *          - AL_OK is init done
+ * @note
+*/
 AL_S32 AlTtc_Dev_Init(AL_TTC_DevStruct *Ttc, AL_U32 DevId, AL_TTC_TimerInitStruct *InitConfig)
 {
     AL_TTC_HwConfigStruct *TtcHwConfig;
@@ -63,10 +71,17 @@ AL_S32 AlTtc_Dev_Init(AL_TTC_DevStruct *Ttc, AL_U32 DevId, AL_TTC_TimerInitStruc
     AlTtc_ll_EnbalePresacle(Ttc->BaseAddr, Ttc->TimerInitConfigs.EnablePrescale);
     AlTtc_ll_SetPresacleVal(Ttc->BaseAddr, Ttc->TimerInitConfigs.PrescaleVal);
     AlTtc_ll_SetCountDec(Ttc->BaseAddr, Ttc->TimerInitConfigs.CountDec);
+    AltTtc_ll_GetIntrtype(Ttc->BaseAddr);
 
     return AL_OK;
 }
 
+/**
+ * This function is interval interrupt handler.
+ * @param   Ttc is pointer to AL_TTC_DevStruct
+ * @return
+ * @note
+*/
 static AL_VOID AlTtc_Dev_IntervalHandler(AL_TTC_DevStruct *Ttc)
 {
     AL_TTC_EventStruct TtcEvent = {
@@ -77,6 +92,12 @@ static AL_VOID AlTtc_Dev_IntervalHandler(AL_TTC_DevStruct *Ttc)
     }
 }
 
+/**
+ * This function is match1 interrupt handler.
+ * @param   Ttc is pointer to AL_TTC_DevStruct
+ * @return
+ * @note
+*/
 static AL_VOID AlTtc_Dev_Match1Handler(AL_TTC_DevStruct *Ttc)
 {
     AL_TTC_EventStruct TtcEvent = {
@@ -87,6 +108,12 @@ static AL_VOID AlTtc_Dev_Match1Handler(AL_TTC_DevStruct *Ttc)
     }
 }
 
+/**
+ * This function is match2 interrupt handler.
+ * @param   Ttc is pointer to AL_TTC_DevStruct
+ * @return
+ * @note
+*/
 static AL_VOID AlTtc_Dev_Match2Handler(AL_TTC_DevStruct *Ttc)
 {
     AL_TTC_EventStruct TtcEvent = {
@@ -97,6 +124,12 @@ static AL_VOID AlTtc_Dev_Match2Handler(AL_TTC_DevStruct *Ttc)
     }
 }
 
+/**
+ * This function is match3 interrupt handler.
+ * @param   Ttc is pointer to AL_TTC_DevStruct
+ * @return
+ * @note
+*/
 static AL_VOID AlTtc_Dev_Match3Handler(AL_TTC_DevStruct *Ttc)
 {
     AL_TTC_EventStruct TtcEvent = {
@@ -107,6 +140,12 @@ static AL_VOID AlTtc_Dev_Match3Handler(AL_TTC_DevStruct *Ttc)
     }
 }
 
+/**
+ * This function is overflow interrupt handler.
+ * @param   Ttc is pointer to AL_TTC_DevStruct
+ * @return
+ * @note
+*/
 static AL_VOID AlTtc_Dev_OverflowHandler(AL_TTC_DevStruct *Ttc)
 {
     AL_TTC_EventStruct TtcEvent = {
@@ -117,6 +156,12 @@ static AL_VOID AlTtc_Dev_OverflowHandler(AL_TTC_DevStruct *Ttc)
     }
 }
 
+/**
+ * This function is eventtimer interrupt handler.
+ * @param   Ttc is pointer to AL_TTC_DevStruct
+ * @return
+ * @note
+*/
 static AL_VOID AlTtc_Dev_EventTimerHandler(AL_TTC_DevStruct *Ttc)
 {
     AL_TTC_EventStruct TtcEvent = {
@@ -139,7 +184,12 @@ static AL_VOID AlTtc_Dev_EventTimerHandler(AL_TTC_DevStruct *Ttc)
 #define AL_TTC_INTR_OVERFLOW(Status)           (Status & (BIT(AL_TTC_IntrOverflow)))
 #define AL_TTC_INTR_EVENTTIMER(Status)         (Status & (BIT(AL_TTC_IntrEventTimer)))
 
-
+/**
+ * This function is ttc's all interrupt entries handler.
+ * @param   Instance is pointer to interrupts call back reference
+ * @return
+ * @note
+*/
 AL_VOID AlTtc_Dev_IntrHandler(AL_VOID *Instance)
 {
     AL_TTC_DevStruct *Ttc = (AL_TTC_DevStruct *)Instance;
@@ -165,6 +215,16 @@ AL_VOID AlTtc_Dev_IntrHandler(AL_VOID *Instance)
     }
 }
 
+/**
+ * This function excute operations to set or get ttc status.
+ * @param   Ttc Pointer to a AL_TTC_DevStruct structure that contains ttc device instance
+ * @param   Cmd is io ctl operation to AL_TTC_IoCtlCmdEnum
+ * @param   IoctlParam is pointer reference to Cmd
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlTtc_Dev_IoCtl(AL_TTC_DevStruct *Ttc, AL_TTC_IoCtlCmdEnum Cmd, AL_TTC_IoctlParamUnion *IoctlParam)
 {
     AL_S32 Ret = AL_OK;
@@ -193,6 +253,16 @@ AL_S32 AlTtc_Dev_IoCtl(AL_TTC_DevStruct *Ttc, AL_TTC_IoCtlCmdEnum Cmd, AL_TTC_Io
     return Ret;
 }
 
+/**
+ * This function register a User Ttc Callback To be used when send or receive done.
+ * @param   Ttc Pointer to a AL_TTC_DevStruct structure that contains ttc device instance
+ * @param   CallBack pointer to the Callback function
+ * @param   CallbackRef pointer to the Callback function params
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlTtc_Dev_RegisterEventCallBack(AL_TTC_DevStruct *Ttc, AL_TTC_EventCallBack Callback, void *CallbackRef)
 {
     Ttc->EventCallBack        = Callback;
@@ -201,6 +271,14 @@ AL_S32 AlTtc_Dev_RegisterEventCallBack(AL_TTC_DevStruct *Ttc, AL_TTC_EventCallBa
     return AL_OK;
 }
 
+/**
+ * This function unregister a User Ttc Callback To be used when send or receive done.
+ * @param   Ttc Pointer to a AL_TTC_DevStruct structure that contains ttc device instance
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failure
+ * @note
+*/
 AL_S32 AlTtc_Dev_UnRegisterEventCallBack(AL_TTC_DevStruct *Ttc)
 {
     Ttc->EventCallBack = (AL_TTC_EventCallBack)AL_NULL;
