@@ -114,6 +114,11 @@ AL_VOID AlGicv3_SpisConfigDefaults(AL_UINTPTR GicdBase)
 
     NumInts = AlGicv3_GetSpiLimit(GicdBase);
 
+    /* Complete all interrupt */
+    for (i = MIN_SPI_ID; i < NumInts; i++) {
+        AlGicv3_EndOfIntrSel1(i);
+    }
+
     /* Treat all (E)SPIs as G1NS by default. We do 32 at a time. */
     for (i = MIN_SPI_ID; i < NumInts; i += (1U << IGROUPR_SHIFT)) {
         #ifdef SUPPORT_NONSECURE
@@ -148,6 +153,7 @@ AL_VOID AlGicv3_SpisConfigDefaults(AL_UINTPTR GicdBase)
     for (i = MIN_SPI_ID; i < NumInts; i += (1U << ICENABLER_SHIFT)) {
         Gicd_WriteIcenabler(GicdBase, i, ~0U);
         Gicd_WriteIcactiver(GicdBase, i, ~0U);
+        Gicd_WriteIcpendr(GicdBase, i, ~0U);
     }
 }
 
@@ -161,6 +167,7 @@ AL_VOID AlGicv3_PpiSgiConfigDefaults(AL_UINTPTR GicrBase)
     PpiRegsNum = 1U;
 
     Gicr_WriteIcenabler0(GicrBase, ~0U);
+    Gicr_WriteIcpendr0(GicrBase, ~0U);
 
     /* Wait for pending writes to GICR_ICENABLER */
     Gicr_WaitForPendingWrite(GicrBase);
