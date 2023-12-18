@@ -801,14 +801,36 @@
 		},
 		"PS_DRIVER_QSPI": {
 			"1.0":{
-				"QSPI_NOR": {
-					"name": "QSPI_NOR",
+				"QSPI_DMA_NOR": {
+					"name": "QSPI_DMA_NOR",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/ps_driver/qspi/example/al_qspi_nor.c",
+						"fpsoc/driver/ps_driver/qspi/example/al_qspi_dma_nor.c",
 						"PS_DRIVER_QSPI_V1_0"
 					],
-					"description": "qspi test",
+					"description": "qspi_dma_nor test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"QSPI_X1_NOR": {
+					"name": "QSPI_X1_NOR",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/qspi/example/al_qspi_x1_nor.c",
+						"PS_DRIVER_QSPI_V1_0"
+					],
+					"description": "al_qspi_x1_nor test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"QSPI_X4_NOR": {
+					"name": "QSPI_X4_NOR",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/qspi/example/al_qspi_x4_nor.c",
+						"PS_DRIVER_QSPI_V1_0"
+					],
+					"description": "al_qspi_x4_nor test",
 					"supportedOS": ["standalone"],
 					"supportedProc": ["apu-0", "apu-1", "rpu"]
 				}
