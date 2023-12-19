@@ -22,14 +22,14 @@ void Enablepinmux1(void)
      *(AL_U32 *)(0xf8803020u) =0x1;    //CAN1 MIO8
      *(AL_U32 *)(0xf8803024u) =0x1;
      *(AL_U32 *)(0xf880340cu) =0x1;    //sel3
-
+/*
      *(AL_U32 *)(0xf8803028u) =0x4;    //GPIO MIO10
      *(AL_U32 *)(0xf880302cu) =0x4;    //GPIO MIO11
 
      *(AL_U32 *)(0xf8803030u) =0x0;    //I2C1 MIO12
      *(AL_U32 *)(0xf8803034u) =0x0;    //I2C1 MIO13
      *(AL_U32 *)(0xf8803404u) =0x1;
-
+*/
 
      *(AL_U32 *)(0xf8803038u) =0x4;    //GPIO MIO14
      *(AL_U32 *)(0xf880303cu) =0x4;    //GPIO MIO15

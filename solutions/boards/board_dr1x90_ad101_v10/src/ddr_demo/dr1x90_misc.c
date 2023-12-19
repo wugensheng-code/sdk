@@ -2,6 +2,8 @@
 #include "dr1x90_ddrc_init.h"
 #include <stdio.h>
 
+#define printf(...)
+
 //gate_chain
 u8 env_cfg_en_read_gate_train = 1;
 u8 env_cfg_is_micron = 1;
@@ -20,38 +22,18 @@ void pinmux_config_dbgm_ddr()
     static volatile uint32_t* const MIO_F15SEL = (volatile uint32_t*) 0xF8803100;
     static volatile uint32_t* const CFG_DBGM_SEL = (volatile uint32_t*) 0xF8800100;
 
-
     // DBGM[15 : 0]
     const int dbgm_pin[16] = { 17, 18, 19, 29, 30, 31, 32, 33, 40, 41, 42, 43, 44, 45, 52, 53 };
     // PINMUX
     for (int i = 0; i < 16; ++i) {
-        // MIO_FUNCSEL[dbgm_pin[i]] = 15U;
-        // MIO_F15SEL[dbgm_pin[i]] = 1U;
         uint32_t offset = dbgm_pin[i];
-        ////  printf("\noffset = 0x%x\r\n", offset);
-
-        dr1x90_ddr_reg_write(&ftcHandle, (u32)(UINTPTR)(MIO_FUNCSEL + offset), 15U);
-        //dr1x90_ddr_reg_read(&ftcHandle, MIO_FUNCSEL + offset,&reg_data1);
-
-        //printf("\n******  addr = 0x%x,data = 0x%x *********\r\n", MIO_FUNCSEL + offset, reg_data1);
-
-
-        dr1x90_ddr_reg_write(&ftcHandle, (u32)(UINTPTR)(MIO_F15SEL + offset), 0x1);
-
-        //dr1x90_ddr_reg_read(&ftcHandle, MIO_F15SEL + offset, &reg_data2);
-        //printf("\n******  addr = 0x%x,data2 = 0x%x  *********\r\n", MIO_F15SEL + offset, reg_data2);
+        MIO_FUNCSEL[offset] = 15U;
+        MIO_F15SEL [offset] = 1U;
     }
-
 
     // Debug monitor sel
     uint32_t cfg = 0U | (1U << 7);
-    // *CFG_DBGM_SEL = cfg;
-    //dr1x90_ddr_reg_write(&ftcHandle, CFG_DBGM_SEL, cfg);
-    dr1x90_ddr_reg_write(&ftcHandle, (u32)(UINTPTR)(CFG_DBGM_SEL), cfg);
-
-    //dr1x90_ddr_reg_read(&ftcHandle, CFG_DBGM_SEL, &reg_data);
-    //printf("\n****** CFG_DBGM_SEL  addr = 0x%x,data = 0x%x  *********\r\n", CFG_DBGM_SEL, reg_data);
-
+    *CFG_DBGM_SEL = cfg;
 }
 
 void internal_loopback_setup()
@@ -171,74 +153,74 @@ void external_loopback(void)
     dr1x90_field_write(DDRC_ADDR_BK0_IOMC1 + byte3_glue_cfg0, U_byte3_glue_mc1_rdqsn_gate_dis_en_offset, U_byte3_glue_mc1_rdqsn_gate_dis_en_mask, 1);
 
     //set oe_md = 2
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xc000 + 0x1c, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xd000 + 0x1c, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xe000 + 0x1c, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xf000 + 0x1c, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xc000 + 0x20, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xd000 + 0x20, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xe000 + 0x20, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xf000 + 0x20, 0x11111111);
+    dr1x90_reg_write(0xc000 + 0x1c, 0x11111111);
+    dr1x90_reg_write(0xd000 + 0x1c, 0x11111111);
+    dr1x90_reg_write(0xe000 + 0x1c, 0x11111111);
+    dr1x90_reg_write(0xf000 + 0x1c, 0x11111111);
+    dr1x90_reg_write(0xc000 + 0x20, 0x11111111);
+    dr1x90_reg_write(0xd000 + 0x20, 0x11111111);
+    dr1x90_reg_write(0xe000 + 0x20, 0x11111111);
+    dr1x90_reg_write(0xf000 + 0x20, 0x11111111);
 
     //set oe_md = 2  BANK0
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x8000 + 0x1c, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x9000 + 0x1c, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xa000 + 0x1c, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xb000 + 0x1c, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x800 + 0x20, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x9000 + 0x20, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xa000 + 0x20, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xb000 + 0x20, 0x11111111);
+    dr1x90_reg_write(0x8000 + 0x1c, 0x11111111);
+    dr1x90_reg_write(0x9000 + 0x1c, 0x11111111);
+    dr1x90_reg_write(0xa000 + 0x1c, 0x11111111);
+    dr1x90_reg_write(0xb000 + 0x1c, 0x11111111);
+    dr1x90_reg_write(0x800  + 0x20, 0x11111111);
+    dr1x90_reg_write(0x9000 + 0x20, 0x11111111);
+    dr1x90_reg_write(0xa000 + 0x20, 0x11111111);
+    dr1x90_reg_write(0xb000 + 0x20, 0x11111111);
 
     //set te_md = 2 BANK0
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x8000 + 0x24, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x9000 + 0x24, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xa000 + 0x24, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xb000 + 0x24, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x8000 + 0x28, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x9000 + 0x28, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xa000 + 0x28, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xb000 + 0x28, 0x11111111);
+    dr1x90_reg_write(0x8000 + 0x24, 0x11111111);
+    dr1x90_reg_write(0x9000 + 0x24, 0x11111111);
+    dr1x90_reg_write(0xa000 + 0x24, 0x11111111);
+    dr1x90_reg_write(0xb000 + 0x24, 0x11111111);
+    dr1x90_reg_write(0x8000 + 0x28, 0x11111111);
+    dr1x90_reg_write(0x9000 + 0x28, 0x11111111);
+    dr1x90_reg_write(0xa000 + 0x28, 0x11111111);
+    dr1x90_reg_write(0xb000 + 0x28, 0x11111111);
 
     //set te_md = 2
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xc000 + 0x24, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xd000 + 0x24, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xe000 + 0x24, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xf000 + 0x24, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xc000 + 0x28, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xd000 + 0x28, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xe000 + 0x28, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xf000 + 0x28, 0x11111111);
+    dr1x90_reg_write(0xc000 + 0x24, 0x11111111);
+    dr1x90_reg_write(0xd000 + 0x24, 0x11111111);
+    dr1x90_reg_write(0xe000 + 0x24, 0x11111111);
+    dr1x90_reg_write(0xf000 + 0x24, 0x11111111);
+    dr1x90_reg_write(0xc000 + 0x28, 0x11111111);
+    dr1x90_reg_write(0xd000 + 0x28, 0x11111111);
+    dr1x90_reg_write(0xe000 + 0x28, 0x11111111);
+    dr1x90_reg_write(0xf000 + 0x28, 0x11111111);
 
     //set pdr_md = 2 BANK0
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x8000 + 0x2c, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x9000 + 0x2c, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xa000 + 0x2c, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xb000 + 0x2c, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x8000 + 0x30, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x9000 + 0x30, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xa000 + 0x30, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xb000 + 0x30, 0x11111111);
+    dr1x90_reg_write(0x8000 + 0x2c, 0x11111111);
+    dr1x90_reg_write(0x9000 + 0x2c, 0x11111111);
+    dr1x90_reg_write(0xa000 + 0x2c, 0x11111111);
+    dr1x90_reg_write(0xb000 + 0x2c, 0x11111111);
+    dr1x90_reg_write(0x8000 + 0x30, 0x11111111);
+    dr1x90_reg_write(0x9000 + 0x30, 0x11111111);
+    dr1x90_reg_write(0xa000 + 0x30, 0x11111111);
+    dr1x90_reg_write(0xb000 + 0x30, 0x11111111);
 
     //set pdr_md = 2
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xc000 + 0x2c, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xd000 + 0x2c, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xe000 + 0x2c, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xf000 + 0x2c, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xc000 + 0x30, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xd000 + 0x30, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xe000 + 0x30, 0x11111111);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0xf000 + 0x30, 0x11111111);
+    dr1x90_reg_write(0xc000 + 0x2c, 0x11111111);
+    dr1x90_reg_write(0xd000 + 0x2c, 0x11111111);
+    dr1x90_reg_write(0xe000 + 0x2c, 0x11111111);
+    dr1x90_reg_write(0xf000 + 0x2c, 0x11111111);
+    dr1x90_reg_write(0xc000 + 0x30, 0x11111111);
+    dr1x90_reg_write(0xd000 + 0x30, 0x11111111);
+    dr1x90_reg_write(0xe000 + 0x30, 0x11111111);
+    dr1x90_reg_write(0xf000 + 0x30, 0x11111111);
 
     //set LCDLR3 = 0 ��LCDL4 = 0
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x2000 + 0x78c, 0x0);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x2000 + 0x790, 0x0);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x2000 + 0x88c, 0x0);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x2000 + 0x890, 0x0);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x2000 + 0x98c, 0x0);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x2000 + 0x990, 0x0);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x2000 + 0xa8c, 0x0);
-    dr1x90_ddr_reg_write(&ftcHandle, 0xf8420000 + 0x2000 + 0xa90, 0x0);
+    dr1x90_reg_write(0x2000 + 0x78c, 0x0);
+    dr1x90_reg_write(0x2000 + 0x790, 0x0);
+    dr1x90_reg_write(0x2000 + 0x88c, 0x0);
+    dr1x90_reg_write(0x2000 + 0x890, 0x0);
+    dr1x90_reg_write(0x2000 + 0x98c, 0x0);
+    dr1x90_reg_write(0x2000 + 0x990, 0x0);
+    dr1x90_reg_write(0x2000 + 0xa8c, 0x0);
+    dr1x90_reg_write(0x2000 + 0xa90, 0x0);
 
 
 }
@@ -793,6 +775,263 @@ uint64_t get_rand()
     return rand_val;
 }
 
+void soft_reye_scanning_new()
+{
+    //global logfile
+    u32 loop_cnt;
+    u32 regData;
+    u32 regData1 = 0;
+    u32 regData2 = 0;
+    u8 n;
+    u32 left_step;
+    u32 left_step_all = 0;
+    u32 right_step;
+    u32 right_step_all = 0;
+    u32 mid_step;
+    
+    u32 dx_MDL;
+    u32 dx_DGSL;
+    u32 dx_DQSGD;
+    u32 dx_RDQSD;
+    u32 dx_RDQSND;
+    u32 dx_DQSGSD;
+    u32 err_cnt = 0;
+    u8 left_edge_done = 0;
+    u8 right_edge_done = 0;
+    u32 dx_RDQSD_is_0 = 0;
+    u32 dx_RDQSND_is_0 = 0;
+    u32 dx_RDQSD_mid_gap = 0;
+
+    u32 zq_val = 0;
+
+    printf(" \n");
+    printf("+---------------------------------------+\n");
+    printf("|    soft_reye_scanning begin           |\n");
+    printf("+---------------------------------------+\n");
+
+    //dr1x90_dram_write(0x100000 , 0x12345678);
+    printf(" Start reye scan \n");
+    // fprintf(logFile, "Start reye scan\n");
+    left_step = 0;
+    right_step = 0;
+    mid_step = 0;
+    err_cnt = 0;
+    dx_MDL = dr1x90_field_read(DDRC_ADDR_PPC + DX0MDLR0, IPRD_offset, IPRD_mask);
+    printf("\nreye scan : DX 0 mdl =  0x%x\n", dx_MDL);
+    // fprintf(logFile, "\nreye scan : DX 0  mdl =  0x%x\n", dx_MDL);
+
+    dx_MDL = dr1x90_field_read(DDRC_ADDR_PPC + DX0MDLR0, IPRD_offset, IPRD_mask);
+    printf("\nreye scan : DX0 mdl.   data =  0x%x\n", dx_MDL);
+
+
+    for (n = 0; n <= 3; n++) {
+ 
+        dx_DGSL = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask);
+        printf("\nreye scan initial : DX 0x%x,  DGSL is 0x%x  \n", n, dx_DGSL);
+        // fprintf(logFile, "\nreye scan initial : DX 0x%x,  DGSL is 0x%x  \n", n, dx_DGSL);
+        dx_DQSGD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
+        printf("\nreye scan initial : DX 0x%x,  DQSGD =  0x%x \n", n, dx_DQSGD);
+        // fprintf(logFile, "\nreye scan initial : DX 0x%x,  DQSGD =  0x%x \n", n, dx_DQSGD);
+        dx_RDQSD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
+        printf("\nreye scan initial : DX 0x%x,  RDQSD =  0x%x \n", n, dx_RDQSD);
+        // fprintf(logFile, "\nreye scan initial : DX 0x%x,  RDQSD =  0x%x \n", n, dx_RDQSD);
+        dx_RDQSND = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask);
+        printf("\nreye scan initial : DX 0x%x,  RDQSND =  0x%x \n", n, dx_RDQSND);
+        // fprintf(logFile, "\nreye scan initial : DX 0x%x,  RDQSND =  0x%x \n", n, dx_RDQSND);
+        dx_DQSGSD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR5 + 0x100 * n, DQSGSD_offset, DQSGSD_mask);
+        printf("\nreye scan initial : DX 0x%x,  DQSGSD =  0x%x \n", n, dx_DQSGSD);
+        // fprintf(logFile, "\nreye scan initial : DX 0x%x, DQSGSD =  0x%x \n", n, dx_DQSGSD);
+
+        //dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask,  );
+        left_step = 0;
+        left_step_all = 0;
+        err_cnt = 0;
+        left_edge_done = 0;
+        right_edge_done = 0;
+         
+        while (left_edge_done < 1) {
+        //while (left_step <= dx_MDL) {
+            //for (left_step = 0; left_step <= dx_MDL; left_step++)
+
+            if (left_step > dx_DQSGD) {
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask, dx_DQSGD + dx_MDL / 2 - left_step);
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask, dx_DGSL - 1);
+            } else {
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask, dx_DQSGD - left_step);
+            }
+            if (left_step_all >= dx_RDQSD) {
+                 
+               regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
+               dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask, 0);
+               if (regData == 0) {
+                   dr1x90_field_write(DDRC_ADDR_PPC + DX0BDLR3 + 0x100 * n, DQ0RBD_offset, DQ0RBD_mask, left_step_all - dx_RDQSD);
+                   dr1x90_field_write(DDRC_ADDR_PPC + DX0BDLR3 + 0x100 * n, DQ1RBD_offset, DQ1RBD_mask, left_step_all - dx_RDQSD);
+                   dr1x90_field_write(DDRC_ADDR_PPC + DX0BDLR3 + 0x100 * n, DQ2RBD_offset, DQ2RBD_mask, left_step_all - dx_RDQSD);
+                   dr1x90_field_write(DDRC_ADDR_PPC + DX0BDLR3 + 0x100 * n, DQ3RBD_offset, DQ3RBD_mask, left_step_all - dx_RDQSD);
+                   dr1x90_field_write(DDRC_ADDR_PPC + DX0BDLR4 + 0x100 * n, DQ4RBD_offset, DQ4RBD_mask, left_step_all - dx_RDQSD);
+                   dr1x90_field_write(DDRC_ADDR_PPC + DX0BDLR4 + 0x100 * n, DQ5RBD_offset, DQ5RBD_mask, left_step_all - dx_RDQSD);
+                   dr1x90_field_write(DDRC_ADDR_PPC + DX0BDLR4 + 0x100 * n, DQ6RBD_offset, DQ6RBD_mask, left_step_all - dx_RDQSD);
+                   dr1x90_field_write(DDRC_ADDR_PPC + DX0BDLR4 + 0x100 * n, DQ7RBD_offset, DQ7RBD_mask, left_step_all - dx_RDQSD);
+               }     
+            } else {
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask, dx_RDQSD - left_step_all);
+            }
+            if (left_step_all >= dx_RDQSND) {
+                regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSND_offset, RDQSND_mask);
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSND_offset, RDQSND_mask, 0);
+            } else {
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask, dx_RDQSND - left_step_all);
+            }
+ 
+
+            for (u8 i = 0; i < 10; i++) {
+
+                //dr1x90_dram_write(0x100000 + i * 4, 0x12345678);
+                u32 zq_val = get_rand();
+                dr1x90_dram_write(0x100000 + i * 8, zq_val);
+                regData = dr1x90_dram_read(0x100000 + i * 8);
+                if ((regData & 0xffffffff) == (zq_val & 0xffffffff)) {
+                    //printf(" pass No. 0x%08x\n", i);
+                }
+                else {
+                    printf(" No. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\n", i, (0x100000 + i * 8), regData, zq_val);
+                    // fprintf(logFile, "\nNo. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\n", i, (0x100000 + i * 8), regData, zq_val);
+                    err_cnt = err_cnt + 1;
+                    break;
+                }
+            }
+            printf("\nreye scan : left_step = 0x%x, left_edge_done = 0x%x, write DRAM address \n", left_step, left_edge_done);
+            // fprintf(logFile, "\nreye scan : left_step = 0x%x, left_edge_done = 0x%x, write DRAM address \n", left_step, left_edge_done);
+            if (err_cnt > 0) {
+                left_edge_done = 1;
+                break;
+            } else {
+                left_step++;
+                left_step_all++;
+            }
+        }
+
+        //dx_DQSGD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
+        //printf("\neye scan : DX 0x%x, old dx_DQSGD =  0x%x, left DQSGD =  0x%x \n", n, dx_DQSGD, dx_DQSGD - left_step);
+        //fprintf(logFile, "\neye scan : DX 0x%x, old dx_DQSGD =  0x%x, left DQSGD =  0x%x \n", n, dx_DQSGD, dx_DQSGD - left_step);
+        ////dx_RDQSD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
+        //printf("\neye scan : DX 0x%x, old dx_RDQSD =  0x%x, left RDQSD =  0x%x \n", n, dx_RDQSD, dx_RDQSD - left_step);
+        //fprintf(logFile, "\neye scan : DX 0x%x, old dx_RDQSD =  0x%x, left RDQSD =  0x%x \n", n, dx_RDQSD, dx_RDQSD - left_step);
+        ////dx_RDQSND = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask);
+        //printf("\neye scan : DX 0x%x, old dx_RDQSND =  0x%x, left RDQSND =  0x%x \n", n, dx_RDQSND, dx_RDQSND - left_step);
+        //fprintf(logFile, "\neye scan : DX 0x%x, old dx_RDQSND =  0x%x, left RDQSND =  0x%x \n", n, dx_RDQSND, dx_RDQSND - left_step);
+        err_cnt = 0;
+        right_step = 0;
+        right_step_all = 0;
+        right_edge_done = 0;
+        while (right_edge_done < 1) {
+        //while (right_step <= dx_MDL) {
+            //for (right_step = 0; right_step <= dx_MDL; right_step++) 
+            if (right_step >= dx_MDL / 2) {
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask, dx_DQSGD - dx_MDL / 2);
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask, dx_DGSL + 1);
+                right_step = right_step_all - dx_MDL / 2;
+            } else {
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask, dx_DQSGD + right_step);
+            }
+ 
+            dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask, dx_RDQSD + right_step_all);
+            dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask, dx_RDQSND + right_step_all);
+            printf(" right_step = 0x%x, right_edge_done =  0x%x, write DRAM address \n", right_step, right_edge_done);
+
+
+            for (u8 i = 0; i < 10; i++) {
+
+                //dr1x90_dram_write(0x100000 + i * 4, 0x12345678);
+                zq_val = get_rand();
+                dr1x90_dram_write(0x100000 + i * 8, zq_val);
+                regData = dr1x90_dram_read(0x100000 + i * 8);
+                if ((regData & 0xffffffff) == (zq_val & 0xffffffff)) {
+                    //printf(" pass No. 0x%08x\n", i);
+                }
+                else {
+                    printf(" No. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\n", i, (0x100000 + i * 8), regData, zq_val);
+                    // fprintf(logFile, "\nNo. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\n", i, (0x100000 + i * 8), regData, zq_val);
+                    err_cnt = err_cnt + 1;
+                    break;
+                }
+            }
+            printf("\nreye scan : right_step = 0x%x, right_edge_done = 0x%x, write DRAM address \n", right_step, right_edge_done);
+            // fprintf(logFile, "\nreye scan : right_step = 0x%x, right_edge_done = 0x%x, write DRAM address \n", right_step, right_edge_done);
+            if (err_cnt > 0) {
+                right_edge_done = 1;
+                break;
+            }
+            else {
+                right_step++;
+                right_step_all++;
+            }
+        }
+
+        //printf("\neye scan : DX 0x%x, old dx_DQSGD =  0x%x, right DQSGD =  0x%x \n", n, dx_DQSGD, dx_DQSGD + right_step_all);
+        //fprintf(logFile, "\neye scan : DX 0x%x, old dx_DQSGD =  0x%x, right DQSGD =  0x%x \n", n, dx_DQSGD, dx_DQSGD + right_step_all);
+        ////dx_RDQSD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
+        //printf("\neye scan : DX 0x%x, old dx_RDQSD =  0x%x, right RDQSD =  0x%x \n", n, dx_RDQSD, dx_RDQSD + right_step_all);
+        //fprintf(logFile, "\neye scan : DX 0x%x, old dx_DQSGD =  0x%x, right RDQSD =  0x%x \n", n, dx_RDQSD, dx_RDQSD + right_step_all);
+        ////dx_RDQSND = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask);
+        //printf("\neye scan : DX 0x%x, old dx_RDQSND =  0x%x, right RDQSND =  0x%x \n", n, dx_RDQSND, dx_RDQSND + right_step_all);
+        //fprintf(logFile, "\neye scan : DX 0x%x, old dx_DQSGD =  0x%x, right RDQSND =  0x%x \n", n, dx_RDQSND, dx_RDQSND + right_step_all);
+
+        /*if (right_step >= left_step) {
+           mid_step = (right_step - left_step) / 2;
+           dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask, dx_DQSGD + mid_step);
+           dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask, dx_RDQSD + mid_step);
+           dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask, dx_RDQSND + mid_step);
+        } else {
+           mid_step = (left_step - right_step) / 2;
+           dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask, dx_DQSGD - mid_step);
+           dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask, dx_RDQSD - mid_step);
+           dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask, dx_RDQSND - mid_step);
+        }*/
+     
+        mid_step = (right_step_all + left_step_all) / 2;
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0BDLR3 + 0x100 * n, DQ0RBD_offset, DQ0RBD_mask, 0);
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0BDLR3 + 0x100 * n, DQ1RBD_offset, DQ1RBD_mask, 0);
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0BDLR3 + 0x100 * n, DQ2RBD_offset, DQ2RBD_mask, 0);
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0BDLR3 + 0x100 * n, DQ3RBD_offset, DQ3RBD_mask, 0);
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0BDLR4 + 0x100 * n, DQ4RBD_offset, DQ4RBD_mask, 0);
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0BDLR4 + 0x100 * n, DQ5RBD_offset, DQ5RBD_mask, 0);
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0BDLR4 + 0x100 * n, DQ6RBD_offset, DQ6RBD_mask, 0);
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0BDLR4 + 0x100 * n, DQ7RBD_offset, DQ7RBD_mask, 0);
+ 
+        if (mid_step > dx_RDQSD) {
+            dx_RDQSD_mid_gap = mid_step - dx_RDQSD;
+            if ((dx_DQSGD + dx_RDQSD_mid_gap) >= dx_MDL / 2) {
+               dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask, dx_DQSGD + dx_RDQSD_mid_gap - dx_MDL / 2);
+               dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask, dx_DGSL + 1);
+            } else {
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask, dx_DQSGD + dx_RDQSD_mid_gap);
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask, dx_DGSL);
+            }
+        } else {
+            dx_RDQSD_mid_gap =  dx_RDQSD - mid_step;
+            if (dx_DQSGD < dx_RDQSD_mid_gap) {
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask, dx_DQSGD + dx_MDL / 2 - dx_RDQSD_mid_gap );
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask, dx_DGSL - 1);
+            }
+            else {
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask, dx_DQSGD - dx_RDQSD_mid_gap);
+                dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask, dx_DGSL);
+            }
+        }
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask, mid_step);     
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask, mid_step);
+        printf("\nreye scan : DX 0x%x, old dx_RDQSND =  0x%x, old gate dx_DQSGD = 0x%x, left =  0x%x, right =  0x%x, mid_step =  0x%x \n", n, dx_RDQSND, left_step_all, right_step_all, mid_step);
+        regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
+        regData1 = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
+        regData2 = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask);
+        printf("\nreye scan : DX 0x%x, new dx_RDQSND =  0x%x, old gate dx_DQSGD = 0x%x, old gate dx_DGSL = 0x%x \n", n, regData, regData1, regData2);
+        // fprintf(logFile, "\neye scan : DX 0x%x, old dx_RDQSND =  0x%x, left =  0x%x, right =  0x%x, mid_step =  0x%x \n", n, dx_RDQSND, left_step_all, right_step_all, mid_step);
+
+    }
+
+    // fprintf(logFile, "Reye scan Done\n");
+}
 
 void soft_reye_scanning() {
 
@@ -809,34 +1048,34 @@ void soft_reye_scanning() {
     u32 dx_DQSGD;
     u32 dx_RDQSD;
     u32 dx_RDQSND;
-    // u32 dx_DQSGSD;
+    u32 dx_DQSGSD;
     u32 err_cnt = 0;
 
 
-   //  printf(" \r\n");
-   //  printf("+---------------------------------------+\r\n");
-   //  printf("|    soft_reye_scanning begin           |\r\n");
-   //  printf("+---------------------------------------+\r\n");
+    printf(" \r\n");
+    printf("+---------------------------------------+\r\n");
+    printf("|    soft_reye_scanning begin           |\r\n");
+    printf("+---------------------------------------+\r\n");
 
     //dr1x90_dram_write(0x100000 , 0x12345678);
-   //  printf(" Start reye scan \r\n");
+    printf(" Start reye scan \r\n");
     left_step = 0;
     right_step = 0;
     mid_step = 0;
     err_cnt = 0;
     for (n = 0; n <= 3; n++) {
         dx_MDL = dr1x90_field_read(DDRC_ADDR_PPC + DX0MDLR0, IPRD_offset, IPRD_mask);
-       //  printf("\neye scan : DX 0x%x  mdl =  0x%x\r\n", dx_MDL);
+        printf("\neye scan : DX 0x%x  mdl =  0x%x\r\n", dx_MDL);
         dx_DGSL = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask);
-       //  printf("\neye scan : DX 0x%x,  DGSL is 0x%x  \r\n", n, dx_DGSL);
+        printf("\neye scan : DX 0x%x,  DGSL is 0x%x  \r\n", n, dx_DGSL);
         dx_DQSGD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
-       //  printf("\neye scan : DX 0x%x,  DQSGD =  0x%x \r\n", n, dx_DQSGD);
+        printf("\neye scan : DX 0x%x,  DQSGD =  0x%x \r\n", n, dx_DQSGD);
         dx_RDQSD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
-       //  printf("\neye scan : DX 0x%x,  RDQSD =  0x%x \r\n", n, dx_RDQSD);
+        printf("\neye scan : DX 0x%x,  RDQSD =  0x%x \r\n", n, dx_RDQSD);
         dx_RDQSND = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask);
-       //  printf("\neye scan : DX 0x%x,  RDQSND =  0x%x \r\n", n, dx_RDQSND);
-       // dx_DQSGSD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR5 + 0x100 * n, DQSGSD_offset, DQSGSD_mask);
-       //  printf("\neye scan : DX 0x%x,  DQSGSD =  0x%x \r\n", n, dx_DQSGSD);
+        printf("\neye scan : DX 0x%x,  RDQSND =  0x%x \r\n", n, dx_RDQSND);
+        dx_DQSGSD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR5 + 0x100 * n, DQSGSD_offset, DQSGSD_mask);
+        printf("\neye scan : DX 0x%x,  DQSGSD =  0x%x \r\n", n, dx_DQSGSD);
 
         //dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask,  );
         left_step = 0;
@@ -852,17 +1091,17 @@ void soft_reye_scanning() {
             }
             dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask, dx_RDQSD - left_step);
             dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask, dx_RDQSND - left_step);
-           //  printf(" left_step = 0x%x, write DRAM address \r\n", left_step);
+            printf(" left_step = 0x%x, write DRAM address \r\n", left_step);
 
             for (u8 i = 0; i < 10; i++) {
                 u32 zq_val = get_rand();
                 dr1x90_dram_write(0x100000 + i * 8, zq_val);
                 regData = dr1x90_dram_read(0x100000 + i * 8);
                 if ((regData & 0xffffffff) == (zq_val & 0xffffffff)) {
-                    //printf(" pass No. 0x%08x\r\n", i);
+                    printf(" pass No. 0x%08x\r\n", i);
                 }
                 else {
-                   //  printf(" No. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\r\n", i, (0x100000 + i * 8), regData, zq_val);
+                    printf(" No. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\r\n", i, (0x100000 + i * 8), regData, zq_val);
                     err_cnt = err_cnt + 1;
                     break;
                 }
@@ -875,12 +1114,12 @@ void soft_reye_scanning() {
             }
         }
 
-        //dx_DQSGD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
-       //  printf("\neye scan : DX 0x%x, old dx_DQSGD =  0x%x, left DQSGD =  0x%x \r\n", n, dx_DQSGD, dx_DQSGD - left_step);
-        //dx_RDQSD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
-       //  printf("\neye scan : DX 0x%x, old dx_RDQSD =  0x%x, left RDQSD =  0x%x \r\n", n, dx_RDQSD, dx_RDQSD - left_step);
-        //dx_RDQSND = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask);
-       //  printf("\neye scan : DX 0x%x, old dx_RDQSND =  0x%x, left RDQSND =  0x%x \r\n", n, dx_RDQSND, dx_RDQSND - left_step);
+        dx_DQSGD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
+        printf("\neye scan : DX 0x%x, old dx_DQSGD =  0x%x, left DQSGD =  0x%x \r\n", n, dx_DQSGD, dx_DQSGD - left_step);
+        dx_RDQSD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
+        printf("\neye scan : DX 0x%x, old dx_RDQSD =  0x%x, left RDQSD =  0x%x \r\n", n, dx_RDQSD, dx_RDQSD - left_step);
+        dx_RDQSND = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask);
+        printf("\neye scan : DX 0x%x, old dx_RDQSND =  0x%x, left RDQSND =  0x%x \r\n", n, dx_RDQSND, dx_RDQSND - left_step);
         err_cnt = 0;
         right_step = 0;
         while (right_step <= dx_MDL) {
@@ -888,7 +1127,7 @@ void soft_reye_scanning() {
             dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask, dx_DQSGD + right_step);
             dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask, dx_RDQSD + right_step);
             dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask, dx_RDQSND + right_step);
-           //  printf(" right_step = 0x%x, write DRAM address \r\n", right_step);
+            printf(" right_step = 0x%x, write DRAM address \r\n", right_step);
 
 
             for (u8 i = 0; i < 10; i++) {
@@ -896,10 +1135,10 @@ void soft_reye_scanning() {
                 dr1x90_dram_write(0x100000 + i * 8, zq_val);
                 regData = dr1x90_dram_read(0x100000 + i * 8);
                 if ((regData & 0xffffffff) == (zq_val & 0xffffffff)) {
-                    //printf(" pass No. 0x%08x\r\n", i);
+                    printf(" pass No. 0x%08x\r\n", i);
                 }
                 else {
-                   //  printf(" No. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\r\n", i, (0x100000 + i * 8), regData, zq_val);
+                    printf(" No. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\r\n", i, (0x100000 + i * 8), regData, zq_val);
                     err_cnt = err_cnt + 1;
                     break;
                 }
@@ -912,11 +1151,11 @@ void soft_reye_scanning() {
             }
         }
 
-       //  printf("\neye scan : DX 0x%x, old dx_DQSGD =  0x%x, right DQSGD =  0x%x \r\n", n, dx_DQSGD, dx_DQSGD + right_step);
-        //dx_RDQSD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
-       //  printf("\neye scan : DX 0x%x, old dx_RDQSD =  0x%x, right RDQSD =  0x%x \r\n", n, dx_RDQSD, dx_RDQSD + right_step);
-        //dx_RDQSND = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask);
-       //  printf("\neye scan : DX 0x%x, old dx_RDQSND =  0x%x, right RDQSND =  0x%x \r\n", n, dx_RDQSND, dx_RDQSND + right_step);
+        printf("\neye scan : DX 0x%x, old dx_DQSGD =  0x%x, right DQSGD =  0x%x \r\n", n, dx_DQSGD, dx_DQSGD + right_step);
+        dx_RDQSD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset, RDQSD_mask);
+        printf("\neye scan : DX 0x%x, old dx_RDQSD =  0x%x, right RDQSD =  0x%x \r\n", n, dx_RDQSD, dx_RDQSD + right_step);
+        dx_RDQSND = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask);
+        printf("\neye scan : DX 0x%x, old dx_RDQSND =  0x%x, right RDQSND =  0x%x \r\n", n, dx_RDQSND, dx_RDQSND + right_step);
 
         if (right_step >= left_step) {
            mid_step = (right_step - left_step) / 2;
@@ -932,7 +1171,7 @@ void soft_reye_scanning() {
 
     }
 
-   //  printf( "Reye scan Done\r\n");
+    printf( "Reye scan Done\r\n");
 
 }
 
@@ -947,35 +1186,35 @@ void soft_weye_scanning() {
     u32 mid_step;
 
     u32 dx_MDL;
-   // u32 dx_WLSL;
-   // u32 dx_WLD;
+    u32 dx_WLSL;
+    u32 dx_WLD;
     u32 dx_WDQD;
     u32 err_cnt = 0;
 
 
-   //  printf(" \r\n");
-   //  printf("+---------------------------------------+\r\n");
-   //  printf("|    soft_weye_scanning begin           |\r\n");
-   //  printf("+---------------------------------------+\r\n");
+    printf(" \r\n");
+    printf("+---------------------------------------+\r\n");
+    printf("|    soft_weye_scanning begin           |\r\n");
+    printf("+---------------------------------------+\r\n");
 
     //dr1x90_dram_write(0x100000 , 0x12345678);
-   //  printf(" Start weye scan \r\n");
+    printf(" Start weye scan \r\n");
     left_step = 0;
     right_step = 0;
     mid_step = 0;
     err_cnt = 0;
     for (n = 0; n <= 3; n++) {
         dx_MDL = dr1x90_field_read(DDRC_ADDR_PPC + DX0MDLR0, IPRD_offset, IPRD_mask);
-       //  printf("\neye scan : DX 0x%x  mdl =  0x%x\r\n", dx_MDL);
+        printf("\neye scan : DX 0x%x  mdl =  0x%x\r\n", dx_MDL);
 
-       // dx_WLSL = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, WLSL_offset, WLSL_mask);
-       //  printf("\nweye scan : DX 0x%x,  WLSL is 0x%x  \r\n", n, dx_WLSL);
+        dx_WLSL = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, WLSL_offset, WLSL_mask);
+        printf("\nweye scan : DX 0x%x,  WLSL is 0x%x  \r\n", n, dx_WLSL);
 
-        //dx_WLD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR0 + 0x100 * n, WLD_offset, WLD_mask);
-       //  printf("\nweye scan : DX 0x%x,  WLD is 0x%x  \r\n", n, dx_WLD);
+        dx_WLD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR0 + 0x100 * n, WLD_offset, WLD_mask);
+        printf("\nweye scan : DX 0x%x,  WLD is 0x%x  \r\n", n, dx_WLD);
 
         dx_WDQD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * n, WDQD_offset, WDQD_mask);
-       //  printf("\nweye scan : DX 0x%x,  WDQD is 0x%x  \r\n", n, dx_WDQD);
+        printf("\nweye scan : DX 0x%x,  WDQD is 0x%x  \r\n", n, dx_WDQD);
 
         //dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, DGSL_offset, DGSL_mask,  );
         left_step = 0;
@@ -985,7 +1224,7 @@ void soft_weye_scanning() {
 
             dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * n, WDQD_offset, WDQD_mask, dx_WDQD - left_step);
 
-           //  printf(" weye scan : left_step = 0x%x, write DRAM address \r\n", left_step);
+            printf(" weye scan : left_step = 0x%x, write DRAM address \r\n", left_step);
 
             for (u8 i = 0; i < 10; i++) {
 
@@ -994,10 +1233,10 @@ void soft_weye_scanning() {
                 dr1x90_dram_write(0x100000 + i * 8, zq_val);
                 regData = dr1x90_dram_read(0x100000 + i * 8);
                 if ((regData & 0xffffffff) == (zq_val & 0xffffffff)) {
-                    //printf(" pass No. 0x%08x\r\n", i);
+                    printf(" pass No. 0x%08x\r\n", i);
                 }
                 else {
-                   //  printf(" weye scan : No. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\r\n", i, (0x100000 + i * 8), regData, zq_val);
+                    printf(" weye scan : No. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\r\n", i, (0x100000 + i * 8), regData, zq_val);
                     err_cnt = err_cnt + 1;
                     break;
                 }
@@ -1010,8 +1249,7 @@ void soft_weye_scanning() {
             }
         }
 
-        //dx_DQSGD = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset, DQSGD_mask);
-       //  printf("\nweye scan : DX 0x%x, old dx_WDQD =  0x%x, left DQSGD =  0x%x \r\n", n, dx_WDQD, dx_WDQD - left_step);
+        printf("\nweye scan : DX 0x%x, old dx_WDQD =  0x%x, left DQSGD =  0x%x \r\n", n, dx_WDQD, dx_WDQD - left_step);
 
         err_cnt = 0;
         right_step = 0;
@@ -1020,8 +1258,8 @@ void soft_weye_scanning() {
 
             dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * n, WDQD_offset, WDQD_mask, dx_WDQD + right_step);
 
-           //  printf(" weye scan : left_step = 0x%x, write DRAM address \r\n", left_step);
-           //  printf(" right_step = 0x%x, write DRAM address \r\n", right_step);
+            printf(" weye scan : left_step = 0x%x, write DRAM address \r\n", left_step);
+            printf(" right_step = 0x%x, write DRAM address \r\n", right_step);
 
 
             for (u8 i = 0; i < 10; i++) {
@@ -1031,10 +1269,10 @@ void soft_weye_scanning() {
                 dr1x90_dram_write(0x100000 + i * 8, zq_val);
                 regData = dr1x90_dram_read(0x100000 + i * 8);
                 if ((regData & 0xffffffff) == (zq_val & 0xffffffff)) {
-                    //printf(" pass No. 0x%08x\r\n", i);
+                    printf(" pass No. 0x%08x\r\n", i);
                 }
                 else {
-                   //  printf(" No. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\r\n", i, (0x100000 + i * 8), regData, zq_val);
+                    printf(" No. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\r\n", i, (0x100000 + i * 8), regData, zq_val);
                     err_cnt = err_cnt + 1;
                     break;
                 }
@@ -1048,7 +1286,7 @@ void soft_weye_scanning() {
         }
 
 
-       //  printf("\nweye scan : DX 0x%x, old dx_WDQD =  0x%x, right WDQD =  0x%x \r\n", n, dx_WDQD, dx_WDQD + right_step);
+        printf("\nweye scan : DX 0x%x, old dx_WDQD =  0x%x, right WDQD =  0x%x \r\n", n, dx_WDQD, dx_WDQD + right_step);
 
         if (right_step >= left_step) {
             mid_step = (right_step - left_step) / 2;
@@ -1061,7 +1299,7 @@ void soft_weye_scanning() {
 
     }
 
-   //  printf( "Reye scan Done\r\n");
+    printf( "Reye scan Done\r\n");
 
 }
 
