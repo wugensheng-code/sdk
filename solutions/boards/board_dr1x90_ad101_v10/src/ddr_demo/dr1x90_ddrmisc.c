@@ -115,7 +115,7 @@ u32 get_mr2_cwl_code(ddr_type_t type, u32 ncwl)
 
 u32 get_nwr(double fck, ddr_type_t type)
 {
-    return (type == DDR3_TYPE) ? 12 : 22;
+    // return (type == DDR3_TYPE) ? 12 : 22;
 
     u32 nWR = (u32)ceil(15.0 / 1e3 * fck);   // Write Recover Time = 15ns For DDR3 & 4
     if (type == DDR3_TYPE) {

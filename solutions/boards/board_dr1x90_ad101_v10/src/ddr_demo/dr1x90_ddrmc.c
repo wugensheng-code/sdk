@@ -220,7 +220,7 @@ static u32 make_field(u32 val, u32 offset, u32 mask)
 
 void dr1x90_ddrmc_timing_cfg(double fck, ddr_type_t type, const ddr_timing_t* timpara)
 {
-/*
+
     const double tck = 1e3 / fck;
     double fval = 0.0;
     u32 ival = 0;
@@ -367,7 +367,7 @@ void dr1x90_ddrmc_timing_cfg(double fck, ddr_type_t type, const ddr_timing_t* ti
     dr1x90_reg_write(DDRC_ADDR_UMCTL2 + DFITMG3   , 0x0000001e); // DFITMG3
     dr1x90_reg_write(DDRC_ADDR_UMCTL2 + DBICTL    , 0x00000005); // DBICTL
     dr1x90_reg_write(DDRC_ADDR_UMCTL2 + DFIPHYMSTR, 0x2a000000); // DFIPHYMSTR
-*/
+/*
     // ************************************************************* //
     dr1x90_reg_write(0x1100 ,0x0d0a1a0e); // DRAMTMG0
     dr1x90_reg_write(0x1104 ,0x00030314); // DRAMTMG1
@@ -405,7 +405,7 @@ void dr1x90_ddrmc_timing_cfg(double fck, ddr_type_t type, const ddr_timing_t* ti
     dr1x90_reg_write(0x11b8 ,0x0000001e); // DFITMG3
     dr1x90_reg_write(0x11c0 ,0x00000005); // DBICTL
     dr1x90_reg_write(0x11c4 ,0x2a000000); // DFIPHYMSTR
-
+*/
 }
 
 static u32 make_addrmap_field(u8 axaddr_bit, u32 base, u32 offset, u32 mask)
