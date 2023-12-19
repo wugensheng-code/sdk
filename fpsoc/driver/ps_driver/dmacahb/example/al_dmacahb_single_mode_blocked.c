@@ -96,6 +96,8 @@ static AL_S32 AlDmacAhb_Test_SingleModeBlocked(AL_VOID)
     Handle->Channel.Trans = ChTransCfg;
 
     while (1) {
+        AL_LOG(AL_LOG_LEVEL_INFO, "Loop: 0x%d\r\n", InitData);
+
         memset((AL_VOID *)(AL_UINTPTR)ChTransCfg.SrcAddr, InitData++, AL_DMACAHB_EX_ARRAY_SIZE);
 
         Ret = AlDmacAhb_Hal_StartBlock(Handle, AL_DMACAHB_EX_BLOCKED_TIMEOUT_IN_MS);
