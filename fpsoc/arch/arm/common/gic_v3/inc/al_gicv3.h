@@ -425,6 +425,7 @@ typedef struct Gicv3DrvData {
  ******************************************************************************/
 AL_VOID AlGicv3_DriverInit(const AL_GICV3_DrvDataStruct *DrvData);
 AL_VOID AlGicv3_DistInit(AL_VOID);
+AL_VOID AlGicv3_DisableOwnSpiInterrupt(AL_VOID);
 AL_VOID AlGicv3_RdistInit(AL_U32 ProcNum);
 AL_VOID AlGicv3_CpuIfEnable(AL_U32 ProcNum);
 AL_VOID AlGicv3_CpuIfDisable(AL_U32 ProcNum);

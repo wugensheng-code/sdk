@@ -56,6 +56,8 @@ void AlGic_Init(void)
 
 #ifndef ARM_CORE_SLAVE
     AlGicv3_DistInit();
+#else
+    AlGicv3_DisableOwnSpiInterrupt();
 #endif
 
     AlGicv3_RdistInit(AlGic_CorePos());

@@ -90,6 +90,28 @@ AL_VOID AlGicv3_DistInit(AL_VOID)
 }
 
 /*******************************************************************************
+ * This function clear spi intr which routing to itself, only use in slave mode
+ ******************************************************************************/
+AL_VOID AlGicv3_DisableOwnSpiInterrupt(AL_VOID)
+{
+    AL_U32 i, NumInts;
+
+    assert(Gicv3DrvData != NULL);
+    assert(Gicv3DrvData->GicdBase != 0U);
+
+    NumInts = AlGicv3_GetSpiLimit(Gicv3DrvData->GicdBase);
+
+    for (i = MIN_SPI_ID; i < NumInts; i += (1U << IROUTER_SHIFT)) {
+        if (Gicd_ReadIrouter(Gicv3DrvData->GicdBase, i) == *(Gicv3DrvData->CpuId)) {
+            AlGicv3_EndOfIntrSel1(i);
+            Gicd_SetIcenabler(Gicv3DrvData->GicdBase, i);
+            Gicd_SetIcactiver(Gicv3DrvData->GicdBase, i);
+            Gicd_SetIcpendr(Gicv3DrvData->GicdBase, i);
+        }
+    }
+}
+
+/*******************************************************************************
  * This function initialises the GIC Redistributor interface of the calling CPU
  * (identified by the 'ProcNum' parameter) based upon the data provided by the
  * platform while initialising the driver.
@@ -634,8 +656,7 @@ AL_VOID AlGicv3_ClearInterruptPending(AL_U32 Id, AL_U32 ProcNum)
     /* Check interrupt ID */
     if (AlGicv3_IsSgiPpi(Id)) {
         /* For SGIs: 0-15, PPIs: 16-31 and EPPIs: 1056-1119 */
-        Gicr_SetIcpendr(
-            Gicv3DrvData->RdistBaseAddrs[ProcNum], Id);
+        Gicr_SetIcpendr(Gicv3DrvData->RdistBaseAddrs[ProcNum], Id);
     } else {
         /* For SPIs: 32-1019 and ESPIs: 4096-5119 */
         Gicd_SetIcpendr(Gicv3DrvData->GicdBase, Id);
