@@ -566,6 +566,28 @@
 					"description": "can test",
 					"supportedOS": ["standalone"],
 					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"CAN_FD_DMA_LLP_NONBLOCK": {
+					"name": "CAN_FD_DMA_LLP_NONBLOCK",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/can/example/al_can_fd_dma_llp_nonblock.c",
+						"PS_DRIVER_CAN_V1_0"
+					],
+					"description": "can test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"CAN_FD_STB_PRIORITY_BLOCKED": {
+					"name": "CAN_FD_STB_PRIORITY_BLOCKED",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/can/example/al_can_fd_stb_priority_blocked.c",
+						"PS_DRIVER_CAN_V1_0"
+					],
+					"description": "can test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
 				}
 			}
 		},
@@ -709,6 +731,39 @@
 					"version": "1.0",
 					"depends": [
 						"fpsoc/driver/ps_driver/iic/example/al_iic_master_block.c",
+						"PS_DRIVER_IIC_V1_0"
+					],
+					"description": "iic test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"IIC_MASTER_DMA": {
+					"name": "IIC_MASTER_DMA",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/iic/example/al_iic_master_dma.c",
+						"PS_DRIVER_IIC_V1_0"
+					],
+					"description": "iic test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"IIC_MASTER_FAST_7BIT_BLOCK": {
+					"name": "IIC_MASTER_FAST_7BIT_BLOCK",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/iic/example/al_iic_master_fast_7bit_block.c",
+						"PS_DRIVER_IIC_V1_0"
+					],
+					"description": "iic test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"IIC_MASTER_FAST_10BIT_BLOCK": {
+					"name": "IIC_MASTER_FAST_10BIT_BLOCK",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/iic/example/al_iic_master_fast_10bit_block.c",
 						"PS_DRIVER_IIC_V1_0"
 					],
 					"description": "iic test",
