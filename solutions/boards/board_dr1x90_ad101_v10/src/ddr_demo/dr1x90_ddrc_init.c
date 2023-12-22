@@ -1,5 +1,13 @@
 #include "dr1x90_ddrc_init.h"
 
+int dr1x90_ddrc_is_init()
+{
+    u32 dfi_done = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DFISTAT, dfi_init_complete_offset, dfi_init_complete_mask);
+    u32 opr_mode = dr1x90_field_read(DDRC_ADDR_UMCTL2 + STAT, operating_mode_offset, operating_mode_mask);
+    // AL_DDR_LOG("DFI_Done == 0x%x, OP_Mode == 0x%x\r\n", dfi_done, opr_mode);
+    return dfi_done == 0x1 && opr_mode != 0x0; // Normal or Power Down or Power Saving Mode
+}
+
 int dr1x90_ddrc_init(double fck, ddr_type_t type, ddr_width_t width, ddr_ecc_t ecc, const ddr_timing_t* timpara, const ddr_addrmap_t* addrmap, const ddr_arbiter_t* arbiter_cfg)
 {
     u32 regData = 0;
@@ -52,7 +60,7 @@ int dr1x90_ddrc_init(double fck, ddr_type_t type, ddr_width_t width, ddr_ecc_t e
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 08 : Fast Init
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    dr1x90_ddrppc_fast_init();
+    // dr1x90_ddrppc_fast_init(fck);
     dr1x90_zq_overwrite_cfg(type);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,15 +74,26 @@ int dr1x90_ddrc_init(double fck, ddr_type_t type, ddr_width_t width, ddr_ecc_t e
     // step 09 : PPC MTEST
     ///////////////////////////////////////////////////////////////////////////////////////////////
     dr1x90_pub_training_cfg(type);
-    dr1x90_do_training(1, 1, 1);
-    // dr1x90_do_training(1, 0, 0);
-    // dr1x90_do_training(0, 0, 1);
-    // dr1x90_do_training(0, 1, 0);
+    // dr1x90_do_training(1, 1, 1);
+    // dr1x90_ddrppc_show_delay();
+
+    dr1x90_ddrc_train_wl();
+    // dr1x90_ddrppc_show_delay();
+
+    dr1x90_ddrc_train_gate();
+    // dr1x90_ddrppc_show_delay();
+
+    dr1x90_ddrc_train_wladj();
+    dr1x90_ddrppc_show_delay();
+
+    dr1x90_ddrc_train_eye();
     dr1x90_ddrppc_show_delay();
 
     // dr1x90_iomc_internal_loopback_cfg();
 
     mtest_err = dr1x90_ddrppc_mtest(0, 0, 0, 9);
+
+    // while (1);
 
     if (ecc == DDR_ECC_SIDEBAND)
         dr1x90_reg_write(DDRC_ADDR_GPLL + FUNCTRL, 0x3);
@@ -149,15 +168,15 @@ int dr1x90_ddrc_init(double fck, ddr_type_t type, ddr_width_t width, ddr_ecc_t e
     regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DFITMG0, dfi_t_rddata_en_offset, dfi_t_rddata_en_mask);
    //  AL_DDR_LOG("\n dfi_t_rddata_en.   data =  0x%x\n", regData);
 
-    set_rand_seed(100);
-
-    soft_reye_scanning_new();
-    soft_weye_scanning();
-    dr1x90_ddrppc_show_delay();
+    // soft_reye_scanning_new();
+    // soft_weye_scanning();
+    // dr1x90_ddrppc_show_delay();
 
     if (ecc != DDR_ECC_NONE) {
         memset((void*)0x0, 0x0, 512 * 1024 * 1024);
     }
+
+    set_rand_seed(100);
 
     // AL_DDR_LOG(" write DRAM address start test \r\n");
     for (u8 i = 0; i < 10; i++) {
@@ -218,7 +237,6 @@ int dr1x90_ddrc_init(double fck, ddr_type_t type, ddr_width_t width, ddr_ecc_t e
    //  AL_DDR_LOG("\n dfi_tphy_wrlat.   data =  0x%x\n", regData);
     regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DFITMG0, dfi_t_rddata_en_offset, dfi_t_rddata_en_mask);
    //  AL_DDR_LOG("\n dfi_t_rddata_en.   data =  0x%x\n", regData);
-
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Test Done

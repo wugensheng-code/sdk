@@ -1,7 +1,6 @@
 #ifndef __AL_DR1X90_DDRC_INIT_H_
 #define __AL_DR1X90_DDRC_INIT_H_
 
-#include "alc_ddr_env.h"
 #include "dr1x90_ddrc.h"
 
 #define DDR3_TYPE 3
@@ -50,6 +49,8 @@ typedef struct ddr_arbiter_t
 
 // DDRC init Proc
 int dr1x90_ddrc_init(double fck, ddr_type_t type, ddr_width_t width, ddr_ecc_t ecc, const ddr_timing_t* timpara, const ddr_addrmap_t* addrmap, const ddr_arbiter_t* arbiter_cfg);
+// Return 1 if DDRC init is done
+int dr1x90_ddrc_is_init();
 
 // GPLL & DPLL Config
 void dr1x90_ddr_gpll_cfg(double fck);  // Frequency of CK (MHz)
@@ -65,7 +66,7 @@ void dr1x90_iomc_internal_loopback_cfg();
 void dr1x90_ddrppc_base_cfg(ddr_type_t type, ddr_width_t width, ddr_ecc_t ecc);
 void dr1x90_ddrppc_set_ddrmr(double fck, ddr_type_t type, const ddr_timing_t* timpara);
 void dr1x90_ddrppc_set_timing();
-void dr1x90_ddrppc_fast_init();
+void dr1x90_ddrppc_fast_init(double fck);
 void dr1x90_ddrppc_show_delay();
 void dr1x90_zq_overwrite_cfg(ddr_type_t type);
 void dr1x90_pub_training_cfg(ddr_type_t type);
@@ -87,10 +88,15 @@ void dr1x90_ddrmc_arbiter_cfg(const ddr_arbiter_t* arbiter_cfg);
 void dr1x90_ddrppc_mdl_cal();
 void dr1x90_ddrppc_dram_init();
 
+// Training
+void dr1x90_ddrc_train_wl();
+void dr1x90_ddrc_train_gate();
+void dr1x90_ddrc_train_wladj();
+void dr1x90_ddrc_train_eye();
+
 // MISC Functions
 u32 get_nwr(double fck, ddr_type_t type);
 void make_ddr_mr(double fck, ddr_type_t type, const ddr_timing_t* timpara, u32* MR);
-double ns2cycle(double t, double tck);
 
 #include "ddr_regs/dr1x90_ddrc_gpll_regs.h"
 #include "ddr_regs/dr1x90_ddrc_dpll_regs.h"

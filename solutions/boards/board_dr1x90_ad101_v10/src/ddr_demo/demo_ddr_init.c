@@ -1,29 +1,26 @@
 #include <stdio.h>
-
-#include "alc_types.h"
+#include <string.h>
 #include "dr1x90_ddrc_init.h"
-#include "dr1x90_misc.h"
 
-/*************************************************************/
+#define max(x, y) ((x) > (y) ? (x) : (y))
+#define min(x, y) ((x) < (y) ? (x) : (y))
 
-int ddrc_is_init()
-{
-    u32 dfi_done = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DFISTAT, dfi_init_complete_offset, dfi_init_complete_mask);
-    u32 opr_mode = dr1x90_field_read(DDRC_ADDR_UMCTL2 + STAT, operating_mode_offset, operating_mode_mask);
-    // AL_DDR_LOG("DFI_Done == 0x%x, OP_Mode == 0x%x\r\n", dfi_done, opr_mode);
-    return dfi_done == 0x1 && opr_mode != 0x0; // Normal or Power Down or Power Saving Mode
-}
+#define DDR_TYPE  DDR3_TYPE
+#define DDR_WIDTH DDR_X32
+#define DDR_ECC   DDR_ECC_NONE
 
 int demo_ddr_init()
 {
-    double f_ck = 1600.0 / 3;    // 533.3 MHz
-    // double f_ck = 2000.0 / 3;    // 666.6 MHz
-    ddr_type_t  type  = DDR3_TYPE;
-    ddr_width_t width = DDR_X32;          // DDR_X32
-    ddr_ecc_t   ecc   = DDR_ECC_NONE;     // DDR_ECC_NONE
+    const double f_ck = 1600.0 / 3;    // 533.3 MHz
+    // const double f_ck = 2000.0 / 3;    // 666.6 MHz
+    // const double f_ck = 800.0;         // 800.0 MHz
+    const double t_ck = 1e3 / f_ck;
+
+    #if DDR_TYPE == DDR3_TYPE
+    // For Demo Board DDR3
     ddr_timing_t timpara = {
-        .nCL  = 9,   // 9, 10
-        .nCWL = 7,   // 7, 9
+        .nCL  = 9,  // 9
+        .nCWL = 7,  // 7
         .nRCD = 9,
         .nRP  = 9,
         .tRAS = 36.0,
@@ -35,7 +32,7 @@ int demo_ddr_init()
         .tRFC  = 260.0,
         .tREFI = 7.8 * 1e3
     };
-    
+    #if DDR_WIDTH == DDR_X32
     // For DDR3 X32
     ddr_addrmap_t addrmap = {
         .ba = {
@@ -57,7 +54,7 @@ int demo_ddr_init()
             25, 26, 27, 28, 29, -1, -1, -1
         }
     };
-    /*
+    #elif DDR_WIDTH == DDR_X16
     // For DDR3 X16
     ddr_addrmap_t addrmap = {
         .ba = {
@@ -79,7 +76,23 @@ int demo_ddr_init()
             24, 25, 26, 27, 28, -1, -1, -1
         }
     };
-    
+    #endif
+    #elif DDR_TYPE == DDR4_TYPE
+    // For DC Borad DDR4
+    ddr_timing_t timpara = {
+        .nCL  = 10,
+        .nCWL = 9,
+        .nRCD = 10,
+        .nRP  = 10,
+        .tRAS = 35.0,
+        .tRC  = 35.0 + 10 * t_ck,
+        .tCCD_L = max(4 * t_ck, 6.25),
+        .tRRD_S = max(4 * t_ck, 6.0),
+        .tRRD_L = max(4 * t_ck, 7.5),
+        .tFAW  = max(28 * t_ck, 35.0),
+        .tRFC  = 350.0,
+        .tREFI = 7.8 * 1e3
+    };
     // For DDR4 X32
     ddr_addrmap_t addrmap = {
         .ba = {
@@ -101,12 +114,13 @@ int demo_ddr_init()
             25, 26, 27, 28, 29, -1, -1, -1
         }
     };
-    */
+    #endif
+
     ddr_arbiter_t arbiter_cfg = {
         // TODO
     };
 
-    int err = dr1x90_ddrc_init(f_ck, type, width, ecc, &timpara, &addrmap, &arbiter_cfg);
-
+    int err = dr1x90_ddrc_init(f_ck, DDR_TYPE, DDR_WIDTH, DDR_ECC, &timpara, &addrmap, &arbiter_cfg);
+    
     return err;
 }

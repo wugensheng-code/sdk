@@ -1,3 +1,5 @@
+#include <math.h>
+#include "alc_ddr_env.h"
 #include "dr1x90_ddrc_init.h"
 
 // task #
@@ -328,32 +330,32 @@ int dr1x90_ddrppc_mtest(u8 bank, u16 row, u16 col, u8 byteNum)
 }
 
 // task #
-void dr1x90_ddrppc_fast_init()
+void dr1x90_ddrppc_fast_init(double fck)
 {
-    u32 regData;
-
-    int n;
-
-    regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0MDLR0, IPRD_offset, IPRD_mask);
+    u32 regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0MDLR0, IPRD_offset, IPRD_mask);
     AL_DDR_LOG("[DDR PPC] 2 x UI = %d\r\n", regData);
 
-    u16 mdl_ui = regData / 2;
+    u32 mdl_ui = regData / 2;
 
-    u16 dl_wld[4] = {120/5, 170/5, 255/5, 270/5};
-//    u16 dl_gate[4] = {120/5 + mdl_ui + mdl_ui/2, 170/5 + mdl_ui + mdl_ui/2, 255/5 + mdl_ui + mdl_ui/2, 270/5 + mdl_ui + mdl_ui/2 }; // fail
-//    u16 dl_gate[4] = {120/5 + mdl_ui  , 170/5 + mdl_ui,   255/5 + mdl_ui,   270/5 + mdl_ui   }; // pass
-    u16 dl_gate[4] = {120/5 + mdl_ui/2, 170/5 + mdl_ui/2, 255/5 + mdl_ui/2, 270/5 + mdl_ui/2 }; // pass
-//    u16 dl_gate[4] = {120/5  , 170/5,   255/5,   270/5   }; // pass
-
+    u32 dl_wld [4] = {120/5, 170/5, 255/5, 270/5};
+    u32 dl_gate[4] = {120/5 + mdl_ui/2, 170/5 + mdl_ui/2, 255/5 + mdl_ui/2, 270/5 + mdl_ui/2 }; // pass
+/*
+    double tk = 1e3 / fck / (double)regData;
+    double dl_dqs[4] = {0.36764 - 0.25037, 0.36764 - 0.24463, 0.47958 - 0.24052, 0.47958 - 0.22018};
+    for (int i = 0; i < 4; ++i) {
+        dl_wld[i]  = lround(dl_dqs[i] / tk);
+        dl_gate[i] = dl_wld[i] + mdl_ui / 2;
+    }
+*/
     dr1x90_field_write(DDRC_ADDR_PPC + RANKIDR, RANKWID_offset, RANKWID_mask, 0);
     dr1x90_field_write(DDRC_ADDR_PPC + RANKIDR, RANKRID_offset, RANKRID_mask, 0);
 
-    for (n = 0; n <= 3; n++) {
+    for (int n = 0; n < 4; n++) {
         // Set by Write Leveling (WL) & WL Adjustment (WLADJ)
-        dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0   + 0x100 * n, WLSL_offset, WLSL_mask, 2 );
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0   + 0x100 * n, WLSL_offset, WLSL_mask, 2);
         dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR0 + 0x100 * n, WLD_offset,  WLD_mask,  dl_wld[n]);
         // Set by Gate Training
-        dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0   + 0x100 * n, DGSL_offset,   DGSL_mask,   3 );
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0   + 0x100 * n, DGSL_offset,   DGSL_mask,   3);
         dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset,  DQSGD_mask,  dl_gate[n]);
         dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR5 + 0x100 * n, DQSGSD_offset, DQSGSD_mask, mdl_ui / 8);
         // Set by Write Eye Training
