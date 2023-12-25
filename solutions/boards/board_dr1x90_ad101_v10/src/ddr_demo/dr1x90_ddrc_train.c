@@ -131,3 +131,182 @@ void dr1x90_ddrc_train_eye()
         );
     }
 }
+
+void dr1x90_ddrppc_zq_cal(ddr_type_t type)
+{
+    u8 n ;
+    u8 i ;
+    u8 BankInfo ;
+    u32 zq_ac_code = 0;
+    u32 zq_dx_code = 0;
+    u32 zq_ac_code1 = 0;
+    u32 zq_dx_code1 = 0;
+
+    u8 pzq_cal_done ;
+    u8 env_cfg_host_odt = 11; // 40
+    u8 env_cfg_host_drv = 11; // 480/40 -1
+
+    //u32  bank_zq_ac_code[3] = {0x19193235,0x19193235,0x19193235} ;
+    //u32  bank_zq_dx_code[3] = {0x19193235,0x19193235,0x19193235} ;
+    u32  bank_zq_ac_code[3] = {0x11112323,0x11112323,0x11112323} ;
+    u32  bank_zq_dx_code[3] = {0x11112323,0x11112323,0x11112323} ;
+
+    u32  zqcal_done;
+    u32  zqcal_err ;
+
+    u32 regData, regDataNew ;
+
+    u32 env_cfg_dci_cascade = 0;
+    u32 env_cfg_pzq_slave = 1;
+    u8 env_cfg_host_vrefr = 0xf;
+    u8 env_cfg_host_vref = 0x1f;
+
+    pzq_cal_done = 0 ;
+
+    // ZCAL = 1
+    dr1x90_field_write(DDRC_ADDR_PPC + PIR, ZCALBYP_offset, ZCALBYP_mask, 0);
+    for (n = 0; n <= 1; n++) {
+        // AL_DDR_LOG("[DDR ZQCAL] training setting\r\n");
+        dr1x90_field_write(DDRC_ADDR_BK0_VREF + ZQ0VREF + 0x2000 * n, ZQCALEN_offset, ZQCALEN_mask, 1);
+        dr1x90_field_write(DDRC_ADDR_BK0_VREF + PZQVREF + 0x2000 * n, ddr_mode_offset, ddr_mode_mask, (type == DDR4_TYPE) ? 1 : 0);
+        dr1x90_field_write(DDRC_ADDR_BK0_VREF + ZQ0PR + 0x2000 * n, PU_ODT_ONLY_offset, PU_ODT_ONLY_mask, 0);
+        dr1x90_field_write(DDRC_ADDR_BK0_VREF + ZQ0PR + 0x2000 * n, ZPROG_PU_ODT_ONLY_offset, ZPROG_PU_ODT_ONLY_mask, env_cfg_host_odt);
+        dr1x90_field_write(DDRC_ADDR_BK0_VREF + ZQ0PR + 0x2000 * n, ZPROG_ASYM_DRV_PD_offset, ZPROG_ASYM_DRV_PD_mask, env_cfg_host_drv);
+        dr1x90_field_write(DDRC_ADDR_BK0_VREF + ZQ0PR + 0x2000 * n, ZPROG_ASYM_DRV_PU_offset, ZPROG_ASYM_DRV_PU_mask, env_cfg_host_drv);
+        dr1x90_field_write(DDRC_ADDR_BK0_VREF + ZQ0CR + 0x2000 * n, FORCE_ZCAL_VT_UPDATE_offset, FORCE_ZCAL_VT_UPDATE_mask, 0);
+        dr1x90_field_write(DDRC_ADDR_BK0_VREF + ZQ1CR + 0x2000 * n, FORCE_ZCAL_VT_UPDATE_offset, FORCE_ZCAL_VT_UPDATE_mask, 0);
+    }
+    dr1x90_field_write(DDRC_ADDR_PPC + PIR, ZCAL_offset, ZCAL_mask, 1);
+    dr1x90_field_write(DDRC_ADDR_PPC + PIR, INIT_offset, INIT_mask, 1);
+    regData = dr1x90_field_read(DDRC_ADDR_PPC + PGSR0, ZCDONE_offset, ZCDONE_mask);
+
+    // AL_DDR_LOG("[DDR ZQCAL] training start\r\n");
+    
+    regData = dr1x90_field_read(DDRC_ADDR_PPC + PIR, INIT_offset, INIT_mask);
+    while (regData == 1) {
+        regData = dr1x90_field_read(DDRC_ADDR_PPC + PIR, INIT_offset, INIT_mask);
+    }
+    // AL_DDR_LOG("[DDR ZQCAL] Initial done = 0x%x\r\n", regData);
+    regData = dr1x90_field_read(DDRC_ADDR_PPC + PGSR0, ZCDONE_offset, ZCDONE_mask);
+    while (regData == 0) {
+        regData = dr1x90_field_read(DDRC_ADDR_PPC + PGSR0, ZCDONE_offset, ZCDONE_mask);
+    }
+    // AL_DDR_LOG("[DDR ZQCAL] done = 0x%x\r\n", regData);
+    regData = dr1x90_field_read(DDRC_ADDR_PPC + PGSR0, ZCERR_offset, ZCERR_mask);
+    AL_DDR_LOG("[DDR ZQCAL] %s\r\n", (regData & ZCERR_mask) ? "Error" : "Done");
+    
+    dr1x90_field_write(DDRC_ADDR_PPC + PIR, ZCAL_offset, ZCAL_mask, 0);
+    dr1x90_field_write(DDRC_ADDR_PPC + PIR, ZCALBYP_offset, ZCALBYP_mask, 1);
+
+    n = 0;
+    zq_ac_code = dr1x90_reg_read(DDRC_ADDR_BK0_VREF + ZQ0DR + 0x2000 * n);
+    zq_dx_code = dr1x90_reg_read(DDRC_ADDR_BK0_VREF + ZQ1DR + 0x2000 * n);
+    // AL_DDR_LOG("[DDR ZQCAL] bank0 zq_ac_code = 0x%x, zq_dx_code = 0x%x\r\n", zq_ac_code, zq_dx_code);
+
+    n = 1;
+    zq_ac_code1 = dr1x90_reg_read(DDRC_ADDR_BK0_VREF + ZQ0DR + 0x2000 * n);
+    zq_dx_code1 = dr1x90_reg_read(DDRC_ADDR_BK0_VREF + ZQ1DR + 0x2000 * n);
+    AL_DDR_LOG("[DDR ZQCAL] bank1 zq_ac_code = 0x%x, zq_dx_code = 0x%x\r\n", zq_ac_code1, zq_dx_code1);
+
+    n = 0;
+    // bank 1 overwtite
+    dr1x90_reg_write(DDRC_ADDR_BK0_VREF + ZQ0DR + 0x2000 * n, zq_ac_code1);
+    dr1x90_reg_write(DDRC_ADDR_BK0_VREF + ZQ1DR + 0x2000 * n, zq_dx_code1);
+    
+    regData = dr1x90_reg_read(DDRC_ADDR_BK0_VREF + ZQ0PR + 0x2000 * n);
+    regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF + ZQ0PR + 0x2000 * n, DRV_ZDEN_offset, DRV_ZDEN_mask, 1, regData);
+    regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF + ZQ0PR + 0x2000 * n, ODT_ZDEN_offset, ODT_ZDEN_mask, 1, regDataNew);
+    dr1x90_reg_update(DDRC_ADDR_BK0_VREF + ZQ0PR + 0x2000 * n, regData, regDataNew);
+
+    regData = dr1x90_reg_read(DDRC_ADDR_BK0_VREF + ZQ1PR + 0x2000 * n );     
+    regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF + ZQ1PR + 0x2000 * n, DRV_ZDEN_offset, DRV_ZDEN_mask, 1, regData);
+    regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF + ZQ1PR + 0x2000 * n, ODT_ZDEN_offset, ODT_ZDEN_mask, 1, regDataNew);
+    dr1x90_reg_update(DDRC_ADDR_BK0_VREF + ZQ1PR + 0x2000 * n, regData, regDataNew);
+
+    dr1x90_field_write(DDRC_ADDR_BK0_VREF + ZQ0CR + 0x2000 * n, FORCE_ZCAL_VT_UPDATE_offset, FORCE_ZCAL_VT_UPDATE_mask, 1);
+    dr1x90_field_write(DDRC_ADDR_BK0_VREF + ZQ1CR + 0x2000 * n, FORCE_ZCAL_VT_UPDATE_offset, FORCE_ZCAL_VT_UPDATE_mask, 1);
+    // AL_DDR_LOG("[DDR ZQCAL] zq_ac_code = 0x%x, zq_dx_code = 0x%x\n", zq_ac_code, zq_dx_code);
+
+    // setup a proper vref for basic functionality
+    for (n = 0; n <= 1; n++) {
+        regData = dr1x90_reg_read(DDRC_ADDR_BK0_VREF+PZQVREF + 0x2000 * n);
+        regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF+PZQVREF + 0x2000 * n, Vref_from_sel_offset,Vref_from_sel_mask, 1, regData);
+        regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF+PZQVREF + 0x2000 * n, Vref_rg_sel_offset, Vref_rg_sel_mask,  env_cfg_host_vrefr, regDataNew);
+        regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF+PZQVREF + 0x2000 * n, Vref_rk_sel_offset, Vref_rk_sel_mask,  0x0, regDataNew);
+        regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF+PZQVREF + 0x2000 * n, ddr_mode_offset, ddr_mode_mask, (type == DDR4_TYPE) ? 1 : 0, regDataNew);
+        dr1x90_reg_update(DDRC_ADDR_BK0_VREF+PZQVREF + 0x2000 * n, regData, regDataNew);
+
+        dr1x90_field_write(DDRC_ADDR_BK0_VREF+VREF1 + 0x2000 * n, Vref1_ctrl_rank0_offset, Vref1_ctrl_rank0_mask, env_cfg_host_vref);
+        dr1x90_field_write(DDRC_ADDR_BK0_VREF+VREF2 + 0x2000 * n, Vref2_ctrl_rank0_offset, Vref2_ctrl_rank0_mask, env_cfg_host_vref);
+        dr1x90_field_write(DDRC_ADDR_BK0_VREF+VREF3 + 0x2000 * n, Vref3_ctrl_rank0_offset, Vref3_ctrl_rank0_mask, env_cfg_host_vref);
+        dr1x90_field_write(DDRC_ADDR_BK0_VREF+VREF4 + 0x2000 * n, Vref4_ctrl_rank0_offset, Vref4_ctrl_rank0_mask, env_cfg_host_vref);
+    }
+}
+
+void dr1x90_ddrc_train_dcc()
+{
+    u32 dcc_clk_div_num = 0;
+    u32 env_clkrst_agt_ddr_clk_half_cycle = 625;
+    u32 env_clkrst_agt_cfg_dfi_ratio = 4;
+    u32 env_cfg_dual_pub = 0;
+    u32 bgrp_idx =  0xFFF;// 12bit
+    u32	pub_idx = 0;
+    u32 regData = 0;
+    int n;
+    int i;
+
+    // ZQCAL disable
+    dr1x90_field_write(DDRC_ADDR_BK0_IOMC1 + byte0_glue_cfg1, U_byte0_glue_mc1_dcc_byp_offset, U_byte0_glue_mc1_dcc_byp_mask, 0x0);	 // DM or DBI
+    dr1x90_field_write(DDRC_ADDR_BK0_IOMC1 + byte1_glue_cfg1, U_byte1_glue_mc1_dcc_byp_offset, U_byte1_glue_mc1_dcc_byp_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_BK0_IOMC1 + byte2_glue_cfg1, U_byte2_glue_mc1_dcc_byp_offset, U_byte2_glue_mc1_dcc_byp_mask, 0x0);	 // DM or DBI
+    dr1x90_field_write(DDRC_ADDR_BK0_IOMC1 + byte3_glue_cfg1, U_byte3_glue_mc1_dcc_byp_offset, U_byte3_glue_mc1_dcc_byp_mask, 0x0);
+
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte0_glue_cfg1, U_byte0_glue_mc1_dcc_byp_offset, U_byte0_glue_mc1_dcc_byp_mask, 0x0);	 // DM or DBI
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte1_glue_cfg1, U_byte1_glue_mc1_dcc_byp_offset, U_byte1_glue_mc1_dcc_byp_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte2_glue_cfg1, U_byte2_glue_mc1_dcc_byp_offset, U_byte2_glue_mc1_dcc_byp_mask, 0x0);	 // DM or DBI
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte3_glue_cfg1, U_byte3_glue_mc1_dcc_byp_offset, U_byte3_glue_mc1_dcc_byp_mask, 0x0);
+
+    for (i = 0; i <= 7; i++) {
+        regData = dr1x90_field_read(DDRC_ADDR_BK0_T0 + 0x1000 * i + DQSGRP_DCC_SR, dutyx_offset, dutyx_mask);
+        AL_DDR_LOG("[DDR DCC] #%d initial dutyx = 0x%x\r\n", i, regData);
+    }
+  
+    // AL_DDR_LOG("[DDR DCC] do_dcc_cal start\r\n");
+  
+    // DCC 需要划分ctl_clk时钟
+    dcc_clk_div_num = 1000000.0 / ((env_clkrst_agt_ddr_clk_half_cycle * env_clkrst_agt_cfg_dfi_ratio) + 1);
+    if (dcc_clk_div_num > 1023) {
+        dcc_clk_div_num = 1023;
+    }
+
+    if (env_cfg_dual_pub == 1) {
+        AL_DDR_LOG("[DDR DCC] WARNING: this do_dcc_cal task currently didn't support dual pub\r\n");
+    } else {
+        for (i = 0; i <= 7; i++) {
+            regData = dr1x90_reg_read(DDRC_ADDR_BK0_T0 + 0x1000 * i + DQSGRP_DCC_CR);
+            // AL_DDR_LOG("[DDR DCC] #%d DQSGRP_DCC_CR = 0x%x\n", i, regData);
+            dr1x90_field_write(DDRC_ADDR_BK0_T0 + 0x1000 * i + DQSGRP_DCC_CR, cfg_dcc_disable_offset, cfg_dcc_disable_mask, 0x1);
+            dr1x90_field_write(DDRC_ADDR_BK0_T0 + 0x1000 * i + DQSGRP_DCC_CR, cfg_dcc_clk_div_num_offset, cfg_dcc_clk_div_num_mask, dcc_clk_div_num);
+            dr1x90_field_write(DDRC_ADDR_BK0_T0 + 0x1000 * i + DQSGRP_DCC_CR, cfg_dcc_disable_offset, cfg_dcc_disable_mask, 0x0);
+        }
+    }
+    // Clear DCC
+    dr1x90_field_write(DDRC_ADDR_PPC + PIR, cfg_dcc_clrsr_offset, cfg_dcc_clrsr_mask, 0x1);	
+    dr1x90_field_write(DDRC_ADDR_PPC + PIR, cfg_dcc_clrsr_offset, cfg_dcc_clrsr_mask, 0x0);
+    dr1x90_field_write(DDRC_ADDR_PPC + PIR, cfg_dcc_offset, cfg_dcc_mask, 0x1);
+    dr1x90_field_write(DDRC_ADDR_PPC + PIR, cfg_dcc_offset, cfg_dcc_mask, 0x0);
+
+    for (i = 0; i <= 7; i++) {
+        regData = 0;
+        while (regData == 0) {
+            regData = dr1x90_field_read(DDRC_ADDR_BK0_T0 + 0x1000 * i + DQSGRP_DCC_SR, dcc_done_offset, dcc_done_mask);
+        }
+        regData = dr1x90_reg_read(DDRC_ADDR_BK0_T0 + 0x1000 * i + DQSGRP_DCC_SR);
+        AL_DDR_LOG("[DDR DCC] #%d pol = 0x%c, dutyx = 0x%x, overflow = 0x%c, undeflow = %c\r\n", i,
+            (regData & pol_mask) ? '1' : '0',
+            (regData & dutyx_mask) >> dutyx_offset,
+            (regData & overflow_mask) ? '1' : '0',
+            (regData & underflow_mask) ? '1' : '0'
+        );
+    }
+}

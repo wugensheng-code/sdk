@@ -66,9 +66,15 @@ void dr1x90_ddr_dpll_cfg()
     dr1x90_field_wait(DDRC_ADDR_DPLL + BK0_DPLL_SR0, BK0_DPLL_LOCK_offset, BK0_DPLL_LOCK_mask, 1, -1);
 }
 
-void dr1x90_ddr_iob_cfg()
+void dr1x90_ddr_iob_cfg(ddr_type_t type)
 {
-    // ...
+    if (type == DDR3_TYPE)
+    {
+        dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr0_cfg3, U_byte0_se_mc1_vref_padin_en_offset, U_byte0_se_mc1_vref_padin_en_mask, 1);
+        dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + brefhp_cfg2, U_bankref_hp_mc1_vref_ext_en_offset, U_bankref_hp_mc1_vref_ext_en_mask, 1);
+        dr1x90_field_write(DDRC_ADDR_BK0_IOMC1 + pr37to40_cfg8, U_byte3_quad1_mc1_vref_padin_en_offset, U_byte3_quad1_mc1_vref_padin_en_mask, 1);
+        dr1x90_field_write(DDRC_ADDR_BK0_IOMC1 + brefhp_cfg2, U_bankref_hp_mc1_vref_ext_en_offset, U_bankref_hp_mc1_vref_ext_en_mask, 1);
+    }
 }
 
 void dr1x90_ddr_iol_cfg()

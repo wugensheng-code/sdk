@@ -57,7 +57,7 @@ void dr1x90_ddr_gpll_cfg(double fck);  // Frequency of CK (MHz)
 void dr1x90_ddr_dpll_cfg();
 
 // Bank Config
-void dr1x90_ddr_iob_cfg();
+void dr1x90_ddr_iob_cfg(ddr_type_t type);
 void dr1x90_ddr_iol_cfg();
 void dr1x90_ddr_busmatrix_cfg(ddr_type_t type);
 void dr1x90_iomc_internal_loopback_cfg();
@@ -86,9 +86,11 @@ void dr1x90_ddrmc_arbiter_cfg(const ddr_arbiter_t* arbiter_cfg);
 
 // Execution
 void dr1x90_ddrppc_mdl_cal();
+void dr1x90_ddrppc_zq_cal(ddr_type_t type);
 void dr1x90_ddrppc_dram_init();
 
 // Training
+void dr1x90_ddrc_train_dcc();
 void dr1x90_ddrc_train_wl();
 void dr1x90_ddrc_train_gate();
 void dr1x90_ddrc_train_wladj();
