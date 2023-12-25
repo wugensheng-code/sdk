@@ -228,6 +228,14 @@ void Enablepinmux1(void)
     *((volatile AL_U32 *)(0xf8803934)) = 0x121702;
     *((volatile AL_U32 *)(0xf880393c)) = 0x121702;
 
+#ifdef AL_TEST_SPI
+    *(AL_U32 *)(0xf8803040u) =0x9;    //spi0  MIO16
+    *(AL_U32 *)(0xf8803044u) =0x9;    //spi0  MIO17
+    *(AL_U32 *)(0xf8803048u) =0x9;    //spi0  MIO18
+    *(AL_U32 *)(0xf8803054u) =0x9;    //spi0  MIO21
+    *(AL_U32 *)(0xf8803424u) =0x1;    //emio_sel9
+#endif
+
     /* ttc1-timer0 on demo board */
     // *(AL_U32 *)(0xf88030a0u) =0x7;
     // *(AL_U32 *)(0xf88030a4u) =0x7;
