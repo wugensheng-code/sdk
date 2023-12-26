@@ -12,7 +12,7 @@ SDK_ROOT   ?= ../../../..
 
 
 
-CHIP       := dr1m90
+CHIP       := dr1v90
 RTOS       := freertos
 
 ifeq ($(CHIP), dr1m90)

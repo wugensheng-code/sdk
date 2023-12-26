@@ -106,17 +106,21 @@ endif
 
 ifeq ($(RTOS), freertos)
 PUBLIC_INC_DIR +=   $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel/include \
-                    $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel/portable/GCC/ARM_CA53_64_BIT_SRE \
                     $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel
 
 ifeq ($(AL_CHIP),dr1m90)
 PUBLIC_INC_DIR +=   $(CHIP_DIR)/../../../arch/arm/armv8/aarch64/cortex-a/inc \
+					$(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel/portable/GCC/ARM_CA53_64_BIT_SRE \
                     $(CHIP_DIR)/../../../arch/common/inc \
                     $(CHIP_DIR)/../../../arch/arm/common/gic_v3/inc
 
 else ifeq ($(AL_CHIP), dr1v90)
-PUBLIC_INC_DIR +=
+PUBLIC_INC_DIR +=   $(AL_SDK_ROOT)/fpsoc/arch/riscv/rv64/inc \
+					$(AL_SDK_ROOT)/fpsoc/arch/riscv/ext-nuclei/inc \
+					$(CHIP_DIR)/../../../arch/common/inc \
+					$(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel/portable/GCC/RISC-V
 
+CFLAGS += -D__SYSTIMER_PRESENT=1 -D__Vendor_SysTickConfig=0 -D__ECLIC_PRESENT=1
 
 endif
 

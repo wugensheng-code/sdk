@@ -36,7 +36,7 @@
 #ifdef __cplusplus
  extern "C" {
 #endif
-
+#include "al_rv64_core.h"
 #if defined(__ECLIC_PRESENT) && (__ECLIC_PRESENT == 1)
 /**
  * \defgroup NMSIS_Core_ECLIC_Registers     Register Define and Type Definitions Of ECLIC

@@ -225,9 +225,12 @@ static inline AL_S32 AlOsal_Lock_Init(AL_Lock_t Lock, const char* Name)
 static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_U32 Timeout)
 {
     /* If the scheduler is started and in thread context */
+#if defined __aarch64__
     if (ullPortInterruptNesting == 0) {
         return !xSemaphoreTake(Lock->Thread_Lock, (TickType_t) Timeout);
-    } else {
+    } else 
+#endif
+    {
         AL_S32 Ret;
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
         Ret = xSemaphoreTakeFromISR(Lock->Thread_Lock, &xHigherPriorityTaskWoken);
@@ -243,9 +246,12 @@ static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_U32 Timeout)
 static inline AL_S32 AlOsal_Lock_Release(AL_Lock_t Lock)
 {
     /* If the scheduler is started and in thread context */
+#if defined __aarch64__
     if (ullPortInterruptNesting == 0) {
         return !xSemaphoreGive(Lock->Thread_Lock);
-    } else {
+    } else 
+#endif
+    {
         AL_S32 Ret;
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
         Ret = xSemaphoreGiveFromISR(Lock->Thread_Lock, &xHigherPriorityTaskWoken);
@@ -322,11 +328,14 @@ static inline AL_S32 AlOsal_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
     MailBox->Msg = *(AL_U64 *)Msg;
     __COMPILER_BARRIER();
     MailBox->entry = 1;
-
+#if defined __aarch64__
     /* If the scheduler is started and in thread context */
     if (ullPortInterruptNesting == 0) {
         return !xSemaphoreGive(MailBox->Semaphore.Semaphore_Handle);
-    } else {
+    } else
+#endif
+    {
+
         AL_S32 Ret;
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
         Ret = xSemaphoreGiveFromISR(MailBox->Semaphore.Semaphore_Handle, &xHigherPriorityTaskWoken);
@@ -340,10 +349,15 @@ static inline AL_S32 AlOsal_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
 static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_U32 Timeout)
 {
     AL_S32 Ret;
+
+#if defined __aarch64__
     /* If the scheduler is started and in thread context */
     if (ullPortInterruptNesting == 0) {
         Ret = !xSemaphoreTake(MailBox->Semaphore.Semaphore_Handle, (TickType_t) Timeout);
-    } else {
+    } else 
+#endif
+    {
+
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
         Ret = xSemaphoreTakeFromISR(MailBox->Semaphore.Semaphore_Handle, &xHigherPriorityTaskWoken);
         if (Ret == pdPASS) {
