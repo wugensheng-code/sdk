@@ -4,9 +4,26 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+/**
+ * @file    al_smc_nand.c
+ * @author  Anlogic esw team
+ * @version V0.0.1
+ * @date    2023-09-01
+ * @brief   smc nand example
+ */
+
+/***************************** Include Files *********************************/
 #include "al_smc_hal.h"
 #include "al_core.h"
 
+/************************** Constant Definitions *****************************/
+
+/**************************** Type Definitions *******************************/
+
+/***************** Macros (Inline Functions) Definitions *********************/
+#define TRANS_SIZE 5000
+
+/************************** Variable Definitions *****************************/
 AL_SMC_HalStruct SmcHal;
 
 AL_SMC_ConfigsStruct SmcInitConfigs =
@@ -15,10 +32,12 @@ AL_SMC_ConfigsStruct SmcInitConfigs =
     .SmcWidth = MW_8BITS
 };
 
-#define TRANS_SIZE 5000
 AL_U8 SendData[TRANS_SIZE] = { 0x0 };
 AL_U8 RecvData[TRANS_SIZE] = { 0x0 };
 
+/************************** Function Prototypes ******************************/
+
+/************************** Function Definitions ******************************/
 int main(void)
 {
     printf("Start FPSoc Smc Test\r\n");
@@ -26,12 +45,12 @@ int main(void)
 
     Ret = AlSmc_Hal_Init(&SmcHal, &SmcInitConfigs, 0);
     if (AL_OK != Ret) {
-         printf("AlSmc_Hal_Init error:%d\r\n", Ret);
+         printf("AlSmc_Hal_Init error:0x%x\r\n", Ret);
     }
 
     Ret = AlSmc_Hal_EraseBlock(&SmcHal, 0);
     if (AL_OK != Ret) {
-         printf("AlSmc_Hal_EraseBlock error:%d\r\n", Ret);
+         printf("AlSmc_Hal_EraseBlock error:0x%x\r\n", Ret);
     }
 
     for (i = 0; i < sizeof(SendData); i++) {
@@ -40,7 +59,7 @@ int main(void)
 
     Ret = AlSmc_Hal_ReadPage(&SmcHal, 0, RecvData, 2048);
     if (AL_OK != Ret) {
-         printf("AlSmc_Hal_ReadPage error:%d\r\n", Ret);
+         printf("AlSmc_Hal_ReadPage error:0x%x\r\n", Ret);
          while(1);
     }
 
@@ -53,13 +72,13 @@ int main(void)
 
     Ret = AlSmc_Hal_WritePage(&SmcHal, 0, SendData, sizeof(SendData));
     if (AL_OK != Ret) {
-         printf("AlSmc_Hal_WritePage error:%d\r\n", Ret);
+         printf("AlSmc_Hal_WritePage error:0x%x\r\n", Ret);
          while(1);
     }
 
     Ret = AlSmc_Hal_ReadPage(&SmcHal, 0, RecvData, sizeof(RecvData));
     if (AL_OK != Ret) {
-         printf("AlSmc_Hal_ReadPage error:%d\r\n", Ret);
+         printf("AlSmc_Hal_ReadPage error:0x%x\r\n", Ret);
          while(1);
     }
 

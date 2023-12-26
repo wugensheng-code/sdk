@@ -7,16 +7,13 @@
 /***************************** Include Files *********************************/
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "al_smc_dev.h"
 
 /************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/
 
-
 /***************** Macros (Inline Functions) Definitions *********************/
-
 
 /************************** Variable Definitions *****************************/
 static AL_U32 __attribute__((aligned(4))) NandOob64[12] = {52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63};

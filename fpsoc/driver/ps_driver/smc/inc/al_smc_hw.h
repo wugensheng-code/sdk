@@ -18,7 +18,7 @@ extern "C" {
 
 /**************************** Type Definitions ******************************/
 
-/***************** Macros (Inline Functions Definitions ********************/
+/***************** Macros (Inline Functions) Definitions ********************/
 
 #define SMC_BASE_ADDR     0xF841A000ULL
 #define NAND_BASE_ADDR     0x64000000ULL

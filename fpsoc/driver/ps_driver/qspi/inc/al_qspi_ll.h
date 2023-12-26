@@ -11,13 +11,13 @@
 extern "C" {
 #endif
 
+/***************************** Include Files ********************************/
 #include "al_qspi_hw.h"
-#include "stdio.h"
 #include "al_core.h"
 
-
+/************************** Constant Definitions ****************************/
 /**
- * @brief
+ * @brief Qspi format enum
  */
 typedef enum
 {
@@ -25,8 +25,6 @@ typedef enum
     SPI_DUAL_FORMAT     = 1,
     SPI_QUAD_FORMAT     = 2
 } AL_QSPI_FrfEnum;
-
-
 
 /**
  * @brief Slave Select Toggle Enable enum
@@ -38,7 +36,7 @@ typedef enum
 } AL_QSPI_SstEnableEnum;
 
 /**
- * @brief Shift Register Loop
+ * @brief Qspi loopback or normal mode enum
  */
 typedef enum
 {
@@ -46,12 +44,18 @@ typedef enum
     QSPI_TEST_MODE      = 1
 } AL_QSPI_LoopBackTestEnum;
 
+/**
+ * @brief Qspi slave output enable enum
+ */
 typedef enum
 {
     QSPI_SLV_OE_ENABLE  = 0,
     QSPI_SLV_OE_DISABLE = 1
 } AL_QSPI_SlvOutEnableEnum;
 
+/**
+ * @brief Qspi transfer mode enum
+ */
 typedef enum
 {
     QSPI_TX_RX           = 0,
@@ -60,7 +64,9 @@ typedef enum
     QSPI_EEPROM          = 3
 } AL_QSPI_TransferMode;
 
-
+/**
+ * @brief Qspi dfs(data frame size) enum
+ */
 typedef enum
 {
     QSPI_DFS_4BITS     = 0x3,
@@ -94,6 +100,9 @@ typedef enum
     QSPI_DFS_32BITS     = 0x1f
 } AL_QSPI_DataFrameSize;
 
+/**
+ * @brief Qspi slave select enum
+ */
 typedef enum
 {
     QSPI_SER_SS_DIS      = 0,
@@ -102,42 +111,63 @@ typedef enum
     QSPI_SER_SS2_EN      = (1 << 2)
 } AL_QSPI_SlvSelEnum;
 
+/**
+ * @brief Qspi slave select toggle enum
+ */
 typedef enum
 {
     QSPI_SLV_TOGGLE_DISABLE   = 0,
     QSPI_SLV_TOGGLE_ENABLE    = 1
 } AL_QSPI_SlvSelToggleEnum;
 
+/**
+ * @brief Qspi tx fifo empty enum
+ */
 typedef enum
 {
     QSPI_SR_TXFIFO_NOTEMPTY   = 0,
     QSPI_SR_TXFIFO_EMPTY      = 1
 } AL_QSPI_TxFifoEmptyEnum;
 
+/**
+ * @brief Qspi tx fifo full enum
+ */
 typedef enum
 {
     QSPI_SR_TXFIFO_FULL      = 0,
     QSPI_SR_TXFIFO_NOTFULL   = 1
 } AL_QSPI_TxFifoFullEnum;
 
+/**
+ * @brief Qspi busy enum
+ */
 typedef enum
 {
     QSPI_SR_IDLE     = 0,
     QSPI_SR_BUSY     = 1
 } AL_QSPI_BusyEnum;
 
+/**
+ * @brief Qspi rx fifo empty enum
+ */
 typedef enum
 {
     QSPI_SR_RXFIFO_EMPTY      = 0,
     QSPI_SR_RXFIFO_NOTEMPTY   = 1
 } AL_QSPI_RxFifoEmptyEnum;
 
+/**
+ * @brief Qspi rx fifo full enum
+ */
 typedef enum
 {
     QSPI_SR_RXFIFO_NOTFULL    = 0,
     QSPI_SR_RXFIFO_FULL       = 1
 } AL_QSPI_RxFifoFullEnum;
 
+/**
+ * @brief Qspi status reg enum
+ */
 typedef enum
 {
     QSPI_BUSY = 0x1,      /* SSI Busy Flag */
@@ -149,6 +179,9 @@ typedef enum
     QSPI_DCOL = 0x40      /* Data Collision Error */
 } AL_QSPI_SrEnum;
 
+/**
+ * @brief Qspi interrupt type enum
+ */
 typedef enum
 {
     QSPI_TXEIM    = 1 << 0,   /* Transmit FIFO Empty Interrupt */
@@ -156,16 +189,12 @@ typedef enum
     QSPI_RXUIM    = 1 << 2,   /* Receive FIFO Underflow Interrupt */
     QSPI_RXOIM    = 1 << 3,   /* Receive FIFO Overflow Interrupt */
     QSPI_RXFIM    = 1 << 4,   /* Receive FIFO Full Interrupt */
-    // QSPI_MSTIM    = 1 << 5,   /* Multi-Master Contention Interrupt */
-
     QSPI_XRXOIM   = 1 << 6,   /* XIP Receive FIFO Overflow Interrupt Mask */
-    QSPI_TXUIM    = 1 << 7,   /* Transmit FIFO Underflow Interrupt Mask */
-    QSPI_AXIEM    = 1 << 8,   /* AXI Error Interrupt Mask */
-    QSPI_SPITEM   = 1 << 10,  /* SPI Transmit Error Interrupt Mask */
-    QSPI_DONEM    = 1 << 11,  /* SSI Done Interrupt Mask */
 } AL_QSPI_IntrTypeEnum;
 
-
+/**
+ * @brief Qspi interrupt status enum
+ */
 typedef enum
 {
     QSPI_TXEIS           = 0x1,      /* Transmit FIFO Empty Interrupt Status */
@@ -173,33 +202,39 @@ typedef enum
     QSPI_RXUIS           = 0x4,      /* Receive FIFO Underflow Interrupt Status */
     QSPI_RXOIS           = 0x8,      /* Receive FIFO Overflow Interrupt Status */
     QSPI_RXFIS           = 0x10,     /* Receive FIFO Full Interrupt Status */
-    // QSPI_MSTIS           = 0x20,     /* Multi-Master Contention Interrupt Status */
-
     QSPI_XRXOIS          = 0x40,     /* XIP Receive FIFO Overflow Interrupt Status */
-    QSPI_TXUIS           = 0x80,     /* Transmit FIFO Underflow Interrupt Status */
-    QSPI_AXIES           = 0x100,    /* AXI Error Interrupt Status */
-    QSPI_SPITES          = 0x400,    /* SPI Transmit Error Interrupt */
-    QSPI_DONES           = 0x800     /* SSI Done Interrupt Status */
 } AL_QSPI_IntrStatusEnum;
 
+/**
+ * @brief Qspi edge sampling enum
+ */
 typedef enum
 {
     QSPI_PostiveEdgeSampling = 0,
     QSPI_NegativeEdgeSampling = 1
 } AL_QSPI_RecvDataSamplEdgeEnum;
 
+/**
+ * @brief Qspi clock stretch enum
+ */
 typedef enum
 {
     QSPI_DisableClockStretch = 0,
     QSPI_EnableClockStretch  = 1
 } AL_QSPI_ClockStretchEnum;
 
+/**
+ * @brief Qspi xip prefetch enable enum
+ */
 typedef enum
 {
     QSPI_DisableXipPrefetch = 0,
     QSPI_EnableXipPrefetch  = 1
 } AL_QSPI_XipPrefetchEnableEnum;
 
+/**
+ * @brief Qspi xip mode bits length enum
+ */
 typedef enum
 {
     QSPI_MBL_2 = 0,
@@ -208,36 +243,54 @@ typedef enum
     QSPI_MBL_16 = 3,
 } AL_QSPI_XipModeBitsLengthEnum;
 
+/**
+ * @brief Qspi xip continuous transfer enable enum
+ */
 typedef enum
 {
     QSPI_DisableXipContTrans = 0,
     QSPI_EnableXipContTrans  = 1
 } AL_QSPI_XipContTransEnableEnum;
 
+/**
+ * @brief Qspi xip instruct phase enable enum
+ */
 typedef enum
 {
     QSPI_XipInstPhaseDisable = 0,
     QSPI_XipInstPhaseEnable  = 1
 } AL_QSPI_XipInstPhaseEnableEnum;
 
+/**
+ * @brief Qspi xip dfs config enum
+ */
 typedef enum
 {
     QSPI_XipDfsChange = 0,
     QSPI_XipDfsFix    = 1
 } AL_QSPI_XipDfsFixEnum;
 
+/**
+ * @brief Qspi instruct phase ddr mode enable enum
+ */
 typedef enum
 {
     QSPI_InstDdrDisable = 0,
     QSPI_InstDdrEnable  = 1
 } AL_QSPI_InstDdrEnableEnum;
 
+/**
+ * @brief Qspi ddr mode enable enum
+ */
 typedef enum
 {
     QSPI_SpiDdrDisable = 0,
     QSPI_SpiDdrEnable  = 1
 } AL_QSPI_SpiDdrEnableEnum;
 
+/**
+ * @brief Qspi instruct length enum
+ */
 typedef enum
 {
     QSPI_INST_L0 = 0,
@@ -246,13 +299,33 @@ typedef enum
     QSPI_INST_L16 = 3
 } AL_QSPI_InstLengthEnum;
 
+/**
+ * @brief Qspi mode bit enable enum
+ */
 typedef enum
 {
     QSPI_XipModeBitDisable = 0,
     QSPI_XipModeBitEnable  = 1
 } AL_QSPI_XipModeBitEnableEnum;
 
+/**
+ * @brief Qspi xip port1 norflash size enum
+ */
+typedef enum
+{
+    QSPI_XipPort1NorFlash_1MB = 7,
+    QSPI_XipPort1NorFlash_2MB = 6,
+    QSPI_XipPort1NorFlash_4MB = 5,
+    QSPI_XipPort1NorFlash_8MB = 4,
+    QSPI_XipPort1NorFlash_16MB = 3,
+    QSPI_XipPort1NorFlash_32MB = 2,
+    QSPI_XipPort1NorFlash_64MB = 1,
+    QSPI_XipPort1NorFlash_128MB = 0
+} AL_QSPI_XipPort1NorFlashSize;
 
+/**
+ * @brief Qspi addr length enum
+ */
 typedef enum
 {
     QSPI_ADDR_L0 = 0x0,
@@ -273,7 +346,9 @@ typedef enum
     QSPI_ADDR_L60 = 0xf
 } AL_QSPI_AddrLengthEnum;
 
-
+/**
+ * @brief Qspi transfer type enum
+ */
 typedef enum
 {
     QSPI_TT0 = 0,   /* Instruction and Address will be sent in Standard SPI Mode */
@@ -291,6 +366,9 @@ typedef enum
     AL_QSPI_USE_DMA
 } AL_QSPI_IsDmaEnum;
 
+/**
+ * @brief Qspi event id enum
+ */
 typedef enum
 {
     AL_QSPI_SEND_DONE                = BIT(0),
@@ -304,27 +382,18 @@ typedef enum
     AL_QSPI_RX_FIFO_FULL             = BIT(8),
 } AL_QSPI_EventIdEnum;
 
+/**************************** Type Definitions ******************************/
+/**
+ * @brief Qspi Event Struct
+ */
 typedef struct
 {
     AL_QSPI_EventIdEnum     Events;
     AL_U32                  EventData;
 } AL_QSPI_EventStruct;
 
-
-typedef enum
-{
-    QSPI_XipPort1NorFlash_1MB = 7,
-    QSPI_XipPort1NorFlash_2MB = 6,
-    QSPI_XipPort1NorFlash_4MB = 5,
-    QSPI_XipPort1NorFlash_8MB = 4,
-    QSPI_XipPort1NorFlash_16MB = 3,
-    QSPI_XipPort1NorFlash_32MB = 2,
-    QSPI_XipPort1NorFlash_64MB = 1,
-    QSPI_XipPort1NorFlash_128MB = 0
-} AL_QSPI_XipPort1NorFlashSize;
-
 /**
- * @brief Enhanced Spi Configs Struct
+ * @brief Enhanced Qspi Configs Struct
  */
 typedef struct
 {
@@ -333,6 +402,10 @@ typedef struct
     AL_QSPI_TransType           TransType;
     AL_U16                      WaitCycles;
 } AL_QSPI_EnSpiCfgStruct;
+
+/**
+ * @brief Qspi Xip Config Struct
+ */
 typedef struct
 {
     AL_QSPI_XipPrefetchEnableEnum   PrefetchEnable;
@@ -344,6 +417,9 @@ typedef struct
     AL_QSPI_XipPort1NorFlashSize    Nor1FlashSize;
 } AL_QSPI_XipCfgStruct;
 
+/**
+ * @brief Qspi Transfer Struct
+ */
 typedef struct
 {
     AL_QSPI_TransferMode        TransMode;
@@ -353,7 +429,7 @@ typedef struct
 } AL_QSPI_TransStruct;
 
 /**
- * @brief  Configs Struct
+ * @brief Configs Struct
  */
 typedef struct
 {
@@ -366,6 +442,11 @@ typedef struct
     AL_QSPI_TransStruct         Trans;
 } AL_QSPI_ConfigsStruct;
 
+/***************** Macros (Inline Functions) Definitions ********************/
+
+/******************************** Variable Prototypes ******************************/
+
+/******************************** Function Prototypes ******************************/
 /**
  * This function disbale qspi.
  * @param   QspiBaseAddr is the qspi base addr

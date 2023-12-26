@@ -272,7 +272,7 @@ AL_S32 AlQspi_Hal_RecvDataBlock(AL_QSPI_HalStruct *Handle, AL_U8 *Data, AL_U32 S
 }
 
 /**
- * This function
+ * This function is qspi blocking tranfer data in full-duplex mode
  * @param   Handle is pointer to AL_QSPI_HalStruct
  * @param   SendData is pointer to send data
  * @param   SendSize is send data size
@@ -320,12 +320,16 @@ AL_S32 AlQspi_Hal_TranferDataBlock(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, A
 /**
  * This function is qspi dma blocking send data
  * @param   Handle is pointer to AL_QSPI_HalStruct
- * @param   Data is pointer to send data
- * @param   Size is send data size
+ * @param   SendData is pointer to send data
+ * @param   InstAndAddr is pointer to for instruct and address for norflash
+ * @param   SendDataSize is send data size
  * @param   Timeout is max wait time for send done
- * @return  The state of function execution
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    TransSize(AL_DMACAHB_ChTransStruct) * SrcTransWidth = Data Size
  *          Data Size % SrcBurstLength = 0
+ *          SendData requires CACHE_LINE_ALIGN alignment
 */
 AL_S32 AlQspi_Hal_DmaStartBlockSend(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, AL_U8 *InstAndAddr, AL_U32 SendDataSize, AL_U32 Timeout)
 {
@@ -418,10 +422,12 @@ AL_S32 AlQspi_Hal_DmaStartBlockSend(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, 
 /**
  * This function is qspi dma blocking receive data
  * @param   Handle is pointer to AL_QSPI_HalStruct
- * @param   Data is pointer to receive data
- * @param   Size is receive data size
+ * @param   RecvData is pointer to receive data
+ * @param   RecvSize is receive data size
  * @param   Timeout is max wait time for receive done
- * @return  The state of function execution
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_S32 AlQspi_Hal_DmaStartBlockReceive(AL_QSPI_HalStruct *Handle, AL_U8 *RecvData, AL_U16 RecvSize, AL_U32 Timeout)
@@ -513,7 +519,9 @@ AL_S32 AlQspi_Hal_DmaStartBlockReceive(AL_QSPI_HalStruct *Handle, AL_U8 *RecvDat
  * @param   RecvData is pointer to receive data
  * @param   RecvSize is receive data size
  * @param   Timeout is max wait time for send done
- * @return  The state of function execution
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_S32 AlQspi_Hal_DmaStartBlockTranfer(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, AL_U32 SendSize,
@@ -666,7 +674,12 @@ AL_S32 AlQspi_Hal_DmaStartBlockTranfer(AL_QSPI_HalStruct *Handle, AL_U8 *SendDat
 /**
  * This function is excute operations to set or check qspi configuration status.
  * @param   Handle is pointer to AL_QSPI_HalStruct
- * @return  The state of function execution
+ * @param   Cmd is control command
+ * @param   Data is control data
+ * @param   Timeout is max wait time
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
  * @note    None
 */
 AL_S32 AlQspi_Hal_IoCtl(AL_QSPI_HalStruct *Handle, AL_Qspi_IoCtlCmdEnum Cmd, AL_VOID *Data, AL_U32 Timeout)

@@ -17,7 +17,7 @@ extern "C" {
 
 /**************************** Type Definitions ******************************/
 
-/***************** Macros (Inline Functions Definitions ********************/
+/***************** Macros (Inline Functions) Definitions ********************/
 
 /* ADC GP0 define interface */
 #define PLS_PROT (0xF8800080ULL)

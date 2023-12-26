@@ -10,8 +10,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/***************************** Include Files ********************************/
 #include "al_qspi_dev.h"
 
+/************************** Constant Definitions ****************************/
+
+/**************************** Type Definitions ******************************/
 struct AL_QSPI_DevStruct;
 
 typedef struct
@@ -22,6 +27,11 @@ typedef struct
     AL_MailBox                   RxEventQueue;
 } AL_QSPI_HalStruct;
 
+/***************** Macros (Inline Functions) Definitions ********************/
+
+/******************************** Variable Prototypes ******************************/
+
+/******************************** Function Prototypes ******************************/
 AL_S32 AlQspi_Hal_Init(AL_QSPI_HalStruct **Handle, AL_QSPI_ConfigsStruct *InitConfig, QSPI_EventCallBack Callback,  AL_U32 DevId);
 AL_S32 AlQspi_Hal_SendDataBlock(AL_QSPI_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout);
 AL_S32 AlQspi_Hal_RecvDataBlock(AL_QSPI_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout);

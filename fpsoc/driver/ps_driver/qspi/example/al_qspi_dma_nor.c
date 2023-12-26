@@ -4,9 +4,26 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+/**
+ * @file    al_qspi_dma_nor.c
+ * @author  Anlogic esw team
+ * @version V0.0.1
+ * @date    2023-09-01
+ * @brief   qspi dma nor example
+ */
+
+/***************************** Include Files *********************************/
 #include "al_qspi_hal.h"
 #include "al_spinor.h"
 #include "al_dmacahb_hal.h"
+
+/************************** Constant Definitions *****************************/
+
+/**************************** Type Definitions *******************************/
+
+/***************** Macros (Inline Functions) Definitions *********************/
+
+/************************** Variable Definitions *****************************/
 AL_QSPI_HalStruct *Handle;
 
 /* When SpiFrameFormat is Dual Quad,TransMode can only use QSPI_TX_ONLY,QSPI_RX_ONLY mode */
@@ -25,7 +42,9 @@ AL_U8 CACHE_LINE_ALIGN DmaSendData[500] = { 0x0 };
 AL_U8 CACHE_LINE_ALIGN DmaRecvData[500] = { 0x0 };
 AL_U8 InstAndAddr[10] = { 0x0 };
 
+/************************** Function Prototypes ******************************/
 
+/************************** Function Definitions ******************************/
 AL_VOID AlNorDma_InfineonReset(AL_VOID)
 {
     AL_S32 Ret = AL_OK;

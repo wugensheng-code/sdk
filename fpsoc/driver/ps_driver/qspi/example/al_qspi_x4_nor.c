@@ -4,9 +4,25 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+/**
+ * @file    al_qspi_x4_nor.c
+ * @author  Anlogic esw team
+ * @version V0.0.1
+ * @date    2023-09-01
+ * @brief   qspi x4 nor example
+ */
+
+/***************************** Include Files *********************************/
 #include "al_qspi_hal.h"
 #include "al_spinor.h"
 
+/************************** Constant Definitions *****************************/
+
+/**************************** Type Definitions *******************************/
+
+/***************** Macros (Inline Functions) Definitions *********************/
+
+/************************** Variable Definitions *****************************/
 AL_QSPI_HalStruct *Handle;
 
 /* When SpiFrameFormat is Dual Quad,TransMode can only use QSPI_TX_ONLY,QSPI_RX_ONLY mode */
@@ -23,7 +39,9 @@ AL_U8 SendData[500] = { 0x0 };
 AL_U8 RecvData[500] = { 0x0 };
 AL_U8 FlashId[10] = { 0x0 };
 
+/************************** Function Prototypes ******************************/
 
+/************************** Function Definitions ******************************/
 AL_VOID AlNor_Reset(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -39,9 +57,6 @@ AL_VOID AlNor_Reset(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_Reset error:0x%x\r\n", Ret);
     }
 }
-
-
-
 
 AL_VOID AlNor_Wren(AL_VOID)
 {
@@ -61,8 +76,6 @@ AL_VOID AlNor_Wren(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_Wren error:0x%x\r\n", Ret);
     }
 }
-
-
 
 AL_VOID AlNor_WaitWip(AL_VOID)
 {

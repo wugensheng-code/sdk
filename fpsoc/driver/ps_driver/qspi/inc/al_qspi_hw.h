@@ -18,7 +18,7 @@ extern "C" {
 
 /**************************** Type Definitions ******************************/
 
-/***************** Macros (Inline Functions Definitions ********************/
+/***************** Macros (Inline Functions) Definitions ********************/
 // #define QSPI_DEBUG 1
 
 ///////////////////////////////////////////////////////
