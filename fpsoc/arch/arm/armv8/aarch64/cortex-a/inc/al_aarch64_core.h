@@ -137,6 +137,48 @@ __STATIC_FORCEINLINE void set_intr_mask(int Mask)
     ISB();
 }
 
+__STATIC_FORCEINLINE int get_current_el(void)
+{
+    return (ARCH_SYSREG_READ(CurrentEL) >> 2) & 0x3;
+}
+
+__STATIC_FORCEINLINE int get_sctlr(void)
+{
+    unsigned int el;
+    unsigned long val;
+
+    el = get_current_el();
+
+    if (el == 1) {
+        val = ARCH_SYSREG_READ(sctlr_el1);
+    } else if (el == 2) {
+        val = ARCH_SYSREG_READ(sctlr_el2);
+    } else {
+        val = ARCH_SYSREG_READ(sctlr_el3);
+    }
+
+    return val;
+}
+
+__STATIC_FORCEINLINE void set_sctlr(unsigned long val)
+{
+    unsigned int el;
+
+    el = get_current_el();
+
+    __COMPILER_BARRIER();
+
+    if (el == 1) {
+        ARCH_SYSREG_WRITE(sctlr_el1, val);
+    } else if (el == 2) {
+        ARCH_SYSREG_WRITE(sctlr_el2, val);
+    } else {
+        ARCH_SYSREG_WRITE(sctlr_el3, val);
+    }
+
+    ISB();
+}
+
 #ifdef __cplusplus
 }
 #endif

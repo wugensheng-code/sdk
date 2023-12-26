@@ -5,6 +5,8 @@
  */
 
 #include "al_type.h"
+#include "al_aarch64_sysreg.h"
+#include "al_aarch64_core.h"
 
 AL_VOID __asm_invalidate_icache_all(AL_VOID);
 AL_VOID __asm_flush_dcache_range(AL_UINTPTR, AL_UINTPTR);
@@ -15,30 +17,27 @@ AL_VOID __asm_invalidate_dcache_all(AL_VOID);
 AL_VOID __asm_flush_dcache_all(AL_VOID);
 AL_VOID disable_mmu(AL_VOID);
 
-
 AL_VOID AlCache_EnableICache(AL_VOID)
 {
-
+    __asm_invalidate_icache_all();
+    set_sctlr(get_sctlr() | SCTLR_ELx_I);
 }
-
 
 AL_VOID AlCache_DisableICache(AL_VOID)
 {
-
+    set_sctlr(get_sctlr() & ~SCTLR_ELx_I);
 }
-
 
 AL_VOID AlCache_EnableDCache(AL_VOID)
 {
-
+    set_sctlr(get_sctlr() | SCTLR_ELx_C);
 }
-
 
 AL_VOID AlCache_DisableDCache(AL_VOID)
 {
-
+    __asm_flush_dcache_all();
+    set_sctlr(get_sctlr() & ~SCTLR_ELx_C);
 }
-
 
 AL_VOID AlCache_InvalidateIcacheAll(AL_VOID)
 {
