@@ -851,6 +851,28 @@
 					"description": "spi test",
 					"supportedOS": ["standalone"],
 					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"SPI_DMA_NOR": {
+					"name": "SPI_DMA_NOR",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/spi/example/al_spi_dma_nor.c",
+						"PS_DRIVER_SPI_V1_0"
+					],
+					"description": "spi test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"SPI_SLAVE": {
+					"name": "SPI_SLAVE",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/spi/example/al_spi_slave.c",
+						"PS_DRIVER_SPI_V1_0"
+					],
+					"description": "spi test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
 				}
 			}
 		},
