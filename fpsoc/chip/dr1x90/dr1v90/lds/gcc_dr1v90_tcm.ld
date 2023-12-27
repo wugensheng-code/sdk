@@ -36,6 +36,7 @@ SECTIONS
     PROVIDE( _ilm = . );
   } >itcm AT>itcm
 
+  PROVIDE (_text = .);
   .text           :
   {
     *(.text.unlikely .text.unlikely.*)

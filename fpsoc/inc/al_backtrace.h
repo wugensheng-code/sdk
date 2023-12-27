@@ -12,6 +12,7 @@ extern "C"{
 #endif /* __cplusplus */
 
 AL_VOID AlBackTrace_Fault(AL_UINTPTR *Sp);
+AL_VOID AlStack_Dump(AL_VOID);
 
 #ifdef __cplusplus
 }

@@ -85,11 +85,36 @@ static AL_INTR_HandlerStruct AL_IrqHandlerList[SOC_INT_MAX];
  */
 static void system_default_exception_handler(unsigned long mcause, unsigned long sp)
 {
+    EXC_Frame_Type *exc_frame = (EXC_Frame_Type *)sp;
+
     /* TODO: Uncomment this if you have implement printf function */
     printf("MCAUSE : 0x%lx\r\n", mcause);
     printf("MDCAUSE: 0x%lx\r\n", ARCH_SYSREG_READ(CSR_MDCAUSE));
     printf("MEPC   : 0x%lx\r\n", ARCH_SYSREG_READ(CSR_MEPC));
     printf("MTVAL  : 0x%lx\r\n", ARCH_SYSREG_READ(CSR_MTVAL));
+
+#ifndef __riscv_32e
+    printf("ra: 0x%lx, tp: 0x%lx, t0: 0x%lx, t1: 0x%lx, t2: 0x%lx, t3: 0x%lx, t4: 0x%lx, t5: 0x%lx, t6: 0x%lx\r\n",
+            exc_frame->ra, exc_frame->tp, exc_frame->t0, \
+            exc_frame->t1, exc_frame->t2, exc_frame->t3, exc_frame->t4, exc_frame->t5, exc_frame->t6);
+
+    printf("a0: 0x%lx, a1: 0x%lx, a2: 0x%lx, a3: 0x%lx, a4: 0x%lx, a5: 0x%lx, a6: 0x%lx, a7: 0x%lx\r\n",
+            exc_frame->a0, exc_frame->a1, exc_frame->a2, exc_frame->a3, exc_frame->a4, exc_frame->a5, \
+            exc_frame->a6, exc_frame->a7);
+
+    printf("cause: 0x%lx, epc: 0x%lx\r\n", exc_frame->cause, exc_frame->epc);
+
+#else
+    printf("ra: 0x%lx, tp: 0x%lx, t0: 0x%lx, t1: 0x%lx, t2: 0x%lx\r\n", exc_frame->ra, exc_frame->tp, exc_frame->t0,
+           exc_frame->t1, exc_frame->t2);
+
+    printf("a0: 0x%lx, a1: 0x%lx, a2: 0x%lx, a3: 0x%lx, a4: 0x%lx, a5: 0x%lx\r\n", exc_frame->a0, exc_frame->a1, \
+            exc_frame->a2, exc_frame->a3, exc_frame->a4, exc_frame->a5);
+
+    printf("cause: 0x%lx, epc: 0x%lx\r\n", exc_frame->cause, exc_frame->epc);
+#endif
+
+    AlStack_Dump();
     while (1);
 }
 
