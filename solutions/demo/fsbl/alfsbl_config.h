@@ -22,8 +22,13 @@ extern "C" {
 
 */
 
+#ifndef ALFSBL_WDT_EXCLUDE_VAL
 #define ALFSBL_WDT_EXCLUDE_VAL    (0U)
+#endif
+
+#ifndef ALFSBL_PMU_EXCLUDE_VAL
 #define ALFSBL_PMU_EXCLUDE_VAL    (0U)
+#endif
 
 
 #if ALFSBL_WDT_EXCLUDE_VAL
