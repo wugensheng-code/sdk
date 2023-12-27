@@ -10,8 +10,8 @@
 
 SDK_ROOT    ?= ../../../../..
 
-CHIP        ?= dr1v90
-ELF         ?= SPI_NOR
+CHIP        ?= dr1m90
+ELF         ?= SPI_SLAVE
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
@@ -36,8 +36,10 @@ BOARD_NAME ?= board_dr1x90_ad101_v10
 #########################################################################
 ifeq ($(ELF), SPI_NOR)
 C_SRCS += al_spi_nor.c
-else
+else ifeq ($(ELF), SPI_DMA_NOR)
 C_SRCS += al_spi_dma_nor.c
+else ifeq ($(ELF), SPI_SLAVE)
+C_SRCS += al_spi_slave.c
 endif
 
 INC_DIR     += ./
@@ -75,8 +77,10 @@ PINMUX_MODE ?= PINMUX_MODE1
 #########################################################################
 ifeq ($(ELF), SPI_NOR)
 TARGET := fpsoc_spi_nor_example
-else
+else ifeq ($(ELF), SPI_DMA_NOR)
 TARGET := fpsoc_spi_dma_nor_example
+else ifeq ($(ELF), SPI_SLAVE)
+TARGET := fpsoc_spi_slave_example
 endif
 
 ifneq ($(PINMUX_MODE),)

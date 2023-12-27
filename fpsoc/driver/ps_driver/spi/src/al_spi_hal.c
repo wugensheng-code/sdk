@@ -271,7 +271,7 @@ AL_S32 AlSpi_Hal_RecvDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *Data, AL_U32 Siz
 
     (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
 
-    if (Ret == AL_OK && (SpiEvent.Events == AL_SPI_SEND_DONE))
+    if (Ret == AL_OK && (SpiEvent.Events == AL_SPI_RECEIVE_DONE))
         return AL_OK;
     else
         return (Ret != AL_OK) ? Ret : AL_SPI_EVENTS_TO_ERRS(SpiEvent.Events);
@@ -372,17 +372,17 @@ AL_S32 AlSpi_Hal_DmaStartBlockSend(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL
         SpiTxDmacChConfigPtr->SrcTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
         SpiTxDmacChConfigPtr->DstTransWidth = AL_DMACAHB_TRANS_WIDTH_8;
         SpiTxDmacChConfigPtr->SrcAddrIncMode = AL_DMACAHB_ADDR_INC_INC;
-        //SpiTxDmacChConfigPtr->DstAddrIncMode = AL_DMACAHB_ADDR_INC_INC;
         SpiTxDmacChConfigPtr->DstAddrIncMode = AL_DMACAHB_ADDR_INC_NO0;
         SpiTxDmacChConfigPtr->SrcBurstLength = AL_DMACAHB_MSIZE_1;
         SpiTxDmacChConfigPtr->DstBurstLength = AL_DMACAHB_MSIZE_1;
-
         SpiTxDmacChConfigPtr->Direction = AL_DMACAHB_TT_FC_MEM2PER;
+
         if (Handle->Dev.HwConfig.BaseAddress < SPI1_BASE_ADDR) {
             SpiTxDmacChConfigPtr->HandShaking.DstPer = AL_DMACAHB_PER_SPI0_TX;
         } else {
             SpiTxDmacChConfigPtr->HandShaking.DstPer = AL_DMACAHB_PER_SPI1_TX;
         }
+
         SpiTxDmacChConfigPtr->HandShaking.DstHsSel = AL_DMACAHB_HAND_SHAKING_HARDWARE;
         SpiTxDmacChConfigPtr->HandShaking.DstHsPol = AL_DMACAHB_HS_POL_ACTIVE_HI;
 
@@ -416,6 +416,9 @@ AL_S32 AlSpi_Hal_DmaStartBlockSend(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "SpiTx Dmacahb hal Start Block error:0x%x\r\n", Ret);
     }
+
+    while(SPI_SR_TXFIFO_NOTEMPTY == AlSpi_ll_IsTxFifoEmpty(Handle->Dev.HwConfig.BaseAddress));
+    while(SPI_SR_BUSY == AlSpi_ll_IsBusy(Handle->Dev.HwConfig.BaseAddress));
 
     (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
 
@@ -585,7 +588,6 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
         SpiTxDmacChConfigPtr->DstAddrIncMode = AL_DMACAHB_ADDR_INC_NO0;
         SpiTxDmacChConfigPtr->SrcBurstLength = AL_DMACAHB_MSIZE_1;
         SpiTxDmacChConfigPtr->DstBurstLength = AL_DMACAHB_MSIZE_1;
-
         SpiTxDmacChConfigPtr->Direction = AL_DMACAHB_TT_FC_MEM2PER;
 
         if (Handle->Dev.HwConfig.BaseAddress < SPI1_BASE_ADDR) {
@@ -684,7 +686,8 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "SpiTx Dmacahb hal Start Block error:0x%x\r\n", Ret);
     }
-
+    while(SPI_SR_TXFIFO_NOTEMPTY == AlSpi_ll_IsTxFifoEmpty(Handle->Dev.HwConfig.BaseAddress));
+    while(SPI_SR_BUSY == AlSpi_ll_IsBusy(Handle->Dev.HwConfig.BaseAddress));
     (AL_VOID)AlOsal_Lock_Release(&Handle->SpiLock);
 
     return Ret;
