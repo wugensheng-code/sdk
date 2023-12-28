@@ -18,7 +18,7 @@ SIZE    = ${Q}$(COMPILE_PREFIX)size
 ECHO  	= echo
 MAKE    = make
 
-ARFLAGS = -cr
+ARFLAGS = crs
 
 #########################################################################
 ifeq ($(AL_CHIP),dr1v90)

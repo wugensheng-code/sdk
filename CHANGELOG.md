@@ -1,4 +1,33 @@
-# CHANGE LOG
+# CHANGELOG
+
+## BM_2023.11_Bate1.0 (2023-11-28)
+
+### (e2f479612ee0df223c092cd26b407bd8831508a6)
+
+### Fix
+
+- 清理以下模块中存在的警告:
+
+  gic, cipher, osal, uart, usb, spi, qspi, smc, ttc, gpio, can, ahb-dma, axi-dma, fatfs, plat  
+
+- 修复uart轮询发送中存在的问题。
+
+- 修复freertos（arm）中中断向量表未对齐的问题。
+
+- 修复驱动中寄存器bit读写接口存在的问题。
+
+- 修复ps-pl port 初始化的问题。
+
+- 修复depend.json部分问题.
+
+### Feature
+
+- 添加bsp_settings的json，为后续的图形界面配置做准备。
+
+- openamp中收到shutdown消息后回复ack消息。
+
+- 添加neon的example。
+
 
 ## FD_2023.11_Alpha1.2 (2023-11-16)
 
