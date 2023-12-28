@@ -4,11 +4,18 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+/***************************** Include Files *********************************/
 #include "al_spi_hal.h"
 #include "al_spinor.h"
 
+/************************** Constant Definitions *****************************/
+
+/**************************** Type Definitions *******************************/
+
+/***************** Macros (Inline Functions) Definitions *********************/
 #define RECV_SIZE 5
 
+/************************** Variable Definitions *****************************/
 AL_SPI_HalStruct *Handle;
 
 AL_SPI_ConfigsStruct SpiInitConfigs =
@@ -23,6 +30,9 @@ AL_SPI_ConfigsStruct SpiInitConfigs =
 AL_U8 SendData[RECV_SIZE] = { 0x12,0x34,0x56,0x78,0x9A };
 AL_U8 RecvData[RECV_SIZE] = { 0x0 };
 
+/************************** Function Prototypes ******************************/
+
+/************************** Function Definitions ******************************/
 /**
  * @note Chip SPI MOSI link Master MOSI when Chip as Slave
 */
@@ -31,11 +41,11 @@ void main(void)
     AL_U32 i;
     AL_S32 ret = AL_OK;
 
-    printf("Start FPSoc Spi Slave Test\r\n");
+    AL_LOG(AL_LOG_LEVEL_ERROR, "Start FPSoc Spi Slave Test\r\n");
 
     ret = AlSpi_Hal_Init(&Handle, &SpiInitConfigs, AL_NULL, 0);
     if (AL_OK != ret) {
-        printf("AlSpi_Hal_Init error, ret:0x%x\r\n", ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi_Hal_Init error, ret:0x%x\r\n", ret);
     }
 
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
@@ -43,7 +53,7 @@ void main(void)
     Handle->Dev.Configs.Trans.TransMode  = SPI_RX_ONLY;
     ret = AlSpi_Hal_RecvDataBlock(Handle, RecvData, RECV_SIZE, 100000);
     if (AL_OK != ret) {
-        printf("AlSpi_Hal_RecvDataBlock error, ret:0x%x\r\n", ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi_Hal_RecvDataBlock error, ret:0x%x\r\n", ret);
         while(1);
     }
 #else
@@ -51,14 +61,14 @@ void main(void)
     Handle->Dev.Configs.Trans.TransMode  = SPI_TX_RX;
     ret = AlSpi_Hal_TranferDataBlock(Handle, SendData, RECV_SIZE, RecvData, RECV_SIZE, 100000);
     if (AL_OK != ret) {
-        printf("AlSpi_Hal_TranferDataBlock error, ret:0x%x\r\n", ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi_Hal_TranferDataBlock error, ret:0x%x\r\n", ret);
         while(1);
     }
 #endif
 
     for (i = 0; i < RECV_SIZE; i++)
-        printf("RecvData[%d]:%d\r\n", i, RecvData[i]);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "RecvData[%d]:%d\r\n", i, RecvData[i]);
 
-    printf("AlSpi Spi Slave Test Pass\r\n");
+    AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi Spi Slave Test Pass\r\n");
 }
 

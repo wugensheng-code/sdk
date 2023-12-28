@@ -4,11 +4,18 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+/***************************** Include Files *********************************/
 #include "al_spi_hal.h"
 #include "al_spinor.h"
-
 #include "al_dmacahb_hal.h"
 
+/************************** Constant Definitions *****************************/
+
+/**************************** Type Definitions *******************************/
+
+/***************** Macros (Inline Functions) Definitions *********************/
+
+/************************** Variable Definitions *****************************/
 AL_SPI_HalStruct *Handle;
 
 AL_SPI_ConfigsStruct SpiInitConfigs =
@@ -20,14 +27,15 @@ AL_SPI_ConfigsStruct SpiInitConfigs =
     .ClkDiv             = 40
 };
 
-
 AL_U8 CACHE_LINE_ALIGN FlashId[10] = { 0x0 };
 
 AL_U8 CACHE_LINE_ALIGN DmaSendData[500] = { 0x0 };
 AL_U8 CACHE_LINE_ALIGN DmaRecvData[500] = { 0x0 };
 
+/************************** Function Prototypes ******************************/
 
-AL_VOID AL_NOR_DMA_RESET(AL_VOID)
+/************************** Function Definitions ******************************/
+AL_VOID AlNorDma_Reset(AL_VOID)
 {
     AL_S32 ret = AL_OK;
 
@@ -36,12 +44,12 @@ AL_VOID AL_NOR_DMA_RESET(AL_VOID)
 
     ret = AlSpi_Hal_DmaStartBlockSend(Handle, DmaSendData, 1, 100000);
     if (AL_OK != ret) {
-        printf("DMA AL_NOR_RESET error, ret:0x%x\r\n", ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_Reset error, ret:0x%x\r\n", ret);
     }
 }
 
 
-AL_VOID AL_NOR_DMA_WREN(AL_VOID)
+AL_VOID AlNorDma_Wren(AL_VOID)
 {
     AL_S32 ret = AL_OK;
 
@@ -50,11 +58,11 @@ AL_VOID AL_NOR_DMA_WREN(AL_VOID)
 
     ret = AlSpi_Hal_DmaStartBlockSend(Handle, DmaSendData, 1, 100000);
     if (AL_OK != ret) {
-        printf("DMA AL_NOR_WREN error, ret:0x%x\r\n", ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_Wren error, ret:0x%x\r\n", ret);
     }
 }
 
-AL_VOID AL_NOR_DMA_WAITWIP(AL_VOID)
+AL_VOID AlNorDma_WaitWip(AL_VOID)
 {
     AL_S32 ret = AL_OK;
 
@@ -64,15 +72,15 @@ AL_VOID AL_NOR_DMA_WAITWIP(AL_VOID)
     do {
         ret = AlSpi_Hal_DmaStartBlockTranfer(Handle, DmaSendData, 1, DmaRecvData, 1, 100000);
         if (AL_OK !=ret) {
-            printf("AL_NOR_WAITWIP error, ret:0x%x\r\n", ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_WaitWip error, ret:0x%x\r\n", ret);
         }
 #ifdef SPI_DEBUG
-        printf("WAITWIP Nor Status1 Reg:%x\r\n", DmaRecvData[0]);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "WAITWIP Nor Status1 Reg:%x\r\n", DmaRecvData[0]);
 #endif
     } while (DmaRecvData[0] & SR_WIP);
 }
 
-AL_VOID AL_NOR_DMA_READSTATUS(AL_VOID)
+AL_VOID AlNorDma_ReadStatus(AL_VOID)
 {
     AL_S32 ret = AL_OK;
 
@@ -81,15 +89,15 @@ AL_VOID AL_NOR_DMA_READSTATUS(AL_VOID)
 
     AlSpi_Hal_DmaStartBlockTranfer(Handle, DmaSendData, 1, DmaRecvData, 1, 100000);
     if (AL_OK != ret) {
-        printf("DMA AL_NOR_READSTATUS error, ret:0x%x\r\n", ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_ReadStatus error, ret:0x%x\r\n", ret);
     }
-// #ifdef SPI_DEBUG
-    printf("Nor Status1 Reg:%x\r\n", DmaRecvData[0]);
-// #endif
+#ifdef SPI_DEBUG
+    AL_LOG(AL_LOG_LEVEL_ERROR, "Nor Status1 Reg:%x\r\n", DmaRecvData[0]);
+#endif
 }
 
 
-AL_VOID AL_NOR_DMA_ERASE(AL_VOID)
+AL_VOID AlNorDma_Erase(AL_VOID)
 {
     AL_S32 ret = AL_OK;
     Handle->Dev.Configs.Trans.TransMode  = SPI_TX_ONLY;
@@ -100,12 +108,12 @@ AL_VOID AL_NOR_DMA_ERASE(AL_VOID)
 
     ret = AlSpi_Hal_DmaStartBlockSend(Handle, DmaSendData, 4, 100000);
     if (AL_OK != ret) {
-        printf("AL_NOR_ERASE error, ret:0x%x\r\n", ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_Erase error, ret:0x%x\r\n", ret);
     }
 }
 
 
-AL_VOID AL_NOR_DMA_READPAGE(AL_VOID)
+AL_VOID AlNorDma_ReadPage(AL_VOID)
 {
     AL_S32 ret = AL_OK;
     Handle->Dev.Configs.Trans.TransMode  = SPI_EEPROM;
@@ -116,12 +124,12 @@ AL_VOID AL_NOR_DMA_READPAGE(AL_VOID)
 
     ret = AlSpi_Hal_DmaStartBlockTranfer(Handle, DmaSendData, 4, DmaRecvData, 240, 100000);
     if (AL_OK !=ret) {
-        printf("DMA AL_NOR_READPAGE error, ret:0x%x\r\n", ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_ReadPage error, ret:0x%x\r\n", ret);
     }
 }
 
 
-AL_VOID AL_NOR_DMA_WRITEPAGE(AL_VOID)
+AL_VOID AlNorDma_WritePage(AL_VOID)
 {
     AL_S32 ret = AL_OK;
 
@@ -137,11 +145,11 @@ AL_VOID AL_NOR_DMA_WRITEPAGE(AL_VOID)
     }
     ret = AlSpi_Hal_DmaStartBlockSend(Handle, DmaSendData, 240, 100000);
     if (AL_OK !=ret) {
-        printf("DMA AL_NOR_WRITEPAGE error, ret:0x%x\r\n", ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_WritePage error, ret:0x%x\r\n", ret);
     }
 }
 
-AL_VOID AL_NOR_DMA_READID(AL_VOID)
+AL_VOID AlNorDma_ReadId(AL_VOID)
 {
     AL_S32 ret = AL_OK;
     Handle->Dev.Configs.Trans.TransMode  = SPI_EEPROM;
@@ -149,10 +157,10 @@ AL_VOID AL_NOR_DMA_READID(AL_VOID)
 
     ret = AlSpi_Hal_DmaStartBlockTranfer(Handle, DmaSendData, 1, FlashId, 3, 100000);
     if (AL_OK !=ret) {
-        printf("AL_NOR_READID error, ret:0x%x\r\n", ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_ReadId error, ret:0x%x\r\n", ret);
     }
 
-    printf("DMA Read Flash ID:0x%x, 0x%x, 0x%x\r\n", FlashId[0], FlashId[1], FlashId[2]);
+    AL_LOG(AL_LOG_LEVEL_ERROR, "DMA Read Flash ID:0x%x, 0x%x, 0x%x\r\n", FlashId[0], FlashId[1], FlashId[2]);
 }
 
 AL_VOID main(AL_VOID)
@@ -160,50 +168,50 @@ AL_VOID main(AL_VOID)
     AL_U32 i;
     AL_S32 ret = AL_OK;
 
-    printf("Start FPSoc Spi AL_SPI_RUN_DMA Test\r\n");
+    AL_LOG(AL_LOG_LEVEL_ERROR, "Start FPSoc Spi AL_SPI_RUN_DMA Test\r\n");
 
     ret = AlSpi_Hal_Init(&Handle, &SpiInitConfigs, AL_NULL, 0);
     if (ret != AL_OK) {
-        printf("AlSpi_Hal_Init error, ret:0x%x\r\n", ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi_Hal_Init error, ret:0x%x\r\n", ret);
     }
 
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
-    // AL_NOR_DMA_RESET();
+    // AlNorDma_Reset();
     /**/
-    AL_NOR_DMA_READID();
+    AlNorDma_ReadId();
 
     /**/
-    AL_NOR_DMA_WREN();
-    AL_NOR_DMA_READSTATUS();
-    AL_NOR_DMA_ERASE();
-    AL_NOR_DMA_WAITWIP();
+    AlNorDma_Wren();
+    AlNorDma_ReadStatus();
+    AlNorDma_Erase();
+    AlNorDma_WaitWip();
 
     /**/
-    AL_NOR_DMA_READPAGE();
+    AlNorDma_ReadPage();
     for (i = 0; i < 240; i++) {
         if(0xff != DmaRecvData[i]) {
-            printf("AlSpi test erase norflash error, ret:0x%x\r\n", ret);
-            printf("Error DmaRecvData[%d]:%d\r\n", i, DmaRecvData[i]);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi test erase norflash error, ret:0x%x\r\n", ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Error DmaRecvData[%d]:%d\r\n", i, DmaRecvData[i]);
             while (1);
         }
     }
 
-    printf("DMA AlSpi test erase norflash success\r\n");
+    AL_LOG(AL_LOG_LEVEL_ERROR, "DMA AlSpi test erase norflash success\r\n");
 
     /**/
-    AL_NOR_DMA_WREN();
-    AL_NOR_DMA_WRITEPAGE();
-    AL_NOR_DMA_WAITWIP();
+    AlNorDma_Wren();
+    AlNorDma_WritePage();
+    AlNorDma_WaitWip();
 
-    AL_NOR_DMA_READPAGE();
+    AlNorDma_ReadPage();
     for (i = 0; i < 230; i++) {
         if(i != DmaRecvData[i]) {
-            printf("DMA AlSpi data write norflash test error, ret:0x%x\r\n", ret);
-            printf("Error DmaRecvData[%d]:%d\r\n", i, DmaRecvData[i]);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "DMA AlSpi data write norflash test error, ret:0x%x\r\n", ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Error DmaRecvData[%d]:%d\r\n", i, DmaRecvData[i]);
             while (1);
         }
     }
-    printf("DMA AlSpi test write norflash success\r\n");
+    AL_LOG(AL_LOG_LEVEL_ERROR, "DMA AlSpi test write norflash success\r\n");
 }
 
