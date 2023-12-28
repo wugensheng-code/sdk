@@ -106,7 +106,7 @@ release-job:
     - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1m90
     - git add $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/src/ddr_demo/libddr.a
     - git clean -xdf
-    - rm -r $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/src/ddr_demo/*.c
+    - rm -r $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/src/ddr_demo/*.c $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/src/ddr_demo/Makefile
     - tar -cvjf BM-fpsoc-sdk.tar.bz2 --exclude=./tools/ci --exclude=./fpsoc/driver/ps_driver_test --exclude=./fpsoc/utest --exclude=./solutions/demo/fsbl/simulation ./*
   release:
     tag_name: "$CI_COMMIT_TAG"

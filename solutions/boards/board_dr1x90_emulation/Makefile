@@ -13,11 +13,15 @@ LIBNAME := plat
 
 SUB_LD_LIBS = $(AL_PLAT_DIR)/src/ddr_demo/libddr.a
 
-lib: $(AL_PLAT_DIR)/src/ddr_demo/libddr.a
+lib: ddr
 
-$(AL_PLAT_DIR)/src/ddr_demo/libddr.a: 
+.PHONY:
+ddr: $(SUB_LD_LIBS)
+	@cp -r $(SUB_LD_LIBS) $(LIB_OUTPUT_DIR)/lib$(LIBNAME).a
+
+.PHONY:
+$(SUB_LD_LIBS): 
 	$(MAKE) -C $(AL_PLAT_DIR)/src/ddr_demo/ ddr
-	@cp -i $(SUB_LD_LIBS) $(LIB_OUTPUT_DIR)/lib$(LIBNAME).a
 
 .PHONY:
 lib.do.clean: ddr.clean
@@ -25,6 +29,6 @@ lib.do.clean: ddr.clean
 
 .PHONY:
 ddr.clean: 
-	$(MAKE) -C $(AL_PLAT_DIR)/src/ddr_demo/ clean
+	$(MAKE) -C $(AL_PLAT_DIR)/src/ddr_demo/ clean_ddr
 
 include $(AL_SDK_ROOT)/tools/make/rules.mk

@@ -15,7 +15,7 @@ include $(AL_SDK_ROOT)/tools/make/rules.mk
 ddr: libddr.a
 
 .PHONY:
-clean:
+clean_ddr:
 	$(RM) -rf $(ALL_OBJS) $(ALL_DEPS)
 
 libddr.a: $(ALL_OBJS)
