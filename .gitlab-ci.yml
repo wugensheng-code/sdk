@@ -103,9 +103,17 @@ release-job:
     paths:
       - BM-fpsoc-sdk.tar.bz2
   script:
-    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1m90
-    - git add $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/src/ddr_demo/libddr.a
+    - make -C $CI_PROJECT_DIR/solutions/demo/fsbl CHIP=dr1m90
+    - mkdir /opt/dr1m90
+    - cp $CI_PROJECT_DIR/output/libddr.a /opt/dr1m90
     - git clean -xdf
+    - make -C $CI_PROJECT_DIR/solutions/demo/fsbl CHIP=dr1v90
+    - mkdir /opt/dr1v90
+    - cp $CI_PROJECT_DIR/output/libddr.a /opt/dr1v90
+    - git clean -xdf
+    - mkdir $CI_PROJECT_DIR/prebuild
+    - cp -r /opt/dr1m90 $CI_PROJECT_DIR/prebuild
+    - cp -r /opt/dr1v90 $CI_PROJECT_DIR/prebuild
     - rm -r $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/src/ddr_demo/*.c $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/src/ddr_demo/Makefile
     - tar -cvjf BM-fpsoc-sdk.tar.bz2 --exclude=./tools/ci --exclude=./fpsoc/driver/ps_driver_test --exclude=./fpsoc/utest --exclude=./solutions/demo/fsbl/simulation ./*
   release:
