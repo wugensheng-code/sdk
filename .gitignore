@@ -22,4 +22,5 @@ gdb.init
 .vscode/settings.json
 *.gcno
 output/*.*
+prebuild/*.*
 
