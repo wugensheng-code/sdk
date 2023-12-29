@@ -95,6 +95,7 @@ NOGC ?= 0
 
 
 LIB_OUTPUT_DIR  ?= $(AL_SDK_ROOT)/output
+LIB_PREBUILD_DIR  ?= $(AL_SDK_ROOT)/prebuild
 
 AL_SDK_ROOT := $(abspath $(AL_SDK_ROOT))
 
@@ -118,6 +119,7 @@ export ARMv8_EL
 export ARMv8_SECURE
 export ARMv8_CORE
 export LIB_OUTPUT_DIR
+export LIB_PREBUILD_DIR
 export COMPILE_PREFIX
 export V
 export SILENT

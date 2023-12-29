@@ -53,7 +53,7 @@ VERBOSE =  #{{VERBOSE}}
 V ?= $(VERBOSE)
 
 ifeq ($(V),1)
-	Q = 
+	Q =
 else
 	Q = @
 endif
@@ -63,7 +63,7 @@ MAKEFLAGS += -j32
 SILENT ?= #{{SILENT}}
 
 ifeq ($(SILENT),1)
-	MAKEFLAGS += -s 
+	MAKEFLAGS += -s
 else
 	MAKEFLAGS +=
 endif
@@ -96,6 +96,7 @@ NOGC ?= #{{NOGC}}
 
 
 LIB_OUTPUT_DIR  ?= $(AL_SDK_ROOT)/output
+
 
 AL_SDK_ROOT := $(abspath $(AL_SDK_ROOT))
 

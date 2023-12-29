@@ -8,16 +8,9 @@ INC_DIR += ../../inc/ddr_demo/ \
 			../../inc/ddr_demo/ddr_regs
 
 # (3) set specificity FLAGS
+LIBNAME := ddr
+
 
 include $(AL_SDK_ROOT)/tools/make/rules.mk
 
-.PHONY:
-ddr: libddr.a
-
-.PHONY:
-clean_ddr:
-	$(RM) -rf $(ALL_OBJS) $(ALL_DEPS)
-
-libddr.a: $(ALL_OBJS)
-	$(AR) $(ARFLAGS) $@ $(C_OBJS) $(ASM_OBJS)
 

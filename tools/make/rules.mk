@@ -183,7 +183,7 @@ NEWLIB_LDFLAGS += -u _printf_float
 endif
 
 LIB_OPT  = $(addprefix -L, $(sort $(LIB_DIR)))
-LDFLAGS += -T$(LINKER_SCRIPT) -Wl,--start-group -Wl,--whole-archive $(ld_libs) -Wl,--no-whole-archive -lgcc -lc -lm -L$(LIB_OUTPUT_DIR) -Wl,--end-group \
+LDFLAGS += -T$(LINKER_SCRIPT) -Wl,--start-group -Wl,--whole-archive $(ld_libs) -Wl,--no-whole-archive -lgcc -lc -lm -L$(LIB_OUTPUT_DIR) -L$(LIB_PREBUILD_DIR) -Wl,--end-group \
            $(LIB_OPT) -nostartfiles -Wl,-M,-Map=$(TARGET).map \
            $(GC_LDFLAGS) $(NEWLIB_LDFLAGS) --specs=nosys.specs -Wl,--build-id=none \
            -u _isatty -u _write -u _sbrk -u _read -u _close -u _fstat -u _lseek -u memset -u memcpy
@@ -319,7 +319,7 @@ endif
 
 
 $(TARGET_ELF): bsp make_all_libs $(ALL_OBJS)
-	$(eval ld_libs := $(patsubst lib%.a,-l%,$(filter-out $(filterout_lib), $(notdir $(wildcard $(LIB_OUTPUT_DIR)/*.a)))) $(LD_LIBS))
+	$(eval ld_libs := $(patsubst lib%.a,-l%,$(filter-out $(filterout_lib), $(notdir $(wildcard $(LIB_OUTPUT_DIR)/*.a $(LIB_PREBUILD)/*.a)))) $(LD_LIBS))
 	$(CC) $(ALL_OBJS) -o $@ $(AL_CFLAGS) $(LDFLAGS)
 	$(OBJCOPY) $@ -O binary $(TARGET).bin
 	$(SIZE) $@
@@ -350,7 +350,10 @@ LIBS_DIR += $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/lwip-2.
 
 ifneq ($(PLAT_DIR),)
 LIBS_DIR += $(PLAT_DIR)
+LIBS_DIR += $(patsubst %/Makefile, %, $(wildcard $(PLAT_DIR)/src/ddr_demo/Makefile))
+
 endif
+
 
 ifeq ($(RTOS), freertos)
     LIBS_DIR += $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/Makefile))
