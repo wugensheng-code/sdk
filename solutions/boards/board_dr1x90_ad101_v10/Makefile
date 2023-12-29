@@ -17,7 +17,7 @@ lib: ddr
 
 .PHONY:
 ddr: $(SUB_LD_LIBS)
-	@cp -r $(SUB_LD_LIBS) $(LIB_OUTPUT_DIR)/lib$(LIBNAME).a
+	cp -r $(SUB_LD_LIBS) $(LIB_OUTPUT_DIR)/lib$(LIBNAME).a
 
 .PHONY:
 $(SUB_LD_LIBS): 

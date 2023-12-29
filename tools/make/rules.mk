@@ -383,7 +383,6 @@ lib.do.clean:
 
 lib: $(LIB_OUTPUT_DIR)/lib$(LIBNAME).a
 $(LIB_OUTPUT_DIR)/lib$(LIBNAME).a: $(ALL_OBJS) $(SUB_LD_LIBS)
-	@rm -f $@
 	@mkdir -p $(LIB_OUTPUT_DIR)
 	$(AR) $(ARFLAGS) $@ $(C_OBJS) $(ASM_OBJS)
 
