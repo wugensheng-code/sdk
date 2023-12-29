@@ -3,7 +3,6 @@ AL_SDK_ROOT ?= $(SDK_ROOT)
 AL_PLAT_DIR ?= $(PLAT_DIR)
 LIB_PREBUILD_DIR  ?= $(AL_SDK_ROOT)/prebuild
 
-
 include $(AL_SDK_ROOT)/tools/make/config.mk
 sinclude $(AL_PLAT_DIR)/board_cfg.mk
 

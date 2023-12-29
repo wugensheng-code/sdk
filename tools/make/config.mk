@@ -95,7 +95,6 @@ NOGC ?= 0
 
 
 LIB_OUTPUT_DIR  ?= $(AL_SDK_ROOT)/output
-LIB_PREBUILD_DIR  ?= $(AL_SDK_ROOT)/prebuild
 
 AL_SDK_ROOT := $(abspath $(AL_SDK_ROOT))
 
