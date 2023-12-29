@@ -14,7 +14,6 @@ int demo_ddr_init()
     const double f_ck = 1600.0 / 3;    // 533.3 MHz
     // const double f_ck = 2000.0 / 3;    // 666.6 MHz
     // const double f_ck = 800.0;         // 800.0 MHz
-    const double t_ck = 1e3 / f_ck;
 
     #if DDR_TYPE == DDR3_TYPE
     // For Demo Board DDR3
@@ -78,6 +77,7 @@ int demo_ddr_init()
     };
     #endif
     #elif DDR_TYPE == DDR4_TYPE
+    const double t_ck = 1e3 / f_ck;
     // For DC Borad DDR4
     ddr_timing_t timpara = {
         .nCL  = 10,

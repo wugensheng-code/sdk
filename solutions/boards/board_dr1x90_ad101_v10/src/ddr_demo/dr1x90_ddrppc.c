@@ -156,14 +156,14 @@ void dr1x90_ddrppc_set_timing()
     //  PTR3                             0x04c
     regData = dr1x90_reg_read (DDRC_ADDR_PPC + PTR3);
     regData = dr1x90_field_set(DDRC_ADDR_PPC + PTR3, tDINIT1_offset,       tDINIT1_mask,  0x180, regData); // tdinit_cke_high
-//  regData = dr1x90_field_set(DDRC_ADDR_PPC + PTR3, tDINIT0_offset,       tDINIT0_mask,0x60000, regData); // tdinit_cke_low
-    regData = dr1x90_field_set(DDRC_ADDR_PPC + PTR3, tDINIT0_offset,       tDINIT0_mask,  0x600, regData); // tdinit_cke_low
+    regData = dr1x90_field_set(DDRC_ADDR_PPC + PTR3, tDINIT0_offset,       tDINIT0_mask,0x60000, regData); // tdinit_cke_low
+    // regData = dr1x90_field_set(DDRC_ADDR_PPC + PTR3, tDINIT0_offset,       tDINIT0_mask,  0x600, regData); // tdinit_cke_low
     dr1x90_reg_write(DDRC_ADDR_PPC + PTR3, regData);
     //  PTR4                             0x050
     regData = dr1x90_reg_read (DDRC_ADDR_PPC + PTR4);
     regData = dr1x90_field_set(DDRC_ADDR_PPC + PTR4, tDINIT3_offset,       tDINIT3_mask,  0x0C8, regData); // tdinit_zq
-//  regData = dr1x90_field_set(DDRC_ADDR_PPC + PTR4, tDINIT2_offset,       tDINIT2_mask,0x30000, regData); // tdinit_rst
-    regData = dr1x90_field_set(DDRC_ADDR_PPC + PTR4, tDINIT2_offset,       tDINIT2_mask,  0x300, regData); // tdinit_rst
+    regData = dr1x90_field_set(DDRC_ADDR_PPC + PTR4, tDINIT2_offset,       tDINIT2_mask,0x30000, regData); // tdinit_rst
+    // regData = dr1x90_field_set(DDRC_ADDR_PPC + PTR4, tDINIT2_offset,       tDINIT2_mask,  0x300, regData); // tdinit_rst
     dr1x90_reg_write(DDRC_ADDR_PPC + PTR4, regData);
     //  PTR5                             0x054
     regData = dr1x90_reg_read (DDRC_ADDR_PPC + PTR5);

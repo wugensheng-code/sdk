@@ -1,4 +1,18 @@
+#include <string.h>
 #include "dr1x90_ddrc_init.h"
+
+static uint64_t rand_val;
+
+static void set_rand_seed(uint64_t v)
+{
+    rand_val = v;
+}
+
+static uint64_t get_rand()
+{
+    rand_val = rand_val * 25214903917ULL + 11ULL;
+    return rand_val;
+}
 
 int dr1x90_ddrc_is_init()
 {
@@ -56,8 +70,8 @@ int dr1x90_ddrc_init(double fck, ddr_type_t type, ddr_width_t width, ddr_ecc_t e
     // step 07 : MDL Calibration
     ///////////////////////////////////////////////////////////////////////////////////////////////
     dr1x90_ddrppc_mdl_cal();
-    dr1x90_ddrppc_zq_cal(type);
-    dr1x90_ddrc_train_dcc();
+    // dr1x90_ddrppc_zq_cal(type);
+    // dr1x90_ddrc_train_dcc();
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 08 : Fast Init
@@ -103,7 +117,6 @@ int dr1x90_ddrc_init(double fck, ddr_type_t type, ddr_width_t width, ddr_ecc_t e
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 10 : MC Configuration
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    set_mpu();
     dr1x90_ddrmc_cfg(fck, type, width, ecc, timpara, addrmap, arbiter_cfg);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -116,6 +129,7 @@ int dr1x90_ddrc_init(double fck, ddr_type_t type, ddr_width_t width, ddr_ecc_t e
     // step 100 : MC Post Configuration
     ///////////////////////////////////////////////////////////////////////////////////////////////
     //Alc_GpioMaskWrite(GPIO_CH0, 0x333, 0xffff);
+    dr1x90_release_ddr_bus();
     dr1x90_ddrmc_post_cfg();
 
     regData = dr1x90_field_read(DDRC_ADDR_PPC + PGCR1, PUBMODE_offset, PUBMODE_mask);

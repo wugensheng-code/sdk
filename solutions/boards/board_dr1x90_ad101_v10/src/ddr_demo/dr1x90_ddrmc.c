@@ -77,9 +77,9 @@ void dr1x90_ddrmc_cfg(double fck, ddr_type_t type, ddr_width_t width, ddr_ecc_t 
 
     dr1x90_ddrmc_addrmap_cfg(type, width, addrmap);
 
-    dr1x90_reg_write(0x1240 ,0x061a0f48); // ODTCFG
+    dr1x90_reg_write(0x1240 ,0x06000608); // ODTCFG
     dr1x90_reg_write(0x1244 ,0x00000011); // ODTMAP
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + ODTMAP ,rank0_rd_odt_offset , rank0_rd_odt_mask ,0x0);
+    // dr1x90_field_write(DDRC_ADDR_UMCTL2 + ODTMAP ,rank0_rd_odt_offset , rank0_rd_odt_mask ,0x0);
 
     dr1x90_ddrmc_arbiter_cfg(arbiter_cfg);
 
@@ -132,6 +132,7 @@ void dr1x90_ddrmc_post_cfg()
     dr1x90_field_wait(DDRC_ADDR_UMCTL2 + STAT, operating_mode_offset, operating_mode_mask, 0x1, -1);
 
     regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + STAT, operating_mode_offset, operating_mode_mask);
+    (void) regData;
 
     //printf("\n operating_mode.   data =  0x%x\r\n", regData);
 

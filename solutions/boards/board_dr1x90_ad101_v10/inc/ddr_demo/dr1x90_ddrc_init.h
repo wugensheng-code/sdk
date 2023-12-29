@@ -97,6 +97,7 @@ void dr1x90_ddrc_train_wladj();
 void dr1x90_ddrc_train_eye();
 
 // MISC Functions
+void dr1x90_release_ddr_bus();
 u32 get_nwr(double fck, ddr_type_t type);
 void make_ddr_mr(double fck, ddr_type_t type, const ddr_timing_t* timpara, u32* MR);
 
