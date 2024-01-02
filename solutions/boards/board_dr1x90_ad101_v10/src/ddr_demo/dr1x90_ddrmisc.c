@@ -164,13 +164,19 @@ void make_ddr_mr(double fck, ddr_type_t type, const ddr_timing_t* timpara, u32* 
 
 void dr1x90_release_ddr_bus()
 {
+    u32 val = 0;
     // DDR Port 0 MPU
-    dr1x90_dram_field_write(0xf840e004, 0, 1, 0);
+    val = dr1x90_dram_read(0xf840e004);
+    val &= ~0x1;
+    dr1x90_dram_write(0xf840e004, val);
 
     // DDR Port 1 MPU
-    dr1x90_dram_field_write(0xf840f004, 0, 1, 0);
+    val = dr1x90_dram_read(0xf840f004);
+    val &= ~0x1;
+    dr1x90_dram_write(0xf840f004, val);
 
     // DDR BUS Reset
-    dr1x90_dram_field_write(0xF8801074, 14, 1, 1);
-    // dr1x90_dram_write(0xF8801074, 0xffffffff);
+    val = dr1x90_dram_read(0xF8801074);
+    val |= 0x1 << 14;
+    dr1x90_dram_write(0xF8801074, val);
 }
