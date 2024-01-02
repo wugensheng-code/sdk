@@ -4,14 +4,14 @@
 # SPDX-License-Identifier: BSD-3-Clause
 #########################################################################
 
+
 #########################################################################
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
 #########################################################################
-CHIP        ?= dr1m90
+SDK_ROOT   ?= ../../../..
 
-SDK_ROOT    ?= ../../../..
-PFLOAT      := 1
 
+CHIP       ?= dr1m90
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
 else
@@ -20,10 +20,9 @@ endif
 
 
 
+
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
-#    SRC_DIR: application source path
-#    INC_DIR  application header path
 #    LD_LIBS: External library files that the app depends on
 #    LIB_DIR: The path where the external library file resides
 #    C_SRCS:   c sources for application
@@ -31,63 +30,49 @@ endif
 #    ASM_SRCS: asm sources for application
 #########################################################################
 SRC_DIR  = ./
-INC_DIR  += ./
+INC_DIR += ./
 
-LD_LIBS  :=
-LIB_DIR  :=
+LD_LIBS  =
+LIB_DIR  =
 
 C_SRCS   :=
 CXX_SRCS :=
 ASM_SRCS :=
 
 #########################################################################
+# 3. CFLAGS
+#########################################################################
+CFLAGS := -O2 -DMMC_DEBUG -DCONFIG_EMMC_TEST=1 -g
+
+#########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 # PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
-
+PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile
 ## Available choices:
 ## PINMUX_MODE1, PINMUX_MODE2, PINMUX_MODE3, PINMUX_MODE_SD1
-#########################################################################.
+#########################################################################
 PINMUX_MODE ?= PINMUX_MODE1
 
-export SOC
-export SDK_ROOT
-export PLAT_DIR
-export CHIP
-export SRC_DIR
-export INC_DIR
 
-export LD_LIBS
-export LIB_DIR
+#########################################################################
+# 5. define build target
+#########################################################################
+TARGET := mmc_test
 
-export CXX_SRCS
-export ASM_SRCS
+ifneq ($(PINMUX_MODE),)
+CFLAGS += -DENABLE_$(PINMUX_MODE)=1
+TARGET:=$(TARGET)_$(CHIP)_$(PINMUX_MODE)
+endif
 
-export PINMUX_MODE
-export COMPILE_PREFIX
+all: $(TARGET)
+	@$(ECHO) COMPILE_PREFIX = $(COMPILE_PREFIX)
 
-
-all:
-	echo COMPILE_PREFIX = $(COMPILE_PREFIX)
-	make cleanapp
-	make -f Makefile_sd dasm
-	make cleanapp
-	make -f Makefile_emmc dasm
-
-cleanapp:
-	$(RM) $(foreach subdir, $(SRC_DIR), $(wildcard $(subdir)/*.d $(subdir)/*.o))
-
-clean:
-	make clean -f Makefile_clean CHIP=dr1m90
-	make clean -f Makefile_clean CHIP=dr1v90
-
-cleanelf:
-	rm -rf *.bin *.dasm *.dump *.elf *.hex *.map *.verilog *.map
-
+# include rules.mk
 include $(SDK_ROOT)/tools/make/rules.mk
 
+# vim: syntax=make
