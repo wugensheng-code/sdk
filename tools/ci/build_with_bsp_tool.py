@@ -54,11 +54,11 @@ class Bsp_tool(object):
 
         try:
             logger.info(f'======> Start creating bsp: project name: {proj_name} os type: {os_type}')
-            subprocess.run(f'./bsp_tool "create_platform_project -projName {proj_name} -location {self.location} -proc {proc_type} -os {os_type} -hpf {hpf_path}"',
+            subprocess.run(f'./anlogic_tool bsp_tool create_platform_project -projName {proj_name} -location {self.location} -proc {proc_type} -os {os_type} -hpf {hpf_path}',
                 shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True)
-            subprocess.run(f'./bsp_tool "create_default_mss -mssfile {self.location}/{proj_name}/system.mss -proc {proc_type} -os {os_type}"',
+            subprocess.run(f'./anlogic_tool bsp_tool create_default_mss -mssfile {self.location}/{proj_name}/system.mss -proc {proc_type} -os {os_type}',
                 shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True)
-            subprocess.run(f'./bsp_tool "generate_bsp_sources -hpf {hpf_path} -mssfile {self.location}/{proj_name}/system.mss -dir {self.location}/{proj_name}"',
+            subprocess.run(f'./anlogic_tool bsp_tool generate_bsp_sources -hpf {hpf_path} -mssfile {self.location}/{proj_name}/system.mss -dir {self.location}/{proj_name}',
                 shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True)
             logger.info(f'======> Platform created successfully: {proj_name}')
         except Exception as e:
@@ -73,9 +73,9 @@ class Bsp_tool(object):
         bspLoc = f'{os.getcwd()}/{bspLoc}'
         try:
             logger.info(f'======> Start creating app: {app_name}')
-            subprocess.run(f'./bsp_tool "create_application_project -projName {proj_name} -location {os.getcwd()} -language C -bsp_loc {self.bsp_location}"',
+            subprocess.run(f'./anlogic_tool bsp_tool create_application_project -projName {proj_name} -location {os.getcwd()} -language C -bsp_loc {self.bsp_location}',
                 shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True)
-            subprocess.run(f'./bsp_tool "generate_app_sources -bsp_loc {bspLoc} -name {app_name} -dir {self.location}/{proj_name}"',
+            subprocess.run(f'./anlogic_tool bsp_tool generate_app_sources -bsp_loc {bspLoc} -name {app_name} -dir {self.location}/{proj_name}',
                 shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True)
             logger.info(f'======> App created successfully: {app_name}')
             logger.info(f'======> Start make project: {app_name}')
