@@ -16,7 +16,7 @@ AL_QSPI_HalStruct *Handle;
 AL_QSPI_ConfigsStruct QspiX4InitConfigs =
 {
     .ClkDiv             = 2,
-    .SamplDelay         = 4,
+    .SamplDelay         = 2,
     .SlvToggleEnum      = QSPI_SLV_TOGGLE_DISABLE,
     .SpiFrameFormat     = SPI_QUAD_FORMAT,
     .ClockStretch       = QSPI_EnableClockStretch
@@ -124,7 +124,7 @@ AL_U32 AlFsbl_QspiInit(void)
     AL_U32 Ret;
     AL_U8 SendData[4] = {0x0};
 
-    AL_REG32_SET_BITS(0xF8801030UL, 0, 6, 2); /// set div_qspi 3 bansed on IO 1000，then div 4, generate 83.33M SCLK
+    AL_REG32_SET_BITS(0xF8801030UL, 0, 6, 4); /// set div_qspi 5 bansed on IO 1000，then div 4, generate 50M SCLK
 
     Ret = AlQspi_Hal_Init(&Handle, &QspiX4InitConfigs, AL_NULL, 0);
     if (Ret != AL_OK) {
@@ -347,10 +347,10 @@ AL_U32 AlFsbl_Qspi32Copy(PTRSIZE SrcAddress, PTRSIZE DestAddress, AL_U32 Length,
     i = Length / 65532 + (Length % 65532 ? 1 : 0);
 
     for (; i > 0; i--) {
-        SendData[0] = (SrcAddress >> 24) & 0xff;
-        SendData[1] = (SrcAddress >> 16) & 0xff;
-        SendData[2] = (SrcAddress >> 8)&0xff;
-        SendData[3] = SrcAddress&0xff;
+        SendData[1] = (SrcAddress >> 24) & 0xff;
+        SendData[2] = (SrcAddress >> 16) & 0xff;
+        SendData[3] = (SrcAddress >> 8)&0xff;
+        SendData[4] = SrcAddress&0xff;
 
         RecvSize = (Length > 65532) ? 65532 : Length;
         Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 5, (AL_U8 *)DestAddress, RecvSize, 10000000);
