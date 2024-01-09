@@ -24,9 +24,7 @@ INC_DIR += $(AL_SDK_ROOT)/fpsoc/arch/arm/common/gic_v3/inc \
            $(AL_SDK_ROOT)/fpsoc/arch/common/inc \
            FreeRTOS-Kernel/portable/GCC/ARM_CA53_64_BIT_SRE
 else
-INC_DIR += $(AL_SDK_ROOT)/fpsoc/arch/riscv/rv64/inc \
-           $(AL_SDK_ROOT)/fpsoc/arch/riscv/ext-nuclei/inc \
-           FreeRTOS-Kernel/portable/GCC/RISC-V
+INC_DIR += FreeRTOS-Kernel/portable/GCC/RISC-V
 endif
 
 ifeq ($(ARMv8_EL),EL1)

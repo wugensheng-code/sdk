@@ -102,48 +102,51 @@ def main():
     group.add_argument('-A', '--all', help='build all project', action='store_true', dest='build_all')
     parser.add_argument('-t', '--bsp_tool', help='bsp_tool path')
     parser.add_argument('-b', '--bsp_resource_path', help='master_sdk path')
-    parser.add_argument('-p', '--hpf', help='hpf path')
 
     args = parser.parse_args()
 
-    os_type = 'standalone'
+    proc_types = {'rpu': 'demo_board_hpf_rpu.hpf', 'apu-0': 'DR1M90_DEMO.hpf'}
 
     bsp_tool = Bsp_tool(bsp_tool_p=args.bsp_tool, BSP_RESOURCE_PATH=args.bsp_resource_path, AARCH64_TOOLCHAIN_PATH=os.path.abspath(AARCH64_TOOLCHAIN_PATH), RISCV_TOOLCHAIN_PATH=os.path.abspath(RISCV_TOOLCHAIN_PATH))
     bsp_tool.setup_env()
-    bsp_tool.create_bsp(proj_name=f'test_platform_standalone', location=os.getcwd(), proc_type='apu-0', os_type='standalone', hpf_path=args.hpf)
-    bsp_tool.create_bsp(proj_name=f'test_platform_freertos', location=os.getcwd(), proc_type='apu-0', os_type='freertos', hpf_path=args.hpf)
-    bsp_tool.create_bsp(proj_name=f'test_platform_rtthread', location=os.getcwd(), proc_type='apu-0', os_type='rtthread', hpf_path=args.hpf)
 
-    statistics = list()
-    with open(f'{args.bsp_resource_path}/docs/depend.json') as f:
-        depend = json.load(f)
-        for i in depend['app'].values():
-            os_type = i['1.0']['supportedOS'][0]
-            k = i['1.0']['name']
-            ret = bsp_tool.create_app_and_make(proj_name=f'test_app_{k}', app_name=f'{k}', bspLoc=f'test_platform_{os_type}')
-            statistics.append({k:ret})
+    for proc_type, hpf in proc_types.items():
+        bsp_tool.create_bsp(proj_name=f'test_platform_standalone_{proc_type}', location=os.getcwd(), proc_type=proc_type, os_type='standalone', hpf_path=hpf)
+        bsp_tool.create_bsp(proj_name=f'test_platform_freertos_{proc_type}', location=os.getcwd(), proc_type=proc_type, os_type='freertos', hpf_path=hpf)
+        bsp_tool.create_bsp(proj_name=f'test_platform_rtthread_{proc_type}', location=os.getcwd(), proc_type=proc_type, os_type='rtthread', hpf_path=hpf)
+
+        statistics = list()
+        with open(f'{args.bsp_resource_path}/docs/depend.json') as f:
+            depend = json.load(f)
+            for i in depend['app'].values():
+                os_type = i['1.0']['supportedOS'][0]
+                k = i['1.0']['name']
+                if ('CHERRYUSB_MSC_FREERTOS' in k and 'rpu' in proc_type) or ('DEMO_OPENAMP' in k and 'rpu' in proc_type):
+                    pass
+                else:
+                    ret = bsp_tool.create_app_and_make(proj_name=f'test_app_{k}', app_name=f'{k}', bspLoc=f'test_platform_{os_type}_{proc_type}')
+                    statistics.append({k:ret})
+
+            for i in depend['ps_driver_app'].values():
+                for c in i['1.0'].values():
+                    os_type = c['supportedOS'][0]
+                    k = c['name']
+                    ret = bsp_tool.create_app_and_make(proj_name=f'test_app_{k}', app_name=f'{k}', bspLoc=f'test_platform_{os_type}_{proc_type}')
+                    statistics.append({k:ret})
 
 
-        for i in depend['ps_driver_app'].values():
-            for c in i['1.0'].values():
-                os_type = c['supportedOS'][0]
-                k = c['name']
-                ret = bsp_tool.create_app_and_make(proj_name=f'test_app_{k}', app_name=f'{k}', bspLoc=f'test_platform_{os_type}')
-                statistics.append({k:ret})
+        logger.info(f'\r\n============================> Statistics for {proc_type} <==========================')
 
-
-    logger.info(f'\r\n==============================> Statistics <===============================')
-
-    ret = None
-    for i in statistics:
-        for k, v in i.items():
-            if v is None:
-                ret = 'Scucess'
-                print(f"| {k:<40} |\033[32m{ret:^30}\033[0m |")
-            else:
-                ret = 'Fail: '+ str(v)
-                print(f"| {k:<40} |\033[31m{ret:^30}\033[0m |")
-                exit(1)
+        ret = None
+        for i in statistics:
+            for k, v in i.items():
+                if v is None:
+                    ret = 'Scucess'
+                    print(f"| {k:<40} |\033[32m{ret:^30}\033[0m |")
+                else:
+                    ret = 'Fail: '+ str(v)
+                    print(f"| {k:<40} |\033[31m{ret:^30}\033[0m |")
+                    exit(1)
 
 
 if __name__ == '__main__':
