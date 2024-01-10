@@ -342,7 +342,7 @@ static AL_U32 ALSmc_Dev_CrcCheck(AL_U8 *Buf)
 */
 AL_U32 ALSmc_Dev_ReadParam(AL_NAND_InfoStruct *NandInfo)
 {
-    AL_U8 Temp[ONFI_PARAM_LEN], Status;
+    AL_U8 Temp[ONFI_PARAM_LEN], Status, Index;
     AL_U32 Crc;
     AL_REG CmdPhaseAddr;
 
@@ -355,28 +355,17 @@ AL_U32 ALSmc_Dev_ReadParam(AL_NAND_InfoStruct *NandInfo)
     NandInfo->Cmd.Column = 0x00;
 
     ALSmc_Dev_SendCmd(NandInfo);
+    AlSys_MDelay(200);
 
-    /* Check Nand Status */
-    do {
-        Status = ALSmc_Dev_ReadStatus(NandInfo);
-    } while (!(Status & ONFI_STATUS_RDY));
-
-    CmdPhaseAddr  = NAND_BASE_ADDR          |
-            (0 << NAND_ADDR_CYCLES_SHIFT)   |
-            (0 << NAND_END_CMD_VALID_SHIFT) |
-            NAND_COMMAND_PHASE_FLAG         |
-            (0 << NAND_END_CMD_SHIFT)       |
-            (0 << NAND_ECC_LAST_SHIFT);
-
-    AL_REG32_WRITE(CmdPhaseAddr, 0);
-
-    ALSmc_Dev_ReadData(NandInfo, Temp, ONFI_PARAM_LEN);
-
-    Crc = ALSmc_Dev_CrcCheck(Temp);
-    if (((Crc & 0xff) != Temp[CRC16_LEN]) || (((Crc >> 8) & 0xff) != Temp[CRC16_LEN+1])){
-        /* Return Error */
-        return AL_SMC_EVENTS_TO_ERRS(SmcCrcErr);
+    for (Index = 0; Index < 3; Index++) {
+        ALSmc_Dev_ReadData(NandInfo, Temp, ONFI_PARAM_LEN);
+        Crc = ALSmc_Dev_CrcCheck(Temp);
+        if (((Crc & 0xff) == Temp[CRC16_LEN]) && (((Crc >> 8) & 0xff) == Temp[CRC16_LEN+1]))
+            break;
     }
+
+    if(Index == 3)
+        return AL_SMC_EVENTS_TO_ERRS(SmcCrcErr);
 
     NandInfo->Size.DataBytesPerPage  =     *((AL_U32 *)(&Temp[DATA_PER_PAGE_POS]));
     NandInfo->Size.SpareBytesPerPage =     *((AL_U16 *)(&Temp[SPARE_PER_PAGE_POS]));
