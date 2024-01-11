@@ -320,3 +320,79 @@ AL_S32 AlGbe_Hal_ReleaseTxPacket(AL_GBE_HalStruct *Handle)
 
     return Ret;
 }
+
+AL_S32 AlGbe_Hal_PtpInit(AL_GBE_HalStruct *Handle, AL_GBE_PtpConfigStruct *PtpConfig)
+{
+    AL_S32 Ret = AL_OK;
+
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+
+    AL_GBE_HAL_LOCK(Handle);
+
+    Ret = AlGbe_Dev_PtpInit(&Handle->Dev, PtpConfig);
+
+    AL_GBE_HAL_UNLOCK(Handle);
+
+    return Ret;
+}
+
+
+AL_S32 AlGbe_Hal_SetPtpTimestamp(AL_GBE_HalStruct *Handle, AL_GBE_PtpTimeStruct *Timestamp)
+{
+    AL_S32 Ret = AL_OK;
+
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+
+    AL_GBE_HAL_LOCK(Handle);
+
+    Ret = AlGbe_Dev_SetPtpTimestamp(&Handle->Dev, Timestamp);
+
+    AL_GBE_HAL_UNLOCK(Handle);
+
+    return Ret;
+}
+
+AL_S32 AlGbe_Hal_GetPtpTimestamp(AL_GBE_HalStruct *Handle, AL_GBE_PtpTimeStruct *Timestamp)
+{
+    AL_S32 Ret = AL_OK;
+
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+
+    AL_GBE_HAL_LOCK(Handle);
+
+    Ret = AlGbe_Dev_GetPtpTimestamp(&Handle->Dev, Timestamp);
+
+    AL_GBE_HAL_UNLOCK(Handle);
+
+    return Ret;
+}
+
+AL_S32 AlGbe_Hal_UpdatePtpTimeOffset(AL_GBE_HalStruct *Handle, AL_GBE_PtpTimeStruct *TimeOffset)
+{
+    AL_S32 Ret = AL_OK;
+
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+
+    AL_GBE_HAL_LOCK(Handle);
+
+    Ret = AlGbe_Dev_UpdatePtpTimeOffset(&Handle->Dev, TimeOffset);
+
+    AL_GBE_HAL_UNLOCK(Handle);
+
+    return Ret;
+}
+
+AL_S32 AlGbe_Hal_AdjustPtpTimeFreq(AL_GBE_HalStruct *Handle, AL_U32 Adj)
+{
+    AL_S32 Ret = AL_OK;
+
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+
+    AL_GBE_HAL_LOCK(Handle);
+
+    Ret = AlGbe_Dev_AdjustPtpTimeFreq(&Handle->Dev, Adj);
+
+    AL_GBE_HAL_UNLOCK(Handle);
+
+    return Ret;
+}

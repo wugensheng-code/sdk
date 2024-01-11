@@ -154,6 +154,7 @@ extern "C" {
 
 #define HAVE_GBEPS_DRIVER
 #define GBE_CLOCK               (25*MHZ)
+#define GBE_PTP_CLOCK           (100*MHZ)
 
 #define GBE_DEVICE_ID           (1)
 

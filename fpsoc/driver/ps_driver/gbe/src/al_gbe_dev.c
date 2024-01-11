@@ -136,6 +136,7 @@ AL_VOID AlGbe_Dev_SetMacConfig(AL_GBE_DevStruct *Gbe)
     MacDefaultCfg.WatchdogDisable = AL_GBE_FUNC_DISABLE;
     MacDefaultCfg.WatchdogTimeout =  AL_GBE_WatchdogTimeout2K;
     MacDefaultCfg.ZeroQuantaPause = AL_GBE_FUNC_ENABLE;
+    MacDefaultCfg.PassAllMulticastPacket = AL_GBE_FUNC_ENABLE;
 
     /* Config Mac configuretion register */
     AlGbe_ll_SetPreLEn(GbeBaseAddr, MacDefaultCfg.PreambleLength);
@@ -733,6 +734,77 @@ AL_S32 AlGbe_Dev_StartMacDma(AL_GBE_DevStruct *Gbe)
     return AL_OK;
 }
 
+AL_S32 AlGbe_Dev_GetRxTimeStamp(AL_GBE_DevStruct *Gbe, AL_U32 DescIndex)
+{
+    AL_GBE_RxDescListStruct *DmaRxDescList = &Gbe->RxDescList;
+    AL_GBE_DMADescStruct *DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaRxDescList->RxDesc[DescIndex]);
+
+    if (!AlGbe_ll_GetWbRecvContextDesc((AL_REG)&DmaRxDesc->DESC3)) {
+        return AL_GBE_ERR_DESC_STATE;
+    }
+
+    /* Get timestamp high */
+    Gbe->RxDescList.RxTimeStamp.TimeStampHigh = DmaRxDesc->DESC1;
+    /* Get timestamp low */
+    Gbe->RxDescList.RxTimeStamp.TimeStampLow  = DmaRxDesc->DESC0;
+
+    DmaRxDesc->DESC0 = DmaRxDesc->BackupAddr0;
+
+    AlGbe_ll_ClearWbRecvContextDesc((AL_REG)&DmaRxDesc->DESC3);
+
+    return AL_OK;
+}
+
+static AL_S32 AlGbe_Dev_CheckTimestamp(AL_VOID *Desc)
+{
+    AL_S32 Ret = AL_GBE_DESC_RX_TIMESTAMP_STATUS_NOT_READY;
+
+    AL_GBE_DMADescStruct *CurrentDesc = (AL_GBE_DMADescStruct *)Desc;
+    AL_U32 Rdes0 = CurrentDesc->DESC0;
+    AL_U32 Rdes1 = CurrentDesc->DESC1;
+
+    if (!AlGbe_ll_IsWbRxDescOwnByDma((AL_REG)&(CurrentDesc->DESC3)) &&
+        AlGbe_ll_GetWbRecvContextDesc((AL_REG)&(CurrentDesc->DESC3))) {
+
+        if ((Rdes0 == 0xffffffff) && (Rdes1 == 0xffffffff))
+            /* Corrupted value */
+            Ret = AL_GBE_DESC_TX_TIMESTAMP_STATUS_ERROR;
+        else
+            /* A valid Timestamp is ready to be read */
+            Ret = AL_OK;
+    }
+
+    /* Timestamp not ready */
+    return Ret;
+}
+
+static AL_S32 AlGbe_Dev_GetRxTimestampStatus(void *Desc, void *NextDesc)
+{
+     AL_GBE_DMADescStruct *CurrentDesc = (AL_GBE_DMADescStruct *)Desc;
+     AL_S32 Ret = AL_GBE_DESC_RX_TIMESTAMP_STATUS_NOT_READY;
+
+     /* Get the status from normal w/b descriptor */
+    if (AlGbe_ll_IsWbRxDesc3StatusValid((AL_REG)&(CurrentDesc->DESC3))) {
+        if (AlGbe_ll_IsWbRxDesc1TimeStampAvaliable((AL_REG)&(CurrentDesc->DESC1))) {
+            AL_S32 Index = 0;
+
+            /* Check if timestamp is OK from context descriptor */
+            do {
+                Ret = AlGbe_Dev_CheckTimestamp(NextDesc);
+                if (Ret == AL_GBE_DESC_RX_TIMESTAMP_STATUS_ERROR)
+                    return Ret;
+                Index++;
+
+            } while ((Ret == AL_GBE_DESC_RX_TIMESTAMP_STATUS_NOT_READY) && (Index < 10));
+
+            if (Index == 10)
+                Ret = AL_GBE_DESC_RX_TIMESTAMP_STATUS_NOT_READY;
+        }
+    }
+
+    return Ret;
+}
+
 AL_S32 AlGbe_Dev_IsRxDataAvailable(AL_GBE_DevStruct *Gbe)
 {
     AL_GBE_RxDescListStruct *DmaRxDescList = &Gbe->RxDescList;
@@ -741,6 +813,8 @@ AL_S32 AlGbe_Dev_IsRxDataAvailable(AL_GBE_DevStruct *Gbe)
     AL_U32 Descscancnt = 0;
     AL_U32 Appdesccnt = 0, FirstAppDescidx = 0;
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
+
+    AL_GBE_DMADescStruct *CurrentDmaRxDesc;
 
     if (DmaRxDescList->AppDescNbr != 0U) {
         /* data already received by not yet processed*/
@@ -763,18 +837,21 @@ AL_S32 AlGbe_Dev_IsRxDataAvailable(AL_GBE_DevStruct *Gbe)
             /* Increment current rx descriptor index */
             INCR_RX_DESC_INDEX(DescIndex, 1U);
 
+            CurrentDmaRxDesc = DmaRxDesc;
+
             /* Check for Context descriptor */
             /* Get current descriptor address */
             DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaRxDescList->RxDesc[DescIndex]);
 
-            if (!AlGbe_ll_IsWbRxDescOwnByDma((AL_REG)&DmaRxDesc->DESC3)) {
-                if (AlGbe_ll_GetWbRecvContextDesc((AL_REG)&DmaRxDesc->DESC3)) {
-                    /* Increment the number of descriptors to be passed to the application */
-                    DmaRxDescList->AppContextDesc = 1;
-                    /* Increment current rx descriptor index */
-                    INCR_RX_DESC_INDEX(DescIndex, 1U);
-                }
+            if (AlGbe_Dev_GetRxTimestampStatus(CurrentDmaRxDesc, DmaRxDesc) == AL_OK) {
+                AlGbe_Dev_GetRxTimeStamp(Gbe, DescIndex);
+
+                /* Increment the number of descriptors to be passed to the application */
+                DmaRxDescList->AppContextDesc = 1;
+                /* Increment current rx descriptor index */
+                INCR_RX_DESC_INDEX(DescIndex, 1U);
             }
+
             /* Fill information to Rx descriptors list */
             DmaRxDescList->CurRxDesc = DescIndex;
             DmaRxDescList->FirstAppDesc = FirstAppDescidx;
@@ -799,10 +876,12 @@ AL_S32 AlGbe_Dev_IsRxDataAvailable(AL_GBE_DevStruct *Gbe)
             /* Increment the number of descriptors to be passed to the application */
             Appdesccnt += 1U;
 
-            /* Increment current rx descriptor index */
-            INCR_RX_DESC_INDEX(DescIndex, 1U);
-            /* Get current descriptor address */
-            DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaRxDescList->RxDesc[DescIndex]);
+            if (!AlGbe_ll_GetWbRecvContextDesc((AL_REG)&DmaRxDesc->DESC3)) {
+                /* Increment current rx descriptor index */
+                INCR_RX_DESC_INDEX(DescIndex, 1U);
+                /* Get current descriptor address */
+                DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)DmaRxDescList->RxDesc[DescIndex]);
+            }
         }
     }
 
@@ -1072,6 +1151,9 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
     /* Mark it as NORMAL descriptor */
     AlGbe_ll_SetTdesc3ContextType((AL_REG)&DmaTxDesc->DESC3, AL_GBE_DESC_NORMAL_DESC);
 
+    if (TxConfig->Attributes & AL_GBE_TX_PACKETS_FEATURES_TTSE) {
+        AlGbe_ll_SetTdesc2TxTimeStampEnable((AL_REG)&DmaTxDesc->DESC2, AL_GBE_FUNC_ENABLE);
+    }
 
     /* Ensure rest of descriptor is written to RAM before the OWN bit */
     DMB();
@@ -1254,6 +1336,20 @@ AL_S32 AlGbe_Dev_Transmit(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruct *TxCo
     return AL_OK;
 }
 
+AL_S32 AlGbe_Dev_GetTxTimeStamp(AL_GBE_DevStruct *Gbe, const AL_GBE_DMADescStruct *DmaTxDesc)
+{
+    if (!AlGbe_ll_GetWbTxDesc3TxTimeStatus((AL_REG)&DmaTxDesc->DESC3)) {
+        return AL_GBE_DESC_TX_TIMESTAMP_STATUS_ERROR;
+    }
+
+    Gbe->TxTimeStamp.TimeStampLow = DmaTxDesc->DESC0;
+    Gbe->TxTimeStamp.TimeStampHigh = DmaTxDesc->DESC1;
+
+    AlGbe_ll_ClearWbTxDesc3TxTimeStatus((AL_REG)&DmaTxDesc->DESC3);
+
+    return AL_OK;
+}
+
 AL_S32 AlGbe_Dev_TransmitPolling(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruct *TxConfig)
 {
     AL_S32 Ret;
@@ -1287,6 +1383,14 @@ AL_S32 AlGbe_Dev_TransmitPolling(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruc
     while (AlGbe_ll_IsWbTxDescOwnByDma((AL_REG)&DmaTxDesc->DESC3)) {
         if (AlGbe_ll_IsDmaChannelFatalBusError(GbeBaseAddr)) {
             return AL_GBE_ERR_FATLA_BUS_ERROR;
+        }
+    }
+
+    if (TxConfig->Attributes & AL_GBE_TX_PACKETS_FEATURES_TTSE) {
+        Ret = AlGbe_Dev_GetTxTimeStamp(Gbe, DmaTxDesc);
+        if (Ret != AL_OK) {
+            AlGbe_Dev_ClrTxBusy(Gbe);
+            return Ret;
         }
     }
 
@@ -1398,6 +1502,141 @@ AL_S32 AlGbe_Dev_RegisterEventCallBack(AL_GBE_DevStruct *Gbe, AL_GBE_EventCallBa
 
     Gbe->EventCallBack        = Callback;
     Gbe->EventCallBackRef     = CallbackRef;
+
+    return AL_OK;
+}
+
+AL_S32 AlGbe_Dev_SetPtpTimestamp(AL_GBE_DevStruct *Gbe, AL_GBE_PtpTimeStruct *Timestamp)
+{
+    AL_ASSERT((Gbe != AL_NULL) && (Timestamp != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+
+    AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
+
+    AlGbe_ll_SetSystemTimeSecondsUpdate(GbeBaseAddr, Timestamp->Sec);
+    AlGbe_ll_SetSystemTimeNanosecondsUpdate(GbeBaseAddr, Timestamp->Nsec);
+
+    AlGbe_ll_EnableInitializeTimestamp(GbeBaseAddr);
+    while(AlGbe_ll_IsInitializeTimestampEnabled(GbeBaseAddr) == AL_GBE_FUNC_ENABLE);
+
+    return AL_OK;
+}
+
+AL_S32 AlGbe_Dev_GetPtpTimestamp(AL_GBE_DevStruct *Gbe, AL_GBE_PtpTimeStruct *Timestamp)
+{
+    AL_ASSERT((Gbe != AL_NULL) && (Timestamp != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+
+    AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
+
+    Timestamp->Sec = AlGbe_ll_GetSystemTimeSeconds(GbeBaseAddr);
+    Timestamp->Nsec = AlGbe_ll_GetSystemTimeNanoseconds(GbeBaseAddr);
+
+    return AL_OK;
+}
+
+AL_S32 AlGbe_Dev_UpdatePtpTimeOffset(AL_GBE_DevStruct *Gbe, AL_GBE_PtpTimeStruct *TimeOffset)
+{
+    AL_ASSERT((Gbe != AL_NULL) && (TimeOffset != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+
+    AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
+
+    AlGbe_ll_SetSystemTimeSecondsUpdate(GbeBaseAddr, TimeOffset->Sec);
+
+    AlGbe_ll_SetSystemTimeNanosecondsUpdate(GbeBaseAddr, (TimeOffset->Nsec) |
+                                            (TimeOffset->Sign << GBE__MAC_SYSTEM_TIME_NANOSECONDS_UPDATE__ADDSUB__SHIFT));
+
+    AlGbe_ll_EnableUpdateTimestamp(GbeBaseAddr);
+    while(AlGbe_ll_IsUpdateTimestampEnabled(GbeBaseAddr) == AL_GBE_FUNC_ENABLE);
+
+    return AL_OK;
+}
+
+AL_S32 AlGbe_Dev_AdjustPtpTimeFreq(AL_GBE_DevStruct *Gbe, AL_U32 Adj)
+{
+    AL_ASSERT((Gbe != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+
+    AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
+
+    AL_U32 Addend = Adj;
+
+    AlGbe_ll_SetTimestampAddend(GbeBaseAddr, Addend);
+
+    AlGbe_ll_EnableUpdateAddendRegister(GbeBaseAddr);
+    while(AlGbe_ll_IsUpdateAddendRegisterEnabled(GbeBaseAddr) == AL_GBE_FUNC_ENABLE);
+
+    return AL_OK;
+}
+
+AL_VOID AlGbe_Dev_EnableTimestamp(AL_GBE_DevStruct *Gbe)
+{
+    AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
+
+    AlGbe_ll_EnableTimeStamp(GbeBaseAddr, AL_GBE_FUNC_ENABLE);
+
+    /* Set PTP frame type */
+    AlGbe_ll_EnablePtpV2(GbeBaseAddr, AL_GBE_FUNC_ENABLE);
+    AlGbe_ll_EnablePtpPacketsOverEthernet(GbeBaseAddr, AL_GBE_FUNC_ENABLE);
+    AlGbe_ll_EnablePtpPacketsOverIpv4Udp(GbeBaseAddr, AL_GBE_FUNC_ENABLE);
+
+    /* Set PTP packets type for Taking Snapshots */
+    AlGbe_ll_EnableTimestampSnapshotForEventMessage(GbeBaseAddr, AL_GBE_FUNC_DISABLE);
+    AlGbe_ll_EnableTMessageSnapshotForRelevantMaster(GbeBaseAddr, AL_GBE_FUNC_DISABLE);
+    AlGbe_ll_PtpSelectPacketsForTakingSnapshot(GbeBaseAddr, 1);
+}
+
+AL_S32 AlGbe_Dev_PtpInit(AL_GBE_DevStruct *Gbe, AL_GBE_PtpConfigStruct *PtpConfig)
+{
+    AL_S32 Data;
+    AL_S64 Temp;
+    AL_U32 Addend;
+
+    AL_ASSERT((Gbe != AL_NULL) && (PtpConfig != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+
+    Gbe->PtpConfig = *PtpConfig;
+
+    AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
+
+    AlGbe_Dev_EnableTimestamp(Gbe);
+
+    AlGbe_ll_EnableTimestampDigitalorBinaryRollover(GbeBaseAddr, AL_GBE_FUNC_ENABLE);
+
+    if (PtpConfig->UpdateMethod == AL_GBE_PTP_FINE_UPDATE) {
+        AlGbe_ll_EnableFineTimestampUpdate(GbeBaseAddr, AL_GBE_FUNC_ENABLE);
+        Data = (AL_GBE_ONE_SEC_IN_NANOSEC / GBE_PTP_CLOCK) * 2;
+    } else {
+        Data = (AL_GBE_ONE_SEC_IN_NANOSEC / GBE_PTP_CLOCK);
+    }
+
+    /* 0.465ns accuracy */
+    //Data = (Data * 1000) / 465;
+
+    if (Data > AL_GBE_PTP_MAX_SUB_SECOND_INCREMENT)
+        Data = AL_GBE_PTP_MAX_SUB_SECOND_INCREMENT;
+
+    AlGbe_ll_SetSubSecondIncrementValue(GbeBaseAddr, Data);
+
+    Temp = AL_GBE_ONE_SEC_IN_NANOSEC / Data;
+
+    /* calculate default added value:
+     * formula is :
+     * Addend = (2^32)/freq_div_ratio;
+     * where, freq_div_ratio = 1e9ns/sec_inc
+     */
+    Temp = Temp << 32;
+    Addend = Temp / GBE_PTP_CLOCK;
+
+    Gbe->PtpConfig.DefaultAddend = Addend;
+
+    if (PtpConfig->UpdateMethod == AL_GBE_PTP_FINE_UPDATE) {
+        AlGbe_Dev_AdjustPtpTimeFreq(Gbe, Addend);
+    }
+
+    AL_GBE_PtpTimeStruct Timestamp = {
+        .Sec = 1703593218,
+        .Nsec = 0,
+        .Sign = 0,
+    };
+
+    AlGbe_Dev_SetPtpTimestamp(Gbe, &Timestamp);
 
     return AL_OK;
 }

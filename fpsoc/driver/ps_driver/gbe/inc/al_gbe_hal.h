@@ -64,6 +64,16 @@ AL_S32 AlGbe_Hal_BuildRxDescriptors(AL_GBE_HalStruct *Handle);
 
 AL_S32 AlGbe_Hal_ReleaseTxPacket(AL_GBE_HalStruct *Handle);
 
+AL_S32 AlGbe_Hal_PtpInit(AL_GBE_HalStruct *Handle, AL_GBE_PtpConfigStruct *PtpConfig);
+
+AL_S32 AlGbe_Hal_SetPtpTimestamp(AL_GBE_HalStruct *Handle, AL_GBE_PtpTimeStruct *Timestamp);
+
+AL_S32 AlGbe_Hal_GetPtpTimestamp(AL_GBE_HalStruct *Handle, AL_GBE_PtpTimeStruct *Timestamp);
+
+AL_S32 AlGbe_Hal_UpdatePtpTimeOffset(AL_GBE_HalStruct *Handle, AL_GBE_PtpTimeStruct *TimeOffset);
+
+AL_S32 AlGbe_Hal_AdjustPtpTimeFreq(AL_GBE_HalStruct *Handle, AL_U32 Adj);
+
 #ifdef __cplusplus
 }
 #endif

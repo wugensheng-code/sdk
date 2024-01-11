@@ -48,6 +48,8 @@
 
 #if NO_SYS
 
+#define LWIP_PTP                1
+
 /**
  * SYS_LIGHTWEIGHT_PROT==1: if you want inter-task protection for certain
  * critical regions during buffer allocation, deallocation and memory
@@ -122,6 +124,12 @@ a lot of data that needs to be copied, this should be set high. */
 /* ---------- UDP options ---------- */
 #define LWIP_UDP                1
 #define UDP_TTL                 255
+
+
+/* ---------- IGMP options ---------- */
+#if LWIP_PTP
+#define LWIP_IGMP                       1
+#endif
 
 
 /* ---------- Statistics options ---------- */

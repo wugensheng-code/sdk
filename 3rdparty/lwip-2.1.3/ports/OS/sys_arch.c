@@ -1036,7 +1036,7 @@ void sys_assert( const char *pcMessage )
 u32_t sys_now(void)
 {
     u64_t tick = AlSys_GetTimerTickCount();
-    return (tick / 50 /1000);
+    return ((tick * 1000)/ AlSys_GetTimerFreq());
 }
 
 #endif /* ！NO_SYS */

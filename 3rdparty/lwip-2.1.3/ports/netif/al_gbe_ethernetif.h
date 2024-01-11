@@ -64,14 +64,14 @@ extern "C" {
 #define GBE_MAC_ADDR4    (0x74)
 #define GBE_MAC_ADDR5    (0x7f)
 
-#define IP_ADDR0        10
-#define IP_ADDR1        8
-#define IP_ADDR2        9
-#define IP_ADDR3        88
+#define IP_ADDR0        192
+#define IP_ADDR1        168
+#define IP_ADDR2        31
+#define IP_ADDR3        222
 
-#define GW_ADDR0        10
-#define GW_ADDR1        8
-#define GW_ADDR2        9
+#define GW_ADDR0        192
+#define GW_ADDR1        168
+#define GW_ADDR2        31
 #define GW_ADDR3        1
 
 #define NETMASK_ADDR0        255
@@ -79,27 +79,7 @@ extern "C" {
 #define NETMASK_ADDR2        255
 #define NETMASK_ADDR3        0
 
-#define ETH_TX_PACKETS_FEATURES_CSUM          0x00000001U
-#define ETH_TX_PACKETS_FEATURES_SAIC          0x00000002U
-#define ETH_TX_PACKETS_FEATURES_VLANTAG       0x00000004U
-#define ETH_TX_PACKETS_FEATURES_INNERVLANTAG  0x00000008U
-#define ETH_TX_PACKETS_FEATURES_TSO           0x00000010U
-#define ETH_TX_PACKETS_FEATURES_CRCPAD        0x00000020U
-
-
-#define ETH_DMATXNDESCRF_CIC_IPHDR_PAYLOAD_INSERT_PHDR_CALC 0x3
-
-#define ETH_CHECKSUM_IPHDR_PAYLOAD_INSERT_PHDR_CALC  ETH_DMATXNDESCRF_CIC_IPHDR_PAYLOAD_INSERT_PHDR_CALC
-
-
-#define ETH_DMATXNDESCRF_CPC_CRC_INSERT                      0x04000000U
-
-
-#define ETH_CRC_PAD_INSERT  ETH_DMATXNDESCRF_CPC_CRC_INSERT
-
-
 void netif_config(void);
-
 
 #if NO_SYS
 void ethernetif_input(struct netif *netif);

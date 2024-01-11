@@ -762,6 +762,11 @@ static inline AL_VOID AlGbe_ll_SetTdesc2CompleteIntr(AL_REG BaseAddr, AL_GBE_Fun
     AL_REG32_SET_BIT(BaseAddr, GBE__DESC_TX_DESC2__IOC__SHIFT, State);
 }
 
+static inline AL_VOID AlGbe_ll_SetTdesc2TxTimeStampEnable(AL_REG BaseAddr, AL_GBE_FunctionEnum State)
+{
+    AL_REG32_SET_BIT(BaseAddr, GBE__DESC_TX_DESC2__TTSE_TMWD__SHIFT, State);
+}
+
 static inline AL_VOID AlGbe_ll_SetTdesc3FrameLen(AL_REG BaseAddr, AL_U16 FrameLen)
 {
     AL_REG32_SET_BITS(BaseAddr, GBE__DESC_TX_DESC3__FL_TPL__SHIFT, GBE__DESC_TX_DESC3__FL_TPL__SIZE, FrameLen);
@@ -797,6 +802,16 @@ static inline AL_BOOL AlGbe_ll_IsTxDescOwnByDma(AL_REG BaseAddr)
     return AL_REG32_GET_BIT(BaseAddr, GBE__DESC_TX_DESC3__OWN__SHIFT);
 }
 
+static inline AL_BOOL AlGbe_ll_GetWbTxDesc3TxTimeStatus(AL_REG BaseAddr)
+{
+    return AL_REG32_GET_BIT(BaseAddr, GBE__DESC_WRITE_BACK_TX_DESC3__TTSS__SHIFT);
+}
+
+static inline AL_VOID AlGbe_ll_ClearWbTxDesc3TxTimeStatus(AL_REG BaseAddr)
+{
+    AL_REG32_SET_BIT(BaseAddr, GBE__DESC_WRITE_BACK_TX_DESC3__TTSS__SHIFT, AL_GBE_FUNC_DISABLE);
+}
+
 static inline AL_BOOL AlGbe_ll_IsWbTxDescOwnByDma(AL_REG BaseAddr)
 {
     return AL_REG32_GET_BIT(BaseAddr, GBE__DESC_WRITE_BACK_TX_DESC3__OWN__SHIFT);
@@ -822,6 +837,11 @@ static inline AL_VOID AlGbe_ll_SetRdesc3OwnByDma(AL_REG BaseAddr, AL_GBE_Functio
     AL_REG32_SET_BIT(BaseAddr, GBE__DESC_RX_DESC3__OWN__SHIFT, State);
 }
 
+static inline AL_BOOL AlGbe_ll_IsWbRxDesc1TimeStampAvaliable(AL_REG BaseAddr)
+{
+    return AL_REG32_GET_BIT(BaseAddr, 14);
+}
+
 static inline AL_BOOL AlGbe_ll_IsWbRxDescOwnByDma(AL_REG BaseAddr)
 {
     return AL_REG32_GET_BIT(BaseAddr, GBE__DESC_WRITE_BACK_RX_DESC3__OWN__SHIFT);
@@ -842,14 +862,141 @@ static inline AL_BOOL AlGbe_ll_IsWbRxDescLastDesc(AL_REG BaseAddr)
     return AL_REG32_GET_BIT(BaseAddr, GBE__DESC_WRITE_BACK_RX_DESC3__LD__SHIFT);
 }
 
+static inline AL_BOOL AlGbe_ll_IsWbRxDesc3StatusValid(AL_REG BaseAddr)
+{
+    return AL_REG32_GET_BIT(BaseAddr, GBE__DESC_WRITE_BACK_RX_DESC3__RS1V__SHIFT);
+}
+
 static inline AL_BOOL AlGbe_ll_GetWbRecvContextDesc(AL_REG BaseAddr)
 {
     return AL_REG32_GET_BIT(BaseAddr, GBE__DESC_WRITE_BACK_RX_DESC3__CTXT__SHIFT);
 }
 
+static inline AL_VOID AlGbe_ll_ClearWbRecvContextDesc(AL_REG BaseAddr)
+{
+    AL_REG32_SET_BIT(BaseAddr, GBE__DESC_WRITE_BACK_RX_DESC3__CTXT__SHIFT, AL_GBE_FUNC_DISABLE);
+}
+
 static inline AL_U16 AlGbe_ll_GetWbRdesc3Packetlen(AL_REG BaseAddr)
 {
     return AL_REG32_GET_BITS(BaseAddr, GBE__DESC_WRITE_BACK_RX_DESC3__PL__SHIFT, GBE__DESC_WRITE_BACK_RX_DESC3__PL__SIZE);
+}
+
+static inline AL_VOID AlGbe_ll_EnableTimeStamp(AL_REG BaseAddr, AL_GBE_FunctionEnum State)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__MAC_TIMESTAMP_CONTROL__OFFSET, GBE__MAC_TIMESTAMP_CONTROL__TSENA__SHIFT, State);
+}
+
+static inline AL_VOID AlGbe_ll_SetSubSecondIncrementValue(AL_REG BaseAddr, AL_U8 Value)
+{
+    AL_REG32_SET_BITS(BaseAddr + GBE__MAC_SUB_SECOND_INCREMENT__OFFSET,
+                      GBE__MAC_SUB_SECOND_INCREMENT__SSINC__SHIFT, GBE__MAC_SUB_SECOND_INCREMENT__SSINC__SIZE, Value);
+}
+
+static inline AL_VOID AlGbe_ll_SetSystemTimeSecondsUpdate(AL_REG BaseAddr, AL_U32 Value)
+{
+    AL_REG32_WRITE(BaseAddr + GBE__MAC_SYSTEM_TIME_SECONDS_UPDATE__OFFSET, Value);
+}
+
+static inline AL_VOID AlGbe_ll_SetSystemTimeNanosecondsUpdate(AL_REG BaseAddr, AL_U32 Value)
+{
+    AL_REG32_WRITE(BaseAddr + GBE__MAC_SYSTEM_TIME_NANOSECONDS_UPDATE__OFFSET, Value);
+}
+
+static inline AL_VOID AlGbe_ll_EnableInitializeTimestamp(AL_REG BaseAddr)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__MAC_TIMESTAMP_CONTROL__OFFSET, GBE__MAC_TIMESTAMP_CONTROL__TSINIT__SHIFT, AL_GBE_FUNC_ENABLE);
+}
+
+static inline AL_GBE_FunctionEnum AlGbe_ll_IsInitializeTimestampEnabled(AL_REG BaseAddr)
+{
+    return AL_REG32_GET_BIT(BaseAddr + GBE__MAC_TIMESTAMP_CONTROL__OFFSET, GBE__MAC_TIMESTAMP_CONTROL__TSINIT__SHIFT);
+}
+
+static inline AL_VOID AlGbe_ll_EnableUpdateTimestamp(AL_REG BaseAddr)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__MAC_TIMESTAMP_CONTROL__OFFSET, GBE__MAC_TIMESTAMP_CONTROL__TSUPDT__SHIFT, AL_GBE_FUNC_ENABLE);
+}
+
+static inline AL_GBE_FunctionEnum AlGbe_ll_IsUpdateTimestampEnabled(AL_REG BaseAddr)
+{
+    return AL_REG32_GET_BIT(BaseAddr + GBE__MAC_TIMESTAMP_CONTROL__OFFSET, GBE__MAC_TIMESTAMP_CONTROL__TSUPDT__SHIFT);
+}
+
+static inline AL_VOID AlGbe_ll_EnableUpdateAddendRegister(AL_REG BaseAddr)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__MAC_TIMESTAMP_CONTROL__OFFSET, GBE__MAC_TIMESTAMP_CONTROL__TSADDREG__SHIFT, AL_GBE_FUNC_ENABLE);
+}
+
+static inline AL_GBE_FunctionEnum AlGbe_ll_IsUpdateAddendRegisterEnabled(AL_REG BaseAddr)
+{
+    return AL_REG32_GET_BIT(BaseAddr + GBE__MAC_TIMESTAMP_CONTROL__OFFSET, GBE__MAC_TIMESTAMP_CONTROL__TSADDREG__SHIFT);
+}
+
+static inline AL_VOID AlGbe_ll_EnablePtpV2(AL_REG BaseAddr, AL_GBE_FunctionEnum State)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__MAC_TIMESTAMP_CONTROL__OFFSET, GBE__MAC_TIMESTAMP_CONTROL__TSVER2ENA__SHIFT, State);
+}
+
+static inline AL_VOID AlGbe_ll_EnablePtpPacketsOverIpv4Udp(AL_REG BaseAddr, AL_GBE_FunctionEnum State)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__MAC_TIMESTAMP_CONTROL__OFFSET, GBE__MAC_TIMESTAMP_CONTROL__TSIPV4ENA__SHIFT, State);
+}
+
+static inline AL_VOID AlGbe_ll_EnableTimestampSnapshotForEventMessage(AL_REG BaseAddr, AL_GBE_FunctionEnum State)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__MAC_TIMESTAMP_CONTROL__OFFSET, GBE__MAC_TIMESTAMP_CONTROL__TSEVNTENA__SHIFT, State);
+}
+
+static inline AL_VOID AlGbe_ll_EnableTMessageSnapshotForRelevantMaster(AL_REG BaseAddr, AL_GBE_FunctionEnum State)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__MAC_TIMESTAMP_CONTROL__OFFSET, GBE__MAC_TIMESTAMP_CONTROL__TSMSTRENA__SHIFT, State);
+}
+
+static inline AL_VOID AlGbe_ll_PtpSelectPacketsForTakingSnapshot(AL_REG BaseAddr, AL_U8 Value)
+{
+    AL_REG32_SET_BITS(BaseAddr + GBE__MAC_TIMESTAMP_CONTROL__OFFSET,
+                      GBE__MAC_TIMESTAMP_CONTROL__SNAPTYPSEL__SHIFT, GBE__MAC_TIMESTAMP_CONTROL__SNAPTYPSEL__SIZE, Value);
+}
+
+static inline AL_VOID AlGbe_ll_EnablePtpPacketsOverIpv6Udp(AL_REG BaseAddr, AL_GBE_FunctionEnum State)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__MAC_TIMESTAMP_CONTROL__OFFSET, GBE__MAC_TIMESTAMP_CONTROL__TSIPV6ENA__SHIFT, State);
+}
+
+static inline AL_VOID AlGbe_ll_EnablePtpPacketsOverEthernet(AL_REG BaseAddr, AL_GBE_FunctionEnum State)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__MAC_TIMESTAMP_CONTROL__OFFSET, GBE__MAC_TIMESTAMP_CONTROL__TSIPENA__SHIFT, State);
+}
+
+static inline AL_VOID AlGbe_ll_EnableTimestampDigitalorBinaryRollover(AL_REG BaseAddr, AL_GBE_FunctionEnum State)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__MAC_TIMESTAMP_CONTROL__OFFSET, GBE__MAC_TIMESTAMP_CONTROL__TSCTRLSSR__SHIFT, State);
+}
+
+static inline AL_VOID AlGbe_ll_EnableTimestampForAllPackets(AL_REG BaseAddr, AL_GBE_FunctionEnum State)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__MAC_TIMESTAMP_CONTROL__OFFSET, GBE__MAC_TIMESTAMP_CONTROL__TSENALL__SHIFT, State);
+}
+
+static inline AL_VOID  AlGbe_ll_EnableFineTimestampUpdate(AL_REG BaseAddr, AL_GBE_FunctionEnum State)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__MAC_TIMESTAMP_CONTROL__OFFSET, GBE__MAC_TIMESTAMP_CONTROL__TSCFUPDT__SHIFT, State);
+}
+
+static inline AL_U32 AlGbe_ll_GetSystemTimeSeconds(AL_REG BaseAddr)
+{
+    return AL_REG32_READ(BaseAddr + GBE__MAC_SYSTEM_TIME_SECONDS__OFFSET);
+}
+
+static inline AL_U32 AlGbe_ll_GetSystemTimeNanoseconds(AL_REG BaseAddr)
+{
+    return AL_REG32_READ(BaseAddr + GBE__MAC_SYSTEM_TIME_NANOSECONDS__OFFSET);
+}
+
+static inline AL_VOID AlGbe_ll_SetTimestampAddend(AL_REG BaseAddr, AL_U32 Value)
+{
+    AL_REG32_WRITE(BaseAddr + GBE__MAC_TIMESTAMP_ADDEND__OFFSET, Value);
 }
 
 #ifdef __cplusplus

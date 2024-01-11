@@ -156,6 +156,12 @@ static struct pbuf *low_level_input(struct netif *netif)
 
         p = pbuf_alloced_custom(PBUF_RAW, framelength, PBUF_REF, custom_pbuf, RxBuff.Buffer, ETH_RX_BUFFER_SIZE);
 
+#if LWIP_PTP
+        if (p) {
+            p->time_sec = GbeHandle->Dev.RxDescList.RxTimeStamp.TimeStampHigh;
+            p->time_nsec = GbeHandle->Dev.RxDescList.RxTimeStamp.TimeStampLow;
+        }
+#endif
     }
 
     return p;
@@ -352,6 +358,11 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
 
     AlGbe_Hal_Transmit(GbeHandle, &TxConfig);
 
+#if LWIP_PTP
+    p->time_sec = GbeHandle->Dev.TxTimeStamp.TimeStampHigh;
+    p->time_nsec = GbeHandle->Dev.TxTimeStamp.TimeStampLow;
+#endif
+
     return errval;
 }
 
@@ -360,6 +371,15 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
 #if !NO_SYS
 sys_thread_t eth_handle = NULL;
 #endif /* !NO_SYS */
+
+static void low_level_ptp_init()
+{
+    AL_GBE_PtpConfigStruct      PtpConfig = {
+        .UpdateMethod = AL_GBE_PTP_FINE_UPDATE,
+    };
+
+    AlGbe_Hal_PtpInit(GbeHandle, &PtpConfig);
+}
 
 err_t low_level_phy_init(AL_GBE_HalStruct *GbeHandle, struct netif *netif, AL_GBE_MacDmaConfigStruct *MacDmaConfig)
 {
@@ -431,6 +451,10 @@ err_t low_level_phy_init(AL_GBE_HalStruct *GbeHandle, struct netif *netif, AL_GB
     {
         AlGbe_Hal_ConfigDuplexAndSpeed(GbeHandle);
     }
+
+#if LWIP_PTP
+    low_level_ptp_init();
+#endif
 
 #if NO_SYS
     AlGbe_Hal_StartMacDma(GbeHandle);
@@ -514,11 +538,19 @@ err_t low_level_init(struct netif *netif)
     /* don't set NETIF_FLAG_ETHARP if this device is not an ethernet one */
     netif->flags |= NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP;
 
+#if LWIP_PTP
+    netif->flags |= NETIF_FLAG_IGMP;
+#endif
+
     /* Set Tx packet config common parameters */
     memset(&TxConfig, 0 , sizeof(AL_GBE_TxDescConfigStruct));
-    TxConfig.Attributes = ETH_TX_PACKETS_FEATURES_CSUM | ETH_TX_PACKETS_FEATURES_CRCPAD;
-    TxConfig.ChecksumCtrl = ETH_CHECKSUM_IPHDR_PAYLOAD_INSERT_PHDR_CALC;
-    TxConfig.CRCPadCtrl = ETH_CRC_PAD_INSERT;
+    TxConfig.Attributes = AL_GBE_TX_PACKETS_FEATURES_CSUM | AL_GBE_TX_PACKETS_FEATURES_CRCPAD;
+#if LWIP_PTP
+    TxConfig.Attributes |= AL_GBE_TX_PACKETS_FEATURES_TTSE;
+#endif
+
+    TxConfig.ChecksumCtrl = AL_GBE_CHECKSUM_IPHDR_PAYLOAD_INSERT_PHDR_CALC;
+    TxConfig.CRCPadCtrl = AL_GBE_CRC_PAD_INSERT;
 
 #if !NO_SYS
     /* create a binary semaphore used for Tx and Rx done */

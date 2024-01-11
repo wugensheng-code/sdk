@@ -136,6 +136,12 @@ typedef struct AL_GBE_FrameBufferStruct
     struct AL_GBE_FrameBufferStruct *next;
 } AL_GBE_BufferStruct;
 
+typedef struct
+{
+    AL_U32 TimeStampLow;
+    AL_U32 TimeStampHigh;
+} AL_GBE_TimeStampStruct;
+
 /* Record sending descriptors and buffer usage */
 typedef struct
 {
@@ -156,6 +162,7 @@ typedef struct
     AL_U32 FirstAppDesc;
     AL_U32 AppDescNbr;
     AL_U32 AppContextDesc;
+    AL_GBE_TimeStampStruct RxTimeStamp;
 } AL_GBE_RxDescListStruct;
 
 /* Just for user, Some feature options that may be used */
@@ -173,6 +180,30 @@ typedef struct
     AL_GBE_DMADescStruct            *RxDescList;
     AL_U32                          RxBuffLen;
 } AL_GBE_InitStruct;
+
+/* 1588 V2 support */
+
+#define AL_GBE_ONE_SEC_IN_NANOSEC               (1000000000UL)
+#define AL_GBE_PTP_MAX_SUB_SECOND_INCREMENT     0xFF
+
+/* PTP time strcut */
+typedef struct {
+    AL_U32 Sec;
+    AL_U32 Nsec;
+    AL_U8 Sign;
+} AL_GBE_PtpTimeStruct;
+
+typedef enum
+{
+    AL_GBE_PTP_FINE_UPDATE      = 0,
+    AL_GBE_PTP_COARSE_UPDATE    = 1
+} AL_GBE_PtpUpdateMethodEnum;
+
+typedef struct
+{
+    AL_GBE_PtpUpdateMethodEnum UpdateMethod;
+    AL_U32 DefaultAddend;
+} AL_GBE_PtpConfigStruct;
 
 typedef void (*AL_GBE_TxFreeCallback)(AL_VOID *Buffer);
 
@@ -212,9 +243,11 @@ typedef struct
     AL_GBE_HwConfigStruct       HwConfig;
     AL_GBE_InitStruct           InitConfig;
     AL_GBE_MacDmaConfigStruct   MacDmaConfig;
+    AL_GBE_PtpConfigStruct      PtpConfig;
 
     AL_GBE_TxDescListStruct     TxDescList;
     AL_GBE_RxDescListStruct     RxDescList;
+    AL_GBE_TimeStampStruct      TxTimeStamp;
     AL_GBE_TxFreeCallback       TxFreeCallback;
 
     AL_GBE_EventCallBack        EventCallBack;
@@ -242,19 +275,35 @@ typedef struct
     void *pData;
 } AL_GBE_TxDescConfigStruct;
 
+#define AL_GBE_TX_PACKETS_FEATURES_CSUM          0x00000001U
+#define AL_GBE_TX_PACKETS_FEATURES_SAIC          0x00000002U
+#define AL_GBE_TX_PACKETS_FEATURES_VLANTAG       0x00000004U
+#define AL_GBE_TX_PACKETS_FEATURES_INNERVLANTAG  0x00000008U
+#define AL_GBE_TX_PACKETS_FEATURES_TSO           0x00000010U
+#define AL_GBE_TX_PACKETS_FEATURES_CRCPAD        0x00000020U
+#define AL_GBE_TX_PACKETS_FEATURES_TTSE          0x00000040U
+
+#define AL_GBE_DMATXNDESCRF_CIC_IPHDR_PAYLOAD_INSERT_PHDR_CALC  0x3
+#define AL_GBE_CHECKSUM_IPHDR_PAYLOAD_INSERT_PHDR_CALC          AL_GBE_DMATXNDESCRF_CIC_IPHDR_PAYLOAD_INSERT_PHDR_CALC
+#define AL_GBE_DMATXNDESCRF_CPC_CRC_INSERT                      0x04000000U
+#define AL_GBE_CRC_PAD_INSERT                                   AL_GBE_DMATXNDESCRF_CPC_CRC_INSERT
+
 /* GBE error code define */
 typedef enum
 {
-    AL_GBE_INVALID_DEVICE_ID    = 0x100,
-    AL_GBE_ERROR_CONFIG         = 0x101,
-    AL_GBE_NOT_READY            = 0x102,
-    AL_GBE_BUSY                 = 0x103,
+    AL_GBE_INVALID_DEVICE_ID                    = 0x100,
+    AL_GBE_ERROR_CONFIG                         = 0x101,
+    AL_GBE_NOT_READY                            = 0x102,
+    AL_GBE_BUSY                                 = 0x103,
 
-    AL_GBE_PHY_BUSY             = 0x104,
-    AL_GBE_ERR_PHY_RESET        = 0x105,
-    AL_GBE_ERR_PHY_LINK         = 0x106,
-    AL_GBE_FATLA_BUS_ERROR      = 0x107,
-    AL_GBE_DESC_ERROR           = 0x108,
+    AL_GBE_PHY_BUSY                             = 0x104,
+    AL_GBE_ERR_PHY_RESET                        = 0x105,
+    AL_GBE_ERR_PHY_LINK                         = 0x106,
+    AL_GBE_FATLA_BUS_ERROR                      = 0x107,
+    AL_GBE_DESC_ERROR                           = 0x108,
+    AL_GBE_DESC_TX_TIMESTAMP_STATUS_ERROR       = 0x109,
+    AL_GBE_DESC_RX_TIMESTAMP_STATUS_NOT_READY   = 0x10A,
+    AL_GBE_DESC_RX_TIMESTAMP_STATUS_ERROR       = 0x10B,
 
 } AL_GBE_ErrorCodeEnum;
 
@@ -408,6 +457,16 @@ AL_S32 AlGbe_Dev_GetRxDataLength(AL_GBE_DevStruct *Gbe, AL_U32 *Length);
 AL_S32 AlGbe_Dev_BuildRxDescriptors(AL_GBE_DevStruct *Gbe);
 
 AL_S32 AlGbe_Dev_ReleaseTxPacket(AL_GBE_DevStruct *Gbe);
+
+AL_S32 AlGbe_Dev_PtpInit(AL_GBE_DevStruct *Gbe, AL_GBE_PtpConfigStruct *PtpConfig);
+
+AL_S32 AlGbe_Dev_SetPtpTimestamp(AL_GBE_DevStruct *Gbe, AL_GBE_PtpTimeStruct *Timestamp);
+
+AL_S32 AlGbe_Dev_GetPtpTimestamp(AL_GBE_DevStruct *Gbe, AL_GBE_PtpTimeStruct *Timestamp);
+
+AL_S32 AlGbe_Dev_UpdatePtpTimeOffset(AL_GBE_DevStruct *Gbe, AL_GBE_PtpTimeStruct *TimeOffset);
+
+AL_S32 AlGbe_Dev_AdjustPtpTimeFreq(AL_GBE_DevStruct *Gbe, AL_U32 Adj);
 
 #ifdef __cplusplus
 }

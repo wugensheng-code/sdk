@@ -1435,7 +1435,7 @@ extern "C" {
 #define GBE__MAC_TIMESTAMP_CONTROL__TSINIT__SHIFT    2
 #define GBE__MAC_TIMESTAMP_CONTROL__TSUPDT__SHIFT    3
 #define GBE__MAC_TIMESTAMP_CONTROL__TSTRIG__SHIFT    4
-#define GBE__MAC_TIMESTAMP_CONTROL__TSOFFSETEG__SHIFT    5
+#define GBE__MAC_TIMESTAMP_CONTROL__TSADDREG__SHIFT    5
 #define GBE__MAC_TIMESTAMP_CONTROL__RESERVED_7_6__SHIFT    6
 #define GBE__MAC_TIMESTAMP_CONTROL__TSENALL__SHIFT    8
 #define GBE__MAC_TIMESTAMP_CONTROL__TSCTRLSSR__SHIFT    9
@@ -1455,6 +1455,8 @@ extern "C" {
 #define GBE__MAC_TIMESTAMP_CONTROL__AV8021ASMEN__SHIFT    28
 #define GBE__MAC_TIMESTAMP_CONTROL__RESERVED_31_29__SHIFT    29
 
+#define GBE__MAC_TIMESTAMP_CONTROL__SNAPTYPSEL__SIZE    2
+
 ///////////////////////////////////////////////////////
 // Register: MAC_Sub_Second_Increment
 // Reserved.
@@ -1467,6 +1469,9 @@ extern "C" {
 #define GBE__MAC_SUB_SECOND_INCREMENT__SNSINC__SHIFT    8
 #define GBE__MAC_SUB_SECOND_INCREMENT__SSINC__SHIFT    16
 #define GBE__MAC_SUB_SECOND_INCREMENT__RESERVED_31_24__SHIFT    24
+
+
+#define GBE__MAC_SUB_SECOND_INCREMENT__SSINC__SIZE    8
 
 ///////////////////////////////////////////////////////
 // Register: MAC_System_Time_Seconds
