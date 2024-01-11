@@ -164,9 +164,6 @@ rt_hw_context_switch_to:
     csrw CSR_MSCRATCH, t0
     LOAD sp, 0x0(a0)                /* Read sp from first TCB member(a0) */
 
-    /* Restore Fpu registers when fpu is enabled */
-    portasmRESTORE_FPU_REGISTERS
-
     /* Pop PC from stack and set MEPC */
     LOAD t0,  0  * REGBYTES(sp)
     csrw CSR_MEPC, t0
@@ -207,6 +204,9 @@ rt_hw_context_switch_to:
 #endif
 
     addi sp, sp, RT_CONTEXT_SIZE
+
+    /* Restore Fpu registers when fpu is enabled */
+    portasmRESTORE_FPU_REGISTERS
 
     mret
 
@@ -254,17 +254,20 @@ eclic_msip_handler:
     LOAD t0, rt_interrupt_from_thread
     STORE sp, 0(t0)
 
-    /* Restore Fpu registers when fpu is enabled */
-    portasmRESTORE_FPU_REGISTERS
-
     csrr t0, CSR_MEPC
     STORE t0, 0(sp)
+
+    /* Save Fpu registers when fpu is enabled */
+    portasmSAVE_FPU_REGISTERS
 
     jal rt_hw_taskswitch
 
     /* Switch task context */
     LOAD t0, rt_interrupt_to_thread
     LOAD sp, 0x0(t0)
+
+    /* Restore Fpu registers when fpu is enabled */
+    portasmRESTORE_FPU_REGISTERS
 
     /* Pop PC from stack and set MEPC */
     LOAD t0,  0  * REGBYTES(sp)
