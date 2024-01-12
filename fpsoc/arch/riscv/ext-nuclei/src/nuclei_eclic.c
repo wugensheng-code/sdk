@@ -235,12 +235,12 @@ void ECLIC_Init(void)
  */
 void ECLIC_Isr_Nonvect(void)
 {
-	AL_REGISTER IRQn = (ARCH_SYSREG_READ(CSR_MCAUSE) & 0xFFF);
+    AL_REGISTER IRQn = (ARCH_SYSREG_READ(CSR_MCAUSE) & 0xFFF);
 
-	if (IRQn < SOC_INT_MAX && AL_IrqHandlerList[IRQn].Func) {
-		AL_IrqHandlerList[IRQn].Func(AL_IrqHandlerList[IRQn].Param);
-	} else
-		while(1);
+    if (IRQn < SOC_INT_MAX && AL_IrqHandlerList[IRQn].Func) {
+        AL_IrqHandlerList[IRQn].Func(AL_IrqHandlerList[IRQn].Param);
+    } else
+        while(1);
 }
 extern void ECLIC_Isr_Vect(void);
 
@@ -279,10 +279,10 @@ int32_t ECLIC_Register_IRQ(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_Type trig_
 
     if (handler != NULL) {
         /* set interrupt handler entry to vector table */
-	if (shv == ECLIC_NON_VECTOR_INTERRUPT)
-		ECLIC_SetVector(IRQn, (AL_REGISTER)ECLIC_Isr_Nonvect);
-	else
-		ECLIC_SetVector(IRQn, (AL_REGISTER)ECLIC_Isr_Vect);
+    if (shv == ECLIC_NON_VECTOR_INTERRUPT)
+        ECLIC_SetVector(IRQn, (AL_REGISTER)ECLIC_Isr_Nonvect);
+    else
+        ECLIC_SetVector(IRQn, (AL_REGISTER)ECLIC_Isr_Vect);
 
         AL_IrqHandlerList[IRQn] = *handler;
     }
@@ -296,7 +296,7 @@ int32_t ECLIC_Register_IRQ(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_Type trig_
 
 AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Func Func, AL_VOID *Paran)
 {
-	AL_U8                 TrigLevel;
+    AL_U8                 TrigLevel;
     ECLIC_TRIGGER_Type    TrigMode;
     AL_INTR_HandlerStruct Handler = {
         .Func       = Func,
@@ -330,7 +330,7 @@ AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Fun
         break;
     }
 
-	return ECLIC_Register_IRQ(IntrId, Attr->VectorMode, TrigMode, TrigLevel, Attr->Priority, &Handler);
+    return ECLIC_Register_IRQ(IntrId, Attr->VectorMode, TrigMode, TrigLevel, Attr->Priority, &Handler);
 }
 
 AL_S32 AlIntr_SetInterrupt(AL_U32 IntrId, AL_FUNCTION State)
@@ -340,12 +340,12 @@ AL_S32 AlIntr_SetInterrupt(AL_U32 IntrId, AL_FUNCTION State)
     switch (State) {
     case AL_FUNC_DISABLE:
         Ret = AL_OK;
-		ECLIC_DisableIRQ(IntrId);
+        ECLIC_DisableIRQ(IntrId);
         break;
 
     case AL_FUNC_ENABLE:
         Ret = AL_OK;
-		ECLIC_EnableIRQ(IntrId);
+        ECLIC_EnableIRQ(IntrId);
         break;
 
     default:
@@ -380,12 +380,12 @@ AL_S32 AlIntr_SetLocalInterrupt(AL_FUNCTION State)
 
 AL_VOID AlIntr_ClearAllPending(AL_VOID)
 {
-	IRQn_Type IrqNum;
-	for (IrqNum = 0; IrqNum < SOC_INT_MAX; IrqNum++) {
-		__ECLIC_ClearPendingIRQ(IrqNum);
-	}
+    IRQn_Type IrqNum;
+    for (IrqNum = 0; IrqNum < SOC_INT_MAX; IrqNum++) {
+        __ECLIC_ClearPendingIRQ(IrqNum);
+    }
 
-	return;
+    return;
 }
 
 AL_VOID AlIntr_RestoreLocalInterruptMask(AL_S32 Mask)

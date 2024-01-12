@@ -14,6 +14,7 @@
 #include "al_type.h"
 #include "al_compiler.h"
 #include "al_rv64_sysregs.h"
+#include "al_rv64_bits.h"
 
 #define ISA_SYSREG_READ     "csrr"
 #define ISA_SYSREG_WRITE    "csrw"
@@ -81,6 +82,14 @@ __STATIC_FORCEINLINE void __FENCE_I(void)
         : "memory")                                              \
 
 #define __RWMB()   __FENCE(iorw,iorw)
+
+#if __RISCV_XLEN == 32
+  typedef AL_U32 rv_csr_t;
+#elif __RISCV_XLEN == 64
+  typedef AL_U64 rv_csr_t;
+#else
+  typedef AL_U64 rv_csr_t;
+#endif
 
 #ifdef __cplusplus
 }

@@ -37,7 +37,7 @@ typedef enum {
     SOC_ACK3_IRQn        =  37,
     SOC_PMU0_IRQn        =  39,
     SOC_PMU1_IRQn        =  40,
-    SOC_ADC_IRQn        =  43,
+    SOC_ADC_IRQn         =  43,
     SOC_WDT0_IRQn        =  45,
     SOC_WDT1_IRQn        =  46,
     SOC_TTC0_TC0_IRQn    =  48,
@@ -63,7 +63,6 @@ typedef enum {
     SOC_USB1_IRQn        =  76,
     SOC_GBE0_IRQn        =  77,
     SOC_GBE1_IRQn        =  78,
-    SOC_INT130_IRQn      =  130,
     SOC_MMC0_IRQn        =  81,
     SOC_MMC1_IRQn        =  82,
     SOC_IIC0_IRQn        =  83,
@@ -76,9 +75,10 @@ typedef enum {
     SOC_UART1_IRQn       =  90,
     SOC_CAN0_IRQn        =  91,
     SOC_CAN1_IRQn        =  92,
-    SOC_INT_MAX          =  256,
-    NPU_HARD_IRQn        =  131,
     NPU_SOFT_IRQn        =  116,
+    SOC_INT130_IRQn      =  130,
+    NPU_HARD_IRQn        =  131,
+    SOC_INT_MAX          =  256,
 } AL_IrqNumEnum;
 
 

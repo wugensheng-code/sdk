@@ -18,7 +18,8 @@
 #ifndef __AL_RISCV_ENCODING_H_
 #define __AL_RISCV_ENCODING_H_
 
-#include "riscv_bits.h"
+#include "al_rv64_bits.h"
+
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -270,14 +271,14 @@
 
 
 /* === PMP CFG Bits === */
-#define PMP_R                0x01
-#define PMP_W                0x02
-#define PMP_X                0x04
+#define PMP_R                0x01 // Set 1 to Enable Read Privilege
+#define PMP_W                0x02 // Set 1 to Enable Write Privilege
+#define PMP_X                0x04 // Set 1 to Enable Execute Privilege
 #define PMP_A                0x18
-#define PMP_A_TOR            0x08
-#define PMP_A_NA4            0x10
-#define PMP_A_NAPOT          0x18
-#define PMP_L                0x80
+#define PMP_A_TOR            0x08 // Set 1 And the previous Pmp address register(pmpaddr) determines the scope
+#define PMP_A_NA4            0x10 // Set 1 to Enable Naturally Aligned Four-byte regions mode
+#define PMP_A_NAPOT          0x18 // Set 1 to Enable Naturally Aligned Power-of-2 regions mode
+#define PMP_L                0x80 // Set 1 to Locking The PMP Privilege
 
 #define PMP_SHIFT            2
 #define PMP_COUNT            16

@@ -69,14 +69,14 @@ typedef enum {
     SOC_SPI0_SLV_IRQn                 =  99,
     SOC_SPI1_MST_IRQn                 =  100,
     SOC_SPI1_SLV_IRQn                 =  101,
-    SOC_INT130_IRQn                   =  143,
     SOC_UART0_IRQn                    =  102,
     SOC_UART1_IRQn                    =  103,
     SOC_CAN0_IRQn                     =  104,
     SOC_CAN1_IRQn                     =  105,
-    SOC_INT_MAX                       =  256,
-    NPU_HARD_IRQn                     =  144,
     NPU_SOFT_IRQn                     =  129,
+    SOC_INT130_IRQn                   =  143,
+    NPU_HARD_IRQn                     =  144,
+    SOC_INT_MAX                       =  256,
 } AL_IrqNumEnum;
 
 #define AL_ARM_CORE_COUNT		(2)

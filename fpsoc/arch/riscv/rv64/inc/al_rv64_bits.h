@@ -4,6 +4,22 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#ifndef __AL_RV_BITS__
+#define __AL_RV_BITS__
+
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
+#ifndef __RISCV_XLEN
+  /** \brief Refer to the width of an integer register in bits(either 32 or 64) */
+  #ifndef __riscv_xlen
+    #define __RISCV_XLEN    32
+  #else
+    #define __RISCV_XLEN    __riscv_xlen
+  #endif
+#endif /* __RISCV_XLEN */
+
 #if __riscv_xlen == 64
 # define SLL32                  sllw
 # define STORE                  sd
@@ -32,3 +48,8 @@
 #endif /* __riscv_flen == 64 */
 #define FPREGBYTES              (1 << LOG_FPREGBYTES)
 #endif /* __riscv_flen */
+
+#ifdef __cplusplus
+}
+#endif
+#endif
