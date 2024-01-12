@@ -343,7 +343,7 @@
 				"description": "fsbl demo",
 				"supportedOS": ["standalone"],
 				"supportedProc": ["apu-0", "apu-1", "rpu"],
-				"buildProperties": { "DOWNLOAD_MODE": "ocm", "DDR_2M_MAPPING":"0", "ARMv8_EL": "EL3","ALFSBL_PMU_EXCLUDE_VAL":"(0U)","ALFSBL_WDT_EXCLUDE_VAL":"(0U)"}
+				"buildProperties": { "DOWNLOAD_MODE": "ocm", "DDR_2M_MAPPING":"0", "ARMv8_EL": "EL3","ALFSBL_PMU_EXCLUDE_VAL":"0","ALFSBL_WDT_EXCLUDE_VAL":"0"}
 			}
 		},
 		"LWIP_NETIO": {
