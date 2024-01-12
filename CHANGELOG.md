@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## FD_2024.01_Beta1.2 (2024-1-12)
+
+### Feat
+
+- 增加对1588的支持到v2版本
+
+- 更新ddr到v3版本
+
+### Fix
+
+- 修复smc中read nand paramater crc错误
+
+- 修复qspi中4 addr mode错误
+
+- 修复riscv fp寄存器问题
+
+
 ## BM_2023.11_Bate1.0 (2023-11-28)
 
 ### (e2f479612ee0df223c092cd26b407bd8831508a6)
@@ -8,7 +25,7 @@
 
 - 清理以下模块中存在的警告:
 
-  gic, cipher, osal, uart, usb, spi, qspi, smc, ttc, gpio, can, ahb-dma, axi-dma, fatfs, plat  
+  gic, cipher, osal, uart, usb, spi, qspi, smc, ttc, gpio, can, ahb-dma, axi-dma, fatfs, plat
 
 - 修复uart轮询发送中存在的问题。
 
