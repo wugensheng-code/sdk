@@ -262,12 +262,12 @@ eclic_msip_handler:
 
     jal rt_hw_taskswitch
 
+    /* Restore Fpu registers when fpu is enabled */
+    portasmRESTORE_FPU_REGISTERS
+
     /* Switch task context */
     LOAD t0, rt_interrupt_to_thread
     LOAD sp, 0x0(t0)
-
-    /* Restore Fpu registers when fpu is enabled */
-    portasmRESTORE_FPU_REGISTERS
 
     /* Pop PC from stack and set MEPC */
     LOAD t0,  0  * REGBYTES(sp)
