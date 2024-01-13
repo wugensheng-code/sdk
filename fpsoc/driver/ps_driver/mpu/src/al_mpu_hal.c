@@ -13,7 +13,7 @@ AL_MPU_HalStruct  AlMpuHandle[AL_IIC_NUM_INSTANCE];
 
 static AL_VOID AlMpu_Hal_MpuRegisterIntr()
 {
-    AlIntr_RegHandler(SOC_INT130_IRQn, AL_NULL, AlMpu_Dev_MpuIntrHandler, AL_MPU_DevInstance);
+    AlIntr_RegHandler(SOC_MPU_IRQn, AL_NULL, AlMpu_Dev_MpuIntrHandler, AL_MPU_DevInstance);
 
 }
 

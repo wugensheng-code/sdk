@@ -74,7 +74,7 @@ typedef enum {
     SOC_CAN0_IRQn                     =  104,
     SOC_CAN1_IRQn                     =  105,
     NPU_SOFT_IRQn                     =  129,
-    SOC_INT130_IRQn                   =  143,
+    SOC_MPU_IRQn                      =  143,
     NPU_HARD_IRQn                     =  144,
     SOC_INT_MAX                       =  256,
 } AL_IrqNumEnum;
