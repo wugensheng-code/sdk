@@ -87,6 +87,13 @@ extern "C" {
 #define I2C0__BASE_ADDR         (0xF8414000UL)
 #define I2C1__BASE_ADDR         (0xF8415000UL)
 
+/*----------------------------------------------------------------------------
+  Define USB params
+ *----------------------------------------------------------------------------*/
+#define AL_USB_NUM_INSTANCE     (1)
+
+#define USB0__BASE_ADDR         (0xF8180000UL)
+#define USB1__BASE_ADDR         (0xF81C0000UL)
 
 /*----------------------------------------------------------------------------
   Define QSPI params

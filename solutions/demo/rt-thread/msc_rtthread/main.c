@@ -1,5 +1,6 @@
 #include "rtthread.h"
 #include "al_core.h"
+#include "al_usb_hal.h"
 
 #ifdef ENABLE_MMU
 #include "al_mmu.h"
@@ -9,110 +10,16 @@
 #define THREAD_STACK_SIZE       2048
 #define THREAD_TIMESLICE        5
 
+#define AL_USB_DEVICE_ID     0
 
-typedef enum IRQn {
-	SOC_INT75_IRQn           = 88, //APU:88  RPU:75
-	SOC_INT76_IRQn           = 89, //APU:89  RPU:76
-    SOC_INT_MAX_IRQn,
-} IRQn_Type;
-
-typedef unsigned int            AL_U32;
-
-#define AL_USB_NUM_INSTANCE    (2)
-
-#define USB0__BASE_ADDR        (0xF8180000UL)
-#define USB1__BASE_ADDR        (0xF8180000UL)
-
-#define USB_CLOCK              (40000000UL)
-
-typedef struct
-{
-    AL_U32                  DeviceId;
-    AL_U32                  BaseAddress;
-    AL_U32                  ClockHz;
-    AL_U32                  IntrNum;
-} AL_USB_HwConfigStruct;
-
-AL_USB_HwConfigStruct AlUsb_HwConfig[AL_USB_NUM_INSTANCE] =
-{
-    {
-        .DeviceId       = 0,
-        .BaseAddress    = USB0__BASE_ADDR,
-        .ClockHz        = USB_CLOCK,
-        .IntrNum        = SOC_USB0_IRQn,
-    },
-    {
-        .DeviceId       = 1,
-        .BaseAddress    = USB1__BASE_ADDR,
-        .ClockHz        = USB_CLOCK,
-        .IntrNum        = SOC_USB1_IRQn
-    },
-};
-
-AL_USB_HwConfigStruct *AlUsb_Dev_LookupConfig(AL_U32 DevId)
-{
-    AL_U32 Index;
-    AL_USB_HwConfigStruct *ConfigPtr = AL_NULL;
-
-    for (Index = 0; Index < AL_USB_NUM_INSTANCE; Index++) {
-        if (AlUsb_HwConfig[Index].DeviceId == DevId) {
-            ConfigPtr = &AlUsb_HwConfig[Index];
-            break;
-        }
-    }
-
-    return ConfigPtr;
-}
-
-typedef struct
-{
-    AL_U32                  BaudRate;
-    AL_U32                  WordLength;
-    AL_U32                  StopBits;
-    AL_U32                  Mode;
-    AL_U32                  HwFlowCtl;
-} AL_USB_InitStruct;
-
-typedef struct
-{
-    AL_REG                        BaseAddr;
-    AL_USB_InitStruct             Configs;
-    AL_U32                        IntrNum;
-    AL_U32                        DevId;
-    AL_U32                        InputClockHz;
-} AL_USB_DevStruct;
-
-typedef struct
-{
-    AL_USB_DevStruct            *Dev;
-
-} AL_USB_HalStruct;
+extern void usbh_initialize(void);
+extern void usbh_class_test(void);
 
 extern void USBH_IRQHandler(void);
 AL_VOID AlUsb_Dev_IntrHandler(AL_VOID *Instance)
 {
     USBH_IRQHandler();
 }
-
-static AL_USB_DevStruct AL_USB_DevInstance[AL_USB_NUM_INSTANCE];
-
-AL_S32 AlUsb_Hal_Init(AL_USB_HalStruct *Handle, AL_U32 DevId, AL_USB_InitStruct *InitConfig)
-{
-    AL_USB_DevStruct *Dev;
-    Dev = &AL_USB_DevInstance[DevId];
-
-	Dev->DevId        = DevId;
-    Dev->BaseAddr     = AlUsb_Dev_LookupConfig(DevId)->BaseAddress;
-    Dev->IntrNum      = AlUsb_Dev_LookupConfig(DevId)->IntrNum;
-    Dev->InputClockHz = AlUsb_Dev_LookupConfig(DevId)->ClockHz;
-
-	rt_kprintf("Dev->IntrNum : %d \r\n", Dev->IntrNum);
-	(AL_VOID)AlIntr_RegHandler(Dev->IntrNum, AL_NULL, AlUsb_Dev_IntrHandler, Dev);
-}
-
-
-extern void usbh_initialize(void);
-extern void usbh_class_test(void);
 
 static rt_thread_t tid1 = RT_NULL;
 
@@ -190,15 +97,16 @@ int main()
     mmu_settlb(gbe_buffer_addr, NORM_NONCACHE);
     #endif
 
-    AL_USB_HalStruct usb0_hal;
-    AL_S32 ret = AlUsb_Hal_Init(&usb0_hal, 0, NULL);
-    if (ret != AL_OK) {
-        rt_kprintf("AlUsb_Hal_Init error\r\n");
-        return ;
+    AL_USB_HalStruct *USB0;
+    AL_S32 ret = AlUsb_Hal_Init(&USB0, AL_USB_DEVICE_ID, AlUsb_Dev_IntrHandler);
+    if (ret == AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_INFO, "[TEST] APU AlUsb_Hal_Init success");
+    }
+    else {
+        AL_LOG(AL_LOG_LEVEL_INFO, "[TEST] APU AlUsb_Hal_Init failed");
     }
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
-    AL_U32 u = 0;
     usbh_initialize();
     usbh_class_test();
 

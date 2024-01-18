@@ -78,6 +78,9 @@ extern "C" {
 #include "al_dma_hal.h"
 #endif
 
+#ifdef HAVE_USBPS_DRIVER
+#include "al_usb_hal.h"
+#endif
 
 #ifdef __cplusplus
 }
