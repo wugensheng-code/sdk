@@ -135,6 +135,13 @@
 				"depends": ["fpsoc/driver/ps_driver/uart"]
 			}
 		},
+		"PS_DRIVER_USB": {
+			"1.0":{
+				"name": "PS_DRIVER_USB",
+				"version": "1.0",
+				"depends": ["fpsoc/driver/ps_driver/usb"]
+			}
+		},
 		"PS_DRIVER_WDT": {
 			"1.0":{
 				"name": "PS_DRIVER_WDT",
@@ -422,7 +429,8 @@
 				"version": "1.0",
 				"depends": [
 					"solutions/demo/baremetal/cherryUSB/device/cdc_acm",
-					"LIB_CHERRYUSB_V1_0"
+					"LIB_CHERRYUSB_V1_0",
+					"PS_DRIVER_USB"
 				],
 				"description": "Baremetal cherryUSB CDC_ACM demo",
 				"supportedOS": ["standalone"],
@@ -436,7 +444,8 @@
 				"depends": [
 					"/solutions/demo/rt-thread/msc_rtthread",
 					"LIB_CHERRYUSB_V1_0",
-					"OS_RTTHREAD_V1_0"
+					"OS_RTTHREAD_V1_0",
+					"PS_DRIVER_USB"
 				],
 				"description": "Baremetal cherryUSB MSC_RTTHREAD demo",
 				"supportedOS": ["rtthread"],
@@ -450,7 +459,8 @@
 				"depends": [
 					"/solutions/demo/freertos/msc_freertos",
 					"LIB_CHERRYUSB_V1_0",
-					"OS_FREERTOS_V1_0"
+					"OS_FREERTOS_V1_0",
+					"PS_DRIVER_USB"
 				],
 				"description": "Baremetal cherryUSB MSC_RTTHREAD demo",
 				"supportedOS": ["freertos"],
