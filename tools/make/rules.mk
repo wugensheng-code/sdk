@@ -1,7 +1,7 @@
 #########################################################################
 AL_SDK_ROOT ?= $(SDK_ROOT)
 AL_PLAT_DIR ?= $(PLAT_DIR)
-LIB_PREBUILD_DIR  ?= $(AL_SDK_ROOT)/prebuild
+LIB_PREBUILD_DIR  ?= $(AL_SDK_ROOT)/prebuild/$(CHIP)
 
 include $(AL_SDK_ROOT)/tools/make/config.mk
 sinclude $(AL_PLAT_DIR)/board_cfg.mk
@@ -325,7 +325,7 @@ endif
 
 
 $(TARGET_ELF): bsp make_all_libs $(ALL_OBJS)
-	$(eval ld_libs := $(patsubst lib%.a,-l%,$(filter-out $(filterout_lib), $(notdir $(wildcard $(LIB_OUTPUT_DIR)/*.a $(LIB_PREBUILD)/*.a)))) $(LD_LIBS))
+	$(eval ld_libs := $(patsubst lib%.a,-l%,$(filter-out $(filterout_lib), $(notdir $(wildcard $(LIB_OUTPUT_DIR)/*.a $(LIB_PREBUILD_DIR)/*.a)))) $(LD_LIBS))
 	$(CC) $(ALL_OBJS) -o $@ $(AL_CFLAGS) $(LDFLAGS)
 	$(OBJCOPY) $@ -O binary $(TARGET).bin
 	$(SIZE) $@

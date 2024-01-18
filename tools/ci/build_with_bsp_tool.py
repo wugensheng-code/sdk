@@ -11,6 +11,7 @@ import subprocess
 import json
 from loguru import logger
 from pathlib import Path
+from shutil import copytree
 
 
 env_k = ['BSP_RESOURCE_PATH', 'AARCH64_TOOLCHAIN_PATH', 'RISCV_TOOLCHAIN_PATH']
@@ -51,15 +52,17 @@ class Bsp_tool(object):
         ''' create bsp '''
 
         self.location = location
+        self.proc_type = proc_type
+        self.os_type = os_type
 
         try:
             logger.info(f'======> Start creating bsp: project name: {proj_name} os type: {os_type}')
             subprocess.run(f'./anlogic_tool bsp_tool create_platform_project -projName {proj_name} -location {self.location} -proc {proc_type} -os {os_type} -hpf {hpf_path}',
-                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True)
+                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
             subprocess.run(f'./anlogic_tool bsp_tool create_default_mss -mssfile {self.location}/{proj_name}/system.mss -proc {proc_type} -os {os_type}',
-                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True)
+                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
             subprocess.run(f'./anlogic_tool bsp_tool generate_bsp_sources -hpf {hpf_path} -mssfile {self.location}/{proj_name}/system.mss -dir {self.location}/{proj_name}',
-                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True)
+                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
             logger.info(f'======> Platform created successfully: {proj_name}')
         except Exception as e:
             logger.error(f'======> create_bsp failed. {e}')
@@ -74,18 +77,25 @@ class Bsp_tool(object):
         try:
             logger.info(f'======> Start creating app: {app_name}')
             subprocess.run(f'./anlogic_tool bsp_tool create_application_project -projName {proj_name} -location {os.getcwd()} -language C -bsp_loc {self.bsp_location}',
-                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True)
+                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
             subprocess.run(f'./anlogic_tool bsp_tool generate_app_sources -bsp_loc {bspLoc} -name {app_name} -dir {self.location}/{proj_name}',
-                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True)
+                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
             logger.info(f'======> App created successfully: {app_name}')
             logger.info(f'======> Start make project: {app_name}')
 
             subprocess.run(f'make -j8',
-                shell=True, capture_output=True, cwd=f'{self.location}/{proj_name}', check=True)
-
+                shell=True, capture_output=True, cwd=f'{self.location}/{proj_name}', check=True, text=True)
+        except subprocess.CalledProcessError as e:
+            logger.error(e.stderr)
+            faild_prj_app = Path(self.env['BSP_RESOURCE_PATH']).joinpath('log').joinpath(self.proc_type).joinpath(f'{proj_name}_{app_name}')
+            faild_prj_app.mkdir(parents=True)
+            faild_prj_bsp = Path(self.env['BSP_RESOURCE_PATH']).joinpath('log').joinpath(self.proc_type).joinpath(f'{self.os_type}')
+            copytree(src=f'{self.location}/{proj_name}', dst=faild_prj_app, ignore=None, dirs_exist_ok=True)
+            copytree(src=f'{bspLoc}', dst=faild_prj_bsp, ignore=None, dirs_exist_ok=True)
+            return e.cmd
         except Exception as e:
             logger.error(f'======> create app and run failed {e}')
-            return e.cmd
+
 
 
 
@@ -105,40 +115,48 @@ def main():
 
     args = parser.parse_args()
 
-    proc_types = {'rpu': 'demo_board_hpf_rpu.hpf', 'apu-0': 'DR1M90_DEMO.hpf'}
+    proc_types = {'rpu': 'demo_board_hpf_rpu.hpf', 'apu-0': 'demo_board_hpf_apu.hpf'}
+
+    Path(args.bsp_resource_path).joinpath('log').mkdir()
 
     bsp_tool = Bsp_tool(bsp_tool_p=args.bsp_tool, BSP_RESOURCE_PATH=args.bsp_resource_path, AARCH64_TOOLCHAIN_PATH=os.path.abspath(AARCH64_TOOLCHAIN_PATH), RISCV_TOOLCHAIN_PATH=os.path.abspath(RISCV_TOOLCHAIN_PATH))
     bsp_tool.setup_env()
+
+    statistics = {'rpu': None, 'apu-0': None}
 
     for proc_type, hpf in proc_types.items():
         bsp_tool.create_bsp(proj_name=f'test_platform_standalone_{proc_type}', location=os.getcwd(), proc_type=proc_type, os_type='standalone', hpf_path=hpf)
         bsp_tool.create_bsp(proj_name=f'test_platform_freertos_{proc_type}', location=os.getcwd(), proc_type=proc_type, os_type='freertos', hpf_path=hpf)
         bsp_tool.create_bsp(proj_name=f'test_platform_rtthread_{proc_type}', location=os.getcwd(), proc_type=proc_type, os_type='rtthread', hpf_path=hpf)
 
-        statistics = list()
+        proc_statistics = list()
         with open(f'{args.bsp_resource_path}/docs/depend.json') as f:
             depend = json.load(f)
             for i in depend['app'].values():
                 os_type = i['1.0']['supportedOS'][0]
                 k = i['1.0']['name']
-                if ('CHERRYUSB_MSC_FREERTOS' in k and 'rpu' in proc_type) or ('DEMO_OPENAMP' in k and 'rpu' in proc_type):
+                if ('DEMO_OPENAMP' in k and 'rpu' in proc_type):
                     pass
                 else:
-                    ret = bsp_tool.create_app_and_make(proj_name=f'test_app_{k}', app_name=f'{k}', bspLoc=f'test_platform_{os_type}_{proc_type}')
-                    statistics.append({k:ret})
+                    ret = bsp_tool.create_app_and_make(proj_name=f'test_app_{proc_type}_{k}', app_name=f'{k}', bspLoc=f'test_platform_{os_type}_{proc_type}')
+                    proc_statistics.append({k:ret})
 
             for i in depend['ps_driver_app'].values():
                 for c in i['1.0'].values():
                     os_type = c['supportedOS'][0]
                     k = c['name']
-                    ret = bsp_tool.create_app_and_make(proj_name=f'test_app_{k}', app_name=f'{k}', bspLoc=f'test_platform_{os_type}_{proc_type}')
-                    statistics.append({k:ret})
+                    ret = bsp_tool.create_app_and_make(proj_name=f'test_app_{proc_type}_{k}', app_name=f'{k}', bspLoc=f'test_platform_{os_type}_{proc_type}')
+                    proc_statistics.append({k:ret})
 
+        statistics[proc_type] = proc_statistics
 
-        logger.info(f'\r\n============================> Statistics for {proc_type} <==========================')
+    ret = None
 
-        ret = None
-        for i in statistics:
+    Fail = False
+
+    for proc, proc_statistics in statistics.items():
+        logger.info(f'\r\n============================> Statistics for {proc} <==========================')
+        for i in proc_statistics:
             for k, v in i.items():
                 if v is None:
                     ret = 'Scucess'
@@ -146,7 +164,10 @@ def main():
                 else:
                     ret = 'Fail: '+ str(v)
                     print(f"| {k:<40} |\033[31m{ret:^30}\033[0m |")
-                    exit(1)
+                    Fail = True
+
+    if Fail:
+        exit(1)
 
 
 if __name__ == '__main__':
