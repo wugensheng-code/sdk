@@ -160,11 +160,12 @@ def main():
             for k, v in i.items():
                 if v is None:
                     ret = 'Scucess'
-                    print(f"| {k:<40} |\033[32m{ret:^30}\033[0m |")
+                    logger.info(f"| {k:<40} |\033[32m{ret:^30}\033[0m |")
                 else:
                     ret = 'Fail: '+ str(v)
-                    print(f"| {k:<40} |\033[31m{ret:^30}\033[0m |")
+                    logger.info(f"| {k:<40} |\033[31m{ret:^30}\033[0m |")
                     Fail = True
+
 
     if Fail:
         exit(1)

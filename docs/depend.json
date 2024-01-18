@@ -430,7 +430,7 @@
 				"depends": [
 					"solutions/demo/baremetal/cherryUSB/device/cdc_acm",
 					"LIB_CHERRYUSB_V1_0",
-					"PS_DRIVER_USB"
+					"PS_DRIVER_USB_V1_0"
 				],
 				"description": "Baremetal cherryUSB CDC_ACM demo",
 				"supportedOS": ["standalone"],
@@ -445,7 +445,7 @@
 					"/solutions/demo/rt-thread/msc_rtthread",
 					"LIB_CHERRYUSB_V1_0",
 					"OS_RTTHREAD_V1_0",
-					"PS_DRIVER_USB"
+					"PS_DRIVER_USB_V1_0"
 				],
 				"description": "Baremetal cherryUSB MSC_RTTHREAD demo",
 				"supportedOS": ["rtthread"],
@@ -460,7 +460,7 @@
 					"/solutions/demo/freertos/msc_freertos",
 					"LIB_CHERRYUSB_V1_0",
 					"OS_FREERTOS_V1_0",
-					"PS_DRIVER_USB"
+					"PS_DRIVER_USB_V1_0"
 				],
 				"description": "Baremetal cherryUSB MSC_RTTHREAD demo",
 				"supportedOS": ["freertos"],
