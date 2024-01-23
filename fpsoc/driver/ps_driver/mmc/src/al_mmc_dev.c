@@ -2125,7 +2125,7 @@ static AL_S32 AlMmc_Dev_WriteData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 Arg,
 #endif
 
     if (Dev->Config.DmaMode != AL_MMC_DMA_MODE_ADMA3) {
-        if ((Dev->CardInfo.CardVer < AL_MMC_CARD_VER_200) && (Dev->CardInfo.CardType == AL_MMC_CARD_TYPE_SD)) {
+        if ((Dev->CardInfo.HiCap == AL_FALSE) && (Dev->CardInfo.CardType == AL_MMC_CARD_TYPE_SD)) {
             Arg *= AL_MMC_BLK_LEN_512B;
         }
 
@@ -2219,7 +2219,7 @@ AL_S32 AlMmc_Dev_ReadData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 Arg, AL_U32 
 #endif
 
     if (Dev->Config.DmaMode != AL_MMC_DMA_MODE_ADMA3) {
-        if ((Dev->CardInfo.CardVer < AL_MMC_CARD_VER_200) && (Dev->CardInfo.CardType == AL_MMC_CARD_TYPE_SD)) {
+        if ((Dev->CardInfo.HiCap == AL_FALSE) && (Dev->CardInfo.CardType == AL_MMC_CARD_TYPE_SD)) {
             Arg *= AL_MMC_BLK_LEN_512B;
         }
 
