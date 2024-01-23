@@ -7,42 +7,66 @@
 #########################################################################
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
 #########################################################################
-SDK_ROOT   ?= ../../../..
+
+SDK_ROOT    ?= ../../../..
 
 
-CHIP       ?= dr1m90
+CHIP        ?= dr1m90
 
-ifeq ($(CHIP),dr1m90)
+ELF ?= AL_MPU
+
+ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
 else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
-
+BOARD_DIR  ?= $(SDK_ROOT)/solutions/boards/
+BOARD_NAME ?= board_dr1x90_ad101_v10
 
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
+#    SRC_DIR: application source path
+#    INC_DIR  application header path
 #    LD_LIBS: External library files that the app depends on
 #    LIB_DIR: The path where the external library file resides
 #    C_SRCS:   c sources for application
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
-SRC_DIR  = ./
-INC_DIR += ./
+ifeq ($(ELF), AL_MPU)
+C_SRCS += mpu_test_main.c
+else ifeq ($(ELF), AL_APU_MPU)
+C_SRCS += al_apu_mpu_test.c
+C_SRCS += al_mpu_common.c
+else ifeq ($(ELF), AL_DDRS0_MPU)
+C_SRCS += al_ddrs0_mpu_test.c
+else ifeq ($(ELF), AL_OCMS2_MPU)
+C_SRCS += al_ocms2_mpu_test.c
+else ifeq ($(ELF), AL_NPU_MPU)
+C_SRCS += al_npu_mpu_test.c
+else
+C_SRCS += mpu_test_main.c
+endif
 
-LD_LIBS  =
-LIB_DIR  =
+INC_DIR     += ./
 
-C_SRCS   :=
-CXX_SRCS :=
-ASM_SRCS :=
+LD_LIBS     :=
+LIB_DIR     :=
+
+CXX_SRCS    :=
+ASM_SRCS    :=
 
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O2
+CFLAGS := -O2 -g
 
+ifeq ($(ELF), AL_APU_MPU)
+ARMv8_EL        := EL1
+else ifeq ($(ELF), AL_MPU)
+ARMv8_EL        := EL1
+endif
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
@@ -57,11 +81,22 @@ PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 #########################################################################
 PINMUX_MODE ?= PINMUX_MODE1
 
-
 #########################################################################
 # 5. define build target
 #########################################################################
-TARGET := fpsoc_mpu
+ifeq ($(ELF), AL_MPU)
+TARGET := al_mpu_test
+else ifeq ($(ELF), AL_APU_MPU)
+TARGET := al_apu_mpu_test
+else ifeq ($(ELF), AL_DDRS0_MPU)
+TARGET := al_ddrs0_mpu_test
+else ifeq ($(ELF), AL_OCMS2_MPU)
+TARGET := al_ocms2_mpu_test
+else ifeq ($(ELF), AL_NPU_MPU)
+TARGET := al_npu_mpu_test
+else
+TARGET := al_mpu_test
+endif
 
 ifneq ($(PINMUX_MODE),)
 CFLAGS += -DENABLE_$(PINMUX_MODE)=1
@@ -71,5 +106,14 @@ endif
 all: $(TARGET)
 	@$(ECHO) COMPILE_PREFIX = $(COMPILE_PREFIX)
 
-# include rules.mk
+cleanapp:
+	$(RM) $(foreach subdir, $(SRC_DIR), $(wildcard $(subdir)/*.d $(subdir)/*.o))
+
+clean:
+	make clean CHIP=dr1m90
+	make clean CHIP=dr1v90
+
+cleanelf:
+	rm -rf *.bin *.dasm *.dump *.elf *.hex *.map *.verilog
+
 include $(SDK_ROOT)/tools/make/rules.mk

@@ -9,7 +9,7 @@
 #include "al_intr.h"
 
 AL_MPU_DevStruct AL_MPU_DevInstance[AL_MPU_NUM_INSTANCE];
-AL_MPU_HalStruct  AlMpuHandle[AL_IIC_NUM_INSTANCE];
+AL_MPU_HalStruct  AlMpuHandle[AL_MPU_NUM_INSTANCE];
 
 static AL_VOID AlMpu_Hal_MpuRegisterIntr()
 {
@@ -240,7 +240,7 @@ AL_S32 AlMpu_Hal_ConfigInit(AL_U8 MpuDevId, AL_MPU_HalStruct **Handle, AL_Mpu_Ev
     }
 
     CallBack = (EventCallBack == AL_NULL) ? AlMpu_Hal_EventCallBack : EventCallBack;
-    RetValue = AlMpu_Dev_RegisterEventCallBack((*Handle)->Dev, CallBack, (void *)Handle);
+    RetValue = AlMpu_Dev_RegisterEventCallBack((*Handle)->Dev, CallBack, (void *)*Handle);
     if (RetValue != AL_OK) {
         return RetValue;
     }
