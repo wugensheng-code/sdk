@@ -153,7 +153,7 @@ void openamp_sample(void* Parameters)
 	LPRINTF("Stopping application...\r\n");
 	platform_cleanup(platform);
 
-    AlGicv3_CpuIfDisable(1);
+	AlGicv3_CpuIfDisable(1);
 	psci_cpu_pwrdown();
 
 	return ret;
