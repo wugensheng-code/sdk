@@ -500,12 +500,16 @@ extern void FreeRTOS_Tick_Handler( void );
                                             : "r" (AL_FUNC_ENABLE)
                                             :"memory");
 
+#if 0
 	AL_INTR_AttrStrct IntrAttr = {
             .TrigMode   =  LEVEL_HIGH_TRIGGER,
             .Priority   =  ( uint32_t ) ( portLOWEST_USABLE_INTERRUPT_PRIORITY << portPRIORITY_SHIFT ),
 	};
 
 	(AL_VOID)AlIntr_RegHandler(SOC_NONE_SECURE_PHYSICAL_TIMER, &IntrAttr, FreeRTOS_Tick_Handler, AL_NULL);
+#else
+	(AL_VOID)AlIntr_RegHandler(SOC_NONE_SECURE_PHYSICAL_TIMER, AL_NULL, FreeRTOS_Tick_Handler, AL_NULL);
+#endif
 }
 /*-----------------------------------------------------------*/
 
