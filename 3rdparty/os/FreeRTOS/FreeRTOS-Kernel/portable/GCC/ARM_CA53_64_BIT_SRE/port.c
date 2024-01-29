@@ -335,49 +335,14 @@ void vPortExitCritical( void )
 
 void FreeRTOS_Tick_Handler( void )
 {
-	/* Must be the lowest possible priority. */
-	#if !defined( QEMU )
-	{
-		uint64_t ullRunningInterruptPriority;
-		/* s3_0_c12_c11_3 is ICC_RPR_EL1. */
-		__asm volatile ( "MRS %0, s3_0_c12_c11_3" : "=r" ( ullRunningInterruptPriority ) );
-		configASSERT( ullRunningInterruptPriority == ( portLOWEST_USABLE_INTERRUPT_PRIORITY << portPRIORITY_SHIFT ) );
-	}
-	#endif
-
-	/* Interrupts should not be enabled before this point. */
-	#if( configASSERT_DEFINED == 1 )
-	{
-		uint32_t ulMaskBits;
-
-		__asm volatile( "MRS %0, DAIF" : "=r"( ulMaskBits ) :: "memory" );
-		configASSERT( ( ulMaskBits & portDAIF_I ) != 0 );
-	}
-	#endif /* configASSERT_DEFINED */
-
-	/* Set interrupt mask before altering scheduler structures.   The tick
-	handler runs at the lowest priority, so interrupts cannot already be masked,
-	so there is no need to save and restore the current mask value.  It is
-	necessary to turn off interrupts in the CPU itself while the ICCPMR is being
-	updated. */
-	/* s3_0_c4_c6_0 is ICC_PMR_EL1. */
-	__asm volatile ( "MSR s3_0_c4_c6_0, %0		\n"
-					 "DSB SY					\n"
-					 "ISB SY					\n"
-					 :: "r" ( configMAX_API_CALL_INTERRUPT_PRIORITY << portPRIORITY_SHIFT ) : "memory" );
-
 	/* Ok to enable interrupts after the interrupt source has been cleared. */
 	configCLEAR_TICK_INTERRUPT();
-	portENABLE_INTERRUPTS();
-
 	/* Increment the RTOS tick. */
 	if( xTaskIncrementTick() != pdFALSE )
 	{
 		ullPortYieldRequired = pdTRUE;
 	}
 
-	/* Ensure all interrupt priorities are active again. */
-	portCLEAR_INTERRUPT_MASK();
 }
 /*-----------------------------------------------------------*/
 

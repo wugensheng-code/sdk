@@ -71,10 +71,6 @@ AL_VOID do_fiq_handle(AL_VOID)
         Handler.Func(Handler.Param);
     }
 
-    /* Temp coding here, should move to portASM.S */
-    #ifdef RTOS_FREERTOS
-        disable_all_intr();
-    #endif
 
     AlGicv3_EndOfIntrSel1(IntrId);
 }
@@ -198,7 +194,7 @@ AL_S32 AlIntr_SaveLocalInterruptMask(AL_VOID)
     AL_U32 EXCEPTION_ALL = (DAIF_IRQ_BIT | DAIF_FIQ_BIT) << 6;
     ExceptionState = get_intr_mask();
     ExceptionState = ExceptionState & EXCEPTION_ALL;
-    if (ExceptionState != EXCEPTION_ALL) { 
+    if (ExceptionState != EXCEPTION_ALL) {
         (AL_U32)AlIntr_SetLocalInterrupt(AL_FUNC_DISABLE);
         return ExceptionState;
     }

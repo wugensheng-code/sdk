@@ -309,12 +309,20 @@ static inline bool AlGicv3_IsIntrIdSpecialIdentifier(AL_U32 Id)
  ******************************************************************************/
 static inline AL_U32 AlGicv3_AckIntrSel1(AL_VOID)
 {
-    return (AL_U32)ARCH_SYSREG_READ(icc_iar1_el1) & IAR1_EL1_INTID_MASK;
+    AL_U32 v;
+    v = (AL_U32)ARCH_SYSREG_READ(icc_iar1_el1) & IAR1_EL1_INTID_MASK;
+    DSB();
+
+    return v;
 }
 
 static inline AL_U32 AlGicv3_GetPendingIntrIdSel1(AL_VOID)
 {
-    return (AL_U32)ARCH_SYSREG_READ(icc_hppir1_el1) & HPPIR1_EL1_INTID_MASK;
+    AL_U32 v;
+    v = (AL_U32)ARCH_SYSREG_READ(icc_hppir1_el1) & HPPIR1_EL1_INTID_MASK;
+    DSB();
+
+    return v;
 }
 
 static inline AL_VOID AlGicv3_EndOfIntrSel1(AL_U32 Id)
@@ -330,8 +338,8 @@ static inline AL_VOID AlGicv3_EndOfIntrSel1(AL_U32 Id)
      * The dsb will also ensure *completion* of previous writes with
      * DEVICE nGnRnE attribute.
      */
-    DSB();
     ARCH_SYSREG_WRITE(icc_eoir1_el1, Id);
+    ISB();
 }
 
 /*******************************************************************************
@@ -339,7 +347,10 @@ static inline AL_VOID AlGicv3_EndOfIntrSel1(AL_U32 Id)
  ******************************************************************************/
 static inline AL_U32 AlGicv3_AckIntr(AL_VOID)
 {
-    return (AL_U32)ARCH_SYSREG_READ(icc_iar0_el1) & IAR0_EL1_INTID_MASK;
+    AL_U32 v;
+    v = (AL_U32)ARCH_SYSREG_READ(icc_iar0_el1) & IAR0_EL1_INTID_MASK;
+    DSB();
+    return v;
 }
 
 static inline AL_VOID AlGicv3_EndOfIntr(AL_U32 Id)
@@ -355,8 +366,10 @@ static inline AL_VOID AlGicv3_EndOfIntr(AL_U32 Id)
      * The dsb will also ensure *completion* of previous writes with
      * DEVICE nGnRnE attribute.
      */
+    ARCH_SYSREG_WRITE(icc_eoir0_el1, Id);
     ISB();
-    return ARCH_SYSREG_WRITE(icc_eoir0_el1, Id);
+
+    return;
 }
 
 /*
@@ -425,8 +438,8 @@ typedef struct Gicv3DrvData {
  ******************************************************************************/
 AL_VOID AlGicv3_DriverInit(const AL_GICV3_DrvDataStruct *DrvData);
 AL_VOID AlGicv3_DistInit(AL_VOID);
-AL_VOID AlGicv3_DisableOwnSpiInterrupt(AL_VOID);
 AL_VOID AlGicv3_RdistInit(AL_U32 ProcNum);
+AL_VOID AlGicv3_DisOwnSpiIntr(AL_VOID);
 AL_VOID AlGicv3_CpuIfEnable(AL_U32 ProcNum);
 AL_VOID AlGicv3_CpuIfDisable(AL_U32 ProcNum);
 AL_U32 AlGicv3_GetPendingInterruptType(AL_VOID);
