@@ -47,6 +47,8 @@ build-apu-job:       # This job runs in the build stage.
     - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/driver/ps_driver_test dr1m90 ocm $CI_PROJECT_DIR $CI_DEBUG false
     - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/driver/ps_driver_test dr1m90 ddr $CI_PROJECT_DIR $CI_DEBUG false
     - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/baremetal dr1m90 ddr $CI_PROJECT_DIR $CI_DEBUG false
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/freertos dr1m90 ddr $CI_PROJECT_DIR $CI_DEBUG false
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/rt-thread dr1m90 ddr $CI_PROJECT_DIR $CI_DEBUG false
     - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/utest dr1m90 ddr $CI_PROJECT_DIR $CI_DEBUG false
 
 build-rpu-job:       # This job runs in the build stage.
@@ -63,6 +65,8 @@ build-rpu-job:       # This job runs in the build stage.
     - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/driver/ps_driver_test dr1v90 ocm $CI_PROJECT_DIR $CI_DEBUG false
     - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/driver/ps_driver_test dr1v90 ddr $CI_PROJECT_DIR $CI_DEBUG false
     - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/baremetal dr1v90 ddr $CI_PROJECT_DIR $CI_DEBUG false
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/freertos dr1m90 ddr $CI_PROJECT_DIR $CI_DEBUG false
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/rt-thread dr1m90 ddr $CI_PROJECT_DIR $CI_DEBUG false
     - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/fpsoc/utest dr1v90 ddr $CI_PROJECT_DIR $CI_DEBUG false
 
 build-fsbl-job:       # This job runs in the build stage.

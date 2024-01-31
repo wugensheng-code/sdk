@@ -14,7 +14,7 @@ endif
 
 # (1.2) add submodule include file to /bsp/inc for calling
 INC_DIR += include/lib/include \
-			/home/chenyu.wang/master_sdk/fpsoc/inc/
+			${SDK_ROOT}/fpsoc/inc/
 
 CFLAGS += -DMACHINE="dr1m90" \
 			-DDEFAULT_LOGGER_ON \
