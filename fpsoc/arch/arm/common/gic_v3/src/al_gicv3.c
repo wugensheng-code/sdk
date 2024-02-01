@@ -78,11 +78,6 @@ AL_VOID do_fiq_handle(AL_VOID)
 static AL_VOID AlIntr_RequestIntr(AL_U32 IntrId, AL_VOID *Handler, AL_VOID *Param)
 {
     AL_INTR_HandlerStruct *HandleArray;
-    /* > SOC_INT_MAX && (not in the range of special range) */
-    if (IntrId >= SOC_INT_MAX && (IntrId < GICV3_SPECIAL_START || IntrId > GICV3_SPECIAL_END)) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "init id error IntrId = %d\n", IntrId);
-        return;
-    }
 
 #ifdef SWITCH_TO_EL1_EL0_FROM_EL3
     HandleArray = irq_handler_list;
@@ -107,6 +102,12 @@ AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Fun
     AL_DEFAULT_ATTR(DefAttr);
 
     Attr = (IntrAttr != AL_NULL) ? IntrAttr : &DefAttr;
+
+    /* > SOC_INT_MAX && (not in the range of special range) */
+    if (IntrId >= SOC_INT_MAX && (IntrId < GICV3_SPECIAL_START || IntrId > GICV3_SPECIAL_END)) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "init id error IntrId = %d\n", IntrId);
+        return AL_ERR_ILLEGAL_PARAM;
+    }
 
     if ((Attr->TrigMode != LEVEL_HIGH_TRIGGER) && (Attr->TrigMode != POSTIVE_EDGE_TRIGGER)) {
         AL_LOG(AL_LOG_LEVEL_WARNING, "Gic only support high level or rising edge trigger\r\n");
