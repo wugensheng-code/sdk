@@ -338,6 +338,7 @@ static inline AL_VOID AlGicv3_EndOfIntrSel1(AL_U32 Id)
      * The dsb will also ensure *completion* of previous writes with
      * DEVICE nGnRnE attribute.
      */
+    DSB();
     ARCH_SYSREG_WRITE(icc_eoir1_el1, Id);
     ISB();
 }
