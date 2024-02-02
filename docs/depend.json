@@ -18,8 +18,7 @@
 				"fpsoc/chip/dr1x90/dr1v90",
 				"fpsoc/arch/riscv",
 				"fpsoc/arch/common/inc",
-				"fpsoc/inc",
-				"fpsoc/drive/ipc/inc"
+				"fpsoc/inc"
 			]
 		}
 	},
