@@ -7,7 +7,8 @@
 				"fpsoc/chip/dr1x90/dr1m90",
 				"fpsoc/arch/arm",
 				"fpsoc/arch/common/inc",
-				"fpsoc/inc"
+				"fpsoc/inc",
+				"fpsoc/drive/ipc/inc"
 			]
 		},
 		"CHIP_DR1V90": {
@@ -17,7 +18,8 @@
 				"fpsoc/chip/dr1x90/dr1v90",
 				"fpsoc/arch/riscv",
 				"fpsoc/arch/common/inc",
-				"fpsoc/inc"
+				"fpsoc/inc",
+				"fpsoc/drive/ipc/inc"
 			]
 		}
 	},
@@ -170,7 +172,8 @@
 				"name": "LIB_LOG",
 				"version": "1.0",
                 "description": "LIB_LOG",
-				"depends": ["fpsoc/lib/log"]
+				"depends": ["fpsoc/lib/log"],
+				"default": true
 			}
 		},
 		"LIB_GCC": {
@@ -178,7 +181,8 @@
 				"name": "LIB_GCC",
 				"version": "1.0",
                 "description": "LIB_GCC",
-				"depends": ["fpsoc/lib/newlib/gcc"]
+				"depends": ["fpsoc/lib/newlib/gcc"],
+				"default": true
 			}
 		},
 		"LIB_CLI": {
@@ -186,7 +190,8 @@
 				"name": "LIB_CLI",
 				"version": "1.0",
                 "description": "LIB_CLI",
-				"depends": ["fpsoc/lib/cli"]
+				"depends": ["fpsoc/lib/cli"],
+				"default": true
 			}
 		},
 		"LIB_FATFS": {
