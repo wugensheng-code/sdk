@@ -7,8 +7,7 @@
 				"fpsoc/chip/dr1x90/dr1m90",
 				"fpsoc/arch/arm",
 				"fpsoc/arch/common/inc",
-				"fpsoc/inc",
-				"fpsoc/driver/ps_driver/ipc/inc"
+				"fpsoc/inc"
 			]
 		},
 		"CHIP_DR1V90": {
@@ -18,8 +17,7 @@
 				"fpsoc/chip/dr1x90/dr1v90",
 				"fpsoc/arch/riscv",
 				"fpsoc/arch/common/inc",
-				"fpsoc/inc",
-				"fpsoc/driver/ps_driver/ipc/inc"
+				"fpsoc/inc"
 			]
 		}
 	},
@@ -148,7 +146,10 @@
 			"1.0":{
 				"name": "PS_DRIVER_WDT",
 				"version": "1.0",
-				"depends":["fpsoc/driver/ps_driver/wdt"]
+				"depends":[
+				"fpsoc/driver/ps_driver/wdt",
+				"PS_DRIVER_PMU_V1_0"
+				]
 			}
 		},
 		"PS_DRIVER_ADC": {
