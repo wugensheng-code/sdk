@@ -14,6 +14,10 @@ extern "C" {
 #include "al_core.h"
 #include "soc_plat.h"
 
+#ifdef HAVE_ADCPS_DRIVER
+#include "al_adc_hal.h"
+#endif
+
 #ifdef HAVE_CANPS_DRIVER
 #include "al_can_hal.h"
 #endif
