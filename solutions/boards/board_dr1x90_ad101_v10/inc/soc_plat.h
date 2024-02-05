@@ -52,58 +52,61 @@ extern "C" {
 #define ALSOC_APU_FREQ          (100*MHZ)
 
 #if defined __aarch64__
-#ifdef AL_OSC_25
-#define SYSTEM_CLOCK            (25*MHZ)
-#elif defined AL_OSC_33
-#define SYSTEM_CLOCK            (33333333UL)
-#elif defined AL_OSC_50
-#define SYSTEM_CLOCK            (50*MHZ)
+    #ifdef AL_OSC_25
+        #define SYSTEM_CLOCK            (25*MHZ)
+    #elif defined AL_OSC_33
+        #define SYSTEM_CLOCK            (33333333UL)
+    #elif defined AL_OSC_50
+        #define SYSTEM_CLOCK            (50*MHZ)
+    #else
+        #define SYSTEM_CLOCK            (50*MHZ)
+    #endif
 #else
-#define SYSTEM_CLOCK            (50*MHZ)
-#endif
-#else
-#ifdef AL_CLK_CONFIG
-#ifdef AL_OSC_25
-#define SYSTEM_CLOCK            (200*MHZ)
-#elif defined AL_OSC_33
-#if (defined AL_CLK_800M || defined AL_CLK_400M || defined AL_CLK_1200M)
-#define SYSTEM_CLOCK            (400*MHZ)
-#elif defined AL_CLK_1000M
-#define SYSTEM_CLOCK            (333333333UL)
-#else
-#error "undefined RPU CLK"
-#endif
-#elif defined AL_OSC_50
-#define SYSTEM_CLOCK            (400*MHZ)
-#else
-#error "undefined OSC"
-#endif
-#else
-#ifdef AL_OSC_25
-#define SYSTEM_CLOCK            (200*MHZ)
-#elif defined AL_OSC_33
-#define SYSTEM_CLOCK            (266666666UL)
-#elif defined AL_OSC_50
-#define SYSTEM_CLOCK            (400*MHZ)
-#else
-#error "undefined OSC"
-#endif
-#endif
+    #ifdef AL_CLK_CONFIG
+        #ifdef AL_OSC_25
+            #define SYSTEM_CLOCK            (200*MHZ)
+        #elif defined AL_OSC_33
+            #if (defined AL_CLK_800M || defined AL_CLK_400M)
+                #define SYSTEM_CLOCK            (400*MHZ)
+            #elif defined AL_CLK_1000M
+                #define SYSTEM_CLOCK            (333333333UL)
+            #elif defined AL_CLK_1200M
+                #define SYSTEM_CLOCK            (600*MHZ)
+            #else
+                #error "undefined RPU CLK"
+            #endif
+        #elif defined AL_OSC_50
+            #define SYSTEM_CLOCK            (400*MHZ)
+        #else
+            #error "undefined OSC"
+        #endif
+    #else
+        #ifdef AL_OSC_25
+            #define SYSTEM_CLOCK            (200*MHZ)
+        #elif defined AL_OSC_33
+            #define SYSTEM_CLOCK            (266666666UL)
+        #elif defined AL_OSC_50
+            #define SYSTEM_CLOCK            (400*MHZ)
+        #else
+            #error "undefined OSC"
+        #endif
+    #endif
 #endif
 
 #define HAVE_UARTPS_DRIVER
+
 #ifdef AL_CLK_CONFIG
 #define UART_CLOCK              (50*MHZ)
 #else
-#ifdef AL_OSC_25
-#define UART_CLOCK              (25*MHZ)
-#elif defined AL_OSC_33
-#define UART_CLOCK              (33333333UL)
-#elif defined AL_OSC_50
-#define UART_CLOCK              (50*MHZ)
-#else
-#define UART_CLOCK              (40*MHZ)
-#endif
+    #ifdef AL_OSC_25
+        #define UART_CLOCK              (25*MHZ)
+    #elif defined AL_OSC_33
+        #define UART_CLOCK              (33333333UL)
+    #elif defined AL_OSC_50
+        #define UART_CLOCK              (50*MHZ)
+    #else
+        #define UART_CLOCK              (40*MHZ)
+    #endif
 #endif
 
 #define HAVE_IICPS_DRIVER
