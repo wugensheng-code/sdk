@@ -5,7 +5,11 @@
 # BOARD_DR1X90_AD101_V10: for demo board select uart 1 as log output
 
 CFLAGS += -DAL_CLK_CONFIG
+ifeq ($(CHIP), dr1m90)
 CFLAGS += -DAL_CLK_800M
+else
+CFLAGS += -DAL_CLK_600M
+endif
 CFLAGS += -DAL_OSC_33
 CFLAGS += -DAL_BRINGUP
 CFLAGS += -DBOARD_DR1X90_AD101_V10

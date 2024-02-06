@@ -68,6 +68,8 @@ extern "C" {
         #elif defined AL_OSC_33
             #if (defined AL_CLK_800M || defined AL_CLK_400M)
                 #define SYSTEM_CLOCK            (400*MHZ)
+            #elif defined AL_CLK_600M
+                #define SYSTEM_CLOCK            (600*MHZ)
             #elif defined AL_CLK_1000M
                 #define SYSTEM_CLOCK            (333333333UL)
             #elif defined AL_CLK_1200M
