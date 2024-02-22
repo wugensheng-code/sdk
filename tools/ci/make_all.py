@@ -57,6 +57,9 @@ def make_all(path, chip, download, sdk_root, debug):
             if 'freertos' in str(makefile_p) and chip == 'dr1v90':
                 continue
 
+            if 'cache_coherency' in str(makefile_p) and chip == 'dr1v90':
+                continue
+
             if 'neon' in str(makefile_p) and chip == 'dr1v90':
                 continue
 

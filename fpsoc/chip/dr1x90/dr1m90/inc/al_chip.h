@@ -76,6 +76,10 @@ typedef enum {
     NPU_SOFT_IRQn                     =  129,
     SOC_MPU_IRQn                      =  143,
     NPU_HARD_IRQn                     =  144,
+    SOC_APU2RPU_REQ_IRQn              =  148,
+    SOC_APU2RPU_ACK_IRQn              =  149,
+    SOC_RPU2APU_REQ_IRQn              =  150,
+    SOC_RPU2APU_ACK_IRQn              =  151,
     SOC_INT_MAX                       =  256,
 } AL_IrqNumEnum;
 

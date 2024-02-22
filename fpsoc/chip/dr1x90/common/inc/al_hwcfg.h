@@ -180,6 +180,7 @@ extern "C" {
   Define IPC params
  *----------------------------------------------------------------------------*/
 #define AL_IPC_NUM_INSTANCE     (1)
+#define AL_IPC_INTR_NUM_INSTANCE    (4)
 #define AL_IPC_BASE_ADDR        (0xF841F000)
 
 /*----------------------------------------------------------------------------
