@@ -18,7 +18,7 @@
         "sub_options": {
             "RT_MAIN_THREAD_STACK_SIZE": {"Name": "RT_MAIN_THREAD_STACK_SIZE", "Value": "2048", "Default": "2048","Type": "integer","Description": "Set main thread stack size","Permit":true},
             "RT_MAIN_THREAD_PRIORITY": {"Name": "RT_MAIN_THREAD_PRIORITY", "Value": "10", "Default": "10","Type": "integer","Description": "Set main thread priority","Permit":true}, 
-            "FINSH_THREAD_NAME": {"Name": "FINSH_THREAD_NAME", "Value": "tshell", "Default": "tshell","Type": "char","Description": "The msh thread name","Permit":true},
+            "FINSH_THREAD_NAME": {"Name": "FINSH_THREAD_NAME", "Value": "\"tshell\"", "Default": "\"tshell\"","Type": "char","Description": "The msh thread name","Permit":true},
             "FINSH_THREAD_PRIORITY": {"Name": "FINSH_THREAD_PRIORITY", "Value": "20", "Default": "20","Max": "32","Type": "integer","Description": "The priority level value of thread","Permit":true},
             "FINSH_THREAD_STACK_SIZE": {"Name": "FINSH_THREAD_STACK_SIZE", "Value": "4096", "Default": "4096","Type": "integer","Description": "The stack size for thread","Permit":true},
             "FINSH_HISTORY_LINES": {"Name": "FINSH_HISTORY_LINES", "Value": "5", "Default": "5","Type": "integer","Description": "The command history line number","Permit":true},
