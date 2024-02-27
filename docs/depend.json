@@ -39,14 +39,16 @@
 				"depends": [
 					"fpsoc/driver/ps_driver/dma",
 					"PS_DRIVER_IPC_V1_0"
-				]
+				],
+				"default": "true"
 			}
 		},
 		"PS_DRIVER_DMACAHB": {
 			"1.0":{
 				"name": "PS_DRIVER_DMACAHB",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/ps_driver/dmacahb"]
+				"depends": ["fpsoc/driver/ps_driver/dmacahb"],
+				"default": "true"
 			}
 		},
 		"PS_DRIVER_GBE": {
@@ -60,7 +62,8 @@
 			"1.0":{
 				"name": "PS_DRIVER_GPIO",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/ps_driver/gpio"]
+				"depends": ["fpsoc/driver/ps_driver/gpio"],
+				"default": "true"
 			}
 		},
 		"PS_DRIVER_IIC": {
@@ -84,14 +87,16 @@
 			"1.0":{
 				"name": "PS_DRIVER_MPU",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/ps_driver/mpu"]
+				"depends": ["fpsoc/driver/ps_driver/mpu"],
+				"default": "true"
 			}
 		},
 		"PS_DRIVER_PMU": {
 			"1.0":{
 				"name": "PS_DRIVER_PMU",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/ps_driver/pmu"]
+				"depends": ["fpsoc/driver/ps_driver/pmu"],
+				"default": "true"
 			}
 		},
 		"PS_DRIVER_QSPI": {
@@ -101,14 +106,16 @@
 				"depends": [
 					"fpsoc/driver/ps_driver/qspi",
 					"PS_DRIVER_DMACAHB_V1_0"
-				]
+				],
+				"default": "true"
 			}
 		},
 		"PS_DRIVER_SMC": {
 			"1.0":{
 				"name": "PS_DRIVER_SMC",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/ps_driver/smc"]
+				"depends": ["fpsoc/driver/ps_driver/smc"],
+				"default": "true"
 			}
 		},
 		"PS_DRIVER_SPI": {
@@ -125,7 +132,8 @@
 			"1.0":{
 				"name": "PS_DRIVER_TTC",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/ps_driver/ttc"]
+				"depends": ["fpsoc/driver/ps_driver/ttc"],
+				"default": "true"
 			}
 		},
 		"PS_DRIVER_UART": {
@@ -149,21 +157,24 @@
 				"depends":[
 				"fpsoc/driver/ps_driver/wdt",
 				"PS_DRIVER_PMU_V1_0"
-				]
+				],
+				"default": "true"
 			}
 		},
 		"PS_DRIVER_ADC": {
 			"1.0":{
 				"name": "PS_DRIVER_ADC",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/ps_driver/adc"]
+				"depends": ["fpsoc/driver/ps_driver/adc"],
+				"default": "true"
 			}
 		},
 		"PS_DRIVER_IPC": {
 			"1.0":{
 				"name": "PS_DRIVER_IPC",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/ps_driver/ipc"]
+				"depends": ["fpsoc/driver/ps_driver/ipc"],
+				"default": "true"
 			}
 		}
 	},
