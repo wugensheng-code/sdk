@@ -181,6 +181,7 @@ static AL_S32 AlCli_GetCmd(AL_U8 *Buf, AL_U32 BufSize)
             memset(CliCmdInfo->CliInputBuf, 0, BufSize);
             CliCmdInfo->CmdCurPos = 0;
             CliCmdInfo->CmdEndPos = 0;
+            AL_CLI_PRINTF("\n");
             return AL_CLI_OK;
         }
 
@@ -267,7 +268,7 @@ void AlCli_Main(void *data)
     AL_CLI_PRINTF("\\_/ \\_/|_| |_||_| \\___/  \\__, ||_| \\___|\r\n");
     AL_CLI_PRINTF("                         |___/          \r\n");
 
-    AL_CLI_PRINTF("%s", CliCmdInfo->prompt);
+    AL_CLI_PRINTF("%s\r\n", CliCmdInfo->prompt);
 
     while (1) {
 

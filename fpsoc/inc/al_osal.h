@@ -430,7 +430,8 @@ static inline AL_VOID AlOsal_Sleep(AL_U32 Time)
 }
 
 #endif
-#else
+#endif
+#ifndef USE_RTOS
 
 /*----------------------------------------------*
  * Semaphore API.*
