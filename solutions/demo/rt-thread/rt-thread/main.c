@@ -7,7 +7,7 @@
 #include <rtthread.h>
 #include "al_core.h"
 
-#define THREAD_PRIORITY         25
+#define THREAD_PRIORITY         10
 #define THREAD_STACK_SIZE       2048
 #define THREAD_TIMESLICE        5
 
