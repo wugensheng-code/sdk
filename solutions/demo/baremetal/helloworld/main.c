@@ -17,20 +17,11 @@ AL_S32 main()
     AL_U32 Size = 0x1;
 
     printf("str = %s \r\n", str);
-
-    for (int i = 0; i < 20; i ++)
-    {
-        AL_U8 *p;
-
-        p = malloc(Size);
-        if (p == NULL) {
-            printf("malloc failed Size = %d \r\n", Size);
-        } else {
-            printf("malloc succeed %p size=%d \r\n", p, Size);
-        }
-        Size <<= 1;
-        free(p);
-    }
+    printf("    __  __     ____         _       ______       __    __ \r\n");
+    printf("   / / / /_   / / /___     | |     / / __ \\_____/ ____/ / \r\n");
+    printf("  / /_/ / _ \\/ / / __ \\    | | /| / / / / / ___/ / __  /  \r\n");
+    printf(" / __  /  __/ / / /_/ /    | |/ |/ / /_/ / /  / / /_/ /   \r\n");
+    printf("/_/ /_/\\___/_/_/\\____/     |__/|__/\\____/_/  /_/\\__ _/    \r\n");
 
     return 0;
-}
+}   
