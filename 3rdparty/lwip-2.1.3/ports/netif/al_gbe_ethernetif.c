@@ -392,18 +392,20 @@ err_t low_level_phy_init(AL_GBE_HalStruct *GbeHandle, struct netif *netif, AL_GB
     ret = AlGbe_Hal_PhyInit(GbeHandle, GBE_PHY_ADDR);
     if (ret != 0)
     {
-        printf("AlGbe_Hal_PhyInit Init failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Hal_PhyInit Init failed\r\n");
         return ERR_IF;
     }
 
+    AL_LOG(AL_LOG_LEVEL_INFO, "AlGbe get phy link status...\r\n");
     ret = AlGbe_Hal_GetPhyLinkStatus(GbeHandle, GBE_PHY_ADDR, &speed, &duplex);
     if (ret != 0)
     {
         netif_set_link_down(netif);
         netif_set_down(netif);
-        printf("AlGbe_Hal_GetPhyLinkStatus link down\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe phy link down\r\n");
         return ERR_IF;
     }
+    AL_LOG(AL_LOG_LEVEL_INFO, "AlGbe phy link up success\r\n");
 
     if (PHY_SPEED_10M == speed)
     {
@@ -492,7 +494,7 @@ err_t low_level_init(struct netif *netif)
     ret = AlGbe_Hal_Init(&GbeHandle, GBE_DEVICE_ID, &InitConfig, &MacDmaConfig, AL_NULL);
     if (ret != AL_OK)
     {
-        printf("AlGbe_Hal_Init failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Hal_Init failed\r\n");
         return ERR_IF;
     }
 
@@ -557,13 +559,13 @@ err_t low_level_init(struct netif *netif)
     ret = sys_sem_new(&GbeRxSem, 0);
     if (ret != ERR_OK)
     {
-        printf("sys_sem_new failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "sys_sem_new failed\r\n");
         return ret;
     }
     ret = sys_sem_new(&GbeTxSem, 0);
     if (ret != ERR_OK)
     {
-        printf("sys_sem_new failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "sys_sem_new failed\r\n");
         return ret;
     }
 
@@ -574,11 +576,11 @@ err_t low_level_init(struct netif *netif)
     ret = low_level_phy_init(GbeHandle, netif, &MacDmaConfig);
     if (ret != ERR_OK)
     {
-        printf("low_level_phy_init failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "low_level_phy_init failed\r\n");
         return ret;
     }
 
-    printf("AlGbe Init success\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "AlGbe Init success\r\n");
 
     return ERR_OK;
 }
@@ -648,10 +650,10 @@ void netif_config(void)
     /* Registers the default network interface */
     netif_set_default(&gnetif);
 
-    printf("Static IP  : %d.%d.%d.%d\r\n", IP_ADDR0, IP_ADDR1, IP_ADDR2, IP_ADDR3);
-    printf("Netmask    : %d.%d.%d.%d\r\n", NETMASK_ADDR0, NETMASK_ADDR1, NETMASK_ADDR2, NETMASK_ADDR3);
-    printf("Gateway    : %d.%d.%d.%d\r\n", GW_ADDR0, GW_ADDR1, GW_ADDR2, GW_ADDR3);
-    printf("Mac Address: %02x:%02x:%02x:%02x:%02x:%02x\r\n",
+    AL_LOG(AL_LOG_LEVEL_INFO, "Static IP  : %d.%d.%d.%d\r\n", IP_ADDR0, IP_ADDR1, IP_ADDR2, IP_ADDR3);
+    AL_LOG(AL_LOG_LEVEL_INFO, "Netmask    : %d.%d.%d.%d\r\n", NETMASK_ADDR0, NETMASK_ADDR1, NETMASK_ADDR2, NETMASK_ADDR3);
+    AL_LOG(AL_LOG_LEVEL_INFO, "Gateway    : %d.%d.%d.%d\r\n", GW_ADDR0, GW_ADDR1, GW_ADDR2, GW_ADDR3);
+    AL_LOG(AL_LOG_LEVEL_INFO, "Mac Address: %02x:%02x:%02x:%02x:%02x:%02x\r\n",
                          gnetif.hwaddr[0], gnetif.hwaddr[1], gnetif.hwaddr[2],
                          gnetif.hwaddr[3], gnetif.hwaddr[4], gnetif.hwaddr[5]);
 }
