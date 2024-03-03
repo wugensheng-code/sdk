@@ -55,14 +55,14 @@ typedef struct
     AL_U32                       Number;
 } AL_IpcSpinLock_HalStruct;
 
-AL_VOID AlIpc_Hal_SpinLockInit(AL_IpcSpinLock_HalStruct **Handle, AL_U32 Number);
-AL_U32 AlIpc_Hal_SpinLockTake(AL_IpcSpinLock_HalStruct *Handle, AL_U32 Timeout);
-AL_VOID AlIpc_Hal_SpinLockRelease(AL_IpcSpinLock_HalStruct *Handle);
-AL_VOID AlIPC_Hal_MboxInit(AL_IpcMailBox_HalStruct **Handle, AL_U32 Number);
-AL_VOID AlIpc_Hal_MboxRead(AL_IpcMailBox_HalStruct *Handle,  AL_U32 *Data);
-AL_VOID AlIpc_Hal_MboxWrite(AL_IpcMailBox_HalStruct *Handle,  AL_U32 Data);
-AL_VOID AlIpc_Hal_IntrInit(AL_IpcIntr_HalStruct **Handle, AL_IPC_IntrEnum IntrType, Callback Func, AL_VOID *Arg);
-AL_VOID AlIpc_Hal_IntrNotify(AL_IPC_IntrEnum IntrType);
+AL_S32 AlIpc_Hal_SpinLockInit(AL_IpcSpinLock_HalStruct **Handle, AL_U32 Number);
+AL_S32 AlIpc_Hal_SpinLockTake(AL_IpcSpinLock_HalStruct *Handle, AL_U32 Timeout);
+AL_S32 AlIpc_Hal_SpinLockRelease(AL_IpcSpinLock_HalStruct *Handle);
+AL_S32 AlIPC_Hal_MboxInit(AL_IpcMailBox_HalStruct **Handle, AL_U32 Number);
+AL_S32 AlIpc_Hal_MboxRead(AL_IpcMailBox_HalStruct *Handle,  AL_U32 *Data);
+AL_S32 AlIpc_Hal_MboxWrite(AL_IpcMailBox_HalStruct *Handle,  AL_U32 Data);
+AL_S32 AlIpc_Hal_IntrInit(AL_IpcIntr_HalStruct **Handle, AL_IPC_IntrEnum IntrType, Callback Func, AL_VOID *Arg);
+AL_S32 AlIpc_Hal_IntrNotify(AL_IPC_IntrEnum IntrType);
 
 #ifdef __cplusplus
 }

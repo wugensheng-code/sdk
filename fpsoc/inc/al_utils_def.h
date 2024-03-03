@@ -96,9 +96,13 @@ extern "C" {
  * else   : timeout
 */
 #define AL_WAIT_COND_UNTIL_TIMEOUT(Condition, DelayMs)   ({                                                         \
-    AL_U64  Start = AlSys_GetTimerTickCount();                                                                           \
-    AL_U64  Freq  = AlSys_GetTimerFreq();                                                                           \
-    while (((Condition) != AL_TRUE) && (Start + Freq * DelayMs / 1000 >= AlSys_GetTimerTickCount()));                    \
+    if (DelayMs == AL_WAITFOREVER) {                                                                                \
+        while ((Condition) != AL_TRUE);                                                                             \
+    } else {                                                                                                        \
+        AL_U64 Start = AlSys_GetTimerTickCount();                                                                   \
+        AL_U64 Freq  = AlSys_GetTimerFreq();                                                                        \
+        while (((Condition) != AL_TRUE) && (Start + Freq * DelayMs / 1000 >= AlSys_GetTimerTickCount()));           \
+    }                                                                                                               \
     (Condition);                                                                                                    \
 })
 

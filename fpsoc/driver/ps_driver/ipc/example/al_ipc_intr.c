@@ -5,11 +5,11 @@
  */
 
 /**
- * @file    al_uart_nonblocked.c
+ * @file    al_ipc_intr.c
  * @author  Anlogic esw team
  * @version V0.0.1
  * @date    2023-09-01
- * @brief   uart nonblocked example
+ * @brief   ipc interrupt example
  */
 
 /***************************** Include Files *********************************/
@@ -37,7 +37,7 @@
 /************************** Function Definitions ******************************/
 AL_VOID CallBack(AL_VOID * arg)
 {
-    AL_LOG(AL_LOG_LEVEL_INFO, "IPC notification\r\n");
+    AL_LOG(AL_LOG_LEVEL_NOTICE, "IPC notification\r\n");
 }
 
 AL_S32 main(AL_VOID)
@@ -61,5 +61,6 @@ AL_S32 main(AL_VOID)
 #endif
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Ipc Inter test success\r\n");
+
     return Ret;
 }

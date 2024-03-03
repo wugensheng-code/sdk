@@ -56,8 +56,8 @@ typedef enum
 } AL_ERR_CODE;
 
 
-#define    AL_OK    (0x00U)
-
+#define    AL_OK       (0x00U)
+#define    AL_ERROR    (~0x00U)  //ambiguous error info
 
 typedef enum
 {

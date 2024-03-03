@@ -5,11 +5,11 @@
  */
 
 /**
- * @file    al_uart_nonblocked.c
+ * @file    al_ipc_mailbox.c
  * @author  Anlogic esw team
  * @version V0.0.1
  * @date    2023-09-01
- * @brief   uart nonblocked example
+ * @brief   ipc mailbox example
  */
 
 /***************************** Include Files *********************************/
@@ -37,26 +37,47 @@
 
 AL_VOID main(AL_VOID)
 {
+    AL_S32 Ret = AL_OK;
     AL_U32 Value = 0xffee;
+    AL_U32 OutValue;
+
     AL_IpcMailBox_HalStruct *Mailbox_Handle;
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Ipc Mailbox test\r\n");
 
-    for (int i = 0; i < 3; i++) 
+    for (int i = 0; i < 3; i++)
     {
-        AlIPC_Hal_MboxInit(&Mailbox_Handle, i);
+        Ret = AlIPC_Hal_MboxInit(&Mailbox_Handle, i);
+        if ( Ret != AL_OK) {
+            break;
+        }
 
-        AlIpc_Hal_MboxWrite(Mailbox_Handle, Value);
+        Ret = AlIpc_Hal_MboxWrite(Mailbox_Handle, Value);
+        if ( Ret != AL_OK) {
+            break;
+        }
 
         AL_LOG(AL_LOG_LEVEL_INFO, "Ipc Mailbox write 0x%x\r\n", Value);
 
-        AlIpc_Hal_MboxRead(Mailbox_Handle, &Value);
+        Ret = AlIpc_Hal_MboxRead(Mailbox_Handle, &OutValue);
+        if ( Ret != AL_OK) {
+            break;
+        }
 
-        AL_LOG(AL_LOG_LEVEL_INFO, "Ipc Mailbox read 0x%x\r\n", Value);
+        if (Value != OutValue) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Ipc Mailbox fail write(0x%x) read(0x%x)\r\n", Value, OutValue);
+            Ret = AL_ERROR;
+            break;
+        }
 
         Value++;
     }
 
-    AL_LOG(AL_LOG_LEVEL_INFO, "Ipc Mailbox test success\r\n");
+    if (Ret == AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_INFO, "Ipc Mailbox test success\r\n");
+    } else {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Ipc Mailbox test fail\r\n");
+    }
+
     return;
 }

@@ -44,7 +44,7 @@ AL_S32 main(AL_VOID)
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Ipc Mailbox test\r\n");
 
-    for (int i = 0; i < 3; i++) 
+    for (int i = 0; i < 3; i++)
     {
         Ret = AlIPC_Hal_MboxInit(&Mailbox_Handle, i);
 
@@ -52,7 +52,7 @@ AL_S32 main(AL_VOID)
 
         AL_LOG(AL_LOG_LEVEL_INFO, "Ipc Mailbox write 0x%x\r\n", Value);
 
-        Ret = AlIpc_Hal_MboxRead(Mailbox_Handle, &Value, AL_WAITING_NO);
+        AlIpc_Hal_MboxRead(Mailbox_Handle, &Value, AL_WAITING_NO);
 
         AL_LOG(AL_LOG_LEVEL_INFO, "Ipc Mailbox read 0x%x\r\n", Value);
 
@@ -71,7 +71,7 @@ AL_S32 main(AL_VOID)
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Ipc spin lock test\r\n");
 
-    for (int i = 0; i < 4; i++) 
+    for (int i = 0; i < 4; i++)
     {
         AlIpc_Hal_SpinLockInit(&Spinlock_Handle, i);
 

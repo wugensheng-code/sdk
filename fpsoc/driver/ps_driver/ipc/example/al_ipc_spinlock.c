@@ -5,11 +5,11 @@
  */
 
 /**
- * @file    al_uart_nonblocked.c
+ * @file    al_ipc_spinlock.c
  * @author  Anlogic esw team
  * @version V0.0.1
  * @date    2023-09-01
- * @brief   uart nonblocked example
+ * @brief   ipc spinlock example
  */
 
 /***************************** Include Files *********************************/
@@ -45,7 +45,7 @@ AL_S32 main(AL_VOID)
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Ipc spin lock test\r\n");
 
-    for (int i = 0; i < 4; i++) 
+    for (int i = 0; i < 4; i++)
     {
         AlIpc_Hal_SpinLockInit(&Spinlock_Handle, i);
 
@@ -60,9 +60,10 @@ AL_S32 main(AL_VOID)
         Same_Key = AlIpc_Hal_SpinLockTake(i, AL_WAITING_NO);
 
         if (!Same_Key) {
-            AL_LOG(AL_LOG_LEVEL_INFO, "Attempt to obtain the same spin lock, acquisition failed\r\n");
+            AL_LOG(AL_LOG_LEVEL_INFO, "Attempt to obtain the same spin lock, acquisition failed \r\n");
         } else {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Successfully obtained the same spin lock, testing failed\r\n")
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Successfully obtained the same spin lock, testing failed \r\n");
+            Ret = AL_ERROR;
         }
 
         AlIpc_Hal_SpinLockRelease(i);
@@ -70,6 +71,11 @@ AL_S32 main(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_INFO, "release the spin lock\r\n");
     }
 
-    AL_LOG(AL_LOG_LEVEL_INFO, "Ipc spinlock test success\r\n");
+    if (Ret == AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_INFO, "Ipc spinlock test success\r\n");
+    } else {
+        AL_LOG(AL_LOG_LEVEL_INFO, "Ipc spinlock test failed\r\n");
+    }
+
     return Ret;
 }
