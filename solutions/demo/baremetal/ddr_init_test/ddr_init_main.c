@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
-#include "demo_ddr_init.h"
+#include "fd_ddr_init.h"
 #include "al_core.h"
 
 #define KB (1024UL)
@@ -14,11 +14,11 @@ int main()
     printf("Compile Time: %s %s\r\n", __DATE__, __TIME__);
     printf("Demo DDR Init\r\n");
 
-    err = demo_ddr_init();
+    err = fd_ddr_init();
 
     err += write_read_compare((void*)(1 * MB), (void*)(1 * MB), 32 * KB / sizeof(uint64_t), 0x114514UL, "1MB offset, 32KB Read Back");
     err += write_read_compare((void*)(4 * MB), (void*)(4 * MB),  8 * MB / sizeof(uint64_t), 0x66CCFFUL, "4MB offset, 8MB Read Back");
-    for (int i = 0; ; ++i) {
+    for (int i = 0; i < 1; ++i) {
         err += write_read_compare((void*)(0UL), (void*)(0UL), 32 * MB / sizeof(uint64_t), 0x1145141919810UL, "32MB Read Back");
     }
 

@@ -8,6 +8,7 @@
 #include "dr1x90_crg.h"
 #include "soc_plat.h"
 #include "al_reg_io.h"
+#include "dr1x90_pinctrl.h"
 
 
 #if (defined ENABLE_PINMUX_MODE1 || defined ENABLE_PINMUX_MODE2)
@@ -46,7 +47,7 @@ int Soc_PlatGetDeviceVersion()
 int Soc_PlatInit()
 {
 #ifdef DDR_AVAILABLE
-	demo_ddr_init();
+	fd_ddr_init();
 #endif
     return AL_OK;
 }

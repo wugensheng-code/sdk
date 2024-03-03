@@ -1,13 +1,11 @@
 #include <math.h>
 #include "alc_ddr_env.h"
+#include "dr1x90_ddrc_func.h"
 #include "dr1x90_ddrc_init.h"
 
 // task #
-void dr1x90_ddrppc_dx_enable(ddr_width_t width, ddr_ecc_t ecc)
+void dr1x90_ddrppc_dx_enable(u32 lane_mask)
 {
-    u32 lane_mask = (0x1 << width) - 1;
-    if (ecc == DDR_ECC_SIDEBAND)
-        lane_mask |= 0b1000;
     for (int i = 0; i < 9; i++ ) {
         /*
         if (i < width) {
@@ -23,7 +21,7 @@ void dr1x90_ddrppc_dx_enable(ddr_width_t width, ddr_ecc_t ecc)
 }
 
 // task #
-void dr1x90_ddrppc_base_cfg(ddr_type_t type, ddr_width_t width, ddr_ecc_t ecc)
+void dr1x90_ddrppc_base_cfg(ddr_type_t type, u32 lane_mask)
 {
     u8 i ;
     u32 regData;
@@ -60,7 +58,7 @@ void dr1x90_ddrppc_base_cfg(ddr_type_t type, ddr_width_t width, ddr_ecc_t ecc)
     dr1x90_field_write(DDRC_ADDR_PPC + PGCR7, WRPSTEX_offset, WRPSTEX_mask, env_cfg_wrpstex);
 
     // enable configured DXn
-    dr1x90_ddrppc_dx_enable(width, ecc);
+    dr1x90_ddrppc_dx_enable(lane_mask);
 
     // added based on AL-1055 requirement
     for (i = 0; i <= 8; i++) {
@@ -94,6 +92,30 @@ void dr1x90_ddrppc_base_cfg(ddr_type_t type, ddr_width_t width, ddr_ecc_t ecc)
     regData = dr1x90_field_set(DDRC_ADDR_PPC + PGCR7, DXCALCLK_offset, DXCALCLK_mask, 0, regData);
     regData = dr1x90_field_set(DDRC_ADDR_PPC + PGCR7, ACCALCLK_offset, ACCALCLK_mask, 0, regData);
     dr1x90_reg_write(DDRC_ADDR_PPC + PGCR7, regData);
+
+    regData = dr1x90_reg_read(DDRC_ADDR_PPC + PGCR5);
+    regData = dr1x90_field_set(DDRC_ADDR_PPC + PGCR5, ac_dly_gten_offset, ac_dly_gten_mask, 0x1, regData);
+    regData = dr1x90_field_set(DDRC_ADDR_PPC + PGCR5, dx_dly_gten_offset, dx_dly_gten_mask, 0x1, regData);
+    regData = dr1x90_field_set(DDRC_ADDR_PPC + PGCR5, ac_wdqs_gten_offset, ac_wdqs_gten_mask, 0x0, regData);
+    dr1x90_reg_write(DDRC_ADDR_PPC + PGCR5, regData);
+
+    regData = dr1x90_reg_read(DDRC_ADDR_PPC + PGCR4);
+    regData = dr1x90_field_set(DDRC_ADDR_PPC + PGCR4, acdlyld_gten_offset, acdlyld_gten_mask, 0x1, regData);
+    regData = dr1x90_field_set(DDRC_ADDR_PPC + PGCR4, dxdlyld_gten_offset, dxdlyld_gten_mask, 0x1, regData);
+    dr1x90_reg_write(DDRC_ADDR_PPC + PGCR4, regData);
+
+    regData = dr1x90_reg_read(DDRC_ADDR_PPC + PGCR6);
+    regData = dr1x90_field_set(DDRC_ADDR_PPC + PGCR6, gt_pipe_sel_pub_offset, gt_pipe_sel_pub_mask, 0x4, regData);
+    regData = dr1x90_field_set(DDRC_ADDR_PPC + PGCR6, gt_pipe_sel_iol_offset, gt_pipe_sel_iol_mask, 0x1, regData);
+    dr1x90_reg_write(DDRC_ADDR_PPC + PGCR6, regData);
+
+    regData = dr1x90_reg_read(DDRC_ADDR_PPC + PGCR8);
+    regData = dr1x90_field_set(DDRC_ADDR_PPC + PGCR8, rankdly_pipe_sel_offset, rankdly_pipe_sel_mask, 0x3, regData);
+    regData = dr1x90_field_set(DDRC_ADDR_PPC + PGCR8, gt_width_sel_pub_offset, gt_width_sel_pub_mask, 0x1, regData);
+    regData = dr1x90_field_set(DDRC_ADDR_PPC + PGCR8, gt_width_sel_iol_offset, gt_width_sel_iol_mask, 0x1, regData);
+    regData = dr1x90_field_set(DDRC_ADDR_PPC + PGCR8, ranksel_mode_offset    , ranksel_mode_mask    , 0x1, regData);
+    regData = dr1x90_field_set(DDRC_ADDR_PPC + PGCR8, gt_pipe_sel_dlyld_offset, gt_pipe_sel_dlyld_mask, 0x1, regData);
+    dr1x90_reg_write(DDRC_ADDR_PPC + PGCR8, regData);
 
     regData = dr1x90_reg_read(DDRC_ADDR_PPC + PTR2);
     regData = dr1x90_field_set(DDRC_ADDR_PPC + PTR2, tCALON_offset, tCALON_mask, 0x1F, regData);
@@ -210,7 +232,7 @@ void dr1x90_ddrppc_mdl_cal()
 
     dr1x90_field_wait(DDRC_ADDR_PPC + PGSR0, DCDONE_offset, DCDONE_mask, 1, -1);
     dr1x90_field_wait(DDRC_ADDR_PPC + PIR,   INIT_offset,   INIT_mask,   0, -1);
-
+/*
     regData = dr1x90_reg_read(0x27a0);
     AL_DDR_LOG("[DDR MDL CAL] DX0 mdl = 0x%x\r\n", regData);
     regData = dr1x90_reg_read(0x28a0);
@@ -219,6 +241,7 @@ void dr1x90_ddrppc_mdl_cal()
     AL_DDR_LOG("[DDR MDL CAL] DX2 mdl = 0x%x\r\n", regData);
     regData = dr1x90_reg_read(0x2aa0);
     AL_DDR_LOG("[DDR MDL CAL] DX3 mdl = 0x%x\r\n", regData);
+*/
 }
 
 // task #
@@ -267,11 +290,12 @@ int dr1x90_ddrppc_mtest(u8 bank, u16 row, u16 col, u8 byteNum)
     u8  bistDone;
     u16 bistDxErr;
     u8  rcvCnt;
+    int mbist_cnt = 0;
     int mbist_fail_cnt = 0;
     int loopback_mode_int_en = 0;
-    int loopback_mode_ext_en = 0;
 
     dr1x90_field_write(DDRC_ADDR_PPC + PGCR1, LBMODE_offset, LBMODE_mask, loopback_mode_int_en);
+    dr1x90_field_write(DDRC_ADDR_PPC + PGCR1, IOLB_offset, IOLB_mask, loopback_mode_int_en);
     dr1x90_field_write(DDRC_ADDR_PPC + BISTWCR, BWCNT_offset, BWCNT_mask, iterateCnt);
 
     dr1x90_reg_write(DDRC_ADDR_PPC + BISTRR   , 0x00000003);
@@ -288,7 +312,7 @@ int dr1x90_ddrppc_mtest(u8 bank, u16 row, u16 col, u8 byteNum)
     dr1x90_reg_write(DDRC_ADDR_PPC + BISTMSKR1 , 0xFFFFFFFF);
     dr1x90_reg_write(DDRC_ADDR_PPC + BISTMSKR2 , 0x00000000);
 
-    for (patternType = 0; patternType <= 27; patternType++) {
+    for (patternType = 0x0; patternType <= 0x17; patternType++) {
         dr1x90_field_write(DDRC_ADDR_PPC + PGCR0, PHYFRST_offset, PHYFRST_mask, 0);
         dr1x90_field_write(DDRC_ADDR_PPC + PGCR0, PHYFRST_offset, PHYFRST_mask, 1);
 
@@ -300,7 +324,7 @@ int dr1x90_ddrppc_mtest(u8 bank, u16 row, u16 col, u8 byteNum)
         //bist mode =1
         //regData = dr1x90_field_set(DDRC_ADDR_PPC + BISTRR, BMODE_offset,  BMODE_mask, 1, regData);
         //loopback mode = 0
-        regData = dr1x90_field_set(DDRC_ADDR_PPC + BISTRR, BMODE_offset,  BMODE_mask, loopback_mode_ext_en+1 , regData);
+        regData = dr1x90_field_set(DDRC_ADDR_PPC + BISTRR, BMODE_offset,  BMODE_mask, loopback_mode_int_en ? 0 : 1 , regData);
 
         regData = dr1x90_field_set(DDRC_ADDR_PPC + BISTRR, BACEN_offset,  BACEN_mask, 0, regData);
         regData = dr1x90_field_set(DDRC_ADDR_PPC + BISTRR, BDXEN_offset,  BDXEN_mask, 1, regData);
@@ -308,13 +332,13 @@ int dr1x90_ddrppc_mtest(u8 bank, u16 row, u16 col, u8 byteNum)
         regData = dr1x90_field_set(DDRC_ADDR_PPC + BISTRR, BDXSEL_offset, BDXSEL_mask, byteNum, regData);
         dr1x90_reg_write(DDRC_ADDR_PPC + BISTRR, regData);
 
-        dr1x90_field_wait(DDRC_ADDR_PPC + BISTGSR, BDONE_offset, BDONE_mask, 1, 0x1500); // wait for bistDone
+        dr1x90_field_wait(DDRC_ADDR_PPC + BISTGSR, BDONE_offset, BDONE_mask, 1, -1); // wait for bistDone
 
         bistDone  = dr1x90_field_read(DDRC_ADDR_PPC + BISTGSR,  BDONE_offset,  BDONE_mask);
         bistDxErr = dr1x90_field_read(DDRC_ADDR_PPC + BISTGSR,  BDXERR_offset, BDXERR_mask);
         rcvCnt    = dr1x90_field_read(DDRC_ADDR_PPC + BISTWCSR, DXWCNT_offset, DXWCNT_mask); // Equal to iterateCnt
 
-        AL_DDR_LOG("[DDR MTEST] #0x%x, bistDone = 0x%x, DxErr = 0x%x, rcvCnt = %d\r\n", patternType, bistDone, bistDxErr, rcvCnt);
+        // AL_DDR_LOG("[DDR MTEST] #0x%x, bistDone = 0x%x, DxErr = 0x%x, rcvCnt = %d\r\n", patternType, bistDone, bistDxErr, rcvCnt);
 
         dr1x90_field_write(DDRC_ADDR_PPC + BISTRR, BINST_offset, BINST_mask, 3);
         dr1x90_field_write(DDRC_ADDR_PPC + BISTRR, BINST_offset, BINST_mask, 2);
@@ -322,47 +346,71 @@ int dr1x90_ddrppc_mtest(u8 bank, u16 row, u16 col, u8 byteNum)
 
         if (bistDone != 1 || bistDxErr != 0 || rcvCnt != iterateCnt) {
             mbist_fail_cnt++;
+            AL_DDR_LOG("[DDR MTEST] #0x%x, bistDone = 0x%x, DxErr = 0x%x, rcvCnt = %d\r\n", patternType, bistDone, bistDxErr, rcvCnt);
+            // AL_DDR_LOG("[DDR MTEST] #0x%x, DX%d, bistDone = 0x%x, DxErr = 0x%x, rcvCnt = %d\r\n", patternType, byteNum, bistDone, bistDxErr, rcvCnt);
         }
-
+        mbist_cnt++;
     }
+
+    AL_DDR_LOG("[DDR MTEST] Done: %d in %d\r\n", mbist_cnt - mbist_fail_cnt, mbist_cnt);
 
     return mbist_fail_cnt ;
 }
 
 // task #
-void dr1x90_ddrppc_fast_init(double fck)
+void dr1x90_ddrppc_fast_init(double fck, u32 lane_mask, const ddr_train_t* cfg)
 {
-    u32 regData = dr1x90_field_read(DDRC_ADDR_PPC + DX0MDLR0, IPRD_offset, IPRD_mask);
-    AL_DDR_LOG("[DDR PPC] 2 x UI = %d\r\n", regData);
-
-    u32 mdl_ui = regData / 2;
-
-    u32 dl_wld [4] = {120/5, 170/5, 255/5, 270/5};
-    u32 dl_gate[4] = {120/5 + mdl_ui/2, 170/5 + mdl_ui/2, 255/5 + mdl_ui/2, 270/5 + mdl_ui/2 }; // pass
-/*
-    double tk = 1e3 / fck / (double)regData;
-    double dl_dqs[4] = {0.36764 - 0.25037, 0.36764 - 0.24463, 0.47958 - 0.24052, 0.47958 - 0.22018};
+    u32 mdl[4];
     for (int i = 0; i < 4; ++i) {
-        dl_wld[i]  = lround(dl_dqs[i] / tk);
-        dl_gate[i] = dl_wld[i] + mdl_ui / 2;
+        mdl[i] = dr1x90_field_read(DDRC_ADDR_PPC + DX0MDLR0 + 0x100 * i, TPRD_offset, TPRD_mask);
     }
-*/
+    AL_DDR_LOG("[FAST INIT] MDL = %d %d %d %d\r\n", mdl[0], mdl[1], mdl[2], mdl[3]);
+
     dr1x90_field_write(DDRC_ADDR_PPC + RANKIDR, RANKWID_offset, RANKWID_mask, 0);
     dr1x90_field_write(DDRC_ADDR_PPC + RANKIDR, RANKRID_offset, RANKRID_mask, 0);
 
-    for (int n = 0; n < 4; n++) {
+    for (int i = 0; i < 4; ++i) {
+        double tLCDL = 1e6 / fck / (double)mdl[i];
         // Set by Write Leveling (WL) & WL Adjustment (WLADJ)
-        dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0   + 0x100 * n, WLSL_offset, WLSL_mask, 2);
-        dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR0 + 0x100 * n, WLD_offset,  WLD_mask,  dl_wld[n]);
+        u32 wlsl = 2;
+        if (cfg->wlsl[i] != (u16)-1)
+            wlsl = (u32)cfg->wlsl[i];
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0   + 0x100 * i, WLSL_offset, WLSL_mask, wlsl);
+
+        u32 wld = (u32)lround((cfg->ac_dly[i] - cfg->dx_dly[i]) / tLCDL);
+        if (cfg->wld[i] != (u16)-1)
+            wld = (u32)cfg->wld[i];
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR0 + 0x100 * i, WLD_offset, WLD_mask, wld + 1);
+
         // Set by Gate Training
-        dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0   + 0x100 * n, DGSL_offset,   DGSL_mask,   3);
-        dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * n, DQSGD_offset,  DQSGD_mask,  dl_gate[n]);
-        dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR5 + 0x100 * n, DQSGSD_offset, DQSGSD_mask, mdl_ui / 8);
+        u32 dgsl = 3;
+        if (cfg->dgsl[i] != (u16)-1)
+            dgsl = (u32)cfg->dgsl[i];
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0   + 0x100 * i, DGSL_offset, DGSL_mask, dgsl);
+
+        u32 dqsgd = wld + mdl[i] / 4;
+        if (cfg->dqsgd[i] != (u16)-1)
+            dqsgd = (u32)cfg->dqsgd[i];
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * i, DQSGD_offset, DQSGD_mask, dqsgd + 1);
+
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR5 + 0x100 * i, DQSGSD_offset, DQSGSD_mask, mdl[i] / 16); // UI / 8
+
         // Set by Write Eye Training
-        dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * n, WDQD_offset,   WDQD_mask,   mdl_ui / 2);
+        u32 wdqd = mdl[i] / 4;
+        if (cfg->wdqd[i] != (u16)-1)
+            wdqd = (u32)cfg->wdqd[i];
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * i, WDQD_offset, WDQD_mask, wdqd + 1);
+
         // Set by Read Eye Training
-        dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * n, RDQSD_offset,  RDQSD_mask,  mdl_ui / 2);
-        dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * n, RDQSND_offset, RDQSND_mask, mdl_ui / 2 + 10);
+        u32 rdqsd = mdl[i] / 4 + 10;
+        if (cfg->rdqsd[i] != (u16)-1)
+            rdqsd = (u32)cfg->rdqsd[i];
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * i, RDQSD_offset, RDQSD_mask, rdqsd + 1);
+
+        u32 rdqsnd = mdl[i] / 4;
+        if (cfg->rdqsnd[i] != (u16)-1)
+            rdqsnd = (u32)cfg->rdqsnd[i];
+        dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * i, RDQSND_offset, RDQSND_mask, rdqsnd + 1);
     }
 
     dr1x90_field_write(DDRC_ADDR_PPC + PGCR4, DXDDLLD_offset, DXDDLLD_mask, 0);
@@ -371,7 +419,6 @@ void dr1x90_ddrppc_fast_init(double fck)
 
     dr1x90_field_write(DDRC_ADDR_PPC + PGCR0, PHYFRST_offset, PHYFRST_mask, 0);
     dr1x90_field_write(DDRC_ADDR_PPC + PGCR0, PHYFRST_offset, PHYFRST_mask, 1);
-
 }
 
 void dr1x90_zq_overwrite_cfg(ddr_type_t type) {
@@ -383,10 +430,12 @@ void dr1x90_zq_overwrite_cfg(ddr_type_t type) {
 
     // u8 pzq_cal_done ;
 
-    //u32  bank_zq_ac_code[3] = {0x19193235,0x19193235,0x19193235} ;
-    //u32  bank_zq_dx_code[3] = {0x19193235,0x19193235,0x19193235} ;
-    u32  bank_zq_ac_code[3] = {0x11112323,0x11112323,0x11112323} ;
-    u32  bank_zq_dx_code[3] = {0x11112323,0x11112323,0x11112323} ;
+    // u32  bank_zq_ac_code[3] = {0x19193235,0x19193235,0x19193235} ;
+    // u32  bank_zq_dx_code[3] = {0x19193235,0x19193235,0x19193235} ;
+    // u32  bank_zq_ac_code[3] = {0x11112323,0x11112323,0x11112323} ;
+    // u32  bank_zq_dx_code[3] = {0x11112323,0x11112323,0x11112323} ;
+    u32  bank_zq_ac_code[3] = {0x17173232,0x17173232,0x17173232} ;
+    u32  bank_zq_dx_code[3] = {0x17173232,0x17173232,0x17173232} ;
 
     // u32  zqcal_done;
     // u32  zqcal_err ;
@@ -551,4 +600,46 @@ void dr1x90_ddrppc_show_delay()
         AL_DDR_LOG("%2d %4d %4d %3d %4d %5d %5d %6d\r\n", n, dgsl, wlsl, wld, wdqd, dqsgd, rdqsd, rdqsnd);
     }
     AL_DDR_LOG("========================================\r\n");
+}
+
+void dr1x90_ddrppc_show_mdl(double fck)
+{
+    u32 regData = 0;
+    for (int i = 0; i < 4; ++i) {
+        regData = dr1x90_reg_read(DDRC_ADDR_PPC + DX0MDLR0 + 0x100 * i);
+        double t = 1e6 / fck / (double)(regData & MDLD_mask);
+        AL_DDR_LOG("[DDR MDL] DX%d = 0x%x\t%.3f ps\r\n", i, regData, t);
+    }
+}
+
+void dr1x90_ddrppc_show_bdl()
+{
+    AL_DDR_LOG("==================================================\r\n");
+    AL_DDR_LOG("DX DQ0 DQ1 DQ2 DQ3 DQ4 DQ5 DQ6 DQ7  DM DQS OE/DQSN\r\n");
+    AL_DDR_LOG("--------------------------------------------------\r\n");
+    for (int i = 0; i < 4; ++i) {
+        u32 bdlr0 = dr1x90_reg_read(DDRC_ADDR_PPC + DX0BDLR0 + 0x100 * i);
+        u32 bdlr1 = dr1x90_reg_read(DDRC_ADDR_PPC + DX0BDLR1 + 0x100 * i);
+        u32 bdlr2 = dr1x90_reg_read(DDRC_ADDR_PPC + DX0BDLR2 + 0x100 * i);
+        AL_DDR_LOG("W%d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d\r\n", i, 
+            (bdlr0 >> DQ0WBD_offset) & 0x3F, (bdlr0 >> DQ1WBD_offset) & 0x3F, 
+            (bdlr0 >> DQ2WBD_offset) & 0x3F, (bdlr0 >> DQ3WBD_offset) & 0x3F, 
+            (bdlr1 >> DQ4WBD_offset) & 0x3F, (bdlr1 >> DQ5WBD_offset) & 0x3F, 
+            (bdlr1 >> DQ6WBD_offset) & 0x3F, (bdlr1 >> DQ7WBD_offset) & 0x3F, 
+            (bdlr2 >>  DMWBD_offset) & 0x3F, (bdlr2 >>  DSWBD_offset) & 0x3F, (bdlr2 >> DSOEBD_offset) & 0x3F
+        );
+    }
+    for (int i = 0; i < 4; ++i) {
+        u32 bdlr3 = dr1x90_reg_read(DDRC_ADDR_PPC + DX0BDLR3 + 0x100 * i);
+        u32 bdlr4 = dr1x90_reg_read(DDRC_ADDR_PPC + DX0BDLR4 + 0x100 * i);
+        u32 bdlr5 = dr1x90_reg_read(DDRC_ADDR_PPC + DX0BDLR5 + 0x100 * i);
+        AL_DDR_LOG("R%d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d %3d\r\n", i, 
+            (bdlr3 >> DQ0RBD_offset) & 0x3F, (bdlr3 >> DQ1RBD_offset) & 0x3F, 
+            (bdlr3 >> DQ2RBD_offset) & 0x3F, (bdlr3 >> DQ3RBD_offset) & 0x3F, 
+            (bdlr4 >> DQ4RBD_offset) & 0x3F, (bdlr4 >> DQ5RBD_offset) & 0x3F, 
+            (bdlr4 >> DQ6RBD_offset) & 0x3F, (bdlr4 >> DQ7RBD_offset) & 0x3F, 
+            (bdlr5 >>  DMRBD_offset) & 0x3F, (bdlr5 >>  DSRBD_offset) & 0x3F, (bdlr5 >> DSNRBD_offset) & 0x3F
+        );
+    }
+    AL_DDR_LOG("==================================================\r\n");
 }

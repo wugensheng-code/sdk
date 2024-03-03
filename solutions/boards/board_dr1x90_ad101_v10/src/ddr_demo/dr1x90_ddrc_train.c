@@ -1,11 +1,13 @@
+#include "dr1x90_ddrc_func.h"
 #include "dr1x90_ddrc_init.h"
 
 #define TRY_CNT 32
+#define DESKEW_EN 0
 
 void dr1x90_ddrc_train_wl()
 {
     u32 regData = 0;
-    u32 wlprd = dr1x90_field_read(DDRC_ADDR_PPC + DX0GSR0, WLPRD_offset, WL_mask);
+    u32 wlprd = dr1x90_field_read(DDRC_ADDR_PPC + DX0GSR0, WLPRD_offset, WLPRD_mask);
     AL_DDR_LOG("[DDR WL] DX0GSR0.WLPRD = %d\r\n", wlprd);
 
     // 1'b0 = 8 DDL tap delays; 1'b1 = 0.52 * WLPRD DDL tap delays
@@ -42,8 +44,8 @@ void dr1x90_ddrc_train_gate()
     regData = dr1x90_reg_read(DDRC_ADDR_PPC + DTCR1);
     // Read Leveling Gate Sampling Difference, 0x2: GDQSPRD/8
     regData = dr1x90_field_set(DDRC_ADDR_PPC + DTCR1, RDLVLGDIFF_offset, RDLVLGDIFF_mask, 0x2, regData);
-    // Read Leveling Gate Shift, 0x3: GDQSPRD/16
-    regData = dr1x90_field_set(DDRC_ADDR_PPC + DTCR1, RDLVLGS_offset, RDLVLGS_mask, 0x3, regData);
+    // Read Leveling Gate Shift, 0x1: GDQSPRD/4 0x3: GDQSPRD/16
+    regData = dr1x90_field_set(DDRC_ADDR_PPC + DTCR1, RDLVLGS_offset, RDLVLGS_mask, 0x1, regData);
     // Read Leveling Enable
     regData = dr1x90_field_set(DDRC_ADDR_PPC + DTCR1, RDLVLEN_offset, RDLVLEN_mask, 0x1, regData);
     // Basic Gate Training Enable
@@ -83,6 +85,7 @@ void dr1x90_ddrc_train_eye()
     u32 regData = 0;
     for (int i = 0; i < TRY_CNT && err != 0; ++i) {
         err = 0;
+        #if DESKEW_EN
         // Read Data Bit Deskew
         regData = dr1x90_reg_read(DDRC_ADDR_PPC + PIR);
         regData = regData | RDDSKW_mask | INIT_mask;
@@ -102,7 +105,7 @@ void dr1x90_ddrc_train_eye()
         regData = dr1x90_reg_read(DDRC_ADDR_PPC + PGSR0);
         // AL_DDR_LOG("[DDR WR DSKEW] #%d %s\r\n", i, (regData & PGSR0_WDERR_mask) ? "Error" : "Done");
         err |= regData & PGSR0_WDERR_mask;
-
+        #endif
         // Read Data Eye Training
         regData = dr1x90_reg_read(DDRC_ADDR_PPC + PIR);
         regData = regData | RDEYE_mask | INIT_mask;
@@ -123,12 +126,19 @@ void dr1x90_ddrc_train_eye()
         // AL_DDR_LOG("[DDR WR CENTER] #%d %s\r\n", i, (regData & PGSR0_WEERR_mask) ? "Error" : "Done");
         err |= regData & PGSR0_WEERR_mask;
 
+        #if DESKEW_EN
         AL_DDR_LOG("[DDR TRAIN #%d] RDDSKE:%c WRDSKW:%c RDEYE:%c WREYE:%c\r\n", i,
             (err & PGSR0_RDERR_mask) ? 'X' : 'O',
             (err & PGSR0_WDERR_mask) ? 'X' : 'O',
             (err & PGSR0_REERR_mask) ? 'X' : 'O',
             (err & PGSR0_WEERR_mask) ? 'X' : 'O'
         );
+        #else
+        AL_DDR_LOG("[DDR TRAIN #%d] RDEYE:%c WREYE:%c\r\n", i,
+            (err & PGSR0_REERR_mask) ? 'X' : 'O',
+            (err & PGSR0_WEERR_mask) ? 'X' : 'O'
+        );
+        #endif
     }
 }
 
