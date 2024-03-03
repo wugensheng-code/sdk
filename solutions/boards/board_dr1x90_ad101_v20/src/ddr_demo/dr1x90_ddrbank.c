@@ -1,40 +1,23 @@
 #include <math.h>
 #include "dr1x90_crg.h"
+#include "dr1x90_ddrc_func.h"
 #include "dr1x90_ddrc_init.h"
 
-void dr1x90_ddr_gpll_cfg(double fck)
+void dr1x90_ddr_gpll_cfg(double fck, double fsys)
 {
-    /*
-    dr1x90_field_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL9, ctrl9_fbk_div_offset,  ctrl9_fbk_div_mask,  63);     // 1066
-    // dr1x90_field_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL9, ctrl9_fbk_div_offset,  ctrl9_fbk_div_mask,  71);     // 1200
-    // dr1x90_field_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL9, ctrl9_fbk_div_offset,  ctrl9_fbk_div_mask,  70);     // 1183
-
-    // clock c0
-    dr1x90_field_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL18, gpll_duty_offset, gpll_duty_mask, 1);
-    dr1x90_field_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL18, gpll_divc_offset, gpll_divc_mask, 1);
-    // clock c1
-    dr1x90_field_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL19, gpll_duty_offset, gpll_duty_mask, 2);
-    dr1x90_field_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL19, gpll_divc_offset, gpll_divc_mask, 3);
-    // clock c2
-    dr1x90_field_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL20, gpll_duty_offset, gpll_duty_mask, 1);
-    dr1x90_field_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL20, gpll_divc_offset, gpll_divc_mask, 1);
-
-    // trigger GPLL reset and wait for GPLL Lock
-    dr1x90_field_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL1, ctrl1_pllreset_offset, ctrl1_pllreset_mask, 1);
-    dr1x90_field_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL1, ctrl1_pllreset_offset, ctrl1_pllreset_mask, 0);
-    dr1x90_field_wait(DDRC_ADDR_GPLL + DDRGPLL_STATE0, gpll_lock_offset, gpll_lock_mask, 1, 1000);
-    */
-    double fbk = 2.0 * fck / (50.0 / 3.0);
+    double fbk = 2.0 * fck / (fsys / 2.0);
     uint32_t fbk_div = lround(fbk);
-    AL_DDR_LOG("[DDR GPLL] fck = %.3f MHz, fbk_div = %d\r\n", fck, fbk_div);
+    uint32_t out_div = 2;
+    if (fbk_div <= 64) {
+        // double fvco to improve clock stability
+        fbk_div *= 2;
+        out_div *= 2;
+    }
+    fck = fsys / 2.0 * fbk_div / out_div;
+    AL_DDR_LOG("[DDR GPLL] fck = %.3f MHz, fbk_div = %d, out_div = %d\r\n", fck, fbk_div, out_div);
 
-    #if CRYSTAL_OSC_HZ == 33333333
-    pll_ddr_div_set(fbk_div, 1, 2, 4, 2);
-    #elif CRYSTAL_OSC_HZ == 50000000
-    pll_ddr_div_set(fbk_div, 1, 3, 6, 3);
-    #else
-    #error "[DDR GPLL] Unsupported CRYSTAL_OSC_HZ"
-    #endif
+    pll_ddr_div_set(fbk_div, 1, out_div, out_div * 2, out_div);
+
     pll_ddr_waitLock();
 
 }
@@ -64,6 +47,7 @@ void dr1x90_ddr_dpll_cfg()
 
     // wait for DPLL Lock
     dr1x90_field_wait(DDRC_ADDR_DPLL + BK0_DPLL_SR0, BK0_DPLL_LOCK_offset, BK0_DPLL_LOCK_mask, 1, -1);
+    dr1x90_field_wait(DDRC_ADDR_DPLL + BK1_DPLL_SR0, BK0_DPLL_LOCK_offset, BK0_DPLL_LOCK_mask, 1, -1);
 }
 
 void dr1x90_ddr_iob_cfg(ddr_type_t type)
@@ -74,6 +58,12 @@ void dr1x90_ddr_iob_cfg(ddr_type_t type)
         dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + brefhp_cfg2, U_bankref_hp_mc1_vref_ext_en_offset, U_bankref_hp_mc1_vref_ext_en_mask, 1);
         dr1x90_field_write(DDRC_ADDR_BK0_IOMC1 + pr37to40_cfg8, U_byte3_quad1_mc1_vref_padin_en_offset, U_byte3_quad1_mc1_vref_padin_en_mask, 1);
         dr1x90_field_write(DDRC_ADDR_BK0_IOMC1 + brefhp_cfg2, U_bankref_hp_mc1_vref_ext_en_offset, U_bankref_hp_mc1_vref_ext_en_mask, 1);
+    }
+    for (int i = 0; i < 12; ++i) {
+        dr1x90_field_write(DDRC_ADDR_BK0_IOMC1 + pr1to4_cfg13 + 0x50 * i, U_byte0_quad1_mc1_slew_offset, U_byte0_quad1_mc1_slew_mask, 0x0);
+        dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr1to4_cfg13 + 0x50 * i, U_byte0_quad1_mc1_slew_offset, U_byte0_quad1_mc1_slew_mask, 0x0);
+        dr1x90_field_write(DDRC_ADDR_BK0_IOMC1 + pr1to4_cfg14 + 0x50 * i, U_byte0_quad1_mc1_pe_ctrl_offset, U_byte0_quad1_mc1_pe_ctrl_mask, 0xFF);
+        dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr1to4_cfg14 + 0x50 * i, U_byte0_quad1_mc1_pe_ctrl_offset, U_byte0_quad1_mc1_pe_ctrl_mask, 0xFF);
     }
 }
 
@@ -118,6 +108,26 @@ void dr1x90_ddr_iol_cfg()
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte1_glue_cfg0, U_byte1_glue_mc1_dqs_byte_md_offset, U_byte1_glue_mc1_dqs_byte_md_mask, 0);
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte2_glue_cfg0, U_byte2_glue_mc1_dqs_byte_md_offset, U_byte2_glue_mc1_dqs_byte_md_mask, 0);
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte3_glue_cfg0, U_byte3_glue_mc1_dqs_byte_md_offset, U_byte3_glue_mc1_dqs_byte_md_mask, 0);
+/*
+    // Always on
+    dr1x90_reg_write(DDRC_ADDR_BK1_T0 + DQSGRP_TE_MD0 , 0x11111111);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T1 + DQSGRP_TE_MD0 , 0x11111111);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T2 + DQSGRP_TE_MD0 , 0x11111111);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T3 + DQSGRP_TE_MD0 , 0x11111111);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T0 + DQSGRP_TE_MD1 , 0x11111111);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T1 + DQSGRP_TE_MD1 , 0x11111111);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T2 + DQSGRP_TE_MD1 , 0x11111111);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T3 + DQSGRP_TE_MD1 , 0x11111111);
+    // Always off
+    dr1x90_reg_write(DDRC_ADDR_BK1_T0 + DQSGRP_PDR_MD0, 0x22222222);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T1 + DQSGRP_PDR_MD0, 0x22222222);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T2 + DQSGRP_PDR_MD0, 0x22222222);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T3 + DQSGRP_PDR_MD0, 0x22222222);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T0 + DQSGRP_PDR_MD1, 0x22222222);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T1 + DQSGRP_PDR_MD1, 0x22222222);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T2 + DQSGRP_PDR_MD1, 0x22222222);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T3 + DQSGRP_PDR_MD1, 0x22222222);
+*/
 }
 
 void dr1x90_ddr_busmatrix_cfg(ddr_type_t type)
@@ -134,6 +144,7 @@ void dr1x90_ddr_busmatrix_cfg(ddr_type_t type)
 
 void dr1x90_iomc_internal_loopback_cfg()
 {
+    /*
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr0_cfg3       , U_byte0_se_mc1_lb_en_offset,      U_byte0_se_mc1_lb_en_mask,   0x1 );
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr1to4_cfg11   , U_byte0_quad1_mc1_lb_en_offset,   U_byte0_quad1_mc1_lb_en_mask,   0xf );
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr5to8_cfg11   , U_byte0_quad2_mc1_lb_en_offset,   U_byte0_quad2_mc1_lb_en_mask,   0xf );
@@ -148,4 +159,36 @@ void dr1x90_iomc_internal_loopback_cfg()
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr41to44_cfg11 , U_byte3_quad2_mc1_lb_en_offset,   U_byte3_quad2_mc1_lb_en_mask,   0xf  );
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr45to48_cfg11 , U_byte3_quad3_mc1_lb_en_offset,   U_byte3_quad3_mc1_lb_en_mask,   0xf  );
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr49_cfg3      , U_byte3_se_mc1_lb_en_offset,      U_byte3_se_mc1_lb_en_mask,      0x1  );
+    */
+   
+    //set  *_mc1_rdqsn_gate_dis_en 1
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte0_glue_cfg0, U_byte0_glue_mc1_rdqsn_gate_dis_en_offset, U_byte0_glue_mc1_rdqsn_gate_dis_en_mask, 1);
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte1_glue_cfg0, U_byte1_glue_mc1_rdqsn_gate_dis_en_offset, U_byte1_glue_mc1_rdqsn_gate_dis_en_mask, 1);
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte2_glue_cfg0, U_byte2_glue_mc1_rdqsn_gate_dis_en_offset, U_byte2_glue_mc1_rdqsn_gate_dis_en_mask, 1);
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte3_glue_cfg0, U_byte3_glue_mc1_rdqsn_gate_dis_en_offset, U_byte3_glue_mc1_rdqsn_gate_dis_en_mask, 1);
+
+    //set pdr_md = 2
+    dr1x90_reg_write(DDRC_ADDR_BK1_T0 + DQSGRP_PDR_MD0, 0x22222222);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T1 + DQSGRP_PDR_MD0, 0x22222222);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T2 + DQSGRP_PDR_MD0, 0x22222222);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T3 + DQSGRP_PDR_MD0, 0x22222222);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T0 + DQSGRP_PDR_MD1, 0x22222222);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T1 + DQSGRP_PDR_MD1, 0x22222222);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T2 + DQSGRP_PDR_MD1, 0x22222222);
+    dr1x90_reg_write(DDRC_ADDR_BK1_T3 + DQSGRP_PDR_MD1, 0x22222222);
+
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr0_cfg3       , U_byte0_se_mc1_lb_en_offset,      U_byte0_se_mc1_lb_en_mask,   0x1 );
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr1to4_cfg11   , U_byte0_quad1_mc1_lb_en_offset,   U_byte0_quad1_mc1_lb_en_mask,   0xf );
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr5to8_cfg11   , U_byte0_quad2_mc1_lb_en_offset,   U_byte0_quad2_mc1_lb_en_mask,   0xf );
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr9to12_cfg11  , U_byte0_quad3_mc1_lb_en_offset,   U_byte0_quad3_mc1_lb_en_mask,   0xf );
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr13to16_cfg11 , U_byte1_quad1_mc1_lb_en_offset,   U_byte1_quad1_mc1_lb_en_mask,   0xf  );
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr17to20_cfg11 , U_byte1_quad2_mc1_lb_en_offset,   U_byte1_quad2_mc1_lb_en_mask,   0xf  );
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr21to24_cfg11 , U_byte1_quad3_mc1_lb_en_offset,   U_byte1_quad3_mc1_lb_en_mask,   0xf  );
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr25to28_cfg11 , U_byte2_quad1_mc1_lb_en_offset,   U_byte2_quad1_mc1_lb_en_mask,   0xf  );
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr29to32_cfg11 , U_byte2_quad2_mc1_lb_en_offset,   U_byte2_quad2_mc1_lb_en_mask,   0xf  );
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr33to36_cfg11 , U_byte2_quad3_mc1_lb_en_offset,   U_byte2_quad3_mc1_lb_en_mask,   0xf  );
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr37to40_cfg11 , U_byte3_quad1_mc1_lb_en_offset,   U_byte3_quad1_mc1_lb_en_mask,   0xf  );
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr41to44_cfg11 , U_byte3_quad2_mc1_lb_en_offset,   U_byte3_quad2_mc1_lb_en_mask,   0xf  );
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr45to48_cfg11 , U_byte3_quad3_mc1_lb_en_offset,   U_byte3_quad3_mc1_lb_en_mask,   0xf  );
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr49_cfg3 , U_byte3_se_mc1_lb_en_offset,   U_byte3_se_mc1_lb_en_mask,   0x1  );
 }

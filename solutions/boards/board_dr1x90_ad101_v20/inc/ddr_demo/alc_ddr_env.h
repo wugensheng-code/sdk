@@ -12,7 +12,7 @@
 #define env_cfg_ddr_speed 1600
 #define env_cfg_ddr_mode  DDR3
 
-#define env_prfbyp_en          1
+#define env_prfbyp_en          0
 #define env_cfg_static_mode    0
 #define env_cfg_rd_rr_mode     1
 #define env_cfg_wr_rr_mode     1

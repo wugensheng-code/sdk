@@ -1,10 +1,11 @@
 #include <math.h>
+#include "dr1x90_ddrc_func.h"
 #include "dr1x90_ddrc_init.h"
 
 #define max(x, y) ((x) > (y) ? (x) : (y))
 #define min(x, y) ((x) < (y) ? (x) : (y))
 
-void dr1x90_ddrmc_cfg(double fck, ddr_type_t type, ddr_width_t width, ddr_ecc_t ecc, const ddr_timing_t* timpara, const ddr_addrmap_t* addrmap, const ddr_arbiter_t* arbiter_cfg)
+void dr1x90_ddrmc_cfg(const ddr_basic_t* basic_cfg, const ddr_timing_t* timpara, const ddr_addrmap_t* addrmap, const ddr_arbiter_t* arbiter_cfg)
 {
     u32 regData;
 
@@ -18,14 +19,14 @@ void dr1x90_ddrmc_cfg(double fck, ddr_type_t type, ddr_width_t width, ddr_ecc_t 
     // regData = dr1x90_reg_read(DDRC_ADDR_UMCTL2 + MSTR);
     regData = 0x40040400;
     // regData = dr1x90_field_set(DDRC_ADDR_UMCTL2 + MSTR, device_config_offset, device_config_mask, 0x1, regData);
-    if (type == DDR4_TYPE)
+    if (basic_cfg->type == DDR4_TYPE)
         regData = dr1x90_field_set(DDRC_ADDR_UMCTL2 + MSTR, ddr4_offset, ddr4_mask, 0x1, regData);
     else
         regData = dr1x90_field_set(DDRC_ADDR_UMCTL2 + MSTR, ddr3_offset, ddr3_mask, 0x1, regData);
     
-    if (width == DDR_X8)
+    if (basic_cfg->width == DDR_X8)
         regData = dr1x90_field_set(DDRC_ADDR_UMCTL2 + MSTR, data_bus_width_offset, data_bus_width_mask, 0x2, regData);
-    else if (width == DDR_X16)
+    else if (basic_cfg->width == DDR_X16)
         regData = dr1x90_field_set(DDRC_ADDR_UMCTL2 + MSTR, data_bus_width_offset, data_bus_width_mask, 0x1, regData);
     else    // DDR_X32
         regData = dr1x90_field_set(DDRC_ADDR_UMCTL2 + MSTR, data_bus_width_offset, data_bus_width_mask, 0x0, regData);
@@ -53,9 +54,12 @@ void dr1x90_ddrmc_cfg(double fck, ddr_type_t type, ddr_width_t width, ddr_ecc_t 
 
 //  dr1x90_reg_write(0x1070 ,0x40085894); // ECCCFG0
 //  dr1x90_reg_write(0x1070 ,0x40085814); // ECCCFG0
-    if(ecc == DDR_ECC_SIDEBAND) {
+    if(basic_cfg->ecc == DDR_ECC_SIDEBAND) {
         dr1x90_reg_write(0x1070 ,0x40085804); // ECCCFG0
-        dr1x90_reg_write(0x1074 ,0x00000780); // ECCCFG1
+        regData = 0x00000780;
+        regData |= (basic_cfg->ecc_poison == ECC_POISON_NONE) ? 0x0 : 0x1;
+        regData |= (basic_cfg->ecc_poison == ECC_POISON_1BIT) ? 0x2 : 0x0;
+        dr1x90_reg_write(0x1074 ,regData);    // ECCCFG1
     } else {
         dr1x90_reg_write(0x1070 ,0x40085810); // ECCCFG0
         dr1x90_reg_write(0x1074 ,0x00000680); // ECCCFG1
@@ -63,25 +67,25 @@ void dr1x90_ddrmc_cfg(double fck, ddr_type_t type, ddr_width_t width, ddr_ecc_t 
 
     dr1x90_reg_write(0x107c ,0x00000300); // ECCCTL
     dr1x90_reg_write(0x10b8 ,0x00000bd3); // ECCPOISONADDR0
-    dr1x90_reg_write(0x10bc ,0x1600ac73); // ECCPOISONADDR1
+    dr1x90_reg_write(0x10bc ,0x0003ffff); // ECCPOISONADDR1
     dr1x90_reg_write(0x10c0 ,0x00000000); // CRCPARCTL0
 
-    dr1x90_ddrmc_init_cfg(fck, type, timpara);
+    dr1x90_ddrmc_init_cfg(basic_cfg->fck, basic_cfg->type, timpara);
 
     dr1x90_reg_write(0x10f0 ,0x00000010); // DIMMCTL
 
     dr1x90_reg_write(0x1180 ,0x01000040); // ZQCTL0
     dr1x90_reg_write(0x1184 ,0x00000070); // ZQCTL1
 
-    dr1x90_ddrmc_timing_cfg(fck, type, timpara);
+    dr1x90_ddrmc_timing_cfg(basic_cfg->fck, basic_cfg->type, timpara);
 
-    dr1x90_ddrmc_addrmap_cfg(type, width, addrmap);
+    dr1x90_ddrmc_addrmap_cfg(basic_cfg->type, basic_cfg->width, addrmap);
 
     dr1x90_reg_write(0x1240 ,0x06000608); // ODTCFG
     dr1x90_reg_write(0x1244 ,0x00000011); // ODTMAP
     // dr1x90_field_write(DDRC_ADDR_UMCTL2 + ODTMAP ,rank0_rd_odt_offset , rank0_rd_odt_mask ,0x0);
 
-    dr1x90_ddrmc_arbiter_cfg(arbiter_cfg);
+    dr1x90_ddrmc_arbiter_cfg(basic_cfg->type, arbiter_cfg);
 
     dr1x90_reg_write(0x1300 ,0x00000010); // DBG0
     dr1x90_reg_write(0x1304 ,0x00000000); // DBG1
@@ -125,7 +129,7 @@ void dr1x90_ddrmc_post_cfg()
 
     // step 9
     // wait SWSTAT.sw_done_ack
-    dr1x90_reg_read(0x1324);
+    dr1x90_field_wait(DDRC_ADDR_UMCTL2 + SWSTAT, sw_done_ack_offset, sw_done_ack_mask, 0x1, -1);
 
     // step 10
     // wait STAT.operating_mode = "normal" 2'b01
@@ -251,7 +255,7 @@ void dr1x90_ddrmc_timing_cfg(double fck, ddr_type_t type, const ddr_timing_t* ti
     // t_xp
     regData |= make_field((u32)0x3, t_xp_offset, t_xp_mask);
     // rd2pre
-    ival = max(4, (u32)ceil(7.5 / tck)); // tRTP = max(4ck, 7.5ns)
+    ival = max(4, (u32)ceil(timpara->tRTP / tck)); // tRTP = max(4ck, 7.5ns)
     if (type == DDR4_TYPE)
         ival = max(ival, timpara->nCL + 4 - timpara->nRP);
     ival = idiv2_floor(ival);
@@ -274,7 +278,7 @@ void dr1x90_ddrmc_timing_cfg(double fck, ddr_type_t type, const ddr_timing_t* ti
     ival = idiv2_ceil(ival);
     regData |= make_field(ival, rd2wr_offset, rd2wr_mask);
     // wr2rd
-    ival = timpara->nCWL + 4 + max(4, (u32)ceil(7.5 / tck)); // tWTR = max(4ck, 7.5ns)
+    ival = timpara->nCWL + 4 + max(4, (u32)ceil(timpara->tWTR_L / tck)); // tWTR = max(4ck, 7.5ns)
     ival = idiv2_ceil(ival);
     regData |= make_field(ival, wr2rd_offset, wr2rd_mask);
     dr1x90_reg_write(DDRC_ADDR_UMCTL2 + DRAMTMG2, regData);
@@ -316,7 +320,7 @@ void dr1x90_ddrmc_timing_cfg(double fck, ddr_type_t type, const ddr_timing_t* ti
         ival = idiv2_ceil(ival);
         regData |= make_field(ival, t_rrd_s_offset, t_rrd_s_mask);
         // wr2rd_s
-        ival = timpara->nCWL + 4 + max(2, (u32)ceil(2.5 / tck)); // tWTR_S = max(2ck, 2.5ns)
+        ival = timpara->nCWL + 4 + max(2, (u32)ceil(timpara->tWTR_S / tck)); // tWTR_S = max(2ck, 2.5ns)
         ival = idiv2_ceil(ival);
         regData |= make_field(ival, wr2rd_s_offset, wr2rd_s_mask);
         dr1x90_reg_write(DDRC_ADDR_UMCTL2 + DRAMTMG9, regData);
@@ -368,45 +372,6 @@ void dr1x90_ddrmc_timing_cfg(double fck, ddr_type_t type, const ddr_timing_t* ti
     dr1x90_reg_write(DDRC_ADDR_UMCTL2 + DFITMG3   , 0x0000001e); // DFITMG3
     dr1x90_reg_write(DDRC_ADDR_UMCTL2 + DBICTL    , 0x00000005); // DBICTL
     dr1x90_reg_write(DDRC_ADDR_UMCTL2 + DFIPHYMSTR, 0x2a000000); // DFIPHYMSTR
-/*
-    // ************************************************************* //
-    dr1x90_reg_write(0x1100 ,0x0d0a1a0e); // DRAMTMG0
-    dr1x90_reg_write(0x1104 ,0x00030314); // DRAMTMG1
-
-    // WL & RL, CL = 9 , WL = 7
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + DRAMTMG2, write_latency_offset, write_latency_mask, timpara->nCWL);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + DRAMTMG2, read_latency_offset , read_latency_mask , timpara->nCL );
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + DRAMTMG2, rd2wr_offset, rd2wr_mask, 0x10);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + DRAMTMG2, wr2rd_offset, wr2rd_mask, 0x10);
-
-    dr1x90_reg_write(0x110c ,0x0000400c); // DRAMTMG3
-    dr1x90_reg_write(0x1110 ,0x06030307); // DRAMTMG4
-    dr1x90_reg_write(0x1114 ,0x05e20302); // DRAMTMG5
-    dr1x90_reg_write(0x1120 ,0x05050b0b); // DRAMTMG8
-    dr1x90_reg_write(0x1124 ,0x00020208); // DRAMTMG9
-    dr1x90_reg_write(0x1128 ,0x000f0e0d); // DRAMTMG10
-    dr1x90_reg_write(0x112c ,0x0e060119); // DRAMTMG11
-    dr1x90_reg_write(0x1130 ,0x0c000008); // DRAMTMG12
-    dr1x90_reg_write(0x113c ,0x00000000); // DRAMTMG15
-
-    // WL = 7 , set t_wrlat = WL -2, and RL = 9, trddata_en = RL -4
-    dr1x90_reg_write(0x1190 ,0x02858203); // DFITMG0
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + DFITMG0, dfi_tphy_wrlat_offset , dfi_tphy_wrlat_mask , timpara->nCWL - 2);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + DFITMG0, dfi_t_rddata_en_offset, dfi_t_rddata_en_mask, timpara->nCL  - 4);
-
-    dr1x90_reg_write(0x1194 ,0x03070101); // DFITMG1
-    dr1x90_reg_write(0x1198 ,0x07007031); // DFILPCFG0
-    dr1x90_reg_write(0x119c ,0x000000f1); // DFILPCFG1
-    dr1x90_reg_write(0x11a0 ,0x40400002); // DFIUPD0
-    dr1x90_reg_write(0x11a4 ,0x003300e6); // DFIUPD1
-    dr1x90_reg_write(0x11a8 ,0x80000000); // DFIUPD2
-//  dr1x90_reg_write(0x11b0 ,0x00000051); // DFIMISC
-//  dr1x90_reg_write(0x11b0 ,0x00000050); // DFIMISC
-
-    dr1x90_reg_write(0x11b8 ,0x0000001e); // DFITMG3
-    dr1x90_reg_write(0x11c0 ,0x00000005); // DBICTL
-    dr1x90_reg_write(0x11c4 ,0x2a000000); // DFIPHYMSTR
-*/
 }
 
 static u32 make_addrmap_field(u8 axaddr_bit, u32 base, u32 offset, u32 mask)
@@ -473,179 +438,81 @@ void dr1x90_ddrmc_addrmap_cfg(ddr_type_t type, ddr_width_t width, const ddr_addr
     regData |= make_addrmap_field(addrmap->bg[0], 2, addrmap_bg_b0_offset, addrmap_bg_b0_mask);
     regData |= make_addrmap_field(addrmap->bg[1], 3, addrmap_bg_b1_offset, addrmap_bg_b1_mask);
     dr1x90_reg_write(DDRC_ADDR_UMCTL2 + ADDRMAP8, regData);
-/*
-    dr1x90_reg_write(0x1204, 0x00020202); // ADDRMAP1
-    dr1x90_reg_write(0x1208 ,0x03030000); // ADDRMAP2
-    dr1x90_reg_write(0x120c, 0x03030303); // ADDRMAP3
-    dr1x90_reg_write(0x1210, 0x00001f1f); // ADDRMAP4
-    dr1x90_reg_write(0x1214, 0x07070707); // ADDRMAP5
-    dr1x90_reg_write(0x1218, 0x0f070707); // ADDRMAP6
-    dr1x90_reg_write(0x121c, 0x00000f0f); // ADDRMAP7
-    dr1x90_reg_write(0x1220, 0x00003f3f); // ADDRMAP8
-*/
-    //dr1x90_reg_write(0x1204 ,0x003f0a0a); // ADDRMAP1
-    //dr1x90_reg_write(0x120c ,0x00000000); // ADDRMAP3
-    //dr1x90_reg_write(0x1210 ,0x00001f1f); // ADDRMAP4
-    //dr1x90_reg_write(0x1214 ,0x08080808); // ADDRMAP5
-    //dr1x90_reg_write(0x1218 ,0x0f080808); // ADDRMAP6
-    //dr1x90_reg_write(0x121c ,0x00000f0f); // ADDRMAP7
-    //dr1x90_reg_write(0x1220 ,0x00000808); // ADDRMAP8
-//  dr1x90_reg_write(0x1224 ,0x01010503); // ADDRMAP9
-//  dr1x90_reg_write(0x1228 ,0x0802020a); // ADDRMAP10
-//  dr1x90_reg_write(0x122c ,0x0000000b); // ADDRMAP11
 }
 
-void dr1x90_ddrmc_arbiter_cfg(const ddr_arbiter_t* arbiter_cfg)
+void dr1x90_ddrmc_arbiter_cfg(ddr_type_t type, const ddr_arbiter_t* arbiter_cfg)
 {
-/*
-    dr1x90_reg_write(0x1250 ,0x5c5b1780); // SCHED
-    dr1x90_reg_write(0x1254 ,0x00000002); // SCHED1
-    dr1x90_reg_write(0x125c ,0x2a00c05a); // PERFHPR1
-    dr1x90_reg_write(0x1264 ,0x6100e7dc); // PERFLPR1
-    dr1x90_reg_write(0x126c ,0x0000bbf3); // PERFWR1
-*/
-    // regData = dr1x90_reg_read(DDRC_ADDR_UMCTL2 + SCHED);
-    // printf("[SCHED] Reset = 0x%x\n", regData);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + SCHED, rdwr_idle_gap_offset, rdwr_idle_gap_mask, 0x0);   // 0x5c -> 0x0
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + SCHED, lpr_num_entries_offset, lpr_num_entries_mask, 0x17);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + SCHED, autopre_rmw_offset, autopre_rmw_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + SCHED, pageclose_offset, pageclose_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + SCHED, prefer_write_offset, prefer_write_mask, 0x0);
-    // regData = dr1x90_reg_read(DDRC_ADDR_UMCTL2 + SCHED);
-    // printf("[SCHED] INIT = 0x%x\n", regData);
-    // regData = dr1x90_reg_read(DDRC_ADDR_UMCTL2 + SCHED1);
-    // printf("[SCHED1] Reset = 0x%x\n", regData);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + SCHED1, pageclose_timer_offset, pageclose_timer_mask, 0x0);
+    u32 regData = 0x1;
+    // rdwr_idle_gap = 0, autopre_rmw = 0, pageclose = 0, prefer_write = 0
+    regData |= make_field(arbiter_cfg->lpr_num, lpr_num_entries_offset, lpr_num_entries_mask);
+    dr1x90_reg_write(DDRC_ADDR_UMCTL2 + SCHED, regData);
 
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PERFHPR1, hpr_xact_run_length_offset, hpr_xact_run_length_mask, 0x2a);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PERFHPR1, hpr_max_starve_offset, hpr_max_starve_mask, 0xc05a);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PERFLPR1, lpr_xact_run_length_offset, lpr_xact_run_length_mask, 0x61);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PERFLPR1, lpr_max_starve_offset, lpr_max_starve_mask, 0xe7dc);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PERFWR1, w_xact_run_length_offset, w_xact_run_length_mask, 0x30);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PERFWR1, w_max_starve_offset, w_max_starve_mask, 0xbbf3);
+    // pageclose_timer = 0
+    dr1x90_reg_write(DDRC_ADDR_UMCTL2 + SCHED1, 0x0);
 
-    /*
-    dr1x90_reg_write(0x1400 ,0x00000100); // PCCFG
-    dr1x90_reg_write(0x1404 ,0x0000333c); // PCFGR_0
-    dr1x90_reg_write(0x1408 ,0x000042d0); // PCFGW_0
-    dr1x90_reg_write(0x1490 ,0x00000001); // PCTRL_0
-    dr1x90_reg_write(0x1494 ,0x0011000b); // PCFGQOS0_0
-//  dr1x90_reg_write(0x1498 ,0x0749004f); // PCFGQOS1_0
-//  dr1x90_reg_write(0x149c ,0x01100e0d); // PCFGWQOS0_0
-//  dr1x90_reg_write(0x14a0 ,0x04b500dd); // PCFGWQOS1_0
-    dr1x90_reg_write(0x14b4 ,0x0000333c); // PCFGR_1
-    dr1x90_reg_write(0x14b8 ,0x00000243); // PCFGW_1
-    dr1x90_reg_write(0x1540 ,0x00000001); // PCTRL_1
-    dr1x90_reg_write(0x1544 ,0x0011000a); // PCFGQOS0_1
-//  dr1x90_reg_write(0x1548 ,0x00440090); // PCFGQOS1_1
-//  dr1x90_reg_write(0x154c ,0x01110503); // PCFGWQOS0_1
-//  dr1x90_reg_write(0x1550 ,0x00cd00fa); // PCFGWQOS1_1
-//  dr1x90_reg_write(0x1564 ,0x00006340); // PCFGR_2
-    dr1x90_reg_write(0x1564 ,0x0000333c); // PCFGR_2
-    dr1x90_reg_write(0x1568 ,0x0000126d); // PCFGW_2
-    dr1x90_reg_write(0x15f0 ,0x00000001); // PCTRL_2
-    dr1x90_reg_write(0x15f4 ,0x00110006); // PCFGQOS0_2
-//  dr1x90_reg_write(0x15f8 ,0x051e04c9); // PCFGQOS1_2
-//  dr1x90_reg_write(0x15fc ,0x01100a06); // PCFGWQOS0_2
-//  dr1x90_reg_write(0x1600 ,0x073a0015); // PCFGWQOS1_2
-//  dr1x90_reg_write(0x1614 ,0x000063f4); // PCFGR_3
-    dr1x90_reg_write(0x1614 ,0x0000333c); // PCFGR_3
-    dr1x90_reg_write(0x1618 ,0x0000705c); // PCFGW_3
-    dr1x90_reg_write(0x16a0 ,0x00000001); // PCTRL_3
-    dr1x90_reg_write(0x16a4 ,0x00100004); // PCFGQOS0_3
-//  dr1x90_reg_write(0x16a8 ,0x006a0331); // PCFGQOS1_3
-//  dr1x90_reg_write(0x16ac ,0x01100d02); // PCFGWQOS0_3
-//  dr1x90_reg_write(0x16b0 ,0x05d2012f); // PCFGWQOS1_3
-    */
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCCFG, bl_exp_mode_offset, bl_exp_mode_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCCFG, pagematch_limit_offset, pagematch_limit_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCCFG, go2critical_en_offset, go2critical_en_mask, 0x0);
+    regData = 0;
+    regData |= make_field(arbiter_cfg->hpr_xact_run, hpr_xact_run_length_offset, hpr_xact_run_length_mask);
+    regData |= make_field(arbiter_cfg->hpr_max_starve, hpr_max_starve_offset, hpr_max_starve_mask);
+    dr1x90_reg_write(DDRC_ADDR_UMCTL2 + PERFHPR1, regData);
+    regData = 0;
+    regData |= make_field(arbiter_cfg->lpr_xact_run, lpr_xact_run_length_offset, lpr_xact_run_length_mask);
+    regData |= make_field(arbiter_cfg->lpr_max_starve, lpr_max_starve_offset, lpr_max_starve_mask);
+    dr1x90_reg_write(DDRC_ADDR_UMCTL2 + PERFLPR1, regData);
+    regData = 0;
+    regData |= make_field(arbiter_cfg->w_xact_run, w_xact_run_length_offset, w_xact_run_length_mask);
+    regData |= make_field(arbiter_cfg->w_max_starve, w_max_starve_offset, w_max_starve_mask);
+    dr1x90_reg_write(DDRC_ADDR_UMCTL2 + PERFWR1, regData);
 
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_0, rd_port_pagematch_en_offset, rd_port_pagematch_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_0, rd_port_urgent_en_offset, rd_port_urgent_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_0, rd_port_aging_en_offset, rd_port_aging_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_0, rd_port_priority_offset, rd_port_priority_mask, 0x33c);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_0, wr_port_pagematch_en_offset, wr_port_pagematch_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_0, wr_port_urgent_en_offset, wr_port_urgent_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_0, wr_port_aging_en_offset, wr_port_aging_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_0, wr_port_priority_offset, wr_port_priority_mask, 0x2d0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCTRL_0, port_en_offset, port_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_0, rqos_map_region1_offset, rqos_map_region1_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_0, rqos_map_region0_offset, rqos_map_region0_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_0, rqos_map_level1_offset, rqos_map_level1_mask, 0x7);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS1_0, rqos_map_timeoutr_offset, rqos_map_timeoutr_mask, 1600);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS1_0, rqos_map_timeoutb_offset, rqos_map_timeoutb_mask, 800);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_0, wqos_map_region2_offset, wqos_map_region2_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_0, wqos_map_region1_offset, wqos_map_region1_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_0, wqos_map_region0_offset, wqos_map_region0_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_0, wqos_map_level2_offset, wqos_map_level2_mask, 0x7);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_0, wqos_map_level1_offset, wqos_map_level1_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_0, wqos_map_timeout2_offset, wqos_map_timeout2_mask, 800);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_0, wqos_map_timeout1_offset, wqos_map_timeout1_mask, 800);
+    regData = 0;
+    regData |= make_field(0x1, bl_exp_mode_offset, bl_exp_mode_mask);
+    regData |= make_field(0x0, pagematch_limit_offset, pagematch_limit_mask);
+    regData |= make_field(0x0, go2critical_en_offset, go2critical_en_mask);
+    dr1x90_reg_write(DDRC_ADDR_UMCTL2 + PCCFG, regData);
 
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_1, rd_port_pagematch_en_offset, rd_port_pagematch_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_1, rd_port_urgent_en_offset, rd_port_urgent_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_1, rd_port_aging_en_offset, rd_port_aging_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_1, rd_port_priority_offset, rd_port_priority_mask, 0x33c);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_1, wr_port_pagematch_en_offset, wr_port_pagematch_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_1, wr_port_urgent_en_offset, wr_port_urgent_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_1, wr_port_aging_en_offset, wr_port_aging_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_1, wr_port_priority_offset, wr_port_priority_mask, 0x2d0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCTRL_1, port_en_offset, port_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_1, rqos_map_region1_offset, rqos_map_region1_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_1, rqos_map_region0_offset, rqos_map_region0_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_1, rqos_map_level1_offset, rqos_map_level1_mask, 0x7);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS1_1, rqos_map_timeoutr_offset, rqos_map_timeoutr_mask, 1600);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS1_1, rqos_map_timeoutb_offset, rqos_map_timeoutb_mask, 800);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_1, wqos_map_region2_offset, wqos_map_region2_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_1, wqos_map_region1_offset, wqos_map_region1_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_1, wqos_map_region0_offset, wqos_map_region0_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_1, wqos_map_level2_offset, wqos_map_level2_mask, 0x7);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_1, wqos_map_level1_offset, wqos_map_level1_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_1, wqos_map_timeout2_offset, wqos_map_timeout2_mask, 800);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_1, wqos_map_timeout1_offset, wqos_map_timeout1_mask, 800);
+    for (int i = 0; i < 4; ++i) {
+        regData = 0;
+        regData |= make_field(type == DDR4_TYPE ? 0x0 : 0x1, rd_port_pagematch_en_offset, rd_port_pagematch_en_mask);
+        regData |= make_field(0x1, rd_port_urgent_en_offset, rd_port_urgent_en_mask);
+        if (arbiter_cfg->port[i].rd_aging != (u16)-1) {
+            regData |= make_field(0x1, rd_port_aging_en_offset, rd_port_aging_en_mask);
+            regData |= make_field(arbiter_cfg->port[i].rd_aging, rd_port_priority_offset, rd_port_priority_mask);
+        }
+        dr1x90_reg_write(DDRC_ADDR_UMCTL2 + PCFGR_0 + 0xb0 * i, regData);
 
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_2, rd_port_pagematch_en_offset, rd_port_pagematch_en_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_2, rd_port_urgent_en_offset, rd_port_urgent_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_2, rd_port_aging_en_offset, rd_port_aging_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_2, rd_port_priority_offset, rd_port_priority_mask, 0x33c);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_2, wr_port_pagematch_en_offset, wr_port_pagematch_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_2, wr_port_urgent_en_offset, wr_port_urgent_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_2, wr_port_aging_en_offset, wr_port_aging_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_2, wr_port_priority_offset, wr_port_priority_mask, 0x2d0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCTRL_2, port_en_offset, port_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_2, rqos_map_region1_offset, rqos_map_region1_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_2, rqos_map_region0_offset, rqos_map_region0_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_2, rqos_map_level1_offset, rqos_map_level1_mask, 0x7);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS1_2, rqos_map_timeoutr_offset, rqos_map_timeoutr_mask, 1600);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS1_2, rqos_map_timeoutb_offset, rqos_map_timeoutb_mask, 800);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_2, wqos_map_region2_offset, wqos_map_region2_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_2, wqos_map_region1_offset, wqos_map_region1_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_2, wqos_map_region0_offset, wqos_map_region0_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_2, wqos_map_level2_offset, wqos_map_level2_mask, 0x7);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_2, wqos_map_level1_offset, wqos_map_level1_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_2, wqos_map_timeout2_offset, wqos_map_timeout2_mask, 800);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_2, wqos_map_timeout1_offset, wqos_map_timeout1_mask, 800);
+        regData = 0;
+        regData |= make_field(type == DDR4_TYPE ? 0x0 : 0x1, wr_port_pagematch_en_offset, rd_port_pagematch_en_mask);
+        regData |= make_field(0x1, wr_port_urgent_en_offset, wr_port_urgent_en_mask);
+        if (arbiter_cfg->port[i].wr_aging != (u16)-1) {
+            regData |= make_field(0x1, wr_port_aging_en_offset, wr_port_aging_en_mask);
+            regData |= make_field(arbiter_cfg->port[i].wr_aging, wr_port_priority_offset, wr_port_priority_mask);
+        }
+        dr1x90_reg_write(DDRC_ADDR_UMCTL2 + PCFGW_0 + 0xb0 * i, regData);
 
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_3, rd_port_pagematch_en_offset, rd_port_pagematch_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_3, rd_port_urgent_en_offset, rd_port_urgent_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_3, rd_port_aging_en_offset, rd_port_aging_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGR_3, rd_port_priority_offset, rd_port_priority_mask, 0x33c);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_3, wr_port_pagematch_en_offset, wr_port_pagematch_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_3, wr_port_urgent_en_offset, wr_port_urgent_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_3, wr_port_aging_en_offset, wr_port_aging_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGW_3, wr_port_priority_offset, wr_port_priority_mask, 0x2d0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCTRL_3, port_en_offset, port_en_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_3, rqos_map_region1_offset, rqos_map_region1_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_3, rqos_map_region0_offset, rqos_map_region0_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_3, rqos_map_level1_offset, rqos_map_level1_mask, 0x7);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS1_3, rqos_map_timeoutr_offset, rqos_map_timeoutr_mask, 1600);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGQOS1_3, rqos_map_timeoutb_offset, rqos_map_timeoutb_mask, 800);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_3, wqos_map_region2_offset, wqos_map_region2_mask, 0x1);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_3, wqos_map_region1_offset, wqos_map_region1_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_3, wqos_map_region0_offset, wqos_map_region0_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_3, wqos_map_level2_offset, wqos_map_level2_mask, 0x7);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_3, wqos_map_level1_offset, wqos_map_level1_mask, 0x0);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_3, wqos_map_timeout2_offset, wqos_map_timeout2_mask, 800);
-    dr1x90_field_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_3, wqos_map_timeout1_offset, wqos_map_timeout1_mask, 800);
+        // port_en = 0x1
+        dr1x90_reg_write(DDRC_ADDR_UMCTL2 + PCTRL_0 + 0xb0 * i, 0x1);
+
+        regData = 0;
+        regData |= make_field(arbiter_cfg->port[i].rqos_level1, rqos_map_level1_offset, rqos_map_level1_mask);
+        regData |= make_field(arbiter_cfg->port[i].rqos_region0, rqos_map_region0_offset, rqos_map_region0_mask);
+        regData |= make_field(arbiter_cfg->port[i].rqos_region1, rqos_map_region1_offset, rqos_map_region1_mask);
+        dr1x90_reg_write(DDRC_ADDR_UMCTL2 + PCFGQOS0_0 + 0xb0 * i, regData);
+
+        regData = 0;
+        regData |= make_field(arbiter_cfg->port[i].vpr_timeout, rqos_map_timeoutb_offset, rqos_map_timeoutb_mask);
+        regData |= make_field(arbiter_cfg->port[i].vpr_timeout, rqos_map_timeoutr_offset, rqos_map_timeoutr_mask);
+        dr1x90_reg_write(DDRC_ADDR_UMCTL2 + PCFGQOS1_0 + 0xb0 * i, regData);
+
+        regData = 0;
+        regData |= make_field(arbiter_cfg->port[i].wqos_level1, wqos_map_level1_offset, wqos_map_level1_mask);
+        regData |= make_field(arbiter_cfg->port[i].wqos_level2, wqos_map_level2_offset, wqos_map_level2_mask);
+        regData |= make_field(arbiter_cfg->port[i].wqos_region0, wqos_map_region0_offset, wqos_map_region0_mask);
+        regData |= make_field(arbiter_cfg->port[i].wqos_region1, wqos_map_region1_offset, wqos_map_region1_mask);
+        regData |= make_field(arbiter_cfg->port[i].wqos_region2, wqos_map_region2_offset, wqos_map_region2_mask);
+        dr1x90_reg_write(DDRC_ADDR_UMCTL2 + PCFGWQOS0_0 + 0xb0 * i, regData);
+
+        regData = 0;
+        regData |= make_field(arbiter_cfg->port[i].vpw_timeout1, wqos_map_timeout1_offset, wqos_map_timeout1_mask);
+        regData |= make_field(arbiter_cfg->port[i].vpw_timeout2, wqos_map_timeout2_offset, wqos_map_timeout2_mask);
+        dr1x90_reg_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_0 + 0xb0 * i, regData);
+    }
 }
