@@ -80,7 +80,8 @@
 			"1.0":{
 				"name": "PS_DRIVER_MMC",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/ps_driver/mmc"]
+				"depends": ["fpsoc/driver/ps_driver/mmc"],
+				"default": "true"
 			}
 		},
 		"PS_DRIVER_MPU": {
