@@ -32,7 +32,7 @@ extern AL_WDT_HwConfigStruct AlWdt_HwConfig[AL_WDT_NUM_INSTANCE];
  * This function look up hardware config structure.
  * @param   HaliceId is hardware module id
  * @return
- *          - AL_UART_HwConfigStruct for hardware config
+ *          - AL_WDT_HwConfigStruct for hardware config
  * @note
 */
 AL_WDT_HwConfigStruct *AlWdt_Hal_LookupConfig(AL_U32 DevId)
@@ -52,8 +52,7 @@ AL_WDT_HwConfigStruct *AlWdt_Hal_LookupConfig(AL_U32 DevId)
 
 /**
  * This function action When the wdt interrupt occurs.
- * @param   WdtEvent Pointer to AL_WDT_EventStruct contains event datas
- * @param   CallbackRef Pointer to a AL_WDT_EventStruct structure that contains uart Hal instance
+ * @param   CallbackRef Pointer to a AL_WDT_HalStruct structure
  * @return
  * @note
 */
@@ -97,12 +96,12 @@ AL_S32 AlWdt_Hal_RegisterEventCallBack(AL_WDT_HalStruct *Wdt, AL_Wdt_EventCallBa
 }
 
 /**
- * This function initialize the UART mode according to the specified
+ * This function initialize the WDT mode according to the specified
  *          parameters in the AL_WDT_InitStruct and initialize the associated handle.
  * @param   Handle Pointer to a AL_WDT_HalStruct structure that contains wdt Hal instance
  * @param   HalId is hardware module id
  * @param   InitConfig pointer to a AL_WDT_InitStruct structure
- *          that contains the configuration information for the specified UART peripheral
+ *          that contains the configuration information for the specified WDT peripheral
  * @return
  *          - AL_OK for function success
  *          - Other for function failuregit

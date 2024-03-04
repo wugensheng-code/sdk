@@ -10,7 +10,7 @@
 
 SDK_ROOT    ?= ../../../../..
 
-CHIP        ?= dr1m90
+CHIP        ?= dr1v90
 ELF         ?= IPC_INTER
 
 ifeq ($(CHIP), dr1m90)

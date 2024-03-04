@@ -43,15 +43,23 @@ typedef struct
     AL_U32                  TimeOutValue;
 } AL_WDT_InitStruct;
 
-
+/**
+ * @brief  Wdt state enum
+ */
 typedef enum
 {
     AL_WDT_STATE_ENABLE       = (0x0),
     AL_WDT_STATE_DISABLE      = (0x01 << 0)
 } AL_WDT_StateEnum;
 
+/**
+ * @brief  Wdt EventCallBack Pointer
+ */
 typedef AL_VOID (*AL_Wdt_EventCallBack)(AL_VOID *CallbackRef);
 
+/**
+ * @brief  Dev Struct
+ */
 typedef struct
 {
     AL_REG                        BaseAddr;

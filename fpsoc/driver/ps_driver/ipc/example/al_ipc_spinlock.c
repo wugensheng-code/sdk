@@ -64,6 +64,7 @@ AL_S32 main(AL_VOID)
         } else {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Successfully obtained the same spin lock, testing failed \r\n");
             Ret = AL_ERROR;
+            break;
         }
 
         AlIpc_Hal_SpinLockRelease(i);

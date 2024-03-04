@@ -33,16 +33,21 @@ extern "C" {
 
 /******************************* Exported Typedef ************************************/
 /**
- * @brief  Configs Struct
+ * @brief  Callback Pointer
  */
-
 typedef void (Callback)(void *);
 
+/**
+ * @brief  IpcMailBox Hal Struct
+ */
 typedef struct
 {
     AL_U32                       Number;
 } AL_IpcMailBox_HalStruct;
 
+/**
+ * @brief  IpcIntr Hal Struct
+ */
 typedef struct
 {
     AL_IPC_IntrEnum              Type;
@@ -50,6 +55,9 @@ typedef struct
     AL_VOID                      *Arg;
 } AL_IpcIntr_HalStruct;
 
+/**
+ * @brief  IpcSpinLock Hal Struct
+ */
 typedef struct
 {
     AL_U32                       Number;

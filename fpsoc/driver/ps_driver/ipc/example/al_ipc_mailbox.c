@@ -35,7 +35,7 @@
 
 /************************** Function Definitions ******************************/
 
-AL_VOID main(AL_VOID)
+AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
     AL_U32 Value = 0xffee;

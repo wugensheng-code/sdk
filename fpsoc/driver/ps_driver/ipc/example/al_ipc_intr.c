@@ -35,32 +35,51 @@
 /************************** Function Prototypes ******************************/
 
 /************************** Function Definitions ******************************/
-AL_VOID CallBack(AL_VOID * arg)
+AL_VOID CallBack2Rpu(AL_VOID * arg)
 {
-    AL_LOG(AL_LOG_LEVEL_NOTICE, "IPC notification\r\n");
+    AL_S32 Ret
+    Ret = AlIpc_Hal_IntrNotify(AL_IPC_RPU2APU_REQ);
+    if (Ret == AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_INFO, "Ipc notify sucess\r\n");
+    }
+}
+
+AL_VOID CallBack2Apu(AL_VOID * arg)
+{
+    AL_LOG(AL_LOG_LEVEL_INFO, "Ipc Inter test success\r\n");
 }
 
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
-    AL_IpcIntr_HalStruct *Ipc_Inter;
+    AL_IpcIntr_HalStruct *IpcInter2Rpu;
+    AL_IpcIntr_HalStruct *IpcInter2Apu;
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Ipc Inter test\r\n");
 
 #ifdef RPU
 
-    AlIpc_Hal_IntrInit(&Ipc_Inter, AL_IPC_APU2RPU_REQ, CallBack, AL_NULL);
-    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
+    Ret = AlIpc_Hal_IntrInit(&IpcInter2Rpu, AL_IPC_APU2RPU_REQ, CallBack2Apu, AL_NULL);
+    Ret = AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
+
+    if (Ret || Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Ipc Inter test error\r\n");
+    }
 
 #endif
 
 #ifdef APU
 
-    AlIpc_Hal_IntrNotify(AL_IPC_APU2RPU_REQ);
+    Ret = AlIpc_Hal_IntrInit(&IpcInter2Apu, AL_IPC_RPU2APU_REQ, CallBack2Rpu, AL_NULL);
+    Ret = AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
+
+    Ret = AlIpc_Hal_IntrNotify(AL_IPC_APU2RPU_REQ);
+
+    if (Ret || Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Ipc Inter test error\r\n");
+    }
 
 #endif
-
-    AL_LOG(AL_LOG_LEVEL_INFO, "Ipc Inter test success\r\n");
 
     return Ret;
 }
