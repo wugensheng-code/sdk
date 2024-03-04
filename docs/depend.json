@@ -649,6 +649,17 @@
 					"supportedOS": ["standalone"],
 					"supportedProc": ["apu-0", "apu-1", "rpu"]
 				},
+				"DMA_MEM_CPY_PERFORMANCE": {
+					"name": "DMA_MEM_CPY_PERFORMANCE",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/dma/example/al_dma_mem_cpy_performance.c",
+						"PS_DRIVER_DMA_V1_0"
+					],
+					"description": "dma test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
 				"DMA_MEM_CPY": {
 					"name": "DMA_MEM_CPY",
 					"version": "1.0",
