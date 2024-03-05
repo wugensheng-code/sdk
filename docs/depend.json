@@ -73,7 +73,8 @@
 				"depends": [
 					"fpsoc/driver/ps_driver/iic",
 					"PS_DRIVER_DMACAHB_V1_0"
-            	]
+            	],
+				"default": true
 			}
 		},
 		"PS_DRIVER_MMC": {
@@ -141,7 +142,10 @@
 			"1.0":{
 				"name": "PS_DRIVER_UART",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/ps_driver/uart"]
+				"depends": [
+					"fpsoc/driver/ps_driver/uart",
+					"PS_DRIVER_DMACAHB_V1_0"
+				]
 			}
 		},
 		"PS_DRIVER_USB": {
