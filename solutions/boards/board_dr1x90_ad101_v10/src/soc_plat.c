@@ -5,7 +5,6 @@
  */
 
 #include "al_core.h"
-#include "dr1x90_crg.h"
 #include "soc_plat.h"
 #include "al_reg_io.h"
 #include "dr1x90_pinctrl.h"

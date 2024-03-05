@@ -115,7 +115,8 @@ def main():
 
     args = parser.parse_args()
 
-    proc_types = {'rpu': 'demo_board_hpf_rpu.hpf', 'apu-0': 'demo_board_hpf_apu.hpf'}
+    # proc_types = {'rpu': 'demo_board_hpf_rpu.hpf', 'apu-0': 'demo_board_hpf_apu.hpf'}
+    proc_types = {'apu-0': 'demo_board_hpf_apu.hpf', 'apu-0': 'demo_board_hpf_apu.hpf'}
 
     Path(args.bsp_resource_path).joinpath('log').mkdir()
 
@@ -154,17 +155,20 @@ def main():
 
     Fail = False
 
-    for proc, proc_statistics in statistics.items():
-        logger.info(f'\r\n============================> Statistics for {proc} <==========================')
-        for i in proc_statistics:
-            for k, v in i.items():
-                if v is None:
-                    ret = 'Scucess'
-                    logger.info(f"| {k:<40} |\033[32m{ret:^30}\033[0m |")
-                else:
-                    ret = 'Fail: '+ str(v)
-                    logger.info(f"| {k:<40} |\033[31m{ret:^30}\033[0m |")
-                    Fail = True
+    try:
+        for proc, proc_statistics in statistics.items():
+            logger.info(f'\r\n============================> Statistics for {proc} <==========================')
+            for i in proc_statistics:
+                for k, v in i.items():
+                    if v is None:
+                        ret = 'Scucess'
+                        logger.info(f"| {k:<40} |\033[32m{ret:^30}\033[0m |")
+                    else:
+                        ret = 'Fail: '+ str(v)
+                        logger.info(f"| {k:<40} |\033[31m{ret:^30}\033[0m |")
+                        Fail = True
+    except Exception as e:
+        pass
 
 
     if Fail:

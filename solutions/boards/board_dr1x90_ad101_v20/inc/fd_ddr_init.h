@@ -5,7 +5,7 @@
 #include "dr1x90_ddrc_init.h"
 
 // Call dr1x90_ddrc_init(...)
-// Used By FSBL
+// Called By FSBL
 int fd_ddr_init();
 
 #endif
