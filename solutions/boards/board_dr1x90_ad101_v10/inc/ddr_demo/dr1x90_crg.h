@@ -44,7 +44,8 @@ void pll_io_waitLock();
 // F_ddr_c0 = CRYSTAL_OSC_HZ * fbk_div / ref_div / out_div_c0
 // F_ddr_c1 = CRYSTAL_OSC_HZ * fbk_div / ref_div / out_div_c1
 // F_ddr_c2 = CRYSTAL_OSC_HZ * fbk_div / ref_div / out_div_c2
-void pll_ddr_div_set(uint32_t fbk_div, uint32_t ref_div, uint32_t out_div_c0, uint32_t out_div_c1, uint32_t out_div_c2);
+// F_ddr_c3 = CRYSTAL_OSC_HZ * fbk_div / ref_div / out_div_c3
+void pll_ddr_div_set(uint32_t fbk_div, uint32_t ref_div, uint32_t out_div_c0, uint32_t out_div_c1, uint32_t out_div_c2, uint32_t out_div_c3);
 void pll_ddr_reset();
 void pll_ddr_release();
 void pll_ddr_waitLock();

@@ -166,10 +166,10 @@ void pll_io_waitLock()
     pll_waitLock(IO_PLL_CTRL);
 }
 
-void pll_ddr_div_set(uint32_t fbk_div, uint32_t ref_div, uint32_t out_div_c0, uint32_t out_div_c1, uint32_t out_div_c2)
+void pll_ddr_div_set(uint32_t fbk_div, uint32_t ref_div, uint32_t out_div_c0, uint32_t out_div_c1, uint32_t out_div_c2, uint32_t out_div_c3)
 {
     pll_reset(DDR_PLL_CTRL);
-    pll_div_set(DDR_PLL_CTRL, ref_div, fbk_div, out_div_c0, out_div_c1, out_div_c2, 0U);
+    pll_div_set(DDR_PLL_CTRL, ref_div, fbk_div, out_div_c0, out_div_c1, out_div_c2, out_div_c3);
     pll_release(DDR_PLL_CTRL);
 }
 
@@ -260,8 +260,6 @@ void clk_simple_config()
     clk_cpu_ratio_6221();
 #elif AL_CLK_1200M
     clk_cpu_ratio_6221();
-#elif AL_CLK_600M
-    clk_cpu_ratio_4421();
 #else   //default 400M
     clk_cpu_ratio_2221();
 #endif
@@ -276,8 +274,6 @@ void clk_simple_config()
     pll_cpu_div_set(60, 2, 1, 1);
     #elif AL_CLK_1200M
     pll_cpu_div_set(72, 2, 1, 2);
-    #elif AL_CLK_600M
-    pll_cpu_div_set(108, 2, 2, 3);
     #else
     pll_cpu_div_set(96, 2, 2, 2);
     #endif
