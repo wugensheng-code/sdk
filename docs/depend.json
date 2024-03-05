@@ -890,6 +890,43 @@
 				}
 			}
 		},
+		"PS_DRIVER_IPC": {
+			"1.0":{
+				"IPC_INTR": {
+					"name": "IPC_INTR",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/ipc/example/al_ipc_intr.c",
+						"PS_DRIVER_IPC_V1_0"
+					],
+					"description": "ipc intr test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"IPC_MAILBOX": {
+					"name": "IPC_MAILBOX",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/ipc/example/al_ipc_mailbox.c",
+						"PS_DRIVER_IPC_V1_0"
+					],
+					"description": "ipc mailbox test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"IPC_SPINLOCK": {
+					"name": "IPC_SPINLOCK",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/ipc/example/al_ipc_spinlock.c",
+						"PS_DRIVER_IPC_V1_0"
+					],
+					"description": "ipc spinlock test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				}
+			}
+		},
 		"PS_DRIVER_SMC": {
 			"1.0":{
 				"SMC": {
