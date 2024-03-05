@@ -1,4 +1,4 @@
 
 {
-    "WITH_PROXY": {"Name":"WITH_PROXY", "Value":false,"Default": false,"Type": "boolean","Description":"Add support for proxy","Permit":false}
+    "WITH_PROXY": {"Name":"WITH_PROXY", "Value":false,"Default": false,"Type": "boolean","Description":"Add support for proxy","Permit":true}
 }
