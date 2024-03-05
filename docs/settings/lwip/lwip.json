@@ -13,7 +13,7 @@
                 "icmp_debug": {"Name": "icmp_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug ICMP protocol","Permit":true},
 	            "igmp_debug": {"Name": "igmp_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug IGMP protocol","Permit":true},
 	            "ip_debug": {"Name": "ip_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug IP layer","Permit":true},
-	            "lwip_dbg_types_on": {"Name": "lwip_dbg_types_on", "Value": "true", "Default": "true","Type": "boolean","Description": "Turn on lwip debug","Permit":true},
+	            "lwip_dbg_types_on": {"Name": "lwip_dbg_types_on", "Value": "false", "Default": "false","Type": "boolean","Description": "Turn on lwip debug","Permit":true},
 	            "netif_debug": {"Name": "netif_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug network interface layer","Permit":true},
 	            "pbuf_debug": {"Name": "pbuf_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug pbuf layer","Permit":true},
 	            "sys_debug": {"Name": "sys_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug sys arch layer","Permit":true},
@@ -23,7 +23,7 @@
 		},
 
 	"dhcp_options": {
-        "Name": "dhcp_options", "Value": false, "Default": false,"Type": "boolean","Description": "Is DHCP required?","Permit":true,
+        "Name": "dhcp_options", "Value": false, "Default": false,"Type": "boolean","Description": "Is DHCP required?","Permit":false,
 		"sub_options":{
                 "dhcp_does_apr_check": {"Name": "dhcp_does_apr_check", "Value": false, "Default": false,"Type": "boolean","Description": "APR check on offered addresses","Permit":false},
 	            "lwip_dhcp": {"Name": "lwip_dhcp", "Value": false, "Default": false,"Type": "boolean","Description": "Is DHCP required?","Permit":false}
@@ -54,12 +54,12 @@
 	"lwip_memory_options": {
 		"Name": "lwip_memory_options", "Value": true, "Default": true,"Type": "boolean","Description": "Options controlling lwIP memory usage","Permit":true,
 		"sub_options":{
-				"mem_size": {"Name": "mem_size", "Value": "1600", "Default": "1600","Type": "integer","Description": "Size of the heap memory (bytes)","Permit":true},
+				"mem_size": {"Name": "mem_size", "Value": "40960", "Default": "40960","Type": "integer","Description": "Size of the heap memory (bytes)","Permit":true},
 				"memp_num_pbuf": {"Name": "memp_num_pbuf", "Value": "16", "Default": "16","Type": "integer","Description": "Number of memp struct pbufs, Set this high if application sends lots of data out of ROM ","Permit":true},
-				"memp_num_sys_timeout": {"Name": "memp_num_sys_timeout", "Value": "3", "Default": "3","Type": "integer","Description": "Number of simultaneously active timeouts","Permit":false},
-				"memp_num_tcp_pcb": {"Name": "memp_num_tcp_pcb", "Value": "5", "Default": "5","Type": "integer","Description": "Number of simultaneously active TCP connections","Permit":true},
+				"memp_num_sys_timeout": {"Name": "memp_num_sys_timeout", "Value": "6", "Default": "6","Type": "integer","Description": "Number of simultaneously active timeouts","Permit":false},
+				"memp_num_tcp_pcb": {"Name": "memp_num_tcp_pcb", "Value": "10", "Default": "10","Type": "integer","Description": "Number of simultaneously active TCP connections","Permit":true},
 				"memp_num_tcp_pcb_listen": {"Name": "memp_num_tcp_pcb_listen", "Value": "8", "Default": "8","Type": "integer","Description": "Number of listening TCP connections","Permit":true},
-				"memp_num_tcp_seg": {"Name": "memp_num_tcp_seg", "Value": "16", "Default": "16","Type": "integer","Description": "Number of simultaneously queued TCP segments","Permit":true},
+				"memp_num_tcp_seg": {"Name": "memp_num_tcp_seg", "Value": "48", "Default": "48","Type": "integer","Description": "Number of simultaneously queued TCP segments","Permit":true},
 				"memp_num_udp_pcb": {"Name": "memp_num_udp_pcb", "Value": "4", "Default": "4","Type": "integer","Description": "Number of UDP protocol control blocks","Permit":true},
 				"memp_num_api_msg": {"Name": "memp_num_api_msg", "Value": "8", "Default": "8","Type": "integer","Description": "Number of concurrently active calls to various","Permit":true},
 				"memp_num_netbuf": {"Name": "memp_num_netbuf", "Value": "2", "Default": "2","Type": "integer","Description": "Number of struct netbufs","Permit":true},
@@ -73,8 +73,7 @@
 		"sub_options":{
 				"default_tcp_recvmbox_size": {"Name": "default_tcp_recvmbox_size", "Value": "24", "Default": "24","Type": "integer","Description": "Size of TCP receive mbox queue","Permit":true},
 				"default_udp_recvmbox_size": {"Name": "default_udp_recvmbox_size", "Value": "6", "Default": "6","Type": "integer","Description": "Size of UDP receive mbox queue","Permit":true},
-				"lwip_tcpip_core_locking_input": {"Name": "lwip_tcpip_core_locking_input", "Value": false, "Default": false,"Type": "boolean","Description": "TCPIP input core locking","Permit":true},
-				"tcpip_mbox_size": {"Name": "tcpip_mbox_size", "Value": "24", "Default": "24","Type": "integer","Description": "Size of TCPIP mbox queue","Permit":true}
+				"tcpip_mbox_size": {"Name": "tcpip_mbox_size", "Value": "48", "Default": "48","Type": "integer","Description": "Size of TCPIP mbox queue","Permit":true}
 			}
 		},
 	
@@ -90,7 +89,7 @@
 	"stats_options": {
 		"Name": "stats_options", "Value": true, "Default": true,"Type": "boolean","Description": "Turn on lwIP statistics?","Permit":true,
 		"sub_options":{	
-			"lwip_stats": {"Name": "lwip_stats", "Value": true, "Default": true,"Type": "boolean","Description": "Turn on lwIP statistics?","Permit":false}
+			"lwip_stats": {"Name": "lwip_stats", "Value": false, "Default": false,"Type": "boolean","Description": "Turn on lwIP statistics?","Permit":false}
 			}
 		},
 	
@@ -101,10 +100,10 @@
 			"tcp_maxrtx": {"Name": "tcp_maxrtx", "Value": "12", "Default": "12","Type": "integer","Description": "TCP Maximum retransmission value","Permit":true},
 			"tcp_mss": {"Name": "tcp_mss", "Value": "1460", "Default": "1460","Type": "integer","Description": "TCP Maximum segment size (bytes)","Permit":true},
 			"tcp_queue_ooseq": {"Name": "tcp_queue_ooseq", "Value": "1", "Default": "1","Type": "integer","Description": "Should TCP queue segments arriving out of order. Set to 0 if your device is low on memory  ","Permit":true},
-			"tcp_snd_buf": {"Name": "tcp_snd_buf", "Value": "5840", "Default": "5840","Type": "integer","Description": "TCP sender buffer space (bytes)(value = 4*TCP_MSS)","Permit":true},
+			"tcp_snd_buf": {"Name": "tcp_snd_buf", "Value": "35040", "Default": "35040","Type": "integer","Description": "TCP sender buffer space (bytes)(value = 4*TCP_MSS)","Permit":true},
 			"tcp_synmaxrtx": {"Name": "tcp_synmaxrtx", "Value": "6", "Default": "6","Type": "integer","Description": "TCP Maximum SYN retransmission value","Permit":true},
 			"tcp_ttl": {"Name": "tcp_ttl", "Value": "255", "Default": "255","Type": "integer","Description": "TCP TTL valve","Permit":true},
-			"tcp_wnd": {"Name": "tcp_wnd", "Value": "5840", "Default": "5840","Type": "integer","Description": "TCP Window (bytes)(value = 4*TCP_MSS)","Permit":true}
+			"tcp_wnd": {"Name": "tcp_wnd", "Value": "35040", "Default": "35040","Type": "integer","Description": "TCP Window (bytes)(value = 4*TCP_MSS)","Permit":true}
 			}
 		},
 
