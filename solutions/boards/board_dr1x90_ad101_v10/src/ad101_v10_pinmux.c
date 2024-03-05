@@ -99,6 +99,8 @@ void Enablepinmux1(void)
     *(AL_U32 *)(0xf88030c0u) = 0x3; //PS_UART_TX    PS_IO48 uart1_tx__emio_o_5 (out)    Function_3
     *(AL_U32 *)(0xf88030c4u) = 0x3; //PS_UART_RX    PS_IO49 uart1_rx__emio_i_5 (in)     Function_3
     *(AL_U32 *)(0xf8803414u) = 0x1; //EMIOSEL_5     1:MIO 0:EMIO
+    mio_pad_ctrl0(48, MIO_SPEED_FAST, MIO_PULL_10K_EN, MIO_PULL_DIS);
+    mio_pad_ctrl0(49, MIO_SPEED_FAST, MIO_PULL_10K_EN, MIO_PULL_DIS);
 
     //USB0
     *(AL_U32 *)(0xf8803070u) = 0xf; //PS_USB_DATA4  PS_IO28 usb0_data[4] (inout)    Function_15
