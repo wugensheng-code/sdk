@@ -548,6 +548,20 @@
 				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			}
 		},
+		"DEMO_OPENAMP_RPC": {
+			"1.0":{
+				"name": "DEMO_OPENAMP_RPC",
+				"version": "1.0",
+				"depends": [
+					"solutions/demo/baremetal/openamp_rpc_demo",
+					"LIB_METAL_V1_0",
+					"LIB_OPENAMP_V1_0"
+				],
+				"description": "openamp_rpc demo",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"]
+			}
+		},
 		"DEMO_OPENAMP_RPMSG_ECHO_FREERTOS": {
 			"1.0":{
 				"name": "DEMO_OPENAMP_RPMSG_ECHO_FREERTOS",
