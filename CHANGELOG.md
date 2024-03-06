@@ -1,20 +1,50 @@
 # CHANGELOG
 
-## FD_2024.01_Beta1.2 (2024-1-12)
+## BM_SDK_2023.3_ES1.0 (2024-3-6)
 
-### Feat
-
-- 增加对1588的支持到v2版本
-
-- 更新ddr到v3版本
+### (d52893591d0136e91da41267faa4d5c9ff398cb2)
 
 ### Fix
 
-- 修复smc中read nand paramater crc错误
+- 修复rtt中cli的线程阻塞问题。
 
-- 修复qspi中4 addr mode错误
+- 完善 bspconfig。
 
-- 修复riscv fp寄存器问题
+- 修复adc再fd中存在的部分问题。
+
+- 完善gbe example 中的log。
+
+### Feature
+
+- 添加 ipc，xmon 驱动和相应 example。
+
+- 添加 gbe ptp example。
+
+- 添加FD中的链接脚本模板。
+
+- 完善ddr驱动的v3版本。
+
+- 添加 openamp proxy rpc demo。
+
+- 添加 dma-mem-cpy-performance case in FD。
+
+## BM_2024.01_Beta1.2 (2024-1-12)
+
+### (75b7cf3cd9136bec266042952bb3d07485625a64)
+
+### Feat
+
+- 增加对1588的支持到v2版本。
+
+- 更新ddr到v3版本。
+
+### Fix
+
+- 修复smc中read nand paramater crc错误。
+
+- 修复qspi中4 addr mode错误。
+
+- 修复riscv fp寄存器问题。
 
 
 ## BM_2023.11_Bate1.0 (2023-11-28)
@@ -25,7 +55,7 @@
 
 - 清理以下模块中存在的警告:
 
-  gic, cipher, osal, uart, usb, spi, qspi, smc, ttc, gpio, can, ahb-dma, axi-dma, fatfs, plat
+  gic, cipher, osal, uart, usb, spi, qspi, smc, ttc, gpio, can, ahb-dma, axi-dma, fatfs, plat。
 
 - 修复uart轮询发送中存在的问题。
 
@@ -35,7 +65,7 @@
 
 - 修复ps-pl port 初始化的问题。
 
-- 修复depend.json部分问题.
+- 修复depend.json部分问题。
 
 ### Feature
 
@@ -46,7 +76,7 @@
 - 添加neon的example。
 
 
-## FD_2023.11_Alpha1.2 (2023-11-16)
+## BM_2023.11_Alpha1.2 (2023-11-16)
 
 ### Fix
 

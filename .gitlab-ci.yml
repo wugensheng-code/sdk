@@ -109,8 +109,13 @@ build-apu-and-rpu-job-with-FD:       # This job runs in the build stage.
     - rm -r ../dr1m90
     - rm -r ../dr1v90
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/src/ddr_demo/
+    - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/src/dr1x90_pinctrl.c
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/src/ad101_v10_pinmux.c
+    - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/inc/dr1x90_pinctrl.h
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/inc/ddr_demo/
+    - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v20
+    - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_dc_v1d1
+    - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_emulation
     - python --version ; pip --version
     - pip install -i https://pypi.tuna.tsinghua.edu.cn/simple scons
     - python $CI_PROJECT_DIR/tools/ci/build_with_bsp_tool.py -A -t $CI_PROJECT_DIR/tools/ci/ -b $CI_PROJECT_DIR
@@ -142,6 +147,7 @@ release-job:
     - rm -r ../dr1v90
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/src/ddr_demo/
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/src/dr1x90_pinctrl.c
+    - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/src/ad101_v10_pinmux.c
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/inc/dr1x90_pinctrl.h
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/inc/ddr_demo/
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v20
