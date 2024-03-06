@@ -147,7 +147,8 @@ int main(int argc, char *argv[])
 	void *platform;
 	struct rpmsg_device *rpdev;
 	int ret;
-
+	
+	AlSys_UDelay(200000);
 	LPRINTF("Starting application...\r\n");
 
 	/* Initialize platform */

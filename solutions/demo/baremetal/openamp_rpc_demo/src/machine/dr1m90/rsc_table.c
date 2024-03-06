@@ -31,15 +31,9 @@
 #define NUM_VRINGS                  0x02
 #define VRING_ALIGN                 0x1000
 
-#if BOARD_SEL == 0
-/* board_dr1x90_emulation */
-#define RING_TX                     0x61030000
-#define RING_RX                     0x61034000
-#else
 /* board_dr1x90_ad101_v10 */
 #define RING_TX                     0xf030000
 #define RING_RX                     0xf034000
-#endif
 
 #define VRING_BD_NUM                128 /* FROM linux DTS, num * PAGE_ALIGN(vring_size)*/
 
