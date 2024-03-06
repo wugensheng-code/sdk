@@ -30,12 +30,12 @@ extern AL_WDT_HwConfigStruct AlWdt_HwConfig[AL_WDT_NUM_INSTANCE];
 /********************************************************/
 /**
  * This function look up hardware config structure.
- * @param   HaliceId is hardware module id
+ * @param   DevId is hardware module id
  * @return
  *          - AL_WDT_HwConfigStruct for hardware config
  * @note
 */
-AL_WDT_HwConfigStruct *AlWdt_Hal_LookupConfig(AL_U32 DevId)
+static AL_WDT_HwConfigStruct *AlWdt_Hal_LookupConfig(AL_U32 DevId)
 {
     AL_U32 Index;
     AL_WDT_HwConfigStruct *ConfigPtr = AL_NULL;
@@ -121,11 +121,11 @@ AL_S32 AlWdt_Hal_Init(AL_WDT_HalStruct **Handle, AL_U32 DevId, AL_WDT_InitStruct
         return AL_WDT_ERR_ILLEGAL_PARAM;
     }
 
-    (*Handle)->BaseAddr      = HwConfig->BaseAddress;
-    (*Handle)->DevId         = DevId;
+    (*Handle)->BaseAddr     = HwConfig->BaseAddress;
+    (*Handle)->DevId        = DevId;
     (*Handle)->Configs      = (InitConfig == AL_NULL) ? WdtDefInitConfigs : (*InitConfig);
     (*Handle)->IntrNum      = AlWdt_Hal_LookupConfig(DevId)->IntrNum;
-    
+
     AlWdt_ll_Enable(HwConfig->BaseAddress, AL_FUNC_DISABLE);
     AlWdt_ll_Set_RestPulseLen(HwConfig->BaseAddress, InitConfig->ResetPuaseLength);
     AlWdt_ll_Set_ResopnseMode(HwConfig->BaseAddress, InitConfig->ResponseMode);
@@ -148,9 +148,7 @@ AL_S32 AlWdt_Hal_Init(AL_WDT_HalStruct **Handle, AL_U32 DevId, AL_WDT_InitStruct
         return Ret;
     }
 
-    (AL_VOID)AlIntr_RegHandler((*Handle)->IntrNum, AL_NULL, AlWdt_Hal_IntrHandler, *Handle);
-
-    return AL_OK;
+    return AlIntr_RegHandler((*Handle)->IntrNum, AL_NULL, AlWdt_Hal_IntrHandler, *Handle);
 }
 
 AL_VOID AlWdt_Hal_Stop(AL_WDT_HalStruct *Wdt)

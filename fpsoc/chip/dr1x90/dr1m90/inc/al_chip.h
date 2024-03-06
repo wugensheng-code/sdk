@@ -74,6 +74,7 @@ typedef enum {
     SOC_CAN0_IRQn                     =  104,
     SOC_CAN1_IRQn                     =  105,
     NPU_SOFT_IRQn                     =  129,
+    SOC_XMON_IRQn                     =  142,
     SOC_MPU_IRQn                      =  143,
     NPU_HARD_IRQn                     =  144,
     SOC_APU2RPU_REQ_IRQn              =  148,

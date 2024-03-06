@@ -81,6 +81,7 @@ typedef enum
     AL_DMA                  = 0x14,
     AL_USB                  = 0x15,
     AL_IPC                  = 0x16,
+    AL_XMON                 = 0x17,
 } AL_MODULE_TYPE;
 
 #ifdef __cplusplus

@@ -184,6 +184,34 @@ extern "C" {
 #define AL_IPC_BASE_ADDR        (0xF841F000)
 
 /*----------------------------------------------------------------------------
+  Define XMON params
+ *----------------------------------------------------------------------------*/
+#define AL_XMON_NUM_INSTANCE       (21)
+#define AL_XMON_DDR_S0_BASE_ADDR  (0xF8440000UL)
+#define AL_XMON_DDR_S1_BASE_ADDR  (0xF8440400UL)
+#define AL_XMON_DDR_S2_BASE_ADDR  (0xF8440800UL)
+#define AL_XMON_DDR_S3_BASE_ADDR  (0xF8440C00UL)
+#define AL_XMON_SX2X_M0_BASE_ADDR (0xF8441000UL)
+#define AL_XMON_SX2X_M1_BASE_ADDR (0xF8441400UL)
+#define AL_XMON_OCM_S2_BASE_ADDR  (0xF8441800UL)
+#define AL_XMON_SH_M2_BASE_ADDR   (0xF8441C00UL)
+#define AL_XMON_SMC_BASE_ADDR     (0xF8442000UL)
+#define AL_XMON_DMACX_BASE_ADDR   (0xF8442400UL)
+#define AL_XMON_GP_S0_BASE_ADDR   (0xF8444000UL)
+#define AL_XMON_GP_S1_BASE_ADDR   (0xF8444400UL)
+#define AL_XMON_HP_S0_BASE_ADDR   (0xF8444800UL)
+#define AL_XMON_HP_S1_BASE_ADDR   (0xF8444C00UL)
+#define AL_XMON_APU_BASE_ADDR     (0xF8445000UL)
+#define AL_XMON_JPU_BASE_ADDR     (0xF8445400UL)
+#define AL_XMON_MAIN_S6_BASE_ADDR (0xF8445800UL)
+#define AL_XMON_MAIN_M6_BASE_ADDR (0xF8445C00UL)
+#define AL_XMON_MAIN_S1_BASE_ADDR (0xF8446000UL)
+#define AL_XMON_MAIN_M0_BASE_ADDR (0xF8446400UL)
+#define AL_XMON_ACP_BASE_ADDR     (0xF8446800UL)
+
+#define XMON_TOP_INTR_STATE_ADDR  (0xF8800210UL)
+
+/*----------------------------------------------------------------------------
   Define TOP
  *----------------------------------------------------------------------------*/
 #define TOP_NS_BASE_ADDR        (0xF8800000UL)
