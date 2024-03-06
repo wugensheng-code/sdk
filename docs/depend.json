@@ -483,7 +483,7 @@
 				"name": "CHERRYUSB_MSC_RTTHREAD",
 				"version": "1.0",
 				"depends": [
-					"/solutions/demo/rt-thread/msc_rtthread",
+					"solutions/demo/rt-thread/msc_rtthread",
 					"LIB_CHERRYUSB_V1_0",
 					"OS_RTTHREAD_V1_0",
 					"PS_DRIVER_USB_V1_0"
@@ -498,7 +498,7 @@
 				"name": "CHERRYUSB_MSC_FREERTOS",
 				"version": "1.0",
 				"depends": [
-					"/solutions/demo/freertos/msc_freertos",
+					"solutions/demo/freertos/msc_freertos",
 					"LIB_CHERRYUSB_V1_0",
 					"OS_FREERTOS_V1_0",
 					"PS_DRIVER_USB_V1_0"
@@ -513,7 +513,7 @@
 				"name": "RT-Thread",
 				"version": "1.0",
 				"depends": [
-				"/solutions/demo/rt-thread/rt-thread",
+				"solutions/demo/rt-thread/rt-thread",
 				"OS_RTTHREAD_V1_0"
 				],
 				"description": "RT-THREAD demo",
@@ -526,7 +526,7 @@
 				"name": "FREERTOS",
 				"version": "1.0",
 				"depends": [
-				"/solutions/demo/freertos/freertos",
+				"solutions/demo/freertos/freertos",
 				"OS_FREERTOS_V1_0"
 				],
 				"description": "FREERTOS demo",

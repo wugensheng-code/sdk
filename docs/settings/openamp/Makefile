@@ -25,8 +25,8 @@ CFLAGS += -DMACHINE="dr1m90" \
 WITH_PROXY = #{{WITH_PROXY}}
 
 ifeq ($(WITH_PROXY),1)
-	C_SRC += $(wildcard ./lib/proxy/*.c)
-	CFLAGS += -DWITH_PROXY=ON
+C_SRCS += $(wildcard ./lib/proxy/*.c)
+CFLAGS += -DWITH_PROXY=ON
 else
 	
 endif
