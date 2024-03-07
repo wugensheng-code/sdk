@@ -43,7 +43,7 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O0 -g
+CFLAGS := -O2 -g
 # CFLAGS += -DAL_DMA_TEST_MEMCPY
 # CFLAGS += -DAL_DMA_TEST_MEMCPY_BLOCK
 # CFLAGS += -DAL_DMA_TEST_PERCPY

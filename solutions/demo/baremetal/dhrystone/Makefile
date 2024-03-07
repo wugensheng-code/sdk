@@ -25,7 +25,7 @@ LIB_DIR     :=
 CXX_SRCS    :=
 ASM_SRCS    :=
 
-CFLAGS := -O0 -g
+CFLAGS := -O2 -g
 
 PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 

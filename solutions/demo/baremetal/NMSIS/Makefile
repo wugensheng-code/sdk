@@ -56,7 +56,7 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O0 -g -DNUCLEI_DSP_N1 -DNUCLEI_DSP_N2 -DNUCLEI_DSP_N3 -DRISCV_MATH_LOOPUNROLL
+CFLAGS := -O2 -g -DNUCLEI_DSP_N1 -DNUCLEI_DSP_N2 -DNUCLEI_DSP_N3 -DRISCV_MATH_LOOPUNROLL
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;

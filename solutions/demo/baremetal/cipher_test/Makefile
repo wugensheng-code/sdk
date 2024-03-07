@@ -42,7 +42,7 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O0 -g -DCIPHER_PARAM_CHECK
+CFLAGS := -O2 -g -DCIPHER_PARAM_CHECK
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;

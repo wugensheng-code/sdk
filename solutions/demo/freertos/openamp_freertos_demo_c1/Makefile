@@ -58,7 +58,7 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O0 -g -Wall -DLOG_DEV=AL_LOG_UART0 -DRPMSG_DEBUG=1 -DBOARD_SEL=1 -DOPENAMP_EXAMPLE_APP
+CFLAGS := -O2 -g -Wall -DLOG_DEV=AL_LOG_UART0 -DRPMSG_DEBUG=1 -DBOARD_SEL=1 -DOPENAMP_EXAMPLE_APP
 CFLAGS += -DAL_PRINT_ASYNC
 
 #########################################################################
