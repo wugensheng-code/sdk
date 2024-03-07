@@ -23,7 +23,7 @@
 
 /* kservice optimization */
 
-#define RT_DEBUG
+
 
 /* Inter-Thread communication */
 

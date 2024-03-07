@@ -23,8 +23,6 @@
 
 /* kservice optimization */
 
-#define RT_DEBUG
-
 /* Inter-Thread communication */
 
 #define RT_USING_SEMAPHORE
