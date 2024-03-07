@@ -37,7 +37,7 @@
 /************************** Function Definitions ******************************/
 AL_VOID CallBack2Rpu(AL_VOID * arg)
 {
-    AL_S32 Ret
+    AL_S32 Ret;
     Ret = AlIpc_Hal_IntrNotify(AL_IPC_RPU2APU_REQ);
     if (Ret == AL_OK) {
         AL_LOG(AL_LOG_LEVEL_INFO, "Ipc notify sucess\r\n");
