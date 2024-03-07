@@ -159,6 +159,14 @@ void Enablepinmux1(void)
     *(AL_U32 *)(0xf8803000u) = 0xc; //PS_SD_DET    PS_IO0     sd0_cd__emio_i_11 (in)             Function_12
     *(AL_U32 *)(0xf880342cu) = 0x1; //EMIOSEL_11   1:MIO 0:EMIO
 
+    /* SD0 config driver capability */
+    // *((volatile AL_U32 *)(0xf8803940))=0x88000007;
+    *((volatile AL_U32 *)(0xf8803948))=0x88000007;
+    *((volatile AL_U32 *)(0xf8803950))=0x88000007;
+    *((volatile AL_U32 *)(0xf8803958))=0x88000007;
+    *((volatile AL_U32 *)(0xf8803960))=0x88000007;
+    *((volatile AL_U32 *)(0xf8803968))=0x88000007;
+
     //QSPI NOR FLASH 0
     *(AL_U32 *)(0xf8803004u) = 0x0; //PS_FLASH_CS_B    PS_IO1    qspi0_ss_b  (out)      Function_0
     *(AL_U32 *)(0xf8803008u) = 0x0; //PS_FLASH_DQ0     PS_IO2    qspi0_io[0] (inout)    Function_0
