@@ -10,6 +10,12 @@
 #include "al_rv64_systimer.h"
 #include "al_systimer.h"
 
+AL_U64 AlSys_GetTimerFreq(AL_VOID)
+{
+    extern AL_U64 SystemCoreClock;
+    return SystemCoreClock / 5;
+}
+
 AL_U64 AlSys_GetTimerTickCount(AL_VOID)
 {
     return SysTimer->MTIMER;

@@ -19,7 +19,7 @@ AL_VOID AlChip_Dr1V90Init(AL_VOID)
     ECLIC_Init();
 
 //#ifndef RTOS_RTTHREAD
-    SysTimer_clk_sel();
+    // SysTimer_clk_sel();
 //#endif
 
     AlIpc_ll_SpinLockInit();

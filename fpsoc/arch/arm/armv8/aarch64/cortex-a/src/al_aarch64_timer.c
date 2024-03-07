@@ -23,6 +23,11 @@ AL_VOID AlSys_StopTimer(AL_VOID)
     Altop_Syscnts_CounterCtrl(AL_FUNC_DISABLE);
 }
 
+AL_U64 AlSys_GetTimerFreq(AL_VOID)
+{
+    extern AL_U64 SystemCoreClock;
+    return SystemCoreClock;
+}
 
 AL_U64 AlSys_GetTimerTickCount(AL_VOID)
 {
