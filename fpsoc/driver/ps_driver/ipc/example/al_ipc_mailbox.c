@@ -79,5 +79,5 @@ AL_S32 main(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_ERROR, "Ipc Mailbox test fail\r\n");
     }
 
-    return;
+    return 0;
 }
