@@ -365,7 +365,8 @@
 				"depends": [
 					"solutions/demo/baremetal/fatfs",
 					"LIB_FATFS_V1_0",
-					"PS_DRIVER_MMC_V1_0"
+					"PS_DRIVER_MMC_V1_0",
+					"LIB_CHERRYUSB_V1_0"
 				],
 				"description": "Baremetal fatfs demo",
 				"supportedOS": ["standalone"],
