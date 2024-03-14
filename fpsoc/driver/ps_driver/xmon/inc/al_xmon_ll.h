@@ -292,7 +292,7 @@ static inline AL_VOID AlXmon_ll_SetTimeoutIntr(AL_REG BaseAddr, AL_FUNCTION Stat
 
 static inline AL_VOID AlXmon_ll_SetRespIntr(AL_REG BaseAddr, AL_FUNCTION State)
 {
-    AL_REG32_SET_BIT(BaseAddr + XMON__INTR__OFFSET, XMON__INTR__DEBUG_RESP__SHIFT, State);
+    AL_REG32_SET_BIT(BaseAddr + XMON__INTR__OFFSET, XMON__INTR__INTR_ENABLE__SHIFT, State);
 }
 
 static inline AL_U32 AlXmon_ll_GetTimeoutState(AL_REG BaseAddr)
@@ -300,7 +300,7 @@ static inline AL_U32 AlXmon_ll_GetTimeoutState(AL_REG BaseAddr)
     return AL_REG32_GET_BIT(BaseAddr + XMON__INTR__OFFSET, XMON__INTR__DEBUG_TIMEOUT__SHIFT);
 }
 
-static inline AL_VOID AlXmon_ll_GetRespError(AL_REG BaseAddr)
+static inline AL_U32 AlXmon_ll_GetRespError(AL_REG BaseAddr)
 {
     return AL_REG32_GET_BIT(BaseAddr + XMON__INTR__OFFSET, XMON__INTR__DEBUG_RESP__SHIFT);
 }

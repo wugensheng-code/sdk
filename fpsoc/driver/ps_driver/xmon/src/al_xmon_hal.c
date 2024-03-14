@@ -53,6 +53,10 @@ static AL_VOID AlXmon_IntrHandler(AL_VOID *Handle)
     if (AlXmon_ll_GetTimeoutState((Xmon)->BaseAddr)) {
         AL_LOG(AL_LOG_LEVEL_NOTICE, "Response Timeout\r\n");
     }
+
+    if (AlXmon_ll_GetRespError((Xmon)->BaseAddr)) {
+        AL_LOG(AL_LOG_LEVEL_NOTICE, "Response Error\r\n");
+    }
 }
 
 
