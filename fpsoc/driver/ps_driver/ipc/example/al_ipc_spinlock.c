@@ -59,7 +59,7 @@ AL_S32 main(AL_VOID)
 
         Same_Key = AlIpc_Hal_SpinLockTake(i, AL_WAITING_NO);
 
-        if (!Same_Key) {
+        if (Same_Key) {
             AL_LOG(AL_LOG_LEVEL_INFO, "Attempt to obtain the same spin lock, acquisition failed \r\n");
         } else {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Successfully obtained the same spin lock, testing failed \r\n");
