@@ -236,4 +236,5 @@ static AL_S32 AlIpc_Hal_IntrClear(AL_IPC_IntrEnum IntrType)
 {
     AL_ASSERT((IntrType <= AL_IPC_RPU2APU_ACK), AL_IPC_ERR_ILLEGAL_PARAM);
     AlIpc_ll_SetInter(IntrType, AL_FUNC_DISABLE);
+    return AL_OK;
 }
