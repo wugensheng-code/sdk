@@ -362,10 +362,22 @@ AL_S32 AlGbe_Dev_ConfigDuplexAndSpeed(AL_GBE_DevStruct *Gbe)
 {
     AL_ASSERT((Gbe != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
+    AL_U32 GbeTopSetting;
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
 
     AlGbe_ll_SetDuplexMode(GbeBaseAddr, Gbe->MacDmaConfig.DuplexMode);
     AlGbe_ll_SetSpeed(GbeBaseAddr, Gbe->MacDmaConfig.Speed);
+
+    if (Gbe->InitConfig.MediaInterface == AL_GBE_RGMII_MODE) {
+        if (Gbe->MacDmaConfig.Speed = AL_GBE_SPEED_100M) {
+            GbeTopSetting = 0x14a1;
+        } else {
+            GbeTopSetting = 0x1461;
+        }
+        AlGbe_ll_SetGbeCtlRegister((GbeBaseAddr == GBE0__BASE_ADDR ? CFG_CTRL_GBE0_ADDR : CFG_CTRL_GBE1_ADDR), GbeTopSetting);
+    } else {
+        //Todo:
+    }
 
     return AL_OK;
 }
@@ -391,6 +403,7 @@ AL_S32 AlGbe_Dev_Init(AL_GBE_DevStruct *Gbe, AL_GBE_HwConfigStruct *HwConfig,
     AL_REG GbeBaseAddr;
     AL_U32 MacAddrLow;
     AL_U16 MacAddrHigh;
+    AL_U32 GbeTopSetting;
 
     AL_ASSERT((Gbe != AL_NULL) && (HwConfig != AL_NULL) && (InitConfig != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
@@ -406,7 +419,12 @@ AL_S32 AlGbe_Dev_Init(AL_GBE_DevStruct *Gbe, AL_GBE_HwConfigStruct *HwConfig,
 
     /* Config gbe control register */
     if (Gbe->InitConfig.MediaInterface == AL_GBE_RGMII_MODE) {
-        AlGbe_ll_SetGbeCtlRegister((GbeBaseAddr == GBE0__BASE_ADDR ? CFG_CTRL_GBE0_ADDR : CFG_CTRL_GBE1_ADDR), 0x3a1);
+        if (MacDmaConfig->Speed = AL_GBE_SPEED_100M) {
+            GbeTopSetting = 0x14a1;
+        } else {
+            GbeTopSetting = 0x1461;
+        }
+        AlGbe_ll_SetGbeCtlRegister((GbeBaseAddr == GBE0__BASE_ADDR ? CFG_CTRL_GBE0_ADDR : CFG_CTRL_GBE1_ADDR), GbeTopSetting);
     } else {
         //Todo:
     }
