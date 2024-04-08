@@ -43,10 +43,8 @@ else ifeq ($(ELF), AL_DDRS0_MPU)
 C_SRCS += al_ddrs0_mpu_test.c
 else ifeq ($(ELF), AL_OCMS2_MPU)
 C_SRCS += al_ocms2_mpu_test.c
-else ifeq ($(ELF), AL_NPU_MPU)
-C_SRCS += al_npu_mpu_test.c
 else
-C_SRCS += mpu_test_main.c
+C_SRCS += al_npu_mpu_test.c
 endif
 
 INC_DIR     += ./
