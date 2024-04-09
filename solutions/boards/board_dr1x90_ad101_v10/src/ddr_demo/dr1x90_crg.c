@@ -260,6 +260,8 @@ void clk_simple_config()
     clk_cpu_ratio_6221();
 #elif AL_CLK_1200M
     clk_cpu_ratio_6221();
+#elif AL_CLK_600M
+    clk_cpu_ratio_4421();
 #else   //default 400M
     clk_cpu_ratio_2221();
 #endif
@@ -274,6 +276,8 @@ void clk_simple_config()
     pll_cpu_div_set(60, 2, 1, 1);
     #elif AL_CLK_1200M
     pll_cpu_div_set(72, 2, 1, 2);
+    #elif AL_CLK_600M
+    pll_cpu_div_set(108, 2, 2, 3);
     #else
     pll_cpu_div_set(96, 2, 2, 2);
     #endif

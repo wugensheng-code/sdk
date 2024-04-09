@@ -11,7 +11,7 @@
 SDK_ROOT   ?= ../../..
 
 
-CHIP       ?= dr1m90
+CHIP       ?= dr1v90
 
 DOWNLOAD = ocm
 ENABLE_MMU := 0
