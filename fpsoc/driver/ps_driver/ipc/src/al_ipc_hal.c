@@ -37,7 +37,7 @@ static AL_IPCINTR_HwConfigStruct *AlIpcIntr_Dev_LookupConfig(AL_IPC_IntrEnum Int
     AL_U32 Index = 0;
     AL_IPCINTR_HwConfigStruct *ConfigPtr = AL_NULL;
 
-    for (Index = 0; Index < 4; Index++) {
+    for (Index = 0; Index < AL_IPC_INTR_NUM_INSTANCE; Index++) {
         if (AlIpcIntr_HwConfig[Index].Type == IntrType) {
             ConfigPtr = &AlIpcIntr_HwConfig[Index];
             break;
