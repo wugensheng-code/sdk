@@ -227,82 +227,82 @@ static inline AL_VOID AlDmacAhb_ll_SetIntrEn(AL_REG BaseAddr, AL_REG ChannelOffs
 /* Destination Transfer Width(DST_TR_WIDTH) */
 static inline AL_U32 AlDmacAhb_ll_GetDstTransWidth(AL_REG BaseAddr, AL_REG ChannelOffset)
 {
-    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset,
+    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset,
                     DMAC_AHB_CTL0_LOWER_DST_TR_WIDTH_SHIFT, DMAC_AHB_CTL0_LOWER_DST_TR_WIDTH_SIZE);
 }
 
 static inline AL_VOID AlDmacAhb_ll_SetDstTransWidth(AL_REG BaseAddr, AL_REG ChannelOffset,
                                                     AL_DMACAHB_TransWidthEnum DsttTransWidth)
 {
-    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_DST_TR_WIDTH_SHIFT,
+    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_DST_TR_WIDTH_SHIFT,
              DMAC_AHB_CTL0_LOWER_DST_TR_WIDTH_SIZE, DsttTransWidth);
 }
 
 /* Source Transfer Width(SRC_TR_WIDTH) */
 static inline AL_U32 AlDmacAhb_ll_GetSrcTransWidth(AL_REG BaseAddr, AL_REG ChannelOffset)
 {
-    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_SRC_TR_WIDTH_SHIFT,
+    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_SRC_TR_WIDTH_SHIFT,
                     DMAC_AHB_CTL0_LOWER_SRC_TR_WIDTH_SIZE);
 }
 
 static inline AL_VOID AlDmacAhb_ll_SetSrcTransWidth(AL_REG BaseAddr, AL_REG ChannelOffset,
                                                     AL_DMACAHB_TransWidthEnum SrcTransWidth)
 {
-    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_SRC_TR_WIDTH_SHIFT,
+    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_SRC_TR_WIDTH_SHIFT,
              DMAC_AHB_CTL0_LOWER_SRC_TR_WIDTH_SIZE, SrcTransWidth);
 }
 
 /* Destination Address Increment */
 static inline AL_U32 AlDmacAhb_ll_GetDstIncMode(AL_REG BaseAddr, AL_REG ChannelOffset)
 {
-    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_DEST_MSIZE_SHIFT,
+    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_DEST_MSIZE_SHIFT,
                     DMAC_AHB_CTL0_LOWER_DINC_SIZE);
 }
 
 static inline AL_VOID AlDmacAhb_ll_SetDstIncMode(AL_REG BaseAddr, AL_REG ChannelOffset,
     AL_DMACAHB_AddrIncEnum DstInc)
 {
-    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_DEST_MSIZE_SHIFT,
+    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_DEST_MSIZE_SHIFT,
              DMAC_AHB_CTL0_LOWER_DINC_SIZE, DstInc);
 }
 
 /* Source Address Increment(SINC) */
 static inline AL_U32 AlDmacAhb_ll_GetSrcIncMode(AL_REG BaseAddr, AL_REG ChannelOffset)
 {
-    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_SINC_SHIFT,
+    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_SINC_SHIFT,
                     DMAC_AHB_CTL0_LOWER_SINC_SIZE);
 }
 
-static inline AL_VOID AlDmacAhb_ll_SetSrcIncModee(AL_REG BaseAddr, AL_REG ChannelOffset,
+static inline AL_VOID AlDmacAhb_ll_SetSrcIncMode(AL_REG BaseAddr, AL_REG ChannelOffset,
                                                   AL_DMACAHB_AddrIncEnum SrcInc)
 {
-    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_SINC_SHIFT,
+    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_SINC_SHIFT,
              DMAC_AHB_CTL0_LOWER_SINC_SIZE, SrcInc);
 }
 
 /* Destination Burst Transaction Length(DST_MSIZE) */
 static inline AL_U32 AlDmacAhb_ll_GetDstMsize(AL_REG BaseAddr, AL_REG ChannelOffset)
 {
-    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_DEST_MSIZE_SHIFT,
+    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_DEST_MSIZE_SHIFT,
                     DMAC_AHB_CTL0_LOWER_DEST_MSIZE_SIZE);
 }
 
 static inline AL_VOID AlDmacAhb_ll_SetDstMsize(AL_REG BaseAddr, AL_REG ChannelOffset, AL_DMACAHB_MsizeEnum Msize)
 {
-    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_DEST_MSIZE_SHIFT,
+    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_DEST_MSIZE_SHIFT,
              DMAC_AHB_CTL0_LOWER_DEST_MSIZE_SIZE, Msize);
 }
 
 /* Source Burst Transaction Length(SRC_MSIZE) */
 static inline AL_U32 AlDmacAhb_ll_GetSrcMsize(AL_REG BaseAddr, AL_REG ChannelOffset)
 {
-    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_SRC_MSIZE_SHIFT,
+    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_SRC_MSIZE_SHIFT,
                     DMAC_AHB_CTL0_LOWER_SRC_MSIZE_SIZE);
 }
 
 static inline AL_VOID AlDmacAhb_ll_SetSrcMsize(AL_REG BaseAddr, AL_REG ChannelOffset, AL_DMACAHB_MsizeEnum Msize)
 {
-    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_SRC_MSIZE_SHIFT,
+    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_SRC_MSIZE_SHIFT,
              DMAC_AHB_CTL0_LOWER_SRC_MSIZE_SIZE, Msize);
 }
 
@@ -335,41 +335,41 @@ static inline AL_VOID AlDmacAhb_ll_SetDstScaEn(AL_REG BaseAddr, AL_REG ChannelOf
 /* Transfer Type and Flow Control(TT_FC), hardware config DMA_FC_ONLY, bit[2] always reads back 0 */
 static inline AL_U32 AlDmacAhb_ll_GetTtFc(AL_REG BaseAddr, AL_REG ChannelOffset)
 {
-    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_TT_FC_SHIFT,
+    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_TT_FC_SHIFT,
                     DMAC_AHB_CTL0_LOWER_DMS_SIZE);
 }
 
 static inline AL_VOID AlDmacAhb_ll_SetTtFc(AL_REG BaseAddr, AL_REG ChannelOffset, AL_DMACAHB_TtFcEnum TtFc)
 {
-    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_TT_FC_SHIFT,
+    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_TT_FC_SHIFT,
              DMAC_AHB_CTL0_LOWER_DMS_SIZE, TtFc);
 }
 
 /* Destination Master Select(DMS), hardware config 2 */
 static inline AL_U32 AlDmacAhb_ll_GetDms(AL_REG BaseAddr, AL_REG ChannelOffset)
 {
-    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_DMS_SHIFT,
+    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_DMS_SHIFT,
                     DMAC_AHB_CTL0_LOWER_DMS_SIZE);
 }
 
 static inline AL_VOID AlDmacAhb_ll_SetDms(AL_REG BaseAddr, AL_REG ChannelOffset,
     AL_U32 Value)
 {
-    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_DMS_SHIFT,
+    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_DMS_SHIFT,
              DMAC_AHB_CTL0_LOWER_DMS_SIZE, Value);
 }
 
 /* Source Master Select(SMS), hardware config 2 */
 static inline AL_U32 AlDmacAhb_ll_GetSms(AL_REG BaseAddr, AL_REG ChannelOffset)
 {
-    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_SMS_SHIFT,
+    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_SMS_SHIFT,
                     DMAC_AHB_CTL0_LOWER_SMS_SIZE);
 }
 
 static inline AL_VOID AlDmacAhb_ll_SetSms(AL_REG BaseAddr, AL_REG ChannelOffset,
     AL_U32 Value)
 {
-    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_UPPER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_SMS_SHIFT,
+    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_CTL0_LOWER_OFFSET + ChannelOffset, DMAC_AHB_CTL0_LOWER_SMS_SHIFT,
              DMAC_AHB_CTL0_LOWER_SMS_SIZE, Value);
 }
 
@@ -593,12 +593,12 @@ static inline AL_VOID AlDmacAhb_ll_SetDstPer(AL_REG BaseAddr, AL_REG ChannelOffs
 static inline AL_U32 AlDmacAhb_ll_GetSgi(AL_REG BaseAddr, AL_REG ChannelOffset)
 {
     return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_SGR_OFFSET + ChannelOffset, DMAC_AHB_SGR_SGI_SHIFT,
-                    DMAC_AHB_SGR_SGC_SHIFT);
+                    DMAC_AHB_SGR_SGI_SIZE);
 }
 
 static inline AL_VOID AlDmacAhb_ll_SetSgi(AL_REG BaseAddr, AL_REG ChannelOffset, AL_U32 Value)
 {
-    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_SGR_OFFSET + ChannelOffset, DMAC_AHB_SGR_SGI_SHIFT, DMAC_AHB_SGR_SGC_SHIFT,
+    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_SGR_OFFSET + ChannelOffset, DMAC_AHB_SGR_SGI_SHIFT, DMAC_AHB_SGR_SGI_SIZE,
              Value);
 }
 
@@ -631,13 +631,13 @@ static inline AL_VOID AlDmacAhb_ll_SetDsi(AL_REG BaseAddr, AL_REG ChannelOffset,
 /* Destination Scatter Count(DSC) */
 static inline AL_U32 AlDmacAhb_ll_GetDsc(AL_REG BaseAddr, AL_REG ChannelOffset)
 {
-    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_DSR_OFFSET + ChannelOffset, DMAC_AHB_DSR_DSI_SHIFT,
-                    DMAC_AHB_DSR_DSI_SIZE);
+    return AL_REG32_GET_BITS(BaseAddr + DMAC_AHB_DSR_OFFSET + ChannelOffset, DMAC_AHB_DSR_DSC_SHIFT,
+                    DMAC_AHB_DSR_DSC_SIZE);
 }
 
 static inline AL_VOID AlDmacAhb_ll_SetDsc(AL_REG BaseAddr, AL_REG ChannelOffset, AL_U32 Value)
 {
-    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_DSR_OFFSET + ChannelOffset, DMAC_AHB_DSR_DSI_SHIFT, DMAC_AHB_DSR_DSI_SIZE,
+    AL_REG32_SET_BITS(BaseAddr + DMAC_AHB_DSR_OFFSET + ChannelOffset, DMAC_AHB_DSR_DSC_SHIFT, DMAC_AHB_DSR_DSC_SIZE,
              Value);
 }
 
