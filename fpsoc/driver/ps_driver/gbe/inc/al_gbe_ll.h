@@ -394,7 +394,7 @@ static inline AL_VOID AlGbe_ll_SetTxFlowCtlEnable(AL_REG BaseAddr, AL_GBE_Functi
 
 static inline AL_VOID AlGbe_ll_SetPauseLowThreshlod(AL_REG BaseAddr, AL_GBE_PauseLowThresholdEnum Value)
 {
-    AL_REG32_SET_BITS(BaseAddr + GBE__MAC_Q0_TX_FLOW_CTRL__OFFSET, 
+    AL_REG32_SET_BITS(BaseAddr + GBE__MAC_Q0_TX_FLOW_CTRL__OFFSET,
                       GBE__MAC_Q0_TX_FLOW_CTRL__PLT__SHIFT, GBE__MAC_Q0_TX_FLOW_CTRL__PLT__SIZE, Value);
 }
 
@@ -405,7 +405,7 @@ static inline AL_VOID AlGbe_ll_SetZeroQuantaPauseDisable(AL_REG BaseAddr, AL_GBE
 
 static inline AL_VOID AlGbe_ll_SetPauseTime(AL_REG BaseAddr, AL_U16 Value)
 {
-    AL_REG32_SET_BITS(BaseAddr + GBE__MAC_Q0_TX_FLOW_CTRL__OFFSET, 
+    AL_REG32_SET_BITS(BaseAddr + GBE__MAC_Q0_TX_FLOW_CTRL__OFFSET,
                       GBE__MAC_Q0_TX_FLOW_CTRL__PT__SHIFT, GBE__MAC_Q0_TX_FLOW_CTRL__PT__SIZE, Value);
 }
 
@@ -997,6 +997,11 @@ static inline AL_U32 AlGbe_ll_GetSystemTimeNanoseconds(AL_REG BaseAddr)
 static inline AL_VOID AlGbe_ll_SetTimestampAddend(AL_REG BaseAddr, AL_U32 Value)
 {
     AL_REG32_WRITE(BaseAddr + GBE__MAC_TIMESTAMP_ADDEND__OFFSET, Value);
+}
+
+static inline AL_VOID AlGbe_ll_SetMmcCntFreez(AL_REG BaseAddr, AL_FUNCTION State)
+{
+    AL_REG32_SET_BIT(BaseAddr + GBE__MMC_CONTROL__OFFSET, GBE__MMC_CONTROL__CNTFREEZ__SHIFT, State);
 }
 
 #ifdef __cplusplus

@@ -8,6 +8,8 @@
 
 #include <string.h>
 
+#undef ENABLE_MMC_COUNT
+
 extern AL_GBE_HwConfigStruct AlGbe_HwConfig[AL_GBE_NUM_INSTANCE];
 
 AL_GBE_HwConfigStruct *AlGbe_Dev_LookupConfig(AL_U32 DevId)
@@ -290,7 +292,7 @@ AL_U32 AlGbe_Dev_ConfigRxDescBuffer(AL_GBE_DevStruct *Gbe, AL_U32 DescIndex, AL_
     return AL_OK;
 }
 
-static void AlGbe_Dev_DMARxDescListInit(AL_GBE_DevStruct *Gbe)
+static AL_VOID AlGbe_Dev_DMARxDescListInit(AL_GBE_DevStruct *Gbe)
 {
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
     AL_GBE_DMADescStruct *DmaRxDescList = Gbe->InitConfig.RxDescList;
@@ -452,6 +454,12 @@ AL_S32 AlGbe_Dev_Init(AL_GBE_DevStruct *Gbe, AL_GBE_HwConfigStruct *HwConfig,
 
     AlGbe_ll_SetMacAddrLow(GbeBaseAddr, MacAddrLow);
     AlGbe_ll_SetMacAddrHigh(GbeBaseAddr, MacAddrHigh);
+
+#ifdef ENABLE_MMC_COUNT
+    AlGbe_ll_SetMmcCntFreez(GbeBaseAddr, AL_FUNC_DISABLE);
+#else
+    AlGbe_ll_SetMmcCntFreez(GbeBaseAddr, AL_FUNC_ENABLE);
+#endif
 
     Gbe->State |= AL_GBE_STATE_READY;
 
@@ -796,7 +804,7 @@ static AL_S32 AlGbe_Dev_CheckTimestamp(AL_VOID *Desc)
     return Ret;
 }
 
-static AL_S32 AlGbe_Dev_GetRxTimestampStatus(void *Desc, void *NextDesc)
+static AL_S32 AlGbe_Dev_GetRxTimestampStatus(AL_VOID *Desc, AL_VOID *NextDesc)
 {
      AL_GBE_DMADescStruct *CurrentDesc = (AL_GBE_DMADescStruct *)Desc;
      AL_S32 Ret = AL_GBE_DESC_RX_TIMESTAMP_STATUS_NOT_READY;
@@ -1489,7 +1497,19 @@ static AL_VOID AlGbe_Dev_ErrorHandler(AL_GBE_DevStruct *Gbe)
         };
         (*Gbe->EventCallBack)(&GbeEvent, Gbe->EventCallBackRef);
     }
+}
 
+
+static AL_VOID AlGbe_Dev_DumpMmcRegister(AL_VOID *Instance)
+{
+    AL_U32 addr;
+    AL_GBE_DevStruct *Gbe = (AL_GBE_DevStruct *)Instance;
+    AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
+
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "dump mmc registers:: \r\n");
+    for (addr = GbeBaseAddr + GBE__MMC_CONTROL__OFFSET; addr <= GbeBaseAddr + GBE__RX_CONTROL_PACKETS_GOOD__OFFSET; addr += 4) {
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "0x%8x : 0x%8x \r\n", addr, AL_REG32_READ(addr));
+    }
 }
 
 AL_VOID AlGbe_Dev_IntrHandler(AL_VOID *Instance)
@@ -1512,9 +1532,18 @@ AL_VOID AlGbe_Dev_IntrHandler(AL_VOID *Instance)
 
     AlGbe_ll_ClrDmaIntr(GbeBaseAddr, IntrStatus);
 
+#ifdef ENABLE_MMC
+    /*
+     * This is a workaround when enable mmc,
+     * mmc interrupt are all masked, but the interrupt still happen
+    */
+    if (IntrStatus == 0) {
+        AlGbe_Dev_DumpMmcRegister(Instance);
+    }
+#endif
 }
 
-AL_S32 AlGbe_Dev_RegisterEventCallBack(AL_GBE_DevStruct *Gbe, AL_GBE_EventCallBack Callback, void *CallbackRef)
+AL_S32 AlGbe_Dev_RegisterEventCallBack(AL_GBE_DevStruct *Gbe, AL_GBE_EventCallBack Callback, AL_VOID *CallbackRef)
 {
     AL_ASSERT((Gbe != AL_NULL) && (Callback != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
