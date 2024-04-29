@@ -21,19 +21,19 @@ AL_S64 mmu_settlb(AL_UINTPTR addr, AL_U64 attr);
 #endif
 #endif
 
-#define EXECUTE_NEVER ((0x1 << 53) | (0x1 << 54))
+#define EXECUTE_NEVER   ((0x1 << 53) | (0x1 << 54))
 #define NON_SECURE      (0x1 << 5)
-#define DEVICE_MEM	(0x409UL | EXECUTE_NEVER)
-#define RESERVED	0x0UL
+#define DEVICE_MEM      (0x409UL | EXECUTE_NEVER)
+#define RESERVED        (0x0UL)
 
 #ifdef SUPPORT_NONSECURE
-#define NORM_CACHE	0x605UL
-#define NORM_NONCACHE	0x601UL
-#define NORM_RO_CACHE	0x685UL
+#define NORM_CACHE        0x605UL
+#define NORM_NONCACHE     0x601UL
+#define NORM_RO_CACHE     0x685UL
 #else
-#define NORM_CACHE	0x705UL
-#define NORM_NONCACHE	0x701UL
-#define NORM_RO_CACHE	0x785UL
+#define NORM_CACHE        0x705UL
+#define NORM_NONCACHE     0x701UL
+#define NORM_RO_CACHE     0x785UL
 #endif
 
 #endif /* AL_MMU_H */

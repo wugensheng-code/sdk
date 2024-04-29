@@ -18,7 +18,7 @@
 	.globl enable_mmu
 enable_mmu:
 	mov	x15, x30
-	ldr	x2, =0x1005
+	ldr	x2, =0x5
 	mvn	x2, x2
 
 	switch_el x3, 0f, 1f, 2f
@@ -106,7 +106,7 @@ finish:
 
 	ldr	x0, =MMUTableL0
 	ldr	x1, =0x000000BB0400FF44
-	ldr	x2, =0x1005
+	ldr	x2, =0x5
 
 	switch_el x3, mmu_el3, mmu_el2, mmu_el1
 mmu_el3:

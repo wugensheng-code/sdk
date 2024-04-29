@@ -13,8 +13,7 @@ SDK_ROOT   ?= ../../..
 
 CHIP       ?= dr1v90
 
-DOWNLOAD = ocm
-ENABLE_MMU := 0
+DOWNLOAD      = ocm
 
 ifeq ($(CHIP), dr1m90)
 ARMv8_EL         := EL3
@@ -33,9 +32,7 @@ endif
 #    ASM_SRCS: asm sources for application
 #########################################################################
 SRC_DIR  = .
-
-SRC_DIR  = .
-
+INC_DIR  = .
 LD_LIBS  =
 LIB_DIR  =
 
@@ -62,13 +59,13 @@ PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_hpf_v10
 ## PINMUX_MODE1, PINMUX_MODE2, PINMUX_MODE3, PINMUX_MODE_SD1
 #########################################################################
 PINMUX_MODE ?= PINMUX_MODE1
+# OUTPUT_DEV  := NONE
 
 #########################################################################
 # 5. fsbl internal Macro
 #########################################################################
 #CFLAGS += -DQSPI_USE_AHB_DMA
 #CFLAGS += -DQSPI_XIP_THROUTH_CSU_DMA
-
 
 DOWNLOAD                   = ocm
 

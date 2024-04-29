@@ -30,10 +30,6 @@
 .endm
 
 .section .vtable
-.rept MAX_INTR
-    DECLARE_INT_HANDLER     default_intexc_handler          /* 1: Reserved */
-.endr
-
     .globl vector_base
     .type vector_base, @object
 vector_base:
@@ -49,6 +45,7 @@ _start:
     /* Disable global interrupt by set sie bitfield
        in machine status register */
     csrw mie, zero
+    csrc CSR_MMISC_CTL, MMISC_CTL_BPU
 
     /* Save complier option */
     .option push
@@ -69,6 +66,28 @@ _start:
     la t0, vector_base
     csrw CSR_MTVT, t0
 
+    li t0, CSR_MCACHE_CTL_IE
+#ifdef ENABLE_ICACHE
+    csrs CSR_MCACHE_CTL, t0
+#else
+    csrc CSR_MCACHE_CTL, t0
+#endif
+
+    li t0, CSR_MCACHE_CTL_DE
+#ifdef ENABLE_DCACHE
+    csrs CSR_MCACHE_CTL, t0
+#else
+    csrc CSR_MCACHE_CTL, t0
+#endif
+
+    /* Enable branch predictor  */
+    li t0, MMISC_CTL_BPU
+#ifdef ENABLE_BPU
+    csrs CSR_MMISC_CTL, t0
+#else
+    csrc CSR_MMISC_CTL, t0
+#endif
+
     /*
      * Configure the entry addresses for interrupt and exception handlers to exc_entry.
      * Due to settings above, Exception and NMI will share common entry.
@@ -79,6 +98,40 @@ _start:
 
     call riscv_vendor_init
 
+    /*
+     * Load code section from FLASH to ILM
+     * when code LMA is different with VMA
+     */
+    la a0, _ilm_lma
+    la a1, _ilm
+    /* If the ILM phy-address same as the logic-address, then quit */
+    beq a0, a1, 2f
+    la a2, _eilm
+    bgeu a1, a2, 2f
+
+1:
+    /* Load code section if necessary */
+    lw t0, (a0)
+    sw t0, (a1)
+    addi a0, a0, 4
+    addi a1, a1, 4
+    bltu a1, a2, 1b
+
+2:
+    /* Load data section */
+    la a0, _data_lma
+    la a1, _data
+    la a2, _edata
+    bgeu a1, a2, 2f
+
+1:
+    lw t0, (a0)
+    sw t0, (a1)
+    addi a0, a0, 4
+    addi a1, a1, 4
+    bltu a1, a2, 1b
+
+2:
     call clear_bss
 
     /* Call global constructors */

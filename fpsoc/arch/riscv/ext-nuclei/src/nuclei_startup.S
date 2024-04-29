@@ -41,10 +41,6 @@ riscv_vendor_init:
     li t0, MMISC_CTL_NMI_CAUSE_FFF
     csrs CSR_MMISC_CTL, t0
 
-    /* Enable branch predictor  */
-    li t0, MMISC_CTL_BPU
-    csrs CSR_MMISC_CTL, t0
-
     /* Set nuclei eclic non-vector entry to be controlled by mtvt2 CSR register
      * Intialize eclic non-vector interrupt base address mtvt2 to irq_entry.*/
     la t0, irq_entry

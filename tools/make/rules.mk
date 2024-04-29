@@ -49,6 +49,14 @@ endif
 endif
 endif
 
+ifeq ($(ENABLE_ICACHE),1)
+AL_CFLAGS   += -DENABLE_ICACHE=1
+endif
+
+ifeq ($(ENABLE_DCACHE),1)
+AL_CFLAGS   += -DENABLE_DCACHE=1
+endif
+
 
 #########################################################################
 # gcc arm option:   https://gcc.gnu.org/onlinedocs/gcc/ARM-Options.html

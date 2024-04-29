@@ -24,7 +24,14 @@ ENABLE_MMU  ?= 1
 DDR_2M_MAPPING ?= 1
 endif
 
+ifeq ($(ENABLE_MMU),1)
+ENABLE_DCACHE ?= 1
+else
+ENABLE_DCACHE ?= 0
+endif
 
+
+ENABLE_ICACHE ?= 1
 CODE_READONLY ?= 0
 
 #########################################################################
@@ -118,7 +125,6 @@ export ARMv8_EL
 export ARMv8_SECURE
 export ARMv8_CORE
 export LIB_OUTPUT_DIR
-export LIB_PREBUILD_DIR
 export COMPILE_PREFIX
 export V
 export SILENT
@@ -130,6 +136,8 @@ export CFLAGS
 export BSP_DIR
 export CHIP_DIR
 export ENABLE_MMU
+export ENABLE_ICACHE
+export ENABLE_DCACHE
 export DDR_2M_MAPPING
 export CODE_READONLY
 export Q
