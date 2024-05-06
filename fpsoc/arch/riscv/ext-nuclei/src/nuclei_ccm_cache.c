@@ -20,38 +20,9 @@
 
 #include "al_type.h"
 #include "al_rv64_core.h"
-
-/* === Nuclei CCM Registers === */
-#define CSR_CCM_MBEGINADDR      0x7CB
-#define CSR_CCM_MCOMMAND        0x7CC
-#define CSR_CCM_MDATA           0x7CD
-#define CSR_CCM_SUEN            0x7CE
-#define CSR_CCM_SBEGINADDR      0x5CB
-#define CSR_CCM_SCOMMAND        0x5CC
-#define CSR_CCM_SDATA           0x5CD
-#define CSR_CCM_UBEGINADDR      0x4CB
-#define CSR_CCM_UCOMMAND        0x4CC
-#define CSR_CCM_UDATA           0x4CD
-#define CSR_CCM_FPIPE           0x4CF
-
-/**
- * \brief Cache CCM Command Types
- */
-typedef enum CCM_CMD {
-    CCM_DC_INVAL = 0x0,                 /*!< Unlock and invalidate D-Cache line specified by CSR CCM_XBEGINADDR */
-    CCM_DC_WB = 0x1,                    /*!< Flush the specific D-Cache line specified by CSR CCM_XBEGINADDR */
-    CCM_DC_WBINVAL = 0x2,               /*!< Unlock, flush and invalidate the specific D-Cache line specified by CSR CCM_XBEGINADDR */
-    CCM_DC_LOCK = 0x3,                  /*!< Lock the specific D-Cache line specified by CSR CCM_XBEGINADDR */
-    CCM_DC_UNLOCK = 0x4,                /*!< Unlock the specific D-Cache line specified by CSR CCM_XBEGINADDR */
-    CCM_DC_WBINVAL_ALL = 0x6,           /*!< Unlock and flush and invalidate all the valid and dirty D-Cache lines */
-    CCM_DC_WB_ALL = 0x7,                /*!< Flush all the valid and dirty D-Cache lines */
-    CCM_DC_INVAL_ALL = 0x17,            /*!< Unlock and invalidate all the D-Cache lines */
-    CCM_IC_INVAL = 0x8,                 /*!< Unlock and invalidate I-Cache line specified by CSR CCM_XBEGINADDR */
-    CCM_IC_LOCK = 0xb,                  /*!< Lock the specific I-Cache line specified by CSR CCM_XBEGINADDR */
-    CCM_IC_UNLOCK = 0xc,                /*!< Unlock the specific I-Cache line specified by CSR CCM_XBEGINADDR */
-    CCM_IC_INVAL_ALL = 0xd              /*!< Unlock and invalidate all the I-Cache lines */
-} CCM_CMD_Type;
-
+#include "al_cache.h"
+#include "nuclei_sysregs.h"
+#include "al_barrier.h"
 
 AL_VOID ccm_invalidate_icache_all(AL_VOID)
 {
@@ -139,6 +110,13 @@ AL_VOID ccm_flush_cache(AL_UINTPTR Start, AL_UINTPTR Size)
     ccm_flush_dcache_range(Start, Start + Size);
 }
 
+AL_VOID ccm_set_noncache(AL_UINTPTR Base, AL_UINTPTR Mask)
+{
+    ARCH_SYSREG_WRITE(CSR_MNOCM, (Mask&0xFFFFFFFC));
+    ARCH_SYSREG_WRITE(CSR_MNOCB, (Base&0xFFFFFFFC)|1);
+    ISB();
+}
+
 
 AL_VOID AlCache_InvalidateIcacheAll(AL_VOID)
 {
@@ -180,4 +158,33 @@ AL_VOID AlCache_FlushDcacheAll(AL_VOID)
 AL_VOID AlCache_DisableMmu(AL_VOID)
 {
     return;
+}
+
+
+#define RV64_PAGE_SHIFT (12)
+#define RV64_PAGE_SIZE  (1 << RV64_PAGE_SHIFT)
+
+
+AL_S32 AlCache_SetMemoryAttr(AL_UINTPTR Start, AL_UINTPTR End, AL_MemAttr Attr)
+{
+    AL_U32 Shift;
+    AL_UINTPTR Mask;
+
+    if ((End - Start) < RV64_PAGE_SIZE) {
+        return AL_ERR_ILLEGAL_PARAM;
+    }
+
+    Shift = RV64_PAGE_SHIFT - 1;
+    do {
+        Shift++;
+        Mask = (1UL << Shift) - 1;
+    } while ((Start & ~Mask) != (End & ~Mask));
+
+    if ((Start & Mask) || (End & Mask)) {
+        return AL_ERR_ILLEGAL_PARAM;
+    }
+
+    ccm_set_noncache((Start & ~Mask), ~Mask);
+
+    return AL_OK;
 }

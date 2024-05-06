@@ -49,8 +49,3 @@ AL_VOID AlCore_DisableBPU(AL_VOID)
     ARCH_SYSREG_CLEAR(CSR_MMISC_CTL, MMISC_CTL_BPU);
     ISB();
 }
-
-AL_S32 AlCache_SetMemoryAttr(AL_UINTPTR Start, AL_UINTPTR End, AL_MemAttr Attr)
-{
-    return AL_ERR_NOT_SUPPORT;
-}
