@@ -25,15 +25,11 @@ AL_VOID main()
 {
     AL_U8 *str = "Hello World From Anlogic!";
     AL_U32 Size = 0x1;
+    AL_S32 Ret;
 
-    printf("str = %s \r\n", str);
+    AL_LOG(AL_LOG_LEVEL_INFO, "str = %s \r\n", str);
 
     AlCache_DisableMmu();
-
-    #if 0
-    extern AL_U32 _no_cache_section_start;
-    mmu_settlb((AL_UINTPTR) &(_no_cache_section_start), NORM_NONCACHE);
-    #endif
 
     for (int i = 0; i < 20; i ++)
     {
@@ -41,9 +37,9 @@ AL_VOID main()
 
         p = malloc(Size);
         if (p == NULL) {
-            printf("malloc failed Size = %d \r\n", Size);
+            AL_LOG(AL_LOG_LEVEL_INFO, "malloc failed Size = %d \r\n", Size);
         } else {
-            printf("malloc succeed %p size=%d \r\n", p, Size);
+            AL_LOG(AL_LOG_LEVEL_INFO, "malloc succeed %p size=%d \r\n", p, Size);
         }
         Size <<= 1;
         free(p);

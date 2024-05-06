@@ -41,7 +41,7 @@ AL_S32 AlLog_Init()
     #endif
 
     return AlUart_Hal_Init(&AlLog, LOG_DEV, &UART_InitStruct, AL_NULL);
-    
+
 #endif
 #endif
     return AL_OK;

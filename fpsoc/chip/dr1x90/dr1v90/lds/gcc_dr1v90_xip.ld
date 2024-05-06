@@ -8,7 +8,7 @@ OUTPUT_ARCH( "riscv" )
 
 ENTRY( _start )
 
-__ROM_BASE = 0x70030000;
+__ROM_BASE = 0x70400000;
 __ROM_SIZE = 0x100000;
 
 MEMORY
@@ -166,7 +166,7 @@ SECTIONS
     KEEP (*(.dtors))
   } >itcm AT>flash
 
-  . = ALIGN(4);
+  . = ALIGN(4k);
 
   .lalign         :
   {
@@ -195,6 +195,8 @@ SECTIONS
     *(.srodata.cst4)
     *(.srodata.cst2)
     *(.srodata .srodata.*)
+    _no_cache_section_start = (. & 4K);
+    _no_cache_section_end = (. & 4K);
   } >itcm AT>flash
 
   PROVIDE( _edata = . );

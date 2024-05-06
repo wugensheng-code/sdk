@@ -87,15 +87,7 @@ int main()
     AL_S8 *str = "Hello World From Anlogic!";
 
     rt_kprintf("str = %s \r\n", str);
-
     AlCache_DisableMmu();
-
-    #ifdef ENABLE_MMU
-    extern AL_U32 _no_cache_section_start;
-    AL_UINTPTR gbe_buffer_addr = (AL_UINTPTR) &(_no_cache_section_start);
-
-    mmu_settlb(gbe_buffer_addr, NORM_NONCACHE);
-    #endif
 
     AL_USB_HalStruct *USB0;
     AL_S32 ret = AlUsb_Hal_Init(&USB0, AL_USB_DEVICE_ID, AlUsb_Dev_IntrHandler);

@@ -45,10 +45,6 @@
 
 #include <string.h>
 
-#ifdef ENABLE_MMU
-#include "al_mmu.h"
-#endif
-
 /* Define those to better describe your network interface. */
 #define IFNAME0 'A'
 #define IFNAME1 'L'
@@ -75,16 +71,10 @@ extern volatile portBASE_TYPE xInsideISR;
 #define GBE_PHY_ADDR            (0)
 
 #ifdef ENABLE_MMU
-
-/* defined in the link script */
-extern AL_U32 _no_cache_section_start;
-AL_UINTPTR gbe_buffer_addr = (AL_UINTPTR) &(_no_cache_section_start);
-
 /* Tx and Rx descriptors define, AL_GBE_RX_DESC_CNT and AL_GBE_TX_DESC_CNT at least four */
 AL_GBE_DMADescStruct DMARxDescList[AL_GBE_RX_DESC_CNT] __attribute__((section(".noncacheable")));
 AL_GBE_DMADescStruct DMATxDescList[AL_GBE_TX_DESC_CNT] __attribute__((section(".noncacheable")));
 #else
-
 /* Tx and Rx descriptors define, AL_GBE_RX_DESC_CNT and AL_GBE_TX_DESC_CNT at least four */
 AL_GBE_DMADescStruct DMARxDescList[AL_GBE_RX_DESC_CNT] CACHE_LINE_ALIGN;
 AL_GBE_DMADescStruct DMATxDescList[AL_GBE_TX_DESC_CNT] CACHE_LINE_ALIGN;
@@ -497,17 +487,6 @@ err_t low_level_init(struct netif *netif)
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Hal_Init failed\r\n");
         return ERR_IF;
     }
-
-#ifdef ENABLE_MMU
-
-    /* 2M alignment required, If it is not set, an error is returned */
-#ifndef DDR_2M_MAPPING
-    return ERR_IF;
-#else
-    AL_ASSERT((DDR_2M_MAPPING == 1), ERR_IF);
-    mmu_settlb(gbe_buffer_addr, NORM_NONCACHE);
-#endif
-#endif
 
     /* Use static buffer to config rx descriptor buffer */
     for (int idx = 0; idx < AL_GBE_RX_DESC_CNT; idx ++)

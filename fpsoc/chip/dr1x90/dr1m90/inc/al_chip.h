@@ -15,9 +15,7 @@ extern "C" {
 #include "al_hwcfg.h"
 #include "soc_plat.h"
 
-AL_VOID AlChip_Dr1m90Init(AL_VOID);
-
-#define AlChip_Init AlChip_Dr1m90Init
+AL_VOID AlChip_Init(AL_VOID);
 
 /*----------------------------------------------------------------------------
 * Define Interrupt Number

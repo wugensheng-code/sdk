@@ -7,7 +7,6 @@
 #include "al_qspi_hal.h"
 #include "al_spinor.h"
 #include "al_dmacahb_hal.h"
-
 #include "alfsbl_secure.h"
 #include "alfsbl_boot.h"
 
@@ -118,11 +117,84 @@ AL_S32 AlNor_SetQuad(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd, AL_U8 QuadPos)
     return Ret;
 }
 
+AL_VOID AlNor_ReadPage_1_1_4(AL_U32 addr)
+{
+    AL_S32 Ret = AL_OK;
+    AL_U8 SendData[256];
+    AL_U8 RecvData[256];
+    AL_U32 i;
+
+    Handle->Dev.Configs.Trans.TransMode  = QSPI_RX_ONLY;
+    Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT1;
+    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L24;
+    Handle->Dev.Configs.SpiFrameFormat = SPI_QUAD_FORMAT;
+    Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0x0a;
+
+    SendData[0] = NOR_OP_READ_1_4_4;
+    SendData[1] = (addr >> 16) & 0xff;
+    SendData[2] = (addr >> 8)&0xff;
+    SendData[3] = addr&0xff;
+
+    Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 4, RecvData, 64, 100000);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_READPAGE error:0x%x\r\n", Ret);
+    }
+
+    for (i = 0; i < 64; i ++) {
+        AL_LOG(AL_LOG_LEVEL_INFO, "%d:0x%x", i, RecvData[i]);
+    }
+}
+
+
+AL_S32 AlNor_SetWrap(void)
+{
+    AL_S32  Ret = AL_OK;
+    AL_U8 SendData[4] = {0x0}, Data = 0;
+    AL_U8 v_data[10];
+
+    Handle->Dev.Configs.Trans.TransMode  = QSPI_EEPROM;
+    Handle->Dev.Configs.SpiFrameFormat  = SPI_STANDARD_FORMAT;
+    Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
+
+    //0x85: read volatile register
+    SendData[0] = 0x85;
+    v_data[0] = 0;
+    Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 1, v_data, 5, 100000);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_READID error:0x%x\r\n", Ret);
+    }
+
+    AlNor_Wren();
+
+    SendData[0] = 0x81;
+    SendData[1] = 0xf2;
+
+    Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 2, 100000);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_READID error:0x%x\r\n", Ret);
+    }
+
+    AlNor_WaitWip();
+
+    SendData[0] = 0x85;
+    v_data[0] = 0;
+    Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 1, v_data, 5, 100000);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_READID error:0x%x\r\n", Ret);
+    }
+
+    return Ret;
+}
+
+
 
 AL_U32 AlFsbl_QspiInit(void)
 {
     AL_U32 Ret;
-    AL_U8 SendData[4] = {0x0};
+    AL_U8 SendData[8] = {0x0};
 
     AL_REG32_SET_BITS(0xF8801030UL, 0, 6, 4); /// set div_qspi 5 bansed on IO 1000，then div 4, generate 50M SCLK
 
@@ -166,7 +238,7 @@ AL_U32 AlFsbl_Qspi24Init(void)
     }
 
 #ifdef QSPI_XIP_THROUTH_CSU_DMA
-    Ret = AlQspi_Dev_XipAddr24Init(&Handle->Dev);
+    Ret = AlQspi_Dev_XipAddr24InitForDMA(&Handle->Dev);
 #endif
 
     return Ret;
@@ -383,3 +455,8 @@ AL_U32 AlFsbl_Qspi24Release(void)
 
 
 
+AL_U32 AlFsbl_QspiXipInit(void)
+{
+    AlNor_SetWrap();
+    return AlQspi_Dev_XipAddr24Init(&Handle->Dev);
+}

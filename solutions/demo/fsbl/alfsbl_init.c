@@ -242,7 +242,7 @@ static uint32_t AlFsbl_WdtInit(void)
 	if(Status != ALFSBL_SUCCESS) {
 		AL_LOG(AL_LOG_LEVEL_ERROR, "WDT initialize error： 0x%08x\r\n", Status);
 		return ALFSBL_ERROR_WDT_INIT_ERR;
-	}	
+	}
 
 	return ALFSBL_SUCCESS;
 }

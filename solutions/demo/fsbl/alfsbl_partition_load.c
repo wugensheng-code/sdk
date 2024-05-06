@@ -318,8 +318,15 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 	else if ((PtHdr->DestLoadAddr == CSU_PCAP_WR_STREAM) || (PtHdr->DestLoadAddr == CSU_PCAP_CSULOCAL_WR_STREAM)) {
 		// correct, do nothing
 	}
+    else if ((QSPI_XIP_BASEADDR <= PtHdr->DestLoadAddr && PtHdr->DestLoadAddr + PtHdr->PartitionLen < (QSPI_XIP_BASEADDR + QSPI_XIP_LEN))
+         && ((QSPI_XIP_BASEADDR <= PtHdr->DestExecAddr && PtHdr->DestExecAddr < (QSPI_XIP_BASEADDR + QSPI_XIP_LEN)))
+    ) {
+        // qspi xip space, do nothing;
+        goto END;
+	}
 	else {
 		Status = ALFSBL_INVALID_LOAD_ADDR;
+        goto END;
 	}
 
 	if(PtHdr->DestExecAddr == 0xFFFFFFFF) {
@@ -340,7 +347,6 @@ static uint32_t AlFsbl_PartitionHeaderValidation(AlFsblInfo *FsblInstancePtr, ui
 	else {
 		Status = ALFSBL_INVALID_EXEC_ADDR;
 	}
-
 
 
 END:
@@ -393,14 +399,21 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	/// partition data copy
 	if((FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_QSPI24) ||
 	   (FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_QSPI32)) {
-		Status = FsblInstancePtr->DeviceOps.DeviceCopy(
-				     SrcAddress,
-					 LoadAddress,
-					 Length,
-					 pSecureInfo);
-		if(ALFSBL_SUCCESS != Status) {
-			goto END;
-		}
+        if (QSPI_XIP_BASEADDR <= PtHdr->DestLoadAddr
+           && PtHdr->DestLoadAddr + PtHdr->PartitionLen <= (QSPI_XIP_BASEADDR + QSPI_XIP_LEN)) {
+                //xip mode, enable qspi xip, instead of data copy
+                AlFsbl_QspiXipInit();
+        }
+        else {
+            Status = FsblInstancePtr->DeviceOps.DeviceCopy(
+                        SrcAddress,
+                        LoadAddress,
+                        Length,
+                        pSecureInfo);
+            if(ALFSBL_SUCCESS != Status) {
+                goto END;
+            }
+        }
 #ifndef QSPI_XIP_THROUTH_CSU_DMA
 		if(pSecureInfo->EncType != OP_ENCRYPT_NONE) {
 			pSecureInfo->InputAddr  = LoadAddress;

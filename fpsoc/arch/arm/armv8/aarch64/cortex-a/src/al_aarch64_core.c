@@ -5,6 +5,9 @@
  */
 
 #include "al_type.h"
+#include "al_utils_def.h"
+#include "al_mmu.h"
+#include "al_cache.h"
 #include "al_aarch64_sysreg.h"
 #include "al_aarch64_core.h"
 
@@ -77,4 +80,23 @@ AL_VOID AlCache_FlushDcacheAll(AL_VOID)
 AL_VOID AlCache_DisableMmu(AL_VOID)
 {
     disable_mmu();
+}
+
+AL_S32 AlCache_SetMemoryAttr(AL_UINTPTR Start, AL_UINTPTR End, AL_MemAttr Attr)
+{
+#ifdef DDR_2M_MAPPING
+    AL_UINTPTR Addr;
+
+    AL_ASSERT(MEM_2M_ALIGN(Start), AL_ERR_ILLEGAL_PARAM);
+    AL_ASSERT(MEM_2M_ALIGN(End), AL_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Attr == Al_MEM_DMA || Attr == NORM_CACHE), AL_ERR_ILLEGAL_PARAM);
+
+    for (Addr = Start; Addr < End; Addr += 0x200000) {
+        mmu_settlb(Addr, (Attr == Al_MEM_DMA) ? DEVICE_MEM : NORM_CACHE);
+    }
+
+    return AL_OK;
+#else
+    return AL_ERR_NOT_SUPPORT;
+#endif
 }

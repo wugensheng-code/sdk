@@ -14,9 +14,7 @@
 #include "al_type.h"
 #include "al_core.h"
 
-AL_VOID AlChip_Dr1V90Init(AL_VOID);
-
-#define AlChip_Init AlChip_Dr1V90Init
+AL_VOID AlChip_Init(AL_VOID);
 
 #include "al_hwcfg.h"
 #include "soc_plat.h"

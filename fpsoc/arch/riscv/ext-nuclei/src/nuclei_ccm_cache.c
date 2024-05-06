@@ -179,5 +179,5 @@ AL_VOID AlCache_FlushDcacheAll(AL_VOID)
 
 AL_VOID AlCache_DisableMmu(AL_VOID)
 {
-
+    return;
 }

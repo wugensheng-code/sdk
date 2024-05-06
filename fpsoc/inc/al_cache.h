@@ -20,6 +20,11 @@ extern "C" {
 #define CACHE_LINE_ALIGN
 #endif
 
+typedef enum AL_MemAttr {
+    Al_MEM_DMA,
+    Al_MEM_NORM_CACHE,
+} AL_MemAttr;
+
 AL_VOID AlCache_EnableICache(AL_VOID);
 
 AL_VOID AlCache_DisableICache(AL_VOID);
@@ -43,6 +48,8 @@ AL_VOID AlCache_InvalidateDcacheAll(AL_VOID);
 AL_VOID AlCache_FlushDcacheAll(AL_VOID);
 
 AL_VOID AlCache_DisableMmu(AL_VOID);
+
+AL_S32 AlCache_SetMemoryAttr(AL_UINTPTR Start, AL_UINTPTR End, AL_MemAttr Attr);
 
 #ifdef __cplusplus
 }

@@ -140,9 +140,11 @@ _start:
     /* Call C/C++ constructor start up code */
     call __libc_init_array
 
+    call AlChip_Init
+
     /* do pre-init steps before main */
     call board_init
-    call _premain_init
+
     /* Call Main Function argc = argv = 0 */
     li a0, 0
     li a1, 0

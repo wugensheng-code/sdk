@@ -196,11 +196,6 @@ el1_entry:
     b main_entry
 
 main_entry:
-    isb
-
-#ifdef ENABLE_MMU
-    bl enable_mmu
-#endif
 
 #ifdef ENABLE_ICACHE
     mrs x0, sctlr_el3
@@ -211,23 +206,23 @@ main_entry:
     bic x0, x0, #(1 << 12)  //disable icache
     msr sctlr_el3, x0
 #endif
-    dsb	sy
     isb
 
+/*Enable MMU & Dcache*/
+#ifdef ENABLE_MMU
+    bl enable_mmu
+#endif
 
 #ifndef SUPPORT_NONSECURE
     bl clear_bss
 #endif
 
+    bl AlChip_Init
+
     bl board_init
 
-    /* Processor specific initialization */
-    bl _premain_init
-
-    /* jump to main */
-
     /* Call entry function when using RT-Thread */
-    bl  entry
+    bl entry
 
     bl components_init
 

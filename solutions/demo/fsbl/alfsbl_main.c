@@ -64,6 +64,7 @@ int main(void)
 			else if(FsblStatus == ALFSBL_SUCCESS) {
 				PartitionIdx = 1;
 				if(PartitionIdx < FsblInstance.ImageHeader.BootHeader.PartitionNum) {
+                    AL_LOG(AL_LOG_LEVEL_INFO, "PartitionNum: %d\r\n", FsblInstance.ImageHeader.BootHeader.PartitionNum);
 					FsblStage = ALFSBL_STAGE3;
 				}
 				else if(PartitionIdx == FsblInstance.ImageHeader.BootHeader.PartitionNum) {

@@ -19,6 +19,7 @@
 #ifdef ENABLE_MMU
 #include "al_cache.h"
 
+#if defined(__aarch64__)
 #define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
 
 #define CACHE_ALIGN(addr, len) \
@@ -43,6 +44,7 @@ static uint32_t dr1m90_cache_line_size(void)
 
     return (4 << ctr_el0_val); /* cache line size */
 }
+#endif
 #endif /* ENABLE_MMU */
 
 void sys_irq_restore_enable(unsigned int flags)
@@ -58,6 +60,7 @@ unsigned int sys_irq_save_disable(void)
 void metal_machine_cache_flush(void *addr, unsigned int len)
 {
 #ifdef ENABLE_MMU
+#if defined(__aarch64__)
 #if 0 /* xxx FIXME hewb */
     void *end = addr + len;
     if (!addr && !len)
@@ -66,6 +69,7 @@ void metal_machine_cache_flush(void *addr, unsigned int len)
         CACHE_ALIGN(addr, len);
         AlCache_FlushDcacheRange((AL_UINTPTR)addr, (AL_UINTPTR)end);
     }
+#endif
 #else
     AlCache_FlushDcacheAll();
 #endif

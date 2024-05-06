@@ -7,6 +7,7 @@
 #include "al_type.h"
 #include "al_rv64_core.h"
 #include "al_barrier.h"
+#include "al_cache.h"
 
 
 AL_VOID AlCache_EnableICache(AL_VOID)
@@ -36,3 +37,20 @@ AL_VOID AlCache_DisableDCache(AL_VOID)
     ISB();
 }
 
+
+AL_VOID AlCore_EnableBPU(AL_VOID)
+{
+    ARCH_SYSREG_SET(CSR_MMISC_CTL, MMISC_CTL_BPU);
+    ISB();
+}
+
+AL_VOID AlCore_DisableBPU(AL_VOID)
+{
+    ARCH_SYSREG_CLEAR(CSR_MMISC_CTL, MMISC_CTL_BPU);
+    ISB();
+}
+
+AL_S32 AlCache_SetMemoryAttr(AL_UINTPTR Start, AL_UINTPTR End, AL_MemAttr Attr)
+{
+    return AL_ERR_NOT_SUPPORT;
+}

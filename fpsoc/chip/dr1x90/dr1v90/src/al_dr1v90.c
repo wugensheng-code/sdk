@@ -13,6 +13,8 @@
 extern void Exception_Init(void);
 extern void ECLIC_Init(void);
 
+AL_VOID AlChip_Init(AL_VOID) __attribute__((alias ("AlChip_Dr1V90Init")));
+
 AL_VOID AlChip_Dr1V90Init(AL_VOID)
 {
     Exception_Init();

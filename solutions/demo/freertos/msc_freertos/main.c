@@ -65,7 +65,7 @@ void start_task2(void* pvParameters)
     usbh_class_test();
 
     int cnt = 0;
-    printf("Enter to task_2\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Enter to task_2\r\n");
     while (1) {
         //printf("task2 is running %d.....\r\n", cnt++);
         vTaskDelay(pdMS_TO_TICKS(6000));
@@ -78,14 +78,7 @@ int main()
 
     printf("str = %s \r\n", str);
 
-#if ENABLE_MMU
-    printf("MMU ENABLE \r\n");
-    extern AL_U32 _no_cache_section_start;
-    mmu_settlb((AL_UINTPTR) &(_no_cache_section_start), NORM_NONCACHE);
-#else
-    printf("MMU DISABLE \r\n");
     AlCache_DisableMmu();
-#endif
 
     TimerHandle_t xExampleSoftwareTimer = NULL;
 
@@ -105,7 +98,7 @@ int main()
     xTaskCreate((TaskFunction_t)start_task1, (const char*)"start_task1",
                 (uint16_t)256, (void*)NULL, (UBaseType_t)1,
                 (TaskHandle_t*)&StartTask1_Handler);
-    
+
     xTaskCreate((TaskFunction_t)start_task2, (const char*)"start_task2",
                 (uint16_t)256, (void*)NULL, (UBaseType_t)2,
                 (TaskHandle_t*)&StartTask2_Handler);

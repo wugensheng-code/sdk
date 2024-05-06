@@ -119,6 +119,8 @@ SECTIONS
     {
         . = ALIGN(4096);
         *(.data*)
+        _no_cache_section_start = (. & 0x200000);
+        _no_cache_section_end   = (. & 0x200000);
     }  > ram AT>ram
 
     /* all bss segment */

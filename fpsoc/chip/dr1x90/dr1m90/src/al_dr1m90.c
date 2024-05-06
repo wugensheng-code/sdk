@@ -12,6 +12,8 @@
 
 extern void AlGic_Init(void);
 
+AL_VOID AlChip_Init(AL_VOID) __attribute__((alias ("AlChip_Dr1m90Init")));
+
 AL_VOID AlChip_Dr1m90Init(AL_VOID)
 {
 #ifndef SUPPORT_NONSECURE

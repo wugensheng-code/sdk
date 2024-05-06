@@ -14,7 +14,6 @@
 AL_S32 main()
 {
     const AL_CHAR *str = "Hello World From Anlogic!";
-    AL_U32 Size = 0x1;
 
     printf("str = %s \r\n", str);
     printf("    __  __     ____         _       ______       __    __ \r\n");
@@ -24,4 +23,4 @@ AL_S32 main()
     printf("/_/ /_/\\___/_/_/\\____/     |__/|__/\\____/_/  /_/\\__ _/    \r\n");
 
     return 0;
-}   
+}

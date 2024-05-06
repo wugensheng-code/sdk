@@ -186,6 +186,8 @@ SECTIONS
     *(.srodata.cst4)
     *(.srodata.cst2)
     *(.srodata .srodata.*)
+    _no_cache_section_start = (. & 4K);
+    _no_cache_section_end = (. & 4K);
   } >ilm AT>ilm
 
   . = ALIGN(4);

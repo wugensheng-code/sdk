@@ -198,9 +198,9 @@ SECTIONS
       . = ALIGN(2M);
       _no_cache_section_start = .;
       KEEP(*(.noncacheable))
+      . = ALIGN(4K);
       _no_cache_section_end   = .;
-      . = ALIGN(2M);
-}  > ram AT>ram
+    }  > ram AT>ram
 
   . = ALIGN(4);
   PROVIDE( _edata = . );

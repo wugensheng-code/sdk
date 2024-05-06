@@ -15,6 +15,7 @@ extern "C" {
 #define IMAGE_FLASH_OFFSET (0x00000000)
 
 #define QSPI_XIP_BASEADDR  (0x70000000)
+#define QSPI_XIP_LEN       (0x10000000)
 
 /// FSBL Status
 #define ALFSBL_RUNNING       (0xFFFFU)
