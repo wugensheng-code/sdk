@@ -408,10 +408,10 @@ AL_S32 AlAdc_Dev_ClrPlAdcIntr(AL_ADC_DevStruct *Adc, AL_ADC_PlIntrTypeEnum IntrT
         AlAdc_ll_ClrPlAdcIntrGth(Adc->AdcBaseAddr);
         break;
     case AL_ADC_PL_INTR_LTH:
-        AlAdc_ll_ClrPlAdcIntrDone(Adc->AdcBaseAddr);
+        AlAdc_ll_ClrPlAdcIntrLth(Adc->AdcBaseAddr);
         break;
     case AL_ADC_PL_INTR_ERROR:
-        AlAdc_ll_ClrPlAdcIntrGth(Adc->AdcBaseAddr);
+        AlAdc_ll_ClrPlAdcIntrError(Adc->AdcBaseAddr);
         break;
     default:
         break;
