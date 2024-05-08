@@ -116,34 +116,6 @@ typedef struct ddr_arbiter_t
     ddr_port_t port[4];
 } ddr_arbiter_t;
 
-typedef struct ddr_params_t
-{
-    u32 osc_clk          ;
-    u32 type             ;
-    u32 speed            ; 
-    u32 dq_width         ;
-    float io_vol         ;
-    u32 verf             ;
-    u32 pzq              ;
-    u32 dram_width       ;
-    u32 speed_bin_index  ;
-    u32 wdbi             ;
-    u32 rdbi             ;
-    u32 dram_density     ;
-    u32 ecc              ;
-    u32 addr_map         ;
-    u32 training         ;
-    float byte0_ac_dely  ;
-    float byte0_dqs_dely ;
-    float byte1_ac_dely  ;
-    float byte1_dqs_dely ;
-    float byte2_ac_dely  ;
-    float byte2_dqs_dely ;
-    float byte3_ac_dely  ;
-    float byte3_dqs_dely ;
-
-} ddr_params_t;
-
 // DDRC init Proc
 int dr1x90_ddrc_init(
     const ddr_basic_t* basic_cfg,

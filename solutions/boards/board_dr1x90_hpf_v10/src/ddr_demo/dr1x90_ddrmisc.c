@@ -166,17 +166,17 @@ void dr1x90_release_ddr_bus()
 {
     u32 val = 0;
     // DDR Port 0 MPU
-    val = dr1x90_dram_read(0xf840e004);
+    val = dr1x90_dram_read(0xf840e004UL);
     val &= ~0x1;
-    dr1x90_dram_write(0xf840e004, val);
+    dr1x90_dram_write(0xf840e004UL, val);
 
     // DDR Port 1 MPU
-    val = dr1x90_dram_read(0xf840f004);
+    val = dr1x90_dram_read(0xf840f004UL);
     val &= ~0x1;
-    dr1x90_dram_write(0xf840f004, val);
+    dr1x90_dram_write(0xf840f004UL, val);
 
     // DDR BUS Reset
-    val = dr1x90_dram_read(0xF8801074);
+    val = dr1x90_dram_read(0xF8801074UL);
     val |= 0x1 << 14;
-    dr1x90_dram_write(0xF8801074, val);
+    dr1x90_dram_write(0xF8801074UL, val);
 }

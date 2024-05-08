@@ -123,8 +123,10 @@ int dr1x90_ddrc_init(
         dr1x90_ddrc_train_wl();
         // dr1x90_ddrppc_show_delay();
     }
-    if (train_cfg->gate) {
-        // dr1x90_ddrc_train_gate();
+    if (train_cfg->gate & 0x1) {
+        dr1x90_ddrc_train_gate();
+    }
+    if (train_cfg->gate & 0x2) {
         dcu_gate_train(lane_mask, MR[3]);
         // dr1x90_ddrppc_show_delay();
     }

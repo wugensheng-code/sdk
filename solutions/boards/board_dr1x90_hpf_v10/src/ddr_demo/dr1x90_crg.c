@@ -166,10 +166,10 @@ void pll_io_waitLock()
     pll_waitLock(IO_PLL_CTRL);
 }
 
-void pll_ddr_div_set(uint32_t fbk_div, uint32_t ref_div, uint32_t out_div_c0, uint32_t out_div_c1, uint32_t out_div_c2)
+void pll_ddr_div_set(uint32_t fbk_div, uint32_t ref_div, uint32_t out_div_c0, uint32_t out_div_c1, uint32_t out_div_c2, uint32_t out_div_c3)
 {
     pll_reset(DDR_PLL_CTRL);
-    pll_div_set(DDR_PLL_CTRL, ref_div, fbk_div, out_div_c0, out_div_c1, out_div_c2, 0U);
+    pll_div_set(DDR_PLL_CTRL, ref_div, fbk_div, out_div_c0, out_div_c1, out_div_c2, out_div_c3);
     pll_release(DDR_PLL_CTRL);
 }
 

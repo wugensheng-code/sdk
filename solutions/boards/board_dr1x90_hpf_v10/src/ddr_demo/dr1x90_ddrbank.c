@@ -5,10 +5,11 @@
 
 void dr1x90_ddr_gpll_cfg(double fck, double fsys)
 {
+    uint32_t regData = 0;
     double fbk = 2.0 * fck / (fsys / 2.0);
     uint32_t fbk_div = lround(fbk);
     uint32_t out_div = 2;
-    if (fbk_div <= 64) {
+    if (fbk_div <= 60) {
         // double fvco to improve clock stability
         fbk_div *= 2;
         out_div *= 2;
@@ -16,7 +17,18 @@ void dr1x90_ddr_gpll_cfg(double fck, double fsys)
     fck = fsys / 2.0 * fbk_div / out_div;
     AL_DDR_LOG("[DDR GPLL] fck = %.3f MHz, fbk_div = %d, out_div = %d\r\n", fck, fbk_div, out_div);
 
-    pll_ddr_div_set(fbk_div, 1, out_div, out_div * 2, out_div);
+    regData = dr1x90_reg_read(DDRC_ADDR_GPLL + DDRGPLL_CTRL8);
+    regData = dr1x90_field_set(DDRC_ADDR_GPLL + DDRGPLL_CTRL8, 16, 0x1f << 16, 10, regData);    // icp_sel
+    regData = dr1x90_field_set(DDRC_ADDR_GPLL + DDRGPLL_CTRL8, 28, 0x07 << 28,  4, regData);    // lpf_res
+    regData = dr1x90_field_set(DDRC_ADDR_GPLL + DDRGPLL_CTRL8, 26, 0x03 << 26,  2, regData);    // lpf_cripple
+    dr1x90_reg_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL8, regData);
+
+    regData = dr1x90_reg_read(DDRC_ADDR_GPLL + DDRGPLL_CTRL9);
+    regData = dr1x90_field_set(DDRC_ADDR_GPLL + DDRGPLL_CTRL9, 24, 0x07 << 24, 0, regData);     // gmc_gain
+    regData = dr1x90_field_set(DDRC_ADDR_GPLL + DDRGPLL_CTRL9, 12, 0x03 << 12, 0, regData);     // kvco
+    dr1x90_reg_write(DDRC_ADDR_GPLL + DDRGPLL_CTRL9, regData);
+
+    pll_ddr_div_set(fbk_div, 1, out_div, out_div * 2, out_div, out_div * 2);
 
     pll_ddr_waitLock();
 
@@ -108,6 +120,12 @@ void dr1x90_ddr_iol_cfg()
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte1_glue_cfg0, U_byte1_glue_mc1_dqs_byte_md_offset, U_byte1_glue_mc1_dqs_byte_md_mask, 0);
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte2_glue_cfg0, U_byte2_glue_mc1_dqs_byte_md_offset, U_byte2_glue_mc1_dqs_byte_md_mask, 0);
     dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + byte3_glue_cfg0, U_byte3_glue_mc1_dqs_byte_md_offset, U_byte3_glue_mc1_dqs_byte_md_mask, 0);
+
+    // DQS PUPD mode, for hardware gate training
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr5to8_cfg9  , U_byte0_quad2_mc1_dqs_pupd_offset, U_byte0_quad2_mc1_dqs_pupd_mask, 0x9100);
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr17to20_cfg9, U_byte1_quad2_mc1_dqs_pupd_offset, U_byte1_quad2_mc1_dqs_pupd_mask, 0x9100);
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr29to32_cfg9, U_byte2_quad2_mc1_dqs_pupd_offset, U_byte2_quad2_mc1_dqs_pupd_mask, 0x9100);
+    dr1x90_field_write(DDRC_ADDR_BK1_IOMC1 + pr41to44_cfg9, U_byte3_quad2_mc1_dqs_pupd_offset, U_byte3_quad2_mc1_dqs_pupd_mask, 0x9100);
 /*
     // Always on
     dr1x90_reg_write(DDRC_ADDR_BK1_T0 + DQSGRP_TE_MD0 , 0x11111111);
