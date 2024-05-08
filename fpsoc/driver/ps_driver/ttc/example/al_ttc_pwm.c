@@ -53,8 +53,6 @@ AL_S32 main(AL_VOID)
         return Ret;
     }
 
-    AL_LOG(AL_LOG_LEVEL_INFO, "Ttc pwm output test success\r\n");
-
     return Ret;
 }
 
@@ -84,8 +82,6 @@ static AL_S32 AlTtc_Test_PwmOutput(AL_VOID)
 
     AlTtc_Hal_EnableWaveOutput(TtcHandle, AL_TRUE);
     AlTtc_Hal_EnableCounter(TtcHandle, AL_TRUE);
-
-    AL_LOG(AL_LOG_LEVEL_INFO, "Ttc pwm output in progress\r\n");
 
 
     return Ret;

@@ -33,22 +33,22 @@ static AL_VOID AlTtc_Hal_DefEventHandler(AL_TTC_EventStruct TtcEvent, AL_VOID *C
     switch (TtcEvent.Events)
     {
     case AL_TTC_EVENT_Interval:
-        AL_LOG(AL_LOG_LEVEL_INFO, "Al ttc generated a interval interrupt");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Al ttc generated a interval interrupt");
         break;
     case AL_TTC_EVENT_Match1:
-        AL_LOG(AL_LOG_LEVEL_INFO, "Al ttc generated a match1 interrupt");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Al ttc generated a match1 interrupt");
         break;
     case AL_TTC_EVENT_Match2:
-        AL_LOG(AL_LOG_LEVEL_INFO, "Al ttc generated a match2 interrupt");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Al ttc generated a match2 interrupt");
         break;
     case AL_TTC_EVENT_Match3:
-        AL_LOG(AL_LOG_LEVEL_INFO, "Al ttc generated a match3 interrupt");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Al ttc generated a match3 interrupt");
         break;
     case AL_TTC_EVENT_Overflow:
-        AL_LOG(AL_LOG_LEVEL_INFO, "Al ttc generated a overflow interrupt");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Al ttc generated a overflow interrupt");
         break;
     case AL_TTC_EVENT_EventTimer:
-        AL_LOG(AL_LOG_LEVEL_INFO, "Al ttc generated a event timer interrupt");
+        AL_LOG(AL_LOG_LEVEL_DEBUG, "Al ttc generated a event timer interrupt");
         break;
     default:
         break;
