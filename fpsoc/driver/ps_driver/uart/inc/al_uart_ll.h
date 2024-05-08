@@ -91,11 +91,11 @@ static inline AL_U8 AlUart_ll_RecvByte(AL_REG BaseAddr)
     return AL_REG32_READ(BaseAddr + UART__RBR__THR__DLL__OFFSET);
 }
 
-static inline AL_VOID AlUart_ll_SetBaudRate(AL_REG BaseAddr, AL_U32 BaudRate, AL_U32 InputClockHz)
+static inline AL_VOID AlUart_ll_SetBaudRate(AL_REG BaseAddr, AL_U8 Dll, AL_U8 Dlh)
 {
     AL_REG32_SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_ENABLE);
-    AL_REG32_WRITE(BaseAddr + UART__IER_DLH__OFFSET, (AL_U8)(((InputClockHz >> 4) / BaudRate) >> 8));
-    AL_REG32_WRITE(BaseAddr + UART__RBR__THR__DLL__OFFSET, (AL_U8)((InputClockHz >> 4) / BaudRate));
+    AL_REG32_WRITE(BaseAddr + UART__RBR__THR__DLL__OFFSET, Dll);
+    AL_REG32_WRITE(BaseAddr + UART__IER_DLH__OFFSET, Dlh);
     AL_REG32_SET_BIT(BaseAddr + UART__LCR__OFFSET, UART__LCR__DLAB__SHIFT, AL_FUNC_DISABLE);
 }
 

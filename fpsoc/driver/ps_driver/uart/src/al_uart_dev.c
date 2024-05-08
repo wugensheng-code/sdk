@@ -146,6 +146,34 @@ AL_VOID AlUart_Dev_ClrRxBusy(AL_UART_DevStruct *Uart)
 }
 
 /**
+ * This function is set baudrate.
+ * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
+  *@param   BaudRate is uart baudrate
+ * @param   InputClockHz is uart sclk frequency
+ * @return
+
+ * @note
+*/
+AL_VOID AlUart_Dev_SetBaudRate(AL_UART_DevStruct *Uart, AL_U32 BaudRate, AL_U32 InputClockHz)
+{
+    AL_FLOAT DllFloat = 0.0f;
+    AL_FLOAT DlhFloat = 0.0f;
+    AL_U8 DllInt = 0;
+    AL_U8 DlhInt = 0;
+
+    DllFloat = ((AL_FLOAT)(InputClockHz >> 4) / (AL_FLOAT)BaudRate);
+    DllInt = (AL_U8)DllFloat;
+
+    if (DllFloat - DllInt > 0.5) {
+        DllInt++;
+    }
+
+    DlhInt = (AL_U8)(((InputClockHz >> 4) / BaudRate) >> 8);
+
+    AlUart_ll_SetBaudRate(Uart->BaseAddr, DllInt, DlhInt);
+}
+
+/**
  * This function initialize UART registers according to the specified parameters in AL_UART_InitStruct.
  * @param   Uart Pointer to a AL_UART_DevStruct structure that contains uart device instance
  * @param   DevId is hardware module id
@@ -203,7 +231,7 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct
     if (AlUart_ll_IsUartBusy(Uart->BaseAddr)) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Al uart cannot set baudrate written while the UART is busy");
     } else {
-        AlUart_ll_SetBaudRate(Uart->BaseAddr, Uart->Configs.BaudRate, Uart->InputClockHz);
+        AlUart_Dev_SetBaudRate(Uart, Uart->Configs.BaudRate, Uart->InputClockHz);
     }
 
     if (AlUart_ll_IsUartBusy(Uart->BaseAddr)) {
