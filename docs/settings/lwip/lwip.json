@@ -1,117 +1,117 @@
 {
 	"arp_options": {
-        "Name": "arp_options", "Value": true, "Default": true,"Type": "boolean", "Description": "APR Options","Permit":false,
+        "Name": "arp_options", "Value": true, "Default": true,"Type": "boolean", "Description": "APR Options","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":false,
         "sub_options":{        
-				"arp_queueing": {"Name": "arp_queueing", "Value": "0", "Default": "0", "Type": "integer", "Description": "Multiple outgoing packets are queued during hardware address resolution","Permit":true},
-	            "arp_table_size": {"Name": "arp_table_size", "Value": "10", "Default": "10","Type": "integer","Description": "Number of active MAC-IP address pairs cached","Permit":true}
+				"arp_queueing": {"Name": "arp_queueing", "Value": "0", "Default": "0", "Type": "integer", "Description": "Multiple outgoing packets are queued during hardware address resolution","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+	            "arp_table_size": {"Name": "arp_table_size", "Value": "10", "Default": "10","Type": "integer","Description": "Number of active MAC-IP address pairs cached","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true}
 			}		
         },
 	
 	"debug_option": {
-        "Name": "debug_option", "Value": true, "Default": true,"Type": "boolean","Description": "Turn on debug ","Permit":true,
+        "Name": "debug_option", "Value": true, "Default": true,"Type": "boolean","Description": "Turn on debug ","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true,
 		"sub_options":{
-                "icmp_debug": {"Name": "icmp_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug ICMP protocol","Permit":true},
-	            "igmp_debug": {"Name": "igmp_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug IGMP protocol","Permit":true},
-	            "ip_debug": {"Name": "ip_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug IP layer","Permit":true},
-	            "lwip_dbg_types_on": {"Name": "lwip_dbg_types_on", "Value": "false", "Default": "false","Type": "boolean","Description": "Turn on lwip debug","Permit":true},
-	            "netif_debug": {"Name": "netif_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug network interface layer","Permit":true},
-	            "pbuf_debug": {"Name": "pbuf_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug pbuf layer","Permit":true},
-	            "sys_debug": {"Name": "sys_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug sys arch layer","Permit":true},
-	            "tcp_debug": {"Name": "tcp_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug TCP layer","Permit":true},
-	            "udp_debug": {"Name": "udp_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug UDP layer","Permit":true}
+                "icmp_debug": {"Name": "icmp_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug ICMP protocol","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+	            "igmp_debug": {"Name": "igmp_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug IGMP protocol","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+	            "ip_debug": {"Name": "ip_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug IP layer","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+	            "lwip_dbg_types_on": {"Name": "lwip_dbg_types_on", "Value": "false", "Default": "false","Type": "boolean","Description": "Turn on lwip debug","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+	            "netif_debug": {"Name": "netif_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug network interface layer","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+	            "pbuf_debug": {"Name": "pbuf_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug pbuf layer","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+	            "sys_debug": {"Name": "sys_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug sys arch layer","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+	            "tcp_debug": {"Name": "tcp_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug TCP layer","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+	            "udp_debug": {"Name": "udp_debug", "Value": false, "Default": false,"Type": "boolean","Description": "Debug UDP layer","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true}
         	}
 		},
 
 	"dhcp_options": {
-        "Name": "dhcp_options", "Value": false, "Default": false,"Type": "boolean","Description": "Is DHCP required?","Permit":false,
+        "Name": "dhcp_options", "Value": false, "Default": false,"Type": "boolean","Description": "Is DHCP required?","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":false,
 		"sub_options":{
-                "dhcp_does_apr_check": {"Name": "dhcp_does_apr_check", "Value": false, "Default": false,"Type": "boolean","Description": "APR check on offered addresses","Permit":false},
-	            "lwip_dhcp": {"Name": "lwip_dhcp", "Value": false, "Default": false,"Type": "boolean","Description": "Is DHCP required?","Permit":false}
+                "dhcp_does_apr_check": {"Name": "dhcp_does_apr_check", "Value": false, "Default": false,"Type": "boolean","Description": "APR check on offered addresses","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":false},
+	            "lwip_dhcp": {"Name": "lwip_dhcp", "Value": false, "Default": false,"Type": "boolean","Description": "Is DHCP required?","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":false}
 			}
 		},
 
 	"ICMP_options": {
-        "Name": "ICMP_options", "Value": true, "Default": true,"Type": "boolean","Description": "ICMP Options","Permit":false,
+        "Name": "ICMP_options", "Value": true, "Default": true,"Type": "boolean","Description": "ICMP Options","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":false,
         "sub_options":{        
-				"icmp_ttl": {"Name": "icmp_ttl", "Value": "255", "Default": "255","Type": "integer","Description": "ICMP TTL value","Permit":true}
+				"icmp_ttl": {"Name": "icmp_ttl", "Value": "255", "Default": "255","Type": "integer","Description": "ICMP TTL value","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true}
         	}
 		},
 
-	"lwip_igmp": {"Name": "lwip_igmp", "Value": false, "Default": false,"Type": "boolean","Description": "IGMP Options","Permit":true},
+	"lwip_igmp": {"Name": "lwip_igmp", "Value": false, "Default": false,"Type": "boolean","Description": "IGMP Options","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
 
 	"IP_options": {
-        "Name": "IP_options", "Value": true, "Default": true,"Type": "boolean","Description": "IP Options","Permit":false,
+        "Name": "IP_options", "Value": true, "Default": true,"Type": "boolean","Description": "IP Options","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":false,
         "sub_options":{        
-				"ip_default_ttl": {"Name": "ip_default_ttl", "Value": "255", "Default": "255","Type": "integer","Description": "Default value for Time-To-Live used by transport layers","Permit":true},
-	            "ip_forward": {"Name": "ip_forward", "Value": "0", "Default": "0","Type": "integer","Description": "Enables the ability to forward IP packets across network interfaces","Permit":true},
-	            "ip_frag": {"Name": "ip_frag", "Value": "1", "Default": "1","Type": "integer","Description": "Fragment outgoing IP packets if their size exceeds MTU","Permit":false},
-	            "ip_options_allowed": {"Name": "ip_options_allowed", "Value": "1", "Default": "1","Type": "integer","Description": "1 = IP options are allowed(but not parsed).0 =packets with IP options are dropped","Permit":true},
-	            "ip_reass_max_pbufs": {"Name": "ip_reass_max_pbufs", "Value": "10", "Default": "10","Type": "integer","Description": "Reassembly PBUF Queue Length","Permit":true},
-	            "ip_reassembly": {"Name": "ip_reassembly", "Value": "1", "Default": "1","Type": "integer","Description": "Reassembly incoming fragmented IP packets","Permit":false}
+				"ip_default_ttl": {"Name": "ip_default_ttl", "Value": "255", "Default": "255","Type": "integer","Description": "Default value for Time-To-Live used by transport layers","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+	            "ip_forward": {"Name": "ip_forward", "Value": "0", "Default": "0","Type": "integer","Description": "Enables the ability to forward IP packets across network interfaces","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+	            "ip_frag": {"Name": "ip_frag", "Value": "1", "Default": "1","Type": "integer","Description": "Fragment outgoing IP packets if their size exceeds MTU","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":false},
+	            "ip_options_allowed": {"Name": "ip_options_allowed", "Value": "1", "Default": "1","Type": "integer","Description": "1 = IP options are allowed(but not parsed).0 =packets with IP options are dropped","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+	            "ip_reass_max_pbufs": {"Name": "ip_reass_max_pbufs", "Value": "10", "Default": "10","Type": "integer","Description": "Reassembly PBUF Queue Length","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+	            "ip_reassembly": {"Name": "ip_reassembly", "Value": "1", "Default": "1","Type": "integer","Description": "Reassembly incoming fragmented IP packets","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":false}
 			}
 		},
 
 	"lwip_memory_options": {
-		"Name": "lwip_memory_options", "Value": true, "Default": true,"Type": "boolean","Description": "Options controlling lwIP memory usage","Permit":true,
+		"Name": "lwip_memory_options", "Value": true, "Default": true,"Type": "boolean","Description": "Options controlling lwIP memory usage","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true,
 		"sub_options":{
-				"mem_size": {"Name": "mem_size", "Value": "40960", "Default": "40960","Type": "integer","Description": "Size of the heap memory (bytes)","Permit":true},
-				"memp_num_pbuf": {"Name": "memp_num_pbuf", "Value": "16", "Default": "16","Type": "integer","Description": "Number of memp struct pbufs, Set this high if application sends lots of data out of ROM ","Permit":true},
-				"memp_num_sys_timeout": {"Name": "memp_num_sys_timeout", "Value": "6", "Default": "6","Type": "integer","Description": "Number of simultaneously active timeouts","Permit":false},
-				"memp_num_tcp_pcb": {"Name": "memp_num_tcp_pcb", "Value": "10", "Default": "10","Type": "integer","Description": "Number of simultaneously active TCP connections","Permit":true},
-				"memp_num_tcp_pcb_listen": {"Name": "memp_num_tcp_pcb_listen", "Value": "8", "Default": "8","Type": "integer","Description": "Number of listening TCP connections","Permit":true},
-				"memp_num_tcp_seg": {"Name": "memp_num_tcp_seg", "Value": "48", "Default": "48","Type": "integer","Description": "Number of simultaneously queued TCP segments","Permit":true},
-				"memp_num_udp_pcb": {"Name": "memp_num_udp_pcb", "Value": "4", "Default": "4","Type": "integer","Description": "Number of UDP protocol control blocks","Permit":true},
-				"memp_num_api_msg": {"Name": "memp_num_api_msg", "Value": "8", "Default": "8","Type": "integer","Description": "Number of concurrently active calls to various","Permit":true},
-				"memp_num_netbuf": {"Name": "memp_num_netbuf", "Value": "2", "Default": "2","Type": "integer","Description": "Number of struct netbufs","Permit":true},
-				"memp_num_netconn": {"Name": "memp_num_netconn", "Value": "4", "Default": "4","Type": "integer","Description": "Number of struct netconns","Permit":true},
-				"memp_num_tcpip_msg_api": {"Name": "memp_num_tcpip_msg_api", "Value": "8", "Default": "8","Type": "integer","Description": "number of struct tcpip_msg (for callback/timeout API communication)","Permit":true}
+				"mem_size": {"Name": "mem_size", "Value": "40960", "Default": "40960","Type": "integer","Description": "Size of the heap memory (bytes)","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+				"memp_num_pbuf": {"Name": "memp_num_pbuf", "Value": "16", "Default": "16","Type": "integer","Description": "Number of memp struct pbufs, Set this high if application sends lots of data out of ROM ","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+				"memp_num_sys_timeout": {"Name": "memp_num_sys_timeout", "Value": "6", "Default": "6","Type": "integer","Description": "Number of simultaneously active timeouts","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":false},
+				"memp_num_tcp_pcb": {"Name": "memp_num_tcp_pcb", "Value": "10", "Default": "10","Type": "integer","Description": "Number of simultaneously active TCP connections","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+				"memp_num_tcp_pcb_listen": {"Name": "memp_num_tcp_pcb_listen", "Value": "8", "Default": "8","Type": "integer","Description": "Number of listening TCP connections","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+				"memp_num_tcp_seg": {"Name": "memp_num_tcp_seg", "Value": "48", "Default": "48","Type": "integer","Description": "Number of simultaneously queued TCP segments","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+				"memp_num_udp_pcb": {"Name": "memp_num_udp_pcb", "Value": "4", "Default": "4","Type": "integer","Description": "Number of UDP protocol control blocks","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+				"memp_num_api_msg": {"Name": "memp_num_api_msg", "Value": "8", "Default": "8","Type": "integer","Description": "Number of concurrently active calls to various","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+				"memp_num_netbuf": {"Name": "memp_num_netbuf", "Value": "2", "Default": "2","Type": "integer","Description": "Number of struct netbufs","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+				"memp_num_netconn": {"Name": "memp_num_netconn", "Value": "4", "Default": "4","Type": "integer","Description": "Number of struct netconns","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+				"memp_num_tcpip_msg_api": {"Name": "memp_num_tcpip_msg_api", "Value": "8", "Default": "8","Type": "integer","Description": "number of struct tcpip_msg (for callback/timeout API communication)","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true}
 			}
 		},
 
 	"mbox_options": {
-		"Name": "mbox_options", "Value": true, "Default": true,"Type": "boolean","Description": "Mbox option","Permit":false,
+		"Name": "mbox_options", "Value": true, "Default": true,"Type": "boolean","Description": "Mbox option","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":false,
 		"sub_options":{
-				"default_tcp_recvmbox_size": {"Name": "default_tcp_recvmbox_size", "Value": "24", "Default": "24","Type": "integer","Description": "Size of TCP receive mbox queue","Permit":true},
-				"default_udp_recvmbox_size": {"Name": "default_udp_recvmbox_size", "Value": "6", "Default": "6","Type": "integer","Description": "Size of UDP receive mbox queue","Permit":true},
-				"tcpip_mbox_size": {"Name": "tcpip_mbox_size", "Value": "48", "Default": "48","Type": "integer","Description": "Size of TCPIP mbox queue","Permit":true}
+				"default_tcp_recvmbox_size": {"Name": "default_tcp_recvmbox_size", "Value": "24", "Default": "24","Type": "integer","Description": "Size of TCP receive mbox queue","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+				"default_udp_recvmbox_size": {"Name": "default_udp_recvmbox_size", "Value": "6", "Default": "6","Type": "integer","Description": "Size of UDP receive mbox queue","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+				"tcpip_mbox_size": {"Name": "tcpip_mbox_size", "Value": "48", "Default": "48","Type": "integer","Description": "Size of TCPIP mbox queue","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true}
 			}
 		},
 	
 	"Pbuf_options": {
-		"Name": "Pbuf_options", "Value": true, "Default": true,"Type": "boolean","Description": "Pbuf Options","Permit":true,
+		"Name": "Pbuf_options", "Value": true, "Default": true,"Type": "boolean","Description": "Pbuf Options","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true,
 		"sub_options":{
-			"pbuf_link_hlen": {"Name": "pbuf_link_hlen", "Value": "14", "Default": "14","Type": "integer","Description": "Number of bytes that should be allcated for a link level header","Permit": false},
-			"pbuf_pool_bufsize": {"Name": "pbuf_pool_bufsize", "Value": "1536", "Default": "1536","Type": "integer","Description": "Size of each pbuf in the pbuf pool","Permit":true},
-			"pbuf_pool_size": {"Name": "pbuf_pool_size", "Value": "30", "Default": "30","Type": "integer","Description": "Number of buffers in pbuf pool","Permit":true}
+			"pbuf_link_hlen": {"Name": "pbuf_link_hlen", "Value": "14", "Default": "14","Type": "integer","Description": "Number of bytes that should be allcated for a link level header","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit": false},
+			"pbuf_pool_bufsize": {"Name": "pbuf_pool_bufsize", "Value": "1536", "Default": "1536","Type": "integer","Description": "Size of each pbuf in the pbuf pool","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+			"pbuf_pool_size": {"Name": "pbuf_pool_size", "Value": "30", "Default": "30","Type": "integer","Description": "Number of buffers in pbuf pool","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true}
 			}
 		},
 		
 	"stats_options": {
-		"Name": "stats_options", "Value": true, "Default": true,"Type": "boolean","Description": "Turn on lwIP statistics?","Permit":true,
+		"Name": "stats_options", "Value": true, "Default": true,"Type": "boolean","Description": "Turn on lwIP statistics?","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true,
 		"sub_options":{	
-			"lwip_stats": {"Name": "lwip_stats", "Value": false, "Default": false,"Type": "boolean","Description": "Turn on lwIP statistics?","Permit":false}
+			"lwip_stats": {"Name": "lwip_stats", "Value": false, "Default": false,"Type": "boolean","Description": "Turn on lwIP statistics?","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":false}
 			}
 		},
 	
 	"TCP_options": {
-		"Name": "TCP_options", "Value": true, "Default": true,"Type": "boolean","Description": "Is TCP required?","Permit":false,
+		"Name": "TCP_options", "Value": true, "Default": true,"Type": "boolean","Description": "Is TCP required?","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":false,
 		"sub_options":{	
-			"lwip_tcp": {"Name": "lwip_tcp", "Value": true, "Default": true,"Type": "boolean","Description": "Is TCP required?","Permit":true},
-			"tcp_maxrtx": {"Name": "tcp_maxrtx", "Value": "12", "Default": "12","Type": "integer","Description": "TCP Maximum retransmission value","Permit":true},
-			"tcp_mss": {"Name": "tcp_mss", "Value": "1460", "Default": "1460","Type": "integer","Description": "TCP Maximum segment size (bytes)","Permit":true},
-			"tcp_queue_ooseq": {"Name": "tcp_queue_ooseq", "Value": "1", "Default": "1","Type": "integer","Description": "Should TCP queue segments arriving out of order. Set to 0 if your device is low on memory  ","Permit":true},
-			"tcp_snd_buf": {"Name": "tcp_snd_buf", "Value": "35040", "Default": "35040","Type": "integer","Description": "TCP sender buffer space (bytes)(value = 4*TCP_MSS)","Permit":true},
-			"tcp_synmaxrtx": {"Name": "tcp_synmaxrtx", "Value": "6", "Default": "6","Type": "integer","Description": "TCP Maximum SYN retransmission value","Permit":true},
-			"tcp_ttl": {"Name": "tcp_ttl", "Value": "255", "Default": "255","Type": "integer","Description": "TCP TTL valve","Permit":true},
-			"tcp_wnd": {"Name": "tcp_wnd", "Value": "35040", "Default": "35040","Type": "integer","Description": "TCP Window (bytes)(value = 4*TCP_MSS)","Permit":true}
+			"lwip_tcp": {"Name": "lwip_tcp", "Value": true, "Default": true,"Type": "boolean","Description": "Is TCP required?","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+			"tcp_maxrtx": {"Name": "tcp_maxrtx", "Value": "12", "Default": "12","Type": "integer","Description": "TCP Maximum retransmission value","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+			"tcp_mss": {"Name": "tcp_mss", "Value": "1460", "Default": "1460","Type": "integer","Description": "TCP Maximum segment size (bytes)","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+			"tcp_queue_ooseq": {"Name": "tcp_queue_ooseq", "Value": "1", "Default": "1","Type": "integer","Description": "Should TCP queue segments arriving out of order. Set to 0 if your device is low on memory  ","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+			"tcp_snd_buf": {"Name": "tcp_snd_buf", "Value": "35040", "Default": "35040","Type": "integer","Description": "TCP sender buffer space (bytes)(value = 4*TCP_MSS)","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+			"tcp_synmaxrtx": {"Name": "tcp_synmaxrtx", "Value": "6", "Default": "6","Type": "integer","Description": "TCP Maximum SYN retransmission value","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+			"tcp_ttl": {"Name": "tcp_ttl", "Value": "255", "Default": "255","Type": "integer","Description": "TCP TTL valve","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+			"tcp_wnd": {"Name": "tcp_wnd", "Value": "35040", "Default": "35040","Type": "integer","Description": "TCP Window (bytes)(value = 4*TCP_MSS)","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true}
 			}
 		},
 
 	"udp_options": {
-		"Name": "udp_options", "Value": true, "Default": true,"Type": "boolean","Description": "IS UDP required?","Permit":false,
+		"Name": "udp_options", "Value": true, "Default": true,"Type": "boolean","Description": "IS UDP required?","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":false,
 		"sub_options":{
-			"lwip_udp": {"Name": "lwip_udp", "Value": true, "Default": true,"Type": "boolean","Description": "IS UDP required?","Permit":true},
-			"udp_ttl": {"Name": "udp_ttl", "Value": "255", "Default": "255","Type": "integer","Description": "UDP TTL value","Permit":true}
+			"lwip_udp": {"Name": "lwip_udp", "Value": true, "Default": true,"Type": "boolean","Description": "IS UDP required?","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+			"udp_ttl": {"Name": "udp_ttl", "Value": "255", "Default": "255","Type": "integer","Description": "UDP TTL value","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true}
 			}
 		}
 

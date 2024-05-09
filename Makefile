@@ -13,9 +13,9 @@
 #{{CHIP}}
 
 ifeq ($(CHIP), dr1m90)
-COMPILE_PREFIX ?= ${AARCH64_TOOLCHAIN_PATH}/aarch64-none-elf-
+COMPILE_PREFIX ?= ${FD_ROOT_PATH}/toolchain/gcc/aarch64/bin/aarch64-none-elf-
 else
-COMPILE_PREFIX ?= ${RISCV_TOOLCHAIN_PATH}/riscv-nuclei-elf-
+COMPILE_PREFIX ?= ${FD_ROOT_PATH}/toolchain/gcc/riscv/fpsoc/bin/riscv-nuclei-elf-
 endif
 
 #########################################################################

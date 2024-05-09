@@ -1,20 +1,20 @@
 {
-    "ARMv8_STATE": {"Name": "ARMv8_STATE", "Value": "64", "Default": "64","Type": "integer","Description": "The ARMv8_STATE(64 or 32)","Permit":false},
-    "ARMv8_EL": {"Name": "ARMv8_EL", "Value": "EL3", "Default": "EL3","Type": "string","Description": "The ARMv8_EL(EL1 or EL3)","Permit":false},
-    "ARMv8_SECURE": {"Name": "ARMv8_SECURE", "Value": "SECURE", "Default": "SECURE","Type": "string","Description": "ARMv8_SECURE(SECURE or NONSECURE)","Permit":false},
-    "ARMv8_CORE": {"Name": "ARMv8_CORE", "Value": "MASTER", "Values": ["MASTER","SLAVE"],"Default": "MASTER","Type": "array","Description": "ARMv8_CORE(MASTER or SLAVE)","Permit":true},
+    "ARMv8_STATE": {"Name": "ARMv8_STATE", "Value": "64", "Default": "64","Type": "integer","Description": "The ARMv8_STATE(64 or 32)","supportedProc": ["apu-0", "apu-1"],"Permit":false},
+    "ARMv8_EL": {"Name": "ARMv8_EL", "Value": "EL3", "Default": "EL3","Type": "string","Description": "The ARMv8_EL(EL1 or EL3)","supportedProc": ["apu-0", "apu-1"],"Permit":false},
+    "ARMv8_SECURE": {"Name": "ARMv8_SECURE", "Value": "SECURE", "Default": "SECURE","Type": "string","Description": "ARMv8_SECURE(SECURE or NONSECURE)","supportedProc": ["apu-0", "apu-1"],"Permit":false},
+    "ARMv8_CORE": {"Name": "ARMv8_CORE", "Value": "MASTER", "Values": ["MASTER","SLAVE"],"Default": "MASTER","Type": "array","Description": "ARMv8_CORE(MASTER or SLAVE)","supportedProc": ["apu-0", "apu-1"],"Permit":true},
 	
-    "SILENT": {"Name": "SILENT", "Value": false, "Default": false,"Type": "boolean","Description": "If SILENT=1, it will not display any compiling messsage","Permit":true},
+    "SILENT": {"Name": "SILENT", "Value": false, "Default": false,"Type": "boolean","Description": "If SILENT=1, it will not display any compiling messsage","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
 
-    "PFLOAT": {"Name": "PFLOAT", "Value": false, "Default": false,"Type": "boolean","Description": "If FLOAT=1, it will enable float point print when using nano newlib","Permit":false},
+    "PFLOAT": {"Name": "PFLOAT", "Value": false, "Default": false,"Type": "boolean","Description": "If FLOAT=1, it will enable float point print when using nano newlib","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":false},
 
-    "NEWLIB": {"Name": "NEWLIB", "Value": "nano", "Default": "nano","Type": "string","Description": "If NEWLIB=nano, it will use nano newlib, otherwise it will use normal newlib","Permit":false},
+    "NEWLIB": {"Name": "NEWLIB", "Value": "nano", "Default": "nano","Type": "string","Description": "If NEWLIB=nano, it will use nano newlib, otherwise it will use normal newlib","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":false},
 
-    "NOGC": {"Name": "NOGC", "Value": false, "Default": false,"Type": "boolean","Description": "If NOGC=1, it will not gc any sections during compiling to save code size","Permit":false},
+    "NOGC": {"Name": "NOGC", "Value": false, "Default": false,"Type": "boolean","Description": "If NOGC=1, it will not gc any sections during compiling to save code size","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":false},
 
-    "CODE_READONLY": {"Name": "CODE_READONLY", "Value": false, "Default": false,"Type": "boolean","Description": "code readonly option","Permit":false},
+    "CODE_READONLY": {"Name": "CODE_READONLY", "Value": false, "Default": false,"Type": "boolean","Description": "code readonly option","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":false},
 
-    "VERBOSE": {"Name": "VERBOSE", "Value": false, "Default": false,"Type": "boolean","Description": "If VERBOSE=1, it will display compiling message in verbose including compiling options","Permit":true},
+    "VERBOSE": {"Name": "VERBOSE", "Value": false, "Default": false,"Type": "boolean","Description": "If VERBOSE=1, it will display compiling message in verbose including compiling options","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
 
-    "OUTPUT_DEV": {"Name": "OUTPUT_DEV", "Value": "UART1", "Values": ["UART0","UART1","NONE"], "Default": "UART1","Type": "array","Description": "If OUTPUT_DEV=UART0, it will output to UART0, If OUTPUT_DEV=UART1, it will output to uart1, if OUTPUT_DEV=NONE, it will output nothing","Permit":true}
+    "OUTPUT_DEV": {"Name": "OUTPUT_DEV", "Value": "UART1", "Values": ["UART0","UART1","NONE"], "Default": "UART1","Type": "array","Description": "If OUTPUT_DEV=UART0, it will output to UART0, If OUTPUT_DEV=UART1, it will output to uart1, if OUTPUT_DEV=NONE, it will output nothing","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true}
 }

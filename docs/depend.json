@@ -29,7 +29,8 @@
 				"depends": [
 					"fpsoc/driver/ps_driver/can",
 					"PS_DRIVER_DMACAHB_V1_0"
-				]
+				],
+				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			}
 		},
 		"PS_DRIVER_XMON": {
@@ -37,6 +38,7 @@
 				"name": "PS_DRIVER_XMON",
 				"version": "1.0",
 				"depends": ["fpsoc/driver/ps_driver/xmon"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
@@ -48,6 +50,7 @@
 					"fpsoc/driver/ps_driver/dma",
 					"PS_DRIVER_IPC_V1_0"
 				],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
@@ -56,6 +59,7 @@
 				"name": "PS_DRIVER_DMACAHB",
 				"version": "1.0",
 				"depends": ["fpsoc/driver/ps_driver/dmacahb"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
@@ -63,7 +67,8 @@
 			"1.0":{
 				"name": "PS_DRIVER_GBE",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/ps_driver/gbe"]
+				"depends": ["fpsoc/driver/ps_driver/gbe"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			}
 		},
 		"PS_DRIVER_GPIO": {
@@ -71,6 +76,7 @@
 				"name": "PS_DRIVER_GPIO",
 				"version": "1.0",
 				"depends": ["fpsoc/driver/ps_driver/gpio"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
@@ -82,6 +88,7 @@
 					"fpsoc/driver/ps_driver/iic",
 					"PS_DRIVER_DMACAHB_V1_0"
             	],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
@@ -90,6 +97,7 @@
 				"name": "PS_DRIVER_MMC",
 				"version": "1.0",
 				"depends": ["fpsoc/driver/ps_driver/mmc"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
@@ -98,6 +106,7 @@
 				"name": "PS_DRIVER_MPU",
 				"version": "1.0",
 				"depends": ["fpsoc/driver/ps_driver/mpu"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
@@ -106,6 +115,7 @@
 				"name": "PS_DRIVER_PMU",
 				"version": "1.0",
 				"depends": ["fpsoc/driver/ps_driver/pmu"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
@@ -117,6 +127,7 @@
 					"fpsoc/driver/ps_driver/qspi",
 					"PS_DRIVER_DMACAHB_V1_0"
 				],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
@@ -125,6 +136,7 @@
 				"name": "PS_DRIVER_SMC",
 				"version": "1.0",
 				"depends": ["fpsoc/driver/ps_driver/smc"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
@@ -135,7 +147,8 @@
 				"depends": [
 					"fpsoc/driver/ps_driver/spi",
 					"PS_DRIVER_DMACAHB_V1_0"
-				]
+				],
+				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			}
 		},
 		"PS_DRIVER_TTC": {
@@ -143,6 +156,7 @@
 				"name": "PS_DRIVER_TTC",
 				"version": "1.0",
 				"depends": ["fpsoc/driver/ps_driver/ttc"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
@@ -153,7 +167,8 @@
 				"depends": [
 					"fpsoc/driver/ps_driver/uart",
 					"PS_DRIVER_DMACAHB_V1_0"
-				]
+				],
+				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			}
 		},
 		"PS_DRIVER_USB": {
@@ -163,7 +178,8 @@
 				"depends": [
 					"fpsoc/driver/ps_driver/usb",
 					"LIB_FATFS_V1_0"
-				]
+				],
+				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			}
 		},
 		"PS_DRIVER_WDT": {
@@ -174,6 +190,7 @@
 				"fpsoc/driver/ps_driver/wdt",
 				"PS_DRIVER_PMU_V1_0"
 				],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
@@ -182,6 +199,7 @@
 				"name": "PS_DRIVER_ADC",
 				"version": "1.0",
 				"depends": ["fpsoc/driver/ps_driver/adc"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
@@ -190,6 +208,7 @@
 				"name": "PS_DRIVER_IPC",
 				"version": "1.0",
 				"depends": ["fpsoc/driver/ps_driver/ipc"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		}
@@ -201,6 +220,7 @@
 				"version": "1.0",
                 "description": "LIB_LOG",
 				"depends": ["fpsoc/lib/log"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
@@ -210,6 +230,7 @@
 				"version": "1.0",
                 "description": "LIB_GCC",
 				"depends": ["fpsoc/lib/newlib/gcc"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
@@ -219,6 +240,7 @@
 				"version": "1.0",
                 "description": "LIB_CLI",
 				"depends": ["fpsoc/lib/cli"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
@@ -228,6 +250,8 @@
 				"version": "1.0",
                 "description": "LIB_FATFS",
 				"depends": ["3rdparty/lib/FATFS"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
+				"default": true,
                 "settings": {
                     "property":"docs/settings/fatfs/fatfs.json",
                     "config":"docs/settings/fatfs/ffconf.h",
@@ -240,7 +264,9 @@
 				"name": "LIB_CHERRYUSB",
 				"version": "1.0",
                 "description": "LIB_CHERRYUSB",
-				"depends": ["3rdparty/lib/CherryUSB"]
+				"depends": ["3rdparty/lib/CherryUSB"],
+				"default": true,
+				"supportedProc": ["apu-0", "apu-1", "rpu"]
 		}
 	},
 		"LIB_CIPHER": {
@@ -248,7 +274,8 @@
 				"name": "LIB_CIPHER",
 				"version": "1.0",
                 "description": "LIB_CIPHER",
-				"depends": ["fpsoc/lib/cipher"]
+				"depends": ["fpsoc/lib/cipher"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			}
 		},
 		"LIB_LWIP":{
@@ -257,6 +284,7 @@
 				"version": "1.0",
                 "description": "LIB_LWIP",
 				"depends": ["3rdparty/lwip-2.1.3"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"settings": {
 					"property":"docs/settings/lwip/lwip.json",
                     "config":"docs/settings/lwip/lwipopts.h",
@@ -269,7 +297,8 @@
 				"name": "LIB_METAL",
 				"version": "1.0",
                 "description": "LIB_METAL",
-				"depends": ["3rdparty/lib/libmetal"]
+				"depends": ["3rdparty/lib/libmetal"],
+				"supportedProc": ["apu-0", "apu-1"]
 			}
 		},
 		"LIB_OPENAMP": {
@@ -281,6 +310,7 @@
 					"3rdparty/lib/open-amp",
 					"LIB_METAL_V1_0"
 				],
+				"supportedProc": ["apu-0", "apu-1"],
 				"settings": {
                     "property":"docs/settings/openamp/openamp.json",
                     "config":"docs/settings/openamp/Makefile",
@@ -295,7 +325,8 @@
 			"name":"OS_STANDALONE",
 			"version":"1.0",
 			"description":"standalone",
-			"depends": []
+			"depends": [],
+			"supportedProc": ["apu-0", "apu-1", "rpu"]
 		}
 		},
 		"OS_FREERTOS":{
@@ -304,6 +335,7 @@
 			"version":"1.0",
 			"description":"freertos",
 			"depends": ["3rdparty/os/FreeRTOS"],
+			"supportedProc": ["apu-0", "apu-1", "rpu"],
             "settings": {
                 "property":"docs/settings/freertos/freertos.json",
                 "config":"docs/settings/freertos/FreeRTOSConfig.h",
@@ -316,6 +348,7 @@
 			"name":"OS_LINUX",
 			"version":"1.0",
 			"description":"linux",
+			"supportedProc": ["apu-0", "apu-1", "rpu"],
 			"depends": []
 			
 		}
@@ -325,6 +358,7 @@
 			"name":"OS_RTTHREAD",
 			"version":"1.0",
 			"description":"OS_RT_THREAD",
+			"supportedProc": ["apu-0", "apu-1", "rpu"],
 			"depends": ["3rdparty/os/RT-Thread"],
             "settings": {
                 "property":"docs/settings/RT-Thread/RT-Thread.json",
