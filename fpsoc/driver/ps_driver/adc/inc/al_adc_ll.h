@@ -341,8 +341,6 @@ static inline AL_VOID AlAdc_ll_WritePlAdcReg(AL_REG AdcBaseAddr, AL_U8 PlRegAddr
 {
     while (AL_REG32_READ(AdcBaseAddr + ADC_MSTS_OFFSET) & ADC_MSTS_R_CMD_FIFO_F_MASK);
     AL_REG32_WRITE(AdcBaseAddr + ADC_CMD_FIFO_OFFSET, ADC_WRITE_CMD << 24 | PlRegAddr << 16 | Data);
-    /* Read the data fifo after writing the cmd fifo, ensure that the data is completed */
-    (AL_VOID)(AL_REG32_READ(AdcBaseAddr + ADC_DATA_FIFO_OFFSET));
 }
 
 /*
