@@ -1,5 +1,37 @@
 # CHANGELOG
 
+## BM_2024.5_ES1.1_release
+
+### (529f8a3f60883761d598e5ef7fa8fcd7073dbfd0)
+
+## Fix
+
+- 修复dmaahb中ll层接口的问题
+
+- 修复串口中的波特率配置
+
+- 修复adc中的中断问题
+
+- 修复gbe中存在的部分问题
+
+- 修复mpu测试程序中makefile存在的问题
+
+- 修复rpu中时钟不准确的问题
+
+- 修改tcm链接脚本，使itcm和dtcm不分开使用
+
+- 修复ipc驱动中存在的部分问题
+
+## Feature
+
+- 新增rpu支持cache设置内存属性
+
+- 新增rpu支持xip boot， 支持DOWNLOAD=xip
+
+- rpu默认打开dcache
+
+- 新增针对hpf的board配置
+
 ## BM_2023.3_ES1.0 (2024-3-6)
 
 ### (d52893591d0136e91da41267faa4d5c9ff398cb2)
