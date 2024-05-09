@@ -145,6 +145,7 @@ release-job:
     - cp -r ../dr1v90 $CI_PROJECT_DIR/prebuild
     - rm -r ../dr1m90
     - rm -r ../dr1v90
+    # board_dr1x90_ad101_v10
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/src/ddr_demo/
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/src/dr1x90_pinctrl.c
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10/src/ad101_v10_pinmux.c
@@ -153,6 +154,14 @@ release-job:
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v20
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_dc_v1d1
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_emulation
+    # #  board_dr1x90_hpf_v10
+    # - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_hpf_v10/src/ddr_demo/
+    # - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_hpf_v10/src/dr1x90_pinctrl.c
+    # - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_hpf_v10/src/ad101_v10_pinmux.c
+    # - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_hpf_v10/inc/dr1x90_pinctrl.h
+    # - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_hpf_v10/inc/ddr_demo/
+    - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_hpf_v10/
+    # tar
     - tar -cvjf BM-fpsoc-sdk.tar.bz2 --exclude=./tools/ci --exclude=./fpsoc/driver/ps_driver_test --exclude=./fpsoc/utest --exclude=./solutions/demo/fsbl/simulation ./*
   release:
     tag_name: "$CI_COMMIT_TAG"
