@@ -14,7 +14,7 @@ extern "C" {
 
 #include "al_type.h"
 
-#define MEM_2M_ALIGN(Mem) ((Mem & (~0x200000UL)) == 0)
+#define MEM_2M_ALIGN(Mem) ((Mem & (0x200000UL-1)) == 0)
 
 AL_S64 mmu_settlb(AL_UINTPTR addr, AL_U64 attr);
 
