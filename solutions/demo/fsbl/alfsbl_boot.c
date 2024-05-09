@@ -21,7 +21,6 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
     uint32_t BootMode;
 
     BootMode = AL_REG32_READ(SYSCTRL_NS_BOOT_MODE);
-    BootMode = ALFSBL_BOOTMODE_QSPI24;
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Boot Mode: 0x%08x\r\n", BootMode);
 
