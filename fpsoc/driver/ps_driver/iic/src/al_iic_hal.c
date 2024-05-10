@@ -648,7 +648,7 @@ AL_S32 AlIic_Hal_SlaveRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
     /* wait until data receive done */
     Ret = AlIic_Hal_WaitSlaveRxDoneOrTimeout(Handle, &IicEvent, Timeout);
     if (Ret != AL_OK) {
-        AlIic_Dev_StopSlaveSend(&Handle->Dev);
+        AlIic_Dev_StopSlaveRecv(&Handle->Dev);
         (AL_VOID)AlOsal_Mb_Receive(&Handle->TxRxEventQueue, &IicEvent, AL_WAITING_NO);
     }
 

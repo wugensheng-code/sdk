@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef __AL_MPU_HAL_H_
-#define __AL_MPU_HAL_H_
+#ifndef __AL_IIC_HAL_H_
+#define __AL_IIC_HAL_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,4 +55,4 @@ AL_S32 AlIic_Hal_IoCtl(AL_IIC_HalStruct *Handle, AL_IIC_IoCtlCmdEnum Cmd, AL_VOI
 }
 #endif
 
-#endif /* AL_MPU_HAL_H */
+#endif /* __AL_IIC_HAL_H_ */
