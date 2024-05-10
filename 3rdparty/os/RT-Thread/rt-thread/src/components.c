@@ -29,6 +29,10 @@
 #endif /* RT_MAIN_THREAD_PRIORITY */
 #endif /* RT_USING_USER_MAIN */
 
+#ifdef ENABLE_MMU
+#include "al_cache.h"
+#endif
+
 #ifdef RT_USING_COMPONENTS_INIT
 /*
  * Components Initialization will initialize some driver and components as following
@@ -226,6 +230,22 @@ void rt_application_init(void)
     rt_thread_startup(tid);
 }
 
+#ifdef ENABLE_MMU
+void rt_nocacheable_memory_init(void)
+{
+    rt_int32_t ret;
+
+    /* defined in the link script */
+    extern rt_uint32_t _no_cache_section_start, _no_cache_section_end;
+    if (&(_no_cache_section_start) != &(_no_cache_section_end)) {
+        ret = AlCache_SetMemoryAttr((rt_uint64_t) &(_no_cache_section_start), (rt_uint64_t) &(_no_cache_section_end), Al_MEM_DMA);
+        if (ret != 0) {
+            rt_kprintf("AlCache_SetMemoryAttr failed%x\r\n");
+        }
+    }
+}
+#endif
+
 /**
  * @brief  This function will call all levels of initialization functions to complete
  *         the initialization of the system, and finally start the scheduler.
@@ -265,6 +285,10 @@ int rtthread_startup(void)
 #ifdef RT_USING_SMP
     rt_hw_spin_lock(&_cpus_lock);
 #endif /* RT_USING_SMP */
+
+#ifdef ENABLE_MMU
+    rt_nocacheable_memory_init();
+#endif
 
     /* start scheduler */
     rt_system_scheduler_start();
