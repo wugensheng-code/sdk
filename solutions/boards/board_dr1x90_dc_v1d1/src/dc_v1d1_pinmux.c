@@ -88,7 +88,7 @@ void Enablepinmux1(void)
 
     *(AL_U32 *)(0xf88030d0u) =0xf;      //mdc1   MIO52-53
     *(AL_U32 *)(0xf88030d4u) =0xf;      //mdio1
-    *(AL_U32 *)(0xf8803438u) =0x1;      //emio_sel
+    *(AL_U32 *)(0xf8803438u) =0x0;      //emio_sel
 
 #ifndef AL_BRINGUP
     *(AL_U32 *)(0xf840e004u) =0x0;      //close mpu ddr0
