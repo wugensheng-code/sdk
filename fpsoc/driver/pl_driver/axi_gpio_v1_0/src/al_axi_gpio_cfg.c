@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-
-
 /***************************** Include Files *********************************/
 #include "al_axi_gpio_hw.h"
 
