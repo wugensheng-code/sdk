@@ -10,7 +10,7 @@
 #########################################################################
 SDK_ROOT   		?= ../../../..
 
-CHIP       		= dr1m90
+CHIP       		= dr1v90
 RTOS       		:= rtthread
 PFLOAT     		:= 1
 ARMv8_SECURE 	= SECURE

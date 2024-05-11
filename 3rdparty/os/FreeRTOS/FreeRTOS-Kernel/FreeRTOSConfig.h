@@ -87,7 +87,7 @@ your application. */
 #define configUSE_TICKLESS_IDLE                 0
 #define configCPU_CLOCK_HZ                      SYSTEM_CLOCK
 #define configRTC_CLOCK_HZ                      32768
-#define configTICK_RATE_HZ                      100
+#define configTICK_RATE_HZ                      1000
 #define configMAX_PRIORITIES                    32
 #define configMINIMAL_STACK_SIZE                256
 #define configMAX_TASK_NAME_LEN                 16

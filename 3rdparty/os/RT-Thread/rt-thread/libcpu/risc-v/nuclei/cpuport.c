@@ -15,8 +15,9 @@
 #include <unistd.h>
 
 #include "cpuport.h"
+#include "al_hwcfg.h"
 
-#define SYSTICK_TICK_CONST                      (SYSTEM_CLOCK / RT_TICK_PER_SECOND)
+#define SYSTICK_TICK_CONST                      ((SYSTEM_CLOCK / 5) / RT_TICK_PER_SECOND)
 
 /* Interrupt level for kernel systimer interrupt and software timer interrupt */
 #define RT_KERNEL_INTERRUPT_LEVEL               0

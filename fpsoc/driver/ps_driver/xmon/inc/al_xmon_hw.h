@@ -31,7 +31,7 @@ extern "C" {
 // // 
 // ///////////////////////////////////////////////////////
 
-// #define CRP__XMON_GLB_WIN__OFFSET (CRP__BASE_ADDR + 0x4B8ULL)
+// #define CRP__XMON_GLB_WIN__OFFSET (CRG__BASE_ADDR + 0x4B8ULL)
 // #define CRP__XMON_GLB_WIN__NUM  0x1
 
 // #define CRP__XMON_GLB_WIN__XMON_GLB_WIN__SHIFT    0

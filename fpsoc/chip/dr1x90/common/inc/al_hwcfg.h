@@ -15,7 +15,7 @@ extern "C" {
   Define System base addr
  *----------------------------------------------------------------------------*/
 #define SYSTIMER__BASE_ADDR     (0x68030000UL)
-#define CRP__BASE_ADDR          (0xF8801000UL)
+#define CRG__BASE_ADDR          (0xF8801000UL)
 
 /*----------------------------------------------------------------------------
   Define Uart params

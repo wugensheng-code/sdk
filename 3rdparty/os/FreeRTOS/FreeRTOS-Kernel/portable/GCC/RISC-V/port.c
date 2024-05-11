@@ -48,7 +48,7 @@
 #endif
 
 #ifndef configSYSTICK_CLOCK_HZ
-#define configSYSTICK_CLOCK_HZ                  SYSTEM_CLOCK
+#define configSYSTICK_CLOCK_HZ                  (SYSTEM_CLOCK / 5)
 #endif
 
 #ifndef configKERNEL_INTERRUPT_PRIORITY
