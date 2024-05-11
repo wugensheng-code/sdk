@@ -371,7 +371,7 @@ AL_S32 AlGbe_Dev_ConfigDuplexAndSpeed(AL_GBE_DevStruct *Gbe)
     AlGbe_ll_SetSpeed(GbeBaseAddr, Gbe->MacDmaConfig.Speed);
 
     if (Gbe->InitConfig.MediaInterface == AL_GBE_RGMII_MODE) {
-        if (Gbe->MacDmaConfig.Speed = AL_GBE_SPEED_100M) {
+        if (Gbe->MacDmaConfig.Speed == AL_GBE_SPEED_100M) {
             GbeTopSetting = 0x14a1;
         } else {
             GbeTopSetting = 0x1461;
@@ -421,7 +421,7 @@ AL_S32 AlGbe_Dev_Init(AL_GBE_DevStruct *Gbe, AL_GBE_HwConfigStruct *HwConfig,
 
     /* Config gbe control register */
     if (Gbe->InitConfig.MediaInterface == AL_GBE_RGMII_MODE) {
-        if (MacDmaConfig->Speed = AL_GBE_SPEED_100M) {
+        if (MacDmaConfig->Speed == AL_GBE_SPEED_100M) {
             GbeTopSetting = 0x14a1;
         } else {
             GbeTopSetting = 0x1461;
