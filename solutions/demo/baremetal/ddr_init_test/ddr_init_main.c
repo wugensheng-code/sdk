@@ -27,39 +27,33 @@ int main()
     return 0;
 }
 
-static uint64_t zq_val;
+static uint64_t random_val;
 
-void zq_seed(uint64_t v)
+void ddr_test_seed(uint64_t v)
 {
-    zq_val = v;
+    random_val = v;
 }
 
-uint64_t zq_rand()
+uint64_t ddr_test_rand()
 {
-    zq_val = zq_val * 25214903917ULL + 11ULL;
-    return zq_val;
+    random_val = random_val * 25214903917ULL + 11ULL;
+    return random_val;
 }
 
 int write_read_compare(volatile uint64_t* wptr, volatile uint64_t* rptr, int size, uint64_t seed, const char* tag)
 {
-    zq_seed(seed);
+    ddr_test_seed(seed);
     for (int i = 0; i < size; i += 1)
     {
-        uint64_t val = zq_rand();
-        // uint64_t val = wptr + i;
-        // uint64_t val = 0xFEDCBA9876543210UL;
-        // uint64_t val = 0xFFFFFFFF00000000UL;
+        uint64_t val = ddr_test_rand();
         wptr[i] = val;
     }
-    
+
     int err = 0;
-    zq_seed(seed);
+    ddr_test_seed(seed);
     for (int i = 0; i < size; i += 1)
     {
-        uint64_t gold = zq_rand();
-        // uint64_t gold = rptr + i;
-        // uint64_t gold = 0xFEDCBA9876543210UL;
-        // uint64_t gold = 0xFFFFFFFF00000000UL;
+        uint64_t gold = ddr_test_rand();
         uint64_t val  = rptr[i];
         if (gold != val)
         {
