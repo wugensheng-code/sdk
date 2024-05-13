@@ -60,7 +60,6 @@ unsigned int sys_irq_save_disable(void)
 void metal_machine_cache_flush(void *addr, unsigned int len)
 {
 #ifdef ENABLE_MMU
-#if defined(__aarch64__)
 #if 0 /* xxx FIXME hewb */
     void *end = addr + len;
     if (!addr && !len)
@@ -69,7 +68,6 @@ void metal_machine_cache_flush(void *addr, unsigned int len)
         CACHE_ALIGN(addr, len);
         AlCache_FlushDcacheRange((AL_UINTPTR)addr, (AL_UINTPTR)end);
     }
-#endif
 #else
     AlCache_FlushDcacheAll();
 #endif
