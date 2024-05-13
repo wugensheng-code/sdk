@@ -159,6 +159,15 @@ void __attribute__((optimize("0"))) Enablepinmux1(void)
     *(AL_U32 *)(0xf8803000u) = 0x4; //PS_SD_DET    PS_IO0     sd0_cd__emio_i_11 (in)             Function_12
     *(AL_U32 *)(0xf880342cu) = 0x1; //EMIOSEL_11   1:MIO 0:EMIO
 
+    //SD1
+    *(AL_U32 *)(0xf8803028u) = 0xa; //PS_SD_D0      PS_IO10     sd1_data[0]__emio_io_11 (inout) Function_10
+    *(AL_U32 *)(0xf880302cu) = 0xa; //PS_SD_CMD     PS_IO11     sd1_cmd__emio_io_11 (inout)     Function_10
+    *(AL_U32 *)(0xf8803030u) = 0xa; //PS_SD_CLK     PS_IO12     sd1_clk__emio_io_11 (inout)     Function_10
+    *(AL_U32 *)(0xf8803034u) = 0xa; //PS_SD_D1      PS_IO13     sd1_data[1]__emio_io_11 (inout) Function_10
+    *(AL_U32 *)(0xf8803038u) = 0xa; //PS_SD_D2      PS_IO14     sd1_data[2]__emio_io_11 (inout) Function_10
+    *(AL_U32 *)(0xf880303cu) = 0xa; //PS_SD_D3      PS_IO15     sd1_data[3]__emio_io_11 (inout) Function_10
+    *(AL_U32 *)(0xf8803430u) = 0x1; //EMIOSEL_12    1:MIO 0:EMIO
+
     /* SD0 config driver capability */
     // *((volatile AL_U32 *)(0xf8803940))=0x88000007;
     *((volatile AL_U32 *)(0xf8803948))=0x88000007;
