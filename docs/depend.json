@@ -350,7 +350,7 @@
 			"description":"linux",
 			"supportedProc": ["apu-0", "apu-1", "rpu"],
 			"depends": []
-			
+
 		}
 		},
 		"OS_RTTHREAD":{
@@ -386,8 +386,8 @@
 			"1.0":{
 				"name": "DDR_INIT",
 				"version": "1.0",
-				"depends": ["solutions/demo/baremetal/ddr_init_test"],
-				"description": "Baremetal ddr_init_test demo",
+				"depends": ["solutions/demo/baremetal/ddr_memory_test"],
+				"description": "Baremetal ddr memory test demo",
 				"supportedOS": ["standalone"],
 				"supportedProc": ["apu-0", "apu-1", "rpu"],
                 "buildProperties": { "DOWNLOAD": "ocm"}
@@ -505,7 +505,7 @@
 				"description": "gbe test",
 				"supportedOS": ["rtthread"],
 				"supportedProc": ["apu-0", "apu-1", "rpu"]
-		}	
+		}
 		},
 		"RTT_LWIP_PING": {
 			"1.0":{
@@ -1168,7 +1168,7 @@
 					"supportedOS": ["standalone"],
 					"supportedProc": ["apu-0", "apu-1", "rpu"]
 				}
-			}	
+			}
 		},
 		"PS_DRIVER_XMON": {
 			"1.0":{

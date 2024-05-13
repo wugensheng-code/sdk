@@ -14,8 +14,6 @@ int main()
     printf("Compile Time: %s %s\r\n", __DATE__, __TIME__);
     printf("Demo DDR Init\r\n");
 
-    err = fd_ddr_init();
-
     err += write_read_compare((void*)(1 * MB), (void*)(1 * MB), 32 * KB / sizeof(uint64_t), 0x114514UL, "1MB offset, 32KB Read Back");
     err += write_read_compare((void*)(4 * MB), (void*)(4 * MB),  8 * MB / sizeof(uint64_t), 0x66CCFFUL, "4MB offset, 8MB Read Back");
     for (int i = 0; i < 1; ++i) {
