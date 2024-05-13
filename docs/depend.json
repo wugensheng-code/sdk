@@ -389,7 +389,8 @@
 				"depends": ["solutions/demo/baremetal/ddr_init_test"],
 				"description": "Baremetal ddr_init_test demo",
 				"supportedOS": ["standalone"],
-				"supportedProc": ["apu-0", "apu-1", "rpu"]
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
+                "buildProperties": { "DOWNLOAD": "ocm"}
 			}
 		},
 		"DHRYSTONE": {
