@@ -15,6 +15,7 @@ extern "C" {
 
 #define ALFSBL_SD_DRV_NUM_0     0x5U
 #define ALFSBL_SD_DRV_NUM_1     0x2U
+#define ALFSBL_SD_DRV_NUM_2     0x7U
 
 #define ALFSBL_NUM_IN_FILE_NAME 0x6U
 

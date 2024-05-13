@@ -36,6 +36,11 @@ uint32_t AlFsbl_SdInit(void)
 		rc = f_mount(&fs, "1:", 1);
 		AL_LOG(AL_LOG_LEVEL_INFO,  "drv is emmc\r\n");
 	}
+	else if(drvnum == ALFSBL_SD_DRV_NUM_2){
+		rc = f_mount(&fs, "3:", 1);
+		AL_LOG(AL_LOG_LEVEL_INFO,  "drv is emmc1\r\n");
+	}
+
 	if(rc != FR_OK){
 		AL_LOG(AL_LOG_LEVEL_ERROR,  "drv disk error:%d\r\n", rc);
 		rc = rc | ((ALFSBL_BOOTMODE_SD << 16));

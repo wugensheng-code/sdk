@@ -60,6 +60,7 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
         break;
 
     case ALFSBL_BOOTMODE_EMMC:
+    case ALFSBL_BOOTMODE_EMMC1:
     case ALFSBL_BOOTMODE_SD:
         AL_LOG(AL_LOG_LEVEL_INFO, "EMMC or SD Boot Mode\r\n");
         FsblInstancePtr->DeviceOps.DeviceInit    = AlFsbl_SdInit;
@@ -72,9 +73,6 @@ uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr)
         FsblInstancePtr->DeviceOps.DeviceInit    = AlFsbl_EmmcRawInit;
         FsblInstancePtr->DeviceOps.DeviceCopy    = AlFsbl_EmmcRawCopy;
         FsblInstancePtr->DeviceOps.DeviceRelease = AlFsbl_EmmcRawRelease;
-        break;
-
-    case ALFSBL_BOOTMODE_JTAG_QSPI:
         break;
 
     default:

@@ -444,6 +444,7 @@ static uint32_t AlFsbl_LoadPsPartition(AlFsblInfo *FsblInstancePtr, SecureInfo *
 	}
 	else if((FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_SD)   ||
 			(FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_EMMC) ||
+			(FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_EMMC1) ||
 			(FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_EMMC_RAW)) {
 		Status = FsblInstancePtr->DeviceOps.DeviceCopy(SrcAddress, LoadAddress, Length, NULL);
 		if(ALFSBL_SUCCESS != Status) {

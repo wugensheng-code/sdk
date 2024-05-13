@@ -21,7 +21,7 @@ extern "C" {
 #define ALFSBL_BOOTMODE_NAND      (0x4U)
 #define ALFSBL_BOOTMODE_SD        (0x5U)
 #define ALFSBL_BOOTMODE_EMMC_RAW  (0x6U)
-#define ALFSBL_BOOTMODE_JTAG_QSPI (0x7U)
+#define ALFSBL_BOOTMODE_EMMC1     (0x7U)
 
 uint32_t AlFsbl_PrimaryBootDeviceInit(AlFsblInfo *FsblInstancePtr);
 

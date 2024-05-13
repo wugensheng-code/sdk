@@ -88,6 +88,7 @@ static void AlFsbl_Num2Str(char *Str, uint32_t Num, uint32_t *StrLen)
 }
 
 const char disk1name[] = "1:/";
+const char disk3name[] = "3:/";
 const char bootname[] = "BOOT";
 const char filesuffix[] = ".bin";
 
@@ -99,15 +100,20 @@ void AlFsbl_MakeSdFileName(char *FileName, uint32_t MultiBootReg, uint32_t DrvNu
 	if (0x0 == MultiBootReg) {
 		if (DrvNum == ALFSBL_SD_DRV_NUM_0) {
 			AlFsbl_MemCpy(FileName, "BOOT.bin", sizeof("BOOT.bin"));
-		} else {
+		} else if (DrvNum == ALFSBL_SD_DRV_NUM_1) {
 			AlFsbl_MemCpy(FileName, "1:/BOOT.bin", sizeof("1:/BOOT.bin"));
+		} else {
+			AlFsbl_MemCpy(FileName, "3:/BOOT.bin", sizeof("3:/BOOT.bin"));
 		}
 	} else {
 		AlFsbl_Num2Str(strnum, MultiBootReg, &num2strlen);
 
-		if (DrvNum != ALFSBL_SD_DRV_NUM_0) {
+		if (DrvNum == ALFSBL_SD_DRV_NUM_1) {
 			AlFsbl_MemCpy(FileName, disk1name, sizeof(disk1name)-1);
 			filenamelen = sizeof(disk1name)-1;
+		} else if (DrvNum == ALFSBL_SD_DRV_NUM_2) {
+			AlFsbl_MemCpy(FileName, disk3name, sizeof(disk3name)-1);
+			filenamelen = sizeof(disk3name)-1;
 		}
 
 		AlFsbl_MemCpy(&FileName[filenamelen], bootname, sizeof(bootname)-1);

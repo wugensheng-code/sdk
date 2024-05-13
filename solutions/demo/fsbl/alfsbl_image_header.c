@@ -56,6 +56,7 @@ uint32_t AlFsbl_ValidateImageHeader(AlFsblInfo *FsblInstancePtr)
 
 	/// get image offset address based on multi boot reg value
 	if ((FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_EMMC) || \
+		(FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_EMMC1) || \
 			(FsblInstancePtr->PrimaryBootDevice == ALFSBL_BOOTMODE_SD)) {
 		FsblInstancePtr->ImageOffsetAddress = 0;
 	} else {

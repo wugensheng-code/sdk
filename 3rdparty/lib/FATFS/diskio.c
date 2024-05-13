@@ -16,6 +16,7 @@
 #define SD      0
 #define EMMC    1
 #define USB     2
+#define EMMC1   3
 
 
 #ifdef HAVE_USBPS_DRIVER
@@ -30,8 +31,8 @@ extern int USB_disk_ioctl(BYTE cmd, void *buff);
 
 #define MMC_RD_WR_TIMEOUT_MS    10000
 
-static AL_MMC_HalStruct *Handle;
-static AL_U32 DevId = 0;
+static AL_MMC_HalStruct *Mmc0Handle;
+static AL_MMC_HalStruct *Mmc1Handle;
 static AL_MMC_InitStruct InitConfig = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
     .DmaMode            = AL_MMC_DMA_MODE_SDMA,
@@ -49,9 +50,8 @@ DSTATUS disk_status(BYTE pdrv)
 
     switch (pdrv) {
     case SD:
-        status &= ~STA_NOINIT;
-        break;
     case EMMC:
+    case EMMC1:
         status &= ~STA_NOINIT;
         break;
     case USB:
@@ -71,7 +71,7 @@ DSTATUS disk_initialize (BYTE pdrv)
     switch (pdrv) {
     case SD:
     case EMMC:
-        status = AlMmc_Hal_Init(&Handle, DevId, &InitConfig, AL_NULL);
+        status = AlMmc_Hal_Init(&Mmc0Handle, 0, &InitConfig, AL_NULL);
         if (status == RES_OK) {
             status = RES_OK;
         } else {
@@ -83,6 +83,15 @@ DSTATUS disk_initialize (BYTE pdrv)
 #ifdef HAVE_USBPS_DRIVER
         status = USB_disk_initialize();
 #endif
+        break;
+    case EMMC1:
+        status = AlMmc_Hal_Init(&Mmc1Handle, 1, &InitConfig, AL_NULL);
+        if (status == RES_OK) {
+            status = RES_OK;
+        } else {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Mmc Init Err: 0x%x\r\n", status);
+            status = STA_NOINIT;
+        }
         break;
     default:
         status = STA_NOINIT;
@@ -98,7 +107,7 @@ DRESULT disk_read (BYTE pdrv, BYTE *buff, DWORD sector, UINT count)
     switch (pdrv) {
     case SD:
     case EMMC:
-        status = AlMmc_Hal_ReadBlocked(Handle, (AL_U8 *)buff, sector, count, MMC_RD_WR_TIMEOUT_MS);
+        status = AlMmc_Hal_ReadBlocked(Mmc0Handle, (AL_U8 *)buff, sector, count, MMC_RD_WR_TIMEOUT_MS);
         if (status != RES_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Mmc Read Err: 0x%x\r\n", status);
             status = RES_ERROR;
@@ -108,6 +117,13 @@ DRESULT disk_read (BYTE pdrv, BYTE *buff, DWORD sector, UINT count)
 #ifdef HAVE_USBPS_DRIVER
         status = USB_disk_read(buff, sector, count);
 #endif
+        break;
+    case EMMC1:
+        status = AlMmc_Hal_ReadBlocked(Mmc1Handle, (AL_U8 *)buff, sector, count, MMC_RD_WR_TIMEOUT_MS);
+        if (status != RES_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Mmc Read Err: 0x%x\r\n", status);
+            status = RES_ERROR;
+        }
         break;
     default:
         status = RES_PARERR;
@@ -128,7 +144,7 @@ DRESULT disk_write (BYTE pdrv, const BYTE *buff, DWORD sector, UINT count)
     switch (pdrv) {
     case SD:
     case EMMC:
-        status = AlMmc_Hal_WriteBlocked(Handle, (AL_U8 *)buff, sector, count, MMC_RD_WR_TIMEOUT_MS);
+        status = AlMmc_Hal_WriteBlocked(Mmc0Handle, (AL_U8 *)buff, sector, count, MMC_RD_WR_TIMEOUT_MS);
         if (status != RES_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Mmc Write Err: 0x%x\r\n", status);
             status = RES_ERROR;
@@ -138,6 +154,13 @@ DRESULT disk_write (BYTE pdrv, const BYTE *buff, DWORD sector, UINT count)
 #ifdef HAVE_USBPS_DRIVER
         status = USB_disk_write(buff, sector, count);
 #endif
+        break;
+    case EMMC1:
+        status = AlMmc_Hal_WriteBlocked(Mmc1Handle, (AL_U8 *)buff, sector, count, MMC_RD_WR_TIMEOUT_MS);
+        if (status != RES_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Mmc Write Err: 0x%x\r\n", status);
+            status = RES_ERROR;
+        }
         break;
     default:
         status = RES_PARERR;
@@ -158,7 +181,7 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void *buff)
         {
         case GET_SECTOR_SIZE :
             // Get R/W sector size (WORD)
-            *(WORD *)buff = (WORD)(Handle->Dev.CardInfo.BlkLen);
+            *(WORD *)buff = (WORD)(Mmc0Handle->Dev.CardInfo.BlkLen);
             break;
         case GET_BLOCK_SIZE :
             // Get erase block size in unit of sector (DWORD)
@@ -166,7 +189,7 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void *buff)
             break;
         case GET_SECTOR_COUNT:
             //*(DWORD * )buff = 1000;
-            *(DWORD *)buff = (DWORD)(Handle->Dev.CardInfo.CardCap * 1024 / Handle->Dev.CardInfo.BlkLen);
+            *(DWORD *)buff = (DWORD)(Mmc0Handle->Dev.CardInfo.CardCap * 1024 / Mmc0Handle->Dev.CardInfo.BlkLen);
             break;
         case CTRL_SYNC :
             break;
@@ -179,6 +202,27 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void *buff)
 #ifdef HAVE_USBPS_DRIVER
         status = USB_disk_ioctl(cmd,buff);
 #endif
+        break;
+    case EMMC1:
+        switch (cmd)
+        {
+        case GET_SECTOR_SIZE :
+            // Get R/W sector size (WORD)
+            *(WORD *)buff = (WORD)(Mmc1Handle->Dev.CardInfo.BlkLen);
+            break;
+        case GET_BLOCK_SIZE :
+            // Get erase block size in unit of sector (DWORD)
+            *(WORD *)buff = 1;
+            break;
+        case GET_SECTOR_COUNT:
+            *(DWORD *)buff = (DWORD)(Mmc1Handle->Dev.CardInfo.CardCap * 1024 / Mmc1Handle->Dev.CardInfo.BlkLen);
+            break;
+        case CTRL_SYNC :
+            break;
+        default:
+            break;
+        }
+        status = RES_OK;
         break;
     default:
         status = RES_PARERR;
