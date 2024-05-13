@@ -382,6 +382,16 @@
 				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			}
 		},
+        "DDR_INIT": {
+			"1.0":{
+				"name": "DDR_INIT",
+				"version": "1.0",
+				"depends": ["solutions/demo/baremetal/ddr_init_test"],
+				"description": "Baremetal ddr_init_test demo",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"]
+			}
+		},
 		"DHRYSTONE": {
 			"1.0":{
 				"name": "DHRYSTONE",
