@@ -378,7 +378,6 @@ static AL_MMC_InitStruct task10_MmcSdmaConfig = {
 };
 
 static AL_QSPI_ConfigsStruct task11_QspiX4Config = {
-    .ClkDiv             = 20,
     .SamplDelay         = 2,
     .SlvToggleEnum      = QSPI_SLV_TOGGLE_DISABLE,
     .SpiFrameFormat     = SPI_QUAD_FORMAT,

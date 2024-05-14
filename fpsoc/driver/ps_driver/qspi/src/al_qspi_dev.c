@@ -59,7 +59,6 @@ static AL_QSPI_ConfigsStruct QSPIDefInitConfigs =
     .Trans.EnSpiCfg.TransType     = QSPI_TT0,
     .Trans.EnSpiCfg.WaitCycles    = 8,
     .ClockStretch  = QSPI_EnableClockStretch,
-    .ClkDiv             = 70,
     .SamplDelay         = 0,
     .SlvToggleEnum      = QSPI_SLV_TOGGLE_DISABLE,
     .Trans.SlvSelEnum         = QSPI_SER_SS0_EN
@@ -218,7 +217,7 @@ AL_S32 AlQspi_Dev_Init(AL_QSPI_DevStruct *Qspi, AL_QSPI_HwConfigStruct *HwConfig
 
     AlQspi_ll_Disable(Qspi->HwConfig.BaseAddress);
     AlQspi_ll_SetClockStretch(Qspi->HwConfig.BaseAddress, Qspi->Configs.ClockStretch);
-    AlQspi_ll_SetClkDiv(Qspi->HwConfig.BaseAddress, Qspi->Configs.ClkDiv);
+    AlQspi_ll_SetClkDiv(Qspi->HwConfig.BaseAddress, (QSPI_CLOCK / Qspi->HwConfig.IoFreq));
     AlQspi_ll_SetSlvSelToggle(Qspi->HwConfig.BaseAddress, Qspi->Configs.SlvToggleEnum);
     AlQspi_ll_SetRecvDataSamplDelay(Qspi->HwConfig.BaseAddress, Qspi->Configs.SamplDelay);     /* 88M */
     AlQspi_ll_SetQspiFrameFormat(Qspi->HwConfig.BaseAddress, Qspi->Configs.SpiFrameFormat);
@@ -1049,15 +1048,15 @@ AL_S32 AlQspi_Dev_IoCtl(AL_QSPI_DevStruct *Qspi, AL_Qspi_IoCtlCmdEnum Cmd, AL_VO
         break;
     }
 
-    case AL_QSPI_IOCTL_SET_CLOCK_DIV: {
-        AL_U16 *ClockDiv = (AL_U16 *)Data;
-        Qspi->Configs.ClkDiv = *ClockDiv;
-        AlQspi_ll_SetClkDiv(Qspi->HwConfig.BaseAddress, Qspi->Configs.ClkDiv);
+    case AL_QSPI_IOCTL_SET_IO_FREQ: {
+        AL_U16 *IoFreq = (AL_U16 *)Data;
+        Qspi->HwConfig.IoFreq = *IoFreq;
+        AlQspi_ll_SetClkDiv(Qspi->HwConfig.BaseAddress, (QSPI_CLOCK / Qspi->HwConfig.IoFreq));
     }
 
-    case AL_QSPI_IOCTL_GET_CLOCK_DIV: {
-        AL_U16 *ClockDiv = (AL_U16 *)Data;
-        *ClockDiv = Qspi->Configs.ClkDiv;
+    case AL_QSPI_IOCTL_GET_IO_FREQ: {
+        AL_U16 *IoFreq = (AL_U16 *)Data;
+        *IoFreq = Qspi->HwConfig.IoFreq;
     }
 
     case AL_QSPI_IOCTL_SET_SLV_TOGGLE: {

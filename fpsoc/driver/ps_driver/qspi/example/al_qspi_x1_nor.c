@@ -28,7 +28,6 @@ AL_QSPI_HalStruct *Handle;
 /* When SpiFrameFormat is Dual Quad,TransMode can only use QSPI_TX_ONLY,QSPI_RX_ONLY mode */
 AL_QSPI_ConfigsStruct QspiInitConfigs =
 {
-    .ClkDiv             = 20,
     .SamplDelay         = 0,
     .SlvToggleEnum      = QSPI_SLV_TOGGLE_DISABLE,
     .SpiFrameFormat     = SPI_STANDARD_FORMAT,

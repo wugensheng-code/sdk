@@ -585,7 +585,8 @@ typedef struct {
     AL_UINTPTR              BaseAddress;    /**< Base address of the device */
     AL_U16                  InterrupId;     /**< Unique ID  of interrupt */
     AL_U16                  FifoLen;        /**< Fifo length */
-	AL_U16                  CsSel;          /**< Cs select */
+    AL_U16                  CsSel;          /**< Cs select */
+    AL_U16                  IoFreq;         /**< Io frequency */
 } AL_QSPI_HwConfigStruct;
 
 #ifdef __cplusplus

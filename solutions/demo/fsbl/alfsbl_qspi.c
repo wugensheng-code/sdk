@@ -14,7 +14,6 @@ AL_QSPI_HalStruct *Handle;
 
 AL_QSPI_ConfigsStruct QspiX4InitConfigs =
 {
-    .ClkDiv             = 2,
     .SamplDelay         = 2,
     .SlvToggleEnum      = QSPI_SLV_TOGGLE_DISABLE,
     .SpiFrameFormat     = SPI_QUAD_FORMAT,

@@ -434,7 +434,6 @@ typedef struct
 typedef struct
 {
     AL_QSPI_FrfEnum             SpiFrameFormat;
-    AL_U16                      ClkDiv;
     AL_U16                      SamplDelay;
     AL_QSPI_SlvSelToggleEnum    SlvToggleEnum;
     AL_QSPI_ClockStretchEnum    ClockStretch;  /* clock stretch is useful in SPI_QUAD_FORMAT and SPI_QUAD_FORMAT */

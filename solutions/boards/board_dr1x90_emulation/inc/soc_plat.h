@@ -137,6 +137,7 @@ extern "C" {
 
 #define HAVE_QSPIPS_DRIVER
 #define QSPI_CLOCK              (50*MHZ)
+#define QSPI_IO_FREQ            (10*MHZ)
 
 #define HAVE_SPIPS_DRIVER
 #define SPI_CLOCK               (50*MHZ)
