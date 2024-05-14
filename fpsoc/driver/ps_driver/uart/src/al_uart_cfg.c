@@ -24,6 +24,7 @@
 
 AL_UART_HwConfigStruct AlUart_HwConfig[AL_UART_NUM_INSTANCE] =
 {
+#ifdef UART0PS_ENABLE
     {
         .DeviceId           = 0,
         .BaseAddress        = UART0__BASE_ADDR,
@@ -31,7 +32,9 @@ AL_UART_HwConfigStruct AlUart_HwConfig[AL_UART_NUM_INSTANCE] =
         .IntrNum            = SOC_UART0_IRQn,
         .ModemPinsConnected = 1
     },
+#endif
 
+#ifdef UART1PS_ENABLE
     {
         .DeviceId           = 1,
         .BaseAddress        = UART1__BASE_ADDR,
@@ -39,4 +42,5 @@ AL_UART_HwConfigStruct AlUart_HwConfig[AL_UART_NUM_INSTANCE] =
         .IntrNum            = SOC_UART1_IRQn,
         .ModemPinsConnected = 1
     }
+#endif
 };

@@ -12,6 +12,7 @@
 
 AL_TTC_HwConfigStruct AlTtc_HwConfig[AL_TTC_NUM_INSTANCE] =
 {
+#ifdef TTC0PS_ENABLE
     {
         .DevId              = 0,
         .BaseAddress        = TTC0__TC0_BASE_ADDR,
@@ -30,6 +31,9 @@ AL_TTC_HwConfigStruct AlTtc_HwConfig[AL_TTC_NUM_INSTANCE] =
         .InputClockHz       = TTC_CLOCK,
         .IntrNum            = SOC_TTC0_TC2_IRQn,
     },
+#endif
+
+#ifdef TTC1PS_ENABLE
     {
         .DevId              = 3,
         .BaseAddress        = TTC1__TC0_BASE_ADDR,
@@ -48,4 +52,5 @@ AL_TTC_HwConfigStruct AlTtc_HwConfig[AL_TTC_NUM_INSTANCE] =
         .InputClockHz       = TTC_CLOCK,
         .IntrNum            = SOC_TTC1_TC2_IRQn,
     },
+#endif
 };
