@@ -24,18 +24,26 @@
 
 AL_SPI_HwConfigStruct AlSpi_HwCfg[AL_SPI_NUM_INSTANCE] =
 {
+#ifdef SPI0PS_ENABLE
     {
         .DeviceId           = 0,
         .BaseAddress        = SPI0_BASE_ADDR,
+        .InputClockHz       = SPI_CLOCK,
+        .IOClockHz          = SPI0_IO_FREQ,
         .IntrId             = SOC_SPI0_MST_IRQn,
         .FifoLen            = SPI_FIFO_LENGTH,
         .CsSel              = SPI_CS0_EN
     },
+#endif
+#ifdef SPI1PS_ENABLE
     {
         .DeviceId           = 1,
         .BaseAddress        = SPI1_BASE_ADDR,
+        .InputClockHz       = SPI_CLOCK,
+        .IOClockHz          = SPI1_IO_FREQ,
         .IntrId             = SOC_SPI1_MST_IRQn,
         .FifoLen            = SPI_FIFO_LENGTH,
         .CsSel              = SPI_CS0_EN
     }
+#endif
 };

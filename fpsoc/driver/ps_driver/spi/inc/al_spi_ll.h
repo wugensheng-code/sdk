@@ -156,7 +156,6 @@ typedef struct
     AL_SPI_Mode             Mode;
     AL_SPI_ProtFormat       ProtFormat;
     AL_SPI_ClockEnum        ClockEnum;
-    AL_U16                  ClkDiv;
     AL_SPI_SlvSelToggleEnum SlvToggleEnum;
     AL_SPI_TransStruct      Trans;
 } AL_SPI_ConfigsStruct;
@@ -314,6 +313,12 @@ static inline AL_VOID AlSpi_ll_SetClkDiv(AL_REG SpiBaseAddr, AL_U16 SpiClkDiv)
 {
     AL_REG32_SET_BITS(SpiBaseAddr + SPI_BAUDR_MST_OFFSET, SPI_BAUDR_MST_SCKDV_SHIFT,
              SPI_BAUDR_MST_SCKDV_SIZE, SpiClkDiv);
+}
+
+static inline AL_U16 AlSpi_ll_GetClkDiv(AL_REG SpiBaseAddr)
+{
+    return AL_REG32_GET_BITS(SpiBaseAddr + SPI_BAUDR_MST_OFFSET, SPI_BAUDR_MST_SCKDV_SHIFT,
+                             SPI_BAUDR_MST_SCKDV_SIZE);
 }
 
 /**

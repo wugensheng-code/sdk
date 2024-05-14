@@ -463,6 +463,8 @@ extern "C" {
 typedef struct {
     AL_U16                     DeviceId;        /**< Unique ID  of device */
     AL_UINTPTR                 BaseAddress;     /**< Base address of the device */
+    AL_U32                     InputClockHz;
+    AL_U32                     IOClockHz;
     AL_U16                     IntrId;          /**< Unique ID  of interrupt */
     AL_U16                     FifoLen;         /**< Fifo length */
     AL_U16                     CsSel;           /**< Cs select */

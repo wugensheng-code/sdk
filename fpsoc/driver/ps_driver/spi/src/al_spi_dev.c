@@ -21,7 +21,6 @@ static AL_SPI_ConfigsStruct SpiDefInitConfigs =
     .Mode               = SPI_MASTER_MODE,
     .ProtFormat         = MOTOROLA_SPI,
     .ClockEnum          = SPI_CLK_MODE0,
-    .ClkDiv             = 70,
     .SlvToggleEnum      = SPI_SLV_TOGGLE_DISABLE
 };
 
@@ -164,6 +163,8 @@ AL_S32 AlSpi_Dev_Init(AL_SPI_DevStruct *Spi, AL_SPI_HwConfigStruct *HwConfig, AL
     if (Spi == AL_NULL) {
         return AL_SPI_ERR_ILLEGAL_PARAM;
     }
+    AL_U16 ClkDiv;
+
     Spi->HwConfig = *HwConfig;
 
     Spi->Configs = (InitConfig == AL_NULL) ? SpiDefInitConfigs : (*InitConfig);
@@ -173,7 +174,10 @@ AL_S32 AlSpi_Dev_Init(AL_SPI_DevStruct *Spi, AL_SPI_HwConfigStruct *HwConfig, AL
     AlSpi_ll_Disable(Spi->HwConfig.BaseAddress);
     AlSpi_ll_SetProtFormat(Spi->HwConfig.BaseAddress, Spi->Configs.ProtFormat);
     AlSpi_ll_SetCpolAndCpha(Spi->HwConfig.BaseAddress, Spi->Configs.ClockEnum);
-    AlSpi_ll_SetClkDiv(Spi->HwConfig.BaseAddress, Spi->Configs.ClkDiv);
+
+    ClkDiv = (Spi->HwConfig.InputClockHz) / (Spi->HwConfig.IOClockHz);
+    AlSpi_ll_SetClkDiv(Spi->HwConfig.BaseAddress, ClkDiv);
+
     AlSpi_ll_SetSlvSelToggle(Spi->HwConfig.BaseAddress, Spi->Configs.SlvToggleEnum);
     AlSpi_ll_MaskIntr(Spi->HwConfig.BaseAddress, SPI_TXEIM | SPI_RXFIM);
     AlSpi_ll_Enable(Spi->HwConfig.BaseAddress);
@@ -590,13 +594,12 @@ AL_S32 AlSpi_Dev_IoCtl(AL_SPI_DevStruct *Spi, AL_Spi_IoCtlCmdEnum Cmd, AL_VOID *
 
     case AL_SPI_IOCTL_SET_CLOCK_DIV: {
         AL_U16 *ClockDiv = (AL_U16 *)Data;
-        Spi->Configs.ClkDiv = *ClockDiv;
-        AlSpi_ll_SetClkDiv(Spi->HwConfig.BaseAddress, Spi->Configs.ClkDiv);
+        AlSpi_ll_SetClkDiv(Spi->HwConfig.BaseAddress, *ClockDiv);
     }
 
     case AL_SPI_IOCTL_GET_CLOCK_DIV: {
         AL_U16 *ClockDiv = (AL_U16 *)Data;
-        *ClockDiv = Spi->Configs.ClkDiv;
+        *ClockDiv = AlSpi_ll_GetClkDiv(Spi->HwConfig.BaseAddress);
     }
 
     case AL_SPI_IOCTL_SET_SLV_TOGGLE: {

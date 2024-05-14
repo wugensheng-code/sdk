@@ -24,7 +24,6 @@ AL_SPI_ConfigsStruct SpiInitConfigs =
     .ProtFormat         = MOTOROLA_SPI,
     .ClockEnum          = SPI_CLK_MODE0,
     .SlvToggleEnum      = SPI_SLV_TOGGLE_DISABLE,
-    .ClkDiv             = 40
 };
 
 AL_U8 CACHE_LINE_ALIGN FlashId[10] = { 0x0 };
