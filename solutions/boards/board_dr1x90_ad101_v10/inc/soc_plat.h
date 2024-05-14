@@ -47,9 +47,9 @@ extern "C" {
 #define MHz                                 1000000
 #define MHZ                                 1000000
 #define UART_CLOCK                         ( 50*MHz)
-#define I2C_CLOCK                          ( 40*MHz)
+#define I2C_CLOCK                          ( 100*MHz)
 #define CAN_CLOCK                          ( 80*MHz)
-#define GBE_CLOCK                          ( 25*MHz)
+#define GBE_CLOCK                          ( 500*MHz)
 #define ADC_CLOCK                           (50*MHz)
 
 #define CPU_CLOCK                       (799.92*MHz)
@@ -294,8 +294,11 @@ extern "C" {
 #define HAVE_QSPIPS_DRIVER
 #define HAVE_UARTPS_DRIVER
 #define GBE_DEVICE_ID (0)
-#ifndef GBE_PTP_CLOCK
-#define GBE_PTP_CLOCK (100*MHz)
+#ifndef GBE0_PTP_CLOCK
+#define GBE0_PTP_CLOCK (100*MHz)
+#endif
+#ifndef GBE1_PTP_CLOCK
+#define GBE1_PTP_CLOCK (100*MHz)
 #endif
 
 /**

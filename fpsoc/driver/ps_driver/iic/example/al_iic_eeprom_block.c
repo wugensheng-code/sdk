@@ -54,8 +54,7 @@ AL_S32 static AlIic_EepromReadData(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, A
     AL_S32 Ret;
 
     /* Send read address */
-    Ret = AlIic_Hal_MasterSendDataBlock(Handle, SlaveAddr, (AL_U8 *)&ReadAddr,
-                                        sizeof(AddrType), IIC_MASTER_TEST_TIMEOUT_MS);
+    Ret = AlIic_EepromWriteData(Handle, SlaveAddr, (AL_U8 *)&ReadAddr, sizeof(AddrType));
     if (Ret != AL_OK) {
         return Ret;
     }

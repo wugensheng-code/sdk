@@ -1955,6 +1955,7 @@ typedef struct
     AL_U32                  DeviceId;
     AL_U32                  BaseAddress;
     AL_U32                  InputClockHz;
+    AL_U32                  PtpInputClockHz;
     AL_U32                  IntrNum;
 } AL_GBE_HwConfigStruct;
 

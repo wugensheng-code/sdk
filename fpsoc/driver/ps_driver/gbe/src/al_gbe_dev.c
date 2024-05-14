@@ -1635,6 +1635,7 @@ AL_S32 AlGbe_Dev_PtpInit(AL_GBE_DevStruct *Gbe, AL_GBE_PtpConfigStruct *PtpConfi
     AL_S32 Data;
     AL_S64 Temp;
     AL_U32 Addend;
+    AL_U32 PtpClock;
 
     AL_ASSERT((Gbe != AL_NULL) && (PtpConfig != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
@@ -1646,11 +1647,13 @@ AL_S32 AlGbe_Dev_PtpInit(AL_GBE_DevStruct *Gbe, AL_GBE_PtpConfigStruct *PtpConfi
 
     AlGbe_ll_EnableTimestampDigitalorBinaryRollover(GbeBaseAddr, AL_GBE_FUNC_ENABLE);
 
+    PtpClock = Gbe->HwConfig.PtpInputClockHz;
+
     if (PtpConfig->UpdateMethod == AL_GBE_PTP_FINE_UPDATE) {
         AlGbe_ll_EnableFineTimestampUpdate(GbeBaseAddr, AL_GBE_FUNC_ENABLE);
-        Data = (AL_GBE_ONE_SEC_IN_NANOSEC / GBE_PTP_CLOCK) * 2;
+        Data = (AL_GBE_ONE_SEC_IN_NANOSEC / PtpClock) * 2;
     } else {
-        Data = (AL_GBE_ONE_SEC_IN_NANOSEC / GBE_PTP_CLOCK);
+        Data = (AL_GBE_ONE_SEC_IN_NANOSEC / PtpClock);
     }
 
     /* 0.465ns accuracy */
@@ -1669,7 +1672,7 @@ AL_S32 AlGbe_Dev_PtpInit(AL_GBE_DevStruct *Gbe, AL_GBE_PtpConfigStruct *PtpConfi
      * where, freq_div_ratio = 1e9ns/sec_inc
      */
     Temp = Temp << 32;
-    Addend = Temp / GBE_PTP_CLOCK;
+    Addend = Temp / PtpClock;
 
     Gbe->PtpConfig.DefaultAddend = Addend;
 

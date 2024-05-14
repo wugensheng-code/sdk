@@ -292,8 +292,11 @@ extern "C" {
 #define HAVE_QSPIPS_DRIVER
 #define HAVE_UARTPS_DRIVER
 #define GBE_DEVICE_ID (0)
-#ifndef GBE_PTP_CLOCK
-#define GBE_PTP_CLOCK (100*MHz)
+#ifndef GBE0_PTP_CLOCK
+#define GBE0_PTP_CLOCK (100*MHz)
+#endif
+#ifndef GBE1_PTP_CLOCK
+#define GBE1_PTP_CLOCK (100*MHz)
 #endif
 
 /**
