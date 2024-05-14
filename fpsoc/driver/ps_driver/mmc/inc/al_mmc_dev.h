@@ -153,6 +153,7 @@ typedef enum
  */
 typedef enum
 {
+    AL_MMC_FREQ_KHZ_HPF     = 0,    /* Flow HPF config io clock */
     AL_MMC_FREQ_KHZ_100     = 100,
     AL_MMC_FREQ_KHZ_200     = 200,
     AL_MMC_FREQ_KHZ_DEF     = 400,

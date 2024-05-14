@@ -1212,6 +1212,7 @@ typedef struct {
     AL_U32      IntrId;
     AL_U32      BusWidth;
     AL_U32      InputClk;
+    AL_U32      IoClk;
     AL_U32      CardDetectSig;
     AL_U32      WritePortSig;
     AL_U32      CardDetect;

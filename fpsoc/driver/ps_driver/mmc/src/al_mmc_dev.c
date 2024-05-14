@@ -1699,6 +1699,13 @@ AL_S32 AlMmc_Dev_Init(AL_MMC_DevStruct *Dev, AL_MMC_HwConfigStruct *HwConfig, AL
 
     AL_S32 Ret = AL_OK;
 
+    if (InitConfig->FreqKhz == AL_MMC_FREQ_KHZ_HPF) {
+        InitConfig->FreqKhz = HwConfig->IoClk / 1000;
+        if (InitConfig->FreqKhz > AL_MMC_FREQ_KHZ_25000) {
+            InitConfig->SpdMode = AL_MMC_SPD_HS_SDR25;
+        }
+    }
+
     if (AlMmc_Dev_GetState(Dev, AL_MMC_STATE_READY)) {
         if (InitConfig == AL_NULL || IS_SAME_INITCONFIGS(Dev->Config, *InitConfig)) {
             return AL_OK;
