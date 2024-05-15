@@ -175,7 +175,7 @@ AL_S32 AlSpi_Dev_Init(AL_SPI_DevStruct *Spi, AL_SPI_HwConfigStruct *HwConfig, AL
     AlSpi_ll_SetProtFormat(Spi->HwConfig.BaseAddress, Spi->Configs.ProtFormat);
     AlSpi_ll_SetCpolAndCpha(Spi->HwConfig.BaseAddress, Spi->Configs.ClockEnum);
 
-    ClkDiv = (Spi->HwConfig.InputClockHz) / (Spi->HwConfig.IOClockHz);
+    ClkDiv = (Spi->HwConfig.InputClockHz) / (Spi->HwConfig.IoClockHz);
     AlSpi_ll_SetClkDiv(Spi->HwConfig.BaseAddress, ClkDiv);
 
     AlSpi_ll_SetSlvSelToggle(Spi->HwConfig.BaseAddress, Spi->Configs.SlvToggleEnum);

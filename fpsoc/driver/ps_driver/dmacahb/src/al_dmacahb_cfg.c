@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include "al_hal.h"
 #include "al_dmacahb_hw.h"
 
 AL_DMACAHB_HwConfigStruct AlDmacAhb_HwConfig[AL_DMACAHB_NUM_INSTANCE] =

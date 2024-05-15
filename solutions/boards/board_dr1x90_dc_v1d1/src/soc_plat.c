@@ -47,6 +47,22 @@ int Soc_PlatGetDeviceVersion()
 
 int Soc_PlatInit()
 {
-	demo_ddr_init();
+    demo_ddr_init();
     return AL_OK;
+}
+
+int Soc_PsPlInit()
+{
+    /// open pl-ps bus connections, hp and gpm bus
+    AL_REG32_SET_BITS(0xF8801078UL, 0, 2, 3);
+    AL_REG32_SET_BITS(0xF8801078UL, 4, 2, 3);
+
+    /// open pl-ps bus connections, fahb and gps bus
+    AL_REG32_SET_BITS(0xF8800080UL, 0, 2, 0);
+
+    /// open apu acp bus connections
+    AL_REG32_SET_BITS(0xF8801070UL, 8, 1, 1);
+    AL_REG32_SET_BITS(0xF8802004UL, 0, 1, 0);
+
+    return 0;
 }

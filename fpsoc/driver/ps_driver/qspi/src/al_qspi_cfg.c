@@ -24,7 +24,6 @@
 
 AL_QSPI_HwConfigStruct AlQSPI_HwCfg[AL_QSPI_NUM_INSTANCE] =
 {
-#ifdef QSPIPS_ENABLE
     {
         .IoFreq             = QSPI_IO_FREQ,
         .DeviceId           = 0,
@@ -33,5 +32,4 @@ AL_QSPI_HwConfigStruct AlQSPI_HwCfg[AL_QSPI_NUM_INSTANCE] =
         .FifoLen            = QSPI_FIFO_LENGTH,
         .CsSel              = QSPI_CS0_EN
     }
-#endif
 };
