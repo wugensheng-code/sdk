@@ -217,7 +217,7 @@ AL_S32 AlQspi_Dev_Init(AL_QSPI_DevStruct *Qspi, AL_QSPI_HwConfigStruct *HwConfig
 
     AlQspi_ll_Disable(Qspi->HwConfig.BaseAddress);
     AlQspi_ll_SetClockStretch(Qspi->HwConfig.BaseAddress, Qspi->Configs.ClockStretch);
-    AlQspi_ll_SetClkDiv(Qspi->HwConfig.BaseAddress, (QSPI_CLOCK / Qspi->HwConfig.IoFreq));
+    AlQspi_ll_SetClkDiv(Qspi->HwConfig.BaseAddress, (Qspi->HwConfig.InputClockHz / Qspi->HwConfig.IoFreq));
     AlQspi_ll_SetSlvSelToggle(Qspi->HwConfig.BaseAddress, Qspi->Configs.SlvToggleEnum);
     AlQspi_ll_SetRecvDataSamplDelay(Qspi->HwConfig.BaseAddress, Qspi->Configs.SamplDelay);     /* 88M */
     AlQspi_ll_SetQspiFrameFormat(Qspi->HwConfig.BaseAddress, Qspi->Configs.SpiFrameFormat);
@@ -1051,7 +1051,7 @@ AL_S32 AlQspi_Dev_IoCtl(AL_QSPI_DevStruct *Qspi, AL_Qspi_IoCtlCmdEnum Cmd, AL_VO
     case AL_QSPI_IOCTL_SET_IO_FREQ: {
         AL_U16 *IoFreq = (AL_U16 *)Data;
         Qspi->HwConfig.IoFreq = *IoFreq;
-        AlQspi_ll_SetClkDiv(Qspi->HwConfig.BaseAddress, (QSPI_CLOCK / Qspi->HwConfig.IoFreq));
+        AlQspi_ll_SetClkDiv(Qspi->HwConfig.BaseAddress, (Qspi->HwConfig.InputClockHz / Qspi->HwConfig.IoFreq));
     }
 
     case AL_QSPI_IOCTL_GET_IO_FREQ: {

@@ -587,6 +587,7 @@ typedef struct {
     AL_U16                  FifoLen;        /**< Fifo length */
     AL_U16                  CsSel;          /**< Cs select */
     AL_U16                  IoFreq;         /**< Io frequency */
+    AL_U32                  InputClockHz;   /**< Input Clock */
 } AL_QSPI_HwConfigStruct;
 
 #ifdef __cplusplus
