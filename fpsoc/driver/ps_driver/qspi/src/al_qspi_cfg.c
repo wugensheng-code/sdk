@@ -30,7 +30,7 @@ AL_QSPI_HwConfigStruct AlQSPI_HwCfg[AL_QSPI_NUM_INSTANCE] =
         .BaseAddress        = QSPI_BASE_ADDR,
         .InterrupId         = SOC_QSPI_IRQn,
         .FifoLen            = QSPI_FIFO_LENGTH,
-        .CsSel              = QSPI_CS0_EN
+        .CsSel              = QSPI_CS0_EN,
         .InputClockHz       = QSPI_CLOCK,
     }
 };
