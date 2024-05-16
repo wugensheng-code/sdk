@@ -38,8 +38,6 @@
 
 AL_S32 main(AL_VOID)
 {
-    Soc_PlatInit();
-
     AL_S32 Ret = AL_OK;
     AL_U32 Key = 0;
     AL_U32 Same_Key = 0;
