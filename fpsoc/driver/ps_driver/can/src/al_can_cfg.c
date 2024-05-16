@@ -8,14 +8,14 @@
 #include "al_can_hw.h"
 
 AL_CAN_HwConfigStruct AlCan_HwConfig[AL_CAN_NUM_INSTANCE] = {
-#ifdef CANPS0_ENABLE
+#ifdef CAN0PS_ENABLE
     {
         .DeviceId       = 0,
         .BaseAddress    = CAN0__BASE_ADDR,
         .IntrId         = SOC_CAN0_IRQn
     },
 #endif
-#ifdef CANPS1_ENABLE
+#ifdef CAN1PS_ENABLE
 
     {
         .DeviceId       = 1,
