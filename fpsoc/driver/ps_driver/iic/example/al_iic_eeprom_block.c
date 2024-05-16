@@ -81,7 +81,6 @@ AL_S32 AlIic_E2promExample()
     {
         .Mode           = AL_IIC_MODE_MASTER,
         .AddrMode       = AL_IIC_ADDR_7BIT,
-        .SpeedMode      = AL_IIC_STANDARD_MODE,
     };
     AL_U8 WriteBuffer[sizeof(AddrType) + EEPROM_PAGE_SIZE] =
     {

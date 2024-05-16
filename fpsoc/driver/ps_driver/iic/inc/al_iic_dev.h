@@ -28,6 +28,10 @@ extern "C" {
 #define AL_IIC_HS_MIN_SCL_HIGH_100PF   60
 #define AL_IIC_HS_MIN_SCL_LOW_100PF    120
 
+#define AL_IIC_RATE_100K                100000
+#define AL_IIC_RATE_400K                400000
+#define AL_IIC_RATE_3400K               3400000
+
 #define AL_IIC_MAX_SLAVE_ADDR          0x3FF
 
 #define DEFAULT_SDA_SCL_AT_LOW_TIMEOUT 40000
@@ -42,9 +46,6 @@ typedef struct
 {
     AL_IIC_OperationModeEnum    Mode;
     AL_IIC_AddrModeEnum         AddrMode;
-
-    /* Just for master, slave not used */
-    AL_IIC_SpeedModeEnum        SpeedMode;
 
     /* Just for slave, master not used */
     AL_U16                      SlaveAddr;
@@ -164,8 +165,8 @@ typedef enum
 {
     AL_IIC_IOCTL_SET_ADDR_MODE,
     AL_IIC_IOCTL_GET_ADDR_MODE,
-    AL_IIC_IOCTL_SET_SPEED_MODE,
-    AL_IIC_IOCTL_GET_SPEED_MODE,
+    AL_IIC_IOCTL_SET_RATE,
+    AL_IIC_IOCTL_GET_RATE,
 } AL_IIC_IoCtlCmdEnum;
 
 /* IIC error code define */

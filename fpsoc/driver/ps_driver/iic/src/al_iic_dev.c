@@ -9,14 +9,13 @@
 #define IS_SAME_INITCONFIGS(Dest, Src)                                          \
 (                                                                               \
     (Dest).Mode == (Src).Mode && (Dest).AddrMode == (Src).AddrMode &&           \
-    (Dest).SpeedMode == (Src).SpeedMode && (Dest).SlaveAddr == (Src).SlaveAddr  \
+    (Dest).SlaveAddr == (Src).SlaveAddr                                         \
 )
 
 static AL_IIC_InitStruct IicDefInitConfigs =
 {
     .Mode           = AL_IIC_MODE_MASTER,
     .AddrMode       = AL_IIC_ADDR_7BIT,
-    .SpeedMode      = AL_IIC_STANDARD_MODE,
 };
 
 extern AL_IIC_HwConfigStruct AlIic_HwConfig[AL_IIC_NUM_INSTANCE];
@@ -172,9 +171,8 @@ static AL_VOID AlIic_Dev_InitSclHighLowCout(AL_IIC_DevStruct *Iic, AL_IIC_SpeedM
 */
 static AL_S32 AlIic_Dev_CheckConfigParam(AL_IIC_InitStruct *InitConfig)
 {
-    AL_ASSERT ((InitConfig->Mode == AL_IIC_MODE_SLAVE) || ((InitConfig->Mode == AL_IIC_MODE_MASTER) &&
-              ((InitConfig->SpeedMode == AL_IIC_STANDARD_MODE || InitConfig->SpeedMode == AL_IIC_FAST_MODE ||
-                InitConfig->SpeedMode == AL_IIC_HIGH_SPEED_MODE))), AL_IIC_ERR_ILLEGAL_PARAM);
+    AL_ASSERT (((InitConfig->Mode == AL_IIC_MODE_SLAVE) ||
+               (InitConfig->Mode == AL_IIC_MODE_MASTER)), AL_IIC_ERR_ILLEGAL_PARAM);
 
     AL_ASSERT(((InitConfig->AddrMode == AL_IIC_ADDR_7BIT) || (InitConfig->AddrMode == AL_IIC_ADDR_10BIT)),
               AL_IIC_ERR_ILLEGAL_PARAM);
@@ -199,6 +197,7 @@ AL_S32 AlIic_Dev_Init(AL_IIC_DevStruct *Iic, AL_IIC_HwConfigStruct *HwConfig, AL
     AL_REG IicBaseAddr;
     AL_U32 RxFifoDepth;
     AL_U32 TxFifoDepth;
+    AL_IIC_SpeedModeEnum SpeedMode;
 
     AL_ASSERT((Iic != AL_NULL), AL_IIC_ERR_ILLEGAL_PARAM);
 
@@ -230,9 +229,18 @@ AL_S32 AlIic_Dev_Init(AL_IIC_DevStruct *Iic, AL_IIC_HwConfigStruct *HwConfig, AL
         AlIic_ll_SetRestartEnable(IicBaseAddr, AL_IIC_FUNC_ENABLE);
         AlIic_ll_SetMasterAddrMode(IicBaseAddr, InitConfig->AddrMode);
 
-        AlIic_ll_SetSpeedMode(IicBaseAddr, InitConfig->SpeedMode);
+        if (HwConfig->RateHz <= AL_IIC_RATE_100K) {
+            SpeedMode = AL_IIC_STANDARD_MODE;
+        } else if ((HwConfig->RateHz > AL_IIC_RATE_100K) && (HwConfig->RateHz <= AL_IIC_RATE_400K)) {
+            SpeedMode = AL_IIC_FAST_MODE;
+        } else {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Unsupported rate\r\n");
+            return AL_IIC_ERR_ILLEGAL_PARAM;
+        }
+
+        AlIic_ll_SetSpeedMode(IicBaseAddr, SpeedMode);
         AlIic_ll_SetMasterEnable(IicBaseAddr, AL_IIC_FUNC_ENABLE);
-        AlIic_Dev_InitSclHighLowCout(Iic, InitConfig->SpeedMode);
+        AlIic_Dev_InitSclHighLowCout(Iic, SpeedMode);
 
         Iic->CmdOption = AL_IIC_CMD_OPTION_STOP;
     } else {
@@ -1359,15 +1367,37 @@ AL_S32 AlIic_Dev_IoCtl(AL_IIC_DevStruct *Iic, AL_IIC_IoCtlCmdEnum Cmd, AL_VOID *
         *AddrMode = AlIic_ll_GetMasterAddrMode(IicBaseAddr);
         break;
     }
-    case AL_IIC_IOCTL_SET_SPEED_MODE: {
-        AL_IIC_SpeedModeEnum SpeedMode = *(AL_IIC_SpeedModeEnum *)Data;
+    case AL_IIC_IOCTL_SET_RATE: {
+        AL_IIC_SpeedModeEnum SpeedMode;
+        AL_U32 Rate = *(AL_U32 *)Data;
+
+        if (Rate <= AL_IIC_RATE_100K) {
+            SpeedMode = AL_IIC_STANDARD_MODE;
+        } else if ((Rate > AL_IIC_RATE_100K) && (Rate <= AL_IIC_RATE_400K)) {
+            SpeedMode = AL_IIC_FAST_MODE;
+        } else {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Unsupported rate\r\n");
+            Ret = AL_IIC_ERR_ILLEGAL_PARAM;
+            break;
+        }
+
         AlIic_ll_SetSpeedMode(IicBaseAddr, SpeedMode);
         AlIic_Dev_InitSclHighLowCout(Iic, SpeedMode);
+
         break;
     }
-    case AL_IIC_IOCTL_GET_SPEED_MODE: {
-        AL_IIC_SpeedModeEnum *SpeedMode = (AL_IIC_SpeedModeEnum *)Data;
-        *SpeedMode = AlIic_ll_GetSpeedMode(IicBaseAddr);
+    case AL_IIC_IOCTL_GET_RATE: {
+        AL_IIC_SpeedModeEnum SpeedMode = AlIic_ll_GetSpeedMode(IicBaseAddr);
+        AL_U32 *Rate = (AL_U32 *)Data;
+
+        if (SpeedMode == AL_IIC_STANDARD_MODE) {
+            *Rate = AL_IIC_RATE_100K;
+        } else if (SpeedMode == AL_IIC_FAST_MODE) {
+            *Rate = AL_IIC_RATE_400K;
+        } else {
+            *Rate = AL_IIC_RATE_3400K;
+        }
+
         break;
     }
     default:

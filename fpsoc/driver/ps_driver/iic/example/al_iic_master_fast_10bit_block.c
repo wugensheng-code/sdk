@@ -38,7 +38,6 @@ AL_S32 AlIic_MasterFast10BitExample()
     {
         .Mode           = AL_IIC_MODE_MASTER,
         .AddrMode       = AL_IIC_ADDR_7BIT,
-        .SpeedMode      = AL_IIC_FAST_MODE,
     };
 
     AL_U8 SendData[BUFFER_SIZE] =
@@ -84,6 +83,13 @@ AL_S32 AlIic_MasterFast10BitExample()
      */
     AL_IIC_AddrModeEnum AddrMode = AL_IIC_ADDR_10BIT;
     Ret = AlIic_Hal_IoCtl(Handle, AL_IIC_IOCTL_SET_ADDR_MODE, &AddrMode);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_Hal_IoCtl Failed\r\n");
+        return Ret;
+    }
+
+    AL_U32 IicRate = AL_IIC_RATE_400K;
+    Ret = AlIic_Hal_IoCtl(Handle, AL_IIC_IOCTL_SET_RATE, &IicRate);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_Hal_IoCtl Failed\r\n");
         return Ret;

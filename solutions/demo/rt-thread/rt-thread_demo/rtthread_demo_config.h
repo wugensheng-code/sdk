@@ -349,7 +349,6 @@ static AL_DMACAHB_ChInitStruct Task5_DmaChConfig = {
 static AL_IIC_InitStruct task6_IicConfig = {
     .Mode       = AL_IIC_MODE_MASTER,
     .AddrMode   = AL_IIC_ADDR_7BIT,
-    .SpeedMode  = AL_IIC_STANDARD_MODE,
 };
 
 // static AL_UART_InitStruct task7_UartConfig = {

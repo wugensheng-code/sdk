@@ -36,7 +36,6 @@ AL_S32 AlIic_MasterBlockExample()
     {
         .Mode           = AL_IIC_MODE_MASTER,
         .AddrMode       = AL_IIC_ADDR_7BIT,
-        .SpeedMode      = AL_IIC_STANDARD_MODE,
     };
 
     AL_U8 SendData[BUFFER_SIZE] =

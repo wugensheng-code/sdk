@@ -48,7 +48,7 @@ extern "C" {
 #define MHZ                                 1000000
 #define KHZ                                 1000
 #define UART_CLOCK                         ( 50*MHz)
-#define I2C_CLOCK                          ( 40*MHz)
+#define I2C_CLOCK                          ( 100*MHz)
 #define CAN_CLOCK                          ( 80*MHz)
 #define GBE_CLOCK                          ( 25*MHz)
 #define ADC_CLOCK                           (50*MHz)
@@ -309,11 +309,12 @@ extern "C" {
 #define GPIOPS_ENABLE
 
 #define HAVE_IICPS_DRIVER
-#define IIC0PS_ENABLE
+#define I2C0PS_ENABLE
+#define I2C1PS_ENABLE
 
 #define I2C_CLOCK  (100 * MHZ)
-#define I2C0_RATE  (100 * KHz)
-#define I2C1_RATE  (100 * KHz)
+#define I2C0_RATE  (100 * KHZ)
+#define I2C1_RATE  (100 * KHZ)
 
 #define HAVE_MMCPS_DRIVER
 #define MMC0PS_ENABLE

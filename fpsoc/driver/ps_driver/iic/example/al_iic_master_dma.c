@@ -36,7 +36,6 @@ AL_S32 AlIic_MasterDmaExample()
     {
         .Mode           = AL_IIC_MODE_MASTER,
         .AddrMode       = AL_IIC_ADDR_7BIT,
-        .SpeedMode      = AL_IIC_FAST_MODE,
     };
 
     AL_U16 SlaveAddr = TEST_SLAVE_ADDR;

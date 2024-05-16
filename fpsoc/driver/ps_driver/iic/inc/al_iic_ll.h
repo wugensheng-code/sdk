@@ -26,9 +26,9 @@ typedef enum {
 } AL_IIC_AddrModeEnum ;
 
 typedef enum {
-    AL_IIC_STANDARD_MODE    = 100000,
-    AL_IIC_FAST_MODE        = 400000,
-    AL_IIC_HIGH_SPEED_MODE  = 3400000,
+    AL_IIC_STANDARD_MODE    = 1,
+    AL_IIC_FAST_MODE        = 2,
+    AL_IIC_HIGH_SPEED_MODE  = 3
 } AL_IIC_SpeedModeEnum;
 
 typedef enum

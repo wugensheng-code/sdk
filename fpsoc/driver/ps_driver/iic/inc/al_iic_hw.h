@@ -687,6 +687,7 @@ typedef struct {
     AL_U32      DeviceId;
     AL_U32      BaseAddress;
     AL_U32      ClockHz;
+    AL_U32      RateHz;
     AL_U32      IntrId;
 } AL_IIC_HwConfigStruct;
 

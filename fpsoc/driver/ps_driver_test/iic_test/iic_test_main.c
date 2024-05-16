@@ -21,7 +21,6 @@ AL_S32 AlIic_SclRecoveryTest()
     {
         .Mode           = AL_IIC_MODE_MASTER,
         .AddrMode       = AL_IIC_ADDR_7BIT,
-        .SpeedMode      = AL_IIC_FAST_MODE,
     };
 
     AL_U8 SendData[8] =
@@ -70,7 +69,6 @@ AL_S32 AlIic_E2promTest()
     {
         .Mode           = AL_IIC_MODE_MASTER,
         .AddrMode       = AL_IIC_ADDR_7BIT,
-        .SpeedMode      = AL_IIC_FAST_MODE,
     };
     AL_U8 WriteBuffer[130] =
     {
@@ -259,7 +257,6 @@ AL_S32 AlIic_MasterRecvPollingTest()
     {
         .Mode           = AL_IIC_MODE_MASTER,
         .AddrMode       = AL_IIC_ADDR_7BIT,
-        .SpeedMode      = AL_IIC_FAST_MODE,
     };
 
     AL_U8 RecvData[256] =
@@ -305,7 +302,6 @@ AL_S32 AlIic_MasterRecvBlockTest()
     {
         .Mode           = AL_IIC_MODE_MASTER,
         .AddrMode       = AL_IIC_ADDR_7BIT,
-        .SpeedMode      = AL_IIC_FAST_MODE,
     };
 
     AL_U8 RecvData[256] =
@@ -351,7 +347,6 @@ AL_S32 AlIic_MasterSendPollingTest()
     {
         .Mode           = AL_IIC_MODE_MASTER,
         .AddrMode       = AL_IIC_ADDR_7BIT,
-        .SpeedMode      = AL_IIC_FAST_MODE,
     };
 
     AL_U8 SendData[256] =
@@ -418,7 +413,6 @@ AL_S32 AlIic_MasterSendBlockTest()
     {
         .Mode           = AL_IIC_MODE_MASTER,
         .AddrMode       = AL_IIC_ADDR_7BIT,
-        .SpeedMode      = AL_IIC_FAST_MODE,
     };
 
     AL_U8 SendData[256] =

@@ -38,7 +38,6 @@ AL_S32 AlIic_MasterFastExample()
     {
         .Mode           = AL_IIC_MODE_MASTER,
         .AddrMode       = AL_IIC_ADDR_7BIT,
-        .SpeedMode      = AL_IIC_FAST_MODE,
     };
 
     AL_U8 SendData[BUFFER_SIZE] =
@@ -75,6 +74,13 @@ AL_S32 AlIic_MasterFastExample()
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     AlIic_MuxInit(Handle);
+
+    AL_U32 IicRate = AL_IIC_RATE_400K;
+    Ret = AlIic_Hal_IoCtl(Handle, AL_IIC_IOCTL_SET_RATE, &IicRate);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_Hal_IoCtl Failed\r\n");
+        return Ret;
+    }
 
     Ret = AlIic_Hal_MasterSendDataBlock(Handle, SlaveAddr, SendData, BUFFER_SIZE, IIC_MASTER_TEST_TIMEOUT_MS);
     if (Ret != AL_OK) {
