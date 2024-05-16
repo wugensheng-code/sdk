@@ -407,22 +407,21 @@ static uint8_t dwc2_calculate_packet_num(uint32_t input_size, uint8_t ep_addr, u
 
 static void dwc2_control_pipe_init(struct dwc2_pipe *chan, struct usb_setup_packet *setup, uint8_t *buffer, uint32_t buflen)
 {
-    unsigned long setup_p = (unsigned long)setup;
     if (chan->ep0_state == DWC2_EP0_STATE_SETUP) /* fill setup */
     {
         chan->num_packets = dwc2_calculate_packet_num(8, 0x00, chan->ep_mps, &chan->xferlen);
         dwc2_pipe_init(chan->chidx, chan->dev_addr, 0x00, USB_ENDPOINT_TYPE_CONTROL, chan->ep_mps, chan->speed);
-        dwc2_pipe_transfer(chan->chidx, 0x00,  (uint32_t *)setup_p, chan->xferlen, chan->num_packets, HC_PID_SETUP);
+        dwc2_pipe_transfer(chan->chidx, 0x00, (uint32_t *)setup, chan->xferlen, chan->num_packets, HC_PID_SETUP);
     } else if (chan->ep0_state == DWC2_EP0_STATE_INDATA) /* fill in data */
     {
         chan->num_packets = dwc2_calculate_packet_num(setup->wLength, 0x80, chan->ep_mps, &chan->xferlen);
         dwc2_pipe_init(chan->chidx, chan->dev_addr, 0x80, USB_ENDPOINT_TYPE_CONTROL, chan->ep_mps, chan->speed);
-        dwc2_pipe_transfer(chan->chidx, 0x80, (uint32_t *)setup_p, chan->xferlen, chan->num_packets, HC_PID_DATA1);
+        dwc2_pipe_transfer(chan->chidx, 0x80, (uint32_t *)buffer, chan->xferlen, chan->num_packets, HC_PID_DATA1);
     } else if (chan->ep0_state == DWC2_EP0_STATE_OUTDATA) /* fill out data */
     {
         chan->num_packets = dwc2_calculate_packet_num(setup->wLength, 0x00, chan->ep_mps, &chan->xferlen);
         dwc2_pipe_init(chan->chidx, chan->dev_addr, 0x00, USB_ENDPOINT_TYPE_CONTROL, chan->ep_mps, chan->speed);
-        dwc2_pipe_transfer(chan->chidx, 0x00, (uint32_t *)setup_p, chan->xferlen, chan->num_packets, HC_PID_DATA1);
+        dwc2_pipe_transfer(chan->chidx, 0x00, (uint32_t *)buffer, chan->xferlen, chan->num_packets, HC_PID_DATA1);
     } else if (chan->ep0_state == DWC2_EP0_STATE_INSTATUS) /* fill in status */
     {
         chan->num_packets = dwc2_calculate_packet_num(0, 0x80, chan->ep_mps, &chan->xferlen);
