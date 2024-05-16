@@ -231,7 +231,7 @@ AL_S32 AlIic_Dev_Init(AL_IIC_DevStruct *Iic, AL_IIC_HwConfigStruct *HwConfig, AL
 
         if (HwConfig->RateHz <= AL_IIC_RATE_100K) {
             SpeedMode = AL_IIC_STANDARD_MODE;
-        } else if ((HwConfig->RateHz > AL_IIC_RATE_100K) && (HwConfig->RateHz <= AL_IIC_RATE_400K)) {
+        } else if (HwConfig->RateHz <= AL_IIC_RATE_400K) {
             SpeedMode = AL_IIC_FAST_MODE;
         } else {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Unsupported rate\r\n");
@@ -1373,7 +1373,7 @@ AL_S32 AlIic_Dev_IoCtl(AL_IIC_DevStruct *Iic, AL_IIC_IoCtlCmdEnum Cmd, AL_VOID *
 
         if (Rate <= AL_IIC_RATE_100K) {
             SpeedMode = AL_IIC_STANDARD_MODE;
-        } else if ((Rate > AL_IIC_RATE_100K) && (Rate <= AL_IIC_RATE_400K)) {
+        } else if (Rate <= AL_IIC_RATE_400K) {
             SpeedMode = AL_IIC_FAST_MODE;
         } else {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Unsupported rate\r\n");
