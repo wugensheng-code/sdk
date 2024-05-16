@@ -27,6 +27,8 @@ AL_S32 static AlIic_MuxInit(AL_IIC_HalStruct *Handle)
         return Ret;
     }
 
+    AlSys_MDelay(100);
+
     return AL_OK;
 }
 

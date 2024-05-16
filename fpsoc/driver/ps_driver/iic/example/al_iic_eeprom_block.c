@@ -20,19 +20,6 @@ typedef AL_U8                       AddrType;
 
 #define IIC_MASTER_TEST_TIMEOUT_MS  1000
 
-AL_S32 static AlIic_MuxInit(AL_IIC_HalStruct *Handle)
-{
-    AL_S32 Ret;
-    AL_U8 Channel = IIC_EEPROM_CHANNEL;
-
-    Ret = AlIic_Hal_MasterSendDataBlock(Handle, IIC_MUX_ADDRESS, &Channel, 1, IIC_MASTER_TEST_TIMEOUT_MS);
-    if (Ret != AL_OK) {
-        return Ret;
-    }
-
-    return AL_OK;
-}
-
 AL_S32 static AlIic_EepromWriteData(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U8 *Buffer, AL_U32 Size)
 {
     AL_S32 Ret;
@@ -61,6 +48,19 @@ AL_S32 static AlIic_EepromReadData(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, A
 
     /* Read data from eeprom */
     Ret = AlIic_Hal_MasterRecvDataBlock(Handle, SlaveAddr, Buffer, Size, IIC_MASTER_TEST_TIMEOUT_MS);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
+    return AL_OK;
+}
+
+AL_S32 static AlIic_MuxInit(AL_IIC_HalStruct *Handle)
+{
+    AL_S32 Ret;
+    AL_U8 Channel = IIC_EEPROM_CHANNEL;
+
+    Ret = AlIic_EepromWriteData(Handle, IIC_MUX_ADDRESS, &Channel, 1);
     if (Ret != AL_OK) {
         return Ret;
     }
