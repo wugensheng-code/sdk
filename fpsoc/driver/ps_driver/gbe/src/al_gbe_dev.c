@@ -372,9 +372,17 @@ AL_S32 AlGbe_Dev_ConfigDuplexAndSpeed(AL_GBE_DevStruct *Gbe)
 
     if (Gbe->InitConfig.MediaInterface == AL_GBE_RGMII_MODE) {
         if (Gbe->MacDmaConfig.Speed == AL_GBE_SPEED_100M) {
-            GbeTopSetting = 0x14a1;
+            if (Gbe->PhyId == PHY_ID_RTL8211F) {
+                GbeTopSetting = PHY_RTL8211F_PHASE_100M;
+            } else if (Gbe->PhyId == PHY_ID_YT8531) {
+                GbeTopSetting = PHY_YT8531_PHASE_100M;
+            }
         } else {
-            GbeTopSetting = 0x1461;
+            if (Gbe->PhyId == PHY_ID_RTL8211F) {
+                GbeTopSetting = PHY_RTL8211F_PHASE_1000M;
+            } else if (Gbe->PhyId == PHY_ID_YT8531) {
+                GbeTopSetting = PHY_YT8531_PHASE_1000M;
+            }
         }
         AlGbe_ll_SetGbeCtlRegister((GbeBaseAddr == GBE0__BASE_ADDR ? CFG_CTRL_GBE0_ADDR : CFG_CTRL_GBE1_ADDR), GbeTopSetting);
     } else {
@@ -422,9 +430,17 @@ AL_S32 AlGbe_Dev_Init(AL_GBE_DevStruct *Gbe, AL_GBE_HwConfigStruct *HwConfig,
     /* Config gbe control register */
     if (Gbe->InitConfig.MediaInterface == AL_GBE_RGMII_MODE) {
         if (MacDmaConfig->Speed == AL_GBE_SPEED_100M) {
-            GbeTopSetting = 0x14a1;
+            if (Gbe->PhyId == PHY_ID_RTL8211F) {
+                GbeTopSetting = PHY_RTL8211F_PHASE_100M;
+            } else if (Gbe->PhyId == PHY_ID_YT8531) {
+                GbeTopSetting = PHY_YT8531_PHASE_100M;
+            }
         } else {
-            GbeTopSetting = 0x1461;
+            if (Gbe->PhyId == PHY_ID_RTL8211F) {
+                GbeTopSetting = PHY_RTL8211F_PHASE_1000M;
+            } else if (Gbe->PhyId == PHY_ID_YT8531) {
+                GbeTopSetting = PHY_YT8531_PHASE_1000M;
+            }
         }
         AlGbe_ll_SetGbeCtlRegister((GbeBaseAddr == GBE0__BASE_ADDR ? CFG_CTRL_GBE0_ADDR : CFG_CTRL_GBE1_ADDR), GbeTopSetting);
     } else {
@@ -548,96 +564,167 @@ AL_S32 AlGbe_Dev_PhyInit(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress)
 {
     AL_S32 Ret = 0;
     AL_U16 RegValue;
+    AL_U16 PhyId1, PhyId2;
 
     AL_ASSERT((Gbe != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
-    /* Reset the Phy */
-    Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_BCR_REG, PHY_BCTL_RESET_MASK);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
-        return Ret;
-    }
-
-    /* Delay at least 10 ms */
-    AlSys_MDelay(500);
-
-    /* Check reset status complete */
-    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BCR_REG, &RegValue);
-    if ((Ret != AL_OK) || (RegValue & PHY_BCTL_RESET_MASK)) {
+    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_ID1_REG, &PhyId1);
+    if (Ret != AL_OK ) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
         return AL_GBE_ERR_PHY_RESET_FAILED;
     }
 
-    /* The RGMII specifies output TXC/RXC and TXD/RXD without any clock skew. Need to add skew on clock line
-       to make sure the other side sample right data. This can also be done in PCB traces. */
-    Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_PAGE_SELECT_REG, PHY_PAGE_RGMII_TXRX_DELAY_ADDR);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
-        return Ret;
+    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_ID2_REG, &PhyId2);
+    if (Ret != AL_OK ) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
+        return AL_GBE_ERR_PHY_RESET_FAILED;
     }
 
-    /* Set Tx Delay */
-    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_RGMII_TX_DELAY_REG, &RegValue);
-    if (Ret == AL_OK) {
-        RegValue = 0x9; //Todo: There needs to be a reasonable explanation
-        Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_RGMII_TX_DELAY_REG, RegValue);
+    Gbe->PhyId = ((PhyId1 & 0xffff) << 16) | (PhyId2 & 0xffff);
+    AL_LOG(AL_LOG_LEVEL_INFO, "AlGbe get phy id : 0x%x \r\n", Gbe->PhyId);
+
+    if (Gbe->PhyId == PHY_ID_RTL8211F) {
+        /* Reset the Phy */
+        Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_BCR_REG, PHY_BCTL_RESET_MASK);
         if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
+            return Ret;
+        }
+
+        /* Delay at least 10 ms */
+        AlSys_MDelay(500);
+
+        /* Check reset status complete */
+        Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BCR_REG, &RegValue);
+        if ((Ret != AL_OK) || (RegValue & PHY_BCTL_RESET_MASK)) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
+            return AL_GBE_ERR_PHY_RESET_FAILED;
+        }
+
+        /* The RGMII specifies output TXC/RXC and TXD/RXD without any clock skew. Need to add skew on clock line
+        to make sure the other side sample right data. This can also be done in PCB traces. */
+        Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_PAGE_SELECT_REG, PHY_PAGE_RGMII_TXRX_DELAY_ADDR);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
+            return Ret;
+        }
+
+        /* Set Tx Delay */
+        Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_RGMII_TX_DELAY_REG, &RegValue);
+        if (Ret == AL_OK) {
+            RegValue = 0x9; //Todo: There needs to be a reasonable explanation
+            Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_RGMII_TX_DELAY_REG, RegValue);
+            if (Ret != AL_OK) {
+                AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
+                return Ret;
+            }
+        } else {
             AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
             return Ret;
         }
-    } else {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
-        return Ret;
-    }
 
-    /* Set Rx Delay */
-    Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_RGMII_RX_DELAY_REG, &RegValue);
-    if (Ret == AL_OK) {
-        RegValue |= PHY_RGMII_RX_DELAY_MASK;
-        Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_RGMII_RX_DELAY_REG, RegValue);
+        /* Set Rx Delay */
+        Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_RGMII_RX_DELAY_REG, &RegValue);
+        if (Ret == AL_OK) {
+            RegValue |= PHY_RGMII_RX_DELAY_MASK;
+            Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_RGMII_RX_DELAY_REG, RegValue);
+            if (Ret != AL_OK) {
+                AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
+                return Ret;
+            }
+        } else {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
+            return Ret;
+        }
+
+        /* Restore to default page 0 */
+        Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_PAGE_SELECT_REG, 0x0);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
             return Ret;
         }
-    } else {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
-        return Ret;
-    }
 
-    /* Restore to default page 0 */
-    Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_PAGE_SELECT_REG, 0x0);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
-        return Ret;
-    }
+        /* Set the auto-negotiation. */
+        Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_AUTONEG_ADVERTISE_REG,
+                                        PHY_100BASETX_FULLDUPLEX_MASK | PHY_100BASETX_HALFDUPLEX_MASK |
+                                        PHY_10BASETX_FULLDUPLEX_MASK | PHY_10BASETX_HALFDUPLEX_MASK |
+                                        PHY_IEEE802_3_SELECTOR_MASK);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
+            return Ret;
+        }
 
-    /* Set the auto-negotiation. */
-    Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_AUTONEG_ADVERTISE_REG,
-                                     PHY_100BASETX_FULLDUPLEX_MASK | PHY_100BASETX_HALFDUPLEX_MASK |
-                                     PHY_10BASETX_FULLDUPLEX_MASK | PHY_10BASETX_HALFDUPLEX_MASK |
-                                     PHY_IEEE802_3_SELECTOR_MASK);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
-        return Ret;
-    }
+        AL_U16 Phy1000BaseTFullDuplex = PHY_1000BASET_FULLDUPLEX_MASK;
+        if (Gbe->MacDmaConfig.Speed != AL_GBE_SPEED_1G) {
+            Phy1000BaseTFullDuplex = 0;
+        }
 
-    AL_U16 Phy1000BaseTFullDuplex = PHY_1000BASET_FULLDUPLEX_MASK;
-    if (Gbe->MacDmaConfig.Speed != AL_GBE_SPEED_1G) {
-        Phy1000BaseTFullDuplex = 0;
-    }
-
-    Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_1000BASET_CONTROL_REG, Phy1000BaseTFullDuplex);
-    if (Ret == AL_OK) {
-        Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BCR_REG, &RegValue);
+        Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_1000BASET_CONTROL_REG, Phy1000BaseTFullDuplex);
         if (Ret == AL_OK) {
-            Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_BCR_REG,
+            Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BCR_REG, &RegValue);
+            if (Ret == AL_OK) {
+                Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_BCR_REG,
                                              (RegValue | PHY_BCTL_AUTONEG_MASK | PHY_BCTL_RESTART_AUTONEG_MASK));
+            } else {
+                AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
+            }
         } else {
             AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
+            return Ret;
         }
-    } else {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
-        return Ret;
+    } else if (Gbe->PhyId == PHY_ID_YT8531) {
+        /* Reset the Phy */
+        Ret = AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, PHY_BCR_REG, PHY_BCTL_RESET_MASK);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_WritePhyRegister error:%x\r\n", Ret);
+            return Ret;
+        }
+
+        /* Delay at least 10 ms */
+        AlSys_MDelay(500);
+
+        /* Check reset status complete */
+        Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_BCR_REG, &RegValue);
+        if ((Ret != AL_OK) || (RegValue & PHY_BCTL_RESET_MASK)) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
+            return AL_GBE_ERR_PHY_RESET_FAILED;
+        }
+
+        AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, IEEE_AUTONEGO_ADVERTISE_REG, &RegValue);
+        RegValue |= IEEE_ASYMMETRIC_PAUSE_MASK;
+        RegValue |= IEEE_PAUSE_MASK;
+        RegValue |= ADVERTISE_100;
+        RegValue |= ADVERTISE_10;
+        AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, IEEE_AUTONEGO_ADVERTISE_REG, RegValue);
+
+        AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, IEEE_1000_ADVERTISE_REG_OFFSET,
+                        &RegValue);
+        RegValue |= ADVERTISE_1000;
+        AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, IEEE_1000_ADVERTISE_REG_OFFSET,
+                        RegValue);
+
+        AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, IEEE_CONTROL_REG_OFFSET, &RegValue);
+        RegValue |= IEEE_CTRL_AUTONEGOTIATE_ENABLE;
+        RegValue |= IEEE_STAT_AUTONEGOTIATE_RESTART;
+        AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, IEEE_CONTROL_REG_OFFSET, RegValue);
+
+        AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, IEEE_CONTROL_REG_OFFSET, &RegValue);
+        RegValue |= IEEE_CTRL_RESET_MASK;
+        AlGbe_Dev_WritePhyRegister(Gbe, PHYAddress, IEEE_CONTROL_REG_OFFSET, RegValue);
+
+        while (1) {
+            AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, IEEE_CONTROL_REG_OFFSET, &RegValue);
+            if (RegValue & IEEE_CTRL_RESET_MASK)
+                continue;
+            else
+             break;
+        }
+
+        AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, IEEE_STATUS_REG_OFFSET, &RegValue);
+
+        while ( !(RegValue & IEEE_STAT_AUTONEGOTIATE_COMPLETE) ) {
+            AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, IEEE_STATUS_REG_OFFSET, &RegValue);
+        }
     }
 
     return AL_OK;
@@ -650,36 +737,65 @@ AL_S32 AlGbe_Dev_GetPhyLinkStatus(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress, AL_U
 
     AL_ASSERT((Gbe != AL_NULL) && (Speed != AL_NULL) && (Duplex != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
 
-    do {
-        Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_SSR_REG, &RegValue);
-        if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
-            return Ret;
+    if (Gbe->PhyId == PHY_ID_RTL8211F) {
+        do {
+            Ret = AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress, PHY_SSR_REG, &RegValue);
+            if (Ret != AL_OK) {
+                AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Dev_ReadPhyRegister error:%x\r\n", Ret);
+                return Ret;
+            }
+
+            //Todo: Timeout
+        } while(((PHY_SSTATUS_LINKSTATUS_MASK & RegValue) == 0));
+
+        switch ((RegValue & PHY_SSTATUS_LINKSPEED_MASK) >> PHY_SSTATUS_LINKSPEED_SHIFT)
+        {
+        case (AL_U32)PHY_SPEED_10M:
+            *Speed = PHY_SPEED_10M;
+            break;
+        case (AL_U32)PHY_SPEED_100M:
+           *Speed = PHY_SPEED_100M;
+            break;
+        case (AL_U32)PHY_SPEED_1000M:
+            *Speed = PHY_SPEED_1000M;
+            break;
+        default:
+            *Speed = PHY_SPEED_10M;
+            break;
         }
 
-        //Todo: Timeout
-    } while(((PHY_SSTATUS_LINKSTATUS_MASK & RegValue) == 0));
+        if ((RegValue & PHY_SSTATUS_LINKDUPLEX_MASK) != 0U) {
+            *Duplex = PHY_FULL_DUPLEX;
+        } else {
+            *Duplex = PHY_HALF_DUPLEX;
+        }
+    } else if (Gbe->PhyId == PHY_ID_YT8531) {
+        AL_U16 TempSpeed;
 
-    switch ((RegValue & PHY_SSTATUS_LINKSPEED_MASK) >> PHY_SSTATUS_LINKSPEED_SHIFT)
-    {
-    case (AL_U32)PHY_SPEED_10M:
-        *Speed = PHY_SPEED_10M;
-        break;
-    case (AL_U32)PHY_SPEED_100M:
-       *Speed = PHY_SPEED_100M;
-        break;
-    case (AL_U32)PHY_SPEED_1000M:
-        *Speed = PHY_SPEED_1000M;
-        break;
-    default:
-        *Speed = PHY_SPEED_10M;
-        break;
-    }
+        AlGbe_Dev_ReadPhyRegister(Gbe, PHYAddress,0X11,&RegValue);
+        TempSpeed = RegValue >> 14;
 
-    if ((RegValue & PHY_SSTATUS_LINKDUPLEX_MASK) != 0U) {
-        *Duplex = PHY_FULL_DUPLEX;
-    } else {
-        *Duplex = PHY_HALF_DUPLEX;
+        switch (TempSpeed)
+        {
+        case (AL_U32)PHY_SPEED_10M:
+            *Speed = PHY_SPEED_10M;
+            break;
+        case (AL_U32)PHY_SPEED_100M:
+            *Speed = PHY_SPEED_100M;
+            break;
+        case (AL_U32)PHY_SPEED_1000M:
+            *Speed = PHY_SPEED_1000M;
+            break;
+        default:
+            *Speed = PHY_SPEED_10M;
+            break;
+        }
+
+        if ((RegValue & 0x2000) != 0U) {
+            *Duplex = PHY_FULL_DUPLEX;
+        } else {
+            *Duplex = PHY_HALF_DUPLEX;
+        }
     }
 
     return AL_OK;
