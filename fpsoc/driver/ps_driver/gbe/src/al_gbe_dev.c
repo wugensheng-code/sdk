@@ -430,17 +430,9 @@ AL_S32 AlGbe_Dev_Init(AL_GBE_DevStruct *Gbe, AL_GBE_HwConfigStruct *HwConfig,
     /* Config gbe control register */
     if (Gbe->InitConfig.MediaInterface == AL_GBE_RGMII_MODE) {
         if (MacDmaConfig->Speed == AL_GBE_SPEED_100M) {
-            if (Gbe->PhyId == PHY_ID_RTL8211F) {
-                GbeTopSetting = PHY_RTL8211F_PHASE_100M;
-            } else if (Gbe->PhyId == PHY_ID_YT8531) {
-                GbeTopSetting = PHY_YT8531_PHASE_100M;
-            }
+            GbeTopSetting = PHY_DEFAULT_PHASE_100M;
         } else {
-            if (Gbe->PhyId == PHY_ID_RTL8211F) {
-                GbeTopSetting = PHY_RTL8211F_PHASE_1000M;
-            } else if (Gbe->PhyId == PHY_ID_YT8531) {
-                GbeTopSetting = PHY_YT8531_PHASE_1000M;
-            }
+            GbeTopSetting = PHY_DEFAULT_PHASE_1000M;
         }
         AlGbe_ll_SetGbeCtlRegister((GbeBaseAddr == GBE0__BASE_ADDR ? CFG_CTRL_GBE0_ADDR : CFG_CTRL_GBE1_ADDR), GbeTopSetting);
     } else {

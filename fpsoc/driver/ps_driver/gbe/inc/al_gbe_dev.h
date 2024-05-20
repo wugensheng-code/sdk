@@ -345,6 +345,10 @@ typedef enum
 #define PHY_YT8531_PHASE_100M               0x361
 #define PHY_YT8531_PHASE_1000M              0x621
 
+#define PHY_ID_DEFAULT                      PHY_ID_RTL8211F
+#define PHY_DEFAULT_PHASE_100M              PHY_RTL8211F_PHASE_100M
+#define PHY_DEFAULT_PHASE_1000M             PHY_RTL8211F_PHASE_1000M
+
 /* Basic mode control register */
 #define PHY_BCR_REG                         0x0
 

@@ -439,6 +439,11 @@ err_t low_level_phy_init(AL_GBE_HalStruct *GbeHandle, struct netif *netif, AL_GB
         }
     }
 
+    if (GbeHandle->Dev.PhyId != PHY_ID_DEFAULT) {
+        linkchange = 1;
+    }
+
+
     if (linkchange)
     {
         AlGbe_Hal_ConfigDuplexAndSpeed(GbeHandle);
