@@ -6,7 +6,7 @@
 #include "usb_osal.h"
 #include "usb_errno.h"
 
-#ifdef OS_RTTHREAD
+#ifdef RTOS_RTTHREAD
 #include <rtthread.h>
 #include <rthw.h>
 
@@ -120,7 +120,7 @@ void usb_osal_msleep(uint32_t delay)
 {
     rt_thread_mdelay(delay);
 }
-#elif OS_FREERTOS
+#elif RTOS_FREERTOS
 #include <FreeRTOS.h>
 #include "semphr.h"
 #include "timers.h"
