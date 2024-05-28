@@ -115,6 +115,10 @@ static void prvTaskExitError(void);
 
 /*-----------------------------------------------------------*/
 
+/* Counts the interrupt nesting depth.  A context switch is only performed if
+if the nesting depth is 0. */
+volatile uint64_t ullPortInterruptNesting = 0;
+
 /* Each task maintains its own interrupt status in the critical nesting
 variable. */
 static UBaseType_t uxCriticalNesting = 0xaaaaaaaa;
@@ -424,6 +428,14 @@ void vPortAssert(int32_t x)
 }
 /*-----------------------------------------------------------*/
 
+AL_BOOL xPortIsInIsr( void )
+{
+    uintptr_t mcause =  ARCH_SYSREG_READ(CSR_MCAUSE);
+    volatile AL_BOOL InIsr = mcause >> __RISCV_XLEN;
+    return InIsr;
+}
+
+/*-----------------------------------------------------------*/
 
 void xPortTaskSwitch(void)
 {

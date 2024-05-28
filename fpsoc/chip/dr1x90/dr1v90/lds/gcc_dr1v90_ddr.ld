@@ -20,6 +20,7 @@ MEMORY
 SECTIONS
 {
   __stack_size = DEFINED(__stack_size) ? __stack_size : 4K;
+  __async_print_ring_buf_size = DEFINED(async_print_ring_buf_size) ? async_print_ring_buf_size : 1M;
 
   .init           :
   {
@@ -200,6 +201,16 @@ SECTIONS
       KEEP(*(.noncacheable))
       . = ALIGN(4K);
       _no_cache_section_end   = .;
+    }  > ram AT>ram
+
+    . = ALIGN(64);
+    .async_print_ring_buf (NOLOAD):
+    {
+        . = ALIGN(64);
+        PROVIDE(_async_print_ring_buf_start = .);
+        . = __async_print_ring_buf_size;
+        PROVIDE(_async_print_ring_buf_end = .);
+        . = ALIGN(64);
     }  > ram AT>ram
 
   . = ALIGN(4);
