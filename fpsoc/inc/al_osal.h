@@ -199,7 +199,16 @@ static inline AL_VOID AlOsal_Sleep(AL_U32 Time)
 
 extern volatile uint64_t ullCriticalNesting;
 extern volatile uint64_t ullPortInterruptNesting;
-extern AL_BOOL xPortIsInIsr( void );
+
+static AL_BOOL AlOsal_In_Intr( void )
+{
+	if (ullPortInterruptNesting) {
+		return AL_TRUE;
+	} else {
+		return AL_FALSE;
+	}
+}
+
 /*----------------------------------------------*
  * MUTEX API.*
  *----------------------------------------------*/
@@ -225,7 +234,7 @@ static inline AL_S32 AlOsal_Lock_Init(AL_Lock_t Lock, const char* Name)
 
 static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_U32 Timeout)
 {
-    if (xPortIsInIsr()){
+    if (AlOsal_In_Intr()){
         AL_S32 Ret;
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
         Ret = xSemaphoreTakeFromISR(Lock->Thread_Lock, &xHigherPriorityTaskWoken);
@@ -236,13 +245,13 @@ static inline AL_S32 AlOsal_Lock_Take(AL_Lock_t Lock, AL_U32 Timeout)
             return AL_ERR_UNAVAILABLE;
         }
     } else {
-        return !xSemaphoreTake(Lock->Thread_Lock, (TickType_t) Timeout);
+        return (xSemaphoreTake(Lock->Thread_Lock, (TickType_t) Timeout) == pdPASS)? AL_OK : AL_ERR_UNAVAILABLE;
     }
 }
 
 static inline AL_S32 AlOsal_Lock_Release(AL_Lock_t Lock)
 {
-    if (xPortIsInIsr()) {
+    if (AlOsal_In_Intr()) {
         AL_S32 Ret;
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
         Ret = xSemaphoreGiveFromISR(Lock->Thread_Lock, &xHigherPriorityTaskWoken);
@@ -253,7 +262,7 @@ static inline AL_S32 AlOsal_Lock_Release(AL_Lock_t Lock)
             return AL_ERR_UNAVAILABLE;
         }
     } else {
-        return !xSemaphoreGive(Lock->Thread_Lock);
+        return (xSemaphoreGive(Lock->Thread_Lock) == pdPASS)? AL_OK : AL_ERR_UNAVAILABLE;
     }
 }
 
@@ -281,12 +290,36 @@ static inline AL_S32 AlOsal_Sem_Init(AL_Semaphore_t Semaphore, const char* Name,
 
 static inline AL_S32 AlOsal_Sem_Take(AL_Semaphore_t Semaphore, AL_U32 Timeout)
 {
-    return !xSemaphoreTake(Semaphore->Semaphore_Handle, (TickType_t) Timeout);
+    if (AlOsal_In_Intr()) {
+        AL_S32 Ret;
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        Ret = xSemaphoreTakeFromISR(Semaphore->Semaphore_Handle, &xHigherPriorityTaskWoken);
+        if (Ret == pdPASS) {
+            portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+            return AL_OK;
+        } else {
+            return AL_ERR_UNAVAILABLE;
+        }
+    } else {
+        return (xSemaphoreTake(Semaphore->Semaphore_Handle, (TickType_t) Timeout) == pdPASS)? AL_OK : AL_ERR_UNAVAILABLE;
+    }
 }
 
 static inline AL_S32 AlOsal_Sem_Release(AL_Semaphore_t Semaphore)
 {
-    return !xSemaphoreGive(Semaphore->Semaphore_Handle);
+    if (AlOsal_In_Intr()) {
+        AL_S32 Ret;
+        BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        Ret = xSemaphoreGiveFromISR(Semaphore->Semaphore_Handle, &xHigherPriorityTaskWoken);
+        if (Ret == pdPASS) {
+            portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+            return AL_OK;
+        } else {
+            return AL_ERR_UNAVAILABLE;
+        }
+    } else {
+        return (xSemaphoreGive(Semaphore->Semaphore_Handle) == pdPASS)? AL_OK : AL_ERR_UNAVAILABLE;
+    }
 }
 
 /*----------------------------------------------*
@@ -322,7 +355,7 @@ static inline AL_S32 AlOsal_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
     __COMPILER_BARRIER();
     MailBox->entry = 1;
 
-    if (xPortIsInIsr()) {
+    if (AlOsal_In_Intr()) {
         AL_S32 Ret;
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
         Ret = xSemaphoreGiveFromISR(MailBox->Semaphore.Semaphore_Handle, &xHigherPriorityTaskWoken);
@@ -331,7 +364,7 @@ static inline AL_S32 AlOsal_Mb_Send(AL_MailBox_t MailBox, AL_VOID * Msg)
         }
         return AL_OK;
     } else {
-        return !xSemaphoreGive(MailBox->Semaphore.Semaphore_Handle);
+        return (xSemaphoreGive(MailBox->Semaphore.Semaphore_Handle) == pdPASS)? AL_OK : AL_ERR_UNAVAILABLE;
     }
 }
 
@@ -339,7 +372,7 @@ static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_U3
 {
     AL_S32 Ret;
 
-    if (xPortIsInIsr()) {
+    if (AlOsal_In_Intr()) {
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
         Ret = xSemaphoreTakeFromISR(MailBox->Semaphore.Semaphore_Handle, &xHigherPriorityTaskWoken);
         if (Ret == pdPASS) {
@@ -349,7 +382,7 @@ static inline AL_S32 AlOsal_Mb_Receive(AL_MailBox_t MailBox, AL_VOID* Msg, AL_U3
             Ret = AL_ERR_UNAVAILABLE;
         }
     } else {
-        Ret = !xSemaphoreTake(MailBox->Semaphore.Semaphore_Handle, (TickType_t) Timeout);
+        Ret = (xSemaphoreTake(MailBox->Semaphore.Semaphore_Handle, (TickType_t) Timeout) == pdPASS)? AL_OK : AL_ERR_UNAVAILABLE;
     }
 
     if (Ret == AL_OK) {

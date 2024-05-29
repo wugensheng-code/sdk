@@ -5,6 +5,7 @@
  */
 #include "usb_osal.h"
 #include "usb_errno.h"
+#include "al_core.h"
 
 #ifdef RTOS_RTTHREAD
 #include <rtthread.h>
@@ -154,13 +155,13 @@ int usb_osal_sem_take(usb_osal_sem_t sem, uint32_t timeout)
     return (xSemaphoreTake((SemaphoreHandle_t)sem, pdMS_TO_TICKS(timeout)) == pdPASS) ? 0 : -ETIMEDOUT;
 }
 
-extern void vPortAssert(int32_t x);
+
 int usb_osal_sem_give(usb_osal_sem_t sem)
 {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
     int ret;
 
-    if (!xPortIsInIsr()) {
+    if (!AlOsal_In_Intr()) {
         ret = xSemaphoreGive((SemaphoreHandle_t)sem);
     } else {
         ret = xSemaphoreGiveFromISR((SemaphoreHandle_t)sem, &xHigherPriorityTaskWoken);

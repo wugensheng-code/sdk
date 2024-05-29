@@ -342,6 +342,18 @@ irq_entry:
     /* Save Fpu registers when fpu is enabled */
     portasmSAVE_FPU_REGISTERS
 
+#ifdef RTOS_FREERTOS
+
+    la      x5, ullPortInterruptNesting
+    LOAD    x1, 0(x5)
+    addi    x6, x1, 1
+    STORE   x6, 0(x5)
+    addi    sp, sp, -2*REGBYTES
+    STORE   x1, 0(sp)
+    STORE   x5, 4(sp)
+
+#endif
+
     /* This special CSR read/write operation, which is actually
      * claim the CLIC to find its pending highest ID, if the ID
      * is not 0, then automatically enable the mstatus.MIE, and
@@ -351,6 +363,13 @@ irq_entry:
 
     /* Critical section with interrupts disabled */
     DISABLE_MIE
+
+#ifdef RTOS_FREERTOS
+    lw     x1, 0(sp)
+    LOAD   x5, 4(sp)
+    STORE  x1, 0(x5)
+    addi   sp, sp, 2*REGBYTES
+#endif
 
     /* Restore Fpu registers when fpu is enabled */
     portasmRESTORE_FPU_REGISTERS
@@ -372,7 +391,26 @@ ECLIC_Isr_Vect:
     /* Save Fpu registers when fpu is enabled */
     portasmSAVE_FPU_REGISTERS
 
+#ifdef RTOS_FREERTOS
+
+    la      x5, ullPortInterruptNesting
+    ld      x1, 0(x5)
+    addi    x6, x1, 1
+    STORE   x6, 0(x5)
+    addi    sp, sp, -2*REGBYTES
+    STORE   x1, 0(sp)
+    STORE   x5, 4(sp)
+
+#endif
+
     call ECLIC_Isr_Nonvect
+
+#ifdef RTOS_FREERTOS
+    LOAD   x1, 0(sp)
+    LOAD   x5, 8(sp)
+    STORE  x1, 0(x5)
+    addi   sp, sp, 2*REGBYTES
+#endif
 
     /* Restore Fpu registers when fpu is enabled */
     portasmRESTORE_FPU_REGISTERS
@@ -392,3 +430,4 @@ Undef_Handler:
 default_intexc_handler:
 1:
     j 1b
+

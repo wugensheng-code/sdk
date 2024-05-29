@@ -167,6 +167,8 @@ static TickType_t ulStoppedTimerCompensation = 0;
 static uint8_t ucMaxSysCallPriority = 0;
 #endif /* configASSERT_DEFINED */
 
+volatile uint64_t ullPortInterruptNesting = 0;
+
 /*-----------------------------------------------------------*/
 
 /*
@@ -422,14 +424,6 @@ void vPortAssert(int32_t x)
         };
     }
 }
-/*-----------------------------------------------------------*/
-
-AL_BOOL xPortIsInIsr( void )
-{
-    uintptr_t mcause =  ARCH_SYSREG_READ(CSR_MCAUSE);
-    volatile AL_BOOL InIsr = mcause >> __RISCV_XLEN;
-    return InIsr;
-}
 
 /*-----------------------------------------------------------*/
 
@@ -653,10 +647,7 @@ void vPortValidateInterruptPriority(void)
     // CSR_MCAUSE_Type mcause = (CSR_MCAUSE_Type)__RV_CSR_READ(CSR_MCAUSE);
     AL_REGISTER mcause = ARCH_SYSREG_READ(CSR_MCAUSE);
     /* Make sure current trap type is interrupt */
-#if defined(__riscv_xlen) && __riscv_xlen == 64
-    AL_REGISTER interrupt = mcause >> 63;
-#endif
-    configASSERT(interrupt == 1);
+    AL_REGISTER interrupt = mcause >> (__riscv_xlen - 1);
     if (interrupt) {
         ulCurrentInterrupt = mcause & 0x1F;
         // ulCurrentInterrupt = mcause.b.exccode;

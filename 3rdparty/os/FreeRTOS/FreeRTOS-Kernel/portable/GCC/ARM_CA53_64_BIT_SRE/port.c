@@ -156,17 +156,6 @@ __attribute__(( used )) const uint64_t ullMaxAPIPriorityMask = ( configMAX_API_C
 
 /*-----------------------------------------------------------*/
 
-AL_BOOL xPortIsInIsr( void )
-{
-	if (ullPortInterruptNesting) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-/*-----------------------------------------------------------*/
-
 /*
  * See header file for description.
  */
