@@ -81,13 +81,9 @@ MKDEP_OPT   = -MMD -MT $@ -MF $@.d
 ifeq ($(RTOS), freertos)
 AL_CFLAGS += -DUSE_RTOS
 AL_CFLAGS += -DRTOS_FREERTOS
-CFLAGS += -DUSE_RTOS
-CFLAGS += -DRTOS_FREERTOS
 else ifeq ($(RTOS), rtthread)
 AL_CFLAGS += -DUSE_RTOS
 AL_CFLAGS += -DRTOS_RTTHREAD
-CFLAGS += -DUSE_RTOS
-CFLAGS += -DRTOS_RTTHREAD
 endif
 
 #########################################################################

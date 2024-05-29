@@ -30,6 +30,9 @@ int main(void)
 	uint32_t FsblStage    = ALFSBL_STAGE1;
 	uint32_t FsblStatus   = ALFSBL_SUCCESS;
 	uint32_t PartitionIdx = 0;
+
+	AL_LOG(AL_LOG_LEVEL_INFO, "fsbl main start: \r\n");
+
 	Soc_PlatInit();
 
 	while (FsblStage <= ALFSBL_STAGE_DFT) {
