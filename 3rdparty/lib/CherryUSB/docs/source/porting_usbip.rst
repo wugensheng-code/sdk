@@ -6,16 +6,16 @@ USB IP 勘误
 FSDEV
 --------------------------
 
-FSDEV 仅支持从机。这个 ip 不同厂家基本都是基于标准的 usb 寄存器，所以用户使用时，仅需要修改 `USBD_IRQHandler` 、 `USB_BASE` 、 `USB_NUM_BIDIR_ENDPOINTS` 即可。有些芯片可能还需要配置 `PMA_ACCESS` 的值，默认为2。下表为具体芯片相关宏的修改值：
+FSDEV 仅支持从机。这个 ip 不同厂家基本都是基于标准的 usb 寄存器，有些芯片可能还需要配置 `PMA_ACCESS` 的值，默认为2。下表为具体芯片相关宏的修改值：
 
 .. list-table::
     :widths: 30 20 30 30 30
     :header-rows: 1
 
     * - 芯片
-      - USBD_IRQHandler
-      - USB_BASE
-      - USB_NUM_BIDIR_ENDPOINTS
+      - 中断名
+      - 寄存器地址
+      - CONFIG_USBDEV_EP_NUM
       - PMA_ACCESS
     * - STM32F0
       - USB_IRQHandler
@@ -48,10 +48,26 @@ FSDEV 仅支持从机。这个 ip 不同厂家基本都是基于标准的 usb �
       - 同上
       - 1
 
+fsdev 需要外置 dp 上拉才能使用，有些芯片可能是接上拉电阻，有些芯片可能是设置寄存器，举例如下：
+
+.. code-block:: C
+
+    USB->BCDR |= (uint16_t)USB_BCDR_DPPU;
+
+如果不存在 BCDR 寄存器，则一般是配置如下，并且该设置需要配置到 `usb_dc_low_level_init` 中或者 `usb_dc_init` 最后都行：
+
+.. code-block:: C
+
+  /* Pull up controller register */
+  #define DP_CTRL ((__IO unsigned*)(0x40001820))
+
+  #define _EnPortPullup() (*DP_CTRL = (*DP_CTRL) | 0x10000000);
+  #define _DisPortPullup() (*DP_CTRL = (*DP_CTRL) & 0xEFFFFFFF);
+
 MUSB
 --------------------------
 
-MUSB IP 支持主从，并且由 **mentor** 定义了一套标准的寄存器偏移，所以如果是走的标准，则从机仅需要修改 `USBD_IRQHandler` 、 `USB_BASE` 、 `USB_NUM_BIDIR_ENDPOINTS` ，主机仅需要修改 `USBH_IRQHandler` 、 `USB_BASE` 以及 `CONIFG_USB_MUSB_EP_NUM` 即可。如果非标准，则需要实现以下宏的偏移，以标准为例：
+MUSB IP 支持主从，并且由 **mentor** 定义了一套标准的寄存器偏移，如果非标准，则需要实现以下宏的偏移，以标准为例：
 
 .. code-block:: C
 
@@ -111,9 +127,9 @@ MUSB IP 支持主从，并且由 **mentor** 定义了一套标准的寄存器偏
     :header-rows: 1
 
     * - 芯片
-      - USBD_IRQHandler
-      - USB_BASE
-      - USB_NUM_BIDIR_ENDPOINTS
+      - 中断名
+      - 寄存器地址
+      - CONFIG_USBDEV_EP_NUM
     * - ES32F3xx
       - USB_INT_Handler
       - 0x40086400
@@ -134,8 +150,8 @@ MUSB IP 支持主从，并且由 **mentor** 定义了一套标准的寄存器偏
     :header-rows: 1
 
     * - 芯片
-      - USBH_IRQHandler
-      - USB_BASE
+      - 中断名
+      - 寄存器地址
       - CONIFG_USB_MUSB_EP_NUM
     * - ES32F3xx
       - USB_INT_Handler
@@ -153,11 +169,11 @@ MUSB IP 支持主从，并且由 **mentor** 定义了一套标准的寄存器偏
 DWC2
 --------------------------
 
-DWC2 IP 支持主从，并且由 **synopsys** 定义了一套标准的寄存器偏移。大部分厂家都使用标准的寄存器偏移，所以如果是从机仅需要修改 `USBD_IRQHandler` 、 `USB_BASE` 、 `USB_NUM_BIDIR_ENDPOINTS` ，主机仅需要修改 `USBH_IRQHandler` 、 `USB_BASE`  即可。
+DWC2 IP 支持主从，并且由 **synopsys** 定义了一套标准的寄存器偏移。大部分厂家都使用标准的寄存器偏移(除了 GCCFG(GGPIO)寄存器)，所以如果是从机仅需要修改 `中断名` 、 `USB_BASE` 、 `CONFIG_USBDEV_EP_NUM` ，主机仅需要修改 `中断名` 、 `USB_BASE`  即可。
 
-其次还有需要注意 VBUS SENSING 这个项，也会影响 USB 的正常枚举，如何修改参考 `GD32 dwc2驱动的GCCFG_NOVBUSSENS寄存器兼容性和stm32存在区别 <https://github.com/sakumisu/CherryUSB/issues/64>`_。
+.. note:: GCCFG(GGPIO) 根据不同的厂家设置不同，会影响 usb 枚举，需要根据厂家提供的手册进行配置,并实现 usbd_get_dwc2_gccfg_conf 和 usbh_get_dwc2_gccfg_conf 函数，填充相应需要使能的bit
 
-.. caution:: 主机 port 仅支持有高速功能的 dwc2 ip, 因为他支持 dma 模式，如果厂家买的 ip 不支持 dma 模式，则无法使用。
+.. caution:: 主机 port 仅支持有 dma 功能的 dwc2 ip(代码中会判断当前 ip 是否支持), 如果不支持 dma 模式，则无法使用。
 
 下表为具体芯片从机相关宏的修改值：
 
@@ -166,9 +182,9 @@ DWC2 IP 支持主从，并且由 **synopsys** 定义了一套标准的寄存器�
     :header-rows: 1
 
     * - 芯片
-      - USBH_IRQHandler
-      - USB_BASE
-      - USB_NUM_BIDIR_ENDPOINTS
+      - 中断名
+      - 寄存器地址
+      - CONFIG_USBDEV_EP_NUM
     * - STM32 非 H7
       - OTG_FS_IRQHandler/OTG_HS_IRQHandler
       - 0x50000000UL/0x40040000UL
@@ -185,9 +201,9 @@ DWC2 IP 支持主从，并且由 **synopsys** 定义了一套标准的寄存器�
     :header-rows: 1
 
     * - 芯片
-      - USBH_IRQHandler
-      - USB_BASE
-      - CONFIG_USB_DWC2_PIPE_NUM
+      - 中断名
+      - 寄存器地址
+      - CONFIG_USBHOST_PIPE_NUM
     * - STM32 全系列
       - OTG_HS_IRQHandler
       - 0x40040000UL
@@ -200,17 +216,17 @@ EHCI 是 intel 制定的标准主机控制器接口，任何厂家都必须实�
 
 .. code-block:: C
 
-  //Host Controller Capability Register BASE
-  #define CONFIG_USB_EHCI_HCCR_BASE (0xxx)
-  //Host Controller Operational Register BASE
-  #define CONFIG_USB_EHCI_HCOR_BASE (0xxx)
-  //是否打印 ehci 配置信息
-  #define CONFIG_USB_EHCI_INFO_ENABLE
+  #define CONFIG_USB_EHCI_HCCR_OFFSET     (0x0)
+  #define CONFIG_USB_EHCI_FRAME_LIST_SIZE 1024
+  #define CONFIG_USB_EHCI_QH_NUM          CONFIG_USBHOST_PIPE_NUM
+  #define CONFIG_USB_EHCI_QTD_NUM         3
+  #define CONFIG_USB_EHCI_ITD_NUM         20
   //是否关闭保留寄存器的占位，默认保留 9 个双字的占位
-  #define CONFIG_USB_ECHI_HCOR_RESERVED_DISABLE
+  #define CONFIG_USB_EHCI_HCOR_RESERVED_DISABLE
   //是否使能 configflag 寄存器中的 bit0
   #define CONFIG_USB_EHCI_CONFIGFLAG
-  //是否使能 port power bit
-  #define CONFIG_USB_EHCI_PORT_POWER
+  #define CONFIG_USB_EHCI_ISO
+  // 不带 tt的 IP 一般使用OHCI
+  #define CONFIG_USB_EHCI_WITH_OHCI
 
-同时由于 EHCI 只是主机控制器，一般配合一个 device 控制器+ otg 控制器，而速度的获取一般是在 otg 寄存器中，所以需要用户实现 `usbh_get_port_speed` 函数。
+同时由于 EHCI 只是主机控制器并且只支持高速，一般配合一个 otg 控制器和一个低速全速兼容控制单元，而速度的获取一般是在 otg 寄存器中，所以需要用户实现 `usbh_get_port_speed` 函数。

@@ -4,14 +4,8 @@
 SRC_DIR = .
 
 # (1.2) add submodule include
-INC_DIR += ./ \
-           ../CherryUSB/common \
-           ../CherryUSB/core \
-           ../CherryUSB/config \
-           ../CherryUSB/osal \
-           ../CherryUSB/class/hub \
-           ../CherryUSB/class/hid \
-           ../CherryUSB/class/msc
+INC_DIR += .
+	   
 # (3) set specificity FLAGS
 LIBNAME := fatfs
 

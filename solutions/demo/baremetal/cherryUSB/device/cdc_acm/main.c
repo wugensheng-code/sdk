@@ -11,14 +11,13 @@
 
 #define AL_USB_DEVICE_ID     0
 
-extern volatile uint8_t dtr_enable;
-extern void cdc_acm_init(void);
-extern void cdc_acm_data_send_with_dtr_test(void);
+extern void cdc_acm_init(uint8_t busid, uint32_t reg_base);
+extern void cdc_acm_data_send_with_dtr_test(uint8_t busid);
+extern void USBD_IRQHandler(uint8_t busid);
 
-extern void USBD_IRQHandler(void);
 AL_VOID AlUsb_Dev_IntrHandler()
 {
-    USBD_IRQHandler();
+    USBD_IRQHandler(0);
 }
 
 AL_VOID main()
@@ -28,8 +27,6 @@ AL_VOID main()
     AL_S32 Ret;
 
     AL_LOG(AL_LOG_LEVEL_INFO, "str = %s \r\n", str);
-
-    AlCache_DisableMmu();
 
     for (int i = 0; i < 20; i ++)
     {
@@ -55,11 +52,10 @@ AL_VOID main()
     }
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
-    cdc_acm_init();
+    cdc_acm_init(0, USB0__BASE_ADDR);
 
     while (1) {
         AlSys_MDelay(2000);
-        usbd_cdc_acm_set_dtr(0, 1);
-        cdc_acm_data_send_with_dtr_test();
+        cdc_acm_data_send_with_dtr_test(0);
     }
 }

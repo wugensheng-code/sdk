@@ -22,13 +22,12 @@
 
 #define AL_USB_DEVICE_ID     0
 
-extern void usbh_initialize(void);
-extern void usbh_class_test(void);
+extern int usbh_initialize(uint8_t busid, uint32_t reg_base);
+extern void USBH_IRQHandler(uint8_t busid);
 
-extern void USBH_IRQHandler(void);
 AL_VOID AlUsb_Dev_IntrHandler(AL_VOID *Instance)
 {
-    USBH_IRQHandler();
+    USBH_IRQHandler(0);
 }
 
 /* The queue used by the queue send and queue receive tasks. */
@@ -59,9 +58,7 @@ void start_task2(void* pvParameters)
     }
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
-    printf("Enter to task_2 USB MSC INIT \r\n");
-
-    usbh_initialize();
+    usbh_initialize(0, USB0__BASE_ADDR);
     usbh_class_test();
 
     int cnt = 0;
@@ -77,8 +74,6 @@ int main()
     AL_S8 *str = "Hello World From Anlogic!";
 
     printf("str = %s \r\n", str);
-
-    AlCache_DisableMmu();
 
     TimerHandle_t xExampleSoftwareTimer = NULL;
 

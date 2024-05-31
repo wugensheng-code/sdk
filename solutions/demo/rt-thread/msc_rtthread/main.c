@@ -12,13 +12,12 @@
 
 #define AL_USB_DEVICE_ID     0
 
-extern void usbh_initialize(void);
-extern void usbh_class_test(void);
+extern int usbh_initialize(uint8_t busid, uint32_t reg_base);
+extern void USBH_IRQHandler(uint8_t busid);
 
-extern void USBH_IRQHandler(void);
 AL_VOID AlUsb_Dev_IntrHandler(AL_VOID *Instance)
 {
-    USBH_IRQHandler();
+    USBH_IRQHandler(0);
 }
 
 static rt_thread_t tid1 = RT_NULL;
@@ -99,7 +98,7 @@ int main()
     }
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
-    usbh_initialize();
+    usbh_initialize(0, USB0__BASE_ADDR);
     usbh_class_test();
 
     while (1) {

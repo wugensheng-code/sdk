@@ -64,7 +64,7 @@ PINMUX_MODE ?= PINMUX_MODE1
 #########################################################################
 TARGET := msc_host_freertos
 DOWNLOAD = ddr
-ENABLE_MMU = 0
+ENABLE_MMU = 1
 
 ifneq ($(PINMUX_MODE),)
 CFLAGS += -DENABLE_$(PINMUX_MODE)=1

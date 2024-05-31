@@ -3,11 +3,11 @@
 # -- Project information
 
 project = 'CherryUSB'
-copyright = '2022, sakumisu'
+copyright = '2024, sakumisu'
 author = 'sakumisu'
 
-release = '0.9'
-version = '0.9.0'
+release = '1.3.0'
+version = '1.3.0'
 
 # -- General configuration
 
