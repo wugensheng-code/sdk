@@ -53,8 +53,8 @@ CFLAGS := -O2 -g
 #    Fixme: where to add board init source files and headers files
 #########################################################################
 # PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
-# PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v20
-PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/platform
+PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v20
+# PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/platform
 # PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_hpf_v10
 # PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_dc_v1d1
 

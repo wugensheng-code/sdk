@@ -77,9 +77,7 @@ AL_VOID AlNor_WaitWip(AL_VOID)
  * @return  Different manufacturers of flash require different parameters to be passed
  * @note
 */
-
-
-AL_S32 AlNor_SetQuad(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd, AL_U8 QuadPos)
+AL_S32 AlNor_SetQuad1ByteMode(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd, AL_U8 QuadPos)
 {
     AL_S32  Ret = AL_OK;
     AL_U8 SendData[4] = {0x0}, Data = 0;
@@ -94,7 +92,7 @@ AL_S32 AlNor_SetQuad(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd, AL_U8 QuadPos)
 
     Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 1, &Data, 1, 100000);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_SetQuad ReadQuadCmd error\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_SetQuad1ByteMode ReadQuadCmd error\r\n");
     }
 
     Data = Data | (1 << QuadPos);
@@ -108,13 +106,77 @@ AL_S32 AlNor_SetQuad(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd, AL_U8 QuadPos)
 
     Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 2, 100000);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_SetQuad SetQuadCmd error\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_SetQuad1ByteMode SetQuadCmd error\r\n");
     }
 
     AlNor_WaitWip();
 
     return Ret;
 }
+
+
+/*
+ * function to set QSPI quad mode
+ * The setting step;
+ * -- Read status1 by ReadQuadCmd1
+ * -- Read status2 by ReadQuadCmd2
+ * if QuadPos < 8
+ * -- set status register: SetQuadCmd （status1 | (0x01 << QuadPos)）status2
+  * if QuadPos > 8
+ * -- set status register: SetQuadCmd status1 (status2 | (0x01 << QuadPos - 8))
+ *
+ *  for example GD25LQ255E
+ * Read Status Register-1        :05H (S7-S0) (cont.)
+ * Read Status Register-2        :35H (S15-S8) (cont.)
+ * Write Status Register-1&2     :01H S7-S0 S15-S8
+*/
+AL_S32 AlNor_SetQuad2ByteMode(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd1, AL_U8 ReadQuadCmd2, AL_U8 QuadPos)
+{
+    AL_S32  Ret = AL_OK;
+    AL_U8 SendData[4] = {0x0}, RecvData = 0;
+
+    SendData[0] = ReadQuadCmd1;
+
+    Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
+    Handle->Dev.Configs.Trans.TransMode  = QSPI_EEPROM;
+    Handle->Dev.Configs.SpiFrameFormat = SPI_STANDARD_FORMAT;
+
+    Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 1, &RecvData, 1, 100000);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_SetQuad2ByteMode ReadQuadCmd error\r\n");
+    }
+    SendData[1] = RecvData;
+
+    SendData[0] = ReadQuadCmd2;
+    Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 1, &RecvData, 1, 100000);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_SetQuad2ByteMode ReadQuadCmd error\r\n");
+    }
+    SendData[2] = RecvData;
+
+    if (QuadPos < 8)
+        SendData[1] |= (1 << QuadPos);
+    else
+        SendData[2] |= (1 << QuadPos - 8);
+
+    AlNor_Wren();
+
+    SendData[0] = SetQuadCmd;
+
+    Handle->Dev.Configs.Trans.TransMode = QSPI_TX_ONLY;
+
+    Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 3, 100000);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_SetQuad2ByteMode SetQuadCmd error\r\n");
+    }
+
+    AlNor_WaitWip();
+
+    return Ret;
+}
+
 
 AL_VOID AlNor_ReadPage_1_1_4(AL_U32 addr)
 {
@@ -218,10 +280,12 @@ AL_U32 AlFsbl_QspiInit(void)
     AL_LOG(AL_LOG_LEVEL_INFO, "Flash ID:0x%x, 0x%x, 0x%x\r\n", FlashId[0], FlashId[1], FlashId[2]);
 
     if((FlashId[0] != 0x01) && (FlashId[0] != 0x20) && (FlashId[0] != 0x0) && (FlashId[0] != 0xff)) {
-        if((FlashId[0] != 0x9d) && (FlashId[0] != 0xc2)) {
-            Ret = AlNor_SetQuad(0x31, 0x35, 1);
+        if((FlashId[0] == 0xc8) && (FlashId[1] == 0x60)) {
+            Ret = AlNor_SetQuad2ByteMode(0x1, 0x5, 0x35, 9);
+        } else  if((FlashId[0] != 0x9d) && (FlashId[0] != 0xc2)) {
+            Ret = AlNor_SetQuad1ByteMode(0x31, 0x35, 1);
         } else {
-            Ret = AlNor_SetQuad(0x01, 0x05, 6);
+            Ret = AlNor_SetQuad1ByteMode(0x01, 0x05, 6);
         }
     }
 
@@ -451,8 +515,6 @@ AL_U32 AlFsbl_Qspi24Release(void)
 {
     return 0;
 }
-
-
 
 AL_U32 AlFsbl_QspiXipInit(void)
 {
