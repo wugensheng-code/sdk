@@ -18,12 +18,7 @@ void components_init(void)
 {
     AL_S32 Ret;
 
-    Ret = AlLog_Init();
-    if (Ret != AL_OK) {
-        while (1) {
-            asm volatile("wfi");
-        }
-    }
+    AlLog_Init();
 
 #ifdef AL_PRINT_ASYNC
     AlPrint_Init();
