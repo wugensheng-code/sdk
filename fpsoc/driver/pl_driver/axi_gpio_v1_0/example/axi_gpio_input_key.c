@@ -9,7 +9,7 @@
 
 AL_VOID GP_Port_Enable()
 {
-	AL_U32 val = AL_REG32_READ(0xF8800080);
+    AL_U32 val = AL_REG32_READ(0xF8800080);
     val &= ~0x2;
     AL_REG32_WRITE(0xF8800080, val);
     val = 0;
@@ -17,7 +17,7 @@ AL_VOID GP_Port_Enable()
     AL_REG32_WRITE(0xF8801078, val & (~0x33));
     AlSys_MDelay(1);
     
-	AL_REG32_WRITE(0xF8801078, val | 0x33);
+    AL_REG32_WRITE(0xF8801078, val | 0x33);
 }
 
 AL_VOID Callback(AlAxiGpio_EventStruct *Event, AL_VOID *CallbackRef)
