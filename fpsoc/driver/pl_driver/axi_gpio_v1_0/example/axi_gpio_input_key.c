@@ -16,7 +16,6 @@ AL_VOID GP_Port_Enable()
     val = AL_REG32_READ(0xF8801078);
     AL_REG32_WRITE(0xF8801078, val & (~0x33));
     AlSys_MDelay(1);
-    
     AL_REG32_WRITE(0xF8801078, val | 0x33);
 }
 
