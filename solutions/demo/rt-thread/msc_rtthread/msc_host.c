@@ -466,7 +466,7 @@ void usbh_class_test(void)
     usb_osal_thread_create("usbh_hid", 2048, CONFIG_USBHOST_PSC_PRIO + 1, usbh_hid_thread, NULL);
 #endif
 #if TEST_USBH_MSC
-    usb_osal_thread_create("usbh_msc", 2048, CONFIG_USBHOST_PSC_PRIO + 1, usbh_msc_thread, NULL);
+    usb_osal_thread_create("usbh_msc", 20480, CONFIG_USBHOST_PSC_PRIO + 1, usbh_msc_thread, NULL);
 #endif
 #if TEST_USBH_AUDIO
 #error "if you want to use iso, please contact with me"

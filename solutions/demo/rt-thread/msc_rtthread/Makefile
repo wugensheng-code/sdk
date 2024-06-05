@@ -1,3 +1,9 @@
+#########################################################################
+# Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+
+# SPDX-License-Identifier: BSD-3-Clause
+#########################################################################
+
 
 #########################################################################
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
@@ -5,16 +11,14 @@
 SDK_ROOT   ?= ../../../../
 
 
-CHIP       = dr1v90
+CHIP       := dr1v90
 RTOS       := rtthread
 
 ifeq ($(CHIP), dr1m90)
-COMPILE_PREFIX ?= /opt/toolchain/7.5.0/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-elf/bin/aarch64-elf-
+COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
 else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
-
-
 
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
@@ -58,7 +62,6 @@ PINMUX_MODE ?= PINMUX_MODE1
 # 5. define build target
 #########################################################################
 TARGET := msc_host_rtthread
-DOWNLOAD = ocm
 
 ifneq ($(PINMUX_MODE),)
 CFLAGS += -DENABLE_$(PINMUX_MODE)=1

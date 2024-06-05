@@ -63,8 +63,6 @@ PINMUX_MODE ?= PINMUX_MODE1
 # 5. define build target
 #########################################################################
 TARGET := msc_host_freertos
-DOWNLOAD = ddr
-ENABLE_MMU = 1
 
 ifneq ($(PINMUX_MODE),)
 CFLAGS += -DENABLE_$(PINMUX_MODE)=1

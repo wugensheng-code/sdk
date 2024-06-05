@@ -86,7 +86,7 @@ int main()
     AL_S8 *str = "Hello World From Anlogic!";
 
     rt_kprintf("str = %s \r\n", str);
-    AlCache_DisableMmu();
+    //AlCache_DisableMmu();
 
     AL_USB_HalStruct *USB0;
     AL_S32 ret = AlUsb_Hal_Init(&USB0, AL_USB_DEVICE_ID, AlUsb_Dev_IntrHandler);
