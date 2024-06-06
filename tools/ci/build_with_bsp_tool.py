@@ -9,7 +9,7 @@ import argparse
 import os
 import subprocess
 import json
-from loguru import logger
+import logging
 from pathlib import Path
 from shutil import copytree
 
@@ -17,6 +17,17 @@ from shutil import copytree
 env_k = ['BSP_RESOURCE_PATH', 'AARCH64_TOOLCHAIN_PATH', 'RISCV_TOOLCHAIN_PATH']
 AARCH64_TOOLCHAIN_PATH='/opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin'
 RISCV_TOOLCHAIN_PATH='/opt/toolchain/riscv-gcc/bin'
+
+
+logger = logging.getLogger('logger')
+logger.setLevel(logging.DEBUG)
+stream_handler = logging.StreamHandler()
+stream_handler.setLevel(logging.INFO)
+logger.addHandler(stream_handler)
+filter_ = logging.Filter('logger')
+stream_handler.addFilter(filter_)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+stream_handler.setFormatter(formatter)
 
 
 class Bsp_tool(object):
@@ -28,7 +39,7 @@ class Bsp_tool(object):
         self.env = dict.fromkeys(env_k)
 
         try:
-            self.env['BSP_RESOURCE_PATH'] = os.path.abspath(kwargs['BSP_RESOURCE_PATH'])
+            self.env['BSP_RESOURCE_PATH'] = os.path.abspath(kwargs['BSP_RESOURCE_PATH']) + '/'
             self.env['AARCH64_TOOLCHAIN_PATH'] = os.path.abspath(AARCH64_TOOLCHAIN_PATH)
             self.env['RISCV_TOOLCHAIN_PATH'] = os.path.abspath(RISCV_TOOLCHAIN_PATH)
 
@@ -42,15 +53,15 @@ class Bsp_tool(object):
     def setup_env(self):
         ''' set environment variables '''
 
-        # self.environ = os.environ.copy()
+        self.environ = os.environ.copy()
 
-        # for k, v in self.env.items():
-        #     os.environ[k] = v
-        #     PATH = os.getenv('PATH')
-        #     PATH + f':{v}'
-        #     os.environ['PATH'] = PATH
-        #     self.environ[k] = v
-        #     self.environ['PATH'] = PATH
+        for k, v in self.env.items():
+            os.environ[k] = v
+            PATH = os.getenv('PATH')
+            PATH + f':{v}'
+            os.environ['PATH'] = PATH
+            self.environ[k] = v
+            self.environ['PATH'] = PATH
         
 
     def create_bsp(self, proj_name, location, chip,  proc_type, os_type, hpf_path):
@@ -62,18 +73,20 @@ class Bsp_tool(object):
 
         try:
             logger.info(f'======> Start creating bsp: project name: {proj_name} os type: {os_type}')
-            ret = subprocess.run(f'./asct dr1x90_tool create_platform_project -projName {proj_name} -location {self.location} -chip {chip} -proc {proc_type} -os {os_type} -hpf {hpf_path}',
+            ret = subprocess.run(f'{self.bsp_tool_p}/asct dr1x90_tool create_platform_project -projName {proj_name} -location {self.location} -chip {chip} -proc {proc_type} -os {os_type} -hpf {hpf_path}',
                 shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
 
-            ret = subprocess.run(f'./asct dr1x90_tool create_default_mss -mssfile {self.location}/{proj_name}/system.mss -chip {chip} -proc {proc_type} -os {os_type}',
+            ret = subprocess.run(f'{self.bsp_tool_p}/asct dr1x90_tool create_default_mss -mssfile {self.location}/{proj_name}/system.mss -chip {chip} -proc {proc_type} -os {os_type}',
                 shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
 
-            ret = subprocess.run(f'./asct dr1x90_tool generate_bsp_sources -hpf {hpf_path} -mssfile {self.location}/{proj_name}/system.mss -bsp_loc {self.location}/{proj_name}',
+            ret = subprocess.run(f'{self.bsp_tool_p}/asct dr1x90_tool generate_bsp_sources -hpf {hpf_path} -mssfile {self.location}/{proj_name}/system.mss -bsp_loc {self.location}/{proj_name}',
                 shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
 
             logger.info(f'======> Platform created successfully: {proj_name}')
         except Exception as e:
             logger.error(f'======> create_bsp failed. {e}')
+            logger.error(e.stderr)
+            logger.error(e.stdout)
             exit(1)
 
         self.bsp_location = f'{os.getcwd()}/{proj_name}'
@@ -84,10 +97,10 @@ class Bsp_tool(object):
         bspLoc = f'{os.getcwd()}/{bspLoc}'
         try:
             logger.info(f'======> Start creating app: {app_name}')
-            subprocess.run(f'./asct dr1x90_tool create_application_project -projName {proj_name} -location {os.getcwd()} -language C -bsp_loc {self.bsp_location}',
-                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
-            subprocess.run(f'./asct dr1x90_tool generate_app_sources -bsp_loc {bspLoc} -name {app_name} -app_loc {self.location}/{proj_name}',
-                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
+            subprocess.run(f'{self.bsp_tool_p}/asct dr1x90_tool create_application_project -projName {proj_name} -location {os.getcwd()} -language C -bsp_loc {self.bsp_location}',
+                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True, env=self.environ)
+            subprocess.run(f'{self.bsp_tool_p}/asct dr1x90_tool generate_app_sources -bsp_loc {bspLoc} -name {app_name} -app_loc {self.location}/{proj_name}',
+                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True, env=self.environ)
             logger.info(f'======> App created successfully: {app_name}')
             logger.info(f'======> Start make project: {app_name}')
 
@@ -95,8 +108,14 @@ class Bsp_tool(object):
                 COMPILE_PREFIX = RISCV_TOOLCHAIN_PATH + '/riscv-nuclei-elf-'
             else:
                 COMPILE_PREFIX = AARCH64_TOOLCHAIN_PATH + '/aarch64-none-elf-'
-            
-            subprocess.run(f'make -j8 COMPILE_PREFIX={COMPILE_PREFIX}',
+
+            if 'rpc' in app_name and self.proc_type != 'rpu':
+                subprocess.run(f'make -j8 COMPILE_PREFIX={COMPILE_PREFIX} WITH_PROXY=1 SDK_ROOT={bspLoc}',
+                    shell=True, capture_output=True, cwd=f'{self.location}/{proj_name}', check=True, text=True)
+            elif 'rpc' in app_name and self.proc_type == 'rpu':
+                return
+
+            subprocess.run(f'make -j8 COMPILE_PREFIX={COMPILE_PREFIX} WITH_PROXY=1 SDK_ROOT={bspLoc}',
                 shell=True, capture_output=True, cwd=f'{self.location}/{proj_name}', check=True, text=True)
         except subprocess.CalledProcessError as e:
             logger.error(e.stderr)
