@@ -72,6 +72,9 @@ AL_VOID AlWdt_Hal_DefEventHandler(AL_VOID *CallbackRef)
 AL_VOID AlWdt_Hal_IntrHandler(AL_VOID *Instance)
 {
     AL_WDT_HalStruct *Wdt = (AL_WDT_HalStruct *)Instance;
+
+    Wdt->EventCallBack(Wdt->EventCallBackRef);
+
     AlWdt_ll_ClearIntr(Wdt->BaseAddr);
 }
 

@@ -24,7 +24,7 @@ AL_VOID AlWdt_Hal_CustomEventHandler(AL_VOID *CallbackRef)
 
 static AL_S32 AlWdt_Test_Interrupt_Mode(AL_VOID)
 {
-    AL_WDT_HalStruct wdt0;
+    AL_WDT_HalStruct *wdt0;
 
     AL_S32 Ret = AlWdt_Hal_Init(&wdt0, 0, &WDT_InitStruct, AlWdt_Hal_CustomEventHandler);
     if (Ret != AL_OK) {
