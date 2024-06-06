@@ -42,13 +42,18 @@ class Bsp_tool(object):
     def setup_env(self):
         ''' set environment variables '''
 
-        for k, v in self.env.items():
-            os.putenv(k, v)
-            PATH = os.getenv('PATH')
-            PATH + f':{v}'
-            os.putenv('PATH', PATH)
+        # self.environ = os.environ.copy()
 
-    def create_bsp(self, proj_name, location, proc_type, os_type, hpf_path):
+        # for k, v in self.env.items():
+        #     os.environ[k] = v
+        #     PATH = os.getenv('PATH')
+        #     PATH + f':{v}'
+        #     os.environ['PATH'] = PATH
+        #     self.environ[k] = v
+        #     self.environ['PATH'] = PATH
+        
+
+    def create_bsp(self, proj_name, location, chip,  proc_type, os_type, hpf_path):
         ''' create bsp '''
 
         self.location = location
@@ -57,12 +62,15 @@ class Bsp_tool(object):
 
         try:
             logger.info(f'======> Start creating bsp: project name: {proj_name} os type: {os_type}')
-            subprocess.run(f'./anlogic_tool bsp_tool create_platform_project -projName {proj_name} -location {self.location} -proc {proc_type} -os {os_type} -hpf {hpf_path}',
+            ret = subprocess.run(f'./asct dr1x90_tool create_platform_project -projName {proj_name} -location {self.location} -chip {chip} -proc {proc_type} -os {os_type} -hpf {hpf_path}',
                 shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
-            subprocess.run(f'./anlogic_tool bsp_tool create_default_mss -mssfile {self.location}/{proj_name}/system.mss -proc {proc_type} -os {os_type}',
+
+            ret = subprocess.run(f'./asct dr1x90_tool create_default_mss -mssfile {self.location}/{proj_name}/system.mss -chip {chip} -proc {proc_type} -os {os_type}',
                 shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
-            subprocess.run(f'./anlogic_tool bsp_tool generate_bsp_sources -hpf {hpf_path} -mssfile {self.location}/{proj_name}/system.mss -dir {self.location}/{proj_name}',
+
+            ret = subprocess.run(f'./asct dr1x90_tool generate_bsp_sources -hpf {hpf_path} -mssfile {self.location}/{proj_name}/system.mss -bsp_loc {self.location}/{proj_name}',
                 shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
+
             logger.info(f'======> Platform created successfully: {proj_name}')
         except Exception as e:
             logger.error(f'======> create_bsp failed. {e}')
@@ -76,14 +84,19 @@ class Bsp_tool(object):
         bspLoc = f'{os.getcwd()}/{bspLoc}'
         try:
             logger.info(f'======> Start creating app: {app_name}')
-            subprocess.run(f'./anlogic_tool bsp_tool create_application_project -projName {proj_name} -location {os.getcwd()} -language C -bsp_loc {self.bsp_location}',
+            subprocess.run(f'./asct dr1x90_tool create_application_project -projName {proj_name} -location {os.getcwd()} -language C -bsp_loc {self.bsp_location}',
                 shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
-            subprocess.run(f'./anlogic_tool bsp_tool generate_app_sources -bsp_loc {bspLoc} -name {app_name} -dir {self.location}/{proj_name}',
+            subprocess.run(f'./asct dr1x90_tool generate_app_sources -bsp_loc {bspLoc} -name {app_name} -app_loc {self.location}/{proj_name}',
                 shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
             logger.info(f'======> App created successfully: {app_name}')
             logger.info(f'======> Start make project: {app_name}')
 
-            subprocess.run(f'make -j8',
+            if self.proc_type == 'rpu':
+                COMPILE_PREFIX = RISCV_TOOLCHAIN_PATH + '/riscv-nuclei-elf-'
+            else:
+                COMPILE_PREFIX = AARCH64_TOOLCHAIN_PATH + '/aarch64-none-elf-'
+            
+            subprocess.run(f'make -j8 COMPILE_PREFIX={COMPILE_PREFIX}',
                 shell=True, capture_output=True, cwd=f'{self.location}/{proj_name}', check=True, text=True)
         except subprocess.CalledProcessError as e:
             logger.error(e.stderr)
@@ -116,7 +129,7 @@ def main():
     args = parser.parse_args()
 
     # proc_types = {'rpu': 'demo_board_hpf_rpu.hpf', 'apu-0': 'demo_board_hpf_apu.hpf'}
-    proc_types = {'apu-0': 'demo_board_hpf_apu.hpf', 'apu-0': 'demo_board_hpf_apu.hpf'}
+    proc_types = {'apu-0': 'dr1x90.hpf', 'rpu': 'dr1x90.hpf'}
 
     Path(args.bsp_resource_path).joinpath('log').mkdir()
 
@@ -126,9 +139,9 @@ def main():
     statistics = {'rpu': None, 'apu-0': None}
 
     for proc_type, hpf in proc_types.items():
-        bsp_tool.create_bsp(proj_name=f'test_platform_standalone_{proc_type}', location=os.getcwd(), proc_type=proc_type, os_type='standalone', hpf_path=hpf)
-        bsp_tool.create_bsp(proj_name=f'test_platform_freertos_{proc_type}', location=os.getcwd(), proc_type=proc_type, os_type='freertos', hpf_path=hpf)
-        bsp_tool.create_bsp(proj_name=f'test_platform_rtthread_{proc_type}', location=os.getcwd(), proc_type=proc_type, os_type='rtthread', hpf_path=hpf)
+        bsp_tool.create_bsp(proj_name=f'test_platform_standalone_{proc_type}', location=os.getcwd(), chip=('dr1v90' if proc_type == 'rpu' else 'dr1m90'), proc_type=proc_type, os_type='standalone', hpf_path=hpf)
+        bsp_tool.create_bsp(proj_name=f'test_platform_freertos_{proc_type}', location=os.getcwd(), chip=('dr1v90' if proc_type == 'rpu' else 'dr1m90'), proc_type=proc_type, os_type='freertos', hpf_path=hpf)
+        bsp_tool.create_bsp(proj_name=f'test_platform_rtthread_{proc_type}', location=os.getcwd(), chip=('dr1v90' if proc_type == 'rpu' else 'dr1m90'), proc_type=proc_type, os_type='rtthread', hpf_path=hpf)
 
         proc_statistics = list()
         with open(f'{args.bsp_resource_path}/docs/depend.json') as f:
