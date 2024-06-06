@@ -11,6 +11,8 @@
 extern "C" {
 #endif
 
+#define AL_AXI_GPIO_NUM_INSTANCE 2 // test 
+
 /***************************** Include Files ********************************/
 #include "al_core.h"
 
