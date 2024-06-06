@@ -11,7 +11,12 @@
 extern "C" {
 #endif
 
-#define AL_AXI_GPIO_NUM_INSTANCE 2 // test 
+// test, parameters should from TD HPF
+#define AL_AXI_GPIO_NUM_INSTANCE    2 
+#define AXI_GPIO0_IRQn              114
+#define AXI_GPIO1_IRQn              115
+#define AXI_GPIO0__BASE_ADDR        0x80000000
+#define AXI_GPIO1__BASE_ADDR        0x80100000
 
 /***************************** Include Files ********************************/
 #include "al_core.h"
