@@ -26,20 +26,20 @@
 
 AL_VOID ccm_invalidate_icache_all(AL_VOID)
 {
-    ARCH_SYSREG_WRITE(CSR_CCM_SCOMMAND, CCM_IC_INVAL_ALL);
+    ARCH_SYSREG_WRITE(CSR_CCM_MCOMMAND, CCM_IC_INVAL_ALL);
     ARCH_SYSREG_WRITE(CSR_CCM_FPIPE, 0x1);
 }
 
 AL_VOID ccm_flush_dcache_all(AL_VOID)
 {
-    ARCH_SYSREG_WRITE(CSR_CCM_SCOMMAND, CCM_DC_WB_ALL);
+    ARCH_SYSREG_WRITE(CSR_CCM_MCOMMAND, CCM_DC_WB_ALL);
     ARCH_SYSREG_WRITE(CSR_CCM_FPIPE, 0x1);
 }
 
 
 AL_VOID ccm_invalidate_dcache_all(AL_VOID)
 {
-    ARCH_SYSREG_WRITE(CSR_CCM_SCOMMAND, CCM_DC_INVAL_ALL);
+    ARCH_SYSREG_WRITE(CSR_CCM_MCOMMAND, CCM_DC_INVAL_ALL);
     ARCH_SYSREG_WRITE(CSR_CCM_FPIPE, 0x1);
 }
 
@@ -47,10 +47,10 @@ AL_VOID ccm_invalidate_dcache_all(AL_VOID)
 AL_VOID ccm_flush_dcache_range(AL_UINTPTR Start, AL_UINTPTR End)
 {
     AL_UINTPTR _start = Start;
-    ARCH_SYSREG_WRITE(CSR_CCM_SBEGINADDR, _start);
+    ARCH_SYSREG_WRITE(CSR_CCM_MBEGINADDR, _start);
     while (_start < End) {
-        ARCH_SYSREG_WRITE(CSR_CCM_SCOMMAND, CCM_DC_WB);
-        _start += ARCH_DMA_MINALIGN;
+        ARCH_SYSREG_WRITE(CSR_CCM_MCOMMAND, CCM_DC_WB);
+        _start += L1_CACHE_BYTES;
     }
     ARCH_SYSREG_WRITE(CSR_CCM_FPIPE, 0x1);
 }
@@ -58,10 +58,10 @@ AL_VOID ccm_flush_dcache_range(AL_UINTPTR Start, AL_UINTPTR End)
 AL_VOID ccm_flush_invalidate_dcache_range(AL_UINTPTR Start, AL_UINTPTR End)
 {
     AL_UINTPTR _start = Start;
-    ARCH_SYSREG_WRITE(CSR_CCM_SBEGINADDR, _start);
+    ARCH_SYSREG_WRITE(CSR_CCM_MBEGINADDR, _start);
     while (_start < End) {
-        ARCH_SYSREG_WRITE(CSR_CCM_SCOMMAND, CCM_DC_WBINVAL);
-        _start += ARCH_DMA_MINALIGN;
+        ARCH_SYSREG_WRITE(CSR_CCM_MCOMMAND, CCM_DC_WBINVAL);
+        _start += L1_CACHE_BYTES;
     }
     ARCH_SYSREG_WRITE(CSR_CCM_FPIPE, 0x1);
 }
@@ -73,10 +73,10 @@ AL_VOID ccm_invalidate_icache_range(AL_UINTPTR Start, AL_UINTPTR End)
      * instruction cache. Invalidate all of it instead.
      */
     AL_UINTPTR _start = Start;
-    ARCH_SYSREG_WRITE(CSR_CCM_SBEGINADDR, _start);
+    ARCH_SYSREG_WRITE(CSR_CCM_MBEGINADDR, _start);
     while (_start < End) {
-        ARCH_SYSREG_WRITE(CSR_CCM_SCOMMAND, CCM_IC_INVAL);
-        _start += ARCH_DMA_MINALIGN;
+        ARCH_SYSREG_WRITE(CSR_CCM_MCOMMAND, CCM_IC_INVAL);
+        _start += L1_CACHE_BYTES;
     }
 
     ARCH_SYSREG_WRITE(CSR_CCM_FPIPE, 0x1);
@@ -86,10 +86,10 @@ AL_VOID ccm_invalidate_dcache_range(AL_UINTPTR Start, AL_UINTPTR End)
 {
     AL_UINTPTR _start = Start;
 
-    ARCH_SYSREG_WRITE(CSR_CCM_SBEGINADDR, _start);
+    ARCH_SYSREG_WRITE(CSR_CCM_MBEGINADDR, _start);
     while (_start < End) {
-        ARCH_SYSREG_WRITE(CSR_CCM_SCOMMAND, CCM_DC_INVAL);
-        _start += ARCH_DMA_MINALIGN;
+        ARCH_SYSREG_WRITE(CSR_CCM_MCOMMAND, CCM_DC_INVAL);
+        _start += L1_CACHE_BYTES;
     }
 
     ARCH_SYSREG_WRITE(CSR_CCM_FPIPE, 0x1);
