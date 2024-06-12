@@ -529,4 +529,30 @@ disable_mmu:
 	dsb	sy
 	isb
 	ret
+
+	.globl enable_icache
+enable_icache:
+#ifdef ENABLE_ICACHE
+	switch_el x3, 0f, 1f, 2f
+
+0:
+	mrs x0, sctlr_el3
+	orr x0, x0, #(1 << 12)  //enable icache
+	msr sctlr_el3, x0
+	b	3f
+1:
+    mrs x0, sctlr_el2
+    orr x0, x0, #(1 << 12)  //enable icache
+    msr sctlr_el2, x0
+	b	3f
+2:
+    mrs x0, sctlr_el1
+    orr x0, x0, #(1 << 12)  //enable icache
+    msr sctlr_el1, x0
+	b	3f
+
+3:
+	isb
+#endif
+	ret
 .end

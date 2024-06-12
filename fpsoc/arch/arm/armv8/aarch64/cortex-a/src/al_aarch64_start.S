@@ -182,31 +182,12 @@ el1_entry:
     mov x0, #3 << 20
     msr cpacr_el1, x0
 
-#ifdef ENABLE_ICACHE
-    mrs x0, sctlr_el1
-    orr x0, x0, #(1 << 12)  //enable icache
-    msr sctlr_el1, x0
-#else
-    mrs x0, sctlr_el1
-    bic x0, x0, #(1 << 12)  //disable icache
-    msr sctlr_el1, x0
-#endif
-    isb
-
+    bl enable_icache
     b main_entry
 
 main_entry:
 
-#ifdef ENABLE_ICACHE
-    mrs x0, sctlr_el3
-    orr x0, x0, #(1 << 12)  //enable icache
-    msr sctlr_el3, x0
-#else
-    mrs x0, sctlr_el3
-    bic x0, x0, #(1 << 12)  //disable icache
-    msr sctlr_el3, x0
-#endif
-    isb
+    bl enable_icache
 
 /*Enable MMU & Dcache*/
 #ifdef ENABLE_MMU
