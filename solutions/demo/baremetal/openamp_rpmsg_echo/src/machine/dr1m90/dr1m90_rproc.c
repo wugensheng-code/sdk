@@ -22,6 +22,8 @@
 #include <metal/irq.h>
 #include "platform_info.h"
 
+extern struct metal_io_ops io_ops;
+
 static int dr1m90_proc_irq_handler(int vect_id, void *data)
 {
 	struct remoteproc *rproc = data;
@@ -118,7 +120,7 @@ dr1m90_proc_mmap(struct remoteproc *rproc, metal_phys_addr_t *pa,
 	remoteproc_init_mem(mem, NULL, lpa, lda, size, tmpio);
 	/* va is the same as pa in this platform */
 	metal_io_init(tmpio, (void *)lpa, &mem->pa, size,
-		      sizeof(metal_phys_addr_t)<<3, attribute, NULL);
+		      sizeof(metal_phys_addr_t)<<3, attribute, &io_ops);
 	remoteproc_add_mem(rproc, mem);
 	*pa = lpa;
 	*da = lda;
