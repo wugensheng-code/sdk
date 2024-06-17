@@ -32,7 +32,7 @@ extern struct netif gnetif;
 * @brief  This function is for creating a udp server on RT-Thread
 */
 
-void udpserv(void *parameter)
+void udpserv(void)
 {
     int sock, bytes_read;
     char *recv_data;
@@ -129,79 +129,4 @@ __exit:
     started = 0;
     is_running = 0;
 
-
-}
-
-void usage(void)
-{
-    rt_kprintf("Usage: udpserver -p <port>\n\r");
-    rt_kprintf("       udpserver --stop\n\r");
-    rt_kprintf("       udpserver --help\n\r");
-    rt_kprintf("\n\r");
-    rt_kprintf("Miscellaneous:\n\r");
-    rt_kprintf("  -p           Specify the host port number\n\r");
-    rt_kprintf("  --stop       Stop udpserver program\n\r");
-    rt_kprintf("  --help       Print help information\n\r");
-}
-
-void udpserver_test(int argc, char** argv)
-{
-    rt_thread_t tid;
-
-    if (argc == 1 || argc > 3)
-    {
-        rt_kprintf("Please check the command you entered!\n");
-        goto __usage;
-    }
-    else
-    {
-        if (rt_strcmp(argv[1], "--help") == 0)
-        {
-            goto __usage;
-        }
-        else if (rt_strcmp(argv[1], "--stop") == 0)
-        {
-            is_running = 0;
-            return;
-        }
-        else if (rt_strcmp(argv[1], "-p") == 0)
-        {
-            if (started)
-            {
-                rt_kprintf("The udpserver has started!");
-                rt_kprintf("Please stop udpserver firstly, by: udpserver --stop");
-                return;
-            }
-
-            port = atoi(argv[2]);
-        }
-        else
-        {
-            goto __usage;
-        }
-    }
-
-    tid = rt_thread_create("udp_serv",
-        udpserv, RT_NULL,
-        5120, RT_THREAD_PRIORITY_MAX/3, 20);
-    if (tid != RT_NULL)
-    {
-        rt_thread_startup(tid);
-    }
-    return;
-
-__usage:
-    usage();
-
-
-}
-
-void UdpServer_Test_Thread()
-{
-    udpserver_test(3, (char *[]){"udpserver", "-p", "5000"});
-    printf("rtt_lwip_udp Done\r\n");
-
-    /* suspend thread */
-    struct rt_thread *thread = rt_thread_self();
-    rt_thread_suspend(thread);
 }

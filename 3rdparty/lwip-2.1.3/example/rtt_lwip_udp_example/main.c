@@ -24,7 +24,7 @@
 #define TCP_SERVER_UDP_THREAD_STACK_SIZE  (8192)
 
 sys_thread_t udp_handle = NULL;
-extern void UdpServer_Test_Thread();
+extern void udpserv();
 int main(void){
 
     rt_kprintf("rtt lwip udp test start>>>\r\n");
@@ -34,7 +34,7 @@ int main(void){
 
     netif_config();
 
-    udp_handle = sys_thread_new("udp test",UdpServer_Test_Thread, NULL, TCP_SERVER_UDP_THREAD_STACK_SIZE, 6);
+    udp_handle = sys_thread_new("udp test",udpserv, NULL, TCP_SERVER_UDP_THREAD_STACK_SIZE, 6);
 
     /* suspend thread */
     thread = rt_thread_self();
