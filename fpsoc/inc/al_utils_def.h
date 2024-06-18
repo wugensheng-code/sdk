@@ -110,7 +110,7 @@ extern "C" {
 /********************************************************/
 
 #define BUG() do {                                                             \
-        AL_LOG("BUG: failure at %s:%d:%s()!\n", __FILE__, __LINE__, __func__); \
+        AL_LOG(AL_LOG_LEVEL_ERROR, "BUG: failure at %s:%d:%s()!\n", __FILE__, __LINE__, __func__); \
         while(1);                                                              \
     } while (0)
 
@@ -120,7 +120,7 @@ extern "C" {
 
 #ifndef WARN
 #define WARN() {                                                              \
-        AL_LOG("warn at %s:%d:%s()!\n", __FILE__, __LINE__, __func__);         \
+        AL_LOG(AL_LOG_LEVEL_WARNING, "warn at %s:%d:%s()!\n", __FILE__, __LINE__, __func__);         \
     }
 #endif
 
