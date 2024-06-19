@@ -170,12 +170,7 @@ AL_VOID AlWdt_Hal_Start(AL_WDT_HalStruct *Wdt)
 
 AL_S32 AlWdt_Hal_Feed(AL_WDT_HalStruct *Wdt)
 {
-    AL_S32 IntrClearValue = 0x0;
-
-    IntrClearValue = AlWdt_ll_ClearIntr(Wdt->BaseAddr);
-    if (!IntrClearValue) {
-        return AL_WDT_ERR_BUSY;
-    }
+    AlWdt_ll_CounterRestart(Wdt->BaseAddr);
 
     return AL_OK;
 }
