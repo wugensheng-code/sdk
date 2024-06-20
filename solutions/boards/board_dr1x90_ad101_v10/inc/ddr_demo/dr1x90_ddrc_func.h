@@ -10,9 +10,11 @@ void dr1x90_ddr_dpll_cfg();
 
 // Bank Config
 void dr1x90_ddr_iob_cfg(ddr_type_t type);
-void dr1x90_ddr_iol_cfg();
+void dr1x90_ddr_iol_cfg(ddr_type_t type);
+void dr1x90_ddr_iob_vref_cfg(ddr_vref_t vref_sel, u32 vref);
 void dr1x90_ddr_busmatrix_cfg(ddr_type_t type);
 void dr1x90_iomc_internal_loopback_cfg();
+void dr1x90_zq_overwrite_v2(ddr_type_t type, const u32* zq_code, u32 vref);
 
 // PPC Config
 void dr1x90_ddrppc_base_cfg(ddr_type_t type, u32 lane_mask);
@@ -39,7 +41,7 @@ void dr1x90_ddrmc_arbiter_cfg(ddr_type_t type, const ddr_arbiter_t* arbiter_cfg)
 
 // Execution
 void dr1x90_ddrppc_mdl_cal();
-void dr1x90_ddrppc_show_mdl(double fck);
+void dr1x90_ddrppc_show_mdl(double fck, u32 lane_mask);
 void dr1x90_ddrppc_zq_cal(ddr_type_t type);
 void dr1x90_ddrppc_dram_init();
 

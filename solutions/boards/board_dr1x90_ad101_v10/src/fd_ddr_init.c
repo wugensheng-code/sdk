@@ -47,29 +47,29 @@ int fd_ddr_init()
 {   
     int err = 0;
     // update params
-   ddr_params.osc_clk         = SYSTEM_CLOCK          ;
-   ddr_params.type            = FD_PARA_DDR_TYPE      ;
-   ddr_params.speed           = FD_PARA_DDR_SPEED     ;
-   ddr_params.dq_width        = FD_PARA_DQ_WIDTH      ;
-   ddr_params.io_vol          = FD_PARA_IO_VOLT       ;
-   ddr_params.verf            = FD_PARA_VREF          ;
-   ddr_params.pzq             = FD_PARA_PZQ_ENABLE    ;
-   ddr_params.dram_width      = FD_PARA_DRAM_WIDTH    ;
-   ddr_params.speed_bin_index = FD_PARA_SPEED_BIN     ;
-   ddr_params.wdbi            = FD_PARA_WDM           ;
-   ddr_params.rdbi            = FD_PARA_RDBI          ;
-   ddr_params.dram_density    = FD_PARA_DRAM_DENSITY  ;
-   ddr_params.ecc             = FD_PARA_ECC           ;
-   ddr_params.addr_map        = FD_PARA_ADDRMAP       ;
-   ddr_params.training        = FD_PARA_TRAINING      ;
-   ddr_params.byte0_ac_dely   = FD_PARA_BYTE0_AC_DLY  ;
-   ddr_params.byte0_dqs_dely  = FD_PARA_BYTE0_DQS_DLY ;
-   ddr_params.byte1_ac_dely   = FD_PARA_BYTE1_AC_DLY  ;
-   ddr_params.byte1_dqs_dely  = FD_PARA_BYTE1_DQS_DLY ;
-   ddr_params.byte2_ac_dely   = FD_PARA_BYTE2_AC_DLY  ;
-   ddr_params.byte2_dqs_dely  = FD_PARA_BYTE2_DQS_DLY ;
-   ddr_params.byte3_ac_dely   = FD_PARA_BYTE3_AC_DLY  ;
-   ddr_params.byte3_dqs_dely  = FD_PARA_BYTE3_DQS_DLY ;
+    ddr_params.osc_clk         = SYSTEM_CLOCK          ;
+    ddr_params.type            = FD_PARA_DDR_TYPE      ;
+    ddr_params.speed           = FD_PARA_DDR_SPEED     ;
+    ddr_params.dq_width        = FD_PARA_DQ_WIDTH      ;
+    ddr_params.io_vol          = FD_PARA_IO_VOLT       ;
+    ddr_params.verf            = FD_PARA_VREF          ;
+    ddr_params.pzq             = FD_PARA_PZQ_ENABLE    ;
+    ddr_params.dram_width      = FD_PARA_DRAM_WIDTH    ;
+    ddr_params.speed_bin_index = FD_PARA_SPEED_BIN     ;
+    ddr_params.wdbi            = FD_PARA_WDM           ;
+    ddr_params.rdbi            = FD_PARA_RDBI          ;
+    ddr_params.dram_density    = FD_PARA_DRAM_DENSITY  ;
+    ddr_params.ecc             = FD_PARA_ECC           ;
+    ddr_params.addr_map        = FD_PARA_ADDRMAP       ;
+    ddr_params.training        = FD_PARA_TRAINING      ;
+    ddr_params.byte0_ac_dely   = FD_PARA_BYTE0_AC_DLY  ;
+    ddr_params.byte0_dqs_dely  = FD_PARA_BYTE0_DQS_DLY ;
+    ddr_params.byte1_ac_dely   = FD_PARA_BYTE1_AC_DLY  ;
+    ddr_params.byte1_dqs_dely  = FD_PARA_BYTE1_DQS_DLY ;
+    ddr_params.byte2_ac_dely   = FD_PARA_BYTE2_AC_DLY  ;
+    ddr_params.byte2_dqs_dely  = FD_PARA_BYTE2_DQS_DLY ;
+    ddr_params.byte3_ac_dely   = FD_PARA_BYTE3_AC_DLY  ;
+    ddr_params.byte3_dqs_dely  = FD_PARA_BYTE3_DQS_DLY ;
 
     err = ddr_init_by_params();
     return err;
@@ -99,6 +99,7 @@ int ddr_init_by_params()
         .width = width ,
         .ecc   = ddr_params.ecc,
         .ecc_poison = ECC_POISON_NONE,
+        .vref  = ddr_params.verf,
         .size  = 1024UL * 1024UL * TOTAL_SZIE
     };
 
@@ -153,7 +154,7 @@ int ddr_init_by_params()
     };
 
     int err = 0;
-    err = dr1x90_ddrc_init(&basic_cfg, &train_cfg, &timpara, &addrmap, &arbiter_cfg);
+    err = dr1x90_ddrc_init(FW_VERSION, &basic_cfg, &train_cfg, &timpara, &addrmap, &arbiter_cfg);
 
     return err;
 }

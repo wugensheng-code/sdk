@@ -109,7 +109,7 @@ int dcu_cmd_exec(int n, u32* data, u32 byte);
 #define DCU_GATE_DIFFDIV 8
 #define DCU_GATE_THRD    8
 #define DCU_GATE_SHIFT   3
-#define DCU_GATE_STSLEN  (DCU_GATE_DIFFDIV * (MAX_DGSL + 1) + 8)
+#define DCU_GATE_STSLEN  ((DCU_GATE_DIFFDIV + 1) * (MAX_DGSL + 1) + 8)
 
 #define DCU_EYE_TABSIZE 256
 
@@ -132,7 +132,7 @@ int dcu_cmd_exec(int n, u32* data, u32 byte);
 #define DCU_WLADJ_SCAN   8
 #define DCU_WLADJ_SAMPLE 16
 
-int dcu_gate_train(u32 lane_mask, u32 mr3);
+int dcu_gate_train(u32 lane_mask, const u32* MR, ddr_type_t type);
 int dcu_reye_mpr_train(u32 lane_mask, u32 mr3);
 int dcu_reye_mpr_train_v2(u32 lane_mask, u32 mr3);
 int dcu_reye_train(u32 lane_mask);

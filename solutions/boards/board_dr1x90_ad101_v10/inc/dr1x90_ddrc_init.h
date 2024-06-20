@@ -3,6 +3,10 @@
 
 #include "alc_types.h"
 
+#define FW_VERSION_MAJOR 4UL
+#define FW_VERSION_MINOR 0UL
+#define FW_VERSION ((FW_VERSION_MAJOR << 32) | FW_VERSION_MINOR)
+
 #define DDR3_TYPE 3
 #define DDR4_TYPE 4
 typedef int ddr_type_t;
@@ -21,6 +25,10 @@ typedef int ddr_ecc_t;
 #define ECC_POISON_1BIT 1
 #define ECC_POISON_2BIT 2
 
+#define DDR_VREF_INT 0
+#define DDR_VREF_EXT 1
+typedef int ddr_vref_t;
+
 typedef struct ddr_basic_t
 {
     double fck;
@@ -29,6 +37,7 @@ typedef struct ddr_basic_t
     int width;
     int ecc;
     int ecc_poison;
+    int vref;
     size_t size;
 } ddr_basic_t;
 
@@ -118,7 +127,7 @@ typedef struct ddr_arbiter_t
 
 // DDRC init Proc
 int dr1x90_ddrc_init(
-    const ddr_basic_t* basic_cfg,
+    const uint64_t para_version, const ddr_basic_t* basic_cfg,
     const ddr_train_t* train_cfg, const ddr_timing_t* timpara,
     const ddr_addrmap_t* addrmap, const ddr_arbiter_t* arbiter_cfg
 );

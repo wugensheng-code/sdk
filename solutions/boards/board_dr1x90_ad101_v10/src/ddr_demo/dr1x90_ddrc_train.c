@@ -77,6 +77,18 @@ void dr1x90_ddrc_train_wladj()
 
     regData = dr1x90_reg_read(DDRC_ADDR_PPC + PGSR0);
     AL_DDR_LOG("[DDR WLADJ] %s\r\n", (regData & PGSR0_WLAERR_mask) ? "Error" : "Done");
+
+    u32 wlprd = dr1x90_field_read(DDRC_ADDR_PPC + DX0GSR0, WLPRD_offset, WLPRD_mask);
+    u32 wlmax = wlprd * 3 / 4;
+    for (int n = 0; n < 4; n++) {
+        u32 wlsl = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, WLSL_offset, WLSL_mask);
+        u32 wld  = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR0 + 0x100 * n, WLD_offset, WLD_mask);
+        if (wld > wlmax) {
+            AL_DDR_LOG("[DDR WLADJ] DX%d WLD = %d is close to WLPRD = %d, force WLD = 0\r\n", n, wld, wlprd);
+            dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * n, WLSL_offset, WLSL_mask, wlsl + 1);
+            dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR0 + 0x100 * n, WLD_offset, WLD_mask, 0);
+        }
+    }
 }
 
 void dr1x90_ddrc_train_eye()

@@ -30,7 +30,7 @@ void pll_enable()
 }
 
 static void pll_div_set(
-    pll_t PLL_CTRL, uint32_t ref_div, uint32_t fbk_div,
+    pll_t PLL_CTRL, uint32_t ref_div, uint32_t fbk_div, 
     uint32_t out_div_0, uint32_t out_div_1, uint32_t out_div_2, uint32_t out_div_3
 )
 {
@@ -43,6 +43,10 @@ static void pll_div_set(
     div = (ref_div - 1U) & 0x7FU;
     val |= div;
     PLL_CTRL[8] = val;
+    #ifdef CRG_DEBUG
+    uint32_t rbk = PLL_CTRL[8];
+    printf("[PLL_REF_DIV] *0x%x = 0x%x, Read Back = 0x%x\n", PLL_CTRL + 8, val, rbk);
+    #endif
 
     // PLL_CTRL + 0x24
     val = PLL_CTRL[9];
@@ -50,6 +54,10 @@ static void pll_div_set(
     div = (fbk_div - 1U) & 0x7FU;
     val |= div;
     PLL_CTRL[9] = val;
+    #ifdef CRG_DEBUG
+    rbk = PLL_CTRL[9];
+    printf("[PLL_FBK_DIV] *0x%x = 0x%x, Read Back = 0x%x\n", PLL_CTRL + 9, val, rbk);
+    #endif
 
     // PLL_CTRL + 0x48
     if (out_div_0 != 0U) {
@@ -60,6 +68,10 @@ static void pll_div_set(
         div = (div >> 1) + 1U;
         val |= div;
         PLL_CTRL[18] = val;
+        #ifdef CRG_DEBUG
+        rbk = PLL_CTRL[18];
+        printf("[PLL_OUT0_DIV] *0x%x = 0x%x, Read Back = 0x%x\n", PLL_CTRL + 18, val, rbk);
+        #endif
     }
     // PLL_CTRL + 0x4C
     if (out_div_1 != 0U) {
@@ -70,6 +82,10 @@ static void pll_div_set(
         div = (div >> 1) + 1U;
         val |= div;
         PLL_CTRL[19] = val;
+        #ifdef CRG_DEBUG
+        rbk = PLL_CTRL[19];
+        printf("[PLL_OUT1_DIV] *0x%x = 0x%x, Read Back = 0x%x\n", PLL_CTRL + 19, val, rbk);
+        #endif
     }
     // PLL_CTRL + 0x50
     if (out_div_2 != 0U) {
@@ -80,6 +96,10 @@ static void pll_div_set(
         div = (div >> 1) + 1U;
         val |= div;
         PLL_CTRL[20] = val;
+        #ifdef CRG_DEBUG
+        rbk = PLL_CTRL[20];
+        printf("[PLL_OUT2_DIV] *0x%x = 0x%x, Read Back = 0x%x\n", PLL_CTRL + 20, val, rbk);
+        #endif
     }
     // PLL_CTRL + 0x54
     if (out_div_3 != 0U) {
@@ -90,7 +110,29 @@ static void pll_div_set(
         div = (div >> 1) + 1U;
         val |= div;
         PLL_CTRL[21] = val;
+        #ifdef CRG_DEBUG
+        rbk = PLL_CTRL[21];
+        printf("[PLL_OUT3_DIV] *0x%x = 0x%x, Read Back = 0x%x\n", PLL_CTRL + 21, val, rbk);
+        #endif
     }
+}
+
+static void pll_bw_set(pll_t PLL_CTRL, const pll_bw_parm_t* parm)
+{
+    uint32_t val = 0x0;
+
+    val = PLL_CTRL[8];
+    val &= ~((0x1f << 16) | (0x03 << 26) | (0x07 << 28));
+    val |= parm->icp     << 16;
+    val |= parm->lpf_cap << 26;
+    val |= parm->lpf_res << 28;
+    PLL_CTRL[8] = val;
+
+    val = PLL_CTRL[9];
+    val &= ~((0x03 << 12) | (0x07 << 24));
+    val |= parm->kvco << 12;
+    val |= parm->gmc  << 24;
+    PLL_CTRL[9] = val;
 }
 
 static void pll_reset(pll_t PLL_CTRL)
@@ -119,11 +161,59 @@ static void pll_waitLock(pll_t PLL_CTRL)
     }
 }
 
+void pll_bw_parm_fetch(double fin, uint32_t fbk_div, uint32_t ref_div, pll_bw_parm_t* parm, int bw_sel)
+{
+    static const uint8_t gmc_tab[5][3] = {
+        5, 5, 3, 3, 3, 2, 3, 2, 1, 2, 1, 0, 0, 0, 0
+    };
+    static const uint8_t icp_tab[5][3] = {
+        31, 20, 6, 31, 13, 5, 31, 12, 5, 31, 11, 5, 27, 10, 6
+    };
+    static const uint8_t cap_tab[5][3] = {
+        1, 1, 1, 0, 2, 2, 1, 2, 2, 1, 2, 2, 2, 2, 2
+    };
+    static const uint8_t res_tab[5][3] = {
+        0, 1, 1, 1, 1, 2, 1, 2, 3, 2, 3, 4, 3, 4, 5
+    };
+    double fpfd = fin / (double)ref_div;
+    double fvco = fin / (double)ref_div * (double)fbk_div;
+
+    int fdx = 0;
+    if      (fpfd > 200e6)
+        fdx = 0;
+    else if (fpfd > 100e6)
+        fdx = 1;
+    else if (fpfd > 50e6)
+        fdx = 2;
+    else if (fpfd > 25e6)
+        fdx = 3;
+    else
+        fdx = 4;
+
+    if (bw_sel < 0 || bw_sel > 2)
+        bw_sel = 1;
+
+    parm->gmc = (uint32_t)gmc_tab[fdx][bw_sel];
+    if (parm->gmc == 0)
+        parm->gmc = fvco > 1.4e9 ? 1 : 0;
+    parm->icp     = (uint32_t)icp_tab[fdx][bw_sel];
+    parm->lpf_cap = (uint32_t)cap_tab[fdx][bw_sel];
+    parm->lpf_res = (uint32_t)res_tab[fdx][bw_sel];
+    parm->kvco    = 0;
+}
+
 void pll_cpu_div_set(uint32_t fbk_div, uint32_t ref_div, uint32_t out_div_6x, uint32_t out_div_4x)
 {
     pll_reset(CPU_PLL_CTRL);
     pll_div_set(CPU_PLL_CTRL, ref_div, fbk_div, out_div_6x, out_div_4x, 0U, 0U);
     pll_release(CPU_PLL_CTRL);
+}
+
+void pll_cpu_bw_cfg(double fin, uint32_t fbk_div, uint32_t ref_div, int bw_sel)
+{
+    pll_bw_parm_t parm;
+    pll_bw_parm_fetch(fin, fbk_div, ref_div, &parm, bw_sel);
+    pll_bw_set(CPU_PLL_CTRL, &parm);
 }
 
 void pll_cpu_reset()
@@ -151,6 +241,13 @@ void pll_io_div_set(
     pll_release(IO_PLL_CTRL);
 }
 
+void pll_io_bw_cfg(double fin, uint32_t fbk_div, uint32_t ref_div, int bw_sel)
+{
+    pll_bw_parm_t parm;
+    pll_bw_parm_fetch(fin, fbk_div, ref_div, &parm, bw_sel);
+    pll_bw_set(IO_PLL_CTRL, &parm);
+}
+
 void pll_io_reset()
 {
     pll_reset(IO_PLL_CTRL);
@@ -171,6 +268,13 @@ void pll_ddr_div_set(uint32_t fbk_div, uint32_t ref_div, uint32_t out_div_c0, ui
     pll_reset(DDR_PLL_CTRL);
     pll_div_set(DDR_PLL_CTRL, ref_div, fbk_div, out_div_c0, out_div_c1, out_div_c2, out_div_c3);
     pll_release(DDR_PLL_CTRL);
+}
+
+void pll_ddr_bw_cfg(double fin, uint32_t fbk_div, uint32_t ref_div, int bw_sel)
+{
+    pll_bw_parm_t parm;
+    pll_bw_parm_fetch(fin, fbk_div, ref_div, &parm, bw_sel);
+    pll_bw_set(DDR_PLL_CTRL, &parm);
 }
 
 void pll_ddr_reset()
@@ -277,7 +381,7 @@ void clk_simple_config()
     #elif AL_CLK_1200M
     pll_cpu_div_set(72, 2, 1, 2);
     #elif AL_CLK_600M
-    pll_cpu_div_set(108, 2, 2, 3);
+    pll_cpu_div_set(72, 2, 1, 2);
     #else
     pll_cpu_div_set(96, 2, 2, 2);
     #endif

@@ -428,6 +428,7 @@ void dr1x90_zq_overwrite_cfg(ddr_type_t type) {
     // u8 BankInfo ;
     u8 override_en = 1;
 
+    // zq_code: { odt_pu[7:0], odt_pd[7:0], drv_pu[7:0], drv_pd[7:0] }
     // u8 pzq_cal_done ;
 
     // u32  bank_zq_ac_code[3] = {0x19193235,0x19193235,0x19193235} ;
@@ -436,6 +437,10 @@ void dr1x90_zq_overwrite_cfg(ddr_type_t type) {
     // u32  bank_zq_dx_code[3] = {0x11112323,0x11112323,0x11112323} ;
     u32  bank_zq_ac_code[3] = {0x17173232,0x17173232,0x17173232} ;
     u32  bank_zq_dx_code[3] = {0x17173232,0x17173232,0x17173232} ;
+
+    // DDR4
+    // u32  bank_zq_ac_code[3] = {0x2E003232,0x2E003232,0x2E003232} ;
+    // u32  bank_zq_dx_code[3] = {0x2E003232,0x2E003232,0x2E003232} ;
 
     // u32  zqcal_done;
     // u32  zqcal_err ;
@@ -467,18 +472,18 @@ void dr1x90_zq_overwrite_cfg(ddr_type_t type) {
                     regData =  ((type == DDR4_TYPE) ? (bank_zq_dx_code[n] & 0xff00ffff) : bank_zq_dx_code[n] ) ;
                 }
 
-                dr1x90_reg_write(DDRC_ADDR_BK0_VREF + ZQ0DR + 0x2000 * n + 0x04 * i, regData);
+                dr1x90_reg_write(DDRC_ADDR_BK0_VREF + ZQ0DR + 0x2000 * n + 0x10 * i, regData);
 
-                regData = dr1x90_reg_read(DDRC_ADDR_BK0_VREF+ZQ0CR + 0x2000 * n + 0x04 * i);
-                regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF+ZQ0CR + 0x2000 * n + 0x04 * i, FORCE_ZCAL_VT_UPDATE_offset, FORCE_ZCAL_VT_UPDATE_mask, 0,  regData);
-                regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF+ZQ0CR + 0x2000 * n + 0x04 * i, PGWAIT_offset, PGWAIT_mask, 1,  regDataNew);
-                regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF+ZQ0CR + 0x2000 * n + 0x04 * i, AVGEN_offset, AVGEN_mask, (type == DDR4_TYPE) ? 1 : 0, regDataNew); // ddr4=1 ddr3=0
-                dr1x90_reg_update(DDRC_ADDR_BK0_VREF+ZQ0CR + 0x800 * n + 0x04 * i, regData, regDataNew);
+                regData = dr1x90_reg_read(DDRC_ADDR_BK0_VREF+ZQ0CR + 0x2000 * n + 0x10 * i);
+                regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF+ZQ0CR + 0x2000 * n + 0x10 * i, FORCE_ZCAL_VT_UPDATE_offset, FORCE_ZCAL_VT_UPDATE_mask, 0,  regData);
+                regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF+ZQ0CR + 0x2000 * n + 0x10 * i, PGWAIT_offset, PGWAIT_mask, 1,  regDataNew);
+                regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF+ZQ0CR + 0x2000 * n + 0x10 * i, AVGEN_offset, AVGEN_mask, (type == DDR4_TYPE) ? 1 : 0, regDataNew); // ddr4=1 ddr3=0
+                dr1x90_reg_update(DDRC_ADDR_BK0_VREF+ZQ0CR + 0x800 * n + 0x10 * i, regData, regDataNew);
 
-                regData = dr1x90_reg_read(DDRC_ADDR_BK0_VREF+ZQ0PR + 0x2000 * n + 0x04 * i);
-                regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF+ZQ0PR + 0x2000 * n + 0x04 * i, DRV_ZDEN_offset, DRV_ZDEN_mask, 1,  regData);
-                regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF+ZQ0PR + 0x2000 * n + 0x04 * i, ODT_ZDEN_offset, ODT_ZDEN_mask, 1,  regDataNew);
-                dr1x90_reg_update(DDRC_ADDR_BK0_VREF+ZQ0PR + 0x2000 * n + 0x04 * i, regData, regDataNew);
+                regData = dr1x90_reg_read(DDRC_ADDR_BK0_VREF+ZQ0PR + 0x2000 * n + 0x10 * i);
+                regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF+ZQ0PR + 0x2000 * n + 0x10 * i, DRV_ZDEN_offset, DRV_ZDEN_mask, 1,  regData);
+                regDataNew = dr1x90_field_set(DDRC_ADDR_BK0_VREF+ZQ0PR + 0x2000 * n + 0x10 * i, ODT_ZDEN_offset, ODT_ZDEN_mask, 1,  regDataNew);
+                dr1x90_reg_update(DDRC_ADDR_BK0_VREF+ZQ0PR + 0x2000 * n + 0x10 * i, regData, regDataNew);
             }
             dr1x90_field_write(DDRC_ADDR_BK0_VREF+ZQ0CR+ 0x2000 * n , FORCE_ZCAL_VT_UPDATE_offset, FORCE_ZCAL_VT_UPDATE_mask, 1);
             dr1x90_field_write(DDRC_ADDR_BK0_VREF+ZQ1CR+ 0x2000 * n , FORCE_ZCAL_VT_UPDATE_offset, FORCE_ZCAL_VT_UPDATE_mask, 1);
@@ -503,11 +508,12 @@ void dr1x90_zq_overwrite_cfg(ddr_type_t type) {
         dr1x90_field_write(DDRC_ADDR_BK0_VREF+VREF2 + 0x2000 * n, Vref2_ctrl_rank0_offset, Vref2_ctrl_rank0_mask, env_cfg_host_vref);
         dr1x90_field_write(DDRC_ADDR_BK0_VREF+VREF3 + 0x2000 * n, Vref3_ctrl_rank0_offset, Vref3_ctrl_rank0_mask, env_cfg_host_vref);
         dr1x90_field_write(DDRC_ADDR_BK0_VREF+VREF4 + 0x2000 * n, Vref4_ctrl_rank0_offset, Vref4_ctrl_rank0_mask, env_cfg_host_vref);
+
+        dr1x90_field_write(DDRC_ADDR_BK0_VREF+VREF1 + 0x2000 * n, Vref1_ctrl_rank1_offset, Vref1_ctrl_rank1_mask, env_cfg_host_vref);
+        dr1x90_field_write(DDRC_ADDR_BK0_VREF+VREF2 + 0x2000 * n, Vref2_ctrl_rank1_offset, Vref2_ctrl_rank1_mask, env_cfg_host_vref);
+        dr1x90_field_write(DDRC_ADDR_BK0_VREF+VREF3 + 0x2000 * n, Vref3_ctrl_rank1_offset, Vref3_ctrl_rank1_mask, env_cfg_host_vref);
+        dr1x90_field_write(DDRC_ADDR_BK0_VREF+VREF4 + 0x2000 * n, Vref4_ctrl_rank1_offset, Vref4_ctrl_rank1_mask, env_cfg_host_vref);
     }
-
-    // assert PZQ_CALDONE_FLAG after PZQ Cal and Vref Setting
-    //Alc_GpioMaskWrite(PZQ_CALDONE_FLAG_mask, PZQ_CALDONE_FLAG_mask);
-
 }
 
 void dr1x90_ac_swap_cfg()
@@ -602,10 +608,13 @@ void dr1x90_ddrppc_show_delay()
     AL_DDR_LOG("========================================\r\n");
 }
 
-void dr1x90_ddrppc_show_mdl(double fck)
+void dr1x90_ddrppc_show_mdl(double fck, u32 lane_mask)
 {
     u32 regData = 0;
     for (int i = 0; i < 4; ++i) {
+        u32 lane_en = lane_mask & (0x1 << i);
+        if (lane_en == 0)
+            continue;
         regData = dr1x90_reg_read(DDRC_ADDR_PPC + DX0MDLR0 + 0x100 * i);
         double t = 1e6 / fck / (double)(regData & MDLD_mask);
         AL_DDR_LOG("[DDR MDL] DX%d = 0x%x\t%.3f ps\r\n", i, regData, t);

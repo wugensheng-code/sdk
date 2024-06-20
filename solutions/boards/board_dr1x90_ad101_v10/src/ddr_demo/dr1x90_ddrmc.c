@@ -60,7 +60,15 @@ void dr1x90_ddrmc_cfg(const ddr_basic_t* basic_cfg, const ddr_timing_t* timpara,
         regData |= (basic_cfg->ecc_poison == ECC_POISON_NONE) ? 0x0 : 0x1;
         regData |= (basic_cfg->ecc_poison == ECC_POISON_1BIT) ? 0x2 : 0x0;
         dr1x90_reg_write(0x1074 ,regData);    // ECCCFG1
-    } else {
+    }
+    else if (basic_cfg->ecc == DDR_ECC_INLINE) {
+        dr1x90_reg_write(0x1070 ,0x02027f64); // ECCCFG0
+        regData = 0x000006b0;
+        regData |= (basic_cfg->ecc_poison == ECC_POISON_NONE) ? 0x0 : 0x1;
+        regData |= (basic_cfg->ecc_poison == ECC_POISON_1BIT) ? 0x2 : 0x0;
+        dr1x90_reg_write(0x1074 ,regData);    // ECCCFG1
+    }
+    else {  // ECC_NONE
         dr1x90_reg_write(0x1070 ,0x40085810); // ECCCFG0
         dr1x90_reg_write(0x1074 ,0x00000680); // ECCCFG1
     }
@@ -82,7 +90,7 @@ void dr1x90_ddrmc_cfg(const ddr_basic_t* basic_cfg, const ddr_timing_t* timpara,
     dr1x90_ddrmc_addrmap_cfg(basic_cfg->type, basic_cfg->width, addrmap);
 
     dr1x90_reg_write(0x1240 ,0x06000608); // ODTCFG
-    dr1x90_reg_write(0x1244 ,0x00000011); // ODTMAP
+    dr1x90_reg_write(0x1244 ,0x00000001); // ODTMAP
     // dr1x90_field_write(DDRC_ADDR_UMCTL2 + ODTMAP ,rank0_rd_odt_offset , rank0_rd_odt_mask ,0x0);
 
     dr1x90_ddrmc_arbiter_cfg(basic_cfg->type, arbiter_cfg);
@@ -445,6 +453,7 @@ void dr1x90_ddrmc_arbiter_cfg(ddr_type_t type, const ddr_arbiter_t* arbiter_cfg)
     u32 regData = 0x1;
     // rdwr_idle_gap = 0, autopre_rmw = 0, pageclose = 0, prefer_write = 0
     regData |= make_field(arbiter_cfg->lpr_num, lpr_num_entries_offset, lpr_num_entries_mask);
+    // regData |= make_field(0x1, prefer_write_offset, prefer_write_mask);
     dr1x90_reg_write(DDRC_ADDR_UMCTL2 + SCHED, regData);
 
     // pageclose_timer = 0
@@ -464,7 +473,7 @@ void dr1x90_ddrmc_arbiter_cfg(ddr_type_t type, const ddr_arbiter_t* arbiter_cfg)
     dr1x90_reg_write(DDRC_ADDR_UMCTL2 + PERFWR1, regData);
 
     regData = 0;
-    regData |= make_field(0x1, bl_exp_mode_offset, bl_exp_mode_mask);
+    regData |= make_field(0x0, bl_exp_mode_offset, bl_exp_mode_mask);
     regData |= make_field(0x0, pagematch_limit_offset, pagematch_limit_mask);
     regData |= make_field(0x0, go2critical_en_offset, go2critical_en_mask);
     dr1x90_reg_write(DDRC_ADDR_UMCTL2 + PCCFG, regData);

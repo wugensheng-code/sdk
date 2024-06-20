@@ -174,9 +174,9 @@ int dcu_gate_edge_dect(int rept, int byte, u32* cnt)
     return 0;
 }
 
-int dcu_gate_train(u32 lane_mask, u32 mr3)
+int dcu_gate_train(u32 lane_mask, const u32* MR, ddr_type_t type)
 {
-    u64 dcu_cmd[2];
+    u64 dcu_cmd[3];
     u32 prd[4];
     u32 cnt[4];
     short status[DCU_GATE_STSLEN];
@@ -188,11 +188,16 @@ int dcu_gate_train(u32 lane_mask, u32 mr3)
     }
     AL_DDR_LOG("[DCU GATE] GDQSPRD = %d %d %d %d\r\n", prd[0], prd[1], prd[2], prd[3]);
 
+    int cmd_len = 2;
     // Enter MPR Mode
-    dcu_cmd[0] = dcu_cmd_make(PUB_DATA_0000_0000,       0x0, 0x0, DCU_CMD_PREC_ALL, DCU_DTP_PPA, DCU_PRT_1);
-    dcu_cmd[1] = dcu_cmd_make(PUB_DATA_0000_0000, mr3 | 0x4, 0x3, DCU_CMD_MRS     , DCU_DTP_MOD, DCU_PRT_1);
-    dcu_cmd_load(dcu_cmd, 2);
-    dcu_cmd_exec(2, NULL, 0);
+    dcu_cmd[0] = dcu_cmd_make(PUB_DATA_0000_0000,         0x0, 0x0, DCU_CMD_PREC_ALL, DCU_DTP_PPA, DCU_PRT_1);
+    dcu_cmd[1] = dcu_cmd_make(PUB_DATA_0000_0000, MR[3] | 0x4, 0x3, DCU_CMD_MRS     , DCU_DTP_MOD, DCU_PRT_1);
+    if (type == DDR4_TYPE) {
+        dcu_cmd[2] = dcu_cmd_make(PUB_DATA_0000_0000, MR[4] | 0x400, 0x4, DCU_CMD_MRS, DCU_DTP_MOD, DCU_PRT_1);
+        cmd_len = 3;
+    }
+    dcu_cmd_load(dcu_cmd, cmd_len);
+    dcu_cmd_exec(cmd_len, NULL, 0);
 
     // setup READ command
     dcu_cmd[0] = dcu_cmd_make(PUB_DATA_0000_0000, 0x0, 0x0, DCU_CMD_READ, DCU_DTP_RD2PRE, DCU_PRT_BL);
@@ -220,7 +225,7 @@ int dcu_gate_train(u32 lane_mask, u32 mr3)
         if (lane_en == 0)
             continue;
         
-        u32 step = prd[dx] / DCU_GATE_DIFFDIV;
+        // u32 step = prd[dx] / DCU_GATE_DIFFDIV;
         u32 dgsl  = 0;
         u32 dqsgd = 0;
         u32   dly = 0;
@@ -229,7 +234,8 @@ int dcu_gate_train(u32 lane_mask, u32 mr3)
 
         int sts_len = 0;
 
-        for (dly = 0; dgsl < MAX_DGSL; dly += step) {
+        while (dgsl < MAX_DGSL && sts_len < DCU_GATE_STSLEN) {
+            dly   = sts_len * prd[dx] / DCU_GATE_DIFFDIV;
             dgsl  = dly / prd[dx];
             dqsgd = dly % prd[dx];
             dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0   + 0x100 * dx, DGSL_offset,  DGSL_mask , dgsl);
@@ -263,8 +269,8 @@ int dcu_gate_train(u32 lane_mask, u32 mr3)
             }
         }
 
-        l_dly = idx_max * step + prd[dx] / 2;
-        r_dly = idx_max * step + prd[dx] / 2 + prd[dx];
+        l_dly = idx_max * prd[dx] / DCU_GATE_DIFFDIV + prd[dx] / 2;
+        r_dly = idx_max * prd[dx] / DCU_GATE_DIFFDIV + prd[dx] / 2 + prd[dx];
 
         // for (int i = 0; i < sts_len; ++i) {
         //     dly   = i * step;
@@ -273,7 +279,7 @@ int dcu_gate_train(u32 lane_mask, u32 mr3)
         //     AL_DDR_LOG("[DCU GATE] DX%d %3d# DLY=%3d DGSL=%2d DQSGD=%3d: %3d %d\r\n", dx, i, dly, dgsl, dqsgd, status[i], correl[i]);
         // }
         // AL_DDR_LOG("[DCU GATE] =============================\r\n");
-        AL_DDR_LOG("[DCU GATE] DX%d MAX @ %d# DLY=%3d: %d\r\n", dx, idx_max, idx_max * step, max_correl);
+        AL_DDR_LOG("[DCU GATE] DX%d MAX @ %d# DLY=%3d: %d\r\n", dx, idx_max, idx_max * prd[dx] / DCU_GATE_DIFFDIV, max_correl);
 
         // Find Last Low Level
         for (dly = l_dly; dly < r_dly; ++dly) {
@@ -310,9 +316,10 @@ int dcu_gate_train(u32 lane_mask, u32 mr3)
         dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * dx, DQSGD_offset, DQSGD_mask, dqsgd + 1);
         AL_DDR_LOG("[DCU GATE] DX%d DGSL:%d DQSGD:%d\r\n", dx, dgsl, dqsgd);
 
-        // if (dgsl != 3) {
+        // if (dgsl != 3 && dgsl != 4)
+        // {
         //     for (int i = 0; i < sts_len; ++i) {
-        //         dly   = i * step;
+        //         dly   =   i * prd[dx] / DCU_GATE_DIFFDIV;
         //         dgsl  = dly / prd[dx];
         //         dqsgd = dly % prd[dx];
         //         AL_DDR_LOG("[GATE BUG] DX%d %3d# DLY=%3d DGSL=%2d DQSGD=%3d: %3d %d\r\n", dx, i, dly, dgsl, dqsgd, status[i], correl[i]);
@@ -321,10 +328,15 @@ int dcu_gate_train(u32 lane_mask, u32 mr3)
         // }
     }
 
+    cmd_len = 1;
     // Exit MPR Mode
-    dcu_cmd[0] = dcu_cmd_make(PUB_DATA_0000_0000, mr3, 0x3, DCU_CMD_MRS, DCU_DTP_MOD, DCU_PRT_1);
-    dcu_cmd_load(dcu_cmd, 1);
-    dcu_cmd_exec(1, NULL, 0);
+    dcu_cmd[0] = dcu_cmd_make(PUB_DATA_0000_0000, MR[3], 0x3, DCU_CMD_MRS, DCU_DTP_MOD, DCU_PRT_1);
+    if (type == DDR4_TYPE) {
+        dcu_cmd[1] = dcu_cmd_make(PUB_DATA_0000_0000, MR[4], 0x4, DCU_CMD_MRS, DCU_DTP_MOD, DCU_PRT_1);
+        cmd_len = 2;
+    }
+    dcu_cmd_load(dcu_cmd, cmd_len);
+    dcu_cmd_exec(cmd_len, NULL, 0);
 
     return 0;
 }
@@ -1114,6 +1126,183 @@ int dcu_wladj(u32 lane_mask)
             }
         }
         dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0 + 0x100 * dx, WLSL_offset, WLSL_mask, wlsl);
+    }
+
+    return 0;
+}
+
+int dcu_vref_reye_mpr_scan(u32 lane_mask, u32 mr3)
+{
+    const u32 golden[4] = {0xFF00FF00, 0xFF00FF00, 0xFF00FF00, 0xFF00FF00};
+    const u32 vref_step = 10;
+    const u32 rdqsd_step = 1;
+
+    u32 gtprd[4];
+    u32 gtdly[4];
+
+    u64 dcu_cmd[2];
+    u32 dcu_data[4];
+    int recv = 0;
+
+    int err = 0;
+    u16 err_tab[DCU_EYE_TABSIZE][8];
+
+
+    for (int dx = 0; dx < 4; ++dx) {
+        u32  dgsl = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0   + 0x100 * dx, DGSL_offset   , DGSL_mask   );
+        u32 dqsgd = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * dx, DQSGD_offset  , DQSGD_mask  );
+        u32 rdqsd = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * dx, RDQSD_offset  , RDQSD_mask  );
+        gtprd[dx] = dr1x90_field_read(DDRC_ADDR_PPC + DX0GSR0   + 0x100 * dx, GDQSPRD_offset, GDQSPRD_mask);
+        gtdly[dx] = dgsl * gtprd[dx] + dqsgd - rdqsd;
+    }
+
+    // Enter MPR Mode
+    dcu_cmd[0] = dcu_cmd_make(PUB_DATA_0000_0000,       0x0, 0x0, DCU_CMD_PREC_ALL, DCU_DTP_PPA, DCU_PRT_1);
+    dcu_cmd[1] = dcu_cmd_make(PUB_DATA_0000_0000, mr3 | 0x4, 0x3, DCU_CMD_MRS     , DCU_DTP_MOD, DCU_PRT_1);
+    dcu_cmd_load(dcu_cmd, 2);
+    dcu_cmd_exec(2, NULL, 0);
+
+    // setup READ command
+    dcu_cmd[0] = dcu_cmd_make(PUB_DATA_0000_0000, 0x0, 0x0, DCU_CMD_READ, DCU_DTP_RD2PRE, DCU_PRT_BL);
+    dcu_cmd[1] = dcu_cmd_make(PUB_DATA_0000_0000, 0x8, 0x0, DCU_CMD_READ, DCU_DTP_RD2PRE, DCU_PRT_BL);
+    dcu_cmd_load(dcu_cmd, 2);
+
+    for (int dx = 0; dx < 4; ++dx) {
+        u32 lane_en = lane_mask & (0x1 << dx);
+        if (lane_en == 0)
+            continue;
+
+        u32 max_rdqsd = gtprd[dx] + gtprd[dx] / 5;
+        max_rdqsd = min(DCU_EYE_TABSIZE, max_rdqsd);
+
+        AL_DDR_LOG("DX%d_Vref ", dx);
+        for (u32 rdqsd = 0; rdqsd < max_rdqsd; rdqsd += rdqsd_step) {
+            AL_DDR_LOG("%4d ", rdqsd);
+        }
+        AL_DDR_LOG("\r\n");
+
+        for (uint32_t vref = 0; vref <= 0xFF; vref += vref_step) {
+            uint32_t bref_cfg = (vref << 0) | (vref << 8) | (vref << 16) | (vref << 24);
+            dr1x90_reg_write(DDRC_ADDR_BK0_IOMC1 + brefhp_cfg1  , bref_cfg);
+            dr1x90_reg_write(DDRC_ADDR_BK0_IOMC1 + brefhp_cfg1_1, bref_cfg);
+            dr1x90_reg_write(DDRC_ADDR_BK1_IOMC1 + brefhp_cfg1  , bref_cfg);
+            dr1x90_reg_write(DDRC_ADDR_BK1_IOMC1 + brefhp_cfg1_1, bref_cfg);
+
+            AL_DDR_LOG("0x%02x ", vref);
+
+            memset(err_tab, 0, sizeof(err_tab));
+
+            for (int i = 0; i < DCU_REYE_MPR_SCAN; ++i) {
+                for (u32 rdqsd = 0; rdqsd < max_rdqsd; rdqsd += rdqsd_step) {
+                    u32 dgsl  = (gtdly[dx] + rdqsd) / gtprd[dx];
+                    u32 dqsgd = (gtdly[dx] + rdqsd) % gtprd[dx];
+                    dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0   + 0x100 * dx, DGSL_offset,   DGSL_mask ,  dgsl);
+                    dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * dx, DQSGD_offset,  DQSGD_mask,  dqsgd + 1);
+                    dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * dx, RDQSD_offset,  RDQSD_mask,  rdqsd + 1);
+                    dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * dx, RDQSND_offset, RDQSND_mask, rdqsd + 1);
+
+                    for (int rpt = 0; rpt < DCU_REYE_MPR_SAMPLE; ++rpt) {
+                        recv = 0;
+                        for (int retry = 0; retry < 3 && recv != 4; ++retry) {
+                            recv = dcu_cmd_exec(2, dcu_data, dx);
+                        }
+                        err += dcu_data_error(dcu_data, golden, err_tab[rdqsd]);
+                    }
+                }
+            }
+
+            for (u32 rdqsd = 0; rdqsd < max_rdqsd; rdqsd += rdqsd_step) {
+                u32 val = sum_tab(err_tab[rdqsd], 8, 1);
+                AL_DDR_LOG("%4d ", val);
+            }
+            AL_DDR_LOG("\r\n");
+
+        }
+    }
+
+    // Exit MPR Mode
+    dcu_cmd[0] = dcu_cmd_make(PUB_DATA_0000_0000, mr3, 0x3, DCU_CMD_MRS, DCU_DTP_MOD, DCU_PRT_1);
+    dcu_cmd_load(dcu_cmd, 1);
+    dcu_cmd_exec(1, NULL, 0);
+    return 0;
+}
+
+int dcu_vref_rweye_scan(u32 lane_mask)
+{
+    const u32 vref_step = 10;
+    const u32  dly_step = 1;
+
+    u32 gtprd[4];
+    u32 gtdly[4];
+
+    u64 dcu_cmd[2];
+    u32 dcu_data[4];
+    int recv = 0;
+
+    int err = 0;
+    u16 err_tab[DCU_EYE_TABSIZE][8];
+
+
+    for (int dx = 0; dx < 4; ++dx) {
+        u32  dgsl = dr1x90_field_read(DDRC_ADDR_PPC + DX0GTR0   + 0x100 * dx, DGSL_offset   , DGSL_mask   );
+        u32 dqsgd = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * dx, DQSGD_offset  , DQSGD_mask  );
+        u32 rdqsd = dr1x90_field_read(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * dx, RDQSD_offset  , RDQSD_mask  );
+        gtprd[dx] = dr1x90_field_read(DDRC_ADDR_PPC + DX0GSR0   + 0x100 * dx, GDQSPRD_offset, GDQSPRD_mask);
+        gtdly[dx] = dgsl * gtprd[dx] + dqsgd - rdqsd;
+    }
+
+    for (int dx = 0; dx < 4; ++dx) {
+        u32 lane_en = lane_mask & (0x1 << dx);
+        if (lane_en == 0)
+            continue;
+
+        u32 max_dly = gtprd[dx] + gtprd[dx] / 5;
+        max_dly = min(DCU_EYE_TABSIZE, max_dly);
+
+        AL_DDR_LOG("DX%d_Vref ", dx);
+        for (u32 dly = 0; dly < max_dly; dly += dly_step) {
+            AL_DDR_LOG("%4d ", dly);
+        }
+        AL_DDR_LOG("\r\n");
+
+        for (uint32_t vref = 0; vref <= 0xFF; vref += vref_step) {
+            uint32_t bref_cfg = (vref << 0) | (vref << 8) | (vref << 16) | (vref << 24);
+            dr1x90_reg_write(DDRC_ADDR_BK0_IOMC1 + brefhp_cfg1  , bref_cfg);
+            dr1x90_reg_write(DDRC_ADDR_BK0_IOMC1 + brefhp_cfg1_1, bref_cfg);
+            dr1x90_reg_write(DDRC_ADDR_BK1_IOMC1 + brefhp_cfg1  , bref_cfg);
+            dr1x90_reg_write(DDRC_ADDR_BK1_IOMC1 + brefhp_cfg1_1, bref_cfg);
+
+            AL_DDR_LOG("0x%02x ", vref);
+
+            memset(err_tab, 0, sizeof(err_tab));
+/*
+            for (int i = 0; i < DCU_REYE_SCAN; ++i) {
+                for (u32 dly = 0; dly < max_dly; dly += dly_step) {
+                    u32 dgsl  = (gtdly[dx] + dly) / gtprd[dx];
+                    u32 dqsgd = (gtdly[dx] + dly) % gtprd[dx];
+                    dr1x90_field_write(DDRC_ADDR_PPC + DX0GTR0   + 0x100 * dx, DGSL_offset,   DGSL_mask ,  dgsl);
+                    dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR2 + 0x100 * dx, DQSGD_offset,  DQSGD_mask,  dqsgd + 1);
+                    dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR3 + 0x100 * dx, RDQSD_offset,  RDQSD_mask,  dly + 1);
+                    dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR4 + 0x100 * dx, RDQSND_offset, RDQSND_mask, dly + 1);
+
+                    err += dcu_mtest_reye(dx, DCU_REYE_PATT_RPT, DCU_REYE_READ_RPT, &err_tab[dly][0], &err_tab[dly][0]);
+                }
+            }
+*/
+            for (int i = 0; i < DCU_WEYE_SCAN; ++i) {
+                for (u32 dly = 0; dly < max_dly; dly += 1) {
+                    dr1x90_field_write(DDRC_ADDR_PPC + DX0LCDLR1 + 0x100 * dx, WDQD_offset, WDQD_mask, dly);
+                    err += dcu_mtest_weye(dx, DCU_WEYE_SAMPLE, &err_tab[dly][0]);
+                }
+            }
+
+            for (u32 dly = 0; dly < max_dly; dly += dly_step) {
+                u32 val = sum_tab(err_tab[dly], 8, 1);
+                AL_DDR_LOG("%4d ", val);
+            }
+            AL_DDR_LOG("\r\n");
+
+        }
     }
 
     return 0;

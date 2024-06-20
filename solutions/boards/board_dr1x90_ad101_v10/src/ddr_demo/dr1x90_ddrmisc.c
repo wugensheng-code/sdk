@@ -152,12 +152,12 @@ void make_ddr_mr(double fck, ddr_type_t type, const ddr_timing_t* timpara, u32* 
         MR[3] = 0x0;
     }
     else if (type == DDR4_TYPE) {
-        MR[0] = 0x0000 | (wr_code << 9) | ((cl_code & 0b00001) << 2) | ((cl_code & 0b01110) << (4 - 1)) | ((cl_code & 0b10000) << (12 - 4));
-        MR[1] = 0x3;
-        MR[2] = 0x80 | (cwl_code << 3);
-        MR[3] = 0x80;
+        MR[0] = 0x0100 | (wr_code << 9) | ((cl_code & 0b00001) << 2) | ((cl_code & 0b01110) << (4 - 1)) | ((cl_code & 0b10000) << (12 - 4));
+        MR[1] = 0x0001 | (0x0 << 8) | (0x0 << 1);
+        MR[2] = 0x0080 | (cwl_code << 3);
+        MR[3] = 0x0000;
         MR[4] = 0x0000;
-        MR[5] = 0x0400;
+        MR[5] = 0x0000 | (0x3 << 6);    // RTT_park = RZQ / 6
         MR[6] = 0x0419;
     }
 }

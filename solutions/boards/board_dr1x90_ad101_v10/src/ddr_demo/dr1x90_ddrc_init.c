@@ -25,11 +25,34 @@ int dr1x90_ddrc_is_init()
 }
 
 int dr1x90_ddrc_init(
-    const ddr_basic_t* basic_cfg,
+    const uint64_t para_version , const ddr_basic_t* basic_cfg,
     const ddr_train_t* train_cfg, const ddr_timing_t* timpara, 
     const ddr_addrmap_t* addrmap, const ddr_arbiter_t* arbiter_cfg
 )
 {
+    AL_DDR_LOG("[DDR FW] Version %d.%d\r\n", FW_VERSION_MAJOR, FW_VERSION_MINOR);
+    AL_DDR_LOG("[DDR FW] Compile Time: %s %s\r\n", __DATE__, __TIME__);
+    if (para_version != FW_VERSION) {
+        uint64_t major = para_version >> 32;
+        uint64_t minor = para_version & 0xFFFFFFFFUL;
+        AL_DDR_LOG("[DDR FW] Parameter Version %d.%d\r\n", major, minor);
+        if (major != FW_VERSION_MAJOR) {
+            AL_DDR_LOG("[DDR FW] Major Version Mismatch, Exit ...\r\n");
+            return -1;
+        }
+        else {
+            AL_DDR_LOG("[DDR FW] Minor Version Mismatch\r\n");
+        }
+    }
+
+    const u32 ddr3_vref_ctrl = 0x10;    // 50%
+    const u32 ddr4_vref_ctrl = 0x50;    // 72%
+    const u32 ddr3_zqcode[4] = {0x17173232, 0x17173232, 0x17173232, 0x17173232};
+    const u32 ddr4_zqcode[4] = {0x2E003232, 0x2E003232, 0x2E003232, 0x2E003232};
+
+    const u32 vref_ctrl = (basic_cfg->type == DDR4_TYPE) ? ddr4_vref_ctrl : ddr3_vref_ctrl;
+    const u32* zqcode   = (basic_cfg->type == DDR4_TYPE) ? ddr4_zqcode : ddr3_zqcode;
+
     u32 regData = 0;
     u32 mtest_err = 0;
     u32 MR[7] = {0};
@@ -39,8 +62,6 @@ int dr1x90_ddrc_init(
     make_ddr_mr(basic_cfg->fck, basic_cfg->type, timpara, MR);
 
     regData = dr1x90_reg_read(0x27a0);
-
-    AL_DDR_LOG("DDR Init V3\r\n");
 
     dr1x90_reg_write(0x11b0 ,0x00000050); // DFIMISC
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,17 +80,19 @@ int dr1x90_ddrc_init(
     // step 03 : IOB Configuraiton
     ///////////////////////////////////////////////////////////////////////////////////////////////
     dr1x90_ddr_iob_cfg(basic_cfg->type);
+    dr1x90_ddr_iob_vref_cfg(basic_cfg->vref, vref_ctrl);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 04 : IOL Configuration
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    dr1x90_ddr_iol_cfg();
+    dr1x90_ddr_iol_cfg(basic_cfg->type);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 10 : MC Configuration
     ///////////////////////////////////////////////////////////////////////////////////////////////
     dr1x90_ddrmc_cfg(basic_cfg, timpara, addrmap, arbiter_cfg);
     dr1x90_reg_write(DDRC_ADDR_DPLL + RW_TEST, 0x1); // Release MC reset
+    // DFIMISC.dfi_init_complete_en = 1'b0
     dr1x90_reg_write(0x11b0 ,0x00000050); // DFIMISC
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,11 +109,15 @@ int dr1x90_ddrc_init(
     // step 07 : MDL Calibration
     ///////////////////////////////////////////////////////////////////////////////////////////////
     dr1x90_ddrppc_mdl_cal();
-    dr1x90_ddrppc_show_mdl(basic_cfg->fck);
-    if (train_cfg->pzq)
+    dr1x90_ddrppc_show_mdl(basic_cfg->fck, lane_mask);
+    if (train_cfg->pzq) {
+        dr1x90_zq_overwrite_v2(basic_cfg->type, zqcode, vref_ctrl);
         dr1x90_ddrppc_zq_cal(basic_cfg->type);
-    else
-        dr1x90_zq_overwrite_cfg(basic_cfg->type);
+    }
+    else {
+        // dr1x90_zq_overwrite_cfg(basic_cfg->type);
+        dr1x90_zq_overwrite_v2(basic_cfg->type, zqcode, vref_ctrl);
+    }
     
     if (train_cfg->dcc)
         dr1x90_ddrc_train_dcc();
@@ -109,11 +136,18 @@ int dr1x90_ddrc_init(
     dr1x90_ddrppc_dram_init();
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    // step 09 : PPC MTEST
+    // step 09 : Training
     ///////////////////////////////////////////////////////////////////////////////////////////////
     dr1x90_pub_training_cfg(basic_cfg->type);
     // dr1x90_do_training(1, 1, 1);
     // dr1x90_ddrppc_show_delay();
+
+    // dr1x90_iomc_internal_loopback_cfg();
+    // for (int i = 0; ; ++i) {
+    //     // dcu_mtest_log(0xF, 0, 0, 0, 1);
+    //     mtest_err = dr1x90_ddrppc_mtest(0, 0, 0, 9);
+    //     delay_ms(1000);
+    // }
 
     pub_lsfr_set(0x1234ABCD);
     dr1x90_reg_write(DDRC_ADDR_PPC + UDDR0, 0x55aa55aa);
@@ -127,7 +161,7 @@ int dr1x90_ddrc_init(
         dr1x90_ddrc_train_gate();
     }
     if (train_cfg->gate & 0x2) {
-        dcu_gate_train(lane_mask, MR[3]);
+        dcu_gate_train(lane_mask, MR, basic_cfg->type);
         // dr1x90_ddrppc_show_delay();
     }
     if (train_cfg->reye & 0x4) {
@@ -150,10 +184,15 @@ int dr1x90_ddrc_init(
     dr1x90_ddrppc_show_delay();
     // dr1x90_ddrppc_show_bdl();
 
-    // dr1x90_iomc_internal_loopback_cfg();
-
     // mtest_err = dr1x90_ddrppc_mtest(0, 0, 0, 9);
+    // for (int i = 0; i < 10; ++i) {
+    //     dcu_mtest_log(0xF, 0, 0, 0, 1);
+    //     // dr1x90_ddrppc_mtest(0, 0, 0, 9);
+    //     delay_ms(200);
+    // }
 
+    // dcu_vref_reye_scan(0xF, MR[3]);
+    // dcu_vref_rweye_scan(0xF);
     // while (1);
 
     if (basic_cfg->ecc == DDR_ECC_SIDEBAND)
@@ -162,13 +201,11 @@ int dr1x90_ddrc_init(
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 11 : HandOff to DFI
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //Alc_GpioMaskWrite(GPIO_CH0, 0x0A, 0xffff);
     dr1x90_field_write(DDRC_ADDR_PPC + PGCR1, PUBMODE_offset, PUBMODE_mask, 0);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 100 : MC Post Configuration
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    //Alc_GpioMaskWrite(GPIO_CH0, 0x333, 0xffff);
     dr1x90_release_ddr_bus();
     dr1x90_ddrmc_post_cfg();
 
@@ -224,13 +261,9 @@ int dr1x90_ddrc_init(
     regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DFITMG0, dfi_t_rddata_en_offset, dfi_t_rddata_en_mask);
    //  AL_DDR_LOG("\n dfi_t_rddata_en.   data =  0x%x\n", regData);
 
-    // soft_reye_scanning_new();
-    // soft_weye_scanning();
-    // dr1x90_ddrppc_show_delay();
-
     if (basic_cfg->ecc != DDR_ECC_NONE) {
-        memset((void*)0x0, 0x0, 512 * 1024 * 1024);
-        // dc_zeros((void*)0x0, 512 * 1024 * 1024);
+        memset((void*)0x0, 0x0, basic_cfg->size);
+        // dc_zeros((void*)0x0, basic_cfg->size);
     }
 /*
     set_rand_seed(100);
