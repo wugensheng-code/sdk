@@ -8,14 +8,12 @@
 #include "al_gicv3_private.h"
 #include "al_gicv3_dist.h"
 #include "al_gicv3_rdist.h"
-#include "al_aarch64_core.h"
 
 #define GICV3_SPECIAL_START     (1020)
 #define GICV3_SPECIAL_END       (1023)
 #define GICV3_SPECIAL_NUM       (GICV3_SPECIAL_END - GICV3_SPECIAL_START +1)
 
 AL_INTR_HandlerStruct irq_handler_list[SOC_INT_MAX + GICV3_SPECIAL_NUM];
-AL_INTR_HandlerStruct fiq_handler_list[SOC_INT_MAX + GICV3_SPECIAL_NUM];
 
 /**
  * @desc  : irq handle implement
@@ -40,7 +38,6 @@ AL_VOID do_irq_handle(AL_VOID)
         Handler.Func(Handler.Param);
     }
 
-    /* Temp coding here, should move to portASM.S */
 #ifdef RTOS_FREERTOS
     disable_all_intr();
 #endif
@@ -60,9 +57,9 @@ AL_VOID do_fiq_handle(AL_VOID)
     IntrId = AlGicv3_AckIntrSel1();
 
     if (IntrId < SOC_INT_MAX) {
-        Handler = fiq_handler_list[IntrId];
+        Handler = irq_handler_list[IntrId];
     } else {
-        Handler = fiq_handler_list[IntrId - GICV3_SPECIAL_START + SOC_INT_MAX];
+        Handler = irq_handler_list[IntrId - GICV3_SPECIAL_START + SOC_INT_MAX];
     }
 
     if (Handler.Func == NULL) {
@@ -82,11 +79,7 @@ static AL_VOID AlIntr_RequestIntr(AL_U32 IntrId, AL_VOID *Handler, AL_VOID *Para
 {
     AL_INTR_HandlerStruct *HandleArray;
 
-#ifdef SWITCH_TO_EL1_EL0_FROM_EL3
     HandleArray = irq_handler_list;
-#else
-    HandleArray = fiq_handler_list;
-#endif
 
     if (IntrId < SOC_INT_MAX) {
         HandleArray[IntrId].Func    = Handler;
@@ -194,6 +187,7 @@ AL_VOID AlIntr_RestoreLocalInterruptMask(AL_S32 Mask)
 
 AL_S32 AlIntr_SaveLocalInterruptMask(AL_VOID)
 {
+#if defined(__aarch64__)
     AL_U32 ExceptionState ;
     AL_U32 EXCEPTION_ALL = (DAIF_IRQ_BIT | DAIF_FIQ_BIT) << 6;
     ExceptionState = get_intr_mask();
@@ -203,6 +197,7 @@ AL_S32 AlIntr_SaveLocalInterruptMask(AL_VOID)
         return ExceptionState;
     }
     return ExceptionState;
+#endif
 }
 
 AL_VOID AlIntr_ClearAllPending(AL_VOID)

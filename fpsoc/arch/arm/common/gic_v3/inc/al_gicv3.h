@@ -11,10 +11,33 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#if defined __aarch64__
 #include "al_aarch64_core.h"
+#elif defined __arm__
+#include "al_aarch32_core.h"
+#endif
+
 #include "al_utils_def.h"
 #include "al_type.h"
 #include "al_gicv3_common.h"
+
+
+#ifdef __aarch64__
+
+#define GICV3_SYSREG_READ   ARCH_SYSREG_READ
+#define GICV3_SYSREG_WRITE  ARCH_SYSREG_WRITE
+#define GICV3_SYSREG_WRITE_64  ARCH_SYSREG_WRITE
+#define GICV3_SYSREG_READ_64   ARCH_SYSREG_READ
+
+#else
+
+#define GICV3_SYSREG_WRITE  ARCH_COPROCR_SYSREG_WRITE
+#define GICV3_SYSREG_READ   ARCH_COPROCR_SYSREG_READ
+#define GICV3_SYSREG_WRITE_64  ARCH_COPROCR_SYSREG_WRITE_64
+#define GICV3_SYSREG_READ_64   ARCH_COPROCR_SYSREG_READ_64
+
+#endif
+
 
 /*******************************************************************************
  * GICv3 and 3.1 miscellaneous definitions
@@ -304,13 +327,35 @@ static inline bool AlGicv3_IsIntrIdSpecialIdentifier(AL_U32 Id)
     return (Id >= PENDING_G1S_INTID) && (Id <= GIC_SPURIOUS_INTERRUPT);
 }
 
+
+#ifdef ISA_COPROCR_READ
+
+#define GICV3_SYSREG_WRITE  ARCH_COPROCR_SYSREG_WRITE
+#define GICV3_SYSREG_READ   ARCH_COPROCR_SYSREG_READ
+
+#define GICV3_SYSREG_WRITE_64  ARCH_COPROCR_SYSREG_WRITE_64
+#define GICV3_SYSREG_READ_64   ARCH_COPROCR_SYSREG_READ_64
+
+
+
+#else
+
+#define GICV3_SYSREG_READ   ARCH_SYSREG_READ
+#define GICV3_SYSREG_WRITE  ARCH_SYSREG_WRITE
+
+#define GICV3_SYSREG_WRITE_64  ARCH_SYSREG_WRITE
+#define GICV3_SYSREG_READ_64   ARCH_SYSREG_READ
+
+#endif
+
+
 /*******************************************************************************
  * Helper GICv3 and 3.1 macros for SEL1
  ******************************************************************************/
 static inline AL_U32 AlGicv3_AckIntrSel1(AL_VOID)
 {
     AL_U32 v;
-    v = (AL_U32)ARCH_SYSREG_READ(icc_iar1_el1) & IAR1_EL1_INTID_MASK;
+    v = (AL_U32)GICV3_SYSREG_READ(icc_iar1_el1) & IAR1_EL1_INTID_MASK;
     DSB();
 
     return v;
@@ -319,7 +364,7 @@ static inline AL_U32 AlGicv3_AckIntrSel1(AL_VOID)
 static inline AL_U32 AlGicv3_GetPendingIntrIdSel1(AL_VOID)
 {
     AL_U32 v;
-    v = (AL_U32)ARCH_SYSREG_READ(icc_hppir1_el1) & HPPIR1_EL1_INTID_MASK;
+    v = (AL_U32)GICV3_SYSREG_READ(icc_hppir1_el1) & HPPIR1_EL1_INTID_MASK;
     DSB();
 
     return v;
@@ -339,7 +384,7 @@ static inline AL_VOID AlGicv3_EndOfIntrSel1(AL_U32 Id)
      * DEVICE nGnRnE attribute.
      */
     DSB();
-    ARCH_SYSREG_WRITE(icc_eoir1_el1, Id);
+    GICV3_SYSREG_WRITE(icc_eoir1_el1, Id);
     ISB();
 }
 
@@ -349,7 +394,7 @@ static inline AL_VOID AlGicv3_EndOfIntrSel1(AL_U32 Id)
 static inline AL_U32 AlGicv3_AckIntr(AL_VOID)
 {
     AL_U32 v;
-    v = (AL_U32)ARCH_SYSREG_READ(icc_iar0_el1) & IAR0_EL1_INTID_MASK;
+    v = (AL_U32)GICV3_SYSREG_READ(icc_iar0_el1) & IAR0_EL1_INTID_MASK;
     DSB();
     return v;
 }
@@ -367,7 +412,7 @@ static inline AL_VOID AlGicv3_EndOfIntr(AL_U32 Id)
      * The dsb will also ensure *completion* of previous writes with
      * DEVICE nGnRnE attribute.
      */
-    ARCH_SYSREG_WRITE(icc_eoir0_el1, Id);
+    GICV3_SYSREG_WRITE(icc_eoir0_el1, Id);
     ISB();
 
     return;

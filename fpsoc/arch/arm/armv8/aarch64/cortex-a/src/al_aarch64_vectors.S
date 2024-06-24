@@ -126,13 +126,13 @@ _exception_entry:
     stp x5, x6,   [sp, #-16]!
     stp x3, x4,   [sp, #-16]!
     stp x1, x2,   [sp, #-16]!
-    b   _save_el_regs            /* jump to the second part */
+    b   save_el_regs            /* jump to the second part */
 
 /*
  * Save exception specific context: ESR and ELR,spsr for all exception levels.
  * This is the second part of the shared routine called into from all entries.
  */
-_save_el_regs:
+save_el_regs:
     switch_el x11, 3f, 2f, 1f
 3:  mrs x1, esr_el3
     mrs x2, elr_el3
@@ -160,17 +160,20 @@ exception_exit:
     ldp x2, x0, [sp],#16
     switch_el x11, 3f, 2f, 1f
 3:  msr elr_el3, x2
-    b   _restore_regs
+    msr spsr_el3, x3
+    b   restore_regs
 2:  msr elr_el2, x2
-    b   _restore_regs
+    msr spsr_el2, x2
+    b   restore_regs
 1:  msr elr_el1, x2
-    b   _restore_regs        /* jump to the second part */
+    msr spsr_el1, x2
+    b   restore_regs        /* jump to the second part */
 
 /*
  * Restore the general purpose registers from the exception stack, then return.
  * This is the second part of the shared routine called into from all entries.
  */
-_restore_regs:
+restore_regs:
     ldp    x1, x2,   [sp],#16
     ldp    x3, x4,   [sp],#16
     ldp    x5, x6,   [sp],#16
@@ -186,4 +189,11 @@ _restore_regs:
     ldp    x25, x26, [sp],#16
     ldp    x27, x28, [sp],#16
     ldp    x29, x30, [sp],#16
+
+    msr    daifset, (DAIF_IRQ_BIT | DAIF_FIQ_BIT)
+
+    /*
+     * Exception Return using the ELR and SPSR for the current Exception level. When executed, the PE restores PSTATE
+     * from the SPSR, and branches to the address held in the ELR.
+    */
     eret

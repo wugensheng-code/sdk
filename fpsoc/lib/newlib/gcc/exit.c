@@ -12,3 +12,10 @@ __WEAK void exit(int fd)
     while (1) {
     }
 }
+
+
+__WEAK void _exit(int fd)
+{
+    while (1) {
+    }
+}

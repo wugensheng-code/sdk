@@ -4,16 +4,21 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "al_aarch64_core.h"
-#include "al_aarch64_sysreg.h"
 #include "al_type.h"
+
+#if defined __aarch64__
+#include "al_aarch64_core.h"
+#elif defined __arm__
+#include "al_aarch32_core.h"
+#endif
+
 #include "al_top.h"
 #include "al_systimer.h"
 
 
 AL_VOID AlSys_StartTimer(AL_VOID)
 {
-    ARCH_SYSREG_WRITE(cntp_ctl_el0, 1);
+    ARCH_COPROCR_SYSREG_WRITE(cntp_ctl_el0, 1);
     Altop_Syscnts_CounterCtrl(AL_FUNC_ENABLE);
 }
 
@@ -31,7 +36,7 @@ AL_U64 AlSys_GetTimerFreq(AL_VOID)
 
 AL_U64 AlSys_GetTimerTickCount(AL_VOID)
 {
-    return (AL_U64)ARCH_SYSREG_READ(cntpct_el0);
+    return (AL_U64)ARCH_COPROCR_SYSREG_READ_64(cntpct_el0);
 }
 
 

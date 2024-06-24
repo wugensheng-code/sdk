@@ -215,12 +215,10 @@ main_entry:
 .global board_init
 .weak board_init
 board_init:
-    nop
     ret
 
 .weak entry
 entry:
-    nop
     ret
 
 _psci_dcache_level:

@@ -7,15 +7,13 @@
 
 #include <assert.h>
 
-#include "al_aarch64_core.h"
 #include "al_barrier.h"
-
 #include "al_gicv3_private.h"
 #include "al_gicv3_dist.h"
 #include "al_gicv3_rdist.h"
 #include "al_gicv3.h"
-
 #include "al_type.h"
+
 
 const AL_GICV3_DrvDataStruct *Gicv3DrvData;
 
@@ -175,7 +173,7 @@ AL_VOID AlGicv3_CpuIfEnable(AL_U32 ProcNum)
      * not supported, the SRE bit is RAO/WI
      */
     IccSreEl1 |= (ICC_SRE_SRE_BIT);
-    ARCH_SYSREG_WRITE(icc_sre_el1, (ARCH_SYSREG_READ(icc_sre_el1) | IccSreEl1));
+    GICV3_SYSREG_WRITE(icc_sre_el1, (GICV3_SYSREG_READ(icc_sre_el1) | IccSreEl1));
 
     /* NS support in al_aarch64_startup.S */
     // ScrEl3 = read_scr_el3();
@@ -200,7 +198,7 @@ AL_VOID AlGicv3_CpuIfEnable(AL_U32 ProcNum)
     ISB();
 
     /* Program the idle Priority in the PMR */
-    ARCH_SYSREG_WRITE(icc_pmr_el1, GIC_PRI_MASK);
+    GICV3_SYSREG_WRITE(icc_pmr_el1, GIC_PRI_MASK);
 
     /* Enable Group0 interrupts */
     // write_icc_igrpen0_el1(IGRPEN1_EL1_ENABLE_G0_BIT);
@@ -209,13 +207,13 @@ AL_VOID AlGicv3_CpuIfEnable(AL_U32 ProcNum)
     // write_icc_igrpen1_el3(read_icc_igrpen1_el3() |
     //             IGRPEN1_EL3_ENABLE_G1S_BIT);
 
-    ARCH_SYSREG_WRITE(icc_bpr1_el1, 7);
-    ARCH_SYSREG_WRITE(icc_ctlr_el1, 0);
+    GICV3_SYSREG_WRITE(icc_bpr1_el1, 7);
+    GICV3_SYSREG_WRITE(icc_ctlr_el1, 0);
 
     ISB();
 
     /* Enable Group1 Secure interrupts */
-    ARCH_SYSREG_WRITE(icc_igrpen1_el1, 1);
+    GICV3_SYSREG_WRITE(icc_igrpen1_el1, 1);
 
     /* Add DSB to ensure visibility of System register writes */
     DSB();
@@ -234,15 +232,15 @@ AL_VOID AlGicv3_CpuIfDisable(AL_U32 ProcNum)
     assert(Gicv3DrvData->RdistBaseAddrs != NULL);
 
     /* Disable legacy interrupt bypass */
-    ARCH_SYSREG_WRITE(icc_sre_el1, (ARCH_SYSREG_READ(icc_sre_el1) |
+    GICV3_SYSREG_WRITE(icc_sre_el1, (GICV3_SYSREG_READ(icc_sre_el1) |
               (ICC_SRE_DIB_BIT | ICC_SRE_DFB_BIT)));
 
     /* Disable Group0 interrupts */
-    ARCH_SYSREG_WRITE(icc_igrpen0_el1, (ARCH_SYSREG_READ(icc_igrpen0_el1) &
+    GICV3_SYSREG_WRITE(icc_igrpen0_el1, (GICV3_SYSREG_READ(icc_igrpen0_el1) &
                   ~IGRPEN1_EL1_ENABLE_G0_BIT));
 
     /* Disable Group1 Secure and Non-Secure interrupts */
-    ARCH_SYSREG_WRITE(icc_igrpen1_el3, (ARCH_SYSREG_READ(icc_igrpen1_el3) &
+    GICV3_SYSREG_WRITE(icc_igrpen1_el3, (GICV3_SYSREG_READ(icc_igrpen1_el3) &
                   ~(IGRPEN1_EL3_ENABLE_G1NS_BIT |
                   IGRPEN1_EL3_ENABLE_G1S_BIT)));
 
@@ -266,14 +264,14 @@ AL_U32 AlGicv3_GetPendingInterruptId(AL_VOID)
 {
     AL_U32 Id;
 
-    Id = (AL_U32)ARCH_SYSREG_READ(icc_hppir0_el1) & HPPIR0_EL1_INTID_MASK;
+    Id = (AL_U32)GICV3_SYSREG_READ(icc_hppir0_el1) & HPPIR0_EL1_INTID_MASK;
 
     /*
      * If the ID is special identifier corresponding to G1S or G1NS
      * interrupt, then read the highest pending group 1 interrupt.
      */
     if ((Id == PENDING_G1S_INTID) || (Id == PENDING_G1NS_INTID)) {
-        return (AL_U32)ARCH_SYSREG_READ(icc_hppir1_el1) & HPPIR1_EL1_INTID_MASK;
+        return (AL_U32)GICV3_SYSREG_READ(icc_hppir1_el1) & HPPIR1_EL1_INTID_MASK;
     }
 
     return Id;
@@ -290,7 +288,7 @@ AL_U32 AlGicv3_GetPendingInterruptId(AL_VOID)
  ******************************************************************************/
 AL_U32 AlGicv3_GetPendingInterruptType(AL_VOID)
 {
-    return (AL_U32)ARCH_SYSREG_READ(icc_hppir0_el1) & HPPIR0_EL1_INTID_MASK;
+    return (AL_U32)GICV3_SYSREG_READ(icc_hppir0_el1) & HPPIR0_EL1_INTID_MASK;
 }
 
 /*******************************************************************************
@@ -356,7 +354,7 @@ AL_U32 AlGicv3_GetInterruptType(AL_U32 Id, AL_U32 ProcNum)
  ******************************************************************************/
 AL_U32 AlGicv3_GetRunningPriority(AL_VOID)
 {
-    return (AL_U32)ARCH_SYSREG_READ(icc_rpr_el1);
+    return (AL_U32)GICV3_SYSREG_READ(icc_rpr_el1);
 }
 
 /*******************************************************************************
@@ -586,20 +584,20 @@ AL_VOID AlGicv3_RaiseSgi(AL_U32 SgiNum, AL_GICV3_IrqGroupEnum Group, AL_REG Targ
 
     switch (Group) {
     case AL_GICV3_G0:
-        ARCH_SYSREG_WRITE(icc_sgi0r_el1, SgiVal);
+        GICV3_SYSREG_WRITE_64(icc_sgi0r_el1, SgiVal);
         break;
     case AL_GICV3_G1NS:
         #ifdef SUPPORT_NONSECURE
-        ARCH_SYSREG_WRITE(icc_sgi1r, SgiVal);
+        GICV3_SYSREG_WRITE_64(icc_sgi1r, SgiVal);
         #else
-        ARCH_SYSREG_WRITE(icc_asgi1r, SgiVal);
+        GICV3_SYSREG_WRITE_64(icc_asgi1r, SgiVal);
         #endif
         break;
     case AL_GICV3_G1S:
         #ifdef SUPPORT_NONSECURE
-        ARCH_SYSREG_WRITE(icc_asgi1r, SgiVal);
+        GICV3_SYSREG_WRITE_64(icc_asgi1r, SgiVal);
         #else
-        ARCH_SYSREG_WRITE(icc_sgi1r, SgiVal);
+        GICV3_SYSREG_WRITE_64(icc_sgi1r, SgiVal);
         #endif
         break;
     default:
@@ -702,7 +700,7 @@ AL_U32 AlGicv3_SetPmr(AL_U32 Mask)
 {
     AL_U32 OldMask;
 
-    OldMask = (AL_U32)ARCH_SYSREG_READ(icc_pmr_el1);
+    OldMask = (AL_U32)GICV3_SYSREG_READ(icc_pmr_el1);
 
     /*
      * Order memory updates w.r.t. PMR write, and ensure they're visible
@@ -711,7 +709,7 @@ AL_U32 AlGicv3_SetPmr(AL_U32 Mask)
      * thereafter.
      */
     DSB();
-    ARCH_SYSREG_WRITE(icc_pmr_el1, Mask);
+    GICV3_SYSREG_WRITE(icc_pmr_el1, Mask);
 
     return OldMask;
 }

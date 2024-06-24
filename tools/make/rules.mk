@@ -27,17 +27,25 @@ CORE            := riscv
 CHIP_ARCH       := rv64imafdc
 ARCH_ABI        := lp64d
 ARCH_EXT        := ext-nuclei
-else ifeq ($(AL_CHIP),dr1m90)
+else ifeq ($(ARMv8_STATE),64)
+CORE            := arm
+CHIP_ARCH       := armv8-a
+ARCH_ABI        := aarch64
+MTUNE           := cortex-a35
+ARCH_FLAG       := -mtune=$(MTUNE) -march=$(CHIP_ARCH) -mcpu=$(MTUNE) -mstrict-align
+else ifeq ($(ARMv8_STATE),32)
 CORE            := arm
 CHIP_ARCH       := armv8-a
 MTUNE           := cortex-a35
+ARCH_ABI        := aarch32
+ARCH_FLAG       := -mtune=$(MTUNE) -march=$(CHIP_ARCH) -mcpu=$(MTUNE) -mfpu=vfpv4 -marm # -mno-unaligned-access
 endif
 
 export CHIP_ARCH
 export ARCH_EXT
 
 #########################################################################
-LINKER_SCRIPT ?= $(CHIP_DIR)/lds/gcc_$(AL_CHIP)_$(DOWNLOAD).ld
+LINKER_SCRIPT ?= $(CHIP_DIR)/lds/gcc_$(AL_CHIP)_$(DOWNLOAD)_$(ARCH_ABI).ld
 
 ifeq ($(ENABLE_MMU),1)
 AL_CFLAGS   += -DENABLE_MMU=1
@@ -63,9 +71,10 @@ endif
 # gcc riscv option: https://gcc.gnu.org/onlinedocs/gcc/RISC-V-Options.html
 #
 
+#
+# -mcpu=$(MTUNE)
 ifeq ($(CORE), arm)
-AL_CFLAGS   += -mtune=$(MTUNE) -march=$(CHIP_ARCH) -fno-builtin \
-               $(GC_CFLAGS) -fno-common -DDOWNLOAD_MODE=$(DOWNLOAD)
+AL_CFLAGS   += $(ARCH_FLAG) -fno-builtin $(GC_CFLAGS) -fno-common -DDOWNLOAD_MODE=$(DOWNLOAD)
 else ifeq ($(CORE), riscv)
 AL_CFLAGS   += -march=$(CHIP_ARCH) -mabi=$(ARCH_ABI) -mcmodel=medany \
                $(GC_CFLAGS) -fno-common -DDOWNLOAD_MODE=$(DOWNLOAD)
@@ -160,9 +169,6 @@ PUBLIC_INC_DIR +=   $(SDK_ROOT)/3rdparty/lib/open-amp/lib/include \
 					$(SDK_ROOT)/3rdparty/lib/open-amp/include/include/generated
 
 
-
-
-
 PUBLIC_INC  :=  $(foreach subdir,$(sort $(PUBLIC_INC_DIR)), -I$(subdir))
 
 ## module inc
@@ -171,7 +177,7 @@ MODULE_INC  :=  $(foreach subdir,$(sort $(INC_DIR)), -I$(subdir)) -I$(AL_PLAT_DI
 #########################################################################
 
 ifeq ($(CORE),arm)
-CFLAGS += -mstrict-align -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35 -gdwarf-2
+CFLAGS += -ffreestanding -fno-omit-frame-pointer -fno-stack-protector -mcpu=cortex-a35 -gdwarf-2
 endif
 
 AL_CFLAGS  += $(CFLAGS) $(PUBLIC_INC) $(MODULE_INC) $(MKDEP_OPT) -w
@@ -190,7 +196,7 @@ NEWLIB_LDFLAGS += -u _printf_float
 endif
 
 LIB_OPT  = $(addprefix -L, $(sort $(LIB_DIR)))
-LDFLAGS += -T$(LINKER_SCRIPT) -Wl,--start-group -Wl,--whole-archive $(ld_libs) -Wl,--no-whole-archive -lgcc -lc -lm -L$(LIB_OUTPUT_DIR) -L$(LIB_PREBUILD_DIR) -Wl,--end-group \
+LDFLAGS += -T$(LINKER_SCRIPT) -Wl,--start-group -Wl,--whole-archive $(ld_libs) -z noexecstack -Wl,--no-whole-archive -lgcc -lc -lm -L$(LIB_OUTPUT_DIR) -L$(LIB_PREBUILD_DIR) -Wl,--end-group \
            $(LIB_OPT) -nostartfiles -Wl,-M,-Map=$(TARGET).map \
            $(GC_LDFLAGS) $(NEWLIB_LDFLAGS) --specs=nosys.specs -Wl,--build-id=none \
            -u _isatty -u _write -u _sbrk -u _read -u _close -u _fstat -u _lseek -u memset -u memcpy

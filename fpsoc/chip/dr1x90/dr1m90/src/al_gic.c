@@ -5,11 +5,13 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+
+
 #include "al_type.h"
 #include "al_chip.h"
-#include "al_aarch64_sysreg.h"
 #include "al_gicv3.h"
 #include "al_gicv3_private.h"
+
 
 static AL_U32 CpuId;
 
@@ -32,7 +34,7 @@ static AL_U32 AlGic_MpidrToCorePos(AL_UINTPTR Mpidr)
 
 static AL_U32 AlGic_CorePos(void)
 {
-    AL_UINTPTR Mpidr = ARCH_SYSREG_READ(mpidr_el1);
+    AL_UINTPTR Mpidr = GICV3_SYSREG_READ(mpidr_el1);
     return AlGic_MpidrToCorePos(Mpidr);
 }
 

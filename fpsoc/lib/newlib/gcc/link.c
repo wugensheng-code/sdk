@@ -8,8 +8,6 @@
 #include "al_core.h"
 #include <errno.h>
 
-#undef errno
-extern int errno;
 
 __WEAK int _link(char* old, char* new)
 {

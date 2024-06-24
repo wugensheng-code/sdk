@@ -18,8 +18,9 @@ INC_DIR += inc \
            $(CHIP_DIR)/../common/inc \
            arch/common/inc
 
-
 ifeq ($(CHIP_ARCH),armv8-a)
+
+ifeq ($(ARMv8_STATE),64)
 
 SRC_DIR += arch/arm/armv8/aarch64/cortex-a/src \
            arch/arm/common/gic_v3/src \
@@ -29,11 +30,20 @@ INC_DIR += arch/arm/armv8/aarch64/cortex-a/inc \
            arch/arm/common/gic_v3/inc \
            arch/arm/common/sys_timer/inc
 
+else ifeq ($(ARMv8_STATE),32)
+
+SRC_DIR += arch/arm/armv8/aarch32/src \
+           arch/arm/common/gic_v3/src \
+           arch/arm/common/sys_timer/src
+
+INC_DIR += arch/arm/armv8/aarch32/inc \
+           arch/arm/common/gic_v3/inc
+endif
+
 else
 
 SRC_DIR += arch/riscv/rv64/src
 INC_DIR += arch/riscv/rv64/inc
-
 
 ifeq ($(ARCH_EXT),ext-nuclei)
 SRC_DIR += arch/riscv/ext-nuclei/src

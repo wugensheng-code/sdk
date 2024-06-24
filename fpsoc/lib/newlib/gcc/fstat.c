@@ -10,8 +10,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#undef errno
-extern int errno;
 
 __WEAK int _fstat(int file, struct stat* st)
 {

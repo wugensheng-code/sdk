@@ -534,7 +534,6 @@ typedef volatile AL_MailBox*  AL_MailBox_t;
 static inline AL_S32 AlOsal_Mb_Init(AL_MailBox_t MailBox, const char* Name)
 {
     AL_UNUSED(Name);
-
     MailBox->Msg   = 0;
     MailBox->size  = 1;
     MailBox->entry = 0;

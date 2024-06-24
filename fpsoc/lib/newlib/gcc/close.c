@@ -8,9 +8,6 @@
 #include "al_core.h"
 #include <errno.h>
 
-#undef errno
-extern int errno;
-
 __WEAK int _close(int fd)
 {
     errno = EBADF;

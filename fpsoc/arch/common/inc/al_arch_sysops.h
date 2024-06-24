@@ -5,11 +5,68 @@
  */
 
 
-#ifndef __AL_ARCH_H_
-#define __AL_ARCH_H_
+#ifndef __AL_ARCH_SYSOPS_H_
+#define __AL_ARCH_SYSOPS_H_
 
 #ifndef STRINGIFY
 #define STRINGIFY(s)            #s
+#endif
+
+#ifndef COPROCR_STRINGIFY
+#define COPROCR_STRINGIFY(coproc, opc1, CRn, CRm, opc2) #coproc", "#opc1", ""%[__V]," #CRn", "#CRm", "#opc2
+#endif
+
+#ifndef COPROCR64_STRINGIFY
+#define COPROCR64_STRINGIFY(coproc, opt1, CRm) #coproc", "#opt1", ""%[__Vlow], %[__Vhigh], "#CRm
+#endif
+
+#ifdef ISA_COPROCR_READ
+#define ARCH_COPROCR_SYSREG_READ(Name)                                   \
+    ({                                                           \
+        AL_REGISTER __V;                                         \
+        __ASM volatile(ISA_COPROCR_READ" "COPROCR_STRINGIFY(Name)          \
+                     : [__V]"=r"(__V)                            \
+                     :                                           \
+                     : "memory");                                \
+        (AL_U32)__V;                                                     \
+    })
+
+
+#define ARCH_COPROCR_SYSREG_WRITE(Name, Val)                     \
+    ({                                                           \
+        AL_REGISTER volatile __V = (AL_REGISTER)(Val);           \
+        __ASM volatile(ISA_COPROCR_WRITE" "COPROCR_STRINGIFY(Name) \
+                     :                                           \
+                     : [__V]"rK"(__V)                            \
+                     : "memory");                                \
+    })
+
+#define ARCH_COPROCR_SYSREG_READ_64(Name)                                    \
+    ({                                                                       \
+        AL_REGISTER __Vlow, __Vhigh;                                         \
+        __ASM volatile(ISA_COPROCR_READ_64" "COPROCR64_STRINGIFY(Name)       \
+                     : [__Vlow]"=r"(__Vlow), [__Vhigh]"=r"(__Vhigh)          \
+                     :                                                       \
+                     : "memory");                                            \
+        (__Vhigh << 32) + __Vlow;                                            \
+    })
+
+#define ARCH_COPROCR_SYSREG_WRITE_64(Name, Val)                              \
+    ({                                                                       \
+        AL_REGISTER volatile __Vlow  = (Val & 0xffffffff);                   \
+        AL_REGISTER volatile __Vhigh = ((Val >> 32) & 0xffffffff);           \
+        __ASM volatile(ISA_COPROCR_WRITE_64" "COPROCR64_STRINGIFY(Name)      \
+                     :                                                       \
+                     : [__Vlow]"rK"(__Vlow), [__Vhigh]"rK"(__Vhigh)          \
+                     : "memory");                                            \
+    })
+#else
+
+#define ARCH_COPROCR_SYSREG_WRITE ARCH_SYSREG_WRITE
+#define ARCH_COPROCR_SYSREG_READ ARCH_SYSREG_READ
+#define ARCH_COPROCR_SYSREG_WRITE_64 ARCH_SYSREG_WRITE
+#define ARCH_COPROCR_SYSREG_READ_64 ARCH_SYSREG_READ
+
 #endif
 
 #define ARCH_SYSREG_READ(Name)                                   \
@@ -110,6 +167,4 @@
 
 
 
-
-
-#endif /* AL_AARCH64_ARCH */
+#endif /* __AL_ARCH_SYSOPS_H_ */

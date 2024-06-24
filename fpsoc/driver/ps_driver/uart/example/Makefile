@@ -11,16 +11,26 @@
 SDK_ROOT    ?= ../../../../..
 
 CHIP        ?= dr1m90
+ARMv8_STATE := 32
+
 ELF         ?= UART_BLOCK
 
 ifeq ($(CHIP), dr1m90)
+
+ifeq ($(ARMv8_STATE), 32)
+COMPILE_PREFIX ?= /opt/toolchain/13.2/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-
+else
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+endif
+
 else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
 BOARD_DIR  ?= $(SDK_ROOT)/solutions/boards/
 BOARD_NAME ?= board_dr1x90_ad101_v10
+
+DOWNLOAD = ocm
 
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
