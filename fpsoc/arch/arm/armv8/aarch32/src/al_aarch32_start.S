@@ -10,15 +10,20 @@
     .globl    vectors
     .globl    reset_handler            /* Reset handler*/
 
+.section .aarch64_start, "ax"
+.global aarch64_start
+aarch64_start:
+    .incbin "aarch64_start.bin"
+
 vector_base vectors
-    b    reset_handler        /* Reset handler*/
-    b    undefined_handler    /* Undef */
-    b    svc_handler            /* Syscall */
-    b    prefetch_abort_handler    /* Prefetch abort */
-    b    data_abort_handler        /* Data abort */
-    b    panic_handler        /* Reserved */
-    b    irq_handler            /* IRQ */
-    b    fiq_handler            /* FIQ */
+    b    reset_handler              /* Reset handler*/
+    b    undefined_handler          /* Undef */
+    b    svc_handler                /* Syscall */
+    b    prefetch_abort_handler     /* Prefetch abort */
+    b    data_abort_handler         /* Data abort */
+    b    panic_handler              /* Reserved */
+    b    irq_handler                /* IRQ */
+    b    fiq_handler                /* FIQ */
 
 
 func reset_handler
@@ -67,19 +72,16 @@ func reset_handler
     mov r14, #0
 #endif
 
-    cps #MODE32_svc
-
     ldr r1, =0x1000       @stack size for each mode = 4KB
     ldr r3, =stack_top
-    add r3, r3, r1
     cps #MODE32_irq        // Change to irq mode.
     mov sp, r3
 
-    add r3, r3, r1
+    sub r3, r3, r1
     cps #MODE32_fiq        // Change to fiq mode.
     mov sp, r3
 
-    add r3, r3, r1
+    sub r3, r3, r1
     cps #MODE32_svc        // Change to svc mode.
     mov sp, r3
 

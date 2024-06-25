@@ -38,7 +38,7 @@ CORE            := arm
 CHIP_ARCH       := armv8-a
 MTUNE           := cortex-a35
 ARCH_ABI        := aarch32
-ARCH_FLAG       := -mtune=$(MTUNE) -march=$(CHIP_ARCH) -mcpu=$(MTUNE) -mfpu=vfpv4 -marm # -mno-unaligned-access
+ARCH_FLAG       := -mtune=$(MTUNE) -march=$(CHIP_ARCH) -mcpu=$(MTUNE) -mfpu=vfpv4 -marm -mno-unaligned-access
 endif
 
 export CHIP_ARCH

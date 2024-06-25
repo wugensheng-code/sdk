@@ -10,7 +10,7 @@ ENTRY(vectors)
 
 MEMORY
 {
-    ram    : ORIGIN = 0x61000300, LENGTH = 0x3c000
+    ram    : ORIGIN = 0x61000000, LENGTH = 0x3F000
 }
 
 SECTIONS
@@ -20,6 +20,8 @@ SECTIONS
     .text :
     {
         PROVIDE(_text_start  = .);
+        KEEP (*(.aarch64_start*))
+        . = _text_start + 0x400;
         *(.vectors*)
         *al_aarch32_start.S.o(.text*)
         *(*.text*)
@@ -130,13 +132,6 @@ SECTIONS
     _bss_end = .;
     _end = .;
     _heap_start = .;
-
-#if 0
-	__stack_end = . ;
-	. = . + 0x8000;
-	__stack_start = .;
-#endif
-
 
     .stack ORIGIN(ram) + LENGTH(ram) - __stack_size (NOLOAD) :
     {
