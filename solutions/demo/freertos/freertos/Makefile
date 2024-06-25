@@ -12,9 +12,9 @@ SDK_ROOT   ?= ../../../..
 
 
 
-CHIP       := dr1v90
+CHIP       := dr1m90
 RTOS       := freertos
-
+SMP    := 1
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
 else
@@ -46,7 +46,8 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS += -O2 -g3
+CFLAGS += -O2 -g3 -DSMP
+
 
 
 #########################################################################

@@ -1,6 +1,6 @@
 /*
- * FreeRTOS Kernel V10.5.1
- * Copyright (C) 2021 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * FreeRTOS Kernel V11.1.0
+ * Copyright (C) 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * SPDX-License-Identifier: MIT
  *
@@ -28,191 +28,210 @@
 
 #include "al_aarch64_macro.h"
 
-	.text
+    .text
 
-	/* Variables and functions. */
-	.extern ullMaxAPIPriorityMask
-	.extern pxCurrentTCB
-	.extern vTaskSwitchContext
-	.extern vApplicationIRQHandler
-	.extern ullPortInterruptNesting
-	.extern ullPortTaskHasFPUContext
-	.extern ullCriticalNesting
-	.extern ullPortYieldRequired
-	.extern _freertos_vector_table
+    /* Variables and functions. */
+    .extern ullMaxAPIPriorityMask
+    .extern pxCurrentTCB
+    .extern vTaskSwitchContext
+    .extern vApplicationIRQHandler
+    .extern ullPortInterruptNesting
+    .extern ullPortTaskHasFPUContext
+    .extern ullCriticalNesting
+    .extern ullPortYieldRequired
+    .extern _freertos_vector_table
 
-	.global FreeRTOS_IRQ_Handler
-	.global FreeRTOS_SWI_Handler
-	.global vPortRestoreTaskContext
+    .global FreeRTOS_IRQ_Handler
+    .global FreeRTOS_SWI_Handler
+    .global vPortRestoreTaskContext
+
+#ifdef SMP
+    .extern pxCurrentTCBs
+
+#endif
 
 
 .macro portSAVE_CONTEXT
 
-	/* Switch to use the EL0 stack pointer. */
-	MSR 	SPSEL, #0
+    /* Switch to use the EL0 stack pointer. */
+    MSR     SPSEL, #0
 
-	/* Save the entire context. */
-	STP 	X0, X1, [SP, #-0x10]!
-	STP 	X2, X3, [SP, #-0x10]!
-	STP 	X4, X5, [SP, #-0x10]!
-	STP 	X6, X7, [SP, #-0x10]!
-	STP 	X8, X9, [SP, #-0x10]!
-	STP 	X10, X11, [SP, #-0x10]!
-	STP 	X12, X13, [SP, #-0x10]!
-	STP 	X14, X15, [SP, #-0x10]!
-	STP 	X16, X17, [SP, #-0x10]!
-	STP 	X18, X19, [SP, #-0x10]!
-	STP 	X20, X21, [SP, #-0x10]!
-	STP 	X22, X23, [SP, #-0x10]!
-	STP 	X24, X25, [SP, #-0x10]!
-	STP 	X26, X27, [SP, #-0x10]!
-	STP 	X28, X29, [SP, #-0x10]!
-	STP 	X30, XZR, [SP, #-0x10]!
+    /* Save the entire context. */
+    STP     X0, X1, [SP, #-0x10]!
+    STP     X2, X3, [SP, #-0x10]!
+    STP     X4, X5, [SP, #-0x10]!
+    STP     X6, X7, [SP, #-0x10]!
+    STP     X8, X9, [SP, #-0x10]!
+    STP     X10, X11, [SP, #-0x10]!
+    STP     X12, X13, [SP, #-0x10]!
+    STP     X14, X15, [SP, #-0x10]!
+    STP     X16, X17, [SP, #-0x10]!
+    STP     X18, X19, [SP, #-0x10]!
+    STP     X20, X21, [SP, #-0x10]!
+    STP     X22, X23, [SP, #-0x10]!
+    STP     X24, X25, [SP, #-0x10]!
+    STP     X26, X27, [SP, #-0x10]!
+    STP     X28, X29, [SP, #-0x10]!
+    STP     X30, XZR, [SP, #-0x10]!
 
-	/* Save the SPSR. */
+    /* Save the SPSR. */
 #if defined( GUEST )
-	MRS		X3, SPSR_EL1
-	MRS		X2, ELR_EL1
+    MRS     X3, SPSR_EL1
+    MRS     X2, ELR_EL1
 #else
-	MRS		X3, SPSR_EL3
-	/* Save the ELR. */
-	MRS		X2, ELR_EL3
+    MRS     X3, SPSR_EL3
+    /* Save the ELR. */
+    MRS     X2, ELR_EL3
 #endif
 
-	STP 	X2, X3, [SP, #-0x10]!
+    STP     X2, X3, [SP, #-0x10]!
 
-	/* Save the critical section nesting depth. */
-	LDR		X0, ullCriticalNestingConst
-	LDR		X3, [X0]
+    /* Save the critical section nesting depth. */
+    LDR     X0, ullCriticalNestingConst
+    LDR     X3, [X0]
 
-	/* Save the FPU context indicator. */
-	LDR		X0, ullPortTaskHasFPUContextConst
-	LDR		X2, [X0]
+    /* Save the FPU context indicator. */
+    LDR     X0, ullPortTaskHasFPUContextConst
+    LDR     X2, [X0]
 
-	/* Save the FPU context, if any (32 128-bit registers). */
-	CMP		X2, #0
-	B.EQ	1f
-	STP		Q0, Q1, [SP,#-0x20]!
-	STP		Q2, Q3, [SP,#-0x20]!
-	STP		Q4, Q5, [SP,#-0x20]!
-	STP		Q6, Q7, [SP,#-0x20]!
-	STP		Q8, Q9, [SP,#-0x20]!
-	STP		Q10, Q11, [SP,#-0x20]!
-	STP		Q12, Q13, [SP,#-0x20]!
-	STP		Q14, Q15, [SP,#-0x20]!
-	STP		Q16, Q17, [SP,#-0x20]!
-	STP		Q18, Q19, [SP,#-0x20]!
-	STP		Q20, Q21, [SP,#-0x20]!
-	STP		Q22, Q23, [SP,#-0x20]!
-	STP		Q24, Q25, [SP,#-0x20]!
-	STP		Q26, Q27, [SP,#-0x20]!
-	STP		Q28, Q29, [SP,#-0x20]!
-	STP		Q30, Q31, [SP,#-0x20]!
+    /* Save the FPU context, if any (32 128-bit registers). */
+    CMP     X2, #0
+    B.EQ    1f
+    STP     Q0, Q1, [SP,#-0x20]!
+    STP     Q2, Q3, [SP,#-0x20]!
+    STP     Q4, Q5, [SP,#-0x20]!
+    STP     Q6, Q7, [SP,#-0x20]!
+    STP     Q8, Q9, [SP,#-0x20]!
+    STP     Q10, Q11, [SP,#-0x20]!
+    STP     Q12, Q13, [SP,#-0x20]!
+    STP     Q14, Q15, [SP,#-0x20]!
+    STP     Q16, Q17, [SP,#-0x20]!
+    STP     Q18, Q19, [SP,#-0x20]!
+    STP     Q20, Q21, [SP,#-0x20]!
+    STP     Q22, Q23, [SP,#-0x20]!
+    STP     Q24, Q25, [SP,#-0x20]!
+    STP     Q26, Q27, [SP,#-0x20]!
+    STP     Q28, Q29, [SP,#-0x20]!
+    STP     Q30, Q31, [SP,#-0x20]!
 
 1:
-	/* Store the critical nesting count and FPU context indicator. */
-	STP 	X2, X3, [SP, #-0x10]!
+    /* Store the critical nesting count and FPU context indicator. */
+    STP     X2, X3, [SP, #-0x10]!
 
-	LDR 	X0, pxCurrentTCBConst
-	LDR 	X1, [X0]
-	MOV 	X0, SP   /* Move SP into X0 for saving. */
-	STR 	X0, [X1]
+    LDR     X0, pxCurrentTCBConst
 
-	/* Switch to use the ELx stack pointer. */
-	MSR 	SPSEL, #1
+    /* Get coreId AND choose the corresponding index for core in pxCurrentTCB */
+    MRS     X1, MPIDR_EL1
+    AND     X1, X1, #0xff
+    LSL     X1, X1, #3 /* X1 = X1 * 8 */
+    ADD     X0, X0, X1
 
-	.endm
+    LDR     X1, [X0]
+    MOV     X0, SP   /* Move SP into X0 for saving. */
+    STR     X0, [X1]
+
+    /* Switch to use the ELx stack pointer. */
+    MSR     SPSEL, #1
+
+    .endm
 
 ; /**********************************************************************/
 
 .macro portRESTORE_CONTEXT
 
-	/* Switch to use the EL0 stack pointer. */
-	MSR 	SPSEL, #0
+    /* Switch to use the EL0 stack pointer. */
+    MSR     SPSEL, #0
 
-	/* Set the SP to point to the stack of the task being restored. */
-	LDR		X0, pxCurrentTCBConst
-	LDR		X1, [X0]
-	LDR		X0, [X1]
-	MOV		SP, X0
+    /* Set the SP to point to the stack of the task being restored. */
+    LDR     X0, pxCurrentTCBConst
 
-	LDP 	X2, X3, [SP], #0x10  /* Critical nesting and FPU context. */
+    /* Get coreId AND choose the corresponding index for core in pxCurrentTCB */
+    MRS     X1, MPIDR_EL1
+    AND     X1, X1, #0xff
+    LSL     X1, X1, #3 /* X1 = X1 * 8 */
+    ADD     X0, X0, X1
 
-	/* Set the PMR register to be correct for the current critical nesting
-	depth. */
-	LDR		X0, ullCriticalNestingConst /* X0 holds the address of ullCriticalNesting. */
-	MOV		X1, #255					/* X1 holds the unmask value. */
-	CMP		X3, #0
-	B.EQ	1f
-	LDR		X6, ullMaxAPIPriorityMaskConst
-	LDR		X1, [X6]					/* X1 holds the mask value. */
+    LDR     X1, [X0]
+    LDR     X0, [X1]
+    MOV     SP, X0
+
+    LDP     X2, X3, [SP], #0x10  /* Critical nesting and FPU context. */
+
+    /* Set the PMR register to be correct for the current critical nesting
+    depth. */
+    LDR     X0, ullCriticalNestingConst /* X0 holds the address of ullCriticalNesting. */
+    MOV     X1, #255                    /* X1 holds the unmask value. */
+    CMP     X3, #0
+    B.EQ    1f
+    LDR     X6, ullMaxAPIPriorityMaskConst
+    LDR     X1, [X6]                    /* X1 holds the mask value. */
 1:
-	MSR		s3_0_c4_c6_0, X1			/* Write the mask value to ICCPMR. s3_0_c4_c6_0 is ICC_PMR_EL1. */
-	DSB 	SY							/* _RB_Barriers probably not required here. */
-	ISB 	SY
-	STR		X3, [X0]					/* Restore the task's critical nesting count. */
+    MSR     s3_0_c4_c6_0, X1            /* Write the mask value to ICCPMR. s3_0_c4_c6_0 is ICC_PMR_EL1. */
+    DSB     SY                          /* _RB_Barriers probably not required here. */
+    ISB     SY
+    STR     X3, [X0]                    /* Restore the task's critical nesting count. */
 
-	/* Restore the FPU context indicator. */
-	LDR		X0, ullPortTaskHasFPUContextConst
-	STR		X2, [X0]
+    /* Restore the FPU context indicator. */
+    LDR     X0, ullPortTaskHasFPUContextConst
+    STR     X2, [X0]
 
-	/* Restore the FPU context, if any. */
-	CMP		X2, #0
-	B.EQ	1f
-	LDP		Q30, Q31, [SP], #0x20
-	LDP		Q28, Q29, [SP], #0x20
-	LDP		Q26, Q27, [SP], #0x20
-	LDP		Q24, Q25, [SP], #0x20
-	LDP		Q22, Q23, [SP], #0x20
-	LDP		Q20, Q21, [SP], #0x20
-	LDP		Q18, Q19, [SP], #0x20
-	LDP		Q16, Q17, [SP], #0x20
-	LDP		Q14, Q15, [SP], #0x20
-	LDP		Q12, Q13, [SP], #0x20
-	LDP		Q10, Q11, [SP], #0x20
-	LDP		Q8, Q9, [SP], #0x20
-	LDP		Q6, Q7, [SP], #0x20
-	LDP		Q4, Q5, [SP], #0x20
-	LDP		Q2, Q3, [SP], #0x20
-	LDP		Q0, Q1, [SP], #0x20
+    /* Restore the FPU context, if any. */
+    CMP     X2, #0
+    B.EQ    1f
+    LDP     Q30, Q31, [SP], #0x20
+    LDP     Q28, Q29, [SP], #0x20
+    LDP     Q26, Q27, [SP], #0x20
+    LDP     Q24, Q25, [SP], #0x20
+    LDP     Q22, Q23, [SP], #0x20
+    LDP     Q20, Q21, [SP], #0x20
+    LDP     Q18, Q19, [SP], #0x20
+    LDP     Q16, Q17, [SP], #0x20
+    LDP     Q14, Q15, [SP], #0x20
+    LDP     Q12, Q13, [SP], #0x20
+    LDP     Q10, Q11, [SP], #0x20
+    LDP     Q8, Q9, [SP], #0x20
+    LDP     Q6, Q7, [SP], #0x20
+    LDP     Q4, Q5, [SP], #0x20
+    LDP     Q2, Q3, [SP], #0x20
+    LDP     Q0, Q1, [SP], #0x20
 1:
-	LDP 	X2, X3, [SP], #0x10  /* SPSR and ELR. */
+    LDP     X2, X3, [SP], #0x10  /* SPSR and ELR. */
 
 #if defined( GUEST )
-	/* Restore the SPSR. */
-	MSR		SPSR_EL1, X3
-	/* Restore the ELR. */
-	MSR		ELR_EL1, X2
+    /* Restore the SPSR. */
+    MSR     SPSR_EL1, X3
+    /* Restore the ELR. */
+    MSR     ELR_EL1, X2
 #else
-	/* Restore the SPSR. */
-	MSR		SPSR_EL3, X3 /*_RB_ Assumes started in EL3. */
-	/* Restore the ELR. */
-	MSR		ELR_EL3, X2
+    /* Restore the SPSR. */
+    MSR     SPSR_EL3, X3 /*_RB_ Assumes started in EL3. */
+    /* Restore the ELR. */
+    MSR     ELR_EL3, X2
 #endif
 
-	LDP 	X30, XZR, [SP], #0x10
-	LDP 	X28, X29, [SP], #0x10
-	LDP 	X26, X27, [SP], #0x10
-	LDP 	X24, X25, [SP], #0x10
-	LDP 	X22, X23, [SP], #0x10
-	LDP 	X20, X21, [SP], #0x10
-	LDP 	X18, X19, [SP], #0x10
-	LDP 	X16, X17, [SP], #0x10
-	LDP 	X14, X15, [SP], #0x10
-	LDP 	X12, X13, [SP], #0x10
-	LDP 	X10, X11, [SP], #0x10
-	LDP 	X8, X9, [SP], #0x10
-	LDP 	X6, X7, [SP], #0x10
-	LDP 	X4, X5, [SP], #0x10
-	LDP 	X2, X3, [SP], #0x10
-	LDP 	X0, X1, [SP], #0x10
+    LDP     X30, XZR, [SP], #0x10
+    LDP     X28, X29, [SP], #0x10
+    LDP     X26, X27, [SP], #0x10
+    LDP     X24, X25, [SP], #0x10
+    LDP     X22, X23, [SP], #0x10
+    LDP     X20, X21, [SP], #0x10
+    LDP     X18, X19, [SP], #0x10
+    LDP     X16, X17, [SP], #0x10
+    LDP     X14, X15, [SP], #0x10
+    LDP     X12, X13, [SP], #0x10
+    LDP     X10, X11, [SP], #0x10
+    LDP     X8, X9, [SP], #0x10
+    LDP     X6, X7, [SP], #0x10
+    LDP     X4, X5, [SP], #0x10
+    LDP     X2, X3, [SP], #0x10
+    LDP     X0, X1, [SP], #0x10
 
-	/* Switch to use the ELx stack pointer.  _RB_ Might not be required. */
-	MSR 	SPSEL, #1
+    /* Switch to use the ELx stack pointer.  _RB_ Might not be required. */
+    MSR     SPSEL, #1
 
-	ERET
+    ERET
 
-	.endm
+    .endm
 
 
 /******************************************************************************
@@ -221,29 +240,31 @@
 .align 8
 .type FreeRTOS_SWI_Handler, %function
 FreeRTOS_SWI_Handler:
-	/* Save the context of the current task and select a new task to run. */
-	portSAVE_CONTEXT
+    /* Save the context of the current task and select a new task to run. */
+    portSAVE_CONTEXT
 #if defined( GUEST )
-	MRS		X0, ESR_EL1
+    MRS     X0, ESR_EL1
 #else
-	MRS		X0, ESR_EL3
+    MRS     X0, ESR_EL3
 #endif
 
-	LSR		X1, X0, #26
+    LSR     X1, X0, #26
 
 #if defined( GUEST )
-	CMP		X1, #0x15 	/* 0x15 = SVC instruction. */
+    CMP     X1, #0x15   /* 0x15 = SVC instruction. */
 #else
-	CMP		X1, #0x17 	/* 0x17 = SMC instruction. */
+    CMP     X1, #0x17   /* 0x17 = SMC instruction. */
 #endif
-	B.NE	FreeRTOS_Abort
-	BL 		vTaskSwitchContext
+    B.NE    FreeRTOS_Abort
+    MRS     x0, MPIDR_EL1       /* Get CoreID */
+    AND     x0, x0, #0xff
+    BL      vTaskSwitchContext
 
-	portRESTORE_CONTEXT
+    portRESTORE_CONTEXT
 
 FreeRTOS_Abort:
-	/* Full ESR is in X0, exception class code is in X1. */
-	B		.
+    /* Full ESR is in X0, exception class code is in X1. */
+    B       .
 
 /******************************************************************************
  * vPortRestoreTaskContext is used to start the scheduler.
@@ -251,20 +272,20 @@ FreeRTOS_Abort:
 .align 8
 .type vPortRestoreTaskContext, %function
 vPortRestoreTaskContext:
-.set freertos_vector_base,	_freertos_vector_table
+.set freertos_vector_base,  _freertos_vector_table
 
-	/* Install the FreeRTOS interrupt handlers. */
-	LDR		X1, =freertos_vector_base
+    /* Install the FreeRTOS interrupt handlers. */
+    LDR     X1, =freertos_vector_base
 #if defined( GUEST )
-	MSR		VBAR_EL1, X1
+    MSR     VBAR_EL1, X1
 #else
-	MSR		VBAR_EL3, X1
+    MSR     VBAR_EL3, X1
 #endif
-	DSB		SY
-	ISB		SY
+    DSB     SY
+    ISB     SY
 
-	/* Start the first task. */
-	portRESTORE_CONTEXT
+    /* Start the first task. */
+    portRESTORE_CONTEXT
 
 
 /******************************************************************************
@@ -281,114 +302,128 @@ vPortRestoreTaskContext:
 .align 8
 .type FreeRTOS_IRQ_Handler, %function
 FreeRTOS_IRQ_Handler:
-	/* Save volatile registers. */
-	STP		X0, X1, [SP, #-0x10]!
-	STP		X2, X3, [SP, #-0x10]!
-	STP		X4, X5, [SP, #-0x10]!
-	STP		X6, X7, [SP, #-0x10]!
-	STP		X8, X9, [SP, #-0x10]!
-	STP		X10, X11, [SP, #-0x10]!
-	STP		X12, X13, [SP, #-0x10]!
-	STP		X14, X15, [SP, #-0x10]!
-	STP		X16, X17, [SP, #-0x10]!
-	STP		X18, X19, [SP, #-0x10]!
-	STP		X29, X30, [SP, #-0x10]!
+    /* Save volatile registers. */
+    STP     X0, X1, [SP, #-0x10]!
+    STP     X2, X3, [SP, #-0x10]!
+    STP     X4, X5, [SP, #-0x10]!
+    STP     X6, X7, [SP, #-0x10]!
+    STP     X8, X9, [SP, #-0x10]!
+    STP     X10, X11, [SP, #-0x10]!
+    STP     X12, X13, [SP, #-0x10]!
+    STP     X14, X15, [SP, #-0x10]!
+    STP     X16, X17, [SP, #-0x10]!
+    STP     X18, X19, [SP, #-0x10]!
+    STP     X29, X30, [SP, #-0x10]!
 
-	/* Save the SPSR and ELR. */
+    /* Save the SPSR and ELR. */
 #if defined( GUEST )
-	MRS		X3, SPSR_EL1
-	MRS		X2, ELR_EL1
+    MRS     X3, SPSR_EL1
+    MRS     X2, ELR_EL1
 #else
-	MRS		X3, SPSR_EL3
-	MRS		X2, ELR_EL3
+    MRS     X3, SPSR_EL3
+    MRS     X2, ELR_EL3
 #endif
-	STP 	X2, X3, [SP, #-0x10]!
+    STP     X2, X3, [SP, #-0x10]!
 
-	/* Increment the interrupt nesting counter. */
-	LDR		X5, ullPortInterruptNestingConst
-	LDR		X1, [X5]	/* Old nesting count in X1. */
-	ADD		X6, X1, #1
-	STR		X6, [X5]	/* Address of nesting count variable in X5. */
+    /* Increment the interrupt nesting counter. */
+    LDR     X5, ullPortInterruptNestingConst
 
-	/* Maintain the interrupt nesting information across the function call. */
-	STP		X1, X5, [SP, #-0x10]!
+    /* Get coreId AND choose the corresponding index for core in ullPortInterruptNesting */
+    MRS     X1, MPIDR_EL1
+    AND     X1, X1, #0xff
+    LSL     X1, X1, #3  /* X1 = X1 * 8 */
+    ADD     X5, X5, X1
 
-	/* Call the C handler. */
-	BL vApplicationIRQHandler
+    LDR     X1, [X5]    /* Old nesting count in X1. */
+    ADD     X6, X1, #1
+    STR     X6, [X5]    /* Address of nesting count variable in X5. */
 
-	/* Restore the critical nesting count. */
-	LDP		X1, X5, [SP], #0x10
-	STR		X1, [X5]
+    /* Maintain the interrupt nesting information across the function call. */
+    STP     X1, X5, [SP, #-0x10]!
 
-	/* Has interrupt nesting unwound? */
-	CMP		X1, #0
-	B.NE	Exit_IRQ_No_Context_Switch
+    /* Call the C handler. */
+    BL vApplicationIRQHandler
 
-	/* Is a context switch required? */
-	LDR		X0, ullPortYieldRequiredConst
-	LDR		X1, [X0]
-	CMP		X1, #0
-	B.EQ	Exit_IRQ_No_Context_Switch
+    /* Restore the critical nesting count. */
+    LDP     X1, X5, [SP], #0x10
+    STR     X1, [X5]
 
-	/* Reset ullPortYieldRequired to 0. */
-	MOV		X2, #0
-	STR		X2, [X0]
+    /* Has interrupt nesting unwound? */
+    CMP     X1, #0
+    B.NE    Exit_IRQ_No_Context_Switch
 
-	/* Restore volatile registers. */
-	LDP 	X4, X5, [SP], #0x10  /* SPSR and ELR. */
+    /* Is a context switch required? */
+    LDR     X0, ullPortYieldRequiredConst
+
+    /* Choose the corresponding index for core in ullPortYieldRequired */
+    MRS     X1, MPIDR_EL1
+    AND     X1, X1, #0xff
+    LSL     X1, X1, #3  /* X1 = X1 * 8 */
+    ADD     X0, X0, X1 
+
+    LDR     X1, [X0]
+    CMP     X1, #0
+    B.EQ    Exit_IRQ_No_Context_Switch
+
+    /* Reset ullPortYieldRequired to 0. */
+    MOV     X2, #0
+    STR     X2, [X0]
+
+    /* Restore volatile registers. */
+    LDP     X4, X5, [SP], #0x10  /* SPSR and ELR. */
 #if defined( GUEST )
-	MSR		SPSR_EL1, X5
-	MSR		ELR_EL1, X4
+    MSR     SPSR_EL1, X5
+    MSR     ELR_EL1, X4
 #else
-	MSR		SPSR_EL3, X5 /*_RB_ Assumes started in EL3. */
-	MSR		ELR_EL3, X4
+    MSR     SPSR_EL3, X5 /*_RB_ Assumes started in EL3. */
+    MSR     ELR_EL3, X4
 #endif
-	DSB		SY
-	ISB		SY
+    DSB     SY
+    ISB     SY
 
-	LDP		X29, X30, [SP], #0x10
-	LDP		X18, X19, [SP], #0x10
-	LDP		X16, X17, [SP], #0x10
-	LDP		X14, X15, [SP], #0x10
-	LDP		X12, X13, [SP], #0x10
-	LDP		X10, X11, [SP], #0x10
-	LDP		X8, X9, [SP], #0x10
-	LDP		X6, X7, [SP], #0x10
-	LDP		X4, X5, [SP], #0x10
-	LDP		X2, X3, [SP], #0x10
-	LDP		X0, X1, [SP], #0x10
+    LDP     X29, X30, [SP], #0x10
+    LDP     X18, X19, [SP], #0x10
+    LDP     X16, X17, [SP], #0x10
+    LDP     X14, X15, [SP], #0x10
+    LDP     X12, X13, [SP], #0x10
+    LDP     X10, X11, [SP], #0x10
+    LDP     X8, X9, [SP], #0x10
+    LDP     X6, X7, [SP], #0x10
+    LDP     X4, X5, [SP], #0x10
+    LDP     X2, X3, [SP], #0x10
+    LDP     X0, X1, [SP], #0x10
 
-	/* Save the context of the current task and select a new task to run. */
-	portSAVE_CONTEXT
-	BL vTaskSwitchContext
-	portRESTORE_CONTEXT
+    /* Save the context of the current task and select a new task to run. */
+    portSAVE_CONTEXT
+    BL vTaskSwitchContext
+    portRESTORE_CONTEXT
 
 Exit_IRQ_No_Context_Switch:
-	/* Restore volatile registers. */
-	LDP 	X4, X5, [SP], #0x10  /* SPSR and ELR. */
+    /* Restore volatile registers. */
+    LDP     X4, X5, [SP], #0x10  /* SPSR and ELR. */
 #if defined( GUEST )
-	MSR		SPSR_EL1, X5
-	MSR		ELR_EL1, X4
+    MSR     SPSR_EL1, X5
+    MSR     ELR_EL1, X4
 #else
-	MSR		SPSR_EL3, X5 /*_RB_ Assumes started in EL3. */
-	MSR		ELR_EL3, X4
+    MSR     SPSR_EL3, X5 /*_RB_ Assumes started in EL3. */
+    MSR     ELR_EL3, X4
 #endif
-	DSB		SY
-	ISB		SY
+    DSB     SY
+    ISB     SY
 
-	LDP		X29, X30, [SP], #0x10
-	LDP		X18, X19, [SP], #0x10
-	LDP		X16, X17, [SP], #0x10
-	LDP		X14, X15, [SP], #0x10
-	LDP		X12, X13, [SP], #0x10
-	LDP		X10, X11, [SP], #0x10
-	LDP		X8, X9, [SP], #0x10
-	LDP		X6, X7, [SP], #0x10
-	LDP		X4, X5, [SP], #0x10
-	LDP		X2, X3, [SP], #0x10
-	LDP		X0, X1, [SP], #0x10
+    LDP     X29, X30, [SP], #0x10
+    LDP     X18, X19, [SP], #0x10
+    LDP     X16, X17, [SP], #0x10
+    LDP     X14, X15, [SP], #0x10
+    LDP     X12, X13, [SP], #0x10
+    LDP     X10, X11, [SP], #0x10
+    LDP     X8, X9, [SP], #0x10
+    LDP     X6, X7, [SP], #0x10
+    LDP     X4, X5, [SP], #0x10
+    LDP     X2, X3, [SP], #0x10
+    LDP     X0, X1, [SP], #0x10
 
-	ERET
+    ERET
 
 
 /******************************************************************************
@@ -527,13 +562,60 @@ _restore_regs:
 	ldp	x29, x30, [sp],#16
 	eret
 
+/*
+ *  int32_t lSpinTrylock(uintptr_t ulGateWord);
+ */
+    .global lSpinTrylock
+    .type lSpinTrylock  , %function
+lSpinTrylock:
+    LDXR    W1, [X0]
+    CMP     W1, #1      /* is locked already? */
+    BEQ     1f          /* if so, leave with fail */
+
+    MOV     W2, #1      /* locked = 1 */
+    STXR    W1, W2, [X0]/* if so attempt to grab it */
+    CMP     W1, #0      /* did we get it? zero is yes */
+
+    /* if not, loop while in contention */
+    BNE     lSpinTrylock
+1:
+    MOV     W0, W1
+    DMB     SY
+    RET
+
+/*
+ *  void vSpinUnlock(uintptr_t ulGateWord);
+ */
+    .global vSpinUnlock
+    .type vSpinUnlock  , %function
+vSpinUnlock:
+    DMB     SY
+
+    MOV     W1, #0
+    STR     W1, [X0]
+
+    DSB     SY
+    SEV         /* let everyone know */
+    RET
+
+
+
 .align 8
-pxCurrentTCBConst: .dword pxCurrentTCB
 ullCriticalNestingConst: .dword ullCriticalNesting
 ullPortTaskHasFPUContextConst: .dword ullPortTaskHasFPUContext
 
 ullMaxAPIPriorityMaskConst: .dword ullMaxAPIPriorityMask
 ullPortInterruptNestingConst: .dword ullPortInterruptNesting
 ullPortYieldRequiredConst: .dword ullPortYieldRequired
+
+#ifdef SMP
+
+pxCurrentTCBConst: .dword pxCurrentTCBs
+
+#else
+
+pxCurrentTCBConst: .dword pxCurrentTCB
+
+#endif
 
 .end

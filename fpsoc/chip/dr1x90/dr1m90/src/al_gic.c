@@ -5,13 +5,10 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-
-
-#include "al_type.h"
 #include "al_chip.h"
 #include "al_gicv3.h"
 #include "al_gicv3_private.h"
-
+#include "al_type.h"
 
 static AL_U32 CpuId;
 
@@ -39,10 +36,10 @@ static AL_U32 AlGic_CorePos(void)
 }
 
 const AL_GICV3_DrvDataStruct GicData = {
-    .CpuId          = &CpuId,
-    .GicdBase       = AL_DR1M90_GICD_BASE,
-    .GicrBase       = AL_DR1M90_GICR_BASE,
-    .RdistNum       = ARRAY_SIZE(RdistBaseAddrs),
+    .CpuId = &CpuId,
+    .GicdBase = AL_DR1M90_GICD_BASE,
+    .GicrBase = AL_DR1M90_GICR_BASE,
+    .RdistNum = ARRAY_SIZE(RdistBaseAddrs),
     .RdistBaseAddrs = RdistBaseAddrs,
     .MpidrToCorePos = AlGic_MpidrToCorePos,
 };
@@ -56,12 +53,15 @@ void AlGic_Init(void)
     *(GicData.CpuId) = AlGic_CorePos();
     AlGicv3_DriverInit(&GicData);
 
-#ifndef ARM_CORE_SLAVE
-    AlGicv3_DistInit();
-#else
-    AlGicv3_Rdist_WaitMasterAwake(GicData.RdistBaseAddrs[0]);
-    AlGicv3_DisableOwnSpiInterrupt();
-#endif
+    if (GicData.CpuId == 0)
+    {
+        AlGicv3_DistInit();
+    }
+    else
+    {
+        AlGicv3_Rdist_WaitMasterAwake(GicData.RdistBaseAddrs[0]);
+        AlGicv3_DisableOwnSpiInterrupt();
+    }
 
     AlGicv3_RdistInit(AlGic_CorePos());
     AlGicv3_CpuIfEnable(AlGic_CorePos());

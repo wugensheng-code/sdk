@@ -69,20 +69,20 @@
 
 /* Kernel includes. */
 #include "FreeRTOS.h" /* Must come first. */
-#include "queue.h"    /* RTOS queue related API prototypes. */
-#include "semphr.h"   /* Semaphore related API prototypes. */
-#include "task.h"     /* RTOS task related API prototypes. */
-#include "timers.h"   /* Software timer related API prototypes. */
+#include "queue.h" /* RTOS queue related API prototypes. */
+#include "semphr.h" /* Semaphore related API prototypes. */
+#include "task.h" /* RTOS task related API prototypes. */
+#include "timers.h" /* Software timer related API prototypes. */
 
+#include <al_core.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-
 /* The period of the example software timer, specified in milliseconds, and
 converted to ticks using the pdMS_TO_TICKS() macro. */
-#define mainSOFTWARE_TIMER_PERIOD_MS    pdMS_TO_TICKS(1000)
-#define TASKDLYMS                       pdMS_TO_TICKS(100)
-#define mainQUEUE_LENGTH                (1)
+#define mainSOFTWARE_TIMER_PERIOD_MS pdMS_TO_TICKS(1000)
+#define TASKDLYMS pdMS_TO_TICKS(100)
+#define mainQUEUE_LENGTH (1)
 
 static void prvSetupHardware(void);
 extern void idle_task(void);
@@ -96,7 +96,6 @@ static TaskHandle_t StartTask2_Handler;
 
 void prvSetupHardware(void)
 {
-
 }
 
 void start_task1(void* pvParameters);
@@ -110,26 +109,31 @@ int main(void)
     can be done here if it was not done before main() was called. */
     prvSetupHardware();
 
+    UBaseType_t uxCoreAffinityMask;
+
     xQueue = xQueueCreate(/* The number of items the queue can hold. */
-                 mainQUEUE_LENGTH,
-                 /* The size of each item the queue holds. */
-                 sizeof(uint32_t));
+        mainQUEUE_LENGTH,
+        /* The size of each item the queue holds. */
+        sizeof(uint32_t));
 
     if (xQueue == NULL) {
         printf("Unable to create xQueue due to low memory.\n");
-        while (1);
+        while (1)
+            ;
     }
     xTaskCreate((TaskFunction_t)start_task1, (const char*)"start_task1",
-                (uint16_t)256, (void*)NULL, (UBaseType_t)2,
-                (TaskHandle_t*)&StartTask1_Handler);
+        (uint16_t)256, (void*)NULL, (UBaseType_t)2,
+        (TaskHandle_t*)&StartTask1_Handler);
 
     xTaskCreate((TaskFunction_t)start_task2, (const char*)"start_task2",
-                (uint16_t)256, (void*)NULL, (UBaseType_t)1,
-                (TaskHandle_t*)&StartTask2_Handler);
+        (uint16_t)256, (void*)NULL, (UBaseType_t)1,
+        (TaskHandle_t*)&StartTask2_Handler);
 
-    xExampleSoftwareTimer =
-        xTimerCreate((const char*)"ExTimer", mainSOFTWARE_TIMER_PERIOD_MS,
-                     pdTRUE, (void*)0, vExampleTimerCallback);
+    uxCoreAffinityMask = (1 << 0);
+    vTaskCoreAffinitySet(StartTask1_Handler, uxCoreAffinityMask);
+
+    xExampleSoftwareTimer = xTimerCreate((const char*)"ExTimer", mainSOFTWARE_TIMER_PERIOD_MS,
+        pdTRUE, (void*)0, vExampleTimerCallback);
 
     xTimerStart(xExampleSoftwareTimer, 0);
     // printf("Before StartScheduler\r\n");
@@ -138,13 +142,17 @@ int main(void)
 
     printf("OS should never run to here\r\n");
 
-    while (1);
+    while (1)
+        ;
 }
 
 void start_task1(void* pvParameters)
 {
     int cnt = 0;
+    BaseType_t xCoreID = xPortGetCoreID();
+
     printf("Enter to task_1\r\n");
+    printf("CpuId: %d\r\n", xCoreID);
     while (1) {
         printf("task1 is running %d.....\r\n", cnt++);
         vTaskDelay(TASKDLYMS);
@@ -203,7 +211,8 @@ void vApplicationMallocFailedHook(void)
     timers, and semaphores.  The size of the FreeRTOS heap is set by the
     configTOTAL_HEAP_SIZE configuration constant in FreeRTOSConfig.h. */
     printf("malloc failed\n");
-    while (1);
+    while (1)
+        ;
 }
 /*-----------------------------------------------------------*/
 
@@ -215,7 +224,8 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char* pcTaskName)
     inspected in the debugger if the task name passed into this function is
     corrupt. */
     printf("Stack Overflow\n");
-    while (1);
+    while (1)
+        ;
 }
 /*-----------------------------------------------------------*/
 
@@ -233,4 +243,9 @@ void vApplicationIdleHook(void)
     if there is a lot of heap remaining unallocated then
     the value of configTOTAL_HEAP_SIZE in FreeRTOSConfig.h can be
     reduced accordingly. */
+}
+/*-----------------------------------------------------------*/
+
+void vApplicationPassiveIdleHook(void)
+{
 }

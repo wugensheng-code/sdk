@@ -351,7 +351,11 @@ static inline AL_VOID AlOsal_Sleep(AL_U32 Time)
 #include "semphr.h"
 
 extern volatile uint64_t ullCriticalNesting;
-extern volatile uint64_t ullPortInterruptNesting;
+// #ifdef SMP
+// extern volatile uint64_t ullPortInterruptNesting;
+// #else
+extern volatile uint64_t ullPortInterruptNesting[2];
+// #endif
 
 /**
  *
@@ -362,11 +366,11 @@ extern volatile uint64_t ullPortInterruptNesting;
  */
 static AL_BOOL AlOsal_In_Intr( void )
 {
-	if (ullPortInterruptNesting) {
-		return AL_TRUE;
-	} else {
-		return AL_FALSE;
-	}
+	// if (ullPortInterruptNesting) {
+	// 	return AL_TRUE;
+	// } else {
+	// 	return AL_FALSE;
+	// }
 }
 
 /*----------------------------------------------*

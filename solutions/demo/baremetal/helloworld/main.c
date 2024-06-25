@@ -13,6 +13,7 @@
 AL_S32 main()
 {
     const AL_CHAR *str = "Hello World From Anlogic!";
+    __ASM volatile("b .");
 
     al_printf("str = %s \r\n", str);
     al_printf("    __  __     ____         _       ______       __    __ \r\n");

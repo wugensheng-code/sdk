@@ -16,10 +16,11 @@
 .globl _start
 .globl vectors
 .globl _sp
+.globl stack_start
 .globl SystemCoreClock
 
 .set vector_base, vectors
-
+.set N_CPUS_SHIFT,   0x1
 
 /* Initial State: MMU Disabled, i/dCache Disabled */
 _start:
@@ -90,9 +91,38 @@ el3_entry:
     adr x0, vector_base
     msr vbar_el3, x0
 
+	/* Get the cpu ID */
+	mrs     x0, MPIDR_EL1
+	and     x0, x0, #0xFF
+    /* Save cpu ID for future use */
+    mov     x4, x0
+
+#ifdef SMP
+    
+    /*EL3_stack_end */
+    /*------------*/
+    /* CPU0 stack */
+    /*------------*/ 
+    /* CPU1 stack */  
+    /*------------*/ 
+    /* CPU2 stack */ 
+    /*------------*/  
+    /* CPU3 stack */
+    /*------------*/   
+    /* EL3_stack */
+    mov     x0, N_CPUS_SHIFT
+    ldr     x1, =stack_start
+    ldr     x2, =_sp
+    subs    x1, x2, x1
+    lsr     x1, x1, x0
+    mul     x0, x1, x4
+    add     x2, x2, x0
+	mov	    sp, x2
+#else
     /* set up stack point */
     ldr x28, =_sp
     mov sp, x28
+#endif
 
     /* Enable FP/SIMD */
     msr cptr_el3, xzr
@@ -194,11 +224,30 @@ main_entry:
     bl enable_mmu
 #endif
 
+#ifdef SMP
+	/* Get CPU Id */
+	mrs  x0, MPIDR_EL1
+	and  x0, x0, #0xFF
+	cmp  x0, #0
+	bne  common_startup_flow
+#endif
+
 #ifndef SUPPORT_NONSECURE
     bl clear_bss
 #endif
 
+common_startup_flow:
+
     bl AlChip_Init
+
+#ifdef SMP
+	/* Get CPU Id */
+	mrs  x0, MPIDR_EL1
+	and  x0, x0, #0xFF
+	ldr  x1, =_start
+    /* void StartAndWaitSecondaryCpuUp(uint64_t CpuID, uint64_t ResetAddr) */
+	bl   AlCpu_WakeUpMultipleCpus
+#endif
 
     bl board_init
 

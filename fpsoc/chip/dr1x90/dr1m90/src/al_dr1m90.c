@@ -22,6 +22,6 @@ AL_VOID AlChip_Dr1m90Init(AL_VOID)
 #endif
 
 #ifndef ARM_CORE_SLAVE
-	AlIpc_ll_SpinLockInit();
+	// AlIpc_ll_SpinLockInit();
 #endif
 }

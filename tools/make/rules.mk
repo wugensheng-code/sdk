@@ -52,6 +52,10 @@ export ARCH_EXT
 #########################################################################
 LINKER_SCRIPT ?= $(CHIP_DIR)/lds/gcc_$(AL_CHIP)_$(DOWNLOAD)_$(ARCH_ABI).ld
 
+ifeq ($(SMP),1)
+AL_CFLAGS   += -DSMP
+endif
+
 ifeq ($(ENABLE_MMU),1)
 AL_CFLAGS   += -DENABLE_MMU=1
 ifeq ($(DDR_2M_MAPPING),1)
@@ -125,9 +129,7 @@ endif
 
 ifeq ($(RTOS), freertos)
 PUBLIC_INC_DIR +=   $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel/include \
-                    $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel \
-                    $(CHIP_DIR)/../../../arch/riscv/ext-nuclei/inc \
-                    $(CHIP_DIR)/../../../arch/riscv/rv64/inc
+                    $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel
 
 ifeq ($(AL_CHIP),dr1m90)
 PUBLIC_INC_DIR +=   $(CHIP_DIR)/../../../arch/arm/armv8/aarch64/cortex-a/inc \

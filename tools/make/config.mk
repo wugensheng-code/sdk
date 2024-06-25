@@ -27,6 +27,11 @@ ARMv8_CORE      ?= MASTER
 #########################################################################
 
 #########################################################################
+# options for enable smp, available choices: 0/1
+#########################################################################
+SMP  ?= 0
+
+#########################################################################
 # options for enable mmu, available choices: 0/1
 #########################################################################
 ENABLE_MMU  ?= 1
@@ -125,6 +130,7 @@ export ARMv8_STATE
 export ARMv8_EL
 export ARMv8_SECURE
 export ARMv8_CORE
+export SMP
 export LIB_OUTPUT_DIR
 export COMPILE_PREFIX
 export V
