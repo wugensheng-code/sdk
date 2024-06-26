@@ -23,6 +23,7 @@
 #include "al_cache.h"
 #include "nuclei_sysregs.h"
 #include "al_barrier.h"
+#include "al_log.h"
 
 AL_VOID ccm_invalidate_icache_all(AL_VOID)
 {
@@ -178,10 +179,10 @@ AL_S32 AlCache_SetMemoryAttr(AL_UINTPTR Start, AL_UINTPTR End, AL_MemAttr Attr)
     do {
         Shift++;
         Mask = (1UL << Shift) - 1;
-    } while ((Start & ~Mask) != (End & ~Mask));
+    } while ((Start & ~Mask) != ((End - 1) & ~Mask));
 
-    if ((Start & Mask) || (End & Mask)) {
-        return AL_ERR_ILLEGAL_PARAM;
+    if ((Start & Mask) || ((End - Start) & Mask)) {
+        AL_LOG(AL_LOG_LEVEL_WARNING, "noncache addr/size should be aligned to %lx\n", Mask+1);
     }
 
     ccm_set_noncache((Start & ~Mask), ~Mask);
