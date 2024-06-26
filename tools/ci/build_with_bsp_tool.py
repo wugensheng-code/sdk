@@ -16,6 +16,7 @@ from shutil import copytree
 
 env_k = ['BSP_RESOURCE_PATH', 'AARCH64_TOOLCHAIN_PATH', 'RISCV_TOOLCHAIN_PATH']
 AARCH64_TOOLCHAIN_PATH='/opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin'
+ARM_TOOLCHAIN_PATH='/opt/toolchain/13.2/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin'
 RISCV_TOOLCHAIN_PATH='/opt/toolchain/riscv-gcc/bin'
 
 
@@ -110,13 +111,18 @@ class Bsp_tool(object):
                 COMPILE_PREFIX = AARCH64_TOOLCHAIN_PATH + '/aarch64-none-elf-'
 
             if 'rpc' in app_name and self.proc_type != 'rpu':
-                subprocess.run(f'make -j8 COMPILE_PREFIX={COMPILE_PREFIX} WITH_PROXY=1 SDK_ROOT={bspLoc}',
+                subprocess.run(f'make -j8 COMPILE_PREFIX={COMPILE_PREFIX} WITH_PROXY=1 SDK_ROOT={bspLoc} LINKER_SCRIPT={self.bsp_location}/dr1v90_fpsoc_cpu0/chip/dr1x90/dr1v90/lds/gcc_dr1v90_ddr_lp64d.ld',
                     shell=True, capture_output=True, cwd=f'{self.location}/{proj_name}', check=True, text=True)
             elif 'rpc' in app_name and self.proc_type == 'rpu':
                 return
-
-            subprocess.run(f'make -j8 COMPILE_PREFIX={COMPILE_PREFIX} WITH_PROXY=1 SDK_ROOT={bspLoc}',
-                shell=True, capture_output=True, cwd=f'{self.location}/{proj_name}', check=True, text=True)
+            elif self.proc_type == 'apu-0':
+                subprocess.run(f'make -j8 COMPILE_PREFIX={COMPILE_PREFIX} WITH_PROXY=1 SDK_ROOT={bspLoc} ARMv8_STATE=64 LINKER_SCRIPT={self.bsp_location}/dr1m90_fpsoc_cpu0/chip/dr1x90/dr1m90/lds/gcc_dr1m90_ddr_aarch64.ld',
+                    shell=True, capture_output=True, cwd=f'{self.location}/{proj_name}', check=True, text=True)
+                if 'freertos' or 'rtthread' in self.bsp_locations:
+                    return
+                COMPILE_PREFIX = ARM_TOOLCHAIN_PATH + '/arm-none-eabi-'
+                subprocess.run(f'make -j8 COMPILE_PREFIX={COMPILE_PREFIX} WITH_PROXY=1 SDK_ROOT={bspLoc} ARMv8_STATE=32 LINKER_SCRIPT={self.bsp_location}/dr1m90_fpsoc_cpu0/chip/dr1x90/dr1m90/lds/gcc_dr1m90_ocm_aarch32.ld',
+                    shell=True, capture_output=True, cwd=f'{self.location}/{proj_name}', check=True, text=True)
         except subprocess.CalledProcessError as e:
             logger.error(e.stderr)
             faild_prj_app = Path(self.env['BSP_RESOURCE_PATH']).joinpath('log').joinpath(self.proc_type).joinpath(f'{proj_name}_{app_name}')
