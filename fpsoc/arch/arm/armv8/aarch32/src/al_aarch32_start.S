@@ -147,6 +147,10 @@ func reset_handler
     mcr     p15, 0, r0, c1, c0, 0
     isb
 
+#ifdef ENABLE_MMU
+    bl	enable_mmu
+#endif
+
 #if 0
     ldr    r0, =(SDCR_RESET_VAL | SDCR_SPD(SDCR_SPD_DISABLE) | SDCR_SCCD_BIT)
     stcopr    r0, SDCR

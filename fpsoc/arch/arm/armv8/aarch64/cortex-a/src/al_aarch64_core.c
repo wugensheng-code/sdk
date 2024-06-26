@@ -86,13 +86,14 @@ AL_S32 AlCache_SetMemoryAttr(AL_UINTPTR Start, AL_UINTPTR End, AL_MemAttr Attr)
 {
 #ifdef DDR_2M_MAPPING
     AL_UINTPTR Addr;
+    AL_U32 Size;
 
     AL_ASSERT(MEM_2M_ALIGN(Start), AL_ERR_ILLEGAL_PARAM);
     AL_ASSERT(MEM_2M_ALIGN(End), AL_ERR_ILLEGAL_PARAM);
     AL_ASSERT((Attr == Al_MEM_DMA || Attr == NORM_CACHE), AL_ERR_ILLEGAL_PARAM);
 
-    for (Addr = Start; Addr < End; Addr += 0x200000) {
-        mmu_settlb(Addr, (Attr == Al_MEM_DMA) ? DEVICE_MEM : NORM_CACHE);
+    for (Addr = Start; Addr < End; Addr += Size) {
+        Size = mmu_settlb(Addr, (Attr == Al_MEM_DMA) ? DEVICE_MEM : NORM_CACHE);
     }
 
     return AL_OK;
