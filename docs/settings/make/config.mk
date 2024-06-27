@@ -8,7 +8,7 @@ AL_CHIP         ?= $(CHIP)
 ## ARMv8_SECURE:    SECURE, NONSECURE
 ## ARMv8_CORE:      MASTER, SLAVE
 
-ARMv8_STATE     ?= #{{ARMv8_STATE}}
+ARMv8_STATE     ?= 64
 ARMv8_EL        ?= #{{ARMv8_EL}}
 ARMv8_SECURE    ?= #{{ARMv8_SECURE}}
 ARMv8_CORE      ?= #{{ARMv8_CORE}}
@@ -25,7 +25,13 @@ ENABLE_MMU  ?= 1
 DDR_2M_MAPPING ?= 1
 endif
 
+ifeq ($(ENABLE_MMU),1)
+ENABLE_DCACHE ?= 1
+else
+ENABLE_DCACHE ?= 0
+endif
 
+ENABLE_ICACHE ?= 1
 CODE_READONLY ?= #{{CODE_READONLY}}
 
 #########################################################################
@@ -131,9 +137,12 @@ export CFLAGS
 export BSP_DIR
 export CHIP_DIR
 export ENABLE_MMU
+export ENABLE_ICACHE
+export ENABLE_DCACHE
 export DDR_2M_MAPPING
 export CODE_READONLY
 export Q
 export AL_CUR_DIR
+export OUTPUT_DEV
 
 # vim: syntax=make

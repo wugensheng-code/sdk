@@ -1,5 +1,4 @@
 {
-    "ARMv8_STATE": {"Name": "ARMv8_STATE", "Value": "64", "Default": "64","Type": "integer","Description": "The ARMv8_STATE(64 or 32)","supportedProc": ["apu-0", "apu-1"],"Permit":false},
     "ARMv8_EL": {"Name": "ARMv8_EL", "Value": "EL3", "Default": "EL3","Type": "string","Description": "The ARMv8_EL(EL1 or EL3)","supportedProc": ["apu-0", "apu-1"],"Permit":false},
     "ARMv8_SECURE": {"Name": "ARMv8_SECURE", "Value": "SECURE", "Default": "SECURE","Type": "string","Description": "ARMv8_SECURE(SECURE or NONSECURE)","supportedProc": ["apu-0", "apu-1"],"Permit":false},
     "ARMv8_CORE": {"Name": "ARMv8_CORE", "Value": "MASTER", "Values": ["MASTER","SLAVE"],"Default": "MASTER","Type": "array","Description": "ARMv8_CORE(MASTER or SLAVE)","supportedProc": ["apu-0", "apu-1"],"Permit":true},
