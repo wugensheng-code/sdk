@@ -6,7 +6,7 @@
 
 OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
 OUTPUT_ARCH(arm)
-ENTRY(vectors)
+ENTRY(aarch64_start)
 
 MEMORY
 {
@@ -22,8 +22,8 @@ SECTIONS
         PROVIDE(_text_start  = .);
         KEEP (*(.aarch64_start*))
         . = _text_start + 0x400;
-        *(.vectors*)
-        *al_aarch32_start.S.o(.text*)
+        KEEP (*(.vectors*))
+        KEEP (*al_aarch32_start.S.o(.text*))
         *(*.text*)
         PROVIDE(_text_end  = .);
     }  > ram AT>ram
