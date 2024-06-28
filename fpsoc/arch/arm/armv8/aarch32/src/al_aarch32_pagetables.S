@@ -43,7 +43,7 @@ MMUTableL0:
 	.set SECT, SECT + 0x100000
 	.endr
 
-	.rept (0x100000000-SECT)/0x100000
+	.rept ((0xFFFFFFFF-SECT)/0x100000+1)
 	.4byte SECT + DEVICE_MEM		/* 0x80000000 - 0x100000000 */
 	.set SECT, SECT + 0x100000
 	.endr
