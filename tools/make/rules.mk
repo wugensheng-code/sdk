@@ -1,7 +1,12 @@
 #########################################################################
 AL_SDK_ROOT ?= $(SDK_ROOT)
 AL_PLAT_DIR ?= $(PLAT_DIR)
+
+ifeq ($(AL_CHIP), dr1v90)
 LIB_PREBUILD_DIR  ?= $(AL_SDK_ROOT)/prebuild/$(CHIP)
+else
+LIB_PREBUILD_DIR  ?= $(AL_SDK_ROOT)/prebuild/$(CHIP)/$(ARMv8_STATE)
+endif
 
 include $(AL_SDK_ROOT)/tools/make/config.mk
 sinclude $(AL_PLAT_DIR)/board_cfg.mk
