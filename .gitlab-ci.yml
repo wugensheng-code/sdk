@@ -78,9 +78,9 @@ build-fsbl-job:       # This job runs in the build stage.
   rules:
     - if: '$CI_COMMIT_TAG == null'
   script:
-    - cd $CI_PROJECT_DIR/solutions/demo/fsbl
-    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/fsbl dr1v90 ocm $CI_PROJECT_DIR $CI_DEBUG false
-    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/fsbl dr1m90 ocm $CI_PROJECT_DIR $CI_DEBUG false
+    - cd $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld dr1v90 ocm $CI_PROJECT_DIR $CI_DEBUG false
+    - python $CI_PROJECT_DIR/tools/ci/make_all.py $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld dr1m90 ocm $CI_PROJECT_DIR $CI_DEBUG false
 
 build-apu-and-rpu-job-with-FD:       # This job runs in the build stage.
   stage: build
@@ -101,11 +101,18 @@ build-apu-and-rpu-job-with-FD:       # This job runs in the build stage.
   script:
     - python --version ; pip --version  # For debugging
     - pip install -i https://pypi.tuna.tsinghua.edu.cn/simple scons loguru
-    - make -C $CI_PROJECT_DIR/solutions/demo/fsbl CHIP=dr1m90
+    - rm -rf ../dr1m90
+    - rm -rf ../dr1v90
     - mkdir ../dr1m90
-    - cp $CI_PROJECT_DIR/output/libddr.a ../dr1m90
+    - mkdir ../dr1m90/32
+    - mkdir ../dr1m90/64
+    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1m90 ARMv8_STATE=64 COMPILE_PREFIX=/opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+    - cp $CI_PROJECT_DIR/output/libddr.a ../dr1m90/64
     - git clean -xdf
-    - make -C $CI_PROJECT_DIR/solutions/demo/fsbl CHIP=dr1v90
+    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1m90 ARMv8_STATE=32 COMPILE_PREFIX=/opt/toolchain/13.2/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-
+    - cp $CI_PROJECT_DIR/output/libddr.a ../dr1m90/32
+    - git clean -xdf
+    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1v90
     - mkdir ../dr1v90
     - cp $CI_PROJECT_DIR/output/libddr.a ../dr1v90
     - git clean -xdf
@@ -144,11 +151,18 @@ release-job:
     paths:
       - BM-fpsoc-sdk.tar.bz2
   script:
-    - make -C $CI_PROJECT_DIR/solutions/demo/fsbl CHIP=dr1m90
+    - rm -rf ../dr1m90
+    - rm -rf ../dr1v90
     - mkdir ../dr1m90
-    - cp $CI_PROJECT_DIR/output/libddr.a ../dr1m90
+    - mkdir ../dr1m90/32
+    - mkdir ../dr1m90/64
+    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1m90 ARMv8_STATE=64 COMPILE_PREFIX=/opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+    - cp $CI_PROJECT_DIR/output/libddr.a ../dr1m90/64
     - git clean -xdf
-    - make -C $CI_PROJECT_DIR/solutions/demo/fsbl CHIP=dr1v90
+    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1m90 ARMv8_STATE=32 COMPILE_PREFIX=/opt/toolchain/13.2/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-
+    - cp $CI_PROJECT_DIR/output/libddr.a ../dr1m90/32
+    - git clean -xdf
+    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1v90
     - mkdir ../dr1v90
     - cp $CI_PROJECT_DIR/output/libddr.a ../dr1v90
     - git clean -xdf
@@ -168,7 +182,7 @@ release-job:
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_emulation
     # - rm -rf $CI_PROJECT_DIR/solutions/boards
     # tar
-    - tar -cvjf BM-fpsoc-sdk.tar.bz2 --exclude=./tools/ci --exclude=./fpsoc/driver/ps_driver_test --exclude=./fpsoc/utest --exclude=./solutions/demo/fsbl/simulation ./*
+    - tar -cvjf BM-fpsoc-sdk.tar.bz2 --exclude=./tools/ci --exclude=./fpsoc/driver/ps_driver_test --exclude=./fpsoc/utest --exclude=./solutions/demo/baremetal/helloworld/simulation ./*
   release:
     tag_name: "$CI_COMMIT_TAG"
     description: "$CI_COMMIT_TAG"
