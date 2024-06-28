@@ -368,4 +368,19 @@ __asm_invalidate_icache_all:
 	dsb
 	isb
 	bx	lr
+
+	.globl psci_cpu_pwrdown
+psci_cpu_pwrdown:
+    cpsid   aif
+    mrc     p15, 0, r1, c1, c0, 0
+    bic     r0, r1, #0x00000005
+    mcr     p15, 0, r0, c1, c0, 0
+    mov     r0, #1
+    bl      __flush_dcache
+    isb
+    dsb     sy
+0:  wfe
+    b       0b
+
 .end
+

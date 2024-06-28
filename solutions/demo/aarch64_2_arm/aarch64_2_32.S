@@ -477,7 +477,7 @@ el3_to_aarch32:
     //orr x0, x0, #(1 << 10)         //AArch32? AArch64
     msr scr_el3, x0
 
-    ldr x0, =_start_arm32
+    adr x0, _start_arm32
     add x0, x0, #0x400
     bic x0, x0, #(0x400 - 1)
     msr elr_el3, x0

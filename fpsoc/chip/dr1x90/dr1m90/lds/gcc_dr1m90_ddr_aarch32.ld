@@ -28,6 +28,7 @@ SECTIONS
         *(*.text*)
         PROVIDE(_text_end  = .);
     }  > ram AT>ram
+    PROVIDE(_text_end  = .);
 
     .ilalign         :
     {
@@ -62,6 +63,15 @@ SECTIONS
         KEEP(*(VSymTab))
         __vsymtab_end = .;
         . = ALIGN(4);
+        __rt_utest_tc_tab_start = .;
+        KEEP(*(UtestTcTab))
+        __rt_utest_tc_tab_end = .;
+        *(.gnu.linkonce.r.*)
+        /* section information for usbh class */
+        . = ALIGN(4);
+        __usbh_class_info_start__ = .;
+        KEEP(*(.usbh_class_info))
+        __usbh_class_info_end__ = .;
     }  > ram AT>ram
 
     .lalign         :
@@ -76,9 +86,6 @@ SECTIONS
         PROVIDE( _data = ADDR(.data));
     } >ram AT>ram
 
-    PROVIDE_HIDDEN (__exidx_start = .);
-    PROVIDE_HIDDEN (__exidx_end = .);
-    
     .pagetable :
     {
         . = ALIGN(4096);
