@@ -12,7 +12,6 @@
 /* Default Init config */
 static AL_MMC_InitStruct AlMmc_DefInitConfig = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
-    .FreqKhz            = AL_MMC_FREQ_KHZ_10000,
     .DmaMode            = AL_MMC_DMA_MODE_SDMA,
     .BusWidth           = AL_MMC_BUS_WIDTH_8BIT,
     .Switch1v8          = AL_FUNC_ENABLE,
@@ -51,7 +50,6 @@ static AL_U8 AlMmc_CapacityDot[16] = {0, 1, 1, 2, 2, 3, 4, 4, 5, 6, 6, 7, 8, 8, 
 #endif
 
 #define IS_SAME_INITCONFIGS(Dst, Src)   ((Dst).CardType == (Src).CardType && \
-                                         (Dst).FreqKhz == (Src).FreqKhz && \
                                          (Dst).SpdMode == (Src).SpdMode && \
                                          (Dst).DmaMode == (Src).DmaMode && \
                                          (Dst).BusWidth == (Src).BusWidth && \
@@ -1699,11 +1697,12 @@ AL_S32 AlMmc_Dev_Init(AL_MMC_DevStruct *Dev, AL_MMC_HwConfigStruct *HwConfig, AL
 
     AL_S32 Ret = AL_OK;
 
-    if (InitConfig->FreqKhz == AL_MMC_FREQ_KHZ_HPF) {
-        InitConfig->FreqKhz = HwConfig->IoClk / 1000;
-        if (InitConfig->FreqKhz > AL_MMC_FREQ_KHZ_25000) {
-            InitConfig->SpdMode = AL_MMC_SPD_HS_SDR25;
-        }
+    AL_LOG(AL_LOG_LEVEL_INFO, "Request input clk %d Hz, IO clk %d Hz\r\n", HwConfig->InputClk,
+                                                                           HwConfig->IoClk);
+
+    InitConfig->FreqKhz = HwConfig->IoClk / 1000;
+    if (InitConfig->FreqKhz > AL_MMC_FREQ_KHZ_25000) {
+        InitConfig->SpdMode = AL_MMC_SPD_HS_SDR25;
     }
 
     if (AlMmc_Dev_GetState(Dev, AL_MMC_STATE_READY)) {
@@ -2322,6 +2321,11 @@ AL_VOID AlMmc_Dev_IntrHandler(void *Instance)
 AL_S32 AlMmc_Dev_IoCtl(AL_MMC_DevStruct *Dev, AL_MMC_IoCtlCmdEnum Cmd, AL_VOID *Data)
 {
     return AL_OK;
+}
+
+AL_VOID AlMmc_Dev_ModifyIoClk(AL_U32 DevId, AL_U32 ClkInHz)
+{
+    AlMmc_HwConfig[DevId].IoClk = ClkInHz;
 }
 
 static AL_VOID AlMmc_Dev_DisplayCsd(AL_MMC_DevStruct *Dev)

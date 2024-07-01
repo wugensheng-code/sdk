@@ -287,7 +287,7 @@ typedef union
 typedef struct
 {
     AL_MMC_CardTypeEnum     CardType;       /* Card set */
-    AL_MMC_FreqKhzEnum      FreqKhz;
+    AL_MMC_FreqKhzEnum      FreqKhz;        /* Request from hardware config, do not need init */
     AL_MMC_SpdModeEnum      SpdMode;
     AL_MMC_DmaModeEnum      DmaMode;
     AL_MMC_BusWidthEnum     BusWidth;
@@ -347,6 +347,7 @@ AL_S32 AlMmc_Dev_Read(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkOffset, AL_U3
 AL_S32 AlMmc_Dev_RstHostController(AL_MMC_DevStruct *Dev, AL_MMC_RstHostEnum Rst);
 AL_VOID AlMmc_Dev_IntrHandler(void *Instance);
 AL_S32 AlMmc_Dev_IoCtl(AL_MMC_DevStruct *Dev, AL_MMC_IoCtlCmdEnum Cmd, AL_VOID *Data);
+AL_VOID AlMmc_Dev_ModifyIoClk(AL_U32 DevId, AL_U32 ClkInHz);
 
 #ifdef __cplusplus
 }

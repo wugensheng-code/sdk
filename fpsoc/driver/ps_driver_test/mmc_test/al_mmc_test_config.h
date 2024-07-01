@@ -25,7 +25,7 @@ extern "C" {
 /************************** Constant Definitions *****************************/
 
 /***************** Macros (Inline Functions) Definitions *********************/
-
+#define AL_MMC_TEST_DEV_ID          (0)
 #define AL_MMC_TEST_SINGLE_BLK_CNT  (1)
 #define AL_MMC_TEST_MULTI_BLK_CNT   (100)
 #define AL_MMC_TEST_BLK_SIZE        (0x200)
@@ -54,11 +54,6 @@ typedef struct
 static AL_MMC_InitStruct SdNoDmaInit = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
     .DmaMode            = AL_MMC_DMA_MODE_NONE,
-#ifdef AUTO_TEST
-    .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
-#else
-    .FreqKhz            = AL_MMC_FREQ_KHZ_50000,
-#endif
     .SpdMode            = AL_MMC_SPD_HS_SDR25,
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
@@ -69,11 +64,6 @@ static AL_MMC_InitStruct SdNoDmaInit = {
 static AL_MMC_InitStruct SdSdmaInit = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
     .DmaMode            = AL_MMC_DMA_MODE_SDMA,
-#ifdef AUTO_TEST
-    .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
-#else
-    .FreqKhz            = AL_MMC_FREQ_KHZ_50000,
-#endif
     .SpdMode            = AL_MMC_SPD_HS_SDR25,
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
@@ -84,11 +74,6 @@ static AL_MMC_InitStruct SdSdmaInit = {
 static AL_MMC_InitStruct SdAdma2Init = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
     .DmaMode            = AL_MMC_DMA_MODE_ADMA2,
-#ifdef AUTO_TEST
-    .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
-#else
-    .FreqKhz            = AL_MMC_FREQ_KHZ_50000,
-#endif
     .SpdMode            = AL_MMC_SPD_HS_SDR25,
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
@@ -99,11 +84,6 @@ static AL_MMC_InitStruct SdAdma2Init = {
 static AL_MMC_InitStruct EmmcNoDmaInit = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
     .DmaMode            = AL_MMC_DMA_MODE_NONE,
-#ifdef AUTO_TEST
-    .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
-#else
-    .FreqKhz            = AL_MMC_FREQ_KHZ_50000,
-#endif
     .SpdMode            = AL_MMC_SPD_HS_SDR25,
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
@@ -114,11 +94,6 @@ static AL_MMC_InitStruct EmmcNoDmaInit = {
 static AL_MMC_InitStruct EmmcSdmaInit = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
     .DmaMode            = AL_MMC_DMA_MODE_SDMA,
-#ifdef AUTO_TEST
-    .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
-#else
-    .FreqKhz            = AL_MMC_FREQ_KHZ_50000,
-#endif
     .SpdMode            = AL_MMC_SPD_HS_SDR25,
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
@@ -129,17 +104,14 @@ static AL_MMC_InitStruct EmmcSdmaInit = {
 static AL_MMC_InitStruct EmmcAdma2Init = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
     .DmaMode            = AL_MMC_DMA_MODE_ADMA2,
-#ifdef AUTO_TEST
-    .FreqKhz            = AL_MMC_FREQ_KHZ_DEF,
-#else
-    .FreqKhz            = AL_MMC_FREQ_KHZ_50000,
-#endif
     .SpdMode            = AL_MMC_SPD_HS_SDR25,
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,
     .AutoGenAdmaTblEn   = AL_FUNC_ENABLE,
     .DmaBdary           = AL_MMC_BDARY_32K
 };
+
+static AL_U32 MmcInitIoClk[AL_MMC_TEST_SD_CASE_NUM] = {10*MHz, 20*MHz, 50*MHz};
 
 /************************** Function Prototypes ******************************/
 

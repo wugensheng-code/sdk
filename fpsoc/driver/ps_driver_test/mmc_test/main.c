@@ -131,7 +131,7 @@ static AL_VOID AlMmc_Test_Sd(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
     AL_U32 Timeout  = 1000;
-    AL_U32 DevId    = 0;
+    AL_U32 DevId    = AL_MMC_TEST_DEV_ID;
     AL_MMC_HalStruct *Handle;
     AL_MMC_InitStruct *InitConfig[AL_MMC_TEST_SD_CASE_NUM];
     AL_S8 *CaseName[AL_MMC_TEST_SD_CASE_NUM] = {"Non-DMA", "SDMA", "ADMA2"};
@@ -143,6 +143,8 @@ static AL_VOID AlMmc_Test_Sd(AL_VOID)
     for (AL_U32 i = 0; i < AL_MMC_TEST_SD_CASE_NUM; i++) {
 
         AL_LOG(AL_LOG_LEVEL_INFO, "----------MMC test %s mode start----------\r\n", CaseName[i]);
+
+        AlMmc_Dev_ModifyIoClk(DevId, MmcInitIoClk[i]);
 
         Ret = AlMmc_Hal_Init(&Handle, DevId, InitConfig[i], AL_NULL);
         if (Ret != AL_OK) {
@@ -179,7 +181,7 @@ static AL_VOID AlMmc_Test_Emmc(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
     AL_U32 Timeout  = 1000;
-    AL_U32 DevId    = 0;
+    AL_U32 DevId    = AL_MMC_TEST_DEV_ID;
     AL_MMC_HalStruct *Handle;
     AL_MMC_InitStruct *InitConfig[AL_MMC_TEST_EMMC_CASE_NUM];
     AL_S8 *CaseName[AL_MMC_TEST_EMMC_CASE_NUM] = {"Non-DMA", "SDMA", "ADMA2"};
@@ -192,6 +194,8 @@ static AL_VOID AlMmc_Test_Emmc(AL_VOID)
     for (AL_U32 i = 0; i < AL_MMC_TEST_EMMC_CASE_NUM; i++) {
 
         AL_LOG(AL_LOG_LEVEL_INFO, "----------MMC test %s mode start----------\r\n", CaseName[i]);
+
+        AlMmc_Dev_ModifyIoClk(DevId, MmcInitIoClk[i]);
 
         Ret = AlMmc_Hal_Init(&Handle, DevId, InitConfig[i], AL_NULL);
         if (Ret != AL_OK) {

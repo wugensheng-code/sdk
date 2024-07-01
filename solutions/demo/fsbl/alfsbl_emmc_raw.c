@@ -23,7 +23,6 @@ static AL_U32 DevId = 0;
 static AL_MMC_InitStruct InitConfig = {
     .CardType           = AL_MMC_CARD_TYPE_AUTO_DETECT,
     .DmaMode            = AL_MMC_DMA_MODE_SDMA,
-    .FreqKhz            = AL_MMC_FREQ_KHZ_50000,
     .SpdMode            = AL_MMC_SPD_HS_SDR25,
     .BusWidth           = AL_MMC_BUS_WIDTH_4BIT,
     .Switch1v8          = AL_FUNC_DISABLE,

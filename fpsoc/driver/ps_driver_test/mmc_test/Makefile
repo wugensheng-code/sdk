@@ -12,6 +12,8 @@ SDK_ROOT   ?= ../../../..
 
 
 CHIP       ?= dr1m90
+ELF ?= SD
+
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
 else
@@ -42,14 +44,20 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O2 -DMMC_DEBUG -DCONFIG_EMMC_TEST=1 -g
+CFLAGS := -O2 -DMMC_DEBUG -g
+ifeq ($(ELF), SD)
+CFLAGS += -DCONFIG_SD_TEST=1
+else ($(ELF), EMMC)
+CFLAGS += -DCONFIG_EMMC_TEST=1
+endif
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
 # PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
-PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
+# PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
+PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v20
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile
@@ -66,7 +74,7 @@ TARGET := mmc_test
 
 ifneq ($(PINMUX_MODE),)
 CFLAGS += -DENABLE_$(PINMUX_MODE)=1
-TARGET:=$(TARGET)_$(CHIP)_$(PINMUX_MODE)
+TARGET:=$(TARGET)_$(ELF)_$(CHIP)_$(PINMUX_MODE)
 endif
 
 all: $(TARGET)
