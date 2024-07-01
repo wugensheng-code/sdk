@@ -122,7 +122,7 @@ AL_S32 AlCipher_Hal_Init(AL_CIPHER_HalStruct **Handle, AL_U32 DevId, AL_CIPHER_E
 
     /* 4. register intr */
     AL_INTR_AttrStrct IntrAttr = {
-        .Priority = 1,
+        .Priority = 0,
         .TrigMode = POSTIVE_EDGE_TRIGGER,
     };
     AlIntr_RegHandler(HwConfig->AckIntrId, &IntrAttr, AlCipher_Dev_IntrHandler, Dev);

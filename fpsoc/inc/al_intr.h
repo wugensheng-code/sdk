@@ -47,6 +47,7 @@ typedef AL_VOID (*AL_INTR_Func)(AL_VOID *Param);
 typedef struct {
 #ifdef __riscv
     AL_INTR_VectorCfg       VectorMode;
+    AL_S32                  IntrLevel;
 #endif
     AL_INTR_TriggerMode     TrigMode;
     AL_S32                  Priority;
@@ -61,19 +62,6 @@ typedef struct
     AL_VOID         *Param;
 } AL_INTR_HandlerStruct;
 
-
-#if (defined __riscv || defined __riscv__)
-#define AL_DEFAULT_ATTR(name)  AL_INTR_AttrStrct name = {   \
-            .TrigMode   =  LEVEL_HIGH_TRIGGER,              \
-            .Priority   =  1,                               \
-            .VectorMode =  NON_VECTOR_INTERRUPT,            \
-};
-#else
-#define AL_DEFAULT_ATTR(Name)  AL_INTR_AttrStrct Name = {   \
-            .TrigMode   =  LEVEL_HIGH_TRIGGER,              \
-            .Priority   =  137,                               \
-};
-#endif
 
 AL_VOID AlIntr_ClearAllPending(AL_VOID);
 

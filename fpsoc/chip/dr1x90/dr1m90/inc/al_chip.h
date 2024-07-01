@@ -110,6 +110,13 @@ typedef enum {
 #define ARM_IRQ_SEC_SGI_6		14
 #define ARM_IRQ_SEC_SGI_7		15
 
+
+#define AL_DEFAULT_ATTR(Name)  AL_INTR_AttrStrct Name = {   \
+            .TrigMode   =  LEVEL_HIGH_TRIGGER,              \
+            .Priority   =  137,                             \
+};
+
+
 #ifdef __cplusplus
 }
 #endif

@@ -296,7 +296,8 @@ int32_t ECLIC_Register_IRQ(IRQn_Type IRQn, uint8_t shv, ECLIC_TRIGGER_Type trig_
 
 AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Func Func, AL_VOID *Paran)
 {
-    AL_U8                 TrigLevel;
+    AL_U8                 IntrLevel;
+    AL_U8                 IntrPriority;
     ECLIC_TRIGGER_Type    TrigMode;
     AL_INTR_HandlerStruct Handler = {
         .Func       = Func,
@@ -305,17 +306,18 @@ AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Fun
     AL_INTR_AttrStrct *Attr;
     AL_DEFAULT_ATTR(DefAttr);
 
+    uint8_t nlbits = __ECLIC_GetCfgNlbits();
+    uint8_t intctlbits = (uint8_t)__ECLIC_INTCTLBITS;
+
     Attr = (IntrAttr != AL_NULL) ? IntrAttr : &DefAttr;
 
     switch (Attr->TrigMode) {
     case LEVEL_HIGH_TRIGGER:
         TrigMode  = ECLIC_LEVEL_TRIGGER;
-        TrigLevel = 1;
         break;
 
     case LEVEL_LOW_TRIGGER:
         TrigMode  = ECLIC_LEVEL_TRIGGER;
-        TrigLevel = 0;
         break;
 
     case POSTIVE_EDGE_TRIGGER:
@@ -330,7 +332,14 @@ AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Fun
         break;
     }
 
-    return ECLIC_Register_IRQ(IntrId, Attr->VectorMode, TrigMode, TrigLevel, Attr->Priority, &Handler);
+    if (nlbits > intctlbits) {
+        nlbits = intctlbits;
+    }
+
+    IntrLevel = (AL_U8)(Attr->Priority >> (intctlbits - nlbits));
+    IntrPriority = (AL_U8)(Attr->Priority & ((1 << (intctlbits - nlbits)) - 1));
+
+    return ECLIC_Register_IRQ(IntrId, Attr->VectorMode, TrigMode, IntrLevel, IntrPriority, &Handler);
 }
 
 AL_S32 AlIntr_SetInterrupt(AL_U32 IntrId, AL_FUNCTION State)

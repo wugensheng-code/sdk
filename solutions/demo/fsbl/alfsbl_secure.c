@@ -96,7 +96,7 @@ uint32_t SecureIrqInit(void)
 	uint32_t ret;
 	AL_INTR_AttrStrct Attr = {
 		.TrigMode   =  POSTIVE_EDGE_TRIGGER,
-		.Priority   =  1,
+		.Priority   =  0,
 #if (defined __riscv || defined __riscv__)
 		.VectorMode =  NON_VECTOR_INTERRUPT,
 #endif

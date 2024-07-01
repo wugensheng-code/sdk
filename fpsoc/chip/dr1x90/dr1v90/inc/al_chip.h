@@ -89,6 +89,14 @@ typedef enum {
 
 #define PMP_ENTRY_NUM           (16)
 
+
+#define AL_DEFAULT_ATTR(name)  AL_INTR_AttrStrct name = {   \
+            .TrigMode   =  LEVEL_HIGH_TRIGGER,              \
+            .Priority   =  0,                               \
+            .VectorMode =  NON_VECTOR_INTERRUPT,            \
+};
+
+
 #ifdef __cplusplus
 }
 #endif
