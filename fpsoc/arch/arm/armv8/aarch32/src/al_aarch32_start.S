@@ -202,6 +202,10 @@ func reset_handler
 
 endfunc reset_handler
 
+.weak board_init
+board_init:
+    nop
+    bx lr
 
 .weak entry
 entry:
