@@ -303,22 +303,28 @@ def main():
         with open(f'{args.bsp_resource_path}/docs/depend.json') as f:
             depend = json.load(f)
 
-            for proc_type in proc_types.keys():
-
-                for i in depend['app'].values():
-                    os_type = i['1.0']['supportedOS'][0]
-                    k = i['1.0']['name']
-                    if ('DEMO_OPENAMP' in k and 'rpu' in proc_type):
-                        pass
-                    else:
-                        bsp_tool.create_app_and_make(app_name=f'{k}', os_type=os_type, proc_type=proc_type)
 
 
-                for i in depend['ps_driver_app'].values():
-                    for c in i['1.0'].values():
-                        os_type = c['supportedOS'][0]
-                        k = c['name']
-                        bsp_tool.create_app_and_make(app_name=f'{k}', os_type=os_type, proc_type=proc_type)
+            for i in depend['app'].values():
+                os_type = i['1.0']['supportedOS'][0]
+                k = i['1.0']['name']
+                proc_types = i['1.0']['supportedProc']
+                if 'DEMO_OPENAMP' in k:
+                    pass
+                else:
+                    for proc_type in proc_types:
+                        if proc_type != 'apu-1':
+                            bsp_tool.create_app_and_make(app_name=f'{k}', os_type=os_type, proc_type=proc_type)
+
+
+            for i in depend['ps_driver_app'].values():
+                for c in i['1.0'].values():
+                    os_type = c['supportedOS'][0]
+                    k = c['name']
+                    proc_types =  c['supportedProc']
+                    for proc_type in proc_types:
+                        if proc_type != 'apu-1':
+                            bsp_tool.create_app_and_make(app_name=f'{k}', os_type=os_type, proc_type=proc_type)
 
         Fail = False
         try:
