@@ -137,7 +137,7 @@ build-apu-and-rpu-job-with-FD:       # This job runs in the build stage.
     - echo $BSP_RESOURCE_PATH
     - echo $AARCH64_TOOLCHAIN_PATH
     - echo $RISCV_TOOLCHAIN_PATH
-    - python $CI_PROJECT_DIR/tools/ci/build_with_bsp_tool.py -A -t $CI_PROJECT_DIR/tools/ci/ -b $CI_PROJECT_DIR
+    - python $CI_PROJECT_DIR/tools/ci/build_with_bsp_tool.py -A -t $CI_PROJECT_DIR/tools/ci/asct -b $CI_PROJECT_DIR
 
 
 release-job:

@@ -10,8 +10,11 @@ import os
 import subprocess
 import json
 import logging
+from copy import deepcopy
+from contextlib import AbstractContextManager, contextmanager, ExitStack
+from uuid import uuid1
 from pathlib import Path
-from shutil import copytree
+from shutil import copytree, rmtree
 
 
 env_k = ['BSP_RESOURCE_PATH', 'AARCH64_TOOLCHAIN_PATH', 'RISCV_TOOLCHAIN_PATH']
@@ -30,188 +33,316 @@ stream_handler.addFilter(filter_)
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 stream_handler.setFormatter(formatter)
 
+'''       key = ['uuid',    'bsp_proj_name',    'app_proj_name',    'location',    'chip',    'proc_type',    'os_type',    'hpf_path',    'ext',    'result']        '''
+bsp_template = [
+                [None,       None,               None,               None,         'dr1m90',  'apu-0',       'standalone',   None,          64,       None],
+                [None,       None,               None,               None,         'dr1m90',  'apu-0',       'standalone',   None,          32,       None],
+                [None,       None,               None,               None,         'dr1m90',  'apu-0',       'freertos',     None,          None,     None],
+                [None,       None,               None,               None,         'dr1m90',  'apu-0',       'rtthread',     None,          None,     None],
+                [None,       None,               None,               None,         'dr1v90',  'rpu',         'standalone',   None,          None,     None],
+                [None,       None,               None,               None,         'dr1v90',  'rpu',         'freertos',     None,          None,     None],
+                [None,       None,               None,               None,         'dr1v90',  'rpu',         'rtthread',     None,          None,     None]
+]
 
-class Bsp_tool(object):
+
+class Bsp_tool(AbstractContextManager):
 
     def __init__(self, bsp_tool_p, **kwargs):
         ''' The key contained in the kwargs is in envk'''
 
-        super(Bsp_tool, self).__init__()
+        super().__init__()
         self.env = dict.fromkeys(env_k)
 
         try:
-            self.env['BSP_RESOURCE_PATH'] = os.path.abspath(kwargs['BSP_RESOURCE_PATH']) + '/'
-            self.env['AARCH64_TOOLCHAIN_PATH'] = os.path.abspath(AARCH64_TOOLCHAIN_PATH)
-            self.env['RISCV_TOOLCHAIN_PATH'] = os.path.abspath(RISCV_TOOLCHAIN_PATH)
-
+            self.env['BSP_RESOURCE_PATH'] = Path(kwargs['BSP_RESOURCE_PATH']).absolute()
+            self.env['AARCH64_TOOLCHAIN_PATH'] = Path(AARCH64_TOOLCHAIN_PATH).absolute()
+            self.env['RISCV_TOOLCHAIN_PATH'] = Path(RISCV_TOOLCHAIN_PATH).absolute()
             self.bsp_tool_p = Path(bsp_tool_p)
-            if not self.bsp_tool_p.exists():
-                raise FileNotFoundError(f'bsp_tool: {self.bsp_tool_p} not found')
+            self.log_path = self.env['BSP_RESOURCE_PATH'].joinpath('log')
+
         except Exception as e:
             logger.error(f'======> make failed {e}')
             exit(1)
 
-    def setup_env(self):
+    @contextmanager
+    def _cleanup_on_error(self):
+        with ExitStack() as stack:
+            stack.push(self)
+            yield
+            # The validation check passed and didn't raise an exception
+            # Accordingly, we want to keep the resource, and pass it
+            # back to our caller
+            stack.pop_all()
+
+    def __enter__(self):
+
+        with self._cleanup_on_error():
+            if not self.bsp_tool_p.exists():
+                raise RuntimeError(f'bsp_tool: {self.bsp_tool_p} not found')
+            self._setup_env()
+            self.log_path.mkdir()
+        self._create_table()
+        return self
+
+    def __exit__(self, *exc_details):
+
+        if exc_details is not None:
+            for i in exc_details:
+                if i is not None:
+                    logger.error(f'{i}')
+
+    def _setup_env(self):
         ''' set environment variables '''
 
         self.environ = os.environ.copy()
 
         for k, v in self.env.items():
-            os.environ[k] = v
+            os.environ[k] = str(v) + '/'
             PATH = os.getenv('PATH')
             PATH + f':{v}'
             os.environ['PATH'] = PATH
             self.environ[k] = v
             self.environ['PATH'] = PATH
-        
 
-    def create_bsp(self, proj_name, location, chip,  proc_type, os_type, hpf_path):
-        ''' create bsp '''
+    def _create_table(self):
+        ''' Create project information table '''
 
-        self.location = location
-        self.proc_type = proc_type
-        self.os_type = os_type
+        self.table_key = ['uuid', 'bsp_proj_name', 'app_proj_name', 'location', 'chip', 'proc_type', 'os_type', 'hpf_path', 'ext', 'result']
+        self.table = list()
+        self.template = bsp_template
+
+    def create_bsp(self, hpf_path, location):
+        """create bsp"""
+
+        bsp_names = list()
+
+        for i in self.template:
+            bsp_name = "bsp"
+            for j in i:
+                if j is not None:
+                    bsp_name = f"{bsp_name}_{j}"
+
+            bsp_names.append(bsp_name)
+
+        for index, name in enumerate(bsp_names):
+            self.template[index][1] = name
 
         try:
-            logger.info(f'======> Start creating bsp: project name: {proj_name} os type: {os_type}')
-            ret = subprocess.run(f'{self.bsp_tool_p}/asct dr1x90_tool create_platform_project -projName {proj_name} -location {self.location} -chip {chip} -proc {proc_type} -os {os_type} -hpf {hpf_path}',
-                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
 
-            ret = subprocess.run(f'{self.bsp_tool_p}/asct dr1x90_tool create_default_mss -mssfile {self.location}/{proj_name}/system.mss -chip {chip} -proc {proc_type} -os {os_type}',
-                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
+            for entry in self.template:
+                logger.info(
+                    f"======> Start creating bsp: project name: {entry[1]} chip: {entry[4]} proc_type: {entry[5]} os_type: {entry[6]}"
+                )
 
-            ret = subprocess.run(f'{self.bsp_tool_p}/asct dr1x90_tool generate_bsp_sources -hpf {hpf_path} -mssfile {self.location}/{proj_name}/system.mss -bsp_loc {self.location}/{proj_name}',
-                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True)
+                ret = subprocess.run(
+                    f"{self.bsp_tool_p} dr1x90_tool create_platform_project -projName {entry[1]} -location {location} -chip {entry[4]} -proc {entry[5]} -os {entry[6]} -hpf {hpf_path}",
+                    shell=True,
+                    capture_output=True,
+                    cwd=self.bsp_tool_p.parent,
+                    check=True,
+                    text=True,
+                )
 
-            logger.info(f'======> Platform created successfully: {proj_name}')
+                ret = subprocess.run(
+                    f"{self.bsp_tool_p} dr1x90_tool create_default_mss -mssfile {location}/{entry[1]}/system.mss -chip {entry[4]} -proc {entry[5]} -os {entry[6]}",
+                    shell=True,
+                    capture_output=True,
+                    cwd=self.bsp_tool_p.parent,
+                    check=True,
+                    text=True,
+                )
+
+                ret = subprocess.run(
+                    f"{self.bsp_tool_p} dr1x90_tool generate_bsp_sources -hpf {hpf_path} -mssfile {location}/{entry[1]}/system.mss -bsp_loc {location}/{entry[1]}",
+                    shell=True,
+                    capture_output=True,
+                    cwd=self.bsp_tool_p.parent,
+                    check=True,
+                    text=True,
+                )
+
+                entry[3] = location
+                logger.info(f"======> Platform created successfully: {entry[1]}")
+
         except Exception as e:
-            logger.error(f'======> create_bsp failed. {e}')
+            logger.error(f"======> create_bsp failed. {e}")
             logger.error(e.stderr)
             logger.error(e.stdout)
             exit(1)
 
-        self.bsp_location = f'{os.getcwd()}/{proj_name}'
+    def create_app_and_make(self, app_name, os_type, proc_type):
+        ''' create app '''
 
-    def create_app_and_make(self, proj_name, app_name, bspLoc):
-        ''' create bsp '''
+        entry = None
+        bsp_type = None
 
-        bspLoc = f'{os.getcwd()}/{bspLoc}'
         try:
-            logger.info(f'======> Start creating app: {app_name}')
-            subprocess.run(f'{self.bsp_tool_p}/asct dr1x90_tool create_application_project -projName {proj_name} -location {os.getcwd()} -language C -bsp_loc {self.bsp_location}',
-                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True, env=self.environ)
-            subprocess.run(f'{self.bsp_tool_p}/asct dr1x90_tool generate_app_sources -bsp_loc {bspLoc} -name {app_name} -app_loc {self.location}/{proj_name}',
-                shell=True, capture_output=True, cwd=self.bsp_tool_p, check=True, text=True, env=self.environ)
+            for index, bsp_content in enumerate(self.template):
+                if bsp_content[5] == proc_type and bsp_content[6] == os_type:
+                    bsp_type = index
+
+            entry = dict(zip(self.table_key, self.template[bsp_type]))
+            entry['uuid'] = uuid1()
+            ext = ''
+            if entry['ext'] is not None:
+                ext = '_{ext}'.format(ext=entry['ext'])
+
+            entry['app_proj_name'] = 'app_{app_name}_{proc_type}_{os_type}{ext_info}'.format(app_name=app_name, proc_type=entry['proc_type'], os_type=entry['os_type'], ext_info=ext)
+
+            subprocess.run(f"{self.bsp_tool_p} dr1x90_tool create_application_project -projName {entry['app_proj_name']} -location {os.getcwd()} -language C -bsp_loc {entry['location']}/{entry['bsp_proj_name']}",
+                shell=True, capture_output=True, cwd=self.bsp_tool_p.parent, check=True, text=True)
+            subprocess.run(f"{self.bsp_tool_p} dr1x90_tool generate_app_sources -bsp_loc {entry['location']}/{entry['bsp_proj_name']} -name {app_name} -app_loc {entry['location']}/{entry['app_proj_name']}",
+                shell=True, capture_output=True, cwd=self.bsp_tool_p.parent, check=True, text=True)
             logger.info(f'======> App created successfully: {app_name}')
-            logger.info(f'======> Start make project: {app_name}')
 
-            if self.proc_type == 'rpu':
-                COMPILE_PREFIX = RISCV_TOOLCHAIN_PATH + '/riscv-nuclei-elf-'
-            else:
-                COMPILE_PREFIX = AARCH64_TOOLCHAIN_PATH + '/aarch64-none-elf-'
+            def make_rpu():
+                COMPILE_PREFIX = RISCV_TOOLCHAIN_PATH + "/riscv-nuclei-elf-"
+                if "rpc" not in entry["app_proj_name"]:
+                    subprocess.run(
+                        f"make -j8 COMPILE_PREFIX={COMPILE_PREFIX} WITH_PROXY=1 SDK_ROOT={entry['location']}/{entry['bsp_proj_name']} LINKER_SCRIPT={entry['location']}/{entry['bsp_proj_name']}/dr1v90_fpsoc_cpu0/chip/dr1x90/dr1v90/lds/gcc_dr1v90_ddr_lp64d.ld",
+                        shell=True,
+                        capture_output=True,
+                        cwd=f"{entry['location']}/{entry['app_proj_name']}",
+                        check=True,
+                        text=True,
+                    )
+                    entry["result"] = "pass"
+                else:
+                    entry["result"] = "N/A "
 
-            if 'rpc' in app_name and self.proc_type != 'rpu':
-                subprocess.run(f'make -j8 COMPILE_PREFIX={COMPILE_PREFIX} WITH_PROXY=1 SDK_ROOT={bspLoc} LINKER_SCRIPT={self.bsp_location}/dr1v90_fpsoc_cpu0/chip/dr1x90/dr1v90/lds/gcc_dr1v90_ddr_lp64d.ld',
-                    shell=True, capture_output=True, cwd=f'{self.location}/{proj_name}', check=True, text=True)
-            elif 'rpc' in app_name and self.proc_type == 'rpu':
-                return
-            elif self.proc_type == 'apu-0':
-                subprocess.run(f'make -j8 COMPILE_PREFIX={COMPILE_PREFIX} WITH_PROXY=1 SDK_ROOT={bspLoc} ARMv8_STATE=64 LINKER_SCRIPT={self.bsp_location}/dr1m90_fpsoc_cpu0/chip/dr1x90/dr1m90/lds/gcc_dr1m90_ddr_aarch64.ld',
-                    shell=True, capture_output=True, cwd=f'{self.location}/{proj_name}', check=True, text=True)
-                if 'freertos' or 'rtthread' in self.bsp_locations:
-                    return
-                COMPILE_PREFIX = ARM_TOOLCHAIN_PATH + '/arm-none-eabi-'
-                subprocess.run(f'make -j8 COMPILE_PREFIX={COMPILE_PREFIX} WITH_PROXY=1 SDK_ROOT={bspLoc} ARMv8_STATE=32 LINKER_SCRIPT={self.bsp_location}/dr1m90_fpsoc_cpu0/chip/dr1x90/dr1m90/lds/gcc_dr1m90_ocm_aarch32.ld',
-                    shell=True, capture_output=True, cwd=f'{self.location}/{proj_name}', check=True, text=True)
+            def make_apu_32():
+                COMPILE_PREFIX = ARM_TOOLCHAIN_PATH + "/arm-none-eabi-"
+                if "standalone" in entry["os_type"] and 'FSBL' not in entry["app_proj_name"] and 'OPENAMP' not in entry["app_proj_name"]:
+                    subprocess.run(
+                        f"make -j8 COMPILE_PREFIX={COMPILE_PREFIX} WITH_PROXY=1 SDK_ROOT={entry['location']}/{entry['bsp_proj_name']} ARMv8_STATE=32 LINKER_SCRIPT={entry['location']}/{entry['bsp_proj_name']}/dr1m90_fpsoc_cpu0/chip/dr1x90/dr1m90/lds/gcc_dr1m90_ddr_aarch32.ld",
+                        shell=True,
+                        capture_output=True,
+                        cwd=f"{entry['location']}/{entry['app_proj_name']}",
+                        check=True,
+                        text=True,
+                    )
+                    entry["result"] = "pass"
+                else:
+                    entry["result"] = "N/A "
+
+            def make_apu_64():
+                COMPILE_PREFIX = AARCH64_TOOLCHAIN_PATH + "/aarch64-none-elf-"
+                subprocess.run(
+                    f"make -j8 COMPILE_PREFIX={COMPILE_PREFIX} WITH_PROXY=1 SDK_ROOT={entry['location']}/{entry['bsp_proj_name']} ARMv8_STATE=64 LINKER_SCRIPT={entry['location']}/{entry['bsp_proj_name']}/dr1m90_fpsoc_cpu0/chip/dr1x90/dr1m90/lds/gcc_dr1m90_ddr_aarch64.ld",
+                    shell=True,
+                    capture_output=True,
+                    cwd=f"{entry['location']}/{entry['app_proj_name']}",
+                    check=True,
+                    text=True,
+                )
+                entry["result"] = "pass"
+            
+
+            logger.info(f"======> Start make project: {entry['app_proj_name']}")
+
+            if 'rpu' in entry['proc_type']:
+                make_rpu()
+            if 'apu' in entry['proc_type'] and 32 != entry['ext']:
+                make_apu_64()
+            if 'apu' in entry['proc_type'] and 32 == entry['ext']:
+                make_apu_32()
+            
+            self.table.append(entry)
+
         except subprocess.CalledProcessError as e:
             logger.error(e.stderr)
-            faild_prj_app = Path(self.env['BSP_RESOURCE_PATH']).joinpath('log').joinpath(self.proc_type).joinpath(f'{proj_name}_{app_name}')
+            faild_prj_app = Path(self.env['BSP_RESOURCE_PATH']).joinpath('log').joinpath(proc_type).joinpath(f"{entry['app_proj_name']}")
             faild_prj_app.mkdir(parents=True)
-            faild_prj_bsp = Path(self.env['BSP_RESOURCE_PATH']).joinpath('log').joinpath(self.proc_type).joinpath(f'{self.os_type}')
-            copytree(src=f'{self.location}/{proj_name}', dst=faild_prj_app, ignore=None, dirs_exist_ok=True)
-            copytree(src=f'{bspLoc}', dst=faild_prj_bsp, ignore=None, dirs_exist_ok=True)
-            return e.cmd
+            faild_prj_bsp = Path(self.env['BSP_RESOURCE_PATH']).joinpath('log').joinpath(proc_type).joinpath(f'{os_type}')
+            copytree(src=f"{entry['location']}/{entry['app_proj_name']}", dst=faild_prj_app, ignore=None, dirs_exist_ok=True)
+            copytree(src=f"{entry['location']}/{entry['bsp_proj_name']}", dst=faild_prj_bsp, ignore=None, dirs_exist_ok=True)
+            entry["result"] = f'failed: {e.cmd}'
+            self.table.append(entry)
+            return
         except Exception as e:
             logger.error(f'======> create app and run failed {e}')
 
 
-
-
 def main():
-    ''' main function '''
+    """main function"""
 
     parser = argparse.ArgumentParser(
-        prog='build_with_bsp_tool',
-        description='Using bsp_tool build master_sdk Engineering.',
-        epilog='Copyright(r), 2023'
+        prog="build_with_bsp_tool",
+        description="Using bsp_tool build master_sdk Engineering.",
+        epilog="Copyright(r), 2023",
     )
 
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('-A', '--all', help='build all project', action='store_true', dest='build_all')
-    parser.add_argument('-t', '--bsp_tool', help='bsp_tool path')
-    parser.add_argument('-b', '--bsp_resource_path', help='master_sdk path')
+    group.add_argument(
+        "-A", "--all", help="build all project", action="store_true", dest="build_all"
+    )
+    parser.add_argument("-t", "--bsp_tool", help="bsp_tool path")
+    parser.add_argument("-b", "--bsp_resource_path", help="master_sdk path")
 
     args = parser.parse_args()
 
-    # proc_types = {'rpu': 'demo_board_hpf_rpu.hpf', 'apu-0': 'demo_board_hpf_apu.hpf'}
     proc_types = {'apu-0': 'dr1x90.hpf', 'rpu': 'dr1x90.hpf'}
 
-    Path(args.bsp_resource_path).joinpath('log').mkdir()
+    bsp_tool = Bsp_tool(
+        bsp_tool_p=args.bsp_tool,
+        BSP_RESOURCE_PATH=args.bsp_resource_path,
+        AARCH64_TOOLCHAIN_PATH=os.path.abspath(AARCH64_TOOLCHAIN_PATH),
+        RISCV_TOOLCHAIN_PATH=os.path.abspath(RISCV_TOOLCHAIN_PATH),
+    )
 
-    bsp_tool = Bsp_tool(bsp_tool_p=args.bsp_tool, BSP_RESOURCE_PATH=args.bsp_resource_path, AARCH64_TOOLCHAIN_PATH=os.path.abspath(AARCH64_TOOLCHAIN_PATH), RISCV_TOOLCHAIN_PATH=os.path.abspath(RISCV_TOOLCHAIN_PATH))
-    bsp_tool.setup_env()
+    with Bsp_tool(
+        bsp_tool_p=args.bsp_tool,
+        BSP_RESOURCE_PATH=args.bsp_resource_path,
+        AARCH64_TOOLCHAIN_PATH=os.path.abspath(AARCH64_TOOLCHAIN_PATH),
+        RISCV_TOOLCHAIN_PATH=os.path.abspath(RISCV_TOOLCHAIN_PATH),
+    ) as bsp_tool:
+        bsp_tool
 
-    statistics = {'rpu': None, 'apu-0': None}
+        bsp_tool.create_bsp(location=os.getcwd(), hpf_path="dr1x90.hpf")
 
-    for proc_type, hpf in proc_types.items():
-        bsp_tool.create_bsp(proj_name=f'test_platform_standalone_{proc_type}', location=os.getcwd(), chip=('dr1v90' if proc_type == 'rpu' else 'dr1m90'), proc_type=proc_type, os_type='standalone', hpf_path=hpf)
-        bsp_tool.create_bsp(proj_name=f'test_platform_freertos_{proc_type}', location=os.getcwd(), chip=('dr1v90' if proc_type == 'rpu' else 'dr1m90'), proc_type=proc_type, os_type='freertos', hpf_path=hpf)
-        bsp_tool.create_bsp(proj_name=f'test_platform_rtthread_{proc_type}', location=os.getcwd(), chip=('dr1v90' if proc_type == 'rpu' else 'dr1m90'), proc_type=proc_type, os_type='rtthread', hpf_path=hpf)
-
-        proc_statistics = list()
         with open(f'{args.bsp_resource_path}/docs/depend.json') as f:
             depend = json.load(f)
-            for i in depend['app'].values():
-                os_type = i['1.0']['supportedOS'][0]
-                k = i['1.0']['name']
-                if ('DEMO_OPENAMP' in k and 'rpu' in proc_type):
-                    pass
-                else:
-                    ret = bsp_tool.create_app_and_make(proj_name=f'test_app_{proc_type}_{k}', app_name=f'{k}', bspLoc=f'test_platform_{os_type}_{proc_type}')
-                    proc_statistics.append({k:ret})
 
-            for i in depend['ps_driver_app'].values():
-                for c in i['1.0'].values():
-                    os_type = c['supportedOS'][0]
-                    k = c['name']
-                    ret = bsp_tool.create_app_and_make(proj_name=f'test_app_{proc_type}_{k}', app_name=f'{k}', bspLoc=f'test_platform_{os_type}_{proc_type}')
-                    proc_statistics.append({k:ret})
+            for proc_type in proc_types.keys():
 
-        statistics[proc_type] = proc_statistics
-
-    ret = None
-
-    Fail = False
-
-    try:
-        for proc, proc_statistics in statistics.items():
-            logger.info(f'\r\n============================> Statistics for {proc} <==========================')
-            for i in proc_statistics:
-                for k, v in i.items():
-                    if v is None:
-                        ret = 'Scucess'
-                        logger.info(f"| {k:<40} |\033[32m{ret:^30}\033[0m |")
+                for i in depend['app'].values():
+                    os_type = i['1.0']['supportedOS'][0]
+                    k = i['1.0']['name']
+                    if ('DEMO_OPENAMP' in k and 'rpu' in proc_type):
+                        pass
                     else:
-                        ret = 'Fail: '+ str(v)
-                        logger.info(f"| {k:<40} |\033[31m{ret:^30}\033[0m |")
-                        Fail = True
-    except Exception as e:
-        pass
+                        bsp_tool.create_app_and_make(app_name=f'{k}', os_type=os_type, proc_type=proc_type)
 
 
-    if Fail:
-        exit(1)
+                for i in depend['ps_driver_app'].values():
+                    for c in i['1.0'].values():
+                        os_type = c['supportedOS'][0]
+                        k = c['name']
+                        bsp_tool.create_app_and_make(app_name=f'{k}', os_type=os_type, proc_type=proc_type)
 
+        Fail = False
+        try:
+            logger.info(f'\r\n============================> Statistics <============================')
+            for i in bsp_tool.table:
+                if i is not None:
+                    if i['uuid'] is not None:
+                        for k, v in i.items():
+                            if 'app_proj_name' == k:
+                                app_proj_name = v;
+                                continue;
+                            if k == 'result':
+                                if'failed' in v:
+                                    logger.info(f"| {app_proj_name:<60} |\033[31m{v:^40}\033[0m |")
+                                    Fail = True
+                                else:
+                                    logger.info(f"| {app_proj_name:<60} |\033[32m{v:^40}\033[0m |")
+        except Exception as e:
+            logger.info(e)
+            pass
+
+
+        if Fail:
+            exit(1)
 
 if __name__ == '__main__':
     main()
