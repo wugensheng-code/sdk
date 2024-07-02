@@ -33,15 +33,15 @@ stream_handler.addFilter(filter_)
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 stream_handler.setFormatter(formatter)
 
-'''       key = ['uuid',    'bsp_proj_name',    'app_proj_name',    'location',    'chip',    'proc_type',    'os_type',    'hpf_path',    'ext',    'result']        '''
+'''       key = ['uuid',    'bsp_proj_name',    'app_proj_name',    'location',    'chip',    'proc_type',    'os_type',    'hpf_path',               'ext',    'result']        '''
 bsp_template = [
-                [None,       None,               None,               None,         'dr1m90',  'apu-0',       'standalone',   None,          64,       None],
-                [None,       None,               None,               None,         'dr1m90',  'apu-0',       'standalone',   None,          32,       None],
-                [None,       None,               None,               None,         'dr1m90',  'apu-0',       'freertos',     None,          None,     None],
-                [None,       None,               None,               None,         'dr1m90',  'apu-0',       'rtthread',     None,          None,     None],
-                [None,       None,               None,               None,         'dr1v90',  'rpu',         'standalone',   None,          None,     None],
-                [None,       None,               None,               None,         'dr1v90',  'rpu',         'freertos',     None,          None,     None],
-                [None,       None,               None,               None,         'dr1v90',  'rpu',         'rtthread',     None,          None,     None]
+                [None,       None,               None,               None,         'dr1m90',  'apu-0',       'standalone',   'ad101_v10.hpf',          64,       None],
+                [None,       None,               None,               None,         'dr1m90',  'apu-0',       'standalone',   'ad101_v10.hpf',          32,       None],
+                [None,       None,               None,               None,         'dr1m90',  'apu-0',       'freertos',     'ad101_v10.hpf',          None,     None],
+                [None,       None,               None,               None,         'dr1m90',  'apu-0',       'rtthread',     'ad101_v10.hpf',          None,     None],
+                [None,       None,               None,               None,         'dr1v90',  'rpu',         'standalone',   'ad102_v10.hpf',          None,     None],
+                [None,       None,               None,               None,         'dr1v90',  'rpu',         'freertos',     'ad102_v10.hpf',          None,     None],
+                [None,       None,               None,               None,         'dr1v90',  'rpu',         'rtthread',     'ad102_v10.hpf',          None,     None]
 ]
 
 
@@ -111,7 +111,7 @@ class Bsp_tool(AbstractContextManager):
         self.table = list()
         self.template = bsp_template
 
-    def create_bsp(self, hpf_path, location):
+    def create_bsp(self, location):
         """create bsp"""
 
         bsp_names = list()
@@ -135,7 +135,7 @@ class Bsp_tool(AbstractContextManager):
                 )
 
                 ret = subprocess.run(
-                    f"{self.bsp_tool_p} dr1x90_tool create_platform_project -projName {entry[1]} -location {location} -chip {entry[4]} -proc {entry[5]} -os {entry[6]} -hpf {hpf_path}",
+                    f"{self.bsp_tool_p} dr1x90_tool create_platform_project -projName {entry[1]} -location {location} -chip {entry[4]} -proc {entry[5]} -os {entry[6]} -hpf {entry[7]}",
                     shell=True,
                     capture_output=True,
                     cwd=self.bsp_tool_p.parent,
@@ -153,7 +153,7 @@ class Bsp_tool(AbstractContextManager):
                 )
 
                 ret = subprocess.run(
-                    f"{self.bsp_tool_p} dr1x90_tool generate_bsp_sources -hpf {hpf_path} -mssfile {location}/{entry[1]}/system.mss -bsp_loc {location}/{entry[1]}",
+                    f"{self.bsp_tool_p} dr1x90_tool generate_bsp_sources -hpf {entry[7]} -mssfile {location}/{entry[1]}/system.mss -bsp_loc {location}/{entry[1]}",
                     shell=True,
                     capture_output=True,
                     cwd=self.bsp_tool_p.parent,
@@ -298,7 +298,7 @@ def main():
     ) as bsp_tool:
         bsp_tool
 
-        bsp_tool.create_bsp(location=os.getcwd(), hpf_path="dr1x90.hpf")
+        bsp_tool.create_bsp(location=os.getcwd())
 
         with open(f'{args.bsp_resource_path}/docs/depend.json') as f:
             depend = json.load(f)
