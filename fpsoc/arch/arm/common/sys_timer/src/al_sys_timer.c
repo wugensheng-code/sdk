@@ -42,13 +42,19 @@ AL_U64 AlSys_GetTimerTickCount(AL_VOID)
 
 AL_VOID AlSys_DelayTicks(AL_U64 TickCount)
 {
-    AL_U64 TickEnd, TickCur;
+    AL_U64 TickEnd, TickCur, TickPre, TickHigh = 0;
 
     TickCur = AlSys_GetTimerTickCount();
     TickEnd = TickCur + TickCount;
+    TickPre = TickCur;
 
     do {
         TickCur = AlSys_GetTimerTickCount();
+        if (TickCur < TickPre) {
+            TickHigh++;
+        }
+        TickPre = TickCur;
+        TickCur |= (TickHigh << 32);
     } while (TickCur < TickEnd);
 }
 
