@@ -66,10 +66,10 @@ PLAT_DIR ?= $(SDK_ROOT)/platform
 #########################################################################
 # 7. linker scripts
 #########################################################################
-#{{LINKER_SCRIPT}}
-
 
 # include rules.mk
 include $(SDK_ROOT)/tools/make/rules.mk
+
+#{{LINKER_SCRIPT}}
 
 # vim: syntax=make
