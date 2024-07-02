@@ -357,6 +357,52 @@ __asm_invalidate_tlb_all:
 	bx	lr
 
 /*
+ * void __asm_flush_and_invalidate_same_dcache_range(start, end)
+ *
+ * clean & invalidate data cache in the same range
+ *
+ * r0: start address
+ * r1: end address
+ */
+	.globl __asm_flush_and_invalidate_same_dcache_range
+__asm_flush_and_invalidate_same_dcache_range:
+	stmfd	sp!, {r4-r11, lr}
+	mrs	r6, cpsr
+	cpsid	aif
+	mov r2, r0
+	mov r3, r1
+	bl	_flush_dcache_range
+	mov r0, r2
+	mov r1, r3
+	bl	_invalid_dcache_range
+	msr	cpsr_c, r6
+	ldmfd	sp!, {r4-r11, lr}
+	bx	lr
+
+/*
+ * void __asm_flush_and_invalidate_same_dcache_range(start, end)
+ *
+ * clean & invalidate data cache in the same range
+ *
+ * r0: flush start address
+ * r1: flush end address
+ * r2: invalidate start address
+ * r3: invalidate end address
+ */
+	.globl __asm_flush_and_invalidate_diff_dcache_range
+__asm_flush_and_invalidate_diff_dcache_range:
+	stmfd	sp!, {r4-r11, lr}
+	mrs	r6, cpsr
+	cpsid	aif
+	bl	_flush_dcache_range
+	mov r0, r2
+	mov r1, r3
+	bl	_invalid_dcache_range
+	msr	cpsr_c, r6
+	ldmfd	sp!, {r4-r11, lr}
+	bx	lr
+
+/*
  * void __asm_invalidate_icache_all(void)
  *
  * invalidate all tlb entries.

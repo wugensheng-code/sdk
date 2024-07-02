@@ -146,12 +146,13 @@ __STATIC_FORCEINLINE int get_current_el(void)
 
 __STATIC_FORCEINLINE int get_sctlr(void)
 {
-
+    ARCH_COPROCR_SYSREG_READ(SCTLR);
 }
 
 __STATIC_FORCEINLINE void set_sctlr(unsigned long val)
 {
-
+    ARCH_COPROCR_SYSREG_WRITE(SCTLR, val);
+    ISB();
 }
 
 #ifdef __cplusplus
