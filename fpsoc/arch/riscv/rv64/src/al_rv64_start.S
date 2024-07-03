@@ -32,6 +32,7 @@
 .section .vtable
     .globl vector_base
     .type vector_base, @object
+.align 6
 vector_base:
     DECLARE_INT_HANDLER     default_intexc_handler          /* 0: Reserved, default handler for Flash download mode */
 .rept MAX_INTR

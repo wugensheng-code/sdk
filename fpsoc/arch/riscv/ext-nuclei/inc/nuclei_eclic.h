@@ -687,19 +687,19 @@ __STATIC_FORCEINLINE uint8_t __ECLIC_GetPriorityIRQ(IRQn_Type IRQn)
  */
 __STATIC_FORCEINLINE void __ECLIC_SetVector(IRQn_Type IRQn, AL_REGISTER vector)
 {
-#if __RISCV_XLEN == 32
-    volatile uint32_t vec_base;
-    vec_base = ((uint32_t)ARCH_SYSREG_READ(CSR_MTVT));
-    (* (unsigned long *) (vec_base + ((int32_t)IRQn) * 4)) = vector;
-#elif __RISCV_XLEN == 64
-    volatile uint64_t vec_base;
-    vec_base = ((uint64_t)ARCH_SYSREG_READ(CSR_MTVT));
-    (* (unsigned long *) (vec_base + ((int32_t)IRQn) * 8)) = vector;
-#else // TODO Need cover for XLEN=128 case in future
-    volatile uint64_t vec_base;
-    vec_base = ((uint64_t)ARCH_SYSREG_READ(CSR_MTVT));
-    (* (unsigned long *) (vec_base + ((int32_t)IRQn) * 8)) = vector;
+    volatile AL_UINTPTR vec_base;
+    vec_base = ((AL_UINTPTR)ARCH_SYSREG_READ(CSR_MTVT));
+    vec_base += ((AL_UINTPTR)IRQn) * sizeof(AL_UINTPTR);
+    (* (AL_UINTPTR *) vec_base) = vector;
+
+#ifdef ENABLE_DCACHE
+    AlCache_FlushDcacheRange((AL_UINTPTR)vec_base, vec_base + sizeof(AL_UINTPTR));
 #endif
+#ifdef ENABLE_ICACHE
+    AlCache_InvalidateIcacheAll();
+    __FENCE_I();
+#endif
+
 }
 
 /**
