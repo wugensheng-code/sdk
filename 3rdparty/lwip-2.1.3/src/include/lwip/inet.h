@@ -49,6 +49,8 @@
 extern "C" {
 #endif
 
+#define IN_ADDR_T_DEFINED
+
 /* If your port already typedef's in_addr_t, define IN_ADDR_T_DEFINED
    to prevent this code from redefining it. */
 #if !defined(in_addr_t) && !defined(IN_ADDR_T_DEFINED)
