@@ -75,6 +75,10 @@ void *fast_memcpy(void *dst, const void *src, size_t length)
     return dst;
 }
 
+#ifdef ENABLE_MMU
+// Use the c library's memcpy
+#else
+
 void *memcpy(void *dst, const void *src, size_t length)
 {
     if ((((uint32_t)(uint64_t)src) & (~(sizeof(uint32_t)-1))) != (((uint32_t)(uint64_t)dst) & (~(sizeof(uint32_t)-1))))
@@ -91,5 +95,6 @@ void *memcpy(void *dst, const void *src, size_t length)
     return fast_memcpy(dst, src, length);
 
 }
+#endif
 
 #endif
