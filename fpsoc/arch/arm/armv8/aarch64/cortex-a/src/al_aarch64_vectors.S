@@ -163,10 +163,10 @@ exception_exit:
     msr spsr_el3, x3
     b   restore_regs
 2:  msr elr_el2, x2
-    msr spsr_el2, x2
+    msr spsr_el2, x3
     b   restore_regs
 1:  msr elr_el1, x2
-    msr spsr_el1, x2
+    msr spsr_el1, x3
     b   restore_regs        /* jump to the second part */
 
 /*
