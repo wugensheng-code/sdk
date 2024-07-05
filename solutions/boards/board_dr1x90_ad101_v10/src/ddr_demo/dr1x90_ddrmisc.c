@@ -157,7 +157,7 @@ void make_ddr_mr(double fck, ddr_type_t type, const ddr_timing_t* timpara, u32* 
         MR[2] = 0x0080 | (cwl_code << 3);
         MR[3] = 0x0000;
         MR[4] = 0x0000;
-        MR[5] = 0x0000 | (0x3 << 6);    // RTT_park = RZQ / 6
+        MR[5] = 0x0000 | (0x3 << 6) | (0x1 << 10);    // RTT_park = RZQ / 6; Data Mask Enable
         MR[6] = 0x0419;
     }
 }
