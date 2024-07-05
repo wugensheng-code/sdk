@@ -13,7 +13,7 @@
 
 #include <string.h>
 
-#define TCP_SERVER_NETIO_THREAD_STACK_SIZE  (3072)
+#define TCP_SERVER_NETIO_THREAD_STACK_SIZE  (4096)
 #define TCP_SERVER_NETIO_THREAD_PRIO        6
 sys_thread_t netio_handle = NULL;
 

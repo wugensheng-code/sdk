@@ -146,6 +146,7 @@ typedef struct
 typedef struct
 {
     AL_U32 TxDesc[AL_GBE_TX_DESC_CNT];
+    AL_U32 *BufferAddress[AL_GBE_TX_DESC_CNT];
     AL_U32 CurTxDesc;
     AL_U32 *PacketAddress[AL_GBE_TX_DESC_CNT];
     AL_U32 *CurrentPacketAddress;

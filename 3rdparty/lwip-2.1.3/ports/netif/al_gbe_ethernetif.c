@@ -83,6 +83,8 @@ AL_GBE_DMADescStruct DMATxDescList[AL_GBE_TX_DESC_CNT] CACHE_LINE_ALIGN;
 /* Rx descriptors buffer, use static buffer, just user Rx descriptors buffer1 */
 uint8_t RxBuffTab[AL_GBE_RX_DESC_CNT][ETH_RX_BUFFER_SIZE] CACHE_LINE_ALIGN;
 
+uint8_t TxBuffTab[AL_GBE_TX_DESC_CNT][ETH_RX_BUFFER_SIZE] CACHE_LINE_ALIGN;
+
 /* Netif for lwip */
 struct netif gnetif;
 
@@ -92,43 +94,14 @@ AL_GBE_HalStruct *GbeHandle;
 /* Tx config, Configure the Tx descriptor function according to this */
 AL_GBE_TxDescConfigStruct TxConfig;
 
-/* define RX_POOL, for Rx zero copy */
-LWIP_MEMPOOL_DECLARE(RX_POOL, 48, sizeof(struct pbuf_custom), "Zero-copy RX PBUF pool");
-
-void pbuf_free_custom(struct pbuf *p)
-{
-    struct pbuf_custom* custom_pbuf = (struct pbuf_custom*)p;
-
-    LWIP_MEMPOOL_FREE(RX_POOL, custom_pbuf);
-
-#ifdef ENABLE_MMU
-    /*
-      Notice:
-      AlCache_InvalidateDcacheRange((AL_UINTPTR)buffer_align, (AL_UINTPTR)buffer_align + ETH_RX_BUFFER_SIZE);
-
-      The data cahe should be invalid based on the corresponding rx buffer（p->payload）
-      and the length of the rx buffer（p->len）, but this operation will not work in
-      the nosys、 freertos and rttthread scenarios at the same time.
-      Use AlCache_InvalidateDcacheAll to work properly in all scenarios.
-     */
-    AlCache_InvalidateDcacheAll();
-#endif
-}
-
-/**
-  * @brief Should allocate a pbuf and transfer the bytes of the incoming
-  * packet from the interface into the pbuf.
-  *
-  * @param netif the lwip network interface structure for this ethernetif
-  * @return a pbuf filled with the received packet (including MAC header)
-  *         NULL on memory error
-  */
 static struct pbuf *low_level_input(struct netif *netif)
 {
     struct pbuf *p = NULL;
+    struct pbuf *q = NULL;
     AL_GBE_BufferStruct RxBuff;
     uint32_t framelength = 0;
-    struct pbuf_custom* custom_pbuf;
+    uint32_t l = 0;
+
 
     if(AlGbe_Hal_GetRxDataBuffer(GbeHandle, &RxBuff) == AL_OK)
     {
@@ -137,21 +110,28 @@ static struct pbuf *low_level_input(struct netif *netif)
         /* Build Rx descriptor to be ready for next data reception */
         AlGbe_Hal_BuildRxDescriptors(GbeHandle);
 
-        custom_pbuf  = (struct pbuf_custom*)LWIP_MEMPOOL_ALLOC(RX_POOL);
-        if (custom_pbuf == NULL) {
-            return NULL;
+#ifdef ENABLE_MMU
+    AL_UINTPTR BufferAlign = (AL_UINTPTR)GBE_CACHE_ALIGN_MEMORY(RxBuff.Buffer);
+    AL_UINTPTR BufferLenAlign = GBE_CACHE_ALIGN_SIZE(framelength);
+
+    AlCache_InvalidateDcacheRange((AL_UINTPTR)BufferAlign, (AL_UINTPTR)(BufferAlign + BufferLenAlign));
+#endif
+        p = pbuf_alloc(PBUF_RAW, PBUF_POOL_BUFSIZE, PBUF_POOL);
+
+        if (p != NULL)
+        {
+            for (q = p, l = 0; q != NULL; q = q->next)
+            {
+                memcpy((AL_U8 *)q->payload, (AL_U8 *)&RxBuff.Buffer[l], q->len);
+                l = l + q->len;
+            }
         }
-
-        custom_pbuf->custom_free_function = pbuf_free_custom;
-
-        p = pbuf_alloced_custom(PBUF_RAW, framelength, PBUF_REF, custom_pbuf, RxBuff.Buffer, ETH_RX_BUFFER_SIZE);
 
 #if LWIP_PTP
-        if (p) {
-            p->time_sec = GbeHandle->Dev.RxDescList.RxTimeStamp.TimeStampHigh;
-            p->time_nsec = GbeHandle->Dev.RxDescList.RxTimeStamp.TimeStampLow;
-        }
+        p->time_sec = GbeHandle->Dev.RxDescList.RxTimeStamp.TimeStampHigh;
+        p->time_nsec = GbeHandle->Dev.RxDescList.RxTimeStamp.TimeStampLow;
 #endif
+
     }
 
     return p;
@@ -215,17 +195,16 @@ void AlGbe_TxFreeCallback(void *buff)
  * @note ERR_OK means the packet was sent (but not necessarily transmit complete),
  * and ERR_IF means the packet has more chained buffers than what the interface supports.
  */
-
 static err_t low_level_output(struct netif *netif, struct pbuf *p)
 {
     uint32_t i = 0U;
     struct pbuf *q = NULL;
     err_t errval = ERR_OK;
-    AL_GBE_BufferStruct Txbuffer[AL_GBE_TX_DESC_CNT];
 
+    AL_GBE_BufferStruct Txbuffer[AL_GBE_TX_DESC_CNT];
     memset(Txbuffer, 0, AL_GBE_TX_DESC_CNT*sizeof(AL_GBE_BufferStruct));
 
-    for (q = p; q != NULL; q = q->next)
+    for(q = p; q != NULL; q = q->next)
     {
         if(i >= AL_GBE_TX_DESC_CNT)
             return ERR_IF;
@@ -250,13 +229,7 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
     TxConfig.TxBuffer = Txbuffer;
     TxConfig.pData = p;
 
-    pbuf_ref(p);
-
-    AlGbe_Hal_TransmitBlock(GbeHandle, &TxConfig, 10);
-
-    sys_arch_sem_wait(&GbeTxSem, 0);
-
-    AlGbe_Hal_ReleaseTxPacket(GbeHandle);
+    AlGbe_Hal_Transmit(GbeHandle, &TxConfig);
 
     return errval;
 }
@@ -317,9 +290,9 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
     uint32_t i = 0U;
     struct pbuf *q = NULL;
     err_t errval = ERR_OK;
-    AL_GBE_BufferStruct Txbuffer[AL_GBE_TX_DESC_CNT] = {0};
 
-    memset(Txbuffer, 0 , AL_GBE_TX_DESC_CNT*sizeof(AL_GBE_BufferStruct));
+    AL_GBE_BufferStruct Txbuffer[AL_GBE_TX_DESC_CNT];
+    memset(Txbuffer, 0, AL_GBE_TX_DESC_CNT*sizeof(AL_GBE_BufferStruct));
 
     for(q = p; q != NULL; q = q->next)
     {
@@ -499,12 +472,14 @@ err_t low_level_init(struct netif *netif)
         AlGbe_Hal_ConfigRxDescBuffer(GbeHandle, idx, RxBuffTab[idx], NULL);
     }
 
+    for (int idx = 0; idx < AL_GBE_TX_DESC_CNT; idx ++)
+    {
+        AlGbe_Hal_ConfigTxDescBuffer(GbeHandle, idx, TxBuffTab[idx], NULL);
+    }
+
     AlGbe_Hal_RegisterIntrHandlerCallBack(GbeHandle, AL_GBE_INTR_TX_COMPLETE, AlGbe_TxDoneCallback);
     AlGbe_Hal_RegisterTxFreeCallBack(GbeHandle, AlGbe_TxFreeCallback);
     AlGbe_Hal_RegisterIntrHandlerCallBack(GbeHandle, AL_GBE_INTR_RX_COMPLETE, AlGbe_RxDoneCallback);
-
-    /* Initialize the RX POOL */
-    LWIP_MEMPOOL_INIT(RX_POOL);
 
     /* set MAC hardware address length */
     netif->hwaddr_len = ETH_HWADDR_LEN;

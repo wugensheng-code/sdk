@@ -22,6 +22,7 @@ static AL_GBE_DMADescStruct DMATxDescList[AL_GBE_TX_DESC_CNT] CACHE_LINE_ALIGN;
 
 /* Rx descriptors buffer, use static buffer, just user Rx descriptors buffer1 */
 static AL_U8 RxBuffTab[AL_GBE_RX_DESC_CNT][ETH_RX_BUFFER_SIZE] CACHE_LINE_ALIGN;
+static AL_U8 TxBuffTab[AL_GBE_TX_DESC_CNT][ETH_RX_BUFFER_SIZE] CACHE_LINE_ALIGN;
 
 /* Gbe driver handle */
 static AL_GBE_HalStruct *GbeHandle;
@@ -149,6 +150,11 @@ AL_VOID AlGbe_Init()
     for (int idx = 0; idx < AL_GBE_RX_DESC_CNT; idx ++)
     {
         AlGbe_Hal_ConfigRxDescBuffer(GbeHandle, idx, RxBuffTab[idx], NULL);
+    }
+
+    for (int idx = 0; idx < AL_GBE_TX_DESC_CNT; idx ++)
+    {
+        AlGbe_Hal_ConfigTxDescBuffer(GbeHandle, idx, TxBuffTab[idx], NULL);
     }
 
     AlGbe_PhyInit(&MacDmaConfig);

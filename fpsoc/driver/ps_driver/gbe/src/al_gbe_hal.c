@@ -133,6 +133,19 @@ AL_S32 AlGbe_Hal_ConfigRxDescBuffer(AL_GBE_HalStruct *Handle, AL_U32 DescIndex, 
     return AL_OK;
 }
 
+AL_S32 AlGbe_Hal_ConfigTxDescBuffer(AL_GBE_HalStruct *Handle, AL_U32 DescIndex, AL_U8 *Buffer1Addr, AL_U8 *Buffer2Addr)
+{
+    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+
+    AL_GBE_HAL_LOCK(Handle);
+
+    AlGbe_Dev_ConfigTxDescBuffer(&Handle->Dev, DescIndex, Buffer1Addr, Buffer2Addr);
+
+    AL_GBE_HAL_UNLOCK(Handle);
+
+    return AL_OK;
+}
+
 AL_S32 AlGbe_Hal_PhyInit(AL_GBE_HalStruct *Handle, AL_U8 PhyAddr)
 {
     AL_S32 Ret;

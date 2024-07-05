@@ -292,6 +292,24 @@ AL_U32 AlGbe_Dev_ConfigRxDescBuffer(AL_GBE_DevStruct *Gbe, AL_U32 DescIndex, AL_
     return AL_OK;
 }
 
+AL_U32 AlGbe_Dev_ConfigTxDescBuffer(AL_GBE_DevStruct *Gbe, AL_U32 DescIndex, AL_U8 *Buffer1, AL_U8 *Buffer2)
+{
+    AL_ASSERT((Gbe != AL_NULL) && (Buffer1 != AL_NULL) && (DescIndex < (AL_U32)AL_GBE_TX_DESC_CNT),
+              AL_GBE_ERR_ILLEGAL_PARAM);
+
+    AL_GBE_DMADescStruct *DmaTxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)(Gbe->TxDescList.TxDesc[DescIndex]));
+
+    /* Store buffer1 address, buffer2 address not used */
+    Gbe->TxDescList.BufferAddress[DescIndex] = Buffer1;
+
+    /* write buffer address to TDES0 */
+    DmaTxDesc->DESC0 = (__IO AL_U32)((AL_UINTPTR)Buffer1);
+    /* store buffer address */
+    DmaTxDesc->BackupAddr0 = (AL_U32)((AL_UINTPTR)Buffer1);
+
+    return AL_OK;
+}
+
 static AL_VOID AlGbe_Dev_DMARxDescListInit(AL_GBE_DevStruct *Gbe)
 {
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
@@ -1252,14 +1270,16 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
     /* Set descriptors here */
     DescNbr += 1U;
 
+    /* Reload Buffer1 address and copy data to buffer1 */
+    DmaTxDesc->DESC0 = Gbe->TxDescList.BufferAddress[DescIndex];
+    memcpy((AL_U8 *)(DmaTxDesc->DESC0), (AL_U8 *)(TxBuffer->Buffer), TxBuffer->Len);
+
 #ifdef ENABLE_MMU
-    BufferAlign = (AL_UINTPTR)GBE_CACHE_ALIGN_MEMORY(TxBuffer->Buffer);
+    BufferAlign = (AL_UINTPTR)GBE_CACHE_ALIGN_MEMORY(DmaTxDesc->DESC0);
     BufferLenAlign = GBE_CACHE_ALIGN_SIZE((TxBuffer->Len)) + CACHE_LINE_SIZE;
     AlCache_FlushDcacheRange((AL_UINTPTR)BufferAlign, (AL_UINTPTR)(BufferAlign + BufferLenAlign));
 #endif
 
-    /* Set header or buffer 1 address */
-    DmaTxDesc->DESC0 = (AL_U32)((AL_UINTPTR)TxBuffer->Buffer);
     /* Set header or buffer 1 Length */
     AlGbe_ll_SetTdesc2Buffer1Len((AL_REG)&DmaTxDesc->DESC2, TxBuffer->Len);
 
@@ -1333,14 +1353,16 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
         /* Get the next Tx buffer in the list */
         TxBuffer = TxBuffer->next;
 
+        /* Reload Buffer1 address and copy data to buffer1 */
+        DmaTxDesc->DESC0 = Gbe->TxDescList.BufferAddress[DescIndex];
+        memcpy((AL_U8 *)(DmaTxDesc->DESC0), (AL_U8 *)(TxBuffer->Buffer), TxBuffer->Len);
+
 #ifdef ENABLE_MMU
-        BufferAlign = (AL_UINTPTR)GBE_CACHE_ALIGN_MEMORY(TxBuffer->Buffer);
+        BufferAlign = (AL_UINTPTR)GBE_CACHE_ALIGN_MEMORY(DmaTxDesc->DESC0);
         BufferLenAlign = GBE_CACHE_ALIGN_SIZE((TxBuffer->Len)) + CACHE_LINE_SIZE;
         AlCache_FlushDcacheRange((AL_UINTPTR)BufferAlign, (AL_UINTPTR)(BufferAlign + BufferLenAlign));
 #endif
 
-        /* Set header or buffer 1 address */
-        DmaTxDesc->DESC0 = (AL_U32)((AL_UINTPTR)TxBuffer->Buffer);
         /* Set header or buffer 1 Length */
         AlGbe_ll_SetTdesc2Buffer1Len((AL_REG)&DmaTxDesc->DESC2, TxBuffer->Len);
 
@@ -1513,14 +1535,15 @@ AL_S32 AlGbe_Dev_TransmitPolling(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruc
     /* issue a poll command to Tx DMA by writing address of next immediate free descriptor */
     AlGbe_ll_SetDmaTxDescTailPointer(GbeBaseAddr, (AL_U32)(Gbe->TxDescList.TxDesc[Gbe->TxDescList.CurTxDesc]));
 
-    /* Wait for data to be transmitted or timeout occurred */
-    while (AlGbe_ll_IsWbTxDescOwnByDma((AL_REG)&DmaTxDesc->DESC3)) {
-        if (AlGbe_ll_IsDmaChannelFatalBusError(GbeBaseAddr)) {
-            return AL_GBE_ERR_FATLA_BUS_ERROR;
-        }
-    }
-
     if (TxConfig->Attributes & AL_GBE_TX_PACKETS_FEATURES_TTSE) {
+
+        /* If need to get the timestamp of tx, need to wait for the packet to finish sending */
+        while (AlGbe_ll_IsWbTxDescOwnByDma((AL_REG)&DmaTxDesc->DESC3)) {
+            if (AlGbe_ll_IsDmaChannelFatalBusError(GbeBaseAddr)) {
+                return AL_GBE_ERR_FATLA_BUS_ERROR;
+            }
+        }
+
         Ret = AlGbe_Dev_GetTxTimeStamp(Gbe, DmaTxDesc);
         if (Ret != AL_OK) {
             AlGbe_Dev_ClrTxBusy(Gbe);
