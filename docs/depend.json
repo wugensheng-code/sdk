@@ -900,6 +900,46 @@
 				}
 			}
 		},
+        "PS_DRIVER_GBE": {
+			"1.0":{
+				"GBE_INTERNAL_LOOPBACK": {
+					"name": "GBE_INTERNAL_LOOPBACK",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/gbe/example/al_gbe_example.h",
+                        "fpsoc/driver/ps_driver/gbe/example/al_gbe_internal_loopback.c",
+						"PS_DRIVER_GBE_V1_0"
+					],
+					"description": "gbe test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"GBE_PING_REPLY_INTR": {
+					"name": "GBE_PING_REPLY_INTR",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/gbe/example/al_gbe_example.h",
+                        "fpsoc/driver/ps_driver/gbe/example/al_gbe_ping_reply_intr.c",
+						"PS_DRIVER_GBE_V1_0"
+					],
+					"description": "gbe test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+                "GBE_PING_REPLY_POLLING": {
+					"name": "GBE_PING_REPLY_POLLING",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/gbe/example/al_gbe_example.h",
+                        "fpsoc/driver/ps_driver/gbe/example/al_gbe_ping_reply_polling.c",
+						"PS_DRIVER_GBE_V1_0"
+					],
+					"description": "gbe test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				}
+			}
+		},
 		"PS_DRIVER_IIC": {
 			"1.0":{
 				"IIC_EEPROM_BLOCK": {
