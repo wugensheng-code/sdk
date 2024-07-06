@@ -162,6 +162,7 @@ SECTIONS
 		. = ALIGN(2M);
 		_no_cache_section_start = .;
 		KEEP(*(.noncacheable))
+		. = ALIGN(2M);
 		_no_cache_section_end   = .;
 		. = ALIGN(2M);
 	}  > ram AT>ram
