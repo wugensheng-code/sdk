@@ -59,6 +59,7 @@ void AlGic_Init(void)
 #ifndef ARM_CORE_SLAVE
     AlGicv3_DistInit();
 #else
+    AlGicv3_Rdist_WaitMasterAwake(GicData.RdistBaseAddrs[0]);
     AlGicv3_DisableOwnSpiInterrupt();
 #endif
 

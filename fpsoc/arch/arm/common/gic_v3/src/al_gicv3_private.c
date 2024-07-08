@@ -45,6 +45,16 @@ AL_VOID AlGicv3_Rdist_MarkCoreAsleep(AL_UINTPTR GicrBase)
     }
 }
 
+/******************************************************************************
+ * This function wait master core wake up.
+ *****************************************************************************/
+AL_VOID AlGicv3_Rdist_WaitMasterAwake(AL_UINTPTR GicrBase)
+{
+    /* Wait till the master core WAKER_CA_BIT changes to 0 */
+    while ((Gicr_ReadWaker(GicrBase) & WAKER_CA_BIT) != 0U) {
+    }
+}
+
 /*******************************************************************************
  * This function probes the Redistributor frames when the driver is initialised
  * and saves their base addresses. These base addresses are used later to

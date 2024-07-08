@@ -136,6 +136,7 @@ AL_VOID AlGicv3_Rdist_BaseAddrsProbe(AL_UINTPTR *RdistBaseAddrs, AL_U32 RdistNum
                                      MpidrHashFn MpidrToCorePos);
 AL_VOID AlGicv3_Rdist_MarkCoreAwake(AL_UINTPTR GicrBase);
 AL_VOID AlGicv3_Rdist_MarkCoreAsleep(AL_UINTPTR GicrBase);
+AL_VOID AlGicv3_Rdist_WaitMasterAwake(AL_UINTPTR GicrBase);
 AL_U32 AlGicv3_GetComponentPartnum(const AL_UINTPTR GicFrame);
 
 #endif /* AL_GICV3_PRIVATE_H */
