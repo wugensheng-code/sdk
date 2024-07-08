@@ -64,4 +64,42 @@ lr	.req	x30
     eret
 .endm
 
+.macro SAVE_FPU, reg
+    STP        Q0, Q1, [\reg,#-0x20]!
+    STP        Q2, Q3, [\reg,#-0x20]!
+    STP        Q4, Q5, [\reg,#-0x20]!
+    STP        Q6, Q7, [\reg,#-0x20]!
+    STP        Q8, Q9, [\reg,#-0x20]!
+    STP        Q10, Q11, [\reg,#-0x20]!
+    STP        Q12, Q13, [\reg,#-0x20]!
+    STP        Q14, Q15, [\reg,#-0x20]!
+    STP        Q16, Q17, [\reg,#-0x20]!
+    STP        Q18, Q19, [\reg,#-0x20]!
+    STP        Q20, Q21, [\reg,#-0x20]!
+    STP        Q22, Q23, [\reg,#-0x20]!
+    STP        Q24, Q25, [\reg,#-0x20]!
+    STP        Q26, Q27, [\reg,#-0x20]!
+    STP        Q28, Q29, [\reg,#-0x20]!
+    STP        Q30, Q31, [\reg,#-0x20]!
+.endm
+
+.macro RESTORE_FPU, reg
+    LDP        Q30, Q31, [\reg], #0x20
+    LDP        Q28, Q29, [\reg], #0x20
+    LDP        Q26, Q27, [\reg], #0x20
+    LDP        Q24, Q25, [\reg], #0x20
+    LDP        Q22, Q23, [\reg], #0x20
+    LDP        Q20, Q21, [\reg], #0x20
+    LDP        Q18, Q19, [\reg], #0x20
+    LDP        Q16, Q17, [\reg], #0x20
+    LDP        Q14, Q15, [\reg], #0x20
+    LDP        Q12, Q13, [\reg], #0x20
+    LDP        Q10, Q11, [\reg], #0x20
+    LDP        Q8, Q9, [\reg], #0x20
+    LDP        Q6, Q7, [\reg], #0x20
+    LDP        Q4, Q5, [\reg], #0x20
+    LDP        Q2, Q3, [\reg], #0x20
+    LDP        Q0, Q1, [\reg], #0x20
+.endm
+
 #endif /* __AL_AARCH64_MACRO_H__ */

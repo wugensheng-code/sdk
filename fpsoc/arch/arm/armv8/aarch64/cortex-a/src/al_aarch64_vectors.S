@@ -126,6 +126,12 @@ _exception_entry:
     stp x5, x6,   [sp, #-16]!
     stp x3, x4,   [sp, #-16]!
     stp x1, x2,   [sp, #-16]!
+
+    SAVE_FPU sp
+    MRS x1, FPCR
+    MRS x2, FPSR
+    stp x1, x2,   [sp, #-16]!
+
     b   save_el_regs            /* jump to the second part */
 
 /*
@@ -174,6 +180,13 @@ exception_exit:
  * This is the second part of the shared routine called into from all entries.
  */
 restore_regs:
+
+    ldp     x1, x2, [sp], #0x10
+    MSR     FPCR, x1
+    MSR     FPSR, x2
+
+    RESTORE_FPU SP
+
     ldp    x1, x2,   [sp],#16
     ldp    x3, x4,   [sp],#16
     ldp    x5, x6,   [sp],#16
