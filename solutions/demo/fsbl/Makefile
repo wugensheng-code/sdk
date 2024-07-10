@@ -14,7 +14,7 @@ SDK_ROOT   ?= ../../..
 CHIP       ?= dr1v90
 
 DOWNLOAD      = ocm
-ENABLE_MMU    := 1
+# ENABLE_MMU    := 1
 
 ifeq ($(CHIP), dr1m90)
 ARMv8_EL         := EL3
@@ -53,7 +53,8 @@ CFLAGS := -O2 -g
 #    Fixme: where to add board init source files and headers files
 #########################################################################
 # PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
-PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v20
+PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
+# PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v20
 # PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/platform
 # PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_hpf_v10
 # PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_dc_v1d1
@@ -72,7 +73,6 @@ PINMUX_MODE ?= PINMUX_MODE1
 #CFLAGS += -DQSPI_USE_AHB_DMA
 #CFLAGS += -DQSPI_XIP_THROUTH_CSU_DMA
 
-DOWNLOAD                   = ocm
 
 #########################################################################
 # 6. define build target
