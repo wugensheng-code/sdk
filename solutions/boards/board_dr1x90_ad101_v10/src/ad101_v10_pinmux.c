@@ -193,6 +193,15 @@ void __attribute__((optimize("0"))) Enablepinmux1(void)
     mio_pad_ctrl0(5, MIO_SPEED_FAST, MIO_PULL_10K_EN, MIO_PULL_DIS);
     mio_pad_ctrl0(6, MIO_SPEED_FAST, MIO_PULL_10K_EN, MIO_PULL_DIS);
 
+    /* Set 12mA drive strength to qspi */
+    mio_pad_ctrl1(0, MIO_RECV_1V8_1V5, MIO_VCCIO_1V8, MIO_DRIVEN_12MA, MIO_DRIVEN_12MA);
+    mio_pad_ctrl1(1, MIO_RECV_1V8_1V5, MIO_VCCIO_1V8, MIO_DRIVEN_12MA, MIO_DRIVEN_12MA);
+    mio_pad_ctrl1(2, MIO_RECV_1V8_1V5, MIO_VCCIO_1V8, MIO_DRIVEN_12MA, MIO_DRIVEN_12MA);
+    mio_pad_ctrl1(3, MIO_RECV_1V8_1V5, MIO_VCCIO_1V8, MIO_DRIVEN_12MA, MIO_DRIVEN_12MA);
+    mio_pad_ctrl1(4, MIO_RECV_1V8_1V5, MIO_VCCIO_1V8, MIO_DRIVEN_12MA, MIO_DRIVEN_12MA);
+    mio_pad_ctrl1(5, MIO_RECV_1V8_1V5, MIO_VCCIO_1V8, MIO_DRIVEN_12MA, MIO_DRIVEN_12MA);
+    mio_pad_ctrl1(6, MIO_RECV_1V8_1V5, MIO_VCCIO_1V8, MIO_DRIVEN_12MA, MIO_DRIVEN_12MA);
+
     /* GBE Configuration drive capability */
     *((volatile AL_U32 *)(0xf8803880))=0xc8000007;
     *((volatile AL_U32 *)(0xf8803888))=0xc8000007;
