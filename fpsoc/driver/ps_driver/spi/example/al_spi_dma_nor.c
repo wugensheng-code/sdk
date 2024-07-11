@@ -34,6 +34,17 @@ AL_U8 CACHE_LINE_ALIGN DmaRecvData[500] = { 0x0 };
 /************************** Function Prototypes ******************************/
 
 /************************** Function Definitions ******************************/
+/**
+ *
+ * This function sends a reset command to the NOR flash memory using DMA.
+ * It sets the transmission mode to SPI_TX_ONLY and sends the reset command.
+ * If the operation fails, it logs an error message.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 AL_VOID AlNorDma_Reset(AL_VOID)
 {
     AL_S32 ret = AL_OK;
@@ -47,7 +58,17 @@ AL_VOID AlNorDma_Reset(AL_VOID)
     }
 }
 
-
+/**
+ *
+ * This function sends a write enable command to the NOR flash memory using DMA.
+ * It sets the transmission mode to SPI_TX_ONLY and sends the write enable command.
+ * If the operation fails, it logs an error message.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 AL_VOID AlNorDma_Wren(AL_VOID)
 {
     AL_S32 ret = AL_OK;
@@ -61,6 +82,17 @@ AL_VOID AlNorDma_Wren(AL_VOID)
     }
 }
 
+/**
+ *
+ * This function repeatedly sends a read status register command to the NOR flash memory
+ * using DMA until the write-in-progress bit is cleared, indicating that the previous
+ * write or erase operation is complete. If the operation fails, it logs an error message.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 AL_VOID AlNorDma_WaitWip(AL_VOID)
 {
     AL_S32 ret = AL_OK;
@@ -79,6 +111,17 @@ AL_VOID AlNorDma_WaitWip(AL_VOID)
     } while (DmaRecvData[0] & SR_WIP);
 }
 
+/**
+ *
+ * This function sends a sector erase command to the NOR flash memory using DMA.
+ * It sets the transmission mode to SPI_TX_ONLY and sends the command along with the address
+ * of the sector to erase. If the operation fails, it logs an error message.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 AL_VOID AlNorDma_ReadStatus(AL_VOID)
 {
     AL_S32 ret = AL_OK;
@@ -95,7 +138,17 @@ AL_VOID AlNorDma_ReadStatus(AL_VOID)
 #endif
 }
 
-
+/**
+ *
+ * This function sends a sector erase command to the NOR flash memory using DMA.
+ * It sets the transmission mode to SPI_TX_ONLY and sends the command along with the address
+ * of the sector to erase. If the operation fails, it logs an error message.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 AL_VOID AlNorDma_Erase(AL_VOID)
 {
     AL_S32 ret = AL_OK;
@@ -111,7 +164,17 @@ AL_VOID AlNorDma_Erase(AL_VOID)
     }
 }
 
-
+/**
+ *
+ * This function sends a page read command to the NOR flash memory using DMA.
+ * It sets the transmission mode to SPI_EEPROM and sends the command along with the address
+ * of the page to read. If the operation fails, it logs an error message.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 AL_VOID AlNorDma_ReadPage(AL_VOID)
 {
     AL_S32 ret = AL_OK;
@@ -127,7 +190,17 @@ AL_VOID AlNorDma_ReadPage(AL_VOID)
     }
 }
 
-
+/**
+ *
+ * This function sends a page program command to the NOR flash memory using DMA.
+ * It sets the transmission mode to SPI_TX_ONLY and sends the command along with the address
+ * of the page to write and the data to be written. If the operation fails, it logs an error message.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 AL_VOID AlNorDma_WritePage(AL_VOID)
 {
     AL_S32 ret = AL_OK;
@@ -148,6 +221,17 @@ AL_VOID AlNorDma_WritePage(AL_VOID)
     }
 }
 
+/**
+ *
+ * This function sends a read ID command to the NOR flash memory using DMA.
+ * It sets the transmission mode to SPI_EEPROM and sends the command. The ID read from the
+ * NOR flash memory is stored in a predefined array. If the operation fails, it logs an error message.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 AL_VOID AlNorDma_ReadId(AL_VOID)
 {
     AL_S32 ret = AL_OK;
@@ -162,6 +246,17 @@ AL_VOID AlNorDma_ReadId(AL_VOID)
     AL_LOG(AL_LOG_LEVEL_ERROR, "DMA Read Flash ID:0x%x, 0x%x, 0x%x\r\n", FlashId[0], FlashId[1], FlashId[2]);
 }
 
+/**
+ *
+ * This function initializes the SPI and DMA, performs a series of NOR flash memory operations
+ * including reset, read ID, write enable, erase, write, and read. It checks the results of erase
+ * and write operations and logs the outcome. If any operation fails, it logs an error message.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 AL_VOID main(AL_VOID)
 {
     AL_U32 i;

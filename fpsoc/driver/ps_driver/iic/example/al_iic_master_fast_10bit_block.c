@@ -17,6 +17,18 @@
 #define IIC_MUX_ADDRESS             0x74
 #define FMC_IIC_CHANNEL             0x10
 
+/**
+ *
+ * This function configures the I2C multiplexer to connect to the specified channel,
+ * allowing communication with devices connected to that channel. It sends a command
+ * to the multiplexer to set the channel, using the I2C address of the multiplexer.
+ *
+ * @param Handle Pointer to the IIC HAL structure. This structure contains the configuration
+ *               and state information required by the HAL functions to manage the I2C operations.
+ *
+ * @return AL_S32 Returns AL_OK if the operation was successful, otherwise returns an error code.
+ *
+ */
 AL_S32 static AlIic_MuxInit(AL_IIC_HalStruct *Handle)
 {
     AL_S32 Ret;
@@ -32,6 +44,17 @@ AL_S32 static AlIic_MuxInit(AL_IIC_HalStruct *Handle)
     return AL_OK;
 }
 
+/**
+ *
+ * This function showcases the process of initializing an I2C interface in master mode with a 10-bit
+ * addressing scheme. It sends a predefined block of data to a slave device and then receives a block
+ * of data from the same device. The function demonstrates setting up the I2C, including switching
+ * the address mode to 10-bit, setting the I2C rate, and handling data transmission and reception.
+ *
+ * @return Returns AL_OK if both send and receive operations were successful. If any
+ *         operation fails, it returns an error code indicating the failure reason.
+ *
+ */
 AL_S32 AlIic_MasterFast10BitExample()
 {
     AL_S32 Ret;
@@ -121,6 +144,15 @@ AL_S32 AlIic_MasterFast10BitExample()
     return AL_OK;
 }
 
+/**
+ *
+ * This function serves as the starting point of the program. It calls the AlIic_MasterFast10BitExample
+ * function to demonstrate I2C communication using a 10-bit addressing mode. The function returns 0
+ * upon successful completion of the demonstration.
+ *
+ * @return int Returns 0 upon successful completion.
+ *
+ */
 int main()
 {
     AlIic_MasterFast10BitExample();

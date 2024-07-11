@@ -54,6 +54,17 @@ static AL_VOID AlAdc_EventHandler(AL_ADC_EventStruct AdcEvent, AL_VOID *Callback
 
 /************************** Function Definitions ******************************/
 
+/**
+ *
+ * Initializes the ADC and starts the ADC alarm function test. It logs the test start,
+ * calls AlAdc_AlarmFunc_Test to perform the test, and logs the result. If the test fails,
+ * it logs an error message and returns the error code.
+ *
+ * @param  None.
+ *
+ * @return AL_S32 Returns AL_OK if the test is successful, or an error code if the test fails.
+ *
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -71,6 +82,19 @@ AL_S32 main(AL_VOID)
     return AL_OK;
 }
 
+/**
+ *
+ * This function initializes the ADC hardware with specified configurations, starts the ADC
+ * with interrupt mode, and enters an infinite loop to simulate continuous operation. It
+ * stops the ADC interrupt mode before returning. If any step fails, it logs an error message
+ * and returns the error code.
+ *
+ * @param  None.
+ *
+ * @return AL_S32 Returns AL_OK if the ADC alarm functionality works as expected, or an error
+ * code if initialization or starting the ADC fails.
+ *
+ */
 static AL_S32 AlAdc_AlarmFunc_Test(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -97,6 +121,18 @@ static AL_S32 AlAdc_AlarmFunc_Test(AL_VOID)
     return AL_OK;
 }
 
+/**
+ *
+ * This function is called when an ADC event occurs. It checks the type of event (data greater
+ * than high threshold or data less than low threshold) and logs the channel number and value
+ * for each active channel. The function is designed to be used as a callback with ADC interrupts.
+ *
+ * @param AdcEvent The ADC event structure containing details about the event.
+ * @param CallbackRef A pointer to user-defined data, in this case, an AL_ADC_HalStruct object.
+ *
+ * @return None.
+ *
+ */
 static AL_VOID AlAdc_EventHandler(AL_ADC_EventStruct AdcEvent, AL_VOID *CallbackRef)
 {
     AL_S32 Index;

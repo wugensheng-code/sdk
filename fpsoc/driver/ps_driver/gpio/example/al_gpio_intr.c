@@ -24,6 +24,13 @@
 #define BANK_INTR
 
 
+/**
+ *
+ * This function demonstrates how to trigger an interrupt for a specific GPIO bank or a specific pin.
+ *
+ * @return AL_OK if successful.
+ *
+ */
 AL_S32 AlGpio_Hal_Intr_Example()
 {
     AL_GPIO_HalStruct *GPIO;

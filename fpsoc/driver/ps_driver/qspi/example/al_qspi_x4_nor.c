@@ -41,6 +41,14 @@ AL_U8 FlashId[10] = { 0x0 };
 /************************** Function Prototypes ******************************/
 
 /************************** Function Definitions ******************************/
+/**
+ * Resets the NOR flash memory using the Infineon specific software reset command.
+ * This function configures the QSPI controller for transmission only mode, sets the address length,
+ * and sends the reset command to the NOR flash.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNor_Reset(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -57,6 +65,14 @@ AL_VOID AlNor_Reset(AL_VOID)
     }
 }
 
+/**
+ * Enables write operations on the NOR flash memory by sending the Write Enable (WREN) command.
+ * This function sets the QSPI controller to transmission only mode, specifies the address length,
+ * instruction length, and the transaction type before sending the WREN command.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNor_Wren(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -76,6 +92,14 @@ AL_VOID AlNor_Wren(AL_VOID)
     }
 }
 
+/**
+ * Waits for the Write In Progress (WIP) bit to clear in the NOR flash's status register.
+ * This function repeatedly reads the status register until the WIP bit is cleared, indicating
+ * that the NOR flash is ready for further operations. It uses EEPROM mode for transactions.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNor_WaitWip(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -100,7 +124,14 @@ AL_VOID AlNor_WaitWip(AL_VOID)
     } while (RecvData[0] & SR_WIP);
 }
 
-
+/**
+ * Reads the status register of the NOR flash memory.
+ * This function configures the QSPI controller for EEPROM mode transactions and reads the status
+ * register to check the current status of the NOR flash.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNor_ReadStatus(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -124,7 +155,14 @@ AL_VOID AlNor_ReadStatus(AL_VOID)
 
 
 
-
+/**
+ * Erases the entire NOR flash memory.
+ * This function sends the Chip Erase (CE) command to the NOR flash, which erases all data stored
+ * in the memory. It sets the QSPI controller to transmission only mode before sending the command.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNor_EraseChip(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -140,7 +178,14 @@ AL_VOID AlNor_EraseChip(AL_VOID)
     }
 }
 
-
+/**
+ * Reads a page from the NOR flash memory using the 1-1-4 fast read command.
+ * This function sets the QSPI controller for reception only mode, specifies the address length,
+ * and sends the 1-1-4 fast read command along with the address to read data from the NOR flash.
+ *
+ * @param addr The address of the page to read from the NOR flash.
+ * @return None.
+ */
 AL_VOID AlNor_ReadPage_1_1_4(AL_U32 addr)
 {
     AL_S32 Ret = AL_OK;
@@ -162,7 +207,14 @@ AL_VOID AlNor_ReadPage_1_1_4(AL_U32 addr)
     }
 }
 
-
+/**
+ * Writes a page to the NOR flash memory using the 1-1-4 page program command.
+ * This function prepares the data to be written, sets the QSPI controller to transmission only mode,
+ * specifies the address length, and sends the 1-1-4 page program command along with the address and data.
+ *
+ * @param addr The address of the page to write to the NOR flash.
+ * @return None.
+ */
 AL_VOID AlNor_WritePage_1_1_4(AL_U32 addr)
 {
     AL_S32 Ret = AL_OK;
@@ -188,6 +240,14 @@ AL_VOID AlNor_WritePage_1_1_4(AL_U32 addr)
     }
 }
 
+/**
+ * Writes a page to the NOR flash memory using the standard page program command.
+ * This function prepares the data to be written, sets the QSPI controller to transmission only mode,
+ * specifies the address length, and sends the standard page program command along with the address and data.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AL_NOR_WRITEPAGE(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -213,7 +273,14 @@ AL_VOID AL_NOR_WRITEPAGE(AL_VOID)
     }
 }
 
-
+/**
+ * Reads the identification (ID) of the NOR flash memory.
+ * This function sends the Read ID (RDID) command to the NOR flash and reads the returned ID.
+ * It configures the QSPI controller for EEPROM mode transactions before sending the command.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNor_ReadId(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -233,15 +300,17 @@ AL_VOID AlNor_ReadId(AL_VOID)
 }
 
 
-
 /**
- * This function is set norflash QE bit
- * @param   SetQuadCmd is set QE bit cmd
- * @param   ReadQuadCmd is read QE bit cmd
- * @param   QuadPos is the location of the QE bit
- * @return  Different manufacturers of flash require different parameters to be passed
- * @note
-*/
+ * Enables the Quad mode in the NOR flash memory by setting a specific bit in a configuration register.
+ * This function first reads the current value of the configuration register, modifies it to enable Quad mode,
+ * and then writes it back to the NOR flash. It ensures the NOR flash is ready for write operations before
+ * and after modifying the configuration register by calling AlNor_Wren() and AlNor_WaitWip().
+ *
+ * @param SetQuadCmd The command to write the configuration register to enable Quad mode.
+ * @param ReadQuadCmd The command to read the current value of the configuration register.
+ * @param QuadPos The bit position in the configuration register that enables Quad mode.
+ * @return AL_OK if the operation was successful, otherwise an error code.
+ */
 AL_S32 AlNor_SetQuad1ByteMode(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd, AL_U8 QuadPos)
 {
     AL_S32  Ret = AL_OK;
@@ -280,21 +349,15 @@ AL_S32 AlNor_SetQuad1ByteMode(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd, AL_U8 QuadPos
 }
 
 
-/*
- * function to set QSPI quad mode
- * The setting step;
- * -- Read status1 by ReadQuadCmd1
- * -- Read status2 by ReadQuadCmd2
- * if QuadPos < 8
- * -- set status register: SetQuadCmd （status1 | (0x01 << QuadPos)）status2
-  * if QuadPos > 8
- * -- set status register: SetQuadCmd status1 (status2 | (0x01 << QuadPos - 8))
+/**
+ * Sets the Quad 2-Byte mode for the NOR flash device.
  *
- *  for example GD25LQ255E
- * Read Status Register-1        :05H (S7-S0) (cont.)
- * Read Status Register-2        :35H (S15-S8) (cont.)
- * Write Status Register-1&2     :01H S7-S0 S15-S8
-*/
+ * @param SetQuadCmd The command to set the Quad 2-Byte mode.
+ * @param ReadQuadCmd1 The command to read the Quad 2-Byte mode.
+ * @param ReadQuadCmd2 The command to read the Quad 2-Byte mode.
+ * @param QuadPos The position of the Quad bit in the command.
+ * @return Returns AL_OK if successful, otherwise returns an error code.
+ */
 AL_S32 AlNor_SetQuad2ByteMode(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd1, AL_U8 ReadQuadCmd2, AL_U8 QuadPos)
 {
     AL_S32  Ret = AL_OK;
@@ -344,6 +407,9 @@ AL_S32 AlNor_SetQuad2ByteMode(AL_U8 SetQuadCmd, AL_U8 ReadQuadCmd1, AL_U8 ReadQu
 
 
 
+/**
+ *  Main function for the FPSoc Qspi X4 Test.
+ */
 AL_VOID main(AL_VOID)
 {
     AL_U32 i;

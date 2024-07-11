@@ -29,12 +29,19 @@ AL_DMACAHB_ChInitStruct     Iic1RxDmacChConfig;
 AL_DMACAHB_HalStruct        *Iic1RxDmacHandle = AL_NULL;
 
 /**
- * This function action when receive or send data.
- * @param   IicEvent Pointer to AL_IIC_EventStruct contains event datas
- * @param   CallbackRef Pointer to a AL_IIC_HalStruct structure that contains iic dev instance
- * @return
- * @note
-*/
+ *
+ * This function is called when an IIC event occurs. It handles various IIC events such as
+ * receive underflow, receive overflow, transmit overflow, read request, transmit abort,
+ * receive done, transmit done, activity, stop detection, start detection, and general call.
+ * For most events, it sends the event data to the TxRxEventQueue. For the TX abort event,
+ * it also logs an error message with the abort source.
+ *
+ * @param IicEvent Pointer to an AL_IIC_EventStruct structure that contains event data.
+ * @param CallbackRef Pointer to a user-defined callback reference, typically an instance of AL_IIC_HalStruct.
+ *
+ * @return None.
+ *
+ */
 static AL_VOID AlIic_DefEventCallBack(AL_IIC_EventStruct *IicEvent, void *CallbackRef)
 {
     AL_IIC_HalStruct *Handle = (AL_IIC_HalStruct *)CallbackRef;
@@ -74,15 +81,18 @@ static AL_VOID AlIic_DefEventCallBack(AL_IIC_EventStruct *IicEvent, void *Callba
 }
 
 /**
- * This function action when master send data.
- * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic dev instance
- * @param   Event Pointer to AL_IIC_EventStruct contains event datas
- * @param   Timeout in block mode
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * This function waits for a master transmit operation to complete. It checks for the completion
+ * of the operation by receiving an event from the TxRxEventQueue. If the device is configured
+ * to stop after the operation, it waits until the master activity flag is cleared.
+ *
+ * @param Handle Pointer to a AL_IIC_HalStruct structure that contains the IIC device instance.
+ * @param Event Pointer to an AL_IIC_EventStruct structure to receive the event data.
+ * @param Timeout Timeout duration in block mode.
+ *
+ * @return AL_OK if the operation was successful, otherwise an error code.
+ *
+ */
 static AL_S32 AlIic_Hal_WaitMasterTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_IIC_EventStruct *Event, AL_U32 Timeout)
 {
     AL_S32 Ret;
@@ -96,15 +106,16 @@ static AL_S32 AlIic_Hal_WaitMasterTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_I
 }
 
 /**
- * This function action when master receive data.
- * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic dev instance
- * @param   Event Pointer to AL_IIC_EventStruct contains event datas
- * @param   Timeout in block mode
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * Similar to AlIic_Hal_WaitMasterTxDoneOrTimeout, but for receive operations.
+ *
+ * @param Handle Pointer to a AL_IIC_HalStruct structure that contains the IIC device instance.
+ * @param Event Pointer to an AL_IIC_EventStruct structure to receive the event data.
+ * @param Timeout Timeout duration in block mode.
+ *
+ * @return AL_OK if the operation was successful, otherwise an error code.
+ *
+ */
 static AL_S32 AlIic_Hal_WaitMasterRxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_IIC_EventStruct *Event, AL_U32 Timeout)
 {
     AL_S32 Ret;
@@ -118,15 +129,16 @@ static AL_S32 AlIic_Hal_WaitMasterRxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_I
 }
 
 /**
- * This function action when slave send data.
- * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic dev instance
- * @param   Event Pointer to AL_IIC_EventStruct contains event datas
- * @param   Timeout in block mode
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * This function waits for a slave transmit operation to complete by checking the slave activity flag.
+ *
+ * @param Handle Pointer to a AL_IIC_HalStruct structure that contains the IIC device instance.
+ * @param Event Pointer to an AL_IIC_EventStruct structure to receive the event data.
+ * @param Timeout Timeout duration in block mode.
+ *
+ * @return AL_OK if the operation was successful, otherwise an error code.
+ *
+ */
 static AL_S32 AlIic_Hal_WaitSlaveTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_IIC_EventStruct *Event, AL_U32 Timeout)
 {
     AL_S32 Ret;
@@ -138,15 +150,16 @@ static AL_S32 AlIic_Hal_WaitSlaveTxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_II
 }
 
 /**
- * This function action when slave receive data.
- * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic dev instance
- * @param   Event Pointer to AL_IIC_EventStruct contains event datas
- * @param   Timeout in block mode
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * Similar to AlIic_Hal_WaitSlaveTxDoneOrTimeout, but for receive operations.
+ *
+ * @param Handle Pointer to a AL_IIC_HalStruct structure that contains the IIC device instance.
+ * @param Event Pointer to an AL_IIC_EventStruct structure to receive the event data.
+ * @param Timeout Timeout duration in block mode.
+ *
+ * @return AL_OK if the operation was successful, otherwise an error code.
+ *
+ */
 static AL_S32 AlIic_Hal_WaitSlaveRxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_IIC_EventStruct *Event, AL_U32 Timeout)
 {
     AL_S32 Ret;
@@ -158,17 +171,19 @@ static AL_S32 AlIic_Hal_WaitSlaveRxDoneOrTimeout(AL_IIC_HalStruct *Handle, AL_II
 }
 
 /**
- * This function initialize the IIC mode according to the specified
- *          parameters in the AL_IIC_InitStruct and initialize the associated handle.
- * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic dev instance
- * @param   DevId is hardware module id
- * @param   InitConfig pointer to a AL_IIC_InitStruct structure
- *          that contains the configuration information for the specified IIC peripheral
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note
-*/
+ *
+ * This function initializes the IIC module based on the provided hardware configuration and
+ * initialization parameters. It also registers an event callback function for IIC events.
+ *
+ * @param Handle Double pointer to a AL_IIC_HalStruct structure for returning the initialized IIC device instance.
+ * @param DevId Hardware module ID.
+ * @param InitConfig Pointer to an AL_IIC_InitStruct structure containing the configuration information.
+ * @param Callback Event callback function to be registered.
+ *
+ * @return AL_OK if the initialization was successful, otherwise an error code.
+ *
+ *
+ */
 AL_S32 AlIic_Hal_Init(AL_IIC_HalStruct **Handle, AL_U32 DevId,
                       AL_IIC_InitStruct *InitConfig, AL_IIC_EventCallBack Callback)
 {
@@ -211,17 +226,19 @@ AL_S32 AlIic_Hal_Init(AL_IIC_HalStruct **Handle, AL_U32 DevId,
 }
 
 /**
- * This function master send an amount of data in blocking & interrupt mode
- * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
- * @param   SlaveAddr Slave address
- * @param   Data Pointer to data buffer
- * @param   Size Amount of data to be sent
- * @param   Timeout Timeout duration
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * This function sends data to a specified slave address in either blocking or interrupt mode.
+ * It waits for the transmit operation to complete or timeout.
+ *
+ * @param Handle Pointer to a AL_IIC_HalStruct structure that contains the IIC device instance.
+ * @param SlaveAddr Slave address.
+ * @param Data Pointer to the data buffer to be sent.
+ * @param Size Amount of data to be sent.
+ * @param Timeout Timeout duration.
+ *
+ * @return AL_OK if the operation was successful, otherwise an error code.
+ *
+ */
 AL_S32 AlIic_Hal_MasterSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -260,19 +277,17 @@ AL_S32 AlIic_Hal_MasterSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
 }
 
 /**
+ *
  * This function master send an amount of data in DMA & blocking & interrupt mode
- * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
- * @param   SlaveAddr Slave address
- * @param   Data Pointer to data buffer
- * @param   Size Amount of data to be sent
- * @param   Timeout Timeout duration
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note The data to be sent must be 32-bit. During DMA transmission,
- *       32-bit data is directly written to the IC_DATA_CMD register,
- *       where the lower 8 bits are actual data and bit8 to bit10 are commands.
- *       For details, refer to the IC_DATA_CMD register
+ *
+ * @param Handle Pointer to a AL_IIC_HalStruct structure that contains the IIC device instance.
+ * @param SlaveAddr Slave address.
+ * @param Data Pointer to the data buffer to be sent.
+ * @param Size Amount of data to be sent.
+ * @param Timeout Timeout duration.
+ *
+ * @return AL_OK if the operation was successful, otherwise an error code.
+ *
 */
 AL_S32 AlIic_Hal_MasterDmaSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U32 *Data, AL_U32 Size, AL_U32 Timeout)
 {
@@ -362,18 +377,18 @@ AL_S32 AlIic_Hal_MasterDmaSendDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAd
     return Ret;
 }
 
-
 /**
- * This function master send an amount of data in polling(non interrupt) & blocking mode.
- * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
- * @param   SlaveAddr Slave address
- * @param   Data Pointer to data buffer
- * @param   Size Amount of data to be sent
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * This function sends data to the IIC bus in master mode using polling.
+ *
+ * @param Handle Pointer to the AL_IIC_HalStruct structure.
+ * @param SlaveAddr The address of the slave device.
+ * @param Data Pointer to the data buffer to be sent.
+ * @param Size The size of the data buffer.
+ *
+ * @return Returns AL_OK if successful, otherwise an error code.
+ *
+ */
 AL_S32 AlIic_Hal_MasterSendDataPolling(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U8 *Data, AL_U32 Size)
 {
     AL_S32 Ret = AL_OK;
@@ -393,17 +408,18 @@ AL_S32 AlIic_Hal_MasterSendDataPolling(AL_IIC_HalStruct *Handle, AL_U16 SlaveAdd
 }
 
 /**
- * This function master receive an amount of data in blocking & interrupt mode
- * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
- * @param   SlaveAddr Slave address
- * @param   Data Pointer to data buffer
- * @param   Size Amount of data to be sent
- * @param   Timeout Timeout duration
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * This function is used to receive a block of data from an I2C slave device in master mode.
+ *
+ * @param Handle Pointer to the AL_IIC_HalStruct representing the I2C handle.
+ * @param SlaveAddr The 7-bit I2C slave address.
+ * @param Data Pointer to the buffer where the received data will be stored.
+ * @param Size The number of bytes to receive.
+ * @param Timeout The timeout value in milliseconds.
+ *
+ * @return Returns AL_OK if the operation is successful. Otherwise, it returns an error code.
+ *
+ */
 AL_S32 AlIic_Hal_MasterRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -438,18 +454,20 @@ AL_S32 AlIic_Hal_MasterRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr,
         return (Ret != AL_OK) ? Ret : AL_IIC_EVENTS_TO_ERRS(IicEvent.Events);
 }
 
+
 /**
- * This function master receive an amount of data in DMA & blocking & interrupt mode
- * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
- * @param   SlaveAddr Slave address
- * @param   Data Pointer to data buffer
- * @param   Size Amount of data to be receive
- * @param   Timeout Timeout duration
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * This function receives a block of data from the specified slave device using DMA transfer.
+ *
+ * @param Handle Pointer to the AL_IIC_HalStruct structure representing the I2C controller handle.
+ * @param SlaveAddr The address of the slave device.
+ * @param Data Pointer to the buffer where the received data will be stored.
+ * @param Size The size of the data block to receive.
+ * @param Timeout The timeout value in milliseconds for the operation.
+ *
+ * @return Returns AL_OK if the operation is successful, or an error code if it fails.
+ *
+ */
 AL_S32 AlIic_Hal_MasterDmaRecvDataBlock(AL_IIC_HalStruct *Handle,AL_U16 SlaveAddr, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -539,17 +557,21 @@ AL_S32 AlIic_Hal_MasterDmaRecvDataBlock(AL_IIC_HalStruct *Handle,AL_U16 SlaveAdd
     return Ret;
 }
 
+
 /**
- * This function master receive an amount of data in polling(non interrupt) & blocking mode.
- * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
- * @param   SlaveAddr Slave address
- * @param   Data Pointer to data buffer
- * @param   Size Amount of data to be sent
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * This function is responsible for performing a polling-based master receive operation on the IIC bus.
+ * It locks the handle, calls the AlIic_Dev_MasterRecvDataPolling function to perform the receive operation,
+ * and then releases the lock before returning the result.
+ *
+ * @param Handle Pointer to the AL_IIC_HalStruct handle structure.
+ * @param SlaveAddr The address of the slave device.
+ * @param Data Pointer to the buffer where the received data will be stored.
+ * @param Size The number of bytes to receive.
+ *
+ * @return Returns AL_OK if the operation is successful, otherwise returns an error code.
+ *
+ */
 AL_S32 AlIic_Hal_MasterRecvDataPolling(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U8 *Data, AL_U32 Size)
 {
     AL_S32 Ret = AL_OK;
@@ -569,17 +591,19 @@ AL_S32 AlIic_Hal_MasterRecvDataPolling(AL_IIC_HalStruct *Handle, AL_U16 SlaveAdd
     return Ret;
 }
 
+
 /**
- * This function slave send an amount of data in blocking & interrupt mode
- * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
- * @param   Data Pointer to data buffer
- * @param   Size Amount of data to be sent
- * @param   Timeout Timeout duration
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * This function sends a data block to the IIC slave device specified by the given handle.
+ *
+ * @param Handle Pointer to the AL_IIC_HalStruct representing the IIC handle.
+ * @param Data Pointer to the data block to be sent.
+ * @param Size Size of the data block in bytes.
+ * @param Timeout Timeout value in milliseconds.
+ *
+ * @return Returns AL_OK if the data block was sent successfully, or an error code if an error occurred.
+ *
+ */
 AL_S32 AlIic_Hal_SlaveSendDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -615,17 +639,23 @@ AL_S32 AlIic_Hal_SlaveSendDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
         return (Ret != AL_OK) ? Ret : AL_IIC_EVENTS_TO_ERRS(IicEvent.Events);
 }
 
+
 /**
- * This function slave receive an amount of data in blocking & interrupt mode
- * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
- * @param   Data Pointer to data buffer
- * @param   Size Amount of data to be sent
- * @param   Timeout Timeout duration
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * This function receives a block of data from the I2C slave device specified by the given handle.
+ * It locks the handle, calls the AlIic_Dev_SlaveRecvData function to receive the data, and then waits
+ * until the data receive is done or a timeout occurs. If a timeout occurs, the function stops the
+ * slave receive operation and releases the lock. The function returns the status of the operation.
+ *
+ * @param Handle Pointer to the AL_IIC_HalStruct representing the I2C handle.
+ * @param Data Pointer to the buffer where the received data will be stored.
+ * @param Size The size of the data to receive, in bytes.
+ * @param Timeout The timeout value in milliseconds.
+ *
+ * @return The status of the operation. Returns AL_OK if the data receive is successful, or an error code
+ *         if an error occurs.
+ *
+ */
 AL_S32 AlIic_Hal_SlaveRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -662,15 +692,17 @@ AL_S32 AlIic_Hal_SlaveRecvDataBlock(AL_IIC_HalStruct *Handle, AL_U8 *Data, AL_U3
     return Ret;
 }
 
+
 /**
- * This function master set command option, like stop、restart etc
- * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
- * @param   CmdOption Command to be set
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * This function sets the command option for the IIC master specified by the given handle.
+ *
+ * @param Handle Pointer to the AL_IIC_HalStruct representing the IIC master.
+ * @param CmdOption The command option to be set.
+ *
+ * @return AL_S32 Returns AL_OK if successful, otherwise returns an error code.
+ *
+ */
 AL_S32 AlIic_Hal_MasterSetCmdOption(AL_IIC_HalStruct *Handle, AL_IIC_CmdOptionEnum CmdOption)
 {
     AL_S32 Ret = AL_OK;
@@ -693,13 +725,14 @@ AL_S32 AlIic_Hal_MasterSetCmdOption(AL_IIC_HalStruct *Handle, AL_IIC_CmdOptionEn
 }
 
 /**
- * This function master get current command option, like stop、restart etc
- * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
- * @return
- *          - Command for function success
- *          - AL_IIC_CMD_OPTION_NONE for function failure
- * @note
-*/
+ *
+ * This function retrieves the command option for the IIC master.
+ *
+ * @param Handle Pointer to the AL_IIC_HalStruct instance.
+ *
+ * @return The command option for the IIC master.
+ *
+ */
 AL_IIC_CmdOptionEnum AlIic_Hal_MastertGetCmdOption(AL_IIC_HalStruct *Handle)
 {
     AL_S32 Ret = AL_OK;
@@ -719,16 +752,18 @@ AL_IIC_CmdOptionEnum AlIic_Hal_MastertGetCmdOption(AL_IIC_HalStruct *Handle)
     return CmdOption;
 }
 
+
 /**
- * This function excute operations to set
- * @param   Handle Pointer to a AL_IIC_HalStruct structure that contains iic device instance
- * @param   Cmd is io ctl cmd to AL_IIC_IoCtlCmdEnum
- * @param   Data Pointer to cmd args
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * This function performs an I2C HAL IOCTL operation specified by the given command and data.
+ *
+ * @param Handle Pointer to the AL_IIC_HalStruct representing the I2C HAL handle.
+ * @param Cmd The I2C IOCTL command to be executed.
+ * @param Data Pointer to the data associated with the IOCTL command.
+ *
+ * @return Returns AL_OK if the operation is successful, otherwise returns an error code.
+ *
+ */
 AL_S32 AlIic_Hal_IoCtl(AL_IIC_HalStruct *Handle, AL_IIC_IoCtlCmdEnum Cmd, AL_VOID *Data)
 {
     AL_S32 Ret = AL_OK;

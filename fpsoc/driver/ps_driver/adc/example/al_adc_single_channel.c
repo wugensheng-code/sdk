@@ -52,6 +52,19 @@ static AL_S32 AlAdc_SingleChannelMode_Test(AL_VOID);
 
 /************************** Function Definitions ******************************/
 
+/**
+ *
+ * This function logs the start of the ADC single channel mode read data test, enters an infinite loop
+ * where it continuously calls AlAdc_SingleChannelMode_Test(), and logs the result of the test. If the test
+ * fails, it logs an error message and returns the error code. Otherwise, it logs a success message.
+ *
+ * Note: The infinite loop makes this function never return under normal operation, which might not be
+ * intended. Consider reviewing the logic related to the infinite loop.
+ *
+ * @param  None.
+ *
+ * @return AL_S32 Returns AL_OK if the test is successful, or an error code if the test fails.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -73,6 +86,18 @@ AL_S32 main(AL_VOID)
     return AL_OK;
 }
 
+/**
+ *
+ * This function initializes the ADC hardware with specified configurations for single channel mode,
+ * starts the ADC, reads data from the configured channel, stops the ADC, and cleans up. It logs
+ * the ADC value read from the specified channel. If any step fails, it logs an error message and
+ * returns the error code.
+ *
+ * @param  None.
+ *
+ * @return AL_S32 Returns AL_OK if the ADC single channel mode operates correctly, or an error code
+ * if initialization, starting, or stopping the ADC fails.
+ */
 static AL_S32 AlAdc_SingleChannelMode_Test(AL_VOID)
 {
     AL_S32 Ret = AL_OK;

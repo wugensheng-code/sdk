@@ -69,11 +69,12 @@ extern AL_QSPI_HwConfigStruct AlQSPI_HwCfg[AL_QSPI_NUM_INSTANCE];
 
 /********************************************************/
 /**
- * This function look up hardware config structure
- * @param   DeviceId is hardware module id
- * @return  hardware config structure pointer with AL_QSPI_HwConfigStruct
- * @note    None
-*/
+ * This function iterates through an array of hardware configuration structures
+ * to find the one that matches the given device ID.
+ *
+ * @param DeviceId The hardware module ID for which the configuration is sought.
+ * @return A pointer to the matching AL_QSPI_HwConfigStruct if found, otherwise NULL.
+ */
 AL_QSPI_HwConfigStruct *AlQspi_Dev_LookupConfig(AL_U32 DeviceId)
 {
     AL_U32 Index;
@@ -90,77 +91,78 @@ AL_QSPI_HwConfigStruct *AlQspi_Dev_LookupConfig(AL_U32 DeviceId)
 }
 
 /**
- * This function is checks whether the qspi AL_QSPI_DevStruct struct tx is busy
- * @param   Qspi is structure pointer to qspi device
- * @return  AL_VOID
- * @note    None
-*/
+ * This function examines the state of the QSPI device to determine if a transmit operation is in progress.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ * @return AL_TRUE if the TX is busy, otherwise AL_FALSE.
+ */
 AL_BOOL AlQspi_Dev_IsTxBusy(AL_QSPI_DevStruct *Qspi)
 {
     return (AL_BOOL)(Qspi->State & AL_QSPI_STATE_TX_BUSY);
 }
 
 /**
- * This function is checks whether the qspi AL_QSPI_DevStruct struct rx is busy
- * @param   Qspi is structure pointer to qspi device
- * @return  AL_VOID
- * @note    None
-*/
+ * Checks if the QSPI device's receive (RX) is currently busy.
+ * This function examines the state of the QSPI device to determine if a receive operation is in progress.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ * @return AL_TRUE if the RX is busy, otherwise AL_FALSE.
+ */
 AL_BOOL AlQspi_Dev_IsRxBusy(AL_QSPI_DevStruct *Qspi)
 {
     return (AL_BOOL)(Qspi->State & AL_QSPI_STATE_RX_BUSY);
 }
 
 /**
- * This function is set qspi AL_QSPI_DevStruct struct tx busy state
- * @param   Qspi is structure pointer to qspi device
- * @return  AL_VOID
- * @note    None
-*/
+ * Sets the QSPI device's transmit (TX) state to busy.
+ * This function modifies the state of the QSPI device to indicate that a transmit operation is in progress.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ */
 static AL_VOID AlQspi_Dev_SetTxBusy(AL_QSPI_DevStruct *Qspi)
 {
     Qspi->State |= AL_QSPI_STATE_TX_BUSY;
 }
 
 /**
- * This function is clear qspi AL_QSPI_DevStruct struct rx busy state
- * @param   Qspi is structure pointer to qspi device
- * @return  AL_VOID
- * @note    None
-*/
+ * Sets the QSPI device's receive (RX) state to busy.
+ * This function modifies the state of the QSPI device to indicate that a receive operation is in progress.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ */
 static AL_VOID AlQspi_Dev_SetRxBusy(AL_QSPI_DevStruct *Qspi)
 {
     Qspi->State |= AL_QSPI_STATE_RX_BUSY;
 }
 
 /**
- * This function is clear qspi AL_QSPI_DevStruct struct tx busy state
- * @param   Qspi is structure pointer to qspi device
- * @return  AL_VOID
- * @note    None
-*/
+ * Clears the QSPI device's transmit (TX) busy state.
+ * This function modifies the state of the QSPI device to indicate that no transmit operation is in progress.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ */
 static AL_VOID AlQspi_Dev_ClrTxBusy(AL_QSPI_DevStruct *Qspi)
 {
     Qspi->State &= (~AL_QSPI_STATE_TX_BUSY);
 }
 
 /**
- * This function is clear qspi AL_QSPI_DevStruct struct rx busy state
- * @param   Qspi is structure pointer to qspi device
- * @return  AL_VOID
- * @note    None
-*/
+ * Clears the QSPI device's receive (RX) busy state.
+ * This function modifies the state of the QSPI device to indicate that no receive operation is in progress.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ */
 static AL_VOID AlQspi_Dev_ClrRxBusy(AL_QSPI_DevStruct *Qspi)
 {
     Qspi->State &= (~AL_QSPI_STATE_RX_BUSY);
 }
 
 /**
- * This function prints the values of all registers in the qspi
- * @param   QSPIBaseAddr is qspi base address
- * @return  AL_VOID
- * @note    None
-*/
+ * Prints the values of all registers in the QSPI device.
+ * This function reads and logs the current value of each register within the QSPI device.
+ *
+ * @param QSPIBaseAddr The base address of the QSPI device's registers.
+ */
 AL_VOID AlQspi_Dev_DumpReg(AL_REG QSPIBaseAddr)
 {
     AL_LOG(AL_LOG_LEVEL_DEBUG, "CTRLR0:0x%x\r\n",  AL_REG32_READ(QSPIBaseAddr + QSPI_CTRLR0_OFFSET));
@@ -197,14 +199,15 @@ AL_VOID AlQspi_Dev_DumpReg(AL_REG QSPIBaseAddr)
 }
 
 /**
- * This function initializes qspi through the AL_QSPI_ConfigsStruct struct
- * @param   Qspi is structure pointer to qspi device
- * @param   InitConfig is qspi configuration parameter struct
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note    if InitConfig is null will use QSPIDefInitConfigs
-*/
+ * Initializes the QSPI device with specified hardware and configuration parameters.
+ * This function sets up the QSPI device according to the provided hardware configuration and optional initialization
+ * parameters. If no initialization parameters are provided, default settings are used.
+ *
+ * @param Qspi Pointer to the QSPI device structure to be initialized.
+ * @param HwConfig Pointer to the hardware configuration structure.
+ * @param InitConfig Pointer to the initialization configuration structure. If NULL, default settings are used.
+ * @return AL_OK if the initialization is successful, otherwise an error code indicating the type of failure.
+ */
 AL_S32 AlQspi_Dev_Init(AL_QSPI_DevStruct *Qspi, AL_QSPI_HwConfigStruct *HwConfig, AL_QSPI_ConfigsStruct *InitConfig)
 {
     if (Qspi == AL_NULL) {
@@ -240,16 +243,16 @@ AL_S32 AlQspi_Dev_Init(AL_QSPI_DevStruct *Qspi, AL_QSPI_HwConfigStruct *HwConfig
     return AL_OK;
 }
 
-
 /**
- * This function initializes qspi XIP mode
- * @param   Qspi is structure pointer to qspi device
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note    Enable the qspi xip mode to be non-continuous transfer
- *          and set the instruction to nor flash 1_4_4(0x6b)
-*/
+ * This function configures the QSPI hardware for 32-bit addressing mode, sets up various
+ * parameters such as wait cycles, clock stretch, transfer mode, address length, instruction
+ * length, transfer type, frame format, XIP mode bit, XIP DFS (Data Frame Size) fix, continuous
+ * transfer, prefetch, instruction phase, and incremental instruction. It also disables the
+ * QSPI device at the start and enables it at the end after all configurations are done.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ * @return Returns AL_QSPI_ERR_ILLEGAL_PARAM if the Qspi pointer is NULL, otherwise returns AL_OK.
+ */
 AL_S32 AlQspi_Dev_XipAddr32Init(AL_QSPI_DevStruct *Qspi)
 {
     if (Qspi == AL_NULL) {
@@ -282,14 +285,15 @@ AL_S32 AlQspi_Dev_XipAddr32Init(AL_QSPI_DevStruct *Qspi)
 }
 
 /**
- * This function initializes qspi XIP mode
- * @param   Qspi is structure pointer to qspi device
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note    Enable the qspi xip mode to be non-continuous transfer
- *          and set the instruction to nor flash 1_4_4(0x6b)
-*/
+ * This function sets up the QSPI device for 24-bit addressing suitable for DMA operations.
+ * It configures the device with specific settings for wait cycles, clock stretch, transfer mode,
+ * address length, instruction length, transfer type, frame format, XIP mode bit, XIP DFS fix,
+ * continuous transfer, prefetch, instruction phase, and incremental instruction. The function
+ * disables the QSPI device at the beginning and enables it after all configurations are applied.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ * @return Returns AL_QSPI_ERR_ILLEGAL_PARAM if the Qspi pointer is NULL, otherwise returns AL_OK.
+ */
 AL_S32 AlQspi_Dev_XipAddr24InitForDMA(AL_QSPI_DevStruct *Qspi)
 {
     if (Qspi == AL_NULL) {
@@ -323,14 +327,15 @@ AL_S32 AlQspi_Dev_XipAddr24InitForDMA(AL_QSPI_DevStruct *Qspi)
 }
 
 /**
- * This function initializes qspi XIP mode
- * @param   Qspi is structure pointer to qspi device
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note    Enable the qspi xip mode to be non-continuous transfer
- *          and set the instruction to nor flash 1_4_4(0xeb)
-*/
+ * This function prepares the QSPI device for operations with 24-bit addressing. It configures
+ * the device with settings for wait cycles, clock stretch, transfer mode, address length,
+ * instruction length, transfer type, frame format, XIP mode bit, XIP DFS fix, continuous
+ * transfer, prefetch, instruction phase, and incremental instruction. The QSPI device is
+ * disabled at the start of the function and enabled at the end after applying all settings.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ * @return Returns AL_QSPI_ERR_ILLEGAL_PARAM if the Qspi pointer is NULL, otherwise returns AL_OK.
+ */
 AL_S32 AlQspi_Dev_XipAddr24Init(AL_QSPI_DevStruct *Qspi)
 {
     if (Qspi == AL_NULL) {
@@ -363,15 +368,21 @@ AL_S32 AlQspi_Dev_XipAddr24Init(AL_QSPI_DevStruct *Qspi)
 }
 
 /**
- * This function is qspi send data
- * @param   Qspi is structure pointer to qspi device
- * @param   SendBuf is send data buffer pointer
- * @param   SendSize is receive data size
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note    None
-*/
+ * This function is responsible for sending data through the QSPI device. It checks if the
+ * QSPI device is ready and not busy before sending data. The function also configures the
+ * data frame size based on the address length and instruction length. It sets up the QSPI
+ * device with the appropriate configurations for data frame size, address length, instruction
+ * length, transfer type, wait cycles, and frame format. The function calculates the send level
+ * and adjusts the TX FIFO start level accordingly. It also handles the clock stretch setting
+ * if enabled.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ * @param SendBuf Pointer to the buffer containing the data to be sent.
+ * @param SendSize Size of the data to be sent, in bytes.
+ * @return Returns AL_QSPI_ERR_ILLEGAL_PARAM if the Qspi pointer is NULL or SendSize is 0,
+ *         AL_QSPI_ERR_NOT_READY if the QSPI device is not ready, AL_QSPI_ERR_NOT_SUPPORT if
+ *         the TX FIFO is full, AL_QSPI_ERR_BUSY if the QSPI device is busy, otherwise returns AL_OK.
+ */
 AL_S32 AlQspi_Dev_SendData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 SendSize)
 {
     AL_U32 SendLevel, SendValue = 0xFFFFFFFF, TempSendSize;
@@ -549,15 +560,15 @@ AL_S32 AlQspi_Dev_SendData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 SendS
 }
 
 /**
- * This function is to start qspi receive data
- * @param   Qspi is structure pointer to qspi device
- * @param   ReceiveBuf is send data buffer pointer
- * @param   ReceiveSize is receive data size
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note    None
-*/
+ * This function is responsible for receiving data from a QSPI device. It checks for various conditions
+ * such as null pointers, readiness of the QSPI device, and whether the receive FIFO is empty or not.
+ * It also sets the data frame size based on the receive size and configures the QSPI hardware for receiving data.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ * @param ReceiveBuf Pointer to the buffer where received data will be stored.
+ * @param ReceiveSize Size of the data to be received.
+ * @return Returns AL_OK if successful, otherwise returns an error code indicating the type of error.
+ */
 AL_S32 AlQspi_Dev_RecvData(AL_QSPI_DevStruct *Qspi, AL_U8 *ReceiveBuf, AL_U16 ReceiveSize)
 {
     AL_U32 Temp;
@@ -616,17 +627,19 @@ AL_S32 AlQspi_Dev_RecvData(AL_QSPI_DevStruct *Qspi, AL_U8 *ReceiveBuf, AL_U16 Re
 }
 
 /**
- * This function is to qspi tranfer in full-duplex mode
- * @param   Qspi is structure pointer to qspi device
- * @param   SendBuf is send data buffer pointer
- * @param   SendSize is send data size
- * @param   ReceiveBuf is send data buffer pointer
- * @param   ReceiveSize is receive data size
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note    None
-*/
+ * This function handles both sending and receiving data through the QSPI interface. It performs checks
+ * for null pointers, readiness of the device, and whether the device is busy. It sets the data frame size
+ * based on the send size and configures the QSPI hardware for data transfer. The function also handles
+ * the configuration of various parameters required for the data transfer such as address length, instruction
+ * length, transfer type, wait cycles, QSPI frame format, and transfer mode.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ * @param SendBuf Pointer to the buffer containing the data to be sent.
+ * @param SendSize Size of the data to be sent.
+ * @param ReceiveBuf Pointer to the buffer where received data will be stored.
+ * @param ReceiveSize Size of the data to be received.
+ * @return Returns AL_OK if successful, otherwise returns an error code indicating the type of error.
+ */
 AL_S32 AlQspi_Dev_TranferData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 SendSize, AL_U8 *ReceiveBuf, AL_U16 ReceiveSize)
 {
     AL_U32 SendLevel, SendValue = 0xffffffff, Temp, TempSendSize;
@@ -805,14 +818,15 @@ AL_S32 AlQspi_Dev_TranferData(AL_QSPI_DevStruct *Qspi, AL_U8 *SendBuf, AL_U32 Se
 }
 
 /**
- * This function is config qspi dma and send nor instruct and addr data
- * @param   Qspi is structure pointer to qspi device
- * @param   SendDataSize is send data size
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note    None
-*/
+ * This function configures the QSPI device for transmission, checks for various error conditions before sending,
+ * and then initiates the DMA transfer. It sets up the QSPI device with the specified configurations such as
+ * data frame size, address length, instruction length, transfer type, wait cycles, SPI frame format, and transfer mode.
+ * It calculates the send level based on the FIFO length and the send data size, adjusting for non-standard SPI frame formats.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ * @param SendDataSize Size of the data to be sent in bytes.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlQspi_Dev_DmaSendData(AL_QSPI_DevStruct *Qspi, AL_U32 SendDataSize)
 {
     AL_U32 SendLevel;
@@ -888,14 +902,15 @@ AL_S32 AlQspi_Dev_DmaSendData(AL_QSPI_DevStruct *Qspi, AL_U32 SendDataSize)
 }
 
 /**
- * This function is to config qspi dma to receive data
- * @param   Qspi is structure pointer to qspi device
- * @param   RecvSize is receive data size
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note    None
-*/
+ * This function prepares the QSPI device for data reception, checks for various error conditions before receiving,
+ * and then enables DMA reception. It configures the QSPI device with the necessary settings such as data frame size,
+ * RX FIFO threshold level, address length, instruction length, transfer type, wait cycles, and SPI frame format.
+ * It calculates the number of data frames to receive based on the receive size and the bits per word, adjusting for the actual data size.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ * @param RecvSize Size of the data to be received in bytes.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlQspi_Dev_DmaRecvData(AL_QSPI_DevStruct *Qspi, AL_U16 RecvSize)
 {
     AL_U32 TempRecvSize;
@@ -934,16 +949,14 @@ AL_S32 AlQspi_Dev_DmaRecvData(AL_QSPI_DevStruct *Qspi, AL_U16 RecvSize)
 }
 
 /**
- * This function is to config qspi dma tranfer in full-duplex mode
- * and send norflash instruct and addr data
- * @param   Qspi is structure pointer to qspi device
- * @param   SendSize is send data size
- * @param   RecvSize is receive data size
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note    None
-*/
+ * This function checks for readiness and busyness of the QSPI device, calculates the actual send size by adjusting for address and instruction lengths,
+ * and then configures both the TX and RX DMA for the transfer. It sets up the QSPI device with the necessary configurations for both sending and receiving data.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ * @param SendSize Size of the data to be sent in bytes.
+ * @param RecvSize Size of the data to be received in bytes.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlQspi_Dev_DmaTranferData(AL_QSPI_DevStruct *Qspi, AL_U32 SendSize, AL_U16 RecvSize)
 {
     AL_U32 SendLevel, TempSendSize;
@@ -1017,15 +1030,14 @@ AL_S32 AlQspi_Dev_DmaTranferData(AL_QSPI_DevStruct *Qspi, AL_U32 SendSize, AL_U1
 }
 
 /**
- * This function excute operations to set or get qspi status
- * @param   Qspi is structure pointer to qspi device
- * @param   Cmd is io ctrl enum to set qspi status
- * @param   Data is AL_VOID pointer converted to AL_QSPI_SlvSelEnum pointer
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note    None
-*/
+ * This function controls the QSPI device by executing various control commands.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ * @param Cmd The command to execute.
+ * @param Data Pointer to the data required for the command.
+ * @return Returns AL_OK on success, AL_QSPI_ERR_ILLEGAL_PARAM if the Qspi pointer is NULL,
+ *         or AL_QSPI_ERR_NOT_SUPPORT if the command is not supported.
+ */
 AL_S32 AlQspi_Dev_IoCtl(AL_QSPI_DevStruct *Qspi, AL_Qspi_IoCtlCmdEnum Cmd, AL_VOID *Data)
 {
     AL_S32 Ret = AL_OK;
@@ -1090,15 +1102,14 @@ AL_S32 AlQspi_Dev_IoCtl(AL_QSPI_DevStruct *Qspi, AL_Qspi_IoCtlCmdEnum Cmd, AL_VO
 }
 
 /**
- * This function is register qspi intrrupt callback function
- * @param   Qspi is structure pointer to qspi device
- * @param   Callback is a function pointer to qspi event callback function
- * @param   CallbackRef is parameter of callback function
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note    None
-*/
+ * This function registers a callback function for QSPI interrupt events.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ * @param Callback The callback function to be registered.
+ * @param CallbackRef User-defined reference that will be passed back in the callback.
+ * @return Returns AL_OK on success, AL_QSPI_ERR_ILLEGAL_PARAM if either Qspi or Callback is NULL,
+ *         or AL_QSPI_ERR_NOT_SUPPORT if a callback is already registered.
+ */
 AL_S32 AlQspi_Dev_RegisterIntrCallBack(AL_QSPI_DevStruct *Qspi, QSPI_EventCallBack Callback, AL_VOID *CallbackRef)
 {
     if (Qspi == AL_NULL || Callback == AL_NULL) {
@@ -1116,13 +1127,11 @@ AL_S32 AlQspi_Dev_RegisterIntrCallBack(AL_QSPI_DevStruct *Qspi, QSPI_EventCallBa
 }
 
 /**
- * This function is unregister qspi intrrupt callback function
- * @param   Qspi is structure pointer to qspi device
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note    None
-*/
+ * This function unregisters the interrupt callback function for the QSPI device.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ * @return Returns AL_OK on success or AL_QSPI_ERR_ILLEGAL_PARAM if the Qspi pointer is NULL.
+ */
 AL_S32 AlQspi_Dev_UnRegisterIntrCallBack(AL_QSPI_DevStruct *Qspi)
 {
     if (Qspi == AL_NULL) {
@@ -1135,11 +1144,11 @@ AL_S32 AlQspi_Dev_UnRegisterIntrCallBack(AL_QSPI_DevStruct *Qspi)
 }
 
 /**
- * This function is qspi receive intrrupt handler
- * @param   Qspi is structure pointer to qspi device
- * @return  AL_VOID
- * @note    None
-*/
+ * This function handles received data for the QSPI device. It reads data from the RX FIFO, updates the receive buffer,
+ * and manages the RX FIFO threshold level. It also triggers the receive done event when all data is received.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ */
 static AL_VOID AlQspi_Dev_RecvDataHandler(AL_QSPI_DevStruct *Qspi)
 {
     AL_U32 Length, RxFifoLevel, Status, Temp;
@@ -1203,11 +1212,11 @@ static AL_VOID AlQspi_Dev_RecvDataHandler(AL_QSPI_DevStruct *Qspi)
 }
 
 /**
- * This function is qspi send intrrupt handler
- * @param   Qspi is structure pointer to qspi device
- * @return  AL_VOID
- * @note    None
-*/
+ * This function handles sending data for the QSPI device. It writes data to the TX FIFO from the send buffer,
+ * manages the TX FIFO threshold level, and triggers the send done event when all data is sent.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ */
 static AL_VOID AlQspi_Dev_SendDataHandler(AL_QSPI_DevStruct *Qspi)
 {
     AL_U32 TxFifoLevel, Length, Room, SendValue = 0xffffffff;
@@ -1258,12 +1267,12 @@ static AL_VOID AlQspi_Dev_SendDataHandler(AL_QSPI_DevStruct *Qspi)
 }
 
 /**
- * This function is intr event handler
- * @param   Qspi is pointer to AL_QSPI_DevStruct
- * @param   EventId is event id
- * @return  AL_VOID
- * @note    None
-*/
+ * This function triggers an event callback with a specified event ID. This function is used internally
+ * to notify about different QSPI events.
+ *
+ * @param Qspi Pointer to the QSPI device structure.
+ * @param EventId The ID of the event to trigger.
+ */
 static AL_VOID AlQspi_Dev_EventHandler(AL_QSPI_DevStruct *Qspi, AL_QSPI_EventIdEnum EventId)
 {
     if (Qspi->EventCallBack) {
@@ -1276,11 +1285,15 @@ static AL_VOID AlQspi_Dev_EventHandler(AL_QSPI_DevStruct *Qspi, AL_QSPI_EventIdE
 }
 
 /**
- * This function is qspi intrrupt handler function
- * @param   instance is AL_VOID pointer converted to AL_QSPI_DevStruct pointer
- * @return  AL_VOID
- * @note    None
-*/
+ * This function handles interrupts for the QSPI device. This function checks the interrupt status
+ * and calls the appropriate handler based on the type of interrupt that occurred.
+ * It handles full and empty conditions for both transmit and receive FIFOs, as well
+ * as overflow and underflow conditions. It also handles specific conditions for
+ * Execute in Place (XIP) mode.
+ *
+ * @param instance Pointer to the QSPI device instance. This should be cast to
+ *                 (AL_QSPI_DevStruct *) inside the function.
+ */
 AL_VOID AlQspi_Dev_IntrHandler(AL_VOID *instance)
 {
     AL_QSPI_DevStruct *Qspi = (AL_QSPI_DevStruct *) instance;

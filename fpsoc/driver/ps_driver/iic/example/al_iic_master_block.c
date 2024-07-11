@@ -15,6 +15,20 @@
 #define IIC_MUX_ADDRESS             0x74
 #define FMC_IIC_CHANNEL             0x10
 
+/**
+ *
+ * This function sets the I2C multiplexer to the correct channel for EEPROM communication.
+ * It sends a single byte, which is the channel number, to the I2C multiplexer's address.
+ * After sending the channel number, it waits for 100 milliseconds to ensure the multiplexer
+ * has switched to the correct channel before proceeding with further I2C operations.
+ *
+ * @param Handle Pointer to the IIC HAL structure, which contains the configuration and state
+ *               information required by the HAL functions.
+ *
+ * @return AL_S32 Returns AL_OK if the multiplexer was successfully initialized, otherwise returns
+ *                an error code indicating the failure reason.
+ *
+ */
 AL_S32 static AlIic_MuxInit(AL_IIC_HalStruct *Handle)
 {
     AL_S32 Ret;
@@ -30,6 +44,20 @@ AL_S32 static AlIic_MuxInit(AL_IIC_HalStruct *Handle)
     return AL_OK;
 }
 
+/**
+ *
+ * This function initializes the I2C interface with the specified device ID and configuration,
+ * then sends a predefined block of data to a slave device with a specific address. After sending
+ * the data, it attempts to receive a block of data from the same slave device. Both the sending
+ * and receiving operations are performed with a specified timeout. The received data is then
+ * printed to the console. This function demonstrates the basic send and receive capabilities
+ * of the I2C interface using the HAL layer.
+ *
+ * @return Returns AL_OK if both send and receive operations were successful, otherwise
+ *         returns an error code. Specific error codes indicate whether the initialization,
+ *         send, or receive operations failed.
+ *
+ */
 AL_S32 AlIic_MasterBlockExample()
 {
     AL_S32 Ret;
@@ -99,6 +127,15 @@ AL_S32 AlIic_MasterBlockExample()
     return AL_OK;
 }
 
+/**
+ *
+ * This function is the starting point of the program. It calls the AlIic_MasterBlockExample
+ * function to demonstrate the I2C send and receive functionality. The function returns 0
+ * upon successful completion of the demonstration.
+ *
+ * @return int Returns 0 upon successful completion.
+ *
+ */
 int main()
 {
     AlIic_MasterBlockExample();

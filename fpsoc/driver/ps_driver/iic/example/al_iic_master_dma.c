@@ -15,6 +15,21 @@
 #define IIC_MUX_ADDRESS             0x74
 #define FMC_IIC_CHANNEL             0x10
 
+/**
+ *
+ * This function configures the I2C multiplexer to the correct channel to enable communication
+ * with the desired device. It sends the channel number to the multiplexer's address and waits
+ * for a short period to ensure the channel is set correctly before proceeding with further
+ * operations.
+ *
+ * @param Handle Pointer to the IIC HAL structure, which contains the configuration and state
+ *               information required by the HAL functions. This structure is used to initiate
+ *               communication with the multiplexer.
+ *
+ * @return Returns AL_OK if the multiplexer was successfully initialized, otherwise returns
+ *         an error code indicating the failure reason.
+ *
+ */
 AL_S32 static AlIic_MuxInit(AL_IIC_HalStruct *Handle)
 {
     AL_S32 Ret;
@@ -30,6 +45,19 @@ AL_S32 static AlIic_MuxInit(AL_IIC_HalStruct *Handle)
     return AL_OK;
 }
 
+/**
+ *
+ * This function showcases how to initialize the I2C interface in DMA mode, send a block of data,
+ * and then receive a block of data from a slave device. It prepares the data for transmission,
+ * ensuring alignment and correct formatting for DMA transfer, and then performs both sending and
+ * receiving operations. After the data is received, it is printed to the console. This function
+ * demonstrates the use of DMA for efficient data transfer over I2C.
+ *
+ * @return Returns AL_OK if both send and receive operations were successful, otherwise
+ *         returns an error code. Specific error codes indicate whether the initialization,
+ *         send, or receive operations failed.
+ *
+ */
 AL_S32 AlIic_MasterDmaExample()
 {
     AL_S32 Ret;
@@ -119,6 +147,15 @@ AL_S32 AlIic_MasterDmaExample()
     return AL_OK;
 }
 
+/**
+ *
+ * This function serves as the starting point of the program. It calls the AlIic_MasterDmaExample
+ * function to demonstrate the I2C send and receive functionality in DMA mode. The function returns
+ * 0 upon successful completion of the demonstration.
+ *
+ * @return Returns 0 upon successful completion.
+ *
+ */
 int main()
 {
     AlIic_MasterDmaExample();

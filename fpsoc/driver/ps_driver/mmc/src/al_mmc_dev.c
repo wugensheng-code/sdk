@@ -73,22 +73,47 @@ static AL_VOID AlMmc_Dev_DisplayAllReg(AL_MMC_DevStruct *Dev);
 static AL_VOID AlMmc_Dev_DisplayCardInfo(AL_MMC_DevStruct *Dev);
 
 /************************** Function Definitions ******************************/
-
+/**
+ * This function checks if the specified state is set for the device.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param State The state to check in the device.
+ * @return AL_TRUE if the specified state is set, otherwise AL_FALSE.
+ */
 AL_BOOL AlMmc_Dev_GetState(AL_MMC_DevStruct *Dev, AL_MMC_StateEnum State)
 {
     return ((Dev->State & State) ? AL_TRUE : AL_FALSE);
 }
 
+/**
+ * This function sets the specified state for the device.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param State The state to set in the device.
+ */
 AL_VOID AlMmc_Dev_SetState(AL_MMC_DevStruct *Dev, AL_MMC_StateEnum State)
 {
     Dev->State |= State;
 }
 
+/**
+ * This function clears the specified state for the device.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param State The state to clear in the device.
+ */
 AL_VOID AlMmc_Dev_ClrState(AL_MMC_DevStruct *Dev, AL_MMC_StateEnum State)
 {
     Dev->State &= ~State;
 }
 
+/**
+ * This function resets the host controller of the device.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param Rst The reset operation to perform.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlMmc_Dev_RstHostController(AL_MMC_DevStruct *Dev, AL_MMC_RstHostEnum Rst)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -116,6 +141,11 @@ AL_S32 AlMmc_Dev_RstHostController(AL_MMC_DevStruct *Dev, AL_MMC_RstHostEnum Rst
     }
 }
 
+/**
+ * This function initializes the top configuration of the device based on its hardware configuration.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ */
 static AL_VOID AlMmc_Dev_TopCfgInit(AL_MMC_DevStruct *Dev)
 {
     AL_MMC_TopCfgUnion TmpReg;
@@ -129,6 +159,13 @@ static AL_VOID AlMmc_Dev_TopCfgInit(AL_MMC_DevStruct *Dev)
     AlMmc_ll_WriteTopCfg(Dev->HwConfig.BaseAddress, TmpReg.Reg);
 }
 
+/**
+ * This function checks if the specified line is idle.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param Line The line to check.
+ * @return AL_OK if the line is idle, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_CheckLineIdle(AL_MMC_DevStruct *Dev, AL_MMC_StateMaskEnum Line)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -150,6 +187,14 @@ static AL_S32 AlMmc_Dev_CheckLineIdle(AL_MMC_DevStruct *Dev, AL_MMC_StateMaskEnu
     return AL_OK;
 }
 
+/**
+ * This function configures the command to be sent to the device.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param Arg The argument for the command.
+ * @param BlkCnt The block count for the command.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_CmdConfig(AL_MMC_DevStruct *Dev, AL_U32 Arg, AL_U32 BlkCnt)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -180,6 +225,13 @@ static AL_S32 AlMmc_Dev_CmdConfig(AL_MMC_DevStruct *Dev, AL_U32 Arg, AL_U32 BlkC
     return AL_OK;
 }
 
+/**
+ * This function gets the command register parameters for the specified command.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param Cmd The command index.
+ * @return The command register parameters.
+ */
 static AL_U32 AlMmc_Dev_GetCmdRegParam(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum Cmd)
 {
     AL_MMC_CmdXferModeUnion TmpReg = {0};
@@ -332,6 +384,18 @@ static AL_U32 AlMmc_Dev_GetCmdRegParam(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum 
     return TmpReg.Reg;
 }
 
+/**
+ *
+ * This function configures the command transfer mode based on the command index, block count, and DMA mode.
+ * It sets the direction of data transfer and enables DMA if required. Multi-block transfers and auto command
+ * settings are also configured based on the command. The function finally sends the command by writing to the
+ * command transfer mode register.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param Cmd Command index to be sent.
+ * @param BlkCnt Number of blocks to be transferred.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 static AL_S32 AlMmc_Dev_CmdSend(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum Cmd, AL_U32 BlkCnt)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -380,6 +444,15 @@ static AL_S32 AlMmc_Dev_CmdSend(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum Cmd, AL
     return AL_OK;
 }
 
+/**
+ *
+ * This function reads the interrupt status register to check for any command or data transfer errors.
+ * It returns specific error codes based on the type of error detected.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param State Interrupt status union indicating the current state.
+ * @return Returns AL_OK if no error is found, or a specific error code corresponding to the detected error.
+ */
 static AL_S32 AlMmc_Dev_CheckErrStat(AL_MMC_DevStruct *Dev, AL_MMC_IntrUnion State)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -416,6 +489,16 @@ static AL_S32 AlMmc_Dev_CheckErrStat(AL_MMC_DevStruct *Dev, AL_MMC_IntrUnion Sta
     }
 }
 
+/**
+ *
+ * This function polls the interrupt status register until the command completion bit is set or a timeout occurs.
+ * It checks for any errors during command execution and returns an error code if any are found. The function
+ * also logs the command response and error status.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param Cmd Command index that was sent.
+ * @return Returns AL_OK on successful command completion, or an error code if the command fails or times out.
+ */
 static AL_S32 AlMmc_Dev_CheckCmdDone(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum Cmd)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -456,6 +539,18 @@ static AL_S32 AlMmc_Dev_CheckCmdDone(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum Cm
     return Ret;
 }
 
+/**
+ *
+ * This function performs a series of operations to send a command to the MMC device. It checks if the command
+ * line is idle, clears any pending interrupts, configures the command, sends it, and waits for it to complete.
+ * It handles both single and multiple block transfers.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param Cmd Command index to be sent.
+ * @param Arg Argument to be passed with the command.
+ * @param BlkCnt Number of blocks to be transferred.
+ * @return Returns AL_OK on successful command transfer, or an error code on failure.
+ */
 static AL_S32 AlMmc_Dev_CmdTransfer(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum Cmd, AL_U32 Arg, AL_U32 BlkCnt)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -491,6 +586,15 @@ static AL_S32 AlMmc_Dev_CmdTransfer(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum Cmd
     return Ret;
 }
 
+/**
+ *
+ * This function reads the current timeout counter value from the control register, compares it with the
+ * desired value, and updates the register if they differ. This is used to configure the timeout behavior
+ * for command responses and data transfers.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param Cnt Timeout counter value to be set.
+ */
 static AL_VOID AlMmc_Dev_SetToutCnt(AL_MMC_DevStruct *Dev, AL_MMC_ToutCntEnum Cnt)
 {
     AL_MMC_CtrlSrToClkUnion TmpReg = {0};
@@ -502,12 +606,33 @@ static AL_VOID AlMmc_Dev_SetToutCnt(AL_MMC_DevStruct *Dev, AL_MMC_ToutCntEnum Cn
     }
 }
 
+/**
+ *
+ * This function reads the host controller's capabilities from the capability registers and stores them
+ * in the device structure. It provides information about the supported features and limits of the host controller.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ */
 static AL_VOID AlMmc_Dev_GetHostInfo(AL_MMC_DevStruct *Dev)
 {
     Dev->HostInfo.Cap1.Reg   = AlMmc_ll_ReadCapability1(Dev->HwConfig.BaseAddress);
     Dev->HostInfo.Cap2.Reg   = AlMmc_ll_ReadCapability2(Dev->HwConfig.BaseAddress);
 }
 
+/**
+ *
+ * This function calculates the required clock divider based on the requested frequency and the input clock frequency.
+ * It then configures the MMC hardware to use the calculated clock frequency. If the requested frequency is the default
+ * frequency, and the clock generator is already set to divide mode, the function does not reconfigure the clock.
+ * Otherwise, it disables the SD clock, performs a soft reset, sets the new frequency, and then re-enables the SD clock.
+ * It also handles the case where the requested frequency is not exactly divisible by the input clock, choosing the
+ * nearest lower frequency in such cases. After setting the clock, it resets the command and data lines to avoid any
+ * glitches.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param Freq The requested frequency in kHz.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_SetClkFreq(AL_MMC_DevStruct *Dev, AL_MMC_FreqKhzEnum Freq)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -601,6 +726,15 @@ static AL_S32 AlMmc_Dev_SetClkFreq(AL_MMC_DevStruct *Dev, AL_MMC_FreqKhzEnum Fre
     return Ret;
 }
 
+/**
+ *
+ * This function resets the host controller, configures the data transfer width, DMA mode, and buffer boundary if DMA
+ * is used. It also sets the timeout count to avoid timeout errors with some cards and initializes the clock frequency
+ * to 400KHz for card initialization.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_SetUpHostController(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -632,6 +766,15 @@ static AL_S32 AlMmc_Dev_SetUpHostController(AL_MMC_DevStruct *Dev)
     return AL_OK;
 }
 
+/**
+ *
+ * This function sends the CMD0 to reset the card and then CMD1 with the operating condition register (OCR) value to
+ * identify the card type. It checks the response to determine if the card is an eMMC or SD card. It also resets the
+ * command line after sending the commands to ensure clean state for further operations.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_IdentifyCard(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -664,6 +807,14 @@ static AL_S32 AlMmc_Dev_IdentifyCard(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ * This function reads the card detect signal configuration and determines if a card is inserted based on the slot type
+ * and the card detect signal. It supports both embedded and UHS-II embedded slot types directly returning success for
+ * these types as they do not require card detection.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK if a card is detected, AL_MMC_ERR_CARD_NOT_INSERTED otherwise.
+ */
 static AL_S32 AlMmc_Dev_CheckCardDetect(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -691,6 +842,13 @@ static AL_S32 AlMmc_Dev_CheckCardDetect(AL_MMC_DevStruct *Dev)
     return AL_OK;
 }
 
+/**
+ *
+ * This function sends the CMD0 to reset the card. It is used to bring the card to idle state before initializing it.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_CardReset(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -705,6 +863,14 @@ static AL_S32 AlMmc_Dev_CardReset(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ * This function sends CMD8 to the card, which is used to check the operating condition of the card and
+ * its compatibility with the host's voltage range. It also performs a reset of the host controller if
+ * necessary and determines the version of the card based on the response to CMD8.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_CardIfCond(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -737,6 +903,13 @@ static AL_S32 AlMmc_Dev_CardIfCond(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ * This function sets the appropriate voltage window and high capacity support bit in the OCR (Operation
+ * Conditions Register) based on the host capabilities and the card type.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return The argument to be used with ACMD41.
+ */
 static inline AL_U32 AlMmc_Dev_GenArgAcmd41(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -764,6 +937,14 @@ static inline AL_U32 AlMmc_Dev_GenArgAcmd41(AL_MMC_DevStruct *Dev)
     return Arg.Reg;
 }
 
+/**
+ * This function is part of the card  * initialization and identification process. It repeatedly
+ * sends ACMD41 (for SD cards) or CMD1 (for MMC cards) until the card exits its power-up sequence.
+ * It also updates the card's high capacity status based on the response.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_CardOpCond(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -807,6 +988,14 @@ static AL_S32 AlMmc_Dev_CardOpCond(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ * This function temporarily changes the block length to 8 bytes to correctly read the
+ * SCR, then restores the original block length. It also rearranges the SCR data to match the host's
+ * endian format.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_GetCardCfg(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -852,6 +1041,14 @@ static AL_S32 AlMmc_Dev_GetCardCfg(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ * This function sends CMD2 to the card and reads the CID register, which contains information
+ * such as the manufacturer ID, product name, and serial  * number. The function also rearranges
+ * the CID data to match the host's endian format.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_GetCardId(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -880,6 +1077,14 @@ static AL_S32 AlMmc_Dev_GetCardId(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ *
+ * This function initiates a command transfer to get the card address. For SD cards, it repeatedly
+ * sends CMD3 and reads the response until a non-zero address is obtained. For other card types, a default address is set.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_GetCardAddr(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -907,6 +1112,14 @@ static AL_S32 AlMmc_Dev_GetCardAddr(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ *
+ * This function sends CMD9 to the card to ask for its CSD register, then reads the response and stores it
+ *  in the device structure. It also rearranges the CSD fields to match the expected format.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_GetCsd(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -950,6 +1163,14 @@ static AL_S32 AlMmc_Dev_GetCsd(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ *
+ * This function determines the card's capacity and block length based on its CSD register values.
+ * It supports different calculations for SD (including SDHC/SDXC) and eMMC cards.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_GetCardCap(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1000,6 +1221,15 @@ static AL_S32 AlMmc_Dev_GetCardCap(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ *
+ * This function checks the card's SCR register and sets the card version accordingly.
+ * It supports different versions for SD cards and uses the CSD register for eMMC cards.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
+
 static AL_S32 AlMmc_Dev_SetCardVer(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1025,6 +1255,14 @@ static AL_S32 AlMmc_Dev_SetCardVer(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ *
+ * This function checks the card version and sets the host version accordingly.
+ * It enables specific features based on the host version, such as Auto CMD23 support.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK on success.
+ */
 static AL_S32 AlMmc_Dev_SetHostVer(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1045,6 +1283,12 @@ static AL_S32 AlMmc_Dev_SetHostVer(AL_MMC_DevStruct *Dev)
     return AL_OK;
 }
 
+/**
+ * This function initializes the card and retrieves its basic information.
+ *
+ * @param Dev Pointer to the device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_GetCardInfo(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1064,6 +1308,12 @@ static AL_S32 AlMmc_Dev_GetCardInfo(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ * This function selects or deselects the card.
+ *
+ * @param Dev Pointer to the device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_SelDesCard(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1078,6 +1328,13 @@ static AL_S32 AlMmc_Dev_SelDesCard(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ * This function retrieves the Extended CSD register information from the card.
+ *
+ * @param Dev Pointer to the device structure.
+ * @param ExtCsd Pointer to the buffer where the Extended CSD information will be stored.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_GetExtCsd(AL_MMC_DevStruct *Dev, AL_U8 *ExtCsd)
 {
     AL_ASSERT((Dev != AL_NULL) && (ExtCsd != AL_NULL), AL_MMC_ERR_NULL_PTR);
@@ -1102,6 +1359,13 @@ static AL_S32 AlMmc_Dev_GetExtCsd(AL_MMC_DevStruct *Dev, AL_U8 *ExtCsd)
     return Ret;
 }
 
+/**
+ * This function calculates the card's capacity based on the Extended CSD register.
+ *
+ * @param Dev Pointer to the device structure.
+ * @param ExtCsd Pointer to the Extended CSD register union.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_GetExtCardCap(AL_MMC_DevStruct *Dev, AL_MMC_RegExtCsdUnion *ExtCsd)
 {
     AL_ASSERT((Dev != AL_NULL) && (ExtCsd != AL_NULL), AL_MMC_ERR_NULL_PTR);
@@ -1122,6 +1386,12 @@ static AL_S32 AlMmc_Dev_GetExtCardCap(AL_MMC_DevStruct *Dev, AL_MMC_RegExtCsdUni
     return Ret;
 }
 
+/**
+ * This function retrieves extended card information including capacity.
+ *
+ * @param Dev Pointer to the device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_GetExtCardInfo(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1143,6 +1413,12 @@ static AL_S32 AlMmc_Dev_GetExtCardInfo(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ * This function enumerates and initializes the SD card.
+ *
+ * @param Dev Pointer to the device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_SdCardEnum(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1211,6 +1487,13 @@ static AL_S32 AlMmc_Dev_SdCardEnum(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ * This function sets a specific field in the Extended CSD register.
+ *
+ * @param Dev Pointer to the device structure.
+ * @param Arg The argument to be passed to the CMD6 command.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_SetExtCsd(AL_MMC_DevStruct *Dev, AL_U32 Arg)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1225,6 +1508,14 @@ static AL_S32 AlMmc_Dev_SetExtCsd(AL_MMC_DevStruct *Dev, AL_U32 Arg)
     return Ret;
 }
 
+/**
+ * This function generates the argument for CMD6 based on the function and speed mode or bus width.
+ *
+ * @param Dev Pointer to the device structure.
+ * @param Func The function to be set or queried.
+ * @param Arg Pointer to the CMD6 argument union.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_GenCmd6Param(AL_MMC_DevStruct *Dev, AL_MMC_Cmd6FuncEnum Func, AL_MMC_Cmd6ArgUnion *Arg)
 {
     AL_ASSERT((Dev != AL_NULL) && (Arg != AL_NULL), AL_MMC_ERR_NULL_PTR);
@@ -1306,6 +1597,15 @@ static AL_S32 AlMmc_Dev_GenCmd6Param(AL_MMC_DevStruct *Dev, AL_MMC_Cmd6FuncEnum 
     return Ret;
 }
 
+/**
+ * This function configures the bus width of the MMC device based on the card's capabilities and the desired configuration.
+ * It first checks if the card is an SD card and then sets the bus width accordingly. If the card supports a 4-bit bus width,
+ * it attempts to set the bus width to 4-bit if not already set. If the card only supports a 1-bit bus width, it sets the bus width to 1-bit.
+ * After setting the bus width, it sends the appropriate command to the card to apply the new bus width setting.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_S32 Returns AL_OK on success, or an error code on failure.
+ */
 static AL_S32 AlMmc_Dev_SetBusWidth(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1376,6 +1676,17 @@ static AL_S32 AlMmc_Dev_SetBusWidth(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ * Sets the bus speed for the MMC device.
+ * This function configures the bus speed of the MMC device based on the card's capabilities and the desired configuration.
+ * It handles both SD and eMMC cards, setting the bus speed by sending the appropriate command to the card.
+ * For SD cards, it sets the block size to 64 bytes before sending the command to change the bus speed.
+ * For eMMC cards, it generates the command parameter for changing the bus speed and sends the command to the card.
+ * After setting the bus speed, it checks the result to ensure the speed was set correctly.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_S32 Returns AL_OK on success, or an error code on failure.
+ */
 static AL_S32 AlMmc_Dev_GetBusSpeed(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1385,6 +1696,15 @@ static AL_S32 AlMmc_Dev_GetBusSpeed(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ * This function configures the block size for data transfers with the MMC device.
+ * It first checks if the command and data lines are idle before sending the command to set the block size.
+ * After sending the command, it updates the hardware configuration to use the new block size.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param BlkLen The desired block length to set.
+ * @return AL_S32 Returns AL_OK on success, or an error code on failure.
+ */
 static AL_S32 AlMmc_Dev_SetBusSpeed(AL_MMC_DevStruct *Dev)
 {
     AL_S32 Ret = AL_OK;
@@ -1462,6 +1782,16 @@ static AL_S32 AlMmc_Dev_SetBusSpeed(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ * This function performs the initialization steps required to set up the SD card mode.
+ * It includes setting the bus width and speed based on the card's capabilities and the desired configuration.
+ * It checks if the card supports high capacity and high speed modes and configures the card accordingly.
+ * The function also adjusts the host controller's clock frequency to match the card's speed mode.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_S32 Returns AL_OK on success, or an error code on failure.
+ */
+
 static AL_S32 AlMmc_Dev_SetBlkSize(AL_MMC_DevStruct *Dev, AL_MMC_BlkLenEnum BlkLen)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1487,6 +1817,14 @@ static AL_S32 AlMmc_Dev_SetBlkSize(AL_MMC_DevStruct *Dev, AL_MMC_BlkLenEnum BlkL
     return Ret;
 }
 
+/**
+ * This function performs the enumeration and mode initialization for an SD card.
+ * It first enumerates the card to identify its capabilities and then initializes the card mode,
+ * including setting the bus width and speed.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_S32 Returns AL_OK on success, or an error code on failure.
+ */
 static AL_S32 AlMmc_Dev_SdModeInit(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1538,6 +1876,13 @@ static AL_S32 AlMmc_Dev_SdModeInit(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ *
+ * This function initializes an SD card by enumerating the card and then initializing it in SD mode.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK if successful, error code otherwise.
+ */
 AL_S32 AlMmc_Dev_SdCardInit(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1557,6 +1902,15 @@ AL_S32 AlMmc_Dev_SdCardInit(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ *
+ * This function performs the enumeration process for an eMMC card, including card reset, operating condition
+ * command, card identification, and setting the card address. It also retrieves the card's CSD and EXT_CSD
+ * information.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK if successful, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_EmmcCardEnum(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1621,6 +1975,14 @@ static AL_S32 AlMmc_Dev_EmmcCardEnum(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ *
+ * This function sets the bus width, speed mode, clock frequency, and block size for an eMMC card. It also
+ * performs a transfer to check the configuration.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK if successful, error code otherwise.
+ */
 static AL_S32 AlMmc_Dev_EmmcModeInit(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1672,6 +2034,13 @@ static AL_S32 AlMmc_Dev_EmmcModeInit(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ *
+ * This function initializes an eMMC card by enumerating the card and then initializing it in eMMC mode.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK if successful, error code otherwise.
+ */
 AL_S32 AlMmc_Dev_EmmcCardInit(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1691,6 +2060,17 @@ AL_S32 AlMmc_Dev_EmmcCardInit(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ *
+ * This function initializes the MMC device based on the provided hardware and initialization configurations.
+ * It sets up the host controller, clears all states, and identifies the card type (SD or eMMC) to perform
+ * card-specific initialization.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param HwConfig Pointer to the hardware configuration structure.
+ * @param InitConfig Pointer to the initialization configuration structure.
+ * @return AL_OK if successful, error code otherwise.
+ */
 AL_S32 AlMmc_Dev_Init(AL_MMC_DevStruct *Dev, AL_MMC_HwConfigStruct *HwConfig, AL_MMC_InitStruct *InitConfig)
 {
     AL_ASSERT((Dev != AL_NULL) && (HwConfig != AL_NULL), AL_MMC_ERR_NULL_PTR);
@@ -1768,13 +2148,15 @@ AL_S32 AlMmc_Dev_Init(AL_MMC_DevStruct *Dev, AL_MMC_HwConfigStruct *HwConfig, AL
 }
 
 /**
- * This function register interrupt call back function
- * @param   Dev is pointer to AL_MMC_DevStruct
- * @param   CallBack is call back struct with AL_MMC_EventCallBack
- * @return
- *          - AL_OK is register correct
- * @note
-*/
+ *
+ * This function registers a callback function that will be called on MMC events. If a callback is already
+ * registered, it will be replaced with the new one.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param CallBack The callback function to register.
+ * @param CallBackRef User-defined reference that will be passed to the callback function.
+ * @return AL_OK if successful.
+ */
 AL_S32 AlMmc_Dev_RegisterEventCallBack(AL_MMC_DevStruct *Dev, AL_MMC_EventCallBack CallBack, AL_VOID *CallBackRef)
 {
     AL_ASSERT((Dev != AL_NULL) && (CallBack != AL_NULL), AL_MMC_ERR_NULL_PTR);
@@ -1791,12 +2173,12 @@ AL_S32 AlMmc_Dev_RegisterEventCallBack(AL_MMC_DevStruct *Dev, AL_MMC_EventCallBa
 }
 
 /**
- * This function unregister interrupt call back function
- * @param   Dev is pointer to AL_MMC_DevStruct
- * @return
- *          - AL_OK is unregister correct
- * @note
-*/
+ *
+ * This function unregisters the currently registered event callback function, if any.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return AL_OK if successful.
+ */
 AL_S32 AlMmc_Dev_UnRegisterEventCallBack(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1807,11 +2189,12 @@ AL_S32 AlMmc_Dev_UnRegisterEventCallBack(AL_MMC_DevStruct *Dev)
 }
 
 /**
- * This function look up hardware config structure
- * @param   DeviceId is hardware module id
- * @return  hardware config structure with AL_MMC_HwConfigStruct
- * @note
-*/
+ * This function iterates through the array of hardware configurations to find a match for the specified device ID.
+ * If a match is found, a pointer to the hardware configuration structure is returned.
+ *
+ * @param DeviceId The unique identifier for the MMC device.
+ * @return A pointer to the hardware configuration structure if a match is found; otherwise, NULL.
+ */
 AL_MMC_HwConfigStruct *AlMmc_Dev_LookupConfig(AL_U32 DeviceId)
 {
     AL_U32 Index;
@@ -1827,6 +2210,12 @@ AL_MMC_HwConfigStruct *AlMmc_Dev_LookupConfig(AL_U32 DeviceId)
     return CfgPtr;
 }
 
+/**
+ * This function performs necessary preparations for data transfer with the MMC device, such as checking if the card is inserted and if the block size is set.
+ *
+ * @param Dev A pointer to the MMC device structure.
+ * @return AL_OK if the configuration is successful; otherwise, an error code.
+ */
 static AL_S32 AlMmc_Dev_TransferConfig(AL_MMC_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1838,6 +2227,14 @@ static AL_S32 AlMmc_Dev_TransferConfig(AL_MMC_DevStruct *Dev)
     return Ret;
 }
 
+/**
+ * This function prepares the ADMA2 descriptor table based on the buffer and block count provided. It calculates the total number of descriptors needed and configures each descriptor accordingly.
+ *
+ * @param Dev A pointer to the MMC device structure.
+ * @param Buf A pointer to the data buffer for transfer.
+ * @param BlkCnt The number of blocks to transfer.
+ * @return AL_OK if the setup is successful; otherwise, an error code.
+ */
 static AL_S32 AlMmc_Dev_SetUpAdma2DescTable(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkCnt)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1902,6 +2299,14 @@ static AL_S32 AlMmc_Dev_SetUpAdma2DescTable(AL_MMC_DevStruct *Dev, AL_U8 *Buf, A
     return Ret;
 }
 
+/**
+ * This function sets up the DMA mode based on the device configuration. It supports different DMA modes such as SDMA, ADMA2, and ADMA3. For ADMA2, it also handles the setup of the descriptor table.
+ *
+ * @param Dev A pointer to the MMC device structure.
+ * @param Buf A pointer to the data buffer for transfer.
+ * @param BlkCnt The number of blocks to transfer.
+ * @return AL_OK if the DMA setup is successful; otherwise, an error code.
+ */
 static AL_S32 AlMmc_Dev_DmaSetUp(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkCnt)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -1944,6 +2349,13 @@ static AL_S32 AlMmc_Dev_DmaSetUp(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkCn
     return Ret;
 }
 
+/**
+ * This function monitors the transfer status and errors through the interrupt status register. It handles different scenarios such as DMA interrupts and transfer completion.
+ *
+ * @param Dev A pointer to the MMC device structure.
+ * @param BlkCnt The number of blocks that were supposed to be transferred.
+ * @return AL_OK if the transfer is successfully completed; AL_MMC_ERR_XFER_COMP_TIMEOUT if the transfer times out; otherwise, an error code based on the type of error encountered.
+ */
 static AL_S32 AlMmc_Dev_CheckTransferDone(AL_MMC_DevStruct *Dev, AL_U32 BlkCnt)
 {
     AL_S32 Ret = AL_OK;
@@ -2000,6 +2412,15 @@ static AL_S32 AlMmc_Dev_CheckTransferDone(AL_MMC_DevStruct *Dev, AL_U32 BlkCnt)
     return Ret;
 }
 
+/**
+ * This function handles the actual data transfer between the host and the MMC device. It reads from or writes data to the device
+ * based on the direction specified in the host information. The data transfer is done in blocks, where each block size is defined
+ * by the MMC card's block length. The function iterates over the data, transferring one word at a time.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param Mem Pointer to the memory where data will be read from or written to.
+ * @return void
+ */
 static AL_VOID AlMmc_Dev_CarryBlkData(AL_MMC_DevStruct *Dev, AL_U8 *Mem)
 {
     AL_U32 WordBlkLen = Dev->CardInfo.BlkLen >> 2;
@@ -2018,6 +2439,16 @@ static AL_VOID AlMmc_Dev_CarryBlkData(AL_MMC_DevStruct *Dev, AL_U8 *Mem)
     }
 }
 
+/**
+ * This function manages the transfer of data blocks between the host and the MMC device without utilizing Direct Memory Access (DMA).
+ * It repeatedly checks the interrupt status to determine when the device is ready for data transfer and handles any errors that occur.
+ * The function supports both read and write operations and ensures that the correct number of blocks are transferred.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param Buf Pointer to the buffer where data will be stored or retrieved from.
+ * @param BlkCnt Number of blocks to transfer.
+ * @return AL_S32 Returns AL_OK on success or an error code on failure.
+ */
 static AL_S32 AlMmc_Dev_TransferNoDma(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkCnt)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -2073,6 +2504,16 @@ static AL_S32 AlMmc_Dev_TransferNoDma(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 
     return Ret;
 }
 
+/**
+ * This function is responsible for initiating and managing the transfer of data blocks between the host and the MMC device.
+ * It decides whether to use DMA for the transfer based on the device configuration and handles any errors that occur during the transfer.
+ * The function supports both read and write operations.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param Buf Pointer to the buffer where data will be stored or retrieved from.
+ * @param BlkCnt Number of blocks to transfer.
+ * @return AL_S32 Returns AL_OK on success or an error code on failure.
+ */
 static AL_S32 AlMmc_Dev_TransferData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkCnt)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -2096,6 +2537,17 @@ static AL_S32 AlMmc_Dev_TransferData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 B
     return Ret;
 }
 
+/**
+ * This function initiates a write operation to transfer data blocks from the host to the MMC device. It sets up the device state,
+ * prepares the command to be sent, and handles the data transfer, either using DMA or manually, depending on the device configuration.
+ * The function also takes care of block addressing for different card types and capacities.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param Buf Pointer to the buffer containing the data to be written.
+ * @param Arg The start block address or the write command argument.
+ * @param BlkCnt Number of blocks to write.
+ * @return AL_S32 Returns AL_OK on success or an error code on failure.
+ */
 static AL_S32 AlMmc_Dev_WriteData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 Arg, AL_U32 BlkCnt)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -2163,6 +2615,17 @@ static AL_S32 AlMmc_Dev_WriteData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 Arg,
     return Ret;
 }
 
+/**
+ * This function is the external interface for writing data to the MMC device. It performs initial checks on the buffer alignment,
+ * configures the data transfer, and then calls the internal function to handle the actual data write. It supports writing multiple
+ * blocks of data and handles different device configurations and states to ensure a successful write operation.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param Buf Pointer to the buffer containing the data to be written.
+ * @param BlkOffset The block offset where writing should start.
+ * @param BlkCnt Number of blocks to write.
+ * @return AL_S32 Returns AL_OK on success or an error code on failure.
+ */
 /* When ADMA2 mode and auto gen desc is false, buf is pointer of desc list */
 AL_S32 AlMmc_Dev_Write(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkOffset, AL_U32 BlkCnt)
 {
@@ -2190,6 +2653,18 @@ AL_S32 AlMmc_Dev_Write(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkOffset, AL_U
     return Ret;
 }
 
+/**
+ * This function initiates a read operation to transfer data blocks from the MMC device to the host. It sets up the device state,
+ * prepares the command to be sent, and handles the data transfer, either using DMA or manually, depending on the device configuration.
+ * The function also takes care of block addressing for different card types and capacities and ensures data coherency by invalidating
+ * the cache if necessary.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param Buf Pointer to the buffer where the read data will be stored.
+ * @param Arg The start block address or the read command argument.
+ * @param BlkCnt Number of blocks to read.
+ * @return AL_S32 Returns AL_OK on success or an error code on failure.
+ */
 AL_S32 AlMmc_Dev_ReadData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 Arg, AL_U32 BlkCnt)
 {
     AL_ASSERT(Dev != AL_NULL, AL_MMC_ERR_NULL_PTR);
@@ -2257,6 +2732,19 @@ AL_S32 AlMmc_Dev_ReadData(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 Arg, AL_U32 
     return Ret;
 }
 
+/**
+ *
+ * This function reads a specified number of blocks from a given block offset into the provided buffer.
+ * It first ensures that the device and buffer pointers are not null and that the buffer is properly aligned.
+ * It then configures the device for transfer and attempts to read the data. If any step fails, the error
+ * code is returned immediately.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param Buf Pointer to the buffer where the read data will be stored.
+ * @param BlkOffset The block offset from where to start reading.
+ * @param BlkCnt The number of blocks to read.
+ * @return AL_S32 Returns AL_OK on success, or an error code on failure.
+ */
 /* When ADMA2 mode and auto gen desc is false, buf is pointer of desc list */
 AL_S32 AlMmc_Dev_Read(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkOffset, AL_U32 BlkCnt)
 {
@@ -2285,11 +2773,14 @@ AL_S32 AlMmc_Dev_Read(AL_MMC_DevStruct *Dev, AL_U8 *Buf, AL_U32 BlkOffset, AL_U3
 }
 
 /**
- * This function is intr call back
- * @param   Instance is pointer to intr call back reference
- * @return
- * @note
-*/
+ *
+ * This function is the interrupt handler for the MMC device. It reads the interrupt signal enable and
+ * interrupt status registers to determine the cause of the interrupt. Based on the cause, it then
+ * performs the appropriate action. Currently, the actions for different interrupts are not implemented
+ * and are marked as TODO.
+ *
+ * @param Instance Pointer to the MMC device instance.
+ */
 AL_VOID AlMmc_Dev_IntrHandler(void *Instance)
 {
     AL_MMC_DevStruct *Dev = Instance;
@@ -2318,16 +2809,43 @@ AL_VOID AlMmc_Dev_IntrHandler(void *Instance)
     }
 }
 
+/**
+ *
+ * This function is intended to perform various control operations on the MMC device. The actual
+ * operations are determined by the IOCTL command passed to the function. Currently, this function
+ * does not implement any specific commands and always returns AL_OK.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @param Cmd The IOCTL command to perform.
+ * @param Data Pointer to the data required for the command, if any.
+ * @return AL_S32 Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlMmc_Dev_IoCtl(AL_MMC_DevStruct *Dev, AL_MMC_IoCtlCmdEnum Cmd, AL_VOID *Data)
 {
     return AL_OK;
 }
 
+/**
+ *
+ * This function updates the IO clock frequency setting for a specified MMC device. The new frequency
+ * is set in the device's hardware configuration structure.
+ *
+ * @param DevId The ID of the MMC device whose IO clock is to be modified.
+ * @param ClkInHz The new IO clock frequency in Hertz.
+ */
 AL_VOID AlMmc_Dev_ModifyIoClk(AL_U32 DevId, AL_U32 ClkInHz)
 {
     AlMmc_HwConfig[DevId].IoClk = ClkInHz;
 }
 
+/**
+ *
+ * This function logs the contents of the CSD register for a given MMC device. The CSD register
+ * contains information about the card's characteristics, such as speed, size, and other parameters.
+ * The function logs various fields of the CSD register for debugging purposes.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ */
 static AL_VOID AlMmc_Dev_DisplayCsd(AL_MMC_DevStruct *Dev)
 {
     AL_LOG(AL_LOG_LEVEL_DEBUG, "-----CSD-----\r\n");
@@ -2370,6 +2888,15 @@ static AL_VOID AlMmc_Dev_DisplayCsd(AL_MMC_DevStruct *Dev)
     AL_LOG(AL_LOG_LEVEL_DEBUG, "-----CSD-----\r\n");
 }
 
+/**
+ *
+ * This function logs the contents of the SCR register for a given MMC device. The SCR provides
+ * information specific to the SD memory card's physical layer. It includes details such as the SD
+ * specification version supported, data bus widths supported, and security support. This function
+ * is used for debugging and diagnostic purposes.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ */
 static AL_VOID AlMmc_Dev_DisplayScr(AL_MMC_DevStruct *Dev)
 {
     AL_LOG(AL_LOG_LEVEL_DEBUG, "-----SCR-----\r\n");
@@ -2387,6 +2914,15 @@ static AL_VOID AlMmc_Dev_DisplayScr(AL_MMC_DevStruct *Dev)
     AL_LOG(AL_LOG_LEVEL_DEBUG, "-----SCR-----\r\n");
 }
 
+/**
+ *
+ * This function iterates through the ADMA descriptor table and logs each descriptor's details,
+ * including descriptor values, address argument pointer, length, action, interrupt, end, and validity flags.
+ *
+ * @param TablePtr Pointer to the ADMA descriptor table.
+ * @param Size The number of descriptors in the table.
+ * @return None.
+ */
 static AL_VOID AlMmc_Dev_DisplayAdmaDesc(AL_MMC_AdmaDescUnion *TablePtr, AL_U32 Size)
 {
     for (AL_U32 i = 0; i < Size; i++) {
@@ -2404,6 +2940,16 @@ static AL_VOID AlMmc_Dev_DisplayAdmaDesc(AL_MMC_AdmaDescUnion *TablePtr, AL_U32 
     }
 }
 
+/**
+ *
+ * This function reads and logs the values of various MMC host controller registers, including block count,
+ * SDMA system address, block size, command transfer mode, response registers, buffer data, current state,
+ * control, reset, interrupt status, and capabilities among others. It provides a comprehensive overview
+ * of the host controller's current configuration and status.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return None.
+ */
 static AL_VOID AlMmc_Dev_DisplayAllReg(AL_MMC_DevStruct *Dev)
 {
     AL_LOG(AL_LOG_LEVEL_DEBUG, "----------Host Controller Register----------\r\n");
@@ -2430,6 +2976,15 @@ static AL_VOID AlMmc_Dev_DisplayAllReg(AL_MMC_DevStruct *Dev)
     AL_LOG(AL_LOG_LEVEL_DEBUG, "----------Host Controller Register Done----------\r\n");
 }
 
+/**
+ *
+ * This function logs detailed information about the MMC/SD card, including the device address, manufacturer ID,
+ * OEM ID, card name, bus speed, mode, read block length, version, high capacity status, and capacity. It differentiates
+ * between SD and eMMC card types and formats the output accordingly.
+ *
+ * @param Dev Pointer to the MMC device structure.
+ * @return None.
+ */
 static AL_VOID AlMmc_Dev_DisplayCardInfo(AL_MMC_DevStruct *Dev)
 {
     AL_LOG(AL_LOG_LEVEL_INFO, "----------Card Info----------\r\n");

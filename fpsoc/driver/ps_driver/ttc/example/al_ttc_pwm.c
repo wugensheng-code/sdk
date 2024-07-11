@@ -40,7 +40,13 @@ static AL_TTC_TimerInitStruct PwmInitConfigs = {
 static AL_S32 AlTtc_Test_PwmOutput(AL_VOID);
 
 /************************** Function Definitions ******************************/
-
+/**
+ * This function serves as the entry point for the program. It initializes the application,
+ * runs the PWM output test, and handles the return status. If the test fails, it logs an error
+ * message and returns the error code. Otherwise, it returns AL_OK indicating success.
+ *
+ * @return AL_OK on success, or an error code on failure.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -56,6 +62,14 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ * This function initializes the TTC device with specific configurations for PWM output,
+ * sets up the interval and match values to generate PWM signal, and enables the waveform output.
+ * It configures the device to generate a PWM signal with a specific frequency and duty cycle,
+ * based on predefined values for the interval max value and match value.
+ *
+ * @return AL_OK on successful initialization and configuration, or an error code on failure.
+ */
 static AL_S32 AlTtc_Test_PwmOutput(AL_VOID)
 {
     AL_U32 Ret = AL_OK;

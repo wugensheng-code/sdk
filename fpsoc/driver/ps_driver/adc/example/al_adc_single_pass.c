@@ -66,6 +66,17 @@ static AL_VOID AlAdc_Handler(AL_ADC_EventStruct AdcEvent, AL_VOID *CallbackRef);
 
 /************************** Function Definitions ******************************/
 
+/**
+ *
+ * This function initializes logging, performs the ADC single pass mode read data test by calling
+ * AlAdc_SinglePassMode_Test(), and logs the outcome of the test. If the test fails, it logs an error
+ * message and returns the error code. Otherwise, it logs a success message and returns AL_OK.
+ *
+ * @param  None.
+ *
+ * @return AL_S32 Returns AL_OK if the test is successful, or an error code if the test fails.
+ *
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -83,6 +94,18 @@ AL_S32 main(AL_VOID)
     return AL_OK;
 }
 
+/**
+ *
+ * This function initializes the ADC hardware with the specified configurations, starts the ADC,
+ * reads data from all configured channels, and then stops the ADC. It logs the value read from
+ * each channel. If any step fails, it logs an error message and returns the error code.
+ *
+ * @param  None.
+ *
+ * @return AL_S32 Returns AL_OK if the ADC operates correctly in single pass mode, or an error code
+ * if initialization, starting, or stopping the ADC fails.
+ *
+ */
 static AL_S32 AlAdc_SinglePassMode_Test(AL_VOID)
 {
     AL_S32 Ret = AL_OK;

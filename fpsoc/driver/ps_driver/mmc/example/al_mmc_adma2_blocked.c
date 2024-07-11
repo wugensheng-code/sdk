@@ -43,7 +43,14 @@ static AL_MMC_InitStruct MmcAdma2Init = {
 static AL_S32 AlMmc_Test_Adma2Blocked(AL_VOID);
 
 /************************** Function Definitions ******************************/
-
+/**
+ *
+ * This function initializes the MMC test for ADMA2 in blocked mode. It logs the start of the test,
+ * calls the AlMmc_Test_Adma2Blocked function to perform the test, and logs the result. If the test
+ * fails, it returns an error code.
+ *
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -61,6 +68,17 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ * Performs the ADMA2 blocked test on the MMC device.
+ *
+ * This function tests the MMC device using ADMA2 in blocked mode. It allocates memory for write and read
+ * operations, initializes the MMC hardware, and performs write and read operations in a loop. Each loop
+ * iteration writes to and reads from the MMC device, compares the written and read data, and logs the result.
+ * If any operation fails, it returns an error code. The function also handles memory cleanup and cache
+ * flushing if MMU is enabled.
+ *
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 static AL_S32 AlMmc_Test_Adma2Blocked(AL_VOID)
 {
     AL_U32 Ret = AL_OK;

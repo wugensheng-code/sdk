@@ -29,11 +29,16 @@ extern AL_SPI_HwConfigStruct AlSpi_HwCfg[AL_SPI_NUM_INSTANCE];
 
 /********************************************************/
 /**
- * This function look up hardware config structure
- * @param   DeviceId is hardware module id
- * @return  hardware config structure pointer with AL_SPI_HwConfigStruct
- * @note    None
-*/
+ *
+ * This function searches for the hardware configuration structure associated with the specified
+ * SPI device ID. It iterates through the available configurations and returns a pointer to the
+ * matching configuration structure.
+ *
+ * @param DeviceId The SPI device ID to look up.
+ *
+ * @return A pointer to the hardware configuration structure if found, or NULL if not found.
+ *
+ */
 AL_SPI_HwConfigStruct *AlSpi_Dev_LookupConfig(AL_U32 DeviceId)
 {
     AL_U32 Index;
@@ -50,66 +55,88 @@ AL_SPI_HwConfigStruct *AlSpi_Dev_LookupConfig(AL_U32 DeviceId)
 }
 
 /**
- * This function look up hardware config structure
- * @param   Spi is structure pointer to spi device
- * @return  AL_VOID
- * @note    None
-*/
+ *
+ * This function checks the state of the SPI device and determines if the transmit bus is busy.
+ *
+ * @param Spi Pointer to the SPI device structure.
+ *
+ * @return AL_TRUE if the transmit bus is busy, AL_FALSE otherwise.
+ *
+ */
 AL_BOOL AlSpi_Dev_IsTxBusy(AL_SPI_DevStruct *Spi)
 {
     return (AL_BOOL)(Spi->State & AL_SPI_STATE_TX_BUSY);
 }
 
 /**
- * This function is set spi AL_SPI_DevStruct struct rx busy state
- * @param   Spi is structure pointer to spi device
- * @return  AL_VOID
- * @note    None
-*/
+ *
+ * This function checks the state of the SPI device to determine if the receive bus is busy.
+ *
+ * @param Spi Pointer to the AL_SPI_DevStruct representing the SPI device.
+ *
+ * @return AL_TRUE if the RX bus is busy, AL_FALSE otherwise.
+ *
+ */
 AL_BOOL AlSpi_Dev_IsRxBusy(AL_SPI_DevStruct *Spi)
 {
     return (AL_BOOL)(Spi->State & AL_SPI_STATE_RX_BUSY);
 }
 
 /**
- * This function is set spi AL_SPI_DevStruct struct tx busy state
- * @param   Spi is structure pointer to spi device
- * @return  AL_VOID
- * @note    None
-*/
+ *
+ * This function sets the transmission bus as busy for the specified SPI device.
+ *
+ * @param Spi Pointer to the AL_SPI_DevStruct representing the SPI device.
+ *
+ * @return None.
+ *
+ */
 static AL_VOID AlSpi_Dev_SetTxBusy(AL_SPI_DevStruct *Spi)
 {
     Spi->State |= AL_SPI_STATE_TX_BUSY;
 }
 
 /**
- * This function is clear spi AL_SPI_DevStruct struct rx busy state
- * @param   Spi is structure pointer to spi device
- * @return  AL_VOID
- * @note    None
-*/
+ *
+ * This function sets the receive busy state of the specified SPI device.
+ * When the RX busy state is set, it indicates that the SPI device is currently
+ * receiving data.
+ *
+ * @param Spi Pointer to the AL_SPI_DevStruct representing the SPI device.
+ *
+ * @return None.
+ *
+ */
 static AL_VOID AlSpi_Dev_SetRxBusy(AL_SPI_DevStruct *Spi)
 {
     Spi->State |= AL_SPI_STATE_RX_BUSY;
 }
 
 /**
- * This function is clear spi AL_SPI_DevStruct struct tx busy state
- * @param   Spi is structure pointer to spi device
- * @return  AL_VOID
- * @note    None
-*/
+ *
+ * This function clears the transmit busy flag of the SPI device, indicating that the transmit
+ * operation is no longer in progress.
+ *
+ * @param Spi Pointer to the AL_SPI_DevStruct representing the SPI device.
+ *
+ * @return None.
+ *
+ */
 static AL_VOID AlSpi_Dev_ClrTxBusy(AL_SPI_DevStruct *Spi)
 {
     Spi->State &= (~AL_SPI_STATE_TX_BUSY);
 }
 
 /**
- * This function is clear spi AL_SPI_DevStruct struct rx busy state
- * @param   Spi is structure pointer to spi device
- * @return  AL_VOID
- * @note    None
-*/
+ *
+ * This function clears the receive busy flag of the SPI device, indicating that the receive
+ * operation is no longer in progress.
+ *
+ * @param Spi Pointer to the AL_SPI_DevStruct representing the SPI device.
+ *
+ * @return None.
+ *
+ */
 static AL_VOID AlSpi_Dev_ClrRxBusy(AL_SPI_DevStruct *Spi)
 {
     Spi->State &= (~AL_SPI_STATE_RX_BUSY);
@@ -117,11 +144,14 @@ static AL_VOID AlSpi_Dev_ClrRxBusy(AL_SPI_DevStruct *Spi)
 
 #ifdef SPI_DEBUG
 /**
- * This function prints the values of all registers in the spi
- * @param   SpiBaseAddr is spi base address
- * @return  AL_VOID
- * @note    None
-*/
+ *
+ * This function prints the values of various registers of the SPI device.
+ *
+ * @param SpiBaseAddr The base address of the SPI device.
+ *
+ * @return None.
+ *
+ */
 AL_VOID AlSpi_Dev_DumpReg(AL_REG SpiBaseAddr)
 {
     AL_LOG(AL_LOG_LEVEL_DEBUG, "CTRLR0:0x%x\r\n",  AL_REG32_READ(SpiBaseAddr + SPI_CTRLR0_MST_OFFSET));
@@ -152,12 +182,16 @@ AL_VOID AlSpi_Dev_DumpReg(AL_REG SpiBaseAddr)
 #endif
 
 /**
- * This function initializes spi through the AL_SPI_ConfigsStruct struct
- * @param   Spi is structure pointer to spi device
- * @param   InitConfig is spi configuration parameter struct
- * @return  Whether the spi is initialized successfully
- * @note    if InitConfig is null will use SpiDefInitConfigs
-*/
+ *
+ * This function initializes the SPI device with the provided hardware configuration and initialization configuration.
+ *
+ * @param Spi Pointer to the SPI device structure.
+ * @param HwConfig Pointer to the hardware configuration structure.
+ * @param InitConfig Pointer to the initialization configuration structure.
+ *
+ * @return AL_S32 Returns AL_SPI_ERR_ILLEGAL_PARAM if Spi is NULL, otherwise returns AL_OK.
+ *
+ */
 AL_S32 AlSpi_Dev_Init(AL_SPI_DevStruct *Spi, AL_SPI_HwConfigStruct *HwConfig, AL_SPI_ConfigsStruct *InitConfig)
 {
     if (Spi == AL_NULL) {
@@ -188,13 +222,16 @@ AL_S32 AlSpi_Dev_Init(AL_SPI_DevStruct *Spi, AL_SPI_HwConfigStruct *HwConfig, AL
 }
 
 /**
- * This function is spi send data
- * @param   Spi is structure pointer to spi device
- * @param   SendBuf is send data buffer pointer
- * @param   SendSize is receive data size
- * @return  Whether the spi send data successfully
- * @note    None
-*/
+ *
+ * This function sends data over SPI using the provided SPI device structure.
+ *
+ * @param Spi       Pointer to the SPI device structure.
+ * @param SendBuf   Pointer to the buffer containing the data to be sent.
+ * @param SendSize  Size of the data to be sent, in bytes.
+ *
+ * @return AL_S32   Returns AL_OK if the data was sent successfully. Returns an error code if an error occurred.
+ *
+ */
 AL_S32 AlSpi_Dev_SendData(AL_SPI_DevStruct *Spi, AL_U8 *SendBuf, AL_U32 SendSize)
 {
     AL_U32 SendLevel, SendValue = 0xFFFFFFFF;
@@ -266,13 +303,16 @@ AL_S32 AlSpi_Dev_SendData(AL_SPI_DevStruct *Spi, AL_U8 *SendBuf, AL_U32 SendSize
 }
 
 /**
- * This function is to start spi receive data
- * @param   Spi is structure pointer to spi device
- * @param   ReceiveBuf is send data buffer pointer
- * @param   ReceiveSize is receive data size
- * @return  Whether the spi receive data successfully
- * @note    None
-*/
+ *
+ * This function receives data over SPI using the provided SPI device structure.
+ *
+ * @param Spi       Pointer to the SPI device structure.
+ * @param ReceiveBuf   Pointer to the buffer containing the data to be received.
+ * @param ReceiveSize  Size of the data to be received, in bytes.
+ *
+ * @return AL_S32   Returns AL_OK if the data was received successfully. Returns an error code if an error occurred.
+ *
+ */
 AL_S32 AlSpi_Dev_RecvData(AL_SPI_DevStruct *Spi, AL_U8 *ReceiveBuf, AL_U16 ReceiveSize)
 {
     AL_U32 Temp;
@@ -317,15 +357,22 @@ AL_S32 AlSpi_Dev_RecvData(AL_SPI_DevStruct *Spi, AL_U8 *ReceiveBuf, AL_U16 Recei
 }
 
 /**
- * This function is to spi tranfer in full-duplex mode
- * @param   Spi is structure pointer to spi device
- * @param   SendBuf is send data buffer pointer
- * @param   SendSize is send data size
- * @param   ReceiveBuf is send data buffer pointer
- * @param   ReceiveSize is receive data size
- * @return  Whether the spi transfer data successfully
- * @note    None
-*/
+ *
+ * This function transfers data over SPI using the provided SPI device structure.
+ *
+ * @param Spi Pointer to the SPI device structure.
+ * @param SendBuf Pointer to the buffer containing the data to be sent.
+ * @param SendSize Size of the data to be sent, in bytes.
+ * @param ReceiveBuf Pointer to the buffer to store the received data.
+ * @param ReceiveSize Size of the buffer to store the received data, in bytes.
+ *
+ * @return Returns AL_OK if the transfer is successful. Returns an error code if there is an error.
+ *         Possible error codes are:
+ *         - AL_SPI_ERR_ILLEGAL_PARAM: Invalid parameters passed to the function.
+ *         - AL_SPI_ERR_NOT_READY: SPI device is not ready for transfer.
+ *         - AL_SPI_ERR_BUSY: SPI device is busy with another transfer.
+ *
+ */
 AL_S32 AlSpi_Dev_TranferData(AL_SPI_DevStruct *Spi, AL_U8 *SendBuf, AL_U32 SendSize, AL_U8 *ReceiveBuf, AL_U16 ReceiveSize)
 {
     AL_U32 SendLevel, SendValue = 0xffffffff, Temp;
@@ -412,11 +459,16 @@ AL_S32 AlSpi_Dev_TranferData(AL_SPI_DevStruct *Spi, AL_U8 *SendBuf, AL_U32 SendS
 }
 
 /**
- * This function
- * @param   Spi is structure pointer to spi device
- * @return
- * @note    None
-*/
+ *
+ * This function sends data using DMA in the specified SPI device.
+ *
+ * @param Spi Pointer to the SPI device structure.
+
+ * @return Returns AL_SPI_ERR_ILLEGAL_PARAM if Spi is NULL, AL_SPI_ERR_NOT_READY if the SPI device is not ready,
+ *         AL_SPI_ERR_NOT_SUPPORT if the transmit FIFO is full, AL_SPI_ERR_BUSY if the transmit is already in progress,
+ *         or AL_OK if the data is sent successfully.
+ *
+ */
 AL_S32 AlSpi_Dev_DmaSendData(AL_SPI_DevStruct *Spi)
 {
     if (Spi == AL_NULL) {
@@ -449,11 +501,19 @@ AL_S32 AlSpi_Dev_DmaSendData(AL_SPI_DevStruct *Spi)
 }
 
 /**
- * This function
- * @param   Spi is structure pointer to spi device
- * @return
- * @note    None
-*/
+ *
+ * This function receives data using DMA in the specified SPI device.
+ *
+ * @param Spi Pointer to the SPI device structure.
+ * @param RecvSize Number of data frames to receive.
+
+ * @return Returns AL_OK on success, or an error code on failure.
+ *         - AL_SPI_ERR_ILLEGAL_PARAM if Spi is NULL.
+ *         - AL_SPI_ERR_NOT_READY if the SPI device is not ready.
+ *         - AL_SPI_ERR_NOT_SUPPORT if the receive FIFO is empty.
+ *         - AL_SPI_ERR_BUSY if the receive operation is already in progress.
+ *
+ */
 AL_S32 AlSpi_Dev_DmaRecvData(AL_SPI_DevStruct *Spi, AL_U16 RecvSize)
 {
     if (Spi == AL_NULL) {
@@ -489,55 +549,85 @@ AL_S32 AlSpi_Dev_DmaRecvData(AL_SPI_DevStruct *Spi, AL_U16 RecvSize)
 }
 
 /**
- * This function
- * @param   Spi is structure pointer to spi device
- * @return
- * @note    None
-*/
+ *
+ * This function performs a DMA transfer of data over SPI. It configures the SPI controller
+ * with the specified transfer mode, receive size, and data frame size. It also enables the
+ * transmit and receive DMA channels, sets the DMA transfer levels, and enables the SPI controller.
+ * Finally, it sets the chip select (CS) signal to start the transfer.
+ *
+ * @param Spi Pointer to the SPI device structure.
+ * @param RecvSize The size of the data to be received in number of frames.
+
+ * @return Returns AL_OK if the transfer was successful. Returns an error code if an error occurred.
+ *         Possible error codes are: AL_SPI_ERR_ILLEGAL_PARAM, AL_SPI_ERR_NOT_READY, AL_SPI_ERR_BUSY.
+
+ */
 AL_S32 AlSpi_Dev_DmaTranferData(AL_SPI_DevStruct *Spi, AL_U16 RecvSize)
 {
-
+    // Check for NULL pointer
     if (Spi == AL_NULL) {
         return AL_SPI_ERR_ILLEGAL_PARAM;
     }
 
+    // Check if SPI is ready
     if ((Spi->State & AL_SPI_STATE_READY) == 0) {
         return AL_SPI_ERR_NOT_READY;
     }
 
+    // Check if SPI is busy
     if (AlSpi_Dev_IsRxBusy(Spi) || AlSpi_Dev_IsTxBusy(Spi)) {
         return AL_SPI_ERR_BUSY;
     }
 
+    // Disable SPI controller
     AlSpi_ll_Disable(Spi->HwConfig.BaseAddress);
+
+    // Set transfer mode
     AlSpi_ll_SetTransfMode(Spi->HwConfig.BaseAddress, Spi->Configs.Trans.TransMode);
+
+    // Set receive size
     AlSpi_ll_SetRecvNumOfDataFrames(Spi->HwConfig.BaseAddress, RecvSize - 1);
+
+    // Set data frame size
     AlSpi_ll_SetDataFrameSize(Spi->HwConfig.BaseAddress, SPI_FRAME_8BITS);
 
+    // Set receive FIFO threshold level
     AlSpi_ll_SetRxFifoThrLevel(Spi->HwConfig.BaseAddress, Spi->HwConfig.FifoLen / 2);
+
+    // Set transmit FIFO threshold level
     AlSpi_ll_SetTxFifoThrLevel(Spi->HwConfig.BaseAddress, Spi->HwConfig.FifoLen / 2);
 
+    // Enable transmit DMA channel
     AlSpi_ll_TxDmaEnable(Spi->HwConfig.BaseAddress);
+
+    // Enable receive DMA channel
     AlSpi_ll_RxDmaEnable(Spi->HwConfig.BaseAddress);
 
+    // Set DMA receive level
     AlSpi_ll_SetDmaRecevLevel(Spi->HwConfig.BaseAddress, 0);
+
+    // Set DMA transmit level
     AlSpi_ll_SetDmaTransLevel(Spi->HwConfig.BaseAddress, Spi->HwConfig.FifoLen / 2);
 
+    // Enable SPI controller
     AlSpi_ll_Enable(Spi->HwConfig.BaseAddress);
-    /* Set cs to start transfer */
+
+    // Set chip select (CS) signal to start transfer
     AlSpi_ll_SetSlvSel(Spi->HwConfig.BaseAddress, Spi->Configs.Trans.SlvSelEnum);
 
     return AL_OK;
 }
 
 /**
- * This function
- * @param   Spi is structure pointer to spi device
- * @param   Cmd is io ctrl enum to set spi status
- * @param   Data is AL_VOID pointer converted to AL_SPI_SlvSelEnum pointer
- * @return  Whether the spi is io ctrl successfully
- * @note    None
-*/
+ * This function performs various control operations on the SPI device.
+ *
+ * @param Spi Pointer to the SPI device structure.
+ * @param Cmd The control command to be executed.
+ * @param Data Pointer to the data associated with the control command.
+ *
+ * @return AL_S32 Returns AL_OK if the operation is successful, otherwise returns an error code.
+ *
+ */
 AL_S32 AlSpi_Dev_IoCtl(AL_SPI_DevStruct *Spi, AL_Spi_IoCtlCmdEnum Cmd, AL_VOID *Data)
 {
     AL_S32 Ret = AL_OK;
@@ -621,13 +711,19 @@ AL_S32 AlSpi_Dev_IoCtl(AL_SPI_DevStruct *Spi, AL_Spi_IoCtlCmdEnum Cmd, AL_VOID *
 }
 
 /**
- * This function is register spi intrrupt callback function
- * @param   Spi is structure pointer to spi device
- * @param   Callback is a function pointer to spi event callback function
- * @param   CallbackRef is parameter of callback function
- * @return  Whether the spi register intrrupt callback function successfully
- * @note    None
-*/
+ *
+ * This function registers an interrupt callback function and a reference pointer
+ * to be used when the interrupt event occurs for the SPI device.
+ *
+ * @param Spi           Pointer to the AL_SPI_DevStruct representing the SPI device.
+ * @param Callback      Pointer to the interrupt callback function.
+ * @param CallbackRef   Pointer to the reference data to be passed to the callback function.
+ *
+ * @return AL_S32       Returns AL_OK if the callback is successfully registered,
+ *                      AL_SPI_ERR_ILLEGAL_PARAM if Spi or Callback is NULL,
+ *                      AL_SPI_ERR_NOT_SUPPORT if an interrupt callback is already registered.
+ *
+ */
 AL_S32 AlSpi_Dev_RegisterIntrCallBack(AL_SPI_DevStruct *Spi, SPI_EventCallBack Callback, AL_VOID *CallbackRef)
 {
     if (Spi == AL_NULL || Callback == AL_NULL) {
@@ -645,11 +741,14 @@ AL_S32 AlSpi_Dev_RegisterIntrCallBack(AL_SPI_DevStruct *Spi, SPI_EventCallBack C
 }
 
 /**
- * This function is unregister spi intrrupt callback function
- * @param   Spi is structure pointer to spi device
- * @return  Whether the spi unregister intrrupt callback function successfully
- * @note    None
-*/
+ *
+ * This function unregisters the interrupt callback function for the specified SPI device.
+ *
+ * @param Spi Pointer to the AL_SPI_DevStruct representing the SPI device.
+
+ * @return AL_S32 Returns AL_OK if the operation is successful, otherwise returns AL_SPI_ERR_ILLEGAL_PARAM.
+
+ */
 AL_S32 AlSpi_Dev_UnRegisterIntrCallBack(AL_SPI_DevStruct *Spi)
 {
     if (Spi == AL_NULL) {
@@ -662,11 +761,18 @@ AL_S32 AlSpi_Dev_UnRegisterIntrCallBack(AL_SPI_DevStruct *Spi)
 }
 
 /**
- * This function is spi receive intrrupt handler
- * @param   Spi is structure pointer to spi device
- * @return  AL_VOID
- * @note    None
-*/
+ *
+ * This function is responsible for handling the reception of data in the SPI device.
+ * It checks the length of the data to be received and performs the necessary operations
+ * based on the received data. If there is an error, it sets the appropriate state and
+ * triggers the event callback. Once the reception is complete, it masks the interrupt
+ * and triggers the receive done event callback.
+ *
+ * @param Spi Pointer to the AL_SPI_DevStruct representing the SPI device.
+ *
+ * @return None.
+
+ */
 static AL_VOID AlSpi_Dev_RecvDataHandler(AL_SPI_DevStruct *Spi)
 {
     AL_U32 Length, RxFifoLevel, Status, Temp;
@@ -729,11 +835,15 @@ static AL_VOID AlSpi_Dev_RecvDataHandler(AL_SPI_DevStruct *Spi)
 }
 
 /**
- * This function is spi send intrrupt handler
- * @param   Spi is structure pointer to spi device
- * @return  AL_VOID
- * @note    None
-*/
+ *
+ * This function is responsible for sending data from the send buffer of the AL_SPI_DevStruct.
+ * It checks the length of the send buffer and the transmit FIFO level to determine how much data can be sent.
+ * It then sends the data using the appropriate bit width and updates the send buffer's handled count.
+ * If all data has been sent, it masks the transmit interrupt and calls the event callback function.
+ *
+ * @param Spi Pointer to the AL_SPI_DevStruct.
+ *
+ */
 static AL_VOID AlSpi_Dev_SendDataHandler(AL_SPI_DevStruct *Spi)
 {
     AL_U32 TxFifoLevel, Length, Room, SendValue = 0xffffffff;
@@ -793,6 +903,18 @@ static AL_VOID AlSpi_Dev_SendDataHandler(AL_SPI_DevStruct *Spi)
 
 #define SPI_IN_STATUS_ERROR(Status)  0
 
+/**
+ *
+ * This function is responsible for handling events that occur on the SPI device.
+ * It checks if a callback function is registered and if so, it creates a SPI event
+ * structure and calls the callback function with the event and a reference to the SPI device.
+ *
+ * @param Spi The SPI device structure.
+ * @param EventId The ID of the event that occurred.
+ *
+ * @return None.
+ *
+ */
 static AL_VOID AlSpi_Dev_EventHandler(AL_SPI_DevStruct *Spi, AL_SPI_EventIdEnum EventId)
 {
     if (Spi->EventCallBack) {
@@ -805,11 +927,15 @@ static AL_VOID AlSpi_Dev_EventHandler(AL_SPI_DevStruct *Spi, AL_SPI_EventIdEnum 
 }
 
 /**
- * This function is spi intrrupt handler function
- * @param   instance is AL_VOID pointer converted to AL_SPI_DevStruct pointer
- * @return  AL_VOID
- * @note    None
-*/
+ *
+ * This function is called when an interrupt is triggered for the SPI device.
+ * It checks the interrupt status and performs the necessary actions based on the interrupt type.
+ *
+ * @param instance Pointer to the SPI device instance.
+ *
+ * @return None.
+ *
+ */
 AL_VOID AlSpi_Dev_IntrHandler(AL_VOID *instance)
 {
     AL_SPI_DevStruct *Spi = (AL_SPI_DevStruct *) instance;
@@ -852,7 +978,6 @@ AL_VOID AlSpi_Dev_IntrHandler(AL_VOID *instance)
         /* A read clears the txo_intr, rxu_intr, rxo_intr interrupts. */
         AlSpi_ll_ClearAllIntr(Spi->HwConfig.BaseAddress);
     }
-
 }
 
 

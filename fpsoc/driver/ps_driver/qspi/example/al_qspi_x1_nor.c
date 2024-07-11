@@ -41,6 +41,13 @@ AL_U8 FlashId[10] = { 0x0 };
 /************************** Function Prototypes ******************************/
 
 /************************** Function Definitions ******************************/
+/**
+ * Resets the Infineon NOR flash memory by sending a specific reset command.
+ * This function configures the SPI frame format, transmission mode, and address length before sending the reset command.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNor_InfineonReset(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -57,6 +64,14 @@ AL_VOID AlNor_InfineonReset(AL_VOID)
     }
 }
 
+/**
+ * Performs a generic reset operation on the NOR flash memory.
+ * This function first enables the reset command, then sends the reset command itself.
+ * It configures the SPI frame format, transmission mode, and address length for both operations.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNor_Reset(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -83,6 +98,13 @@ AL_VOID AlNor_Reset(AL_VOID)
     }
 }
 
+/**
+ * Enables write operations on the NOR flash memory.
+ * This function configures the SPI frame format, transmission mode, address length, and instruction length before sending the write enable command.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNor_Wren(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -102,6 +124,13 @@ AL_VOID AlNor_Wren(AL_VOID)
     }
 }
 
+/**
+ * Sets the status register of the NOR flash memory with the provided data.
+ * This function configures the SPI frame format, transmission mode, address length, and instruction length before sending the write status register command along with the data.
+ *
+ * @param data The data to be written to the status register.
+ * @return None.
+ */
 AL_VOID AlNor_SetStatus(AL_U8 data)
 {
     AL_S32 Ret = AL_OK;
@@ -121,6 +150,14 @@ AL_VOID AlNor_SetStatus(AL_U8 data)
     }
 }
 
+/**
+ * Waits for the Write-In-Progress (WIP) bit to clear in the status register of the NOR flash memory.
+ * This function repeatedly reads the status register until the WIP bit is cleared, indicating that the write operation is complete.
+ * It configures the SPI frame format, transmission mode, address length, and instruction length for the read operation.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNor_WaitWip(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -145,7 +182,13 @@ AL_VOID AlNor_WaitWip(AL_VOID)
     } while (RecvData[0] & SR_WIP);
 }
 
-
+/**
+ * Reads the status register of the NOR flash memory.
+ * This function configures the SPI frame format, transmission mode, address length, and instruction length before reading the status register.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNor_ReadStatus(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -167,7 +210,13 @@ AL_VOID AlNor_ReadStatus(AL_VOID)
 // #endif
 }
 
-
+/**
+ * Erases a sector of the NOR flash memory at the specified address.
+ * This function configures the SPI frame format, transmission mode, address length, and instruction length before sending the sector erase command along with the address.
+ *
+ * @param addr The address of the sector to be erased.
+ * @return None.
+ */
 AL_VOID AlNor_Erase(AL_U32 addr)
 {
     AL_S32 Ret = AL_OK;
@@ -189,7 +238,13 @@ AL_VOID AlNor_Erase(AL_U32 addr)
     }
 }
 
-
+/**
+ * Erases the entire NOR flash memory chip.
+ * This function configures the SPI frame format and transmission mode before sending the chip erase command.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNor_EraseChip(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -206,7 +261,13 @@ AL_VOID AlNor_EraseChip(AL_VOID)
 }
 
 
-
+/**
+ * Reads a page of data from the NOR flash memory at the specified address.
+ * This function configures the SPI frame format, transmission mode, address length, and instruction length before reading the data into a buffer.
+ *
+ * @param addr The address of the page to be read.
+ * @return None.
+ */
 AL_VOID AlNor_ReadPage(AL_U32 addr)
 {
     AL_S32 Ret = AL_OK;
@@ -228,7 +289,13 @@ AL_VOID AlNor_ReadPage(AL_U32 addr)
     }
 }
 
-
+/**
+ * Writes a page of data to the NOR flash memory at the specified address.
+ * This function configures the SPI frame format, transmission mode, address length, and instruction length before writing the data from a buffer.
+ *
+ * @param addr The address of the page to be written.
+ * @return None.
+ */
 AL_VOID AlNor_WritePage(AL_U32 addr)
 {
     AL_S32 Ret = AL_OK;
@@ -254,7 +321,13 @@ AL_VOID AlNor_WritePage(AL_U32 addr)
     }
 }
 
-
+/**
+ * Reads the identification data from the NOR flash memory.
+ * This function configures the SPI frame format, transmission mode, address length, and instruction length before reading the ID into a buffer.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNor_ReadId(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -274,6 +347,11 @@ AL_VOID AlNor_ReadId(AL_VOID)
 }
 
 
+/**
+ *
+ * This function initializes the QSPI driver, performs various QSPI operations
+ * such as erasing and writing to the NOR flash, and verifies the results.
+ */
 AL_VOID main(AL_VOID)
 {
     AL_U32 i;

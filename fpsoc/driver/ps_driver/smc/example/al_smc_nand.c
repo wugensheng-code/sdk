@@ -38,6 +38,22 @@ AL_U8 RecvData[TRANS_SIZE] = { 0x0 };
 /************************** Function Prototypes ******************************/
 
 /************************** Function Definitions ******************************/
+/**
+ *
+ * This function serves as the starting point for the FPSoc SMC test. It initializes the SMC hardware
+ * with predefined configurations, attempts to erase a block in the SMC device, and prepares a buffer
+ * of data to be sent. It prints status messages to indicate the progress and result of these operations.
+ *
+ * @param None.
+ *
+ * @return int Returns 0 if the program executes successfully, or a non-zero error code if initialization
+ *         or block erasure fails.
+ *
+ * @note This function demonstrates the basic usage of the SMC hardware interface, including initialization,
+ *       block erasure, and data preparation for transmission. Error codes from SMC operations are printed
+ *       to the standard output.
+ *
+ */
 int main(void)
 {
     printf("Start FPSoc Smc Test\r\n");

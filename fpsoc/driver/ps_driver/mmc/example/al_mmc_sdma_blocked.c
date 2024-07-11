@@ -43,7 +43,15 @@ static AL_MMC_InitStruct MmcSdmaInit = {
 static AL_S32 AlMmc_Test_SdmaBlocked(AL_VOID);
 
 /************************** Function Definitions ******************************/
-
+/**
+ *
+ * This function initializes the MMC test for SDMA in blocked mode. It logs the start of the test,
+ * calls the AlMmc_Test_SdmaBlocked function to perform the test, and logs the result. If the test
+ * fails, it logs an error message and returns the error code. Otherwise, it logs a success message
+ * indicating the test passed.
+ *
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -61,6 +69,17 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ *
+ * This function tests the MMC device using SDMA in blocked mode. It allocates memory for write and read
+ * operations, initializes the MMC hardware, and performs write and read operations in a loop. Each loop
+ * iteration writes to and reads from the MMC device, compares the written and read data, and logs the result.
+ * If any operation fails, it logs an error message and returns an error code. The function also handles memory
+ * cleanup and cache flushing if MMU is enabled. The loop continues indefinitely, logging success messages for
+ * each successful data check.
+ *
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 static AL_S32 AlMmc_Test_SdmaBlocked(AL_VOID)
 {
     AL_U32 Ret = AL_OK;

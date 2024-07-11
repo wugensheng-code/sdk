@@ -17,6 +17,18 @@
 #define IIC_MUX_ADDRESS             0x74
 #define FMC_IIC_CHANNEL             0x10
 
+/**
+ *
+ * This function sets the I2C multiplexer to the desired channel to enable communication
+ * with devices connected to that channel. It sends a single byte representing the channel
+ * number to the multiplexer's I2C address and waits for the operation to complete.
+ *
+ * @param Handle Pointer to the IIC HAL structure. This structure contains the configuration
+ *               and state information required by the HAL functions to manage I2C operations.
+ *
+ * @return Returns AL_OK if the operation was successful, otherwise returns an error code.
+ *
+ */
 AL_S32 static AlIic_MuxInit(AL_IIC_HalStruct *Handle)
 {
     AL_S32 Ret;
@@ -32,6 +44,17 @@ AL_S32 static AlIic_MuxInit(AL_IIC_HalStruct *Handle)
     return AL_OK;
 }
 
+/**
+ *
+ * This function showcases the initialization of an I2C interface in master mode with a 7-bit
+ * addressing scheme. It sends a predefined block of data to a slave device and then receives
+ * a block of data from the same device. The function logs the transmitted and received data
+ * for demonstration purposes.
+ *
+ * @return Returns AL_OK if both send and receive operations were successful. If any
+ *         operation fails, it returns an error code indicating the failure reason.
+ *
+ */
 AL_S32 AlIic_MasterFastExample()
 {
     AL_S32 Ret;
@@ -108,6 +131,15 @@ AL_S32 AlIic_MasterFastExample()
     return AL_OK;
 }
 
+/**
+ *
+ * This function serves as the starting point of the program. It calls the AlIic_MasterFastExample
+ * function to demonstrate fast I2C communication. The function returns 0 upon successful
+ * completion of the demonstration.
+ *
+ * @return Returns 0 upon successful completion.
+ *
+ */
 int main()
 {
     AlIic_MasterFastExample();

@@ -22,6 +22,14 @@
 #define AL_GPIO_DELAY_2000MS  2000
 
 
+/**
+ *
+ * This function demonstrates how to initialize the GPIO, write to a GPIO bank,
+ * read the value of a GPIO pin, and perform GPIO polling to control an LED.
+ *
+ * @return AL_OK if the function executes successfully.
+ *
+ */
 AL_S32 AlGpio_Hal_Ctl_LED_Example()
 {
     AL_GPIO_HalStruct *GPIO;

@@ -33,8 +33,18 @@ AL_U8 RecvData[RECV_SIZE] = { 0x0 };
 
 /************************** Function Definitions ******************************/
 /**
+ *
+ * This function initializes the SPI hardware using the provided configurations. It sets up the SPI device
+ * in slave mode with the specified protocol format, clock mode, and slave toggle settings. It logs an error
+ * message if the initialization fails.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
  * @note Chip SPI MOSI link Master MOSI when Chip as Slave
-*/
+ *
+ */
 void main(void)
 {
     AL_U32 i;

@@ -20,6 +20,19 @@ typedef AL_U8                       AddrType;
 
 #define IIC_MASTER_TEST_TIMEOUT_MS  1000
 
+/**
+ *
+ * This function sends a block of data to the EEPROM at the specified slave address.
+ * It waits for the write operation to complete by introducing a delay after sending the data.
+ *
+ * @param Handle Pointer to the IIC HAL structure.
+ * @param SlaveAddr The slave address of the EEPROM.
+ * @param Buffer Pointer to the data buffer to be written.
+ * @param Size The number of bytes to write.
+ *
+ * @return AL_S32 Returns AL_OK if the write operation is successful, otherwise returns an error code.
+
+ */
 AL_S32 static AlIic_EepromWriteData(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U8 *Buffer, AL_U32 Size)
 {
     AL_S32 Ret;
@@ -35,6 +48,20 @@ AL_S32 static AlIic_EepromWriteData(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, 
     return AL_OK;
 }
 
+/**
+ *
+ * This function first sends the read address to the EEPROM and then reads a block of data from it.
+ * It uses the AlIic_EepromWriteData function to send the read address.
+ *
+ * @param Handle Pointer to the IIC HAL structure.
+ * @param SlaveAddr The slave address of the EEPROM.
+ * @param ReadAddr The EEPROM address from where to start reading.
+ * @param Buffer Pointer to the buffer where the read data will be stored.
+ * @param Size The number of bytes to read.
+ *
+ * @return AL_S32 Returns AL_OK if the read operation is successful, otherwise returns an error code.
+ *
+ */
 AL_S32 static AlIic_EepromReadData(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U16 ReadAddr,
                                    AL_U8 *Buffer, AL_U32 Size)
 {
@@ -55,6 +82,15 @@ AL_S32 static AlIic_EepromReadData(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, A
     return AL_OK;
 }
 
+/**
+ *
+ * This function sets the I2C MUX to the correct channel for EEPROM communication.
+ *
+ * @param Handle Pointer to the IIC HAL structure.
+ *
+ * @return AL_S32 Returns AL_OK if the MUX initialization is successful, otherwise returns an error code.
+ *
+ */
 AL_S32 static AlIic_MuxInit(AL_IIC_HalStruct *Handle)
 {
     AL_S32 Ret;
@@ -68,6 +104,16 @@ AL_S32 static AlIic_MuxInit(AL_IIC_HalStruct *Handle)
     return AL_OK;
 }
 
+/**
+ *
+ * This function initializes the I2C interface, writes a block of data to the EEPROM,
+ * and then reads it back to verify the write operation. It logs the result of the operation.
+ *
+ * @param None.
+ *
+ * @return AL_S32 Returns AL_OK if the example completes successfully, otherwise returns an error code.
+ *
+ */
 AL_S32 AlIic_E2promExample()
 {
     AL_S32 Ret;

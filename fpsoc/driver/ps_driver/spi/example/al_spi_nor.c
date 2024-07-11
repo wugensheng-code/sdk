@@ -32,6 +32,17 @@ AL_U8 __attribute__((aligned(4))) FlashId[10] = { 0x0 };
 /************************** Function Prototypes ******************************/
 
 /************************** Function Definitions ******************************/
+/**
+ *
+ * This function sends a reset command to the NOR flash device using SPI communication.
+ * It sets the transmission mode to SPI_TX_ONLY and sends the reset command defined by NOR_OP_INFINEON_SRST.
+ * If the command fails to send, it logs an error with the return value.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 void AlNor_Reset(void)
 {
     AL_S32 ret = AL_OK;
@@ -46,7 +57,17 @@ void AlNor_Reset(void)
 }
 
 
-
+/**
+ *
+ * This function sends a write enable command to the NOR flash device to allow modifications.
+ * It sets the transmission mode to SPI_TX_ONLY and sends the write enable command defined by NOR_OP_WREN.
+ * If the command fails to send, it logs an error with the return value.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 void AlNor_Wren(void)
 {
     AL_S32 ret = AL_OK;
@@ -60,8 +81,18 @@ void AlNor_Wren(void)
     };
 }
 
-
-
+/**
+ *
+ *
+ * This function allows setting the status register of the NOR flash device to a specific value.
+ * It sets the transmission mode to SPI_TX_ONLY, prepares the command and data, and sends them.
+ * If the command fails to send, it logs an error with the return value.
+ *
+ * @param data The value to set the status register to.
+ *
+ * @return None.
+ *
+ */
 void AlNor_SetStatus(AL_U8 data)
 {
     AL_S32 ret = AL_OK;
@@ -76,6 +107,17 @@ void AlNor_SetStatus(AL_U8 data)
     }
 }
 
+/**
+ *
+ * This function continuously reads the status register of the NOR flash device until the WIP bit is cleared,
+ * indicating that the write or erase operation is complete. It uses SPI_EEPROM mode for communication.
+ * If reading the status register fails, it logs an error.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 void AlNor_WriteWip(void)
 {
     AL_S32 ret = AL_OK;
@@ -94,7 +136,17 @@ void AlNor_WriteWip(void)
     } while (RecvData[0] & SR_WIP);
 }
 
-
+/**
+ *
+ * This function reads the status register of the NOR flash device and logs its value.
+ * It sets the transmission mode to SPI_EEPROM and sends the read status register command.
+ * If the command fails to send, it logs an error with the return value.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 void AlNor_ReadStatus(void)
 {
     AL_S32 ret = AL_OK;
@@ -111,6 +163,17 @@ void AlNor_ReadStatus(void)
 #endif
 }
 
+/**
+ *
+ * This function sends a sector erase command to the NOR flash device.
+ * It sets the transmission mode to SPI_TX_ONLY and sends the sector erase command along with the address to erase.
+ * If the command fails to send, it logs an error with the return value.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 void AlNor_Erase(void)
 {
     AL_S32 ret = AL_OK;
@@ -127,6 +190,17 @@ void AlNor_Erase(void)
     }
 }
 
+/**
+ *
+ * This function sends a chip erase command to the NOR flash device, removing all data.
+ * It sets the transmission mode to SPI_TX_ONLY and sends the chip erase command.
+ * If the command fails to send, it logs an error with the return value.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 void AlNor_EraseChip(void)
 {
     AL_S32 ret = AL_OK;
@@ -140,6 +214,17 @@ void AlNor_EraseChip(void)
     }
 }
 
+/**
+ *
+ * This function reads data from a specific page of the NOR flash device.
+ * It sets the transmission mode to SPI_EEPROM, sends the read command with the page address, and stores the received data.
+ * If the command fails, it logs an error with the return value.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 void AlNor_ReadPage(void)
 {
     AL_S32 ret = AL_OK;
@@ -155,7 +240,17 @@ void AlNor_ReadPage(void)
     }
 }
 
-
+/**
+ *
+ * Similar to AlNor_ReadPage but reads from a specific page with an additional offset.
+ * It sets the transmission mode to SPI_EEPROM and sends the read command with the page address and offset.
+ * If the command fails, it logs an error with the return value.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 void AlNor_ReadPage1(void)
 {
     AL_S32 ret = AL_OK;
@@ -172,6 +267,17 @@ void AlNor_ReadPage1(void)
     }
 }
 
+/**
+ *
+ * This function writes data to a specific page of the NOR flash device.
+ * It sets the transmission mode to SPI_TX_ONLY, prepares the data to be written, and sends the write command with the data.
+ * If the command fails to send, it logs an error with the return value.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 void AlNor_WritePage(void)
 {
     AL_S32 ret = AL_OK;
@@ -192,6 +298,17 @@ void AlNor_WritePage(void)
     }
 }
 
+/**
+ *
+ * Similar to AlNor_WritePage but writes to a specific page with an additional offset.
+ * It sets the transmission mode to SPI_TX_ONLY, prepares the data to be written, and sends the write command with the data and offset.
+ * If the command fails to send, it logs an error with the return value.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 void AlNor_WritePage1(void)
 {
     AL_S32 ret = AL_OK;
@@ -212,6 +329,17 @@ void AlNor_WritePage1(void)
     }
 }
 
+/**
+ *
+ * This function reads the manufacturer and device identification of the NOR flash device.
+ * It sets the transmission mode to SPI_EEPROM and sends the read ID command.
+ * The received ID is logged. If the command fails, it logs an error with the return value.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 AL_VOID AlNor_ReadId(AL_VOID)
 {
     AL_S32 ret = AL_OK;
@@ -225,6 +353,16 @@ AL_VOID AlNor_ReadId(AL_VOID)
 }
 
 
+/**
+ *
+ * This function initializes the SPI driver, performs various SPI NOR flash operations,
+ * and checks the results for errors.
+ *
+ * @param  None.
+ *
+ * @return None.
+ *
+ */
 void main(void)
 {
     AL_U32 i;

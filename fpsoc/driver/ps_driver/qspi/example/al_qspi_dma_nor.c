@@ -44,6 +44,13 @@ AL_U8 InstAndAddr[10] = { 0x0 };
 /************************** Function Prototypes ******************************/
 
 /************************** Function Definitions ******************************/
+/**
+ * Resets the Infineon NOR flash memory using DMA.
+ * This function configures the QSPI controller for a transmit-only operation, sets the instruction to the Infineon-specific software reset command, and initiates a block send operation via DMA.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNorDma_InfineonReset(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -62,7 +69,13 @@ AL_VOID AlNorDma_InfineonReset(AL_VOID)
     }
 }
 
-
+/**
+ * Performs a generic reset operation on the NOR flash memory using DMA.
+ * This function prepares the QSPI controller for a reset operation by setting it to transmit-only mode, configuring the necessary parameters for the reset instruction, and then sends the reset enable and reset commands sequentially to the NOR flash.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNorDma_Reset(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -95,7 +108,13 @@ AL_VOID AlNorDma_Reset(AL_VOID)
 }
 
 
-
+/**
+ * Enables write operations on the NOR flash memory using DMA.
+ * It sets the QSPI controller to transmit-only mode, configures the necessary parameters, and sends the write enable (WREN) command to the NOR flash to allow write operations.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNorDma_Wren(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -116,7 +135,13 @@ AL_VOID AlNorDma_Wren(AL_VOID)
 }
 
 
-
+/**
+ * Waits for the write-in-progress (WIP) bit to clear in the NOR flash's status register.
+ * This function repeatedly reads the status register until the WIP bit is cleared, indicating that the NOR flash is ready for further operations. It uses DMA for the status register read operations.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNorDma_WaitWip(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -142,7 +167,13 @@ AL_VOID AlNorDma_WaitWip(AL_VOID)
 }
 
 
-
+/**
+ * Reads the status register of the NOR flash memory using DMA.
+ * This function configures the QSPI controller for EEPROM mode, sets up the read status register (RDSR) command, and performs a block transfer to read the status register.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNorDma_ReadStatus(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -165,7 +196,13 @@ AL_VOID AlNorDma_ReadStatus(AL_VOID)
 }
 
 
-
+/**
+ * Erases a sector in the NOR flash memory using DMA.
+ * This function configures the QSPI controller for a transmit-only operation, sets up the sector erase (SE) command with the target sector address, and initiates the erase operation.
+ *
+ * @param addr The address of the sector to erase.
+ * @return None.
+ */
 AL_VOID AlNorDma_Erase(AL_U32 addr)
 {
     AL_S32 Ret = AL_OK;
@@ -188,7 +225,13 @@ AL_VOID AlNorDma_Erase(AL_U32 addr)
 }
 
 
-
+/**
+ * Reads a page from the NOR flash memory using DMA.
+ * This function sets the QSPI controller for a receive-only operation, configures it for quad I/O read mode, sets up the read command with the target page address, and performs a block transfer to read the page data.
+ *
+ * @param addr The address of the page to read.
+ * @return None.
+ */
 AL_VOID AlNorDma_ReadPage(AL_U32 addr)
 {
     AL_S32 Ret = AL_OK;
@@ -212,7 +255,13 @@ AL_VOID AlNorDma_ReadPage(AL_U32 addr)
 
 
 
-
+/**
+ * Writes a page to the NOR flash memory using DMA.
+ * This function prepares the QSPI controller for a transmit-only operation in quad I/O mode, sets up the page program (PP) command with the target page address, fills a buffer with data to write, and initiates the write operation.
+ *
+ * @param addr The address of the page to write.
+ * @return None.
+ */
 AL_VOID AlNorDma_WritePage(AL_U32 addr)
 {
     AL_S32 Ret = AL_OK;
@@ -239,7 +288,13 @@ AL_VOID AlNorDma_WritePage(AL_U32 addr)
     }
 }
 
-
+/**
+ * Reads the identification (ID) of the NOR flash memory using DMA.
+ * This function configures the QSPI controller for EEPROM mode, sets up the read ID (RDID) command, and performs a block transfer to read the flash memory's ID.
+ *
+ * @param None.
+ * @return None.
+ */
 AL_VOID AlNorDma_ReadId(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -261,6 +316,9 @@ AL_VOID AlNorDma_ReadId(AL_VOID)
 }
 
 
+/**
+ * @brief Main function for the Qspi DMA test.
+ */
 AL_VOID main(AL_VOID)
 {
     AL_U32 i;
@@ -276,7 +334,6 @@ AL_VOID main(AL_VOID)
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     AlNorDma_ReadId();
-
 
     AlNorDma_Wren();
     AlNorDma_Erase(0);
@@ -298,7 +355,6 @@ AL_VOID main(AL_VOID)
     AlNorDma_Wren();
     AlNorDma_WritePage(0);
     AlNorDma_WaitWip();
-
 
     AlNorDma_ReadPage(0);
     for (i = 0; i < 230; i++) {

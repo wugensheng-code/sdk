@@ -29,12 +29,19 @@ AL_DMACAHB_HalStruct        *Spi1RxDmacHandle = AL_NULL;
 
 /********************************************************/
 /**
- * This function is wait send done or timeout
- * @param   Handle is pointer to AL_SPI_HalStruct
- * @param   Timeout is max wait time
- * @return  Return whether to send timeout
- * @note    None
-*/
+ *
+ * This function waits for the transmission to complete or times out, using the specified timeout value.
+ *
+ * @param Handle Pointer to the AL_SPI_HalStruct structure.
+ * @param Event Pointer to the AL_SPI_EventStruct structure to store the event information.
+ * @param Timeout Timeout value in milliseconds.
+ *
+ * @return The return value indicates the status of the function call.
+ *         - Returns a negative value if an error occurred.
+ *         - Returns 0 if the transmission completed successfully.
+ *         - Returns a positive value if the function timed out.
+ *
+ */
 static AL_S32 AlSpi_Hal_WaitTxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_SPI_EventStruct *Event, AL_U32 Timeout)
 {
 
@@ -52,12 +59,16 @@ static AL_S32 AlSpi_Hal_WaitTxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_SPI_Eve
 }
 
 /**
- * This function is wait receive done or timeout
- * @param   Handle is pointer to AL_SPI_HalStruct
- * @param   Timeout is max wait time
- * @return  Return whether to receive timeout
- * @note    None
-*/
+ *
+ * This function waits for the Rx done event to occur or for a timeout to happen.
+ *
+ * @param Handle Pointer to the AL_SPI_HalStruct structure.
+ * @param Event Pointer to the AL_SPI_EventStruct structure to store the event information.
+ * @param Timeout Timeout value in milliseconds.
+ *
+ * @return The return value of AlOsal_Mb_Receive function.
+ *
+ */
 static AL_S32 AlSpi_Hal_WaitRxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_SPI_EventStruct *Event, AL_U32 Timeout)
 {
 #ifdef SPI_DEBUG
@@ -73,12 +84,20 @@ static AL_S32 AlSpi_Hal_WaitRxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_SPI_Eve
 }
 
 /**
- * This function is wait receive done and send done or timeout
- * @param   Handle is pointer to AL_SPI_HalStruct
- * @param   Timeout is max wait time
- * @return  Return whether to send and receive timeout
- * @note    None
-*/
+ *
+ * This function waits for the transmit and receive operations of the SPI handle to complete
+ * or until the specified timeout period is reached. It uses the event queues to receive
+ * the transmit and receive events. If the timeout period is reached before the operations
+ * complete, the slave select line is disabled and the function returns the appropriate error code.
+ *
+ * @param Handle Pointer to the AL_SPI_HalStruct representing the SPI handle.
+ * @param Event Pointer to the AL_SPI_EventStruct to store the received events.
+ * @param Timeout Timeout period in milliseconds.
+ *
+ * @return Returns AL_OK if the transmit and receive operations complete successfully,
+ *         otherwise returns the appropriate error code.
+ *
+ */
 static AL_S32 AlSpi_Hal_WaitTxRxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_SPI_EventStruct *Event, AL_U32 Timeout)
 {
 #ifdef SPI_DEBUG
@@ -106,12 +125,16 @@ static AL_S32 AlSpi_Hal_WaitTxRxDoneOrTimeout(AL_SPI_HalStruct *Handle, AL_SPI_E
 }
 
 /**
- * This is default event callback function
- * @param   SpiEvent is a AL_SPI_EventStruct struct
- * @param   CallbackRef is parameter of callback function
- * @return  AL_OK
- * @note    None
-*/
+ *
+ * This function is called when a SPI event occurs. It handles different types of SPI events
+ * and sends them to the corresponding event queues.
+ *
+ * @param SpiEvent The SPI event structure containing information about the event.
+ * @param CallbackRef A reference to the SPI handle structure.
+ *
+ * @return None.
+ *
+ */
 static AL_VOID AlSpi_DefEventCallBack(AL_SPI_EventStruct SpiEvent, void *CallbackRef)
 {
     AL_SPI_HalStruct *Handle = (AL_SPI_HalStruct *)CallbackRef;
@@ -136,17 +159,17 @@ static AL_VOID AlSpi_DefEventCallBack(AL_SPI_EventStruct SpiEvent, void *Callbac
 }
 
 /**
- * This function initialize the spi according to the specified
- *          parameters in the AL_SPI_ConfigsStruct and initialize the associated handle.
- * @param   Handle is pointer to AL_SPI_HalStruct
- * @param   InitConfig pointer to a AL_SPI_ConfigsStruct structure
- *          that contains the configuration information for the specified spi peripheral
- * @param   Callback is a function pointer to spi event callback function
- * @param   CallbackRef is parameter of callback function
- * @param   DevId is hardware module id
- * @return  The state of function execution
- * @note    None
-*/
+ *
+ * This function initializes the SPI hardware and driver based on the provided configuration.
+ *
+ * @param Handle Pointer to the SPI handle structure.
+ * @param InitConfig Pointer to the SPI configuration structure.
+ * @param Callback Callback function for SPI events.
+ * @param DevId ID of the SPI device.
+ *
+ * @return Returns AL_OK on success, otherwise an error code.
+ *
+ */
 AL_S32 AlSpi_Hal_Init(AL_SPI_HalStruct **Handle, AL_SPI_ConfigsStruct *InitConfig, SPI_EventCallBack Callback, AL_U32 DevId)
 {
     AL_S32 Ret = AL_OK;
@@ -192,14 +215,17 @@ AL_S32 AlSpi_Hal_Init(AL_SPI_HalStruct **Handle, AL_SPI_ConfigsStruct *InitConfi
 }
 
 /**
- * This function is spi blocking send data
- * @param   Handle is pointer to AL_SPI_HalStruct
- * @param   Data is pointer to send data
- * @param   Size is send data size
- * @param   Timeout is max wait time for send done
- * @return  The state of function execution
- * @note    None
-*/
+ *
+ * This function sends a block of data over SPI using the provided handle.
+ *
+ * @param Handle Pointer to the SPI handle structure.
+ * @param Data Pointer to the data buffer to be sent.
+ * @param Size Size of the data buffer in bytes.
+ * @param Timeout Timeout value in milliseconds.
+ *
+ * @return Returns AL_OK if the data was sent successfully, otherwise returns an error code.
+ *
+ */
 AL_S32 AlSpi_Hal_SendDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -236,14 +262,17 @@ AL_S32 AlSpi_Hal_SendDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *Data, AL_U32 Siz
 }
 
 /**
- * This function is spi blocking receive data
- * @param   Handle is pointer to AL_SPI_HalStruct
- * @param   Data is pointer to receive data
- * @param   Size is receive data size
- * @param   Timeout is max wait time for receive done
- * @return  The state of function execution
- * @note    None
-*/
+ *
+ * This function receives a block of data from the SPI device specified by the given handle.
+ *
+ * @param Handle Pointer to the AL_SPI_HalStruct representing the SPI device.
+ * @param Data Pointer to the buffer where the received data will be stored.
+ * @param Size The size of the data block to receive, in bytes.
+ * @param Timeout The maximum time to wait for the receive operation to complete, in milliseconds.
+ *
+ * @return AL_OK if the receive operation is successful, otherwise an error code.
+ *
+ */
 AL_S32 AlSpi_Hal_RecvDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -278,16 +307,22 @@ AL_S32 AlSpi_Hal_RecvDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *Data, AL_U32 Siz
 }
 
 /**
- * This function is spi blocking tranfer data
- * @param   Handle is pointer to AL_SPI_HalStruct
- * @param   SendData is pointer to send data
- * @param   SendSize is send data size
- * @param   RecvData is pointer to receive data
- * @param   RecvSize is receive data size
- * @param   Timeout is max wait time for send done
- * @return  The state of function execution
- * @note    None
-*/
+ *
+ * This function transfers a block of data over SPI using the provided SPI handle.
+ * It sends the data in the `SendData` buffer of size `SendSize` and receives the data
+ * in the `RecvData` buffer of size `RecvSize`. The transfer is performed with a timeout
+ * value specified in milliseconds.
+ *
+ * @param Handle Pointer to the SPI handle structure.
+ * @param SendData Pointer to the buffer containing the data to be sent.
+ * @param SendSize Size of the data to be sent in bytes.
+ * @param RecvData Pointer to the buffer to store the received data.
+ * @param RecvSize Size of the buffer to store the received data in bytes.
+ * @param Timeout Timeout value in milliseconds for the transfer operation.
+ *
+ * @return Returns AL_OK if the transfer is successful, otherwise returns an error code.
+ *
+ */
 AL_S32 AlSpi_Hal_TranferDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL_U32 SendSize,
                                    AL_U8 *RecvData, AL_U16 RecvSize, AL_U32 Timeout)
 {
@@ -323,15 +358,21 @@ AL_S32 AlSpi_Hal_TranferDataBlock(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL_
 }
 
 /**
- * This function is spi dma blocking send data
- * @param   Handle is pointer to AL_SPI_HalStruct
- * @param   Data is pointer to send data
- * @param   Size is send data size
- * @param   Timeout is max wait time for send done
- * @return  The state of function execution
- * @note    TransSize(AL_DMACAHB_ChTransStruct) * SrcTransWidth = Data Size
- *          Data Size % SrcBurstLength = 0
-*/
+ *
+ * This function starts a DMA block send operation on the SPI interface. It transfers the data from the provided
+ * buffer to the SPI data register using DMA. The function first checks the handle and then initializes the DMA
+ * channel configuration based on the SPI base address. It then locks the SPI interface, initiates the DMA send
+ * operation, and starts the DMA transfer. Finally, it waits for the transmit FIFO to be empty and for the SPI
+ * interface to be idle before releasing the lock and returning the result.
+ *
+ * @param Handle Pointer to the SPI HAL structure.
+ * @param SendData Pointer to the buffer containing the data to be sent.
+ * @param SendSize Size of the data to be sent in bytes.
+ * @param Timeout Timeout value in milliseconds.
+ *
+ * @return Returns AL_OK if the DMA block send operation is successful, or an error code if it fails.
+ *
+ */
 AL_S32 AlSpi_Hal_DmaStartBlockSend(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL_U32 SendSize, AL_U32 Timeout)
 {
     AL_DMACAHB_ChTransStruct    *SpiTxDmacChTrans;
@@ -425,16 +466,20 @@ AL_S32 AlSpi_Hal_DmaStartBlockSend(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL
     return Ret;
 }
 
-
 /**
- * This function is spi dma blocking receive data
- * @param   Handle is pointer to AL_SPI_HalStruct
- * @param   Data is pointer to receive data
- * @param   Size is receive data size
- * @param   Timeout is max wait time for receive done
- * @return  The state of function execution
- * @note    None
-*/
+ *
+ * This function starts a DMA block receive operation on the SPI interface. It receives data from the SPI interface
+ * and stores it in the provided buffer using DMA. The function takes a handle to the SPI interface, the buffer to
+ * store the received data, the size of the data to receive, and a timeout value.
+ *
+ * @param Handle Pointer to the SPI handle structure.
+ * @param RecvData Pointer to the buffer to store the received data.
+ * @param RecvSize Size of the data to receive.
+ * @param Timeout Timeout value in milliseconds.
+ *
+ * @return Returns AL_OK if the operation is successful, or an error code if the operation fails.
+ *
+ */
 AL_S32 AlSpi_Hal_DmaStartBlockReceive(AL_SPI_HalStruct *Handle, AL_U8 *RecvData, AL_U16 RecvSize, AL_U32 Timeout)
 {
     AL_DMACAHB_ChTransStruct    *SpiRxDmacChTrans;
@@ -524,19 +569,21 @@ AL_S32 AlSpi_Hal_DmaStartBlockReceive(AL_SPI_HalStruct *Handle, AL_U8 *RecvData,
     return Ret;
 }
 
-
-
 /**
- * This function is spi dma blocking tranfer data
- * @param   Handle is pointer to AL_SPI_HalStruct
- * @param   SendData is pointer to send data
- * @param   SendSize is send data size
- * @param   RecvData is pointer to receive data
- * @param   RecvSize is receive data size
- * @param   Timeout is max wait time for send done
- * @return  The state of function execution
- * @note    None
-*/
+ *
+ * This function starts a DMA block transfer for SPI communication. It transfers data from the
+ * SendData buffer to the SPI transmit register and from the SPI receive register to the RecvData buffer.
+ *
+ * @param Handle Pointer to the SPI HAL structure.
+ * @param SendData Pointer to the buffer containing the data to be transmitted.
+ * @param SendSize Size of the data to be transmitted in bytes.
+ * @param RecvData Pointer to the buffer to store the received data.
+ * @param RecvSize Size of the buffer to store the received data in bytes.
+ * @param Timeout Timeout value in milliseconds.
+ *
+ * @return Returns AL_OK if the DMA block transfer was started successfully, or an error code if an error occurred.
+ *
+ */
 AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData, AL_U32 SendSize,
                                        AL_U8 *RecvData, AL_U16 RecvSize, AL_U32 Timeout)
 {
@@ -693,14 +740,18 @@ AL_S32 AlSpi_Hal_DmaStartBlockTranfer(AL_SPI_HalStruct *Handle, AL_U8 *SendData,
     return Ret;
 }
 
-
-
 /**
- * This function is excute operations to set or check spi configuration status.
- * @param   Handle is pointer to AL_SPI_HalStruct
- * @return  The state of function execution
- * @note    None
-*/
+ *
+ * This function allows the user to perform various control operations on the SPI HAL.
+ *
+ * @param Handle Pointer to the AL_SPI_HalStruct representing the SPI HAL handle.
+ * @param Cmd The I/O control command to be executed.
+ * @param Data Pointer to the data associated with the I/O control command.
+ * @param Timeout The timeout value for the I/O control operation.
+ *
+ * @return Returns AL_OK if the I/O control operation is successful, otherwise returns an error code.
+ *
+ */
 AL_S32 AlSpi_Hal_IoCtl(AL_SPI_HalStruct *Handle, AL_Spi_IoCtlCmdEnum Cmd, AL_VOID *Data, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;

@@ -53,6 +53,16 @@ static AL_S32 AlAdc_ContinuousMode_Test(AL_VOID);
 
 /************************** Function Definitions ******************************/
 
+/**
+ *
+ * This function logs the start of the test, calls AlAdc_ContinuousMode_Test to perform the test,
+ * and logs the result. If the test fails, it logs an error message and returns the error code.
+ *
+ * @param  None.
+ *
+ * @return AL_S32 Returns AL_OK if the test is successful, or an error code if the test fails.
+ *
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -70,6 +80,19 @@ AL_S32 main(AL_VOID)
     return AL_OK;
 }
 
+/**
+ *
+ * This function initializes the ADC hardware with specified configurations, starts the ADC in
+ * continuous mode, and reads data from all configured channels for a number of iterations.
+ * It logs the value of each channel for each iteration. After completing the iterations, it stops
+ * the ADC and cleans up.
+ *
+ * @param  None.
+ *
+ * @return AL_S32 Returns AL_OK if the ADC continuous mode operates correctly, or an error code
+ * if initialization or starting the ADC fails.
+ *
+ */
 static AL_S32 AlAdc_ContinuousMode_Test(AL_VOID)
 {
     AL_ADC_HalStruct *Handle;

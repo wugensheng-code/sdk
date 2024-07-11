@@ -36,7 +36,13 @@ static AL_TTC_TimerInitStruct EventInitConfigs = {
 static AL_S32 AlTtc_Test_MeasurePulseWidth(AL_VOID);
 
 /************************** Function Definitions ******************************/
-
+/**
+ * This function initializes the application, runs the pulse width measurement test,
+ * and reports the test result. If the test fails, it logs an error message and returns
+ * an error code. On success, it logs a success message and returns AL_OK.
+ *
+ * @return AL_OK if the test succeeds, error code otherwise.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -54,6 +60,13 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ * This function initializes the TTC hardware with predefined configurations, sets up the
+ * event timer for pulse width measurement, and continuously reads and logs the event timer value.
+ * The function runs indefinitely, logging the value of the event timer.
+ *
+ * @return AL_OK if the TTC hardware is successfully initialized, error code otherwise.
+ */
 static AL_S32 AlTtc_Test_MeasurePulseWidth(AL_VOID)
 {
     AL_U32 Ret = AL_OK;

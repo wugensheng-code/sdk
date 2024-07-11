@@ -15,6 +15,17 @@
 #define IIC_MUX_ADDRESS             0x74
 #define FMC_IIC_CHANNEL             0x10
 
+/**
+ *
+ * This function sets the I2C MUX to the correct channel for EEPROM communication by sending
+ * the channel number to the MUX's I2C address. It waits for the operation to complete by
+ * introducing a delay.
+ *
+ * @param Handle Pointer to the IIC HAL structure.
+ *
+ * @return AL_S32 Returns AL_OK if the MUX initialization is successful, otherwise returns an error code.
+ *
+ */
 AL_S32 static AlIic_MuxInit(AL_IIC_HalStruct *Handle)
 {
     AL_S32 Ret;
@@ -30,6 +41,15 @@ AL_S32 static AlIic_MuxInit(AL_IIC_HalStruct *Handle)
     return AL_OK;
 }
 
+/**
+ *
+ * This function initializes the I2C interface for master mode with a 7-bit address mode, then
+ * switches to a 10-bit address mode. It sends a predefined block of data to a slave device and
+ * receives a block of data from it. The function logs the transmitted and received data.
+ *
+ * @return Returns AL_OK if the send and receive operations are successful, otherwise returns an error code.
+ *
+ */
 AL_S32 AlIic_Master10BitBlockExample()
 {
     AL_S32 Ret;
@@ -112,6 +132,14 @@ AL_S32 AlIic_Master10BitBlockExample()
     return AL_OK;
 }
 
+/**
+ *
+ * This function calls AlIic_Master10BitBlockExample to demonstrate sending and receiving data
+ * over I2C in 10-bit address mode. It returns 0 upon successful completion.
+ *
+ * @return int Returns 0 upon successful completion.
+ *
+ */
 int main()
 {
     AlIic_Master10BitBlockExample();

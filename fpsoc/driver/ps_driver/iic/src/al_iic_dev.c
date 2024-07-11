@@ -21,12 +21,16 @@ static AL_IIC_InitStruct IicDefInitConfigs =
 extern AL_IIC_HwConfigStruct AlIic_HwConfig[AL_IIC_NUM_INSTANCE];
 
 /**
- * This function look up hardware config structure.
- * @param   DeviceId is hardware module id
- * @return
- *          - AL_IIC_HwConfigStruct for hardware config
- * @note
-*/
+ *
+ * Looks up the hardware configuration for a given I2C device ID.
+ * This function searches through the available I2C hardware configurations
+ * and returns a pointer to the configuration if found.
+ *
+ * @param DevId The device ID of the I2C device to look up.
+ *
+ * @return A pointer to the hardware configuration structure if found; NULL otherwise.
+ *
+ */
 AL_IIC_HwConfigStruct *AlIic_Dev_LookupConfig(AL_U32 DevId)
 {
     AL_U32 Index;
@@ -43,35 +47,40 @@ AL_IIC_HwConfigStruct *AlIic_Dev_LookupConfig(AL_U32 DevId)
 }
 
 /**
- * This function check whether the iic tx is busy.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- *          - AL_BOOL for iic tx status
- * @note
-*/
+ *
+ * Checks if the I2C device's transmit buffer is busy.
+ * This function examines the device state to determine if data is currently
+ * being transmitted.
+ *
+ * @param Iic Pointer to the I2C device structure.
+ * @return AL_TRUE if the transmit buffer is busy; AL_FALSE otherwise.
+ */
 AL_BOOL AlIic_Dev_IsTxBusy(AL_IIC_DevStruct *Iic)
 {
     return (AL_BOOL)(Iic->State & AL_IIC_STATE_TX_BUSY);
 }
 
 /**
- * This function check whether the iic rx is busy.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- *          - AL_BOOL for iic rx status
- * @note
-*/
+ * Checks if the I2C device's receive buffer is busy.
+ * This function examines the device state to determine if data is currently
+ * being received.
+ *
+ * @param Iic Pointer to the I2C device structure.
+ * @return AL_TRUE if the receive buffer is busy; AL_FALSE otherwise.
+ */
 AL_BOOL AlIic_Dev_IsRxBusy(AL_IIC_DevStruct *Iic)
 {
     return (AL_BOOL)(Iic->State & AL_IIC_STATE_RX_BUSY);
 }
 
 /**
- * This function set iic tx status to busy.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ * Sets the I2C device's transmit buffer to busy.
+ * This function updates the device state to indicate that data is being transmitted.
+ * If an event callback is registered, it triggers the callback with the
+ * AL_IIC_EVENT_READY_TO_TX event.
+ *
+ * @param Iic Pointer to the I2C device structure.
+ */
 AL_VOID AlIic_Dev_SetTxBusy(AL_IIC_DevStruct *Iic)
 {
     Iic->State |= AL_IIC_STATE_TX_BUSY;
@@ -85,11 +94,13 @@ AL_VOID AlIic_Dev_SetTxBusy(AL_IIC_DevStruct *Iic)
 }
 
 /**
- * This function set iic rx status to busy.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ * Sets the I2C device's receive buffer to busy.
+ * This function updates the device state to indicate that data is being received.
+ * If an event callback is registered, it triggers the callback with the
+ * AL_IIC_EVENT_READY_TO_RX event.
+ *
+ * @param Iic Pointer to the I2C device structure.
+ */
 AL_VOID AlIic_Dev_SetRxBusy(AL_IIC_DevStruct *Iic)
 {
     Iic->State |= AL_IIC_STATE_RX_BUSY;
@@ -103,34 +114,35 @@ AL_VOID AlIic_Dev_SetRxBusy(AL_IIC_DevStruct *Iic)
 }
 
 /**
- * This function clear iic tx busy status.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ * Clears the I2C device's transmit buffer busy status.
+ * This function updates the device state to indicate that the transmit buffer is no longer busy.
+ *
+ * @param Iic Pointer to the I2C device structure.
+ */
 AL_VOID AlIic_Dev_ClrTxBusy(AL_IIC_DevStruct *Iic)
 {
     Iic->State &= (~AL_IIC_STATE_TX_BUSY);
 }
 
 /**
- * This function clear iic rx busy status.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ * Clears the I2C device's receive buffer busy status.
+ * This function updates the device state to indicate that the receive buffer is no longer busy.
+ *
+ * @param Iic Pointer to the I2C device structure.
+ */
 AL_VOID AlIic_Dev_ClrRxBusy(AL_IIC_DevStruct *Iic)
 {
     Iic->State &= (~AL_IIC_STATE_RX_BUSY);
 }
 
 /**
- * This function config the clock.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @param   SpeedMode Speed Mode
- * @return
- * @note
-*/
+ * Initializes the SCL high and low count for a specified speed mode.
+ * This function calculates and sets the SCL high and low period counts based on the
+ * specified speed mode and the I2C clock frequency.
+ *
+ * @param Iic Pointer to the I2C device structure.
+ * @param SpeedMode The speed mode (standard, fast, or high speed) to initialize the SCL counts for.
+ */
 static AL_VOID AlIic_Dev_InitSclHighLowCout(AL_IIC_DevStruct *Iic, AL_IIC_SpeedModeEnum SpeedMode)
 {
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
@@ -164,11 +176,13 @@ static AL_VOID AlIic_Dev_InitSclHighLowCout(AL_IIC_DevStruct *Iic, AL_IIC_SpeedM
 }
 
 /**
- * This function check the configure to be config.
- * @param   InitConfig The Initial configuration
- * @return
- * @note
-*/
+ * Checks the initialization configuration parameters for validity.
+ * This function verifies that the provided initialization parameters are within
+ * acceptable ranges and configurations.
+ *
+ * @param InitConfig Pointer to the initialization configuration structure.
+ * @return AL_OK if the parameters are valid; an error code otherwise.
+ */
 static AL_S32 AlIic_Dev_CheckConfigParam(AL_IIC_InitStruct *InitConfig)
 {
     AL_ASSERT (((InitConfig->Mode == AL_IIC_MODE_SLAVE) ||
@@ -181,16 +195,15 @@ static AL_S32 AlIic_Dev_CheckConfigParam(AL_IIC_InitStruct *InitConfig)
 }
 
 /**
- * This function initialize IIC registers according to the specified parameters in AL_IIC_InitStruct.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @param   HwConfig IIC hardware configure
- * @param   InitConfig pointer to a AL_IIC_InitStruct structure
- *          that contains the configuration information for the specified IIC peripheral
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ * Initializes the I2C device with specified hardware and initialization configurations.
+ * This function sets up the I2C device based on the provided hardware and initialization
+ * configurations, including setting the speed mode, address mode, and FIFO thresholds.
+ *
+ * @param Iic Pointer to the I2C device structure to initialize.
+ * @param HwConfig Pointer to the hardware configuration structure.
+ * @param InitConfig Pointer to the initialization configuration structure.
+ * @return AL_OK if the device was successfully initialized; an error code otherwise.
+ */
 AL_S32 AlIic_Dev_Init(AL_IIC_DevStruct *Iic, AL_IIC_HwConfigStruct *HwConfig, AL_IIC_InitStruct *InitConfig)
 {
     AL_S32 Ret;
@@ -276,13 +289,13 @@ AL_S32 AlIic_Dev_Init(AL_IIC_DevStruct *Iic, AL_IIC_HwConfigStruct *HwConfig, AL
 }
 
 /**
- * This function used when master send or receive data,
- * to config slave address.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @param   SlaveAddr Slave address
- * @return
- * @note
-*/
+ * Configures the slave address for I2C master mode operations.
+ * This function sets the target slave address for I2C transactions initiated by the master.
+ * It temporarily disables the I2C device to update the target address.
+ *
+ * @param Iic Pointer to the I2C device structure.
+ * @param SlaveAddr The slave address to set for master mode operations.
+ */
 static inline AL_VOID AlIic_Dev_MasterSetTar(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr)
 {
     /* I2C_DYNAMIC_TAR_UPDATE not enabled, need disable IIC first */
@@ -294,12 +307,13 @@ static inline AL_VOID AlIic_Dev_MasterSetTar(AL_IIC_DevStruct *Iic, AL_U16 Slave
 }
 
 /**
- * This function used when master send data in block mode, enable/disable interrupt.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @param   State AL_IIC_FUNC_DISABLE or AL_IIC_FUNC_DISABLE
- * @return
- * @note
-*/
+ * Enables or disables interrupts for master mode send operations.
+ * This function updates the interrupt mask to enable or disable interrupts related
+ * to transmit operations, such as TX_EMPTY, TX_ABRT, and TX_OVER.
+ *
+ * @param Iic Pointer to the I2C device structure.
+ * @param State Specifies whether to enable or disable the send interrupts.
+ */
 static AL_VOID AlIic_Dev_EnableMasterSendIntr(AL_IIC_DevStruct *Iic, AL_IIC_FunctionEnum State)
 {
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
@@ -315,16 +329,19 @@ static AL_VOID AlIic_Dev_EnableMasterSendIntr(AL_IIC_DevStruct *Iic, AL_IIC_Func
 }
 
 /**
- * This function master send an amount of data in blocking & interrupt mode
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @param   SlaveAddr Slave address
- * @param   SendBuf Pointer to data buffer
- * @param   SendSize Amount of data to be sent
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * This function initiates a transmission of data from the master to the specified slave device.
+ * It sets up the necessary parameters and enables the master send interrupt to handle the transmission.
+ * The function checks for the validity of the input parameters, the readiness of the device, and
+ * whether the device is currently busy in transmission. It then sets the device's operation state,
+ * target slave address, and data buffer for transmission.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ * @param SlaveAddr The address of the slave device.
+ * @param SendBuf Pointer to the data buffer to be sent.
+ * @param SendSize The size of the data to be sent.
+ * @return AL_S32 Returns AL_OK if the operation was successful, otherwise an error code.
+ */
 AL_S32 AlIic_Dev_MasterSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *SendBuf, AL_U32 SendSize)
 {
     AL_ASSERT((Iic != AL_NULL) && (Iic->Configs.Mode == AL_IIC_MODE_MASTER) &&
@@ -349,6 +366,17 @@ AL_S32 AlIic_Dev_MasterSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *
     return AL_OK;
 }
 
+/**
+ *
+ * This function initiates a DMA-based transmission of data from the master to the specified slave device.
+ * It disables the IIC device before setting up DMA parameters and re-enables it after configuration.
+ * The function ensures the input parameters are valid, the device is ready, and not currently busy.
+ * It sets the device's operation state and target slave address for the DMA transmission.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ * @param SlaveAddr The address of the slave device.
+ * @return AL_S32 Returns AL_OK if the operation was successful, otherwise an error code.
+ */
 AL_S32 AlIic_Dev_MasterDmaSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr)
 {
     AL_ASSERT((Iic != AL_NULL) && (Iic->Configs.Mode == AL_IIC_MODE_MASTER) &&
@@ -371,11 +399,12 @@ AL_S32 AlIic_Dev_MasterDmaSendData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr)
 }
 
 /**
- * This function used when master send data in block mode, stop send process.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ *
+ * This function disables the master send interrupt and clears the transmission busy flag,
+ * effectively stopping any ongoing data transmission initiated by the master.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ */
 AL_VOID AlIic_Dev_StopMasterSend(AL_IIC_DevStruct *Iic)
 {
     AlIic_Dev_EnableMasterSendIntr(Iic, AL_IIC_FUNC_DISABLE);
@@ -384,16 +413,18 @@ AL_VOID AlIic_Dev_StopMasterSend(AL_IIC_DevStruct *Iic)
 }
 
 /**
- * This function master send an amount of data in polling(non interrupt) & blocking mode.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @param   SlaveAddr Slave address
- * @param   SendBuf Pointer to data buffer
- * @param   SendSize Amount of data to be sent
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * This function sends data to the specified slave device using a polling method rather than interrupts.
+ * It checks for the validity of the input parameters, the readiness of the device, and whether the device
+ * is currently busy. The function then enters a loop, sending data byte by byte, and waits for the
+ * transmission to complete if a STOP condition is requested.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ * @param SlaveAddr The address of the slave device.
+ * @param SendBuf Pointer to the data buffer to be sent.
+ * @param SendSize The size of the data to be sent.
+ * @return Returns AL_OK if the operation was successful, otherwise an error code.
+ */
 AL_S32 AlIic_Dev_MasterSendDataPolling(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *SendBuf, AL_U32 SendSize)
 {
     AL_U32 HandledCnt = 0;
@@ -453,12 +484,15 @@ AL_S32 AlIic_Dev_MasterSendDataPolling(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, 
 }
 
 /**
- * This function used when master receive data in block mode, enable/disable interrupt.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @param   State AL_IIC_FUNC_DISABLE or AL_IIC_FUNC_DISABLE
- * @return
- * @note
-*/
+ *
+ * This function configures the interrupt mask for the master receive operation. It enables or disables
+ * interrupts related to transmission empty, reception full, transmission abort, reception underflow,
+ * and reception overflow based on the specified state.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ * @param State The desired state of the receive interrupts (enable or disable).
+ * @return None.
+ */
 static AL_VOID AlIic_Dev_EnableMasterRecvIntr(AL_IIC_DevStruct *Iic, AL_IIC_FunctionEnum State)
 {
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
@@ -476,16 +510,19 @@ static AL_VOID AlIic_Dev_EnableMasterRecvIntr(AL_IIC_DevStruct *Iic, AL_IIC_Func
 }
 
 /**
- * This function master receive an amount of data in blocking & interrupt mode
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @param   SlaveAddr Slave address
- * @param   RecvBuf Pointer to data buffer
- * @param   RecvSize Amount of data to be receive
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * This function initiates the reception of data from the specified slave device to the master.
+ * It sets up the necessary parameters and enables the master receive interrupt to handle the reception.
+ * The function checks for the validity of the input parameters, the readiness of the device, and
+ * whether the device is currently busy in reception. It then sets the device's operation state,
+ * target slave address, and data buffer for reception.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ * @param SlaveAddr The address of the slave device.
+ * @param RecvBuf Pointer to the buffer where received data will be stored.
+ * @param RecvSize The size of the data to be received.
+ * @return Returns AL_OK if the operation was successful, otherwise an error code.
+ */
 AL_S32 AlIic_Dev_MasterRecvData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *RecvBuf, AL_U32 RecvSize)
 {
     AL_REG IicBaseAddr;
@@ -528,6 +565,18 @@ AL_S32 AlIic_Dev_MasterRecvData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *
     return AL_OK;
 }
 
+/**
+ *
+ * This function initiates a DMA-based reception of data from the specified slave device to the master.
+ * It disables the IIC device before setting up DMA parameters for reception and re-enables it after configuration.
+ * The function ensures the input parameters are valid, the device is ready, and not currently busy in reception.
+ * It sets the device's operation state and target slave address for the DMA reception.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ * @param SlaveAddr The address of the slave device.
+ * @param RecvSize The size of the data to be received.
+ * @return Returns AL_OK if the operation was successful, otherwise an error code.
+ */
 AL_S32 AlIic_Dev_MasterDmaRecvData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U32 RecvSize)
 {
     AL_ASSERT((Iic != AL_NULL) && (Iic->Configs.Mode == AL_IIC_MODE_MASTER) &&
@@ -560,11 +609,13 @@ AL_S32 AlIic_Dev_MasterDmaRecvData(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U
 }
 
 /**
- * This function used when master receive data in block mode, stop recvive process.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ *
+ * This function disables the master receive interrupt and clears the reception busy flag,
+ * effectively stopping any ongoing data reception initiated by the master.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ * @return None.
+ */
 AL_VOID AlIic_Dev_StopMasterRecv(AL_IIC_DevStruct *Iic)
 {
     AlIic_Dev_EnableMasterRecvIntr(Iic, AL_IIC_FUNC_DISABLE);
@@ -573,16 +624,19 @@ AL_VOID AlIic_Dev_StopMasterRecv(AL_IIC_DevStruct *Iic)
 }
 
 /**
- * This function master receive an amount of data in polling(non interrupt) & blocking mode.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @param   SlaveAddr Slave address
- * @param   RecvBuf Pointer to data buffer
- * @param   RecvSize Amount of data to be receive
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * This function is responsible for receiving data from an I2C slave device in master mode.
+ * It ensures that the device is in the correct state and configuration before initiating
+ * the receive operation. The function polls the TX FIFO to issue read commands and the RX FIFO
+ * to retrieve the received data.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ * @param SlaveAddr The address of the slave device from which data is to be received.
+ * @param RecvBuf Pointer to the buffer where received data will be stored.
+ * @param RecvSize The number of bytes to receive.
+ *
+ * @return Returns AL_OK if the operation is successful, otherwise returns an error code.
+ */
 AL_S32 AlIic_Dev_MasterRecvDataPolling(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, AL_U8 *RecvBuf, AL_U32 RecvSize)
 {
     AL_U8 Data = 0;
@@ -649,12 +703,15 @@ AL_S32 AlIic_Dev_MasterRecvDataPolling(AL_IIC_DevStruct *Iic, AL_U16 SlaveAddr, 
 }
 
 /**
- * This function used when master send data in block mode, enable/disable interrupt.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @param   State AL_IIC_FUNC_DISABLE or AL_IIC_FUNC_DISABLE
- * @return
- * @note
-*/
+ *
+ * This function configures the interrupt mask to enable or disable interrupts related to slave transmission.
+ * It is used internally to control the flow of slave transmission operations
+ * by enabling interrupts for conditions like transmit abort, read request, transmit over, and receive done.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ * @param State Specifies whether to enable or disable the slave send interrupts.
+ * @return None.
+ */
 static AL_VOID AlIic_Dev_EnableSlaveSendIntr(AL_IIC_DevStruct *Iic, AL_IIC_FunctionEnum State)
 {
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
@@ -672,15 +729,17 @@ static AL_VOID AlIic_Dev_EnableSlaveSendIntr(AL_IIC_DevStruct *Iic, AL_IIC_Funct
 }
 
 /**
- * This function slave send an amount of data in blocking & interrupt mode
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @param   SendBuf Pointer to data buffer
- * @param   SendSize Amount of data to be sent
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * Initiates the transmission of data from an I2C slave device.
+ * It sets up the device's internal state and buffer pointers for the transmission
+ * and enables the necessary interrupts to handle the data sending process.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ * @param SendBuf Pointer to the buffer containing the data to be sent.
+ * @param SendSize The number of bytes to send.
+ *
+ * @return Returns AL_OK if the operation is successful, otherwise returns an error code.
+ */
 AL_S32 AlIic_Dev_SlaveSendData(AL_IIC_DevStruct *Iic, AL_U8 *SendBuf, AL_U32 SendSize)
 {
     AL_ASSERT((Iic != AL_NULL) && (Iic->Configs.Mode == AL_IIC_MODE_SLAVE) &&
@@ -704,11 +763,14 @@ AL_S32 AlIic_Dev_SlaveSendData(AL_IIC_DevStruct *Iic, AL_U8 *SendBuf, AL_U32 Sen
 }
 
 /**
- * This function used when slave send data in block mode, stop recvive process.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ *
+ * This function disables the interrupts related to slave sending operations and
+ * clears the busy state of the device, effectively stopping any ongoing data transmission
+ * in slave mode.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ * @return None.
+ */
 AL_VOID AlIic_Dev_StopSlaveSend(AL_IIC_DevStruct *Iic)
 {
     AlIic_Dev_EnableSlaveSendIntr(Iic, AL_IIC_FUNC_DISABLE);
@@ -717,12 +779,15 @@ AL_VOID AlIic_Dev_StopSlaveSend(AL_IIC_DevStruct *Iic)
 }
 
 /**
- * This function used when slave receive data in block mode, enable/disable interrupt.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @param   State AL_IIC_FUNC_DISABLE or AL_IIC_FUNC_DISABLE
- * @return
- * @note
-*/
+ *
+ * Configures the interrupt mask to enable or disable interrupts for conditions related to
+ * slave reception. This includes interrupts for RX FIFO full, underflow, and overflow.
+ * It is used to control the flow of data reception in slave mode.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ * @param State Specifies whether to enable or disable the slave receive interrupts.
+ * @return None.
+ */
 static AL_VOID AlIic_Dev_EnableSlaveRecvIntr(AL_IIC_DevStruct *Iic, AL_IIC_FunctionEnum State)
 {
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
@@ -738,15 +803,17 @@ static AL_VOID AlIic_Dev_EnableSlaveRecvIntr(AL_IIC_DevStruct *Iic, AL_IIC_Funct
 }
 
 /**
- * This function slave receive an amount of data in blocking & interrupt mode
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @param   RecvBuf Pointer to data buffer
- * @param   RecvSize Amount of data to be sent
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ *
+ * Prepares the I2C slave device to receive data by setting up the internal state,
+ * buffer pointers, and configuring the RX FIFO threshold. It enables the necessary interrupts
+ * to handle the data reception process.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ * @param RecvBuf Pointer to the buffer where received data will be stored.
+ * @param RecvSize The number of bytes to receive.
+ *
+ * @return Returns AL_OK if the operation is successful, otherwise returns an error code.
+ */
 AL_S32 AlIic_Dev_SlaveRecvData(AL_IIC_DevStruct *Iic, AL_U8 *RecvBuf, AL_U32 RecvSize)
 {
     AL_REG IicBaseAddr;
@@ -781,11 +848,13 @@ AL_S32 AlIic_Dev_SlaveRecvData(AL_IIC_DevStruct *Iic, AL_U8 *RecvBuf, AL_U32 Rec
 }
 
 /**
- * This function used when slave receive data in block mode, stop recvive process.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ *
+ * Disables the interrupts related to slave reception operations and clears the busy state
+ * of the device, effectively stopping any ongoing data reception in slave mode.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ * @return None.
+ */
 AL_VOID AlIic_Dev_StopSlaveRecv(AL_IIC_DevStruct *Iic)
 {
     AlIic_Dev_EnableSlaveRecvIntr(Iic, AL_IIC_FUNC_DISABLE);
@@ -794,12 +863,15 @@ AL_VOID AlIic_Dev_StopSlaveRecv(AL_IIC_DevStruct *Iic)
 }
 
 /**
- * This function used when master send data in block&interrupt mode,
- * send data in the interrupt.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ *
+ * This function is called to handle the transmission of data in master mode.
+ * It polls the TX FIFO to send data until all data in the buffer is transmitted.
+ * It also handles the last byte transmission differently based on the command option set
+ * for stop or restart condition.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ * @return None.
+ */
 static AL_VOID AlIic_Dev_MasterSendDataHandler(AL_IIC_DevStruct *Iic)
 {
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
@@ -846,12 +918,13 @@ static AL_VOID AlIic_Dev_MasterSendDataHandler(AL_IIC_DevStruct *Iic)
 }
 
 /**
- * This function used when master receive data in block&interrupt mode,
- * receive data in the interrupt.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ * Handles the reception of data in master mode. This function reads data from the RX FIFO
+ * until it's empty or the requested amount of data has been received. It also adjusts the RX FIFO
+ * threshold based on the remaining data to be received. If all requested data has been received,
+ * it triggers the RX_DONE event and disables relevant interrupts.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ */
 static AL_VOID AlIic_Dev_MasterRecvDataHandler(AL_IIC_DevStruct *Iic)
 {
     AL_U8 Data;
@@ -895,12 +968,14 @@ static AL_VOID AlIic_Dev_MasterRecvDataHandler(AL_IIC_DevStruct *Iic)
 }
 
 /**
- * This function used when master receive data in block&interrupt mode,
- * master issue read commands before receive data.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ * Issues read commands in master mode. This function fills the TX FIFO with read commands
+ * until it's full or the requested amount of data has been issued for reading. It handles
+ * the last read command differently based on the command option (STOP, RESTART, or WRITE).
+ * After issuing all read commands, it immediately starts receiving data by calling
+ * AlIic_Dev_MasterRecvDataHandler.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ */
 static AL_VOID AlIic_Dev_MasterRecvDataIssueReadCmd(AL_IIC_DevStruct *Iic)
 {
     AL_U16 Cmd = 0;
@@ -934,6 +1009,13 @@ static AL_VOID AlIic_Dev_MasterRecvDataIssueReadCmd(AL_IIC_DevStruct *Iic)
     AlIic_Dev_MasterRecvDataHandler(Iic);
 }
 
+/**
+ * Issues read commands in master mode for DMA-based transfers. This function is similar to
+ * AlIic_Dev_MasterRecvDataIssueReadCmd but is intended for use with DMA by issuing read commands
+ * without immediately starting the data reception process.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ */
 static AL_VOID AlIic_Dev_MasterDmaRecvDataIssueReadCmd(AL_IIC_DevStruct *Iic)
 {
     AL_U16 Cmd = 0;
@@ -965,12 +1047,13 @@ static AL_VOID AlIic_Dev_MasterDmaRecvDataIssueReadCmd(AL_IIC_DevStruct *Iic)
 }
 
 /**
- * This function used when slave receive data in block&interrupt mode,
- * receive data in the interrupt.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ * Handles the reception of data in slave mode. This function reads data from the RX FIFO
+ * until it's empty or the requested amount of data has been received. It also adjusts the RX FIFO
+ * threshold based on the remaining data to be received. If all requested data has been received,
+ * it triggers the RX_DONE event and stops the slave receiver.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ */
 static AL_VOID AlIic_Dev_SlaveRecvDataHandler(AL_IIC_DevStruct *Iic)
 {
     AL_U8 Data;
@@ -1008,12 +1091,10 @@ static AL_VOID AlIic_Dev_SlaveRecvDataHandler(AL_IIC_DevStruct *Iic)
 }
 
 /**
- * This function used when slave send data in block&interrupt mode,
- * send data in the interrupt.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ * Handles the transmission of data in slave mode. This function writes a single byte of data to the TX FIFO if it's not full and the requested amount of data has not been fully sent. If all data has been sent, it triggers the RD_REQ event and disables relevant interrupts.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ */
 static AL_VOID AlIic_Dev_SlaveSendDataHandler(AL_IIC_DevStruct *Iic)
 {
     AL_U8 Data;
@@ -1049,12 +1130,12 @@ static AL_VOID AlIic_Dev_SlaveSendDataHandler(AL_IIC_DevStruct *Iic)
 }
 
 /**
- * This function used when slave send data in block&interrupt mode,
- * This occurs on the last byte of the transmission, indicating that the transmission is done.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ * Handles the completion of data transmission in slave mode. This function is called when the master
+ * does not acknowledge a transmitted byte, indicating that the transmission is done.
+ * It triggers the TX_DONE event and disables the RX_DONE interrupt.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ */
 static AL_VOID AlIic_Dev_SlaveSendDataDoneHandler(AL_IIC_DevStruct *Iic)
 {
     AL_REG IicBaseAddr = (AL_REG)(Iic->HwConfig.BaseAddress);
@@ -1078,11 +1159,12 @@ static AL_VOID AlIic_Dev_SlaveSendDataDoneHandler(AL_IIC_DevStruct *Iic)
 }
 
 /**
- * This function used in block&interrupt mode, This occurs when error tx process.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ * Handles the TX abort event. This function is called when a transmission is aborted.
+ * It retrieves the abort source, triggers the TX_ABRT event, and attempts to recover
+ * if the abort was caused by SDA being stuck at low.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ */
 static AL_VOID AlIic_Dev_TxAbrtHandler(AL_IIC_DevStruct *Iic)
 {
     AL_IIC_AbrtSrcEnum AbrtSrc = AlIic_ll_GetAbrtSrc(Iic->HwConfig.BaseAddress);
@@ -1111,11 +1193,12 @@ static AL_VOID AlIic_Dev_TxAbrtHandler(AL_IIC_DevStruct *Iic)
 }
 
 /**
- * This function used in block&interrupt mode, error interrupt handler.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ * Handles error interrupts. This function stops data transmission or reception in case of an error
+ * (e.g., RX_UNDER, RX_OVER, TX_OVER) and triggers the corresponding event.
+ *
+ * @param Iic Pointer to the IIC device structure.
+ * @param EventId The ID of the event that occurred.
+ */
 static AL_VOID AlIic_Dev_ErrorIntrHandler(AL_IIC_DevStruct *Iic, AL_IIC_EventIdEnum EventId)
 {
     /* Error occurred, Stop RX */
@@ -1146,11 +1229,11 @@ static AL_VOID AlIic_Dev_ErrorIntrHandler(AL_IIC_DevStruct *Iic, AL_IIC_EventIdE
 }
 
 /**
- * This function used in block&interrupt mode, normal interrupt handler.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ * Handles normal interrupts for the I2C device. This function is called when there is an activity on the bus that does not require any specific action other than notifying the user through a callback.
+ *
+ * @param Iic Pointer to the I2C device structure.
+ * @param EventId The event ID that triggered the interrupt.
+ */
 static AL_VOID AlIic_Dev_NormalIntrHandler(AL_IIC_DevStruct *Iic, AL_IIC_EventIdEnum EventId)
 {
     if (Iic->EventCallBack) {
@@ -1179,11 +1262,10 @@ static AL_VOID AlIic_Dev_NormalIntrHandler(AL_IIC_DevStruct *Iic, AL_IIC_EventId
 #define IIC_INTR_SCL_STUCK_ATLOW_INTR(Status)   (Status & AL_IIC_INTR_SCL_STUCK_ATLOW)
 
 /**
- * IIC interrupt handler
- * @param   instance Pointer to a AL_IIC_DevStruct structure
- * @return
- * @note
-*/
+ * The main interrupt handler for the I2C device. This function checks the interrupt status and calls the appropriate handler based on the type of interrupt that occurred.
+ *
+ * @param instance A void pointer to the I2C device structure.
+ */
 AL_VOID AlIic_Dev_IntrHandler(AL_VOID *instance)
 {
     AL_IIC_DevStruct *Iic = (AL_IIC_DevStruct *)instance;
@@ -1272,15 +1354,13 @@ AL_VOID AlIic_Dev_IntrHandler(AL_VOID *instance)
 }
 
 /**
- * This function register a User IIC Callback.
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @param   CallBack pointer to the Callback function
- * @param   CallbackRef pointer to the Callback function params
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ * Registers a callback function to be called when an event occurs on the I2C bus.
+ *
+ * @param Iic Pointer to the I2C device structure.
+ * @param Callback The function to be called when an event occurs.
+ * @param CallbackRef A user-defined reference that will be passed to the callback function.
+ * @return AL_OK if the callback was successfully registered; otherwise, an error code.
+ */
 AL_S32 AlIic_Dev_RegisterEventCallBack(AL_IIC_DevStruct *Iic, AL_IIC_EventCallBack Callback, void *CallbackRef)
 {
     AL_ASSERT((Iic != AL_NULL) && (Callback != AL_NULL), AL_IIC_ERR_ILLEGAL_PARAM);
@@ -1292,14 +1372,12 @@ AL_S32 AlIic_Dev_RegisterEventCallBack(AL_IIC_DevStruct *Iic, AL_IIC_EventCallBa
 }
 
 /**
- * This function master set command option, like stop、restart etc
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @param   CmdOption Command to be set
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ * Sets the command option for the I2C master. This function configures how the I2C master behaves with respect to STOP and RESTART conditions.
+ *
+ * @param Iic Pointer to the I2C device structure.
+ * @param CmdOption The command option to set.
+ * @return AL_OK if the command option was successfully set; otherwise, an error code.
+ */
 AL_S32 AlIic_Dev_MasterSetCmdOption(AL_IIC_DevStruct *Iic, AL_IIC_CmdOptionEnum CmdOption)
 {
     AL_ASSERT(Iic != AL_NULL, AL_IIC_ERR_ILLEGAL_PARAM);
@@ -1320,13 +1398,11 @@ AL_S32 AlIic_Dev_MasterSetCmdOption(AL_IIC_DevStruct *Iic, AL_IIC_CmdOptionEnum 
 }
 
 /**
- * This function master get current command option, like stop、restart etc
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @return
- *          - Command for function success
- *          - AL_IIC_CMD_OPTION_NONE for function failure
- * @note
-*/
+ * Gets the current command option setting for the I2C master.
+ *
+ * @param Iic Pointer to the I2C device structure.
+ * @return The current command option setting.
+ */
 AL_IIC_CmdOptionEnum AlIic_Dev_MasterGetCmdOption(AL_IIC_DevStruct *Iic)
 {
     AL_ASSERT(Iic != AL_NULL, AL_IIC_CMD_OPTION_NONE);
@@ -1335,15 +1411,13 @@ AL_IIC_CmdOptionEnum AlIic_Dev_MasterGetCmdOption(AL_IIC_DevStruct *Iic)
 }
 
 /**
- * This function excute operations to set
- * @param   Iic Pointer to a AL_IIC_DevStruct structure
- * @param   Cmd is io ctl cmd to AL_IIC_IoCtlCmdEnum
- * @param   Data Pointer to cmd args
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ * Performs a control operation on the I2C device. This function allows setting and getting various parameters of the I2C device, such as address mode and transfer rate.
+ *
+ * @param Iic Pointer to the I2C device structure.
+ * @param Cmd The control command to execute.
+ * @param Data Pointer to the data needed for the command or where to store the command output.
+ * @return AL_OK if the operation was successful; otherwise, an error code.
+ */
 AL_S32 AlIic_Dev_IoCtl(AL_IIC_DevStruct *Iic, AL_IIC_IoCtlCmdEnum Cmd, AL_VOID *Data)
 {
     AL_S32 Ret = AL_OK;

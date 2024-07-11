@@ -24,12 +24,17 @@ AL_DMACAHB_HalStruct        *QspiRxDmacHandle = AL_NULL;
 
 /********************************************************/
 /**
- * This function is wait send done or timeout
- * @param   Handle is pointer to AL_QSPI_HalStruct
- * @param   Timeout is max wait time
- * @return  Return whether to send timeout
- * @note    None
-*/
+ *
+ * This function waits for the QSPI transmission to complete or until the specified timeout period elapses.
+ * It checks the QSPI status register for the busy flag to determine if the transmission is still ongoing.
+ * If the transmission completes within the timeout period, it disables the slave select signal.
+ *
+ * @param Handle Pointer to the AL_QSPI_HalStruct structure that holds the QSPI device's configuration and state.
+ * @param Event Pointer to the AL_QSPI_EventStruct structure where the event details will be stored.
+ * @param Timeout Maximum time to wait for the transmission to complete, in milliseconds.
+ * @return Returns AL_OK if the transmission completes successfully within the timeout period, otherwise returns an error code indicating the type of failure (e.g., timeout).
+ *
+ */
 static AL_S32 AlQspi_Hal_WaitTxDoneOrTimeout(AL_QSPI_HalStruct *Handle, AL_QSPI_EventStruct *Event, AL_U32 Timeout)
 {
 #ifdef QSPI_DEBUG
@@ -46,12 +51,16 @@ static AL_S32 AlQspi_Hal_WaitTxDoneOrTimeout(AL_QSPI_HalStruct *Handle, AL_QSPI_
 }
 
 /**
- * This function is wait receive done or timeout
- * @param   Handle is pointer to AL_QSPI_HalStruct
- * @param   Timeout is max wait time
- * @return  Return whether to receive timeout
- * @note    None
-*/
+ *
+ * Similar to AlQspi_Hal_WaitTxDoneOrTimeout, this function waits for the QSPI reception to complete or until the specified timeout period elapses.
+ * It monitors the QSPI status register for the busy flag to check if the reception is still in progress.
+ * Upon completion or timeout, it disables the slave select signal.
+ *
+ * @param Handle Pointer to the AL_QSPI_HalStruct structure that holds the QSPI device's configuration and state.
+ * @param Event Pointer to the AL_QSPI_EventStruct structure where the event details will be stored.
+ * @param Timeout Maximum time to wait for the reception to complete, in milliseconds.
+ * @return Returns AL_OK if the reception completes successfully within the timeout period, otherwise returns an error code indicating the type of failure (e.g., timeout).
+ */
 static AL_S32 AlQspi_Hal_WaitRxDoneOrTimeout(AL_QSPI_HalStruct *Handle, AL_QSPI_EventStruct *Event, AL_U32 Timeout)
 {
 #ifdef QSPI_DEBUG
@@ -68,12 +77,17 @@ static AL_S32 AlQspi_Hal_WaitRxDoneOrTimeout(AL_QSPI_HalStruct *Handle, AL_QSPI_
 }
 
 /**
- * This function is wait receive done and send done or timeout
- * @param   Handle is pointer to AL_QSPI_HalStruct
- * @param   Timeout is max wait time
- * @return  Return whether to send and receive timeout
- * @note    None
-*/
+ *
+ * This function waits for both QSPI transmission and reception to complete or until the specified timeout period elapses.
+ * It first waits for the transmission to complete and then for the reception to complete, each within the specified timeout period.
+ * If either operation does not complete within its timeout period, it disables the slave select signal and returns an error.
+ *
+ * @param Handle Pointer to the AL_QSPI_HalStruct structure that holds the QSPI device's configuration and state.
+ * @param Event Pointer to the AL_QSPI_EventStruct structure where the event details will be stored.
+ * @param Timeout Maximum time to wait for both transmission and reception to complete, in milliseconds.
+ * @return Returns AL_OK if both transmission and reception complete successfully within their respective timeout periods, otherwise returns an error code indicating the type of failure (e.g., timeout).
+ * @note This function is static and intended for internal use within the QSPI HAL module.
+ */
 static AL_S32 AlQspi_Hal_WaitTxRxDoneOrTimeout(AL_QSPI_HalStruct *Handle, AL_QSPI_EventStruct *Event, AL_U32 Timeout)
 {
 #ifdef QSPI_DEBUG
@@ -101,12 +115,14 @@ static AL_S32 AlQspi_Hal_WaitTxRxDoneOrTimeout(AL_QSPI_HalStruct *Handle, AL_QSP
 
 
 /**
- * This is default event callback function
- * @param   QspiEvent is a AL_QSPI_EventStruct struct
- * @param   CallbackRef is parameter of callback function
- * @return  AL_OK
- * @note    None
-*/
+ *
+ * This function is the default event callback that is called upon the occurrence of a QSPI event.
+ * It handles various QSPI events such as send done, send timeout, receive done, and receive timeout by posting these events to the respective event queues.
+ *
+ * @param QspiEvent The QSPI event structure that contains details about the occurred event.
+ * @param CallbackRef User-defined callback reference, which in this case is expected to be a pointer to the AL_QSPI_HalStruct structure.
+ * @return Always returns AL_OK.
+ */
 static AL_VOID AlQspi_DefEventCallBack(AL_QSPI_EventStruct QspiEvent, void *CallbackRef)
 {
     AL_QSPI_HalStruct *Handle = (AL_QSPI_HalStruct *)CallbackRef;
@@ -131,17 +147,18 @@ static AL_VOID AlQspi_DefEventCallBack(AL_QSPI_EventStruct QspiEvent, void *Call
 }
 
 /**
- * This function initialize the qspi according to the specified
- *          parameters in the AL_QSPI_ConfigsStruct and initialize the associated handle.
- * @param   Handle is pointer to AL_QSPI_HalStruct
- * @param   InitConfig pointer to a AL_QSPI_ConfigsStruct structure
- *          that contains the configuration information for the specified qspi peripheral
- * @param   Callback is a function pointer to qspi event callback function
- * @param   CallbackRef is parameter of callback function
- * @param   DevId is hardware module id
- * @return  The state of function execution
- * @note    None
-*/
+ *
+ * This function initializes the QSPI peripheral with the specified configurations.
+ * It looks up the hardware configuration based on the provided device ID, initializes the QSPI device structure,
+ * and registers the provided callback function for QSPI events.
+ * If no callback is provided, it registers a default event callback function.
+ *
+ * @param Handle Double pointer to the AL_QSPI_HalStruct structure that will be initialized and represent the QSPI device.
+ * @param InitConfig Pointer to the AL_QSPI_ConfigsStruct structure containing the desired QSPI configurations.
+ * @param Callback Function pointer to the QSPI event callback function. If NULL, a default callback is used.
+ * @param DevId Hardware module ID of the QSPI peripheral to be initialized.
+ * @return Returns AL_OK if the initialization is successful, otherwise returns an error code indicating the failure reason.
+ */
 AL_S32 AlQspi_Hal_Init(AL_QSPI_HalStruct **Handle, AL_QSPI_ConfigsStruct *InitConfig, QSPI_EventCallBack Callback, AL_U32 DevId)
 {
     AL_S32 Ret = AL_OK;
@@ -186,13 +203,16 @@ AL_S32 AlQspi_Hal_Init(AL_QSPI_HalStruct **Handle, AL_QSPI_ConfigsStruct *InitCo
 }
 
 /**
- * This function is qspi blocking send data
- * @param   Handle is pointer to AL_QSPI_HalStruct
- * @param   Data is pointer to send data
- * @param   Size is send data size
- * @param   Timeout is max wait time for send done
- * @return  The state of function execution
- * @note    None
+ *
+ * This function sends data through the QSPI peripheral in a blocking manner, meaning it waits until the data is fully sent or a timeout occurs.
+ * It takes the QSPI lock before sending the data and releases it afterward.
+ * If the data is sent successfully within the timeout period, it waits for a send done event.
+ *
+ * @param Handle Pointer to the AL_QSPI_HalStruct structure representing the QSPI device.
+ * @param Data Pointer to the data buffer to be sent.
+ * @param Size Size of the data to be sent, in bytes.
+ * @param Timeout Maximum time to wait for the data to be sent, in milliseconds.
+ * @return Returns AL_OK if the data is sent successfully within the timeout period, otherwise returns an error code indicating the failure reason.
 */
 AL_S32 AlQspi_Hal_SendDataBlock(AL_QSPI_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
@@ -229,14 +249,17 @@ AL_S32 AlQspi_Hal_SendDataBlock(AL_QSPI_HalStruct *Handle, AL_U8 *Data, AL_U32 S
 }
 
 /**
- * This function is qspi blocking receive data
- * @param   Handle is pointer to AL_QSPI_HalStruct
- * @param   Data is pointer to receive data
- * @param   Size is receive data size
- * @param   Timeout is max wait time for receive done
- * @return  The state of function execution
- * @note    None
-*/
+ *
+ * Similar to AlQspi_Hal_SendDataBlock, this function receives data through the QSPI peripheral in a blocking manner.
+ * It waits until the specified amount of data is received or a timeout occurs.
+ * It ensures mutual exclusive access to the QSPI peripheral by taking a lock before receiving the data and releasing it afterward.
+ *
+ * @param Handle Pointer to the AL_QSPI_HalStruct structure representing the QSPI device.
+ * @param Data Pointer to the buffer where the received data will be stored.
+ * @param Size Size of the data to be received, in bytes.
+ * @param Timeout Maximum time to wait for the data to be received, in milliseconds.
+ * @return Returns AL_OK if the data is received successfully within the timeout period, otherwise returns an error code indicating the failure reason.
+ */
 AL_S32 AlQspi_Hal_RecvDataBlock(AL_QSPI_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -272,16 +295,18 @@ AL_S32 AlQspi_Hal_RecvDataBlock(AL_QSPI_HalStruct *Handle, AL_U8 *Data, AL_U32 S
 }
 
 /**
- * This function is qspi blocking tranfer data in full-duplex mode
- * @param   Handle is pointer to AL_QSPI_HalStruct
- * @param   SendData is pointer to send data
- * @param   SendSize is send data size
- * @param   RecvData is pointer to receive data
- * @param   RecvSize is receive data size
- * @param   Timeout is max wait time for send done
- * @return  The state of function execution
- * @note    None
-*/
+ *
+ * This function initiates a transfer of data blocks over QSPI. It first takes a lock on the QSPI device to ensure
+ * exclusive access, then sends the data. It waits for the transmission to complete or timeout before releasing the lock.
+ *
+ * @param Handle Pointer to the QSPI handle which contains the device configuration and state.
+ * @param SendData Pointer to the buffer containing the data to be sent.
+ * @param SendSize Size of the data to be sent.
+ * @param RecvData Pointer to the buffer where received data will be stored.
+ * @param RecvSize Size of the receive buffer.
+ * @param Timeout Time in milliseconds to wait for the operation to complete.
+ * @return AL_S32 Returns AL_OK on success, AL_QSPI_ERR_TIMEOUT if the operation times out, or other error codes on failure.
+ */
 AL_S32 AlQspi_Hal_TranferDataBlock(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, AL_U32 SendSize,
                                    AL_U8 *RecvData, AL_U16 RecvSize, AL_U32 Timeout)
 {
@@ -318,19 +343,18 @@ AL_S32 AlQspi_Hal_TranferDataBlock(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, A
 }
 
 /**
- * This function is qspi dma blocking send data
- * @param   Handle is pointer to AL_QSPI_HalStruct
- * @param   SendData is pointer to send data
- * @param   InstAndAddr is pointer to for instruct and address for norflash
- * @param   SendDataSize is send data size
- * @param   Timeout is max wait time for send done
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note    TransSize(AL_DMACAHB_ChTransStruct) * SrcTransWidth = Data Size
- *          Data Size % SrcBurstLength = 0
- *          SendData requires CACHE_LINE_ALIGN alignment
-*/
+ *
+ * This function configures the DMA controller for sending data over QSPI. It sets up the DMA channel, including
+ * the source and destination addresses, transfer size, and other parameters. It then starts the DMA transfer and waits
+ * for it to complete or timeout.
+ *
+ * @param Handle Pointer to the QSPI handle which contains the device configuration and state.
+ * @param SendData Pointer to the data to be sent.
+ * @param InstAndAddr Pointer to the instruction and address bytes to be sent before the data.
+ * @param SendDataSize Size of the data to be sent.
+ * @param Timeout Time in milliseconds to wait for the operation to complete.
+ * @return AL_S32 Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlQspi_Hal_DmaStartBlockSend(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, AL_U8 *InstAndAddr, AL_U32 SendDataSize, AL_U32 Timeout)
 {
     AL_DMACAHB_ChTransStruct    *QspiTxDmacChTrans;
@@ -420,16 +444,16 @@ AL_S32 AlQspi_Hal_DmaStartBlockSend(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, 
 
 
 /**
- * This function is qspi dma blocking receive data
- * @param   Handle is pointer to AL_QSPI_HalStruct
- * @param   RecvData is pointer to receive data
- * @param   RecvSize is receive data size
- * @param   Timeout is max wait time for receive done
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note    None
-*/
+ *
+ * This function prepares the DMA controller for receiving data over QSPI. It sets up the DMA channel for reception,
+ * including the destination address and size. It then initiates the DMA transfer and waits for it to complete or timeout.
+ *
+ * @param Handle Pointer to the QSPI handle which contains the device configuration and state.
+ * @param RecvData Pointer to the buffer where the received data will be stored.
+ * @param RecvSize Size of the data to be received.
+ * @param Timeout Time in milliseconds to wait for the operation to complete.
+ * @return AL_S32 Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlQspi_Hal_DmaStartBlockReceive(AL_QSPI_HalStruct *Handle, AL_U8 *RecvData, AL_U16 RecvSize, AL_U32 Timeout)
 {
     AL_DMACAHB_ChTransStruct    *QspiRxDmacChTrans;
@@ -512,18 +536,22 @@ AL_S32 AlQspi_Hal_DmaStartBlockReceive(AL_QSPI_HalStruct *Handle, AL_U8 *RecvDat
 
 
 /**
- * This function is qspi dma blocking tranfer data
- * @param   Handle is pointer to AL_QSPI_HalStruct
- * @param   SendData is pointer to send data
- * @param   SendSize is send data size
- * @param   RecvData is pointer to receive data
- * @param   RecvSize is receive data size
- * @param   Timeout is max wait time for send done
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note    None
-*/
+ *
+ * This function configures the DMA channels for both transmission and reception, initializes
+ * the DMA with the given parameters, and starts the transfer. It handles the locking mechanism
+ * to ensure thread safety and checks for valid input parameters. The function calculates the
+ * temporary send size based on the address and instruction length from the QSPI configuration,
+ * sets up the DMA channel configurations for both sending and receiving, and initializes the
+ * DMA channels. If any step fails, it releases the acquired lock and returns an error code.
+ *
+ * @param Handle Pointer to the QSPI handle which contains configuration and state information.
+ * @param SendData Pointer to the buffer containing the data to be sent.
+ * @param SendSize Size of the data to be sent.
+ * @param RecvData Pointer to the buffer where received data will be stored.
+ * @param RecvSize Size of the data to be received.
+ * @param Timeout Time in milliseconds to wait for the lock before starting the transfer.
+ * @return Returns AL_OK on success or an error code on failure.
+ */
 AL_S32 AlQspi_Hal_DmaStartBlockTranfer(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, AL_U32 SendSize,
                                        AL_U8 *RecvData, AL_U16 RecvSize, AL_U32 Timeout)
 {
@@ -672,16 +700,20 @@ AL_S32 AlQspi_Hal_DmaStartBlockTranfer(AL_QSPI_HalStruct *Handle, AL_U8 *SendDat
 }
 
 /**
- * This function is excute operations to set or check qspi configuration status.
- * @param   Handle is pointer to AL_QSPI_HalStruct
- * @param   Cmd is control command
- * @param   Data is control data
- * @param   Timeout is max wait time
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note    None
-*/
+ *
+ * This function is responsible for executing a variety of control commands on the QSPI device. It first ensures
+ * that the handle provided is not NULL, indicating a valid QSPI device. Then, it attempts to take a lock on the
+ * device to ensure exclusive access during the operation, waiting up to a specified timeout. If the lock is successfully
+ * acquired, the function proceeds to execute the specified IOCTL command by calling another function and passing
+ * the command and data. Regardless of the success or failure of the command execution, it releases the lock on the
+ * device before returning. If any step fails, the function returns an error code.
+ *
+ * @param Handle Pointer to the QSPI handle, representing the QSPI device.
+ * @param Cmd The IOCTL command to execute.
+ * @param Data Pointer to the data required for the command, if any.
+ * @param Timeout Maximum time in milliseconds to wait for the lock before proceeding with the command.
+ * @return AL_S32 Returns AL_OK on successful execution of the command, or an error code if the operation fails.
+ */
 AL_S32 AlQspi_Hal_IoCtl(AL_QSPI_HalStruct *Handle, AL_Qspi_IoCtlCmdEnum Cmd, AL_VOID *Data, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
