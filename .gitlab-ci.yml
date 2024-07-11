@@ -106,13 +106,13 @@ build-apu-and-rpu-job-with-FD:       # This job runs in the build stage.
     - mkdir ../dr1m90
     - mkdir ../dr1m90/32
     - mkdir ../dr1m90/64
-    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1m90 ARMv8_STATE=64 COMPILE_PREFIX=/opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1m90 PLAT_DIR=$CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10 ARMv8_STATE=64 COMPILE_PREFIX=/opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
     - cp $CI_PROJECT_DIR/output/libddr.a ../dr1m90/64
     - git clean -xdf
-    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1m90 ARMv8_STATE=32 COMPILE_PREFIX=/opt/toolchain/13.2/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-
+    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1m90 PLAT_DIR=$CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10 ARMv8_STATE=32 COMPILE_PREFIX=/opt/toolchain/13.2/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-
     - cp $CI_PROJECT_DIR/output/libddr.a ../dr1m90/32
     - git clean -xdf
-    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1v90
+    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1v90 PLAT_DIR=$CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10
     - mkdir ../dr1v90
     - cp $CI_PROJECT_DIR/output/libddr.a ../dr1v90
     - git clean -xdf
@@ -156,13 +156,15 @@ release-job:
     - mkdir ../dr1m90
     - mkdir ../dr1m90/32
     - mkdir ../dr1m90/64
-    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1m90 ARMv8_STATE=64 COMPILE_PREFIX=/opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1m90 ARMv8_STATE=64 |
+      PLAT_DIR=$CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10  COMPILE_PREFIX=/opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
     - cp $CI_PROJECT_DIR/output/libddr.a ../dr1m90/64
     - git clean -xdf
-    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1m90 ARMv8_STATE=32 COMPILE_PREFIX=/opt/toolchain/13.2/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-
+    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1m90 ARMv8_STATE=32 |
+      PLAT_DIR=$CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10 COMPILE_PREFIX=/opt/toolchain/13.2/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-
     - cp $CI_PROJECT_DIR/output/libddr.a ../dr1m90/32
     - git clean -xdf
-    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld CHIP=dr1v90
+    - make -C $CI_PROJECT_DIR/solutions/demo/baremetal/helloworld PLAT_DIR=$CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v10 CHIP=dr1v90
     - mkdir ../dr1v90
     - cp $CI_PROJECT_DIR/output/libddr.a ../dr1v90
     - git clean -xdf
