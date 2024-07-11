@@ -207,7 +207,7 @@ AL_VOID AlNor_ReadPage_1_1_4(AL_U32 addr)
 }
 
 
-AL_S32 AlNor_SetWrap(void)
+static AL_S32 AlNor_SetWrapMode0(void)
 {
     AL_S32  Ret = AL_OK;
     AL_U8 SendData[4] = {0x0}, Data = 0;
@@ -250,6 +250,38 @@ AL_S32 AlNor_SetWrap(void)
     return Ret;
 }
 
+static AL_S32 AlNor_SetWrapMode1(void)
+{
+    AL_S32 Ret = AL_OK;
+    AL_U8 SendData[5] = {0x0};
+
+    Handle->Dev.Configs.Trans.TransMode  = QSPI_TX_ONLY;
+    Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT1;
+    Handle->Dev.Configs.SpiFrameFormat = SPI_QUAD_FORMAT;
+    Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L4;
+
+
+    SendData[0] = 0x77;
+    SendData[1] = 0xee;
+    SendData[2] = 0xee;
+    SendData[3] = 0xee;
+    SendData[4] = 0xee;
+
+    Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 5, 100000);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_WREN error:0x%x\r\n", Ret);
+    }
+}
+
+AL_S32 AlNor_SetWrap(void)
+{
+    if (FlashId[1] == 0x40 && FlashId[2] == 0x18) {
+        return AlNor_SetWrapMode1();
+    } else {
+        return AlNor_SetWrapMode0();
+    }
+}
 
 
 AL_U32 AlFsbl_QspiInit(void)
@@ -519,5 +551,5 @@ AL_U32 AlFsbl_Qspi24Release(void)
 AL_U32 AlFsbl_QspiXipInit(void)
 {
     AlNor_SetWrap();
-    return AlQspi_Dev_XipAddr24Init(&Handle->Dev);
+    return AlQspi_Dev_XipAddr24Init(&Handle->Dev, FlashId);
 }

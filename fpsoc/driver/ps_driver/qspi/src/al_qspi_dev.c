@@ -327,23 +327,28 @@ AL_S32 AlQspi_Dev_XipAddr24InitForDMA(AL_QSPI_DevStruct *Qspi)
 }
 
 /**
- * This function prepares the QSPI device for operations with 24-bit addressing. It configures
- * the device with settings for wait cycles, clock stretch, transfer mode, address length,
- * instruction length, transfer type, frame format, XIP mode bit, XIP DFS fix, continuous
- * transfer, prefetch, instruction phase, and incremental instruction. The QSPI device is
- * disabled at the start of the function and enabled at the end after applying all settings.
- *
- * @param Qspi Pointer to the QSPI device structure.
- * @return Returns AL_QSPI_ERR_ILLEGAL_PARAM if the Qspi pointer is NULL, otherwise returns AL_OK.
- */
-AL_S32 AlQspi_Dev_XipAddr24Init(AL_QSPI_DevStruct *Qspi)
+ * This function initializes qspi XIP mode
+ * @param   Qspi is structure pointer to qspi device
+ * @return
+ *          - AL_OK for function success
+ *          - Other for function failuregit
+ * @note    Enable the qspi xip mode to be non-continuous transfer
+ *          and set the instruction to nor flash 1_4_4(0xeb)
+*/
+AL_S32 AlQspi_Dev_XipAddr24Init(AL_QSPI_DevStruct *Qspi, AL_U8* FlashId)
 {
     if (Qspi == AL_NULL) {
         return AL_QSPI_ERR_ILLEGAL_PARAM;
     }
 
     AlQspi_ll_Disable(Qspi->HwConfig.BaseAddress);
-    AlQspi_ll_SetWaitCycles(Qspi->HwConfig.BaseAddress, 0xa);
+
+    if (FlashId[1] == 0x40 && FlashId[2] == 0x18) {
+        AlQspi_ll_SetWaitCycles(Qspi->HwConfig.BaseAddress, 0x6);
+    } else {
+        AlQspi_ll_SetWaitCycles(Qspi->HwConfig.BaseAddress, 0xa);
+    }
+
     AlQspi_ll_SetClockStretch(Qspi->HwConfig.BaseAddress, QSPI_EnableClockStretch);
     AlQspi_ll_SetTransfMode(Qspi->HwConfig.BaseAddress, QSPI_RX_ONLY);
     AlQspi_ll_SetAddrLength(Qspi->HwConfig.BaseAddress, QSPI_ADDR_L24);

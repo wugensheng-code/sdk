@@ -96,7 +96,7 @@ AL_S32 AlQspi_Dev_UnRegisterIntrCallBack(AL_QSPI_DevStruct *Qspi);
 AL_VOID AlQspi_Dev_IntrHandler(AL_VOID *instance);
 AL_QSPI_HwConfigStruct *AlQspi_Dev_LookupConfig(AL_U32 DeviceId);
 AL_S32 AlQspi_Dev_XipAddr32Init(AL_QSPI_DevStruct *Qspi);
-AL_S32 AlQspi_Dev_XipAddr24Init(AL_QSPI_DevStruct *Qspi);
+AL_S32 AlQspi_Dev_XipAddr24Init(AL_QSPI_DevStruct *Qspi, AL_U8* FlashId);
 AL_VOID AlQspi_Dev_DumpReg(AL_REG QspiBaseAddr);
 
 #ifdef __cplusplus
