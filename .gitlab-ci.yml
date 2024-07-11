@@ -180,6 +180,8 @@ release-job:
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_ad101_v20
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_dc_v1d1
     - rm -rf $CI_PROJECT_DIR/solutions/boards/board_dr1x90_emulation
+    - rm -rf $CI_PROJECT_DIR/solutions/boards/platform
+    - rm -rf $CI_PROJECT_DIR/tools/hooks
     # - rm -rf $CI_PROJECT_DIR/solutions/boards
     # tar
     - tar -cvjf BM-fpsoc-sdk.tar.bz2 --exclude=./tools/ci --exclude=./fpsoc/driver/ps_driver_test --exclude=./fpsoc/utest --exclude=./solutions/demo/baremetal/helloworld/simulation ./*
