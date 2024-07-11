@@ -14,7 +14,7 @@ SDK_ROOT   ?= ../../..
 CHIP       ?= dr1v90
 
 DOWNLOAD      = ocm
-# ENABLE_MMU    := 1
+ENABLE_MMU    := 1
 
 ifeq ($(CHIP), dr1m90)
 ARMv8_EL         := EL3

@@ -1,6 +1,17 @@
 #########################################################################
 AL_CHIP         ?= $(CHIP)
 
+## Available choices:
+## ocm: Program will be download into ocm and run directly in ocm
+## ddr: Program will be download into ddr and run directly in ddr
+## tcm: Program will be download into tcm and run directly in tcm
+
+ifeq ($(AL_CHIP),dr1v90)
+DOWNLOAD        ?= tcm
+else
+DOWNLOAD        ?= ddr
+endif
+
 #########################################################################
 ## Available choices:
 ## ARMv8_STATE:     32,  64
@@ -19,7 +30,8 @@ ARMv8_CORE      ?= #{{ARMv8_CORE}}
 # options for enable mmu, available choices: 0/1
 #########################################################################
 ifeq ($(AL_CHIP),dr1v90)
-ENABLE_MMU  ?= 0
+ifeq ($(DOWNLOAD),ddr)
+ENABLE_MMU  ?= 1
 else
 ENABLE_MMU  ?= 1
 DDR_2M_MAPPING ?= 1
@@ -39,16 +51,7 @@ CODE_READONLY ?= #{{CODE_READONLY}}
 #########################################################################
 COMPILE_PREFIX  ?=
 
-## Available choices:
-## ocm: Program will be download into ocm and run directly in ocm
-## ddr: Program will be download into ddr and run directly in ddr
-## tcm: Program will be download into tcm and run directly in tcm
 
-ifeq ($(AL_CHIP),dr1v90)
-DOWNLOAD        ?= tcm
-else
-DOWNLOAD        ?= ddr
-endif
 
 
 ## If V=1, it will display compiling message in verbose including compiling options
