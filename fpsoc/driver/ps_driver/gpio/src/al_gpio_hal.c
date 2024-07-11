@@ -890,19 +890,22 @@ static AL_VOID AlGpio_Hal_IntrHandler(AL_VOID *Instance)
 
     for(Bank = 0; Bank < GPIO_MAX_BANKS; Bank ++) {
         IntrStatus = AlGpio_Hal_GetBankIntrStatus(Handle, Bank);
-        if (Handle->IntrBank & BIT(Bank)) {
-            if(Handle->EventCallBack) {
-                AL_GPIO_EventStruct GpioEvent = {
-                    .Bank      = Bank,
-                    .EventData = IntrStatus
-                };
-                Handle->EventCallBack(GpioEvent, Handle->EventCallBackRef);
+        if (IntrStatus != 0) {
+            if (Handle->IntrBank & BIT(Bank)) {
+                if(Handle->EventCallBack) {
+                    AL_GPIO_EventStruct GpioEvent = {
+                        .Bank      = Bank,
+                        .EventData = IntrStatus
+                    };
+                    Handle->EventCallBack(GpioEvent, Handle->EventCallBackRef);
 
-                AlGpio_Hal_ClrBankIntr(Handle, Bank, IntrStatus);
-                /* In edge interrupt mode, GPIO__EOI Register need to be set 0 for the next interrupt. */
-                AlGpio_Hal_ClrBankIntr(Handle, Bank, AL_GPIO_DISABLE);
+                    AlGpio_Hal_ClrBankIntr(Handle, Bank, IntrStatus);
+                    /* In edge interrupt mode, GPIO__EOI Register need to be set 0 for the next interrupt. */
+                    AlGpio_Hal_ClrBankIntr(Handle, Bank, AL_GPIO_DISABLE);
+                }
             }
         }
+
     }
 }
 
