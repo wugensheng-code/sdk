@@ -198,16 +198,23 @@ int send_data(int socket, void *buffer, size_t size, int flags)
 
 int recv_data(int socket, void *buffer, size_t size, int flags)
 {
-    size_t rc = recv(socket, buffer, size, flags);
+    size_t rc;
+    size_t recv_total_conut = 0;
+    char *recv_buffer= (char *)buffer;
 
-    if (rc < 0)
+    while (1)
     {
-        psock_errno("recv()");
-        return -1;
-    }
+        rc = recv(socket, recv_buffer + recv_total_conut, size - recv_total_conut, flags);
+        if (rc < 0)
+        {
+            psock_errno("recv()");
+            return -1;
+        }
 
-    if (rc != size)
-        return 1;
+        recv_total_conut += rc;
+        if (recv_total_conut >= size)
+            return 0;
+    }
 
     return 0;
 }

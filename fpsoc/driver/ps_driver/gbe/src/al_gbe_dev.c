@@ -264,48 +264,50 @@ AL_VOID AlGbe_Dev_SetDmaConfig(AL_GBE_DevStruct *Gbe)
     AlGbe_ll_SetDmaRxBufferSize(GbeBaseAddr, ((Gbe->InitConfig.RxBuffLen) / 4));
 }
 
-AL_U32 AlGbe_Dev_ConfigRxDescBuffer(AL_GBE_DevStruct *Gbe, AL_U32 DescIndex, AL_U8 *Buffer1, AL_U8 *Buffer2)
+AL_S32 AlGbe_Dev_ConfigRxDescBuffer(AL_GBE_DevStruct *Gbe, AL_U8 *BuffersAddr, AL_U32 BufferCnt, AL_U32 BufferSize)
 {
-    AL_ASSERT((Gbe != AL_NULL) && (Buffer1 != AL_NULL) && (DescIndex < (AL_U32)AL_GBE_RX_DESC_CNT),
-              AL_GBE_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Gbe != AL_NULL) && (BuffersAddr != AL_NULL) && (BufferCnt == (AL_U32)AL_GBE_RX_DESC_CNT) &&
+              (BufferSize == AL_GBE_TX_RX_BUFF_SIZE), AL_GBE_ERR_ILLEGAL_PARAM);
 
-    AL_GBE_DMADescStruct *DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)(Gbe->RxDescList.RxDesc[DescIndex]));
+    AL_U32 DescIndex = 0;
+    AL_GBE_DMADescStruct *DmaRxDesc;
 
-    /* write buffer address to RDES0 */
-    DmaRxDesc->DESC0 = (__IO AL_U32)((AL_UINTPTR)Buffer1);
-    /* store buffer address */
-    DmaRxDesc->BackupAddr0 = (AL_U32)((AL_UINTPTR)Buffer1);
-    /* set buffer address valid bit to RDES3 */
-    AlGbe_ll_SetRdesc3Buff1Valid((AL_REG)&(DmaRxDesc->DESC3), AL_GBE_FUNC_ENABLE);
+    for (DescIndex = 0; DescIndex < AL_GBE_RX_DESC_CNT; DescIndex++) {
+        DmaRxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)(Gbe->RxDescList.RxDesc[DescIndex]));
 
-    if (Buffer2 != AL_NULL) {
-        /* write buffer 2 address to RDES1 */
-        DmaRxDesc->DESC2 = (__IO AL_U32)((AL_UINTPTR)Buffer2);
-        /* store buffer 2 address */
-        DmaRxDesc->BackupAddr1 = (AL_U32)((AL_UINTPTR)Buffer2);
-        /* set buffer 2 address valid bit to RDES3 */
-        AlGbe_ll_SetRdesc3Buff2Valid((AL_REG)&(DmaRxDesc->DESC3), AL_GBE_FUNC_ENABLE);
+        /* write buffer address to RDES0 */
+        DmaRxDesc->DESC0 = (__IO AL_U32)((AL_UINTPTR)(BuffersAddr + (BufferSize * DescIndex)));
+        /* store buffer address */
+        DmaRxDesc->BackupAddr0 = (AL_U32)((AL_UINTPTR)(BuffersAddr + (BufferSize * DescIndex)));
+        /* set buffer address valid bit to RDES3 */
+        AlGbe_ll_SetRdesc3Buff1Valid((AL_REG)&(DmaRxDesc->DESC3), AL_GBE_FUNC_ENABLE);
+
+        /* set OWN bit to RDES3 */
+        AlGbe_ll_SetRdesc3OwnByDma((AL_REG)&(DmaRxDesc->DESC3), AL_GBE_FUNC_ENABLE);
     }
-    /* set OWN bit to RDES3 */
-    AlGbe_ll_SetRdesc3OwnByDma((AL_REG)&(DmaRxDesc->DESC3), AL_GBE_FUNC_ENABLE);
 
     return AL_OK;
 }
 
-AL_U32 AlGbe_Dev_ConfigTxDescBuffer(AL_GBE_DevStruct *Gbe, AL_U32 DescIndex, AL_U8 *Buffer1, AL_U8 *Buffer2)
+AL_S32 AlGbe_Dev_ConfigTxDescBuffer(AL_GBE_DevStruct *Gbe, AL_U8 *BuffersAddr, AL_U32 BufferCnt, AL_U32 BufferSize)
 {
-    AL_ASSERT((Gbe != AL_NULL) && (Buffer1 != AL_NULL) && (DescIndex < (AL_U32)AL_GBE_TX_DESC_CNT),
-              AL_GBE_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Gbe != AL_NULL) && (BuffersAddr != AL_NULL) && (BufferCnt == (AL_U32)AL_GBE_TX_DESC_CNT) &&
+              (BufferSize == AL_GBE_TX_RX_BUFF_SIZE), AL_GBE_ERR_ILLEGAL_PARAM);
 
-    AL_GBE_DMADescStruct *DmaTxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)(Gbe->TxDescList.TxDesc[DescIndex]));
+    AL_U32 DescIndex = 0;
+    AL_GBE_DMADescStruct *DmaTxDesc;
 
-    /* Store buffer1 address, buffer2 address not used */
-    Gbe->TxDescList.BufferAddress[DescIndex] = Buffer1;
+    for (DescIndex = 0; DescIndex < AL_GBE_TX_DESC_CNT; DescIndex++) {
+        DmaTxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)(Gbe->TxDescList.TxDesc[DescIndex]));
 
-    /* write buffer address to TDES0 */
-    DmaTxDesc->DESC0 = (__IO AL_U32)((AL_UINTPTR)Buffer1);
-    /* store buffer address */
-    DmaTxDesc->BackupAddr0 = (AL_U32)((AL_UINTPTR)Buffer1);
+        /* Store buffer1 address, buffer2 address not used */
+        Gbe->TxDescList.BufferAddress[DescIndex] = BuffersAddr + (BufferSize * DescIndex);
+
+        /* write buffer address to TDES0 */
+        DmaTxDesc->DESC0 = (__IO AL_U32)((AL_UINTPTR)(BuffersAddr + (BufferSize * DescIndex)));
+        /* store buffer address */
+        DmaTxDesc->BackupAddr0 = (AL_U32)((AL_UINTPTR)(BuffersAddr + (BufferSize * DescIndex)));
+    }
 
     return AL_OK;
 }
@@ -362,6 +364,8 @@ AL_VOID AlGbe_Dev_DMATxDescListInit(AL_GBE_DevStruct *Gbe)
         DmaTxDesc->DESC1 = 0x0;
         DmaTxDesc->DESC2 = 0x0;
         DmaTxDesc->DESC3 = 0x0;
+        DmaTxDesc->BackupAddr0 = 0x0;
+        DmaTxDesc->BackupAddr1 = 0x0;
 
         Gbe->TxDescList.TxDesc[Index] = (AL_U32)((AL_UINTPTR)DmaTxDesc);
     }

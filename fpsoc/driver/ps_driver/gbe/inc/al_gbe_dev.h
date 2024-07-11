@@ -22,6 +22,13 @@ extern "C" {
 #define AL_GBE_RX_DESC_CNT    32
 #endif
 
+/*
+   Ethernet frames usually do not exceed 1522 bytes,
+   because 64 byte alignment is required
+   when enable the cache, so the rx buffer size is set to 1600
+ */
+#define AL_GBE_TX_RX_BUFF_SIZE                   1600
+
 #define AL_GBE_SEGMENT_DEFAULT_SIZE              1460
 
 #ifdef ENABLE_MMU
@@ -518,7 +525,9 @@ AL_S32 AlGbe_Dev_GetPhyLinkStatus(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress, AL_U
 
 AL_S32 AlGbe_Dev_ConfigDuplexAndSpeed(AL_GBE_DevStruct *Gbe);
 
-AL_U32 AlGbe_Dev_ConfigRxDescBuffer(AL_GBE_DevStruct *Gbe, AL_U32 Index, AL_U8 *pBuffer1, AL_U8 *pBuffer2);
+AL_S32 AlGbe_Dev_ConfigRxDescBuffer(AL_GBE_DevStruct *Gbe, AL_U8 *BuffersAddr, AL_U32 BufferCnt, AL_U32 BufferSize);
+
+AL_S32 AlGbe_Dev_ConfigTxDescBuffer(AL_GBE_DevStruct *Gbe, AL_U8 *BuffersAddr, AL_U32 BufferCnt, AL_U32 BufferSize);
 
 AL_S32 AlGbe_Dev_Transmit(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruct *TxConfig);
 

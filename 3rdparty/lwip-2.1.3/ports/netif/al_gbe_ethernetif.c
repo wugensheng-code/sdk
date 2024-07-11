@@ -466,15 +466,18 @@ err_t low_level_init(struct netif *netif)
         return ERR_IF;
     }
 
-    /* Use static buffer to config rx descriptor buffer */
-    for (int idx = 0; idx < AL_GBE_RX_DESC_CNT; idx ++)
+    /* Use static buffer to config tx/rx descriptor buffer */
+    ret = AlGbe_Hal_ConfigRxDescBuffer(GbeHandle, RxBuffTab, AL_GBE_RX_DESC_CNT, ETH_RX_BUFFER_SIZE);
+    if (ret != AL_OK)
     {
-        AlGbe_Hal_ConfigRxDescBuffer(GbeHandle, idx, RxBuffTab[idx], NULL);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Hal_ConfigRxDescBuffer failed\r\n");
+        return ERR_IF;
     }
-
-    for (int idx = 0; idx < AL_GBE_TX_DESC_CNT; idx ++)
+    ret = AlGbe_Hal_ConfigTxDescBuffer(GbeHandle, TxBuffTab, AL_GBE_TX_DESC_CNT, ETH_RX_BUFFER_SIZE);
+    if (ret != AL_OK)
     {
-        AlGbe_Hal_ConfigTxDescBuffer(GbeHandle, idx, TxBuffTab[idx], NULL);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Hal_ConfigTxDescBuffer failed\r\n");
+        return ERR_IF;
     }
 
     AlGbe_Hal_RegisterIntrHandlerCallBack(GbeHandle, AL_GBE_INTR_TX_COMPLETE, AlGbe_TxDoneCallback);

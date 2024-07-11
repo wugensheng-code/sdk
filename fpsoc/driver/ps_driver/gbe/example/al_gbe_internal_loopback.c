@@ -154,15 +154,18 @@ AL_VOID AlGbe_Init()
     AlGbe_ll_SetLoopbackModeEnable(GbeHandle->Dev.HwConfig.BaseAddress, AL_GBE_FUNC_ENABLE);
     AlGbe_ll_SetRecvAllEnable(GbeHandle->Dev.HwConfig.BaseAddress, AL_GBE_FUNC_ENABLE);
 
-    /* Use static buffer to config rx descriptor buffer */
-    for (int idx = 0; idx < AL_GBE_RX_DESC_CNT; idx ++)
+    /* Use static buffer to config tx/rx descriptor buffer */
+    Ret = AlGbe_Hal_ConfigRxDescBuffer(GbeHandle, RxBuffTab, AL_GBE_RX_DESC_CNT, ETH_RX_BUFFER_SIZE);
+    if (Ret != AL_OK)
     {
-        AlGbe_Hal_ConfigRxDescBuffer(GbeHandle, idx, RxBuffTab[idx], NULL);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Hal_ConfigRxDescBuffer failed\r\n");
+        return Ret;
     }
-
-    for (int idx = 0; idx < AL_GBE_TX_DESC_CNT; idx ++)
+    Ret = AlGbe_Hal_ConfigTxDescBuffer(GbeHandle, TxBuffTab, AL_GBE_TX_DESC_CNT, ETH_RX_BUFFER_SIZE);
+    if (Ret != AL_OK)
     {
-        AlGbe_Hal_ConfigTxDescBuffer(GbeHandle, idx, TxBuffTab[idx], NULL);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Hal_ConfigTxDescBuffer failed\r\n");
+        return Ret;
     }
 
     AlGbe_PhyInit(&MacDmaConfig);
