@@ -47,7 +47,6 @@ typedef AL_VOID (*AL_INTR_Func)(AL_VOID *Param);
 typedef struct {
 #ifdef __riscv
     AL_INTR_VectorCfg       VectorMode;
-    AL_S32                  IntrLevel;
 #endif
     AL_INTR_TriggerMode     TrigMode;
     AL_S32                  Priority;
