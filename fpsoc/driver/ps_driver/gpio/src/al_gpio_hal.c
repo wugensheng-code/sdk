@@ -155,6 +155,24 @@ static AL_VOID AlGpio_Hal_GetBankPin(AL_U32 PinNumber, AL_U32 *BankNumber, AL_U3
 
 /**
  *
+ * This function retrieves the direction of a GPIO bank specified by the given handle and bank number.
+ *
+ * @param Handle The handle to the GPIO HAL structure.
+ * @param Bank The bank number of the GPIO.
+ *
+ * @return The direction of the GPIO bank.
+ *
+ */
+static AL_S32 AlGpio_Hal_GetBankDirection(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
+{
+    AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
+
+    return AlGpio_ll_GetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
+}
+
+
+/**
+ *
  * This function sets the direction of a GPIO bank specified by the `Bank` parameter.
  * The direction can be set to either input or output using the `Direction` parameter.
  *
@@ -239,24 +257,6 @@ AL_S32 AlGpio_Hal_WriteBank(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Data)
 }
 
 
-/**
- *
- * This function retrieves the direction of a GPIO bank specified by the given handle and bank number.
- *
- * @param Handle The handle to the GPIO HAL structure.
- * @param Bank The bank number of the GPIO.
- *
- * @return The direction of the GPIO bank.
- *
- */
-static AL_S32 AlGpio_Hal_GetBankDirection(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
-{
-    AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
-
-    return AlGpio_ll_GetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
-}
-
-
 
 /* ② Pin APIs */
 /**
@@ -279,15 +279,15 @@ static AL_S32 AlGpio_Hal_SetPinDirection(AL_GPIO_HalStruct *Handle, AL_U32 Pin, 
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
-    DirReg = AlGpio_ll_GetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
-    if(Direction != (AL_U32)0) { /*  Output Direction */
-        DirReg |= BIT(PinNumber);
-    } else { /*  Input Direction */
-        DirReg &= ~BIT(PinNumber);
-    }
 
-    AlGpio_ll_ClrDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
-    AlGpio_ll_SetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, DirReg);
+    DirReg = AlGpio_ll_GetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
+    if(Direction != (AL_U32)0) { /*  Output Direction 1 */
+        DirReg |= BIT(PinNumber);
+        AlGpio_ll_SetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
+    } else { /*  Input Direction 0 */
+        DirReg &= ~BIT(PinNumber);
+        AlGpio_ll_ClrDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
+    }
 
     return AL_OK;
 }
@@ -360,8 +360,7 @@ AL_S32 AlGpio_Hal_ReadPinInput(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
     DirReg = AlGpio_ll_GetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
     DirReg &= ~BIT(PinNumber);
 
-    AlGpio_ll_ClrDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
-    AlGpio_ll_SetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, DirReg); /* Input Direction */
+    AlGpio_ll_ClrDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber)); /* Input Direction */
 
     return (AlGpio_ll_ReadInput(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET) >> PinNumber) & (AL_U32)1;
 }
@@ -385,27 +384,28 @@ AL_S32 AlGpio_Hal_WritePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U32 Data)
     AL_U32 Value = 0;
     AL_U32 DataVar = Data;
     AL_U32 DirReg = 0;
+    AL_U32 Read_Pin_Value = 0;
+
 
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
+
+    /* Set direction. */
     DirReg = AlGpio_ll_GetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
     DirReg |= BIT(PinNumber); /* Output Direction */
-    DataVar &= (AL_U32)0x01;
-    Value = AlGpio_ll_ReadOutput(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
-    if (DataVar != 0)
-    {
-        Value |= (DataVar << PinNumber);
-    } else if (DataVar == 0)
-    {
-        Value &= ~(~DataVar << PinNumber);
-    }
-
-    AlGpio_ll_ClrDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
     AlGpio_ll_SetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, DirReg);
 
-    AlGpio_ll_ClrWrite(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
-    AlGpio_ll_Write(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Value);
+    /* Write Pin */
+    DataVar &= (AL_U32)0x01;
+    Value = AlGpio_ll_ReadOutput(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
+    if (DataVar == 1)
+    {
+        AlGpio_ll_Write(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Value | (DataVar << PinNumber));
+    } else if (DataVar == 0)
+    {
+        AlGpio_ll_ClrWrite(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
+    }
 
     return AL_OK;
 }
@@ -673,31 +673,6 @@ AL_S32 AlGpio_Hal_GetBankSync(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
 /* ④ Pin APIs intr */
 /**
  *
- * This function enables the interrupt for the specified GPIO pin.
- *
- * @param Handle Pointer to the AL_GPIO_HalStruct instance.
- * @param Pin The GPIO pin number to enable interrupt for.
- *
- * @return AL_OK if successful, otherwise an error code.
- *
- */
-static AL_S32 AlGpio_Hal_EnablePinIntr(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
-{
-    AL_U32 Bank = 0;
-    AL_U32 PinNumber = 0;
-
-    AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
-
-    AlGpio_Hal_GetBankPin((AL_U8)Pin, &Bank, &PinNumber);
-    AlGpio_ll_DisableIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
-    AlGpio_ll_EnableIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
-
-    return AL_OK;
-}
-
-
-/**
- *
  * This function checks whether the interrupt is enabled for the specified GPIO pin.
  *
  * @param Handle Pointer to the AL_GPIO_HalStruct instance.
@@ -717,6 +692,36 @@ static AL_BOOL AlGpio_Hal_GetPinIntrEnable(AL_GPIO_HalStruct *Handle, AL_U32 Pin
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
     IntrReg = AlGpio_ll_GetIntrEnable(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
     return ((IntrReg & (BIT(PinNumber))) == (AL_U32)0 ? (AL_U32)AL_FALSE : (AL_U32)AL_TRUE);
+}
+
+
+/**
+ *
+ * This function enables the interrupt for the specified GPIO pin.
+ *
+ * @param Handle Pointer to the AL_GPIO_HalStruct instance.
+ * @param Pin The GPIO pin number to enable interrupt for.
+ *
+ * @return AL_OK if successful, otherwise an error code.
+ *
+ */
+static AL_S32 AlGpio_Hal_EnablePinIntr(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
+{
+    AL_U32 Bank = 0;
+    AL_U32 PinNumber = 0;
+    AL_U32 GetPinIntrEnable = 0;
+
+    AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
+
+    AlGpio_Hal_GetBankPin((AL_U8)Pin, &Bank, &PinNumber);
+
+    /* Check if the Pin is interrupt enabled. */
+    GetPinIntrEnable = AlGpio_Hal_GetPinIntrEnable(Handle, Pin);
+    if (!GetPinIntrEnable) {
+        AlGpio_ll_EnableIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
+    }
+
+    return AL_OK;
 }
 
 
@@ -836,6 +841,20 @@ static AL_S32 AlGpio_Hal_GetPinIntrType(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
 }
 
 
+static AL_BOOL AlGpio_Hal_GetPinDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
+{
+    AL_U32 Bank = 0;
+    AL_U32 PinNumber = 0;
+    AL_U32 IntrReg = 0;
+
+    AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
+
+    AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
+    IntrReg = AlGpio_ll_GetDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
+    return ((IntrReg & (BIT(PinNumber))) == (AL_U32)0 ? (AL_U32)AL_FALSE : (AL_U32)AL_TRUE);
+}
+
+
 /**
  *
  * This function enables pin debounce for a specific GPIO pin. Pin debounce is a technique used to eliminate
@@ -854,6 +873,7 @@ static AL_S32 AlGpio_Hal_EnablePinDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Pin
     AL_U32 Bank = 0;
     AL_U32 PinNumber = 0;
     AL_U32 DebounceReg = 0;
+    AL_U32 GetPinDebounce = 0;
 
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
@@ -864,8 +884,11 @@ static AL_S32 AlGpio_Hal_EnablePinDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Pin
     } else {
         DebounceReg &= ~(BIT(PinNumber));
     }
-    AlGpio_ll_DisableDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
-    AlGpio_ll_EnableDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, DebounceReg);
+
+    GetPinDebounce = AlGpio_Hal_GetPinDebounce(Handle, Pin);
+    if (!GetPinDebounce) {
+        AlGpio_ll_EnableDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, BIT(PinNumber));
+    }
 
     return AL_OK;
 }
