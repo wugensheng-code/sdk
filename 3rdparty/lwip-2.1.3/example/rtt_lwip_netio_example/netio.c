@@ -238,6 +238,7 @@ int TCP_Server(void *arg)
     int rc;
     int nByte;
     int flag = 1;
+    char success_flag = 1;
 
     u32_t start_time = 0;
     u32_t current_time = 0;
@@ -373,14 +374,23 @@ int TCP_Server(void *arg)
                             if (rc < 0 && errno != EINTR)
                             {
                                 psock_errno("send()\r\n");
+                                success_flag = 0;
                                 break;
                             }
 
                             if (rc > 0)
                                 nByte += rc;
                         }
-
                         nData += ctl.data;
+                        if (success_flag == 0)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (success_flag == 0)
+                    {
+                        break;
                     }
 
                     cBuffer[0] = 1;
