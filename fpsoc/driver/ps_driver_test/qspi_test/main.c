@@ -89,7 +89,7 @@ void AL_NOR_DMA_RESET(void)
 
     InstAndAddr[0] = NOR_OP_INFINEON_SRST;
 
-    Ret = AlQspi_Hal_DmaStartBlockSend(Handle, DmaSendData, InstAndAddr, 0, 100000);
+    Ret = AlQspi_Hal_DmaStartSendBlock(Handle, DmaSendData, InstAndAddr, 0, 100000);
     if (Ret != AL_OK) {
         printf("DMA AL_NOR_RESET error:0x%x\r\n", Ret);
     }
@@ -109,7 +109,7 @@ void AL_NOR_DMA_RESET1(void)
 
     InstAndAddr[0] = NOR_OP_SRSTEN;
 
-    Ret = AlQspi_Hal_DmaStartBlockSend(Handle, DmaSendData, InstAndAddr, 0, 100000);
+    Ret = AlQspi_Hal_DmaStartSendBlock(Handle, DmaSendData, InstAndAddr, 0, 100000);
     if (Ret != AL_OK) {
         printf("AL_NOR_RESET error:0x%x\r\n", Ret);
     }
@@ -121,7 +121,7 @@ void AL_NOR_DMA_RESET1(void)
     Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
     InstAndAddr[0] = NOR_OP_SRST;
 
-    Ret = AlQspi_Hal_DmaStartBlockSend(Handle, DmaSendData, InstAndAddr, 0, 100000);
+    Ret = AlQspi_Hal_DmaStartSendBlock(Handle, DmaSendData, InstAndAddr, 0, 100000);
     if (Ret != AL_OK) {
         printf("AL_NOR_RESET error:0x%x\r\n", Ret);
     }
@@ -160,7 +160,7 @@ void AL_NOR_DMA_WREN(void)
 
     InstAndAddr[0] = NOR_OP_WREN;
 
-    Ret = AlQspi_Hal_DmaStartBlockSend(Handle, DmaSendData, InstAndAddr, 0, 100000);
+    Ret = AlQspi_Hal_DmaStartSendBlock(Handle, DmaSendData, InstAndAddr, 0, 100000);
     if (Ret != AL_OK) {
         printf("DMA AL_NOR_WREN error:0x%x\r\n", Ret);
     }
@@ -223,7 +223,7 @@ void AL_NOR_DMA_WAITWIP(void)
     DmaSendData[0] = NOR_OP_RDSR;
 
     do {
-        Ret = AlQspi_Hal_DmaStartBlockTranfer(Handle, DmaSendData, 1, DmaRecvData, 1, 100000);
+        Ret = AlQspi_Hal_DmaStartTranferBlock(Handle, DmaSendData, 1, DmaRecvData, 1, 100000);
         if (Ret != AL_OK) {
             printf("AL_NOR_WAITWIP error:0x%x\r\n", Ret);
         }
@@ -267,7 +267,7 @@ void AL_NOR_DMA_READSTATUS(void)
 
     DmaSendData[0] = NOR_OP_RDSR;
 
-    AlQspi_Hal_DmaStartBlockTranfer(Handle, DmaSendData, 1, DmaRecvData, 1, 100000);
+    AlQspi_Hal_DmaStartTranferBlock(Handle, DmaSendData, 1, DmaRecvData, 1, 100000);
     if (Ret != AL_OK) {
         printf("DMA AL_NOR_READSTATUS error:0x%x\r\n", Ret);
     }
@@ -358,7 +358,7 @@ void AL_NOR_DMA_ERASE(void)
     InstAndAddr[2] = 0;
     InstAndAddr[3] = 0;
 
-    Ret = AlQspi_Hal_DmaStartBlockSend(Handle, DmaSendData, InstAndAddr, 0, 100000);
+    Ret = AlQspi_Hal_DmaStartSendBlock(Handle, DmaSendData, InstAndAddr, 0, 100000);
     if (Ret != AL_OK) {
         printf("AL_NOR_ERASE error:0x%x\r\n", Ret);
     }
@@ -592,7 +592,7 @@ void AL_NOR_DMA_READPAGE(void)
     DmaSendData[2] = 0x20;
     DmaSendData[3] = 0;
 
-    Ret = AlQspi_Hal_DmaStartBlockTranfer(Handle, DmaSendData, 4, DmaRecvData, 240, 100000);
+    Ret = AlQspi_Hal_DmaStartTranferBlock(Handle, DmaSendData, 4, DmaRecvData, 240, 100000);
     if (Ret != AL_OK) {
         printf("DMA AL_NOR_READPAGE error:0x%x\r\n", Ret);
     }
@@ -715,7 +715,7 @@ void AL_NOR_DMA_WRITEPAGE(void)
     for (i = 0; i < 400; i++) {
         DmaSendData[i] = i % 255;
     }
-    Ret = AlQspi_Hal_DmaStartBlockSend(Handle, DmaSendData, InstAndAddr, 240, 1000000);
+    Ret = AlQspi_Hal_DmaStartSendBlock(Handle, DmaSendData, InstAndAddr, 240, 1000000);
     if (Ret != AL_OK) {
         printf("DMA AL_NOR_WRITEPAGE error:0x%x\r\n", Ret);
     }
@@ -841,7 +841,7 @@ AL_VOID AL_NOR_DMA_READID(AL_VOID)
 
     DmaSendData[0] = NOR_OP_RDID;;
 
-    Ret = AlQspi_Hal_DmaStartBlockTranfer(Handle, DmaSendData, 1, FlashId, 3, 100000);
+    Ret = AlQspi_Hal_DmaStartTranferBlock(Handle, DmaSendData, 1, FlashId, 3, 100000);
     if (Ret != AL_OK) {
         printf("AL_NOR_READID error:0x%x\r\n", Ret);
     }

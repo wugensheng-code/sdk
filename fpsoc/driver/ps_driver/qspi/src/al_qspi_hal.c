@@ -355,7 +355,7 @@ AL_S32 AlQspi_Hal_TranferDataBlock(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, A
  * @param Timeout Time in milliseconds to wait for the operation to complete.
  * @return AL_S32 Returns AL_OK on success, or an error code on failure.
  */
-AL_S32 AlQspi_Hal_DmaStartBlockSend(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, AL_U8 *InstAndAddr, AL_U32 SendDataSize, AL_U32 Timeout)
+AL_S32 AlQspi_Hal_DmaStartSendBlock(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, AL_U8 *InstAndAddr, AL_U32 SendDataSize, AL_U32 Timeout)
 {
     AL_DMACAHB_ChTransStruct    *QspiTxDmacChTrans;
 
@@ -454,7 +454,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockSend(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, 
  * @param Timeout Time in milliseconds to wait for the operation to complete.
  * @return AL_S32 Returns AL_OK on success, or an error code on failure.
  */
-AL_S32 AlQspi_Hal_DmaStartBlockReceive(AL_QSPI_HalStruct *Handle, AL_U8 *RecvData, AL_U16 RecvSize, AL_U32 Timeout)
+AL_S32 AlQspi_Hal_DmaStartReceiveBlock(AL_QSPI_HalStruct *Handle, AL_U8 *RecvData, AL_U16 RecvSize, AL_U32 Timeout)
 {
     AL_DMACAHB_ChTransStruct    *QspiRxDmacChTrans;
 
@@ -552,7 +552,7 @@ AL_S32 AlQspi_Hal_DmaStartBlockReceive(AL_QSPI_HalStruct *Handle, AL_U8 *RecvDat
  * @param Timeout Time in milliseconds to wait for the lock before starting the transfer.
  * @return Returns AL_OK on success or an error code on failure.
  */
-AL_S32 AlQspi_Hal_DmaStartBlockTranfer(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, AL_U32 SendSize,
+AL_S32 AlQspi_Hal_DmaStartTranferBlock(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, AL_U32 SendSize,
                                        AL_U8 *RecvData, AL_U16 RecvSize, AL_U32 Timeout)
 {
     AL_DMACAHB_ChTransStruct    *QspiTxDmacChTrans;

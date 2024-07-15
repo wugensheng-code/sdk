@@ -365,7 +365,7 @@ AL_U32 AlFsbl_Qspi24Copy(PTRSIZE SrcAddress, PTRSIZE DestAddress, AL_U32 Length,
 
         RecvSize = (Length > 4032) ? 4032 : Length;
 
-        Ret = AlQspi_Hal_DmaStartBlockTranfer(Handle, SendData, 4, (AL_U8 *)DestAddress, RecvSize, 50000000);
+        Ret = AlQspi_Hal_DmaStartTranferBlock(Handle, SendData, 4, (AL_U8 *)DestAddress, RecvSize, 50000000);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "DMA AL_NOR_READPAGE error:0x%x\r\n", Ret);
         }
@@ -460,7 +460,7 @@ AL_U32 AlFsbl_Qspi32Copy(PTRSIZE SrcAddress, PTRSIZE DestAddress, AL_U32 Length,
 
         RecvSize = (Length > 4032) ? 4032 : Length;
 
-        Ret = AlQspi_Hal_DmaStartBlockTranfer(Handle, SendData, 5, (AL_U8 *)DestAddress, RecvSize, 5000000);
+        Ret = AlQspi_Hal_DmaStartTranferBlock(Handle, SendData, 5, (AL_U8 *)DestAddress, RecvSize, 5000000);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_READPAGE error:0x%x\r\n", Ret);
         }
