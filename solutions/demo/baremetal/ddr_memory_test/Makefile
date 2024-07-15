@@ -74,9 +74,6 @@ endif
 all: $(TARGET)
 	@$(ECHO) COMPILE_PREFIX = $(COMPILE_PREFIX)
 
-gdb: all
-	$(COMPILE_PREFIX)gdb -f $(TARGET).elf -x $(SDK_ROOT)/target_zq.gdb
-
 # include rules.mk
 include $(SDK_ROOT)/tools/make/rules.mk
 
