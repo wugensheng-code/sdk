@@ -97,34 +97,34 @@ extern AL_CAN_HwConfigStruct AlCan_HwConfig[];
 
 /************************** Function Definitions ******************************/
 /**
- * This function switch DLC to data size in word
- * @param   Dlc is Enum to DLC
- * @return  data size in word
- * @note
-*/
+ * This function converts a Data Length Code (DLC) to its corresponding data length in bytes.
+ *
+ * @param Dlc The Data Length Code to be converted.
+ * @return The data length in bytes corresponding to the given DLC.
+ */
 AL_U32 AlCan_Dev_Dlc2Len(AL_CAN_DataLenEnum Dlc)
 {
     return AL_CAN_DataLenArray[Dlc];
 }
 
 /**
- * This function switch DLC to data size in byte
- * @param   Dlc is Enum to DLC
- * @return  data size in word
- * @note    CAN domian only support word read/write
-*/
+ * This function converts a Data Length Code (DLC) to its corresponding data length in bytes.
+ * This function explicitly casts the result to an AL_U32 type.
+ *
+ * @param Dlc The Data Length Code to be converted.
+ * @return The data length in bytes corresponding to the given DLC, cast to AL_U32.
+ */
 AL_U32 AlCan_Dev_Dlc2LenInByte(AL_CAN_DataLenEnum Dlc)
 {
     return (AL_U32) AL_CAN_DataLenInByteArray[Dlc];
 }
 
 /**
- * This function set CAN protocol type
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @return
- *          - AL_OK for successfully set
- * @note
-*/
+ * This function sets the CAN type for the device.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlCan_Dev_SetCanType(AL_CAN_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
@@ -144,12 +144,12 @@ static AL_S32 AlCan_Dev_SetCanType(AL_CAN_DevStruct *Dev)
 }
 
 /**
- * This function wait for set running mode done or timeout
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @return
- *          - AL_OK for successfully set
- * @note
-*/
+ * This function waits for the device to enter the operational mode specified in its configuration.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @return AL_OK on success, AL_CAN_ERR_TIMEOUT if the operation times out,
+ *         or AL_CAN_ERR_ILLEGAL_PARAM if an unsupported operational mode is specified.
+ */
 static AL_S32 AlCan_Dev_WaitForOpsMode(AL_CAN_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
@@ -186,12 +186,11 @@ static AL_S32 AlCan_Dev_WaitForOpsMode(AL_CAN_DevStruct *Dev)
 }
 
 /**
- * This function set CAN running mode
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @return
- *          - AL_OK for successfully set
- * @note
-*/
+ * This function sets the operational mode for the device as specified in its configuration.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlCan_Dev_SetOpsMode(AL_CAN_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
@@ -228,12 +227,12 @@ static AL_S32 AlCan_Dev_SetOpsMode(AL_CAN_DevStruct *Dev)
 }
 
 /**
- * This function set CAN slow or fast speed bit rate patameter
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   BitRate is pointer to AL_CAN_BitRateStruct
- * @return
- * @note
-*/
+ * This function sets the bit rate for the CAN communication.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param BitRate Pointer to the structure containing bit rate settings.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlCan_Dev_SetBitRate(AL_CAN_DevStruct *Dev, AL_CAN_BitRateStruct *BitRate)
 {
     AL_ASSERT((Dev != AL_NULL) && (BitRate != AL_NULL), AL_CAN_ERR_NULL_PTR);
@@ -260,12 +259,12 @@ AL_S32 AlCan_Dev_SetBitRate(AL_CAN_DevStruct *Dev, AL_CAN_BitRateStruct *BitRate
 }
 
 /**
- * This function get CAN slow or fast speed bit rate patameter
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   BitRate is pointer to AL_CAN_BitRateStruct
- * @return
- * @note
-*/
+ * This function retrieves the current bit rate settings of the CAN device.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param BitRate Pointer to the structure where the current bit rate settings will be stored.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlCan_Dev_GetBitRate(AL_CAN_DevStruct *Dev, AL_CAN_BitRateStruct *BitRate)
 {
     AL_ASSERT((Dev != AL_NULL) && (BitRate != AL_NULL), AL_CAN_ERR_NULL_PTR);
@@ -292,12 +291,13 @@ AL_S32 AlCan_Dev_GetBitRate(AL_CAN_DevStruct *Dev, AL_CAN_BitRateStruct *BitRate
 }
 
 /**
- * This function set CAN default config bit timing parameter
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   DefBitRate is pointer to AL_CAN_DefBitRateStruct
- * @return
- * @note
-*/
+ * This function sets the default bit rate for the CAN device using predefined settings.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param DefBitRate Pointer to the structure containing the index to the predefined bit rate settings
+ *        and the type of bit rate to set.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlCan_Dev_SetDefBitRate(AL_CAN_DevStruct *Dev, AL_CAN_DefBitRateStruct *DefBitRate)
 {
     AL_ASSERT((Dev != AL_NULL) && (DefBitRate != AL_NULL), AL_CAN_ERR_NULL_PTR);
@@ -316,11 +316,11 @@ AL_S32 AlCan_Dev_SetDefBitRate(AL_CAN_DevStruct *Dev, AL_CAN_DefBitRateStruct *D
 }
 
 /**
- * This function set CAN transmit mode
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @return
- * @note
-*/
+ * This function sets the transmission mode for the CAN device.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlCan_Dev_SetTransMode(AL_CAN_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
@@ -348,48 +348,48 @@ static AL_S32 AlCan_Dev_SetTransMode(AL_CAN_DevStruct *Dev)
 }
 
 /**
- * This function get module status
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   State is enum to AL_CAN_StateEnum
- * @return  is this state active or not
- * @note
-*/
+ * This function retrieves the current state of the CAN device.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param State The state to check.
+ * @return AL_TRUE if the device is in the specified state, AL_FALSE otherwise.
+ */
 AL_BOOL AlCan_Dev_GetState(AL_CAN_DevStruct *Dev, AL_CAN_StateEnum State)
 {
     return ((Dev->State & State) ? AL_TRUE : AL_FALSE);
 }
 
 /**
- * This function set module status
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   State is enum to AL_CAN_StateEnum
- * @return
- * @note
-*/
+ * This function sets a state for the CAN device.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param State The state to set.
+ * @return None.
+ */
 AL_VOID AlCan_Dev_SetState(AL_CAN_DevStruct *Dev, AL_CAN_StateEnum State)
 {
     Dev->State |= State;
 }
 
 /**
- * This function clr module status
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   State is enum to AL_CAN_StateEnum
- * @return
- * @note
-*/
+ * This function clears a state for the CAN device.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param State The state to clear.
+ * @return None.
+ */
 AL_VOID AlCan_Dev_ClrState(AL_CAN_DevStruct *Dev, AL_CAN_StateEnum State)
 {
     Dev->State &= ~State;
 }
 
 /**
- * This function is recv interrupt handler
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   IntrStatus is interrupt register status
- * @return
- * @note
-*/
+ * This function clears the receive empty state and notifies via callback.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param IntrStatus The interrupt status that triggered the handler.
+ * @return None.
+ */
 static AL_VOID AlCan_Dev_RecvFrameHandler(AL_CAN_DevStruct *Dev, AL_U32 IntrStatus)
 {
     // AL_LOG(AL_LOG_LEVEL_DEBUG, "AlCan_Dev_RecvFrameHandler: Recv a frame!\r\n");
@@ -403,12 +403,12 @@ static AL_VOID AlCan_Dev_RecvFrameHandler(AL_CAN_DevStruct *Dev, AL_U32 IntrStat
 }
 
 /**
- * This function is send frame done handler
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   IntrStatus is interrupt register status
- * @return
- * @note
-*/
+ * This function clears the send busy state and notifies via callback.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param IntrStatus The interrupt status that triggered the handler.
+ * @return None.
+ */
 static AL_VOID AlCan_Dev_SendFrameHandler(AL_CAN_DevStruct *Dev, AL_U32 IntrStatus)
 {
     AL_CAN_EventStruct Event = {
@@ -420,12 +420,12 @@ static AL_VOID AlCan_Dev_SendFrameHandler(AL_CAN_DevStruct *Dev, AL_U32 IntrStat
 }
 
 /**
- * This function is error interrupt handler
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   IntrStatus is interrupt register status
- * @return
- * @note
-*/
+ * This function determines the type of error based on the interrupt status and notifies via callback.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param IntrStatus The interrupt status that triggered the handler.
+ * @return None.
+ */
 static AL_VOID AlCan_Dev_ErrHandler(AL_CAN_DevStruct *Dev, AL_U32 IntrStatus)
 {
     AL_CAN_EventStruct Event;
@@ -467,12 +467,12 @@ static AL_VOID AlCan_Dev_ErrHandler(AL_CAN_DevStruct *Dev, AL_U32 IntrStatus)
 }
 
 /**
- * This function is intr event handler
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   IntrStatus is interrupt register status
- * @return
- * @note
-*/
+ * This function handles CAN device events based on interrupt status.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param IntrStatus Interrupt status indicating the type of event.
+ * @return None.
+ */
 static AL_VOID AlCan_Dev_EventHandler(AL_CAN_DevStruct *Dev, AL_U32 IntrStatus)
 {
     AL_CAN_EventStruct Event;
@@ -499,11 +499,11 @@ static AL_VOID AlCan_Dev_EventHandler(AL_CAN_DevStruct *Dev, AL_U32 IntrStatus)
 }
 
 /**
- * This function is intr call back
- * @param   Instance is pointer to intr call back reference
- * @return
- * @note
-*/
+ * This function interrupt handler for CAN device. It checks the interrupt status and calls the appropriate handler.
+ *
+ * @param Instance Pointer to the CAN device instance.
+ * @return None.
+ */
 AL_VOID AlCan_Dev_IntrHandler(void *Instance)
 {
     AL_CAN_DevStruct *Dev = (AL_CAN_DevStruct *)Instance;
@@ -531,13 +531,13 @@ AL_VOID AlCan_Dev_IntrHandler(void *Instance)
 }
 
 /**
- * This function register interrupt call back function
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   CallBack is call back struct with AL_CAN_EventCallBack
- * @return
- *          - AL_OK is register correct
- * @note
-*/
+ * This function registers a callback function for CAN device events.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param CallBack Function pointer to the callback function.
+ * @param CallBackRef User-defined reference passed to the callback function.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlCan_Dev_RegisterEventCallBack(AL_CAN_DevStruct *Dev, AL_CAN_EventCallBack CallBack, AL_VOID *CallBackRef)
 {
     AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
@@ -556,12 +556,11 @@ AL_S32 AlCan_Dev_RegisterEventCallBack(AL_CAN_DevStruct *Dev, AL_CAN_EventCallBa
 }
 
 /**
- * This function unregister interrupt call back function
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @return
- *          - AL_OK is unregister correct
- * @note
-*/
+ * This function unregisters the event callback function for a CAN device.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlCan_Dev_UnRegisterEventCallBack(AL_CAN_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
@@ -573,11 +572,11 @@ AL_S32 AlCan_Dev_UnRegisterEventCallBack(AL_CAN_DevStruct *Dev)
 }
 
 /**
- * This function look up hardware config structure
- * @param   DeviceId is hardware module id
- * @return  hardware config structure with AL_CAN_HwConfigStruct
- * @note
-*/
+ * This function looks up the hardware configuration for a CAN device using its device ID.
+ *
+ * @param DeviceId The device ID of the CAN device.
+ * @return Pointer to the hardware configuration structure if found, NULL otherwise.
+ */
 AL_CAN_HwConfigStruct *AlCan_Dev_LookupConfig(AL_U32 DeviceId)
 {
     AL_CAN_HwConfigStruct *CfgPtr = AL_NULL;
@@ -593,12 +592,12 @@ AL_CAN_HwConfigStruct *AlCan_Dev_LookupConfig(AL_U32 DeviceId)
 }
 
 /**
- * This function set module in reset mode
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   IsReset is reset or not
- * @return
- * @note
-*/
+ * This function sets or clears the reset state of a CAN device.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param IsReset Boolean value to set (TRUE) or clear (FALSE) the reset state.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlCan_Dev_SetReset(AL_CAN_DevStruct *Dev, AL_BOOL IsReset)
 {
     AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
@@ -616,14 +615,13 @@ AL_S32 AlCan_Dev_SetReset(AL_CAN_DevStruct *Dev, AL_BOOL IsReset)
 }
 
 /**
- * This function init CAN module
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   HwConfig is hardware config structure with AL_CAN_HwConfigStruct
- * @param   InitConfig is module config structure with AL_CAN_InitStruct
- * @return
- *          - AL_OK is init done
- * @note
-*/
+ * This function initializes a CAN device with specified hardware and initialization configurations.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param HwConfig Pointer to the hardware configuration structure.
+ * @param InitConfig Pointer to the initialization configuration structure. If NULL, default configuration is used.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, AL_CAN_InitStruct *InitConfig)
 {
     AL_S32 Ret = AL_OK;
@@ -685,13 +683,12 @@ AL_S32 AlCan_Dev_Init(AL_CAN_DevStruct *Dev, AL_CAN_HwConfigStruct *HwConfig, AL
 }
 
 /**
- * This function send frame
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   Frame is tx buffer data with AL_CAN_FrameStruct
- * @return
- *          - AL_OK is send done
- * @note
-*/
+ * This function sends a CAN frame using the specified CAN device.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param Frame Pointer to the CAN frame structure to be sent.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
 {
     AL_U32 Id, Ctrl;
@@ -750,13 +747,12 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
 }
 
 /**
- * This function decode a frame
- * @param   BuffAddr is pointer to a frame buffer
- * @param   Frame is pointer to store frame buffer with AL_CAN_FrameStruct
- * @return
- *          - AL_OK is send done
- * @note
-*/
+ * This function decodes a CAN frame from the specified buffer address.
+ *
+ * @param BuffAddr Pointer to the buffer address where the frame is stored.
+ * @param Frame Pointer to the CAN frame structure to store the decoded frame.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlCan_Dev_DecodeFrame(AL_U32 *BuffAddr, AL_CAN_FrameStruct *Frame)
 {
     AL_ASSERT((BuffAddr != AL_NULL) && (Frame != AL_NULL), AL_CAN_ERR_NULL_PTR);
@@ -784,13 +780,16 @@ AL_S32 AlCan_Dev_DecodeFrame(AL_U32 *BuffAddr, AL_CAN_FrameStruct *Frame)
 }
 
 /**
- * This function receive a frame
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   Frame is pointer to store frame buffer with AL_CAN_FrameStruct
- * @return
- *          - AL_OK is send done
- * @note
-*/
+ * This function checks the device and frame pointers for nullity, the device's state for readiness,
+ * and the receive buffer for non-emptiness. It then reads the control word and the data from the receive buffer,
+ * populates the frame structure accordingly, and releases the receive buffer. If the frame contains an error
+ * or if the receive buffer is found empty after attempting to release it, appropriate error codes are returned.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param Frame Pointer to the structure where the received frame will be stored.
+ * @return AL_OK on success, error code otherwise.
+ *
+ * */
 AL_S32 AlCan_Dev_RecvFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
 {
     AL_CAN_FrameCtrlUnion Ctrl;
@@ -832,13 +831,15 @@ AL_S32 AlCan_Dev_RecvFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
 }
 
 /**
- * This function set filter parameter
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   FilterCfg is pointer to filter configuration with AL_CAN_FilterCfgStruct
- * @return
- *          - AL_OK is send done
- * @note
-*/
+ * This function validates the input pointers, checks if the filter is already enabled, and if not, enables it.
+ * It then sets the filter address and mask according to the provided configuration. If the filter is already enabled,
+ * a TODO comment suggests that additional actions might be required.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param FilterCfg Pointer to the filter configuration structure.
+ * @return AL_OK on success, error code otherwise.
+ *
+ * */
 AL_S32 AlCan_Dev_SetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *FilterCfg)
 {
     AL_ASSERT((Dev != AL_NULL) && (FilterCfg != AL_NULL), AL_CAN_ERR_NULL_PTR);
@@ -860,13 +861,14 @@ AL_S32 AlCan_Dev_SetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *Filter
 }
 
 /**
- * This function get filter parameter
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   FilterCfg is pointer to store filter configuration with AL_CAN_FilterCfgStruct
- * @return
- *          - AL_OK is send done
- * @note
-*/
+ * This function checks the input pointers for nullity and whether the filter is enabled. It then retrieves the filter configuration
+ * from the device and stores it in the provided structure. If the filter is not enabled, an error is returned.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param FilterCfg Pointer to the structure where the filter configuration will be stored.
+ * @return AL_OK on success, AL_CAN_ERR_NULL_PTR if the filter is not enabled.
+ *
+ * */
 AL_S32 AlCan_Dev_GetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *FilterCfg)
 {
     AL_ASSERT((Dev != AL_NULL) && (FilterCfg != AL_NULL), AL_CAN_ERR_NULL_PTR);
@@ -888,12 +890,14 @@ AL_S32 AlCan_Dev_GetFilter(AL_CAN_DevStruct *Dev, AL_CAN_FilterCfgStruct *Filter
 }
 
 /**
- * This function get filter parameter
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @return
- *          - AL_OK is send done
- * @note
-*/
+ * This function checks the device pointer for nullity, retrieves the last decode error,
+ * and logs an appropriate message. Depending on the error type, it may return a specific error code.
+ * If the error type is unrecognized, it returns an error indicating a wrong parameter.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @return AL_OK if no error, specific error code corresponding to the decode error.
+ *
+ */
 AL_S32 AlCan_Dev_GetDecodeError(AL_CAN_DevStruct *Dev)
 {
     AL_ASSERT(Dev != AL_NULL, AL_CAN_ERR_NULL_PTR);
@@ -957,14 +961,16 @@ AL_S32 AlCan_Dev_GetDecodeError(AL_CAN_DevStruct *Dev)
 }
 
 /**
- * This function excute operations exclude send and receive frame
- * @param   Dev is pointer to AL_CAN_DevStruct
- * @param   Cmd is io ctl operation to AL_CAN_IoCtlCmdEnum
- * @param   Data is pointer reference to Cmd
- * @return
- *          - AL_OK is send done
- * @note
-*/
+ * This function validates the device pointer and switches on the command type. It supports setting
+ * and getting bit rates, resetting the device, setting and getting filter configurations,
+ * and getting and setting the device state. If the command is not recognized, an error is returned.
+ *
+ * @param Dev Pointer to the CAN device structure.
+ * @param Cmd The control command to execute.
+ * @param Data Pointer to the data required for the command.
+ * @return AL_OK on success, AL_CAN_ERR_IOCTL_CMD if the command is unrecognized, or other error codes depending on the command execution result.
+ *
+ */
 AL_S32 AlCan_Dev_IoCtl(AL_CAN_DevStruct *Dev, AL_CAN_IoCtlCmdEnum Cmd, AL_VOID *Data)
 {
     AL_S32 Ret = AL_OK;
@@ -1027,12 +1033,14 @@ AL_S32 AlCan_Dev_IoCtl(AL_CAN_DevStruct *Dev, AL_CAN_IoCtlCmdEnum Cmd, AL_VOID *
 }
 
 /**
- * This function display received frame
- * @param   Frame is pointer to received buffer with AL_CAN_FrameStruct
- * @return
- *          - AL_OK is send done
- * @note
-*/
+ *
+ * This function validates the frame pointer to ensure it is not NULL. It then logs the frame's ID, data length code (DLC),
+ * actual data length in bytes, and whether the ID is extended, the frame is remote, and the bit rate is switched.
+ * It iterates through the data words of the frame, logging each one. The function concludes by logging a completion message.
+ *
+ * @param Frame Pointer to the CAN frame structure to be displayed.
+ * @return AL_OK on successful execution, AL_CAN_ERR_NULL_PTR if the frame pointer is NULL.
+ */
 AL_S32 AlCan_Dev_DisplayFrame(AL_CAN_FrameStruct *Frame)
 {
     AL_ASSERT(Frame != AL_NULL, AL_CAN_ERR_NULL_PTR);

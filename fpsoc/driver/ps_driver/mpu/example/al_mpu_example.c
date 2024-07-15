@@ -13,6 +13,16 @@ static AL_MPU_HalStruct *ApuHandle;
 
 #define APU_MPU_REGION_SIZE     32
 
+/**
+ *
+ * This function initializes the MPU configuration for the APU by setting up various regions with specific attributes
+ * such as read/write permissions, security settings, privilege levels, and interrupt enablement. It then attempts
+ * to initialize, enable, and disable the MPU using HAL (Hardware Abstraction Layer) functions. Additionally,
+ * it configures individual MPU regions and enables/disables them to test the MPU's functionality. The function
+ * logs the outcome of each operation to indicate success or failure.
+ *
+ * @return AL_OK if all operations are successful, an error code otherwise.
+ */
 AL_S32 AlMpu_ApuExample()
 {
     AL_U32 RetValue = 0;
@@ -84,6 +94,12 @@ AL_S32 AlMpu_ApuExample()
     return AL_OK;
 }
 
+/**
+ *
+ * This function calls AlMpu_ApuExample to configure and test the MPU for the APU. It then returns the status of the operation.
+ *
+ * @return 0 indicating successful execution.
+ */
 int main()
 {
     AlMpu_ApuExample();

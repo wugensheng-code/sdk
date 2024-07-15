@@ -29,12 +29,11 @@ extern AL_WDT_HwConfigStruct AlWdt_HwConfig[AL_WDT_NUM_INSTANCE];
 
 /********************************************************/
 /**
- * This function look up hardware config structure.
- * @param   DevId is hardware module id
- * @return
- *          - AL_WDT_HwConfigStruct for hardware config
- * @note
-*/
+ * This function looks up the hardware configuration structure for a given device ID.
+ *
+ * @param DevId Hardware module ID to look up.
+ * @return Pointer to the AL_WDT_HwConfigStruct structure for the specified hardware config. Returns NULL if the device ID is not found.
+ */
 static AL_WDT_HwConfigStruct *AlWdt_Hal_LookupConfig(AL_U32 DevId)
 {
     AL_U32 Index;
@@ -51,11 +50,10 @@ static AL_WDT_HwConfigStruct *AlWdt_Hal_LookupConfig(AL_U32 DevId)
 }
 
 /**
- * This function action When the wdt interrupt occurs.
- * @param   CallbackRef Pointer to a AL_WDT_HalStruct structure
- * @return
- * @note
-*/
+ * This function default event handler for WDT interrupt. This function is called when a WDT interrupt occurs.
+ *
+ * @param CallbackRef Pointer to user-defined data, typically a structure representing the WDT instance.
+ */
 AL_VOID AlWdt_Hal_DefEventHandler(AL_VOID *CallbackRef)
 {
     AL_UNUSED(CallbackRef);
@@ -64,11 +62,10 @@ AL_VOID AlWdt_Hal_DefEventHandler(AL_VOID *CallbackRef)
 }
 
 /**
- * This function is wdt's all interrupt entries handler.
- * @param   Instance is pointer to interrupts call back reference
- * @return
- * @note
-*/
+ * This function handles all WDT interrupt entries. This function is called whenever a WDT interrupt is triggered.
+ *
+ * @param Instance Pointer to the interrupt callback reference, typically a structure representing the WDT instance.
+ */
 AL_VOID AlWdt_Hal_IntrHandler(AL_VOID *Instance)
 {
     AL_WDT_HalStruct *Wdt = (AL_WDT_HalStruct *)Instance;
@@ -79,15 +76,13 @@ AL_VOID AlWdt_Hal_IntrHandler(AL_VOID *Instance)
 }
 
 /**
- * This function register a User WDT Callback.
- * @param   Wdt Pointer to a AL_WDT_HalStruct structure that contains wdt Halice instance
- * @param   CallBack pointer to the Callback function
- * @param   CallbackRef pointer to the Callback function params
- * @return
- *          - AL_OK for function success
- *          - Other for function failure
- * @note
-*/
+ * This function begisters a user-defined callback function for WDT events.
+ *
+ * @param Wdt Pointer to the AL_WDT_HalStruct structure that contains the WDT instance.
+ * @param Callback Pointer to the user-defined callback function to be registered.
+ * @param CallbackRef Pointer to user-defined data to be passed to the callback function when it is called.
+ * @return AL_OK if the function succeeds in registering the callback. Returns an error code if the function fails.
+ */
 AL_S32 AlWdt_Hal_RegisterEventCallBack(AL_WDT_HalStruct *Wdt, AL_Wdt_EventCallBack Callback, void *CallbackRef)
 {
     AL_ASSERT((Wdt != AL_NULL && Callback != AL_NULL), AL_WDT_ERR_ILLEGAL_PARAM);
@@ -99,17 +94,14 @@ AL_S32 AlWdt_Hal_RegisterEventCallBack(AL_WDT_HalStruct *Wdt, AL_Wdt_EventCallBa
 }
 
 /**
- * This function initialize the WDT mode according to the specified
- *          parameters in the AL_WDT_InitStruct and initialize the associated handle.
- * @param   Handle Pointer to a AL_WDT_HalStruct structure that contains wdt Hal instance
- * @param   HalId is hardware module id
- * @param   InitConfig pointer to a AL_WDT_InitStruct structure
- *          that contains the configuration information for the specified WDT peripheral
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note
-*/
+ * This function initializes the WDT module with specified parameters and associates it with a handle.
+ *
+ * @param Handle Double pointer to a AL_WDT_HalStruct structure that will contain the WDT instance after initialization.
+ * @param DevId Hardware module ID for the WDT.
+ * @param InitConfig Pointer to a AL_WDT_InitStruct structure that contains the configuration information for the WDT.
+ * @param Callback Pointer to a user-defined callback function for WDT events.
+ * @return AL_OK if the function succeeds in initializing the WDT. Returns an error code if the function fails.
+ */
 AL_S32 AlWdt_Hal_Init(AL_WDT_HalStruct **Handle, AL_U32 DevId, AL_WDT_InitStruct *InitConfig, AL_Wdt_EventCallBack Callback)
 {
     AL_S32 Ret = AL_OK;
@@ -154,6 +146,11 @@ AL_S32 AlWdt_Hal_Init(AL_WDT_HalStruct **Handle, AL_U32 DevId, AL_WDT_InitStruct
     return AlIntr_RegHandler((*Handle)->IntrNum, AL_NULL, AlWdt_Hal_IntrHandler, *Handle);
 }
 
+/**
+ * This function stops the WDT.
+ *
+ * @param Wdt Pointer to the AL_WDT_HalStruct structure that contains the WDT instance to be stopped.
+ */
 AL_VOID AlWdt_Hal_Stop(AL_WDT_HalStruct *Wdt)
 {
     AlWdt_ll_Pause(Wdt->BaseAddr, AL_FUNC_ENABLE);
@@ -161,6 +158,11 @@ AL_VOID AlWdt_Hal_Stop(AL_WDT_HalStruct *Wdt)
     return;
 }
 
+/**
+ * This function starts the WDT.
+ *
+ * @param Wdt Pointer to the AL_WDT_HalStruct structure that contains the WDT instance to be started.
+ */
 AL_VOID AlWdt_Hal_Start(AL_WDT_HalStruct *Wdt)
 {
     AlWdt_ll_Enable(Wdt->BaseAddr, AL_FUNC_ENABLE);
@@ -168,6 +170,12 @@ AL_VOID AlWdt_Hal_Start(AL_WDT_HalStruct *Wdt)
     return;
 }
 
+/**
+ * This function feeds the WDT to prevent it from resetting the system.
+ *
+ * @param Wdt Pointer to the AL_WDT_HalStruct structure that contains the WDT instance to be fed.
+ * @return AL_OK if the function succeeds in feeding the WDT.
+ */
 AL_S32 AlWdt_Hal_Feed(AL_WDT_HalStruct *Wdt)
 {
     AlWdt_ll_CounterRestart(Wdt->BaseAddr);
@@ -175,6 +183,12 @@ AL_S32 AlWdt_Hal_Feed(AL_WDT_HalStruct *Wdt)
     return AL_OK;
 }
 
+/**
+ * This function sets up the timeout period for the WDT.
+ *
+ * @param Wdt Pointer to the AL_WDT_HalStruct structure that contains the WDT instance.
+ * @param TimeOutPeriod The timeout period to be set for the WDT.
+ */
 AL_VOID AlWdt_Hal_SetupTimeout(AL_WDT_HalStruct *Wdt, AL_WDT_TIMEOUT_PERIOD TimeOutPeriod)
 {
     AlWdt_ll_Set_TimeoutPeriod(Wdt->BaseAddr, TimeOutPeriod);

@@ -35,7 +35,15 @@
 /************************** Function Prototypes ******************************/
 
 /************************** Function Definitions ******************************/
-
+/**
+ * Main function to test IPC spin lock functionality.
+ * This function performs a series of operations to test the IPC spin lock functionality. It initializes a spin lock,
+ * attempts to take the spin lock, checks if the spin lock can be taken again (which should fail to ensure the lock is working correctly),
+ * and then releases the spin lock. This process is repeated for four different spin lock instances. It logs information
+ * about the operations being performed and their outcomes. The function aims to verify the correct behavior of spin locks in preventing concurrent access.
+ *
+ * @return AL_OK if all tests pass successfully, indicating that the spin locks are functioning as expected. Returns AL_ERROR if any test fails, indicating a problem with the spin lock implementation.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;

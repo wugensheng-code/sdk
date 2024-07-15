@@ -1,0 +1,21 @@
+digraph "AL_QSPI_DevStruct"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="AL_QSPI_DevStruct",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" SendBuffer\nRecvBuffer" ,fontname="Helvetica"];
+  Node2 [label="AL_QSPI_BufferStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__QSPI__BufferStruct.html",tooltip="Qspi Buffer Struct. "];
+  Node3 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Configs" ,fontname="Helvetica"];
+  Node3 [label="AL_QSPI_ConfigsStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__QSPI__ConfigsStruct.html",tooltip="Configs Struct. "];
+  Node4 -> Node3 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Trans" ,fontname="Helvetica"];
+  Node4 [label="AL_QSPI_TransStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__QSPI__TransStruct.html",tooltip="Qspi Transfer Struct. "];
+  Node5 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" EnSpiCfg" ,fontname="Helvetica"];
+  Node5 [label="AL_QSPI_EnSpiCfgStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__QSPI__EnSpiCfgStruct.html",tooltip="Enhanced Qspi Configs Struct. "];
+  Node6 -> Node3 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" XipCfg" ,fontname="Helvetica"];
+  Node6 [label="AL_QSPI_XipCfgStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__QSPI__XipCfgStruct.html",tooltip="Qspi Xip Config Struct. "];
+  Node7 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" EventCallBack" ,fontname="Helvetica"];
+  Node7 [label="AL_QSPI_EventStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__QSPI__EventStruct.html",tooltip="Qspi Event Struct. "];
+  Node8 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" HwConfig" ,fontname="Helvetica"];
+  Node8 [label="AL_QSPI_HwConfigStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__QSPI__HwConfigStruct.html"];
+}

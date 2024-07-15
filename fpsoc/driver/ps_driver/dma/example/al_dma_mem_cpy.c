@@ -30,7 +30,12 @@
 static AL_S32 AlDma_Test_MemCpy(AL_VOID);
 
 /************************** Function Definitions ******************************/
-
+/**
+ * This function initializes the DMA memory copy test, executes it, and logs the result.
+ * If the test fails, it logs an error message and returns the error code.
+ *
+ * @return AL_S32 Returns AL_OK if the test is successful, or an error code if the test fails.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -48,6 +53,15 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ * This function allocates aligned memory for source and destination buffers, initializes local interrupts,
+ * and enters a loop where it continuously updates the source buffer, performs a memory copy from source to destination,
+ * verifies the copied data, and clears the destination buffer for the next iteration. It logs each step of the process
+ * and checks for errors. If an error occurs during memory copy or data verification, it logs the error and exits.
+ * The function also handles cache flushing if MMU is enabled.
+ *
+ * @return AL_S32 Returns AL_OK if the memory copy and verification are successful, or an error code if an error occurs.
+ */
 static AL_S32 AlDma_Test_MemCpy(AL_VOID)
 {
     AL_U32 Ret = AL_OK;

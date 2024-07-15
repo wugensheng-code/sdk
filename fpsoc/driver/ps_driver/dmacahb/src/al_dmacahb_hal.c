@@ -23,38 +23,38 @@ static AL_DMACAHB_HalStruct AL_DMACAHB_HalInstance[AL_DMACAHB_NUM_INSTANCE][AL_D
 
 /************************** Function Definitions ******************************/
 /**
- * This function wait for frame send done or timeout
- * @param   Handle is pointer to AL_DMACAHB_HalStruct
- * @param   Timeout is max wait time for send done
- * @return
- *          - AL_OK
- * @note
-*/
+ * This function waits for a transaction to complete or timeout.
+ *
+ * @param Handle Pointer to the DMA controller handle.
+ * @param Event Pointer to the event structure where the event details will be stored.
+ * @param TimeoutMs Timeout in milliseconds.
+ * @return AL_S32 Status of the operation. Returns 0 (AL_OK) if successful.
+ */
 AL_S32 AlDmacAhb_Hal_WaitTransDoneOrTimeout(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_EventStruct *Event, AL_U32 TimeoutMs)
 {
     return AlOsal_Mb_Receive(&Handle->EventQueue, Event, TimeoutMs);
 }
 
 /**
- * This function wait for src burst trans done or timeout
- * @param   Handle is pointer to AL_DMACAHB_HalStruct
- * @param   Timeout is max wait time for send done
- * @return
- *          - AL_OK
- * @note
-*/
+ * This function waits for a source transaction to complete or timeout.
+ *
+ * @param Handle Pointer to the DMA controller handle.
+ * @param Event Pointer to the event structure where the event details will be stored.
+ * @param TimeoutMs Timeout in milliseconds.
+ * @return AL_S32 Status of the operation. Returns 0 (AL_OK) if successful.
+ */
 AL_S32 AlDmacAhb_Hal_WaitSrcTransDoneOrTimeout(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_EventStruct *Event, AL_U32 TimeoutMs)
 {
     return AlOsal_Mb_Receive(&Handle->SrcEventQueue, Event, TimeoutMs);
 }
 
 /**
- * This function is intr handler call back function
- * @param   Event is pointer to AL_DMACAHB_EventStruct
- * @param   CallBackRef
- * @return
- * @note
-*/
+ * Default channel event callback function.
+ *
+ * @param Event Pointer to the event structure containing the event details.
+ * @param CallBackRef User-defined callback reference.
+ * @return AL_S32 Returns 0 (AL_OK) if successful.
+ */
 static AL_S32 AlDmacAhb_Hal_DefChEventCallBack(AL_DMACAHB_EventStruct *Event, AL_VOID *CallBackRef)
 {
     AL_DMACAHB_HalStruct *Handle = (AL_DMACAHB_HalStruct *)CallBackRef;
@@ -86,6 +86,12 @@ static AL_S32 AlDmacAhb_Hal_DefChEventCallBack(AL_DMACAHB_EventStruct *Event, AL
     return AL_OK;
 }
 
+/**
+ * This function initializes the DMA controller handle.
+ *
+ * @param Handle Pointer to the DMA controller handle.
+ * @return AL_S32 Returns 0 (AL_OK) if successful.
+ */
 static inline AL_S32 AlDmacahb_Hal_HandleInit(AL_DMACAHB_HalStruct *Handle)
 {
     AL_S32 Ret = AL_OK;
@@ -109,15 +115,14 @@ static inline AL_S32 AlDmacahb_Hal_HandleInit(AL_DMACAHB_HalStruct *Handle)
 }
 
 /**
- * This function init DMACAHB module
- * @param   Handle is pointer to AL_DMACAHB_HalStruct
- * @param   InitConfig is module config structure with AL_DMACAHB_ChInitStruct
- * @param   CallBack is call back struct with AL_DMACAHB_ChCallBackStruct
- * @param   DevId is hardware module id
- * @return
- *          - AL_OK
- * @note
-*/
+ * This function initializes the DMA controller with the specified configuration.
+ *
+ * @param Handle Double pointer to the DMA controller handle to be initialized.
+ * @param DevId Device ID for the DMA controller.
+ * @param InitConfig Pointer to the initialization configuration structure.
+ * @param CallBack Event callback function.
+ * @return AL_S32 Returns 0 (AL_OK) if successful.
+ */
 AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct **Handle, AL_U32 DevId, AL_DMACAHB_ChInitStruct *InitConfig,
                           AL_DMACAHB_ChEventCallBack CallBack)
 {
@@ -173,12 +178,11 @@ AL_S32 AlDmacAhb_Hal_Init(AL_DMACAHB_HalStruct **Handle, AL_U32 DevId, AL_DMACAH
 }
 
 /**
- * This function init DMACAHB module
- * @param   Handle is pointer to AL_DMACAHB_HalStruct
- * @return
- *          - AL_OK
- * @note
-*/
+ * This function deinitializes the DMA controller.
+ *
+ * @param Handle Pointer to the DMA controller handle.
+ * @return AL_S32 Returns 0 (AL_OK) if successful.
+ */
 AL_S32 AlDmacAhb_Hal_DeInit(AL_DMACAHB_HalStruct *Handle)
 {
     AL_S32 Ret = AL_OK;
@@ -209,12 +213,11 @@ AL_S32 AlDmacAhb_Hal_DeInit(AL_DMACAHB_HalStruct *Handle)
 }
 
 /**
- * This function start dma
- * @param   Handle is pointer to AL_DMACAHB_HalStruct
- * @return
- *          - AL_OK
- * @note
-*/
+ * This function starts a DMA transaction.
+ *
+ * @param Handle Pointer to the DMA controller handle.
+ * @return AL_S32 Returns 0 (AL_OK) if successful.
+ */
 AL_S32 AlDmacAhb_Hal_Start(AL_DMACAHB_HalStruct *Handle)
 {
     AL_S32 Ret = AL_OK;
@@ -237,13 +240,12 @@ AL_S32 AlDmacAhb_Hal_Start(AL_DMACAHB_HalStruct *Handle)
 }
 
 /**
- * This function start dma blocked
- * @param   Handle is pointer to AL_DMACAHB_HalStruct
- * @param   Timeout is max wait time for dma done
- * @return
- *          - AL_OK
- * @note
-*/
+ * This function starts a DMA transaction and waits for it to complete or timeout.
+ *
+ * @param Handle Pointer to the DMA controller handle.
+ * @param Timeout Timeout in milliseconds.
+ * @return AL_S32 Returns 0 (AL_OK) if successful, otherwise returns an error code.
+ */
 AL_S32 AlDmacAhb_Hal_StartBlock(AL_DMACAHB_HalStruct *Handle, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -281,14 +283,13 @@ AL_S32 AlDmacAhb_Hal_StartBlock(AL_DMACAHB_HalStruct *Handle, AL_U32 Timeout)
 }
 
 /**
- * This function recv frame blocked
- * @param   Handle is pointer to AL_DMACAHB_HalStruct
- * @param   Cmd is io ctl cmd to AL_DMACAHB_IoCtlCmdEnum
- * @param   Data is pointer to cmd args
- * @return
- *          - AL_OK
- * @note
-*/
+ * This function performs an IOCTL command on the DMA controller.
+ *
+ * @param Handle Pointer to the DMA controller handle.
+ * @param Cmd IOCTL command to be performed.
+ * @param Data Pointer to the data required for the IOCTL command.
+ * @return AL_S32 Returns 0 (AL_OK) if successful.
+ */
 AL_S32 AlDmacAhb_Hal_IoCtl(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_IoCtlCmdEnum Cmd, AL_VOID *Data)
 {
     AL_S32 Ret = AL_OK;
@@ -306,5 +307,3 @@ AL_S32 AlDmacAhb_Hal_IoCtl(AL_DMACAHB_HalStruct *Handle, AL_DMACAHB_IoCtlCmdEnum
 
     return Ret;
 }
-
-

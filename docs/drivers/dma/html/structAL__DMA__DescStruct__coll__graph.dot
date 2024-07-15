@@ -1,0 +1,10 @@
+digraph "AL_DMA_DescStruct"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="AL_DMA_DescStruct",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Xfer" ,fontname="Helvetica"];
+  Node2 [label="AL_DMA_XferStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__DMA__XferStruct.html"];
+  Node3 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" ReqCfg" ,fontname="Helvetica"];
+  Node3 [label="AL_DMA_ReqCfgStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__DMA__ReqCfgStruct.html"];
+}

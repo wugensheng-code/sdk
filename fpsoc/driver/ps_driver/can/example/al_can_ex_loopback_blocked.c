@@ -50,7 +50,12 @@ static AL_CAN_FrameStruct ExFrame = {
 static AL_S32 AlCan_Test_ExLoopbackBlocked(AL_VOID);
 
 /************************** Function Definitions ******************************/
-
+/**
+ *
+ * The main entry point for the CAN external loopback blocked test.
+ *
+ * @return AL_OK if the test runs successfully, error code otherwise.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -68,6 +73,16 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ *
+ * This function initializes the CAN hardware with the specified configuration for external loopback mode.
+ * It then enters an infinite loop, where it sends a predefined CAN frame and waits for a frame to be received.
+ * After receiving a frame, it compares the sent and received data. If the data matches, it continues;
+ * otherwise, it logs an error and exits. The function includes a delay between iterations
+ * to manage timing and prevent rapid retransmission.
+ *
+ * @return AL_OK if the test completes successfully without any data mismatch, error code otherwise.
+ */
 static AL_S32 AlCan_Test_ExLoopbackBlocked(AL_VOID)
 {
     AL_U32 Ret = AL_OK;

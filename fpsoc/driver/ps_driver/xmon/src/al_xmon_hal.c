@@ -22,14 +22,12 @@ static AL_Xmon_HalStruct AlXmonHandle[AL_XMON_NUM_INSTANCE];
 /************************** Function Prototypes ******************************/
 
 /********************************************************/
-
 /**
- * This function look up hardware config structure.
- * @param   DeviceId is hardware module id
- * @return
- *          - AL_XMON_HwConfigStruct for hardware config
- * @note
-*/
+ * This function searches through the available XMON hardware configurations to find the one that matches the specified device ID.
+ *
+ * @param DevId The device ID for which the hardware configuration is being looked up.
+ * @return Pointer to the AL_XMON_HwConfigStruct structure if found, otherwise NULL.
+ */
 static AL_XMON_HwConfigStruct *AlXmon_Dev_LookupConfig(AL_U32 DevId)
 {
     AL_U32 Index;
@@ -45,6 +43,12 @@ static AL_XMON_HwConfigStruct *AlXmon_Dev_LookupConfig(AL_U32 DevId)
     return ConfigPtr;
 }
 
+/**
+ * This function searches through the available XMON hardware configurations to find the one that matches the specified device ID.
+ *
+ * @param DevId The device ID for which the hardware configuration is being looked up.
+ * @return Pointer to the AL_XMON_HwConfigStruct structure if found, otherwise NULL.
+ */
 static AL_VOID AlXmon_IntrHandler(AL_VOID *Handle)
 {
     AL_Xmon_HalStruct *Xmon = (AL_Xmon_HalStruct *)Handle;
@@ -59,17 +63,13 @@ static AL_VOID AlXmon_IntrHandler(AL_VOID *Handle)
     }
 }
 
-
 /**
- * This function initialize the XMON mode according to the specified
- *          parameters in the AL_Xmon_HalStruct and initialize the associated handle.
- * @param   Handle Pointer to a AL_xmon_HalStruct structure that contains xmon Hal instance
- * @param   AL_XMON_Instance The xmon instance to be observed
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note
-*/
+ * This function initializes an XMON instance with the specified hardware configuration. It enables interrupts and registers the interrupt handler.
+ *
+ * @param Handle Double pointer to the AL_Xmon_HalStruct structure where the initialized XMON instance will be stored.
+ * @param Instance The instance of the XMON module to be initialized.
+ * @return AL_OK on success, AL_XMON_ERR_ILLEGAL_PARAM if the parameters are invalid.
+ */
 AL_S32 AlXmon_Hal_Init(AL_Xmon_HalStruct **Handle, AL_XMON_Instance Instance)
 {
     AL_S32 Ret = AL_OK;
@@ -94,6 +94,19 @@ AL_S32 AlXmon_Hal_Init(AL_Xmon_HalStruct **Handle, AL_XMON_Instance Instance)
     return AL_OK;
 }
 
+/**
+ * This function sets up various parameters for monitoring, including ID ranges, QoS thresholds, and enables response time monitoring.
+ *
+ * @param Handle Pointer to the AL_Xmon_HalStruct structure that contains the XMON instance to be configured.
+ * @param IdMax Maximum ID for monitoring.
+ * @param IdMin Minimum ID for monitoring.
+ * @param GidMax Maximum group ID for monitoring.
+ * @param GidMin Minimum group ID for monitoring.
+ * @param QosMax Maximum QoS value for monitoring.
+ * @param QosMin Minimum QoS value for monitoring.
+ * @param Thre Threshold for debug timeout.
+ * @return AL_OK on success, AL_XMON_ERR_ILLEGAL_PARAM if the parameters are invalid.
+ */
 AL_S32 AlXmon_Hal_MonitorConfig(AL_Xmon_HalStruct *Handle,
     AL_U16 IdMax, AL_U16 IdMin,
     AL_U16 GidMax, AL_U16 GidMin, AL_U8 QosMax, AL_U8 QosMin, AL_U32 Thre)
@@ -118,6 +131,12 @@ AL_S32 AlXmon_Hal_MonitorConfig(AL_Xmon_HalStruct *Handle,
     return AL_OK;
 }
 
+/**
+ * This function reads various monitoring values from the XMON instance, such as QoS records, response times, and bandwidth usage.
+ *
+ * @param Handle Pointer to the AL_Xmon_HalStruct structure that contains the XMON instance from which values are to be retrieved.
+ * @return AL_OK on success, AL_XMON_ERR_ILLEGAL_PARAM if the parameters are invalid.
+ */
 AL_S32 AlXmon_Hal_MonitorGetValue(AL_Xmon_HalStruct *Handle)
 {
     AL_ASSERT((Handle != AL_NULL), AL_XMON_ERR_ILLEGAL_PARAM);

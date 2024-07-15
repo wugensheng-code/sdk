@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['io_20functions',['IO Functions',['../group__DMA__Exported__Functions__Group3.html',1,'']]],
+  ['init_20and_20deinit_20functions',['Init and DeInit Functions',['../group__DMA__Exported__Functions__Group4.html',1,'']]],
+  ['i2s_5fbase_5faddr',['I2S_BASE_ADDR',['../al__dma__per__cpy__cycle_8c.html#a5813eeeeed993b9c42ffeeae1d919d63',1,'I2S_BASE_ADDR():&#160;al_dma_per_cpy_cycle.c'],['../al__dma__per__cpy__single_8c.html#a5813eeeeed993b9c42ffeeae1d919d63',1,'I2S_BASE_ADDR():&#160;al_dma_per_cpy_single.c']]],
+  ['i2s_5fclk_5fctrl_5freg',['I2S_CLK_CTRL_REG',['../al__dma__per__cpy__cycle_8c.html#ad8de6aff0ddde23929416dd96286462c',1,'I2S_CLK_CTRL_REG():&#160;al_dma_per_cpy_cycle.c'],['../al__dma__per__cpy__single_8c.html#ad8de6aff0ddde23929416dd96286462c',1,'I2S_CLK_CTRL_REG():&#160;al_dma_per_cpy_single.c']]],
+  ['i2s_5fctrl_5freg',['I2S_CTRL_REG',['../al__dma__per__cpy__cycle_8c.html#aed4ec6c5acbe38061d7285deca251e0a',1,'I2S_CTRL_REG():&#160;al_dma_per_cpy_cycle.c'],['../al__dma__per__cpy__single_8c.html#aed4ec6c5acbe38061d7285deca251e0a',1,'I2S_CTRL_REG():&#160;al_dma_per_cpy_single.c']]],
+  ['i2s_5fdata_5frx_5freg',['I2S_DATA_RX_REG',['../al__dma__per__cpy__cycle_8c.html#ad7cf5413b4c0ee9b7294067c1b6717bd',1,'I2S_DATA_RX_REG():&#160;al_dma_per_cpy_cycle.c'],['../al__dma__per__cpy__single_8c.html#ad7cf5413b4c0ee9b7294067c1b6717bd',1,'I2S_DATA_RX_REG():&#160;al_dma_per_cpy_single.c']]],
+  ['i2s_5fdata_5ftx_5freg',['I2S_DATA_TX_REG',['../al__dma__per__cpy__cycle_8c.html#abb0c505d04d7de1573e7845a80e2955c',1,'I2S_DATA_TX_REG():&#160;al_dma_per_cpy_cycle.c'],['../al__dma__per__cpy__single_8c.html#abb0c505d04d7de1573e7845a80e2955c',1,'I2S_DATA_TX_REG():&#160;al_dma_per_cpy_single.c']]],
+  ['i2s_5fperiod_5flen_5freg',['I2S_PERIOD_LEN_REG',['../al__dma__per__cpy__cycle_8c.html#a07751e589a548383f6322378e6bbc00b',1,'I2S_PERIOD_LEN_REG():&#160;al_dma_per_cpy_cycle.c'],['../al__dma__per__cpy__single_8c.html#a07751e589a548383f6322378e6bbc00b',1,'I2S_PERIOD_LEN_REG():&#160;al_dma_per_cpy_single.c']]],
+  ['i2s_5freset_5freg',['I2S_RESET_REG',['../al__dma__per__cpy__cycle_8c.html#aec72baa6f462bade2e020f06d5f844c0',1,'I2S_RESET_REG():&#160;al_dma_per_cpy_cycle.c'],['../al__dma__per__cpy__single_8c.html#aec72baa6f462bade2e020f06d5f844c0',1,'I2S_RESET_REG():&#160;al_dma_per_cpy_single.c']]],
+  ['i2s_5frx_5fid',['I2S_RX_ID',['../al__dma__per__cpy__cycle_8c.html#a373d8e3a1213f5d1fb3a6bf63af124ef',1,'I2S_RX_ID():&#160;al_dma_per_cpy_cycle.c'],['../al__dma__per__cpy__single_8c.html#a373d8e3a1213f5d1fb3a6bf63af124ef',1,'I2S_RX_ID():&#160;al_dma_per_cpy_single.c']]],
+  ['i2s_5ftx_5fid',['I2S_TX_ID',['../al__dma__per__cpy__cycle_8c.html#af549e8e2b1421ba0672215dac50ba700',1,'I2S_TX_ID():&#160;al_dma_per_cpy_cycle.c'],['../al__dma__per__cpy__single_8c.html#af549e8e2b1421ba0672215dac50ba700',1,'I2S_TX_ID():&#160;al_dma_per_cpy_single.c']]],
+  ['init',['Init',['../structDMA__DevStruct.html#ab20092a87b87fee14944827b74537915',1,'DMA_DevStruct']]],
+  ['insnaccess',['InsnAccess',['../structAL__DMA__ReqCfgStruct.html#aebeedb4b3e462065fa39d20348ed4ccc',1,'AL_DMA_ReqCfgStruct']]],
+  ['intclr',['INTCLR',['../structAL__DMA__DmaCtrlRegStruct.html#a1d2c75bbefa7084c3e228ee4401a5560',1,'AL_DMA_DmaCtrlRegStruct']]],
+  ['integ_5fcfg',['INTEG_CFG',['../group__DMA__Private__Definition.html#ga1e7ddb07e3e83201d7b5b6ec5f972a5c',1,'al_dma_dev.c']]],
+  ['inten',['INTEN',['../structAL__DMA__DmaCtrlRegStruct.html#ae3f78ca8c7e8a42e3ee074fc747228b6',1,'AL_DMA_DmaCtrlRegStruct']]],
+  ['intmis',['INTMIS',['../structAL__DMA__DmaCtrlRegStruct.html#af1400db8194af6ed9ef83eb822a7c826',1,'AL_DMA_DmaCtrlRegStruct']]],
+  ['intrnum',['IntrNum',['../structAL__DMA__HwConfigStruct.html#ac496adeae053f9367c6e22c578254e46',1,'AL_DMA_HwConfigStruct']]],
+  ['invalid1',['INVALID1',['../group__DMA__Exported__Definition__Group1.html#gga88ff589ff7d3ea55a50d0421bc9c0940ab84b10cf9b0b5c0cf5fc21823986cf4b',1,'al_dma_dev.h']]],
+  ['invalid2',['INVALID2',['../group__DMA__Exported__Definition__Group1.html#gga88ff589ff7d3ea55a50d0421bc9c0940a98ebe899b474845e83a16e9d996a9ffc',1,'al_dma_dev.h']]],
+  ['ipcfginfo',['IpCfgInfo',['../structDMA__DevStruct.html#a2d52c84ae2c8d3e7b7d3da76cc3974eb',1,'DMA_DevStruct']]],
+  ['irqns',['IrqNs',['../structAL__DMA__IpCfgInfoStruct.html#a343c6175cab36c0dca7994c22ce1593d',1,'AL_DMA_IpCfgInfoStruct']]],
+  ['is_5fcacheline_5faligned',['IS_CACHELINE_ALIGNED',['../al__dma__dev_8c.html#a45efcf7620e76a49cbe0394221272da6',1,'al_dma_dev.c']]]
+];

@@ -12,9 +12,12 @@ static AL_USB_HalStruct AL_USB_HalInstance[AL_USB_NUM_INSTANCE];
 extern AL_USB_HwConfigStruct AlUsb_HwCfg[AL_USB_NUM_INSTANCE];
 
 /**
- * @brief  This function looks for the device configuration based on the unique device ID.
- * @param  DeviceId is the unique device ID of the device being looked up.
- * @return A pointer to the configuration table entry corresponding to the given device ID, or NULL if no match is found.
+ *
+ * This function iterates through the available USB hardware configurations and returns the configuration
+ * that matches the specified device ID. If no matching configuration is found, it returns NULL.
+ *
+ * @param DeviceId The device ID for which to find the hardware configuration.
+ * @return A pointer to the matching AL_USB_HwConfigStruct if found, otherwise NULL.
  */
 static AL_USB_HwConfigStruct *AlUsb_Hal_LookupConfig(AL_U32 DeviceId)
 {
@@ -32,10 +35,15 @@ static AL_USB_HwConfigStruct *AlUsb_Hal_LookupConfig(AL_U32 DeviceId)
 }
 
 /**
- * @brief  This function inits USB module.
- * @param  Handle is pointer to AL_USB_HalStruct
- * @param  HwConfig
- * @return AL_S32
+ *
+ * This function initializes the USB hardware based on the specified device ID. It sets up the hardware
+ * configuration, including the base address and interrupt ID, and registers the interrupt handler. It
+ * requires a valid handle to store the instance information and uses a callback function for interrupt handling.
+ *
+ * @param Handle A pointer to a pointer of AL_USB_HalStruct to store the USB instance information.
+ * @param DevId The device ID of the USB to initialize.
+ * @param CallBack A pointer to the callback function for interrupt handling.
+ * @return AL_OK on success, AL_USB_ERR_ILLEGAL_PARAM if any parameter is invalid.
  */
 AL_S32 AlUsb_Hal_Init(AL_USB_HalStruct **Handle, AL_U32 DevId, AL_VOID *CallBack)
 {

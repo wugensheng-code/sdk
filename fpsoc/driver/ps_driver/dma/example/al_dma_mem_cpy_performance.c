@@ -49,7 +49,12 @@ AL_U64 Start, End;
 static AL_S32 AlDma_Test_MemCpyBlocked(AL_VOID);
 
 /************************** Function Definitions ******************************/
-
+/**
+ * This function initializes the logging system, runs the memory copy test in a blocked manner,
+ * and logs the result of the test. If the test fails, it logs an error message and returns the error code.
+ *
+ * @return AL_S32 Returns AL_OK if the test is successful, or an error code if the test fails.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -67,6 +72,17 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ * This function initializes DMA hardware, performs memory copy operations in a loop, and measures
+ * the performance of these operations. It allocates source and destination buffers, fills the source
+ * buffer with data, copies the data from the source to the destination buffer using DMA, and verifies
+ * the copied data. It also calculates and logs the time taken for each copy operation, the data rate,
+ * and other performance metrics. The function handles initialization and deinitialization of the DMA
+ * hardware, error checking, and cleanup.
+ *
+ * @return AL_S32 Returns AL_OK if all memory copy operations and checks are successful,
+ *         or an error code if an operation fails.
+ */
 static AL_S32 AlDma_Test_MemCpyBlocked(AL_VOID)
 {
     AL_U32 Ret = AL_OK;

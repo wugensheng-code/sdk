@@ -68,7 +68,11 @@ AL_DMA_ChCfgStruct P2MConfig = {
 static AL_S32 AlDma_Test_PerCpyCycle(AL_VOID);
 
 /************************** Function Definitions ******************************/
-
+/**
+ * This function initializes the DMA copy cycle test and logs the result.
+ *
+ * @return AL_OK if the test passes, otherwise returns an error code.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -86,6 +90,13 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ * This function initializes DMA channels for memory-to-peripheral and peripheral-to-memory transfers,
+ * sets up local interrupts, performs data copying from source to destination using DMA, checks the data integrity,
+ * and cleans up resources.
+ *
+ * @return AL_OK if the test and data verification pass, otherwise returns an error code.
+ */
 static AL_S32 AlDma_Test_PerCpyCycle(AL_VOID)
 {
     AL_U32 Ret = AL_OK;

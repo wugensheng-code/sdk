@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['ecc_5fbusy',['ECC_BUSY',['../al__smc__ll_8h.html#a4f6132b2fafe5d62078be7e9f4874895adc266891767cd6d5febdfa49f76aa009',1,'al_smc_ll.h']]],
+  ['ecc_5fbypasss',['ECC_BYPASSS',['../al__smc__ll_8h.html#af84530455be6a5f8e4b3d7f07136df56a38af6e4866c4e285fe9c0049c92d82b0',1,'al_smc_ll.h']]],
+  ['ecc_5flast',['ECC_LAST',['../al__smc__dev_8h.html#aa25f8e52033cde0aa4ade32020af40df',1,'al_smc_dev.h']]],
+  ['ecc_5fmode_5fapb',['ECC_MODE_APB',['../al__smc__ll_8h.html#af84530455be6a5f8e4b3d7f07136df56a4e032345fb1244b21b7e8724aadf2f07',1,'al_smc_ll.h']]],
+  ['ecc_5fmode_5fmem',['ECC_MODE_MEM',['../al__smc__ll_8h.html#af84530455be6a5f8e4b3d7f07136df56a0abf98362814a4a7abfc9d8a54776a7a',1,'al_smc_ll.h']]],
+  ['ecc_5fnojump',['ECC_NOJUMP',['../al__smc__ll_8h.html#a9d6b3b47b36066a84140200a3b90724ea71e26d6dcbc7bd378ed24e3e88f4361a',1,'al_smc_ll.h']]],
+  ['ecc_5fnum_5fpos',['ECC_NUM_POS',['../al__smc__dev_8h.html#acf75abe8a07bdd48a44e70ab7451a591',1,'al_smc_dev.h']]],
+  ['ecc_5fready',['ECC_READY',['../al__smc__ll_8h.html#a4f6132b2fafe5d62078be7e9f4874895a38882a0bf5a325631badf101b54eb9ee',1,'al_smc_ll.h']]],
+  ['eccjump_5fuse_5fcol_5fchange',['ECCJUMP_USE_COL_CHANGE',['../al__smc__ll_8h.html#a9d6b3b47b36066a84140200a3b90724ea9fc344f4fda3fd8fbf6d4340efce61e6',1,'al_smc_ll.h']]],
+  ['eccjump_5fuse_5ffull_5fchange',['ECCJUMP_USE_FULL_CHANGE',['../al__smc__ll_8h.html#a9d6b3b47b36066a84140200a3b90724eaf454d1560b2159510d8ad1f2b1b21d16',1,'al_smc_ll.h']]],
+  ['ecclast',['EccLast',['../structAL__Nand__CmdStruct.html#a672005d4a696611e81f4cd8549371fac',1,'AL_Nand_CmdStruct']]],
+  ['eccnum',['EccNum',['../structAL__Nand__SizeStruct.html#a1213885f2fb20d59f2f71c5f0eba9a56',1,'AL_Nand_SizeStruct']]],
+  ['endcmd',['EndCmd',['../structAL__Nand__CmdStruct.html#a850b71b57d215220f7ffb771d8c5945b',1,'AL_Nand_CmdStruct']]],
+  ['endcmdphase',['EndCmdPhase',['../structAL__Nand__CmdStruct.html#a188baf39871c3387dda24763d853ab0e',1,'AL_Nand_CmdStruct']]],
+  ['errorcode',['ErrorCode',['../structAL__SMC__DevStruct.html#a2b09c967b46485411d2d1ab7ca9cdde8',1,'AL_SMC_DevStruct']]],
+  ['event',['Event',['../structAL__SMC__EventStruct.html#a2502835235c8a3736aea354b5ef3bea4',1,'AL_SMC_EventStruct']]],
+  ['eventdata',['EventData',['../structAL__SMC__EventStruct.html#aef52983627d90749b3a6a83c65a065ce',1,'AL_SMC_EventStruct']]]
+];

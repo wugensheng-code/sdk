@@ -1,0 +1,11 @@
+digraph "fpsoc/driver/ps_driver/smc/example" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_3503317a8f2a69a7d1b47aac5516569d {
+    graph [ bgcolor="#ddddee", pencolor="black", label="smc" fontname="Helvetica", fontsize="10", URL="dir_3503317a8f2a69a7d1b47aac5516569d.html"]
+  dir_12404e8d4a76be926cd28c61cb09dee9 [shape=box, label="example", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_12404e8d4a76be926cd28c61cb09dee9.html"];
+  }
+  dir_7bd1534d1064c9cbc2f3098e7520a7b0 [shape=box label="inc" URL="dir_7bd1534d1064c9cbc2f3098e7520a7b0.html"];
+  dir_12404e8d4a76be926cd28c61cb09dee9->dir_7bd1534d1064c9cbc2f3098e7520a7b0 [headlabel="1", labeldistance=1.5 headhref="dir_000004_000005.html"];
+}

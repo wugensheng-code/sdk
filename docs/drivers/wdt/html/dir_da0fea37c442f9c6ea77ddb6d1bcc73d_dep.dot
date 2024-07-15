@@ -1,0 +1,11 @@
+digraph "fpsoc/driver/ps_driver/wdt/example" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_3573bd7ee365ffe0bb2018a8f82a0cf7 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="wdt" fontname="Helvetica", fontsize="10", URL="dir_3573bd7ee365ffe0bb2018a8f82a0cf7.html"]
+  dir_da0fea37c442f9c6ea77ddb6d1bcc73d [shape=box, label="example", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_da0fea37c442f9c6ea77ddb6d1bcc73d.html"];
+  }
+  dir_9c9139687ab486f8759123377046ee2f [shape=box label="inc" URL="dir_9c9139687ab486f8759123377046ee2f.html"];
+  dir_da0fea37c442f9c6ea77ddb6d1bcc73d->dir_9c9139687ab486f8759123377046ee2f [headlabel="1", labeldistance=1.5 headhref="dir_000004_000005.html"];
+}

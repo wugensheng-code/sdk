@@ -1,0 +1,32 @@
+digraph "AL_DMACAHB_DmacStruct"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="AL_DMACAHB_DmacStruct",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" State" ,fontname="Helvetica"];
+  Node2 [label="AL_DMACAHB_StateStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__DMACAHB__StateStruct.html",tooltip="Dmac ahb current state struct. "];
+  Node3 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Channel" ,fontname="Helvetica"];
+  Node3 [label="DMACAHB_ChStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structDMACAHB__ChStruct.html",tooltip="Channel dev struct. "];
+  Node4 -> Node3 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Config" ,fontname="Helvetica"];
+  Node4 [label="AL_DMACAHB_ChInitStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__DMACAHB__ChInitStruct.html",tooltip="Channel init struct. "];
+  Node5 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Intr" ,fontname="Helvetica"];
+  Node5 [label="AL_DMACAHB_ChIntrStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__DMACAHB__ChIntrStruct.html",tooltip="Channel intr struct. "];
+  Node6 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" HandShaking" ,fontname="Helvetica"];
+  Node6 [label="AL_DMACAHB_ChHsStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__DMACAHB__ChHsStruct.html",tooltip="Channel hand shaking config struct. "];
+  Node7 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" SgrDsr" ,fontname="Helvetica"];
+  Node7 [label="AL_DMACAHB_ChSgrDsrStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__DMACAHB__ChSgrDsrStruct.html",tooltip="Channel source gather & destination scatter struct. "];
+  Node8 -> Node3 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Param" ,fontname="Helvetica"];
+  Node8 [label="AL_DMACAHB_ChParamStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__DMACAHB__ChParamStruct.html",tooltip="Channel params struct. "];
+  Node1 -> Node3 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Dmac" ,fontname="Helvetica"];
+  Node9 -> Node3 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" EventCallBack" ,fontname="Helvetica"];
+  Node9 [label="AL_DMACAHB_EventStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__DMACAHB__EventStruct.html",tooltip="Dmac ahb event struct. "];
+  Node10 -> Node3 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Trans" ,fontname="Helvetica"];
+  Node10 [label="AL_DMACAHB_ChTransStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__DMACAHB__ChTransStruct.html",tooltip="Dmac ahb trans config struct. "];
+  Node11 -> Node10 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Lli" ,fontname="Helvetica"];
+  Node11 [label="AL_DMACAHB_LliStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__DMACAHB__LliStruct.html",tooltip="Dmac ahb link list item struct. "];
+  Node12 -> Node11 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" CtlLow" ,fontname="Helvetica"];
+  Node12 [label="AL_DMACAHB_CtlLoUnion",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$unionAL__DMACAHB__CtlLoUnion.html",tooltip="Dmac ahb control low register union. "];
+  Node13 -> Node11 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" CtlHigh" ,fontname="Helvetica"];
+  Node13 [label="AL_DMACAHB_CtlHiUnion",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$unionAL__DMACAHB__CtlHiUnion.html",tooltip="Dmac ahb control high register union. "];
+}

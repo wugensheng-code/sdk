@@ -47,7 +47,13 @@ static AL_UART_InitStruct UART_InitStruct = {
 static AL_S32 AlUart_Test_RecvAndSendNonBlock(AL_VOID);
 
 /************************** Function Definitions ******************************/
-
+/**
+ * This function initializes the UART non-blocked test, executes the test by calling
+ * AlUart_Test_RecvAndSendNonBlock, and logs the result. If the test fails, it logs an error
+ * message and returns the error code. Otherwise, it logs a success message and returns AL_OK.
+ *
+ * @return AL_OK on success, or an error code on failure.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -65,6 +71,15 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ * This function initializes the UART hardware with predefined configurations, then enters a loop
+ * where it attempts to receive data in a non-blocking manner. Once data is received, it sends the
+ * data back. The function tests the UART's ability to receive and send data without blocking the
+ * execution flow, using a timeout mechanism for both operations. If any operation fails, it logs
+ * an error message and returns the error code.
+ *
+ * @return AL_OK on success, or an error code on failure.
+ */
 static AL_S32 AlUart_Test_RecvAndSendNonBlock(AL_VOID)
 {
     AL_UART_HalStruct *UartHandle;

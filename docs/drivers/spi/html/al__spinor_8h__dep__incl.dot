@@ -1,0 +1,12 @@
+digraph "fpsoc/driver/ps_driver/spi/inc/al_spinor.h"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="fpsoc/driver/ps_driver\l/spi/inc/al_spinor.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="fpsoc/driver/ps_driver\l/spi/example/al_spi_dma_nor.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__spi__dma__nor_8c.html"];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="fpsoc/driver/ps_driver\l/spi/example/al_spi_nor.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__spi__nor_8c.html"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="fpsoc/driver/ps_driver\l/spi/example/al_spi_slave.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__spi__slave_8c.html"];
+}

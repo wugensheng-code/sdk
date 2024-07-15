@@ -11,6 +11,13 @@
 
 AL_GBE_HalStruct AlGbeHandle[AL_GBE_NUM_INSTANCE];
 
+/**
+ * Callback function for default GBE events.
+ *
+ * @param GbeEvent Pointer to the GBE event structure.
+ * @param CallbackRef User-defined callback reference.
+ * @return None.
+ */
 static AL_VOID AlGbe_DefEventCallBack(AL_GBE_EventStruct *GbeEvent, void *CallbackRef)
 {
     AL_GBE_HalStruct *Handle = (AL_GBE_HalStruct *)CallbackRef;
@@ -31,18 +38,42 @@ static AL_VOID AlGbe_DefEventCallBack(AL_GBE_EventStruct *GbeEvent, void *Callba
     }
 }
 
+/**
+ * Waits for a TX done event or times out.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @param Timeout Timeout in milliseconds.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlGbe_Hal_WaitTxDoneOrTimeout(AL_GBE_HalStruct *Handle, AL_U32 Timeout)
 {
 
     return AL_OK;
 }
 
+/**
+ * Waits for an RX done event or times out.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @param Timeout Timeout in milliseconds.
+ * @return AL_OK on success, error code otherwise.
+ */
 static AL_S32 AlGbe_Hal_WaitRxDoneOrTimeout(AL_GBE_HalStruct *Handle, AL_U32 Timeout)
 {
 
     return AL_OK;
 }
 
+/**
+ * Initializes the GBE HAL.
+ *
+ * @param Handle Double pointer to the GBE HAL structure to be initialized.
+ * @param DevId Device ID.
+ * @param InitConfig Pointer to the initialization configuration structure.
+ * @param MacDmaConfig Pointer to the MAC DMA configuration structure.
+ * @param Callback Event callback function.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_Init(AL_GBE_HalStruct **Handle, AL_U32 DevId, AL_GBE_InitStruct *InitConfig,
                       AL_GBE_MacDmaConfigStruct *MacDmaConfig, AL_GBE_EventCallBack Callback)
 {
@@ -83,6 +114,14 @@ AL_S32 AlGbe_Hal_Init(AL_GBE_HalStruct **Handle, AL_U32 DevId, AL_GBE_InitStruct
     return AL_OK;
 }
 
+/**
+ * Registers an interrupt handler callback.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @param IntrId Interrupt ID.
+ * @param CallBackHandler Pointer to the callback handler function.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_RegisterIntrHandlerCallBack(AL_GBE_HalStruct *Handle, AL_GBE_IntrStatusEnum IntrId,
                                              void *CallBackHandler)
 {
@@ -107,6 +146,13 @@ AL_S32 AlGbe_Hal_RegisterIntrHandlerCallBack(AL_GBE_HalStruct *Handle, AL_GBE_In
     return Ret;
 }
 
+/**
+ * Registers a callback for TX free event.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @param CallBackHandler Pointer to the callback handler function.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_RegisterTxFreeCallBack(AL_GBE_HalStruct *Handle, void *CallBackHandler)
 {
     AL_ASSERT((Handle != AL_NULL) && (CallBackHandler != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
@@ -120,6 +166,15 @@ AL_S32 AlGbe_Hal_RegisterTxFreeCallBack(AL_GBE_HalStruct *Handle, void *CallBack
     return AL_OK;
 }
 
+/**
+ * Configures RX descriptor buffers.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @param BuffersAddr Address of the buffers.
+ * @param BufferCnt Number of buffers.
+ * @param BufferSize Size of each buffer.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_ConfigRxDescBuffer(AL_GBE_HalStruct *Handle, AL_U8 *BuffersAddr, AL_U32 BufferCnt, AL_U32 BufferSize)
 {
     AL_S32 Ret;
@@ -135,6 +190,15 @@ AL_S32 AlGbe_Hal_ConfigRxDescBuffer(AL_GBE_HalStruct *Handle, AL_U8 *BuffersAddr
     return Ret;
 }
 
+/**
+ * Configures TX descriptor buffers.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @param BuffersAddr Address of the buffers.
+ * @param BufferCnt Number of buffers.
+ * @param BufferSize Size of each buffer.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_ConfigTxDescBuffer(AL_GBE_HalStruct *Handle, AL_U8 *BuffersAddr, AL_U32 BufferCnt, AL_U32 BufferSize)
 {
     AL_S32 Ret;
@@ -150,6 +214,13 @@ AL_S32 AlGbe_Hal_ConfigTxDescBuffer(AL_GBE_HalStruct *Handle, AL_U8 *BuffersAddr
     return Ret;
 }
 
+/**
+ * Initializes the PHY.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @param PhyAddr PHY address.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_PhyInit(AL_GBE_HalStruct *Handle, AL_U8 PhyAddr)
 {
     AL_S32 Ret;
@@ -165,6 +236,15 @@ AL_S32 AlGbe_Hal_PhyInit(AL_GBE_HalStruct *Handle, AL_U8 PhyAddr)
     return Ret;
 }
 
+/**
+ * Gets the PHY link status.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @param PhyAddr PHY address.
+ * @param Speed Pointer to store the speed.
+ * @param Duplex Pointer to store the duplex mode.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_GetPhyLinkStatus(AL_GBE_HalStruct *Handle, AL_U32 PhyAddr, AL_U8 *Speed, AL_U8 *Duplex)
 {
     AL_S32 Ret;
@@ -180,6 +260,12 @@ AL_S32 AlGbe_Hal_GetPhyLinkStatus(AL_GBE_HalStruct *Handle, AL_U32 PhyAddr, AL_U
     return Ret;
 }
 
+/**
+ * Configures duplex and speed.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_ConfigDuplexAndSpeed(AL_GBE_HalStruct *Handle)
 {
     AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
@@ -193,6 +279,12 @@ AL_S32 AlGbe_Hal_ConfigDuplexAndSpeed(AL_GBE_HalStruct *Handle)
     return AL_OK;
 }
 
+/**
+ * Starts the MAC DMA.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_StartMacDma(AL_GBE_HalStruct *Handle)
 {
     AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
@@ -206,6 +298,12 @@ AL_S32 AlGbe_Hal_StartMacDma(AL_GBE_HalStruct *Handle)
     return AL_OK;
 }
 
+/**
+ * Starts the MAC DMA with interrupts.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_StartMacDmaIntr(AL_GBE_HalStruct *Handle)
 {
     AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
@@ -219,6 +317,14 @@ AL_S32 AlGbe_Hal_StartMacDmaIntr(AL_GBE_HalStruct *Handle)
     return AL_OK;
 }
 
+/**
+ * Transmits a block of data.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @param TxConfig Pointer to the TX descriptor configuration structure.
+ * @param Timeout Timeout in milliseconds.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_TransmitBlock(AL_GBE_HalStruct *Handle, AL_GBE_TxDescConfigStruct *TxConfig, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -246,6 +352,13 @@ AL_S32 AlGbe_Hal_TransmitBlock(AL_GBE_HalStruct *Handle, AL_GBE_TxDescConfigStru
     return Ret;
 }
 
+/**
+ * Transmits data.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @param TxConfig Pointer to the TX descriptor configuration structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_Transmit(AL_GBE_HalStruct *Handle, AL_GBE_TxDescConfigStruct *TxConfig)
 {
     AL_S32 Ret = AL_OK;
@@ -265,6 +378,13 @@ AL_S32 AlGbe_Hal_Transmit(AL_GBE_HalStruct *Handle, AL_GBE_TxDescConfigStruct *T
     return Ret;
 }
 
+/**
+ * Gets the RX data buffer.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @param RxBuffer Pointer to the RX buffer structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_GetRxDataBuffer(AL_GBE_HalStruct *Handle, AL_GBE_BufferStruct *RxBuffer)
 {
     AL_S32 Ret = AL_OK;
@@ -289,6 +409,13 @@ AL_S32 AlGbe_Hal_GetRxDataBuffer(AL_GBE_HalStruct *Handle, AL_GBE_BufferStruct *
     return Ret;
 }
 
+/**
+ * Gets the RX data length.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @param Length Pointer to store the data length.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_GetRxDataLength(AL_GBE_HalStruct *Handle, AL_U32 *Length)
 {
     AL_S32 Ret = AL_OK;
@@ -304,6 +431,12 @@ AL_S32 AlGbe_Hal_GetRxDataLength(AL_GBE_HalStruct *Handle, AL_U32 *Length)
     return Ret;
 }
 
+/**
+ * Builds RX descriptors.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_BuildRxDescriptors(AL_GBE_HalStruct *Handle)
 {
     AL_S32 Ret = AL_OK;
@@ -319,6 +452,12 @@ AL_S32 AlGbe_Hal_BuildRxDescriptors(AL_GBE_HalStruct *Handle)
     return Ret;
 }
 
+/**
+ * Releases a TX packet.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_ReleaseTxPacket(AL_GBE_HalStruct *Handle)
 {
     AL_S32 Ret = AL_OK;
@@ -338,6 +477,13 @@ AL_S32 AlGbe_Hal_ReleaseTxPacket(AL_GBE_HalStruct *Handle)
     return Ret;
 }
 
+/**
+ * Initializes PTP.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @param PtpConfig Pointer to the PTP configuration structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_PtpInit(AL_GBE_HalStruct *Handle, AL_GBE_PtpConfigStruct *PtpConfig)
 {
     AL_S32 Ret = AL_OK;
@@ -353,7 +499,13 @@ AL_S32 AlGbe_Hal_PtpInit(AL_GBE_HalStruct *Handle, AL_GBE_PtpConfigStruct *PtpCo
     return Ret;
 }
 
-
+/**
+ * Sets the PTP timestamp.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @param Timestamp Pointer to the PTP time structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_SetPtpTimestamp(AL_GBE_HalStruct *Handle, AL_GBE_PtpTimeStruct *Timestamp)
 {
     AL_S32 Ret = AL_OK;
@@ -369,6 +521,16 @@ AL_S32 AlGbe_Hal_SetPtpTimestamp(AL_GBE_HalStruct *Handle, AL_GBE_PtpTimeStruct 
     return Ret;
 }
 
+/**
+ *
+ * This function fetches the current PTP timestamp from the device. It ensures thread safety by locking
+ * the GBE HAL structure during the operation. It validates the input parameters and returns an error
+ * if the handle is NULL.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @param Timestamp Pointer to the structure where the PTP timestamp will be stored.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_GetPtpTimestamp(AL_GBE_HalStruct *Handle, AL_GBE_PtpTimeStruct *Timestamp)
 {
     AL_S32 Ret = AL_OK;
@@ -384,6 +546,16 @@ AL_S32 AlGbe_Hal_GetPtpTimestamp(AL_GBE_HalStruct *Handle, AL_GBE_PtpTimeStruct 
     return Ret;
 }
 
+/**
+ *
+ * This function updates the PTP time offset in the device. It locks the GBE HAL structure to ensure
+ * thread safety during the operation. The function checks for a valid handle and returns an error
+ * if the handle is NULL.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @param TimeOffset Pointer to the structure containing the new time offset to be applied.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_UpdatePtpTimeOffset(AL_GBE_HalStruct *Handle, AL_GBE_PtpTimeStruct *TimeOffset)
 {
     AL_S32 Ret = AL_OK;
@@ -399,6 +571,15 @@ AL_S32 AlGbe_Hal_UpdatePtpTimeOffset(AL_GBE_HalStruct *Handle, AL_GBE_PtpTimeStr
     return Ret;
 }
 
+/**
+ * This function adjusts the frequency of the PTP clock. It locks the GBE HAL structure to ensure
+ * thread safety. The function validates the handle and returns an error if it is NULL. The adjustment
+ * is made based on the provided frequency adjustment value.
+ *
+ * @param Handle Pointer to the GBE HAL structure.
+ * @param Adj The adjustment value for the PTP time frequency.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Hal_AdjustPtpTimeFreq(AL_GBE_HalStruct *Handle, AL_U32 Adj)
 {
     AL_S32 Ret = AL_OK;

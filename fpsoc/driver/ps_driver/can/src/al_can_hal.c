@@ -25,38 +25,38 @@ extern AL_BOOL AlCan_Dev_GetState(AL_CAN_DevStruct *Dev, AL_CAN_StateEnum State)
 
 /************************** Function Definitions ******************************/
 /**
- * This function wait for frame send done or timeout
- * @param   Handle is pointer to AL_CAN_HalStruct
- * @param   TimeoutMs is max wait time for send done
- * @return
- *          - AL_OK
- * @note
-*/
+ * This function waits for a send operation to complete or timeout.
+ *
+ * @param Handle Pointer to the CAN HAL structure.
+ * @param Event Pointer to the event structure where the event details will be stored.
+ * @param TimeoutMs Timeout in milliseconds.
+ * @return Returns the result of the mailbox receive operation.
+ */
 static AL_S32 AlCan_Hal_WaitSendDoneOrTimeout(AL_CAN_HalStruct *Handle, AL_CAN_EventStruct *Event, AL_U32 TimeoutMs)
 {
     return AlOsal_Mb_Receive(&(Handle->TxEventQueue), Event, TimeoutMs);
 }
 
 /**
- * This function wait for frame recv done or timeout
- * @param   Handle is pointer to AL_CAN_HalStruct
- * @param   TimeoutMs is max wait time for send done
- * @return
- *          - AL_OK
- * @note
-*/
+ * This function waits for the receive queue to be not empty or timeout.
+ *
+ * @param Handle Pointer to the CAN HAL structure.
+ * @param Event Pointer to the event structure where the event details will be stored.
+ * @param TimeoutMs Timeout in milliseconds.
+ * @return Returns the result of the mailbox receive operation.
+ */
 static AL_S32 AlCan_Hal_WaitRecvNotEmptyOrTimeout(AL_CAN_HalStruct *Handle, AL_CAN_EventStruct *Event, AL_U32 TimeoutMs)
 {
     return AlOsal_Mb_Receive(&(Handle->RxEventQueue), Event, TimeoutMs);
 }
 
 /**
- * This function is intr handler call back function
- * @param   Event is pointer to AL_CAN_EventStruct
- * @param   CallBackRef
- * @return
- * @note
-*/
+ * This function defaults event callback function.
+ *
+ * @param Event Pointer to the event structure containing the event details.
+ * @param CallBackRef User-defined callback reference, typically the handle to the CAN HAL structure.
+ * @return None.
+ */
 static AL_VOID AlCan_Hal_DefEventCallBack(AL_CAN_EventStruct *Event, AL_VOID *CallBackRef)
 {
     AL_CAN_HalStruct *Handle = (AL_CAN_HalStruct *)CallBackRef;
@@ -86,6 +86,12 @@ static AL_VOID AlCan_Hal_DefEventCallBack(AL_CAN_EventStruct *Event, AL_VOID *Ca
     }
 }
 
+/**
+ * This function initializes the CAN HAL handle.
+ *
+ * @param Handle Pointer to the CAN HAL structure to initialize.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 static inline AL_S32 AlCan_Hal_HandleInit(AL_CAN_HalStruct *Handle)
 {
     AL_S32 Ret = AL_OK;
@@ -106,15 +112,14 @@ static inline AL_S32 AlCan_Hal_HandleInit(AL_CAN_HalStruct *Handle)
 }
 
 /**
- * This function init CAN module
- * @param   Handle is pointer to AL_CAN_HalStruct
- * @param   InitConfig is module config structure with AL_CAN_InitStruct
- * @param   CallBack is call back struct with AL_CAN_EventCallBack
- * @param   DevId is hardware module id
- * @return
- *          - AL_OK
- * @note
-*/
+ * This function initializes the CAN hardware and registers event callbacks.
+ *
+ * @param Handle Double pointer to the CAN HAL structure. This will be initialized by the function.
+ * @param DevId Device ID for the CAN hardware.
+ * @param InitConfig Pointer to the initialization configuration structure.
+ * @param CallBack Event callback function pointer.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct **Handle, AL_U32 DevId, AL_CAN_InitStruct *InitConfig,
                       AL_CAN_EventCallBack CallBack)
 {
@@ -158,13 +163,12 @@ AL_S32 AlCan_Hal_Init(AL_CAN_HalStruct **Handle, AL_U32 DevId, AL_CAN_InitStruct
 }
 
 /**
- * This function send frame
- * @param   Handle is pointer to AL_CAN_HalStruct
- * @param   Frame is tx buffer data with AL_CAN_FrameStruct
- * @return
- *          - AL_OK
- * @note
-*/
+ * This function sends a CAN frame.
+ *
+ * @param Handle Pointer to the CAN HAL structure.
+ * @param Frame Pointer to the frame structure to send.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlCan_Hal_SendFrame(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
 {
     AL_S32 Ret = AL_OK;
@@ -184,13 +188,12 @@ AL_S32 AlCan_Hal_SendFrame(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
 }
 
 /**
- * This function recv frame
- * @param   Handle is pointer to AL_CAN_HalStruct
- * @param   Frame is tx buffer data with AL_CAN_FrameStruct
- * @return
- *          - AL_OK
- * @note
-*/
+ * This function receives a CAN frame.
+ *
+ * @param Handle Pointer to the CAN HAL structure.
+ * @param Frame Pointer to the frame structure where the received frame will be stored.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlCan_Hal_RecvFrame(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
 {
     AL_S32 Ret = AL_OK;
@@ -223,14 +226,13 @@ AL_S32 AlCan_Hal_RecvFrame(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
 }
 
 /**
- * This function send frame blocked
- * @param   Handle is pointer to AL_CAN_HalStruct
- * @param   Frame is tx buffer data with AL_CAN_FrameStruct
- * @param   Timeout is max wait time for send done
- * @return
- *          - AL_OK
- * @note
-*/
+ * This function sends a CAN frame and blocks until the send is complete or times out.
+ *
+ * @param Handle Pointer to the CAN HAL structure.
+ * @param Frame Pointer to the frame structure to send.
+ * @param Timeout Timeout in milliseconds.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlCan_Hal_SendFrameBlock(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -266,14 +268,13 @@ AL_S32 AlCan_Hal_SendFrameBlock(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Fr
 }
 
 /**
- * This function recv frame blocked
- * @param   Handle is pointer to AL_CAN_HalStruct
- * @param   Frame is tx buffer data with AL_CAN_FrameStruct
- * @param   Timeout is max wait time for send done
- * @return
- *          - AL_OK
- * @note
-*/
+ * This function receives a CAN frame and blocks until a frame is received or times out.
+ *
+ * @param Handle Pointer to the CAN HAL structure.
+ * @param Frame Pointer to the frame structure where the received frame will be stored.
+ * @param Timeout Timeout in milliseconds.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlCan_Hal_RecvFrameBlock(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -308,13 +309,12 @@ AL_S32 AlCan_Hal_RecvFrameBlock(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Fr
 }
 
 /**
- * This function recv frame blocked
- * @param   Handle is pointer to AL_CAN_HalStruct
- * @param   Frame is rx buffer data with AL_CAN_FrameStruct
- * @return
- *          - AL_OK
- * @note
-*/
+ * This function receives a CAN frame using DMA.
+ *
+ * @param Handle Pointer to the CAN HAL structure.
+ * @param Frame Pointer to the frame structure where the received frame will be stored.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlCan_Hal_RecvFrameDma(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Frame)
 {
     AL_S32 Ret = AL_OK;
@@ -334,14 +334,13 @@ AL_S32 AlCan_Hal_RecvFrameDma(AL_CAN_HalStruct *Handle, AL_CAN_FrameStruct *Fram
 }
 
 /**
- * This function recv frame blocked
- * @param   Handle is pointer to AL_CAN_HalStruct
- * @param   Cmd is io ctl cmd to AL_CAN_IoCtlCmdEnum
- * @param   Data is pointer to cmd args
- * @return
- *          - AL_OK
- * @note
-*/
+ * This function performs an IOCTL command on the CAN device.
+ *
+ * @param Handle Pointer to the CAN HAL structure.
+ * @param Cmd IOCTL command to perform.
+ * @param Data Pointer to the data required for the IOCTL command.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlCan_Hal_IoCtl(AL_CAN_HalStruct *Handle, AL_CAN_IoCtlCmdEnum Cmd, AL_VOID *Data)
 {
     AL_S32 Ret = AL_OK;

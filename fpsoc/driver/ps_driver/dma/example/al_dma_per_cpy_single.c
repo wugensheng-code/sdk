@@ -68,7 +68,12 @@ AL_DMA_ChCfgStruct P2MConfig = {
 static AL_S32 AlDma_Test_PerCpySingle(AL_VOID);
 
 /************************** Function Definitions ******************************/
-
+/**
+ * This function initializes the test, executes it, and logs the result.
+ * If the test fails at any point, it logs an error message and returns the error code.
+ *
+ * @return AL_OK if the test passes, otherwise returns an error code.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -86,6 +91,14 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ * This function performs a single peripheral copy operation using DMA. It initializes DMA handles for memory-to-peripheral
+ * and peripheral-to-memory transfers, sets up local interrupts, performs the data copying, checks the integrity of the copied data,
+ * and cleans up resources. It also handles DMA transfer errors and data integrity errors by logging appropriate error messages
+ * and returning error codes.
+ *
+ * @return AL_OK if the test and data verification pass, otherwise returns an error code.
+ */
 static AL_S32 AlDma_Test_PerCpySingle(AL_VOID)
 {
     AL_U32 Ret = AL_OK;

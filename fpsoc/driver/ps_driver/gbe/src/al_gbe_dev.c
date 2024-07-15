@@ -12,6 +12,14 @@
 
 extern AL_GBE_HwConfigStruct AlGbe_HwConfig[AL_GBE_NUM_INSTANCE];
 
+/**
+ * This function iterates through a predefined list of hardware configurations,
+ * searching for a configuration that matches the given device ID. If a match is found,
+ * a pointer to the configuration structure is returned. Otherwise, NULL is returned.
+ *
+ * @param DevId The device ID for which to find the hardware configuration.
+ * @return A pointer to the matching hardware configuration structure, or NULL if no match is found.
+ */
 AL_GBE_HwConfigStruct *AlGbe_Dev_LookupConfig(AL_U32 DevId)
 {
     AL_U32 Index;
@@ -27,36 +35,85 @@ AL_GBE_HwConfigStruct *AlGbe_Dev_LookupConfig(AL_U32 DevId)
     return ConfigPtr;
 }
 
+/**
+ * This function examines the state of the device to determine if the transmit path is currently
+ * in use. It returns a boolean value indicating the status.
+ *
+ * @param Gbe A pointer to the device structure.
+ * @return AL_TRUE if the TX path is busy, otherwise AL_FALSE.
+ */
 AL_BOOL AlGbe_Dev_IsTxBusy(AL_GBE_DevStruct *Gbe)
 {
     return (AL_BOOL)(Gbe->State & AL_GBE_STATE_TX_BUSY);
 }
 
+/**
+ * This function examines the state of the device to determine if the receive path is currently
+ * in use. It returns a boolean value indicating the status.
+ *
+ * @param Gbe A pointer to the device structure.
+ * @return AL_TRUE if the RX path is busy, otherwise AL_FALSE.
+ */
 AL_BOOL AlGbe_Dev_IsRxBusy(AL_GBE_DevStruct *Gbe)
 {
     return (AL_BOOL)(Gbe->State & AL_GBE_STATE_RX_BUSY);
 }
 
+/**
+ * This function modifies the state of the device to indicate that the transmit path is currently
+ * in use.
+ *
+ * @param Gbe A pointer to the device structure.
+ * @return None.
+ */
 AL_VOID AlGbe_Dev_SetTxBusy(AL_GBE_DevStruct *Gbe)
 {
     Gbe->State |= AL_GBE_STATE_TX_BUSY;
 }
 
+/**
+ * This function modifies the state of the device to indicate that the receive path is currently
+ * in use.
+ *
+ * @param Gbe A pointer to the device structure.
+ * @return None.
+ */
 AL_VOID AlGbe_Dev_SetRxBusy(AL_GBE_DevStruct *Gbe)
 {
     Gbe->State |= AL_GBE_STATE_RX_BUSY;
 }
 
+/**
+ * This function modifies the state of the device to indicate that the transmit path is no longer
+ * in use.
+ *
+ * @param Gbe A pointer to the device structure.
+ * @return None.
+ */
 AL_VOID AlGbe_Dev_ClrTxBusy(AL_GBE_DevStruct *Gbe)
 {
     Gbe->State &= (~AL_GBE_STATE_TX_BUSY);
 }
 
+/**
+ * This function modifies the state of the device to indicate that the receive path is no longer
+ * in use.
+ *
+ * @param Gbe A pointer to the device structure.
+ * @return None.
+ */
 AL_VOID AlGbe_Dev_ClrRxBusy(AL_GBE_DevStruct *Gbe)
 {
     Gbe->State &= (~AL_GBE_STATE_RX_BUSY);
 }
 
+/**
+ * This function calculates the appropriate CSR clock divider based on the input clock frequency
+ * and configures the device's CSR clock range accordingly.
+ *
+ * @param Gbe A pointer to the device structure.
+ * @return None.
+ */
 AL_VOID AlGbe_Dev_SetCsrClockRange(AL_GBE_DevStruct *Gbe)
 {
     AL_U32 Clock = Gbe->HwConfig.InputClockHz;
@@ -98,6 +155,14 @@ AL_VOID AlGbe_Dev_SetCsrClockRange(AL_GBE_DevStruct *Gbe)
     AlGbe_ll_SetCsrClockRange(GbeBaseAddr, ClockDiv);
 }
 
+/**
+ * This function initializes the MAC configuration structure with default values and then
+ * modifies specific settings based on the device's current configuration. It applies these
+ * settings to the device's MAC configuration registers.
+ *
+ * @param Gbe A pointer to the device structure.
+ * @return None.
+ */
 AL_VOID AlGbe_Dev_SetMacConfig(AL_GBE_DevStruct *Gbe)
 {
     AL_GBE_MacConfigStruct MacDefaultCfg;
@@ -218,6 +283,15 @@ AL_VOID AlGbe_Dev_SetMacConfig(AL_GBE_DevStruct *Gbe)
     AlGbe_ll_SetMtlRxQueueDisableDropTcpIpChecksumErrorpackets(GbeBaseAddr, MacDefaultCfg.DisableDropTCPIPChecksumErrorPacket);
 }
 
+/**
+ * This function sets up the DMA configuration with default values and applies these settings
+ * through lower-level hardware interface functions. It configures various aspects of the DMA
+ * operation such as arbitration scheme, priority, burst lengths, and more.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @return None.
+ */
+
 AL_VOID AlGbe_Dev_SetDmaConfig(AL_GBE_DevStruct *Gbe)
 {
     AL_GBE_DmaConfigStruct DmaDefaultCfg;
@@ -264,6 +338,17 @@ AL_VOID AlGbe_Dev_SetDmaConfig(AL_GBE_DevStruct *Gbe)
     AlGbe_ll_SetDmaRxBufferSize(GbeBaseAddr, ((Gbe->InitConfig.RxBuffLen) / 4));
 }
 
+/**
+ * This function initializes the RX descriptor list with buffer addresses and sets up control bits
+ * for each descriptor to prepare them for receiving packets. It also ensures that the buffer
+ * addresses and counts are valid and asserts if any illegal parameters are detected.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param BuffersAddr Pointer to the start of the buffer addresses array.
+ * @param BufferCnt Count of buffers to be configured.
+ * @param BufferSize Size of each buffer.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Dev_ConfigRxDescBuffer(AL_GBE_DevStruct *Gbe, AL_U8 *BuffersAddr, AL_U32 BufferCnt, AL_U32 BufferSize)
 {
     AL_ASSERT((Gbe != AL_NULL) && (BuffersAddr != AL_NULL) && (BufferCnt == (AL_U32)AL_GBE_RX_DESC_CNT) &&
@@ -289,6 +374,18 @@ AL_S32 AlGbe_Dev_ConfigRxDescBuffer(AL_GBE_DevStruct *Gbe, AL_U8 *BuffersAddr, A
     return AL_OK;
 }
 
+/**
+ * This function initializes the TX descriptor list with buffer addresses. It prepares the
+ * descriptors for transmission by setting up buffer addresses in the descriptors. It also
+ * performs parameter validation to ensure that the provided buffer addresses and counts are
+ * within expected ranges.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param BuffersAddr Pointer to the start of the buffer addresses array.
+ * @param BufferCnt Count of buffers to be configured.
+ * @param BufferSize Size of each buffer.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Dev_ConfigTxDescBuffer(AL_GBE_DevStruct *Gbe, AL_U8 *BuffersAddr, AL_U32 BufferCnt, AL_U32 BufferSize)
 {
     AL_ASSERT((Gbe != AL_NULL) && (BuffersAddr != AL_NULL) && (BufferCnt == (AL_U32)AL_GBE_TX_DESC_CNT) &&
@@ -312,6 +409,14 @@ AL_S32 AlGbe_Dev_ConfigTxDescBuffer(AL_GBE_DevStruct *Gbe, AL_U8 *BuffersAddr, A
     return AL_OK;
 }
 
+/**
+ * This function sets up the initial state of the RX descriptor list. It clears all descriptor
+ * entries and configures the hardware with the base address of the descriptor list, among other
+ * initial settings. It prepares the RX descriptor list to receive packets.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @return None.
+ */
 static AL_VOID AlGbe_Dev_DMARxDescListInit(AL_GBE_DevStruct *Gbe)
 {
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
@@ -349,6 +454,14 @@ static AL_VOID AlGbe_Dev_DMARxDescListInit(AL_GBE_DevStruct *Gbe)
     AlGbe_ll_SetDmaRxDescTailPointer(GbeBaseAddr, (AL_U32)((AL_UINTPTR)(DmaRxDescList + (AL_U32)(AL_GBE_RX_DESC_CNT - 1U))));
 }
 
+/**
+ * This function prepares the TX descriptor list for use. It clears all descriptor entries and
+ * sets up the hardware with the necessary configuration for the TX descriptor list, including
+ * the base address and ring length. It prepares the TX descriptor list for packet transmission.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @return None.
+ */
 AL_VOID AlGbe_Dev_DMATxDescListInit(AL_GBE_DevStruct *Gbe)
 {
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
@@ -382,6 +495,18 @@ AL_VOID AlGbe_Dev_DMATxDescListInit(AL_GBE_DevStruct *Gbe)
     AlGbe_ll_SetDmaTxDescTailPointer(GbeBaseAddr,  (AL_U32)((AL_UINTPTR)DmaTxDescList));
 }
 
+/**
+ *
+ * This function sets the duplex mode and speed for the GBE device based on the configuration
+ * provided in the Gbe structure. It also configures the GBE control register based on the PHY ID
+ * and speed settings. If the media interface is RGMII, it sets the GBE control register with the
+ * appropriate phase settings for the PHY.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @return AL_OK on success, error code otherwise.
+ * @param Gbe Pointer to the GBE device structure.
+ * @return None.
+ */
 AL_S32 AlGbe_Dev_ConfigDuplexAndSpeed(AL_GBE_DevStruct *Gbe)
 {
     AL_ASSERT((Gbe != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
@@ -414,6 +539,16 @@ AL_S32 AlGbe_Dev_ConfigDuplexAndSpeed(AL_GBE_DevStruct *Gbe)
     return AL_OK;
 }
 
+/**
+ *
+ * This function validates the configuration of the GBE device. It ensures that the transmit and
+ * receive descriptor lists are not NULL and that the receive buffer length is a multiple of 4,
+ * which is required for a 32-bit data bus width.
+ *
+ * @param InitConfig Pointer to the GBE initialization configuration structure.
+ * @param MacDmaConfig Pointer to the GBE MAC DMA configuration structure.
+ * @return AL_OK if the configuration is valid, error code otherwise.
+ */
 AL_S32 AlGbe_Dev_CheckConfig(AL_GBE_InitStruct *InitConfig, AL_GBE_MacDmaConfigStruct *MacDmaConfig)
 {
     AL_ASSERT((InitConfig->TxDescList != AL_NULL) && (InitConfig->RxDescList != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
@@ -428,6 +563,19 @@ AL_S32 AlGbe_Dev_CheckConfig(AL_GBE_InitStruct *InitConfig, AL_GBE_MacDmaConfigS
     return AL_OK;
 }
 
+/**
+ *
+ * This function initializes the GBE device with the provided hardware, initialization, and MAC DMA
+ * configurations. It performs a series of steps including checking the configuration, setting the
+ * control register, performing a software reset, configuring the clock range, MAC, DMA, and the
+ * MAC address. It also initializes the DMA descriptor lists in ring mode.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param HwConfig Pointer to the GBE hardware configuration structure.
+ * @param InitConfig Pointer to the GBE initialization configuration structure.
+ * @param MacDmaConfig Pointer to the GBE MAC DMA configuration structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Dev_Init(AL_GBE_DevStruct *Gbe, AL_GBE_HwConfigStruct *HwConfig,
                       AL_GBE_InitStruct *InitConfig, AL_GBE_MacDmaConfigStruct *MacDmaConfig)
 {
@@ -496,6 +644,19 @@ AL_S32 AlGbe_Dev_Init(AL_GBE_DevStruct *Gbe, AL_GBE_HwConfigStruct *HwConfig,
     return AL_OK;
 }
 
+/**
+ *
+ * This function writes a specified value to a PHY register. It checks if the GMII interface is
+ * busy before proceeding with the write operation. It prepares the MDIO Address Register value,
+ * writes the value to the MII data register, and then writes the result into the MII Address
+ * register. It waits for the GMII interface to become available before completing.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param PHYAddr The PHY device address.
+ * @param PHYReg The PHY register address.
+ * @param RegValue The value to write to the PHY register.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Dev_WritePhyRegister(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddr, AL_U32 PHYReg, AL_U16 RegValue)
 {
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
@@ -535,6 +696,19 @@ AL_S32 AlGbe_Dev_WritePhyRegister(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddr, AL_U32 
   return AL_OK;
 }
 
+/**
+ *
+ * This function reads a value from a specified PHY register. It checks if the GMII interface is
+ * busy before proceeding with the read operation. It prepares the MDIO Address Register value,
+ * writes the result into the MII Address register, and waits for the GMII interface to become
+ * available. It then reads the value from the MII data register.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param PHYAddr The PHY device address.
+ * @param PHYReg The PHY register address.
+ * @param RegValue Pointer to store the read value from the PHY register.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Dev_ReadPhyRegister(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddr, AL_U32 PHYReg, AL_U16 *RegValue)
 {
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
@@ -574,6 +748,20 @@ AL_S32 AlGbe_Dev_ReadPhyRegister(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddr, AL_U32 P
     return AL_OK;
 }
 
+/**
+ * This function performs several operations to initialize the PHY device, including reading the PHY ID,
+ * resetting the PHY, configuring RGMII delays, setting up auto-negotiation, and enabling or disabling
+ * 1000BaseT full duplex mode based on the MAC DMA configuration. It handles different PHY models by checking
+ * the PHY ID and applies specific initialization sequences for each. The function also ensures that the PHY
+ * is reset properly and waits for auto-negotiation to complete if applicable.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param PHYAddress The address of the PHY device to initialize.
+ * @return AL_OK on success, or an error code on failure.
+ *
+ * @retval AL_GBE_ERR_ILLEGAL_PARAM Indicates an illegal parameter error.
+ * @retval AL_GBE_ERR_PHY_RESET_FAILED Indicates that resetting the PHY device failed.
+ */
 AL_S32 AlGbe_Dev_PhyInit(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress)
 {
     AL_S32 Ret = 0;
@@ -744,6 +932,15 @@ AL_S32 AlGbe_Dev_PhyInit(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress)
     return AL_OK;
 }
 
+/**
+ * This function queries the PHY link status, including speed and duplex mode, for a specified PHY address.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param PHYAddress The address of the PHY to query.
+ * @param Speed Pointer to a variable where the link speed will be stored.
+ * @param Duplex Pointer to a variable where the duplex mode will be stored.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlGbe_Dev_GetPhyLinkStatus(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress, AL_U8 *Speed, AL_U8 *Duplex)
 {
     AL_S32 Ret;
@@ -815,6 +1012,12 @@ AL_S32 AlGbe_Dev_GetPhyLinkStatus(AL_GBE_DevStruct *Gbe, AL_U32 PHYAddress, AL_U
     return AL_OK;
 }
 
+/**
+ * This function initializes and starts the MAC DMA and interrupt handling.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlGbe_Dev_StartMacDmaIntr(AL_GBE_DevStruct *Gbe)
 {
     AL_ASSERT((Gbe != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
@@ -865,6 +1068,12 @@ AL_S32 AlGbe_Dev_StartMacDmaIntr(AL_GBE_DevStruct *Gbe)
     return AL_OK;
 }
 
+/**
+ * This function starts the MAC DMA for transmission and reception.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlGbe_Dev_StartMacDma(AL_GBE_DevStruct *Gbe)
 {
     AL_ASSERT((Gbe != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
@@ -890,6 +1099,13 @@ AL_S32 AlGbe_Dev_StartMacDma(AL_GBE_DevStruct *Gbe)
     return AL_OK;
 }
 
+/**
+ * This function retrieves the receive timestamp for a specified descriptor index.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param DescIndex The index of the descriptor to retrieve the timestamp for.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlGbe_Dev_GetRxTimeStamp(AL_GBE_DevStruct *Gbe, AL_U32 DescIndex)
 {
     AL_GBE_RxDescListStruct *DmaRxDescList = &Gbe->RxDescList;
@@ -911,6 +1127,14 @@ AL_S32 AlGbe_Dev_GetRxTimeStamp(AL_GBE_DevStruct *Gbe, AL_U32 DescIndex)
     return AL_OK;
 }
 
+/**
+ * This function checks the timestamp status of a descriptor.
+ *
+ * @param Desc Pointer to the descriptor to check.
+ * @return Returns AL_OK if a valid timestamp is ready to be read,
+ *         AL_GBE_DESC_TX_TIMESTAMP_STATUS_ERROR if the timestamp is corrupted,
+ *         or AL_GBE_DESC_RX_TIMESTAMP_STATUS_NOT_READY if the timestamp is not ready.
+ */
 static AL_S32 AlGbe_Dev_CheckTimestamp(AL_VOID *Desc)
 {
     AL_S32 Ret = AL_GBE_DESC_RX_TIMESTAMP_STATUS_NOT_READY;
@@ -934,6 +1158,15 @@ static AL_S32 AlGbe_Dev_CheckTimestamp(AL_VOID *Desc)
     return Ret;
 }
 
+/**
+ * This function gets the receive timestamp status for a descriptor, checking if a valid timestamp is available.
+ *
+ * @param Desc Pointer to the current descriptor.
+ * @param NextDesc Pointer to the next descriptor in the chain.
+ * @return Returns AL_OK if a valid timestamp is available,
+ *         AL_GBE_DESC_RX_TIMESTAMP_STATUS_NOT_READY if the timestamp is not ready,
+ *         or AL_GBE_DESC_TX_TIMESTAMP_STATUS_ERROR if an error occurred.
+ */
 static AL_S32 AlGbe_Dev_GetRxTimestampStatus(AL_VOID *Desc, AL_VOID *NextDesc)
 {
      AL_GBE_DMADescStruct *CurrentDesc = (AL_GBE_DMADescStruct *)Desc;
@@ -961,6 +1194,16 @@ static AL_S32 AlGbe_Dev_GetRxTimestampStatus(AL_VOID *Desc, AL_VOID *NextDesc)
     return Ret;
 }
 
+/**
+ *
+ * This function iterates through the RX descriptor list to determine if there are any packets
+ * that have been received but not yet processed by the application. It updates the descriptor
+ * list with the index and count of descriptors that contain unprocessed received data.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @return Returns 1 if unprocessed received data is available, 0 if all received data has been processed, or AL_OK if no data is received.
+ * @param None
+ */
 AL_S32 AlGbe_Dev_IsRxDataAvailable(AL_GBE_DevStruct *Gbe)
 {
     AL_GBE_RxDescListStruct *DmaRxDescList = &Gbe->RxDescList;
@@ -1080,6 +1323,18 @@ AL_S32 AlGbe_Dev_IsRxDataAvailable(AL_GBE_DevStruct *Gbe)
     return AL_OK;
 }
 
+/**
+ *
+ * This function is called after determining that received data is available. It compiles the
+ * list of buffers that make up the received packet. This may involve multiple descriptors if
+ * the packet is split across them. The function updates the provided RxBuffer structure with
+ * the addresses and lengths of the buffers that contain the packet data.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param RxBuffer Pointer to the structure where the buffer information will be stored.
+ * @return Returns AL_OK on success, or AL_GBE_ERR_FATLA_BUS_ERROR if no valid data is found.
+ * @param None
+ */
 AL_S32 AlGbe_Dev_GetRxDataBuffer(AL_GBE_DevStruct *Gbe, AL_GBE_BufferStruct *RxBuffer)
 {
     AL_GBE_RxDescListStruct *DmaRxDescList = &Gbe->RxDescList;
@@ -1155,12 +1410,15 @@ AL_S32 AlGbe_Dev_GetRxDataBuffer(AL_GBE_DevStruct *Gbe, AL_GBE_BufferStruct *RxB
 }
 
 /**
-  * @brief  This function gets the length of last received Packet.
-  * @param  heth: pointer to a ETH_HandleTypeDef structure that contains
-  *         the configuration information for ETHERNET module
-  * @param  Length: parameter to hold Rx packet length
-  * @retval HAL Status
-  */
+ *
+ * This function calculates the length of the data that has been received and is ready to be processed.
+ * It checks if there is any data available to be read. If there is no data available, it returns an error.
+ * Otherwise, it calculates the length of the data based on the last descriptor's information.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param Length Pointer to store the length of the received data.
+ * @return Returns AL_OK on success, AL_GBE_ERR_ILLEGAL_PARAM if any parameter is NULL, or AL_GBE_ERR_FATLA_BUS_ERROR if no data is available.
+ */
 AL_S32 AlGbe_Dev_GetRxDataLength(AL_GBE_DevStruct *Gbe, AL_U32 *Length)
 {
     AL_GBE_RxDescListStruct *DmaRxDescList = &Gbe->RxDescList;
@@ -1186,6 +1444,16 @@ AL_S32 AlGbe_Dev_GetRxDataLength(AL_GBE_DevStruct *Gbe, AL_U32 *Length)
     return AL_OK;
 }
 
+/**
+ *
+ * This function prepares the receive descriptors for incoming data. It initializes each descriptor with
+ * the backup address and sets the valid and ownership bits accordingly. If interrupt mode is enabled,
+ * it also configures the complete interrupt for each descriptor. Finally, it resets the application descriptor
+ * count and context descriptor to indicate that the descriptors are ready for use.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @return Returns AL_OK on success, AL_GBE_ERR_ILLEGAL_PARAM if the GBE pointer is NULL, or AL_GBE_ERR_FATLA_BUS_ERROR if no descriptors are to be built.
+ */
 AL_S32 AlGbe_Dev_BuildRxDescriptors(AL_GBE_DevStruct *Gbe)
 {
     AL_GBE_RxDescListStruct *DmaRxDescList = &Gbe->RxDescList;
@@ -1243,6 +1511,19 @@ AL_S32 AlGbe_Dev_BuildRxDescriptors(AL_GBE_DevStruct *Gbe)
     return AL_OK;
 }
 
+/**
+ *
+ * This function sets up the transmit descriptors based on the provided configuration. It handles the buffer
+ * alignment for cache coherency, sets the buffer lengths, and configures the descriptor for timestamping if
+ * required. It also marks the first descriptor and sets the OWN bit to indicate that the descriptor is ready
+ * to be processed by the DMA. If the packet spans multiple descriptors, it properly links them and clears the
+ * last descriptor bit of the previous descriptor in the chain.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param TxConfig Pointer to the transmit descriptor configuration structure.
+ * @param IntrEnable Specifies whether to enable interrupt upon completion.
+ * @return Returns AL_GBE_ERR_DESC_STATE if the current descriptor is owned by DMA or already has a packet address assigned, otherwise AL_OK.
+ */
 static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruct *TxConfig, AL_GBE_FunctionEnum IntrEnable)
 {
     AL_GBE_TxDescListStruct *DmaTxDescList = &Gbe->TxDescList;
@@ -1420,6 +1701,13 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
     return AL_OK;
 }
 
+/**
+ * This function iterates through the buffers in use and releases packets that have been transmitted.
+ * It updates the release index and the number of buffers in use accordingly.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @return Returns AL_OK on success.
+ */
 AL_S32 AlGbe_Dev_ReleaseTxPacket(AL_GBE_DevStruct *Gbe)
 {
     AL_GBE_TxDescListStruct *DmaTxDescList = &Gbe->TxDescList;
@@ -1465,6 +1753,14 @@ AL_S32 AlGbe_Dev_ReleaseTxPacket(AL_GBE_DevStruct *Gbe)
     return AL_OK;
 }
 
+/**
+ * This function prepares the transmit descriptors, sets the device as busy, and starts the transmission.
+ * It ensures that the device and the provided configuration are valid and that the device is ready and not busy.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param TxConfig Pointer to the transmit descriptor configuration structure.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlGbe_Dev_Transmit(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruct *TxConfig)
 {
     AL_S32 Ret;
@@ -1496,6 +1792,14 @@ AL_S32 AlGbe_Dev_Transmit(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruct *TxCo
     return AL_OK;
 }
 
+/**
+ * This function checks if the timestamp is available for the given transmit descriptor and retrieves it if available.
+ * It clears the timestamp status after retrieval.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param DmaTxDesc Pointer to the DMA transmit descriptor.
+ * @return Returns AL_OK on success, or AL_GBE_DESC_TX_TIMESTAMP_STATUS_ERROR if the timestamp is not available.
+ */
 AL_S32 AlGbe_Dev_GetTxTimeStamp(AL_GBE_DevStruct *Gbe, const AL_GBE_DMADescStruct *DmaTxDesc)
 {
     if (!AlGbe_ll_GetWbTxDesc3TxTimeStatus((AL_REG)&DmaTxDesc->DESC3)) {
@@ -1510,6 +1814,14 @@ AL_S32 AlGbe_Dev_GetTxTimeStamp(AL_GBE_DevStruct *Gbe, const AL_GBE_DMADescStruc
     return AL_OK;
 }
 
+/**
+ * This function is similar to AlGbe_Dev_Transmit but waits for the packet to be sent if timestamping is enabled.
+ * It checks for fatal bus errors during transmission.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param TxConfig Pointer to the transmit descriptor configuration structure.
+ * @return Returns AL_OK on success, AL_GBE_ERR_FATLA_BUS_ERROR on fatal bus error, or another error code on failure.
+ */
 AL_S32 AlGbe_Dev_TransmitPolling(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruct *TxConfig)
 {
     AL_S32 Ret;
@@ -1560,6 +1872,13 @@ AL_S32 AlGbe_Dev_TransmitPolling(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruc
     return AL_OK;
 }
 
+/**
+ * This function is called when a transmit operation is completed.
+ * It notifies the registered event callback with the TX done event and clears the busy status of the device.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @return None.
+ */
 static AL_VOID AlGbe_Dev_TxDoneHandler(AL_GBE_DevStruct *Gbe)
 {
     if (Gbe->EventCallBack) {
@@ -1571,6 +1890,13 @@ static AL_VOID AlGbe_Dev_TxDoneHandler(AL_GBE_DevStruct *Gbe)
     AlGbe_Dev_ClrTxBusy(Gbe);
 }
 
+/**
+ * This function is called when a receive operation is completed.
+ * It notifies the registered event callback with the RX done event.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @return None.
+ */
 static AL_VOID AlGbe_Dev_RxDoneHandler(AL_GBE_DevStruct *Gbe)
 {
     if (Gbe->EventCallBack) {
@@ -1596,6 +1922,12 @@ static AL_VOID AlGbe_Dev_RxDoneHandler(AL_GBE_DevStruct *Gbe)
 #define GBE_IN_ABNORMAL_SUMMARY_INTR(Status)        (Status & AL_GBE_INTR_ABNORMAL_SUMMARY)
 #define GBE_IN_NORMAL_SUMMARY_INTR(Status)          (Status & AL_GBE_INTR_NORMAL_SUMMARY)
 
+/**
+ * This function handles device errors by checking the interrupt status and executing the appropriate actions based on the type of error.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @return None.
+ */
 static AL_VOID AlGbe_Dev_ErrorHandler(AL_GBE_DevStruct *Gbe)
 {
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
@@ -1634,7 +1966,12 @@ static AL_VOID AlGbe_Dev_ErrorHandler(AL_GBE_DevStruct *Gbe)
     }
 }
 
-
+/**
+ * This function dumps the MMC registers for debugging purposes.
+ *
+ * @param Instance Pointer to the GBE device instance.
+ * @return None.
+ */
 static AL_VOID AlGbe_Dev_DumpMmcRegister(AL_VOID *Instance)
 {
     AL_U32 addr;
@@ -1647,6 +1984,12 @@ static AL_VOID AlGbe_Dev_DumpMmcRegister(AL_VOID *Instance)
     }
 }
 
+/**
+ * This function checks the type of interrupt and calls the appropriate handler function.
+ *
+ * @param Instance Pointer to the GBE device instance.
+ * @return None.
+ */
 AL_VOID AlGbe_Dev_IntrHandler(AL_VOID *Instance)
 {
     AL_GBE_DevStruct *Gbe = (AL_GBE_DevStruct *)Instance;
@@ -1678,6 +2021,14 @@ AL_VOID AlGbe_Dev_IntrHandler(AL_VOID *Instance)
 #endif
 }
 
+/**
+ * This function registers a callback function for GBE device events.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param Callback Function pointer to the callback function.
+ * @param CallbackRef Pointer to user data that will be passed to the callback function.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Dev_RegisterEventCallBack(AL_GBE_DevStruct *Gbe, AL_GBE_EventCallBack Callback, AL_VOID *CallbackRef)
 {
     AL_ASSERT((Gbe != AL_NULL) && (Callback != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
@@ -1688,6 +2039,13 @@ AL_S32 AlGbe_Dev_RegisterEventCallBack(AL_GBE_DevStruct *Gbe, AL_GBE_EventCallBa
     return AL_OK;
 }
 
+/**
+ * This function sets the PTP (Precision Time Protocol) timestamp.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param Timestamp Pointer to the structure containing the timestamp to be set.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Dev_SetPtpTimestamp(AL_GBE_DevStruct *Gbe, AL_GBE_PtpTimeStruct *Timestamp)
 {
     AL_ASSERT((Gbe != AL_NULL) && (Timestamp != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
@@ -1703,6 +2061,13 @@ AL_S32 AlGbe_Dev_SetPtpTimestamp(AL_GBE_DevStruct *Gbe, AL_GBE_PtpTimeStruct *Ti
     return AL_OK;
 }
 
+/**
+ * This function retrieves the current PTP (Precision Time Protocol) timestamp.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param Timestamp Pointer to the structure where the current timestamp will be stored.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Dev_GetPtpTimestamp(AL_GBE_DevStruct *Gbe, AL_GBE_PtpTimeStruct *Timestamp)
 {
     AL_ASSERT((Gbe != AL_NULL) && (Timestamp != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
@@ -1715,6 +2080,13 @@ AL_S32 AlGbe_Dev_GetPtpTimestamp(AL_GBE_DevStruct *Gbe, AL_GBE_PtpTimeStruct *Ti
     return AL_OK;
 }
 
+/**
+ * This function updates the PTP time offset.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param TimeOffset Pointer to the structure containing the time offset to be applied.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Dev_UpdatePtpTimeOffset(AL_GBE_DevStruct *Gbe, AL_GBE_PtpTimeStruct *TimeOffset)
 {
     AL_ASSERT((Gbe != AL_NULL) && (TimeOffset != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
@@ -1732,6 +2104,13 @@ AL_S32 AlGbe_Dev_UpdatePtpTimeOffset(AL_GBE_DevStruct *Gbe, AL_GBE_PtpTimeStruct
     return AL_OK;
 }
 
+/**
+ * This function adjusts the PTP time frequency.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param Adj Adjustment value for the PTP time frequency.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Dev_AdjustPtpTimeFreq(AL_GBE_DevStruct *Gbe, AL_U32 Adj)
 {
     AL_ASSERT((Gbe != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
@@ -1748,6 +2127,12 @@ AL_S32 AlGbe_Dev_AdjustPtpTimeFreq(AL_GBE_DevStruct *Gbe, AL_U32 Adj)
     return AL_OK;
 }
 
+/**
+ * This function enables timestamping for the GBE device.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @return None.
+ */
 AL_VOID AlGbe_Dev_EnableTimestamp(AL_GBE_DevStruct *Gbe)
 {
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
@@ -1765,6 +2150,13 @@ AL_VOID AlGbe_Dev_EnableTimestamp(AL_GBE_DevStruct *Gbe)
     AlGbe_ll_PtpSelectPacketsForTakingSnapshot(GbeBaseAddr, 1);
 }
 
+/**
+ * This function initializes the PTP (Precision Time Protocol) settings for the GBE device, including setting the initial timestamp and adjusting the time frequency if necessary.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param PtpConfig Pointer to the structure containing the PTP configuration settings.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_Dev_PtpInit(AL_GBE_DevStruct *Gbe, AL_GBE_PtpConfigStruct *PtpConfig)
 {
     AL_S32 Data;

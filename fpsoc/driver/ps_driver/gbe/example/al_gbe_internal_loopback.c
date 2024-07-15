@@ -45,6 +45,14 @@ AL_U8 SendFrame[] =
 
 AL_U8 RecvFrame[ETH_RX_BUFFER_SIZE];
 
+/**
+ * This function initializes the Ethernet PHY layer by setting up the PHY address, checking the link status,
+ * and configuring the speed and duplex mode based on the PHY's capabilities and the desired configuration
+ * specified in the MacDmaConfig structure.
+ *
+ * @param MacDmaConfig Pointer to the AL_GBE_MacDmaConfigStruct structure that contains the desired MAC and DMA configuration.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlGbe_PhyInit(AL_GBE_MacDmaConfigStruct *MacDmaConfig)
 {
     AL_S32 Ret;
@@ -123,6 +131,13 @@ AL_S32 AlGbe_PhyInit(AL_GBE_MacDmaConfigStruct *MacDmaConfig)
     return AL_OK;
 }
 
+/**
+ * This function performs the initial setup of the GBE driver and hardware configuration. It sets up the MAC address,
+ * media interface mode, RX/TX descriptor lists, buffer lengths, and duplex mode. It also initializes the HAL layer,
+ * configures RX/TX descriptor buffers, and enables loopback and receive-all modes if necessary.
+ *
+ * @return None.
+ */
 AL_VOID AlGbe_Init()
 {
     AL_S32 Ret;
@@ -173,6 +188,14 @@ AL_VOID AlGbe_Init()
     AlGbe_Hal_StartMacDma(GbeHandle);
 }
 
+/**
+ * This function is responsible for sending an Ethernet frame through the GBE interface. It sets up the buffer structure
+ * for transmission, configures the TX descriptor, and invokes the HAL layer transmit function.
+ *
+ * @param Frame Pointer to the frame data to be sent.
+ * @param FrameSize Size of the frame in bytes.
+ * @return None.
+ */
 AL_VOID AlGbe_SendFrame(AL_U8 *Frame, AL_U32 FrameSize)
 {
     AL_GBE_BufferStruct Txbuffer = {0};
@@ -188,6 +211,15 @@ AL_VOID AlGbe_SendFrame(AL_U8 *Frame, AL_U32 FrameSize)
 
 }
 
+/**
+ * This function is responsible for receiving an Ethernet frame from the GBE interface. It checks if a frame is available,
+ * retrieves the frame length, invalidates the cache for the received data (if MMU is enabled), and copies the frame
+ * into the provided buffer.
+ *
+ * @param Frame Pointer to the buffer where the received frame should be stored.
+ * @param FrameSize Pointer to a variable where the size of the received frame will be stored.
+ * @return None.
+ */
 AL_VOID AlGbe_RecvFrame(AL_U8 *Frame, AL_U32 *FrameSize)
 {
     AL_GBE_BufferStruct RxBuff = {0};
@@ -212,6 +244,12 @@ AL_VOID AlGbe_RecvFrame(AL_U8 *Frame, AL_U32 *FrameSize)
     }
 }
 
+/**
+ * This function demonstrates the GBE internal loopback functionality by initializing the GBE interface, sending,
+ * and receiving frames in a loop. It checks if the received frames match the sent frames and logs the result.
+ *
+ * @return None.
+ */
 AL_VOID AlGbe_InternalLoopbackExample()
 {
     AL_U32 FrameLen = 0;
@@ -263,6 +301,12 @@ AL_VOID AlGbe_InternalLoopbackExample()
     AL_LOG(AL_LOG_LEVEL_INFO, "Gbe internal loopback pass\r\n");
 }
 
+/**
+ * This function is the main entry point of the application. It logs an informational message and then calls
+ * the AlGbe_InternalLoopbackExample function to demonstrate the GBE internal loopback functionality.
+ *
+ * @return Returns 0 on completion.
+ */
 int main()
 {
     AL_LOG(AL_LOG_LEVEL_INFO, "AL GBE internal loopback example\r\n");

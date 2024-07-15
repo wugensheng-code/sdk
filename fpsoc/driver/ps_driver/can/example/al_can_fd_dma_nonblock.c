@@ -68,7 +68,13 @@ static AL_DMACAHB_ChInitStruct FdDma_DmaChConfig = {
 /************************** Function Prototypes ******************************/
 static AL_S32 AlCan_Test_FdDmaNonBlock(AL_VOID);
 /************************** Function Definitions ******************************/
-
+/**
+ *
+ * This function initializes the test environment, then calls AlCan_Test_FdDmaNonBlock to perform the actual test.
+ * It logs the start and end of the test, and reports success or failure based on the return value of AlCan_Test_FdDmaNonBlock.
+ *
+ * @return AL_OK if the test is successful, an error code otherwise.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -86,6 +92,23 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ * This function sets up the CAN and DMA hardware for non-blocking operation, including initializing the hardware,
+ * setting up DMA linked list items (LLIs) for data transfer, and entering a loop to handle CAN frames reception and processing.
+ * It uses DMA to transfer received CAN frames into a pre-allocated memory buffer and processes each received frame.
+ * The function continuously checks for new CAN frames and handles them until the test is manually stopped or an error occurs.
+ *
+ * The test involves several steps:
+ * 1. Allocating memory aligned with the cache line size for receiving CAN frames.
+ * 2. Initializing the CAN hardware with the specified configuration.
+ * 3. Initializing the DMA hardware with the specified channel configuration.
+ * 4. Setting up the DMA transfer from the CAN hardware to the allocated memory.
+ * 5. Entering a loop that waits for CAN frames to be received. Upon receiving a frame, the DMA is triggered to transfer the frame to memory.
+ *    The received frame is then processed.
+ * 6. The loop continues until an error occurs or the test is manually stopped.
+ *
+ * @return AL_OK if the test completes successfully, an error code otherwise.
+ */
 static AL_S32 AlCan_Test_FdDmaNonBlock(AL_VOID)
 {
     AL_U32 Ret = AL_OK;

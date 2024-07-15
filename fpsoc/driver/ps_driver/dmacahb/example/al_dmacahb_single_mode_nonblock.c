@@ -53,7 +53,13 @@ static AL_DMACAHB_ChInitStruct ChInitCfg = {
 static AL_S32 AlDmacAhb_Test_SingleModeNonBlock(AL_VOID);
 
 /************************** Function Definitions ******************************/
-
+/**
+ *
+ * This function initializes the test environment, executes the non-blocking single mode test, and logs the test results.
+ * It returns an error code if the test fails or AL_OK if the test succeeds.
+ *
+ * @return AL_OK on success, otherwise an error code indicating the type of failure.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -71,6 +77,16 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ *
+ * This function performs a non-blocking DMA transfer from a source memory location to a destination memory location.
+ * It initializes the DMA controller, sets up the transfer, waits for the transfer to complete with a timeout, and checks
+ * the integrity of the transferred data. It cleans up resources and deinitializes the DMA controller before returning.
+ * The function demonstrates handling of non-blocking DMA transfers, including setup, execution without blocking the CPU,
+ * and validation of transfer results.
+ *
+ * @return AL_OK if the transfer is successful and the data integrity is verified, otherwise an error code.
+ */
 static AL_S32 AlDmacAhb_Test_SingleModeNonBlock(AL_VOID)
 {
     AL_U32 Ret = AL_OK;

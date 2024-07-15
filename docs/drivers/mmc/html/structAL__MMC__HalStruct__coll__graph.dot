@@ -1,0 +1,33 @@
+digraph "AL_MMC_HalStruct"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="AL_MMC_HalStruct",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Dev" ,fontname="Helvetica"];
+  Node2 [label="AL_MMC_DevStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__MMC__DevStruct.html"];
+  Node3 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" EventCallBack" ,fontname="Helvetica"];
+  Node3 [label="AL_MMC_EventStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__MMC__EventStruct.html",tooltip="Event struct. "];
+  Node4 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" HostInfo" ,fontname="Helvetica"];
+  Node4 [label="AL_MMC_HostInfoStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__MMC__HostInfoStruct.html"];
+  Node5 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Cap1" ,fontname="Helvetica"];
+  Node5 [label="AL_MMC_Cap1Union",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$unionAL__MMC__Cap1Union.html"];
+  Node6 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Cap2" ,fontname="Helvetica"];
+  Node6 [label="AL_MMC_Cap2Union",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$unionAL__MMC__Cap2Union.html"];
+  Node7 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" HwConfig" ,fontname="Helvetica"];
+  Node7 [label="AL_MMC_HwConfigStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__MMC__HwConfigStruct.html"];
+  Node8 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" CACHE_LINE_ALIGN" ,fontname="Helvetica"];
+  Node8 [label="AL_MMC_AdmaDescUnion",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$unionAL__MMC__AdmaDescUnion.html"];
+  Node9 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" CardInfo" ,fontname="Helvetica"];
+  Node9 [label="AL_MMC_CardInfoStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__MMC__CardInfoStruct.html"];
+  Node10 -> Node9 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Cid" ,fontname="Helvetica"];
+  Node10 [label="AL_MMC_RegCidUnion",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$unionAL__MMC__RegCidUnion.html"];
+  Node11 -> Node9 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Csd" ,fontname="Helvetica"];
+  Node11 [label="AL_MMC_RegCsdUnion",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$unionAL__MMC__RegCsdUnion.html"];
+  Node12 -> Node9 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Scr" ,fontname="Helvetica"];
+  Node12 [label="AL_MMC_RegScrUnion",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$unionAL__MMC__RegScrUnion.html"];
+  Node13 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Config" ,fontname="Helvetica"];
+  Node13 [label="AL_MMC_InitStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__MMC__InitStruct.html"];
+  Node14 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" CardState" ,fontname="Helvetica"];
+  Node14 [label="AL_MMC_CardStateUnion",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$unionAL__MMC__CardStateUnion.html"];
+}

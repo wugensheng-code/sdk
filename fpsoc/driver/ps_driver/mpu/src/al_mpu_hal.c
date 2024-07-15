@@ -11,12 +11,29 @@
 AL_MPU_DevStruct AL_MPU_DevInstance[AL_MPU_NUM_INSTANCE];
 AL_MPU_HalStruct  AlMpuHandle[AL_MPU_NUM_INSTANCE];
 
+/**
+ *
+ * This function registers a specific interrupt handler for the MPU (Memory Protection Unit) interrupts. It uses the SOC_MPU_IRQn
+ * as the interrupt number and specifies the AlMpu_Dev_MpuIntrHandler as the callback function to handle MPU interrupts.
+ * The function does not return any value and does not take any parameters.
+ *
+ * @return None
+ */
 static AL_VOID AlMpu_Hal_MpuRegisterIntr()
 {
     AlIntr_RegHandler(SOC_MPU_IRQn, AL_NULL, AlMpu_Dev_MpuIntrHandler, AL_MPU_DevInstance);
 
 }
 
+/**
+ *
+ * This function is called when an MPU event occurs. It processes the event based on its ID. For example, if the event is
+ * a deny access event, it logs the instance and region number that triggered the event. The function does not return any value.
+ *
+ * @param MpuEvent Pointer to the MPU event structure containing details about the event.
+ * @param CallbackRef User-defined reference passed to the callback function.
+ * @return None
+ */
 static AL_VOID AlMpu_Hal_EventCallBack(AL_MPU_EventStruct *MpuEvent, AL_VOID *CallbackRef)
 {
     AL_MPU_HalStruct *Handle = (AL_MPU_HalStruct *)CallbackRef;
@@ -33,14 +50,11 @@ static AL_VOID AlMpu_Hal_EventCallBack(AL_MPU_EventStruct *MpuEvent, AL_VOID *Ca
 }
 
 /**
- * This function enable MPU
- * @param Handle is pointer to AL_MPU_HalStruct
  *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
+ * This function enables the MPU by taking a lock, enabling the MPU device, and then releasing the lock. It returns an error code if any step fails.
  *
- * @note
+ * @param Handle Pointer to the MPU HAL structure.
+ * @return AL_OK on success, an error code otherwise.
  */
 AL_S32 AlMpu_Hal_MpuEnable(AL_MPU_HalStruct *Handle)
 {
@@ -61,14 +75,12 @@ AL_S32 AlMpu_Hal_MpuEnable(AL_MPU_HalStruct *Handle)
 }
 
 /**
- * This function disable MPU
- * @param Handle is pointer to AL_MPU_HalStruct
  *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
+ * Similar to AlMpu_Hal_MpuEnable, this function disables the MPU by taking a lock, disabling the MPU device,
+ * and then releasing the lock. It returns an error code if any step fails.
  *
- * @note
+ * @param Handle Pointer to the MPU HAL structure.
+ * @return AL_OK on success, an error code otherwise.
  */
 AL_S32 AlMpu_Hal_MpuDisable(AL_MPU_HalStruct *Handle)
 {
@@ -89,15 +101,13 @@ AL_S32 AlMpu_Hal_MpuDisable(AL_MPU_HalStruct *Handle)
 }
 
 /**
- * This function enable a region
- * @param Handle is pointer to AL_MPU_HalStruct
- * @param RegionNumber region number
  *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
+ * This function enables a specified region of the MPU. It takes a lock, sets the region enable status to enabled,
+ * and then releases the lock. It returns an error code if any step fails.
  *
- * @note
+ * @param Handle Pointer to the MPU HAL structure.
+ * @param RegionNumber The number of the region to enable.
+ * @return AL_OK on success, an error code otherwise.
  */
 AL_S32 AlMpu_Hal_EnableRegion(AL_MPU_HalStruct *Handle, AL_U8 RegionNumber)
 {
@@ -118,15 +128,13 @@ AL_S32 AlMpu_Hal_EnableRegion(AL_MPU_HalStruct *Handle, AL_U8 RegionNumber)
 }
 
 /**
- * This function disable a region
- * @param Handle is pointer to AL_MPU_HalStruct
- * @param RegionNumber region number
  *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
+ * This function disables a specified region of the MPU. It takes a lock, sets the region enable status to disabled,
+ * and then releases the lock. It returns an error code if any step fails.
  *
- * @note
+ * @param Handle Pointer to the MPU HAL structure.
+ * @param RegionNumber The number of the region to disable.
+ * @return AL_OK on success, an error code otherwise.
  */
 AL_S32 AlMpu_Hal_DisableRegion(AL_MPU_HalStruct *Handle, AL_U8 RegionNumber)
 {
@@ -147,16 +155,14 @@ AL_S32 AlMpu_Hal_DisableRegion(AL_MPU_HalStruct *Handle, AL_U8 RegionNumber)
 }
 
 /**
- * This function config a region by region number
- * @param Handle is pointer to AL_MPU_HalStruct
- * @param RegionNumber region number
- * @param InitRegionConfig pointer to AL_MPU_RegionConfigStruct
  *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
+ * This function configures a specific MPU region based on the provided configuration structure. It takes a lock,
+ * applies the configuration to the specified region, and then releases the lock. It returns an error code if any step fails.
  *
- * @note
+ * @param Handle Pointer to the MPU HAL structure.
+ * @param RegionNumber The number of the region to configure.
+ * @param InitRegionConfig Pointer to the configuration structure for the region.
+ * @return AL_OK on success, an error code otherwise.
  */
 AL_S32 AlMpu_Hal_ConfigRegionByRegionNum(AL_MPU_HalStruct *Handle, AL_U8 RegionNumber,
                                          AL_MPU_RegionConfigStruct *InitRegionConfig)
@@ -178,15 +184,14 @@ AL_S32 AlMpu_Hal_ConfigRegionByRegionNum(AL_MPU_HalStruct *Handle, AL_U8 RegionN
 }
 
 /**
- * This function config a region
- * @param Handle is pointer to AL_MPU_HalStruct
- * @param InitRegionConfig pointer to AL_MPU_RegionConfigStruct
+
  *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
+ * This function applies a configuration to an MPU region. It takes a lock, applies the provided configuration,
+ * and then releases the lock. It returns an error code if any step fails.
  *
- * @note
+ * @param Handle Pointer to the MPU HAL structure.
+ * @param InitRegionConfig Pointer to the configuration structure for the region.
+ * @return AL_OK on success, an error code otherwise.
  */
 AL_S32 AlMpu_Hal_ConfigRegion(AL_MPU_HalStruct *Handle, AL_MPU_RegionConfigStruct *InitRegionConfig)
 {
@@ -207,18 +212,16 @@ AL_S32 AlMpu_Hal_ConfigRegion(AL_MPU_HalStruct *Handle, AL_MPU_RegionConfigStruc
 }
 
 /**
- * This function initialize the mpu region configs
- * @param MpuDevId unique MPU device id
- * @param Handle is pointer to AL_MPU_HalStruct
- * @param EventCallBack Event CallBack
- * @param InitRegionConfig pointer to AL_MPU_RegionConfigStruct
- * @param ConfigNumber config number of AL_MPU_RegionConfigStruct
  *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
+ * This function initializes the MPU device with a specified configuration. It looks up the hardware configuration based on the device ID,
+ * registers an event callback, and initializes the device with the provided configuration. It returns an error code if any step fails.
  *
- * @note
+ * @param MpuDevId The device ID of the MPU.
+ * @param Handle Pointer to a pointer to the MPU HAL structure to be initialized.
+ * @param EventCallBack The event callback function to be registered.
+ * @param InitRegionConfig Pointer to the initial region configuration structure.
+ * @param ConfigNumber The number of configurations to apply.
+ * @return AL_OK on success, an error code otherwise.
  */
 AL_S32 AlMpu_Hal_ConfigInit(AL_U8 MpuDevId, AL_MPU_HalStruct **Handle, AL_Mpu_EventCallBack EventCallBack,
                             AL_MPU_RegionConfigStruct *InitRegionConfig, AL_U8 ConfigNumber)
@@ -267,12 +270,10 @@ AL_S32 AlMpu_Hal_ConfigInit(AL_U8 MpuDevId, AL_MPU_HalStruct **Handle, AL_Mpu_Ev
 }
 
 /**
- * This function initialize the mpu related interrupt
- * @param
  *
- * @return
+ * This function initializes the MPU HAL layer by registering the MPU interrupt handler. It does not return any value and does not take any parameters.
  *
- * @note
+ * @return None
  */
 AL_VOID AlMpu_Hal_Init()
 {

@@ -40,6 +40,14 @@ static AL_GBE_TxDescConfigStruct TxConfig;
 AL_U8 SendFrame[FRAME_SIZE];
 AL_U8 RecvFrame[FRAME_SIZE];
 
+/**
+ * This function initializes the PHY layer by setting up the PHY address, checking the link status,
+ * and configuring the speed and duplex mode based on the PHY's capabilities. It also checks for
+ * any link changes and applies the new configuration if necessary.
+ *
+ * @param MacDmaConfig Pointer to the MAC DMA configuration structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlGbe_PhyInit(AL_GBE_MacDmaConfigStruct *MacDmaConfig)
 {
     AL_S32 Ret;
@@ -118,6 +126,13 @@ AL_S32 AlGbe_PhyInit(AL_GBE_MacDmaConfigStruct *MacDmaConfig)
     return AL_OK;
 }
 
+/**
+ * This function sets up the GBE driver with the specified MAC address, media interface, and
+ * descriptor lists for RX and TX. It also initializes the MAC DMA configuration to default values
+ * and starts the MAC DMA.
+ *
+ * @return None.
+ */
 AL_VOID AlGbe_Init()
 {
     AL_S32 Ret;
@@ -171,6 +186,14 @@ AL_VOID AlGbe_Init()
     AlGbe_Hal_StartMacDma(GbeHandle);
 }
 
+/**
+ * This function prepares a TX buffer with the provided frame and frame size, then initiates
+ * transmission of the frame through the GBE interface.
+ *
+ * @param Frame Pointer to the frame data to be sent.
+ * @param FrameSize Size of the frame in bytes.
+ * @return None.
+ */
 AL_VOID AlGbe_SendFrame(AL_U8 *Frame, AL_U32 FrameSize)
 {
     AL_GBE_BufferStruct Txbuffer = {0};
@@ -186,6 +209,15 @@ AL_VOID AlGbe_SendFrame(AL_U8 *Frame, AL_U32 FrameSize)
 
 }
 
+/**
+ * This function iterates over the specified section of the frame, calculating the checksum
+ * by summing the 16-bit words and folding the result.
+ *
+ * @param RxFramePtr Pointer to the start of the frame.
+ * @param Start Starting index within the frame from which to begin checksum calculation.
+ * @param Length Number of 16-bit words to include in the checksum calculation.
+ * @return Calculated checksum value.
+ */
 static AL_U16 CalculatCheckSum(AL_U16 *RxFramePtr, AL_U16 Start, AL_U16 Length)
 {
     AL_U32 Sum = 0;
@@ -204,6 +236,15 @@ static AL_U16 CalculatCheckSum(AL_U16 *RxFramePtr, AL_U16 Start, AL_U16 Length)
     return CheckSum;
 }
 
+/**
+ * This function checks the received frame for an ICMP echo request, constructs an ICMP echo reply
+ * if the request is valid, and sends the reply. It performs various checks and calculations,
+ * including verifying checksums and calculating new checksums for the reply.
+ *
+ * @param RecvFrame Pointer to the received frame data.
+ * @param FrameSize Size of the received frame in bytes.
+ * @return None.
+ */
 AL_VOID AlGbe_ProcessIcmpPacket(AL_U8 *RecvFrame, AL_U32 FrameSize)
 {
     AL_U16 *RxFramePtr;
@@ -314,6 +355,16 @@ AL_VOID AlGbe_ProcessIcmpPacket(AL_U8 *RecvFrame, AL_U32 FrameSize)
     }
 }
 
+/**
+ *
+ * This function checks if the received frame is an ARP request for the local IP address. If so,
+ * it constructs an ARP reply packet by filling in the source and destination MAC addresses, ARP
+ * operation code, sender and target IP addresses, and then transmits the reply packet.
+ *
+ * @param RecvFrame Pointer to the received frame.
+ * @param FrameSize Size of the received frame.
+ * @return None.
+ */
 AL_VOID AlGbe_ProcessArpPacket(AL_U8 *RecvFrame, AL_U32 FrameSize)
 {
     AL_U16 *RxFramePtr;
@@ -407,6 +458,16 @@ AL_VOID AlGbe_ProcessArpPacket(AL_U8 *RecvFrame, AL_U32 FrameSize)
 
 }
 
+/**
+ *
+ * This function determines the type of the received frame. If the frame is a broadcast frame,
+ * it is processed as an ARP packet. If the frame's destination MAC address matches the local MAC
+ * address, it is processed as an ICMP packet. Otherwise, the frame is ignored.
+ *
+ * @param RecvFrame Pointer to the received frame.
+ * @param FrameSize Size of the received frame.
+ * @return None.
+ */
 AL_VOID AlGbe_ProcessRecvFrame(AL_U8 *RecvFrame, AL_U32 FrameSize)
 {
     AL_U16 *RxFramePtr;
@@ -424,6 +485,16 @@ AL_VOID AlGbe_ProcessRecvFrame(AL_U8 *RecvFrame, AL_U32 FrameSize)
 
 }
 
+/**
+ *
+ * This function checks if a frame has been received. If so, it retrieves the frame from the
+ * hardware, invalidates the cache for the received data (if MMU is enabled), and copies the
+ * frame into the provided buffer. It then prepares the RX descriptor for the next data reception.
+ *
+ * @param Frame Pointer to the buffer where the received frame will be copied.
+ * @param FrameSize Pointer to a variable where the size of the received frame will be stored.
+ * @return None.
+ */
 AL_VOID AlGbe_RecvFrame(AL_U8 *Frame, AL_U32 *FrameSize)
 {
     AL_GBE_BufferStruct RxBuff = {0};
@@ -448,6 +519,14 @@ AL_VOID AlGbe_RecvFrame(AL_U8 *Frame, AL_U32 *FrameSize)
     }
 }
 
+/**
+ *
+ * This function initializes the GBE hardware and continuously checks for received frames. If a
+ * frame is received, it processes the frame accordingly. After processing, it resets the frame
+ * length and clears the receive and send frame buffers.
+ *
+ * @return None.
+ */
 AL_VOID AlGbe_PingReplyPollingExample()
 {
     AL_U32 FrameLen = 0;
@@ -466,6 +545,13 @@ AL_VOID AlGbe_PingReplyPollingExample()
     }
 }
 
+/**
+ *
+ * This function is the entry point for the program. It logs a start message and then calls the
+ * function to demonstrate handling of ping replies using polling.
+ *
+ * @return Returns 0 on successful execution.
+ */
 int main()
 {
     AL_LOG(AL_LOG_LEVEL_INFO, "AL GBE polling ping reply example\r\n");

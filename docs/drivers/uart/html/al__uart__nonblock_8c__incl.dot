@@ -1,0 +1,20 @@
+digraph "fpsoc/driver/ps_driver/uart/example/al_uart_nonblock.c"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node0 [label="fpsoc/driver/ps_driver\l/uart/example/al_uart\l_nonblock.c",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node0 -> Node1 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node1 [label="string.h",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node0 -> Node2 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="stdlib.h",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node0 -> Node3 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="al_uart_hal.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__uart__hal_8h.html"];
+  Node3 -> Node4 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="al_uart_dev.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__uart__dev_8h.html",tooltip="uart device driver "];
+  Node4 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="al_uart_ll.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__uart__ll_8h.html"];
+  Node5 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="al_uart_hw.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__uart__hw_8h.html"];
+  Node6 -> Node7 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="al_core.h",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+}

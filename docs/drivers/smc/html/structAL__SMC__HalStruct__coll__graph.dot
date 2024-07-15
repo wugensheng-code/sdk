@@ -1,0 +1,18 @@
+digraph "AL_SMC_HalStruct"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="AL_SMC_HalStruct",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Dev" ,fontname="Helvetica"];
+  Node2 [label="AL_SMC_DevStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__SMC__DevStruct.html"];
+  Node3 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Configs" ,fontname="Helvetica"];
+  Node3 [label="AL_SMC_ConfigsStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__SMC__ConfigsStruct.html"];
+  Node4 -> Node3 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Cycles" ,fontname="Helvetica"];
+  Node4 [label="SMC_Cycles",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$unionSMC__Cycles.html"];
+  Node5 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" NandInfo" ,fontname="Helvetica"];
+  Node5 [label="AL_NAND_InfoStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__NAND__InfoStruct.html"];
+  Node6 -> Node5 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Cmd" ,fontname="Helvetica"];
+  Node6 [label="AL_Nand_CmdStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__Nand__CmdStruct.html"];
+  Node7 -> Node5 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Size" ,fontname="Helvetica"];
+  Node7 [label="AL_Nand_SizeStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__Nand__SizeStruct.html"];
+}

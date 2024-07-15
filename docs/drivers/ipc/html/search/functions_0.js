@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['alipc_5fhal_5fintrclear',['AlIpc_Hal_IntrClear',['../al__ipc__hal_8c.html#a69cb2649440dfc6fe8825061d71a25ff',1,'al_ipc_hal.c']]],
+  ['alipc_5fhal_5fintrinit',['AlIpc_Hal_IntrInit',['../al__ipc__hal_8h.html#a79330ce47f8ab12c4046d266d3706f26',1,'AlIpc_Hal_IntrInit(AL_IpcIntr_HalStruct **Handle, AL_IPC_IntrEnum IntrType, Callback Func, AL_VOID *Arg):&#160;al_ipc_hal.c'],['../al__ipc__hal_8c.html#a79330ce47f8ab12c4046d266d3706f26',1,'AlIpc_Hal_IntrInit(AL_IpcIntr_HalStruct **Handle, AL_IPC_IntrEnum IntrType, Callback Func, AL_VOID *Arg):&#160;al_ipc_hal.c']]],
+  ['alipc_5fhal_5fintrnotify',['AlIpc_Hal_IntrNotify',['../al__ipc__hal_8h.html#ace013a49f0fda062d4e5fac62a24c0de',1,'AlIpc_Hal_IntrNotify(AL_IPC_IntrEnum IntrType):&#160;al_ipc_hal.c'],['../al__ipc__hal_8c.html#ace013a49f0fda062d4e5fac62a24c0de',1,'AlIpc_Hal_IntrNotify(AL_IPC_IntrEnum IntrType):&#160;al_ipc_hal.c']]],
+  ['alipc_5fhal_5fmboxinit',['AlIPC_Hal_MboxInit',['../al__ipc__hal_8h.html#a10c76b4becad936ad5308b388535a908',1,'AlIPC_Hal_MboxInit(AL_IpcMailBox_HalStruct **Handle, AL_U32 Number):&#160;al_ipc_hal.c'],['../al__ipc__hal_8c.html#a10c76b4becad936ad5308b388535a908',1,'AlIPC_Hal_MboxInit(AL_IpcMailBox_HalStruct **Handle, AL_U32 Number):&#160;al_ipc_hal.c']]],
+  ['alipc_5fhal_5fmboxread',['AlIpc_Hal_MboxRead',['../al__ipc__hal_8h.html#a54e7369c53e1d865a974a342814f550b',1,'AlIpc_Hal_MboxRead(AL_IpcMailBox_HalStruct *Handle, AL_U32 *Data):&#160;al_ipc_hal.c'],['../al__ipc__hal_8c.html#a54e7369c53e1d865a974a342814f550b',1,'AlIpc_Hal_MboxRead(AL_IpcMailBox_HalStruct *Handle, AL_U32 *Data):&#160;al_ipc_hal.c']]],
+  ['alipc_5fhal_5fmboxwrite',['AlIpc_Hal_MboxWrite',['../al__ipc__hal_8h.html#a44179deb797b24c9943f504742b5ea62',1,'AlIpc_Hal_MboxWrite(AL_IpcMailBox_HalStruct *Handle, AL_U32 Data):&#160;al_ipc_hal.c'],['../al__ipc__hal_8c.html#a44179deb797b24c9943f504742b5ea62',1,'AlIpc_Hal_MboxWrite(AL_IpcMailBox_HalStruct *Handle, AL_U32 Data):&#160;al_ipc_hal.c']]],
+  ['alipc_5fhal_5fspinlockinit',['AlIpc_Hal_SpinLockInit',['../al__ipc__hal_8h.html#a4913f7b1308c0b880575c497ebc54fde',1,'AlIpc_Hal_SpinLockInit(AL_IpcSpinLock_HalStruct **Handle, AL_U32 Number):&#160;al_ipc_hal.c'],['../al__ipc__hal_8c.html#a4913f7b1308c0b880575c497ebc54fde',1,'AlIpc_Hal_SpinLockInit(AL_IpcSpinLock_HalStruct **Handle, AL_U32 Number):&#160;al_ipc_hal.c']]],
+  ['alipc_5fhal_5fspinlockrelease',['AlIpc_Hal_SpinLockRelease',['../al__ipc__hal_8h.html#a38cd72472384d3b545261dc546b873ba',1,'AlIpc_Hal_SpinLockRelease(AL_IpcSpinLock_HalStruct *Handle):&#160;al_ipc_hal.c'],['../al__ipc__hal_8c.html#a38cd72472384d3b545261dc546b873ba',1,'AlIpc_Hal_SpinLockRelease(AL_IpcSpinLock_HalStruct *Handle):&#160;al_ipc_hal.c']]],
+  ['alipc_5fhal_5fspinlocktake',['AlIpc_Hal_SpinLockTake',['../al__ipc__hal_8h.html#a9fd3bfb4ba8d1610006739a4f4be67b1',1,'AlIpc_Hal_SpinLockTake(AL_IpcSpinLock_HalStruct *Handle, AL_U32 Timeout):&#160;al_ipc_hal.c'],['../al__ipc__hal_8c.html#a9fd3bfb4ba8d1610006739a4f4be67b1',1,'AlIpc_Hal_SpinLockTake(AL_IpcSpinLock_HalStruct *Handle, AL_U32 Timeout):&#160;al_ipc_hal.c']]],
+  ['alipc_5fintrhandler',['AlIpc_IntrHandler',['../al__ipc__hal_8c.html#a5cec94787661020f9eb3be40dadb8577',1,'al_ipc_hal.c']]],
+  ['alipc_5fll_5fmboxread',['AlIpc_ll_MboxRead',['../al__ipc__ll_8h.html#a70b434abbf9a4aa3fdc8dca1cc16cde9',1,'al_ipc_ll.h']]],
+  ['alipc_5fll_5fmboxwrite',['AlIpc_ll_MboxWrite',['../al__ipc__ll_8h.html#a6ddea9ba68ef1d561ed5885dae47ea60',1,'al_ipc_ll.h']]],
+  ['alipc_5fll_5fsetinter',['AlIpc_ll_SetInter',['../al__ipc__ll_8h.html#a7634a245469dc84e21d87da980567935',1,'al_ipc_ll.h']]],
+  ['alipc_5fll_5fspinlockinit',['AlIpc_ll_SpinLockInit',['../al__ipc__ll_8h.html#ae2f9821404cdc5b5e55172a5db986650',1,'al_ipc_ll.h']]],
+  ['alipc_5fll_5fspinlockinitthis',['AlIpc_ll_SpinLockInitThis',['../al__ipc__ll_8h.html#a6176ee63926b91da833d1e2606aa02b3',1,'al_ipc_ll.h']]],
+  ['alipc_5fll_5fspinlockrelease',['AlIpc_ll_SpinLockRelease',['../al__ipc__ll_8h.html#a411db45be4d151064880249d7c7a1dbe',1,'al_ipc_ll.h']]],
+  ['alipc_5fll_5fspinlocktrytake',['AlIpc_ll_SpinLockTryTake',['../al__ipc__ll_8h.html#a0a270549806ae27619d38808e1530a8a',1,'al_ipc_ll.h']]],
+  ['alipcintr_5fdev_5flookupconfig',['AlIpcIntr_Dev_LookupConfig',['../al__ipc__hal_8c.html#ab78643d319bae7a8f00800ed17396b12',1,'al_ipc_hal.c']]]
+];

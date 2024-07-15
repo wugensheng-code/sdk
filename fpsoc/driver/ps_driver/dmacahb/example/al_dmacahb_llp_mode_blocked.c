@@ -53,7 +53,15 @@ static AL_DMACAHB_ChInitStruct ChInitCfg = {
 static AL_S32 AlDmacAhb_Test_LlpModeBlocked(AL_VOID);
 
 /************************** Function Definitions ******************************/
-
+/**
+ *
+ * This function initializes the DMAC AHB for LLP mode operation, creates a series of linked list items,
+ * and then starts a block transfer. It checks for transfer completion and validates the data integrity
+ * after each transfer. If any step fails, it logs an error and exits. Upon successful completion of all
+ * transfers, it cleans up resources and exits.
+ *
+ * @return AL_OK if the test passes, error code otherwise.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -71,6 +79,14 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ *
+ * Initializes DMAC AHB, sets up linked list items for block transfer, and starts the transfer in a loop.
+ * It checks for transfer completion and validates the data integrity after each transfer. It also handles
+ * resource allocation and deallocation for the transfer buffers.
+ *
+ * @return AL_OK if the test passes, error code otherwise.
+ */
 static AL_S32 AlDmacAhb_Test_LlpModeBlocked(AL_VOID)
 {
     AL_U32 Ret = AL_OK;

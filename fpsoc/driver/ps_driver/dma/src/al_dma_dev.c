@@ -213,12 +213,26 @@ typedef enum {
 /********************* Private Variable Definition ***************************/
 
 /********************* Private Function Definition ***************************/
-
+/**
+ * Checks if the DMA direction is from memory to device or device to memory.
+ *
+ * @param Direction The direction of the DMA transfer.
+ * @return AL_BOOL True if the direction is either from memory to device or device to memory, otherwise false.
+ */
 __STATIC_INLINE AL_BOOL AlDma_Dev_IsSlaveDirection(AL_DMA_TransEnum Direction)
 {
     return (Direction == DMA_MEM_TO_DEV) || (Direction == DMA_DEV_TO_MEM);
 }
 
+/**
+ * Encodes the DMAADDH instruction into the buffer.
+ *
+ * @param DryRun If non-zero, the function returns the size of the instruction without encoding it.
+ * @param Buf The buffer where the instruction is encoded.
+ * @param Addr The address register to be added (source or destination).
+ * @param Val The value to be added to the address register.
+ * @return AL_S32 The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMAADDH(AL_U8 DryRun, AL_CHAR *Buf, DMA_AddrEnum Addr, AL_U16 Val)
 {
     if (DryRun) {
@@ -235,6 +249,13 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMAADDH(AL_U8 DryRun, AL_CHAR *Buf, DMA_AddrEnu
     return SZ_DMAADDH;
 }
 
+/**
+ * Encodes the DMAEND instruction into the buffer.
+ *
+ * @param DryRun If non-zero, the function returns the size of the instruction without encoding it.
+ * @param Buf The buffer where the instruction is encoded.
+ * @return AL_S32 The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMAEND(AL_U8 DryRun, AL_CHAR *Buf)
 {
     if (DryRun) {
@@ -252,6 +273,13 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMAEND(AL_U8 DryRun, AL_CHAR *Buf)
     return SZ_DMAEND;
 }
 
+/**
+ * Copies 4 bytes from the source to the destination.
+ *
+ * @param Dst The destination buffer.
+ * @param Src The source buffer.
+ * @return None.
+ */
 __STATIC_INLINE void AlDma_Dev_Cpy4(AL_CHAR *Dst, AL_CHAR *Src)
 {
     *Dst = *Src;
@@ -260,6 +288,16 @@ __STATIC_INLINE void AlDma_Dev_Cpy4(AL_CHAR *Dst, AL_CHAR *Src)
     *(Dst + 3) = *(Src + 3);
 }
 
+/**
+ * Encodes the DMAGO instruction into the buffer.
+ *
+ * @param DryRun If non-zero, the function returns the size of the instruction without encoding it.
+ * @param Buf The buffer where the instruction is encoded.
+ * @param Chan The channel number.
+ * @param Imm The immediate value.
+ * @param NonSecure Indicates if the operation is non-secure.
+ * @return AL_S32 The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMAGO(AL_U8 DryRun, AL_CHAR *Buf, AL_U8 Chan, AL_U32 Imm, AL_U8 NonSecure)
 {
     if (DryRun) {
@@ -282,6 +320,15 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMAGO(AL_U8 DryRun, AL_CHAR *Buf, AL_U8 Chan, A
     return SZ_DMAGO;
 }
 
+/**
+ * Encodes the DMALP instruction into the buffer.
+ *
+ * @param DryRun If non-zero, the function returns the size of the instruction without encoding it.
+ * @param Buf The buffer where the instruction is encoded.
+ * @param LoopCntr The loop counter (0 or 1).
+ * @param Loops The number of loops.
+ * @return AL_S32 The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMALP(AL_U8 DryRun, AL_CHAR *Buf, AL_U8 LoopCntr, AL_U16 Loops)
 {
     if (DryRun) {
@@ -300,6 +347,15 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMALP(AL_U8 DryRun, AL_CHAR *Buf, AL_U8 LoopCnt
     return SZ_DMALP;
 }
 
+/**
+ * Encodes the DMAMOV instruction into the buffer.
+ *
+ * @param DryRun If non-zero, the function returns the size of the instruction without encoding it.
+ * @param Buf The buffer where the instruction is encoded.
+ * @param RegDest The register destination (SAR, DAR, or CCR).
+ * @param Imm The immediate value to be moved into the register.
+ * @return AL_S32 The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMAMOV(AL_U8 DryRun, AL_CHAR *Buf, DMA_MovEnum RegDest, AL_U32 Imm)
 {
     if (DryRun) {
@@ -325,6 +381,13 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMAMOV(AL_U8 DryRun, AL_CHAR *Buf, DMA_MovEnum 
     return SZ_DMAMOV;
 }
 
+/**
+ * Encodes the DMANOP instruction into the buffer.
+ *
+ * @param DryRun If non-zero, the function returns the size of the instruction without encoding it.
+ * @param Buf The buffer where the instruction is encoded.
+ * @return AL_S32 The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMANOP(AL_U8 DryRun, AL_CHAR *Buf)
 {
     if (DryRun) {
@@ -342,6 +405,13 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMANOP(AL_U8 DryRun, AL_CHAR *Buf)
     return SZ_DMANOP;
 }
 
+/**
+ * Encodes the DMARMB instruction into the buffer.
+ *
+ * @param DryRun If non-zero, the function returns the size of the instruction without encoding it.
+ * @param Buf The buffer where the instruction is encoded.
+ * @return AL_S32 The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMARMB(AL_U8 DryRun, AL_CHAR *Buf)
 {
     if (DryRun) {
@@ -359,6 +429,14 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMARMB(AL_U8 DryRun, AL_CHAR *Buf)
     return SZ_DMARMB;
 }
 
+/**
+ * Encodes the DMASEV instruction into the buffer.
+ *
+ * @param DryRun If non-zero, the function returns the size of the instruction without encoding it.
+ * @param Buf The buffer where the instruction is encoded.
+ * @param Event The event number.
+ * @return AL_S32 The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMASEV(AL_U8 DryRun, AL_CHAR *Buf, AL_U8 Event)
 {
     if (DryRun) {
@@ -377,6 +455,13 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMASEV(AL_U8 DryRun, AL_CHAR *Buf, AL_U8 Event)
     return SZ_DMASEV;
 }
 
+/**
+ * Encodes the DMAWMB instruction into the buffer.
+ *
+ * @param DryRun If non-zero, the function returns the size of the instruction without encoding it.
+ * @param Buf The buffer where the instruction is encoded.
+ * @return AL_S32 The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMAWMB(AL_U8 DryRun, AL_CHAR *Buf)
 {
     if (DryRun) {
@@ -394,6 +479,14 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMAWMB(AL_U8 DryRun, AL_CHAR *Buf)
     return SZ_DMAWMB;
 }
 
+/**
+ * Encodes the DMAFLUSHP instruction into the buffer.
+ *
+ * @param DryRun If non-zero, the function returns the size of the instruction without encoding it.
+ * @param Buf The buffer where the instruction is encoded.
+ * @param Peri The peripheral number.
+ * @return AL_S32 The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMAFLUSHP(AL_U8 DryRun, AL_CHAR *Buf, AL_U8 Peri)
 {
     if (DryRun) {
@@ -415,6 +508,14 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMAFLUSHP(AL_U8 DryRun, AL_CHAR *Buf, AL_U8 Per
     return SZ_DMAFLUSHP;
 }
 
+/**
+ * Encodes the DMALD instruction into the buffer.
+ *
+ * @param DryRun If non-zero, the function returns the size of the instruction without encoding it.
+ * @param Buf The buffer where the instruction is encoded.
+ * @param Cond The condition for the load (single or burst).
+ * @return AL_S32 The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMALD(AL_U8 DryRun, AL_CHAR *Buf, AL_DMA_CondEnum Cond)
 {
     if (DryRun) {
@@ -439,6 +540,15 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMALD(AL_U8 DryRun, AL_CHAR *Buf, AL_DMA_CondEn
     return SZ_DMALD;
 }
 
+/**
+ * Encodes the DMALDP instruction into the buffer.
+ *
+ * @param DryRun If non-zero, the function returns the size of the instruction without encoding it.
+ * @param Buf The buffer where the instruction is encoded.
+ * @param Cond The condition for the load (single or burst).
+ * @param Peri The peripheral number.
+ * @return AL_S32 The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMALDP(AL_U8 DryRun, AL_CHAR *Buf, AL_DMA_CondEnum Cond, AL_U8 Peri)
 {
     if (DryRun) {
@@ -465,6 +575,17 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMALDP(AL_U8 DryRun, AL_CHAR *Buf, AL_DMA_CondE
     return SZ_DMALDP;
 }
 
+/**
+ * Encodes a DMALPEND instruction into the buffer.
+ *
+ * @param DryRun If set to non-zero, the function does not perform encoding but returns the size of the instruction.
+ * @param Buf Pointer to the buffer where the instruction is to be encoded.
+ * @param Cond Condition under which the loop operation is performed.
+ * @param Forever Indicates whether the loop is infinite.
+ * @param Loop Indicates whether looping is enabled.
+ * @param BackJump The number of bytes to jump back at the end of the loop.
+ * @return The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMALPEND(AL_U8 DryRun, AL_CHAR *Buf, AL_DMA_CondEnum Cond, AL_BOOL Forever,
                                           AL_U32 Loop, AL_U8 BackJump)
 {
@@ -502,6 +623,13 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMALPEND(AL_U8 DryRun, AL_CHAR *Buf, AL_DMA_Con
     return SZ_DMALPEND;
 }
 
+/**
+ * Encodes a DMAKILL instruction into the buffer.
+ *
+ * @param DryRun If set to non-zero, the function does not perform encoding but returns the size of the instruction.
+ * @param Buf Pointer to the buffer where the instruction is to be encoded.
+ * @return The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMAKILL(AL_U8 DryRun, AL_CHAR *Buf)
 {
     if (DryRun) {
@@ -517,6 +645,14 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMAKILL(AL_U8 DryRun, AL_CHAR *Buf)
     return SZ_DMAKILL;
 }
 
+/**
+ * Encodes a DMAST instruction into the buffer.
+ *
+ * @param DryRun If set to non-zero, the function does not perform encoding but returns the size of the instruction.
+ * @param Buf Pointer to the buffer where the instruction is to be encoded.
+ * @param Cond Condition under which the store operation is performed.
+ * @return The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMAST(AL_U8 DryRun, AL_CHAR *Buf, AL_DMA_CondEnum Cond)
 {
     if (DryRun) {
@@ -541,6 +677,15 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMAST(AL_U8 DryRun, AL_CHAR *Buf, AL_DMA_CondEn
     return SZ_DMAST;
 }
 
+/**
+ * Encodes a DMASTP instruction into the buffer.
+ *
+ * @param DryRun If set to non-zero, the function does not perform encoding but returns the size of the instruction.
+ * @param Buf Pointer to the buffer where the instruction is to be encoded.
+ * @param Cond Condition under which the store operation is performed.
+ * @param Peri Peripheral number associated with the store operation.
+ * @return The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMASTP(AL_U8 DryRun, AL_CHAR *Buf, AL_DMA_CondEnum Cond, AL_U8 Peri)
 {
     if (DryRun) {
@@ -567,6 +712,13 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMASTP(AL_U8 DryRun, AL_CHAR *Buf, AL_DMA_CondE
     return SZ_DMASTP;
 }
 
+/**
+ * Encodes a DMASTZ instruction into the buffer.
+ *
+ * @param DryRun If set to non-zero, the function does not perform encoding but returns the size of the instruction.
+ * @param Buf Pointer to the buffer where the instruction is to be encoded.
+ * @return The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMASTZ(AL_U8 DryRun, AL_CHAR *Buf)
 {
     if (DryRun) {
@@ -584,6 +736,15 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMASTZ(AL_U8 DryRun, AL_CHAR *Buf)
     return SZ_DMASTZ;
 }
 
+/**
+ * Encodes a DMAWFE instruction into the buffer.
+ *
+ * @param DryRun If set to non-zero, the function does not perform encoding but returns the size of the instruction.
+ * @param Buf Pointer to the buffer where the instruction is to be encoded.
+ * @param Event Event number to wait for.
+ * @param Invalidate Indicates whether to invalidate the event after waiting.
+ * @return The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMAWFE(AL_U8 DryRun, AL_CHAR *Buf, AL_U8 Event, AL_U32 Invalidate)
 {
     if (DryRun) {
@@ -610,6 +771,15 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMAWFE(AL_U8 DryRun, AL_CHAR *Buf, AL_U8 Event,
     return SZ_DMAWFE;
 }
 
+/**
+ * Encodes a DMAWFP instruction into the buffer.
+ *
+ * @param DryRun If set to non-zero, the function does not perform encoding but returns the size of the instruction.
+ * @param Buf Pointer to the buffer where the instruction is to be encoded.
+ * @param Cond Condition under which the wait for peripheral operation is performed.
+ * @param Peri Peripheral number to wait for.
+ * @return The size of the encoded instruction.
+ */
 __STATIC_INLINE AL_S32 DMA_Instr_DMAWFP(AL_U8 DryRun, AL_CHAR *Buf, AL_DMA_CondEnum Cond, AL_U8 Peri)
 {
     if (DryRun) {
@@ -641,6 +811,14 @@ __STATIC_INLINE AL_S32 DMA_Instr_DMAWFP(AL_U8 DryRun, AL_CHAR *Buf, AL_DMA_CondE
     return SZ_DMAWFP;
 }
 
+/**
+ * Loads and stores data from memory to memory in a loop.
+ *
+ * @param DryRun If set to non-zero, the function does not perform encoding but returns the total size of the instructions.
+ * @param Buf Pointer to the buffer where the instructions are to be encoded.
+ * @param Cycle Number of load/store cycles to perform.
+ * @return The total size of the encoded instructions.
+ */
 static AL_S32 AlDma_Dev_LdStMemToMem(AL_U8 DryRun, AL_CHAR *Buf, AL_S32 Cycle)
 {
     AL_S32 Off = 0;
@@ -653,6 +831,16 @@ static AL_S32 AlDma_Dev_LdStMemToMem(AL_U8 DryRun, AL_CHAR *Buf, AL_S32 Cycle)
     return Off;
 }
 
+/**
+ * Loads from a device and stores to memory in a loop.
+ *
+ * @param DryRun If set to non-zero, the function does not perform encoding but returns the total size of the instructions.
+ * @param Dev Pointer to the device structure.
+ * @param Buf Pointer to the buffer where the instructions are to be encoded.
+ * @param XferSpec Pointer to the transfer specification structure.
+ * @param Cycle Number of load/store cycles to perform.
+ * @return The total size of the encoded instructions.
+ */
 static AL_S32 AlDma_Dev_LdStDevToMem(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_CHAR *Buf,
                                      AL_DMA_XferSpecStruct *XferSpec, AL_S32 Cycle)
 {
@@ -672,7 +860,16 @@ static AL_S32 AlDma_Dev_LdStDevToMem(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_CHA
 
     return Off;
 }
-
+/**
+ * Loads from memory and stores to a device in a loop.
+ *
+ * @param DryRun If set to non-zero, the function does not perform encoding but returns the total size of the instructions.
+ * @param Dev Pointer to the device structure.
+ * @param Buf Pointer to the buffer where the instructions are to be encoded.
+ * @param XferSpec Pointer to the transfer specification structure.
+ * @param Cycle Number of load/store cycles to perform.
+ * @return The total size of the encoded instructions.
+ */
 static AL_S32 AlDma_Dev_LdStMemToDev(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_CHAR *Buf,
                                      AL_DMA_XferSpecStruct *XferSpec, AL_S32 Cycle)
 {
@@ -693,6 +890,16 @@ static AL_S32 AlDma_Dev_LdStMemToDev(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_CHA
     return Off;
 }
 
+/**
+ * Performs a burst transfer operation based on the direction specified in the transfer specification.
+ *
+ * @param DryRun If set to non-zero, the function does not perform encoding but returns the total size of the instructions.
+ * @param Dev Pointer to the device structure.
+ * @param Buf Pointer to the buffer where the instructions are to be encoded.
+ * @param XferSpec Pointer to the transfer specification structure.
+ * @param Cycle Number of burst cycles to perform.
+ * @return The total size of the encoded instructions or an error code to scare off the client.
+ */
 static AL_S32 AlDma_Dev_Burst(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_CHAR *Buf,
                               AL_DMA_XferSpecStruct *XferSpec, AL_S32 Cycle)
 {
@@ -716,6 +923,20 @@ static AL_S32 AlDma_Dev_Burst(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_CHAR *Buf,
     return Off;
 }
 
+/**
+ * This function calculates the necessary loop counts for the DMA transfer based on the burst size.
+ * It supports splitting the transfer into multiple loops if the burst size exceeds the maximum loop count limits.
+ * The function handles both single and double loop scenarios and adjusts the burst size accordingly.
+ *
+ * @param DryRun If set to 1, the function performs a dry run without actual data transfer.
+ * @param Dev Pointer to the DMA device structure.
+ * @param Buf Pointer to the buffer where DMA instructions are stored.
+ * @param BurstSize Pointer to the size of the burst. This value is updated based on the loop calculations.
+ * @param XferSpec Pointer to the DMA transfer specification structure.
+ * @return The offset in the buffer after adding the DMA instructions.
+ *
+ *
+ */
 /* Returns bytes consumed and updates bursts */
 static AL_S32 AlDma_Dev_Loop(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_CHAR *Buf, AL_UINTPTR *BurstSize,
                              AL_DMA_XferSpecStruct *XferSpec)
@@ -785,6 +1006,19 @@ static AL_S32 AlDma_Dev_Loop(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_CHAR *Buf, 
     return Off;
 }
 
+/**
+ * This function is responsible for generating the DMA instructions for a periodic transfer.
+ * It calculates the loop count based on the burst size and handles any remainder by adding additional instructions.
+ * The function also adjusts the control register for burst length if necessary.
+ *
+ * @param DryRun If set to 1, performs a dry run without actual data transfer.
+ * @param Dev Pointer to the DMA device structure.
+ * @param Buf Pointer to the buffer where DMA instructions are stored.
+ * @param BurstSize The burst size for the transfer.
+ * @param XferSpec Pointer to the DMA transfer specification structure.
+ * @param Event The event number to signal upon completion.
+ * @return The offset in the buffer after adding the DMA instructions.
+ */
 static AL_S32 AlDma_Dev_Period(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_CHAR *Buf, AL_UINTPTR BurstSize,
                                AL_DMA_XferSpecStruct *XferSpec, AL_S32 Event)
 {
@@ -844,6 +1078,19 @@ static AL_S32 AlDma_Dev_Period(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_CHAR *Buf
     return Off;
 }
 
+/**
+ * This function configures the DMA for cyclic transfers by dividing the total transfer into periods.
+ * It calculates the number of periods and any residue outside of these periods.
+ * The function generates loops for each period and handles the residue with additional instructions.
+ *
+ * @param DryRun If set to 1, performs a dry run without actual data transfer.
+ * @param Dev Pointer to the DMA device structure.
+ * @param Buf Pointer to the buffer where DMA instructions are stored.
+ * @param XferSpec Pointer to the DMA transfer specification structure.
+ * @return The offset in the buffer after setting up the DMA loops.
+ *
+ * @return None.
+ */
 static AL_S32 AlDma_Dev_LoopCyclic(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_CHAR *Buf, AL_UINTPTR BurstSize,
                                    AL_DMA_XferSpecStruct *XferSpec, AL_S32 Event)
 {
@@ -888,6 +1135,20 @@ static AL_S32 AlDma_Dev_LoopCyclic(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_CHAR 
     return Off;
 }
 
+/**
+ *
+ * This function calculates the burst size based on the transfer length and control register settings.
+ * It then calls AlDma_Dev_Loop to handle the actual loop setup for the transfer.
+ * The function adjusts for different transfer directions and interlace sizes.
+ *
+ * @param DryRun Indicates whether the operation is a dry run (for calculation purposes) or an actual execution.
+ * @param Dev Pointer to the DMA device structure.
+ * @param Buf Pointer to the buffer where DMA instructions are stored.
+ * @param BurstSize The burst size of the transfer.
+ * @param XferSpec Pointer to the DMA transfer specification structure.
+ * @param Event The event associated with the transfer.
+ * @return The offset within the buffer after adding the DMA instructions.
+ */
 static AL_S32 AlDma_Dev_SetupLoops(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_CHAR *Buf, AL_DMA_XferSpecStruct *XferSpec)
 {
     AL_DMA_XferStruct *Xfer = &XferSpec->Desc->Xfer;
@@ -916,6 +1177,18 @@ static AL_S32 AlDma_Dev_SetupLoops(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_CHAR 
     return Off;
 }
 
+/**
+ * This function initializes the DMA transfer by setting the source and destination addresses using DMAMOV instructions.
+ * It then calls AlDma_Dev_SetupLoops to configure the necessary loops for the transfer. If the transfer does not require
+ * interlacing and is of type BURST, it adjusts the CCR (Channel Control Register) for burst length and sets up additional loops if needed.
+ *
+ * @param DryRun Indicates whether the operation is a dry run (for calculation purposes) or an actual execution.
+ * @param Dev Pointer to the DMA device structure.
+ * @param Buf Pointer to the buffer where DMA instructions are stored.
+ * @param XferSpec Pointer to the DMA transfer specification structure.
+ * @return The offset within the buffer after adding the DMA instructions.
+ *
+ */
 static AL_S32 AlDma_Dev_SetupXfer(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_CHAR *Buf, AL_DMA_XferSpecStruct *XferSpec)
 {
     AL_DMA_XferStruct *Xfer = &XferSpec->Desc->Xfer;
@@ -948,6 +1221,18 @@ static AL_S32 AlDma_Dev_SetupXfer(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_CHAR *
     return Off;
 }
 
+/**
+ * This function calculates the burst size for a cyclic DMA transfer based on the transfer length, burst size, burst length,
+ * and interlace size. It then configures the transfer loops using AlDma_Dev_LoopCyclic.
+ *
+ * @param DryRun Indicates whether the operation is a dry run (for calculation purposes) or an actual execution.
+ * @param Dev Pointer to the DMA device structure.
+ * @param Buf Pointer to the buffer where DMA instructions are stored.
+ * @param XferSpec Pointer to the DMA transfer specification structure.
+ * @param Event The event associated with the transfer.
+ * @return The offset within the buffer after adding the DMA instructions.
+ *
+ */
 static AL_S32 AlDma_Dev_SetupXferCyclic(AL_U8 DryRun, AL_DMA_DevStruct *Dev,
                               AL_CHAR *Buf, AL_DMA_XferSpecStruct *XferSpec, AL_S32 Event)
 {
@@ -971,12 +1256,12 @@ static AL_S32 AlDma_Dev_SetupXferCyclic(AL_U8 DryRun, AL_DMA_DevStruct *Dev,
 }
 
 /**
- * @brief Conversion from the endian Swap size to the bit encoding of the CCR
+ * This function maps an endian swap size (0, 8, 16, 32, 64, 128) to its corresponding control bits (0 to 4) used in DMA configuration.
+ * If the endian swap size does not match any of the predefined sizes, it returns 0.
  *
- * @param EndianSwapSize: the endian Swap size, in terms of bits, it
- *        could be 8, 16, 32, 64, or 128(We are using Dev assembly syntax)
+ * @param EndianSwapSize The endian swap size in bits.
+ * @return The control bits corresponding to the endian swap size.
  *
- * @return The endian Swap size bit encoding for the CCR.
  */
 __STATIC_INLINE AL_U32 AlDma_Dev_ToendianSwapSizeBits(AL_U32 EndianSwapSize)
 {
@@ -1004,13 +1289,12 @@ __STATIC_INLINE AL_U32 AlDma_Dev_ToendianSwapSizeBits(AL_U32 EndianSwapSize)
 }
 
 /**
- * @brief Conversion from the burst size to the bit encoding of the CCR
+ * This function maps a burst size (1, 2, 4, 8, 16, 32, 64, 128) to its corresponding control bits (0 to 7) used in DMA configuration.
+ * If the burst size does not match any of the predefined sizes, it returns 0.
  *
- * @param BurstSize: is the burst size. It's the data width.
- *        In terms of bytes, it could be 1, 2, 4, 8, 16, 32, 64, or 128.
- *        It must be no larger than the bus width.
+ * @param BurstSize The burst size.
+ * @return The control bits corresponding to the burst size.
  *
- * @return The BurstSize bit encoding for the CCR.
  */
 static AL_U32 AlDma_Dev_ToBurstSizeBits(AL_U32 BurstSize)
 {
@@ -1046,11 +1330,10 @@ static AL_U32 AlDma_Dev_ToBurstSizeBits(AL_U32 BurstSize)
 }
 
 /**
- * @brief Conversion from Dev bus transfer descriptors to CCR value.
+ * Prepares the Control Configuration Register (CCR) value based on the DMA request configuration.
  *
- * @param ReqCfg: request Config.
- *
- * @return The 32-bit CCR value.
+ * @param ReqCfg Pointer to the DMA request configuration structure.
+ * @return The configured CCR value.
  */
 static AL_U32 AlDma_Dev_PrepareCCR(AL_DMA_ReqCfgStruct *ReqCfg)
 {
@@ -1089,6 +1372,14 @@ static AL_U32 AlDma_Dev_PrepareCCR(AL_DMA_ReqCfgStruct *ReqCfg)
     return Ccr;
 }
 
+/**
+ * Calculates the burst length for a DMA transfer based on the device's IP configuration and the transfer length.
+ *
+ * @param Desc Pointer to the DMA descriptor structure.
+ * @param Dev Pointer to the DMA device structure.
+ * @param Len The length of the data to be transferred.
+ * @return The calculated burst length. Returns -1 if the burst length calculation fails.
+ */
 /* Call after fixing burst size */
 static AL_S32 AlDma_Dev_GetBurstLen(AL_DMA_DescStruct *Desc, AL_DMA_DevStruct *Dev, AL_U32 Len)
 {
@@ -1114,14 +1405,12 @@ static AL_S32 AlDma_Dev_GetBurstLen(AL_DMA_DescStruct *Desc, AL_DMA_DevStruct *D
 }
 
 /**
- * @brief Use the debug registers to kill the Dev Thread.
+ * Executes the DMAKILL instruction for a specific channel and thread.
  *
- * @param Reg: the AL_DMA_DmaCtrlRegStruct info.
- * @param Channel: the Dev Channel number.
- * @param Thread: the Debug Thread encoding.
- *        0: Dev manager Thread, 1: Dev Channel.
- *
- * @return 0 on success, -1 on time out
+ * @param Reg Pointer to the DMA control register structure.
+ * @param Channel The DMA channel number.
+ * @param Thread The DMA thread number.
+ * @return 0 on success, AL_DMA_ERR_TIMEOUT if the operation times out.
  */
 static AL_S32 DMA_Exec_DMAKILL(AL_DMA_DmaCtrlRegStruct *Reg, AL_U32 Channel, AL_U32 Thread)
 {
@@ -1154,11 +1443,10 @@ static AL_S32 DMA_Exec_DMAKILL(AL_DMA_DmaCtrlRegStruct *Reg, AL_U32 Channel, AL_
 }
 
 /**
- * @brief Read soc Dev Config.
+ * Reads and updates the DMA device configuration based on the device's control registers.
  *
- * @param Dev: the handle of Dev.
- *
- * return None
+ * @param Dev Pointer to the DMA device structure.
+ * @return None.
  */
 static void AlDma_Dev_ReadConfig(AL_DMA_DevStruct *Dev)
 {
@@ -1196,13 +1484,13 @@ static void AlDma_Dev_ReadConfig(AL_DMA_DevStruct *Dev)
 }
 
 /**
- * @brief Construct the Dev program based on the Dev transfer.
+ * Builds the DMA program for a transfer, optionally performing a dry run to calculate the program length.
  *
- * @param Dev: the handle of Dev.
- * @param XferSpec: Dev xfer spec.
- * @param Channel: the Dev Channel number
- *
- * @return The number of bytes for the program.
+ * @param DryRun If 1, performs a dry run without actually configuring the device. If 0, configures the device.
+ * @param Dev Pointer to the DMA device structure.
+ * @param XferSpec Pointer to the DMA transfer specification structure.
+ * @param Channel The DMA channel number.
+ * @return The offset within the microcode buffer after the program is built. Returns a negative value on failure.
  */
 static AL_S32 AlDma_Dev_BuildDmaProg(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_DMA_XferSpecStruct *XferSpec,
                                      AL_U32 Channel)
@@ -1243,14 +1531,12 @@ static AL_S32 AlDma_Dev_BuildDmaProg(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_DMA
 }
 
 /**
- * @brief Generate a Dev program for the Dev command.
+ * Generates the DMA program for a transfer and writes it to the device's microcode buffer.
  *
- * @param Dev: the handle of Dev.
- * @param XferSpec: Dev xfer spec.
- * @param Channel: the Dev Channel number
- *
- * @return - AL_OK on success.
- *         - AL_DMA_ERR_FAIL on fail.
+ * @param Dev Pointer to the DMA device structure.
+ * @param XferSpec Pointer to the DMA transfer specification structure.
+ * @param Channel The DMA channel number.
+ * @return AL_OK on success, AL_DMA_ERR_FAIL if the program length exceeds the buffer size or other failures occur.
  */
 static AL_S32 AlDma_Dev_GenDmaProg(AL_DMA_DevStruct *Dev, AL_DMA_XferSpecStruct *XferSpec,
                                    AL_U32 Channel)
@@ -1276,13 +1562,12 @@ static AL_S32 AlDma_Dev_GenDmaProg(AL_DMA_DevStruct *Dev, AL_DMA_XferSpecStruct 
 }
 
 /**
- * @brief Execute the DMAGO to start a Channel.
+ * Executes the DMAGO instruction to start a DMA transfer on a specific channel.
  *
- * @param Reg: the AL_DMA_DmaCtrlRegStruct info.
- * @param Channel: the Dev Channel number.
- * @param Addr: Dev program starting address, this should be Dev address
- *
- * @return AL_OK on success, AL_DMA_ERR_TIMEOUT on time out
+ * @param Reg Pointer to the DMA control register structure.
+ * @param Channel The DMA channel number.
+ * @param Addr The address of the DMA program in memory.
+ * @return AL_OK on success, AL_DMA_ERR_TIMEOUT if the operation times out.
  */
 static AL_S32 DMA_Exec_DMAGO(AL_DMA_DmaCtrlRegStruct *Reg, AL_U32 Channel, AL_U32 Addr)
 {
@@ -1332,7 +1617,12 @@ static AL_S32 DMA_Exec_DMAGO(AL_DMA_DmaCtrlRegStruct *Reg, AL_U32 Channel, AL_U3
     return AL_OK;
 }
 
-
+/**
+ * Cleans and invalidates the data buffer associated with a DMA descriptor to ensure data coherency.
+ *
+ * @param Desc Pointer to the DMA descriptor structure.
+ * @return AL_OK on success, AL_DMA_ERR_BUFF_NOT_ALIGN if the buffer or buffer size is not cache line aligned.
+ */
 static AL_S32 AlDma_Dev_CleanInvalidateDataBuf(AL_DMA_DescStruct *Desc)
 {
     /* make sure the Buf and bufsize cache line aligned. */
@@ -1362,11 +1652,10 @@ static AL_S32 AlDma_Dev_CleanInvalidateDataBuf(AL_DMA_DescStruct *Desc)
  */
 
 /**
- * @brief Dev Get Raw IrqStatus
+ * Gets the raw interrupt status from the DMA device.
  *
- * @param Dev: the handle of Dev.
- *
- * @return raw irq status
+ * @param Dev Pointer to the DMA device structure.
+ * @return Raw interrupt status.
  */
 AL_U32 AlDma_Dev_GetRawIrqStatus(AL_DMA_DevStruct *Dev)
 {
@@ -1376,12 +1665,11 @@ AL_U32 AlDma_Dev_GetRawIrqStatus(AL_DMA_DevStruct *Dev)
 }
 
 /**
- * @brief Dev Clear Irq
+ * Clears a specified interrupt for the DMA device.
  *
- * @param Dev: the handle of Dev.
- * @param Irq:   the Channel irq.
- *
- * @return AL_S32
+ * @param Dev Pointer to the DMA device structure.
+ * @param Irq The interrupt number to clear.
+ * @return Status code (AL_OK if successful).
  */
 AL_S32 AlDma_Dev_ClearIrq(AL_DMA_DevStruct *Dev, AL_U32 Irq)
 {
@@ -1393,11 +1681,10 @@ AL_S32 AlDma_Dev_ClearIrq(AL_DMA_DevStruct *Dev, AL_U32 Irq)
 }
 
 /**
- * @brief get the position
+ * Retrieves the current position of the DMA transfer for a specific channel.
  *
- * @param Chan: the handle of AL_DMA_ChStruct.
- *
- * @return the size dma Transferred.
+ * @param Chan Pointer to the DMA channel structure.
+ * @return The number of bytes transferred.
  */
 AL_S32 AlDma_Dev_GetPosition(AL_DMA_ChStruct *Chan)
 {
@@ -1428,7 +1715,11 @@ AL_S32 AlDma_Dev_GetPosition(AL_DMA_ChStruct *Chan)
 
  *  @{
  */
-
+/**
+ * Resets the DMA device.
+ *
+ * @return None.
+ */
 AL_VOID AlDma_Dev_Reset(AL_VOID)
 {
     AL_REG32_WRITE(0xF88060A0, 0x00000000);
@@ -1438,13 +1729,10 @@ AL_VOID AlDma_Dev_Reset(AL_VOID)
 }
 
 /**
- * @brief Initializes a specific Dev dmac.
+ * Initializes the DMA device and its channels.
  *
- * @param Dev: the handle of Dev.
- *
- * @return
- *        - AL_OK on success.
- *        - AL_DMA_ERR_FAIL on fail.
+ * @param Dev Pointer to the DMA device structure.
+ * @return Status code (AL_OK if successful).
  */
 AL_S32 AlDma_Dev_Init(AL_DMA_DevStruct *Dev)
 {
@@ -1466,13 +1754,10 @@ AL_S32 AlDma_Dev_Init(AL_DMA_DevStruct *Dev)
 }
 
 /**
- * @brief DeInitializes a specific Dev dmac.
+ * De-initializes the DMA device.
  *
- * @param Dev: the handle of Dev.
- *
- * @return
- *        - AL_OK on success.
- *        - AL_DMA_ERR_FAIL on fail.
+ * @param Dev Pointer to the DMA device structure.
+ * @return Status code (AL_OK if successful).
  */
 AL_S32 AlDma_Dev_DeInit(AL_DMA_DevStruct *Dev)
 {
@@ -1514,16 +1799,11 @@ AL_S32 AlDma_Dev_DeInit(AL_DMA_DevStruct *Dev)
 
  *  @{
  */
-
 /**
- * @brief Start a Dev Channel with the Desc request.
+ * Starts a DMA transfer on a specific channel.
  *
- * @param Chan: the hanlde of AL_DMA_ChStruct.
- *
- * @return
- *        - AL_OK on success
- *        - HAL_BUSY if Dev is busy
- *        - AL_DMA_ERR_FAIL on other failures
+ * @param Chan Pointer to the DMA channel structure.
+ * @return Status code (AL_OK if successful, AL_DMA_ERR_FAIL if not).
  */
 AL_S32 AlDma_Dev_Start(AL_DMA_ChStruct *Chan)
 {
@@ -1568,14 +1848,10 @@ AL_S32 AlDma_Dev_Start(AL_DMA_ChStruct *Chan)
 }
 
 /**
- * @brief Stop a Dev Channel.
+ * Stops a DMA transfer on a specific channel.
  *
- * @param Chan: the hanlde of AL_DMA_ChStruct.
- *
- * @return
- *        - AL_OK on success
- *        - HAL_BUSY if Dev is busy
- *        - AL_DMA_ERR_FAIL on other failures
+ * @param Chan Pointer to the DMA channel structure.
+ * @return Status code (AL_OK if successful).
  */
 AL_S32 AlDma_Dev_Stop(AL_DMA_ChStruct *Chan)
 {
@@ -1594,6 +1870,14 @@ AL_S32 AlDma_Dev_Stop(AL_DMA_ChStruct *Chan)
     return AL_OK;
 }
 
+/**
+ * Registers an event callback function for a specific DMA channel.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @param CallBack The callback function to register.
+ * @param CallBackRef User-defined reference passed to the callback function.
+ * @return Status code (AL_OK if successful).
+ */
 AL_S32 AlDma_Dev_RegisterEventCallBack(AL_DMA_ChStruct *Channel, AL_DMA_EventCallBack CallBack, AL_VOID *CallBackRef)
 {
    AL_ASSERT(Channel != AL_NULL, AL_ERR_NULL_PTR);
@@ -1609,6 +1893,12 @@ AL_S32 AlDma_Dev_RegisterEventCallBack(AL_DMA_ChStruct *Channel, AL_DMA_EventCal
     return AL_OK;
 }
 
+/**
+ * Unregisters the event callback function for a specific DMA channel.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @return Status code (AL_OK if successful).
+ */
 AL_S32 AlDma_Dev_UnRegisterEventCallBack(AL_DMA_ChStruct *Channel)
 {
    AL_ASSERT(Channel != AL_NULL, AL_ERR_NULL_PTR);
@@ -1620,11 +1910,10 @@ AL_S32 AlDma_Dev_UnRegisterEventCallBack(AL_DMA_ChStruct *Channel)
 }
 
 /**
- * @brief Dev IrqHandler
+ * Handles IRQ for a specific DMA channel.
  *
- * @param Dev: the handle of Dev.
- *
- * @return: raw irq status
+ * @param Channel Pointer to the DMA channel structure.
+ * @return None.
  */
 AL_VOID AlDma_Dev_IrqHandler(AL_VOID *Channel)
 {
@@ -1682,14 +1971,11 @@ AL_VOID AlDma_Dev_IrqHandler(AL_VOID *Channel)
 
 #if 0
 /**
- * @brief Set mc Buf resource for chan
+ * Sets the microcontroller buffer for a DMA channel.
  *
- * @param Chan: the handle of AL_DMA_ChStruct.
- * @param Buf: mc Buf Addr.
- *
- * @return AL_S32.
- *
- * @note must be invoked before function AlDma_Dev_PrepDmaXXX.
+ * @param Chan Pointer to the DMA channel structure.
+ * @param Buf Address of the microcontroller buffer.
+ * @return Status code (AL_OK if successful).
  */
 AL_S32 AlDma_Dev_SetMcBuf(AL_DMA_ChStruct *Chan, void *Buf)
 {
@@ -1704,11 +1990,10 @@ AL_S32 AlDma_Dev_SetMcBuf(AL_DMA_ChStruct *Chan, void *Buf)
 #endif
 
 /**
- * @brief Get mc Buf resource of chan
+ * Gets the microcontroller buffer for a DMA channel.
  *
- * @param Chan: the handle of AL_DMA_ChStruct.
- *
- * @return mc Buf Addr.
+ * @param Chan Pointer to the DMA channel structure.
+ * @return Pointer to the microcontroller buffer.
  */
 void *AlDma_Dev_GetMcBuf(AL_DMA_ChStruct *Chan)
 {
@@ -1716,11 +2001,10 @@ void *AlDma_Dev_GetMcBuf(AL_DMA_ChStruct *Chan)
 }
 
 /**
- * @brief Get Desc resource of chan
+ * Retrieves the descriptor for a DMA channel.
  *
- * @param Chan: the handle of AL_DMA_ChStruct.
- *
- * @return Desc ptr.
+ * @param Chan Pointer to the DMA channel structure.
+ * @return Pointer to the DMA descriptor.
  */
 const AL_DMA_DescStruct *AlDma_Dev_GetDesc(AL_DMA_ChStruct *Chan)
 {
@@ -1728,12 +2012,10 @@ const AL_DMA_DescStruct *AlDma_Dev_GetDesc(AL_DMA_ChStruct *Chan)
 }
 
 /**
- * @brief Request a dma Channel
+ * Requests a DMA channel from the DMA device.
  *
- * @param Dev: the handle of AL_DMA_DevStruct.
- * @param id: the Peri id.
- *
- * @return a idle dma Channel.
+ * @param Dev Pointer to the DMA device structure.
+ * @return Pointer to the allocated DMA channel structure, or NULL if no channel is available.
  */
 AL_DMA_ChStruct *AlDma_Dev_RequestChannel(AL_DMA_DevStruct *Dev)
 {
@@ -1756,13 +2038,11 @@ AL_DMA_ChStruct *AlDma_Dev_RequestChannel(AL_DMA_DevStruct *Dev)
 }
 
 /**
- * @brief Release a dma Channel
+ * Releases a DMA channel.
  *
- * @param Chan: the handle of AL_DMA_ChStruct.
- *
- * @return
- *        - AL_OK on success.
- *        - AL_DMA_ERR_FAIL on fail.
+ * @param Chan Pointer to the DMA channel structure.
+ * @return AL_OK on success, error code otherwise.
+ * None
  */
 AL_S32 AlDma_Dev_ReleaseChannel(AL_DMA_ChStruct *Chan)
 {
@@ -1775,14 +2055,12 @@ AL_S32 AlDma_Dev_ReleaseChannel(AL_DMA_ChStruct *Chan)
 }
 
 /**
- * @brief Config a Dev dma Channel
+ * Configures a DMA channel with specific settings.
  *
- * @param Chan: the handle of AL_DMA_ChStruct.
- * @param Config: the Peri req Config.
- *
- * @return
- *        - AL_OK on success.
- *        - AL_DMA_ERR_FAIL on fail.
+ * @param Chan Pointer to the DMA channel structure to configure.
+ * @param Config Pointer to the configuration structure containing the new settings.
+ * @return AL_OK on success, error code otherwise.
+ * None
  */
 AL_S32 AlDma_Dev_Config(AL_DMA_ChStruct *Chan, AL_DMA_ChCfgStruct *Config)
 {
@@ -1822,17 +2100,15 @@ AL_S32 AlDma_Dev_Config(AL_DMA_ChStruct *Chan, AL_DMA_ChCfgStruct *Config)
 }
 
 /**
- * @brief Prepare a Cyclic dma transfer for the Channel
+ * Prepares a DMA channel for cyclic DMA operations.
  *
- * @param Chan: the handle of AL_DMA_ChStruct.
- * @param MemAddr: the memory Addr.
- * @param Len: data len.
- * @param PeriodLen: periodic len.
- * @param Direction: transfer Direction.
- *
- * @return
- *        - AL_OK on success.
- *        - AL_DMA_ERR_FAIL on fail.
+ * @param Chan Pointer to the DMA channel structure.
+ * @param MemAddr Memory address for the DMA operation.
+ * @param Len Length of the data to be transferred.
+ * @param PeriodLen Length of one period in the cyclic transfer.
+ * @param Direction Direction of the DMA transfer (memory to device or device to memory).
+ * @return AL_OK on success, error code otherwise.
+ * None
  */
 AL_S32 AlDma_Dev_PrepDmaCyclic(AL_DMA_ChStruct *Chan, AL_U32 MemAddr, AL_U32 Len, AL_U32 PeriodLen,
                                AL_DMA_TransEnum Direction)
@@ -1893,16 +2169,14 @@ AL_S32 AlDma_Dev_PrepDmaCyclic(AL_DMA_ChStruct *Chan, AL_U32 MemAddr, AL_U32 Len
 }
 
 /**
- * @brief Prepare a single dma transfer for the Channel
+ * Prepares a DMA channel for a single DMA operation.
  *
- * @param Chan: the handle of AL_DMA_ChStruct.
- * @param MemAddr: the memory Addr.
- * @param Len: data len.
- * @param Direction: transfer Direction.
- *
- * @return
- *        - AL_OK on success.
- *        - AL_DMA_ERR_FAIL on fail.
+ * @param Chan Pointer to the DMA channel structure.
+ * @param MemAddr Memory address for the DMA operation.
+ * @param Len Length of the data to be transferred.
+ * @param Direction Direction of the DMA transfer (memory to device or device to memory).
+ * @return AL_OK on success, error code otherwise.
+ * None
  */
 AL_S32 AlDma_Dev_PrepDmaSingle(AL_DMA_ChStruct *Chan, AL_U32 MemAddr, AL_U32 Len, AL_DMA_TransEnum Direction)
 {
@@ -1956,16 +2230,14 @@ AL_S32 AlDma_Dev_PrepDmaSingle(AL_DMA_ChStruct *Chan, AL_U32 MemAddr, AL_U32 Len
 }
 
 /**
- * @brief Prepare a dma memcpy
+ * Prepares a DMA channel for a memcpy-like operation.
  *
- * @param Chan: the handle of AL_DMA_ChStruct.
- * @param Dst: the memory Dst Addr.
- * @param Src: the memory Src Addr.
- * @param Len: data len.
- *
- * @return
- *        - AL_OK on success.
- *        - AL_DMA_ERR_FAIL on fail.
+ * @param Chan Pointer to the DMA channel structure.
+ * @param Dst Destination memory address for the memcpy operation.
+ * @param Src Source memory address for the memcpy operation.
+ * @param Len Length of the data to be copied.
+ * @return AL_OK on success, error code otherwise.
+ * None
  */
 AL_S32 AlDma_Dev_PrepDmaMemcpy(AL_DMA_ChStruct *Chan, AL_U32 Dst, AL_U32 Src, AL_U32 Len)
 {
@@ -2018,16 +2290,36 @@ AL_S32 AlDma_Dev_PrepDmaMemcpy(AL_DMA_ChStruct *Chan, AL_U32 Dst, AL_U32 Src, AL
     return AlDma_Dev_CleanInvalidateDataBuf(Desc);
 }
 
+/**
+ * Attempts to acquire a lock for a DMA operation.
+ *
+ * @param LockAddr Address of the lock register.
+ * @return AL_TRUE if the lock was successfully acquired, AL_FALSE otherwise.
+ * None
+ */
 AL_BOOL AlDma_Dev_FetchLock(AL_REG LockAddr)
 {
     return (AL_BOOL)AL_REG32_GET_BIT(LockAddr, 0);
 }
 
+/**
+ * Releases a previously acquired lock.
+ *
+ * @param LockAddr Address of the lock register.
+ * None
+ */
 AL_VOID AlDma_Dev_ReleaseLock(AL_REG LockAddr)
 {
     AL_REG32_SET_BIT(LockAddr, 0, AL_FUNC_ENABLE);
 }
 
+/**
+ * Looks up the hardware configuration for a given DMA device ID.
+ *
+ * @param DevId The device ID for which to lookup the configuration.
+ * @return Pointer to the DMA hardware configuration structure if found, NULL otherwise.
+ * None
+ */
 AL_DMA_HwConfigStruct *AlDma_Dev_LookupConfig(AL_U32 DevId)
 {
     AL_U32 Index = 0;

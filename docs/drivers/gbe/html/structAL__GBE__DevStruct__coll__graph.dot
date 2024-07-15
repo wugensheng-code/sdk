@@ -1,0 +1,26 @@
+digraph "AL_GBE_DevStruct"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="AL_GBE_DevStruct",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" TxDescList" ,fontname="Helvetica"];
+  Node2 [label="AL_GBE_TxDescListStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__GBE__TxDescListStruct.html"];
+  Node3 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" InitConfig" ,fontname="Helvetica"];
+  Node3 [label="AL_GBE_InitStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__GBE__InitStruct.html"];
+  Node4 -> Node3 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" RxDescList\nTxDescList" ,fontname="Helvetica"];
+  Node4 [label="AL_GBE_DMADescStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__GBE__DMADescStruct.html"];
+  Node5 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" HwConfig" ,fontname="Helvetica"];
+  Node5 [label="AL_GBE_HwConfigStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__GBE__HwConfigStruct.html"];
+  Node6 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" RxDescList" ,fontname="Helvetica"];
+  Node6 [label="AL_GBE_RxDescListStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__GBE__RxDescListStruct.html"];
+  Node7 -> Node6 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" RxTimeStamp" ,fontname="Helvetica"];
+  Node7 [label="AL_GBE_TimeStampStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__GBE__TimeStampStruct.html"];
+  Node8 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" MacDmaConfig" ,fontname="Helvetica"];
+  Node8 [label="AL_GBE_MacDmaConfigStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__GBE__MacDmaConfigStruct.html"];
+  Node9 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" EventCallBack" ,fontname="Helvetica"];
+  Node9 [label="AL_GBE_EventStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__GBE__EventStruct.html"];
+  Node10 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" PtpConfig" ,fontname="Helvetica"];
+  Node10 [label="AL_GBE_PtpConfigStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__GBE__PtpConfigStruct.html"];
+  Node7 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" TxTimeStamp" ,fontname="Helvetica"];
+}

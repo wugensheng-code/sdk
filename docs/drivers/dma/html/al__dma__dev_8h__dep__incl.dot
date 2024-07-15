@@ -1,0 +1,22 @@
+digraph "fpsoc/driver/ps_driver/dma/inc/al_dma_dev.h"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node3 [label="fpsoc/driver/ps_driver\l/dma/inc/al_dma_dev.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="fpsoc/driver/ps_driver\l/dma/inc/al_dma_hal.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__dma__hal_8h.html"];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="fpsoc/driver/ps_driver\l/dma/example/al_dma_mem_cpy.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__dma__mem__cpy_8c.html"];
+  Node4 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="fpsoc/driver/ps_driver\l/dma/example/al_dma_mem\l_cpy_blocked.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__dma__mem__cpy__blocked_8c.html"];
+  Node4 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="fpsoc/driver/ps_driver\l/dma/example/al_dma_mem\l_cpy_performance.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__dma__mem__cpy__performance_8c.html"];
+  Node4 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="fpsoc/driver/ps_driver\l/dma/example/al_dma_per\l_cpy_cycle.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__dma__per__cpy__cycle_8c.html"];
+  Node4 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="fpsoc/driver/ps_driver\l/dma/example/al_dma_per\l_cpy_single.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__dma__per__cpy__single_8c.html"];
+  Node4 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="fpsoc/driver/ps_driver\l/dma/src/al_dma_hal.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__dma__hal_8c.html"];
+  Node3 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="fpsoc/driver/ps_driver\l/dma/src/al_dma_dev.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__dma__dev_8c.html"];
+}

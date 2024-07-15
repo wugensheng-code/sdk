@@ -53,7 +53,14 @@ static AL_CAN_FrameStruct ExFrame = {
 static AL_S32 AlCan_Test_FdStbFifoBlocked(AL_VOID);
 
 /************************** Function Definitions ******************************/
-
+/**
+ *
+ * This function initializes the test environment and starts the CAN FD STB FIFO blocked test
+ * by calling AlCan_Test_FdStbFifoBlocked. It logs the start of the test, checks the return value
+ * of the test function to determine success or failure, and logs the appropriate message before exiting.
+ *
+ * @return AL_OK if the test is successful, an error code otherwise.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -71,6 +78,18 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ *
+ * This function initializes the CAN hardware with a specific configuration for FIFO mode and enters a loop
+ * where it periodically sends and receives CAN frames. The sending of frames is blocked until a frame
+ * is successfully sent or a timeout occurs. The function also handles receiving frames, checking for errors,
+ * and displaying received frames. The loop continues indefinitely, simulating a real-world scenario
+ * where a device continuously sends and receives CAN frames.
+ *
+ * @return AL_OK if the loop runs without errors,
+ *         AL_ERR_UNAVAILABLE if a frame is not available for reception,
+ *         or other error codes for different errors encountered during the test.
+ */
 static AL_S32 AlCan_Test_FdStbFifoBlocked(AL_VOID)
 {
     AL_U32 Ret = AL_OK;

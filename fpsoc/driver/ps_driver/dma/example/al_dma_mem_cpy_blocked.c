@@ -37,7 +37,13 @@ AL_DMA_ChCfgStruct Config = {
 static AL_S32 AlDma_Test_MemCpyBlocked(AL_VOID);
 
 /************************** Function Definitions ******************************/
-
+/**
+ * This function initializes the DMA hardware, performs a memory copy operation in a blocked manner,
+ * and then deinitializes the DMA hardware. It logs information about the operation and checks for errors
+ * at each step. If an error occurs, it logs the error and exits with the error code.
+ *
+ * @return AL_S32 Returns AL_OK on success or an error code on failure.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -55,6 +61,15 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ * This function allocates source and destination memory buffers, initializes the DMA hardware for a memory
+ * to memory transfer, and performs a series of memory copy operations in a loop. Each loop iteration copies
+ * data from the source buffer to the destination buffer, verifies the copied data, and then clears the destination
+ * buffer for the next iteration. It also handles cache flushing if MMU is enabled. If any step fails, it logs
+ * the error, releases resources, and returns the error code.
+ *
+ * @return AL_S32 Returns AL_OK on success or an error code on failure.
+ */
 static AL_S32 AlDma_Test_MemCpyBlocked(AL_VOID)
 {
     AL_U32 Ret = AL_OK;

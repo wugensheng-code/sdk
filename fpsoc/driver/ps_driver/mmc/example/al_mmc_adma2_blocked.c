@@ -69,7 +69,6 @@ AL_S32 main(AL_VOID)
 }
 
 /**
- * Performs the ADMA2 blocked test on the MMC device.
  *
  * This function tests the MMC device using ADMA2 in blocked mode. It allocates memory for write and read
  * operations, initializes the MMC hardware, and performs write and read operations in a loop. Each loop

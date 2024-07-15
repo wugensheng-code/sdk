@@ -77,11 +77,11 @@ AL_VOID AlDmacAhb_Dev_ClrState(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChStateE
 
 /************************** Function Definitions ******************************/
 /**
- * This function look up hardware config structure
- * @param   DeviceId is hardware module id
- * @return  hardware config structure with AL_DMACAHB_HwConfigStruct
- * @note
-*/
+ * This function looks up the hardware configuration for a given device ID.
+ *
+ * @param DeviceId The unique identifier for the device.
+ * @return A pointer to the hardware configuration structure if found, otherwise NULL.
+ */
 AL_DMACAHB_HwConfigStruct *AlDmacAhb_Dev_LookupConfig(AL_U32 DeviceId)
 {
     AL_U32 Index;
@@ -98,11 +98,11 @@ AL_DMACAHB_HwConfigStruct *AlDmacAhb_Dev_LookupConfig(AL_U32 DeviceId)
 }
 
 /**
- * This function clear all intr of specified channel
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @return
- * @note
-*/
+ * This function clears all interrupts for a given DMA channel.
+ *
+ * @param Channel A pointer to the DMA channel structure.
+ * @return AL_OK on success, error code on failure.
+ */
 AL_S32 AlDmacAhb_Dev_ClrChAllIntr(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
@@ -120,11 +120,11 @@ AL_S32 AlDmacAhb_Dev_ClrChAllIntr(AL_DMACAHB_ChStruct *Channel)
 }
 
 /**
- * This function unmask intr of specified channel
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @return
- * @note
-*/
+ * This function unmasks interrupts for a given DMA channel based on its configuration.
+ *
+ * @param Channel A pointer to the DMA channel structure.
+ * @return AL_OK on success, error code on failure.
+ */
 AL_S32 AlDmacAhb_Dev_UnmaskChIntr(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
@@ -152,11 +152,11 @@ AL_S32 AlDmacAhb_Dev_UnmaskChIntr(AL_DMACAHB_ChStruct *Channel)
 }
 
 /**
- * This function mask intr of specified channel
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @return
- * @note
-*/
+ * This function masks interrupts for a given DMA channel based on its configuration.
+ *
+ * @param Channel A pointer to the DMA channel structure.
+ * @return AL_OK on success, error code on failure.
+ */
 AL_S32 AlDmacAhb_Dev_MaskChIntr(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
@@ -184,12 +184,11 @@ AL_S32 AlDmacAhb_Dev_MaskChIntr(AL_DMACAHB_ChStruct *Channel)
 }
 
 /**
- * This function set trans type of specified channel
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @return
- *          - AL_OK
- * @note
-*/
+ * This function sets the transaction type for a given DMA channel.
+ *
+ * @param Channel A pointer to the DMA channel structure.
+ * @return AL_OK on success, AL_DMACAHB_ERR_ILLEGAL_PARAM if an invalid transaction type is specified, error code on failure.
+ */
 AL_S32 AlDmacAhb_Dev_SetTransType(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
@@ -280,10 +279,11 @@ AL_S32 AlDmacAhb_Dev_SetTransType(AL_DMACAHB_ChStruct *Channel)
 }
 
 /**
- * This function set CTL low register of specified channel
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @note
-*/
+ * This function sets the control register low part for a given DMA channel.
+ *
+ * @param Channel A pointer to the DMA channel structure.
+ * @return AL_OK on success, error code on failure.
+ */
 AL_S32 AlDmacAhb_Dev_SetCtlLoReg(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
@@ -311,10 +311,11 @@ AL_S32 AlDmacAhb_Dev_SetCtlLoReg(AL_DMACAHB_ChStruct *Channel)
 }
 
 /**
- * This function set CFG low register of specified channel
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @note
-*/
+ * This function sets the configuration register low part for a given DMA channel.
+ *
+ * @param Channel A pointer to the DMA channel structure.
+ * @return AL_OK on success, error code on failure.
+ */
 AL_S32 AlDmacAhb_Dev_SetCfgLoReg(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
@@ -335,10 +336,14 @@ AL_S32 AlDmacAhb_Dev_SetCfgLoReg(AL_DMACAHB_ChStruct *Channel)
 }
 
 /**
- * This function set CFG high register of specified channel
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @note
-*/
+ *
+ * This function configures the high register of a DMA channel based on the channel's configuration settings.
+ * It sets the FIFO mode, protection control, and source/destination peripherals for handshaking, if hardware handshaking is used.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @return AL_OK on success, error code otherwise.
+ * @param None
+ */
 AL_S32 AlDmacAhb_Dev_SetCfgHiReg(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
@@ -362,10 +367,14 @@ AL_S32 AlDmacAhb_Dev_SetCfgHiReg(AL_DMACAHB_ChStruct *Channel)
 }
 
 /**
- * This function set src gather and dst scatter of specified channel
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @note
-*/
+ *
+ * This function configures the scatter-gather settings for a DMA channel, enabling and setting the source gather and
+ * destination scatter intervals and counts if they are enabled in the channel's configuration.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @return AL_OK on success, error code otherwise.
+ * @param None
+ */
 AL_S32 AlDmacAhb_Dev_SetSgrDsr(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
@@ -386,11 +395,13 @@ AL_S32 AlDmacAhb_Dev_SetSgrDsr(AL_DMACAHB_ChStruct *Channel)
 }
 
 /**
- * This function fill Lli struct with ctl register to specified channel
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @param   c
- * @note
-*/
+ *
+ * This function reads the control information from the DMA channel's registers and fills the provided linked list item structure with this information.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @param Lli Pointer to the linked list item structure to be filled.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlDmacAhb_Dev_FillLliWithCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_LliStruct *Lli)
 {
     AL_ASSERT((Channel != AL_NULL) && (Lli != AL_NULL), AL_DMACAHB_ERR_NULL_PTR);
@@ -586,15 +597,16 @@ static AL_S32 AlDmacahb_Dev_CheckAddrAlign(AL_DMACAHB_ChStruct *Channel)
 #endif
 
 /**
- * This function set channel trans params
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @return
- *          - AL_DMACAHB_ERR_NULL_PTR Channel is NULL
- *          - AL_DMACAHB_ERR_ADDR_NOT_ALIGN src or dst address not align with their trans width
- *          - AL_DMACAHB_ERR_STATE_NOT_READY channel not ready
- *          - AL_OK start success
- * @note
-*/
+ *
+ * This function performs cache operations to ensure data coherency for DMA operations. It flushes the source address data from the cache and
+ * invalidates the destination address data in the cache. The operation varies depending on the transaction type configured for the channel.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @return AL_OK on success,
+ *         AL_DMACAHB_ERR_NULL_PTR if the channel is NULL,
+ *         AL_DMACAHB_ERR_ADDR_NOT_ALIGN if the source or destination address is not aligned,
+ *         AL_DMACAHB_ERR_STATE_NOT_READY if the channel is not ready, or other error codes as appropriate.
+ */
 AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
@@ -671,15 +683,11 @@ AL_S32 AlDmacAhb_Dev_SetTransParams(AL_DMACAHB_ChStruct *Channel)
 }
 
 /**
- * This function set channel trans soft handshaking request
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @return
- *          - AL_DMACAHB_ERR_NULL_PTR Channel is NULL
- *          - AL_DMACAHB_ERR_ADDR_NOT_ALIGN src or dst address not align with their trans width
- *          - AL_DMACAHB_ERR_STATE_NOT_READY channel not ready
- *          - AL_OK start success
- * @note
-*/
+ * This function checks the current state of the channel and decides whether to initiate a burst transfer or a single transfer based on the channel's mode and remaining transfer count.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlDmacAhb_Dev_SoftRequest(AL_DMACAHB_ChStruct *Channel)
 {
     AL_S32 Ret = AL_OK;
@@ -709,15 +717,11 @@ AL_S32 AlDmacAhb_Dev_SoftRequest(AL_DMACAHB_ChStruct *Channel)
 }
 
 /**
- * This function set channel trans params and enable it
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @return
- *          - AL_DMACAHB_ERR_NULL_PTR Channel is NULL
- *          - AL_DMACAHB_ERR_ADDR_NOT_ALIGN src or dst address not align with their trans width
- *          - AL_DMACAHB_ERR_STATE_NOT_READY channel not ready
- *          - AL_OK start success
- * @note
-*/
+ * This function sets the channel's transfer parameters and enables the channel for transfer.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlDmacAhb_Dev_Start(AL_DMACAHB_ChStruct *Channel)
 {
     AL_S32 Ret;
@@ -734,6 +738,13 @@ AL_S32 AlDmacAhb_Dev_Start(AL_DMACAHB_ChStruct *Channel)
     return AL_OK;
 }
 
+/**
+ * This function checks each field of the configuration structures to ensure they match exactly. It is used to avoid reinitializing a channel with the same configuration.
+ *
+ * @param Dst Destination channel initialization structure.
+ * @param Src Source channel initialization structure.
+ * @return AL_TRUE if the configurations are identical, AL_FALSE otherwise.
+ */
 static inline AL_BOOL AlDmacahb_Dev_IsSameInitConfig(AL_DMACAHB_ChInitStruct Dst, AL_DMACAHB_ChInitStruct Src)
 {
     if (Dst.TransType != Src.TransType || Dst.SrcTransWidth != Src.SrcTransWidth || Dst.DstTransWidth != Src.DstTransWidth ||
@@ -795,14 +806,13 @@ static inline AL_BOOL AlDmacahb_Dev_IsSameInitConfig(AL_DMACAHB_ChInitStruct Dst
 }
 
 /**
- * This function init DMACAHB module
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @param   HwConfigs is hardware config structure with AL_DMACAHB_HwConfigStruct
- * @param   InitConfig is module config structure with AL_DMACAHB_InitStruct
- * @return
- *          - AL_OK is init done
- * @note
-*/
+ * This function sets up the DMA channel based on the provided configurations, including setting the base address, device ID, and other parameters. It also checks if the channel is already initialized with the same configuration to avoid redundancy.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @param HwConfig Pointer to the hardware configuration structure.
+ * @param InitConfig Pointer to the initialization configuration structure. If NULL, default configuration is used.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlDmacAhb_Dev_Init(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_HwConfigStruct *HwConfig,
                           AL_DMACAHB_ChInitStruct *InitConfig)
 {
@@ -848,12 +858,11 @@ AL_S32 AlDmacAhb_Dev_Init(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_HwConfigStruc
 }
 
 /**
- * This function deinit DMACAHB module
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @return
- *          - AL_OK is init done
- * @note
-*/
+ * This function disables the channel, clears its configuration, and resets the associated DMA controller if no other channels are active.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlDmacAhb_Dev_DeInit(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
@@ -876,14 +885,13 @@ AL_S32 AlDmacAhb_Dev_DeInit(AL_DMACAHB_ChStruct *Channel)
 }
 
 /**
- * This function register interrupt call back function
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @param   CallBack is call back struct with AL_DMACAHB_CallBackStruct
- * @param   CallBackRef is call back reference param
- * @return
- *          - AL_OK is register correct
- * @note
-*/
+ * This function sets a callback to be invoked on specific events related to the DMA channel. If a callback is already registered, it will be replaced.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @param CallBack Function pointer to the callback function.
+ * @param CallBackRef User-defined reference passed to the callback function.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlDmacAhb_Dev_RegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChEventCallBack CallBack,
                                              AL_VOID *CallBackRef)
 {
@@ -904,12 +912,11 @@ AL_S32 AlDmacAhb_Dev_RegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel, AL_DM
 }
 
 /**
- * This function unregister interrupt call back function
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @return
- *          - AL_OK is unregister correct
- * @note
-*/
+ * This function removes the currently registered callback function for the specified DMA channel.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @return AL_OK on success, error code otherwise.
+ */
 AL_S32 AlDmacAhb_Dev_UnRegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel)
 {
     AL_ASSERT(Channel != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
@@ -920,47 +927,48 @@ AL_S32 AlDmacAhb_Dev_UnRegisterChEventCallBack(AL_DMACAHB_ChStruct *Channel)
 }
 
 /**
- * This function get module status
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @param   State is enum to AL_DMACAHB_ChStateEnum
- * @return  is this state active or not
- * @note
-*/
+ * This function returns the current state of the specified DMA channel, indicating whether it matches the queried state.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @param State The state to check against the channel's current state.
+ * @return AL_TRUE if the current state matches the queried state, AL_FALSE otherwise.
+ */
 AL_BOOL AlDmacAhb_Dev_GetState(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChStateEnum State)
 {
     return ((Channel->State & State) ? AL_TRUE : AL_FALSE);
 }
 
 /**
- * This function set module status
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @param   State is enum to AL_DMACAHB_ChStateEnum
- * @return
- * @note
-*/
+ * This function adds the specified state to the channel's current state.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @param State The state to be added to the channel's current state.
+ * @return None.
+ */
 AL_VOID AlDmacAhb_Dev_SetState(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChStateEnum State)
 {
     Channel->State |= State;
 }
 
 /**
- * This function clr module status
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @param   State is enum to AL_DMACAHB_ChStateEnum
- * @return
- * @note
-*/
+ * This function removes the specified state from the channel's current state.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @param State The state to be removed from the channel's current state.
+ * @return None.
+ */
 AL_VOID AlDmacAhb_Dev_ClrState(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_ChStateEnum State)
 {
     Channel->State &= ~State;
 }
 
 /**
- * This function handle trans complete intr
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @return
- * @note
-*/
+ * This function is called when a DMA transfer is complete. It updates the state of the channel,
+ * clears the state based on the transfer type, and invokes the event callback associated with the channel.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @return None.
+ */
 static AL_VOID AlDmacAhb_Dev_TransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
     AL_DMACAHB_ChStateEnum State;
@@ -978,11 +986,12 @@ static AL_VOID AlDmacAhb_Dev_TransCompHandler(AL_DMACAHB_ChStruct *Channel)
 }
 
 /**
- * This function handle block trans complete intr
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @return
- * @note
-*/
+ * This function is called when a block transfer is complete. It updates the state of the channel,
+ * manages reload operations if necessary, and invokes the event callback associated with the channel.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @return None.
+ */
 static AL_VOID AlDmacAhb_Dev_BlockTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
     AL_DMACAHB_ChStateEnum State = AL_DMACAHB_STATE_NOT_INIT;
@@ -1012,11 +1021,11 @@ static AL_VOID AlDmacAhb_Dev_BlockTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 }
 
 /**
- * This function handle src trans complete intr
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @return
- * @note
-*/
+ * This function is called when a source transfer is complete. It invokes the event callback associated with the channel.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @return None.
+ */
 static AL_VOID AlDmacAhb_Dev_SrcTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb Channel %d block src trans complete!\r\n", Channel->Config.Id);
@@ -1028,11 +1037,12 @@ static AL_VOID AlDmacAhb_Dev_SrcTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 }
 
 /**
- * This function handle dst trans complete intr
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @return
- * @note
-*/
+ * Handles the completion of a destination transfer for a specific channel.
+ * This function is called when a destination transfer is complete. It invokes the event callback associated with the channel.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @return None.
+ */
 static AL_VOID AlDmacAhb_Dev_DstTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 {
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Dmacahb Channel %d block dst trans complete!\r\n", Channel->Config.Id);
@@ -1044,11 +1054,11 @@ static AL_VOID AlDmacAhb_Dev_DstTransCompHandler(AL_DMACAHB_ChStruct *Channel)
 }
 
 /**
- * This function handle channel error intr
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @return
- * @note
-*/
+ * This function is called when an error occurs in the DMA operation. It invokes the event callback associated with the channel.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @return None.
+ */
 static AL_VOID AlDmacAhb_Dev_ErrHandler(AL_DMACAHB_ChStruct *Channel)
 {
     AL_LOG(AL_LOG_LEVEL_DEBUG, "DmacAhb ErrHandler\r\n");
@@ -1060,11 +1070,11 @@ static AL_VOID AlDmacAhb_Dev_ErrHandler(AL_DMACAHB_ChStruct *Channel)
 }
 
 /**
- * This function is intr call back
- * @param   Instance is pointer to intr call back reference
- * @return
- * @note
-*/
+ * This function is called when a DMA interrupt occurs. It checks the type of interrupt and calls the appropriate handler function for each active channel.
+ *
+ * @param Instance Pointer to the DMA instance structure.
+ * @return None.
+ */
 AL_VOID AlDmacAhb_Dev_IntrHandler(AL_VOID *Instance)
 {
     AL_DMACAHB_DmacStruct *Dmac = (AL_DMACAHB_DmacStruct *)Instance;
@@ -1122,14 +1132,14 @@ AL_VOID AlDmacAhb_Dev_IntrHandler(AL_VOID *Instance)
 }
 
 /**
- * This function excute operations exclude dma start
- * @param   Channel is pointer to AL_DMACAHB_ChStruct
- * @param   Cmd is io ctl operation to AL_DMACAHB_IoCtlCmdEnum
- * @param   Data is pointer reference to Cmd
- * @return
- *          - AL_OK is send done
- * @note
-*/
+ * This function is a generic interface for performing various control operations on a DMA channel,
+ * such as setting or clearing the state, reading or writing control registers, etc.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @param Cmd The command to execute.
+ * @param Data Pointer to the data required for the command.
+ * @return AL_S32 Returns 0 on success or an error code on failure.
+ */
 AL_S32 AlDmacAhb_Dev_IoCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_IoCtlCmdEnum Cmd, AL_VOID *Data)
 {
     AL_ASSERT((Channel != AL_NULL) && (Data != AL_NULL), AL_DMACAHB_ERR_NULL_PTR);
@@ -1228,15 +1238,13 @@ AL_S32 AlDmacAhb_Dev_IoCtl(AL_DMACAHB_ChStruct *Channel, AL_DMACAHB_IoCtlCmdEnum
 }
 
 /**
- * This function switch trans type to state
- * @param   Type is enum to AL_DMACAHB_TransTypeEnum
- * @param   State is pointer to AL_DMACAHB_ChStateEnum
- * @return
- *          - AL_OK switch type to state correct
- *          - AL_DMACAHB_ERR_NULL_PTR
- *          - AL_DMACAHB_ERR_ILLEGAL_PARAM
- * @note
-*/
+ * This function maps a given DMA transaction type to a corresponding state. It is used to update
+ * the state of a DMA channel based on the type of transaction it is set to perform.
+ *
+ * @param Type The DMA transaction type.
+ * @param State Pointer to the state variable to be updated.
+ * @return AL_S32 Returns AL_OK on success or AL_DMACAHB_ERR_ILLEGAL_PARAM if the type is not recognized.
+ */
 AL_S32 AlDmacAhb_Dev_TransTypeToState(AL_DMACAHB_TransTypeEnum Type, AL_DMACAHB_ChStateEnum *State)
 {
     AL_ASSERT(State != AL_NULL, AL_DMACAHB_ERR_NULL_PTR);
@@ -1269,6 +1277,13 @@ AL_S32 AlDmacAhb_Dev_TransTypeToState(AL_DMACAHB_TransTypeEnum Type, AL_DMACAHB_
     return AL_OK;
 }
 
+/**
+ * This function attempts to acquire a lock necessary for performing DMA operations. It retries
+ * until the lock is acquired or a timeout occurs.
+ *
+ * @param LockAddr The address of the lock to acquire.
+ * @return AL_S32 Returns AL_OK on success or AL_DMACAHB_ERR_FETCH_LOCK if a timeout occurs.
+ */
 static AL_S32 AlDmacAhb_Dev_GetLock(AL_U32 LockAddr)
 {
     AL_U32 Timeout = AL_DMACAHB_LOOP_REG_CNT_MAX;
@@ -1286,6 +1301,17 @@ static AL_S32 AlDmacAhb_Dev_GetLock(AL_U32 LockAddr)
     return AL_OK;
 }
 
+/**
+ * This function attempts to allocate a DMA channel for use. It checks for channel availability,
+ * requests a lock, and updates the channel state accordingly.
+ *
+ * @param HwConfig Pointer to the DMA hardware configuration structure.
+ * @param RequestId The ID of the requested DMA channel.
+ * @param AvailableId Pointer to the variable where the ID of the allocated channel will be stored.
+ * @return AL_S32 Returns AL_OK on success,
+ *         AL_DMACAHB_ERR_NONE_AVAILABLE_CH if no channel is available,
+ *         or other error codes for different failures.
+ */
 AL_S32 AlDmacAhb_Dev_RequestCh(AL_DMACAHB_HwConfigStruct *HwConfig, AL_DMACAHB_ChIdEnum RequestId,
                                AL_DMACAHB_ChIdEnum *AvailableId)
 {
@@ -1330,6 +1356,13 @@ AL_S32 AlDmacAhb_Dev_RequestCh(AL_DMACAHB_HwConfigStruct *HwConfig, AL_DMACAHB_C
     return AL_OK;
 }
 
+/**
+ * This function releases a previously allocated DMA channel. It resets the channel state and
+ * releases the lock associated with DMA operations.
+ *
+ * @param Channel Pointer to the DMA channel structure.
+ * @return AL_S32 Returns AL_OK on success or other error codes for different failures.
+ */
 AL_S32 AlDmacAhb_Dev_ReleaseCh(AL_DMACAHB_ChStruct *Channel)
 {
     AL_S32 Ret = AL_OK;
@@ -1350,6 +1383,13 @@ AL_S32 AlDmacAhb_Dev_ReleaseCh(AL_DMACAHB_ChStruct *Channel)
     return AL_OK;
 }
 
+/**
+ * This function clears the state of all DMA channels in a given DMA instance. It is typically
+ * used during initialization or reset procedures.
+ *
+ * @param HwConfig Pointer to the DMA hardware configuration structure.
+ * @return AL_S32 Returns AL_OK on success or other error codes for different failures.
+ */
 AL_S32 AlDmacAhb_Dev_ClrChannelState(AL_DMACAHB_HwConfigStruct *HwConfig)
 {
     AL_ASSERT(HwConfig != AL_NULL, AL_ERR_NULL_PTR);

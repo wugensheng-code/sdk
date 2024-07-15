@@ -1,0 +1,22 @@
+var searchData=
+[
+  ['dar',['DAR',['../group__DMA__Private__Definition.html#gga175a8e8670b0f75d9dee224600b67556a67301608372d3e031f16fb3b1bac63c1',1,'al_dma_dev.c']]],
+  ['dma_5fch_5fbuswidth_5f16_5fbytes',['DMA_CH_BUSWIDTH_16_BYTES',['../group__DMA__Exported__Definition__Group1.html#ggacd9d16f9aafdfa3c6bdaf8a77ec66ba4a386984b438d648a04b3c3617c2adefcd',1,'al_dma_dev.h']]],
+  ['dma_5fch_5fbuswidth_5f1_5fbyte',['DMA_CH_BUSWIDTH_1_BYTE',['../group__DMA__Exported__Definition__Group1.html#ggacd9d16f9aafdfa3c6bdaf8a77ec66ba4acfd8aff765cb0991c601031a5ce4ea02',1,'al_dma_dev.h']]],
+  ['dma_5fch_5fbuswidth_5f2_5fbytes',['DMA_CH_BUSWIDTH_2_BYTES',['../group__DMA__Exported__Definition__Group1.html#ggacd9d16f9aafdfa3c6bdaf8a77ec66ba4a4c75771c689ba535865709ff5644a32e',1,'al_dma_dev.h']]],
+  ['dma_5fch_5fbuswidth_5f32_5fbytes',['DMA_CH_BUSWIDTH_32_BYTES',['../group__DMA__Exported__Definition__Group1.html#ggacd9d16f9aafdfa3c6bdaf8a77ec66ba4acb93a354474bc837da510c663577917d',1,'al_dma_dev.h']]],
+  ['dma_5fch_5fbuswidth_5f3_5fbytes',['DMA_CH_BUSWIDTH_3_BYTES',['../group__DMA__Exported__Definition__Group1.html#ggacd9d16f9aafdfa3c6bdaf8a77ec66ba4a090758cdb58c3028d177c7247e145daf',1,'al_dma_dev.h']]],
+  ['dma_5fch_5fbuswidth_5f4_5fbytes',['DMA_CH_BUSWIDTH_4_BYTES',['../group__DMA__Exported__Definition__Group1.html#ggacd9d16f9aafdfa3c6bdaf8a77ec66ba4aec89c1c5e3dac81ef4ff02e80d565c7b',1,'al_dma_dev.h']]],
+  ['dma_5fch_5fbuswidth_5f64_5fbytes',['DMA_CH_BUSWIDTH_64_BYTES',['../group__DMA__Exported__Definition__Group1.html#ggacd9d16f9aafdfa3c6bdaf8a77ec66ba4a675f2ceffbb17f36ac3719bd307755a5',1,'al_dma_dev.h']]],
+  ['dma_5fch_5fbuswidth_5f8_5fbytes',['DMA_CH_BUSWIDTH_8_BYTES',['../group__DMA__Exported__Definition__Group1.html#ggacd9d16f9aafdfa3c6bdaf8a77ec66ba4a37d1dd58ca62cabc6222b9bee6277bc6',1,'al_dma_dev.h']]],
+  ['dma_5fch_5fbuswidth_5fundefined',['DMA_CH_BUSWIDTH_UNDEFINED',['../group__DMA__Exported__Definition__Group1.html#ggacd9d16f9aafdfa3c6bdaf8a77ec66ba4afd7fdc4c39d745960dbd7b76b1ea7451',1,'al_dma_dev.h']]],
+  ['dma_5fdev_5fto_5fdev',['DMA_DEV_TO_DEV',['../group__DMA__Exported__Definition__Group1.html#ggab86db94f31121b351cd50edcb49a4417a39c8953c1b77c2e46ee39c1631de4371',1,'al_dma_dev.h']]],
+  ['dma_5fdev_5fto_5fmem',['DMA_DEV_TO_MEM',['../group__DMA__Exported__Definition__Group1.html#ggab86db94f31121b351cd50edcb49a4417a23787e6d8b6b28b46b15a74db500f930',1,'al_dma_dev.h']]],
+  ['dma_5ferr_5fbuff_5fnot_5falign',['DMA_ERR_BUFF_NOT_ALIGN',['../group__DMA__Exported__Definition__Group1.html#gga1aef5819f7faed1f47664f5ee0ae3ae5a7891d26e71404151c3404b2aed8ecc3e',1,'al_dma_dev.h']]],
+  ['dma_5ferr_5ffail',['DMA_ERR_FAIL',['../group__DMA__Exported__Definition__Group1.html#gga1aef5819f7faed1f47664f5ee0ae3ae5a497b56a69ae7da66704fe1394af6a943',1,'al_dma_dev.h']]],
+  ['dma_5ferr_5fillegal_5flength',['DMA_ERR_ILLEGAL_LENGTH',['../group__DMA__Exported__Definition__Group1.html#gga1aef5819f7faed1f47664f5ee0ae3ae5a66b4b52d9ef467706efd8608b4404f59',1,'al_dma_dev.h']]],
+  ['dma_5fmem_5fto_5fdev',['DMA_MEM_TO_DEV',['../group__DMA__Exported__Definition__Group1.html#ggab86db94f31121b351cd50edcb49a4417a867ac6bb4b067133a518f0af3ce3e383',1,'al_dma_dev.h']]],
+  ['dma_5fmem_5fto_5fmem',['DMA_MEM_TO_MEM',['../group__DMA__Exported__Definition__Group1.html#ggab86db94f31121b351cd50edcb49a4417ad1dbede1911411f57ee96d9d797c19bf',1,'al_dma_dev.h']]],
+  ['dma_5ftrans_5fnone',['DMA_TRANS_NONE',['../group__DMA__Exported__Definition__Group1.html#ggab86db94f31121b351cd50edcb49a4417a46947d0e329c4a09f3cc85074e4aada9',1,'al_dma_dev.h']]],
+  ['dst',['DST',['../group__DMA__Private__Definition.html#gga05ef82aabc8af64d5181bdbdb426ad5ea7a1970158a695340fdc76c8424740233',1,'al_dma_dev.c']]]
+];

@@ -50,7 +50,13 @@ static AL_CAN_FrameStruct ExFrame = {
 static AL_S32 AlCan_Test_InLoopbackBlocked(AL_VOID);
 
 /************************** Function Definitions ******************************/
-
+/**
+ *
+ * This function initializes the test environment and starts the CAN in loopback blocked test by calling AlCan_Test_InLoopbackBlocked.
+ * It logs the start of the test, checks the return value of the test function to determine success or failure, and logs the appropriate message before exiting.
+ *
+ * @return AL_OK if the test is successful, an error code otherwise.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -68,6 +74,22 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ *
+ * This function initializes the CAN hardware with a specific configuration for loopback mode and enters a loop
+ * where it sends and receives CAN frames in a blocked manner. The function sends a predefined CAN frame
+ * and waits for its reception using a blocking call with a specified timeout. If the frame is successfully sent and received,
+ * it compares the sent and received data to ensure they match. The loop continues indefinitely, simulating
+ * a real-world scenario where a device continuously sends and receives CAN frames in loopback mode.
+ *
+ * The function logs an error and returns immediately if any of the following operations fail:
+ * - Hardware initialization
+ * - Sending a frame
+ * - Receiving a frame
+ * - Data comparison between sent and received frames
+ *
+ * @return AL_OK if the loop runs without errors, an error code otherwise.
+ */
 static AL_S32 AlCan_Test_InLoopbackBlocked(AL_VOID)
 {
     AL_U32 Ret = AL_OK;

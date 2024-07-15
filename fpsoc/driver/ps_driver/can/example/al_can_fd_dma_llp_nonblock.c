@@ -67,7 +67,12 @@ static AL_DMACAHB_ChInitStruct FdDma_DmaChConfig = {
 /************************** Function Prototypes ******************************/
 static AL_S32 AlCan_Test_FdDmaLlpNonBlock(AL_VOID);
 /************************** Function Definitions ******************************/
-
+/**
+ *
+ * This function logs the start of the test, calls the AlCan_Test_FdDmaLlpNonBlock function to perform the actual test, and logs the result based on the return value of the test function. If the test fails, it logs an error message and returns the error code. Otherwise, it logs a success message and returns AL_OK.
+ *
+ * @return AL_OK if the test runs successfully, error code otherwise.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -85,6 +90,16 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ * Performs the CAN FD DMA LLP non-block test.
+ *
+ * This function initializes the CAN and DMA hardware with specific configurations for non-blocking operations using linked list items (LLIs).
+ * It allocates memory for receiving CAN frames and sets up DMA LLIs for transferring received data into this memory.
+ * The function enters an infinite loop, continuously receiving CAN frames using DMA, validating the received data, and logging the results.
+ * The loop includes mechanisms for handling errors and ensuring data coherence in memory through cache operations.
+ *
+ * @return AL_OK if the test completes successfully, error code otherwise.
+ */
 static AL_S32 AlCan_Test_FdDmaLlpNonBlock(AL_VOID)
 {
     AL_U32 Ret = AL_OK;

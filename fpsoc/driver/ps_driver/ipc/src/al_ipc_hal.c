@@ -24,14 +24,13 @@ extern AL_IPCINTR_HwConfigStruct AlIpcIntr_HwConfig[AL_IPC_INTR_NUM_INSTANCE];
 /************************** Function Prototypes ******************************/
 static AL_S32 AlIpc_Hal_IntrClear(AL_IPC_IntrEnum IntrType);
 /********************************************************/
-
 /**
- * This function look up hardware config structure.
- * @param   AL_IPC_IntrEnum is Interrupt types supported by Ipc
- * @return
- *          - AL_IPCINTR_HwConfigStruct for hardware config
- * @note
-*/
+ * This function searches through the available IPC interrupt hardware configurations to find the one that
+ * matches the specified interrupt type.
+ *
+ * @param IntrType The interrupt type for which the hardware configuration is being looked up.
+ * @return Pointer to the AL_IPCINTR_HwConfigStruct structure if found, otherwise NULL.
+ */
 static AL_IPCINTR_HwConfigStruct *AlIpcIntr_Dev_LookupConfig(AL_IPC_IntrEnum IntrType)
 {
     AL_U32 Index = 0;
@@ -48,14 +47,12 @@ static AL_IPCINTR_HwConfigStruct *AlIpcIntr_Dev_LookupConfig(AL_IPC_IntrEnum Int
 }
 
 /**
- * This function initializes spinlock based on number
- * @param   Handle Pointer to a *AL_IpcSpinLock_HalStruct 
- * @param   Number is SpinLock number
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note
-*/
+ * This function initializes a spin lock for inter-process communication by setting up the handle and lock number.
+ *
+ * @param Handle Double pointer to the AL_IpcSpinLock_HalStruct structure where the initialized spin lock will be stored.
+ * @param Number The number of the spin lock to initialize.
+ * @return AL_OK on success, AL_IPC_ERR_ILLEGAL_PARAM if the parameters are invalid.
+ */
 AL_S32 AlIpc_Hal_SpinLockInit(AL_IpcSpinLock_HalStruct **Handle, AL_U32 Number)
 {
     AL_ASSERT((Handle != AL_NULL), AL_IPC_ERR_ILLEGAL_PARAM);
@@ -70,14 +67,12 @@ AL_S32 AlIpc_Hal_SpinLockInit(AL_IpcSpinLock_HalStruct **Handle, AL_U32 Number)
 }
 
 /**
- * This function obtains spinlock based on the specified timeout parameter and handle
- * @param   Handle Pointer to a *AL_IpcSpinLock_HalStruct 
- * @param   Timeout is SpinLock number
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note
-*/
+ * This function tries to acquire a spin lock for inter-process communication, with a specified timeout for the operation.
+ *
+ * @param Handle Pointer to the AL_IpcSpinLock_HalStruct structure that represents the spin lock to be acquired.
+ * @param Timeout The maximum time to wait for the lock to become available.
+ * @return AL_OK if the lock was successfully acquired, AL_IPC_ERR_TIMEOUT if the operation timed out.
+ */
 AL_S32 AlIpc_Hal_SpinLockTake(AL_IpcSpinLock_HalStruct *Handle, AL_U32 Timeout)
 {
     AL_U32 Take = 0;
@@ -95,13 +90,11 @@ AL_S32 AlIpc_Hal_SpinLockTake(AL_IpcSpinLock_HalStruct *Handle, AL_U32 Timeout)
 }
 
 /**
- * This function release spinlock based on the specified handle
- * @param   Handle Pointer to a *AL_IpcSpinLock_HalStruct 
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note
-*/
+ * This function releases a previously acquired spin lock for inter-process communication.
+ *
+ * @param Handle Pointer to the AL_IpcSpinLock_HalStruct structure that represents the spin lock to be released.
+ * @return AL_OK if succeed.
+ */
 AL_S32 AlIpc_Hal_SpinLockRelease(AL_IpcSpinLock_HalStruct *Handle)
 {
     AL_ASSERT((Handle != AL_NULL), AL_IPC_ERR_ILLEGAL_PARAM);
@@ -110,13 +103,12 @@ AL_S32 AlIpc_Hal_SpinLockRelease(AL_IpcSpinLock_HalStruct *Handle)
 }
 
 /**
- * This function initializes the specified mailbox handle based on number
- * @param   Handle Pointer to a *AL_IpcMailBox_HalStruct 
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note
-*/
+ * This function initializes a mailbox for inter-process communication by setting up the handle and mailbox number.
+ *
+ * @param Handle Double pointer to the AL_IpcMailBox_HalStruct structure where the initialized mailbox will be stored.
+ * @param Number The number of the mailbox to initialize.
+ * @return AL_OK on success, AL_IPC_ERR_ILLEGAL_PARAM if the parameters are invalid.
+ */
 AL_S32 AlIPC_Hal_MboxInit(AL_IpcMailBox_HalStruct **Handle, AL_U32 Number)
 {
     AL_ASSERT((Handle != AL_NULL), AL_IPC_ERR_ILLEGAL_PARAM);
@@ -131,14 +123,12 @@ AL_S32 AlIPC_Hal_MboxInit(AL_IpcMailBox_HalStruct **Handle, AL_U32 Number)
 }
 
 /**
- * This function reads the data of the mailbox based on the specified handle
- * @param   Handle Pointer to a *AL_IpcMailBox_HalStruct 
- * @param   Data Point to the variable address where the data is to be saved
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note
-*/
+ * This function reads a 32-bit data value from a specified mailbox for inter-process communication.
+ *
+ * @param Handle Pointer to the AL_IpcMailBox_HalStruct structure that represents the mailbox to read from.
+ * @param Data Pointer to a 32-bit variable where the read data will be stored.
+ * @return AL_OK on success, AL_IPC_ERR_ILLEGAL_PARAM if the parameters are invalid.
+ */
 AL_S32 AlIpc_Hal_MboxRead(AL_IpcMailBox_HalStruct *Handle, AL_U32 *Data)
 {
     AL_ASSERT((Handle != AL_NULL), AL_IPC_ERR_ILLEGAL_PARAM);
@@ -149,14 +139,12 @@ AL_S32 AlIpc_Hal_MboxRead(AL_IpcMailBox_HalStruct *Handle, AL_U32 *Data)
 }
 
 /**
- * This function wtite the data of the mailbox based on the specified handle
- * @param   Handle Pointer to a *AL_IpcMailBox_HalStruct 
- * @param   Data Point to the variable address where the data is to be saved
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note
-*/
+ * This function writes a 32-bit data value to a specified mailbox for inter-process communication.
+ *
+ * @param Handle Pointer to the AL_IpcMailBox_HalStruct structure that represents the mailbox to write to.
+ * @param Data The 32-bit data value to write.
+ * @return AL_OK on success, AL_IPC_ERR_ILLEGAL_PARAM if the parameters are invalid.
+ */
 AL_S32 AlIpc_Hal_MboxWrite(AL_IpcMailBox_HalStruct *Handle, AL_U32 Data)
 {
     AL_ASSERT((Handle != AL_NULL), AL_IPC_ERR_ILLEGAL_PARAM);
@@ -166,6 +154,12 @@ AL_S32 AlIpc_Hal_MboxWrite(AL_IpcMailBox_HalStruct *Handle, AL_U32 Data)
     return AL_OK;
 }
 
+/**
+ * This function is the interrupt handler for IPC interrupts. It calls the registered callback function for the interrupt.
+ *
+ * @param Handle Pointer to the user-defined data structure that contains information about the IPC interrupt.
+ * @return None.
+ */
 static AL_VOID AlIpc_IntrHandler(AL_VOID *Handle)
 {
     AL_IpcIntr_HalStruct *Intr = (AL_IpcIntr_HalStruct *)Handle;
@@ -180,16 +174,14 @@ static AL_VOID AlIpc_IntrHandler(AL_VOID *Handle)
 }
 
 /**
- * This function initializes the handle based on the specified interrupt type and callback function
- * @param   Handle Pointer to a *AL_IpcMailBox_HalStruct 
- * @param   IntrType Interrupt type etc: apu2rpu 
- * @param   Callback Pointer to the callback function. 
- * @param   Arg Parameters passed to callback. 
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note
-*/
+ * This function initializes an interrupt for inter-process communication by setting up the handle, type, callback function, and argument.
+ *
+ * @param Handle Double pointer to the AL_IpcIntr_HalStruct structure where the initialized interrupt will be stored.
+ * @param IntrType The type of the interrupt to initialize.
+ * @param Func Pointer to the callback function to be called when the interrupt occurs.
+ * @param Arg Pointer to the argument to be passed to the callback function.
+ * @return AL_OK on success, AL_IPC_ERR_ILLEGAL_PARAM if the parameters are invalid or the hardware configuration is not found.
+ */
 AL_S32 AlIpc_Hal_IntrInit(AL_IpcIntr_HalStruct **Handle, AL_IPC_IntrEnum IntrType, Callback Func, AL_VOID *Arg)
 {
     AL_IPCINTR_HwConfigStruct *HwConfig = AL_NULL;
@@ -209,13 +201,11 @@ AL_S32 AlIpc_Hal_IntrInit(AL_IpcIntr_HalStruct **Handle, AL_IPC_IntrEnum IntrTyp
 }
 
 /**
- * This function triggers the corresponding interrupt based on the specified interrupt type
- * @param   IntrType Interrupt type
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note
-*/
+ * This function triggers an interrupt for inter-process communication.
+ *
+ * @param IntrType The type of the interrupt to notify.
+ * @return AL_OK on success, AL_IPC_ERR_ILLEGAL_PARAM if the interrupt type is invalid.
+ */
 AL_S32 AlIpc_Hal_IntrNotify(AL_IPC_IntrEnum IntrType)
 {
     AL_ASSERT((IntrType <= AL_IPC_RPU2APU_ACK), AL_IPC_ERR_ILLEGAL_PARAM);
@@ -225,13 +215,11 @@ AL_S32 AlIpc_Hal_IntrNotify(AL_IPC_IntrEnum IntrType)
 }
 
 /**
- * This function cleans up the corresponding interrupt based on the specified interrupt type
- * @param   IntrType Interrupt type
- * @return
- *          - AL_OK for function success
- *          - Other for function failuregit
- * @note
-*/
+ * This function clears a specified interrupt for inter-process communication.
+ *
+ * @param IntrType The type of the interrupt to clear.
+ * @return AL_OK on success, AL_IPC_ERR_ILLEGAL_PARAM if the interrupt type is invalid.
+ */
 static AL_S32 AlIpc_Hal_IntrClear(AL_IPC_IntrEnum IntrType)
 {
     AL_ASSERT((IntrType <= AL_IPC_RPU2APU_ACK), AL_IPC_ERR_ILLEGAL_PARAM);

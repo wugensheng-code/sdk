@@ -52,7 +52,14 @@ static AL_CAN_FrameStruct ExFrame = {
 static AL_S32 AlCan_Test_StdPtbBlocked(AL_VOID);
 
 /************************** Function Definitions ******************************/
-
+/**
+ *
+ * This function initializes the test environment and starts the CAN standard PTB (Pass-Through Block) blocked test
+ * by calling AlCan_Test_StdPtbBlocked. It logs the start of the test, checks the return value of the test function
+ * to determine success or failure, and logs the appropriate message before exiting.
+ *
+ * @return AL_OK if the test is successful, an error code otherwise.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -70,6 +77,19 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ *
+ * This function initializes the CAN hardware with a specific configuration for standard PTB mode and enters
+ * a loop where it sends CAN frames in a blocked manner and attempts to receive CAN frames.
+ * The sending of frames is attempted every AL_CAN_EX_DELAY_COUNT iterations of the loop, with a delay of AL_CAN_EX_DELAY_MS
+ * milliseconds between each iteration. If sending a frame fails, an error is logged. If receiving a frame fails
+ * with an error other than AL_ERR_UNAVAILABLE, an error is logged. Otherwise, received frames are displayed.
+ * The loop runs indefinitely, simulating a real-world scenario where a device continuously sends and receives CAN frames.
+ *
+ * @return AL_OK if the loop runs without critical errors,
+ *         AL_ERR_UNAVAILABLE if a frame is not available for reception,
+ *         or other error codes for different errors encountered during the test.
+ */
 static AL_S32 AlCan_Test_StdPtbBlocked(AL_VOID)
 {
     AL_U32 Ret = AL_OK;

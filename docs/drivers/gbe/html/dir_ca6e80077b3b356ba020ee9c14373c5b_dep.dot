@@ -1,0 +1,17 @@
+digraph "fpsoc/driver/ps_driver/gbe" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_a142bca7253ca5dd8b1ad96ffc0e37e7 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="ps_driver" fontname="Helvetica", fontsize="10", URL="dir_a142bca7253ca5dd8b1ad96ffc0e37e7.html"]
+  subgraph clusterdir_ca6e80077b3b356ba020ee9c14373c5b {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_ca6e80077b3b356ba020ee9c14373c5b.html"];
+    dir_ca6e80077b3b356ba020ee9c14373c5b [shape=plaintext label="gbe"];
+    dir_7a455481a7cfab4127b9bfd712ed429b [shape=box label="example" color="black" fillcolor="white" style="filled" URL="dir_7a455481a7cfab4127b9bfd712ed429b.html"];
+    dir_70dff01384ca216718507e0be9d7ff6e [shape=box label="inc" color="black" fillcolor="white" style="filled" URL="dir_70dff01384ca216718507e0be9d7ff6e.html"];
+    dir_27e7fb32c4339e68b8918450fc467ea1 [shape=box label="src" color="black" fillcolor="white" style="filled" URL="dir_27e7fb32c4339e68b8918450fc467ea1.html"];
+  }
+  }
+  dir_27e7fb32c4339e68b8918450fc467ea1->dir_70dff01384ca216718507e0be9d7ff6e [headlabel="3", labeldistance=1.5 headhref="dir_000006_000005.html"];
+  dir_7a455481a7cfab4127b9bfd712ed429b->dir_70dff01384ca216718507e0be9d7ff6e [headlabel="2", labeldistance=1.5 headhref="dir_000004_000005.html"];
+}

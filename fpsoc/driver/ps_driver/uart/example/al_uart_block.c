@@ -47,7 +47,13 @@ static AL_UART_InitStruct UART_InitStruct = {
 static AL_S32 AlUart_Test_RecvAndSendBlock(AL_VOID);
 
 /************************** Function Definitions ******************************/
-
+/**
+ * This function initializes the UART blocked test, executes the test by calling AlUart_Test_RecvAndSendBlock,
+ * and logs the result. If the test fails, it logs an error message and returns the error code. Otherwise,
+ * it logs a success message and returns AL_OK.
+ *
+ * @return AL_OK on success, or an error code on failure.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -65,6 +71,14 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ * This function initializes the UART hardware with predefined configurations, then enters a loop where it
+ * waits to receive data. Once data is received, it sends the data back. The function tests the UART's ability
+ * to receive and send data in a blocking manner, using a timeout mechanism. If any operation fails, it logs
+ * an error message and returns the error code.
+ *
+ * @return AL_OK on success, or an error code on failure.
+ */
 static AL_S32 AlUart_Test_RecvAndSendBlock(AL_VOID)
 {
     AL_UART_HalStruct *UartHandle;

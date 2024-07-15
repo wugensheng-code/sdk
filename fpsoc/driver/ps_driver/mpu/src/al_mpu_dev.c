@@ -10,6 +10,7 @@
 
 #include <string.h>
 
+
 static AL_MPU_CommonMpuRegionStatusStruct CommonMpuRegionStatus[AL_MPU_NUM_COMMON_INSTANCE] = {
     {
         .DevId           = 0,
@@ -50,14 +51,10 @@ static AL_MPU_ApuRegionStatusStruct ApuMpuRegionStatus = {
 extern AL_MPU_HwConfigStruct AlMpu_HwConfig[AL_MPU_NUM_INSTANCE];
 
 /**
- * This function return AL_MPU_HwConfigStruct by MPU device id
- * @param MpuDevId unique MPU device id
+ * This function looks up the hardware configuration for a given device ID.
  *
- * @return
- *        - A pointer on success
- *        - NULL on failure
- *
- * @note
+ * @param DevId The device ID for which the hardware configuration is to be looked up.
+ * @return A pointer to the hardware configuration structure if found, otherwise NULL.
  */
 AL_MPU_HwConfigStruct *AlMpu_Dev_LookupConfigByDevId(AL_U8 DevId)
 {
@@ -74,6 +71,12 @@ AL_MPU_HwConfigStruct *AlMpu_Dev_LookupConfigByDevId(AL_U8 DevId)
     return ConfigPtr;
 }
 
+/**
+ * This function gets the first available region number for a given device ID.
+ *
+ * @param DevId The device ID for which the available region number is requested.
+ * @return The first available region number if found, otherwise AL_MPU_INVALID_REGION_NUMBER.
+ */
 static AL_U8 AlMpu_Dev_GetAvailableRegionByDevId(AL_U8 DevId)
 {
     AL_U32 MpuNumIndex;
@@ -101,6 +104,14 @@ static AL_U8 AlMpu_Dev_GetAvailableRegionByDevId(AL_U8 DevId)
     return AL_MPU_INVALID_REGION_NUMBER;
 }
 
+/**
+ * This function updates the enable status of a region for a given device ID.
+ *
+ * @param DevId The device ID for which the region enable status is to be updated.
+ * @param RegionNumber The region number whose enable status is to be updated.
+ * @param EnableStatus The new enable status for the region.
+ * @return AL_OK on success, otherwise an error code.
+ */
 static AL_S32 AlMpu_Dev_UpdateRegionEnableStatus(AL_U8 DevId, AL_U8 RegionNumber, AL_MPU_RegionEnEnum EnableStatus)
 {
     AL_U32 MpuNumIndex;
@@ -119,6 +130,13 @@ static AL_S32 AlMpu_Dev_UpdateRegionEnableStatus(AL_U8 DevId, AL_U8 RegionNumber
     return AL_OK;
 }
 
+/**
+ * This function sets the attributes for a memory protection unit (MPU) region.
+ *
+ * @param RegionBaseAddr The base address of the region.
+ * @param Config Pointer to the region configuration structure.
+ * @return None.
+ */
 static AL_VOID AlMpu_Dev_SetRegionAttr(AL_REG RegionBaseAddr, AL_MPU_RegionConfigStruct *Config)
 {
     AlMpu_ll_SetRegionAttrSecure(RegionBaseAddr, Config->Secure);
@@ -129,15 +147,11 @@ static AL_VOID AlMpu_Dev_SetRegionAttr(AL_REG RegionBaseAddr, AL_MPU_RegionConfi
 }
 
 /**
- * This function configure the mpu region
- * @param RegionBaseAddr region base address
- * @param Config Configured parameter
+ * This function configures a region of the memory protection unit (MPU).
  *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
- *
- * @note
+ * @param RegionBaseAddr The base address of the region to configure.
+ * @param Config Pointer to the configuration structure for the region.
+ * @return AL_OK on success, otherwise an error code indicating the type of failure.
  */
 static AL_S32 AlMpu_Dev_SetRegion(AL_REG RegionBaseAddr, AL_MPU_RegionConfigStruct *Config)
 {
@@ -177,16 +191,12 @@ static AL_S32 AlMpu_Dev_SetRegion(AL_REG RegionBaseAddr, AL_MPU_RegionConfigStru
 }
 
 /**
- * This function config a region by region number
- * @param Mpu is pointer to AL_MPU_DevStruct
- * @param RegionNumber region number
- * @param InitRegionConfig pointer to AL_MPU_RegionConfigStruct
+ * This function configures a region of the MPU by region number.
  *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
- *
- * @note
+ * @param Mpu Pointer to the MPU device structure.
+ * @param RegionNumber The number of the region to configure.
+ * @param RegionConfig Pointer to the configuration structure for the region.
+ * @return AL_OK on success, otherwise an error code.
  */
 AL_S32 AlMpu_Dev_ConfigRegionByRegionNum(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber,
                                          AL_MPU_RegionConfigStruct *RegionConfig)
@@ -241,16 +251,13 @@ AL_S32 AlMpu_Dev_ConfigRegionByRegionNum(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumb
 }
 
 /**
- * This function initialize the mpu region configs
- * @param Mpu is pointer to AL_MPU_DevStruct
- * @param HwConfig is pointer to AL_MPU_HwConfigStruct
- * @param InitRegionConfig pointer to AL_MPU_RegionConfigStruct
- * @param ConfigNumber config number of AL_MPU_RegionConfigStruct
+ * This function initializes the MPU device with the given hardware configuration and initial region configurations.
  *
- * @return
- *        - Number of successful configurations
- *
- * @note
+ * @param Mpu Pointer to the MPU device structure to be initialized.
+ * @param HwConfig Pointer to the hardware configuration structure.
+ * @param InitRegionConfig Pointer to an array of initial region configuration structures.
+ * @param ConfigNumber The number of initial region configurations provided.
+ * @return The number of regions successfully configured.
  */
 AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
                       AL_MPU_RegionConfigStruct *InitRegionConfig, AL_U8 ConfigNumber)
@@ -293,15 +300,11 @@ AL_S32 AlMpu_Dev_Init(AL_MPU_DevStruct *Mpu, AL_MPU_HwConfigStruct *HwConfig,
 }
 
 /**
- * This function config a region and enable the region
- * @param Mpu is pointer to AL_MPU_DevStruct
- * @param InitRegionConfig is pointer to AL_MPU_RegionConfigStruct
+ * This function configures a region of the MPU.
  *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
- *
- * @note
+ * @param Mpu Pointer to the MPU device structure.
+ * @param RegionConfig Pointer to the configuration structure for the region.
+ * @return AL_OK on success, otherwise an error code.
  */
 AL_S32 AlMpu_Dev_ConfigRegion(AL_MPU_DevStruct *Mpu, AL_MPU_RegionConfigStruct *RegionConfig)
 {
@@ -325,16 +328,12 @@ AL_S32 AlMpu_Dev_ConfigRegion(AL_MPU_DevStruct *Mpu, AL_MPU_RegionConfigStruct *
 }
 
 /**
- * This function disable or enable a region
- * @param Mpu is pointer to AL_MPU_DevStruct
- * @param RegionNumber the region number
- * @param EnableStatus region MPU_REGION_DISABLE or MPU_REGION_ENABLE
+ * This function sets the enable status of a specific region in the MPU.
  *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
- *
- * @note
+ * @param Mpu Pointer to the MPU device structure.
+ * @param RegionNumber The number of the region whose enable status is to be set.
+ * @param EnableStatus The new enable status for the region.
+ * @return AL_OK on success, otherwise an error code.
  */
 AL_S32 AlMpu_Dev_SetRegionEnableStatus(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber, AL_MPU_RegionEnEnum EnableStatus)
 {
@@ -368,14 +367,10 @@ AL_S32 AlMpu_Dev_SetRegionEnableStatus(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber
 }
 
 /**
- * This function enable the mpu
- * @param Mpu is pointer to AL_MPU_DevStruct
+ * This function enables the MPU.
  *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
- *
- * @note
+ * @param Mpu Pointer to the MPU device structure.
+ * @return AL_OK on success, otherwise an error code.
  */
 AL_S32 AlMpu_Dev_MpuEnable(AL_MPU_DevStruct *Mpu)
 {
@@ -391,14 +386,12 @@ AL_S32 AlMpu_Dev_MpuEnable(AL_MPU_DevStruct *Mpu)
 }
 
 /**
- * This function disable the mpu
- * @param Mpu is pointer to AL_MPU_DevStruct
  *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
+ * This function disables the MPU by calling a low-level disable function with the base address of the MPU.
+ * It asserts that the MPU pointer is not NULL before proceeding.
  *
- * @note
+ * @param Mpu Pointer to the MPU device structure.
+ * @return AL_OK on success, otherwise AL_MPU_ERR_ILLEGAL_PARAM if Mpu is NULL.
  */
 AL_S32 AlMpu_Dev_MpuDisable(AL_MPU_DevStruct *Mpu)
 {
@@ -413,6 +406,15 @@ AL_S32 AlMpu_Dev_MpuDisable(AL_MPU_DevStruct *Mpu)
     return AL_OK;
 }
 
+/**
+ *
+ * This function is called when an MPU event occurs. It checks if an event callback is registered.
+ * If so, it constructs an event structure with the event ID and data (region number) and calls the callback.
+ *
+ * @param Mpu Pointer to the MPU device structure.
+ * @param RegionNumber The region number associated with the event.
+ * @return None.
+ */
 static AL_VOID AlMpu_Dev_EventHandler(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber)
 {
     if (Mpu->EventCallBack) {
@@ -426,6 +428,14 @@ static AL_VOID AlMpu_Dev_EventHandler(AL_MPU_DevStruct *Mpu, AL_U8 RegionNumber)
 
 }
 
+/**
+ *
+ * This function reads the interrupt status and determines the region number that caused the interrupt.
+ * It iterates through the bits of the interrupt status until it finds the set bit corresponding to the region number.
+ *
+ * @param MpuBaseAddr The base address of the MPU.
+ * @return The region number that caused the interrupt.
+ */
 static AL_U8 AlMpu_Dev_GetIntrRegionNumber(AL_REG MpuBaseAddr)
 {
     AL_U32 IntrRegion;
@@ -441,12 +451,12 @@ static AL_U8 AlMpu_Dev_GetIntrRegionNumber(AL_REG MpuBaseAddr)
 }
 
 /**
- * This function is MPU interrupt handler
- * @param Instance is pointer to AL_MPU_DevInstance
  *
- * @return
+ * This function is the interrupt handler for MPU interrupts. It iterates through all possible MPU instances,
+ * checks if an interrupt has occurred for each, and then handles the interrupt by clearing it and calling the event handler.
  *
- * @note
+ * @param Instance Pointer to the array of MPU device structures.
+ * @return None.
  */
 AL_VOID AlMpu_Dev_MpuIntrHandler(void *Instance)
 {
@@ -486,16 +496,15 @@ AL_VOID AlMpu_Dev_MpuIntrHandler(void *Instance)
 }
 
 /**
- * This function register event callback
- * @param Mpu is pointer to AL_MPU_DevStruct
- * @param Callback the callback function
- * @param CallbackRef pointer a handle
  *
- * @return
- *        - 0 on success
- *        - Numbers greater than zero on failure
+ * This function allows registering a callback function that will be called when an MPU event occurs.
+ * It asserts that both the MPU device structure and the callback function are not NULL.
+ * If a callback is already registered, it will be replaced with the new one.
  *
- * @note
+ * @param Mpu Pointer to the MPU device structure.
+ * @param Callback The callback function to register.
+ * @param CallbackRef A user-defined reference that will be passed to the callback function.
+ * @return AL_OK on success, otherwise AL_MPU_ERR_ILLEGAL_PARAM if either Mpu or Callback is NULL.
  */
 AL_S32 AlMpu_Dev_RegisterEventCallBack(AL_MPU_DevStruct *Mpu, AL_Mpu_EventCallBack Callback, void *CallbackRef)
 {

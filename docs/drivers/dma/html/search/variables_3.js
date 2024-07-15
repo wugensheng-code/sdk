@@ -1,0 +1,24 @@
+var searchData=
+[
+  ['dar',['DAR',['../structAL__DMA__AxiRegStruct.html#aa7046e8e59c75bbb6d7a64004dccd342',1,'AL_DMA_AxiRegStruct']]],
+  ['databufdep',['DataBufDep',['../structAL__DMA__IpCfgInfoStruct.html#ad3392886dfb9e8e6b328bbdee7ae6aa2',1,'AL_DMA_IpCfgInfoStruct']]],
+  ['databuswidth',['DataBusWidth',['../structAL__DMA__IpCfgInfoStruct.html#ae0d0bfa38b0170ff3a89fe22ed7d3c30',1,'AL_DMA_IpCfgInfoStruct']]],
+  ['datinbyte',['DatInByte',['../structAL__DMA__CalStruct.html#a9907bb139d9e141d3f3372cfc81b30ae',1,'AL_DMA_CalStruct']]],
+  ['dbgcmd',['DBGCMD',['../structAL__DMA__DmaCtrlRegStruct.html#aeb4ba4073dc5ca3327941a8111b47109',1,'AL_DMA_DmaCtrlRegStruct']]],
+  ['dbginst',['DBGINST',['../structAL__DMA__DmaCtrlRegStruct.html#ab27a189291a296405560b39c7ec8b723',1,'AL_DMA_DmaCtrlRegStruct']]],
+  ['dbgstatus',['DBGSTATUS',['../structAL__DMA__DmaCtrlRegStruct.html#ac0831f384097c4368feebbfbceefb7cb',1,'AL_DMA_DmaCtrlRegStruct']]],
+  ['desc',['Desc',['../structAL__DMA__XferSpecStruct.html#a51f7ca7046c34c9130978f0a923813fb',1,'AL_DMA_XferSpecStruct::Desc()'],['../structAL__DMA__ChStruct.html#ae9fed22921229ee607394f4704c9f07f',1,'AL_DMA_ChStruct::Desc()']]],
+  ['dev',['Dev',['../structAL__DMA__ChStruct.html#a91598c6e6e43d49b1ab54e042955c01f',1,'AL_DMA_ChStruct::Dev()'],['../structAL__DMA__HalStruct.html#a43cb878ccdf68e22b3283ebdf78cd0b6',1,'AL_DMA_HalStruct::Dev()']]],
+  ['deviceid',['DeviceId',['../structAL__DMA__HwConfigStruct.html#ac6c90c3f70140ed6999ef133b01a5035',1,'AL_DMA_HwConfigStruct']]],
+  ['diff',['Diff',['../structAL__DMA__CalStruct.html#a5a629355fc8412de237b9b3a4efcb974',1,'AL_DMA_CalStruct']]],
+  ['dir',['Dir',['../structAL__DMA__DescStruct.html#abd652978bf838978e34484beb2cd2413',1,'AL_DMA_DescStruct::Dir()'],['../structAL__DMA__ChStruct.html#adb7101c87ba6ed0a8c878f0c39f29b17',1,'AL_DMA_ChStruct::Dir()']]],
+  ['direction',['Direction',['../structAL__DMA__ChCfgStruct.html#a287826f2f2039459abeb5f5ca832380a',1,'AL_DMA_ChCfgStruct']]],
+  ['dpc',['DPC',['../structAL__DMA__DmaCtrlRegStruct.html#a3b4b770afcf398752f9523780f3d8fb7',1,'AL_DMA_DmaCtrlRegStruct']]],
+  ['dsr',['DSR',['../structAL__DMA__DmaCtrlRegStruct.html#a897daa77c7934c25dcf466bd043e5552',1,'AL_DMA_DmaCtrlRegStruct']]],
+  ['dstaddr',['DstAddr',['../structAL__DMA__XferStruct.html#ad44402c6f39ee6f7639dc0ba84a63e30',1,'AL_DMA_XferStruct::DstAddr()'],['../structAL__DMA__ChCfgStruct.html#a3cc4f0fbcd1df2c42e2aaa24ab16790d',1,'AL_DMA_ChCfgStruct::DstAddr()']]],
+  ['dstaddrwidth',['DstAddrWidth',['../structAL__DMA__ChCfgStruct.html#aa78a3f4ab325f67adca75b3f9f9a2657',1,'AL_DMA_ChCfgStruct']]],
+  ['dstcachectl',['DstCacheCtl',['../structAL__DMA__ReqCfgStruct.html#a66cc913ba4491fffe318c140297085d7',1,'AL_DMA_ReqCfgStruct']]],
+  ['dstinc',['DstInc',['../structAL__DMA__ReqCfgStruct.html#ab62b5c9ec8b56476acb5befafc647ea5',1,'AL_DMA_ReqCfgStruct']]],
+  ['dstinterlacesize',['DstInterlaceSize',['../structAL__DMA__DescStruct.html#adcc2d8c2a47ac6e68f4a9a51b06fa36d',1,'AL_DMA_DescStruct::DstInterlaceSize()'],['../structAL__DMA__ChStruct.html#aa854b87bba6cba299a8ea5effa01dba5',1,'AL_DMA_ChStruct::DstInterlaceSize()'],['../structAL__DMA__ChCfgStruct.html#ab797095c22d095444e4f3efd50ccd723',1,'AL_DMA_ChCfgStruct::DstInterlaceSize()']]],
+  ['dstmaxburst',['DstMaxBurst',['../structAL__DMA__ChCfgStruct.html#a16b2dfcd906203f7b75c529f6848640f',1,'AL_DMA_ChCfgStruct']]]
+];

@@ -1,0 +1,11 @@
+digraph "fpsoc/driver/ps_driver/dma/src" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_02968f11321396ad5945446bc62d274e {
+    graph [ bgcolor="#ddddee", pencolor="black", label="dma" fontname="Helvetica", fontsize="10", URL="dir_02968f11321396ad5945446bc62d274e.html"]
+  dir_10d63560016b0e87922bb332f53948df [shape=box, label="src", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_10d63560016b0e87922bb332f53948df.html"];
+  }
+  dir_d34cd2e881c3957a2f74217f99e751ac [shape=box label="inc" URL="dir_d34cd2e881c3957a2f74217f99e751ac.html"];
+  dir_10d63560016b0e87922bb332f53948df->dir_d34cd2e881c3957a2f74217f99e751ac [headlabel="3", labeldistance=1.5 headhref="dir_000006_000005.html"];
+}

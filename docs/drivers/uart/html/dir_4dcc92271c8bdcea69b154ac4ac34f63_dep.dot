@@ -1,0 +1,11 @@
+digraph "fpsoc/driver/ps_driver/uart/src" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_5861584371fcc2405b0e1c99370b9613 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="uart" fontname="Helvetica", fontsize="10", URL="dir_5861584371fcc2405b0e1c99370b9613.html"]
+  dir_4dcc92271c8bdcea69b154ac4ac34f63 [shape=box, label="src", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_4dcc92271c8bdcea69b154ac4ac34f63.html"];
+  }
+  dir_d5f1d6348b438c8f20c2758d004aae07 [shape=box label="inc" URL="dir_d5f1d6348b438c8f20c2758d004aae07.html"];
+  dir_4dcc92271c8bdcea69b154ac4ac34f63->dir_d5f1d6348b438c8f20c2758d004aae07 [headlabel="3", labeldistance=1.5 headhref="dir_000006_000005.html"];
+}

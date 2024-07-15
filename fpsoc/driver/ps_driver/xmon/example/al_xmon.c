@@ -39,7 +39,12 @@
 
 
 /************************** Function Definitions ******************************/
-
+/**
+ * Logs the monitoring information of a given Xmon instance to the console.
+ * This function prints various performance and configuration metrics of the Xmon instance, such as QoS records, response times, and bandwidth usage.
+ *
+ * @param Xmon Pointer to the AL_Xmon_HalStruct structure that contains the Xmon instance to be logged.
+ */
 void printf_monitor(AL_Xmon_HalStruct *Xmon)
 {
   	AL_LOG(AL_LOG_LEVEL_ERROR, "AXIMON awqos_record         = 0x%x\r\n", Xmon->Info.Record.AwQos_Record);
@@ -54,6 +59,12 @@ void printf_monitor(AL_Xmon_HalStruct *Xmon)
   	AL_LOG(AL_LOG_LEVEL_ERROR, "AXIMON bandwidth_rd         = 0x%x\r\n", Xmon->Info.BandWidthRd);
 }
 
+/**
+ * Logs the monitoring information of a given Xmon instance to the console.
+ * This function prints various performance and configuration metrics of the Xmon instance, such as QoS records, response times, and bandwidth usage.
+ *
+ * @param Xmon Pointer to the AL_Xmon_HalStruct structure that contains the Xmon instance to be logged.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;

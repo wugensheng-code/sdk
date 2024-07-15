@@ -1,0 +1,11 @@
+digraph "fpsoc/driver/ps_driver/dmacahb/src" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_3a45f561a2aedda02b401de1b52571e4 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="dmacahb" fontname="Helvetica", fontsize="10", URL="dir_3a45f561a2aedda02b401de1b52571e4.html"]
+  dir_b42931e3b5f301222ed6144c192123ca [shape=box, label="src", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_b42931e3b5f301222ed6144c192123ca.html"];
+  }
+  dir_c22d897c75c019e9b5cc4e45e02016f1 [shape=box label="inc" URL="dir_c22d897c75c019e9b5cc4e45e02016f1.html"];
+  dir_b42931e3b5f301222ed6144c192123ca->dir_c22d897c75c019e9b5cc4e45e02016f1 [headlabel="5", labeldistance=1.5 headhref="dir_000006_000005.html"];
+}

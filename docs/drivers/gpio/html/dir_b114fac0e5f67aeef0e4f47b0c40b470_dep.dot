@@ -1,0 +1,11 @@
+digraph "fpsoc/driver/ps_driver/gpio/example" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_3f25ed7487b4f3184dd72ff440579e0f {
+    graph [ bgcolor="#ddddee", pencolor="black", label="gpio" fontname="Helvetica", fontsize="10", URL="dir_3f25ed7487b4f3184dd72ff440579e0f.html"]
+  dir_b114fac0e5f67aeef0e4f47b0c40b470 [shape=box, label="example", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_b114fac0e5f67aeef0e4f47b0c40b470.html"];
+  }
+  dir_e81bfb74570cb0bda9f0e33877561163 [shape=box label="inc" URL="dir_e81bfb74570cb0bda9f0e33877561163.html"];
+  dir_b114fac0e5f67aeef0e4f47b0c40b470->dir_e81bfb74570cb0bda9f0e33877561163 [headlabel="2", labeldistance=1.5 headhref="dir_000004_000005.html"];
+}

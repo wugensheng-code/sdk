@@ -1,0 +1,12 @@
+digraph "AL_CAN_HalStruct"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="AL_CAN_HalStruct",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Dev" ,fontname="Helvetica"];
+  Node2 [label="AL_CAN_DevStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__CAN__DevStruct.html",tooltip="Module device struct. "];
+  Node3 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" EventCallBack" ,fontname="Helvetica"];
+  Node3 [label="AL_CAN_EventStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__CAN__EventStruct.html",tooltip="Event struct. "];
+  Node4 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" Config" ,fontname="Helvetica"];
+  Node4 [label="AL_CAN_InitStruct",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structAL__CAN__InitStruct.html",tooltip="Module Init config struct. "];
+}

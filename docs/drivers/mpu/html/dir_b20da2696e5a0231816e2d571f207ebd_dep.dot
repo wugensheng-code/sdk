@@ -1,0 +1,11 @@
+digraph "fpsoc/driver/ps_driver/mpu/example" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_55074c710dce6213d41aaaed9193c6fb {
+    graph [ bgcolor="#ddddee", pencolor="black", label="mpu" fontname="Helvetica", fontsize="10", URL="dir_55074c710dce6213d41aaaed9193c6fb.html"]
+  dir_b20da2696e5a0231816e2d571f207ebd [shape=box, label="example", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_b20da2696e5a0231816e2d571f207ebd.html"];
+  }
+  dir_5bf57f7edd2bb3d8292ec3dde7907d7b [shape=box label="inc" URL="dir_5bf57f7edd2bb3d8292ec3dde7907d7b.html"];
+  dir_b20da2696e5a0231816e2d571f207ebd->dir_5bf57f7edd2bb3d8292ec3dde7907d7b [headlabel="1", labeldistance=1.5 headhref="dir_000004_000005.html"];
+}

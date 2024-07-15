@@ -34,7 +34,13 @@
 /************************** Function Prototypes ******************************/
 
 /************************** Function Definitions ******************************/
-
+/**
+ * This function performs a series of operations to test the IPC mailbox functionality. It initializes a mailbox,
+ * writes a value to it, reads the value back, and checks if the written and read values match. This process is repeated
+ * for three different mailbox instances. It logs information about the operations being performed and their outcomes.
+ *
+ * @return 0 Always returns 0 indicating the program executed.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
