@@ -2,25 +2,40 @@
 #include <stdint.h>
 #include "fd_ddr_init.h"
 #include "al_core.h"
+#include "dr1x90_pinctrl.h"
 
 #define KB (1024UL)
 #define MB (1024UL * KB)
+
+#define ECC_STR (FD_PARA_ECC == DDR_ECC_SIDEBAND) ? "SideBand ECC" : \
+                (FD_PARA_ECC == DDR_ECC_INLINE)   ? "Inline ECC" : "without ECC"
 
 int write_read_compare(volatile uint64_t* wptr, volatile uint64_t* rptr, int size, uint64_t seed, const char* tag);
 
 int main()
 {
+    const pin_uart_t pin_uart0 = {51, 50};
+    pinmux_config_uart0(&pin_uart0);
+
     int err = 0;
     printf("Compile Time: %s %s\r\n", __DATE__, __TIME__);
-    printf("Demo DDR Init\r\n");
+    printf("DDR Memory Test\r\n");
+
+    err = fd_ddr_init();
+
+    // Total Size in MB
+    size_t total_size = FD_PARA_DRAM_DENSITY / 8 * FD_PARA_DQ_WIDTH / FD_PARA_DRAM_WIDTH;
+    if (FD_PARA_ECC == DDR_ECC_INLINE)
+        total_size = total_size * 7 / 8;
+    printf("DDR %s, Available Size = %ld MB\r\n", ECC_STR, total_size);
 
     err += write_read_compare((void*)(1 * MB), (void*)(1 * MB), 32 * KB / sizeof(uint64_t), 0x114514UL, "1MB offset, 32KB Read Back");
     err += write_read_compare((void*)(4 * MB), (void*)(4 * MB),  8 * MB / sizeof(uint64_t), 0x66CCFFUL, "4MB offset, 8MB Read Back");
     for (int i = 0; i < 1; ++i) {
-        err += write_read_compare((void*)(0UL), (void*)(0UL), 32 * MB / sizeof(uint64_t), 0x1145141919810UL, "32MB Read Back");
+        err += write_read_compare((void*)(0UL), (void*)(0UL), total_size * MB / sizeof(uint64_t), 0x1145141919810UL, "Full Space Scan");
     }
 
-    printf("Demo DDR Init %s\r\n", err == 0 ? "PASS" : "FAIL");
+    printf("DDR Memory Test %s\r\n", err == 0 ? "PASS" : "FAIL");
 
     return 0;
 }

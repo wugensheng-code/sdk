@@ -525,3 +525,43 @@ void dr1x90_ddrmc_arbiter_cfg(ddr_type_t type, const ddr_arbiter_t* arbiter_cfg)
         dr1x90_reg_write(DDRC_ADDR_UMCTL2 + PCFGWQOS1_0 + 0xb0 * i, regData);
     }
 }
+
+void dr1x90_ddrmc_scrub_write(const ddr_basic_t* basic_cfg)
+{
+    for (int i = 0; i < 4; ++i) {
+        // port_en = 0x0
+        dr1x90_reg_write(DDRC_ADDR_UMCTL2 + PCTRL_0 + 0xb0 * i, 0x0);
+    }
+
+    u32 regData = dr1x90_reg_read(DDRC_ADDR_UMCTL2 + SBRCTL);
+    regData = dr1x90_field_set(DDRC_ADDR_UMCTL2 + SBRCTL, scrub_interval_offset, scrub_interval_mask, 0x0, regData);
+    regData = dr1x90_field_set(DDRC_ADDR_UMCTL2 + SBRCTL, scrub_mode_offset, scrub_mode_mask, 0x1, regData);
+    regData = dr1x90_field_set(DDRC_ADDR_UMCTL2 + SBRCTL, scrub_en_offset, scrub_en_mask, 0x0, regData);
+    dr1x90_reg_write(DDRC_ADDR_UMCTL2 + SBRCTL, regData);
+
+    dr1x90_reg_write(DDRC_ADDR_UMCTL2 + SBRWDATA0, 0xCCAA5533);
+    dr1x90_reg_write(DDRC_ADDR_UMCTL2 + SBRSTART0, 0x0);
+    dr1x90_reg_write(DDRC_ADDR_UMCTL2 + SBRSTART1, 0x0);
+
+    if (basic_cfg->ecc == DDR_ECC_INLINE) {
+        size_t ecc_region_hif = basic_cfg->size / 4 - 1UL;
+        dr1x90_reg_write(DDRC_ADDR_UMCTL2 + SBRRANGE0, (ecc_region_hif >>  0) & 0xFFFFFFFFUL);
+        dr1x90_reg_write(DDRC_ADDR_UMCTL2 + SBRRANGE1, (ecc_region_hif >> 32) & 0xFFFFFFFFUL);
+    }
+    else {
+        dr1x90_reg_write(DDRC_ADDR_UMCTL2 + SBRRANGE0, 0x0);
+        dr1x90_reg_write(DDRC_ADDR_UMCTL2 + SBRRANGE1, 0x0);
+    }
+
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + SBRCTL, scrub_en_offset, scrub_en_mask, 0x1);
+
+    dr1x90_field_wait(DDRC_ADDR_UMCTL2 + SBRSTAT, scrub_done_offset, scrub_done_mask, 0x1, -1);
+    dr1x90_field_wait(DDRC_ADDR_UMCTL2 + SBRSTAT, scrub_busy_offset, scrub_busy_mask, 0x0, -1);
+
+    dr1x90_field_write(DDRC_ADDR_UMCTL2 + SBRCTL, scrub_en_offset, scrub_en_mask, 0x0);
+
+    for (int i = 0; i < 4; ++i) {
+        // port_en = 0x0
+        dr1x90_reg_write(DDRC_ADDR_UMCTL2 + PCTRL_0 + 0xb0 * i, 0x1);
+    }
+}

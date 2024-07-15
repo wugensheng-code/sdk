@@ -38,6 +38,7 @@ void dr1x90_ddrmc_init_cfg(double fck, ddr_type_t type, const ddr_timing_t* timp
 void dr1x90_ddrmc_timing_cfg(double fck, ddr_type_t type, const ddr_timing_t* timpara);
 void dr1x90_ddrmc_addrmap_cfg(ddr_type_t type, ddr_width_t width, const ddr_addrmap_t* addrmap);
 void dr1x90_ddrmc_arbiter_cfg(ddr_type_t type, const ddr_arbiter_t* arbiter_cfg);
+void dr1x90_ddrmc_scrub_write(const ddr_basic_t* basic_cfg);
 
 // Execution
 void dr1x90_ddrppc_mdl_cal();

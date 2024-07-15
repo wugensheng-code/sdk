@@ -1,122 +1,93 @@
-
-
+#include <stdio.h>
 #include <string.h>
 #include "fd_ddr_init.h"
 
-// Total Size in MB
-static unsigned long long TOTAL_SZIE = 0;
-ddr_timing_t get_timing_para(double fck, ddr_params_t ddr_params);
-ddr_addrmap_t get_addrmap();
-int ddr_init_by_params();
-int ddr_init_by_tcl(ddr_params_t* params_addr);
-
-// default params config
-ddr_params_t ddr_params = {
-    .osc_clk         = 33330000,
-    .type            = 3       ,
-    .speed           = 1066    ,
-    .dq_width        = 32      ,
-
-    .io_vol          = 1.5     ,
-    .verf            = 0       ,
-    .pzq             = 0       ,
-    .dram_width      = 8       ,
-
-    .speed_bin_index = 4       ,
-    .wdbi            = 1       ,
-    .rdbi            = 0       ,
-    .dram_density    = 4096    ,
-
-    .ecc             = 0       ,
-    .addr_map        = 0       ,
-    .training        = 1       ,
-    .byte0_ac_dely   = 0.0     ,
-
-    .byte0_dqs_dely  = 0.0     ,
-    .byte1_ac_dely   = 0.0     ,
-    .byte1_dqs_dely  = 0.0     ,
-    .byte2_ac_dely   = 0.0     ,
-
-    .byte2_dqs_dely  = 0.0     ,
-    .byte3_ac_dely   = 0.0     ,
-    .byte3_dqs_dely  = 0.0  
-};
+ddr_timing_t  get_timing_para(double fck, const ddr_params_t* parm);
+ddr_addrmap_t get_addrmap(const ddr_params_t* parm);
+int ddr_init_by_params(const ddr_params_t* parm);
+int ddr_init_by_tcl(const ddr_params_t* parm);
 
 // called by socplat_init
 int fd_ddr_init()
 {   
-    int err = 0;
-    // update params
-    ddr_params.osc_clk         = SYSTEM_CLOCK          ;
-    ddr_params.type            = FD_PARA_DDR_TYPE      ;
-    ddr_params.speed           = FD_PARA_DDR_SPEED     ;
-    ddr_params.dq_width        = FD_PARA_DQ_WIDTH      ;
-    ddr_params.io_vol          = FD_PARA_IO_VOLT       ;
-    ddr_params.verf            = FD_PARA_VREF          ;
-    ddr_params.pzq             = FD_PARA_PZQ_ENABLE    ;
-    ddr_params.dram_width      = FD_PARA_DRAM_WIDTH    ;
-    ddr_params.speed_bin_index = FD_PARA_SPEED_BIN     ;
-    ddr_params.wdbi            = FD_PARA_WDM           ;
-    ddr_params.rdbi            = FD_PARA_RDBI          ;
-    ddr_params.dram_density    = FD_PARA_DRAM_DENSITY  ;
-    ddr_params.ecc             = FD_PARA_ECC           ;
-    ddr_params.addr_map        = FD_PARA_ADDRMAP       ;
-    ddr_params.training        = FD_PARA_TRAINING      ;
-    ddr_params.byte0_ac_dely   = FD_PARA_BYTE0_AC_DLY  ;
-    ddr_params.byte0_dqs_dely  = FD_PARA_BYTE0_DQS_DLY ;
-    ddr_params.byte1_ac_dely   = FD_PARA_BYTE1_AC_DLY  ;
-    ddr_params.byte1_dqs_dely  = FD_PARA_BYTE1_DQS_DLY ;
-    ddr_params.byte2_ac_dely   = FD_PARA_BYTE2_AC_DLY  ;
-    ddr_params.byte2_dqs_dely  = FD_PARA_BYTE2_DQS_DLY ;
-    ddr_params.byte3_ac_dely   = FD_PARA_BYTE3_AC_DLY  ;
-    ddr_params.byte3_dqs_dely  = FD_PARA_BYTE3_DQS_DLY ;
+    ddr_params_t param = {
+        .osc_clk         = SYSTEM_CLOCK          ,
+        .type            = FD_PARA_DDR_TYPE      ,
+        .speed           = FD_PARA_DDR_SPEED     ,
+        .dq_width        = FD_PARA_DQ_WIDTH      ,
+        .io_vol          = FD_PARA_IO_VOLT       ,
+        .verf            = FD_PARA_VREF          ,
+        .pzq             = FD_PARA_PZQ_ENABLE    ,
+        .dram_width      = FD_PARA_DRAM_WIDTH    ,
+        .speed_bin_index = FD_PARA_SPEED_BIN     ,
+        .wdbi            = FD_PARA_WDM           ,
+        .rdbi            = FD_PARA_RDBI          ,
+        .dram_density    = FD_PARA_DRAM_DENSITY  ,
+        .ecc             = FD_PARA_ECC           ,
+        .addr_map        = FD_PARA_ADDRMAP       ,
+        .training        = FD_PARA_TRAINING      ,
+        .byte0_ac_dely   = FD_PARA_BYTE0_AC_DLY  ,
+        .byte0_dqs_dely  = FD_PARA_BYTE0_DQS_DLY ,
+        .byte1_ac_dely   = FD_PARA_BYTE1_AC_DLY  ,
+        .byte1_dqs_dely  = FD_PARA_BYTE1_DQS_DLY ,
+        .byte2_ac_dely   = FD_PARA_BYTE2_AC_DLY  ,
+        .byte2_dqs_dely  = FD_PARA_BYTE2_DQS_DLY ,
+        .byte3_ac_dely   = FD_PARA_BYTE3_AC_DLY  ,
+        .byte3_dqs_dely  = FD_PARA_BYTE3_DQS_DLY 
+    };
 
-    err = ddr_init_by_params();
+    int err = ddr_init_by_params(&param);
     return err;
 }
 
 // called by ddr_init_tcl
-int ddr_init_by_tcl(ddr_params_t* params_addr)
+int ddr_init_by_tcl(const ddr_params_t* parm)
 {
-     int err = 0;
-     memcpy(&ddr_params, (void*)params_addr, sizeof(ddr_params_t));
-     err = ddr_init_by_params();
-     return err;
+    ddr_params_t param;
+    memcpy(&param, (void*)parm, sizeof(ddr_params_t));
+    int err = ddr_init_by_params(&param);
+    return err;
 }
 
-int ddr_init_by_params()
+int ddr_init_by_params(const ddr_params_t* parm)
 {
-    // update params
-    TOTAL_SZIE = ddr_params.dram_density / 8 * ddr_params.dq_width / ddr_params.dram_width;
-    const double f_ck = (double)(ddr_params.speed) / 2;
-    const double fsys = (double)ddr_params.osc_clk * 1e-6;
-    ddr_width_t width = ddr_params.dq_width  / 8;
+    // Total Size in MB
+    size_t total_size = parm->dram_density / 8 * parm->dq_width / parm->dram_width;
+    uint32_t dram_depth = parm->dram_density / parm->dram_width;
+    if (parm->ecc == DDR_ECC_INLINE)
+        total_size = total_size * 7 / 8;
+    printf("[DDR INFO] DRAM %dM x%d, Use DQ[%d:0] %s\r\n", dram_depth, parm->dram_width, 
+        parm->dq_width - 1, parm->ecc == DDR_ECC_SIDEBAND ? "+ DQ[31:24]" : ""
+    );
+    printf("[DDR INFO] Available Capacity %ld MB\r\n", total_size);
+
+    const double f_ck = (double)parm->speed / 2.0;
+    const double fsys = (double)parm->osc_clk * 1e-6;
+    ddr_width_t width = parm->dq_width / 8;
     ddr_basic_t basic_cfg = {
         .fck   = f_ck,
         .fsys  = fsys,
-        // gxrao
-        .type  = ddr_params.type,
+        .type  = parm->type,
         .width = width ,
-        .ecc   = ddr_params.ecc,
+        .ecc   = parm->ecc,
         .ecc_poison = ECC_POISON_NONE,
-        .vref  = ddr_params.verf,
-        .size  = 1024UL * 1024UL * TOTAL_SZIE
+        .vref  = parm->verf,
+        .size  = 1024UL * 1024UL * total_size
     };
 
     ddr_train_t train_cfg = {
-        .pzq   = ddr_params.pzq,
+        .pzq   = 0, // parm->pzq
         .dcc   = 0,
-        .fast  = !ddr_params.training,
-        .wl    = ddr_params.training,
-        .wladj = ddr_params.training,
-        .gate  = ddr_params.training,
-        .reye  = ddr_params.training,
-        .weye  = ddr_params.training,
-        .ac_dly = { (double)ddr_params.byte0_ac_dely , (double)ddr_params.byte1_ac_dely , 
-                    (double)ddr_params.byte2_ac_dely , (double)ddr_params.byte3_ac_dely },
-        
-        .dx_dly = {(double)ddr_params.byte0_dqs_dely, (double)ddr_params.byte0_dqs_dely, 
-                    (double)ddr_params.byte0_dqs_dely, (double)ddr_params.byte0_dqs_dely},
+        .fast  = !parm->training,
+        .wl    =  parm->training,
+        .wladj =  parm->training,
+        .gate  =  parm->training,
+        .reye  =  parm->training,
+        .weye  =  parm->training,
+        .ac_dly = { (double)parm->byte0_ac_dely , (double)parm->byte1_ac_dely  , 
+                    (double)parm->byte2_ac_dely , (double)parm->byte3_ac_dely  },
+        .dx_dly = { (double)parm->byte0_dqs_dely, (double)parm->byte0_dqs_dely , 
+                    (double)parm->byte0_dqs_dely, (double)parm->byte0_dqs_dely },
         .wlsl   = { -1,  -1,  -1,  -1},
         .wld    = { -1,  -1,  -1,  -1},
         .dgsl   = { -1,  -1,  -1,  -1},
@@ -126,9 +97,9 @@ int ddr_init_by_params()
         .rdqsnd = { -1,  -1,  -1,  -1}
     };
 
-    ddr_timing_t timpara = get_timing_para(f_ck, ddr_params);
+    ddr_timing_t timpara = get_timing_para(f_ck, parm);
 
-    ddr_addrmap_t addrmap = get_addrmap();
+    ddr_addrmap_t addrmap = get_addrmap(parm);
 
     ddr_arbiter_t arbiter_cfg = {
         .lpr_num        = 31  ,
@@ -167,6 +138,115 @@ static u8 clog2(uint64_t x)
     return i;
 }
 
+#define MAP_INVALID 0
+#define MAP_COL     1
+#define MAP_ROW     2
+#define MAP_BA      3
+#define MAP_BG      4
+#define MAP_MAXSIZE 8
+
+typedef struct ddr_addrmap_config_t
+{
+    int len;
+    int type[MAP_MAXSIZE];
+    int size[MAP_MAXSIZE];
+} ddr_addrmap_config_t;
+
+static int map_append(ddr_addrmap_config_t* cfg, int type, int size)
+{
+    int idx = cfg->len;
+    cfg->type[idx] = type;
+    cfg->size[idx] = size;
+    cfg->len = ++idx;
+    return idx;
+}
+
+ddr_addrmap_t get_addrmap(const ddr_params_t* parm)
+{
+    ddr_addrmap_config_t config;
+    memset(&config, 0, sizeof(ddr_addrmap_config_t));
+    ddr_addrmap_t map;
+    memset(&map, -1, sizeof(ddr_addrmap_t));
+
+    const uint64_t depth = parm->dram_density / parm->dram_width;
+    const int width = clog2(depth - 1) + 20;
+
+    const int col_ec = (parm->ecc == DDR_ECC_INLINE) ? 3 : 0;
+    const int col_lo = 
+        parm->dq_width == 32 ? 2 :
+        parm->dq_width == 16 ? 3 : 4;
+    const int col_mi = 2;
+    const int col_hi = 10 - col_mi - col_lo - col_ec;
+    const int ba = (parm->type == DDR3_TYPE) ? 3 : 2;
+    const int bg = (parm->type == DDR3_TYPE) ? 0 : 
+                   (parm->dram_width == 16 ) ? 1 : 2;
+    const int row = width - 10 - ba - bg;
+
+    switch (parm->addr_map)
+    {
+    case ROW_COL_BANK:
+        map_append(&config, MAP_COL, col_mi);
+        map_append(&config, MAP_BG , bg    );
+        map_append(&config, MAP_BA , ba    );
+        map_append(&config, MAP_COL, col_hi);
+        map_append(&config, MAP_ROW, row   );
+        map_append(&config, MAP_COL, col_ec);
+        break;
+    case ROW_BANK_COL:
+        map_append(&config, MAP_COL, col_mi);
+        map_append(&config, MAP_COL, col_hi);
+        map_append(&config, MAP_BG , bg    );
+        map_append(&config, MAP_BA , ba    );
+        map_append(&config, MAP_ROW, row   );
+        map_append(&config, MAP_COL, col_ec);
+        break;
+    case BANK_ROW_COL:
+        map_append(&config, MAP_COL, col_mi);
+        map_append(&config, MAP_COL, col_hi);
+        map_append(&config, MAP_ROW, row   );
+        map_append(&config, MAP_BG , bg    );
+        map_append(&config, MAP_BA , ba    );
+        map_append(&config, MAP_COL, col_ec);
+        break;
+    }
+
+    uint8_t axaddr = 4;
+    uint8_t cdx = (uint8_t)col_lo;
+    uint8_t rdx = 0;
+    uint8_t bax = 0;
+    uint8_t bgx = 0;
+
+    for (int i = 0; i < config.len; ++i) {
+        int type = config.type[i];
+        int size = config.size[i];
+        for (int j = 0; j < size; ++j) {
+            switch (type)
+            {
+            case MAP_COL:
+                map.col[cdx] = axaddr;
+                ++cdx;
+                break;
+            case MAP_ROW:
+                map.row[rdx] = axaddr;
+                ++rdx;
+                break;
+            case MAP_BA:
+                map.ba [bax] = axaddr;
+                ++bax;
+                break;
+            case MAP_BG:
+                map.bg [bgx] = axaddr;
+                ++bgx;
+                break;
+            default:
+                break;
+            }
+            ++axaddr;
+        }
+    }
+    return map;
+}
+/*
 static u8 find(const u8* arr, int n, u8 target)
 {
     for (int i = 0; i < n; ++i) {
@@ -176,23 +256,24 @@ static u8 find(const u8* arr, int n, u8 target)
     return (u8)-1;
 }
 
-ddr_addrmap_t get_addrmap()
+ddr_addrmap_t get_addrmap(const ddr_params_t* parm)
 {
     ddr_addrmap_t map;
     memset(&map, -1, sizeof(ddr_addrmap_t));
 
-    u8 width = clog2(TOTAL_SZIE - 1) + 20;
+    const size_t total_size = parm->dram_density / 8 * parm->dq_width / parm->dram_width;
+    u8 width = clog2(total_size - 1) + 20;
 
     u8 ba[3] = {-1, -1, -1};
     u8 bg[2] = {-1, -1};
 
     u8 cdx = 4;
-    cdx = ddr_params.dq_width == 32 ? 2 :
-          ddr_params.dq_width == 16 ? 3 :
+    cdx = parm->dq_width == 32 ? 2 :
+          parm->dq_width == 16 ? 3 :
           4;
     u8 rdx = 0;
 
-    switch (ddr_params.addr_map)
+    switch (parm->addr_map)
     {
         case ROW_COL_BANK:
             ba[0] = 6;
@@ -204,7 +285,7 @@ ddr_addrmap_t get_addrmap()
             ba[0] = width - 2;
             break;
     }
-    switch (ddr_params.type)
+    switch (parm->type)
     {
     case DDR3_TYPE:
         ba[1] = ba[0] + 1;
@@ -241,3 +322,4 @@ ddr_addrmap_t get_addrmap()
 
     return map;
 }
+*/

@@ -90,6 +90,8 @@ int dr1x90_ddrc_init(
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 10 : MC Configuration
     ///////////////////////////////////////////////////////////////////////////////////////////////
+    dr1x90_reg_write(DDRC_ADDR_GPLL + FUNCTRL, (basic_cfg->ecc == DDR_ECC_SIDEBAND) ? 0x2 : 0x0);
+    
     dr1x90_ddrmc_cfg(basic_cfg, timpara, addrmap, arbiter_cfg);
     dr1x90_reg_write(DDRC_ADDR_DPLL + RW_TEST, 0x1); // Release MC reset
     // DFIMISC.dfi_init_complete_en = 1'b0
@@ -195,9 +197,6 @@ int dr1x90_ddrc_init(
     // dcu_vref_rweye_scan(0xF);
     // while (1);
 
-    if (basic_cfg->ecc == DDR_ECC_SIDEBAND)
-        dr1x90_reg_write(DDRC_ADDR_GPLL + FUNCTRL, 0x3);
-
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // step 11 : HandOff to DFI
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -209,128 +208,11 @@ int dr1x90_ddrc_init(
     dr1x90_release_ddr_bus();
     dr1x90_ddrmc_post_cfg();
 
-    regData = dr1x90_field_read(DDRC_ADDR_PPC + PGCR1, PUBMODE_offset, PUBMODE_mask);
-   //  AL_DDR_LOG("\n initial PUBMODE.   data =  0x%x\n", regData);
-
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, dbg_hpr_q_depth_offset, dbg_hpr_q_depth_mask);
-   //  AL_DDR_LOG("\n MC initial dbg_hpr_q_depth.   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, dbg_lpr_q_depth_offset, dbg_lpr_q_depth_mask);
-   //  AL_DDR_LOG("\n MC initial dbg_lpr_q_depth.   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, dbg_w_q_depth_offset, dbg_w_q_depth_mask);
-   //  AL_DDR_LOG("\n MC initial dbg_w_q_depth.   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, dbg_wr_q_empty_offset, dbg_wr_q_empty_mask);
-   //  AL_DDR_LOG("\n MC initial dbg_wr_q_empty.   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, dbg_rd_q_empty_offset, dbg_rd_q_empty_mask);
-   //  AL_DDR_LOG("\n MC initial dbg_rd_q_empty.   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, rd_data_pipeline_empty_offset, rd_data_pipeline_empty_mask);
-   //  AL_DDR_LOG("\n MC initial rd_data_pipeline_empty.   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, wr_data_pipeline_empty_offset, wr_data_pipeline_empty_mask);
-   //  AL_DDR_LOG("\n MC initial wr_data_pipeline_empty.   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, dbg_stall_wr_offset, dbg_stall_wr_mask);
-   //  AL_DDR_LOG("\n MC initial dbg_stall_wr.   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, dbg_stall_rd_offset, dbg_stall_rd_mask);
-   //  AL_DDR_LOG("\n MC initial dbg_stall_rd.   data =  0x%x\n", regData);
-
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + INIT3, mr_offset, mr_mask);
-   //  AL_DDR_LOG("\n MR0.   data =  0x%x\n", regData);
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + INIT3, emr_offset, emr_mask);
-   //  AL_DDR_LOG("\n MR1.   data =  0x%x\n", regData);
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + INIT4, emr2_offset, emr2_mask);
-   //  AL_DDR_LOG("\n MR2.   data =  0x%x\n", regData);
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + INIT4, emr3_offset, emr3_mask);
-   //  AL_DDR_LOG("\n MR3.   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DRAMTMG2, write_latency_offset, write_latency_mask);
-   //  AL_DDR_LOG("\n write_latency.   data =  0x%x\n", regData);
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DRAMTMG2, read_latency_offset, read_latency_mask);
-   //  AL_DDR_LOG("\n read_latency.   data =  0x%x\n", regData);
-
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DFITMG0, dfi_tphy_wrlat_offset, dfi_tphy_wrlat_mask);
-   //  AL_DDR_LOG("\n dfi_tphy_wrlat.   data =  0x%x\n", regData);
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DFITMG0, dfi_t_rddata_en_offset, dfi_t_rddata_en_mask);
-   //  AL_DDR_LOG("\n dfi_t_rddata_en.   data =  0x%x\n", regData);
-
     if (basic_cfg->ecc != DDR_ECC_NONE) {
-        memset((void*)0x0, 0x0, basic_cfg->size);
+        // memset((void*)0x0, 0x0, basic_cfg->size);
         // dc_zeros((void*)0x0, basic_cfg->size);
+        dr1x90_ddrmc_scrub_write(basic_cfg);
     }
-/*
-    set_rand_seed(100);
-
-    AL_DDR_LOG("[DDR TEST] DRAM W & R\r\n");
-    for (int i = 0; i < 10; i++) {
-        //dr1x90_dram_write(0x100000 + i * 4, 0x12345678);
-        u32 zq_val = get_rand();
-        dr1x90_dram_write(0x100000 + i * 8, zq_val);
-        regData = dr1x90_dram_read(0x100000 + i * 8);
-        if ((regData & 0xffffffff) == (zq_val & 0xffffffff)) {
-            //AL_DDR_LOG(" pass No. 0x%08x\n", i);
-        }
-        else {
-            ++mtest_err;
-            AL_DDR_LOG(" No. 0x%08x, read Error : address 0x%08x =  0x%08x, expect = 0x%08x\r\n", i, (0x100000 + i * 8), regData, zq_val);
-        }
-    }
-    // AL_DDR_LOG(" write DRAM address test done \r\n");
-*/
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, dbg_hpr_q_depth_offset, dbg_hpr_q_depth_mask);
-   //  AL_DDR_LOG("\n MC test dbg_hpr_q_depth.   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, dbg_lpr_q_depth_offset, dbg_lpr_q_depth_mask);
-   //  AL_DDR_LOG("\n MC test dbg_lpr_q_depth.   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, dbg_w_q_depth_offset, dbg_w_q_depth_mask);
-   //  AL_DDR_LOG("\n MC test dbg_w_q_depth.   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, dbg_wr_q_empty_offset, dbg_wr_q_empty_mask);
-   //  AL_DDR_LOG("\n MC test dbg_wr_q_empty.   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, dbg_rd_q_empty_offset, dbg_rd_q_empty_mask);
-   //  AL_DDR_LOG("\n MC test dbg_rd_q_empty.   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, rd_data_pipeline_empty_offset, rd_data_pipeline_empty_mask);
-   //  AL_DDR_LOG("\n MC test rd_data_pipeline_empty.   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, wr_data_pipeline_empty_offset, wr_data_pipeline_empty_mask);
-   //  AL_DDR_LOG("\n MC test wr_data_pipeline_empty.   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, dbg_stall_wr_offset, dbg_stall_wr_mask);
-   //  AL_DDR_LOG("\n MC test dbg_stall_wr.   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DBGCAM, dbg_stall_rd_offset, dbg_stall_rd_mask);
-   //  AL_DDR_LOG("\n MC test dbg_stall_rd.   data =  0x%x\n", regData);
-
-    regData = dr1x90_dram_read(0xF84400AC);
-   //  AL_DDR_LOG(" XMON Debug Timeout   data =  0x%x\n", regData);
-
-    regData = dr1x90_dram_read(0xF8800000);
-   //  AL_DDR_LOG(" chipID   data =  0x%x\n", regData);
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DRAMTMG2, write_latency_offset, write_latency_mask);
-   //  AL_DDR_LOG("\n write_latency.   data =  0x%x\n", regData);
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DRAMTMG2, read_latency_offset, read_latency_mask);
-   //  AL_DDR_LOG("\n read_latency.   data =  0x%x\n", regData);
-
-
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DFITMG0, dfi_tphy_wrlat_offset, dfi_tphy_wrlat_mask);
-   //  AL_DDR_LOG("\n dfi_tphy_wrlat.   data =  0x%x\n", regData);
-    regData = dr1x90_field_read(DDRC_ADDR_UMCTL2 + DFITMG0, dfi_t_rddata_en_offset, dfi_t_rddata_en_mask);
-   //  AL_DDR_LOG("\n dfi_t_rddata_en.   data =  0x%x\n", regData);
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-    // Test Done
-    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     return mtest_err;
 }

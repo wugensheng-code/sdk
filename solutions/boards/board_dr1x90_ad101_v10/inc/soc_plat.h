@@ -92,11 +92,11 @@ extern "C" {
 
 #define DDRC_ADDR_MAP                  ROW_COL_BANK
 #define DDRC_COMP_DENSITY                      4096
-#define DDRC_SPEED_BIN        _SPEED_BIN_DDR3_1066G
+#define DDRC_SPEED_BIN        _SPEED_BIN_DDR3_1333H
 #define DDRC_COMP_TYPE           DDR_COMP_WIDTH_x16
 #define DDRC_IO_VOL                             1.5
 #define DDRC_PZQ_CONF                             0
-#define DDRC_DDR_SPEED                         1066
+#define DDRC_DDR_SPEED                         1333
 #define DDRC_TRAINING_EN                          1
 #define DDRC_DELAY_B0_AC                        0.0
 #define DDRC_DELAY_B0_DQ                        0.0
@@ -110,6 +110,7 @@ extern "C" {
 #define DDRC_VREF                          Internal
 #define DDRC_WDM_WDBI                           WDM
 #define DDRC_DQ_WIDTH                            32
+#define DDRC_ECC_EN                               0
 
 // (1) ddr type, default: DDR3
 #define DDR4                                      4

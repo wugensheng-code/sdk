@@ -4,7 +4,7 @@
 #include "alc_types.h"
 
 #define FW_VERSION_MAJOR 4UL
-#define FW_VERSION_MINOR 0UL
+#define FW_VERSION_MINOR 2UL
 #define FW_VERSION ((FW_VERSION_MAJOR << 32) | FW_VERSION_MINOR)
 
 #define DDR3_TYPE 3

@@ -46,7 +46,7 @@ ASM_SRCS :=
 #########################################################################
 CFLAGS := -O2 -g
 
-ENABLE_MMU := 0
+ENABLE_MMU := 1
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
@@ -73,6 +73,9 @@ endif
 
 all: $(TARGET)
 	@$(ECHO) COMPILE_PREFIX = $(COMPILE_PREFIX)
+
+gdb: all
+	$(COMPILE_PREFIX)gdb -f $(TARGET).elf -x $(SDK_ROOT)/target_zq.gdb
 
 # include rules.mk
 include $(SDK_ROOT)/tools/make/rules.mk
