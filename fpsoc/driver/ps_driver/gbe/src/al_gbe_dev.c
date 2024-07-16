@@ -1568,17 +1568,10 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
     /* Set header or buffer 1 Length */
     AlGbe_ll_SetTdesc2Buffer1Len((AL_REG)&DmaTxDesc->DESC2, TxBuffer->Len);
 
-    if (TxBuffer->next != AL_NULL) {
-        TxBuffer = TxBuffer->next;
-        /* Set buffer 2 address */
-        DmaTxDesc->DESC1 = (AL_U32)((AL_UINTPTR)TxBuffer->Buffer);
-        /* Set buffer 2 Length */
-        AlGbe_ll_SetTdesc2Buffer2Len((AL_REG)&DmaTxDesc->DESC2, TxBuffer->Len);
-    } else {
-        DmaTxDesc->DESC1 = 0x0;
-        /* Set buffer 2 Length */
-        AlGbe_ll_SetTdesc2Buffer2Len((AL_REG)&DmaTxDesc->DESC2, 0x0U);
-    }
+    /* Buffer2 not use */
+    DmaTxDesc->DESC1 = 0x0;
+    /* Set buffer 2 Length */
+    AlGbe_ll_SetTdesc2Buffer2Len((AL_REG)&DmaTxDesc->DESC2, 0x0U);
 
     AlGbe_ll_SetTdesc3FrameLen((AL_REG)&DmaTxDesc->DESC3, TxConfig->Length);
 
@@ -1651,18 +1644,10 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
         /* Set header or buffer 1 Length */
         AlGbe_ll_SetTdesc2Buffer1Len((AL_REG)&DmaTxDesc->DESC2, TxBuffer->Len);
 
-        if (TxBuffer->next != AL_NULL) {
-            /* Get the next Tx buffer in the list */
-            TxBuffer = TxBuffer->next;
-            /* Set buffer 2 address */
-            DmaTxDesc->DESC1 = (AL_U32)((AL_UINTPTR)TxBuffer->Buffer);
-            /* Set buffer 2 Length */
-            AlGbe_ll_SetTdesc2Buffer2Len((AL_REG)&DmaTxDesc->DESC2, TxBuffer->Len);
-        } else {
-            DmaTxDesc->DESC1 = 0x0;
-            /* Set buffer 2 Length */
-            AlGbe_ll_SetTdesc2Buffer2Len((AL_REG)&DmaTxDesc->DESC2, 0x0U);
-        }
+        /* Buffer2 not use */
+        DmaTxDesc->DESC1 = 0x0;
+        /* Set buffer 2 Length */
+        AlGbe_ll_SetTdesc2Buffer2Len((AL_REG)&DmaTxDesc->DESC2, 0x0U);
 
         /* Set the packet length */
         AlGbe_ll_SetTdesc3FrameLen((AL_REG)&DmaTxDesc->DESC3, TxConfig->Length);

@@ -10,7 +10,7 @@
 SDK_ROOT   ?= ../../../..
 
 
-CHIP       ?= dr1v90
+CHIP       ?= dr1m90
 RTOS       := rtthread
 
 ifeq ($(CHIP), dr1m90)
