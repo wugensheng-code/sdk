@@ -2,7 +2,6 @@
 #include <stdint.h>
 #include "fd_ddr_init.h"
 #include "al_core.h"
-#include "dr1x90_pinctrl.h"
 
 #define KB (1024UL)
 #define MB (1024UL * KB)
@@ -14,8 +13,6 @@ int write_read_compare(volatile uint64_t* wptr, volatile uint64_t* rptr, int siz
 
 int main()
 {
-    const pin_uart_t pin_uart0 = {51, 50};
-    pinmux_config_uart0(&pin_uart0);
 
     int err = 0;
     printf("Compile Time: %s %s\r\n", __DATE__, __TIME__);
