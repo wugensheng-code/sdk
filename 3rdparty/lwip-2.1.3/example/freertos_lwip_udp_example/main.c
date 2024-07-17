@@ -87,9 +87,9 @@
 #include <string.h>
 #include <stdio.h>
 
-#define ETH_INIT_THREAD_STACK_SIZE          (3072 / (sizeof( StackType_t )))
-#define TCP_SERVER_UDP_THREAD_STACK_SIZE  (3072 / (sizeof( StackType_t )))
-#define TCP_SERVER_UDP_THREAD_PRIO        (TCPIP_THREAD_PRIO + 1)
+#define ETH_INIT_THREAD_STACK_SIZE          (4096 / (sizeof( StackType_t )))
+#define TCP_SERVER_UDP_THREAD_STACK_SIZE    (4096 / (sizeof( StackType_t )))
+#define TCP_SERVER_UDP_THREAD_PRIO          (TCPIP_THREAD_PRIO + 1)
 
 
 sys_thread_t netio_handle;
