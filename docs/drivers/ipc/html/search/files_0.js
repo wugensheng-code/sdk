@@ -1,9 +1,7 @@
 var searchData=
 [
   ['al_5fipc_5fcfg_2ec',['al_ipc_cfg.c',['../al__ipc__cfg_8c.html',1,'']]],
-  ['al_5fipc_5fcfg_2ec_2eo_2ed',['al_ipc_cfg.c.o.d',['../al__ipc__cfg_8c_8o_8d.html',1,'']]],
   ['al_5fipc_5fhal_2ec',['al_ipc_hal.c',['../al__ipc__hal_8c.html',1,'']]],
-  ['al_5fipc_5fhal_2ec_2eo_2ed',['al_ipc_hal.c.o.d',['../al__ipc__hal_8c_8o_8d.html',1,'']]],
   ['al_5fipc_5fhal_2eh',['al_ipc_hal.h',['../al__ipc__hal_8h.html',1,'']]],
   ['al_5fipc_5fhw_2eh',['al_ipc_hw.h',['../al__ipc__hw_8h.html',1,'']]],
   ['al_5fipc_5fintr_2ec',['al_ipc_intr.c',['../al__ipc__intr_8c.html',1,'']]],

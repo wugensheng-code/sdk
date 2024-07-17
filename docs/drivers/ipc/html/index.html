@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>AL9000 Project: Main Page</title>
+<title>ipc: Main Page</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -52,16 +52,24 @@ $(function() {
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0" 
+<iframe src="javascript:void(0)" frameborder="0"
         name="MSearchResults" id="MSearchResults">
 </iframe>
 </div>
 
 <div class="header">
   <div class="headertitle">
-<div class="title">AL9000 Project Documentation</div>  </div>
+<div class="title">IPC API Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
+  <div class="textblock"><p>The AL9000 IPC driver. This driver supports the AL9000 IPC Controller.</p>
+    <p>The IPC Controller supports the following features:</p>
+    <ul>
+      <li>16 个 mailbox register</li>
+      <li>12 对 req/ack 中断寄存器，当向寄存器写入非零值时，发生中断，清零时停止</li>
+      <li>支持 4 个 spin lock 最低位为有效位，为1时表示可用，读后清零，读出为0时表示正在占用</li>
+      <li>支持访问错误查询，共三种错误：复位时访问，访问不存在地址，以及APB lock时访问</li>
+    </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

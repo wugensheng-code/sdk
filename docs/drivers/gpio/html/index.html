@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>AL9000 Project: Main Page</title>
+<title>gpio: Main Page</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -52,16 +52,28 @@ $(function() {
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0" 
+<iframe src="javascript:void(0)" frameborder="0"
         name="MSearchResults" id="MSearchResults">
 </iframe>
 </div>
 
 <div class="header">
   <div class="headertitle">
-<div class="title">AL9000 Project Documentation</div>  </div>
+<div class="title">GPIO API Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
+  <div class="textblock"><p>The AL9000 GPIO driver. This driver supports the AL9000 GPIO Controller.</p>
+    <p>The GPIO Controller supports the following features:</p>
+    <ul>
+      <li>54 GPIO signals for device pins.</li>
+      <li>192 GPIO signals between the PS and PL via the EMIO interface.</li>
+      <li>The function of each GPIO can be dynamically programmed on an individual or group basis.</li>
+      <li>Support enable, data write, data read and direction controlling.</li>
+      <li>Programmable interrupts on individual GPIO basis.</li>
+      <li>Status read of raw and masked interrupt.</li>
+      <li>Selectable sensitivity: Level-sensitive (High or Low) or edge-sensitive (positive, negative, or both)..</li>
+      <li>Supports debounce with an external slow clock to eliminate jitter interrupts.</li>
+    </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

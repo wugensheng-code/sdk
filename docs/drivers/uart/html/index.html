@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>AL9000 Project: Main Page</title>
+<title>uart: Main Page</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -52,16 +52,30 @@ $(function() {
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0" 
+<iframe src="javascript:void(0)" frameborder="0"
         name="MSearchResults" id="MSearchResults">
 </iframe>
 </div>
 
 <div class="header">
   <div class="headertitle">
-<div class="title">AL9000 Project Documentation</div>  </div>
+<div class="title">UART API Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
+  <div class="textblock"><p>The AL9000 UART driver. This driver supports the AL9000 UART Controller.</p>
+    <p>The UART Controller supports the following features:</p>
+    <ul>
+      <li>支持可编程的波特率发生器</li>
+      <li>支持64字节接收和发送FIFO</li>
+      <li>支持可编程的协议：数据位数（6，7，8）；可选的奇偶校验位；停止位数（1，1.5，2）</li>
+      <li>支持奇偶校验，帧和溢出错误检测</li>
+      <li>支持线终止的产生与检测</li>
+      <li>支持中断的产生</li>
+      <li>支持环回模式</li>
+      <li>支持两种可编程模式的DMA</li>
+      <li>支持自动流控制</li>
+      <li>调制解调器控制信号：CTS、RTS、DSR、DTR、RI和DCD仅在EMIO接口上可用</li>
+    </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

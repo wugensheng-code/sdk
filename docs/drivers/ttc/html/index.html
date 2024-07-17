@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>AL9000 Project: Main Page</title>
+<title>ttc: Main Page</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -52,16 +52,30 @@ $(function() {
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0" 
+<iframe src="javascript:void(0)" frameborder="0"
         name="MSearchResults" id="MSearchResults">
 </iframe>
 </div>
 
 <div class="header">
   <div class="headertitle">
-<div class="title">AL9000 Project Documentation</div>  </div>
+<div class="title">TTC API Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
+  <div class="textblock"><p>The Xilinx CAN driver. This driver supports the Xilinx CAN Controller.</p>
+    <p>The CAN Controller supports the following features:</p>
+    <ul>
+      <li>支持3个独立可编程的16位定时器/计数器</li>
+      <li>支持16位预分频器，用于时钟速率选择</li>
+      <li>支持三个中断，每个计时器计数器各一个</li>
+      <li>支持在溢出或定期间隔时产生的中断</li>
+      <li>支持当计数匹配可编程值时产生中断</li>
+      <li>支持一个事件计时器测量每个外部时钟脉冲的长度(高或低持续时间)</li>
+      <li>支持计数器递增或递减</li>
+      <li>支持随时读取每个计数寄存器的当前值</li>
+      <li>支持通过MIO和PL产生波形输出</li>
+      <li>支持地址保护</li>
+    </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

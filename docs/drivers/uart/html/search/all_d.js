@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['uart_2ec_2eo_2ed',['uart.c.o.d',['../uart_8c_8o_8d.html',1,'']]],
   ['uart_5f_5fde_5fen_5f_5fde_5fenable_5f_5fmask',['UART__DE_EN__DE_ENABLE__MASK',['../al__uart__hw_8h.html#ab126e3613e53555ce38af7489534afe9',1,'al_uart_hw.h']]],
   ['uart_5f_5fde_5fen_5f_5fde_5fenable_5f_5fpor_5fvalue',['UART__DE_EN__DE_ENABLE__POR_VALUE',['../al__uart__hw_8h.html#ab41981a77dbb68f3c5684d8a0287a115',1,'al_uart_hw.h']]],
   ['uart_5f_5fde_5fen_5f_5fde_5fenable_5f_5fshift',['UART__DE_EN__DE_ENABLE__SHIFT',['../al__uart__hw_8h.html#a8dd58d94052de29b2380f0ba2b8bd4d5',1,'al_uart_hw.h']]],

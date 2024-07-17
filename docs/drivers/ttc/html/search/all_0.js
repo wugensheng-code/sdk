@@ -1,14 +1,12 @@
 var searchData=
 [
   ['al_5fttc_5fcfg_2ec',['al_ttc_cfg.c',['../al__ttc__cfg_8c.html',1,'']]],
-  ['al_5fttc_5fcfg_2ec_2eo_2ed',['al_ttc_cfg.c.o.d',['../al__ttc__cfg_8c_8o_8d.html',1,'']]],
   ['al_5fttc_5fclkedgeenum',['AL_TTC_ClkEdgeEnum',['../al__ttc__ll_8h.html#a8813e4a2e8dac509266470afbe1a2515',1,'al_ttc_ll.h']]],
   ['al_5fttc_5fclksrcenum',['AL_TTC_ClkSrcEnum',['../al__ttc__ll_8h.html#aae120801836daa5098cdc7837ddb5c44',1,'al_ttc_ll.h']]],
   ['al_5fttc_5fcountdec',['AL_TTC_CountDec',['../al__ttc__ll_8h.html#a283ceb94f34ad331d68bc120a0e7782d',1,'al_ttc_ll.h']]],
   ['al_5fttc_5fcountdown',['AL_TTC_CountDown',['../al__ttc__ll_8h.html#a283ceb94f34ad331d68bc120a0e7782daee721a4f24a947819b53842aa6fa9894',1,'al_ttc_ll.h']]],
   ['al_5fttc_5fcountup',['AL_TTC_CountUp',['../al__ttc__ll_8h.html#a283ceb94f34ad331d68bc120a0e7782dad591427baeb9f84c95be4b82208e9a10',1,'al_ttc_ll.h']]],
   ['al_5fttc_5fdev_2ec',['al_ttc_dev.c',['../al__ttc__dev_8c.html',1,'']]],
-  ['al_5fttc_5fdev_2ec_2eo_2ed',['al_ttc_dev.c.o.d',['../al__ttc__dev_8c_8o_8d.html',1,'']]],
   ['al_5fttc_5fdev_2eh',['al_ttc_dev.h',['../al__ttc__dev_8h.html',1,'']]],
   ['al_5fttc_5fdevice_5fid',['AL_TTC_DEVICE_ID',['../al__ttc__measure_8c.html#a5835dc611982270ad0283e4eaddb602c',1,'AL_TTC_DEVICE_ID():&#160;al_ttc_measure.c'],['../al__ttc__pwm_8c.html#a5835dc611982270ad0283e4eaddb602c',1,'AL_TTC_DEVICE_ID():&#160;al_ttc_pwm.c']]],
   ['al_5fttc_5fdevstruct',['AL_TTC_DevStruct',['../structAL__TTC__DevStruct.html',1,'']]],
@@ -29,7 +27,6 @@ var searchData=
   ['al_5fttc_5feventstruct',['AL_TTC_EventStruct',['../structAL__TTC__EventStruct.html',1,'']]],
   ['al_5fttc_5fextclk',['AL_TTC_EXTCLK',['../al__ttc__ll_8h.html#aae120801836daa5098cdc7837ddb5c44a24cbdb306507e089dbf8bd70ddcb1a11',1,'al_ttc_ll.h']]],
   ['al_5fttc_5fhal_2ec',['al_ttc_hal.c',['../al__ttc__hal_8c.html',1,'']]],
-  ['al_5fttc_5fhal_2ec_2eo_2ed',['al_ttc_hal.c.o.d',['../al__ttc__hal_8c_8o_8d.html',1,'']]],
   ['al_5fttc_5fhal_2eh',['al_ttc_hal.h',['../al__ttc__hal_8h.html',1,'']]],
   ['al_5fttc_5fhalstruct',['AL_TTC_HalStruct',['../structAL__TTC__HalStruct.html',1,'']]],
   ['al_5fttc_5fhighlevel',['AL_TTC_HighLevel',['../al__ttc__ll_8h.html#a8cf488a2a39a3ba78d45a865f84ed98ea45e5aed7647448c1b16828d3b822c856',1,'al_ttc_ll.h']]],

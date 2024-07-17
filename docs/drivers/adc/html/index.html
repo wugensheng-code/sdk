@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>AL9000 Project: Main Page</title>
+<title>adc: Main Page</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -52,16 +52,43 @@ $(function() {
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0" 
+<iframe src="javascript:void(0)" frameborder="0"
         name="MSearchResults" id="MSearchResults">
 </iframe>
 </div>
 
 <div class="header">
   <div class="headertitle">
-<div class="title">AL9000 Project Documentation</div>  </div>
+<div class="title">ADC API Documentation</div>  </div>
 </div><!--header-->
+<div class="textblock"><p>The AL9000 ADC driver. This driver supports the AL9000 ADC Controller.</p>
+  <p>The ADC Controller supports the following features:</p>
+  <li>ADC_PL</li>
+  <ul>
+    <li>支持多种adc_clk来源（osc/PS/fabric），可切换，同时支持分频模式（adc_clk的2-256分频）</li>
+    <li>支持低功耗模式，adc时钟可以gate</li>
+    <li>支持多个模拟输入来源，包括16个复用IO和1个专用IO</li>
+    <li>支持来自config和ADC_PS的APB信号的切换</li>
+    <li>支持APB和APB的仲裁，优先JTAG转换的APB访问</li>
+    <li>支持single channel mode，可以指定channel</li>
+    <li>支持 single pass mode，扫描一遍所有使用的channel数据</li>
+    <li>支持continuous mode，持续读取所有使用的channel数据</li>
+    <li>支持 external mux mode ，会输出一组3bit的寄存器数据，用于指定外部的channel地址</li>
+    <li>支持大于或小于指定阈值的中断，每个channel可独立设置</li>
+    <li>支持可以mask的中断</li>
+  </ul>
+
+  <li>ADC_PS</li>
+  <ul>
+    <li>JTAG时钟TCK支持多种分频模式（apb_clk的2/4/8/16分频）</li>
+    <li>待发送的command信号支持 16深度的FIFO</li>
+    <li>接收的data数据支持16深度的FIFO</li>
+    <li>支持串并，并串转换</li>
+    <li>支持FIFO空满的中断</li>
+    <li>支持可以mask的中断</li>
+  </ul>
 <div class="contents">
+
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>AL9000 Project: Main Page</title>
+<title>mmc: Main Page</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -52,16 +52,30 @@ $(function() {
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0" 
+<iframe src="javascript:void(0)" frameborder="0"
         name="MSearchResults" id="MSearchResults">
 </iframe>
 </div>
 
 <div class="header">
   <div class="headertitle">
-<div class="title">AL9000 Project Documentation</div>  </div>
+<div class="title">MMC API Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
+  <div class="textblock"><p>The AL9000 MMC driver. This driver supports the AL9000 MMC Controller.</p>
+    <p>The MMC Controller supports the following features:</p>
+    <ul>
+      <li>eMMC5.1：x1/x4/x8</li>
+      <li>SD4.2：x1/x4</li>
+      <li>DMA类型：NoDMA/SDMA</li>
+      <li>DMA类型：ADMA2/ADMA3</li>
+      <li>Speed：Default Speed(DS)、High-Speed(HS)</li>
+      <li>Speed：SDR12、SDR25</li>
+      <li>Blocks：single、multi</li>
+      <li>支持中断</li>
+      <li>SD卡检测和写保护</li>
+      <li>cclk_rx相位可调</li>
+    </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

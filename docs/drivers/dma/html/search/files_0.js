@@ -1,12 +1,9 @@
 var searchData=
 [
   ['al_5fdma_5fcfg_2ec',['al_dma_cfg.c',['../al__dma__cfg_8c.html',1,'']]],
-  ['al_5fdma_5fcfg_2ec_2eo_2ed',['al_dma_cfg.c.o.d',['../al__dma__cfg_8c_8o_8d.html',1,'']]],
   ['al_5fdma_5fdev_2ec',['al_dma_dev.c',['../al__dma__dev_8c.html',1,'']]],
-  ['al_5fdma_5fdev_2ec_2eo_2ed',['al_dma_dev.c.o.d',['../al__dma__dev_8c_8o_8d.html',1,'']]],
   ['al_5fdma_5fdev_2eh',['al_dma_dev.h',['../al__dma__dev_8h.html',1,'']]],
   ['al_5fdma_5fhal_2ec',['al_dma_hal.c',['../al__dma__hal_8c.html',1,'']]],
-  ['al_5fdma_5fhal_2ec_2eo_2ed',['al_dma_hal.c.o.d',['../al__dma__hal_8c_8o_8d.html',1,'']]],
   ['al_5fdma_5fhal_2eh',['al_dma_hal.h',['../al__dma__hal_8h.html',1,'']]],
   ['al_5fdma_5fhw_2eh',['al_dma_hw.h',['../al__dma__hw_8h.html',1,'']]],
   ['al_5fdma_5fmem_5fcpy_2ec',['al_dma_mem_cpy.c',['../al__dma__mem__cpy_8c.html',1,'']]],

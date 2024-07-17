@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>AL9000 Project: Main Page</title>
+<title>dmacahb: Main Page</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -52,16 +52,33 @@ $(function() {
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0" 
+<iframe src="javascript:void(0)" frameborder="0"
         name="MSearchResults" id="MSearchResults">
 </iframe>
 </div>
 
 <div class="header">
   <div class="headertitle">
-<div class="title">AL9000 Project Documentation</div>  </div>
+<div class="title">DMACAHB API Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
+  <div class="textblock"><p>The AL9000 DMACAHB driver. This driver supports the AL9000 DMACAHB Controller.</p>
+    <p>The DMACAHB Controller supports the following features:</p>
+    <ul>
+      <li>8个DMA channel, 16个hardware DMA handshaking interface</li>
+      <li>支持编程channel优先级</li>
+      <li>支持编程transfer type: M2M, M2P, P2M</li>
+      <li>支持编程channel source/destination address、address increment/decrement/no-change(64 byte)</li>
+      <li>支持编程channel gather/scatter feature</li>
+      <li>支持编程FIFO_MODE：当channel FIFO is ready for transaction时，FIFO中space/data的大小</li>
+      <li>支持software handshaking</li>
+      <li>支持burst and single DMA transaction</li>
+      <li>支持DMAC flow control</li>
+      <li>支持编程Multi-block transfers：block chaining、auto-reloading、contiguous address</li>
+      <li>block chaining支持control register writeback</li>
+      <li>支持transfers suspension between blocks</li>
+      <li>支持中断信号Mask，Clear</li>
+    </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>AL9000 Project: Main Page</title>
+<title>mpu: Main Page</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -52,16 +52,33 @@ $(function() {
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0" 
+<iframe src="javascript:void(0)" frameborder="0"
         name="MSearchResults" id="MSearchResults">
 </iframe>
 </div>
 
 <div class="header">
   <div class="headertitle">
-<div class="title">AL9000 Project Documentation</div>  </div>
+<div class="title">MPU API Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
+  <div class="textblock"><p>The AL9000 MPU driver. This driver supports the AL9000 MPU Controller.</p>
+    <p>The MPU Controller supports the following features:</p>
+    <ul>
+      <li>支持基于地址段的保护，保护段 数参数化配置，范围1~32</li>
+      <li>每个地址段支持1bit使能控制，仅使能时保护开启</li>
+      <li>支持配置根据读写维度保护，包含：
+        1）读保护 写保护  2） 只读保护  3） 只写保护  4） 读写均不保护
+      </li>
+      <li>支持根据命令安全属性保护，包含：
+        1） 仅安全访问  2）安全非安全均可访问
+      </li>
+      <li>支持基于特权模式的保护，包含：
+        1） 仅privileged访问  2）privileged和normal均可访问
+      </li>
+      <li>支持根据groupid维度的保护，groupid用于区分针对不同master的保护行为</li>
+      <li>支持中断，中断区分不同MPU以及不同region</li>
+    </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
