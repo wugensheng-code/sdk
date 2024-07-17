@@ -413,27 +413,6 @@ AL_S32 AlGpio_Hal_WritePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U32 Data)
 
 
 /* ③ Bank APIs intr */
-/**
- *
- * This function enables interrupt for a specific GPIO bank.
- *
- * @param Handle Pointer to the AL_GPIO_HalStruct instance.
- * @param Bank The GPIO bank number.
- * @param Value The interrupt value to be enabled.
- *
- * @return AL_OK if successful, otherwise an error code.
- *
- */
-static AL_S32 AlGpio_Hal_EnableBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Value)
-{
-    AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
-
-    AlGpio_ll_DisableIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_ALL_ENABLE);
-    AlGpio_ll_EnableIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Value);
-
-    return AL_OK;
-}
-
 
 /**
  *
@@ -453,24 +432,6 @@ static AL_S32 AlGpio_Hal_ClrBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_
     AlGpio_ll_ClrIntr(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Value);
 
     return AL_OK;
-}
-
-
-/**
- *
- * This function retrieves the interrupt enable status for the specified GPIO bank.
- *
- * @param Handle Pointer to the AL_GPIO_HalStruct instance.
- * @param Bank The GPIO bank number.
- *
- * @return The interrupt enable status for the specified GPIO bank.
- *
- */
-static AL_S32 AlGpio_Hal_GetBankIntrEnable(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
-{
-    AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
-
-    return AlGpio_ll_GetIntrEnable(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
 }
 
 
@@ -518,24 +479,6 @@ AL_S32 AlGpio_Hal_MaskBankIntr(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Va
 
 /**
  *
- * This function retrieves the interrupt status of a specific GPIO bank.
- *
- * @param Handle Pointer to the GPIO HAL structure.
- * @param Bank The GPIO bank number.
- *
- * @return The interrupt status of the GPIO bank.
- *
- */
-static AL_S32 AlGpio_Hal_GetBankIntrStatus(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
-{
-    AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
-
-    return AlGpio_ll_GetIntrStatus(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
-}
-
-
-/**
- *
  * This function retrieves the raw interrupt status of a GPIO bank.
  *
  * @param Handle Pointer to the GPIO HAL structure.
@@ -549,83 +492,6 @@ AL_S32 AlGpio_Hal_GetBankRawIntrStatus(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
     AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
 
     return AlGpio_ll_GetRawIntrStatus(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
-}
-
-
-/**
- *
- * This function sets the interrupt type, polarity, and edge for a specific GPIO bank.
- *
- * @param Handle Pointer to the AL_GPIO_HalStruct instance.
- * @param Bank The GPIO bank number.
- * @param IntrType The interrupt type to be set.
- * @param IntrPolarity The interrupt polarity to be set.
- * @param IntrEdge The interrupt edge to be set.
- *
- * @return AL_OK if successful, otherwise an error code.
- *
- */
-static AL_S32 AlGpio_Hal_SetIntrBankType(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_GPIO_IntrTypeEnum IntrType, AL_GPIO_IntrPolarityEnum IntrPolarity, AL_GPIO_IntrBothEdgeEnum IntrEdge)
-{
-    AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
-
-    AlGpio_ll_ClrIntrType(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_ALL_ENABLE);
-    AlGpio_ll_ClrIntrPolarity(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_ALL_ENABLE);
-    AlGpio_ll_ClrIntrBothEdge(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_ALL_ENABLE);
-
-    AlGpio_ll_SetIntrType(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, IntrType);
-    AlGpio_ll_SetIntrPolarity(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, IntrPolarity);
-    AlGpio_ll_SetIntrBothEdge(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, IntrEdge);
-
-    return AL_OK;
-}
-
-
-/**
- *
- * This function retrieves the interrupt type, polarity, and edge configuration for a specific GPIO bank.
- *
- * @param Handle Pointer to the AL_GPIO_HalStruct instance.
- * @param Bank The GPIO bank number.
- * @param IntrType Pointer to store the interrupt type.
- * @param IntrPolarity Pointer to store the interrupt polarity.
- * @param IntrEdge Pointer to store the interrupt edge configuration.
- *
- * @return AL_OK if successful, otherwise an error code.
- *
- */
-static AL_S32 AlGpio_Hal_GetIntrBankType(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 *IntrType, AL_U32 *IntrPolarity, AL_U32 *IntrEdge)
-{
-    AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
-
-    *IntrType = AlGpio_ll_GetIntrType(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
-    *IntrPolarity = AlGpio_ll_GetIntrPolarity(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
-    *IntrEdge = AlGpio_ll_GetIntrBothEdge(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
-
-    return AL_OK;
-}
-
-
-/**
- *
- * This function enables the debounce feature for a specific GPIO bank.
- * Debouncing is a technique used to remove noise or glitches from input signals.
- *
- * @param Handle Pointer to the AL_GPIO_HalStruct instance.
- * @param Bank The GPIO bank number.
- * @param Value The debounce value to be set.
- *
- * @return AL_OK if successful, otherwise an error code.
- *
- */
-static AL_S32 AlGpio_Hal_EnableBankDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Value)
-{
-    AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
-
-    AlGpio_ll_DisableDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, AL_GPIO_ALL_ENABLE);
-    AlGpio_ll_EnableDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Value);
-
-    return AL_OK;
 }
 
 
@@ -650,6 +516,23 @@ AL_S32 AlGpio_Hal_EnableBankSync(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 
     return AL_OK;
 }
 
+
+/**
+ *
+ * This function retrieves the interrupt status of a specific GPIO bank.
+ *
+ * @param Handle Pointer to the GPIO HAL structure.
+ * @param Bank The GPIO bank number.
+ *
+ * @return The interrupt status of the GPIO bank.
+ *
+ */
+static AL_S32 AlGpio_Hal_GetBankIntrStatus(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
+{
+    AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
+
+    return AlGpio_ll_GetIntrStatus(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
+}
 
 /**
  *
@@ -988,67 +871,6 @@ AL_S32 AlGpio_Hal_IntrPinCfg(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_GPIO_Intr
     if(GetIntrMode != IntrType || GetPinDirection != 0 || GetPinIntrEnable == 0) {
         AL_LOG(AL_LOG_LEVEL_INFO, "Interrupt configuration was set incorrectly, Pin IntrMode got is 0x%x, \
             Pin Direction got is 0x%x, Pin Status got is 0x%x.", GetIntrMode, GetPinDirection, GetPinIntrEnable);
-        return AL_FALSE;
-    }
-
-    return AL_OK;
-}
-
-
-/**
- *
- * This function configures the interrupt settings for a specific GPIO bank, including the interrupt type,
- * polarity, and edge.
- *
- * @param Handle Pointer to the GPIO HAL structure.
- * @param IntrBank The GPIO bank to configure the interrupt for.
- * @param IntrVal The interrupt value to enable.
- * @param IntrType The interrupt type to configure.
- * @param IntrPolarity The interrupt polarity to configure.
- * @param IntrEdge The interrupt edge to configure.
- *
- * @return AL_OK if the interrupt configuration was set correctly, AL_FALSE otherwise.
- *
- */
-AL_S32 AlGpio_Hal_IntrBankCfg(AL_GPIO_HalStruct *Handle, AL_U32 IntrBank, AL_U32 IntrVal, AL_GPIO_IntrTypeEnum IntrType,
-                            AL_GPIO_IntrPolarityEnum IntrPolarity, AL_GPIO_IntrBothEdgeEnum IntrEdge)
-{
-    AL_ASSERT(Handle != AL_NULL, AL_GPIO_ERR_ILLEGAL_PARAM);
-    AL_GPIO_Intr_BankEnum Bank = 0;
-    AL_GPIO_IntrTypeEnum Type = 0;
-    AL_GPIO_IntrPolarityEnum Polarity = 0;
-    AL_GPIO_IntrBothEdgeEnum BothEdge = 0;
-    AL_U32 GetBankDirection = 0;
-    AL_U32 GetBankIntrEnable = 0;
-
-    if (IntrType) {
-        AlGpio_Hal_EnableBankDebounce(Handle, Bank, IntrVal);
-    }
-    if (IntrBank == AL_GPIO_BANK0) {
-        (AL_VOID)AlIntr_RegHandler(Handle->HwConfig.IntrId, AL_NULL, AlGpio_Hal_IntrHandler, Handle);
-        Bank = AL_GPIO_INTR_BANK0;
-    } else if(IntrBank == AL_GPIO_BANK1) {
-        (AL_VOID)AlIntr_RegHandler(Handle->HwConfig.IntrId + 1, AL_NULL, AlGpio_Hal_IntrHandler, Handle);
-        Bank = AL_GPIO_INTR_BANK1;
-    } else if(IntrBank == AL_GPIO_BANK2) {
-        (AL_VOID)AlIntr_RegHandler(Handle->HwConfig.IntrId + 2, AL_NULL, AlGpio_Hal_IntrHandler, Handle);
-        Bank = AL_GPIO_INTR_BANK2;
-    } else if (IntrBank == AL_GPIO_BANK3) {
-        (AL_VOID)AlIntr_RegHandler(Handle->HwConfig.IntrId + 3, AL_NULL, AlGpio_Hal_IntrHandler, Handle);
-        Bank = AL_GPIO_INTR_BANK3;
-    }
-
-    Handle->IntrBank |= Bank;
-
-    AlGpio_Hal_SetBankDirection(Handle, IntrBank, GPIO_PIN_INPUT);
-    AlGpio_Hal_SetIntrBankType(Handle, IntrBank, IntrType, IntrPolarity, IntrEdge);
-    AlGpio_Hal_EnableBankIntr(Handle, IntrBank, IntrVal);
-
-    GetBankDirection = AlGpio_Hal_GetBankDirection(Handle, IntrBank);
-    GetBankIntrEnable = AlGpio_Hal_GetBankIntrEnable(Handle, IntrBank);
-    AlGpio_Hal_GetIntrBankType(Handle, IntrBank, &Type, &Polarity, &BothEdge);
-    if(Type != IntrType || Polarity != IntrPolarity || BothEdge != IntrEdge || GetBankDirection || GetBankIntrEnable != IntrVal) {
-        AL_LOG(AL_LOG_LEVEL_INFO, "Interrupt configuration was set incorrectly.");
         return AL_FALSE;
     }
 

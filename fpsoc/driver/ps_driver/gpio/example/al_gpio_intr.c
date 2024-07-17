@@ -21,7 +21,6 @@
 #define BANK_TYPE_REG      0xc00
 #define BANK_POLARUTY_REG  0x0
 #define BANK_BOTHEDGE_REG  0x0
-#define BANK_INTR
 
 
 /**
@@ -52,14 +51,10 @@ AL_S32 AlGpio_Hal_Intr_Example()
     }
 
     /* 3、Test intr */
-#ifdef PIN_INTR
-    AlGpio_Hal_IntrPinCfg(GPIO, PS_KEY_1, GPIO_INTR_TYPE_LEVEL_HIGH);
+    AlGpio_Hal_IntrPinCfg(GPIO, PS_KEY_1, GPIO_INTR_TYPE_EDGE_RISING);
     AlGpio_Hal_IntrPinCfg(GPIO, PS_KEY_2, GPIO_INTR_TYPE_EDGE_RISING);
-    // AlGpio_Hal_IntrPinCfg(GPIO, PL_KEY, GPIO_INTR_TYPE_EDGE_FALLING);
+    AlGpio_Hal_IntrPinCfg(GPIO, PL_KEY, GPIO_INTR_TYPE_EDGE_FALLING);
     AlSys_MDelay(5000);
-#else
-    AlGpio_Hal_IntrBankCfg(GPIO, AL_GPIO_BANK0, BANK_INTR_VALUE, BANK_TYPE_REG, BANK_POLARUTY_REG, BANK_BOTHEDGE_REG);
-#endif
 
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
@@ -70,6 +65,8 @@ AL_S32 AlGpio_Hal_Intr_Example()
 
 
 AL_S32 main(void) {
+    *(AL_U32 *)(0xf8803028u) =0x4;    //GPIO MIO10
+    *(AL_U32 *)(0xf880302cu) =0x4;    //GPIO MIO11
     AL_LOG(AL_LOG_LEVEL_INFO, "[TEST]AlGpio_Hal_Test start");
     AlGpio_Hal_Intr_Example();
 
