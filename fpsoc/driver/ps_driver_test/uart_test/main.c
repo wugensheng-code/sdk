@@ -7,8 +7,7 @@
 #include "al_uart_test_config.h"
 #include "al_uart_hal.h"
 
-static AL_S32 AlUart_Test_SendDataPolling(AL_VOID);
-static AL_S32 AlUart_Test_SendDataBlock(AL_VOID);
+static AL_S32 AlUart_Test_RecvAndSendDataPolling(AL_VOID);
 static AL_S32 AlUart_Test_RecvAndSendBlock(AL_VOID);
 static AL_S32 AlUart_Test_RecvAndSendNonBlock(AL_VOID);
 static AL_S32 AlUart_Test_UartAutoFlowControl(AL_VOID);
@@ -18,20 +17,11 @@ static AL_S32 AlUart_Test_Loopback(AL_VOID);
 
 AL_S32 main(AL_VOID)
 {
-#if CONFIG_AlUart_Test_SendDataPolling_TEST
+#if CONFIG_AlUart_Test_RecvAndSendDataPolling_TEST
     AL_LOG(AL_LOG_LEVEL_INFO, "AlUart Send Data Polling only example testing...\r\n");
-    AL_S32 Ret = AlUart_Test_SendDataPolling();
+    AL_S32 Ret = AlUart_Test_RecvAndSendDataPolling();
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlUart Send Data Polling only example test error\r\n");
-        return Ret;
-    }
-#endif
-
-#if CONFIG_AlUart_Test_SendDataBlock_TEST
-    AL_LOG(AL_LOG_LEVEL_INFO, "AlUart Send Data Block only example testing...\r\n");
-    AL_S32 Ret = AlUart_Test_SendDataBlock();
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlUart Send Data Block only example test error\r\n");
         return Ret;
     }
 #endif
@@ -87,20 +77,19 @@ AL_S32 main(AL_VOID)
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlUart Loopback testing error\r\n");
         return Ret;
+    } else {
+        AL_LOG(AL_LOG_LEVEL_INFO, "AlUart Loopback testing success\r\n");
     }
 #endif
     while (1);
 }
 
-static AL_S32 AlUart_Test_SendDataPolling(AL_VOID)
+static AL_S32 AlUart_Test_RecvAndSendDataPolling(AL_VOID)
 {
     AL_UART_HalStruct *UartHandle;
 
     AL_U8 *Data = (AL_U8 *)malloc(BUF_SIZE);
     memset(Data, 0, (sizeof(AL_U8) * BUF_SIZE));
-    for (int i = 0; i < BUF_SIZE; i++) {
-        Data[i] = i + 'A';
-    }
 
     AL_S32 Ret = AlUart_Hal_Init(&UartHandle, AL_UART_DEVID, &UART_InitStruct, AL_NULL);
     if (Ret != AL_OK) {
@@ -108,43 +97,18 @@ static AL_S32 AlUart_Test_SendDataPolling(AL_VOID)
         return Ret;
     }
 
-    while (1) {
-        Ret = AlUart_Hal_SendDataPolling(UartHandle, Data, BUF_SIZE);
-        if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "AlUart_Hal_SendDataPolling Error\r\n");
-            return Ret;
-        }
-        AL_LOG(AL_LOG_LEVEL_INFO, "\r\n");
-    }
-
-}
-
-static AL_S32 AlUart_Test_SendDataBlock(AL_VOID)
-{
-    AL_UART_HalStruct *UartHandle;
-
-    AL_U8 *Data = (AL_U8 *)malloc(BUF_SIZE);
-    memset(Data, 0, (sizeof(AL_U8) * BUF_SIZE));
-    for (int i = 0; i < BUF_SIZE; i++) {
-        Data[i] = i + 'A';
-    }
-
-    AL_S32 Ret = AlUart_Hal_Init(&UartHandle, AL_UART_DEVID, &UART_InitStruct, AL_NULL);
-    if (Ret != AL_OK){
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlUart_Hal_Init error\r\n");
+    Ret = AlUart_Hal_RecvDataPolling(UartHandle, Data, BUF_SIZE);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlUart_Hal_SendDataPolling Error\r\n");
         return Ret;
     }
-    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
-    while (1) {
-        Ret = AlUart_Hal_SendDataBlock(UartHandle, Data, BUF_SIZE, AL_UART_TIME_OUT_MS);
-        if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "AlUart_Hal_SendDataBlock Error! Ret: 0x%x\r\n", Ret);
-            return Ret;
-        }
-        AL_LOG(AL_LOG_LEVEL_INFO, "\r\n");
+    Ret = AlUart_Hal_SendDataPolling(UartHandle, Data, BUF_SIZE);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlUart_Hal_SendDataPolling Error\r\n");
+        return Ret;
     }
-
+    AL_LOG(AL_LOG_LEVEL_INFO, "\r\n");
 }
 
 static AL_S32 AlUart_Test_RecvAndSendBlock(AL_VOID)
@@ -351,24 +315,17 @@ static AL_S32 AlUart_Test_Loopback(AL_VOID)
         RecvBuffer[Index] = 0;
     }
 
-    ret = AlUart_Hal_RecvData((AL_UART_HalStruct *)uart0_hal, RecvBuffer, TEST_BUF_SIZE);
-    if(ret!= AL_OK) {
-        printf("AlUart_Hal_RecvData error\r\n");
-        return ret;
-    }
-
-    ret = AlUart_Hal_SendData((AL_UART_HalStruct *)uart0_hal, SendBuffer, TEST_BUF_SIZE);
+    ret = AlUart_Hal_SendDataPolling((AL_UART_HalStruct *)uart0_hal, SendBuffer, TEST_BUF_SIZE);
     if(ret!= AL_OK) {
         printf("AlUart_Hal_SendData error\r\n");
         return ret;
     }
 
-	while (1) {
-		if (uart0_hal->Dev.RecvBuffer.HandledCnt == TEST_BUF_SIZE &&
-            uart0_hal->Dev.SendBuffer.HandledCnt == TEST_BUF_SIZE) {
-                break;
-        }
-	}
+    ret = AlUart_Hal_RecvDataPolling((AL_UART_HalStruct *)uart0_hal, RecvBuffer, TEST_BUF_SIZE);
+    if(ret!= AL_OK) {
+        printf("AlUart_Hal_RecvData error\r\n");
+        return ret;
+    }
 
     for(Index = 0; Index < TEST_BUF_SIZE; Index++){
         if(RecvBuffer[Index]!= SendBuffer[Index]){
