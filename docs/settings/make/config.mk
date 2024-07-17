@@ -32,6 +32,7 @@ ARMv8_CORE      ?= #{{ARMv8_CORE}}
 ifeq ($(AL_CHIP),dr1v90)
 ifeq ($(DOWNLOAD),ddr)
 ENABLE_MMU  ?= 1
+endif
 else
 ENABLE_MMU  ?= 1
 DDR_2M_MAPPING ?= 1
