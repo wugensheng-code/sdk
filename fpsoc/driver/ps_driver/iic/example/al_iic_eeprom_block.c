@@ -10,11 +10,19 @@
 
 #define IIC_MUX_ADDRESS             0x74
 
+#define BOARD_DR1X90_AD101_V20
+
+#ifdef BOARD_DR1X90_AD101_V20
+#define EEPROM_ADDRESS              0x50
+#define EEPROM_PAGE_SIZE            8
+#else
 #define EEPROM_ADDRESS              0x54
+#define EEPROM_PAGE_SIZE            16
+#endif
+
 #define IIC_EEPROM_CHANNEL          0x04
 
 typedef AL_U8                       AddrType;
-#define EEPROM_PAGE_SIZE            16
 
 #define EEPROM_TEST_START_ADDR      0x00
 
@@ -128,12 +136,21 @@ AL_S32 AlIic_E2promExample()
         .Mode           = AL_IIC_MODE_MASTER,
         .AddrMode       = AL_IIC_ADDR_7BIT,
     };
+
+#ifdef BOARD_DR1X90_AD101_V20
+    AL_U8 WriteBuffer[sizeof(AddrType) + EEPROM_PAGE_SIZE] =
+    {
+        0x00, //Read addr 0x00
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x29
+    };
+#else
     AL_U8 WriteBuffer[sizeof(AddrType) + EEPROM_PAGE_SIZE] =
     {
         0x00, //Read addr 0x00
         0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x29,
         0x31, 0x32, 0x33, 0x34, 0x65, 0x36, 0x37, 0x3a,
     };
+#endif
     AL_U8 ReadBuffer[EEPROM_PAGE_SIZE] = {0};
 
     AL_LOG(AL_LOG_LEVEL_INFO, "AlIic_E2promExample\r\n");

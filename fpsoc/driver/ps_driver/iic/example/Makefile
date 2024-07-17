@@ -46,8 +46,6 @@ else ifeq ($(ELF), IIC_MASTER_FAST)
 C_SRCS += al_iic_master_fast_7bit_block.c
 else ifeq ($(ELF), IIC_MASTER_FAST_10BIT)
 C_SRCS += al_iic_master_fast_10bit_block.c
-else ifeq ($(ELF), IIC_SLAVE)
-C_SRCS += al_iic_slave_block.c
 else
 C_SRCS += al_iic_master_10bit_block.c
 endif
@@ -93,8 +91,6 @@ else ifeq ($(ELF), IIC_MASTER_FAST)
 TARGET := al_iic_master_fast_example
 else ifeq ($(ELF), IIC_MASTER_FAST_10BIT)
 TARGET := al_iic_master_fast_10bit_example
-else ifeq ($(ELF), IIC_SLAVE)
-TARGET := al_iic_slave
 else
 TARGET := al_iic_master_10bit_example
 endif
