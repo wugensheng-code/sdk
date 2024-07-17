@@ -75,11 +75,7 @@ void *fast_memcpy(void *dst, const void *src, size_t length)
     return dst;
 }
 
-#ifdef ENABLE_MMU
-// Use the c library's memcpy
-#else
-
-void *memcpy(void *dst, const void *src, size_t length)
+void *al_memcpy(void *dst, const void *src, size_t length)
 {
     if ((((uint32_t)(uint64_t)src) & (~(sizeof(uint32_t)-1))) != (((uint32_t)(uint64_t)dst) & (~(sizeof(uint32_t)-1))))
     {
@@ -95,6 +91,25 @@ void *memcpy(void *dst, const void *src, size_t length)
     return fast_memcpy(dst, src, length);
 
 }
+
+#ifndef ENABLE_MMU
+/*
+ * MMU is disabled, so only al_memcpy can be used.
+ * Therefore, memcpy is implemented as al_memcpy.
+ */
+void *memcpy(void *dst, const void *src, size_t length){
+    return al_memcpy(dst, src, length);
+}
+#else
+/*
+ * MMU is enabled, so we need to distinguish between the following cases:
+ *
+ * 1. If the variable is noncacheable, the C library's memcpy cannot be used.
+ *    Therefore, we should manually use al_memcpy.
+ *
+ * 2. If the variable is cacheable, the C library's memcpy can be used due to
+ *    its higher efficiency. Use the C library's memcpy.
+ */
 #endif
 
 #endif
