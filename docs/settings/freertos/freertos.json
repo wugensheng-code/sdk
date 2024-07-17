@@ -35,7 +35,7 @@
         "sub_options":{
             "configSUPPORT_STATIC_ALLOCATION": {"Name": "configSUPPORT_STATIC_ALLOCATION", "Value": true, "Default": true,"Type": "boolean","Description": "1 for support static allocation; 0 for not support static alloction","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
             "configSUPPORT_DYNAMIC_ALLOCATION": {"Name": "configSUPPORT_DYNAMIC_ALLOCATION", "Value": true, "Default": true,"Type": "boolean","Description": "1 for support dynamic allocation; 0 for not support dynamic alloction","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
-            "configTOTAL_HEAP_SIZE": {"Name": "configTOTAL_HEAP_SIZE", "Value": "100*1024", "Default": "100*1024","Type": "integer","Description": "Set the heap size","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
+            "configTOTAL_HEAP_SIZE": {"Name": "configTOTAL_HEAP_SIZE", "Value": "80*1024", "Default": "100*1024","Type": "integer","Description": "Set the heap size","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true},
             "configAPPLICATION_ALLOCATED_HEAP": {"Name": "configAPPLICATION_ALLOCATED_HEAP", "Value": false, "Default": false,"Type": "boolean","Description": "1 for support declare heap 0 for not support declare heap","supportedProc": ["apu-0", "apu-1", "rpu"],"Permit":true}
         }
     },

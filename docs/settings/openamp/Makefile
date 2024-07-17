@@ -20,16 +20,17 @@ CFLAGS += -DMACHINE="dr1m90" \
 			-DCMAKE_C_COMPILER_FORCED=ON \
 			-DWITH_APPS=OFF \
 			-DWITH_DCACHE_VRINGS=ON \
-			-DVIRTIO_CACHED_VRINGS
+			-DVIRTIO_CACHED_VRINGS \
+			-DVIRTIO_CACHED_BUFFERS
 
 WITH_PROXY = #{{WITH_PROXY}}
-
 ifeq ($(WITH_PROXY),1)
 C_SRCS += $(wildcard ./lib/proxy/*.c)
 CFLAGS += -DWITH_PROXY=ON
 else
 	
 endif
+
 
 # (3) set specificity FLAGS
 LIBNAME := openamp

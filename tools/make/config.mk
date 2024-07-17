@@ -18,6 +18,7 @@ endif
 ## ARMv8_EL:        EL1, EL3
 ## ARMv8_SECURE:    SECURE, NONSECURE
 ## ARMv8_CORE:      MASTER, SLAVE
+
 ARMv8_STATE     ?= 64
 ARMv8_EL        ?= EL3
 ARMv8_SECURE    ?= SECURE
@@ -43,7 +44,6 @@ else
 ENABLE_DCACHE ?= 0
 endif
 
-
 ENABLE_ICACHE ?= 1
 CODE_READONLY ?= 0
 
@@ -51,6 +51,8 @@ CODE_READONLY ?= 0
 # options for compile command
 #########################################################################
 COMPILE_PREFIX  ?=
+
+
 
 
 ## If V=1, it will display compiling message in verbose including compiling options
@@ -64,7 +66,6 @@ ifeq ($(V),1)
 else
 	Q = @
 endif
-
 
 MAKEFLAGS += -j32
 ## If SILENT=1, it will not display any compiling messsage

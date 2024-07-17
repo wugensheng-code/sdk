@@ -5,7 +5,7 @@ C_SRCS += $(wildcard ./lib/*.c) \
 		    $(wildcard ./lib/rpmsg/*.c) \
 			$(wildcard ./lib/virtio/*.c) \
 			$(wildcard ./lib/remoteproc/*.c) \
-			$(wildcard ./lib/service/rpmsg/rpc/*.c) 
+			$(wildcard ./lib/service/rpmsg/rpc/*.c)
 
 # (1.2) add submodule include file to /bsp/inc for calling
 INC_DIR += lib/include \
