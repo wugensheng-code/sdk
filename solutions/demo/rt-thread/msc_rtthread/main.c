@@ -3,7 +3,7 @@
 #include "al_usb_hal.h"
 
 #ifdef ENABLE_MMU
-#include "al_mmu.h"
+#include "al_cache.h"
 #endif
 
 #define THREAD_PRIORITY         25

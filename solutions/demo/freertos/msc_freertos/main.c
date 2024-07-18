@@ -17,7 +17,7 @@
 
 
 #ifdef ENABLE_MMU
-#include "al_mmu.h"
+#include "al_cache.h"
 #endif
 
 #define AL_USB_DEVICE_ID     0

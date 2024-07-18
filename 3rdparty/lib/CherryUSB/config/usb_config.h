@@ -29,19 +29,6 @@
 #define CONFIG_USB_ALIGN_SIZE 4
 #endif
 
-/*
- * Define macros to replace memcpy with al_memcpy.
- * 
- * Explanation:
- * When using sections marked as noncacheable (e.g., __attribute__((section(".noncacheable")))),
- * using the standard C library functions memcpy can lead to unexpected behaviors or exceptions.
- * This is because these functions may not be optimized for noncacheable memory regions.
- * Therefore, we use custom implementations al_memcpy designed to handle noncacheable memory safely.
- */
-#if defined __aarch64__ || defined __arm__
-#define memcpy al_memcpy
-#endif
-
 /* attribute data into no cache ram */
 #define USB_NOCACHE_RAM_SECTION __attribute__((section(".noncacheable")))
 
