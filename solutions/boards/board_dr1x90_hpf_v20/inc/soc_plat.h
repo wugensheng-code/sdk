@@ -14,7 +14,7 @@ extern "C" {
 
 #define __HPF_AARCH64        0
 #define __HPF_RISCV          1
-#define __ARCH   __HPF_AARCH64
+#define __ARCH     __HPF_RISCV
 
 /* config opcode */
 #define CONFIG_EXIT         0U
@@ -56,7 +56,7 @@ extern "C" {
 #define GBE_CLOCK                          (500*MHz)
 #define ADC_CLOCK                          ( 50*MHz)
 
-#define CPU_CLOCK                          (900*MHz)
+#define CPU_CLOCK                          (800*MHz)
 #define GBE0_PTP_CLOCK                     (100*MHz)
 #define IO_1000_FREQ                      (1000*MHz)
 #define IO_25_FREQ                          (25*MHz)
@@ -121,7 +121,7 @@ extern "C" {
 #define IO_lpf_cap                                2
 #define IO_lpf_res                                4
 #define CPU_CLOCK_RATIO                         421
-#define CPU_FBK_DIV                             108
+#define CPU_FBK_DIV                              96
 #define CPU_OUT_DIV                               2
 #define CPU_REF_DIV                               2
 #define IO1000_OUT_DIV                            2
@@ -147,10 +147,7 @@ extern "C" {
 #define CAN0_SLOW_RATE                      1000000
 #define CAN0PS_ENABLE 
 #define CAN0_TYPE                            CAN20B
-#define CAN1_FAST_RATE                      1000000
-#define CAN1_SLOW_RATE                      1000000
-#define CAN1PS_ENABLE 
-#define CAN1_TYPE                             CANFD
+// #define CAN1PS_ENABLE 
 #define HAVE_DDR_DRIVRE 
 #define DDR_AVAILABLE 
 #define DDRC_ADDR_MAP                  ROW_COL_BANK
@@ -170,7 +167,7 @@ extern "C" {
 #define DDRPS_ENABLE                              1
 #define GBE0PS_ENABLE 
 // #define GBE1PS_ENABLE 
-#define GPIOPL_ENABLE 
+// #define GPIOPL_ENABLE 
 #define GPIOPS_ENABLE 
 #define I2C0_RATE                          (0.1*MHz)
 #define I2C0PS_ENABLE 
@@ -381,7 +378,7 @@ extern "C" {
 #ifdef  DDRC_TRAINING_EN
 #define FD_PARA_TRAINING            DDRC_TRAINING_EN
 #else
-#define FD_PARA_TRAINING                           0
+#define FD_PARA_TRAINING                           0   
 #endif
 
 // (15) ddr train 

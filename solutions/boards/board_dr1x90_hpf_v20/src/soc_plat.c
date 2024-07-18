@@ -69,16 +69,6 @@ _UL psio_data_0[] = {
     // 0xF8803408[0:0] = 1
     CONFIG_REG_MASK(0xF8803408, 0x00000001, 0x00000001),
 
-    // Config CAN1, Select IO: "PL IO", emio selection: mio, as a default value
-    // register: EMIOSEL_3.emiosel_3 = 1
-    // 0xF880340C[0:0] = 1
-    CONFIG_REG_MASK(0xF880340C, 0x00000001, 0x00000001),
-
-    // Config CAN1_Dot_IO, Select IO: "PL IO", emio selection: emio
-    // register: EMIOSEL_3.emiosel_3 = 0x0
-    // 0xF880340C[0:0] = 0x0
-    CONFIG_REG_MASK(0xF880340C, 0x00000001, 0x00000000),
-
     // Config ETH0_tx_clk, PS IO 16->Single-ended pull up Drive Strength: 16
     // register: PARA1_PS_MIO_16.mc1_ensrc = 0x15
     // 0xf8803884[12:8] = 0x15
@@ -1757,10 +1747,10 @@ _UL clk_data_0[] = {
     // 0xF8801104[9:9] = 1
     CONFIG_REG_MASK(0xF8801104, 0x00000200, 0x00000200),
 
-    // Config CPUPLL, CPU N: 108, mc1_fbk_div: 107
-    // register: CPUPLL_CTRL9.ctrl9_cpupll = 0x0000006b
-    // 0xF8801124[6:0] = 0x0000006b
-    CONFIG_REG_MASK(0xF8801124, 0x0000007f, 0x0000006b),
+    // Config CPUPLL, CPU N: 96, mc1_fbk_div: 95
+    // register: CPUPLL_CTRL9.ctrl9_cpupll = 0x0000005f
+    // 0xF8801124[6:0] = 0x0000005f
+    CONFIG_REG_MASK(0xF8801124, 0x0000007f, 0x0000005f),
 
     // Config CPUPLL, mc1_kvco_sel: 0
     // register: CPUPLL_CTRL9.ctrl9_cpupll = 0x00000000
@@ -1982,6 +1972,21 @@ _UL ps_pl_0[] = {
     // register: CFG_HP_WIDTH.wmode_hp1 = 0x0
     // 0xF8800084[1:1] = 0x0
     CONFIG_REG_MASK(0xF8800084, 0x00000002, 0x00000000),
+
+    // Config PLS_PROT, fahb_hready from pl
+    // register: PLS_PROT.fahb_proten = 0x0
+    // 0xF8800080[0:0] = 0x0
+    CONFIG_REG_MASK(0xF8800080, 0x00000001, 0x00000000),
+
+    // Config CRG_EN, pl2ps max fbk info: 0x1
+    // register: FAHB_DPLL_PARA.fbk = 0x00000001
+    // 0xF8801058[31:24] = 0x00000001
+    CONFIG_REG_MASK(0xF8801058, 0xff000000, 0x01000000),
+
+    // Config CRG_EN, pl2ps max ref info: 0x0
+    // register: FAHB_DPLL_PARA.ref = 0x00000000
+    // 0xF8801058[23:16] = 0x00000000
+    CONFIG_REG_MASK(0xF8801058, 0x00ff0000, 0x00000000),
 
     /* configuration complete */
     CONFIG_REG_EXIT()
