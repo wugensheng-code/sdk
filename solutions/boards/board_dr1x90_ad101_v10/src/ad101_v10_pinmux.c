@@ -264,7 +264,7 @@ void __attribute__((optimize("0"))) Enablepinmux1(void)
     *(AL_U32 *)(0xf8803424u) =0x1;    //emio_sel9
 #endif
 
-    /* ttc1-timer0 on demo board */
+    /* tc1-timer0 on demo board */
     // *(AL_U32 *)(0xf88030a0u) =0x7;
     // *(AL_U32 *)(0xf88030a4u) =0x7;
     // *(AL_U32 *)(0xf880341cu) =0x1;
@@ -312,7 +312,7 @@ void Enablepinmux1_mode2(void)
 
     *(AL_U32 *)(0xf8803040u) =0x7;
     *(AL_U32 *)(0xf8803044u) =0x7;
-    *(AL_U32 *)(0xf880341cu) =0x1; //TTC SET
+    *(AL_U32 *)(0xf880341cu) =0x1; //TC SET
 
     *(AL_U32 *)(0xf8803048u) =0x0;
     *(AL_U32 *)(0xf880304cu) =0x0;

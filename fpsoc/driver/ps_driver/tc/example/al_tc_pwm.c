@@ -5,39 +5,39 @@
  */
 
 /**
- * @file    al_ttc_pwm.c
+ * @file    al_tc_pwm.c
  * @author  Anlogic esw team
  * @version V0.0.1
  * @date    2023-09-01
- * @brief   ttc pwm output example
+ * @brief   tc pwm output example
  */
 
 /***************************** Include Files *********************************/
 #include <string.h>
 #include <stdlib.h>
-#include "al_ttc_hal.h"
+#include "al_tc_hal.h"
 
 /************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/
 
 /***************** Macros (Inline Functions) Definitions *********************/
-#define AL_TTC_DEVICE_ID             (3)
- /* pwm frequency = clock frequency / pow(2, PrescaleVal + 1) / (AL_TTC_INTERVAL_MAX_VAL + 1) */
-#define AL_TTC_INTERVAL_MAX_VAL      (999)
-/* pwm duty cycle = (AL_TTC_MATCH1_VAL + 1) / (AL_TTC_INTERVAL_MAX_VAL + 1) */
-#define AL_TTC_MATCH1_VAL            (249)
+#define AL_TC_DEVICE_ID             (3)
+ /* pwm frequency = clock frequency / pow(2, PrescaleVal + 1) / (AL_TC_INTERVAL_MAX_VAL + 1) */
+#define AL_TC_INTERVAL_MAX_VAL      (999)
+/* pwm duty cycle = (AL_TC_MATCH1_VAL + 1) / (AL_TC_INTERVAL_MAX_VAL + 1) */
+#define AL_TC_MATCH1_VAL            (249)
 
 /************************** Variable Definitions *****************************/
-static AL_TTC_TimerInitStruct PwmInitConfigs = {
-    .CountDec            = AL_TTC_CountUp,
-    .ClkSrc              = AL_TTC_PCLK,
+static AL_TC_TimerInitStruct PwmInitConfigs = {
+    .CountDec            = AL_TC_CountUp,
+    .ClkSrc              = AL_TC_PCLK,
     .EnablePrescale      = AL_TRUE,
     .PrescaleVal         = 2,
 };
 
 /************************** Function Prototypes ******************************/
-static AL_S32 AlTtc_Test_PwmOutput(AL_VOID);
+static AL_S32 AlTc_Test_PwmOutput(AL_VOID);
 
 /************************** Function Definitions ******************************/
 /**
@@ -51,11 +51,11 @@ AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
 
-    AL_LOG(AL_LOG_LEVEL_INFO, "Ttc pwm output test\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Tc pwm output test\r\n");
 
-    Ret = AlTtc_Test_PwmOutput();
+    Ret = AlTc_Test_PwmOutput();
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Ttc pwm output test failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Tc pwm output test failed\r\n");
         return Ret;
     }
 
@@ -63,19 +63,19 @@ AL_S32 main(AL_VOID)
 }
 
 /**
- * This function initializes the TTC device with specific configurations for PWM output,
+ * This function initializes the TC device with specific configurations for PWM output,
  * sets up the interval and match values to generate PWM signal, and enables the waveform output.
  * It configures the device to generate a PWM signal with a specific frequency and duty cycle,
  * based on predefined values for the interval max value and match value.
  *
  * @return AL_OK on successful initialization and configuration, or an error code on failure.
  */
-static AL_S32 AlTtc_Test_PwmOutput(AL_VOID)
+static AL_S32 AlTc_Test_PwmOutput(AL_VOID)
 {
     AL_U32 Ret = AL_OK;
-    AL_TTC_HalStruct *TtcHandle;
+    AL_TC_HalStruct *TcHandle;
 
-    Ret = AlTtc_Hal_Init(&TtcHandle, AL_TTC_DEVICE_ID, &PwmInitConfigs, AL_NULL);
+    Ret = AlTc_Hal_Init(&TcHandle, AL_TC_DEVICE_ID, &PwmInitConfigs, AL_NULL);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
         return Ret;
@@ -83,19 +83,19 @@ static AL_S32 AlTtc_Test_PwmOutput(AL_VOID)
 
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
-    AlTtc_Hal_EnableIntervalMode(TtcHandle);
-    AlTtc_Hal_SetIntervalMaxVal(TtcHandle, AL_TTC_INTERVAL_MAX_VAL);
+    AlTc_Hal_EnableIntervalMode(TcHandle);
+    AlTc_Hal_SetIntervalMaxVal(TcHandle, AL_TC_INTERVAL_MAX_VAL);
 
-    AlTtc_Hal_EnableMatchMode(TtcHandle, AL_TRUE);
-    AlTtc_Hal_SetMatchVal(TtcHandle, AL_TTC_Match1, AL_TTC_MATCH1_VAL);
+    AlTc_Hal_EnableMatchMode(TcHandle, AL_TRUE);
+    AlTc_Hal_SetMatchVal(TcHandle, AL_TC_Match1, AL_TC_MATCH1_VAL);
 
-    AlTtc_Hal_SetWaveformPolarity(TtcHandle, AL_TTC_Negedge);
+    AlTc_Hal_SetWaveformPolarity(TcHandle, AL_TC_Negedge);
 
-    AlTtc_Hal_EnableIntr(TtcHandle, AL_TTC_IntrInterval, AL_TRUE);
-    AlTtc_Hal_EnableIntr(TtcHandle, AL_TTC_IntrMatch1, AL_TRUE);
+    AlTc_Hal_EnableIntr(TcHandle, AL_TC_IntrInterval, AL_TRUE);
+    AlTc_Hal_EnableIntr(TcHandle, AL_TC_IntrMatch1, AL_TRUE);
 
-    AlTtc_Hal_EnableWaveOutput(TtcHandle, AL_TRUE);
-    AlTtc_Hal_EnableCounter(TtcHandle, AL_TRUE);
+    AlTc_Hal_EnableWaveOutput(TcHandle, AL_TRUE);
+    AlTc_Hal_EnableCounter(TcHandle, AL_TRUE);
 
 
     return Ret;

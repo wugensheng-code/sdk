@@ -7,11 +7,11 @@
 #########################################################################
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
 #########################################################################
-SDK_ROOT   ?= ../../../..
 
+SDK_ROOT    ?= ../../../../..
 
-CHIP       ?= dr1m90
-# CHIP       ?= dr1v90
+CHIP        ?= dr1m90
+ELF         ?= TC_PWM
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
@@ -19,38 +19,46 @@ else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
-
+BOARD_DIR  ?= $(SDK_ROOT)/solutions/boards/
+BOARD_NAME ?= board_dr1x90_ad101_v10
 
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
+#    SRC_DIR: application source path
+#    INC_DIR  application header path
 #    LD_LIBS: External library files that the app depends on
 #    LIB_DIR: The path where the external library file resides
 #    C_SRCS:   c sources for application
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
-SRC_DIR  = ./
+ifeq ($(ELF), TC_PWM)
+C_SRCS += al_tc_pwm.c
+else
+C_SRCS += al_tc_measure.c
+endif
 
-INC_DIR += ./
+INC_DIR     += ./
 
-LD_LIBS  =
-LIB_DIR  =
+LD_LIBS     :=
+LIB_DIR     :=
 
-C_SRCS   :=
-CXX_SRCS :=
-ASM_SRCS :=
+CXX_SRCS    :=
+ASM_SRCS    :=
 
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O2 -g -DAL_BRINGUP -DAL_OSC_33 -DAL_CLK_CONFIG
-CFLAGS += -DCONFIG_AlTtc_PwmOutput_TEST=1
+CFLAGS := -O2 -g
+#CFLAGS += -DAL_BRINGUP -DAL_OSC_33 -DAL_CLK_CONFIG -DAL_DCBOARD_TC
+# CFLAGS += -DUSE_RTOS
+# CFLAGS += -DRTOS_RTTHREAD
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
-PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
+PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile
@@ -59,11 +67,15 @@ PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
 #########################################################################
 PINMUX_MODE ?= PINMUX_MODE1
 
-
 #########################################################################
 # 5. define build target
 #########################################################################
-TARGET := ttc_test
+ifeq ($(ELF), TC_PWM)
+TARGET := fpsoc_tc_example_pwm
+else
+TARGET := fpsoc_tc_example_measure
+endif
+
 
 ifneq ($(PINMUX_MODE),)
 CFLAGS += -DENABLE_$(PINMUX_MODE)=1
@@ -73,8 +85,14 @@ endif
 all: $(TARGET)
 	@$(ECHO) COMPILE_PREFIX = $(COMPILE_PREFIX)
 
-# include rules.mk
+cleanapp:
+	$(RM) $(foreach subdir, $(SRC_DIR), $(wildcard $(subdir)/*.d $(subdir)/*.o))
+
+clean:
+	make clean CHIP=dr1m90
+	make clean CHIP=dr1v90
+
+cleanelf:
+	rm -rf *.bin *.dasm *.dump *.elf *.hex *.map *.verilog
+
 include $(SDK_ROOT)/tools/make/rules.mk
-
-# vim: syntax=make
-

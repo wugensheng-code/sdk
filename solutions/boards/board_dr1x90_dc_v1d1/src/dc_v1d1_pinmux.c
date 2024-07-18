@@ -280,7 +280,7 @@ void Enablepinmux1_mode2(void)
 
     *(AL_U32 *)(0xf8803040u) =0x7;
     *(AL_U32 *)(0xf8803044u) =0x7;
-    *(AL_U32 *)(0xf880341cu) =0x1; //TTC SET
+    *(AL_U32 *)(0xf880341cu) =0x1; //TC SET
 
     *(AL_U32 *)(0xf8803048u) =0x0;
     *(AL_U32 *)(0xf880304cu) =0x0;

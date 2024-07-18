@@ -19,7 +19,7 @@ else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
-
+DOWNLOAD=ocm
 
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
@@ -43,7 +43,7 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O2 -g -DCONFIG_AlUart_Test_SendDataPolling_TEST=1
+CFLAGS := -O0 -g -DCONFIG_AlUart_Test_Loopback_TEST=1
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;

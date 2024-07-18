@@ -70,8 +70,8 @@ extern "C" {
 #include "al_wdt_dev.h"
 #endif
 
-#ifdef HAVE_TTCPS_DRIVER
-#include "al_ttc_hal.h"
+#ifdef HAVE_TCPS_DRIVER
+#include "al_tc_hal.h"
 #endif
 
 #ifdef HAVE_IPC_DRIVER

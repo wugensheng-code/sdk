@@ -143,7 +143,7 @@ static AL_S32 task15_UartRecvProcess(AL_U8 *RecvMem);
 static AL_VOID task15_CmdHelp(AL_VOID);
 static AL_VOID task15_CmdTaskState(AL_VOID);
 AL_VOID ConfigureTimerForRunTimeStates(AL_VOID);
-static AL_VOID Ttc_DefEventHandler(AL_TTC_EventStruct TtcEvent, AL_VOID *CallbackRef);
+static AL_VOID Tc_DefEventHandler(AL_TC_EventStruct TcEvent, AL_VOID *CallbackRef);
 
 static AL_U8 task15_ProcName[][UART_CMD_LEN_MAX] = {
     "help",

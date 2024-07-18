@@ -151,11 +151,11 @@
 				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			}
 		},
-		"PS_DRIVER_TTC": {
+		"PS_DRIVER_TC": {
 			"1.0":{
-				"name": "PS_DRIVER_TTC",
+				"name": "PS_DRIVER_TC",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/ps_driver/ttc"],
+				"depends": ["fpsoc/driver/ps_driver/tc"],
 				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
@@ -1188,27 +1188,27 @@
 				}
 			}
 		},
-		"PS_DRIVER_TTC": {
+		"PS_DRIVER_TC": {
 			"1.0":{
-				"TTC_PWM": {
-					"name": "TTC_PWM",
+				"TC_PWM": {
+					"name": "TC_PWM",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/ps_driver/ttc/example/al_ttc_pwm.c",
-						"PS_DRIVER_TTC_V1_0"
+						"fpsoc/driver/ps_driver/tc/example/al_tc_pwm.c",
+						"PS_DRIVER_TC_V1_0"
 					],
-					"description": "ttc test",
+					"description": "tc test",
 					"supportedOS": ["standalone"],
 					"supportedProc": ["apu-0", "apu-1", "rpu"]
 				},
-				"TTC_MEASURE": {
-					"name": "TTC_MEASURE",
+				"TC_MEASURE": {
+					"name": "TC_MEASURE",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/ps_driver/ttc/example/al_ttc_measure.c",
-						"PS_DRIVER_TTC_V1_0"
+						"fpsoc/driver/ps_driver/tc/example/al_tc_measure.c",
+						"PS_DRIVER_TC_V1_0"
 					],
-					"description": "ttc test",
+					"description": "tc test",
 					"supportedOS": ["standalone"],
 					"supportedProc": ["apu-0", "apu-1", "rpu"]
 				}

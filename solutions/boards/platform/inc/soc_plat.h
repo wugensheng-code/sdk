@@ -64,7 +64,7 @@ extern "C" {
 #define QSPI_CLOCK                       (99.99*MHz)
 #define MMC0_IO_FREQ                    (49.995*MHz)
 #define MMC_CLOCK                       (49.995*MHz)
-#define TTC_CLOCK                       (199.98*MHz)
+#define TC_CLOCK                       (199.98*MHz)
 #define UART_CLOCK                      (49.995*MHz)
 #define WDT_CLOCK                       (16.665*MHz)
 
@@ -83,8 +83,8 @@ extern "C" {
 #ifndef UART_CLOCK
 #define UART_CLOCK                         ( 50*MHz)
 #endif
-#ifndef TTC_CLOCK
-#define TTC_CLOCK                          (200*MHz)
+#ifndef TC_CLOCK
+#define TC_CLOCK                          (200*MHz)
 #endif
 #ifndef WDT_CLOCK
 #define WDT_CLOCK                       (16.665*MHz)
@@ -126,12 +126,12 @@ extern "C" {
 #define CANFD                                     0
 #define CAN20B                                    1
 #define CAN0_SLOW_RATE                      1000000
-#define CAN0PS_ENABLE 
+#define CAN0PS_ENABLE
 #define CAN0_TYPE                            CAN20B
-// #define CAN1PS_ENABLE 
-#define HAVE_DDR_DRIVRE 
+// #define CAN1PS_ENABLE
+#define HAVE_DDR_DRIVRE
 #define DDR_ENABLE                                1
-#define DDR_AVAILABLE 
+#define DDR_AVAILABLE
 #define DDRC_ADDR_MAP                  ROW_COL_BANK
 #define DDRC_COMP_DENSITY                      4096
 #define DDRC_SPEED_BIN        _SPEED_BIN_DDR3_1066G
@@ -147,33 +147,33 @@ extern "C" {
 #define DDRC_VREF                          Internal
 #define DDRC_WDM_WDBI                          NONE
 #define DDRC_DQ_WIDTH                            32
-#define GBE0_ENABLE 
-// #define GBE1_ENABLE 
-// #define GPIOPL_ENABLE 
-#define GPIOPS_ENABLE 
+#define GBE0_ENABLE
+// #define GBE1_ENABLE
+// #define GPIOPL_ENABLE
+#define GPIOPS_ENABLE
 #define I2C0_RATE                          (0.1*MHz)
-#define I2C0PS_ENABLE 
-// #define I2C1PS_ENABLE 
-// #define SMCPS_ENABLE 
+#define I2C0PS_ENABLE
+// #define I2C1PS_ENABLE
+// #define SMCPS_ENABLE
 #define OSC_CLK                               33.33
-#define QSPIPS_ENABLE 
-#define MMC0PS_ENABLE 
-// #define MMC1PS_ENABLE 
-// #define SPI0PS_ENABLE 
-// #define SPI1PS_ENABLE 
-#define TTC0PS_ENABLE 
-// #define TTC1PS_ENABLE 
-// #define UART0PS_ENABLE 
+#define QSPIPS_ENABLE
+#define MMC0PS_ENABLE
+// #define MMC1PS_ENABLE
+// #define SPI0PS_ENABLE
+// #define SPI1PS_ENABLE
+#define TC0PS_ENABLE
+// #define TC1PS_ENABLE
+// #define UART0PS_ENABLE
 #define UART1_BAUDRATE                       115200
-#define UART1PS_ENABLE 
-#define USB0PS_ENABLE 
-// #define USB1PS_ENABLE 
-#define WDTPS_ENABLE 
+#define UART1PS_ENABLE
+#define USB0PS_ENABLE
+// #define USB1PS_ENABLE
+#define WDTPS_ENABLE
 
 // GBE_DEVICE_ID
 #ifdef GBE1_ENABLE
 #define GBE_DEVICE_ID          (1)
-#else 
+#else
 #define GBE_DEVICE_ID          (0)
 #endif
 
@@ -190,7 +190,7 @@ extern "C" {
 // (2) ddr speed: default: 800
 #ifdef  DDRC_DDR_SPEED
 #define FD_PARA_DDR_SPEED            DDRC_DDR_SPEED
-#else 
+#else
 #define FD_PARA_DDR_SPEED                       800
 #endif
 
@@ -293,7 +293,7 @@ extern "C" {
 #define BANK_ROW_COL 2
 #ifdef  DDRC_ADDR_MAP
 #define FD_PARA_ADDRMAP                DDRC_ADDR_MAP
-#else 
+#else
 #define FD_PARA_ADDRMAP                 ROW_COL_BANK
 #endif
 
@@ -305,11 +305,11 @@ extern "C" {
 #define FD_PARA_TRAINING                           1
 #endif
 
-// (15) ddr train 
+// (15) ddr train
 // (15.1) byte0
 #ifdef  DDRC_DELAY_B0_AC
 #define FD_PARA_BYTE0_AC_DLY        DDRC_DELAY_B0_AC
-#else 
+#else
 #define FD_PARA_BYTE0_AC_DLY                    (0.0)
 #endif
 #ifdef  DDRC_DELAY_B0_DQ
@@ -321,7 +321,7 @@ extern "C" {
 // (15.2) byte1
 #ifdef  DDRC_DELAY_B1_AC
 #define FD_PARA_BYTE1_AC_DLY        DDRC_DELAY_B1_AC
-#else 
+#else
 #define FD_PARA_BYTE1_AC_DLY                    (0.0)
 #endif
 #ifdef  DDRC_DELAY_B1_DQ
@@ -333,7 +333,7 @@ extern "C" {
 // (15.2) byte2
 #ifdef  DDRC_DELAY_B2_AC
 #define FD_PARA_BYTE2_AC_DLY        DDRC_DELAY_B2_AC
-#else 
+#else
 #define FD_PARA_BYTE2_AC_DLY                    (0.0)
 #endif
 #ifdef  DDRC_DELAY_B2_DQ
@@ -345,7 +345,7 @@ extern "C" {
 // (15.3) byte3
 #ifdef  DDRC_DELAY_B3_AC
 #define FD_PARA_BYTE3_AC_DLY        DDRC_DELAY_B3_AC
-#else 
+#else
 #define FD_PARA_BYTE3_AC_DLY                    (0.0)
 #endif
 #ifdef  DDRC_DELAY_B3_DQ
@@ -362,7 +362,7 @@ extern "C" {
 #define HAVE_IICPS_DRIVER
 #define HAVE_QSPIPS_DRIVER
 #define HAVE_MMCPS_DRIVER
-#define HAVE_TTCPS_DRIVER
+#define HAVE_TCPS_DRIVER
 #define HAVE_UARTPS_DRIVER
 #define HAVE_USBPS_DRIVER
 #define HAVE_WDTPS_DRIVER

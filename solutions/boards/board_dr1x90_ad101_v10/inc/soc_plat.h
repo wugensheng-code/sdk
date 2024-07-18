@@ -352,9 +352,9 @@ extern "C" {
 #define WDT0PS_ENABLE
 #define WDT1PS_ENABLE
 
-#define HAVE_TTCPS_DRIVER
-#define TTC0PS_ENABLE
-#define TTC1PS_ENABLE
+#define HAVE_TCPS_DRIVER
+#define TC0PS_ENABLE
+#define TC1PS_ENABLE
 
 #define HAVE_IPC_DRIVER
 #define IPC_ENABLE
@@ -389,8 +389,8 @@ int  Soc_PlatGetDeviceVersion();
 #ifndef MMC_CLOCK
 #define MMC_CLOCK              (100*MHz)
 #endif
-#ifndef TTC_CLOCK
-#define TTC_CLOCK              (200*MHz)
+#ifndef TC_CLOCK
+#define TC_CLOCK              (200*MHz)
 #endif
 #ifndef WDT_CLOCK
 #define WDT_CLOCK              (16666667)

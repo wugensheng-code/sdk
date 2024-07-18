@@ -17,7 +17,7 @@ extern "C" {
 #include "al_spi_hal.h"
 #include "al_qspi_hal.h"
 #include "al_uart_hal.h"
-#include "al_ttc_hal.h"
+#include "al_tc_hal.h"
 #include "al_gbe_ethernetif.h"
 
 /* TASK PRIORITY CONFIG */
@@ -151,10 +151,10 @@ extern "C" {
 #define TASK_STATE_BUF              (4096)
 
 /* TIMER MACRO CONFIG */
-#define TTC_DEVICE_ID               (0)
-#define TTC_CLK_PRESACLE            (199)
-#define TTC_MATCH_VALUE             (999)
-#define TTC_INTERVAL_MAX_VALUE      (TTC_MATCH_VALUE)
+#define TC_DEVICE_ID               (0)
+#define TC_CLK_PRESACLE            (199)
+#define TC_MATCH_VALUE             (999)
+#define TC_INTERVAL_MAX_VALUE      (TC_MATCH_VALUE)
 
 /* ASYNC MACRO CONFIG */
 #define PRINT_INTERVAL_TIME         (pdMS_TO_TICKS(50))

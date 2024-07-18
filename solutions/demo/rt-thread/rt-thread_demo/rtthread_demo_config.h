@@ -17,7 +17,7 @@ extern "C" {
 #include "al_spi_hal.h"
 #include "al_qspi_hal.h"
 #include "al_uart_hal.h"
-#include "al_ttc_hal.h"
+#include "al_tc_hal.h"
 #include "al_gbe_ethernetif.h"
 
 /* TASK PRIORITY CONFIG */
@@ -148,10 +148,10 @@ extern "C" {
 #define TASK_STATE_BUF              (4096)
 
 /* TIMER MACRO CONFIG */
-#define TTC_DEVICE_ID               (0)
-#define TTC_CLK_PRESACLE            (199)
-#define TTC_MATCH_VALUE             (999)
-#define TTC_INTERVAL_MAX_VALUE      (TTC_MATCH_VALUE)
+#define TC_DEVICE_ID               (0)
+#define TC_CLK_PRESACLE            (199)
+#define TC_MATCH_VALUE             (999)
+#define TC_INTERVAL_MAX_VALUE      (TC_MATCH_VALUE)
 #define THREAD_TICK                 (100)
 
 
@@ -424,10 +424,10 @@ static AL_DMACAHB_ChInitStruct Task14_DmaChConfig = {
     .SgrDsr.IsDstScatterEn  = AL_FALSE,
 };
 
-static AL_TTC_TimerInitStruct Ttc_Config = {
-    .ClkSrc              = AL_TTC_PCLK,
-    .PrescaleVal         = TTC_CLK_PRESACLE,
-    .CountDec            = AL_TTC_CountUp,
+static AL_TC_TimerInitStruct Tc_Config = {
+    .ClkSrc              = AL_TC_PCLK,
+    .PrescaleVal         = TC_CLK_PRESACLE,
+    .CountDec            = AL_TC_CountUp,
     .EnablePrescale      = AL_TRUE,
 };
 

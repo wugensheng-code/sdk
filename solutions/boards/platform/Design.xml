@@ -549,8 +549,8 @@
                 <ipxact:configurableElementValue referenceId="p2f_clk1_Dot_Enable">0</ipxact:configurableElementValue>
                 <ipxact:configurableElementValue referenceId="p2f_clk2_Dot_Enable">0</ipxact:configurableElementValue>
                 <ipxact:configurableElementValue referenceId="p2f_clk3_Dot_Enable">0</ipxact:configurableElementValue>
-                <ipxact:configurableElementValue referenceId="TTC_Dot_Clock_Source">&quot;CPU PLL&quot;</ipxact:configurableElementValue>
-                <ipxact:configurableElementValue referenceId="TTC_Dot_Actual_Inside_Frequency">199.98</ipxact:configurableElementValue>
+                <ipxact:configurableElementValue referenceId="TC_Dot_Clock_Source">&quot;CPU PLL&quot;</ipxact:configurableElementValue>
+                <ipxact:configurableElementValue referenceId="TC_Dot_Actual_Inside_Frequency">199.98</ipxact:configurableElementValue>
                 <ipxact:configurableElementValue referenceId="WDT_Dot_Clock_Source">&quot;OSC&quot;</ipxact:configurableElementValue>
                 <ipxact:configurableElementValue referenceId="WDT_Dot_Actual_Inside_Frequency">16.665</ipxact:configurableElementValue>
                 <ipxact:configurableElementValue referenceId="WDT_Dot_Range">&quot;0.1:25&quot;</ipxact:configurableElementValue>

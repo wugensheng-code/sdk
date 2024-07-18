@@ -89,10 +89,10 @@ void Enablepinmux1(void)
     *(AL_U32 *)(0xf88030d4u) =0xf;      //mdio1
     *(AL_U32 *)(0xf8803438u) =0x1;      //emio_sel
 
-#ifndef AL_DCBOARD_TTC
-    *(AL_U32 *)(0xF8803078u) =0x7;    //ttc0
+#ifndef AL_DCBOARD_TC
+    *(AL_U32 *)(0xF8803078u) =0x7;    //tc0
     *(AL_U32 *)(0xF880307cu) =0x7;
-    *(AL_U32 *)(0xf8803070u) =0x7;    //ttc1
+    *(AL_U32 *)(0xf8803070u) =0x7;    //tc1
     *(AL_U32 *)(0xf8803074u) =0x7;
 #endif
 
@@ -149,7 +149,7 @@ void Enablepinmux1_mode2(void)
 
     *(AL_U32 *)(0xf8803040u) =0x7;
     *(AL_U32 *)(0xf8803044u) =0x7;
-    *(AL_U32 *)(0xf880341cu) =0x1; //TTC SET
+    *(AL_U32 *)(0xf880341cu) =0x1; //TC SET
 
     *(AL_U32 *)(0xf8803048u) =0x0;
     *(AL_U32 *)(0xf880304cu) =0x0;

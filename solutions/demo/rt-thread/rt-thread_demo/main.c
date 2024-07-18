@@ -72,7 +72,7 @@ static AL_S32 task3_DmacahbChEventCallBack(AL_DMACAHB_EventStruct *Event, AL_VOI
 static AL_S32 task15_UartRecvProcess(AL_U8 *RecvMem);
 static AL_VOID task15_CmdHelp(AL_VOID);
 AL_VOID ConfigureTimerForRunTimeStates(AL_VOID);
-static AL_VOID Ttc_DefEventHandler(AL_TTC_EventStruct TtcEvent, AL_VOID *CallbackRef);
+static AL_VOID Tc_DefEventHandler(AL_TC_EventStruct TcEvent, AL_VOID *CallbackRef);
 
 static AL_U8 task15_ProcName[][UART_CMD_LEN_MAX] = {
     "help",
@@ -213,7 +213,7 @@ int demo(void)
                 THREAD_TICK);
     if (Task15UartProc_Handler != RT_NULL)
         rt_thread_startup(Task15UartProc_Handler);
-    
+
     return AL_OK;
 }
 MSH_CMD_EXPORT(demo, demo);
@@ -903,40 +903,40 @@ static AL_VOID task15_CmdHelp(AL_VOID)
 AL_VOID ConfigureTimerForRunTimeStates(AL_VOID)
 {
     AL_U32 Ret = AL_OK;
-    AL_TTC_HalStruct *TtcHandle = AL_NULL;
+    AL_TC_HalStruct *TcHandle = AL_NULL;
 
-    AlTtc_Hal_Init(&TtcHandle, TTC_DEVICE_ID, &Ttc_Config, Ttc_DefEventHandler);
+    AlTc_Hal_Init(&TcHandle, TC_DEVICE_ID, &Tc_Config, Tc_DefEventHandler);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
         return;
     }
 
-    AlTtc_Hal_EnableIntervalMode(TtcHandle);
-    AlTtc_Hal_SetIntervalMaxVal(TtcHandle, TTC_INTERVAL_MAX_VALUE);
-    AlTtc_Hal_EnableMatchMode(TtcHandle, AL_TRUE);
-    AlTtc_Hal_SetMatchVal(TtcHandle, AL_TTC_Match1, TTC_MATCH_VALUE);
-    AlTtc_Hal_EnableIntr(TtcHandle, AL_TTC_IntrMatch1, AL_TRUE);
-    AlTtc_Hal_EnableCounter(TtcHandle, AL_TRUE);
+    AlTc_Hal_EnableIntervalMode(TcHandle);
+    AlTc_Hal_SetIntervalMaxVal(TcHandle, TC_INTERVAL_MAX_VALUE);
+    AlTc_Hal_EnableMatchMode(TcHandle, AL_TRUE);
+    AlTc_Hal_SetMatchVal(TcHandle, AL_TC_Match1, TC_MATCH_VALUE);
+    AlTc_Hal_EnableIntr(TcHandle, AL_TC_IntrMatch1, AL_TRUE);
+    AlTc_Hal_EnableCounter(TcHandle, AL_TRUE);
 
     rtthreadRunTimeTicks = 0;
 }
 
-static AL_VOID Ttc_DefEventHandler(AL_TTC_EventStruct TtcEvent, AL_VOID *CallbackRef)
+static AL_VOID Tc_DefEventHandler(AL_TC_EventStruct TcEvent, AL_VOID *CallbackRef)
 {
-    switch (TtcEvent.Events)
+    switch (TcEvent.Events)
     {
-    case AL_TTC_EVENT_Interval:
+    case AL_TC_EVENT_Interval:
         break;
-    case AL_TTC_EVENT_Match1:
+    case AL_TC_EVENT_Match1:
         rtthreadRunTimeTicks++;
         break;
-    case AL_TTC_EVENT_Match2:
+    case AL_TC_EVENT_Match2:
         break;
-    case AL_TTC_EVENT_Match3:
+    case AL_TC_EVENT_Match3:
         break;
-    case AL_TTC_EVENT_Overflow:
+    case AL_TC_EVENT_Overflow:
         break;
-    case AL_TTC_EVENT_EventTimer:
+    case AL_TC_EVENT_EventTimer:
         break;
     default:
         break;
