@@ -5,11 +5,13 @@
 
 #define PARA_SEL_BY_WIDTH(para_x8, para_x16) ((FD_PARA_DRAM_WIDTH == DDR_COMP_WIDTH_x8) ? (para_x8) : (para_x16))
 
-static float set_param_by_width(float para_x8, float para_x16, ddr_params_t ddr_params) {
-    return ((ddr_params.dram_width == DDR_COMP_WIDTH_x8) ? (para_x8) : (para_x16));
+static double set_param_by_width(double para_x8, double para_x16, u32 dram_width)
+{
+    return (dram_width == DDR_COMP_WIDTH_x8) ? para_x8 : para_x16;
 }
 
-static float set_trfc_by_density(u32 dram_density) {
+static double set_trfc_by_density(u32 dram_density)
+{
     return  dram_density <=  512 ?  90.0 : \
             dram_density <= 1024 ? 110.0 : \
             dram_density <= 2048 ? 160.0 : \
@@ -21,7 +23,7 @@ static float set_trfc_by_density(u32 dram_density) {
 #define TREFI (7.8 * 1e3)    // 0 - 85C
 // #define TREFI (3.9 * 1e3)    // 85 - 95C
 
-static ddr_timing_t SPEED_BIN_DDR3_800D = {
+static const ddr_timing_t SPEED_BIN_DDR3_800D = {
     .nCL  = 5,
     .nCWL = 5,
     .nRCD = 5,
@@ -39,7 +41,7 @@ static ddr_timing_t SPEED_BIN_DDR3_800D = {
     .tREFI  = TREFI
 };
 
-static ddr_timing_t SPEED_BIN_DDR3_800E = {
+static const ddr_timing_t SPEED_BIN_DDR3_800E = {
     .nCL  = 6,
     .nCWL = 5,
     .nRCD = 6,
@@ -57,7 +59,7 @@ static ddr_timing_t SPEED_BIN_DDR3_800E = {
     .tREFI  = TREFI
 };
 
-static ddr_timing_t SPEED_BIN_DDR3_1066E = {
+static const ddr_timing_t SPEED_BIN_DDR3_1066E = {
     .nCL  = 6,
     .nCWL = 6,
     .nRCD = 6,
@@ -75,7 +77,7 @@ static ddr_timing_t SPEED_BIN_DDR3_1066E = {
     .tREFI  = TREFI
 };
 
-static ddr_timing_t SPEED_BIN_DDR3_1066F = {
+static const ddr_timing_t SPEED_BIN_DDR3_1066F = {
     .nCL  = 7,
     .nCWL = 6,
     .nRCD = 7,
@@ -93,7 +95,7 @@ static ddr_timing_t SPEED_BIN_DDR3_1066F = {
     .tREFI  = TREFI
 };
 
-static ddr_timing_t SPEED_BIN_DDR3_1066G = {
+static const ddr_timing_t SPEED_BIN_DDR3_1066G = {
     .nCL  = 8,
     .nCWL = 6,
     .nRCD = 8,
@@ -111,7 +113,7 @@ static ddr_timing_t SPEED_BIN_DDR3_1066G = {
     .tREFI  = TREFI
 };
 
-static ddr_timing_t SPEED_BIN_DDR3_1333F = {
+static const ddr_timing_t SPEED_BIN_DDR3_1333F = {
     .nCL  = 7,
     .nCWL = 7,
     .nRCD = 7,
@@ -129,7 +131,7 @@ static ddr_timing_t SPEED_BIN_DDR3_1333F = {
     .tREFI  = TREFI
 };
 
-static ddr_timing_t SPEED_BIN_DDR3_1333G = {
+static const ddr_timing_t SPEED_BIN_DDR3_1333G = {
     .nCL  = 8,
     .nCWL = 7,
     .nRCD = 8,
@@ -147,7 +149,7 @@ static ddr_timing_t SPEED_BIN_DDR3_1333G = {
     .tREFI  = TREFI
 };
 
-static ddr_timing_t SPEED_BIN_DDR3_1333H = {
+static const ddr_timing_t SPEED_BIN_DDR3_1333H = {
     .nCL  = 9,
     .nCWL = 7,
     .nRCD = 9,
@@ -165,7 +167,7 @@ static ddr_timing_t SPEED_BIN_DDR3_1333H = {
     .tREFI  = TREFI
 };
 
-static ddr_timing_t SPEED_BIN_DDR3_1333J = {
+static const ddr_timing_t SPEED_BIN_DDR3_1333J = {
     .nCL  = 10,
     .nCWL = 7,
     .nRCD = 10,
@@ -183,7 +185,7 @@ static ddr_timing_t SPEED_BIN_DDR3_1333J = {
     .tREFI  = TREFI
 };
 
-static ddr_timing_t SPEED_BIN_DDR4_1600J = {
+static const ddr_timing_t SPEED_BIN_DDR4_1600J = {
     .nCL  = 10,
     .nCWL = 9,
     .nRCD = 10,
@@ -201,7 +203,7 @@ static ddr_timing_t SPEED_BIN_DDR4_1600J = {
     .tREFI  = TREFI
 };
 
-static ddr_timing_t SPEED_BIN_DDR4_1600K = {
+static const ddr_timing_t SPEED_BIN_DDR4_1600K = {
     .nCL  = 11,
     .nCWL = 9,
     .nRCD = 11,
@@ -219,7 +221,7 @@ static ddr_timing_t SPEED_BIN_DDR4_1600K = {
     .tREFI  = TREFI
 };
 
-static ddr_timing_t SPEED_BIN_DDR4_1600L = {
+static const ddr_timing_t SPEED_BIN_DDR4_1600L = {
     .nCL  = 12,
     .nCWL = 9,
     .nRCD = 12,
@@ -237,62 +239,72 @@ static ddr_timing_t SPEED_BIN_DDR4_1600L = {
     .tREFI  = TREFI
 };
 
-static ddr_timing_t speed_bin_list[20] = {};
+static const ddr_timing_t* speed_bin_list[] = {
+    &SPEED_BIN_DDR3_800D , &SPEED_BIN_DDR3_800E , 
+    &SPEED_BIN_DDR3_1066E, &SPEED_BIN_DDR3_1066F, &SPEED_BIN_DDR3_1066G, 
+    &SPEED_BIN_DDR3_1333F, &SPEED_BIN_DDR3_1333G, &SPEED_BIN_DDR3_1333H, &SPEED_BIN_DDR3_1333J, 
+    &SPEED_BIN_DDR4_1600J, &SPEED_BIN_DDR4_1600K, &SPEED_BIN_DDR4_1600L
+};
+static const speed_bin_size = sizeof(speed_bin_list) / sizeof(const ddr_timing_t*);
 
-ddr_timing_t get_timing_para(double fck, ddr_params_t ddr_params)
+static u32 autoSel_speed_bin(double fck, u32 ddr_type)
 {
-    double tck = 1e3 / fck;
+    if (ddr_type == DDR3_TYPE) {
+        if (fck < 400.0)
+            return 1;   // SPEED_BIN_DDR3_800E
+        else if (fck < 533.4)
+            return 4;   // SPEED_BIN_DDR3_1066G
+        else
+            return 8;   // SPEED_BIN_DDR3_1333J
+    }
+    else {
+        return 9;   // SPEED_BIN_DDR4_1600J;
+    }
+    return (u32)-1;
+}
+
+ddr_timing_t get_timing_para(double fck, const ddr_params_t* parm)
+{
+    const double tck = 1e3 / fck;
     ddr_timing_t para;
-    speed_bin_list[0] = SPEED_BIN_DDR3_800D;
-    speed_bin_list[1] = SPEED_BIN_DDR3_800E;
-    speed_bin_list[2] = SPEED_BIN_DDR3_1066E;
-    speed_bin_list[3] = SPEED_BIN_DDR3_1066F;
-    speed_bin_list[4] = SPEED_BIN_DDR3_1066G;
-    speed_bin_list[5] = SPEED_BIN_DDR3_1333F;
-    speed_bin_list[6] = SPEED_BIN_DDR3_1333G;
-    speed_bin_list[7] = SPEED_BIN_DDR3_1333H;
-    speed_bin_list[8] = SPEED_BIN_DDR3_1333J;
-    speed_bin_list[9] = SPEED_BIN_DDR4_1600J;
-    speed_bin_list[10] = SPEED_BIN_DDR4_1600K;
-    speed_bin_list[11] = SPEED_BIN_DDR4_1600L;
-    // add new bin after this line
-    speed_bin_list[12] = SPEED_BIN_DDR3_800D;
+    
+    u32 bin_idx = parm->speed_bin_index;
+    if (bin_idx >= speed_bin_size)
+        bin_idx = autoSel_speed_bin(fck, parm->type);
+    memcpy(&para, speed_bin_list[bin_idx], sizeof(ddr_timing_t));
 
-    // update params
-    memcpy(&para, &speed_bin_list[ddr_params.speed_bin_index], sizeof(ddr_timing_t));
     // set param by ddr width
-    if (ddr_params.speed_bin_index < 2) {
-        // 800e and 800d
+    if (bin_idx < 2) {
+        // DDR3 800E and 800D
         para.tRRD_L = 10.0;
-        para.tFAW   = set_param_by_width(40.0, 50.0, ddr_params);
-
-    } else if (ddr_params.speed_bin_index < 5) {
-        // 1066e 1066f 1066g
-        para.tRRD_L = set_param_by_width(7.5,   10.0, ddr_params);
-        para.tFAW   = set_param_by_width(37.5,  50.0, ddr_params);
-    } else if (ddr_params.speed_bin_index < 9) {
-        // 1333f 1333g 1333h 1333j
-        para.tRRD_L = set_param_by_width(6.0,   7.5,  ddr_params);
-        para.tFAW   = set_param_by_width(30.0,  45.0, ddr_params);
-    }  else if (ddr_params.speed_bin_index < 12) {
-        // 1333f 1333g 1333h 1333j
-        para.tRRD_S = set_param_by_width(5.0,   6.0, ddr_params),
-        para.tRRD_L = set_param_by_width(6.0,   7.5, ddr_params);
-        para.tFAW   = set_param_by_width(25.0, 35.0, ddr_params);
+        para.tFAW   = set_param_by_width(40.0, 50.0, parm->dram_width);
+    } else if (bin_idx < 5) {
+        // DDR3 1066E 1066F 1066G
+        para.tRRD_L = set_param_by_width(7.5,  10.0, parm->dram_width);
+        para.tFAW   = set_param_by_width(37.5, 50.0, parm->dram_width);
+    } else if (bin_idx < 9) {
+        // DDR3 1333F 1333G 1333H 1333J
+        para.tRRD_L = set_param_by_width(6.0,  7.5,  parm->dram_width);
+        para.tFAW   = set_param_by_width(30.0, 45.0, parm->dram_width);
+    } else if (bin_idx < 12) {
+        // DDR4 1600J 1600K 1600L
+        para.tRRD_S = set_param_by_width(5.0,   6.0, parm->dram_width),
+        para.tRRD_L = set_param_by_width(6.0,   7.5, parm->dram_width);
+        para.tFAW   = set_param_by_width(25.0, 35.0, parm->dram_width);
     } else {
-        /* doing nothing*/
+        /* do nothing*/
     }
     // set param by 
-    para.tRFC = set_trfc_by_density(ddr_params.dram_density);
+    para.tRFC = set_trfc_by_density(parm->dram_density);
 
-    if (ddr_params.type == DDR4_TYPE) {
+    if (parm->type == DDR4_TYPE) {
         para.tCCD_L = MAX(para.tCCD_L, tck * 5);
         para.tRRD_S = MAX(para.tRRD_S, tck * 4);
         para.tRRD_L = MAX(para.tRRD_L, tck * 4);
         para.tWTR_S = MAX(para.tWTR_S, tck * 2);
         para.tWTR_L = MAX(para.tWTR_L, tck * 4);
         para.tRTP   = MAX(para.tRTP, tck * 4);
-        para.tFAW   = MAX(para.tFAW, tck * PARA_SEL_BY_WIDTH(20, 28));
+        para.tFAW   = MAX(para.tFAW, tck * set_param_by_width(20, 28, parm->dram_width));
     }
     return para;
 }

@@ -387,7 +387,7 @@
 #define         PGSR0_QSGERR_offset                              22
 #define         PGSR0_QSGERR_mask                                0x00400000
 #define         PGSR0_WLERR_offset                               21
-#define         PGSR0WLERR_mask                                  0x00200000
+#define         PGSR0_WLERR_mask                                 0x00200000
 #define         ZCERR_offset                                     20
 #define         ZCERR_mask                                       0x00100000
 #define         VERR_offset                                      19

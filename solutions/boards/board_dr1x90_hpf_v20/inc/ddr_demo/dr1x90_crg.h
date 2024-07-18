@@ -25,9 +25,23 @@
 void pll_bypass();
 void pll_enable();
 
+typedef struct pll_bw_parm_t
+{
+    uint32_t gmc;
+    uint32_t icp;
+    uint32_t lpf_cap;
+    uint32_t lpf_res;
+    uint32_t kvco;
+} pll_bw_parm_t;
+
+// bw_sel = [0, 1, 2] = [High, Medium, Low]
+void pll_bw_parm_fetch(double fin, uint32_t fbk_div, uint32_t ref_div, pll_bw_parm_t* parm, int bw_sel);
+
 // F_cpu6x = CRYSTAL_OSC_HZ * fbk_div / ref_div / out_div_6x
 // F_cpu4x = CRYSTAL_OSC_HZ * fbk_div / ref_div / out_div_4x
 void pll_cpu_div_set(uint32_t fbk_div, uint32_t ref_div, uint32_t out_div_6x, uint32_t out_div_4x);
+// fin = input frequency (Hz); bw_sel = [0, 1, 2] = [High, Medium, Low]
+void pll_cpu_bw_cfg(double fin, uint32_t fbk_div, uint32_t ref_div, int bw_sel);
 void pll_cpu_reset();
 void pll_cpu_release();
 void pll_cpu_waitLock();
@@ -37,6 +51,8 @@ void pll_cpu_waitLock();
 // F_io80   = CRYSTAL_OSC_HZ * fbk_div / ref_div / out_div_80
 // F_io25   = CRYSTAL_OSC_HZ * fbk_div / ref_div / out_div_25
 void pll_io_div_set(uint32_t fbk_div, uint32_t ref_div, uint32_t out_div_1000, uint32_t out_div_400, uint32_t out_div_80, uint32_t out_div_25);
+// fin = input frequency (Hz); bw_sel = [0, 1, 2] = [High, Medium, Low]
+void pll_io_bw_cfg(double fin, uint32_t fbk_div, uint32_t ref_div, int bw_sel);
 void pll_io_reset();
 void pll_io_release();
 void pll_io_waitLock();
@@ -44,7 +60,10 @@ void pll_io_waitLock();
 // F_ddr_c0 = CRYSTAL_OSC_HZ * fbk_div / ref_div / out_div_c0
 // F_ddr_c1 = CRYSTAL_OSC_HZ * fbk_div / ref_div / out_div_c1
 // F_ddr_c2 = CRYSTAL_OSC_HZ * fbk_div / ref_div / out_div_c2
-void pll_ddr_div_set(uint32_t fbk_div, uint32_t ref_div, uint32_t out_div_c0, uint32_t out_div_c1, uint32_t out_div_c2);
+// F_ddr_c3 = CRYSTAL_OSC_HZ * fbk_div / ref_div / out_div_c3
+void pll_ddr_div_set(uint32_t fbk_div, uint32_t ref_div, uint32_t out_div_c0, uint32_t out_div_c1, uint32_t out_div_c2, uint32_t out_div_c3);
+// fin = input frequency (Hz); bw_sel = [0, 1, 2] = [High, Medium, Low]
+void pll_ddr_bw_cfg(double fin, uint32_t fbk_div, uint32_t ref_div, int bw_sel);
 void pll_ddr_reset();
 void pll_ddr_release();
 void pll_ddr_waitLock();
