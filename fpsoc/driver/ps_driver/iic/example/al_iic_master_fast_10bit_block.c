@@ -9,13 +9,18 @@
 #define AL_IIC_DEVICE_ID            0
 
 #define BUFFER_SIZE                 128
-#define TEST_COUNT                  16
-
 #define TEST_SLAVE_ADDR             0x77
 #define IIC_MASTER_TEST_TIMEOUT_MS  100
 
 #define IIC_MUX_ADDRESS             0x74
+
+#define BOARD_DR1X90_AD101_V20
+
+#ifdef BOARD_DR1X90_AD101_V20
+#define FMC_IIC_CHANNEL             0x01
+#else
 #define FMC_IIC_CHANNEL             0x10
+#endif
 
 /**
  *
