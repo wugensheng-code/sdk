@@ -406,3 +406,14 @@ AL_S32 AlIntr_SaveLocalInterruptMask(AL_VOID)
 {
     return get_irq_mask();
 }
+
+AL_S32 AlIntr_SetPreemptionBitsCount(AL_U32 Bits)
+{
+    if (Bits > __ECLIC_GetInfoCtlbits()) {
+        return AL_ERR_ILLEGAL_PARAM;
+    } else {
+        ECLIC_SetCfgNlbits(Bits);
+    }
+
+    return AL_OK;
+}

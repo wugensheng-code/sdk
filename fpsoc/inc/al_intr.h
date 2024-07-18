@@ -68,6 +68,10 @@ AL_VOID AlIntr_ControllerInit(AL_VOID);
 
 AL_S32 AlIntr_SetLocalInterrupt(AL_FUNCTION State);
 
+AL_S32 AlIntr_SetPreemptionBitsCount(AL_U32 Bits);
+
+AL_S32 AlIntr_SetLocalInterruptMask(AL_U32 Bits);
+
 AL_VOID AlIntr_RestoreLocalInterruptMask(AL_S32 Mask);
 
 AL_S32 AlIntr_SaveLocalInterruptMask(AL_VOID);

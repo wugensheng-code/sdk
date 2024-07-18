@@ -213,3 +213,9 @@ AL_VOID AlIntr_ClearAllPending(AL_VOID)
 
     Gicr_WriteIcpendr0(Gicv3DrvData->RdistBaseAddrs[*(Gicv3DrvData->CpuId)], ClearVal);
 }
+
+
+AL_S32 AlIntr_SetPreemptionBitsCount(AL_U32 Bits)
+{
+    GICV3_SYSREG_WRITE(icc_bpr1_el1, Bits);
+}
