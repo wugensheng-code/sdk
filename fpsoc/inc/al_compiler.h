@@ -171,11 +171,7 @@
 
 #endif
 
-#if defined __aarch64__ || defined __riscv__ || defined __riscv
 #define CACHE_LINE_SIZE   64
-#else
-#define CACHE_LINE_SIZE   32
-#endif
 
 #define cacheline_aligned __attribute__((__aligned__(CACHE_LINE_SIZE)))
 
