@@ -20,21 +20,19 @@ endif
 ## ARMv8_CORE:      MASTER, SLAVE
 
 ARMv8_STATE     ?= 64
-ARMv8_EL        ?= #{{ARMv8_EL}}
-ARMv8_SECURE    ?= #{{ARMv8_SECURE}}
-ARMv8_CORE      ?= #{{ARMv8_CORE}}
+ARMv8_EL        ?= EL3
+ARMv8_SECURE    ?= SECURE
+ARMv8_CORE      ?= MASTER
 
 #########################################################################
 
 #########################################################################
 # options for enable mmu, available choices: 0/1
 #########################################################################
+ENABLE_MMU  ?= 1
+
 ifeq ($(AL_CHIP),dr1v90)
-ifeq ($(DOWNLOAD),ddr)
-ENABLE_MMU  ?= 1
-endif
 else
-ENABLE_MMU  ?= 1
 DDR_2M_MAPPING ?= 1
 endif
 
@@ -45,7 +43,7 @@ ENABLE_DCACHE ?= 0
 endif
 
 ENABLE_ICACHE ?= 1
-CODE_READONLY ?= #{{CODE_READONLY}}
+CODE_READONLY ?= 0
 
 #########################################################################
 # options for compile command
@@ -58,7 +56,7 @@ COMPILE_PREFIX  ?=
 ## If V=1, it will display compiling message in verbose including compiling options
 #Handling of V=1/VERBOSE=1 flag
 # if V=1, $(DETAILS) will echo extra details
-VERBOSE =  #{{VERBOSE}}
+VERBOSE ?= 0
 V ?= $(VERBOSE)
 
 ifeq ($(V),1)
@@ -69,7 +67,7 @@ endif
 
 MAKEFLAGS += -j32
 ## If SILENT=1, it will not display any compiling messsage
-SILENT ?= #{{SILENT}}
+SILENT ?= 0
 
 ifeq ($(SILENT),1)
 	MAKEFLAGS += -s
@@ -79,7 +77,7 @@ endif
 ## If OUTPUT_DEV=UART1, it will output messsage by uart1
 ## If plat = emulation ,choose UART0
 ## If plat = board ,choose UART1
-OUTPUT_DEV ?= #{{OUTPUT_DEV}}
+OUTPUT_DEV ?= UART1
 
 ifeq ($(OUTPUT_DEV),UART0)
 	CFLAGS += -DLOG_DEV=AL_LOG_UART0
@@ -95,13 +93,13 @@ endif
 RTOS ?=
 
 ## If PFLOAT=1, it will enable float point print when using nano newlib
-PFLOAT ?= #{{PFLOAT}}
+PFLOAT ?= 0
 
 ## If NEWLIB=nano, it will use nano newlib, otherwise it will use normal newlib
-NEWLIB ?= #{{NEWLIB}}
+NEWLIB ?= nano
 
 ## If NOGC=1, it will not gc any sections during compiling to save code size
-NOGC ?= #{{NOGC}}
+NOGC ?= 0
 
 
 LIB_OUTPUT_DIR  ?= $(AL_SDK_ROOT)/output

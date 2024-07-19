@@ -29,12 +29,10 @@ ARMv8_CORE      ?= MASTER
 #########################################################################
 # options for enable mmu, available choices: 0/1
 #########################################################################
+ENABLE_MMU  ?= 1
+
 ifeq ($(AL_CHIP),dr1v90)
-ifeq ($(DOWNLOAD),ddr)
-ENABLE_MMU  ?= 1
-endif
 else
-ENABLE_MMU  ?= 1
 DDR_2M_MAPPING ?= 1
 endif
 
