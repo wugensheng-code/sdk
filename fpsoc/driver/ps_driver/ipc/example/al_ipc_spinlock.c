@@ -47,8 +47,6 @@
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
-    AL_U32 Key = 0;
-    AL_U32 Same_Key = 0;
     AL_IpcSpinLock_HalStruct *Spinlock_Handle;
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Ipc spin lock test\r\n");
@@ -59,15 +57,15 @@ AL_S32 main(AL_VOID)
 
         AL_LOG(AL_LOG_LEVEL_INFO, "try take the spin lock\r\n");
 
-        Key = AlIpc_Hal_SpinLockTake(&Spinlock_Handle, AL_WAITING_NO);
+        Ret = AlIpc_Hal_SpinLockTake(Spinlock_Handle, AL_WAITING_NO);
 
-        if (Key) {
+        if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_INFO, "Successfully obtained the spin lock\r\n");
         }
 
-        Same_Key = AlIpc_Hal_SpinLockTake(&Spinlock_Handle, AL_WAITING_NO);
+        Ret = AlIpc_Hal_SpinLockTake(Spinlock_Handle, AL_WAITING_NO);
 
-        if (Same_Key) {
+        if (Ret) {
             AL_LOG(AL_LOG_LEVEL_INFO, "Attempt to obtain the same spin lock, acquisition failed \r\n");
         } else {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Successfully obtained the same spin lock, testing failed \r\n");
@@ -75,7 +73,7 @@ AL_S32 main(AL_VOID)
             break;
         }
 
-        AlIpc_Hal_SpinLockRelease(&Spinlock_Handle);
+        AlIpc_Hal_SpinLockRelease(Spinlock_Handle);
 
         AL_LOG(AL_LOG_LEVEL_INFO, "release the spin lock\r\n");
     }
