@@ -83,7 +83,7 @@ AL_S32 main(AL_VOID)
 
         Ret = AlIpc_Hal_SpinLockTake(Spinlock_Handle, AL_WAITING_NO);
 
-        if (Ret) {
+        if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_INFO, "Attempt to obtain the same spin lock, acquisition failed \r\n");
         } else {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Successfully obtained the same spin lock, testing failed \r\n");

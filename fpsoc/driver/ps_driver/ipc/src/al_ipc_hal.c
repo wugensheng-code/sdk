@@ -83,7 +83,7 @@ AL_S32 AlIpc_Hal_SpinLockTake(AL_IpcSpinLock_HalStruct *Handle, AL_U32 Timeout)
 	AL_U64 Start = AlSys_GetTimerTickCount();
 	AL_U64 Freq  = AlSys_GetTimerFreq();
 	do {
-		Take = AlIpc_ll_SpinLockTryTake(Handle->Number);
+        Take = AlIpc_ll_SpinLockTryTake(Handle->Number);
 	} while((Take != 1) && (Start + Freq * Timeout / 1000 >= AlSys_GetTimerTickCount()));
 
 
@@ -116,8 +116,6 @@ AL_S32 AlIPC_Hal_MboxInit(AL_IpcMailBox_HalStruct **Handle, AL_U32 Number)
 {
     AL_ASSERT((Handle != AL_NULL), AL_IPC_ERR_ILLEGAL_PARAM);
     AL_ASSERT((Number < IPC_MAILBOX_NUM), AL_IPC_ERR_ILLEGAL_PARAM);
-
-    AlIpc_ll_MboxWrite(Number, 0x0UL);
 
     *Handle = &AlIpcMailBoxHandle[Number];
     (*Handle)->Number = Number;
@@ -168,7 +166,11 @@ static AL_VOID AlIpc_IntrHandler(AL_VOID *Handle)
     AL_IpcIntr_HalStruct *Intr = (AL_IpcIntr_HalStruct *)Handle;
     AL_S32 Ret;
 
-    Intr->Func(Intr->Arg);
+    if (Intr->Func) {
+        Intr->Func(Intr->Arg);
+    } else {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "missing IPC Intr Func\r\n");
+    }
 
     Ret = AlIpc_Hal_IntrClear(Intr->Type);
     if (Ret != AL_OK) {
