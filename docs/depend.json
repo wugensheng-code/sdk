@@ -269,6 +269,16 @@
 				"supportedProc": ["apu-0", "apu-1", "rpu"]
 		}
 	},
+		"LIB_NMSIS": {
+			"1.0":{
+				"name": "LIB_NMSIS",
+				"version": "1.0",
+                "description": "LIB_NMSIS",
+				"depends": ["3rdparty/lib/NMSIS"],
+				"default": true,
+				"supportedProc": ["apu-0", "apu-1", "rpu"]
+		}
+    },
 		"LIB_CIPHER": {
 			"1.0":{
 				"name": "LIB_CIPHER",
@@ -693,6 +703,175 @@
 				"description": "openamp_rpmsg_echo_freertos demo",
 				"supportedOS": ["freertos"],
 				"supportedProc": ["apu-0", "apu-1"]
+			}
+		},
+		"RISCV_BAYES_EXAMPLE": {
+			"1.0":{
+				"name": "RISCV_BAYES_EXAMPLE",
+				"version": "1.0",
+				"depends": [
+					"3rdparty/lib/NMSIS/NMSIS/DSP/Examples/RISCV/riscv_bayes_example",
+					"LIB_NMSIS_V1_0"
+				],
+				"description": "nmsis bayes example",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["rpu"]
+			}
+		},
+		"RISCV_CLASS_MARKS_EXAMPLE": {
+			"1.0":{
+				"name": "RISCV_CLASS_MARKS_EXAMPLE",
+				"version": "1.0",
+				"depends": [
+					"3rdparty/lib/NMSIS/NMSIS/DSP/Examples/RISCV/riscv_class_marks_example",
+					"LIB_NMSIS_V1_0"
+				],
+				"description": "nmsis class marks example",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["rpu"]
+			}
+		},
+		"RISCV_CONVOLUTION_EXAMPLE": {
+			"1.0":{
+				"name": "RISCV_CONVOLUTION_EXAMPLE",
+				"version": "1.0",
+				"depends": [
+					"3rdparty/lib/NMSIS/NMSIS/DSP/Examples/RISCV/riscv_convolution_example",
+					"LIB_NMSIS_V1_0"
+				],
+				"description": "nmsis convolution example",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["rpu"]
+			}
+		},
+		"RISCV_DOTPRODUCT_EXAMPLE": {
+			"1.0":{
+				"name": "RISCV_DOTPRODUCT_EXAMPLE",
+				"version": "1.0",
+				"depends": [
+					"3rdparty/lib/NMSIS/NMSIS/DSP/Examples/RISCV/riscv_dotproduct_example",
+					"LIB_NMSIS_V1_0"
+				],
+				"description": "nmsis dotproduct example",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["rpu"]
+			}
+		},
+		"RISCV_FFT_BIN_EXAMPLE": {
+			"1.0":{
+				"name": "RISCV_FFT_BIN_EXAMPLE",
+				"version": "1.0",
+				"depends": [
+					"3rdparty/lib/NMSIS/NMSIS/DSP/Examples/RISCV/riscv_fft_bin_example",
+					"LIB_NMSIS_V1_0"
+				],
+				"description": "nmsis fft bin example",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["rpu"]
+			}
+		},
+		"RISCV_FIR_EXAMPLE": {
+			"1.0":{
+				"name": "RISCV_FIR_EXAMPLE",
+				"version": "1.0",
+				"depends": [
+					"3rdparty/lib/NMSIS/NMSIS/DSP/Examples/RISCV/riscv_fir_example",
+					"LIB_NMSIS_V1_0"
+				],
+				"description": "nmsis fir example",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["rpu"]
+			}
+		},
+		"RISCV_GRAPHIC_EQUALIZER_EXAMPLE": {
+			"1.0":{
+				"name": "RISCV_GRAPHIC_EQUALIZER_EXAMPLE",
+				"version": "1.0",
+				"depends": [
+					"3rdparty/lib/NMSIS/NMSIS/DSP/Examples/RISCV/riscv_graphic_equalizer_example",
+					"LIB_NMSIS_V1_0"
+				],
+				"description": "nmsis graphic equalizer example",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["rpu"]
+			}
+		},
+		"RISCV_LINEAR_INTERP_EXAMPLE": {
+			"1.0":{
+				"name": "RISCV_LINEAR_INTERP_EXAMPLE",
+				"version": "1.0",
+				"depends": [
+					"3rdparty/lib/NMSIS/NMSIS/DSP/Examples/RISCV/riscv_linear_interp_example",
+					"LIB_NMSIS_V1_0"
+				],
+				"description": "nmsis linear interp example",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["rpu"]
+			}
+		},
+		"RISCV_MATRIX_EXAMPLE": {
+			"1.0":{
+				"name": "RISCV_MATRIX_EXAMPLE",
+				"version": "1.0",
+				"depends": [
+					"3rdparty/lib/NMSIS/NMSIS/DSP/Examples/RISCV/riscv_matrix_example",
+					"LIB_NMSIS_V1_0"
+				],
+				"description": "nmsis matrix example",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["rpu"]
+			}
+		},
+		"RISCV_SIGNAL_CONVERGE_EXAMPLE": {
+			"1.0":{
+				"name": "RISCV_SIGNAL_CONVERGE_EXAMPLE",
+				"version": "1.0",
+				"depends": [
+					"3rdparty/lib/NMSIS/NMSIS/DSP/Examples/RISCV/riscv_signal_converge_example",
+					"LIB_NMSIS_V1_0"
+				],
+				"description": "nmsis matrix example",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["rpu"]
+			}
+		},
+		"RISCV_SIN_COS_EXAMPLE": {
+			"1.0":{
+				"name": "RISCV_SIN_COS_EXAMPLE",
+				"version": "1.0",
+				"depends": [
+					"3rdparty/lib/NMSIS/NMSIS/DSP/Examples/RISCV/riscv_sin_cos_example",
+					"LIB_NMSIS_V1_0"
+				],
+				"description": "nmsis sin cos example",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["rpu"]
+			}
+		},
+		"RISCV_SVM_EXAMPLE": {
+			"1.0":{
+				"name": "RISCV_SVM_EXAMPLE",
+				"version": "1.0",
+				"depends": [
+					"3rdparty/lib/NMSIS/NMSIS/DSP/Examples/RISCV/riscv_svm_example",
+					"LIB_NMSIS_V1_0"
+				],
+				"description": "nmsis svm example",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["rpu"]
+			}
+		},
+		"RISCV_VARIANCE_EXAMPLE": {
+			"1.0":{
+				"name": "RISCV_VARIANCE_EXAMPLE",
+				"version": "1.0",
+				"depends": [
+					"3rdparty/lib/NMSIS/NMSIS/DSP/Examples/RISCV/riscv_variance_example",
+					"LIB_NMSIS_V1_0"
+				],
+				"description": "nmsis variance example",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["rpu"]
 			}
 		}
 	},

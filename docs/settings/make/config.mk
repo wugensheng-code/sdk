@@ -31,7 +31,8 @@ ARMv8_CORE      ?= #{{ARMv8_CORE}}
 #########################################################################
 ENABLE_MMU  ?= 1
 
-ifneq ($(AL_CHIP),dr1v90)
+ifeq ($(AL_CHIP),dr1v90)
+else
 DDR_2M_MAPPING ?= 1
 endif
 
