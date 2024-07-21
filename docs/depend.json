@@ -1406,22 +1406,22 @@
 		},
 		"PS_DRIVER_UART": {
 			"1.0":{
-				"UART_BLOCK": {
-					"name": "UART_BLOCK",
+				"UART_INTR_BLOCK": {
+					"name": "UART_INTR_BLOCK",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/ps_driver/uart/example/al_uart_block.c",
+						"fpsoc/driver/ps_driver/uart/example/al_uart_intr_block.c",
 						"PS_DRIVER_UART_V1_0"
 					],
 					"description": "uart test",
 					"supportedOS": ["standalone"],
 					"supportedProc": ["apu-0", "apu-1", "rpu"]
 				},
-				"UART_NONBLOCK": {
-					"name": "UART_NONBLOCK",
+				"UART_POLL_BLOCK": {
+					"name": "UART_POLL_BLOCK",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/ps_driver/uart/example/al_uart_nonblock.c",
+						"fpsoc/driver/ps_driver/uart/example/al_uart_poll_block.c",
 						"PS_DRIVER_UART_V1_0"
 					],
 					"description": "uart test",

@@ -300,7 +300,7 @@ AL_S32 AlUart_Dev_SendDataPolling(AL_UART_DevStruct *Uart, AL_U8 *Data, AL_U32 S
     }
 
     /* Waiting for transmitter Shift Register and the FIFO both empty. */
-    while (!(AlUart_ll_IsEmptyTsrAndTxFifo(Uart->BaseAddr)));
+    //while (!(AlUart_ll_IsEmptyTsrAndTxFifo(Uart->BaseAddr)));
 
     AlUart_Dev_ClrTxBusy(Uart);
 

@@ -44,7 +44,7 @@ AL_S32 AlUart_Hal_RecvData(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size);
 
 AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout);
 
-AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 NeedSize, AL_U32 *RealSize, AL_U64 Timeout);
+AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 RequestSize, AL_U32 *ReceiveSize, AL_U32 Timeout);
 
 AL_S32 AlUart_Hal_SendDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size);
 
@@ -55,6 +55,17 @@ AL_S32 AlUart_Hal_SendDataDmaBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U3
 AL_S32 AlUart_Hal_RecvDataDmaBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size, AL_U32 Timeout);
 
 AL_S32 AlUart_Hal_IoCtl(AL_UART_HalStruct *Handle, AL_UART_IoCtlCmdEnum Cmd, AL_UART_IoctlParamUnion *IoctlParam);
+
+
+static inline AL_BOOL AlUart_Hal_IsRxBusy(AL_UART_HalStruct *Handle)
+{
+    return AlUart_Dev_IsRxBusy(&Handle->Dev);
+}
+
+static inline AL_BOOL AlUart_Hal_IsTxBusy(AL_UART_HalStruct *Handle)
+{
+    return AlUart_Dev_IsTxBusy(&Handle->Dev);
+}
 
 
 #ifdef __cplusplus

@@ -144,11 +144,10 @@ AL_S32 AlUart_Hal_Init(AL_UART_HalStruct **Handle, AL_U32 DevId,
 AL_S32 AlUart_Hal_SendDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 Size)
 {
     AL_S32 Ret = AL_OK;
-    AL_U64 Timeout = AL_WAITFOREVER;
 
     AL_ASSERT((Handle != AL_NULL), AL_UART_ERR_ILLEGAL_PARAM);
 
-    Ret = AlOsal_Lock_Take(&Handle->TxLock, Timeout);
+    Ret = AlOsal_Lock_Take(&Handle->TxLock, AL_WAITFOREVER);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -180,6 +179,7 @@ AL_S32 AlUart_Hal_RecvDataPolling(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32
     }
 
     Ret = AlUart_Dev_RecvDataPolling(&Handle->Dev, Data, Size);
+
     (AL_VOID)AlOsal_Lock_Release(&Handle->RxLock);
 
     return Ret;
@@ -231,12 +231,12 @@ AL_S32 AlUart_Hal_SendDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 S
  *
  * @param Handle A pointer to the UART handle structure.
  * @param Data A pointer to the buffer where received data will be stored.
- * @param NeedSize The size of the data buffer to be received.
- * @param RealSize A pointer to a variable where the actual size of received data will be stored.
+ * @param RequestSize The size of the data buffer to be received.
+ * @param ReceiveSize A pointer to a variable where the actual size of received data will be stored.
  * @param Timeout The timeout period in milliseconds.
  * @return AL_S32 Returns AL_OK on success, or an error code on failure.
  */
-AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 NeedSize, AL_U32 *RealSize, AL_U64 Timeout)
+AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 RequestSize, AL_U32 *ReceiveSize, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
     AL_UART_EventStruct UartEvent = {0};
@@ -248,7 +248,7 @@ AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 N
         return Ret;
     }
 
-    Ret = AlUart_Dev_RecvData(&Handle->Dev, Data, NeedSize);
+    Ret = AlUart_Dev_RecvData(&Handle->Dev, Data, RequestSize);
     if (Ret != AL_OK) {
         (AL_VOID)AlOsal_Lock_Release(&Handle->RxLock);
         return Ret;
@@ -260,7 +260,7 @@ AL_S32 AlUart_Hal_RecvDataBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U32 N
         (AL_VOID)AlOsal_Mb_Receive(&Handle->RxEventQueue, &UartEvent, AL_WAITING_NO);
     }
 
-    *RealSize =  UartEvent.EventData;
+    *ReceiveSize =  UartEvent.EventData;
 
     (AL_VOID)AlOsal_Lock_Release(&Handle->RxLock);
 
@@ -480,30 +480,6 @@ AL_S32 AlUart_Hal_RecvDataDmaBlock(AL_UART_HalStruct *Handle, AL_U8 *Data, AL_U3
     return Ret;
 }
 
-
-/**
- * This function attempts to get the last receive event without blocking.
- *
- * @param Handle Pointer to the UART handle structure.
- * @param Events Pointer to the event structure where the last receive event will be stored.
- * @return AL_S32 Returns AL_OK on success, error code otherwise.
- */
-AL_S32 AlUart_Hal_TryGetRecvLastEvent(AL_UART_HalStruct *Handle, AL_UART_EventStruct *Events)
-{
-    return AlOsal_Mb_Receive(&Handle->RxEventQueue, Events, 0);
-}
-
-/**
- * This function attempts to get the last send event without blocking.
- *
- * @param Handle Pointer to the UART handle structure.
- * @param Events Pointer to the event structure where the last send event will be stored.
- * @return AL_S32 Returns AL_OK on success, error code otherwise.
- */
-AL_S32 AlUart_Hal_TryGetSendLastEvent(AL_UART_HalStruct *Handle, AL_UART_EventStruct *Events)
-{
-    return AlOsal_Mb_Send(&Handle->TxEventQueue, Events);
-}
 
 /**
  * This function performs an IOCTL command on the UART device.

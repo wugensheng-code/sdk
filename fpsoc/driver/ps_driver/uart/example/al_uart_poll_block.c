@@ -5,11 +5,11 @@
  */
 
 /**
- * @file    al_uart_nonblocked.c
+ * @file    al_uart_blocked.c
  * @author  Anlogic esw team
  * @version V0.0.1
  * @date    2023-09-01
- * @brief   uart nonblocked example
+ * @brief   uart poll block example
  */
 
 /***************************** Include Files *********************************/
@@ -44,13 +44,13 @@ static AL_UART_InitStruct UART_InitStruct = {
 
 
 /************************** Function Prototypes ******************************/
-static AL_S32 AlUart_Test_RecvAndSendNonBlock(AL_VOID);
+static AL_S32 AlUart_Test_RecvAndSendPollBlock(AL_VOID);
 
 /************************** Function Definitions ******************************/
 /**
- * This function initializes the UART non-blocked test, executes the test by calling
- * AlUart_Test_RecvAndSendNonBlock, and logs the result. If the test fails, it logs an error
- * message and returns the error code. Otherwise, it logs a success message and returns AL_OK.
+ * This function initializes the UART blocked test, executes the test by calling AlUart_Test_RecvAndSendPollBlock,
+ * and logs the result. If the test fails, it logs an error message and returns the error code. Otherwise,
+ * it logs a success message and returns AL_OK.
  *
  * @return AL_OK on success, or an error code on failure.
  */
@@ -58,33 +58,33 @@ AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
 
-    AL_LOG(AL_LOG_LEVEL_INFO, "Uart Nonblocked test\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Uart recv and send polling blocked test\r\n");
 
-    Ret = AlUart_Test_RecvAndSendNonBlock();
+    Ret = AlUart_Test_RecvAndSendPollBlock();
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Uart Nonblocked test failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Uart recv and send polling blocked test failed\r\n");
         return Ret;
     }
 
     AL_LOG(AL_LOG_LEVEL_INFO, "\r\n");
-    AL_LOG(AL_LOG_LEVEL_INFO, "Uart Nonblocked test success\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Uart recv and send polling blocked test success\r\n");
     return Ret;
 }
 
 /**
- * This function initializes the UART hardware with predefined configurations, then enters a loop
- * where it attempts to receive data in a non-blocking manner. Once data is received, it sends the
- * data back. The function tests the UART's ability to receive and send data without blocking the
- * execution flow, using a timeout mechanism for both operations. If any operation fails, it logs
+ * This function initializes the UART hardware with predefined configurations, then enters a loop where it
+ * waits to receive data. Once data is received, it sends the data back. The function tests the UART's ability
+ * to receive and send data in a blocking manner, using a timeout mechanism. If any operation fails, it logs
  * an error message and returns the error code.
  *
  * @return AL_OK on success, or an error code on failure.
  */
-static AL_S32 AlUart_Test_RecvAndSendNonBlock(AL_VOID)
+static AL_S32 AlUart_Test_RecvAndSendPollBlock(AL_VOID)
 {
     AL_UART_HalStruct *UartHandle;
 
     AL_U8 *Data = (AL_U8 *)malloc(BUF_SIZE);
+
     memset(Data, 0, (sizeof(AL_U8) * BUF_SIZE));
 
     AL_S32 Ret = AlUart_Hal_Init(&UartHandle, AL_UART_DEVID, &UART_InitStruct, AL_NULL);
@@ -93,27 +93,25 @@ static AL_S32 AlUart_Test_RecvAndSendNonBlock(AL_VOID)
         return Ret;
     }
 
-    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
-
     AL_LOG(AL_LOG_LEVEL_INFO, "Send less than %d Bytes data and will show back\r\n", BUF_SIZE);
 
     while (1) {
-        Ret = AlUart_Hal_RecvData(UartHandle, Data, BUF_SIZE);
+        Ret = AlUart_Hal_RecvDataPolling(UartHandle, Data, BUF_SIZE);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Uart receive data error\r\n");
-            return Ret;
+            break;
         }
 
-        while (AlUart_Dev_IsRxBusy(&UartHandle->Dev));
-
-        Ret = AlUart_Hal_SendData(UartHandle, Data, UartHandle->Dev.RecvBuffer.HandledCnt);
-        if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Uart send data error\r\n");
-            return Ret;
+        if (Ret == AL_OK) {
+            Ret = AlUart_Hal_SendDataPolling(UartHandle, Data, BUF_SIZE);
+            if (Ret != AL_OK) {
+                AL_LOG(AL_LOG_LEVEL_ERROR, "Uart send data error\r\n");
+                break;
+            }
         }
-
-        while (AlUart_Dev_IsTxBusy(&UartHandle->Dev));
-
-        return AL_OK;
     }
+
+    free(Data);
+
+    return Ret;
 }

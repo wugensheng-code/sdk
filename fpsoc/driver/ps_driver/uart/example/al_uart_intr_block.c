@@ -9,7 +9,7 @@
  * @author  Anlogic esw team
  * @version V0.0.1
  * @date    2023-09-01
- * @brief   uart blocked example
+ * @brief   uart intr block example
  */
 
 /***************************** Include Files *********************************/
@@ -23,7 +23,6 @@
 
 /***************** Macros (Inline Functions) Definitions *********************/
 #define BUF_SIZE 16
-#define AL_UART_TIME_OUT_MS 10000
 #define AL_UART_DEVID 1
 
 /************************** Variable Definitions *****************************/
@@ -44,11 +43,11 @@ static AL_UART_InitStruct UART_InitStruct = {
 
 
 /************************** Function Prototypes ******************************/
-static AL_S32 AlUart_Test_RecvAndSendBlock(AL_VOID);
+static AL_S32 AlUart_Test_RecvAndSendIntrBlock(AL_VOID);
 
 /************************** Function Definitions ******************************/
 /**
- * This function initializes the UART blocked test, executes the test by calling AlUart_Test_RecvAndSendBlock,
+ * This function initializes the UART blocked test, executes the test by calling AlUart_Test_RecvAndSendIntrBlock,
  * and logs the result. If the test fails, it logs an error message and returns the error code. Otherwise,
  * it logs a success message and returns AL_OK.
  *
@@ -58,16 +57,16 @@ AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
 
-    AL_LOG(AL_LOG_LEVEL_INFO, "Uart blocked test\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Uart recv and send interrupt blocked test\r\n");
 
-    Ret = AlUart_Test_RecvAndSendBlock();
+    Ret = AlUart_Test_RecvAndSendIntrBlock();
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Uart blocked test failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Uart recv and send interrupt blocked test failed\r\n");
         return Ret;
     }
 
     AL_LOG(AL_LOG_LEVEL_INFO, "\r\n");
-    AL_LOG(AL_LOG_LEVEL_INFO, "Uart blocked test success\r\n");
+    AL_LOG(AL_LOG_LEVEL_INFO, "Uart recv and send interrupt blocked test success\r\n");
     return Ret;
 }
 
@@ -79,10 +78,10 @@ AL_S32 main(AL_VOID)
  *
  * @return AL_OK on success, or an error code on failure.
  */
-static AL_S32 AlUart_Test_RecvAndSendBlock(AL_VOID)
+static AL_S32 AlUart_Test_RecvAndSendIntrBlock(AL_VOID)
 {
     AL_UART_HalStruct *UartHandle;
-    AL_U32 RealSize;
+    AL_U32 ReceiveSize;
 
     AL_U8 *Data = (AL_U8 *)malloc(BUF_SIZE);
     memset(Data, 0, (sizeof(AL_U8) * BUF_SIZE));
@@ -97,20 +96,22 @@ static AL_S32 AlUart_Test_RecvAndSendBlock(AL_VOID)
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Send less than %d Bytes data and will show back\r\n", BUF_SIZE);
     while (1) {
-        Ret = AlUart_Hal_RecvDataBlock(UartHandle, Data, BUF_SIZE, &RealSize, AL_UART_TIME_OUT_MS);
+        Ret = AlUart_Hal_RecvDataBlock(UartHandle, Data, BUF_SIZE, &ReceiveSize, AL_WAITFOREVER);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Uart receive data timeout or less that %d Bytes data\r\n", BUF_SIZE);
-            return Ret;
+            break;
         }
 
-        if (Ret == AL_OK) {
-            Ret = AlUart_Hal_SendDataBlock(UartHandle, Data, RealSize, AL_UART_TIME_OUT_MS);
+        if (Ret == AL_OK && ReceiveSize > 0) {
+            Ret = AlUart_Hal_SendDataBlock(UartHandle, Data, ReceiveSize, AL_WAITFOREVER);
             if (Ret != AL_OK) {
                 AL_LOG(AL_LOG_LEVEL_ERROR, "Uart send data error\r\n");
-                return Ret;
-            } else {
-                return AL_OK;
+                break;
             }
         }
     }
+
+    free(Data);
+
+    return Ret;
 }

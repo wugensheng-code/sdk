@@ -11,9 +11,8 @@
 SDK_ROOT    ?= ../../../../..
 
 CHIP        ?= dr1m90
-ARMv8_STATE := 32
 
-ELF         ?= UART_BLOCK
+ELF         ?= UART_POLL_BLOCK
 
 ifeq ($(CHIP), dr1m90)
 
@@ -42,10 +41,10 @@ DOWNLOAD = ocm
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
-ifeq ($(ELF), UART_NONBLOCK)
-C_SRCS += al_uart_nonblock.c
-else
-C_SRCS += al_uart_block.c
+ifeq ($(ELF), UART_POLL_BLOCK)
+C_SRCS += al_uart_poll_block.c
+else ifeq ($(ELF), UART_INTR_BLOCK)
+C_SRCS += al_uart_intr_block.c
 endif
 
 INC_DIR     += ./
@@ -80,10 +79,10 @@ PINMUX_MODE ?= PINMUX_MODE1
 #########################################################################
 # 5. define build target
 #########################################################################
-ifeq ($(ELF), UART_NONBLOCK)
-TARGET := fpsoc_uart_nonblock
-else
-TARGET := fpsoc_uart_block
+ifeq ($(ELF), UART_POLL_BLOCK)
+TARGET := fpsoc_uart_poll_block
+else ifeq ($(ELF), UART_INTR_BLOCK)
+TARGET := fpsoc_uart_intr_block
 endif
 
 ifneq ($(PINMUX_MODE),)
