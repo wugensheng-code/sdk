@@ -8,7 +8,7 @@
 #########################################################################
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
 #########################################################################
-SDK_ROOT   ?= ../../../..
+SDK_ROOT   ?= ../../../../../../../../
 
 CHIP            ?= dr1v90
 ARMv8_STATE     := 64
@@ -26,7 +26,7 @@ COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
 
 
-DOWNLOAD = ocm
+DOWNLOAD = tcm
 
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
@@ -37,12 +37,14 @@ DOWNLOAD = ocm
 #    ASM_SRCS: asm sources for application
 #########################################################################
 SRC_DIR  = ./
+
 INC_DIR += ./
 
 LD_LIBS  =
 LIB_DIR  =
 
 C_SRCS   :=
+
 CXX_SRCS :=
 ASM_SRCS :=
 
@@ -56,26 +58,17 @@ CFLAGS := -O2 -g
 #    Fixme: where to add board init source files and headers files
 #########################################################################
 # PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
-#PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
+PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 #PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v20
-PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_hpf_v20
-#########################################################################
-# put these option to board_dr1x90_emulation Makefile
-## Available choices:
-## PINMUX_MODE1, PINMUX_MODE2, PINMUX_MODE3, PINMUX_MODE_SD1
-#########################################################################
-PINMUX_MODE ?= PINMUX_MODE1
+# PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_hpf_v20
+
 
 
 #########################################################################
 # 5. define build target
 #########################################################################
-TARGET := helloworld
+TARGET := riscv_linear_interp_example
 
-ifneq ($(PINMUX_MODE),)
-CFLAGS += -DENABLE_$(PINMUX_MODE)=1
-TARGET:=$(TARGET)_$(CHIP)_$(PINMUX_MODE)
-endif
 
 all: $(TARGET)
 	@$(ECHO) COMPILE_PREFIX = $(COMPILE_PREFIX)
