@@ -66,10 +66,18 @@ PLAT_DIR ?= $(SDK_ROOT)/platform
 #########################################################################
 # 7. linker scripts
 #########################################################################
+ARMv8_STATE ?= 64
+ifeq ($(CHIP), dr1v90)
+ARCH_ABI := lp64d
+else ifeq ($(ARMv8_STATE),64)
+ARCH_ABI := aarch64
+else ifeq ($(ARMv8_STATE),32)
+ARCH_ABI := aarch32
+endif
+
+#{{LINKER_SCRIPT}}
 
 # include rules.mk
 include $(SDK_ROOT)/tools/make/rules.mk
-
-#{{LINKER_SCRIPT}}
 
 # vim: syntax=make
