@@ -29,7 +29,7 @@ MMUTableL0:
 	.endr
 
 	.rept (0x65000000-SECT)/0x100000
-	.4byte SECT + NORM_CACHE		/* 0x64000000 - 0x65000000 */
+	.4byte SECT + DEVICE_MEM		/* 0x64000000 - 0x65000000 */
 	.set SECT, SECT + 0x100000
 	.endr
 

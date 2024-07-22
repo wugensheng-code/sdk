@@ -86,6 +86,11 @@ MMUTableL1:
     .endr
 
     .rept (0x64000000-SECT)/0x200000
+    .8byte SECT + RESERVED
+    .set SECT, SECT + 0x200000
+    .endr
+
+    .rept (0x65000000-SECT)/0x200000
     .8byte SECT + DEVICE_MEM
     .set SECT, SECT + 0x200000
     .endr
