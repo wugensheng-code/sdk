@@ -289,8 +289,6 @@ AL_U32 AlFsbl_QspiInit(void)
     AL_U32 Ret;
     AL_U8 SendData[8] = {0x0};
 
-    AL_REG32_SET_BITS(0xF8801030UL, 0, 6, 4); /// set div_qspi 5 bansed on IO 1000，then div 4, generate 50M SCLK
-
     Ret = AlQspi_Hal_Init(&Handle, &QspiX4InitConfigs, AL_NULL, 0);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlQspi_Hal_Init error:0x%x\r\n", Ret);
