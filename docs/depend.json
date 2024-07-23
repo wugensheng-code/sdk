@@ -806,7 +806,8 @@
 				],
 				"description": "nmsis linear interp example",
 				"supportedOS": ["standalone"],
-				"supportedProc": ["rpu"]
+				"supportedProc": ["rpu"],
+				"buildProperties": { "DOWNLOAD": "ddr"}
 			}
 		},
 		"RISCV_MATRIX_EXAMPLE": {
