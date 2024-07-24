@@ -61,7 +61,7 @@ PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
 ## PINMUX_MODE1, PINMUX_MODE2, PINMUX_MODE3, PINMUX_MODE_SD1
 #########################################################################
 PINMUX_MODE ?= PINMUX_MODE1
-DOWNLOAD = com
+
 #########################################################################
 # 5. define build target
 #########################################################################
