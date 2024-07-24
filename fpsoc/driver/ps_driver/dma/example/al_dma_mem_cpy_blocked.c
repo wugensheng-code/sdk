@@ -5,7 +5,7 @@
  */
 
 /**
- * @file    al_dmacahb_llp_mode_blocked.c
+ * @file    al_dma_mem_cpy_blocked.c
  * @author  Anlogic esw team
  * @version V0.0.1
  * @date    2023-09-01

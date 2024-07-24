@@ -5,7 +5,7 @@
  */
 
 /**
- * @file    al_dmacahb_llp_mode_performance.c
+ * @file    al_dma_mem_cpy_performance.c
  * @author  Anlogic esw team
  * @version V0.0.1
  * @date    2023-09-01
@@ -37,8 +37,8 @@ typedef struct
 /************************** Variable Definitions *****************************/
 AL_DMA_ChCfgStruct Config = {
     .Direction      = DMA_MEM_TO_MEM,
-    .SrcAddrWidth   = DMA_CH_BUSWIDTH_8_BYTES,
-    .DstAddrWidth   = DMA_CH_BUSWIDTH_8_BYTES,
+    .SrcAddrWidth   = DMA_CH_BUSWIDTH_16_BYTES,
+    .DstAddrWidth   = DMA_CH_BUSWIDTH_16_BYTES,
     .SrcMaxBurst    = 8,
     .DstMaxBurst    = 8,
 };
@@ -88,10 +88,8 @@ static AL_S32 AlDma_Test_MemCpyBlocked(AL_VOID)
     AL_U32 Ret = AL_OK;
     AL_U32 InitData = 0;
     AL_DMA_HalStruct *Handle = AL_NULL;
-    // AL_U32 *Src = memalign(CACHE_LINE_SIZE, AL_DMA_EX_DATA_SIZE_IN_WORD * sizeof(AL_U32) * AL_DMA_TEST_LOOP);
-    // AL_U32 *Dst = memalign(CACHE_LINE_SIZE, AL_DMA_EX_DATA_SIZE_IN_WORD * sizeof(AL_U32) * AL_DMA_TEST_LOOP);
-    AL_U32 *Dst = (AL_U32 *)(AL_UINTPTR)(0x40000000);
-    AL_U32 *Src = (AL_U32 *)(AL_UINTPTR)(0x61020000);
+    AL_U32 *Src = (AL_U32 *)(AL_UINTPTR)(0x11020000);
+    AL_U32 *Dst = (AL_U32 *)(AL_UINTPTR)(0x11000000);
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Copy from %p to %p \r\n", Src, Dst);
 
@@ -104,7 +102,7 @@ static AL_S32 AlDma_Test_MemCpyBlocked(AL_VOID)
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     while (1) {
-        AL_LOG(AL_LOG_LEVEL_INFO, "Loop: 0x%d\r\n", ++InitData);
+        AL_LOG(AL_LOG_LEVEL_INFO, "Loop: %d\r\n", ++InitData);
 
         for (AL_U32 i = 0; i < AL_DMA_EX_DATA_SIZE_IN_WORD * InitData; i++) {
             Src[i] = i + InitData;
@@ -153,7 +151,7 @@ static AL_S32 AlDma_Test_MemCpyBlocked(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_INFO, "|-%d End: %llu\r\n", i, Cal[i].End);
         AL_LOG(AL_LOG_LEVEL_INFO, "|-%d TimeInUs: %llu\r\n", i, Cal[i].TimeInUs);
         AL_LOG(AL_LOG_LEVEL_INFO, "|-%d DatInByte: %llu\r\n", i, Cal[i].DatInByte);
-        // AL_LOG(AL_LOG_LEVEL_DEBUG, "|-%d BytePerSec: %f MB/s\r\n", i, Cal[i].BytePerSec);
+        // AL_LOG(AL_LOG_LEVEL_INFO, "|-%d BytePerSec: %f MB/s\r\n", i, Cal[i].BytePerSec);
     }
 
     Ret = AlDma_Hal_DeInit(Handle);
