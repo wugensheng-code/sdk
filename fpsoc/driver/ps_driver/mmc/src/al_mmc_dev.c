@@ -159,7 +159,8 @@ static AL_VOID AlMmc_Dev_TopCfgInit(AL_MMC_DevStruct *Dev)
 {
     AL_MMC_TopCfgUnion TmpReg;
 
-    AlMmc_ll_SetRelease(Dev->HwConfig.BaseAddress, AL_FALSE);
+    /* May case an unpredictable error */
+    // AlMmc_ll_SetRelease(Dev->HwConfig.BaseAddress, AL_FALSE);
 
     TmpReg.Reg = AlMmc_ll_ReadTopCfg(Dev->HwConfig.BaseAddress);
     TmpReg.Bit.ClkPhase         = Dev->HwConfig.ClkPhase;
@@ -169,7 +170,7 @@ static AL_VOID AlMmc_Dev_TopCfgInit(AL_MMC_DevStruct *Dev)
     TmpReg.Bit.CardWrProtSig    = Dev->HwConfig.WritePortSig;
     AlMmc_ll_WriteTopCfg(Dev->HwConfig.BaseAddress, TmpReg.Reg);
 
-    AlMmc_ll_SetRelease(Dev->HwConfig.BaseAddress, AL_TRUE);
+    // AlMmc_ll_SetRelease(Dev->HwConfig.BaseAddress, AL_TRUE);
 }
 
 /**
