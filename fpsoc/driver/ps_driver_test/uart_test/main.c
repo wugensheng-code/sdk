@@ -275,17 +275,19 @@ static AL_S32 AlUart_Test_RecvDmaBlock(AL_VOID)
 
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
+#ifdef ENABLE_MMU
+    AlCache_InvalidateDcacheRange((AL_UINTPTR)DmaRecvData, (AL_UINTPTR)(DmaRecvData + 32));
+#endif
+
     Ret = AlUart_Hal_RecvDataDmaBlock(UartHandle, DmaRecvData, 32, 10000000);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Uart Recv Data Dma Block error:0x%x\r\n", Ret);
         return Ret;
     }
 
-#ifdef ENABLE_MMU
-    AlCache_InvalidateDcacheRange((AL_UINTPTR)DmaRecvData, (AL_UINTPTR)(DmaRecvData + 32));
-#endif
-
-    AL_LOG(AL_LOG_LEVEL_INFO, "memory is %s", DmaRecvData);
+    for (int i = 0; i < 32; i++) {
+        printf("DmaRecvData %d is %x\r\n", i, DmaRecvData[i]);
+    }
 
     return AL_OK;
 }
