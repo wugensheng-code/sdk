@@ -1,9 +1,8 @@
-/**
- * 
- * Date: 2024/04/25
- * axi gpio test, read pin value by interrupt.
- * 
-*/
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 
 #include "al_axi_gpio_hal.h"
 

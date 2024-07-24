@@ -13,7 +13,7 @@ SDK_ROOT    ?= ../../../../..
 
 CHIP        ?= dr1m90
 
-ELF ?= axi_gpio_input_key
+ELF ?= axi_gpio_output_led
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-

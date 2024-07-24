@@ -1,36 +1,30 @@
-/**
- * 
- * Date: 2024/04/25
- * axi gpio test, write pin.
- * 
-*/
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 
 #include "al_axi_gpio_hal.h"
-
-AL_VOID GP_Port_Enable()
-{
-    AL_U32 val = AL_REG32_READ(0xF8800080);
-    val &= ~0x2;
-    AL_REG32_WRITE(0xF8800080, val);
-    val = 0;
-    val = AL_REG32_READ(0xF8801078);
-    AL_REG32_WRITE(0xF8801078, val & (~0x33));
-    AlSys_MDelay(1);
-    AL_REG32_WRITE(0xF8801078, val | 0x33);
-}
 
 int main()
 {
     AL_U32 Val = 0;
+    AL_S32 ret = AL_OK;
 
-    printf("=== hello axi gpio ===\n");
-    GP_Port_Enable();
+    AL_LOG(AL_LOG_LEVEL_INFO, "Axi gpio output test!");
 
+    /* Instantiate a axi gpio and init it */
     AlAxiGpio_Hal_Struct *Gpio;
-    AlAxiGpio_Hal_Init(&Gpio, 0, AL_NULL);
+    ret = AlAxiGpio_Hal_Init(&Gpio, 0, AL_NULL);
+    if (ret != AL_OK)
+    {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Axi gpio init failed!");
+        return ret;
+    }
 
     while (1)
     {
+        /* Toggle led */
         Val = ~Val;
         AlAxiGpio_Hal_WritePin(&Gpio, AL_AXI_GPIO_CHANNEL1, 0, Val);
         AlSys_MDelay(200);
