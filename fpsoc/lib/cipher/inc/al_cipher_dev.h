@@ -156,7 +156,6 @@ typedef enum
     AL_CIPHER_CMD_HASH      = 0xCD04,
     AL_CIPHER_CMD_SIGN      = 0xCD05,
     AL_CIPHER_CMD_GENKEY    = 0xCD06,
-    AL_CIPHER_CMD_GETZ      = 0xCD07,
     AL_CIPHER_CMD_ACK       = 0xAC01
 } AL_CIPHER_CmdEnum;
 
@@ -200,7 +199,6 @@ typedef enum
     AL_CIPHER_ACK_HASH_DONE         = 0x6D,
     AL_CIPHER_ACK_SIGN_DONE         = 0x6E,
     AL_CIPHER_ACK_GENKEY_DONE       = 0x6F,
-    AL_CIPHER_ACK_GETZ_DONE         = 0x71,
     AL_CIPHER_ACK_CMD_ERR           = 0xE1,
     AL_CIPHER_ACK_CSU_ERR           = 0xE2,
     AL_CIPHER_ACK_CSU_TIMEOUT       = 0xE3,
@@ -328,13 +326,6 @@ typedef struct
 } AL_CIPHER_KeyStruct;
 
 typedef struct {
-    AL_U32 PubKey;
-    AL_U32 Ida;
-    AL_U32 IdaLen;
-    AL_U32 ZaOut;
-} AL_CIPHER_GetZaStruct;
-
-typedef struct {
     AL_CIPHER_CipherStruct  CipherParam;
     AL_U32                  HashOut;
 } AL_CIPHER_DmaStruct;
@@ -365,7 +356,6 @@ typedef struct
         AL_CIPHER_HashStruct    HashParam;
         AL_CIPHER_SignStruct    SignParam;
         AL_CIPHER_KeyStruct     GenKeyParam;
-        AL_CIPHER_GetZaStruct   GetZaDataParam;
         AL_U32                  Data[7];
     } MsgData;
 } AL_CIPHER_MsgStruct;
@@ -417,12 +407,6 @@ typedef union
         AL_U32                      *Digest;
         AL_U32                      *Signature;
     } Sign;
-    struct {
-        AL_U32                      *PubKey;
-        AL_U32                      *Ida;
-        AL_U32                      IdaLen;
-        AL_U32                      *ZaOut;
-    } GetZ;
 } AL_CIPHER_ConfigUnion;
 
 /**

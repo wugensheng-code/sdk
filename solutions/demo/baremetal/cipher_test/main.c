@@ -1210,33 +1210,6 @@ AL_VOID AlCipher_Test_GenKey(AL_CIPHER_HalStruct *Handle)
     AL_LOG(AL_LOG_LEVEL_DEBUG, "----------Gen Key Default Done!----------\r\n");
 }
 
-AL_VOID AlCipher_Test_GetZ(AL_CIPHER_HalStruct *Handle)
-{
-    AL_U32 Ret = AL_OK;
-    AL_CIPHER_ConfigUnion Config;
-    AL_U32 Timeout = 1000;
-    AL_CIPHER_MsgAckEnum AckVal = 0;
-
-    /********************************************************Get Za Sm2*/
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "----------Get Za Sm2!----------\r\n");
-
-    Config.GetZ.Ida     = Ida;
-    Config.GetZ.PubKey  = Sm2Ppk;
-    Config.GetZ.IdaLen  = IDA_LENGTH;
-    Config.GetZ.ZaOut   = GetZaZa;
-
-    Ret = AlCipher_Hal_StartBlock(Handle, AL_CIPHER_CMD_GETZ, &Config, Timeout);
-    if (AL_CIPHER_IS_ACK_STATE(Ret)) {
-        if (Ret != AL_CIPHER_ACK_HASH_DONE) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Gen Za ack Error: 0x%x\r\n", Ret);
-        }
-    } else {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Gen Za start block err: 0x%x\r\n", Ret);
-    }
-
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "----------Get Za Sm2 Done!----------\r\n");
-}
-
 AL_VOID AlCipher_Test_SignatureFlow(AL_CIPHER_HalStruct *Handle)
 {
     AL_U32 Ret = AL_OK;
@@ -1391,8 +1364,6 @@ AL_U32 main(AL_VOID)
         // AlCipher_Test_Sign(Handle);
         // //csu gen key -> check in TestSignatureFlow correct
         // AlCipher_Test_GenKey(Handle);
-        // csu get z -> correct
-        AlCipher_Test_GetZ(Handle);
         //csu sign flow -> correct
         AlCipher_Test_SignatureFlow(Handle);
     }

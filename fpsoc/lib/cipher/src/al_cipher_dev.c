@@ -25,8 +25,6 @@ const AL_CIPHER_EcCurveStruct Sm2Curve = {.A = {0xFFFFFFFC, 0xFFFFFFFF, 0x000000
 #define AL_CIPHER_MSG_WORD_SIZE 10
 #define AL_CIPHER_ACK_WORD_SIZE 2
 
-#define AL_CIPHER_GETZ_HASH_BUF_SIZE 0x200
-
 #define IS_CRYPT_ALGM(Algm)     ((Algm == AL_CIPHER_OPS_CRYPT_AES256) || \
                                  (Algm == AL_CIPHER_OPS_CRYPT_SM4) || \
                                  (Algm == AL_CIPHER_OPS_CRYPT_NONE))
@@ -593,21 +591,6 @@ static AL_S32 AlCipher_Dev_GenKey(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnio
     return Ret;
 }
 
-#ifdef CIPHER_PARAM_CHECK
-static AL_S32 AlCipher_Dev_GetZCheckParams(AL_CIPHER_ConfigUnion *Config)
-{
-    AL_ASSERT(Config != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
-    AL_ASSERT(Config->GetZ.PubKey != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
-    AL_ASSERT(Config->GetZ.Ida != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
-    AL_ASSERT(Config->GetZ.ZaOut != AL_NULL, AL_CIPHER_ERR_NULL_PTR);
-    AL_ASSERT(IS_CACHE_ALIGN((AL_UINTPTR)Config->GetZ.PubKey), AL_CIPHER_ERR_DATA_START_ALIGN);
-    AL_ASSERT(IS_CACHE_ALIGN((AL_UINTPTR)Config->GetZ.Ida), AL_CIPHER_ERR_DATA_START_ALIGN);
-    AL_ASSERT(IS_CACHE_ALIGN((AL_UINTPTR)Config->GetZ.ZaOut), AL_CIPHER_ERR_DATA_START_ALIGN);
-
-    return AL_OK;
-}
-#endif
-
 static AL_S32 AlCipher_Dev_SwitchEndian(AL_U8 *Data, AL_U32 DataSize)
 {
     AL_U8 SwitchData = 0;
@@ -626,65 +609,6 @@ static AL_S32 AlCipher_Dev_SwitchEndian(AL_U8 *Data, AL_U32 DataSize)
     }
 
     return AL_OK;
-}
-
-static AL_S32 AlCipher_Dev_GetZ(AL_CIPHER_DevStruct *Dev, AL_CIPHER_ConfigUnion *Config)
-{
-    AL_S32 Ret = AL_OK;
-    AL_U32 RealDataSize = 0;
-    AL_U32 AlignBufSize = 0;
-    AL_CIPHER_ConfigUnion HashConfig;
-
-    AL_ASSERT((Dev != AL_NULL) && (Config != AL_NULL), AL_CIPHER_ERR_NULL_PTR);
-
-#ifdef CIPHER_PARAM_CHECK
-    AlCipher_Dev_GetZCheckParams(Config);
-#endif
-
-    RealDataSize = 2 + Config->GetZ.IdaLen + AL_CIPHER_DATA_ALIGN_SIZE + sizeof(AL_CIPHER_EcCurveStruct);
-
-    AlignBufSize = (RealDataSize & ~0x3F) + (IS_DATA_ALIGN(RealDataSize) ? 0 : AL_CIPHER_DATA_ALIGN_SIZE);
-
-    if (AlignBufSize > AL_CIPHER_GETZ_HASH_BUF_SIZE) {
-        // AL_LOG(AL_LOG_LEVEL_ERROR, "Get Z align size large than temp hash buf size,
-        //                             please increase macro AL_CIPHER_GETZ_HASH_BUF_SIZE in %s\r\n", __FILE__);
-        return AL_CIPHER_ERR_DATA_OVERFLOW;
-    }
-
-    AL_U8 AlignBuf[AL_CIPHER_GETZ_HASH_BUF_SIZE] = {0};
-
-    /* IdLen -> 2 bytes */
-    AlignBuf[0] = ((Config->GetZ.IdaLen << 3) >> 8) & 0xFF;
-    AlignBuf[1] = (Config->GetZ.IdaLen << 3) & 0xFF;
-
-    /* copy Id */
-    AL_CIPHER_MEMCPY(&AlignBuf[2], Config->GetZ.Ida, Config->GetZ.IdaLen);
-
-    /* copy PubKey, default big endian, so need switch endian */
-    AL_CIPHER_MEMCPY(&AlignBuf[2 + Config->GetZ.IdaLen], Config->GetZ.PubKey, AL_CIPHER_DATA_ALIGN_SIZE);
-    Ret = AlCipher_Dev_SwitchEndian(&AlignBuf[2 + Config->GetZ.IdaLen], AL_CIPHER_DATA_ALIGN_SIZE);
-    if (Ret != AL_OK) {
-        return Ret;
-    }
-
-    HashConfig.Hash.HashMode    = AL_CIPHER_OPS_HASH_SM3;
-    HashConfig.Hash.HashBlkMode = AL_CIPHER_BLK_WHOLE;
-    HashConfig.Hash.InputData   = (AL_U32 *)AlignBuf;
-    HashConfig.Hash.DataLength  = AlignBufSize;
-    HashConfig.Hash.HashOut     = Config->GetZ.ZaOut;
-
-#ifdef ENABLE_MMU
-    AlCache_FlushDcacheRange((AL_UINTPTR)AlignBuf, (AL_UINTPTR)(AlignBuf + AlignBufSize));
-    AlCache_InvalidateDcacheRange((AL_UINTPTR)Config->GetZ.ZaOut, (AL_UINTPTR)(Config->GetZ.ZaOut + AL_CIPHER_HASH_SIZE));
-#endif
-
-    Ret = AlCipher_Dev_Hash(Dev, &HashConfig);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Get Z hash err: 0x%x\r\n", Ret);
-        return Ret;
-    }
-
-    return Ret;
 }
 
 static AL_VOID AlCipher_Dev_SetStartBusy(AL_CIPHER_DevStruct *Dev)
@@ -731,9 +655,6 @@ AL_S32 AlCipher_Dev_Start(AL_CIPHER_DevStruct *Dev, AL_CIPHER_CmdEnum Cmd, AL_CI
         break;
     case AL_CIPHER_CMD_GENKEY:
         Ret = AlCipher_Dev_GenKey(Dev, Config);
-        break;
-    case AL_CIPHER_CMD_GETZ:
-        Ret = AlCipher_Dev_GetZ(Dev, Config);
         break;
     default:
         Ret = AL_CIPHER_ERR_UNSUPPORT_CMD;

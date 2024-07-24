@@ -34,8 +34,6 @@ uint32_t *GenKeyEccPri = (uint32_t *)(GENKEY_ECC_PRI_ADDR);
 uint32_t *GenKeyEccPub = (uint32_t *)(GENKEY_ECC_PUB_ADDR);
 uint32_t *GenKeySm2Pri = (uint32_t *)(GENKEY_SM2_PRI_ADDR);
 uint32_t *GenKeySm2Pub = (uint32_t *)(GENKEY_SM2_PUB_ADDR);
-//Get Za addr
-uint32_t *GetZaZa = (uint32_t *)(GETZ_ZA_ADDR);
 
 uint32_t CACHE_LINE_ALIGN UserSm4Key[] = {0xB82BB78D, 0x06928435, 0x6FFC32A6, 0x054A4C73};
 uint32_t CACHE_LINE_ALIGN UserSm4IV[] = {0xC624E1DB, 0x141E678E, 0x91346E89, 0x1378FD4E};

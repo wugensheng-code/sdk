@@ -92,7 +92,6 @@ extern "C" {
 #define GENKEY_ECC_PUB_ADDR (0x40040600)
 #define GENKEY_SM2_PRI_ADDR (0x40040700)
 #define GENKEY_SM2_PUB_ADDR (0x40040800)
-#define GETZ_ZA_ADDR (0x40040900)
 
 #define SRC_DATA_ADDR (0x40050000)      //src data
 #define ENC_AES_DATA_ADDR (0x40060000)  //enc aes data
@@ -156,7 +155,6 @@ extern uint32_t *GenKeyEccPri;
 extern uint32_t *GenKeyEccPub;
 extern uint32_t *GenKeySm2Pri;
 extern uint32_t *GenKeySm2Pub;
-extern uint32_t *GetZaZa;
 extern uint32_t *SrcAesHashBuff;
 extern uint32_t *SrcSm3HashBuff;
 extern uint32_t *EncAesDataBuff;
