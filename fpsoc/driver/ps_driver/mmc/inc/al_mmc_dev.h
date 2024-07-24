@@ -139,10 +139,16 @@ typedef enum
 {
     AL_MMC_SPD_DS_SDR12,      /* Max 25MHz, 12MB/s(4-bit), 26MB/s(eMMC 8-bit), 3.3V */
     AL_MMC_SPD_HS_SDR25,      /* Max 50MHz, 25MB/s(4-bit), 52MB/s(eMMC 8-bit), 3.3V */
+    AL_MMC_SPD_SDR50,
+    AL_MMC_SPD_SDR104_HS200,
+    AL_MMC_SPD_DDR50_HS_DDR,
+    AL_MMC_SPD_RSVD_1,
+    AL_MMC_SPD_RSVD_2,
+    AL_MMC_SPD_UHS_II_HS400,
 } AL_MMC_SpdModeEnum;
 
 /**
- * @brief   Bus frequency
+ * @brief   Bus frequency, follow HPF config
  * @note    SD: <25Mhz, 3.3V: DS
  *              >25Mhz, <50Mhz, 3.3V: HS
  *              <25Mhz, 1.8V: SDR12
@@ -153,7 +159,7 @@ typedef enum
  */
 typedef enum
 {
-    AL_MMC_FREQ_KHZ_HPF     = 0,    /* Flow HPF config io clock */
+    AL_MMC_FREQ_KHZ_HPF     = 0,    /* Follow HPF config io clock */
     AL_MMC_FREQ_KHZ_100     = 100,
     AL_MMC_FREQ_KHZ_200     = 200,
     AL_MMC_FREQ_KHZ_DEF     = 400,

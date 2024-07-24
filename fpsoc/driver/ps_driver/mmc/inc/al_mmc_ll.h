@@ -1088,6 +1088,11 @@ static inline AL_VOID AlMmc_ll_WriteTopCfg(AL_REG BaseAddr, AL_U32 Val)
     AL_REG32_WRITE((BaseAddr == MMC0__BASE_ADDR) ? MMC0_TOP_CFG_CTRL_ADDR : MMC1_TOP_CFG_CTRL_ADDR, Val);
 }
 
+static inline AL_VOID AlMmc_ll_SetRelease(AL_REG BaseAddr, AL_BOOL Release)
+{
+    AL_REG32_SET_BIT(0xF880107C, (BaseAddr == MMC0__BASE_ADDR) ? 8 : 9, Release);
+}
+
 /* --------------------MMC/Block Register-------------------- */
 
 

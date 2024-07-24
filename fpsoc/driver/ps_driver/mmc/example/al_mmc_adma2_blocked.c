@@ -22,7 +22,11 @@
 /**************************** Type Definitions *******************************/
 
 /***************** Macros (Inline Functions) Definitions *********************/
-#define AL_MMC_EX_DEVICE_ID             (0)
+#ifndef DEVICE_ID
+#define DEVICE_ID (0)
+#endif
+
+#define AL_MMC_EX_DEVICE_ID             (DEVICE_ID)
 #define AL_MMC_EX_BLOCKED_TIMEOUT_IN_MS (100)
 #define AL_MMC_EX_BLOCK_SIZE            (512)
 #define AL_MMC_EX_BLOCK_COUNT           (10)

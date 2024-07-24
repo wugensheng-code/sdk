@@ -22,6 +22,15 @@ static AL_MMC_InitStruct AlMmc_DefInitConfig = {
 /* For capacity print, only for debug */
 static AL_U8 AlMmc_CapacityDot[16] = {0, 1, 1, 2, 2, 3, 4, 4, 5, 6, 6, 7, 8, 8, 9, 9};
 
+static const AL_U8 * const SpeedInfo[] = {
+    [AL_MMC_SPD_DS_SDR12] = "default speed or sdr12",
+    [AL_MMC_SPD_HS_SDR25] = "high speed or sdr25",
+    [AL_MMC_SPD_SDR50] = "sdr50",
+    [AL_MMC_SPD_SDR104_HS200] = "sdr104 or hs200",
+    [AL_MMC_SPD_DDR50_HS_DDR] = "ddr50",
+    [AL_MMC_SPD_UHS_II_HS400] = "uhsii or hs400",
+};
+
 /**************************** Type Definitions *******************************/
 
 /***************** Macros (Inline Functions) Definitions *********************/
@@ -150,6 +159,8 @@ static AL_VOID AlMmc_Dev_TopCfgInit(AL_MMC_DevStruct *Dev)
 {
     AL_MMC_TopCfgUnion TmpReg;
 
+    AlMmc_ll_SetRelease(Dev->HwConfig.BaseAddress, AL_FALSE);
+
     TmpReg.Reg = AlMmc_ll_ReadTopCfg(Dev->HwConfig.BaseAddress);
     TmpReg.Bit.ClkPhase         = Dev->HwConfig.ClkPhase;
     TmpReg.Bit.CfgCardDetectN   = Dev->HwConfig.CardDetect;
@@ -157,6 +168,8 @@ static AL_VOID AlMmc_Dev_TopCfgInit(AL_MMC_DevStruct *Dev)
     TmpReg.Bit.CfgCardProt      = Dev->HwConfig.WritePort;
     TmpReg.Bit.CardWrProtSig    = Dev->HwConfig.WritePortSig;
     AlMmc_ll_WriteTopCfg(Dev->HwConfig.BaseAddress, TmpReg.Reg);
+
+    AlMmc_ll_SetRelease(Dev->HwConfig.BaseAddress, AL_TRUE);
 }
 
 /**
@@ -557,7 +570,7 @@ static AL_S32 AlMmc_Dev_CmdTransfer(AL_MMC_DevStruct *Dev, AL_MMC_CmdIdxEnum Cmd
 
     AL_S32 Ret = AL_OK;
 
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "Send: %s%d, Arg: 0x%x, BlkCnt: %d\r\n", ((Cmd & 0x100) ? "ACMD" : "CMD"), (Cmd & 0xFF),
+    AL_LOG(AL_LOG_LEVEL_DEBUG, "---[Send]: %s%d, Arg: 0x%x, BlkCnt: %d\r\n", ((Cmd & 0x100) ? "ACMD" : "CMD"), (Cmd & 0xFF),
                                                                         Arg, BlkCnt);
 
     Ret = AlMmc_Dev_CheckLineIdle(Dev, AL_MMC_STATE_MASK_LINE_BOTH);
@@ -1273,7 +1286,10 @@ static AL_S32 AlMmc_Dev_SetHostVer(AL_MMC_DevStruct *Dev)
         Ctrl2.Reg = AlMmc_ll_ReadAutoCmdStat_CtrlHost2(Dev->HwConfig.BaseAddress);
         Ctrl2.Bit.Cmd23En       = AL_TRUE;
         Ctrl2.Bit.HostVer4En    = AL_TRUE;
-        Ctrl2.Bit.Amda2LenMode  = AL_TRUE;  /* For ADMA2 26-bit length mode, extened from ver 4.1 */
+        if (Dev->Config.DmaMode == AL_MMC_DMA_MODE_ADMA2) {
+            /* For ADMA2 26-bit length mode, extened from ver 4.1 */
+            Ctrl2.Bit.Amda2LenMode  = AL_TRUE;
+        }
         AlMmc_ll_WriteAutoCmdStat_CtrlHost2(Dev->HwConfig.BaseAddress, Ctrl2.Reg);
         Dev->HostInfo.HostVer = AL_MMC_HOST_VER_4;
     } else {
@@ -1620,7 +1636,7 @@ static AL_S32 AlMmc_Dev_SetBusWidth(AL_MMC_DevStruct *Dev)
                     AL_MMC_BUS_WIDTH_4BIT);
                 Dev->Config.BusWidth = AL_MMC_BUS_WIDTH_4BIT;
             } else {
-                AL_LOG(AL_LOG_LEVEL_INFO, "Bus width is 4-bit\r\n");
+                AL_LOG(AL_LOG_LEVEL_INFO, "Card support bus width 4-bit\r\n");
             }
         } else {
             /* Card only support 1-bit bus width */
@@ -1650,6 +1666,7 @@ static AL_S32 AlMmc_Dev_SetBusWidth(AL_MMC_DevStruct *Dev)
 
         Ret = AlMmc_Dev_SetExtCsd(Dev, Arg.Reg);
         if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Switch %d-bit error\r\n", Dev->Config.BusWidth);
             return Ret;
         }
     }
@@ -1868,6 +1885,12 @@ static AL_S32 AlMmc_Dev_SdModeInit(AL_MMC_DevStruct *Dev)
         return Ret;
     }
 
+    /* Update IP register speed mode sel field */
+    AL_MMC_Hc2AcUnion Ctrl2;
+    Ctrl2.Reg = AlMmc_ll_ReadAutoCmdStat_CtrlHost2(Dev->HwConfig.BaseAddress);
+    Ctrl2.Bit.UhsModeSel = Dev->CardInfo.SpdMode;
+    AlMmc_ll_WriteAutoCmdStat_CtrlHost2(Dev->HwConfig.BaseAddress, Ctrl2.Reg);
+
     Ret = AlMmc_Dev_SetBlkSize(Dev, Dev->CardInfo.BlkLen);
     if (Ret != AL_OK) {
         return Ret;
@@ -2006,16 +2029,21 @@ static AL_S32 AlMmc_Dev_EmmcModeInit(AL_MMC_DevStruct *Dev)
         if (Ret != AL_OK) {
             return Ret;
         }
-        Dev->CardInfo.SpdMode = AL_MMC_SPD_HS_SDR25;
-    } else {
-        Dev->CardInfo.SpdMode = AL_MMC_SPD_DS_SDR12;
     }
+
+    Dev->CardInfo.SpdMode = Dev->Config.SpdMode;
 
     /* Change host controller freq */
     Ret = AlMmc_Dev_SetClkFreq(Dev, Dev->Config.FreqKhz);
     if (Ret != AL_OK) {
         return Ret;
     }
+
+    /* Update IP register speed mode sel field */
+    AL_MMC_Hc2AcUnion Ctrl2;
+    Ctrl2.Reg = AlMmc_ll_ReadAutoCmdStat_CtrlHost2(Dev->HwConfig.BaseAddress);
+    Ctrl2.Bit.UhsModeSel = Dev->CardInfo.SpdMode;
+    AlMmc_ll_WriteAutoCmdStat_CtrlHost2(Dev->HwConfig.BaseAddress, Ctrl2.Reg);
 
     /* Do a transfer to check the configuration */
     if ((Dev->Config.BusWidth != AL_MMC_BUS_WIDTH_1BIT) && (Dev->CardInfo.SpdMode != AL_MMC_SPD_DS_SDR12)) {
@@ -2085,11 +2113,7 @@ AL_S32 AlMmc_Dev_Init(AL_MMC_DevStruct *Dev, AL_MMC_HwConfigStruct *HwConfig, AL
         InitConfig->SpdMode = AL_MMC_SPD_HS_SDR25;
     }
 
-    if (AlMmc_Dev_GetState(Dev, AL_MMC_STATE_READY)) {
-        if (InitConfig == AL_NULL || IS_SAME_INITCONFIGS(Dev->Config, *InitConfig)) {
-            return AL_OK;
-        }
-    }
+    AlMmc_Dev_ClrState(Dev, AL_MMC_STATE_READY);
 
     Dev->Config     = (InitConfig == AL_NULL) ? AlMmc_DefInitConfig : (*InitConfig);
     Dev->HwConfig   = *HwConfig;
@@ -2125,8 +2149,10 @@ AL_S32 AlMmc_Dev_Init(AL_MMC_DevStruct *Dev, AL_MMC_HwConfigStruct *HwConfig, AL
     }
 
     if (Dev->CardInfo.CardType == AL_MMC_CARD_TYPE_SD) {
+        AL_LOG(AL_LOG_LEVEL_INFO, "Identify Card is SD\r\n");
         Ret = AlMmc_Dev_SdCardInit(Dev);
     } else if (Dev->CardInfo.CardType == AL_MMC_CARD_TYPE_EMMC) {
+        AL_LOG(AL_LOG_LEVEL_INFO, "Identify Card is eMMC\r\n");
         Ret = AlMmc_Dev_EmmcCardInit(Dev);
     } else {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Invalid or not support card\r\n");
@@ -3007,7 +3033,7 @@ static AL_VOID AlMmc_Dev_DisplayCardInfo(AL_MMC_DevStruct *Dev)
                                                               Dev->CardInfo.Cid.Emmc.Pnm63_56);
     }
     AL_LOG(AL_LOG_LEVEL_INFO, "|-Bus Speed: %d KHz\r\n", Dev->CardInfo.FreqKhz);
-    AL_LOG(AL_LOG_LEVEL_INFO, "|-Mode: %s\r\n", (Dev->CardInfo.SpdMode == 0) ? "Default Speed" : "High Speed");
+    AL_LOG(AL_LOG_LEVEL_INFO, "|-Mode: %s\r\n", SpeedInfo[Dev->CardInfo.SpdMode]);
     AL_LOG(AL_LOG_LEVEL_INFO, "|-Rd Block Len: %d\r\n", Dev->CardInfo.BlkLen);
     AL_LOG(AL_LOG_LEVEL_INFO, "|-Version: %d\r\n", Dev->CardInfo.CardVer);
     AL_LOG(AL_LOG_LEVEL_INFO, "|-High Capacity: %s\r\n", Dev->CardInfo.HiCap ? "YES" : "NO");

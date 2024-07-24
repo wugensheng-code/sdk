@@ -11,11 +11,16 @@
 SDK_ROOT   ?= ../../../..
 
 
-CHIP       ?= dr1m90
-ELF ?= SD
+CHIP        ?= dr1m90
+ELF         ?= SD
+ARMv8_STATE ?= 64
 
 ifeq ($(CHIP), dr1m90)
+ifeq ($(ARMv8_STATE), 32)
+COMPILE_PREFIX ?= /opt/toolchain/13.2/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-
+else
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+endif
 else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
@@ -64,6 +69,12 @@ PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v20
 ## Available choices:
 ## PINMUX_MODE1, PINMUX_MODE2, PINMUX_MODE3, PINMUX_MODE_SD1
 #########################################################################
+ifeq ($(ELF), SD)
+PINMUX_MODE := PINMUX_MODE1
+else ($(ELF), EMMC)
+PINMUX_MODE := PINMUX_MODE2
+endif
+
 PINMUX_MODE ?= PINMUX_MODE1
 
 
@@ -74,7 +85,7 @@ TARGET := mmc_test
 
 ifneq ($(PINMUX_MODE),)
 CFLAGS += -DENABLE_$(PINMUX_MODE)=1
-TARGET:=$(TARGET)_$(ELF)_$(CHIP)_$(PINMUX_MODE)
+TARGET:=$(TARGET)_$(ELF)_$(CHIP)_$(ARMv8_STATE)_$(PINMUX_MODE)
 endif
 
 all: $(TARGET)
