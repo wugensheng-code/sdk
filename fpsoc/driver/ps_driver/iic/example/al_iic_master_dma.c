@@ -132,15 +132,15 @@ AL_S32 AlIic_MasterDmaExample()
         return Ret;
     }
 
+#ifdef ENABLE_MMU
+    AlCache_InvalidateDcacheRange((AL_UINTPTR)RecvData, (AL_UINTPTR)(RecvData + BUFFER_SIZE));
+#endif
+
     Ret = AlIic_Hal_MasterDmaRecvDataBlock(Handle, SlaveAddr, RecvData , BUFFER_SIZE, IIC_MASTER_TEST_TIMEOUT_MS);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_Hal_MasterDmaRecvDataBlock failed\r\n");
         return Ret;
     }
-
-#ifdef ENABLE_MMU
-    AlCache_InvalidateDcacheRange((AL_UINTPTR)RecvData, (AL_UINTPTR)(RecvData + BUFFER_SIZE));
-#endif
 
     AL_LOG(AL_LOG_LEVEL_INFO, "AlIic_Hal_MasterDmaRecvDataBlock Data:\r\n");
     for (int i = 0; i < BUFFER_SIZE; i++)
