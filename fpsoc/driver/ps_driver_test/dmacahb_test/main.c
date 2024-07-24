@@ -106,7 +106,7 @@ AL_VOID AlDmacAhb_Test_OtherTransTypeEgCallBack(AL_DMACAHB_EventStruct *Event, A
 
 AL_VOID AlDmacAhb_Test_SingleMode(AL_VOID)
 {
-    AL_DMACAHB_HalStruct        *Handle;
+    AL_DMACAHB_HalStruct        *Handle[DMACAHB_CH_NUM];
     AL_DMACAHB_ChInitStruct     ChConfig;
     AL_DMACAHB_ChTransStruct    *Trans;
     AL_U32 DeviceId = 0;
@@ -117,34 +117,54 @@ AL_VOID AlDmacAhb_Test_SingleMode(AL_VOID)
 
     ChConfig = ChSingleModeEg1;
 
-    Ret = AlDmacAhb_Hal_Init(&Handle, DeviceId, &ChConfig, AL_NULL);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
+    for (AL_U32 i = 0; i < DMACAHB_CH_NUM; i++) {
+        AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb single mode channel %d!\r\n", i);
+
+        ChConfig.Id = i;
+
+        Ret = AlDmacAhb_Hal_Init(&Handle[i], DeviceId, &ChConfig, AL_NULL);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Hal Init error:0x%x\r\n", Ret);
+        }
     }
-    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
+        AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
-    Trans = &(Handle->Channel.Trans);
-    Trans->SrcAddr = (AL_REG)SRC_MEM[0];
-    Trans->DstAddr = (AL_REG)DST_MEM[0];
-    Trans->TransSize = AL_DMACAHB_TEST_ARRAY_SIZE / (1 << ChConfig.SrcTransWidth);
+    while (1) {
+        for (AL_U32 i = 0; i < DMACAHB_CH_NUM; i++) {
+            Trans = &(Handle[i]->Channel.Trans);
+            Trans->SrcAddr = (AL_REG)SRC_MEM[0];
+            Trans->DstAddr = (AL_REG)DST_MEM[0];
+            if (ChConfig.SgrDsr.IsDstScatterEn || ChConfig.SgrDsr.IsSrcGatherEn) {
+                Trans->TransSize = AL_DMACAHB_TEST_ARRAY_SIZE / (1 << ChConfig.SrcTransWidth) /
+                                ((ChConfig.SgrDsr.SrcGatherCount + ChConfig.SgrDsr.SrcGatherInterval) /
+                                ChConfig.SgrDsr.SrcGatherInterval);
+            } else {
+                Trans->TransSize = AL_DMACAHB_TEST_ARRAY_SIZE / (1 << ChConfig.SrcTransWidth);
+            }
 
-    //init SRC_MEM
-    AlDmacAhb_Test_InitSrc(Trans->SrcAddr, Trans->TransSize * (1 << ChConfig.SrcTransWidth), 'A');
+            //init SRC_MEM
+            AlDmacAhb_Test_InitSrc(Trans->SrcAddr, Trans->TransSize * (1 << ChConfig.SrcTransWidth), 'A');
 
-    Ret = AlDmacAhb_Hal_StartBlock(Handle, Timeout);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
+            Ret = AlDmacAhb_Hal_StartBlock(Handle[i], Timeout);
+            if (Ret != AL_OK) {
+                AL_LOG(AL_LOG_LEVEL_ERROR, "Trans error:0x%x\r\n", Ret);
+            }
+
+            Ret = AlDmacAhb_Test_DataCheck(Trans->SrcAddr, Trans->DstAddr, AL_DMACAHB_TEST_ARRAY_SIZE);
+            if (Ret != AL_OK) {
+                AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
+            } else {
+                AL_LOG(AL_LOG_LEVEL_INFO, "Channel %d Trans done\r\n", Handle[i]->Channel.Config.Id);
+            }
+
+            // Ret = AlDmacAhb_Hal_DeInit(Handle[i]);
+            // if (Ret != AL_OK) {
+            //     AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
+            // }
+
+        }
     }
 
-    Ret = AlDmacAhb_Test_DataCheck(Trans->SrcAddr, Trans->DstAddr, AL_DMACAHB_TEST_ARRAY_SIZE);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Data check error:0x%x\r\n", Ret);
-    }
-
-    Ret = AlDmacAhb_Hal_DeInit(Handle);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Deinit error:0x%x\r\n", Ret);
-    }
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Dmacahb single mode test done!\r\n");
 }

@@ -97,7 +97,7 @@ static AL_S32 AlDmacAhb_Test_SingleModeBlocked(AL_VOID)
     AL_U8 *MemSrc = memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
     AL_U8 *MemDst = memalign(CACHE_LINE_SIZE, AL_DMACAHB_EX_ARRAY_SIZE);
 
-    AL_LOG(AL_LOG_LEVEL_DEBUG, "Aligned Src:%p, Dst:%p\r\n", MemSrc, MemDst);
+    AL_LOG(AL_LOG_LEVEL_INFO, "Aligned Src:0x%x, Dst:0x%x\r\n", MemSrc, MemDst);
 
     Ret = AlDmacAhb_Hal_Init(&Handle, AL_DMACAHB_EX_DEVICE_ID, &ChInitCfg, AL_NULL);
     if (Ret != AL_OK) {

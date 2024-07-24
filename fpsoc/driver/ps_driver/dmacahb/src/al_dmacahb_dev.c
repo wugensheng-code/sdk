@@ -1331,7 +1331,11 @@ AL_S32 AlDmacAhb_Dev_RequestCh(AL_DMACAHB_HwConfigStruct *HwConfig, AL_DMACAHB_C
     if (ChState & AlDmacAhb_ChParam[RequestId].ChMask) {
         AL_LOG(AL_LOG_LEVEL_INFO, "Request channel Id is used!\r\n");
     } else {
-        /* TODO: owner channel */
+        AlDmacAhb_ll_SetChannelState(HwConfig->ChStateAddr, (ChState | AlDmacAhb_ChParam[RequestId].ChMask));
+        *AvailableId = RequestId;
+        AlDmacAhb_ll_ReleaseLock(HwConfig->LockAddress);
+        AL_LOG(AL_LOG_LEVEL_INFO, "Assign an available channel %d!\r\n", RequestId);
+        return AL_OK;
     }
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Auto assign a channel!\r\n");

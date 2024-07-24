@@ -10,10 +10,15 @@
 #########################################################################
 SDK_ROOT   ?= ../../../..
 
+CHIP        ?= dr1m90
+ARMv8_STATE ?= 64
 
-CHIP       ?= dr1m90
 ifeq ($(CHIP), dr1m90)
+ifeq ($(ARMv8_STATE), 32)
+COMPILE_PREFIX ?= /opt/toolchain/13.2/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-
+else
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+endif
 else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
@@ -42,14 +47,25 @@ ASM_SRCS :=
 #########################################################################
 # 3. CFLAGS
 #########################################################################
-CFLAGS := -O2 -DDMACAHB_DEBUG -DCONFIG_SINGLE_MODE_TEST=1 -Wno-int-to-pointer-cast -g
+CFLAGS := -O2 -DDMACAHB_DEBUG -Wno-int-to-pointer-cast -g
+
+ifeq ($(MODE), SINGLE)
+CFLAGS += -DCONFIG_SINGLE_MODE_TEST=1
+else ifeq ($(MODE), RELOAD)
+CFLAGS += -DCONFIG_RELOAD_MODE_TEST=1
+else ifeq ($(MODE), LLP)
+CFLAGS += -DCONFIG_LLP_MODE_TEST=1
+else ifeq ($(MODE), OTHER)
+CFLAGS += -DCONFIG_OTHER_TRANS_TYPE_TEST=1
+endif
 
 #########################################################################
 # 4. PINMUX_MODE: sdk internal define, pinmux setting need to remove;
 #    Fixme: where to add board init source files and headers files
 #########################################################################
 # PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
-PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
+# PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
+PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v20
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile
@@ -66,7 +82,7 @@ TARGET := dmacahb_test
 
 ifneq ($(PINMUX_MODE),)
 CFLAGS += -DENABLE_$(PINMUX_MODE)=1
-TARGET:=$(TARGET)_$(CHIP)_$(PINMUX_MODE)
+TARGET:=$(TARGET)_$(MODE)_$(CHIP)_$(ARMv8_STATE)_$(PINMUX_MODE)
 endif
 
 all: $(TARGET)

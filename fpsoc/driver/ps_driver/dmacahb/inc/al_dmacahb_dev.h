@@ -341,7 +341,7 @@ typedef struct
 {
     AL_U32                  SrcAddr;
     AL_U32                  DstAddr;
-    AL_U32                  TransSize;      /* Size in Src trans width */
+    AL_U32                  TransSize;      /* Size in Src trans width, max 0xFFF */
     AL_U32                  ReloadCountNum; /* use in reload mode, save reload times */
     AL_U32                  ReloadCount;    /* save current reload times */
     AL_DMACAHB_LliStruct    *Lli;           /* Pointer to link list item */
