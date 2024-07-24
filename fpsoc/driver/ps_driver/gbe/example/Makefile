@@ -11,12 +11,19 @@
 SDK_ROOT    ?= ../../../../..
 
 
-CHIP        ?= dr1m90
+CHIP            ?= dr1m90
+ARMv8_STATE     ?= 64
 
 ELF ?= AL_GBE_PING_REPLY_POLLING
 
 ifeq ($(CHIP), dr1m90)
+
+ifeq ($(ARMv8_STATE), 32)
+COMPILE_PREFIX ?= /opt/toolchain/13.2/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-
+else
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+endif
+
 else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
