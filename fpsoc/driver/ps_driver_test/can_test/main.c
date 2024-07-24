@@ -72,9 +72,6 @@ static AL_VOID AlCan_Test_ListenOnly(AL_VOID)
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Can FD listen only example\r\n");
     Config.OpsMode      = AL_CAN_MODE_LISTENONLY;
     Config.RunMode      = AL_CAN_RUN_INTR;
-    Config.Type         = AL_CAN_TYPE_FD;
-    Config.SlowBitRate  = AL_CAN_ARBITRATION_0_5M;
-    Config.FastBitRate  = AL_CAN_1_M;
     Config.TransMode    = AL_CAN_TRANS_PTB;
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
@@ -180,9 +177,6 @@ static AL_VOID AlCan_Test_Standby(AL_VOID)
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Can FD standby example\r\n");
     Config.OpsMode      = AL_CAN_MODE_STANDBY;
     Config.RunMode      = AL_CAN_RUN_INTR;
-    Config.Type         = AL_CAN_TYPE_FD;
-    Config.SlowBitRate  = AL_CAN_ARBITRATION_0_5M;
-    Config.FastBitRate  = AL_CAN_1_M;
     Config.TransMode    = AL_CAN_TRANS_PTB;
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
@@ -224,8 +218,6 @@ static AL_VOID AlCan_Test_InLoopBack(AL_VOID)
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Can 2.0B in loopback example\r\n");
     Config.OpsMode      = AL_CAN_MODE_IN_LOOPBACK;
     Config.RunMode      = AL_CAN_RUN_INTR;
-    Config.Type         = AL_CAN_TYPE_2_0B;
-    Config.SlowBitRate  = AL_CAN_ARBITRATION_0_25M;
     Config.TransMode    = AL_CAN_TRANS_PTB;
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
@@ -387,8 +379,6 @@ static AL_VOID AlCan_Test_ExLoopBack(AL_VOID)
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Can 2.0B extern loopback example\r\n");
     Config.OpsMode      = AL_CAN_MODE_EX_LOOPBACK;
     Config.RunMode      = AL_CAN_RUN_INTR;
-    Config.Type         = AL_CAN_TYPE_2_0B;
-    Config.SlowBitRate  = AL_CAN_ARBITRATION_0_25M;
     Config.TransMode    = AL_CAN_TRANS_PTB;
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
@@ -579,8 +569,6 @@ static AL_VOID AlCan_Test_StdIntr(AL_VOID)
 
     Config.OpsMode      = AL_CAN_MODE_NORMAL;
     Config.RunMode      = AL_CAN_RUN_INTR;
-    Config.Type         = AL_CAN_TYPE_2_0B;
-    Config.SlowBitRate  = AL_CAN_ARBITRATION_0_25M;
     Config.TransMode    = AL_CAN_TRANS_PTB;
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
@@ -789,9 +777,6 @@ static AL_VOID AlCan_Test_FdStbFifo(AL_VOID)
 
     Config.OpsMode      = AL_CAN_MODE_NORMAL;
     Config.RunMode      = AL_CAN_RUN_INTR;
-    Config.Type         = AL_CAN_TYPE_FD;
-    Config.SlowBitRate  = AL_CAN_ARBITRATION_0_5M;
-    Config.FastBitRate  = AL_CAN_1_M;
     Config.TransMode    = AL_CAN_TRANS_STB_FIFO;
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 
@@ -920,9 +905,6 @@ static AL_VOID AlCan_Test_FdDmaRecv(AL_VOID)
     AL_LOG(AL_LOG_LEVEL_DEBUG, "Can fd dma example\r\n");
     Config.OpsMode      = AL_CAN_MODE_NORMAL;
     Config.RunMode      = AL_CAN_RUN_INTR_DMA;
-    Config.Type         = AL_CAN_TYPE_FD;
-    Config.SlowBitRate  = AL_CAN_ARBITRATION_0_5M;
-    Config.FastBitRate  = AL_CAN_1_M;
     Config.TransMode    = AL_CAN_TRANS_PTB;
     Config.RbAfwl       = AL_CAN_RB_LIMIT_8;
 

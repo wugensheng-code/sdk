@@ -8,18 +8,21 @@
 #########################################################################
 # 1. define SDK_ROOT, BOARD info, CHIP, COMPILE_PREFIX
 #########################################################################
-SDK_ROOT   ?= ../../../..
+SDK_ROOT    ?= ../../../..
 
 
-CHIP       ?= dr1m90
+CHIP        ?= dr1m90
+ARMv8_STATE ?= 64
+
 ifeq ($(CHIP), dr1m90)
+ifeq ($(ARMv8_STATE), 32)
+COMPILE_PREFIX ?= /opt/toolchain/13.2/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-
+else
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
+endif
 else
 COMPILE_PREFIX ?= /opt/toolchain/riscv-gcc/bin/riscv-nuclei-elf-
 endif
-
-
-
 
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
@@ -49,7 +52,8 @@ CFLAGS := -O2 -DCAN_DEBUG -DCONFIG_CAN_IN_LOOPBACK_TEST=1 -g
 #    Fixme: where to add board init source files and headers files
 #########################################################################
 # PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_emulation
-PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
+# PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v10
+PLAT_DIR  ?= $(SDK_ROOT)/solutions/boards/board_dr1x90_ad101_v20
 
 #########################################################################
 # put these option to board_dr1x90_emulation Makefile

@@ -32,9 +32,6 @@
 static AL_CAN_InitStruct FdStbPriorityConfig = {
     .OpsMode        = AL_CAN_MODE_NORMAL,
     .RunMode        = AL_CAN_RUN_INTR,
-    .Type           = AL_CAN_TYPE_FD,
-    .SlowBitRate    = AL_CAN_0_5M,
-    .FastBitRate    = AL_CAN_1_M,
     .TransMode      = AL_CAN_TRANS_STB_PRIO,
     .RbAfwl         = AL_CAN_RB_LIMIT_8
 };

@@ -93,9 +93,8 @@ typedef enum
  */
 typedef enum
 {
-    AL_CAN_TYPE_NOT_SET,
-    AL_CAN_TYPE_2_0B,
-    AL_CAN_TYPE_FD
+    AL_CAN_TYPE_FD,
+    AL_CAN_TYPE_2_0B
 } AL_CAN_TypeEnum;
 
 /**
@@ -124,7 +123,8 @@ typedef enum
     AL_CAN_5M,
     AL_CAN_6_667M,
     AL_CAN_8M,
-    AL_CAN_10M
+    AL_CAN_10M,
+    AL_CAN_BIT_RATE_MAX
 } AL_CAN_BitRateEnum;
 
 /**
@@ -294,7 +294,6 @@ typedef enum
 {
     AL_CAN_IOCTL_SET_BIT_RATE,
     AL_CAN_IOCTL_GET_BIT_RATE,
-    AL_CAN_IOCTL_SET_DEF_BIT_RATE,
     AL_CAN_IOCTL_SET_RESET,
     AL_CAN_IOCTL_SET_FILTER,
     AL_CAN_IOCTL_GET_FILTER,
@@ -328,11 +327,21 @@ typedef union
  */
 typedef struct
 {
+    AL_U32                      Rate;
     AL_CAN_BitRateTypeEnum      Type;
     AL_U8                       TimeSeg1;
     AL_U8                       TimeSeg2;
     AL_U8                       SyncJumpWidth;
     AL_U8                       Prescaler;
+} AL_CAN_BitRateCfgStruct;
+
+/**
+ * @brief  Frame bit rate struct
+ */
+typedef struct
+{
+    AL_U32                  InputClk;
+    AL_CAN_BitRateCfgStruct BitRate[AL_CAN_BIT_RATE_MAX];
 } AL_CAN_BitRateStruct;
 
 /**
@@ -360,6 +369,7 @@ typedef AL_VOID (*AL_CAN_EventCallBack)(AL_CAN_EventStruct *Event, AL_VOID *Call
  */
 typedef struct
 {
+    AL_BOOL                     FilterEn;
     AL_CAN_FilterIndexEnum      FilterIndex;
     AL_CAN_FilterMaskTypeEnum   MaskType;
     AL_U32                      MaskValue;      /* Mask bit */
@@ -375,7 +385,7 @@ typedef struct
     AL_BOOL             IsIdExt;
     AL_BOOL             IsRemote;
     AL_BOOL             IsBitSwitch;
-    AL_BOOL             IsEnTts;
+    AL_BOOL             IsEnTts;        /* Transmit time-stamp enable */
     AL_CAN_KoerEnum     Koer;
     AL_CAN_DataLenEnum  DataLen;
     AL_U32              Data[16];
@@ -391,9 +401,14 @@ typedef struct
     AL_CAN_OpsModeEnum      OpsMode;
     AL_CAN_RunModeEnum      RunMode;
     AL_CAN_TransModeEnum    TransMode;
-    AL_CAN_BitRateEnum      SlowBitRate;
-    AL_CAN_BitRateEnum      FastBitRate;
+    AL_U32                  InputClk;       /* Request from hw config */
+    AL_U8                   InputClkIndex;
+    AL_CAN_BitRateCfgStruct SlowBitRate;    /* Request from hw config */
+    AL_CAN_BitRateCfgStruct FastBitRate;    /* Request from hw config */
     AL_CAN_RbAwflEnum       RbAfwl;         /* Receive buffer Almost Full Warning Limit */
+    AL_BOOL                 IsTimeStampEn;
+    AL_CAN_TimeposEnum      TimePos;
+    AL_CAN_FilterCfgStruct  Acf[CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_AE_X_SIZE];
 } AL_CAN_InitStruct;
 
 /**
@@ -434,9 +449,13 @@ AL_S32 AlCan_Dev_DecodeFrame(AL_U32 *BuffAddr, AL_CAN_FrameStruct *Frame);
 
 AL_S32 AlCan_Dev_GetDecodeError(AL_CAN_DevStruct *Dev);
 
+AL_S32 AlCan_Dev_ModifyHwConfig(AL_U32 DevId, AL_U32 Type, AL_U32 SlowBitRate, AL_U32 FastBitRate);
+
 AL_S32 AlCan_Dev_IoCtl(AL_CAN_DevStruct *Dev, AL_CAN_IoCtlCmdEnum Cmd, AL_VOID *Data);
 
 AL_S32 AlCan_Dev_DisplayFrame(AL_CAN_FrameStruct *Frame);
+
+AL_S32 AlCan_Dev_DisplayConfig(AL_CAN_DevStruct *Dev);
 
 #ifdef __cplusplus
 }

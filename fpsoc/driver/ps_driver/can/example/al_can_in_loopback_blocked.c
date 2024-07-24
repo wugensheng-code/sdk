@@ -30,8 +30,6 @@
 static AL_CAN_InitStruct InLoopbackConfig = {
     .OpsMode        = AL_CAN_MODE_IN_LOOPBACK,
     .RunMode        = AL_CAN_RUN_INTR,
-    .Type           = AL_CAN_TYPE_2_0B,
-    .SlowBitRate    = AL_CAN_ARBITRATION_0_25M,
     .TransMode      = AL_CAN_TRANS_PTB,
     .RbAfwl         = AL_CAN_RB_LIMIT_8
 };

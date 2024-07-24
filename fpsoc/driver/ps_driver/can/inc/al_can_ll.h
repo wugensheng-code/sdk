@@ -11,6 +11,7 @@
 extern "C" {
 #endif
 
+#include "al_can_plat.h"
 #include "al_can_hw.h"
 
 typedef enum
@@ -948,31 +949,31 @@ static inline AL_VOID AlCan_ll_SetSelmask(AL_REG BaseAddr, AL_CAN_SelmaskEnum Mo
             CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_SELMASK_SHIFT, Mode);
 }
 
-// /* TIME-stamping ENable(TIMEEN) */
-// static inline AL_BOOL AlCan_ll_IsTimeen(AL_REG BaseAddr)
-// {
-//     return (AL_BOOL)AL_REG32_GET_BIT(BaseAddr + CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_OFFSET,
-//                             CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_TIMEEN_SHIFT);
-// }
+/* TIME-stamping ENable(TIMEEN) */
+static inline AL_BOOL AlCan_ll_IsTimeen(AL_REG BaseAddr)
+{
+    return (AL_BOOL)AL_REG32_GET_BIT(BaseAddr + CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_OFFSET,
+                            CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_TIMEEN_SHIFT);
+}
 
-// static inline AL_VOID AlCan_ll_SetTimeen(AL_REG BaseAddr, AL_BOOL IsEnabled)
-// {
-//     AL_REG32_SET_BIT(BaseAddr + CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_OFFSET,
-//             CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_TIMEEN_SHIFT, IsEnabled);
-// }
+static inline AL_VOID AlCan_ll_SetTimeen(AL_REG BaseAddr, AL_BOOL IsEnabled)
+{
+    AL_REG32_SET_BIT(BaseAddr + CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_OFFSET,
+            CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_TIMEEN_SHIFT, IsEnabled);
+}
 
-// /* TIME-stamping POSition(TIMEPOS) */
-// static inline AL_CAN_TimeposEnum AlCan_ll_GetTimepos(AL_REG BaseAddr)
-// {
-//     return (AL_CAN_TimeposEnum)AL_REG32_GET_BIT(BaseAddr + CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_OFFSET,
-//                                        CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_TIMEPOS_SHIFT);
-// }
+/* TIME-stamping POSition(TIMEPOS) */
+static inline AL_CAN_TimeposEnum AlCan_ll_GetTimepos(AL_REG BaseAddr)
+{
+    return (AL_CAN_TimeposEnum)AL_REG32_GET_BIT(BaseAddr + CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_OFFSET,
+                                       CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_TIMEPOS_SHIFT);
+}
 
-// static inline AL_VOID AlCan_ll_SetTimepos(AL_REG BaseAddr, AL_CAN_TimeposEnum Mode)
-// {
-//     AL_REG32_SET_BIT(BaseAddr + CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_OFFSET,
-//             CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_TIMEPOS_SHIFT, Mode);
-// }
+static inline AL_VOID AlCan_ll_SetTimepos(AL_REG BaseAddr, AL_CAN_TimeposEnum Mode)
+{
+    AL_REG32_SET_BIT(BaseAddr + CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_OFFSET,
+            CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_TIMEPOS_SHIFT, Mode);
+}
 
 // /* Acceptance Filter Enable(AE_x) */
 // static inline AL_BOOL AlCan_ll_IsAex(AL_REG BaseAddr, AL_U32 Shift)
@@ -1273,7 +1274,7 @@ static inline AL_VOID AlCan_ll_SetAcfen(AL_REG BaseAddr, AL_BOOL IsEnabled)
 {
     AL_REG32_SET_BITS(BaseAddr + CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_OFFSET,
              CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_AE_1_SHIFT,
-             CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_AE_X_SIZE, ((IsEnabled) ? 0x7FFF : 0x0));
+             CAN_ACF_EN_1_ACF_EN_0_TIMECFG_ACFCTRL_AE_X_SIZE-1, ((IsEnabled) ? 0x3 : 0x0));
 }
 
 static inline AL_BOOL AlCan_ll_IsAcfenx(AL_REG BaseAddr, AL_U32 Index)
@@ -1332,37 +1333,37 @@ static inline AL_VOID AlCan_ll_ClrIntrStatus(AL_REG BaseAddr, AL_U32 Status)
     AL_REG32_WRITE(BaseAddr + CAN_LIMIT_ERRINT_RTIF_RTIE_OFFSET, ((Value & (~CAN_LIMIT_ERRINT_RTIF_RTIE_ALLINTR_MASK)) | Status));
 }
 
-// /**
-//  * Configuration and Status Register(CFG_STAT)
-//  * Command Register(TCMD)
-//  * Transmit Control Register(TCTRL)
-//  * Receive Control Register(RCTRL)
-// */
-// static inline AL_U32 AlCan_ll_ReadCfgstatTcmdTctrlRctrl(AL_REG BaseAddr)
-// {
-//     return AL_REG32_READ(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET);
-// }
+/**
+ * Configuration and Status Register(CFG_STAT)
+ * Command Register(TCMD)
+ * Transmit Control Register(TCTRL)
+ * Receive Control Register(RCTRL)
+*/
+static inline AL_U32 AlCan_ll_ReadCfgstatTcmdTctrlRctrl(AL_REG BaseAddr)
+{
+    return AL_REG32_READ(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET);
+}
 
-// static inline AL_VOID AlCan_ll_WriteCfgstatTcmdTctrlRctrl(AL_REG BaseAddr, AL_U32 Value)
-// {
-//     AL_REG32_WRITE(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET, Value);
-// }
+static inline AL_VOID AlCan_ll_WriteCfgstatTcmdTctrlRctrl(AL_REG BaseAddr, AL_U32 Value)
+{
+    AL_REG32_WRITE(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET, Value);
+}
 
-// /**
-//  * Receive and Transmit Interrupt Enable Register(RTIE)
-//  * Receive and Transmit Interrupt Flag Register(RTIF)
-//  * ERRor INTerrupt Enable and Flag Register(ERRINT)
-//  * Warning Limits Register(LIMIT)
-// */
-// static inline AL_U32 AlCan_ll_ReadLimitErrintRtifRtie(AL_REG BaseAddr)
-// {
-//     return AL_REG32_READ(BaseAddr + CAN_LIMIT_ERRINT_RTIF_RTIE_OFFSET);
-// }
+/**
+ * Receive and Transmit Interrupt Enable Register(RTIE)
+ * Receive and Transmit Interrupt Flag Register(RTIF)
+ * ERRor INTerrupt Enable and Flag Register(ERRINT)
+ * Warning Limits Register(LIMIT)
+*/
+static inline AL_U32 AlCan_ll_ReadLimitErrintRtifRtie(AL_REG BaseAddr)
+{
+    return AL_REG32_READ(BaseAddr + CAN_LIMIT_ERRINT_RTIF_RTIE_OFFSET);
+}
 
-// static inline AL_VOID AlCan_ll_WriteLimitErrintRtifRtie(AL_REG BaseAddr, AL_U32 Value)
-// {
-//     AL_REG32_WRITE(BaseAddr + CAN_LIMIT_ERRINT_RTIF_RTIE_OFFSET, Value);
-// }
+static inline AL_VOID AlCan_ll_WriteLimitErrintRtifRtie(AL_REG BaseAddr, AL_U32 Value)
+{
+    AL_REG32_WRITE(BaseAddr + CAN_LIMIT_ERRINT_RTIF_RTIE_OFFSET, Value);
+}
 
 // /**
 //  * Slow Speed Bit Timing Segment 1(S_Seg_1)
@@ -1444,21 +1445,21 @@ static inline AL_VOID AlCan_ll_WriteAcodexAmaskx(AL_REG BaseAddr, AL_U32 Value)
     AL_REG32_WRITE(BaseAddr + CAN_ACF_3_ACF_2_ACF_1_ACF_0_OFFSET, Value);
 }
 
-// /**
-//  * Version Information(VER_0)
-//  * Version Information(VER_1)
-//  * TTCAN:TB Slot Pointer(TBSLOT)
-//  * TTCAN:Time Trigger Configuration(TTCFG)
-// */
-// static inline AL_U32 AlCan_ll_ReadVerxTbslotTtcfg(AL_REG BaseAddr)
-// {
-//     return AL_REG32_READ(BaseAddr + CAN_TTCFG_TBSLOT_VER_1_VER_0_OFFSET);
-// }
+/**
+ * Version Information(VER_0)
+ * Version Information(VER_1)
+ * TTCAN:TB Slot Pointer(TBSLOT)
+ * TTCAN:Time Trigger Configuration(TTCFG)
+*/
+static inline AL_U32 AlCan_ll_ReadVerxTbslotTtcfg(AL_REG BaseAddr)
+{
+    return AL_REG32_READ(BaseAddr + CAN_TTCFG_TBSLOT_VER_1_VER_0_OFFSET);
+}
 
-// static inline AL_VOID AlCan_ll_WriteVerxTbslotTtcfg(AL_REG BaseAddr, AL_U32 Value)
-// {
-//     AL_REG32_WRITE(BaseAddr + CAN_TTCFG_TBSLOT_VER_1_VER_0_OFFSET, Value);
-// }
+static inline AL_VOID AlCan_ll_WriteVerxTbslotTtcfg(AL_REG BaseAddr, AL_U32 Value)
+{
+    AL_REG32_WRITE(BaseAddr + CAN_TTCFG_TBSLOT_VER_1_VER_0_OFFSET, Value);
+}
 
 // /**
 //  * Reference Message(REF_MSG_0)

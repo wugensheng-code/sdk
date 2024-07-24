@@ -32,16 +32,21 @@
 static AL_CAN_InitStruct StdPtbConfig = {
     .OpsMode        = AL_CAN_MODE_NORMAL,
     .RunMode        = AL_CAN_RUN_INTR,
-    .Type           = AL_CAN_TYPE_2_0B,
-    .SlowBitRate    = AL_CAN_ARBITRATION_0_25M,
     .TransMode      = AL_CAN_TRANS_PTB,
-    .RbAfwl         = AL_CAN_RB_LIMIT_8
+    .RbAfwl         = AL_CAN_RB_LIMIT_8,
+    .IsTimeStampEn  = AL_TRUE,
+    .TimePos        = AL_CAN_TIMEPOS_EOF,
+    .Acf[0].FilterEn        = AL_TRUE,
+    .Acf[0].FilterIndex     = AL_CAN_FILTER_0,
+    .Acf[0].MaskType        = AL_CAN_FILTER_MASK_BOTH,
+    .Acf[0].MaskValue       = 0x7FE,
+    .Acf[0].IdValue         = 0x1,
 };
 
 static AL_CAN_FrameStruct ExFrame = {
     .Id             = 0x10,
     .IsBitSwitch    = 0x0,
-    .IsEnTts        = 0x0,
+    .IsEnTts        = 0x1,
     .IsIdExt        = 0x0,
     .IsRemote       = 0x0,
     .DataLen        = AL_CAN_LEN_8,
@@ -96,6 +101,8 @@ static AL_S32 AlCan_Test_StdPtbBlocked(AL_VOID)
     AL_U32 DelayCount = 0;
     AL_CAN_FrameStruct Frame;
     AL_CAN_HalStruct *Handle = AL_NULL;
+
+    Ret = AlCan_Dev_ModifyHwConfig(AL_CAN_EX_DEVICE_ID, CAN20B, 250000, 0);
 
     Ret = AlCan_Hal_Init(&Handle, AL_CAN_EX_DEVICE_ID, &StdPtbConfig, AL_NULL);
     if (Ret != AL_OK) {

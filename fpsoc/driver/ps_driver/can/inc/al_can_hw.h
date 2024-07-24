@@ -901,6 +901,10 @@ typedef struct {
     AL_U32      DeviceId;
     AL_U32      BaseAddress;
     AL_U32      IntrId;
+    AL_U32      InputClk;
+    AL_U32      Type;
+    AL_U32      SlowBitRate;
+    AL_U32      FastBitRate;
 } AL_CAN_HwConfigStruct;
 
 #ifdef __cplusplus
