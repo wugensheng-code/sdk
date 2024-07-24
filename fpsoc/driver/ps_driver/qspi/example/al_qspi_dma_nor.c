@@ -18,7 +18,9 @@
 #include "al_dmacahb_hal.h"
 
 /************************** Constant Definitions *****************************/
-
+#define PAGE_SIZE       (256)
+#define DMA_MAX_SIZE    (4095)
+#define WRITE_SIZE      (4096)
 /**************************** Type Definitions *******************************/
 
 /***************** Macros (Inline Functions) Definitions *********************/
@@ -36,9 +38,8 @@ AL_QSPI_ConfigsStruct QspiX4InitConfigs =
 };
 
 AL_U8 CACHE_LINE_ALIGN FlashId[10] = { 0x0 };
-
-AL_U8 CACHE_LINE_ALIGN DmaSendData[500] = { 0x0 };
-AL_U8 CACHE_LINE_ALIGN DmaRecvData[500] = { 0x0 };
+AL_U8 CACHE_LINE_ALIGN DmaSendData[WRITE_SIZE] = { 0x0 };
+AL_U8 CACHE_LINE_ALIGN DmaRecvData[WRITE_SIZE] = { 0x0 };
 AL_U8 InstAndAddr[10] = { 0x0 };
 
 /************************** Function Prototypes ******************************/
@@ -200,10 +201,10 @@ AL_VOID AlNorDma_ReadStatus(AL_VOID)
  * Erases a sector in the NOR flash memory using DMA.
  * This function configures the QSPI controller for a transmit-only operation, sets up the sector erase (SE) command with the target sector address, and initiates the erase operation.
  *
- * @param addr The address of the sector to erase.
+ * @param Addr The address of the sector to erase.
  * @return None.
  */
-AL_VOID AlNorDma_Erase(AL_U32 addr)
+AL_VOID AlNorDma_Erase(AL_U32 Addr)
 {
     AL_S32 Ret = AL_OK;
 
@@ -214,9 +215,9 @@ AL_VOID AlNorDma_Erase(AL_U32 addr)
     Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
 
     InstAndAddr[0] = NOR_OP_SE;
-    InstAndAddr[1] = (addr >> 16) & 0xff;
-    InstAndAddr[2] = (addr >> 8)&0xff;
-    InstAndAddr[3] = addr&0xff;
+    InstAndAddr[1] = (Addr >> 16) & 0xff;
+    InstAndAddr[2] = (Addr >> 8) & 0xff;
+    InstAndAddr[3] = Addr & 0xff;
 
     Ret = AlQspi_Hal_DmaStartSendBlock(Handle, DmaSendData, InstAndAddr, 0, 100000);
     if (Ret != AL_OK) {
@@ -229,12 +230,15 @@ AL_VOID AlNorDma_Erase(AL_U32 addr)
  * Reads a page from the NOR flash memory using DMA.
  * This function sets the QSPI controller for a receive-only operation, configures it for quad I/O read mode, sets up the read command with the target page address, and performs a block transfer to read the page data.
  *
- * @param addr The address of the page to read.
+ * @param Addr The address of the page to read.
+ * @param Data A pointer to the buffer where received data will be stored.
+ * @param Size The size of the data buffer to be read.
  * @return None.
  */
-AL_VOID AlNorDma_ReadPage(AL_U32 addr)
+AL_VOID AlNorDma_ReadPage(AL_U32 Addr, AL_U8 *Data, AL_U32 Size)
 {
     AL_S32 Ret = AL_OK;
+    AL_U8 CACHE_LINE_ALIGN DmaRecvBuf[DMA_MAX_SIZE] = { 0x0 };
 
     Handle->Dev.Configs.Trans.TransMode  = QSPI_RX_ONLY;
     Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
@@ -243,14 +247,16 @@ AL_VOID AlNorDma_ReadPage(AL_U32 addr)
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 8;
 
     DmaSendData[0] = NOR_OP_READ_1_1_4;
-    DmaSendData[1] = (addr >> 16) & 0xff;
-    DmaSendData[2] = (addr >> 8)&0xff;
-    DmaSendData[3] = addr&0xff;
+    DmaSendData[1] = (Addr >> 16) & 0xff;
+    DmaSendData[2] = (Addr >> 8) & 0xff;
+    DmaSendData[3] = Addr & 0xff;
 
-    Ret = AlQspi_Hal_DmaStartTranferBlock(Handle, DmaSendData, 4, DmaRecvData, 240, 100000);
+    Ret = AlQspi_Hal_DmaStartTranferBlock(Handle, DmaSendData, 4, DmaRecvBuf, Size, 100000);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "DMA AL_NOR_READPAGE error:0x%x\r\n", Ret);
     }
+
+    memcpy(Data, DmaRecvBuf, Size);
 }
 
 
@@ -259,10 +265,12 @@ AL_VOID AlNorDma_ReadPage(AL_U32 addr)
  * Writes a page to the NOR flash memory using DMA.
  * This function prepares the QSPI controller for a transmit-only operation in quad I/O mode, sets up the page program (PP) command with the target page address, fills a buffer with data to write, and initiates the write operation.
  *
- * @param addr The address of the page to write.
+ * @param Addr The address of the page to write.
+ * @param Data A pointer to the buffer to be write.
+ * @param Size The size of the data buffer to be write.
  * @return None.
  */
-AL_VOID AlNorDma_WritePage(AL_U32 addr)
+AL_VOID AlNorDma_WritePage(AL_U32 Addr, AL_U8 *Data, AL_U32 Size)
 {
     AL_S32 Ret = AL_OK;
 
@@ -274,15 +282,11 @@ AL_VOID AlNorDma_WritePage(AL_U32 addr)
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
 
     InstAndAddr[0] = NOR_OP_PP_1_1_4;
-    InstAndAddr[1] = (addr >> 16) & 0xff;
-    InstAndAddr[2] = (addr >> 8)&0xff;
-    InstAndAddr[3] = addr&0xff;
+    InstAndAddr[1] = (Addr >> 16) & 0xff;
+    InstAndAddr[2] = (Addr >> 8) & 0xff;
+    InstAndAddr[3] = Addr & 0xff;
 
-    AL_U32 i = 0;
-    for (i = 0; i < 400; i++) {
-        DmaSendData[i] = i % 255;
-    }
-    Ret = AlQspi_Hal_DmaStartSendBlock(Handle, DmaSendData, InstAndAddr, 240, 1000000);
+    Ret = AlQspi_Hal_DmaStartSendBlock(Handle, Data, InstAndAddr, Size, 1000000);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "DMA AL_NOR_WRITEPAGE error:0x%x\r\n", Ret);
     }
@@ -298,6 +302,7 @@ AL_VOID AlNorDma_WritePage(AL_U32 addr)
 AL_VOID AlNorDma_ReadId(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
+    
     Handle->Dev.Configs.Trans.TransMode  = QSPI_EEPROM;
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
     Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
@@ -315,6 +320,59 @@ AL_VOID AlNorDma_ReadId(AL_VOID)
     AL_LOG(AL_LOG_LEVEL_ERROR, "DMA Read Flash ID:0x%x, 0x%x, 0x%x\r\n", FlashId[0], FlashId[1], FlashId[2]);
 }
 
+/**
+ * Call AlNorDma_WritePage to write data to flash.
+ *
+ * @param Addr The address of the page to write.
+ * @param Data A pointer to the buffer to be write.
+ * @param Size The size of the data buffer to be write.
+ * @return None.
+ */
+AL_VOID AlNorDma_WriteFlash(AL_U32 Addr, AL_U8 *Data, AL_U32 Size)
+{
+    AL_U32 CycleCount = 0;
+
+    while (Size > 0) {
+        if (Size > PAGE_SIZE) {
+            AlNorDma_WritePage(Addr, Data + CycleCount * PAGE_SIZE, PAGE_SIZE);
+            AlNorDma_WaitWip();
+            AlNorDma_Wren();
+            Addr += PAGE_SIZE;
+            Size -= PAGE_SIZE;
+            CycleCount += 1;
+        }
+        else {
+            AlNorDma_WritePage(Addr, Data + CycleCount * PAGE_SIZE, Size);
+            break;
+        }
+    }
+}
+
+/**
+ * Call AlNorDma_ReadPage to read data.
+ *
+ * @param Addr The address of the page to read.
+ * @param Data A pointer to the buffer where received data will be stored.
+ * @param Size The size of the data buffer to be read.
+ * @return None.
+ */
+AL_VOID AlNorDma_ReadFlash(AL_U32 Addr, AL_U8 *Data, AL_U32 Size)
+{
+    AL_U32 CycleCount = 0;
+
+    while (Size > 0) {
+        if (Size > DMA_MAX_SIZE) {
+            AlNorDma_ReadPage(Addr, Data + CycleCount * DMA_MAX_SIZE, DMA_MAX_SIZE);
+            Addr += DMA_MAX_SIZE;
+            Size -= DMA_MAX_SIZE;
+            CycleCount += 1;
+        }
+        else {
+            AlNorDma_ReadPage(Addr, Data + CycleCount * DMA_MAX_SIZE, Size);
+            break;
+        }
+    }
+}
 
 /**
  * @brief Main function for the Qspi DMA test.
@@ -339,10 +397,10 @@ AL_VOID main(AL_VOID)
     AlNorDma_Erase(0);
     AlNorDma_WaitWip();
 
-    /**/
-    AlNorDma_ReadPage(0);
-    for (i = 0; i < 240; i++) {
-        if(0xff != DmaRecvData[i]) {
+    /* Verify that the erase was successful. */
+    AlNorDma_ReadFlash(0, DmaRecvData, WRITE_SIZE);
+    for (i = 0; i < WRITE_SIZE; i++) {
+        if (0xff != DmaRecvData[i]) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "AlQspi test erase norflash error\r\n");
             AL_LOG(AL_LOG_LEVEL_ERROR, "Error DmaRecvData[%d]:%d\r\n", i, DmaRecvData[i]);
             while (1);
@@ -351,19 +409,25 @@ AL_VOID main(AL_VOID)
 
     AL_LOG(AL_LOG_LEVEL_ERROR, "DMA AlQspi test erase norflash success\r\n");
 
-    /**/
+    /* The array DmaSendData contains the data sent to flash. */
+    for(i=0; i <= WRITE_SIZE; i++) {
+        DmaSendData[i] = i & 0xff;
+    }
+
     AlNorDma_Wren();
-    AlNorDma_WritePage(0);
+    AlNorDma_WriteFlash(0, DmaSendData, WRITE_SIZE);
     AlNorDma_WaitWip();
 
-    AlNorDma_ReadPage(0);
-    for (i = 0; i < 230; i++) {
-        if(i != DmaRecvData[i]) {
+    /* verify */
+    AlNorDma_ReadFlash(0, DmaRecvData, WRITE_SIZE);
+    for (i = 0; i < WRITE_SIZE; i++) {
+        if (DmaRecvData[i] != (i & 0xff)) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "DMA AlQspi data write norflash test error\r\n");
             AL_LOG(AL_LOG_LEVEL_ERROR, "Error DmaRecvData[%d]:%d\r\n", i, DmaRecvData[i]);
             while (1);
         }
     }
+    
     AL_LOG(AL_LOG_LEVEL_ERROR, "DMA AlQspi test write norflash success\r\n");
 }
 

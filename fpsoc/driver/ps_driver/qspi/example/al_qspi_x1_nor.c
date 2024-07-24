@@ -17,7 +17,8 @@
 #include "al_spinor.h"
 
 /************************** Constant Definitions *****************************/
-
+#define PAGE_SIZE       (256)
+#define WRITE_SIZE      (1000)
 /**************************** Type Definitions *******************************/
 
 /***************** Macros (Inline Functions) Definitions *********************/
@@ -28,14 +29,14 @@ AL_QSPI_HalStruct *Handle;
 /* When SpiFrameFormat is Dual Quad,TransMode can only use QSPI_TX_ONLY,QSPI_RX_ONLY mode */
 AL_QSPI_ConfigsStruct QspiInitConfigs =
 {
-    .SamplDelay         = 0,
+    .SamplDelay         = 2,
     .SlvToggleEnum      = QSPI_SLV_TOGGLE_DISABLE,
     .SpiFrameFormat     = SPI_STANDARD_FORMAT,
     .ClockStretch       = QSPI_EnableClockStretch
 };
 
-AL_U8 SendData[500] = { 0x0 };
-AL_U8 RecvData[500] = { 0x0 };
+AL_U8 SendData[WRITE_SIZE] = { 0x0 };
+AL_U8 RecvData[WRITE_SIZE] = { 0x0 };
 AL_U8 FlashId[10] = { 0x0 };
 
 /************************** Function Prototypes ******************************/
@@ -51,14 +52,15 @@ AL_U8 FlashId[10] = { 0x0 };
 AL_VOID AlNor_InfineonReset(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
+    AL_U8 SendBuf[10] = {0x0};
 
     Handle->Dev.Configs.SpiFrameFormat  = SPI_STANDARD_FORMAT;
     Handle->Dev.Configs.Trans.TransMode = QSPI_TX_ONLY;
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
     Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
-    SendData[0] = NOR_OP_INFINEON_SRST;
+    SendBuf[0] = NOR_OP_INFINEON_SRST;
 
-    Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 1, 100000);
+    Ret = AlQspi_Hal_SendDataBlock(Handle, SendBuf, 1, 100000);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_Reset error:0x%x\r\n", Ret);
     }
@@ -75,14 +77,15 @@ AL_VOID AlNor_InfineonReset(AL_VOID)
 AL_VOID AlNor_Reset(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
+    AL_U8 SendBuf[10] = {0x0};
 
     Handle->Dev.Configs.SpiFrameFormat  = SPI_STANDARD_FORMAT;
     Handle->Dev.Configs.Trans.TransMode = QSPI_TX_ONLY;
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
     Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
-    SendData[0] = NOR_OP_SRSTEN;
+    SendBuf[0] = NOR_OP_SRSTEN;
 
-    Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 1, 100000);
+    Ret = AlQspi_Hal_SendDataBlock(Handle, SendBuf, 1, 100000);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_RESET error:0x%x\r\n", Ret);
     }
@@ -90,9 +93,9 @@ AL_VOID AlNor_Reset(AL_VOID)
     Handle->Dev.Configs.Trans.TransMode = QSPI_TX_ONLY;
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
     Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
-    SendData[0] = NOR_OP_SRST;
+    SendBuf[0] = NOR_OP_SRST;
 
-    Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 1, 100000);
+    Ret = AlQspi_Hal_SendDataBlock(Handle, SendBuf, 1, 100000);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_RESET error:0x%x\r\n", Ret);
     }
@@ -108,6 +111,7 @@ AL_VOID AlNor_Reset(AL_VOID)
 AL_VOID AlNor_Wren(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
+    AL_U8 SendBuf[10] = {0x0};
 
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
     Handle->Dev.Configs.Trans.TransMode = QSPI_TX_ONLY;
@@ -116,9 +120,9 @@ AL_VOID AlNor_Wren(AL_VOID)
     Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
     Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
 
-    SendData[0] = NOR_OP_WREN;
+    SendBuf[0] = NOR_OP_WREN;
 
-    Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 1, 100000);
+    Ret = AlQspi_Hal_SendDataBlock(Handle, SendBuf, 1, 100000);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_Wren error:0x%x\r\n", Ret);
     }
@@ -131,9 +135,10 @@ AL_VOID AlNor_Wren(AL_VOID)
  * @param data The data to be written to the status register.
  * @return None.
  */
-AL_VOID AlNor_SetStatus(AL_U8 data)
+AL_VOID AlNor_SetStatus(AL_U8 Data)
 {
     AL_S32 Ret = AL_OK;
+    AL_U8 SendBuf[10] = {0x0};
 
     Handle->Dev.Configs.SpiFrameFormat  = SPI_STANDARD_FORMAT;
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
@@ -141,10 +146,10 @@ AL_VOID AlNor_SetStatus(AL_U8 data)
     Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
     Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
 
-    SendData[0] = NOR_OP_WRSR;
-    SendData[1] = data;
+    SendBuf[0] = NOR_OP_WRSR;
+    SendBuf[1] = Data;
 
-    Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 2, 100000);
+    Ret = AlQspi_Hal_SendDataBlock(Handle, SendBuf, 2, 100000);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_SETSTATUS error:0x%x\r\n", Ret);
     }
@@ -161,6 +166,7 @@ AL_VOID AlNor_SetStatus(AL_U8 data)
 AL_VOID AlNor_WaitWip(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
+    AL_U8 SendBuf[10] = {0x0};
 
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
     Handle->Dev.Configs.Trans.TransMode  = QSPI_EEPROM;
@@ -169,10 +175,10 @@ AL_VOID AlNor_WaitWip(AL_VOID)
     Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
     Handle->Dev.Configs.SpiFrameFormat = SPI_STANDARD_FORMAT;
 
-    SendData[0] = NOR_OP_RDSR;
+    SendBuf[0] = NOR_OP_RDSR;
 
     do {
-        Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 1, RecvData, 1, 100000);
+        Ret = AlQspi_Hal_TranferDataBlock(Handle, SendBuf, 1, RecvData, 1, 100000);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_WaitWip error:0x%x\r\n", Ret);
         }
@@ -192,6 +198,7 @@ AL_VOID AlNor_WaitWip(AL_VOID)
 AL_VOID AlNor_ReadStatus(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
+    AL_U8 SendBuf[10] = {0x0};
 
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
     Handle->Dev.Configs.Trans.TransMode  = QSPI_EEPROM;
@@ -199,9 +206,9 @@ AL_VOID AlNor_ReadStatus(AL_VOID)
     Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
     Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
 
-    SendData[0] = NOR_OP_RDSR;
+    SendBuf[0] = NOR_OP_RDSR;
 
-    AlQspi_Hal_TranferDataBlock(Handle, SendData, 1, RecvData, 1, 100000);
+    AlQspi_Hal_TranferDataBlock(Handle, SendBuf, 1, RecvData, 1, 100000);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_ReadStatus error:0x%x\r\n", Ret);
     }
@@ -214,12 +221,13 @@ AL_VOID AlNor_ReadStatus(AL_VOID)
  * Erases a sector of the NOR flash memory at the specified address.
  * This function configures the SPI frame format, transmission mode, address length, and instruction length before sending the sector erase command along with the address.
  *
- * @param addr The address of the sector to be erased.
+ * @param Addr The address of the sector to be erased.
  * @return None.
  */
-AL_VOID AlNor_Erase(AL_U32 addr)
+AL_VOID AlNor_Erase(AL_U32 Addr)
 {
     AL_S32 Ret = AL_OK;
+    AL_U8 SendBuf[10] = {0x0};
 
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
     Handle->Dev.Configs.Trans.TransMode  = QSPI_TX_ONLY;
@@ -227,12 +235,12 @@ AL_VOID AlNor_Erase(AL_U32 addr)
     Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
     Handle->Dev.Configs.SpiFrameFormat = SPI_STANDARD_FORMAT;
 
-    SendData[0] = NOR_OP_SE;
-    SendData[1] = (addr >> 16) & 0xff;
-    SendData[2] = (addr >> 8)&0xff;
-    SendData[3] = addr&0xff;
+    SendBuf[0] = NOR_OP_SE;
+    SendBuf[1] = (Addr >> 16) & 0xff;
+    SendBuf[2] = (Addr >> 8) & 0xff;
+    SendBuf[3] = Addr & 0xff;
 
-    Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 4, 100000);
+    Ret = AlQspi_Hal_SendDataBlock(Handle, SendBuf, 4, 100000);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_Erase error:0x%x\r\n", Ret);
     }
@@ -248,13 +256,15 @@ AL_VOID AlNor_Erase(AL_U32 addr)
 AL_VOID AlNor_EraseChip(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
+    AL_U8 SendBuf[10] = {0x0};
+
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
     Handle->Dev.Configs.Trans.TransMode  = QSPI_TX_ONLY;
     Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L0;
-    SendData[0] = NOR_OP_CE;
+    SendBuf[0] = NOR_OP_CE;
 
     AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_EraseChip running\r\n");
-    Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 1, 100000);
+    Ret = AlQspi_Hal_SendDataBlock(Handle, SendBuf, 1, 100000);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_EraseChip error:0x%x\r\n", Ret);
     }
@@ -265,12 +275,13 @@ AL_VOID AlNor_EraseChip(AL_VOID)
  * Reads a page of data from the NOR flash memory at the specified address.
  * This function configures the SPI frame format, transmission mode, address length, and instruction length before reading the data into a buffer.
  *
- * @param addr The address of the page to be read.
+ * @param Addr The address of the page to be read.
  * @return None.
  */
-AL_VOID AlNor_ReadPage(AL_U32 addr)
+AL_VOID AlNor_ReadPage(AL_U32 Addr)
 {
     AL_S32 Ret = AL_OK;
+    AL_U8 SendBuf[10] = {0x0};
 
     Handle->Dev.Configs.Trans.TransMode  = QSPI_EEPROM;
     Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L24;
@@ -278,12 +289,12 @@ AL_VOID AlNor_ReadPage(AL_U32 addr)
     Handle->Dev.Configs.SpiFrameFormat = SPI_STANDARD_FORMAT;
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
 
-    SendData[0] = NOR_OP_READ;
-    SendData[1] = (addr >> 16) & 0xff;
-    SendData[2] = (addr >> 8)&0xff;
-    SendData[3] = addr&0xff;
+    SendBuf[0] = NOR_OP_READ;
+    SendBuf[1] = (Addr >> 16) & 0xff;
+    SendBuf[2] = (Addr >> 8) & 0xff;
+    SendBuf[3] = Addr & 0xff;
 
-    Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 4, RecvData, 240, 100000);
+    Ret = AlQspi_Hal_TranferDataBlock(Handle, SendBuf, 4, RecvData, WRITE_SIZE, 100000);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_ReadPage error:0x%x\r\n", Ret);
     }
@@ -293,12 +304,16 @@ AL_VOID AlNor_ReadPage(AL_U32 addr)
  * Writes a page of data to the NOR flash memory at the specified address.
  * This function configures the SPI frame format, transmission mode, address length, and instruction length before writing the data from a buffer.
  *
- * @param addr The address of the page to be written.
+ * @param Addr The address of the page to write.
+ * @param Data A pointer to the buffer to be write.
+ * @param Size The size of the data buffer to be write.
  * @return None.
  */
-AL_VOID AlNor_WritePage(AL_U32 addr)
+AL_VOID AlNor_WritePage(AL_U32 Addr,AL_U8 *Data, AL_U32 Size)
 {
     AL_S32 Ret = AL_OK;
+    AL_U8 SendBuf[260] = {0x0};
+
     Handle->Dev.Configs.SpiFrameFormat  = SPI_STANDARD_FORMAT;
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
     Handle->Dev.Configs.Trans.TransMode  = QSPI_TX_ONLY;
@@ -306,16 +321,16 @@ AL_VOID AlNor_WritePage(AL_U32 addr)
     Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
     Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
 
-    SendData[0] = NOR_OP_PP;
-    SendData[1] = (addr >> 16) & 0xff;
-    SendData[2] = (addr >> 8)&0xff;
-    SendData[3] = addr&0xff;
+    SendBuf[0] = NOR_OP_PP;
+    SendBuf[1] = (Addr >> 16) & 0xff;
+    SendBuf[2] = (Addr >> 8) & 0xff;
+    SendBuf[3] = Addr & 0xff;
 
     AL_U32 i = 0;
-    for (i = 0; i < 400; i++) {
-        SendData[i + 4] = i % 255;
+    for (i = 0; i < 256; i++) {
+        SendBuf[i + 4] = Data[i];
     }
-    Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 240, 100000);
+    Ret = AlQspi_Hal_SendDataBlock(Handle, SendBuf, Size + 4, 100000);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_WritePage error:0x%x\r\n", Ret);
     }
@@ -330,8 +345,9 @@ AL_VOID AlNor_WritePage(AL_U32 addr)
  */
 AL_VOID AlNor_ReadId(AL_VOID)
 {
+    AL_U8 SendBuf[10] = {0x0};
     AL_S32 Ret = AL_OK;
-    SendData[0] = NOR_OP_RDID;
+
     Handle->Dev.Configs.SpiFrameFormat  = SPI_STANDARD_FORMAT;
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
     Handle->Dev.Configs.Trans.TransMode  = QSPI_EEPROM;
@@ -339,13 +355,42 @@ AL_VOID AlNor_ReadId(AL_VOID)
     Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
     Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
 
-    Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 1, FlashId, 3, 100000);
+    SendBuf[0] = NOR_OP_RDID;
+
+    Ret = AlQspi_Hal_TranferDataBlock(Handle, SendBuf, 1, FlashId, 3, 100000);
     if (Ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_ReadId error:0x%x\r\n", Ret);
     }
     AL_LOG(AL_LOG_LEVEL_ERROR, "Flash ID:0x%x, 0x%x, 0x%x\r\n", FlashId[0], FlashId[1], FlashId[2]);
 }
 
+/**
+ * Call AlNor_WritePage to write data to flash.
+ *
+ * @param Addr The address of the page to write.
+ * @param Data A pointer to the buffer to be write.
+ * @param Size The size of the data buffer to be write.
+ * @return None.
+ */
+AL_VOID AlNor_WriteFlash(AL_U32 Addr, AL_U8 *Data, AL_U32 Size)
+{
+    AL_U32 CycleCount = 0;
+
+    while (Size > 0) {
+        if (Size > PAGE_SIZE) {
+            AlNor_WritePage(Addr, Data + CycleCount * PAGE_SIZE, PAGE_SIZE);
+            AlNor_WaitWip();
+            AlNor_Wren();
+            Addr += PAGE_SIZE;
+            Size -= PAGE_SIZE;
+            CycleCount += 1;
+        }
+        else {
+            AlNor_WritePage(Addr, Data + CycleCount * PAGE_SIZE, Size);
+            break;
+        }
+    }
+}
 
 /**
  *
@@ -373,7 +418,7 @@ AL_VOID main(AL_VOID)
     AlNor_WaitWip();
 
     AlNor_ReadPage(0);
-    for (i = 0; i < 240; i++) {
+    for (i = 0; i < WRITE_SIZE; i++) {
         if(0xff != RecvData[i]) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "AlQspi test erase norflash error\r\n");
             AL_LOG(AL_LOG_LEVEL_ERROR, "Error RecvData[%d]:%d\r\n", i, RecvData[i]);
@@ -384,16 +429,19 @@ AL_VOID main(AL_VOID)
     AL_LOG(AL_LOG_LEVEL_ERROR, "AlQspi test erase norflash success\r\n");
 
     /**/
+    for (i=0; i < WRITE_SIZE; i++) {
+        SendData[i] = i & 0xff;
+    }
+
     AlNor_Wren();
-    AlNor_WritePage(0);
+    AlNor_WriteFlash(0, SendData, WRITE_SIZE);
     AlNor_WaitWip();
 
     AlNor_ReadPage(0);
-    for (i = 0; i < 230; i++) {
-        if(i != RecvData[i]) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "AlQspi data write norflash test error\r\n");
+    for (i = 0; i < WRITE_SIZE; i++) {
+        if ((i & 0xff) != RecvData[i]) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "Error RecvData[%d]:%d\r\n", i, RecvData[i]);
-            while (1);
+            while(1);
         }
     }
 

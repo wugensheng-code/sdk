@@ -118,8 +118,8 @@ extern "C" {
 #define HAVE_QSPIPS_DRIVER
 #define QSPIPS_ENABLE
 
-#define QSPI_CLOCK       (50 * MHZ)
-#define QSPI_IO_FREQ     (25 * MHZ)
+#define QSPI_CLOCK       (100 * MHZ)
+#define QSPI_IO_FREQ     (50 * MHZ)
 
 #define HAVE_ADCPS_DRIVER
 #define ADCPS_ENABLE
