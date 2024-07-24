@@ -127,13 +127,6 @@ static inline AlAxiGpio_ll_ChannelDirEnum AlAxiGpio_ll_GetChannelDir2(AL_U32 Bas
 {
     return AL_REG32_READ(BaseAddr + AL_AXI_GPIO_TRI2);
 }
-
-/***************************** AL_AXI_GPIO_GIER ********************************/
-static inline AL_VOID AlAxiGpio_ll_SetGlobalInt(AL_U32 BaseAddr, AlAxiGpio_ll_IntEnum Int)
-{
-    AL_REG32_SET_BIT(BaseAddr + AL_AXI_GPIO_GIER, 31, Int);
-}
-
 /***************************** AL_AXI_GPIO_ISR ********************************/
 static inline AL_U32 AlAxiGpio_ll_GetIntStatus(AL_U32 BaseAddr)
 {

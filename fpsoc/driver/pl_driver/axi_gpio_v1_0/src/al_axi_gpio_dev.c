@@ -121,7 +121,6 @@ AL_S32 AlAxiGpio_Dev_IntInit(AlAxiGpio_Dev_Struct *Handle, AlAxiGpio_ll_ChannelE
 {
     AL_U32 BaseAddr = Handle->HwConfig.BaseAddress;
 
-    AlAxiGpio_ll_SetGlobalInt(BaseAddr, AL_AXI_GPIO_INT_ENABLE);
     switch (Channel)
     {
     case AL_AXI_GPIO_CHANNEL1: 

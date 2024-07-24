@@ -25,9 +25,8 @@ extern "C" {
 #define AL_AXI_GPIO_TRI         0x04
 #define AL_AXI_GPIO_DATA2       0x08
 #define AL_AXI_GPIO_TRI2        0x0c
-#define AL_AXI_GPIO_GIER        0x11c
-#define AL_AXI_GPIO_ISR         0x120
-#define AL_AXI_GPIO_IER         0x128
+#define AL_AXI_GPIO_ISR         0x104
+#define AL_AXI_GPIO_IER         0x100
 
 typedef struct {
     AL_U32                  DeviceId    ;
