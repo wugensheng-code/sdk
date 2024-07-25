@@ -15,4 +15,6 @@ digraph "fpsoc/driver/ps_driver/smc/example/al_smc_nand.c"
   Node5 [label="al_core.h",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
   Node3 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
   Node0 -> Node5 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node0 -> Node6 [color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="al_cache.h",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
 }

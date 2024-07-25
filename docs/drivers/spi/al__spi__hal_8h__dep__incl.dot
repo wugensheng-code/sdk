@@ -4,11 +4,13 @@ digraph "fpsoc/driver/ps_driver/spi/inc/al_spi_hal.h"
   node [fontname="Helvetica",fontsize="10",shape=record];
   Node6 [label="fpsoc/driver/ps_driver\l/spi/inc/al_spi_hal.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
   Node6 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node7 [label="fpsoc/driver/ps_driver\l/spi/example/al_spi_dma_nor.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__spi__dma__nor_8c.html"];
+  Node7 [label="fpsoc/driver/ps_driver\l/spi/example/al_spi_dma_nor.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__spi__dma__nor_8c.html",tooltip="al_spi_dma_nor example "];
   Node6 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node8 [label="fpsoc/driver/ps_driver\l/spi/example/al_spi_nor.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__spi__nor_8c.html"];
+  Node8 [label="fpsoc/driver/ps_driver\l/spi/example/al_spi_master.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__spi__master_8c.html",tooltip="al_spi_master example "];
   Node6 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node9 [label="fpsoc/driver/ps_driver\l/spi/example/al_spi_slave.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__spi__slave_8c.html"];
+  Node9 [label="fpsoc/driver/ps_driver\l/spi/example/al_spi_nor.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__spi__nor_8c.html",tooltip="al_spi_nor example "];
   Node6 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
-  Node10 [label="fpsoc/driver/ps_driver\l/spi/src/al_spi_hal.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__spi__hal_8c.html"];
+  Node10 [label="fpsoc/driver/ps_driver\l/spi/example/al_spi_slave.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__spi__slave_8c.html",tooltip="al_spi_slave example "];
+  Node6 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="fpsoc/driver/ps_driver\l/spi/src/al_spi_hal.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__spi__hal_8c.html"];
 }

@@ -90,6 +90,8 @@ Functions</h2></td></tr>
 <tr class="separator:a243847aaa13d253219c48ac3248f9d57"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca1fa5f5206e9de1fb2edc3a58abbf27"><td class="memItemLeft" align="right" valign="top">static AL_VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#aca1fa5f5206e9de1fb2edc3a58abbf27">AlGpio_Hal_GetBankPin</a> (AL_U32 PinNumber, AL_U32 *BankNumber, AL_U32 *PinNumberInBank)</td></tr>
 <tr class="separator:aca1fa5f5206e9de1fb2edc3a58abbf27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abbe82eccb151bb5776236b13a796cfde"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#abbe82eccb151bb5776236b13a796cfde">AlGpio_Hal_GetBankDirection</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank)</td></tr>
+<tr class="separator:abbe82eccb151bb5776236b13a796cfde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a580cb075a672263a13541fc1a93d5c2a"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a580cb075a672263a13541fc1a93d5c2a">AlGpio_Hal_SetBankDirection</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank, AL_U32 Direction)</td></tr>
 <tr class="separator:a580cb075a672263a13541fc1a93d5c2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00cd7644c51ff4ac96c352829c31cb6c"><td class="memItemLeft" align="right" valign="top">AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a00cd7644c51ff4ac96c352829c31cb6c">AlGpio_Hal_ReadBankOutput</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank)</td></tr>
@@ -98,8 +100,6 @@ Functions</h2></td></tr>
 <tr class="separator:a565e0631d723839065436ff42083c8cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42f062027df68ce1db69792fac350ac1"><td class="memItemLeft" align="right" valign="top">AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a42f062027df68ce1db69792fac350ac1">AlGpio_Hal_WriteBank</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank, AL_U32 Data)</td></tr>
 <tr class="separator:a42f062027df68ce1db69792fac350ac1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbe82eccb151bb5776236b13a796cfde"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#abbe82eccb151bb5776236b13a796cfde">AlGpio_Hal_GetBankDirection</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank)</td></tr>
-<tr class="separator:abbe82eccb151bb5776236b13a796cfde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4623f8affc87deb0026b80d8d77f91a5"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a4623f8affc87deb0026b80d8d77f91a5">AlGpio_Hal_SetPinDirection</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Pin, AL_U32 Direction)</td></tr>
 <tr class="separator:a4623f8affc87deb0026b80d8d77f91a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a763141225d5f7aba13240bb181407364"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a763141225d5f7aba13240bb181407364">AlGpio_Hal_GetPinDirection</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Pin)</td></tr>
@@ -110,46 +110,36 @@ Functions</h2></td></tr>
 <tr class="separator:acaed0a53a60a330f2b5cf0e70dc262e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a76a9246ff1aa251180c3b0a65dd0fc"><td class="memItemLeft" align="right" valign="top">AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a5a76a9246ff1aa251180c3b0a65dd0fc">AlGpio_Hal_WritePin</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Pin, AL_U32 Data)</td></tr>
 <tr class="separator:a5a76a9246ff1aa251180c3b0a65dd0fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0841deb13fba195c1e5ad532a0715529"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a0841deb13fba195c1e5ad532a0715529">AlGpio_Hal_EnableBankIntr</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank, AL_U32 Value)</td></tr>
-<tr class="separator:a0841deb13fba195c1e5ad532a0715529"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90845fa374fbcd9ece7d65c362f03985"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a90845fa374fbcd9ece7d65c362f03985">AlGpio_Hal_ClrBankIntr</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank, AL_U32 Value)</td></tr>
 <tr class="separator:a90845fa374fbcd9ece7d65c362f03985"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afdd0c4868c0cbcc6dcd579ef3118185e"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#afdd0c4868c0cbcc6dcd579ef3118185e">AlGpio_Hal_GetBankIntrEnable</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank)</td></tr>
-<tr class="separator:afdd0c4868c0cbcc6dcd579ef3118185e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4c663e823df21e756cbfcb7d3ca5465"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#ad4c663e823df21e756cbfcb7d3ca5465">AlGpio_Hal_GetBankIntrMask</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank)</td></tr>
 <tr class="separator:ad4c663e823df21e756cbfcb7d3ca5465"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0bf327527ca5e390e868303b2641e689"><td class="memItemLeft" align="right" valign="top">AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a0bf327527ca5e390e868303b2641e689">AlGpio_Hal_MaskBankIntr</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank, AL_U32 Value)</td></tr>
 <tr class="separator:a0bf327527ca5e390e868303b2641e689"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ff3a8f94c5c484f5eee6321b41ac454"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a7ff3a8f94c5c484f5eee6321b41ac454">AlGpio_Hal_GetBankIntrStatus</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank)</td></tr>
-<tr class="separator:a7ff3a8f94c5c484f5eee6321b41ac454"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a65c49fb57fc6a7bb458c6ca4ff21e79e"><td class="memItemLeft" align="right" valign="top">AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a65c49fb57fc6a7bb458c6ca4ff21e79e">AlGpio_Hal_GetBankRawIntrStatus</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank)</td></tr>
 <tr class="separator:a65c49fb57fc6a7bb458c6ca4ff21e79e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa38e23ed0d0c2981c11a1713d3205e7f"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#aa38e23ed0d0c2981c11a1713d3205e7f">AlGpio_Hal_SetIntrBankType</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank, <a class="el" href="al__gpio__hal_8h.html#aa525352e03cc6f843fc8d45abff94cc3">AL_GPIO_IntrTypeEnum</a> IntrType, <a class="el" href="al__gpio__hal_8h.html#aa386d365720bb7a048b1a4035f19f849">AL_GPIO_IntrPolarityEnum</a> IntrPolarity, <a class="el" href="al__gpio__hal_8h.html#a052cb4b51fb81bde41792389611dcceb">AL_GPIO_IntrBothEdgeEnum</a> IntrEdge)</td></tr>
-<tr class="separator:aa38e23ed0d0c2981c11a1713d3205e7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c897eb83665827fa003ebb90f4f1a05"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a2c897eb83665827fa003ebb90f4f1a05">AlGpio_Hal_GetIntrBankType</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank, AL_U32 *IntrType, AL_U32 *IntrPolarity, AL_U32 *IntrEdge)</td></tr>
-<tr class="separator:a2c897eb83665827fa003ebb90f4f1a05"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95c43085978930fc58f5363dbeeba13e"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a95c43085978930fc58f5363dbeeba13e">AlGpio_Hal_EnableBankDebounce</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank, AL_U32 Value)</td></tr>
-<tr class="separator:a95c43085978930fc58f5363dbeeba13e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae9c4863303796e6054b7801746db7739"><td class="memItemLeft" align="right" valign="top">AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#ae9c4863303796e6054b7801746db7739">AlGpio_Hal_EnableBankSync</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank, AL_U32 Value)</td></tr>
 <tr class="separator:ae9c4863303796e6054b7801746db7739"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ff3a8f94c5c484f5eee6321b41ac454"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a7ff3a8f94c5c484f5eee6321b41ac454">AlGpio_Hal_GetBankIntrStatus</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank)</td></tr>
+<tr class="separator:a7ff3a8f94c5c484f5eee6321b41ac454"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1942c65163511562a7ff99203e3cafd"><td class="memItemLeft" align="right" valign="top">AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#ac1942c65163511562a7ff99203e3cafd">AlGpio_Hal_GetBankSync</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Bank)</td></tr>
 <tr class="separator:ac1942c65163511562a7ff99203e3cafd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a583581083fdb3431ec52d63c5c47d506"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a583581083fdb3431ec52d63c5c47d506">AlGpio_Hal_EnablePinIntr</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Pin)</td></tr>
-<tr class="separator:a583581083fdb3431ec52d63c5c47d506"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf5aaafcd2f2d40d955d9511028367fc"><td class="memItemLeft" align="right" valign="top">static AL_BOOL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#aaf5aaafcd2f2d40d955d9511028367fc">AlGpio_Hal_GetPinIntrEnable</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Pin)</td></tr>
 <tr class="separator:aaf5aaafcd2f2d40d955d9511028367fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a583581083fdb3431ec52d63c5c47d506"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a583581083fdb3431ec52d63c5c47d506">AlGpio_Hal_EnablePinIntr</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Pin)</td></tr>
+<tr class="separator:a583581083fdb3431ec52d63c5c47d506"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a583422bf8f69f70777ab5b7c1e3b0edd"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a583422bf8f69f70777ab5b7c1e3b0edd">AlGpio_Hal_SetPinIntrType</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Pin, <a class="el" href="al__gpio__hal_8h.html#acf9f283c57bc72d95300945edb2e390a">AL_GPIO_IntrEnum</a> IntrType)</td></tr>
 <tr class="separator:a583422bf8f69f70777ab5b7c1e3b0edd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6274148f87383c2a3efb9248efdc6ad7"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a6274148f87383c2a3efb9248efdc6ad7">AlGpio_Hal_GetPinIntrType</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Pin)</td></tr>
 <tr class="separator:a6274148f87383c2a3efb9248efdc6ad7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5602aca263de6de6be97656fff50e431"><td class="memItemLeft" align="right" valign="top">static AL_BOOL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a5602aca263de6de6be97656fff50e431">AlGpio_Hal_GetPinDebounce</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Pin)</td></tr>
+<tr class="separator:a5602aca263de6de6be97656fff50e431"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52e1fd36ac6413c7bac148f2c4411040"><td class="memItemLeft" align="right" valign="top">static AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a52e1fd36ac6413c7bac148f2c4411040">AlGpio_Hal_EnablePinDebounce</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Pin)</td></tr>
 <tr class="separator:a52e1fd36ac6413c7bac148f2c4411040"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b6fe5caefc7609880b047a31fb0330c"><td class="memItemLeft" align="right" valign="top">static AL_VOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a4b6fe5caefc7609880b047a31fb0330c">AlGpio_Hal_IntrHandler</a> (AL_VOID *Instance)</td></tr>
 <tr class="separator:a4b6fe5caefc7609880b047a31fb0330c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a78d1b7389d2b5f417267ae8036a3f51e"><td class="memItemLeft" align="right" valign="top">AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a78d1b7389d2b5f417267ae8036a3f51e">AlGpio_Hal_IntrPinCfg</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 Pin, <a class="el" href="al__gpio__hal_8h.html#acf9f283c57bc72d95300945edb2e390a">AL_GPIO_IntrEnum</a> IntrType)</td></tr>
 <tr class="separator:a78d1b7389d2b5f417267ae8036a3f51e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a656fd1af7431116e7ce77d8890c1e414"><td class="memItemLeft" align="right" valign="top">AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__gpio__hal_8c.html#a656fd1af7431116e7ce77d8890c1e414">AlGpio_Hal_IntrBankCfg</a> (<a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *Handle, AL_U32 IntrBank, AL_U32 IntrVal, <a class="el" href="al__gpio__hal_8h.html#aa525352e03cc6f843fc8d45abff94cc3">AL_GPIO_IntrTypeEnum</a> IntrType, <a class="el" href="al__gpio__hal_8h.html#aa386d365720bb7a048b1a4035f19f849">AL_GPIO_IntrPolarityEnum</a> IntrPolarity, <a class="el" href="al__gpio__hal_8h.html#a052cb4b51fb81bde41792389611dcceb">AL_GPIO_IntrBothEdgeEnum</a> IntrEdge)</td></tr>
-<tr class="separator:a656fd1af7431116e7ce77d8890c1e414"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -253,110 +243,6 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>None. </dd></dl>
-
-</div>
-</div>
-<a id="a95c43085978930fc58f5363dbeeba13e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a95c43085978930fc58f5363dbeeba13e">&#9670;&nbsp;</a></span>AlGpio_Hal_EnableBankDebounce()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static AL_S32 AlGpio_Hal_EnableBankDebounce </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *&#160;</td>
-          <td class="paramname"><em>Handle</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">AL_U32&#160;</td>
-          <td class="paramname"><em>Bank</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">AL_U32&#160;</td>
-          <td class="paramname"><em>Value</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>This function enables the debounce feature for a specific GPIO bank. Debouncing is a technique used to remove noise or glitches from input signals.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">Handle</td><td>Pointer to the <a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> instance. </td></tr>
-    <tr><td class="paramname">Bank</td><td>The GPIO bank number. </td></tr>
-    <tr><td class="paramname">Value</td><td>The debounce value to be set.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>AL_OK if successful, otherwise an error code. </dd></dl>
-
-</div>
-</div>
-<a id="a0841deb13fba195c1e5ad532a0715529"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0841deb13fba195c1e5ad532a0715529">&#9670;&nbsp;</a></span>AlGpio_Hal_EnableBankIntr()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static AL_S32 AlGpio_Hal_EnableBankIntr </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *&#160;</td>
-          <td class="paramname"><em>Handle</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">AL_U32&#160;</td>
-          <td class="paramname"><em>Bank</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">AL_U32&#160;</td>
-          <td class="paramname"><em>Value</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>This function enables interrupt for a specific GPIO bank.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">Handle</td><td>Pointer to the <a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> instance. </td></tr>
-    <tr><td class="paramname">Bank</td><td>The GPIO bank number. </td></tr>
-    <tr><td class="paramname">Value</td><td>The interrupt value to be enabled.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>AL_OK if successful, otherwise an error code. </dd></dl>
 
 </div>
 </div>
@@ -536,51 +422,6 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The direction of the GPIO bank. </dd></dl>
-
-</div>
-</div>
-<a id="afdd0c4868c0cbcc6dcd579ef3118185e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afdd0c4868c0cbcc6dcd579ef3118185e">&#9670;&nbsp;</a></span>AlGpio_Hal_GetBankIntrEnable()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static AL_S32 AlGpio_Hal_GetBankIntrEnable </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *&#160;</td>
-          <td class="paramname"><em>Handle</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">AL_U32&#160;</td>
-          <td class="paramname"><em>Bank</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>This function retrieves the interrupt enable status for the specified GPIO bank.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">Handle</td><td>Pointer to the <a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> instance. </td></tr>
-    <tr><td class="paramname">Bank</td><td>The GPIO bank number.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The interrupt enable status for the specified GPIO bank. </dd></dl>
 
 </div>
 </div>
@@ -800,8 +641,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a2c897eb83665827fa003ebb90f4f1a05"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c897eb83665827fa003ebb90f4f1a05">&#9670;&nbsp;</a></span>AlGpio_Hal_GetIntrBankType()</h2>
+<a id="a5602aca263de6de6be97656fff50e431"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5602aca263de6de6be97656fff50e431">&#9670;&nbsp;</a></span>AlGpio_Hal_GetPinDebounce()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -810,7 +651,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">static AL_S32 AlGpio_Hal_GetIntrBankType </td>
+          <td class="memname">static AL_BOOL AlGpio_Hal_GetPinDebounce </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *&#160;</td>
           <td class="paramname"><em>Handle</em>, </td>
@@ -819,25 +660,7 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">AL_U32&#160;</td>
-          <td class="paramname"><em>Bank</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">AL_U32 *&#160;</td>
-          <td class="paramname"><em>IntrType</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">AL_U32 *&#160;</td>
-          <td class="paramname"><em>IntrPolarity</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">AL_U32 *&#160;</td>
-          <td class="paramname"><em>IntrEdge</em>&#160;</td>
+          <td class="paramname"><em>Pin</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -851,18 +674,6 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>This function retrieves the interrupt type, polarity, and edge configuration for a specific GPIO bank.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">Handle</td><td>Pointer to the <a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> instance. </td></tr>
-    <tr><td class="paramname">Bank</td><td>The GPIO bank number. </td></tr>
-    <tr><td class="paramname">IntrType</td><td>Pointer to store the interrupt type. </td></tr>
-    <tr><td class="paramname">IntrPolarity</td><td>Pointer to store the interrupt polarity. </td></tr>
-    <tr><td class="paramname">IntrEdge</td><td>Pointer to store the interrupt edge configuration.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>AL_OK if successful, otherwise an error code. </dd></dl>
 
 </div>
 </div>
@@ -1042,71 +853,6 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns AL_OK if successful, otherwise returns an error code. </dd></dl>
-
-</div>
-</div>
-<a id="a656fd1af7431116e7ce77d8890c1e414"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a656fd1af7431116e7ce77d8890c1e414">&#9670;&nbsp;</a></span>AlGpio_Hal_IntrBankCfg()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">AL_S32 AlGpio_Hal_IntrBankCfg </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *&#160;</td>
-          <td class="paramname"><em>Handle</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">AL_U32&#160;</td>
-          <td class="paramname"><em>IntrBank</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">AL_U32&#160;</td>
-          <td class="paramname"><em>IntrVal</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="al__gpio__hal_8h.html#aa525352e03cc6f843fc8d45abff94cc3">AL_GPIO_IntrTypeEnum</a>&#160;</td>
-          <td class="paramname"><em>IntrType</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="al__gpio__hal_8h.html#aa386d365720bb7a048b1a4035f19f849">AL_GPIO_IntrPolarityEnum</a>&#160;</td>
-          <td class="paramname"><em>IntrPolarity</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="al__gpio__hal_8h.html#a052cb4b51fb81bde41792389611dcceb">AL_GPIO_IntrBothEdgeEnum</a>&#160;</td>
-          <td class="paramname"><em>IntrEdge</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>This function configures the interrupt settings for a specific GPIO bank, including the interrupt type, polarity, and edge.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">Handle</td><td>Pointer to the GPIO HAL structure. </td></tr>
-    <tr><td class="paramname">IntrBank</td><td>The GPIO bank to configure the interrupt for. </td></tr>
-    <tr><td class="paramname">IntrVal</td><td>The interrupt value to enable. </td></tr>
-    <tr><td class="paramname">IntrType</td><td>The interrupt type to configure. </td></tr>
-    <tr><td class="paramname">IntrPolarity</td><td>The interrupt polarity to configure. </td></tr>
-    <tr><td class="paramname">IntrEdge</td><td>The interrupt edge to configure.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>AL_OK if the interrupt configuration was set correctly, AL_FALSE otherwise. </dd></dl>
 
 </div>
 </div>
@@ -1515,72 +1261,6 @@ Variables</h2></td></tr>
 <li>1: Output</li>
 </ul>
 </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>AL_OK if successful, otherwise an error code. </dd></dl>
-
-</div>
-</div>
-<a id="aa38e23ed0d0c2981c11a1713d3205e7f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa38e23ed0d0c2981c11a1713d3205e7f">&#9670;&nbsp;</a></span>AlGpio_Hal_SetIntrBankType()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static AL_S32 AlGpio_Hal_SetIntrBankType </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> *&#160;</td>
-          <td class="paramname"><em>Handle</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">AL_U32&#160;</td>
-          <td class="paramname"><em>Bank</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="al__gpio__hal_8h.html#aa525352e03cc6f843fc8d45abff94cc3">AL_GPIO_IntrTypeEnum</a>&#160;</td>
-          <td class="paramname"><em>IntrType</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="al__gpio__hal_8h.html#aa386d365720bb7a048b1a4035f19f849">AL_GPIO_IntrPolarityEnum</a>&#160;</td>
-          <td class="paramname"><em>IntrPolarity</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="al__gpio__hal_8h.html#a052cb4b51fb81bde41792389611dcceb">AL_GPIO_IntrBothEdgeEnum</a>&#160;</td>
-          <td class="paramname"><em>IntrEdge</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>This function sets the interrupt type, polarity, and edge for a specific GPIO bank.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">Handle</td><td>Pointer to the <a class="el" href="structAL__GPIO__HalStruct.html">AL_GPIO_HalStruct</a> instance. </td></tr>
-    <tr><td class="paramname">Bank</td><td>The GPIO bank number. </td></tr>
-    <tr><td class="paramname">IntrType</td><td>The interrupt type to be set. </td></tr>
-    <tr><td class="paramname">IntrPolarity</td><td>The interrupt polarity to be set. </td></tr>
-    <tr><td class="paramname">IntrEdge</td><td>The interrupt edge to be set.</td></tr>
   </table>
   </dd>
 </dl>

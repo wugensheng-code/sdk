@@ -70,6 +70,9 @@ $(function() {
 <div class="title">al_iic_eeprom_block.c File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>al_iic_eeprom_block  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="al__iic__hal_8h_source.html">al_iic_hal.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for al_iic_eeprom_block.c:</div>
@@ -85,12 +88,14 @@ Macros</h2></td></tr>
 <tr class="separator:a839bd5ceecbd4611cc1d7f00a0517c8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ad02ab61f37d20ecedd7acfbc5c42ed"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__iic__eeprom__block_8c.html#a8ad02ab61f37d20ecedd7acfbc5c42ed">IIC_MUX_ADDRESS</a>&#160;&#160;&#160;0x74</td></tr>
 <tr class="separator:a8ad02ab61f37d20ecedd7acfbc5c42ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa6cf79c8db30749fdc1022ee5f673e5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__iic__eeprom__block_8c.html#aaa6cf79c8db30749fdc1022ee5f673e5">EEPROM_ADDRESS</a>&#160;&#160;&#160;0x54</td></tr>
+<tr class="memitem:a54a10963ec81e96ced787bcff8065ed5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__iic__eeprom__block_8c.html#a54a10963ec81e96ced787bcff8065ed5">BOARD_DR1X90_AD101_V20</a></td></tr>
+<tr class="separator:a54a10963ec81e96ced787bcff8065ed5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa6cf79c8db30749fdc1022ee5f673e5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__iic__eeprom__block_8c.html#aaa6cf79c8db30749fdc1022ee5f673e5">EEPROM_ADDRESS</a>&#160;&#160;&#160;0x50</td></tr>
 <tr class="separator:aaa6cf79c8db30749fdc1022ee5f673e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:addfda15f5f3ec6f8f325f48be50c548a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__iic__eeprom__block_8c.html#addfda15f5f3ec6f8f325f48be50c548a">EEPROM_PAGE_SIZE</a>&#160;&#160;&#160;8</td></tr>
+<tr class="separator:addfda15f5f3ec6f8f325f48be50c548a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:affa1bfd6b7cfe07fd14c3d559519cd98"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__iic__eeprom__block_8c.html#affa1bfd6b7cfe07fd14c3d559519cd98">IIC_EEPROM_CHANNEL</a>&#160;&#160;&#160;0x04</td></tr>
 <tr class="separator:affa1bfd6b7cfe07fd14c3d559519cd98"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:addfda15f5f3ec6f8f325f48be50c548a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__iic__eeprom__block_8c.html#addfda15f5f3ec6f8f325f48be50c548a">EEPROM_PAGE_SIZE</a>&#160;&#160;&#160;16</td></tr>
-<tr class="separator:addfda15f5f3ec6f8f325f48be50c548a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3dc91ff00c3d3393476906e8152550b9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__iic__eeprom__block_8c.html#a3dc91ff00c3d3393476906e8152550b9">EEPROM_TEST_START_ADDR</a>&#160;&#160;&#160;0x00</td></tr>
 <tr class="separator:a3dc91ff00c3d3393476906e8152550b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8fdaf3af5cc5ffebce52b690b833a783"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__iic__eeprom__block_8c.html#a8fdaf3af5cc5ffebce52b690b833a783">IIC_MASTER_TEST_TIMEOUT_MS</a>&#160;&#160;&#160;1000</td></tr>
@@ -115,7 +120,8 @@ Functions</h2></td></tr>
 <tr class="separator:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><dl class="section author"><dt>Author</dt><dd>Anlogic esw team </dd></dl>
+<div class="textblock"><p>al_iic_eeprom_block </p>
+<dl class="section author"><dt>Author</dt><dd>Anlogic esw team </dd></dl>
 <dl class="section version"><dt>Version</dt><dd>V0.0.1 </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2023-09-08 </dd></dl>
 </div><h2 class="groupheader">Macro Definition Documentation</h2>
@@ -134,6 +140,20 @@ Functions</h2></td></tr>
 </dl>
 </div>
 </div>
+<a id="a54a10963ec81e96ced787bcff8065ed5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54a10963ec81e96ced787bcff8065ed5">&#9670;&nbsp;</a></span>BOARD_DR1X90_AD101_V20</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define BOARD_DR1X90_AD101_V20</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aaa6cf79c8db30749fdc1022ee5f673e5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaa6cf79c8db30749fdc1022ee5f673e5">&#9670;&nbsp;</a></span>EEPROM_ADDRESS</h2>
 
@@ -141,7 +161,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define EEPROM_ADDRESS&#160;&#160;&#160;0x54</td>
+          <td class="memname">#define EEPROM_ADDRESS&#160;&#160;&#160;0x50</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -156,7 +176,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define EEPROM_PAGE_SIZE&#160;&#160;&#160;16</td>
+          <td class="memname">#define EEPROM_PAGE_SIZE&#160;&#160;&#160;8</td>
         </tr>
       </table>
 </div><div class="memdoc">

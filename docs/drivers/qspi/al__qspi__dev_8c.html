@@ -129,8 +129,8 @@ Functions</h2></td></tr>
 <tr class="separator:ad8f50e4ef10755a1f4b07201c68725aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab86bff541d473fb804105619de155977"><td class="memItemLeft" align="right" valign="top">AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__qspi__dev_8c.html#ab86bff541d473fb804105619de155977">AlQspi_Dev_XipAddr24InitForDMA</a> (<a class="el" href="structAL__QSPI__DevStruct.html">AL_QSPI_DevStruct</a> *Qspi)</td></tr>
 <tr class="separator:ab86bff541d473fb804105619de155977"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9291609f5acde6e05ca112c462725e44"><td class="memItemLeft" align="right" valign="top">AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__qspi__dev_8c.html#a9291609f5acde6e05ca112c462725e44">AlQspi_Dev_XipAddr24Init</a> (<a class="el" href="structAL__QSPI__DevStruct.html">AL_QSPI_DevStruct</a> *Qspi)</td></tr>
-<tr class="separator:a9291609f5acde6e05ca112c462725e44"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e49542950b8a5ae38f601e0d096be11"><td class="memItemLeft" align="right" valign="top">AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__qspi__dev_8c.html#a6e49542950b8a5ae38f601e0d096be11">AlQspi_Dev_XipAddr24Init</a> (<a class="el" href="structAL__QSPI__DevStruct.html">AL_QSPI_DevStruct</a> *Qspi, AL_U8 *<a class="el" href="al__qspi__x4__nor_8c.html#a5c0d5ab863468c119dfc3c2c22557e40">FlashId</a>)</td></tr>
+<tr class="separator:a6e49542950b8a5ae38f601e0d096be11"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ab01a8a0d265a3e8e42faffa2321e3e"><td class="memItemLeft" align="right" valign="top">AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__qspi__dev_8c.html#a9ab01a8a0d265a3e8e42faffa2321e3e">AlQspi_Dev_SendData</a> (<a class="el" href="structAL__QSPI__DevStruct.html">AL_QSPI_DevStruct</a> *Qspi, AL_U8 *SendBuf, AL_U32 SendSize)</td></tr>
 <tr class="separator:a9ab01a8a0d265a3e8e42faffa2321e3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc488d3146c3cef215baa81cde53b15b"><td class="memItemLeft" align="right" valign="top">AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__qspi__dev_8c.html#abc488d3146c3cef215baa81cde53b15b">AlQspi_Dev_RecvData</a> (<a class="el" href="structAL__QSPI__DevStruct.html">AL_QSPI_DevStruct</a> *Qspi, AL_U8 *ReceiveBuf, AL_U16 ReceiveSize)</td></tr>
@@ -1157,8 +1157,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a9291609f5acde6e05ca112c462725e44"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9291609f5acde6e05ca112c462725e44">&#9670;&nbsp;</a></span>AlQspi_Dev_XipAddr24Init()</h2>
+<a id="a6e49542950b8a5ae38f601e0d096be11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e49542950b8a5ae38f601e0d096be11">&#9670;&nbsp;</a></span>AlQspi_Dev_XipAddr24Init()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1167,19 +1167,33 @@ Variables</h2></td></tr>
           <td class="memname">AL_S32 AlQspi_Dev_XipAddr24Init </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structAL__QSPI__DevStruct.html">AL_QSPI_DevStruct</a> *&#160;</td>
-          <td class="paramname"><em>Qspi</em></td><td>)</td>
+          <td class="paramname"><em>Qspi</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">AL_U8 *&#160;</td>
+          <td class="paramname"><em>FlashId</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>This function prepares the QSPI device for operations with 24-bit addressing. It configures the device with settings for wait cycles, clock stretch, transfer mode, address length, instruction length, transfer type, frame format, XIP mode bit, XIP DFS fix, continuous transfer, prefetch, instruction phase, and incremental instruction. The QSPI device is disabled at the start of the function and enabled at the end after applying all settings.</p>
-<dl class="params"><dt>Parameters</dt><dd>
+<p>This function initializes qspi XIP mode </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">Qspi</td><td>Pointer to the QSPI device structure. </td></tr>
+    <tr><td class="paramname">Qspi</td><td>is structure pointer to qspi device </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Returns AL_QSPI_ERR_ILLEGAL_PARAM if the Qspi pointer is NULL, otherwise returns AL_OK. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><ul>
+<li>AL_OK for function success</li>
+<li>Other for function failuregit </li>
+</ul>
+</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Enable the qspi xip mode to be non-continuous transfer and set the instruction to nor flash 1_4_4(0xeb) </dd></dl>
 
 </div>
 </div>

@@ -1,0 +1,11 @@
+digraph "fpsoc/driver/ps_driver/tc/src" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_28b20fd63b2b31dc5dde5fe6e5b47073 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="tc" fontname="Helvetica", fontsize="10", URL="dir_28b20fd63b2b31dc5dde5fe6e5b47073.html"]
+  dir_807526ef0614d8b727605cf947c87322 [shape=box, label="src", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_807526ef0614d8b727605cf947c87322.html"];
+  }
+  dir_535c5664f2fe875d5e3a41258d7751a7 [shape=box label="inc" URL="dir_535c5664f2fe875d5e3a41258d7751a7.html"];
+  dir_807526ef0614d8b727605cf947c87322->dir_535c5664f2fe875d5e3a41258d7751a7 [headlabel="3", labeldistance=1.5 headhref="dir_000006_000005.html"];
+}

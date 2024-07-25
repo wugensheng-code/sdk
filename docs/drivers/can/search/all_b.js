@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['rate',['Rate',['../structAL__CAN__BitRateCfgStruct.html#ad53572cfda33e0bd1411c90664f2a6fe',1,'AL_CAN_BitRateCfgStruct']]],
   ['rbafwl',['RbAfwl',['../structAL__CAN__InitStruct.html#ac9f25674ce23a20d4115e4d6e47a6a76',1,'AL_CAN_InitStruct']]],
   ['reg',['Reg',['../unionAL__CAN__FrameCtrlUnion.html#ae30eb19907456be7f33a976e65456923',1,'AL_CAN_FrameCtrlUnion']]],
   ['reserve',['Reserve',['../unionAL__CAN__FrameCtrlUnion.html#a714c4b253594bfb4be35674f9990f344',1,'AL_CAN_FrameCtrlUnion']]],

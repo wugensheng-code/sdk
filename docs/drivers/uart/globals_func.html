@@ -171,13 +171,19 @@ $(function() {
 : <a class="el" href="al__uart__hal_8h.html#a0e651f75b9876437588e8bc132ae5a11">al_uart_hal.h</a>
 , <a class="el" href="al__uart__hal_8c.html#a0e651f75b9876437588e8bc132ae5a11">al_uart_hal.c</a>
 </li>
+<li>AlUart_Hal_IsRxBusy()
+: <a class="el" href="al__uart__hal_8h.html#af956bab942a38c2e9dda2b66be06afcf">al_uart_hal.h</a>
+</li>
+<li>AlUart_Hal_IsTxBusy()
+: <a class="el" href="al__uart__hal_8h.html#aff3b7278cebc4ec41b8edcab10b1ee84">al_uart_hal.h</a>
+</li>
 <li>AlUart_Hal_RecvData()
 : <a class="el" href="al__uart__hal_8h.html#af8b5d9bdd635fbd936738a9b23c0371a">al_uart_hal.h</a>
 , <a class="el" href="al__uart__hal_8c.html#af8b5d9bdd635fbd936738a9b23c0371a">al_uart_hal.c</a>
 </li>
 <li>AlUart_Hal_RecvDataBlock()
-: <a class="el" href="al__uart__hal_8h.html#ab4a4354076af571aa510f312a61a23c6">al_uart_hal.h</a>
-, <a class="el" href="al__uart__hal_8c.html#ab4a4354076af571aa510f312a61a23c6">al_uart_hal.c</a>
+: <a class="el" href="al__uart__hal_8h.html#a7241417c7f5096008911a34436312ec0">al_uart_hal.h</a>
+, <a class="el" href="al__uart__hal_8c.html#a7241417c7f5096008911a34436312ec0">al_uart_hal.c</a>
 </li>
 <li>AlUart_Hal_RecvDataDmaBlock()
 : <a class="el" href="al__uart__hal_8h.html#a4d73b8aae783062c0131f71646020ad2">al_uart_hal.h</a>
@@ -202,12 +208,6 @@ $(function() {
 <li>AlUart_Hal_SendDataPolling()
 : <a class="el" href="al__uart__hal_8h.html#ac857b222da920c215e38e09761db258b">al_uart_hal.h</a>
 , <a class="el" href="al__uart__hal_8c.html#ac857b222da920c215e38e09761db258b">al_uart_hal.c</a>
-</li>
-<li>AlUart_Hal_TryGetRecvLastEvent()
-: <a class="el" href="al__uart__hal_8c.html#ac431b3569b47ad8a8d83ff52edb3c67a">al_uart_hal.c</a>
-</li>
-<li>AlUart_Hal_TryGetSendLastEvent()
-: <a class="el" href="al__uart__hal_8c.html#af7e7ca9b1187ca2aaaebe2ac1168f42e">al_uart_hal.c</a>
 </li>
 <li>AlUart_ll_DisableAllIntr()
 : <a class="el" href="al__uart__ll_8h.html#a6fc7cb993772501b1df1cef0f29aea4b">al_uart_ll.h</a>
@@ -323,19 +323,19 @@ $(function() {
 <li>AlUart_ll_SetTxIntr()
 : <a class="el" href="al__uart__ll_8h.html#a9236cf9ee0a6bd2a02b585ebe6a8b6a6">al_uart_ll.h</a>
 </li>
-<li>AlUart_Test_RecvAndSendBlock()
-: <a class="el" href="al__uart__block_8c.html#a38f969ed7f670e777fc3a5d4c3bb2ad8">al_uart_block.c</a>
+<li>AlUart_Test_RecvAndSendIntrBlock()
+: <a class="el" href="al__uart__intr__block_8c.html#aa3efecf69886270eada89f2a570e92f6">al_uart_intr_block.c</a>
 </li>
-<li>AlUart_Test_RecvAndSendNonBlock()
-: <a class="el" href="al__uart__nonblock_8c.html#ae85e214a6931dba701fbe1ad24cb7501">al_uart_nonblock.c</a>
+<li>AlUart_Test_RecvAndSendPollBlock()
+: <a class="el" href="al__uart__poll__block_8c.html#a5f04c177c6063d65bd1285746f5d2d75">al_uart_poll_block.c</a>
 </li>
 </ul>
 
 
 <h3><a id="index_m"></a>- m -</h3><ul>
 <li>main()
-: <a class="el" href="al__uart__block_8c.html#a7692d86a53d32e905d9d4b3dd8a1d19d">al_uart_block.c</a>
-, <a class="el" href="al__uart__nonblock_8c.html#a7692d86a53d32e905d9d4b3dd8a1d19d">al_uart_nonblock.c</a>
+: <a class="el" href="al__uart__intr__block_8c.html#a7692d86a53d32e905d9d4b3dd8a1d19d">al_uart_intr_block.c</a>
+, <a class="el" href="al__uart__poll__block_8c.html#a7692d86a53d32e905d9d4b3dd8a1d19d">al_uart_poll_block.c</a>
 </li>
 </ul>
 </div><!-- contents -->

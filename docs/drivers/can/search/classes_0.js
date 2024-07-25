@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['al_5fcan_5fbitratecfgstruct',['AL_CAN_BitRateCfgStruct',['../structAL__CAN__BitRateCfgStruct.html',1,'']]],
   ['al_5fcan_5fbitratestruct',['AL_CAN_BitRateStruct',['../structAL__CAN__BitRateStruct.html',1,'']]],
   ['al_5fcan_5fdefbitratestruct',['AL_CAN_DefBitRateStruct',['../structAL__CAN__DefBitRateStruct.html',1,'']]],
   ['al_5fcan_5fdevstruct',['AL_CAN_DevStruct',['../structAL__CAN__DevStruct.html',1,'']]],

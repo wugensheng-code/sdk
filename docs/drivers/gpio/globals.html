@@ -152,12 +152,6 @@ $(function() {
 <li>AlGpio_Hal_DefEventCallBack()
 : <a class="el" href="al__gpio__hal_8c.html#a7b333f2bcde207c0125b1d3ab62db619">al_gpio_hal.c</a>
 </li>
-<li>AlGpio_Hal_EnableBankDebounce()
-: <a class="el" href="al__gpio__hal_8c.html#a95c43085978930fc58f5363dbeeba13e">al_gpio_hal.c</a>
-</li>
-<li>AlGpio_Hal_EnableBankIntr()
-: <a class="el" href="al__gpio__hal_8c.html#a0841deb13fba195c1e5ad532a0715529">al_gpio_hal.c</a>
-</li>
 <li>AlGpio_Hal_EnableBankSync()
 : <a class="el" href="al__gpio__hal_8h.html#ae9c4863303796e6054b7801746db7739">al_gpio_hal.h</a>
 , <a class="el" href="al__gpio__hal_8c.html#ae9c4863303796e6054b7801746db7739">al_gpio_hal.c</a>
@@ -170,9 +164,6 @@ $(function() {
 </li>
 <li>AlGpio_Hal_GetBankDirection()
 : <a class="el" href="al__gpio__hal_8c.html#abbe82eccb151bb5776236b13a796cfde">al_gpio_hal.c</a>
-</li>
-<li>AlGpio_Hal_GetBankIntrEnable()
-: <a class="el" href="al__gpio__hal_8c.html#afdd0c4868c0cbcc6dcd579ef3118185e">al_gpio_hal.c</a>
 </li>
 <li>AlGpio_Hal_GetBankIntrMask()
 : <a class="el" href="al__gpio__hal_8c.html#ad4c663e823df21e756cbfcb7d3ca5465">al_gpio_hal.c</a>
@@ -191,8 +182,8 @@ $(function() {
 : <a class="el" href="al__gpio__hal_8h.html#ac1942c65163511562a7ff99203e3cafd">al_gpio_hal.h</a>
 , <a class="el" href="al__gpio__hal_8c.html#ac1942c65163511562a7ff99203e3cafd">al_gpio_hal.c</a>
 </li>
-<li>AlGpio_Hal_GetIntrBankType()
-: <a class="el" href="al__gpio__hal_8c.html#a2c897eb83665827fa003ebb90f4f1a05">al_gpio_hal.c</a>
+<li>AlGpio_Hal_GetPinDebounce()
+: <a class="el" href="al__gpio__hal_8c.html#a5602aca263de6de6be97656fff50e431">al_gpio_hal.c</a>
 </li>
 <li>AlGpio_Hal_GetPinDirection()
 : <a class="el" href="al__gpio__hal_8c.html#a763141225d5f7aba13240bb181407364">al_gpio_hal.c</a>
@@ -210,10 +201,6 @@ $(function() {
 <li>AlGpio_Hal_Intr_Example()
 : <a class="el" href="al__gpio__intr_8c.html#a5f2e0acec1dceda62e54e09a0ad0e40b">al_gpio_intr.c</a>
 </li>
-<li>AlGpio_Hal_IntrBankCfg()
-: <a class="el" href="al__gpio__hal_8h.html#aaf9906fe77d0a2813cc30964acac8685">al_gpio_hal.h</a>
-, <a class="el" href="al__gpio__hal_8c.html#a656fd1af7431116e7ce77d8890c1e414">al_gpio_hal.c</a>
-</li>
 <li>AlGpio_Hal_IntrHandler()
 : <a class="el" href="al__gpio__hal_8c.html#a4b6fe5caefc7609880b047a31fb0330c">al_gpio_hal.c</a>
 </li>
@@ -229,8 +216,8 @@ $(function() {
 , <a class="el" href="al__gpio__hal_8c.html#a0bf327527ca5e390e868303b2641e689">al_gpio_hal.c</a>
 </li>
 <li>AlGpio_Hal_ReadBankInput()
-: <a class="el" href="al__gpio__hal_8c.html#a565e0631d723839065436ff42083c8cd">al_gpio_hal.c</a>
-, <a class="el" href="al__gpio__hal_8h.html#a565e0631d723839065436ff42083c8cd">al_gpio_hal.h</a>
+: <a class="el" href="al__gpio__hal_8h.html#a565e0631d723839065436ff42083c8cd">al_gpio_hal.h</a>
+, <a class="el" href="al__gpio__hal_8c.html#a565e0631d723839065436ff42083c8cd">al_gpio_hal.c</a>
 </li>
 <li>AlGpio_Hal_ReadBankOutput()
 : <a class="el" href="al__gpio__hal_8h.html#a00cd7644c51ff4ac96c352829c31cb6c">al_gpio_hal.h</a>
@@ -241,17 +228,14 @@ $(function() {
 , <a class="el" href="al__gpio__hal_8c.html#acaed0a53a60a330f2b5cf0e70dc262e9">al_gpio_hal.c</a>
 </li>
 <li>AlGpio_Hal_ReadPinOutput()
-: <a class="el" href="al__gpio__hal_8h.html#abef558ece1c4bb4cafc1c0634157b2c0">al_gpio_hal.h</a>
-, <a class="el" href="al__gpio__hal_8c.html#abef558ece1c4bb4cafc1c0634157b2c0">al_gpio_hal.c</a>
+: <a class="el" href="al__gpio__hal_8c.html#abef558ece1c4bb4cafc1c0634157b2c0">al_gpio_hal.c</a>
+, <a class="el" href="al__gpio__hal_8h.html#abef558ece1c4bb4cafc1c0634157b2c0">al_gpio_hal.h</a>
 </li>
 <li>AlGpio_Hal_RegisterEventCallBack()
 : <a class="el" href="al__gpio__hal_8c.html#a4851c5ac22b59b05a72f1b1b3ae06425">al_gpio_hal.c</a>
 </li>
 <li>AlGpio_Hal_SetBankDirection()
 : <a class="el" href="al__gpio__hal_8c.html#a580cb075a672263a13541fc1a93d5c2a">al_gpio_hal.c</a>
-</li>
-<li>AlGpio_Hal_SetIntrBankType()
-: <a class="el" href="al__gpio__hal_8c.html#aa38e23ed0d0c2981c11a1713d3205e7f">al_gpio_hal.c</a>
 </li>
 <li>AlGpio_Hal_SetPinDirection()
 : <a class="el" href="al__gpio__hal_8c.html#a4623f8affc87deb0026b80d8d77f91a5">al_gpio_hal.c</a>
@@ -264,8 +248,8 @@ $(function() {
 , <a class="el" href="al__gpio__hal_8c.html#a42f062027df68ce1db69792fac350ac1">al_gpio_hal.c</a>
 </li>
 <li>AlGpio_Hal_WritePin()
-: <a class="el" href="al__gpio__hal_8h.html#a5a76a9246ff1aa251180c3b0a65dd0fc">al_gpio_hal.h</a>
-, <a class="el" href="al__gpio__hal_8c.html#a5a76a9246ff1aa251180c3b0a65dd0fc">al_gpio_hal.c</a>
+: <a class="el" href="al__gpio__hal_8c.html#a5a76a9246ff1aa251180c3b0a65dd0fc">al_gpio_hal.c</a>
+, <a class="el" href="al__gpio__hal_8h.html#a5a76a9246ff1aa251180c3b0a65dd0fc">al_gpio_hal.h</a>
 </li>
 <li>AlGpio_HwCfg
 : <a class="el" href="al__gpio__cfg_8c.html#ab28e34a328ab49fd1a5ffdf96ba78da2">al_gpio_cfg.c</a>
@@ -367,9 +351,6 @@ $(function() {
 <h3><a id="index_b"></a>- b -</h3><ul>
 <li>BANK_BOTHEDGE_REG
 : <a class="el" href="al__gpio__intr_8c.html#a31528003792f13a7608923f2c8264850">al_gpio_intr.c</a>
-</li>
-<li>BANK_INTR
-: <a class="el" href="al__gpio__intr_8c.html#a31af45e0adc037821603929e436323d2">al_gpio_intr.c</a>
 </li>
 <li>BANK_INTR_VALUE
 : <a class="el" href="al__gpio__intr_8c.html#a2cdc8c8821ab4ac321712e2baf0cac5d">al_gpio_intr.c</a>

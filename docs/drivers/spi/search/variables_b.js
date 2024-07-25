@@ -1,7 +1,7 @@
 var searchData=
 [
   ['sendbuffer',['SendBuffer',['../structAL__SPI__DevStruct.html#a25a2268d0903cf574fec662dea2d7222',1,'AL_SPI_DevStruct']]],
-  ['senddata',['SendData',['../al__spi__slave_8c.html#a7742caf20a254410f384cc8ff6d4c265',1,'al_spi_slave.c']]],
+  ['senddata',['SendData',['../al__spi__master_8c.html#a7742caf20a254410f384cc8ff6d4c265',1,'SendData():&#160;al_spi_master.c'],['../al__spi__slave_8c.html#a7742caf20a254410f384cc8ff6d4c265',1,'SendData():&#160;al_spi_slave.c']]],
   ['slvselenum',['SlvSelEnum',['../structAL__SPI__TransStruct.html#ad964ef42fd2c177112ce726880141a71',1,'AL_SPI_TransStruct']]],
   ['slvtoggleenum',['SlvToggleEnum',['../structAL__SPI__ConfigsStruct.html#a32853c2fff04ea2d543dab3ddf330e39',1,'AL_SPI_ConfigsStruct']]],
   ['spi0rxdmacchconfig',['Spi0RxDmacChConfig',['../al__spi__hal_8c.html#a67f754e06e5999bbd230bf2a415d232d',1,'al_spi_hal.c']]],
@@ -13,7 +13,7 @@ var searchData=
   ['spi1txdmacchconfig',['Spi1TxDmacChConfig',['../al__spi__hal_8c.html#a19e4361f793e071486b229b91029094e',1,'al_spi_hal.c']]],
   ['spi1txdmachandle',['Spi1TxDmacHandle',['../al__spi__hal_8c.html#a43a5765c12f8ee3fb8e00db2ccb78692',1,'al_spi_hal.c']]],
   ['spidefinitconfigs',['SpiDefInitConfigs',['../al__spi__dev_8c.html#aff753ba4be5069a210847b4635dd7187',1,'al_spi_dev.c']]],
-  ['spiinitconfigs',['SpiInitConfigs',['../al__spi__dma__nor_8c.html#a9c68f5b369a6285790a39518749736af',1,'SpiInitConfigs():&#160;al_spi_dma_nor.c'],['../al__spi__nor_8c.html#a9c68f5b369a6285790a39518749736af',1,'SpiInitConfigs():&#160;al_spi_nor.c'],['../al__spi__slave_8c.html#a9c68f5b369a6285790a39518749736af',1,'SpiInitConfigs():&#160;al_spi_slave.c']]],
+  ['spiinitconfigs',['SpiInitConfigs',['../al__spi__dma__nor_8c.html#a9c68f5b369a6285790a39518749736af',1,'SpiInitConfigs():&#160;al_spi_dma_nor.c'],['../al__spi__master_8c.html#a9c68f5b369a6285790a39518749736af',1,'SpiInitConfigs():&#160;al_spi_master.c'],['../al__spi__nor_8c.html#a9c68f5b369a6285790a39518749736af',1,'SpiInitConfigs():&#160;al_spi_nor.c'],['../al__spi__slave_8c.html#a9c68f5b369a6285790a39518749736af',1,'SpiInitConfigs():&#160;al_spi_slave.c']]],
   ['spilock',['SpiLock',['../structAL__SPI__HalStruct.html#a976eb1242691924bd421835129d9ae0a',1,'AL_SPI_HalStruct']]],
   ['state',['State',['../structAL__SPI__DevStruct.html#a86e97da110253ae5cd4086aaaed646cc',1,'AL_SPI_DevStruct']]]
 ];

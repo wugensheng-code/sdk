@@ -39,6 +39,7 @@ var searchData=
   ['al_5fspi_5fioctl_5fset_5fslv_5ftoggle',['AL_SPI_IOCTL_SET_SLV_TOGGLE',['../al__spi__dev_8h.html#afe54b79dfc04b70ed4f5392ed9330ef2abd50b5720bb5431feebc39ed6dc8b276',1,'al_spi_dev.h']]],
   ['al_5fspi_5fioctlcmdenum',['AL_Spi_IoCtlCmdEnum',['../al__spi__dev_8h.html#afe54b79dfc04b70ed4f5392ed9330ef2',1,'al_spi_dev.h']]],
   ['al_5fspi_5fll_2eh',['al_spi_ll.h',['../al__spi__ll_8h.html',1,'']]],
+  ['al_5fspi_5fmaster_2ec',['al_spi_master.c',['../al__spi__master_8c.html',1,'']]],
   ['al_5fspi_5fmode',['AL_SPI_Mode',['../al__spi__ll_8h.html#a3a52d86925a04de503c00b9ebc4b9bd2',1,'al_spi_ll.h']]],
   ['al_5fspi_5fnor_2ec',['al_spi_nor.c',['../al__spi__nor_8c.html',1,'']]],
   ['al_5fspi_5fprotformat',['AL_SPI_ProtFormat',['../al__spi__ll_8h.html#af1a096f4492a181108d332756cf27547',1,'al_spi_ll.h']]],

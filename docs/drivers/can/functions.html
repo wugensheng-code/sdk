@@ -60,6 +60,13 @@ $(function() {
 <div class="contents">
 <div class="textblock">Here is a list of all struct and union fields with links to the structures/unions they belong to:</div>
 
+<h3><a id="index_a"></a>- a -</h3><ul>
+<li>Acf
+: <a class="el" href="structAL__CAN__InitStruct.html#adc94642f5eb80d5ccd81dc9b9a65e76b">AL_CAN_InitStruct</a>
+</li>
+</ul>
+
+
 <h3><a id="index_b"></a>- b -</h3><ul>
 <li>BaseAddr
 : <a class="el" href="structAL__CAN__DevStruct.html#ad0d556c83753bf151c0b0b7bb446bb23">AL_CAN_DevStruct</a>
@@ -69,6 +76,9 @@ $(function() {
 </li>
 <li>Bit
 : <a class="el" href="unionAL__CAN__FrameCtrlUnion.html#aecf23124a09ab367c1c93884d2209c9c">AL_CAN_FrameCtrlUnion</a>
+</li>
+<li>BitRate
+: <a class="el" href="structAL__CAN__BitRateStruct.html#a6d6b6c780bd9b0fa6b2141a7498a6a84">AL_CAN_BitRateStruct</a>
 </li>
 <li>Brs
 : <a class="el" href="unionAL__CAN__FrameCtrlUnion.html#a546c4b0590d5eca0a32490e702856376">AL_CAN_FrameCtrlUnion</a>
@@ -123,10 +133,14 @@ $(function() {
 
 <h3><a id="index_f"></a>- f -</h3><ul>
 <li>FastBitRate
-: <a class="el" href="structAL__CAN__InitStruct.html#a404a75d526b15a16463e4252e8956008">AL_CAN_InitStruct</a>
+: <a class="el" href="structAL__CAN__HwConfigStruct.html#afbbe847d5a430a03e2dc34fe5c31a284">AL_CAN_HwConfigStruct</a>
+, <a class="el" href="structAL__CAN__InitStruct.html#a29d68c3707e397d5ecade2da28726e9f">AL_CAN_InitStruct</a>
 </li>
 <li>Fdf
 : <a class="el" href="unionAL__CAN__FrameCtrlUnion.html#aec0ec572dde199285620ae7a0bea08b8">AL_CAN_FrameCtrlUnion</a>
+</li>
+<li>FilterEn
+: <a class="el" href="structAL__CAN__FilterCfgStruct.html#a77cf0d16edd1a69d47a0064613abf699">AL_CAN_FilterCfgStruct</a>
 </li>
 <li>FilterIndex
 : <a class="el" href="structAL__CAN__FilterCfgStruct.html#adeab994e5881180cacb5854d9505a46a">AL_CAN_FilterCfgStruct</a>
@@ -147,6 +161,14 @@ $(function() {
 <li>Index
 : <a class="el" href="structAL__CAN__DefBitRateStruct.html#abbea77fb9d6a2f8bcb1013f272b5d84e">AL_CAN_DefBitRateStruct</a>
 </li>
+<li>InputClk
+: <a class="el" href="structAL__CAN__BitRateStruct.html#a5a824cfc7b6f611c4d06557bd4482c52">AL_CAN_BitRateStruct</a>
+, <a class="el" href="structAL__CAN__HwConfigStruct.html#a460da6dbdada0f5f558547330e24046d">AL_CAN_HwConfigStruct</a>
+, <a class="el" href="structAL__CAN__InitStruct.html#a948e638ebb99cca0843c6b4441a3933a">AL_CAN_InitStruct</a>
+</li>
+<li>InputClkIndex
+: <a class="el" href="structAL__CAN__InitStruct.html#a8c6605351b0ac8f504fe751e86c1d1de">AL_CAN_InitStruct</a>
+</li>
 <li>IntrId
 : <a class="el" href="structAL__CAN__HwConfigStruct.html#a28ac5eb5aadb8119fdc5d593d072e53a">AL_CAN_HwConfigStruct</a>
 </li>
@@ -161,6 +183,9 @@ $(function() {
 </li>
 <li>IsRemote
 : <a class="el" href="structAL__CAN__FrameStruct.html#a4cddaf8ed39971c9dd74b732237d7f0d">AL_CAN_FrameStruct</a>
+</li>
+<li>IsTimeStampEn
+: <a class="el" href="structAL__CAN__InitStruct.html#afef29bfa88cf4777e8dda9c02746815e">AL_CAN_InitStruct</a>
 </li>
 </ul>
 
@@ -192,7 +217,7 @@ $(function() {
 
 <h3><a id="index_p"></a>- p -</h3><ul>
 <li>Prescaler
-: <a class="el" href="structAL__CAN__BitRateStruct.html#aff8f4bda134318fdb9c8aa9dcc3fc0e5">AL_CAN_BitRateStruct</a>
+: <a class="el" href="structAL__CAN__BitRateCfgStruct.html#acad7a8098720e62e41caa048cc835fae">AL_CAN_BitRateCfgStruct</a>
 </li>
 <li>Private
 : <a class="el" href="structAL__CAN__DevStruct.html#a4d0c84844e4b42bdb87f7a0edf0eb3ed">AL_CAN_DevStruct</a>
@@ -201,6 +226,9 @@ $(function() {
 
 
 <h3><a id="index_r"></a>- r -</h3><ul>
+<li>Rate
+: <a class="el" href="structAL__CAN__BitRateCfgStruct.html#ad53572cfda33e0bd1411c90664f2a6fe">AL_CAN_BitRateCfgStruct</a>
+</li>
 <li>RbAfwl
 : <a class="el" href="structAL__CAN__InitStruct.html#ac9f25674ce23a20d4115e4d6e47a6a76">AL_CAN_InitStruct</a>
 </li>
@@ -230,23 +258,27 @@ $(function() {
 
 <h3><a id="index_s"></a>- s -</h3><ul>
 <li>SlowBitRate
-: <a class="el" href="structAL__CAN__InitStruct.html#a22625c0fdbe070e0fe20eaa132f7001a">AL_CAN_InitStruct</a>
+: <a class="el" href="structAL__CAN__HwConfigStruct.html#ae897d5ddfbad45df46681932634eab24">AL_CAN_HwConfigStruct</a>
+, <a class="el" href="structAL__CAN__InitStruct.html#a1b0df6777aab6933f322fbdd2bd99127">AL_CAN_InitStruct</a>
 </li>
 <li>State
 : <a class="el" href="structAL__CAN__DevStruct.html#a5f773394785545e24704fcaeb9bfedce">AL_CAN_DevStruct</a>
 </li>
 <li>SyncJumpWidth
-: <a class="el" href="structAL__CAN__BitRateStruct.html#a95bc340d3513dafc19bad00be6ed3afd">AL_CAN_BitRateStruct</a>
+: <a class="el" href="structAL__CAN__BitRateCfgStruct.html#af2ab24839ee70316932452547baa1174">AL_CAN_BitRateCfgStruct</a>
 </li>
 </ul>
 
 
 <h3><a id="index_t"></a>- t -</h3><ul>
+<li>TimePos
+: <a class="el" href="structAL__CAN__InitStruct.html#a32554c48e2cd69ba9cf26aee0113970d">AL_CAN_InitStruct</a>
+</li>
 <li>TimeSeg1
-: <a class="el" href="structAL__CAN__BitRateStruct.html#a593e465e758daf929a0ddf453a64b688">AL_CAN_BitRateStruct</a>
+: <a class="el" href="structAL__CAN__BitRateCfgStruct.html#a57eca2395b61a41c500bef4d5076f5c9">AL_CAN_BitRateCfgStruct</a>
 </li>
 <li>TimeSeg2
-: <a class="el" href="structAL__CAN__BitRateStruct.html#a033ed7cdd43ed0c46464423cc0544515">AL_CAN_BitRateStruct</a>
+: <a class="el" href="structAL__CAN__BitRateCfgStruct.html#a3598edcbe1967fcfb6b78c496542e178">AL_CAN_BitRateCfgStruct</a>
 </li>
 <li>TransMode
 : <a class="el" href="structAL__CAN__InitStruct.html#a7960a3097926286d60da981a9f7f854f">AL_CAN_InitStruct</a>
@@ -261,8 +293,9 @@ $(function() {
 : <a class="el" href="structAL__CAN__HalStruct.html#a806acf569b6d4aea2e80a303de1ab743">AL_CAN_HalStruct</a>
 </li>
 <li>Type
-: <a class="el" href="structAL__CAN__BitRateStruct.html#a792f9bba673e334e0c7c6c94133460d0">AL_CAN_BitRateStruct</a>
+: <a class="el" href="structAL__CAN__BitRateCfgStruct.html#afd84599a731a525f555e7e74b389b655">AL_CAN_BitRateCfgStruct</a>
 , <a class="el" href="structAL__CAN__DefBitRateStruct.html#ae20f4bd83268c8301b5b1dc3d5391b26">AL_CAN_DefBitRateStruct</a>
+, <a class="el" href="structAL__CAN__HwConfigStruct.html#afe231797f34c1c39ddd68b35cc967047">AL_CAN_HwConfigStruct</a>
 , <a class="el" href="structAL__CAN__InitStruct.html#ae880e1e13f05c83415eade99fe5293a2">AL_CAN_InitStruct</a>
 </li>
 </ul>

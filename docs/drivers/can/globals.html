@@ -103,6 +103,9 @@ $(function() {
 <li>AL_CAN_BIT_F
 : <a class="el" href="al__can__dev_8h.html#a3e0d0525e661f82794642d55e5c3fa49a54109dfe0c4ade8c2d1c4179b3d39638">al_can_dev.h</a>
 </li>
+<li>AL_CAN_BIT_RATE_MAX
+: <a class="el" href="al__can__dev_8h.html#aa63b96d58731bf19451f11d188c2698aa2cfc63d2af1fc40efb74ba2ce03f03ba">al_can_dev.h</a>
+</li>
 <li>AL_CAN_BIT_S
 : <a class="el" href="al__can__dev_8h.html#a3e0d0525e661f82794642d55e5c3fa49a0c498f50aeac30f56e7b38a8df7e4c93">al_can_dev.h</a>
 </li>
@@ -407,9 +410,6 @@ $(function() {
 </li>
 <li>AL_CAN_IOCTL_SET_BIT_RATE
 : <a class="el" href="al__can__dev_8h.html#a70ed7c8026d4909007c9fd8b2cd9d9eda3291333da0416cea8e72a5f87c4d4a9b">al_can_dev.h</a>
-</li>
-<li>AL_CAN_IOCTL_SET_DEF_BIT_RATE
-: <a class="el" href="al__can__dev_8h.html#a70ed7c8026d4909007c9fd8b2cd9d9edaa84477a490d94a3e7c6f365ef054506b">al_can_dev.h</a>
 </li>
 <li>AL_CAN_IOCTL_SET_FILTER
 : <a class="el" href="al__can__dev_8h.html#a70ed7c8026d4909007c9fd8b2cd9d9eda66d7c60bdbd5a4e0933111ee072f4225">al_can_dev.h</a>
@@ -861,9 +861,6 @@ $(function() {
 <li>AL_CAN_TYPE_FD
 : <a class="el" href="al__can__dev_8h.html#a49860338771d55d469846d1b877c340ea5a7edfcbfc7c99bdc1a1bfc9dbc9be7f">al_can_dev.h</a>
 </li>
-<li>AL_CAN_TYPE_NOT_SET
-: <a class="el" href="al__can__dev_8h.html#a49860338771d55d469846d1b877c340ea2b0bb6b802133146614db6d8a3b5b63a">al_can_dev.h</a>
-</li>
 <li>AL_CAN_TypeEnum
 : <a class="el" href="al__can__dev_8h.html#a49860338771d55d469846d1b877c340e">al_can_dev.h</a>
 </li>
@@ -873,13 +870,20 @@ $(function() {
 <li>AlCan_Dev_ClrState()
 : <a class="el" href="al__can__dev_8c.html#aef8446bef751e73d30f7d54c1ba334fb">al_can_dev.c</a>
 </li>
+<li>AlCan_Dev_DecodeConfig()
+: <a class="el" href="al__can__dev_8c.html#a5105a503e66b928f1ba698d18c771e97">al_can_dev.c</a>
+</li>
 <li>AlCan_Dev_DecodeFrame()
 : <a class="el" href="al__can__dev_8h.html#ab5747aee30c037790e1baa13c9b57abc">al_can_dev.h</a>
 , <a class="el" href="al__can__dev_8c.html#ab5747aee30c037790e1baa13c9b57abc">al_can_dev.c</a>
 </li>
+<li>AlCan_Dev_DisplayConfig()
+: <a class="el" href="al__can__dev_8h.html#a37155a562e79321cf4b3d150efe9f675">al_can_dev.h</a>
+, <a class="el" href="al__can__dev_8c.html#a37155a562e79321cf4b3d150efe9f675">al_can_dev.c</a>
+</li>
 <li>AlCan_Dev_DisplayFrame()
-: <a class="el" href="al__can__dev_8c.html#acb0d4be6d062af9ec5e60531d3e3c130">al_can_dev.c</a>
-, <a class="el" href="al__can__dev_8h.html#acb0d4be6d062af9ec5e60531d3e3c130">al_can_dev.h</a>
+: <a class="el" href="al__can__dev_8h.html#acb0d4be6d062af9ec5e60531d3e3c130">al_can_dev.h</a>
+, <a class="el" href="al__can__dev_8c.html#acb0d4be6d062af9ec5e60531d3e3c130">al_can_dev.c</a>
 </li>
 <li>AlCan_Dev_Dlc2Len()
 : <a class="el" href="al__can__dev_8c.html#a2c19ec449e25a816c674632fce72f667">al_can_dev.c</a>
@@ -896,7 +900,7 @@ $(function() {
 : <a class="el" href="al__can__dev_8c.html#a01d0ca31df2201799af34074b221fdc8">al_can_dev.c</a>
 </li>
 <li>AlCan_Dev_GetBitRate()
-: <a class="el" href="al__can__dev_8c.html#a73919e34ff6a61a4ddf6c46446c6f5ea">al_can_dev.c</a>
+: <a class="el" href="al__can__dev_8c.html#adbdd50582de766828a09e5983bb2435b">al_can_dev.c</a>
 </li>
 <li>AlCan_Dev_GetDecodeError()
 : <a class="el" href="al__can__dev_8h.html#a26325908cc7d3aa4843756c63f8cbe5f">al_can_dev.h</a>
@@ -906,16 +910,16 @@ $(function() {
 : <a class="el" href="al__can__dev_8c.html#aa320d3fea70225ab12d498b01f71ef8d">al_can_dev.c</a>
 </li>
 <li>AlCan_Dev_GetState()
-: <a class="el" href="al__can__dev_8c.html#a8e6f0b0eb64815c09cf25ad8c22f05a8">al_can_dev.c</a>
-, <a class="el" href="al__can__hal_8c.html#a8e6f0b0eb64815c09cf25ad8c22f05a8">al_can_hal.c</a>
+: <a class="el" href="al__can__hal_8c.html#a8e6f0b0eb64815c09cf25ad8c22f05a8">al_can_hal.c</a>
+, <a class="el" href="al__can__dev_8c.html#a8e6f0b0eb64815c09cf25ad8c22f05a8">al_can_dev.c</a>
 </li>
 <li>AlCan_Dev_Init()
 : <a class="el" href="al__can__dev_8c.html#ab22259c57e3806d8632de6b80cfbd119">al_can_dev.c</a>
 , <a class="el" href="al__can__dev_8h.html#ab22259c57e3806d8632de6b80cfbd119">al_can_dev.h</a>
 </li>
 <li>AlCan_Dev_IntrHandler()
-: <a class="el" href="al__can__dev_8h.html#a420e0f72a553d7060a6122d1e8e1141b">al_can_dev.h</a>
-, <a class="el" href="al__can__dev_8c.html#abf2b70bf6c65a2ed66388b97d96e1881">al_can_dev.c</a>
+: <a class="el" href="al__can__dev_8c.html#abf2b70bf6c65a2ed66388b97d96e1881">al_can_dev.c</a>
+, <a class="el" href="al__can__dev_8h.html#a420e0f72a553d7060a6122d1e8e1141b">al_can_dev.h</a>
 </li>
 <li>AlCan_Dev_IoCtl()
 : <a class="el" href="al__can__dev_8c.html#a2cbea12d8480555629aa9d8d120ecc68">al_can_dev.c</a>
@@ -924,6 +928,10 @@ $(function() {
 <li>AlCan_Dev_LookupConfig()
 : <a class="el" href="al__can__dev_8c.html#ab8580262734275a4ca4bc70b70e153aa">al_can_dev.c</a>
 , <a class="el" href="al__can__dev_8h.html#ab8580262734275a4ca4bc70b70e153aa">al_can_dev.h</a>
+</li>
+<li>AlCan_Dev_ModifyHwConfig()
+: <a class="el" href="al__can__dev_8c.html#a6014f39cdbe9e77eabecd1744a7e2f41">al_can_dev.c</a>
+, <a class="el" href="al__can__dev_8h.html#a6014f39cdbe9e77eabecd1744a7e2f41">al_can_dev.h</a>
 </li>
 <li>AlCan_Dev_RecvFrame()
 : <a class="el" href="al__can__dev_8c.html#af196580363c66df574cd15a2397ed602">al_can_dev.c</a>
@@ -937,20 +945,20 @@ $(function() {
 , <a class="el" href="al__can__dev_8c.html#a4e884dcf40b4cf0e2c3dc77e2429b29d">al_can_dev.c</a>
 </li>
 <li>AlCan_Dev_SendFrame()
-: <a class="el" href="al__can__dev_8h.html#af1040c663be2f6721178bd2f5fd45fe4">al_can_dev.h</a>
-, <a class="el" href="al__can__dev_8c.html#af1040c663be2f6721178bd2f5fd45fe4">al_can_dev.c</a>
+: <a class="el" href="al__can__dev_8c.html#af1040c663be2f6721178bd2f5fd45fe4">al_can_dev.c</a>
+, <a class="el" href="al__can__dev_8h.html#af1040c663be2f6721178bd2f5fd45fe4">al_can_dev.h</a>
 </li>
 <li>AlCan_Dev_SendFrameHandler()
 : <a class="el" href="al__can__dev_8c.html#a25dfb75f2f2af9977001fc1dc19cea94">al_can_dev.c</a>
 </li>
 <li>AlCan_Dev_SetBitRate()
-: <a class="el" href="al__can__dev_8c.html#a4036290a56815a7a273663770724e696">al_can_dev.c</a>
+: <a class="el" href="al__can__dev_8c.html#a4703e178765a8d16fd1f3568f295d2ae">al_can_dev.c</a>
 </li>
 <li>AlCan_Dev_SetCanType()
 : <a class="el" href="al__can__dev_8c.html#a3584e984c65a5428d0c93c5cc11897fc">al_can_dev.c</a>
 </li>
 <li>AlCan_Dev_SetDefBitRate()
-: <a class="el" href="al__can__dev_8c.html#abc03ad7307572ab3c720ab872f11413d">al_can_dev.c</a>
+: <a class="el" href="al__can__dev_8c.html#a721bc706a74b6ddc3557512fa3fc4181">al_can_dev.c</a>
 </li>
 <li>AlCan_Dev_SetFilter()
 : <a class="el" href="al__can__dev_8c.html#adc4e3fa004156f85a624e517a0e2fe86">al_can_dev.c</a>
@@ -985,12 +993,12 @@ $(function() {
 , <a class="el" href="al__can__hal_8c.html#a421f207e153cb20f371b4c7e0ebbeb88">al_can_hal.c</a>
 </li>
 <li>AlCan_Hal_IoCtl()
-: <a class="el" href="al__can__hal_8c.html#ab5f792454975acc8311a730d23fa4cf4">al_can_hal.c</a>
-, <a class="el" href="al__can__hal_8h.html#ab5f792454975acc8311a730d23fa4cf4">al_can_hal.h</a>
+: <a class="el" href="al__can__hal_8h.html#ab5f792454975acc8311a730d23fa4cf4">al_can_hal.h</a>
+, <a class="el" href="al__can__hal_8c.html#ab5f792454975acc8311a730d23fa4cf4">al_can_hal.c</a>
 </li>
 <li>AlCan_Hal_RecvFrame()
-: <a class="el" href="al__can__hal_8c.html#aa6e830fcd18a6f2926f805b5adc57947">al_can_hal.c</a>
-, <a class="el" href="al__can__hal_8h.html#aa6e830fcd18a6f2926f805b5adc57947">al_can_hal.h</a>
+: <a class="el" href="al__can__hal_8h.html#aa6e830fcd18a6f2926f805b5adc57947">al_can_hal.h</a>
+, <a class="el" href="al__can__hal_8c.html#aa6e830fcd18a6f2926f805b5adc57947">al_can_hal.c</a>
 </li>
 <li>AlCan_Hal_RecvFrameBlock()
 : <a class="el" href="al__can__hal_8h.html#a75c29fd32d9f407b92b0ea766f0e914a">al_can_hal.h</a>
@@ -1001,12 +1009,12 @@ $(function() {
 , <a class="el" href="al__can__hal_8c.html#a4ea775843fe0ec61aa9defb2b853b112">al_can_hal.c</a>
 </li>
 <li>AlCan_Hal_SendFrame()
-: <a class="el" href="al__can__hal_8c.html#a76214637ac3c321be7677891bbbae1eb">al_can_hal.c</a>
-, <a class="el" href="al__can__hal_8h.html#a76214637ac3c321be7677891bbbae1eb">al_can_hal.h</a>
+: <a class="el" href="al__can__hal_8h.html#a76214637ac3c321be7677891bbbae1eb">al_can_hal.h</a>
+, <a class="el" href="al__can__hal_8c.html#a76214637ac3c321be7677891bbbae1eb">al_can_hal.c</a>
 </li>
 <li>AlCan_Hal_SendFrameBlock()
-: <a class="el" href="al__can__hal_8c.html#a30dce15fe5805f9a503a4c963cdc590e">al_can_hal.c</a>
-, <a class="el" href="al__can__hal_8h.html#a30dce15fe5805f9a503a4c963cdc590e">al_can_hal.h</a>
+: <a class="el" href="al__can__hal_8h.html#a30dce15fe5805f9a503a4c963cdc590e">al_can_hal.h</a>
+, <a class="el" href="al__can__hal_8c.html#a30dce15fe5805f9a503a4c963cdc590e">al_can_hal.c</a>
 </li>
 <li>AlCan_Hal_WaitRecvNotEmptyOrTimeout()
 : <a class="el" href="al__can__hal_8c.html#a2fcf4d65e1bf7969a5aafaa9675ec42e">al_can_hal.c</a>
@@ -1054,6 +1062,9 @@ $(function() {
 <li>AlCan_ll_GetSsjw()
 : <a class="el" href="al__can__ll_8h.html#acda0b09e13524e1d483f9fd37c9894e7">al_can_ll.h</a>
 </li>
+<li>AlCan_ll_GetTimepos()
+: <a class="el" href="al__can__ll_8h.html#a7b1d9d3c93e65d6b4c957eaad29a7b5b">al_can_ll.h</a>
+</li>
 <li>AlCan_ll_GetUmaskIntrStatus()
 : <a class="el" href="al__can__ll_8h.html#aee4c20db9c152efe4cd06a29e998b037">al_can_ll.h</a>
 </li>
@@ -1078,8 +1089,20 @@ $(function() {
 <li>AlCan_ll_IsStby()
 : <a class="el" href="al__can__ll_8h.html#ab630602138b6fdf705aec0f70767f86c">al_can_ll.h</a>
 </li>
+<li>AlCan_ll_IsTimeen()
+: <a class="el" href="al__can__ll_8h.html#af7136c6c103ef904b88c72d4604de563">al_can_ll.h</a>
+</li>
 <li>AlCan_ll_ReadAcodexAmaskx()
 : <a class="el" href="al__can__ll_8h.html#abba74e6d413d887bcfab0368571dff89">al_can_ll.h</a>
+</li>
+<li>AlCan_ll_ReadCfgstatTcmdTctrlRctrl()
+: <a class="el" href="al__can__ll_8h.html#aaa3f73bffc52b90bb908873050f52c55">al_can_ll.h</a>
+</li>
+<li>AlCan_ll_ReadLimitErrintRtifRtie()
+: <a class="el" href="al__can__ll_8h.html#ab9db297f9913aede532e3b87c8cc515a">al_can_ll.h</a>
+</li>
+<li>AlCan_ll_ReadVerxTbslotTtcfg()
+: <a class="el" href="al__can__ll_8h.html#ab0b8a7b31567a9199ed18d4bea60b65b">al_can_ll.h</a>
 </li>
 <li>AlCan_ll_ReadWordRecvBuffer()
 : <a class="el" href="al__can__ll_8h.html#ac3d236bb56380403aaffc13c5662414d">al_can_ll.h</a>
@@ -1165,6 +1188,12 @@ $(function() {
 <li>AlCan_ll_SetTdcen()
 : <a class="el" href="al__can__ll_8h.html#a7978b42f2228ba405a261bf6e342aeb2">al_can_ll.h</a>
 </li>
+<li>AlCan_ll_SetTimeen()
+: <a class="el" href="al__can__ll_8h.html#ab708c3c10fc114c497da33cdb402102a">al_can_ll.h</a>
+</li>
+<li>AlCan_ll_SetTimepos()
+: <a class="el" href="al__can__ll_8h.html#ab9c9314f23de4b094c936e0d2391b310">al_can_ll.h</a>
+</li>
 <li>AlCan_ll_SetTpe()
 : <a class="el" href="al__can__ll_8h.html#a4e6a7204154350ee73fd439f11a361b4">al_can_ll.h</a>
 </li>
@@ -1185,6 +1214,15 @@ $(function() {
 </li>
 <li>AlCan_ll_WriteAcodexAmaskx()
 : <a class="el" href="al__can__ll_8h.html#a3aabc180863cad2c4f334c0fb3c16863">al_can_ll.h</a>
+</li>
+<li>AlCan_ll_WriteCfgstatTcmdTctrlRctrl()
+: <a class="el" href="al__can__ll_8h.html#a3127fd91e26c813b1cf61ef32700dfd6">al_can_ll.h</a>
+</li>
+<li>AlCan_ll_WriteLimitErrintRtifRtie()
+: <a class="el" href="al__can__ll_8h.html#a034b240509ba0a290951b7d4be16b794">al_can_ll.h</a>
+</li>
+<li>AlCan_ll_WriteVerxTbslotTtcfg()
+: <a class="el" href="al__can__ll_8h.html#a3a37a315a058e73d5376daed57596092">al_can_ll.h</a>
 </li>
 <li>AlCan_ll_WriteWordSendBuffer()
 : <a class="el" href="al__can__ll_8h.html#a229f3ddfca11c42586f5facac53b9d3a">al_can_ll.h</a>

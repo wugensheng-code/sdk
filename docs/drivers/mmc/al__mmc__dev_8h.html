@@ -262,8 +262,17 @@ Enumerations</h2></td></tr>
 <a class="el" href="al__mmc__dev_8h.html#aca874cd4735b3ce642b9071eba1908f3a153e616be09198d2ace11cbe316dff7d">AL_MMC_BUS_WIDTH_8BIT</a> = (0x8)
  }</td></tr>
 <tr class="separator:aca874cd4735b3ce642b9071eba1908f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73585e2b48b96924e77982b7bafac307"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307">AL_MMC_SpdModeEnum</a> { <a class="el" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a58b0cfd75a3987235c7155e677fee430">AL_MMC_SPD_DS_SDR12</a>, 
-<a class="el" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a6b9c86a2158843e19e38812b848435fc">AL_MMC_SPD_HS_SDR25</a>
+<tr class="memitem:a73585e2b48b96924e77982b7bafac307"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307">AL_MMC_SpdModeEnum</a> { <br />
+&#160;&#160;<a class="el" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a58b0cfd75a3987235c7155e677fee430">AL_MMC_SPD_DS_SDR12</a>, 
+<a class="el" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a6b9c86a2158843e19e38812b848435fc">AL_MMC_SPD_HS_SDR25</a>, 
+<a class="el" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a91a9e3cdcca9ed72f0dbf1e8cf217933">AL_MMC_SPD_SDR50</a>, 
+<a class="el" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307ab3aa46a46c3dd9c59d168587ef8c34b3">AL_MMC_SPD_SDR104_HS200</a>, 
+<br />
+&#160;&#160;<a class="el" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a3c54f73fe0a9d0bbb81dd732e2473beb">AL_MMC_SPD_DDR50_HS_DDR</a>, 
+<a class="el" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307ab38dc04a9f2d211da14161f6caa44561">AL_MMC_SPD_RSVD_1</a>, 
+<a class="el" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a02dacbc4510c6dcea5217ce96db637ac">AL_MMC_SPD_RSVD_2</a>, 
+<a class="el" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a3ff725d980f2bcf20b0e263e8edb7d0e">AL_MMC_SPD_UHS_II_HS400</a>
+<br />
  }</td></tr>
 <tr class="separator:a73585e2b48b96924e77982b7bafac307"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb9841389075a4e5017e11217d207a48"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__mmc__dev_8h.html#aeb9841389075a4e5017e11217d207a48">AL_MMC_FreqKhzEnum</a> { <br />
@@ -291,7 +300,7 @@ Enumerations</h2></td></tr>
 <a class="el" href="al__mmc__dev_8h.html#aeb9841389075a4e5017e11217d207a48a77fc0cbefaf612fb50917df89d41fb4e">AL_MMC_FREQ_KHZ_50000</a> = 50000, 
 <a class="el" href="al__mmc__dev_8h.html#aeb9841389075a4e5017e11217d207a48a15a7feee973315dfedeb89a50d2d90aa">AL_MMC_FREQ_KHZ_52000</a> = 52000
 <br />
- }<tr class="memdesc:aeb9841389075a4e5017e11217d207a48"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bus frequency.  <a href="al__mmc__dev_8h.html#aeb9841389075a4e5017e11217d207a48">More...</a><br /></td></tr>
+ }<tr class="memdesc:aeb9841389075a4e5017e11217d207a48"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bus frequency, follow HPF config.  <a href="al__mmc__dev_8h.html#aeb9841389075a4e5017e11217d207a48">More...</a><br /></td></tr>
 </td></tr>
 <tr class="separator:aeb9841389075a4e5017e11217d207a48"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe575adbf71d1892173db5c56681a7a2"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__mmc__dev_8h.html#abe575adbf71d1892173db5c56681a7a2">AL_MMC_IntrEnum</a> { <br />
@@ -1110,7 +1119,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Bus frequency. </p>
+<p>Bus frequency, follow HPF config. </p>
 <dl class="section note"><dt>Note</dt><dd>SD: &lt;25Mhz, 3.3V: DS &gt;25Mhz, &lt;50Mhz, 3.3V: HS &lt;25Mhz, 1.8V: SDR12 &gt;25Mhz, &lt;50Mhz, 1.8V: SDR25 &gt;50Mhz, &lt;100Mhz, 1.8V: SDR50 eMMC: &lt;26Mhz: Backwards Compatibility with legacy MMC card(DS) &gt;26Mhz, &lt;52Mhz: high speed SDR </dd></dl>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aeb9841389075a4e5017e11217d207a48aaf4342f41e1c535dbbea250c2aa826be"></a>AL_MMC_FREQ_KHZ_HPF&#160;</td><td class="fielddoc"></td></tr>
@@ -1211,6 +1220,12 @@ Functions</h2></td></tr>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a73585e2b48b96924e77982b7bafac307a58b0cfd75a3987235c7155e677fee430"></a>AL_MMC_SPD_DS_SDR12&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a73585e2b48b96924e77982b7bafac307a6b9c86a2158843e19e38812b848435fc"></a>AL_MMC_SPD_HS_SDR25&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a73585e2b48b96924e77982b7bafac307a91a9e3cdcca9ed72f0dbf1e8cf217933"></a>AL_MMC_SPD_SDR50&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a73585e2b48b96924e77982b7bafac307ab3aa46a46c3dd9c59d168587ef8c34b3"></a>AL_MMC_SPD_SDR104_HS200&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a73585e2b48b96924e77982b7bafac307a3c54f73fe0a9d0bbb81dd732e2473beb"></a>AL_MMC_SPD_DDR50_HS_DDR&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a73585e2b48b96924e77982b7bafac307ab38dc04a9f2d211da14161f6caa44561"></a>AL_MMC_SPD_RSVD_1&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a73585e2b48b96924e77982b7bafac307a02dacbc4510c6dcea5217ce96db637ac"></a>AL_MMC_SPD_RSVD_2&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a73585e2b48b96924e77982b7bafac307a3ff725d980f2bcf20b0e263e8edb7d0e"></a>AL_MMC_SPD_UHS_II_HS400&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 </div>

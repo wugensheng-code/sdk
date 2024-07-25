@@ -1,7 +1,7 @@
 var searchData=
 [
   ['sendbuffer',['SendBuffer',['../structAL__SPI__DevStruct.html#a25a2268d0903cf574fec662dea2d7222',1,'AL_SPI_DevStruct']]],
-  ['senddata',['SendData',['../al__spi__slave_8c.html#a7742caf20a254410f384cc8ff6d4c265',1,'al_spi_slave.c']]],
+  ['senddata',['SendData',['../al__spi__master_8c.html#a7742caf20a254410f384cc8ff6d4c265',1,'SendData():&#160;al_spi_master.c'],['../al__spi__slave_8c.html#a7742caf20a254410f384cc8ff6d4c265',1,'SendData():&#160;al_spi_slave.c']]],
   ['slvselenum',['SlvSelEnum',['../structAL__SPI__TransStruct.html#ad964ef42fd2c177112ce726880141a71',1,'AL_SPI_TransStruct']]],
   ['slvtoggleenum',['SlvToggleEnum',['../structAL__SPI__ConfigsStruct.html#a32853c2fff04ea2d543dab3ddf330e39',1,'AL_SPI_ConfigsStruct']]],
   ['spi0rxdmacchconfig',['Spi0RxDmacChConfig',['../al__spi__hal_8c.html#a67f754e06e5999bbd230bf2a415d232d',1,'al_spi_hal.c']]],
@@ -307,7 +307,7 @@ var searchData=
   ['spi_5ftxoicr_5fmst_5ftxoicr_5fsize',['SPI_TXOICR_MST_TXOICR_SIZE',['../al__spi__hw_8h.html#a4d716993e7c83e6e4ccf510c504a8eac',1,'al_spi_hw.h']]],
   ['spi_5ftxoim',['SPI_TXOIM',['../al__spi__ll_8h.html#ae7191eb39e79042ef59fba48919cc3e6a4982ad96c54d87f05239dc943bec6e39',1,'al_spi_ll.h']]],
   ['spidefinitconfigs',['SpiDefInitConfigs',['../al__spi__dev_8c.html#aff753ba4be5069a210847b4635dd7187',1,'al_spi_dev.c']]],
-  ['spiinitconfigs',['SpiInitConfigs',['../al__spi__dma__nor_8c.html#a9c68f5b369a6285790a39518749736af',1,'SpiInitConfigs():&#160;al_spi_dma_nor.c'],['../al__spi__nor_8c.html#a9c68f5b369a6285790a39518749736af',1,'SpiInitConfigs():&#160;al_spi_nor.c'],['../al__spi__slave_8c.html#a9c68f5b369a6285790a39518749736af',1,'SpiInitConfigs():&#160;al_spi_slave.c']]],
+  ['spiinitconfigs',['SpiInitConfigs',['../al__spi__dma__nor_8c.html#a9c68f5b369a6285790a39518749736af',1,'SpiInitConfigs():&#160;al_spi_dma_nor.c'],['../al__spi__master_8c.html#a9c68f5b369a6285790a39518749736af',1,'SpiInitConfigs():&#160;al_spi_master.c'],['../al__spi__nor_8c.html#a9c68f5b369a6285790a39518749736af',1,'SpiInitConfigs():&#160;al_spi_nor.c'],['../al__spi__slave_8c.html#a9c68f5b369a6285790a39518749736af',1,'SpiInitConfigs():&#160;al_spi_slave.c']]],
   ['spilock',['SpiLock',['../structAL__SPI__HalStruct.html#a976eb1242691924bd421835129d9ae0a',1,'AL_SPI_HalStruct']]],
   ['sr1_5fquad_5fen_5fbit6',['SR1_QUAD_EN_BIT6',['../al__spinor_8h.html#a4967aef05a563630af61e0d292d8347b',1,'al_spinor.h']]],
   ['sr2_5flb1',['SR2_LB1',['../al__spinor_8h.html#a1f7be40a97c2e1972b44801edb4eebfe',1,'al_spinor.h']]],

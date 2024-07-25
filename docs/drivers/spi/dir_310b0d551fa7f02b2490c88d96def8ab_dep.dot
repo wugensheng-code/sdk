@@ -13,5 +13,5 @@ digraph "fpsoc/driver/ps_driver/spi" {
   }
   }
   dir_e289475b7294c819edae4a4eb055d5ff->dir_666ccb4cd30577991bc034e60377c3bf [headlabel="3", labeldistance=1.5 headhref="dir_000006_000005.html"];
-  dir_1db3e606d9535d779261eb3cb690ae9c->dir_666ccb4cd30577991bc034e60377c3bf [headlabel="6", labeldistance=1.5 headhref="dir_000004_000005.html"];
+  dir_1db3e606d9535d779261eb3cb690ae9c->dir_666ccb4cd30577991bc034e60377c3bf [headlabel="8", labeldistance=1.5 headhref="dir_000004_000005.html"];
 }

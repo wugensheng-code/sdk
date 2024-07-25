@@ -71,6 +71,9 @@ $(function() {
 <div class="title">al_dma_mem_cpy_performance.c File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>axi dma mem cpy performance example  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;string.h&gt;</code><br />
 <code>#include &lt;malloc.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="al__dma__hal_8h_source.html">al_dma_hal.h</a>&quot;</code><br />
@@ -112,7 +115,12 @@ Variables</h2></td></tr>
 <tr class="memitem:abb50eb3ec8fe1c91f8075208b1eab76e"><td class="memItemLeft" align="right" valign="top">AL_U64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__dma__mem__cpy__performance_8c.html#abb50eb3ec8fe1c91f8075208b1eab76e">End</a></td></tr>
 <tr class="separator:abb50eb3ec8fe1c91f8075208b1eab76e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Macro Definition Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>axi dma mem cpy performance example </p>
+<dl class="section author"><dt>Author</dt><dd>Anlogic esw team </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>V0.0.1 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2023-09-01 </dd></dl>
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a40b6d00cbed8e140ed96ffb5656dedcd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a40b6d00cbed8e140ed96ffb5656dedcd">&#9670;&nbsp;</a></span>AL_DMA_EX_DATA_SIZE_IN_WORD</h2>
 
@@ -221,8 +229,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">= {</div><div class="line">    .Direction      = <a class="code" href="group__DMA__Exported__Definition__Group1.html#ggab86db94f31121b351cd50edcb49a4417ad1dbede1911411f57ee96d9d797c19bf">DMA_MEM_TO_MEM</a>,</div><div class="line">    .SrcAddrWidth   = <a class="code" href="group__DMA__Exported__Definition__Group1.html#ggacd9d16f9aafdfa3c6bdaf8a77ec66ba4a37d1dd58ca62cabc6222b9bee6277bc6">DMA_CH_BUSWIDTH_8_BYTES</a>,</div><div class="line">    .DstAddrWidth   = <a class="code" href="group__DMA__Exported__Definition__Group1.html#ggacd9d16f9aafdfa3c6bdaf8a77ec66ba4a37d1dd58ca62cabc6222b9bee6277bc6">DMA_CH_BUSWIDTH_8_BYTES</a>,</div><div class="line">    .SrcMaxBurst    = 8,</div><div class="line">    .DstMaxBurst    = 8,</div><div class="line">}</div><div class="ttc" id="group__DMA__Exported__Definition__Group1_html_ggab86db94f31121b351cd50edcb49a4417ad1dbede1911411f57ee96d9d797c19bf"><div class="ttname"><a href="group__DMA__Exported__Definition__Group1.html#ggab86db94f31121b351cd50edcb49a4417ad1dbede1911411f57ee96d9d797c19bf">DMA_MEM_TO_MEM</a></div><div class="ttdef"><b>Definition:</b> al_dma_dev.h:75</div></div>
-<div class="ttc" id="group__DMA__Exported__Definition__Group1_html_ggacd9d16f9aafdfa3c6bdaf8a77ec66ba4a37d1dd58ca62cabc6222b9bee6277bc6"><div class="ttname"><a href="group__DMA__Exported__Definition__Group1.html#ggacd9d16f9aafdfa3c6bdaf8a77ec66ba4a37d1dd58ca62cabc6222b9bee6277bc6">DMA_CH_BUSWIDTH_8_BYTES</a></div><div class="ttdef"><b>Definition:</b> al_dma_dev.h:92</div></div>
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div><div class="line">    .Direction      = <a class="code" href="group__DMA__Exported__Definition__Group1.html#ggab86db94f31121b351cd50edcb49a4417ad1dbede1911411f57ee96d9d797c19bf">DMA_MEM_TO_MEM</a>,</div><div class="line">    .SrcAddrWidth   = <a class="code" href="group__DMA__Exported__Definition__Group1.html#ggacd9d16f9aafdfa3c6bdaf8a77ec66ba4a386984b438d648a04b3c3617c2adefcd">DMA_CH_BUSWIDTH_16_BYTES</a>,</div><div class="line">    .DstAddrWidth   = <a class="code" href="group__DMA__Exported__Definition__Group1.html#ggacd9d16f9aafdfa3c6bdaf8a77ec66ba4a386984b438d648a04b3c3617c2adefcd">DMA_CH_BUSWIDTH_16_BYTES</a>,</div><div class="line">    .SrcMaxBurst    = 8,</div><div class="line">    .DstMaxBurst    = 8,</div><div class="line">}</div><div class="ttc" id="group__DMA__Exported__Definition__Group1_html_ggacd9d16f9aafdfa3c6bdaf8a77ec66ba4a386984b438d648a04b3c3617c2adefcd"><div class="ttname"><a href="group__DMA__Exported__Definition__Group1.html#ggacd9d16f9aafdfa3c6bdaf8a77ec66ba4a386984b438d648a04b3c3617c2adefcd">DMA_CH_BUSWIDTH_16_BYTES</a></div><div class="ttdef"><b>Definition:</b> al_dma_dev.h:93</div></div>
+<div class="ttc" id="group__DMA__Exported__Definition__Group1_html_ggab86db94f31121b351cd50edcb49a4417ad1dbede1911411f57ee96d9d797c19bf"><div class="ttname"><a href="group__DMA__Exported__Definition__Group1.html#ggab86db94f31121b351cd50edcb49a4417ad1dbede1911411f57ee96d9d797c19bf">DMA_MEM_TO_MEM</a></div><div class="ttdef"><b>Definition:</b> al_dma_dev.h:75</div></div>
 </div><!-- fragment --><dl><dt><b>Examples: </b></dt><dd><a class="el" href="al_dma_mem_cpy_performance_8c-example.html#a4">al_dma_mem_cpy_performance.c</a>.</dd>
 </dl>
 </div>

@@ -14,6 +14,7 @@ var searchData=
   ['al_5fcan_5farbitration_5f0_5f25m',['AL_CAN_ARBITRATION_0_25M',['../al__can__dev_8h.html#aa63b96d58731bf19451f11d188c2698aa688b009fc9649f4a9d2d10a5a4b4fb31',1,'al_can_dev.h']]],
   ['al_5fcan_5farbitration_5f0_5f5m',['AL_CAN_ARBITRATION_0_5M',['../al__can__dev_8h.html#aa63b96d58731bf19451f11d188c2698aae662bd30deaa55c5fe126e4325d15702',1,'al_can_dev.h']]],
   ['al_5fcan_5fbit_5ff',['AL_CAN_BIT_F',['../al__can__dev_8h.html#a3e0d0525e661f82794642d55e5c3fa49a54109dfe0c4ade8c2d1c4179b3d39638',1,'al_can_dev.h']]],
+  ['al_5fcan_5fbit_5frate_5fmax',['AL_CAN_BIT_RATE_MAX',['../al__can__dev_8h.html#aa63b96d58731bf19451f11d188c2698aa2cfc63d2af1fc40efb74ba2ce03f03ba',1,'al_can_dev.h']]],
   ['al_5fcan_5fbit_5fs',['AL_CAN_BIT_S',['../al__can__dev_8h.html#a3e0d0525e661f82794642d55e5c3fa49a0c498f50aeac30f56e7b38a8df7e4c93',1,'al_can_dev.h']]],
   ['al_5fcan_5fevent_5fabort',['AL_CAN_EVENT_ABORT',['../al__can__dev_8h.html#a49d6a3e6f3cc15cb9c5590a0046403d1a706220eb983882b6d791921685426dae',1,'al_can_dev.h']]],
   ['al_5fcan_5fevent_5farbitration_5flost',['AL_CAN_EVENT_ARBITRATION_LOST',['../al__can__dev_8h.html#a49d6a3e6f3cc15cb9c5590a0046403d1a0931af1e1c42b316239e2067838a262d',1,'al_can_dev.h']]],
@@ -44,7 +45,6 @@ var searchData=
   ['al_5fcan_5fioctl_5fget_5fkoer',['AL_CAN_IOCTL_GET_KOER',['../al__can__dev_8h.html#a70ed7c8026d4909007c9fd8b2cd9d9eda4c7d38039a20c0c73179ebcbf8f2b53f',1,'al_can_dev.h']]],
   ['al_5fcan_5fioctl_5fget_5fstate',['AL_CAN_IOCTL_GET_STATE',['../al__can__dev_8h.html#a70ed7c8026d4909007c9fd8b2cd9d9edaefe667b06092e5d4565db207b602eb77',1,'al_can_dev.h']]],
   ['al_5fcan_5fioctl_5fset_5fbit_5frate',['AL_CAN_IOCTL_SET_BIT_RATE',['../al__can__dev_8h.html#a70ed7c8026d4909007c9fd8b2cd9d9eda3291333da0416cea8e72a5f87c4d4a9b',1,'al_can_dev.h']]],
-  ['al_5fcan_5fioctl_5fset_5fdef_5fbit_5frate',['AL_CAN_IOCTL_SET_DEF_BIT_RATE',['../al__can__dev_8h.html#a70ed7c8026d4909007c9fd8b2cd9d9edaa84477a490d94a3e7c6f365ef054506b',1,'al_can_dev.h']]],
   ['al_5fcan_5fioctl_5fset_5ffilter',['AL_CAN_IOCTL_SET_FILTER',['../al__can__dev_8h.html#a70ed7c8026d4909007c9fd8b2cd9d9eda66d7c60bdbd5a4e0933111ee072f4225',1,'al_can_dev.h']]],
   ['al_5fcan_5fioctl_5fset_5freset',['AL_CAN_IOCTL_SET_RESET',['../al__can__dev_8h.html#a70ed7c8026d4909007c9fd8b2cd9d9edaee554651b3915ba69d22b1e32b52ea29',1,'al_can_dev.h']]],
   ['al_5fcan_5fioctl_5fset_5fstate',['AL_CAN_IOCTL_SET_STATE',['../al__can__dev_8h.html#a70ed7c8026d4909007c9fd8b2cd9d9edabe2ccd0d98880a4f445ea0e46a1d0360',1,'al_can_dev.h']]],
@@ -154,6 +154,5 @@ var searchData=
   ['al_5fcan_5fttype_5ftrans_5fstart_5ftrigger',['AL_CAN_TTYPE_TRANS_START_TRIGGER',['../al__can__ll_8h.html#a6dfc92d70c06ecf462d37a1f0f62e5faa80382d7b4bd7dfd387a73f190ecb6fcf',1,'al_can_ll.h']]],
   ['al_5fcan_5fttype_5ftrans_5fstop_5ftrigger',['AL_CAN_TTYPE_TRANS_STOP_TRIGGER',['../al__can__ll_8h.html#a6dfc92d70c06ecf462d37a1f0f62e5faadfa5dea172bc7438e9bf7fd4525dd753',1,'al_can_ll.h']]],
   ['al_5fcan_5ftype_5f2_5f0b',['AL_CAN_TYPE_2_0B',['../al__can__dev_8h.html#a49860338771d55d469846d1b877c340eafb9fd9859fff6879e3873b7f75eca1b7',1,'al_can_dev.h']]],
-  ['al_5fcan_5ftype_5ffd',['AL_CAN_TYPE_FD',['../al__can__dev_8h.html#a49860338771d55d469846d1b877c340ea5a7edfcbfc7c99bdc1a1bfc9dbc9be7f',1,'al_can_dev.h']]],
-  ['al_5fcan_5ftype_5fnot_5fset',['AL_CAN_TYPE_NOT_SET',['../al__can__dev_8h.html#a49860338771d55d469846d1b877c340ea2b0bb6b802133146614db6d8a3b5b63a',1,'al_can_dev.h']]]
+  ['al_5fcan_5ftype_5ffd',['AL_CAN_TYPE_FD',['../al__can__dev_8h.html#a49860338771d55d469846d1b877c340ea5a7edfcbfc7c99bdc1a1bfc9dbc9be7f',1,'al_can_dev.h']]]
 ];

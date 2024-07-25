@@ -7,5 +7,5 @@ digraph "fpsoc/driver/ps_driver/spi/example" {
   dir_1db3e606d9535d779261eb3cb690ae9c [shape=box, label="example", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_1db3e606d9535d779261eb3cb690ae9c.html"];
   }
   dir_666ccb4cd30577991bc034e60377c3bf [shape=box label="inc" URL="dir_666ccb4cd30577991bc034e60377c3bf.html"];
-  dir_1db3e606d9535d779261eb3cb690ae9c->dir_666ccb4cd30577991bc034e60377c3bf [headlabel="6", labeldistance=1.5 headhref="dir_000004_000005.html"];
+  dir_1db3e606d9535d779261eb3cb690ae9c->dir_666ccb4cd30577991bc034e60377c3bf [headlabel="8", labeldistance=1.5 headhref="dir_000004_000005.html"];
 }

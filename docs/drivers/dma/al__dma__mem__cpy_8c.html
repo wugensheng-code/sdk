@@ -69,6 +69,9 @@ $(function() {
 <div class="title">al_dma_mem_cpy.c File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>axi dma mem cpy example  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;string.h&gt;</code><br />
 <code>#include &lt;malloc.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="al__dma__hal_8h_source.html">al_dma_hal.h</a>&quot;</code><br />
@@ -92,7 +95,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a7692d86a53d32e905d9d4b3dd8a1d19d"><td class="memItemLeft" align="right" valign="top">AL_S32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__dma__mem__cpy_8c.html#a7692d86a53d32e905d9d4b3dd8a1d19d">main</a> (AL_VOID)</td></tr>
 <tr class="separator:a7692d86a53d32e905d9d4b3dd8a1d19d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Macro Definition Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>axi dma mem cpy example </p>
+<dl class="section author"><dt>Author</dt><dd>Anlogic esw team </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>V0.0.1 </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2023-09-01 </dd></dl>
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a750e48f6c0e9e07c8d3c31482367b227"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a750e48f6c0e9e07c8d3c31482367b227">&#9670;&nbsp;</a></span>AL_DMA_EX_DATA_SIZE</h2>
 
@@ -104,7 +112,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="al_dma_mem_cpy_8c-example.html#a3">al_dma_mem_cpy.c</a>.</dd>
+</dl>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
@@ -133,7 +142,8 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>This function allocates aligned memory for source and destination buffers, initializes local interrupts, and enters a loop where it continuously updates the source buffer, performs a memory copy from source to destination, verifies the copied data, and clears the destination buffer for the next iteration. It logs each step of the process and checks for errors. If an error occurs during memory copy or data verification, it logs the error and exits. The function also handles cache flushing if MMU is enabled.</p>
 <dl class="section return"><dt>Returns</dt><dd>AL_S32 Returns AL_OK if the memory copy and verification are successful, or an error code if an error occurs. </dd></dl>
-
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="al_dma_mem_cpy_8c-example.html#a0">al_dma_mem_cpy.c</a>.</dd>
+</dl>
 </div>
 </div>
 <a id="a7692d86a53d32e905d9d4b3dd8a1d19d"></a>
@@ -153,7 +163,8 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>This function initializes the DMA memory copy test, executes it, and logs the result. If the test fails, it logs an error message and returns the error code.</p>
 <dl class="section return"><dt>Returns</dt><dd>AL_S32 Returns AL_OK if the test is successful, or an error code if the test fails. </dd></dl>
-
+<dl><dt><b>Examples: </b></dt><dd><a class="el" href="al_dma_mem_cpy_8c-example.html#a1">al_dma_mem_cpy.c</a>.</dd>
+</dl>
 </div>
 </div>
 </div><!-- contents -->

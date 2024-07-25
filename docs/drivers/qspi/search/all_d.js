@@ -2,7 +2,7 @@ var searchData=
 [
   ['sampldelay',['SamplDelay',['../structAL__QSPI__ConfigsStruct.html#a9d38adb140b97cdc682e231353a05fc0',1,'AL_QSPI_ConfigsStruct']]],
   ['sendbuffer',['SendBuffer',['../structAL__QSPI__DevStruct.html#ae04790e1ff6b58a07f9d8ae803dcd38b',1,'AL_QSPI_DevStruct']]],
-  ['senddata',['SendData',['../al__qspi__x1__nor_8c.html#a7650c8650fd9e62f08934826c5e26f80',1,'SendData():&#160;al_qspi_x1_nor.c'],['../al__qspi__x4__nor_8c.html#a7650c8650fd9e62f08934826c5e26f80',1,'SendData():&#160;al_qspi_x4_nor.c']]],
+  ['senddata',['SendData',['../al__qspi__x1__nor_8c.html#a71186a09995704330b28ca213d9aa467',1,'SendData():&#160;al_qspi_x1_nor.c'],['../al__qspi__x4__nor_8c.html#a71186a09995704330b28ca213d9aa467',1,'SendData():&#160;al_qspi_x4_nor.c']]],
   ['slvselenum',['SlvSelEnum',['../structAL__QSPI__TransStruct.html#a6af359ac00595ddc341a8d23cd54469a',1,'AL_QSPI_TransStruct']]],
   ['slvtoggleenum',['SlvToggleEnum',['../structAL__QSPI__ConfigsStruct.html#aafed2eff5381fceadb2162a3d9620c15',1,'AL_QSPI_ConfigsStruct']]],
   ['spi_5fdual_5fformat',['SPI_DUAL_FORMAT',['../al__qspi__ll_8h.html#a2bd9ef512682d525c7f40c318e51027faac82de0635d19f3fc663ae2dd982025b',1,'al_qspi_ll.h']]],

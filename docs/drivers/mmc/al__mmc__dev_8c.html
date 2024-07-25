@@ -260,6 +260,8 @@ Variables</h2></td></tr>
 <tr class="separator:aff3db650edb1fa9c730825cc71623f34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2b5cda551db2b98cadcd45a634b0b62"><td class="memItemLeft" align="right" valign="top">static AL_U8&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__mmc__dev_8c.html#ab2b5cda551db2b98cadcd45a634b0b62">AlMmc_CapacityDot</a> [16] = {0, 1, 1, 2, 2, 3, 4, 4, 5, 6, 6, 7, 8, 8, 9, 9}</td></tr>
 <tr class="separator:ab2b5cda551db2b98cadcd45a634b0b62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaca2157022857100464a4676bd40ad1e"><td class="memItemLeft" align="right" valign="top">static const AL_U8 *const&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__mmc__dev_8c.html#aaca2157022857100464a4676bd40ad1e">SpeedInfo</a> []</td></tr>
+<tr class="separator:aaca2157022857100464a4676bd40ad1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8aa1ed09492ba89b70dbbbd58e71dbf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structAL__MMC__HwConfigStruct.html">AL_MMC_HwConfigStruct</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="al__mmc__dev_8c.html#ac8aa1ed09492ba89b70dbbbd58e71dbf">AlMmc_HwConfig</a> []</td></tr>
 <tr class="separator:ac8aa1ed09492ba89b70dbbbd58e71dbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -293,8 +295,8 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">(Status &amp; (<a class="code" href="al__mmc__dev_8h.html#abe575adbf71d1892173db5c56681a7a2a8f141f5047b88e1197a58f5bdb93e961">AL_MMC_INTR_CARD_INSERT_MASK</a> | <a class="code" href="al__mmc__dev_8h.html#abe575adbf71d1892173db5c56681a7a2aeca303df0ca43859c63f9251ae4ff4eb">AL_MMC_INTR_CARD_REMOVE_MASK</a> |\</div><div class="line">                                               AL_MMC_INTR_CARD_MASK))</div><div class="ttc" id="al__mmc__dev_8h_html_abe575adbf71d1892173db5c56681a7a2aeca303df0ca43859c63f9251ae4ff4eb"><div class="ttname"><a href="al__mmc__dev_8h.html#abe575adbf71d1892173db5c56681a7a2aeca303df0ca43859c63f9251ae4ff4eb">AL_MMC_INTR_CARD_REMOVE_MASK</a></div><div class="ttdef"><b>Definition:</b> al_mmc_dev.h:186</div></div>
-<div class="ttc" id="al__mmc__dev_8h_html_abe575adbf71d1892173db5c56681a7a2a8f141f5047b88e1197a58f5bdb93e961"><div class="ttname"><a href="al__mmc__dev_8h.html#abe575adbf71d1892173db5c56681a7a2a8f141f5047b88e1197a58f5bdb93e961">AL_MMC_INTR_CARD_INSERT_MASK</a></div><div class="ttdef"><b>Definition:</b> al_mmc_dev.h:185</div></div>
+<b>Value:</b><div class="fragment"><div class="line">(Status &amp; (<a class="code" href="al__mmc__dev_8h.html#abe575adbf71d1892173db5c56681a7a2a8f141f5047b88e1197a58f5bdb93e961">AL_MMC_INTR_CARD_INSERT_MASK</a> | <a class="code" href="al__mmc__dev_8h.html#abe575adbf71d1892173db5c56681a7a2aeca303df0ca43859c63f9251ae4ff4eb">AL_MMC_INTR_CARD_REMOVE_MASK</a> |\</div><div class="line">                                               AL_MMC_INTR_CARD_MASK))</div><div class="ttc" id="al__mmc__dev_8h_html_abe575adbf71d1892173db5c56681a7a2aeca303df0ca43859c63f9251ae4ff4eb"><div class="ttname"><a href="al__mmc__dev_8h.html#abe575adbf71d1892173db5c56681a7a2aeca303df0ca43859c63f9251ae4ff4eb">AL_MMC_INTR_CARD_REMOVE_MASK</a></div><div class="ttdef"><b>Definition:</b> al_mmc_dev.h:192</div></div>
+<div class="ttc" id="al__mmc__dev_8h_html_abe575adbf71d1892173db5c56681a7a2a8f141f5047b88e1197a58f5bdb93e961"><div class="ttname"><a href="al__mmc__dev_8h.html#abe575adbf71d1892173db5c56681a7a2a8f141f5047b88e1197a58f5bdb93e961">AL_MMC_INTR_CARD_INSERT_MASK</a></div><div class="ttdef"><b>Definition:</b> al_mmc_dev.h:191</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -3284,6 +3286,34 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+</div>
+</div>
+<a id="aaca2157022857100464a4676bd40ad1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaca2157022857100464a4676bd40ad1e">&#9670;&nbsp;</a></span>SpeedInfo</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const AL_U8* const SpeedInfo[]</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">= {</div><div class="line">    [<a class="code" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a58b0cfd75a3987235c7155e677fee430">AL_MMC_SPD_DS_SDR12</a>] = <span class="stringliteral">&quot;default speed or sdr12&quot;</span>,</div><div class="line">    [<a class="code" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a6b9c86a2158843e19e38812b848435fc">AL_MMC_SPD_HS_SDR25</a>] = <span class="stringliteral">&quot;high speed or sdr25&quot;</span>,</div><div class="line">    [<a class="code" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a91a9e3cdcca9ed72f0dbf1e8cf217933">AL_MMC_SPD_SDR50</a>] = <span class="stringliteral">&quot;sdr50&quot;</span>,</div><div class="line">    [<a class="code" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307ab3aa46a46c3dd9c59d168587ef8c34b3">AL_MMC_SPD_SDR104_HS200</a>] = <span class="stringliteral">&quot;sdr104 or hs200&quot;</span>,</div><div class="line">    [<a class="code" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a3c54f73fe0a9d0bbb81dd732e2473beb">AL_MMC_SPD_DDR50_HS_DDR</a>] = <span class="stringliteral">&quot;ddr50&quot;</span>,</div><div class="line">    [<a class="code" href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a3ff725d980f2bcf20b0e263e8edb7d0e">AL_MMC_SPD_UHS_II_HS400</a>] = <span class="stringliteral">&quot;uhsii or hs400&quot;</span>,</div><div class="line">}</div><div class="ttc" id="al__mmc__dev_8h_html_a73585e2b48b96924e77982b7bafac307a3ff725d980f2bcf20b0e263e8edb7d0e"><div class="ttname"><a href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a3ff725d980f2bcf20b0e263e8edb7d0e">AL_MMC_SPD_UHS_II_HS400</a></div><div class="ttdef"><b>Definition:</b> al_mmc_dev.h:147</div></div>
+<div class="ttc" id="al__mmc__dev_8h_html_a73585e2b48b96924e77982b7bafac307a3c54f73fe0a9d0bbb81dd732e2473beb"><div class="ttname"><a href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a3c54f73fe0a9d0bbb81dd732e2473beb">AL_MMC_SPD_DDR50_HS_DDR</a></div><div class="ttdef"><b>Definition:</b> al_mmc_dev.h:144</div></div>
+<div class="ttc" id="al__mmc__dev_8h_html_a73585e2b48b96924e77982b7bafac307a91a9e3cdcca9ed72f0dbf1e8cf217933"><div class="ttname"><a href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a91a9e3cdcca9ed72f0dbf1e8cf217933">AL_MMC_SPD_SDR50</a></div><div class="ttdef"><b>Definition:</b> al_mmc_dev.h:142</div></div>
+<div class="ttc" id="al__mmc__dev_8h_html_a73585e2b48b96924e77982b7bafac307ab3aa46a46c3dd9c59d168587ef8c34b3"><div class="ttname"><a href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307ab3aa46a46c3dd9c59d168587ef8c34b3">AL_MMC_SPD_SDR104_HS200</a></div><div class="ttdef"><b>Definition:</b> al_mmc_dev.h:143</div></div>
+<div class="ttc" id="al__mmc__dev_8h_html_a73585e2b48b96924e77982b7bafac307a6b9c86a2158843e19e38812b848435fc"><div class="ttname"><a href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a6b9c86a2158843e19e38812b848435fc">AL_MMC_SPD_HS_SDR25</a></div><div class="ttdef"><b>Definition:</b> al_mmc_dev.h:141</div></div>
+<div class="ttc" id="al__mmc__dev_8h_html_a73585e2b48b96924e77982b7bafac307a58b0cfd75a3987235c7155e677fee430"><div class="ttname"><a href="al__mmc__dev_8h.html#a73585e2b48b96924e77982b7bafac307a58b0cfd75a3987235c7155e677fee430">AL_MMC_SPD_DS_SDR12</a></div><div class="ttdef"><b>Definition:</b> al_mmc_dev.h:140</div></div>
+</div><!-- fragment -->
 </div>
 </div>
 </div><!-- contents -->

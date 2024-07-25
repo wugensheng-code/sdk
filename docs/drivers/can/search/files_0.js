@@ -13,5 +13,6 @@ var searchData=
   ['al_5fcan_5fhw_2eh',['al_can_hw.h',['../al__can__hw_8h.html',1,'']]],
   ['al_5fcan_5fin_5floopback_5fblocked_2ec',['al_can_in_loopback_blocked.c',['../al__can__in__loopback__blocked_8c.html',1,'']]],
   ['al_5fcan_5fll_2eh',['al_can_ll.h',['../al__can__ll_8h.html',1,'']]],
+  ['al_5fcan_5fplat_2eh',['al_can_plat.h',['../al__can__plat_8h.html',1,'']]],
   ['al_5fcan_5fstd_5fptb_5fblocked_2ec',['al_can_std_ptb_blocked.c',['../al__can__std__ptb__blocked_8c.html',1,'']]]
 ];

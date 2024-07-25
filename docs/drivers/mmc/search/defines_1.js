@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['is_5fsame_5finitconfigs',['IS_SAME_INITCONFIGS',['../al__mmc__dev_8c.html#a993dc8b6f2817475e58b81886c595cc5',1,'al_mmc_dev.c']]]
+  ['device_5fid',['DEVICE_ID',['../al__mmc__adma2__blocked_8c.html#a0b85963cace75e76ae726bcffb04eb70',1,'DEVICE_ID():&#160;al_mmc_adma2_blocked.c'],['../al__mmc__non__dma__blocked_8c.html#a0b85963cace75e76ae726bcffb04eb70',1,'DEVICE_ID():&#160;al_mmc_non_dma_blocked.c'],['../al__mmc__sdma__blocked_8c.html#a0b85963cace75e76ae726bcffb04eb70',1,'DEVICE_ID():&#160;al_mmc_sdma_blocked.c']]]
 ];

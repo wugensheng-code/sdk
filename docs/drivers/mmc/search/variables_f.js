@@ -27,6 +27,7 @@ var searchData=
   ['slottype',['SlotType',['../unionAL__MMC__Cap1Union.html#a44c934eed736ce049ca9193b08c79270',1,'AL_MMC_Cap1Union']]],
   ['spdmode',['SpdMode',['../structAL__MMC__InitStruct.html#a5cdffdcc78776015594564b7681a1d03',1,'AL_MMC_InitStruct::SpdMode()'],['../structAL__MMC__CardInfoStruct.html#aebe932febf1ef8cdc279bc8c466b6689',1,'AL_MMC_CardInfoStruct::SpdMode()']]],
   ['specvers',['SpecVers',['../unionAL__MMC__RegCsdUnion.html#aff18778c919b248dc534ea85eec83ad2',1,'AL_MMC_RegCsdUnion']]],
+  ['speedinfo',['SpeedInfo',['../al__mmc__dev_8c.html#aaca2157022857100464a4676bd40ad1e',1,'al_mmc_dev.c']]],
   ['state',['State',['../structAL__MMC__DevStruct.html#a8166890130cc0c1796dfa457f06d412b',1,'AL_MMC_DevStruct']]],
   ['stopbgreq',['StopBgReq',['../unionAL__MMC__CtrlWuBgPwHc1Union.html#a0a8f6291478bd4b8fcefaa2c78572368',1,'AL_MMC_CtrlWuBgPwHc1Union']]],
   ['subcmdflag',['SubCmdFlag',['../unionAL__MMC__CmdXferModeUnion.html#a10799efbe90ca502d99b39921aace68d',1,'AL_MMC_CmdXferModeUnion']]],

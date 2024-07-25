@@ -161,6 +161,7 @@ var searchData=
   ['almmc_5fll_5fsetdattransdir',['AlMmc_ll_SetDatTransDir',['../al__mmc__ll_8h.html#abb19c509755d899338ef29679cb6572e',1,'al_mmc_ll.h']]],
   ['almmc_5fll_5fsetdmaen',['AlMmc_ll_SetDmaEn',['../al__mmc__ll_8h.html#a6564e580997f0c00d74b37e90ad94685',1,'al_mmc_ll.h']]],
   ['almmc_5fll_5fsetmultiblksel',['AlMmc_ll_SetMultiBlkSel',['../al__mmc__ll_8h.html#aabd8dc177496165543e4f4896ce3449c',1,'al_mmc_ll.h']]],
+  ['almmc_5fll_5fsetrelease',['AlMmc_ll_SetRelease',['../al__mmc__ll_8h.html#aaa0216c209373dfd343ebda0a113d9d9',1,'al_mmc_ll.h']]],
   ['almmc_5fll_5fsetresperrchken',['AlMmc_ll_SetRespErrChkEn',['../al__mmc__ll_8h.html#a4b63e6120b14af3e53c62c1cf8c8964c',1,'al_mmc_ll.h']]],
   ['almmc_5fll_5fsetresperrchktype',['AlMmc_ll_SetRespErrChkType',['../al__mmc__ll_8h.html#a384e7f81a00a105a61835842b8763c17',1,'al_mmc_ll.h']]],
   ['almmc_5fll_5fsetrespintrdisable',['AlMmc_ll_SetRespIntrDisable',['../al__mmc__ll_8h.html#a9c35db8173f96bc00a60810b3ad6b0b9',1,'al_mmc_ll.h']]],

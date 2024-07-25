@@ -53,8 +53,10 @@ var menudata={children:[
 {text:"Globals",url:"globals.html",children:[
 {text:"All",url:"globals.html",children:[
 {text:"a",url:"globals.html#index_a"},
+{text:"d",url:"globals_d.html#index_d"},
 {text:"i",url:"globals_i.html#index_i"},
-{text:"m",url:"globals_m.html#index_m"}]},
+{text:"m",url:"globals_m.html#index_m"},
+{text:"s",url:"globals_s.html#index_s"}]},
 {text:"Functions",url:"globals_func.html",children:[
 {text:"a",url:"globals_func.html#index_a"},
 {text:"m",url:"globals_func_m.html#index_m"}]},
@@ -67,6 +69,7 @@ var menudata={children:[
 {text:"m",url:"globals_eval_m.html#index_m"}]},
 {text:"Macros",url:"globals_defs.html",children:[
 {text:"a",url:"globals_defs.html#index_a"},
+{text:"d",url:"globals_defs_d.html#index_d"},
 {text:"i",url:"globals_defs_i.html#index_i"},
 {text:"m",url:"globals_defs_m.html#index_m"}]}]}]},
 {text:"Examples",url:"examples.html"}]}
