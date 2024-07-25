@@ -1,4 +1,5 @@
 #include "al_core.h"
+#include "al_rv64_core.h"
 
 /* Note:Add -fno-omit-frame-pointer to the CFLAGS in the makefile to print the all call stack */
 struct StackFrame {
@@ -28,10 +29,17 @@ static AL_VOID AlStack_WalkStackFrame(AL_VOID)
     struct StackFrame *frame;
     AL_INTPTR low;
 
+#ifndef USE_RTOS
     const register AL_INTPTR current_sp __asm__ ("sp");
     sp = current_sp;
     pc = (AL_INTPTR)AlStack_WalkStackFrame;
     fp = (AL_INTPTR)__builtin_frame_address(0);
+#else
+    const register AL_INTPTR current_sp = ARCH_SYSREG_READ(CSR_MSCRATCH);
+    sp = current_sp;
+    pc = ARCH_SYSREG_READ(CSR_MEPC);
+    fp = (AL_INTPTR)((struct StackFrame *)sp + 2);
+#endif
 
     while (1) {
         if (!AlStack_IsText(pc))
