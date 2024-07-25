@@ -1,6 +1,7 @@
 #include "rtthread.h"
 #include "al_core.h"
 #include "al_usb_hal.h"
+#include "al_gpio_hal.h"
 
 #ifdef ENABLE_MMU
 #include "al_cache.h"
@@ -12,12 +13,35 @@
 
 #define AL_USB_DEVICE_ID     0
 
+#define AL_GPIO_DEVICE_ID       0
+#define AL_USB_PHY_RESET_PIN    7 /* PS_IO7 */
+
 extern int usbh_initialize(uint8_t busid, uint32_t reg_base);
 extern void USBH_IRQHandler(uint8_t busid);
 
 AL_VOID AlUsb_Dev_IntrHandler(AL_VOID *Instance)
 {
     USBH_IRQHandler(0);
+}
+
+AL_VOID AlUsb_PhyHardReset()
+{
+    AL_GPIO_HalStruct *GPIO;
+    AL_U32 RawVal = 0;
+
+    AL_S32 ret = AlGpio_Hal_Init(&GPIO, AL_GPIO_DEVICE_ID, NULL);
+
+    if (ret == AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_INFO, "[TEST] APU AlGpio_Hal_Init success");
+    }
+    else {
+        AL_LOG(AL_LOG_LEVEL_INFO, "[TEST] APU AlGpio_Hal_Init failed");
+    }
+
+    AlGpio_Hal_WritePin(GPIO, AL_USB_PHY_RESET_PIN, 0x1);
+    AlGpio_Hal_WritePin(GPIO, AL_USB_PHY_RESET_PIN, 0x0);
+    AlSys_MDelay(20);
+    AlGpio_Hal_WritePin(GPIO, AL_USB_PHY_RESET_PIN, 0x1);
 }
 
 static rt_thread_t tid1 = RT_NULL;
@@ -87,6 +111,8 @@ int main()
 
     rt_kprintf("str = %s \r\n", str);
     //AlCache_DisableMmu();
+
+    AlUsb_PhyHardReset();
 
     AL_USB_HalStruct *USB0;
     AL_S32 ret = AlUsb_Hal_Init(&USB0, AL_USB_DEVICE_ID, AlUsb_Dev_IntrHandler);
