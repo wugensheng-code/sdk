@@ -252,6 +252,12 @@ void Enablepinmux1(void)
     *(AL_U32 *)(0xf8803048u) =0x9;    //spi0  MIO18 SPI0_CS
     *(AL_U32 *)(0xf8803054u) =0x9;    //spi0  MIO21 SPI0_MOSI
     *(AL_U32 *)(0xf8803424u) =0x1;    //emio_sel9
+
+    *(AL_U32 *)(0xf88030b8u) =0x9;      //spi1 mio46-49
+    *(AL_U32 *)(0xf88030bcu) =0x9;
+    *(AL_U32 *)(0xf88030c0u) =0x9;
+    *(AL_U32 *)(0xf88030c4u) =0x9;
+    *(AL_U32 *)(0xf8803428u) =0x1;      //emio_sel9
 #endif
 
     /* tc1-timer0 on demo board */

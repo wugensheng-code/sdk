@@ -13,7 +13,9 @@
 /**************************** Type Definitions *******************************/
 
 /***************** Macros (Inline Functions) Definitions *********************/
-#define RECV_SIZE 32
+#define AL_SPI_DEVICE_ID            1
+
+#define RECV_SIZE                   32
 
 /************************** Variable Definitions *****************************/
 AL_SPI_HalStruct *Handle;
@@ -48,7 +50,7 @@ void main(void)
 
     AL_LOG(AL_LOG_LEVEL_ERROR, "Start FPSoc Spi Master Test\r\n");
 
-    Ret = AlSpi_Hal_Init(&Handle, &SpiInitConfigs, AL_NULL, 0);
+    Ret = AlSpi_Hal_Init(&Handle, &SpiInitConfigs, AL_NULL, AL_SPI_DEVICE_ID);
     if (AL_OK != Ret) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi_Hal_Init error, Ret:0x%x\r\n", Ret);
     }

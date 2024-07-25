@@ -197,7 +197,17 @@ AL_S32 AlSpi_Hal_Init(AL_SPI_HalStruct **Handle, AL_SPI_ConfigsStruct *InitConfi
         Ret = AlSpi_Dev_RegisterIntrCallBack(&(*Handle)->Dev, Callback, (void *)*Handle);
     }
 
-    (AL_VOID)AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlSpi_Dev_IntrHandler, &(*Handle)->Dev);
+    if (InitConfig->Mode == SPI_SLAVE_MODE) {
+        /*
+          The spi master and slave use different interrupts number.
+          The slave interrupt number is 1 larger than that of the master.
+          Currently, only the master interrupt number is added to the cfg.c file,
+          Therefore, if it is slave, it is necessary to add 1 to the interrupt number when registering an interrupt.
+         */
+        (AL_VOID)AlIntr_RegHandler((HwConfig->IntrId) + 1, AL_NULL, AlSpi_Dev_IntrHandler, &(*Handle)->Dev);
+    } else {
+        (AL_VOID)AlIntr_RegHandler(HwConfig->IntrId, AL_NULL, AlSpi_Dev_IntrHandler, &(*Handle)->Dev);
+    }
 
     Ret = AlOsal_Lock_Init(&(*Handle)->SpiLock, "SpiLock");
     if (Ret != AL_OK) {
