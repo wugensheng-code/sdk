@@ -2,7 +2,11 @@
 
 ## 概述
 
-SMC 示例工程演示了SMC（存储器控制器）外设与 nandflash 进行擦除，读写测试功能。
+SMC example 提供如下测试功能：
+
+- Nand Flash 初始化及配置
+- Nand Flash 擦除及读写测试
+- Nand Flash OOB 读写测试
 
 ## 硬件设置
 
@@ -10,10 +14,10 @@ SMC 示例工程演示了SMC（存储器控制器）外设与 nandflash 进行�
 
 ## 已知问题
 
-无已知问题
+无已知问题。
 
 ## 运行说明
 
 示例1:al_smc_nand.c
-- SMC进行nand flash 擦除、读写测试。
+- SMC 进行 nand flash 初始化、擦除、读写、OOB读写测试。
 

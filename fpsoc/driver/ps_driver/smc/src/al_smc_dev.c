@@ -22,7 +22,8 @@ static AL_U32 __attribute__((aligned(4))) NandOob16[3] = {13, 14, 15};        /*
 
 extern AL_SMC_HwConfigStruct AlSmc_HwCfg[AL_SMC_NUM_INSTANCE];
 /************************** Function Prototypes ******************************/
-
+static AL_U8 ALSmc_Dev_SetFeature(AL_NAND_InfoStruct *NandInfo, AL_U8 Address, AL_U8 *Data);
+static AL_U8 ALSmc_Dev_GetFeature(AL_NAND_InfoStruct *NandInfo, AL_U8 Address, AL_U8 *Data);
 
 /********************************************************/
 /**
@@ -390,6 +391,8 @@ AL_U32 ALSmc_Dev_ReadParam(AL_NAND_InfoStruct *NandInfo)
     AL_U32 Crc;
     AL_REG CmdPhaseAddr;
 
+    AL_U32 TimingSupport = 0x0U;
+
     NandInfo->Cmd.StartCmd = ONFI_CMD_READ_PARAMETER1;
     NandInfo->Cmd.EndCmd = ONFI_CMD_READ_PARAMETER2;
     NandInfo->Cmd.AddrCycles = ONFI_CMD_READ_PARAMETER_CYCLES;
@@ -417,6 +420,45 @@ AL_U32 ALSmc_Dev_ReadParam(AL_NAND_InfoStruct *NandInfo)
     NandInfo->Size.BlocksPerUnit      =    *((AL_U32 *)(&Temp[BLOCKS_PER_UINT_POS]));
     NandInfo->Size.TotalUnit          =    Temp[TOTAL_UINT_POS];
     NandInfo->Size.EccNum              =    Temp[ECC_NUM_POS];
+
+    NandInfo->IsSupportFeatureOps = Temp[FEATURE_SUPPORT_POS];
+    TimingSupport = (AL_U32)Temp[TIMING_SUPPORT_POS] | ((AL_U32)Temp[TIMING_SUPPORT_POS + 1] << 8);
+
+    for(Index = 5; Index >= 0; Index--) {
+        if (TimingSupport & (0x01 << Index)) {
+            NandInfo->MaxTimingMode = Index;
+            break;
+        } else {
+            continue;
+        }
+    }
+
+    return AL_OK;
+}
+
+/**
+ *
+ * Set fixed smc timing for 50M clock.
+ *
+ * @param Smc Pointer to the AL_SMC_DevStruct structure representing the SMC device.
+ *
+ * @return AL_OK if successful.
+ *
+ */
+AL_VOID ALSmc_Dev_SetFixedTiming(AL_SMC_DevStruct *Smc)
+{
+    AL_SMC_ConfigsStruct TimingConfig = { 0 };
+
+    TimingConfig.Cycles.b.Trc = 3;
+    TimingConfig.Cycles.b.Twc = 3;
+    TimingConfig.Cycles.b.Trea = 1;
+    TimingConfig.Cycles.b.Twp = 2;
+    TimingConfig.Cycles.b.Tclr = 1;
+    TimingConfig.Cycles.b.Tar = 1;
+    TimingConfig.Cycles.b.Trr = 1;
+
+    AlSmc_ll_SetCycles(Smc->SmcBaseAddr, TimingConfig.Cycles);
+    AlSmc_ll_SetCmdTypeAndChipNum(Smc->SmcBaseAddr, UPDATE_REGS, INTF1_CHIP1);
 
     return AL_OK;
 }

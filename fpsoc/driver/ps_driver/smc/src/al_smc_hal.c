@@ -95,6 +95,8 @@ AL_U32 AlSmc_Hal_Init(AL_SMC_HalStruct *Handle, AL_SMC_ConfigsStruct *InitConfig
         }
     }
 
+    ALSmc_Dev_SetFixedTiming(Handle->Dev);
+
     HAL_INIT_END:
     AL_SMC_HAL_UNLOCK(Handle);
 

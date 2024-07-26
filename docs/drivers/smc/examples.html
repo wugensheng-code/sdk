@@ -52,7 +52,7 @@ $(function() {
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0" 
+<iframe src="javascript:void(0)" frameborder="0"
         name="MSearchResults" id="MSearchResults">
 </iframe>
 </div>
@@ -62,8 +62,27 @@ $(function() {
 <div class="title">Examples</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all examples:</div><ul>
-<li><a class="el" href="al_smc_nand_8c-example.html">al_smc_nand.c</a></li>
+<!-- <div class="textblock">Here is a list of all examples:</div> -->
+<p class="textblock" style="font-size: 1.5em;">smc 例程提供如下测试功能: </p>
+<ul>
+  <li>Nand Flash 初始化配置</li>
+  <li>Nand 擦除功能</li>
+  <li>Nand Page 读写功能</li>
+  <li>Nand OOB 读写功能</li>
+</ul>
+<p style="font-size: 1.5em;">硬件设置</p>
+<ul>
+  <li>需要硬件配置兼容的 nandflash</li>
+</ul>
+<p style="font-size: 1.5em;">已知问题</p>
+<ul>
+  <li>无已知问题</li>
+</ul>
+<p style="font-size: 1.5em;">运行说明</p>
+
+<ul>
+<li><a class="el" href="al_smc_nand_8cs-example.html">al_smc_nand.c</a></li>
+<p> Nand Flash 初始化、擦除、Page读写、OOB读写。</p>
 
 </ul>
 </div><!-- contents -->

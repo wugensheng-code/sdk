@@ -175,12 +175,14 @@ extern "C" {
 
 /* */
 #define NAND_FEAT_POS        6
+#define FEATURE_SUPPORT_POS  8
 #define DATA_PER_PAGE_POS    80
 #define SPARE_PER_PAGE_POS   84
 #define PAGE_PER_BLOCK_POS   92
 #define BLOCKS_PER_UINT_POS  96
 #define TOTAL_UINT_POS       100
 #define ECC_NUM_POS          112
+#define TIMING_SUPPORT_POS   129
 
 #define ZoneBitError        0
 #define OneBitError         1
@@ -303,6 +305,11 @@ typedef struct
     AL_Nand_SizeStruct          Size;
     AL_Nand_CmdStruct           Cmd;
     AL_Nand_Width               FlashWidth;
+
+    AL_U32                      IsSupportFeatureOps;
+    AL_U32                      MaxTimingMode;
+    AL_U32                      CurTimingMode;
+
     AL_U8 __attribute__((aligned(4))) DataBuf[SMC_MAX_PAGE_SIZE + SMC_MAX_SPARE_SIZE];
     AL_U8 __attribute__((aligned(4))) EccCalc[SMC_MAX_SPARE_SIZE];
     AL_U8 __attribute__((aligned(4))) EccCode[SMC_MAX_SPARE_SIZE];
@@ -333,6 +340,8 @@ AL_U32 AlSmc_Dev_EccHwDisable(AL_SMC_DevStruct *Smc);
 AL_U32 AlSmc_Dev_EccHwEnable(AL_SMC_DevStruct *Smc);
 AL_U32 AlSmc_Dev_EnableOnDieEcc(AL_NAND_InfoStruct *NandInfo);
 AL_VOID AlSmc_Dev_InitCyclesAndMemWidth(AL_SMC_DevStruct *Smc);
+
+AL_VOID ALSmc_Dev_SetFixedTiming(AL_SMC_DevStruct *Smc);
 
 #ifdef __cplusplus
 }
