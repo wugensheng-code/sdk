@@ -52,7 +52,7 @@ $(function() {
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0" 
+<iframe src="javascript:void(0)" frameborder="0"
         name="MSearchResults" id="MSearchResults">
 </iframe>
 </div>
@@ -62,12 +62,31 @@ $(function() {
 <div class="title">Examples</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all examples:</div><ul>
-<li><a class="el" href="al_gpio_ctl_LED_8c-example.html">al_gpio_ctl_LED.c</a></li>
+  <p class="textblock" style="font-size: 1.5em;">gpio例程提供如下测试功能：</p>
+  <ul>
+    <li>GPIO口读写功能测试。</li>
+    <li>GPIO口中断功能测试</li>
+  </ul>
+  <p style="font-size: 1.5em;">硬件设置</p>
+  <ul>
+    <li>无特殊设置</li>
+  </ul>
+  <p style="font-size: 1.5em;">已知问题</p>
+  <ul>
+    <li>无已知问题</li>
+  </ul>
+  <p style="font-size: 1.5em;">运行说明</p>
+  <p>以下示例中用到的MIO/EMIO口均需要配置pinmux</p>
+  <ul>
+  <li><a class="el" href="al_gpio_ctl_LED_8c-example.html">al_gpio_ctl_LED.c</a></li>
+  <p>以BANK的方式控制LED闪烁。</p>
+  <p>以PIN的方式用KEY控制LED闪烁。</p>
 
-<li><a class="el" href="al_gpio_intr_8c-example.html">al_gpio_intr.c</a></li>
+  <li><a class="el" href="al_gpio_intr_8c-example.html">al_gpio_intr.c</a></li>
+  <p>支持边沿触发以及电平触发模式，支持不同BANK中的PIN同时触发中断。本示例配置两个MIO口和一个EMIO口以边沿方式触发中断。</p>
 
-</ul>
+  </ul>
+
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
