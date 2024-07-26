@@ -86,6 +86,10 @@ extern "C" {
 #include "al_usb_hal.h"
 #endif
 
+#ifdef HAVE_EFUSE_DRIVER
+#include "al_efuse_hal.h"
+#endif
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
