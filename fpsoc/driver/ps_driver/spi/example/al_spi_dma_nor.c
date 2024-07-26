@@ -14,6 +14,7 @@
 /**************************** Type Definitions *******************************/
 
 /***************** Macros (Inline Functions) Definitions *********************/
+#define AL_SPI_DEVICE_ID            1
 
 /************************** Variable Definitions *****************************/
 AL_SPI_HalStruct *Handle;
@@ -264,7 +265,7 @@ AL_VOID main(AL_VOID)
 
     AL_LOG(AL_LOG_LEVEL_ERROR, "Start FPSoc Spi AL_SPI_RUN_DMA Test\r\n");
 
-    ret = AlSpi_Hal_Init(&Handle, &SpiInitConfigs, AL_NULL, 0);
+    ret = AlSpi_Hal_Init(&Handle, &SpiInitConfigs, AL_NULL, AL_SPI_DEVICE_ID);
     if (ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi_Hal_Init error, ret:0x%x\r\n", ret);
     }
@@ -290,7 +291,7 @@ AL_VOID main(AL_VOID)
             while (1);
         }
     }
-
+    memset(DmaRecvData, 0x0, sizeof(DmaRecvData));
     AL_LOG(AL_LOG_LEVEL_ERROR, "DMA AlSpi test erase norflash success\r\n");
 
     /**/

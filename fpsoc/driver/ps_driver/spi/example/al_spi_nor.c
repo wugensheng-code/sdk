@@ -13,6 +13,8 @@
 /**************************** Type Definitions *******************************/
 
 /***************** Macros (Inline Functions) Definitions *********************/
+#define AL_SPI_DEVICE_ID            1
+
 
 /************************** Variable Definitions *****************************/
 AL_SPI_HalStruct *Handle;
@@ -370,7 +372,7 @@ void main(void)
 
     AL_LOG(AL_LOG_LEVEL_ERROR, "Start FPSoc Spi Test\r\n");
 
-    ret = AlSpi_Hal_Init(&Handle, &SpiInitConfigs, AL_NULL, 0);
+    ret = AlSpi_Hal_Init(&Handle, &SpiInitConfigs, AL_NULL, AL_SPI_DEVICE_ID);
     if (AL_OK != ret) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi_Hal_Init error, ret:0x%x\r\n", ret);
     }
@@ -392,7 +394,7 @@ void main(void)
             while (1);
         }
     }
-
+    memset(RecvData, 0x0, sizeof(RecvData));
     AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi test erase norflash success\r\n");
 
     AlNor_Wren();
@@ -411,6 +413,7 @@ void main(void)
             while (1);
         }
     }
+    memset(RecvData, 0x0, sizeof(RecvData));
 
     AlNor_ReadPage1();
     for (i = 0; i < 230; i++) {
