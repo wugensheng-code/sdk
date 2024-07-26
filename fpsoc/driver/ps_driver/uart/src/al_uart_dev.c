@@ -215,6 +215,9 @@ AL_S32 AlUart_Dev_Init(AL_UART_DevStruct *Uart, AL_U32 DevId, AL_UART_InitStruct
     AlUart_ll_ResetTxFifo(Uart->BaseAddr);
     AlUart_ll_ResetRxFifo(Uart->BaseAddr);
 
+    /* Waiting for uart to be idle */
+    while (AlUart_ll_IsUartBusy(Uart->BaseAddr));
+
     if (AlUart_ll_IsUartBusy(Uart->BaseAddr)) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "Al uart cannot set baudrate written while the UART is busy");
     } else {
