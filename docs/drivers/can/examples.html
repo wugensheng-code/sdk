@@ -52,7 +52,7 @@ $(function() {
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0" 
+<iframe src="javascript:void(0)" frameborder="0"
         name="MSearchResults" id="MSearchResults">
 </iframe>
 </div>
@@ -62,18 +62,45 @@ $(function() {
 <div class="title">Examples</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all examples:</div><ul>
+<!-- <div class="textblock">Here is a list of all examples:</div> -->
+<p class="textblock" style="font-size: 1.5em;">can例程提供如下测试功能：</p>
+<ul>
+  <li>CAN 外设的内/外环回测试</li>
+  <li>CAN2.0B 相关测试</li>
+  <li>CANFD 相关测试</li>
+  <li>CAN-DMA 相关测试</li>
+</ul>
+<p style="font-size: 1.5em;">硬件设置</p>
+<ul>
+  <li>无特殊设置</li>
+</ul>
+<p style="font-size: 1.5em;">已知问题</p>
+<ul>
+  <li>无已知问题</li>
+</ul>
+<p style="font-size: 1.5em;">运行说明</p>
+
+<ul>
 <li><a class="el" href="al_can_ex_loopback_blocked_8c-example.html">al_can_ex_loopback_blocked.c</a></li>
+<p>CAN 外环回测试: ptb 传输模式，中断模式，CAN2.0标准。</p>
 
 <li><a class="el" href="al_can_fd_dma_llp_nonblock_8c-example.html">al_can_fd_dma_llp_nonblock.c</a></li>
+<p>CAN 正常模式:ptb 传输模式，dma中断llp测试，CANFD标准。</p>
+
+<li><a class="el" href="al_can_fd_dma_nonblock_8c-example.html">al_can_fd_dma_nonblock.c</a></li>
+<p>CAN 正常模式:ptb 传输模式，dma中断，CANFD标准。</p>
 
 <li><a class="el" href="al_can_fd_stb_fifo_blocked_8c-example.html">al_can_fd_stb_fifo_blocked.c</a></li>
+<p>CAN 正常模式: stb 传输模式，中断模式，CANFD标准。</p>
 
 <li><a class="el" href="al_can_fd_stb_priority_blocked_8c-example.html">al_can_fd_stb_priority_blocked.c</a></li>
 
-<li><a class="el" href="al_can_in_loopback_blocked_8c-example.html">al_can_in_loopback_blocked.c</a></li>
 
-<li><a class="el" href="al_can_std_ptb_blocked_8c-example.html">al_can_std_ptb_blocked.c</a></li>
+<li><a class="el" href="al_can_in_loopback_blocked_8c-example.html">al_can_in_loopback_blocked.c</a></li>
+<p>CAN 内环回测试: ptb 传输模式，中断模式，CAN2.0标准。</p>
+
+<li><a class="el" href="al_can_std_ptb_blockeds_8c-example.html">al_can_std_ptb_blockeds.c</a></li>
+<p>CAN 正常模式: ptb 传输模式，中断模式，CAN2.0标准。</p>
 
 </ul>
 </div><!-- contents -->

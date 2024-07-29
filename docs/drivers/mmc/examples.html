@@ -52,7 +52,7 @@ $(function() {
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0" 
+<iframe src="javascript:void(0)" frameborder="0"
         name="MSearchResults" id="MSearchResults">
 </iframe>
 </div>
@@ -62,12 +62,32 @@ $(function() {
 <div class="title">Examples</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all examples:</div><ul>
+<!-- <div class="textblock">Here is a list of all examples:</div> -->
+<p class="textblock" style="font-size: 1.5em;">MMC例程提供如下测试功能：</p>
+<ul>
+  <li>MMC NON-DMA模式测试</li>
+  <li>MMC SDMA模式测试</li>
+  <li>MMC ADMA2模式测试</li>
+</ul>
+<p style="font-size: 1.5em;">硬件设置</p>
+<ul>
+  <li>无特殊设置</li>
+</ul>
+<p style="font-size: 1.5em;">已知问题</p>
+<ul>
+  <li>无已知问题</li>
+</ul>
+<p style="font-size: 1.5em;">运行说明</p>
+
+<ul>
 <li><a class="el" href="al_mmc_adma2_blocked_8c-example.html">al_mmc_adma2_blocked.c</a></li>
+<p>MMC ADMA2模式测试: ADMA2 mode，SD/EMMC card。</p>
 
 <li><a class="el" href="al_mmc_non_dma_blocked_8c-example.html">al_mmc_non_dma_blocked.c</a></li>
+<p>MMC NON-DMA模式测试: NON-DMA mode，SD/EMMC card。</p>
 
 <li><a class="el" href="al_mmc_sdma_blocked_8c-example.html">al_mmc_sdma_blocked.c</a></li>
+<p>MMC SDMA模式测试: SDMA mode，SD/EMMC card。</p>
 
 </ul>
 </div><!-- contents -->

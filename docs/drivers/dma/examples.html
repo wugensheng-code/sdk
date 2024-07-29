@@ -52,7 +52,7 @@ $(function() {
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0" 
+<iframe src="javascript:void(0)" frameborder="0"
         name="MSearchResults" id="MSearchResults">
 </iframe>
 </div>
@@ -62,16 +62,40 @@ $(function() {
 <div class="title">Examples</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all examples:</div><ul>
+<!-- <div class="textblock">Here is a list of all examples:</div> -->
+<p class="textblock" style="font-size: 1.5em;">AXI-DMA例程提供如下测试功能：</p>
+<ul>
+  <li>AXI-DMA M2M测试</li>
+  <li>AXI-DMA M2M接口测试</li>
+  <li>AXI-DMA M2M性能测试</li>
+  <li>AXI-DMA M2P/P2M single/cycle 测试</li>
+</ul>
+<p style="font-size: 1.5em;">硬件设置</p>
+<ul>
+  <li>M2M 无特殊设置</li>
+  <li>M2P/P2M 需PL侧码流</li>
+</ul>
+<p style="font-size: 1.5em;">已知问题</p>
+<ul>
+  <li>无已知问题</li>
+</ul>
+<p style="font-size: 1.5em;">运行说明</p>
+
+<ul>
 <li><a class="el" href="al_dma_mem_cpy_8c-example.html">al_dma_mem_cpy.c</a></li>
+<p>AXI-DMA M2M接口测试: 自动初始化分配通道，数据传输完成后，释放通道。</p>
 
 <li><a class="el" href="al_dma_mem_cpy_blocked_8c-example.html">al_dma_mem_cpy_blocked.c</a></li>
+<p>AXI-DMA M2M测试: 作为DMA外设拆分接口进行初始化、传输、释放。</p>
 
 <li><a class="el" href="al_dma_mem_cpy_performance_8c-example.html">al_dma_mem_cpy_performance.c</a></li>
+<p>AXI-DMA 性能测试: 计算M2M接口级传输速度。</p>
 
 <li><a class="el" href="al_dma_per_cpy_cycle_8c-example.html">al_dma_per_cpy_cycle.c</a></li>
+<p>AXI-DMA M2P/P2M 测试: cycle模式。</p>
 
 <li><a class="el" href="al_dma_per_cpy_single_8c-example.html">al_dma_per_cpy_single.c</a></li>
+<p>AXI-DMA M2P/P2M 测试: single模式。</p>
 
 </ul>
 </div><!-- contents -->
