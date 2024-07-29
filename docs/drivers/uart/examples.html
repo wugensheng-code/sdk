@@ -52,7 +52,7 @@ $(function() {
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0" 
+<iframe src="javascript:void(0)" frameborder="0"
         name="MSearchResults" id="MSearchResults">
 </iframe>
 </div>
@@ -62,10 +62,28 @@ $(function() {
 <div class="title">Examples</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all examples:</div><ul>
+<!-- <div class="textblock">Here is a list of all examples:</div> -->
+<p class="textblock" style="font-size: 1.5em;">uart例程提供如下测试功能：</p>
+<ul>
+  <li>UART 中断模式下收发测试</li>
+  <li>UART 轮询模式下收发测试</li>
+</ul>
+<p style="font-size: 1.5em;">硬件设置</p>
+<ul>
+  <li>无特殊设置</li>
+</ul>
+<p style="font-size: 1.5em;">已知问题</p>
+<ul>
+  <li>无已知问题</li>
+</ul>
+<p style="font-size: 1.5em;">运行说明</p>
+
+<ul>
 <li><a class="el" href="al_uart_intr_block_8c-example.html">al_uart_intr_block.c</a></li>
+<p>UART 中断测试: 中断模式接收和发送测试。</p>
 
 <li><a class="el" href="al_uart_poll_block_8c-example.html">al_uart_poll_block.c</a></li>
+<p>UART 轮询测试: 轮询模式接收和发送测试。</p>
 
 </ul>
 </div><!-- contents -->

@@ -52,7 +52,7 @@ $(function() {
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0" 
+<iframe src="javascript:void(0)" frameborder="0"
         name="MSearchResults" id="MSearchResults">
 </iframe>
 </div>
@@ -62,15 +62,36 @@ $(function() {
 <div class="title">Examples</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all examples:</div><ul>
+<!-- <div class="textblock">Here is a list of all examples:</div> -->
+<p class="textblock" style="font-size: 1.5em;">adc例程提供如下测试功能：</p>
+<ul>
+  <li>adc 以轮询的方式在 single_pass 模式下进行数据采集</li>
+  <li>adc 以轮询的方式在 single_channel 模式下进行数据采集</li>
+  <li>adc 以轮询的方式在 continuous 模式下进行数据采集</li>
+  <li>adc 以中断的方式对高于水线和低于水线的数据模式下进行采集</li>
+</ul>
+<p style="font-size: 1.5em;">硬件设置</p>
+<ul>
+  <li>无特殊设置</li>
+</ul>
+<p style="font-size: 1.5em;">已知问题</p>
+<ul>
+  <li>无已知问题</li>
+</ul>
+<p style="font-size: 1.5em;">运行说明</p>
+
+<ul>
 <li><a class="el" href="al_adc_alarm_8c-example.html">al_adc_alarm.c</a></li>
+<p>adc 以轮询的方式在 single_pass 模式下进行数据采集。</p>
 
 <li><a class="el" href="al_adc_continuous_8c-example.html">al_adc_continuous.c</a></li>
+<p>adc 以轮询的方式在 single_channel 模式下进行数据采集。</p>
 
 <li><a class="el" href="al_adc_single_channel_8c-example.html">al_adc_single_channel.c</a></li>
+<p>adc 以轮询的方式在 continuous 模式下进行数据采集。</p>
 
 <li><a class="el" href="al_adc_single_pass_8c-example.html">al_adc_single_pass.c</a></li>
-
+<p>adc 以中断的方式对高于水线和低于水线的数据模式下进行采集。</p>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
