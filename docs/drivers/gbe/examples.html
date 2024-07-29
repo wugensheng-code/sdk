@@ -58,16 +58,34 @@ $(function() {
 </div>
 
 <div class="header">
-  <div class="headertitle">
-<div class="title">Examples</div>  </div>
-</div><!--header-->
-<div class="contents">
-<div class="textblock">Here is a list of all examples:</div><ul>
-<li><a class="el" href="al_gbe_internal_loopback_8c-example.html">al_gbe_internal_loopback.c</a></li>
+    <div class="headertitle">
+  <div class="title">Examples</div>  </div>
+  </div><!--header-->
+  <div class="contents">
+    <p class="textblock" style="font-size: 1.5em;">GBE 例程提供如下测试功能：</p>
+    <ul>
+      <li>GBE 外设的内回环测试</li>
+      <li>GBE 轮询模式 ping reply 测试</li>
+      <li>GBE 中断模式 ping reply 测试</li>
+    </ul>
+    <p style="font-size: 1.5em;">硬件设置</p>
+    <ul>
+      <li>无特殊设置</li>
+    </ul>
+    <p style="font-size: 1.5em;">已知问题</p>
+    <ul>
+      <li>无已知问题</li>
+    </ul>
+    <p style="font-size: 1.5em;">运行说明</p>
+    <ul>
+    <li><a class="el" href="al_gbe_internal_loopback_8c-example">al_gbe_internal_loopback.c</a></li>
+    <p>GBE 内回环测试，需要接上网线</p>
 
-<li><a class="el" href="al_gbe_ping_reply_intr_8c-example.html">al_gbe_ping_reply_intr.c</a></li>
+    <li><a class="el" href="al_gbe_ping_reply_polling_8c-example.html">al_gbe_ping_reply_polling.c</a></li>
+    <p>GBE 轮询模式ping reply测试，运行后，用一台主机ping开发板，开发板回应ping</p>
 
-<li><a class="el" href="al_gbe_ping_reply_polling_8c-example.html">al_gbe_ping_reply_polling.c</a></li>
+    <li><a class="el" href="al_gbe_ping_reply_intr_8c-example.html">al_gbe_ping_reply_intr.c</a></li>
+    <p>GBE 中断模式ping reply测试，运行后，用一台主机ping开发板，开发板回应ping</p>
 
 </ul>
 </div><!-- contents -->

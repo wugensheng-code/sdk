@@ -58,22 +58,48 @@ $(function() {
 </div>
 
 <div class="header">
-  <div class="headertitle">
-<div class="title">Examples</div>  </div>
-</div><!--header-->
-<div class="contents">
-<div class="textblock">Here is a list of all examples:</div><ul>
-<li><a class="el" href="al_iic_eeprom_block_8c-example.html">al_iic_eeprom_block.c</a></li>
+    <div class="headertitle">
+  <div class="title">Examples</div>  </div>
+  </div><!--header-->
+  <div class="contents">
+    <p class="textblock" style="font-size: 1.5em;">IIC 例程提供如下测试功能：</p>
+    <ul>
+      <li>DMA 模式收发数据测试</li>
+      <li>EEPROM 读写测试</li>
+      <li>7/10 bit 地址模式，standard/fast 模式下收发测试</li>
+    </ul>
+    <p style="font-size: 1.5em;">硬件设置</p>
+    <ul>
+      <li>无特殊设置</li>
+    </ul>
+    <p style="font-size: 1.5em;">已知问题</p>
+    <ul>
+      <li>无已知问题</li>
+    </ul>
+    <p style="font-size: 1.5em;">运行说明</p>
+    <ul>
+    <li><a class="el" href="al_iic_eeprom_block_8c-example">al_iic_eeprom_block.c</a></li>
+    <p>IIC 中断模式下 EEPROM 读写测试</p>
 
-<li><a class="el" href="al_iic_master_10bit_block_8c-example.html">al_iic_master_10bit_block.c</a></li>
+    <li><a class="el" href="al_iic_master_10bit_block_8c-example">al_iic_master_10bit_block.c</a></li>
+    <p>先运行slave，再运行master</p>
+    <p>IIC master 模式下 标准速度模式 10bit地址 数据收发测试</p>
 
-<li><a class="el" href="al_iic_master_block_8c-example.html">al_iic_master_block.c</a></li>
+    <li><a class="el" href="al_iic_master_block_8c-example">al_iic_master_block.c</a></li>
+    <p>先运行slave，再运行master</p>
+    <p>IIC master 模式下 标准速度模式 7bit地址  数据收发测试</p>
 
-<li><a class="el" href="al_iic_master_dma_8c-example.html">al_iic_master_dma.c</a></li>
+    <li><a class="el" href="al_iic_master_dma_8c-example">al_iic_master_dma.c</a></li>
+    <p>先运行slave，再运行master</p>
+    <p>IIC master 模式下通过 dma 方式收发数据</p>
 
-<li><a class="el" href="al_iic_master_fast_10bit_block_8c-example.html">al_iic_master_fast_10bit_block.c</a></li>
+    <li><a class="el" href="al_iic_master_fast_7bit_block_8c-example">al_iic_master_fast_7bit_block.c</a></li>
+    <p>先运行slave，再运行master</p>
+    <p>IIC master 模式下 fast 模式 7bit地址  数据收发测试</p>
 
-<li><a class="el" href="al_iic_master_fast_7bit_block_8c-example.html">al_iic_master_fast_7bit_block.c</a></li>
+    <li><a class="el" href="al_iic_master_fast_10bit_block_8c-example">al_iic_master_fast_10bit_block.c</a></li>
+    <p>先运行slave，再运行master</p>
+    <p>IIC master 模式下 fast 模式 10bit地址  数据收发测试</p>
 
 </ul>
 </div><!-- contents -->
