@@ -211,6 +211,24 @@
 				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
+		},
+		"PL_DRIVER_GPIO": {
+			"1.0":{
+				"name": "PL_DRIVER_GPIO",
+				"version": "1.0",
+				"depends": ["fpsoc/driver/pl_driver/axi_gpio_v1_0"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
+				"default": true
+			}
+		},
+		"PL_DRIVER_IIC": {
+			"1.0":{
+				"name": "PL_DRIVER_IIC",
+				"version": "1.0",
+				"depends": ["fpsoc/driver/pl_driver/axi_iic"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
+				"default": true
+			}
 		}
 	},
 	"library": {
@@ -1489,6 +1507,60 @@
 						"PS_DRIVER_ADC_V1_0"
 					],
 					"description": "adc test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				}
+			}
+		}
+	},
+	"pl_driver_app": {
+		"PL_DRIVER_GPIO": {
+			"1.0":{
+				"GPIO_OUTPUT": {
+					"name": "GPIO_OUTPUT",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_gpio_v1_0/example/axi_gpio_output_led.c",
+						"PL_DRIVER_GPIO_V1_0"
+					],
+					"description": "axi gpio output test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"GPIO_INPUT": {
+					"name": "GPIO_INPUT",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_gpio_v1_0/example/axi_gpio_input_key.c",
+						"PL_DRIVER_GPIO_V1_0"
+					],
+					"description": "axi gpio input test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				}
+			}
+		},
+		"PL_DRIVER_IIC": {
+			"1.0":{
+				"IIC_EEPROM": {
+					"name": "IIC_EEPROM",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_iic/example/axi_iic_eeprom.c",
+						"PL_DRIVER_IIC_V1_0"
+					],
+					"description": "axi iic eeprom test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"IIC_LOOP": {
+					"name": "IIC_LOOP",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_iic/example/axi_iic_loop.c",
+						"PL_DRIVER_IIC_V1_0"
+					],
+					"description": "axi iic loop test",
 					"supportedOS": ["standalone"],
 					"supportedProc": ["apu-0", "apu-1", "rpu"]
 				}
