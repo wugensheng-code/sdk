@@ -56,37 +56,39 @@ AL_U8 RecvData[RECV_SIZE] = { 0x0 };
  */
 void main(void)
 {
-    AL_U32 i;
-    AL_S32 ret = AL_OK;
+    AL_U32 Index;
+    AL_S32 Ret = AL_OK;
 
     AL_LOG(AL_LOG_LEVEL_ERROR, "Start FPSoc Spi Slave Test\r\n");
 
-    ret = AlSpi_Hal_Init(&Handle, &SpiInitConfigs, AL_NULL, AL_SPI_DEVICE_ID);
-    if (AL_OK != ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi_Hal_Init error, ret:0x%x\r\n", ret);
+    Ret = AlSpi_Hal_Init(&Handle, &SpiInitConfigs, AL_NULL, AL_SPI_DEVICE_ID);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi_Hal_Init error, Ret:0x%x\r\n", Ret);
     }
 
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 #ifdef RX_ONLY
     Handle->Dev.Configs.Trans.TransMode  = SPI_RX_ONLY;
-    ret = AlSpi_Hal_RecvDataBlock(Handle, RecvData, RECV_SIZE, 100000);
-    if (AL_OK != ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi_Hal_RecvDataBlock error, ret:0x%x\r\n", ret);
+    Ret = AlSpi_Hal_RecvDataBlock(Handle, RecvData, RECV_SIZE, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi_Hal_RecvDataBlock error, Ret:0x%x\r\n", Ret);
         while(1);
     }
 #else
     /* full duplex mode */
     Handle->Dev.Configs.Trans.TransMode  = SPI_TX_RX;
-    ret = AlSpi_Hal_TranferDataBlock(Handle, SendData, RECV_SIZE, RecvData, RECV_SIZE, 100000);
-    if (AL_OK != ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi_Hal_TranferDataBlock error, ret:0x%x\r\n", ret);
+    Ret = AlSpi_Hal_TranferDataBlock(Handle, SendData, RECV_SIZE, RecvData, RECV_SIZE, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi_Hal_TranferDataBlock error, Ret:0x%x\r\n", Ret);
         while(1);
     }
 #endif
 
-    for (i = 0; i < RECV_SIZE; i++)
-        AL_LOG(AL_LOG_LEVEL_ERROR, "RecvData[%d]:%d\r\n", i, RecvData[i]);
+    for (Index = 0; Index < RECV_SIZE; Index++)
+        AL_LOG(AL_LOG_LEVEL_ERROR, "RecvData[%d]:%d\r\n", Index, RecvData[Index]);
 
     AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi Spi Slave Test Pass\r\n");
+
+    return 0;
 }
 

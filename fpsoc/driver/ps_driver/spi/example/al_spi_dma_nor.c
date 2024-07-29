@@ -27,10 +27,25 @@ AL_SPI_ConfigsStruct SpiInitConfigs =
     .SlvToggleEnum      = SPI_SLV_TOGGLE_DISABLE,
 };
 
-AL_U8 CACHE_LINE_ALIGN FlashId[10] = { 0x0 };
+/* The Buffer size must be aligned with the cache line when enable MMU */
+#define FLAH_ID_SIZE                64
+#define BUFFER_SIZE                 512
 
-AL_U8 CACHE_LINE_ALIGN DmaSendData[500] = { 0x0 };
-AL_U8 CACHE_LINE_ALIGN DmaRecvData[500] = { 0x0 };
+#ifdef ENABLE_MMU
+
+AL_U8 CACHE_LINE_ALIGN FlashId[FLAH_ID_SIZE] = { 0x0 };
+
+AL_U8 CACHE_LINE_ALIGN DmaSendData[BUFFER_SIZE] = { 0x0 };
+AL_U8 CACHE_LINE_ALIGN DmaRecvData[BUFFER_SIZE] = { 0x0 };
+
+#else
+
+AL_U8 FlashId[FLAH_ID_SIZE] = { 0x0 };
+
+AL_U8 DmaSendData[BUFFER_SIZE] = { 0x0 };
+AL_U8 DmaRecvData[BUFFER_SIZE] = { 0x0 };
+
+#endif
 
 /************************** Function Prototypes ******************************/
 
@@ -48,14 +63,18 @@ AL_U8 CACHE_LINE_ALIGN DmaRecvData[500] = { 0x0 };
  */
 AL_VOID AlNorDma_Reset(AL_VOID)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     Handle->Dev.Configs.Trans.TransMode = SPI_TX_ONLY;
     DmaSendData[0] = NOR_OP_INFINEON_SRST;
 
-    ret = AlSpi_Hal_DmaStartBlockSend(Handle, DmaSendData, 1, 100000);
-    if (AL_OK != ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_Reset error, ret:0x%x\r\n", ret);
+#ifdef ENABLE_MMU
+    AlCache_FlushDcacheRange((AL_UINTPTR)DmaSendData, (AL_UINTPTR)(DmaSendData + BUFFER_SIZE));
+#endif
+
+    Ret = AlSpi_Hal_DmaStartBlockSend(Handle, DmaSendData, 1, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_Reset error, Ret:0x%x\r\n", Ret);
     }
 }
 
@@ -72,14 +91,18 @@ AL_VOID AlNorDma_Reset(AL_VOID)
  */
 AL_VOID AlNorDma_Wren(AL_VOID)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     Handle->Dev.Configs.Trans.TransMode = SPI_TX_ONLY;
     DmaSendData[0] = NOR_OP_WREN;
 
-    ret = AlSpi_Hal_DmaStartBlockSend(Handle, DmaSendData, 1, 100000);
-    if (AL_OK != ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_Wren error, ret:0x%x\r\n", ret);
+#ifdef ENABLE_MMU
+    AlCache_FlushDcacheRange((AL_UINTPTR)DmaSendData, (AL_UINTPTR)(DmaSendData + BUFFER_SIZE));
+#endif
+
+    Ret = AlSpi_Hal_DmaStartBlockSend(Handle, DmaSendData, 1, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_Wren error, Ret:0x%x\r\n", Ret);
     }
 }
 
@@ -96,15 +119,20 @@ AL_VOID AlNorDma_Wren(AL_VOID)
  */
 AL_VOID AlNorDma_WaitWip(AL_VOID)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     Handle->Dev.Configs.Trans.TransMode  = SPI_EEPROM;
     DmaSendData[0] = NOR_OP_RDSR;
 
     do {
-        ret = AlSpi_Hal_DmaStartBlockTranfer(Handle, DmaSendData, 1, DmaRecvData, 1, 100000);
-        if (AL_OK !=ret) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_WaitWip error, ret:0x%x\r\n", ret);
+#ifdef ENABLE_MMU
+        AlCache_FlushDcacheRange((AL_UINTPTR)DmaSendData, (AL_UINTPTR)(DmaSendData + BUFFER_SIZE));
+        AlCache_InvalidateDcacheRange((AL_UINTPTR)DmaRecvData, (AL_UINTPTR)(DmaRecvData + BUFFER_SIZE));
+#endif
+
+        Ret = AlSpi_Hal_DmaStartBlockTranfer(Handle, DmaSendData, 1, DmaRecvData, 1, 100000);
+        if (AL_OK != Ret) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_WaitWip error, Ret:0x%x\r\n", Ret);
         }
 #ifdef SPI_DEBUG
         AL_LOG(AL_LOG_LEVEL_ERROR, "WAITWIP Nor Status1 Reg:%x\r\n", DmaRecvData[0]);
@@ -125,14 +153,19 @@ AL_VOID AlNorDma_WaitWip(AL_VOID)
  */
 AL_VOID AlNorDma_ReadStatus(AL_VOID)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     Handle->Dev.Configs.Trans.TransMode  = SPI_EEPROM;
     DmaSendData[0] = NOR_OP_RDSR;
 
-    AlSpi_Hal_DmaStartBlockTranfer(Handle, DmaSendData, 1, DmaRecvData, 1, 100000);
-    if (AL_OK != ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_ReadStatus error, ret:0x%x\r\n", ret);
+#ifdef ENABLE_MMU
+    AlCache_FlushDcacheRange((AL_UINTPTR)DmaSendData, (AL_UINTPTR)(DmaSendData + BUFFER_SIZE));
+    AlCache_InvalidateDcacheRange((AL_UINTPTR)DmaRecvData, (AL_UINTPTR)(DmaRecvData + BUFFER_SIZE));
+#endif
+
+    Ret = AlSpi_Hal_DmaStartBlockTranfer(Handle, DmaSendData, 1, DmaRecvData, 1, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_ReadStatus error, Ret:0x%x\r\n", Ret);
     }
 #ifdef SPI_DEBUG
     AL_LOG(AL_LOG_LEVEL_ERROR, "Nor Status1 Reg:%x\r\n", DmaRecvData[0]);
@@ -152,16 +185,20 @@ AL_VOID AlNorDma_ReadStatus(AL_VOID)
  */
 AL_VOID AlNorDma_Erase(AL_VOID)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
     Handle->Dev.Configs.Trans.TransMode  = SPI_TX_ONLY;
     DmaSendData[0] = NOR_OP_SE;
     DmaSendData[1] = 0;
     DmaSendData[2] = 0;
     DmaSendData[3] = 0;
 
-    ret = AlSpi_Hal_DmaStartBlockSend(Handle, DmaSendData, 4, 100000);
-    if (AL_OK != ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_Erase error, ret:0x%x\r\n", ret);
+#ifdef ENABLE_MMU
+    AlCache_FlushDcacheRange((AL_UINTPTR)DmaSendData, (AL_UINTPTR)(DmaSendData + BUFFER_SIZE));
+#endif
+
+    Ret = AlSpi_Hal_DmaStartBlockSend(Handle, DmaSendData, 4, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_Erase error, Ret:0x%x\r\n", Ret);
     }
 }
 
@@ -178,16 +215,21 @@ AL_VOID AlNorDma_Erase(AL_VOID)
  */
 AL_VOID AlNorDma_ReadPage(AL_VOID)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
     Handle->Dev.Configs.Trans.TransMode  = SPI_EEPROM;
     DmaSendData[0] = NOR_OP_READ;
     DmaSendData[1] = 0;
     DmaSendData[2] = 0;
     DmaSendData[3] = 0;
 
-    ret = AlSpi_Hal_DmaStartBlockTranfer(Handle, DmaSendData, 4, DmaRecvData, 240, 100000);
-    if (AL_OK !=ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_ReadPage error, ret:0x%x\r\n", ret);
+#ifdef ENABLE_MMU
+    AlCache_FlushDcacheRange((AL_UINTPTR)DmaSendData, (AL_UINTPTR)(DmaSendData + BUFFER_SIZE));
+    AlCache_InvalidateDcacheRange((AL_UINTPTR)DmaRecvData, (AL_UINTPTR)(DmaRecvData + BUFFER_SIZE));
+#endif
+
+    Ret = AlSpi_Hal_DmaStartBlockTranfer(Handle, DmaSendData, 4, DmaRecvData, 240, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_ReadPage error, Ret:0x%x\r\n", Ret);
     }
 }
 
@@ -204,7 +246,7 @@ AL_VOID AlNorDma_ReadPage(AL_VOID)
  */
 AL_VOID AlNorDma_WritePage(AL_VOID)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     Handle->Dev.Configs.Trans.TransMode  = SPI_TX_ONLY;
     DmaSendData[0] = NOR_OP_PP;
@@ -212,13 +254,18 @@ AL_VOID AlNorDma_WritePage(AL_VOID)
     DmaSendData[2] = 0;
     DmaSendData[3] = 0;
 
-    AL_U32 i = 0;
-    for (i = 0; i < 400; i++) {
-        DmaSendData[i + 4] = i % 255;
+    AL_U32 Index = 0;
+    for (Index = 0; Index < 400; Index++) {
+        DmaSendData[Index + 4] = Index % 255;
     }
-    ret = AlSpi_Hal_DmaStartBlockSend(Handle, DmaSendData, 240, 100000);
-    if (AL_OK !=ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_WritePage error, ret:0x%x\r\n", ret);
+
+#ifdef ENABLE_MMU
+    AlCache_FlushDcacheRange((AL_UINTPTR)DmaSendData, (AL_UINTPTR)(DmaSendData + BUFFER_SIZE));
+#endif
+
+    Ret = AlSpi_Hal_DmaStartBlockSend(Handle, DmaSendData, 240, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_WritePage error, Ret:0x%x\r\n", Ret);
     }
 }
 
@@ -235,13 +282,18 @@ AL_VOID AlNorDma_WritePage(AL_VOID)
  */
 AL_VOID AlNorDma_ReadId(AL_VOID)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
     Handle->Dev.Configs.Trans.TransMode  = SPI_EEPROM;
     DmaSendData[0] = NOR_OP_RDID;;
 
-    ret = AlSpi_Hal_DmaStartBlockTranfer(Handle, DmaSendData, 1, FlashId, 3, 100000);
-    if (AL_OK !=ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_ReadId error, ret:0x%x\r\n", ret);
+#ifdef ENABLE_MMU
+    AlCache_FlushDcacheRange((AL_UINTPTR)DmaSendData, (AL_UINTPTR)(DmaSendData + BUFFER_SIZE));
+    AlCache_InvalidateDcacheRange((AL_UINTPTR)DmaRecvData, (AL_UINTPTR)(DmaRecvData + BUFFER_SIZE));
+#endif
+
+    Ret = AlSpi_Hal_DmaStartBlockTranfer(Handle, DmaSendData, 1, FlashId, 3, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNorDma_ReadId error, Ret:0x%x\r\n", Ret);
     }
 
     AL_LOG(AL_LOG_LEVEL_ERROR, "DMA Read Flash ID:0x%x, 0x%x, 0x%x\r\n", FlashId[0], FlashId[1], FlashId[2]);
@@ -260,14 +312,14 @@ AL_VOID AlNorDma_ReadId(AL_VOID)
  */
 AL_VOID main(AL_VOID)
 {
-    AL_U32 i;
-    AL_S32 ret = AL_OK;
+    AL_U32 Index;
+    AL_S32 Ret = AL_OK;
 
     AL_LOG(AL_LOG_LEVEL_ERROR, "Start FPSoc Spi AL_SPI_RUN_DMA Test\r\n");
 
-    ret = AlSpi_Hal_Init(&Handle, &SpiInitConfigs, AL_NULL, AL_SPI_DEVICE_ID);
-    if (ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi_Hal_Init error, ret:0x%x\r\n", ret);
+    Ret = AlSpi_Hal_Init(&Handle, &SpiInitConfigs, AL_NULL, AL_SPI_DEVICE_ID);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi_Hal_Init error, Ret:0x%x\r\n", Ret);
     }
 
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
@@ -284,10 +336,10 @@ AL_VOID main(AL_VOID)
 
     /**/
     AlNorDma_ReadPage();
-    for (i = 0; i < 240; i++) {
-        if(0xff != DmaRecvData[i]) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi test erase norflash error, ret:0x%x\r\n", ret);
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Error DmaRecvData[%d]:%d\r\n", i, DmaRecvData[i]);
+    for (Index = 0; Index < 240; Index++) {
+        if(0xff != DmaRecvData[Index]) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi test erase norflash error, Ret:0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Error DmaRecvData[%d]:%d\r\n", Index, DmaRecvData[Index]);
             while (1);
         }
     }
@@ -300,13 +352,15 @@ AL_VOID main(AL_VOID)
     AlNorDma_WaitWip();
 
     AlNorDma_ReadPage();
-    for (i = 0; i < 230; i++) {
-        if(i != DmaRecvData[i]) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "DMA AlSpi data write norflash test error, ret:0x%x\r\n", ret);
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Error DmaRecvData[%d]:%d\r\n", i, DmaRecvData[i]);
+    for (Index = 0; Index < 230; Index++) {
+        if(Index != DmaRecvData[Index]) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "DMA AlSpi data write norflash test error, Ret:0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Error DmaRecvData[%d]:%d\r\n", Index, DmaRecvData[Index]);
             while (1);
         }
     }
     AL_LOG(AL_LOG_LEVEL_ERROR, "DMA AlSpi test write norflash success\r\n");
+
+    return 0;
 }
 

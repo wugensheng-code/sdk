@@ -47,14 +47,14 @@ AL_U8 __attribute__((aligned(4))) FlashId[10] = { 0x0 };
  */
 void AlNor_Reset(void)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     Handle->Dev.Configs.Trans.TransMode = SPI_TX_ONLY;
     SendData[0] = NOR_OP_INFINEON_SRST;
 
-    ret = AlSpi_Hal_SendDataBlock(Handle, SendData, 1, 100000);
-    if (AL_OK != ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_Reset error, ret:0x%x\r\n", ret);
+    Ret = AlSpi_Hal_SendDataBlock(Handle, SendData, 1, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_Reset error, Ret:0x%x\r\n", Ret);
     }
 }
 
@@ -72,15 +72,15 @@ void AlNor_Reset(void)
  */
 void AlNor_Wren(void)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     Handle->Dev.Configs.Trans.TransMode = SPI_TX_ONLY;
     SendData[0] = NOR_OP_WREN;
 
-    ret = AlSpi_Hal_SendDataBlock(Handle, SendData, 1, 100000);
-    if (AL_OK != ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_Wren error, ret:0x%x\r\n", ret);
-    };
+    Ret = AlSpi_Hal_SendDataBlock(Handle, SendData, 1, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_Wren error, Ret:0x%x\r\n", Ret);
+    }
 }
 
 /**
@@ -97,15 +97,15 @@ void AlNor_Wren(void)
  */
 void AlNor_SetStatus(AL_U8 data)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     Handle->Dev.Configs.Trans.TransMode = SPI_TX_ONLY;
     SendData[0] = NOR_OP_WRSR;
     SendData[1] = data;
 
-    ret = AlSpi_Hal_SendDataBlock(Handle, SendData, 2, 100000);
-    if (AL_OK != ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_SetStatus error, ret:0x%x\r\n", ret);
+    Ret = AlSpi_Hal_SendDataBlock(Handle, SendData, 2, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_SetStatus error, Ret:0x%x\r\n", Ret);
     }
 }
 
@@ -122,15 +122,15 @@ void AlNor_SetStatus(AL_U8 data)
  */
 void AlNor_WriteWip(void)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     Handle->Dev.Configs.Trans.TransMode  = SPI_EEPROM;
     SendData[0] = NOR_OP_RDSR;
 
     do {
-        ret = AlSpi_Hal_TranferDataBlock(Handle, SendData, 1, RecvData, 1, 100000);
-        if (AL_OK != ret) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_WriteWip error, ret:0x%x\r\n");
+        Ret = AlSpi_Hal_TranferDataBlock(Handle, SendData, 1, RecvData, 1, 100000);
+        if (AL_OK != Ret) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_WriteWip error, Ret:0x%x\r\n");
         }
 #ifdef SPI_DEBUG
         AL_LOG(AL_LOG_LEVEL_ERROR, "WAITWIP Nor Status1 Reg:%x\r\n", RecvData[0]);
@@ -151,14 +151,14 @@ void AlNor_WriteWip(void)
  */
 void AlNor_ReadStatus(void)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     Handle->Dev.Configs.Trans.TransMode  = SPI_EEPROM;
     SendData[0] = NOR_OP_RDSR;
 
-    AlSpi_Hal_TranferDataBlock(Handle, SendData, 1, RecvData, 1, 100000);
-    if (AL_OK != ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_ReadStatus error, ret:0x%x\r\n", ret);
+    Ret = AlSpi_Hal_TranferDataBlock(Handle, SendData, 1, RecvData, 1, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_ReadStatus error, Ret:0x%x\r\n", Ret);
     }
 #ifdef SPI_DEBUG
     AL_LOG(AL_LOG_LEVEL_ERROR, "Nor Status1 Reg:%x\r\n", RecvData[0]);
@@ -178,7 +178,7 @@ void AlNor_ReadStatus(void)
  */
 void AlNor_Erase(void)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     Handle->Dev.Configs.Trans.TransMode  = SPI_TX_ONLY;
     SendData[0] = NOR_OP_SE;
@@ -186,9 +186,9 @@ void AlNor_Erase(void)
     SendData[2] = 0;
     SendData[3] = 0;
 
-    ret = AlSpi_Hal_SendDataBlock(Handle, SendData, 4, 100000);
-    if (AL_OK != ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_Erase error, ret:0x%x\r\n", ret);
+    Ret = AlSpi_Hal_SendDataBlock(Handle, SendData, 4, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_Erase error, Ret:0x%x\r\n", Ret);
     }
 }
 
@@ -205,14 +205,14 @@ void AlNor_Erase(void)
  */
 void AlNor_EraseChip(void)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     Handle->Dev.Configs.Trans.TransMode  = SPI_TX_ONLY;
     SendData[0] = NOR_OP_CE;
 
-    ret = AlSpi_Hal_SendDataBlock(Handle, SendData, 1, 100000);
-    if (AL_OK != ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_EraseChip error, ret:0x%x\r\n", ret);
+    Ret = AlSpi_Hal_SendDataBlock(Handle, SendData, 1, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_EraseChip error, Ret:0x%x\r\n", Ret);
     }
 }
 
@@ -229,16 +229,16 @@ void AlNor_EraseChip(void)
  */
 void AlNor_ReadPage(void)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
     Handle->Dev.Configs.Trans.TransMode  = SPI_EEPROM;
     SendData[0] = NOR_OP_READ;
     SendData[1] = 0;
     SendData[2] = 0;
     SendData[3] = 0;
 
-    ret = AlSpi_Hal_TranferDataBlock(Handle, SendData, 4, RecvData, 240, 100000);
-    if (AL_OK != ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_ReadPage error, ret:0x%x\r\n", ret);
+    Ret = AlSpi_Hal_TranferDataBlock(Handle, SendData, 4, RecvData, 240, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_ReadPage error, Ret:0x%x\r\n", Ret);
     }
 }
 
@@ -255,7 +255,7 @@ void AlNor_ReadPage(void)
  */
 void AlNor_ReadPage1(void)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
     Handle->Dev.Configs.Trans.TransMode  = SPI_EEPROM;
 
     SendData[0] = NOR_OP_READ;
@@ -263,9 +263,9 @@ void AlNor_ReadPage1(void)
     SendData[2] = 0x10;
     SendData[3] = 0;
 
-    ret = AlSpi_Hal_TranferDataBlock(Handle, SendData, 4, RecvData, 240, 100000);
-    if (AL_OK !=ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_ReadPage error, ret:0x%x\r\n", ret);
+    Ret = AlSpi_Hal_TranferDataBlock(Handle, SendData, 4, RecvData, 240, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_ReadPage error, Ret:0x%x\r\n", Ret);
     }
 }
 
@@ -282,7 +282,7 @@ void AlNor_ReadPage1(void)
  */
 void AlNor_WritePage(void)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     Handle->Dev.Configs.Trans.TransMode  = SPI_TX_ONLY;
     SendData[0] = NOR_OP_PP;
@@ -290,13 +290,13 @@ void AlNor_WritePage(void)
     SendData[2] = 0;
     SendData[3] = 0;
 
-    AL_U32 i = 0;
-    for (i = 0; i < 400; i++) {
-        SendData[i + 4] = i % 255;
+    AL_U32 Index = 0;
+    for (Index = 0; Index < 400; Index++) {
+        SendData[Index + 4] = Index % 255;
     }
-    ret = AlSpi_Hal_SendDataBlock(Handle, SendData, 240, 100000);
-    if (AL_OK !=ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_WritePage error ret:0x%x\r\n", ret);
+    Ret = AlSpi_Hal_SendDataBlock(Handle, SendData, 240, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_WritePage error Ret:0x%x\r\n", Ret);
     }
 }
 
@@ -313,7 +313,7 @@ void AlNor_WritePage(void)
  */
 void AlNor_WritePage1(void)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
 
     Handle->Dev.Configs.Trans.TransMode  = SPI_TX_ONLY;
     SendData[0] = NOR_OP_PP;
@@ -321,13 +321,13 @@ void AlNor_WritePage1(void)
     SendData[2] = 0x10;
     SendData[3] = 0;
 
-    AL_U32 i = 0;
-    for (i = 0; i < 400; i++) {
-       SendData[i + 4] = i % 255;
+    AL_U32 Index = 0;
+    for (Index = 0; Index < 400; Index++) {
+       SendData[Index + 4] = Index % 255;
     }
-    ret = AlSpi_Hal_SendDataBlock(Handle, SendData, 240, 100000);
-    if (AL_OK !=ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_WritePage error, ret:0x%x\r\n", ret);
+    Ret = AlSpi_Hal_SendDataBlock(Handle, SendData, 240, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_WritePage error, Ret:0x%x\r\n", Ret);
     }
 }
 
@@ -344,12 +344,12 @@ void AlNor_WritePage1(void)
  */
 AL_VOID AlNor_ReadId(AL_VOID)
 {
-    AL_S32 ret = AL_OK;
+    AL_S32 Ret = AL_OK;
     Handle->Dev.Configs.Trans.TransMode  = SPI_EEPROM;
     SendData[0] = NOR_OP_RDID;
-    ret = AlSpi_Hal_TranferDataBlock(Handle, SendData, 1, FlashId, 3, 100000);
-    if (AL_OK !=ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_ReadId error, ret:0x%x\r\n", ret);
+    Ret = AlSpi_Hal_TranferDataBlock(Handle, SendData, 1, FlashId, 3, 100000);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlNor_ReadId error, Ret:0x%x\r\n", Ret);
     }
     AL_LOG(AL_LOG_LEVEL_ERROR, "Flash ID:0x%x, 0x%x, 0x%x\r\n", FlashId[0], FlashId[1], FlashId[2]);
 }
@@ -367,14 +367,14 @@ AL_VOID AlNor_ReadId(AL_VOID)
  */
 void main(void)
 {
-    AL_U32 i;
-    AL_S32 ret = AL_OK;
+    AL_U32 Index;
+    AL_S32 Ret = AL_OK;
 
     AL_LOG(AL_LOG_LEVEL_ERROR, "Start FPSoc Spi Test\r\n");
 
-    ret = AlSpi_Hal_Init(&Handle, &SpiInitConfigs, AL_NULL, AL_SPI_DEVICE_ID);
-    if (AL_OK != ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi_Hal_Init error, ret:0x%x\r\n", ret);
+    Ret = AlSpi_Hal_Init(&Handle, &SpiInitConfigs, AL_NULL, AL_SPI_DEVICE_ID);
+    if (AL_OK != Ret) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi_Hal_Init error, Ret:0x%x\r\n", Ret);
     }
 
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
@@ -387,10 +387,10 @@ void main(void)
     AlNor_WriteWip();
 
     AlNor_ReadPage();
-    for (i = 0; i < 240; i++) {
-        if(0xff != RecvData[i]) {
+    for (Index = 0; Index < 240; Index++) {
+        if(0xff != RecvData[Index]) {
             AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi test erase norflash error\r\n");
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Error RecvData[%d]:%d\r\n", i, RecvData[i]);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Error RecvData[%d]:%d\r\n", Index, RecvData[Index]);
             while (1);
         }
     }
@@ -406,24 +406,26 @@ void main(void)
     AlNor_WriteWip();
 
     AlNor_ReadPage();
-    for (i = 0; i < 230; i++) {
-        if(i != RecvData[i]) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi data write norflash test error, ret:0x%x\r\n", ret);
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Error RecvData[%d]:%d\r\n", i, RecvData[i]);
+    for (Index = 0; Index < 230; Index++) {
+        if(Index != RecvData[Index]) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi data write norflash test error, Ret:0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Error RecvData[%d]:%d\r\n", Index, RecvData[Index]);
             while (1);
         }
     }
     memset(RecvData, 0x0, sizeof(RecvData));
 
     AlNor_ReadPage1();
-    for (i = 0; i < 230; i++) {
-        if(i != RecvData[i]) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi data write1 norflash test error, ret:0x%x\r\n", ret);
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Error RecvData[%d]:%d\r\n", i, RecvData[i]);
+    for (Index = 0; Index < 230; Index++) {
+        if(Index != RecvData[Index]) {
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi data write1 norflash test error, Ret:0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "Error RecvData[%d]:%d\r\n", Index, RecvData[Index]);
             while (1);
         }
     }
 
     AL_LOG(AL_LOG_LEVEL_ERROR, "AlSpi test write norflash success\r\n");
+
+    return 0;
 }
 
