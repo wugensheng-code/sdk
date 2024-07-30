@@ -1098,6 +1098,21 @@
 				}
 			}
 		},
+		"PS_DRIVER_WDT": {
+			"1.0":{
+				"WDT": {
+					"name": "WDT",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/wdt/example/al_wdt.c",
+						"PS_DRIVER_WDT_V1_0"
+					],
+					"description": "wdt test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				}
+			}
+		},
         "PS_DRIVER_GBE": {
 			"1.0":{
 				"GBE_INTERNAL_LOOPBACK": {
