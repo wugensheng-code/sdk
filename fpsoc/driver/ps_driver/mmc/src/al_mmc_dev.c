@@ -2106,13 +2106,14 @@ AL_S32 AlMmc_Dev_Init(AL_MMC_DevStruct *Dev, AL_MMC_HwConfigStruct *HwConfig, AL
 
     AL_S32 Ret = AL_OK;
 
-    AL_LOG(AL_LOG_LEVEL_INFO, "Request input clk %d Hz, IO clk %d Hz\r\n", HwConfig->InputClk,
-                                                                           HwConfig->IoClk);
-
+    /* Configurable mode default divide 4 */
+    HwConfig->InputClk >>= 2;
     InitConfig->FreqKhz = HwConfig->IoClk / 1000;
     if (InitConfig->FreqKhz > AL_MMC_FREQ_KHZ_25000) {
         InitConfig->SpdMode = AL_MMC_SPD_HS_SDR25;
     }
+    AL_LOG(AL_LOG_LEVEL_INFO, "Request input clk %d Hz, IO clk %d Hz\r\n", HwConfig->InputClk,
+                                                                           HwConfig->IoClk);
 
     AlMmc_Dev_ClrState(Dev, AL_MMC_STATE_READY);
 

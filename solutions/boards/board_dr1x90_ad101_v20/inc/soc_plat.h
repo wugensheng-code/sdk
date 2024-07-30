@@ -386,7 +386,7 @@ int  Soc_PlatGetDeviceVersion();
 
 /* debug info */
 #ifndef MMC_CLOCK
-#define MMC_CLOCK              (100*MHz)
+#define MMC_CLOCK              (400*MHz)
 #endif
 #ifndef TC_CLOCK
 #define TC_CLOCK              (200*MHz)

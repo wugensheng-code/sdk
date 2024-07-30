@@ -123,16 +123,16 @@ extern "C" {
 
 
 #ifdef AL_CLK_CONFIG
-#define MMC_CLOCK               (100*MHZ)
+#define MMC_CLOCK               (400*MHZ)
 #else
 #ifdef AL_OSC_25
-#define MMC_CLOCK               (50*MHZ)
+#define MMC_CLOCK               (200*MHZ)
 #elif defined AL_OSC_33
-#define MMC_CLOCK               (66*MHZ)
+#define MMC_CLOCK               (264*MHZ)
 #elif defined AL_OSC_50
-#define MMC_CLOCK               (100*MHZ)
+#define MMC_CLOCK               (400*MHZ)
 #else
-#define MMC_CLOCK               (10*MHZ)
+#define MMC_CLOCK               (40*MHZ)
 #endif
 #endif
 
@@ -230,7 +230,7 @@ int Soc_PlatGetDeviceVersion();
 
 /* debug info */
 #ifndef MMC_CLOCK
-#define MMC_CLOCK              (100*MHz)
+#define MMC_CLOCK              (400*MHz)
 #endif
 #ifndef TC_CLOCK
 #define TC_CLOCK              (200*MHz)

@@ -74,7 +74,7 @@ extern "C" {
 #define MMC0_TOP_CFG_CTRL_ADDR  (0xF8800150UL)
 #define MMC1_TOP_CFG_CTRL_ADDR  (0xF8800154UL)
 
-#define MMC0_BUS_WIDTH          (8)
+#define MMC0_BUS_WIDTH          (4)
 #define MMC1_BUS_WIDTH          (4)
 
 /*----------------------------------------------------------------------------
