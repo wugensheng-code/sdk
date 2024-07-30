@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>AL9000 Project: Main Page</title>
+<title>xmon: Main Page</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -52,15 +52,25 @@ $(function() {
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
-<iframe src="javascript:void(0)" frameborder="0" 
+<iframe src="javascript:void(0)" frameborder="0"
         name="MSearchResults" id="MSearchResults">
 </iframe>
 </div>
 
 <div class="header">
   <div class="headertitle">
-<div class="title">AL9000 Project Documentation</div>  </div>
+<div class="title">XMON API Documentation</div>  </div>
 </div><!--header-->
+<div class="textblock"><p>The AL9000 XMON driver. This driver supports the AL9000 XMON Controller.</p>
+  <p>The XMON Controller supports the following features:</p>
+  <ul>
+    <li>支持分aw与ar通道独立输出qos指示，qos位宽4bit</li>
+    <li>支持配置固定优先级输出</li>
+    <li>支持参数统计配置清零</li>
+    <li>支持对AXI总线命令分参数详细统计，如 read/write、burst_length等</li>
+    <li>支持实时查询qos值</li>
+  </ul>
+
 <div class="contents">
 </div><!-- contents -->
 <!-- start footer part -->
