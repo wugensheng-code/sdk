@@ -1184,9 +1184,9 @@ static AL_S32 AlGbe_Dev_GetRxTimestampStatus(AL_VOID *Desc, AL_VOID *NextDesc)
                     return Ret;
                 Index++;
 
-            } while ((Ret == AL_GBE_DESC_RX_TIMESTAMP_STATUS_NOT_READY) && (Index < 10));
+            } while ((Ret == AL_GBE_DESC_RX_TIMESTAMP_STATUS_NOT_READY) && (Index < 100));
 
-            if (Index == 10)
+            if (Index == 100)
                 Ret = AL_GBE_DESC_RX_TIMESTAMP_STATUS_NOT_READY;
         }
     }
