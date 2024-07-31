@@ -807,6 +807,7 @@ extern "C" {
 /**************************** Type Definitions ******************************/
 typedef struct {
     AL_U16                     DeviceId;        /**< Unique ID  of device */
+    AL_U32                     InputClkFreq;    /**< Input clock frequency of smc */
     AL_UINTPTR                 NandBaseAddr;    /**< Base address of the device */
     AL_UINTPTR                 SmcBaseAddr;    /**< Base address of the device */
 } AL_SMC_HwConfigStruct;

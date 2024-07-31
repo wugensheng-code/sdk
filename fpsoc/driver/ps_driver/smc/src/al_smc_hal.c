@@ -51,6 +51,7 @@ AL_U32 AlSmc_Hal_Init(AL_SMC_HalStruct *Handle, AL_SMC_ConfigsStruct *InitConfig
     Handle->Dev = &AL_SMC_DevInstance[CfgPtr->DeviceId];
     Handle->Dev->SmcBaseAddr = CfgPtr->SmcBaseAddr;
     Handle->Dev->NandBaseAddr = CfgPtr->NandBaseAddr;
+    Handle->Dev->InputClkFreq = CfgPtr->InputClkFreq;
     Handle->NandInfo = &AL_NAND_InfoInstance[CfgPtr->DeviceId];
 
     AlSmc_Dev_EccHwDisable(Handle->Dev);

@@ -7,6 +7,7 @@
 
 /********************************* including Files *********************************/
 #include "al_smc_hw.h"
+#include "al_chip.h"
 
 /********************************* Constant Definitions *****************************/
 
@@ -24,9 +25,12 @@
 
 AL_SMC_HwConfigStruct AlSmc_HwCfg[AL_SMC_NUM_INSTANCE] =
 {
+#ifdef SMCPS_ENABLE
     {
         .DeviceId           = 0,
+	.InputClkFreq       = SMC_CLOCK,
         .NandBaseAddr       = NAND_BASE_ADDR,
         .SmcBaseAddr        = SMC_BASE_ADDR
     }
+#endif
 };

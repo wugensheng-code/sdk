@@ -177,6 +177,7 @@ extern "C" {
 
 #define HAVE_SMCPS_DRIVER
 #define SMCPS_ENABLE
+#define SMC_CLOCK  (50 * MHZ)
 
 #define HAVE_SPIPS_DRIVER
 #define SPI0PS_ENABLE

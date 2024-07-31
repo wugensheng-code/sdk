@@ -181,6 +181,7 @@ extern "C" {
 #define QSPIPS_ENABLE
 #define MMC0PS_ENABLE
 #define MMC1PS_ENABLE
+#define SMC_CLOCK                        (50 * MHZ)
 // #define SPI0PS_ENABLE
 // #define SPI1PS_ENABLE
 // #define TC0PS_ENABLE

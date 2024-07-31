@@ -70,8 +70,8 @@ int main(void)
             printf("AlSmc_Hal_Init error:0x%x\r\n", Ret);
         }
 
-	SpareBufPtr = &SmcHal.NandInfo->SpareBuf[0];
-	SpareBufSize = SmcHal.NandInfo->Size.SpareBytesPerPage;
+        SpareBufPtr = &SmcHal.NandInfo->SpareBuf[0];
+        SpareBufSize = SmcHal.NandInfo->Size.SpareBytesPerPage;
 
         Ret = AlSmc_Hal_EraseBlock(&SmcHal, 0);
         if (AL_OK != Ret) {
@@ -115,46 +115,48 @@ int main(void)
             }
         }
 
-	Ret = AlSmc_Hal_ReadSpare(&SmcHal, 0, SpareBufPtr);
-        if (AL_OK != Ret) {
-            printf("AlSmc_Hal_ReadPage error:0x%x\r\n", Ret);
-             while(1);
-        }
+        if (SmcHal.NandInfo->Size.EccNum == 1) {
+                Ret = AlSmc_Hal_ReadSpare(&SmcHal, 0, SpareBufPtr);
+                if (AL_OK != Ret) {
+                        printf("AlSmc_Hal_ReadPage error:0x%x\r\n", Ret);
+                        while(1);
+                }
 
-	for (i = 0; i < SpareBufSize; i++) {
-            if(0xff != SpareBufPtr[i]) {
-                printf("AlSmc test erase nandflash error\r\n");
-                printf("Error RecvData[%d]:%d\r\n", i, SpareBufPtr[i]);
-		while(1);
-            }
-        }
+                for (i = 0; i < SpareBufSize; i++) {
+                        if(0xff != SpareBufPtr[i]) {
+                                printf("AlSmc test erase nandflash error\r\n");
+                                printf("Error RecvData[%d]:%d\r\n", i, SpareBufPtr[i]);
+                                while(1);
+                        }
+                }
 
-	for (i = 0; i < SpareBufSize; i++) {
-            SpareBufPtr[i] = i % 256;
-        }
+                for (i = 0; i < SpareBufSize; i++) {
+                        SpareBufPtr[i] = i % 256;
+                }
 
-        Ret = AlSmc_Hal_WriteSpare(&SmcHal, 0, SpareBufPtr);
-        if (AL_OK != Ret) {
-            printf("AlSmc_Hal_ReadPage error:0x%x\r\n", Ret);
-            while(1);
-        }
+                Ret = AlSmc_Hal_WriteSpare(&SmcHal, 0, SpareBufPtr);
+                if (AL_OK != Ret) {
+                        printf("AlSmc_Hal_ReadPage error:0x%x\r\n", Ret);
+                        while(1);
+                }
 
-	for (i = 0; i < SpareBufSize; i++) {
-            SpareBufPtr[i] = 0;
-        }
+                for (i = 0; i < SpareBufSize; i++) {
+                        SpareBufPtr[i] = 0;
+                }
 
-        Ret = AlSmc_Hal_ReadSpare(&SmcHal, 0, SpareBufPtr);
-        if (AL_OK != Ret) {
-            printf("AlSmc_Hal_ReadPage error:0x%x\r\n", Ret);
-             while(1);
-        }
+                Ret = AlSmc_Hal_ReadSpare(&SmcHal, 0, SpareBufPtr);
+                if (AL_OK != Ret) {
+                        printf("AlSmc_Hal_ReadPage error:0x%x\r\n", Ret);
+                        while(1);
+                }
 
-        for (i = 0; i < SpareBufSize; i++) {
-            if((i % 256) != SpareBufPtr[i]) {
-                printf("AlSmc data write nandflash test error\r\n");
-                printf("Error OobRecvData[%d]:%d\r\n", i, SpareBufPtr[i]);
-                while (1);
-            }
+                for (i = 0; i < SpareBufSize; i++) {
+                        if((i % 256) != SpareBufPtr[i]) {
+                                printf("AlSmc data write nandflash test error\r\n");
+                                printf("Error OobRecvData[%d]:%d\r\n", i, SpareBufPtr[i]);
+                                while (1);
+                        }
+                }
         }
 
         printf("LoopCount: %d\r\n", LoopCount);

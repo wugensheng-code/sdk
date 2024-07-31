@@ -1293,8 +1293,8 @@ AL_U32 AlSmc_Dev_EnableOnDieEcc(AL_NAND_InfoStruct *NandInfo)
         EccSetFeature[0] = 0x10;
     }
 
-    ALSmc_Dev_GetFeature(NandInfo, 0x90, &EccGetFeature[0]);
     ALSmc_Dev_SetFeature(NandInfo, 0x90, &EccSetFeature[0]);
+    ALSmc_Dev_GetFeature(NandInfo, 0x90, &EccGetFeature[0]);
 
     if (EccGetFeature[0] != EccSetFeature[0]) {
         return AL_SMC_EVENTS_TO_ERRS(SmcWriteEccFeatErr);

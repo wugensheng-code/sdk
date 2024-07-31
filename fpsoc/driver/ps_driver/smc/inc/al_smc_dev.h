@@ -266,6 +266,7 @@ typedef struct
 {
     AL_REG                        SmcBaseAddr;        /* SMC Base address */
     AL_REG                        NandBaseAddr;     /* NAND base address */
+    AL_U32                        InputClkFreq;     /* Input clock frequency of smc */
     AL_SMC_ConfigsStruct          Configs;
     AL_U32                        ErrorCode;
     AL_SMC_StateEnum              State;
