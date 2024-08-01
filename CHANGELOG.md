@@ -1,5 +1,47 @@
 # CHANGELOG
 
+## BM_2024.7_release
+
+### (1aec0313e914cff7aaac8b8cb94c964f67f9d4f8)
+
+## Fix
+
+- 外设 DMA example bug fix: spi, uart, i2c
+
+- 提高 smc 的 timing
+
+- 修复 risc-v 中注册中断服务函数时由于 cache 导致的一致性问题
+
+- 修复 openamp 中 cache 一致性问题
+
+- 修复 GBE driver 中 cache 一致性问题 
+
+## Feature
+
+- 添加 efuse 驱动
+
+- 添加 risc-v 中针对 freertos 的 backtrace
+
+- 添加针对 usb phy 的 gpio reset
+
+- 支持 aarch32
+
+- 添加 apu 中保存浮点寄存器的支持
+
+- 添加 wdt example
+
+- 添加 sorftip axi iic 驱动
+
+- 添加 sorftip axi gpio 驱动
+
+- usb 支持 apu msc rt-thread 及 rpu msc freertos
+
+- freertos 中添加中断嵌套层数的记录
+
+- 添加驱动注释
+
+- 添加驱动及 example 文档
+
 ## BM_2024.5_ES1.1_release
 
 ### (529f8a3f60883761d598e5ef7fa8fcd7073dbfd0)
