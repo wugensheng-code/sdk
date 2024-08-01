@@ -1,0 +1,11 @@
+digraph "/home/jiawenshen/master_sdk/fpsoc/driver/ps_driver/efuse/example" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_ab790a1fb53e9e298e61bf248806a144 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="efuse" fontname="Helvetica", fontsize="10", URL="dir_ab790a1fb53e9e298e61bf248806a144.html"]
+  dir_7b000038e68e29d4e72340f6e83596a6 [shape=box, label="example", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_7b000038e68e29d4e72340f6e83596a6.html"];
+  }
+  dir_ba54dd099c4a861a1789e11b67b9e40c [shape=box label="inc" URL="dir_ba54dd099c4a861a1789e11b67b9e40c.html"];
+  dir_7b000038e68e29d4e72340f6e83596a6->dir_ba54dd099c4a861a1789e11b67b9e40c [headlabel="2", labeldistance=1.5 headhref="dir_000004_000005.html"];
+}

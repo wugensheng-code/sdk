@@ -10,6 +10,7 @@
  * @version V0.0.1
  * @date    2024-07-25
  * @brief   efuse chip example
+ * @example al_efuse_chip.c
  */
 
 /***************************** Include Files *********************************/
@@ -30,6 +31,13 @@ static AL_VOID AlEfuse_Test_Chip(AL_VOID);
 
 /************************** Function Definitions ******************************/
 
+/**
+ *
+ * This function initializes the test, logs the start and end of the test,
+ * and calls the AlEfuse_Test_Chip function to perform the actual test.
+ *
+ * @return AL_S32 Returns AL_OK on success.
+ */
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
@@ -43,6 +51,13 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
+/**
+ *
+ * This function sets specific bits in the efuse chip at predefined offsets.
+ * It uses the AlEfuse_Hal_SetBits function to set the bits.
+ *
+ * @return AL_VOID This function does not return a value.
+ */
 AL_VOID AlEfuse_Test_Chip(AL_VOID)
 {
     AL_U32 Offset = AL_EFUSE_TEST_FIELD2_OFFSET;

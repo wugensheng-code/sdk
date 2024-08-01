@@ -21,17 +21,18 @@
 /************************** Function Definitions ******************************/
 
 /**
- * @brief  Set the efuse bits
- * @param  Offset: The offset of the efuse bits
- * @param  Num: The number of the efuse bits
- * @param  Val: The value pointer of the efuse bits
- *              If Val is NULL, set all efuse bits to 1
- *              If Val is not NULL, set the efuse bits to 1 according to Val
- *              ex: Val[0] -> [Offset + 31, Offset + 0]
- *                  Val[1] -> [Offset + 63, Offset + 32]
- *                  ...
- * @return None
-*/
+ *
+ * This function sets bits in the efuse device starting from a given offset.
+ * If the Val parameter is NULL, it sets the specified number of bits to 1.
+ * Otherwise, it sets the bits according to the values in the Val array.
+ * The function also logs the operations performed.
+ *
+ * @param Offset The starting offset where bits will be set.
+ * @param Num The number of bits to set.
+ * @param Val A pointer to an array of values to set the bits. If NULL, all bits are set to 1.
+ * @return AL_VOID This function does not return a value.
+ *
+ */
 AL_VOID AlEfuse_Dev_SetBits(AL_U32 Offset, AL_U32 Num, AL_U32 *Val)
 {
     AL_LOG(AL_LOG_LEVEL_INFO, "---Set efuse bit---\r\n");

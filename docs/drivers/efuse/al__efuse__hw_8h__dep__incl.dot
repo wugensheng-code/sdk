@@ -1,0 +1,20 @@
+digraph "/home/jiawenshen/master_sdk/fpsoc/driver/ps_driver/efuse/inc/al_efuse_hw.h"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node2 [label="/home/jiawenshen/master\l_sdk/fpsoc/driver/ps_driver\l/efuse/inc/al_efuse_hw.h",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="/home/jiawenshen/master\l_sdk/fpsoc/driver/ps_driver\l/efuse/inc/al_efuse_ll.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__efuse__ll_8h.html"];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="/home/jiawenshen/master\l_sdk/fpsoc/driver/ps_driver\l/efuse/inc/al_efuse_dev.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__efuse__dev_8h.html",tooltip="efuse driver "];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="/home/jiawenshen/master\l_sdk/fpsoc/driver/ps_driver\l/efuse/inc/al_efuse_hal.h",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__efuse__hal_8h.html"];
+  Node5 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="/home/jiawenshen/master\l_sdk/fpsoc/driver/ps_driver\l/efuse/example/al_efuse_chip.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__efuse__chip_8c.html",tooltip="efuse chip example "];
+  Node5 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="/home/jiawenshen/master\l_sdk/fpsoc/driver/ps_driver\l/efuse/example/al_efuse_simu.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__efuse__simu_8c.html",tooltip="efuse simulation example "];
+  Node5 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="/home/jiawenshen/master\l_sdk/fpsoc/driver/ps_driver\l/efuse/src/al_efuse_hal.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__efuse__hal_8c.html"];
+  Node3 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="/home/jiawenshen/master\l_sdk/fpsoc/driver/ps_driver\l/efuse/src/al_efuse_dev.c",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$al__efuse__dev_8c.html"];
+}
