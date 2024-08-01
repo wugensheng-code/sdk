@@ -33,6 +33,16 @@
 				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			}
 		},
+		"PS_DRIVER_EFUSE": {
+			"1.0":{
+				"name": "PS_DRIVER_EFUSE",
+				"version": "1.0",
+				"depends": [
+					"fpsoc/driver/ps_driver/efuse"
+				],
+				"supportedProc": ["apu-0", "apu-1", "rpu"]
+			}
+		},
 		"PS_DRIVER_XMON": {
 			"1.0":{
 				"name": "PS_DRIVER_XMON",
@@ -1093,6 +1103,32 @@
 						"PS_DRIVER_GPIO_V1_0"
 					],
 					"description": "gpio test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				}
+			}
+		},
+		"PS_DRIVER_EFUSE": {
+			"1.0":{
+				"EFUSE_CHIP": {
+					"name": "EFUSE_CHIP",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/efuse/example/al_efuse_chip.c",
+						"PS_DRIVER_EFUSE_V1_0"
+					],
+					"description": "efuse chip test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"EFUSE_SIMU": {
+					"name": "EFUSE_SIMU",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/ps_driver/efuse/example/al_efuse_simu.c",
+						"PS_DRIVER_EFUSE_V1_0"
+					],
+					"description": "efuse simu test",
 					"supportedOS": ["standalone"],
 					"supportedProc": ["apu-0", "apu-1", "rpu"]
 				}
