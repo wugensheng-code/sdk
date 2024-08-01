@@ -157,7 +157,7 @@ AL_VOID AlGbe_Init()
     InitConfig.RxBuffLen = ETH_RX_BUFFER_SIZE;
 
     MacDmaConfig.DuplexMode = AL_GBE_FULL_DUPLEX_MODE;
-    MacDmaConfig.Speed = AL_GBE_SPEED_1G;
+    MacDmaConfig.Speed = AL_GBE_SPEED_AUTONEG;
 
     Ret = AlGbe_Hal_Init(&GbeHandle, GBE_DEVICE_ID, &InitConfig, &MacDmaConfig, AL_NULL);
     if (Ret != AL_OK)
@@ -183,7 +183,12 @@ AL_VOID AlGbe_Init()
         return Ret;
     }
 
-    AlGbe_PhyInit(&MacDmaConfig);
+    Ret = AlGbe_PhyInit(&MacDmaConfig);
+    if (Ret != AL_OK)
+    {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Hal_PhyInit Init failed\r\n");
+        return Ret;
+    }
 
     AlGbe_Hal_StartMacDma(GbeHandle);
 }

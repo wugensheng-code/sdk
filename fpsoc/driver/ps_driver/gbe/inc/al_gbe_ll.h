@@ -39,6 +39,7 @@ typedef enum
     AL_GBE_SPEED_2_5G       = 1,
     AL_GBE_SPEED_10M        = 2,
     AL_GBE_SPEED_100M       = 3,
+    AL_GBE_SPEED_AUTONEG    = 4,
 } AL_GBE_SpeedEnum;
 
 typedef enum

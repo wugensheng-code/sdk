@@ -214,51 +214,6 @@ AL_S32 AlGbe_Hal_ConfigTxDescBuffer(AL_GBE_HalStruct *Handle, AL_U8 *BuffersAddr
     return Ret;
 }
 
-/**
- * Initializes the PHY.
- *
- * @param Handle Pointer to the GBE HAL structure.
- * @param PhyAddr PHY address.
- * @return AL_OK on success, error code otherwise.
- */
-AL_S32 AlGbe_Hal_PhyInit(AL_GBE_HalStruct *Handle, AL_U8 PhyAddr)
-{
-    AL_S32 Ret;
-
-    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
-
-    AL_GBE_HAL_LOCK(Handle);
-
-    Ret = AlGbe_Dev_PhyInit(&Handle->Dev, PhyAddr);
-
-    AL_GBE_HAL_UNLOCK(Handle);
-
-    return Ret;
-}
-
-/**
- * Gets the PHY link status.
- *
- * @param Handle Pointer to the GBE HAL structure.
- * @param PhyAddr PHY address.
- * @param Speed Pointer to store the speed.
- * @param Duplex Pointer to store the duplex mode.
- * @return AL_OK on success, error code otherwise.
- */
-AL_S32 AlGbe_Hal_GetPhyLinkStatus(AL_GBE_HalStruct *Handle, AL_U32 PhyAddr, AL_U8 *Speed, AL_U8 *Duplex)
-{
-    AL_S32 Ret;
-
-    AL_ASSERT((Handle != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
-
-    AL_GBE_HAL_LOCK(Handle);
-
-    Ret = AlGbe_Dev_GetPhyLinkStatus(&Handle->Dev, PhyAddr, Speed, Duplex);
-
-    AL_GBE_HAL_UNLOCK(Handle);
-
-    return Ret;
-}
 
 /**
  * Configures duplex and speed.

@@ -457,7 +457,7 @@ err_t low_level_init(struct netif *netif)
     InitConfig.RxBuffLen = ETH_RX_BUFFER_SIZE;
 
     MacDmaConfig.DuplexMode = AL_GBE_FULL_DUPLEX_MODE;
-    MacDmaConfig.Speed = AL_GBE_SPEED_1G;
+    MacDmaConfig.Speed = AL_GBE_SPEED_AUTONEG;
 
     ret = AlGbe_Hal_Init(&GbeHandle, GBE_DEVICE_ID, &InitConfig, &MacDmaConfig, AL_NULL);
     if (ret != AL_OK)
