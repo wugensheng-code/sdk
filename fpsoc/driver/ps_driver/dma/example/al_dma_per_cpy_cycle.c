@@ -28,7 +28,11 @@
 #define I2S_TX_ID   (0)
 #define I2S_RX_ID   (3)
 
+#ifdef __riscv
+#define I2S_BASE_ADDR 0x80000000
+#else
 #define I2S_BASE_ADDR 0xA0000000
+#endif
 
 #define I2S_RESET_REG       (0x0)
 #define I2S_CTRL_REG        (0x4)

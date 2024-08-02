@@ -11,6 +11,8 @@ make clean ELF=MEMCPY_PERFORMANCE ARMv8_STATE=32
 make clean CHIP=dr1v90 ELF=MEMCPY_BLOCK
 make clean CHIP=dr1v90 ELF=MEMCPY
 make clean CHIP=dr1v90 ELF=MEMCPY_PERFORMANCE
+make clean CHIP=dr1v90 ELF=PERCPY_SINGLE
+make clean CHIP=dr1v90 ELF=PERCPY_CYCLE
 clear
 make ELF=MEMCPY_BLOCK -j8 dasm
 clear
@@ -37,4 +39,8 @@ clear
 make CHIP=dr1v90 ELF=MEMCPY -j8 dasm
 clear
 make CHIP=dr1v90 ELF=MEMCPY_PERFORMANCE -j8 dasm
+clear
+make CHIP=dr1v90 ELF=PERCPY_SINGLE -j8 dasm
+clear
+make CHIP=dr1v90 ELF=PERCPY_CYCLE -j8 dasm
 clear
