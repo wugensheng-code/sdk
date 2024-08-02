@@ -586,7 +586,7 @@ AL_U8 ALSmc_Dev_GetFeature(AL_NAND_InfoStruct *NandInfo, AL_U8 Address, AL_U8 *D
  * if the erase operation fails.
  *
  */
-AL_U32 ALSmc_Dev_EraseBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U8 Page)
+AL_U32 ALSmc_Dev_EraseBlock(AL_SMC_DevStruct *Smc, AL_NAND_InfoStruct *NandInfo, AL_U32 Page)
 {
     AL_U32 Status;
 
