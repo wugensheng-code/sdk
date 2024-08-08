@@ -151,16 +151,16 @@ static AL_VOID AlIic_Dev_InitSclHighLowCout(AL_IIC_DevStruct *Iic, AL_IIC_SpeedM
     if (SpeedMode == AL_IIC_STANDARD_MODE) {
         AL_U16 SsSclHigh, SsSclLow;
 
-        SsSclHigh = ((AL_U16) (((AL_IIC_SS_MIN_SCL_HIGH * ClockMHz) / 1000) + (25-7)));
-        SsSclLow = ((AL_U16) (((AL_IIC_SS_MIN_SCL_LOW * ClockMHz) / 1000) + 25));
+        SsSclHigh = ((AL_U16) (((AL_IIC_SS_MIN_SCL_HIGH * ClockMHz) / 1000) + 118));
+        SsSclLow = ((AL_U16) (((AL_IIC_SS_MIN_SCL_LOW * ClockMHz) / 1000) - 1));
 
         AlIic_ll_SetStdSpeedSclHighCount(IicBaseAddr, SsSclHigh);
         AlIic_ll_SetStdSpeedSclLowCount(IicBaseAddr, SsSclLow);
     } else if (SpeedMode == AL_IIC_FAST_MODE) {
         AL_U16 FsSclHigh, FsSclLow;
 
-        FsSclHigh = ((AL_U16) (((AL_IIC_FS_MIN_SCL_HIGH * ClockMHz) / 1000) + (25-7)));
-        FsSclLow = ((AL_U16) (((AL_IIC_FS_MIN_SCL_LOW * ClockMHz) / 1000) + 25));
+        FsSclHigh = ((AL_U16) (((AL_IIC_FS_MIN_SCL_HIGH * ClockMHz) / 1000) + 48));
+        FsSclLow = ((AL_U16) (((AL_IIC_FS_MIN_SCL_LOW * ClockMHz) / 1000) - 1));
 
         AlIic_ll_SetFastSpeedSclHighCount(IicBaseAddr, FsSclHigh);
         AlIic_ll_SetFastSpeedSclLowCount(IicBaseAddr, FsSclLow);
