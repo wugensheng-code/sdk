@@ -50,7 +50,13 @@ AL_S32 AlLog_Init()
 AL_U32 AlLog_Write(const void* Data, AL_U32 Len)
 {
 #if (LOG_DEV == AL_LOG_UART0) || (LOG_DEV == AL_LOG_UART1)
-    return AlUart_Hal_SendDataPolling(AlLog, (AL_U8 *)Data, Len);
+    AL_U32 i;
+    for (i = 0; i < Len; i++) {
+        AlUart_Dev_SendByte(&(AlLog->Dev), ((const AL_S8*)Data)[i]);
+    }
+
+    return Len;
+
 #else
     (AL_VOID)Data;
     (AL_VOID)Len;
