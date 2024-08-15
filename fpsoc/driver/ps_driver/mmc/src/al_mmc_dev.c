@@ -653,7 +653,7 @@ static AL_S32 AlMmc_Dev_SetClkFreq(AL_MMC_DevStruct *Dev, AL_MMC_FreqKhzEnum Fre
 
     AL_S32 Ret = AL_OK;
     AL_MMC_CtrlSrToClkUnion TmpReg = {0};
-    AL_U32 InputClkKhz = Dev->HwConfig.InputClk / 1000;
+    AL_U32 InputClkKhz = (Dev->HwConfig.InputClk >> 2) / 1000;
     AL_U32 FreqDiv = InputClkKhz / Freq;
     AL_U32 FreqMod = InputClkKhz % Freq;
     AL_U32 FreqSel = 0;
@@ -2107,7 +2107,7 @@ AL_S32 AlMmc_Dev_Init(AL_MMC_DevStruct *Dev, AL_MMC_HwConfigStruct *HwConfig, AL
     AL_S32 Ret = AL_OK;
 
     /* Configurable mode default divide 4 */
-    HwConfig->InputClk >>= 2;
+    // HwConfig->InputClk >>= 2;
     InitConfig->FreqKhz = HwConfig->IoClk / 1000;
     if (InitConfig->FreqKhz > AL_MMC_FREQ_KHZ_25000) {
         InitConfig->SpdMode = AL_MMC_SPD_HS_SDR25;
