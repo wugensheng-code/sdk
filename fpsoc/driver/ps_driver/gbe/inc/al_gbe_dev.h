@@ -283,6 +283,7 @@ typedef struct
     AL_U32 VlanCtrl;
     AL_U32 InnerVlanTag;
     AL_U32 InnerVlanCtrl;
+    AL_BOOL IsPtpMsg;
     void *pData;
 } AL_GBE_TxDescConfigStruct;
 

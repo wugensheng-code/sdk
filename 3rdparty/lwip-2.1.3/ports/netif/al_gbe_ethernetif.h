@@ -85,6 +85,10 @@ void netif_config(void);
 void ethernetif_input(struct netif *netif);
 #endif
 
+#if LWIP_PTP
+#define PTP_EVENT_PORT    319
+#define PTP_GENERAL_PORT  320
+#endif
 
 #ifdef __cplusplus
 }

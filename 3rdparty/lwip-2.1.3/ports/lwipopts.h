@@ -81,6 +81,13 @@
 
 #else
 
+/**
+ * define macro for PTP
+ */
+#define LWIP_PTP                    1
+#define SO_REUSE                    1
+#define LWIP_NETIF_TX_SINGLE_PBUF   1
+
 /*
    ----------------------------------------------
    ---------- Sequential layer options ----------
@@ -108,10 +115,10 @@
 #if defined(RTOS_RTTHREAD)
 
 #define TCPIP_THREAD_PRIO               7
-#define TCPIP_THREAD_STACKSIZE          3096
-#define DEFAULT_THREAD_STACKSIZE        2048
+#define TCPIP_THREAD_STACKSIZE          3072
+#define DEFAULT_THREAD_STACKSIZE        3072
 
-#define ETH_INPUT_THREAD_STACKSIZE      2048
+#define ETH_INPUT_THREAD_STACKSIZE      3072
 #define ETH_INPUT_THREAD_PRIO           8
 
 #elif defined(RTOS_FREERTOS)
@@ -119,13 +126,13 @@
 #define TCPIP_THREAD_PRIO               8
 
 /* The length of this StackType_t is 8 */
-#define TCPIP_THREAD_STACKSIZE          (3096/8)
-#define DEFAULT_THREAD_STACKSIZE        (2048/8)
+#define TCPIP_THREAD_STACKSIZE          (3072/8)
+#define DEFAULT_THREAD_STACKSIZE        (3072/8)
 
 #define ETH_INPUT_THREAD_PRIO           7
 
 /* The length of this StackType_t is 8 */
-#define ETH_INPUT_THREAD_STACKSIZE      (2048/8)
+#define ETH_INPUT_THREAD_STACKSIZE      (3072/8)
 
 #endif
 

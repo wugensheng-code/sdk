@@ -1216,7 +1216,7 @@ static AL_S32 AlGbe_Dev_PrepareTxDescriptors(AL_GBE_DevStruct *Gbe, AL_GBE_TxDes
     /* Mark it as NORMAL descriptor */
     AlGbe_ll_SetTdesc3ContextType((AL_REG)&DmaTxDesc->DESC3, AL_GBE_DESC_NORMAL_DESC);
 
-    if (TxConfig->Attributes & AL_GBE_TX_PACKETS_FEATURES_TTSE) {
+    if ((TxConfig->Attributes & AL_GBE_TX_PACKETS_FEATURES_TTSE) && (TxConfig->IsPtpMsg == AL_TRUE)) {
         AlGbe_ll_SetTdesc2TxTimeStampEnable((AL_REG)&DmaTxDesc->DESC2, AL_GBE_FUNC_ENABLE);
     }
 
@@ -1372,45 +1372,6 @@ AL_S32 AlGbe_Dev_ReleaseTxPacket(AL_GBE_DevStruct *Gbe)
 }
 
 /**
- * This function prepares the transmit descriptors, sets the device as busy, and starts the transmission.
- * It ensures that the device and the provided configuration are valid and that the device is ready and not busy.
- *
- * @param Gbe Pointer to the GBE device structure.
- * @param TxConfig Pointer to the transmit descriptor configuration structure.
- * @return Returns AL_OK on success, or an error code on failure.
- */
-AL_S32 AlGbe_Dev_Transmit(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruct *TxConfig)
-{
-    AL_S32 Ret;
-
-    AL_ASSERT((Gbe != AL_NULL) && (TxConfig != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
-    AL_ASSERT(((Gbe->State & AL_GBE_STATE_READY) == AL_GBE_STATE_READY), AL_GBE_ERR_NOT_READY);
-    AL_ASSERT((!AlGbe_Dev_IsTxBusy(Gbe)), AL_GBE_ERR_BUSY);
-
-    /* Change Status */
-    AlGbe_Dev_SetTxBusy(Gbe);
-
-    AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
-
-    Gbe->TxDescList.CurrentPacketAddress = (AL_U32 *)TxConfig->pData;
-
-    Ret = AlGbe_Dev_PrepareTxDescriptors(Gbe, TxConfig, AL_GBE_FUNC_ENABLE);
-    if (Ret != AL_OK) {
-        return Ret;
-    }
-
-    DMB();
-
-    INCR_TX_DESC_INDEX(Gbe->TxDescList.CurTxDesc, 1U);
-
-    /* Start transmission */
-    /* issue a poll command to Tx DMA by writing address of next immediate free descriptor */
-    AlGbe_ll_SetDmaTxDescTailPointer(GbeBaseAddr, (AL_U32)(Gbe->TxDescList.TxDesc[Gbe->TxDescList.CurTxDesc]));
-
-    return AL_OK;
-}
-
-/**
  * This function checks if the timestamp is available for the given transmit descriptor and retrieves it if available.
  * It clears the timestamp status after retrieval.
  *
@@ -1433,17 +1394,16 @@ AL_S32 AlGbe_Dev_GetTxTimeStamp(AL_GBE_DevStruct *Gbe, const AL_GBE_DMADescStruc
 }
 
 /**
- * This function is similar to AlGbe_Dev_Transmit but waits for the packet to be sent if timestamping is enabled.
- * It checks for fatal bus errors during transmission.
+ * This function prepares the transmit descriptors, sets the device as busy, and starts the transmission.
+ * It ensures that the device and the provided configuration are valid and that the device is ready and not busy.
  *
  * @param Gbe Pointer to the GBE device structure.
  * @param TxConfig Pointer to the transmit descriptor configuration structure.
- * @return Returns AL_OK on success, AL_GBE_ERR_FATLA_BUS_ERROR on fatal bus error, or another error code on failure.
+ * @return Returns AL_OK on success, or an error code on failure.
  */
-AL_S32 AlGbe_Dev_TransmitPolling(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruct *TxConfig)
+AL_S32 AlGbe_Dev_Transmit(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruct *TxConfig)
 {
     AL_S32 Ret;
-    const AL_GBE_DMADescStruct *DmaTxDesc;
 
     AL_ASSERT((Gbe != AL_NULL) && (TxConfig != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
     AL_ASSERT(((Gbe->State & AL_GBE_STATE_READY) == AL_GBE_STATE_READY), AL_GBE_ERR_NOT_READY);
@@ -1453,10 +1413,13 @@ AL_S32 AlGbe_Dev_TransmitPolling(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruc
     AlGbe_Dev_SetTxBusy(Gbe);
 
     AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
+    const AL_GBE_DMADescStruct *DmaTxDesc;
+
+    Gbe->TxDescList.CurrentPacketAddress = (AL_U32 *)TxConfig->pData;
 
     DmaTxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)((&Gbe->TxDescList)->TxDesc[Gbe->TxDescList.CurTxDesc]));
 
-    Ret = AlGbe_Dev_PrepareTxDescriptors(Gbe, TxConfig, AL_GBE_FUNC_DISABLE);
+    Ret = AlGbe_Dev_PrepareTxDescriptors(Gbe, TxConfig, AL_GBE_FUNC_ENABLE);
     if (Ret != AL_OK) {
         return Ret;
     }
@@ -1482,6 +1445,69 @@ AL_S32 AlGbe_Dev_TransmitPolling(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruc
         if (Ret != AL_OK) {
             AlGbe_Dev_ClrTxBusy(Gbe);
             return Ret;
+        }
+
+    }
+
+    AlGbe_Dev_ClrTxBusy(Gbe);
+
+    return AL_OK;
+}
+
+/**
+ * This function is similar to AlGbe_Dev_Transmit but waits for the packet to be sent if timestamping is enabled.
+ * It checks for fatal bus errors during transmission.
+ *
+ * @param Gbe Pointer to the GBE device structure.
+ * @param TxConfig Pointer to the transmit descriptor configuration structure.
+ * @return Returns AL_OK on success, AL_GBE_ERR_FATLA_BUS_ERROR on fatal bus error, or another error code on failure.
+ */
+AL_S32 AlGbe_Dev_TransmitPolling(AL_GBE_DevStruct *Gbe, AL_GBE_TxDescConfigStruct *TxConfig)
+{
+    AL_S32 Ret;
+    AL_GBE_DMADescStruct *DmaTxDesc;
+    AL_U32 CurrentTxDescIndex = 0;
+
+    AL_ASSERT((Gbe != AL_NULL) && (TxConfig != AL_NULL), AL_GBE_ERR_ILLEGAL_PARAM);
+    AL_ASSERT(((Gbe->State & AL_GBE_STATE_READY) == AL_GBE_STATE_READY), AL_GBE_ERR_NOT_READY);
+    AL_ASSERT((!AlGbe_Dev_IsTxBusy(Gbe)), AL_GBE_ERR_BUSY);
+
+    /* Change Status */
+    AlGbe_Dev_SetTxBusy(Gbe);
+
+    AL_REG GbeBaseAddr = (AL_REG)(Gbe->HwConfig.BaseAddress);
+
+    DmaTxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)((&Gbe->TxDescList)->TxDesc[Gbe->TxDescList.CurTxDesc]));
+
+    Ret = AlGbe_Dev_PrepareTxDescriptors(Gbe, TxConfig, AL_GBE_FUNC_DISABLE);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
+    DMB();
+
+    CurrentTxDescIndex = Gbe->TxDescList.CurTxDesc;
+    INCR_TX_DESC_INDEX(Gbe->TxDescList.CurTxDesc, 1U);
+
+    /* Start transmission */
+    /* issue a poll command to Tx DMA by writing address of next immediate free descriptor */
+    AlGbe_ll_SetDmaTxDescTailPointer(GbeBaseAddr, (AL_U32)(Gbe->TxDescList.TxDesc[Gbe->TxDescList.CurTxDesc]));
+
+    /* For TX, Timestamp Snapshot only for PTP message */
+    if ((TxConfig->Attributes & AL_GBE_TX_PACKETS_FEATURES_TTSE) && (TxConfig->IsPtpMsg == AL_TRUE)) {
+        DmaTxDesc = (AL_GBE_DMADescStruct *)((AL_UINTPTR)((&Gbe->TxDescList)->TxDesc[CurrentTxDescIndex]));
+
+        /* If need to get the timestamp of tx, need to wait for the packet to finish sending */
+        while (AlGbe_ll_IsWbTxDescOwnByDma((AL_REG)&DmaTxDesc->DESC3)) {
+            if (AlGbe_ll_IsDmaChannelFatalBusError(GbeBaseAddr)) {
+                return AL_GBE_ERR_FATLA_BUS_ERROR;
+            }
+        }
+
+        Ret = AlGbe_Dev_GetTxTimeStamp(Gbe, DmaTxDesc);
+        if (Ret != AL_OK) {
+            AlGbe_Dev_ClrTxBusy(Gbe);
+            return AL_OK;
         }
     }
 
@@ -1765,7 +1791,7 @@ AL_VOID AlGbe_Dev_EnableTimestamp(AL_GBE_DevStruct *Gbe)
     /* Set PTP packets type for Taking Snapshots */
     AlGbe_ll_EnableTimestampSnapshotForEventMessage(GbeBaseAddr, AL_GBE_FUNC_DISABLE);
     AlGbe_ll_EnableTMessageSnapshotForRelevantMaster(GbeBaseAddr, AL_GBE_FUNC_DISABLE);
-    AlGbe_ll_PtpSelectPacketsForTakingSnapshot(GbeBaseAddr, 1);
+    AlGbe_ll_PtpSelectPacketsForTakingSnapshot(GbeBaseAddr, 2);
 }
 
 /**

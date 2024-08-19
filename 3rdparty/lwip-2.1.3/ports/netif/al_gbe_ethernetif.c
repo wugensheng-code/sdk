@@ -41,6 +41,8 @@
 #include "lwipopts.h"
 #include "lwip/netif.h"
 #include "netif/etharp.h"
+#include "lwip/ip.h"
+#include "lwip/udp.h"
 #include "lwip/snmp.h"
 
 #include <string.h>
@@ -57,6 +59,8 @@
 
 sys_sem_t GbeRxSem;
 sys_sem_t GbeTxSem;
+
+sys_thread_t eth_handle = NULL;
 
 #ifdef RTOS_FREERTOS
 extern volatile portBASE_TYPE xInsideISR;
@@ -94,6 +98,145 @@ AL_GBE_HalStruct *GbeHandle;
 /* Tx config, Configure the Tx descriptor function according to this */
 AL_GBE_TxDescConfigStruct TxConfig;
 
+
+#if (LWIP_PTP) && (!NO_SYS)
+
+#define PTP_HEADER_LENGTH       34
+
+sys_mbox_t ptp_tx_mbox;
+sys_mbox_t ptp_rx_mbox;
+
+typedef struct
+{
+    AL_GBE_TimeStampStruct TimeStamp;
+    AL_U8 PtpMsgHead[PTP_HEADER_LENGTH];
+} AL_GBE_PtpTimeStampStruct;
+
+AL_VOID AlGbe_PtpStoreTxTimeStamp(const AL_GBE_TimeStampStruct *TxTimeStamp)
+{
+    err_t ret;
+
+    AL_GBE_TimeStampStruct *TimeStamp = mem_calloc(1, sizeof(AL_GBE_TimeStampStruct));
+    memcpy(TimeStamp, TxTimeStamp, sizeof(AL_GBE_TimeStampStruct));
+
+    ret = sys_mbox_trypost(&ptp_tx_mbox, TimeStamp);
+    if (ret != ERR_OK) {
+        mem_free(TimeStamp);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_PtpStoreTxTimeStamp failed\r\n");
+    }
+
+}
+
+AL_S32 AlGbe_PtpGetTxTimeStamp(AL_GBE_TimeStampStruct *TxTimeStamp)
+{
+    AL_S32 Ret;
+
+    AL_GBE_TimeStampStruct *TimeStamp;
+
+    Ret = sys_arch_mbox_fetch(&ptp_tx_mbox, &TimeStamp, 0);
+    if (Ret == SYS_ARCH_TIMEOUT) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_PtpGetTxTimeStamp failed\r\n");
+        return AL_GBE_DESC_TX_TIMESTAMP_STATUS_ERROR;
+    }
+
+    memcpy(TxTimeStamp, TimeStamp, sizeof(AL_GBE_TimeStampStruct));
+    mem_free(TimeStamp);
+
+    return AL_OK;
+}
+
+AL_VOID AlGbe_PtpStoreRxTimeStamp(const AL_GBE_TimeStampStruct *RxTimeStamp, const AL_U8 *PtpMsg)
+{
+    err_t ret;
+
+    AL_GBE_PtpTimeStampStruct *PtpTimeStamp = mem_calloc(1, sizeof(AL_GBE_PtpTimeStampStruct));
+
+    memcpy(&(PtpTimeStamp->TimeStamp), RxTimeStamp, sizeof(AL_GBE_TimeStampStruct));
+    memcpy(PtpTimeStamp->PtpMsgHead, PtpMsg+SIZEOF_ETH_HDR+IP_HLEN+UDP_HLEN, PTP_HEADER_LENGTH);
+
+    ret = sys_mbox_trypost(&ptp_rx_mbox, PtpTimeStamp);
+    if (ret != ERR_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_PtpStoreRxTimeStamp failed\r\n");
+        mem_free(PtpTimeStamp);
+    }
+
+}
+
+AL_S32 AlGbe_PtpGetRxTimeStamp(AL_GBE_TimeStampStruct *RxTimeStamp, const AL_U8 *PtpMsgHead)
+{
+    AL_S32 Ret;
+
+    AL_GBE_PtpTimeStampStruct *PtpTimeStamp;
+
+    Ret = sys_arch_mbox_tryfetch(&ptp_rx_mbox, &PtpTimeStamp);
+    if (Ret != ERR_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_PtpGetRxTimeStamp failed\r\n");
+        return AL_GBE_DESC_TX_TIMESTAMP_STATUS_ERROR;
+    }
+
+    if (memcmp(PtpTimeStamp->PtpMsgHead, PtpMsgHead, PTP_HEADER_LENGTH)) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_PtpGetRxTimeStamp failed\r\n");
+        mem_free(PtpTimeStamp);
+        return AL_GBE_DESC_TX_TIMESTAMP_STATUS_ERROR;
+    }
+
+    memcpy(RxTimeStamp, &(PtpTimeStamp->TimeStamp), sizeof(AL_GBE_TimeStampStruct));
+    mem_free(PtpTimeStamp);
+
+    return AL_OK;
+}
+#endif /* (LWIP_PTP) && (!NO_SYS) */
+
+#if LWIP_PTP
+
+static void low_level_ptp_init()
+{
+    AL_GBE_PtpConfigStruct      PtpConfig = {
+        .UpdateMethod = AL_GBE_PTP_FINE_UPDATE,
+    };
+
+#if !NO_SYS
+
+    sys_mbox_new(&ptp_tx_mbox, 64);
+    sys_mbox_new(&ptp_rx_mbox, 64);
+#endif
+
+    AlGbe_Hal_PtpInit(GbeHandle, &PtpConfig);
+}
+
+AL_BOOL AlGbe_IsPtpPacket(struct pbuf *p)
+{
+    AL_U8 *Buff;
+
+    const struct ip_hdr *iphdr;
+    u16_t iphdr_hlen;
+    struct udp_hdr *udphdr;
+    u16_t src_port, dest_port;
+
+    iphdr = (struct ip_hdr *)((AL_U8 *)p->payload + SIZEOF_ETH_HDR);
+
+    if ((IPH_PROTO(iphdr)) != IP_PROTO_UDP) {
+        return AL_FALSE;
+    }
+
+    /* obtain IP header length in bytes */
+    iphdr_hlen = IPH_HL_BYTES(iphdr);
+
+    udphdr = (struct udp_hdr *)((AL_U8 *)p->payload + SIZEOF_ETH_HDR + iphdr_hlen);
+
+    src_port = lwip_ntohs(udphdr->src);
+    dest_port = lwip_ntohs(udphdr->dest);
+
+    if (((src_port == PTP_EVENT_PORT) && (dest_port == PTP_EVENT_PORT)) ||
+        ((src_port == PTP_GENERAL_PORT) && (dest_port == PTP_GENERAL_PORT))) {
+            return AL_TRUE;
+    }
+
+    return AL_FALSE;
+}
+
+#endif /* LWIP_PTP */
+
 static struct pbuf *low_level_input(struct netif *netif)
 {
     struct pbuf *p = NULL;
@@ -102,6 +245,10 @@ static struct pbuf *low_level_input(struct netif *netif)
     uint32_t framelength = 0;
     uint32_t l = 0;
 
+#if LWIP_PTP
+    GbeHandle->Dev.RxDescList.RxTimeStamp.TimeStampHigh = 0;
+    GbeHandle->Dev.RxDescList.RxTimeStamp.TimeStampLow = 0;
+#endif /* LWIP_PTP */
 
     if(AlGbe_Hal_GetRxDataBuffer(GbeHandle, &RxBuff) == AL_OK)
     {
@@ -128,10 +275,17 @@ static struct pbuf *low_level_input(struct netif *netif)
         }
 
 #if LWIP_PTP
-        p->time_sec = GbeHandle->Dev.RxDescList.RxTimeStamp.TimeStampHigh;
-        p->time_nsec = GbeHandle->Dev.RxDescList.RxTimeStamp.TimeStampLow;
-#endif
+        if (GbeHandle->Dev.RxDescList.RxTimeStamp.TimeStampHigh != 0 &&
+            GbeHandle->Dev.RxDescList.RxTimeStamp.TimeStampLow != 0) {
+#if NO_SYS
+                p->time_sec = GbeHandle->Dev.RxDescList.RxTimeStamp.TimeStampHigh;
+                p->time_nsec = GbeHandle->Dev.RxDescList.RxTimeStamp.TimeStampLow;
+#else
+                AlGbe_PtpStoreRxTimeStamp(&GbeHandle->Dev.RxDescList.RxTimeStamp, p->payload);
+#endif /* NO_SYS */
+        }
 
+#endif /* LWIP_PTP */
     }
 
     return p;
@@ -229,7 +383,17 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
     TxConfig.TxBuffer = Txbuffer;
     TxConfig.pData = p;
 
+#if LWIP_PTP
+    TxConfig.IsPtpMsg = AlGbe_IsPtpPacket(p);
+#endif
+
     AlGbe_Hal_Transmit(GbeHandle, &TxConfig);
+
+#if LWIP_PTP
+    if (TxConfig.IsPtpMsg == AL_TRUE) {
+        AlGbe_PtpStoreTxTimeStamp(&GbeHandle->Dev.TxTimeStamp);
+    }
+#endif
 
     return errval;
 }
@@ -319,30 +483,23 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
     TxConfig.TxBuffer = Txbuffer;
     TxConfig.pData = p;
 
+#if LWIP_PTP
+    TxConfig.IsPtpMsg = AlGbe_IsPtpPacket(p);
+#endif
+
     AlGbe_Hal_Transmit(GbeHandle, &TxConfig);
 
 #if LWIP_PTP
-    p->time_sec = GbeHandle->Dev.TxTimeStamp.TimeStampHigh;
-    p->time_nsec = GbeHandle->Dev.TxTimeStamp.TimeStampLow;
+    if (TxConfig.IsPtpMsg == AL_TRUE) {
+        p->time_sec = GbeHandle->Dev.TxTimeStamp.TimeStampHigh;
+        p->time_nsec = GbeHandle->Dev.TxTimeStamp.TimeStampLow;
+    }
 #endif
 
     return errval;
 }
 
 #endif /* !NO_SYS */
-
-#if !NO_SYS
-sys_thread_t eth_handle = NULL;
-#endif /* !NO_SYS */
-
-static void low_level_ptp_init()
-{
-    AL_GBE_PtpConfigStruct      PtpConfig = {
-        .UpdateMethod = AL_GBE_PTP_FINE_UPDATE,
-    };
-
-    AlGbe_Hal_PtpInit(GbeHandle, &PtpConfig);
-}
 
 err_t low_level_phy_init(AL_GBE_HalStruct *GbeHandle, struct netif *netif, AL_GBE_MacDmaConfigStruct *MacDmaConfig)
 {
