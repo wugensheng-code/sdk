@@ -11,7 +11,7 @@ extern AlAxiIic_HwConfigStruct AlAxiIic_HwConfig[AL_AXI_IIC_NUM_INSTANCE];
 AL_S32 AlAxiIic_Dev_CheckID(AlAxiIic_DevStruct *Iic)
 {
     AL_U32 ReadId = 0;
-    AL_U32 BaseAddr = Iic->HwConfig.BaseAddress;
+    AL_U64 BaseAddr = Iic->HwConfig.BaseAddress;
 
     ReadId = AlAxiIic_ReadId(BaseAddr);
     if (ReadId != AXI_IIC_ID)
@@ -42,7 +42,7 @@ AlAxiIic_HwConfigStruct *AlAxiIic_Dev_LookupConfig(AL_U32 DevId)
 AL_S32 AlAxiIic_Dev_Init(AlAxiIic_DevStruct *Iic, AlAxiIic_HwConfigStruct *HwConfig, AlAxiIic_InitStruct *InitConfig)
 {
     AL_S32 Status;
-    AL_U32 BaseAddr;
+    AL_U64 BaseAddr;
 
     Iic->HwConfig = *HwConfig;
     Iic->InitConfig = *InitConfig;
@@ -77,7 +77,7 @@ AL_S32 AlAxiIic_Dev_Init(AlAxiIic_DevStruct *Iic, AlAxiIic_HwConfigStruct *HwCon
 
 AL_VOID AlAxiIic_Dev_CreateTrans(AlAxiIic_DevStruct *Iic, AlAxiIic_StopModeEnum StopMode)
 {
-    AL_U32 BaseAddr = Iic->HwConfig.BaseAddress;
+    AL_U64 BaseAddr = Iic->HwConfig.BaseAddress;
 
     AlAxiIic_SetPhaseStart(BaseAddr, AL_AXI_IIC_FUNC_ENABLE);
     AlAxiIic_SetPhaseAddr(BaseAddr, AL_AXI_IIC_FUNC_ENABLE);
@@ -96,7 +96,7 @@ AL_VOID AlAxiIic_Dev_CreateTrans(AlAxiIic_DevStruct *Iic, AlAxiIic_StopModeEnum 
 AL_S32 AlAxiIic_Dev_MasterSendData(AlAxiIic_DevStruct *Iic, AL_U32 SlaveAddr, AL_U8 *SendBuf, AL_U32 SendSize)
 {
     AL_S32 i = 0;   
-    AL_U32 BaseAddr = Iic->HwConfig.BaseAddress;
+    AL_U64 BaseAddr = Iic->HwConfig.BaseAddress;
     
     AlAxiIic_SetSlaveAddr(BaseAddr, SlaveAddr);
 
@@ -116,7 +116,7 @@ AL_S32 AlAxiIic_Dev_MasterRecvData(AlAxiIic_DevStruct *Iic, AL_U32 SlaveAddr, AL
 {
     AL_S32 i = 0;
     
-    AL_U32 BaseAddr = Iic->HwConfig.BaseAddress;
+    AL_U64 BaseAddr = Iic->HwConfig.BaseAddress;
 
     AlAxiIic_SetSlaveAddr(BaseAddr, SlaveAddr);
 
@@ -134,7 +134,7 @@ AL_S32 AlAxiIic_Dev_MasterRecvData(AlAxiIic_DevStruct *Iic, AL_U32 SlaveAddr, AL
 
 AL_S32 AlAxiIic_Dev_SlaveSendData(AlAxiIic_DevStruct *Iic, AL_U8 *SendBuf, AL_U32 SendSize)
 {
-    AL_U32 BaseAddr = Iic->HwConfig.BaseAddress;
+    AL_U64 BaseAddr = Iic->HwConfig.BaseAddress;
 
     Iic->TransBuffer.BuffPtr = SendBuf;
     Iic->TransBuffer.ReqCnt = SendSize;
@@ -147,7 +147,7 @@ AL_S32 AlAxiIic_Dev_SlaveSendData(AlAxiIic_DevStruct *Iic, AL_U8 *SendBuf, AL_U3
 
 AL_S32 AlAxiIic_Dev_SlaveRecvData(AlAxiIic_DevStruct *Iic, AL_U8 *RecvBuf)
 {
-    AL_U32 BaseAddr = Iic->HwConfig.BaseAddress;
+    AL_U64 BaseAddr = Iic->HwConfig.BaseAddress;
 
     Iic->RecvBuffer.BuffPtr = RecvBuf;
     Iic->RecvBuffer.DataCnt = 0;
@@ -161,7 +161,7 @@ AL_S32 AlAxiIic_Dev_SlaveRecvData(AlAxiIic_DevStruct *Iic, AL_U8 *RecvBuf)
 AL_VOID AlAxiIic_Dev_IrqHandler(AL_VOID *Instance)
 {
     AlAxiIic_DevStruct *Iic = (AlAxiIic_DevStruct*)Instance;
-    AL_U32 BaseAddr = Iic->HwConfig.BaseAddress;
+    AL_U64 BaseAddr = Iic->HwConfig.BaseAddress;
 
     AL_U32 IntStatus = AlAxiIic_GetStatusAll(BaseAddr);
     
@@ -277,7 +277,7 @@ AL_S32 AlAxiIic_Dev_ClrFifo(AlAxiIic_DevStruct *Iic)
     AlAxiIic_SetCmd(Iic->HwConfig.BaseAddress, AL_AXI_IIC_CMD_CLR_FIFO);
 }
 
-AL_S32 AlAxiIic_Dev_SetSpeedMode(AL_U32 BaseAddr, AlAxiIic_SpeedModeEnum SpeedMode, AL_U32 Taclk)
+AL_S32 AlAxiIic_Dev_SetSpeedMode(AL_U64 BaseAddr, AlAxiIic_SpeedModeEnum SpeedMode, AL_U32 Taclk)
 {
     AL_U32 Tsclh = 0;
 

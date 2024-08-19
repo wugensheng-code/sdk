@@ -105,7 +105,7 @@ AL_S32 AlAxiIic_Dev_Reset(AlAxiIic_DevStruct *Iic);
 AL_S32 AlAxiIic_Dev_ClrFifo(AlAxiIic_DevStruct *Iic);
 AL_VOID AlAxiIic_Dev_IrqHandler(AL_VOID *Instance);
 AL_VOID AlAxiIic_Dev_CreateTrans(AlAxiIic_DevStruct *Iic, AlAxiIic_StopModeEnum StopMode);
-AL_S32 AlAxiIic_Dev_SetSpeedMode(AL_U32 BaseAddr, AlAxiIic_SpeedModeEnum SpeedMode, AL_U32 Taclk);
+AL_S32 AlAxiIic_Dev_SetSpeedMode(AL_U64 BaseAddr, AlAxiIic_SpeedModeEnum SpeedMode, AL_U32 Taclk);
 AL_S32 AlAxiIic_Dev_RegisterEventCallBack(AlAxiIic_DevStruct *Handle, AlAxiIic_EventCallBack CallBack, AL_VOID *CallBackRef);
 
 #ifdef __cplusplus

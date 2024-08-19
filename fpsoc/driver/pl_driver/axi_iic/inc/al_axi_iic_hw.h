@@ -23,8 +23,8 @@ extern "C" {
 
 typedef struct {
     AL_U32      DeviceId;
-    AL_U32      BaseAddress;
     AL_U32      IntrId;
+    AL_U64      BaseAddress;
 } AlAxiIic_HwConfigStruct;
 
 /***************************** Register Offset ********************************/
