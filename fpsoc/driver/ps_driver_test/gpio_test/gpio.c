@@ -8,8 +8,9 @@
 
 #define AL_GPIO_DEVICE_ID  0
 #define LED                14
-#define PS_KEY_1           10
-#define PS_KEY_2           11
+#define PS_MIO10           10
+#define PL_KEY_1           54
+#define PL_KEY_2           55
 
 static AL_S32 AlGpio_Test_EventCallBack(AL_GPIO_EventStruct Event, AL_VOID *CallBackRef)
 {
@@ -41,12 +42,13 @@ int AlGpio_Hal_Test()
 
     /* 3、Test InputRead EOI register */
     for(int i = 0;i < 10;i++) {
-        AL_LOG(AL_LOG_LEVEL_INFO, "The Input Data Value of GPIO Pin %d is 0x%x", PS_KEY_1, AlGpio_Hal_ReadPinInput(GPIO,PS_KEY_1));
+        AL_LOG(AL_LOG_LEVEL_INFO, "The Input Data Value of GPIO Pin %d is 0x%x", PS_MIO10, AlGpio_Hal_ReadPinInput(GPIO,PS_MIO10));
     }
 
     /* 4、Test intr */
-    AlGpio_Hal_IntrPinCfg(GPIO, PS_KEY_1, GPIO_INTR_TYPE_LEVEL_HIGH);
-    AlGpio_Hal_IntrPinCfg(GPIO, PS_KEY_2, GPIO_INTR_TYPE_EDGE_FALLING);
+    AlGpio_Hal_IntrPinCfg(GPIO, PS_MIO10, GPIO_INTR_TYPE_LEVEL_HIGH);
+    AlGpio_Hal_IntrPinCfg(GPIO, PL_KEY_1, GPIO_INTR_TYPE_EDGE_FALLING);
+    AlGpio_Hal_IntrPinCfg(GPIO, PL_KEY_2, GPIO_INTR_TYPE_EDGE_RISING);
 
     AlSys_MDelay(5000);
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
@@ -60,6 +62,7 @@ int AlGpio_Hal_Test()
 
 
 int main(void) {
+    *(AL_U32 *)(0xf8803028u) =0x4;    //GPIO MIO10
     AL_LOG(AL_LOG_LEVEL_INFO, "[TEST]AlGpio_Hal_Test start");
     AlGpio_Hal_Test();
 

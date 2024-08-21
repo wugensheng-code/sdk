@@ -77,6 +77,7 @@ AL_S32 AlGpio_Hal_Ctl_LED_Example()
 
 
 AL_S32 main(void) {
+    *(AL_U32 *)(0xf88030b8u) = 0x4; //rx 46
     AL_LOG(AL_LOG_LEVEL_INFO, "[TEST]AlGpio_Hal_CTL_LED_Test start");
     AlGpio_Hal_Ctl_LED_Example();
 
