@@ -50,26 +50,41 @@ AL_U8 RecvFrame[FRAME_SIZE];
  * @param MacDmaConfig Pointer to the MAC DMA configuration structure.
  * @return Returns 0 on success, non-zero error code on failure.
  */
-AL_S32 AlGbe_PhyInit(AL_GBE_MacDmaConfigStruct *MacDmaConfig)
+AL_S32 AlPhy_Init(AL_GBE_MacDmaConfigStruct *MacDmaConfig)
 {
     AL_S32 Ret;
+    AL_U8 LinkStatus;
     AL_U8 Speed;
     AL_U8 Duplex;
     AL_U8 Linkchange = 0;
 
-    /* Initialize the ETH PHY */
-    Ret = AlGbe_Hal_PhyInit(GbeHandle, GBE_PHY_ADDR);
+    Ret = AlGbe_DetectPhy(GbeHandle);
     if (Ret != 0)
     {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Hal_PhyInit Init failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_DetectPhy failed\r\n");
+        return Ret;
+    }
+
+    /* Initialize the ETH PHY */
+    Ret = AlGbe_PhyInit(&GbeHandle->Dev.PhyDev);
+    if (Ret != 0)
+    {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_PhyInit failed\r\n");
         return Ret;
     }
 
     AL_LOG(AL_LOG_LEVEL_INFO, "AlGbe get phy link status...\r\n");
-    Ret = AlGbe_Hal_GetPhyLinkStatus(GbeHandle, GBE_PHY_ADDR, &Speed, &Duplex);
-    if (Ret != 0)
+    Ret = AlGbe_GetPhyLinkStatus(&GbeHandle->Dev.PhyDev, &LinkStatus);
+    if ((Ret != 0) && (LinkStatus != AL_TRUE))
     {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe phy link down\r\n");
+        return Ret;
+    }
+
+    Ret = AlGbe_GetPhyLinkSpeedDuplex(&GbeHandle->Dev.PhyDev, &Speed, &Duplex);
+    if (Ret != 0)
+    {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_GetPhyLinkSpeedDuplex failed\r\n");
         return Ret;
     }
     AL_LOG(AL_LOG_LEVEL_INFO, "AlGbe phy link up success\r\n");
@@ -116,7 +131,8 @@ AL_S32 AlGbe_PhyInit(AL_GBE_MacDmaConfigStruct *MacDmaConfig)
         }
     }
 
-    if (GbeHandle->Dev.PhyId != PHY_ID_DEFAULT) {
+    if (GbeHandle->Dev.PhyDev.PhyId != PHY_ID_DEFAULT)
+    {
         Linkchange = 1;
     }
 
@@ -226,10 +242,10 @@ AL_VOID AlGbe_Init()
     AlGbe_Hal_RegisterTxFreeCallBack(GbeHandle, AlGbe_TxFreeCallback);
     AlGbe_Hal_RegisterIntrHandlerCallBack(GbeHandle, AL_GBE_INTR_RX_COMPLETE, AlGbe_RxDoneCallback);
 
-    Ret = AlGbe_PhyInit(&MacDmaConfig);
+    Ret = AlPhy_Init(&MacDmaConfig);
     if (Ret != AL_OK)
     {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Hal_PhyInit Init failed\r\n");
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlPhy_Init Init failed\r\n");
         return Ret;
     }
 

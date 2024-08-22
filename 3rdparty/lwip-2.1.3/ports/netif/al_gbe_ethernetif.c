@@ -503,22 +503,39 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
 
 err_t low_level_phy_init(AL_GBE_HalStruct *GbeHandle, struct netif *netif, AL_GBE_MacDmaConfigStruct *MacDmaConfig)
 {
-    AL_S32 ret;
-    AL_U8 speed;
-    AL_U8 duplex;
-    AL_U8 linkchange = 0;
+    AL_S32 Ret;
+    AL_U8 LinkStatus;
+    AL_U8 Speed;
+    AL_U8 Duplex;
+    AL_U8 LinkChange = 0;
+
+    Ret = AlGbe_DetectPhy(GbeHandle);
+    if (Ret != 0)
+    {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Hal_DetectPhy failed\r\n");
+        return ERR_IF;
+    }
 
     /* Initialize the ETH PHY */
-    ret = AlGbe_Hal_PhyInit(GbeHandle, GBE_PHY_ADDR);
-    if (ret != 0)
+    Ret = AlGbe_PhyInit(&GbeHandle->Dev.PhyDev);
+    if (Ret != 0)
     {
         AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe_Hal_PhyInit Init failed\r\n");
         return ERR_IF;
     }
 
     AL_LOG(AL_LOG_LEVEL_INFO, "AlGbe get phy link status...\r\n");
-    ret = AlGbe_Hal_GetPhyLinkStatus(GbeHandle, GBE_PHY_ADDR, &speed, &duplex);
-    if (ret != 0)
+    Ret = AlGbe_GetPhyLinkStatus(&GbeHandle->Dev.PhyDev, &LinkStatus);
+    if ((Ret != 0) && (LinkStatus != AL_TRUE))
+    {
+        netif_set_link_down(netif);
+        netif_set_down(netif);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlGbe phy link down\r\n");
+        return ERR_IF;
+    }
+
+    Ret = AlGbe_GetPhyLinkSpeedDuplex(&GbeHandle->Dev.PhyDev, &Speed, &Duplex);
+    if (Ret != 0)
     {
         netif_set_link_down(netif);
         netif_set_down(netif);
@@ -527,20 +544,20 @@ err_t low_level_phy_init(AL_GBE_HalStruct *GbeHandle, struct netif *netif, AL_GB
     }
     AL_LOG(AL_LOG_LEVEL_INFO, "AlGbe phy link up success\r\n");
 
-    if (PHY_SPEED_10M == speed)
+    if (PHY_SPEED_10M == Speed)
     {
         if (MacDmaConfig->Speed != AL_GBE_SPEED_10M)
         {
             GbeHandle->Dev.MacDmaConfig.Speed = AL_GBE_SPEED_10M;
-            linkchange = 1;
+            LinkChange = 1;
         }
     }
-    else if (PHY_SPEED_100M == speed)
+    else if (PHY_SPEED_100M == Speed)
     {
         if (MacDmaConfig->Speed != AL_GBE_SPEED_100M)
         {
             GbeHandle->Dev.MacDmaConfig.Speed = AL_GBE_SPEED_100M;
-            linkchange = 1;
+            LinkChange = 1;
         }
     }
     else
@@ -548,16 +565,16 @@ err_t low_level_phy_init(AL_GBE_HalStruct *GbeHandle, struct netif *netif, AL_GB
         if (MacDmaConfig->Speed != AL_GBE_SPEED_1G)
         {
             GbeHandle->Dev.MacDmaConfig.Speed = AL_GBE_SPEED_1G;
-            linkchange = 1;
+            LinkChange = 1;
         }
     }
 
-    if (PHY_FULL_DUPLEX == duplex)
+    if (PHY_FULL_DUPLEX == Duplex)
     {
         if (MacDmaConfig->DuplexMode != AL_GBE_FULL_DUPLEX_MODE)
         {
             GbeHandle->Dev.MacDmaConfig.DuplexMode = AL_GBE_FULL_DUPLEX_MODE;
-            linkchange = 1;
+            LinkChange = 1;
         }
     }
     else
@@ -565,31 +582,18 @@ err_t low_level_phy_init(AL_GBE_HalStruct *GbeHandle, struct netif *netif, AL_GB
         if (MacDmaConfig->DuplexMode != AL_GBE_HALF_DUPLEX_MODE)
         {
             GbeHandle->Dev.MacDmaConfig.DuplexMode = AL_GBE_HALF_DUPLEX_MODE;
-            linkchange = 1;
+            LinkChange = 1;
         }
     }
 
-    if (GbeHandle->Dev.PhyId != PHY_ID_DEFAULT) {
-        linkchange = 1;
+    if (GbeHandle->Dev.PhyDev.PhyId != PHY_ID_DEFAULT) {
+        LinkChange = 1;
     }
 
-
-    if (linkchange)
+    if (LinkChange)
     {
         AlGbe_Hal_ConfigDuplexAndSpeed(GbeHandle);
     }
-
-#if LWIP_PTP
-    low_level_ptp_init();
-#endif
-
-#if NO_SYS
-    AlGbe_Hal_StartMacDma(GbeHandle);
-#else
-    AlGbe_Hal_StartMacDmaIntr(GbeHandle);
-#endif
-    netif_set_up(netif);
-    netif_set_link_up(netif);
 
     return ERR_OK;
 }
@@ -698,6 +702,18 @@ err_t low_level_init(struct netif *netif)
         AL_LOG(AL_LOG_LEVEL_ERROR, "low_level_phy_init failed\r\n");
         return ret;
     }
+
+#if LWIP_PTP
+    low_level_ptp_init();
+#endif
+
+#if NO_SYS
+    AlGbe_Hal_StartMacDma(GbeHandle);
+#else
+    AlGbe_Hal_StartMacDmaIntr(GbeHandle);
+#endif
+    netif_set_up(netif);
+    netif_set_link_up(netif);
 
     AL_LOG(AL_LOG_LEVEL_INFO, "AlGbe Init success\r\n");
 

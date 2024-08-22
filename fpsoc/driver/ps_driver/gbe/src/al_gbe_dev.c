@@ -519,15 +519,15 @@ AL_S32 AlGbe_Dev_ConfigDuplexAndSpeed(AL_GBE_DevStruct *Gbe)
 
     if (Gbe->InitConfig.MediaInterface == AL_GBE_RGMII_MODE) {
         if (Gbe->MacDmaConfig.Speed == AL_GBE_SPEED_100M) {
-            if (Gbe->PhyId == PHY_ID_RTL8211F) {
+            if (Gbe->PhyDev.PhyId == PHY_ID_RTL8211F) {
                 GbeTopSetting = PHY_RTL8211F_PHASE_100M;
-            } else if (Gbe->PhyId == PHY_ID_YT8531) {
+            } else if (Gbe->PhyDev.PhyId == PHY_ID_YT8531) {
                 GbeTopSetting = PHY_YT8531_PHASE_100M;
             }
         } else {
-            if (Gbe->PhyId == PHY_ID_RTL8211F) {
+            if (Gbe->PhyDev.PhyId == PHY_ID_RTL8211F) {
                 GbeTopSetting = PHY_RTL8211F_PHASE_1000M;
-            } else if (Gbe->PhyId == PHY_ID_YT8531) {
+            } else if (Gbe->PhyDev.PhyId == PHY_ID_YT8531) {
                 GbeTopSetting = PHY_YT8531_PHASE_1000M;
             }
         }

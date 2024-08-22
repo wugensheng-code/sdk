@@ -264,7 +264,7 @@ typedef struct
     AL_U32                      ErrorCode;
     AL_GBE_StateEnum            State;
 
-    AL_U32                      PhyId;
+    AL_PHY_DevStruct            PhyDev;
 } AL_GBE_DevStruct;
 
 /* TX descriptor configuration options, Configure the TX descriptor according to these options */
@@ -317,7 +317,7 @@ typedef enum
     AL_GBE_DESC_RX_TIMESTAMP_STATUS_NOT_READY   = 0x10A,
     AL_GBE_DESC_RX_TIMESTAMP_STATUS_ERROR       = 0x10B,
     AL_GBE_ERR_PHY_UNSUPPORT                    = 0x10C,
-
+    AL_GBE_PHY_NOT_FOUND                        = 0x10D,
 } AL_GBE_ErrorCodeEnum;
 
 #define AL_GBE_ERR_ILLEGAL_PARAM            (AL_DEF_ERR(AL_GBE, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
@@ -331,6 +331,7 @@ typedef enum
 #define AL_GBE_ERR_PHY_RESET_FAILED         (AL_DEF_ERR(AL_GBE, AL_LOG_LEVEL_ERROR, AL_GBE_ERR_PHY_RESET))
 #define AL_GBE_ERR_PHY_LINK_DOWN            (AL_DEF_ERR(AL_GBE, AL_LOG_LEVEL_ERROR, AL_GBE_ERR_PHY_LINK))
 #define AL_GBE_ERR_PHY_UNSUPPORT            (AL_DEF_ERR(AL_GBE, AL_LOG_LEVEL_ERROR, AL_GBE_ERR_PHY_UNSUPPORT))
+#define AL_GBE_ERR_PHY_NOT_FOUND            (AL_DEF_ERR(AL_GBE, AL_LOG_LEVEL_ERROR, AL_GBE_PHY_NOT_FOUND))
 #define AL_GBE_ERR_FATLA_BUS_ERROR          (AL_DEF_ERR(AL_GBE, AL_LOG_LEVEL_ERROR, AL_GBE_FATLA_BUS_ERROR))
 #define AL_GBE_ERR_DESC_STATE               (AL_DEF_ERR(AL_GBE, AL_LOG_LEVEL_ERROR, AL_GBE_DESC_ERROR))
 
