@@ -247,11 +247,58 @@ AL_S32 AlGpio_Hal_ReadBankInput(AL_GPIO_HalStruct *Handle, AL_U32 Bank)
 AL_S32 AlGpio_Hal_WriteBank(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Data)
 {
     AL_ASSERT((Handle != AL_NULL) && (Bank < Handle->HwConfig.MaxBanks), AL_GPIO_ERR_ILLEGAL_PARAM);
-    AL_U32 index = 0;
+
     AlGpio_Hal_SetBankDirection(Handle, Bank, GPIO_BANK_OUTPUT);
 
     AlGpio_ll_Write(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, Data);
     AlGpio_ll_ClrWrite(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET, ~Data);
+
+    return AL_OK;
+}
+
+
+/**
+ *
+ * This function sets output discrete(s) to logic 1 for the specified GPIO Bank.
+ *
+ * @param Handle Pointer to the AL_GPIO_HalStruct instance.
+ * @param Bank The GPIO bank number.
+ * @param Mask The mask to apply to the GPIO bank.
+ *
+ * @return AL_OK if the operation is successful, otherwise an error code.
+ *
+ */
+AL_U32 AlGpio_Hal_DiscreteSet(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Mask)
+{
+    AL_ASSERT((Handle != AL_NULL) && (Bank < Handle->HwConfig.MaxBanks), AL_GPIO_ERR_ILLEGAL_PARAM);
+
+    AL_U32 Current = 0;
+
+    Current = AlGpio_ll_ReadOutput(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
+    Current |= Mask;
+    AlGpio_Hal_WriteBank(Handle, Bank, Current);
+
+    return AL_OK;
+}
+
+/**
+ * This function sets output discrete(s) to logic 1 for the specified GPIO Bank.
+ *
+ * @param num1 The first integer input for the calculation.
+ * @param num2 The second integer input for the calculation.
+ *
+ * @return The result of the calculation.
+ *
+ */
+AL_U32 AlGpio_Hal_DiscreteClear(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Mask)
+{
+    AL_ASSERT((Handle != AL_NULL) && (Bank < Handle->HwConfig.MaxBanks), AL_GPIO_ERR_ILLEGAL_PARAM);
+
+    AL_U32 Current = 0;
+
+    Current = AlGpio_ll_ReadOutput(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
+    Current &= ~Mask;
+    AlGpio_Hal_WriteBank(Handle, Bank, Current);
 
     return AL_OK;
 }

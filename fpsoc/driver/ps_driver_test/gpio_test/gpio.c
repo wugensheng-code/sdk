@@ -23,6 +23,8 @@ int AlGpio_Hal_Test()
 {
     AL_GPIO_HalStruct *GPIO;
     AL_U32 RawVal = 0;
+    AL_U32 Val = 0;
+    AL_U32 index = 0;
 
     /* 1、Test AlGpio_Hal_Init */
     AL_S32 ret = AlGpio_Hal_Init(&GPIO, AL_GPIO_DEVICE_ID, AlGpio_Test_EventCallBack);
@@ -34,14 +36,22 @@ int AlGpio_Hal_Test()
         AL_LOG(AL_LOG_LEVEL_INFO, "[TEST] APU AlGpio_Hal_Init failed");
     }
 
-    /* 2、Test LED function */
+    /* 2、Test Write, Read and DiscreteSet, DiscreteClear function */
     AlGpio_Hal_WritePin(GPIO, LED, 0x0);
     AlGpio_Hal_ReadPinOutput(GPIO, LED);
     AlGpio_Hal_WritePin(GPIO, LED, 0x1);
     AlGpio_Hal_ReadPinOutput(GPIO, LED);
 
+    AlGpio_Hal_WriteBank(GPIO, AL_GPIO_BANK1, 0x4000);
+    AlGpio_Hal_DiscreteSet(GPIO, AL_GPIO_BANK1, 0x20);
+    Val = AlGpio_Hal_ReadBankOutput(GPIO, AL_GPIO_BANK1);
+    AL_LOG(AL_LOG_LEVEL_INFO, "The Output Data Value of GPIO Bank 0x%x is 0x%x", AL_GPIO_BANK1, Val);
+    AlGpio_Hal_DiscreteClear(GPIO, AL_GPIO_BANK1, 0x20);
+    Val = AlGpio_Hal_ReadBankOutput(GPIO, AL_GPIO_BANK1);
+    AL_LOG(AL_LOG_LEVEL_INFO, "The Output Data Value of GPIO Bank 0x%x is 0x%x", AL_GPIO_BANK1, Val);
+
     /* 3、Test InputRead EOI register */
-    for(int i = 0;i < 10;i++) {
+    for(index = 0;index < 10; index++) {
         AL_LOG(AL_LOG_LEVEL_INFO, "The Input Data Value of GPIO Pin %d is 0x%x", PS_MIO10, AlGpio_Hal_ReadPinInput(GPIO,PS_MIO10));
     }
 

@@ -119,6 +119,8 @@ AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct **Handle, AL_U32 DevId, AL_GPIO_EventCa
 AL_S32 AlGpio_Hal_ReadBankInput(AL_GPIO_HalStruct *Handle, AL_U32 Bank);
 AL_S32 AlGpio_Hal_ReadBankOutput(AL_GPIO_HalStruct *Handle, AL_U32 Bank);
 AL_S32 AlGpio_Hal_WriteBank(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Data);
+AL_U32 AlGpio_Hal_DiscreteSet(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Mask);
+AL_U32 AlGpio_Hal_DiscreteClear(AL_GPIO_HalStruct *Handle, AL_U32 Bank, AL_U32 Mask);
 
 /*
  * Pin APIs
