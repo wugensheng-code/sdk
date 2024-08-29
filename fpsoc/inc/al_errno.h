@@ -84,6 +84,7 @@ typedef enum
     AL_XMON                 = 0x17,
     AL_AxiDma               = 0x18,
     AL_AXI_ETHLITE          = 0x19,
+    AL_AxiQspi              = 0x1A,
 } AL_MODULE_TYPE;
 
 #ifdef __cplusplus

@@ -240,6 +240,15 @@
 				"default": true
 			}
 		},
+		"PL_DRIVER_QSPI": {
+			"1.0":{
+				"name": "PL_DRIVER_QSPI",
+				"version": "1.0",
+				"depends": ["fpsoc/driver/pl_driver/axi_qspi"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
+				"default": true
+			}
+		},
 		"PL_DRIVER_ETHLITE": {
 			"1.0":{
 				"name": "PL_DRIVER_ETHLITE",

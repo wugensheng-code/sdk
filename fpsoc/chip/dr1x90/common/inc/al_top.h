@@ -14,6 +14,7 @@ extern "C" {
 #include "al_type.h"
 
 AL_VOID Altop_Syscnts_CounterCtrl(AL_FUNCTION CntStatus);
+AL_VOID AlTop_GPPortEnable(AL_VOID);
 
 
 #ifdef __cplusplus
