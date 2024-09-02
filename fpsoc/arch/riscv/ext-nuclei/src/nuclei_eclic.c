@@ -417,3 +417,23 @@ AL_S32 AlIntr_SetPreemptionBitsCount(AL_U32 Bits)
 
     return AL_OK;
 }
+
+AL_VOID AlIntr_SetPriorityMask(AL_U32 Mask)
+{
+    ECLIC_SetMth(Mask);
+}
+
+AL_U32 AlIntr_GetPriorityMask(AL_VOID)
+{
+    return (ECLIC_GetMth() & 0xFF);
+}
+
+AL_VOID AlIntr_GenSecSoftIntr(AL_U32 IntrNum, AL_U64 CpuId)
+{
+    /* reserved */
+}
+
+AL_VOID AlIntr_GenNonSecSoftIntr(AL_U32 IntrNum, AL_U64 CpuId)
+{
+    /* reserved */
+}

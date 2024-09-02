@@ -219,3 +219,23 @@ AL_S32 AlIntr_SetPreemptionBitsCount(AL_U32 Bits)
 {
     GICV3_SYSREG_WRITE(icc_bpr1_el1, Bits);
 }
+
+AL_VOID AlIntr_SetPriorityMask(AL_U32 Mask)
+{
+    GICV3_SYSREG_WRITE(icc_pmr_el1, Mask);
+}
+
+AL_U32 AlIntr_GetPriorityMask(AL_VOID)
+{
+    return (GICV3_SYSREG_READ(icc_pmr_el1) & 0xFF);
+}
+
+AL_VOID AlIntr_GenSoftIntr(AL_U32 IntrNum, AL_U64 CpuId)
+{
+    AlGicv3_RaiseSgi(IntrNum, AL_GICV3_SAME, CpuId);
+}
+
+AL_VOID AlIntr_GenNonSecSoftIntr(AL_U32 IntrNum, AL_U64 CpuId)
+{
+    AlGicv3_RaiseSgi(IntrNum, AL_GICV3_G1NS, CpuId);
+}

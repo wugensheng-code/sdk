@@ -551,7 +551,7 @@ AL_VOID AlGicv3_SetInterruptType(AL_U32 Id, AL_U32 ProcNum, AL_U32 Type)
  *
  * The target parameter must be a valid MPIDR in the system.
  ******************************************************************************/
-AL_VOID AlGicv3_RaiseSgi(AL_U32 SgiNum, AL_GICV3_IrqGroupEnum Group, AL_REG Target)
+AL_VOID AlGicv3_RaiseSgi(AL_U32 SgiNum, AL_GICV3_IrqGroupEnum Group, AL_U64 Target)
 {
     AL_U32 Tgt, Aff3, Aff2, Aff1, Aff0;
     AL_U64 SgiVal;
@@ -599,6 +599,9 @@ AL_VOID AlGicv3_RaiseSgi(AL_U32 SgiNum, AL_GICV3_IrqGroupEnum Group, AL_REG Targ
         #else
         GICV3_SYSREG_WRITE_64(icc_sgi1r, SgiVal);
         #endif
+        break;
+    case AL_GICV3_SAME:
+        GICV3_SYSREG_WRITE_64(icc_sgi1r, SgiVal);
         break;
     default:
         assert(false);

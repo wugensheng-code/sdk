@@ -70,6 +70,14 @@ AL_S32 AlIntr_SetLocalInterrupt(AL_FUNCTION State);
 
 AL_S32 AlIntr_SetPreemptionBitsCount(AL_U32 Bits);
 
+AL_VOID AlIntr_SetPriorityMask(AL_U32 Mask);
+
+AL_U32 AlIntr_GetPriorityMask(AL_VOID);
+
+AL_VOID AlIntr_GenSoftIntr(AL_U32 IntrNum, AL_U64 CpuId);
+
+AL_VOID AlIntr_GenNonSecSoftIntr(AL_U32 IntrNum, AL_U64 CpuId);
+
 AL_S32 AlIntr_SetLocalInterruptMask(AL_U32 Bits);
 
 AL_VOID AlIntr_RestoreLocalInterruptMask(AL_S32 Mask);

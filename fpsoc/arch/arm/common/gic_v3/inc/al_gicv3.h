@@ -314,7 +314,8 @@
 typedef enum {
     AL_GICV3_G1S,
     AL_GICV3_G1NS,
-    AL_GICV3_G0
+    AL_GICV3_G0,
+    AL_GICV3_SAME
 } AL_GICV3_IrqGroupEnum;
 
 static inline AL_UINTPTR AlGicv3_RedistSize(AL_VOID)
@@ -498,7 +499,7 @@ AL_VOID AlGicv3_DisableInterrupt(AL_U32 Id, AL_U32 ProcNum);
 AL_VOID AlGicv3_SetInterruptPriority(AL_U32 Id, AL_U32 ProcNum, AL_U32 Priority);
 AL_VOID AlGicv3_SetInterruptTriggerMode(AL_U32 Id, AL_U32 ProcNum, AL_U32 TriggerMode);
 AL_VOID AlGicv3_SetInterruptType(AL_U32 Id, AL_U32 ProcNum, AL_U32 type);
-AL_VOID AlGicv3_RaiseSgi(AL_U32 SgiNum, AL_GICV3_IrqGroupEnum Group, AL_REG Target);
+AL_VOID AlGicv3_RaiseSgi(AL_U32 SgiNum, AL_GICV3_IrqGroupEnum Group, AL_U64 Target);
 AL_VOID AlGicv3_SetSpiRouting(AL_U32 Id, AL_U32 Irm, AL_REG Mpidr);
 AL_VOID AlGicv3_SetInterruptPending(AL_U32 Id, AL_U32 ProcNum);
 AL_VOID AlGicv3_ClearInterruptPending(AL_U32 Id, AL_U32 ProcNum);
