@@ -10,10 +10,7 @@
 
 SDK_ROOT    ?= ../../../../..
 
-
 CHIP        ?= dr1m90
-ELF         ?= MEMCPY_BLOCK
-# ENABLE_MMU  := 0
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
@@ -26,6 +23,12 @@ BOARD_NAME ?= board_dr1x90_ad101_v20
 
 DOWNLOAD = ddr
 
+ifeq ($(DOWNLOAD), ddr)
+ENABLE_MMU  := 1
+else
+ENABLE_MMU  := 0
+endif
+
 #########################################################################
 # 2. define SRC_DIR, INC_DIR, LD_LIBS, LIB_DIR
 #    SRC_DIR: application source path
@@ -37,7 +40,7 @@ DOWNLOAD = ddr
 #    ASM_SRCS: asm sources for application
 #########################################################################
 
-C_SRCS += axidma_simple_block.c
+C_SRCS += axidma_direct_mode.c
 
 INC_DIR     += ./
 
@@ -70,7 +73,7 @@ PINMUX_MODE ?= PINMUX_MODE1
 # 5. define build target
 #########################################################################
 
-TARGET := axidma_simple_block
+TARGET := axidma_direct_mode
 
 
 ifneq ($(PINMUX_MODE),)

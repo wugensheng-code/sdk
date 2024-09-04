@@ -17,9 +17,27 @@ typedef struct
     AL_MailBox              S2mm_EventQueue;
 } AlAxiDma_HalStruct;
 
+typedef struct {
+    AL_U8                   **Buffers;
+    AL_U32                  *BufferLengths;
+    AL_U32                  NumBuffers;
+    AL_U32                  S2mmCyclicCount;
+    AL_U32                  Mm2sCyclicCount;
+    AlAxiDma_TransDirEnum   Direction;
+} ALAXIDMA_TransferMsg;
+
+typedef struct {
+        AL_U32              errorBit;
+        const char          *errorMsg;
+} ErrorInfo;
+
 /************************** Function Prototypes ******************************/
 AL_S32 AlAxiDma_Hal_Init(AlAxiDma_HalStruct **Dev, AL_U32 DevId, AlAxiDma_InitStruct *InitConfig, AlAxiDma_EventCallBack EventCallBack);
-AL_U32 AlAxiDma_Hal_Simple_Transfer(AlAxiDma_HalStruct *Handle, AL_U64 BuffAddr, AL_U32 Length, AL_U32 Direction, AL_U32 Timeout);
+AL_S32 AlAxiDma_Hal_DirectMode_TransferBlock(AlAxiDma_HalStruct *Handle, AL_U8 *Buffer, AL_U32 Length, AL_U32 Direction, AL_U32 Timeout);
+AL_S32 AlAxiDma_Hal_DirectMode_TransferPolling(AlAxiDma_HalStruct *Handle, AL_U8 *Buffer, AL_U32 Length, AL_U32 Direction);
+AL_S32 AlAxiDma_Hal_SetupDescriptors(AlAxiDma_HalStruct *Handle, ALAXIDMA_TransferMsg *Msg);
+AL_S32 AlAxiDma_Hal_SgMode_TransferBlock(AlAxiDma_HalStruct *Handle, ALAXIDMA_TransferMsg *Msg, AL_U32 Timeout);
+AL_S32 AlAxiDma_Hal_SgMode_TransferPolling(AlAxiDma_HalStruct *Handle, ALAXIDMA_TransferMsg *Msg);
 
 #ifdef __cplusplus
 }
