@@ -41,6 +41,7 @@
     .extern ullPortYieldRequired
     .extern _freertos_vector_table
 
+    .global freertos_vector_base
     .global FreeRTOS_IRQ_Handler
     .global FreeRTOS_SWI_Handler
     .global vPortRestoreTaskContext
@@ -395,6 +396,8 @@ FreeRTOS_IRQ_Handler:
 
     /* Save the context of the current task and select a new task to run. */
     portSAVE_CONTEXT
+    MRS     X0, MPIDR_EL1       /* Get CoreID */
+    AND     X0, X0, #0xff
     BL vTaskSwitchContext
     portRESTORE_CONTEXT
 

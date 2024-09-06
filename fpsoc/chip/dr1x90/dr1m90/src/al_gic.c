@@ -53,7 +53,7 @@ void AlGic_Init(void)
     *(GicData.CpuId) = AlGic_CorePos();
     AlGicv3_DriverInit(&GicData);
 
-    if (GicData.CpuId == 0)
+    if (*(Gicv3DrvData->CpuId) == 0)
     {
         AlGicv3_DistInit();
     }

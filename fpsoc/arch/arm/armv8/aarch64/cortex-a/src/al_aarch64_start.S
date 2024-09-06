@@ -240,6 +240,7 @@ common_startup_flow:
 
     bl AlChip_Init
 
+#if 0
 #ifdef SMP
 	/* Get CPU Id */
 	mrs  x0, MPIDR_EL1
@@ -247,6 +248,7 @@ common_startup_flow:
 	ldr  x1, =_start
     /* void StartAndWaitSecondaryCpuUp(uint64_t CpuID, uint64_t ResetAddr) */
 	bl   AlCpu_WakeUpMultipleCpus
+#endif
 #endif
 
     bl board_init

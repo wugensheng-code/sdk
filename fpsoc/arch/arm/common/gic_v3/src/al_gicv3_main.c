@@ -8,12 +8,11 @@
 #include <assert.h>
 
 #include "al_barrier.h"
-#include "al_gicv3_private.h"
-#include "al_gicv3_dist.h"
-#include "al_gicv3_rdist.h"
 #include "al_gicv3.h"
+#include "al_gicv3_dist.h"
+#include "al_gicv3_private.h"
+#include "al_gicv3_rdist.h"
 #include "al_type.h"
-
 
 const AL_GICV3_DrvDataStruct *Gicv3DrvData;
 
@@ -38,15 +37,16 @@ AL_VOID AlGicv3_DriverInit(const AL_GICV3_DrvDataStruct *DrvData)
     GicVer >>= PIDR2_ARCH_REV_SHIFT;
     GicVer &= PIDR2_ARCH_REV_MASK;
 
-    if (DrvData->GicrBase != 0U) {
+    if (DrvData->GicrBase != 0U)
+    {
         /*
          * Find the base address of each implemented Redistributor interface.
          * The number of interfaces should be equal to the number of CPUs in the
          * system. The memory for saving these addresses has to be allocated by
          * the platform port
          */
-        AlGicv3_Rdist_BaseAddrsProbe(DrvData->RdistBaseAddrs, DrvData->RdistNum,
-                                     DrvData->GicrBase, DrvData->MpidrToCorePos);
+        AlGicv3_Rdist_BaseAddrsProbe(DrvData->RdistBaseAddrs, DrvData->RdistNum, DrvData->GicrBase,
+                                     DrvData->MpidrToCorePos);
     }
 
     Gicv3DrvData = DrvData;
@@ -68,8 +68,7 @@ AL_VOID AlGicv3_DistInit(AL_VOID)
      * the ARE_S bit. The Distributor might generate a system error
      * otherwise.
      */
-    Gicd_ClrCtlr(Gicv3DrvData->GicdBase, CTLR_ENABLE_G0_BIT | CTLR_ENABLE_G1S_BIT |
-                                         CTLR_ENABLE_G1NS_BIT, RWP_TRUE);
+    Gicd_ClrCtlr(Gicv3DrvData->GicdBase, CTLR_ENABLE_G0_BIT | CTLR_ENABLE_G1S_BIT | CTLR_ENABLE_G1NS_BIT, RWP_TRUE);
 
     /* Set the ARE_S and ARE_NS bit now that interrupts have been disabled */
     Gicd_SetCtlr(Gicv3DrvData->GicdBase, CTLR_ARE_S_BIT | CTLR_ARE_NS_BIT, RWP_TRUE);
@@ -77,11 +76,11 @@ AL_VOID AlGicv3_DistInit(AL_VOID)
     /* Set the default attribute of all (E)SPIs */
     AlGicv3_SpisConfigDefaults(Gicv3DrvData->GicdBase);
 
-    #ifdef SUPPORT_NONSECURE
+#ifdef SUPPORT_NONSECURE
     BitMap |= CTLR_ENABLE_G1NS_BIT;
-    #else
+#else
     BitMap |= CTLR_ENABLE_G1S_BIT;
-    #endif
+#endif
 
     /* Enable the secure (E)SPIs now that they have been configured */
     Gicd_SetCtlr(Gicv3DrvData->GicdBase, BitMap, RWP_TRUE);
@@ -99,8 +98,10 @@ AL_VOID AlGicv3_DisableOwnSpiInterrupt(AL_VOID)
 
     NumInts = AlGicv3_GetSpiLimit(Gicv3DrvData->GicdBase);
 
-    for (i = MIN_SPI_ID; i < NumInts; i += (1U << IROUTER_SHIFT)) {
-        if (Gicd_ReadIrouter(Gicv3DrvData->GicdBase, i) == *(Gicv3DrvData->CpuId)) {
+    for (i = MIN_SPI_ID; i < NumInts; i += (1U << IROUTER_SHIFT))
+    {
+        if (Gicd_ReadIrouter(Gicv3DrvData->GicdBase, i) == *(Gicv3DrvData->CpuId))
+        {
             AlGicv3_EndOfIntrSel1(i);
             Gicd_SetIcenabler(Gicv3DrvData->GicdBase, i);
             Gicd_SetIcactiver(Gicv3DrvData->GicdBase, i);
@@ -134,14 +135,15 @@ AL_VOID AlGicv3_RdistInit(AL_U32 ProcNum)
     /* Set the default attribute of all SGIs and (E)PPIs */
     AlGicv3_PpiSgiConfigDefaults(GicrBase);
 
-    #ifdef SUPPORT_NONSECURE
+#ifdef SUPPORT_NONSECURE
     BitMap |= CTLR_ENABLE_G1NS_BIT;
-    #else
+#else
     BitMap |= CTLR_ENABLE_G1S_BIT;
-    #endif
+#endif
 
     /* Enable interrupt groups as required, if not already */
-    if ((Ctlr & BitMap) != BitMap) {
+    if ((Ctlr & BitMap) != BitMap)
+    {
         Gicd_SetCtlr(Gicv3DrvData->GicdBase, BitMap, RWP_TRUE);
     }
 }
@@ -232,17 +234,14 @@ AL_VOID AlGicv3_CpuIfDisable(AL_U32 ProcNum)
     assert(Gicv3DrvData->RdistBaseAddrs != NULL);
 
     /* Disable legacy interrupt bypass */
-    GICV3_SYSREG_WRITE(icc_sre_el1, (GICV3_SYSREG_READ(icc_sre_el1) |
-              (ICC_SRE_DIB_BIT | ICC_SRE_DFB_BIT)));
+    GICV3_SYSREG_WRITE(icc_sre_el1, (GICV3_SYSREG_READ(icc_sre_el1) | (ICC_SRE_DIB_BIT | ICC_SRE_DFB_BIT)));
 
     /* Disable Group0 interrupts */
-    GICV3_SYSREG_WRITE(icc_igrpen0_el1, (GICV3_SYSREG_READ(icc_igrpen0_el1) &
-                  ~IGRPEN1_EL1_ENABLE_G0_BIT));
+    GICV3_SYSREG_WRITE(icc_igrpen0_el1, (GICV3_SYSREG_READ(icc_igrpen0_el1) & ~IGRPEN1_EL1_ENABLE_G0_BIT));
 
     /* Disable Group1 Secure and Non-Secure interrupts */
     GICV3_SYSREG_WRITE(icc_igrpen1_el3, (GICV3_SYSREG_READ(icc_igrpen1_el3) &
-                  ~(IGRPEN1_EL3_ENABLE_G1NS_BIT |
-                  IGRPEN1_EL3_ENABLE_G1S_BIT)));
+                                         ~(IGRPEN1_EL3_ENABLE_G1NS_BIT | IGRPEN1_EL3_ENABLE_G1S_BIT)));
 
     /* Synchronise accesses to group enable registers */
     ISB();
@@ -270,7 +269,8 @@ AL_U32 AlGicv3_GetPendingInterruptId(AL_VOID)
      * If the ID is special identifier corresponding to G1S or G1NS
      * interrupt, then read the highest pending group 1 interrupt.
      */
-    if ((Id == PENDING_G1S_INTID) || (Id == PENDING_G1NS_INTID)) {
+    if ((Id == PENDING_G1S_INTID) || (Id == PENDING_G1NS_INTID))
+    {
         return (AL_U32)GICV3_SYSREG_READ(icc_hppir1_el1) & HPPIR1_EL1_INTID_MASK;
     }
 
@@ -313,18 +313,22 @@ AL_U32 AlGicv3_GetInterruptType(AL_U32 Id, AL_U32 ProcNum)
     assert(ProcNum < Gicv3DrvData->RdistNum);
 
     /* All LPI interrupts are Group 1 non secure */
-    if (Id >= MIN_LPI_ID) {
+    if (Id >= MIN_LPI_ID)
+    {
         return INTR_GROUP1NS;
     }
 
     /* Check interrupt ID */
-    if (AlGicv3_IsSgiPpi(Id)) {
+    if (AlGicv3_IsSgiPpi(Id))
+    {
         /* SGIs: 0-15, PPIs: 16-31, EPPIs: 1056-1119 */
         assert(Gicv3DrvData->RdistBaseAddrs != NULL);
         GicrBase = Gicv3DrvData->RdistBaseAddrs[ProcNum];
         Igroup = Gicr_GetIgroupr(GicrBase, Id);
         Grpmodr = Gicr_GetIgrpmodr(GicrBase, Id);
-    } else {
+    }
+    else
+    {
         /* SPIs: 32-1019, ESPIs: 4096-5119 */
         assert(Gicv3DrvData->GicdBase != 0U);
         Igroup = Gicd_GetIgroupr(Gicv3DrvData->GicdBase, Id);
@@ -335,12 +339,14 @@ AL_U32 AlGicv3_GetInterruptType(AL_U32 Id, AL_U32 ProcNum)
      * If the IGROUP bit is set, then it is a Group 1 Non secure
      * interrupt
      */
-    if (Igroup != 0U) {
+    if (Igroup != 0U)
+    {
         return INTR_GROUP1NS;
     }
 
     /* If the GRPMOD bit is set, then it is a Group 1 Secure interrupt */
-    if (Grpmodr != 0U) {
+    if (Grpmodr != 0U)
+    {
         return INTR_GROUP1S;
     }
 
@@ -371,10 +377,10 @@ AL_U32 AlGicv3_GetInterruptActive(AL_U32 Id, AL_U32 ProcNum)
     assert(Gicv3DrvData->RdistBaseAddrs != NULL);
 
     /* Check interrupt ID */
-    if (AlGicv3_IsSgiPpi(Id)) {
+    if (AlGicv3_IsSgiPpi(Id))
+    {
         /* For SGIs: 0-15, PPIs: 16-31 and EPPIs: 1056-1119 */
-        return Gicr_GetIsactiver(
-            Gicv3DrvData->RdistBaseAddrs[ProcNum], Id);
+        return Gicr_GetIsactiver(Gicv3DrvData->RdistBaseAddrs[ProcNum], Id);
     }
 
     /* For SPIs: 32-1019 and ESPIs: 4096-5119 */
@@ -400,11 +406,13 @@ AL_VOID AlGicv3_EnableInterrupt(AL_U32 Id, AL_U32 ProcNum)
     DSB();
 
     /* Check interrupt ID */
-    if (AlGicv3_IsSgiPpi(Id)) {
+    if (AlGicv3_IsSgiPpi(Id))
+    {
         /* For SGIs: 0-15, PPIs: 16-31 and EPPIs: 1056-1119 */
-        Gicr_SetIsenabler(
-            Gicv3DrvData->RdistBaseAddrs[ProcNum], Id);
-    } else {
+        Gicr_SetIsenabler(Gicv3DrvData->RdistBaseAddrs[ProcNum], Id);
+    }
+    else
+    {
         /* For SPIs: 32-1019 and ESPIs: 4096-5119 */
         Gicd_SetIsenabler(Gicv3DrvData->GicdBase, Id);
     }
@@ -428,15 +436,16 @@ AL_VOID AlGicv3_DisableInterrupt(AL_U32 Id, AL_U32 ProcNum)
      */
 
     /* Check interrupt ID */
-    if (AlGicv3_IsSgiPpi(Id)) {
+    if (AlGicv3_IsSgiPpi(Id))
+    {
         /* For SGIs: 0-15, PPIs: 16-31 and EPPIs: 1056-1119 */
-        Gicr_SetIcenabler(
-            Gicv3DrvData->RdistBaseAddrs[ProcNum], Id);
+        Gicr_SetIcenabler(Gicv3DrvData->RdistBaseAddrs[ProcNum], Id);
 
         /* Write to clear enable requires waiting for pending writes */
-        Gicr_WaitForPendingWrite(
-            Gicv3DrvData->RdistBaseAddrs[ProcNum]);
-    } else {
+        Gicr_WaitForPendingWrite(Gicv3DrvData->RdistBaseAddrs[ProcNum]);
+    }
+    else
+    {
         /* For SPIs: 32-1019 and ESPIs: 4096-5119 */
         Gicd_SetIcenabler(Gicv3DrvData->GicdBase, Id);
 
@@ -461,11 +470,14 @@ AL_VOID AlGicv3_SetInterruptPriority(AL_U32 Id, AL_U32 ProcNum, AL_U32 Priority)
     assert(Gicv3DrvData->RdistBaseAddrs != NULL);
 
     /* Check interrupt ID */
-    if (AlGicv3_IsSgiPpi(Id)) {
+    if (AlGicv3_IsSgiPpi(Id))
+    {
         /* For SGIs: 0-15, PPIs: 16-31 and EPPIs: 1056-1119 */
         GicrBase = Gicv3DrvData->RdistBaseAddrs[ProcNum];
         Gicr_SetIpriorityr(GicrBase, Id, Priority);
-    } else {
+    }
+    else
+    {
         /* For SPIs: 32-1019 and ESPIs: 4096-5119 */
         Gicd_SetIpriorityr(Gicv3DrvData->GicdBase, Id, Priority);
     }
@@ -485,11 +497,14 @@ AL_VOID AlGicv3_SetInterruptTriggerMode(AL_U32 Id, AL_U32 ProcNum, AL_U32 Trigge
     assert(Gicv3DrvData->RdistBaseAddrs != NULL);
 
     /* Check interrupt ID */
-    if (AlGicv3_IsSgiPpi(Id)) {
+    if (AlGicv3_IsSgiPpi(Id))
+    {
         /* For SGIs: 0-15, PPIs: 16-31 and EPPIs: 1056-1119 */
         GicrBase = Gicv3DrvData->RdistBaseAddrs[ProcNum];
         Gicr_SetIcfgr(GicrBase, Id, TriggerMode);
-    } else {
+    }
+    else
+    {
         /* For SPIs: 32-1019 and ESPIs: 4096-5119 */
         Gicd_SetIcfgr(Gicv3DrvData->GicdBase, Id, TriggerMode);
     }
@@ -510,7 +525,8 @@ AL_VOID AlGicv3_SetInterruptType(AL_U32 Id, AL_U32 ProcNum, AL_U32 Type)
     assert(ProcNum < Gicv3DrvData->RdistNum);
     assert(Gicv3DrvData->RdistBaseAddrs != NULL);
 
-    switch (Type) {
+    switch (Type)
+    {
     case INTR_GROUP1S:
         Igroup = false;
         Grpmod = true;
@@ -529,20 +545,19 @@ AL_VOID AlGicv3_SetInterruptType(AL_U32 Id, AL_U32 ProcNum, AL_U32 Type)
     }
 
     /* Check interrupt ID */
-    if (AlGicv3_IsSgiPpi(Id)) {
+    if (AlGicv3_IsSgiPpi(Id))
+    {
         /* For SGIs: 0-15, PPIs: 16-31 and EPPIs: 1056-1119 */
         GicrBase = Gicv3DrvData->RdistBaseAddrs[ProcNum];
 
-        Igroup ? Gicr_SetIgroupr(GicrBase, Id) :
-             Gicr_ClrIgroupr(GicrBase, Id);
-        Grpmod ? Gicr_SetIgrpmodr(GicrBase, Id) :
-             Gicr_ClrIgrpmodr(GicrBase, Id);
-    } else {
+        Igroup ? Gicr_SetIgroupr(GicrBase, Id) : Gicr_ClrIgroupr(GicrBase, Id);
+        Grpmod ? Gicr_SetIgrpmodr(GicrBase, Id) : Gicr_ClrIgrpmodr(GicrBase, Id);
+    }
+    else
+    {
         /* For SPIs: 32-1019 and ESPIs: 4096-5119 */
-        Igroup ? Gicd_SetIgroupr(Gicv3DrvData->GicdBase, Id) :
-             Gicd_ClrIgroupr(Gicv3DrvData->GicdBase, Id);
-        Grpmod ? Gicd_SetIgrpmodr(Gicv3DrvData->GicdBase, Id) :
-             Gicd_ClrIgrpmodr(Gicv3DrvData->GicdBase, Id);
+        Igroup ? Gicd_SetIgroupr(Gicv3DrvData->GicdBase, Id) : Gicd_ClrIgroupr(Gicv3DrvData->GicdBase, Id);
+        Grpmod ? Gicd_SetIgrpmodr(Gicv3DrvData->GicdBase, Id) : Gicd_ClrIgrpmodr(Gicv3DrvData->GicdBase, Id);
     }
 }
 
@@ -573,8 +588,7 @@ AL_VOID AlGicv3_RaiseSgi(AL_U32 SgiNum, AL_GICV3_IrqGroupEnum Group, AL_REG Targ
     Tgt = BIT_32(Aff0);
 
     /* Raise SGI to PE specified by its affinity */
-    SgiVal = GICV3_SGIR_VALUE(Aff3, Aff2, Aff1, SgiNum, SGIR_IRM_TO_AFF,
-            Tgt);
+    SgiVal = GICV3_SGIR_VALUE(Aff3, Aff2, Aff1, SgiNum, SGIR_IRM_TO_AFF, Tgt);
 
     /*
      * Ensure that any shared variable updates depending on out of band
@@ -582,23 +596,24 @@ AL_VOID AlGicv3_RaiseSgi(AL_U32 SgiNum, AL_GICV3_IrqGroupEnum Group, AL_REG Targ
      */
     DSB();
 
-    switch (Group) {
+    switch (Group)
+    {
     case AL_GICV3_G0:
         GICV3_SYSREG_WRITE_64(icc_sgi0r_el1, SgiVal);
         break;
     case AL_GICV3_G1NS:
-        #ifdef SUPPORT_NONSECURE
+#ifdef SUPPORT_NONSECURE
         GICV3_SYSREG_WRITE_64(icc_sgi1r, SgiVal);
-        #else
+#else
         GICV3_SYSREG_WRITE_64(icc_asgi1r, SgiVal);
-        #endif
+#endif
         break;
     case AL_GICV3_G1S:
-        #ifdef SUPPORT_NONSECURE
+#ifdef SUPPORT_NONSECURE
         GICV3_SYSREG_WRITE_64(icc_asgi1r, SgiVal);
-        #else
+#else
         GICV3_SYSREG_WRITE_64(icc_sgi1r, SgiVal);
-        #endif
+#endif
         break;
     default:
         assert(false);
@@ -652,10 +667,13 @@ AL_VOID AlGicv3_ClearInterruptPending(AL_U32 Id, AL_U32 ProcNum)
      */
 
     /* Check interrupt ID */
-    if (AlGicv3_IsSgiPpi(Id)) {
+    if (AlGicv3_IsSgiPpi(Id))
+    {
         /* For SGIs: 0-15, PPIs: 16-31 and EPPIs: 1056-1119 */
         Gicr_SetIcpendr(Gicv3DrvData->RdistBaseAddrs[ProcNum], Id);
-    } else {
+    }
+    else
+    {
         /* For SPIs: 32-1019 and ESPIs: 4096-5119 */
         Gicd_SetIcpendr(Gicv3DrvData->GicdBase, Id);
     }
@@ -682,11 +700,13 @@ AL_VOID AlGicv3_SetInterruptPending(AL_U32 Id, AL_U32 ProcNum)
     DSB();
 
     /* Check interrupt ID */
-    if (AlGicv3_IsSgiPpi(Id)) {
+    if (AlGicv3_IsSgiPpi(Id))
+    {
         /* For SGIs: 0-15, PPIs: 16-31 and EPPIs: 1056-1119 */
-        Gicr_SetIspendr(
-            Gicv3DrvData->RdistBaseAddrs[ProcNum], Id);
-    } else {
+        Gicr_SetIspendr(Gicv3DrvData->RdistBaseAddrs[ProcNum], Id);
+    }
+    else
+    {
         /* For SPIs: 32-1019 and ESPIs: 4096-5119 */
         Gicd_SetIspendr(Gicv3DrvData->GicdBase, Id);
     }
@@ -720,11 +740,16 @@ AL_U32 AlGicv3_SetPmr(AL_U32 Mask)
  *****************************************************************************/
 static AL_BOOL AlGicv3_IsSgiPpi(AL_U32 Id)
 {
-    if (IS_SGI_PPI(Id)) {       /* SGIs: 0-15, PPIs: 16-31, EPPIs: 1056-1119 */
+    if (IS_SGI_PPI(Id))
+    { /* SGIs: 0-15, PPIs: 16-31, EPPIs: 1056-1119 */
         return true;
-    } else if (IS_SPI(Id)) {    /* SPIs: 32-1019, ESPIs: 4096-5119 */
+    }
+    else if (IS_SPI(Id))
+    { /* SPIs: 32-1019, ESPIs: 4096-5119 */
         return false;
-    } else {
+    }
+    else
+    {
         return false;
     }
 }

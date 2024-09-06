@@ -177,8 +177,8 @@ not need to be guarded with a critical section. */
 
 /* These macros do not globally disable/enable interrupts.  They do mask off
 interrupts that have a priority below configMAX_API_CALL_INTERRUPT_PRIORITY. */
-#define portENTER_CRITICAL() vPortEnterCritical();
-#define portEXIT_CRITICAL() vPortExitCritical();
+#define portENTER_CRITICAL() vTaskEnterCritical();
+#define portEXIT_CRITICAL() vTaskExitCritical();
 #define portSET_INTERRUPT_MASK_FROM_ISR() uxPortSetInterruptMask()
 #define portCLEAR_INTERRUPT_MASK_FROM_ISR(x) vPortClearInterruptMask(x)
 
@@ -247,7 +247,7 @@ macros is used. */
 
     extern void vInterruptCore(uint32_t ulInterruptID, uint32_t ulCoreID);
 /* Use PPI 0 as the yield core intrrupt */
-#define portYIELD_CORE_INT_ID 0
+#define portYIELD_CORE_INT_ID 15
 #define portYIELD_CORE(xCoreID) vInterruptCore(portYIELD_CORE_INT_ID, (uint32_t)xCoreID)
 
 #define portENTER_CRITICAL_FROM_ISR() vTaskEnterCriticalFromISR()

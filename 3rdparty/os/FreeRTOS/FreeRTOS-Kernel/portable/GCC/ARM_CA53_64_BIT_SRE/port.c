@@ -162,6 +162,49 @@ __attribute__((used)) const uint64_t ullMaxAPIPriorityMask =
 
 /*-----------------------------------------------------------*/
 
+int32_t lInterruptControllerInitialised[configNUMBER_OF_CORES] = {0};
+int32_t lReadyToSchedule[configNUMBER_OF_CORES] = {pdFALSE};
+
+/*-----------------------------------------------------------*/
+
+#ifdef SMP
+
+uint32_t IntCoreCnt[2] = {0, 0};
+
+uint32_t TSCIsrCnt[4] = {0, 0, 0, 0};
+void vTaskSwitchContextISR(void *arg)
+{
+    portEND_SWITCHING_ISR(pdTRUE);
+    TSCIsrCnt[portGET_CORE_ID()]++;
+}
+#define AL_DR1M90_GIC_BASE (0xDD000000UL)
+#define AL_DR1M90_GICR_1_BASE (AL_DR1M90_GIC_BASE + 0x60000UL)
+#define AL_DR1M90_GICR_BASE (AL_DR1M90_GIC_BASE + 0x40000UL)
+
+void vInterruptCore(uint32_t ulInterruptID, uint32_t ulCoreID)
+{
+    configASSERT(ulCoreID < configNUMBER_OF_CORES);
+    configASSERT(ulInterruptID < 16);
+    // uint32_t ulRegVal = 0;
+    // uint32_t ulCoreMask = (1 << ulCoreID);
+    // ulRegVal |= ulInterruptID & 0xFu;
+    // ulRegVal |= (ulCoreMask << 16U);
+    // *((volatile uint32_t*)portICD_SGIR_ADDRESS) = ulRegVal;
+
+    AlGicv3_RaiseSgi(ulInterruptID, AL_GICV3_G1S, ulCoreID);
+
+    uint32_t ulRegVal = 0;
+    uint32_t ulCoreMask = (1 << ulCoreID);
+    ulRegVal |= ulInterruptID & 0xFu;
+    ulRegVal |= (ulCoreMask << 16U);
+    *((volatile uint32_t *)AL_DR1M90_GICR_BASE) = ulRegVal;
+    IntCoreCnt[ulCoreID]++;
+    // #error "Not implemented"
+}
+#endif
+
+/*-----------------------------------------------------------*/
+
 /*
  * See header file for description.
  */
@@ -262,6 +305,12 @@ BaseType_t xPortStartScheduler(void)
 {
     uint32_t ulAPSR;
 
+    extern void _start(void);
+
+    AlCpu_WakeUpMultipleCpus(portGET_CORE_ID(), _start);
+
+    AlIntr_RegHandler(portYIELD_CORE_INT_ID, AL_NULL, vTaskSwitchContextISR, AL_NULL);
+
     __asm volatile("MRS %0, CurrentEL" : "=r"(ulAPSR));
 
     ulAPSR &= portAPSR_MODE_BITS_MASK;
@@ -285,6 +334,15 @@ BaseType_t xPortStartScheduler(void)
         /* Start the timer that generates the tick ISR. */
         configSETUP_TICK_INTERRUPT();
 
+        lReadyToSchedule[portGET_CORE_ID()] = pdTRUE;
+
+        for (uint32_t i = 0; i < configNUMBER_OF_CORES; i++)
+        {
+            if (lReadyToSchedule[i] == pdFALSE)
+            {
+                i = 0;
+            }
+        }
         /* Start the first task executing. */
         vPortRestoreTaskContext();
     }
@@ -347,11 +405,15 @@ void FreeRTOS_Tick_Handler(void)
 {
     /* Ok to enable interrupts after the interrupt source has been cleared. */
     configCLEAR_TICK_INTERRUPT();
+
+    UBaseType_t x = portENTER_CRITICAL_FROM_ISR();
     /* Increment the RTOS tick. */
     if (xTaskIncrementTick() != pdFALSE)
     {
         ullPortYieldRequired[portGET_CORE_ID()] = pdTRUE;
     }
+
+    portEXIT_CRITICAL_FROM_ISR(x);
 }
 /*-----------------------------------------------------------*/
 
@@ -405,27 +467,6 @@ UBaseType_t uxPortSetInterruptMask(void)
 
     return ulReturn;
 }
-/*-----------------------------------------------------------*/
-
-#ifdef SMP
-
-uint32_t IntCoreCnt[2] = {0, 0};
-
-void vInterruptCore(uint32_t ulInterruptID, uint32_t ulCoreID)
-{
-    configASSERT(ulCoreID < configNUMBER_OF_CORES);
-    configASSERT(ulInterruptID < 16);
-    // uint32_t ulRegVal = 0;
-    // uint32_t ulCoreMask = (1 << ulCoreID);
-    // ulRegVal |= ulInterruptID & 0xFu;
-    // ulRegVal |= (ulCoreMask << 16U);
-    // *((volatile uint32_t*)portICD_SGIR_ADDRESS) = ulRegVal;
-
-    AlGicv3_RaiseSgi(ulInterruptID, AL_GICV3_G0, ulCoreID);
-    IntCoreCnt[ulCoreID]++;
-    // #error "Not implemented"
-}
-#endif
 /*-----------------------------------------------------------*/
 
 #if (configASSERT_DEFINED == 1)
@@ -485,13 +526,13 @@ void vSetupTickInterrupt(void)
     cntfrq /= configTICK_RATE_HZ;
 
     // disable timer
-    __asm volatile("msr cntp_ctl_el0, xzr" ::: "memory");
+    __asm volatile("msr cntps_ctl_el1, xzr" ::: "memory");
 
     // set timer value
-    __asm volatile("msr cntp_tval_el0, %0" : : "r"(cntfrq) : "memory");
+    __asm volatile("msr cntps_tval_el1, %0" : : "r"(cntfrq) : "memory");
 
     // enable timer
-    __asm volatile("msr cntp_ctl_el0, %0" : : "r"(AL_FUNC_ENABLE) : "memory");
+    __asm volatile("msr cntps_ctl_el1, %0" : : "r"(AL_FUNC_ENABLE) : "memory");
 
 #if 0
 	AL_INTR_AttrStrct IntrAttr = {
@@ -501,7 +542,7 @@ void vSetupTickInterrupt(void)
 
 	(AL_VOID)AlIntr_RegHandler(SOC_NONE_SECURE_PHYSICAL_TIMER, &IntrAttr, FreeRTOS_Tick_Handler, AL_NULL);
 #else
-    (AL_VOID) AlIntr_RegHandler(SOC_NONE_SECURE_PHYSICAL_TIMER, AL_NULL, FreeRTOS_Tick_Handler, AL_NULL);
+    (AL_VOID) AlIntr_RegHandler(SOC_SECURE_PHYSICAL_TIMER, AL_NULL, FreeRTOS_Tick_Handler, AL_NULL);
 #endif
 }
 /*-----------------------------------------------------------*/
@@ -527,4 +568,53 @@ void clear_tick()
 
     // enable timer
     __asm volatile("msr cntp_ctl_el0, %0" : : "r"(AL_FUNC_ENABLE) : "memory");
+}
+/*-----------------------------------------------------------*/
+
+void entry()
+{
+    extern void _start(void);
+
+    if (portGET_CORE_ID())
+    {
+        AlCpu_WakeUpMultipleCpus(portGET_CORE_ID(), _start);
+        while (lReadyToSchedule[0] = pdFALSE)
+        {
+            ;
+        }
+
+        extern uint64_t freertos_vector_base;
+#if defined(GUEST)
+
+        __asm__ volatile("msr vbar_el1, %0\n"         // 设置中断向量表地址
+                         :                            // 没有输出
+                         : "r"(&freertos_vector_base) // 输入参数
+                         : "memory"                   // 表示内存可能被修改
+        );
+#else
+
+        __asm__ volatile("msr vbar_el3, %0\n"         // 设置中断向量表地址
+                         :                            // 没有输出
+                         : "r"(&freertos_vector_base) // 输入参数
+                         : "memory"                   // 表示内存可能被修改
+        );
+#endif
+
+        DSB();
+        ISB();
+
+        lReadyToSchedule[portGET_CORE_ID()] = pdTRUE;
+
+        for (uint32_t i = 0; i < configNUMBER_OF_CORES; i++)
+        {
+            if (lReadyToSchedule[i] == pdFALSE)
+            {
+                i = 0;
+            }
+        }
+
+        configSETUP_TICK_INTERRUPT();
+        AlIntr_RegHandler(portYIELD_CORE_INT_ID, AL_NULL, vTaskSwitchContextISR, AL_NULL);
+        vPortRestoreTaskContext();
+    }
 }
