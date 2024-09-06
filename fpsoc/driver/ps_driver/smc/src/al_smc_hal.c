@@ -54,6 +54,10 @@ AL_U32 AlSmc_Hal_Init(AL_SMC_HalStruct *Handle, AL_SMC_ConfigsStruct *InitConfig
     Handle->Dev->InputClkFreq = CfgPtr->InputClkFreq;
     Handle->NandInfo = &AL_NAND_InfoInstance[CfgPtr->DeviceId];
 
+#if (defined __riscv || defined __riscv__)
+    AlSmc_ll_NandBaseRemap();
+#endif
+
     AlSmc_Dev_EccHwDisable(Handle->Dev);
 
     Ret = ALSmc_Dev_Reset(Handle->NandInfo);

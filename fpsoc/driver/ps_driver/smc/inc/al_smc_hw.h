@@ -21,7 +21,16 @@ extern "C" {
 /***************** Macros (Inline Functions) Definitions ********************/
 
 #define SMC_BASE_ADDR     0xF841A000ULL
+
+#if (defined __riscv || defined __riscv__)
+#define NAND_BASE_ADDR     0x1A4000000ULL
+#else
 #define NAND_BASE_ADDR     0x64000000ULL
+#endif
+
+#define RPU_NCDDR_BASE_ADDR          0x1A0000000ULL
+#define RPU_NCDDR_MAPPING_ADDR       0x060000000ULL
+#define SYSCTL_RPU_CTRL_ADDR         0xF8800178ULL
 
 #define AL_SMC_NUM_INSTANCE    (1)
 

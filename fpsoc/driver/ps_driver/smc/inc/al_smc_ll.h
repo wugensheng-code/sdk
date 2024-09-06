@@ -185,7 +185,13 @@ static inline AL_U32 AlSmc_ll_ReadEccValue(AL_REG SmcBaseAddr, AL_U32 Offset)
     return AL_REG32_READ(SmcBaseAddr + SMC_ECC1_BLOCK0_OFFSET + Offset * 4);
 }
 
-
+static inline AL_VOID AlSmc_ll_NandBaseRemap(AL_VOID)
+{
+    AL_U64 SetVal = (RPU_NCDDR_BASE_ADDR ^ RPU_NCDDR_MAPPING_ADDR) >> 28;
+    
+    AL_REG32_WRITE(SYSCTL_RPU_CTRL_ADDR, 
+        (AL_REG32_READ(SYSCTL_RPU_CTRL_ADDR) & 0xFFFF00FF) | (SetVal << 8));
+}
 
 #ifdef __cplusplus
 }
