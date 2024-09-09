@@ -428,7 +428,7 @@ AL_U32 AlIntr_GetPriorityMask(AL_VOID)
     return (ECLIC_GetMth() & 0xFF);
 }
 
-AL_VOID AlIntr_GenSecSoftIntr(AL_U32 IntrNum, AL_U64 CpuId)
+AL_VOID AlIntr_GenSoftIntr(AL_U32 IntrNum, AL_U64 CpuId)
 {
     /* reserved */
 }
