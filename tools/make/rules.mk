@@ -123,6 +123,11 @@ PUBLIC_INC_DIR +=   $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/rt-thread/include \
                     $(AL_SDK_ROOT)/3rdparty/os/RT-Thread
 endif
 
+ifeq ($(RTOS), threadx)
+PUBLIC_INC_DIR += $(AL_SDK_ROOT)/3rdparty/os/threadx/common_smp/inc \
+                  $(AL_SDK_ROOT)/3rdparty/os/threadx/ports_arch/ARMv8-A/threadx_smp/common/inc
+endif
+
 ifeq ($(RTOS), freertos)
 PUBLIC_INC_DIR +=   $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel/include \
                     $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/FreeRTOS-Kernel \
@@ -333,11 +338,13 @@ $(CXX_OBJS): %.o: % $(COMMON_PREREQS)
 ####
 
 ifeq ($(RTOS), freertos)
-	filterout_lib = %librtthread
+	filterout_lib = %librtthread %libthreadx
 else ifeq ($(RTOS), rtthread)
-	filterout_lib = %libfreertos
+	filterout_lib = %libfreertos %libthreadx
+else ifeq ($(RTOS), threadx)
+    filterout_lib = %libfreertos %librtthread
 else
-	filterout_lib = %libfreertos %librtthread
+	filterout_lib = %libfreertos %librtthread %libthreadx
 endif
 
 
@@ -382,6 +389,8 @@ ifeq ($(RTOS), freertos)
     LIBS_DIR += $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/os/FreeRTOS/Makefile))
 else ifeq ($(RTOS), rtthread)
 	LIBS_DIR += $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/os/RT-Thread/Makefile))
+else ifeq ($(RTOS), threadx)
+    LIBS_DIR += $(patsubst %/Makefile, %, $(wildcard $(AL_SDK_ROOT)/3rdparty/os/threadx/Makefile))
 endif
 
 

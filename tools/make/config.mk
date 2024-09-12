@@ -27,9 +27,10 @@ ARMv8_CORE      ?= MASTER
 #########################################################################
 
 #########################################################################
-# options for enable mmu, available choices: 0/1
+# options for enable mmu, SMP, available choices: 0/1
 #########################################################################
 ENABLE_MMU  ?= 1
+SMP 	    ?= 0
 
 ifeq ($(AL_CHIP),dr1v90)
 else
@@ -144,5 +145,6 @@ export CODE_READONLY
 export Q
 export AL_CUR_DIR
 export OUTPUT_DEV
+export SMP
 
 # vim: syntax=make
