@@ -410,6 +410,16 @@
 		"DOWNLOAD": "ddr"
 	},
 	"app": {
+		"EMPTY": {
+			"1.0":{
+				"name": "EMPTY",
+				"version": "1.0",
+				"depends": ["solutions/demo/baremetal/empty"],
+				"description": "Baremetal empty project",
+				"supportedOS": ["standalone"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"]
+			}
+		},
 		"HELLOWORLD": {
 			"1.0":{
 				"name": "HELLOWORLD",
@@ -420,7 +430,7 @@
 				"supportedProc": ["apu-0", "apu-1", "rpu"]
 			}
 		},
-        "DDR_INIT": {
+		"DDR_INIT": {
 			"1.0":{
 				"name": "DDR_INIT",
 				"version": "1.0",
