@@ -59,7 +59,7 @@ extern "C" {
 #define AL_MPU_INVALID_REGION_NUMBER    (AL_MPU_APU_REGION_31 + 1)
 
 #define AL_MPU_DEFAULT_REGION_GRANULARITY_SIZE          (0x1000)
-#define AL_MPU_DEFAULT_REGION_GRANULARITY_SIZE_MASK     (0xFFFFF000)
+#define AL_MPU_DEFAULT_REGION_GRANULARITY_SIZE_MASK     (0xFFF)
 
 #define AL_MPU_IS_VALID_REGION_SECURE(SECURE) (((SECURE) == MPU_REGION_SECURE) || \
                                                ((SECURE) == MPU_REGION_NONSECURE))
@@ -99,8 +99,8 @@ typedef enum
     AL_MPU_RegionReadWriteEnum ReadWrite;
     AL_MPU_RegionInterruptEnEnum InterruptEnable;
 
-    AL_U32 StartAddr;
-    AL_U32 Size;
+    AL_UINTPTR StartAddr;
+    AL_UINTPTR Size;
 
     /* Master group id, This can be a single group id
        or multiple group id can be grouped together

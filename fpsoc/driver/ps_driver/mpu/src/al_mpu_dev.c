@@ -172,8 +172,8 @@ static AL_S32 AlMpu_Dev_SetRegion(AL_REG RegionBaseAddr, AL_MPU_RegionConfigStru
         return AL_MPU_ERR_ILLEGAL_PARAM;
     }
 
-    if ((!((Config->StartAddr) & AL_MPU_DEFAULT_REGION_GRANULARITY_SIZE_MASK) && (Config->StartAddr != 0)) ||
-         !((Config->Size) & AL_MPU_DEFAULT_REGION_GRANULARITY_SIZE_MASK)) {
+    if (((Config->StartAddr != 0) && ((Config->StartAddr) & AL_MPU_DEFAULT_REGION_GRANULARITY_SIZE_MASK)) ||
+        ((Config->Size) == 0) || ((Config->Size) & AL_MPU_DEFAULT_REGION_GRANULARITY_SIZE_MASK)) {
             AL_LOG(AL_LOG_LEVEL_WARNING, "The protected address and length must be a multiple of 4K! "
                    "and the current configuration is ignored!\r\n");
             return AL_MPU_ERR_ILLEGAL_PARAM;
