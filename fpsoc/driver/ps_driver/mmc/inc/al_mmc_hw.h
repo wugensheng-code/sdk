@@ -20,6 +20,7 @@ extern "C" {
 
 /***************** Macros (Inline Functions) Definitions ********************/
 
+#define MMC_TOP_NS_CFG_CTRL_CLK_PHASE_SEL_MAX       (8)
 #define MMC_TOP_NS_CFG_CTRL_CLK_PHASE_SEL_0_DEF     (0)
 #define MMC_TOP_NS_CFG_CTRL_CLK_PHASE_SEL_1         (1)
 #define MMC_TOP_NS_CFG_CTRL_CLK_PHASE_SEL_2         (2)
