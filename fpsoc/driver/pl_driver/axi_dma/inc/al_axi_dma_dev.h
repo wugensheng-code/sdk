@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #ifndef __AL_AXI_DMA_DEV_H_
 #define __AL_AXI_DMA_DEV_H_
 
@@ -7,15 +13,7 @@ extern "C" {
 
 /***************************** Include Files *********************************/
 #include "al_axi_dma_ll.h"
-
-#define AL_AxiDma_EVENT_START_BIT    6
-
-#define AL_AxiDma_ERR_NULL_PTR                 (AL_DEF_ERR(AL_AxiDma, AL_LOG_LEVEL_ERROR, AL_ERR_NULL_PTR))
-#define AL_AxiDma_ERR_ILLEGAL_PARAM            (AL_DEF_ERR(AL_AxiDma, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
-#define AL_AxiDma_ERR_BUSY                     (AL_DEF_ERR(AL_AxiDma, AL_LOG_LEVEL_ERROR, AL_ERR_BUSY))
-#define AL_AxiDma_ERR_NOT_SUPPORT              (AL_DEF_ERR(AL_AxiDma, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_SUPPORT))
-#define AL_AxiDma_EVENTS_TO_ERRS(Events)       (AL_DEF_ERR(AL_AxiDma, AL_LOG_LEVEL_ERROR, Events << AL_AxiDma_EVENT_START_BIT))
-
+/**************************** Type Definitions ******************************/
 typedef enum
 {
     EVENT_S2MM_DONE     = 0,
@@ -67,7 +65,6 @@ typedef struct {
     AlAxiDma_Descriptor        *descriptors;
 } AlAxiDma_InitStruct;
 
-
 typedef struct {
     AlAxiDma_HwConfigStruct     HwConfig;
     AlAxiDma_InitStruct         InitConfig;
@@ -80,6 +77,14 @@ typedef struct {
     AL_U32                      Mm2sCyclicCompleted;
     AlAxiDma_Descriptor         *descriptors;
 } AlAxiDma_DevStruct;
+
+/***************** Macros (Inline Functions) Definitions *********************/
+#define AL_AxiDma_EVENT_START_BIT    6
+#define AL_AxiDma_ERR_NULL_PTR                 (AL_DEF_ERR(AL_AxiDma, AL_LOG_LEVEL_ERROR, AL_ERR_NULL_PTR))
+#define AL_AxiDma_ERR_ILLEGAL_PARAM            (AL_DEF_ERR(AL_AxiDma, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
+#define AL_AxiDma_ERR_BUSY                     (AL_DEF_ERR(AL_AxiDma, AL_LOG_LEVEL_ERROR, AL_ERR_BUSY))
+#define AL_AxiDma_ERR_NOT_SUPPORT              (AL_DEF_ERR(AL_AxiDma, AL_LOG_LEVEL_ERROR, AL_ERR_NOT_SUPPORT))
+#define AL_AxiDma_EVENTS_TO_ERRS(Events)       (AL_DEF_ERR(AL_AxiDma, AL_LOG_LEVEL_ERROR, Events << AL_AxiDma_EVENT_START_BIT))
 
 /************************** Function Prototypes ******************************/
 AlAxiDma_HwConfigStruct *AlAxiDma_Dev_LookupConfig(AL_U32 DevId);

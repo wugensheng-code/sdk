@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #ifndef __AL_AXI_DMA_HW_H_
 #define __AL_AXI_DMA_HW_H_
 
@@ -7,7 +13,8 @@ extern "C" {
 
 /***************************** Include Files *********************************/
 #include "al_core.h"
-
+#include "soc_plat.h"
+/**************************** Type Definitions ******************************/
 typedef enum {
     AL_AXIDMA_DIRECT_MODE      = 0,
     AL_AXIDMA_SG_MODE          = 1
@@ -43,93 +50,95 @@ typedef struct {
     AL_U32      EnableRxLength;
 } AlAxiDma_HwConfigStruct;
 
-
-/* Definitions for PL AXI DMA */
+/***************** Macros (Inline Functions) Definitions ********************/
+#ifndef AL_AXI_DMA_NUM_INSTANCE
 #define AL_AXI_DMA_NUM_INSTANCE                      1
-#define AL_AXI_DMA0_BASE_ADDR                        0x80000000UL
-#define AL_AXI_DMA0_ADDR_WIDTH                       32
-#define AL_AXI_DMA0_BUFFER_LENGTH_WIDTH              26
-#define AL_AXI_DMA0_ENABLE_CONTROL_STATUS_STREAM     AL_FUNC_DISABLE
-#define AL_AXI_DMA0_ENABLE_S2MM_RXLENGTH             AL_FUNC_DISABLE
-#define AL_AXI_DMA0_ENABLE_MICRO                     AL_FUNC_DISABLE
-#define AL_AXI_DMA0_MODE                             AL_AXIDMA_DIRECT_MODE
+#endif
 
-#define AL_AXI_DMA0_S2MM_IRQn                        114
-#define AL_AXI_DMA0_MM2S_IRQn                        115
+#define AXI_DMA0_BASE_ADDR                        0x80000000UL
+#define AXI_DMA0_ADDR_WIDTH                       32
+#define AXI_DMA0_BUFFER_LENGTH_WIDTH              26
+#define AXI_DMA0_ENABLE_CONTROL_STATUS_STREAM     AL_FUNC_DISABLE
+#define AXI_DMA0_ENABLE_S2MM_RXLENGTH             AL_FUNC_DISABLE
+#define AXI_DMA0_ENABLE_MICRO                     AL_FUNC_DISABLE
+#define AXI_DMA0_MODE                             AL_AXIDMA_DIRECT_MODE
 
-#define AL_AXI_DMA0_INCLUDE_MM2S                     AL_FUNC_ENABLE
-#define AL_AXI_DMA0_INCLUDE_S2MM                     AL_FUNC_ENABLE
+#define AXI_DMA0_S2MM_IRQn                        114
+#define AXI_DMA0_MM2S_IRQn                        115
 
-#define AL_AXI_DMA0_HAS_MM2S_DRE                     AL_FUNC_DISABLE
-#define AL_AXI_DMA0_HAS_S2MM_DRE                     AL_FUNC_DISABLE
+#define AXI_DMA0_INCLUDE_MM2S                     AL_FUNC_ENABLE
+#define AXI_DMA0_INCLUDE_S2MM                     AL_FUNC_ENABLE
 
-#define AL_AXI_DMA0_MM2S_MEMORY_MAP_DATA_WIDTH       64
-#define AL_AXI_DMA0_S2MM_MEMORY_MAP_DATA_WIDTH       64
+#define AXI_DMA0_HAS_MM2S_DRE                     AL_FUNC_DISABLE
+#define AXI_DMA0_HAS_S2MM_DRE                     AL_FUNC_DISABLE
 
-#define AL_AXI_DMA0_MM2S_STREAM_DATA_WIDTH           32
-#define AL_AXI_DMA0_S2MM_STREAM_DATA_WIDTH           32
+#define AXI_DMA0_MM2S_MEMORY_MAP_DATA_WIDTH       64
+#define AXI_DMA0_S2MM_MEMORY_MAP_DATA_WIDTH       64
 
-#define AL_AXI_DMA0_MM2S_BURST_SIZE                  16
-#define AL_AXI_DMA0_S2MM_BURST_SIZE                  16
+#define AXI_DMA0_MM2S_STREAM_DATA_WIDTH           32
+#define AXI_DMA0_S2MM_STREAM_DATA_WIDTH           32
 
-#define AXIDMA_DESC_ALIGN_SIZE                       0x40
-#define AXIDMA_MICRO_ALIGN_SIZE                      0x1000
-#define AXIDMA_MM2S_ALIGN_SIZE                       (AL_AXI_DMA0_MM2S_MEMORY_MAP_DATA_WIDTH / 8)
-#define AXIDMA_S2MM_ALIGN_SIZE                       (AL_AXI_DMA0_S2MM_MEMORY_MAP_DATA_WIDTH / 8)
+#define AXI_DMA0_MM2S_BURST_SIZE                  16
+#define AXI_DMA0_S2MM_BURST_SIZE                  16
+
+#define AXI_DMA_DESC_ALIGN_SIZE                   0x40
+#define AXI_DMA_MICRO_ALIGN_SIZE                  0x1000
+#define AXI_DMA_MM2S_ALIGN_SIZE                   (AXI_DMA0_MM2S_MEMORY_MAP_DATA_WIDTH / 8)
+#define AXI_DMA_S2MM_ALIGN_SIZE                   (AXI_DMA0_S2MM_MEMORY_MAP_DATA_WIDTH / 8)
 
 /* Attribute for aligning the buffer address for MM2S transfers */
-#define AXIDMA_MM2S_BUFFER_ALIGN __attribute__((aligned(AXIDMA_MM2S_ALIGN_SIZE)))
+#define AL_AXI_DMA_MM2S_BUFFER_ALIGN __attribute__((aligned(AXI_DMA_MM2S_ALIGN_SIZE)))
 
 /* Attribute for aligning the buffer address for S2MM transfers */
-#define AXIDMA_S2MM_BUFFER_ALIGN __attribute__((aligned(AXIDMA_S2MM_ALIGN_SIZE)))
+#define AL_AXI_DMA_S2MM_BUFFER_ALIGN __attribute__((aligned(AXI_DMA_S2MM_ALIGN_SIZE)))
 
 /* Attribute for aligning the buffer address for micro transfers */
-#define AXIDMA_MICRO_BUFFER_ALIGN __attribute__((aligned(AXIDMA_MICRO_ALIGN_SIZE)))
+#define AL_AXI_DMA_MICRO_BUFFER_ALIGN __attribute__((aligned(AXI_DMA_MICRO_ALIGN_SIZE)))
 
 /* Attribute for placing descriptors in non-cacheable RAM section with alignment */
-#define AXIDMA_DESC_NOCACHE_ALIGN_RAM_SECTION __attribute__((aligned(AXIDMA_DESC_ALIGN_SIZE))) __attribute__((section(".noncacheable")))
+#define AL_AXI_DMA_DESC_NOCACHE_ALIGN_RAM_SECTION __attribute__((aligned(AXI_DMA_DESC_ALIGN_SIZE))) __attribute__((section(".noncacheable")))
 
 /***************************** Register Offsets（MM2S / S2MM）*****************************/
-#define ALAXIDMA_MM2S_OFFSET                  0x00
-#define ALAXIDMA_S2MM_OFFSET                  0x30
-#define ALAXIDMA_CR_OFFSET                    0x00
-#define ALAXIDMA_SR_OFFSET                    0x04
-#define ALAXIDMA_CURDESR_OFFSET               0x08
-#define ALAXIDMA_CURDESR_MSB_OFFSET           0x0C
-#define ALAXIDMA_TAILDESR_OFFSET              0x10
-#define ALAXIDMA_TAILDESR_MSB_OFFSET          0x14
-#define ALAXIDMA_ADDR_OFFSET                  0x18
-#define ALAXIDMA_ADDR_MSB_OFFSET              0x1C
-#define ALAXIDMA_LENTH_OFFSET                 0x28
+#define AL_AXI_DMA_MM2S_OFFSET                  0x00
+#define AL_AXI_DMA_S2MM_OFFSET                  0x30
+#define AL_AXI_DMA_CR_OFFSET                    0x00
+#define AL_AXI_DMA_SR_OFFSET                    0x04
+#define AL_AXI_DMA_CURDESR_OFFSET               0x08
+#define AL_AXI_DMA_CURDESR_MSB_OFFSET           0x0C
+#define AL_AXI_DMA_TAILDESR_OFFSET              0x10
+#define AL_AXI_DMA_TAILDESR_MSB_OFFSET          0x14
+#define AL_AXI_DMA_ADDR_OFFSET                  0x18
+#define AL_AXI_DMA_ADDR_MSB_OFFSET              0x1C
+#define AL_AXI_DMA_LENTH_OFFSET                 0x28
 
 /***************************** AXI_DMA_CR_OFFSET Register *****************************/
-#define ALAXIDMA_CR_RUNSTOP_SHIFT                0
-#define ALAXIDMA_CR_RESET_SHIFT                  2
-#define ALAXIDMA_CR_KEYHOLE_SHIFT                3
-#define ALAXIDMA_CR_CYCLIC_SHIFT                 4
-#define ALAXIDMA_CR_IOC_SHIFT                   12
-#define ALAXIDMA_CR_ERR_SHIFT                   14
+#define AL_AXI_DMA_CR_RUNSTOP_SHIFT                0
+#define AL_AXI_DMA_CR_RESET_SHIFT                  2
+#define AL_AXI_DMA_CR_KEYHOLE_SHIFT                3
+#define AL_AXI_DMA_CR_CYCLIC_SHIFT                 4
+#define AL_AXI_DMA_CR_IOC_SHIFT                   12
+#define AL_AXI_DMA_CR_ERR_SHIFT                   14
 
 /***************************** AXI_DMA_SR_OFFSET Register *****************************/
-#define ALAXIDMA_SR_HALT_SHIFT                   0
-#define ALAXIDMA_SR_IDLE_SHIFT                   1
-#define ALAXIDMA_SR_IOC_SHIFT                   12
-#define ALAXIDMA_SR_ERR_SHIFT                   14
+#define AL_AXI_DMA_SR_HALT_SHIFT                   0
+#define AL_AXI_DMA_SR_IDLE_SHIFT                   1
+#define AL_AXI_DMA_SR_IOC_SHIFT                   12
+#define AL_AXI_DMA_SR_ERR_SHIFT                   14
 
-#define ALAXIDMA_SR_INTR_SHIFT                  12
-#define ALAXIDMA_SR_INTR_SIZE                    3
+#define AL_AXI_DMA_SR_INTR_SHIFT                  12
+#define AL_AXI_DMA_SR_INTR_SIZE                    3
 
 /***************************** AXI_DMA_LENTH_OFFSET Register *****************************/
-#define ALAXIDMA_LENTH_START_SHIFT               0
-#define ALAXIDMA_LENGTH_SIZE                    26
+#define AL_AXI_DMA_LENTH_START_SHIFT               0
+#define AL_AXI_DMA_LENGTH_SIZE                    26
 
 /***************************** AXI_DMA_Threshold_OFFSET Register *****************************/
-#define ALAXIDMA_THRE_START_SHIFT               16
-#define ALAXIDMA_THRE_SIZE                       8
+#define AL_AXI_DMA_THRE_START_SHIFT               16
+#define AL_AXI_DMA_THRE_SIZE                       8
 
 /***************************** Scatter Gather Descriptor *********************************/
-#define ALAXIDMA_DESC_CONTROL_SOF_SHIFT         27
-#define ALAXIDMA_DESC_CONTROL_EOF_SHIFT         26
+#define AL_AXI_DMA_DESC_CONTROL_SOF_SHIFT         27
+#define AL_AXI_DMA_DESC_CONTROL_EOF_SHIFT         26
 
 #ifdef __cplusplus
 }

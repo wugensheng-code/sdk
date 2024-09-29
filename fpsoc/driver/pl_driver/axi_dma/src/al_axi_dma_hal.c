@@ -1,5 +1,18 @@
-#include "al_axi_dma_hal.h"
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
 
+/***************************** Include Files *********************************/
+#include "al_axi_dma_hal.h"
+/************************** Constant Definitions *****************************/
+
+/**************************** Type Definitions *******************************/
+
+/***************** Macros (Inline Functions) Definitions *********************/
+
+/************************** Variable Definitions *****************************/
 AlAxiDma_HalStruct AXI_DMA_Handle[AL_AXI_DMA_NUM_INSTANCE];
 
 // Define an array of error information
@@ -11,7 +24,16 @@ ErrorInfo errorTable[] = {
         {SG_SLAVE_ERROR, "SG Slave Error"},
         {SG_DECODE_ERROR, "SG Decode Error"}
 };
+/********************************************************/
 
+/**
+ * This function is called back when an AXI DMA event occurs and handles the event by sending it to the
+ * appropriate message queue based on the type of event.
+ *
+ * @param AxiDmaEvent Pointer to the AXI DMA event structure containing details about the event.
+ * @param CallbackRef A void pointer to the AXI DMA handle structure.
+ * @return void
+ */
 static AL_VOID AlAxiDma_Hal_DefEventHandler(AlAxiDma_EventStruct *AxiDmaEvent, AL_VOID *CallbackRef)
 {
     AlAxiDma_HalStruct *Handle = (AlAxiDma_HalStruct *)CallbackRef;
@@ -23,7 +45,7 @@ static AL_VOID AlAxiDma_Hal_DefEventHandler(AlAxiDma_EventStruct *AxiDmaEvent, A
             break;
 
         case EVENT_S2MM_CYCLIC:
-            ChanBase = Handle->Dma.RegBase + ALAXIDMA_S2MM_OFFSET;
+            ChanBase = Handle->Dma.RegBase + AL_AXI_DMA_S2MM_OFFSET;
             AlAxiDma_ll_Reset(ChanBase, AL_FUNC_ENABLE);
             AlOsal_Mb_Send(&Handle->S2mm_EventQueue, AxiDmaEvent);
             break;
@@ -42,7 +64,7 @@ static AL_VOID AlAxiDma_Hal_DefEventHandler(AlAxiDma_EventStruct *AxiDmaEvent, A
             break;
 
         case EVENT_MM2S_CYCLIC:
-            ChanBase = Handle->Dma.RegBase + ALAXIDMA_MM2S_OFFSET;
+            ChanBase = Handle->Dma.RegBase + AL_AXI_DMA_MM2S_OFFSET;
             AlAxiDma_ll_Reset(ChanBase, AL_FUNC_ENABLE);
             AlOsal_Mb_Send(&Handle->Mm2s_EventQueue, AxiDmaEvent);
             break;
@@ -61,6 +83,16 @@ static AL_VOID AlAxiDma_Hal_DefEventHandler(AlAxiDma_EventStruct *AxiDmaEvent, A
     }
 }
 
+/**
+ * This function sets up the hardware configuration for the AXI DMA, initializes locks and message queues for
+ * MM2S and S2MM, and registers the event callback function.
+ *
+ * @param Handle A pointer to a pointer of the AXI DMA handle structure to be initialized.
+ * @param DevId The device ID of the AXI DMA to be initialized.
+ * @param InitConfig A pointer to the AXI DMA initialization structure.
+ * @param EventCallBack The event callback function to be registered.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlAxiDma_Hal_Init(AlAxiDma_HalStruct **Handle, AL_U32 DevId, AlAxiDma_InitStruct *InitConfig, AlAxiDma_EventCallBack EventCallBack)
 {
     AL_S32 Ret = AL_OK;
@@ -120,6 +152,17 @@ AL_S32 AlAxiDma_Hal_Init(AlAxiDma_HalStruct **Handle, AL_U32 DevId, AlAxiDma_Ini
     return Ret;
 }
 
+/**
+ * This function performs a direct mode transfer for the AXI DMA in block transfer mode. It sets up the transfer,
+ * manages cache if MMU is enabled, waits for the transfer to complete, and handles any errors.
+ *
+ * @param Handle A pointer to the AXI DMA handle structure.
+ * @param Buffer Pointer to the buffer to transfer.
+ * @param Length The length of the buffer to transfer.
+ * @param Direction The direction of the transfer (AL_AXIDMA_DEVICE_TO_DMA or AL_AXIDMA_DMA_TO_DEVICE).
+ * @param Timeout The timeout value for waiting for the completion event.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlAxiDma_Hal_DirectMode_TransferBlock(AlAxiDma_HalStruct *Handle, AL_U8 *Buffer, AL_U32 Length, AL_U32 Direction, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -171,6 +214,16 @@ AL_S32 AlAxiDma_Hal_DirectMode_TransferBlock(AlAxiDma_HalStruct *Handle, AL_U8 *
     return (Ret != AL_OK) ? Ret : AL_AxiDma_EVENTS_TO_ERRS(AxiDmaEvent.Event);
 }
 
+/**
+ * This function performs a direct mode transfer for the AXI DMA in polling mode. It sets up the transfer,
+ * manages cache if MMU is enabled, and handles any errors.
+ *
+ * @param Handle A pointer to the AXI DMA handle structure.
+ * @param Buffer Pointer to the buffer to transfer.
+ * @param Length The length of the buffer to transfer.
+ * @param Direction The direction of the transfer (AL_AXIDMA_DEVICE_TO_DMA or AL_AXIDMA_DMA_TO_DEVICE).
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlAxiDma_Hal_DirectMode_TransferPolling(AlAxiDma_HalStruct *Handle, AL_U8 *Buffer, AL_U32 Length, AL_U32 Direction)
 {
     AL_S32 Ret = AL_OK;
@@ -203,6 +256,15 @@ AL_S32 AlAxiDma_Hal_DirectMode_TransferPolling(AlAxiDma_HalStruct *Handle, AL_U8
     return Ret;
 }
 
+/**
+ * This function performs a scatter-gather mode transfer for the AXI DMA in block transfer mode. It sets up the transfer,
+ * manages cache if MMU is enabled, waits for the transfer to complete, and handles any errors.
+ *
+ * @param Handle A pointer to the AXI DMA handle structure.
+ * @param Msg A pointer to the transfer message structure containing buffer details.
+ * @param Timeout The timeout value for waiting for the completion event.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlAxiDma_Hal_SgMode_TransferBlock(AlAxiDma_HalStruct *Handle, ALAXIDMA_TransferMsg *Msg, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
@@ -261,6 +323,14 @@ AL_S32 AlAxiDma_Hal_SgMode_TransferBlock(AlAxiDma_HalStruct *Handle, ALAXIDMA_Tr
     return (Ret != AL_OK) ? Ret : AL_AxiDma_EVENTS_TO_ERRS(AxiDmaEvent.Event);
 }
 
+/**
+ * This function performs a scatter-gather mode transfer for the AXI DMA in polling mode. It sets up the transfer,
+ * manages cache if MMU is enabled, and handles any errors.
+ *
+ * @param Handle A pointer to the AXI DMA handle structure.
+ * @param Msg A pointer to the transfer message structure containing buffer details.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlAxiDma_Hal_SgMode_TransferPolling(AlAxiDma_HalStruct *Handle, ALAXIDMA_TransferMsg *Msg)
 {
     AL_S32 Ret = AL_OK;
@@ -298,6 +368,14 @@ AL_S32 AlAxiDma_Hal_SgMode_TransferPolling(AlAxiDma_HalStruct *Handle, ALAXIDMA_
     return Ret;
 }
 
+/**
+ * This function sets up the descriptors for scatter-gather (SG) mode transfer in the AXI DMA. It configures each descriptor
+ * based on the provided buffers and lengths, and ensures the total transfer length does not exceed the hardware limit.
+ *
+ * @param Handle A pointer to the AXI DMA handle structure.
+ * @param Msg A pointer to the transfer message structure containing buffer details.
+ * @return Returns AL_OK on success, or an error code on failure.
+ */
 AL_S32 AlAxiDma_Hal_SetupDescriptors(AlAxiDma_HalStruct *Handle, ALAXIDMA_TransferMsg *Msg)
 {
     AL_S32 Ret = AL_OK;
@@ -338,11 +416,18 @@ AL_S32 AlAxiDma_Hal_SetupDescriptors(AlAxiDma_HalStruct *Handle, ALAXIDMA_Transf
     return Ret;
 }
 
-/* If the hardware build has Rxlength in status stream set to 1,
- * then the last APP word, must have non-zero value when AND with 0x7FFFFF.
- * Not doing so will cause the hardware to stall.
+/**
+ * This function sets the application-specific word in the descriptor's APP array for the last buffer. If the hardware
+ * build has Rxlength in the status stream set to 1, the last APP word must have a non-zero value when ANDed with 0x7FFFFF
+ * to avoid hardware stalling.
+ *
+ * @param Handle A pointer to the AXI DMA handle structure.
+ * @param Msg A pointer to the transfer message structure containing buffer details.
+ * @param Offset The offset within the APP array where the word should be set (must be between 0 and 4).
+ * @param Word The application-specific word to set.
+ * @return Returns AL_OK on success, or an error code on failure.
  */
-AL_U32 AlAxiDma_Hal_SetDescAppWord(AlAxiDma_HalStruct *Handle, ALAXIDMA_TransferMsg *Msg, AL_U32 Offset, AL_U32 Word)
+AL_S32 AlAxiDma_Hal_SetDescAppWord(AlAxiDma_HalStruct *Handle, ALAXIDMA_TransferMsg *Msg, AL_U32 Offset, AL_U32 Word)
 {
     if (!Handle->Dma.HwConfig.EnableStatusControlStream) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "stream in hardware not build");
@@ -359,7 +444,16 @@ AL_U32 AlAxiDma_Hal_SetDescAppWord(AlAxiDma_HalStruct *Handle, ALAXIDMA_Transfer
     return AL_OK;
 }
 
-AL_U32 AlAxiDma_Hal_GetDescAppWord(AlAxiDma_HalStruct *Handle, ALAXIDMA_TransferMsg *Msg, AL_U32 Offset)
+/**
+ * This function retrieves the application-specific word from the descriptor's APP array for the last buffer. The function
+ * checks the hardware configuration for status control stream support and validates the provided offset.
+ *
+ * @param Handle A pointer to the AXI DMA handle structure.
+ * @param Msg A pointer to the transfer message structure containing buffer details.
+ * @param Offset The offset within the APP array from which the word should be retrieved (must be between 0 and 4).
+ * @return Returns the value of the application-specific word, or an error code on failure.
+ */
+AL_S32 AlAxiDma_Hal_GetDescAppWord(AlAxiDma_HalStruct *Handle, ALAXIDMA_TransferMsg *Msg, AL_U32 Offset)
 {
     if (!Handle->Dma.HwConfig.EnableStatusControlStream) {
         AL_LOG(AL_LOG_LEVEL_ERROR, "stream in hardware not build");
@@ -371,5 +465,5 @@ AL_U32 AlAxiDma_Hal_GetDescAppWord(AlAxiDma_HalStruct *Handle, ALAXIDMA_Transfer
         return AL_AxiDma_ERR_ILLEGAL_PARAM;
     }
 
-    return Handle->Dma.descriptors[Msg->NumBuffers - 1].app[Offset];
+    return (AL_S32)Handle->Dma.descriptors[Msg->NumBuffers - 1].app[Offset];
 }

@@ -1,7 +1,27 @@
+/*
+ * Copyright (c) 2023, Anlogic Inc. and Contributors. All rights reserved.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/***************************** Include Files *********************************/
 #include "al_axi_dma_dev.h"
+/************************** Constant Definitions *****************************/
+
+/**************************** Type Definitions *******************************/
+
+/***************** Macros (Inline Functions) Definitions *********************/
 
 extern AlAxiDma_HwConfigStruct AlAxiDma_HwConfig[AL_AXI_DMA_NUM_INSTANCE];
 
+/**
+ * This function looks up the hardware configuration for the AXI DMA device
+ * based on the specified device ID.
+ *
+ * @param DevId The device ID of the AXI DMA to look up.
+ * @return A pointer to the hardware configuration structure for the specified device,
+ *         or AL_NULL if the device ID is not found.
+ */
 AlAxiDma_HwConfigStruct *AlAxiDma_Dev_LookupConfig(AL_U32 DevId)
 {
     AL_U32 Index;
@@ -17,6 +37,14 @@ AlAxiDma_HwConfigStruct *AlAxiDma_Dev_LookupConfig(AL_U32 DevId)
     return ConfigPtr;
 }
 
+/**
+ * This function initializes the AXI DMA device with specified configurations.
+ *
+ * @param Dma Pointer to the AXI DMA device structure to initialize.
+ * @param HwConfig Pointer to the hardware configuration structure.
+ * @param InitConfig Pointer to the initialization configuration structure.
+ * @return AL_OK if successful, error code otherwise.
+ */
 AL_S32 AlAxiDma_Dev_Init(AlAxiDma_DevStruct *Dma, AlAxiDma_HwConfigStruct *HwConfig, AlAxiDma_InitStruct *InitConfig)
 {
     /* Setup the instance */
@@ -64,6 +92,14 @@ AL_S32 AlAxiDma_Dev_Init(AlAxiDma_DevStruct *Dma, AlAxiDma_HwConfigStruct *HwCon
     return AL_OK;
 }
 
+/**
+ * This function registers an event callback function for the AXI DMA device.
+ *
+ * @param Dma Pointer to the AXI DMA device structure.
+ * @param CallBack The event callback function to register.
+ * @param CallBackRef A reference pointer to be passed to the callback function.
+ * @return AL_OK if successful, error code otherwise.
+ */
 AL_S32 AlAxiDma_Dev_RegisterEventCallBack(AlAxiDma_DevStruct *Dma, AlAxiDma_EventCallBack CallBack, AL_VOID *CallBackRef)
 {
     Dma->EventCallBack = CallBack;
@@ -71,6 +107,16 @@ AL_S32 AlAxiDma_Dev_RegisterEventCallBack(AlAxiDma_DevStruct *Dma, AlAxiDma_Even
     return AL_OK;
 }
 
+/**
+ * This function initiates a transfer in Direct Mode for the AXI DMA device.
+ *
+ * @param Dma Pointer to the AXI DMA device structure.
+ * @param Buffer Pointer to the data buffer.
+ * @param Length The length of the data to be transferred.
+ * @param Direction The direction of the transfer (DMA to device or device to DMA).
+ * @param Method The transfer method (interrupt or polling).
+ * @return AL_OK if successful, error code otherwise.
+ */
 AL_S32 AlAxiDma_Dev_DirectMode_Transfer(AlAxiDma_DevStruct *Dma, AL_U8 *Buffer, AL_U32 Length, AlAxiDma_TransDirEnum Direction, AlAxiDma_TransferMethodEnum Method)
 {
     AL_S32 Ret = AL_OK;
@@ -130,23 +176,35 @@ AL_S32 AlAxiDma_Dev_DirectMode_Transfer(AlAxiDma_DevStruct *Dma, AL_U8 *Buffer, 
     return Ret;
 }
 
+/**
+ * This function resets the AXI DMA device.
+ *
+ * @param Dma Pointer to the AXI DMA device structure.
+ * @return void
+ */
 AL_VOID AlAxiDma_Dev_Reset(AlAxiDma_DevStruct *Dma)
 {
     AL_U64 ChanBase;
 
     // Reset Mm2s channel if available
     if (Dma->HwConfig.HasMm2s) {
-        ChanBase = Dma->RegBase + ALAXIDMA_MM2S_OFFSET;
+        ChanBase = Dma->RegBase + AL_AXI_DMA_MM2S_OFFSET;
         AlAxiDma_ll_Reset(ChanBase, AL_FUNC_ENABLE);
     }
 
     // Reset S2mm channel if available
     if (Dma->HwConfig.HasS2mm) {
-        ChanBase = Dma->RegBase + ALAXIDMA_S2MM_OFFSET;
+        ChanBase = Dma->RegBase + AL_AXI_DMA_S2MM_OFFSET;
         AlAxiDma_ll_Reset(ChanBase, AL_FUNC_ENABLE);
     }
 }
 
+/**
+ * This function checks if the reset operation on the AXI DMA device is complete.
+ *
+ * @param Dma Pointer to the AXI DMA device structure.
+ * @return AL_TRUE if reset is complete for all enabled channels, AL_FALSE otherwise.
+ */
 AL_S32 AlAxiDma_Dev_ResetIsDone(AlAxiDma_DevStruct *Dma)
 {
     AL_S32 Mm2sResetDone = AL_TRUE;
@@ -160,7 +218,7 @@ AL_S32 AlAxiDma_Dev_ResetIsDone(AlAxiDma_DevStruct *Dma)
     }
 
     if (Dma->HwConfig.HasS2mm) {
-        S2mmResetDone = AlAxiDma_ll_GetCrReset(Dma->RegBase + ALAXIDMA_S2MM_OFFSET) ? AL_FALSE : AL_TRUE;
+        S2mmResetDone = AlAxiDma_ll_GetCrReset(Dma->RegBase + AL_AXI_DMA_S2MM_OFFSET) ? AL_FALSE : AL_TRUE;
     }
 
     // Return true only if both enabled channels have completed reset
@@ -175,18 +233,35 @@ AL_S32 AlAxiDma_Dev_ResetIsDone(AlAxiDma_DevStruct *Dma)
     }
 }
 
+/**
+ * This function checks if the AXI DMA device is busy.
+ *
+ * @param Dma Pointer to the AXI DMA device structure.
+ * @param Direction The direction of the transfer (DMA to device or device to DMA).
+ * @return AL_TRUE if the DMA is busy, AL_FALSE otherwise.
+ */
 AL_BOOL AlAxiDma_Dev_Busy(AlAxiDma_DevStruct *Dma, AlAxiDma_TransDirEnum Direction)
 {
     AL_U64 ChanBase;
-    ChanBase = Dma->RegBase + (ALAXIDMA_S2MM_OFFSET * Direction);
+    ChanBase = Dma->RegBase + (AL_AXI_DMA_S2MM_OFFSET * Direction);
 
     return (AlAxiDma_ll_GetSrIdle(ChanBase) ? AL_FALSE : AL_TRUE);
 }
 
+/**
+ * This function starts a direct mode transfer for the AXI DMA device.
+ *
+ * @param Dma Pointer to the AXI DMA device structure.
+ * @param Buffer Pointer to the data buffer.
+ * @param Length The length of the data to be transferred.
+ * @param Direction The direction of the transfer (DMA to device or device to DMA).
+ * @param Method The transfer method (block-based or polling).
+ * @return AL_OK if successful, error code otherwise.
+ */
 AL_S32 AlAxiDma_Dev_DirectMode_Start(AlAxiDma_DevStruct *Dma, AL_U8 *Buffer, AL_U32 Length, AlAxiDma_TransDirEnum Direction, AlAxiDma_TransferMethodEnum Method)
 {
     AL_S32 Ret = AL_OK;
-    AL_U64 ChanBase = Dma->RegBase + (ALAXIDMA_S2MM_OFFSET * Direction);
+    AL_U64 ChanBase = Dma->RegBase + (AL_AXI_DMA_S2MM_OFFSET * Direction);
 
     // Check if Method is valid
     AL_ASSERT((Method == AL_AXIDMA_BLOCK) || (Method == AL_AXIDMA_POLLING), AL_AxiDma_ERR_ILLEGAL_PARAM);
@@ -223,16 +298,34 @@ AL_S32 AlAxiDma_Dev_DirectMode_Start(AlAxiDma_DevStruct *Dma, AL_U8 *Buffer, AL_
     return Ret;
 }
 
+/**
+ * This function stops transfer for the AXI DMA device.
+ *
+ * @param Dma Pointer to the AXI DMA device structure.
+ * @param Direction The direction of the transfer (DMA to device or device to DMA).
+ * @return void
+ */
 AL_VOID AlAxiDma_Dev_Stop_Transfer(AlAxiDma_DevStruct *Dma, AlAxiDma_TransDirEnum Direction)
 {
     AL_U64 ChanBase;
-    ChanBase = Dma->RegBase + (ALAXIDMA_S2MM_OFFSET * Direction);
+    ChanBase = Dma->RegBase + (AL_AXI_DMA_S2MM_OFFSET * Direction);
 
     AlAxiDma_ll_SetIocIntr(ChanBase, AL_AXI_DMA_FUNC_DISABLE);
     AlAxiDma_ll_SetErrIntr(ChanBase, AL_AXI_DMA_FUNC_DISABLE);
     AlAxiDma_ll_SetRunStop(ChanBase, AL_AXI_DMA_FUNC_DISABLE);
 }
 
+/**
+ * This function sets up the descriptors for AXI DMA transfers.
+ *
+ * @param Dma Pointer to the AXI DMA device structure.
+ * @param Index Index of the descriptor to be set up.
+ * @param Buffer Pointer to the data buffer.
+ * @param Length The length of the data to be transferred.
+ * @param NumBuffers The number of buffers to be transferred.
+ * @param Direction The direction of the transfer (DMA to device or device to DMA).
+ * @return AL_OK if successful, error code otherwise.
+ */
 AL_S32 AlAxiDma_Dev_SetupDescriptors(AlAxiDma_DevStruct *Dma, AL_U32 Index, AL_U8 *Buffer, AL_U32 Length, AL_U32 NumBuffers, AlAxiDma_TransDirEnum Direction)
 {
     AL_S32 Ret = AL_OK;
@@ -288,8 +381,8 @@ AL_S32 AlAxiDma_Dev_SetupDescriptors(AlAxiDma_DevStruct *Dma, AL_U32 Index, AL_U
 
     // In Micro mode need set up s2mm descriptor's sof and eof manually
     if (Dma->HwConfig.EnableMicroMode || Direction == AL_AXIDMA_DMA_TO_DEVICE) {
-        ControlFlags |= (Index == 0 ? (1UL << ALAXIDMA_DESC_CONTROL_SOF_SHIFT) : 0);
-        ControlFlags |= (Index == NumBuffers - 1 ? (1UL << ALAXIDMA_DESC_CONTROL_EOF_SHIFT) : 0);
+        ControlFlags |= (Index == 0 ? (1UL << AL_AXI_DMA_DESC_CONTROL_SOF_SHIFT) : 0);
+        ControlFlags |= (Index == NumBuffers - 1 ? (1UL << AL_AXI_DMA_DESC_CONTROL_EOF_SHIFT) : 0);
     }
 
     // Setup the current descriptor's contents
@@ -307,10 +400,19 @@ AL_S32 AlAxiDma_Dev_SetupDescriptors(AlAxiDma_DevStruct *Dma, AL_U32 Index, AL_U
     return Ret;
 }
 
+/**
+ * This function initiates a Scatter-Gather (SG) mode transfer for the AXI DMA device.
+ *
+ * @param Dma Pointer to the AXI DMA device structure.
+ * @param NumBuffers Number of buffers to be transferred.
+ * @param Direction The direction of the transfer (DMA to device or device to DMA).
+ * @param Method The transfer method (block-based or polling).
+ * @return AL_OK if successful, error code otherwise.
+ */
 AL_S32 AlAxiDma_Dev_SgMode_Transfer(AlAxiDma_DevStruct *Dma, AL_U32 NumBuffers, AlAxiDma_TransDirEnum Direction, AlAxiDma_TransferMethodEnum Method)
 {
     AL_S32 Ret = AL_OK;
-    AL_U64 ChanBase = Dma->RegBase + (ALAXIDMA_S2MM_OFFSET * Direction);
+    AL_U64 ChanBase = Dma->RegBase + (AL_AXI_DMA_S2MM_OFFSET * Direction);
 
     // Assert to check if direction is valid
     AL_ASSERT(Direction == AL_AXIDMA_DMA_TO_DEVICE || Direction == AL_AXIDMA_DEVICE_TO_DMA, AL_AxiDma_ERR_ILLEGAL_PARAM);
@@ -395,6 +497,12 @@ AL_S32 AlAxiDma_Dev_SgMode_Transfer(AlAxiDma_DevStruct *Dma, AL_U32 NumBuffers, 
 #define AL_AXIDMA_INTR_DLY(Status)           (Status & AL_AXIDMA_INTR_DLY_DONE)
 #define AL_AXIDMA_INTR_ERR(Status)           (Status & AL_AXIDMA_INTR_ERR_OCCUR)
 
+/**
+ * This function clears the complete status bit for all descriptors in the chain.
+ *
+ * @param Dma Pointer to the AXI DMA device structure.
+ * @return void
+ */
 AL_VOID ClearCompleteStatus(AlAxiDma_DevStruct *Dma)
 {
     AlAxiDma_Descriptor *CurDesc = Dma->descriptors;
@@ -411,6 +519,13 @@ AL_VOID ClearCompleteStatus(AlAxiDma_DevStruct *Dma)
     } while (CurDesc != StartDesc);
 }
 
+/**
+ * This function handles transfer errors for the AXI DMA device.
+ *
+ * @param Dma Pointer to the AXI DMA device structure.
+ * @param Direction The direction of the transfer (DMA to device or device to DMA).
+ * @return void
+ */
 AL_VOID AlAxiDma_Dev_Transfer_ErrorHandler(AlAxiDma_DevStruct *Dma, AlAxiDma_TransDirEnum Direction)
 {
     AL_U64 ChanBase;
@@ -422,10 +537,10 @@ AL_VOID AlAxiDma_Dev_Transfer_ErrorHandler(AlAxiDma_DevStruct *Dma, AlAxiDma_Tra
 
     // Set the base address and event type based on the direction
     if (Direction == AL_AXIDMA_DEVICE_TO_DMA) {
-        ChanBase = Dma->RegBase + ALAXIDMA_S2MM_OFFSET;
+        ChanBase = Dma->RegBase + AL_AXI_DMA_S2MM_OFFSET;
         EventType = EVENT_S2MM_ERROR;
     } else {
-        ChanBase = Dma->RegBase + ALAXIDMA_MM2S_OFFSET;
+        ChanBase = Dma->RegBase + AL_AXI_DMA_MM2S_OFFSET;
         EventType = EVENT_MM2S_ERROR;
     }
 
@@ -447,6 +562,13 @@ AL_VOID AlAxiDma_Dev_Transfer_ErrorHandler(AlAxiDma_DevStruct *Dma, AlAxiDma_Tra
     while (!AlAxiDma_Dev_ResetIsDone(Dma));
 }
 
+/**
+ * This function handles the completion of a transfer for the AXI DMA device.
+ *
+ * @param Dma Pointer to the AXI DMA device structure.
+ * @param Direction The direction of the transfer (DMA to device or device to DMA).
+ * @return void
+ */
 AL_VOID AlAxiDma_Dev_Transfer_DoneHandler(AlAxiDma_DevStruct *Dma, AlAxiDma_TransDirEnum Direction)
 {
     AL_U32 EventType;
@@ -497,30 +619,42 @@ AL_VOID AlAxiDma_Dev_Transfer_DoneHandler(AlAxiDma_DevStruct *Dma, AlAxiDma_Tran
     }
 }
 
+/**
+ * This function handles the interrupt for the MM2S (memory-mapped to stream) transfer of the AXI DMA device.
+ *
+ * @param Instance Pointer to the instance of the AXI DMA device structure.
+ * @return void
+ */
 AL_VOID AlAxiDma_Dev_Mm2s_IntrHandler(AL_VOID *Instance)
 {
     AlAxiDma_DevStruct *Dma = (AlAxiDma_DevStruct *)Instance;
-    AlAxiDma_IntrEnum IntrStatus = AlAxiDma_ll_GetIntrStatus(Dma->RegBase + ALAXIDMA_MM2S_OFFSET);
+    AlAxiDma_IntrEnum IntrStatus = AlAxiDma_ll_GetIntrStatus(Dma->RegBase + AL_AXI_DMA_MM2S_OFFSET);
 
     if (AL_AXIDMA_INTR_ERR(IntrStatus)) {
-        AlAxiDma_ll_ClrErr(Dma->RegBase + ALAXIDMA_MM2S_OFFSET);
+        AlAxiDma_ll_ClrErr(Dma->RegBase + AL_AXI_DMA_MM2S_OFFSET);
         AlAxiDma_Dev_Transfer_ErrorHandler(Dma, AL_AXIDMA_DMA_TO_DEVICE);
     } else if (AL_AXIDMA_INTR_IOC(IntrStatus)) {
-        AlAxiDma_ll_ClrIoc(Dma->RegBase + ALAXIDMA_MM2S_OFFSET);
+        AlAxiDma_ll_ClrIoc(Dma->RegBase + AL_AXI_DMA_MM2S_OFFSET);
         AlAxiDma_Dev_Transfer_DoneHandler(Dma, AL_AXIDMA_DMA_TO_DEVICE);
     }
 }
 
+/**
+ * This function handles the interrupt for the S2MM (stream to memory-mapped) transfer of the AXI DMA device.
+ *
+ * @param Instance Pointer to the instance of the AXI DMA device structure.
+ * @return void
+ */
 AL_VOID AlAxiDma_Dev_S2mm_IntrHandler(AL_VOID *Instance)
 {
     AlAxiDma_DevStruct *Dma = (AlAxiDma_DevStruct *)Instance;
-    AlAxiDma_IntrEnum IntrStatus = AlAxiDma_ll_GetIntrStatus(Dma->RegBase + ALAXIDMA_S2MM_OFFSET);
+    AlAxiDma_IntrEnum IntrStatus = AlAxiDma_ll_GetIntrStatus(Dma->RegBase + AL_AXI_DMA_S2MM_OFFSET);
 
     if (AL_AXIDMA_INTR_ERR(IntrStatus)) {
-        AlAxiDma_ll_ClrErr(Dma->RegBase + ALAXIDMA_S2MM_OFFSET);
+        AlAxiDma_ll_ClrErr(Dma->RegBase + AL_AXI_DMA_S2MM_OFFSET);
         AlAxiDma_Dev_Transfer_ErrorHandler(Dma, AL_AXIDMA_DEVICE_TO_DMA);
     } else if (AL_AXIDMA_INTR_IOC(IntrStatus)) {
-        AlAxiDma_ll_ClrIoc(Dma->RegBase + ALAXIDMA_S2MM_OFFSET);
+        AlAxiDma_ll_ClrIoc(Dma->RegBase + AL_AXI_DMA_S2MM_OFFSET);
         AlAxiDma_Dev_Transfer_DoneHandler(Dma, AL_AXIDMA_DEVICE_TO_DMA);
     }
 }
