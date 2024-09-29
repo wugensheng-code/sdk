@@ -83,6 +83,22 @@ SECTIONS
 
   } >flash AT>flash
 
+
+    .eh_frame : {
+       *(.eh_frame)
+    } >ram AT>ram
+
+    .eh_framehdr : {
+       __eh_framehdr_start = .;
+       *(.eh_framehdr)
+       __eh_framehdr_end = .;
+    } >ram AT>ram
+
+    .gcc_except_table : {
+       *(.gcc_except_table)
+
+  } >flash AT>flash
+
   . = ALIGN(4096);
   .cli_section :
   {
@@ -155,6 +171,11 @@ SECTIONS
     KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .ctors))
     KEEP (*(SORT(.ctors.*)))
     KEEP (*(.ctors))
+    PROVIDE(__ctors_start__ = .);
+    /* new GCC version uses .init_array */
+    KEEP(*(SORT(.init_array.*)))
+    KEEP(*(.init_array))
+    PROVIDE(__ctors_end__ = .);
   } >itcm AT>flash
 
   .dtors          :

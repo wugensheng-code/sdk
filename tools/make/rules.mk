@@ -206,7 +206,8 @@ LIB_OPT  = $(addprefix -L, $(sort $(LIB_DIR)))
 LDFLAGS += -T$(LINKER_SCRIPT) -Wl,--start-group -Wl,--whole-archive $(ld_libs) -z noexecstack -Wl,--no-whole-archive -lgcc -lc -lm -L$(LIB_OUTPUT_DIR) -L$(LIB_PREBUILD_DIR) -Wl,--end-group \
            $(LIB_OPT) -nostartfiles -Wl,-M,-Map=$(TARGET).map \
            $(GC_LDFLAGS) $(NEWLIB_LDFLAGS) --specs=nosys.specs -Wl,--build-id=none \
-           -u _isatty -u _write -u _sbrk -u _read -u _close -u _fstat -u _lseek -u memset -u memcpy
+           -u _write  \
+           -lstdc++ -lm -lc -lgcc -lg -lc
 
 ifeq ($(CORE),arm)
 LDFLAGS += -Wl,--no-warn-rwx-segments
@@ -333,11 +334,11 @@ $(CXX_OBJS): %.o: % $(COMMON_PREREQS)
 ####
 
 ifeq ($(RTOS), freertos)
-	filterout_lib = %librtthread
+filterout_lib = %librtthread
 else ifeq ($(RTOS), rtthread)
-	filterout_lib = %libfreertos
+filterout_lib = %libfreertos
 else
-	filterout_lib = %libfreertos %librtthread
+filterout_lib = %libfreertos %librtthread
 endif
 
 

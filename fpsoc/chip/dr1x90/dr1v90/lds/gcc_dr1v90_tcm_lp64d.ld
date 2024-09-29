@@ -153,6 +153,12 @@ SECTIONS
     KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .ctors))
     KEEP (*(SORT(.ctors.*)))
     KEEP (*(.ctors))
+
+    PROVIDE(__ctors_start__ = .);
+    /* new GCC version uses .init_array */
+    KEEP(*(SORT(.init_array.*)))
+    KEEP(*(.init_array))
+    PROVIDE(__ctors_end__ = .);
   } >tcm AT>tcm
 
   .dtors          :
@@ -164,6 +170,19 @@ SECTIONS
     KEEP (*(.dtors))
   } >tcm AT>tcm
 
+  .eh_frame : {
+     *(.eh_frame)
+  } >tcm AT>tcm
+
+  .eh_framehdr : {
+     __eh_framehdr_start = .;
+     *(.eh_framehdr)
+     __eh_framehdr_end = .;
+  } >tcm AT>tcm
+
+  .gcc_except_table : {
+     *(.gcc_except_table)
+  } >tcm AT>tcm
 
   .lalign         :
   {

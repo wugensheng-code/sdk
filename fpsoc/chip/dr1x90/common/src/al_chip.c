@@ -14,11 +14,42 @@
 
 AL_U64 SystemCoreClock = SYSTEM_CLOCK;  /* System Clock Frequency (Core Clock) */
 
+/*
+ * When compiling C++ code with static objects, the compiler inserts
+ * a call to __cxa_atexit() with __dso_handle as one of the arguments.
+ * The dummy versions of these symbols should be provided.
+ */
+
+void *__dso_handle = (void *) &__dso_handle;
+
+__WEAK void _init()
+{
+}
+
+__WEAK void _fini()
+{
+}
+
+
+void cplusplus_init()
+{
+    typedef void(*pfunc)();
+    extern pfunc __ctors_start__[];
+    extern pfunc __ctors_end__[];
+    pfunc *p;
+
+    for (p = __ctors_start__; p < __ctors_end__; p++)
+        (*p)();
+    
+    return;
+}
+
 void components_init(void)
 {
     AL_S32 Ret;
 
     AlLog_Init();
+    cplusplus_init();
 
 #ifdef AL_PRINT_ASYNC
     AlPrint_Init();

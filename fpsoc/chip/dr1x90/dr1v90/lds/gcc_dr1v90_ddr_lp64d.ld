@@ -154,7 +154,28 @@ SECTIONS
     KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .ctors))
     KEEP (*(SORT(.ctors.*)))
     KEEP (*(.ctors))
+
+    PROVIDE(__ctors_start__ = .);
+    /* new GCC version uses .init_array */
+    KEEP(*(SORT(.init_array.*)))
+    KEEP(*(.init_array))
+    PROVIDE(__ctors_end__ = .);
   } >ram AT>ram
+
+
+    .eh_frame : {
+       *(.eh_frame)
+    } >ram AT>ram
+
+    .eh_framehdr : {
+       __eh_framehdr_start = .;
+       *(.eh_framehdr)
+       __eh_framehdr_end = .;
+    } >ram AT>ram
+
+    .gcc_except_table : {
+       *(.gcc_except_table)
+    } >ram AT>ram
 
   .dtors          :
   {
@@ -221,12 +242,14 @@ SECTIONS
   PROVIDE( __bss_start = . );
   .bss            :
   {
+    PROVIDE(__bss_start__ = .);
     *(.sbss*)
     *(.gnu.linkonce.sb.*)
     *(.bss .bss.*)
     *(.gnu.linkonce.b.*)
     *(COMMON)
     . = ALIGN(4);
+    PROVIDE(__bss_end__ = .);
   } >ram AT>ram
 
   . = ALIGN(8);

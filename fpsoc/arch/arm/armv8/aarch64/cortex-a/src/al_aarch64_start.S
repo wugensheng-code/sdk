@@ -249,7 +249,11 @@ main_entry:
 
     bl components_init
 
+	bl __libc_init_array
+
     bl main
+
+	bl __libc_fini_array
 
     /* hang */
     b .
