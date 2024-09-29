@@ -12,8 +12,8 @@ extern "C" {
 
 typedef enum
 {
-    AL_AXI_DMA_FUNC_DISABLE     = 0,
-    AL_AXI_DMA_FUNC_ENABLE      = 1
+    AL_AXI_DMA_FUNC_DISABLE    = 0,
+    AL_AXI_DMA_FUNC_ENABLE     = 1
 } AlAxiDma_FunctionEnum;
 
 typedef enum {
@@ -22,19 +22,14 @@ typedef enum {
 } AlAxiDma_TransDirEnum;
 
 typedef enum {
-    AL_AXIDMA_DIRECT_MODE  = 0,
-    AL_AXIDMA_SG_MODE      = 1
-} AlAxiDma_ModeEnum;
-
-typedef enum {
-    AL_AXIDMA_BLOCK    = 0,
-    AL_AXIDMA_POLLING  = 1
+    AL_AXIDMA_BLOCK            = 0,
+    AL_AXIDMA_POLLING          = 1
 } AlAxiDma_TransferMethodEnum;
 
 typedef enum {
-    AL_AXIDMA_INTR_IOC_DONE              = (0x1 << 0),
-    AL_AXIDMA_INTR_DLY_DONE              = (0x1 << 1),
-    AL_AXIDMA_INTR_ERR_OCCUR             = (0x1 << 2)
+    AL_AXIDMA_INTR_IOC_DONE              = (1UL << 0),
+    AL_AXIDMA_INTR_DLY_DONE              = (1UL << 1),
+    AL_AXIDMA_INTR_ERR_OCCUR             = (1UL << 2)
 } AlAxiDma_IntrEnum;
 
 static inline AlAxiDma_IntrEnum AlAxiDma_ll_GetIntrStatus(AL_U64 ChanBase)

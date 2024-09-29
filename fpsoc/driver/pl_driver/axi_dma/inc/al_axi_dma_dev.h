@@ -27,12 +27,12 @@ typedef enum
 } AlAxiDma_EventEnum;
 
 typedef enum {
-    DMA_INTERNAL_ERROR = 1 << 4,
-    DMA_SLAVE_ERROR    = 1 << 5,
-    DMA_DECODE_ERROR   = 1 << 6,
-    SG_INTERNAL_ERROR  = 1 << 8,
-    SG_SLAVE_ERROR     = 1 << 9,
-    SG_DECODE_ERROR    = 1 << 10,
+    DMA_INTERNAL_ERROR = 1UL << 4,
+    DMA_SLAVE_ERROR    = 1UL << 5,
+    DMA_DECODE_ERROR   = 1UL << 6,
+    SG_INTERNAL_ERROR  = 1UL << 8,
+    SG_SLAVE_ERROR     = 1UL << 9,
+    SG_DECODE_ERROR    = 1UL << 10,
 } AlAxiDma_ErrorState;
 
 typedef struct

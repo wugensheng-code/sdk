@@ -3,29 +3,25 @@
 /* Device hardware build related constants. */
 #define DMA_DEV_ID                    0
 #define GP0_Master                    0x80000000UL
-#define STREAM_DATA_GEN_OFFSET        0x100000
-#define STREAM_DATA_CHECK_OFFSET      0x200000
+#define STREAM_DATA_GEN_OFFSET        0x100000UL
+#define STREAM_DATA_CHECK_OFFSET      0x200000UL
 #define TRANSFER_LEN                  0x2000
 #define TEST_START_VALUE              0x0
 #define TEST_ITERATIONS               100
-#define AL_AXI_DMA0_DEVICE_ID         0
 #define TRANSFER_METHOD               1  // 1 = BLOCK, 0 = POLLING
 
 /************************** Function Prototypes ******************************/
-static AL_S32 AlAxiDma_SimpleTransferExample(AL_U16 DeviceId);
-static AL_S32 CheckData(AL_VOID);
-static AL_VOID AlAxiDmaRegDump(AL_U32 baseaddr, AlAxiDma_TransDirEnum Direction);
 static AL_VOID ReleasePorts(AL_VOID);
 static AL_VOID GenerateData(AL_VOID);
 static AL_VOID PrepareDataCheck(AL_VOID);
 static AL_S32 DmaTransferCheck(AL_U32 direction);
+static AL_S32 AlAxiDma_DirectTransferExample(AL_U16 DeviceId);
+static AL_VOID AlAxiDmaRegDump(AlAxiDma_HalStruct *Handle, AlAxiDma_TransDirEnum Direction);
 
 /************************** Variable Definitions *****************************/
 AXIDMA_S2MM_BUFFER_ALIGN AL_U8 TransferBuffer[TRANSFER_LEN];
 
-AlAxiDma_InitStruct InitConfig = {
-    .DeviceId    = AL_AXI_DMA0_DEVICE_ID,
-};
+AlAxiDma_InitStruct InitConfig = {0};
 
 AL_S32 main(AL_VOID)
 {
@@ -39,10 +35,10 @@ AL_S32 main(AL_VOID)
     for (int i = 0; i < TEST_ITERATIONS; i++) {
         AL_LOG(AL_LOG_LEVEL_INFO, "---- Direct mode test Iteration: %d ----", i + 1);
 
-        /* Run the example for simple transfer */
-        Ret = AlAxiDma_SimpleTransferExample(DMA_DEV_ID);
+        /* Run the example for direct transfer */
+        Ret = AlAxiDma_DirectTransferExample(DMA_DEV_ID);
         if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_INFO, "Failed on iteration %d with error code %d", i + 1, Ret);
+            AL_LOG(AL_LOG_LEVEL_INFO, "Failed on iteration %d with error code 0x%x", i + 1, Ret);
             return Ret;
         }
     }
@@ -53,7 +49,7 @@ AL_S32 main(AL_VOID)
     return Ret;
 }
 
-static AL_S32 AlAxiDma_SimpleTransferExample(AL_U16 DeviceId)
+static AL_S32 AlAxiDma_DirectTransferExample(AL_U16 DeviceId)
 {
     AlAxiDma_HalStruct *Handle;
     AL_S32 Ret = AL_OK;
@@ -131,7 +127,7 @@ static AL_VOID ReleasePorts(AL_VOID)
 
 static AL_VOID GenerateData(AL_VOID)
 {
-    AL_REG32_WRITE(GP0_Master + STREAM_DATA_GEN_OFFSET + 0x04, TRANSFER_LEN / (AL_AXI_DMA0_MM2S_STREAM_DATA_WIDTH / 8));
+    AL_REG32_WRITE(GP0_Master + STREAM_DATA_GEN_OFFSET + 0x04, TRANSFER_LEN / (AL_AXI_DMA0_S2MM_STREAM_DATA_WIDTH / 8));
     AL_REG32_WRITE(GP0_Master + STREAM_DATA_GEN_OFFSET + 0x00, TEST_START_VALUE);
 }
 
@@ -139,27 +135,6 @@ static AL_VOID PrepareDataCheck(AL_VOID)
 {
     AL_REG32_WRITE(GP0_Master + STREAM_DATA_CHECK_OFFSET + 0x04, TRANSFER_LEN / (AL_AXI_DMA0_MM2S_STREAM_DATA_WIDTH / 8));
     AL_REG32_WRITE(GP0_Master + STREAM_DATA_CHECK_OFFSET + 0x00, TEST_START_VALUE);
-}
-
-static AL_S32 CheckData(AL_VOID)
-{
-    AL_U32 *RxPacket;
-    AL_U32 Index = 0;
-    AL_U32 Value = 0;
-
-    RxPacket = (AL_U32 *)TransferBuffer;
-    Value = TEST_START_VALUE;
-
-    for (Index = 0; Index < TRANSFER_LEN / (AL_AXI_DMA0_MM2S_STREAM_DATA_WIDTH / 8); Index++) {
-        if (RxPacket[Index] != Value) {
-            AL_LOG(AL_LOG_LEVEL_INFO, "Data error %d: 0x%x/0x%x",
-                   Index, (unsigned int)RxPacket[Index], (unsigned int)Value);
-            return AL_ERROR;
-        }
-        Value = (Value + 1);
-    }
-
-    return AL_OK;
 }
 
 static AL_S32 DmaTransferCheck(AL_U32 direction)
@@ -172,10 +147,10 @@ static AL_S32 DmaTransferCheck(AL_U32 direction)
         AL_U32 Index = 0;
         AL_U32 Value = 0;
 
-        RxPacket = (AL_U32 *)TransferBuffer; // Assume TransferBuffer is defined elsewhere
+        RxPacket = (AL_U32 *)TransferBuffer;
         Value = TEST_START_VALUE;
 
-        for (Index = 0; Index < TRANSFER_LEN / (AL_AXI_DMA0_MM2S_STREAM_DATA_WIDTH / 8); Index++) {
+        for (Index = 0; Index < TRANSFER_LEN / (AL_AXI_DMA0_S2MM_STREAM_DATA_WIDTH / 8); Index++) {
             if (RxPacket[Index] != Value) {
                 AL_LOG(AL_LOG_LEVEL_INFO, "S2MM Data error %d: 0x%x/0x%x",
                        Index, (unsigned int)RxPacket[Index], (unsigned int)Value);
@@ -184,13 +159,13 @@ static AL_S32 DmaTransferCheck(AL_U32 direction)
             Value = (Value + 1);
         }
         AL_LOG(AL_LOG_LEVEL_INFO, "S2MM AXI Stream manual data check success!");
-    } 
+    }
     else if (direction == AL_AXIDMA_DMA_TO_DEVICE) {
         // MM2S direction check
         if (AL_REG32_READ(GP0_Master + STREAM_DATA_CHECK_OFFSET + 0x08)) {
             AL_LOG(AL_LOG_LEVEL_INFO, "MM2S AXI Stream auto data check fail!");
-            Ret = AL_ERROR; // Set return value to error
-        } 
+            Ret = AL_ERROR;
+        }
         else if (AL_REG32_READ(GP0_Master + STREAM_DATA_CHECK_OFFSET + 0x0c) &&
                  AL_REG32_READ(GP0_Master + STREAM_DATA_CHECK_OFFSET + 0x10)) {
             AL_LOG(AL_LOG_LEVEL_INFO, "MM2S AXI Stream auto data check success!");
@@ -200,19 +175,14 @@ static AL_S32 DmaTransferCheck(AL_U32 direction)
     return Ret;
 }
 
-static AL_VOID AlAxiDmaRegDump(AL_U32 baseaddr, AlAxiDma_TransDirEnum Direction)
+static AL_VOID AlAxiDmaRegDump(AlAxiDma_HalStruct *Handle, AlAxiDma_TransDirEnum Direction)
 {
-    if(Direction == AL_AXIDMA_DMA_TO_DEVICE) {
-        AL_LOG(AL_LOG_LEVEL_INFO, "|MM2S DMACR:0x%x",AL_REG32_READ(baseaddr + ALAXIDMA_MM2S_OFFSET + ALAXIDMA_CR_OFFSET));
-        AL_LOG(AL_LOG_LEVEL_INFO, "|MM2S DMASR:0x%x",AL_REG32_READ(baseaddr + ALAXIDMA_MM2S_OFFSET + ALAXIDMA_SR_OFFSET));
-        AL_LOG(AL_LOG_LEVEL_INFO, "|MM2S SA:0x%x",AL_REG32_READ(baseaddr + ALAXIDMA_MM2S_OFFSET + ALAXIDMA_ADDR_OFFSET));
-        AL_LOG(AL_LOG_LEVEL_INFO, "|MM2S SA_MSB:0x%x",AL_REG32_READ(baseaddr + ALAXIDMA_MM2S_OFFSET + ALAXIDMA_ADDR_MSB_OFFSET));
-        AL_LOG(AL_LOG_LEVEL_INFO, "|MM2S LENGTH:0x%x",AL_REG32_READ(baseaddr + ALAXIDMA_MM2S_OFFSET + ALAXIDMA_LENTH_OFFSET));
-    } else {
-        AL_LOG(AL_LOG_LEVEL_INFO, "|S2MM DMACR:0x%x",AL_REG32_READ(baseaddr + ALAXIDMA_S2MM_OFFSET + ALAXIDMA_CR_OFFSET));
-        AL_LOG(AL_LOG_LEVEL_INFO, "|S2MM DMASR:0x%x",AL_REG32_READ(baseaddr + ALAXIDMA_S2MM_OFFSET + ALAXIDMA_SR_OFFSET));
-        AL_LOG(AL_LOG_LEVEL_INFO, "|S2MM DA:0x%x",AL_REG32_READ(baseaddr + ALAXIDMA_S2MM_OFFSET + ALAXIDMA_ADDR_OFFSET));
-        AL_LOG(AL_LOG_LEVEL_INFO, "|S2MM DA_MSB:0x%x",AL_REG32_READ(baseaddr + ALAXIDMA_S2MM_OFFSET + ALAXIDMA_ADDR_MSB_OFFSET));
-        AL_LOG(AL_LOG_LEVEL_INFO, "|S2MM LENGTH:0x%x",AL_REG32_READ(baseaddr + ALAXIDMA_S2MM_OFFSET + ALAXIDMA_LENTH_OFFSET));
-    }
+    AL_U64 ChanBase = Handle->Dma.RegBase + (ALAXIDMA_S2MM_OFFSET * Direction);
+    const char *direction = (Direction == AL_AXIDMA_DEVICE_TO_DMA) ? "S2MM" : "MM2S";
+
+    AL_LOG(AL_LOG_LEVEL_INFO, "%s DMACR:  0x%x", direction, AL_REG32_READ(ChanBase + ALAXIDMA_CR_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_INFO, "%s DMASR:  0x%x", direction, AL_REG32_READ(ChanBase + ALAXIDMA_SR_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_INFO, "%s SA:     0x%x", direction, AL_REG32_READ(ChanBase + ALAXIDMA_ADDR_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_INFO, "%s SA_MSB: 0x%x", direction, AL_REG32_READ(ChanBase + ALAXIDMA_ADDR_MSB_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_INFO, "%s LENGTH: 0x%x", direction, AL_REG32_READ(ChanBase + ALAXIDMA_LENTH_OFFSET));
 }

@@ -29,10 +29,9 @@ static AL_VOID AlAxiDma_Hal_DefEventHandler(AlAxiDma_EventStruct *AxiDmaEvent, A
             break;
 
         case EVENT_S2MM_ERROR:
-            AL_LOG(AL_LOG_LEVEL_ERROR, "S2MM Error Occurred:");
             for (int i = 0; i < sizeof(errorTable)/sizeof(ErrorInfo); ++i) {
                 if (AxiDmaEvent->EventData & errorTable[i].errorBit) {
-                    AL_LOG(AL_LOG_LEVEL_ERROR, "%s;", errorTable[i].errorMsg);
+                    AL_LOG(AL_LOG_LEVEL_ERROR, "S2mm transfer Error: %s", errorTable[i].errorMsg);
                 }
             }
             AlOsal_Mb_Send(&Handle->S2mm_EventQueue, AxiDmaEvent);
@@ -49,10 +48,9 @@ static AL_VOID AlAxiDma_Hal_DefEventHandler(AlAxiDma_EventStruct *AxiDmaEvent, A
             break;
 
         case EVENT_MM2S_ERROR:
-            AL_LOG(AL_LOG_LEVEL_ERROR, "MM2S Error Occurred:");
             for (int i = 0; i < sizeof(errorTable)/sizeof(ErrorInfo); ++i) {
                 if (AxiDmaEvent->EventData & errorTable[i].errorBit) {
-                    AL_LOG(AL_LOG_LEVEL_ERROR, "%s;", errorTable[i].errorMsg);
+                    AL_LOG(AL_LOG_LEVEL_ERROR, "Mm2s transfer Error: %s", errorTable[i].errorMsg);
                 }
             }
             AlOsal_Mb_Send(&Handle->Mm2s_EventQueue, AxiDmaEvent);
@@ -125,12 +123,13 @@ AL_S32 AlAxiDma_Hal_Init(AlAxiDma_HalStruct **Handle, AL_U32 DevId, AlAxiDma_Ini
 AL_S32 AlAxiDma_Hal_DirectMode_TransferBlock(AlAxiDma_HalStruct *Handle, AL_U8 *Buffer, AL_U32 Length, AL_U32 Direction, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
+
+    AL_ASSERT((Handle != AL_NULL), AL_AxiDma_ERR_NULL_PTR);
+
     AlAxiDma_EventStruct AxiDmaEvent = {0};
     AL_Lock_t Lock = (Direction == AL_AXIDMA_DEVICE_TO_DMA) ? &Handle->S2mm_Lock : &Handle->Mm2s_Lock;
     AL_MailBox_t EventQueue = (Direction == AL_AXIDMA_DEVICE_TO_DMA) ? &Handle->S2mm_EventQueue : &Handle->Mm2s_EventQueue;
     AlAxiDma_EventEnum ExpectedEvent = (Direction == AL_AXIDMA_DEVICE_TO_DMA) ? EVENT_S2MM_DONE : EVENT_MM2S_DONE;
-
-    AL_ASSERT((Handle != AL_NULL), AL_AxiDma_ERR_NULL_PTR);
 
     // Take the lock
     Ret = AlOsal_Lock_Take(Lock, AL_WAITFOREVER);
@@ -175,9 +174,10 @@ AL_S32 AlAxiDma_Hal_DirectMode_TransferBlock(AlAxiDma_HalStruct *Handle, AL_U8 *
 AL_S32 AlAxiDma_Hal_DirectMode_TransferPolling(AlAxiDma_HalStruct *Handle, AL_U8 *Buffer, AL_U32 Length, AL_U32 Direction)
 {
     AL_S32 Ret = AL_OK;
-    AL_Lock_t Lock = (Direction == AL_AXIDMA_DEVICE_TO_DMA) ? &Handle->S2mm_Lock : &Handle->Mm2s_Lock;
 
     AL_ASSERT((Handle != AL_NULL), AL_AxiDma_ERR_NULL_PTR);
+
+    AL_Lock_t Lock = (Direction == AL_AXIDMA_DEVICE_TO_DMA) ? &Handle->S2mm_Lock : &Handle->Mm2s_Lock;
 
     // Take the lock
     Ret = AlOsal_Lock_Take(Lock, AL_WAITFOREVER);
@@ -206,14 +206,15 @@ AL_S32 AlAxiDma_Hal_DirectMode_TransferPolling(AlAxiDma_HalStruct *Handle, AL_U8
 AL_S32 AlAxiDma_Hal_SgMode_TransferBlock(AlAxiDma_HalStruct *Handle, ALAXIDMA_TransferMsg *Msg, AL_U32 Timeout)
 {
     AL_S32 Ret = AL_OK;
+
+    AL_ASSERT(Handle != AL_NULL && Msg != AL_NULL, AL_AxiDma_ERR_NULL_PTR);
+
     AlAxiDma_EventStruct AxiDmaEvent = {0};
     AL_Lock_t Lock = (Msg->Direction == AL_AXIDMA_DEVICE_TO_DMA) ? &Handle->S2mm_Lock : &Handle->Mm2s_Lock;
     AL_MailBox_t EventQueue = (Msg->Direction == AL_AXIDMA_DEVICE_TO_DMA) ? &Handle->S2mm_EventQueue : &Handle->Mm2s_EventQueue;
     AlAxiDma_EventEnum ExpectedEvent = (Msg->Direction == AL_AXIDMA_DEVICE_TO_DMA) ?
         (Handle->Dma.InitConfig.S2mm_HasCyclic ? EVENT_S2MM_CYCLIC : EVENT_S2MM_DONE) :
         (Handle->Dma.InitConfig.Mm2s_HasCyclic ? EVENT_MM2S_CYCLIC : EVENT_MM2S_DONE);
-
-    AL_ASSERT((Handle != AL_NULL), AL_AxiDma_ERR_NULL_PTR);
 
     // Take the lock
     Ret = AlOsal_Lock_Take(Lock, AL_WAITFOREVER);
@@ -263,9 +264,10 @@ AL_S32 AlAxiDma_Hal_SgMode_TransferBlock(AlAxiDma_HalStruct *Handle, ALAXIDMA_Tr
 AL_S32 AlAxiDma_Hal_SgMode_TransferPolling(AlAxiDma_HalStruct *Handle, ALAXIDMA_TransferMsg *Msg)
 {
     AL_S32 Ret = AL_OK;
-    AL_Lock_t Lock = (Msg->Direction == AL_AXIDMA_DEVICE_TO_DMA) ? &Handle->S2mm_Lock : &Handle->Mm2s_Lock;
 
-    AL_ASSERT((Handle != AL_NULL), AL_AxiDma_ERR_NULL_PTR);
+    AL_ASSERT(Handle != AL_NULL && Msg != AL_NULL, AL_AxiDma_ERR_NULL_PTR);
+
+    AL_Lock_t Lock = (Msg->Direction == AL_AXIDMA_DEVICE_TO_DMA) ? &Handle->S2mm_Lock : &Handle->Mm2s_Lock;
 
     // Take the lock
     Ret = AlOsal_Lock_Take(Lock, AL_WAITFOREVER);
@@ -299,14 +301,27 @@ AL_S32 AlAxiDma_Hal_SgMode_TransferPolling(AlAxiDma_HalStruct *Handle, ALAXIDMA_
 AL_S32 AlAxiDma_Hal_SetupDescriptors(AlAxiDma_HalStruct *Handle, ALAXIDMA_TransferMsg *Msg)
 {
     AL_S32 Ret = AL_OK;
+    AL_U32 TotalLength = 0;
+    AL_U32 SgTotalMaxTransferLen;
 
-    AL_ASSERT(Handle != NULL && Msg != NULL, AL_AxiDma_ERR_NULL_PTR);
+    AL_ASSERT(Handle != AL_NULL && Msg != AL_NULL, AL_AxiDma_ERR_NULL_PTR);
 
     for (int i = 0; i < Msg->NumBuffers; i++) {
+        TotalLength += Msg->BufferLengths[i];
         Ret = AlAxiDma_Dev_SetupDescriptors(&Handle->Dma, i, Msg->Buffers[i], Msg->BufferLengths[i], Msg->NumBuffers, Msg->Direction);
         if (Ret != AL_OK) {
             return Ret;
         }
+    }
+
+    /* The maximum amount of data can be transmitted in a frame,
+     * i.e. the total number of descriptors transmitted,
+     * do not exceed (1 << buffer length) - 1
+     */
+    SgTotalMaxTransferLen = (1UL << Handle->Dma.HwConfig.BufferlenWidth) - 1;
+    if (TotalLength > SgTotalMaxTransferLen) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Invalid transfer length: %lu. Total maximum allowed length: %lu", TotalLength, SgTotalMaxTransferLen);
+        return AL_AxiDma_ERR_ILLEGAL_PARAM;
     }
 
     // Set the next_desc and next_desc_msb of the last descriptor to point to the first descriptor
@@ -321,4 +336,40 @@ AL_S32 AlAxiDma_Hal_SetupDescriptors(AlAxiDma_HalStruct *Handle, ALAXIDMA_Transf
     }
 
     return Ret;
+}
+
+/* If the hardware build has Rxlength in status stream set to 1,
+ * then the last APP word, must have non-zero value when AND with 0x7FFFFF.
+ * Not doing so will cause the hardware to stall.
+ */
+AL_U32 AlAxiDma_Hal_SetDescAppWord(AlAxiDma_HalStruct *Handle, ALAXIDMA_TransferMsg *Msg, AL_U32 Offset, AL_U32 Word)
+{
+    if (!Handle->Dma.HwConfig.EnableStatusControlStream) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "stream in hardware not build");
+        return AL_AxiDma_ERR_NOT_SUPPORT;
+    }
+
+    if ((Offset < 0) || (Offset > 4)) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "invalid offset %d", Offset);
+        return AL_AxiDma_ERR_ILLEGAL_PARAM;
+    }
+
+    Handle->Dma.descriptors[Msg->NumBuffers - 1].app[Offset] = Word;
+
+    return AL_OK;
+}
+
+AL_U32 AlAxiDma_Hal_GetDescAppWord(AlAxiDma_HalStruct *Handle, ALAXIDMA_TransferMsg *Msg, AL_U32 Offset)
+{
+    if (!Handle->Dma.HwConfig.EnableStatusControlStream) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "stream in hardware not build");
+        return AL_AxiDma_ERR_NOT_SUPPORT;
+    }
+
+    if ((Offset < 0) || (Offset > 4)) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "invalid offset %d", Offset);
+        return AL_AxiDma_ERR_ILLEGAL_PARAM;
+    }
+
+    return Handle->Dma.descriptors[Msg->NumBuffers - 1].app[Offset];
 }

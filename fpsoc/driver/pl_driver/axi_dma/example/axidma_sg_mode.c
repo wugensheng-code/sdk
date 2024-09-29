@@ -1,16 +1,20 @@
 #include "al_axi_dma_hal.h"
 
+#define DMA_DEV_ID                    0
 #define GP0_Master                    0x80000000UL
-#define STREAM_DATA_GEN_OFFSET        0x100000
-#define STREAM_DATA_CHECK_OFFSET      0x200000
-#define TEST_START_VALUE              0x0
+#define STREAM_DATA_GEN_OFFSET        0x100000UL
+#define STREAM_DATA_CHECK_OFFSET      0x200000UL
+
 #define BUFFER_SIZE_1                 0x500
 #define BUFFER_SIZE_2                 0x500
 #define BUFFER_SIZE_3                 0x1000
-#define TEST_ITERATIONS               100
-#define NUM_BUFFERS                   3
+#define BUFFER_SIZE_4                 0x1000
+#define BUFFER_SIZE_5                 0x2000
 
-#define AL_AXI_DMA0_DEVICE_ID         0
+#define TEST_ITERATIONS               100
+#define TEST_START_VALUE              0x0
+#define NUM_BUFFERS                   5
+
 #define DEFAULT_THRESHLOD             1
 #define TRANSFER_METHOD               1  // 1 = BLOCK, 0 = POLLING
 
@@ -18,11 +22,18 @@
 AXIDMA_S2MM_BUFFER_ALIGN AL_U8 TransferBuffer1[BUFFER_SIZE_1];
 AXIDMA_S2MM_BUFFER_ALIGN AL_U8 TransferBuffer2[BUFFER_SIZE_2];
 AXIDMA_S2MM_BUFFER_ALIGN AL_U8 TransferBuffer3[BUFFER_SIZE_3];
+AXIDMA_S2MM_BUFFER_ALIGN AL_U8 TransferBuffer4[BUFFER_SIZE_4];
+AXIDMA_S2MM_BUFFER_ALIGN AL_U8 TransferBuffer5[BUFFER_SIZE_5];
+
+// Array of buffer pointers
+AL_U8 *buffers[NUM_BUFFERS] = {TransferBuffer1, TransferBuffer2, TransferBuffer3, TransferBuffer4, TransferBuffer5};
+
+// Lengths for each buffer
+AL_U32 bufferLengths[] = {BUFFER_SIZE_1, BUFFER_SIZE_2, BUFFER_SIZE_3, BUFFER_SIZE_4, BUFFER_SIZE_5};
 
 AXIDMA_DESC_NOCACHE_ALIGN_RAM_SECTION AlAxiDma_Descriptor descriptors[NUM_BUFFERS] = {0};
 
 AlAxiDma_InitStruct InitConfig = {
-    .DeviceId             = AL_AXI_DMA0_DEVICE_ID,
     .S2mm_Threshold       = DEFAULT_THRESHLOD,
     .S2mm_HasCyclic       = AL_AXI_DMA_FUNC_DISABLE,
     .S2mm_HasKeyHole      = AL_AXI_DMA_FUNC_DISABLE,
@@ -53,7 +64,7 @@ AL_S32 main(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_INFO, "---- Scatter/Gather mode test Iteration: %d ----", i + 1);
 
         /* Run the example for simple transfer */
-        Ret = AlAxiDma_SgMode_TransferExample(0);
+        Ret = AlAxiDma_SgMode_TransferExample(DMA_DEV_ID);
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_INFO, "Failed on iteration %d with error code %d", i + 1, Ret);
             return Ret;
@@ -70,12 +81,6 @@ static AL_S32 AlAxiDma_SgMode_TransferExample(AL_U16 DeviceId)
 {
     AlAxiDma_HalStruct *Handle;
     AL_S32 Ret = AL_OK;
-
-    // Array of buffer pointers
-    AL_U8 *buffers[NUM_BUFFERS] = {TransferBuffer1, TransferBuffer2, TransferBuffer3};
-
-    // Lengths for each buffer
-    AL_U32 bufferLengths[] = {BUFFER_SIZE_1, BUFFER_SIZE_2, BUFFER_SIZE_3};
 
     for (AL_U32 i = 0; i < NUM_BUFFERS; i++) {
         memset(buffers[i], 0, bufferLengths[i]);
@@ -179,13 +184,21 @@ static AL_VOID ReleasePorts(AL_VOID)
 
 static AL_VOID GenerateData(AL_VOID)
 {
-    AL_REG32_WRITE(GP0_Master + STREAM_DATA_GEN_OFFSET + 0x04, (BUFFER_SIZE_1 + BUFFER_SIZE_2 + BUFFER_SIZE_3) / (AL_AXI_DMA0_MM2S_STREAM_DATA_WIDTH / 8));
+    AL_U32 totalSize = 0;
+    for (int i = 0; i < NUM_BUFFERS; i++) {
+        totalSize += bufferLengths[i];
+    }
+    AL_REG32_WRITE(GP0_Master + STREAM_DATA_GEN_OFFSET + 0x04, totalSize / (AL_AXI_DMA0_S2MM_STREAM_DATA_WIDTH / 8));
     AL_REG32_WRITE(GP0_Master + STREAM_DATA_GEN_OFFSET + 0x00, TEST_START_VALUE);
 }
 
 static AL_VOID PrepareDataCheck(AL_VOID)
 {
-    AL_REG32_WRITE(GP0_Master + STREAM_DATA_CHECK_OFFSET + 0x04, (BUFFER_SIZE_1 + BUFFER_SIZE_2 + BUFFER_SIZE_3) / (AL_AXI_DMA0_MM2S_STREAM_DATA_WIDTH / 8));
+    AL_U32 totalSize = 0;
+    for (int i = 0; i < NUM_BUFFERS; i++) {
+        totalSize += bufferLengths[i];
+    }
+    AL_REG32_WRITE(GP0_Master + STREAM_DATA_CHECK_OFFSET + 0x04, totalSize / (AL_AXI_DMA0_MM2S_STREAM_DATA_WIDTH / 8));
     AL_REG32_WRITE(GP0_Master + STREAM_DATA_CHECK_OFFSET + 0x00, TEST_START_VALUE);
 }
 
@@ -209,14 +222,13 @@ static AL_S32 CheckData(AL_U32 *buffer, AL_U32 size, AL_U32 start_test)
 static AL_S32 DmaTransferCheck(ALAXIDMA_TransferMsg *msg)
 {
     if (msg->Direction == AL_AXIDMA_DEVICE_TO_DMA) {
-        AL_S32 ret = CheckData((AL_U32 *)TransferBuffer1, BUFFER_SIZE_1, TEST_START_VALUE);
-        if (ret != AL_OK) return ret;
-
-        ret = CheckData((AL_U32 *)TransferBuffer2, BUFFER_SIZE_2, TEST_START_VALUE + (BUFFER_SIZE_1 / (AL_AXI_DMA0_MM2S_STREAM_DATA_WIDTH / 8)));
-        if (ret != AL_OK) return ret;
-
-        ret = CheckData((AL_U32 *)TransferBuffer3, BUFFER_SIZE_3, TEST_START_VALUE + ((BUFFER_SIZE_1 + BUFFER_SIZE_2) / (AL_AXI_DMA0_MM2S_STREAM_DATA_WIDTH / 8)));
-        if (ret != AL_OK) return ret;
+        AL_U32 offset = 0;
+        AL_S32 ret;
+        for (int i = 0; i < NUM_BUFFERS; i++) {
+            ret = CheckData((AL_U32 *)buffers[i], bufferLengths[i], TEST_START_VALUE + offset / (AL_AXI_DMA0_MM2S_STREAM_DATA_WIDTH / 8));
+            if (ret != AL_OK) return ret;
+            offset += bufferLengths[i];
+        }
         AL_LOG(AL_LOG_LEVEL_INFO, "S2MM AXI Stream manual data check success!");
     } else {
         if (AL_REG32_READ(GP0_Master + STREAM_DATA_CHECK_OFFSET + 0x08)) {
