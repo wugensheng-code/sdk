@@ -19,6 +19,7 @@ extern "C" {
 #include "al_uart_hal.h"
 #include "al_tc_hal.h"
 #include "al_gbe_ethernetif.h"
+#include "al_axi_dma_hal.h"
 
 /* TASK PRIORITY CONFIG */
 #define WDT_TASK_PRIORITY           (3)
@@ -36,6 +37,7 @@ extern "C" {
 #define DMACAHB2_TASK_PRIORITY      (2)
 #define UART_PROC_TASK_PRIORITY     (3)
 #define PRINT_TASK_PRIORITY         (4)
+#define PL_AXIDMA_TASK_PRIORITY     (2)
 
 /* TASK STACK SIZE IN WORD */
 #define WDT_TASK_STACK_SIZE         (256)
@@ -53,6 +55,7 @@ extern "C" {
 #define DMACAHB2_TASK_STACK_SIZE    (256)
 #define UART_PROC_TASK_STACK_SIZE   (256)
 #define PRINT_TASK_STACK_SIZE       (256)
+#define PL_AXIDMA_TASK_STACK_SIZE   (256)
 
 /* GPIO LED MACRO CONFIG */
 #define GPIO_LED_DEVICE_ID          (0)
@@ -78,16 +81,20 @@ extern "C" {
 #define DMACAHB_ARRAY_SIZE          (64)
 
 /* IIC MACRO CONFIG */
-#define IIC_DEVICE_ID               (0)
-#define IIC_MUX_ADDRESS             (0x74)
-#define IIC_EEPROM_CHANNEL          (0x04)
-#define IIC_EEPROM_ADDRESS          (0x54)
-#define IIC_EEPROM_PAGE_SIZE        (16)
-#define IIC_EEPROM_START_ADDR       (0x0)
-#define IIC_TEST_TIMEOUT_MS         (pdMS_TO_TICKS(1000))
-#define IIC_INTERVAL_TIME           (pdMS_TO_TICKS(100))
-#define IIC_ADDR_SIZE               (sizeof(AL_U8))
-#define IIC_WAIT_WRITE_COMPLETE     (pdMS_TO_TICKS(100))
+#define AL_IIC_DEVICE_ID            0
+#define IIC_MUX_ADDRESS             0x74
+#define BOARD_DR1X90_AD101_V20
+#ifdef BOARD_DR1X90_AD101_V20
+#define EEPROM_ADDRESS              0x50
+#define EEPROM_PAGE_SIZE            8
+#else
+#define EEPROM_ADDRESS              0x54
+#define EEPROM_PAGE_SIZE            16
+#endif
+#define IIC_EEPROM_CHANNEL          0x04
+typedef AL_U8                      AddrType;
+#define EEPROM_TEST_START_ADDR      0x00
+#define IIC_MASTER_TEST_TIMEOUT_MS  (pdMS_TO_TICKS(1000))
 
 /* UART MACRO CONFIG */
 #define UART_DEVICE_ID              (1)
@@ -158,6 +165,18 @@ extern "C" {
 
 /* ASYNC MACRO CONFIG */
 #define PRINT_INTERVAL_TIME         (pdMS_TO_TICKS(50))
+
+
+/* PL AXIDMA CONFIG */
+#define DMA_DEV_ID                    0
+#define GP0_Master                    0x80000000UL
+#define STREAM_DATA_GEN_OFFSET        0x100000UL
+#define STREAM_DATA_CHECK_OFFSET      0x200000UL
+
+#define TRANSFER_LEN                  0x20
+#define TEST_START_VALUE              0x0
+#define TEST_ITERATIONS               100
+#define TRANSFER_METHOD               1  // 1 = BLOCK, 0 = POLLING
 
 
 static AL_CAN_InitStruct Task2_CanConfig = {
@@ -428,6 +447,10 @@ static AL_DMACAHB_ChInitStruct Task14_DmaChConfig = {
     .SgrDsr.IsSrcGatherEn   = AL_FALSE,
     .SgrDsr.IsDstScatterEn  = AL_FALSE,
 };
+
+AL_AXI_DMA_MICRO_BUFFER_ALIGN AL_U8 TransferBuffer[TRANSFER_LEN];
+AlAxiDma_InitStruct AxiDmaInitConfig = {0};
+
 
 static inline AL_VOID AlQspi_freertos_Reset(AL_QSPI_HalStruct *Handle, AL_U8 *SendData)
 {
@@ -818,6 +841,126 @@ AL_S32 AlQspi_freertos_SetQuad(AL_QSPI_HalStruct *Handle, AL_U8 *SendData, AL_U8
 
     return Ret;
 }
+
+
+AL_S32 AlIic_EepromWriteData(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U8 *Buffer, AL_U32 Size)
+{
+    AL_S32 Ret;
+
+    Ret = AlIic_Hal_MasterSendDataBlock(Handle, SlaveAddr, Buffer, Size, IIC_MASTER_TEST_TIMEOUT_MS);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
+    /* delay > 10ms for write complete */
+    AlSys_MDelay(100);
+
+    return AL_OK;
+}
+
+AL_S32 AlIic_EepromReadData(AL_IIC_HalStruct *Handle, AL_U16 SlaveAddr, AL_U16 ReadAddr,
+                                   AL_U8 *Buffer, AL_U32 Size)
+{
+    AL_S32 Ret;
+
+    /* Send read address */
+    Ret = AlIic_EepromWriteData(Handle, SlaveAddr, (AL_U8 *)&ReadAddr, sizeof(AddrType));
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
+    /* Read data from eeprom */
+    Ret = AlIic_Hal_MasterRecvDataBlock(Handle, SlaveAddr, Buffer, Size, IIC_MASTER_TEST_TIMEOUT_MS);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
+    return AL_OK;
+}
+
+AL_S32 AlIic_MuxInit(AL_IIC_HalStruct *Handle)
+{
+    AL_S32 Ret;
+    AL_U8 Channel = IIC_EEPROM_CHANNEL;
+
+    Ret = AlIic_EepromWriteData(Handle, IIC_MUX_ADDRESS, &Channel, 1);
+    if (Ret != AL_OK) {
+        return Ret;
+    }
+
+    return AL_OK;
+}
+
+
+AL_VOID ReleasePorts(AL_VOID)
+{
+    AL_REG32_SET_BIT(0xF8800080, 1, 0);
+    AL_REG32_SET_BIT(0xF8801078, 0, 1);
+    AL_REG32_SET_BIT(0xF8801078, 4, 1);
+}
+
+AL_VOID GenerateData(AL_VOID)
+{
+    AL_REG32_WRITE(GP0_Master + STREAM_DATA_GEN_OFFSET + 0x04, TRANSFER_LEN / (AXI_DMA0_S2MM_STREAM_DATA_WIDTH / 8));
+    AL_REG32_WRITE(GP0_Master + STREAM_DATA_GEN_OFFSET + 0x00, TEST_START_VALUE);
+}
+
+AL_VOID PrepareDataCheck(AL_VOID)
+{
+    AL_REG32_WRITE(GP0_Master + STREAM_DATA_CHECK_OFFSET + 0x04, TRANSFER_LEN / (AXI_DMA0_MM2S_STREAM_DATA_WIDTH / 8));
+    AL_REG32_WRITE(GP0_Master + STREAM_DATA_CHECK_OFFSET + 0x00, TEST_START_VALUE);
+}
+
+AL_S32 DmaTransferCheck(AL_U32 direction)
+{
+    AL_S32 Ret = AL_OK;
+
+    if (direction == AL_AXIDMA_DEVICE_TO_DMA) {
+        // S2MM direction check
+        AL_U32 *RxPacket;
+        AL_U32 Index = 0;
+        AL_U32 Value = 0;
+
+        RxPacket = (AL_U32 *)TransferBuffer;
+        Value = TEST_START_VALUE;
+
+        for (Index = 0; Index < TRANSFER_LEN / (AXI_DMA0_S2MM_STREAM_DATA_WIDTH / 8); Index++) {
+            if (RxPacket[Index] != Value) {
+                AL_LOG(AL_LOG_LEVEL_INFO, "S2MM Data error %d: 0x%x/0x%x",
+                       Index, (unsigned int)RxPacket[Index], (unsigned int)Value);
+                return AL_ERROR;
+            }
+            Value = (Value + 1);
+        }
+        // AL_LOG(AL_LOG_LEVEL_INFO, "S2MM AXI Stream manual data check success!");
+    }
+    else if (direction == AL_AXIDMA_DMA_TO_DEVICE) {
+        // MM2S direction check
+        if (AL_REG32_READ(GP0_Master + STREAM_DATA_CHECK_OFFSET + 0x08)) {
+            AL_LOG(AL_LOG_LEVEL_INFO, "MM2S AXI Stream auto data check fail!");
+            Ret = AL_ERROR;
+        }
+        else if (AL_REG32_READ(GP0_Master + STREAM_DATA_CHECK_OFFSET + 0x0c) &&
+                 AL_REG32_READ(GP0_Master + STREAM_DATA_CHECK_OFFSET + 0x10)) {
+            // AL_LOG(AL_LOG_LEVEL_INFO, "MM2S AXI Stream auto data check success!");
+        }
+    }
+
+    return Ret;
+}
+
+AL_VOID AlAxiDmaRegDump(AlAxiDma_HalStruct *Handle, AlAxiDma_TransDirEnum Direction)
+{
+    AL_U64 ChanBase = Handle->Dma.RegBase + (AL_AXI_DMA_S2MM_OFFSET * Direction);
+    const char *direction = (Direction == AL_AXIDMA_DEVICE_TO_DMA) ? "S2MM" : "MM2S";
+
+    AL_LOG(AL_LOG_LEVEL_INFO, "%s DMACR:  0x%x", direction, AL_REG32_READ(ChanBase + AL_AXI_DMA_CR_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_INFO, "%s DMASR:  0x%x", direction, AL_REG32_READ(ChanBase + AL_AXI_DMA_SR_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_INFO, "%s SA:     0x%x", direction, AL_REG32_READ(ChanBase + AL_AXI_DMA_ADDR_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_INFO, "%s SA_MSB: 0x%x", direction, AL_REG32_READ(ChanBase + AL_AXI_DMA_ADDR_MSB_OFFSET));
+    AL_LOG(AL_LOG_LEVEL_INFO, "%s LENGTH: 0x%x", direction, AL_REG32_READ(ChanBase + AL_AXI_DMA_LENTH_OFFSET));
+}
+
 
 #ifdef __cplusplus
 }

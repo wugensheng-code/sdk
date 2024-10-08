@@ -106,6 +106,7 @@ static TaskHandle_t Task13Dma_Handler;
 static TaskHandle_t Task14Dmacahb2_Handler;
 static TaskHandle_t Task15UartProc_Handler;
 static TaskHandle_t Task16AsyncPrint_Handler;
+static TaskHandle_t Task17PlAxiDma_Handler;
 
 static AL_Lock Lock_CanInit;
 static AL_Lock Lock_DmaInit;
@@ -136,6 +137,8 @@ void task13_Dma(void* pvParameters);
 void task14_dmacahb2(void* pvParameters);
 void task15_UartProc(void* pvParameters);
 void task16_AsyncPrint(void* pvParameters);
+void task17_PlAxiDma(void* pvParameters);
+
 
 typedef AL_VOID (*Task15Func)(AL_VOID);
 static AL_S32 task3_DmacahbChEventCallBack(AL_DMACAHB_EventStruct *Event, AL_VOID *CallBackRef);
@@ -268,6 +271,11 @@ int main(void)
                 (uint16_t)PRINT_TASK_STACK_SIZE, (void*)NULL,
                 (UBaseType_t)PRINT_TASK_PRIORITY,
                 (TaskHandle_t*)&Task16AsyncPrint_Handler);
+
+    xTaskCreate((TaskFunction_t)task17_PlAxiDma, (const char*)"task17_PlAxiDma",
+                (uint16_t)PL_AXIDMA_TASK_STACK_SIZE, (void*)NULL,
+                (UBaseType_t)PL_AXIDMA_TASK_PRIORITY,
+                (TaskHandle_t*)&Task17PlAxiDma_Handler);
 
     vTaskStartScheduler();
 
@@ -498,69 +506,79 @@ void task5_dmacahb(void* pvParameters)
 
 void task6_Iic(void* pvParameters)
 {
-    AL_S32 Ret = AL_OK;
-    AL_U8 InitData = 0;
-    AL_U8 Channel = IIC_EEPROM_CHANNEL;
-    AL_U16 SlaveAddr = IIC_EEPROM_START_ADDR;
-    AL_IIC_HalStruct *IicHandle = AL_NULL;
-    AL_U8 *MemWrite = (AL_U8 *)pvPortMalloc(IIC_ADDR_SIZE + IIC_EEPROM_PAGE_SIZE);
-    AL_U8 *MemRead = (AL_U8 *)pvPortMalloc(IIC_EEPROM_PAGE_SIZE);
+    AL_S32 Ret;
+    AL_U16 Index;
+    AL_U8 TestFail = 0;
+    AL_IIC_HalStruct *Handle;
+    AL_U16 SlaveAddr = EEPROM_ADDRESS;
+    AL_U16 WriteLen;
 
-    AL_LOG(AL_LOG_LEVEL_INFO, "Task6 Iic hal init\r\n");
+    AL_IIC_InitStruct InitConfig =
+    {
+        .Mode           = AL_IIC_MODE_MASTER,
+        .AddrMode       = AL_IIC_ADDR_7BIT,
+    };
 
-    Ret = AlIic_Hal_Init(&IicHandle, DMACAHB_DEVICE_ID, &task6_IicConfig, AL_NULL);
+#ifdef BOARD_DR1X90_AD101_V20
+    AL_U8 WriteBuffer[sizeof(AddrType) + EEPROM_PAGE_SIZE] =
+    {
+        0x00, //Read addr 0x00
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x29
+    };
+#else
+    AL_U8 WriteBuffer[sizeof(AddrType) + EEPROM_PAGE_SIZE] =
+    {
+        0x00, //Read addr 0x00
+        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x29,
+        0x31, 0x32, 0x33, 0x34, 0x65, 0x36, 0x37, 0x3a,
+    };
+#endif
+    AL_U8 ReadBuffer[EEPROM_PAGE_SIZE] = {0};
+
+    // AL_LOG(AL_LOG_LEVEL_INFO, "AlIic_E2promExample\r\n");
+
+    Ret = AlIic_Hal_Init(&Handle, AL_IIC_DEVICE_ID, &InitConfig, AL_NULL);
     if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Task6 Iic hal Init error:0x%x\r\n", Ret);
-        while (1);
-    }
-    AL_LOG(AL_LOG_LEVEL_INFO, "Task6 Iic hal init success\r\n");
-
-    Ret = AlIic_Hal_MasterSendDataBlock(IicHandle, IIC_MUX_ADDRESS, &Channel, 1, IIC_TEST_TIMEOUT_MS);
-    if (Ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Task6 Iic Mux Init error:0x%x\r\n", Ret);
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_Hal_Init Failed\r\n");
     }
 
-    MemWrite[0] = (AL_U8) (IIC_EEPROM_START_ADDR);
+    /* IIC MUX, switch EEPROM */
+    AlIic_MuxInit(Handle);
 
-    while (1) {
-        memset(&MemWrite[1], InitData++, IIC_EEPROM_PAGE_SIZE);
-        AL_LOG(AL_LOG_LEVEL_INFO, "Task6 iic Data trans %d\r\n", InitData);
+    if (sizeof(AddrType) == 1) {
+        WriteBuffer[0] = (AL_U8) (EEPROM_TEST_START_ADDR);
+    } else {
+        WriteBuffer[0] = (AL_U8) (EEPROM_TEST_START_ADDR >> 8);
+        WriteBuffer[1] = (AL_U8) (EEPROM_TEST_START_ADDR);
+    }
+    WriteLen = sizeof(WriteBuffer);
 
-        Ret = AlIic_Hal_MasterSendDataBlock(IicHandle, IIC_EEPROM_ADDRESS, MemWrite,
-                                            IIC_ADDR_SIZE + IIC_EEPROM_PAGE_SIZE, IIC_TEST_TIMEOUT_MS);
+    while(1)
+    {
+        /* Page write, Include address, WriteLen should not should not exceed the page size + 1 */
+        Ret = AlIic_EepromWriteData(Handle, SlaveAddr, WriteBuffer, WriteLen);
         if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Task6 Iic send data error:0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_EepromWriteData Failed\r\n");
+            return Ret;
         }
 
-        /* Wait write complete */
-        vTaskDelay(IIC_WAIT_WRITE_COMPLETE);
-
-        /* Send read address */
-        Ret = AlIic_Hal_MasterSendDataBlock(IicHandle, IIC_EEPROM_ADDRESS, (AL_U8 *)&SlaveAddr,
-                                            IIC_ADDR_SIZE, IIC_TEST_TIMEOUT_MS);
+        /* Read data from e2prom */
+        Ret = AlIic_EepromReadData(Handle, SlaveAddr, EEPROM_TEST_START_ADDR, ReadBuffer, EEPROM_PAGE_SIZE);
         if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Task6 Iic send read addr error:0x%x\r\n", Ret);
+            AL_LOG(AL_LOG_LEVEL_ERROR, "AlIic_EepromReadData Failed\r\n");
         }
 
-        /* Read data from eeprom */
-        Ret = AlIic_Hal_MasterRecvDataBlock(IicHandle, IIC_EEPROM_ADDRESS, MemRead,
-                                            IIC_EEPROM_PAGE_SIZE, IIC_TEST_TIMEOUT_MS);
-        if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Task6 Iic recv data error:0x%x\r\n", Ret);
+        for(Index = 0; Index < EEPROM_PAGE_SIZE; Index++) {
+            if (WriteBuffer[Index+sizeof(AddrType)] != ReadBuffer[Index]) {
+                TestFail = 1;
+                break;
+            }
         }
-
-        Ret = memcmp(&MemWrite[1], MemRead, IIC_EEPROM_PAGE_SIZE);
-        if (Ret != AL_OK) {
-            AL_LOG(AL_LOG_LEVEL_ERROR, "Task6 Iic read&write data check error:0x%x\r\n", Ret);
+        if (TestFail) {
+            AL_LOG(AL_LOG_LEVEL_INFO, "E2prom write read fail\r\n");
+        } else {
+            AL_LOG(AL_LOG_LEVEL_INFO, "E2prom write read success\r\n");
         }
-
-        memset(MemRead, 0, IIC_EEPROM_PAGE_SIZE);
-
-        #ifdef ENABLE_MMU
-        AlCache_FlushDcacheRange(MemRead, MemRead + IIC_EEPROM_PAGE_SIZE);
-        #endif
-
-        vTaskDelay(IIC_INTERVAL_TIME);
     }
 }
 
@@ -1000,6 +1018,69 @@ void task16_AsyncPrint(void* pvParameters)
     while (1) {
         AlPrint_AsyncPrintf();
         vTaskDelay(PRINT_INTERVAL_TIME);
+    }
+}
+
+void task17_PlAxiDma(void* pvParameters)
+{
+    AlAxiDma_HalStruct *AxiDmaHandle;
+    AL_S32 Ret = AL_OK;
+
+    AL_LOG(AL_LOG_LEVEL_INFO, "--- Entering main() ---");
+
+    ReleasePorts();
+
+    memset(TransferBuffer, 0, sizeof(TransferBuffer));
+
+    Ret = AlAxiDma_Hal_Init(&AxiDmaHandle, DMA_DEV_ID, &AxiDmaInitConfig, AL_NULL);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_INFO, "AlAxiDma_Hal_Init failed %d", Ret);
+        return Ret;
+    }
+
+    while(1)
+    {
+        // Generate data for S2MM transfer (DEVICE_TO_DMA)
+        GenerateData();
+
+    #if TRANSFER_METHOD == 1
+        Ret = AlAxiDma_Hal_DirectMode_TransferBlock(AxiDmaHandle, TransferBuffer, TRANSFER_LEN, AL_AXIDMA_DEVICE_TO_DMA, AL_WAITFOREVER);
+    #else
+        Ret = AlAxiDma_Hal_DirectMode_TransferPolling(AxiDmaHandle, TransferBuffer, TRANSFER_LEN, AL_AXIDMA_DEVICE_TO_DMA);
+    #endif
+        if (Ret != AL_OK) {
+            return Ret;
+        }
+
+        // AL_LOG(AL_LOG_LEVEL_INFO, "AXI DMA HP0(OCM/DDR)<--AXIStream(PL) S2MM Done\r\n");
+
+        // DATA Check
+        Ret = DmaTransferCheck(AL_AXIDMA_DEVICE_TO_DMA);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_INFO, "DmaTransferCheck S2MM failed 0x%x\r\n", Ret);
+            return Ret;
+        }
+
+        // Prepare for MM2S transfer check
+        PrepareDataCheck();
+
+    #if TRANSFER_METHOD == 1
+        Ret = AlAxiDma_Hal_DirectMode_TransferBlock(AxiDmaHandle, TransferBuffer, TRANSFER_LEN, AL_AXIDMA_DMA_TO_DEVICE, AL_WAITFOREVER);
+    #else
+        Ret = AlAxiDma_Hal_DirectMode_TransferPolling(AxiDmaHandle, TransferBuffer, TRANSFER_LEN, AL_AXIDMA_DMA_TO_DEVICE);
+    #endif
+        if (Ret != AL_OK) {
+            return Ret;
+        }
+
+        // AL_LOG(AL_LOG_LEVEL_INFO, "AXI DMA HP0(OCM/DDR)-->AXIStream(PL) MM2S Done\r\n");
+
+        // DATA Check
+        Ret = DmaTransferCheck(AL_AXIDMA_DMA_TO_DEVICE);
+        if (Ret != AL_OK) {
+            AL_LOG(AL_LOG_LEVEL_INFO, "DmaTransferCheck MM2S failed 0x%x\r\n", Ret);
+            return Ret;
+        }
     }
 }
 
