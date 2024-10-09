@@ -337,18 +337,33 @@ void AlEthlite_RxDoneCallback(void *CallbackRef)
     struct pbuf *p = pbuf_alloc(PBUF_RAW, PBUF_POOL_BUFSIZE, PBUF_POOL);
     if (p == NULL) {
         AlAxiEthLite_Hal_RecvFrameIntr(AXIETHHandle, temp_buffer, &RxFrameLen);
+#if defined(RTOS_RTTHREAD)
+        rt_interrupt_leave();
+#elif defined(RTOS_FREERTOS)
+        xInsideISR--;
+#endif
         return;
     }
 
     Ret = AlAxiEthLite_Hal_RecvFrameIntr(AXIETHHandle, p->payload, &RxFrameLen);
     if ((Ret != AL_OK) || (RxFrameLen == 0)) {
         pbuf_free(p);
+#if defined(RTOS_RTTHREAD)
+        rt_interrupt_leave();
+#elif defined(RTOS_FREERTOS)
+        xInsideISR--;
+#endif
         return;
     }
 
     if (queue_send(recv_q, (void*)p) < 0) {
 
         pbuf_free(p);
+#if defined(RTOS_RTTHREAD)
+        rt_interrupt_leave();
+#elif defined(RTOS_FREERTOS)
+        xInsideISR--;
+#endif
         return;
     }
 
