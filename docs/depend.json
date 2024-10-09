@@ -248,6 +248,15 @@
 				"supportedProc": ["apu-0", "apu-1"],
 				"default": true
 			}
+		},
+		"PL_DRIVER_AXIDMA": {
+			"1.0":{
+				"name": "PL_DRIVER_AXIDMA",
+				"version": "1.0",
+				"depends": ["fpsoc/driver/pl_driver/axi_dma"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
+				"default": true
+			}
 		}
 	},
 	"library": {
@@ -1631,6 +1640,32 @@
 						"PL_DRIVER_IIC_V1_0"
 					],
 					"description": "axi iic loop test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				}
+			}
+		},
+		"PL_DRIVER_AXIDMA": {
+			"1.0":{
+				"AXIDMA_DIRECT": {
+					"name": "AXIDMA_DIRECT",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_iic/example/axidma_direct_mode.c",
+						"PL_DRIVER_AXIDMA_V1_0"
+					],
+					"description": "axi dma direct mode test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"AXIDMA_SG": {
+					"name": "AXIDMA_SG",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_iic/example/axidma_sg_mode.c",
+						"PL_DRIVER_AXIDMA_V1_0"
+					],
+					"description": "axi dma scatter/gather mode test",
 					"supportedOS": ["standalone"],
 					"supportedProc": ["apu-0", "apu-1", "rpu"]
 				}
