@@ -302,7 +302,9 @@ AL_S32 AlQspi_Dev_XipAddr24InitForDMA(AL_QSPI_DevStruct *Qspi)
 
     AlQspi_ll_Disable(Qspi->HwConfig.BaseAddress);
     AlQspi_ll_SetWaitCycles(Qspi->HwConfig.BaseAddress, 0x8);
-    AlQspi_ll_SetClockStretch(Qspi->HwConfig.BaseAddress, QSPI_EnableClockStretch);
+    // AlQspi_ll_SetClockStretch(Qspi->HwConfig.BaseAddress, QSPI_EnableClockStretch);
+    AlQspi_ll_SetClockStretch(Qspi->HwConfig.BaseAddress, QSPI_DisableClockStretch);
+
     AlQspi_ll_SetTransfMode(Qspi->HwConfig.BaseAddress, QSPI_RX_ONLY);
     AlQspi_ll_SetAddrLength(Qspi->HwConfig.BaseAddress, QSPI_ADDR_L24);
     AlQspi_ll_SetInstLength(Qspi->HwConfig.BaseAddress, QSPI_INST_L8);
@@ -311,9 +313,15 @@ AL_S32 AlQspi_Dev_XipAddr24InitForDMA(AL_QSPI_DevStruct *Qspi)
 
     AlQspi_ll_SetXipModeBitEn(Qspi->HwConfig.BaseAddress, QSPI_XipModeBitDisable);
 
-    AlQspi_ll_SetXipDfsFix(Qspi->HwConfig.BaseAddress, QSPI_XipDfsFix);
+
+    // AlQspi_ll_SetXipDfsFix(Qspi->HwConfig.BaseAddress, QSPI_XipDfsFix);
+    AlQspi_ll_SetXipDfsFix(Qspi->HwConfig.BaseAddress, QSPI_XipDfsChange);
+
     AlQspi_ll_SetXipContTrans(Qspi->HwConfig.BaseAddress, QSPI_EnableXipContTrans);
-    AlQspi_ll_SetXipPrefetch(Qspi->HwConfig.BaseAddress, QSPI_DisableXipPrefetch);
+    AlQspi_ll_SetXipPrefetch(Qspi->HwConfig.BaseAddress, QSPI_EnableXipPrefetch);
+    // AlQspi_ll_SetXipContTrans(Qspi->HwConfig.BaseAddress, QSPI_DisableXipContTrans);
+    // AlQspi_ll_SetXipPrefetch(Qspi->HwConfig.BaseAddress, QSPI_DisableXipPrefetch);
+
     AlQspi_ll_SetXipInstPhase(Qspi->HwConfig.BaseAddress, QSPI_XipInstPhaseEnable);
     AlQspi_ll_SetXipIncrInst(Qspi->HwConfig.BaseAddress, NOR_OP_READ_1_1_4);
     /* WRAP transfer types is only supported in continuous XIP mode */
