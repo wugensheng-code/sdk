@@ -13,12 +13,16 @@ extern AlAxiGpio_HwConfigStruct AlAxiGpio_HwCfg[AL_AXI_GPIO_NUM_INSTANCE];
 
 AL_S32 AlAxiGpio_Dev_Init(AlAxiGpio_Dev_Struct *Handle, AlAxiGpio_HwConfigStruct *HwConfig)
 {
+    AL_ASSERT(Handle != AL_NULL, AL_AXI_GPIO_ERR_ILLEGAL_PARAM);
+
     Handle->HwConfig = *HwConfig;
     return AL_OK;
 }
 
 AL_S32 AlAxiGpio_Dev_WritePin(AlAxiGpio_Dev_Struct *Handle, AlAxiGpio_ll_ChannelEnum Channel, AL_U32 Bit, AL_U32 Value)
 {
+
+    AL_ASSERT((Handle != AL_NULL) && (Channel < AXI_GPIO_MAX_CHANNEL) && (Bit < AXI_GPIO_MAX_BIT), AL_AXI_GPIO_ERR_ILLEGAL_PARAM);
     AL_U32 BaseAddr = Handle->HwConfig.BaseAddress;
 
     if (Channel == AL_AXI_GPIO_CHANNEL1)
@@ -36,6 +40,8 @@ AL_S32 AlAxiGpio_Dev_WritePin(AlAxiGpio_Dev_Struct *Handle, AlAxiGpio_ll_Channel
 
 AL_U32 AlAxiGpio_Dev_ReadPin(AlAxiGpio_Dev_Struct *Handle, AlAxiGpio_ll_ChannelEnum Channel, AL_U32 Bit)
 {
+    AL_ASSERT((Handle != AL_NULL) && (Channel < AXI_GPIO_MAX_CHANNEL) && (Bit < AXI_GPIO_MAX_BIT), AL_AXI_GPIO_ERR_ILLEGAL_PARAM);
+
     AL_U32 BaseAddr = Handle->HwConfig.BaseAddress;
     AL_U32 Value;
 
@@ -55,6 +61,8 @@ AL_U32 AlAxiGpio_Dev_ReadPin(AlAxiGpio_Dev_Struct *Handle, AlAxiGpio_ll_ChannelE
 
 AL_S32 AlAxiGpio_Dev_WriteChannel(AlAxiGpio_Dev_Struct *Handle, AlAxiGpio_ll_ChannelEnum Channel, AL_U32 Value)
 {
+    AL_ASSERT((Handle != AL_NULL) && (Channel < AXI_GPIO_MAX_CHANNEL), AL_AXI_GPIO_ERR_ILLEGAL_PARAM);
+
     AL_U32 BaseAddr = Handle->HwConfig.BaseAddress;
     if (Channel == AL_AXI_GPIO_CHANNEL1)
     {
@@ -72,6 +80,8 @@ AL_S32 AlAxiGpio_Dev_WriteChannel(AlAxiGpio_Dev_Struct *Handle, AlAxiGpio_ll_Cha
 
 AL_U32 AlAxiGpio_Dev_ReadChannel(AlAxiGpio_Dev_Struct *Handle, AlAxiGpio_ll_ChannelEnum Channel)
 {
+    AL_ASSERT((Handle != AL_NULL) && (Channel < AXI_GPIO_MAX_CHANNEL), AL_AXI_GPIO_ERR_ILLEGAL_PARAM);
+
     AL_U32 BaseAddr = Handle->HwConfig.BaseAddress;
     AL_U32 Value;
 
@@ -91,54 +101,47 @@ AL_U32 AlAxiGpio_Dev_ReadChannel(AlAxiGpio_Dev_Struct *Handle, AlAxiGpio_ll_Chan
 
 AL_VOID AlAxiGpio_Dev_IntrHandler(AL_VOID *Instance)
 {
-    AlAxiGpio_Dev_Struct *Handle = Instance;
-    AL_U32 BaseAddr = Handle->HwConfig.BaseAddress;
-    AL_U32 IntStatus = AlAxiGpio_ll_GetIntStatus(BaseAddr);
-    
-    /* Channel 1 Interrupt */
-    if (IntStatus & (AlAxiGpio_ll_GetChannelInt(BaseAddr, AL_AXI_GPIO_CHANNEL1) << AL_AXI_GPIO_CHANNEL1))
-    {
-        AlAxiGpio_ll_ClearInt(BaseAddr, AL_AXI_GPIO_CHANNEL1);
-        AlAxiGpio_EventStruct Event = 
-        {
-            .EventData = AL_AXI_GPIO_CHANNEL1
-        };
-        Handle->EventCallBack(&Event, Handle->EventCallBackRef);
+    AlAxiGpio_Dev_Struct *Handle = (AlAxiGpio_Dev_Struct *)Instance;
+    AL_U32 IntStatus = AlAxiGpio_ll_GetIntStatus(Handle->HwConfig.BaseAddress);
+    AL_U32 Status = 0;
+    AL_U32 Channel = 0;
+
+    if ((IntStatus & BIT(AL_AXI_GPIO_CHANNEL1)) && (IntStatus & BIT(AL_AXI_GPIO_CHANNEL2))) {
+        AlAxiGpio_ll_ClearAllInt(Handle->HwConfig.BaseAddress);
+    } else if((IntStatus & BIT(AL_AXI_GPIO_CHANNEL1)) && (!(IntStatus & BIT(AL_AXI_GPIO_CHANNEL2)))) {
+        AlAxiGpio_ll_ClearInt(Handle->HwConfig.BaseAddress, AL_AXI_GPIO_CHANNEL1);
+    } else if((IntStatus & BIT(AL_AXI_GPIO_CHANNEL2)) && (!(IntStatus & BIT(AL_AXI_GPIO_CHANNEL1)))) {
+        AlAxiGpio_ll_ClearInt(Handle->HwConfig.BaseAddress, AL_AXI_GPIO_CHANNEL2);
     }
-    /* Channel 2 Interrupt */
-    else if (IntStatus & (AlAxiGpio_ll_GetChannelInt(BaseAddr, AL_AXI_GPIO_CHANNEL2) << AL_AXI_GPIO_CHANNEL2))
+
+    AlAxiGpio_EventStruct Event =
     {
-        AlAxiGpio_ll_ClearInt(BaseAddr, AL_AXI_GPIO_CHANNEL2);
-        AlAxiGpio_EventStruct Event = 
-        {
-            .EventData = AL_AXI_GPIO_CHANNEL2
-        };
-        Handle->EventCallBack(&Event, Handle->EventCallBackRef);
-    }
+        .Channel = (IntStatus & BIT(AL_AXI_GPIO_CHANNEL1)) | (IntStatus & BIT(AL_AXI_GPIO_CHANNEL2)),
+        .EventData = IntStatus
+    };
+    Handle->EventCallBack(Event, Handle->EventCallBackRef);
 }
 
 AL_S32 AlAxiGpio_Dev_IntInit(AlAxiGpio_Dev_Struct *Handle, AlAxiGpio_ll_ChannelEnum Channel)
 {
+    AL_ASSERT((Handle != AL_NULL) && (Channel < AXI_GPIO_MAX_CHANNEL), AL_AXI_GPIO_ERR_ILLEGAL_PARAM);
+
     AL_U32 BaseAddr = Handle->HwConfig.BaseAddress;
 
     switch (Channel)
     {
-    case AL_AXI_GPIO_CHANNEL1: 
-        AlAxiGpio_ll_SetChannelInt(BaseAddr, AL_AXI_GPIO_CHANNEL1, AL_AXI_GPIO_INT_ENABLE); 
-        break;
-    case AL_AXI_GPIO_CHANNEL2: 
-        AlAxiGpio_ll_SetChannelInt(BaseAddr, AL_AXI_GPIO_CHANNEL2, AL_AXI_GPIO_INT_ENABLE); 
-        break;
-    case AL_AXI_GPIO_ALL_CHAN: 
+    case AL_AXI_GPIO_CHANNEL1:
         AlAxiGpio_ll_SetChannelInt(BaseAddr, AL_AXI_GPIO_CHANNEL1, AL_AXI_GPIO_INT_ENABLE);
-        AlAxiGpio_ll_SetChannelInt(BaseAddr, AL_AXI_GPIO_CHANNEL2, AL_AXI_GPIO_INT_ENABLE); 
         break;
-    default: break;
+    case AL_AXI_GPIO_CHANNEL2:
+        AlAxiGpio_ll_SetChannelInt(BaseAddr, AL_AXI_GPIO_CHANNEL2, AL_AXI_GPIO_INT_ENABLE);
+        break;
+    default:
+        break;
     }
 
-    AL_INTR_AttrStrct intr_attr = { LEVEL_HIGH_TRIGGER, 4 };
-    AlIntr_RegHandler(Handle->HwConfig.IntrId, &intr_attr, AlAxiGpio_Dev_IntrHandler, Handle);
-    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
+    AlIntr_RegHandler(Handle->HwConfig.IntrId, AL_NULL, AlAxiGpio_Dev_IntrHandler, Handle);
+
     return AL_OK;
 }
 

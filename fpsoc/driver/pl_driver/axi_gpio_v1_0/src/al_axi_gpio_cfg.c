@@ -11,13 +11,13 @@
 AlAxiGpio_HwConfigStruct AlAxiGpio_HwCfg[AL_AXI_GPIO_NUM_INSTANCE] =
 {
     {
-        .DeviceId           = 0,
-        .BaseAddress        = AXI_GPIO0__BASE_ADDR,
+        .DeviceId           = AXI_GPIO0_DEVICE_ID,
+        .BaseAddress        = AXI_GPIO0_BASE_ADDR,
         .IntrId             = AXI_GPIO0_IRQn,
     },
     {
-        .DeviceId           = 1,
-        .BaseAddress        = AXI_GPIO1__BASE_ADDR,
+        .DeviceId           = AXI_GPIO1_DEVICE_ID,
+        .BaseAddress        = AXI_GPIO1_BASE_ADDR,
         .IntrId             = AXI_GPIO1_IRQn,
     }
 };

@@ -30,15 +30,15 @@ typedef enum
 typedef enum
 {
     AL_AXI_GPIO_INT_DISABLE = 0,
-    AL_AXI_GPIO_INT_ENABLE  = 1
+    AL_AXI_GPIO_INT_ENABLE  = 1,
 } AlAxiGpio_ll_IntEnum;
 
 typedef enum
 {
     AL_AXI_GPIO_CHANNEL1    = 0,
     AL_AXI_GPIO_CHANNEL2    = 1,
-    AL_AXI_GPIO_ALL_CHAN    = 2
 } AlAxiGpio_ll_ChannelEnum;
+
 
 typedef enum
 {
@@ -136,6 +136,11 @@ static inline AL_U32 AlAxiGpio_ll_GetIntStatus(AL_U32 BaseAddr)
 static inline AL_VOID AlAxiGpio_ll_ClearInt(AL_U32 BaseAddr, AlAxiGpio_ll_ChannelEnum Channel)
 {
     AL_REG32_SET_BIT(BaseAddr + AL_AXI_GPIO_ISR, Channel, 1);
+}
+
+static inline AL_VOID AlAxiGpio_ll_ClearAllInt(AL_U32 BaseAddr)
+{
+    AL_REG32_SET_BITS(BaseAddr + AL_AXI_GPIO_ISR, 0, 2, 0x3);
 }
 
 /***************************** AL_AXI_GPIO_IER ********************************/

@@ -12,11 +12,13 @@ extern "C" {
 #endif
 
 // test, parameters should from TD HPF
-#define AL_AXI_GPIO_NUM_INSTANCE    2 
+#define AL_AXI_GPIO_NUM_INSTANCE    2
+#define AXI_GPIO0_DEVICE_ID         0
+#define AXI_GPIO1_DEVICE_ID         1
 #define AXI_GPIO0_IRQn              114
 #define AXI_GPIO1_IRQn              115
-#define AXI_GPIO0__BASE_ADDR        0x80000000
-#define AXI_GPIO1__BASE_ADDR        0x80100000
+#define AXI_GPIO0_BASE_ADDR        0x80000000
+#define AXI_GPIO1_BASE_ADDR        0x80100000
 
 /***************************** Include Files ********************************/
 #include "al_core.h"
@@ -27,6 +29,9 @@ extern "C" {
 #define AL_AXI_GPIO_TRI2        0x0c
 #define AL_AXI_GPIO_ISR         0x104
 #define AL_AXI_GPIO_IER         0x100
+
+#define AXI_GPIO_MAX_BIT        32
+#define AXI_GPIO_MAX_CHANNEL    2
 
 typedef struct {
     AL_U32                  DeviceId    ;

@@ -14,12 +14,15 @@ extern "C" {
 /***************************** Include Files ********************************/
 #include "al_axi_gpio_ll.h"
 
+#define AL_AXI_GPIO_ERR_ILLEGAL_PARAM    (AL_DEF_ERR(AL_AxiGpio, AL_LOG_LEVEL_ERROR, AL_ERR_ILLEGAL_PARAM))
+
 typedef struct
 {
+    AL_U32                  Channel;
     AL_U32                  EventData;
 } AlAxiGpio_EventStruct;
 
-typedef (*AlAxiGpio_EventCallBack)(AlAxiGpio_EventStruct *Event, AL_VOID *CallbackRef);
+typedef (*AlAxiGpio_EventCallBack)(AlAxiGpio_EventStruct Event, AL_VOID *CallbackRef);
 
 typedef struct
 {
