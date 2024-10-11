@@ -275,6 +275,15 @@
 				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
+		},
+		"PL_DRIVER_VDMA": {
+			"1.0":{
+				"name": "PL_DRIVER_VDMA",
+				"version": "1.0",
+				"depends": ["fpsoc/driver/pl_driver/axi_vdma_v1_0"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
+				"default": true
+			}
 		}
 	},
 	"library": {
@@ -1802,6 +1811,21 @@
 						"PL_DRIVER_UARTLITE_V1_0"
 					],
 					"description": "axi uartlite poll test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				}
+			}
+		},
+		"PL_DRIVER_VDMA": {
+			"1.0":{
+				"VDMA_LOOPBACK": {
+					"name": "VDMA_LOOPBACK",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_vdma/example/axi_vdma_loopback.c",
+						"PL_DRIVER_VDMA_V1_0"
+					],
+					"description": "axi vdma loopback test",
 					"supportedOS": ["standalone"],
 					"supportedProc": ["apu-0", "apu-1", "rpu"]
 				}
