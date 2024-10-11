@@ -1637,6 +1637,98 @@
 				}
 			}
 		},
+        "PL_DRIVER_QSPI": {
+			"1.0":{
+				"QSPI_X1_3BYTE_INTR": {
+					"name": "QSPI_X1_3BYTE_INTR",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_qspi/example/al_axi_qspi_x1_3byte_unit_intr_example.c",
+						"PL_DRIVER_QSPI_V1_0"
+					],
+					"description": "axi qspi x1 3byte intr mode test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"QSPI_X1_3BYTE_POLLED": {
+					"name": "QSPI_X1_3BYTE_POLLED",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_qspi/example/al_axi_qspi_x1_3byte_unit_polled_example.c",
+						"PL_DRIVER_QSPI_V1_0"
+					],
+					"description": "axi qspi x1 3byte polled mode test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+                "QSPI_X1_4BYTE_POLLED": {
+					"name": "QSPI_X1_4BYTE_POLLED",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_qspi/example/al_axi_qspi_x1_4byte_unit_polled_example.c",
+						"PL_DRIVER_QSPI_V1_0"
+					],
+					"description": "axi qspi x1 4byte polled mode test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+                "QSPI_X1_4BYTE_INTR": {
+					"name": "QSPI_X1_4BYTE_INTR",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_qspi/example/al_axi_qspi_x1_4byte_unit_intr_example.c",
+						"PL_DRIVER_QSPI_V1_0"
+					],
+					"description": "axi qspi x1 4byte intr mode test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+                "QSPI_X2_3BYTE_POLLED": {
+					"name": "QSPI_X2_3BYTE_POLLED",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_qspi/example/al_axi_qspi_x2_3byte_unit_polled_example.c",
+						"PL_DRIVER_QSPI_V1_0"
+					],
+					"description": "axi qspi x2 3byte intr mode test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+                "QSPI_X4_3BYTE_POLLED": {
+					"name": "QSPI_X4_3BYTE_POLLED",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_qspi/example/al_axi_qspi_x4_3byte_unit_polled_example.c",
+						"PL_DRIVER_QSPI_V1_0"
+					],
+					"description": "axi qspi x4 3byte intr mode test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+                "QSPI_X1_INTR": {
+					"name": "QSPI_X1_INTR",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_qspi/example/al_axi_qspi_x1_intr_example.c",
+						"PL_DRIVER_QSPI_V1_0"
+					],
+					"description": "axi qspi x1 intr mode test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+                "QSPI_X1_POLLED": {
+					"name": "QSPI_X1_POLLED",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_qspi/example/al_axi_qspi_x1_polled_example.c",
+						"PL_DRIVER_QSPI_V1_0"
+					],
+					"description": "axi qspi x1 polled mode test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				}
+			}
+		},
 		"PL_DRIVER_IIC": {
 			"1.0":{
 				"IIC_EEPROM": {
