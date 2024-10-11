@@ -266,6 +266,15 @@
 				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
+		},
+		"PL_DRIVER_UARTLITE": {
+			"1.0":{
+				"name": "PL_DRIVER_UARTLITE",
+				"version": "1.0",
+				"depends": ["fpsoc/driver/pl_driver/axi_uartlite_v1_0"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
+				"default": true
+			}
 		}
 	},
 	"library": {
@@ -1625,7 +1634,7 @@
 					"description": "axi gpio input test",
 					"supportedOS": ["standalone"],
 					"supportedProc": ["apu-0", "apu-1", "rpu"]
-				} 
+				}
 			}
 		},
 		"PL_DRIVER_IIC": {
@@ -1675,6 +1684,32 @@
 						"PL_DRIVER_AXIDMA_V1_0"
 					],
 					"description": "axi dma scatter/gather mode test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				}
+			}
+		},
+		"PL_DRIVER_UARTLITE": {
+			"1.0":{
+				"UARTLITE_INTR": {
+					"name": "UARTLITE_INTR",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_uartlite_v1_0/example/al_axi_uart_lite_intr_block.c",
+						"PL_DRIVER_UARTLITE_V1_0"
+					],
+					"description": "axi uartlite intr test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"UARTLITE_POLL": {
+					"name": "UARTLITE_POLL",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_uartlite_v1_0/example/al_axi_uart_lite_poll_block.c",
+						"PL_DRIVER_UARTLITE_V1_0"
+					],
+					"description": "axi uartlite poll test",
 					"supportedOS": ["standalone"],
 					"supportedProc": ["apu-0", "apu-1", "rpu"]
 				}
