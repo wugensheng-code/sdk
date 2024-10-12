@@ -4,92 +4,66 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <stddef.h>
-#include <string.h>
-#include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <sys/types.h>
 
-#if defined __aarch64__ || defined __arm__
+#if defined(__aarch64__)
 
-void *fast_memcpy(void *dst, const void *src, size_t length)
+/* Check if SRC or DST is not aligned to a "long" boundary */
+#define UNALIGNED(SRC, DST) \
+    (((uintptr_t)(SRC) & (sizeof(long) - 1)) || ((uintptr_t)(DST) & (sizeof(long) - 1)))
+
+/* Define the byte count for each iteration of the 4X unrolled loop */
+#define BIG_BLOCK_SIZE (sizeof(long) << 2)
+
+/* Define the byte count for each iteration of the word copy loop */
+#define LITTLE_BLOCK_SIZE (sizeof(long))
+
+/* Determine if length is too small for block copying */
+#define TOO_SMALL(LEN) ((LEN) < BIG_BLOCK_SIZE)
+
+void *al_memcpy(void *dst, const void *src, size_t length)
 {
-    union{
-        char *lpstr;
-        uint32_t *lpint;
-    }s;
-    union{
-        char *lpstr;
-        uint32_t *lpint;
-    }d;
+    char *destination = dst;
+    const char *source = src;
+    long *aligned_destination;
+    const long *aligned_source;
 
-    char *suffix = (void*)(((uint64_t)src) + length);
-    char *prefix = (void*)(((uint64_t)src) & (~(sizeof(uint32_t)-1)));
-    uint32_t *middle = (void*)(((uint64_t)suffix) & (~(sizeof(uint32_t)-1)));
-
-
-    s.lpstr = (void*)src;
-    d.lpstr = (void*)dst;
-
-    if (prefix != src)
-    {
-        while(s.lpstr < prefix + sizeof(uint32_t))
-        {
-            *d.lpstr++ = *s.lpstr ++;
-        }
-    }
-
-    while(s.lpint < middle - (sizeof(uint32_t) * 8))
-    {
-        *d.lpint++ = *s.lpint ++;
-        *d.lpint++ = *s.lpint ++;
-        *d.lpint++ = *s.lpint ++;
-        *d.lpint++ = *s.lpint ++;
-        *d.lpint++ = *s.lpint ++;
-        *d.lpint++ = *s.lpint ++;
-        *d.lpint++ = *s.lpint ++;
-        *d.lpint++ = *s.lpint ++;
-    }
-
-    while(s.lpint < middle - (sizeof(uint32_t) * 4))
-    {
-        *d.lpint++ = *s.lpint ++;
-        *d.lpint++ = *s.lpint ++;
-        *d.lpint++ = *s.lpint ++;
-        *d.lpint++ = *s.lpint ++;
-    }
-
-    while(s.lpint < middle - (sizeof(uint32_t) * 2))
-    {
-        *d.lpint++ = *s.lpint ++;
-        *d.lpint++ = *s.lpint ++;
-    }
-
-    while(s.lpint < middle) *d.lpint++ = *s.lpint ++;
-    while(s.lpstr < suffix) *d.lpstr++ = *s.lpstr ++;
-
-    return dst;
-}
-
-void *memcpy(void *dst, const void *src, size_t length)
-{
-    if ((((uint32_t)(uint64_t)src) & (~(sizeof(uint32_t)-1))) != (((uint32_t)(uint64_t)dst) & (~(sizeof(uint32_t)-1))))
-    {
-        char *lpSrc = (void*)src;
-        char *lpDst = (void*)dst;
-        char *lpTail = lpSrc + length;
-
-        while(lpSrc < lpTail) *lpDst ++ = *lpSrc ++;
-
+    if (src == dst) {
         return dst;
     }
 
-    return fast_memcpy(dst, src, length);
+    /* Use block copy if conditions are suitable (large size and aligned) */
+    if (!TOO_SMALL(length) && !UNALIGNED(source, destination)) {
+        aligned_destination = (long *)destination;
+        aligned_source = (const long *)source;
 
+        /* Perform the copy in chunks of 4 long words */
+        while (length >= BIG_BLOCK_SIZE) {
+            *aligned_destination++ = *aligned_source++;
+            *aligned_destination++ = *aligned_source++;
+            *aligned_destination++ = *aligned_source++;
+            *aligned_destination++ = *aligned_source++;
+            length -= BIG_BLOCK_SIZE;
+        }
+
+        /* Continue copying one long word at a time */
+        while (length >= LITTLE_BLOCK_SIZE) {
+            *aligned_destination++ = *aligned_source++;
+            length -= LITTLE_BLOCK_SIZE;
+        }
+
+        /* Handle any remaining bytes */
+        destination = (char *)aligned_destination;
+        source = (const char *)aligned_source;
+    }
+
+    /* Copy remaining data byte by byte */
+    while (length--) {
+        *destination++ = *source++;
+    }
+
+    return dst;
 }
 
 #endif

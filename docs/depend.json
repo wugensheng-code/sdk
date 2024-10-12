@@ -1770,7 +1770,7 @@
 					"name": "AXIDMA_DIRECT",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/axi_iic/example/axidma_direct_mode.c",
+						"fpsoc/driver/pl_driver/axi_dma/example/axidma_direct_mode.c",
 						"PL_DRIVER_AXIDMA_V1_0"
 					],
 					"description": "axi dma direct mode test",
@@ -1781,7 +1781,7 @@
 					"name": "AXIDMA_SG",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/axi_iic/example/axidma_sg_mode.c",
+						"fpsoc/driver/pl_driver/axi_dma/example/axidma_sg_mode.c",
 						"PL_DRIVER_AXIDMA_V1_0"
 					],
 					"description": "axi dma scatter/gather mode test",
