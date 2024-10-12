@@ -226,7 +226,7 @@
 			"1.0":{
 				"name": "PL_DRIVER_GPIO",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/pl_driver/axi_gpio_v1_0"],
+				"depends": ["fpsoc/driver/pl_driver/axi_gpio"],
 				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
@@ -271,7 +271,7 @@
 			"1.0":{
 				"name": "PL_DRIVER_UARTLITE",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/pl_driver/axi_uartlite_v1_0"],
+				"depends": ["fpsoc/driver/pl_driver/axi_uartlite"],
 				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
@@ -1626,7 +1626,7 @@
 					"name": "GPIO_OUTPUT",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/axi_gpio_v1_0/example/axi_gpio_output_led.c",
+						"fpsoc/driver/pl_driver/axi_gpio/example/axi_gpio_output_led.c",
 						"PL_DRIVER_GPIO_V1_0"
 					],
 					"description": "axi gpio output test",
@@ -1637,7 +1637,7 @@
 					"name": "GPIO_INPUT",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/axi_gpio_v1_0/example/axi_gpio_input_key.c",
+						"fpsoc/driver/pl_driver/axi_gpio/example/axi_gpio_input_key.c",
 						"PL_DRIVER_GPIO_V1_0"
 					],
 					"description": "axi gpio input test",
@@ -1796,7 +1796,7 @@
 					"name": "UARTLITE_INTR",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/axi_uartlite_v1_0/example/al_axi_uart_lite_intr_block.c",
+						"fpsoc/driver/pl_driver/axi_uartlite/example/al_axi_uart_lite_intr_block.c",
 						"PL_DRIVER_UARTLITE_V1_0"
 					],
 					"description": "axi uartlite intr test",
@@ -1807,7 +1807,7 @@
 					"name": "UARTLITE_POLL",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/axi_uartlite_v1_0/example/al_axi_uart_lite_poll_block.c",
+						"fpsoc/driver/pl_driver/axi_uartlite/example/al_axi_uart_lite_poll_block.c",
 						"PL_DRIVER_UARTLITE_V1_0"
 					],
 					"description": "axi uartlite poll test",
