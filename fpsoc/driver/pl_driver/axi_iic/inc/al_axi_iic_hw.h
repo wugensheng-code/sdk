@@ -11,10 +11,12 @@
 extern "C" {
 #endif
 
-// test, parameter from TD hpf file 
+// test, parameter from TD hpf file
 #define AL_AXI_IIC_NUM_INSTANCE 2
-#define AXI_I2C0__BASE_ADDR 0x80000000
-#define AXI_I2C1__BASE_ADDR 0x80100000
+#define AXI_IIC0_DEVICE_ID 0
+#define AXI_IIC1_DEVICE_ID 1
+#define AXI_I2C0_BASE_ADDR 0x80000000
+#define AXI_I2C1_BASE_ADDR 0x80100000
 #define AXI_IIC0_IRQn 114
 #define AXI_IIC1_IRQn 115
 
