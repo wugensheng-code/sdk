@@ -274,15 +274,105 @@ static AL_S32 AlNor_SetWrapMode1(void)
     }
 }
 
+static AL_S32 AlNor_SetXipAndWrap_GD25LB256B(void)
+{
+    AL_S32  Ret = AL_OK;
+    AL_U8 XipCfgVal = 0xFE;
+    AL_U8 WrapCfgVal = 0xFE;
+    AL_U8 SendData[5] = { 0x0 }, Data = 0;
+    AL_U8 ReadbackVal = 0;
+
+    AlNor_Wren();
+
+    SendData[0] = 0x81;
+    SendData[1] = 0x06;
+    SendData[2] = 0x06;
+    SendData[3] = 0x06;
+    SendData[4] = XipCfgVal;
+    Handle->Dev.Configs.Trans.TransMode  = QSPI_TX_ONLY;
+    Handle->Dev.Configs.SpiFrameFormat  = SPI_STANDARD_FORMAT;
+    Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L24;
+    Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
+    Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 5, 100000);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_READID error:0x%x\r\n", Ret);
+    }
+
+    AlNor_WaitWip();
+
+    SendData[0] = 0x85;
+    SendData[1] = 0x06;
+    SendData[2] = 0x06;
+    SendData[3] = 0x06;
+    Handle->Dev.Configs.Trans.TransMode  = QSPI_EEPROM;
+    Handle->Dev.Configs.SpiFrameFormat  = SPI_STANDARD_FORMAT;
+    Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 8;
+    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L24;
+    Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
+    Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 5, &ReadbackVal, 1, 100000);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_READID error:0x%x\r\n", Ret);
+    }
+
+    if (ReadbackVal != XipCfgVal) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Set xip enable error\r\n");
+    }
+
+    AlNor_Wren();
+
+    SendData[0] = 0x81;
+    SendData[1] = 0x07;
+    SendData[2] = 0x07;
+    SendData[3] = 0x07;
+    SendData[4] = WrapCfgVal;
+    Handle->Dev.Configs.Trans.TransMode  = QSPI_TX_ONLY;
+    Handle->Dev.Configs.SpiFrameFormat  = SPI_STANDARD_FORMAT;
+    Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L24;
+    Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
+    Ret = AlQspi_Hal_SendDataBlock(Handle, SendData, 5, 100000);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_READID error:0x%x\r\n", Ret);
+    }
+
+    AlNor_WaitWip();
+
+    SendData[0] = 0x85;
+    SendData[1] = 0x07;
+    SendData[2] = 0x07;
+    SendData[3] = 0x07;
+    Handle->Dev.Configs.Trans.TransMode  = QSPI_EEPROM;
+    Handle->Dev.Configs.SpiFrameFormat  = SPI_STANDARD_FORMAT;
+    Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 8;
+    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L24;
+    Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT0;
+    Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
+    Ret = AlQspi_Hal_TranferDataBlock(Handle, SendData, 5, &ReadbackVal, 1, 100000);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "AL_NOR_READID error:0x%x\r\n", Ret);
+    }
+
+    if (ReadbackVal != WrapCfgVal) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Set xip enable error\r\n");
+    }
+
+    return Ret;
+}
+
 AL_S32 AlNor_SetWrap(void)
 {
     if (FlashId[1] == 0x40 && FlashId[2] == 0x18) {
         return AlNor_SetWrapMode1();
+    } else if (FlashId[0] == 0xC8 && FlashId[1] == 0x67 && FlashId[2] == 0x19) {
+        return AlNor_SetXipAndWrap_GD25LB256B();
     } else {
         return AlNor_SetWrapMode0();
     }
 }
-
 
 AL_U32 AlFsbl_QspiInit(void)
 {
