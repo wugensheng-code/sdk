@@ -1513,6 +1513,8 @@ static AL_S32 AlDma_Dev_BuildDmaProg(AL_U8 DryRun, AL_DMA_DevStruct *Dev, AL_DMA
 
     if (!XferSpec->Desc->Cyclic) {
         Off += AlDma_Dev_SetupXfer(DryRun, Dev, &Buf[Off], XferSpec);
+        /* Add a memory barrier before DMASSEV as recommended by spec */
+        Off += DMA_Instr_DMAWMB(DryRun, &Buf[Off]);
         /* DMASEV peripheral/event */
         Off += DMA_Instr_DMASEV(DryRun, &Buf[Off], Channel);
         /* DMAEND */
