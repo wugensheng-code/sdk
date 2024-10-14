@@ -240,20 +240,20 @@
 				"default": true
 			}
 		},
-		"PL_DRIVER_QSPI": {
+		"PL_DRIVER_QUAD_SPI": {
 			"1.0":{
-				"name": "PL_DRIVER_QSPI",
+				"name": "PL_DRIVER_QUAD_SPI",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/pl_driver/axi_qspi"],
+				"depends": ["fpsoc/driver/pl_driver/axi_quad_spi"],
 				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
-		"PL_DRIVER_ETHLITE": {
+		"PL_DRIVER_ETHERNET_LITE": {
 			"1.0":{
-				"name": "PL_DRIVER_ETHLITE",
+				"name": "PL_DRIVER_ETHERNET_LITE",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/pl_driver/axi_eth_lite"],
+				"depends": ["fpsoc/driver/pl_driver/axi_ethernet_lite"],
 				"supportedProc": ["apu-0", "apu-1"],
 				"default": true
 			}
@@ -267,11 +267,11 @@
 				"default": true
 			}
 		},
-		"PL_DRIVER_UARTLITE": {
+		"PL_DRIVER_UART_LITE": {
 			"1.0":{
-				"name": "PL_DRIVER_UARTLITE",
+				"name": "PL_DRIVER_UART_LITE",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/pl_driver/axi_uartlite"],
+				"depends": ["fpsoc/driver/pl_driver/axi_uart_lite"],
 				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
@@ -280,7 +280,7 @@
 			"1.0":{
 				"name": "PL_DRIVER_VDMA",
 				"version": "1.0",
-				"depends": ["fpsoc/driver/pl_driver/axi_vdma_v1_0"],
+				"depends": ["fpsoc/driver/pl_driver/vdma"],
 				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
@@ -1646,14 +1646,14 @@
 				}
 			}
 		},
-        "PL_DRIVER_QSPI": {
+        "PL_DRIVER_QUAD_SPI": {
 			"1.0":{
 				"QSPI_X1_3BYTE_INTR": {
 					"name": "QSPI_X1_3BYTE_INTR",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/axi_qspi/example/al_axi_qspi_x1_3byte_unit_intr_example.c",
-						"PL_DRIVER_QSPI_V1_0"
+						"fpsoc/driver/pl_driver/axi_quad_spi/example/al_axi_qspi_x1_3byte_unit_intr_example.c",
+						"PL_DRIVER_QUAD_SPI_V1_0"
 					],
 					"description": "axi qspi x1 3byte intr mode test",
 					"supportedOS": ["standalone"],
@@ -1663,8 +1663,8 @@
 					"name": "QSPI_X1_3BYTE_POLLED",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/axi_qspi/example/al_axi_qspi_x1_3byte_unit_polled_example.c",
-						"PL_DRIVER_QSPI_V1_0"
+						"fpsoc/driver/pl_driver/axi_quad_spi/example/al_axi_qspi_x1_3byte_unit_polled_example.c",
+						"PL_DRIVER_QUAD_SPI_V1_0"
 					],
 					"description": "axi qspi x1 3byte polled mode test",
 					"supportedOS": ["standalone"],
@@ -1674,8 +1674,8 @@
 					"name": "QSPI_X1_4BYTE_POLLED",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/axi_qspi/example/al_axi_qspi_x1_4byte_unit_polled_example.c",
-						"PL_DRIVER_QSPI_V1_0"
+						"fpsoc/driver/pl_driver/axi_quad_spi/example/al_axi_qspi_x1_4byte_unit_polled_example.c",
+						"PL_DRIVER_QUAD_SPI_V1_0"
 					],
 					"description": "axi qspi x1 4byte polled mode test",
 					"supportedOS": ["standalone"],
@@ -1685,8 +1685,8 @@
 					"name": "QSPI_X1_4BYTE_INTR",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/axi_qspi/example/al_axi_qspi_x1_4byte_unit_intr_example.c",
-						"PL_DRIVER_QSPI_V1_0"
+						"fpsoc/driver/pl_driver/axi_quad_spi/example/al_axi_qspi_x1_4byte_unit_intr_example.c",
+						"PL_DRIVER_QUAD_SPI_V1_0"
 					],
 					"description": "axi qspi x1 4byte intr mode test",
 					"supportedOS": ["standalone"],
@@ -1696,8 +1696,8 @@
 					"name": "QSPI_X2_3BYTE_POLLED",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/axi_qspi/example/al_axi_qspi_x2_3byte_unit_polled_example.c",
-						"PL_DRIVER_QSPI_V1_0"
+						"fpsoc/driver/pl_driver/axi_quad_spi/example/al_axi_qspi_x2_3byte_unit_polled_example.c",
+						"PL_DRIVER_QUAD_SPI_V1_0"
 					],
 					"description": "axi qspi x2 3byte intr mode test",
 					"supportedOS": ["standalone"],
@@ -1707,8 +1707,8 @@
 					"name": "QSPI_X4_3BYTE_POLLED",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/axi_qspi/example/al_axi_qspi_x4_3byte_unit_polled_example.c",
-						"PL_DRIVER_QSPI_V1_0"
+						"fpsoc/driver/pl_driver/axi_quad_spi/example/al_axi_qspi_x4_3byte_unit_polled_example.c",
+						"PL_DRIVER_QUAD_SPI_V1_0"
 					],
 					"description": "axi qspi x4 3byte intr mode test",
 					"supportedOS": ["standalone"],
@@ -1718,8 +1718,8 @@
 					"name": "QSPI_X1_INTR",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/axi_qspi/example/al_axi_qspi_x1_intr_example.c",
-						"PL_DRIVER_QSPI_V1_0"
+						"fpsoc/driver/pl_driver/axi_quad_spi/example/al_axi_qspi_x1_intr_example.c",
+						"PL_DRIVER_QUAD_SPI_V1_0"
 					],
 					"description": "axi qspi x1 intr mode test",
 					"supportedOS": ["standalone"],
@@ -1729,8 +1729,8 @@
 					"name": "QSPI_X1_POLLED",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/axi_qspi/example/al_axi_qspi_x1_polled_example.c",
-						"PL_DRIVER_QSPI_V1_0"
+						"fpsoc/driver/pl_driver/axi_quad_spi/example/al_axi_qspi_x1_polled_example.c",
+						"PL_DRIVER_QUAD_SPI_V1_0"
 					],
 					"description": "axi qspi x1 polled mode test",
 					"supportedOS": ["standalone"],
@@ -1790,16 +1790,16 @@
 				}
 			}
 		},
-		"PL_DRIVER_UARTLITE": {
+		"PL_DRIVER_UART_LITE": {
 			"1.0":{
 				"UARTLITE_INTR": {
 					"name": "UARTLITE_INTR",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/axi_uartlite/example/al_axi_uart_lite_intr_block.c",
-						"PL_DRIVER_UARTLITE_V1_0"
+						"fpsoc/driver/pl_driver/axi_uart_lite/example/al_axi_uart_lite_intr_block.c",
+						"PL_DRIVER_UART_LITE_V1_0"
 					],
-					"description": "axi uartlite intr test",
+					"description": "axi uart_lite intr test",
 					"supportedOS": ["standalone"],
 					"supportedProc": ["apu-0", "apu-1", "rpu"]
 				},
@@ -1807,10 +1807,10 @@
 					"name": "UARTLITE_POLL",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/axi_uartlite/example/al_axi_uart_lite_poll_block.c",
-						"PL_DRIVER_UARTLITE_V1_0"
+						"fpsoc/driver/pl_driver/axi_uart_lite/example/al_axi_uart_lite_poll_block.c",
+						"PL_DRIVER_UART_LITE_V1_0"
 					],
-					"description": "axi uartlite poll test",
+					"description": "axi uart_lite poll test",
 					"supportedOS": ["standalone"],
 					"supportedProc": ["apu-0", "apu-1", "rpu"]
 				}
@@ -1822,7 +1822,7 @@
 					"name": "VDMA_LOOPBACK",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/axi_vdma/example/axi_vdma_loopback.c",
+						"fpsoc/driver/pl_driver/vdma/example/axi_vdma_loopback.c",
 						"PL_DRIVER_VDMA_V1_0"
 					],
 					"description": "axi vdma loopback test",
