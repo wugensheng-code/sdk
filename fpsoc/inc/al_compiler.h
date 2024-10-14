@@ -171,8 +171,10 @@
 
 #endif
 
+#define WORD_SIZE         4
 #define CACHE_LINE_SIZE   64
 
+#define word_aligned __attribute__((__aligned__(WORD_SIZE)))
 #define cacheline_aligned __attribute__((__aligned__(CACHE_LINE_SIZE)))
 
 #if __has_attribute(__fallthrough__)
