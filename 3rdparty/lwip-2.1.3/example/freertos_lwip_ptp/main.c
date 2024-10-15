@@ -102,7 +102,7 @@ void eth_init_thread(void *arg)
 
 int main(void)
 {
-    printf("freertos_lwip_ping start>>>\r\n");
+    printf("FreeRtos LWIP PTP example\r\n");
 
     sys_thread_new("eth_init_thread", eth_init_thread, NULL,
                    3072/8,
