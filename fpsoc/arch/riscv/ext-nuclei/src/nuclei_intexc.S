@@ -406,7 +406,7 @@ ECLIC_Isr_Vect:
 
 #ifdef RTOS_FREERTOS
     LOAD   x1, 0(sp)
-    LOAD   x5, 8(sp)
+    LOAD   x5, 4(sp)
     STORE  x1, 0(x5)
     addi   sp, sp, 2*REGBYTES
 #endif
