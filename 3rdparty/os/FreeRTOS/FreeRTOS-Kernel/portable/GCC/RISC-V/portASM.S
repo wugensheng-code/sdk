@@ -36,12 +36,140 @@
 
 #define portCONTEXT_SIZE    ( portRegNum * REGBYTES )
 
+#define portasmADDITIONAL_CONTEXT_SIZE  0
+
 .section    .text.entry
 .align 8
 
 .extern xPortTaskSwitch
 .extern pxCurrentTCB
 .global prvPortStartFirstTask
+.global pxPortInitialiseStack
+
+#ifdef __riscv_flen
+
+#if __riscv_flen == 32
+    #define store_fpu           fsw
+    #define load_fpu            flw
+    #define FREGBYTES           4
+#endif
+#if __riscv_flen == 64
+    #define store_fpu           fsd
+    #define load_fpu            fld
+    #define FREGBYTES           8
+#endif
+
+/* offset 0 * FREGBYTES - mepc
+ * offset 1 * FREGBYTES - mstatus
+ * offset (2 - 32) * FREGBYTES - float registers
+ */
+#define portFPU_CONTEXT_WORDS   34
+#define portFPU_CONTEXT_SIZE (portFPU_CONTEXT_WORDS * FREGBYTES)
+
+.macro portasmSAVE_FPU_REGISTERS
+    addi    sp, sp, -portFPU_CONTEXT_SIZE
+    /* get FS field from mstatus */
+    li t0, MSTATUS_FS
+    csrr    t1, mstatus
+    STORE t1, 33 * FREGBYTES(sp)
+    and t0, t1, t0
+    /* Make room for the additional FPU registers. */
+    store_fpu  f0, 1 * FREGBYTES(sp)
+    store_fpu  f1, 2 * FREGBYTES(sp)
+    store_fpu  f2, 3 * FREGBYTES(sp)
+    store_fpu  f3, 4 * FREGBYTES(sp)
+    store_fpu  f4, 5 * FREGBYTES(sp)
+    store_fpu  f5, 6 * FREGBYTES(sp)
+    store_fpu  f6, 7 * FREGBYTES(sp)
+    store_fpu  f7, 8 * FREGBYTES(sp)
+    store_fpu  f8, 9 * FREGBYTES(sp)
+    store_fpu  f9, 10 * FREGBYTES(sp)
+    store_fpu  f10, 11 * FREGBYTES(sp)
+    store_fpu  f11, 12 * FREGBYTES(sp)
+    store_fpu  f12, 13 * FREGBYTES(sp)
+    store_fpu  f13, 14 * FREGBYTES(sp)
+    store_fpu  f14, 15 * FREGBYTES(sp)
+    store_fpu  f15, 16 * FREGBYTES(sp)
+    store_fpu  f16, 17 * FREGBYTES(sp)
+    store_fpu  f17, 18 * FREGBYTES(sp)
+    store_fpu  f18, 19 * FREGBYTES(sp)
+    store_fpu  f19, 20 * FREGBYTES(sp)
+    store_fpu  f20, 21 * FREGBYTES(sp)
+    store_fpu  f21, 22 * FREGBYTES(sp)
+    store_fpu  f22, 23 * FREGBYTES(sp)
+    store_fpu  f23, 24 * FREGBYTES(sp)
+    store_fpu  f24, 25 * FREGBYTES(sp)
+    store_fpu  f25, 26 * FREGBYTES(sp)
+    store_fpu  f26, 27 * FREGBYTES(sp)
+    store_fpu  f27, 28 * FREGBYTES(sp)
+    store_fpu  f28, 29 * FREGBYTES(sp)
+    store_fpu  f29, 30 * FREGBYTES(sp)
+    store_fpu  f30, 31 * FREGBYTES(sp)
+    store_fpu  f31, 32 * FREGBYTES(sp)
+
+    /* must set FS to clean */
+    csrc    mstatus, t0
+    li  t1, MSTATUS_FS_CLEAN
+    csrs    mstatus, t1
+1:
+    .endm
+
+.macro portasmRESTORE_FPU_REGISTERS
+    LOAD  t1, 33 * FREGBYTES(sp)
+    /* get FS field from mstatus */
+    li t0, MSTATUS_FS
+    and t0, t1, t0
+     /* FS == dirty */
+    csrs    mstatus, t0
+    load_fpu   f0, 1 * FREGBYTES(sp)
+    load_fpu   f1, 2 * FREGBYTES(sp)
+    load_fpu   f2, 3 * FREGBYTES(sp)
+    load_fpu   f3, 4 * FREGBYTES(sp)
+    load_fpu   f4, 5 * FREGBYTES(sp)
+    load_fpu   f5, 6 * FREGBYTES(sp)
+    load_fpu   f6, 7 * FREGBYTES(sp)
+    load_fpu   f7, 8 * FREGBYTES(sp)
+    load_fpu   f8, 9 * FREGBYTES(sp)
+    load_fpu   f9, 10 * FREGBYTES(sp)
+    load_fpu   f10, 11 * FREGBYTES(sp)
+    load_fpu   f11, 12 * FREGBYTES(sp)
+    load_fpu   f12, 13 * FREGBYTES(sp)
+    load_fpu   f13, 14 * FREGBYTES(sp)
+    load_fpu   f14, 15 * FREGBYTES(sp)
+    load_fpu   f15, 16 * FREGBYTES(sp)
+    load_fpu   f16, 17 * FREGBYTES(sp)
+    load_fpu   f17, 18 * FREGBYTES(sp)
+    load_fpu   f18, 19 * FREGBYTES(sp)
+    load_fpu   f19, 20 * FREGBYTES(sp)
+    load_fpu   f20, 21 * FREGBYTES(sp)
+    load_fpu   f21, 22 * FREGBYTES(sp)
+    load_fpu   f22, 23 * FREGBYTES(sp)
+    load_fpu   f23, 24 * FREGBYTES(sp)
+    load_fpu   f24, 25 * FREGBYTES(sp)
+    load_fpu   f25, 26 * FREGBYTES(sp)
+    load_fpu   f26, 27 * FREGBYTES(sp)
+    load_fpu   f27, 28 * FREGBYTES(sp)
+    load_fpu   f28, 29 * FREGBYTES(sp)
+    load_fpu   f29, 30 * FREGBYTES(sp)
+    load_fpu   f30, 31 * FREGBYTES(sp)
+    load_fpu   f31, 32 * FREGBYTES(sp)
+
+    /* must set FS to clean */
+    csrc    mstatus, t0
+    li  t1, MSTATUS_FS_CLEAN
+    csrs    mstatus, t1
+1:
+    addi    sp, sp, portFPU_CONTEXT_SIZE
+    .endm
+
+#else
+
+.macro portasmSAVE_FPU_REGISTERS
+.endm
+.macro portasmRESTORE_FPU_REGISTERS
+.endm
+
+#endif
 
 /**
  * \brief  Global interrupt disabled
@@ -64,7 +192,7 @@
 */
 /* Save caller registers */
 .macro SAVE_CONTEXT
-    csrrw sp, CSR_MSCRATCH, sp
+    csrrw sp, CSR_MSCRATCHCSWL, sp
     /* Allocate stack space for context saving */
 #ifndef __riscv_32e
     addi sp, sp, -20*REGBYTES
@@ -128,7 +256,7 @@
     /* De-allocate the stack space */
     addi sp, sp, 14*REGBYTES
 #endif /* __riscv_32e */
-    csrrw sp, CSR_MSCRATCH, sp
+    csrrw sp, CSR_MSCRATCHCSWL, sp
 .endm
 
 /**
@@ -200,52 +328,6 @@ exc_entry:
     /* Return to regular code */
     mret
 
-// /**
-//  * \brief  Non-Vector Interrupt Entry
-//  * \details
-//  * This function provide common entry functions for handling
-//  * non-vector interrupts
-//  * \remarks
-//  * This function provide a default non-vector interrupt entry.
-//  * ABI defined caller save register and some CSR registers need
-//  * to be saved before enter interrupt handler and be restored before return.
-//  */
-// .section      .text.irq
-// /* In CLIC mode, the interrupt entry must be 4bytes aligned */
-// .align 2
-// .global irq_entry
-// /* This label will be set to MTVT2 register */
-// irq_entry:
-//     /* Save the caller saving registers (context) */
-//     SAVE_CONTEXT
-//     /* Save the necessary CSR registers */
-//     SAVE_CSR_CONTEXT
-
-//     /* This special CSR read/write operation, which is actually
-//      * claim the CLIC to find its pending highest ID, if the ID
-//      * is not 0, then automatically enable the mstatus.MIE, and
-//      * jump to its vector-entry-label, and update the link register
-//      */
-//     csrrw ra, CSR_JALMNXTI, ra
-
-//     /* Critical section with interrupts disabled */
-//     DISABLE_MIE
-
-//     /* Restore the necessary CSR registers */
-//     RESTORE_CSR_CONTEXT
-//     /* Restore the caller saving registers (context) */
-//     RESTORE_CONTEXT
-
-//     /* Return to regular code */
-//     mret
-
-// /* Default Handler for Exceptions / Interrupts */
-// .global default_intexc_handler
-// Undef_Handler:
-// default_intexc_handler:
-// 1:
-//     j 1b
-
 /* Start the first task.  This also clears the bit that indicates the FPU is
     in use in case the FPU was used before the scheduler was started - which
     would otherwise result in the unnecessary leaving of space in the stack
@@ -256,7 +338,7 @@ prvPortStartFirstTask:
        The stack that was used by main()
        before the scheduler is started is
        no longer required after the scheduler is started.
-       Interrupt stack pointer is stored in CSR_MSCRATCH */
+       Interrupt stack pointer is stored in CSR_MSCRATCHCSWL */
     la t0, _sp
     csrw CSR_MSCRATCH, t0
     LOAD sp, pxCurrentTCB           /* Load pxCurrentTCB. */
@@ -265,10 +347,18 @@ prvPortStartFirstTask:
     /* Pop PC from stack and set MEPC */
     LOAD t0,  0  * REGBYTES(sp)
     csrw CSR_MEPC, t0
+
+    LOAD t0,  (portRegNum + portFPU_CONTEXT_WORDS - 1)  * REGBYTES(sp)
+    fscsr t0
+
+
     /* Pop mstatus from stack and set it */
-    LOAD t0,  (portRegNum - 1)  * REGBYTES(sp)
+    LOAD t0,  (portRegNum + portFPU_CONTEXT_WORDS - 2)  * REGBYTES(sp)
     csrw CSR_MSTATUS, t0
     /* Interrupt still disable here */
+
+    portasmRESTORE_FPU_REGISTERS
+    
     /* Restore Registers from Stack */
     LOAD x1,  1  * REGBYTES(sp)    /* RA */
     LOAD x5,  2  * REGBYTES(sp)
@@ -341,9 +431,16 @@ eclic_msip_handler:
 #endif
     /* Push mstatus to stack */
     csrr t0, CSR_MSTATUS
-    STORE t0,  (portRegNum - 1)  * REGBYTES(sp)
+    STORE t0,  (portRegNum - 2)  * REGBYTES(sp)
+    
+    frcsr t0
+    STORE t0, (portRegNum - 1)  * REGBYTES(sp)
+    fscsr zero
+    li  t1, MSTATUS_FS_CLEAN
+    csrs    mstatus, t1
 
     /* Push additional registers */
+    portasmSAVE_FPU_REGISTERS
 
     /* Store sp to task stack */
     LOAD t0, pxCurrentTCB
@@ -360,10 +457,15 @@ eclic_msip_handler:
     /* Pop PC from stack and set MEPC */
     LOAD t0,  0  * REGBYTES(sp)
     csrw CSR_MEPC, t0
+
     /* Pop additional registers */
+    portasmRESTORE_FPU_REGISTERS
+
+    LOAD t0,  (portRegNum - 1)  * REGBYTES(sp)
+    fscsr t0
 
     /* Pop mstatus from stack and set it */
-    LOAD t0,  (portRegNum - 1)  * REGBYTES(sp)
+    LOAD t0,  (portRegNum - 2)  * REGBYTES(sp)
     csrw CSR_MSTATUS, t0
     /* Interrupt still disable here */
     /* Restore Registers from Stack */

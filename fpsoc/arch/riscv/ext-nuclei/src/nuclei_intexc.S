@@ -43,9 +43,6 @@
     csrr    t1, mstatus
     STORE   t1, 33 * FPREGBYTES(sp)
     and t0, t1, t0
-    li t2, MSTATUS_FS_DIRTY
-    bne t2, t0, 1f
-    /* FS == dirty */
     /* Make room for the additional FPU registers. */
     FPSTORE  f0, 1 * FPREGBYTES(sp)
     FPSTORE  f1, 2 * FPREGBYTES(sp)
@@ -92,9 +89,6 @@
     /* get FS field from mstatus */
     li t0, MSTATUS_FS
     and t0, t1, t0
-    li t2, MSTATUS_FS_DIRTY
-    bne t2, t0, 1f
-    /* FS == dirty */
     csrs    mstatus, t0
     FPLOAD   f0, 1 * FPREGBYTES(sp)
     FPLOAD   f1, 2 * FPREGBYTES(sp)
@@ -169,10 +163,8 @@
 .macro SAVE_CONTEXT
 
 #ifdef USE_RTOS
-#ifdef RTOS_RTTHREAD
     csrrw sp, CSR_MSCRATCHCSWL, sp
     /* Allocate stack space for context saving */
-#endif
 #endif
 
 #ifndef __riscv_32e
@@ -239,9 +231,7 @@
 #endif /* __riscv_32e */
 
 #ifdef USE_RTOS
-#ifdef RTOS_RTTHREAD
     csrrw sp, CSR_MSCRATCHCSWL, sp
-#endif
 #endif
 
 .endm
@@ -342,6 +332,12 @@ irq_entry:
     /* Save Fpu registers when fpu is enabled */
     portasmSAVE_FPU_REGISTERS
 
+    frcsr   t0
+    STORE   t0, 0(sp)
+    fscsr zero
+    li  t1, MSTATUS_FS_CLEAN
+    csrs    mstatus, t1
+
 #ifdef RTOS_FREERTOS
 
     la      x5, ullPortInterruptNesting
@@ -370,6 +366,9 @@ irq_entry:
     STORE  x1, 0(x5)
     addi   sp, sp, 2*REGBYTES
 #endif
+
+    LOAD t0, 0(sp)
+    fscsr   t0
 
     /* Restore Fpu registers when fpu is enabled */
     portasmRESTORE_FPU_REGISTERS

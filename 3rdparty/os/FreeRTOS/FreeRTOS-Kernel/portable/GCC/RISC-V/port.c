@@ -30,55 +30,55 @@
  *----------------------------------------------------------*/
 
 /* Scheduler includes. */
-#include <stdio.h>
 #include "FreeRTOS.h"
-#include "task.h"
-#include "al_rv64_sysregs.h"
 #include "al_chip.h"
 #include "al_compiler.h"
-#include "nuclei_eclic.h"
+#include "al_rv64_sysregs.h"
 #include "al_rv64_systimer.h"
+#include "nuclei_eclic.h"
+#include "task.h"
+#include <stdio.h>
 
-//#define ENABLE_KERNEL_DEBUG
+// #define ENABLE_KERNEL_DEBUG
 
 #ifdef ENABLE_KERNEL_DEBUG
-#define FREERTOS_PORT_DEBUG(...)                printf(__VA_ARGS__)
+#define FREERTOS_PORT_DEBUG(...) printf(__VA_ARGS__)
 #else
 #define FREERTOS_PORT_DEBUG(...)
 #endif
 
 #ifndef configSYSTICK_CLOCK_HZ
-#define configSYSTICK_CLOCK_HZ                  (SYSTEM_CLOCK / 5)
+#define configSYSTICK_CLOCK_HZ (SYSTEM_CLOCK / 5)
 #endif
 
 #ifndef configKERNEL_INTERRUPT_PRIORITY
-#define configKERNEL_INTERRUPT_PRIORITY         0
+#define configKERNEL_INTERRUPT_PRIORITY 0
 #endif
 
 #ifndef configMAX_SYSCALL_INTERRUPT_PRIORITY
 // See function prvCheckMaxSysCallPrio and prvCalcMaxSysCallMTH
-#define configMAX_SYSCALL_INTERRUPT_PRIORITY    255
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY 255
 #endif
 
 /* Constants required to check the validity of an interrupt priority. */
-#define portFIRST_USER_INTERRUPT_NUMBER ( 18 )
+#define portFIRST_USER_INTERRUPT_NUMBER (18)
 
-#define SYSTICK_TICK_CONST          (configSYSTICK_CLOCK_HZ / configTICK_RATE_HZ)
+#define SYSTICK_TICK_CONST (configSYSTICK_CLOCK_HZ / configTICK_RATE_HZ)
 
 /* Masks off all bits but the ECLIC MTH bits in the MTH register. */
-#define portMTH_MASK                ( 0xFFUL )
+#define portMTH_MASK (0xFFUL)
 
 /* Constants required to set up the initial stack. */
-#define portINITIAL_MSTATUS         ( MSTATUS_MPP | MSTATUS_MPIE | MSTATUS_FS_INITIAL)
-#define portINITIAL_EXC_RETURN      ( 0xfffffffd )
+#define portINITIAL_MSTATUS (MSTATUS_MPP | MSTATUS_MPIE | MSTATUS_FS_INITIAL)
+#define portINITIAL_EXC_RETURN (0xfffffffd)
 
 /* The systick is a 64-bit counter. */
-#define portMAX_BIT_NUMBER          ( SysTimer_MTIMER_Msk )
+#define portMAX_BIT_NUMBER (SysTimer_MTIMER_Msk)
 
 /* A fiddle factor to estimate the number of SysTick counts that would have
 occurred while the SysTick counter is stopped during tickless idle
 calculations. */
-#define portMISSED_COUNTS_FACTOR    ( 45UL )
+#define portMISSED_COUNTS_FACTOR (45UL)
 
 /* Let the user override the pre-loading of the initial LR with the address of
 prvTaskExitError() in case it messes up unwinding of the stack in the
@@ -111,7 +111,7 @@ extern void prvPortStartFirstTask(void) __attribute__((naked));
  */
 static void prvTaskExitError(void);
 
-#define xPortSysTickHandler     eclic_mtip_handler
+#define xPortSysTickHandler eclic_mtip_handler
 
 /*-----------------------------------------------------------*/
 
@@ -138,7 +138,7 @@ uint8_t uxMaxSysCallMTH = 255;
 /*
  * The number of SysTick increments that make up one tick period.
  */
-#if( configUSE_TICKLESS_IDLE == 1 )
+#if (configUSE_TICKLESS_IDLE == 1)
 static TickType_t ulTimerCountsForOneTick = 0;
 #endif /* configUSE_TICKLESS_IDLE */
 
@@ -146,7 +146,7 @@ static TickType_t ulTimerCountsForOneTick = 0;
  * The maximum number of tick periods that can be suppressed is limited by the
  * 24 bit resolution of the SysTick timer.
  */
-#if( configUSE_TICKLESS_IDLE == 1 )
+#if (configUSE_TICKLESS_IDLE == 1)
 static TickType_t xMaximumPossibleSuppressedTicks = 0;
 #endif /* configUSE_TICKLESS_IDLE */
 
@@ -154,7 +154,7 @@ static TickType_t xMaximumPossibleSuppressedTicks = 0;
  * Compensate for the CPU cycles that pass while the SysTick is stopped (low
  * power functionality only.
  */
-#if( configUSE_TICKLESS_IDLE == 1 )
+#if (configUSE_TICKLESS_IDLE == 1)
 static TickType_t ulStoppedTimerCompensation = 0;
 #endif /* configUSE_TICKLESS_IDLE */
 
@@ -163,7 +163,7 @@ static TickType_t ulStoppedTimerCompensation = 0;
  * FreeRTOS API functions are not called from interrupts that have been assigned
  * a priority above configMAX_SYSCALL_INTERRUPT_PRIORITY.
  */
-#if( configASSERT_DEFINED == 1 )
+#if (configASSERT_DEFINED == 1)
 static uint8_t ucMaxSysCallPriority = 0;
 #endif /* configASSERT_DEFINED */
 
@@ -230,28 +230,40 @@ volatile uint64_t ullPortInterruptNesting = 0;
  * portTASK_RETURN_ADDRESS
  * pxCode
  */
-StackType_t* pxPortInitialiseStack(StackType_t* pxTopOfStack, TaskFunction_t pxCode, void* pvParameters)
+StackType_t *pxPortInitialiseStack(StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters)
 {
     /* Simulate the stack frame as it would be created by a context switch
     interrupt. */
 
+    pxTopOfStack--;
+    *pxTopOfStack = (StackType_t)0UL; /* fcsr */
+
     /* Offset added to account for the way the MCU uses the stack on entry/exit
     of interrupts, and to ensure alignment. */
     pxTopOfStack--;
-    *pxTopOfStack = portINITIAL_MSTATUS;    /* MSTATUS */
+    *pxTopOfStack = portINITIAL_MSTATUS; /* MSTATUS */
 
     /* Save code space by skipping register initialisation. */
 #ifndef __riscv_32e
-    pxTopOfStack -= 22;    /* X11 - X31. */
+    pxTopOfStack -= 22; /* X11 - X31. */
 #else
-    pxTopOfStack -= 6;    /* X11 - X15. */
+    pxTopOfStack -= 6; /* X11 - X15. */
 #endif
-    *pxTopOfStack = (StackType_t) pvParameters;      /* X10/A0 */
-    pxTopOfStack -= 6; /* X5 - X9 */
-    *pxTopOfStack = (StackType_t) portTASK_RETURN_ADDRESS;      /* RA, X1 */
+    *pxTopOfStack = (StackType_t)pvParameters;            /* X10/A0 */
+    pxTopOfStack -= 6;                                    /* X5 - X9 */
+    *pxTopOfStack = (StackType_t)portTASK_RETURN_ADDRESS; /* RA, X1 */
 
-    pxTopOfStack --;
-    *pxTopOfStack = ((StackType_t) pxCode) ;        /* PC */
+    for (int i = 0; i < 32; i++)
+    {
+        pxTopOfStack--;
+        *pxTopOfStack = 0;
+    }
+
+    pxTopOfStack--;
+    *pxTopOfStack = ARCH_SYSREG_READ(CSR_MSTATUS);
+
+    pxTopOfStack--;
+    *pxTopOfStack = ((StackType_t)pxCode); /* PC */
 
     return pxTopOfStack;
 }
@@ -269,7 +281,8 @@ static void prvTaskExitError(void)
     defined, then stop here so application writers can catch the error. */
     configASSERT(uxCriticalNesting == ~0UL);
     portDISABLE_INTERRUPTS();
-    while (ulDummy == 0) {
+    while (ulDummy == 0)
+    {
         /* This file calls prvTaskExitError() after the scheduler has been
         started to remove a compiler warning about the function being defined
         but never called.  ulDummy is used purely to quieten other warnings
@@ -289,14 +302,18 @@ static uint8_t prvCheckMaxSysCallPrio(uint8_t max_syscall_prio)
     uint8_t intctlbits = __ECLIC_INTCTLBITS;
     uint8_t lvlbits, temp;
 
-    if (nlbits <= intctlbits) {
+    if (nlbits <= intctlbits)
+    {
         lvlbits = nlbits;
-    } else {
+    }
+    else
+    {
         lvlbits = intctlbits;
     }
 
     temp = ((1 << lvlbits) - 1);
-    if (max_syscall_prio > temp) {
+    if (max_syscall_prio > temp)
+    {
         max_syscall_prio = temp;
     }
     return max_syscall_prio;
@@ -310,16 +327,20 @@ static uint8_t prvCalcMaxSysCallMTH(uint8_t max_syscall_prio)
     uint8_t maxsyscallmth = 0;
     uint8_t temp;
 
-    if (nlbits <= intctlbits) {
+    if (nlbits <= intctlbits)
+    {
         lvlbits = nlbits;
-    } else {
+    }
+    else
+    {
         lvlbits = intctlbits;
     }
 
     lfabits = 8 - lvlbits;
 
     temp = ((1 << lvlbits) - 1);
-    if (max_syscall_prio > temp) {
+    if (max_syscall_prio > temp)
+    {
         max_syscall_prio = temp;
     }
 
@@ -340,7 +361,7 @@ BaseType_t xPortStartScheduler(void)
     uxMaxSysCallMTH = prvCalcMaxSysCallMTH(configMAX_SYSCALL_INTERRUPT_PRIORITY);
     FREERTOS_PORT_DEBUG("Max SysCall MTH is set to 0x%x\n", uxMaxSysCallMTH);
 
-#if( configASSERT_DEFINED == 1 )
+#if (configASSERT_DEFINED == 1)
     {
         /* Use the same mask on the maximum system call priority. */
         ucMaxSysCallPriority = prvCheckMaxSysCallPrio(configMAX_SYSCALL_INTERRUPT_PRIORITY);
@@ -391,7 +412,8 @@ void vPortEnterCritical(void)
     functions that end in "FromISR" can be used in an interrupt.  Only assert if
     the critical nesting count is 1 to protect against recursive calls if the
     assert function also uses a critical section. */
-    if (uxCriticalNesting == 1) {
+    if (uxCriticalNesting == 1)
+    {
         configASSERT((__ECLIC_GetMth() & portMTH_MASK) == uxMaxSysCallMTH);
     }
 }
@@ -401,7 +423,8 @@ void vPortExitCritical(void)
 {
     configASSERT(uxCriticalNesting);
     uxCriticalNesting--;
-    if (uxCriticalNesting == 0) {
+    if (uxCriticalNesting == 0)
+    {
         portENABLE_INTERRUPTS();
     }
 }
@@ -410,15 +433,18 @@ void vPortExitCritical(void)
 void vPortAssert(int32_t x)
 {
     TaskHandle_t th;
-    if ((x) == 0) {
+    if ((x) == 0)
+    {
         taskDISABLE_INTERRUPTS();
 #if (INCLUDE_xTaskGetCurrentTaskHandle == 1)
         th = xTaskGetCurrentTaskHandle();
-        if (th) {
+        if (th)
+        {
             printf("Assert in task %s\n", pcTaskGetName(th));
         }
 #endif
-        while (1) {
+        while (1)
+        {
             /* Sleep and wait for interrupt */
             __WFI();
         };
@@ -447,7 +473,8 @@ void xPortSysTickHandler(void)
     {
         SysTick_Reload(SYSTICK_TICK_CONST);
         /* Increment the RTOS tick. */
-        if (xTaskIncrementTick() != pdFALSE) {
+        if (xTaskIncrementTick() != pdFALSE)
+        {
             /* A context switch is required.  Context switching is performed in
             the SWI interrupt.  Pend the SWI interrupt. */
             portYIELD();
@@ -457,7 +484,7 @@ void xPortSysTickHandler(void)
 }
 /*-----------------------------------------------------------*/
 
-#if( configUSE_TICKLESS_IDLE == 1 )
+#if (configUSE_TICKLESS_IDLE == 1)
 
 __attribute__((weak)) void vPortSuppressTicksAndSleep(TickType_t xExpectedIdleTime)
 {
@@ -467,7 +494,8 @@ __attribute__((weak)) void vPortSuppressTicksAndSleep(TickType_t xExpectedIdleTi
     FREERTOS_PORT_DEBUG("Enter TickLess %d\n", (uint32_t)xExpectedIdleTime);
 
     /* Make sure the SysTick reload value does not overflow the counter. */
-    if (xExpectedIdleTime > xMaximumPossibleSuppressedTicks) {
+    if (xExpectedIdleTime > xMaximumPossibleSuppressedTicks)
+    {
         xExpectedIdleTime = xMaximumPossibleSuppressedTicks;
     }
 
@@ -481,7 +509,8 @@ __attribute__((weak)) void vPortSuppressTicksAndSleep(TickType_t xExpectedIdleTi
     tick periods.  -1 is used because this code will execute part way
     through one of the tick periods. */
     ulReloadValue = (ulTimerCountsForOneTick * (xExpectedIdleTime - 1UL));
-    if (ulReloadValue > ulStoppedTimerCompensation) {
+    if (ulReloadValue > ulStoppedTimerCompensation)
+    {
         ulReloadValue -= ulStoppedTimerCompensation;
     }
 
@@ -491,7 +520,8 @@ __attribute__((weak)) void vPortSuppressTicksAndSleep(TickType_t xExpectedIdleTi
 
     /* If a context switch is pending or a task is waiting for the scheduler
     to be unsuspended then abandon the low power entry. */
-    if (eTaskConfirmSleepModeStatus() == eAbortSleep) {
+    if (eTaskConfirmSleepModeStatus() == eAbortSleep)
+    {
         /* Restart from whatever is left in the count register to complete
         this tick period. */
         /* Restart SysTick. */
@@ -504,7 +534,9 @@ __attribute__((weak)) void vPortSuppressTicksAndSleep(TickType_t xExpectedIdleTi
         /* Re-enable interrupts - see comments above the cpsid instruction()
            above. */
         __enable_irq();
-    } else {
+    }
+    else
+    {
         xTickCountBeforeSleep = xTaskGetTickCount();
 
         /* Set the new reload value. */
@@ -525,7 +557,8 @@ __attribute__((weak)) void vPortSuppressTicksAndSleep(TickType_t xExpectedIdleTi
         time variable must remain unmodified, so a copy is taken. */
         xModifiableIdleTime = xExpectedIdleTime;
         configPRE_SLEEP_PROCESSING(xModifiableIdleTime);
-        if (xModifiableIdleTime > 0) {
+        if (xModifiableIdleTime > 0)
+        {
             __WFI();
         }
         configPOST_SLEEP_PROCESSING(xExpectedIdleTime);
@@ -555,21 +588,27 @@ __attribute__((weak)) void vPortSuppressTicksAndSleep(TickType_t xExpectedIdleTi
         /* Determine if SysTimer Interrupt is not yet happened,
         (in which case an interrupt other than the SysTick
         must have brought the system out of sleep mode). */
-        if (SysTimer_GetLoadValue() >= (XLastLoadValue + ulReloadValue)) {
+        if (SysTimer_GetLoadValue() >= (XLastLoadValue + ulReloadValue))
+        {
             /* As the pending tick will be processed as soon as this
             function exits, the tick value maintained by the tick is stepped
             forward by one less than the time spent waiting. */
             ulCompleteTickPeriods = xExpectedIdleTime - 1UL;
             FREERTOS_PORT_DEBUG("TickLess - SysTimer Interrupt Entered!\n");
-        } else {
+        }
+        else
+        {
             /* Something other than the tick interrupt ended the sleep.
             Work out how long the sleep lasted rounded to complete tick
             periods (not the ulReload value which accounted for part
             ticks). */
             xModifiableIdleTime = SysTimer_GetLoadValue();
-            if (xModifiableIdleTime > XLastLoadValue) {
+            if (xModifiableIdleTime > XLastLoadValue)
+            {
                 ulCompletedSysTickDecrements = (xModifiableIdleTime - XLastLoadValue);
-            } else {
+            }
+            else
+            {
                 ulCompletedSysTickDecrements = (xModifiableIdleTime + portMAX_BIT_NUMBER - XLastLoadValue);
             }
 
@@ -597,7 +636,7 @@ __attribute__((weak)) void vPortSuppressTicksAndSleep(TickType_t xExpectedIdleTi
 #endif /* #if configUSE_TICKLESS_IDLE */
 /*-----------------------------------------------------------*/
 
-extern void eclic_msip_handler(void);
+extern void eclic_msip_handler(void) __attribute__((interrupt));
 extern void eclic_mtip_handler(void);
 /*
  * Setup the systick timer to generate the tick interrupts at the required
@@ -606,13 +645,14 @@ extern void eclic_mtip_handler(void);
 __attribute__((weak)) void vPortSetupTimerInterrupt(void)
 {
     /* Calculate the constants required to configure the tick interrupt. */
-#if( configUSE_TICKLESS_IDLE == 1 )
+#if (configUSE_TICKLESS_IDLE == 1)
     {
         ulTimerCountsForOneTick = (SYSTICK_TICK_CONST);
         xMaximumPossibleSuppressedTicks = portMAX_BIT_NUMBER / ulTimerCountsForOneTick;
         ulStoppedTimerCompensation = portMISSED_COUNTS_FACTOR / (configCPU_CLOCK_HZ / configSYSTICK_CLOCK_HZ);
-        FREERTOS_PORT_DEBUG("CountsForOneTick, SuppressedTicks and TimerCompensation: %u, %u, %u\n", \
-                            (uint32_t)ulTimerCountsForOneTick, (uint32_t)xMaximumPossibleSuppressedTicks, (uint32_t)ulStoppedTimerCompensation);
+        FREERTOS_PORT_DEBUG("CountsForOneTick, SuppressedTicks and TimerCompensation: %u, %u, %u\n",
+                            (uint32_t)ulTimerCountsForOneTick, (uint32_t)xMaximumPossibleSuppressedTicks,
+                            (uint32_t)ulStoppedTimerCompensation);
     }
 #endif /* configUSE_TICKLESS_IDLE */
     TickType_t ticks = SYSTICK_TICK_CONST;
@@ -636,7 +676,7 @@ __attribute__((weak)) void vPortSetupTimerInterrupt(void)
 
 /*-----------------------------------------------------------*/
 
-#if( configASSERT_DEFINED == 1 )
+#if (configASSERT_DEFINED == 1)
 
 void vPortValidateInterruptPriority(void)
 {
@@ -648,11 +688,13 @@ void vPortValidateInterruptPriority(void)
     AL_REGISTER mcause = ARCH_SYSREG_READ(CSR_MCAUSE);
     /* Make sure current trap type is interrupt */
     AL_REGISTER interrupt = mcause >> (__riscv_xlen - 1);
-    if (interrupt) {
+    if (interrupt)
+    {
         ulCurrentInterrupt = mcause & 0x1F;
         // ulCurrentInterrupt = mcause.b.exccode;
         /* Is the interrupt number a user defined interrupt? */
-        if (ulCurrentInterrupt >= portFIRST_USER_INTERRUPT_NUMBER) {
+        if (ulCurrentInterrupt >= portFIRST_USER_INTERRUPT_NUMBER)
+        {
             /* Look up the interrupt's priority. */
             ucCurrentPriority = __ECLIC_GetLevelIRQ(ulCurrentInterrupt);
             /* The following assertion will fail if a service routine (ISR) for
@@ -685,15 +727,14 @@ void vPortValidateInterruptPriority(void)
 /*-----------------------------------------------------------*/
 #if configSUPPORT_STATIC_ALLOCATION
 
-void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer,
-                                    StackType_t **ppxIdleTaskStackBuffer,
-                                    uint32_t *pulIdleTaskStackSize )
+void vApplicationGetIdleTaskMemory(StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer,
+                                   uint32_t *pulIdleTaskStackSize)
 {
-/* If the buffers to be provided to the Idle task are declared inside this
-function then they must be declared static - otherwise they will be allocated on
-the stack and so not exists after this function exits. */
-static StaticTask_t xIdleTaskTCB;
-static StackType_t uxIdleTaskStack[ configMINIMAL_STACK_SIZE ];
+    /* If the buffers to be provided to the Idle task are declared inside this
+    function then they must be declared static - otherwise they will be allocated on
+    the stack and so not exists after this function exits. */
+    static StaticTask_t xIdleTaskTCB;
+    static StackType_t uxIdleTaskStack[configMINIMAL_STACK_SIZE];
 
     /* Pass out a pointer to the StaticTask_t structure in which the Idle task's
     state will be stored. */
@@ -709,15 +750,14 @@ static StackType_t uxIdleTaskStack[ configMINIMAL_STACK_SIZE ];
 }
 
 /*-----------------------------------------------*/
-void vApplicationGetTimerTaskMemory( StaticTask_t **ppxTimerTaskTCBBuffer,
-                                     StackType_t **ppxTimerTaskStackBuffer,
-                                     uint32_t *pulTimerTaskStackSize )
+void vApplicationGetTimerTaskMemory(StaticTask_t **ppxTimerTaskTCBBuffer, StackType_t **ppxTimerTaskStackBuffer,
+                                    uint32_t *pulTimerTaskStackSize)
 {
-/* If the buffers to be provided to the Timer task are declared inside this
-function then they must be declared static - otherwise they will be allocated on
-the stack and so not exists after this function exits. */
-static StaticTask_t xTimerTaskTCB;
-static StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
+    /* If the buffers to be provided to the Timer task are declared inside this
+    function then they must be declared static - otherwise they will be allocated on
+    the stack and so not exists after this function exits. */
+    static StaticTask_t xTimerTaskTCB;
+    static StackType_t uxTimerTaskStack[configTIMER_TASK_STACK_DEPTH];
 
     /* Pass out a pointer to the StaticTask_t structure in which the Timer
     task's state will be stored. */
@@ -732,6 +772,5 @@ static StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
     *pulTimerTaskStackSize = configTIMER_TASK_STACK_DEPTH;
 }
 #endif
-
 
 #endif /* configASSERT_DEFINED */
