@@ -53,12 +53,6 @@ AL_S32 main()
         return ret;
     }
 
-    ret = AlAxiGpio_Hal_Init(&Gpio1, AXI_GPIO1_DEVICE_ID, Callback);
-    if (ret != AL_OK) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Axi gpio1 init failed!");
-        return ret;
-    }
-
     AL_LOG(AL_LOG_LEVEL_INFO, "Read Channel in = 0x%x", AlAxiGpio_Hal_ReadChannel(Gpio0, AL_AXI_GPIO_CHANNEL2));
 
 
@@ -70,7 +64,7 @@ AL_S32 main()
     }
 
     /* Enable axi gpio channel2 interrupt */
-    ret = AlAxiGpio_Hal_IntInit(Gpio1, AL_AXI_GPIO_CHANNEL2);
+    ret = AlAxiGpio_Hal_IntInit(Gpio0, AL_AXI_GPIO_CHANNEL2);
     if(ret != AL_OK) {
         AL_LOG(AL_LOG_LEVEL_INFO, "Axi gpio1 interrupt init failed, ret = 0x%x\r\n!", ret);
         return ret;

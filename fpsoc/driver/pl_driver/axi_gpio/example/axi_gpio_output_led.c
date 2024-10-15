@@ -27,7 +27,6 @@ int main()
 
     /* Instantiate a axi gpio and init it */
     AlAxiGpio_Hal_Struct *Gpio0;
-    AlAxiGpio_Hal_Struct *Gpio1;
 
     ret = AlAxiGpio_Hal_Init(&Gpio0, AXI_GPIO0_DEVICE_ID, AL_NULL);
     if (ret != AL_OK)
@@ -36,12 +35,6 @@ int main()
         return ret;
     }
 
-    ret = AlAxiGpio_Hal_Init(&Gpio1, AXI_GPIO1_DEVICE_ID, AL_NULL);
-    if (ret != AL_OK)
-    {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Axi gpio1 init failed!");
-        return ret;
-    }
 
     while (1)
     {
@@ -49,11 +42,11 @@ int main()
         /* Toggle led */
         Bit_Val = ~Bit_Val;
         AlAxiGpio_Hal_WritePin(Gpio0, AL_AXI_GPIO_CHANNEL1, 15, Bit_Val);
-        AlAxiGpio_Hal_WritePin(Gpio1, AL_AXI_GPIO_CHANNEL2, 14, Bit_Val);
+        AlAxiGpio_Hal_WritePin(Gpio0, AL_AXI_GPIO_CHANNEL2, 14, Bit_Val);
     #else
         Val = ~Val;
         AlAxiGpio_Hal_WriteChannel(Gpio0, AL_AXI_GPIO_CHANNEL1, Val);
-        AlAxiGpio_Hal_WriteChannel(Gpio1, AL_AXI_GPIO_CHANNEL2, Val);
+        AlAxiGpio_Hal_WriteChannel(Gpio0, AL_AXI_GPIO_CHANNEL2, Val);
     #endif
         AlSys_MDelay(500);
     }
