@@ -125,17 +125,59 @@ el3_entry:
     mov x0, #(0x1 << 0)         //Enable group 0 interrupts
     msr S3_0_c12_c12_6, x0
 
-    /* Set counter frequency */
-    ldr    x0, =SystemCoreClock
-    ldr    x0, [x0]
-    msr    cntfrq_el0, x0
-
     mrs    x0, scr_el3
     orr    x0, x0, #(0x1 << 1)      /* Enable IRQ */
     orr    x0, x0, #(0x1 << 2)      /* Enable FIQ */
     orr    x0, x0, #(0x1 << 3)      /* Enable EA */
     bic    x0, x0, #0x1             /* clear scr_el3.NS */
     msr    scr_el3, x0
+
+    /*
+     * Load code section from FLASH to ILM
+     * when code LMA is different with VMA
+     */
+
+    ldr    x0, =_ilm_lma
+    ldr    x1, =_ilm
+    /* If the ILM phy-address same as the logic-address, then quit */
+    cmp    x0, x1
+    beq    2f
+    ldr    x2, =_eilm
+    cmp    x1, x2
+    bge    2f
+
+1:
+    /* Load code section if necessary */
+    ldr    x3, [x0]
+    str    x3, [x1]
+    add    x0, x0, #8
+    add    x1, x1, #8
+    cmp    x1, x2
+    blt    1b
+
+2:
+    /* Load data section */
+    ldr    x0, =_data_lma
+    ldr    x1, =_data
+    ldr    x2, =_edata
+    cmp    x1, x2
+    bge    2f
+
+1:
+    ldr    x3, [x0]
+    str    x3, [x1]
+    add    x0, x0, #8
+    add    x1, x1, #8
+    cmp    x1, x2
+    blt    1b
+
+2:
+
+    /* Set counter frequency */
+    ldr    x0, =SystemCoreClock
+    ldr    x0, [x0]
+    msr    cntfrq_el0, x0
+    mrs    x1, cntfrq_el0
 
 #ifdef SUPPORT_NONSECURE
     bl clear_bss

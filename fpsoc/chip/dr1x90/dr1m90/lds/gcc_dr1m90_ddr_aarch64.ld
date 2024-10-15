@@ -170,6 +170,11 @@ SECTIONS
         _unity_test_end   = .;
     }  > ram AT>ram
 
+    PROVIDE (__etext = .);
+    PROVIDE (_etext = .);
+    PROVIDE (etext = .);
+    PROVIDE( _eilm = . );
+
     /* all data segment */
     . = ALIGN(16);
     .data :
@@ -199,6 +204,9 @@ SECTIONS
         PROVIDE(_async_print_ring_buf_end = .);
         . = ALIGN(64);
     }  > ram AT>ram
+
+    PROVIDE( _edata = . );
+    PROVIDE( edata = . );
 
     . = ALIGN(16);
     /* all bss segment */
