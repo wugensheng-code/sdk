@@ -353,6 +353,8 @@ AL_S32 AlQspi_Dev_XipAddr24Init(AL_QSPI_DevStruct *Qspi, AL_U8* FlashId)
 
     if (FlashId[1] == 0x40 && FlashId[2] == 0x18) {
         AlQspi_ll_SetWaitCycles(Qspi->HwConfig.BaseAddress, 0x6);
+    } else if (FlashId[0] == 0xC8 && FlashId[1] == 0x67 && FlashId[2] == 0x19) {
+        AlQspi_ll_SetWaitCycles(Qspi->HwConfig.BaseAddress, 0x6);
     } else {
         AlQspi_ll_SetWaitCycles(Qspi->HwConfig.BaseAddress, 0xa);
     }

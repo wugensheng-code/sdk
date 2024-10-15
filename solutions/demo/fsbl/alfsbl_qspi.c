@@ -259,7 +259,8 @@ static AL_S32 AlNor_SetWrapMode1(void)
     Handle->Dev.Configs.Trans.EnSpiCfg.TransType = QSPI_TT1;
     Handle->Dev.Configs.SpiFrameFormat = SPI_QUAD_FORMAT;
     Handle->Dev.Configs.Trans.EnSpiCfg.WaitCycles = 0;
-    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L4;
+    Handle->Dev.Configs.Trans.EnSpiCfg.AddrLength = QSPI_ADDR_L32;
+    Handle->Dev.Configs.Trans.EnSpiCfg.InstLength = QSPI_INST_L8;
 
 
     SendData[0] = 0x77;
