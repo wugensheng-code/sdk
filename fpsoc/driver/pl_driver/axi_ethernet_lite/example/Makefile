@@ -12,7 +12,7 @@ SDK_ROOT    ?= ../../../../..
 
 
 CHIP        ?= dr1m90
-ELF         ?= ETHLITE_PING_ACK_POLLING
+ELF         ?= ETHLITE_PING_REPLY_POLLING
 
 ifeq ($(CHIP), dr1m90)
 COMPILE_PREFIX ?= /opt/toolchain/arm-gnu-toolchain-12.3.rel1-x86_64-aarch64-none-elf/bin/aarch64-none-elf-
@@ -33,12 +33,12 @@ BOARD_NAME ?= board_dr1x90_ad101_v10
 #    CXX_SRCS: cpp sources for application
 #    ASM_SRCS: asm sources for application
 #########################################################################
-ifeq ($(ELF), ETHLITE_PING_ACK_POLLING)
-C_SRCS += al_ethlite_pingack.c
-else ifeq ($(ELF), ETHLITE_PING_ACK_INTR)
-C_SRCS += al_ethlite_pingack_intr.c
+ifeq ($(ELF), ETHLITE_PING_REPLY_POLLING)
+C_SRCS += al_ethlite_ping_reply.c
+else ifeq ($(ELF), ETHLITE_PING_REPLY_INTR)
+C_SRCS += al_ethlite_ping_reply_intr.c
 else
-C_SRCS += al_ethlite_pingack.c
+C_SRCS += al_ethlite_ping_reply.c
 endif
 
 INC_DIR     += ./
@@ -70,12 +70,12 @@ PINMUX_MODE ?= PINMUX_MODE1
 #########################################################################
 # 5. define build target
 #########################################################################
-ifeq ($(ELF), ETHLITE_PING_ACK_POLLING)
-TARGET := fpsoc_ethlite_pingack_polling
-else ifeq ($(ELF), ETHLITE_PING_ACK_INTR)
-TARGET := fpsoc_ethlite_pingack_intr
+ifeq ($(ELF), ETHLITE_PING_REPLY_POLLING)
+TARGET := fpsoc_ethlite_pingreply_polling
+else ifeq ($(ELF), ETHLITE_PING_REPLY_INTR)
+TARGET := fpsoc_ethlite_pingreply_intr
 else
-TARGET := fpsoc_ethlite_pingack_polling
+TARGET := fpsoc_ethlite_pingreply_polling
 endif
 
 ifneq ($(PINMUX_MODE),)

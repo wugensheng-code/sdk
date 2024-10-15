@@ -254,7 +254,7 @@
 				"name": "PL_DRIVER_ETHERNET_LITE",
 				"version": "1.0",
 				"depends": ["fpsoc/driver/pl_driver/axi_ethernet_lite"],
-				"supportedProc": ["apu-0", "apu-1"],
+				"supportedProc": ["apu-0", "apu-1", "rpu"],
 				"default": true
 			}
 		},
@@ -691,7 +691,7 @@
 				"depends": [
 					"LIB_LWIP_V1_0",
 					"3rdparty/lwip-2.1.3/example/ethlite_lwip_ping_example",
-					"PL_DRIVER_ETHERNET_LITE"
+					"PL_DRIVER_ETHERNET_LITE_V1_0"
 				],
 				"description": "ethlite test",
 				"supportedOS": ["standalone"],
@@ -705,7 +705,7 @@
 				"depends": [
 					"LIB_LWIP_V1_0",
 					"3rdparty/lwip-2.1.3/example/ethlite_lwip_netio_example",
-					"PL_DRIVER_ETHERNET_LITE"
+					"PL_DRIVER_ETHERNET_LITE_V1_0"
 				],
 				"description": "ethlite test",
 				"supportedOS": ["standalone"],
@@ -719,7 +719,7 @@
 				"depends": [
 					"LIB_LWIP_V1_0",
 					"3rdparty/lwip-2.1.3/example/ethlite_lwip_udp_echo_example",
-					"PL_DRIVER_ETHERNET_LITE"
+					"PL_DRIVER_ETHERNET_LITE_V1_0"
 				],
 				"description": "ethlite test",
 				"supportedOS": ["standalone"],
@@ -733,7 +733,7 @@
 				"depends": [
 					"LIB_LWIP_V1_0",
 					"3rdparty/lwip-2.1.3/example/ethlite_rtt_lwip_ping_example",
-					"PL_DRIVER_ETHERNET_LITE"
+					"PL_DRIVER_ETHERNET_LITE_V1_0"
 				],
 				"description": "ethlite test",
 				"supportedOS": ["rtthread"],
@@ -747,7 +747,7 @@
 				"depends": [
 					"LIB_LWIP_V1_0",
 					"3rdparty/lwip-2.1.3/example/ethlite_rtt_lwip_netio_example",
-					"PL_DRIVER_ETHERNET_LITE"
+					"PL_DRIVER_ETHERNET_LITE_V1_0"
 				],
 				"description": "ethlite test",
 				"supportedOS": ["rtthread"],
@@ -761,7 +761,7 @@
 				"depends": [
 					"LIB_LWIP_V1_0",
 					"3rdparty/lwip-2.1.3/example/ethlite_rtt_lwip_udp_example",
-					"PL_DRIVER_ETHERNET_LITE"
+					"PL_DRIVER_ETHERNET_LITE_V1_0"
 				],
 				"description": "ethlite test",
 				"supportedOS": ["rtthread"],
@@ -775,7 +775,7 @@
 				"depends": [
 					"LIB_LWIP_V1_0",
 					"3rdparty/lwip-2.1.3/example/ethlite_freertos_lwip_ping_example",
-					"PL_DRIVER_ETHERNET_LITE"
+					"PL_DRIVER_ETHERNET_LITE_V1_0"
 				],
 				"description": "ethlite test",
 				"supportedOS": ["freertos"],
@@ -789,7 +789,7 @@
 				"depends": [
 					"LIB_LWIP_V1_0",
 					"3rdparty/lwip-2.1.3/example/ethlite_freertos_lwip_netio_example",
-					"PL_DRIVER_ETHERNET_LITE"
+					"PL_DRIVER_ETHERNET_LITE_V1_0"
 				],
 				"description": "ethlite test",
 				"supportedOS": ["freertos"],
@@ -803,7 +803,7 @@
 				"depends": [
 					"LIB_LWIP_V1_0",
 					"3rdparty/lwip-2.1.3/example/ethlite_freertos_lwip_udp_example",
-					"PL_DRIVER_ETHERNET_LITE"
+					"PL_DRIVER_ETHERNET_LITE_V1_0"
 				],
 				"description": "ethlite test",
 				"supportedOS": ["freertos"],
@@ -1966,6 +1966,32 @@
 						"PL_DRIVER_VDMA_V1_0"
 					],
 					"description": "axi vdma loopback test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				}
+			}
+		},
+		"PL_DRIVER_ETHERNET_LITE": {
+			"1.0":{
+				"ETHERNET_LITE_PING_REPLY_INTR": {
+					"name": "ETHERNET_LITE_PING_REPLY_INTR",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_ethernet_lite/example/al_ethlite_ping_reply.c",
+						"PL_DRIVER_ETHERNET_LITE_V1_0"
+					],
+					"description": "axi ethlite intr test",
+					"supportedOS": ["standalone"],
+					"supportedProc": ["apu-0", "apu-1", "rpu"]
+				},
+				"ETHERNET_LITE_PING_REPLY_POOL": {
+					"name": "ETHERNET_LITE_PING_REPLY_POOL",
+					"version": "1.0",
+					"depends": [
+						"fpsoc/driver/pl_driver/axi_ethernet_lite/example/al_ethlite_ping_reply_intr.c",
+						"PL_DRIVER_ETHERNET_LITE_V1_0"
+					],
+					"description": "axi ethlite poll test",
 					"supportedOS": ["standalone"],
 					"supportedProc": ["apu-0", "apu-1", "rpu"]
 				}
