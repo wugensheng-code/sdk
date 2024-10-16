@@ -232,18 +232,18 @@ static inline AL_VOID AlCan_ll_SetCanCtrlReset(AL_REG BaseAddr, AL_BOOL IsEnable
 //             AL_TRUE);
 // }
 
-// /* Transmit Secondary ALL frames(TSALL), set to 1 but can not reset it to 0 */
-// static inline AL_BOOL AlCan_ll_IsTsall(AL_REG BaseAddr)
-// {
-//     return (AL_BOOL)AL_REG32_GET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET,
-//                             CAN_RCTRL_TCTRL_TCMD_CFG_STAT_TSALL_SHIFT);
-// }
+/* Transmit Secondary ALL frames(TSALL), set to 1 but can not reset it to 0 */
+static inline AL_BOOL AlCan_ll_IsTsall(AL_REG BaseAddr)
+{
+    return (AL_BOOL)AL_REG32_GET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET,
+                            CAN_RCTRL_TCTRL_TCMD_CFG_STAT_TSALL_SHIFT);
+}
 
-// static inline AL_VOID AlCan_ll_SetTsall(AL_REG BaseAddr)
-// {
-//     AL_REG32_SET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET, CAN_RCTRL_TCTRL_TCMD_CFG_STAT_TSALL_SHIFT,
-//             AL_TRUE);
-// }
+static inline AL_VOID AlCan_ll_SetTsall(AL_REG BaseAddr)
+{
+    AL_REG32_SET_BIT(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET, CAN_RCTRL_TCTRL_TCMD_CFG_STAT_TSALL_SHIFT,
+            AL_TRUE);
+}
 
 // /* Transmit Secondary ONE frame(TSONE), set to 1 but can not reset it to 0 */
 // static inline AL_BOOL AlCan_ll_IsTsone(AL_REG BaseAddr)
@@ -323,13 +323,13 @@ static inline AL_VOID AlCan_ll_SetTbsel(AL_REG BaseAddr, AL_CAN_TbselEnum TransB
             TransBuffer);
 }
 
-// /* Transmission Secondary Status(TSSTAT) */
-// static inline AL_CAN_TsstatEnum AlCan_ll_GetTsstat(AL_REG BaseAddr)
-// {
-//     return (AL_CAN_TsstatEnum)AL_REG32_GET_BITS(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET,
-//                                        CAN_RCTRL_TCTRL_TCMD_CFG_STAT_TSSTAT_SHIFT,
-//                                        CAN_RCTRL_TCTRL_TCMD_CFG_STAT_TSSTAT_SIZE);
-// }
+/* Transmission Secondary Status(TSSTAT) */
+static inline AL_CAN_TsstatEnum AlCan_ll_GetTsstat(AL_REG BaseAddr)
+{
+    return (AL_CAN_TsstatEnum)AL_REG32_GET_BITS(BaseAddr + CAN_RCTRL_TCTRL_TCMD_CFG_STAT_OFFSET,
+                                       CAN_RCTRL_TCTRL_TCMD_CFG_STAT_TSSTAT_SHIFT,
+                                       CAN_RCTRL_TCTRL_TCMD_CFG_STAT_TSSTAT_SIZE);
+}
 
 // /* TTCAN Transmit Buffer Mode(TTTBM) */
 // static inline AL_CAN_TttbmEnum AlCan_ll_GetTttbm(AL_REG BaseAddr)
