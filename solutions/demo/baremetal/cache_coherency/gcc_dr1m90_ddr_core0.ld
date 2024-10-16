@@ -26,6 +26,17 @@ SECTIONS
 		PROVIDE(_text_end  = .);
 	}  > ram AT>ram
 
+    .ilalign         :
+    {
+        . = ALIGN(4);
+        PROVIDE( _ilm_lma = . );
+    } > ram AT>ram
+
+    .ialign         :
+    {
+        PROVIDE( _ilm = . );
+    } > ram AT>ram
+
 	/* read only data segment */
 	.rodata :
 	{
@@ -146,6 +157,23 @@ SECTIONS
 		_unity_test_end   = .;
 	}  > ram AT>ram
 
+    PROVIDE (__etext = .);
+    PROVIDE (_etext = .);
+    PROVIDE (etext = .);
+    PROVIDE( _eilm = . );
+
+    .lalign         :
+    {
+        . = ALIGN(4);
+        PROVIDE( _data_lma = LOADADDR(.data) );
+    } >ram AT>ram
+
+    .dalign         :
+    {
+        . = ALIGN(4);
+        PROVIDE( _data = ADDR(.data));
+    } >ram AT>ram
+
 	/* all data segment */
 	. = ALIGN(16);
 	.data :
@@ -176,6 +204,9 @@ SECTIONS
 		PROVIDE(_async_print_ring_buf_end = .);
 		. = ALIGN(64);
 	}  > ram AT>ram
+
+    PROVIDE( _edata = . );
+    PROVIDE( edata = . );
 
 	. = ALIGN(16);
 	/* all bss segment */

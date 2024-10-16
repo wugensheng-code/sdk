@@ -26,6 +26,17 @@ SECTIONS
 		PROVIDE(_text_end  = .);
 	}  > ram AT>ram
 
+    .ilalign         :
+    {
+        . = ALIGN(4);
+        PROVIDE( _ilm_lma = . );
+    } > ram AT>ram
+
+    .ialign         :
+    {
+        PROVIDE( _ilm = . );
+    } > ram AT>ram
+
 	/* read only data segment */
 	.rodata :
 	{
@@ -58,6 +69,18 @@ SECTIONS
         KEEP(*(.usbh_class_info))
         __usbh_class_info_end__ = .;
 	}  > ram AT>ram
+
+    .lalign         :
+    {
+        . = ALIGN(4);
+        PROVIDE( _data_lma = LOADADDR(.pagetable) );
+    } >ram AT>ram
+
+    .dalign         :
+    {
+        . = ALIGN(4);
+        PROVIDE( _data = ADDR(.pagetable));
+    } >ram AT>ram
 
 	.pagetable :
 	{
@@ -146,6 +169,11 @@ SECTIONS
 		_unity_test_end   = .;
 	}  > ram AT>ram
 
+    PROVIDE (__etext = .);
+    PROVIDE (_etext = .);
+    PROVIDE (etext = .);
+    PROVIDE( _eilm = . );
+
 	/* all data segment */
 	. = ALIGN(16);
 	.data :
@@ -176,6 +204,9 @@ SECTIONS
 		PROVIDE(_async_print_ring_buf_end = .);
 		. = ALIGN(64);
 	}  > ram AT>ram
+
+    PROVIDE( _edata = . );
+    PROVIDE( edata = . );
 
 	. = ALIGN(16);
 	/* all bss segment */
