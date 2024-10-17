@@ -299,9 +299,6 @@ __asm_dcache_all:
 	cbz	x11, finished		/* if loc is 0, exit */
 	mov	x15, lr
 	mov	x0, #0			/* start flush at cache level 0 */
-	mrs	x14, DAIF
-	orr	x2, x14, #0xc0
-	msr	DAIF, x2
 	/* x0  <- cache level */
 	/* x10 <- clidr_el1 */
 	/* x11 <- loc */
@@ -324,7 +321,6 @@ skip:
 	msr	csselr_el1, x0		/* restore csselr_el1 */
 	dsb	sy
 	isb
-	msr	DAIF, x14
 	mov	lr, x15
 
 finished:
@@ -355,9 +351,6 @@ __asm_flush_dcache_range:
 	and	x3, x3, #0xf
 	mov	x2, #4
 	lsl	x2, x2, x3		/* cache line size */
-	mrs	x14, DAIF
-	orr	x13, x14, #0xc0
-	msr	DAIF, x13
 
 	/* x2 <- minimal cache line size in cache system */
 	sub	x3, x2, #1
@@ -367,7 +360,6 @@ __asm_flush_dcache_range:
 	cmp	x0, x1
 	b.lo	1b
 	dsb	sy
-	msr	DAIF, x14
 	ret
 /*
  * void __asm_invalidate_dcache_range(start, end)
@@ -383,9 +375,6 @@ __asm_invalidate_dcache_range:
 	ubfm	x3, x3, #16, #19
 	mov	x2, #4
 	lsl	x2, x2, x3		/* cache line size */
-	mrs	x14, DAIF
-	orr	x13, x14, #0xc0
-	msr	DAIF, x13
 
 	/* x2 <- minimal cache line size in cache system */
 	sub	x3, x2, #1
@@ -395,7 +384,6 @@ __asm_invalidate_dcache_range:
 	cmp	x0, x1
 	b.lo	1b
 	dsb	sy
-	msr	DAIF, x14
 	ret
 
 /*
@@ -413,9 +401,6 @@ __asm_flush_and_invalidate_same_dcache_range:
 	and	x3, x3, #0xf
 	mov	x2, #4
 	lsl	x2, x2, x3		/* cache line size */
-	mrs	x14, DAIF
-	orr	x13, x14, #0xc0
-	msr	DAIF, x13
 
 	/* x2 <- minimal cache line size in cache system */
 	sub	x3, x2, #1
@@ -425,7 +410,6 @@ __asm_flush_and_invalidate_same_dcache_range:
 	cmp	x0, x1
 	b.lo	1b
 	dsb	sy
-	msr	DAIF, x14
 	ret
 
 /*
@@ -443,9 +427,6 @@ __asm_flush_and_invalidate_diff_dcache_range:
 	and	x5, x5, #0xf
 	mov	x4, #4
 	lsl	x4, x4, x5		/* cache line size */
-	mrs	x14, DAIF
-	orr	x13, x14, #0xc0
-	msr	DAIF, x13
 
 	/* x4 <- minimal cache line size in cache system */
 	sub	x5, x4, #1
@@ -460,7 +441,6 @@ __asm_flush_and_invalidate_diff_dcache_range:
 	cmp x2, x3
 	b.lo	2b
 	dsb	sy
-	msr	DAIF, x14
 	ret
 
 /*
