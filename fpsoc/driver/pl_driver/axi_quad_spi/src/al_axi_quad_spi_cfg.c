@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "al_axi_qspi_hw.h"
+#include "al_axi_quad_spi_hw.h"
 
 /************************** Variable Definitions *****************************/
 AlAxiQspi_HwConfigStruct AlAxiQspi_HwCfg[AL_AXI_QSPI_NUM_INSTANCE] =

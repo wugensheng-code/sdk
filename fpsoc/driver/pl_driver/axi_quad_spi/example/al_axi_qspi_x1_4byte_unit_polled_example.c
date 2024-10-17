@@ -12,8 +12,8 @@
 
 /***************************** Include Files *********************************/
 #include <stdio.h>
-#include "al_axi_qspi_hal.h"
-#include "al_axi_qspi_dev.h"
+#include "al_axi_quad_spi_hal.h"
+#include "al_axi_quad_spi_dev.h"
 #include "al_intr.h"
 #include "al_osal.h"
 #include "al_reg_io.h"

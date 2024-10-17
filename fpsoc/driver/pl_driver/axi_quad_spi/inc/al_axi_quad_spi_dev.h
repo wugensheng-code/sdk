@@ -20,7 +20,7 @@ extern "C" {
 #endif
 
 /***************************** Include Files *********************************/
-#include "al_axi_qspi_hw.h"
+#include "al_axi_quad_spi_hw.h"
 #include "al_type.h"
 #include "al_errno.h"
 

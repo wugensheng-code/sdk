@@ -20,7 +20,7 @@ extern "C" {
 #endif
 
 /***************************** Include Files *********************************/
-#include "al_axi_qspi_dev.h"
+#include "al_axi_quad_spi_dev.h"
 #include "al_osal.h"
 
 /************************** Constant Definitions *****************************/

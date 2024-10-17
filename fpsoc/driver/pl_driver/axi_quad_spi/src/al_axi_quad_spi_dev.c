@@ -5,8 +5,8 @@
  */
 
 /***************************** Include Files *********************************/
-#include "al_axi_qspi_dev.h"
-#include "al_axi_qspi_ll.h"
+#include "al_axi_quad_spi_dev.h"
+#include "al_axi_quad_spi_ll.h"
 
 /***************** Macros (Inline Functions) Definitions *********************/
 #define AL_AXI_QSPI_INTR_MODF                 BIT(0)
