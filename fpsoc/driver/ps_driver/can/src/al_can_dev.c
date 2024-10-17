@@ -793,9 +793,9 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
     AL_ASSERT(Frame->DataLen < AL_CAN_LEN_MAX, AL_CAN_ERR_ILLEGAL_PARAM);
     AL_ASSERT(!AlCan_Dev_GetState(Dev, AL_CAN_STATE_RESET), AL_CAN_ERR_STATE_RESET);
     AL_ASSERT(AlCan_Dev_GetState(Dev, AL_CAN_STATE_READY), AL_CAN_ERR_STATE_NOT_READY);
-    AL_ASSERT((!AlCan_Dev_GetState(Dev, AL_CAN_STATE_SEND_BUSY)) &&
+    AL_ASSERT(!(AlCan_Dev_GetState(Dev, AL_CAN_STATE_SEND_BUSY) &&
                (Dev->Config.TransMode != AL_CAN_TRANS_STB_FIFO) &&
-               (Dev->Config.TransMode != AL_CAN_TRANS_STB_PRIO), AL_CAN_ERR_BUSY);
+               (Dev->Config.TransMode != AL_CAN_TRANS_STB_PRIO)), AL_CAN_ERR_BUSY);
 
     if (AlCan_ll_GetTsstat(Dev->BaseAddr) == AL_CAN_TSSTAT_FULL) {
         return AL_CAN_ERR_IN_TS_FULL;
@@ -837,6 +837,7 @@ AL_S32 AlCan_Dev_SendFrame(AL_CAN_DevStruct *Dev, AL_CAN_FrameStruct *Frame)
         break;
     case AL_CAN_TRANS_STB_FIFO:
     case AL_CAN_TRANS_STB_PRIO:
+        AlCan_ll_SetTsnext(Dev->BaseAddr, AL_CAN_TSNEXT_STB_SLOT_FILLED);
         AlCan_ll_SetTsall(Dev->BaseAddr);
         break;
     default:
