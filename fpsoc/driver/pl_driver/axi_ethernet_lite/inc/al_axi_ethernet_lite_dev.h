@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-#include "al_axi_ethlite_ll.h"
+#include "al_axi_ethernet_lite_ll.h"
 
 typedef struct
 {
@@ -57,7 +57,7 @@ typedef AL_VOID (*AL_AXI_ETHLITE_EventCallBack)(AL_AXI_ETHLITE_EventStruct *Even
 
 typedef struct
 {
-    AL_AXI_ETHLITE_HwConfigStruct       HwConfig;
+    AlAxiEthLite_HwConfigStruct         HwConfig;
     AL_AXI_ETHLITE_InitStruct           InitConfig;
     AL_AXI_ETHLITE_EventCallBack        EventCallBack;
     AL_VOID                             *EventCallBackRef;
@@ -84,9 +84,9 @@ typedef enum
 
 #define AL_AXI_ETHLITE_MAX_FRAME_SIZE               1518
 
-AL_AXI_ETHLITE_HwConfigStruct *AlAxiEthLite_Dev_LookupConfig(AL_U32 DevId);
+AlAxiEthLite_HwConfigStruct *AlAxiEthLite_Dev_LookupConfig(AL_U32 DevId);
 
-AL_S32 AlAxiEthLite_Dev_Init(AL_AXI_ETHLITE_DevStruct *AxiEth, AL_AXI_ETHLITE_HwConfigStruct *HwConfig,
+AL_S32 AlAxiEthLite_Dev_Init(AL_AXI_ETHLITE_DevStruct *AxiEth, AlAxiEthLite_HwConfigStruct *HwConfig,
                              AL_AXI_ETHLITE_InitStruct *InitConfig);
 
 AL_S32 AlAxiEthLite_Dev_RegisterEventCallBack(AL_AXI_ETHLITE_DevStruct *AxiEth,

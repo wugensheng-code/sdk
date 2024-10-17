@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "al_axi_ethlite_hal.h"
+#include "al_axi_ethernet_lite_hal.h"
 #include "al_ethlite_ethernetif.h"
 
 #include "lwip/init.h"
@@ -13,8 +13,6 @@
 extern struct netif ethlite_netif;
 
 extern void netio_init(void);
-
-extern void start_application(void);
 
 int main()
 {

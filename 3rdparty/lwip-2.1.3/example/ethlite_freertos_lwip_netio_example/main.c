@@ -74,7 +74,7 @@
 #include "task.h"     /* RTOS task related API prototypes. */
 #include "timers.h"   /* Software timer related API prototypes. */
 
-#include "al_axi_ethlite_hal.h"
+#include "al_axi_ethernet_lite_hal.h"
 #include "al_ethlite_ethernetif.h"
 #include "lwip/tcpip.h"
 

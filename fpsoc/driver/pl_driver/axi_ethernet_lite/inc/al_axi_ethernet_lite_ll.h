@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-#include "al_axi_ethlite_hw.h"
+#include "al_axi_ethernet_lite_hw.h"
 
 typedef enum
 {

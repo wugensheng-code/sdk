@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "al_axi_ethlite_dev.h"
+#include "al_axi_ethernet_lite_dev.h"
 
 static AL_AXI_ETHLITE_InitStruct AlAxiEthLiteInitConfigs =
 {
@@ -32,14 +32,14 @@ static AL_AXI_ETHLITE_DefaultInitStruct AxiEthDefInitConfigs =
     .TxHfDuplexEnable       = AL_AXI_ETHLITE_FUNC_DISABLE,
 };
 
-extern AL_AXI_ETHLITE_HwConfigStruct AlAxiEthLite_HwConfig[AL_AXI_ETHLITE_NUM_INSTANCE];
+extern AlAxiEthLite_HwConfigStruct AlAxiEthLite_HwConfig[AL_AXI_ETH_LITE_NUM_INSTANCE];
 
-AL_AXI_ETHLITE_HwConfigStruct *AlAxiEthLite_Dev_LookupConfig(AL_U32 DevId)
+AlAxiEthLite_HwConfigStruct *AlAxiEthLite_Dev_LookupConfig(AL_U32 DevId)
 {
     AL_U32 Index;
-    AL_AXI_ETHLITE_HwConfigStruct *ConfigPtr = AL_NULL;
+    AlAxiEthLite_HwConfigStruct *ConfigPtr = AL_NULL;
 
-    for (Index = 0; Index < AL_AXI_ETHLITE_NUM_INSTANCE; Index++) {
+    for (Index = 0; Index < AL_AXI_ETH_LITE_NUM_INSTANCE; Index++) {
         if (AlAxiEthLite_HwConfig[Index].DeviceId == DevId) {
             ConfigPtr = &AlAxiEthLite_HwConfig[Index];
             break;
@@ -245,7 +245,7 @@ static AL_VOID AlAxiEthLitelite_FlushReceive(AL_AXI_ETHLITE_DevStruct *AxiEth)
     AlAxiEthLite_ll_ClrRxPongBufferFrameFlag(EthBaseAddr);
 }
 
-AL_S32 AlAxiEthLite_Dev_Init(AL_AXI_ETHLITE_DevStruct *AxiEth, AL_AXI_ETHLITE_HwConfigStruct *HwConfig,
+AL_S32 AlAxiEthLite_Dev_Init(AL_AXI_ETHLITE_DevStruct *AxiEth, AlAxiEthLite_HwConfigStruct *HwConfig,
                              AL_AXI_ETHLITE_InitStruct *InitConfig)
 {
     AL_ASSERT((AxiEth != AL_NULL) && (HwConfig != AL_NULL) && (InitConfig != AL_NULL),
@@ -284,7 +284,7 @@ AL_S32 AlAxiEthLite_Dev_Init(AL_AXI_ETHLITE_DevStruct *AxiEth, AL_AXI_ETHLITE_Hw
     AlAxiEthLite_Dev_SetEthConfig(AxiEth, InitConfig);
 
     if (AlAxiEthLite_ll_IsMdioExist(EthBaseAddr) == AL_TRUE) {
-        MdioClockDiv = AxiEth->HwConfig.ClockHz / 2500000;
+        MdioClockDiv = AxiEth->HwConfig.InputClk / 2500000;
         AlAxiEthLite_ll_SetMdioClockDiv(EthBaseAddr, MdioClockDiv);
         AlAxiEthLite_ll_EnableMdio(EthBaseAddr, AL_AXI_ETHLITE_FUNC_ENABLE);
 

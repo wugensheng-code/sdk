@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-#include "al_axi_ethlite_dev.h"
+#include "al_axi_ethernet_lite_dev.h"
 
 typedef AL_VOID (*AL_AXI_ETHLITE_RxValidCallBack)(AL_VOID *CallbackRef);
 typedef AL_VOID (*AL_AXI_ETHLITE_TxDoneCallBack)(AL_VOID *CallbackRef);

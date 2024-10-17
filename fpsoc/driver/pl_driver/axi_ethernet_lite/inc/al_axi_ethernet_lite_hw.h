@@ -19,10 +19,10 @@ extern "C" {
 /**************************** Type Definitions ******************************/
 
 /***************** Macros (Inline Functions) Definitions ********************/
-#define AL_AXI_ETHLITE_NUM_INSTANCE        1
-#define AXI_ETHLITE_ETH0_BASE_ADDR         0x1c0000000ULL
-#define AXI_ETHLITE_ETH0_CLOCK             100000000
-#define AXI_ETHLITE_ETH0_INTR_ID           114
+#define AL_AXI_ETH_LITE_NUM_INSTANCE        1
+#define AXI_ETH_LITE0_BASE_ADDR             0x1c0000000ULL
+#define AXI_ETH_LITE_CLOCK                  100000000
+#define AXI_ETH_LITE0_INTR_ID               114
 
 
 ///////////////////////////////////////////////////////
@@ -236,9 +236,9 @@ extern "C" {
 typedef struct {
     AL_U32      DeviceId;
     AL_UINTPTR  BaseAddress;
-    AL_U32      ClockHz;
+    AL_U32      InputClk;
     AL_U32      IntrId;
-} AL_AXI_ETHLITE_HwConfigStruct;
+} AlAxiEthLite_HwConfigStruct;
 
 #ifdef __cplusplus
 }

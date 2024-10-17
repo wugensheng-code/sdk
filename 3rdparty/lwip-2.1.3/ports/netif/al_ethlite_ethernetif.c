@@ -36,7 +36,7 @@
  */
 
 #include "al_ethlite_ethernetif.h"
-#include "al_axi_ethlite_hal.h"
+#include "al_axi_ethernet_lite_hal.h"
 
 #include "lwipopts.h"
 #include "lwip/netif.h"

@@ -6,7 +6,7 @@
 
 /********************************* including Files *********************************/
 #include "al_hal.h"
-#include "al_axi_ethlite_hw.h"
+#include "al_axi_ethernet_lite_hw.h"
 
 /********************************* Constant Definitions *****************************/
 
@@ -22,12 +22,12 @@
 
 /******************************** Variable Prototypes ******************************/
 
-AL_AXI_ETHLITE_HwConfigStruct AlAxiEthLite_HwConfig[AL_AXI_ETHLITE_NUM_INSTANCE] =
+AlAxiEthLite_HwConfigStruct AlAxiEthLite_HwConfig[AL_AXI_ETH_LITE_NUM_INSTANCE] =
 {
     {
         .DeviceId       = 0,
-        .BaseAddress    = AXI_ETHLITE_ETH0_BASE_ADDR,
-        .ClockHz        = AXI_ETHLITE_ETH0_CLOCK,
-        .IntrId         = AXI_ETHLITE_ETH0_INTR_ID,
+        .BaseAddress    = AXI_ETH_LITE0_BASE_ADDR,
+        .InputClk       = AXI_ETH_LITE_CLOCK,
+        .IntrId         = AXI_ETH_LITE0_INTR_ID,
     }
 };

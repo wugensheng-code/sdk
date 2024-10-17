@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "al_axi_ethlite_hal.h"
+#include "al_axi_ethernet_lite_hal.h"
 
 
 #define ETH_MAC_ADDR_LEN    6

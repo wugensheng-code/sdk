@@ -5,9 +5,9 @@
  */
 
 /***************************** Include Files *********************************/
-#include "al_axi_ethlite_hal.h"
+#include "al_axi_ethernet_lite_hal.h"
 
-AL_AXI_ETHLITE_HalStruct AlAxiEthLiteHandle[AL_AXI_ETHLITE_NUM_INSTANCE];
+AL_AXI_ETHLITE_HalStruct AlAxiEthLiteHandle[AL_AXI_ETH_LITE_NUM_INSTANCE];
 
 static AL_VOID AlAxiEthLite_DefEventCallBack(AL_AXI_ETHLITE_EventStruct *Event, AL_VOID *CallbackRef)
 {
@@ -31,7 +31,7 @@ AL_S32 AlAxiEthLite_Hal_Init(AL_AXI_ETHLITE_HalStruct **Handle, AL_U32 DevId,
                          AL_AXI_ETHLITE_InitStruct *InitConfig, AL_AXI_ETHLITE_EventCallBack Callback)
 {
     AL_S32 Ret = AL_OK;
-    AL_AXI_ETHLITE_HwConfigStruct *HwConfig = AL_NULL;
+    AlAxiEthLite_HwConfigStruct *HwConfig = AL_NULL;
 
     AL_ASSERT((Handle != AL_NULL), AL_AXI_ETHLITE_ERR_ILLEGAL_PARAM);
 
