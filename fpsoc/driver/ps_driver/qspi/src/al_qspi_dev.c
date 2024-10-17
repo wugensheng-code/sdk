@@ -352,11 +352,14 @@ AL_S32 AlQspi_Dev_XipAddr24Init(AL_QSPI_DevStruct *Qspi, AL_U8* FlashId)
     AlQspi_ll_Disable(Qspi->HwConfig.BaseAddress);
 
     if (FlashId[1] == 0x40 && FlashId[2] == 0x18) {
-        AlQspi_ll_SetWaitCycles(Qspi->HwConfig.BaseAddress, 0x6);
+        AlQspi_ll_SetWaitCycles(Qspi->HwConfig.BaseAddress, 0x4);
+        AlQspi_ll_SetXipModeBits(Qspi->HwConfig.BaseAddress, 0x00);
     } else if (FlashId[0] == 0xC8 && FlashId[1] == 0x67 && FlashId[2] == 0x19) {
-        AlQspi_ll_SetWaitCycles(Qspi->HwConfig.BaseAddress, 0x6);
+        AlQspi_ll_SetWaitCycles(Qspi->HwConfig.BaseAddress, 0x4);
+        AlQspi_ll_SetXipModeBits(Qspi->HwConfig.BaseAddress, 0xFF);
     } else {
-        AlQspi_ll_SetWaitCycles(Qspi->HwConfig.BaseAddress, 0xa);
+        AlQspi_ll_SetWaitCycles(Qspi->HwConfig.BaseAddress, 0x8);
+        AlQspi_ll_SetXipModeBits(Qspi->HwConfig.BaseAddress, 0xFF);
     }
 
     AlQspi_ll_SetClockStretch(Qspi->HwConfig.BaseAddress, QSPI_EnableClockStretch);
@@ -365,7 +368,9 @@ AL_S32 AlQspi_Dev_XipAddr24Init(AL_QSPI_DevStruct *Qspi, AL_U8* FlashId)
     AlQspi_ll_SetInstLength(Qspi->HwConfig.BaseAddress, QSPI_INST_L8);
     AlQspi_ll_SetTransType(Qspi->HwConfig.BaseAddress, QSPI_TT1);
     AlQspi_ll_SetQspiFrameFormat(Qspi->HwConfig.BaseAddress, SPI_QUAD_FORMAT);
-    AlQspi_ll_SetXipModeBitEn(Qspi->HwConfig.BaseAddress, QSPI_XipModeBitDisable);
+
+    AlQspi_ll_SetXipModeBitEn(Qspi->HwConfig.BaseAddress, QSPI_XipModeBitEnable);
+    AlQspi_ll_SetXipMbl(Qspi->HwConfig.BaseAddress, QSPI_MBL_8);
 
     AlQspi_ll_SetXipDfsFix(Qspi->HwConfig.BaseAddress, QSPI_XipDfsChange);
     AlQspi_ll_SetXipContTrans(Qspi->HwConfig.BaseAddress, QSPI_DisableXipContTrans);
