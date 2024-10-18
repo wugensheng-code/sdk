@@ -1962,7 +1962,7 @@
 					"name": "VDMA_LOOPBACK",
 					"version": "1.0",
 					"depends": [
-						"fpsoc/driver/pl_driver/vdma/example/axi_vdma_loopback.c",
+						"fpsoc/driver/pl_driver/vdma/example/vdma_loopback_intr.c",
 						"PL_DRIVER_VDMA_V1_0"
 					],
 					"description": "axi vdma loopback test",

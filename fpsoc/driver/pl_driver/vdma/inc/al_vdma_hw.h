@@ -4,19 +4,12 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef AL_AXI_VDMA_HW_H_
-#define AL_AXI_VDMA_HW_H_
+#ifndef AL_VDMA_HW_H_
+#define AL_VDMA_HW_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-// test, parameters should from TD HPF
-#define AL_AXI_VDMA_NUM_INSTANCE    2
-#define AXI_VDMA0_IRQn              114
-#define AXI_VDMA0__BASE_ADDR        0x80002000U
-
-
 
 /***************************** Include Files ********************************/
 #include "al_core.h"

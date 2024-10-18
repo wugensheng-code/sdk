@@ -75,8 +75,8 @@ typedef enum
     AL_IIC                  = 0x0C,
     AL_CIPHER               = 0x0D,
     AL_GBE                  = 0x0F,
-    AL_ADC                 = 0x10,
-    AL_TC                  = 0x11,
+    AL_ADC                  = 0x10,
+    AL_TC                   = 0x11,
     AL_WDT                  = 0x13,
     AL_DMA                  = 0x14,
     AL_USB                  = 0x15,
@@ -86,6 +86,7 @@ typedef enum
     AL_AXI_ETHLITE          = 0x19,
     AL_AxiQspi              = 0x1A,
     AL_AxiGpio              = 0x1B,
+    AL_VDMA                 = 0x1C,
 } AL_MODULE_TYPE;
 
 #ifdef __cplusplus
