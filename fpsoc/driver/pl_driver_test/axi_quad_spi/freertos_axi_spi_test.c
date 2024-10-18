@@ -77,7 +77,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "al_axi_qspi_hal.h"
+#include "al_axi_quad_spi_hal.h"
 #include "al_intr.h"
 #include "al_reg_io.h"
 #include "al_spinor.h"
