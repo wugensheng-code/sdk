@@ -1904,7 +1904,7 @@
 				}
 			}
 		},
-		"PL_DRIVER_AXIDMA": {
+		"PL_DRIVER_AXI_DMA": {
 			"1.0":{
 				"AXIDMA_DIRECT": {
 					"name": "AXIDMA_DIRECT",
