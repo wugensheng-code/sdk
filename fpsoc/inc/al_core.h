@@ -28,6 +28,9 @@ AL_VOID AlCore_EnableBPU(AL_VOID);
 
 AL_VOID AlCore_DisableBPU(AL_VOID);
 
+AL_S32 AlCore_GetCoreId(AL_VOID);
+
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

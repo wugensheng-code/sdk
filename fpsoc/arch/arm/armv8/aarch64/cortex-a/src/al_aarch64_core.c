@@ -98,6 +98,12 @@ AL_S32 AlCache_SetMemoryAttr(AL_UINTPTR Start, AL_UINTPTR End, AL_MemAttr Attr)
 
     return AL_OK;
 #else
-    return AL_ERR_NOT_SUPPORT;
+    return AL_OK;
 #endif
+}
+
+
+AL_S32 AlCore_GetCoreId(AL_VOID)
+{
+    return (ARCH_SYSREG_READ(mpidr_el1) & 0xFF);
 }

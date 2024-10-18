@@ -25,6 +25,7 @@ AL_VOID do_irq_handle(AL_VOID)
     AL_INTR_HandlerStruct Handler;
 
     IntrId = AlGicv3_AckIntrSel1();
+    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     if (IntrId < SOC_INT_MAX) {
         Handler = irq_handler_list[IntrId];
@@ -37,11 +38,6 @@ AL_VOID do_irq_handle(AL_VOID)
     } else {
         Handler.Func(Handler.Param);
     }
-
-#ifdef RTOS_FREERTOS
-    disable_all_intr();
-#endif
-
     AlGicv3_EndOfIntrSel1(IntrId);
 }
 
@@ -55,6 +51,7 @@ AL_VOID do_fiq_handle(AL_VOID)
     AL_INTR_HandlerStruct Handler;
 
     IntrId = AlGicv3_AckIntrSel1();
+    AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
     if (IntrId < SOC_INT_MAX) {
         Handler = irq_handler_list[IntrId];
@@ -68,11 +65,9 @@ AL_VOID do_fiq_handle(AL_VOID)
         Handler.Func(Handler.Param);
     }
 
-    #ifdef RTOS_FREERTOS
-        disable_all_intr();
-    #endif
-
     AlGicv3_EndOfIntrSel1(IntrId);
+
+
 }
 
 static AL_VOID AlIntr_RequestIntr(AL_U32 IntrId, AL_VOID *Handler, AL_VOID *Param)

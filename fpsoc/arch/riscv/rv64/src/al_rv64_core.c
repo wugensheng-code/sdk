@@ -49,3 +49,8 @@ AL_VOID AlCore_DisableBPU(AL_VOID)
     ARCH_SYSREG_CLEAR(CSR_MMISC_CTL, MMISC_CTL_BPU);
     ISB();
 }
+
+AL_S32 AlCore_GetCoreId(AL_VOID)
+{
+    return 0;
+}

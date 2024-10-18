@@ -5,11 +5,11 @@
  */
 
 #include "al_type.h"
+#include "al_aarch32_core.h"
 #include "al_utils_def.h"
 #include "al_mmu.h"
 #include "al_cache.h"
 #include "al_aarch32_sysreg.h"
-#include "al_aarch32_core.h"
 
 AL_VOID __asm_invalidate_icache_all(AL_VOID);
 AL_VOID __asm_flush_dcache_range(AL_UINTPTR, AL_UINTPTR);
@@ -94,4 +94,9 @@ AL_S32 AlCache_SetMemoryAttr(AL_UINTPTR Start, AL_UINTPTR End, AL_MemAttr Attr)
     }
 
     return AL_OK;
+}
+
+AL_S32 AlCore_GetCoreId(AL_VOID)
+{
+    return (ARCH_COPROCR_SYSREG_READ(mpidr_el1) & 0xFF);
 }
