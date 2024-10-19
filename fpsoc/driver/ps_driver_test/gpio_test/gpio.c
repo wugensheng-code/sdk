@@ -56,9 +56,10 @@ int AlGpio_Hal_Test()
     }
 
     /* 4、Test intr */
-    AlGpio_Hal_IntrPinCfg(GPIO, PS_MIO10, GPIO_INTR_TYPE_LEVEL_HIGH);
-    AlGpio_Hal_IntrPinCfg(GPIO, PL_KEY_1, GPIO_INTR_TYPE_EDGE_FALLING);
-    AlGpio_Hal_IntrPinCfg(GPIO, PL_KEY_2, GPIO_INTR_TYPE_EDGE_RISING);
+    AL_INTR_AttrStrct AttrGpio = {.Priority = 0x20, .TrigMode = LEVEL_HIGH_TRIGGER};
+    AlGpio_Hal_IntrPinCfg(GPIO, PS_MIO10, GPIO_INTR_TYPE_LEVEL_HIGH, &AttrGpio);
+    AlGpio_Hal_IntrPinCfg(GPIO, PL_KEY_1, GPIO_INTR_TYPE_EDGE_FALLING, &AttrGpio);
+    AlGpio_Hal_IntrPinCfg(GPIO, PL_KEY_2, GPIO_INTR_TYPE_EDGE_RISING, &AttrGpio);
 
     AlSys_MDelay(5000);
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);

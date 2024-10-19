@@ -25,6 +25,7 @@
 #define AL_GPIO_DEVICE_ID  0
 /* use SD_CD pin as key */
 #define PS_KEY_1 11
+
 /************************** Variable Definitions *****************************/
 static AL_TC_TimerInitStruct PwmInitConfigs = {
     .CountDec            = AL_TC_CountUp,
@@ -33,7 +34,7 @@ static AL_TC_TimerInitStruct PwmInitConfigs = {
     .PrescaleVal         = 10,
 };
 
-static AL_U32 GpioFlag = 0;
+static volatile GpioFlag = 0;
 AL_TC_HalStruct *TcHandle;
 AL_GPIO_HalStruct *GPIO;
 /************************** Function Prototypes ******************************/
@@ -57,7 +58,9 @@ AL_S32 main(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_INFO, "[TEST] APU TC init failed\r\n");
     }
 
+#if defined(__aarch64__)
     AlGicv3_SetInterruptPriority(TcHandle->Dev.IntrNum, CpuId, AttrTc.Priority);
+#endif
 
     AlTc_Hal_EnableIntervalMode(TcHandle);
 
