@@ -58,7 +58,6 @@ AL_S32 main(AL_VOID)
         AL_LOG(AL_LOG_LEVEL_INFO, "try take the spin lock\r\n");
 
         Ret = AlIpc_Hal_SpinLockTake(Spinlock_Handle, AL_WAITING_NO);
-
         if (Ret != AL_OK) {
             AL_LOG(AL_LOG_LEVEL_INFO, "Successfully obtained the spin lock\r\n");
         }

@@ -74,33 +74,38 @@ AL_VOID CallBack2Apu(AL_VOID * arg)
 AL_S32 main(AL_VOID)
 {
     AL_S32 Ret = AL_OK;
-    AL_IpcIntr_HalStruct *IpcInter2Rpu;
-    AL_IpcIntr_HalStruct *IpcInter2Apu;
+    AL_IpcIntr_HalStruct *IpcInter2Rpu = AL_NULL;
+    AL_IpcIntr_HalStruct *IpcInter2Apu = AL_NULL;
 
     AL_LOG(AL_LOG_LEVEL_INFO, "Ipc Inter test\r\n");
 
 #ifdef RPU
-
     Ret = AlIpc_Hal_IntrInit(&IpcInter2Rpu, AL_IPC_APU2RPU_REQ, CallBack2Apu, AL_NULL);
-    Ret = AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
-
-    if (Ret || Ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Ipc Inter test error\r\n");
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Ipc Intr init error\r\n");
     }
 
+    Ret = AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Ipc Intr enable error\r\n");
+    }
 #endif
 
 #ifdef APU
-
     Ret = AlIpc_Hal_IntrInit(&IpcInter2Apu, AL_IPC_RPU2APU_REQ, CallBack2Rpu, AL_NULL);
-    Ret = AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
-
-    Ret = AlIpc_Hal_IntrNotify(AL_IPC_APU2RPU_REQ);
-
-    if (Ret || Ret) {
-        AL_LOG(AL_LOG_LEVEL_ERROR, "Ipc Inter test error\r\n");
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Ipc Inter init error\r\n");
     }
 
+    Ret = AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Ipc Intr enable error\r\n");
+    }
+
+    Ret = AlIpc_Hal_IntrNotify(AL_IPC_APU2RPU_REQ);
+    if (Ret != AL_OK) {
+        AL_LOG(AL_LOG_LEVEL_ERROR, "Ipc Intr Notify error\r\n");
+    }
 #endif
 
     return Ret;

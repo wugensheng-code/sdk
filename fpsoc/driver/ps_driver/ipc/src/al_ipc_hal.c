@@ -80,11 +80,11 @@ AL_S32 AlIpc_Hal_SpinLockTake(AL_IpcSpinLock_HalStruct *Handle, AL_U32 Timeout)
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "begin waiting AlIpc_Hal_SpinLockTake 0x%x \r\n", Timeout);
 
-	AL_U64 Start = AlSys_GetTimerTickCount();
-	AL_U64 Freq  = AlSys_GetTimerFreq();
-	do {
+    AL_U64 Start = AlSys_GetTimerTickCount();
+    AL_U64 Freq  = AlSys_GetTimerFreq();
+    do {
         Take = AlIpc_ll_SpinLockTryTake(Handle->Number);
-	} while((Take != 1) && (Start + Freq * Timeout / 1000 >= AlSys_GetTimerTickCount()));
+    } while((Take != 1) && (Start + Freq * Timeout / 1000 >= AlSys_GetTimerTickCount()));
 
 
     AL_LOG(AL_LOG_LEVEL_DEBUG, "end waiting AlIpc_Hal_SpinLockTake 0x%x \r\n", Take);
