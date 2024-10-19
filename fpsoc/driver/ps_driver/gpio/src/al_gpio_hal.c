@@ -843,21 +843,18 @@ static AL_VOID AlGpio_Hal_IntrHandler(AL_VOID *Instance)
     for(Bank = 0; Bank < GPIO_MAX_BANKS; Bank ++) {
         IntrStatus = AlGpio_Hal_GetBankIntrStatus(Handle, Bank);
         if (IntrStatus != 0) {
-            if (Handle->IntrBank & BIT(Bank)) {
-                if(Handle->EventCallBack) {
-                    AL_GPIO_EventStruct GpioEvent = {
-                        .Bank      = Bank,
-                        .EventData = IntrStatus
-                    };
-                    Handle->EventCallBack(GpioEvent, Handle->EventCallBackRef);
+            if(Handle->EventCallBack) {
+                AL_GPIO_EventStruct GpioEvent = {
+                    .Bank      = Bank,
+                    .EventData = IntrStatus
+                };
+                Handle->EventCallBack(GpioEvent, Handle->EventCallBackRef);
 
-                    AlGpio_Hal_ClrBankIntr(Handle, Bank, IntrStatus);
-                    /* In edge interrupt mode, GPIO__EOI Register need to be set 0 for the next interrupt. */
-                    AlGpio_Hal_ClrBankIntr(Handle, Bank, AL_GPIO_DISABLE);
-                }
+                AlGpio_Hal_ClrBankIntr(Handle, Bank, IntrStatus);
+                /* In edge interrupt mode, GPIO__EOI Register need to be set 0 for the next interrupt. */
+                AlGpio_Hal_ClrBankIntr(Handle, Bank, AL_GPIO_DISABLE);
             }
         }
-
     }
 }
 
@@ -874,7 +871,7 @@ static AL_VOID AlGpio_Hal_IntrHandler(AL_VOID *Instance)
  * @return AL_OK if the configuration was successful, AL_FALSE otherwise.
  *
  */
-AL_S32 AlGpio_Hal_IntrPinCfg(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_GPIO_IntrEnum IntrType)
+AL_S32 AlGpio_Hal_IntrPinCfg(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_GPIO_IntrEnum IntrType, AL_INTR_AttrStrct *Attr)
 {
     AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.BankMaxPins), AL_GPIO_ERR_ILLEGAL_PARAM);
 
@@ -888,20 +885,14 @@ AL_S32 AlGpio_Hal_IntrPinCfg(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_GPIO_Intr
     }
 
     if (Pin >= 0 && Pin <= MAX_PIN_NUMBER_IN_BANK_0) {
-        (AL_VOID)AlIntr_RegHandler(Handle->HwConfig.IntrId, AL_NULL, AlGpio_Hal_IntrHandler, Handle);
-        Bank = AL_GPIO_INTR_BANK0;
+        (AL_VOID)AlIntr_RegHandler(Handle->HwConfig.IntrId, Attr, AlGpio_Hal_IntrHandler, Handle);
     } else if(Pin > MAX_PIN_NUMBER_IN_BANK_0 && Pin <= MAX_PIN_NUMBER_IN_BANK_1) {
-        (AL_VOID)AlIntr_RegHandler(Handle->HwConfig.IntrId + 1, AL_NULL, AlGpio_Hal_IntrHandler, Handle);
-        Bank = AL_GPIO_INTR_BANK1;
+        (AL_VOID)AlIntr_RegHandler(Handle->HwConfig.IntrId + 1, Attr, AlGpio_Hal_IntrHandler, Handle);
     } else if(Pin > MAX_PIN_NUMBER_IN_BANK_1 && Pin <= MAX_PIN_NUMBER_IN_BANK_2) {
-        (AL_VOID)AlIntr_RegHandler(Handle->HwConfig.IntrId + 2, AL_NULL, AlGpio_Hal_IntrHandler, Handle);
-        Bank = AL_GPIO_INTR_BANK2;
+        (AL_VOID)AlIntr_RegHandler(Handle->HwConfig.IntrId + 2, Attr, AlGpio_Hal_IntrHandler, Handle);
     } else if (Pin > MAX_PIN_NUMBER_IN_BANK_2 && Pin <= MAX_PIN_NUMBER_IN_BANK_3) {
-        (AL_VOID)AlIntr_RegHandler(Handle->HwConfig.IntrId + 3, AL_NULL, AlGpio_Hal_IntrHandler, Handle);
-        Bank = AL_GPIO_INTR_BANK3;
+        (AL_VOID)AlIntr_RegHandler(Handle->HwConfig.IntrId + 3, Attr, AlGpio_Hal_IntrHandler, Handle);
     }
-
-    Handle->IntrBank |= Bank;
 
     AlGpio_Hal_SetPinDirection(Handle, Pin, GPIO_PIN_INPUT);
     AlGpio_Hal_SetPinIntrType(Handle, Pin, IntrType);

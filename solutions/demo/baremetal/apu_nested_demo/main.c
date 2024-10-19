@@ -7,7 +7,8 @@
 /***************************** Include Files *********************************/
 #include <string.h>
 #include <stdlib.h>
-#include "al_hal.h"
+#include "al_gpio_hal.h"
+#include "al_tc_hal.h"
 #include "al_aarch64_core.h"
 
 /************************** Constant Definitions *****************************/
@@ -23,7 +24,7 @@
 
 #define AL_GPIO_DEVICE_ID  0
 /* use SD_CD pin as key */
-#define PS_KEY_1 0
+#define PS_KEY_1 11
 /************************** Variable Definitions *****************************/
 static AL_TC_TimerInitStruct PwmInitConfigs = {
     .CountDec            = AL_TC_CountUp,
@@ -72,12 +73,10 @@ AL_S32 main(AL_VOID)
     } else {
         AL_LOG(AL_LOG_LEVEL_INFO, "[TEST] APU AlGpio_Hal_Init failed\r\n");
     }
+    *(AL_U32 *)(0xf880302cu) =0x4;    //GPIO MIO11
 
-#if 0
-    AlGpio_Hal_IntrPinCfg(GPIO, PS_KEY_1, GPIO_INTR_TYPE_EDGE_FALLING);
-    AL_INTR_AttrStrct Attr = {.Priority = 0x20, .TrigMode = LEVEL_HIGH_TRIGGER};
-    (AL_VOID)AlIntr_RegHandler(Handle->HwConfig.IntrId, &Attr, AlGpio_Hal_IntrHandler, Handle);
-#endif
+    AL_INTR_AttrStrct AttrGpio = {.Priority = 0x20, .TrigMode = LEVEL_HIGH_TRIGGER};
+    AlGpio_Hal_IntrPinCfg(GPIO, PS_KEY_1, GPIO_INTR_TYPE_EDGE_FALLING, &AttrGpio);
 
     AlIntr_SetLocalInterrupt(AL_FUNC_ENABLE);
 
@@ -117,6 +116,7 @@ static AL_VOID Nest_Tc_EventHandler(AL_TC_EventStruct TcEvent, AL_VOID *Callback
         break;
     }
 }
+
 
 static AL_VOID Nest_Gpio_EventCallBack(AL_GPIO_EventStruct GpioEvent, AL_VOID *CallbackRef)
 {

@@ -139,7 +139,7 @@ AL_S32 AlGpio_Hal_GetBankSync(AL_GPIO_HalStruct *Handle, AL_U32 Bank);
 /*
  * Pin intr APIs
 */
-AL_S32 AlGpio_Hal_IntrPinCfg(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_GPIO_IntrEnum IntrType);
+AL_S32 AlGpio_Hal_IntrPinCfg(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_GPIO_IntrEnum IntrType, AL_INTR_AttrStrct *Attr);
 
 #ifdef __cplusplus
 }
