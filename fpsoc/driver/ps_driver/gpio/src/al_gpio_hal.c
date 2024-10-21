@@ -108,6 +108,7 @@ AL_S32 AlGpio_Hal_Init(AL_GPIO_HalStruct **Handle, AL_U32 DevId, AL_GPIO_EventCa
     (*Handle)->HwConfig.BaseAddress = HwConfig->BaseAddress;
     (*Handle)->HwConfig.BankMaxPins = HwConfig->BankMaxPins;
     (*Handle)->HwConfig.MaxBanks  = HwConfig->MaxBanks;
+    (*Handle)->HwConfig.MaxPinNum = HwConfig->MaxPinNum;
     (*Handle)->HwConfig.IntrId = HwConfig->IntrId;
 
     /* register intr */
@@ -323,7 +324,7 @@ static AL_S32 AlGpio_Hal_SetPinDirection(AL_GPIO_HalStruct *Handle, AL_U32 Pin, 
     AL_U32 PinNumber = 0;
     AL_U32 DirReg = 0;
 
-    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.BankMaxPins), AL_GPIO_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.MaxPinNum), AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
 
@@ -355,7 +356,7 @@ static AL_S32 AlGpio_Hal_GetPinDirection(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
     AL_U32 Bank = 0;
     AL_U32 PinNumber = 0;
 
-    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.BankMaxPins), AL_GPIO_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.MaxPinNum), AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
     return (AlGpio_ll_GetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET) >> PinNumber) & (AL_U32)1;
@@ -377,7 +378,7 @@ AL_S32 AlGpio_Hal_ReadPinOutput(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
     AL_U32 Bank = 0;
     AL_U32 PinNumber = 0;
 
-    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.BankMaxPins), AL_GPIO_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.MaxPinNum), AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
 
@@ -401,7 +402,7 @@ AL_S32 AlGpio_Hal_ReadPinInput(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
     AL_U32 PinNumber = 0;
     AL_U32 DirReg = 0;
 
-    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.BankMaxPins), AL_GPIO_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.MaxPinNum), AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
     DirReg = AlGpio_ll_GetDirection(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
@@ -434,7 +435,7 @@ AL_S32 AlGpio_Hal_WritePin(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_U32 Data)
     AL_U32 Read_Pin_Value = 0;
 
 
-    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.BankMaxPins), AL_GPIO_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.MaxPinNum), AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
 
@@ -616,7 +617,7 @@ static AL_BOOL AlGpio_Hal_GetPinIntrEnable(AL_GPIO_HalStruct *Handle, AL_U32 Pin
     AL_U32 PinNumber = 0;
     AL_U32 IntrReg = 0;
 
-    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.BankMaxPins), AL_GPIO_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.MaxPinNum), AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
     IntrReg = AlGpio_ll_GetIntrEnable(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
@@ -640,7 +641,7 @@ static AL_S32 AlGpio_Hal_EnablePinIntr(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
     AL_U32 PinNumber = 0;
     AL_U32 GetPinIntrEnable = 0;
 
-    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.BankMaxPins), AL_GPIO_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.MaxPinNum), AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin((AL_U8)Pin, &Bank, &PinNumber);
 
@@ -678,7 +679,7 @@ static AL_S32 AlGpio_Hal_SetPinIntrType(AL_GPIO_HalStruct *Handle, AL_U32 Pin, A
     AL_U32 IntrPolarityReg = 0;
     AL_U32 IntrEdgeReg = 0;
 
-    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.BankMaxPins), AL_GPIO_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.MaxPinNum), AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
     IntrTypeReg = AlGpio_ll_GetIntrType(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
@@ -744,7 +745,7 @@ static AL_S32 AlGpio_Hal_GetPinIntrType(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
     AL_U32 IntrEdge = 0;
     AL_U32 IntrMode = 0;
 
-    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.BankMaxPins), AL_GPIO_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.MaxPinNum), AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
     IntrType = AlGpio_ll_GetIntrType(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET) & (BIT(PinNumber));
@@ -776,7 +777,7 @@ static AL_BOOL AlGpio_Hal_GetPinDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Pin)
     AL_U32 PinNumber = 0;
     AL_U32 IntrReg = 0;
 
-    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.BankMaxPins), AL_GPIO_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.MaxPinNum), AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin(Pin, &Bank, &PinNumber);
     IntrReg = AlGpio_ll_GetDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
@@ -804,7 +805,7 @@ static AL_S32 AlGpio_Hal_EnablePinDebounce(AL_GPIO_HalStruct *Handle, AL_U32 Pin
     AL_U32 DebounceReg = 0;
     AL_U32 GetPinDebounce = 0;
 
-    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.BankMaxPins), AL_GPIO_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.MaxPinNum), AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AlGpio_Hal_GetBankPin((AL_U8)Pin, &Bank, &PinNumber);
     DebounceReg = AlGpio_ll_GetDebounce(Handle->HwConfig.BaseAddress + Bank * GPIO_REG_OFFSET);
@@ -873,7 +874,7 @@ static AL_VOID AlGpio_Hal_IntrHandler(AL_VOID *Instance)
  */
 AL_S32 AlGpio_Hal_IntrPinCfg(AL_GPIO_HalStruct *Handle, AL_U32 Pin, AL_GPIO_IntrEnum IntrType, AL_INTR_AttrStrct *Attr)
 {
-    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.BankMaxPins), AL_GPIO_ERR_ILLEGAL_PARAM);
+    AL_ASSERT((Handle != AL_NULL) && (Pin < Handle->HwConfig.MaxPinNum), AL_GPIO_ERR_ILLEGAL_PARAM);
 
     AL_GPIO_Intr_BankEnum Bank = 0;
     AL_U32 GetPinDirection = 0;
