@@ -11,7 +11,7 @@
 AlAxiVdma_HwConfigStruct AlAxiVdma_HwCfg[AL_VDMA_NUM_INSTANCE] =
 {
     {
-        .DeviceId = AXI_VDMA0_DEV_ID,
+        .DeviceId               = AXI_VDMA0_DEV_ID,
         .BaseAddress            = AXI_VDMA0_BASEADDR,
 
         .MaxFrameStoreNum       = AXI_VDMA0_MaxFrameStoreNum,

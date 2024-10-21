@@ -10,7 +10,7 @@ AlAxiVdma_Hal_Struct *Vdma;
 AlAxiVdma_ChannelCfg *Mm2sChannelCfg;
 AlAxiVdma_ChannelCfg *S2MmChannelCfg;
 
-AL_BOOL TransFlag = 0;
+volatile AL_BOOL TransFlag = 0;
 AL_U8 ReadArray[64*64*5];
 AL_U8 WriteArray[64*64*5];
 

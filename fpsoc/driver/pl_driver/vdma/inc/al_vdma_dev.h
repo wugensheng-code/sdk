@@ -25,8 +25,8 @@ extern "C" {
 #define AL_AXI_VDMA_ERR_NOMEM                    (AL_DEF_ERR(AL_VDMA, AL_LOG_LEVEL_ERROR, AL_ERR_NOMEM))
 #define AL_AXI_VDMA_ERR_NOMEM                    (AL_DEF_ERR(AL_VDMA, AL_LOG_LEVEL_ERROR, AL_ERR_NOMEM))
 
-#define AL_AXIVDMA_MAX_FRAMESTORE 16
-
+#define AL_AXIVDMA_MAX_FRAMESTORE_64 8
+#define AL_AXIVDMA_MAX_FRAMESTORE_32 16
 
 typedef enum
 {
@@ -77,7 +77,7 @@ typedef struct {
     AL_BOOL  GenlockEn;
     AL_U32  CircularPark;
     AL_U32   RegIndex;
-    AL_UINTPTR FrameStoreStartAddr[AL_AXIVDMA_MAX_FRAMESTORE];
+    AL_UINTPTR FrameStoreStartAddr[32];
     AL_U32  Vsize;
     AL_U32  Hsize;
     AL_U32  FrameDelay;
@@ -113,8 +113,8 @@ typedef struct
 AL_S32 AlAxiVdma_Dev_Init(AlAxiVdma_Dev_Struct *Vdma, AL_U32 DevId);
 AL_U32 AlAxiVdma_Dev_StartMm2s(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg *ReadChannelCfg);
 AL_U32 AlAxiVdma_Dev_SetMm2sConfig(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg *ReadChannelCfg);
-AL_U32 AlAxiVdma_Dev_StartS2Mm(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg *WriteChannelCfg);
-AL_U32 AlAxiVdma_Dev_SetS2MmConfig(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg *WriteChannelCfg);
+AL_U32 AlAxiVdma_Dev_StartS2Mm(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg *S2MmChannelCfg);
+AL_U32 AlAxiVdma_Dev_SetS2MmConfig(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg *S2MmChannelCfg);
 AL_VOID AlAxiVdma_Dev_Mm2sIntrHandler(AL_VOID *Instance);
 AL_VOID AlAxiVdma_Dev_S2MmIntrHandler(AL_VOID *Instance);
 AL_S32 AlAxiVdma_Dev_RegisterEventCallBack(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_EventCallBack Callback, void *CallbackRef);

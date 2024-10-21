@@ -43,7 +43,7 @@ AL_BOOL AlAxiVdma_Dev_IsRuningMm2s(AlAxiVdma_Dev_Struct *Vdma)
     return AL_TRUE;
 }
 
-AL_U32 AlAxiVdma_Dev_StartMm2s(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg *ReadChannelCfg)
+AL_U32 AlAxiVdma_Dev_StartMm2s(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg *Mm2sChannelCfg)
 {
     AL_BOOL Status;
 
@@ -52,7 +52,7 @@ AL_U32 AlAxiVdma_Dev_StartMm2s(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg 
     }
 
     if (AlAxiVdma_Dev_IsRuningMm2s(Vdma)) {
-        AlAxiVdma_ll_SetMm2sVsize(Vdma->HwConfig.BaseAddress, ReadChannelCfg->Vsize);
+        AlAxiVdma_ll_SetMm2sVsize(Vdma->HwConfig.BaseAddress, Mm2sChannelCfg->Vsize);
     } else {
         return AL_AXI_VDMA_ERR_BUSY;
     }
@@ -60,28 +60,73 @@ AL_U32 AlAxiVdma_Dev_StartMm2s(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg 
     return AL_OK;
 }
 
-AL_U32 AlAxiVdma_Dev_SetMm2sConfig(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg *ReadChannelCfg)
+AL_U32 AlAxiVdma_Dev_SetMm2sBufferAddr(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg *Mm2sChannelCfg)
 {
-    AlAxiVdma_ll_SetMm2sIrqDelayCount(Vdma->HwConfig.BaseAddress, ReadChannelCfg->DelayCount);
-    AlAxiVdma_ll_SetMm2sIrqFrameCount(Vdma->HwConfig.BaseAddress, ReadChannelCfg->FrameCount);
-    AlAxiVdma_ll_SetMm2sRepeatEn(Vdma->HwConfig.BaseAddress, ReadChannelCfg->RepeatEn);
-    AlAxiVdma_ll_SetMm2sErrIrqEn(Vdma->HwConfig.BaseAddress, ReadChannelCfg->ErrIrqEn);
-    AlAxiVdma_ll_SetMm2sDlyCntIrqEn(Vdma->HwConfig.BaseAddress, ReadChannelCfg->DlyCntIrqEn);
-    AlAxiVdma_ll_SetMm2sFrmCntIrqEn(Vdma->HwConfig.BaseAddress, ReadChannelCfg->FrmCntIrqEn);
-    AlAxiVdma_ll_SetMm2sRdPntrNum(Vdma->HwConfig.BaseAddress, ReadChannelCfg->PntrNum);
-    AlAxiVdma_ll_SetMm2sGenlockSrc(Vdma->HwConfig.BaseAddress, ReadChannelCfg->GenlockSrc);
-    AlAxiVdma_ll_SetMm2sFrameCntEn(Vdma->HwConfig.BaseAddress, ReadChannelCfg->FrameCntEn);
-    AlAxiVdma_ll_SetMm2sGenlockEn(Vdma->HwConfig.BaseAddress, ReadChannelCfg->GenlockEn);
-    AlAxiVdma_ll_SetMm2sCircularPark(Vdma->HwConfig.BaseAddress, ReadChannelCfg->CircularPark);
-    AlAxiVdma_ll_SetMm2sRegIndex(Vdma->HwConfig.BaseAddress, ReadChannelCfg->RegIndex);
+    AL_S32 AddrWidth;
+    AL_S32 FrmBound;
+    AL_S32 NumFrames;
+    AL_S32 Loop16 = 0;
+    AL_S32 HiFrmAddr = 0;
+    AL_S32 i;
 
-    for (AL_U32 i = 0; i < Vdma->HwConfig.MaxFrameStoreNum; i++) {
-        AlAxiVdma_ll_SetMm2sStartAddr((Vdma->HwConfig.BaseAddress + i * 4), ReadChannelCfg->FrameStoreStartAddr[i]);
+    NumFrames = Vdma->HwConfig.MaxFrameStoreNum;
+
+    if (Vdma->HwConfig.BaseAddress > 0xffffffff) {
+        AddrWidth = 64;
+    } else {
+        AddrWidth = 32;
     }
 
-    AlAxiVdma_ll_SetMm2sHsize(Vdma->HwConfig.BaseAddress, ReadChannelCfg->Hsize);
-    AlAxiVdma_ll_SetMm2sFrameDelay(Vdma->HwConfig.BaseAddress, ReadChannelCfg->FrameDelay);
-    AlAxiVdma_ll_SetMm2sStride(Vdma->HwConfig.BaseAddress,ReadChannelCfg->Stride);
+    if (AddrWidth > 32) {
+        FrmBound = (AL_AXIVDMA_MAX_FRAMESTORE_64) / 2 - 1;
+    } else {
+        FrmBound = (AL_AXIVDMA_MAX_FRAMESTORE_32) / 2 - 1;
+    }
+
+    for (i = 0; i < NumFrames; i++, Loop16++) {
+        if ((i > FrmBound) && !HiFrmAddr) {
+            AlAxiVdma_ll_SetMm2sRegIndex(Vdma->HwConfig.BaseAddress, AL_TRUE);
+            HiFrmAddr = 1;
+            Loop16 = 0;
+        }
+
+        if (AddrWidth > 32) {
+            AlAxiVdma_ll_SetMm2sStartAddr((Vdma->HwConfig.BaseAddress + i * 4 * 2),
+                                            Mm2sChannelCfg->FrameStoreStartAddr[i]);
+
+            AlAxiVdma_ll_SetMm2sStartAddr((Vdma->HwConfig.BaseAddress + 4 + i * 4 * 2),
+                                            (Mm2sChannelCfg->FrameStoreStartAddr[i] >> 32));
+        } else {
+            AlAxiVdma_ll_SetMm2sStartAddr((Vdma->HwConfig.BaseAddress + i * 4),
+                                            Mm2sChannelCfg->FrameStoreStartAddr[i]);
+        }
+
+        if ((NumFrames > FrmBound) && (i == (NumFrames - 1))) {
+            AlAxiVdma_ll_SetMm2sRegIndex(Vdma->HwConfig.BaseAddress, AL_FALSE);
+        }
+    }
+}
+
+AL_U32 AlAxiVdma_Dev_SetMm2sConfig(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg *Mm2sChannelCfg)
+{
+    AlAxiVdma_ll_SetMm2sIrqDelayCount(Vdma->HwConfig.BaseAddress, Mm2sChannelCfg->DelayCount);
+    AlAxiVdma_ll_SetMm2sIrqFrameCount(Vdma->HwConfig.BaseAddress, Mm2sChannelCfg->FrameCount);
+    AlAxiVdma_ll_SetMm2sRepeatEn(Vdma->HwConfig.BaseAddress, Mm2sChannelCfg->RepeatEn);
+    AlAxiVdma_ll_SetMm2sErrIrqEn(Vdma->HwConfig.BaseAddress, Mm2sChannelCfg->ErrIrqEn);
+    AlAxiVdma_ll_SetMm2sDlyCntIrqEn(Vdma->HwConfig.BaseAddress, Mm2sChannelCfg->DlyCntIrqEn);
+    AlAxiVdma_ll_SetMm2sFrmCntIrqEn(Vdma->HwConfig.BaseAddress, Mm2sChannelCfg->FrmCntIrqEn);
+    AlAxiVdma_ll_SetMm2sRdPntrNum(Vdma->HwConfig.BaseAddress, Mm2sChannelCfg->PntrNum);
+    AlAxiVdma_ll_SetMm2sGenlockSrc(Vdma->HwConfig.BaseAddress, Mm2sChannelCfg->GenlockSrc);
+    AlAxiVdma_ll_SetMm2sFrameCntEn(Vdma->HwConfig.BaseAddress, Mm2sChannelCfg->FrameCntEn);
+    AlAxiVdma_ll_SetMm2sGenlockEn(Vdma->HwConfig.BaseAddress, Mm2sChannelCfg->GenlockEn);
+    AlAxiVdma_ll_SetMm2sCircularPark(Vdma->HwConfig.BaseAddress, Mm2sChannelCfg->CircularPark);
+    AlAxiVdma_ll_SetMm2sRegIndex(Vdma->HwConfig.BaseAddress, Mm2sChannelCfg->RegIndex);
+
+    AlAxiVdma_Dev_SetMm2sBufferAddr(Vdma, Mm2sChannelCfg);
+
+    AlAxiVdma_ll_SetMm2sHsize(Vdma->HwConfig.BaseAddress, Mm2sChannelCfg->Hsize);
+    AlAxiVdma_ll_SetMm2sFrameDelay(Vdma->HwConfig.BaseAddress, Mm2sChannelCfg->FrameDelay);
+    AlAxiVdma_ll_SetMm2sStride(Vdma->HwConfig.BaseAddress,Mm2sChannelCfg->Stride);
 
     return AL_OK;
 }
@@ -104,7 +149,7 @@ AL_BOOL AlAxiVdma_Dev_IsRuningS2Mm(AlAxiVdma_Dev_Struct *Vdma)
     return AL_TRUE;
 }
 
-AL_U32 AlAxiVdma_Dev_StartS2Mm(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg *WriteChannelCfg)
+AL_U32 AlAxiVdma_Dev_StartS2Mm(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg *S2MmChannelCfg)
 {
     AL_BOOL Status;
 
@@ -113,7 +158,7 @@ AL_U32 AlAxiVdma_Dev_StartS2Mm(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg 
     }
 
     if (AlAxiVdma_Dev_IsRuningS2Mm(Vdma)) {
-        AlAxiVdma_ll_SetS2MmVsize(Vdma->HwConfig.BaseAddress, WriteChannelCfg->Vsize);
+        AlAxiVdma_ll_SetS2MmVsize(Vdma->HwConfig.BaseAddress, S2MmChannelCfg->Vsize);
     } else {
         return AL_AXI_VDMA_ERR_BUSY;
     }
@@ -121,31 +166,76 @@ AL_U32 AlAxiVdma_Dev_StartS2Mm(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg 
     return AL_OK;
 }
 
-AL_U32 AlAxiVdma_Dev_SetS2MmConfig(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg *WriteChannelCfg)
+AL_U32 AlAxiVdma_Dev_SetS2MmBufferAddr(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg *S2MmChannelCfg)
 {
-    AlAxiVdma_ll_SetS2MmIrqDelayCount(Vdma->HwConfig.BaseAddress, WriteChannelCfg->DelayCount);
-    AlAxiVdma_ll_SetS2MmIrqFrameCount(Vdma->HwConfig.BaseAddress, WriteChannelCfg->FrameCount);
-    AlAxiVdma_ll_SetS2MmRepeatEn(Vdma->HwConfig.BaseAddress, WriteChannelCfg->RepeatEn);
-    AlAxiVdma_ll_SetS2MmErrIrqEn(Vdma->HwConfig.BaseAddress, WriteChannelCfg->ErrIrqEn);
-    AlAxiVdma_ll_SetS2MmDlyCntIrqEn(Vdma->HwConfig.BaseAddress, WriteChannelCfg->DlyCntIrqEn);
-    AlAxiVdma_ll_SetS2MmFrmCntIrqEn(Vdma->HwConfig.BaseAddress, WriteChannelCfg->FrmCntIrqEn);
-    AlAxiVdma_ll_SetS2MmRdPntrNum(Vdma->HwConfig.BaseAddress, WriteChannelCfg->PntrNum);
-    AlAxiVdma_ll_SetS2MmGenlockSrc(Vdma->HwConfig.BaseAddress, WriteChannelCfg->GenlockSrc);
-    AlAxiVdma_ll_SetS2MmFrameCntEn(Vdma->HwConfig.BaseAddress, WriteChannelCfg->FrameCntEn);
-    AlAxiVdma_ll_SetS2MmGenlockEn(Vdma->HwConfig.BaseAddress, WriteChannelCfg->GenlockEn);
-    AlAxiVdma_ll_SetS2MmCircularPark(Vdma->HwConfig.BaseAddress, WriteChannelCfg->CircularPark);
-    AlAxiVdma_ll_SetS2MmRegIndex(Vdma->HwConfig.BaseAddress, WriteChannelCfg->RegIndex);
+    AL_S32 AddrWidth;
+    AL_S32 FrmBound;
+    AL_S32 NumFrames;
+    AL_S32 Loop16 = 0;
+    AL_S32 HiFrmAddr = 0;
+    AL_S32 i;
 
-    for (AL_U32 i = 0; i < Vdma->HwConfig.MaxFrameStoreNum; i++) {
-        AlAxiVdma_ll_SetS2MmStartAddr((Vdma->HwConfig.BaseAddress + i * 4), WriteChannelCfg->FrameStoreStartAddr[i]);
+    NumFrames = Vdma->HwConfig.MaxFrameStoreNum;
+
+    if (Vdma->HwConfig.BaseAddress > 0xffffffff) {
+        AddrWidth = 64;
+    } else {
+        AddrWidth = 32;
     }
 
-    AlAxiVdma_ll_SetS2MmHsize(Vdma->HwConfig.BaseAddress, WriteChannelCfg->Hsize);
-    AlAxiVdma_ll_SetS2MmFrameDelay(Vdma->HwConfig.BaseAddress, WriteChannelCfg->FrameDelay);
-    AlAxiVdma_ll_SetS2MmStride(Vdma->HwConfig.BaseAddress, WriteChannelCfg->Stride);
+    if (AddrWidth > 32) {
+        FrmBound = (AL_AXIVDMA_MAX_FRAMESTORE_64) / 2 - 1;
+    } else {
+        FrmBound = (AL_AXIVDMA_MAX_FRAMESTORE_32) / 2 - 1;
+    }
+
+    for (i = 0; i < NumFrames; i++, Loop16++) {
+        if ((i > FrmBound) && !HiFrmAddr) {
+            AlAxiVdma_ll_SetS2MmRegIndex(Vdma->HwConfig.BaseAddress, AL_TRUE);
+            HiFrmAddr = 1;
+            Loop16 = 0;
+        }
+
+        if (AddrWidth > 32) {
+            AlAxiVdma_ll_SetS2MmStartAddr((Vdma->HwConfig.BaseAddress + i * 4 * 2),
+                                            S2MmChannelCfg->FrameStoreStartAddr[i]);
+
+            AlAxiVdma_ll_SetS2MmStartAddr((Vdma->HwConfig.BaseAddress + 4 + i * 4 * 2),
+                                            (S2MmChannelCfg->FrameStoreStartAddr[i] >> 32));
+        } else {
+            AlAxiVdma_ll_SetS2MmStartAddr((Vdma->HwConfig.BaseAddress + i * 4),
+                                            S2MmChannelCfg->FrameStoreStartAddr[i]);
+        }
+
+        if ((NumFrames > FrmBound) && (i == (NumFrames - 1))) {
+            AlAxiVdma_ll_SetS2MmRegIndex(Vdma->HwConfig.BaseAddress, AL_FALSE);
+        }
+    }
+}
+
+AL_U32 AlAxiVdma_Dev_SetS2MmConfig(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_ChannelCfg *S2MmChannelCfg)
+{
+    AlAxiVdma_ll_SetS2MmIrqDelayCount(Vdma->HwConfig.BaseAddress, S2MmChannelCfg->DelayCount);
+    AlAxiVdma_ll_SetS2MmIrqFrameCount(Vdma->HwConfig.BaseAddress, S2MmChannelCfg->FrameCount);
+    AlAxiVdma_ll_SetS2MmRepeatEn(Vdma->HwConfig.BaseAddress, S2MmChannelCfg->RepeatEn);
+    AlAxiVdma_ll_SetS2MmErrIrqEn(Vdma->HwConfig.BaseAddress, S2MmChannelCfg->ErrIrqEn);
+    AlAxiVdma_ll_SetS2MmDlyCntIrqEn(Vdma->HwConfig.BaseAddress, S2MmChannelCfg->DlyCntIrqEn);
+    AlAxiVdma_ll_SetS2MmFrmCntIrqEn(Vdma->HwConfig.BaseAddress, S2MmChannelCfg->FrmCntIrqEn);
+    AlAxiVdma_ll_SetS2MmRdPntrNum(Vdma->HwConfig.BaseAddress, S2MmChannelCfg->PntrNum);
+    AlAxiVdma_ll_SetS2MmGenlockSrc(Vdma->HwConfig.BaseAddress, S2MmChannelCfg->GenlockSrc);
+    AlAxiVdma_ll_SetS2MmFrameCntEn(Vdma->HwConfig.BaseAddress, S2MmChannelCfg->FrameCntEn);
+    AlAxiVdma_ll_SetS2MmGenlockEn(Vdma->HwConfig.BaseAddress, S2MmChannelCfg->GenlockEn);
+    AlAxiVdma_ll_SetS2MmCircularPark(Vdma->HwConfig.BaseAddress, S2MmChannelCfg->CircularPark);
+    AlAxiVdma_ll_SetS2MmRegIndex(Vdma->HwConfig.BaseAddress, S2MmChannelCfg->RegIndex);
+
+    AlAxiVdma_Dev_SetS2MmBufferAddr(Vdma, S2MmChannelCfg);
+
+    AlAxiVdma_ll_SetS2MmHsize(Vdma->HwConfig.BaseAddress, S2MmChannelCfg->Hsize);
+    AlAxiVdma_ll_SetS2MmFrameDelay(Vdma->HwConfig.BaseAddress, S2MmChannelCfg->FrameDelay);
+    AlAxiVdma_ll_SetS2MmStride(Vdma->HwConfig.BaseAddress, S2MmChannelCfg->Stride);
 
     if (Vdma->HwConfig.HasVFlip) {
-        AlAxiVdma_ll_EnableVerticalFlip(Vdma->HwConfig.BaseAddress, WriteChannelCfg->EnableVerticalFlip);
+        AlAxiVdma_ll_EnableVerticalFlip(Vdma->HwConfig.BaseAddress, S2MmChannelCfg->EnableVerticalFlip);
     }
 
     return AL_OK;
