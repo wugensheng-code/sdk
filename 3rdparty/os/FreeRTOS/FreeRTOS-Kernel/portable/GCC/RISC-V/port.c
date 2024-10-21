@@ -235,9 +235,6 @@ StackType_t *pxPortInitialiseStack(StackType_t *pxTopOfStack, TaskFunction_t pxC
     /* Simulate the stack frame as it would be created by a context switch
     interrupt. */
 
-    pxTopOfStack--;
-    *pxTopOfStack = (StackType_t)0UL; /* fcsr */
-
     /* Offset added to account for the way the MCU uses the stack on entry/exit
     of interrupts, and to ensure alignment. */
     pxTopOfStack--;
@@ -245,22 +242,77 @@ StackType_t *pxPortInitialiseStack(StackType_t *pxTopOfStack, TaskFunction_t pxC
 
     /* Save code space by skipping register initialisation. */
 #ifndef __riscv_32e
-    pxTopOfStack -= 22; /* X11 - X31. */
+    // pxTopOfStack -= 22; /* X11 - X31. */
+    pxTopOfStack--;
+    *pxTopOfStack = 0x1111111111111111ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x1212121212121212ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x1313131313131313ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x1414141414141414ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x1515151515151515ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x1616161616161616ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x1717171717171717ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x1818181818181818ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x1919191919191919ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x2020202020202020ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x2121212121212121ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x2222222222222222ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x2323232323232323ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x2424242424242424ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x2525252525252525ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x2626262626262626ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x2727272727272727ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x2828282828282828ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x2929292929292929ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x3030303030303030ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x3131313131313131ULL;
 #else
     pxTopOfStack -= 6; /* X11 - X15. */
 #endif
+
+    pxTopOfStack--;
     *pxTopOfStack = (StackType_t)pvParameters;            /* X10/A0 */
-    pxTopOfStack -= 6;                                    /* X5 - X9 */
+
+    // pxTopOfStack -= 6;                                    /* X5 - X9 */
+    pxTopOfStack--;
+    *pxTopOfStack = 0x5555555555555555ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x6666666666666666ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x7777777777777777ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x8888888888888888ULL;
+    pxTopOfStack--;
+    *pxTopOfStack = 0x9999999999999999ULL;
+
+    pxTopOfStack--;
     *pxTopOfStack = (StackType_t)portTASK_RETURN_ADDRESS; /* RA, X1 */
 
+    /* F0 - F31 */
     for (int i = 0; i < 32; i++)
     {
         pxTopOfStack--;
         *pxTopOfStack = 0;
     }
-
-    pxTopOfStack--;
-    *pxTopOfStack = ARCH_SYSREG_READ(CSR_MSTATUS);
 
     pxTopOfStack--;
     *pxTopOfStack = ((StackType_t)pxCode); /* PC */
