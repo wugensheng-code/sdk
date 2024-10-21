@@ -20,10 +20,14 @@ extern "C" {
 
 /***************** Macros (Inline Functions) Definitions ********************/
 #define AL_AXI_ETH_LITE_NUM_INSTANCE        1
-#define AXI_ETH_LITE0_BASE_ADDR             0x1c0000000ULL
-#define AXI_ETH_LITE_CLOCK                  100000000
-#define AXI_ETH_LITE0_INTR_ID               114
 
+#if (defined _AARCH_64 || defined __aarch64__ || defined __arm__)
+#define AXI_ETH_LITE0_BASE_ADDR             0x1C0000000ULL
+#else
+#define AXI_ETH_LITE0_BASE_ADDR             0x1F0000000ULL
+#endif
+
+#define AXI_ETH_LITE_CLOCK (100*MHz)
 
 ///////////////////////////////////////////////////////
 // Register: ELITE_ETXSTAT0

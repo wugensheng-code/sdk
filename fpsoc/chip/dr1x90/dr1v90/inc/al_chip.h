@@ -73,6 +73,7 @@ typedef enum {
     SOC_UART1_IRQn       =  90,
     SOC_CAN0_IRQn        =  91,
     SOC_CAN1_IRQn        =  92,
+    AXI_ETH_LITE0_INTR_ID = 101,
     NPU_SOFT_IRQn        =  116,
     SOC_XMON_IRQn        =  129,
     SOC_MPU_IRQn         =  130,
