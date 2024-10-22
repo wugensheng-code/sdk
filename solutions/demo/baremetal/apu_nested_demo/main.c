@@ -24,7 +24,7 @@
 
 #define AL_GPIO_DEVICE_ID  0
 /* use SD_CD pin as key */
-#define PS_KEY_1 11
+#define PS_KEY_1 0
 
 /************************** Variable Definitions *****************************/
 static AL_TC_TimerInitStruct PwmInitConfigs = {
@@ -49,7 +49,8 @@ AL_S32 main(AL_VOID)
     AL_U32 CpuId = AlCore_GetCoreId();
     AL_INTR_AttrStrct AttrTc = {.Priority = 0x30, .TrigMode = LEVEL_HIGH_TRIGGER};
 
-	AlIntr_SetPreemptionBitsCount(0);
+    *(AL_U32 *)(0xf8803000u) = 0x4;
+    AlIntr_SetPreemptionBitsCount(0);
 
     Ret = AlTc_Hal_Init(&TcHandle, AL_TC_DEVICE_ID, &PwmInitConfigs, Nest_Tc_EventHandler);
     if (Ret == AL_OK) {
