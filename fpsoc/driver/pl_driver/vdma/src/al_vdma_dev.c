@@ -71,7 +71,7 @@ AL_U32 AlAxiVdma_Dev_SetMm2sBufferAddr(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_Cha
 
     NumFrames = Vdma->HwConfig.MaxFrameStoreNum;
 
-    if (Vdma->HwConfig.BaseAddress > 0xffffffff) {
+    if (Vdma->HwConfig.AddrWidth > 32) {
         AddrWidth = 64;
     } else {
         AddrWidth = 32;
@@ -177,7 +177,7 @@ AL_U32 AlAxiVdma_Dev_SetS2MmBufferAddr(AlAxiVdma_Dev_Struct *Vdma, AlAxiVdma_Cha
 
     NumFrames = Vdma->HwConfig.MaxFrameStoreNum;
 
-    if (Vdma->HwConfig.BaseAddress > 0xffffffff) {
+    if (Vdma->HwConfig.AddrWidth > 32) {
         AddrWidth = 64;
     } else {
         AddrWidth = 32;
@@ -291,7 +291,7 @@ static AL_VOID AlAxiVdma_Dev_Mm2sHandler(AlAxiVdma_Dev_Struct *Vdma, AL_U32 Mm2s
     PendingIntr &= AlAxiVdma_Dev_GetMm2sEnableIntr(Vdma);
 
     if (PendingIntr & BIT(MM2S_INTR_ERROR)) {
-        VdmaEvent.Events = AlAxiVdma_Event_Mm2s_ERRIRQ;
+        VdmaEvent.Events = ALAXIVDMA_EVENT_MM2S_ERRIRQ;
 
         if (Vdma->EventCallBack) {
             (*Vdma->EventCallBack)(VdmaEvent, Vdma->EventCallBackRef);
@@ -299,7 +299,7 @@ static AL_VOID AlAxiVdma_Dev_Mm2sHandler(AlAxiVdma_Dev_Struct *Vdma, AL_U32 Mm2s
     }
 
     if (PendingIntr & BIT(MM2S_INTR_FRM_CNT)) {
-        VdmaEvent.Events = AlAxiVdma_Event_Mm2s_FRAMECNT;
+        VdmaEvent.Events = ALAXIVDMA_EVENT_MM2S_FRAMECNT;
 
         if (Vdma->EventCallBack) {
             (*Vdma->EventCallBack)(VdmaEvent, Vdma->EventCallBackRef);
@@ -340,7 +340,7 @@ static AL_VOID AlAxiVdma_Dev_S2MmHandler(AlAxiVdma_Dev_Struct *Vdma, AL_U32 S2Mm
     PendingIntr &= AlAxiVdma_Dev_GetS2MmEnableIntr(Vdma);
 
     if (PendingIntr & BIT(S2MM_INTR_ERROR)) {
-        VdmaEvent.Events = AlAxiVdma_Event_S2Mm_ERRIRQ;
+        VdmaEvent.Events = ALAXIVDMA_EVENT_S2MM_ERRIRQ;
 
         if (Vdma->EventCallBack) {
             (*Vdma->EventCallBack)(VdmaEvent, Vdma->EventCallBackRef);
@@ -348,7 +348,7 @@ static AL_VOID AlAxiVdma_Dev_S2MmHandler(AlAxiVdma_Dev_Struct *Vdma, AL_U32 S2Mm
     }
 
     if (PendingIntr & BIT(S2MM_INTR_FRM_CNT)) {
-        VdmaEvent.Events = AlAxiVdma_Event_S2Mm_FRAMECNT;
+        VdmaEvent.Events = ALAXIVDMA_EVENT_S2MM_FRAMECNT;
 
         if (Vdma->EventCallBack) {
             (*Vdma->EventCallBack)(VdmaEvent, Vdma->EventCallBackRef);

@@ -18,13 +18,13 @@ static AL_VOID AlAxiVdma_Hal_DefEventHandler(AlAxiVdma_EventStruct VdmaEvent, AL
 
     switch (VdmaEvent.Events)
     {
-    case AlAxiVdma_Event_Mm2s_FRAMECNT:
+    case ALAXIVDMA_EVENT_MM2S_FRAMECNT:
         break;
-    case AlAxiVdma_Event_Mm2s_ERRIRQ:
+    case ALAXIVDMA_EVENT_MM2S_ERRIRQ:
         break;
-    case AlAxiVdma_Event_S2Mm_FRAMECNT:
+    case ALAXIVDMA_EVENT_S2MM_FRAMECNT:
         break;
-    case AlAxiVdma_Event_S2Mm_ERRIRQ:
+    case ALAXIVDMA_EVENT_S2MM_ERRIRQ:
         break;
     default:
         break;

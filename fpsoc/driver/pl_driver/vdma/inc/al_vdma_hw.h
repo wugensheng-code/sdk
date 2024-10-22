@@ -149,6 +149,7 @@ typedef struct
 {
     AL_U8 DeviceId;
     AL_UINTPTR BaseAddress;
+    AL_U32 AddrWidth;
 
     AL_U32 MaxFrameStoreNum;
 

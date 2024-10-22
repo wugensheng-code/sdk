@@ -18,31 +18,32 @@ extern "C" {
 #define AL_VDMA_NUM_INSTANCE 2
 #define AXI_VDMA0_DEV_ID 0
 #define AXI_VDMA0_BASEADDR 0x80002000
+#define AXI_VDMA0_ADDRWIDTH 32
 
-#define AXI_VDMA0_MaxFrameStoreNum 5
+#define AXI_VDMA0_MAXFRAMESTOENUM 5
 
-#define AXI_VDMA0_HasS2Mm 1
-#define AXI_VDMA0_S2Mm_IntrId 114
-#define AXI_VDMA0_S2MmMmDataWidth 128
-#define AXI_VDMA0_S2MmBurstSize 8
-#define AXI_VDMA0_S2MmStreamDataWidth 32
-#define AXI_VDMA0_S2MmLineBufferDepth 512
-#define AXI_VDMA0_S2MmFsyncOptions 0
-#define AXI_VDMA0_S2MmGenlockMode 3
-#define AXI_VDMA0_S2MmHasDRE 0
+#define AXI_VDMA0_HASS2MM 1
+#define AXI_VDMA0_S2MM_INTRID 114
+#define AXI_VDMA0_S2MMMMDATAWIDTH 128
+#define AXI_VDMA0_S2MMBURSTSIZE 8
+#define AXI_VDMA0_S2MMSTREAMDATAWIDITH 32
+#define AXI_VDMA0_S2MMLINEBUFFERDEPTH 512
+#define AXI_VDMA0_S2MMFSYNCOPTIONS 0
+#define AXI_VDMA0_S2MMGENLOCKMODE 3
+#define AXI_VDMA0_S2MMHASDRE 0
 
-#define AXI_VDMA0_HasMm2s 1
-#define AXI_VDMA0_Mm2s_IntrId 115
-#define AXI_VDMA0_Mm2sMmDataWidth 128
-#define AXI_VDMA0_Mm2sBurstSize 8
-#define AXI_VDMA0_Mm2sStreamDataWidth 32
-#define AXI_VDMA0_Mm2sLineBufferDepth 512
-#define AXI_VDMA0_Mm2sFsyncOptions 0
-#define AXI_VDMA0_Mm2sGenlockMode 2
-#define AXI_VDMA0_Mm2sHasDRE 0
+#define AXI_VDMA0_HASMM2S 1
+#define AXI_VDMA0_MM2S_INTRID 115
+#define AXI_VDMA0_MM2SMMDATAWIDTH 128
+#define AXI_VDMA0_MM2SBURSTSIZE 8
+#define AXI_VDMA0_MM2SSTREAMDATAWIDTH 32
+#define AXI_VDMA0_MM2SLINEBUFFERDEPTH 512
+#define AXI_VDMA0_MM2SFSYNCOPTIONS 0
+#define AXI_VDMA0_MM2SGENLOCKMODE 2
+#define AXI_VDMA0_MM2SHASDRE 0
 
-#define AXI_VDMA0_EnableAsynsMode 0
-#define AXI_VDMA0_HasVFlip 1
+#define AXI_VDMA0_ENABLEASYNSMODE 0
+#define AXI_VDMA0_HASVFLIP 1
 
 /***************************** AL_AXI_VDMA_DATA ********************************/
 

@@ -32,20 +32,20 @@ static AL_VOID AlAxiVdma_EventHandler(AlAxiVdma_EventStruct VdmaEvent, AL_VOID *
 {
     switch (VdmaEvent.Events)
     {
-    case AlAxiVdma_Event_Mm2s_FRAMECNT:
+    case ALAXIVDMA_EVENT_MM2S_FRAMECNT:
         AL_LOG(AL_LOG_LEVEL_INFO, "Al AxiVdma Mm2s interrupt");
         AlAxiVdma_Hal_Stop(Vdma, AL_VDMA_MM2S_CHANNEL);
         break;
-    case AlAxiVdma_Event_Mm2s_ERRIRQ:
+    case ALAXIVDMA_EVENT_MM2S_ERRIRQ:
         AL_LOG(AL_LOG_LEVEL_INFO, "Al AxiVdma Mm2s error interrupt");
         AlAxiVdma_Hal_Stop(Vdma, AL_VDMA_MM2S_CHANNEL);
         break;
-    case AlAxiVdma_Event_S2Mm_FRAMECNT:
+    case ALAXIVDMA_EVENT_S2MM_FRAMECNT:
         AL_LOG(AL_LOG_LEVEL_INFO, "Al AxiVdma S2Mm interrupt");
         TransFlag = 1;
         AlAxiVdma_Hal_Stop(Vdma, AL_VDMA_S2MM_CHANNEL);
         break;
-    case AlAxiVdma_Event_S2Mm_ERRIRQ:
+    case ALAXIVDMA_EVENT_S2MM_ERRIRQ:
         AL_LOG(AL_LOG_LEVEL_INFO, "Al AxiVdma S2Mm error interrupt");
         TransFlag = 1;
         AlAxiVdma_Hal_Stop(Vdma, AL_VDMA_S2MM_CHANNEL);

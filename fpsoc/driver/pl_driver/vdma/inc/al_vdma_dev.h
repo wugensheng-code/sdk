@@ -25,8 +25,8 @@ extern "C" {
 #define AL_AXI_VDMA_ERR_NOMEM                    (AL_DEF_ERR(AL_VDMA, AL_LOG_LEVEL_ERROR, AL_ERR_NOMEM))
 #define AL_AXI_VDMA_ERR_NOMEM                    (AL_DEF_ERR(AL_VDMA, AL_LOG_LEVEL_ERROR, AL_ERR_NOMEM))
 
-#define AL_AXIVDMA_MAX_FRAMESTORE_64 8
-#define AL_AXIVDMA_MAX_FRAMESTORE_32 16
+#define AL_AXIVDMA_MAX_FRAMESTORE_64 16
+#define AL_AXIVDMA_MAX_FRAMESTORE_32 32
 
 typedef enum
 {
@@ -87,10 +87,10 @@ typedef struct {
 
 typedef enum
 {
-    AlAxiVdma_Event_Mm2s_FRAMECNT     = 0,
-    AlAxiVdma_Event_Mm2s_ERRIRQ       = 1,
-    AlAxiVdma_Event_S2Mm_FRAMECNT     = 2,
-    AlAxiVdma_Event_S2Mm_ERRIRQ       = 3,
+    ALAXIVDMA_EVENT_MM2S_FRAMECNT     = 0,
+    ALAXIVDMA_EVENT_MM2S_ERRIRQ       = 1,
+    ALAXIVDMA_EVENT_S2MM_FRAMECNT     = 2,
+    ALAXIVDMA_EVENT_S2MM_ERRIRQ       = 3,
 } AlAxiVdma_EventIdEnum;
 
 typedef struct
