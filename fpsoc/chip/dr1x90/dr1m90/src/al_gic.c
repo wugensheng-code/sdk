@@ -32,7 +32,7 @@ static AL_U32 AlGic_MpidrToCorePos(AL_UINTPTR Mpidr)
     return CpuId;
 }
 
-static AL_U32 AlGic_CorePos(void)
+AL_U32 AlGic_CorePos(void)
 {
     AL_UINTPTR Mpidr = GICV3_SYSREG_READ(mpidr_el1);
     return AlGic_MpidrToCorePos(Mpidr);

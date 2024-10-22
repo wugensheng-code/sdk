@@ -90,7 +90,8 @@ static AL_VOID AlIntr_RequestIntr(AL_U32 IntrId, AL_VOID *Handler, AL_VOID *Para
 
 AL_S32 AlIntr_RegHandler(AL_S32 IntrId, AL_INTR_AttrStrct *IntrAttr, AL_INTR_Func Func, AL_VOID *Param)
 {
-    AL_U32 CpuId = *(Gicv3DrvData->CpuId);
+extern AL_U32 AlGic_CorePos(void);
+    AL_U32 CpuId = AlGic_CorePos();
     AL_INTR_AttrStrct *Attr;
     AL_DEFAULT_ATTR(DefAttr);
 
